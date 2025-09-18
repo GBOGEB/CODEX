@@ -14,7 +14,7 @@ Indicative retail ranges (1/4"–1/2" sizes):
 ## Pressure Safety Valves (PSV)
 - **Leser** (Germany) – High-performance spring-loaded PSVs, DN25–DN80.  
 - **Herose** (Germany) – Cryogenic PSVs suitable for helium service.  
-- **Advance Valve / EU stockists** – Distribute Leser/Hero se lines.
+- **Advance Valve / EU stockists** – Distribute Leser/Herose lines.
 
 Indicative range for DN25–DN50 cryogenic PSVs: ~€400–€1,200 each depending on materials, certification, and cleaning.
 
