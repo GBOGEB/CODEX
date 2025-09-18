@@ -22,7 +22,15 @@ Apply stainless sealing wire across each /FS nut to an anchor tab with a seriali
 
 ## 6. Safety Devices & S-Line Protection
 - **Populations:** **Bursting discs = 60 QCELL + 5 QPLANT; Safety valves = 180 QCELL + 30 QPLANT.**
-- **Setpoints (absolute):** QCELL BD **2.0 bar(a)**; QPLANT HP BD **18 bar(a)** / PSV **16 bar(a)**; thermal shield BD **3.5 bar(a)** / PSV **4.0 bar(a)**; warm LP PSV **1.3 bar(a)**; vacuum breaker PSV **0.95 bar(a)**.
+- **Setpoints (absolute):**
+
+  | Location/Device         | BD Setpoint      | PSV Setpoint     |
+  |------------------------|------------------|------------------|
+  | QCELL                  | **2.0 bar(a)**   | -                |
+  | QPLANT HP              | **18 bar(a)**    | **16 bar(a)**    |
+  | Thermal shield         | **3.5 bar(a)**   | **4.0 bar(a)**   |
+  | Warm LP                | -                | **1.3 bar(a)**   |
+  | Vacuum breaker         | -                | **0.95 bar(a)**  |
 - **S-line header:** **QINFRA.S → QRB.S** protected at **1.3 bar(a)** with PSV capacity **≥ 200 g/s helium at 300 K** discharging to **WCS.LP** recovery. Final sizing shall comply with API 520/521 and ISO 21013-1/-2 using Addendum event backpressures.
 
 ## 7. P&ID Legend Delta (ISA/ISO)
