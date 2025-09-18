@@ -1,0 +1,52 @@
+name: HELIUM_VCR_UHP_master_applied
+version: 1.3.0
+date: 2025-09-18
+folders:
+  - 01_requirements
+  - 02_design/02A_PnID
+  - 03_bom
+  - 04_quality
+  - 05_vendor
+  - 06_arch/ADR
+  - 07_ops/OCD
+  - 99_handover
+files:
+  99_handover/MASTER_DIFF.md: {path: 99_handover/MASTER_DIFF.md}
+  99_handover/MASTER_PATCH.md: {path: 99_handover/MASTER_PATCH.md}
+  99_handover/RENAME_SBS.csv: {path: 99_handover/RENAME_SBS.csv}
+  02_design/02A_PnID/PID_SYMBOL_CHEATSHEET.md: {path: 02_design/02A_PnID/PID_SYMBOL_CHEATSHEET.md}
+  02_design/02A_PnID/PID_ASSEMBLY_PREVIEWS.md: {path: 02_design/02A_PnID/PID_ASSEMBLY_PREVIEWS.md}
+  03_bom/BOM_Master.csv: {path: 03_bom/BOM_Master.csv}
+  04_quality/PROC_DBBA_Purge.md: {path: 04_quality/PROC_DBBA_Purge.md}
+  04_quality/PROC_He_LeakTest_ISO20485.md: {path: 04_quality/PROC_He_LeakTest_ISO20485.md}
+  04_quality/ITP_HE_VCR.csv: {path: 04_quality/ITP_HE_VCR.csv}
+  01_requirements/RTM.csv: {path: 01_requirements/RTM.csv}
+  01_requirements/requirements.json: {path: 01_requirements/requirements.json}
+  05_vendor/VENDOR_COSTS.md: {path: 05_vendor/VENDOR_COSTS.md}
+  06_arch/ADR/ADR.md: {path: 06_arch/ADR/ADR.md}
+  07_ops/OCD/OCD.md: {path: 07_ops/OCD/OCD.md}
+  99_handover/README.md:
+    content: |
+      # Handover Instructions
+      1. Review `MASTER_DIFF.md` and mark decisions (Yes/No/Maybe).
+      2. Apply replacements listed in `RENAME_SBS.csv` across project documents.
+      3. Insert `MASTER_PATCH.md` into MASTER after Table 6 and before acceptance testing.
+      4. Regenerate P&ID legend using `PID_SYMBOL_CHEATSHEET.md` and assembly previews.
+      5. Execute QA procedures using `PROC_DBBA_Purge.md`, `PROC_He_LeakTest_ISO20485.md`, and `ITP_HE_VCR.csv`.
+      6. Update RTM using `RTM.csv` / `requirements.json` and track evidence in CIS.
+      7. Archive outputs via `handover_master_applied.tgz` or Git tag `SEED_20250918`.
+scripts:
+  - name: build_pdfs
+    run: |
+      pandoc 02_design/02A_PnID/PID_SYMBOL_CHEATSHEET.md -V toc=true -V numbersections=true -o PID_SYMBOL_CHEATSHEET.pdf
+      pandoc 02_design/02A_PnID/PID_ASSEMBLY_PREVIEWS.md -V toc=true -V numbersections=true -o PID_ASSEMBLY_PREVIEWS.pdf
+  - name: seed_repo
+    run: |
+      git init
+      git add .
+      git commit -m "KEB: master-applied baseline 1.3.0"
+      git tag -a SEED_20250918 -m "SEED 1.3.0"
+outputs:
+  - archive: handover_master_applied.tgz
+    includes:
+      - "**/*"

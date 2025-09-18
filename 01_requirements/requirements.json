@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "baseline": "1.3.0",
+    "date": "2025-09-18"
+  },
+  "requirements": [
+    {
+      "id": "RTM.001",
+      "class": "C",
+      "shall": "All serviceable joints shall be metal-gasket face-seal (/FS, VCR-compatible) with no PTFE/elastomer in wetted helium service.",
+      "verify": "Visual inspection + BOM review",
+      "deliverables": ["P&IDs", "Line class sheet"],
+      "source": "MASTER_PATCH §1-§8"
+    },
+    {
+      "id": "RTM.002",
+      "class": "C",
+      "shall": "Each /FS remake shall use a new metal gasket with batch traceability and tamper evidence recorded.",
+      "verify": "Maintenance checklist",
+      "deliverables": ["Maintenance log", "Tamper-seal log"],
+      "source": "MASTER_PATCH §4 & §8"
+    },
+    {
+      "id": "RTM.003",
+      "class": "C",
+      "shall": "Panel-side interfaces shall be female and module-side interfaces male; deviations shall be tagged and logged.",
+      "verify": "Field inspection",
+      "deliverables": ["Orientation checklist"],
+      "source": "MASTER_PATCH §2"
+    },
+    {
+      "id": "RTM.003b",
+      "class": "C",
+      "shall": "Pneumatic/solenoid pilots for manual isolation shall fail open so loss of air does not obstruct nominal flow.",
+      "verify": "Functional test",
+      "deliverables": ["Valve FAT/SAT records"],
+      "source": "MASTER_PATCH §8"
+    },
+    {
+      "id": "RTM.004",
+      "class": "A",
+      "shall": "Leak acceptance shall meet Addendum Table 6 limits under ambient and standby conditions using EN 13185 / ISO 20485 methods.",
+      "verify": "Helium MS leak test",
+      "deliverables": ["Leak reports"],
+      "source": "Addendum Table 6; MASTER_PATCH §3 & §8"
+    },
+    {
+      "id": "RTM.005",
+      "class": "C",
+      "shall": "DBB plus eductor purge shall achieve residual air ≤0.05 % before breaking /FS joints and shall log helium loss per cycle.",
+      "verify": "Procedure witness",
+      "deliverables": ["Purge log", "Analyzer log"],
+      "source": "MASTER_PATCH §3"
+    },
+    {
+      "id": "RTM.006",
+      "class": "A",
+      "shall": "QINFRA.S and QRB.S headers shall be protected at 1.3 bar(a) with PSV capacity ≥200 g/s helium at 300 K discharged to WCS.LP recovery.",
+      "verify": "Sizing calculations + certificates",
+      "deliverables": ["PSV certification dossier"],
+      "source": "MASTER_PATCH §6"
+    },
+    {
+      "id": "RTM.007",
+      "class": "C",
+      "shall": "Provide bursting disc and PSV populations and setpoints as specified (BD 60 QCELL + 5 QPLANT; PSV 180 QCELL + 30 QPLANT with stated setpoints) and certify orifice capacities.",
+      "verify": "Manifest review + certificates",
+      "deliverables": ["BOM_Master.csv", "Certification pack"],
+      "source": "MASTER_PATCH §6"
+    },
+    {
+      "id": "RTM.008",
+      "class": "C",
+      "shall": "Implement tamper-evident ties across /FS nuts with scan-based remake counts integrated to the maintenance system.",
+      "verify": "Inspection + system audit",
+      "deliverables": ["Tamper log", "Maintenance system report"],
+      "source": "MASTER_PATCH §4"
+    },
+    {
+      "id": "RTM.009",
+      "class": "A",
+      "shall": "Install dual helium analyzers (GAP.WCS and GAP.QRB) measuring H₂O and N₂ with ±1 ppm accuracy and ≤±1 ppm/year drift; maintain calibration certificates.",
+      "verify": "Calibration verification",
+      "deliverables": ["Analyzer calibration certificates"],
+      "source": "Addendum analyzer clause; BOM_Master.csv"
+    }
+  ]
+}
