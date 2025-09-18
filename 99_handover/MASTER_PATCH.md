@@ -31,7 +31,11 @@ Apply stainless sealing wire across each /FS nut to an anchor tab with a seriali
   | Thermal shield         | **3.5 bar(a)**   | **4.0 bar(a)**   |
   | Warm LP                | -                | **1.3 bar(a)**   |
   | Vacuum breaker         | -                | **0.95 bar(a)**  |
-- **S-line header:** **QINFRA.S → QRB.S** protected at **1.3 bar(a)** with PSV capacity **≥ 200 g/s helium at 300 K** discharging to **WCS.LP** recovery. Final sizing shall comply with API 520/521 and ISO 21013-1/-2 using Addendum event backpressures.
+- **S-line header:**
+  - **Setpoint:** **QINFRA.S → QRB.S** protected at **1.3 bar(a)**.
+  - **PSV capacity:** **≥ 200 g/s helium at 300 K**.
+  - **Discharge routing:** PSV discharges to **WCS.LP** recovery.
+  - **Sizing standards:** Final sizing shall comply with **API 520/521** and **ISO 21013-1/-2** using Addendum event backpressures.
 
 ## 7. P&ID Legend Delta (ISA/ISO)
 Add to legend: **"/FS = Metal gasket face-seal (VCR-compatible); new gasket at each remake; panel female, module male."** Apply dot notation for all line identifiers (QRB.A/B/D/E; QINFRA.U/W/S; WCS.HP/LP/VLP; optional WCS.R).
