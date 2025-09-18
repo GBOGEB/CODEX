@@ -33,7 +33,7 @@ scripts:
       pandoc 02_design/02A_PnID/PID_ASSEMBLY_PREVIEWS.md -V toc=true -V numbersections=true -o PID_ASSEMBLY_PREVIEWS.pdf
   - name: seed_repo
     run: |
-      git init && git add . && git commit -m "KEB: master-applied baseline 1.3.0" && git tag -a SEED_20250918 -m "SEED 1.3.0"
+      git init && git add . && git commit -m "KEB: master-applied baseline 1.3.0" && git tag -a SEED_$(date +%Y%m%d) -m "SEED 1.3.0"
 outputs:
   - archive: handover_master_applied.tgz
     includes:
