@@ -31,6 +31,7 @@ Apply stainless sealing wire across each /FS nut to an anchor tab with a seriali
   | Thermal shield         | **3.5 bar(a)**   | **4.0 bar(a)**   |
   | Warm LP                | -                | **1.3 bar(a)**   |
   | Vacuum breaker         | -                | **0.95 bar(a)**  |
+
 - **S-line header:**
   - **Setpoint:** **QINFRA.S → QRB.S** protected at **1.3 bar(a)**.
   - **PSV capacity:** **≥ 200 g/s helium at 300 K**.
