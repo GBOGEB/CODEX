@@ -1,11 +1,11 @@
 ReqID,Shall Statement,Class,Verification,Deliverables,Source Reference
-RTM.001,"All serviceable joints shall be metal-gasket face-seal (/FS, VCR-compatible) with no PTFE/elastomer in wetted helium service.",C,Visual inspection + BOM review,P&IDs; Line class sheet,MASTER_PATCH §1-§8
-RTM.002,"Each /FS remake shall use a new metal gasket with batch traceability and tamper evidence recorded.",C,Maintenance checklist,Maintenance log; Tamper-seal log,MASTER_PATCH §4 & §8
-RTM.003,"Panel-side interfaces shall be female and module-side interfaces male; deviations shall be tagged and logged.",C,Field inspection,Orientation checklist,MASTER_PATCH §2
-RTM.003b,"Pneumatic/solenoid pilots for manual isolation shall fail open so loss of air does not obstruct nominal flow.",C,Functional test,Valve FAT/SAT records,MASTER_PATCH §8
-RTM.004,"Leak acceptance shall meet Addendum Table 6 limits under ambient and standby conditions using EN 13185 / ISO 20485 methods.",A,Helium MS leak test,Leak reports,Addendum Table 6; MASTER_PATCH §3 & §8
-RTM.005,"DBB plus eductor purge shall achieve residual air ≤0.05 % before breaking /FS joints and shall log helium loss per cycle.",C,Procedure witness,Purge log; Analyzer log,MASTER_PATCH §3
-RTM.006,"QINFRA.S and QRB.S headers shall be protected at 1.3 bar(a) with PSV capacity ≥200 g/s helium at 300 K discharged to WCS.LP recovery.",A,Sizing calculations + certificates,PSV certification dossier,MASTER_PATCH §6
-RTM.007,"Provide bursting disc and PSV populations and setpoints as specified (BD 60 QCELL + 5 QPLANT; PSV 180 QCELL + 30 QPLANT with stated setpoints) and certify orifice capacities.",C,Manifest review + certs,BOM_Master.csv; Cert pack,MASTER_PATCH §6
-RTM.008,"Implement tamper-evident ties across /FS nuts with scan-based remake counts integrated to the maintenance system.",C,Inspection + system audit,Tamper log; Maintenance system report,MASTER_PATCH §4
+RTM.001,"All serviceable joints shall be /FS (VCR-compatible); no PTFE or elastomer seals in wetted helium service.",C,Visual inspection + BOM review,P&IDs; Line class sheet,MASTER_PATCH §1-§8
+RTM.002,"Each /FS remake shall use a new metal gasket with batch traceability and tamper evidence.",C,Maintenance checklist,Maintenance log; Tamper-seal log,MASTER_PATCH §4 & §8
+RTM.003,"/FS orientation shall be panel-female and module-male; deviations logged.",C,Field inspection,Orientation checklist,MASTER_PATCH §2
+RTM.003b,"Small pneumatic/solenoid pilots shall be fail-open so loss of motive air does not obstruct manual isolation flow.",C,Functional test,Valve FAT/SAT records,MASTER_PATCH §8
+RTM.004,"Leak acceptance shall meet Addendum Table 6 values using EN 13185 / ISO 20485 helium mass-spectrometer methods.",A,Helium MS leak test,Leak reports,Addendum Table 6; MASTER_PATCH §3 & §8
+RTM.005,"DBB plus eductor purge shall achieve residual air ≤0.05 % before breaking the joint.",C,Procedure witness,Purge log; Analyzer log,MASTER_PATCH §3
+RTM.006,"QINFRA.S/QRB.S shall be protected at 1.3 bar(a) with PSV capacity ≥200 g/s @ 300 K routed to WCS.LP recovery.",A,Sizing calculations + certificates,PSV certification dossier,MASTER_PATCH §6
+RTM.007,"Provide BD/PSV populations and setpoints as defined above with certified orifice capacity.",C,Manifest review + certs,BOM_Master.csv; Cert pack,MASTER_PATCH §6
+RTM.008,"Implement tamper-evident ties and scan-based remake counting for every /FS connection.",C,Inspection + system audit,Tamper log; Maintenance system report,MASTER_PATCH §4
 RTM.009,"Install dual helium analyzers (GAP.WCS and GAP.QRB) measuring H₂O and N₂ with ±1 ppm accuracy and ≤±1 ppm/year drift; maintain calibration certificates.",A,Calibration verification,Analyzer calibration certificates,Addendum analyzer clause; BOM_Master.csv
