@@ -1,5 +1,4 @@
 # MASTER — Diff Ledger (Redline/Greenline)
-
 Key: [- deleted -] (red) • [+ added +] (green) • Decision: ✅ Yes / ❌ No / ⏳ Maybe
 
 | Change ID | Where (Anchor → Subclause) | Page | Old text ([-…-]) | New text ([+…+]) | Decision |

@@ -1,23 +1,14 @@
-# DBB + Eductor Purge Procedure (/FS Assemblies)
 
-## Purpose
-Maintain helium Grade 5.0 purity and limit losses when servicing metal gasket face-seal joints on QINFRA.U/W/S and WCS lines.
+# Double-Block-and-Bleed (DBB) Purge Procedure for /FS Assemblies
 
-## Prerequisites
-- Verify analyzer readings within limits prior to intervention.
-- Confirm Venturi eductor (dry N₂ motive) or recovery header is available.
-- Ensure new metal gaskets (SS/Ni/Cu as specified) and tamper seals are on hand.
+**Scope:** Applies to serviceable metal gasket face-seal joints on QINFRA.U/W/S, WCS.HP/LP/VLP (and optional WCS.R) warm helium lines.  
+**Objective:** Limit residual air to ≤0.05% and capture helium losses while protecting Table 6 leakage acceptance.
 
-## Steps
-1. **Isolate** the module using upstream and downstream diaphragm valves (DBB). Confirm bleed valve closed.
-2. **Connect** bleed tee to recovery header or Venturi eductor exhaust; supply dry N₂ motive gas per vendor data.
-3. **Pull-down** cavity to ≤50 mbar(a). Close bleed, charge with helium to 1.05 bar(a), vent to WCS.LP or recovery. Repeat three cycles.
-4. **Verify** purity using portable analyzer (H₂O/N₂) or installed analyzer sample point. Acceptance: residual air ≤0.05 % equivalent.
-5. **Break** /FS joint, discard used gasket, install new gasket, re-make joint to OEM torque/turn.
-6. **Leak test** assembly per ISO 20485 / EN 13185 with acceptance limits from Table 6.
-7. **Record** purge cycles, analyzer readings, helium loss estimate, gasket batch, tamper-seal ID, operator signature in maintenance log.
-
-## Notes
-- Capture eductor motive pressure and duration for KPI tracking.
-- If analyzer exceeds threshold, extend purge cycles or investigate ingress.
-- Dispose of used gaskets per cleanroom waste procedure.
+1. **Isolation** – Close upstream and downstream diaphragm valves to establish DBB. Confirm position with limit switches where fitted.
+2. **Connect bleed** – Attach the face-seal bleed tee to either a recovery header (preferred) or a Venturi eductor assembly driven by dry nitrogen. Verify `/FS` gaskets and tamper tags prior to connection.
+3. **Pull-down** – Open bleed valve and evacuate the cavity to ≤50 mbar(a) equivalent. If using an eductor, confirm motive ΔP is within vendor limits.
+4. **Helium backfill** – Close bleed, backfill with clean helium to 1.05 bar(a), vent to WCS.LP (or recovery) and repeat Steps 3–4 three times.
+5. **Analyze** – Measure residual impurity with the assigned analyzer. Proceed only if residual air ≤0.05% (or more stringent project limit).
+6. **Break joint** – Release tamper wire, remove the /FS nut, discard used gasket, and install a new metal gasket (record alloy and batch/heat number).
+7. **Re-make and test** – Assemble joint per torque/turn procedure, install new tamper wire and seal, perform helium mass-spectrometer test versus Table 6 acceptance, and log helium usage.
+8. **Records** – Update purge log with tag, technician, residual %, helium loss, analyzer ID, gasket batch, and tamper seal ID

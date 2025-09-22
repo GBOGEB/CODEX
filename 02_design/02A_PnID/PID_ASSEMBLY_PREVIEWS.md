@@ -1,49 +1,53 @@
-# P&ID Assembly Previews (/FS Notation + Dot SBS Names)
 
-## A. DBB Purge Block with Venturi Eductor (QINFRA.U / QINFRA.W)
-```
-      ──(D)──┬──(D)──→ Process downstream
-   IN        │    OUT
-             │
-             └─[TEE]─[●]─[≡]─(D)─< >──→ QINFRA.S → WCS.LP
-                    FR  FIL        EDC (dry N₂ motive)
-```
-- Tags: DV.QINFRA.U.101, DV.QINFRA.U.102, FR.QINFRA.U.103, FIL.QINFRA.U.104, EDC.QINFRA.U.105.  
-- Annotate every coupling “/FS”; bleed leg returns to recovery or venturi exhaust.
+# P&ID Assembly Previews (/FS Notation Applied)
 
-## B. Pressure Pickup Spool with Test Port (QRB.W)
-```
-Process ──◼︎──[TEE]──◼︎──→ Process
-                │
-                ○ PT-045 (/FS test port)
-```
-- PT.QRB.W.045 uses face-seal take-off with nut test-port for inboard MS leak-check.
+The following text diagrams mirror the ISA-5.1/ISO symbol legend with dot-style SBS naming and `/FS` annotations for metal gasket face-seal joints.
 
-## C. Analyzer Pick-off to Gas Analysis Panel (WCS)
+## A. DBB Purge Block with Venturi Eductor (QINFRA.U/W service)
 ```
-Process ──(D)──[●]──[≡]──(⊃)──→ GAP.WCS → WCS.LP
-           DV    FR    FIL    Reg (PRV/PCV)
+IN ──(D)──┬──(D)── OUT
+          │
+          └─[TEE]==/FS==[●]==/FS==[≡]==/FS==(D)==/FS==< >──→ QINFRA.S → WCS.LP
+                          FR          FIL        bleed       eductor (dry N₂ motive)
 ```
-- Analyzer panel GAP.WCS returns to WCS.LP; restrictor union maintains sample draw; include /FS annotation at each removable joint.
+Tags: DV.QINFRA.U.101 (IN), DV.QINFRA.U.102 (OUT), FR.QINFRA.U.103, FIL.QINFRA.U.104, EDC.QINFRA.U.105. All unions carry `/FS`; bleed routes to recovery header.
 
-## D. CF↔FS Temperature Feedthrough (QRB.B Warm Panel)
+## B. Pressure Pickup Spool with Test Port (WCS.HP)
 ```
-INVAC wall ─[CF/FS]─ ○ TT-046 ─◼︎─→ Warm process
+Process ──==/FS==[TEE]==/FS==── Process
+                     │
+                     ○ PT.WCS.HP.045
 ```
-- Adapter ADP.QRB.B.131; all-metal feedthrough maintains INVAC integrity.
+Use nut test-port for inboard helium leak-check; install calibration cap with `/FS` annotation.
 
-## E. Relief Train to S-Line (QINFRA.S → QRB.S)
+## C. Analyzer Pick-Off and Return (WCS analyzer panel)
 ```
-Process ──[≀ BD-01]──(spring PSV-02)──▷|──→ QINFRA.S (DN150) → WCS.LP
+Process ──(D)==/FS==[●]==/FS==[≡]==/FS==(⊃)==/FS==→ GAP.WCS
+            DV        FR        FIL        PRV/PCV
+                         │
+                         └───────────────→ WCS.LP return (/FS)
 ```
-- PSV sized for ≥200 g/s He @ 300 K at 1.3 bar(a); include NRV toward recovery header.
+Supports continuous He purity monitoring; restrictor protects analyzer flow, return line routes to LP recovery.
 
-## F. MFC Bypass / Isolation (WCS Analyzer Skid)
+## D. CF↔FS Temperature Feedthrough (QRB warm panel)
 ```
-      ─(D)─◼︎──→┐
-                │ MFM/MFC (FS base blocks)
-      ─(D)─◼︎──→┘
+QRB wall ─[CF/FS]==/FS==○ TT.QRB.W.046 ─==/FS==→ Warm piping
 ```
-- DV.WCS.ANL.141 / 142 for bypass; FT.WCS.ANL.143 output; annotate /FS at each removable coupling.
+All-metal feedthrough with CF clamp on cold side and `/FS` joint on warm instrumentation.
 
-> Export tip: `pandoc PID_ASSEMBLY_PREVIEWS.md -V toc=true -V numbersections=true -o PID_ASSEMBLY_PREVIEWS.pdf`
+## E. Relief Path to S-Line (QINFRA.S / QRB.S)
+```
+Process ──[≀ BD.QPLANT.401]==/FS==→(spring) PSV.QPLANT.402──▷|──→ QINFRA.S (DN150)
+                                                             NRV.QPLANT.403
+```
+Sizing basis: 1.3 bar(a) setpoint, ≥200 g/s helium at 300 K discharging to WCS.LP recovery header.
+
+## F. MFC Bypass and Isolation (WCS.LP panel)
+```
+        ┌──(D)==/FS==→──┐
+IN ──(D)==/FS==  MFC block  ==/FS==(⊃)==/FS==→ OUT
+        └──(D)==/FS==→──┘
+```
+Bypass valves DV.WCS.LP.141 / DV.WCS.LP.142 isolate the metal-sealed mass flow controller; control valve `(⊃)` tied to AO/DO with analyzer feedback.
+
+> Use these previews as drafting references; final CAD should place official ISA/ISO blocks and `/FS` call-outs per project legend.

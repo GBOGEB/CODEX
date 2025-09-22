@@ -1,26 +1,9 @@
 # Helium Leak Test Procedure (EN 13185 / ISO 20485)
-
-## Scope
-Applies to all /FS assemblies and welded spools within the helium distribution scope, using helium mass spectrometry to verify compliance with Table 6 leakage limits.
-
-## References
-- ISO 20485: Tracer gas method
-- EN 13185: Helium leak detection
-- Project Table 6: leakage classes and acceptance values
-
-## Equipment
-- Calibrated helium mass spectrometer (certificate per ISO/IEC 17025)
-- Calibrated reference leak (≤1×10⁻⁹ mbar·L/s)
-- Sniffer probe and test enclosures as required
-
-## Method
-1. **Pre-check** instrument calibration with reference leak; record serial numbers and date.
-2. **Stabilize** system per operating state (ambient or standby) defined in Table 6.
-3. **Test** each joint (sniffer or enclosure method) ensuring laminar flow across /FS nuts or welded seams. Maintain background ≤1×10⁻¹⁰ mbar·L/s.
-4. **Compare** measured leakage with Table 6 limit for that component class. Mark pass/fail.
-5. **Document** readings, instrument IDs, environmental conditions, and operator signatures.
-
-## Records
-- Leak test report with joint tag, measured value, acceptance limit, result
-- Instrument calibration certificates attached to report
-- Cross-reference to maintenance log when linked to /FS remake events
+**Scope:** Applies to all /FS joints and welded assemblies subject to Table 6 leakage acceptance.  
+**Method:** Helium mass-spectrometer testing (vacuum or sniff) per EN 13185 and ISO 20485.
+1. **Preparation** – Verify calibration status of the leak detector and reference leak. Record instrument serial, calibration due date, and sensitivity.
+2. **Background check** – Confirm ambient helium background below 1.0×10⁻¹⁰ mbar·L/s before measurement. Document readings.
+3. **Test setup** – Connect to component or system test port (use /FS nut test ports where fitted). Apply vacuum or tracer gas in accordance with component rating.
+4. **Measurement** – Scan each joint; acceptance limits shall meet or exceed Table 6 values for the relevant component class. Note any corrective action taken.
+5. **Post-test** – Return system to operating pressure, reinstall protective caps, and replace tamper ties if disturbed.
+6. **Records** – Log tag ID, method (vacuum/sniff), measured leak rate, acceptance limit, operator, and instrument data. File results in the project QA archive and update RTM references.

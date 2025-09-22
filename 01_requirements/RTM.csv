@@ -1,10 +1,10 @@
-ReqID,Shall Statement,Class,Verification,Deliverable,Source
-RTM.001,"All serviceable joints shall be metal gasket face-seal (/FS, VCR-compatible); no PTFE/elastomer in wetted helium service.",C,Visual inspection & BOM review,P&ID set; Line class sheet,MASTER_PATCH.md
-RTM.002,"Each /FS remake shall use a new metal gasket with batch trace and tamper-seal scan.",C,Maintenance checklist,Maintenance log; Tamper log,MASTER_PATCH.md
-RTM.003,"Panel-side interfaces shall be female and module-side interfaces male unless formally approved deviation is logged.",C,Field inspection,Deviation log; ITP,MASTER_PATCH.md
-RTM.003b,"Pneumatic/solenoid pilots controlling manual isolation valves shall fail open so loss of air does not obstruct nominal manual flow.",C,Functional test,Valve FAT report; IO list,MASTER_DIFF.md C06
-RTM.004,"Leak acceptance shall meet Table 6 values under ambient and standby conditions using EN 13185 / ISO 20485 helium MS testing.",A,Leak test record,Leak report; Calibration certs,Addendum Table 6
-RTM.005,"DBB plus eductor purge shall achieve residual air ≤0.05% prior to breaking any /FS joint.",C,Purge log,PROC_DBBA_Purge.md,MASTER_PATCH.md
-RTM.006,"QINFRA.S and QRB.S shall be protected at 1.3 bar(a) with PSV capacity ≥200 g/s He @ 300 K discharging to WCS.LP recovery.",A,Sizing calculation & certificate,PSV dossier,MASTER_PATCH.md
-RTM.007,"Provide bursting disc and PSV populations/setpoints: BD 60 QCELL + 5 QPLANT; PSV 180 QCELL + 30 QPLANT with setpoints per policy.",C,Manifest review,BOM_Master.csv,MASTER_DIFF.md C07
-RTM.008,"Implement tamper-evident ties across /FS nuts with scan-based remake counting integrated to CIS.",C,Audit log & photo,Maintenance log; CIS export,MASTER_PATCH.md
+ReqID,Shall,Class,Verification,Deliverable,Source
+RTM.001,All serviceable joints shall be metal gasket face-seal (/FS, VCR-compatible) with no PTFE/elastomer in wetted helium service,C,Visual inspection and BOM review,P&ID set; Line class datasheet,MASTER_PATCH §8
+RTM.002,Each /FS remake shall use a new metal gasket with batch trace and tamper scan,C,Maintenance checklist and trace log,Service log; Tamper-tag records,MASTER_PATCH §8
+RTM.003,Panel interfaces shall be female and mobile modules male; deviations logged,C,Visual inspection and tag audit,Orientation checklist,MASTER_PATCH §2
+RTM.003b,Small solenoid pilots shall be fail-open so instrument-air loss does not obstruct manual isolation flow,C,Functional test report,Valve I/O list,MASTER_PATCH §8
+RTM.004,Leak acceptance shall meet Addendum Table 6 under ambient and standby conditions,A,Helium MS leak test per EN 13185 / ISO 20485,Leak test reports,MASTER_PATCH §8 & Table 6
+RTM.005,DBB plus eductor purge shall achieve residual air ≤0.05% before breaking /FS joints,C,Procedure records,PROC_DBBA_Purge log,MASTER_PATCH §3
+RTM.006,QINFRA.S and QRB.S shall be protected at 1.3 bar(a) with PSV capacity ≥200 g/s helium at 300 K discharged to WCS.LP,A,Certified sizing calculation and PSV certificate,PSV dossier,MASTER_PATCH §6
+RTM.007,Provide BD and PSV populations/setpoints as specified (BD 65; PSV 210) with certification of capacity,C,Manifest check and vendor certificates,BOM_Master.csv; PSV/BD cert pack,MASTER_PATCH §6
+RTM.008,Implement tamper-evident ties across /FS nuts with scan-based remake counting,C,Visual + system log,Photo evidence; CIS extract,MASTER_PATCH §4

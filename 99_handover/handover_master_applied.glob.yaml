@@ -1,0 +1,40 @@
+name: HELIUM_VCR_UHP_master_applied
+version: 1.3.0
+date: 2025-09-18
+folders:
+  - 01_requirements
+  - 02_design/02A_PnID
+  - 03_bom
+  - 04_quality
+  - 05_vendor
+  - 06_arch/ADR
+  - 07_ops/OCD
+  - 99_handover
+files:
+  99_handover/MASTER_DIFF.md: { include: true }
+  99_handover/MASTER_PATCH.md: { include: true }
+  99_handover/RENAME_SBS.csv: { include: true }
+  99_handover/BUILD_WORKFLOW.md: { include: true }
+  02_design/02A_PnID/PID_SYMBOL_CHEATSHEET.md: { include: true }
+  02_design/02A_PnID/PID_ASSEMBLY_PREVIEWS.md: { include: true }
+  03_bom/BOM_Master.csv: { include: true }
+  04_quality/ITP_HE_VCR.csv: { include: true }
+  04_quality/PROC_DBBA_Purge.md: { include: true }
+  04_quality/PROC_He_LeakTest_ISO20485.md: { include: true }
+  01_requirements/RTM.csv: { include: true }
+  01_requirements/requirements.json: { include: true }
+  05_vendor/VENDOR_COSTS.md: { include: true }
+  06_arch/ADR/ADR.md: { include: true }
+  07_ops/OCD/OCD.md: { include: true }
+scripts:
+  - name: build_pids
+    run: |
+      pandoc 02_design/02A_PnID/PID_SYMBOL_CHEATSHEET.md -V toc=true -V numbersections=true -o PID_SYMBOL_CHEATSHEET.pdf
+      pandoc 02_design/02A_PnID/PID_ASSEMBLY_PREVIEWS.md -V toc=true -V numbersections=true -o PID_ASSEMBLY_PREVIEWS.pdf
+  - name: seed_repo
+    run: |
+      git init && git add . && git commit -m "KEB: master-applied baseline 1.3.0" && git tag -a SEED_$(date +%Y%m%d) -m "SEED 1.3.0"
+outputs:
+  - archive: handover_master_applied.tgz
+    includes:
+      - '**/*'

@@ -7,74 +7,84 @@
     {
       "id": "RTM.001",
       "class": "C",
-      "shall": "All serviceable joints shall be metal gasket face-seal (/FS, VCR-compatible); no PTFE/elastomer in wetted helium service.",
-      "verification": "Visual inspection & BOM review",
-      "deliverables": ["P&ID", "Line class"],
-      "source": "MASTER_PATCH.md"
+
+      "shall": "All serviceable joints shall be metal gasket face-seal (/FS, VCR-compatible) with no PTFE/elastomer in wetted helium service.",
+      "verify": "Visual inspection and BOM review",
+      "deliverables": ["P&ID set", "Line class datasheet"],
+      "source": "MASTER_PATCH §8"
     },
     {
       "id": "RTM.002",
       "class": "C",
-      "shall": "Each /FS remake shall use a new metal gasket with batch trace and tamper-seal scan.",
-      "verification": "Maintenance checklist",
-      "deliverables": ["Maintenance log", "Tamper log"],
-      "source": "MASTER_PATCH.md"
+
+      "shall": "Each /FS remake shall use a new metal gasket with batch trace and tamper scan.",
+      "verify": "Maintenance checklist and trace log",
+      "deliverables": ["Service log", "Tamper-tag records"],
+      "source": "MASTER_PATCH §8"
     },
     {
       "id": "RTM.003",
       "class": "C",
-      "shall": "Panel-side interfaces shall be female and module-side interfaces male unless formally approved deviation is logged.",
-      "verification": "Field inspection",
-      "deliverables": ["Deviation log", "ITP"],
-      "source": "MASTER_PATCH.md"
+
+      "shall": "Panel interfaces shall be female and mobile modules male; deviations logged.",
+      "verify": "Visual inspection and tag audit",
+      "deliverables": ["Orientation checklist"],
+      "source": "MASTER_PATCH §2"
+
     },
     {
       "id": "RTM.003b",
       "class": "C",
-      "shall": "Pneumatic/solenoid pilots controlling manual isolation valves shall fail open so loss of air does not obstruct nominal manual flow.",
-      "verification": "Functional test",
-      "deliverables": ["Valve FAT report", "IO list"],
-      "source": "MASTER_DIFF.md C06"
+
+      "shall": "Small solenoid pilots shall be fail-open so instrument-air loss does not obstruct manual isolation flow.",
+      "verify": "Functional test report",
+      "deliverables": ["Valve I/O list"],
+      "source": "MASTER_PATCH §8"
     },
     {
       "id": "RTM.004",
       "class": "A",
-      "shall": "Leak acceptance shall meet Table 6 values under ambient and standby conditions using EN 13185 / ISO 20485 helium MS testing.",
-      "verification": "Leak test record",
-      "deliverables": ["Leak report", "Calibration certs"],
-      "source": "Addendum Table 6"
+
+      "shall": "Leak acceptance shall meet Addendum Table 6 under ambient and standby conditions.",
+      "verify": "Helium MS leak test per EN 13185 / ISO 20485",
+      "deliverables": ["Leak test reports"],
+      "source": "MASTER_PATCH §8 & Table 6"
     },
     {
       "id": "RTM.005",
       "class": "C",
-      "shall": "DBB plus eductor purge shall achieve residual air ≤0.05% prior to breaking any /FS joint.",
-      "verification": "Purge log",
+
+      "shall": "DBB plus eductor purge shall achieve residual air ≤0.05% before breaking /FS joints.",
+      "verify": "Procedure records",
       "deliverables": ["PROC_DBBA_Purge log"],
-      "source": "MASTER_PATCH.md"
+      "source": "MASTER_PATCH §3"
     },
     {
       "id": "RTM.006",
       "class": "A",
-      "shall": "QINFRA.S and QRB.S shall be protected at 1.3 bar(a) with PSV capacity ≥200 g/s He @ 300 K discharging to WCS.LP recovery.",
-      "verification": "Sizing calculation & certificate",
+      "shall": "QINFRA.S and QRB.S shall be protected at 1.3 bar(a) with PSV capacity ≥200 g/s helium at 300 K discharged to WCS.LP.",
+      "verify": "Certified sizing calculation and PSV certificate",
       "deliverables": ["PSV dossier"],
-      "source": "MASTER_PATCH.md"
+      "source": "MASTER_PATCH §6"
     },
     {
       "id": "RTM.007",
       "class": "C",
-      "shall": "Provide bursting disc and PSV populations/setpoints: BD 60 QCELL + 5 QPLANT; PSV 180 QCELL + 30 QPLANT with setpoints per policy.",
-      "verification": "Manifest review",
-      "deliverables": ["BOM_Master.csv", "Cert pack"],
-      "source": "MASTER_DIFF.md C07"
+      "shall": "Provide BD and PSV populations/setpoints as specified (BD 65; PSV 210) with certification of capacity.",
+      "verify": "Manifest check and vendor certificates",
+      "deliverables": ["BOM_Master.csv", "PSV/BD cert pack"],
+      "source": "MASTER_PATCH §6"
+
     },
     {
       "id": "RTM.008",
       "class": "C",
-      "shall": "Implement tamper-evident ties across /FS nuts with scan-based remake counting integrated to CIS.",
-      "verification": "Audit log & photo",
-      "deliverables": ["Maintenance log", "CIS export"],
-      "source": "MASTER_PATCH.md"
+
+      "shall": "Implement tamper-evident ties across /FS nuts with scan-based remake counting.",
+      "verify": "Visual + system log",
+      "deliverables": ["Photo evidence", "CIS extract"],
+      "source": "MASTER_PATCH §4"
+
     }
   ]
 }

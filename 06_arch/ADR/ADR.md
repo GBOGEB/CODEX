@@ -1,23 +1,45 @@
-# ADR-001 — /FS Policy, Safety Populations, and Dot Line Naming
+
+# ADR-001: /FS Policy, Safety Populations, and SBS Integration
 
 ## Context
-The Addendum II – Cryoplant Technical Requirements mandates Table 6 helium leak limits, dual analyzer coverage (compressor room & cold-box room), warm-line interfaces with DN150 S-line routed to WCS.LP, and minimized helium inventory loss. Servicing needs require replaceable joints without compromising purity.
+- Addendum II – Cryoplant Technical Requirements mandates Table 6 leakage limits, helium recovery via QINFRA.S → WCS.LP, analyzer coverage in the compressor and cold-box rooms, and SBS naming for warm lines (QINFRA.U/W/S, QRB.A/B/D/E, WCS.HP/LP/VLP).
+- Serviceable joints must allow maintenance without compromising helium purity (Grade 5.0) or leak performance.
+- Relief network sizing requires explicit BD/PSV populations and setpoints to protect QRB.S, QINFRA.S, and downstream recovery.
 
 ## Decision
-Adopt metal gasket face-seal (/FS, VCR-compatible) joints for serviceable warm modules, enforce panel female / module male orientation, implement DBB + eductor purge with residual ≤0.05 %, deploy tamper-evident seals, and formalize safety device populations (BD 65, PSV 210) with setpoints per subsystem. Rename SBS lines using dot notation (QRB.A/B/D/E, QINFRA.U/W/S, WCS.HP/LP/VLP/WCS.R).
-
-## Rationale
-- Preserves helium Grade 5.0 purity while allowing modular maintenance.
-- Aligns with OEM leak performance (≤10⁻⁹ mbar·L/s) and Table 6 acceptance values.
-- DBB purge minimizes helium losses (~1.5 L per service) and meets analyzer thresholds.
-- Dot notation harmonizes with control system tagging and reduces dash confusion in ICS exports.
-- Safety populations ensure QINFRA.S → WCS.LP recovery maintains 200 g/s @ 300 K capacity at 1.3 bar(a).
-
-## Consequences
-- Requires stocking of metal gaskets (SS/Ni/Cu) and tamper seals.
-- Additional eductor skids and analyzer validation steps at maintenance start/finish.
-- PSV/BD sizing calculations must be updated to reflect new setpoints and flow assumptions.
-- P&ID legend updated with /FS note and dot notation; training required for drafting team.
+1. Adopt metal gasket face-seal (/FS, VCR-compatible) joints for all warm serviceable interfaces while keeping main spines welded.
+2. Enforce orientation: fixed infrastructure female, removable modules male; track deviations.
+3. Implement DBB + bleed to recovery or Venturi eductor with residual air target ≤0.05%.
+4. Install tamper-evident seals and scan workflow to track remake counts and gasket batches.
+5. Freeze BD/PSV populations and setpoints (BD 65; PSV 210) with S-line PSV capacity ≥200 g/s @ 300 K at 1.3 bar(a) setpoint, tying discharge to WCS.LP.
 
 ## Status
-Proposed baseline v1.3.0 — pending stakeholder approval via MASTER_DIFF decisions.
+Accepted – baseline v1.3.0 (2025-09-18).
+
+## Consequences
+- Simplifies maintenance: predictable female seats on panels, sacrificial male noses on LRUs.
+- Purge procedure minimises helium loss and supports analyzer validation.
+- Tamper tracking enforces single-use gaskets and leak integrity.
+- Relief design references align with API 520/521 and ISO 21013-1/-2, ensuring compliance for QRB.S/QINFRA.S events.
+
+## Alternatives Considered
+- Retain legacy dash naming (QRB-A, etc.) – rejected to align with SBS dot notation.  
+- Allow elastomer/PTFE back-up seals – rejected (contamination risk and non-conformance to Addendum purity requirement).  
+- Rely solely on welded joints – rejected (does not support modular replacement of analyzers/instruments).
+
+## Related Requirements
+- RTM.001–RTM.008 (see 01_requirements/RTM.csv).  
+- Table 6 leakage acceptance; Tables 7–8 measuring points.  
+- Warm line interface section (DN150 QINFRA.S tie to WCS.LP).
+
+## Risks & Mitigations
+- **Risk:** Air ingress during maintenance on sub-atmospheric segments.  
+  **Mitigation:** DBB purge with eductor plus analyzer verification; helium guard per Addendum.  
+- **Risk:** PSV sizing misalignment with recovery capacity.  
+  **Mitigation:** Certified calculations per API/ISO and documentation in PSV dossier.  
+- **Risk:** Failure to replace gaskets.  
+  **Mitigation:** Tamper wire + scan workflow and maintenance checklist hold point.
+
+## SBS Mapping
+- `/FS` joints present in: WCS analyzer panels & service tees; QRB warm panel & INVAC feedthroughs; QINFRA.U/W/S service connections; storage vessel sampling spools.
+- All other SBS segments remain welded (cryogenic cold mass, main headers, S-line backbone).
