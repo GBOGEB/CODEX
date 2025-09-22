@@ -1,3 +1,4 @@
+
 # P&ID Symbol Cheat-Sheet (ISA/ISO Aligned with /FS Annotation)
 
 Project: HELIUM_VCR_UHP · Rev 1.0 · Date 2025-09-18  
@@ -62,3 +63,5 @@ Project delta: annotate every metal gasket face-seal joint as `/FS` and apply do
 2. Reference Tables 6–8 (Addendum II) for leak acceptance and measuring points when placing PT/AI instrumentation.  
 3. For S-line tie-ins (QINFRA.S / QRB.S) note PSV setpoints and discharge to WCS.LP.  
 4. For analyzer pick-offs, depict restrictor union `[●]`, fine metering valve `(D)`, filter `[≡]`, regulator `(⊃)`, and return line to WCS.LP.
+=======
+

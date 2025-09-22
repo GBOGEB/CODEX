@@ -1,6 +1,7 @@
 # VCR Face-Seal Policy & Serviceability (QRB.A/B/D/E · QINFRA.U/W/S · WCS.HP/LP/VLP)
 
 ## 1. Scope and Applicability
+
 All serviceable warm subassemblies shall use metal gasket face-seal (/FS, VCR-compatible) joints; primary spines remain welded. This chapter formalizes /FS usage, purge, tamper-evidence, and safety populations consistent with Table 6 leakage acceptance and the measuring-point philosophy (Tables 7–8).
 
 ## 2. Orientation Policy (panel female / module male)

@@ -1,3 +1,4 @@
+
 # Double-Block-and-Bleed (DBB) Purge Procedure for /FS Assemblies
 
 **Scope:** Applies to serviceable metal gasket face-seal joints on QINFRA.U/W/S, WCS.HP/LP/VLP (and optional WCS.R) warm helium lines.  
@@ -10,4 +11,4 @@
 5. **Analyze** – Measure residual impurity with the assigned analyzer. Proceed only if residual air ≤0.05% (or more stringent project limit).
 6. **Break joint** – Release tamper wire, remove the /FS nut, discard used gasket, and install a new metal gasket (record alloy and batch/heat number).
 7. **Re-make and test** – Assemble joint per torque/turn procedure, install new tamper wire and seal, perform helium mass-spectrometer test versus Table 6 acceptance, and log helium usage.
-8. **Records** – Update purge log with tag, technician, residual %, helium loss, analyzer ID, gasket batch, and tamper seal ID.
+8. **Records** – Update purge log with tag, technician, residual %, helium loss, analyzer ID, gasket batch, and tamper seal ID
