@@ -1,53 +1,59 @@
 
-# P&ID Assembly Previews (/FS Notation Applied)
+# P&ID Assembly Previews (/FS Examples)
 
-The following text diagrams mirror the ISA-5.1/ISO symbol legend with dot-style SBS naming and `/FS` annotations for metal gasket face-seal joints.
+All tags use dot notation (e.g., QRB.W, QINFRA.S, WCS.HP). Add the **/FS** legend note to each coupling on final drawings.
 
-## A. DBB Purge Block with Venturi Eductor (QINFRA.U/W service)
+## A. DBB Purge Block with Venturi Eductor
+Line: QINFRA.U (or QINFRA.W) · Class HE-UHP-SS316L-EP(FS)
+
 ```
 IN ──(D)──┬──(D)── OUT
           │
-          └─[TEE]==/FS==[●]==/FS==[≡]==/FS==(D)==/FS==< >──→ QINFRA.S → WCS.LP
-                          FR          FIL        bleed       eductor (dry N₂ motive)
+          └─[TEE]─[●]─[≡]─(D)─< >──→ QINFRA.S or WCS.LP
+               FR   FIL       EDC
 ```
-Tags: DV.QINFRA.U.101 (IN), DV.QINFRA.U.102 (OUT), FR.QINFRA.U.103, FIL.QINFRA.U.104, EDC.QINFRA.U.105. All unions carry `/FS`; bleed routes to recovery header.
+- DV.QINFRA.U.101 (IN), DV.QINFRA.U.102 (OUT), FR.QINFRA.U.103, FIL.QINFRA.U.104, EDC.QINFRA.U.105.  
+- All couplings annotated **/FS**; bleed leg discharges to recovery header or eductor return.
 
-## B. Pressure Pickup Spool with Test Port (WCS.HP)
-```
-Process ──==/FS==[TEE]==/FS==── Process
-                     │
-                     ○ PT.WCS.HP.045
-```
-Use nut test-port for inboard helium leak-check; install calibration cap with `/FS` annotation.
+## B. Pressure Pickup Spool with Test Port
 
-## C. Analyzer Pick-Off and Return (WCS analyzer panel)
 ```
-Process ──(D)==/FS==[●]==/FS==[≡]==/FS==(⊃)==/FS==→ GAP.WCS
-            DV        FR        FIL        PRV/PCV
-                         │
-                         └───────────────→ WCS.LP return (/FS)
+Process ──◼︎──[TEE]──◼︎──→ Process
+                 │
+                 ○ PT.QRB.W.045 (/FS nut with test port)
 ```
-Supports continuous He purity monitoring; restrictor protects analyzer flow, return line routes to LP recovery.
+- Tee uses /FS union; pressure transmitter tagged PT.QRB.W.045 with calibration port accessible via face-seal nut test point.
 
-## D. CF↔FS Temperature Feedthrough (QRB warm panel)
-```
-QRB wall ─[CF/FS]==/FS==○ TT.QRB.W.046 ─==/FS==→ Warm piping
-```
-All-metal feedthrough with CF clamp on cold side and `/FS` joint on warm instrumentation.
+## C. Analyzer Pick-Off (Return to WCS.LP)
 
-## E. Relief Path to S-Line (QINFRA.S / QRB.S)
 ```
-Process ──[≀ BD.QPLANT.401]==/FS==→(spring) PSV.QPLANT.402──▷|──→ QINFRA.S (DN150)
-                                                             NRV.QPLANT.403
+Process ──(D)──[●]──[≡]──(⊃)──→ GAP.WCS (sample)
+           DV   FR    FIL   PCV
+           │
+           └──────────────→ WCS.LP (return)
 ```
-Sizing basis: 1.3 bar(a) setpoint, ≥200 g/s helium at 300 K discharging to WCS.LP recovery header.
+- DV.WCS.HP.121, FR.WCS.HP.122, FIL.WCS.HP.123, PCV.WCS.HP.124 regulating to analyzer. Return line ties back to WCS.LP.
 
-## F. MFC Bypass and Isolation (WCS.LP panel)
-```
-        ┌──(D)==/FS==→──┐
-IN ──(D)==/FS==  MFC block  ==/FS==(⊃)==/FS==→ OUT
-        └──(D)==/FS==→──┘
-```
-Bypass valves DV.WCS.LP.141 / DV.WCS.LP.142 isolate the metal-sealed mass flow controller; control valve `(⊃)` tied to AO/DO with analyzer feedback.
+## D. CF↔FS Temperature Feedthrough (QRB Warm Panel)
 
-> Use these previews as drafting references; final CAD should place official ISA/ISO blocks and `/FS` call-outs per project legend.
+```
+INVAC ─[CF/FS]─○ TT.QRB.W.046 ─◼︎─→ Warm process
+```
+- Adapter ADP.QRB.W.131 (CF to /FS). TT.QRB.W.046 uses metal feedthrough; annotate /FS at warm connection.
+
+## E. PSV + BD to S-Line Header
+
+```
+Process ──[≀ BD.QCELL.201]──(spring PSV.QCELL.301)──▷|──→ QINFRA.S (DN150 to WCS.LP)
+```
+- BD setpoint 2.0 bar(a) (QCELL example); PSV sized for required flow; non-return valve into S-line; instrumentation monitors backpressure.
+
+## F. MFC Bypass Module (Metal-Sealed Base Blocks)
+
+```
+        ┌──(D)──→ Bypass
+IN ──(D)┤
+        └── MFC (○FT) ─(⊃)──→ OUT
+```
+- DV.WCS.HP.141 / DV.WCS.HP.142 isolate/bypass; FT.WCS.HP.143 reports flow; FV.WCS.HP.144 controls; all base-block interfaces /FS.
+

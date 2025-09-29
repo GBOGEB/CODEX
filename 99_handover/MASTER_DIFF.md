@@ -1,8 +1,10 @@
 # MASTER — Diff Ledger (Redline/Greenline)
+
 Key: [- deleted -] (red) • [+ added +] (green) • Decision: ✅ Yes / ❌ No / ⏳ Maybe
 
 | Change ID | Where (Anchor → Subclause) | Page | Old text ([-…-]) | New text ([+…+]) | Decision |
 |---|---|---:|---|---|---|
+
 | C01 | Table 1 – Major Interfacing and fluid transport lines → Naming | {auto} | [- QRB-A, QRB-B, QRB-D, QRB-E; QINFRA-U/W/S; WCS-HP/LP/VLP -] | [+ QRB.A, QRB.B, QRB.D, QRB.E; QINFRA.U/W/S; WCS.HP/LP/VLP (optionally WCS.R) +] | ⏳ |
 | C02 | Warm line interfaces (DN & duties) | {auto} | [- “The QINFRA-S is a safety Line … to the LP suction …” -] | [+ “QINFRA.S (S-line) is the safety/recovery header; QRB.S local header protected at 1.3 bar(a) with capacity for 200 g/s @ 300 K to WCS.LP recovery.” +] | ⏳ |
 | C03 | Table 6 – Leakage requirements | {auto} | [- — -] | [+ “Serviceable joints shall be metal gasket face-seal (/FS, VCR-compatible); new metal gasket at every remake; verification by He MS test vs Table 6.” +] | ⏳ |
@@ -45,3 +47,4 @@ nxt:        Next r
     Next t
 End Sub
 ```
+

@@ -1,4 +1,5 @@
 
+
 # Vendor Triplets & Indicative EU Pricing
 
 All costs are ballpark ranges pulled from publicly available catalog or distributor listings to support early tender benchmarking. Final quotations from suppliers shall govern the contract baseline.
@@ -38,4 +39,5 @@ Typical range: disc €250–€600; holder €400–€900 depending on size an
 - **Edgetech Instruments** / **Process Sensing Technologies** – trace moisture and N₂/Ar analyzers (upper four-to-low five-figure packages when dual-channel with sample conditioning).
 
 > **Note:** Apply vendor-specific cleaning (e.g., SC-01) and certification costs when converting to project budgets.
+
 

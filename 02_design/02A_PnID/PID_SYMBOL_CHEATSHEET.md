@@ -1,67 +1,65 @@
 
-# P&ID Symbol Cheat-Sheet (ISA/ISO Aligned with /FS Annotation)
+# P&ID Symbol Cheat-Sheet (ISA/ISO with /FS Annotation)
 
 Project: HELIUM_VCR_UHP · Rev 1.0 · Date 2025-09-18  
-Basis: ISA-5.1 tag & instrument symbols, ISO 10628 / ISO 14617 line and equipment conventions.  
-Project delta: annotate every metal gasket face-seal joint as `/FS` and apply dot-style SBS names (e.g., `QRB.A`, `QINFRA.S`, `WCS.HP`).
+Standards: ISA-5.1 (2024) instrument symbols & tag letters; ISO 10628 / ISO 14617 linework.  
+Project delta: annotate every face-seal coupling with **/FS = Metal gasket face-seal (VCR-compatible); new gasket each remake; panel female, module male.**
 
 ## A. Line Types & Connectors
-| Name | ISO/ISA Basis | ASCII Preview | Project Note |
+| Name | Standard | ASCII Preview | Notes |
 |---|---|---|---|
-| Process line (He) | ISO 10628 | `─────────` | Standard thickness solid line |
-| Capillary/sample line | ISO 10628 | `─ ─ ─ ─` (thin) | Use thin dashed line |
-| Pneumatic signal | ISA-5.1 | `– – – –` | For instrument air |
-| Electric signal | ISA-5.1 | `– · – · –` | Dash-dot |
-| Data/comm signal | ISA-5.1 | `· · · · ·` | Dotted |
-| Off-page connector | ISO 10628 | `○→TAG` | Reference to destination |
-| Face-seal union (/FS) | Project note | `==/FS==` | Call-out “/FS = metal gasket face-seal (VCR-compatible)” |
+| Process line (He) | ISO 10628 | ───────── | Full-thickness solid line |
+| Capillary / sample | ISO 10628 | ─ ─ ─ ─ | Thin dashed line |
+| Pneumatic signal | ISA-5.1 | – – – – | Long dash |
+| Electric signal | ISA-5.1 | – · – · – | Dash-dot |
+| Data / comms | ISA-5.1 | · · · · · · | Dotted |
+| Off-page connector | ISO 10628 | ○→TAG | Circle with arrow & reference |
+| Face-seal union | Project | ==/FS== | Add call-out “/FS” near coupling |
 
-## B. Valves & Fittings
-| Component | Standard | ASCII Preview | Typical Tag | Project Note |
+## B. Valves & Inline Devices
+| Name | Standard | ASCII Preview | Typical Tag | Notes |
 |---|---|---|---|---|
-| Hand valve (ball) | ISO 10628 | `─◼︎─` | HV-### | On/off isolation |
-| Diaphragm valve | ISA-5.1 | `─(D)─` | DV-### | Clean-service /FS DBB |
-| Control valve | ISA-5.1 | `─(⊃)─` | FV-### / CV-### | Add positioner bubble |
-| Check valve | ISO 10628 | `─▷|─` | NRV-### | Non-return on recovery headers |
-| Pressure safety valve | ISO 10628 | `─(spring)↗` | PSV-### | Route to QINFRA.S / WCS.LP |
-| Bursting disc | ISO 10628 | `─[≀]─` | BD-### | Houses DN & burst rating |
-| Inline filter | ISO 10628 | `─[≡]─` | FIL-### | 0.003 µm UHP filter |
-| Flow restrictor union | Project | `─[●]─` | FR-### | OEM /FS restrictor |
-| CF↔FS adapter | Project | `─[CF/FS]─` | ADP-### | For INVAC feedthroughs |
+| Hand valve (ball) | ISO 10628 | ─◼︎─ | HV.### | Warm on/off isolation |
+| Diaphragm valve | ISA-5.1 | ─(D)─ | DV.### | UHP/DBB blocks |
+| Control valve | ISA-5.1 | ─(⊃)─ | FV.### / CV.### | Add positioner bubble |
+| Check valve | ISO 10628 | ─▷|─ | NRV.### | Relief return/non-return |
+| Safety valve (PSV) | ISO 10628 | ─(spring)↗ | PSV.### | Link to QINFRA.S |
+| Bursting disc (BD) | ISO 10628 | ─[≀]─ | BD.### | DN100 housings etc. |
+| Inline filter | ISO 10628 | ─[≡]─ | FIL.### | 0.003 μm upstream analyzers |
+| Flow restrictor | Project | ─[●]─ | FR.### | VCR restrictor union |
+| Face-seal coupling | Project | ─◁▷─/FS | FSU.### | Use /FS annotation |
+| CF↔FS adapter | Project | ─[CF/FS]─ | ADP.### | INVAC feedthrough |
 
 ## C. Instruments & Accessories
-| Instrument | ISA Letter | Symbol | Example Tag | Project Note |
+| Function | ISA Letter | Symbol | Example Tag | Notes |
 |---|---|---|---|---|
-| Pressure transmitter | PT | `○ PT` | PT-0xx | Use /FS tee with nut test port |
-| Temperature transmitter | TT | `○ TT` | TT-0xx | CF↔FS feedthrough |
-| Flow transmitter | FT | `○ FT` | FT-0xx | MFM/MFC base block |
-| Analyzer indicator | AI | `○ AI` | AI-0xx | H₂O & N₂ ppm monitoring |
-| Positioner | FY | `◐ FY` | FV-0xx-FY | On control valve |
-| Local gauge | PI/TI/FI | `◌ PI` | PI-0xx | Remove for maintenance |
-| Solenoid (fail-open) | Y | `◖ Y` | Y-0xx | Pilot for manual valves |
-| Limit switch | ZS | `◖ ZS` | ZS-0xx | Dual end-switches where SIL relevant |
+| Pressure transmitter | PT | ○PT | QRB.W-HE-PT.045 | Use nut test port |
+| Temperature transmitter | TT | ○TT | QRB.W-HE-TT.046 | CF↔FS feedthrough |
+| Flow transmitter / MFC | FT | ○FT | WCS.HP-HE-FT.047 | Base blocks /FS |
+| Analyzer indicator | AI | ○AI | GAP.WCS-AI.201 | H₂O / N₂ ppm |
+| Positioner | FY | ◐FY | FV.047-FY | For control valves |
+| Local indicator | PI/TI | ◌PI | WCS.LP-PI.012 | Gauges |
+| Solenoid | Y | ◖Y | Y.501 | Fail-open pilot |
+| Limit switch | ZS | ◖ZS | ZS.047A/B | Dual end-switches |
 
 ## D. Equipment & Specials
-| Item | Standard | Symbol | Tag | Note |
-|---|---|---|---|---|
-| Venturi eductor | ISO 10628 | `─< >─` | EDC-### | Dry N₂ motive purge |
-| Gas analyzer panel | Project | `[ANLZ]` | GAP.WCS / GAP.QRB | Return to WCS.LP |
-| Ambient heater | ISO 10628 | `[EH]` | EH-### | Cold-box room |
-| Vacuum pump (temporary) | ISO 14617 | `[P(VAC)]` | VP-### | Conditioning option |
+| Item | Symbol | Tag | Note |
+|---|---|---|---|
+| Venturi eductor | ─< >─ | EDC.105 | Dry N₂ motive |
+| Gas analyzer panel | [ANLZ] | GAP.WCS / GAP.QRB | Returns to WCS.LP |
+| Ambient heater | [EH] | EH.QRB | Cold-box room |
+| Vacuum pump (portable) | [P(VAC)] | VP.WCS | Purge assist |
 
-## E. Instrument/Signal Legend
-- Solid line: process helium.  
-- Thin dashed: sample/capillary.  
-- Long dashed: pneumatic.  
-- Dash-dot: electric.  
-- Dotted: data/comm.  
-- Annotation `/FS`: metal gasket face-seal (VCR-compatible); **new gasket each remake**; panel side female, module side male.  
-- Tagging pattern: `{Area}.{Service}.{Type}.{Seq}` e.g., `QRB.W-HE-PT-023` → `QRB.W-HE-PT-023`.
+## E. Signal Legend
+- Solid line = process helium.  
+- Thin dashed = sample/capillary.  
+- Long dash = pneumatic.  
+- Dash-dot = electric power/command.  
+- Dotted = data/comm.  
+- All face-seal joints carry **/FS** note and orientation policy.
 
-## F. Usage Guidance
-1. Apply `/FS` to every face-seal union or component call-out.  
-2. Reference Tables 6–8 (Addendum II) for leak acceptance and measuring points when placing PT/AI instrumentation.  
-3. For S-line tie-ins (QINFRA.S / QRB.S) note PSV setpoints and discharge to WCS.LP.  
-4. For analyzer pick-offs, depict restrictor union `[●]`, fine metering valve `(D)`, filter `[≡]`, regulator `(⊃)`, and return line to WCS.LP.
-=======
+## F. Tagging Syntax
+`{Area}.{Service}-{Type}.{Seq}` → e.g., `QRB.W-HE-PT.045`.  
+Area codes: QRB.A/B/D/E, QINFRA.U/W/S, WCS.HP/LP/VLP, optional WCS.R.  
+Include /FS annotation at each coupling in CAD drawings.
 

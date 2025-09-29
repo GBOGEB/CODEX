@@ -1,4 +1,5 @@
 
+
 # ADR-001: /FS Policy, Safety Populations, and SBS Integration
 
 ## Context
@@ -43,3 +44,4 @@ Accepted – baseline v1.3.0 (2025-09-18).
 ## SBS Mapping
 - `/FS` joints present in: WCS analyzer panels & service tees; QRB warm panel & INVAC feedthroughs; QINFRA.U/W/S service connections; storage vessel sampling spools.
 - All other SBS segments remain welded (cryogenic cold mass, main headers, S-line backbone).
+
