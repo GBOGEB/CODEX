@@ -1,36 +1,53 @@
-# Operational Concept Document: /FS Serviceability & Testing
 
-## 1. Stakeholder & User Requirements
-- **StR.HE.Purity:** Maintain He 5.0 purity at all removable interfaces (from Addendum II).  
-- **StR.HE.Leak:** Meet Table 6 leakage limits under ambient and standby conditions.  
-- **StR.Recovery:** Route relief and purge flows to WCS.LP recovery via QINFRA.S.  
-- **UR.Serviceability:** Operators shall replace analyzers, transmitters, and purge modules without compromising purity.  
-- **UR.Traceability:** Maintenance shall log every /FS make-break, gasket batch, and tamper seal ID.
+# Operational Concept Document – /FS Serviceability & Testing
 
-## 2. Scenarios
-| Scenario | Description | Key /FS Actions |
-|---|---|---|
-| Warm stop | Transition QRB.A/B and WCS headers to standby | Perform DBB purge on open points; verify analyzers |
-| Thermal shield standby | Maintain QRB.D/E loops at standby temps | Monitor PSV/BD readiness; check purge panels |
-| 4.5 K standby | Cold box isolated, still cold | Keep INVAC feedthrough /FS closed and tagged |
-| 2 K standby | Sub-atm regions guarded | Maintain helium guard; no /FS openings without purge permit |
-| 2 K operation | Full load | Continuous analyzer monitoring; S-line PSV armed |
+## 1. Purpose
+Describe how operators, maintenance teams, and automated controls manage metal gasket face-seal (/FS) assemblies within the helium cryoplant while preserving Grade 5.0 purity, Table 6 leakage limits, and helium recovery targets.
 
-## 3. Operations Concept
-- **Start-up:** Confirm PSV/BD certification, analyzers calibrated, tamper seals intact.  
-- **Normal operation:** Monitor KPIs (He loss/day, leak per joint, purge residual).  
-- **Maintenance:** Execute DBB purge, replace gasket, log data, run helium leak test.  
-- **Abnormal:** If purge residual >0.05 %, repeat cycle; if PSV lifts on QINFRA.S, log mass-flow event and inspect BD/PSV population.
+## 2. Stakeholders & Roles
+- **Operations crew:** Execute start-up, normal run, shutdown, and emergency procedures; initiate purge cycles.  
+- **Maintenance technicians:** Perform /FS make-break, gasket replacement, tamper-seal management, leak testing.  
+- **Reliability engineering:** Monitor MTBF, purge metrics, KPI dashboard.  
+- **Control system (CIS):** Provides prompts, tracks tamper scans, logs analyzer data, enforces interlocks.
 
-## 4. Interfaces & Dependencies
-- ICS tags for analyzers, purge valves, PSV switches integrate via ISA-5.1 naming.  
-- Maintenance system receives tamper-seal scan data and populates RTM.002/008 evidence.  
-- Recovery skid (WCS.LP/WCS.R) handles eductor exhaust and S-line flows.
+## 3. Operational Scenarios
+1. **Warm start-up:** Pressurise QINFRA.U/W/S, verify analyzers (GAP.WCS, GAP.QRB), check PSV/BD readiness (setpoints).  
+2. **Thermal-shield standby:** Maintain TS loops via QRB.D/QRB.E; DBB purge available for any module swap.  
+3. **4.5 K standby / 2 K standby:** Monitor relief valves on QRB.S; maintain helium guard; confirm DBB purge readiness for interventions.  
+4. **2 K operation:** Continuous analyzer monitoring; S-line PSV status; helium loss KPI tracked daily.  
+5. **Maintenance outage:** Execute DBB purge, replace gaskets, perform leak test, log tamper info.  
+6. **Emergency depressurisation / LOOP:** Follow Addendum event tree; S-line directs 200 g/s @300 K to WCS.LP; CIS records flow and helium recovery volumes.
 
-## 5. Verification & Validation Mapping
-- FAT: P&ID compliance, DBB purge demonstration, tamper seal traceability, PSV certification review.  
-- SAT: Helium leak tests, analyzer performance verification, recovery integration tests, KPI initialization.
+## 4. User Stories → Requirements
+- **US-OPS-01:** As an operator, I need a standard purge workflow so helium purity remains ≥99.999% after maintenance. → RTM.005.  
+- **US-MAINT-02:** As maintenance, I need tamper seals and logs to prove new gasket installation. → RTM.002 & RTM.008.  
+- **US-RELIAB-03:** As reliability engineering, I need analyzer data and helium loss metrics to maintain KPI ≤1 Nm³/day. → RTM.004 + KPI dashboard.  
+- **US-SAFETY-04:** As safety manager, I require PSV/BD population and sizing data to certify S-line performance. → RTM.006 & RTM.007.  
+- **US-CONTROL-05:** As CIS owner, I require fail-open pilots so loss of air does not block manual valves. → RTM.003b.
 
-## 6. Transition to Operations
-- Handover bundle includes MASTER_DIFF, MASTER_PATCH, RTM, ITP, procedures, vendor costs, ADR, OCD, .glob script.  
-- Update baseline tag (SEED_20250918) post-approval.
+## 5. Interfaces
+- **Mechanical:** `/FS` joints located at WCS panels, QRB warm panels, analyzer spools, storage sampling ports.  
+- **Process:** QINFRA.S / QRB.S tie to WCS.LP for recovery; analyzers loop back to LP.  
+- **Electrical/Controls:** Instrument air (fail-open), DO/DI for valves, AO for MFC, analyzer Ethernet/OPC-UA to CIS.  
+- **Data:** Tamper scan IDs, purge logs, leak test results stored in CIS/QA databases.
+
+## 6. Operational Constraints
+- No PTFE or elastomer seals in wetted helium service.  
+- Analyzer accuracy ±1 ppm with drift ≤±1 ppm/year; calibration at FAT/SAT.  
+- Helium loss KPI ≤1 Nm³/day steady state; ≤1% per abnormal event with recovery strategy.  
+- Residual air after purge ≤0.05% prior to break-in.  
+- Relief devices certified for setpoint and capacity; S-line maintained at 1.3 bar(a).
+
+## 7. Support & Maintenance
+- Spare gasket kits, nuts, and select bodies maintained per BOM_Master.csv.  
+- Scheduled verification of eductor motive pressure and solenoid fail-open function.  
+- Quarterly review of purge logs, leak reports, and tamper seal counts; feed into DMAIC control loop.
+
+## 8. Data & Logging
+- CIS captures: purge cycle metrics, analyzer ppm data, helium losses, PSV/BD activations, tamper seal scans.  
+- QA archive stores: leak test reports, calibration certificates, PSV/BD certificates, RTM compliance evidence.
+
+## 9. Handover & Training
+- Provide operators with PID symbol cheat-sheet and assembly previews.  
+- Train maintenance on DBB purge and tamper sealing.  
+- Conduct dry-run of S-line relief scenario verifying 200 g/s capability and WCS.LP recovery response.

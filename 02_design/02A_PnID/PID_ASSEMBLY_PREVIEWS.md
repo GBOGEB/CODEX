@@ -1,3 +1,4 @@
+
 # P&ID Assembly Previews (/FS Examples)
 
 All tags use dot notation (e.g., QRB.W, QINFRA.S, WCS.HP). Add the **/FS** legend note to each coupling on final drawings.
@@ -55,3 +56,4 @@ IN ──(D)┤
         └── MFC (○FT) ─(⊃)──→ OUT
 ```
 - DV.WCS.HP.141 / DV.WCS.HP.142 isolate/bypass; FT.WCS.HP.143 reports flow; FV.WCS.HP.144 controls; all base-block interfaces /FS.
+

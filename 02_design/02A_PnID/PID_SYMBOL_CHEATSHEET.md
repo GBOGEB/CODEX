@@ -1,3 +1,4 @@
+
 # P&ID Symbol Cheat-Sheet (ISA/ISO with /FS Annotation)
 
 Project: HELIUM_VCR_UHP · Rev 1.0 · Date 2025-09-18  
@@ -61,3 +62,4 @@ Project delta: annotate every face-seal coupling with **/FS = Metal gasket face-
 `{Area}.{Service}-{Type}.{Seq}` → e.g., `QRB.W-HE-PT.045`.  
 Area codes: QRB.A/B/D/E, QINFRA.U/W/S, WCS.HP/LP/VLP, optional WCS.R.  
 Include /FS annotation at each coupling in CAD drawings.
+

@@ -1,3 +1,4 @@
+
 # Procedure: Double-Block-and-Bleed (DBB) Purge for /FS Assemblies
 
 **Scope:** Applies to all serviceable metal gasket face-seal joints on QRB.A/B/D/E, QINFRA.U/W/S, WCS.HP/LP/VLP (and optional WCS.R) lines.
@@ -23,3 +24,5 @@
 6. **Testing & Records**  
    - Perform helium MS leak test to Table 6 acceptance.  
    - Update maintenance record with purge cycles, analyzer ppm, gasket batch, tamper seal ID, technician and supervisor signatures.
+ – Update purge log with tag, technician, residual %, helium loss, analyzer ID, gasket batch, and tamper seal ID
+
