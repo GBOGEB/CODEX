@@ -1,0 +1,729 @@
+<h1 id="full-helium-vcr-artefact-pack-all-sections">Full Helium VCR
+Artefact Pack (All Sections)</h1>
+<p>Baseline: HELIUM_VCR_UHP_master_applied v1.3.0
+(handover_master_applied.glob.yaml, 2025-09-18).</p>
+<h2 id="requirements-rtm">§1 Requirements (RTM)</h2>
+<p>Sources: 01_requirements/requirements.json,
+01_requirements/RTM.csv.</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Req ID</th>
+<th>Class</th>
+<th>Requirement</th>
+<th>Verification</th>
+<th>Deliverables</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>RTM.001</td>
+<td>C</td>
+<td>All serviceable joints shall be /FS (VCR-compatible); no PTFE or
+elastomer seals in wetted helium service.</td>
+<td>Visual inspection + BOM review</td>
+<td>P&amp;IDs<br>Line class sheet</td>
+<td>MASTER_PATCH §1-§8</td>
+</tr>
+<tr class="even">
+<td>RTM.002</td>
+<td>C</td>
+<td>Each /FS remake shall use a new metal gasket with batch traceability
+and tamper evidence.</td>
+<td>Maintenance checklist</td>
+<td>Maintenance log<br>Tamper-seal log</td>
+<td>MASTER_PATCH §4 &amp; §8</td>
+</tr>
+<tr class="odd">
+<td>RTM.003</td>
+<td>C</td>
+<td>/FS orientation shall be panel-female and module-male; deviations
+logged.</td>
+<td>Field inspection</td>
+<td>Orientation checklist</td>
+<td>MASTER_PATCH §2</td>
+</tr>
+<tr class="even">
+<td>RTM.003b</td>
+<td>C</td>
+<td>Small pneumatic/solenoid pilots shall be fail-open so loss of motive
+air does not obstruct manual isolation flow.</td>
+<td>Functional test</td>
+<td>Valve FAT/SAT records</td>
+<td>MASTER_PATCH §8</td>
+</tr>
+<tr class="odd">
+<td>RTM.004</td>
+<td>A</td>
+<td>Leak acceptance shall meet Addendum Table 6 values using EN 13185 /
+ISO 20485 helium mass-spectrometer methods.</td>
+<td>Helium MS leak test</td>
+<td>Leak reports</td>
+<td>Addendum Table 6; MASTER_PATCH §3 &amp; §8</td>
+</tr>
+<tr class="even">
+<td>RTM.005</td>
+<td>C</td>
+<td>DBB plus eductor purge shall achieve residual air ≤0.05 % before
+breaking the joint.</td>
+<td>Procedure witness</td>
+<td>Purge log<br>Analyzer log</td>
+<td>MASTER_PATCH §3</td>
+</tr>
+<tr class="odd">
+<td>RTM.006</td>
+<td>A</td>
+<td>QINFRA.S/QRB.S shall be protected at 1.3 bar(a) with PSV capacity
+≥200 g/s @ 300 K routed to WCS.LP recovery.</td>
+<td>Sizing calculations + certificates</td>
+<td>PSV certification dossier</td>
+<td>MASTER_PATCH §6</td>
+</tr>
+<tr class="even">
+<td>RTM.007</td>
+<td>C</td>
+<td>Provide BD/PSV populations and setpoints as defined above with
+certified orifice capacity.</td>
+<td>Manifest review + certs</td>
+<td>BOM_Master.csv<br>Cert pack</td>
+<td>MASTER_PATCH §6</td>
+</tr>
+<tr class="odd">
+<td>RTM.008</td>
+<td>C</td>
+<td>Implement tamper-evident ties and scan-based remake counting for
+every /FS connection.</td>
+<td>Inspection + system audit</td>
+<td>Tamper log<br>Maintenance system report</td>
+<td>MASTER_PATCH §4</td>
+</tr>
+<tr class="even">
+<td>RTM.009</td>
+<td>A</td>
+<td>Install dual helium analyzers (GAP.WCS and GAP.QRB) measuring H₂O
+and N₂ with ±1 ppm accuracy and ≤±1 ppm/year drift; maintain calibration
+certificates.</td>
+<td>Calibration verification</td>
+<td>Analyzer calibration certificates</td>
+<td>Addendum analyzer clause; BOM_Master.csv</td>
+</tr>
+</tbody>
+</table>
+<h2 id="quality-test-planning">§2 Quality &amp; Test Planning</h2>
+<h3 id="inspection-test-plan-itp_he_vcr.csv">§2.1 Inspection &amp; Test
+Plan (ITP_HE_VCR.csv)</h3>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Step</th>
+<th>H/W</th>
+<th>Acceptance Criteria</th>
+<th>Reference</th>
+<th>Record</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Face-seal orientation check</td>
+<td>W</td>
+<td>Panel female / module male confirmed</td>
+<td>MASTER_PATCH §2</td>
+<td>Checklist</td>
+</tr>
+<tr class="even">
+<td>DBB purge cycle</td>
+<td>H</td>
+<td>Residual air ≤0.05% and He loss logged</td>
+<td>PROC_DBBA_Purge</td>
+<td>Log sheet</td>
+</tr>
+<tr class="odd">
+<td>Gasket replacement</td>
+<td>W</td>
+<td>New metal gasket per batch record</td>
+<td>MASTER_PATCH §8</td>
+<td>Maintenance log</td>
+</tr>
+<tr class="even">
+<td>Helium leak test</td>
+<td>H</td>
+<td>Leakage ≤ Table 6 limit</td>
+<td>PROC_He_LeakTest_ISO20485</td>
+<td>Leak report</td>
+</tr>
+<tr class="odd">
+<td>Tamper seal installation</td>
+<td>W</td>
+<td>Seal ID recorded and scanned</td>
+<td>MASTER_PATCH §4</td>
+<td>Photo + scan log</td>
+</tr>
+<tr class="even">
+<td>PSV/BD certification</td>
+<td>H</td>
+<td>Setpoint &amp; orifice capacity validated</td>
+<td>MASTER_PATCH §6</td>
+<td>Cert dossier</td>
+</tr>
+<tr class="odd">
+<td>Analyzer calibration</td>
+<td>W</td>
+<td>±1 ppm accuracy / drift verified</td>
+<td>RTM.004</td>
+<td>Calibration certificate</td>
+</tr>
+</tbody>
+</table>
+<h3
+id="procedure-double-block-and-bleed-dbb-purge-proc_dbba_purge.md">§2.2
+Procedure: Double-Block-and-Bleed (DBB) Purge (PROC_DBBA_Purge.md)</h3>
+<p><strong>Scope:</strong> Applies to all serviceable metal gasket
+face-seal joints on QRB.A/B/D/E, QINFRA.U/W/S, WCS.HP/LP/VLP (and
+optional WCS.R) lines.</p>
+<ol type="1">
+<li><strong>Preparation</strong>
+<ul>
+<li>Verify analyzer availability (H₂O/N₂ ppm).<br />
+</li>
+<li>Confirm tamper seal ID and gasket batch in log.<br />
+</li>
+<li>Connect Venturi eductor (dry N₂ motive) or recovery hose to bleed
+port.</li>
+</ul></li>
+<li><strong>Isolation</strong>
+<ul>
+<li>Close upstream and downstream diaphragm valves (DBB).<br />
+</li>
+<li>Open bleed leg to eductor/recovery.</li>
+</ul></li>
+<li><strong>Evacuation &amp; Backfill</strong>
+<ul>
+<li>Pull cavity to ≤50 mbar(a) equivalent.<br />
+</li>
+<li>Close bleed; backfill with helium to 1.05 bar(a).<br />
+</li>
+<li>Vent to WCS.LP.<br />
+</li>
+<li>Repeat steps 3a–3c three times.</li>
+</ul></li>
+<li><strong>Verification</strong>
+<ul>
+<li>Sample with analyzer; residual air ≤0.05 %.<br />
+</li>
+<li>Record He loss estimate (approx. 1.5 L STP for 0.5 L cavity per
+cycle).</li>
+</ul></li>
+<li><strong>Break &amp; Re-make</strong>
+<ul>
+<li>Break joint; replace gasket (new metal gasket per alloy plan).<br />
+</li>
+<li>Assemble per torque/turn; install tamper seal.</li>
+</ul></li>
+<li><strong>Testing &amp; Records</strong>
+<ul>
+<li>Perform helium MS leak test to Table 6 acceptance.<br />
+</li>
+<li>Update maintenance record with purge cycles, analyzer ppm, gasket
+batch, tamper seal ID, technician and supervisor signatures. – Update
+purge log with tag, technician, residual %, helium loss, analyzer ID,
+gasket batch, and tamper seal ID</li>
+</ul></li>
+</ol>
+<h3
+id="procedure-helium-mass-spectrometer-leak-test-proc_he_leaktest_iso20485.md">§2.3
+Procedure: Helium Mass-Spectrometer Leak Test
+(PROC_He_LeakTest_ISO20485.md)</h3>
+<p><strong>Scope:</strong> All /FS joints, welded closures, and
+safety-device interfaces subject to Table 6 leakage acceptance.</p>
+<ol type="1">
+<li><strong>Pre-test</strong>
+<ul>
+<li>Verify test instrument calibration (ISO/IEC 17025
+certificate).<br />
+</li>
+<li>Perform background check (&lt;1×10⁻¹⁰ mbar·L/s He).</li>
+</ul></li>
+<li><strong>Method</strong>
+<ul>
+<li>Apply tracer helium to connection (sniffer or hood) per EN
+13185.<br />
+</li>
+<li>For nuts with test ports, use inboard MS port.<br />
+</li>
+<li>Record maximum indicated leak rate.</li>
+</ul></li>
+<li><strong>Acceptance</strong>
+<ul>
+<li>Compare to Table 6 limits (≤1×10⁻⁹ mbar·L/s He per connection unless
+otherwise specified).<br />
+</li>
+<li>Re-test after tightening if necessary (new gasket if joint is
+opened).</li>
+</ul></li>
+<li><strong>Records</strong>
+<ul>
+<li>Capture tag ID, joint type, test method, leak rate, instrument ID,
+technician, supervisor sign-off.<br />
+</li>
+<li>Store log in quality archive and link to RTM.004.</li>
+</ul></li>
+</ol>
+<h2 id="bill-of-materials-snapshot-bom_master.csv">§3 Bill of Materials
+Snapshot (BOM_Master.csv)</h2>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tag</th>
+<th>Area</th>
+<th>Description</th>
+<th>Setpoint/Rating</th>
+<th>Qty</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>BD.QCELL</td>
+<td>QCELL</td>
+<td>Bursting disc</td>
+<td>2.0 bar(a)</td>
+<td>60</td>
+<td>Cold users; route to recovery/tunnel vent</td>
+</tr>
+<tr class="even">
+<td>BD.QPLANT.HP</td>
+<td>WCS.HP</td>
+<td>Bursting disc (HP)</td>
+<td>18 bar(a)</td>
+<td>2</td>
+<td>Compressor discharge / ORS envelope</td>
+</tr>
+<tr class="odd">
+<td>BD.QPLANT.TS</td>
+<td>QRB.D/QRB.E</td>
+<td>Bursting disc (thermal shield)</td>
+<td>3.5 bar(a)</td>
+<td>3</td>
+<td>Supply/return branches</td>
+</tr>
+<tr class="even">
+<td>BD.QPLANT.LP</td>
+<td>WCS.LP</td>
+<td>Bursting disc (LP auxiliaries)</td>
+<td>1.3 bar(a)</td>
+<td>0</td>
+<td>Use PSV per spec</td>
+</tr>
+<tr class="odd">
+<td>PSV.QCELL</td>
+<td>QCELL</td>
+<td>Safety valve population</td>
+<td>(varies)</td>
+<td>180</td>
+<td>Allocate per QCELL functions</td>
+</tr>
+<tr class="even">
+<td>PSV.QPLANT.HP</td>
+<td>WCS.HP</td>
+<td>Safety valve (HP)</td>
+<td>16 bar(a)</td>
+<td>6</td>
+<td>Compressor trains &amp; headers</td>
+</tr>
+<tr class="odd">
+<td>PSV.QPLANT.TS</td>
+<td>QRB.D/QRB.E</td>
+<td>Safety valve (thermal shield)</td>
+<td>4.0 bar(a)</td>
+<td>6</td>
+<td>Warm TS loops</td>
+</tr>
+<tr class="even">
+<td>PSV.QPLANT.LP</td>
+<td>WCS.LP</td>
+<td>Safety valve (LP header)</td>
+<td>1.3 bar(a)</td>
+<td>4</td>
+<td>Protect LP header</td>
+</tr>
+<tr class="odd">
+<td>PSV.QPLANT.VB</td>
+<td>Various</td>
+<td>Vacuum breaker</td>
+<td>0.95 bar(a)</td>
+<td>4</td>
+<td>Thin-wall vessels</td>
+</tr>
+<tr class="even">
+<td>PSV.QPLANT.S</td>
+<td>QINFRA.S</td>
+<td>Safety valve (S-line header)</td>
+<td>1.3 bar(a)</td>
+<td>4</td>
+<td>≥200 g/s He <span class="citation" data-cites="300">@300</span> K to
+WCS.LP</td>
+</tr>
+<tr class="odd">
+<td>VAL.ONOFF</td>
+<td>WCS/QRB</td>
+<td>On/Off valves</td>
+<td>PN rated</td>
+<td>180</td>
+<td>1 welded bodies; /FS at instrument take-offs”</td>
+</tr>
+<tr class="even">
+<td>FSU.GASKET.ALL</td>
+<td>ALL</td>
+<td>Metal gasket kit</td>
+<td>n/a</td>
+<td>&gt;500</td>
+<td>SS primary; Ni/Cu by temperature</td>
+</tr>
+<tr class="odd">
+<td>GAP.WCS</td>
+<td>WCS</td>
+<td>Gas analyzer panel</td>
+<td>ppm range</td>
+<td>1</td>
+<td>Moisture/N₂ analyzer; return to WCS.LP</td>
+</tr>
+<tr class="even">
+<td>GAP.QRB</td>
+<td>QRB</td>
+<td>Gas analyzer panel</td>
+<td>ppm range</td>
+<td>1</td>
+<td>Cold-box room analyzer; return to WCS.LP</td>
+</tr>
+<tr class="odd">
+<td>EDC.QINFRA</td>
+<td>UHP Network</td>
+<td>Venturi eductor set</td>
+<td>ΔP motive</td>
+<td>6</td>
+<td>Dry N₂ motive purge blocks</td>
+</tr>
+<tr class="even">
+<td>SOL.FAILOPEN</td>
+<td>WCS/QRB</td>
+<td>Fail-open pilot solenoids</td>
+<td>24 VDC</td>
+<td>60</td>
+<td>Manual isolation assist</td>
+</tr>
+</tbody>
+</table>
+<h2 id="vendor-landscape-vendor_costs.md">§4 Vendor Landscape
+(VENDOR_COSTS.md)</h2>
+<h1 id="vendor-triplets-indicative-eu-pricing">Vendor Triplets &amp;
+Indicative EU Pricing</h1>
+<p>All costs are ballpark ranges pulled from publicly available catalog
+or distributor listings to support early tender benchmarking. Final
+quotations from suppliers shall govern the contract baseline.</p>
+<h2 id="face-seal-fs-fittings-and-gaskets">Face-Seal (/FS) Fittings and
+Gaskets</h2>
+<ul>
+<li><strong>Swagelok</strong> (VCR® catalog; EU sales centres). Example
+public list prices show metal gaskets and bodies depending on
+finish/cleaning.<br />
+</li>
+<li><strong>Parker Veriflo</strong> (VacuSeal™ series; EU distributors).
+Online listings for standard glands, bodies, and gaskets.<br />
+</li>
+<li><strong>FITOK</strong> (FR metal gasket face-seal; FITOK GmbH, DE).
+Catalogue pricing available via EU branch.</li>
+</ul>
+<p>Indicative retail ranges (1/4”–1/2” sizes): - Metal gaskets
+(SS/Ni/Cu): ~€2–€15 each (varies by alloy and packaging).<br />
+- Female/male bodies and weld glands: ~€20–€120 each (standard vs EP
+finish).</p>
+<h2 id="pressure-safety-valves-psv">Pressure Safety Valves (PSV)</h2>
+<ul>
+<li><strong>Leser</strong> (Germany) – High-performance spring-loaded
+PSVs, DN25–DN80.<br />
+</li>
+<li><strong>Herose</strong> (Germany) – Cryogenic PSVs suitable for
+helium service.<br />
+</li>
+<li><strong>Advance Valve / EU stockists</strong> – Distribute
+Leser/Herose lines.</li>
+</ul>
+<p>Indicative range for DN25–DN50 cryogenic PSVs: ~€400–€1,200 each
+depending on materials, certification, and cleaning.</p>
+<h2 id="bursting-discs-bd">Bursting Discs (BD)</h2>
+<ul>
+<li><strong>REMBE</strong> (Germany) – BT/BT-KUB series; compatible
+holders for DN80–DN150.<br />
+</li>
+<li><strong>OsecoElfab</strong> (UK/EU) – OP/DC forward-acting discs;
+example DN100 disc ~€499 (public retail).<br />
+</li>
+<li><strong>Fike Europe</strong> (Belgium) – Cryogenic bursting discs;
+pricing on request.</li>
+</ul>
+<p>Typical range: disc €250–€600; holder €400–€900 depending on size and
+material grade.</p>
+<h2 id="venturi-eductors-purge-hardware">Venturi Eductors &amp; Purge
+Hardware</h2>
+<ul>
+<li><strong>SMC</strong> (ZH series vacuum ejectors) – dry nitrogen
+motive; ~€20–€150.<br />
+</li>
+<li><strong>Piab</strong> (piINLINE® eductors) – configurable orifices;
+similar pricing.</li>
+</ul>
+<h2 id="fail-open-pilot-solenoids">Fail-Open Pilot Solenoids</h2>
+<ul>
+<li><strong>ASCO</strong> / <strong>Bürkert</strong> three-way NO valves
+(1/4” instrument-air) – ~€100–€550 depending on materials and
+certification.</li>
+</ul>
+<h2 id="online-he-purity-analyzers">Online He Purity Analyzers</h2>
+<ul>
+<li><strong>Michell Instruments</strong> (Easidew moisture transmitter)
+– ~€2.7k for ppm H₂O transmitters.<br />
+</li>
+<li><strong>Edgetech Instruments</strong> / <strong>Process Sensing
+Technologies</strong> – trace moisture and N₂/Ar analyzers (upper
+four-to-low five-figure packages when dual-channel with sample
+conditioning).</li>
+</ul>
+<blockquote>
+<p><strong>Note:</strong> Apply vendor-specific cleaning (e.g., SC-01)
+and certification costs when converting to project budgets.</p>
+</blockquote>
+<h2 id="architecture-decision-record-adradr.md">§5 Architecture Decision
+Record (ADR/ADR.md)</h2>
+<h1
+id="adr-001-fs-policy-safety-populations-and-sbs-integration">ADR-001:
+/FS Policy, Safety Populations, and SBS Integration</h1>
+<h2 id="context">Context</h2>
+<ul>
+<li>Addendum II – Cryoplant Technical Requirements mandates Table 6
+leakage limits, helium recovery via QINFRA.S → WCS.LP, analyzer coverage
+in the compressor and cold-box rooms, and SBS naming for warm lines
+(QINFRA.U/W/S, QRB.A/B/D/E, WCS.HP/LP/VLP).</li>
+<li>Serviceable joints must allow maintenance without compromising
+helium purity (Grade 5.0) or leak performance.</li>
+<li>Relief network sizing requires explicit BD/PSV populations and
+setpoints to protect QRB.S, QINFRA.S, and downstream recovery.</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<ol type="1">
+<li>Adopt metal gasket face-seal (/FS, VCR-compatible) joints for all
+warm serviceable interfaces while keeping main spines welded.</li>
+<li>Enforce orientation: fixed infrastructure female, removable modules
+male; track deviations.</li>
+<li>Implement DBB + bleed to recovery or Venturi eductor with residual
+air target ≤0.05%.</li>
+<li>Install tamper-evident seals and scan workflow to track remake
+counts and gasket batches.</li>
+<li>Freeze BD/PSV populations and setpoints (BD 65; PSV 210) with S-line
+PSV capacity ≥200 g/s @ 300 K at 1.3 bar(a) setpoint, tying discharge to
+WCS.LP.</li>
+</ol>
+<h2 id="status">Status</h2>
+<p>Accepted – baseline v1.3.0 (2025-09-18).</p>
+<h2 id="consequences">Consequences</h2>
+<ul>
+<li>Simplifies maintenance: predictable female seats on panels,
+sacrificial male noses on LRUs.</li>
+<li>Purge procedure minimises helium loss and supports analyzer
+validation.</li>
+<li>Tamper tracking enforces single-use gaskets and leak integrity.</li>
+<li>Relief design references align with API 520/521 and ISO 21013-1/-2,
+ensuring compliance for QRB.S/QINFRA.S events.</li>
+</ul>
+<h2 id="alternatives-considered">Alternatives Considered</h2>
+<ul>
+<li>Retain legacy dash naming (QRB-A, etc.) – rejected to align with SBS
+dot notation.<br />
+</li>
+<li>Allow elastomer/PTFE back-up seals – rejected (contamination risk
+and non-conformance to Addendum purity requirement).<br />
+</li>
+<li>Rely solely on welded joints – rejected (does not support modular
+replacement of analyzers/instruments).</li>
+</ul>
+<h2 id="related-requirements">Related Requirements</h2>
+<ul>
+<li>RTM.001–RTM.008 (see 01_requirements/RTM.csv).<br />
+</li>
+<li>Table 6 leakage acceptance; Tables 7–8 measuring points.<br />
+</li>
+<li>Warm line interface section (DN150 QINFRA.S tie to WCS.LP).</li>
+</ul>
+<h2 id="risks-mitigations">Risks &amp; Mitigations</h2>
+<ul>
+<li><strong>Risk:</strong> Air ingress during maintenance on
+sub-atmospheric segments.<br />
+<strong>Mitigation:</strong> DBB purge with eductor plus analyzer
+verification; helium guard per Addendum.<br />
+</li>
+<li><strong>Risk:</strong> PSV sizing misalignment with recovery
+capacity.<br />
+<strong>Mitigation:</strong> Certified calculations per API/ISO and
+documentation in PSV dossier.<br />
+</li>
+<li><strong>Risk:</strong> Failure to replace gaskets.<br />
+<strong>Mitigation:</strong> Tamper wire + scan workflow and maintenance
+checklist hold point.</li>
+</ul>
+<h2 id="sbs-mapping">SBS Mapping</h2>
+<ul>
+<li><code>/FS</code> joints present in: WCS analyzer panels &amp;
+service tees; QRB warm panel &amp; INVAC feedthroughs; QINFRA.U/W/S
+service connections; storage vessel sampling spools.</li>
+<li>All other SBS segments remain welded (cryogenic cold mass, main
+headers, S-line backbone).</li>
+</ul>
+<h2 id="operational-concept-background-ocdocd.md">§6 Operational Concept
+Background (OCD/OCD.md)</h2>
+<h1
+id="operational-concept-document-fs-serviceability-testing">Operational
+Concept Document – /FS Serviceability &amp; Testing</h1>
+<h2 id="purpose">1. Purpose</h2>
+<p>Describe how operators, maintenance teams, and automated controls
+manage metal gasket face-seal (/FS) assemblies within the helium
+cryoplant while preserving Grade 5.0 purity, Table 6 leakage limits, and
+helium recovery targets.</p>
+<h2 id="stakeholders-roles">2. Stakeholders &amp; Roles</h2>
+<ul>
+<li><strong>Operations crew:</strong> Execute start-up, normal run,
+shutdown, and emergency procedures; initiate purge cycles.<br />
+</li>
+<li><strong>Maintenance technicians:</strong> Perform /FS make-break,
+gasket replacement, tamper-seal management, leak testing.<br />
+</li>
+<li><strong>Reliability engineering:</strong> Monitor MTBF, purge
+metrics, KPI dashboard.<br />
+</li>
+<li><strong>Control system (CIS):</strong> Provides prompts, tracks
+tamper scans, logs analyzer data, enforces interlocks.</li>
+</ul>
+<h2 id="operational-scenarios">3. Operational Scenarios</h2>
+<ol type="1">
+<li><strong>Warm start-up:</strong> Pressurise QINFRA.U/W/S, verify
+analyzers (GAP.WCS, GAP.QRB), check PSV/BD readiness (setpoints).<br />
+</li>
+<li><strong>Thermal-shield standby:</strong> Maintain TS loops via
+QRB.D/QRB.E; DBB purge available for any module swap.<br />
+</li>
+<li><strong>4.5 K standby / 2 K standby:</strong> Monitor relief valves
+on QRB.S; maintain helium guard; confirm DBB purge readiness for
+interventions.<br />
+</li>
+<li><strong>2 K operation:</strong> Continuous analyzer monitoring;
+S-line PSV status; helium loss KPI tracked daily.<br />
+</li>
+<li><strong>Maintenance outage:</strong> Execute DBB purge, replace
+gaskets, perform leak test, log tamper info.<br />
+</li>
+<li><strong>Emergency depressurisation / LOOP:</strong> Follow Addendum
+event tree; S-line directs 200 g/s <span class="citation"
+data-cites="300">@300</span> K to WCS.LP; CIS records flow and helium
+recovery volumes.</li>
+</ol>
+<h2 id="user-stories-requirements">4. User Stories → Requirements</h2>
+<ul>
+<li><strong>US-OPS-01:</strong> As an operator, I need a standard purge
+workflow so helium purity remains ≥99.999% after maintenance. →
+RTM.005.<br />
+</li>
+<li><strong>US-MAINT-02:</strong> As maintenance, I need tamper seals
+and logs to prove new gasket installation. → RTM.002 &amp;
+RTM.008.<br />
+</li>
+<li><strong>US-RELIAB-03:</strong> As reliability engineering, I need
+analyzer data and helium loss metrics to maintain KPI ≤1 Nm³/day. →
+RTM.004 + KPI dashboard.<br />
+</li>
+<li><strong>US-SAFETY-04:</strong> As safety manager, I require PSV/BD
+population and sizing data to certify S-line performance. → RTM.006
+&amp; RTM.007.<br />
+</li>
+<li><strong>US-CONTROL-05:</strong> As CIS owner, I require fail-open
+pilots so loss of air does not block manual valves. → RTM.003b.</li>
+</ul>
+<h2 id="interfaces">5. Interfaces</h2>
+<ul>
+<li><strong>Mechanical:</strong> <code>/FS</code> joints located at WCS
+panels, QRB warm panels, analyzer spools, storage sampling ports.<br />
+</li>
+<li><strong>Process:</strong> QINFRA.S / QRB.S tie to WCS.LP for
+recovery; analyzers loop back to LP.<br />
+</li>
+<li><strong>Electrical/Controls:</strong> Instrument air (fail-open),
+DO/DI for valves, AO for MFC, analyzer Ethernet/OPC-UA to CIS.<br />
+</li>
+<li><strong>Data:</strong> Tamper scan IDs, purge logs, leak test
+results stored in CIS/QA databases.</li>
+</ul>
+<h2 id="operational-constraints">6. Operational Constraints</h2>
+<ul>
+<li>No PTFE or elastomer seals in wetted helium service.<br />
+</li>
+<li>Analyzer accuracy ±1 ppm with drift ≤±1 ppm/year; calibration at
+FAT/SAT.<br />
+</li>
+<li>Helium loss KPI ≤1 Nm³/day steady state; ≤1% per abnormal event with
+recovery strategy.<br />
+</li>
+<li>Residual air after purge ≤0.05% prior to break-in.<br />
+</li>
+<li>Relief devices certified for setpoint and capacity; S-line
+maintained at 1.3 bar(a).</li>
+</ul>
+<h2 id="support-maintenance">7. Support &amp; Maintenance</h2>
+<ul>
+<li>Spare gasket kits, nuts, and select bodies maintained per
+BOM_Master.csv.<br />
+</li>
+<li>Scheduled verification of eductor motive pressure and solenoid
+fail-open function.<br />
+</li>
+<li>Quarterly review of purge logs, leak reports, and tamper seal
+counts; feed into DMAIC control loop.</li>
+</ul>
+<h2 id="data-logging">8. Data &amp; Logging</h2>
+<ul>
+<li>CIS captures: purge cycle metrics, analyzer ppm data, helium losses,
+PSV/BD activations, tamper seal scans.<br />
+</li>
+<li>QA archive stores: leak test reports, calibration certificates,
+PSV/BD certificates, RTM compliance evidence.</li>
+</ul>
+<h2 id="handover-training">9. Handover &amp; Training</h2>
+<ul>
+<li>Provide operators with PID symbol cheat-sheet and assembly
+previews.<br />
+</li>
+<li>Train maintenance on DBB purge and tamper sealing.<br />
+</li>
+<li>Conduct dry-run of S-line relief scenario verifying 200 g/s
+capability and WCS.LP recovery response.</li>
+</ul>

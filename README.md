@@ -174,3 +174,20 @@ python usage_example.py
 **NO** - This implementation demonstrates that you can have a single, unified codebase that works with both GitHub.com and GitHub Enterprise Server through configuration-based differences rather than code duplication.
 
 The same classes, methods, and logic work for both environments - only the URLs and configuration parameters change.
+
+
+## Packaging conversation archives
+
+This repository now ships with a lightweight archiving pipeline that can zip conversation folders and produce consistent manifests.
+
+### Running the pipeline
+```bash
+python -m scripts.build_index --source data/handover_final --output output --dataset-name handover_final
+```
+
+The command above writes ZIP archives to `output/handover_final/` and refreshes `GLOBAL_index.json`.
+
+### Tests
+```bash
+pytest
+```

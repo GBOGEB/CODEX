@@ -1,0 +1,319 @@
+<h1 id="vcr-requirements-quality-bom-vendor-summary">VCR Requirements,
+Quality, BOM &amp; Vendor Summary</h1>
+<p>This markdown consolidates the VCR-specific slices requested for PDF
+export.</p>
+<h2 id="requirements-overview">1. Requirements Overview</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Req ID</th>
+<th>Theme</th>
+<th>Verification</th>
+<th>Artifact Hook</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>RTM.001</td>
+<td>All serviceable joints shall be /FS (VCR-compatible)</td>
+<td>Visual inspection + BOM review</td>
+<td>P&amp;IDs, Line class sheet</td>
+</tr>
+<tr class="even">
+<td>RTM.002</td>
+<td>Each /FS remake shall use a new metal gasket with batch traceability
+and tamper evidence.</td>
+<td>Maintenance checklist</td>
+<td>Maintenance log, Tamper-seal log</td>
+</tr>
+<tr class="odd">
+<td>RTM.003</td>
+<td>/FS orientation shall be panel-female and module-male</td>
+<td>Field inspection</td>
+<td>Orientation checklist</td>
+</tr>
+<tr class="even">
+<td>RTM.003b</td>
+<td>Small pneumatic/solenoid pilots shall be fail-open so loss of motive
+air does not obstruct manual isolation flow.</td>
+<td>Functional test</td>
+<td>Valve FAT/SAT records</td>
+</tr>
+<tr class="odd">
+<td>RTM.004</td>
+<td>Leak acceptance shall meet Addendum Table 6 values using EN 13185 /
+ISO 20485 helium mass-spectrometer methods.</td>
+<td>Helium MS leak test</td>
+<td>Leak reports</td>
+</tr>
+<tr class="even">
+<td>RTM.005</td>
+<td>DBB plus eductor purge shall achieve residual air &lt;=0.05% before
+breaking the joint.</td>
+<td>Procedure witness</td>
+<td>Purge log, Analyzer log</td>
+</tr>
+<tr class="odd">
+<td>RTM.006</td>
+<td>QINFRA.S/QRB.S shall be protected at 1.3 bar(a) with PSV capacity
+&gt;=200 g/s @ 300 K routed to WCS.LP recovery.</td>
+<td>Sizing calculations + certificates</td>
+<td>PSV certification dossier</td>
+</tr>
+<tr class="even">
+<td>RTM.007</td>
+<td>Provide BD/PSV populations and setpoints as defined above with
+certified orifice capacity.</td>
+<td>Manifest review + certificates</td>
+<td>BOM_Master.csv, Certification pack</td>
+</tr>
+<tr class="odd">
+<td>RTM.008</td>
+<td>Implement tamper-evident ties and scan-based remake counting for
+every /FS connection.</td>
+<td>Inspection + system audit</td>
+<td>Tamper log, Maintenance system report</td>
+</tr>
+<tr class="even">
+<td>RTM.009</td>
+<td>Install dual helium analyzers (GAP.WCS and GAP.QRB) measuring H2O
+and N2 with +/-1 ppm accuracy and &lt;=1 ppm/year drift</td>
+<td>Calibration verification</td>
+<td>Analyzer calibration certificates</td>
+</tr>
+</tbody>
+</table>
+<h2 id="quality-controls-snapshot">2. Quality Controls Snapshot</h2>
+<ul>
+<li>Hold/Witness plan: see VCR_Quality_Procedures.docx Section 1.</li>
+<li>DBB purge and helium leak test steps remain mandatory before any /FS
+joint return to service.</li>
+<li>Analyzer calibration (+/-1 ppm, &lt;=1 ppm/year drift) anchors
+acceptance for RTM.004/009.</li>
+</ul>
+<h2 id="bom-elements-driving-the-vcr-envelope">3. BOM Elements Driving
+the VCR Envelope</h2>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tag</th>
+<th>Area</th>
+<th>Description</th>
+<th>Setpoint/Rating</th>
+<th>Qty</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>BD.QCELL</td>
+<td>QCELL</td>
+<td>Bursting disc</td>
+<td>2.0 bar(a)</td>
+<td>60</td>
+<td>Cold users; route to recovery/tunnel vent</td>
+</tr>
+<tr class="even">
+<td>BD.QPLANT.HP</td>
+<td>WCS.HP</td>
+<td>Bursting disc (HP)</td>
+<td>18 bar(a)</td>
+<td>2</td>
+<td>Compressor discharge / ORS envelope</td>
+</tr>
+<tr class="odd">
+<td>BD.QPLANT.TS</td>
+<td>QRB.D/QRB.E</td>
+<td>Bursting disc (thermal shield)</td>
+<td>3.5 bar(a)</td>
+<td>3</td>
+<td>Supply/return branches</td>
+</tr>
+<tr class="even">
+<td>BD.QPLANT.LP</td>
+<td>WCS.LP</td>
+<td>Bursting disc (LP auxiliaries)</td>
+<td>1.3 bar(a)</td>
+<td>0</td>
+<td>Use PSV per spec</td>
+</tr>
+<tr class="odd">
+<td>PSV.QCELL</td>
+<td>QCELL</td>
+<td>Safety valve population</td>
+<td>(varies)</td>
+<td>180</td>
+<td>Allocate per QCELL functions</td>
+</tr>
+<tr class="even">
+<td>PSV.QPLANT.HP</td>
+<td>WCS.HP</td>
+<td>Safety valve (HP)</td>
+<td>16 bar(a)</td>
+<td>6</td>
+<td>Compressor trains &amp; headers</td>
+</tr>
+<tr class="odd">
+<td>PSV.QPLANT.TS</td>
+<td>QRB.D/QRB.E</td>
+<td>Safety valve (thermal shield)</td>
+<td>4.0 bar(a)</td>
+<td>6</td>
+<td>Warm TS loops</td>
+</tr>
+<tr class="even">
+<td>PSV.QPLANT.LP</td>
+<td>WCS.LP</td>
+<td>Safety valve (LP header)</td>
+<td>1.3 bar(a)</td>
+<td>4</td>
+<td>Protect LP header</td>
+</tr>
+<tr class="odd">
+<td>PSV.QPLANT.VB</td>
+<td>Various</td>
+<td>Vacuum breaker</td>
+<td>0.95 bar(a)</td>
+<td>4</td>
+<td>Thin-wall vessels</td>
+</tr>
+<tr class="even">
+<td>PSV.QPLANT.S</td>
+<td>QINFRA.S</td>
+<td>Safety valve (S-line header)</td>
+<td>1.3 bar(a)</td>
+<td>4</td>
+<td>&gt;=200 g/s He <span class="citation" data-cites="300">@300</span>
+K to WCS.LP</td>
+</tr>
+<tr class="odd">
+<td>VAL.ONOFF</td>
+<td>WCS/QRB</td>
+<td>On/Off valves</td>
+<td>PN rated</td>
+<td>180</td>
+<td>1” welded bodies; /FS at instrument take-offs</td>
+</tr>
+<tr class="even">
+<td>FSU.GASKET.ALL</td>
+<td>ALL</td>
+<td>Metal gasket kit</td>
+<td>n/a</td>
+<td>&gt;500</td>
+<td>SS primary; Ni/Cu by temperature</td>
+</tr>
+<tr class="odd">
+<td>GAP.WCS</td>
+<td>WCS</td>
+<td>Gas analyzer panel</td>
+<td>ppm range</td>
+<td>1</td>
+<td>Moisture/N2 analyzer; return to WCS.LP</td>
+</tr>
+<tr class="even">
+<td>GAP.QRB</td>
+<td>QRB</td>
+<td>Gas analyzer panel</td>
+<td>ppm range</td>
+<td>1</td>
+<td>Cold-box room analyzer; return to WCS.LP</td>
+</tr>
+<tr class="odd">
+<td>EDC.QINFRA</td>
+<td>UHP Network</td>
+<td>Venturi eductor set</td>
+<td>?P motive</td>
+<td>6</td>
+<td>Dry N2 motive purge blocks</td>
+</tr>
+<tr class="even">
+<td>SOL.FAILOPEN</td>
+<td>WCS/QRB</td>
+<td>Fail-open pilot solenoids</td>
+<td>24 VDC</td>
+<td>60</td>
+<td>Manual isolation assist</td>
+</tr>
+</tbody>
+</table>
+<h2 id="vendor-landscape-budgetary-only">4. Vendor Landscape (budgetary
+only)</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Scope</th>
+<th>Vendors</th>
+<th>Indicative Range</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>/FS fittings &amp; gaskets</td>
+<td>Swagelok; Parker Veriflo; FITOK</td>
+<td>Metal gaskets ~EUR 2-15; bodies/weld glands ~EUR 20-120 (finish
+dependent)</td>
+<td>Catalog/distributor pricing; include cleaning premiums</td>
+</tr>
+<tr class="even">
+<td>Pressure safety valves</td>
+<td>Leser; Herose; Advance Valve (stockist)</td>
+<td>DN25-DN50 cryogenic PSV ~EUR 400-1,200</td>
+<td>Cryogenic helium service; certification costs apply</td>
+</tr>
+<tr class="odd">
+<td>Bursting discs</td>
+<td>REMBE; OsecoElfab; Fike Europe</td>
+<td>Disc EUR 250-600; holder EUR 400-900</td>
+<td>Match holders to disc series per supplier guidance</td>
+</tr>
+<tr class="even">
+<td>Venturi eductors &amp; purge hardware</td>
+<td>SMC ZH; Piab piINLINE</td>
+<td>Approx. EUR 20-150</td>
+<td>Dry N2 motive supply, size orifices per purge calc</td>
+</tr>
+<tr class="odd">
+<td>Fail-open pilot solenoids</td>
+<td>ASCO; Buerkert</td>
+<td>Approx. EUR 100-550</td>
+<td>Three-way NO valves; certification/material adders</td>
+</tr>
+<tr class="even">
+<td>Online He purity analyzers</td>
+<td>Michell; Edgetech/PST</td>
+<td>Dual-channel packages mid four- to low five-figure EUR</td>
+<td>Include sample conditioning + calibration service</td>
+</tr>
+</tbody>
+</table>
+<h2 id="architecture-ops-touchpoints">5. Architecture &amp; Ops
+Touchpoints</h2>
+<ul>
+<li>ADR-001 enforces the /FS policy, purge discipline, and relief
+population baseline.</li>
+<li>OCD scenarios: maintenance outage + emergency depressurization
+demand live proof of purge, analyzer, and S-line capacity.</li>
+<li>Evidence flow: P&amp;IDs / BOM -&gt; RTM -&gt; QA logs -&gt; CIS
+records -&gt; vendor cert dossiers.</li>
+</ul>
