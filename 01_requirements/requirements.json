@@ -10,93 +10,71 @@
       "shall": "All serviceable joints shall be /FS (VCR-compatible); no PTFE or elastomer seals in wetted helium service.",
       "verify": "Visual inspection + BOM review",
       "deliverables": ["P&IDs", "Line class sheet"],
-      "source": "MASTER_PATCH §1-§8"
-
+      "source": "MASTER_FACE_SEAL_POLICY §1-§8"
     },
     {
       "id": "RTM.002",
       "class": "C",
-
       "shall": "Each /FS remake shall use a new metal gasket with batch traceability and tamper evidence.",
       "verify": "Maintenance checklist",
       "deliverables": ["Maintenance log", "Tamper-seal log"],
-      "source": "MASTER_PATCH §4 & §8"
-
+      "source": "MASTER_FACE_SEAL_POLICY §4 & §8"
     },
     {
       "id": "RTM.003",
       "class": "C",
-
       "shall": "/FS orientation shall be panel-female and module-male; deviations logged.",
       "verify": "Field inspection",
       "deliverables": ["Orientation checklist"],
-      "source": "MASTER_PATCH §2"
-
-
-      "shall": "Panel interfaces shall be female and mobile modules male; deviations logged.",
-      "verify": "Visual inspection and tag audit",
-      "deliverables": ["Orientation checklist"],
-      "source": "MASTER_PATCH §2"
-
-
+      "source": "MASTER_FACE_SEAL_POLICY §2"
     },
     {
       "id": "RTM.003b",
       "class": "C",
-
       "shall": "Small pneumatic/solenoid pilots shall be fail-open so loss of motive air does not obstruct manual isolation flow.",
       "verify": "Functional test",
       "deliverables": ["Valve FAT/SAT records"],
-
-      "source": "MASTER_PATCH §8"
+      "source": "MASTER_FACE_SEAL_POLICY §8"
     },
     {
       "id": "RTM.004",
       "class": "A",
-
       "shall": "Leak acceptance shall meet Addendum Table 6 values using EN 13185 / ISO 20485 helium mass-spectrometer methods.",
       "verify": "Helium MS leak test",
       "deliverables": ["Leak reports"],
-      "source": "Addendum Table 6; MASTER_PATCH §3 & §8"
-
+      "source": "Addendum Table 6; MASTER_FACE_SEAL_POLICY §3 & §8"
     },
     {
       "id": "RTM.005",
       "class": "C",
-
       "shall": "DBB plus eductor purge shall achieve residual air ≤0.05 % before breaking the joint.",
       "verify": "Procedure witness",
       "deliverables": ["Purge log", "Analyzer log"],
-
-      "source": "MASTER_PATCH §3"
+      "source": "MASTER_FACE_SEAL_POLICY §3"
     },
     {
       "id": "RTM.006",
       "class": "A",
-
       "shall": "QINFRA.S/QRB.S shall be protected at 1.3 bar(a) with PSV capacity ≥200 g/s @ 300 K routed to WCS.LP recovery.",
       "verify": "Sizing calculations + certificates",
       "deliverables": ["PSV certification dossier"],
-
-      "source": "MASTER_PATCH §6"
+      "source": "MASTER_FACE_SEAL_POLICY §6"
     },
     {
       "id": "RTM.007",
-
+      "class": "C",
       "shall": "Provide BD/PSV populations and setpoints as defined above with certified orifice capacity.",
       "verify": "Manifest review + certificates",
       "deliverables": ["BOM_Master.csv", "Certification pack"],
-      "source": "MASTER_PATCH §6"
-
+      "source": "MASTER_FACE_SEAL_POLICY §6"
     },
     {
       "id": "RTM.008",
       "class": "C",
-
       "shall": "Implement tamper-evident ties and scan-based remake counting for every /FS connection.",
       "verify": "Inspection + system audit",
       "deliverables": ["Tamper log", "Maintenance system report"],
-      "source": "MASTER_PATCH §4"
+      "source": "MASTER_FACE_SEAL_POLICY §4"
     },
     {
       "id": "RTM.009",
@@ -105,7 +83,6 @@
       "verify": "Calibration verification",
       "deliverables": ["Analyzer calibration certificates"],
       "source": "Addendum analyzer clause; BOM_Master.csv"
-
     }
   ]
 }
