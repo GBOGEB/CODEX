@@ -20,6 +20,10 @@ from typing import Dict, Iterable, List, Mapping, MutableMapping, Sequence
 
 
 DEFAULT_FORMATS: Sequence[str] = ("pptx", "pdf", "html")
+# LAYOUT_ALIASES maps semantic layout names to PowerPoint master slide names.
+# This is provided for user reference and future extension. Users should update
+# this dictionary when adding custom layouts to their base template (see README.md
+# "How do I add custom layouts?" section for details).
 LAYOUT_ALIASES: Mapping[str, str] = {
     "statement": "Statement",
     "appendix": "Appendix",
