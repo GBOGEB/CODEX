@@ -38,7 +38,7 @@ class TemplateSettings:
     """Declarative description of the template and governance requirements."""
 
     template_path: Path
-    theme_colors: Mapping[str, str] = field(default_factory=lambda: THEME_COLORS)
+    theme_colors: Mapping[str, str] = field(default_factory=lambda: dict(THEME_COLORS))
     strict_links: bool = True
     partner_logo: Path | None = None
     base_url: str | None = None
@@ -73,7 +73,7 @@ def load_template_metadata(settings: TemplateSettings) -> MutableMapping[str, st
 
     The metadata is embedded into the deck to make it easy for GBOGEB to
     validate provenance and to help reviewers understand which version of the
-    template produced an artefact.
+    template produced an artifact.
     """
 
     metadata: MutableMapping[str, str] = {
@@ -110,7 +110,7 @@ def convert_markdown_bundle(
 ) -> List[Path]:
     """Convert a Markdown source into PPTX, PDF, and HTML using Pandoc/KEB.
 
-    The function gracefully falls back to writing placeholder artefacts when the
+    The function gracefully falls back to writing placeholder artifacts when the
     environment lacks Pandoc so that local development and CI dry runs remain
     deterministic.
     """
@@ -251,7 +251,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         subparser.add_argument("--format", nargs="+", default=list(DEFAULT_FORMATS))
         subparser.add_argument("--pandoc", default="pandoc")
         subparser.add_argument("--dry-run", action="store_true")
-        subparser.add_argument("--strict-links", action="store_true", default=True)
+        subparser.add_argument("--strict-links", action="store_true", default=False)
 
     build_parser = subparsers.add_parser("build", help="Build a single deck")
     add_common_options(build_parser)
