@@ -79,7 +79,7 @@ def load_template_metadata(settings: TemplateSettings) -> MutableMapping[str, st
     metadata: MutableMapping[str, str] = {
         "template_path": str(settings.template_path),
         "strict_links": str(settings.strict_links),
-        "theme_colors": json.dumps(settings.theme_colors),
+        "theme_colors": json.dumps(dict(settings.theme_colors)),
     }
 
     if settings.template_path.exists():
