@@ -27,7 +27,7 @@ This guide explains how the presentation tooling integrates with the CODEX pipel
 ## What the template provides
 
 - **Branding fidelity**: SCKCEN color palette, typography, and logo positioning encoded in the base template, with overridable placeholders for partner branding.
-- **Slide primitives**: Title, section, statement + evidence, tabular comparisons, KPI scorecards, and appendix pages exposed as reusable blocks in the `SlideBuilder` API.
+- **Slide primitives**: Title, section, statement + evidence, tabular comparisons, KPI scorecards, and appendix pages exposed as reusable blocks via helper functions in `qplant_sckcen_template.py`.
 - **Metadata-first**: Author, revision, sensitivity, and hyperlink manifests captured for every render, keeping GBOGEB checks auditable.
 - **Multiformat parity**: Markdown → PPTX/PDF/HTML transformations share the same content map so text, hyperlinks, and speaker notes stay aligned.
 
