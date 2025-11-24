@@ -255,7 +255,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         subparser.add_argument("--format", nargs="+", default=list(DEFAULT_FORMATS))
         subparser.add_argument("--pandoc", default="pandoc")
         subparser.add_argument("--dry-run", action="store_true")
-        subparser.add_argument("--strict-links", action="store_true", default=True)
+        subparser.add_argument("--strict-links", action="store_true", default=False)
 
     build_parser = subparsers.add_parser("build", help="Build a single deck")
     add_common_options(build_parser)

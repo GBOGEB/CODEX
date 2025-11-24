@@ -77,15 +77,6 @@ python -m slides.qplant_sckcen_template batch \
   --format pptx pdf html
 ```
 
-### Generate partial slide decks
-Use the `--include` or `--exclude` flags to quickly slice a deck for a focused review:
-```bash
-python -m slides.qplant_sckcen_template build \
-  --source slides/src/full_report.md \
-  --include "executive-summary,risks" \
-  --output-dir output/slides
-```
-
 ### Preserve hyperlinks
 All formats keep hyperlink targets by default. Ensure your Markdown links use absolute URLs or repository-relative paths so they remain valid when rendered to PDF and HTML. The builder logs broken links and fails the GBOGEB check when `--strict-links` is enabled.
 
@@ -100,11 +91,11 @@ All formats keep hyperlink targets by default. Ensure your Markdown links use ab
 
 | Symptom | Likely cause | Fix |
 |---------|--------------|-----|
-| Missing fonts in PPTX | Host lacks SCKCEN font pack | Install fonts locally or supply `--fallback-font <fontname>` to the builder. |
-| HTML images broken | Asset path not copied | Place images in `slides/assets` or set `--asset-root <directory>` to a shared directory. |
+| Missing fonts in PPTX | Host lacks SCKCEN font pack | Install fonts locally. |
+| HTML images broken | Asset path not copied | Place images in `slides/assets`. |
 | Pandoc not found | Pandoc not installed or not on PATH | Install Pandoc 3.x and retry; the CLI checks and reports the detected version. |
 | Broken hyperlinks in PDF | Relative links resolve incorrectly | Use absolute URLs or set `--base-url` so HTML → PDF conversion can rewrite links. |
-| Deck rejected by GBOGEB | Missing metadata fields | Provide `--metadata author="Name" --metadata revision="vX.Y" --metadata sensitivity="internal"`. |
+| Deck rejected by GBOGEB | Missing metadata fields | Ensure required metadata fields (author, revision, sensitivity) are present in your source or configuration. |
 
 ## CI/CD guidance
 
@@ -114,9 +105,11 @@ All formats keep hyperlink targets by default. Ensure your Markdown links use ab
     - name: ppt
       uses: slides.qplant_sckcen_template.build_deck
       inputs:
-        source_glob: slides/src/*.md
+        source_dir: slides/src
         output_dir: output/slides
         formats: [pptx, pdf, html]
+      # The build_deck function is called with source, output_dir, settings, and formats parameters.
+      # DOW should invoke it for each source file found in source_dir.
   ```
 - Upload `output/slides/*.pptx`, `*.pdf`, and `*.html` as pipeline artifacts; do **not** commit them to Git.
 - Publish the metadata report (`output/slides/metadata.json`) so downstream consumers can reuse hyperlinks and authorship data.
@@ -124,7 +117,7 @@ All formats keep hyperlink targets by default. Ensure your Markdown links use ab
 ## Frequently asked questions
 
 ### How do I reuse slides across decks?
-Use the `--include` flag with comma-separated slide identifiers defined in your Markdown frontmatter. The builder concatenates matching sections while keeping numbering, hyperlinks, and references intact.
+The builder processes each Markdown source file independently. To reuse content, extract common slides into separate Markdown files and reference them in your main source.
 
 ### How can I preview HTML locally?
 Run a lightweight web server:
@@ -153,11 +146,11 @@ Yes. Export charts as SVG or PNG and reference them in Markdown. When KEB conver
 
 - Generated PPTX/PDF/HTML artifacts are excluded from Git via `.gitignore` but uploaded by the DOW pipeline for traceability.
 - Every render writes `metadata.json` summarizing authorship, revision, sensitivity, slide count, link status, and template checksum.
-- The `--freeze` flag embeds a SHA256 of the template and Markdown source into the deck notes so reviewers can verify provenance offline.
+- (Planned) A future `--freeze` flag will embed a SHA256 of the template and Markdown source into the deck notes so reviewers can verify provenance offline.
 
 ## Change log
 
 - **2025-02-17**: Added multi-format parity guidance, hyperlink preservation, and DOW/KEB integration examples.
-- **2025-02-10**: Introduced partial deck building with `--include/--exclude` filters.
+- **2025-02-10**: Documented template customization and batch building workflows.
 - **2025-02-03**: Documented metadata reporting for GBOGEB governance checks.
 
