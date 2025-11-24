@@ -38,7 +38,7 @@ class TemplateSettings:
     """Declarative description of the template and governance requirements."""
 
     template_path: Path
-    theme_colors: Mapping[str, str] = field(default_factory=lambda: THEME_COLORS)
+    theme_colors: Mapping[str, str] = field(default_factory=lambda: dict(THEME_COLORS))
     strict_links: bool = True
     partner_logo: Path | None = None
     base_url: str | None = None
