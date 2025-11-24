@@ -22,7 +22,7 @@ This guide explains how the presentation tooling integrates with the CODEX pipel
    python -m slides.qplant_sckcen_template build --source slides/src/demo.md --output-dir output/slides
    ```
 4. Open the generated `output/slides/demo.pptx` in PowerPoint, or share `demo.html` for a quick review.
-5. Commit only the source files and the metadata report; generated PPTX/PDF/HTML artefacts stay out of Git but are uploaded by DOW as pipeline artefacts.
+5. Commit only the source files and the metadata report; generated PPTX/PDF/HTML artifacts stay out of Git but are uploaded by DOW as pipeline artifacts.
 
 ## What the template provides
 
@@ -35,7 +35,7 @@ This guide explains how the presentation tooling integrates with the CODEX pipel
 
 | Component | Purpose | Integration point |
 |-----------|---------|-------------------|
-| **DOW** | Pipeline scheduler that runs lint → render → publish | `slides.qplant_sckcen_template.build_deck` is called from the DOW `ppt` stage; artefacts are uploaded to the run summary. |
+| **DOW** | Pipeline scheduler that runs lint → render → publish | `slides.qplant_sckcen_template.build_deck` is called from the DOW `ppt` stage; artifacts are uploaded to the run summary. |
 | **KEB** | Pandoc + conversion helpers for Markdown → PPTX/PDF/HTML | `convert_markdown_bundle` wraps KEB to keep CLI flags consistent. |
 | **GBOGEB** | Governance checks (naming, hyperlink safety, metadata completeness) | `validate_deck_metadata` returns a machine-readable report consumed by GBOGEB. |
 
@@ -49,7 +49,7 @@ slides/
 └── src/                       # Markdown/RST slide sources and YAML manifests
 ```
 
-> Tip: Keep image assets below 2 MB to avoid bloating the pipeline artefacts and to speed up Pandoc conversions.
+> Tip: Keep image assets below 2 MB to avoid bloating the pipeline artifacts and to speed up Pandoc conversions.
 
 ## Template customization
 
@@ -118,7 +118,7 @@ All formats keep hyperlink targets by default. Ensure your Markdown links use ab
         output_dir: output/slides
         formats: [pptx, pdf, html]
   ```
-- Upload `output/slides/*.pptx`, `*.pdf`, and `*.html` as pipeline artefacts; do **not** commit them to Git.
+- Upload `output/slides/*.pptx`, `*.pdf`, and `*.html` as pipeline artifacts; do **not** commit them to Git.
 - Publish the metadata report (`output/slides/metadata.json`) so downstream consumers can reuse hyperlinks and authorship data.
 
 ## Frequently asked questions
@@ -151,7 +151,7 @@ Yes. Export charts as SVG or PNG and reference them in Markdown. When KEB conver
 
 ## Governance and artifact hygiene
 
-- Generated PPTX/PDF/HTML artefacts are excluded from Git via `.gitignore` but uploaded by the DOW pipeline for traceability.
+- Generated PPTX/PDF/HTML artifacts are excluded from Git via `.gitignore` but uploaded by the DOW pipeline for traceability.
 - Every render writes `metadata.json` summarizing authorship, revision, sensitivity, slide count, link status, and template checksum.
 - The `--freeze` flag embeds a SHA256 of the template and Markdown source into the deck notes so reviewers can verify provenance offline.
 
