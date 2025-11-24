@@ -151,7 +151,7 @@ Yes. Export charts as SVG or PNG and reference them in Markdown. When KEB conver
 
 ## Governance and artifact hygiene
 
-- Generated PPTX/PDF/HTML artefacts are excluded from Git via `.gitignore` but uploaded by the DOW pipeline for traceability.
+- Generated PPTX/PDF/HTML artifacts are excluded from Git via `.gitignore` but uploaded by the DOW pipeline for traceability.
 - Every render writes `metadata.json` summarizing authorship, revision, sensitivity, slide count, link status, and template checksum.
 - The `--freeze` flag embeds a SHA256 of the template and Markdown source into the deck notes so reviewers can verify provenance offline.
 
