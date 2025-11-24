@@ -152,7 +152,7 @@ def convert_markdown_bundle(
                 args.extend(["--reference-doc", str(settings.template_path)])
 
             if settings.partner_logo:
-                args.extend(["--metadata", f"partner_logo={settings.partner_logo}"])
+                args.extend(["--metadata", f"partner_logo={str(settings.partner_logo)}"])
             if settings.base_url:
                 args.extend(["--metadata", f"base_url={settings.base_url}"])
             if settings.strict_links:
