@@ -100,8 +100,8 @@ All formats keep hyperlink targets by default. Ensure your Markdown links use ab
 
 | Symptom | Likely cause | Fix |
 |---------|--------------|-----|
-| Missing fonts in PPTX | Host lacks SCKCEN font pack | Install fonts locally or supply `--fallback-font` to the builder. |
-| HTML images broken | Asset path not copied | Place images in `slides/assets` or set `--asset-root` to a shared directory. |
+| Missing fonts in PPTX | Host lacks SCKCEN font pack | Install fonts locally or supply `--fallback-font <fontname>` to the builder. |
+| HTML images broken | Asset path not copied | Place images in `slides/assets` or set `--asset-root <directory>` to a shared directory. |
 | Pandoc not found | Pandoc not installed or not on PATH | Install Pandoc 3.x and retry; the CLI checks and reports the detected version. |
 | Broken hyperlinks in PDF | Relative links resolve incorrectly | Use absolute URLs or set `--base-url` so HTML → PDF conversion can rewrite links. |
 | Deck rejected by GBOGEB | Missing metadata fields | Provide `--metadata author="Name" --metadata revision="vX.Y" --metadata sensitivity="internal"`. |
