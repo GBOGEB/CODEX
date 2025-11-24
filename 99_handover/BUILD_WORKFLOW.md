@@ -50,7 +50,7 @@ Assign each change an impact score (0–5) considering safety, compliance, opera
 ## 6. Handover Steps
 1. Review MASTER_DIFF.md and capture approvals (✅/❌/⏳).  
 2. Apply RENAME_SBS.csv substitutions across source documents.  
-3. Insert MASTER_PATCH.md into MASTER.docx at the location after Table 6.  
+3. Insert MASTER_PATCH.md into MASTER.docx (captured in `02_design/MASTER_FACE_SEAL_POLICY.md`) at the location after Table 6.
 4. Generate updated PDFs/exports (symbols, assemblies, RTM, ITP).  
 5. Commit changes; create SEED tag snapshot; package handover bundle.  
 6. Provide CIS with updated requirement JSON for ingestion.

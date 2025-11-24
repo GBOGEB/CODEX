@@ -24,7 +24,7 @@ Accepted – baseline v1.3.0 (2025-09-18).
 - Relief design references align with API 520/521 and ISO 21013-1/-2, ensuring compliance for QRB.S/QINFRA.S events.
 
 ## Alternatives Considered
-- Retain legacy dash naming (QRB-A, etc.) – rejected to align with SBS dot notation.  
+- Retain legacy dash naming (legacy “QRB-A” style) – rejected to align with SBS dot notation (QRB.A, QINFRA.S, WCS.HP, etc.).
 - Allow elastomer/PTFE back-up seals – rejected (contamination risk and non-conformance to Addendum purity requirement).  
 - Rely solely on welded joints – rejected (does not support modular replacement of analyzers/instruments).
 
