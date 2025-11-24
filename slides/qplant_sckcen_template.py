@@ -73,7 +73,7 @@ def load_template_metadata(settings: TemplateSettings) -> MutableMapping[str, st
 
     The metadata is embedded into the deck to make it easy for GBOGEB to
     validate provenance and to help reviewers understand which version of the
-    template produced an artefact.
+    template produced an artifact.
     """
 
     metadata: MutableMapping[str, str] = {
