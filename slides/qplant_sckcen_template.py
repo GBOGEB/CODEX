@@ -110,7 +110,7 @@ def convert_markdown_bundle(
 ) -> List[Path]:
     """Convert a Markdown source into PPTX, PDF, and HTML using Pandoc/KEB.
 
-    The function gracefully falls back to writing placeholder artefacts when the
+    The function gracefully falls back to writing placeholder artifacts when the
     environment lacks Pandoc so that local development and CI dry runs remain
     deterministic.
     """
