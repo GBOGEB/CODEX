@@ -1,6 +1,6 @@
 # ADDENDUM — Multi-Format Output Triage Logic
 
-Apply this triage model in addition to the current planned `OUTPUT_1_BASELINE`.
+Apply this triage model in addition to the current planned `OUTPUT_1_BASELINE` (that is, the baseline output specification / primary single-output plan that this addendum extends).
 
 The leak-rate dashboard is one engineering topic, but it must generate several outputs with different purpose, audience, and density.
 
