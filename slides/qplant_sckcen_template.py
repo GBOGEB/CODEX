@@ -153,6 +153,12 @@ def convert_markdown_bundle(
             ]
 
             if fmt == "pptx":
+                if not settings.template_path.exists():
+                    raise FileNotFoundError(
+                        "PPTX reference template not found: "
+                        f"{settings.template_path}. Configure an existing template "
+                        "path or use --dry-run for placeholder output."
+                    )
                 args.extend(["--reference-doc", str(settings.template_path)])
 
             if settings.partner_logo:
