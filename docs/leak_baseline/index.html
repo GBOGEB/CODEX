@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BSLN Helium Leak Translation Baseline</title>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #131a2f;
+      --text: #e8ecf7;
+      --muted: #a9b4d0;
+      --accent: #57c7ff;
+      --ok: #6de28b;
+      --warn: #ffd166;
+    }
+    body { margin: 0; font-family: Inter, Segoe UI, Arial, sans-serif; background: var(--bg); color: var(--text); }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    h1, h2, h3 { margin: 10px 0; }
+    .card { background: var(--panel); border-radius: 14px; padding: 18px; margin: 14px 0; box-shadow: 0 0 0 1px #273055; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #30406f; padding: 8px; text-align: right; }
+    th:first-child, td:first-child { text-align: left; }
+    .small { color: var(--muted); font-size: 0.9rem; }
+    code { color: var(--accent); }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; margin-right: 8px; background: #21315f; }
+    .l1 { border-left: 4px solid var(--ok); padding-left: 10px; }
+    .l2 { border-left: 4px solid var(--warn); padding-left: 10px; }
+    .l3 { border-left: 4px solid #ff6b6b; padding-left: 10px; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>BSLN — Helium Leak Rate Translation (Cryogenic Interface)</h1>
+  <p class="small">Goal: translate leak rates in <code>mbar·L/s</code> into equivalent helium loss in <code>g/day</code> and <code>g/year</code>, assuming low pressure ambient = 1 bar.</p>
+
+  <div class="card">
+    <h2>Core conversion maths</h2>
+    <p>Given leak throughput <code>Q = 1×10⁻⁸ mbar·L/s</code>.</p>
+    <ol>
+      <li>Convert to SI pressure-volume flow:
+        <br/><code>1 mbar·L/s = 100 Pa × 10⁻³ m³/s = 0.1 Pa·m³/s</code>
+        <br/><code>Q_SI = Q × 0.1 = 1×10⁻⁹ Pa·m³/s</code>
+      </li>
+      <li>Ideal gas molar leak at temperature <code>T = 293.15 K</code>:
+        <br/><code>ṅ = Q_SI / (R·T)</code> where <code>R=8.314462618 J/(mol·K)</code>
+      </li>
+      <li>Mass leak for helium <code>M_He = 4.002602 g/mol</code>:
+        <br/><code>ṁ = ṅ·M_He</code>
+      </li>
+      <li>Annualized with availability:
+        <br/><code>g/year@99% in 8000 h = (g/h × 8000 × 0.99)</code>
+      </li>
+    </ol>
+  </div>
+
+  <div class="card" id="kpi"></div>
+
+  <div class="card">
+    <h2>Valve type baseline & cost class mapping</h2>
+    <table id="tbl"></table>
+    <p class="small">Cost class is a planning proxy (low/medium/high/capital-critical), not vendor quotation.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>XY Scatter (log-log)</h2>
+      <div id="plot"></div>
+    </div>
+    <div class="card">
+      <h2>DMAIC — Task 0 to Task 7, Task 99</h2>
+      <h3>Define</h3><p>Translate leak specs to human-visible mass-loss impact and decision-grade valve classing.</p>
+      <h3>Measure</h3><p>Inputs: leak rates 10⁻⁹…10⁻⁴ mbar·L/s, T=293.15 K, He molecular mass, runtime 8000 h, availability 99%.</p>
+      <h3>Analyze</h3><p>Log sensitivity: each decade increase in leak gives decade increase in helium loss and OPEX risk.</p>
+      <h3>Improve</h3><p>Provide interactive BSLN chart, mapped valve classes, and conversion formulae for idempotent reuse.</p>
+      <h3>Control</h3><p>Freeze assumptions in this HTML baseline; revision by git tags and PR review.</p>
+
+      <h3>TASK 3 — 3-Level mapped baseline</h3>
+      <p class="l1"><strong>Visual-first</strong>: dashboard, KPI cards, log-log evidence plots, human-readable equations.</p>
+      <p class="l2"><strong>Coding-first</strong>: deterministic equations, branch iterations, stable constants and units.</p>
+      <p class="l3"><strong>Integration-first</strong>: single-file deployable HTML for GitHub hosting & peer review link-sharing.</p>
+
+      <h3>TASK 4 — 3 iterations / branch / temperature levels</h3>
+      <ul>
+        <li>L1 (cool): conservative interpretation and broad safety margins.</li>
+        <li>L2 (standard): nominal T=293.15 K and canonical ideal-gas conversion.</li>
+        <li>L3 (hot): aggressive sensitivity and high-leak escalation visibility.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>TASK 5/6/7/99 — Output & Versioning Plan</h2>
+    <ul>
+      <li><strong>File index</strong>: <code>docs/leak_baseline/index.html</code> (primary end-user artifact).</li>
+      <li><strong>Hosting</strong>: publish via GitHub Pages or static site host; share URL with technical peers.</li>
+      <li><strong>Traceability</strong>: include constants, equations, and table inputs inline for auditability.</li>
+      <li><strong>Run stats</strong>: browser-rendered Plotly chart + reproducible deterministic JavaScript calculations.</li>
+      <li><strong>Version control</strong>: git commit + PR body captures intent, assumptions, and limits.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+const R = 8.314462618;
+const T = 293.15;
+const M_HE = 4.002602;
+const HOURS = 8000;
+const AVAIL = 0.99;
+
+function leakToGPerSec(leak_mbarLs) {
+  const q_si = leak_mbarLs * 0.1;
+  const n_dot = q_si / (R * T);
+  return n_dot * M_HE;
+}
+
+const valves = [
+  { type: 'Ultra-high integrity welded/VCR', leak: 1e-9, cost: '$$$$' },
+  { type: 'Cryogenic high-performance valve', leak: 1e-8, cost: '$$$' },
+  { type: 'Process isolation valve (tight)', leak: 1e-6, cost: '$$' },
+  { type: 'General service valve seat', leak: 1e-4, cost: '$' }
+];
+
+for (const v of valves) {
+  v.gps = leakToGPerSec(v.leak);
+  v.gpd = v.gps * 86400;
+  v.gpy99 = v.gps * 3600 * HOURS * AVAIL;
+}
+
+const b = valves.find(v => v.leak === 1e-8);
+document.getElementById('kpi').innerHTML = `
+  <h2>CORE TAKEAWAY (1×10⁻⁸ mbar·L/s)</h2>
+  <span class="badge">Equivalent He loss = <strong>${b.gpd.toExponential(3)} g/day</strong></span>
+  <span class="badge">Annualized (8000 h @99%) = <strong>${b.gpy99.toExponential(3)} g/year</strong></span>
+  <p class="small">At ΔP from high-pressure side to ambient 1 bar, this throughput-based conversion expresses escaped helium mass potential.</p>
+`;
+
+const tbl = document.getElementById('tbl');
+tbl.innerHTML = `
+<thead><tr><th>Valve class</th><th>Leak rate (mbar·L/s)</th><th>g/day</th><th>g/year @99%×8000h</th><th>Cost class</th></tr></thead>
+<tbody>
+${valves.map(v => `<tr><td>${v.type}</td><td>${v.leak.toExponential(1)}</td><td>${v.gpd.toExponential(3)}</td><td>${v.gpy99.toExponential(3)}</td><td>${v.cost}</td></tr>`).join('')}
+</tbody>`;
+
+const trace = {
+  x: valves.map(v => v.leak),
+  y: valves.map(v => v.gpd),
+  mode: 'markers+text',
+  text: valves.map(v => v.type),
+  textposition: 'top center',
+  marker: { size: 12, color: '#57c7ff' },
+  type: 'scatter'
+};
+
+const layout = {
+  paper_bgcolor: '#131a2f',
+  plot_bgcolor: '#131a2f',
+  font: { color: '#e8ecf7' },
+  xaxis: { title: 'Leak rate (mbar·L/s)', type: 'log', gridcolor: '#2e3a66' },
+  yaxis: { title: 'Helium loss (g/day)', type: 'log', gridcolor: '#2e3a66' },
+  margin: { l: 60, r: 20, t: 20, b: 60 }
+};
+
+Plotly.newPlot('plot', [trace], layout, {responsive: true});
+</script>
+</body>
+</html>
