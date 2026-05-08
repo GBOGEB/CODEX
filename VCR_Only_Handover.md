@@ -299,44 +299,36 @@ builder version
 
 ## 9. Release Structure
 
-Use this output structure:
+For this repository, place generated artefacts into the existing top-level folders rather than creating a separate `leak_rate_helium_dashboard/` subproject. Use this structure:
 
 ```text
-leak_rate_helium_dashboard/
+CODEX/
 ├─ docs/
-│  ├─ index.html
-│  ├─ dashboard.html
-│  ├─ calculations.html
-│  ├─ executive_summary.html
-│  ├─ rtm_traceability.html
-│  ├─ handover.html
-│  └─ handover.pdf
-├─ source/
-│  ├─ handover.md
-│  ├─ assumptions.md
-│  ├─ developer_notes.md
-│  └─ rtm_traceability.md
-├─ data/
-│  ├─ leak_classes.json
-│  ├─ valve_candidates.json
-│  ├─ scenarios.json
-│  └─ source_anchors.json
-├─ src/
-│  ├─ calc_leak_rate.py
-│  ├─ generate_dashboard.py
-│  ├─ build_handover.py
-│  └─ manifest.py
-├─ assets/
-│  ├─ style.css
-│  └─ triage.js
+│  ├─ HUMAN.index.html
+│  ├─ HUMAN.report.md
+│  ├─ HUMAN.version_log.md
+│  └─ leak_baseline/
+│     └─ index.html
 ├─ outputs/
-│  ├─ plots/
-│  ├─ tables/
-│  └─ manifests/
-├─ README.md
+│  ├─ html/
+│  │  ├─ index.html
+│  │  ├─ 01_EXECUTIVE_SUMMARY.html
+│  │  ├─ 02_LEAK_RATE_TRANSLATION.html
+│  │  ├─ 03_MATHS_PROOF.html
+│  │  ├─ 04_PLOTS_AND_VISUAL_EVIDENCE.html
+│  │  ├─ 05_VALVE_CLASS_COMPARISON.html
+│  │  ├─ 06_ENGINEERING_RATIONALE.html
+│  │  ├─ 07_TRACEABILITY_MATRIX.html
+│  │  ├─ 08_VERSION_HISTORY.html
+│  │  └─ 09_BUILD_AND_RUNTIME_REPORT.html
+│  └─ json/
+│     └─ calculation_inputs_outputs.json
+├─ traceability/
+│  └─ TRACEABILITY_MATRIX.md
+├─ OUTPUT_MANIFEST.json
+├─ VERSION.json
 ├─ CHANGELOG.md
-├─ ERROR_LOG.md
-└─ OUTPUT_MANIFEST.json
+└─ ERROR_LOG.md
 ```
 
 ---
