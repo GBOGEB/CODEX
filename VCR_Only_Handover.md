@@ -147,7 +147,7 @@ print CSS
 badges for ACCEPT / REVIEW / RISK / TRACE
 ```
 
-Use the provided HTML scaffold as the visual and structural pattern.
+Use the structure and styling cues listed above as the visual and structural pattern for the HTML output; this extract does not reference a separate in-repo scaffold file.
 
 ---
 
