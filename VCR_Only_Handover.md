@@ -346,7 +346,7 @@ leak_rate_helium_dashboard/
 First commit target:
 
 ```text
-v0.1.0-leak-rate-static-triage-baseline
+v1.1.0-leak-rate-static-triage-baseline
 ```
 
 Commit message:
