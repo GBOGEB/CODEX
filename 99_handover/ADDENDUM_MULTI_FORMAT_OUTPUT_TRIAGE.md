@@ -205,6 +205,8 @@ source inputs
 builder version
 ```
 
+For idempotency checks, treat `generated timestamp` as operational metadata and exclude it from equality comparison. All other generated artefacts and manifest fields should remain deterministic for the same inputs.
+
 ---
 
 ## 9) ASCII Architecture / Hierarchy / Repo Broadcast
