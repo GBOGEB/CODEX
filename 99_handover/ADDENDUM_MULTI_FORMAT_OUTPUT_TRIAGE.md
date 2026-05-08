@@ -211,6 +211,8 @@ For idempotency checks, treat `generated timestamp` as operational metadata and 
 
 ## 9) ASCII Architecture / Hierarchy / Repo Broadcast
 
+The following diagrams describe the **proposed target publication layout** for the leak-rate dashboard addendum. They are not a statement that the current repository already uses these exact paths; today the repo still contains generated material in locations such as `docs/`, `output/`, and `outputs/`.
+
 ### 9.1 System architecture (ASCII)
 
 ```text
@@ -267,6 +269,8 @@ Javascript behavior expected in `assets/triage.js`:
 ---
 
 ## 10) Release Structure
+
+Use this as the **proposed target release structure** for a future dedicated `leak_rate_helium_dashboard/` package or exported publication bundle. Align implementation work against the repository's actual current output locations until that structure is created.
 
 ```text
 leak_rate_helium_dashboard/
