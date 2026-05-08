@@ -148,9 +148,46 @@ Yes. Export charts as SVG or PNG and reference them in Markdown. When KEB conver
 - Every render writes `metadata.json` summarizing authorship, revision, sensitivity, slide count, link status, and template checksum.
 - (Planned) A future `--freeze` flag will embed a SHA256 of the template and Markdown source into the deck notes so reviewers can verify provenance offline.
 
+## Regulatory gatekeeper context (CE/ISO validation)
+
+For regulated deliveries, the review body validating datasets and verification evidence is often an accredited conformity assessment organization rather than the software contractor itself.
+
+- **BSI (British Standards Institution)**: standards body and certification provider active in ISO-aligned management system certification.
+- **TÜV organizations (e.g., TÜV SÜD, TÜV Rheinland)**: independent testing/inspection/certification bodies frequently used for technical files, safety cases, and process audits.
+- **Belgium context**: Belgian projects commonly use a notified body or accredited auditor selected by the prime contractor; subcontracted assessment by TÜV SÜD (or equivalent) is possible when contractually delegated.
+
+### Corrigendum note (parked for next release)
+
+- **CORR-REG-0001 (planned)**: The contractor **shall** ensure that any subcontracted gatekeeper (including TÜV entities) abides by the governing CE/ISO code item once the exact clause identifier is finalized in the contract annex.
+
+## Delivery depth, intent, and handover checklist
+
+Use this checklist to capture the total structure/gist of each deck-build change set and support clean handover:
+
+1. **Content depth**
+   - Source manifests included (`slides/src/**`), with revision labels.
+   - Evidence references and hyperlink inventories recorded in metadata.
+2. **Style depth**
+   - Template lineage tracked (`template_path`, checksum, theme colors).
+   - Partner-branding options documented (`--partner-logo`, `--base-url`).
+3. **Structure depth**
+   - Output parity across PPTX/PDF/HTML confirmed from one source.
+   - Layout alias mapping validated for any custom slide masters.
+4. **Intent and outcome**
+   - Business objective and target audience recorded in deck metadata/frontmatter.
+   - Governance report reviewed for required fields before release.
+5. **Versioning and cross-references**
+   - Tag metadata revision (`DECK_REVISION`) to match release identifier.
+   - Link DOW run ID, artifact bundle path, and PR number in release notes.
+
+### TODO (next steps)
+
+- Finalize the contractual CE/ISO clause code and replace `CORR-REG-0001` placeholder.
+- Add a CI check that fails if regulatory handover fields are missing from metadata.
+- Extend changelog entries to include contractor/notified-body assignment per release.
+
 ## Change log
 
 - **2025-02-17**: Added multi-format parity guidance, hyperlink preservation, and DOW/KEB integration examples.
 - **2025-02-10**: Documented template customization and batch building workflows.
 - **2025-02-03**: Documented metadata reporting for GBOGEB governance checks.
-

@@ -108,6 +108,7 @@ def ensure_pandoc_available(pandoc_cmd: str) -> None:
 def convert_markdown_bundle(
     source_path: Path,
     output_dir: Path,
+    settings: TemplateSettings,
     formats: Iterable[str] = DEFAULT_FORMATS,
     pandoc_cmd: str = "pandoc",
     dry_run: bool = False,
@@ -117,6 +118,10 @@ def convert_markdown_bundle(
     The function gracefully falls back to writing placeholder artifacts when the
     environment lacks Pandoc so that local development and CI dry runs remain
     deterministic.
+
+    The active :class:`TemplateSettings` control the reference PPTX, partner
+    branding metadata, base URL rewrites, and link validation flags passed to
+    Pandoc so that CLI options are faithfully applied.
     """
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -146,6 +151,19 @@ def convert_markdown_bundle(
                 "--output",
                 str(target),
             ]
+
+            if fmt == "pptx":
+                args.extend(["--reference-doc", str(settings.template_path)])
+
+            if settings.partner_logo:
+                args.extend(["--metadata", f"partner_logo={settings.partner_logo}"])
+
+            if settings.base_url:
+                args.extend(["--metadata", f"base-url={settings.base_url}"])
+
+            if settings.strict_links:
+                args.extend(["--metadata", "link-strict=true", "--fail-if-warnings"])
+
             subprocess.run(args, check=True, capture_output=True)
 
         outputs.append(target)
@@ -187,6 +205,7 @@ def build_deck(
     outputs = convert_markdown_bundle(
         source_path=source,
         output_dir=output_dir,
+        settings=settings,
         formats=formats,
         pandoc_cmd=pandoc_cmd,
         dry_run=dry_run,
