@@ -166,10 +166,10 @@ Use this checklist to capture the total structure/gist of each deck-build change
 
 1. **Content depth**
    - Source manifests included (`slides/src/**`), with revision labels.
-   - Evidence references and hyperlink inventories recorded in metadata.
+   - Evidence references and hyperlink inventories documented for handover; automated metadata capture is planned and should not be assumed in current `build_deck()` output.
 2. **Style depth**
    - Template lineage tracked (`template_path`, checksum, theme colors).
-   - Partner-branding options documented (`--partner-logo`, `--base-url`).
+   - Partner-branding options documented in build notes and/or metadata when used (`--partner-logo`, `--base-url`).
 3. **Structure depth**
    - Output parity across PPTX/PDF/HTML confirmed from one source.
    - Layout alias mapping validated for any custom slide masters.
