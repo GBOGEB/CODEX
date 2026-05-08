@@ -71,7 +71,7 @@ This extract mirrors the full artefact pack but filters for the VCR scope. Secti
 
 # ADDENDUM — Multi-Format Output Triage Logic
 
-Apply this triage model in addition to the current planned OUTPUT_1_BASELINE.
+Apply this triage model in addition to the baseline VCR-only handover defined in §§1-6 of this document.
 
 The leak-rate dashboard is one engineering topic, but it must generate several outputs with different purpose, audience, and density.
 
