@@ -112,16 +112,16 @@ Do not let any generated output become an independent source of truth.
 
 Create output views for the following audiences:
 
-| Output                   | Audience                      |      Density | Purpose                             |
-| ------------------------ | ----------------------------- | -----------: | ----------------------------------- |
-| `index.html`             | Technical peer / reviewer     |       Medium | Navigation portal                   |
-| `dashboard.html`         | Engineer / decision-maker     | Visual first | Interactive leak-rate dashboard     |
-| `calculations.html`      | Cryogenic engineer            |         High | Formula proof and worked examples   |
-| `handover.md`            | Coding agent / VS Code / Git  |         High | Source-readable handover            |
-| `handover.pdf`           | Formal reviewer / stakeholder |  Medium-high | Controlled issue pack               |
-| `rtm_traceability.html`  | QA / requirements reviewer    |         High | RTM and source mapping              |
-| `executive_summary.html` | Manager / non-specialist      |   Low-medium | Decision summary and recommendation |
-| `developer_notes.md`     | Codex / future maintainer     |         High | Build logic and extension rules     |
+| Output                   | Audience                      | Density | Purpose                                  |
+| ------------------------ | ----------------------------- | ------: | ---------------------------------------- |
+| `index.html`             | Technical peer / reviewer     |  Medium | Navigation portal                        |
+| `dashboard.html`         | Engineer / decision-maker     |     Low | Interactive visual-first leak-rate dashboard |
+| `calculations.html`      | Cryogenic engineer            |    High | Formula proof and worked examples        |
+| `handover.md`            | Coding agent / VS Code / Git  |    High | Source-readable handover                 |
+| `handover.pdf`           | Formal reviewer / stakeholder |  Medium | Controlled issue pack                    |
+| `rtm_traceability.html`  | QA / requirements reviewer    |    High | RTM and source mapping                   |
+| `executive_summary.html` | Manager / non-specialist      |     Low | Decision summary and recommendation      |
+| `developer_notes.md`     | Codex / future maintainer     |    High | Build logic and extension rules          |
 
 ---
 
