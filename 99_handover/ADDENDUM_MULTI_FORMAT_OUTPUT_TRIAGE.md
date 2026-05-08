@@ -72,7 +72,8 @@ print CSS
 badges for ACCEPT / REVIEW / RISK / TRACE
 ```
 
-Use the provided HTML scaffold as the visual and structural pattern.
+Use the repo's canonical HTML scaffold at `[REPO-RELATIVE-PATH-TO-CANONICAL-HANDOVER-HTML-SCAFFOLD]` as the visual and structural pattern to copy/extend for new HTML outputs.
+If additional examples are needed, also reference `[REPO-RELATIVE-PATH-TO-SECONDARY-HANDOVER/PORTAL-HTML-TEMPLATE]` for shared navigation, print CSS, and section layout conventions.
 
 ---
 
