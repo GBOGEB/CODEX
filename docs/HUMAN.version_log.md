@@ -1,2 +1,3 @@
-# HUMAN version log
-- 1.1.0 at 2026-05-08T07:51:37Z, git e07c261
+# HUMAN Version Log
+
+- v1.2.0 @ 2026-05-09T21:04:07Z (git 3540a7a)
