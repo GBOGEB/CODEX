@@ -22,7 +22,7 @@ This guide explains how the presentation tooling integrates with the CODEX pipel
    python -m slides.qplant_sckcen_template build --source slides/src/demo.md --output-dir output/slides
    ```
 4. Open the generated `output/slides/demo.pptx` in PowerPoint, or share `demo.html` for a quick review.
-5. Commit only the source files and the metadata report; generated PPTX/PDF/HTML artefacts stay out of Git but are uploaded by DOW as pipeline artefacts.
+5. Commit only the source files and the metadata report; generated PPTX/PDF/HTML artifacts stay out of Git but are uploaded by DOW as pipeline artifacts.
 
 ## What the template provides
 
@@ -35,7 +35,7 @@ This guide explains how the presentation tooling integrates with the CODEX pipel
 
 | Component | Purpose | Integration point |
 |-----------|---------|-------------------|
-| **DOW** | Pipeline scheduler that runs lint → render → publish | `slides.qplant_sckcen_template.build_deck` is called from the DOW `ppt` stage; artefacts are uploaded to the run summary. |
+| **DOW** | Pipeline scheduler that runs lint → render → publish | `slides.qplant_sckcen_template.build_deck` is called from the DOW `ppt` stage; artifacts are uploaded to the run summary. |
 | **KEB** | Pandoc + conversion helpers for Markdown → PPTX/PDF/HTML | `convert_markdown_bundle` wraps KEB to keep CLI flags consistent. |
 | **GBOGEB** | Governance checks (naming, hyperlink safety, metadata completeness) | `validate_deck_metadata` returns a machine-readable report consumed by GBOGEB. |
 
@@ -49,7 +49,7 @@ slides/
 └── src/                       # Markdown/RST slide sources and YAML manifests
 ```
 
-> Tip: Keep image assets below 2 MB to avoid bloating the pipeline artefacts and to speed up Pandoc conversions.
+> Tip: Keep image assets below 2 MB to avoid bloating the pipeline artifacts and to speed up Pandoc conversions.
 
 ## Template customization
 
@@ -77,15 +77,6 @@ python -m slides.qplant_sckcen_template batch \
   --format pptx pdf html
 ```
 
-### Generate partial slide decks
-Use the `--include` or `--exclude` flags to quickly slice a deck for a focused review:
-```bash
-python -m slides.qplant_sckcen_template build \
-  --source slides/src/full_report.md \
-  --include "executive-summary,risks" \
-  --output-dir output/slides
-```
-
 ### Preserve hyperlinks
 All formats keep hyperlink targets by default. Ensure your Markdown links use absolute URLs or repository-relative paths so they remain valid when rendered to PDF and HTML. The builder logs broken links and fails the GBOGEB check when `--strict-links` is enabled.
 
@@ -100,11 +91,11 @@ All formats keep hyperlink targets by default. Ensure your Markdown links use ab
 
 | Symptom | Likely cause | Fix |
 |---------|--------------|-----|
-| Missing fonts in PPTX | Host lacks SCKCEN font pack | Install fonts locally or supply `--fallback-font <fontname>` to the builder. |
-| HTML images broken | Asset path not copied | Place images in `slides/assets` or set `--asset-root <directory>` to a shared directory. |
+| Missing fonts in PPTX | Host lacks SCKCEN font pack | Install fonts locally. |
+| HTML images broken | Asset path not copied | Place images in `slides/assets`. |
 | Pandoc not found | Pandoc not installed or not on PATH | Install Pandoc 3.x and retry; the CLI checks and reports the detected version. |
 | Broken hyperlinks in PDF | Relative links resolve incorrectly | Use absolute URLs or set `--base-url` so HTML → PDF conversion can rewrite links. |
-| Deck rejected by GBOGEB | Missing metadata fields | Provide `--metadata author="Name" --metadata revision="vX.Y" --metadata sensitivity="internal"`. |
+| Deck rejected by GBOGEB | Missing metadata fields | Ensure required metadata fields (author, revision, sensitivity) are present in your source or configuration. |
 
 ## CI/CD guidance
 
@@ -114,17 +105,19 @@ All formats keep hyperlink targets by default. Ensure your Markdown links use ab
     - name: ppt
       uses: slides.qplant_sckcen_template.build_deck
       inputs:
-        source_glob: slides/src/*.md
+        source_dir: slides/src
         output_dir: output/slides
         formats: [pptx, pdf, html]
+      # The build_deck function is called with source, output_dir, settings, and formats parameters.
+      # DOW should invoke it for each source file found in source_dir.
   ```
-- Upload `output/slides/*.pptx`, `*.pdf`, and `*.html` as pipeline artefacts; do **not** commit them to Git.
+- Upload `output/slides/*.pptx`, `*.pdf`, and `*.html` as pipeline artifacts; do **not** commit them to Git.
 - Publish the metadata report (`output/slides/metadata.json`) so downstream consumers can reuse hyperlinks and authorship data.
 
 ## Frequently asked questions
 
 ### How do I reuse slides across decks?
-Use the `--include` flag with comma-separated slide identifiers defined in your Markdown frontmatter. The builder concatenates matching sections while keeping numbering, hyperlinks, and references intact.
+The builder processes each Markdown source file independently. To reuse content, extract common slides into separate Markdown files and reference them in your main source.
 
 ### How can I preview HTML locally?
 Run a lightweight web server:
@@ -153,11 +146,48 @@ Yes. Export charts as SVG or PNG and reference them in Markdown. When KEB conver
 
 - Generated PPTX/PDF/HTML artifacts are excluded from Git via `.gitignore` but uploaded by the DOW pipeline for traceability.
 - Every render writes `metadata.json` summarizing authorship, revision, sensitivity, slide count, link status, and template checksum.
-- The `--freeze` flag embeds a SHA256 of the template and Markdown source into the deck notes so reviewers can verify provenance offline.
+- (Planned) A future `--freeze` flag will embed a SHA256 of the template and Markdown source into the deck notes so reviewers can verify provenance offline.
+
+## Regulatory gatekeeper context (CE/ISO validation)
+
+For regulated deliveries, the review body validating datasets and verification evidence is often an accredited conformity assessment organization rather than the software contractor itself.
+
+- **BSI (British Standards Institution)**: standards body and certification provider active in ISO-aligned management system certification.
+- **TÜV organizations (e.g., TÜV SÜD, TÜV Rheinland)**: independent testing/inspection/certification bodies frequently used for technical files, safety cases, and process audits.
+- **Belgium context**: Belgian projects commonly use a notified body or accredited auditor selected by the prime contractor; subcontracted assessment by TÜV SÜD (or equivalent) is possible when contractually delegated.
+
+### Corrigendum note (parked for next release)
+
+- **CORR-REG-0001 (planned)**: The contractor **shall** ensure that any subcontracted gatekeeper (including TÜV entities) abides by the governing CE/ISO code item once the exact clause identifier is finalized in the contract annex.
+
+## Delivery depth, intent, and handover checklist
+
+Use this checklist to capture the total structure/gist of each deck-build change set and support clean handover:
+
+1. **Content depth**
+   - Source manifests included (`slides/src/**`), with revision labels.
+   - Evidence references and hyperlink inventories documented for handover; automated metadata capture is planned and should not be assumed in current `build_deck()` output.
+2. **Style depth**
+   - Template lineage tracked (`template_path`, checksum, theme colors).
+   - Partner-branding options documented in build notes and/or metadata when used (`--partner-logo`, `--base-url`).
+3. **Structure depth**
+   - Output parity across PPTX/PDF/HTML confirmed from one source.
+   - Layout alias mapping validated for any custom slide masters.
+4. **Intent and outcome**
+   - Business objective and target audience recorded in deck metadata/frontmatter.
+   - Governance report reviewed for required fields before release.
+5. **Versioning and cross-references**
+   - Tag metadata revision (`DECK_REVISION`) to match release identifier.
+   - Link DOW run ID, artifact bundle path, and PR number in release notes.
+
+### TODO (next steps)
+
+- Finalize the contractual CE/ISO clause code and replace `CORR-REG-0001` placeholder.
+- Add a CI check that fails if regulatory handover fields are missing from metadata.
+- Extend changelog entries to include contractor/notified-body assignment per release.
 
 ## Change log
 
 - **2025-02-17**: Added multi-format parity guidance, hyperlink preservation, and DOW/KEB integration examples.
-- **2025-02-10**: Introduced partial deck building with `--include/--exclude` filters.
+- **2025-02-10**: Documented template customization and batch building workflows.
 - **2025-02-03**: Documented metadata reporting for GBOGEB governance checks.
-

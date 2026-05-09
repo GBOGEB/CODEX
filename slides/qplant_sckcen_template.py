@@ -20,6 +20,10 @@ from typing import Dict, Iterable, List, Mapping, MutableMapping, Sequence
 
 
 DEFAULT_FORMATS: Sequence[str] = ("pptx", "pdf", "html")
+# LAYOUT_ALIASES maps semantic layout names to PowerPoint master slide names.
+# This is provided for user reference and future extension. Users should update
+# this dictionary when adding custom layouts to their base template (see README.md
+# "How do I add custom layouts?" section for details).
 LAYOUT_ALIASES: Mapping[str, str] = {
     "statement": "Statement",
     "appendix": "Appendix",
@@ -104,6 +108,7 @@ def ensure_pandoc_available(pandoc_cmd: str) -> None:
 def convert_markdown_bundle(
     source_path: Path,
     output_dir: Path,
+    settings: TemplateSettings,
     formats: Iterable[str] = DEFAULT_FORMATS,
     pandoc_cmd: str = "pandoc",
     dry_run: bool = False,
@@ -113,6 +118,10 @@ def convert_markdown_bundle(
     The function gracefully falls back to writing placeholder artifacts when the
     environment lacks Pandoc so that local development and CI dry runs remain
     deterministic.
+
+    The active :class:`TemplateSettings` control the reference PPTX, partner
+    branding metadata, base URL rewrites, and link validation flags passed to
+    Pandoc so that CLI options are faithfully applied.
     """
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -142,6 +151,33 @@ def convert_markdown_bundle(
                 "--output",
                 str(target),
             ]
+
+            if fmt == "pptx":
+                if not settings.template_path.exists():
+                    raise FileNotFoundError(
+                        "PPTX reference template not found: "
+                        f"{settings.template_path}. Configure an existing template "
+                        "path or use --dry-run for placeholder output."
+                    )
+                args.extend(["--reference-doc", str(settings.template_path)])
+
+            if settings.partner_logo:
+                args.extend(["--metadata", f"partner_logo={settings.partner_logo}"])
+
+            if settings.base_url:
+                args.extend(["--metadata", f"base_url={settings.base_url}"])
+
+            if settings.strict_links:
+                args.extend(
+                    [
+                        "--metadata",
+                        "strict_links=true",
+                        "--metadata",
+                        "link-strict=true",
+                        "--fail-if-warnings",
+                    ]
+                )
+
             subprocess.run(args, check=True, capture_output=True)
 
         outputs.append(target)
@@ -183,6 +219,7 @@ def build_deck(
     outputs = convert_markdown_bundle(
         source_path=source,
         output_dir=output_dir,
+        settings=settings,
         formats=formats,
         pandoc_cmd=pandoc_cmd,
         dry_run=dry_run,
@@ -251,7 +288,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         subparser.add_argument("--format", nargs="+", default=list(DEFAULT_FORMATS))
         subparser.add_argument("--pandoc", default="pandoc")
         subparser.add_argument("--dry-run", action="store_true")
-        subparser.add_argument("--strict-links", action="store_true", default=True)
+        subparser.add_argument("--strict-links", action="store_true", default=False)
 
     build_parser = subparsers.add_parser("build", help="Build a single deck")
     add_common_options(build_parser)

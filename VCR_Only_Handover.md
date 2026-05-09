@@ -68,3 +68,292 @@ This extract mirrors the full artefact pack but filters for the VCR scope. Secti
 ## ADR/OCD tie-ins (see §§5-6)
 - ADR-001 enforces /FS policy, DBB purge discipline, tamper tracking, and PSV/BD populations tied to WCS.LP recovery.
 - OCD scenarios: warm start-up (analyzers + PSV readiness), maintenance outage (DBB purge + leak test), emergency depressurization/LOOP (S-line directs 200 g/s @ 300 K to WCS.LP with CIS logging).
+
+# ADDENDUM — Multi-Format Output Triage Logic
+
+Apply this triage model in addition to the baseline VCR-only handover defined in §§1-6 of this document.
+
+The leak-rate dashboard is one engineering topic, but it must generate several outputs with different purpose, audience, and density.
+
+## 1. Output Triage Principle
+
+One source topic shall generate multiple coordinated artefacts:
+
+```text
+Same engineering truth
+Different audience
+Different density
+Different format
+Same traceability
+```
+
+The source of truth remains:
+
+```text
+Markdown + YAML + JSON data + Python calculation engine
+```
+
+The generated outputs are:
+
+```text
+HTML dashboard
+Markdown handover
+PDF handover
+RTM table
+JSON/YAML traceability
+GitHub Pages static portal
+```
+
+Do not let any generated output become an independent source of truth.
+
+---
+
+## 2. Audience / Density Mapping
+
+Create output views for the following audiences:
+
+| Output                   | Audience                      | Density | Purpose                                  |
+| ------------------------ | ----------------------------- | ------: | ---------------------------------------- |
+| `index.html`             | Technical peer / reviewer     |  Medium | Navigation portal                        |
+| `dashboard.html`         | Engineer / decision-maker     |     Low | Interactive visual-first leak-rate dashboard |
+| `calculations.html`      | Cryogenic engineer            |    High | Formula proof and worked examples        |
+| `handover.md`            | Coding agent / VS Code / Git  |    High | Source-readable handover                 |
+| `handover.pdf`           | Formal reviewer / stakeholder |  Medium | Controlled issue pack                    |
+| `rtm_traceability.html`  | QA / requirements reviewer    |    High | RTM and source mapping                   |
+| `executive_summary.html` | Manager / non-specialist      |     Low | Decision summary and recommendation      |
+| `developer_notes.md`     | Codex / future maintainer     |    High | Build logic and extension rules          |
+
+---
+
+## 3. Required View Modes
+
+Implement the HTML shell with these modes:
+
+```text
+HTML Preview
+Code-like Markdown
+PDF / Print Mode
+Expand All
+Collapse All
+Export PDF
+```
+
+The HTML should use:
+
+```text
+details / summary sections
+sticky navigation
+print CSS
+badges for ACCEPT / REVIEW / RISK / TRACE
+```
+
+Use the structure and styling cues listed above as the visual and structural pattern for the HTML output; this extract does not reference a separate in-repo scaffold file.
+
+---
+
+## 4. Engineering Triage Object Types
+
+Every extracted item must be classified into one of:
+
+```text
+Decision
+Requirement
+Assumption
+Risk
+Action
+Interface
+Evidence
+Generated Artefact
+Calculation
+Plot
+Validation Check
+```
+
+Each item shall carry:
+
+```text
+id
+title
+type
+source
+status
+owner
+density_level
+audience
+trace_reference
+version_added
+```
+
+---
+
+## 5. Status Badges
+
+Use these status labels consistently:
+
+```text
+ACCEPT = mature enough for baseline
+REVIEW = technically plausible but needs checking
+RISK = unresolved, unsafe, contradictory, or assumption-heavy
+TRACE = source-linked evidence item
+TODO = required implementation work
+NEXT = next recommended step
+DONE = implemented baseline feature
+```
+
+---
+
+## 6. Leak Dashboard Specific Triage
+
+For this project, classify content as follows:
+
+```text
+Visual-first:
+  dashboard plots
+  log-log leak-rate comparison
+  valve-class comparison
+  cost versus leak-tightness plot
+  fleet-size sensitivity
+
+Calculation-first:
+  unit conversion
+  helium mass-loss equation
+  sonic/choked-flow check
+  Reynolds number estimate
+  pressure and temperature sensitivity
+  worked examples
+
+Requirement-first:
+  RTM-047 to RTM-051
+  leak-rate table
+  helium inventory table
+  Slide 15 warm-valve concern
+  EN 13185 leak-detection anchor
+
+Decision-first:
+  where 1e-9 is overkill
+  where 1e-8 is justified
+  where 1e-4 is acceptable only for valve-seat/internal leakage
+  where 1e-3 is rejected boundary case
+
+Reliability-first:
+  MTBF
+  MTTR
+  MDT
+  availability
+  spare strategy
+  critical valve consequence
+```
+
+---
+
+## 7. Recursive DMAIC Layer
+
+Apply this recursive loop to each output view:
+
+```text
+DEFINE: What is this view for?
+MEASURE: What data does it contain?
+ANALYZE: What engineering question does it answer?
+IMPROVE: How does it improve understanding?
+CONTROL: How is it versioned and kept traceable?
+```
+
+Each output file shall include a short `DMAIC View Note`.
+
+---
+
+## 8. Idempotency Rule
+
+The build must be idempotent:
+
+```text
+same inputs
+same assumptions
+same code version
+same templates
+=
+same generated outputs
+```
+
+Generate a manifest:
+
+```text
+OUTPUT_MANIFEST.json
+```
+
+Include:
+
+```text
+file path
+file type
+purpose
+audience
+density
+hash
+generated timestamp
+source inputs
+builder version
+```
+
+---
+
+## 9. Release Structure
+
+For this repository, place generated artefacts into the existing top-level folders rather than creating a separate `leak_rate_helium_dashboard/` subproject. Use this structure:
+
+```text
+CODEX/
+├─ docs/
+│  ├─ HUMAN.index.html
+│  ├─ HUMAN.report.md
+│  ├─ HUMAN.version_log.md
+│  └─ leak_baseline/
+│     └─ index.html
+├─ outputs/
+│  ├─ html/
+│  │  ├─ index.html
+│  │  ├─ 01_EXECUTIVE_SUMMARY.html
+│  │  ├─ 02_LEAK_RATE_TRANSLATION.html
+│  │  ├─ 03_MATHS_PROOF.html
+│  │  ├─ 04_PLOTS_AND_VISUAL_EVIDENCE.html
+│  │  ├─ 05_VALVE_CLASS_COMPARISON.html
+│  │  ├─ 06_ENGINEERING_RATIONALE.html
+│  │  ├─ 07_TRACEABILITY_MATRIX.html
+│  │  ├─ 08_VERSION_HISTORY.html
+│  │  └─ 09_BUILD_AND_RUNTIME_REPORT.html
+│  └─ json/
+│     └─ calculation_inputs_outputs.json
+├─ traceability/
+│  └─ TRACEABILITY_MATRIX.md
+├─ OUTPUT_MANIFEST.json
+├─ VERSION.json
+├─ CHANGELOG.md
+└─ ERROR_LOG.md
+```
+
+---
+
+## 10. Baseline Commit Target
+
+First commit target:
+
+```text
+v1.1.0-leak-rate-static-triage-baseline
+```
+
+Commit message:
+
+```text
+feat: add leak-rate helium dashboard triage baseline
+```
+
+Baseline success means:
+
+```text
+An engineer can open index.html,
+navigate by audience and density,
+inspect leak-rate calculations,
+view interactive plots,
+trace every number to assumptions or RTM anchors,
+and understand which valve leak class is justified, excessive, or risky.
+```
