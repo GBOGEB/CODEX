@@ -63,7 +63,7 @@ def page(title: str, body: str) -> str:
 
 
 def write_outputs() -> None:
-    for d in [HTML, JSON_DIR, TRACE, DOCS, OUT / "md", OUT / "svg", OUT / "versioned"]:
+    for d in [HTML, JSON_DIR, TRACE, DOCS]:
         d.mkdir(parents=True, exist_ok=True)
 
     rows = [calc(x) for x in LEAK_RATES]
