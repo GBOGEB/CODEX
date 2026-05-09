@@ -1,7 +1,9 @@
 from __future__ import annotations
 from pathlib import Path
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 import json, subprocess, platform
+
+UTC = timezone.utc
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "outputs"
