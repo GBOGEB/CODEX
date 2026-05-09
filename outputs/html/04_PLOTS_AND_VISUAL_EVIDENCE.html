@@ -1,0 +1,20 @@
+<!doctype html><html><head><meta charset='utf-8'><title>04_PLOTS_AND_VISUAL_EVIDENCE.html</title>
+    <style>
+    body{font-family:Inter,Arial,sans-serif;margin:24px;line-height:1.5;background:#f8fbff;color:#0f1b2d}
+    h1,h2{color:#0a2e5c} table{border-collapse:collapse;width:100%;margin:8px 0}
+    th,td{border:1px solid #8da1bb;padding:8px;vertical-align:top}
+    .card{background:white;border:1px solid #d6e1ef;border-radius:10px;padding:14px;margin:10px 0}
+    code{background:#eef3f8;padding:2px 4px;border-radius:4px}
+    </style>
+    </head><body><h1>04 Plots and Visual Evidence</h1><nav><a href='index.html'>index.html</a> | <a href='01_EXECUTIVE_SUMMARY.html'>01_EXECUTIVE_SUMMARY.html</a> | <a href='02_LEAK_RATE_TRANSLATION.html'>02_LEAK_RATE_TRANSLATION.html</a> | <a href='03_MATHS_PROOF.html'>03_MATHS_PROOF.html</a> | <a href='04_PLOTS_AND_VISUAL_EVIDENCE.html'>04_PLOTS_AND_VISUAL_EVIDENCE.html</a> | <a href='05_VALVE_CLASS_COMPARISON.html'>05_VALVE_CLASS_COMPARISON.html</a> | <a href='06_ENGINEERING_RATIONALE.html'>06_ENGINEERING_RATIONALE.html</a> | <a href='07_TRACEABILITY_MATRIX.html'>07_TRACEABILITY_MATRIX.html</a> | <a href='08_VERSION_HISTORY.html'>08_VERSION_HISTORY.html</a> | <a href='09_BUILD_AND_RUNTIME_REPORT.html'>09_BUILD_AND_RUNTIME_REPORT.html</a></nav><div class='card'><p>XY scatter with logarithmic X and Y axes; SVG-export compatible through Plotly modebar.</p></div>
+    <script src='https://cdn.plot.ly/plotly-2.35.2.min.js'></script>
+    <div id='plot' style='height:540px'></div>
+    <script>
+    const x = [1e-09, 1e-08, 1e-07, 1e-06, 1e-05, 0.0001];
+    const y = [1.4188355677445836e-08, 1.4188355677445835e-07, 1.4188355677445833e-06, 1.4188355677445833e-05, 0.00014188355677445836, 0.0014188355677445836];
+    const labels = ['1e-09', '1e-08', '1e-07', '1e-06', '1e-05', '1e-04'];
+    Plotly.newPlot('plot', [{x, y, text: labels, mode: 'markers+text', type:'scatter', marker:{size:12}}],
+      {title:'Leak rate vs He mass loss (g/day)', xaxis:{type:'log', title:'Leak rate (mbar·L/s)'}, yaxis:{type:'log', title:'He loss (g/day)'}},
+      {responsive:true});
+    </script>
+    </body></html>
