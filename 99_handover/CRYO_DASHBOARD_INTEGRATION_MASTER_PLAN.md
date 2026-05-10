@@ -63,7 +63,7 @@ Cryogenic_Engineer_Tools/
 - `20_stage`: merge + smoke + regression checks.
 - `30_release`: frozen artifacts for local review and host deployment.
 
-## 3.2 Branching and Sync Policy
+### 3.2 Branching and Sync Policy
 - Keep `main` protected and releasable.
 - Use short-lived branches: `feature/<scope>`, `fix/<scope>`, `integrate/<sourceA>-<sourceB>`.
 - For each integration cycle:
@@ -101,12 +101,12 @@ Use high contrast as baseline for Windows environments while staying in low-satu
 - `--panel: #F3F1FA`
 - `--text: #1E1B2E`
 
-### Dark Theme Surface Tokens
+#### Dark Theme Surface Tokens
 - `--bg: #161422`
 - `--panel: #211D33`
 - `--text: #EEEAFB`
 
-## 4.3 Accessibility Rules
+### 4.3 Accessibility Rules
 - Body text contrast target: WCAG AA minimum 4.5:1.
 - Interactive controls: visible focus ring in both themes.
 - Avoid pastel-on-pastel for critical values (warnings must elevate saturation/contrast).
