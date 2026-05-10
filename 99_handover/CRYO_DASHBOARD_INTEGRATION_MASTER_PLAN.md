@@ -40,7 +40,7 @@ The intent is to preserve idempotency, avoid uncontrolled dilution of prior work
 
 ## 3) Repository Working Structure (Local + GitHub)
 
-## 3.1 Recommended Local Workspace Layout
+### 3.1 Recommended Local Workspace Layout
 Create a stable parent folder outside cloud-sync turbulence (e.g., OneDrive live-lock conflicts):
 
 ```text
