@@ -117,7 +117,7 @@ Use high contrast as baseline for Windows environments while staying in low-satu
 
 Primary dashboard subset: **Material Properties + Thermal Parasitic Load framing** for cryogenic shield/mass modeling.
 
-## 5.1 Fixed Design Anchors
+### 5.1 Fixed Design Anchors
 - Ambient design temperature: `T_ambient = 300 K` (fixed design value).
 - Thermal shield nominal stage: `T_shield = 50 K`.
 - Cold mass nominal stage: `T_cold_mass = 2 K`.
@@ -126,7 +126,7 @@ Primary dashboard subset: **Material Properties + Thermal Parasitic Load framing
   - Outer diameter `D_outer = 1.0 m`
   - Inner diameter `D_inner = 0.5 m`
 
-## 5.2 Parasitic Zones
+### 5.2 Parasitic Zones
 1. `300 K -> 50 K` zone
    - Radiation parasitic load (external to shield).
    - Conduction parasitic load through supports/interfaces.
@@ -135,7 +135,7 @@ Primary dashboard subset: **Material Properties + Thermal Parasitic Load framing
    - Residual/intercepted conduction into cold mass.
    - Internal radiation and material-dependent transport.
 
-## 5.3 Radiation Baseline Equation
+### 5.3 Radiation Baseline Equation
 Use user-supplied empirical constant format for shield load:
 
 ```text
@@ -148,7 +148,7 @@ For nominal shield stage (`T_shield = 50 K`):
 Q_rad_50_nominal = Constant_Rad_50 * (300^4 - 50^4)
 ```
 
-## 5.4 Conduction/Material Modeling Notes
+### 5.4 Conduction/Material Modeling Notes
 - Conduction inputs should support mixed materials with temperature-dependent `k(T)` and `cp(T)`.
 - Allow enthalpy-based segment integration for cooldown scheduling.
 - Cooling-rate plans should support zone bands (`min`, `nominal`, `max`) by time window.
