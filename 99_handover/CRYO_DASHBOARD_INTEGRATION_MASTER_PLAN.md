@@ -76,27 +76,27 @@ Cryogenic_Engineer_Tools/
 
 ## 4) UI Theme Baseline (Day/Night + Contrast)
 
-## 4.1 Toggle Requirement
+### 4.1 Toggle Requirement
 - Provide explicit **Dark/Light mode** toggle.
 - Persist user preference (`localStorage` key, e.g., `qet_theme`).
 - Default fallback from system preference (`prefers-color-scheme`).
 
-## 4.2 Colour Guidance
+### 4.2 Colour Guidance
 Use high contrast as baseline for Windows environments while staying in low-saturation pastel ranges.
 
-### Heading Palette (SCK-aligned)
+#### Heading Palette (SCK-aligned)
 - **H1 / H2 Primary:** dark indigo with visible violet tones (must not appear black on light theme).
 - Candidate token suggestions:
   - `--heading-primary: #3F2A78` (dark indigo-violet)
   - `--heading-secondary: #5C43A8` (soft deep purple)
 
-### Accent / Action Palette (replace generic blue default)
+#### Accent / Action Palette (replace generic blue default)
 - Replace default blue with controlled violet-indigo family:
   - `--accent-default: #6D5BB3`
   - `--accent-hover: #5B4B9A`
   - `--accent-soft-bg: #EEEAFB`
 
-### Light Theme Surface Tokens
+#### Light Theme Surface Tokens
 - `--bg: #FAFAFD`
 - `--panel: #F3F1FA`
 - `--text: #1E1B2E`
