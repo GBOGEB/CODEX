@@ -29,7 +29,7 @@ orphan_non_plot_html = [path for path in orphan_html if not path.startswith(PLOT
 duplicate_dashboards = [
     path
     for path in deployed_html
-    if path != "docs/dashboard.html" and Path(path).name.startswith("dashboard")
+    if path != "docs/dashboard.html" and Path(path).stem.startswith("dashboard")
 ]
 
 errors = []

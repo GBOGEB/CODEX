@@ -28,7 +28,7 @@ bad_entries = [
 if bad_entries:
     raise SystemExit(
         "published_pages contains invalid entries:\n"
-        + "\n".join(str(p) for p in bad_entries[:MAX_ERROR_ENTRIES])
+        + "\n".join(p for p in bad_entries[:MAX_ERROR_ENTRIES])
     )
 
 missing_required = [path for path in required if path not in published_pages]

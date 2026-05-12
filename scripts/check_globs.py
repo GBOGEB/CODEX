@@ -15,9 +15,8 @@ violations = []
 for p in Path(".").rglob("*"):
     s = str(p).replace("\\", "/")
     name = p.name.lower()
-    lowered = s.lower()
     segments = [part.lower() for part in p.parts if part]
-    if lowered in allowlist:
+    if s.lower() in allowlist:
         continue
     has_forbidden_segment = any(part in forbidden_segment_exact for part in segments)
     has_copy_segment = any(part.startswith("copy") for part in segments)
