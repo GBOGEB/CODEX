@@ -4,12 +4,12 @@ Use the **clean handover pack** and avoid the rough tuple flow (that is, passing
 
 ## Recommended operator flow
 
-1. Start by pasting the **Minimal Copy-Paste Block** (see below) into CODEX.
+1. Start by pasting the **Minimal Copy-Paste Version** (see below) into CODEX.
 2. Provide the full handover pack as supporting context only if more detail is needed.
 
-## Minimal Copy-Paste Block
+## Minimal Copy-Paste Version
 
-Copy and paste the block below verbatim at the start of every new CODEX interaction to give the agent essential project context before you supply any additional files.
+Copy and paste the version below verbatim at the start of every new CODEX interaction to give the agent essential project context before you supply any additional files.
 
 ```
 ## CODEX Minimal Context — HELIUM_VCR_UHP v1.3.0
@@ -45,8 +45,8 @@ The clean **CODEX Handover Manifest Glob Pack** should include:
 - CI workflow
 - GitHub Pages workflow
 - acceptance checklist
-- Minimal Copy-Paste Block (see above)
+- Minimal Copy-Paste Version (see above)
 
 ## Selection rule
 
-**Best option:** paste the **Minimal Copy-Paste Block** into CODEX first, then add the full pack only as needed.
+**Best option:** paste the **Minimal Copy-Paste Version** into CODEX first, then add the full pack only as needed.
