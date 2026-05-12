@@ -16,7 +16,7 @@ for p in Path(".").rglob("*"):
     s = str(p).replace("\\", "/")
     name = p.name.lower()
     lowered = s.lower()
-    segments = [part for part in lowered.split("/") if part]
+    segments = [part.lower() for part in p.parts if part]
     if lowered in allowlist:
         continue
     has_forbidden_segment = any(part in forbidden_segment_exact for part in segments)

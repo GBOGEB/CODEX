@@ -24,6 +24,7 @@ for pattern in published:
 
 orphan_html = [path for path in deployed_html if path not in tracked_html]
 stale_plot_html = [path for path in orphan_html if path.startswith(PLOT_HTML_PREFIX)]
+orphan_non_plot_html = [path for path in orphan_html if not path.startswith(PLOT_HTML_PREFIX)]
 
 duplicate_dashboards = [
     path
@@ -34,8 +35,10 @@ duplicate_dashboards = [
 errors = []
 if missing:
     errors.append("Missing published pages from manifest:\n" + "\n".join(missing))
-if orphan_html:
-    errors.append("Untracked public entrypoints under docs/:\n" + "\n".join(orphan_html))
+if orphan_non_plot_html:
+    errors.append(
+        "Untracked public entrypoints under docs/:\n" + "\n".join(orphan_non_plot_html)
+    )
 if stale_plot_html:
     errors.append("Stale plot HTML files under docs/plots/:\n" + "\n".join(stale_plot_html))
 if duplicate_dashboards:

@@ -39,10 +39,12 @@ if missing_required:
     )
 
 seen = set()
+duplicate_set = set()
 duplicates = []
 for page in published_pages:
-    if page in seen and page not in duplicates:
+    if page in seen and page not in duplicate_set:
         duplicates.append(page)
+        duplicate_set.add(page)
     seen.add(page)
 if duplicates:
     raise SystemExit("published_pages contains duplicates:\n" + "\n".join(duplicates))
