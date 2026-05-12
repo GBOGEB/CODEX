@@ -60,7 +60,7 @@
   </main>
 
   <script>
-    const data = [
+    const SAMPLE_DATA = [
       {theme:'Reliability', epic:'Lifecycle Cost Governance', status:'active', summary:'RCM + cost baseline + risk scoring.'},
       {theme:'Delivery', epic:'Commissioning Readiness', status:'active', summary:'Factory/site acceptance workflows and readiness gates.'},
       {theme:'Quality', epic:'QA/QC Evidence Chain', status:'planning', summary:'Traceability from requirement to test evidence.'},
@@ -72,8 +72,19 @@
     const topicList = document.getElementById('topicList');
     const preview = document.getElementById('preview');
 
-    const themes = ['All', ...new Set(data.map(d => d.theme))];
-    themes.forEach(t => { const o = document.createElement('option'); o.value=t; o.textContent=t; themeSelect.appendChild(o); });
+    let data = [];
+
+    function init(topics) {
+      data = topics;
+      const themes = ['All', ...new Set(data.map(d => d.theme))];
+      themes.forEach(t => { const o = document.createElement('option'); o.value=t; o.textContent=t; themeSelect.appendChild(o); });
+      render();
+    }
+
+    fetch('topics.json')
+      .then(r => { if (!r.ok) throw new Error('Failed to load topics.json: ' + r.status); return r.json(); })
+      .then(init)
+      .catch(() => init(SAMPLE_DATA));
 
     function createPill(text) {
       const span = document.createElement('span');
@@ -133,7 +144,6 @@
 
     themeSelect.addEventListener('change', render);
     searchInput.addEventListener('input', render);
-    render();
   </script>
 </body>
 </html>
