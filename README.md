@@ -191,3 +191,58 @@ The command above writes ZIP archives to `output/handover_final/` and refreshes 
 ```bash
 pytest
 ```
+
+## Repo-level rendered Markdown (HTML) with user-friendly URL copy
+
+If you publish this repository README as rendered HTML, prefer a **plain-language "Copy URL" action** instead of exposing only a long trace-style link. End users should be able to copy one clean link and paste it directly into:
+
+- Microsoft Edge (Windows PC)
+- Safari (iPhone)
+- Chrome (iPhone)
+
+### UX requirements (recommended)
+
+1. Show a visible button label: **Copy URL**.
+2. Copy only the canonical page URL (not debug/tracing query parameters).
+3. Provide a fallback when clipboard APIs are blocked (manual select + copy prompt).
+4. Keep the button touch-friendly for iPhone (minimum 44px tap target).
+
+### Reference implementation (browser-compatible)
+
+```html
+<button id="copy-url-btn" type="button" aria-live="polite">Copy URL</button>
+<script>
+  (function () {
+    const btn = document.getElementById("copy-url-btn");
+    if (!btn) return;
+
+    function canonicalUrl() {
+      return window.location.origin + window.location.pathname;
+    }
+
+    async function copyUrl() {
+      const url = canonicalUrl();
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(url);
+          btn.textContent = "Copied";
+          setTimeout(() => (btn.textContent = "Copy URL"), 1200);
+          return;
+        }
+      } catch (_) {}
+
+      const ok = window.prompt("Copy this URL:", url);
+      if (ok !== null) {
+        btn.textContent = "Copy URL";
+      }
+    }
+
+    btn.addEventListener("click", copyUrl);
+  })();
+</script>
+```
+
+### Notes
+
+- On iPhone Safari/Chrome, Clipboard API behavior can vary by iOS version and page security context; the prompt fallback keeps the flow usable.
+- If governance requires traceability, store trace IDs in backend logs/metadata rather than forcing end users to copy parameter-heavy URLs.
