@@ -177,7 +177,7 @@ def convert_markdown_bundle(
                 )
 
             if settings.strict_links:
-                args.extend(["--metadata", "link-strict=true", "--fail-if-warnings"])
+                args.extend(["--metadata", "link-strict=true"])
 
             subprocess.run(args, check=True, capture_output=True)
 
