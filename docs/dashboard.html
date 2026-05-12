@@ -75,14 +75,60 @@
     const themes = ['All', ...new Set(data.map(d => d.theme))];
     themes.forEach(t => { const o = document.createElement('option'); o.value=t; o.textContent=t; themeSelect.appendChild(o); });
 
+    function createPill(text) {
+      const span = document.createElement('span');
+      span.className = 'pill';
+      span.textContent = text;
+      return span;
+    }
+
+    function createTopicListItem(item) {
+      const li = document.createElement('li');
+      const strong = document.createElement('strong');
+      strong.textContent = item.epic;
+      li.appendChild(strong);
+      li.appendChild(document.createTextNode(' '));
+      li.appendChild(createPill(item.theme));
+      li.appendChild(document.createTextNode(' '));
+      li.appendChild(createPill(item.status));
+      li.appendChild(document.createElement('br'));
+
+      const summary = document.createElement('span');
+      summary.className = 'muted';
+      summary.textContent = item.summary;
+      li.appendChild(summary);
+      return li;
+    }
+
+    function createPreviewContent(item) {
+      if (!item) {
+        const empty = document.createElement('p');
+        empty.className = 'muted';
+        empty.textContent = 'No topic matches current filter.';
+        return [empty];
+      }
+
+      const heading = document.createElement('h4');
+      heading.textContent = item.epic;
+
+      const paragraph = document.createElement('p');
+      const theme = document.createElement('em');
+      theme.textContent = item.theme;
+      paragraph.appendChild(theme);
+      paragraph.appendChild(document.createTextNode(' — ' + item.summary));
+
+      const pre = document.createElement('pre');
+      pre.textContent = `## ${item.epic}\n- Status: ${item.status}\n- Theme: ${item.theme}`;
+
+      return [heading, paragraph, pre];
+    }
+
     function render() {
       const theme = themeSelect.value;
       const q = searchInput.value.toLowerCase();
       const filtered = data.filter(d => (theme==='All' || d.theme===theme) && JSON.stringify(d).toLowerCase().includes(q));
-      topicList.innerHTML = filtered.map(d => `<li><strong>${d.epic}</strong> <span class="pill">${d.theme}</span> <span class="pill">${d.status}</span><br/><span class="muted">${d.summary}</span></li>`).join('');
-      preview.innerHTML = filtered[0]
-        ? `<h4>${filtered[0].epic}</h4><p><em>${filtered[0].theme}</em> — ${filtered[0].summary}</p><pre>## ${filtered[0].epic}\n- Status: ${filtered[0].status}\n- Theme: ${filtered[0].theme}</pre>`
-        : '<p class="muted">No topic matches current filter.</p>';
+      topicList.replaceChildren(...filtered.map(createTopicListItem));
+      preview.replaceChildren(...createPreviewContent(filtered[0]));
     }
 
     themeSelect.addEventListener('change', render);
