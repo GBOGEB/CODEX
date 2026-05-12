@@ -11,13 +11,15 @@ Use the **clean handover pack** and avoid the rough tuple flow.
 
 The clean **CODEX Handover Manifest Glob Pack** should include:
 
+> Note: the manifest and policy filenames below refer to artifacts bundled in the external clean handover pack. They are not expected to exist as tracked files in this repository unless they have been copied in as part of that bundle.
+
 - master CODEX prompt
 - repo target structure
 - SAME vs SIMILAR branch rules
-- root `MANIFEST.json`
-- tool `MANIFEST.json`
-- `GLOB_POLICY.md`
-- `BACKBONE_POLICY.md`
+- root `MANIFEST.json` (handover-pack artifact)
+- tool `MANIFEST.json` (handover-pack artifact)
+- `GLOB_POLICY.md` (handover-pack artifact)
+- `BACKBONE_POLICY.md` (handover-pack artifact)
 - CI workflow
 - GitHub Pages workflow
 - acceptance checklist
