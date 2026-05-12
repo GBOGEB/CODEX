@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-F9fh6dXIIt5UZCtWaULIxO9kqJ61ZTfhW2dd+dCKFPk='; script-src 'sha256-O1wgkkhyAS/8njDyKvWdC8awE2ECyh+yrlf59iDaIsI='; connect-src 'self'" />
+  <title>Core Topic EP Dashboard</title>
+  <style>
+    :root { --bg:#0b1020; --card:#121a30; --txt:#e8edff; --muted:#9fb0e0; --accent:#6ea8ff; }
+    body { margin:0; font-family:Inter,Arial,sans-serif; background:var(--bg); color:var(--txt); }
+    header, main { max-width:1100px; margin:auto; padding:20px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; }
+    .card { background:var(--card); border:1px solid #26335f; border-radius:12px; padding:14px; }
+    .muted { color:var(--muted); font-size:.9rem; }
+    button, select, input { background:#1c2750; color:var(--txt); border:1px solid #334887; border-radius:8px; padding:8px 10px; }
+    .pill { display:inline-block; padding:4px 9px; border-radius:999px; border:1px solid #3a4f91; margin:3px 4px 0 0; font-size:.8rem; }
+    a { color:var(--accent); }
+    #topicList li { margin-bottom:6px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Engineering Portal — Core Topic EP Dashboard</h1>
+    <p class="muted">Renamed from legacy HBHelium wording. GitHub Pages-ready static dashboard with JSON-driven interaction.</p>
+    <div class="card">
+      <strong>Suggested naming options</strong><br/>
+      <span class="pill">Core Topic EP Dashboard</span>
+      <span class="pill">Themed Topics & Epics Portal</span>
+      <span class="pill">Engineering Program Epic Hub</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="grid">
+      <article class="card">
+        <h3>Topic Filter</h3>
+        <label for="theme">Theme</label>
+        <select id="theme"></select>
+        <label for="search">Keyword</label>
+        <input id="search" placeholder="type text"/>
+      </article>
+      <article class="card">
+        <h3>Preview</h3>
+        <p class="muted">Shows rendered Markdown-compatible snippets for selected epic.</p>
+        <div id="preview"></div>
+      </article>
+      <article class="card">
+        <h3>Backbone</h3>
+        <ul>
+          <li>HTML + JS interaction layer</li>
+          <li>Python can generate <code>topics.json</code> from markdown/yaml</li>
+          <li>Deploy with GitHub Pages from <code>/docs</code></li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h3>Themed Topics & Epics</h3>
+      <ul id="topicList"></ul>
+    </section>
+  </main>
+
+  <script>
+    const SAMPLE_DATA = [
+      {theme:'Reliability', epic:'Lifecycle Cost Governance', status:'active', summary:'RCM + cost baseline + risk scoring.'},
+      {theme:'Delivery', epic:'Commissioning Readiness', status:'active', summary:'Factory/site acceptance workflows and readiness gates.'},
+      {theme:'Quality', epic:'QA/QC Evidence Chain', status:'planning', summary:'Traceability from requirement to test evidence.'},
+      {theme:'Integration', epic:'GitHub Managed Build Spine', status:'active', summary:'Python/JS pipeline generating markdown + rendered HTML.'}
+    ];
+
+    const themeSelect = document.getElementById('theme');
+    const searchInput = document.getElementById('search');
+    const topicList = document.getElementById('topicList');
+    const preview = document.getElementById('preview');
+
+    let data = [];
+
+    function init(topics) {
+      data = topics;
+      const themes = ['All', ...new Set(data.map(d => d.theme))];
+      themes.forEach(t => { const o = document.createElement('option'); o.value=t; o.textContent=t; themeSelect.appendChild(o); });
+      render();
+    }
+
+    fetch('topics.json')
+      .then(r => { if (!r.ok) throw new Error('Failed to load topics.json: ' + r.status); return r.json(); })
+      .then(init)
+      .catch(() => init(SAMPLE_DATA));
+
+    function createPill(text) {
+      const span = document.createElement('span');
+      span.className = 'pill';
+      span.textContent = text;
+      return span;
+    }
+
+    function createTopicListItem(item) {
+      const li = document.createElement('li');
+      const strong = document.createElement('strong');
+      strong.textContent = item.epic;
+      li.appendChild(strong);
+      li.appendChild(document.createTextNode(' '));
+      li.appendChild(createPill(item.theme));
+      li.appendChild(document.createTextNode(' '));
+      li.appendChild(createPill(item.status));
+      li.appendChild(document.createElement('br'));
+
+      const summary = document.createElement('span');
+      summary.className = 'muted';
+      summary.textContent = item.summary;
+      li.appendChild(summary);
+      return li;
+    }
+
+    function createPreviewContent(item) {
+      if (!item) {
+        const empty = document.createElement('p');
+        empty.className = 'muted';
+        empty.textContent = 'No topic matches current filter.';
+        return [empty];
+      }
+
+      const heading = document.createElement('h4');
+      heading.textContent = item.epic;
+
+      const paragraph = document.createElement('p');
+      const theme = document.createElement('em');
+      theme.textContent = item.theme;
+      paragraph.appendChild(theme);
+      paragraph.appendChild(document.createTextNode(' — ' + item.summary));
+
+      const pre = document.createElement('pre');
+      pre.textContent = `## ${item.epic}\n- Status: ${item.status}\n- Theme: ${item.theme}`;
+
+      return [heading, paragraph, pre];
+    }
+
+    function render() {
+      const theme = themeSelect.value;
+      const q = searchInput.value.toLowerCase();
+      const filtered = data.filter(d => (theme==='All' || d.theme===theme) && JSON.stringify(d).toLowerCase().includes(q));
+      topicList.replaceChildren(...filtered.map(createTopicListItem));
+      preview.replaceChildren(...createPreviewContent(filtered[0]));
+    }
+
+    themeSelect.addEventListener('change', render);
+    searchInput.addEventListener('input', render);
+  </script>
+</body>
+</html>

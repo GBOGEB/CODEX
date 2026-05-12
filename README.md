@@ -7,6 +7,17 @@ CODEX provides unified GitHub interface management and authentication that works
 **Answer to the question: "Do I need to duplicate in enterprise as well?"**  
 **NO** - This implementation eliminates the need for code duplication between standard GitHub and enterprise environments.
 
+
+## User entry pages (GitHub Pages)
+
+For end users, the primary launcher is the repository-level landing page in `/docs`, with the dashboard preserved as the topic/epic view:
+
+- **Primary entry**: [`docs/index.html`](docs/index.html)
+- **Topic dashboard**: [`docs/dashboard.html`](docs/dashboard.html)
+- **Published URL pattern**: `https://<org-or-user>.github.io/<repo>/` (landing) and `.../dashboard.html` (topic view)
+
+If GitHub Pages is configured to serve the `/docs` folder on `main`, users can access the rendered landing/dashboard/human-doc assets without browsing the full repository tree.
+
 ## Features
 
 - ✅ **Unified Interface**: Same code works with GitHub.com and GitHub Enterprise Server

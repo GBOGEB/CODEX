@@ -1,0 +1,214 @@
+<h1 id="adr-ocd-background-full-text">ADR &amp; OCD Background (Full
+Text)</h1>
+<h2 id="adr-001-fs-policy-safety-populations-sbs-integration">ADR-001
+(/FS Policy, Safety Populations, SBS Integration)</h2>
+<h1
+id="adr-001-fs-policy-safety-populations-and-sbs-integration">ADR-001:
+/FS Policy, Safety Populations, and SBS Integration</h1>
+<h2 id="context">Context</h2>
+<ul>
+<li>Addendum II – Cryoplant Technical Requirements mandates Table 6
+leakage limits, helium recovery via QINFRA.S → WCS.LP, analyzer coverage
+in the compressor and cold-box rooms, and SBS naming for warm lines
+(QINFRA.U/W/S, QRB.A/B/D/E, WCS.HP/LP/VLP).</li>
+<li>Serviceable joints must allow maintenance without compromising
+helium purity (Grade 5.0) or leak performance.</li>
+<li>Relief network sizing requires explicit BD/PSV populations and
+setpoints to protect QRB.S, QINFRA.S, and downstream recovery.</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<ol type="1">
+<li>Adopt metal gasket face-seal (/FS, VCR-compatible) joints for all
+warm serviceable interfaces while keeping main spines welded.</li>
+<li>Enforce orientation: fixed infrastructure female, removable modules
+male; track deviations.</li>
+<li>Implement DBB + bleed to recovery or Venturi eductor with residual
+air target ≤0.05%.</li>
+<li>Install tamper-evident seals and scan workflow to track remake
+counts and gasket batches.</li>
+<li>Freeze BD/PSV populations and setpoints (BD 65; PSV 210) with S-line
+PSV capacity ≥200 g/s @ 300 K at 1.3 bar(a) setpoint, tying discharge to
+WCS.LP.</li>
+</ol>
+<h2 id="status">Status</h2>
+<p>Accepted – baseline v1.3.0 (2025-09-18).</p>
+<h2 id="consequences">Consequences</h2>
+<ul>
+<li>Simplifies maintenance: predictable female seats on panels,
+sacrificial male noses on LRUs.</li>
+<li>Purge procedure minimises helium loss and supports analyzer
+validation.</li>
+<li>Tamper tracking enforces single-use gaskets and leak integrity.</li>
+<li>Relief design references align with API 520/521 and ISO 21013-1/-2,
+ensuring compliance for QRB.S/QINFRA.S events.</li>
+</ul>
+<h2 id="alternatives-considered">Alternatives Considered</h2>
+<ul>
+<li>Retain legacy dash naming (QRB-A, etc.) – rejected to align with SBS
+dot notation.<br />
+</li>
+<li>Allow elastomer/PTFE back-up seals – rejected (contamination risk
+and non-conformance to Addendum purity requirement).<br />
+</li>
+<li>Rely solely on welded joints – rejected (does not support modular
+replacement of analyzers/instruments).</li>
+</ul>
+<h2 id="related-requirements">Related Requirements</h2>
+<ul>
+<li>RTM.001–RTM.008 (see 01_requirements/RTM.csv).<br />
+</li>
+<li>Table 6 leakage acceptance; Tables 7–8 measuring points.<br />
+</li>
+<li>Warm line interface section (DN150 QINFRA.S tie to WCS.LP).</li>
+</ul>
+<h2 id="risks-mitigations">Risks &amp; Mitigations</h2>
+<ul>
+<li><strong>Risk:</strong> Air ingress during maintenance on
+sub-atmospheric segments.<br />
+<strong>Mitigation:</strong> DBB purge with eductor plus analyzer
+verification; helium guard per Addendum.<br />
+</li>
+<li><strong>Risk:</strong> PSV sizing misalignment with recovery
+capacity.<br />
+<strong>Mitigation:</strong> Certified calculations per API/ISO and
+documentation in PSV dossier.<br />
+</li>
+<li><strong>Risk:</strong> Failure to replace gaskets.<br />
+<strong>Mitigation:</strong> Tamper wire + scan workflow and maintenance
+checklist hold point.</li>
+</ul>
+<h2 id="sbs-mapping">SBS Mapping</h2>
+<ul>
+<li><code>/FS</code> joints present in: WCS analyzer panels &amp;
+service tees; QRB warm panel &amp; INVAC feedthroughs; QINFRA.U/W/S
+service connections; storage vessel sampling spools.</li>
+<li>All other SBS segments remain welded (cryogenic cold mass, main
+headers, S-line backbone).</li>
+</ul>
+<h2
+id="operational-concept-document-extract-fs-serviceability-testing">Operational
+Concept Document Extract (/FS Serviceability &amp; Testing)</h2>
+<h1
+id="operational-concept-document-fs-serviceability-testing">Operational
+Concept Document – /FS Serviceability &amp; Testing</h1>
+<h2 id="purpose">1. Purpose</h2>
+<p>Describe how operators, maintenance teams, and automated controls
+manage metal gasket face-seal (/FS) assemblies within the helium
+cryoplant while preserving Grade 5.0 purity, Table 6 leakage limits, and
+helium recovery targets.</p>
+<h2 id="stakeholders-roles">2. Stakeholders &amp; Roles</h2>
+<ul>
+<li><strong>Operations crew:</strong> Execute start-up, normal run,
+shutdown, and emergency procedures; initiate purge cycles.<br />
+</li>
+<li><strong>Maintenance technicians:</strong> Perform /FS make-break,
+gasket replacement, tamper-seal management, leak testing.<br />
+</li>
+<li><strong>Reliability engineering:</strong> Monitor MTBF, purge
+metrics, KPI dashboard.<br />
+</li>
+<li><strong>Control system (CIS):</strong> Provides prompts, tracks
+tamper scans, logs analyzer data, enforces interlocks.</li>
+</ul>
+<h2 id="operational-scenarios">3. Operational Scenarios</h2>
+<ol type="1">
+<li><strong>Warm start-up:</strong> Pressurise QINFRA.U/W/S, verify
+analyzers (GAP.WCS, GAP.QRB), check PSV/BD readiness (setpoints).<br />
+</li>
+<li><strong>Thermal-shield standby:</strong> Maintain TS loops via
+QRB.D/QRB.E; DBB purge available for any module swap.<br />
+</li>
+<li><strong>4.5 K standby / 2 K standby:</strong> Monitor relief valves
+on QRB.S; maintain helium guard; confirm DBB purge readiness for
+interventions.<br />
+</li>
+<li><strong>2 K operation:</strong> Continuous analyzer monitoring;
+S-line PSV status; helium loss KPI tracked daily.<br />
+</li>
+<li><strong>Maintenance outage:</strong> Execute DBB purge, replace
+gaskets, perform leak test, log tamper info.<br />
+</li>
+<li><strong>Emergency depressurisation / LOOP:</strong> Follow Addendum
+event tree; S-line directs 200 g/s <span class="citation"
+data-cites="300">@300</span> K to WCS.LP; CIS records flow and helium
+recovery volumes.</li>
+</ol>
+<h2 id="user-stories-requirements">4. User Stories → Requirements</h2>
+<ul>
+<li><strong>US-OPS-01:</strong> As an operator, I need a standard purge
+workflow so helium purity remains ≥99.999% after maintenance. →
+RTM.005.<br />
+</li>
+<li><strong>US-MAINT-02:</strong> As maintenance, I need tamper seals
+and logs to prove new gasket installation. → RTM.002 &amp;
+RTM.008.<br />
+</li>
+<li><strong>US-RELIAB-03:</strong> As reliability engineering, I need
+analyzer data and helium loss metrics to maintain KPI ≤1 Nm³/day. →
+RTM.004 + KPI dashboard.<br />
+</li>
+<li><strong>US-SAFETY-04:</strong> As safety manager, I require PSV/BD
+population and sizing data to certify S-line performance. → RTM.006
+&amp; RTM.007.<br />
+</li>
+<li><strong>US-CONTROL-05:</strong> As CIS owner, I require fail-open
+pilots so loss of air does not block manual valves. → RTM.003b.</li>
+</ul>
+<h2 id="interfaces">5. Interfaces</h2>
+<ul>
+<li><strong>Mechanical:</strong> <code>/FS</code> joints located at WCS
+panels, QRB warm panels, analyzer spools, storage sampling ports.<br />
+</li>
+<li><strong>Process:</strong> QINFRA.S / QRB.S tie to WCS.LP for
+recovery; analyzers loop back to LP.<br />
+</li>
+<li><strong>Electrical/Controls:</strong> Instrument air (fail-open),
+DO/DI for valves, AO for MFC, analyzer Ethernet/OPC-UA to CIS.<br />
+</li>
+<li><strong>Data:</strong> Tamper scan IDs, purge logs, leak test
+results stored in CIS/QA databases.</li>
+</ul>
+<h2 id="operational-constraints">6. Operational Constraints</h2>
+<ul>
+<li>No PTFE or elastomer seals in wetted helium service.<br />
+</li>
+<li>Analyzer accuracy ±1 ppm with drift ≤±1 ppm/year; calibration at
+FAT/SAT.<br />
+</li>
+<li>Helium loss KPI ≤1 Nm³/day steady state; ≤1% per abnormal event with
+recovery strategy.<br />
+</li>
+<li>Residual air after purge ≤0.05% prior to break-in.<br />
+</li>
+<li>Relief devices certified for setpoint and capacity; S-line
+maintained at 1.3 bar(a).</li>
+</ul>
+<h2 id="support-maintenance">7. Support &amp; Maintenance</h2>
+<ul>
+<li>Spare gasket kits, nuts, and select bodies maintained per
+BOM_Master.csv.<br />
+</li>
+<li>Scheduled verification of eductor motive pressure and solenoid
+fail-open function.<br />
+</li>
+<li>Quarterly review of purge logs, leak reports, and tamper seal
+counts; feed into DMAIC control loop.</li>
+</ul>
+<h2 id="data-logging">8. Data &amp; Logging</h2>
+<ul>
+<li>CIS captures: purge cycle metrics, analyzer ppm data, helium losses,
+PSV/BD activations, tamper seal scans.<br />
+</li>
+<li>QA archive stores: leak test reports, calibration certificates,
+PSV/BD certificates, RTM compliance evidence.</li>
+</ul>
+<h2 id="handover-training">9. Handover &amp; Training</h2>
+<ul>
+<li>Provide operators with PID symbol cheat-sheet and assembly
+previews.<br />
+</li>
+<li>Train maintenance on DBB purge and tamper sealing.<br />
+</li>
+<li>Conduct dry-run of S-line relief scenario verifying 200 g/s
+capability and WCS.LP recovery response.</li>
+</ul>

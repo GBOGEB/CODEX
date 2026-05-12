@@ -1,0 +1,51 @@
+{
+  "project": "Q_Engineering_Tools",
+  "canonical_entrypoint": "docs/index.html",
+  "hosted_entrypoint": "https://<github-user-or-org>.github.io/<repo>/",
+  "repository_role": "engineering_source_of_truth",
+  "pages_role": "curated_verified_user_portal",
+  "status": "active",
+  "version": "0.1.0",
+  "dashboard_lineage": {
+    "canonical_dashboard": "losses",
+    "current_generation": "v3",
+    "same_branch_policy": "bugfix_or_equivalent_improvement_only",
+    "similar_branch_policy": "parallel_variant_requires_comparison_and_promotion_gate"
+  },
+  "build": {
+    "master_builder": "tools/losses/src/build_all.py",
+    "publish_folder": "docs/",
+    "deterministic_required": true,
+    "idempotent_required": true
+  },
+  "published_pages": [
+    "docs/index.html",
+    "docs/engineering_portal.html",
+    "docs/dashboard.html",
+    "docs/handover.html",
+    "docs/verification.html",
+    "docs/regression.html",
+    "docs/traceability.html",
+    "docs/manifest.html",
+    "docs/knowledge_transfer.html",
+    "docs/knowledge_transfer_slides.html",
+    "docs/plots/index.html",
+    "docs/plots/*.html",
+    "docs/leak_baseline/index.html",
+    "docs/HUMAN.*.html"
+  ],
+  "controls": {
+    "link_check_required": true,
+    "stale_check_required": true,
+    "manifest_check_required": true,
+    "glob_policy_required": true,
+    "regression_check_required": true,
+    "post_publish_smoke_test_required": true
+  },
+  "promotion_rules": {
+    "main_must_be_deployable": true,
+    "pages_must_be_verified": true,
+    "experimental_outputs_must_not_replace_canonical_silently": true,
+    "public_urls_should_remain_stable": true
+  }
+}
