@@ -155,7 +155,8 @@ def convert_markdown_bundle(
             if fmt == "pptx":
                 if not settings.template_path.exists():
                     raise FileNotFoundError(
-                        f"PPTX reference template not found: {settings.template_path}"
+                        "PPTX reference template not found: "
+                        f"{settings.template_path}. Configure an existing template path."
                     )
                 if not settings.template_path.is_file():
                     raise ValueError(
@@ -167,6 +168,7 @@ def convert_markdown_bundle(
                 args.extend(["--metadata", f"partner_logo={settings.partner_logo}"])
 
             if settings.base_url:
+                # Keep both metadata key styles for compatibility across templates/filters.
                 args.extend(
                     [
                         "--metadata",
@@ -177,8 +179,16 @@ def convert_markdown_bundle(
                 )
 
             if settings.strict_links:
-                args.extend(["--metadata", "link-strict=true"])
-
+                # Keep both strict_links and link-strict metadata key styles for compatibility.
+                args.extend(
+                    [
+                        "--metadata",
+                        "strict_links=true",
+                        "--metadata",
+                        "link-strict=true",
+                        "--fail-if-warnings",
+                    ]
+                )
             subprocess.run(args, check=True, capture_output=True)
 
         outputs.append(target)
