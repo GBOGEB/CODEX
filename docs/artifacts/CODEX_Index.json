@@ -1,0 +1,104 @@
+{
+  "generated_at": "2025-12-04T12:49:08.8749515+01:00",
+  "artifacts": [
+    {
+      "id": "structure.10_books",
+      "type": "folder",
+      "label": "10_books canonical workspace",
+      "path": "book_md/10_books",
+      "status": "ready",
+      "notes": "Root for books, slides, and data binders."
+    },
+    {
+      "id": "book.master",
+      "type": "book",
+      "label": "Cryoplant Master Book",
+      "manifest": "book_md/book_order.txt",
+      "source_dir": "book_md",
+      "output_dir": "book_md/10_books/output",
+      "status": "source-only",
+      "relations": ["structure.10_books"]
+    },
+    {
+      "id": "slides.engine.qplant",
+      "type": "slide_engine",
+      "label": "QPLANT/SCKCEN PPT engine",
+      "path": "book_md/10_books/20_slides/engine/qplant_sckcen_template.py",
+      "readme": "book_md/10_books/20_slides/README.md",
+      "formats": ["pptx", "pdf", "html"],
+      "cli": "python -m slides.qplant_sckcen_template build|batch",
+      "relations": ["structure.10_books"]
+    },
+    {
+      "id": "slides.assets",
+      "type": "assets",
+      "label": "Slide assets",
+      "path": "book_md/10_books/20_slides/assets",
+      "status": "empty-shell",
+      "relations": ["slides.engine.qplant"]
+    },
+    {
+      "id": "slides.sources",
+      "type": "slides_src",
+      "label": "Deck source markdown",
+      "path": "book_md/10_books/20_slides/src",
+      "manifest_dir": "book_md/10_books/20_slides/manifests",
+      "output_dir": "book_md/10_books/20_slides/output",
+      "status": "empty-shell",
+      "relations": ["slides.engine.qplant"]
+    },
+    {
+      "id": "data.inputs",
+      "type": "dataset-root",
+      "label": "Binder inputs (canonical)",
+      "path": "book_md/10_books/30_data/inputs",
+      "related": ["Input/"],
+      "status": "empty-shell"
+    },
+    {
+      "id": "data.outputs",
+      "type": "dataset-root",
+      "label": "Binder outputs (canonical)",
+      "path": "book_md/10_books/30_data/outputs",
+      "related": ["output/"],
+      "status": "empty-shell"
+    },
+    {
+      "id": "dataset.handover_final",
+      "type": "dataset",
+      "label": "Handover final packaged conversations",
+      "path": "output/handover_final",
+      "manifest": "output/handover_final/conversations_manifest.json",
+      "global_index": "GLOBAL_index.json"
+    },
+    {
+      "id": "governance.handover",
+      "type": "handover",
+      "label": "Handover diffs and workflow",
+      "path": "99_handover",
+      "files": [
+        "99_handover/BUILD_WORKFLOW.md",
+        "99_handover/MASTER_DIFF.md",
+        "99_handover/MASTER_PATCH.md",
+        "99_handover/RENAME_SBS.csv",
+        "99_handover/handover_master_applied.glob.yaml"
+      ]
+    },
+    {
+      "id": "docs.legacy_exports",
+      "type": "doc_bundle",
+      "label": "Legacy exports (DOCX/PDF/HTML)",
+      "path": ".",
+      "files": [
+        "Full_VCR_Handover_master.docx",
+        "Full_VCR_Handover_master.html",
+        "VCR_Summary_master.docx",
+        "VCR_Summary_master.pdf",
+        "Book_Master.md",
+        "3_3_6_qplant_control_system_master.docx",
+        "3_3_6_qplant_control_system_master.pdf"
+      ],
+      "note": "Generated artefacts prior to canonical reorg; keep for reference."
+    }
+  ]
+}
