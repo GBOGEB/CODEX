@@ -14,3 +14,7 @@
 - Core Topic EP Dashboard
 - Themed Topics & Epics Portal
 - Engineering Program Epic Hub
+
+
+## Pending review + parallel track
+Use a dual-PR model: merge a minimal baseline branch, while a parallel `review/followups-*` branch collects all comment-driven updates before final approval. See `docs/review_parallel_track.md`.
