@@ -6,6 +6,7 @@ required = [
     "docs/dashboard.html",
     "docs/plots/index.html",
 ]
+MAX_ERROR_ENTRIES = 50
 
 manifest = Path("MANIFEST.json")
 if not manifest.exists():
@@ -27,7 +28,7 @@ bad_entries = [
 if bad_entries:
     raise SystemExit(
         "published_pages contains invalid entries:\n"
-        + "\n".join(str(p) for p in bad_entries[:50])
+        + "\n".join(str(p) for p in bad_entries[:MAX_ERROR_ENTRIES])
     )
 
 missing_required = [path for path in required if path not in published_pages]

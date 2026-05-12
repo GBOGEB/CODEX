@@ -2,6 +2,8 @@ import json
 from fnmatch import fnmatch
 from pathlib import Path
 
+PLOT_HTML_PREFIX = "docs/plots/"
+
 manifest = json.loads(Path("MANIFEST.json").read_text(encoding="utf-8"))
 published = manifest.get("published_pages", [])
 if not isinstance(published, list) or not published:
@@ -21,7 +23,7 @@ for pattern in published:
     tracked_html.update(pattern_matches)
 
 orphan_html = [path for path in deployed_html if path not in tracked_html]
-stale_plot_html = [path for path in orphan_html if path.startswith("docs/plots/")]
+stale_plot_html = [path for path in orphan_html if path.startswith(PLOT_HTML_PREFIX)]
 
 duplicate_dashboards = [
     path

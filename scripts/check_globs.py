@@ -10,6 +10,7 @@ forbidden_segment_exact = {
 }
 forbidden_filename_tokens = {"_old.", "_new.", "_final.", "_latest."}
 allowlist = {"output/handover_final"}
+MAX_VIOLATIONS_DISPLAYED = 50
 violations = []
 for p in Path(".").rglob("*"):
     s = str(p).replace("\\", "/")
@@ -31,6 +32,9 @@ for p in Path(".").rglob("*"):
         violations.append(s)
 
 if violations:
-    raise SystemExit("forbidden ambiguity paths found:\n" + "\n".join(sorted(violations)[:50]))
+    raise SystemExit(
+        "forbidden ambiguity paths found:\n"
+        + "\n".join(sorted(violations)[:MAX_VIOLATIONS_DISPLAYED])
+    )
 
 print("glob policy check passed")
