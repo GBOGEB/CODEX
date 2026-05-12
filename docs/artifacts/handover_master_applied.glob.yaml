@@ -39,8 +39,9 @@ files:
       6. Update RTM using `RTM.csv` / `requirements.json` and track evidence in CIS.
       7. Archive outputs via `handover_master_applied.tgz` or Git tag `SEED_20250918`.
 scripts:
-Apply replacements listed in 99_handover/RENAME_SBS.csv to source documents (whole-word)."
-
+  - name: apply_replacements
+    run: |
+      Apply replacements listed in 99_handover/RENAME_SBS.csv to source documents (whole-word).
   - name: build_pdfs
     run: |
       pandoc 02_design/02A_PnID/PID_SYMBOL_CHEATSHEET.md -V toc=true -V numbersections=true -o PID_SYMBOL_CHEATSHEET.pdf
