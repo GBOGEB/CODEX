@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install pytest
+
+      - name: Build dashboard/pages
+        run: |
+          if [ -f tools/losses/src/build_all.py ]; then
+            python tools/losses/src/build_all.py
+          fi
+
+      - name: Run tests
+        run: |
+          pytest -q
+
+      - name: Check manifest
+        run: |
+          python scripts/check_manifest.py
+
+      - name: Check glob policy
+        run: |
+          python scripts/check_globs.py
+
+      - name: Check stale artifacts
+        run: |
+          python scripts/check_stale.py
+
+      - name: Check links
+        run: |
+          python scripts/check_links.py
