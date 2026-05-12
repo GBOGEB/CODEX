@@ -3,7 +3,7 @@
 ## GitHub Pages setup
 1. Keep dashboard artifacts in `/docs`.
 2. In repository settings, set Pages source to `main` branch `/docs` folder.
-3. Publish `dashboard.html` as entry page, optionally rename to `index.html`.
+3. Publish the dashboard as `/docs/index.html` for the site root, or keep `dashboard.html` and link to it from an existing `/docs/index.html`.
 
 ## Backbone architecture
 - **Python layer**: aggregates markdown, YAML slide specs, and test status into a `topics.json` file.
