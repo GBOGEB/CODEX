@@ -167,7 +167,14 @@ def convert_markdown_bundle(
                 args.extend(["--metadata", f"partner_logo={settings.partner_logo}"])
 
             if settings.base_url:
-                args.extend(["--metadata", f"base-url={settings.base_url}"])
+                args.extend(
+                    [
+                        "--metadata",
+                        f"base-url={settings.base_url}",
+                        "--metadata",
+                        f"base_url={settings.base_url}",
+                    ]
+                )
 
             if settings.strict_links:
                 args.extend(["--metadata", "link-strict=true", "--fail-if-warnings"])
