@@ -157,20 +157,20 @@ def render_svg_plot(rows: list[dict[str, float]]) -> str:
         f"<circle cx='{x_pos(row['leak_mbarLs']):.2f}' cy='{y_pos(row['g_day']):.2f}' r='5' fill='#0a2e5c' />"
         f"<text x='{x_pos(row['leak_mbarLs']):.2f}' y='{y_pos(row['g_day']) - 12:.2f}' "
         "text-anchor='middle' font-size='11' fill='#0f1b2d'>"
-        f"{escape(f'{row["leak_mbarLs"]:.0e}')}</text>"
+        f"{escape(format(row['leak_mbarLs'], '.0e'))}</text>"
         for row in rows
     )
     x_ticks = "".join(
         f"<line x1='{x_pos(row['leak_mbarLs']):.2f}' y1='{top + inner_height:.2f}' x2='{x_pos(row['leak_mbarLs']):.2f}' "
         f"y2='{top + inner_height + 6:.2f}' stroke='#0f1b2d' />"
         f"<text x='{x_pos(row['leak_mbarLs']):.2f}' y='{height - 24:.2f}' text-anchor='middle' font-size='11' fill='#0f1b2d'>"
-        f"{escape(f'{row["leak_mbarLs"]:.0e}')}</text>"
+        f"{escape(format(row['leak_mbarLs'], '.0e'))}</text>"
         for row in rows
     )
     y_ticks = "".join(
         f"<line x1='{left - 6:.2f}' y1='{y_pos(row['g_day']):.2f}' x2='{left:.2f}' y2='{y_pos(row['g_day']):.2f}' stroke='#0f1b2d' />"
         f"<text x='{left - 12:.2f}' y='{y_pos(row['g_day']) + 4:.2f}' text-anchor='end' font-size='11' fill='#0f1b2d'>"
-        f"{escape(f'{row["g_day"]:.1e}')}</text>"
+        f"{escape(format(row['g_day'], '.1e'))}</text>"
         for row in rows
     )
     return (
