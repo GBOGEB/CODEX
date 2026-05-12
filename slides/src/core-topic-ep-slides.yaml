@@ -1,0 +1,40 @@
+meta:
+  title: "Core Topic EP Dashboard"
+  subtitle: "Themed Topics and Epics"
+  author: "Engineering Portal"
+  format: "html-slides"
+slides:
+  - slide_number: 1
+    title: "Portal Rename"
+    subtitle: "From HBHelium legacy label to Core Topic EP"
+    annotations:
+      - "Use concise name focused on epics and themes"
+      - "Keep acronym EP for continuity"
+    text_block: |
+      The legacy name is replaced by **Core Topic EP Dashboard**.
+      This aligns the portal with engineering themes, epic tracking,
+      and GitHub-hosted collaboration.
+
+  - slide_number: 2
+    title: "System Structure"
+    subtitle: "HTML interaction + GitHub managed backbone"
+    annotations:
+      - "Static frontend served from GitHub Pages"
+      - "Python scripts produce JSON and markdown artifacts"
+      - "JavaScript handles filtering and preview rendering"
+    text_block: |
+      Users interact through HTML components while the backend content
+      is generated from Python and markdown/yaml sources in-repo.
+
+  - slide_number: 3
+    title: "Content blocks"
+    subtitle: "Text and block layout model"
+    annotations:
+      - "title"
+      - "subtitle"
+      - "slide_number"
+      - "annotations"
+      - "text_block"
+    text_block: |
+      Each slide is represented as structured YAML so it can be converted
+      to markdown, reveal-style HTML, or PPTX templates.
