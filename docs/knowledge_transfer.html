@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Engineering Knowledge Transfer Plan</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #0b1220; color: #e8eefc; }
+    .content { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
+    h1 { margin-top: 0; }
+    h2 { color: #93c5fd; border-bottom: 1px solid #24314f; padding-bottom: 6px; }
+    h3 { color: #bdd7ff; }
+    ul, ol { line-height: 1.7; }
+    section { background: #131c2f; border: 1px solid #24314f; border-radius: 10px; padding: 20px 24px; margin: 20px 0; }
+    a { color: #93c5fd; }
+    .checklist li { list-style: none; padding-left: 0; }
+    .checklist li::before { content: "☐ "; color: #93c5fd; }
+    nav { margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <main class="content">
+    <nav><a href="index.html">← Portal</a> | <a href="knowledge_transfer_slides.html">Slides overview</a></nav>
+    <h1>Engineering App / Tool / Knowledge Transfer Program</h1>
+
+    <section>
+      <h2>Purpose</h2>
+      <p>This program turns repository artifacts into a repeatable engineering knowledge-transfer product delivered as:</p>
+      <ul>
+        <li>HTML slides for executive and onboarding walkthroughs.</li>
+        <li>Static HTML pages for detailed implementation and operating guidance.</li>
+        <li>Integrated global entry points so users can discover the content from the main CODEX portal.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Phase Plan</h2>
+
+      <h3>Phase 0 — Discovery and Governance</h3>
+      <ul>
+        <li>Confirm the audience (engineering, quality, operations, PMO).</li>
+        <li>Define scope boundaries (tooling, architecture, operational handover, verification).</li>
+        <li>Establish ownership, review cadence, and acceptance criteria.</li>
+      </ul>
+
+      <h3>Phase 1 — Information Architecture</h3>
+      <ul>
+        <li>Organize content into tracks:
+          <ol>
+            <li>Engineering app/tool architecture</li>
+            <li>Build and runtime workflows</li>
+            <li>Quality and verification evidence</li>
+            <li>Operational handover</li>
+          </ol>
+        </li>
+        <li>Map existing source documents and generated HTML outputs into these tracks.</li>
+      </ul>
+
+      <h3>Phase 2 — Slide System (HTML)</h3>
+      <ul>
+        <li>Build browser-native slides with sections for context, architecture, execution model, and adoption.</li>
+        <li>Keep a short "leadership path" and a deeper "engineering path."</li>
+        <li>Version the slides alongside source documents.</li>
+      </ul>
+
+      <h3>Phase 3 — HTML Knowledge Base</h3>
+      <ul>
+        <li>Maintain canonical Markdown source pages for each phase deliverable.</li>
+        <li>Publish static HTML pages to <code>/docs</code> for GitHub Pages consumption.</li>
+        <li>Add cross-links from slides into deeper HTML doc pages.</li>
+      </ul>
+
+      <h3>Phase 4 — Global Integration (GBOGEB/CODEX)</h3>
+      <ul>
+        <li>Register links in the global portal (<code>docs/index.html</code>) so users discover the content from the root page.</li>
+        <li>Add dashboard links and navigation consistency checks.</li>
+        <li>Validate all links with repository checks.</li>
+      </ul>
+
+      <h3>Phase 5 — Operationalization</h3>
+      <ul>
+        <li>Add a release checklist (content freeze, QA pass, publish, announce).</li>
+        <li>Track version history and change log for knowledge-transfer assets.</li>
+        <li>Schedule quarterly refreshes and post-mortem updates.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Execution Checklist</h2>
+      <ul class="checklist">
+        <li>Audience and owners confirmed</li>
+        <li>Content tracks approved</li>
+        <li>Slides reviewed by engineering lead</li>
+        <li>HTML knowledge base reviewed by quality lead</li>
+        <li>Global portal links validated</li>
+        <li>First release published</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Success Criteria</h2>
+      <p>New engineer can navigate from the global CODEX portal to:</p>
+      <ol>
+        <li>high-level slides in &lt; 2 clicks,</li>
+        <li>detailed procedural docs in &lt; 3 clicks,</li>
+        <li>verification evidence in &lt; 4 clicks.</li>
+      </ol>
+      <p>All referenced pages are static, link-valid, and versioned in-repo.</p>
+    </section>
+  </main>
+</body>
+</html>

@@ -3,7 +3,7 @@
 ## Purpose
 This program turns repository artifacts into a repeatable engineering knowledge-transfer product delivered as:
 - HTML slides for executive and onboarding walkthroughs.
-- Rendered Markdown for detailed implementation and operating guidance.
+- Static HTML pages for detailed implementation and operating guidance.
 - Integrated global entry points so users can discover the content from the main CODEX portal.
 
 ## Phase Plan
@@ -26,10 +26,10 @@ This program turns repository artifacts into a repeatable engineering knowledge-
 - Keep a short “leadership path” and a deeper “engineering path.”
 - Version the slides alongside source documents.
 
-### Phase 3 — Rendered Markdown Knowledge Base
-- Maintain canonical Markdown pages for each phase deliverable.
-- Publish rendered Markdown to `/docs` for GitHub Pages consumption.
-- Add cross-links from slides into deeper rendered docs.
+### Phase 3 — HTML Knowledge Base
+- Maintain canonical Markdown source pages for each phase deliverable.
+- Publish static HTML pages to `/docs` for GitHub Pages consumption.
+- Add cross-links from slides into deeper HTML doc pages.
 
 ### Phase 4 — Global Integration (GBOGEB/CODEX)
 - Register links in the global portal (`docs/index.html`) so users discover the content from the root page.
@@ -45,7 +45,7 @@ This program turns repository artifacts into a repeatable engineering knowledge-
 - [ ] Audience and owners confirmed
 - [ ] Content tracks approved
 - [ ] Slides reviewed by engineering lead
-- [ ] Rendered Markdown reviewed by quality lead
+- [ ] HTML knowledge base reviewed by quality lead
 - [ ] Global portal links validated
 - [ ] First release published
 
