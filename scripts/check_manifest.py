@@ -19,16 +19,32 @@ published_pages = obj.get("published_pages")
 if not isinstance(published_pages, list) or not published_pages:
     raise SystemExit("published_pages must be a non-empty list")
 
-non_string_pages = [page for page in published_pages if not isinstance(page, str)]
-if non_string_pages:
-    raise SystemExit("published_pages must contain only string paths")
-
-missing_required_pages = [path for path in required if path not in published_pages]
-if missing_required_pages:
+bad_entries = [
+    page
+    for page in published_pages
+    if not isinstance(page, str) or not page.strip() or not page.startswith("docs/")
+]
+if bad_entries:
     raise SystemExit(
-        "published_pages missing required entrypoints: "
-        + ", ".join(missing_required_pages)
+        "published_pages contains invalid entries:\n"
+        + "\n".join(str(p) for p in bad_entries[:50])
     )
+
+missing_required = [path for path in required if path not in published_pages]
+if missing_required:
+    raise SystemExit(
+        "published_pages missing required entrypoints:\n"
+        + "\n".join(missing_required)
+    )
+
+seen = set()
+duplicates = []
+for page in published_pages:
+    if page in seen and page not in duplicates:
+        duplicates.append(page)
+    seen.add(page)
+if duplicates:
+    raise SystemExit("published_pages contains duplicates:\n" + "\n".join(duplicates))
 
 for path in required:
     if not Path(path).exists():

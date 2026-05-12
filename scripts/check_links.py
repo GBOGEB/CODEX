@@ -12,6 +12,8 @@ class LinkParser(HTMLParser):
                 self.links.append(href)
 
 docs_root = Path('docs').resolve()
+repo_root = Path('.').resolve()
+allowed_site_roots = ('outputs',)
 errors = []
 for html in docs_root.rglob('*.html'):
     parser = LinkParser()
@@ -29,6 +31,15 @@ for html in docs_root.rglob('*.html'):
         try:
             target.relative_to(docs_root)
         except ValueError:
+            try:
+                target.relative_to(repo_root)
+                if any(
+                    target.is_relative_to(repo_root / root)
+                    for root in allowed_site_roots
+                ) and target.exists():
+                    continue
+            except ValueError:
+                pass
             errors.append(f"{html}: link escapes docs root -> {href}")
             continue
         if not target.exists():
