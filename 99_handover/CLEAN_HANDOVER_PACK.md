@@ -1,6 +1,6 @@
 # Clean Handover Pack Usage
 
-Use the **clean handover pack** and avoid the rough tuple flow.
+Use the **clean handover pack** and avoid the rough tuple flow (that is, passing fragmented, loosely structured handover inputs instead of the packaged minimal copy-paste handover).
 
 ## Recommended operator flow
 
