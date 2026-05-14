@@ -1,42 +1,68 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><title>QCELL SVG Rebuild Governance v0.6.0</title></head><body><pre># QCELL SVG Rebuild Governance Plan v0.6.0
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QCELL SVG Rebuild Governance v0.6.0</title>
+</head>
+<body>
+  <h1>QCELL SVG Rebuild Governance Plan v0.6.0</h1>
 
-## Decision: stop PPT-first drift
+  <h2>Decision: stop PPT-first drift</h2>
 
-The PPT deck is now a **reference source**, not the production artefact. The rebuild starts from **versioned SVG/HTML + SSOT YAML + rendered Markdown**. Optional PPT/PDF exports come only after the SVG model is stable.
+  <p>
+    The PPT deck is now a <strong>reference source</strong>, not the production artefact.
+    The rebuild starts from <strong>versioned SVG/HTML + SSOT YAML + rendered Markdown</strong>.
+    Optional PPT/PDF exports come only after the SVG model is stable.
+  </p>
 
-## Source basis
+  <h2>Source basis</h2>
 
-- Uploaded QCELL staged concept deck: nested 2K mass, 50K shield, MLI, vacuum, ambient boundary, radiation and conduction sources.
-- Raw conversation and tuple file: temperature colour rules, pressure mode, A/B and D/E circuits, parasitic-load semantics, GitHub-hosted HTML requirement.
-- Existing v0.3.0 HTML/SVG: keep interaction, YAML panel, pressure/temperature toggle, named lines, boundaries, and changelog structure.
-- Existing v0.4.1 artefact: preserve the improved narrative and SSOT idea.
-- v0.5.0 narrative: keep only as storyboard seed.
+  <ul>
+    <li>Uploaded QCELL staged concept deck: nested 2K mass, 50K shield, MLI, vacuum, ambient boundary, radiation and conduction sources.</li>
+    <li>Raw conversation and tuple file: temperature colour rules, pressure mode, A/B and D/E circuits, parasitic-load semantics, GitHub-hosted HTML requirement.</li>
+    <li>Existing v0.3.0 HTML/SVG: keep interaction, YAML panel, pressure/temperature toggle, named lines, boundaries, and changelog structure.</li>
+    <li>Existing v0.4.1 artefact: preserve the improved narrative and SSOT idea.</li>
+    <li>v0.5.0 narrative: keep only as storyboard seed.</li>
+  </ul>
 
-## Rebuild principles
+  <h2>Rebuild principles</h2>
 
-1. Do not break existing versions.
-2. SVG is the drawing source; HTML is the hosted interactive wrapper.
-3. YAML is the SSOT for labels, values, colours, equations, views, and lineage.
-4. Re-running with the same YAML must produce the same SVG/HTML.
-5. Each revision updates tuple inventory, changelog, lineage, review checklist, SVG, HTML, and Markdown.
-6. User steering happens at phase gates on small SVG/HTML increments.
+  <ol>
+    <li>Do not break existing versions.</li>
+    <li>SVG is the drawing source; HTML is the hosted interactive wrapper.</li>
+    <li>YAML is the SSOT for labels, values, colours, equations, views, and lineage.</li>
+    <li>Re-running with the same YAML must produce the same SVG/HTML.</li>
+    <li>Each revision updates tuple inventory, changelog, lineage, review checklist, SVG, HTML, and Markdown.</li>
+    <li>User steering happens at phase gates on small SVG/HTML increments.</li>
+  </ol>
 
-## Master tuple set
+  <h2>Master tuple set</h2>
 
-| Tuple | Domain | Meaning | Status |
-|---|---|---|---|
-| T-001 | Mass | 2K_mass is the protected liquid-helium core / JT black-box region | KEEP |
-| T-002 | Barrier | White annulus is vacuum barrier | KEEP |
-| T-003 | Shield | 50K thermal shield protects the 2K mass | KEEP |
-| T-004 | MLI | Blue/orange membrane indicates MLI + shield layer | KEEP |
-| T-005 | Ambient | Outer boundary is 293.15 K nominal / 300 K design | KEEP |
-| T-006 | Circuit | A = 2K supply, supercritical He, 4.5 K, 3 bar | KEEP |
-| T-007 | Circuit | B = 2K return, 2–4 K, 26–31 mbar | KEEP |
-| T-008 | Circuit | D = shield supply, 30–40 K, 12–13 bar | KEEP |
-| T-009 | Circuit | E = shield return, 50–60 K, about 20 K rise | KEEP |
-| T-010 | Colour | Temperature determines colour; 2, 4, 30, 50, 60, 77 K and separate 77–300 K scale | KEEP |
-| T-011 | Pressure | Low pressure = 27 mbar to 1.2 bar; high pressure = 1.2 bar to 15 bar | NEW |
-| T-012 | Heat flow | Nominal heat flow is high temperature to low temperature | KEEP |
+  <table>
+    <thead>
+      <tr>
+        <th>Tuple</th>
+        <th>Domain</th>
+        <th>Meaning</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>T-001</td><td>Mass</td><td>2K_mass is the protected liquid-helium core / JT black-box region</td><td>KEEP</td></tr>
+      <tr><td>T-002</td><td>Barrier</td><td>White annulus is vacuum barrier</td><td>KEEP</td></tr>
+      <tr><td>T-003</td><td>Shield</td><td>50K thermal shield protects the 2K mass</td><td>KEEP</td></tr>
+      <tr><td>T-004</td><td>MLI</td><td>Blue/orange membrane indicates MLI + shield layer</td><td>KEEP</td></tr>
+      <tr><td>T-005</td><td>Ambient</td><td>Outer boundary is 293.15 K nominal / 300 K design</td><td>KEEP</td></tr>
+      <tr><td>T-006</td><td>Circuit</td><td>A = 2K supply, supercritical He, 4.5 K, 3 bar</td><td>KEEP</td></tr>
+      <tr><td>T-007</td><td>Circuit</td><td>B = 2K return, 2–4 K, 26–31 mbar</td><td>KEEP</td></tr>
+      <tr><td>T-008</td><td>Circuit</td><td>D = shield supply, 30–40 K, 12–13 bar</td><td>KEEP</td></tr>
+      <tr><td>T-009</td><td>Circuit</td><td>E = shield return, 50–60 K, about 20 K rise</td><td>KEEP</td></tr>
+      <tr><td>T-010</td><td>Colour</td><td>Temperature determines colour; 2, 4, 30, 50, 60, 77 K and separate 77–300 K scale</td><td>KEEP</td></tr>
+      <tr><td>T-011</td><td>Pressure</td><td>Low pressure = 27 mbar to 1.2 bar; high pressure = 1.2 bar to 15 bar</td><td>NEW</td></tr>
+      <tr><td>T-012</td><td>Heat flow</td><td>Nominal heat flow is high temperature to low temperature</td><td>KEEP</td></tr>
+    </tbody>
+  </table>
 | T-013 | Reverse flow | If 2K mass is warmer than 50K shield, inner parasitic path reverses | NEW |
 | T-014 | Load | 300→50 radiation | KEEP |
 | T-015 | Load | 300→50 conduction through supports/tyrods | KEEP |
