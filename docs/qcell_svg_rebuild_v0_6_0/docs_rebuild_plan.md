@@ -39,7 +39,7 @@ The PPT deck is now a **reference source**, not the production artefact. The reb
 | T-012 | Heat flow | Nominal heat flow is high temperature to low temperature | KEEP |
 | T-013 | Reverse flow | If 2K mass is warmer than 50K shield, inner parasitic path reverses | NEW |
 | T-014 | Load | 300→50 radiation | KEEP |
-| T-015 | Load | 300→50 conduction through supports/tyrods | KEEP |
+| T-015 | Load | 300→50 conduction through supports/tie rods | KEEP |
 | T-016 | Load | 50→2 radiation | KEEP |
 | T-017 | Load | 50→2 conduction | KEEP |
 | T-018 | View | Temperature mode | KEEP |
