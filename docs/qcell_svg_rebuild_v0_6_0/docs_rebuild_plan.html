@@ -1,0 +1,134 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>QCELL SVG Rebuild Governance v0.6.0</title></head><body><pre># QCELL SVG Rebuild Governance Plan v0.6.0
+
+## Decision: stop PPT-first drift
+
+The PPT deck is now a **reference source**, not the production artefact. The rebuild starts from **versioned SVG/HTML + SSOT YAML + rendered Markdown**. Optional PPT/PDF exports come only after the SVG model is stable.
+
+## Source basis
+
+- Uploaded QCELL staged concept deck: nested 2K mass, 50K shield, MLI, vacuum, ambient boundary, radiation and conduction sources.
+- Raw conversation and tuple file: temperature colour rules, pressure mode, A/B and D/E circuits, parasitic-load semantics, GitHub-hosted HTML requirement.
+- Existing v0.3.0 HTML/SVG: keep interaction, YAML panel, pressure/temperature toggle, named lines, boundaries, and changelog structure.
+- Existing v0.4.1 artefact: preserve the improved narrative and SSOT idea.
+- v0.5.0 narrative: keep only as storyboard seed.
+
+## Rebuild principles
+
+1. Do not break existing versions.
+2. SVG is the drawing source; HTML is the hosted interactive wrapper.
+3. YAML is the SSOT for labels, values, colours, equations, views, and lineage.
+4. Re-running with the same YAML must produce the same SVG/HTML.
+5. Each revision updates tuple inventory, changelog, lineage, review checklist, SVG, HTML, and Markdown.
+6. User steering happens at phase gates on small SVG/HTML increments.
+
+## Master tuple set
+
+| Tuple | Domain | Meaning | Status |
+|---|---|---|---|
+| T-001 | Mass | 2K_mass is the protected liquid-helium core / JT black-box region | KEEP |
+| T-002 | Barrier | White annulus is vacuum barrier | KEEP |
+| T-003 | Shield | 50K thermal shield protects the 2K mass | KEEP |
+| T-004 | MLI | Blue/orange membrane indicates MLI + shield layer | KEEP |
+| T-005 | Ambient | Outer boundary is 293.15 K nominal / 300 K design | KEEP |
+| T-006 | Circuit | A = 2K supply, supercritical He, 4.5 K, 3 bar | KEEP |
+| T-007 | Circuit | B = 2K return, 2–4 K, 26–31 mbar | KEEP |
+| T-008 | Circuit | D = shield supply, 30–40 K, 12–13 bar | KEEP |
+| T-009 | Circuit | E = shield return, 50–60 K, about 20 K rise | KEEP |
+| T-010 | Colour | Temperature determines colour; 2, 4, 30, 50, 60, 77 K and separate 77–300 K scale | KEEP |
+| T-011 | Pressure | Low pressure = 27 mbar to 1.2 bar; high pressure = 1.2 bar to 15 bar | NEW |
+| T-012 | Heat flow | Nominal heat flow is high temperature to low temperature | KEEP |
+| T-013 | Reverse flow | If 2K mass is warmer than 50K shield, inner parasitic path reverses | NEW |
+| T-014 | Load | 300→50 radiation | KEEP |
+| T-015 | Load | 300→50 conduction through supports/tyrods | KEEP |
+| T-016 | Load | 50→2 radiation | KEEP |
+| T-017 | Load | 50→2 conduction | KEEP |
+| T-018 | View | Temperature mode | KEEP |
+| T-019 | View | Pressure mode | REFINE |
+| T-020 | View | Nominal / all cold | PRIMARY |
+| T-021 | View | Warm / all at 300 K | NEW |
+| T-022 | View | Active cooldown | NEW |
+| T-023 | View | Passive warm-up / A-B off | NEW |
+| T-024 | Output | HTML-hosted interactive SVG | KEEP |
+| T-025 | Output | Rendered Markdown report | NEW |
+| T-026 | Output | GitHub Pages repo package | KEEP |
+| T-027 | Governance | Changelog + lineage per version | EXPAND |
+
+## Version lineage
+
+| Version | Useful content | Control decision |
+|---|---|---|
+| v0.1 | Temperature colour bar and interactive seed | Preserve |
+| v0.2 | YAML source, GitHub Pages scaffold, changelog | Preserve |
+| v0.3 | A/B/D/E, bidirectional boundary, parasitic placeholders | Preserve as best prior HTML |
+| v0.4.1 | Better narrative and protected-core concept | Preserve; stop PPT-first |
+| v0.5.0 | Storyboard seed | Preserve only as text/narrative |
+| v0.6.0 | Governance baseline | Current |
+| v0.7.0 | SVG grammar/style proof | Planned |
+| v0.8.0 | Nominal all-cold physics | Planned |
+| v0.9.0 | Modes, reversal logic, equations | Planned |
+| v1.0.0 | Hosted master release | Planned |
+
+## Phase plan
+
+### Phase 0 — Freeze and preserve
+Tasks: archive prior artefacts; define tuple set; mark PPT as reference-only; create changelog and lineage baseline.  
+Exit: v0.6.0 governance pack approved.
+
+### Phase 1 — SVG grammar and visual system
+Tasks: define temperature map, pressure map, arrow grammar, boundaries, warm/cold cards, and callout style.  
+Exit: static SVG style proof accepted.
+
+### Phase 2 — Nominal case: everything already cold
+Tasks: draw 2K mass, vacuum, MLI, 50K shield, 300K boundary, A/B, D/E, and 300→50 / 50→2 heat leaks.  
+Exit: heat-flow directions, labels, colours, and boundaries accepted.
+
+### Phase 3 — Pressure and circuit views
+Tasks: add pressure toggle with low-pressure and high-pressure domains; preserve geometry.  
+Exit: pressure colours visibly distinct and line labels correct.
+
+### Phase 4 — Transient and reverse-flow logic
+Tasks: add state selector for nominal, warm start, active cooldown, passive warm-up; implement sign-change logic.  
+Exit: reversal arrows and state text are explicit.
+
+### Phase 5 — MASTER integrated view
+Tasks: combine boundaries, masses, circuits, radiation, conduction, equations, legends, toggles, and YAML panel.  
+Exit: readable integrated SVG/HTML.
+
+### Phase 6 — GitHub Pages release
+Tasks: package repo, generator, changelog, review checklist, and GitHub Pages workflow.  
+Exit: `/docs/index.html` works locally and in GitHub Pages.
+
+## Recursive tuple update protocol
+
+```yaml
+tuple_update:
+  id: T-###
+  action: add | modify | supersede | deprecate
+  source: user | generated | derived
+  affects: [ssot_yaml, svg, html, markdown, changelog]
+  validation: [visual_review, physics_consistency, idempotent_regeneration]
+```
+
+## Progress tracker
+
+| Phase | Status | Next action |
+|---|---:|---|
+| 0 Freeze and preserve | IN PROGRESS | Review v0.6.0 governance pack |
+| 1 SVG grammar | NOT STARTED | Build v0.7 style proof |
+| 2 Nominal case | NOT STARTED | Build nominal SVG |
+| 3 Pressure/circuit views | NOT STARTED | Refine pressure scale |
+| 4 Transient/reverse flow | NOT STARTED | Add state logic |
+| 5 MASTER view | NOT STARTED | Integrate layers |
+| 6 GitHub release | NOT STARTED | Package repo |
+
+## Immediate action list
+
+1. Accept v0.6.0 as rebuild baseline.
+2. Build v0.7.0 SVG style proof only.
+3. Review arrows, boundaries, colour scales, card layout.
+4. Build v0.8.0 nominal all-cold case.
+5. Add pressure mode after geometry is accepted.
+6. Add transient/reverse-flow logic after nominal is correct.
+7. Generate final HTML-hosted MASTER view.
+8. Export optional PPT only at the end.
+</pre></body></html>
