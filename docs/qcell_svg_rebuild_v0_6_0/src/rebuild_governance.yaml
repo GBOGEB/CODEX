@@ -1,0 +1,11 @@
+schema_version: 0.6.0
+package_type: qcell_svg_rebuild_governance
+decision: stop_ppt_first_drift
+primary_artifact_chain: [ssot_yaml, versioned_svg, hosted_html, rendered_markdown]
+ppt_policy: reference_source_and_export_only
+idempotency:
+  same_yaml_same_svg: true
+  same_yaml_same_html: true
+  versioned_outputs_only: true
+  phase_gate_review: true
+next_version: v0.7.0_style_proof
