@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QPS Master Slide System v0.5</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --text: #e5e7eb;
+      --accent: #22d3ee;
+      --warning: #f59e0b;
+      --space-sm: 8px;
+      --space-md: 12px;
+      --space-lg: 20px;
+      --h1: 30px;
+      --h2: 22px;
+      --body: 15px;
+      --font: Inter, Segoe UI, Arial, sans-serif;
+    }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); }
+    .wrap { max-width: 980px; margin: 0 auto; padding: var(--space-lg); }
+    .slide { background: var(--panel); border-left: 4px solid var(--accent); padding: var(--space-lg); margin-bottom: var(--space-lg); }
+    h1 { margin-top: 0; font-size: var(--h1); }
+    h2 { font-size: var(--h2); margin-bottom: var(--space-md); }
+    p, li { font-size: var(--body); line-height: 1.4; }
+    nav a { color: var(--accent); margin-right: var(--space-md); text-decoration: none; }
+    .reference { color: var(--warning); }
+    .meta { opacity: 0.85; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>QPS Master Slide System <span class="meta">v0.5.0</span></h1>
+    <div class="slide" id="STYLE_SYSTEM_001">
+      <h2>STYLE_SYSTEM_001 — Semantic Visual Dialects</h2>
+      <ul>
+        <li>Styles are semantic visual dialects, not isolated themes.</li>
+        <li>Overlay grammar should communicate hierarchy and review status.</li>
+      </ul>
+      <nav>
+        <a href="#STYLE_SYSTEM_002">Next</a>
+        <a class="reference" href="#CONTROL_SYSTEM_001">Reference</a>
+      </nav>
+    </div>
+
+    <div class="slide" id="STYLE_SYSTEM_002">
+      <h2>STYLE_SYSTEM_002 — Dense Slide Composition Rules</h2>
+      <ul>
+        <li>Preserve high-density engineering detail with strict sectioning.</li>
+        <li>Use tokenized spacing and emphasis for consistent readability.</li>
+      </ul>
+      <nav>
+        <a href="#STYLE_SYSTEM_001">Prev</a>
+        <a href="#STYLE_SYSTEM_001">Home</a>
+      </nav>
+    </div>
+
+    <div class="slide" id="CONTROL_SYSTEM_001">
+      <h2>CONTROL_SYSTEM_001 — QPS:CIS Hierarchy</h2>
+      <ul>
+        <li>QPS:CIS hierarchy defines signals, ownership, and control boundaries.</li>
+        <li>MIT/MIS/MCS semantics are inherited through WCS.HCC layers.</li>
+      </ul>
+      <nav>
+        <a href="#CONTROL_SYSTEM_002">Next</a>
+        <a class="reference" href="#STYLE_SYSTEM_001">Reference</a>
+      </nav>
+    </div>
+
+    <div class="slide" id="CONTROL_SYSTEM_002">
+      <h2>CONTROL_SYSTEM_002 — Inhibition and Interlock Logic</h2>
+      <ul>
+        <li>Inhibition rules must be explicit, traceable, and test-linked.</li>
+        <li>Interlocks should show trigger, effect, and reset semantics.</li>
+      </ul>
+      <nav>
+        <a href="#CONTROL_SYSTEM_001">Prev</a>
+        <a class="reference" href="#STYLE_SYSTEM_002">Interlude</a>
+      </nav>
+    </div>
+  </div>
+</body>
+</html>

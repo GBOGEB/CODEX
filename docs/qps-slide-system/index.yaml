@@ -1,0 +1,25 @@
+version: 0.5.0
+system: QPS_MASTER_SLIDES_SYSTEM
+entrypoint: index.html
+decks:
+  - id: STYLE_SYSTEM
+    title: Style System
+    slides:
+      - STYLE_SYSTEM_001
+      - STYLE_SYSTEM_002
+  - id: CONTROL_SYSTEM
+    title: Control System
+    slides:
+      - CONTROL_SYSTEM_001
+      - CONTROL_SYSTEM_002
+links:
+  references:
+    - from: STYLE_SYSTEM_001
+      to: CONTROL_SYSTEM_001
+      type: reference
+    - from: CONTROL_SYSTEM_002
+      to: STYLE_SYSTEM_002
+      type: interlude
+tokens: styles/tokens.yaml
+maps:
+  duplicate_reference: maps/duplicate_reference_map.yaml
