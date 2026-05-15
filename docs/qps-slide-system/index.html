@@ -102,10 +102,11 @@
     </div>
   </div>
   <script>
+    var MONO = 'Consolas, "Courier New", monospace';
     var FONTS = {
-      aptos:   { body: 'Aptos, Calibri, "Segoe UI", Arial, sans-serif',   mono: 'Consolas, "Courier New", monospace' },
-      inter:   { body: 'Inter, "Segoe UI", Arial, sans-serif',             mono: 'Consolas, "Courier New", monospace' },
-      georgia: { body: 'Georgia, "Times New Roman", serif',                mono: '"Courier New", monospace' }
+      aptos:   { body: 'Aptos, Calibri, "Segoe UI", Arial, sans-serif', mono: MONO },
+      inter:   { body: 'Inter, "Segoe UI", Arial, sans-serif',           mono: MONO },
+      georgia: { body: 'Georgia, "Times New Roman", serif',              mono: '"Courier New", monospace' }
     };
     function applyFont(key) {
       var f = FONTS[key] || FONTS.aptos;
@@ -114,8 +115,8 @@
       try { localStorage.setItem('qps-font', key); } catch(e) {}
     }
     (function init() {
-      var saved = '';
-      try { saved = localStorage.getItem('qps-font') || ''; } catch(e) {}
+      var saved;
+      try { saved = localStorage.getItem('qps-font') || 'aptos'; } catch(e) { saved = 'aptos'; }
       var key = FONTS[saved] ? saved : 'aptos';
       document.getElementById('font-select').value = key;
       applyFont(key);
