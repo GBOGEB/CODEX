@@ -48,16 +48,12 @@ repo/
 
 ## Build reproducibility baseline
 
-Use repository-owned entrypoints as the contract:
+Use the repository's documented, CI-matching entrypoints as the contract:
 
-- `make setup`
-- `make lint`
-- `make test`
-- `make build`
-- `make package`
-- `make verify`
+- `pytest`
+- `python scripts/check_*.py`
 
-CI should invoke these same commands, not ad hoc tool invocations.
+CI should invoke these same canonical commands. If the project later adds a `Makefile` as a stable wrapper surface, update both this document and CI to use those `make ...` entrypoints consistently.
 
 ## Security and release controls
 
