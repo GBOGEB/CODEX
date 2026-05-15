@@ -4,7 +4,7 @@ HTML-first dense engineering knowledge-transfer system for QPS slide decks.
 
 ## Version
 
-`v0.4.0` — indexed master-output pass.
+`v0.5.0` — HTML render + YAML seed pass.
 
 ## Purpose
 
@@ -37,3 +37,11 @@ YAML source -> HTML render -> PDF/PPTX review artefacts
 ## Review status
 
 This is a first GitHub/Codex-ready scaffold. It intentionally keeps the render lightweight while preserving the architecture, terminology, and deck split for the next implementation pass.
+
+
+## v0.5 Delivery
+
+- Added runnable `index.html` with HTML-native navigation.
+- Added `index.yaml` system index.
+- Added first deck YAML files with two master slides each.
+- Added style token file and duplicate/reference map.

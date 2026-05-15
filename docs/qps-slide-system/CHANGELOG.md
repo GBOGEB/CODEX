@@ -29,3 +29,14 @@
 - Add index.yaml.
 - Add rendered HTML master-slide examples.
 - Add reference/interlude linking system.
+
+## v0.5.0
+
+### Added
+
+- Rendered `index.html` with HTML-native section anchors and navigation links.
+- Initial YAML index and deck files for STYLE_SYSTEM and CONTROL_SYSTEM.
+- Second master slide per deck to validate slide sequence behavior.
+- Reference/interlude linking between decks.
+- Duplicate/reference canonical map file.
+- Style token source file for color/spacing/typography/emphasis.
