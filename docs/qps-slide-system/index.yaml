@@ -13,14 +13,40 @@ decks:
       - CONTROL_SYSTEM_001
       - CONTROL_SYSTEM_002
 links:
-  # Cross-deck links only. In-deck navigation (next/prev/home) is declared in each deck YAML.
-  references:
-    - from: STYLE_SYSTEM_001
-      to: CONTROL_SYSTEM_001
-      type: reference
-    - from: CONTROL_SYSTEM_002
-      to: STYLE_SYSTEM_002
-      type: interlude
+  # Full link index: in-deck navigation (next/prev/home) and cross-deck relations (reference/interlude).
+  # In-deck links are also declared inline in each deck YAML; this index is the authoritative combined view.
+  - id: STYLE_SYSTEM_001__next
+    from: STYLE_SYSTEM_001
+    to: STYLE_SYSTEM_002
+    type: next
+  - id: STYLE_SYSTEM_001__reference
+    from: STYLE_SYSTEM_001
+    to: CONTROL_SYSTEM_001
+    type: reference
+  - id: STYLE_SYSTEM_002__prev
+    from: STYLE_SYSTEM_002
+    to: STYLE_SYSTEM_001
+    type: prev
+  - id: STYLE_SYSTEM_002__home
+    from: STYLE_SYSTEM_002
+    to: home
+    type: home
+  - id: CONTROL_SYSTEM_001__next
+    from: CONTROL_SYSTEM_001
+    to: CONTROL_SYSTEM_002
+    type: next
+  - id: CONTROL_SYSTEM_001__reference
+    from: CONTROL_SYSTEM_001
+    to: STYLE_SYSTEM_001
+    type: reference
+  - id: CONTROL_SYSTEM_002__prev
+    from: CONTROL_SYSTEM_002
+    to: CONTROL_SYSTEM_001
+    type: prev
+  - id: CONTROL_SYSTEM_002__interlude
+    from: CONTROL_SYSTEM_002
+    to: STYLE_SYSTEM_002
+    type: interlude
 tokens: styles/tokens.yaml
 maps:
   duplicate_reference: maps/duplicate_reference_map.yaml
