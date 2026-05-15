@@ -4,7 +4,7 @@
 
 This report treats “project kickoff through the first production-ready release and operational handoff” as the path from initial repository bootstrap through the first production-ready release and operational handoff. For a GitHub-centered delivery model, the strongest default is a protected-trunk workflow: short-lived working branches, pull requests as the unit of review and audit, GitHub Issues/Projects/Milestones as the work system, and GitHub Actions as the automation plane.
 
-For reproducibility, the central design principle is to make the repository the single operational contract for both humans and automation: pin the runtime/toolchain, commit the correct lockfiles or wrappers for the chosen ecosystem, expose one stable command surface such as `make setup`, `make test`, `make build`, and `make package`, and have CI call those same commands.
+For reproducibility, the central design principle is to make the repository the single operational contract for both humans and automation: pin the runtime/toolchain, commit the correct lockfiles or wrappers for the chosen ecosystem, document the exact install and validation commands used by CI, and have local development call those same commands.
 
 For release management, the cleanest generic model is SemVer for version numbers, Conventional Commits for commit intent, signed release tags, GitHub Releases for distributable artifacts, and GitHub’s automated release notes with a repository-level `.github/release.yml` so changelog categories stay consistent over time.
 
@@ -24,36 +24,38 @@ Recommended branch model:
 - Required checks and reviews
 - CODEOWNERS on sensitive paths
 
-## Repository blueprint
+## Current repository landmarks
 
 ```text
 repo/
 ├── .github/
-│   ├── CODEOWNERS
-│   ├── dependabot.yml
-│   ├── pull_request_template.md
-│   ├── release.yml
-│   ├── ISSUE_TEMPLATE/
 │   └── workflows/
 ├── docs/
+├── outputs/
 ├── scripts/
 ├── src/
 ├── tests/
 ├── README.md
-├── CONTRIBUTING.md
-├── SECURITY.md
-├── SUPPORT.md
-└── Makefile
+├── pyproject.toml
+├── requirements.txt
+├── MANIFEST.json
+└── GLOB_POLICY.md
 ```
+
+This repository does not currently define a root `Makefile`, so the reproducibility contract should stay aligned with the Python commands already exercised by CI.
 
 ## Build reproducibility baseline
 
 Use the repository's documented, CI-matching entrypoints as the contract:
 
-- `pytest`
-- `python scripts/check_*.py`
+- `python -m pip install -e '.[dev]'`
+- `python -m pytest -q`
+- `python scripts/check_manifest.py`
+- `python scripts/check_globs.py`
+- `python scripts/check_stale.py`
+- `python scripts/check_links.py`
 
-CI should invoke these same canonical commands. If the project later adds a `Makefile` as a stable wrapper surface, update both this document and CI to use those `make ...` entrypoints consistently.
+These commands match the repository's current validation flow. If the project later adds a stable wrapper such as a root `Makefile`, update both this document and CI together so the documented command surface remains true.
 
 ## Security and release controls
 
@@ -83,4 +85,4 @@ Release model:
 
 ## Exit criterion
 
-A new engineer can clone the repo, run setup, open an issue-linked branch, pass CI via PR, merge into protected `main`, cut a signed release tag, and promote the same release artifact across environments using only documented runbooks.
+A new engineer can clone the repo, install the documented development dependencies, open an issue-linked branch, pass CI via PR, merge into protected `main`, cut a signed release tag, and promote the same release artifact across environments using only documented runbooks.
