@@ -61,100 +61,120 @@
       <tr><td>T-010</td><td>Colour</td><td>Temperature determines colour; 2, 4, 30, 50, 60, 77 K and separate 77–300 K scale</td><td>KEEP</td></tr>
       <tr><td>T-011</td><td>Pressure</td><td>Low pressure = 27 mbar to 1.2 bar; high pressure = 1.2 bar to 15 bar</td><td>NEW</td></tr>
       <tr><td>T-012</td><td>Heat flow</td><td>Nominal heat flow is high temperature to low temperature</td><td>KEEP</td></tr>
+      <tr><td>T-013</td><td>Reverse flow</td><td>If 2K mass is warmer than 50K shield, inner parasitic path reverses</td><td>NEW</td></tr>
+      <tr><td>T-014</td><td>Load</td><td>300→50 radiation</td><td>KEEP</td></tr>
+      <tr><td>T-015</td><td>Load</td><td>300→50 conduction through supports/tyrods</td><td>KEEP</td></tr>
+      <tr><td>T-016</td><td>Load</td><td>50→2 radiation</td><td>KEEP</td></tr>
+      <tr><td>T-017</td><td>Load</td><td>50→2 conduction</td><td>KEEP</td></tr>
+      <tr><td>T-018</td><td>View</td><td>Temperature mode</td><td>KEEP</td></tr>
+      <tr><td>T-019</td><td>View</td><td>Pressure mode</td><td>REFINE</td></tr>
+      <tr><td>T-020</td><td>View</td><td>Nominal / all cold</td><td>PRIMARY</td></tr>
+      <tr><td>T-021</td><td>View</td><td>Warm / all at 300 K</td><td>NEW</td></tr>
+      <tr><td>T-022</td><td>View</td><td>Active cooldown</td><td>NEW</td></tr>
+      <tr><td>T-023</td><td>View</td><td>Passive warm-up / A-B off</td><td>NEW</td></tr>
+      <tr><td>T-024</td><td>Output</td><td>HTML-hosted interactive SVG</td><td>KEEP</td></tr>
+      <tr><td>T-025</td><td>Output</td><td>Rendered Markdown report</td><td>NEW</td></tr>
+      <tr><td>T-026</td><td>Output</td><td>GitHub Pages repo package</td><td>KEEP</td></tr>
+      <tr><td>T-027</td><td>Governance</td><td>Changelog + lineage per version</td><td>EXPAND</td></tr>
     </tbody>
   </table>
-| T-013 | Reverse flow | If 2K mass is warmer than 50K shield, inner parasitic path reverses | NEW |
-| T-014 | Load | 300→50 radiation | KEEP |
-| T-015 | Load | 300→50 conduction through supports/tyrods | KEEP |
-| T-016 | Load | 50→2 radiation | KEEP |
-| T-017 | Load | 50→2 conduction | KEEP |
-| T-018 | View | Temperature mode | KEEP |
-| T-019 | View | Pressure mode | REFINE |
-| T-020 | View | Nominal / all cold | PRIMARY |
-| T-021 | View | Warm / all at 300 K | NEW |
-| T-022 | View | Active cooldown | NEW |
-| T-023 | View | Passive warm-up / A-B off | NEW |
-| T-024 | Output | HTML-hosted interactive SVG | KEEP |
-| T-025 | Output | Rendered Markdown report | NEW |
-| T-026 | Output | GitHub Pages repo package | KEEP |
-| T-027 | Governance | Changelog + lineage per version | EXPAND |
 
-## Version lineage
+  <h2>Version lineage</h2>
 
-| Version | Useful content | Control decision |
-|---|---|---|
-| v0.1 | Temperature colour bar and interactive seed | Preserve |
-| v0.2 | YAML source, GitHub Pages scaffold, changelog | Preserve |
-| v0.3 | A/B/D/E, bidirectional boundary, parasitic placeholders | Preserve as best prior HTML |
-| v0.4.1 | Better narrative and protected-core concept | Preserve; stop PPT-first |
-| v0.5.0 | Storyboard seed | Preserve only as text/narrative |
-| v0.6.0 | Governance baseline | Current |
-| v0.7.0 | SVG grammar/style proof | Planned |
-| v0.8.0 | Nominal all-cold physics | Planned |
-| v0.9.0 | Modes, reversal logic, equations | Planned |
-| v1.0.0 | Hosted master release | Planned |
+  <table>
+    <thead>
+      <tr>
+        <th>Version</th>
+        <th>Useful content</th>
+        <th>Control decision</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>v0.1</td><td>Temperature colour bar and interactive seed</td><td>Preserve</td></tr>
+      <tr><td>v0.2</td><td>YAML source, GitHub Pages scaffold, changelog</td><td>Preserve</td></tr>
+      <tr><td>v0.3</td><td>A/B/D/E, bidirectional boundary, parasitic placeholders</td><td>Preserve as best prior HTML</td></tr>
+      <tr><td>v0.4.1</td><td>Better narrative and protected-core concept</td><td>Preserve; stop PPT-first</td></tr>
+      <tr><td>v0.5.0</td><td>Storyboard seed</td><td>Preserve only as text/narrative</td></tr>
+      <tr><td>v0.6.0</td><td>Governance baseline</td><td>Current</td></tr>
+      <tr><td>v0.7.0</td><td>SVG grammar/style proof</td><td>Planned</td></tr>
+      <tr><td>v0.8.0</td><td>Nominal all-cold physics</td><td>Planned</td></tr>
+      <tr><td>v0.9.0</td><td>Modes, reversal logic, equations</td><td>Planned</td></tr>
+      <tr><td>v1.0.0</td><td>Hosted master release</td><td>Planned</td></tr>
+    </tbody>
+  </table>
 
-## Phase plan
+  <h2>Phase plan</h2>
 
-### Phase 0 — Freeze and preserve
-Tasks: archive prior artefacts; define tuple set; mark PPT as reference-only; create changelog and lineage baseline.  
-Exit: v0.6.0 governance pack approved.
+  <h3>Phase 0 — Freeze and preserve</h3>
+  <p>Tasks: archive prior artefacts; define tuple set; mark PPT as reference-only; create changelog and lineage baseline.<br>
+  Exit: v0.6.0 governance pack approved.</p>
 
-### Phase 1 — SVG grammar and visual system
-Tasks: define temperature map, pressure map, arrow grammar, boundaries, warm/cold cards, and callout style.  
-Exit: static SVG style proof accepted.
+  <h3>Phase 1 — SVG grammar and visual system</h3>
+  <p>Tasks: define temperature map, pressure map, arrow grammar, boundaries, warm/cold cards, and callout style.<br>
+  Exit: static SVG style proof accepted.</p>
 
-### Phase 2 — Nominal case: everything already cold
-Tasks: draw 2K mass, vacuum, MLI, 50K shield, 300K boundary, A/B, D/E, and 300→50 / 50→2 heat leaks.  
-Exit: heat-flow directions, labels, colours, and boundaries accepted.
+  <h3>Phase 2 — Nominal case: everything already cold</h3>
+  <p>Tasks: draw 2K mass, vacuum, MLI, 50K shield, 300K boundary, A/B, D/E, and 300→50 / 50→2 heat leaks.<br>
+  Exit: heat-flow directions, labels, colours, and boundaries accepted.</p>
 
-### Phase 3 — Pressure and circuit views
-Tasks: add pressure toggle with low-pressure and high-pressure domains; preserve geometry.  
-Exit: pressure colours visibly distinct and line labels correct.
+  <h3>Phase 3 — Pressure and circuit views</h3>
+  <p>Tasks: add pressure toggle with low-pressure and high-pressure domains; preserve geometry.<br>
+  Exit: pressure colours visibly distinct and line labels correct.</p>
 
-### Phase 4 — Transient and reverse-flow logic
-Tasks: add state selector for nominal, warm start, active cooldown, passive warm-up; implement sign-change logic.  
-Exit: reversal arrows and state text are explicit.
+  <h3>Phase 4 — Transient and reverse-flow logic</h3>
+  <p>Tasks: add state selector for nominal, warm start, active cooldown, passive warm-up; implement sign-change logic.<br>
+  Exit: reversal arrows and state text are explicit.</p>
 
-### Phase 5 — MASTER integrated view
-Tasks: combine boundaries, masses, circuits, radiation, conduction, equations, legends, toggles, and YAML panel.  
-Exit: readable integrated SVG/HTML.
+  <h3>Phase 5 — MASTER integrated view</h3>
+  <p>Tasks: combine boundaries, masses, circuits, radiation, conduction, equations, legends, toggles, and YAML panel.<br>
+  Exit: readable integrated SVG/HTML.</p>
 
-### Phase 6 — GitHub Pages release
-Tasks: package repo, generator, changelog, review checklist, and GitHub Pages workflow.  
-Exit: `/docs/index.html` works locally and in GitHub Pages.
+  <h3>Phase 6 — GitHub Pages release</h3>
+  <p>Tasks: package repo, generator, changelog, review checklist, and GitHub Pages workflow.<br>
+  Exit: <code>/docs/index.html</code> works locally and in GitHub Pages.</p>
 
-## Recursive tuple update protocol
+  <h2>Recursive tuple update protocol</h2>
 
-```yaml
-tuple_update:
+  <pre><code>tuple_update:
   id: T-###
   action: add | modify | supersede | deprecate
   source: user | generated | derived
   affects: [ssot_yaml, svg, html, markdown, changelog]
-  validation: [visual_review, physics_consistency, idempotent_regeneration]
-```
+  validation: [visual_review, physics_consistency, idempotent_regeneration]</code></pre>
 
-## Progress tracker
+  <h2>Progress tracker</h2>
 
-| Phase | Status | Next action |
-|---|---:|---|
-| 0 Freeze and preserve | IN PROGRESS | Review v0.6.0 governance pack |
-| 1 SVG grammar | NOT STARTED | Build v0.7 style proof |
-| 2 Nominal case | NOT STARTED | Build nominal SVG |
-| 3 Pressure/circuit views | NOT STARTED | Refine pressure scale |
-| 4 Transient/reverse flow | NOT STARTED | Add state logic |
-| 5 MASTER view | NOT STARTED | Integrate layers |
-| 6 GitHub release | NOT STARTED | Package repo |
+  <table>
+    <thead>
+      <tr>
+        <th>Phase</th>
+        <th style="text-align: right;">Status</th>
+        <th>Next action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>0 Freeze and preserve</td><td style="text-align: right;">IN PROGRESS</td><td>Review v0.6.0 governance pack</td></tr>
+      <tr><td>1 SVG grammar</td><td style="text-align: right;">NOT STARTED</td><td>Build v0.7 style proof</td></tr>
+      <tr><td>2 Nominal case</td><td style="text-align: right;">NOT STARTED</td><td>Build nominal SVG</td></tr>
+      <tr><td>3 Pressure/circuit views</td><td style="text-align: right;">NOT STARTED</td><td>Refine pressure scale</td></tr>
+      <tr><td>4 Transient/reverse flow</td><td style="text-align: right;">NOT STARTED</td><td>Add state logic</td></tr>
+      <tr><td>5 MASTER view</td><td style="text-align: right;">NOT STARTED</td><td>Integrate layers</td></tr>
+      <tr><td>6 GitHub release</td><td style="text-align: right;">NOT STARTED</td><td>Package repo</td></tr>
+    </tbody>
+  </table>
 
-## Immediate action list
+  <h2>Immediate action list</h2>
 
-1. Accept v0.6.0 as rebuild baseline.
-2. Build v0.7.0 SVG style proof only.
-3. Review arrows, boundaries, colour scales, card layout.
-4. Build v0.8.0 nominal all-cold case.
-5. Add pressure mode after geometry is accepted.
-6. Add transient/reverse-flow logic after nominal is correct.
-7. Generate final HTML-hosted MASTER view.
-8. Export optional PPT only at the end.
-</pre></body></html>
+  <ol>
+    <li>Accept v0.6.0 as rebuild baseline.</li>
+    <li>Build v0.7.0 SVG style proof only.</li>
+    <li>Review arrows, boundaries, colour scales, card layout.</li>
+    <li>Build v0.8.0 nominal all-cold case.</li>
+    <li>Add pressure mode after geometry is accepted.</li>
+    <li>Add transient/reverse-flow logic after nominal is correct.</li>
+    <li>Generate final HTML-hosted MASTER view.</li>
+    <li>Export optional PPT only at the end.</li>
+  </ol>
+
+</body>
+</html>
