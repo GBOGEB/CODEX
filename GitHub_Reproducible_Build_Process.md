@@ -2,7 +2,7 @@
 
 ## Executive summary
 
-This report treats “project start to inception” as the path from initial repository bootstrap through the first production-ready release and operational handoff. For a GitHub-centered delivery model, the strongest default is a protected-trunk workflow: short-lived working branches, pull requests as the unit of review and audit, GitHub Issues/Projects/Milestones as the work system, and GitHub Actions as the automation plane.
+This report treats “project kickoff through the first production-ready release and operational handoff” as the path from initial repository bootstrap through the first production-ready release and operational handoff. For a GitHub-centered delivery model, the strongest default is a protected-trunk workflow: short-lived working branches, pull requests as the unit of review and audit, GitHub Issues/Projects/Milestones as the work system, and GitHub Actions as the automation plane.
 
 For reproducibility, the central design principle is to make the repository the single operational contract for both humans and automation: pin the runtime/toolchain, commit the correct lockfiles or wrappers for the chosen ecosystem, expose one stable command surface such as `make setup`, `make test`, `make build`, and `make package`, and have CI call those same commands.
 
