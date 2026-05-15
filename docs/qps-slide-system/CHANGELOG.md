@@ -4,16 +4,16 @@
 
 ### Added
 
-- HTML-first navigation/index architecture.
-- Initial deck split:
+- Initial documentation for the QPS master-slide system structure and direction.
+- Proposed HTML-first navigation/index architecture.
+- Proposed initial deck split:
   - STYLE_SYSTEM
   - SBS_NAMING
   - CONTROL_SYSTEM
   - UTILITIES_SYSTEM
-- First-pass master-slide candidates.
-- Recursive/idempotent/evolutionary DMAIC model.
-- KPI tracking and phase maturity metrics.
-- YAML source model draft.
+- First-pass documentation of master-slide candidates.
+- Draft definition of the recursive/idempotent/evolutionary DMAIC model.
+- Draft notes for KPI tracking, phase maturity metrics, and a YAML source model.
 
 ### Key Findings
 
