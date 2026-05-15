@@ -23,12 +23,16 @@ The goal is not low-density presentation design. The goal is dense, coherent, to
 YAML source -> HTML render -> PDF/PPTX review artefacts
 ```
 
-## Current artefacts
+## Current repository files
 
-- `index.html` — first HTML preview and navigation entry.
-- `index.yaml` — system/deck index draft.
-- `schema.slide.yaml` — draft slide source schema.
+- `README.md` — package overview, scope, and implementation direction.
 - `CHANGELOG.md` — versioned progress log.
+
+## Planned/generated artefacts
+
+- `index.html` — planned HTML preview and navigation entry.
+- `index.yaml` — planned system/deck index draft.
+- `schema.slide.yaml` — planned slide source schema draft.
 
 ## Review status
 
