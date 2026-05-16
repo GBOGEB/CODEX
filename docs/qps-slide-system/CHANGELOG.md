@@ -40,3 +40,16 @@
 - Reference/interlude linking between decks.
 - Duplicate/reference canonical map file.
 - Style token source file for color/spacing/typography/emphasis.
+
+
+## v0.6.0
+
+### Added
+
+- Chapter 15 calculator tool scaffold in `src/ch15_calculator_tool.py`.
+- Version metadata loading from `VERSION.json` for reproducible calculation lineage.
+- Unit tests for total-with-contingency, failure-rate, and version loading behavior.
+
+### Purpose
+
+- Start Chapter 15 implementation as a calculator-focused workstream with explicit versioning semantics.

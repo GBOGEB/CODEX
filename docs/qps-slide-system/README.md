@@ -4,7 +4,7 @@ HTML-first dense engineering knowledge-transfer system for QPS slide decks.
 
 ## Version
 
-`v0.5.0` — HTML render + YAML seed pass.
+`v0.6.0` — adds Chapter 15 calculator tooling + versioning governance seed.
 
 ## Purpose
 
@@ -45,3 +45,10 @@ This is a first GitHub/Codex-ready scaffold. It intentionally keeps the render l
 - Added `index.yaml` system index.
 - Added first deck YAML files with two master slides each.
 - Added style token file and duplicate/reference map.
+
+
+## Chapter 15 (Calculator Tool + Versioning)
+
+- Added Python calculator utility (`src/ch15_calculator_tool.py`) to seed reproducible chapter-level engineering calculations.
+- Tool reads `VERSION.json` to attach semantic version metadata to outputs and reviews.
+- This aligns chapter work packages to explicit versioned baselines for CI validation and PR governance.
