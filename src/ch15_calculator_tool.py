@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
 import json
+from pathlib import Path
 
 
 @dataclass(frozen=True)
@@ -14,9 +14,12 @@ class CalculatorVersion:
     generated_at: str | None = None
 
 
-def load_version(version_file: str = "VERSION.json") -> CalculatorVersion:
+def load_version(version_file: str | Path = "VERSION.json") -> CalculatorVersion:
     """Load version metadata from VERSION.json."""
-    data = json.loads(Path(version_file).read_text(encoding="utf-8"))
+    version_path = Path(version_file)
+    if not version_path.is_absolute():
+        version_path = Path(__file__).resolve().parents[1] / version_path
+    data = json.loads(version_path.read_text(encoding="utf-8"))
     return CalculatorVersion(
         version=data.get("version", "0.0.0"),
         git=data.get("git"),
