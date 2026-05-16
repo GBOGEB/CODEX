@@ -14,7 +14,6 @@ ROOT = Path(__file__).resolve().parents[1]
 @dataclass(frozen=True)
 class CalculatorVersion:
     """Version metadata attached to calculator outputs."""
-
     version: str
     git: str | None = None
     generated_at: str | None = None
@@ -50,7 +49,6 @@ def load_version(version_file: PathLike | None = None) -> CalculatorVersion:
 
 def calculate_total_with_contingency(base_cost: float, contingency_pct: float) -> float:
     """Return total cost after contingency percentage is applied."""
-
     if base_cost < 0:
         raise ValueError("base_cost must be >= 0")
     if contingency_pct < 0:
@@ -61,7 +59,6 @@ def calculate_total_with_contingency(base_cost: float, contingency_pct: float) -
 
 def calculate_failure_rate(failures: int, operating_hours: float) -> float:
     """Return failures per operating hour."""
-
     if failures < 0:
         raise ValueError("failures must be >= 0")
     if operating_hours <= 0:

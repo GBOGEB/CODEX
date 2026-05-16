@@ -40,6 +40,15 @@ VALVE_CLASSES = [
 ]
 
 
+def project_version() -> str:
+    pyproject_path = Path(__file__).resolve().parents[1] / "pyproject.toml"
+    for line in pyproject_path.read_text(encoding="utf-8").splitlines():
+        stripped = line.strip()
+        if stripped.startswith("version ="):
+            return stripped.split("=", 1)[1].strip().strip('"').strip("'")
+    return "0.0.0"
+
+
 def calc(leak: float) -> dict[str, float]:
     leak_decimal = Decimal(str(leak))
     with localcontext() as ctx:
@@ -186,7 +195,7 @@ def render_svg_plot(rows: list[dict[str, float]]) -> str:
     )
 
 
-def build_pages(now: str, git: str, rows: list[dict[str, float]], core: dict[str, float], nav_prefix: str = "") -> dict[str, str]:
+def build_pages(now: str, git: str, rows: list[dict[str, float]], core: dict[str, float], version: str, nav_prefix: str = "") -> dict[str, str]:
     table_rows = "".join(
         f"<tr><td>{row['leak_mbarLs']:.0e}</td><td>{row['g_day']:.6e}</td><td>{row['g_year_99_8000h']:.6e}</td></tr>"
         for row in rows
@@ -207,7 +216,7 @@ def build_pages(now: str, git: str, rows: list[dict[str, float]], core: dict[str
         "05_VALVE_CLASS_COMPARISON.html": f"<h1>05 Valve Class Comparison</h1>{navigation}<table><tr><th>Valve type</th><th>Leak class</th><th>Sealing quality</th><th>Cost impact</th><th>Suitability</th></tr>{valve_rows}</table>",
         "06_ENGINEERING_RATIONALE.html": f"<h1>06 Engineering Rationale</h1>{navigation}<div class='card'><h2>MATHS / Sizing / Flow / Pressure</h2><p>Mass leakage scales linearly with throughput leak class. Ambient side fixed at 1 bar supports normalized comparison across valve families.</p><h2>Material & valve selection</h2><p>Metal-sealed welded/VCR selections are preferred for 1e-9 to 1e-8 classes where helium inventory retention and purity are primary constraints.</p></div>",
         "07_TRACEABILITY_MATRIX.html": f"<h1>07 Traceability Matrix</h1>{navigation}<table><tr><th>Requirement</th><th>Evidence</th></tr><tr><td>Leak conversion proof</td><td>02 + 03 pages</td></tr><tr><td>Log-log visual evidence</td><td>04 page</td></tr><tr><td>Valve mapping</td><td>05 page</td></tr><tr><td>Build/version metadata</td><td>09 page + VERSION.json</td></tr></table>",
-        "08_VERSION_HISTORY.html": f"<h1>08 Version History</h1>{navigation}<div class='card'><p>Version 1.2.0 generated at {now}, git {git}.</p><p>DMAIC_0 completeness check: assumptions, units, code generation, and output matrix validated.</p></div>",
+        "08_VERSION_HISTORY.html": f"<h1>08 Version History</h1>{navigation}<div class='card'><p>Version {version} generated at {now}, git {git}.</p><p>DMAIC_0 completeness check: assumptions, units, code generation, and output matrix validated.</p></div>",
         "09_BUILD_AND_RUNTIME_REPORT.html": f"<h1>09 Build and Runtime Report</h1>{navigation}<table><tr><th>Item</th><th>Value</th></tr><tr><td>Build timestamp</td><td>{now}</td></tr><tr><td>Git hash</td><td>{git}</td></tr><tr><td>Python support</td><td>&gt;=3.10</td></tr><tr><td>Runtime metadata</td><td>{runtime_note}</td></tr><tr><td>Stable build status</td><td>PASS</td></tr><tr><td>Stable server status</td><td>N/A (static package)</td></tr><tr><td>GitHub Pages publication status</td><td>Ready for publish</td></tr></table>",
     }
 
@@ -222,19 +231,20 @@ def write_outputs() -> None:
 
     rows = [calc(leak) for leak in LEAK_RATES]
     core = calc(1e-8)
+    version = project_version()
     now = generated_at_value()
     git = git_value()
 
-    pages = build_pages(now, git, rows, core)
+    pages = build_pages(now, git, rows, core, version)
     for filename, body in pages.items():
         write_text(HTML / filename, page(filename, body))
 
-    docs_pages = build_pages(now, git, rows, core, nav_prefix="../outputs/html/")
+    docs_pages = build_pages(now, git, rows, core, version, nav_prefix="../outputs/html/")
     write_text(DOCS / "HUMAN.index.html", page("index.html", docs_pages["index.html"]))
     write_text(DOCS / "HUMAN.calculations.html", page("03_MATHS_PROOF.html", docs_pages["03_MATHS_PROOF.html"]))
     write_text(DOCS / "HUMAN.traceability_table.html", page("07_TRACEABILITY_MATRIX.html", docs_pages["07_TRACEABILITY_MATRIX.html"]))
     write_text(DOCS / "HUMAN.report.md", f"# HUMAN Report\n\nCore conversion at 1e-8 mbar·L/s: {core['g_day']:.6e} g/day; {core['g_year_99_8000h']:.6e} g/year.\n")
-    write_text(DOCS / "HUMAN.version_log.md", f"# HUMAN Version Log\n\n- v1.2.0 @ {now} (git {git})\n")
+    write_text(DOCS / "HUMAN.version_log.md", f"# HUMAN Version Log\n\n- v{version} @ {now} (git {git})\n")
 
     calc_json = {
         "constants": {"R": R, "T": T, "M_HE": M_HE, "HOURS": HOURS, "AVAIL": AVAIL},
@@ -274,10 +284,10 @@ def write_outputs() -> None:
         manifest["json"].append("outputs/json/runtime_metadata.json")
 
     write_text(ROOT / "OUTPUT_MANIFEST.json", json.dumps(manifest, indent=2))
-    write_text(ROOT / "VERSION.json", json.dumps({"version": "1.2.0", "generated_at": now, "git": git}, indent=2))
+    write_text(ROOT / "VERSION.json", json.dumps({"version": version, "generated_at": now, "git": git}, indent=2))
     write_text(
         ROOT / "CHANGELOG.md",
-        "# CHANGELOG\n\n## 1.2.0\n- Replaced shell pages with filled technical content.\n- Added idempotent generator script and HUMAN.* collateral.\n- Expanded traceability, maths proof, and runtime metadata handling.\n",
+        f"# CHANGELOG\n\n## {version}\n- Replaced shell pages with filled technical content.\n- Added idempotent generator script and HUMAN.* collateral.\n- Expanded traceability, maths proof, and runtime metadata handling.\n",
     )
     write_text(
         ROOT / "BUILD_LOG.md",
