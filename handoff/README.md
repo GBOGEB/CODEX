@@ -17,4 +17,4 @@ From repository root:
 (cd handoff && tar -czf v0_6_2_handover_bundle.tar.gz v0_6_2)
 ```
 
-These commands are deterministic for package contents and should be used only for distribution artifacts, not for source control.
+These commands rebuild the same package contents, but the resulting archives are not byte-reproducible by default because `zip` and `tar` may record varying metadata such as timestamps, ownership, and file order. Use them only for local/distribution artifacts, not for source control or reproducible release packaging.
