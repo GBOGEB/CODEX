@@ -34,7 +34,8 @@ def test_failure_rate_rejects_invalid_inputs():
         calculate_failure_rate(1, 0)
 
 
-def test_load_version_reads_repo_version_file():
+def test_load_version_reads_repo_version_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.chdir(tmp_path)
     ver = load_version()
     assert ver.version
 
@@ -44,6 +45,14 @@ def test_load_version_requires_non_empty_version(tmp_path: Path):
     bad_version_file.write_text(json.dumps({"version": ""}), encoding="utf-8")
 
     with pytest.raises(ValueError, match="non-empty"):
+        load_version(bad_version_file)
+
+
+def test_load_version_requires_object_json(tmp_path: Path):
+    bad_version_file = tmp_path / "VERSION.json"
+    bad_version_file.write_text(json.dumps([]), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="JSON object"):
         load_version(bad_version_file)
 
 

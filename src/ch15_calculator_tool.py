@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Union
 
 PathLike = Union[str, Path]
+ROOT = Path(__file__).resolve().parents[1]
 
 
 @dataclass(frozen=True)
@@ -29,10 +30,13 @@ class Ch15InputSample:
     operating_hours: float
 
 
-def load_version(version_file: PathLike = "VERSION.json") -> CalculatorVersion:
+def load_version(version_file: PathLike | None = None) -> CalculatorVersion:
     """Load version metadata from a VERSION.json-like file."""
 
-    data = json.loads(Path(version_file).read_text(encoding="utf-8"))
+    version_path = ROOT / "VERSION.json" if version_file is None else Path(version_file)
+    data = json.loads(version_path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError("VERSION metadata must be a JSON object")
     version = data.get("version")
     if not isinstance(version, str) or not version.strip():
         raise ValueError("VERSION metadata must include a non-empty string 'version'")
