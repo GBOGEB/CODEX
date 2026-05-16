@@ -21,7 +21,7 @@ This note summarizes currently available handover guidance in the local CODEX wo
 - [ ] Establish integration branch lifecycle (`feature/*` -> review -> merge -> tagged snapshot).
 
 ## B. Handover artifact placement and structure
-- [ ] Keep `handover/GISTAU_CH15_V11_PR_HANDOVER.md` as primary integration handover source.
+- [ ] Create `handover/GISTAU_CH15_V11_PR_HANDOVER.md` and use it as the primary integration handover source.
 - [ ] Add explicit artifact map covering `handover/`, `docs/`, and `output/` publication paths.
 - [ ] Add a deterministic artifact manifest update step to the PR checklist.
 
