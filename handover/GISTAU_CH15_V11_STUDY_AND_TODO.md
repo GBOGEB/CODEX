@@ -16,7 +16,7 @@ This note summarizes currently available handover guidance in the local CODEX wo
 ## CH15-V11 execution TODOs
 
 ## A. Repository and branch governance
-- [ ] Confirm authoritative remote is `GBOGEB/CODEX` and document access limitation for `GBOGEN/CODEX`.
+- [ ] Confirm authoritative integration remote is `GBOGEB/CODEX`; if `GBOGEN/CODEX` appears in local configuration or notes, document it explicitly as a legacy/non-authoritative remote before use.
 - [ ] Ensure branch naming pattern and protection behavior are explicitly documented for `main` and feature branches.
 - [ ] Establish integration branch lifecycle (`feature/*` -> review -> merge -> tagged snapshot).
 
