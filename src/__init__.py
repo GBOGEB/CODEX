@@ -12,7 +12,7 @@ from .github_interface import GitHubInterface
 from .authenticator import GitHubAuthenticator
 from .config import GitHubConfig, ConfigManager
 
-__version__ = "1.0.0"
+__version__ = "1.3.0"
 __all__ = ["GitHubInterface", "GitHubAuthenticator", "GitHubConfig", "ConfigManager"]
 
 
