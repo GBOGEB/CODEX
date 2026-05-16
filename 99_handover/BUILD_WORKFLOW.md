@@ -59,3 +59,8 @@ Assign each change an impact score (0–5) considering safety, compliance, opera
 - Git workflow: commit → tag `SEED_YYYYMMDD`.  
 - Store `handover_master_applied.tgz` with all artifacts.  
 - Document versions inside requirements.json meta block.
+
+
+## Lifecycle and governance
+
+- Apply Chapter 15 feature lifecycle rule: `99_handover/CH15_FEATURE_TREATMENT_RULE.md`.
