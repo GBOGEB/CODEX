@@ -19,7 +19,10 @@ class CalculatorVersion:
     generated_at: str | None = None
 
 
-def load_version(version_file: PathLike = "VERSION.json") -> CalculatorVersion:
+_DEFAULT_VERSION_FILE = Path(__file__).resolve().parents[1] / "VERSION.json"
+
+
+def load_version(version_file: PathLike = _DEFAULT_VERSION_FILE) -> CalculatorVersion:
     """Load version metadata from a VERSION.json-like file."""
 
     data = json.loads(Path(version_file).read_text(encoding="utf-8"))
