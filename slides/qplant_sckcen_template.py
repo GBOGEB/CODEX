@@ -148,7 +148,7 @@ def convert_markdown_bundle(
                 str(target),
             ]
 
-            if fmt == "pptx":
+            if fmt == "pptx" and settings.template_path.exists():
                 args.extend(["--reference-doc", str(settings.template_path)])
 
             if settings.partner_logo:
