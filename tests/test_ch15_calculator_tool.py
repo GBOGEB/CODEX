@@ -4,8 +4,10 @@ from pathlib import Path
 import pytest
 
 from src.ch15_calculator_tool import (
+    build_sample_stats,
     calculate_failure_rate,
     calculate_total_with_contingency,
+    load_input_sample,
     load_version,
 )
 
@@ -43,3 +45,17 @@ def test_load_version_requires_non_empty_version(tmp_path: Path):
 
     with pytest.raises(ValueError, match="non-empty"):
         load_version(bad_version_file)
+
+
+def test_load_input_sample_and_build_stats():
+    sample = load_input_sample("inputs/ch15/sample_input_v1.json")
+    stats = build_sample_stats(sample)
+    assert stats["total_with_contingency"] == pytest.approx(140625.0)
+    assert stats["failure_rate_per_hour"] == pytest.approx(3 / 8760.0)
+
+
+def test_load_input_sample_requires_fields(tmp_path: Path):
+    bad = tmp_path / "bad.json"
+    bad.write_text(json.dumps({"base_cost": 1}), encoding="utf-8")
+    with pytest.raises(ValueError, match="Missing required fields"):
+        load_input_sample(bad)

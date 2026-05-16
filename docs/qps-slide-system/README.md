@@ -52,3 +52,5 @@ This is a first GitHub/Codex-ready scaffold. It intentionally keeps the render l
 - Added Python calculator utility (`src/ch15_calculator_tool.py`) to seed reproducible chapter-level engineering calculations.
 - Tool reads `VERSION.json` to attach semantic version metadata to outputs and reviews.
 - This aligns chapter work packages to explicit versioned baselines for CI validation and PR governance.
+
+- Added sample input file `inputs/ch15/sample_input_v1.json` and stats computation (`build_sample_stats`) to support input-size and output-stat traceability.

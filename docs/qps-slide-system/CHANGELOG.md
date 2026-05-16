@@ -53,3 +53,5 @@
 ### Purpose
 
 - Start Chapter 15 implementation as a calculator-focused workstream with explicit versioning semantics.
+
+- Sample input JSON added at `inputs/ch15/sample_input_v1.json` and deterministic stats builder added for governance-ready outputs.
