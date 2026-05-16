@@ -1,0 +1,32 @@
+version: v0.6.2
+name: qcell_view_policy
+regression_correction:
+  issue: pressure_temperature_palette_collision
+  resolution: independent_views_and_palettes
+
+views:
+  temperature_analysis:
+    role: primary
+    palette: cryogenic_dedicated
+    thresholds_k: [2, 4, 30, 50, 60, 77]
+    warm_extension_k: [77, 300]
+    semantics: thermal_physics_primary
+  pressure_diagnostic:
+    role: secondary
+    palette: diagnostic_independent
+    low_zone: blue_cyan_or_purple_grey
+    high_zone: dark_diagnostic
+    semantics: operational_diagnostic_only
+
+combined_view:
+  allowed: true
+  requires_explicit_toggle: true
+  separated_legends: true
+  removable_layers_live: true
+  semantic_guardrail: prevent_mixed_interpretation
+
+continuation:
+  preserve_governance_baseline: pr_38
+  preserve_metadata: [A_B, D_E]
+  preserve_parasitic_sign_reversal_logic: true
+  next_target: v0.7.0_svg_grammar_style_proof
