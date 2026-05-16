@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Portable Recursive Engineering Handover — Unified Document Schema</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #38bdf8;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --risk: #ef4444;
+      --code: #020617;
+      --paper: #ffffff;
+      --paper-text: #111827;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    header {
+      padding: 2rem;
+      border-bottom: 1px solid #334155;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+    }
+
+    header h1 { margin: 0 0 .5rem 0; font-size: 2rem; }
+    header p { max-width: 900px; color: var(--muted); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      min-height: calc(100vh - 150px);
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      align-self: start;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 1rem;
+      background: #020617;
+      border-right: 1px solid #334155;
+    }
+
+    nav a {
+      display: block;
+      padding: .6rem .75rem;
+      margin: .25rem 0;
+      color: var(--text);
+      text-decoration: none;
+      border-radius: .6rem;
+    }
+
+    nav a:hover { background: #1e293b; color: var(--accent); }
+
+    main { padding: 2rem; max-width: 1150px; }
+
+    section {
+      margin-bottom: 2rem;
+      padding: 1.25rem;
+      border: 1px solid #334155;
+      border-radius: 1rem;
+      background: var(--panel);
+      box-shadow: 0 18px 40px rgba(0,0,0,.25);
+    }
+
+    h2 { color: var(--accent); margin-top: 0; }
+    h3 { margin-bottom: .25rem; }
+
+    details {
+      margin: .8rem 0;
+      border: 1px solid #334155;
+      border-radius: .8rem;
+      background: var(--panel2);
+      overflow: hidden;
+    }
+
+    summary {
+      cursor: pointer;
+      padding: .85rem 1rem;
+      font-weight: 700;
+    }
+
+    details > div { padding: 0 1rem 1rem 1rem; }
+
+    code, pre {
+      font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+      background: var(--code);
+      color: #d1fae5;
+      border-radius: .6rem;
+    }
+
+    pre { padding: 1rem; overflow: auto; }
+    code { padding: .1rem .35rem; }
+
+    .badge {
+      display: inline-block;
+      padding: .15rem .5rem;
+      border-radius: 999px;
+      font-size: .8rem;
+      font-weight: 700;
+      margin-right: .35rem;
+    }
+
+    .ok { background: rgba(34,197,94,.15); color: #86efac; }
+    .warn { background: rgba(245,158,11,.15); color: #fcd34d; }
+    .risk { background: rgba(239,68,68,.15); color: #fca5a5; }
+    .info { background: rgba(56,189,248,.15); color: #7dd3fc; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+    th, td {
+      border: 1px solid #334155;
+      padding: .65rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th { background: #0f172a; color: #bfdbfe; }
+
+    .view-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin: 1rem 0;
+    }
+
+    button {
+      border: 1px solid #334155;
+      border-radius: .7rem;
+      background: #0f172a;
+      color: var(--text);
+      padding: .55rem .8rem;
+      cursor: pointer;
+    }
+
+    button:hover { border-color: var(--accent); color: var(--accent); }
+
+    .pdf-mode body, .pdf-mode main, .pdf-mode section {
+      background: var(--paper);
+      color: var(--paper-text);
+    }
+
+    @media print {
+      body { background: white; color: black; }
+      nav, .view-controls { display: none; }
+      .layout { display: block; }
+      section { page-break-inside: avoid; box-shadow: none; border: 1px solid #999; }
+      details { break-inside: avoid; }
+      details[open] summary { border-bottom: 1px solid #ddd; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Portable Recursive Engineering Handover</h1>
+    <p>Unified Document Schema for reusable engineering handover generation: Python as builder/orchestrator, Markdown as source of truth, HTML as interactive portal, PDF as formal handover, and GitHub or IT hosting as the versioned publishing layer.</p>
+    <div class="view-controls">
+      <button onclick="setView('html')">HTML Preview</button>
+      <button onclick="setView('markdown')">Code-like Markdown</button>
+      <button onclick="setView('pdf')">PDF / Print Mode</button>
+      <button onclick="expandAll(true)">Expand All</button>
+      <button onclick="expandAll(false)">Collapse All</button>
+      <button onclick="window.print()">Export PDF</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav>
+      <strong>Navigation</strong>
+      <a href="#handover-purpose">1. Purpose</a>
+      <a href="#triage-model">2. Triage Model</a>
+      <a href="#unified-schema">3. Unified Schema</a>
+      <a href="#repo-structure">4. Repo Structure</a>
+      <a href="#architecture">5. Architecture</a>
+      <a href="#recursive-history">6. Recursive History</a>
+      <a href="#handover-index">7. Handover Index</a>
+      <a href="#rtm">8. RTM / Traceability</a>
+      <a href="#implementation-plan">9. Implementation Plan</a>
+      <a href="#progress-tracker">10. Progress Tracker</a>
+      <a href="#code-master">11. Python Master Code</a>
+      <a href="#future-prompts">12. Future Input Guidance</a>
+      <a href="#pdf-readiness">13. PDF Readiness</a>
+      <a href="#dmaic-recursive">14. Recursive DMAIC</a>
+      <a href="#conversation-evolution">15. Conversation Evolution</a>
+      <a href="#tuple-set">16. Tuple Set</a>
+      <a href="#idempotency-rules">17. Idempotency Rules</a>
+      <a href="#done-todo">18. DONE / TODO</a>
+      <a href="#version-control">19. Version Control</a>
+      <a href="#artifact-consistency">20. Auxiliary Artifacts</a>
+      <a href="#addendum-multi-format">21. Addendum: Multi-Format Triage</a>
+    </nav>
+
+    <main>
+      <section id="handover-purpose">
+        <h2>1. Purpose</h2>
+        <p>This handover format is designed to extract substance from long engineering sessions, preserve recursive build-up, and publish the same source into three readable views:</p>
+      </section>
+      <section id="addendum-multi-format">
+        <h2>21. ADDENDUM — Multi-Format Output Triage Logic</h2>
+        <p><span class="badge info">TRACE</span> Apply this model in addition to <code>OUTPUT_1_BASELINE</code>, the baseline single-output handover schema defined by this document’s core Markdown-to-HTML/PDF workflow. One engineering truth must generate multi-audience, multi-density outputs without source divergence.</p>
+        <details open>
+          <summary>21.1 Output triage principle and source-of-truth rule</summary>
+          <div>
+            <pre><code>Same engineering truth
+Different audience
+Different density
+Different format
+Same traceability</code></pre>
+            <p>Canonical source remains Markdown + YAML + JSON data + Python calculation engine. Generated outputs include dashboard HTML, Markdown/PDF handover, RTM, JSON/YAML traceability, and static portal pages.</p>
+          </div>
+        </details>
+        <details open>
+          <summary>21.2 Audience / density mapping</summary>
+          <div>
+            <table>
+              <tr><th>Output</th><th>Audience</th><th>Density</th><th>Purpose</th><th>DMAIC View Note</th></tr>
+              <tr><td><code>index.html</code></td><td>Technical peer / reviewer</td><td>Medium</td><td>Navigation portal</td><td>DEFINE nav scope, CONTROL links/version.</td></tr>
+              <tr><td><code>dashboard.html</code></td><td>Engineer / decision-maker</td><td>Visual-first</td><td>Interactive leak-rate dashboard</td><td>ANALYZE leak-class trade-offs.</td></tr>
+              <tr><td><code>calculations.html</code></td><td>Cryogenic engineer</td><td>High</td><td>Formula proof + worked examples</td><td>MEASURE and validate equations.</td></tr>
+              <tr><td><code>handover.md</code></td><td>Coding agent / Git</td><td>High</td><td>Source-readable handover</td><td>CONTROL source of truth.</td></tr>
+              <tr><td><code>handover.pdf</code></td><td>Formal reviewer</td><td>Medium-high</td><td>Controlled issue pack</td><td>IMPROVE distribution readability.</td></tr>
+              <tr><td><code>rtm_traceability.html</code></td><td>QA / requirements reviewer</td><td>High</td><td>RTM/source mapping</td><td>CONTROL trace integrity.</td></tr>
+              <tr><td><code>executive_summary.html</code></td><td>Manager / non-specialist</td><td>Low-medium</td><td>Decision summary</td><td>DEFINE non-specialist decisions.</td></tr>
+              <tr><td><code>developer_notes.md</code></td><td>Future maintainer</td><td>High</td><td>Build logic and extension rules</td><td>IMPROVE maintainability.</td></tr>
+            </table>
+          </div>
+        </details>
+        <details>
+          <summary>21.3 Required modes, object schema, and status set</summary>
+          <div>
+            <p>Required view modes are already scaffolded: HTML Preview, Code-like Markdown, PDF/Print Mode, Expand All, Collapse All, Export PDF.</p>
+            <p>Required object types: Decision, Requirement, Assumption, Risk, Action, Interface, Evidence, Generated Artefact, Calculation, Plot, Validation Check.</p>
+            <p>Required item fields: <code>id, title, type, source, status, owner, density_level, audience, trace_reference, version_added</code>.</p>
+            <p>Status labels: <span class="badge ok">ACCEPT</span><span class="badge warn">REVIEW</span><span class="badge risk">RISK</span><span class="badge info">TRACE</span> TODO, NEXT, DONE.</p>
+          </div>
+        </details>
+        <details>
+          <summary>21.4 Leak-rate project triage profile</summary>
+          <div><pre><code>Visual-first: dashboard plots, log-log leak comparison, valve-class comparison, cost vs leak-tightness, fleet-size sensitivity
+Calculation-first: conversion, helium mass-loss, choked-flow check, Reynolds estimate, P/T sensitivity, worked examples
+Requirement-first: RTM-047..RTM-051, leak table, inventory table, slide-15 warm-valve concern, EN 13185 anchor
+Decision-first: 1e-9 overkill, 1e-8 justified, 1e-4 only for valve-seat/internal leakage, 1e-3 rejected
+Reliability-first: MTBF, MTTR, MDT, availability, spares, critical-valve consequence</code></pre></div>
+        </details>
+        <details>
+          <summary>21.5 Idempotent release structure + baseline target</summary>
+          <div>
+            <p><span class="badge ok">CONTROL</span> Idempotency rule: same inputs + assumptions + code version + templates must yield same outputs.</p>
+            <p>Generate <code>OUTPUT_MANIFEST.json</code> including file path/type, purpose, audience, density, hash, timestamp, source inputs, builder version.</p>
+            <pre><code>Baseline tag: v0.1.0-leak-rate-static-triage-baseline
+Commit: feat: add leak-rate helium dashboard triage baseline</code></pre>
+          </div>
+        </details>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    function expandAll(open) {
+      document.querySelectorAll('details').forEach(d => d.open = open);
+    }
+
+    function setView(mode) {
+      document.body.dataset.view = mode;
+      if (mode === 'pdf') {
+        expandAll(true);
+        document.documentElement.classList.add('pdf-mode');
+      } else {
+        document.documentElement.classList.remove('pdf-mode');
+      }
+      if (mode === 'markdown') {
+        alert('Markdown mode target: generate handover.md from Python master code and open it in VS Code. This HTML shell remains the visual preview.');
+      }
+    }
+  </script>
+</body>
+</html>

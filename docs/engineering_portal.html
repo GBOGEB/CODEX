@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CODEX Engineering Portal</title>
+  <style>
+    body { font-family: ui-sans-serif, system-ui, Arial; margin: 0; background: #0a0f1e; color: #e6ecff; }
+    main { max-width: 1100px; margin: 0 auto; padding: 28px; }
+    .card { background: #121a2e; border: 1px solid #2c3b66; border-radius: 12px; padding: 18px; margin-bottom: 16px; }
+    a { color: #8ec5ff; }
+    code, pre { background: #0a1224; border: 1px solid #273558; border-radius: 8px; }
+    code { padding: 2px 6px; }
+    pre { padding: 12px; overflow-x: auto; }
+    ul { line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>CODEX Engineering Portal</h1>
+    <p>Enhanced user entry for engineering app/tool execution, knowledge transfer, and clickable build artifacts.</p>
+
+    <section class="card">
+      <h2>User Entry</h2>
+      <ul>
+        <li><a href="index.html">Global Portal Home</a></li>
+        <li><a href="dashboard.html">Operational Dashboard</a></li>
+        <li><a href="knowledge_transfer_slides.html">Knowledge Transfer Slides</a></li>
+        <li><a href="knowledge_transfer.md">Knowledge Transfer Plan (Markdown source)</a></li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Repository /CODEX Wiring</h2>
+      <p>Repository root (local path): <code>/workspace/CODEX</code></p>
+      <pre>
+/CODEX
+├─ docs/                     # user-facing portal and rendered HTML
+├─ src/                      # functional Python interface modules
+├─ scripts/                  # CLI checks/build helpers
+├─ outputs/                  # generated engineering evidence artifacts
+└─ 99_handover/              # handover workflow + governance assets
+      </pre>
+      <p>Functional subrepo wiring (branch-style ASCII):</p>
+      <pre>
+main
+├─ docs-entry ............. docs/index.html -> engineering portal -> transfer assets
+├─ app-core ............... src/github_interface.py + src/authenticator.py
+├─ qa-checks .............. scripts/check_links.py + scripts/check_manifest.py
+└─ deliverables ........... outputs/html/* + traceability/TRACEABILITY_MATRIX.md
+      </pre>
+    </section>
+
+    <section class="card">
+      <h2>Clickable CLI Artifact List</h2>
+      <ul>
+        <li>YAML: <a href="artifacts/CODEX_Index.yaml">CODEX_Index.yaml</a></li>
+        <li>YAML: <a href="artifacts/handover_master_applied.glob.yaml">handover_master_applied.glob.yaml</a></li>
+        <li>JSON: <a href="artifacts/CODEX_Index.json">CODEX_Index.json</a></li>
+        <li>JSON: <a href="artifacts/GLOBAL_index.json">GLOBAL_index.json</a></li>
+        <li>JSON: <a href="artifacts/MANIFEST.json">MANIFEST.json</a></li>
+        <li>JSON: <a href="artifacts/OUTPUT_MANIFEST.json">OUTPUT_MANIFEST.json</a></li>
+      </ul>
+      <p>Useful checks:</p>
+      <pre>python scripts/check_links.py
+python scripts/check_manifest.py
+python scripts/build_index.py</pre>
+    </section>
+  </main>
+</body>
+</html>

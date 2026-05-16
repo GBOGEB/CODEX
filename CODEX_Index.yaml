@@ -1,0 +1,63 @@
+generated_at: "2025-12-04T12:49:08.8749515+01:00"
+summary: >
+  Canonical CODEX layout with books, slides, and data binders aligned under
+  book_md/10_books. Legacy exports remain at root; new work should live in
+  the numbered subfolders below.
+
+books:
+  - id: book.master
+    label: Cryoplant Master Book
+    source: book_md
+    manifest: book_md/book_order.txt
+    output_dir: book_md/10_books/output
+    status: source-only (generate PDFs/HTML via pandoc in CI)
+
+slides:
+  - id: slides.engine.qplant
+    label: QPLANT/SCKCEN PPT engine
+    engine: book_md/10_books/20_slides/engine/qplant_sckcen_template.py
+    guide: book_md/10_books/20_slides/README.md
+    formats: [pptx, pdf, html]
+    cli: python -m slides.qplant_sckcen_template build|batch
+  - id: slides.sources
+    label: Deck sources and manifests
+    src_dir: book_md/10_books/20_slides/src
+    manifests: book_md/10_books/20_slides/manifests
+    assets: book_md/10_books/20_slides/assets
+    output_dir: book_md/10_books/20_slides/output
+    status: empty-shell (ready for new decks)
+
+data:
+  - id: data.inputs
+    path: book_md/10_books/30_data/inputs
+    related: Input/
+    status: empty-shell
+  - id: data.outputs
+    path: book_md/10_books/30_data/outputs
+    related: output/
+    status: empty-shell
+  - id: dataset.handover_final
+    manifest: output/handover_final/conversations_manifest.json
+    index: GLOBAL_index.json
+
+handover:
+  - id: governance.handover
+    path: 99_handover
+    files:
+      - 99_handover/BUILD_WORKFLOW.md
+      - 99_handover/MASTER_DIFF.md
+      - 99_handover/MASTER_PATCH.md
+      - 99_handover/RENAME_SBS.csv
+      - 99_handover/handover_master_applied.glob.yaml
+
+legacy_exports:
+  - id: docs.legacy_exports
+    note: Generated artefacts before canonical reorg; retain for reference
+    files:
+      - Full_VCR_Handover_master.docx
+      - Full_VCR_Handover_master.html
+      - VCR_Summary_master.docx
+      - VCR_Summary_master.pdf
+      - Book_Master.md
+      - 3_3_6_qplant_control_system_master.docx
+      - 3_3_6_qplant_control_system_master.pdf

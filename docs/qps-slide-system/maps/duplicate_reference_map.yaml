@@ -1,0 +1,17 @@
+version: 0.5.0
+rules:
+  canonical_priority:
+    - master
+map:
+  - canonical: STYLE_SYSTEM_001
+    duplicates: []
+    references:
+      - CONTROL_SYSTEM_001
+  - canonical: CONTROL_SYSTEM_001
+    duplicates: []
+    references:
+      - STYLE_SYSTEM_001
+  - canonical: CONTROL_SYSTEM_002
+    duplicates: []
+    interludes:
+      - STYLE_SYSTEM_002

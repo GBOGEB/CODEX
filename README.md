@@ -7,6 +7,17 @@ CODEX provides unified GitHub interface management and authentication that works
 **Answer to the question: "Do I need to duplicate in enterprise as well?"**  
 **NO** - This implementation eliminates the need for code duplication between standard GitHub and enterprise environments.
 
+
+## User entry pages (GitHub Pages)
+
+For end users, the primary launcher is the repository-level landing page in `/docs`, with the dashboard preserved as the topic/epic view:
+
+- **Primary entry**: [`docs/index.html`](docs/index.html)
+- **Topic dashboard**: [`docs/dashboard.html`](docs/dashboard.html)
+- **Published URL pattern**: `https://<org-or-user>.github.io/<repo>/` (landing) and `.../dashboard.html` (topic view)
+
+If GitHub Pages is configured to serve the `/docs` folder on `main`, users can access the rendered landing/dashboard/human-doc assets without browsing the full repository tree.
+
 ## Features
 
 - ✅ **Unified Interface**: Same code works with GitHub.com and GitHub Enterprise Server
@@ -191,3 +202,58 @@ The command above writes ZIP archives to `output/handover_final/` and refreshes 
 ```bash
 pytest
 ```
+
+## Repo-level rendered Markdown (HTML) with user-friendly URL copy
+
+If you publish this repository README as rendered HTML, prefer a **plain-language "Copy URL" action** instead of exposing only a long trace-style link. End users should be able to copy one clean link and paste it directly into:
+
+- Microsoft Edge (Windows PC)
+- Safari (iPhone)
+- Chrome (iPhone)
+
+### UX requirements (recommended)
+
+1. Show a visible button label: **Copy URL**.
+2. Copy only the canonical page URL (not debug/tracing query parameters).
+3. Provide a fallback when clipboard APIs are blocked (manual select + copy prompt).
+4. Keep the button touch-friendly for iPhone (minimum 44px tap target).
+
+### Reference implementation (browser-compatible)
+
+```html
+<button id="copy-url-btn" type="button" aria-live="polite">Copy URL</button>
+<script>
+  (function () {
+    const btn = document.getElementById("copy-url-btn");
+    if (!btn) return;
+
+    function canonicalUrl() {
+      return window.location.origin + window.location.pathname;
+    }
+
+    async function copyUrl() {
+      const url = canonicalUrl();
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(url);
+          btn.textContent = "Copied";
+          setTimeout(() => (btn.textContent = "Copy URL"), 1200);
+          return;
+        }
+      } catch (_) {}
+
+      const ok = window.prompt("Copy this URL:", url);
+      if (ok !== null) {
+        btn.textContent = "Copy URL";
+      }
+    }
+
+    btn.addEventListener("click", copyUrl);
+  })();
+</script>
+```
+
+### Notes
+
+- On iPhone Safari/Chrome, Clipboard API behavior can vary by iOS version and page security context; the prompt fallback keeps the flow usable.
+- If governance requires traceability, store trace IDs in backend logs/metadata rather than forcing end users to copy parameter-heavy URLs.

@@ -118,6 +118,10 @@ def convert_markdown_bundle(
     The function gracefully falls back to writing placeholder artifacts when the
     environment lacks Pandoc so that local development and CI dry runs remain
     deterministic.
+
+    The active :class:`TemplateSettings` control the reference PPTX, partner
+    branding metadata, base URL rewrites, and link validation flags passed to
+    Pandoc so that CLI options are faithfully applied.
     """
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -148,16 +152,43 @@ def convert_markdown_bundle(
                 str(target),
             ]
 
-            if fmt == "pptx" and settings.template_path.exists():
+            if fmt == "pptx":
+                if not settings.template_path.exists():
+                    raise FileNotFoundError(
+                        "PPTX reference template not found: "
+                        f"{settings.template_path}. Configure an existing template path."
+                    )
+                if not settings.template_path.is_file():
+                    raise ValueError(
+                        f"PPTX reference template is not a file: {settings.template_path}"
+                    )
                 args.extend(["--reference-doc", str(settings.template_path)])
 
             if settings.partner_logo:
-                args.extend(["--metadata", f"partner_logo={str(settings.partner_logo)}"])
-            if settings.base_url:
-                args.extend(["--metadata", f"base_url={settings.base_url}"])
-            if settings.strict_links:
-                args.extend(["--metadata", "strict_links=true"])
+                args.extend(["--metadata", f"partner_logo={settings.partner_logo}"])
 
+            if settings.base_url:
+                # Keep both metadata key styles for compatibility across templates/filters.
+                args.extend(
+                    [
+                        "--metadata",
+                        f"base-url={settings.base_url}",
+                        "--metadata",
+                        f"base_url={settings.base_url}",
+                    ]
+                )
+
+            if settings.strict_links:
+                # Keep both strict_links and link-strict metadata key styles for compatibility.
+                args.extend(
+                    [
+                        "--metadata",
+                        "strict_links=true",
+                        "--metadata",
+                        "link-strict=true",
+                        "--fail-if-warnings",
+                    ]
+                )
             subprocess.run(args, check=True, capture_output=True)
 
         outputs.append(target)

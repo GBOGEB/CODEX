@@ -1,0 +1,3 @@
+# HUMAN Version Log
+
+- v1.2.0 @ 2026-05-09T21:04:07Z (git 3540a7a)
