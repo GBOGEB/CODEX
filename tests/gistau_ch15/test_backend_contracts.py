@@ -43,6 +43,7 @@ def test_expander_positive_recovery():
 
 
 def test_expander_defaults_to_helium_proxy():
+    # calculate_expander calls backend.state_pt twice (inlet + outlet) per invocation.
     expected_state_pt_calls = 4
     recording_backend = FluidRecordingBackend()
     helium = calculate_expander(
