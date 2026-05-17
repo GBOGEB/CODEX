@@ -257,6 +257,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - name: Validate required files
         run: |
           test -f docs/gistau-ch15/index.html
@@ -275,7 +279,15 @@ jobs:
 
       - name: Detect forbidden external dependencies
         run: |
-          ! grep -R "cdn.plot.ly\\|https://cdn\\|sandbox:" docs/gistau-ch15
+          # grep exit codes: 0=match (bad), 1=no match (good), 2=error (bad)
+          # set +e prevents early exit so we can inspect the code explicitly.
+          set +e
+          grep -r \
+            --include='*.html' --include='*.js' --include='*.css' --include='*.json' \
+            "cdn\.plot\.ly\|https://cdn\|sandbox:" docs/gistau-ch15
+          rc=$?
+          set -e
+          [ "$rc" -eq 1 ] || { echo "ERROR: grep exited with code $rc (0=matches found, 2=grep error)" >&2; exit 1; }
 
       - name: Validate Python tests if present
         run: |
