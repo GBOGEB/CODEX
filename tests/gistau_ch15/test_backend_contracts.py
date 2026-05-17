@@ -86,6 +86,7 @@ def test_expander_supports_other_cryogenic_fluid_proxies():
     )
 
     assert helium.outlet_temperature_k < nitrogen.outlet_temperature_k
+    assert helium.outlet_temperature_k < hydrogen.outlet_temperature_k
     assert hydrogen.outlet_temperature_k == pytest.approx(nitrogen.outlet_temperature_k)
 
 
