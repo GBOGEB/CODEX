@@ -57,6 +57,7 @@ def test_expander_defaults_to_helium_proxy():
 
 
 def test_expander_supports_other_cryogenic_fluid_proxies():
+    pressure_ratio = 110.0 / 1200.0
     helium = calculate_expander(
         backend=backend,
         fluid='helium',
@@ -87,7 +88,13 @@ def test_expander_supports_other_cryogenic_fluid_proxies():
 
     assert helium.outlet_temperature_k < nitrogen.outlet_temperature_k
     assert helium.outlet_temperature_k < hydrogen.outlet_temperature_k
+    assert helium.outlet_temperature_k == pytest.approx(
+        80.0 - 0.82 * (80.0 - 80.0 * pressure_ratio**0.4)
+    )
     assert hydrogen.outlet_temperature_k == pytest.approx(nitrogen.outlet_temperature_k)
+    assert nitrogen.outlet_temperature_k == pytest.approx(
+        80.0 - 0.82 * (80.0 - 80.0 * pressure_ratio**0.28)
+    )
 
 
 def test_equivalent_power_positive():

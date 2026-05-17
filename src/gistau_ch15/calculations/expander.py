@@ -6,6 +6,7 @@ from gistau_ch15.properties.base import PropertyBackend
 
 HELIUM_ISENTROPIC_TEMPERATURE_EXPONENT = 0.4
 DIATOMIC_ISENTROPIC_TEMPERATURE_EXPONENT = 0.28
+DIATOMIC_FLUID_NAMES = {'nitrogen', 'n2', 'ln2', 'liquid nitrogen', 'hydrogen', 'h2'}
 
 
 @dataclass(frozen=True)
@@ -20,7 +21,7 @@ class ExpanderResult:
 
 def _isentropic_temperature_exponent(fluid: str) -> float:
     normalized_fluid = fluid.strip().lower()
-    if normalized_fluid in {'nitrogen', 'n2', 'ln2', 'liquid nitrogen', 'hydrogen', 'h2'}:
+    if normalized_fluid in DIATOMIC_FLUID_NAMES:
         return DIATOMIC_ISENTROPIC_TEMPERATURE_EXPONENT
     return HELIUM_ISENTROPIC_TEMPERATURE_EXPONENT
 
