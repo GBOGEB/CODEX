@@ -1,0 +1,172 @@
+{
+  "source": {
+    "title": "GISTAU Chapter 15 Cryo Tool Box worked examples",
+    "source_file": "Chapter15_Gitua_tools.pdf",
+    "notes": "Values captured from visible chapter figures. Status values distinguish captured, partial, and pending exact transcription. These records are intended as validation fixtures for backend tier comparison."
+  },
+  "backend_tiers": [
+    "tier0_fallback",
+    "tier1_coolprop",
+    "tier2_refprop",
+    "tier3_hepak",
+    "tier4_nist_reference"
+  ],
+  "examples": [
+    {
+      "example_id": "WE-T00-REFPROP-H-PT-001",
+      "tuple_id": "T00",
+      "domain": "Property/State Engine",
+      "figure": "Fig. 15.3",
+      "page": 619,
+      "description": "Helium enthalpy spreadsheet cell using REFPROP at 1 bar and 300 K.",
+      "inputs": {"fluid": "helium", "pressure_bar": 1.0, "temperature_k": 300.0},
+      "expected_outputs": {"enthalpy_j_g": 1563.3194},
+      "primary_reference_tier": "tier2_refprop",
+      "secondary_reference_tiers": ["tier1_coolprop", "tier4_nist_reference"],
+      "status": "captured"
+    },
+    {
+      "example_id": "WE-T00-REFPROP-HSD-PT-002",
+      "tuple_id": "T00",
+      "domain": "Property/State Engine",
+      "figure": "Fig. 15.4",
+      "page": 620,
+      "description": "Helium enthalpy, entropy and density at 1 bar and 300 K.",
+      "inputs": {"fluid": "helium", "pressure_bar": 1.0, "temperature_k": 300.0},
+      "expected_outputs": {"enthalpy_j_g": 1563.3194, "entropy_j_gk": 28.0075, "density_kg_m3": 0.1604},
+      "primary_reference_tier": "tier2_refprop",
+      "secondary_reference_tiers": ["tier1_coolprop", "tier4_nist_reference"],
+      "status": "captured"
+    },
+    {
+      "example_id": "WE-T00-SATURATION-QUALITY-003",
+      "tuple_id": "T00",
+      "domain": "Saturation / Quality",
+      "figure": "Fig. 15.5",
+      "page": 621,
+      "description": "Saturation and quality examples including a two-phase-like quality value.",
+      "inputs": {"fluid": "helium", "pressure_bar": 1.0, "temperature_k": 4.2098},
+      "expected_outputs": {"enthalpy_j_g": 15.0, "entropy_j_gk": 3.5656, "density_kg_m3": 21.7606, "quality": 0.73},
+      "primary_reference_tier": "tier3_hepak",
+      "secondary_reference_tiers": ["tier2_refprop", "tier1_coolprop"],
+      "status": "captured"
+    },
+    {
+      "example_id": "WE-T01-ROOM-TEMP-COMPRESSOR-001",
+      "tuple_id": "T01",
+      "domain": "Room-temperature Compressor",
+      "figure": "Fig. 15.10 / Fig. 15.12",
+      "page": 624,
+      "description": "Room-temperature compressor sketch and finalised spreadsheet example.",
+      "inputs": {"fluid": "helium_or_nitrogen_context", "suction_pressure_bar": 1.05, "suction_temperature_c": 25.0, "discharge_pressure_bar": 14.0, "mass_flow_g_s": 50.0},
+      "expected_outputs": {"absolute_power_kw_visible": 160.0, "isothermal_power_kw_visible": 11.48, "isothermal_efficiency_visible": 0.458},
+      "primary_reference_tier": "tier2_refprop",
+      "secondary_reference_tiers": ["tier1_coolprop"],
+      "status": "partial_capture_requires_fluid_disambiguation"
+    },
+    {
+      "example_id": "WE-T02-FREE-EXPANSION-HEAT-001",
+      "tuple_id": "T02",
+      "domain": "Free Expansion / JT Valve",
+      "figure": "Fig. 15.16",
+      "page": 628,
+      "description": "Free expansion with positive thermal power input.",
+      "inputs": {"fluid": "helium", "inlet_pressure_bar": 14.0, "inlet_temperature_k": 20.0, "outlet_pressure_bar": 1.0, "mass_flow_g_s": 50.0, "thermal_power_w": 100.0},
+      "expected_outputs": {"outlet_temperature_k": 19.16, "inlet_enthalpy_j_g": 101.92, "outlet_enthalpy_j_g": 103.92},
+      "primary_reference_tier": "tier2_refprop",
+      "secondary_reference_tiers": ["tier1_coolprop", "tier3_hepak"],
+      "status": "captured"
+    },
+    {
+      "example_id": "WE-T02-INVERSION-HELIUM-002",
+      "tuple_id": "T02",
+      "domain": "Inversion Temperature",
+      "figure": "Fig. 15.19",
+      "page": 629,
+      "description": "Helium inversion temperature example with zero thermal power.",
+      "inputs": {"fluid": "helium", "inlet_pressure_bar": 14.0, "outlet_pressure_bar": 1.0, "mass_flow_g_s": 50.0, "thermal_power_w": 0.0},
+      "expected_outputs": {"inversion_temperature_k": 43.21, "enthalpy_j_g": 229.41},
+      "primary_reference_tier": "tier2_refprop",
+      "secondary_reference_tiers": ["tier1_coolprop"],
+      "status": "captured"
+    },
+    {
+      "example_id": "WE-T02-SAT-LIQUID-HELIUM-003",
+      "tuple_id": "T02",
+      "domain": "Saturated Liquid Helium Expansion",
+      "figure": "Fig. 15.21",
+      "page": 629,
+      "description": "Expansion of pure equilibrium liquid helium with quality output.",
+      "inputs": {"fluid": "helium", "inlet_pressure_bar": 1.20, "inlet_temperature_k": 4.41, "outlet_pressure_bar": 0.50, "mass_flow_g_s": 50.0, "thermal_power_w": 0.0},
+      "expected_outputs": {"outlet_temperature_k": 3.55, "quality": 0.17, "enthalpy_j_g": -1.04},
+      "primary_reference_tier": "tier3_hepak",
+      "secondary_reference_tiers": ["tier2_refprop", "tier1_coolprop"],
+      "status": "captured_two_phase_priority"
+    },
+    {
+      "example_id": "WE-T02-MASS-FLOW-004",
+      "tuple_id": "T02",
+      "domain": "Mass Flow From Heat Input",
+      "figure": "Fig. 15.23",
+      "page": 630,
+      "description": "Mass flow solved by heat input and measured discharge temperature.",
+      "inputs": {"fluid": "helium", "inlet_pressure_bar": 4.0, "inlet_temperature_k": 20.0, "outlet_pressure_bar": 3.75, "outlet_temperature_k": 22.50, "thermal_power_w": 100.0},
+      "expected_outputs": {"mass_flow_g_s": 7.39, "inlet_enthalpy_j_g": 106.67, "outlet_enthalpy_j_g": 120.21},
+      "primary_reference_tier": "tier2_refprop",
+      "secondary_reference_tiers": ["tier1_coolprop", "tier3_hepak"],
+      "status": "captured"
+    },
+    {
+      "example_id": "WE-T03-HEAT-EXCHANGER-001",
+      "tuple_id": "T03",
+      "domain": "Heat Exchanger",
+      "figure": "Fig. 15.25",
+      "page": 632,
+      "description": "Simple helium heat exchanger with balance check.",
+      "inputs": {"fluid": "helium", "hot_inlet_pressure_bar": 14.0, "hot_inlet_temperature_k": 300.0, "cold_inlet_pressure_bar": 1.20, "cold_inlet_temperature_k": 200.0, "hot_mass_flow_g_s": 50.0, "cold_mass_flow_g_s": 45.0},
+      "expected_outputs": {"hot_outlet_temperature_k_visible": 212.72, "alternative_hot_outlet_temperature_k_visible": 196.97, "lmtd_k_visible": 6.73},
+      "primary_reference_tier": "tier2_refprop",
+      "secondary_reference_tiers": ["tier1_coolprop", "tier3_hepak"],
+      "status": "partial_capture_multiple_scenarios"
+    },
+    {
+      "example_id": "WE-T04-CRYOGENIC-EXPANDER-001",
+      "tuple_id": "T04",
+      "domain": "Cryogenic Expander",
+      "figure": "Fig. 15.29 / Fig. 15.30",
+      "page": 635,
+      "description": "Cryogenic expander finalised turbine spreadsheet.",
+      "inputs": {"fluid": "helium", "inlet_pressure_bar": 14.0, "inlet_temperature_k": 25.0, "outlet_pressure_bar": 1.20, "mass_flow_g_s": 50.0, "isentropic_efficiency": 0.75},
+      "expected_outputs": {"outlet_temperature_k": 12.93, "outlet_enthalpy_j_g": 70.85, "power_w_visible": -2981.6},
+      "primary_reference_tier": "tier2_refprop",
+      "secondary_reference_tiers": ["tier1_coolprop", "tier3_hepak"],
+      "status": "captured_sign_convention_to_confirm"
+    },
+    {
+      "example_id": "WE-T05-CRYOGENIC-COMPRESSOR-001",
+      "tuple_id": "T05",
+      "domain": "Cryogenic Compressor / Circulator",
+      "figure": "Fig. 15.31",
+      "page": 638,
+      "description": "Cryogenic compressor / circulator finalised spreadsheet.",
+      "inputs": {"fluid": "helium", "inlet_pressure_bar": 0.50, "inlet_temperature_k": 5.0, "outlet_pressure_bar": 1.70, "mass_flow_g_s": 400.0, "isentropic_efficiency": 0.75},
+      "expected_outputs": {"outlet_temperature_k": 7.72, "outlet_enthalpy_j_g": 42.37, "power_w": 5336.0},
+      "primary_reference_tier": "tier3_hepak",
+      "secondary_reference_tiers": ["tier2_refprop", "tier1_coolprop"],
+      "status": "captured_low_temperature_priority"
+    },
+    {
+      "example_id": "WE-T06-EQUIVALENT-POWER-001",
+      "tuple_id": "T06",
+      "domain": "Equivalent Power",
+      "figure": "Fig. 15.33",
+      "page": 639,
+      "description": "Equivalent power mixed duty refrigerator spreadsheet.",
+      "inputs": {"fluid": "helium", "room_temperature_k": 300.0, "domains": ["shields", "supercritical", "isothermal", "liquid"]},
+      "expected_outputs": {"equivalent_power_w_visible": 906643.0, "absorbed_power_kw_visible": 3150.0, "carnot_power_w_visible": 90679.0},
+      "primary_reference_tier": "tier4_nist_reference",
+      "secondary_reference_tiers": ["tier2_refprop", "tier3_hepak", "tier1_coolprop"],
+      "status": "partial_capture_requires_column_mapping"
+    }
+  ]
+}
