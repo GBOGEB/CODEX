@@ -49,11 +49,13 @@ def calculate_expander(
     if mdot_kg_s <= 0:
         raise ValueError("mdot_kg_s must be positive")
 
-    inlet = backend.state_pt(fluid, p1_kpa, t1_k)
+    working_fluid = fluid.strip() if fluid and fluid.strip() else 'helium'
+
+    inlet = backend.state_pt(working_fluid, p1_kpa, t1_k)
     pressure_ratio = max(p2_kpa / max(p1_kpa, 1e-9), 1e-9)
-    ideal_t2 = t1_k * pressure_ratio ** _isentropic_temperature_exponent(fluid)
+    ideal_t2 = t1_k * pressure_ratio ** _isentropic_temperature_exponent(working_fluid)
     actual_t2 = t1_k - eta_isentropic * max(t1_k - ideal_t2, 0.0)
-    outlet = backend.state_pt(fluid, p2_kpa, actual_t2)
+    outlet = backend.state_pt(working_fluid, p2_kpa, actual_t2)
 
     power = mdot_kg_s * max(inlet.enthalpy_j_kg - outlet.enthalpy_j_kg, 0.0)
 

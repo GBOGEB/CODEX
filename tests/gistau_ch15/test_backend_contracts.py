@@ -8,6 +8,15 @@ from gistau_ch15.properties.fallback_helium import FallbackHeliumBackend
 backend = FallbackHeliumBackend()
 
 
+class FluidRecordingBackend(FallbackHeliumBackend):
+    def __init__(self):
+        self.fluids = []
+
+    def state_pt(self, fluid: str, p_kpa: float, t_k: float):
+        self.fluids.append(fluid)
+        return super().state_pt(fluid, p_kpa, t_k)
+
+
 def test_backend_contract_has_required_calls():
     assert hasattr(backend, 'state_pt')
     assert hasattr(backend, 'state_ph')
@@ -33,8 +42,9 @@ def test_expander_positive_recovery():
 
 
 def test_expander_defaults_to_helium_proxy():
+    recording_backend = FluidRecordingBackend()
     helium = calculate_expander(
-        backend=backend,
+        backend=recording_backend,
         fluid='helium',
         p1_kpa=1200.0,
         t1_k=80.0,
@@ -43,7 +53,7 @@ def test_expander_defaults_to_helium_proxy():
         eta_isentropic=0.82,
     )
     defaulted = calculate_expander(
-        backend=backend,
+        backend=recording_backend,
         fluid='',
         p1_kpa=1200.0,
         t1_k=80.0,
@@ -54,6 +64,7 @@ def test_expander_defaults_to_helium_proxy():
 
     assert defaulted.outlet_temperature_k == helium.outlet_temperature_k
     assert defaulted.power_output_w == helium.power_output_w
+    assert recording_backend.fluids[-4:] == ['helium', 'helium', 'helium', 'helium']
 
 
 def test_expander_supports_other_cryogenic_fluid_proxies():
