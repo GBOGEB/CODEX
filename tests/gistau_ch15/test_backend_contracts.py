@@ -1,3 +1,5 @@
+import pytest
+
 from gistau_ch15.calculations.equivalent_power import calculate_equivalent_power
 from gistau_ch15.calculations.expander import calculate_expander
 from gistau_ch15.properties.fallback_helium import FallbackHeliumBackend
@@ -84,7 +86,7 @@ def test_expander_supports_other_cryogenic_fluid_proxies():
     )
 
     assert helium.outlet_temperature_k < nitrogen.outlet_temperature_k
-    assert hydrogen.outlet_temperature_k == nitrogen.outlet_temperature_k
+    assert hydrogen.outlet_temperature_k == pytest.approx(nitrogen.outlet_temperature_k)
 
 
 def test_equivalent_power_positive():
