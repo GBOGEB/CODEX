@@ -46,12 +46,34 @@ class CoolPropAdapter:
     def state_ph(self, fluid: str, p_kpa: float, h_j_kg: float) -> State:
         p_pa = p_kpa * 1000.0
         t = self._cp.PropsSI("T", "P", p_pa, "H", h_j_kg, fluid)
-        return self.state_pt(fluid, p_kpa, t)
+        s = self._cp.PropsSI("S", "P", p_pa, "H", h_j_kg, fluid)
+        rho = self._cp.PropsSI("D", "P", p_pa, "H", h_j_kg, fluid)
+        q_raw = self._cp.PropsSI("Q", "P", p_pa, "H", h_j_kg, fluid)
+        quality = q_raw if 0.0 <= q_raw <= 1.0 else None
+        return State(
+            pressure_kpa=p_kpa,
+            temperature_k=t,
+            enthalpy_j_kg=h_j_kg,
+            entropy_j_kgk=s,
+            density_kg_m3=rho,
+            quality=quality,
+        )
 
     def state_ps(self, fluid: str, p_kpa: float, s_j_kgk: float) -> State:
         p_pa = p_kpa * 1000.0
         t = self._cp.PropsSI("T", "P", p_pa, "S", s_j_kgk, fluid)
-        return self.state_pt(fluid, p_kpa, t)
+        h = self._cp.PropsSI("H", "P", p_pa, "S", s_j_kgk, fluid)
+        rho = self._cp.PropsSI("D", "P", p_pa, "S", s_j_kgk, fluid)
+        q_raw = self._cp.PropsSI("Q", "P", p_pa, "S", s_j_kgk, fluid)
+        quality = q_raw if 0.0 <= q_raw <= 1.0 else None
+        return State(
+            pressure_kpa=p_kpa,
+            temperature_k=t,
+            enthalpy_j_kg=h,
+            entropy_j_kgk=s_j_kgk,
+            density_kg_m3=rho,
+            quality=quality,
+        )
 
     def saturation_t(self, fluid: str, t_k: float) -> SaturationState:
         p_pa = self._cp.PropsSI("P", "T", t_k, "Q", 0, fluid)

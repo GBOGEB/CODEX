@@ -71,9 +71,17 @@ def evaluate_state_points(
     silently disappearing.
     """
 
+    # Materialize once so every backend sees the full request list even when
+    # callers pass a generator or other one-shot iterable.
+    # Note: for validation workloads the full request set is held in memory
+    # simultaneously. This is intentional — cross-backend comparisons require
+    # each backend to see identical requests, so streaming is not applicable
+    # here. Callers with very large request corpora should batch externally.
+    request_list = list(requests)
+
     results: list[BackendStateResult] = []
     for definition in backend_definitions:
-        for request in requests:
+        for request in request_list:
             if definition.backend is None:
                 results.append(
                     BackendStateResult(
@@ -155,7 +163,15 @@ def compare_to_reference(
 
         for result in group:
             if result.state is None:
-                status = "backend_unavailable" if result.error else "blocked_no_state"
+                # Distinguish: backend was never available (definition.backend is
+                # None → "backend unavailable" sentinel) vs a per-state evaluation
+                # failure on an available backend.
+                if result.error == "backend unavailable":
+                    status = "backend_unavailable"
+                elif result.error:
+                    status = "evaluation_error"
+                else:
+                    status = "blocked_no_state"
                 deltas.append(
                     PropertyDelta(
                         request_id=request_id,
