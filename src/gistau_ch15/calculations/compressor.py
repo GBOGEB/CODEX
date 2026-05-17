@@ -5,6 +5,9 @@ from math import log
 
 from gistau_ch15.properties.base import PropertyBackend
 
+KPA_TO_PA = 1000.0
+ISENTROPIC_TEMPERATURE_EXPONENT = 0.28
+
 
 @dataclass
 class CompressorResult:
@@ -50,17 +53,23 @@ def calculate_compressor(
     st1 = backend.state_pt(fluid, p1_kpa, t1_k)
 
     pressure_ratio = p2_kpa / p1_kpa
-    t2_k = t1_k * pressure_ratio**0.28
+    t2_k = t1_k * pressure_ratio**ISENTROPIC_TEMPERATURE_EXPONENT
 
     st2 = backend.state_pt(fluid, p2_kpa, t2_k)
 
-    gas_constant = (st1.pressure_kpa * 1000.0) / max(st1.density_kg_m3 * st1.temperature_k, 1e-9)
+    denominator = st1.density_kg_m3 * st1.temperature_k
+    if denominator <= 0.0:
+        raise ValueError("backend returned non-physical inlet state for gas constant calculation")
+
+    gas_constant = (st1.pressure_kpa * KPA_TO_PA) / denominator
     isothermal_specific_work_j_kg = gas_constant * t1_k * log(pressure_ratio)
     power = mdot_kg_s * isothermal_specific_work_j_kg / eta_isothermal
     isentropic_power = None
 
     if eta_isentropic is not None:
-        dh = max(st2.enthalpy_j_kg - st1.enthalpy_j_kg, 0.0)
+        dh = st2.enthalpy_j_kg - st1.enthalpy_j_kg
+        if dh <= 0.0:
+            raise ValueError("backend returned non-physical enthalpy rise for compressor")
         isentropic_power = mdot_kg_s * dh / eta_isentropic
 
     return CompressorResult(
