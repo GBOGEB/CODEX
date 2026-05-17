@@ -265,6 +265,7 @@ jobs:
           test -f docs/gistau-ch15/data/tuple_registry.json
           test -f docs/gistau-ch15/data/surface_data.json
           test -f docs/gistau-ch15/data/critical_todos.json
+          test -f docs/gistau-ch15/plots/thermo_active.html
 
       - name: Validate JSON registers
         run: |
