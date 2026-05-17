@@ -10,6 +10,7 @@ backend = FallbackHeliumBackend()
 
 class FluidRecordingBackend(FallbackHeliumBackend):
     def __init__(self):
+        super().__init__()
         self.fluids = []
 
     def state_pt(self, fluid: str, p_kpa: float, t_k: float):
@@ -42,6 +43,7 @@ def test_expander_positive_recovery():
 
 
 def test_expander_defaults_to_helium_proxy():
+    expected_state_pt_calls = 4
     recording_backend = FluidRecordingBackend()
     helium = calculate_expander(
         backend=recording_backend,
@@ -64,7 +66,7 @@ def test_expander_defaults_to_helium_proxy():
 
     assert defaulted.outlet_temperature_k == helium.outlet_temperature_k
     assert defaulted.power_output_w == helium.power_output_w
-    assert recording_backend.fluids[-4:] == ['helium', 'helium', 'helium', 'helium']
+    assert recording_backend.fluids == ['helium'] * expected_state_pt_calls
 
 
 def test_expander_supports_other_cryogenic_fluid_proxies():
