@@ -6,6 +6,8 @@ from gistau_ch15.properties.fallback_helium import FallbackHeliumBackend
 
 
 backend = FallbackHeliumBackend()
+STATE_PT_CALLS_PER_EXPANDER_CALC = 2
+EXPANDER_CALCS_IN_DEFAULT_TEST = 2
 
 
 class FluidRecordingBackend(FallbackHeliumBackend):
@@ -43,7 +45,9 @@ def test_expander_positive_recovery():
 
 
 def test_expander_defaults_to_helium_proxy():
-    expected_state_pt_calls = 2 * 2
+    expected_state_pt_calls = (
+        STATE_PT_CALLS_PER_EXPANDER_CALC * EXPANDER_CALCS_IN_DEFAULT_TEST
+    )
     recording_backend = FluidRecordingBackend()
     helium = calculate_expander(
         backend=recording_backend,
