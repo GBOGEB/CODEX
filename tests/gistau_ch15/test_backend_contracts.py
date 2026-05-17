@@ -1,0 +1,43 @@
+from gistau_ch15.calculations.equivalent_power import calculate_equivalent_power
+from gistau_ch15.calculations.expander import calculate_expander
+from gistau_ch15.properties.fallback_helium import FallbackHeliumBackend
+
+
+backend = FallbackHeliumBackend()
+
+
+def test_backend_contract_has_required_calls():
+    assert hasattr(backend, 'state_pt')
+    assert hasattr(backend, 'state_ph')
+    assert hasattr(backend, 'state_ps')
+    assert hasattr(backend, 'saturation_t')
+    assert hasattr(backend, 'saturation_p')
+    assert hasattr(backend, 'quality_ph')
+
+
+def test_expander_positive_recovery():
+    result = calculate_expander(
+        backend=backend,
+        fluid='helium',
+        p1_kpa=1200.0,
+        t1_k=80.0,
+        p2_kpa=110.0,
+        mdot_kg_s=0.05,
+        eta_isentropic=0.82,
+    )
+
+    assert result.power_output_w >= 0.0
+    assert result.outlet_temperature_k < result.inlet_temperature_k
+
+
+def test_equivalent_power_positive():
+    eq = calculate_equivalent_power(
+        compressor_power_w=1200.0,
+        expander_recovery_w=100.0,
+        refrigeration_load_w=10.0,
+        cold_temperature_k=4.5,
+        ambient_temperature_k=300.0,
+    )
+
+    assert eq.equivalent_power_w > 0.0
+    assert eq.carnot_factor > 1.0
