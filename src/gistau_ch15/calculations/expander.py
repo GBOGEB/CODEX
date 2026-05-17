@@ -4,6 +4,9 @@ from dataclasses import dataclass
 
 from gistau_ch15.properties.base import PropertyBackend
 
+HELIUM_ISENTROPIC_TEMPERATURE_EXPONENT = 0.4
+DIATOMIC_ISENTROPIC_TEMPERATURE_EXPONENT = 0.28
+
 
 @dataclass(frozen=True)
 class ExpanderResult:
@@ -13,6 +16,13 @@ class ExpanderResult:
     outlet_temperature_k: float
     power_output_w: float
     isentropic_efficiency: float
+
+
+def _isentropic_temperature_exponent(fluid: str) -> float:
+    normalized_fluid = fluid.strip().lower()
+    if normalized_fluid in {'nitrogen', 'n2', 'ln2', 'liquid nitrogen', 'hydrogen', 'h2'}:
+        return DIATOMIC_ISENTROPIC_TEMPERATURE_EXPONENT
+    return HELIUM_ISENTROPIC_TEMPERATURE_EXPONENT
 
 
 def calculate_expander(
@@ -40,7 +50,7 @@ def calculate_expander(
 
     inlet = backend.state_pt(fluid, p1_kpa, t1_k)
     pressure_ratio = max(p2_kpa / max(p1_kpa, 1e-9), 1e-9)
-    ideal_t2 = t1_k * pressure_ratio ** 0.28
+    ideal_t2 = t1_k * pressure_ratio ** _isentropic_temperature_exponent(fluid)
     actual_t2 = t1_k - eta_isentropic * max(t1_k - ideal_t2, 0.0)
     outlet = backend.state_pt(fluid, p2_kpa, actual_t2)
 

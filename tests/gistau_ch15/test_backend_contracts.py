@@ -30,6 +30,63 @@ def test_expander_positive_recovery():
     assert result.outlet_temperature_k < result.inlet_temperature_k
 
 
+def test_expander_defaults_to_helium_proxy():
+    helium = calculate_expander(
+        backend=backend,
+        fluid='helium',
+        p1_kpa=1200.0,
+        t1_k=80.0,
+        p2_kpa=110.0,
+        mdot_kg_s=0.05,
+        eta_isentropic=0.82,
+    )
+    defaulted = calculate_expander(
+        backend=backend,
+        fluid='',
+        p1_kpa=1200.0,
+        t1_k=80.0,
+        p2_kpa=110.0,
+        mdot_kg_s=0.05,
+        eta_isentropic=0.82,
+    )
+
+    assert defaulted.outlet_temperature_k == helium.outlet_temperature_k
+    assert defaulted.power_output_w == helium.power_output_w
+
+
+def test_expander_supports_other_cryogenic_fluid_proxies():
+    helium = calculate_expander(
+        backend=backend,
+        fluid='helium',
+        p1_kpa=1200.0,
+        t1_k=80.0,
+        p2_kpa=110.0,
+        mdot_kg_s=0.05,
+        eta_isentropic=0.82,
+    )
+    nitrogen = calculate_expander(
+        backend=backend,
+        fluid='LN2',
+        p1_kpa=1200.0,
+        t1_k=80.0,
+        p2_kpa=110.0,
+        mdot_kg_s=0.05,
+        eta_isentropic=0.82,
+    )
+    hydrogen = calculate_expander(
+        backend=backend,
+        fluid='H2',
+        p1_kpa=1200.0,
+        t1_k=80.0,
+        p2_kpa=110.0,
+        mdot_kg_s=0.05,
+        eta_isentropic=0.82,
+    )
+
+    assert helium.outlet_temperature_k < nitrogen.outlet_temperature_k
+    assert hydrogen.outlet_temperature_k == nitrogen.outlet_temperature_k
+
+
 def test_equivalent_power_positive():
     eq = calculate_equivalent_power(
         compressor_power_w=1200.0,
