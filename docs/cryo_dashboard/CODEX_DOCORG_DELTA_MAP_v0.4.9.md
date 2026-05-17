@@ -51,4 +51,9 @@ Created during session:
 
 - `codex/cryo-v0.4.9-session-handover`
 
+Branch classification:
+
+- variance type: natural variance
+- branch type: stable feature
+
 End of delta map.
