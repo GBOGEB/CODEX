@@ -49,7 +49,8 @@ def calculate_expander(
     if mdot_kg_s <= 0:
         raise ValueError("mdot_kg_s must be positive")
 
-    working_fluid = fluid.strip() if fluid and fluid.strip() else 'helium'
+    stripped_fluid = fluid.strip() if fluid else ''
+    working_fluid = stripped_fluid if stripped_fluid else 'helium'
 
     inlet = backend.state_pt(working_fluid, p1_kpa, t1_k)
     pressure_ratio = max(p2_kpa / max(p1_kpa, 1e-9), 1e-9)
