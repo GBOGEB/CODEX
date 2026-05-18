@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Low-Temperature Helium Surface Review</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<link rel="stylesheet" href="../visual_cards.css" />
+<style>
+.controls{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0}.controls label{font-weight:800}.plotbox{width:100%;height:520px;border:2px solid #000}.note{border-left:6px solid #c00000;padding-left:12px;font-weight:700}.small{font-size:.92rem}.mono{font-family:ui-monospace,Consolas,monospace}
+</style>
+</head>
+<body>
+<header class="topbar">
+<h1>Low-Temperature Helium Thermodynamic Surfaces</h1>
+<p>Review scaffold for T-s, T-h, T-g, exergy and pressure/density/specific-volume isolines below 10 K and below 5 K.</p>
+</header>
+<main class="layout">
+<section class="card warning">
+<h2>Scope and physical caution</h2>
+<p class="note">This page is a visualization scaffold. The numerical data below are placeholder grids until PR-G/PR-H bind CoolProp, REFPROP, HEPAK and NIST/GISTAU values. HEPAK is expected to be the preferred authority for helium below 5 K, two-phase helium, and near-2 K saturation/quality regions.</p>
+<table>
+<thead><tr><th>Region</th><th>Target pressure range</th><th>Use case</th><th>Preferred tier</th></tr></thead>
+<tbody>
+<tr><td>&lt; 10 K</td><td>26 mbar to 3 bar</td><td>general cryogenic helium mapping</td><td>CoolProp/REFPROP/HEPAK compare</td></tr>
+<tr><td>&lt; 5 K</td><td>26 mbar to 2 bar</td><td>SHe, VLP gas, saturation/quality</td><td>HEPAK priority</td></tr>
+<tr><td>A supply</td><td>about 3 bar, 4.5 K</td><td>supercritical helium supply point</td><td>REFPROP/HEPAK cross-check</td></tr>
+<tr><td>VLP return</td><td>about 26 mbar, 2–10 K</td><td>very-low-pressure return gas</td><td>HEPAK priority</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="card active">
+<h2>3D surface selector</h2>
+<div class="controls">
+<label>Surface mode <select id="surfaceMode"><option value="Ts">T-s base</option><option value="Th">T-h base</option><option value="Tg">T-g base</option><option value="exergy">Exergy between point 1 and 2</option></select></label>
+<label>Z variable <select id="zVar"><option value="pressure_mbar">Pressure [mbar]</option><option value="rho_kg_m3">Density rho [kg/m^3]</option><option value="v_m3_kg">Specific volume v [m^3/kg]</option><option value="enthalpy_j_kg">Enthalpy h [J/kg]</option><option value="entropy_j_kgk">Entropy s [J/kg-K]</option><option value="gibbs_j_kg">Gibbs free energy g [J/kg]</option><option value="exergy_j_kg">Specific exergy [J/kg]</option></select></label>
+<label>Focus <select id="focus"><option value="lt10">T &lt; 10 K</option><option value="lt5">T &lt; 5 K</option><option value="vlp">VLP 26–550 mbar</option><option value="supply">A-supply around 3 bar / 4.5 K</option></select></label>
+<button onclick="renderSurface()">Render</button>
+</div>
+<div id="surfacePlot" class="plotbox"></div>
+</section>
+
+<section class="card active">
+<h2>2D thermodynamic review curves</h2>
+<div class="controls">
+<button onclick="render2D('Ts')">T-s</button>
+<button onclick="render2D('Th')">T-h</button>
+<button onclick="render2D('Tg')">T-g</button>
+<button onclick="render2D('exergy')">Exergy balance</button>
+</div>
+<div id="curvePlot" class="plotbox"></div>
+</section>
+
+<section class="card neutral">
+<h2>Point-pair definitions for exergy and machine blocks</h2>
+<table>
+<thead><tr><th>Block</th><th>Point 1</th><th>Point 2</th><th>Visual intent</th></tr></thead>
+<tbody>
+<tr><td>Expander</td><td>high P, low T inlet</td><td>lower P outlet</td><td>show h drop, s change, exergy recovery</td></tr>
+<tr><td>JT valve</td><td>upstream liquid/SHe</td><td>downstream two-phase/VLP</td><td>show h constant, quality risk, exergy loss</td></tr>
+<tr><td>HX</td><td>hot/cold inlet streams</td><td>hot/cold outlet streams</td><td>show approach, entropy generation, exergy destruction</td></tr>
+<tr><td>Cold compressor / VLP</td><td>26 mbar VLP return</td><td>250–550 mbar stage outlet</td><td>show compression work and density change</td></tr>
+</tbody>
+</table>
+<p class="small">Density is tracked as rho in kg/m^3. Specific volume is v = 1/rho in m^3/kg. g/cm^3 conversion can be added as rho_g_cm3 = rho_kg_m3 / 1000.</p>
+</section>
+</main>
+<script>
+function linspace(a,b,n){const out=[];for(let i=0;i<n;i++)out.push(a+(b-a)*i/(n-1));return out;}
+function placeholderGrid(focus){
+  const T = focus==='lt5'?linspace(1.8,5,35):focus==='vlp'?linspace(2,10,35):focus==='supply'?linspace(3.8,5.5,35):linspace(1.8,10,35);
+  const S = linspace(200,5200,35);
+  const P = focus==='vlp'?linspace(26,550,35):focus==='supply'?linspace(2500,3500,35):linspace(26,3000,35);
+  return {T,S,P};
+}
+function zValue(zVar,T,S,P){
+  const rho = Math.max(0.02, P/(2077.1*T));
+  const h = 5193*T;
+  const g = h - T*S;
+  const ex = Math.max(0, h - 300*S/1000);
+  if(zVar==='pressure_mbar') return P;
+  if(zVar==='rho_kg_m3') return rho;
+  if(zVar==='v_m3_kg') return 1/rho;
+  if(zVar==='enthalpy_j_kg') return h;
+  if(zVar==='entropy_j_kgk') return S;
+  if(zVar==='gibbs_j_kg') return g;
+  if(zVar==='exergy_j_kg') return ex;
+  return P;
+}
+function renderSurface(){
+  const mode=document.getElementById('surfaceMode').value;
+  const zVar=document.getElementById('zVar').value;
+  const focus=document.getElementById('focus').value;
+  const grid=placeholderGrid(focus);
+  const x=[],y=[],z=[];
+  for(let i=0;i<grid.T.length;i++){
+    const row=[];
+    for(let j=0;j<grid.S.length;j++){
+      const T=grid.T[i], S=grid.S[j], P=grid.P[(i+j)%grid.P.length];
+      row.push(zValue(zVar,T,S,P));
+    }
+    z.push(row);
+  }
+  const xAxis = mode==='Th'?'h [J/kg]':mode==='Tg'?'g [J/kg]':'s [J/kg-K]';
+  const xVals = mode==='Th'?grid.S.map(s=>s*9):mode==='Tg'?grid.S.map(s=>20000-s*2):grid.S;
+  const data=[{type:'surface',x:xVals,y:grid.T,z:z,contours:{z:{show:true,usecolormap:true,highlightcolor:'#c00000',project:{z:true}}},name:zVar}];
+  const layout={title:`${mode} 3D surface with z=${zVar}`,scene:{xaxis:{title:xAxis},yaxis:{title:'T [K]'},zaxis:{title:zVar}},margin:{l:0,r:0,b:0,t:50}};
+  Plotly.newPlot('surfacePlot',data,layout);
+}
+function render2D(mode){
+  const T=linspace(1.8,10,80);
+  const s=T.map(t=>900+500*Math.log(t));
+  const h=T.map(t=>5193*t);
+  const g=T.map((t,i)=>h[i]-t*s[i]);
+  const ex=T.map((t,i)=>Math.max(0,h[i]-300*s[i]/1000));
+  let y=s,title='T-s';
+  if(mode==='Th'){y=h;title='T-h';}
+  if(mode==='Tg'){y=g;title='T-g';}
+  if(mode==='exergy'){y=ex;title='Specific exergy between reference and cold point';}
+  Plotly.newPlot('curvePlot',[{x:T,y:y,mode:'lines',name:title}],{title:title,xaxis:{title:'Temperature [K]'},yaxis:{title:mode==='Ts'?'s [J/kg-K]':mode==='Th'?'h [J/kg]':mode==='Tg'?'g [J/kg]':'exergy [J/kg]'}});
+}
+renderSurface();render2D('Ts');
+</script>
+</body>
+</html>
