@@ -52,7 +52,37 @@ function populateTable(rows){
   tbody.innerHTML='';
   rows.forEach(r=>{
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td class="mono">${r.point_id}</td><td>${r.region}</td><td>${r.temperature_k}</td><td>${r.pressure_mbar}</td><td class="${r.available?'green-text':'red-text'}">${r.available}</td><td>${r.status}</td><td>${r.notes}</td>`;
+
+    const pointCell=document.createElement('td');
+    pointCell.className='mono';
+    pointCell.textContent=String(r.point_id);
+    tr.appendChild(pointCell);
+
+    const regionCell=document.createElement('td');
+    regionCell.textContent=String(r.region);
+    tr.appendChild(regionCell);
+
+    const temperatureCell=document.createElement('td');
+    temperatureCell.textContent=String(r.temperature_k);
+    tr.appendChild(temperatureCell);
+
+    const pressureCell=document.createElement('td');
+    pressureCell.textContent=String(r.pressure_mbar);
+    tr.appendChild(pressureCell);
+
+    const availableCell=document.createElement('td');
+    availableCell.className=r.available?'green-text':'red-text';
+    availableCell.textContent=String(r.available);
+    tr.appendChild(availableCell);
+
+    const statusCell=document.createElement('td');
+    statusCell.textContent=String(r.status);
+    tr.appendChild(statusCell);
+
+    const notesCell=document.createElement('td');
+    notesCell.textContent=String(r.notes);
+    tr.appendChild(notesCell);
+
     tbody.appendChild(tr);
   });
 }
