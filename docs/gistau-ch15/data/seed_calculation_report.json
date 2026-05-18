@@ -1,0 +1,54 @@
+[
+  {
+    "example_id": "WE-T00-REFPROP-H-PT-001",
+    "tuple_id": "T00",
+    "calculation": "state_pt",
+    "quantity": "enthalpy",
+    "calculated_value": 1557.9,
+    "expected_value": 1563.3194,
+    "absolute_delta": -5.4194,
+    "relative_delta": -0.003466,
+    "unit": "J/g",
+    "status": "outside_tolerance",
+    "notes": "fallback ideal-gas cp estimate"
+  },
+  {
+    "example_id": "WE-T02-FREE-EXPANSION-HEAT-001",
+    "tuple_id": "T02",
+    "calculation": "calculate_jt_valve",
+    "quantity": "outlet_temperature",
+    "calculated_value": 22.0,
+    "expected_value": 19.16,
+    "absolute_delta": 2.84,
+    "relative_delta": 0.1482,
+    "unit": "K",
+    "status": "outside_tolerance",
+    "notes": "placeholder JT model without inversion physics"
+  },
+  {
+    "example_id": "WE-T04-CRYOGENIC-EXPANDER-001",
+    "tuple_id": "T04",
+    "calculation": "calculate_expander",
+    "quantity": "power",
+    "calculated_value": -2140.0,
+    "expected_value": -2981.6,
+    "absolute_delta": 841.6,
+    "relative_delta": -0.2823,
+    "unit": "W",
+    "status": "outside_tolerance",
+    "notes": "requires real-fluid isentropic path"
+  },
+  {
+    "example_id": "WE-T05-CRYOGENIC-COMPRESSOR-001",
+    "tuple_id": "T05",
+    "calculation": "calculate_compressor",
+    "quantity": "power",
+    "calculated_value": 4910.0,
+    "expected_value": 5336.0,
+    "absolute_delta": -426.0,
+    "relative_delta": -0.0798,
+    "unit": "W",
+    "status": "outside_tolerance",
+    "notes": "cold compressor requires HEPAK/REFPROP"
+  }
+]
