@@ -1,0 +1,18 @@
+version: 0.1.0
+snapshots:
+  - snapshot_id: STATE-0001
+    created_at: 2026-05-18
+    status: active
+    active_branches:
+      - semantic_substrate
+      - tuple_registry
+    active_invariants:
+      - INV-001
+      - INV-002
+      - INV-003
+    unresolved_semantic_debt:
+      - tuple replay persistence not implemented
+      - drift analytics not implemented
+    next_actions:
+      - implement semantic drift analytics
+      - add recursive merge semantics

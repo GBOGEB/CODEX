@@ -55,3 +55,11 @@
 - Start Chapter 15 implementation as a calculator-focused workstream with explicit versioning semantics.
 
 - Sample input JSON added at `inputs/ch15/sample_input_v1.json` and deterministic stats builder added for governance-ready outputs.
+
+## v0.6.1 - Graph navigation MVP + schema hardening
+
+- Added slide/node/review YAML schema drafts under `yaml/`.
+- Added eight-node SVG semantic graph MVP with clickable node routing.
+- Added HTML graph landing page and per-node detail pages.
+- Added side-by-side lineage review prototype (`html/review.html` + YAML review record).
+- Added density mode tokens for ultra-dense, engineering-dense, review, and presentation render profiles.

@@ -1,0 +1,35 @@
+version: 0.1.0
+purpose: Detect divergence between declared semantic intent and actual repository evolution.
+rules:
+  - id: DRIFT-001
+    title: orphan semantic artifact
+    severity: error
+    condition: governed artifact lacks ssot_ref, tuple_ref, or delta_ref
+    remediation: add reference to overlay_ssot.yaml, tuple_registry.yaml, or semantic_delta_ledger.yaml
+  - id: DRIFT-002
+    title: undocumented top-level structure
+    severity: warning
+    condition: new top-level directory is not represented in repo_manifest.yaml
+    remediation: update repo_manifest.yaml and semantic_delta_ledger.yaml
+  - id: DRIFT-003
+    title: stale active branch
+    severity: warning
+    condition: branch_dag status is active but no recent delta references it
+    remediation: update branch status or create a delta
+  - id: DRIFT-004
+    title: invariant without validator coverage
+    severity: warning
+    condition: invariant exists but no validator or manual validation rule references it
+    remediation: add validator coverage or document exception
+  - id: DRIFT-005
+    title: ROE without closure
+    severity: warning
+    condition: ROE item has no prevention or promoted_to_invariants field
+    remediation: close loop with prevention rule or explicit exception
+metrics:
+  drift_score:
+    formula: weighted_count_by_severity
+    bands:
+      green: 0-2
+      amber: 3-6
+      red: 7+

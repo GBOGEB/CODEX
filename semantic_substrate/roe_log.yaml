@@ -1,0 +1,18 @@
+version: 0.1.0
+roe:
+  - id: ROE-0001
+    date: 2026-05-18
+    trigger: Handover package felt too lite for semantic replay
+    cause: Narrative continuity existed without machine-reconstructable semantic state
+    correction:
+      - add invariant registry
+      - add branch DAG
+      - add semantic delta ledger
+      - add reconstruction manifest
+    prevention:
+      - require reconstructability invariant
+      - require semantic lineage
+      - require semantic delta tracking
+    promoted_to_invariants:
+      - INV-003
+      - INV-005

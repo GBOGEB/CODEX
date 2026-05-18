@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NIST Validation Review</title>
+<link rel="stylesheet" href="visual_cards.css" />
+<style>
+.hero{padding:24px;border-left:8px solid #008000;background:#f5fff5}.warn{border-left:8px solid #c00000;padding-left:12px}.mono{font-family:ui-monospace,Consolas,monospace}.good{color:#008000;font-weight:700}.bad{color:#c00000;font-weight:700}
+</style>
+</head>
+<body>
+<header class="topbar">
+<h1>NIST / GISTAU Validation Review</h1>
+<p>Validation baseline page for thermodynamic kernels, backend tiers and low-temperature helium review.</p>
+</header>
+<main class="layout">
+<section class="card active hero">
+<h2>Validation maturity</h2>
+<p>This phase introduces the first explicit NIST/GISTAU validation baseline for the cryogenic thermodynamic framework.</p>
+<ul>
+<li>Fallback values remain approximations.</li>
+<li>CoolProp is the first open-source executable candidate.</li>
+<li>REFPROP remains canonical for gas-region engineering checks.</li>
+<li>HEPAK remains priority below 5 K and for two-phase helium.</li>
+</ul>
+</section>
+<section class="card neutral">
+<h2>Validation anchors</h2>
+<table>
+<thead><tr><th>Point</th><th>Region</th><th>Purpose</th><th>Expected backend tier</th></tr></thead>
+<tbody>
+<tr><td class="mono">NIST-HE-300K-1BAR</td><td>Ambient helium</td><td>Sanity check and Cp/density validation</td><td class="good">CoolProp / REFPROP</td></tr>
+<tr><td class="mono">GISTAU-SHE-4P5K-3BAR</td><td>SHe supply</td><td>Low-temperature process review</td><td class="good">HEPAK preferred</td></tr>
+<tr><td class="mono">GISTAU-VLP-2K-26MBAR</td><td>VLP return</td><td>Cold-compression and exergy review</td><td class="bad">HEPAK critical</td></tr>
+</tbody>
+</table>
+</section>
+<section class="card warning">
+<h2>Known limitations</h2>
+<ul>
+<li>Fallback entropy is not publication-grade.</li>
+<li>JT inversion behavior is not yet reproduced.</li>
+<li>Two-phase dome reconstruction remains pending.</li>
+<li>He-II transition behavior remains pending.</li>
+<li>Exergy values are currently engineering approximations.</li>
+</ul>
+</section>
+<section class="card active">
+<h2>Linked engineering review pages</h2>
+<div class="entry-links">
+<a class="primary" href="plots/ts_surface_review.html">T-s surface review</a>
+<a class="primary" href="plots/coolprop_state_grid_view.html">CoolProp state-grid review</a>
+<a class="primary" href="backend_delta_heatmap.html">Backend heatmap</a>
+</div>
+</section>
+</main>
+</body>
+</html>
