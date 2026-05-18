@@ -1,0 +1,66 @@
+version: 0.2.0
+roadmap_name: CODEX semantic substrate evolution sequence
+updated: 2026-05-18
+sequence:
+  - id: EVO-001
+    title: tuple registry engine
+    status: scaffolded
+    purpose: Capture semantic lineage, intent, decision, delta, invariant, and ROE tuples.
+    outputs:
+      - semantic_substrate/tuple_registry.yaml
+      - semantic_substrate/engines/tuple_registry_engine.py
+  - id: EVO-002
+    title: semantic commit hooks
+    status: scaffolded
+    purpose: Enforce semantic references in commits and PRs.
+    outputs:
+      - semantic_substrate/hooks/semantic_commit_hook.py
+  - id: EVO-003
+    title: automatic delta extraction
+    status: scaffolded
+    purpose: Convert changed files and commit metadata into candidate delta records.
+    outputs:
+      - semantic_substrate/engines/delta_extractor.py
+  - id: EVO-004
+    title: semantic graph renderer
+    status: scaffolded
+    purpose: Render branch, tuple, invariant, and delta relationships into a human-readable graph.
+    outputs:
+      - semantic_substrate/viewers/semantic_graph_renderer.py
+  - id: EVO-005
+    title: replayable agent state snapshots
+    status: scaffolded
+    purpose: Persist agent recoverability states for cold-start continuity.
+    outputs:
+      - semantic_substrate/state_snapshots.yaml
+      - semantic_substrate/engines/state_snapshot_engine.py
+  - id: EVO-006
+    title: semantic drift analytics
+    status: planned
+    purpose: Detect divergence between declared intent and actual repository structure.
+    outputs:
+      - semantic_substrate/analytics/drift_rules.yaml
+  - id: EVO-007
+    title: recursive merge semantics
+    status: planned
+    purpose: Make merge decisions aware of semantic lineage and invariant effects.
+    outputs:
+      - semantic_substrate/merge/recursive_merge_policy.yaml
+  - id: EVO-008
+    title: multi-agent lineage coordination
+    status: planned
+    purpose: Track work across GPT, Codex, Copilot, human, and future agents.
+    outputs:
+      - semantic_substrate/agents/agent_lineage.yaml
+  - id: EVO-009
+    title: semantic debt scoring
+    status: planned
+    purpose: Score unresolved semantic debt and prioritize cleanup.
+    outputs:
+      - semantic_substrate/analytics/semantic_debt_score.yaml
+  - id: EVO-010
+    title: digital twin runtime layer
+    status: concept
+    purpose: Evolve repo metadata into a runnable semantic twin of the CODEX project state.
+    outputs:
+      - semantic_substrate/digital_twin/runtime_layer.yaml

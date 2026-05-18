@@ -1,0 +1,31 @@
+version: 0.1.0
+merge_semantics:
+  philosophy: invariant-first recursive continuity
+  rules:
+    - id: MERGE-001
+      title: invariant precedence
+      description: Changes violating active invariants shall not auto-merge.
+      action: require manual review
+    - id: MERGE-002
+      title: lineage preservation
+      description: Tuple ancestry shall remain traceable after merge.
+      action: reject orphan tuples
+    - id: MERGE-003
+      title: semantic delta generation
+      description: Every semantic merge shall emit or update a semantic delta.
+      action: generate delta candidate
+    - id: MERGE-004
+      title: ROE retention
+      description: Historical failures and corrections shall not be discarded during merge.
+      action: preserve roe_log lineage
+    - id: MERGE-005
+      title: reconstruction safety
+      description: Merges shall not break cold-start reconstructability.
+      action: run reconstruction validator
+conflict_resolution:
+  semantic_conflict_priority:
+    - invariants
+    - reconstruction
+    - lineage
+    - branch continuity
+    - convenience
