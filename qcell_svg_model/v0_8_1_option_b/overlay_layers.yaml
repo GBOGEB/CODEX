@@ -1,0 +1,113 @@
+version: 0.8.1-option-b
+artifact: qcell_sheet4_overlay_first
+intent: preserve_sheet4_lessons_without_forcing_all_detail_into_main
+
+principles:
+  - thermal_architecture_first
+  - flows_are_small_and_subordinate
+  - pressure_diagnostics_are_optional_overlays
+  - annotations_are_toggleable_explanations
+  - endpoint_marks_only_where_they_reduce_ambiguity
+  - drawio_is_lineage_input_yaml_is_ssot
+
+modes:
+  operator:
+    description: Clean MAIN view for fast scanning.
+    default_layers:
+      - base_thermal_shell
+      - critical_labels
+    muted_layers:
+      - teaching_flows
+      - pressure_diagnostics
+      - endpoint_guides
+      - explanatory_annotations
+  teaching:
+    description: Expanded explanation view for onboarding, reviews, and traceability.
+    default_layers:
+      - base_thermal_shell
+      - critical_labels
+      - teaching_flows
+      - endpoint_guides
+      - explanatory_annotations
+    muted_layers:
+      - pressure_diagnostics
+  diagnostic:
+    description: Optional pressure/diagnostic overlay view.
+    default_layers:
+      - base_thermal_shell
+      - critical_labels
+      - pressure_diagnostics
+      - endpoint_guides
+    muted_layers:
+      - teaching_flows
+      - explanatory_annotations
+
+layers:
+  base_thermal_shell:
+    role: architecture
+    priority: 100
+    visual_weight: dominant
+    contents:
+      - 2K_mass
+      - thermal_boundaries
+      - major_components
+      - interfaces
+    rules:
+      - never_muted_in_standard_views
+      - preserve_readability_at_full_page_zoom
+
+  critical_labels:
+    role: identification
+    priority: 90
+    visual_weight: medium
+    rules:
+      - labels_must_not_overlap_primary_geometry
+      - labels_may_be_bumped_by_collision_engine
+
+  teaching_flows:
+    role: explanation
+    priority: 50
+    visual_weight: light
+    flow_scale: small
+    rules:
+      - arrows_must_not_dominate_main
+      - use_local_short_segments_where_possible
+      - avoid_long_cross_diagram_arrows
+      - prefer_sparse_direction_hints_over_dense_routing
+
+  endpoint_guides:
+    role: disambiguation
+    priority: 45
+    visual_weight: light
+    rules:
+      - only_show_where_causality_or_connection_is_ambiguous
+      - do_not_create_secondary_visual_network
+
+  pressure_diagnostics:
+    role: diagnostic_overlay
+    priority: 40
+    visual_weight: medium
+    palette: pressure_only
+    rules:
+      - keep_separate_from_temperature_palette
+      - default_off_in_operator_and_teaching_modes
+      - never_recolor_thermal_shell
+
+  explanatory_annotations:
+    role: review_and_onboarding
+    priority: 20
+    visual_weight: light
+    rules:
+      - toggleable
+      - never_required_for_base_operator_readability
+      - suitable_for_review_mode_not_main_mode
+
+comparison_checkpoints:
+  against_pr_68:
+    - full_page_readability
+    - zoomed_component_readability
+    - operator_scan_speed
+    - teaching_clarity
+    - visual_clutter
+    - yaml_ssot_conversion_effort
+    - layer_engine_compatibility
