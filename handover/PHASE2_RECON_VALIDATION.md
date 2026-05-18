@@ -53,7 +53,7 @@ To move from “foundational substrate” to “deterministic autonomous runtime
 4. **Artifact unpack/rebuild CI step**
    - Validate that `*.tar.gz.b64` seed can be decoded/unpacked reproducibly in CI.
 5. **Digital-twin bridge contracts**
-   - Formalize interfaces between `digital_twin/runtime_layer.yaml` and overlay SSOT semantics.
+   - Formalize interfaces between `semantic_substrate/digital_twin/runtime_layer.yaml` and overlay SSOT semantics.
 
 ## Recommended immediate next action
 Adopt `handover/PHASE_3_HARDENING_CHECKLIST.md` as the governing execution checklist and bind each item to measurable CI checks (not narrative-only completion) before promoting Option-B artifacts beyond experimental branch scope.
