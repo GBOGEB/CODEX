@@ -115,7 +115,7 @@ def run_refprop_gas_region_validation(
 
     report = {
         "validation_targets": ["WE-T00-REFPROP-H-PT-001", "WE-T00-REFPROP-HSD-PT-002"],
-        "backend": REFPROPAdapter.backend_name,
+        "backend": adapter.backend_name,
         "rows": len(computed_rows),
         "status": "ok",
     }
