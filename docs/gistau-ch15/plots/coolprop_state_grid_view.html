@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CoolProp State Grid View</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<link rel="stylesheet" href="../visual_cards.css" />
+<style>
+.plotbox{width:100%;height:460px;border:2px solid #000}.statusline{font-weight:800;border-left:6px solid #000;padding-left:12px}.mono{font-family:ui-monospace,Consolas,monospace}.small{font-size:.92rem}
+</style>
+</head>
+<body>
+<header class="topbar">
+<h1>CoolProp State Grid — Data-Bound Review</h1>
+<p>Loads the CoolProp state-grid JSON artifact and prepares Plotly views for real-fluid low-temperature helium review.</p>
+</header>
+<main class="layout">
+<section class="card active">
+<h2>State-grid status</h2>
+<p id="status" class="statusline">Loading data...</p>
+<table id="gridTable"><thead><tr><th>Point</th><th>Region</th><th>T [K]</th><th>P [mbar]</th><th>Available</th><th>Status</th><th>Notes</th></tr></thead><tbody></tbody></table>
+</section>
+<section class="card active">
+<h2>T-h / T-s readiness plot</h2>
+<div id="statePlot" class="plotbox"></div>
+</section>
+<section class="card neutral">
+<h2>rho-v readiness plot</h2>
+<div id="rhoPlot" class="plotbox"></div>
+</section>
+<section class="card warning">
+<h2>Binding notes</h2>
+<ul>
+<li>If CoolProp is unavailable, this page still renders explicit unavailable rows.</li>
+<li>When CoolProp is installed, h, s, rho, v, Gibbs and exergy fields populate the Plotly traces.</li>
+<li>HEPAK remains preferred below 5 K and in two-phase/quality regions.</li>
+<li>REFPROP remains canonical for gas-region engineering checks.</li>
+</ul>
+</section>
+</main>
+<script>
+async function loadGrid(){
+  const res = await fetch('../data/coolprop_state_grid_report.json');
+  return await res.json();
+}
+function numericRows(rows){
+  return rows.filter(r => r.available && r.enthalpy_j_kg !== null && r.entropy_j_kgk !== null && r.density_kg_m3 !== null);
+}
+function populateTable(rows){
+  const tbody=document.querySelector('#gridTable tbody');
+  tbody.innerHTML='';
+  rows.forEach(r=>{
+    const tr=document.createElement('tr');
+
+    const pointCell=document.createElement('td');
+    pointCell.className='mono';
+    pointCell.textContent=String(r.point_id);
+    tr.appendChild(pointCell);
+
+    const regionCell=document.createElement('td');
+    regionCell.textContent=String(r.region);
+    tr.appendChild(regionCell);
+
+    const temperatureCell=document.createElement('td');
+    temperatureCell.textContent=String(r.temperature_k);
+    tr.appendChild(temperatureCell);
+
+    const pressureCell=document.createElement('td');
+    pressureCell.textContent=String(r.pressure_mbar);
+    tr.appendChild(pressureCell);
+
+    const availableCell=document.createElement('td');
+    availableCell.className=r.available?'green-text':'red-text';
+    availableCell.textContent=String(r.available);
+    tr.appendChild(availableCell);
+
+    const statusCell=document.createElement('td');
+    statusCell.textContent=String(r.status);
+    tr.appendChild(statusCell);
+
+    const notesCell=document.createElement('td');
+    notesCell.textContent=String(r.notes);
+    tr.appendChild(notesCell);
+
+    tbody.appendChild(tr);
+  });
+}
+function plotState(rows){
+  const good=numericRows(rows);
+  if(good.length===0){
+    Plotly.newPlot('statePlot',[{x:rows.map(r=>r.temperature_k),y:rows.map(r=>0),mode:'markers+text',text:rows.map(r=>r.point_id),name:'CoolProp unavailable'}],{title:'No numeric CoolProp state values available yet',xaxis:{title:'T [K]'},yaxis:{title:'placeholder'}});
+    Plotly.newPlot('rhoPlot',[{x:rows.map(r=>r.temperature_k),y:rows.map(r=>0),mode:'markers+text',text:rows.map(r=>r.point_id),name:'rho/v unavailable'}],{title:'No numeric rho-v values available yet',xaxis:{title:'T [K]'},yaxis:{title:'placeholder'}});
+    return;
+  }
+  Plotly.newPlot('statePlot',[
+    {x:good.map(r=>r.temperature_k),y:good.map(r=>r.enthalpy_j_kg),mode:'markers+lines',name:'h [J/kg]'},
+    {x:good.map(r=>r.temperature_k),y:good.map(r=>r.entropy_j_kgk),mode:'markers+lines',name:'s [J/kg-K]',yaxis:'y2'}
+  ],{title:'CoolProp T-h / T-s state grid',xaxis:{title:'T [K]'},yaxis:{title:'h [J/kg]'},yaxis2:{title:'s [J/kg-K]',overlaying:'y',side:'right'}});
+  Plotly.newPlot('rhoPlot',[
+    {x:good.map(r=>r.specific_volume_m3_kg),y:good.map(r=>r.density_kg_m3),mode:'markers+lines',name:'rho-v'}
+  ],{title:'CoolProp density vs specific volume',xaxis:{title:'v [m^3/kg]'},yaxis:{title:'rho [kg/m^3]'}});
+}
+loadGrid().then(rows=>{
+  const availableCount=numericRows(rows).length;
+  document.getElementById('status').textContent=`Loaded ${rows.length} state-grid rows. Available numeric backend rows: ${availableCount}.`;
+  populateTable(rows);
+  plotState(rows);
+}).catch(err=>{
+  document.getElementById('status').textContent='Failed to load coolprop_state_grid_report.json: '+err;
+});
+</script>
+</body>
+</html>
