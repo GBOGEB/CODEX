@@ -1,0 +1,87 @@
+{
+  "purpose": "Visual/source reconstruction registry for PR-FB. Links worked examples to visible engineering cards, source snippets, figures, tables, colours, and validation intent.",
+  "colour_convention": {
+    "green": "validated or active deterministic path",
+    "black": "neutral source/reference mapping",
+    "red": "open TODO, blocked backend, or source transcription warning"
+  },
+  "blocks": [
+    {
+      "block_id": "VB-T00-PROPERTY",
+      "tuple_id": "T00",
+      "title": "Property Engine Worked Examples",
+      "source_figures": ["Fig. 15.3", "Fig. 15.4", "Fig. 15.5", "Fig. 15.6"],
+      "worked_examples": ["WE-T00-REFPROP-H-PT-001", "WE-T00-REFPROP-HSD-PT-002", "WE-T00-SATURATION-QUALITY-003"],
+      "primary_visual": "property-call-table",
+      "table_columns": ["backend tier", "P", "T", "h", "s", "rho", "quality", "status"],
+      "status_colour": "black",
+      "next_visual_todo": "Add source image crop and equation overlay for REFPROP/HEPAK calls."
+    },
+    {
+      "block_id": "VB-T01-COMPRESSOR",
+      "tuple_id": "T01",
+      "title": "Room-Temperature Compressor Worked Example",
+      "source_figures": ["Fig. 15.10", "Fig. 15.12"],
+      "worked_examples": ["WE-T01-ROOM-TEMP-COMPRESSOR-001"],
+      "primary_visual": "compressor-flow-card",
+      "table_columns": ["P1", "T1", "P2", "mdot", "power", "isothermal efficiency", "status"],
+      "status_colour": "red",
+      "next_visual_todo": "Resolve fluid ambiguity and exact column mapping from source table."
+    },
+    {
+      "block_id": "VB-T02-JT",
+      "tuple_id": "T02",
+      "title": "JT / Free Expansion Worked Examples",
+      "source_figures": ["Fig. 15.16", "Fig. 15.19", "Fig. 15.21", "Fig. 15.23"],
+      "worked_examples": ["WE-T02-FREE-EXPANSION-HEAT-001", "WE-T02-INVERSION-HELIUM-002", "WE-T02-SAT-LIQUID-HELIUM-003", "WE-T02-MASS-FLOW-004"],
+      "primary_visual": "jt-expansion-card",
+      "table_columns": ["P1", "T1", "P2", "Qdot", "T2", "h", "quality", "tier", "status"],
+      "status_colour": "green",
+      "next_visual_todo": "Add two-phase region card highlighting HEPAK priority below 5 K."
+    },
+    {
+      "block_id": "VB-T03-HX",
+      "tuple_id": "T03",
+      "title": "Heat Exchanger Worked Example",
+      "source_figures": ["Fig. 15.25", "Fig. 15.27"],
+      "worked_examples": ["WE-T03-HEAT-EXCHANGER-001"],
+      "primary_visual": "hx-balance-card",
+      "table_columns": ["hot in", "hot out", "cold in", "cold out", "LMTD", "residual", "status"],
+      "status_colour": "red",
+      "next_visual_todo": "Split multiple source scenarios into separate visible cards."
+    },
+    {
+      "block_id": "VB-T04-EXPANDER",
+      "tuple_id": "T04",
+      "title": "Cryogenic Expander Worked Example",
+      "source_figures": ["Fig. 15.29", "Fig. 15.30"],
+      "worked_examples": ["WE-T04-CRYOGENIC-EXPANDER-001"],
+      "primary_visual": "expander-power-card",
+      "table_columns": ["P1", "T1", "P2", "mdot", "eta", "T2", "power", "status"],
+      "status_colour": "red",
+      "next_visual_todo": "Confirm sign convention for turbine power and display both source and engineering sign conventions."
+    },
+    {
+      "block_id": "VB-T05-CRYO-COMPRESSOR",
+      "tuple_id": "T05",
+      "title": "Cryogenic Compressor / Circulator Worked Example",
+      "source_figures": ["Fig. 15.31"],
+      "worked_examples": ["WE-T05-CRYOGENIC-COMPRESSOR-001"],
+      "primary_visual": "cryo-compressor-card",
+      "table_columns": ["P1", "T1", "P2", "mdot", "eta", "T2", "power", "tier", "status"],
+      "status_colour": "green",
+      "next_visual_todo": "Use HEPAK-priority label for low-temperature helium validation."
+    },
+    {
+      "block_id": "VB-T06-EQPOWER",
+      "tuple_id": "T06",
+      "title": "Equivalent Power Worked Example",
+      "source_figures": ["Fig. 15.33"],
+      "worked_examples": ["WE-T06-EQUIVALENT-POWER-001"],
+      "primary_visual": "equivalent-power-rollup-card",
+      "table_columns": ["load type", "Tcold", "Q", "Carnot", "FOM", "Peq", "status"],
+      "status_colour": "red",
+      "next_visual_todo": "Resolve source column mapping and expose roll-up structure."
+    }
+  ]
+}
