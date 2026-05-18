@@ -24,11 +24,11 @@ class CoolPropSaturationCurveGenerator:
             temperatures = [1.8, 2.0, 2.4, 3.0, 3.8, 4.6]
 
             entropy_liquid = [
-                float(adapter._cp.PropsSI("S", "T", t, "Q", 0, "Helium"))
+                adapter.entropy_tq("Helium", t, 0.0)
                 for t in temperatures
             ]
             entropy_vapor = [
-                float(adapter._cp.PropsSI("S", "T", t, "Q", 1, "Helium"))
+                adapter.entropy_tq("Helium", t, 1.0)
                 for t in temperatures
             ]
         except PropertyBackendUnavailable:

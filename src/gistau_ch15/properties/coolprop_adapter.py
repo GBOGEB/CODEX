@@ -104,3 +104,6 @@ class CoolPropAdapter:
         if q < 0.0 or q > 1.0:
             return None
         return q
+
+    def entropy_tq(self, fluid: str, t_k: float, quality: float) -> float:
+        return float(self._cp.PropsSI("S", "T", t_k, "Q", quality, fluid))

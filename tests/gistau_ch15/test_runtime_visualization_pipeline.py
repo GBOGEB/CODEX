@@ -22,16 +22,13 @@ def test_coolprop_curve_generator_returns_curve():
     assert len(curve.temperature_liquid) > 0
 
 
-def test_coolprop_curve_generator_uses_runtime_hooks_when_available():
-    class _FakeCP:
+def test_coolprop_curve_generator_invokes_runtime_hooks():
+    class _FakeAdapter:
         @staticmethod
-        def PropsSI(*args):
-            if args[3] == "Q" and args[4] == 0:
+        def entropy_tq(_, __, quality):
+            if quality == 0.0:
                 return 111.0
             return 222.0
-
-    class _FakeAdapter:
-        _cp = _FakeCP()
 
     class _FakeHooks:
         def adapter(self):
