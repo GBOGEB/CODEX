@@ -26,8 +26,11 @@ def write_coolprop_state_grid_report(output_path: str | Path = DEFAULT_OUTPUT) -
 
 def main() -> None:
     rows = write_coolprop_state_grid_report()
-    available = sum(1 for row in rows if row.get("available"))
-    print(f"wrote {len(rows)} CoolProp state-grid rows ({available} available)")
+    available_flagged = sum(1 for row in rows if row.get("available"))
+    print(
+        f"wrote {len(rows)} CoolProp state-grid rows "
+        f"({available_flagged} flagged available by CoolProp support)"
+    )
 
 
 if __name__ == "__main__":
