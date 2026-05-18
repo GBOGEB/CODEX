@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='utf-8'/>
+<title>Thermodynamic Visual Overlays</title>
+<script src='https://cdn.plot.ly/plotly-2.35.2.min.js'></script>
+<style>
+body { font-family: Arial, sans-serif; background:#0f172a; color:#e2e8f0; margin:20px; }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.card { background:#111827; border-radius:10px; padding:10px; }
+.plot { height:420px; }
+</style>
+</head>
+<body>
+<h1>PR-H Thermodynamic Visual Overlays</h1>
+<p>Deterministic review overlays prepared for future backend-driven execution.</p>
+<div class='grid'>
+<div class='card'><div id='sat' class='plot'></div></div>
+<div class='card'><div id='ts' class='plot'></div></div>
+<div class='card'><div id='phase' class='plot'></div></div>
+<div class='card'><div id='delta' class='plot'></div></div>
+<div class='card'><div id='expander' class='plot'></div></div>
+<div class='card'><div id='heatmap' class='plot'></div></div>
+</div>
+<script>
+fetch('../data/thermo_visual_overlay_seed.json')
+.then(r => r.json())
+.then(data => {
+Plotly.newPlot('sat', [
+{ x:data.saturation_dome.entropy_liquid, y:data.saturation_dome.temperature_liquid, mode:'lines', name:'liquid' },
+{ x:data.saturation_dome.entropy_vapor, y:data.saturation_dome.temperature_vapor, mode:'lines', name:'vapor' }
+], { title:'Saturation Dome Overlay', xaxis:{title:'Entropy'}, yaxis:{title:'Temperature [K]'} });
+
+const tsData = data.ts_paths.map(p => ({ x:p.entropy, y:p.temperature, mode:'lines+markers', name:p.name }));
+Plotly.newPlot('ts', tsData, { title:'T-s Reconstruction', xaxis:{title:'Entropy'}, yaxis:{title:'Temperature [K]'} });
+
+Plotly.newPlot('phase', [{
+ x:data.phase_map.pressure,
+ y:data.phase_map.temperature,
+ mode:'markers',
+ marker:{ size:12, color:data.phase_map.code }
+}], { title:'Low-Temperature Phase Map', xaxis:{title:'Pressure [kPa]'}, yaxis:{title:'Temperature [K]'} });
+
+Plotly.newPlot('delta', [
+{ x:data.backend_delta.backend, y:data.backend_delta.enthalpy_pct, type:'bar', name:'enthalpy %' },
+{ x:data.backend_delta.backend, y:data.backend_delta.density_pct, type:'bar', name:'density %' }
+], { title:'Backend Delta Overlay' });
+
+Plotly.newPlot('expander', [
+{ x:data.expander.station, y:data.expander.temperature, mode:'lines+markers', name:'Temperature [K]' },
+{ x:data.expander.station, y:data.expander.pressure, mode:'lines+markers', name:'Pressure [kPa]' }
+], { title:'Cryogenic Expander Validation' });
+
+Plotly.newPlot('heatmap', [{
+ z:data.agreement.z,
+ x:data.agreement.x,
+ y:data.agreement.y,
+ type:'heatmap'
+}], { title:'Backend Agreement Heatmap' });
+});
+</script>
+</body>
+</html>
