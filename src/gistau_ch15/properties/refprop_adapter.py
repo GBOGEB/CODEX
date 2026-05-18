@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from gistau_ch15.properties.errors import PropertyBackendUnavailable
+from .errors import PropertyBackendUnavailable
 
 
 class REFPROPAdapter:
@@ -14,6 +14,36 @@ class REFPROPAdapter:
     backend_name = "REFPROP"
 
     def __init__(self) -> None:
+        raise PropertyBackendUnavailable(
+            "REFPROP backend is not installed or configured in this environment"
+        )
+
+    def state_pt(self, pressure: float, temperature: float):
+        raise PropertyBackendUnavailable(
+            "REFPROP backend is not installed or configured in this environment"
+        )
+
+    def state_ph(self, pressure: float, enthalpy: float):
+        raise PropertyBackendUnavailable(
+            "REFPROP backend is not installed or configured in this environment"
+        )
+
+    def state_ps(self, pressure: float, entropy: float):
+        raise PropertyBackendUnavailable(
+            "REFPROP backend is not installed or configured in this environment"
+        )
+
+    def saturation_t(self, temperature: float):
+        raise PropertyBackendUnavailable(
+            "REFPROP backend is not installed or configured in this environment"
+        )
+
+    def saturation_p(self, pressure: float):
+        raise PropertyBackendUnavailable(
+            "REFPROP backend is not installed or configured in this environment"
+        )
+
+    def quality_ph(self, pressure: float, enthalpy: float):
         raise PropertyBackendUnavailable(
             "REFPROP backend is not installed or configured in this environment"
         )
