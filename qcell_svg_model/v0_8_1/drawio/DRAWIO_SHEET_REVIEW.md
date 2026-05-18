@@ -1,6 +1,6 @@
 # Draw.io Sheet Review - QCELL_PARASITIC
 
-Source file: `drawio/QCELL_PARASITIC.drawio.svg`
+Source file: [`qcell_svg_model/v0_8_1/drawio/QCELL_PARASITIC.drawio.svg`](QCELL_PARASITIC.drawio.svg)
 
 ## Embedded sheets
 

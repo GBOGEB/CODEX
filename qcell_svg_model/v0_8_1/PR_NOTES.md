@@ -7,7 +7,7 @@ Add the QCELL full engineering + coding handover package and preserve the provid
 ## Key updates
 
 - Adds v0.8.1 handover files under `qcell_svg_model/v0_8_1/`.
-- Adds `QCELL_PARASITIC.drawio.svg` with four embedded Draw.io sheets.
+- Adds `qcell_svg_model/v0_8_1/drawio/QCELL_PARASITIC.drawio.svg` with four embedded Draw.io sheets.
 - Adds sheet review focusing on sheet 4: `Copy of Copy of Copy of BSLN_0`.
 - Records rule: flow arrows/details must remain visually smaller and layer-separated.
 - Keeps pressure diagnostic palette separate from thermal/temperature palette.
