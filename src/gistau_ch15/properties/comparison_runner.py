@@ -1,63 +1,57 @@
 from __future__ import annotations
 
-import json
-from pathlib import Path
-from typing import Iterable
+from dataclasses import dataclass, asdict
+from typing import Any
 
-from gistau_ch15.properties.backend_selector import select_available_backends
-from gistau_ch15.properties.compare import (
-    BackendDefinition,
-    BackendTier,
-    StatePointRequest,
-    as_report_rows,
-    compare_to_reference,
-    evaluate_state_points,
-)
+from gistau_ch15.validation.calculation_runner import run_seed_calculation_report
 
 
-DEFAULT_REPORT_PATH = Path("docs/gistau-ch15/data/backend_comparison_report.json")
+@dataclass(frozen=True)
+class BackendComparisonRow:
+    example_id: str
+    tuple_id: str
+    backend_name: str
+    backend_tier: str
+    reference_tier: str
+    quantity: str
+    backend_value: float | None
+    reference_value: float | None
+    absolute_delta: float | None
+    relative_delta: float | None
+    unit: str
+    status: str
+    notes: str
 
 
-def _tier_for_backend(name: str) -> BackendTier:
-    mapping = {
-        "fallback": BackendTier.FALLBACK,
-        "coolprop": BackendTier.COOLPROP,
-        "refprop": BackendTier.REFPROP,
-        "hepak": BackendTier.HEPAK,
-    }
-    return mapping[name]
+def seed_rows_to_backend_comparison() -> list[BackendComparisonRow]:
+    """Convert fallback seed calculations into comparison-report rows.
 
+    This is the first executable bridge from calculation_runner.py into the
+    GitHub Pages backend heatmap. Later passes will add CoolProp, REFPROP and
+    HEPAK rows using the same schema.
+    """
 
-def build_backend_definitions() -> list[BackendDefinition]:
-    backends, _ = select_available_backends()
-    definitions: list[BackendDefinition] = []
-
-    for name in ["fallback", "coolprop", "refprop", "hepak"]:
-        definitions.append(
-            BackendDefinition(
-                name=name,
-                tier=_tier_for_backend(name),
-                backend=backends.get(name),
-                role="runtime_validation",
-                notes="auto-generated backend definition",
+    rows: list[BackendComparisonRow] = []
+    for item in run_seed_calculation_report():
+        rows.append(
+            BackendComparisonRow(
+                example_id=item["example_id"],
+                tuple_id=item["tuple_id"],
+                backend_name="fallback",
+                backend_tier="tier0_fallback",
+                reference_tier="tier4_nist_gistau_reference",
+                quantity=item["quantity"],
+                backend_value=item["calculated_value"],
+                reference_value=item["expected_value"],
+                absolute_delta=item["absolute_delta"],
+                relative_delta=item["relative_delta"],
+                unit=item["unit"],
+                status=item["status"],
+                notes=item["notes"],
             )
         )
-
-    return definitions
-
-
-def run_backend_comparison(
-    requests: Iterable[StatePointRequest],
-    reference_backend: str = "fallback",
-    output_path: str | Path = DEFAULT_REPORT_PATH,
-):
-    definitions = build_backend_definitions()
-    results = evaluate_state_points(definitions, requests)
-    deltas = compare_to_reference(results, reference_backend)
-    rows = as_report_rows(deltas)
-
-    path = Path(output_path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(rows, indent=2) + "\n", encoding="utf-8")
-
     return rows
+
+
+def generate_backend_comparison_report() -> list[dict[str, Any]]:
+    return [asdict(row) for row in seed_rows_to_backend_comparison()]
