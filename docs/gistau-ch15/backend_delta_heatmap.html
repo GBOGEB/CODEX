@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>GISTAU Backend Delta Heatmap</title>
+<link rel="stylesheet" href="visual_cards.css" />
+<style>
+.heatmap td{text-align:center;font-weight:700}.ok{background:#e6f4e6;color:#008000}.warn{background:#fff4e5;color:#c00000}.ref{background:#f2f2f2;color:#000}.blocked{background:#ffeaea;color:#c00000}.matrix-note{border-left:6px solid #000;padding-left:12px;font-weight:700}
+</style>
+</head>
+<body>
+<header class="topbar">
+<h1>GISTAU Chapter 15 — Backend Delta Heatmap</h1>
+<p>Visual comparison matrix for fallback, CoolProp, REFPROP, HEPAK and NIST/GISTAU reference tiers.</p>
+</header>
+<main class="layout">
+<section class="card active">
+<h2>Backend Tier Accuracy Matrix</h2>
+<p class="matrix-note">This scaffold is intentionally visual-first. Numeric deltas will bind to <code>compare.py</code> outputs and <code>worked_examples.json</code> in the next validation pass.</p>
+<table class="heatmap">
+<thead>
+<tr><th>Tuple</th><th>Fallback</th><th>CoolProp</th><th>REFPROP</th><th>HEPAK</th><th>NIST/GISTAU</th><th>Primary risk</th></tr>
+</thead>
+<tbody>
+<tr><td>T00 Property</td><td class="warn">approx</td><td class="ok">candidate</td><td class="ok">primary</td><td class="ok">low-T</td><td class="ref">reference</td><td>unit consistency</td></tr>
+<tr><td>T01 Compressor</td><td class="warn">approx</td><td class="ok">candidate</td><td class="ok">primary</td><td class="ref">cross-check</td><td class="ref">source table</td><td>fluid/context ambiguity</td></tr>
+<tr><td>T02 JT / two-phase</td><td class="blocked">not valid 2φ</td><td class="warn">candidate</td><td class="ok">gas/sat</td><td class="ok">primary 2φ</td><td class="ref">source table</td><td>quality / phase region</td></tr>
+<tr><td>T03 Heat exchanger</td><td class="warn">approx</td><td class="ok">candidate</td><td class="ok">primary</td><td class="ok">low-T</td><td class="ref">source table</td><td>multiple scenarios</td></tr>
+<tr><td>T04 Expander</td><td class="warn">approx</td><td class="ok">candidate</td><td class="ok">primary</td><td class="ok">wetness check</td><td class="ref">source table</td><td>power sign convention</td></tr>
+<tr><td>T05 Cryo compressor</td><td class="blocked">weak low-T</td><td class="warn">candidate</td><td class="ok">cross-check</td><td class="ok">primary low-T</td><td class="ref">source table</td><td>&lt;5 K helium accuracy</td></tr>
+<tr><td>T06 Equivalent power</td><td class="ok">roll-up only</td><td class="ok">enthalpy inputs</td><td class="ok">primary inputs</td><td class="ok">low-T inputs</td><td class="ref">reference roll-up</td><td>column mapping / FOM</td></tr>
+</tbody>
+</table>
+</section>
+<section class="card warning">
+<h2>Colour Interpretation</h2>
+<table>
+<thead><tr><th>Colour</th><th>Meaning</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td class="ok">green</td><td>acceptable candidate or primary tier</td><td>bind numeric delta</td></tr>
+<tr><td class="warn">amber/red text</td><td>approximate or needs caution</td><td>show tolerance warning</td></tr>
+<tr><td class="blocked">red block</td><td>invalid or blocked for this physics region</td><td>defer to HEPAK/REFPROP/NIST</td></tr>
+<tr><td class="ref">black/grey</td><td>reference/source baseline</td><td>do not treat as executable backend</td></tr>
+</tbody>
+</table>
+</section>
+<section class="card neutral">
+<h2>Next Data Binding</h2>
+<ul>
+<li>Load <code>docs/gistau-ch15/data/worked_examples.json</code>.</li>
+<li>Generate backend outputs through <code>evaluate_state_points(...)</code>.</li>
+<li>Compare with <code>compare_to_reference(...)</code>.</li>
+<li>Render actual ΔT, Δh, Δs and Δρ values in this heatmap.</li>
+</ul>
+</section>
+</main>
+</body>
+</html>
