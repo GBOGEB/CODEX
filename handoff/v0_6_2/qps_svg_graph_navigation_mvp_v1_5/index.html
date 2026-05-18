@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>QPS SVG Graph Navigation MVP v1.5 (compact)</title>
+  <style>
+    body{font-family:Arial,sans-serif;margin:0;background:#0b1020;color:#e8ecff}
+    .wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px}
+    .panel{border:1px solid #334;background:#121a31;border-radius:8px;padding:12px}
+    .toolbar button{margin-right:6px}
+    body[data-density="ultra"]{font-size:12px}
+    body[data-density="normal"]{font-size:14px}
+    body[data-density="wallboard"]{font-size:18px}
+    a{color:#89b4ff}
+  </style>
+</head>
+<body data-density="normal">
+  <div class="panel toolbar">
+    <strong>Density:</strong>
+    <button onclick="setDensity('ultra')">ultra</button>
+    <button onclick="setDensity('normal')">normal</button>
+    <button onclick="setDensity('wallboard')">wallboard</button>
+  </div>
+  <div class="wrap">
+    <section class="panel">
+      <h2>Clickable SVG graph</h2>
+      <svg viewBox="0 0 450 220" width="100%" aria-label="QPS graph">
+        <line x1="90" y1="70" x2="220" y2="70" stroke="#80ed99"/>
+        <line x1="90" y1="70" x2="220" y2="150" stroke="#72efdd"/>
+        <line x1="220" y1="70" x2="220" y2="150" stroke="#ffb703"/>
+        <a href="nodes/root.html"><circle cx="90" cy="70" r="24" fill="#355070"/><text x="72" y="76">root</text></a>
+        <a href="nodes/contract.html"><circle cx="220" cy="70" r="24" fill="#6d597a"/><text x="190" y="76">contract</text></a>
+        <a href="nodes/registry.html"><circle cx="220" cy="150" r="24" fill="#b56576"/><text x="192" y="156">registry</text></a>
+      </svg>
+      <ul>
+        <li>tree: root → contract</li><li>interface: root → registry</li><li>control: contract → registry</li>
+      </ul>
+    </section>
+    <section class="panel">
+      <h2>Source vs curated review shell</h2>
+      <iframe src="nodes/root.html" title="source" style="width:100%;height:160px"></iframe>
+      <iframe src="nodes/contract.html" title="curated" style="width:100%;height:160px"></iframe>
+      <p><a href="nodes.yaml">node registry (YAML)</a> · <a href="graph-contract.json">graph object contract</a></p>
+    </section>
+  </div>
+  <script>function setDensity(d){document.body.dataset.density=d;}</script>
+</body>
+</html>

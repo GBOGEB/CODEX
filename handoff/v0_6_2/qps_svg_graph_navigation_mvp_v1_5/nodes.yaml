@@ -1,0 +1,20 @@
+nodes:
+  - id: root
+    label: QPS Root
+    page: nodes/root.html
+  - id: contract
+    label: Graph Contract
+    page: nodes/contract.html
+  - id: registry
+    label: Node Registry
+    page: nodes/registry.html
+edges:
+  - from: root
+    to: contract
+    type: tree
+  - from: root
+    to: registry
+    type: interface
+  - from: contract
+    to: registry
+    type: control
