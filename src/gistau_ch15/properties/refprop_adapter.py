@@ -17,3 +17,33 @@ class REFPROPAdapter:
         raise PropertyBackendUnavailable(
             "REFPROP backend is not installed or configured in this environment"
         )
+
+    def state_pt(self, pressure: float, temperature: float):
+        raise PropertyBackendUnavailable(
+            "REFPROP backend is not installed or configured in this environment"
+        )
+
+    def state_ph(self, pressure: float, enthalpy: float):
+        raise PropertyBackendUnavailable(
+            "REFPROP backend is not installed or configured in this environment"
+        )
+
+    def state_ps(self, pressure: float, entropy: float):
+        raise PropertyBackendUnavailable(
+            "REFPROP backend is not installed or configured in this environment"
+        )
+
+    def saturation_t(self, temperature: float):
+        raise PropertyBackendUnavailable(
+            "REFPROP backend is not installed or configured in this environment"
+        )
+
+    def saturation_p(self, pressure: float):
+        raise PropertyBackendUnavailable(
+            "REFPROP backend is not installed or configured in this environment"
+        )
+
+    def quality_ph(self, pressure: float, enthalpy: float):
+        raise PropertyBackendUnavailable(
+            "REFPROP backend is not installed or configured in this environment"
+        )
