@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from gistau_ch15.properties.errors import PropertyBackendUnavailable
+from .errors import PropertyBackendUnavailable
 
 
 class HEPAKAdapter:
