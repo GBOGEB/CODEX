@@ -37,11 +37,11 @@ def _parse_porcelain_z(output: bytes) -> list[str]:
         path = entry[3:]
 
         if status.startswith(('R', 'C')):
-            index += 1
-            if index < len(parts):
-                files.append(_decode_git_bytes(parts[index]))
-            else:
-                files.append(_decode_git_bytes(path))
+            # In --porcelain=v1 -z output, rename/copy records encode the
+            # destination path in the current entry and the origin path in the
+            # next NUL-delimited field.  We want the destination (current file).
+            files.append(_decode_git_bytes(path))
+            index += 1  # skip the origin path that follows
         else:
             files.append(_decode_git_bytes(path))
 
@@ -99,7 +99,18 @@ def run_orchestration(changed_files: Iterable[str] | None = None) -> dict:
             'error': str(exc),
         }
 
-    validation = _run_validator()
+    try:
+        validation = _run_validator()
+    except OSError as exc:
+        return {
+            'validator_exit_code': None,
+            'validator_stdout': '',
+            'validator_stderr': '',
+            'delta': delta,
+            'status': 'failed',
+            'error': str(exc),
+        }
+
     validation_code = validation['exit_code']
     return {
         'validator_exit_code': validation_code,
@@ -107,6 +118,7 @@ def run_orchestration(changed_files: Iterable[str] | None = None) -> dict:
         'validator_stderr': validation['stderr'],
         'delta': delta,
         'status': 'ok' if validation_code == 0 else 'failed',
+        'error': None,
     }
 
 
