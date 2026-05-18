@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>GISTAU Plotly Review</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<link rel="stylesheet" href="../visual_cards.css" />
+</head>
+<body>
+<header class="topbar">
+<h1>Thermodynamic Overlay Review</h1>
+<p>Plotly-based overlays for backend comparison and low-temperature helium analysis.</p>
+</header>
+<main class="layout">
+<section class="card active">
+<h2>T-s Overlay Scaffold</h2>
+<div id="ts_plot" style="width:100%;height:420px"></div>
+</section>
+<section class="card neutral">
+<h2>rho-v Overlay Scaffold</h2>
+<div id="rho_plot" style="width:100%;height:420px"></div>
+</section>
+</main>
+<script>
+const tsData=[{x:[4,6,8,10,20],y:[1000,1200,1500,1700,2500],mode:'lines+markers',name:'CoolProp baseline'}];
+const tsLayout={title:'T-s Review Overlay',xaxis:{title:'Temperature [K]',type:'log'},yaxis:{title:'Entropy [J/kg-K]'}};
+Plotly.newPlot('ts_plot',tsData,tsLayout);
+const rhoData=[{x:[0.1,0.2,0.4,0.8],y:[120,80,40,20],mode:'lines+markers',name:'rho-v relationship'}];
+const rhoLayout={title:'Density / Specific Volume Overlay',xaxis:{title:'Specific Volume [m^3/kg]'},yaxis:{title:'Density [kg/m^3]'}};
+Plotly.newPlot('rho_plot',rhoData,rhoLayout);
+</script>
+</body>
+</html>
