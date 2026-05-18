@@ -31,6 +31,10 @@ def test_coolprop_curve_generator_invokes_runtime_hooks():
             return 222.0
 
     class _FakeHooks:
+        @staticmethod
+        def available():
+            return True
+
         def adapter(self):
             return _FakeAdapter()
 

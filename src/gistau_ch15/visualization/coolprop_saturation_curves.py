@@ -20,6 +20,8 @@ class CoolPropSaturationCurveGenerator:
             )
 
             hooks = CoolPropRuntimeHooks()
+            if not hooks.available():
+                raise PropertyBackendUnavailable("CoolProp unavailable")
             adapter = hooks.adapter()
             temperatures = [1.8, 2.0, 2.4, 3.0, 3.8, 4.6]
 

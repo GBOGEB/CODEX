@@ -54,8 +54,20 @@ class ThermoOverlayGenerator:
                 "mode": "deterministic_fallback",
                 "phase": "PR-H",
             },
-            "saturation_dome": saturation.__dict__,
-            "ts_paths": [path.__dict__ for path in ts_paths],
+            "saturation_dome": {
+                "entropy_liquid": saturation.entropy_liquid,
+                "temperature_liquid": saturation.temperature_liquid,
+                "entropy_vapor": saturation.entropy_vapor,
+                "temperature_vapor": saturation.temperature_vapor,
+            },
+            "ts_paths": [
+                {
+                    "name": path.name,
+                    "entropy": path.entropy,
+                    "temperature": path.temperature,
+                }
+                for path in ts_paths
+            ],
             "phase_map": {
                 "pressure": phase_map.pressure_kpa,
                 "temperature": phase_map.temperature_k,
