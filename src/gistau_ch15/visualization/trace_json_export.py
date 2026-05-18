@@ -23,6 +23,12 @@ class PlotlyTraceJSONExporter:
     def export(self, output_path: str | Path = OUTPUT) -> Path:
         saturation = FallbackSaturationSampler().sample()
         agreement = BackendAgreementBuilder().build()
+        if len(agreement.values) != len(agreement.tuples):
+            raise ValueError("Agreement matrix rows must align with tuples")
+        if any(
+            len(row) != len(agreement.backends) for row in agreement.values
+        ):
+            raise ValueError("Agreement matrix columns must align with backends")
 
         builder = PlotlyTraceBuilder()
 

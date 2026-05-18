@@ -7,7 +7,12 @@ def test_overlay_generator_returns_payload():
     payload = ThermoOverlayGenerator().build_seed_dataset()
 
     assert "metadata" in payload
-    assert "saturation" in payload
+    assert "saturation_dome" in payload
+    assert "ts_paths" in payload
+    assert "phase_map" in payload
+    assert "backend_delta" in payload
+    assert "expander" in payload
+    assert "agreement" in payload
     assert "backend_status" in payload
 
 

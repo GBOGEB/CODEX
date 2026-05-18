@@ -20,11 +20,25 @@ class CoolPropSaturationCurveGenerator:
             )
 
             hooks = CoolPropRuntimeHooks()
+            adapter = hooks.adapter()
+            temperatures = [1.8, 2.0, 2.4, 3.0, 3.8, 4.6]
 
-            if not hooks.available():
-                raise PropertyBackendUnavailable("CoolProp unavailable")
-
+            entropy_liquid = [
+                float(adapter._cp.PropsSI("S", "T", t, "Q", 0, "Helium"))
+                for t in temperatures
+            ]
+            entropy_vapor = [
+                float(adapter._cp.PropsSI("S", "T", t, "Q", 1, "Helium"))
+                for t in temperatures
+            ]
+        except PropertyBackendUnavailable:
+            return FallbackSaturationSampler().sample()
         except Exception:
             return FallbackSaturationSampler().sample()
 
-        return FallbackSaturationSampler().sample()
+        return SaturationCurve(
+            entropy_liquid=entropy_liquid,
+            temperature_liquid=temperatures,
+            entropy_vapor=entropy_vapor,
+            temperature_vapor=temperatures,
+        )

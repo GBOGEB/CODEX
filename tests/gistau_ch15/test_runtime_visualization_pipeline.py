@@ -1,6 +1,7 @@
 from gistau_ch15.visualization.backend_delta_matrix import (
     FallbackBackendDeltaBuilder,
 )
+from gistau_ch15.visualization import coolprop_runtime_hooks
 from gistau_ch15.visualization.coolprop_saturation_curves import (
     CoolPropSaturationCurveGenerator,
 )
@@ -19,6 +20,32 @@ def test_coolprop_curve_generator_returns_curve():
     curve = CoolPropSaturationCurveGenerator().generate()
 
     assert len(curve.temperature_liquid) > 0
+
+
+def test_coolprop_curve_generator_uses_runtime_hooks_when_available():
+    class _FakeCP:
+        @staticmethod
+        def PropsSI(*args):
+            if args[3] == "Q" and args[4] == 0:
+                return 111.0
+            return 222.0
+
+    class _FakeAdapter:
+        _cp = _FakeCP()
+
+    class _FakeHooks:
+        def adapter(self):
+            return _FakeAdapter()
+
+    original_hooks = coolprop_runtime_hooks.CoolPropRuntimeHooks
+    coolprop_runtime_hooks.CoolPropRuntimeHooks = _FakeHooks
+    try:
+        curve = CoolPropSaturationCurveGenerator().generate()
+    finally:
+        coolprop_runtime_hooks.CoolPropRuntimeHooks = original_hooks
+
+    assert curve.entropy_liquid == [111.0] * 6
+    assert curve.entropy_vapor == [222.0] * 6
 
 
 def test_executable_ts_generator_returns_paths():

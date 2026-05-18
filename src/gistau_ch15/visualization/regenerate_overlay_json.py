@@ -39,12 +39,29 @@ def regenerate() -> Path:
             "generator": "regenerate_overlay_json",
             "mode": "deterministic_fallback",
         },
-        "saturation": saturation.__dict__,
+        "saturation_dome": saturation.__dict__,
         "ts_paths": [path.__dict__ for path in ts_paths],
-        "phase_map": phase_map.__dict__,
-        "expander": [point.__dict__ for point in expander],
-        "agreement": agreement.__dict__,
-        "backend_delta": deltas.__dict__,
+        "phase_map": {
+            "pressure": phase_map.pressure_kpa,
+            "temperature": phase_map.temperature_k,
+            "code": phase_map.region_code,
+        },
+        "expander": {
+            "station": [point.station for point in expander],
+            "temperature": [point.temperature_k for point in expander],
+            "pressure": [point.pressure_kpa for point in expander],
+        },
+        "agreement": {
+            "x": agreement.backends,
+            "y": agreement.tuples,
+            "z": agreement.values,
+        },
+        "backend_delta": {
+            "backend": deltas.backends,
+            "enthalpy_pct": deltas.enthalpy_delta_pct,
+            "density_pct": deltas.density_delta_pct,
+            "temperature_k": deltas.temperature_delta_k,
+        },
     }
 
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)

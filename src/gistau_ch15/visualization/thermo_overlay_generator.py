@@ -4,6 +4,25 @@ import json
 from pathlib import Path
 from typing import Any
 
+from gistau_ch15.visualization.backend_agreement import (
+    BackendAgreementBuilder,
+)
+from gistau_ch15.visualization.backend_delta_matrix import (
+    FallbackBackendDeltaBuilder,
+)
+from gistau_ch15.visualization.expander_validation import (
+    FallbackExpanderValidation,
+)
+from gistau_ch15.visualization.phase_map_sampling import (
+    FallbackPhaseMapSampler,
+)
+from gistau_ch15.visualization.saturation_sampling import (
+    FallbackSaturationSampler,
+)
+from gistau_ch15.visualization.ts_reconstruction import (
+    FallbackTSReconstructor,
+)
+
 
 DEFAULT_OUTPUT = Path(
     "docs/gistau-ch15/data/thermo_visual_overlay_seed.json"
@@ -22,17 +41,41 @@ class ThermoOverlayGenerator:
     """
 
     def build_seed_dataset(self) -> dict[str, Any]:
+        saturation = FallbackSaturationSampler().sample()
+        ts_paths = FallbackTSReconstructor().build_paths()
+        phase_map = FallbackPhaseMapSampler().sample()
+        expander = FallbackExpanderValidation().build()
+        agreement = BackendAgreementBuilder().build()
+        deltas = FallbackBackendDeltaBuilder().build()
+
         return {
             "metadata": {
                 "generator": "ThermoOverlayGenerator",
                 "mode": "deterministic_fallback",
                 "phase": "PR-H",
             },
-            "saturation": {
-                "entropy_liquid": [5, 12, 20, 31, 45, 62],
-                "temperature_liquid": [1.8, 2.0, 2.4, 3.0, 3.8, 4.6],
-                "entropy_vapor": [450, 390, 330, 270, 220, 180],
-                "temperature_vapor": [1.8, 2.0, 2.4, 3.0, 3.8, 4.6],
+            "saturation_dome": saturation.__dict__,
+            "ts_paths": [path.__dict__ for path in ts_paths],
+            "phase_map": {
+                "pressure": phase_map.pressure_kpa,
+                "temperature": phase_map.temperature_k,
+                "code": phase_map.region_code,
+            },
+            "backend_delta": {
+                "backend": deltas.backends,
+                "enthalpy_pct": deltas.enthalpy_delta_pct,
+                "density_pct": deltas.density_delta_pct,
+                "temperature_k": deltas.temperature_delta_k,
+            },
+            "expander": {
+                "station": [point.station for point in expander],
+                "temperature": [point.temperature_k for point in expander],
+                "pressure": [point.pressure_kpa for point in expander],
+            },
+            "agreement": {
+                "x": agreement.backends,
+                "y": agreement.tuples,
+                "z": agreement.values,
             },
             "backend_status": {
                 "fallback": "available",
