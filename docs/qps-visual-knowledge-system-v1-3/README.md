@@ -79,3 +79,52 @@ Instead it:
 - adds render-system maturity
 - introduces navigation architecture
 - preserves recursive/evolutionary workflow
+
+
+---
+
+# System Framing (Semantic Engineering)
+
+Slides are treated as **semantic engineering artefacts**, not presentation pages.
+
+Canonical architecture:
+
+```
+PPTX / PDF / Images
+  -> semantic extraction
+  -> YAML object layer
+  -> HTML engineering surface
+  -> multi-render export system
+```
+
+Core principles:
+- HTML-first
+- additive-only versioning
+- preserve lineage
+- preserve visual nuance
+- preserve engineering density
+- multiple style families are intentional
+- PPTX is an export target
+
+## Version Lineage
+
+Current versions tracked in this stream:
+- v1.0b
+- v1.1
+- v1.2
+- v1.3
+
+## Merged PRs
+
+- #56
+- #59
+
+## Next Priorities
+
+1. SVG graph traversal
+2. side-by-side review mode
+3. utilities/control expansion
+4. responsive ultra-dense rendering
+5. Office365 export automation
+6. HTML -> PPTX regeneration
+7. static-host deployment
