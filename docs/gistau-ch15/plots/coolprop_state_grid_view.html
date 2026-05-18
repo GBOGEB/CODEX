@@ -102,7 +102,7 @@ function plotState(rows){
   ],{title:'CoolProp density vs specific volume',xaxis:{title:'v [m^3/kg]'},yaxis:{title:'rho [kg/m^3]'}});
 }
 loadGrid().then(rows=>{
-  const availableCount=rows.filter(r=>r.available).length;
+  const availableCount=numericRows(rows).length;
   document.getElementById('status').textContent=`Loaded ${rows.length} state-grid rows. Available numeric backend rows: ${availableCount}.`;
   populateTable(rows);
   plotState(rows);
