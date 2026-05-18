@@ -6,6 +6,8 @@ from gistau_ch15.visualization.saturation_sampling import (
     SaturationCurve,
 )
 
+HELIUM_SAMPLE_TEMPERATURES_K = [1.8, 2.0, 2.4, 3.0, 3.8, 4.6]
+
 
 class CoolPropSaturationCurveGenerator:
     """Optional CoolProp saturation curve generator.
@@ -23,7 +25,7 @@ class CoolPropSaturationCurveGenerator:
             if not hooks.available():
                 raise PropertyBackendUnavailable("CoolProp unavailable")
             adapter = hooks.adapter()
-            temperatures = [1.8, 2.0, 2.4, 3.0, 3.8, 4.6]
+            temperatures = HELIUM_SAMPLE_TEMPERATURES_K
 
             entropy_liquid = [
                 adapter.entropy_tq("Helium", t, 0.0)

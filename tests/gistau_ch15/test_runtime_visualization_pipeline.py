@@ -4,6 +4,7 @@ from gistau_ch15.visualization.backend_delta_matrix import (
 from gistau_ch15.visualization import coolprop_runtime_hooks
 from gistau_ch15.visualization.coolprop_saturation_curves import (
     CoolPropSaturationCurveGenerator,
+    HELIUM_SAMPLE_TEMPERATURES_K,
 )
 from gistau_ch15.visualization.executable_ts_paths import (
     ExecutableTSPathGenerator,
@@ -45,8 +46,9 @@ def test_coolprop_curve_generator_invokes_runtime_hooks():
     finally:
         coolprop_runtime_hooks.CoolPropRuntimeHooks = original_hooks
 
-    assert curve.entropy_liquid == [111.0] * 6
-    assert curve.entropy_vapor == [222.0] * 6
+    expected_count = len(HELIUM_SAMPLE_TEMPERATURES_K)
+    assert curve.entropy_liquid == [111.0] * expected_count
+    assert curve.entropy_vapor == [222.0] * expected_count
 
 
 def test_executable_ts_generator_returns_paths():

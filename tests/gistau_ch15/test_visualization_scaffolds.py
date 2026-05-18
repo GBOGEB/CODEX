@@ -51,6 +51,16 @@ def test_regenerate_overlay_json_matches_dashboard_schema(tmp_path):
     payload = json.loads(output.read_text(encoding="utf-8"))
     assert "saturation_dome" in payload
     assert payload["phase_map"].keys() == {"pressure", "temperature", "code"}
+    assert len(payload["phase_map"]["pressure"]) == len(
+        payload["phase_map"]["temperature"]
+    )
+    assert len(payload["phase_map"]["code"]) == len(
+        payload["phase_map"]["temperature"]
+    )
+    assert all(
+        isinstance(value, (int, float))
+        for value in payload["phase_map"]["temperature"]
+    )
     assert payload["backend_delta"].keys() == {
         "backend",
         "enthalpy_pct",
