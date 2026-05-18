@@ -3,8 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass, asdict
 from typing import Any
 
-from gistau_ch15.properties.errors import PropertyBackendUnavailable
-
 
 @dataclass(frozen=True)
 class CoolPropGridPoint:
@@ -76,6 +74,8 @@ def build_coolprop_state_grid(fluid: str = "Helium", ambient_temperature_k: floa
 
     try:
         import CoolProp.CoolProp as CP  # type: ignore
+    except ModuleNotFoundError:  # pragma: no cover - optional dependency path
+        return _unavailable_rows("CoolProp unavailable: optional backend not installed")
     except Exception as exc:  # pragma: no cover - optional dependency path
         return _unavailable_rows(f"CoolProp unavailable: {exc}")
 
@@ -114,7 +114,7 @@ def build_coolprop_state_grid(fluid: str = "Helium", ambient_temperature_k: floa
                     temperature_k=temperature_k,
                     pressure_mbar=pressure_mbar,
                     backend="CoolProp",
-                    available=True,
+                    available=False,
                     enthalpy_j_kg=None,
                     entropy_j_kgk=None,
                     density_kg_m3=None,
