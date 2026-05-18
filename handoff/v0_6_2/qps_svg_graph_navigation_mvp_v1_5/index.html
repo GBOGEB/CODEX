@@ -13,14 +13,15 @@
     body[data-density="normal"]{font-size:14px}
     body[data-density="wallboard"]{font-size:18px}
     a{color:#89b4ff}
+    svg text{fill:#e8ecff;font-family:Arial,sans-serif;font-size:14px}
   </style>
 </head>
 <body data-density="normal">
   <div class="panel toolbar">
     <strong>Density:</strong>
-    <button onclick="setDensity('ultra')">ultra</button>
-    <button onclick="setDensity('normal')">normal</button>
-    <button onclick="setDensity('wallboard')">wallboard</button>
+    <button data-density="ultra">ultra</button>
+    <button data-density="normal">normal</button>
+    <button data-density="wallboard">wallboard</button>
   </div>
   <div class="wrap">
     <section class="panel">
@@ -46,6 +47,11 @@
       <p><a href="nodes.yaml">node registry (YAML)</a> · <a href="graph-contract.json">graph object contract</a></p>
     </section>
   </div>
-  <script>function setDensity(d){document.body.dataset.density=d;}</script>
+  <script>
+    function setDensity(d){document.body.dataset.density=d;}
+    document.querySelectorAll('.toolbar button[data-density]').forEach((btn)=>{
+      btn.addEventListener('click',()=>setDensity(btn.dataset.density));
+    });
+  </script>
 </body>
 </html>
