@@ -49,9 +49,15 @@ class REFPROPAdapter:
         return rp
 
     def _state_from_flash(self, fluid: str, p_kpa: float, flash: Any, *, q_allowed: bool) -> State:
-        if getattr(flash, "ierr", 0) != 0:
+        ierr = getattr(flash, "ierr", 0)
+        if ierr != 0:
             message = getattr(flash, "herr", "unknown REFPROP error")
-            raise RuntimeError(f"REFPROP unavailable state for {fluid} @ {p_kpa:.3f} kPa: {message}")
+            exc = RuntimeError(
+                f"REFPROP unavailable state for {fluid} @ {p_kpa:.3f} kPa "
+                f"(ierr={ierr}): {message}"
+            )
+            exc.ierr = ierr
+            raise exc
 
         quality = None
         q_val = getattr(flash, "q", -999)
