@@ -46,7 +46,8 @@ def parse_fg_bg_pairs(text: str) -> list[tuple[str, str, str]]:
     pairs: list[tuple[str, str, str]] = []
     token = "unknown"
     mode = "unknown"
-    pending: dict[str, dict[str, str | bool]] = {}
+    pending: dict[str, dict[str, str]] = {}
+    emitted: set[str] = set()
     for line in text.splitlines():
         if re.match(r"^\s{2}[a-z_]+:\s*$", line):
             token = line.strip().rstrip(":")
@@ -54,22 +55,21 @@ def parse_fg_bg_pairs(text: str) -> list[tuple[str, str, str]]:
         if mode_match:
             mode = mode_match.group(1)
             key = f"{token}.{mode}"
-            pending[key] = {"bg": "", "fg": "", "emitted": False}
+            pending.setdefault(key, {"bg": "", "fg": ""})
             line = mode_match.group(2)
-        color_match = re.match(rf"^\s{{6}}(bg|fg):\s*['\"]?({HEX})['\"]?", line)
         key = f"{token}.{mode}"
-        if color_match and key in pending:
-            pending[key][color_match.group(1)] = color_match.group(2)
+        if key not in pending:
+            continue
         bg_match = BG.search(line)
         fg_match = FG.search(line)
-        if bg_match and key in pending:
+        if bg_match:
             pending[key]["bg"] = bg_match.group(1)
-        if fg_match and key in pending:
+        if fg_match:
             pending[key]["fg"] = fg_match.group(1)
-        item = pending.get(key)
-        if item and item["bg"] and item["fg"] and not item["emitted"]:
-            pairs.append((key, str(item["bg"]), str(item["fg"])))
-            item["emitted"] = True
+        item = pending[key]
+        if item["bg"] and item["fg"] and key not in emitted:
+            pairs.append((key, item["bg"], item["fg"]))
+            emitted.add(key)
     return pairs
 
 
