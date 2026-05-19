@@ -9,6 +9,7 @@ BG = re.compile(rf"bg:\s*['\"]?({HEX})['\"]?")
 FG = re.compile(rf"fg:\s*['\"]?({HEX})['\"]?")
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_THEME = SCRIPT_DIR / "SEMANTIC_THEME.yaml"
+SEMANTIC_TOKENS_SECTION = "semantic_tokens"
 
 
 def _normalize_hex(value: str) -> str:
@@ -53,11 +54,11 @@ def parse_fg_bg_pairs(text: str) -> list[tuple[str, str, str]]:
     in_semantic_tokens = False
     for line in text.splitlines():
         # Track when we enter/exit the semantic_tokens section
-        if re.match(r"^semantic_tokens:\s*$", line):
+        if re.match(rf"^{SEMANTIC_TOKENS_SECTION}:\s*$", line):
             in_semantic_tokens = True
             continue
-        # Exit semantic_tokens section when we hit another top-level key
-        if in_semantic_tokens and re.match(r"^[a-z_]+:\s*$", line):
+        # Exit semantic_tokens section when we hit another top-level key (no leading whitespace)
+        if in_semantic_tokens and re.match(r"^(?!\s)[a-z_]+:\s*$", line):
             in_semantic_tokens = False
         # Only parse tokens within semantic_tokens section
         if not in_semantic_tokens:
