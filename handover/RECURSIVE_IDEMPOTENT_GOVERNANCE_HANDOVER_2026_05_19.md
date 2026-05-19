@@ -13,7 +13,8 @@ Current protected engineering baseline:
 
 ```text
 Branch: feature/method-comparison-panel
-Version: v0.4.5
+Governance baseline package: v0.4.5
+Repository VERSION.json: 1.3.0
 Commit: 95feba55199f995dd5a3739a1bc1e8f374bb4d82
 ```
 
@@ -48,7 +49,7 @@ UI layers may never redefine engineering semantics.
 
 ### 2. Formal Change Classification
 
-Required file:
+Target file (planned governance artefact; not yet enforced in this repository):
 
 ```text
 CHANGE_CLASSIFICATION.md
@@ -96,7 +97,7 @@ RAW TUPLES
 
 ### 4. Golden Outputs
 
-Required:
+Target directory (planned governance artefact; not yet enforced in this repository):
 
 ```text
 /golden_outputs/
@@ -112,7 +113,7 @@ Purpose:
 
 ### 5. Regression Engine
 
-Required:
+Target directory (planned governance artefact; not yet enforced in this repository):
 
 ```text
 tests/regression/
@@ -121,17 +122,17 @@ tests/regression/
 Suggested:
 
 ```text
-compare_to_golden.js
-validate_integral_ranges.js
-validate_export_consistency.js
-validate_method_deltas.js
+compare_to_golden.py
+validate_integral_ranges.py
+validate_export_consistency.py
+validate_method_deltas.py
 ```
 
 ---
 
 ### 6. Build Contracts
 
-Required:
+Target directory (planned governance artefact; not yet enforced in this repository):
 
 ```text
 /contracts/
@@ -190,7 +191,7 @@ Forbidden:
 
 ### 8. Release Governance
 
-Required:
+Target directory (planned governance artefact; not yet enforced in this repository):
 
 ```text
 /releases/
@@ -209,7 +210,7 @@ clean_zip/
 
 ### 9. Session Continuity Engine
 
-Required:
+Target file (planned governance artefact; not yet enforced in this repository):
 
 ```text
 SESSION_CONTEXT.json
