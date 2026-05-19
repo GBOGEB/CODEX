@@ -15,7 +15,7 @@ REQUIRED_ARTIFACTS = [
 ]
 
 RULES = [
-    ("no_low_contrast", [sys.executable, str(SCRIPT_DIR / "WCAG_CONTRAST_CHECKER.py"), str(SCRIPT_DIR / "SEMANTIC_THEME.yaml")]),
+    ("no_low_contrast", [sys.executable, str(SCRIPT_DIR / "WCAG_CONTRAST_CHECKER.py")]),
     (
         "slide_id_required (lineage example)",
         [sys.executable, str(SCRIPT_DIR / "SLIDE_ID_ENFORCER.py"), str(SCRIPT_DIR / "LINEAGE_SCHEMA.yaml")],

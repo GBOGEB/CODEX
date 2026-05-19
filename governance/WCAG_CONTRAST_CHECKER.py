@@ -13,6 +13,8 @@ DEFAULT_THEME = SCRIPT_DIR / "SEMANTIC_THEME.yaml"
 
 def _normalize_hex(value: str) -> str:
     value = value.lower()
+    if not value.startswith("#"):
+        raise ValueError(f"Unsupported hex color '{value}'")
     if len(value) == 4:
         return "#" + "".join(ch * 2 for ch in value[1:])
     if len(value) == 7:
