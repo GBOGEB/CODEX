@@ -26,7 +26,7 @@ Canonical source hierarchy:
 
 ---
 
-# Theme Governance
+## Theme Governance
 
 Theme transforms are semantic.
 
@@ -50,7 +50,7 @@ semantic_cards:
 
 ---
 
-# Accessibility
+## Accessibility
 
 Renderer targets WCAG-compliant contrast behavior.
 
@@ -65,7 +65,7 @@ Contrast rules:
 
 ---
 
-# Typography Governance
+## Typography Governance
 
 Fonts:
 
@@ -85,7 +85,7 @@ Renderer responsibilities:
 
 ---
 
-# Layout Governance
+## Layout Governance
 
 Renderer must implement:
 
@@ -97,7 +97,7 @@ Renderer must implement:
 
 ---
 
-# Stable IDs
+## Stable IDs
 
 Every slide requires immutable IDs.
 
@@ -118,7 +118,7 @@ Stable IDs are required for:
 
 ---
 
-# Validation Direction
+## Validation Direction
 
 Future CI rendering validation should include:
 

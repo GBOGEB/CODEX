@@ -21,8 +21,11 @@ theme_light:
 ```yaml
 theme_dark:
   canvas: '#181421'
-  card: '#241D33'
-  text: '#F5F2FF'
+  title_bar: '#3A2460'
+  title_text: '#FFFFFF'
+  card:
+    background: '#241D33'
+    text: '#F5F2FF'
 ```
 
 ---
@@ -68,21 +71,21 @@ ssot:
 ```yaml
 fonts:
   title:
-    family: Aptos
+    family: "Aptos, 'Segoe UI', Calibri, Arial, sans-serif"
     size: 24
     weight: 700
 
   section:
-    family: Aptos
+    family: "Aptos, 'Segoe UI', Calibri, Arial, sans-serif"
     size: 18
     weight: 600
 
   body:
-    family: Aptos
+    family: "Aptos, 'Segoe UI', Calibri, Arial, sans-serif"
     size: 13
 
   technical:
-    family: Consolas
+    family: "Consolas, 'Liberation Mono', 'Courier New', monospace"
     size: 12
 ```
 

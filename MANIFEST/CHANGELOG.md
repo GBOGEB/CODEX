@@ -1,6 +1,6 @@
 # CHANGELOG
 
-# A6.0
+## A6.0
 
 ## Added
 
