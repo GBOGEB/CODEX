@@ -26,11 +26,11 @@ def test_refresh_overlay_artifacts_writes_manifest(tmp_path: Path):
     # Parse and validate manifest structure
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     assert manifest["schema_version"] == "1.0"
-    
+
     # Derive expected count from actual artifacts (2 data files + 1 manifest)
     expected_artifact_count = len([p for p in outputs if p != manifest_path])
     assert manifest["artifact_count"] == expected_artifact_count
-    
+
     # Verify artifacts list structure
     assert "artifacts" in manifest
     assert len(manifest["artifacts"]) == expected_artifact_count

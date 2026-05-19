@@ -18,7 +18,7 @@ class PagesArtifactRefresh:
         trace_output: Path | None = None,
     ) -> list[Path]:
         """Refresh artifacts, optionally redirecting outputs.
-        
+
         Args:
             overlay_output: Optional path for thermo_visual_overlay_seed.json
             trace_output: Optional path for plotly_trace_export.json
@@ -26,14 +26,7 @@ class PagesArtifactRefresh:
         outputs: list[Path] = []
 
         if overlay_output is not None:
-            # Temporarily redirect regenerate() output
-            from gistau_ch15.visualization import regenerate_overlay_json
-            original = regenerate_overlay_json.OUTPUT
-            regenerate_overlay_json.OUTPUT = overlay_output
-            try:
-                outputs.append(regenerate())
-            finally:
-                regenerate_overlay_json.OUTPUT = original
+            outputs.append(regenerate(overlay_output))
         else:
             outputs.append(regenerate())
 
