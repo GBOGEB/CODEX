@@ -47,8 +47,10 @@ class OverlayArtifactManifestBuilder:
         self,
         artifacts: list[Path],
         output_path: str | Path,
+        *,
+        root: Path | None = None,
     ) -> Path:
-        records = self.build_records(artifacts)
+        records = self.build_records(artifacts, root=root)
 
         payload = {
             "schema_version": "1.0",
