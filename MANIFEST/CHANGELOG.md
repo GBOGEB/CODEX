@@ -2,7 +2,7 @@
 
 ## A6.0
 
-## Added
+### Added
 
 - renderer governance layer
 - semantic theme governance
@@ -14,18 +14,18 @@
 - typography governance
 - layout governance rules
 
-## Improved
+### Improved
 
 - warning-card dark-mode readability
 - semantic rendering clarity
 - architectural lineage structure
 
-## Fixed
+### Fixed
 
 - pastel-warning contrast collapse in dark mode
 - theme inversion ambiguity
 
-## Known Issues
+### Known Issues
 
 - renderer linting not implemented yet
 - adaptive card sizing incomplete
@@ -33,7 +33,7 @@
 - overflow linting incomplete
 - GitHub Pages app shell incomplete
 
-## Next Steps
+### Next Steps
 
 - contrast_lint.py
 - overflow_lint.py

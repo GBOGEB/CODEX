@@ -35,33 +35,44 @@ theme_dark:
 ## Warning
 
 ```yaml
-warning:
-  light:
-    background: '#F5E8A8'
-    text: '#2B2111'
+semantic_cards:
+  warning:
+    light:
+      background: '#F5E8A8'
+      text: '#2B2111'
 
-  dark:
-    background: '#3B2A00'
-    border: '#C89B00'
-    text: '#FFE9A3'
+    dark:
+      background: '#3B2A00'
+      border: '#C89B00'
+      text: '#FFE9A3'
 ```
 
 ## Decision
 
 ```yaml
-decision:
-  dark:
-    background: '#214F36'
-    text: '#DDFBE8'
+semantic_cards:
+  decision:
+    light:
+      background: '#DDFBE8'
+      text: '#163326'
+
+    dark:
+      background: '#214F36'
+      text: '#DDFBE8'
 ```
 
 ## SSOT
 
 ```yaml
-ssot:
-  dark:
-    background: '#3B2063'
-    text: '#E5D2FF'
+semantic_cards:
+  ssot:
+    light:
+      background: '#E5D2FF'
+      text: '#281747'
+
+    dark:
+      background: '#3B2063'
+      text: '#E5D2FF'
 ```
 
 ---
