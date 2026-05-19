@@ -49,7 +49,7 @@ UI layers may never redefine engineering semantics.
 
 ### 2. Formal Change Classification
 
-Target file (planned governance artefact; not yet enforced in this repository):
+Target file (planned governance artifact; not yet enforced in this repository):
 
 ```text
 CHANGE_CLASSIFICATION.md
@@ -97,7 +97,7 @@ RAW TUPLES
 
 ### 4. Golden Outputs
 
-Target directory (planned governance artefact; not yet enforced in this repository):
+Target directory (planned governance artifact; not yet enforced in this repository):
 
 ```text
 /golden_outputs/
@@ -113,7 +113,7 @@ Purpose:
 
 ### 5. Regression Engine
 
-Target directory (planned governance artefact; not yet enforced in this repository):
+Target directory (planned governance artifact; not yet enforced in this repository):
 
 ```text
 tests/regression/
@@ -132,7 +132,7 @@ validate_method_deltas.py
 
 ### 6. Build Contracts
 
-Target directory (planned governance artefact; not yet enforced in this repository):
+Target directory (planned governance artifact; not yet enforced in this repository):
 
 ```text
 /contracts/
@@ -191,7 +191,7 @@ Forbidden:
 
 ### 8. Release Governance
 
-Target directory (planned governance artefact; not yet enforced in this repository):
+Target directory (planned governance artifact; not yet enforced in this repository):
 
 ```text
 /releases/
@@ -210,7 +210,7 @@ clean_zip/
 
 ### 9. Session Continuity Engine
 
-Target file (planned governance artefact; not yet enforced in this repository):
+Target file (planned governance artifact; not yet enforced in this repository):
 
 ```text
 SESSION_CONTEXT.json
