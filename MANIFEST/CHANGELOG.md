@@ -15,19 +15,19 @@
 - CI renderer gate definitions
 - deterministic render contract guidance
 
-### Improved
+### Clarified (Governance/Specification)
 
-- dark mode warning card readability
-- semantic theme lineage
-- deterministic renderer contracts
-- semantic card transformation policy
-- renderer reproducibility guidance
+- dark mode warning readability requirements in governance language
+- semantic theme lineage expectations
+- deterministic renderer contract guidance
+- semantic card transformation policy requirements
+- renderer reproducibility expectations
 
-### Fixed
+### Specified (Not Yet Implemented in Runtime)
 
-- pastel warning cards in dark mode
-- low-contrast semantic warning rendering
-- white/light text on pastel warning backgrounds
+- prohibition of pastel warning cards in dark mode policy
+- minimum contrast policy for semantic warning rendering
+- policy against white/light text on pastel warning backgrounds
 
 ### Known Issues
 

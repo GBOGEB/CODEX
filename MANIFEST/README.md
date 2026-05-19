@@ -56,3 +56,10 @@ A6 focuses on deterministic renderer quality:
 - renderer contracts,
 - lineage and manifesting,
 - CI/CD readiness.
+
+## A6 Manifest Files
+
+- `README.md`
+- `RENDER_RULES.md`
+- `STYLE_GUIDE.md`
+- `CHANGELOG.md`

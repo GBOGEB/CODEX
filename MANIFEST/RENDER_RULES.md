@@ -19,7 +19,9 @@ Generated outputs are not canonical. The canonical chain is:
 
 ## Renderer contract
 
-Every rendered output must be reproducible from SSOT YAML and registered assets.
+Every rendered output must be reproducible from the SSOT (single source of truth) YAML and registered assets.
+
+For A6 governance, SSOT YAML is the same canonical artifact referenced as MASTER YAML in the source hierarchy above.
 
 Required render targets:
 
@@ -80,10 +82,16 @@ Every semantic card must satisfy contrast validation before release.
 
 Minimum requirements:
 
-- body text: WCAG AA contrast target
-- title text: WCAG AA contrast target
+- body text: WCAG 2.2 AA ratio >= 4.5:1
+- title text: WCAG 2.2 AA ratio >= 4.5:1, or >= 3:1 for large text (>= 18 pt regular or >= 14 pt bold)
 - badges and metadata: no white-on-pastel in dark mode
 - dark cards use darker semantic backgrounds and warmer pale text
+
+Measurement contract:
+
+- Compute contrast using WCAG relative luminance with sRGB values.
+- Evaluate rendered foreground text color against the immediate card background color.
+- Validate the final rendered colors per target output theme (light and dark), not pre-transform tokens.
 
 ## Typography engine rules
 
@@ -114,6 +122,14 @@ fonts:
     family: Consolas
     size: 12
 ```
+
+Deterministic font contract:
+
+- Preferred stacks:
+  - title/section/body: `Aptos, Calibri, Arial, Helvetica, sans-serif`
+  - technical: `Consolas, "Liberation Mono", "DejaVu Sans Mono", "Courier New", monospace`
+- CI and release renderers MUST run with these families available (installed or bundled).
+- If Aptos/Consolas are unavailable, renderers MUST use the listed fallback order and keep layout calculations tied to the effective resolved font.
 
 ## Layout engine rules
 
