@@ -1,4 +1,4 @@
-# Copilot Instructions for CODEX
+# GitHub Copilot Instructions for CODEX
 
 - Keep changes scoped and avoid unrelated refactors.
 - Preserve the platform boundary: CODEX owns GitHub integration substrate concerns.
