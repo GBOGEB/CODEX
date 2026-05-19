@@ -1,0 +1,423 @@
+{
+  "backend_availability": [
+    {
+      "available": true,
+      "name": "fallback",
+      "reason": "deterministic built-in backend",
+      "tier": "tier0_fallback"
+    },
+    {
+      "available": false,
+      "name": "coolprop",
+      "reason": "CoolProp is not installed or not importable. Use FallbackHeliumBackend or install/integrate GBOGEB/CoolProp.",
+      "tier": "tier1_coolprop"
+    },
+    {
+      "available": true,
+      "name": "refprop",
+      "reason": "available",
+      "tier": "tier2_refprop"
+    },
+    {
+      "available": true,
+      "name": "hepak",
+      "reason": "available",
+      "tier": "tier3_hepak"
+    }
+  ],
+  "backend_comparison_rows": [
+    {
+      "backend_name": "fallback",
+      "backend_tier": "tier0_fallback",
+      "delta_density_kg_m3": 0.0,
+      "delta_enthalpy_j_kg": 0.0,
+      "delta_entropy_j_kgk": 0.0,
+      "delta_temperature_k": 0.0,
+      "example_id": "WE-T00-REFPROP-H-PT-001",
+      "reference_backend": "fallback",
+      "status": "ok",
+      "tuple_id": "refprop-gas-001"
+    },
+    {
+      "backend_name": "coolprop",
+      "backend_tier": "tier1_coolprop",
+      "delta_density_kg_m3": null,
+      "delta_enthalpy_j_kg": null,
+      "delta_entropy_j_kgk": null,
+      "delta_temperature_k": null,
+      "example_id": "WE-T00-REFPROP-H-PT-001",
+      "reference_backend": "fallback",
+      "status": "backend_unavailable",
+      "tuple_id": "refprop-gas-001"
+    },
+    {
+      "backend_name": "refprop",
+      "backend_tier": "tier2_refprop",
+      "delta_density_kg_m3": null,
+      "delta_enthalpy_j_kg": null,
+      "delta_entropy_j_kgk": null,
+      "delta_temperature_k": null,
+      "example_id": "WE-T00-REFPROP-H-PT-001",
+      "reference_backend": "fallback",
+      "status": "evaluation_error",
+      "tuple_id": "refprop-gas-001"
+    },
+    {
+      "backend_name": "hepak",
+      "backend_tier": "tier3_hepak",
+      "delta_density_kg_m3": null,
+      "delta_enthalpy_j_kg": null,
+      "delta_entropy_j_kgk": null,
+      "delta_temperature_k": null,
+      "example_id": "WE-T00-REFPROP-H-PT-001",
+      "reference_backend": "fallback",
+      "status": "evaluation_error",
+      "tuple_id": "refprop-gas-001"
+    },
+    {
+      "backend_name": "fallback",
+      "backend_tier": "tier0_fallback",
+      "delta_density_kg_m3": 0.0,
+      "delta_enthalpy_j_kg": 0.0,
+      "delta_entropy_j_kgk": 0.0,
+      "delta_temperature_k": 0.0,
+      "example_id": "WE-T00-REFPROP-HSD-PT-002",
+      "reference_backend": "fallback",
+      "status": "ok",
+      "tuple_id": "refprop-gas-002"
+    },
+    {
+      "backend_name": "coolprop",
+      "backend_tier": "tier1_coolprop",
+      "delta_density_kg_m3": null,
+      "delta_enthalpy_j_kg": null,
+      "delta_entropy_j_kgk": null,
+      "delta_temperature_k": null,
+      "example_id": "WE-T00-REFPROP-HSD-PT-002",
+      "reference_backend": "fallback",
+      "status": "backend_unavailable",
+      "tuple_id": "refprop-gas-002"
+    },
+    {
+      "backend_name": "refprop",
+      "backend_tier": "tier2_refprop",
+      "delta_density_kg_m3": null,
+      "delta_enthalpy_j_kg": null,
+      "delta_entropy_j_kgk": null,
+      "delta_temperature_k": null,
+      "example_id": "WE-T00-REFPROP-HSD-PT-002",
+      "reference_backend": "fallback",
+      "status": "evaluation_error",
+      "tuple_id": "refprop-gas-002"
+    },
+    {
+      "backend_name": "hepak",
+      "backend_tier": "tier3_hepak",
+      "delta_density_kg_m3": null,
+      "delta_enthalpy_j_kg": null,
+      "delta_entropy_j_kgk": null,
+      "delta_temperature_k": null,
+      "example_id": "WE-T00-REFPROP-HSD-PT-002",
+      "reference_backend": "fallback",
+      "status": "evaluation_error",
+      "tuple_id": "refprop-gas-002"
+    },
+    {
+      "backend_name": "fallback",
+      "backend_tier": "tier0_fallback",
+      "delta_density_kg_m3": 0.0,
+      "delta_enthalpy_j_kg": 0.0,
+      "delta_entropy_j_kgk": 0.0,
+      "delta_temperature_k": 0.0,
+      "example_id": "WE-T02-SAT-LIQUID-HELIUM-003",
+      "reference_backend": "fallback",
+      "status": "ok",
+      "tuple_id": "sat-2k-001"
+    },
+    {
+      "backend_name": "coolprop",
+      "backend_tier": "tier1_coolprop",
+      "delta_density_kg_m3": null,
+      "delta_enthalpy_j_kg": null,
+      "delta_entropy_j_kgk": null,
+      "delta_temperature_k": null,
+      "example_id": "WE-T02-SAT-LIQUID-HELIUM-003",
+      "reference_backend": "fallback",
+      "status": "backend_unavailable",
+      "tuple_id": "sat-2k-001"
+    },
+    {
+      "backend_name": "refprop",
+      "backend_tier": "tier2_refprop",
+      "delta_density_kg_m3": null,
+      "delta_enthalpy_j_kg": null,
+      "delta_entropy_j_kgk": null,
+      "delta_temperature_k": null,
+      "example_id": "WE-T02-SAT-LIQUID-HELIUM-003",
+      "reference_backend": "fallback",
+      "status": "evaluation_error",
+      "tuple_id": "sat-2k-001"
+    },
+    {
+      "backend_name": "hepak",
+      "backend_tier": "tier3_hepak",
+      "delta_density_kg_m3": null,
+      "delta_enthalpy_j_kg": null,
+      "delta_entropy_j_kgk": null,
+      "delta_temperature_k": null,
+      "example_id": "WE-T02-SAT-LIQUID-HELIUM-003",
+      "reference_backend": "fallback",
+      "status": "evaluation_error",
+      "tuple_id": "sat-2k-001"
+    },
+    {
+      "backend_name": "fallback",
+      "backend_tier": "tier0_fallback",
+      "delta_density_kg_m3": 0.0,
+      "delta_enthalpy_j_kg": 0.0,
+      "delta_entropy_j_kgk": 0.0,
+      "delta_temperature_k": 0.0,
+      "example_id": "WE-T04-CRYOGENIC-EXPANDER-001",
+      "reference_backend": "fallback",
+      "status": "ok",
+      "tuple_id": "expander-2k-001"
+    },
+    {
+      "backend_name": "coolprop",
+      "backend_tier": "tier1_coolprop",
+      "delta_density_kg_m3": null,
+      "delta_enthalpy_j_kg": null,
+      "delta_entropy_j_kgk": null,
+      "delta_temperature_k": null,
+      "example_id": "WE-T04-CRYOGENIC-EXPANDER-001",
+      "reference_backend": "fallback",
+      "status": "backend_unavailable",
+      "tuple_id": "expander-2k-001"
+    },
+    {
+      "backend_name": "refprop",
+      "backend_tier": "tier2_refprop",
+      "delta_density_kg_m3": null,
+      "delta_enthalpy_j_kg": null,
+      "delta_entropy_j_kgk": null,
+      "delta_temperature_k": null,
+      "example_id": "WE-T04-CRYOGENIC-EXPANDER-001",
+      "reference_backend": "fallback",
+      "status": "evaluation_error",
+      "tuple_id": "expander-2k-001"
+    },
+    {
+      "backend_name": "hepak",
+      "backend_tier": "tier3_hepak",
+      "delta_density_kg_m3": null,
+      "delta_enthalpy_j_kg": null,
+      "delta_entropy_j_kgk": null,
+      "delta_temperature_k": null,
+      "example_id": "WE-T04-CRYOGENIC-EXPANDER-001",
+      "reference_backend": "fallback",
+      "status": "evaluation_error",
+      "tuple_id": "expander-2k-001"
+    }
+  ],
+  "backend_delta_summary": {
+    "backend_names": [
+      "coolprop",
+      "fallback",
+      "hepak",
+      "refprop"
+    ],
+    "row_count": 16,
+    "status_counts": {
+      "backend_unavailable": 4,
+      "evaluation_error": 8,
+      "ok": 4
+    }
+  },
+  "backend_heatmap_matrix": {
+    "coolprop": {
+      "expander-2k-001": null,
+      "refprop-gas-001": null,
+      "refprop-gas-002": null,
+      "sat-2k-001": null
+    },
+    "fallback": {
+      "expander-2k-001": 0.0,
+      "refprop-gas-001": 0.0,
+      "refprop-gas-002": 0.0,
+      "sat-2k-001": 0.0
+    },
+    "hepak": {
+      "expander-2k-001": null,
+      "refprop-gas-001": null,
+      "refprop-gas-002": null,
+      "sat-2k-001": null
+    },
+    "refprop": {
+      "expander-2k-001": null,
+      "refprop-gas-001": null,
+      "refprop-gas-002": null,
+      "sat-2k-001": null
+    }
+  },
+  "cryogenic_expander_replay": {
+    "enthalpy_drop_j_kg": 0.0,
+    "inlet_enthalpy_j_kg": 23368.5,
+    "inlet_entropy_j_kgk": 23368.5,
+    "inlet_pressure_kpa": 120.0,
+    "inlet_temperature_k": 4.5,
+    "outlet_enthalpy_j_kg": 23368.5,
+    "outlet_entropy_j_kgk": 23368.5,
+    "outlet_pressure_kpa": 20.0,
+    "outlet_quality": null,
+    "outlet_temperature_k": 4.5,
+    "phase_stability": "single_phase_or_unknown",
+    "shaft_recovery_w": 0.0
+  },
+  "experimental_correlation": {
+    "absolute_residual": 0.2999999999999998,
+    "backend_name": "fallback",
+    "experiment_id": "PUBLICATION-REPRODUCTION-SCAFFOLD",
+    "measured_value": 4.2,
+    "notes": "placeholder measured value until experimental campaign data are provided",
+    "predicted_value": 4.5,
+    "quantity": "outlet_temperature_k",
+    "relative_residual_percent": 7.142857142857138,
+    "tuple_id": "expander-2k-001"
+  },
+  "refprop_validation_rows": [
+    {
+      "backend_name": "fallback",
+      "density_kg_m3": 0.16260651870396226,
+      "enthalpy_j_kg": 1557900.0,
+      "entropy_j_kgk": 1557900.0,
+      "example_id": "WE-T00-REFPROP-H-PT-001",
+      "gas_region": true,
+      "notes": "canonical gas-region PT validation",
+      "pressure_kpa": 101.325,
+      "quality": null,
+      "status": "ok",
+      "temperature_k": 300.0,
+      "tuple_id": "refprop-gas-001"
+    },
+    {
+      "backend_name": "fallback",
+      "density_kg_m3": 3.0090029367868665,
+      "enthalpy_j_kg": 415440.0,
+      "entropy_j_kgk": 415440.0,
+      "example_id": "WE-T00-REFPROP-HSD-PT-002",
+      "gas_region": true,
+      "notes": "cryogenic gas-region PT validation",
+      "pressure_kpa": 500.0,
+      "quality": null,
+      "status": "ok",
+      "temperature_k": 80.0,
+      "tuple_id": "refprop-gas-002"
+    }
+  ],
+  "saturation_overlay_rows": [
+    {
+      "backend_name": "fallback",
+      "fluid": "Helium",
+      "liquid_density_kg_m3": 125.0,
+      "notes": "",
+      "pressure_kpa": 18.0,
+      "status": "ok",
+      "temperature_k": 1.8,
+      "vapor_density_kg_m3": 0.2
+    },
+    {
+      "backend_name": "fallback",
+      "fluid": "Helium",
+      "liquid_density_kg_m3": 125.0,
+      "notes": "",
+      "pressure_kpa": 20.0,
+      "status": "ok",
+      "temperature_k": 2.0,
+      "vapor_density_kg_m3": 0.2
+    },
+    {
+      "backend_name": "fallback",
+      "fluid": "Helium",
+      "liquid_density_kg_m3": 125.0,
+      "notes": "",
+      "pressure_kpa": 21.7,
+      "status": "ok",
+      "temperature_k": 2.17,
+      "vapor_density_kg_m3": 0.2
+    },
+    {
+      "backend_name": "fallback",
+      "fluid": "Helium",
+      "liquid_density_kg_m3": 125.0,
+      "notes": "",
+      "pressure_kpa": 25.0,
+      "status": "ok",
+      "temperature_k": 2.5,
+      "vapor_density_kg_m3": 0.2
+    },
+    {
+      "backend_name": "fallback",
+      "fluid": "Helium",
+      "liquid_density_kg_m3": 125.0,
+      "notes": "",
+      "pressure_kpa": 30.0,
+      "status": "ok",
+      "temperature_k": 3.0,
+      "vapor_density_kg_m3": 0.2
+    },
+    {
+      "backend_name": "fallback",
+      "fluid": "Helium",
+      "liquid_density_kg_m3": 125.0,
+      "notes": "",
+      "pressure_kpa": 42.0,
+      "status": "ok",
+      "temperature_k": 4.2,
+      "vapor_density_kg_m3": 0.2
+    },
+    {
+      "backend_name": "fallback",
+      "fluid": "Helium",
+      "liquid_density_kg_m3": 125.0,
+      "notes": "",
+      "pressure_kpa": 50.0,
+      "status": "ok",
+      "temperature_k": 5.0,
+      "vapor_density_kg_m3": 0.2
+    }
+  ],
+  "uncertainty_summary": {
+    "backend_name": "fallback",
+    "mean_value": 0.0,
+    "quantity": "delta_temperature_k",
+    "relative_uncertainty_percent": 0.0,
+    "sample_count": 4,
+    "standard_deviation": 0.0
+  },
+  "wetness_validation_rows": [
+    {
+      "backend_name": "fallback",
+      "example_id": "WE-T02-SAT-LIQUID-HELIUM-003",
+      "notes": "canonical 2 K saturated helium validation point",
+      "phase_region": "single_phase_or_unknown",
+      "pressure_kpa": 3.2,
+      "quality": null,
+      "status": "ok",
+      "temperature_k": 2.0,
+      "tuple_id": "sat-2k-001",
+      "wetness_fraction": null
+    },
+    {
+      "backend_name": "fallback",
+      "example_id": "WE-T04-CRYOGENIC-EXPANDER-001",
+      "notes": "cryogenic expander validation anchor",
+      "phase_region": "single_phase_or_unknown",
+      "pressure_kpa": 120.0,
+      "quality": null,
+      "status": "ok",
+      "temperature_k": 4.5,
+      "tuple_id": "expander-2k-001",
+      "wetness_fraction": null
+    }
+  ]
+}
