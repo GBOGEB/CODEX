@@ -34,7 +34,7 @@ def test_refresh_overlay_artifacts_writes_manifest(tmp_path: Path):
     # Verify artifacts list structure
     assert "artifacts" in manifest
     assert len(manifest["artifacts"]) == expected_artifact_count
-    
+
     # Verify each artifact has required fields
     for artifact in manifest["artifacts"]:
         assert "key" in artifact
