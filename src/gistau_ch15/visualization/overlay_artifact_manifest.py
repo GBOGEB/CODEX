@@ -25,17 +25,20 @@ class OverlayArtifactManifestBuilder:
         *,
         root: Path | None = None,
     ) -> list[OverlayArtifactRecord]:
-        base = root or Path.cwd()
+        base = (root or Path.cwd()).resolve()
         records: list[OverlayArtifactRecord] = []
 
         for artifact in artifacts:
             path = Path(artifact).resolve()
             payload = path.read_bytes()
-            rel_path = path.relative_to(base.resolve()).as_posix()
+            try:
+                record_path = path.relative_to(base).as_posix()
+            except ValueError:
+                record_path = path.as_posix()
             records.append(
                 OverlayArtifactRecord(
                     key=path.stem,
-                    path=rel_path,
+                    path=record_path,
                     sha256=hashlib.sha256(payload).hexdigest(),
                     size_bytes=len(payload),
                 )
