@@ -20,7 +20,7 @@ def _normalize_hex(value: str) -> str:
     if len(value) == 7:
         return value
     if len(value) == 9:
-        return value[:7]
+        raise ValueError(f"8-digit hex (RGBA) not supported for contrast calculation: '{value}'. Use 6-digit hex (RGB) only.")
     raise ValueError(f"Unsupported hex color '{value}'")
 
 
@@ -75,7 +75,9 @@ def parse_fg_bg_pairs(text: str) -> list[tuple[str, str, str]]:
     return pairs
 
 
-def main(path: str = "governance/SEMANTIC_THEME.yaml", minimum: float = 4.5) -> int:
+def main(path: str | None = None, minimum: float = 4.5) -> int:
+    if path is None:
+        path = str(DEFAULT_THEME)
     text = Path(path).read_text(encoding="utf-8")
     errors = []
     pairs = parse_fg_bg_pairs(text)

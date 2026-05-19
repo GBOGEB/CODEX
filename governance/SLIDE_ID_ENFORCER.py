@@ -15,7 +15,7 @@ def _normalize_value(raw: str) -> str:
 
 
 def validate(path: str) -> int:
-    lines = Path(path).read_text().splitlines()
+    lines = Path(path).read_text(encoding="utf-8").splitlines()
     bad: list[str] = []
     found = 0
     for i, line in enumerate(lines, start=1):
