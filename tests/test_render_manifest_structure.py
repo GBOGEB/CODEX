@@ -20,8 +20,14 @@ def test_a6_required_manifest_files_exist() -> None:
 
 
 def test_slide_and_figure_registries_use_expected_identifiers() -> None:
-    slide_registry = (MANIFEST_DIR / "MASTER_SLIDE_REGISTRY.yaml").read_text(encoding="utf-8")
-    figure_registry = (MANIFEST_DIR / "MASTER_FIGURE_REGISTRY.yaml").read_text(encoding="utf-8")
+    slide_registry_path = MANIFEST_DIR / "MASTER_SLIDE_REGISTRY.yaml"
+    figure_registry_path = MANIFEST_DIR / "MASTER_FIGURE_REGISTRY.yaml"
+
+    assert slide_registry_path.exists()
+    assert figure_registry_path.exists()
+
+    slide_registry = slide_registry_path.read_text(encoding="utf-8")
+    figure_registry = figure_registry_path.read_text(encoding="utf-8")
 
     assert "registry: MASTER_SLIDE_REGISTRY" in slide_registry
     assert "slide_id:" in slide_registry
