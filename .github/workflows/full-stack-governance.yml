@@ -41,15 +41,22 @@ jobs:
       - name: Governance smoke test
         run: |
           mkdir -p reports/${{ matrix.component }}
-          echo "Smoke validation for ${{ matrix.component }}" > reports/${{ matrix.component }}/summary.txt
+          echo "Governance validation for ${{ matrix.component }}" > reports/${{ matrix.component }}/summary.txt
           python - <<'PY'
 from pathlib import Path
 p = Path('reports') / '${{ matrix.component }}' / 'lineage.txt'
-p.write_text('governance=lineage-tracked\nstatus=pass\n')
+p.write_text(
+    'governance=lineage-tracked\n'
+    'status=todo\n'
+    'detail=Real governance checks are not yet implemented in .github/workflows/full-stack-governance.yml\n'
+)
 print(p.read_text())
 PY
+          echo "Governance smoke test is a placeholder and must not report success without running real checks." >&2
+          exit 1
 
       - name: Upload governance artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: governance-${{ matrix.component }}
