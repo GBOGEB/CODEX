@@ -31,7 +31,7 @@ def test_refresh_overlay_artifacts_writes_manifest(tmp_path: Path):
     assert payload["schema_version"] == MANIFEST_SCHEMA_VERSION
     assert payload["artifact_count"] == len(payload["artifacts"])
     assert len(payload["artifacts"]) >= 2
-    
+
     # Verify all required paths are present
     artifact_paths = {item["path"] for item in payload["artifacts"]}
     assert "thermo_visual_overlay_seed.json" in artifact_paths

@@ -95,7 +95,7 @@ class OverlayArtifactManifestBuilder:
         artifacts_payload = payload.get("artifacts")
         if not isinstance(artifacts_payload, list):
             raise ValueError("Manifest artifacts field must be a list")
-        
+
         records = []
         for idx, item in enumerate(artifacts_payload):
             if not isinstance(item, dict):
@@ -108,7 +108,7 @@ class OverlayArtifactManifestBuilder:
                 raise ValueError(
                     f"Artifact at index {idx} has invalid fields: {e}"
                 ) from e
-        
+
         manifest = OverlayArtifactManifest(
             schema_version=str(payload.get("schema_version", "")),
             artifact_count=int(payload.get("artifact_count", -1)),
