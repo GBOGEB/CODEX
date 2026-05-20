@@ -1,0 +1,27 @@
+name: semantic-validation
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - feat/**
+
+jobs:
+  validate-semantic-substrate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run semantic validator
+        run: |
+          python semantic_substrate/validators/validate_semantic_substrate.py

@@ -1,101 +1,26 @@
-# ABACUS_RENDER_PIPELINE Style Guide
+# A6 Renderer Style Guide
 
-## Theme Light
+This guide defines how renderer specifications should be written for deterministic implementation and linting.
 
-```yaml
-theme_light:
-  canvas: '#F4F2EE'
-  title_bar: '#5B2E91'
-  title_text: '#FFFFFF'
-  card:
-    background: '#FFFFFF'
-    text: '#1F2430'
-```
+## Language
 
----
+- Use normative keywords: **MUST**, **MUST NOT**, **SHOULD**, **MAY**.
+- Avoid ambiguous terms such as "better", "cleaner", or "nice looking".
+- State measurable thresholds where possible.
 
-## Theme Dark
+## Theming
 
-```yaml
-theme_dark:
-  canvas: '#181421'
-  title_bar: '#3A2460'
-  title_text: '#FFFFFF'
-  card:
-    background: '#241D33'
-    text: '#F5F2FF'
-```
+- Specify semantic color behavior per theme, not inversion behavior.
+- Include explicit dark and light examples for warnings and status cards.
+- Any contrast requirement must include numeric WCAG targets.
 
----
+## Determinism
 
-## Semantic Cards
+- Contracts must identify canonical inputs and generated outputs.
+- Rendering instructions must be reproducible from the same inputs.
+- Font requirements must include fallback stacks and availability rules.
 
-The following combined block is the authoritative schema for all semantic card variants.
-Each card type must define both `light` and `dark` variants.
+## Traceability
 
-```yaml
-semantic_cards:
-  warning:
-    light:
-      background: '#F5E8A8'
-      text: '#2B2111'
-    dark:
-      background: '#3B2A00'
-      border: '#C89B00'
-      text: '#FFE9A3'
-
-  decision:
-    light:
-      background: '#DDFBE8'
-      text: '#163326'
-    dark:
-      background: '#214F36'
-      text: '#DDFBE8'
-
-  ssot:
-    light:
-      background: '#E5D2FF'
-      text: '#281747'
-    dark:
-      background: '#3B2063'
-      text: '#E5D2FF'
-```
-
----
-
-## Typography
-
-```yaml
-fonts:
-  title:
-    family: "Aptos, 'Segoe UI', Calibri, Arial, sans-serif"
-    size: 24
-    weight: 700
-
-  section:
-    family: "Aptos, 'Segoe UI', Calibri, Arial, sans-serif"
-    size: 18
-    weight: 600
-
-  body:
-    family: "Aptos, 'Segoe UI', Calibri, Arial, sans-serif"
-    size: 13
-
-  technical:
-    family: "Consolas, 'Liberation Mono', 'Courier New', monospace"
-    size: 12
-```
-
----
-
-## Renderer Principle
-
-Semantic meaning must survive:
-
-- dark mode
-- PDF export
-- PPTX export
-- HTML rendering
-- GitHub Pages snapshots
-
-Theme transforms are semantic, not inversion-based.
+- Every governance rule should be traceable to `RENDER_RULES.md`.
+- Changelog updates should describe specification/governance changes unless executable behavior shipped in the same PR.

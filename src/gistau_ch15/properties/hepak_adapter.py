@@ -1,55 +1,58 @@
 from __future__ import annotations
 
+from typing import Optional
+
+from .base import State, SaturationState
 from .errors import PropertyBackendUnavailable
 
 
 class HEPAKAdapter:
-    """Optional HEPAK adapter scaffold.
+    """Optional HEPAK backend scaffold.
 
-    HEPAK is expected to become the preferred backend for:
-
+    Intended future scope:
     - helium below 5 K,
-    - two-phase helium,
-    - quality/wetness calculations,
-    - VLP return regions,
-    - near-2 K saturation checks.
+    - saturated helium,
+    - wetness fraction,
+    - lambda-region awareness,
+    - VLP return analysis,
+    - cold-compressor validation.
 
-    This scaffold keeps the interface explicit while remaining CI-safe.
+    This layer remains optional so repository CI can execute without HEPAK.
     """
 
     backend_name = "HEPAK"
 
-    def __init__(self) -> None:
+    def __init__(self, fluid: str = "Helium") -> None:
+        self.fluid = fluid
+
+    def _unavailable(self, call_name: str):
         raise PropertyBackendUnavailable(
-            "HEPAK backend is not installed or not connected"
+            f"HEPAK unavailable for {call_name}. Configure HEPAK bindings before enabling 2 K validation."
         )
 
-    def state_pt(self, pressure, temperature):
-        raise PropertyBackendUnavailable(
-            "HEPAK backend is not installed or not connected"
-        )
+    def state_pt(self, fluid: str, p_kpa: float, t_k: float) -> State:
+        self._unavailable("state_pt")
 
-    def state_ph(self, pressure, enthalpy):
-        raise PropertyBackendUnavailable(
-            "HEPAK backend is not installed or not connected"
-        )
+    def state_ph(self, fluid: str, p_kpa: float, h_j_kg: float) -> State:
+        self._unavailable("state_ph")
 
-    def state_ps(self, pressure, entropy):
-        raise PropertyBackendUnavailable(
-            "HEPAK backend is not installed or not connected"
-        )
+    def state_ps(self, fluid: str, p_kpa: float, s_j_kgk: float) -> State:
+        self._unavailable("state_ps")
 
-    def saturation_t(self, temperature):
-        raise PropertyBackendUnavailable(
-            "HEPAK backend is not installed or not connected"
-        )
+    def saturation_t(self, fluid: str, t_k: float) -> SaturationState:
+        self._unavailable("saturation_t")
 
-    def saturation_p(self, pressure):
-        raise PropertyBackendUnavailable(
-            "HEPAK backend is not installed or not connected"
-        )
+    def saturation_p(self, fluid: str, p_kpa: float) -> SaturationState:
+        self._unavailable("saturation_p")
 
-    def quality_ph(self, pressure, enthalpy):
-        raise PropertyBackendUnavailable(
-            "HEPAK backend is not installed or not connected"
-        )
+    def quality_ph(self, fluid: str, p_kpa: float, h_j_kg: float) -> Optional[float]:
+        self._unavailable("quality_ph")
+
+    def validate_two_phase_region(self, state: State) -> dict[str, object]:
+        quality = state.quality
+        return {
+            "backend_name": self.backend_name,
+            "quality": quality,
+            "two_phase_region": quality is not None and 0.0 <= quality <= 1.0,
+            "near_2k_region": state.temperature_k <= 5.0,
+        }

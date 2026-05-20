@@ -1,0 +1,31 @@
+version: 0.1.0
+semantic_debt:
+  scoring_model:
+    formula: weighted_sum
+    dimensions:
+      orphan_artifacts:
+        weight: 5
+      unresolved_roe:
+        weight: 4
+      missing_deltas:
+        weight: 3
+      stale_active_branches:
+        weight: 2
+      undocumented_structure:
+        weight: 2
+      invariant_violations:
+        weight: 8
+  thresholds:
+    healthy:
+      max_score: 10
+    warning:
+      min_score: 11
+      max_score: 25
+    critical:
+      min_score: 26
+  current_estimate:
+    score: 6
+    rationale:
+      - replay persistence incomplete
+      - drift analytics not automated yet
+      - recursive merge semantics still policy-only

@@ -1,130 +1,221 @@
-# RENDER RULES
+# A6 Renderer Governance Rules
 
-## Purpose
+System: `GBOGEB/CODEX Engineering Publication & Deck Rendering System`
 
-Renderer governance for the ABACUS_RENDER_PIPELINE.
+Codename: `ABACUS_RENDER_PIPELINE`
 
-This document defines deterministic rendering contracts for:
+Status: `ALPHA A6 — Renderer Governance Layer`
+
+## Primary rule
+
+Generated outputs are not canonical. The canonical chain is:
+
+1. MASTER YAML
+2. MASTER FIGURES
+3. MASTER DECISIONS
+4. MASTER SPEAKER NOTES
+5. USER PPTX as reference/input
+6. Generated outputs
+
+## Renderer contract
+
+Every rendered output must be reproducible from the SSOT (single source of truth) YAML and registered assets.
+
+For A6 governance, SSOT YAML is the same canonical artifact referenced as MASTER YAML in the source hierarchy above.
+
+Required render targets:
 
 - HTML
 - PPTX
 - PDF
 - Markdown
 - GitHub Pages
-- snapshot views
+- Speaker Notes
+- MASTER Registry
+- Executive Snapshot
+- Knowledge Cloud
 
-Generated outputs are never canonical.
+## Semantic card governance
 
-Canonical source hierarchy:
+Semantic colors must transform by theme. They must not be produced by naive inversion.
 
-1. MASTER YAML
-2. MASTER FIGURES
-3. MASTER DECISIONS
-4. MASTER SPEAKER NOTES
-5. USER PPTX
-6. GENERATED OUTPUTS
+### Warning cards
 
----
-
-## Theme Governance
-
-Theme transforms are semantic.
-
-Dark mode MUST NOT simply invert light-mode palettes.
-
-Semantic cards must define explicit light and dark variants.
-
-Example:
+Light theme:
 
 ```yaml
 semantic_cards:
   warning:
     light:
-      background: '#F5E8A8'
-      text: '#2B2111'
-    dark:
-      background: '#3B2A00'
-      border: '#C89B00'
-      text: '#FFE9A3'
+      background: "#F5E8A8"
+      text: "#2B2111"
 ```
 
----
-
-## Accessibility
-
-Renderer targets WCAG-compliant contrast behavior.
-
-Pastel cards in dark mode are prohibited.
-
-Contrast rules:
-
-- semantic intent must survive theme transform
-- text contrast must remain readable
-- borders must remain visible in PDF export
-- warning cards must use warm-dark backgrounds in dark mode
-
----
-
-## Typography Governance
-
-Fonts (see STYLE_GUIDE.md for authoritative values):
-
-| Role | Family |
-|---|---|
-| title | `"Aptos, 'Segoe UI', Calibri, Arial, sans-serif"` |
-| section | `"Aptos, 'Segoe UI', Calibri, Arial, sans-serif"` |
-| body | `"Aptos, 'Segoe UI', Calibri, Arial, sans-serif"` |
-| technical | `"Consolas, 'Liberation Mono', 'Courier New', monospace"` |
-
-Renderer responsibilities:
-
-- adaptive heading scaling
-- overflow prevention
-- semantic emphasis preservation
-- deterministic bullet spacing
-
----
-
-## Layout Governance
-
-Renderer must implement:
-
-- card auto-height
-- whitespace balancing
-- overflow detection
-- semantic asymmetry balancing
-- stable navigation placement
-
----
-
-## Stable IDs
-
-Every slide requires immutable IDs.
-
-Example:
+Dark theme:
 
 ```yaml
-slide_id: MSLIDE_EXEC_INFOCARD_01
+semantic_cards:
+  warning:
+    dark:
+      background: "#3B2A00"
+      border: "#C89B00"
+      text: "#FFE9A3"
 ```
 
-Stable IDs are required for:
+Forbidden in dark mode:
 
-- lineage
-- figure references
-- snapshots
-- PDF anchors
-- changelog traceability
-- speaker-note traceability
+```yaml
+dark_mode:
+  pastel_cards: true
+```
 
----
+Required:
 
-## Validation Direction
+```yaml
+dark_mode:
+  pastel_cards: false
+```
 
-Future CI rendering validation should include:
+## Contrast governance
 
-- contrast linting
-- overflow linting
-- spacing linting
-- snapshot regression checks
-- navigation validation
-- theme transform checks
+Every semantic card must satisfy contrast validation before release.
+
+Minimum requirements:
+
+- body text: WCAG 2.2 AA ratio >= 4.5:1
+- title text: WCAG 2.2 AA ratio >= 4.5:1, or >= 3:1 for large text (>= 18 pt regular or >= 14 pt bold)
+- badges and metadata: no white-on-pastel in dark mode
+- dark cards use darker semantic backgrounds and warmer pale text
+
+Measurement contract:
+
+- Compute contrast using WCAG relative luminance with sRGB values.
+- Evaluate rendered foreground text color against the immediate card background color.
+- Validate the final rendered colors per target output theme (light and dark), not pre-transform tokens.
+
+## Typography engine rules
+
+The renderer must enforce:
+
+- heading hierarchy
+- adaptive text scaling
+- bullet rendering consistency
+- semantic emphasis rules
+- technical text monospace rendering
+
+Canonical fonts:
+
+```yaml
+fonts:
+  policy:
+    package_or_embed: required
+    deterministic_selection: true
+    notes:
+      - "Renderers should embed the canonical fonts when the target format supports embedding."
+      - "If embedding is not supported, renderers must package the fonts with the build/runtime image or use the fallback stacks below in listed order."
+      - "A renderer must not substitute fonts outside these stacks unless the run fails with an explicit font-resolution error."
+      - "For a given target/runtime, the resolved family must be stable across CI, Pages, and PDF generation."
+  title:
+    family: Aptos
+    fallbacks:
+      - Aptos
+      - Calibri
+      - Arial
+      - Helvetica
+      - sans-serif
+    size: 24
+    weight: 700
+  section:
+    family: Aptos
+    fallbacks:
+      - Aptos
+      - Calibri
+      - Arial
+      - Helvetica
+      - sans-serif
+    size: 18
+    weight: 600
+  body:
+    family: Aptos
+    fallbacks:
+      - Aptos
+      - Calibri
+      - Arial
+      - Helvetica
+      - sans-serif
+    size: 13
+  technical:
+    family: Consolas
+    fallbacks:
+      - Consolas
+      - "Courier New"
+      - Courier
+      - monospace
+    size: 12
+```
+
+Deterministic font contract:
+
+- Preferred stacks:
+  - title/section/body: `Aptos, Calibri, Arial, Helvetica, sans-serif`
+  - technical: `Consolas, "Liberation Mono", "DejaVu Sans Mono", "Courier New", monospace`
+- CI and release renderers MUST guarantee availability of the fallback families; Aptos/Consolas are preferred when available/licensed.
+- Renderers MUST use the listed fallback order and keep layout calculations tied to the effective resolved font in each environment.
+
+## Layout engine rules
+
+The renderer must enforce:
+
+- card auto-height
+- whitespace governance
+- overflow detection
+- landscape slide safety
+- asymmetry balancing
+- no clipped title bars
+- no unreadable overlays
+
+## Navigation engine rules
+
+The renderer must support:
+
+- semantic topic navigation
+- local next/previous links
+- MASTER figure linking
+- PDF anchor support
+- slide ID anchors
+
+Every slide requires a stable ID.
+
+## Lineage rules
+
+Every output must trace to:
+
+- source PPTX where applicable
+- source slide number where applicable
+- MASTER YAML ID
+- MASTER figure IDs
+- generation timestamp or run ID
+- renderer version or phase tag
+
+## CI renderer gates
+
+A6 introduces these future CI checks:
+
+- YAML schema validation
+- semantic contrast linting
+- required slide ID linting
+- missing figure reference detection
+- orphan output detection
+- dark/light theme snapshot checks
+- render smoke tests
+
+## A6 acceptance criteria
+
+A6 is acceptable when:
+
+- dark warning cards are readable
+- pastel cards are disabled in dark mode
+- MANIFEST files define renderer contracts
+- MASTER slide and figure registries exist
+- changelog records known issues and next actions
+- Codex has an executable task for renderer linting and CI checks

@@ -1,0 +1,110 @@
+version: 0.1.0
+substrate: CODEX semantic invariants
+last_updated: 2026-05-18
+invariants:
+  - id: INV-001
+    title: SSOT traceability
+    statement: Every governed artifact shall reference a single source of truth node.
+    severity: error
+    applies_to: [markdown, yaml, json, code]
+    validation:
+      kind: reference_exists
+      required_fields: [ssot_ref]
+      registry: semantic_substrate/overlay_ssot.yaml
+    roe_trigger: orphan artifact, duplicated authority, conflicting source files
+  - id: INV-002
+    title: Tuple lineage
+    statement: Every semantic tuple shall reference either ROOT or an existing parent tuple.
+    severity: error
+    applies_to: [tuple_registry]
+    validation:
+      kind: parent_reference
+      id_pattern: '^TUP-[0-9]{4}$|^ROOT$'
+      parent_field: parent_id
+    roe_trigger: lost reasoning lineage, unexplained design jump
+  - id: INV-003
+    title: Cold-start reconstructability
+    statement: The repository shall be reconstructable from checked-in state files without external memory.
+    severity: error
+    applies_to: [state_reconstruction]
+    validation:
+      kind: required_files
+      files:
+        - semantic_substrate/STATE_RECONSTRUCTION.md
+        - semantic_substrate/active_context.yaml
+        - semantic_substrate/branch_dag.yaml
+        - semantic_substrate/semantic_delta_ledger.yaml
+        - semantic_substrate/invariants.yaml
+    roe_trigger: agent cannot resume, handover feels lite, missing next action
+  - id: INV-004
+    title: Branch DAG integrity
+    statement: Branches shall form an acyclic graph and remain traceable to ROOT.
+    severity: error
+    applies_to: [branch_dag]
+    validation:
+      kind: dag_acyclic
+      node_id_pattern: '^[a-z0-9][a-z0-9_-]*$|^ROOT$'
+      allowed_status: [active, dormant, merged, abandoned]
+    roe_trigger: branch confusion, duplicate streams, unclear merge ancestry
+  - id: INV-005
+    title: Semantic delta capture
+    statement: Every material semantic change shall be captured in the semantic delta ledger.
+    severity: warning
+    applies_to: [delta_ledger, pull_requests, commits]
+    validation:
+      kind: delta_schema
+      id_pattern: '^DELTA-[0-9]{4}$'
+      required_fields: [id, date, from_state, to_state, summary, impact]
+    roe_trigger: change cannot be explained after the fact
+  - id: INV-006
+    title: Return-of-experience closure
+    statement: Repeated failures, corrections, and friction shall feed back into invariants or exceptions.
+    severity: warning
+    applies_to: [roe_log]
+    validation:
+      kind: roe_schema
+      required_fields: [id, date, trigger, cause, correction, prevention]
+    roe_trigger: same failure happens twice
+  - id: INV-007
+    title: Human-machine parity
+    statement: Critical registries shall have both human-readable and machine-readable representations where useful.
+    severity: warning
+    applies_to: [documentation, registries]
+    validation:
+      kind: parity_check
+      pairs:
+        - [semantic_substrate/invariants.yaml, semantic_substrate/INVARIANTS.md]
+        - [semantic_substrate/branch_dag.yaml, semantic_substrate/BRANCH_DAG.md]
+    roe_trigger: humans and validators disagree
+  - id: INV-008
+    title: Validator-first gate
+    statement: Repository semantic checks shall pass before merge or release.
+    severity: error
+    applies_to: [ci, pr]
+    validation:
+      kind: command_passes
+      command: python semantic_substrate/validators/validate_semantic_substrate.py
+    roe_trigger: broken metadata enters main
+  - id: INV-009
+    title: Canonical semantic IDs
+    statement: Semantic identifiers shall remain predictable and unique.
+    severity: error
+    applies_to: [ids]
+    validation:
+      kind: id_patterns
+      patterns:
+        tuple: '^TUP-[0-9]{4}$|^ROOT$'
+        invariant: '^INV-[0-9]{3}$'
+        delta: '^DELTA-[0-9]{4}$'
+        state: '^STATE-[0-9]{4}$'
+        roe: '^ROE-[0-9]{4}$'
+    roe_trigger: duplicate or ambiguous semantic references
+  - id: INV-010
+    title: Manifested structural drift
+    statement: New, deleted, or moved top-level semantic structures shall be reflected in the repo manifest.
+    severity: warning
+    applies_to: [repo_manifest]
+    validation:
+      kind: manifest_coverage
+      manifest: semantic_substrate/repo_manifest.yaml
+    roe_trigger: repo layout changes silently
