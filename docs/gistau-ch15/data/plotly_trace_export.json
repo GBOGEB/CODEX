@@ -1,0 +1,88 @@
+{
+  "saturation": [
+    {
+      "type": "scatter",
+      "mode": "lines+markers",
+      "name": "liquid branch",
+      "x": [
+        5,
+        12,
+        20,
+        31,
+        45,
+        62
+      ],
+      "y": [
+        1.8,
+        2.0,
+        2.4,
+        3.0,
+        3.8,
+        4.6
+      ]
+    },
+    {
+      "type": "scatter",
+      "mode": "lines+markers",
+      "name": "vapor branch",
+      "x": [
+        450,
+        390,
+        330,
+        270,
+        220,
+        180
+      ],
+      "y": [
+        1.8,
+        2.0,
+        2.4,
+        3.0,
+        3.8,
+        4.6
+      ]
+    }
+  ],
+  "agreement": {
+    "type": "heatmap",
+    "name": "backend agreement",
+    "x": [
+      "fallback",
+      "coolprop",
+      "refprop",
+      "hepak"
+    ],
+    "y": [
+      "T00 property",
+      "T02 saturation",
+      "T04 expander",
+      "T05 compressor"
+    ],
+    "z": [
+      [
+        0.62,
+        0.88,
+        1.0,
+        0.95
+      ],
+      [
+        0.3,
+        0.72,
+        0.86,
+        1.0
+      ],
+      [
+        0.45,
+        0.78,
+        0.91,
+        0.96
+      ],
+      [
+        0.28,
+        0.7,
+        0.89,
+        1.0
+      ]
+    ]
+  }
+}
