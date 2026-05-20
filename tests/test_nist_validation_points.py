@@ -50,12 +50,17 @@ def test_fixture_schema_and_required_keys() -> None:
         assert isinstance(point["point_id"], str)
         assert isinstance(point["source"], str)
         assert isinstance(point["source_type"], str)
+        assert isinstance(point["T_K"], (int, float))
+        assert isinstance(point["P_kPa"], (int, float))
+        assert isinstance(point["uncertainty_or_tolerance"], (int, float))
         assert point["T_K"] > 0.0
         assert point["P_kPa"] > 0.0
         assert point["uncertainty_or_tolerance"] >= 0.0
 
         quality = point["expected_quality"]
-        assert quality is None or 0.0 <= quality <= 1.0
+        assert quality is None or (
+            isinstance(quality, (int, float)) and 0.0 <= quality <= 1.0
+        )
 
 
 def test_required_baseline_points_present() -> None:
@@ -83,5 +88,7 @@ def test_fixture_paths_run_without_optional_backend_imports() -> None:
     assert points
 
     sat = saturation_state_stub(temperature_k=4.222, pressure_kpa=101.325)
+    assert sat.temperature_k == 4.222
+    assert sat.pressure_kpa == 101.325
     assert sat.validation_status == "reference_only"
     assert "placeholder" in sat.approximation_note

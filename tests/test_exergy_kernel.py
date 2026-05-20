@@ -16,7 +16,7 @@ def test_specific_flow_exergy_sign_and_scale_positive_case() -> None:
     assert ex == 20000.0
 
 
-def test_specific_flow_exergy_sign_negative_case() -> None:
+def test_specific_flow_exergy_sign_and_scale_negative_case() -> None:
     ex = specific_flow_exergy(
         h_j_kg=110000.0,
         s_j_kgk=700.0,
