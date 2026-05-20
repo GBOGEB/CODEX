@@ -107,19 +107,50 @@ Canonical fonts:
 
 ```yaml
 fonts:
+  policy:
+    package_or_embed: required
+    deterministic_selection: true
+    notes:
+      - "Renderers should embed the canonical fonts when the target format supports embedding."
+      - "If embedding is not supported, renderers must package the fonts with the build/runtime image or use the fallback stacks below in listed order."
+      - "A renderer must not substitute fonts outside these stacks unless the run fails with an explicit font-resolution error."
+      - "For a given target/runtime, the resolved family must be stable across CI, Pages, and PDF generation."
   title:
     family: Aptos
+    fallbacks:
+      - Aptos
+      - Calibri
+      - Arial
+      - Helvetica
+      - sans-serif
     size: 24
     weight: 700
   section:
     family: Aptos
+    fallbacks:
+      - Aptos
+      - Calibri
+      - Arial
+      - Helvetica
+      - sans-serif
     size: 18
     weight: 600
   body:
     family: Aptos
+    fallbacks:
+      - Aptos
+      - Calibri
+      - Arial
+      - Helvetica
+      - sans-serif
     size: 13
   technical:
     family: Consolas
+    fallbacks:
+      - Consolas
+      - "Courier New"
+      - Courier
+      - monospace
     size: 12
 ```
 
