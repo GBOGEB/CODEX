@@ -19,3 +19,10 @@ def test_availability_rows_serializable():
     assert 'name' in rows[0]
     assert 'tier' in rows[0]
     assert 'available' in rows[0]
+
+
+def test_reference_tier_is_reported_available():
+    rows = availability_report_rows()
+    reference_rows = [row for row in rows if row["name"] == "nist_gistau_reference"]
+    assert reference_rows
+    assert reference_rows[0]["available"] is True
