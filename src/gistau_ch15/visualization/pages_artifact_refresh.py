@@ -14,6 +14,18 @@ class PagesArtifactRefresh:
     def refresh(
         self,
         *,
+        overlay_seed_output: str | Path | None = None,
+        trace_export_output: str | Path | None = None,
+    ) -> list[Path]:
+        outputs: list[Path] = []
+
+        if overlay_seed_output is not None:
+            outputs.append(regenerate(overlay_seed_output))
+        else:
+            outputs.append(regenerate())
+
+        if trace_export_output is not None:
+            outputs.append(PlotlyTraceJSONExporter().export(trace_export_output))
         overlay_output: Path | None = None,
         trace_output: Path | None = None,
     ) -> list[Path]:
