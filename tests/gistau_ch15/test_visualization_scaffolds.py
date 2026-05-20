@@ -41,12 +41,7 @@ def test_backend_agreement_builder_returns_matrix():
 
 def test_regenerate_overlay_json_matches_dashboard_schema(tmp_path):
     output = tmp_path / "seed.json"
-    original_output = regenerate_overlay_json.OUTPUT
-    regenerate_overlay_json.OUTPUT = output
-    try:
-        regenerate_overlay_json.regenerate()
-    finally:
-        regenerate_overlay_json.OUTPUT = original_output
+    regenerate_overlay_json.regenerate(output)
 
     payload = json.loads(output.read_text(encoding="utf-8"))
     assert "saturation_dome" in payload

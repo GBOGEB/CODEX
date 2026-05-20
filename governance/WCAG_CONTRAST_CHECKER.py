@@ -53,14 +53,11 @@ def parse_fg_bg_pairs(text: str) -> list[tuple[str, str, str]]:
     emitted: set[str] = set()
     in_semantic_tokens = False
     for line in text.splitlines():
-        # Track when we enter/exit the semantic_tokens section
         if re.match(rf"^{SEMANTIC_TOKENS_SECTION}:\s*$", line):
             in_semantic_tokens = True
             continue
-        # Exit semantic_tokens section when we hit another top-level key (no leading whitespace)
         if in_semantic_tokens and re.match(r"^(?!\s)[a-z_]+:\s*$", line):
             in_semantic_tokens = False
-        # Only parse tokens within semantic_tokens section
         if not in_semantic_tokens:
             continue
         if re.match(r"^\s{2}[a-z_]+:\s*$", line):
