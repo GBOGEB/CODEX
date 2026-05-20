@@ -97,7 +97,14 @@ def main(path: str | None = None, minimum: float = 4.5) -> int:
         print(f"FAIL: no semantic token fg/bg pairs detected in {path}")
         return 1
     for key, bg, fg in pairs:
-        ratio = contrast_ratio(bg, fg)
+        try:
+            ratio = contrast_ratio(bg, fg)
+        except ValueError as exc:
+            errors.append(f"{key}: {exc}")
+            continue
+        except Exception as exc:
+            errors.append(f"{key}: unable to calculate contrast ({exc})")
+            continue
         if ratio < minimum:
             errors.append(f"{key}: contrast {ratio:.2f} < {minimum}")
 
