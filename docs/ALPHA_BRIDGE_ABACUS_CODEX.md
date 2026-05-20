@@ -17,7 +17,7 @@ The goal is to:
 
 ---
 
-# Β — Primary Functional Split
+## Β — Primary Functional Split
 
 ## CODEX
 
@@ -72,7 +72,7 @@ Core domains:
 
 ---
 
-# Γ — Proposed Strategic Boundary
+## Γ — Proposed Strategic Boundary
 
 ## CODEX SHOULD OWN
 
@@ -114,7 +114,7 @@ ABACUS remains the heavy analysis and orchestration environment.
 
 ---
 
-# Δ — Immediate Bridge Opportunities
+## Δ — Immediate Bridge Opportunities
 
 ## 1. GitHub Adapter Extraction
 
@@ -190,7 +190,7 @@ This enables:
 
 ---
 
-# Ε — Identified Pruning Candidates
+## Ε — Identified Pruning Candidates
 
 ## ABACUS
 
@@ -223,7 +223,7 @@ Potential pruning areas:
 
 ---
 
-# Ζ — Orchestrator Relationship
+## Ζ — Orchestrator Relationship
 
 ## Current State
 
@@ -254,7 +254,7 @@ This reduces platform duplication.
 
 ---
 
-# Η — Ranking + Validation Alignment
+## Η — Ranking + Validation Alignment
 
 ABACUS already contains:
 
@@ -283,7 +283,7 @@ Suggested future split:
 
 ---
 
-# Θ — Recommended Next Steps
+## Θ — Recommended Next Steps
 
 ## Phase Alpha
 
@@ -313,7 +313,7 @@ Suggested future split:
 
 ---
 
-# ASCII Overview
+## ASCII Overview
 
 ```text
                     ┌───────────────────────┐
@@ -350,7 +350,7 @@ Suggested future split:
 
 ---
 
-# Initial Conclusion
+## Initial Conclusion
 
 The repositories are complementary, not competing.
 
