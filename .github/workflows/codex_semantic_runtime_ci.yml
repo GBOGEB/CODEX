@@ -70,10 +70,9 @@ jobs:
 
       - name: Validate manifest structure
         run: |
-          test -f MANIFEST/STYLE_GUIDE.md
-          test -f MANIFEST/RENDER_RULES.md
+          test -f MANIFEST.json
 
       - name: Validate dark mode governance references
         run: |
-          grep -R "#FFE9A3" MANIFEST || exit 1
-          grep -R "semantic colors must transform by theme" MANIFEST || exit 1
+          grep "#FFE9A3" MANIFEST.json || exit 1
+          grep "semantic colors must transform by theme" MANIFEST.json || exit 1
