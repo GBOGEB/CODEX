@@ -1,0 +1,47 @@
+name: render-governance-ci
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  governance-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install pytest
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pyyaml
+
+      - name: Validate manifest files
+        run: |
+          test -f MANIFEST/RENDER_RULES.md
+          test -f MANIFEST/STYLE_GUIDE.md
+          test -f MANIFEST/CHANGELOG.md
+          test -f MANIFEST/TUPLE_OFFLOAD_SUMMARY.md
+
+      - name: Validate kernel tests
+        run: |
+          pytest tests/test_units_kernel.py tests/test_exergy_kernel.py
+
+      - name: Theme governance scan
+        run: |
+          grep -R "semantic" MANIFEST/STYLE_GUIDE.md
+          grep -R "warning:" MANIFEST/STYLE_GUIDE.md
+
+      - name: Future renderer lint placeholder
+        run: |
+          echo 'contrast_lint.py pending'
+          echo 'overflow_lint.py pending'
+          echo 'spacing_lint.py pending'
