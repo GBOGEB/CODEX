@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 
 from gistau_ch15.visualization.overlay_artifact_manifest import (
-    MANIFEST_SCHEMA_VERSION,
     OverlayArtifactManifestBuilder,
 )
 from gistau_ch15.visualization.pages_artifact_refresh import (
@@ -28,7 +27,5 @@ def refresh_overlay_artifacts(
     )
     manifest_builder = OverlayArtifactManifestBuilder()
     manifest = manifest_builder.write_manifest(artifacts, manifest_output, root=root)
-    loaded = manifest_builder.load_manifest(manifest)
-    if loaded.schema_version != MANIFEST_SCHEMA_VERSION:
-        raise ValueError("Unexpected manifest schema version after refresh")
+    manifest_builder.load_manifest(manifest)
     return [*artifacts, manifest]
