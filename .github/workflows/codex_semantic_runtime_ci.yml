@@ -35,13 +35,13 @@ jobs:
         run: |
           python semantic_substrate/runtime/orchestration_loop.py
 
-      - name: Run replay engine
+      - name: Run delta extractor
         run: |
-          python semantic_substrate/engines/replay_engine.py
+          python semantic_substrate/engines/delta_extractor.py
 
-      - name: Run tuple replay engine
+      - name: Run tuple registry engine
         run: |
-          python semantic_substrate/engines/tuple_replay_engine.py
+          python semantic_substrate/engines/tuple_registry_engine.py
 
       - name: Run telemetry dashboard
         run: |
