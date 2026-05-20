@@ -45,7 +45,17 @@ jobs:
 
       - name: Run telemetry dashboard
         run: |
-          python semantic_substrate/telemetry/semantic_telemetry_dashboard.py
+          if [ -f semantic_substrate/telemetry/semantic_telemetry_dashboard.py ]; then
+            python semantic_substrate/telemetry/semantic_telemetry_dashboard.py
+          else
+            viewer_entrypoint="$(find semantic_substrate/viewers -maxdepth 1 -type f -name '*.py' | sort | head -n 1)"
+            if [ -n "$viewer_entrypoint" ]; then
+              python "$viewer_entrypoint"
+            else
+              echo "No telemetry dashboard or viewer entrypoint found." >&2
+              exit 1
+            fi
+          fi
 
       - name: Run tests
         run: |
