@@ -35,10 +35,10 @@ P_LAMBDA_KPA: float = 5.04
 #: Molar mass of helium-4 [kg/mol]
 MOLAR_MASS_KG_MOL: float = 4.002602e-3
 #: Universal gas constant [J/(mol·K)]
-R_UNIVERSAL_J_MOLΚ: float = 8.314462
+R_UNIVERSAL_J_MOLK: float = 8.314462
 
 #: Specific gas constant for helium-4 [J/(kg·K)]
-R_SPECIFIC_J_KGK: float = R_UNIVERSAL_J_MOLΚ / MOLAR_MASS_KG_MOL
+R_SPECIFIC_J_KGK: float = R_UNIVERSAL_J_MOLK / MOLAR_MASS_KG_MOL
 
 
 # ── NIST helium saturation data fixtures ─────────────────────────────────────

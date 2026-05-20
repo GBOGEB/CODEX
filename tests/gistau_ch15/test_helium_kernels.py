@@ -129,8 +129,10 @@ class TestNistAnchorLookup:
     def test_anchor_has_required_keys(self):
         anchor = nist_anchor_at_temperature(4.222, tolerance_k=0.1)
         assert anchor is not None
-        for key in ("t_k", "p_kpa", "rho_liquid_kg_m3", "rho_vapor_kg_m3",
-                    "h_liquid_j_kg", "h_vapor_j_kg"):
+        for key in (
+            "t_k", "p_kpa", "rho_liquid_kg_m3", "rho_vapor_kg_m3",
+            "h_liquid_j_kg", "h_vapor_j_kg",
+        ):
             assert key in anchor
 
 
