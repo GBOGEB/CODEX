@@ -28,6 +28,7 @@
 </section>
 </main>
 <script>
+const MAX_SAMPLE_ROWS = 16;
 async function render() {
   const body = document.getElementById("comparison-sample");
   const count = document.getElementById("row-count");
@@ -35,7 +36,7 @@ async function render() {
     const response = await fetch("data/backend_comparison_report.json");
     const rows = await response.json();
     count.textContent = `${rows.length} comparison rows loaded.`;
-    body.innerHTML = rows.slice(0, 16).map((row) => (
+    body.innerHTML = rows.slice(0, MAX_SAMPLE_ROWS).map((row) => (
       `<tr><td>${row.example_id}</td><td>${row.backend_name}</td><td>${row.quantity}</td><td>${row.status}</td><td>${row.absolute_delta ?? "—"}</td></tr>`
     )).join("");
   } catch (error) {
