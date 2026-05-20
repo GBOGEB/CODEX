@@ -30,7 +30,7 @@ class HEPAKAdapter:
     def _load_binding(self) -> Any:
         """Load HEPAK Python bindings from supported module names.
 
-        The loader tries ``hepak`` first, then ``pyhepak`` as a fallback.
+        The loader tries `hepak` first, then `pyhepak` as a fallback.
         If neither import is available, the adapter remains optional by
         raising PropertyBackendUnavailable.
         """

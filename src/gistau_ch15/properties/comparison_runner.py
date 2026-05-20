@@ -75,7 +75,8 @@ class ComparisonRunner:
     def build_heatmap_matrix(self, rows: list[dict[str, Any]]) -> dict[str, Any]:
         """Build tuple-indexed temperature-delta matrix.
 
-        Legacy compare.py rows use ``delta_temperature_k`` directly.
+        Legacy rows from `gistau_ch15.properties.compare` use
+        ``delta_temperature_k`` directly.
         Worked-example rows use ``absolute_delta`` only for the
         ``outlet_temperature_k`` quantity.
         """
