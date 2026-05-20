@@ -61,7 +61,7 @@ class WetnessValidationRunner:
                     bounded_quality = quality if 0.0 <= quality <= 1.0 else None
                     if bounded_quality is None:
                         wetness_fraction = None
-                        quality = None
+                        quality = bounded_quality
                         phase_region = "quality_out_of_range"
                     else:
                         quality = bounded_quality

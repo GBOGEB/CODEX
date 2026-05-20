@@ -6,13 +6,14 @@ from gistau_ch15.properties.refprop_adapter import REFPROPAdapter
 
 
 class _FakeRefpropLibrary:
-    def __init__(self) -> None:
+    def __init__(self, molar_mass: float = 4.0) -> None:
         self.calls: list[tuple[str, str, str, float, float]] = []
+        self.molar_mass = molar_mass
 
     def REFPROPdll(self, fluid, inputs, output, i_units, i_mass, i_flag, x1, x2, z):
         self.calls.append((fluid, inputs, output, float(x1), float(x2)))
         table = {
-            ("TP", "W"): 4.0,
+            ("TP", "W"): self.molar_mass,
             ("TP", "H"): 1000.0,
             ("TP", "S"): 10.0,
             ("TP", "D"): 2.0,
@@ -33,8 +34,11 @@ class _FakeRefpropLibrary:
         return SimpleNamespace(Output=[table[(inputs, output)]], ierr=0, herr="")
 
 
-def _build_adapter(monkeypatch: pytest.MonkeyPatch) -> tuple[REFPROPAdapter, _FakeRefpropLibrary]:
-    fake = _FakeRefpropLibrary()
+def _build_adapter(
+    monkeypatch: pytest.MonkeyPatch,
+    molar_mass: float = 4.0,
+) -> tuple[REFPROPAdapter, _FakeRefpropLibrary]:
+    fake = _FakeRefpropLibrary(molar_mass=molar_mass)
     monkeypatch.setattr(REFPROPAdapter, "_load", lambda self: fake)
     adapter = REFPROPAdapter()
     return adapter, fake
@@ -74,3 +78,11 @@ def test_refprop_adapter_state_ph_state_ps_and_saturation_convert_units(
     assert sat_p.vapor_density_kg_m3 == pytest.approx(2.0)
     assert ("HELIUM", "PH", "T", 500.0, 1000.0) in fake.calls
     assert ("HELIUM", "PS", "T", 500.0, 10.0) in fake.calls
+
+
+def test_refprop_adapter_conversion_uses_reported_molar_mass(monkeypatch: pytest.MonkeyPatch):
+    adapter, _ = _build_adapter(monkeypatch, molar_mass=5.0)
+    state = adapter.state_pt("Helium", 101.325, 300.0)
+    assert state.enthalpy_j_kg == pytest.approx(200000.0)
+    assert state.entropy_j_kgk == pytest.approx(2000.0)
+    assert state.density_kg_m3 == pytest.approx(10.0)

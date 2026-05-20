@@ -103,10 +103,13 @@ class HEPAKAdapter:
                 quality=quality,
             )
         if isinstance(raw, dict):
+            temperature = raw.get("temperature_k", t_k)
+            if temperature is None:
+                raise PropertyBackendUnavailable("HEPAK state payload missing temperature_k")
             quality = self._bounded_quality(raw.get("quality"))
             return State(
                 pressure_kpa=float(raw.get("pressure_kpa", p_kpa)),
-                temperature_k=float(raw.get("temperature_k", t_k if t_k is not None else 0.0)),
+                temperature_k=float(temperature),
                 enthalpy_j_kg=float(raw["enthalpy_j_kg"]),
                 entropy_j_kgk=float(raw["entropy_j_kgk"]),
                 density_kg_m3=float(raw["density_kg_m3"]),
@@ -123,9 +126,15 @@ class HEPAKAdapter:
                 vapor_density_kg_m3=float(raw.vapor_density_kg_m3),
             )
         if isinstance(raw, dict):
+            pressure = raw.get("pressure_kpa", p_kpa)
+            temperature = raw.get("temperature_k", t_k)
+            if pressure is None:
+                raise PropertyBackendUnavailable("HEPAK saturation payload missing pressure_kpa")
+            if temperature is None:
+                raise PropertyBackendUnavailable("HEPAK saturation payload missing temperature_k")
             return SaturationState(
-                pressure_kpa=float(raw.get("pressure_kpa", p_kpa if p_kpa is not None else 0.0)),
-                temperature_k=float(raw.get("temperature_k", t_k if t_k is not None else 0.0)),
+                pressure_kpa=float(pressure),
+                temperature_k=float(temperature),
                 liquid_density_kg_m3=float(raw["liquid_density_kg_m3"]),
                 vapor_density_kg_m3=float(raw["vapor_density_kg_m3"]),
             )

@@ -191,7 +191,7 @@ class FrontierEngineeringRunner:
         status = availability_map.get(backend_name)
         if status is not None:
             reason = status.reason
-        return _UnavailableBackend(backend_name.upper(), reason)
+        return _UnavailableBackend(backend_name, reason)
 
     @staticmethod
     def _state_requests() -> list[StatePointRequest]:

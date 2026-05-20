@@ -29,7 +29,6 @@ class REFPROPAdapter:
         self._rp: Any | None = None
         self._molar_mass_g_mol: dict[str, float] = {}
         self.status = REFPROPStatus(False, "REFPROP not loaded")
-        self._load()
 
     def _load(self) -> Any:
         if self._rp is not None:
