@@ -11,7 +11,6 @@ from gistau_ch15.visualization.pages_artifact_refresh import (
 )
 
 MANIFEST_OUTPUT = Path("docs/gistau-ch15/data/generated_overlay_manifest.json")
-PIPELINE_VERSION = "h2.generated-overlay.v1"
 
 
 def refresh_overlay_artifacts(
