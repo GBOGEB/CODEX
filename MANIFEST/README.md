@@ -63,3 +63,6 @@ A6 focuses on deterministic renderer quality:
 - `RENDER_RULES.md`
 - `STYLE_GUIDE.md`
 - `CHANGELOG.md`
+- `SESSION_OFFLOAD_PR_G2_A6.md` — session lineage/offload record for this A6 PR
+
+`README.md` is the canonical MANIFEST entrypoint (historically referenced as `README_MAX.md` in early A6 PR text).

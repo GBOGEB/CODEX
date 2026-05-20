@@ -128,8 +128,8 @@ Deterministic font contract:
 - Preferred stacks:
   - title/section/body: `Aptos, Calibri, Arial, Helvetica, sans-serif`
   - technical: `Consolas, "Liberation Mono", "DejaVu Sans Mono", "Courier New", monospace`
-- CI and release renderers MUST run with these families available (installed or bundled).
-- If Aptos/Consolas are unavailable, renderers MUST use the listed fallback order and keep layout calculations tied to the effective resolved font.
+- CI and release renderers MUST guarantee availability of the fallback families; Aptos/Consolas are preferred when available/licensed.
+- Renderers MUST use the listed fallback order and keep layout calculations tied to the effective resolved font in each environment.
 
 ## Layout engine rules
 
