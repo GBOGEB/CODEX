@@ -29,6 +29,12 @@ def test_run_orchestration_payload_shape_ok():
     with patch(
         'semantic_substrate.runtime.orchestration_loop._run_validator',
         return_value=fake_validator,
+    ), patch(
+        'semantic_substrate.runtime.orchestration_loop.persist_session',
+        return_value={'replay_checkpoint': {'snapshot_id': 'STATE-0002'}},
+    ), patch(
+        'semantic_substrate.runtime.orchestration_loop.build_semantic_plan',
+        return_value={'priorities': []},
     ):
         result = run_orchestration(changed_files=['README.md'])
 
@@ -40,19 +46,31 @@ def test_run_orchestration_payload_shape_ok():
     assert 'validator_stderr' in result
     assert result['loop_trace'] == [
         'observe',
-        'classify',
+        'reconstruct',
+        'reason',
+        'prioritize',
+        'recommend',
+        'heal',
+        'synchronize',
+        'persist',
+        'evolve',
         'validate',
         'generate_delta',
         'update_snapshot',
         'update_lineage',
         'update_debt',
-        'recommend_next_action',
+        'adaptive_cognition',
     ]
     assert result['delta']['files'][0]['classification'] == 'documentation'
     assert result['drift_report']['finding_count'] == 0
     assert result['merge_orchestration']['rules']
     assert '<html' in result['semantic_graph_html']
     assert result['recommended_next_actions']
+    assert 'correction_proposals' in result
+    assert 'planning_report' in result
+    assert 'replay_checkpoint' in result
+    assert 'semantic_event_intelligence' in result
+    assert 'cognition_summary' in result
 
 
 def test_run_orchestration_payload_shape_failed():
@@ -60,6 +78,12 @@ def test_run_orchestration_payload_shape_failed():
     with patch(
         'semantic_substrate.runtime.orchestration_loop._run_validator',
         return_value=fake_validator,
+    ), patch(
+        'semantic_substrate.runtime.orchestration_loop.persist_session',
+        return_value={'replay_checkpoint': {'snapshot_id': 'STATE-0002'}},
+    ), patch(
+        'semantic_substrate.runtime.orchestration_loop.build_semantic_plan',
+        return_value={'priorities': []},
     ):
         result = run_orchestration(changed_files=['README.md'])
 
