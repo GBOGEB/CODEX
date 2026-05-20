@@ -94,7 +94,7 @@ class OverlayArtifactManifestBuilder:
     def parse_payload(self, payload: dict) -> OverlayArtifactManifest:
         if not isinstance(payload, dict):
             raise ValueError(
-                f"Manifest payload must be a JSON object (dict), got {type(payload).__name__}"
+                f"Manifest payload must be a dict, got {type(payload).__name__}"
             )
         artifacts_payload = payload.get("artifacts")
         if not isinstance(artifacts_payload, list):
