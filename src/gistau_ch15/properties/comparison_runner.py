@@ -6,6 +6,8 @@ from typing import Any
 from .compare import PropertyDelta
 from gistau_ch15.validation.worked_example_runner import WorkedExampleRunner
 
+EXCLUDED_HEATMAP_STATUSES = {"backend_unavailable", "mapping_pending", "reference_unavailable"}
+
 
 class ComparisonRunner:
     """Publication-grade backend delta aggregation scaffold.
@@ -80,7 +82,7 @@ class ComparisonRunner:
         matrix: dict[str, dict[str, float | None]] = {}
 
         for row in rows:
-            if row.get("status") in {"backend_unavailable", "mapping_pending", "reference_unavailable"}:
+            if row.get("status") in EXCLUDED_HEATMAP_STATUSES:
                 continue
             backend = row["backend_name"]
             matrix.setdefault(backend, {})

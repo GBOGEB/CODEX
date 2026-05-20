@@ -37,7 +37,7 @@ class HEPAKAdapter:
         for module_name in ("hepak", "pyhepak"):
             try:
                 return importlib.import_module(module_name)
-            except Exception:
+            except (ImportError, ModuleNotFoundError):
                 continue
         raise PropertyBackendUnavailable(
             "HEPAK bindings are not importable. Install/configure HEPAK runtime to enable low-temperature execution."
