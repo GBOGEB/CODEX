@@ -27,8 +27,7 @@ class HEPAKAdapter:
         self.fluid = fluid
         self._binding = self._load_binding()
 
-    @staticmethod
-    def _load_binding():
+    def _load_binding(self):
         for module_name in ("hepak", "pyhepak"):
             try:
                 return importlib.import_module(module_name)
