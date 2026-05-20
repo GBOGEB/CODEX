@@ -13,8 +13,13 @@ if str(ROOT) not in sys.path:
 # Repo-local import must happen after the sys.path bootstrap above so this
 # module remains directly executable from the repository checkout.
 from semantic_substrate.analytics.drift_engine import evaluate_semantic_drift
+from semantic_substrate.engines.autonomous_correction_engine import (
+    generate_correction_proposals,
+)
 from semantic_substrate.engines.delta_extractor import generate_delta_entry
 from semantic_substrate.engines.replay_engine import ReplayEngine
+from semantic_substrate.engines.semantic_planning_engine import build_semantic_plan
+from semantic_substrate.memory.persistent_memory import persist_session
 from semantic_substrate.viewers.semantic_graph_renderer import render_html_graph
 
 VALIDATOR = ROOT / 'semantic_substrate' / 'validators' / 'validate_semantic_substrate.py'
@@ -155,6 +160,32 @@ def _recursive_merge_orchestration() -> dict:
     }
 
 
+def _semantic_event_intelligence(delta: dict, drift: dict, proposals: dict) -> dict:
+    classifications: dict[str, int] = {}
+    for item in delta.get('files', []):
+        key = item.get('classification', 'unknown')
+        classifications[key] = classifications.get(key, 0) + 1
+    return {
+        'event_count': len(delta.get('files', [])),
+        'classification_counts': classifications,
+        'drift_finding_count': drift.get('finding_count', 0),
+        'correction_proposal_count': proposals.get('proposal_count', 0),
+    }
+
+
+def _cognition_summary(
+    plan: dict,
+    memory_entry: dict,
+    events: dict,
+) -> dict:
+    top_priority = (plan.get('priorities') or [None])[0]
+    return {
+        'top_priority': top_priority,
+        'memory_checkpoint': memory_entry.get('replay_checkpoint'),
+        'event_intelligence': events,
+    }
+
+
 def run_orchestration(changed_files: Iterable[str] | None = None) -> dict:
     try:
         observed_files = list(changed_files) if changed_files is not None else _changed_files()
@@ -195,17 +226,29 @@ def run_orchestration(changed_files: Iterable[str] | None = None) -> dict:
     semantic_graph = render_html_graph(_load_yaml(BRANCH_DAG))
     next_actions = _recommend_next_action(validation, drift)
     merge_orchestration = _recursive_merge_orchestration()
+    correction_proposals = generate_correction_proposals(drift)
+    planning_report = build_semantic_plan(drift, snapshot, correction_proposals)
+    events = _semantic_event_intelligence(delta, drift, correction_proposals)
+    memory_entry = persist_session(snapshot, delta, drift, next_actions)
+    cognition_summary = _cognition_summary(planning_report, memory_entry, events)
 
     validation_code = validation['exit_code']
     loop_trace = [
         'observe',
-        'classify',
+        'reconstruct',
+        'reason',
+        'prioritize',
+        'recommend',
+        'heal',
+        'synchronize',
+        'persist',
+        'evolve',
         'validate',
         'generate_delta',
         'update_snapshot',
         'update_lineage',
         'update_debt',
-        'recommend_next_action',
+        'adaptive_cognition',
     ]
     return {
         'validator_exit_code': validation_code,
@@ -218,6 +261,11 @@ def run_orchestration(changed_files: Iterable[str] | None = None) -> dict:
         'semantic_graph_html': semantic_graph,
         'merge_orchestration': merge_orchestration,
         'recommended_next_actions': next_actions,
+        'correction_proposals': correction_proposals,
+        'planning_report': planning_report,
+        'replay_checkpoint': memory_entry.get('replay_checkpoint'),
+        'semantic_event_intelligence': events,
+        'cognition_summary': cognition_summary,
         'loop_trace': loop_trace,
         'status': 'ok' if validation_code == 0 else 'failed',
         'error': None,
