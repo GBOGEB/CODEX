@@ -144,10 +144,13 @@ def _recommend_next_action(validation: dict, drift: dict) -> list[str]:
 
 
 def _recursive_merge_orchestration() -> dict:
-    policy = _load_yaml(RECURSIVE_MERGE_POLICY).get('merge_semantics', {})
+    policy_data = _load_yaml(RECURSIVE_MERGE_POLICY)
+    policy = policy_data.get('merge_semantics', {})
     return {
         'philosophy': policy.get('philosophy'),
-        'priority': policy.get('conflict_resolution', {}).get('semantic_conflict_priority', []),
+        'priority': policy_data.get('conflict_resolution', {}).get(
+            'semantic_conflict_priority', []
+        ),
         'rules': policy.get('rules', []),
     }
 
