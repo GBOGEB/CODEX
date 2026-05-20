@@ -32,6 +32,8 @@ jobs:
           test -f MANIFEST/TUPLE_OFFLOAD_SUMMARY.md
 
       - name: Validate kernel tests
+        env:
+          PYTHONPATH: ${{ github.workspace }}/src
         run: |
           pytest tests/test_units_kernel.py tests/test_exergy_kernel.py
 
