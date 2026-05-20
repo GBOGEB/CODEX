@@ -1,14 +1,32 @@
 from __future__ import annotations
 
+import argparse
 import re
-import sys
 from pathlib import Path
 
-HEX = re.compile(r"#[0-9A-Fa-f]{6}")
+HEX = r"#(?:[0-9A-Fa-f]{8}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})"
+BG = re.compile(rf"bg:\s*['\"]?({HEX})['\"]?")
+FG = re.compile(rf"fg:\s*['\"]?({HEX})['\"]?")
+SCRIPT_DIR = Path(__file__).resolve().parent
+DEFAULT_THEME = SCRIPT_DIR / "SEMANTIC_THEME.yaml"
+SEMANTIC_TOKENS_SECTION = "semantic_tokens"
+
+
+def _normalize_hex(value: str) -> str:
+    value = value.lower()
+    if not value.startswith("#"):
+        raise ValueError(f"Unsupported hex color '{value}'")
+    if len(value) == 4:
+        return "#" + "".join(ch * 2 for ch in value[1:])
+    if len(value) == 7:
+        return value
+    if len(value) == 9:
+        raise ValueError(f"8-digit hex (RGBA) not supported for contrast calculation: '{value}'. Use 6-digit hex (RGB) only.")
+    raise ValueError(f"Unsupported hex color '{value}'")
 
 
 def _hex_to_rgb(value: str) -> tuple[float, float, float]:
-    value = value.lstrip("#")
+    value = _normalize_hex(value).lstrip("#")
     return int(value[0:2], 16) / 255, int(value[2:4], 16) / 255, int(value[4:6], 16) / 255
 
 
@@ -31,22 +49,59 @@ def parse_fg_bg_pairs(text: str) -> list[tuple[str, str, str]]:
     pairs: list[tuple[str, str, str]] = []
     token = "unknown"
     mode = "unknown"
+    pending: dict[str, dict[str, str]] = {}
+    emitted: set[str] = set()
+    in_semantic_tokens = False
     for line in text.splitlines():
+        if re.match(rf"^{SEMANTIC_TOKENS_SECTION}:\s*$", line):
+            in_semantic_tokens = True
+            continue
+        if in_semantic_tokens and re.match(r"^(?!\s)[a-z_]+:\s*$", line):
+            in_semantic_tokens = False
+        if not in_semantic_tokens:
+            continue
         if re.match(r"^\s{2}[a-z_]+:\s*$", line):
             token = line.strip().rstrip(":")
-        if re.match(r"^\s{4}(light|dark):", line):
-            mode = line.strip().split(":", 1)[0]
-            colors = HEX.findall(line)
-            if len(colors) >= 2:
-                pairs.append((f"{token}.{mode}", colors[0], colors[1]))
+        mode_match = re.match(r"^\s{4}(light|dark):\s*(.*)$", line)
+        if mode_match:
+            mode = mode_match.group(1)
+            key = f"{token}.{mode}"
+            pending.setdefault(key, {"bg": "", "fg": ""})
+            line = mode_match.group(2)
+        key = f"{token}.{mode}"
+        if key not in pending:
+            continue
+        bg_match = BG.search(line)
+        fg_match = FG.search(line)
+        if bg_match:
+            pending[key]["bg"] = bg_match.group(1)
+        if fg_match:
+            pending[key]["fg"] = fg_match.group(1)
+        item = pending[key]
+        if item["bg"] and item["fg"] and key not in emitted:
+            pairs.append((key, item["bg"], item["fg"]))
+            emitted.add(key)
     return pairs
 
 
-def main(path: str = "governance/SEMANTIC_THEME.yaml", minimum: float = 4.5) -> int:
-    text = Path(path).read_text()
+def main(path: str | None = None, minimum: float = 4.5) -> int:
+    if path is None:
+        path = str(DEFAULT_THEME)
+    text = Path(path).read_text(encoding="utf-8")
     errors = []
-    for key, bg, fg in parse_fg_bg_pairs(text):
-        ratio = contrast_ratio(bg, fg)
+    pairs = parse_fg_bg_pairs(text)
+    if not pairs:
+        print(f"FAIL: no semantic token fg/bg pairs detected in {path}")
+        return 1
+    for key, bg, fg in pairs:
+        try:
+            ratio = contrast_ratio(bg, fg)
+        except ValueError as exc:
+            errors.append(f"{key}: {exc}")
+            continue
+        except Exception as exc:
+            errors.append(f"{key}: unable to calculate contrast ({exc})")
+            continue
         if ratio < minimum:
             errors.append(f"{key}: contrast {ratio:.2f} < {minimum}")
 
@@ -58,4 +113,8 @@ def main(path: str = "governance/SEMANTIC_THEME.yaml", minimum: float = 4.5) -> 
 
 
 if __name__ == "__main__":
-    raise SystemExit(main(*sys.argv[1:]))
+    parser = argparse.ArgumentParser(description="Validate WCAG contrast for semantic fg/bg token pairs.")
+    parser.add_argument("path", nargs="?", default=str(DEFAULT_THEME), help="Path to semantic theme YAML.")
+    parser.add_argument("minimum", nargs="?", type=float, default=4.5, help="Minimum WCAG contrast ratio.")
+    args = parser.parse_args()
+    raise SystemExit(main(args.path, args.minimum))

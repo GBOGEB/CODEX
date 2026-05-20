@@ -4,37 +4,45 @@ import subprocess
 import sys
 from pathlib import Path
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+
+REQUIRED_ARTIFACTS = [
+    SCRIPT_DIR / "SEMANTIC_THEME.yaml",
+    SCRIPT_DIR / "LINEAGE_SCHEMA.yaml",
+    SCRIPT_DIR / "LAYOUT_CONTRACTS.yaml",
+    SCRIPT_DIR / "RENDER_RULES.md",
+    SCRIPT_DIR / "RENDER_TEST_SUITE.md",
+]
 
 RULES = [
-    "no_low_contrast",
-    "slide_id_required",
+    ("no_low_contrast", [sys.executable, str(SCRIPT_DIR / "WCAG_CONTRAST_CHECKER.py")]),
+    (
+        "slide_id_required (lineage example)",
+        [sys.executable, str(SCRIPT_DIR / "SLIDE_ID_ENFORCER.py"), str(SCRIPT_DIR / "LINEAGE_SCHEMA.yaml")],
+    ),
 ]
 
 
 def run() -> int:
-    rc = 0
-    theme = Path("governance/SEMANTIC_THEME.yaml")
-    lineage = Path("governance/LINEAGE_SCHEMA.yaml")
-
-    if not theme.exists() or not lineage.exists():
-        print("FAIL: missing governance artifacts")
+    missing = [path for path in REQUIRED_ARTIFACTS if not path.exists()]
+    if missing:
+        print("FAIL: missing governance artifacts:")
+        for path in missing:
+            print(f" - {path}")
         return 1
 
-    print("CHECK: no_low_contrast")
-    r1 = subprocess.run([sys.executable, "governance/WCAG_CONTRAST_CHECKER.py"], check=False)
-    rc |= r1.returncode
+    failed = False
+    for name, command in RULES:
+        print(f"CHECK: {name}")
+        result = subprocess.run(command, check=False)
+        if result.returncode != 0:
+            failed = True
 
-    print("CHECK: slide_id_required (lineage example)")
-    r2 = subprocess.run(
-        [sys.executable, "governance/SLIDE_ID_ENFORCER.py", "governance/LINEAGE_SCHEMA.yaml"], check=False
-    )
-    rc |= r2.returncode
-
-    if rc == 0:
+    if not failed:
         print("PASS: render linter checks passed")
-    else:
-        print("FAIL: render linter checks failed")
-    return rc
+        return 0
+    print("FAIL: render linter checks failed")
+    return 1
 
 
 if __name__ == "__main__":
