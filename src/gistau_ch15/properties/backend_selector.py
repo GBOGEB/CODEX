@@ -20,6 +20,8 @@ def _try_backend(name: str, tier: BackendTier, factory: Any) -> tuple[Any | None
     try:
         backend = factory()
         return backend, BackendAvailability(name=name, tier=tier, available=True, reason="available")
+    except PropertyBackendUnavailable as exc:
+        return None, BackendAvailability(name=name, tier=tier, available=False, reason=str(exc))
     except Exception as exc:
         return None, BackendAvailability(name=name, tier=tier, available=False, reason=str(exc))
 
@@ -60,6 +62,15 @@ def select_available_backends() -> tuple[dict[str, Any], list[BackendAvailabilit
         availability.append(status)
         if backend is not None:
             backends[name] = backend
+
+    availability.append(
+        BackendAvailability(
+            name="nist_gistau_reference",
+            tier=BackendTier.NIST_REFERENCE,
+            available=True,
+            reason="fixture/reference data from worked_examples.json",
+        )
+    )
 
     return backends, availability
 
