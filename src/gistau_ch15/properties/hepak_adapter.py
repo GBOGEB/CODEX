@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import importlib
-from typing import Optional
+from typing import Any, Optional
 
 from .base import State, SaturationState
 from .errors import PropertyBackendUnavailable
@@ -27,7 +27,13 @@ class HEPAKAdapter:
         self.fluid = fluid
         self._binding = self._load_binding()
 
-    def _load_binding(self):
+    def _load_binding(self) -> Any:
+        """Load HEPAK Python bindings from supported module names.
+
+        The loader tries ``hepak`` first, then ``pyhepak`` as a fallback.
+        If neither import is available, the adapter remains optional by
+        raising PropertyBackendUnavailable.
+        """
         for module_name in ("hepak", "pyhepak"):
             try:
                 return importlib.import_module(module_name)
