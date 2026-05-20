@@ -1,0 +1,67 @@
+name: CODEX Semantic Runtime CI
+
+on:
+  push:
+    branches:
+      - main
+      - feat/**
+  pull_request:
+
+jobs:
+  semantic-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml pytest
+
+      - name: Run semantic validator
+        run: |
+          python semantic_substrate/validators/validate_semantic_substrate.py
+
+      - name: Run orchestration loop
+        run: |
+          python semantic_substrate/runtime/orchestration_loop.py
+
+      - name: Run replay engine
+        run: |
+          python semantic_substrate/engines/replay_engine.py
+
+      - name: Run tuple replay engine
+        run: |
+          python semantic_substrate/engines/tuple_replay_engine.py
+
+      - name: Run telemetry dashboard
+        run: |
+          python semantic_substrate/telemetry/semantic_telemetry_dashboard.py
+
+      - name: Run tests
+        run: |
+          pytest -q
+
+  renderer-governance:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate manifest structure
+        run: |
+          test -f MANIFEST/STYLE_GUIDE.md
+          test -f MANIFEST/RENDER_RULES.md
+
+      - name: Validate dark mode governance references
+        run: |
+          grep -R "#FFE9A3" MANIFEST || exit 1
+          grep -R "semantic colors must transform by theme" MANIFEST || exit 1
