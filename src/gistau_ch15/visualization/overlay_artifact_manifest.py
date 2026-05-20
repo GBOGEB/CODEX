@@ -42,7 +42,14 @@ class OverlayArtifactManifestBuilder:
         for artifact in artifacts:
             path = Path(artifact).resolve()
             payload = path.read_bytes()
-            rel_path = path.relative_to(base).as_posix()
+            try:
+                rel_path = path.relative_to(base).as_posix()
+            except ValueError as e:
+                raise ValueError(
+                    f"Artifact {path} is outside root {base}. "
+                    "Provide an explicit root parameter or ensure all artifacts "
+                    "are under the current working directory."
+                ) from e
             records.append(
                 OverlayArtifactRecord(
                     key=path.stem,
@@ -58,9 +65,10 @@ class OverlayArtifactManifestBuilder:
         self,
         artifacts: list[Path],
         *,
+        root: Path | None = None,
         schema_version: str = MANIFEST_SCHEMA_VERSION,
     ) -> OverlayArtifactManifest:
-        records = self.build_records(artifacts)
+        records = self.build_records(artifacts, root=root)
         return OverlayArtifactManifest(
             schema_version=schema_version,
             artifact_count=len(records),
@@ -87,10 +95,24 @@ class OverlayArtifactManifestBuilder:
         artifacts_payload = payload.get("artifacts")
         if not isinstance(artifacts_payload, list):
             raise ValueError("Manifest artifacts field must be a list")
+        
+        records = []
+        for idx, item in enumerate(artifacts_payload):
+            if not isinstance(item, dict):
+                raise ValueError(
+                    f"Artifact at index {idx} must be a dict, got {type(item).__name__}"
+                )
+            try:
+                records.append(OverlayArtifactRecord(**item))
+            except TypeError as e:
+                raise ValueError(
+                    f"Artifact at index {idx} has invalid fields: {e}"
+                ) from e
+        
         manifest = OverlayArtifactManifest(
             schema_version=str(payload.get("schema_version", "")),
             artifact_count=int(payload.get("artifact_count", -1)),
-            artifacts=[OverlayArtifactRecord(**item) for item in artifacts_payload],
+            artifacts=records,
         )
         self.validate_manifest(manifest)
         return manifest
@@ -103,8 +125,10 @@ class OverlayArtifactManifestBuilder:
         self,
         artifacts: list[Path],
         output_path: str | Path,
+        *,
+        root: Path | None = None,
     ) -> Path:
-        manifest = self.build_manifest(artifacts)
+        manifest = self.build_manifest(artifacts, root=root)
         self.validate_manifest(manifest)
 
         path = Path(output_path)

@@ -11,10 +11,22 @@ from gistau_ch15.visualization.trace_json_export import (
 class PagesArtifactRefresh:
     """Refresh GitHub Pages-visible visualization artifacts."""
 
-    def refresh(self) -> list[Path]:
+    def refresh(
+        self,
+        *,
+        overlay_seed_output: str | Path | None = None,
+        trace_export_output: str | Path | None = None,
+    ) -> list[Path]:
         outputs: list[Path] = []
 
-        outputs.append(regenerate())
-        outputs.append(PlotlyTraceJSONExporter().export())
+        if overlay_seed_output is not None:
+            outputs.append(regenerate(overlay_seed_output))
+        else:
+            outputs.append(regenerate())
+
+        if trace_export_output is not None:
+            outputs.append(PlotlyTraceJSONExporter().export(trace_export_output))
+        else:
+            outputs.append(PlotlyTraceJSONExporter().export())
 
         return outputs

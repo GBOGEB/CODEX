@@ -26,7 +26,7 @@ from gistau_ch15.visualization.ts_reconstruction import (
 OUTPUT = Path("docs/gistau-ch15/data/thermo_visual_overlay_seed.json")
 
 
-def regenerate() -> Path:
+def regenerate(output_path: str | Path = OUTPUT) -> Path:
     saturation = FallbackSaturationSampler().sample()
     ts_paths = FallbackTSReconstructor().build_paths()
     phase_map = FallbackPhaseMapSampler().sample()
@@ -76,10 +76,11 @@ def regenerate() -> Path:
         },
     }
 
-    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    path = Path(output_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
-    return OUTPUT
+    return path
 
 
 if __name__ == "__main__":
