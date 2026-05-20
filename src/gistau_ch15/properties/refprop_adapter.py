@@ -28,6 +28,7 @@ class REFPROPAdapter:
         self.root_path = root_path or ""
         self._rp: Any | None = None
         self.status = REFPROPStatus(False, "REFPROP not loaded")
+        self._load()
 
     def _load(self) -> Any:
         if self._rp is not None:

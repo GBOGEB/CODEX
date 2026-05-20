@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib
 from typing import Optional
 
 from .base import State, SaturationState
@@ -24,6 +25,18 @@ class HEPAKAdapter:
 
     def __init__(self, fluid: str = "Helium") -> None:
         self.fluid = fluid
+        self._binding = self._load_binding()
+
+    @staticmethod
+    def _load_binding():
+        for module_name in ("hepak", "pyhepak"):
+            try:
+                return importlib.import_module(module_name)
+            except Exception:
+                continue
+        raise PropertyBackendUnavailable(
+            "HEPAK bindings are not importable. Install/configure HEPAK runtime to enable low-temperature execution."
+        )
 
     def _unavailable(self, call_name: str):
         raise PropertyBackendUnavailable(

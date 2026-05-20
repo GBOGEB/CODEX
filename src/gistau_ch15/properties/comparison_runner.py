@@ -4,6 +4,7 @@ from dataclasses import asdict
 from typing import Any
 
 from .compare import PropertyDelta
+from gistau_ch15.validation.worked_example_runner import WorkedExampleRunner
 
 
 class ComparisonRunner:
@@ -36,6 +37,32 @@ class ComparisonRunner:
 
         return rows
 
+    def run_worked_example_comparisons(
+        self,
+        backends: dict[str, Any],
+        availability: list[Any],
+        worked_example_runner: WorkedExampleRunner | None = None,
+    ) -> list[dict[str, Any]]:
+        runner = worked_example_runner or WorkedExampleRunner()
+        report_rows: list[dict[str, Any]] = []
+
+        for availability_row in availability:
+            backend_name = availability_row.name
+            if backend_name == "nist_gistau_reference":
+                continue
+
+            backend = backends.get(backend_name)
+            for output_row in runner.run_for_backend(
+                backend_name=backend_name,
+                backend_tier=availability_row.tier.value,
+                backend=backend,
+                backend_available=availability_row.available,
+                unavailable_reason=availability_row.reason,
+            ):
+                report_rows.append(output_row)
+
+        return report_rows
+
     def build_summary(self, rows: list[dict[str, Any]]) -> dict[str, Any]:
         return {
             "row_count": len(rows),
@@ -47,9 +74,14 @@ class ComparisonRunner:
         matrix: dict[str, dict[str, float | None]] = {}
 
         for row in rows:
+            if row.get("status") in {"backend_unavailable", "mapping_pending", "reference_unavailable"}:
+                continue
             backend = row["backend_name"]
             matrix.setdefault(backend, {})
-            matrix[backend][row["tuple_id"]] = row["delta_temperature_k"]
+            if "delta_temperature_k" in row:
+                matrix[backend][row["tuple_id"]] = row["delta_temperature_k"]
+            elif row.get("quantity") == "outlet_temperature_k":
+                matrix[backend][row["tuple_id"]] = row["absolute_delta"]
 
         return matrix
 
