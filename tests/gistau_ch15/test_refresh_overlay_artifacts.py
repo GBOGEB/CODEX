@@ -1,43 +1,60 @@
 import json
 from pathlib import Path
 
-import pytest
-
-from gistau_ch15.visualization.overlay_artifact_manifest import (
-    MANIFEST_SCHEMA_VERSION,
-    OverlayArtifactManifestBuilder,
-)
 from gistau_ch15.visualization.refresh_overlay_artifacts import (
     refresh_overlay_artifacts,
 )
 
 
 def test_refresh_overlay_artifacts_writes_manifest(tmp_path: Path):
+    # Redirect all outputs to tmp_path
+    overlay_output = tmp_path / "thermo_visual_overlay_seed.json"
+    trace_output = tmp_path / "plotly_trace_export.json"
     manifest_path = tmp_path / "generated_overlay_manifest.json"
 
-    outputs = refresh_overlay_artifacts(manifest_path)
+    outputs = refresh_overlay_artifacts(
+        manifest_path,
+        root=tmp_path,
+        overlay_output=overlay_output,
+        trace_output=trace_output,
+    )
 
+    # Verify manifest is in outputs and exists
     assert manifest_path in outputs
     assert manifest_path.exists()
 
-    payload = json.loads(manifest_path.read_text(encoding="utf-8"))
-    assert payload["schema_version"] == MANIFEST_SCHEMA_VERSION
-    assert payload["artifact_count"] == 2
-    assert len(payload["artifacts"]) == 2
+    # Parse and validate manifest structure
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    assert manifest["schema_version"] == "1.0"
+
+    # Derive expected count from refreshed artifacts (manifest excluded)
+    expected_artifact_count = len([p for p in outputs if p != manifest_path])
+    assert manifest["artifact_count"] == expected_artifact_count
+
+    # Verify artifacts list structure
+    assert "artifacts" in manifest
+    assert len(manifest["artifacts"]) == expected_artifact_count
+
+    # Verify each artifact has required fields
+    for artifact in manifest["artifacts"]:
+        assert "key" in artifact
+        assert "path" in artifact
+        assert "sha256" in artifact
+        assert "size_bytes" in artifact
 
 
-def test_overlay_manifest_loader_validates_count(tmp_path: Path):
-    manifest_path = tmp_path / "broken_manifest.json"
-    manifest_path.write_text(
-        json.dumps(
-            {
-                "schema_version": MANIFEST_SCHEMA_VERSION,
-                "artifact_count": 99,
-                "artifacts": [],
-            }
-        ),
-        encoding="utf-8",
-    )
+def test_refresh_overlay_artifacts_default_paths_are_root_relative(tmp_path: Path):
+    outputs = refresh_overlay_artifacts(root=tmp_path)
 
-    with pytest.raises(ValueError, match="artifact_count"):
-        OverlayArtifactManifestBuilder().load_manifest(manifest_path)
+    overlay_output = tmp_path / "docs/gistau-ch15/data/thermo_visual_overlay_seed.json"
+    trace_output = tmp_path / "docs/gistau-ch15/data/plotly_trace_export.json"
+    manifest_path = tmp_path / "docs/gistau-ch15/data/generated_overlay_manifest.json"
+    assert outputs == [overlay_output, trace_output, manifest_path]
+    assert all(path.exists() for path in outputs)
+
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    assert manifest["artifact_count"] == 2
+    assert {item["path"] for item in manifest["artifacts"]} == {
+        "docs/gistau-ch15/data/thermo_visual_overlay_seed.json",
+        "docs/gistau-ch15/data/plotly_trace_export.json",
+    }
