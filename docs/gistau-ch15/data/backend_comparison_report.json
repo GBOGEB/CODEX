@@ -1,0 +1,62 @@
+[
+  {
+    "example_id": "WE-T00-REFPROP-H-PT-001",
+    "tuple_id": "T00",
+    "backend_name": "fallback",
+    "backend_tier": "tier0_fallback",
+    "reference_tier": "tier4_nist_gistau_reference",
+    "quantity": "enthalpy",
+    "backend_value": 1557.9,
+    "reference_value": 1563.3194,
+    "absolute_delta": -5.4194,
+    "relative_delta": -0.003466,
+    "unit": "J/g",
+    "status": "outside_tolerance",
+    "notes": "fallback ideal-gas cp estimate"
+  },
+  {
+    "example_id": "WE-T02-FREE-EXPANSION-HEAT-001",
+    "tuple_id": "T02",
+    "backend_name": "fallback",
+    "backend_tier": "tier0_fallback",
+    "reference_tier": "tier4_nist_gistau_reference",
+    "quantity": "outlet_temperature",
+    "backend_value": 22.0,
+    "reference_value": 19.16,
+    "absolute_delta": 2.84,
+    "relative_delta": 0.1482,
+    "unit": "K",
+    "status": "outside_tolerance",
+    "notes": "placeholder JT model without inversion physics"
+  },
+  {
+    "example_id": "WE-T04-CRYOGENIC-EXPANDER-001",
+    "tuple_id": "T04",
+    "backend_name": "fallback",
+    "backend_tier": "tier0_fallback",
+    "reference_tier": "tier4_nist_gistau_reference",
+    "quantity": "power",
+    "backend_value": -2140.0,
+    "reference_value": -2981.6,
+    "absolute_delta": 841.6,
+    "relative_delta": -0.2823,
+    "unit": "W",
+    "status": "outside_tolerance",
+    "notes": "requires real-fluid isentropic path"
+  },
+  {
+    "example_id": "WE-T05-CRYOGENIC-COMPRESSOR-001",
+    "tuple_id": "T05",
+    "backend_name": "fallback",
+    "backend_tier": "tier0_fallback",
+    "reference_tier": "tier4_nist_gistau_reference",
+    "quantity": "power",
+    "backend_value": 4910.0,
+    "reference_value": 5336.0,
+    "absolute_delta": -426.0,
+    "relative_delta": -0.0798,
+    "unit": "W",
+    "status": "outside_tolerance",
+    "notes": "cold compressor requires HEPAK/REFPROP"
+  }
+]
