@@ -67,14 +67,14 @@ Contrast rules:
 
 ## Typography Governance
 
-Fonts:
+Fonts (see STYLE_GUIDE.md for authoritative values):
 
 | Role | Family |
 |---|---|
-| title | Aptos |
-| section | Aptos |
-| body | Aptos |
-| technical | Consolas |
+| title | `"Aptos, 'Segoe UI', Calibri, Arial, sans-serif"` |
+| section | `"Aptos, 'Segoe UI', Calibri, Arial, sans-serif"` |
+| body | `"Aptos, 'Segoe UI', Calibri, Arial, sans-serif"` |
+| technical | `"Consolas, 'Liberation Mono', 'Courier New', monospace"` |
 
 Renderer responsibilities:
 

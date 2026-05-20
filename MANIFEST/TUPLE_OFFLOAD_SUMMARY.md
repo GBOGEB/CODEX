@@ -1,16 +1,16 @@
 # TUPLE OFFLOAD SUMMARY
 
-# Repository
+## Repository
 
 GBOGEB/CODEX
 
-# System
+## System
 
 ABACUS_RENDER_PIPELINE
 
 ---
 
-# Purpose
+## Purpose
 
 This document offloads accumulated ChatGPT engineering tuples into a deterministic project-lineage artifact.
 
@@ -25,7 +25,7 @@ Goals:
 
 ---
 
-# Tuple Statistics
+## Tuple Statistics
 
 Approximate tuple categories accumulated:
 
@@ -47,7 +47,7 @@ Total estimated engineering tuples:
 
 ---
 
-# Major Engineering Streams
+## Major Engineering Streams
 
 ## Stream A — Thermodynamic Core
 
@@ -131,7 +131,7 @@ Implemented/planned:
 
 ---
 
-# Current Maturity
+## Current Maturity
 
 | Layer | Status |
 |---|---|
@@ -147,7 +147,7 @@ Implemented/planned:
 
 ---
 
-# Highest Priority TODOs
+## Highest Priority TODOs
 
 ## Thermodynamic
 
@@ -177,7 +177,7 @@ Implemented/planned:
 
 ---
 
-# Pipeline Integration Direction
+## Pipeline Integration Direction
 
 ABACUS_RENDER_PIPELINE should become the canonical orchestration layer for:
 
@@ -207,7 +207,7 @@ HTML / PDF / PPTX / SNAPSHOTS
 
 ---
 
-# Architectural Intent
+## Architectural Intent
 
 The project direction is now:
 
@@ -223,7 +223,7 @@ HTML/PDF rendering scripts
 
 ---
 
-# Next Recommended PR Sequence
+## Next Recommended PR Sequence
 
 | Phase | Focus |
 |---|---|
@@ -237,7 +237,7 @@ HTML/PDF rendering scripts
 
 ---
 
-# Canonical Principle
+## Canonical Principle
 
 Generated outputs are never canonical.
 

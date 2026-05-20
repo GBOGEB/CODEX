@@ -1,6 +1,4 @@
-# STYLE GUIDE
-
-# ABACUS_RENDER_PIPELINE
+# ABACUS_RENDER_PIPELINE Style Guide
 
 ## Theme Light
 
@@ -16,7 +14,7 @@ theme_light:
 
 ---
 
-# Theme Dark
+## Theme Dark
 
 ```yaml
 theme_dark:
@@ -30,9 +28,10 @@ theme_dark:
 
 ---
 
-# Semantic Cards
+## Semantic Cards
 
-## Warning
+The following combined block is the authoritative schema for all semantic card variants.
+Each card type must define both `light` and `dark` variants.
 
 ```yaml
 semantic_cards:
@@ -40,36 +39,23 @@ semantic_cards:
     light:
       background: '#F5E8A8'
       text: '#2B2111'
-
     dark:
       background: '#3B2A00'
       border: '#C89B00'
       text: '#FFE9A3'
-```
 
-## Decision
-
-```yaml
-semantic_cards:
   decision:
     light:
       background: '#DDFBE8'
       text: '#163326'
-
     dark:
       background: '#214F36'
       text: '#DDFBE8'
-```
 
-## SSOT
-
-```yaml
-semantic_cards:
   ssot:
     light:
       background: '#E5D2FF'
       text: '#281747'
-
     dark:
       background: '#3B2063'
       text: '#E5D2FF'
@@ -77,7 +63,7 @@ semantic_cards:
 
 ---
 
-# Typography
+## Typography
 
 ```yaml
 fonts:
@@ -102,7 +88,7 @@ fonts:
 
 ---
 
-# Renderer Principle
+## Renderer Principle
 
 Semantic meaning must survive:
 
