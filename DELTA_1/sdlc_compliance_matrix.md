@@ -12,7 +12,7 @@ Define the baseline compliance and governance expectations for recursive GitHub-
 |---|---|---|
 | Protected main branch | YES | CODEX |
 | PR review governance | YES | CODEX |
-| CI validation | YES | ABACUS |
+| CI validation | YES | CODEX (workflow impl) + ABACUS (automation contract) |
 | Dependency review | YES | ABACUS |
 | Security scanning | YES | ABACUS |
 | Release lineage | YES | CODEX |

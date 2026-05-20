@@ -19,10 +19,10 @@ Define the canonical governance taxonomy for GitHub-centered recursive SDLC exec
 
 | Type | Pattern |
 |---|---|
-| Feature | feature/<issue>-<slug> |
-| Fix | fix/<issue>-<slug> |
-| Chore | chore/<issue>-<slug> |
-| Hotfix | hotfix/<issue>-<slug> |
+| Feature | feat/<issue>-<short-name> |
+| Fix | fix/<issue>-<short-name> |
+| Chore | chore/<issue>-<short-name> |
+| Hotfix | hotfix/<issue>-<short-name> |
 | DELTA program | delta-<program>-<scope> |
 
 ---
