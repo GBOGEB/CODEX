@@ -71,6 +71,12 @@ class ComparisonRunner:
         }
 
     def build_heatmap_matrix(self, rows: list[dict[str, Any]]) -> dict[str, Any]:
+        """Build tuple-indexed temperature-delta matrix.
+
+        Legacy compare.py rows use ``delta_temperature_k`` directly.
+        Worked-example rows use ``absolute_delta`` only for the
+        ``outlet_temperature_k`` quantity.
+        """
         matrix: dict[str, dict[str, float | None]] = {}
 
         for row in rows:
@@ -78,10 +84,13 @@ class ComparisonRunner:
                 continue
             backend = row["backend_name"]
             matrix.setdefault(backend, {})
+            delta_value = None
             if "delta_temperature_k" in row:
-                matrix[backend][row["tuple_id"]] = row["delta_temperature_k"]
+                delta_value = row["delta_temperature_k"]
             elif row.get("quantity") == "outlet_temperature_k":
-                matrix[backend][row["tuple_id"]] = row["absolute_delta"]
+                delta_value = row["absolute_delta"]
+            if delta_value is not None:
+                matrix[backend][row["tuple_id"]] = delta_value
 
         return matrix
 
