@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Optional
+import importlib
+from typing import Any, Optional
 
 from .base import State, SaturationState
 from .errors import PropertyBackendUnavailable
@@ -24,6 +25,24 @@ class HEPAKAdapter:
 
     def __init__(self, fluid: str = "Helium") -> None:
         self.fluid = fluid
+        self._binding = self._load_binding()
+
+    def _load_binding(self) -> Any:
+        """Load HEPAK Python bindings from supported module names.
+
+        The loader tries `hepak` first, then `pyhepak` as a fallback because
+        environments differ in published package/module naming.
+        If neither import is available, the adapter remains optional by
+        raising PropertyBackendUnavailable.
+        """
+        for module_name in ("hepak", "pyhepak"):
+            try:
+                return importlib.import_module(module_name)
+            except (ImportError, ModuleNotFoundError):
+                continue
+        raise PropertyBackendUnavailable(
+            "HEPAK bindings are not importable. Install/configure HEPAK runtime to enable low-temperature execution."
+        )
 
     def _unavailable(self, call_name: str):
         raise PropertyBackendUnavailable(
