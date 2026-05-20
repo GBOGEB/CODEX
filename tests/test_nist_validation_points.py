@@ -51,7 +51,7 @@ def test_fixture_schema_and_required_keys() -> None:
         assert isinstance(point["source"], str)
         assert isinstance(point["source_type"], str)
         assert point["T_K"] > 0.0
-        assert point["P_kPa"] >= 0.0
+        assert point["P_kPa"] > 0.0
         assert point["uncertainty_or_tolerance"] >= 0.0
 
         quality = point["expected_quality"]
@@ -65,7 +65,7 @@ def test_required_baseline_points_present() -> None:
 
 def test_reference_only_status_is_explicit_when_values_are_missing() -> None:
     for point in _load_points():
-        missing_primary_values = all(
+        has_missing_primary_value = any(
             point[field] is None
             for field in (
                 "expected_h_J_kg",
@@ -73,7 +73,7 @@ def test_reference_only_status_is_explicit_when_values_are_missing() -> None:
                 "expected_rho_kg_m3",
             )
         )
-        if missing_primary_values:
+        if has_missing_primary_value:
             assert point["source_type"] == "reference_only"
             assert "reference-only" in str(point["notes"]).lower()
 
