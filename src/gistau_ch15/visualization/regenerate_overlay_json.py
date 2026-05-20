@@ -27,6 +27,11 @@ OUTPUT = Path("docs/gistau-ch15/data/thermo_visual_overlay_seed.json")
 
 
 def regenerate(output_path: str | Path = OUTPUT) -> Path:
+    """Regenerate overlay JSON with deterministic fallback data.
+    
+    Args:
+        output_path: Path where the overlay JSON will be written.
+    """
     saturation = FallbackSaturationSampler().sample()
     ts_paths = FallbackTSReconstructor().build_paths()
     phase_map = FallbackPhaseMapSampler().sample()
