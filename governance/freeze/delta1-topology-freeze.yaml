@@ -1,0 +1,64 @@
+---
+# DELTA_1 Topology Freeze Baseline
+# Stabilization artifact establishing release-governance frozen state for CODEX.
+
+freeze_id: delta1-topology-freeze
+program: DELTA_1
+repository: GBOGEB/CODEX
+freeze_state: release-governance-frozen
+
+# Freeze dimensions
+topology:
+  recursive_normalization: true
+  semantic_consistency: true
+  federated_release_stability: true
+  operational_runtime_alignment: true
+  release_target_freeze_semantics: true
+
+# Repository final state
+repositories:
+  GBOGEB/CODEX:
+    status: runtime-governance-complete
+    convergence_strategy: incremental-main-integration
+    release_candidate: DELTA_1_RC1
+
+# Governance domains frozen
+governance_domains:
+  - branch_protection
+  - pr_review_governance
+  - ci_validation
+  - release_lineage
+  - sdlc_compliance
+  - audit_evidence
+  - operational_ownership
+
+# Release targets
+release_targets:
+  - id: DELTA_1_RC1
+    label: DELTA_1 Release Candidate 1
+    description: First release candidate for DELTA_1 governance baseline.
+  - id: v0.1.0-delta1
+    label: DELTA_1 baseline release
+    description: Formal baseline release for DELTA_1 governance execution package.
+
+# Naming freeze
+naming:
+  branch_prefix_feature: feat
+  branch_prefix_fix: fix
+  branch_prefix_chore: chore
+  branch_prefix_hotfix: hotfix
+  branch_prefix_program: delta
+  # PR taxonomy example identifiers (pattern: <PROGRAM>_PR_<sequence>)
+  pr_taxonomy_governance: DELTA_1_PR_0001
+  pr_taxonomy_delivery: DELTA_1_PR_0010
+  pr_taxonomy_security: DELTA_1_PR_0020
+  pr_taxonomy_release: DELTA_1_PR_0030
+
+# PR taxonomy (example identifiers illustrating the naming pattern per type)
+follow_up_prs:
+  - id: DELTA_1_PR_0002
+    scope: taxonomy-normalization
+  - id: DELTA_1_PR_0003
+    scope: branch-protection-governance
+  - id: DELTA_1_PR_0004
+    scope: audit-evidence-and-release-lineage
