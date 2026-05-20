@@ -187,6 +187,18 @@ python usage_example.py
 The same classes, methods, and logic work for both environments - only the URLs and configuration parameters change.
 
 
+
+## PR-H2 generated overlay pipeline
+
+This repository now includes the PR-H2 generated overlay pipeline layer for thermodynamic visualization artifacts.
+
+- **Lineage**: `PR-G2 (backend governance) -> PR-H (visual review infrastructure) -> PR-H2 (generated overlay pipeline)`.
+- **Main entrypoint**: `src/gistau_ch15/visualization/refresh_overlay_artifacts.py::refresh_overlay_artifacts()`.
+- **Manifest contract + loader/validator**: `src/gistau_ch15/visualization/overlay_artifact_manifest.py`.
+- **Default generated manifest location**: `docs/gistau-ch15/data/generated_overlay_manifest.json`.
+
+`refresh_overlay_artifacts()` refreshes Pages-visible overlay artifacts and regenerates a versioned manifest containing artifact path, checksum, and size metadata for CI and publication workflows.
+
 ## Packaging conversation archives
 
 This repository now ships with a lightweight archiving pipeline that can zip conversation folders and produce consistent manifests.
