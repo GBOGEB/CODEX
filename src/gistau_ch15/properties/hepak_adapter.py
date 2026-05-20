@@ -31,7 +31,7 @@ class HEPAKAdapter:
             import hepak as hepak_binding  # type: ignore
         except Exception as exc:
             raise PropertyBackendUnavailable(
-                "HEPAK bindings are not importable. Configure HEPAK before enabling 2 K validation."
+                "HEPAK bindings are not importable. Configure HEPAK before enabling 2K validation."
             ) from exc
         self._binding = hepak_binding
 
