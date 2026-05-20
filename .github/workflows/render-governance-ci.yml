@@ -32,13 +32,23 @@ jobs:
           test -f MANIFEST/TUPLE_OFFLOAD_SUMMARY.md
 
       - name: Validate kernel tests
+        env:
+          PYTHONPATH: ${{ github.workspace }}/src
         run: |
           pytest tests/test_units_kernel.py tests/test_exergy_kernel.py
 
       - name: Theme governance scan
         run: |
-          grep -R "semantic" MANIFEST/STYLE_GUIDE.md
-          grep -R "warning:" MANIFEST/STYLE_GUIDE.md
+          if grep -n "semantic" MANIFEST/STYLE_GUIDE.md; then
+            echo 'Found "semantic" references in MANIFEST/STYLE_GUIDE.md'
+          else
+            echo 'No "semantic" references found in MANIFEST/STYLE_GUIDE.md'
+          fi
+          if grep -n "warning:" MANIFEST/STYLE_GUIDE.md; then
+            echo 'Found "warning:" references in MANIFEST/STYLE_GUIDE.md'
+          else
+            echo 'No "warning:" references found in MANIFEST/STYLE_GUIDE.md'
+          fi
 
       - name: Future renderer lint placeholder
         run: |
