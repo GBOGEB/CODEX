@@ -48,13 +48,26 @@ class WetnessValidationRunner:
                 )
 
                 quality = state.quality
+                lambda_region = state.temperature_k <= 2.17
 
                 if quality is None:
+                    quality_value = None
                     wetness_fraction = None
-                    phase_region = "single_phase_or_unknown"
+                    phase_region = (
+                        "lambda_region_single_phase_or_unknown"
+                        if lambda_region
+                        else "single_phase_or_unknown"
+                    )
                 else:
-                    wetness_fraction = 1.0 - quality
-                    phase_region = "two_phase"
+                    bounded_quality = quality if 0.0 <= quality <= 1.0 else None
+                    if bounded_quality is None:
+                        quality_value = None
+                        wetness_fraction = None
+                        phase_region = "quality_out_of_range"
+                    else:
+                        quality_value = bounded_quality
+                        wetness_fraction = 1.0 - bounded_quality
+                        phase_region = "lambda_region_two_phase" if lambda_region else "two_phase"
 
                 rows.append(
                     WetnessValidationRow(
@@ -63,7 +76,7 @@ class WetnessValidationRunner:
                         backend_name=backend_name,
                         temperature_k=state.temperature_k,
                         pressure_kpa=state.pressure_kpa,
-                        quality=quality,
+                        quality=quality_value,
                         wetness_fraction=wetness_fraction,
                         phase_region=phase_region,
                         status="ok",

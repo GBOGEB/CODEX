@@ -19,6 +19,9 @@ class BackendAvailability:
 def _try_backend(name: str, tier: BackendTier, factory: Any) -> tuple[Any | None, BackendAvailability]:
     try:
         backend = factory()
+        load = getattr(backend, "_load", None)
+        if callable(load):
+            load()
         return backend, BackendAvailability(name=name, tier=tier, available=True, reason="available")
     except PropertyBackendUnavailable as exc:
         return None, BackendAvailability(name=name, tier=tier, available=False, reason=str(exc))
