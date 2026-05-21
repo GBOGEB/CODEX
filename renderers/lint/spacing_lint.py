@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from dataclasses import dataclass
 
 
@@ -57,10 +58,10 @@ def main() -> int:
     ]
     if issues:
         for item in issues:
-            print(f'[{item.severity}] {item.component}: {item.message}')
+            print(f'[{item.severity}] {item.component}: {item.message}', file=sys.stderr)
         return 1
 
-    print('spacing governance checks passed')
+    print('[info] spacing governance checks passed')
     return 0
 
 
