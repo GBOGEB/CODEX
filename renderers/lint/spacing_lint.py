@@ -61,7 +61,7 @@ def main() -> int:
             print(f'[{item.severity}] {item.component}: {item.message}', file=sys.stderr)
         return 1
 
-    print('[info] spacing governance checks passed', file=sys.stderr)
+    print('[info] spacing governance checks passed')
     return 0
 
 
