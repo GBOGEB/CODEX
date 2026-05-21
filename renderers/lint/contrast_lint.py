@@ -32,7 +32,7 @@ def _normalize_hex(value: str) -> str:
 
 def _contrast_ratio(a: str, b: str) -> float:
     def _hex_to_rgb(value: str) -> tuple[float, float, float]:
-        rgb = _normalize_hex(value).lstrip('#')
+        rgb = _normalize_hex(value)[1:]
         return int(rgb[0:2], 16) / 255, int(rgb[2:4], 16) / 255, int(rgb[4:6], 16) / 255
 
     def _linear(channel: float) -> float:
@@ -86,6 +86,7 @@ def validate_warning_dark_mode() -> list[ContrastIssue]:
 
 
 def main() -> int:
+    """Run contrast lint checks and return process exit code (0 pass, 1 fail)."""
     results = validate_warning_dark_mode()
     if results:
         for item in results:
