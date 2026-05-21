@@ -47,20 +47,20 @@ class SemanticThemeRuntime:
         semantic_cards = self.data.get('semantic_cards')
         if semantic_cards is None:
             raise ValueError("Missing 'semantic_cards' key in theme configuration")
-        
+
         if semantic_type not in semantic_cards:
             available = ', '.join(sorted(semantic_cards.keys()))
             raise ValueError(
                 f"Unknown semantic_type '{semantic_type}'. Available types: {available}"
             )
-        
+
         type_config = semantic_cards[semantic_type]
         if mode not in type_config:
             available = ', '.join(sorted(type_config.keys()))
             raise ValueError(
                 f"Unknown mode '{mode}' for semantic_type '{semantic_type}'. Available modes: {available}"
             )
-        
+
         entry = type_config[mode]
 
         return SemanticCardTheme(

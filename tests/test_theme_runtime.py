@@ -41,13 +41,13 @@ def test_decision_dark_theme() -> None:
 
 def test_invalid_semantic_type() -> None:
     runtime = SemanticThemeRuntime()
-    
+
     with pytest.raises(ValueError, match="Unknown semantic_type 'invalid'"):
         runtime.resolve('invalid', 'light')
 
 
 def test_invalid_mode() -> None:
     runtime = SemanticThemeRuntime()
-    
+
     with pytest.raises(ValueError, match="Unknown mode 'invalid' for semantic_type 'warning'"):
         runtime.resolve('warning', 'invalid')
