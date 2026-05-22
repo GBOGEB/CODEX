@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from src.renderers.lint.thresholds import MAX_CARD_BODY_LINES, MAX_TITLE_LENGTH
+from renderers.lint.thresholds import MAX_CARD_BODY_LINES, MAX_TITLE_LENGTH
 
 
 @dataclass
