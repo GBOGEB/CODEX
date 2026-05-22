@@ -1,44 +1,9 @@
-master_slide_registry:
-  - id: MSLIDE_EXEC_INFOCARD_01
-    topic: executive_alignment
-    source:
-      pptx: QRB_AUB_ROOF(1).pptx
-      slide: 2
-    outputs:
-      - html
-      - pdf
-      - pptx
-      - snapshot
-    lineage:
-      canonical: true
-      generated_outputs_noncanonical: true
-
-  - id: MSLIDE_QA_ANSWER_FIRST_01
-    topic: contractor_question
-    source:
-      pptx: QRB_AUB_ROOF(1).pptx
-      slide: 4
-    outputs:
-      - html
-      - pdf
-      - markdown
-
-  - id: MSLIDE_MASTERPLAN_01
-    topic: masterplan
-    source:
-      pptx: QRB_AUB_ROOF(1).pptx
-      slide: 8
-    outputs:
-      - html
-      - pdf
-      - snapshot
-
-  - id: MSLIDE_ROOF_DECISION_01
-    topic: roof_constraints
-    source:
-      pptx: QRB_AUB_ROOF(1).pptx
-      slide: 19
-    outputs:
-      - html
-      - pdf
-      - pptx
+version: 1
+registry: MASTER_SLIDE_REGISTRY
+description: Canonical slide registry for deterministic renderer governance.
+slides:
+  - slide_id: A6-0001
+    title: ABACUS_RENDER_PIPELINE Governance Overview
+    topic: renderer_governance
+    source_ref: MANIFEST/RENDER_RULES.md
+    required_figures: []

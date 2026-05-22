@@ -31,8 +31,22 @@
 <thead><tr><th>Point</th><th>Region</th><th>Purpose</th><th>Expected backend tier</th></tr></thead>
 <tbody>
 <tr><td class="mono">NIST-HE-300K-1BAR</td><td>Ambient helium</td><td>Sanity check and Cp/density validation</td><td class="good">CoolProp / REFPROP</td></tr>
+<tr><td class="mono">NIST-HE-SAT-4P222K-1ATM</td><td>Helium saturation</td><td>Normal boiling point / quality anchor</td><td class="good">REFPROP / HEPAK</td></tr>
 <tr><td class="mono">GISTAU-SHE-4P5K-3BAR</td><td>SHe supply</td><td>Low-temperature process review</td><td class="good">HEPAK preferred</td></tr>
 <tr><td class="mono">GISTAU-VLP-2K-26MBAR</td><td>VLP return</td><td>Cold-compression and exergy review</td><td class="bad">HEPAK critical</td></tr>
+<tr><td class="mono">GISTAU-WE-T00-HSD-PT-002</td><td>Worked example</td><td>Chapter 15 tuple reproduction baseline</td><td class="good">CoolProp / REFPROP</td></tr>
+</tbody>
+</table>
+</section>
+<section class="card neutral">
+<h2>Current backend reproduction status</h2>
+<table>
+<thead><tr><th>Tier</th><th>Status</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Fallback</td><td class="bad">Approximate only</td><td>Deterministic CI path; values are explicitly non-publication-grade.</td></tr>
+<tr><td>CoolProp</td><td class="good">Candidate</td><td>Open-source executable path when installed.</td></tr>
+<tr><td>REFPROP</td><td class="good">Reference executable</td><td>Canonical gas-region path for engineering verification.</td></tr>
+<tr><td>HEPAK</td><td class="good">Priority below 5 K</td><td>Needed for two-phase, saturation quality, and VLP regimes.</td></tr>
 </tbody>
 </table>
 </section>
