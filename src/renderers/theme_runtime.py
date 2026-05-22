@@ -31,7 +31,17 @@ class SemanticThemeRuntime:
 
     def _load(self) -> dict[str, Any]:
         with self.config_path.open('r', encoding='utf-8') as handle:
-            return yaml.safe_load(handle)
+            loaded = yaml.safe_load(handle)
+
+        if loaded is None:
+            return {}
+
+        if not isinstance(loaded, dict):
+            raise ValueError(
+                f"Expected mapping at root of semantic theme config: {self.config_path}"
+            )
+
+        return loaded
 
     def resolve(self, semantic_type: str, mode: str) -> SemanticCardTheme:
         semantic_cards = self.data['semantic_cards']
