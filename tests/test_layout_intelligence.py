@@ -39,15 +39,18 @@ def test_dense_layout_detection() -> None:
 
     # Check for body density decision
     assert 'body' in components
-    body_decision = next(d for d in result if d.component == 'body')
+    body_decision = next((d for d in result if d.component == 'body'), None)
+    assert body_decision is not None
     assert 'split_card_or_reduce_density' == body_decision.decision
 
     # Check for layout decision (multiple figures + dense text)
     assert 'layout' in components
-    layout_decision = next(d for d in result if d.component == 'layout')
+    layout_decision = next((d for d in result if d.component == 'layout'), None)
+    assert layout_decision is not None
     assert 'use_two_column_or_figure_priority_layout' == layout_decision.decision
 
     # Check for semantic emphasis decision
     assert 'semantic-emphasis' in components
-    semantic_decision = next(d for d in result if d.component == 'semantic-emphasis')
+    semantic_decision = next((d for d in result if d.component == 'semantic-emphasis'), None)
+    assert semantic_decision is not None
     assert 'reserve_visual_priority' == semantic_decision.decision
