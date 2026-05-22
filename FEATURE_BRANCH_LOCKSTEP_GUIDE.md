@@ -131,7 +131,7 @@ git fetch origin
 git checkout feature/sipoc-workflow-progressie
 git rebase origin/main
 # resolve conflicts if any
-git push --force-with-lease
+git push --force-with-lease origin feature/sipoc-workflow-progressie
 ```
 
 ### Integration gates
