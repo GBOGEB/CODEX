@@ -1,0 +1,27 @@
+{
+  "federation": "CODEX_ABAC_FEDERATION",
+  "repositories": [
+    {
+      "id": "CODEX",
+      "role": "DOMAIN_RUNTIME"
+    },
+    {
+      "id": "ABACUS",
+      "role": "INFRASTRUCTURE_RUNTIME"
+    },
+    {
+      "id": "Codex_Abac",
+      "role": "FEDERATION_ORCHESTRATOR"
+    }
+  ],
+  "links": [
+    {
+      "source": "CODEX",
+      "target": "Codex_Abac"
+    },
+    {
+      "source": "ABACUS",
+      "target": "Codex_Abac"
+    }
+  ]
+}
