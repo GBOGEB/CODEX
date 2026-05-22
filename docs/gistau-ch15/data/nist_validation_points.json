@@ -13,9 +13,35 @@
     "notes": "Ambient helium sanity-check point"
   },
   {
+    "point_id": "NIST-HE-SAT-4P222K-1ATM",
+    "source": "NIST",
+    "source_type": "reference_only",
+    "T_K": 4.222,
+    "P_kPa": 101.325,
+    "expected_h_J_kg": 23500.0,
+    "expected_s_J_kgK": null,
+    "expected_rho_kg_m3": 16.89,
+    "expected_quality": 1.0,
+    "uncertainty_or_tolerance": 0.05,
+    "notes": "Reference-only saturation anchor at normal boiling point (vapor phase); entropy pending source extraction"
+  },
+  {
+    "point_id": "GISTAU-VLP-2K-26MBAR",
+    "source": "GISTAU Chapter 15",
+    "source_type": "reference_only",
+    "T_K": 2.0,
+    "P_kPa": 2.6,
+    "expected_h_J_kg": null,
+    "expected_s_J_kgK": null,
+    "expected_rho_kg_m3": null,
+    "expected_quality": null,
+    "uncertainty_or_tolerance": 0.1,
+    "notes": "Reference-only VLP return region at about 26 mbar"
+  },
+  {
     "point_id": "GISTAU-SHE-4P5K-3BAR",
     "source": "GISTAU Chapter 15",
-    "source_type": "worked_example",
+    "source_type": "reference_only",
     "T_K": 4.5,
     "P_kPa": 300.0,
     "expected_h_J_kg": null,
@@ -23,19 +49,19 @@
     "expected_rho_kg_m3": null,
     "expected_quality": null,
     "uncertainty_or_tolerance": 0.05,
-    "notes": "A-supply low-temperature validation anchor"
+    "notes": "Reference-only A-supply low-temperature validation anchor"
   },
   {
-    "point_id": "GISTAU-VLP-2K-26MBAR",
+    "point_id": "GISTAU-WE-T00-HSD-PT-002",
     "source": "GISTAU Chapter 15",
     "source_type": "worked_example",
-    "T_K": 2.0,
-    "P_kPa": 2.6,
-    "expected_h_J_kg": null,
-    "expected_s_J_kgK": null,
-    "expected_rho_kg_m3": null,
+    "T_K": 300.0,
+    "P_kPa": 100.0,
+    "expected_h_J_kg": 1563319.4,
+    "expected_s_J_kgK": 28007.5,
+    "expected_rho_kg_m3": 0.1604,
     "expected_quality": null,
-    "uncertainty_or_tolerance": 0.10,
-    "notes": "VLP return low-pressure validation region"
+    "uncertainty_or_tolerance": 0.01,
+    "notes": "Worked-example tuple for Fig. 15.4 (H/S/D at 1 bar, 300 K)"
   }
 ]
