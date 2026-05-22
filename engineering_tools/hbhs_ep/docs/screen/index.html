@@ -12,15 +12,15 @@ body{margin:0;background:#07101f;color:#f8fafc;font-family:Arial,sans-serif;line
 <header>
 <h1>HBHS-EP v8.4 — Screen Hub</h1>
 <p>No download required. Use this page as the in-browser launch dashboard for current progress, metrics, and wave outputs.</p>
-<span class="status">CODEX branch: hbhs_v84</span><span class="status">PR #129</span><span class="status">Screen-first mode</span>
+<span class="status">CODEX branch: hbhs_v84</span><span class="status">PR #129</span><span class="status">Wave 2 active</span>
 </header>
 <section class="grid">
 <a class="card" href="../waves/index.html"><h2>Wave Dashboard</h2><div class="kpi">3 / 100</div><p>Visual wave progression and plot roadmap.</p></a>
 <a class="card" href="../metrics/index.html"><h2>Metrics Dashboard</h2><div class="kpi">DMAIC</div><p>Recursive lineage, KPIs, covariance and maturity trends.</p></a>
+<a class="card" href="../plots/pressure_envelopes.html"><h2>Wave 2 Physics</h2><div class="kpi">Plotly</div><p>Pressure windows, proof gap and N+1 compressor visuals.</p></a>
 <a class="card" href="../index.html"><h2>Main Portal</h2><div class="kpi">HBHS</div><p>Current engineering portal entrypoint.</p></a>
 <a class="card" href="../../source/json/wave_plot_roadmap.json"><h2>Wave SSoT</h2><div class="kpi">JSON</div><p>Canonical source for 100-plot wave roadmap.</p></a>
 <a class="card" href="../../source/json/dmaic_kpi_metrics.json"><h2>KPI SSoT</h2><div class="kpi">JSON</div><p>Canonical source for metrics, lineage and covariance.</p></a>
-<a class="card" href="../data/hcc_wcs_ssot.json"><h2>HCC/WCS SSoT</h2><div class="kpi">350</div><p>Core pressure and flow tuple data.</p></a>
 </section>
 <section class="wide">
 <h2>Current in-screen status</h2>
@@ -29,7 +29,7 @@ body{margin:0;background:#07101f;color:#f8fafc;font-family:Arial,sans-serif;line
 <tr><td>Portal baseline</td><td>Implemented</td><td>Initial HBHS-EP portal merged via PR #113.</td></tr>
 <tr><td>Wave roadmap</td><td>Implemented in PR #129</td><td>Visible roadmap toward 100 plots/graphs.</td></tr>
 <tr><td>Metrics dashboard</td><td>Implemented in PR #129</td><td>DMAIC KPIs, lineage and covariance guidance.</td></tr>
-<tr><td>Physics plots</td><td>Next wave</td><td>Pressure/compressor envelopes should be added next.</td></tr>
+<tr><td>Wave 2 plots</td><td>ACTIVE</td><td>Pressure/compressor Plotly dashboards now implemented.</td></tr>
 <tr><td>Governance</td><td>Active</td><td>SSoT should lead plot growth; manifests/hashes still pending.</td></tr>
 </table>
 </section>
@@ -37,9 +37,9 @@ body{margin:0;background:#07101f;color:#f8fafc;font-family:Arial,sans-serif;line
 <h2>Guided interpretation</h2>
 <ul>
 <li>Current visual maturity is early but now visible.</li>
+<li>Wave 2 begins the first physics-heavy dashboard layer.</li>
 <li>Plot count must not outrun proof closure.</li>
-<li>SSoT and control metrics are leading indicators.</li>
-<li>Wave 2 should add actual pressure/compressor plots, not more scaffolding.</li>
+<li>Pressure envelope assumptions should next migrate toward real-gas models.</li>
 </ul>
 </section>
 </body>
