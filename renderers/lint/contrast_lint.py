@@ -12,7 +12,7 @@ class ContrastIssue:
 
 DARK_WARNING_BACKGROUND = '#3B2A00'
 DARK_WARNING_TEXT = '#FFE9A3'
-MINIMUM_WCAG_CONTRAST = 4.5
+MINIMUM_WCAG_CONTRAST = 7.0
 
 
 def _normalize_hex(value: str) -> str:
