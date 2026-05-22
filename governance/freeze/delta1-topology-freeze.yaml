@@ -1,64 +1,22 @@
----
-# DELTA_1 Topology Freeze Baseline
-# Stabilization artifact establishing release-governance frozen state for CODEX.
+delta1_topology_freeze:
+  moniker: DELTA_1
 
-freeze_id: delta1-topology-freeze
-program: DELTA_1
-repository: GBOGEB/CODEX
-freeze_state: release-governance-frozen
+  freeze_domains:
+    - governance_freeze
+    - runtime_freeze
+    - release_freeze
+    - continuity_freeze
 
-# Freeze dimensions
-topology:
-  recursive_normalization: true
-  semantic_consistency: true
-  federated_release_stability: true
-  operational_runtime_alignment: true
-  release_target_freeze_semantics: true
+  freeze_requirements:
+    recursive_topology_normalization: enabled
+    semantic_governance_consistency: enabled
+    federated_release_stability: enabled
 
-# Repository final state
-repositories:
-  GBOGEB/CODEX:
-    status: runtime-governance-complete
-    convergence_strategy: incremental-main-integration
-    release_candidate: DELTA_1_RC1
+  release_targets:
+    - DELTA_1_RC1
+    - v0.1.0-delta1
 
-# Governance domains frozen
-governance_domains:
-  - branch_protection
-  - pr_review_governance
-  - ci_validation
-  - release_lineage
-  - sdlc_compliance
-  - audit_evidence
-  - operational_ownership
-
-# Release targets
-release_targets:
-  - id: DELTA_1_RC1
-    label: DELTA_1 Release Candidate 1
-    description: First release candidate for DELTA_1 governance baseline.
-  - id: v0.1.0-delta1
-    label: DELTA_1 baseline release
-    description: Formal baseline release for DELTA_1 governance execution package.
-
-# Naming freeze
-naming:
-  branch_prefix_feature: feat
-  branch_prefix_fix: fix
-  branch_prefix_chore: chore
-  branch_prefix_hotfix: hotfix
-  branch_prefix_program: delta
-  # PR taxonomy example identifiers (pattern: <PROGRAM>_PR_<sequence>)
-  pr_taxonomy_governance: DELTA_1_PR_0001
-  pr_taxonomy_delivery: DELTA_1_PR_0010
-  pr_taxonomy_security: DELTA_1_PR_0020
-  pr_taxonomy_release: DELTA_1_PR_0030
-
-# PR taxonomy (example identifiers illustrating the naming pattern per type)
-follow_up_prs:
-  - id: DELTA_1_PR_0002
-    scope: taxonomy-normalization
-  - id: DELTA_1_PR_0003
-    scope: branch-protection-governance
-  - id: DELTA_1_PR_0004
-    scope: audit-evidence-and-release-lineage
+  objectives:
+    - topology_stabilization
+    - governance_release_consistency
+    - operational_runtime_alignment
