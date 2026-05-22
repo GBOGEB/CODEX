@@ -1,39 +1,9 @@
-master_figure_registry:
-  - id: FIG_AUB_LAYOUT_01
-    category: layout
-    canonical: true
-    outputs:
-      - html
-      - pdf
-      - snapshot
-    references:
-      - MSLIDE_EXEC_INFOCARD_01
-
-  - id: FIG_QRB_MOVEIN_01
-    category: logistics
-    canonical: true
-    outputs:
-      - html
-      - pdf
-      - pptx
-    references:
-      - MSLIDE_MASTERPLAN_01
-
-  - id: FIG_ROOF_SECTION_01
-    category: roof_constraints
-    canonical: true
-    outputs:
-      - html
-      - pdf
-    references:
-      - MSLIDE_ROOF_DECISION_01
-
-  - id: FIG_SSOT_01
-    category: governance
-    canonical: true
-    outputs:
-      - html
-      - markdown
-      - snapshot
-    references:
-      - MSLIDE_EXEC_INFOCARD_01
+version: 1
+registry: MASTER_FIGURE_REGISTRY
+description: Canonical figure registry for deterministic renderer governance.
+figures:
+  - figure_id: FIG-A6-0001
+    title: Renderer governance lifecycle
+    owner_slide_id: A6-0001
+    source_ref: MANIFEST/ROADMAP.md
+    asset_path: null

@@ -1,0 +1,39 @@
+name: HBHS-EP TupleBridge Pages
+
+on:
+  push:
+    branches:
+      - main
+      - hbhs_ep_v83_portal
+
+jobs:
+  validate-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate workspace scaffold
+        run: |
+          python tools/hbhs_ep_v8_3/workspace_build.py
+
+      - name: Validate docs subtree
+        run: |
+          test -f docs/hbhs-ep-v8.3-tuplebridge/index.html
+          test -f docs/hbhs-ep-v8.3-tuplebridge/README.md
+
+      - name: Archive topology bundle
+        run: |
+          tar -czf hbhs_ep_v8_3_bundle.tar.gz docs/hbhs-ep-v8.3-tuplebridge tools/hbhs_ep_v8_3
+
+      - name: Upload bundle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hbhs-ep-v8.3-bundle
+          path: hbhs_ep_v8_3_bundle.tar.gz

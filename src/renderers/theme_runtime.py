@@ -25,9 +25,10 @@ class SemanticThemeRuntime:
     - snapshot generation
     """
 
-    def __init__(self, config_path: str | Path | None = None) -> None:
+    def __init__(self, config_path: str | None = None) -> None:
         if config_path is None:
-            repo_root = Path(__file__).resolve().parents[2]
+            # Default to repo root themes/ directory, resolved relative to this file
+            repo_root = Path(__file__).resolve().parent.parent.parent
             self.config_path = repo_root / 'themes' / 'semantic_cards.yaml'
         else:
             self.config_path = Path(config_path)
