@@ -24,6 +24,36 @@ from gistau_ch15.properties.validation_dataset import (
     REFPROP_GAS_REGION_POINTS,
 )
 from gistau_ch15.properties.wetness_validation import WetnessValidationRunner
+from gistau_ch15.properties.errors import PropertyBackendUnavailable
+
+
+class _UnavailableBackend:
+    def __init__(self, backend_name: str, reason: str) -> None:
+        self._backend_name = backend_name
+        self._reason = reason
+
+    def _raise(self, method_name: str):
+        raise PropertyBackendUnavailable(
+            f"{self._backend_name} unavailable for {method_name}: {self._reason}"
+        )
+
+    def state_pt(self, fluid: str, p_kpa: float, t_k: float):
+        self._raise("state_pt")
+
+    def state_ph(self, fluid: str, p_kpa: float, h_j_kg: float):
+        self._raise("state_ph")
+
+    def state_ps(self, fluid: str, p_kpa: float, s_j_kgk: float):
+        self._raise("state_ps")
+
+    def saturation_t(self, fluid: str, t_k: float):
+        self._raise("saturation_t")
+
+    def saturation_p(self, fluid: str, p_kpa: float):
+        self._raise("saturation_p")
+
+    def quality_ph(self, fluid: str, p_kpa: float, h_j_kg: float):
+        self._raise("quality_ph")
 
 
 class FrontierEngineeringRunner:
@@ -41,6 +71,7 @@ class FrontierEngineeringRunner:
     def run(self) -> dict[str, Any]:
         backends, availability = select_available_backends()
         backend_definitions = self._backend_definitions(backends)
+        availability_map = {item.name: item for item in availability}
         requests = self._state_requests()
 
         state_results = evaluate_state_points(backend_definitions, requests)
@@ -52,17 +83,27 @@ class FrontierEngineeringRunner:
         summary = comparison_runner.build_summary(comparison_rows)
         heatmap = comparison_runner.build_heatmap_matrix(comparison_rows)
 
+        refprop_backend = self._backend_or_unavailable(
+            backends,
+            availability_map,
+            "refprop",
+        )
         refprop_rows = RefpropVerificationRunner.as_rows(
             RefpropVerificationRunner().run(
-                backend=backends[reference_name],
-                backend_name=reference_name,
+                backend=refprop_backend,
+                backend_name="refprop",
             )
         )
 
+        hepak_backend = self._backend_or_unavailable(
+            backends,
+            availability_map,
+            "hepak",
+        )
         wetness_rows = WetnessValidationRunner.as_rows(
             WetnessValidationRunner().run(
-                backend=backends[reference_name],
-                backend_name=reference_name,
+                backend=hepak_backend,
+                backend_name="hepak",
             )
         )
 
@@ -136,6 +177,21 @@ class FrontierEngineeringRunner:
         self.writer.write_json("frontier_engineering_report.json", report)
 
         return report
+
+    @staticmethod
+    def _backend_or_unavailable(
+        backends: dict[str, Any],
+        availability_map: dict[str, Any],
+        backend_name: str,
+    ) -> Any:
+        backend = backends.get(backend_name)
+        if backend is not None:
+            return backend
+        reason = "not selected"
+        status = availability_map.get(backend_name)
+        if status is not None:
+            reason = status.reason
+        return _UnavailableBackend(backend_name, reason)
 
     @staticmethod
     def _state_requests() -> list[StatePointRequest]:
