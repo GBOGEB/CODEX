@@ -32,8 +32,22 @@ def test_dense_layout_detection() -> None:
         )
     )
 
-    decisions = [str(decision).lower() for decision in result]
+    # Assert on structured fields instead of string representation
+    components = [d.component for d in result]
+    decisions = [d.decision for d in result]
+    reasons = [d.reason for d in result]
 
-    assert any('dense' in decision and 'text' in decision for decision in decisions)
-    assert any('multiple' in decision and 'figure' in decision for decision in decisions)
-    assert any('critical' in decision and 'semantic' in decision for decision in decisions)
+    # Check for body density decision
+    assert 'body' in components
+    body_decision = next(d for d in result if d.component == 'body')
+    assert 'split_card_or_reduce_density' == body_decision.decision
+
+    # Check for layout decision (multiple figures + dense text)
+    assert 'layout' in components
+    layout_decision = next(d for d in result if d.component == 'layout')
+    assert 'use_two_column_or_figure_priority_layout' == layout_decision.decision
+
+    # Check for semantic emphasis decision
+    assert 'semantic-emphasis' in components
+    semantic_decision = next(d for d in result if d.component == 'semantic-emphasis')
+    assert 'reserve_visual_priority' == semantic_decision.decision
