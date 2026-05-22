@@ -12,15 +12,15 @@ body{margin:0;background:#07101f;color:#f8fafc;font-family:Arial,sans-serif;line
 <header>
 <h1>HBHS-EP v8.4 — Screen Hub</h1>
 <p>No download required. Use this page as the in-browser launch dashboard for current progress, metrics, and wave outputs.</p>
-<span class="status">CODEX branch: hbhs_v84</span><span class="status">PR #129</span><span class="status">Wave 3 active</span>
+<span class="status">CODEX branch: hbhs_v84</span><span class="status">PR #129</span><span class="status">Wave 4 active</span>
 </header>
 <section class="grid">
 <a class="card" href="../waves/index.html"><h2>Wave Dashboard</h2><div class="kpi">3 / 100</div><p>Visual wave progression and plot roadmap.</p></a>
 <a class="card" href="../metrics/index.html"><h2>Metrics Dashboard</h2><div class="kpi">DMAIC</div><p>Recursive lineage, KPIs, covariance and maturity trends.</p></a>
 <a class="card" href="../plots/pressure_envelopes.html"><h2>Wave 2 Physics</h2><div class="kpi">Plotly</div><p>Pressure windows, proof gap and N+1 compressor visuals.</p></a>
 <a class="card" href="../plots/monte_carlo_variance.html"><h2>Wave 3 Monte Carlo</h2><div class="kpi">Variance</div><p>Pressure distributions, covariance and uncertainty interpretation.</p></a>
-<a class="card" href="../../source/json/wave_plot_roadmap.json"><h2>Wave SSoT</h2><div class="kpi">JSON</div><p>Canonical source for 100-plot wave roadmap.</p></a>
-<a class="card" href="../../source/json/dmaic_kpi_metrics.json"><h2>KPI SSoT</h2><div class="kpi">JSON</div><p>Canonical source for metrics, lineage and covariance.</p></a>
+<a class="card" href="../plots/thermo_exergy.html"><h2>Wave 4 Thermodynamics</h2><div class="kpi">Exergy</div><p>JT vs turbine, flash-gas reduction and QLH ride-through.</p></a>
+<a class="card" href="../../source/json/thermo_exergy_wave4.json"><h2>Thermo SSoT</h2><div class="kpi">JSON</div><p>Canonical thermodynamic and exergy source tuples.</p></a>
 </section>
 <section class="wide">
 <h2>Current in-screen status</h2>
@@ -31,16 +31,17 @@ body{margin:0;background:#07101f;color:#f8fafc;font-family:Arial,sans-serif;line
 <tr><td>Metrics dashboard</td><td>Implemented in PR #129</td><td>DMAIC KPIs, lineage and covariance guidance.</td></tr>
 <tr><td>Wave 2 plots</td><td>ACTIVE</td><td>Pressure/compressor Plotly dashboards implemented.</td></tr>
 <tr><td>Wave 3 variance</td><td>ACTIVE</td><td>Monte Carlo and covariance dashboards implemented.</td></tr>
+<tr><td>Wave 4 thermo</td><td>ACTIVE</td><td>Thermodynamic and exergy dashboards implemented.</td></tr>
 <tr><td>Governance</td><td>Active</td><td>SSoT should lead plot growth; manifests/hashes still pending.</td></tr>
 </table>
 </section>
 <section class="wide">
 <h2>Guided interpretation</h2>
 <ul>
-<li>Wave 2 established the first physics-heavy dashboards.</li>
-<li>Wave 3 introduces operational uncertainty and covariance interpretation.</li>
-<li>Low-pressure tails and covariance behavior are more important than simple averages.</li>
-<li>Next waves should evolve toward real-gas and transient thermodynamic models.</li>
+<li>Wave 4 connects thermodynamic performance to operational reliability.</li>
+<li>The QLH buffer should be interpreted as a stabilizing thermodynamic asset, not competing architecture.</li>
+<li>Exergy destruction and flash-gas generation should become explicit operational KPIs.</li>
+<li>Next waves should evolve toward dynamic control and reliability state transitions.</li>
 </ul>
 </section>
 </body>
