@@ -25,13 +25,17 @@ class SemanticThemeRuntime:
     - snapshot generation
     """
 
-    def __init__(self, config_path: str = 'themes/semantic_cards.yaml') -> None:
-        self.config_path = Path(config_path)
+    def __init__(self, config_path: str | Path | None = None) -> None:
+        if config_path is None:
+            package_root = Path(__file__).resolve().parents[2]
+            self.config_path = package_root / 'themes' / 'semantic_cards.yaml'
+        else:
+            self.config_path = Path(config_path)
         self.data = self._load()
 
     def _load(self) -> dict[str, Any]:
         with self.config_path.open('r', encoding='utf-8') as handle:
-            return yaml.safe_load(handle)
+            return yaml.safe_load(handle) or {}
 
     def resolve(self, semantic_type: str, mode: str) -> SemanticCardTheme:
         semantic_cards = self.data['semantic_cards']

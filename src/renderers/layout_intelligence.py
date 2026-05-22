@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from renderers.lint.overflow_lint import MAX_CARD_BODY_LINES, MAX_TITLE_LENGTH
+
 
 @dataclass
 class LayoutDecision:
@@ -33,7 +35,7 @@ class AdaptiveLayoutEngine:
     def decide_card_layout(self, card: CardLayoutInput) -> list[LayoutDecision]:
         decisions: list[LayoutDecision] = []
 
-        if len(card.title) > 72:
+        if len(card.title) > MAX_TITLE_LENGTH:
             decisions.append(
                 LayoutDecision(
                     component='title',
@@ -42,7 +44,7 @@ class AdaptiveLayoutEngine:
                 )
             )
 
-        if card.body_line_count > 18:
+        if card.body_line_count > MAX_CARD_BODY_LINES:
             decisions.append(
                 LayoutDecision(
                     component='body',
