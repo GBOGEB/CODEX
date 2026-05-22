@@ -1,6 +1,6 @@
 # Feature Branch in Lockstep with `main`
 
-This guide elaborates your visual process as a **feature-branch delivery model** that stays separate from `main`, while continuously synchronized with `main` (lockstep).
+This guide elaborates on your visual process as a **feature-branch delivery model** that stays separate from `main`, while continuously synchronized with `main` (lockstep).
 
 ---
 
