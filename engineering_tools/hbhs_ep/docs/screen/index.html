@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HBHS-EP Screen Hub</title>
+<style>
+body{margin:0;background:#07101f;color:#f8fafc;font-family:Arial,sans-serif;line-height:1.55}header{padding:24px 36px;background:linear-gradient(135deg,#0f172a,#172554);border-bottom:1px solid #334155}h1{margin:0;color:#7dd3fc}h2{color:#c4b5fd}a{color:#7dd3fc;text-decoration:none}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:24px}.card{background:#111827;border:1px solid #334155;border-radius:16px;padding:18px;min-height:150px}.card:hover{border-color:#7dd3fc}.kpi{font-size:32px;color:#fde68a;font-weight:bold}.status{display:inline-block;border:1px solid #334155;border-radius:999px;background:#0f172a;color:#bfdbfe;padding:4px 9px;margin:3px}.wide{margin:24px;padding:20px;background:#111827;border:1px solid #334155;border-radius:16px}table{width:100%;border-collapse:collapse;font-size:13px}th,td{border:1px solid #334155;padding:8px}th{background:#172554;color:#bfdbfe}td{background:#0f172a}@media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<h1>HBHS-EP v8.4 — Screen Hub</h1>
+<p>No download required. Use this page as the in-browser launch dashboard for current progress, metrics, and wave outputs.</p>
+<span class="status">CODEX branch: hbhs_v84</span><span class="status">PR #129</span><span class="status">Screen-first mode</span>
+</header>
+<section class="grid">
+<a class="card" href="../waves/index.html"><h2>Wave Dashboard</h2><div class="kpi">3 / 100</div><p>Visual wave progression and plot roadmap.</p></a>
+<a class="card" href="../metrics/index.html"><h2>Metrics Dashboard</h2><div class="kpi">DMAIC</div><p>Recursive lineage, KPIs, covariance and maturity trends.</p></a>
+<a class="card" href="../index.html"><h2>Main Portal</h2><div class="kpi">HBHS</div><p>Current engineering portal entrypoint.</p></a>
+<a class="card" href="../../source/json/wave_plot_roadmap.json"><h2>Wave SSoT</h2><div class="kpi">JSON</div><p>Canonical source for 100-plot wave roadmap.</p></a>
+<a class="card" href="../../source/json/dmaic_kpi_metrics.json"><h2>KPI SSoT</h2><div class="kpi">JSON</div><p>Canonical source for metrics, lineage and covariance.</p></a>
+<a class="card" href="../data/hcc_wcs_ssot.json"><h2>HCC/WCS SSoT</h2><div class="kpi">350</div><p>Core pressure and flow tuple data.</p></a>
+</section>
+<section class="wide">
+<h2>Current in-screen status</h2>
+<table>
+<tr><th>Area</th><th>Status</th><th>Meaning</th></tr>
+<tr><td>Portal baseline</td><td>Implemented</td><td>Initial HBHS-EP portal merged via PR #113.</td></tr>
+<tr><td>Wave roadmap</td><td>Implemented in PR #129</td><td>Visible roadmap toward 100 plots/graphs.</td></tr>
+<tr><td>Metrics dashboard</td><td>Implemented in PR #129</td><td>DMAIC KPIs, lineage and covariance guidance.</td></tr>
+<tr><td>Physics plots</td><td>Next wave</td><td>Pressure/compressor envelopes should be added next.</td></tr>
+<tr><td>Governance</td><td>Active</td><td>SSoT should lead plot growth; manifests/hashes still pending.</td></tr>
+</table>
+</section>
+<section class="wide">
+<h2>Guided interpretation</h2>
+<ul>
+<li>Current visual maturity is early but now visible.</li>
+<li>Plot count must not outrun proof closure.</li>
+<li>SSoT and control metrics are leading indicators.</li>
+<li>Wave 2 should add actual pressure/compressor plots, not more scaffolding.</li>
+</ul>
+</section>
+</body>
+</html>
