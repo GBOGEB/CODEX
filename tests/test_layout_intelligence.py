@@ -32,4 +32,8 @@ def test_dense_layout_detection() -> None:
         )
     )
 
-    assert len(result) >= 2
+    decisions = [str(decision).lower() for decision in result]
+
+    assert any('dense' in decision and 'text' in decision for decision in decisions)
+    assert any('multiple' in decision and 'figure' in decision for decision in decisions)
+    assert any('critical' in decision and 'semantic' in decision for decision in decisions)
