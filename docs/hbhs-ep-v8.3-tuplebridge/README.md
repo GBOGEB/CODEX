@@ -1,34 +1,29 @@
 # HBHS-EP v8.3 — CODEX/ABACUS TupleBridge
 
-This PR package integrates the HBHS-EP v8.3 TupleBridge material into CODEX as a reviewable, self-contained documentation and automation subtree.
+This package documents and proposes the HBHS-EP v8.3 TupleBridge integration into CODEX as a reviewable, self-contained design and documentation subtree. It does not yet introduce runtime or automation components; those are candidates for follow-up PRs.
 
 ## Source inputs
 
-This package was assembled from the uploaded tuple bridge materials:
+This package was assembled from the following upstream design materials (not included directly in this PR):
 
 - `v8.3_TUPLE_BRIDGE.html` — rendered tuple dashboard and registry view.
 - `Here is the polished layout structu.md` — polished layout, archive generator, and multi-node knowledge topology.
 - `To implement a self-documenting, re.md` — recursive engineering repository architecture and lifecycle model.
-- `workspace_build.py` — recursive workspace generator engine.
+- `workspace_build.py` — recursive workspace generator engine (proposed; not yet added).
 - `HBHS_EP_v8_3_CODEX_ABACUS_TupleBridge_FULL.zip` and `CORE.zip` — prior repo-ready integration archives.
 
 ## Repository placement
 
-The package is placed below:
+This PR adds the following files:
 
 ```text
 docs/hbhs-ep-v8.3-tuplebridge/
-├── README.md
-├── index.html
-├── repository-blueprint.md
-├── recursive-repository-architecture.md
-└── pr-notes.md
-
-tools/hbhs_ep_v8_3/
-└── workspace_build.py
+├── README.md        ← this file (design documentation)
+├── index.html       ← HTML landing page for GitHub Pages
+└── pr-notes.md      ← PR-level notes and integration proposals
 ```
 
-This avoids replacing the existing CODEX `/docs/index.html` root while preserving the TupleBridge as a Pages-compatible documentation island.
+This avoids replacing the existing CODEX `/docs/index.html` root while adding a Pages-accessible HTML landing page under the TupleBridge subtree.
 
 ## Integration intent
 
