@@ -31,6 +31,10 @@ class RefpropVerificationRunner:
     states explicitly instead of dropping rows.
     """
 
+    UNIT_NOTE = (
+        "units: pressure[kPa], enthalpy[J/kg], entropy[J/kg-K], density[kg/m3]"
+    )
+
     def run(
         self,
         backend: PropertyBackend,
@@ -56,7 +60,7 @@ class RefpropVerificationRunner:
                         quality=None,
                         gas_region=None,
                         status="backend_unavailable_or_failed",
-                        notes=str(exc),
+                        notes=f"{self.UNIT_NOTE}; error={exc}",
                     )
                 )
         return rows
@@ -68,6 +72,7 @@ class RefpropVerificationRunner:
         state: State,
     ) -> RefpropVerificationRow:
         gas_region = state.quality is None or state.quality >= 1.0
+        gas_region_note = "gas_region=confirmed" if gas_region else "gas_region=outside_target"
         return RefpropVerificationRow(
             example_id=point.example_id,
             tuple_id=point.tuple_id,
@@ -80,7 +85,7 @@ class RefpropVerificationRunner:
             quality=state.quality,
             gas_region=gas_region,
             status="ok" if gas_region else "non_gas_region",
-            notes=point.notes,
+            notes=f"{point.notes}; {RefpropVerificationRunner.UNIT_NOTE}; {gas_region_note}",
         )
 
     @staticmethod

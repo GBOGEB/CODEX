@@ -60,9 +60,12 @@ A6 focuses on deterministic renderer quality:
 ## A6 Manifest Files
 
 - `README.md`
-- `RENDER_RULES.md`
-- `STYLE_GUIDE.md`
 - `CHANGELOG.md`
-- `SESSION_OFFLOAD_PR_G2_A6.md` — session lineage/offload record for this A6 PR
+- `ROADMAP.md`
+- `MASTER_SLIDE_REGISTRY.yaml`
+- `MASTER_FIGURE_REGISTRY.yaml`
+- `STYLE_GUIDE.md`
+- `RENDER_RULES.md`
+- `LINEAGE.md`
 
 `README.md` is the canonical MANIFEST entrypoint (historically referenced as `README_MAX.md` in early A6 PR text).
