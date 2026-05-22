@@ -43,7 +43,7 @@ The SIPOC defines boundaries before detailed execution.
 
 ## 2) Workflow (Detailed)
 
-The workflow expands SIPOC process steps and includes QA decision/rework loop.
+The workflow expands SIPOC process steps and includes a QA decision/rework loop.
 
 ### ASCII Flow
 
