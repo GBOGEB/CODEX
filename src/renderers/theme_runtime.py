@@ -36,21 +36,32 @@ class SemanticThemeRuntime:
 
     def _load(self) -> dict[str, Any]:
         with self.config_path.open('r', encoding='utf-8') as handle:
-            loaded = yaml.safe_load(handle)
-
-        if loaded is None:
-            return {}
-
-        if not isinstance(loaded, dict):
-            raise ValueError(
-                f"Expected mapping at root of semantic theme config: {self.config_path}"
-            )
-
-        return loaded
+            data = yaml.safe_load(handle)
+            if data is None or not isinstance(data, dict):
+                raise ValueError(
+                    f"Invalid YAML in {self.config_path}: expected dict, got {type(data).__name__}"
+                )
+            return data
 
     def resolve(self, semantic_type: str, mode: str) -> SemanticCardTheme:
-        semantic_cards = self.data['semantic_cards']
-        entry = semantic_cards[semantic_type][mode]
+        semantic_cards = self.data.get('semantic_cards')
+        if semantic_cards is None:
+            raise ValueError("Missing 'semantic_cards' key in theme configuration")
+
+        if semantic_type not in semantic_cards:
+            available = ', '.join(sorted(semantic_cards.keys()))
+            raise ValueError(
+                f"Unknown semantic_type '{semantic_type}'. Available types: {available}"
+            )
+
+        type_config = semantic_cards[semantic_type]
+        if mode not in type_config:
+            available = ', '.join(sorted(type_config.keys()))
+            raise ValueError(
+                f"Unknown mode '{mode}' for semantic_type '{semantic_type}'. Available modes: {available}"
+            )
+
+        entry = type_config[mode]
 
         return SemanticCardTheme(
             background=entry['background'],
