@@ -14,7 +14,10 @@ def test_standard_layout_path() -> None:
         )
     )
 
-    assert result
+    assert any(
+        layout_decision.decision == 'standard_card_layout'
+        for layout_decision in result
+    )
 
 
 def test_dense_layout_detection() -> None:
