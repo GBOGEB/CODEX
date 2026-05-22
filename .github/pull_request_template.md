@@ -12,5 +12,5 @@ Describe the governance or delivery change.
 Describe what reviewers should focus on.
 
 ## Lineage
-Program: DELTA_1
+Program: <program>
 Repository: CODEX
