@@ -38,8 +38,21 @@ class SemanticThemeRuntime:
             return yaml.safe_load(handle) or {}
 
     def resolve(self, semantic_type: str, mode: str) -> SemanticCardTheme:
-        semantic_cards = self.data['semantic_cards']
-        entry = semantic_cards[semantic_type][mode]
+        semantic_cards = self.data.get('semantic_cards')
+        if not isinstance(semantic_cards, dict):
+            raise KeyError("Missing 'semantic_cards' section in theme configuration.")
+
+        semantic_entry = semantic_cards.get(semantic_type)
+        if not isinstance(semantic_entry, dict):
+            valid_semantic_types = ', '.join(sorted(semantic_cards.keys()))
+            raise KeyError(
+                f"Unknown semantic type '{semantic_type}'. Valid options: {valid_semantic_types}"
+            )
+
+        entry = semantic_entry.get(mode)
+        if not isinstance(entry, dict):
+            valid_modes = ', '.join(sorted(semantic_entry.keys()))
+            raise KeyError(f"Unknown mode '{mode}' for '{semantic_type}'. Valid options: {valid_modes}")
 
         return SemanticCardTheme(
             background=entry['background'],
