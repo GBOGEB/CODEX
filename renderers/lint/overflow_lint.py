@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import argparse
+import sys
 from dataclasses import dataclass
 
 
@@ -44,5 +46,24 @@ def validate_card_body_lines(lines: int) -> list[OverflowIssue]:
     return issues
 
 
+def main() -> int:
+    parser = argparse.ArgumentParser(description='Run overflow governance lint checks.')
+    parser.add_argument('--title', type=str, default='')
+    parser.add_argument('--card-body-lines', type=int, default=0)
+    args = parser.parse_args()
+
+    issues = [
+        *validate_title_length(args.title),
+        *validate_card_body_lines(args.card_body_lines),
+    ]
+    if issues:
+        for item in issues:
+            print(f'[{item.severity}] {item.component}: {item.message}', file=sys.stderr)
+        return 1
+
+    print('[info] overflow governance checks passed')
+    return 0
+
+
 if __name__ == '__main__':
-    print('overflow governance lint scaffold active')
+    raise SystemExit(main())
