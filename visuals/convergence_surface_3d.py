@@ -1,9 +1,9 @@
 import plotly.graph_objects as go
 
-waves = ['A1','A2','A3','A4','A5','A6','A7','A8']
-governance = [18,35,49,63,74,88,92,94]
-thermo = [2,4,9,14,22,31,38,44]
-publication = [8,22,35,48,61,76,83,88]
+waves = ['A1','A2','A3','A4','A5','A6','A7','A8','A9']
+governance = [18,35,49,63,74,88,92,94,95]
+thermo = [2,4,9,14,22,31,38,44,52]
+publication = [8,22,35,48,61,76,83,88,91]
 
 fig = go.Figure(
     data=[
@@ -19,7 +19,7 @@ fig = go.Figure(
 )
 
 fig.update_layout(
-    title='A8 Convergence Topology Surface',
+    title='A9 Convergence Topology Surface',
     scene=dict(
         xaxis_title='Governance',
         yaxis_title='Publication',
