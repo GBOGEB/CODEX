@@ -14,7 +14,9 @@ def build_backend_residual_heatmap():
     try:
         import plotly.graph_objects as go
     except ImportError as exc:
-        raise SystemExit('Plotly is required to generate backend residual heatmap.') from exc
+        raise SystemExit(
+            'Plotly is required to generate backend residual heatmap. Install it with: pip install plotly'
+        ) from exc
 
     fig = go.Figure(
         data=go.Heatmap(
