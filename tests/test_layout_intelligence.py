@@ -15,6 +15,9 @@ def test_standard_layout_path() -> None:
     )
 
     assert result
+    assert len(result) == 1
+    assert result[0].component == 'layout'
+    assert result[0].decision == 'standard_card_layout'
 
 
 def test_dense_layout_detection() -> None:
@@ -30,3 +33,12 @@ def test_dense_layout_detection() -> None:
     )
 
     assert len(result) >= 2
+    # Verify expected decisions are present
+    components = [d.component for d in result]
+    assert 'body' in components
+    assert 'semantic-emphasis' in components
+    # Verify specific decision content
+    body_decision = next(d for d in result if d.component == 'body')
+    assert body_decision.decision == 'split_card_or_reduce_density'
+    semantic_decision = next(d for d in result if d.component == 'semantic-emphasis')
+    assert semantic_decision.decision == 'reserve_visual_priority'

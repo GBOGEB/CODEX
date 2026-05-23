@@ -1,8 +1,8 @@
 # PIPELINE ARCHITECTURE
 
-# ABACUS_RENDER_PIPELINE
+## ABACUS_RENDER_PIPELINE
 
-## Canonical Lifecycle
+### Canonical Lifecycle
 
 ```text
 MASTER INPUTS
@@ -22,9 +22,9 @@ LINEAGE PERSISTENCE
 
 ---
 
-# Pipeline Stages
+## Pipeline Stages
 
-## Extract
+### Extract
 
 Responsibilities:
 
@@ -37,7 +37,7 @@ Responsibilities:
 
 ---
 
-## Normalize
+### Normalize
 
 Responsibilities:
 
@@ -49,7 +49,7 @@ Responsibilities:
 
 ---
 
-## Validate
+### Validate
 
 Responsibilities:
 
@@ -62,7 +62,7 @@ Responsibilities:
 
 ---
 
-## Render
+### Render
 
 Responsibilities:
 
@@ -75,7 +75,7 @@ Responsibilities:
 
 ---
 
-## Publish
+### Publish
 
 Responsibilities:
 
@@ -86,7 +86,7 @@ Responsibilities:
 
 ---
 
-## Lineage
+### Lineage
 
 Responsibilities:
 
@@ -99,7 +99,7 @@ Responsibilities:
 
 ---
 
-# Governance Principle
+## Governance Principle
 
 The pipeline must become:
 
@@ -115,7 +115,7 @@ manually orchestrated scripts
 
 ---
 
-# Future Direction
+## Future Direction
 
 Future orchestration should include:
 
