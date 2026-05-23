@@ -16,13 +16,15 @@ IN PROGRESS
 
 ## Current Metrics
 
-| Metric | Previous | Target |
-|---|---|---|
-| Architecture Score | 62 | 74 |
-| Runtime Visualization | 15 | 65 |
-| Operational Observability | 10 | 50 |
-| Dashboard Capability | 5 | 70 |
-| Runtime Awareness | 40 | 75 |
+```text
+Metric                        Previous  Target
+────────────────────────────  ────────  ──────
+Architecture Score                  62      74
+Runtime Visualization               15      65
+Operational Observability           10      50
+Dashboard Capability                 5      70
+Runtime Awareness                   40      75
+```
 
 ---
 
