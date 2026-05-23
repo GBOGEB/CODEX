@@ -10,41 +10,41 @@ body{margin:0;background:#07101f;color:#f8fafc;font-family:Arial,sans-serif;line
 </head>
 <body>
 <header>
-<h1>HBHS-EP v8.4 — Screen Hub</h1>
-<p>No download required. Use this page as the in-browser launch dashboard for current progress, metrics, and wave outputs.</p>
-<span class="status">CODEX branch: hbhs_v84</span><span class="status">PR #129</span><span class="status">Wave 6 active</span>
+<h1>HBHS-EP v8.5 — Screen Hub</h1>
+<p>No download required. Use this page as the in-browser launch dashboard for current progress, metrics, wave outputs and normalized engineering maturity.</p>
+<span class="status">CODEX branch: hbhs_v84</span><span class="status">PR #129</span><span class="status">Program maturity tracking active</span>
 </header>
 <section class="grid">
-<a class="card" href="../waves/index.html"><h2>Wave Dashboard</h2><div class="kpi">3 / 100</div><p>Visual wave progression and plot roadmap.</p></a>
-<a class="card" href="../metrics/index.html"><h2>Metrics Dashboard</h2><div class="kpi">DMAIC</div><p>Recursive lineage, KPIs, covariance and maturity trends.</p></a>
-<a class="card" href="../plots/pressure_envelopes.html"><h2>Wave 2 Physics</h2><div class="kpi">Plotly</div><p>Pressure windows, proof gap and N+1 compressor visuals.</p></a>
-<a class="card" href="../plots/monte_carlo_variance.html"><h2>Wave 3 Monte Carlo</h2><div class="kpi">Variance</div><p>Pressure distributions, covariance and uncertainty interpretation.</p></a>
-<a class="card" href="../plots/thermo_exergy.html"><h2>Wave 4 Thermodynamics</h2><div class="kpi">Exergy</div><p>JT vs turbine, flash-gas reduction and QLH ride-through.</p></a>
-<a class="card" href="../plots/control_reliability.html"><h2>Wave 5 Reliability</h2><div class="kpi">Control</div><p>Feed-forward control, LOOP ride-through and resilience logic.</p></a>
-<a class="card" href="../plots/governance_release.html"><h2>Wave 6 Governance</h2><div class="kpi">Control</div><p>Manifest traceability, release readiness and rebuild confidence.</p></a>
-<a class="card" href="../../source/json/governance_release_wave6.json"><h2>Governance SSoT</h2><div class="kpi">JSON</div><p>Canonical release and governance source tuples.</p></a>
+<a class="card" href="../waves/index.html"><h2>Wave Dashboard</h2><div class="kpi">100 Plot Plan</div><p>Visual wave progression and roadmap.</p></a>
+<a class="card" href="../metrics/index.html"><h2>Metrics Dashboard</h2><div class="kpi">DMAIC</div><p>Recursive lineage, KPIs and covariance trends.</p></a>
+<a class="card" href="../metrics/wave_completion_dashboard.html"><h2>Wave Completion</h2><div class="kpi">41%</div><p>Normalized engineering maturity and completion tracking.</p></a>
+<a class="card" href="../plots/pressure_envelopes.html"><h2>Wave 2 Physics</h2><div class="kpi">58%</div><p>Pressure windows, proof gap and compressor visuals.</p></a>
+<a class="card" href="../plots/monte_carlo_variance.html"><h2>Wave 3 Monte Carlo</h2><div class="kpi">49%</div><p>Variance, covariance and uncertainty interpretation.</p></a>
+<a class="card" href="../plots/thermo_exergy.html"><h2>Wave 4 Thermodynamics</h2><div class="kpi">46%</div><p>Exergy, flash-gas reduction and QLH ride-through.</p></a>
+<a class="card" href="../plots/control_reliability.html"><h2>Wave 5 Reliability</h2><div class="kpi">38%</div><p>Feed-forward control and resilience logic.</p></a>
+<a class="card" href="../plots/governance_release.html"><h2>Wave 6 Governance</h2><div class="kpi">27%</div><p>Manifest traceability and rebuild confidence.</p></a>
+<a class="card" href="../../source/json/wave_completion_metrics.json"><h2>Completion SSoT</h2><div class="kpi">JSON</div><p>Canonical normalized completion and maturity tuples.</p></a>
 </section>
 <section class="wide">
-<h2>Current in-screen status</h2>
+<h2>Current normalized wave maturity</h2>
 <table>
-<tr><th>Area</th><th>Status</th><th>Meaning</th></tr>
-<tr><td>Portal baseline</td><td>Implemented</td><td>Initial HBHS-EP portal merged via PR #113.</td></tr>
-<tr><td>Wave roadmap</td><td>Implemented in PR #129</td><td>Visible roadmap toward 100 plots/graphs.</td></tr>
-<tr><td>Metrics dashboard</td><td>Implemented in PR #129</td><td>DMAIC KPIs, lineage and covariance guidance.</td></tr>
-<tr><td>Wave 2 plots</td><td>ACTIVE</td><td>Pressure/compressor Plotly dashboards implemented.</td></tr>
-<tr><td>Wave 3 variance</td><td>ACTIVE</td><td>Monte Carlo and covariance dashboards implemented.</td></tr>
-<tr><td>Wave 4 thermo</td><td>ACTIVE</td><td>Thermodynamic and exergy dashboards implemented.</td></tr>
-<tr><td>Wave 5 reliability</td><td>ACTIVE</td><td>Control logic and resilience dashboards implemented.</td></tr>
-<tr><td>Wave 6 governance</td><td>ACTIVE</td><td>Manifest, release and recursive rebuild dashboards implemented.</td></tr>
+<tr><th>Wave</th><th>Completion</th><th>Status</th><th>Interpretation</th></tr>
+<tr><td>W0 Foundation</td><td>100%</td><td>LOCKED</td><td>Canonical structural baseline established.</td></tr>
+<tr><td>W1 Roadmap</td><td>92%</td><td>STABLE</td><td>Metrics and lineage framework operational.</td></tr>
+<tr><td>W2 Physics</td><td>58%</td><td>ACTIVE</td><td>Engineering proof visualizations expanding.</td></tr>
+<tr><td>W3 Variance</td><td>49%</td><td>ACTIVE</td><td>Uncertainty and covariance reasoning forming.</td></tr>
+<tr><td>W4 Thermodynamics</td><td>46%</td><td>ACTIVE</td><td>Exergy and thermal buffering interpretations expanding.</td></tr>
+<tr><td>W5 Reliability</td><td>38%</td><td>ACTIVE</td><td>Dynamic operational-state reasoning introduced.</td></tr>
+<tr><td>W6 Governance</td><td>27%</td><td>FORMING</td><td>Recursive rebuild and release governance developing.</td></tr>
 </table>
 </section>
 <section class="wide">
-<h2>Guided interpretation</h2>
+<h2>Program interpretation</h2>
 <ul>
-<li>Wave 6 explicitly represents the DMAIC Control phase.</li>
-<li>Governance maturity must increase together with engineering complexity.</li>
-<li>Recursive rebuild confidence is now treated as an engineering KPI.</li>
-<li>Generated dashboards are delivery views, not authoritative truth sources.</li>
+<li>Overall normalized program completion is approximately 41%.</li>
+<li>Earlier waves are stabilizing while downstream operational/governance waves are still maturing.</li>
+<li>Program maturity now explicitly tracks engineering confidence, not only artifact count.</li>
+<li>Next maturity milestones should focus on real-gas models, manifest coverage and deployment readiness.</li>
 </ul>
 </section>
 </body>
