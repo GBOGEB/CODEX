@@ -1,13 +1,62 @@
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from pathlib import Path
+import yaml
 
 
 def main() -> None:
-    waves = ['A1','A2','A3','A4','A5','A6','A7','A8']
-    convergence = [12,24,36,47,58,63,64,67]
-    thermo = [2,4,9,14,22,31,38,44]
-    publication = [8,22,35,48,61,76,83,88]
+    # Load wave progression from governed manifest
+    wave_manifest_path = Path(__file__).parent.parent / 'MANIFEST' / 'WAVE_PROGRESSION.yaml'
+    with open(wave_manifest_path, 'r') as f:
+        wave_data = yaml.safe_load(f)
+    
+    # Load program metrics from governed manifest
+    metrics_manifest_path = Path(__file__).parent.parent / 'MANIFEST' / 'PROGRAM_METRICS.yaml'
+    with open(metrics_manifest_path, 'r') as f:
+        metrics_data = yaml.safe_load(f)
+    
+    # Extract wave data
+    waves = [w['wave'] for w in wave_data['waves']]
+    completion = [w['completion'] for w in wave_data['waves']]
+    wave_metrics = wave_data['wave_metrics']
+    thermo = [wave_metrics['thermodynamic_progress'][w] for w in waves]
+    publication = [wave_metrics['publication_progress'][w] for w in waves]
+    governance = [wave_metrics['renderer_governance_progress'][w] for w in waves]
+    
+    # Extract program metrics
+    metrics = metrics_data['program_metrics']['metrics']
+    radar_categories = []
+    radar_values = []
+    heatmap_categories = []
+    heatmap_values = []
+    
+    for key, metric in metrics.items():
+        display_name = key.replace('_', ' ').title()
+        if display_name == 'Ci Cd':
+            display_name = 'CI/CD'
+        elif display_name == 'Publication Readiness':
+            display_name = 'Publication'
+        
+        radar_categories.append(display_name)
+        radar_values.append(metric['score'])
+        
+        # Abbreviated names for heatmap
+        abbrev = display_name[:6] if len(display_name) > 6 else display_name
+        if display_name == 'Governance':
+            abbrev = 'Gov'
+        elif display_name == 'Orchestration':
+            abbrev = 'Orch'
+        elif display_name == 'Visualization':
+            abbrev = 'Visual'
+        elif display_name == 'Thermodynamics':
+            abbrev = 'Thermo'
+        elif display_name == 'Validation':
+            abbrev = 'Valid'
+        elif display_name == 'Publication':
+            abbrev = 'Pub'
+        
+        heatmap_categories.append(abbrev)
+        heatmap_values.append(metric['score'])
 
     fig = make_subplots(
         rows=2,
@@ -15,23 +64,27 @@ def main() -> None:
         specs=[[{'type':'scatter'}, {'type':'polar'}],
                [{'type':'heatmap'}, {'type':'scatter3d'}]],
         subplot_titles=(
-            'Wave Progression',
+            'Wave Completion Progression',
             'Maturity Radar',
-            'Completion Heatmap',
+            'Program Metrics Heatmap',
             'Convergence Surface',
         ),
     )
 
     fig.add_trace(
-        go.Scatter(x=waves, y=convergence, mode='lines+markers', name='Convergence'),
+        go.Scatter(x=waves, y=completion, mode='lines+markers', name='Completion %'),
         row=1,
         col=1,
     )
+    
+    # Add y-axis title for wave completion
+    fig.update_yaxes(title_text='Completion %', row=1, col=1)
+    fig.update_xaxes(title_text='Wave', row=1, col=1)
 
     fig.add_trace(
         go.Scatterpolar(
-            r=[88,72,77,74,64,38],
-            theta=['Governance','Orchestration','Telemetry','Renderer','Publication','Thermo'],
+            r=radar_values,
+            theta=radar_categories,
             fill='toself',
             name='Maturity Radar',
         ),
@@ -41,9 +94,9 @@ def main() -> None:
 
     fig.add_trace(
         go.Heatmap(
-            z=[[88,72,77,74,64,38]],
-            x=['Gov','Orch','Telem','Render','Pub','Thermo'],
-            y=['Completion'],
+            z=[heatmap_values],
+            x=heatmap_categories,
+            y=['Score'],
         ),
         row=2,
         col=1,
@@ -51,7 +104,7 @@ def main() -> None:
 
     fig.add_trace(
         go.Scatter3d(
-            x=convergence,
+            x=governance,
             y=publication,
             z=thermo,
             mode='lines+markers',

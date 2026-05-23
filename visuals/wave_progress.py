@@ -1,10 +1,16 @@
 import plotly.graph_objects as go
 from pathlib import Path
+import yaml
 
 
 def main() -> None:
-    waves = ['A1','A2','A3','A4','A5','A6','A7','A8']
-    completion = [100,100,100,100,100,86,41,67]
+    # Load wave progression from governed manifest
+    manifest_path = Path(__file__).parent.parent / 'MANIFEST' / 'WAVE_PROGRESSION.yaml'
+    with open(manifest_path, 'r') as f:
+        data = yaml.safe_load(f)
+    
+    waves = [w['wave'] for w in data['waves']]
+    completion = [w['completion'] for w in data['waves']]
 
     fig = go.Figure()
 

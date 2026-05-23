@@ -1,20 +1,29 @@
 import plotly.graph_objects as go
 from pathlib import Path
+import yaml
 
 
 def main() -> None:
-    categories = [
-        'Governance',
-        'Renderer',
-        'CI/CD',
-        'Orchestration',
-        'Visualization',
-        'Thermodynamics',
-        'Validation',
-        'Publication',
-    ]
-
-    values = [86,74,62,68,71,38,52,58]
+    # Load program metrics from governed manifest
+    manifest_path = Path(__file__).parent.parent / 'MANIFEST' / 'PROGRAM_METRICS.yaml'
+    with open(manifest_path, 'r') as f:
+        data = yaml.safe_load(f)
+    
+    metrics = data['program_metrics']['metrics']
+    categories = []
+    values = []
+    
+    # Extract categories and scores in consistent order
+    for key, metric in metrics.items():
+        # Convert key to display name
+        display_name = key.replace('_', ' ').title()
+        if display_name == 'Ci Cd':
+            display_name = 'CI/CD'
+        elif display_name == 'Publication Readiness':
+            display_name = 'Publication'
+        
+        categories.append(display_name)
+        values.append(metric['score'])
 
     fig = go.Figure()
 
