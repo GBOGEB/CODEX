@@ -20,6 +20,8 @@ def test_wave_progression_monotonic():
 
     previous = 0
     for wave in data['waves']:
-        after = wave.get('score_after', 0)
+        assert 'score_after' in wave
+        after = wave['score_after']
+        assert isinstance(after, (int, float))
         assert after >= previous
         previous = after
