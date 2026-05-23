@@ -1,0 +1,44 @@
+{
+  "version": "HBHS-EP-v9.5-wave16-evidence-proof-template",
+  "purpose": "Provide reusable proof, evidence and drop-in governance templates so future waves can emulate evidence-coupled maturity scoring.",
+  "wave": 16,
+  "name": "Proof Synchronization & Emulation Template",
+  "current_stats": {
+    "overall_completion_percent": 47,
+    "evidence_corrected_completion_percent": 39,
+    "plot_completion": "27/100",
+    "ssot_coverage_percent": 42,
+    "proof_closure_percent": 22,
+    "governance_traceability_percent": 41,
+    "rebuild_confidence_percent": 28,
+    "evidence_validity_percent": 18
+  },
+  "proof_maturity_levels": [
+    {"level":"L0","name":"Conceptual speculation","description":"Idea exists but is not yet anchored to equations, data or source evidence."},
+    {"level":"L1","name":"Architecture reasoning","description":"Consistent with system architecture and interface logic."},
+    {"level":"L2","name":"Physics-derived","description":"Supported by first-principles calculations or engineering equations."},
+    {"level":"L3","name":"Simulated validation","description":"Supported by reproducible numerical simulation."},
+    {"level":"L4","name":"Vendor-correlated","description":"Correlated with vendor maps, datasheets or supplier evidence."},
+    {"level":"L5","name":"Operationally validated","description":"Supported by commissioning, test or operational data."},
+    {"level":"L6","name":"Closed-loop adaptive evidence","description":"Validated by recurring operational feedback and recalibration."},
+    {"level":"L7","name":"Long-term operational proof","description":"Supported by long-term production data and stable governance history."}
+  ],
+  "wave_emulation_rules": [
+    "Every new wave must state previous score, current score and assumed next score.",
+    "Every new wave must separate visual progress from evidence-supported progress.",
+    "Every new wave must list proof level L0-L7 for each major claim.",
+    "Every new wave must include at least one risk of overconfidence or dilution.",
+    "Every new wave must define a drop-in message for the next agent or next wave.",
+    "Every new wave must identify what evidence would upgrade its maturity score."
+  ],
+  "score_template": {
+    "previous_score_percent": null,
+    "current_score_percent": null,
+    "evidence_corrected_score_percent": null,
+    "assumed_next_score_percent": null,
+    "delta_previous_to_current": null,
+    "delta_current_to_evidence_corrected": null,
+    "dominant_gap": "validated evidence availability"
+  },
+  "drop_in_message_template": "Continue HBHS-EP from the current branch and wave. First read source/json/wave_completion_metrics.json, source/json/evidence_proof_wave16.json and docs/screen/index.html. For the next wave, report previous score, current score, evidence-corrected score and assumed next score. Separate visual maturity from evidence-supported maturity. Assign proof levels L0-L7 to all major claims. Update the SSoT JSON first, then generate the browser dashboard. Do not increase maturity only because new visuals were added."
+}
