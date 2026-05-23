@@ -21,7 +21,7 @@ def test_runtime_directories_exist():
 
 
 def test_runtime_root_declared():
-    assert RUNTIME.parent.name == 'hbhs-ep-v8.3-tuplebridge'
     if not RUNTIME.exists():
         pytest.skip('runtime/ not yet generated; pending Wave-2 runtime scaffold')
+    assert RUNTIME.parent.name == 'hbhs-ep-v8.3-tuplebridge'
     assert RUNTIME.exists()
