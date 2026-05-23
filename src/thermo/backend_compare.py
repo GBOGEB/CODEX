@@ -5,13 +5,23 @@ from dataclasses import dataclass
 
 @dataclass
 class BackendResidual:
+    """Backend comparison residual structure.
+    
+    Fields represent absolute differences between two backends:
+    - delta_h: enthalpy difference (J/kg)
+    - delta_s: entropy difference (J/kg·K)
+    - delta_rho: density difference (kg/m³)
+    - delta_cp: specific heat difference (J/kg·K)
+    - scientific_confidence: confidence score in range [0, 100]
+      where 0 = no confidence, 100 = full confidence
+    """
     backend_a: str
     backend_b: str
-    delta_h: float
-    delta_s: float
-    delta_rho: float
-    delta_cp: float
-    scientific_confidence: float
+    delta_h: float  # J/kg
+    delta_s: float  # J/kg·K
+    delta_rho: float  # kg/m³
+    delta_cp: float  # J/kg·K
+    scientific_confidence: float  # [0, 100]
 
 
 class BackendComparisonEngine:

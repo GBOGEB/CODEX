@@ -35,8 +35,18 @@ class HeliumReferenceKernel:
         pressure_pa: float,
         ambient_temperature_k: float = 300.0,
     ) -> HeliumState:
+        # Validate inputs to prevent nonsensical results
+        if temperature_k <= 0:
+            raise ValueError(f'temperature_k must be positive, got {temperature_k}')
+        if pressure_pa < 0:
+            raise ValueError(f'pressure_pa must be non-negative, got {pressure_pa}')
+        if ambient_temperature_k <= 0:
+            raise ValueError(f'ambient_temperature_k must be positive, got {ambient_temperature_k}')
+
         h = self.CP_IDEAL * temperature_k
-        s = self.CP_IDEAL * max(temperature_k, 1e-9) / max(ambient_temperature_k, 1e-9)
+        # Note: entropy_j_kgk is a placeholder scaffold calculation (cp*T/T_amb)
+        # not thermodynamically rigorous entropy; requires NIST/REFPROP validation
+        s = self.CP_IDEAL * temperature_k / ambient_temperature_k
         rho = pressure_pa / (self.R_HE * temperature_k)
         g = h - temperature_k * s
         exergy = h - ambient_temperature_k * s
