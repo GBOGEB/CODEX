@@ -38,7 +38,7 @@ asymptotic convergence stabilization
 
 where:
 
-- score increases slow
+- score increases slowly
 - governance hardens
 - entropy decreases
 - recursive consistency improves
