@@ -22,7 +22,7 @@ def main():
     except json.JSONDecodeError as e:
         print(f"Error: Invalid JSON in {TOPOLOGY}: {e}", file=sys.stderr)
         sys.exit(1)
-    except Exception as e:
+    except (IOError, OSError) as e:
         print(f"Error reading {TOPOLOGY}: {e}", file=sys.stderr)
         sys.exit(1)
 
