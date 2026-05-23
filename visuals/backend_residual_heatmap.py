@@ -1,4 +1,4 @@
-import plotly.graph_objects as go
+from pathlib import Path
 
 backends = ['Fallback','NIST','CoolProp','REFPROP','HEPAK']
 
@@ -10,17 +10,32 @@ residuals = [
     [0.57,0.41,0.28,0.19,0.0],
 ]
 
-fig = go.Figure(
-    data=go.Heatmap(
-        z=residuals,
-        x=backends,
-        y=backends,
+def build_backend_residual_heatmap():
+    try:
+        import plotly.graph_objects as go
+    except ImportError as exc:
+        raise SystemExit('Plotly is required to generate backend residual heatmap.') from exc
+
+    fig = go.Figure(
+        data=go.Heatmap(
+            z=residuals,
+            x=backends,
+            y=backends,
+        )
     )
-)
+    fig.update_layout(
+        title='Backend Residual Heatmap (A9 Scaffold)',
+    )
+    return fig
 
-fig.update_layout(
-    title='Backend Residual Heatmap (A9 Scaffold)',
-)
 
-fig.write_html('outputs/backend_residual_heatmap.html')
-print('generated outputs/backend_residual_heatmap.html')
+def main():
+    output_path = Path('outputs/backend_residual_heatmap.html')
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig = build_backend_residual_heatmap()
+    fig.write_html(str(output_path))
+    print(f'generated {output_path}')
+
+
+if __name__ == '__main__':
+    main()
