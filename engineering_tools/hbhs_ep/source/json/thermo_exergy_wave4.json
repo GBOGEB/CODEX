@@ -1,0 +1,47 @@
+{
+  "version": "HBHS-EP-v8.4-wave4-thermo-exergy",
+  "purpose": "Canonical source for Wave 4 thermodynamic, exergy and cryogenic process visualizations.",
+  "core_cases": [
+    {
+      "id": "THERMO-001",
+      "name": "JT vs wet turbine expansion",
+      "basis": "3 bar, 4.5 K SHE expansion to 2 K",
+      "jt_relative_liquid_yield": 1.0,
+      "wet_turbine_relative_liquid_yield": 1.375,
+      "interpretation": "Wet expansion turbine yields approximately 37.5% more liquid than JT valve baseline."
+    },
+    {
+      "id": "THERMO-002",
+      "name": "2 K return vapor subcooling",
+      "flash_gas_reduction_percent": 77,
+      "interpretation": "Using 2 K return vapor to subcool the 4.5 K supply dramatically reduces flash gas."
+    },
+    {
+      "id": "THERMO-003",
+      "name": "QLH buffer ride-through",
+      "buffer_volume_liters": 5000,
+      "ride_through_hours": 8,
+      "interpretation": "External liquid buffer provides thermal and operational smoothing during disturbances."
+    },
+    {
+      "id": "THERMO-004",
+      "name": "2 K equivalent heat leak",
+      "equivalent_heat_load_watts": 80,
+      "interpretation": "Non-isothermal transport and heat leak elevate interface temperature and consume exergy margin."
+    }
+  ],
+  "wave4_plot_targets": [
+    "JT vs turbine yield comparison",
+    "flash gas reduction chart",
+    "QLH buffer depletion transient",
+    "2 K heat leak equivalent",
+    "cryogenic exergy ladder",
+    "entropy/exergy loss Sankey",
+    "subcooling effectiveness",
+    "thermal buffering response"
+  ],
+  "governance": {
+    "rule": "Wave 4 plots should connect thermodynamic performance to reliability and control outcomes.",
+    "warning": "High visual density without thermodynamic interpretation is considered dilution."
+  }
+}

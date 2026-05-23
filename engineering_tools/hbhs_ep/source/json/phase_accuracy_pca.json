@@ -1,0 +1,70 @@
+{
+  "version": "HBHS-EP-v10.8-phase-accuracy-pca",
+  "purpose": "Canonical source for claimed-vs-actual maturity, revised predictions, PCA-style dimensional reduction and road-to-completion tracking.",
+  "program_status": {
+    "pr": 129,
+    "branch": "hbhs_v84",
+    "state": "open",
+    "mergeable": true,
+    "draft": false,
+    "current_phase": "Phase Accuracy, PCA and Road-to-Completion"
+  },
+  "waves": [
+    {"wave":0,"name":"Foundation","claimed":100,"actual":100,"revised_previous_prediction":100,"evidence_corrected":100,"next_prediction":100},
+    {"wave":1,"name":"Roadmap and Metrics","claimed":95,"actual":92,"revised_previous_prediction":93,"evidence_corrected":90,"next_prediction":95},
+    {"wave":2,"name":"Pressure Physics","claimed":68,"actual":58,"revised_previous_prediction":61,"evidence_corrected":52,"next_prediction":64},
+    {"wave":3,"name":"Monte Carlo and Variance","claimed":61,"actual":49,"revised_previous_prediction":53,"evidence_corrected":43,"next_prediction":56},
+    {"wave":4,"name":"Thermodynamics and Exergy","claimed":60,"actual":46,"revised_previous_prediction":51,"evidence_corrected":38,"next_prediction":54},
+    {"wave":5,"name":"Control and Reliability","claimed":56,"actual":38,"revised_previous_prediction":44,"evidence_corrected":32,"next_prediction":47},
+    {"wave":6,"name":"Governance and Release","claimed":49,"actual":27,"revised_previous_prediction":34,"evidence_corrected":24,"next_prediction":39},
+    {"wave":7,"name":"Digital Twin","claimed":32,"actual":12,"revised_previous_prediction":18,"evidence_corrected":8,"next_prediction":21},
+    {"wave":8,"name":"Operational Intelligence","claimed":24,"actual":4,"revised_previous_prediction":10,"evidence_corrected":2,"next_prediction":11},
+    {"wave":9,"name":"Autonomous Reasoning","claimed":16,"actual":1,"revised_previous_prediction":5,"evidence_corrected":0.3,"next_prediction":5},
+    {"wave":10,"name":"Lifecycle Orchestration","claimed":9,"actual":0.3,"revised_previous_prediction":2,"evidence_corrected":0.1,"next_prediction":2},
+    {"wave":11,"name":"Federated Intelligence","claimed":3,"actual":0.05,"revised_previous_prediction":0.2,"evidence_corrected":0.01,"next_prediction":0.5},
+    {"wave":12,"name":"Adaptive Resilience","claimed":1,"actual":0.01,"revised_previous_prediction":0.08,"evidence_corrected":0.005,"next_prediction":0.1},
+    {"wave":13,"name":"Predictive Intelligence","claimed":0.2,"actual":0,"revised_previous_prediction":0.005,"evidence_corrected":0,"next_prediction":0.03},
+    {"wave":14,"name":"Reality Calibration","claimed":0.01,"actual":0,"revised_previous_prediction":0,"evidence_corrected":0,"next_prediction":0.01},
+    {"wave":15,"name":"Evidence Synchronization","claimed":0.005,"actual":0,"revised_previous_prediction":0,"evidence_corrected":0,"next_prediction":0.005},
+    {"wave":16,"name":"Recursive Emulation Governance","claimed":0.02,"actual":0.001,"revised_previous_prediction":0.001,"evidence_corrected":0.001,"next_prediction":0.02},
+    {"wave":17,"name":"Constitutional Governance","claimed":0.0001,"actual":0.0001,"revised_previous_prediction":0.0001,"evidence_corrected":0.0001,"next_prediction":0.0002},
+    {"wave":18,"name":"Semantic Governance","claimed":0.0001,"actual":0.0001,"revised_previous_prediction":0.0001,"evidence_corrected":0.0001,"next_prediction":0.0002},
+    {"wave":19,"name":"Epistemic Survivability","claimed":0.0001,"actual":0.0001,"revised_previous_prediction":0.0001,"evidence_corrected":0.0001,"next_prediction":0.0002},
+    {"wave":20,"name":"Convergence Governance","claimed":4,"actual":2,"revised_previous_prediction":0,"evidence_corrected":2,"next_prediction":6},
+    {"wave":21,"name":"Deployment Readiness","claimed":7,"actual":5,"revised_previous_prediction":0,"evidence_corrected":4,"next_prediction":11},
+    {"wave":22,"name":"Productization","claimed":10,"actual":6,"revised_previous_prediction":0,"evidence_corrected":5,"next_prediction":12},
+    {"wave":23,"name":"Institutional Continuity","claimed":7,"actual":6,"revised_previous_prediction":0,"evidence_corrected":6,"next_prediction":12},
+    {"wave":24,"name":"Civilization Resilience","claimed":6,"actual":5,"revised_previous_prediction":0,"evidence_corrected":5,"next_prediction":11},
+    {"wave":25,"name":"Human Legacy","claimed":12,"actual":10,"revised_previous_prediction":0,"evidence_corrected":9,"next_prediction":18},
+    {"wave":26,"name":"Human-Aligned Stewardship","claimed":8,"actual":7,"revised_previous_prediction":0,"evidence_corrected":7,"next_prediction":14},
+    {"wave":27,"name":"Wisdom and Restraint","claimed":11,"actual":10,"revised_previous_prediction":0,"evidence_corrected":10,"next_prediction":15},
+    {"wave":28,"name":"Accuracy, PCA and Completion Roadmap","claimed":0,"actual":0,"revised_previous_prediction":0,"evidence_corrected":0,"next_prediction":12}
+  ],
+  "pca_features": [
+    "claimed",
+    "actual",
+    "revised_previous_prediction",
+    "evidence_corrected",
+    "prediction_error",
+    "evidence_gap"
+  ],
+  "pca_interpretation": {
+    "pc1": "Implementation maturity axis: high for foundation, roadmap, physics and governance waves where concrete HTML/Plotly artifacts exist.",
+    "pc2": "Speculation-to-evidence gap axis: high when conceptual intelligence waves outpace actual evidence-supported implementation.",
+    "pc3": "Correction pressure axis: highlights waves where revised predictions had to be pulled downward after comparing claimed vs actual progress."
+  },
+  "road_to_completion": [
+    {"milestone":"M1","target":"Merge PR #129 or split into smaller reviewable PRs","completion_gain":"+5 to +8%","dependency":"review and repository acceptance"},
+    {"milestone":"M2","target":"Add manifest/hash generator and source-generated dependency map","completion_gain":"+8 to +12%","dependency":"build script and CI"},
+    {"milestone":"M3","target":"Replace screening plots with source-generated Plotly from validated data","completion_gain":"+10 to +18%","dependency":"validated input datasets"},
+    {"milestone":"M4","target":"Integrate real-gas property package / vendor maps","completion_gain":"+12 to +20%","dependency":"REFPROP/CoolProp/vendor maps"},
+    {"milestone":"M5","target":"Add telemetry ingestion and operational calibration","completion_gain":"+15 to +25%","dependency":"operational data access"},
+    {"milestone":"M6","target":"Harden usability, onboarding and productization","completion_gain":"+10 to +15%","dependency":"role-based review"}
+  ],
+  "dominant_differences": [
+    "Claimed scores overestimated waves that depended on telemetry, vendor data or real-gas validation.",
+    "Actual implementation is strongest where HTML, JSON and Plotly artifacts exist in the PR.",
+    "Evidence-corrected scores are lower where claims are conceptual, semantic, constitutional or stewardship-oriented but not yet implemented as runnable dashboards.",
+    "The convergence path is now dominated by validated data, manifests, CI, and operational calibration rather than additional conceptual waves."
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "version": "HBHS-EP-v8.4-wave6-governance-release",
+  "purpose": "Canonical source for release governance, recursive rebuild control, manifest traceability and deployment readiness dashboards.",
+  "governance_metrics": [
+    {"metric":"Manifest traceability","current":15,"target":100,"unit":"%","interpretation":"Generated artifacts should map back to canonical source inputs."},
+    {"metric":"Source/generated linkage","current":25,"target":100,"unit":"%","interpretation":"Every rendered dashboard should reference a canonical JSON/YAML/Markdown source."},
+    {"metric":"Release readiness","current":35,"target":100,"unit":"%","interpretation":"Measures deployability, readability, navigation and governance maturity."},
+    {"metric":"Drift risk","current":55,"target":0,"unit":"relative index","interpretation":"Higher values indicate generated content outpacing SSoT control."},
+    {"metric":"Recursive rebuild confidence","current":28,"target":100,"unit":"%","interpretation":"Ability to deterministically reconstruct outputs from canonical sources."}
+  ],
+  "manifest_examples": [
+    {
+      "artifact":"docs/plots/pressure_envelopes.html",
+      "generated_from":[
+        "source/json/hcc_wcs_ssot.json",
+        "source/json/wave_plot_roadmap.json"
+      ],
+      "status":"tracked"
+    },
+    {
+      "artifact":"docs/plots/thermo_exergy.html",
+      "generated_from":[
+        "source/json/thermo_exergy_wave4.json"
+      ],
+      "status":"tracked"
+    }
+  ],
+  "wave6_plot_targets": [
+    "manifest lineage graph",
+    "source/generated dependency map",
+    "release readiness gauge",
+    "drift-risk trend",
+    "recursive rebuild flow",
+    "DMAIC audit timeline",
+    "artifact traceability Sankey"
+  ],
+  "control_principles": [
+    "Generated outputs are never authoritative sources.",
+    "SSoT inputs should lead all dashboard generation.",
+    "Plot growth without proof growth is dilution.",
+    "Governance maturity should increase with engineering complexity."
+  ]
+}

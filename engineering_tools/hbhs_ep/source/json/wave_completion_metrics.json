@@ -1,0 +1,28 @@
+{
+  "version": "HBHS-EP-v8.5-wave-completion-metrics",
+  "purpose": "Track normalized completion, cumulative maturity and progress toward 100% engineering readiness across all HBHS-EP waves.",
+  "overall_completion_percent": 41,
+  "overall_target_plots": 100,
+  "current_generated_plots": 27,
+  "waves": [
+    {"wave":0,"name":"Foundation","completion":100,"plots_complete":0,"maturity":"locked","dmaic":"Define"},
+    {"wave":1,"name":"Roadmap & Metrics","completion":92,"plots_complete":3,"maturity":"stable","dmaic":"Measure"},
+    {"wave":2,"name":"Pressure Physics","completion":58,"plots_complete":6,"maturity":"active","dmaic":"Analyze"},
+    {"wave":3,"name":"Monte Carlo & Variance","completion":49,"plots_complete":5,"maturity":"active","dmaic":"Analyze"},
+    {"wave":4,"name":"Thermodynamics & Exergy","completion":46,"plots_complete":5,"maturity":"active","dmaic":"Improve"},
+    {"wave":5,"name":"Control & Reliability","completion":38,"plots_complete":4,"maturity":"active","dmaic":"Improve"},
+    {"wave":6,"name":"Governance & Release","completion":27,"plots_complete":4,"maturity":"forming","dmaic":"Control"}
+  ],
+  "completion_interpretation": {
+    "rule":"Completion is normalized by engineering maturity, not artifact count alone.",
+    "warning":"Visual proliferation without proof closure reduces true completion confidence.",
+    "preferred_behavior":"Earlier waves should stabilize before downstream maturity acceleration occurs."
+  },
+  "next_targets": [
+    "Increase manifest traceability above 50%",
+    "Add real-gas thermodynamic property models",
+    "Increase recursive rebuild confidence above 60%",
+    "Reach 50+ engineering plots with maintained governance maturity",
+    "Add deployment-readiness and publishing workflows"
+  ]
+}

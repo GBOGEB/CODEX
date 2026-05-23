@@ -1,0 +1,35 @@
+{
+  "version": "HBHS-EP-v8.4-wave-progress",
+  "purpose": "Make visual engineering progress apparent per wave and track the path toward 100 plots and graphs.",
+  "total_plots_target": 100,
+  "waves": [
+    {"wave": 0, "name": "Portal foundation", "target_plots": 0, "completed_plots": 0, "status": "complete", "focus": "SSoT, DMAIC, repo split, portal shell"},
+    {"wave": 1, "name": "Progress dashboard", "target_plots": 10, "completed_plots": 3, "status": "in_progress", "focus": "wave board, proof-gap chart, interface SVG, roadmap visuals"},
+    {"wave": 2, "name": "Pressure and compressor envelopes", "target_plots": 20, "completed_plots": 0, "status": "planned", "focus": "HCC/WCS pressure windows, FSD575 gap, PVPS N+1"},
+    {"wave": 3, "name": "Monte Carlo and variance", "target_plots": 20, "completed_plots": 0, "status": "planned", "focus": "VLP/LP PERT distributions, uncertainty bands, sensitivity"},
+    {"wave": 4, "name": "Thermodynamics and exergy", "target_plots": 25, "completed_plots": 0, "status": "planned", "focus": "JT vs turbine, flash gas, subcooling, exergy, heat leak"},
+    {"wave": 5, "name": "Control and reliability", "target_plots": 15, "completed_plots": 0, "status": "planned", "focus": "LOOP, N+1, buffer ride-through, state machines"},
+    {"wave": 6, "name": "Release polish", "target_plots": 10, "completed_plots": 0, "status": "planned", "focus": "thumbnails, slides, print/PDF, GitHub Pages checks"}
+  ],
+  "plot_backlog_categories": [
+    "HCC/WCS pressure ladder",
+    "350 g/s vs 337.62 g/s proof gap",
+    "FSD575/FSD475 comparative capacity",
+    "PVPS suction PERT",
+    "LP outlet PERT",
+    "PVPS N+1 redistribution",
+    "QRB-WCS pressure loss sensitivity",
+    "2 K heat leak equivalent",
+    "QLH buffer ride-through",
+    "JT vs wet turbine yield",
+    "flash gas reduction",
+    "subcooling effectiveness",
+    "cold compressor suction stability",
+    "LOOP state transition",
+    "recovery compression pressure tiers"
+  ],
+  "governance": {
+    "rule": "Generated plots must trace to source/json and source/markdown. The dashboard tracks planned, completed, and proof-blocked plots.",
+    "control": "Each wave should update this JSON, docs/waves/index.html, and OUTPUT_MANIFEST.json."
+  }
+}
