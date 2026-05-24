@@ -15,11 +15,11 @@ $$CR = \frac{L_{lightest} + 0.05}{L_{darkest} + 0.05}$$
 * **Immutable System Audit Checksum:** `DDFB39D64D852780`
 
 ### 🚧 Buildout Gaps (Framework Not Fully Built Out)
-* [ ] Load milestone vectors and invariant colors from g8_lifecycle_manifest.json instead of hard-coded values.
-* [ ] Write generated HTML and run reports to outputs/html/ for Pages publishing alignment.
-* [ ] Emit a dedicated G8 report file instead of overwriting the repository README.md.
-* [ ] Replace calculate_g8_anova naming/labeling with covariance-correlation terminology or implement true ANOVA.
-* [ ] Add pytest coverage for contrast validator and cryogenic engine edge cases.
+* [ ] Read invariants and milestone vectors from this manifest in orchestrate_g8.py.
+* [ ] Publish generated HTML artifacts under outputs/html for Pages workflow compatibility.
+* [ ] Generate a dedicated report artifact instead of replacing README.md.
+* [ ] Align ANOVA metric naming with actual covariance/correlation implementation or implement ANOVA.
+* [ ] Add pytest coverage for contrast and cryogenic engine edge cases.
 
 ---
 *G8 automated audit baseline complete. Buildout remains in-progress until TODO items are closed.*
