@@ -16,16 +16,33 @@ def bake_g4_environment():
         mass_flow=11.5, h_in=12.0, h_out=28.5, s_in=0.04, s_out=0.07, power_kw=220.0
     )
 
+    implementation_status = {
+        "state": "framework_stub",
+        "missing": [
+            "runtime configuration for production telemetry endpoints",
+            "artifact publishing alignment with docs/ or outputs/html/",
+            "bounded README telemetry section update (avoid full README overwrite)",
+            "unit test coverage for exergy and wave-metric boundary cases",
+        ],
+        "todo": [
+            "Resolve private telemetry endpoints from deployment-local environment/config.",
+            "Publish HTML outputs under repository Pages staging paths.",
+            "Write telemetry output to a dedicated generated report artifact.",
+            "Add regression tests for nominal and edge-case telemetry calculations.",
+        ],
+    }
+
     g4_signal_manifest = {
         "generation": "G4",
         "phase": "Integrated_Commissioning_L8",
         "system_owner": "Gert",
         "facility_tag": "CCB.Room_01",
+        "implementation_status": implementation_status,
         "signal_matrix": {
             "A66_Status": {
                 "component_id": "G4-TUPLE-A66",
                 "hardware_tag": "A66-TC-001",
-                "telemetry_stream": "amqp://mq.gbogeb.internal/signals/a66",
+                "telemetry_stream": "g4.a66.status",
                 "lifecycle_gate": "L8_Verification",
             },
             "Helium_Refrigeration": {
@@ -62,7 +79,7 @@ def bake_g4_environment():
     <h2>📁 Generation 4 (G4) Physical-to-Digital Asset Topography</h2>
     <table>
         <thead>
-            <tr><th>Component ID</th><th>Functional Scope Domain</th><th>Spatial Spatial Tag</th><th>Repository Source Line Link</th></tr>
+            <tr><th>Component ID</th><th>Functional Scope Domain</th><th>Spatial Tag</th><th>Repository Source Line Link</th></tr>
         </thead>
         <tbody>
             <tr><td>G4-TUPLE-A66</td><td>A66 Control Module Readiness</td><td><span class=\"tag\">CCB.Room_01</span></td><td><a href=\"https://github.com/gbogeb/codex\">gbogeb/codex/components/a66</a></td></tr>

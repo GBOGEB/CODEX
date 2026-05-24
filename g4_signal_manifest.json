@@ -3,11 +3,26 @@
   "phase": "Integrated_Commissioning_L8",
   "system_owner": "Gert",
   "facility_tag": "CCB.Room_01",
+  "implementation_status": {
+    "state": "framework_stub",
+    "missing": [
+      "runtime configuration for production telemetry endpoints",
+      "artifact publishing alignment with docs/ or outputs/html/",
+      "bounded README telemetry section update (avoid full README overwrite)",
+      "unit test coverage for exergy and wave-metric boundary cases"
+    ],
+    "todo": [
+      "Resolve private telemetry endpoints from deployment-local environment/config.",
+      "Publish HTML outputs under repository Pages staging paths.",
+      "Write telemetry output to a dedicated generated report artifact.",
+      "Add regression tests for nominal and edge-case telemetry calculations."
+    ]
+  },
   "signal_matrix": {
     "A66_Status": {
       "component_id": "G4-TUPLE-A66",
       "hardware_tag": "A66-TC-001",
-      "telemetry_stream": "amqp://mq.gbogeb.internal/signals/a66",
+      "telemetry_stream": "g4.a66.status",
       "lifecycle_gate": "L8_Verification"
     },
     "Helium_Refrigeration": {
