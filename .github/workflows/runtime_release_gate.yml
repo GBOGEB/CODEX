@@ -1,0 +1,54 @@
+name: Runtime Release Gate
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  release-gate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Execute federation bridge
+        run: |
+          python docs/wave_packages/runtime/federation_bridge_cli.py
+
+      - name: Generate reality tracker
+        run: |
+          python docs/wave_packages/runtime/reality_tracker.py
+
+      - name: Enforce deployment threshold
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          deploy = json.loads(Path('docs/wave_packages/runtime/out/deployment_readiness.json').read_text())
+          reality = json.loads(Path('docs/wave_packages/runtime/out/reality_tracker.json').read_text())
+
+          deploy_score = deploy['completion_percent']
+          reality_score = reality['average_actual']
+
+          print(f'Deployment score: {deploy_score}')
+          print(f'Reality score: {reality_score}')
+
+          if deploy_score < 90:
+              raise SystemExit('Deployment readiness below release threshold')
+
+          if reality_score < 60:
+              raise SystemExit('Reality alignment below release threshold')
+          PY
+
+      - name: Verify runtime artifacts
+        run: |
+          test -f docs/wave_packages/runtime/out/reality_tracker.json
+          test -f docs/wave_packages/runtime/out/federation_bridge_build_report.json
+          test -f docs/wave_packages/runtime/pages/plotly_runtime_dashboard.html
