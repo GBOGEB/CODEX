@@ -13,8 +13,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install Base Core Dependencies
-        run: pip install numpy pandas pyyaml
       - name: Execute Core Script Compilation Verification
         run: |
           if [ -f src/abacus_render_pipeline/orchestrate.py ]; then

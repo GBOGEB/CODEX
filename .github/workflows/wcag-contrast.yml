@@ -13,17 +13,26 @@ jobs:
           python-version: '3.11'
       - name: Execute WCAG Node Assessment
         run: |
-          python -c "
-import sys
-# Simplified programmatic check matching the G5 invariant baseline
-# Enforces dark warning card background: #4A3110 and text: #FFE9A3
-bg, text = [0.29, 0.19, 0.06], [1.0, 0.91, 0.64] # sRGB linear approximations
-lum_bg = 0.2126*bg[0] + 0.7152*bg[1] + 0.0722*bg[2]
-lum_txt = 0.2126*text[0] + 0.7152*text[1] + 0.0722*text[2]
-ratio = (lum_txt + 0.05) / (lum_bg + 0.05)
-print(f'Calculated Target Contrast Ratio: {ratio:.2f}:1')
-if ratio < 4.5:
-    print('CRITICAL FAILURE: Theme breaches the WCAG AA 4.5:1 requirement boundary.')
-    sys.exit(1)
-print('SUCCESS: Contrast boundary invariant verified.')
-          "
+         python - <<'PY'
+         import sys
+
+         def hex_to_luminance(hex_val):
+             hex_val = hex_val.lstrip("#")
+             rgb = tuple(int(hex_val[i : i + 2], 16) / 255.0 for i in (0, 2, 4))
+             linear = [
+                 value / 12.92 if value <= 0.03928 else ((value + 0.055) / 1.055) ** 2.4
+                 for value in rgb
+             ]
+             return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+
+         bg_hex = "#4A3110"
+         txt_hex = "#FFE9A3"
+         lum_bg = hex_to_luminance(bg_hex)
+         lum_txt = hex_to_luminance(txt_hex)
+         ratio = (max(lum_bg, lum_txt) + 0.05) / (min(lum_bg, lum_txt) + 0.05)
+         print(f"Calculated target contrast ratio: {ratio:.2f}:1")
+         if ratio < 4.5:
+             print("CRITICAL FAILURE: Theme breaches the WCAG AA 4.5:1 requirement boundary.")
+             sys.exit(1)
+         print("SUCCESS: Contrast boundary invariant verified.")
+         PY

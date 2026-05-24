@@ -13,11 +13,19 @@ jobs:
           python-version: '3.11'
       - name: Verify Cross-Format Structural Alignment (HTML <-> Markdown)
         run: |
-          python -c "
-import os
-html_exists = os.path.exists('docs/deck-systems/abacus-render-pipeline/dashboard.html')
-md_exists = os.path.exists('README.md')
-print('Parity Assessment Active')
-if not (html_exists and md_exists):
-    print('Warning: Outbound documentation mismatch detected.')
-          "
+         python - <<'PY'
+         import os
+         import sys
+
+         html_exists = os.path.exists(
+             "docs/deck-systems/abacus-render-pipeline/runtime_dashboard.html"
+         )
+         md_exists = os.path.exists(
+             "docs/deck-systems/abacus-render-pipeline/runtime_summary.md"
+         )
+         print("Parity Assessment Active")
+         if not (html_exists and md_exists):
+             print("Failure: runtime HTML/Markdown parity outputs are not both present.")
+             sys.exit(1)
+         print("Parity check passed.")
+         PY
