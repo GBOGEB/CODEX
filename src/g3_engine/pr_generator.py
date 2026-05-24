@@ -33,7 +33,7 @@ def issue_g3_pull_request(repo_slug: str, head_branch: str, pr_title: str, pr_bo
 
     if response.status_code == 201:
         try:
-            pr_url = response.json().get("html_url", "(url unavailable)")
+            pr_url = response.json().get("html_url", "URL not provided in response")
         except JSONDecodeError as exc:
             print(f"PR create failed: invalid JSON response ({exc})")
             return False
