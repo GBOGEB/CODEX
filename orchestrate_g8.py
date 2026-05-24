@@ -27,7 +27,7 @@ class ExergyInputs(TypedDict):
     power_input_kw: float
 
 
-BUILDOUT_TODO_ITEMS: list[str] = []
+BUILDOUT_TODO_STATUS = "No open buildout TODO items."
 
 
 def _load_warning_dark_invariant(manifest: dict) -> WarningDarkInvariant:
@@ -153,11 +153,7 @@ $$CR = \\frac{{L_{{lightest}} + 0.05}}{{L_{{darkest}} + 0.05}}$$
 
     todo_output = ROOT / "outputs" / "g8_buildout_todo.md"
     todo_output.parent.mkdir(parents=True, exist_ok=True)
-    todo_lines = ["# G8 Buildout TODO", ""]
-    if BUILDOUT_TODO_ITEMS:
-        todo_lines.extend(f"- [ ] {item}" for item in BUILDOUT_TODO_ITEMS)
-    else:
-        todo_lines.append("- [x] No open buildout TODO items.")
+    todo_lines = ["# G8 Buildout TODO", "", f"- [x] {BUILDOUT_TODO_STATUS}"]
     todo_output.write_text(
         "\n".join(todo_lines) + "\n",
         encoding="utf-8",
