@@ -43,3 +43,11 @@
 
 ## 7) YAML Glossary Linkage
 - See `MANIFEST/FEDERATION_GLOSSARY.yaml`.
+
+## 8) Missing Buildout Notes / TODO
+- Missing automation hooks:
+  - [ ] Pull lineage/build/deploy state directly from both repos.
+  - [ ] Attach CI/CD run URLs and commit SHAs for each cycle row.
+  - [ ] Compute and publish PCA/DMAIC/ANOVA outputs instead of manual summaries.
+- TODO owner:
+- TODO due date (UTC):
