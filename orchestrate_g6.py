@@ -5,8 +5,8 @@ from semantic_substrate.renderer.contrast_validator import ContrastValidator
 
 MISSING_BUILDOUT_TODOS = [
     "Load claimed/actual wave series from governed manifests.",
-    "Write generated pages to docs/ or outputs/html/ instead of repository root.",
-    "Do not overwrite README.md; append attestation summary in a dedicated section/file.",
+    "Write generated pages to docs/ or outputs/html/ instead of repository root (and register docs HTML in MANIFEST.json).",
+    "Current scaffold overwrites README.md; final buildout should emit a dedicated attestation file.",
     "Add tests for attestation hash inputs and generated artifact paths.",
 ]
 
