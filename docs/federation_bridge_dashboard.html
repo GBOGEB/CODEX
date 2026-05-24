@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ABACUS ↔ CODEX Federation Dashboard</title>
+  <style>
+    :root { --bg:#0b1220; --panel:#121b2f; --card:#1a2540; --line:#33446f; --txt:#edf2ff; --muted:#9cb0df; --ok:#50d890; --warn:#ffcb6b; --info:#8ad3ff; }
+    body { margin:0; font-family:Inter,Arial,sans-serif; background:var(--bg); color:var(--txt); }
+    main { max-width:1200px; margin:0 auto; padding:20px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; }
+    h1,h2,h3 { margin:0 0 10px; }
+    .muted { color:var(--muted); }
+    table { width:100%; border-collapse:collapse; }
+    th,td { border-bottom:1px solid var(--line); padding:8px; text-align:left; }
+    .pill { display:inline-block; border:1px solid var(--line); border-radius:999px; padding:2px 8px; margin-right:6px; font-size:.85rem; }
+    a { color:var(--info); }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Federation Bridge Dashboard</h1>
+  <p class="muted">Future-proof planning template for <strong>GBOGEB/CODEX</strong> and <strong>GBOGEB/ABACUS</strong>. Tracks lineage, build/deploy, CI/CD and wave analytics.</p>
+
+  <section class="grid">
+    <article class="card">
+      <h3>Cycle Definition</h3>
+      <p>One cycle is complete when:</p>
+      <ul>
+        <li>Repo cloned locally from GitHub, or</li>
+        <li>Local branch pushed to source remote.</li>
+      </ul>
+      <span class="pill">Scope: Federation</span>
+      <span class="pill">Mode: Clone ↔ Push</span>
+    </article>
+
+    <article class="card">
+      <h3>Progress (Claimed vs Actual)</h3>
+      <table>
+        <tr><th>Lane</th><th>Claimed</th><th>Actual</th></tr>
+        <tr><td>Lineage mapping</td><td>100%</td><td>Template staged</td></tr>
+        <tr><td>Build/deploy spec</td><td>100%</td><td>Template staged</td></tr>
+        <tr><td>CI/CD map</td><td>100%</td><td>Template staged</td></tr>
+      </table>
+    </article>
+
+    <article class="card">
+      <h3>Wave Analytics Lanes</h3>
+      <ul>
+        <li><strong>PCA:</strong> principal variance across pipeline events.</li>
+        <li><strong>DMAIC:</strong> Define/Measure/Analyze/Improve/Control lifecycle.</li>
+        <li><strong>ANOVA:</strong> covariance drift checks between waves.</li>
+      </ul>
+    </article>
+  </section>
+
+  <section class="card" style="margin-top:12px;">
+    <h2>Primary Artifacts</h2>
+    <ul>
+      <li><a href="federation_input_template.md">federation_input_template.md</a> (render-ready markdown source)</li>
+      <li><a href="slides_html.html">slides_html.html</a> (slide-like visual brief)</li>
+      <li><a href="dashboard.html">dashboard.html</a> (existing operations dashboard)</li>
+      <li><a href="https://github.com/GBOGEB/CODEX">GBOGEB/CODEX</a></li>
+      <li><a href="https://github.com/GBOGEB/ABACUS">GBOGEB/ABACUS</a></li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>
