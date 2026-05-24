@@ -24,36 +24,24 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest
 
-      - name: Generate runtime markdown
+      - name: Execute full federation bridge
         run: |
-          python docs/wave_packages/runtime/render_markdown_runtime.py
-
-      - name: Generate runtime HTML
-        run: |
-          python docs/wave_packages/runtime/render_html_runtime.py
-
-      - name: Generate topology graph
-        run: |
-          python docs/wave_packages/runtime/topology_renderer.py
-
-      - name: Generate Plotly dashboard
-        run: |
-          python docs/wave_packages/runtime/plotly_runtime_dashboard.py
-
-      - name: Generate statistics PCA report
-        run: |
-          python docs/wave_packages/runtime/statistics_pca_runtime.py
+          python docs/wave_packages/runtime/federation_bridge_cli.py
 
       - name: Run runtime tests
         run: |
           pytest tests/test_runtime_validation.py
 
-      - name: Verify runtime artifacts
+      - name: Verify bridge reports
         run: |
+          test -f docs/wave_packages/runtime/out/federation_bridge_build_report.json
+          test -f docs/wave_packages/runtime/out/federation_bridge_build_report.md
           test -f docs/wave_packages/runtime/out/runtime_status.md
+          test -f docs/wave_packages/runtime/out/topology_runtime.mmd
+          test -f docs/wave_packages/runtime/out/statistics_pca_report.json
           test -f docs/wave_packages/runtime/pages/index.html
           test -f docs/wave_packages/runtime/pages/plotly_runtime_dashboard.html
-          test -f docs/wave_packages/runtime/out/statistics_pca_report.json
+          test -f docs/wave_packages/runtime/pages/runtime_bundle_index.html
 
       - name: Upload runtime artifacts
         uses: actions/upload-artifact@v4
