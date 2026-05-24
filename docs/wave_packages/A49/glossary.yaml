@@ -34,11 +34,45 @@ terms:
   seniority_rank:
     definition: "Governance authority derived from maturity, lineage depth, survivability cycles, and recursive reuse."
 
+  maturity:
+    definition: "Current operational stability of a domain or capability."
+    equation: "maturity = stabilized_capabilities / total_capabilities"
+
+  completion:
+    definition: "Implemented and evidence-backed scope."
+    equation: "completion = closed_items / total_items"
+
+  convergence:
+    definition: "Alignment with federation and topology goals."
+    equation: "convergence = aligned_domains / total_domains"
+
+  survivability:
+    definition: "Continuity under deployment, rollback, or drift."
+    equation: "survivability = resilient_paths / total_paths"
+
   propagation_gain:
-    definition: "Expected downstream improvement created by a change across dependent waves, repositories, and artifacts."
+    definition: "Downstream recursive improvement from a change across dependent waves, repositories, and artifacts."
+    equation: "propagation_gain = sum(downstream_impact_i)"
+
+  schema_federation:
+    definition: "Shared schema contracts and data exchange protocols between ABACUS, BRIDGE, and CODEX repositories."
+
+  deployment_covariance:
+    definition: "Cross-repository deployment correlation and synchronization requirements."
+
+  bridge_continuity:
+    definition: "Preservation of BRIDGE schema contracts and feed integrity across runtime updates."
+
+  PCA:
+    abbr: "Principal Component Analysis"
+    definition: "Dimensionality reduction technique for identifying dominant variance patterns in multi-domain KPI data."
+
+  covariance:
+    definition: "Statistical measure of how two variables change together, used for trust-weighted arbitration between backend sources."
 
   leverage_domain:
     definition: "A domain where small changes produce disproportionate ecosystem-wide benefit."
 
   dependency_compression:
     definition: "Reduction of critical-path depth, translation layers, synchronization drag, and operational latency."
+    equation: "compression = baseline_path - optimized_path"
