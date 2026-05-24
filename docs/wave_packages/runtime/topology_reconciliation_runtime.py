@@ -19,7 +19,11 @@ REQUIRED_NODES = [
 
 
 def _normalize_node(value: str) -> str:
-    """Convert node labels to lowercase snake_case tokens for matching."""
+    """Convert node labels to lowercase snake_case tokens for matching.
+
+    Non-alphanumeric characters are collapsed into underscores so labels from
+    different topology sections can be matched with the same token scheme.
+    """
     return re.sub(r'[^a-z0-9]+', '_', str(value).lower()).strip('_')
 
 
@@ -65,7 +69,7 @@ def reconcile() -> dict:
     if persisted:
         status = 'reconciled-persisted'
     elif missing:
-        status = 'reconciled-recorded'
+        status = 'reconciled-already-recorded'
     else:
         status = 'already-consistent'
 

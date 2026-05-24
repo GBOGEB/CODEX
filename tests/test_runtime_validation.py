@@ -50,13 +50,14 @@ def test_topology_reconciliation_deduplicates_recorded_nodes(tmp_path, monkeypat
 
     first_report = topology_reconciliation_runtime.reconcile()
     second_report = topology_reconciliation_runtime.reconcile()
+    expected_missing = topology_reconciliation_runtime.REQUIRED_NODES[1:]
 
     assert first_report['status'] == 'reconciled-persisted'
-    assert second_report['status'] == 'reconciled-recorded'
+    assert second_report['status'] == 'reconciled-already-recorded'
     assert second_report['reconciled_nodes'] == []
     assert 'runtime_bridge' not in first_report['missing_nodes']
+    assert set(second_report['missing_nodes']) == set(expected_missing)
 
     persisted = json.loads(topology_path.read_text(encoding='utf-8'))
-    assert persisted['reconciled_nodes'].count('synchronization_engine') == 1
-    assert persisted['reconciled_nodes'].count('plotly_runtime_dashboard') == 1
-    assert persisted['reconciled_nodes'].count('pages_runtime') == 1
+    for node in expected_missing:
+        assert persisted['reconciled_nodes'].count(node) == 1
