@@ -49,7 +49,7 @@ def main() -> None:
     fig = make_subplots(
         rows=2,
         cols=2,
-        specs=[[{'type':'scatter'}, {'type':'polar'}],
+        specs=[[{'type':'xy'}, {'type':'polar'}],
                [{'type':'heatmap'}, {'type':'scene'}]],
         subplot_titles=(
             'Wave Completion Progression',

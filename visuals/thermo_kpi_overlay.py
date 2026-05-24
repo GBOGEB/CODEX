@@ -1,20 +1,15 @@
 import plotly.graph_objects as go
 from pathlib import Path
+import yaml
 
 
 def main() -> None:
-    metrics = [
-        'Entropy',
-        'Density',
-        'JT',
-        'NIST',
-        'CoolProp',
-        'REFPROP',
-        'HEPAK',
-        'He-II',
-    ]
-
-    scores = [34, 41, 27, 43, 18, 12, 9, 6]
+    manifest_path = Path(__file__).parent.parent / 'MANIFEST' / 'THERMODYNAMIC_KPIS.yaml'
+    with manifest_path.open('r', encoding='utf-8') as f:
+        data = yaml.safe_load(f)
+    kpis = data['thermodynamic_kpis']['metrics']
+    metrics = [kpi['name'] for kpi in kpis]
+    scores = [kpi['score'] for kpi in kpis]
 
     fig = go.Figure(
         data=[
