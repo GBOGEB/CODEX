@@ -28,7 +28,7 @@ def execute_g8_lifecycle_validation():
         mass_flow_he=11.5, h_in=15.0, h_out=32.0, s_in=0.03, s_out=0.06, power_input_kw=210.0
     )
 
-    state_token = f"G8-VALIDATION-CR:{contrast_results['contrast_ratio']}-EXERGY:{calculated_exergy:.4f}"
+    state_token = f"G8-VALIDATION-CR:{contrast_results['contrast_ratio_raw']:.12f}-EXERGY:{calculated_exergy:.4f}"
     g8_hash = hashlib.sha256(state_token.encode()).hexdigest()[:16].upper()
 
     files_html = f"""<!DOCTYPE html>

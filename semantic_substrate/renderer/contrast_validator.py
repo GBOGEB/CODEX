@@ -42,6 +42,7 @@ class ContrastValidator:
             "background": background,
             "text": text,
             "contrast_ratio": round(ratio, 2),
+            "contrast_ratio_raw": ratio,
             "passes_wcag_aa": ratio >= 4.5,
             "passes_wcag_aaa": ratio >= 7.0,
         }
