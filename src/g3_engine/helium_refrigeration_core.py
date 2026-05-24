@@ -39,5 +39,5 @@ class CryogenicHeliumEngine:
         return float(sum((x - mc) * (y - ma) for x, y in zip(c, a)) / (len(c) - 1))
 
     def calculate_anova_variance(self, claimed_vector: list[float], actual_vector: list[float]) -> float:
-        """Backward-compatible alias for older callers."""
+        """Deprecated: use calculate_covariance(); retained for backward compatibility."""
         return self.calculate_covariance(claimed_vector, actual_vector)

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+from json import JSONDecodeError
 import os
 import requests
-from requests.exceptions import JSONDecodeError
 
 
 def issue_g3_pull_request(repo_slug: str, head_branch: str, pr_title: str, pr_body_markdown: str) -> bool:
