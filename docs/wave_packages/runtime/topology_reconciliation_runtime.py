@@ -19,7 +19,7 @@ REQUIRED_NODES = [
 
 
 def _normalize_node(value: str) -> str:
-    return re.sub(r'[^a-z0-9]+', '_', str(value).strip().lower()).strip('_')
+    return re.sub(r'[^a-z0-9]+', '_', str(value).lower()).strip('_')
 
 
 def _extract_structured_nodes(topology: dict) -> set[str]:
@@ -60,9 +60,16 @@ def reconcile() -> dict:
             TOPOLOGY.write_text(json.dumps(topology, indent=2, sort_keys=True) + '\n', encoding='utf-8')
             persisted = True
 
+    if persisted:
+        status = 'reconciled-persisted'
+    elif missing:
+        status = 'reconciled-recorded'
+    else:
+        status = 'already-consistent'
+
     return {
         'timestamp': datetime.now(timezone.utc).isoformat(),
-        'status': 'reconciled-persisted' if persisted else ('reconciled-recorded' if missing else 'already-consistent'),
+        'status': status,
         'missing_nodes': missing,
         'reconciled_nodes': reconciled,
         'persisted_topology': persisted,
