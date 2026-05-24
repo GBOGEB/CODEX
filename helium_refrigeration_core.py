@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import numpy as np
+from src.gistau_ch15.kernels.exergy import specific_flow_exergy
 
 
 class CryogenicHeliumEngine:
@@ -19,19 +19,31 @@ class CryogenicHeliumEngine:
         entropy_out,
         power_kw,
     ):
-        delta_h = enthalpy_out - enthalpy_in
-        delta_s = entropy_out - entropy_in
-        exergy_change = delta_h - (self.T0 * delta_s)
+        exergy_change = specific_flow_exergy(
+            h_j_kg=enthalpy_out,
+            s_j_kgk=entropy_out,
+            h0_j_kg=enthalpy_in,
+            s0_j_kgk=entropy_in,
+            t0_k=self.T0,
+        )
         useful_exergy_power = mass_flow * exergy_change
 
         if power_kw <= 0:
             return 0.0
         return min(max(useful_exergy_power / power_kw, 0.0), 1.0)
 
-    def calculate_anova_variance(self, claimed_vector, actual_vector):
-        c = np.array(claimed_vector, dtype=float)
-        a = np.array(actual_vector, dtype=float)
+    def calculate_covariance(self, claimed_vector, actual_vector):
+        c = [float(value) for value in claimed_vector]
+        a = [float(value) for value in actual_vector]
         if len(c) != len(a) or len(c) < 2:
             return 0.0
-        covariance_matrix = np.cov(c, a)
-        return float(covariance_matrix[0, 1])
+
+        c_mean = sum(c) / len(c)
+        a_mean = sum(a) / len(a)
+        covariance = sum(
+            (claimed - c_mean) * (actual - a_mean) for claimed, actual in zip(c, a)
+        ) / (len(c) - 1)
+        return float(covariance)
+
+    def calculate_anova_variance(self, claimed_vector, actual_vector):
+        return self.calculate_covariance(claimed_vector, actual_vector)

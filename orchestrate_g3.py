@@ -1,14 +1,31 @@
 #!/usr/bin/env python3
+import json
+from pathlib import Path
+
 from helium_refrigeration_core import CryogenicHeliumEngine
 
 
+def _load_matrix(matrix_path: Path) -> dict:
+    with matrix_path.open("r", encoding="utf-8") as matrix_file:
+        return json.load(matrix_file)
+
+
+def _upstream_url(repo: str, file_path: str) -> str:
+    return f"https://github.com/{repo}/blob/main/{file_path}"
+
+
 def compile_g3_dashboard():
+    repo_root = Path(__file__).resolve().parent
+    output_dir = repo_root / "outputs" / "html"
+    output_dir.mkdir(parents=True, exist_ok=True)
+
     engine = CryogenicHeliumEngine()
+    matrix = _load_matrix(repo_root / "g3_deep_matrix.json")
 
     claimed_waves = [0.20, 0.40, 0.60, 0.80, 1.00]
     actual_waves = [0.18, 0.39, 0.55, 0.79, 0.98]
 
-    anova_covariance = engine.calculate_anova_variance(claimed_waves, actual_waves)
+    covariance = engine.calculate_covariance(claimed_waves, actual_waves)
     exergy_sample = engine.compute_exergy_efficiency(
         mass_flow=11.5,
         enthalpy_in=10.5,
@@ -16,6 +33,28 @@ def compile_g3_dashboard():
         entropy_in=0.05,
         entropy_out=0.08,
         power_kw=250.0,
+    )
+
+    tuple_rows = []
+    missing_upstream_paths = []
+    for tuple_data in matrix.get("tuples", []):
+        upstream_repo = tuple_data["upstream"]["repo"]
+        upstream_file = tuple_data["upstream"]["file_path"]
+        tuple_rows.append(
+            "<tr>"
+            f"<td>{tuple_data['component_id']}</td>"
+            f"<td>{tuple_data['scope']}</td>"
+            f"<td><a href=\"{_upstream_url(upstream_repo, upstream_file)}\">{upstream_file}</a></td>"
+            f"<td>{tuple_data['downstream']['file_path']}</td>"
+            "</tr>"
+        )
+        if upstream_repo.lower() == "gbogeb/codex" and not (repo_root / upstream_file).exists():
+            missing_upstream_paths.append(upstream_file)
+
+    missing_todo_lines = (
+        "\n".join(f"- [ ] Add or correct upstream anchor: `{path}`" for path in missing_upstream_paths)
+        if missing_upstream_paths
+        else "- [x] All codex upstream anchors currently resolve to existing files."
     )
 
     files_html = f"""<!DOCTYPE html>
@@ -27,9 +66,7 @@ def compile_g3_dashboard():
     <h2>📁 G3 Deep-Tuple File Topography Lineage Map</h2>
     <table>
         <tr><th>Tuple ID</th><th>Scope Context Block</th><th>Upstream (codex)</th><th>Downstream (abacus)</th></tr>
-        <tr><td>G3-TUPLE-A66</td><td>A66 Development Status</td><td><a href=\"https://github.com/gbogeb/codex\">components/a66/specs.md</a></td><td>controllers/a66_logic.py</td></tr>
-        <tr><td>G3-TUPLE-HE-REF</td><td>Helium Refrigeration Core</td><td>cryo/helium_refrigeration_requirements.md</td><td>physics/helium_refrigeration_core.py</td></tr>
-        <tr><td>G3-TUPLE-GH-PR</td><td>GitHub Pull Request Engine</td><td>.github/workflows/g3_gatekeeper.yml</td><td>automation/pr_generator.py</td></tr>
+        {''.join(tuple_rows)}
     </table>
 </body>
 </html>"""
@@ -43,7 +80,7 @@ def compile_g3_dashboard():
     <h1>📊 G3 Real-Time Wave Telemetry Dashboard</h1>
     <div>A66 Module Status: L4 Verified</div>
     <div>Helium Loop Exergy Efficiency: {exergy_sample*100:.2f}%</div>
-    <div>ANOVA Covariance Metric: {anova_covariance:.6f}</div>
+    <div>Wave Covariance Metric: {covariance:.6f}</div>
 </body>
 </html>"""
 
@@ -59,20 +96,23 @@ def compile_g3_dashboard():
 This platform maps high-level layouts inside **gbogeb/codex** directly to the functional mathematical code engines inside **gbogeb/abacus**.
 
 ### 📈 Current Automated Pipeline Health Metrics
-* **Calculated ANOVA Covariance Parameter:** `{anova_covariance:.6f}`
+* **Calculated Wave Covariance Parameter:** `{covariance:.6f}`
 * **Helium Cycle System Exergy Rating:** `{exergy_sample * 100:.2f}%`
 * **Core Development Configuration Track Status:** `G3-Verified Stable Production`
+
+## TODO: Missing Build-Out Anchors
+{missing_todo_lines}
 """
 
-    with open("files.html", "w", encoding="utf-8") as f:
+    with (output_dir / "files.html").open("w", encoding="utf-8") as f:
         f.write(files_html)
-    with open("dashboard.html", "w", encoding="utf-8") as f:
+    with (output_dir / "dashboard.html").open("w", encoding="utf-8") as f:
         f.write(dashboard_html)
-    with open("slides_html.html", "w", encoding="utf-8") as f:
+    with (output_dir / "slides_html.html").open("w", encoding="utf-8") as f:
         f.write(slides_html)
-    with open("README.md", "w", encoding="utf-8") as f:
+    with (output_dir / "README.md").open("w", encoding="utf-8") as f:
         f.write(readme_md)
-    print("✨ Process Success: All 4 production target artifacts compiled and verified for G3.")
+    print(f"✨ Process Success: All 4 production target artifacts compiled to {output_dir}.")
 
 
 if __name__ == "__main__":

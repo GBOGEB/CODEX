@@ -3,6 +3,7 @@ import os
 import sys
 
 import requests
+from src.github_interface import GitHubInterface
 
 
 def issue_g3_pull_request(repo_slug, head_branch, pr_title, pr_body_markdown):
@@ -11,12 +12,9 @@ def issue_g3_pull_request(repo_slug, head_branch, pr_title, pr_body_markdown):
         print("⚠️ Secret GITHUB_TOKEN environment variable is unassigned. Skipping PR generation.")
         return False
 
-    url = f"https://api.github.com/repos/{repo_slug}/pulls"
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Accept": "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
-    }
+    github = GitHubInterface()
+    url = f"{github.api_url}/repos/{repo_slug}/pulls"
+    headers = github.get_api_headers(token)
     payload = {
         "title": pr_title,
         "body": pr_body_markdown,
@@ -25,7 +23,11 @@ def issue_g3_pull_request(repo_slug, head_branch, pr_title, pr_body_markdown):
         "maintainer_can_modify": True,
     }
 
-    response = requests.post(url, json=payload, headers=headers, timeout=30)
+    try:
+        response = requests.post(url, json=payload, headers=headers, timeout=30)
+    except requests.RequestException as exc:
+        print(f"❌ API Pull Request initialization transport error: {exc}")
+        return False
     if response.status_code == 201:
         print(f"🚀 Pull Request opened successfully: {response.json().get('html_url')}")
         return True
