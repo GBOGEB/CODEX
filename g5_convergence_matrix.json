@@ -1,0 +1,40 @@
+{
+  "generation": "G5",
+  "lifecycle_phase": "L8_Integrated_Commissioning",
+  "project_parent": "MINERVA_QPS",
+  "system_owner": "Gert",
+  "federation": {
+    "upstream_canonical": "gbogeb/codex",
+    "downstream_functional": "gbogeb/abacus"
+  },
+  "component_tuples": [
+    {
+      "id": "G5-TUPLE-A66",
+      "domain": "Control & Automation Node",
+      "tag": "CCB.Room_01",
+      "lifecycle_gate": "L4_Detailed_Design_Verified",
+      "upstream_path": "components/a66/specs.md",
+      "downstream_path": "controllers/a66_logic.py"
+    },
+    {
+      "id": "G5-TUPLE-HE-REF",
+      "domain": "Cryogenic System Engineering",
+      "tag": "AUB.Room_02",
+      "lifecycle_gate": "L8_Integrated_Commissioning",
+      "modes": {
+        "2K-SB": { "signal_id": "HE_STATIC_BENCHMARK", "target_efficiency": 0.35 },
+        "2K-OP": { "signal_id": "HE_DYNAMIC_OPERATIONAL", "nominal_flow_g_s": 11.5 }
+      },
+      "upstream_path": "cryo/helium_refrigeration_requirements.md",
+      "downstream_path": "physics/helium_refrigeration_core.py"
+    },
+    {
+      "id": "G5-TUPLE-GH-PR",
+      "domain": "CI/CD Infrastructure Engine",
+      "tag": "CLOUD.Runner",
+      "lifecycle_gate": "Continuous_Deployment_100",
+      "upstream_path": ".github/workflows/g5_execution_gate.yml",
+      "downstream_path": "automation/pr_generator.py"
+    }
+  ]
+}

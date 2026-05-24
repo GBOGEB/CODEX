@@ -1,0 +1,38 @@
+name: G5 Unified Lifecycle Execution & Deployment Gateway
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  g5-build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code Architecture
+      uses: actions/checkout@v4
+
+    - name: Initialize G5 Python Environment
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install Analytical Processing Libraries
+      run: |
+        python -m pip install --upgrade pip
+        pip install numpy pandas pyyaml requests
+
+    - name: Execute G5 Master Orchestrator and Bake Artifacts
+      run: python orchestrate_g5.py
+
+    - name: Archive and Publish Telemetry Visualizations to Pages
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: '.'
