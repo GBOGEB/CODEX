@@ -1,0 +1,38 @@
+name: Federation Bridge Build and Deploy Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code Architecture
+        uses: actions/checkout@v4
+
+      - name: Set up Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Analytical Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Execute Pipeline Orchestrator and Artifact Bakery
+        run: |
+          python scripts/orchestrate.py
+          python scripts/orchestrate_g3.py
+
+      - name: Upload generated artifact bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: federation-bridge-artifacts
+          path: |
+            output/federation_bridge/
+            output/federation_bridge/g3/

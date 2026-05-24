@@ -269,3 +269,36 @@ If you publish this repository README as rendered HTML, prefer a **plain-languag
 
 - On iPhone Safari/Chrome, Clipboard API behavior can vary by iOS version and page security context; the prompt fallback keeps the flow usable.
 - If governance requires traceability, store trace IDs in backend logs/metadata rather than forcing end users to copy parameter-heavy URLs.
+
+## One-cycle SDLC, lineage, and CI/CD reference
+
+For a direct, operations-ready definition of one full engineering cycle (clone/sync -> validate -> build -> test -> artifact lineage -> commit/push -> CI/CD gates), see:
+
+- [`LINEAGE_BUILD_DEPLOY_CICD.md`](LINEAGE_BUILD_DEPLOY_CICD.md)
+
+Use this as the 100% completion checklist for build/deploy governance and release readiness.
+
+
+## Federation bridge deployment architecture (gbogeb)
+
+This repository now includes a production-oriented federation bridge baseline for bidirectional sync topology (`gbogeb/codex` <-> `gbogeb/abacus`) and artifact orchestration:
+
+- Bridge manifest: [`federation_bridge/bridge_manifest.yaml`](federation_bridge/bridge_manifest.yaml)
+- Canonical glossary: [`glossary/yaml_glossary.yaml`](glossary/yaml_glossary.yaml)
+- Orchestrator: [`scripts/orchestrate.py`](scripts/orchestrate.py)
+- CI workflow: [`.github/workflows/deploy_pipeline.yml`](.github/workflows/deploy_pipeline.yml)
+
+Running `python scripts/orchestrate.py` generates the four requested outputs under `output/federation_bridge/`:
+`files.html`, `dashboard.html`, `slides.html`, and `README.md`.
+
+
+### G3 deep-tuple build module
+
+For G3 deep topology/lineage execution and metrics bake-out:
+
+- Matrix SSOT: [`federation_bridge/g3/g3_deep_matrix.json`](federation_bridge/g3/g3_deep_matrix.json)
+- Thermodynamic engine: [`src/g3_engine/helium_refrigeration_core.py`](src/g3_engine/helium_refrigeration_core.py)
+- PR automation helper: [`src/g3_engine/pr_generator.py`](src/g3_engine/pr_generator.py)
+- G3 orchestrator: [`scripts/orchestrate_g3.py`](scripts/orchestrate_g3.py)
+
+Run `python scripts/orchestrate_g3.py` to generate G3 artifacts under `output/federation_bridge/g3/`.
