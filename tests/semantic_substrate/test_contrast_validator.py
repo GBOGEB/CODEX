@@ -43,5 +43,5 @@ def test_wcag_aa_boundary_behavior() -> None:
 def test_invalid_hex_rejected(invalid_hex: str) -> None:
     validator = ContrastValidator()
 
-    with pytest.raises(ValueError, match="expected format '#RRGGBB' or '#RGB'|8-digit hex"):
+    with pytest.raises(ValueError, match="Invalid color"):
         validator.validate_theme_node(invalid_hex, "#FFFFFF")
