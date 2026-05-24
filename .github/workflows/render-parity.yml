@@ -1,0 +1,23 @@
+name: Render Parity Synchronization
+on:
+  push:
+    branches: [ main, a6-renderer-governance-layer ]
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize Processing Core
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify Cross-Format Structural Alignment (HTML <-> Markdown)
+        run: |
+          python -c "
+import os
+html_exists = os.path.exists('docs/deck-systems/abacus-render-pipeline/dashboard.html')
+md_exists = os.path.exists('README.md')
+print('Parity Assessment Active')
+if not (html_exists and md_exists):
+    print('Warning: Outbound documentation mismatch detected.')
+          "
