@@ -86,7 +86,7 @@ p {{ color: #a1a1aa; font-size: 1.25em; line-height: 1.6; }}
     elif not buildout_todo:
         buildout_todo = ["No open buildout TODO items."]
     todo_lines = "\n".join(f"* [ ] {item}" for item in buildout_todo)
-    report_md = f"""# 🌌 G8 Unified Federation Framework & System Verification Specification
+    g8_report_content = f"""# 🌌 G8 Unified Federation Framework & System Verification Specification
 
 ## 🛡️ Level 8 (L8) Closed-Loop Post-Commissioning Summary
 This control center acts as the final validation layer bridging conceptual designs inside **gbogeb/codex** to deployment realities inside **gbogeb/abacus**.
@@ -117,7 +117,7 @@ $$CR = \\frac{{L_{{lightest}} + 0.05}}{{L_{{darkest}} + 0.05}}$$
         f.write(slides_html)
     report_path = Path("outputs") / "g8_lifecycle_report.md"
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(report_md, encoding="utf-8")
+    report_path.write_text(g8_report_content, encoding="utf-8")
 
     print("✨ Generation 8 Environment successfully synchronized. HTML artifacts and G8 report baked for deployment.")
 
