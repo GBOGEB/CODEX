@@ -1,0 +1,64 @@
+name: Runtime Federation CI
+
+on:
+  push:
+    branches:
+      - a28-glossary-reference-runtime
+  pull_request:
+
+jobs:
+  runtime-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+
+      - name: Generate runtime markdown
+        run: |
+          python docs/wave_packages/runtime/render_markdown_runtime.py
+
+      - name: Generate runtime HTML
+        run: |
+          python docs/wave_packages/runtime/render_html_runtime.py
+
+      - name: Generate topology graph
+        run: |
+          python docs/wave_packages/runtime/topology_renderer.py
+
+      - name: Generate Plotly dashboard
+        run: |
+          python docs/wave_packages/runtime/plotly_runtime_dashboard.py
+
+      - name: Generate statistics PCA report
+        run: |
+          python docs/wave_packages/runtime/statistics_pca_runtime.py
+
+      - name: Run runtime tests
+        run: |
+          pytest tests/test_runtime_validation.py
+
+      - name: Verify runtime artifacts
+        run: |
+          test -f docs/wave_packages/runtime/out/runtime_status.md
+          test -f docs/wave_packages/runtime/pages/index.html
+          test -f docs/wave_packages/runtime/pages/plotly_runtime_dashboard.html
+          test -f docs/wave_packages/runtime/out/statistics_pca_report.json
+
+      - name: Upload runtime artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-federation-artifacts
+          path: |
+            docs/wave_packages/runtime/out/
+            docs/wave_packages/runtime/pages/
