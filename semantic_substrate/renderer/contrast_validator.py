@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 
+from src.renderers.theme_runtime import SemanticThemeRuntime
+
+
 class ContrastValidator:
     def __init__(self):
+        warning_dark = SemanticThemeRuntime().resolve("warning", "dark")
         self.target_invariants = {
             "warning": {
-                "dark": {"background": "#4A3110", "text": "#FFE9A3"}
+                "dark": {"background": warning_dark.background, "text": warning_dark.text}
             }
         }
 
