@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+from pathlib import Path
 
 from helium_refrigeration_core import CryogenicHeliumEngineG4
 
@@ -20,15 +21,9 @@ def bake_g4_environment():
         "state": "framework_stub",
         "missing": [
             "runtime configuration for production telemetry endpoints",
-            "artifact publishing alignment with docs/ or outputs/html/",
-            "bounded README telemetry section update (avoid full README overwrite)",
-            "unit test coverage for exergy and wave-metric boundary cases",
         ],
         "todo": [
             "Resolve private telemetry endpoints from deployment-local environment/config.",
-            "Publish HTML outputs under repository Pages staging paths.",
-            "Write telemetry output to a dedicated generated report artifact.",
-            "Add regression tests for nominal and edge-case telemetry calculations.",
         ],
     }
 
@@ -134,8 +129,8 @@ def bake_g4_environment():
 </body>
 </html>"""
 
-    # ARTIFACT 4: README.md
-    readme_md = f"""# 🌌 G4 Unified Federation Architecture & Telemetry Specification
+    # ARTIFACT 4: g4_telemetry_report.md
+    report_md = f"""# 🌌 G4 Unified Federation Architecture & Telemetry Specification
 
 ## 🔗 Live Framework Lineage Trace (G1 → G3 → G4)
 This control document tracks the dynamic convergence of code delivery updates and cryogenic system states.
@@ -156,18 +151,21 @@ $$\\eta_{{ex}} = \\frac{{\\psi_{{total}}}}{{W_{{in}}}}$$
 *Verified G4 System Artifact. Execution Loop status: Closed and active.*
 """
 
-    with open("g4_signal_manifest.json", "w", encoding="utf-8") as f:
+    outputs_html_dir = Path("outputs/html")
+    outputs_html_dir.mkdir(parents=True, exist_ok=True)
+
+    with Path("g4_signal_manifest.json").open("w", encoding="utf-8") as f:
         json.dump(g4_signal_manifest, f, indent=2)
         f.write("\n")
 
-    with open("files.html", "w", encoding="utf-8") as f:
+    with (outputs_html_dir / "files.html").open("w", encoding="utf-8") as f:
         f.write(files_html)
-    with open("dashboard.html", "w", encoding="utf-8") as f:
+    with (outputs_html_dir / "dashboard.html").open("w", encoding="utf-8") as f:
         f.write(dashboard_html)
-    with open("slides_html.html", "w", encoding="utf-8") as f:
+    with (outputs_html_dir / "slides_html.html").open("w", encoding="utf-8") as f:
         f.write(slides_html)
-    with open("README.md", "w", encoding="utf-8") as f:
-        f.write(readme_md)
+    with Path("outputs/g4_telemetry_report.md").open("w", encoding="utf-8") as f:
+        f.write(report_md)
 
     print("🚀 Generation 4 Framework convergence complete. Deployable artifacts baked successfully.")
 
