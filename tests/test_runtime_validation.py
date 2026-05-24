@@ -50,7 +50,10 @@ def test_topology_reconciliation_deduplicates_recorded_nodes(tmp_path, monkeypat
 
     first_report = topology_reconciliation_runtime.reconcile()
     second_report = topology_reconciliation_runtime.reconcile()
-    expected_missing = topology_reconciliation_runtime.REQUIRED_NODES[1:]
+    expected_missing = [
+        node for node in topology_reconciliation_runtime.REQUIRED_NODES
+        if node != 'runtime_bridge'
+    ]
 
     assert first_report['status'] == 'reconciled-persisted'
     assert second_report['status'] == 'reconciled-already-recorded'

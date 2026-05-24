@@ -49,7 +49,7 @@ def reconcile() -> dict:
 
     topology = json.loads(TOPOLOGY.read_text(encoding='utf-8'))
     if not isinstance(topology, dict):
-        return {'status': 'invalid-topology', 'detail': 'Topology JSON must be an object'}
+        return {'status': 'invalid-topology', 'detail': f'Expected dictionary, got {type(topology).__name__}'}
 
     structured_nodes = _extract_structured_nodes(topology)
     missing = [node for node in REQUIRED_NODES if node not in structured_nodes]
@@ -58,9 +58,11 @@ def reconcile() -> dict:
     persisted = False
     if missing:
         topology.setdefault('reconciled_nodes', [])
+        recorded_nodes = set(topology['reconciled_nodes'])
         for node in missing:
-            if node not in topology['reconciled_nodes']:
+            if node not in recorded_nodes:
                 topology['reconciled_nodes'].append(node)
+                recorded_nodes.add(node)
                 reconciled.append(node)
         if reconciled:
             TOPOLOGY.write_text(json.dumps(topology, indent=2, sort_keys=True) + '\n', encoding='utf-8')
