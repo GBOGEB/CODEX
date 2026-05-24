@@ -10,7 +10,7 @@ except ImportError as e:
     sys.exit(1)
 
 
-def load_wave_progression(manifest_path: Path) -> tuple[list[str], list[int]]:
+def load_wave_progression(manifest_path: Path) -> tuple[list[str], list[float]]:
     """Load wave progression data from YAML manifest."""
     if not manifest_path.exists():
         raise FileNotFoundError(
@@ -18,15 +18,52 @@ def load_wave_progression(manifest_path: Path) -> tuple[list[str], list[int]]:
             f"Expected MANIFEST/WAVE_PROGRESSION.yaml in repository root."
         )
     
-    with open(manifest_path) as f:
+    with open(manifest_path, encoding='utf-8') as f:
         data = yaml.safe_load(f)
-    
+
+    if not isinstance(data, dict):
+        raise ValueError(
+            'Invalid wave progression manifest schema: expected a mapping with a "waves" list.'
+        )
+
+    wave_entries = data.get('waves')
+    if not isinstance(wave_entries, list):
+        raise ValueError(
+            'Invalid wave progression manifest schema: expected "waves" to be a list of '
+            'objects with "wave" and "completion" keys.'
+        )
+
     waves = []
     completion = []
-    
-    for wave_entry in data.get('waves', []):
-        waves.append(wave_entry['wave'])
-        completion.append(wave_entry['completion'])
+
+    for index, wave_entry in enumerate(wave_entries, start=1):
+        if not isinstance(wave_entry, dict):
+            raise ValueError(
+                f'Invalid wave progression manifest schema at waves[{index}]: expected mapping.'
+            )
+
+        if 'wave' not in wave_entry or 'completion' not in wave_entry:
+            raise ValueError(
+                f'Invalid wave progression manifest schema at waves[{index}]: '
+                'required keys are "wave" and "completion".'
+            )
+
+        wave = wave_entry['wave']
+        completion_value = wave_entry['completion']
+
+        if not isinstance(wave, str) or not wave.strip():
+            raise ValueError(
+                f'Invalid wave progression manifest schema at waves[{index}].wave: '
+                'expected non-empty string.'
+            )
+        if not isinstance(completion_value, (int, float)):
+            raise ValueError(
+                f'Invalid wave progression manifest schema at waves[{index}].completion: '
+                'expected number.'
+            )
+
+        waves.append(wave)
+        completion.append(float(completion_value))
     
     return waves, completion
 

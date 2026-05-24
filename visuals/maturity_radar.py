@@ -3,30 +3,67 @@ import sys
 
 try:
     import plotly.graph_objects as go
+    import yaml
 except ImportError as e:
     print(f"Error: Missing required dependency: {e.name}")
-    print("Install with: pip install plotly")
+    print("Install with: pip install plotly pyyaml")
     sys.exit(1)
 
 
+def load_program_metrics(manifest_path: Path) -> tuple[list[str], list[float]]:
+    """Load maturity metrics from governed YAML manifest."""
+    if not manifest_path.exists():
+        raise FileNotFoundError(
+            f"Program metrics manifest not found: {manifest_path}\n"
+            f"Expected MANIFEST/PROGRAM_METRICS.yaml in repository root."
+        )
+
+    with open(manifest_path, encoding='utf-8') as f:
+        data = yaml.safe_load(f)
+
+    if not isinstance(data, dict):
+        raise ValueError(
+            'Invalid program metrics manifest schema: expected top-level mapping.'
+        )
+
+    program_metrics = data.get('program_metrics')
+    if not isinstance(program_metrics, dict):
+        raise ValueError(
+            'Invalid program metrics manifest schema: expected "program_metrics" mapping.'
+        )
+
+    metrics = program_metrics.get('metrics')
+    if not isinstance(metrics, dict) or not metrics:
+        raise ValueError(
+            'Invalid program metrics manifest schema: expected non-empty "metrics" mapping.'
+        )
+
+    categories: list[str] = []
+    values: list[float] = []
+    for metric_name, metric_data in metrics.items():
+        if not isinstance(metric_data, dict):
+            raise ValueError(
+                f'Invalid program metrics manifest schema at metrics.{metric_name}: '
+                'expected mapping containing "score".'
+            )
+        score = metric_data.get('score')
+        if not isinstance(score, (int, float)):
+            raise ValueError(
+                f'Invalid program metrics manifest schema at metrics.{metric_name}.score: '
+                'expected number.'
+            )
+
+        categories.append(metric_name.replace('_', ' ').title())
+        values.append(float(score))
+
+    return categories, values
+
+
 def generate_maturity_radar_chart(output_path: Path) -> None:
-    """Generate maturity radar chart.
-    
-    Note: Currently uses hard-coded values. Future enhancement:
-    load from MANIFEST/PROGRAM_METRICS.yaml for governed KPI tracking.
-    """
-    categories = [
-        'Governance',
-        'Renderer',
-        'CI/CD',
-        'Orchestration',
-        'Visualization',
-        'Thermodynamics',
-        'Validation',
-        'Publication',
-    ]
-    
-    values = [86, 74, 62, 68, 71, 38, 52, 58]
+    """Generate maturity radar chart from governed manifest."""
+    repo_root = Path(__file__).parent.parent
+    manifest_path = repo_root / 'MANIFEST' / 'PROGRAM_METRICS.yaml'
+    categories, values = load_program_metrics(manifest_path)
     
     fig = go.Figure()
     
