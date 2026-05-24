@@ -125,6 +125,16 @@ The following repository structure is a strong default for an unspecified langua
 
 Because language selection is still open, the repository should commit only to the **contract** (`bootstrap`, `test`, `build`, `package`) and defer the implementation to `scripts/*.sh`.
 
+### Current build-out status (framework first)
+
+This guide defines the delivery **framework**, not a fully built implementation. Treat the items below as required follow-up work before production use:
+
+- Implement each `scripts/*.sh` target and keep the `Makefile` contract aligned (`bootstrap`, `lint`, `test`, `build`, `package`).
+- Replace sample GitHub Action version tags with pinned full commit SHAs in hardened repositories.
+- Scope workflow permissions to least privilege per job (for most CI jobs, start with `contents: read`).
+- Define where `package` runs (CI vs release workflow) and keep that choice consistent in docs and workflows.
+- Add and enforce repository-specific release/deploy gates (environments, approvals, attestations, rollback runbooks).
+
 ### Sample CI workflow
 
 ```yaml
