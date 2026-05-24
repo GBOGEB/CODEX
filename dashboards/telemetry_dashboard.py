@@ -2,6 +2,11 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from pathlib import Path
 import yaml
+import sys
+
+# Add parent directory to path to import from visuals
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from visuals.metric_display import normalize_metric_name, abbreviate_metric_name
 
 
 def main() -> None:
@@ -31,30 +36,11 @@ def main() -> None:
     heatmap_values = []
     
     for key, metric in metrics.items():
-        display_name = key.replace('_', ' ').title()
-        if display_name == 'Ci Cd':
-            display_name = 'CI/CD'
-        elif display_name == 'Publication Readiness':
-            display_name = 'Publication'
+        display_name = normalize_metric_name(key)
+        abbrev = abbreviate_metric_name(display_name)
         
         radar_categories.append(display_name)
         radar_values.append(metric['score'])
-        
-        # Abbreviated names for heatmap
-        abbrev = display_name[:6] if len(display_name) > 6 else display_name
-        if display_name == 'Governance':
-            abbrev = 'Gov'
-        elif display_name == 'Orchestration':
-            abbrev = 'Orch'
-        elif display_name == 'Visualization':
-            abbrev = 'Visual'
-        elif display_name == 'Thermodynamics':
-            abbrev = 'Thermo'
-        elif display_name == 'Validation':
-            abbrev = 'Valid'
-        elif display_name == 'Publication':
-            abbrev = 'Pub'
-        
         heatmap_categories.append(abbrev)
         heatmap_values.append(metric['score'])
 

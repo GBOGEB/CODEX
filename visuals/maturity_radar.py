@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
 from pathlib import Path
 import yaml
+from metric_display import normalize_metric_name
 
 
 def main() -> None:
@@ -15,13 +16,7 @@ def main() -> None:
     
     # Extract categories and scores in consistent order
     for key, metric in metrics.items():
-        # Convert key to display name
-        display_name = key.replace('_', ' ').title()
-        if display_name == 'Ci Cd':
-            display_name = 'CI/CD'
-        elif display_name == 'Publication Readiness':
-            display_name = 'Publication'
-        
+        display_name = normalize_metric_name(key)
         categories.append(display_name)
         values.append(metric['score'])
 
