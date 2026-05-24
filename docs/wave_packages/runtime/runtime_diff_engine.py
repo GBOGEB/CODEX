@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import html
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -57,16 +58,22 @@ def build_diff(history: list[dict]) -> dict:
 def render_html(report: dict) -> str:
     rows = []
     for key, value in report.get('diffs', {}).items():
+        key_escaped = html.escape(str(key), quote=True)
+        previous_escaped = html.escape(str(value.get('previous')), quote=True)
+        current_escaped = html.escape(str(value.get('current')), quote=True)
+        delta_escaped = html.escape(str(value.get('delta')), quote=True)
+        trend_escaped = html.escape(str(value.get('trend')), quote=True)
         rows.append(
-            f'<tr><td>{key}</td><td>{value["previous"]}</td><td>{value["current"]}</td><td>{value["delta"]}</td><td>{value["trend"]}</td></tr>'
+            f'<tr><td>{key_escaped}</td><td>{previous_escaped}</td><td>{current_escaped}</td><td>{delta_escaped}</td><td>{trend_escaped}</td></tr>'
         )
+    regression_count_escaped = html.escape(str(report.get('regression_count', 0)), quote=True)
 
     return f'''<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><title>Runtime Diff Dashboard</title></head>
 <body>
 <h1>Runtime Diff Dashboard</h1>
-<p>Regression count: {report.get('regression_count', 0)}</p>
+<p>Regression count: {regression_count_escaped}</p>
 <table border="1" cellpadding="6">
 <tr><th>Metric</th><th>Previous</th><th>Current</th><th>Delta</th><th>Trend</th></tr>
 {''.join(rows)}
