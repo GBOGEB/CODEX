@@ -3,6 +3,13 @@ import hashlib
 
 from semantic_substrate.renderer.contrast_validator import ContrastValidator
 
+MISSING_BUILDOUT_TODOS = [
+    "Load claimed/actual wave series from governed manifests.",
+    "Write generated pages to docs/ or outputs/html/ instead of repository root.",
+    "Do not overwrite README.md; append attestation summary in a dedicated section/file.",
+    "Add tests for attestation hash inputs and generated artifact paths.",
+]
+
 
 def run_g6_attestation_loop():
     validator = ContrastValidator()
@@ -56,6 +63,7 @@ def run_g6_attestation_loop():
 </body>
 </html>"""
 
+    todo_lines = "\n".join(f"- TODO: {item}" for item in MISSING_BUILDOUT_TODOS)
     readme_md = f"""# 🌌 G6 Unified Federation Framework & Deployment Attestation
 
 ## 📈 Verified Pipeline Metrics
@@ -63,6 +71,9 @@ def run_g6_attestation_loop():
 * **Validated Warning Card Text:** `{warning_dark['text']}`
 * **Calculated WCAG Contrast Performance Ratio:** `{contrast_results['contrast_ratio']}:1`
 * **Cryptographic Attestation Token:** `{attestation_hash}`
+
+## 🚧 Incomplete Buildout (Scaffold)
+{todo_lines}
 """
 
     with open("files.html", "w", encoding="utf-8") as f:
