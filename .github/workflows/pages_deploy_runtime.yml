@@ -38,10 +38,9 @@ jobs:
 
       - name: Prepare Pages artifact
         run: |
-          mkdir -p _site
-          cp -r docs/wave_packages/runtime/pages/* _site/
-          cp docs/wave_packages/runtime/out/runtime_diff_dashboard.html _site/
-          cp docs/wave_packages/runtime/out/deployment_readiness.md _site/
+          mkdir -p _site/pages _site/out
+          cp -r docs/wave_packages/runtime/pages/* _site/pages/
+          cp -r docs/wave_packages/runtime/out/* _site/out/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
