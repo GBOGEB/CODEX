@@ -18,7 +18,6 @@ The output should remain one coherent package, not fifty independent PDFs.
 | CODEX package folder | `docs/wave_packages/A49/` | package root |
 | HTML runtime | `docs/wave_packages/A49/index.html` | hosted / browser view |
 | Markdown slug | `docs/wave_packages/A49/HBHS_EP_WAVE_0_50_REPORT.md` | source report |
-| Manifest | `docs/wave_packages/A49/manifest.json` | artifact registry |
 | Glossary | `docs/wave_packages/A49/glossary.yaml` | canonical terminology |
 
 ## Functional chapter groups
@@ -86,7 +85,7 @@ Every report table should use glossary-governed headings:
 | survivability | continuity under drift/deployment/rollback |
 | completion | implemented, documented, and evidence-backed scope |
 | propagation gain | downstream improvement from a change |
-| weighted priority | weakness x leverage x effort x federation impact |
+| weighted priority | (weakness * propagation_gain * federation_impact) / effort |
 
 ## Process flows
 

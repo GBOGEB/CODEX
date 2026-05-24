@@ -10,8 +10,9 @@ A49 prepares the full grouped reporting package rather than 50 separate PDFs. It
 
 - `HBHS_EP_WAVE_0_50_REPORT.md` - grouped report source
 - `glossary.yaml` - canonical wave/reporting glossary
-- `waves_0_50.json` - wave metrics SSOT
-- `build_wave_package.py` - rebuild skeleton
+- `index.html` - hosted HTML entrypoint
+- `runtime/wave_runtime.ts` - TypeScript runtime helpers
+- `runtime/wave_runtime.js` - compiled JavaScript runtime
 
 ## Key doctrine
 

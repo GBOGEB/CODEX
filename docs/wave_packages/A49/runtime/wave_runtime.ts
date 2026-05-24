@@ -18,9 +18,10 @@ export interface RGLDomain {
 export function weightedPriority(
   weakness: number,
   propagationGain: number,
+  federationImpact: number,
   effort: number
 ): number {
-  return (weakness * propagationGain) / Math.max(effort, 1);
+  return (weakness * propagationGain * federationImpact) / Math.max(effort, 1);
 }
 
 export function describeRGL(): string {

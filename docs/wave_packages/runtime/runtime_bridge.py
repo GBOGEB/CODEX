@@ -11,8 +11,6 @@ Purpose:
 from pathlib import Path
 import json
 
-ROOT = Path(__file__).resolve().parents[1]
-
 class RuntimeBridge:
     def __init__(self):
         self.feed_registry = {}

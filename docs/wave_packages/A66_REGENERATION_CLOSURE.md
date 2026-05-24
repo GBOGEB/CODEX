@@ -32,9 +32,9 @@ A66 focuses only on:
 | synchronization engines | scaffolded | `runtime/synchronization_engine.py` |
 | executable topology | scaffolded | `topology/topology_runtime.json` |
 | KPI federation | specified | `A52_kpi_registry.yaml` |
-| covariance runtime | specified | `analytics/covariance_registry.yaml` |
-| CI reproducibility | scaffolded | `validation/manifest_validator.py` |
-| freshness governance | scaffolded | `runtime/freshness_governance.yaml` |
+| covariance runtime | planned | `analytics/covariance_registry.yaml` (planned) |
+| CI reproducibility | planned | `validation/manifest_validator.py` (planned) |
+| freshness governance | planned | `runtime/freshness_governance.yaml` (planned) |
 | topology-aware orchestration | scaffolded | `runtime/runtime_bridge.py` |
 
 ## Forward runtime flow
