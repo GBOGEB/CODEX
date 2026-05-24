@@ -7,6 +7,7 @@ from semantic_substrate.renderer.contrast_validator import ContrastValidator
 
 
 def execute_g10_final_closure():
+    repo_root = Path(__file__).resolve().parent
     validator = ContrastValidator()
     engine = CryogenicHeliumEngineG10()
 
@@ -24,7 +25,7 @@ def execute_g10_final_closure():
     sig_payload = f"G10-FINAL-CR:{contrast_results['contrast_ratio']}-EXERGY:{exergy:.4f}"
     g10_token = hashlib.sha256(sig_payload.encode()).hexdigest()[:16].upper()
 
-    html_dir = Path("docs/deck-systems/abacus-render-pipeline")
+    html_dir = repo_root / "docs" / "deck-systems" / "abacus-render-pipeline"
     html_dir.mkdir(parents=True, exist_ok=True)
 
     (html_dir / "files.html").write_text(
@@ -34,7 +35,7 @@ def execute_g10_final_closure():
         encoding="utf-8",
     )
 
-    (html_dir / "dashboard.html").write_text(
+    (html_dir / "runtime_overview.html").write_text(
         f"""<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>G10 Dashboard</title></head>
 <body><h1>📊 Generation 10 Converged Telemetry Interface</h1>
 <ul><li>Helium Loop Exergy Efficiency: {exergy * 100:.2f}%</li>
@@ -49,7 +50,7 @@ def execute_g10_final_closure():
         encoding="utf-8",
     )
 
-    Path("g10_production_manifest.json").write_text(
+    (repo_root / "g10_production_manifest.json").write_text(
         """{
   "generation": "G10",
   "lifecycle_phase": "L8_Commissioning_Signed_Off",
@@ -61,18 +62,17 @@ def execute_g10_final_closure():
         encoding="utf-8",
     )
 
-    Path("README.md").write_text(
-        f"""# 🌌 G10 Unified Federation Framework & System Verification Closure
+    (html_dir / "runtime_summary.md").write_text(
+        f"""# G10 Runtime Summary
 
-## 📈 Verified G10 Runtime Summary
-* **A6 Warning Card Text Contrast Performance:** `{contrast_results['contrast_ratio']}:1` (Target: >= 4.5:1)
-* **ANOVA Workspace Velocity Coefficient (R):** `{correlation:.5f}`
-* **Calculated Helium Plant Loop Exergy:** `{exergy * 100:.2f}%`
-* **Immutable System Attestation Token:** `{g10_token}`
+- A6 warning card text contrast: `{contrast_results['contrast_ratio']}:1` (target: >= 4.5:1)
+- ANOVA workspace velocity coefficient (R): `{correlation:.5f}`
+- Calculated helium plant loop exergy: `{exergy * 100:.2f}%`
+- Immutable system attestation token: `{g10_token}`
 """,
         encoding="utf-8",
     )
-    print("✨ Generation 10 Environment successfully synchronized. All 4 target files baked for deployment.")
+    print("✨ Generation 10 environment synchronized. Generated HTML pages, manifest, and runtime summary.")
 
 
 if __name__ == "__main__":

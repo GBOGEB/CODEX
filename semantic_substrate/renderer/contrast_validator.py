@@ -4,13 +4,31 @@ from pathlib import Path
 
 
 class ContrastValidator:
-    def __init__(self, theme_path="semantic_substrate/themes.json"):
-        theme_file = Path(theme_path)
+    def __init__(self, theme_path: str | Path | None = None):
+        if theme_path is None:
+            theme_file = Path(__file__).resolve().parent.parent / "themes.json"
+        else:
+            theme_file = Path(theme_path)
         self.target_invariants = json.loads(theme_file.read_text(encoding="utf-8"))
 
     @staticmethod
-    def _hex_to_rgb(hex_color):
-        hex_color = hex_color.lstrip("#")
+    def _normalize_hex(hex_color: str) -> str:
+        value = hex_color.strip()
+        if not value.startswith("#"):
+            raise ValueError(f"Invalid color '{hex_color}': expected format '#RRGGBB' or '#RGB'.")
+        hex_part = value[1:]
+        if len(hex_part) == 3 and all(ch in "0123456789abcdefABCDEF" for ch in hex_part):
+            return "#" + "".join(ch * 2 for ch in hex_part)
+        if len(hex_part) == 6 and all(ch in "0123456789abcdefABCDEF" for ch in hex_part):
+            return value
+        if len(hex_part) == 8:
+            raise ValueError(f"Invalid color '{hex_color}': 8-digit hex (#RRGGBBAA) is not supported.")
+        raise ValueError(f"Invalid color '{hex_color}': expected format '#RRGGBB' or '#RGB'.")
+
+    @classmethod
+    def _hex_to_rgb(cls, hex_color: str):
+        normalized = cls._normalize_hex(hex_color)
+        hex_color = normalized.lstrip("#")
         return tuple(int(hex_color[i:i + 2], 16) / 255.0 for i in (0, 2, 4))
 
     @staticmethod
