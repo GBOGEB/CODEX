@@ -15,15 +15,15 @@ class ContrastValidator:
     def _normalize_hex(hex_color: str) -> str:
         value = hex_color.strip()
         if not value.startswith("#"):
-            raise ValueError(f"Invalid color '{hex_color}': expected format '#RRGGBB' or '#RGB'.")
+            raise ValueError(f"Invalid color '{value}': expected format '#RRGGBB' or '#RGB'.")
         hex_part = value[1:]
         if len(hex_part) == 3 and all(ch in "0123456789abcdefABCDEF" for ch in hex_part):
             return "#" + "".join(ch * 2 for ch in hex_part)
         if len(hex_part) == 6 and all(ch in "0123456789abcdefABCDEF" for ch in hex_part):
             return value
         if len(hex_part) == 8:
-            raise ValueError(f"Invalid color '{hex_color}': 8-digit hex (#RRGGBBAA) is not supported.")
-        raise ValueError(f"Invalid color '{hex_color}': expected format '#RRGGBB' or '#RGB'.")
+            raise ValueError(f"Invalid color '{value}': 8-digit hex (#RRGGBBAA) is not supported.")
+        raise ValueError(f"Invalid color '{value}': expected format '#RRGGBB' or '#RGB'.")
 
     @classmethod
     def _hex_to_rgb(cls, hex_color: str):
