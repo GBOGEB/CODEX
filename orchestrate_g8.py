@@ -101,10 +101,8 @@ def execute_g8_lifecycle_validation():
         mass_flow_he=11.5, h_in=15.0, h_out=32.0, s_in=0.03, s_out=0.06, power_input_kw=210.0
     )
 
-    contrast_ratio_formatted = f"{contrast_results['contrast_ratio']:.2f}"
-    state_token = f"G8-VALIDATION-CR:{contrast_ratio_formatted}-EXERGY:{calculated_exergy:.4f}"
+    state_token = f"G8-VALIDATION-CR:{contrast_results['contrast_ratio']:.2f}-EXERGY:{calculated_exergy:.4f}"
     g8_hash = hashlib.sha256(state_token.encode()).hexdigest()[:16].upper()
-    component_rows = _render_component_rows(manifest_data)
 
     files_html = f"""<!DOCTYPE html>
 <html lang=\"en\"><head><meta charset=\"UTF-8\"><title>G8 Component Registry</title>
@@ -120,7 +118,7 @@ tr:nth-child(even) {{ background: #111827; }}
 <h2>📁 Generation 8 (G8) Comprehensive Component Traceability Matrix</h2>
 <p><strong>System Core Verification Token:</strong> <code>{g8_hash}</code></p>
 <table><thead><tr><th>Component ID</th><th>Functional Substrate Domain</th><th>Equipment Tag</th><th>Upstream Target (codex)</th><th>Downstream Code (abacus)</th></tr></thead><tbody>
-{component_rows}
+{_render_component_rows(manifest_data)}
 </tbody></table></body></html>"""
 
     dashboard_html = f"""<!DOCTYPE html>
