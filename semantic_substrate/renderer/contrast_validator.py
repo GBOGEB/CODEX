@@ -20,9 +20,7 @@ def _load_warning_dark_invariant() -> dict[str, str]:
     warning = semantic_cards.get("warning", {})
     warning_dark = warning.get("dark", {})
     if not isinstance(warning_dark, dict):
-        raise ValueError(
-            f"Invalid warning.dark mapping in {theme_path}: expected dictionary."
-        )
+        raise ValueError(f"Invalid warning.dark mapping in {theme_path}.")
     if "background" not in warning_dark or "text" not in warning_dark:
         raise ValueError(
             f"Missing required warning.dark colors in {theme_path}: "
@@ -57,14 +55,12 @@ class ContrastValidator:
             raise ValueError(f"Unsupported hex color '{value}'")
         if len(value) == 4:
             value = "#" + "".join(ch * 2 for ch in value[1:])
-        elif len(value) == 7:
-            pass
         elif len(value) == 9:
             raise ValueError(
                 f"8-digit hex (RGBA) not supported for contrast calculation: '{value}'. "
                 "Use 6-digit hex (RGB) only."
             )
-        else:
+        elif len(value) != 7:
             raise ValueError(f"Unsupported hex color '{value}'")
         try:
             int(value[1:], 16)
