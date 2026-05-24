@@ -14,5 +14,12 @@ $$CR = \frac{L_{lightest} + 0.05}{L_{darkest} + 0.05}$$
 * **Calculated Helium Plant Loop Exergy:** `48.52%`
 * **Immutable System Audit Checksum:** `DDFB39D64D852780`
 
+### 🚧 Buildout Gaps (Framework Not Fully Built Out)
+* [ ] Load milestone vectors and invariant colors from g8_lifecycle_manifest.json instead of hard-coded values.
+* [ ] Write generated HTML and run reports to outputs/html/ for Pages publishing alignment.
+* [ ] Emit a dedicated G8 report file instead of overwriting the repository README.md.
+* [ ] Replace calculate_g8_anova naming/labeling with covariance-correlation terminology or implement true ANOVA.
+* [ ] Add pytest coverage for contrast validator and cryogenic engine edge cases.
+
 ---
-*G8 Automated Audit Complete. Codebase deployment state: Fully Hardened and Production Ready.*
+*G8 automated audit baseline complete. Buildout remains in-progress until TODO items are closed.*

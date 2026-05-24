@@ -3,6 +3,14 @@ import hashlib
 from semantic_substrate.renderer.contrast_validator import ContrastValidator
 from physics.helium_refrigeration_core import CryogenicHeliumEngineG8
 
+G8_BUILDOUT_TODO = [
+    "Load milestone vectors and invariant colors from g8_lifecycle_manifest.json instead of hard-coded values.",
+    "Write generated HTML and run reports to outputs/html/ for Pages publishing alignment.",
+    "Emit a dedicated G8 report file instead of overwriting the repository README.md.",
+    "Replace calculate_g8_anova naming/labeling with covariance-correlation terminology or implement true ANOVA.",
+    "Add pytest coverage for contrast validator and cryogenic engine edge cases.",
+]
+
 
 def execute_g8_lifecycle_validation():
     validator = ContrastValidator()
@@ -67,6 +75,7 @@ p {{ color: #a1a1aa; font-size: 1.25em; line-height: 1.6; }}
 <p style=\"color:#10b981;\">System Integrity Token: <code>{g8_hash}</code></p>
 </div></body></html>"""
 
+    todo_lines = "\n".join(f"* [ ] {item}" for item in G8_BUILDOUT_TODO)
     readme_md = f"""# 🌌 G8 Unified Federation Framework & System Verification Specification
 
 ## 🛡️ Level 8 (L8) Closed-Loop Post-Commissioning Summary
@@ -83,8 +92,11 @@ $$CR = \\frac{{L_{{lightest}} + 0.05}}{{L_{{darkest}} + 0.05}}$$
 * **Calculated Helium Plant Loop Exergy:** `{calculated_exergy * 100:.2f}%`
 * **Immutable System Audit Checksum:** `{g8_hash}`
 
+### 🚧 Buildout Gaps (Framework Not Fully Built Out)
+{todo_lines}
+
 ---
-*G8 Automated Audit Complete. Codebase deployment state: Fully Hardened and Production Ready.*
+*G8 automated audit baseline complete. Buildout remains in-progress until TODO items are closed.*
 """
 
     with open("files.html", "w", encoding="utf-8") as f:
