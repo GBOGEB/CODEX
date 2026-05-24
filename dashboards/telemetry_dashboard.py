@@ -4,8 +4,10 @@ from pathlib import Path
 import yaml
 import sys
 
-# Add parent directory to path to import from visuals
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# Import from sibling visuals package
+_repo_root = Path(__file__).parent.parent
+if str(_repo_root) not in sys.path:
+    sys.path.insert(0, str(_repo_root))
 from visuals.metric_display import normalize_metric_name, abbreviate_metric_name
 
 

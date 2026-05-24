@@ -1,5 +1,8 @@
 """Shared utilities for metric display name normalization across visualization scripts."""
 
+# Maximum length for abbreviated metric names
+MAX_ABBREVIATION_LENGTH = 6
+
 
 def normalize_metric_name(key: str) -> str:
     """
@@ -45,5 +48,5 @@ def abbreviate_metric_name(display_name: str) -> str:
     if display_name in abbreviations:
         return abbreviations[display_name]
     
-    # Default: truncate to 6 characters
-    return display_name[:6] if len(display_name) > 6 else display_name
+    # Default: truncate to MAX_ABBREVIATION_LENGTH characters
+    return display_name[:MAX_ABBREVIATION_LENGTH] if len(display_name) > MAX_ABBREVIATION_LENGTH else display_name

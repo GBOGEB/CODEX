@@ -1,7 +1,7 @@
 import plotly.graph_objects as go
 from pathlib import Path
 import yaml
-from metric_display import normalize_metric_name
+from .metric_display import normalize_metric_name
 
 
 def main() -> None:
