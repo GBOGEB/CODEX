@@ -62,5 +62,6 @@ def test_topology_reconciliation_deduplicates_recorded_nodes(tmp_path, monkeypat
     assert set(second_report['missing_nodes']) == set(expected_missing)
 
     persisted = json.loads(topology_path.read_text(encoding='utf-8'))
+    assert 'reconciled_nodes' in persisted
     for node in expected_missing:
         assert persisted['reconciled_nodes'].count(node) == 1

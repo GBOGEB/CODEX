@@ -65,7 +65,7 @@ def reconcile() -> dict:
                 recorded_nodes.add(node)
                 reconciled.append(node)
         if reconciled:
-            TOPOLOGY.write_text(json.dumps(topology, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+            TOPOLOGY.write_text(json.dumps(topology, indent=2) + '\n', encoding='utf-8')
             persisted = True
 
     if persisted:
