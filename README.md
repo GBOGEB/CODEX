@@ -269,3 +269,11 @@ If you publish this repository README as rendered HTML, prefer a **plain-languag
 
 - On iPhone Safari/Chrome, Clipboard API behavior can vary by iOS version and page security context; the prompt fallback keeps the flow usable.
 - If governance requires traceability, store trace IDs in backend logs/metadata rather than forcing end users to copy parameter-heavy URLs.
+
+## One-cycle SDLC, lineage, and CI/CD reference
+
+For a direct, operations-ready definition of one full engineering cycle (clone/sync -> validate -> build -> test -> artifact lineage -> commit/push -> CI/CD gates), see:
+
+- [`LINEAGE_BUILD_DEPLOY_CICD.md`](LINEAGE_BUILD_DEPLOY_CICD.md)
+
+Use this as the 100% completion checklist for build/deploy governance and release readiness.
