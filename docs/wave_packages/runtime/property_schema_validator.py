@@ -52,6 +52,14 @@ def type_name(expected: Any) -> str:
 
 
 def validate_object(name: str, data: dict) -> dict:
+    if name not in SCHEMES:
+        allowed = ', '.join(SCHEMES.keys())
+        return {
+            'status': 'failed',
+            'errors': [f'Unknown scheme "{name}". Allowed schemes: {allowed}'],
+            'warnings': [],
+        }
+    
     scheme = SCHEMES[name]
     errors = []
 

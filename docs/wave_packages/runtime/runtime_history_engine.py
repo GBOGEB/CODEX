@@ -56,7 +56,6 @@ def append_snapshot() -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description='Persist and replay runtime history')
-    parser.add_argument('--out', default=str(HISTORY))
     parser.parse_args()
     report = append_snapshot()
     (OUT / 'runtime_history_report.json').write_text(json.dumps(report, indent=2, sort_keys=True) + '\n', encoding='utf-8')

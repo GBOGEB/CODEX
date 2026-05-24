@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import html
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -73,12 +74,15 @@ def load_metrics(path: str | None):
 
 
 def build_tiles(metrics: dict) -> str:
-    html = []
+    html_parts = []
     for key, value in metrics.items():
-        html.append(
-            f"<div class='tile'><h3>{key.replace('_', ' ')}</h3><div class='value'>{value}</div></div>"
+        # Escape key and value to prevent HTML injection
+        safe_key = html.escape(str(key).replace('_', ' '))
+        safe_value = html.escape(str(value))
+        html_parts.append(
+            f"<div class='tile'><h3>{safe_key}</h3><div class='value'>{safe_value}</div></div>"
         )
-    return ''.join(html)
+    return ''.join(html_parts)
 
 
 def render_dashboard(metrics: dict) -> str:

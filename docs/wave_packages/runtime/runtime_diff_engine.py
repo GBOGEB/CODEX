@@ -79,6 +79,10 @@ def render_html(report: dict) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description='Generate runtime diffs and regression analysis')
     parser.parse_args()
+    
+    # Ensure output directory exists
+    OUT.mkdir(parents=True, exist_ok=True)
+    
     report = build_diff(load_history())
     (OUT / 'runtime_diff.json').write_text(json.dumps(report, indent=2, sort_keys=True) + '\n', encoding='utf-8')
     (OUT / 'runtime_diff_dashboard.html').write_text(render_html(report), encoding='utf-8')

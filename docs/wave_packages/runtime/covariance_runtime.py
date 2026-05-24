@@ -36,9 +36,13 @@ def symmetry_error(matrix: list[list[float]]) -> float:
 
 
 def covariance_health(matrix: list[list[float]]) -> dict:
-    diagonal = [matrix[i][i] for i in range(len(matrix))]
-    non_negative = all(value >= 0 for value in diagonal)
+    # Validate matrix first to ensure it's square and finite
+    size = validate_square_matrix(matrix)
     sym_error = symmetry_error(matrix)
+    
+    # Extract diagonal using validated size
+    diagonal = [matrix[i][i] for i in range(size)]
+    non_negative = all(value >= 0 for value in diagonal)
 
     score = 100.0
     score -= min(sym_error * 100, 40.0)

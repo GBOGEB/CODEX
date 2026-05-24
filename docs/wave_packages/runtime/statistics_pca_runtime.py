@@ -67,7 +67,13 @@ def load_matrix(path):
 
 
 def compute_report(rows):
+    if not rows:
+        raise ValueError("Input rows list is empty - cannot compute PCA report")
+    
     metrics = [key for key in rows[0].keys() if key != "wave"]
+    if not metrics:
+        raise ValueError("No metric columns found (only 'wave' column present)")
+    
     columns = {metric: [float(row[metric]) for row in rows] for metric in metrics}
 
     stats = {

@@ -20,7 +20,13 @@ def validate_feed(feed: dict) -> dict:
     if not isinstance(feed["signals"], dict):
         raise FeedValidationError("signals must be an object")
 
-    normalized = {str(k): float(v) for k, v in feed["signals"].items()}
+    # Normalize signals with proper error handling
+    normalized = {}
+    for k, v in feed["signals"].items():
+        try:
+            normalized[str(k)] = float(v)
+        except (ValueError, TypeError) as e:
+            raise FeedValidationError(f"Signal '{k}' has invalid value '{v}': {e}")
 
     return {
         "source": feed["source"],
