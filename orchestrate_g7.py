@@ -3,6 +3,13 @@ import hashlib
 from semantic_substrate.renderer.contrast_validator import ContrastValidator
 from helium_refrigeration_core import CryogenicHeliumEngineG7
 
+G7_BUILDOUT_TODOS = [
+    "Wire generated outputs to outputs/html/g7 instead of repository root artifacts.",
+    "Replace placeholder traceability paths with verifiable in-repo or external references.",
+    "Rename the ANOVA metric/function to match the implemented Pearson correlation logic.",
+    "Add unit tests for contrast validation and exergy/correlation numerical edge cases.",
+]
+
 
 def execute_g7_production_synthesis():
     validator = ContrastValidator()
@@ -29,6 +36,7 @@ def execute_g7_production_synthesis():
 
     state_token = f"G7-SYNTHESIS-CR:{contrast_results['contrast_ratio']}-EXERGY:{calculated_exergy:.4f}"
     g7_hash = hashlib.sha256(state_token.encode()).hexdigest()[:16].upper()
+    todo_markdown = "\n".join(f"- [ ] {todo}" for todo in G7_BUILDOUT_TODOS)
 
     files_html = f"""<!DOCTYPE html>
 <html lang=\"en\">
@@ -120,8 +128,12 @@ $$CR = \\frac{{L_{{lightest}} + 0.05}}{{L_{{darkest}} + 0.05}}$$
 * **Calculated Helium Plant Loop Exergy:** `{calculated_exergy * 100:.2f}%`
 * **Immutable System Audit Checksum:** `{g7_hash}`
 
+### ⚠️ Framework Status (Incomplete Buildout)
+This package is currently a scaffold and still has pending implementation work:
+{todo_markdown}
+
 ---
-*G7 Automated Audit Complete. Codebase deployment state: Fully Hardened and Production Ready.*
+*G7 Automated Audit Snapshot Complete. Deployment status: Framework scaffold with open TODO items.*
 """
 
     with open("files.html", "w", encoding="utf-8") as f:
@@ -132,7 +144,7 @@ $$CR = \\frac{{L_{{lightest}} + 0.05}}{{L_{{darkest}} + 0.05}}$$
         f.write(slides_html)
     with open("README.md", "w", encoding="utf-8") as f:
         f.write(readme_md)
-    print("✨ Generation 7 Environment successfully synchronized. All 4 target files baked for deployment.")
+    print("⚠️ Generation 7 framework scaffold synced. Generated 4 artifacts with open TODO items documented in README.md.")
 
 
 if __name__ == "__main__":

@@ -16,5 +16,12 @@ $$CR = \frac{L_{lightest} + 0.05}{L_{darkest} + 0.05}$$
 * **Calculated Helium Plant Loop Exergy:** `48.52%`
 * **Immutable System Audit Checksum:** `DD03FE41421F62C1`
 
+### ⚠️ Framework Status (Incomplete Buildout)
+This package is currently a scaffold and still has pending implementation work:
+- [ ] Wire generated outputs to outputs/html/g7 instead of repository root artifacts.
+- [ ] Replace placeholder traceability paths with verifiable in-repo or external references.
+- [ ] Rename the ANOVA metric/function to match the implemented Pearson correlation logic.
+- [ ] Add unit tests for contrast validation and exergy/correlation numerical edge cases.
+
 ---
-*G7 Automated Audit Complete. Codebase deployment state: Fully Hardened and Production Ready.*
+*G7 Automated Audit Snapshot Complete. Deployment status: Framework scaffold with open TODO items.*
