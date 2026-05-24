@@ -1,19 +1,23 @@
+from pathlib import Path
+
 import pytest
+import yaml
 
 from semantic_substrate.renderer.contrast_validator import ContrastValidator
-from src.renderers.theme_runtime import SemanticThemeRuntime
 
 
 def test_target_invariant_warning_card_contrast():
     validator = ContrastValidator()
-    warning_dark_theme = SemanticThemeRuntime().resolve("warning", "dark")
+    theme_path = Path(__file__).resolve().parent.parent.parent / "themes" / "semantic_cards.yaml"
+    with theme_path.open("r", encoding="utf-8") as handle:
+        warning_dark_theme = yaml.safe_load(handle)["semantic_cards"]["warning"]["dark"]
     dark_warning = validator.target_invariants["warning"]["dark"]
 
-    assert dark_warning["background"] == warning_dark_theme.background
-    assert dark_warning["text"] == warning_dark_theme.text
+    assert dark_warning["background"] == warning_dark_theme["background"]
+    assert dark_warning["text"] == warning_dark_theme["text"]
 
     metrics = validator.validate_theme_node(
-        warning_dark_theme.background, warning_dark_theme.text
+        warning_dark_theme["background"], warning_dark_theme["text"]
     )
     assert metrics["wcag_aa_compliant"] is True
     assert metrics["contrast_ratio"] >= validator.MIN_AA_RATIO

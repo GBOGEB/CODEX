@@ -1,6 +1,25 @@
 from __future__ import annotations
 
-from src.renderers.theme_runtime import SemanticThemeRuntime
+from functools import lru_cache
+from pathlib import Path
+
+import yaml
+
+
+@lru_cache(maxsize=1)
+def _load_warning_dark_invariant() -> dict[str, str]:
+    repo_root = Path(__file__).resolve().parent.parent.parent
+    theme_path = repo_root / "themes" / "semantic_cards.yaml"
+    with theme_path.open("r", encoding="utf-8") as handle:
+        data = yaml.safe_load(handle)
+    if not isinstance(data, dict):
+        raise ValueError(f"Invalid YAML structure in {theme_path}")
+    semantic_cards = data.get("semantic_cards", {})
+    warning_dark = semantic_cards.get("warning", {}).get("dark", {})
+    return {
+        "background": warning_dark["background"],
+        "text": warning_dark["text"],
+    }
 
 class ContrastValidator:
     """
@@ -11,12 +30,12 @@ class ContrastValidator:
     MIN_AA_RATIO = 4.5
 
     def __init__(self) -> None:
-        warning_dark = SemanticThemeRuntime().resolve("warning", "dark")
+        warning_dark = _load_warning_dark_invariant()
         self.target_invariants = {
             "warning": {
                 "dark": {
-                    "background": warning_dark.background,
-                    "text": warning_dark.text,
+                    "background": warning_dark["background"],
+                    "text": warning_dark["text"],
                 }
             }
         }
