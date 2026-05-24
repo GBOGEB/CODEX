@@ -36,7 +36,7 @@ def load_wave_progression(manifest_path: Path) -> tuple[list[str], list[float]]:
     waves = []
     completion = []
 
-    for index, wave_entry in enumerate(wave_entries, start=1):
+    for index, wave_entry in enumerate(wave_entries):
         if not isinstance(wave_entry, dict):
             raise ValueError(
                 f'Invalid wave progression manifest schema at waves[{index}]: expected mapping.'
