@@ -1,4 +1,6 @@
-#!/usr/bin/env python3
+from __future__ import annotations
+
+from src.renderers.theme_runtime import SemanticThemeRuntime
 
 class ContrastValidator:
     """
@@ -6,22 +8,36 @@ class ContrastValidator:
     Enforces semantic theme safety constraints for the ABACUS_RENDER_PIPELINE.
     """
 
-    def __init__(self):
+    MIN_AA_RATIO = 4.5
+
+    def __init__(self) -> None:
+        warning_dark = SemanticThemeRuntime().resolve("warning", "dark")
         self.target_invariants = {
             "warning": {
                 "dark": {
-                    "background": "#4A3110",
-                    "text": "#FFE9A3",
+                    "background": warning_dark.background,
+                    "text": warning_dark.text,
                 }
             }
         }
-        self.MIN_AA_RATIO = 4.5
+
+    def _normalize_hex(self, value: str) -> str:
+        if not value.startswith("#"):
+            raise ValueError(f"Unsupported hex color '{value}'")
+        if len(value) == 4:
+            return "#" + "".join(ch * 2 for ch in value[1:])
+        if len(value) == 7:
+            return value
+        if len(value) == 9:
+            raise ValueError(
+                f"8-digit hex (RGBA) not supported for contrast calculation: '{value}'. "
+                "Use 6-digit hex (RGB) only."
+            )
+        raise ValueError(f"Unsupported hex color '{value}'")
 
     def _hex_to_srgb(self, hex_str: str) -> tuple[float, float, float]:
         """Converts hex color values to normalized sRGB components."""
-        value = hex_str.lstrip("#")
-        if len(value) != 6:
-            raise ValueError(f"Invalid Hex format detected: {hex_str}")
+        value = self._normalize_hex(hex_str)[1:]
         return tuple(int(value[i : i + 2], 16) / 255.0 for i in (0, 2, 4))
 
     def calculate_relative_luminance(self, hex_color: str) -> float:
@@ -53,7 +69,8 @@ class ContrastValidator:
         ratio = self.calculate_contrast_ratio(background_hex, text_hex)
         is_compliant = ratio >= self.MIN_AA_RATIO
         return {
-            "contrast_ratio": round(ratio, 2),
+            "contrast_ratio": ratio,
+            "contrast_ratio_rounded": round(ratio, 2),
             "wcag_aa_compliant": is_compliant,
             "action_required": not is_compliant,
         }
