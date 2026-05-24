@@ -19,10 +19,12 @@ REQUIRED_NODES = [
 
 
 def _normalize_node(value: str) -> str:
+    """Convert node labels to lowercase snake_case tokens for matching."""
     return re.sub(r'[^a-z0-9]+', '_', str(value).lower()).strip('_')
 
 
 def _extract_structured_nodes(topology: dict) -> set[str]:
+    """Collect normalized node identifiers from structured topology sections."""
     nodes: set[str] = set()
     for item in topology.get('forward_recursion', []):
         if isinstance(item, str):

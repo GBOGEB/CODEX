@@ -1,8 +1,10 @@
 from pathlib import Path
+import json
 
 from docs.wave_packages.runtime.covariance_runtime import covariance_health
 from docs.wave_packages.runtime.abacus_feed_runtime import validate_feed
 from docs.wave_packages.runtime.statistics_pca_runtime import compute_report
+from docs.wave_packages.runtime import topology_reconciliation_runtime
 
 
 def test_covariance_runtime():
@@ -34,3 +36,27 @@ def test_statistics_runtime():
 
 def test_runtime_paths_exist():
     assert Path('docs/wave_packages/runtime').exists()
+
+
+def test_topology_reconciliation_deduplicates_recorded_nodes(tmp_path, monkeypatch):
+    topology_data = {
+        'forward_recursion': ['ABACUS feed', 'bridge runtime'],
+        'backward_recursion': ['runtime insight'],
+        'bridge_federation': {'runtime_bridge': 'medium_high'},
+    }
+    topology_path = tmp_path / 'topology_runtime.json'
+    topology_path.write_text(json.dumps(topology_data), encoding='utf-8')
+    monkeypatch.setattr(topology_reconciliation_runtime, 'TOPOLOGY', topology_path)
+
+    first_report = topology_reconciliation_runtime.reconcile()
+    second_report = topology_reconciliation_runtime.reconcile()
+
+    assert first_report['status'] == 'reconciled-persisted'
+    assert second_report['status'] == 'reconciled-recorded'
+    assert second_report['reconciled_nodes'] == []
+    assert 'runtime_bridge' not in first_report['missing_nodes']
+
+    persisted = json.loads(topology_path.read_text(encoding='utf-8'))
+    assert persisted['reconciled_nodes'].count('synchronization_engine') == 1
+    assert persisted['reconciled_nodes'].count('plotly_runtime_dashboard') == 1
+    assert persisted['reconciled_nodes'].count('pages_runtime') == 1
