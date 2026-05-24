@@ -24,12 +24,17 @@ STEPS = [
     ['topology_renderer.py'],
     ['plotly_runtime_dashboard.py'],
     ['pages_runtime.py'],
+    ['self_healing_runtime.py'],
+    ['deployment_readiness.py'],
 ]
 
 EXPECTED_ARTIFACTS = [
     OUT / 'runtime_status.md',
     OUT / 'topology_runtime.mmd',
     OUT / 'statistics_pca_report.json',
+    OUT / 'deployment_readiness.json',
+    OUT / 'deployment_readiness.md',
+    OUT / 'self_healing_runtime_report.json',
     PAGES / 'index.html',
     PAGES / 'plotly_runtime_dashboard.html',
     PAGES / 'plotly_runtime_dashboard.json',
