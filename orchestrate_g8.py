@@ -1,7 +1,16 @@
 #!/usr/bin/env python3
 import hashlib
+from pathlib import Path
 from semantic_substrate.renderer.contrast_validator import ContrastValidator
 from physics.helium_refrigeration_core import CryogenicHeliumEngineG8
+
+BUILDOUT_TODO_ITEMS = [
+    "Load lifecycle invariants and milestone vectors from g8_lifecycle_manifest.json instead of hard-coded values.",
+    "Rename or replace calculate_g8_anova with a true ANOVA implementation to match terminology.",
+    "Write published HTML artifacts under outputs/html/ so pages staging includes generated reports.",
+    "Write run summaries to an artifact file instead of mutating README.md at runtime.",
+    "Add pytest coverage for contrast validator and cryogenic analytics edge cases.",
+]
 
 
 def execute_g8_lifecycle_validation():
@@ -96,7 +105,17 @@ $$CR = \\frac{{L_{{lightest}} + 0.05}}{{L_{{darkest}} + 0.05}}$$
     with open("README.md", "w", encoding="utf-8") as f:
         f.write(readme_md)
 
-    print("✨ Generation 8 Environment successfully synchronized. All 4 target files baked for deployment.")
+    todo_output = Path("outputs/g8_buildout_todo.md")
+    todo_output.parent.mkdir(parents=True, exist_ok=True)
+    todo_output.write_text(
+        "\n".join(["# G8 Buildout TODO", ""] + [f"- [ ] {item}" for item in BUILDOUT_TODO_ITEMS]) + "\n",
+        encoding="utf-8",
+    )
+
+    print(
+        "✨ Generation 8 Environment synchronized. Generated deployment artifacts and "
+        f"captured remaining buildout items in {todo_output}."
+    )
 
 
 if __name__ == "__main__":
