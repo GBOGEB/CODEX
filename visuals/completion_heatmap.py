@@ -36,7 +36,7 @@ def main() -> None:
         title='ABACUS_RENDER_PIPELINE Program Metrics Heatmap',
     )
 
-    output_path = Path('outputs/completion_heatmap.html')
+    output_path = Path(__file__).resolve().parent.parent / 'outputs' / 'html' / 'completion_heatmap.html'
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.write_html(str(output_path))
     print(f'generated {output_path}')

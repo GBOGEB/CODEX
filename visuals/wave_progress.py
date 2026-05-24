@@ -29,7 +29,7 @@ def main() -> None:
         yaxis_title='Completion %',
     )
 
-    output_path = Path('outputs/wave_progression.html')
+    output_path = Path(__file__).resolve().parent.parent / 'outputs' / 'html' / 'wave_progression.html'
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.write_html(str(output_path))
     print(f'generated {output_path}')

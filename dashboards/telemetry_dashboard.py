@@ -62,7 +62,7 @@ def main() -> None:
         rows=2,
         cols=2,
         specs=[[{'type':'scatter'}, {'type':'polar'}],
-               [{'type':'heatmap'}, {'type':'scatter3d'}]],
+               [{'type':'heatmap'}, {'type':'scene'}]],
         subplot_titles=(
             'Wave Completion Progression',
             'Maturity Radar',
@@ -119,7 +119,7 @@ def main() -> None:
         height=900,
     )
 
-    output_path = Path('outputs/telemetry_dashboard.html')
+    output_path = Path(__file__).resolve().parent.parent / 'outputs' / 'html' / 'telemetry_dashboard.html'
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.write_html(str(output_path))
     print(f'generated {output_path}')

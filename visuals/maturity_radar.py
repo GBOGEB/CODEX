@@ -41,7 +41,7 @@ def main() -> None:
         title='ABACUS_RENDER_PIPELINE Maturity Radar',
     )
 
-    output_path = Path('outputs/maturity_radar.html')
+    output_path = Path(__file__).resolve().parent.parent / 'outputs' / 'html' / 'maturity_radar.html'
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.write_html(str(output_path))
     print(f'generated {output_path}')
