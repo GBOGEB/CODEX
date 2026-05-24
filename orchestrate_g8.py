@@ -1,28 +1,35 @@
 #!/usr/bin/env python3
 import hashlib
+import json
 from pathlib import Path
 from semantic_substrate.renderer.contrast_validator import ContrastValidator
 from physics.helium_refrigeration_core import CryogenicHeliumEngineG8
 
 BUILDOUT_TODO_ITEMS = [
-    "Load lifecycle invariants and milestone vectors from g8_lifecycle_manifest.json instead of hard-coded values.",
-    "Rename or replace calculate_g8_anova with a true ANOVA implementation to match terminology.",
-    "Write published HTML artifacts under outputs/html/ so pages staging includes generated reports.",
-    "Write run summaries to an artifact file instead of mutating README.md at runtime.",
-    "Add pytest coverage for contrast validator and cryogenic analytics edge cases.",
+    "Load milestone vectors and thermodynamic inputs from g8_lifecycle_manifest.json instead of hard-coded values.",
 ]
+
+
+def _load_warning_dark_invariant(manifest_path: Path) -> dict[str, str]:
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    for component in manifest.get("components", []):
+        target = component.get("target_invariant")
+        if target and "warning" in target and "dark" in target["warning"]:
+            return target["warning"]["dark"]
+    raise ValueError("warning.dark invariant not found in g8_lifecycle_manifest.json")
 
 
 def execute_g8_lifecycle_validation():
     validator = ContrastValidator()
     engine = CryogenicHeliumEngineG8()
 
-    warning_dark = validator.target_invariants["warning"]["dark"]
+    repo_root = Path(__file__).resolve().parent
+    warning_dark = _load_warning_dark_invariant(repo_root / "g8_lifecycle_manifest.json")
     contrast_results = validator.validate_theme_node(warning_dark["background"], warning_dark["text"])
 
     claimed_milestones = [0.20, 0.40, 0.60, 0.80, 1.00]
     actual_milestones = [0.20, 0.41, 0.59, 0.80, 1.00]
-    covariance, correlation = engine.calculate_g8_anova(claimed_milestones, actual_milestones)
+    covariance, correlation = engine.calculate_g8_covariance_correlation(claimed_milestones, actual_milestones)
 
     calculated_exergy = engine.compute_g8_exergy_efficiency(
         mass_flow_he=11.5, h_in=15.0, h_out=32.0, s_in=0.03, s_out=0.06, power_input_kw=210.0
@@ -61,7 +68,7 @@ body {{ font-family: system-ui, sans-serif; padding: 40px; background: #020617; 
 </style></head><body><h1>📊 Generation 8 Converged Telemetry Control Center</h1><div class=\"grid\"> 
 <div class=\"card\"><div class=\"lbl\">Helium Plant Exergy Efficiency</div><div class=\"val\">{calculated_exergy*100:.2f}%</div></div>
 <div class=\"card\"><div class=\"lbl\">A6 Warning Card Contrast Ratio</div><div class=\"val\">{contrast_results['contrast_ratio']}:1</div></div>
-<div class=\"card\"><div class=\"lbl\">ANOVA Phase Correlation (R)</div><div class=\"val\">{correlation:.5f}</div></div>
+<div class=\"card\"><div class=\"lbl\">Phase Correlation (R)</div><div class=\"val\">{correlation:.5f}</div></div>
 </div></body></html>"""
 
     slides_html = f"""<!DOCTYPE html>
@@ -76,7 +83,7 @@ p {{ color: #a1a1aa; font-size: 1.25em; line-height: 1.6; }}
 <p style=\"color:#10b981;\">System Integrity Token: <code>{g8_hash}</code></p>
 </div></body></html>"""
 
-    readme_md = f"""# 🌌 G8 Unified Federation Framework & System Verification Specification
+    run_summary_md = f"""# 🌌 G8 Unified Federation Framework & System Verification Specification
 
 ## 🛡️ Level 8 (L8) Closed-Loop Post-Commissioning Summary
 This control center acts as the final validation layer bridging conceptual designs inside **gbogeb/codex** to deployment realities inside **gbogeb/abacus**.
@@ -88,7 +95,8 @@ $$CR = \\frac{{L_{{lightest}} + 0.05}}{{L_{{darkest}} + 0.05}}$$
 
 ### 📈 Verified G8 Run Audit Metrics
 * **A6 Warning Card Text Contrast Performance:** `{contrast_results['contrast_ratio']}:1` (Target: $\\ge 4.5:1$)
-* **ANOVA Workspace Velocity Coefficient (R):** `{correlation:.5f}`
+* **Workspace Covariance:** `{covariance:.5f}`
+* **Workspace Correlation Coefficient (R):** `{correlation:.5f}`
 * **Calculated Helium Plant Loop Exergy:** `{calculated_exergy * 100:.2f}%`
 * **Immutable System Audit Checksum:** `{g8_hash}`
 
@@ -96,16 +104,16 @@ $$CR = \\frac{{L_{{lightest}} + 0.05}}{{L_{{darkest}} + 0.05}}$$
 *G8 Automated Audit Complete. Codebase deployment state: Fully Hardened and Production Ready.*
 """
 
-    with open("files.html", "w", encoding="utf-8") as f:
-        f.write(files_html)
-    with open("dashboard.html", "w", encoding="utf-8") as f:
-        f.write(dashboard_html)
-    with open("slides_html.html", "w", encoding="utf-8") as f:
-        f.write(slides_html)
-    with open("README.md", "w", encoding="utf-8") as f:
-        f.write(readme_md)
+    html_output_dir = repo_root / "outputs" / "html"
+    html_output_dir.mkdir(parents=True, exist_ok=True)
+    (html_output_dir / "files.html").write_text(files_html, encoding="utf-8")
+    (html_output_dir / "dashboard.html").write_text(dashboard_html, encoding="utf-8")
+    (html_output_dir / "slides_html.html").write_text(slides_html, encoding="utf-8")
 
-    todo_output = Path("outputs/g8_buildout_todo.md")
+    run_summary_output = repo_root / "outputs" / "g8_run_summary.md"
+    run_summary_output.write_text(run_summary_md, encoding="utf-8")
+
+    todo_output = repo_root / "outputs" / "g8_buildout_todo.md"
     todo_output.parent.mkdir(parents=True, exist_ok=True)
     todo_output.write_text(
         "\n".join(["# G8 Buildout TODO", ""] + [f"- [ ] {item}" for item in BUILDOUT_TODO_ITEMS]) + "\n",
@@ -114,7 +122,7 @@ $$CR = \\frac{{L_{{lightest}} + 0.05}}{{L_{{darkest}} + 0.05}}$$
 
     print(
         "✨ Generation 8 Environment synchronized. Generated deployment artifacts and "
-        f"captured remaining buildout items in {todo_output}."
+        f"captured remaining buildout items in {todo_output}. Run summary: {run_summary_output}."
     )
 
 

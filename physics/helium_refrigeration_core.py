@@ -4,7 +4,6 @@
 class CryogenicHeliumEngineG8:
     def __init__(self, t0_ambient=298.15):
         self.T0 = t0_ambient
-        self.n2_precool_flow = 11.5
 
     def compute_g8_exergy_efficiency(self, mass_flow_he, h_in, h_out, s_in, s_out, power_input_kw, nitrogen_assist=True):
         delta_h = h_out - h_in
@@ -17,7 +16,7 @@ class CryogenicHeliumEngineG8:
             return 0.0
         return min(max(useful_work / power_input_kw, 0.0), 1.0)
 
-    def calculate_g8_anova(self, claimed_vector, actual_vector):
+    def calculate_g8_covariance_correlation(self, claimed_vector, actual_vector):
         c = [float(x) for x in claimed_vector]
         a = [float(x) for x in actual_vector]
         n = len(c)
@@ -34,3 +33,6 @@ class CryogenicHeliumEngineG8:
             return cov, 0.0
         corr = cov / ((var_c ** 0.5) * (var_a ** 0.5))
         return float(cov), float(corr)
+
+    def calculate_g8_anova(self, claimed_vector, actual_vector):
+        return self.calculate_g8_covariance_correlation(claimed_vector, actual_vector)
