@@ -49,5 +49,5 @@
   - [ ] Pull lineage/build/deploy state directly from both repos.
   - [ ] Attach CI/CD run URLs and commit SHAs for each cycle row.
   - [ ] Compute and publish PCA/DMAIC/ANOVA outputs instead of manual summaries.
-- TODO owner:
-- TODO due date (UTC):
+- TODO owner: TBD
+- TODO due date (UTC): TBD
