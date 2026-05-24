@@ -12,6 +12,7 @@ class RuntimeGovernanceA61:
     - Integrate this validator into the render pipeline execution loop.
     - Extend spacing validation to stylesheet blocks if governance scope expands beyond inline styles.
     """
+    FLOAT_EPSILON = 1e-9
 
     def __init__(self, spacing_standard_px: int = 4, allowed_overflow_threshold: float = 0.0):
         if spacing_standard_px <= 0:
@@ -32,7 +33,8 @@ class RuntimeGovernanceA61:
                 for px_value in re.findall(r"(-?\d+(?:\.\d+)?)px\b", declaration, flags=re.IGNORECASE):
                     margin = float(px_value)
                     remainder = abs(margin) % self.spacing_standard_px
-                    if remainder and abs(self.spacing_standard_px - remainder) > 1e-9:
+                    distance_to_grid = min(remainder, self.spacing_standard_px - remainder)
+                    if distance_to_grid > self.FLOAT_EPSILON:
                         return False
         return True
 
@@ -61,8 +63,9 @@ class RuntimeGovernanceA61:
 
     @staticmethod
     def _slugify_header(header: str) -> str:
+        """Normalize a Markdown header into a lowercase dash-separated anchor slug."""
         normalized = header.strip().lower()
-        normalized = re.sub(r"[^\w\s-]", "", normalized)
+        normalized = re.sub(r"[^a-z0-9\s-]", "", normalized)
         normalized = re.sub(r"[\s_]+", "-", normalized)
         normalized = re.sub(r"-+", "-", normalized)
         return normalized.strip("-")
