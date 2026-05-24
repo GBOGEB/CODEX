@@ -7,12 +7,12 @@ import yaml
 def main() -> None:
     # Load wave progression from governed manifest
     wave_manifest_path = Path(__file__).parent.parent / 'MANIFEST' / 'WAVE_PROGRESSION.yaml'
-    with open(wave_manifest_path, 'r') as f:
+    with wave_manifest_path.open('r', encoding='utf-8') as f:
         wave_data = yaml.safe_load(f)
     
     # Load program metrics from governed manifest
     metrics_manifest_path = Path(__file__).parent.parent / 'MANIFEST' / 'PROGRAM_METRICS.yaml'
-    with open(metrics_manifest_path, 'r') as f:
+    with metrics_manifest_path.open('r', encoding='utf-8') as f:
         metrics_data = yaml.safe_load(f)
     
     # Extract wave data

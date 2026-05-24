@@ -6,7 +6,7 @@ import yaml
 def main() -> None:
     # Load program metrics from governed manifest
     manifest_path = Path(__file__).parent.parent / 'MANIFEST' / 'PROGRAM_METRICS.yaml'
-    with open(manifest_path, 'r') as f:
+    with manifest_path.open('r', encoding='utf-8') as f:
         data = yaml.safe_load(f)
     
     metrics = data['program_metrics']['metrics']

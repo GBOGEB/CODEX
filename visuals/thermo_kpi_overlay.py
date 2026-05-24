@@ -14,7 +14,7 @@ def main() -> None:
         'He-II',
     ]
 
-    scores = [34,41,27,43,18,12,9,6]
+    scores = [34, 41, 27, 43, 18, 12, 9, 6]
 
     fig = go.Figure(
         data=[
