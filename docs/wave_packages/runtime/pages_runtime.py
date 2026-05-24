@@ -18,8 +18,8 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
 <meta charset=\"utf-8\" />
 <title>Runtime Pages Bundle</title>
 <style>
-body { font-family: Arial, sans-serif; margin: 2rem; }
-li { margin-bottom: 0.5rem; }
+body {{ font-family: Arial, sans-serif; margin: 2rem; }}
+li {{ margin-bottom: 0.5rem; }}
 </style>
 </head>
 <body>
@@ -34,10 +34,32 @@ li { margin-bottom: 0.5rem; }
 
 
 def build_index(runtime_files):
+    """Build index links relative to docs/wave_packages/runtime/pages/"""
     items = []
+    pages_dir = Path('docs/wave_packages/runtime/pages')
+    
     for item in runtime_files:
-        name = Path(item).name
-        items.append(f'<li><a href="../{item}">{name}</a></li>')
+        item_path = Path(item)
+        name = item_path.name
+        
+        # Compute relative path from pages/ directory to the target file
+        try:
+            rel_path = item_path.relative_to(pages_dir)
+            href = str(rel_path)
+        except ValueError:
+            # If not under pages/, compute relative path from pages/ parent
+            if item_path.is_relative_to(Path('docs/wave_packages/runtime')):
+                rel_path = item_path.relative_to(Path('docs/wave_packages/runtime'))
+                # If in out/ or other sibling dir, use ../
+                if rel_path.parts[0] != 'pages':
+                    href = f'../{rel_path}'
+                else:
+                    href = str(rel_path.relative_to('pages'))
+            else:
+                # Fallback: use the original path
+                href = str(item_path)
+        
+        items.append(f'<li><a href="{href}">{name}</a></li>')
     return '\n'.join(items)
 
 
