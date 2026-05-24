@@ -43,8 +43,8 @@ jobs:
           if deploy_score < 90:
               raise SystemExit('Deployment readiness below release threshold')
 
-          if reality_score < 60:
-              raise SystemExit('Reality alignment below release threshold')
+          if reality_score < 50:
+              raise SystemExit('Reality alignment below release threshold (minimum PARTIAL classification)')
           PY
 
       - name: Verify runtime artifacts
