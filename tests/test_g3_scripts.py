@@ -90,7 +90,7 @@ def test_issue_g3_pull_request_handles_transport_errors(
     monkeypatch.setattr(pr_generator.requests, "post", _raise_request_exception)
     assert (
         pr_generator.issue_g3_pull_request(
-            "GBOGEB/CODEX", "branch", "title", "body"
+            "gbogeb/codex", "branch", "title", "body"
         )
         is False
     )
