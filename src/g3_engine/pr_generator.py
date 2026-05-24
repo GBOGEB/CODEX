@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import os
 import requests
+from requests.exceptions import JSONDecodeError
 
 
 def issue_g3_pull_request(repo_slug: str, head_branch: str, pr_title: str, pr_body_markdown: str) -> bool:
@@ -33,7 +34,7 @@ def issue_g3_pull_request(repo_slug: str, head_branch: str, pr_title: str, pr_bo
     if response.status_code == 201:
         try:
             pr_url = response.json().get("html_url", "(url unavailable)")
-        except ValueError as exc:
+        except JSONDecodeError as exc:
             print(f"PR create failed: invalid JSON response ({exc})")
             return False
         print(f"PR opened: {pr_url}")
