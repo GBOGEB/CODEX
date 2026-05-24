@@ -38,6 +38,12 @@ def test_hex_normalization_and_rejections():
         validator.calculate_relative_luminance("#aabbcc")
     )
 
-    for invalid_hex in ("##FFFFFF", "FFFFFF", "#FFFFFFFF", "#xyz"):
-        with pytest.raises(ValueError):
+    expected = {
+        "##FFFFFF": "Unsupported hex color",
+        "FFFFFF": "Unsupported hex color",
+        "#FFFFFFFF": r"8-digit hex \(RGBA\) not supported",
+        "#xyz": "Unsupported hex color",
+    }
+    for invalid_hex, message in expected.items():
+        with pytest.raises(ValueError, match=message):
             validator.calculate_relative_luminance(invalid_hex)
