@@ -49,4 +49,4 @@ def abbreviate_metric_name(display_name: str) -> str:
         return abbreviations[display_name]
     
     # Default: truncate to MAX_ABBREVIATION_LENGTH characters
-    return display_name[:MAX_ABBREVIATION_LENGTH] if len(display_name) > MAX_ABBREVIATION_LENGTH else display_name
+    return display_name[:MAX_ABBREVIATION_LENGTH]
