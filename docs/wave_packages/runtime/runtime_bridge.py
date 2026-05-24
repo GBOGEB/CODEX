@@ -23,7 +23,7 @@ class RuntimeBridge:
 
     def validate_schema(self, payload: dict) -> bool:
         # TODO: implement schema validation
-        return True
+        raise NotImplementedError("Schema validation not yet implemented")
 
     def hydrate_runtime(self, payload: dict):
         # TODO: connect CODEX runtime hydration

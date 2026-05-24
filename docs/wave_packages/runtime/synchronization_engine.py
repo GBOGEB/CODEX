@@ -7,7 +7,7 @@ Tracks:
 - topology consistency
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 class SynchronizationEngine:
 
@@ -19,7 +19,7 @@ class SynchronizationEngine:
 
     def synchronization_report(self):
         return {
-            'timestamp': datetime.utcnow().isoformat() + 'Z',
+            'timestamp': datetime.now(timezone.utc).isoformat(),
             'status': 'scaffolded'
         }
 
