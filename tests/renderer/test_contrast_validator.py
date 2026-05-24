@@ -38,6 +38,6 @@ def test_hex_normalization_and_rejections():
         validator.calculate_relative_luminance("#aabbcc")
     )
 
-    for invalid_hex in ("##FFFFFF", "FFFFFF", "#FFFFFFFF"):
+    for invalid_hex in ("##FFFFFF", "FFFFFF", "#FFFFFFFF", "#xyz"):
         with pytest.raises(ValueError):
             validator.calculate_relative_luminance(invalid_hex)

@@ -13,9 +13,21 @@ def _load_warning_dark_invariant() -> dict[str, str]:
     with theme_path.open("r", encoding="utf-8") as handle:
         data = yaml.safe_load(handle)
     if not isinstance(data, dict):
-        raise ValueError(f"Invalid YAML structure in {theme_path}")
+        raise ValueError(
+            f"Invalid YAML in {theme_path}: expected root mapping/dictionary."
+        )
     semantic_cards = data.get("semantic_cards", {})
-    warning_dark = semantic_cards.get("warning", {}).get("dark", {})
+    warning = semantic_cards.get("warning", {})
+    warning_dark = warning.get("dark", {})
+    if not isinstance(warning_dark, dict):
+        raise ValueError(
+            f"Invalid warning.dark mapping in {theme_path}: expected dictionary."
+        )
+    if "background" not in warning_dark or "text" not in warning_dark:
+        raise ValueError(
+            f"Missing required warning.dark colors in {theme_path}: "
+            "expected 'background' and 'text'."
+        )
     return {
         "background": warning_dark["background"],
         "text": warning_dark["text"],
@@ -44,15 +56,21 @@ class ContrastValidator:
         if not value.startswith("#"):
             raise ValueError(f"Unsupported hex color '{value}'")
         if len(value) == 4:
-            return "#" + "".join(ch * 2 for ch in value[1:])
-        if len(value) == 7:
-            return value
-        if len(value) == 9:
+            value = "#" + "".join(ch * 2 for ch in value[1:])
+        elif len(value) == 7:
+            pass
+        elif len(value) == 9:
             raise ValueError(
                 f"8-digit hex (RGBA) not supported for contrast calculation: '{value}'. "
                 "Use 6-digit hex (RGB) only."
             )
-        raise ValueError(f"Unsupported hex color '{value}'")
+        else:
+            raise ValueError(f"Unsupported hex color '{value}'")
+        try:
+            int(value[1:], 16)
+        except ValueError as exc:
+            raise ValueError(f"Unsupported hex color '{value}'") from exc
+        return value
 
     def _hex_to_srgb(self, hex_str: str) -> tuple[float, float, float]:
         """Converts hex color values to normalized sRGB components."""
