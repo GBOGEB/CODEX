@@ -1,0 +1,36 @@
+version: 0.68.0
+wave: A68
+name: rendered-runtime-starter-pack
+purpose: YAML driven runtime registry for quick execution and Pages rendering
+
+entrypoints:
+  bridge: docs/wave_packages/runtime/runtime_bridge.py
+  sync: docs/wave_packages/runtime/synchronization_engine.py
+  maturity: docs/wave_packages/runtime/metrics_maturity.py
+  covariance: docs/wave_packages/runtime/covariance_runtime.py
+  abacus_feed: docs/wave_packages/runtime/abacus_feed_runtime.py
+  markdown: docs/wave_packages/runtime/render_markdown_runtime.py
+  html: docs/wave_packages/runtime/render_html_runtime.py
+  pages: docs/wave_packages/runtime/pages_runtime.py
+  topology: docs/wave_packages/runtime/topology_renderer.py
+
+outputs:
+  runtime_dir: docs/wave_packages/runtime/out
+  pages_dir: docs/wave_packages/runtime/pages
+  markdown_report: docs/wave_packages/runtime/out/runtime_status.md
+  html_index: docs/wave_packages/runtime/pages/index.html
+  topology_mermaid: docs/wave_packages/runtime/out/topology_runtime.mmd
+
+controls:
+  deterministic: true
+  manifest_validation: true
+  topology_validation: true
+  pages_bundle_generation: true
+  no_network_side_effects: true
+
+maturity_targets:
+  rendered_markdown: 85
+  rendered_html: 82
+  pages_bundle: 80
+  topology_visualization: 84
+  quick_movement_starter_pack: 90
