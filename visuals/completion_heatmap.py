@@ -1,17 +1,16 @@
 from pathlib import Path
-import sys
-
-try:
-    import plotly.graph_objects as go
-    import yaml
-except ImportError as e:
-    print(f"Error: Missing required dependency: {e.name}")
-    print("Install with: pip install plotly pyyaml")
-    sys.exit(1)
 
 
 def load_completion_metrics(manifest_path: Path) -> tuple[list[str], list[list[float]]]:
     """Load completion metrics from governed YAML manifest."""
+    try:
+        import yaml
+    except ImportError as e:
+        raise ImportError(
+            f"Missing required dependency: {e.name}\n"
+            "Install with: pip install pyyaml"
+        ) from e
+    
     if not manifest_path.exists():
         raise FileNotFoundError(
             f"Program metrics manifest not found: {manifest_path}\n"
@@ -61,6 +60,14 @@ def load_completion_metrics(manifest_path: Path) -> tuple[list[str], list[list[f
 
 def generate_completion_heatmap(output_path: Path) -> None:
     """Generate completion heatmap from governed manifest."""
+    try:
+        import plotly.graph_objects as go
+    except ImportError as e:
+        raise ImportError(
+            f"Missing required dependency: {e.name}\n"
+            "Install with: pip install plotly"
+        ) from e
+    
     repo_root = Path(__file__).parent.parent
     manifest_path = repo_root / 'MANIFEST' / 'PROGRAM_METRICS.yaml'
     categories, status_values = load_completion_metrics(manifest_path)
