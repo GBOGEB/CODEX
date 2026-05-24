@@ -25,6 +25,8 @@ CHECKS = [
 TODO = [
     {'item': 'Confirm GitHub Pages repository settings publish docs/ or workflow artifact', 'status': 'external-config-required', 'priority': 'high'},
     {'item': 'Add real ABACUS feed source instead of default fixture payload', 'status': 'integration-required', 'priority': 'high'},
+    {'item': 'Build out runtime HTML/index generators so CSS templates render without KeyError and bundle index artifacts are emitted', 'status': 'buildout-required', 'priority': 'high'},
+    {'item': 'Implement non-dry-run pages regeneration adapter in runtime_bridge (current execute mode records plan only)', 'status': 'framework-incomplete', 'priority': 'high'},
     {'item': 'Persist runtime history across CI runs', 'status': 'next-build', 'priority': 'high'},
     {'item': 'Add live Plotly hydration from generated JSON reports', 'status': 'partial', 'priority': 'medium'},
     {'item': 'Add automated link checking for generated Pages bundle', 'status': 'next-build', 'priority': 'medium'},
