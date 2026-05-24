@@ -5,16 +5,6 @@ from __future__ import annotations
 
 
 class ContrastValidator:
-    def __init__(self) -> None:
-        self.target_invariants = {
-            "warning": {
-                "dark": {
-                    "background": "#4A3110",
-                    "text": "#FFE9A3",
-                }
-            }
-        }
-
     @staticmethod
     def _hex_to_rgb(hex_color: str) -> tuple[float, float, float]:
         value = hex_color.strip().lstrip("#")
