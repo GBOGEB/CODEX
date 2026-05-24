@@ -2,21 +2,32 @@
 import hashlib
 import json
 from pathlib import Path
+from typing import TypedDict, cast
 from semantic_substrate.renderer.contrast_validator import ContrastValidator
 from physics.helium_refrigeration_core import CryogenicHeliumEngineG8
 
+
+class WarningDarkInvariant(TypedDict):
+    background: str
+    text: str
+
+
 BUILDOUT_TODO_ITEMS = [
-    "Load milestone vectors and thermodynamic inputs from g8_lifecycle_manifest.json instead of hard-coded values.",
+    "Load claimed/actual milestones and exergy thermodynamic inputs from g8_lifecycle_manifest.json.",
 ]
 
 
-def _load_warning_dark_invariant(manifest_path: Path) -> dict[str, str]:
+def _load_warning_dark_invariant(manifest_path: Path) -> WarningDarkInvariant:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     for component in manifest.get("components", []):
         target = component.get("target_invariant")
         if target and "warning" in target and "dark" in target["warning"]:
-            return target["warning"]["dark"]
-    raise ValueError("warning.dark invariant not found in g8_lifecycle_manifest.json")
+            warning_dark = target["warning"]["dark"]
+            if "background" in warning_dark and "text" in warning_dark:
+                return cast(WarningDarkInvariant, warning_dark)
+    raise ValueError(
+        "Manifest must include components[].target_invariant.warning.dark with background/text colors"
+    )
 
 
 def execute_g8_lifecycle_validation():

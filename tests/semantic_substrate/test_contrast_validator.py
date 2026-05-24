@@ -1,3 +1,5 @@
+import pytest
+
 from semantic_substrate.renderer.contrast_validator import ContrastValidator
 
 
@@ -26,9 +28,5 @@ def test_validate_theme_node_identical_colors_fail_wcag():
 
 
 def test_validate_theme_node_invalid_hex_raises():
-    try:
+    with pytest.raises(ValueError):
         ContrastValidator.validate_theme_node("#12345", "#ffffff")
-    except ValueError as exc:
-        assert "Invalid hex color" in str(exc)
-    else:
-        raise AssertionError("Expected ValueError for invalid hex color")
