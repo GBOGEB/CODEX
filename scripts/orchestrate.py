@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Federation bridge orchestrator.
 
-Generates four required artifacts in output/federation_bridge:
+Generates four required artifacts in outputs/html/federation_bridge:
 - files.html
 - dashboard.html
 - slides.html
@@ -15,7 +15,8 @@ import json
 import math
 import statistics
 
-OUTPUT_DIR = Path("output/federation_bridge")
+ROOT = Path(__file__).resolve().parents[1]
+OUTPUT_DIR = ROOT / "outputs/html/federation_bridge"
 
 
 def calculate_wave_stats() -> dict:

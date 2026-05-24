@@ -29,7 +29,7 @@ class CryogenicHeliumEngine:
             return 0.0
         return float(min(max(useful_exergy_power / float(power_kw), 0.0), 1.0))
 
-    def calculate_anova_variance(self, claimed_vector: list[float], actual_vector: list[float]) -> float:
+    def calculate_covariance(self, claimed_vector: list[float], actual_vector: list[float]) -> float:
         c = [float(x) for x in claimed_vector]
         a = [float(x) for x in actual_vector]
         if len(c) != len(a) or len(c) < 2:
@@ -37,3 +37,6 @@ class CryogenicHeliumEngine:
         mc = statistics.mean(c)
         ma = statistics.mean(a)
         return float(sum((x - mc) * (y - ma) for x, y in zip(c, a)) / (len(c) - 1))
+
+    def calculate_anova_variance(self, claimed_vector: list[float], actual_vector: list[float]) -> float:
+        return self.calculate_covariance(claimed_vector, actual_vector)

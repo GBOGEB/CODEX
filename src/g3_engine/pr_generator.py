@@ -24,9 +24,19 @@ def issue_g3_pull_request(repo_slug: str, head_branch: str, pr_title: str, pr_bo
         "base": "main",
         "maintainer_can_modify": True,
     }
-    response = requests.post(url, json=payload, headers=headers, timeout=30)
+    try:
+        response = requests.post(url, json=payload, headers=headers, timeout=30)
+    except requests.RequestException as exc:
+        print(f"PR create failed: {exc}")
+        return False
+
     if response.status_code == 201:
-        print(f"PR opened: {response.json().get('html_url')}")
+        try:
+            pr_url = response.json().get("html_url", "(url unavailable)")
+        except ValueError as exc:
+            print(f"PR create failed: invalid JSON response ({exc})")
+            return False
+        print(f"PR opened: {pr_url}")
         return True
 
     print(f"PR create failed ({response.status_code}): {response.text}")

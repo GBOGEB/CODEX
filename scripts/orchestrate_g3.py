@@ -11,8 +11,8 @@ if str(ROOT) not in sys.path:
 
 from src.g3_engine.helium_refrigeration_core import CryogenicHeliumEngine
 
-OUTPUT_DIR = Path("output/federation_bridge/g3")
-MATRIX_PATH = Path("federation_bridge/g3/g3_deep_matrix.json")
+OUTPUT_DIR = ROOT / "outputs/html/federation_bridge/g3"
+MATRIX_PATH = ROOT / "federation_bridge/g3/g3_deep_matrix.json"
 
 
 def compile_g3_dashboard() -> None:
@@ -20,7 +20,7 @@ def compile_g3_dashboard() -> None:
     claimed_waves = [0.20, 0.40, 0.60, 0.80, 1.00]
     actual_waves = [0.18, 0.39, 0.55, 0.79, 0.98]
 
-    anova_covariance = engine.calculate_anova_variance(claimed_waves, actual_waves)
+    covariance = engine.calculate_covariance(claimed_waves, actual_waves)
     exergy_sample = engine.compute_exergy_efficiency(
         mass_flow=11.5,
         enthalpy_in=10.5,
@@ -43,7 +43,7 @@ def compile_g3_dashboard() -> None:
 
     dashboard_html = f"""<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>G3 Telemetry Dashboard</title></head><body>
 <h1>G3 Real-Time Wave Telemetry Dashboard</h1>
-<ul><li>A66 Module Status: L4 Verified</li><li>Helium Exergy Efficiency: {exergy_sample*100:.2f}%</li><li>ANOVA Covariance Metric: {anova_covariance:.6f}</li></ul>
+<ul><li>A66 Module Status: L4 Verified</li><li>Helium Exergy Efficiency: {exergy_sample*100:.2f}%</li><li>Covariance Metric: {covariance:.6f}</li></ul>
 </body></html>"""
 
     slides_html = """<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>G3 Systems Architecture Slides</title></head><body><h1>Generation 3 (G3) System Integration Matrix</h1></body></html>"""
@@ -51,7 +51,7 @@ def compile_g3_dashboard() -> None:
     readme_md = f"""# Exhaustive Generation 3 (G3) System Control Interface
 
 ## Current Automated Pipeline Health Metrics
-- Calculated ANOVA Covariance Parameter: `{anova_covariance:.6f}`
+- Calculated Covariance Parameter: `{covariance:.6f}`
 - Helium Cycle System Exergy Rating: `{exergy_sample * 100:.2f}%`
 - Core Development Configuration Track Status: `G3-Verified Stable Production`
 """
@@ -61,7 +61,7 @@ def compile_g3_dashboard() -> None:
     (OUTPUT_DIR / "slides.html").write_text(slides_html, encoding="utf-8")
     (OUTPUT_DIR / "README.md").write_text(readme_md, encoding="utf-8")
     (OUTPUT_DIR / "g3_metrics.json").write_text(
-        json.dumps({"anova_covariance": anova_covariance, "exergy_efficiency": exergy_sample}, indent=2),
+        json.dumps({"covariance": covariance, "exergy_efficiency": exergy_sample}, indent=2),
         encoding="utf-8",
     )
     print("Process Success: G3 artifacts compiled")
