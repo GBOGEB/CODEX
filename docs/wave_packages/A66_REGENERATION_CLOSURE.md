@@ -74,7 +74,7 @@ A67 should only be considered complete when:
 - Pages handover route is documented;
 - PR changed files list proves all closure artifacts are present.
 
-## Incomplete framework build-out notes (A76 review)
+## Incomplete framework build-out notes (current review)
 
 - `runtime/render_html_runtime.py` and `runtime/pages_runtime.py` still need template hardening so bundle index generation cannot fail on style-template formatting.
 - `runtime/runtime_bridge.py` execute path still emits a regeneration plan and does not trigger a concrete non-dry-run adapter/workflow handoff.
