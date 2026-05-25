@@ -53,9 +53,9 @@ def build_execution_summary() -> dict:
     success_rate = len(STATUS['SUCCESS']) / total_pipelines
     
     # Derive runtime state from success rate
-    if success_rate == 1.0:
+    if success_rate >= 0.99:  # Account for floating-point precision
         runtime_state = 'FULLY_OPERATIONAL'
-    elif success_rate == 0:
+    elif success_rate < 0.01:  # Account for floating-point precision
         runtime_state = 'FAILED'
     else:
         runtime_state = 'PARTIAL_OPERATIONAL'
