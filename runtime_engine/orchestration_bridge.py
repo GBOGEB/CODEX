@@ -7,8 +7,6 @@ ROOT = Path(__file__).resolve().parents[1]
 
 PIPELINE = [
     'telemetry_pipeline.py',
-    'convergence_engine.py',
-    'render_runtime_report.py',
     'plotly_wave_dashboard.py',
 ]
 
