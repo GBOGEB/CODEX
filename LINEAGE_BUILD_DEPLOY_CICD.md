@@ -72,7 +72,7 @@ A cycle is 100% complete when:
 ### Incomplete/Stub Code Gate (Required before cycle close)
 - If `pytest -q` fails during collection, treat the cycle as incomplete and capture the blocker in lineage notes.
 - Current known blockers and framework gaps:
-  - `src/gistau_ch15/visualization/pages_artifact_refresh.py` currently has a syntax blocker (`SyntaxError: unmatched ')'`) that prevents full test collection.
+  - `src/gistau_ch15/visualization/pages_artifact_refresh.py` currently has a malformed/duplicated `refresh(...)` method signature block that prevents full test collection.
   - Framework stubs are present in `src/gistau_ch15/kernels/saturation_stub.py` and `semantic_substrate/engines/delta_extractor.py`.
 - Track missing buildout work in the repository TODO plans:
   - `handover/GISTAU_CH15_TECH_TODO_IMPLEMENTATION_PLAN.md`
