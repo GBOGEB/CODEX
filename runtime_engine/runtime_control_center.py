@@ -39,7 +39,7 @@ def execute_pipeline(script_name: str) -> bool:
 
 def build_execution_summary() -> dict:
     total_pipelines = len(PIPELINE_STEPS)
-    success_rate = len(STATUS['SUCCESS']) / max(total_pipelines, 1)
+    success_rate = len(STATUS['SUCCESS']) / total_pipelines
     
     # Derive runtime state from success rate
     if success_rate == 1.0:

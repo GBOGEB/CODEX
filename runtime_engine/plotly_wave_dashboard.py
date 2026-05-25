@@ -42,12 +42,12 @@ Plotly.newPlot('chart', [trace1, trace2], {
 
 
 def render_dashboard() -> None:
-    OUTPUT.mkdir(parents=True, exist_ok=True)
-    
     if not TELEMETRY.exists():
         print(f'Error: Telemetry file not found at {TELEMETRY}', file=sys.stderr)
         print('Run: python -m runtime_engine.telemetry_pipeline', file=sys.stderr)
         sys.exit(1)
+    
+    OUTPUT.mkdir(parents=True, exist_ok=True)
     
     payload = json.loads(TELEMETRY.read_text(encoding='utf-8'))
 
