@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / 'runtime_output'
+OUTPUT = ROOT / 'outputs' / 'runtime_engine'
 TELEMETRY = OUTPUT / 'telemetry.json'
 HTML = OUTPUT / 'plotly_wave_dashboard.html'
 
@@ -41,6 +42,13 @@ Plotly.newPlot('chart', [trace1, trace2], {
 
 
 def render_dashboard() -> None:
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+    
+    if not TELEMETRY.exists():
+        print(f'Error: Telemetry file not found at {TELEMETRY}', file=sys.stderr)
+        print('Run telemetry_pipeline.py first to generate telemetry data.', file=sys.stderr)
+        sys.exit(1)
+    
     payload = json.loads(TELEMETRY.read_text(encoding='utf-8'))
 
     waves = [w['wave'] for w in payload['waves']]

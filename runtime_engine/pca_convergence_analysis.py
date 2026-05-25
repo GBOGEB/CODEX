@@ -4,8 +4,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / 'runtime_output'
-OUTPUT.mkdir(exist_ok=True)
+OUTPUT = ROOT / 'outputs' / 'runtime_engine'
 
 PCA_FACTORS = {
     'governance': 0.81,
@@ -35,6 +34,8 @@ def compute_pca_summary() -> dict:
 
 
 if __name__ == '__main__':
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+    
     summary = compute_pca_summary()
 
     output = OUTPUT / 'pca_convergence_summary.json'

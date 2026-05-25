@@ -1,20 +1,23 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
-from subprocess import run
-from datetime import datetime
+from subprocess import run, CalledProcessError
+from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / 'runtime_output'
-OUTPUT.mkdir(exist_ok=True)
+OUTPUT = ROOT / 'outputs' / 'runtime_engine'
 
-PIPELINES = [
-    'telemetry_pipeline.py',
-    'convergence_engine.py',
-    'render_runtime_report.py',
-    'plotly_wave_dashboard.py',
-]
+# Import pipeline steps from shared config
+import importlib.util
+spec = importlib.util.spec_from_file_location(
+    "pipeline_config",
+    ROOT / "runtime_engine" / "pipeline_config.py"
+)
+pipeline_config = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(pipeline_config)
+PIPELINE_STEPS = pipeline_config.PIPELINE_STEPS
 
 STATUS = {
     'SUCCESS': [],
@@ -24,25 +27,32 @@ STATUS = {
 
 def execute_pipeline(script_name: str) -> bool:
     try:
-        run(
-            ['python', str(ROOT / 'runtime_engine' / script_name)],
+        result = run(
+            [sys.executable, str(ROOT / 'runtime_engine' / script_name)],
             check=True,
+            capture_output=True,
+            text=True,
         )
         STATUS['SUCCESS'].append(script_name)
         return True
 
-    except Exception:
-        STATUS['FAILED'].append(script_name)
+    except (CalledProcessError, OSError) as e:
+        STATUS['FAILED'].append({
+            'script': script_name,
+            'error': str(e),
+            'stderr': getattr(e, 'stderr', ''),
+        })
         return False
 
 
 def build_execution_summary() -> dict:
+    total_pipelines = len(PIPELINE_STEPS)
     return {
-        'timestamp': datetime.utcnow().isoformat(),
+        'timestamp': datetime.now(timezone.utc).isoformat(),
         'executed': STATUS['SUCCESS'],
         'failed': STATUS['FAILED'],
         'success_rate': round(
-            len(STATUS['SUCCESS']) / max(len(PIPELINES), 1),
+            len(STATUS['SUCCESS']) / max(total_pipelines, 1),
             2,
         ),
         'runtime_state': 'PARTIAL_OPERATIONAL',
@@ -50,7 +60,9 @@ def build_execution_summary() -> dict:
 
 
 if __name__ == '__main__':
-    for pipeline in PIPELINES:
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+    
+    for pipeline in PIPELINE_STEPS:
         execute_pipeline(pipeline)
 
     summary = build_execution_summary()

@@ -5,8 +5,7 @@ from pathlib import Path
 from statistics import mean
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / 'runtime_output'
-OUTPUT.mkdir(exist_ok=True)
+OUTPUT = ROOT / 'outputs' / 'runtime_engine'
 
 DMAIC = {
     'define': [70, 74, 78],
@@ -31,6 +30,8 @@ def build_dmaic_summary() -> dict:
 
 
 if __name__ == '__main__':
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+    
     summary = build_dmaic_summary()
 
     output = OUTPUT / 'dmaic_runtime_summary.json'

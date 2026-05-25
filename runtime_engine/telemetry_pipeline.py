@@ -5,8 +5,7 @@ from pathlib import Path
 from statistics import mean
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / 'runtime_output'
-OUTPUT.mkdir(exist_ok=True)
+OUTPUT = ROOT / 'outputs' / 'runtime_engine'
 
 WAVES = [
     {'wave': 'W1', 'completion': 15, 'score': 48},
@@ -102,6 +101,8 @@ def build_payload() -> dict:
 
 
 if __name__ == '__main__':
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+    
     payload = build_payload()
 
     out = OUTPUT / 'telemetry.json'
