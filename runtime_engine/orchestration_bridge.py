@@ -4,10 +4,7 @@ import sys
 from pathlib import Path
 from subprocess import run
 
-# Add parent directory to path for imports
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from runtime_engine.pipeline_config import PIPELINE_STEPS
+from .pipeline_config import PIPELINE_STEPS
 
 ROOT = Path(__file__).resolve().parents[1]
 
