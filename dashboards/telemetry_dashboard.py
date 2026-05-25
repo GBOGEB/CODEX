@@ -4,16 +4,20 @@ from pathlib import Path
 import yaml
 import sys
 
-def _load_metric_display_helpers():
-    if __package__:
+def _import_metric_display_helpers():
+    try:
         from visuals.metric_display import (
             normalize_metric_name,
             abbreviate_metric_name,
         )
-    else:
-        repo_root = Path(__file__).resolve().parent.parent
-        if str(repo_root) not in sys.path:
-            sys.path.insert(0, str(repo_root))
+    except ModuleNotFoundError as exc:
+        if exc.name != 'visuals':
+            raise
+
+        _repo_root = Path(__file__).parent.parent
+        if str(_repo_root) not in sys.path:
+            sys.path.insert(0, str(_repo_root))
+
         from visuals.metric_display import (
             normalize_metric_name,
             abbreviate_metric_name,
@@ -22,7 +26,7 @@ def _load_metric_display_helpers():
 
 
 def main() -> None:
-    normalize_metric_name, abbreviate_metric_name = _load_metric_display_helpers()
+    normalize_metric_name, abbreviate_metric_name = _import_metric_display_helpers()
 
     # Load wave progression from governed manifest
     wave_manifest_path = Path(__file__).parent.parent / 'MANIFEST' / 'WAVE_PROGRESSION.yaml'
