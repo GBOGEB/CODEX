@@ -1,12 +1,14 @@
 # GitHub-Centered Software Delivery From Project Start to First Production Release
 
+This guide is the GitHub-controls companion to `GitHub_Reproducible_Build_Process.md`. Treat `GitHub_Reproducible_Build_Process.md` as the primary cross-platform baseline and use this document to apply GitHub-specific governance, workflow, and security defaults.
+
 ## Executive summary
 
 For a new software project whose language and deployment platform are not yet fixed, the most robust approach is to make the repository itself the system of record for source, workflow, release evidence, and handoff documentation. In practice, that means establishing a small set of non-negotiable repository contracts on day one: a protected default branch, work tracked through issues and a Project, standardized pull requests, reproducible build commands behind a stable interface such as `make`, CI and security checks on every pull request, release tags that map cleanly to semantic versions, and environment-gated deployment workflows. GitHub’s own documentation supports this end-to-end model across GitHub Flow, Projects, rulesets/branch protection, Actions workflows, environments, release notes, and code ownership.
 
 The recommended default branch strategy is **GitHub Flow with a protected `main` branch**, short-lived topic branches, pull requests for every change, squash merging, and Conventional Commits in either commit messages or at minimum the final squash-merge title. GitHub documents GitHub Flow as a lightweight branch-based workflow; GitHub also lets administrators require approving reviews, code-owner review, passing status checks, conversation resolution, signed commits, linear history, merge queues, and successful deployments before merge. Conventional Commits were designed to make history machine-readable and align naturally with Semantic Versioning, while Git documents annotated tags as the proper form of release tags.
 
-Because the language is unspecified, the most defensible repository design is **language-agnostic at the workflow layer and language-specific at the script layer**. The CI pipeline should call a small, stable command contract such as `make bootstrap`, `make test`, `make build`, and `make package`; the implementation of those targets then depends on the selected ecosystem. Primary documentation across npm, pip/Python, Maven, .NET, Go, and Cargo all supports a lockfile- or wrapper-based reproducibility model, but the concrete mechanism differs by ecosystem. That difference is exactly why the repository should expose a consistent build interface while hiding language specifics behind scripts.
+Because the language is unspecified, the most defensible repository design is **language-agnostic at the workflow layer and language-specific at the script layer**. The CI pipeline should call a small, stable command contract such as `make bootstrap`, `make lint`, `make test`, `make build`, and `make package`; the implementation of those targets then depends on the selected ecosystem. Primary documentation across npm, pip/Python, Maven, .NET, Go, and Cargo all supports a lockfile- or wrapper-based reproducibility model, but the concrete mechanism differs by ecosystem. That difference is exactly why the repository should expose a consistent build interface while hiding language specifics behind scripts.
 
 Security should be built into the baseline rather than added after the first release. GitHub’s native stack already covers dependency review, Dependabot updates, CodeQL code scanning, secret scanning, push protection, environment-scoped secrets, OIDC-based cloud authentication, and artifact attestations. The most important operational recommendation is to use GitHub-native controls wherever possible, because they are the most tightly integrated with pull requests, repository policy, and release auditability. The most important implementation recommendation is to pin Actions to full commit SHAs in hardened production repositories, because GitHub documents full-length SHA pinning as the only immutable way to reference an action release.
 
@@ -123,7 +125,7 @@ The following repository structure is a strong default for an unspecified langua
 
 ## Reproducible CI/CD and security implementation
 
-Because language selection is still open, the repository should commit only to the **contract** (`bootstrap`, `test`, `build`, `package`) and defer the implementation to `scripts/*.sh`.
+Because language selection is still open, the repository should commit only to the **contract** (`bootstrap`, `lint`, `test`, `build`, `package`) and defer the implementation to `scripts/*.sh`.
 
 ### Current build-out status (framework first)
 
@@ -146,8 +148,6 @@ on:
   push:
     branches: [main]
 
-permissions: read-all
-
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -155,10 +155,14 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Check out source
-        uses: actions/checkout@v6
+        # Keep version tags readable in documentation examples.
+        # For hardened production repositories, pin to a full commit SHA.
+        uses: actions/checkout@v4
 
       - name: Bootstrap toolchain and dependencies
         run: make bootstrap
@@ -171,6 +175,9 @@ jobs:
 
       - name: Build
         run: make build
+
+      - name: Package
+        run: make package
 ```
 
 ## Release, deployment, and handoff
