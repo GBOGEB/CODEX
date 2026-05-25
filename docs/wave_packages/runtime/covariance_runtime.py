@@ -21,7 +21,7 @@ def validate_square_matrix(matrix: list[list[float]]) -> int:
         if len(row) != size:
             raise ValueError("Matrix must be square")
         for value in row:
-            if not isinstance(value, (int, float)) or math.isnan(float(value)):
+            if not isinstance(value, (int, float)) or not math.isfinite(float(value)):
                 raise ValueError("Matrix values must be finite")
     return size
 

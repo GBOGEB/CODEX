@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+import pytest
 
 from docs.wave_packages.runtime.covariance_runtime import covariance_health
 from docs.wave_packages.runtime.abacus_feed_runtime import validate_feed
@@ -11,6 +12,11 @@ def test_covariance_runtime():
     report = covariance_health([[1.0, 0.1], [0.1, 1.0]])
     assert report['status'] == 'ok'
     assert report['score'] >= 80
+
+
+def test_covariance_rejects_infinite_values():
+    with pytest.raises(ValueError, match='finite'):
+        covariance_health([[1.0, float('inf')], [0.1, 1.0]])
 
 
 def test_feed_validation():
