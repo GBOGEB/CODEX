@@ -6,7 +6,6 @@ from statistics import mean
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / 'runtime_output'
-OUTPUT.mkdir(exist_ok=True)
 
 WAVES = [
     {'wave': 'W1', 'completion': 15, 'score': 48},
@@ -101,10 +100,16 @@ def build_payload() -> dict:
     }
 
 
-if __name__ == '__main__':
+def main() -> None:
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+    
     payload = build_payload()
 
     out = OUTPUT / 'telemetry.json'
     out.write_text(json.dumps(payload, indent=2), encoding='utf-8')
 
     print('Telemetry pipeline executed.')
+
+
+if __name__ == '__main__':
+    main()
