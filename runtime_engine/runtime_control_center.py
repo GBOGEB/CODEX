@@ -39,15 +39,22 @@ def execute_pipeline(script_name: str) -> bool:
 
 def build_execution_summary() -> dict:
     total_pipelines = len(PIPELINE_STEPS)
+    success_rate = len(STATUS['SUCCESS']) / max(total_pipelines, 1)
+    
+    # Derive runtime state from success rate
+    if success_rate == 1.0:
+        runtime_state = 'FULLY_OPERATIONAL'
+    elif success_rate == 0:
+        runtime_state = 'FAILED'
+    else:
+        runtime_state = 'PARTIAL_OPERATIONAL'
+    
     return {
         'timestamp': datetime.now(timezone.utc).isoformat(),
         'executed': STATUS['SUCCESS'],
         'failed': STATUS['FAILED'],
-        'success_rate': round(
-            len(STATUS['SUCCESS']) / max(total_pipelines, 1),
-            2,
-        ),
-        'runtime_state': 'PARTIAL_OPERATIONAL',
+        'success_rate': round(success_rate, 2),
+        'runtime_state': runtime_state,
     }
 
 

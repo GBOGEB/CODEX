@@ -46,7 +46,7 @@ def render_dashboard() -> None:
     
     if not TELEMETRY.exists():
         print(f'Error: Telemetry file not found at {TELEMETRY}', file=sys.stderr)
-        print('Run telemetry_pipeline.py first to generate telemetry data.', file=sys.stderr)
+        print('Run: python -m runtime_engine.telemetry_pipeline', file=sys.stderr)
         sys.exit(1)
     
     payload = json.loads(TELEMETRY.read_text(encoding='utf-8'))
