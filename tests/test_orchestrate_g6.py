@@ -1,16 +1,31 @@
 from pathlib import Path
 
-from orchestrate_g6 import _load_wave_series, run_g6_attestation_loop
+import yaml
+
+from orchestrate_g6 import CONVERGENCE_KPIS_PATH, WAVE_PROGRESSION_PATH, _load_wave_series, run_g6_attestation_loop
 
 
 def test_load_wave_series_reads_governed_manifests() -> None:
     claimed_waves, actual_waves = _load_wave_series()
 
+    with WAVE_PROGRESSION_PATH.open("r", encoding="utf-8") as handle:
+        wave_progression = yaml.safe_load(handle) or {}
+    with CONVERGENCE_KPIS_PATH.open("r", encoding="utf-8") as handle:
+        convergence = yaml.safe_load(handle) or {}
+
+    expected_claimed = {
+        item["wave"]: float(item["completion"]) / 100.0
+        for item in wave_progression["waves"]
+    }
+    expected_actual = {
+        wave: float(completion) / 100.0
+        for wave, completion in convergence["convergence_kpis"]["progression"].items()
+    }
+    common_waves = sorted(set(expected_claimed) & set(expected_actual))
+
     assert len(claimed_waves) == len(actual_waves)
-    assert claimed_waves[0] == 1.0
-    assert actual_waves[0] == 0.12
-    assert claimed_waves[-1] == 0.52
-    assert actual_waves[-1] == 0.71
+    assert claimed_waves == [expected_claimed[wave] for wave in common_waves]
+    assert actual_waves == [expected_actual[wave] for wave in common_waves]
 
 
 def test_run_g6_attestation_loop_writes_outputs_html_without_touching_readme(tmp_path: Path) -> None:

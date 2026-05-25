@@ -34,6 +34,10 @@ def _load_wave_series() -> tuple[list[float], list[float]]:
     return [claimed_by_wave[wave] for wave in common_waves], [actual_by_wave[wave] for wave in common_waves]
 
 
+def _format_wave_series(values: list[float]) -> list[str]:
+    return [f"{value:.4f}" for value in values]
+
+
 def _html_shell(title: str, body: str) -> str:
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -60,14 +64,15 @@ def run_g6_attestation_loop(output_dir: Path = OUTPUT_HTML_DIR) -> dict[str, obj
     )
 
     claimed_waves, actual_waves = _load_wave_series()
+    wave_delta = sum(abs(c - a) for c, a in zip(claimed_waves, actual_waves))
 
     state_payload = json.dumps(
         {
             "contrast_ratio": contrast_results["contrast_ratio"],
             "wcag_aa_compliant": contrast_results["wcag_aa_compliant"],
-            "wave_delta": round(sum(abs(c - a) for c, a in zip(claimed_waves, actual_waves)), 4),
-            "claimed_waves": claimed_waves,
-            "actual_waves": actual_waves,
+            "wave_delta": f"{wave_delta:.4f}",
+            "claimed_waves": _format_wave_series(claimed_waves),
+            "actual_waves": _format_wave_series(actual_waves),
         },
         sort_keys=True,
     )
