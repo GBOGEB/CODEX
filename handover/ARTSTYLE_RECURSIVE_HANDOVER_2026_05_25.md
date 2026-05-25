@@ -31,10 +31,10 @@ Deployment Automation   40%    autorun pipeline actions   Automatic preview mode
 
 ## 2. The Core Program Equations & Execution Logic
 Every metric tracked across active workspace blocks transforms into a computed runtime asset. The platform relies on the following structural equations, which are encoded into the running engine:
-- **Wave Completion Realism Delta (\Delta):** Determines the exact gap between perceived, human-declared progress updates and physical validation outputs. A negative index detects progress inflation:
-- **Unified Wave Maturity Index (M_{\text{wave}}):** Computes operational stability along weighted vectors, enforcing that visual visibility counts as heavily as test passage parameters:
-- **Ceiling Convergence Efficiency (C_{\text{efficiency}}):** Identifies optimization thresholds before hitting architectural bounds of diminishing functional returns:
-- **Iteration Forecast Horizon (I_{\text{remaining}}):** Predicts the number of remaining continuous diagnostic loops required to clear targeted gate conditions based on average velocity:
+- **Wave Completion Realism Delta (\Delta):** Determines the exact gap between perceived, human-declared progress updates and physical validation outputs. A negative index detects progress inflation.
+- **Unified Wave Maturity Index (M_{\text{wave}}):** Computes operational stability along weighted vectors, enforcing that visual visibility counts as heavily as test passage parameters.
+- **Ceiling Convergence Efficiency (C_{\text{efficiency}}):** Identifies optimization thresholds before hitting architectural bounds of diminishing functional returns.
+- **Iteration Forecast Horizon (I_{\text{remaining}}):** Predicts the number of remaining continuous diagnostic loops required to clear targeted gate conditions based on average velocity.
 
 ## 🏗️ 3. The Federated Semantic Control Plane (GLOSSARY.yaml)
 This complete, production-grade control plane serves as the semantic master engine across the federated workspace boundaries (gbogeb/codex ↔ gbogeb/abacus).
@@ -88,6 +88,7 @@ glossary:
       governance_meaning: ["Coefficient bounds weigh layout visibility equally with testing sweeps"]
       linked_dashboards: ["program_overview.html", "wave_status.html"]
       linked_runtime: ["src/artstyle/cdx_engine.py"]
+      thresholds: { target_gte: 0.7000 }
 
     ceiling_convergence:
       abbreviation: "C_efficiency"
@@ -96,6 +97,7 @@ glossary:
       governance_meaning: ["Monitors efficiency before hitting lines of diminishing asset returns"]
       linked_dashboards: ["ceiling_convergence.html"]
       linked_runtime: ["src/artstyle/cdx_engine.py"]
+      thresholds: { warning_if_lt: 0.5000 }
 
     iteration_forecast:
       abbreviation: "I_remaining"
@@ -104,6 +106,7 @@ glossary:
       governance_meaning: ["Slower progression delta values extend forecast horizons horizontally"]
       linked_dashboards: ["wave_completion.html", "iteration_forecast.html"]
       linked_runtime: ["src/artstyle/cdx_engine.py"]
+      thresholds: { warning_if_gt: 10.0000 }
 
   metrics:
     perceived_ceiling:
@@ -138,7 +141,7 @@ glossary:
   headings:
     h1: { font: "Helvetica Neue", weight: 700, role: "Program-level structural root heading definition" }
     h2: { font: "Helvetica Neue", weight: 600, role: "Wave-level containment split title block" }
-    h3: { font: "Helvetica Neue", weight: 500, role: "Subwave or diagnostics diagnostic log display" }
+    h3: { font: "Helvetica Neue", weight: 500, role: "Subwave or diagnostics log display" }
 
   accessibility_contracts:
     wcag_minimum: { contrast_ratio: 7.00 }
@@ -542,6 +545,10 @@ jobs:
       with: { python-version: '3.11' }
     - run: python src/artstyle/cdx_engine.py
     - run: python src/artstyle/semantic_validator.py
+    - uses: actions/configure-pages@v5
+    - uses: actions/upload-pages-artifact@v3
+      with:
+        path: docs/
     - name: Publish Authoritative Mirror directly to Pages Gateway
       uses: actions/deploy-pages@v4
 ```
@@ -556,7 +563,6 @@ This fluid, framework-free browser gateway functions as the primary user surface
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Authoritative Control Plane Viewport</title>
-  <link rel="stylesheet" href="../tokens/color_taxonomy.css">
   <style>
     body { background-color: #0b081a; color: #f2f2f7; font-family: ui-monospace, monospace; padding: 3rem 2rem; margin: 0; }
     .hub-chassis { max-width: 1200px; margin: 0 auto; }
