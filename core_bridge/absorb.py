@@ -64,15 +64,20 @@ class FederationBridgeEngine:
             print(f"[-] Execution stopped: Target layout file not found.")
             return False
             
+        with open(self.dashboard_path, "r", encoding="utf-8") as f:
+            html_content = f.read()
+        
+        # Check if already updated (idempotent operation)
+        if "Implementation Status (Active Pipeline Connected)" in html_content:
+            print(f"[*] Dashboard already updated - skipping patch (idempotent).")
+            return True
+            
         stats = self.scan_workspace()
         total_mapped = len(self.glossary.get("terms", []))
         total_files = sum(stats.values())
         
         wave_output = f"DMAIC Layer Active | Processed N={total_files} files (Word: {stats['docx']}, Py: {stats['py_loose']}, Visio/SVG: {stats['visio_svg']})"
         
-        with open(self.dashboard_path, "r", encoding="utf-8") as f:
-            html_content = f.read()
-
         # Rigid matching sequence targeting the static placeholder block
         target_regex = re.compile(
             r"<h3>Implementation Gaps \(Current Stub\)</h3>\s*<ul>.*?</ul>\s*<p class=\"muted\">.*?</p>\s*<p>.*?</p>", 
