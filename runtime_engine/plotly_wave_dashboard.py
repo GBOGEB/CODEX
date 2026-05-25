@@ -47,8 +47,6 @@ def render_dashboard() -> None:
         print('Run: python -m runtime_engine.telemetry_pipeline', file=sys.stderr)
         sys.exit(1)
     
-    OUTPUT.mkdir(parents=True, exist_ok=True)
-    
     payload = json.loads(TELEMETRY.read_text(encoding='utf-8'))
 
     waves = [w['wave'] for w in payload['waves']]
@@ -60,6 +58,7 @@ def render_dashboard() -> None:
     html = html.replace('__SCORES__', json.dumps(scores))
     html = html.replace('__COMPLETION__', json.dumps(completion))
 
+    OUTPUT.mkdir(parents=True, exist_ok=True)
     HTML.write_text(html, encoding='utf-8')
 
     print('Plotly dashboard generated.')

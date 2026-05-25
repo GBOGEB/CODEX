@@ -39,6 +39,17 @@ def execute_pipeline(script_name: str) -> bool:
 
 def build_execution_summary() -> dict:
     total_pipelines = len(PIPELINE_STEPS)
+    
+    # Handle edge case of empty pipeline
+    if total_pipelines == 0:
+        return {
+            'timestamp': datetime.now(timezone.utc).isoformat(),
+            'executed': [],
+            'failed': [],
+            'success_rate': 0.0,
+            'runtime_state': 'NO_PIPELINES',
+        }
+    
     success_rate = len(STATUS['SUCCESS']) / total_pipelines
     
     # Derive runtime state from success rate
