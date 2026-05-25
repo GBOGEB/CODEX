@@ -12,7 +12,7 @@ HTML = OUTPUT / 'plotly_wave_dashboard.html'
 HTML_TEMPLATE = """
 <html>
 <head>
-<script src='https://cdn.plot.ly/plotly-2.30.0.min.js'></script>
+<script src='https://cdn.plot.ly/plotly-2.35.2.min.js'></script>
 </head>
 <body>
 <div id='chart'></div>
