@@ -188,7 +188,7 @@ For deployment topology, the safest generic promotion model is **dev -> stage ->
 
 ### Four-week rollout plan (template example)
 
-Treat the calendar dates below as placeholders anchored to an example kickoff; adapt them to relative Week 1, Week 2, Week 3, and Week 4 for your actual project timeline.
+Treat the calendar dates below as placeholders anchored to an example kickoff; adapt them to relative Week 1, Week 2, Week 3, and Week 4 for your actual project timeline (for example: May 18-22, 2026 -> Week 1; May 25-29, 2026 -> Week 2; June 1-5, 2026 -> Week 3; June 8-12, 2026 -> Week 4).
 
 ```mermaid
 gantt
