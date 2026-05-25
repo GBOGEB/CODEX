@@ -44,4 +44,8 @@ def test_run_g6_attestation_loop_writes_outputs_html_without_touching_readme(tmp
 
     dashboard = (output_dir / "g6_dashboard.html").read_text(encoding="utf-8")
     assert "Content-Security-Policy" in dashboard
+    assert "default-src 'self'" in dashboard
+    assert "base-uri 'none'" in dashboard
+    assert "object-src 'none'" in dashboard
+    assert "frame-ancestors 'none'" in dashboard
     assert result["attestation_hash"] in dashboard
