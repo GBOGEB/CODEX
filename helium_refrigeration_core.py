@@ -30,7 +30,8 @@ class CryogenicHeliumEngine:
 
         if power_kw <= 0:
             return 0.0
-        return min(max(useful_exergy_power / power_kw, 0.0), 1.0)
+        power_w = power_kw * 1000.0
+        return min(max(useful_exergy_power / power_w, 0.0), 1.0)
 
     def calculate_covariance(self, claimed_vector, actual_vector):
         c = [float(value) for value in claimed_vector]
@@ -46,4 +47,14 @@ class CryogenicHeliumEngine:
         return float(covariance)
 
     def calculate_anova_variance(self, claimed_vector, actual_vector):
-        return self.calculate_covariance(claimed_vector, actual_vector)
+        c = [float(value) for value in claimed_vector]
+        a = [float(value) for value in actual_vector]
+        if len(c) != len(a) or len(c) < 2:
+            return 0.0
+
+        residuals = [claimed - actual for claimed, actual in zip(c, a)]
+        residual_mean = sum(residuals) / len(residuals)
+        variance = sum((value - residual_mean) ** 2 for value in residuals) / (
+            len(residuals) - 1
+        )
+        return float(variance)

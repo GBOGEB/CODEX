@@ -32,7 +32,7 @@ def test_compute_exergy_efficiency_bounds() -> None:
             enthalpy_out=220.0,
             entropy_in=1.0,
             entropy_out=1.1,
-            power_kw=1.0,
+            power_kw=0.5,
         )
         == 1.0
     )
@@ -44,8 +44,22 @@ def test_covariance_and_legacy_alias() -> None:
     actual = [1.0, 2.0, 3.0]
 
     assert engine.calculate_covariance(claimed, actual) == pytest.approx(1.0)
-    assert engine.calculate_anova_variance(claimed, actual) == pytest.approx(1.0)
+    assert engine.calculate_anova_variance(claimed, actual) == pytest.approx(0.0)
     assert engine.calculate_covariance([1.0], [1.0]) == 0.0
+    assert engine.calculate_anova_variance([1.0], [1.0]) == 0.0
+
+
+def test_compute_exergy_efficiency_uses_kw_units() -> None:
+    engine = CryogenicHeliumEngine()
+    efficiency = engine.compute_exergy_efficiency(
+        mass_flow=2.0,
+        enthalpy_in=100.0,
+        enthalpy_out=1100.0,
+        entropy_in=1.0,
+        entropy_out=1.0,
+        power_kw=2.0,
+    )
+    assert efficiency == pytest.approx(1.0)
 
 
 def test_compile_g3_dashboard_notes_missing_anchors(
