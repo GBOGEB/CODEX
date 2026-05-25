@@ -187,7 +187,12 @@ def load_payload(path: str | Path | None) -> dict[str, Any]:
             },
         }
     p = Path(path)
-    return json.loads(p.read_text(encoding="utf-8"))
+    data = json.loads(p.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError(
+            f"Payload JSON must be an object (dict), got {type(data).__name__}"
+        )
+    return data
 
 
 def write_report(report: dict[str, Any], path: str | Path) -> None:
