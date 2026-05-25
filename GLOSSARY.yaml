@@ -1,20 +1,122 @@
+# %YAML 1.2
+---
 meta:
-  repo_owner: "gbogeb"
-  associated_project: "MINERVA_QPS"
-  runtime_governance: "Alpha A6"
-  last_sync_timestamp: "2026-05-25T17:11:30Z"
+  system_class: "Federated Semantic Control Plane Engine"
+  version: "6.0.0"
+  provenance_anchors:
+    upstream_conceptual: "https://github.com/gbogeb/codex"
+    downstream_functional: "https://github.com/gbogeb/abacus"
+    visual_perceptual_layer: "https://github.com/gbogeb/art-style"
 
-terms:
-  - tag: "QPLANT_HE_REFRIG"
-    canonical_name: "Helium Refrigeration 2K/4.5K Supply System"
-    source_file: "docs/visio/QPLANT_v4.vsdx"
-    status: "Validated"
-    semantic_links:
-      - "ABACUS://core/thermo_models"
-      - "CODEX://docs/specifications"
-  - tag: "FED_BRIDGE_DASH"
-    canonical_name: "Federation Bridge Entry Dashboard Layer"
-    source_file: "docs/federation_bridge_dashboard.html"
-    status: "Active Pipeline Connected"
-    semantic_links:
-      - "CODEX://core_bridge/absorb.py"
+glossary_hierarchy:
+  - "GLOBAL_GLOSSARY"
+  - "PROGRAM_GLOSSARY"
+  - "WAVE_GLOSSARY"
+  - "MODULE_GLOSSARY"
+  - "RUNTIME_VARIABLES"
+
+glossary:
+  terminology:
+    cdx: "Continuous Diagnostics First tracking posture. Visual parameters take absolute precedence over hidden logic paths."
+    html_first: "Static rendering verified as an explicit governance release gate contract."
+    lineage: "Parent-to-child trace path mapping from root program definitions down to task artifacts."
+    claimed_completion: "Progress evaluation metrics declared by checking agents."
+    actual_completion: "Progress verification metrics calculated by background document scanners."
+    maturity_star: "High-fidelity indicator glyph used inside downstream Plotly dashboards."
+
+  abbreviations:
+    cdx: { canonical: "Continuous Diagnostics" }
+    ci:  { canonical: "Continuous Integration" }
+    cd:  { canonical: "Continuous Deployment" }
+    pca: { canonical: "Principal Component Analysis" }
+    dmaic: { canonical: "Define Measure Analyze Improve Control" }
+    ssot: { canonical: "Single Source of Truth" }
+
+  equations:
+    delivery_delta:
+      abbreviation: "Δ"
+      caption: "TAB: Measured delta tracking index across development blocks."
+      latex_inline: "$$\\Delta = Completion_{actual} - Completion_{claimed}$$"
+      governance_meaning: ["negative results track progress overclaim", "positive results flag outperforming status"]
+      linked_dashboards: ["wave_completion.html", "dmaic_kpis.html"]
+      linked_runtime: ["src/artstyle/cdx_engine.py", "src/artstyle/semantic_validator.py"]
+      thresholds: { warning_if_lt: -0.1000 }
+
+    wave_maturity:
+      abbreviation: "M_wave"
+      caption: "PLT: Weighted structural maturity score calculation node."
+      latex_inline: "$$M_{wave}=\\sum_i w_i x_i$$"
+      governance_meaning: ["coefficients determine influence vectors across release checks"]
+      linked_dashboards: ["program_overview.html", "wave_status.html"]
+      linked_runtime: ["src/artstyle/cdx_engine.py"]
+      thresholds: { warning_if_lt: 0.0000 }
+
+    ceiling_convergence:
+      abbreviation: "C_efficiency"
+      caption: "EQ: Optimization density tracking variable."
+      latex_inline: "$$C_{efficiency}=\\frac{M_{current}}{M_{ceiling}}$$"
+      governance_meaning: ["monitors system growth metrics relative to diminishing returns margins"]
+      linked_dashboards: ["ceiling_convergence.html"]
+      linked_runtime: ["src/artstyle/cdx_engine.py"]
+      thresholds: { warning_if_lt: 0.5000 }
+
+    iteration_forecast:
+      abbreviation: "I_remaining"
+      caption: "PLT: Predicted loop parameters needed to clear active wave gates."
+      latex_inline: "$$I_{remaining}=\\frac{M_{ceiling}-M_{current}}{\\Delta M_{avg}}$$"
+      governance_meaning: ["slower velocity scores extend iteration vector limits horizontally"]
+      linked_dashboards: ["wave_completion.html", "iteration_forecast.html"]
+      linked_runtime: ["src/artstyle/cdx_engine.py"]
+      thresholds: { warning_if_lt: 0.0000 }
+
+  metrics:
+    perceived_ceiling:
+      definition: "Achievable completion limits before execution curves reach saturation."
+      examples:
+        wave_001: { current: 0.425, ceiling: 0.850, estimated_iterations_remaining: 5 }
+        program_total: { current: 0.310, ceiling: 0.970, estimated_subwaves_remaining: 18 }
+      linked_equation: "ceiling_convergence"
+
+  kpis:
+    kpi_coefficients:
+      html_output_exists: 0.15
+      diagnostics_present: 0.15
+      testing_completeness: 0.20
+      ci_cd_validation: 0.20
+      pca_coordination: 0.10
+      dmaic_progression: 0.10
+      accessibility_pass: 0.05
+      colour_fidelity_pass: 0.05
+    semantic_governance:
+      glossary_coverage: { target: 1.00 }
+      orphan_terms: { target: 0 }
+      undocumented_metrics: { target: 0 }
+      equation_traceability: { target: 1.00 }
+
+  captions:
+    figures: { prefix: "FIG" }
+    tables: { prefix: "TAB" }
+    plots: { prefix: "PLT" }
+    equations: { prefix: "EQ" }
+
+  headings:
+    h1: { font: "Helvetica Neue", weight: 700, role: "Program-level structural root title heading" }
+    h2: { font: "Helvetica Neue", weight: 600, role: "Wave-level containment split heading" }
+    h3: { font: "Helvetica Neue", weight: 500, role: "Subwave or diagnostics metrics micro logging block" }
+
+  accessibility_contracts:
+    wcag_minimum: { contrast_ratio: 7.00 }
+    preferred_target: { standard: "WCAG AAA" }
+    prohibited:
+      - "violet_on_indigo_without_compensation"
+      - "low_luminance_collisions"
+      - "invisible_focus_states"
+
+pr_compliance_contracts:
+  required_declarations:
+    - "glossary_updates"
+    - "new_semantic_objects"
+    - "equation_mappings"
+    - "kpi_changes"
+    - "topology_deltas"
+...
