@@ -12,7 +12,7 @@ Because the language is unspecified, the most defensible repository design is **
 
 Security should be built into the baseline rather than added after the first release. GitHub’s native stack already covers dependency review, Dependabot updates, CodeQL code scanning, secret scanning, push protection, environment-scoped secrets, OIDC-based cloud authentication, and artifact attestations. The most important operational recommendation is to use GitHub-native controls wherever possible, because they are the most tightly integrated with pull requests, repository policy, and release auditability. The most important implementation recommendation is to pin Actions to full commit SHAs in hardened production repositories, because GitHub documents full-length SHA pinning as the only immutable way to reference an action release.
 
-The remainder of this report therefore recommends a concrete, review-ready baseline: a repository blueprint, artifact inventory, branch and review policy, issue and PR templates, label and Project taxonomy, a language-agnostic build contract, sample GitHub Actions workflows, release-note configuration, deployment gates for dev/stage/prod, a comparison of CI/CD alternatives, and a four-week rollout plan running from **Monday, May 18, 2026 through Friday, June 12, 2026**.
+The remainder of this report therefore recommends a concrete, review-ready baseline: a repository blueprint, artifact inventory, branch and review policy, issue and PR templates, label and Project taxonomy, a language-agnostic build contract, sample GitHub Actions workflows, release-note configuration, deployment gates for dev/stage/prod, a comparison of CI/CD alternatives, and a four-week rollout plan mapped to relative **Week 1-Week 4** milestones.
 
 ## Operating model from inception to first production release
 
@@ -186,7 +186,9 @@ Release tagging should use **SemVer-aligned annotated tags**, with the Git tag a
 
 For deployment topology, the safest generic promotion model is **dev -> stage -> prod**, with GitHub environments enforcing the control boundaries.
 
-### Four-week rollout plan
+### Four-week rollout plan (template example)
+
+Treat the calendar dates below as placeholders anchored to an example kickoff; adapt them to relative Week 1, Week 2, Week 3, and Week 4 for your actual project timeline.
 
 ```mermaid
 gantt
