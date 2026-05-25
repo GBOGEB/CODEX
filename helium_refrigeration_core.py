@@ -52,9 +52,9 @@ class CryogenicHeliumEngine:
         if len(c) != len(a) or len(c) < 2:
             return 0.0
 
-        residuals = [claimed - actual for claimed, actual in zip(c, a)]
-        residual_mean = sum(residuals) / len(residuals)
-        variance = sum((value - residual_mean) ** 2 for value in residuals) / (
-            len(residuals) - 1
+        differences = [claimed - actual for claimed, actual in zip(c, a)]
+        difference_mean = sum(differences) / len(differences)
+        variance = sum((value - difference_mean) ** 2 for value in differences) / (
+            len(differences) - 1
         )
         return float(variance)
