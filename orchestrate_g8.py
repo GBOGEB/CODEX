@@ -179,12 +179,11 @@ $$CR = \\frac{{L_{{lightest}} + 0.05}}{{L_{{darkest}} + 0.05}}$$
 *G8 automated audit baseline complete. Buildout remains in-progress until TODO items are closed.*
 """
 
-    with open("files.html", "w", encoding="utf-8") as f:
-        f.write(files_html)
-    with open("dashboard.html", "w", encoding="utf-8") as f:
-        f.write(dashboard_html)
-    with open("slides_html.html", "w", encoding="utf-8") as f:
-        f.write(slides_html)
+    html_output_dir = Path("outputs") / "html"
+    html_output_dir.mkdir(parents=True, exist_ok=True)
+    (html_output_dir / "files.html").write_text(files_html, encoding="utf-8")
+    (html_output_dir / "dashboard.html").write_text(dashboard_html, encoding="utf-8")
+    (html_output_dir / "slides_html.html").write_text(slides_html, encoding="utf-8")
     report_path = Path("outputs") / "g8_lifecycle_report.md"
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(g8_report_content, encoding="utf-8")
