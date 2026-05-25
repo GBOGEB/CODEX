@@ -65,7 +65,11 @@ def load_matrix(path: str | Path | None) -> list[list[float]]:
         return [[1.0, 0.1], [0.1, 1.0]]
     data = json.loads(Path(path).read_text(encoding="utf-8"))
     if isinstance(data, dict):
-        return data.get("matrix", data)
+        if "matrix" not in data:
+            raise ValueError(
+                "JSON object must contain a 'matrix' key"
+            )
+        return data["matrix"]
     if isinstance(data, list):
         return data
     raise ValueError(
