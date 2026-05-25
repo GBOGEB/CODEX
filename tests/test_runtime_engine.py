@@ -3,12 +3,9 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
-
-# Import the modules under test
-import sys
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from runtime_engine.telemetry_pipeline import (
     build_payload,
@@ -18,7 +15,7 @@ from runtime_engine.telemetry_pipeline import (
     KPI_WEIGHTS,
     DMAIC,
 )
-from runtime_engine.plotly_wave_dashboard import render_dashboard, TELEMETRY
+from runtime_engine import plotly_wave_dashboard
 
 
 def test_compute_wave_velocity_returns_list():
@@ -168,15 +165,14 @@ def test_build_payload_json_serializable():
     assert deserialized == payload
 
 
-def test_render_dashboard_fails_without_telemetry(tmp_path):
+def test_render_dashboard_fails_without_telemetry():
     """Test that render_dashboard raises FileNotFoundError when telemetry is missing."""
-    # This test verifies the error handling behavior
-    # We can't easily test the actual rendering without creating the telemetry file
-    # but we can verify the error message is helpful
+    # Mock TELEMETRY path to a non-existent file to ensure clean test state
+    fake_telemetry_path = Path('/tmp/nonexistent_telemetry_file_for_test.json')
     
-    if not TELEMETRY.exists():
+    with patch.object(plotly_wave_dashboard, 'TELEMETRY', fake_telemetry_path):
         with pytest.raises(FileNotFoundError) as exc_info:
-            render_dashboard()
+            plotly_wave_dashboard.render_dashboard()
         
         assert 'telemetry_pipeline.py' in str(exc_info.value)
-        assert str(TELEMETRY) in str(exc_info.value)
+        assert str(fake_telemetry_path) in str(exc_info.value)
