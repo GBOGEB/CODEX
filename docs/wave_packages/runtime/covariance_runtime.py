@@ -68,7 +68,10 @@ def load_matrix(path: str | Path | None) -> list[list[float]]:
         return data.get("matrix", data)
     if isinstance(data, list):
         return data
-    raise ValueError("Input JSON must be a matrix list or an object containing 'matrix'")
+    raise ValueError(
+        "Input JSON must be a matrix list or an object containing 'matrix', "
+        f"got {type(data).__name__}"
+    )
 
 
 def main(argv: Iterable[str] | None = None) -> int:
