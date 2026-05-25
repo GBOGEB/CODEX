@@ -2,7 +2,7 @@ from pathlib import Path
 import json
 import pytest
 
-from docs.wave_packages.runtime.covariance_runtime import covariance_health
+from docs.wave_packages.runtime.covariance_runtime import covariance_health, load_matrix
 from docs.wave_packages.runtime.abacus_feed_runtime import validate_feed
 from docs.wave_packages.runtime.statistics_pca_runtime import compute_report
 from docs.wave_packages.runtime import topology_reconciliation_runtime
@@ -17,6 +17,13 @@ def test_covariance_runtime():
 def test_covariance_rejects_infinite_values():
     with pytest.raises(ValueError, match='finite'):
         covariance_health([[1.0, float('inf')], [0.1, 1.0]])
+
+
+def test_load_matrix_supports_bare_list_json(tmp_path):
+    matrix_path = tmp_path / 'matrix.json'
+    matrix = [[1.0, 0.0], [0.0, 1.0]]
+    matrix_path.write_text(json.dumps(matrix), encoding='utf-8')
+    assert load_matrix(matrix_path) == matrix
 
 
 def test_feed_validation():
