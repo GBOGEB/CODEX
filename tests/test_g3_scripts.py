@@ -38,7 +38,7 @@ def test_compute_exergy_efficiency_bounds() -> None:
     )
 
 
-def test_covariance_and_legacy_alias() -> None:
+def test_covariance_and_variance_metrics() -> None:
     engine = CryogenicHeliumEngine()
     claimed = [1.0, 2.0, 3.0]
     actual = [1.0, 2.0, 3.0]
@@ -91,6 +91,32 @@ def test_compile_g3_dashboard_notes_missing_anchors(
     files_html = (tmp_path / "outputs" / "html" / "files.html").read_text(encoding="utf-8")
     assert "- [ ] Add or correct upstream anchor: `missing.md`" in readme
     assert "G3-TUPLE-ONE" in files_html
+
+
+def test_compile_g3_dashboard_escapes_matrix_values(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    matrix = {
+        "tuples": [
+            {
+                "component_id": "<script>alert(1)</script>",
+                "scope": "Scope & \"quoted\"",
+                "upstream": {"repo": "gbogeb/codex", "file_path": "a b/<tag>.md"},
+                "downstream": {"file_path": "downstream/<bad>.py"},
+            }
+        ]
+    }
+    (tmp_path / "g3_deep_matrix.json").write_text(json.dumps(matrix), encoding="utf-8")
+    monkeypatch.setattr(orchestrate_g3, "__file__", str(tmp_path / "orchestrate_g3.py"))
+
+    orchestrate_g3.compile_g3_dashboard()
+
+    files_html = (tmp_path / "outputs" / "html" / "files.html").read_text(encoding="utf-8")
+    assert "<script>alert(1)</script>" not in files_html
+    assert "&lt;script&gt;alert(1)&lt;/script&gt;" in files_html
+    assert "Scope &amp; &quot;quoted&quot;" in files_html
+    assert "a%20b/%3Ctag%3E.md" in files_html
+    assert "downstream/&lt;bad&gt;.py" in files_html
 
 
 def test_issue_g3_pull_request_handles_transport_errors(

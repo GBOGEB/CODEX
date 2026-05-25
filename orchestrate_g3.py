@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import json
+from html import escape
 from pathlib import Path
+from urllib.parse import quote
 
 from helium_refrigeration_core import CryogenicHeliumEngine
 
@@ -11,7 +13,9 @@ def _load_matrix(matrix_path: Path) -> dict:
 
 
 def _upstream_url(repo: str, file_path: str) -> str:
-    return f"https://github.com/{repo}/blob/main/{file_path}"
+    safe_repo = quote(repo, safe="/._-")
+    safe_path = quote(file_path, safe="/._-")
+    return f"https://github.com/{safe_repo}/blob/main/{safe_path}"
 
 
 def compile_g3_dashboard():
@@ -40,12 +44,17 @@ def compile_g3_dashboard():
     for tuple_data in matrix.get("tuples", []):
         upstream_repo = tuple_data["upstream"]["repo"]
         upstream_file = tuple_data["upstream"]["file_path"]
+        component_id = escape(str(tuple_data["component_id"]))
+        scope = escape(str(tuple_data["scope"]))
+        upstream_file_display = escape(str(upstream_file))
+        downstream_file = escape(str(tuple_data["downstream"]["file_path"]))
+        upstream_url = escape(_upstream_url(upstream_repo, upstream_file), quote=True)
         tuple_rows.append(
             "<tr>"
-            f"<td>{tuple_data['component_id']}</td>"
-            f"<td>{tuple_data['scope']}</td>"
-            f"<td><a href=\"{_upstream_url(upstream_repo, upstream_file)}\">{upstream_file}</a></td>"
-            f"<td>{tuple_data['downstream']['file_path']}</td>"
+            f"<td>{component_id}</td>"
+            f"<td>{scope}</td>"
+            f"<td><a href=\"{upstream_url}\">{upstream_file_display}</a></td>"
+            f"<td>{downstream_file}</td>"
             "</tr>"
         )
         if upstream_repo.lower() == "gbogeb/codex" and not (repo_root / upstream_file).exists():
