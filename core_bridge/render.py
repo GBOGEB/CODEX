@@ -3,11 +3,12 @@
 CODEX Transformation Engine - SLUG Format Matrix Generator
 """
 import sys
+from html import escape
 from pathlib import Path
 
 
 class SlugRenderPipeline:
-    def __init__(self, output_dir="docs/rendered_outputs"):
+    def __init__(self, output_dir="outputs/rendered_outputs"):
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -17,7 +18,8 @@ class SlugRenderPipeline:
             return f"[-] Error: Source asset missing: {source_file}"
 
         target_format = target_format.lower().strip()
-        out_file = self.output_dir / f"{source.stem}_export.{target_format if target_format != 'sheet' else 'xlsx'}"
+        normalized_format = "csv" if target_format in ["sheet", "xlsx"] else target_format
+        out_file = self.output_dir / f"{source.stem}_export.{normalized_format}"
 
         with open(source, "r", encoding="utf-8", errors="ignore") as f:
             raw_data = f.read()
@@ -25,11 +27,11 @@ class SlugRenderPipeline:
         print(f"[+] Compiling Document Matrix: {source.name} -> Target format: [{target_format.upper()}]")
 
         if target_format == "html":
-            out_file.write_text(f"<html><body>{raw_data}</body></html>", encoding="utf-8")
+            out_file.write_text(f"<html><body><pre>{escape(raw_data)}</pre></body></html>", encoding="utf-8")
         elif target_format == "pdf":
             out_file.write_text(f"PDF Output Layer Stream\nSource File: {source.name}", encoding="utf-8")
         elif target_format in ["sheet", "xlsx", "csv"]:
-            out_file.with_suffix(".csv").write_text("Header1,Header2\nData1,Data2", encoding="utf-8")
+            out_file.write_text("Header1,Header2\nData1,Data2", encoding="utf-8")
         elif target_format in ["slides", "pptx"]:
             out_file.write_text(
                 f"Slide Deck Breakpoint System\nTotal Segments: {len(raw_data.split('---'))}",

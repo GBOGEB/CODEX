@@ -3,7 +3,6 @@
 CODEX Federation Bridge - Core Ingestion & Dashboard Synchronization Engine
 Author: gbogeb
 """
-import os
 import re
 import sys
 from pathlib import Path
@@ -77,32 +76,29 @@ class FederationBridgeEngine:
         with open(self.dashboard_path, "r", encoding="utf-8") as f:
             html_content = f.read()
 
-        # Rigid matching sequence targeting the static placeholder block
         target_regex = re.compile(
-            r"<h3>Implementation Gaps \(Current Stub\)</h3\>\s*<ul\>.*?<\/ul\>\s*<p class=\"muted\"\>.*?<\/p\>",
+            r'<div class="card-panel" id="federation-bridge-status">.*?</div>',
             re.DOTALL,
         )
 
-        new_block = f"""<h3>Implementation Status (Active Pipeline Connected)</h3>
-      <ul>
-        <li><strong>Ingestion Layer:</strong> MCP-driven dynamic workspace tracking is active.</li>
-        <li><strong>Traceability Master:</strong> {total_mapped} verified terms linked to canonical SSOT.</li>
-        <li><strong>Wave Statistics:</strong> {wave_output}.</li>
-      </ul>
-      <p class=\"muted\"><strong>Pipeline Status:</strong> Continuous deployment synchronization achieved via GitHub Pages.</p>"""
+        new_block = f"""<div class="card-panel" id="federation-bridge-status">
+        <h2>FEDERATION BRIDGE STATUS</h2>
+        <p style="color: #8e8e93; font-size: 0.85rem; line-height: 1.5; margin: 0;">
+          Ingestion and render pipelines are active with glossary traceability.
+        </p>
+        <ul style="margin-top: 1rem;">
+          <li><strong>Traceability Master:</strong> {total_mapped} verified terms linked to canonical SSOT.</li>
+          <li><strong>Wave Statistics:</strong> {wave_output}.</li>
+        </ul>
+      </div>"""
 
         if target_regex.search(html_content):
             updated_html = target_regex.sub(new_block, html_content)
+        elif "</main>" in html_content:
+            updated_html = html_content.replace("</main>", f"{new_block}\n    </main>", 1)
         else:
-            # Fallback inline replacement if text matches broad headers
-            if "Implementation Gaps (Current Stub)" in html_content:
-                updated_html = html_content.replace(
-                    "<h3>Implementation Gaps (Current Stub)</h3>",
-                    f"<h3>Implementation Status</h3>\n{new_block}",
-                )
-            else:
-                print("[-] Error: Placeholder layout boundaries do not align with template regex.")
-                return False
+            print("[-] Error: Could not locate a stable insertion point in dashboard template.")
+            return False
 
         with open(self.dashboard_path, "w", encoding="utf-8") as f:
             f.write(updated_html)
