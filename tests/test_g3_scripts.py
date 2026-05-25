@@ -101,7 +101,10 @@ def test_compile_g3_dashboard_escapes_matrix_values(
             {
                 "component_id": "<script>alert(1)</script>",
                 "scope": "Scope & \"quoted\"",
-                "upstream": {"repo": "gbogeb/codex", "file_path": "a b/<tag>.md"},
+                "upstream": {
+                    "repo": "gbogeb/codex\" onclick=\"alert(1)",
+                    "file_path": "a b/<tag>.md",
+                },
                 "downstream": {"file_path": "downstream/<bad>.py"},
             }
         ]
@@ -115,7 +118,9 @@ def test_compile_g3_dashboard_escapes_matrix_values(
     assert "<script>alert(1)</script>" not in files_html
     assert "&lt;script&gt;alert(1)&lt;/script&gt;" in files_html
     assert "Scope &amp; &quot;quoted&quot;" in files_html
-    assert "a%20b/%3Ctag%3E.md" in files_html
+    assert "onclick=&quot;alert(1)" not in files_html
+    assert "href=\"#\"" in files_html
+    assert "a b/&lt;tag&gt;.md" in files_html
     assert "downstream/&lt;bad&gt;.py" in files_html
 
 

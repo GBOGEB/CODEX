@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 import json
+import re
 from html import escape
 from pathlib import Path
 from urllib.parse import quote
 
 from helium_refrigeration_core import CryogenicHeliumEngine
+
+
+_REPO_SLUG_PATTERN = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 
 
 def _load_matrix(matrix_path: Path) -> dict:
@@ -13,7 +17,9 @@ def _load_matrix(matrix_path: Path) -> dict:
 
 
 def _upstream_url(repo: str, file_path: str) -> str:
-    safe_repo = quote(repo, safe="/._-")
+    if not _REPO_SLUG_PATTERN.fullmatch(repo):
+        return "#"
+    safe_repo = repo
     safe_path = quote(file_path, safe="/._-")
     return f"https://github.com/{safe_repo}/blob/main/{safe_path}"
 
