@@ -60,6 +60,11 @@ def load_wave_progression(manifest_path: Path) -> tuple[list[str], list[float]]:
                 f'Invalid wave progression manifest schema at waves[{index}].completion: '
                 'expected number.'
             )
+        if not (0 <= float(completion_value) <= 100):
+            raise ValueError(
+                f'Invalid wave progression manifest schema at waves[{index}].completion: '
+                f'expected value in [0, 100], got {completion_value}.'
+            )
 
         waves.append(wave)
         completion.append(float(completion_value))

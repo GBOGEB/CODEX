@@ -1,60 +1,20 @@
+import sys
 from pathlib import Path
+
+# Ensure repo root is on sys.path so that visuals.* imports work when
+# this script is executed directly (python visuals/maturity_radar.py).
+_REPO_ROOT = str(Path(__file__).parent.parent)
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
+
+from visuals.program_metrics_manifest import load_program_metric_entries, metric_display_label
 
 
 def load_program_metrics(manifest_path: Path) -> tuple[list[str], list[float]]:
     """Load maturity metrics from governed YAML manifest."""
-    try:
-        import yaml
-    except ImportError as e:
-        raise ImportError(
-            f"Missing required dependency: {e.name}\n"
-            "Install with: pip install pyyaml"
-        ) from e
-    
-    if not manifest_path.exists():
-        raise FileNotFoundError(
-            f"Program metrics manifest not found: {manifest_path}\n"
-            f"Expected MANIFEST/PROGRAM_METRICS.yaml in repository root."
-        )
-
-    with open(manifest_path, encoding='utf-8') as f:
-        data = yaml.safe_load(f)
-
-    if not isinstance(data, dict):
-        raise ValueError(
-            'Invalid program metrics manifest schema: expected top-level mapping.'
-        )
-
-    program_metrics = data.get('program_metrics')
-    if not isinstance(program_metrics, dict):
-        raise ValueError(
-            'Invalid program metrics manifest schema: expected "program_metrics" mapping.'
-        )
-
-    metrics = program_metrics.get('metrics')
-    if not isinstance(metrics, dict) or not metrics:
-        raise ValueError(
-            'Invalid program metrics manifest schema: expected non-empty "metrics" mapping.'
-        )
-
-    categories: list[str] = []
-    values: list[float] = []
-    for metric_name, metric_data in metrics.items():
-        if not isinstance(metric_data, dict):
-            raise ValueError(
-                f'Invalid program metrics manifest schema at metrics.{metric_name}: '
-                'expected mapping containing "score".'
-            )
-        score = metric_data.get('score')
-        if not isinstance(score, (int, float)):
-            raise ValueError(
-                f'Invalid program metrics manifest schema at metrics.{metric_name}.score: '
-                'expected number.'
-            )
-
-        categories.append(metric_name.replace('_', ' ').title())
-        values.append(float(score))
-
+    entries = load_program_metric_entries(manifest_path)
+    categories = [metric_display_label(name, data) for name, data in entries]
+    values = [float(data['score']) for _, data in entries]
     return categories, values
 
 
