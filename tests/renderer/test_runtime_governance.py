@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from textwrap import dedent
 
 from src.abacus_render_pipeline.runtime_governance import RuntimeGovernanceA61
