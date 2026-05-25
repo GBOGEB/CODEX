@@ -9,7 +9,7 @@ description = "Utilities for packaging CODEX conversation archives"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "CODEX Team" }]
-dependencies = ["PyYAML>=6.0,<7.0"]
+dependencies = ["PyYAML>=6.0,<7.0", "requests>=2.25.0"]
 
 [project.optional-dependencies]
 dev = ["pytest>=7.0"]
@@ -17,3 +17,6 @@ dev = ["pytest>=7.0"]
 [tool.pytest.ini_options]
 addopts = "-q"
 testpaths = ["tests"]
+
+[tool.setuptools.package-data]
+"src.renderers.themes" = ["*.yaml"]

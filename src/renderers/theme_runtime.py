@@ -27,8 +27,8 @@ class SemanticThemeRuntime:
 
     def __init__(self, config_path: str | Path | None = None) -> None:
         if config_path is None:
-            package_root = Path(__file__).resolve().parents[2]
-            self.config_path = package_root / 'themes' / 'semantic_cards.yaml'
+            # Resolve to src/renderers/themes/semantic_cards.yaml
+            self.config_path = Path(__file__).resolve().parent / 'themes' / 'semantic_cards.yaml'
         else:
             self.config_path = Path(config_path)
         self.data = self._load()
