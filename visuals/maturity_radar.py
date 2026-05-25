@@ -3,15 +3,14 @@ from pathlib import Path
 import yaml
 import sys
 
-# Handle both package import and standalone script execution
-try:
-    from .metric_display import normalize_metric_name
-except ImportError:
+if __package__ in (None, ''):
     # Running as standalone script - add script directory to path
     _script_dir = Path(__file__).parent
     if str(_script_dir) not in sys.path:
         sys.path.insert(0, str(_script_dir))
     from metric_display import normalize_metric_name
+else:
+    from .metric_display import normalize_metric_name
 
 
 def main() -> None:

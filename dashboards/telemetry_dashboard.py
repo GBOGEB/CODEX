@@ -123,9 +123,11 @@ def main() -> None:
         height=900,
     )
 
-    output_path = Path(__file__).resolve().parent.parent / 'outputs' / 'html' / 'telemetry_dashboard.html'
+    output_root = Path(__file__).resolve().parent.parent / 'outputs'
+    output_path = output_root / 'telemetry_dashboard.html'
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.write_html(str(output_path))
+
+    fig.write_html(str(output_path), include_plotlyjs='cdn')
     print(f'generated {output_path}')
 
 
