@@ -94,11 +94,17 @@ class FederationBridgeEngine:
 
         if target_regex.search(html_content):
             updated_html = target_regex.sub(new_block, html_content)
-        elif "</main>" in html_content:
-            updated_html = html_content.replace("</main>", f"{new_block}\n    </main>", 1)
         else:
-            print("[-] Error: Could not locate a stable insertion point in dashboard template.")
-            return False
+            main_section_regex = re.compile(r"(<main\b[^>]*>)(.*?)(</main>)", re.DOTALL)
+            main_match = main_section_regex.search(html_content)
+            if not main_match:
+                print("[-] Error: Could not locate a stable insertion point in dashboard template.")
+                return False
+            updated_html = (
+                f"{html_content[:main_match.start()]}"
+                f"{main_match.group(1)}{main_match.group(2)}{new_block}\n    {main_match.group(3)}"
+                f"{html_content[main_match.end():]}"
+            )
 
         with open(self.dashboard_path, "w", encoding="utf-8") as f:
             f.write(updated_html)

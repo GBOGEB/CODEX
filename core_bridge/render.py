@@ -31,7 +31,7 @@ class SlugRenderPipeline:
         elif target_format == "pdf":
             out_file.write_text(f"PDF Output Layer Stream\nSource File: {source.name}", encoding="utf-8")
         elif target_format in ["sheet", "xlsx", "csv"]:
-            out_file.write_text("Header1,Header2\nData1,Data2", encoding="utf-8")
+            out_file.write_text(raw_data, encoding="utf-8")
         elif target_format in ["slides", "pptx"]:
             out_file.write_text(
                 f"Slide Deck Breakpoint System\nTotal Segments: {len(raw_data.split('---'))}",

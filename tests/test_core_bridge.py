@@ -28,6 +28,7 @@ def test_render_sheet_token_outputs_csv(tmp_path: Path) -> None:
     out_path = tmp_path / "outputs" / "sample_export.csv"
     assert str(out_path) in result
     assert out_path.exists()
+    assert out_path.read_text(encoding="utf-8") == "a,b\n1,2"
 
 
 def test_absorb_patches_existing_index_idempotently(tmp_path: Path) -> None:
