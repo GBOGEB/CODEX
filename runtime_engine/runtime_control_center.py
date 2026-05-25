@@ -6,18 +6,13 @@ from pathlib import Path
 from subprocess import run, CalledProcessError
 from datetime import datetime, timezone
 
+# Add parent directory to path for imports
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from runtime_engine.pipeline_config import PIPELINE_STEPS
+
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / 'outputs' / 'runtime_engine'
-
-# Import pipeline steps from shared config
-import importlib.util
-spec = importlib.util.spec_from_file_location(
-    "pipeline_config",
-    ROOT / "runtime_engine" / "pipeline_config.py"
-)
-pipeline_config = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(pipeline_config)
-PIPELINE_STEPS = pipeline_config.PIPELINE_STEPS
 
 STATUS = {
     'SUCCESS': [],
