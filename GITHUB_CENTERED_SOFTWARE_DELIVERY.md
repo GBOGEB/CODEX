@@ -1,6 +1,6 @@
 # GitHub-Centered Software Delivery From Project Start to First Production Release
 
-This guide is the GitHub-controls companion to `GitHub_Reproducible_Build_Process.md`. Treat `GitHub_Reproducible_Build_Process.md` as the primary cross-platform baseline and use this document to apply GitHub-specific governance, workflow, and security defaults.
+This guide is the GitHub-focused companion to `GitHub_Reproducible_Build_Process.md`. Treat `GitHub_Reproducible_Build_Process.md` as the primary cross-platform baseline and use this document to apply GitHub-specific governance, workflow, and security defaults.
 
 ## Executive summary
 
