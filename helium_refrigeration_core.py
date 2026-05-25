@@ -30,8 +30,8 @@ class CryogenicHeliumEngine:
 
         if power_kw <= 0:
             return 0.0
-        power_w = power_kw * 1000.0
-        return min(max(useful_exergy_power / power_w, 0.0), 1.0)
+        power_watts = power_kw * 1000.0
+        return min(max(useful_exergy_power / power_watts, 0.0), 1.0)
 
     def calculate_covariance(self, claimed_vector, actual_vector):
         c = [float(value) for value in claimed_vector]
