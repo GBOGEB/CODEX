@@ -1,25 +1,23 @@
 from __future__ import annotations
 
+from pathlib import Path
 
-def _hex_to_rgb(hex_color: str) -> tuple[int, int, int]:
-    value = hex_color.lstrip("#")
-    if len(value) != 6:
-        raise ValueError(f"Expected 6-digit hex color, got: {hex_color}")
-    return tuple(int(value[i : i + 2], 16) for i in (0, 2, 4))
+import yaml
 
-
-def _to_linear(channel: float) -> float:
-    if channel <= 0.04045:
-        return channel / 12.92
-    return ((channel + 0.055) / 1.055) ** 2.4
+from governance.WCAG_CONTRAST_CHECKER import contrast_ratio
 
 
-def _relative_luminance(hex_color: str) -> float:
-    r, g, b = _hex_to_rgb(hex_color)
-    r_lin = _to_linear(r / 255.0)
-    g_lin = _to_linear(g / 255.0)
-    b_lin = _to_linear(b / 255.0)
-    return 0.2126 * r_lin + 0.7152 * g_lin + 0.0722 * b_lin
+THEME_PATH = Path(__file__).resolve().parents[2] / "governance" / "SEMANTIC_THEME.yaml"
+
+
+def _load_warning_dark_theme(path: Path = THEME_PATH) -> dict[str, str]:
+    with path.open("r", encoding="utf-8") as handle:
+        data = yaml.safe_load(handle) or {}
+    dark = data["semantic_tokens"]["warning"]["dark"]
+    return {
+        "background": dark["bg"],
+        "text": dark["fg"],
+    }
 
 
 class ContrastValidator:
@@ -28,19 +26,13 @@ class ContrastValidator:
     def __init__(self) -> None:
         self.target_invariants = {
             "warning": {
-                "dark": {
-                    "background": "#7c2d12",
-                    "text": "#fef3c7",
-                }
+                "dark": _load_warning_dark_theme(),
             }
         }
 
     def validate_theme_node(self, background: str, text: str) -> dict[str, float | bool]:
-        l1 = _relative_luminance(background)
-        l2 = _relative_luminance(text)
-        lightest, darkest = max(l1, l2), min(l1, l2)
-        contrast_ratio = round((lightest + 0.05) / (darkest + 0.05), 2)
+        ratio = round(contrast_ratio(background, text), 2)
         return {
-            "contrast_ratio": contrast_ratio,
-            "wcag_aa_compliant": contrast_ratio >= 4.5,
+            "contrast_ratio": ratio,
+            "wcag_aa_compliant": ratio >= 4.5,
         }

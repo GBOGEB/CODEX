@@ -1,17 +1,56 @@
 #!/usr/bin/env python3
+import json
 import hashlib
+from html import escape
+from pathlib import Path
+
+import yaml
 
 from semantic_substrate.renderer.contrast_validator import ContrastValidator
 
-MISSING_BUILDOUT_TODOS = [
-    "Load claimed/actual wave series from governed manifests.",
-    "Write generated pages to docs/ or outputs/html/ instead of repository root (and register docs HTML in MANIFEST.json).",
-    "Current scaffold overwrites README.md; final buildout should emit a dedicated attestation file.",
-    "Add tests for attestation hash inputs and generated artifact paths.",
-]
+ROOT = Path(__file__).resolve().parent
+OUTPUT_HTML_DIR = ROOT / "outputs" / "html"
+WAVE_PROGRESSION_PATH = ROOT / "MANIFEST" / "WAVE_PROGRESSION.yaml"
+CONVERGENCE_KPIS_PATH = ROOT / "MANIFEST" / "CONVERGENCE_KPIS.yaml"
 
 
-def run_g6_attestation_loop():
+def _load_wave_series() -> tuple[list[float], list[float]]:
+    with WAVE_PROGRESSION_PATH.open("r", encoding="utf-8") as handle:
+        wave_progression = yaml.safe_load(handle) or {}
+    with CONVERGENCE_KPIS_PATH.open("r", encoding="utf-8") as handle:
+        convergence_kpis = yaml.safe_load(handle) or {}
+
+    claimed_by_wave = {
+        item["wave"]: float(item["completion"]) / 100.0
+        for item in wave_progression.get("waves", [])
+        if "wave" in item and "completion" in item
+    }
+    actual_by_wave = {
+        wave: float(completion) / 100.0
+        for wave, completion in convergence_kpis.get("convergence_kpis", {}).get("progression", {}).items()
+    }
+
+    common_waves = sorted(set(claimed_by_wave) & set(actual_by_wave))
+    return [claimed_by_wave[wave] for wave in common_waves], [actual_by_wave[wave] for wave in common_waves]
+
+
+def _html_shell(title: str, body: str) -> str:
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none';">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{escape(title)}</title>
+</head>
+<body>
+{body}
+</body>
+</html>
+"""
+
+
+def run_g6_attestation_loop(output_dir: Path = OUTPUT_HTML_DIR) -> dict[str, object]:
     validator = ContrastValidator()
 
     warning_dark = validator.target_invariants["warning"]["dark"]
@@ -20,72 +59,79 @@ def run_g6_attestation_loop():
         warning_dark["text"],
     )
 
-    claimed_waves = [0.20, 0.40, 0.60, 0.80, 1.00]
-    actual_waves = [0.20, 0.41, 0.59, 0.80, 1.00]
+    claimed_waves, actual_waves = _load_wave_series()
 
-    state_payload = (
-        f"G6-Verified-CR:{contrast_results['contrast_ratio']}-"
-        f"WCAG:{contrast_results['wcag_aa_compliant']}-"
-        f"WAVE-DELTA:{sum(abs(c-a) for c, a in zip(claimed_waves, actual_waves)):.4f}"
+    state_payload = json.dumps(
+        {
+            "contrast_ratio": contrast_results["contrast_ratio"],
+            "wcag_aa_compliant": contrast_results["wcag_aa_compliant"],
+            "wave_delta": round(sum(abs(c - a) for c, a in zip(claimed_waves, actual_waves)), 4),
+            "claimed_waves": claimed_waves,
+            "actual_waves": actual_waves,
+        },
+        sort_keys=True,
     )
     attestation_hash = hashlib.sha256(state_payload.encode()).hexdigest()[:16]
 
-    files_html = f"""<!DOCTYPE html>
-<html lang=\"en\">
-<head>
-    <meta charset=\"UTF-8\"><title>G6 Component Topography</title>
-</head>
-<body>
-    <h2>📁 Generation 6 (G6) Attested Component Matrix</h2>
-    <p><strong>System State Checksum:</strong> <code>{attestation_hash}</code></p>
-</body>
-</html>"""
+    ratio_text = escape(f"{contrast_results['contrast_ratio']}:1")
+    compliant_text = escape(str(contrast_results["wcag_aa_compliant"]))
+    hash_text = escape(attestation_hash)
+    warning_bg = escape(warning_dark["background"])
+    warning_text = escape(warning_dark["text"])
 
-    dashboard_html = f"""<!DOCTYPE html>
-<html lang=\"en\">
-<head>
-    <meta charset=\"UTF-8\"><title>G6 Telemetry Console</title>
-</head>
-<body>
-    <h1>📊 Generation 6 QA Hardening Telemetry Center</h1>
-    <p>Contrast ratio: {contrast_results['contrast_ratio']}:1</p>
-    <p>WCAG AA compliant: {contrast_results['wcag_aa_compliant']}</p>
-    <p>Attestation hash: {attestation_hash}</p>
-</body>
-</html>"""
+    files_html = _html_shell(
+        "G6 Component Topography",
+        f"""    <h2>📁 Generation 6 (G6) Attested Component Matrix</h2>
+    <p><strong>System State Checksum:</strong> <code>{hash_text}</code></p>""",
+    )
 
-    slides_html = f"""<!DOCTYPE html>
-<html lang=\"en\">
-<head><meta charset=\"UTF-8\"><title>G6 Verification Review</title></head>
-<body>
-    <h1>G6 Sign-Off: Hardened Renderer Core</h1>
-    <p>Attestation Node: <code>{attestation_hash}</code></p>
-</body>
-</html>"""
+    dashboard_html = _html_shell(
+        "G6 Telemetry Console",
+        f"""    <h1>📊 Generation 6 QA Hardening Telemetry Center</h1>
+    <p>Contrast ratio: {ratio_text}</p>
+    <p>WCAG AA compliant: {compliant_text}</p>
+    <p>Attestation hash: <code>{hash_text}</code></p>""",
+    )
 
-    todo_lines = "\n".join(f"- TODO: {item}" for item in MISSING_BUILDOUT_TODOS)
-    readme_md = f"""# 🌌 G6 Unified Federation Framework & Deployment Attestation
+    slides_html = _html_shell(
+        "G6 Verification Review",
+        f"""    <h1>G6 Sign-Off: Hardened Renderer Core</h1>
+    <p>Attestation Node: <code>{hash_text}</code></p>""",
+    )
+
+    attestation_summary = f"""# 🌌 G6 Unified Federation Framework & Deployment Attestation
 
 ## 📈 Verified Pipeline Metrics
-* **Validated Warning Card Background:** `{warning_dark['background']}`
-* **Validated Warning Card Text:** `{warning_dark['text']}`
-* **Calculated WCAG Contrast Performance Ratio:** `{contrast_results['contrast_ratio']}:1`
-* **Cryptographic Attestation Token:** `{attestation_hash}`
-
-## 🚧 Incomplete Buildout (Scaffold)
-{todo_lines}
+* **Validated Warning Card Background:** `{warning_bg}`
+* **Validated Warning Card Text:** `{warning_text}`
+* **Calculated WCAG Contrast Performance Ratio:** `{ratio_text}`
+* **Cryptographic Attestation Token:** `{hash_text}`
 """
 
-    with open("files.html", "w", encoding="utf-8") as f:
-        f.write(files_html)
-    with open("dashboard.html", "w", encoding="utf-8") as f:
-        f.write(dashboard_html)
-    with open("slides_html.html", "w", encoding="utf-8") as f:
-        f.write(slides_html)
-    with open("README.md", "w", encoding="utf-8") as f:
-        f.write(readme_md)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    print("🚀 G6 Attestation Loop successful. All 4 target files baked for deployment.")
+    files_path = output_dir / "g6_files.html"
+    dashboard_path = output_dir / "g6_dashboard.html"
+    slides_path = output_dir / "g6_slides.html"
+    summary_path = output_dir / "g6_attestation.md"
+
+    files_path.write_text(files_html, encoding="utf-8")
+    dashboard_path.write_text(dashboard_html, encoding="utf-8")
+    slides_path.write_text(slides_html, encoding="utf-8")
+    summary_path.write_text(attestation_summary, encoding="utf-8")
+
+    print(f"🚀 G6 Attestation Loop successful. Wrote artifacts to {output_dir}.")
+    return {
+        "attestation_hash": attestation_hash,
+        "contrast_results": contrast_results,
+        "warning_dark": warning_dark,
+        "output_paths": {
+            "files": str(files_path),
+            "dashboard": str(dashboard_path),
+            "slides": str(slides_path),
+            "summary": str(summary_path),
+        },
+    }
 
 
 if __name__ == "__main__":
