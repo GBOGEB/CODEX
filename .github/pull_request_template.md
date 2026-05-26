@@ -1,16 +1,50 @@
-# Pull Request
+# [WAVE]
 
-## Summary
-Describe the governance or delivery change.
+## Semantic Scope
+- [ ] Governance
+- [ ] Federation
+- [ ] Runtime
+- [ ] Telemetry
+- [ ] Render
+- [ ] Drift
 
-## Validation
-- [ ] Repository review completed
-- [ ] No secrets committed
-- [ ] Existing execution preserved
+---
 
-## Review objectives
-Describe what reviewers should focus on.
+# Tuple Metadata
 
-## Lineage
-Program: <program>
-Repository: CODEX
+| Key | Value |
+|---|---|
+| Wave | W000 |
+| Trace | FEDERATION.RUNTIME |
+| State | ACTIVE |
+| Renderable | YES |
+| Drift Stable | YES |
+
+---
+
+# Completion Vector
+
+| Domain | Completion |
+|---|---|
+| Structure | 90% |
+| Federation | 40% |
+| Telemetry | 35% |
+| Renderability | 75% |
+
+---
+
+# Near-Miss Optimizations
+
+-
+-
+-
+
+---
+
+# Render Validation
+
+- [ ] Markdown
+- [ ] YAML
+- [ ] HTML
+- [ ] GitHub Pages
+- [ ] Telemetry

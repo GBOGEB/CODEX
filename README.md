@@ -1,5 +1,25 @@
 # 🌌 G9 Unified Federation Framework & System Verification Specification
 
+
+## W000 Federated Semantic Trace Bootstrap
+
+This repository now includes a federation bootstrap wave (`W000-FEDERATED-SEMANTIC-TRACE`) to bridge ABACUS, CODEX, and daily chat interaction with dual-render governance:
+
+- Human semantic readability first
+- Machine-sequential telemetry for orchestration
+- Prefix-driven traceability (`[TOPIC]`, `[TRACE]`, `[WAVE]`, `[DRIFT]`, etc.)
+- Completion-vector oriented runtime scoring
+
+Bootstrap artifacts are staged in:
+- `.devcontainer/devcontainer.json`
+- `federation/semantic_index/schema.yaml`
+- `telemetry/pca/drift_monitor.py`
+- `agents/codex/MCP_INSTRUCTION.md`
+- `agents/abacus/FEDERATION_PROTOCOL.md`
+- `.github/pull_request_template.md`
+
+---
+
 ## 🛡️ Level 8 (L8) Closed-Loop Post-Commissioning Summary
 
 * **A6 Warning Card Text Contrast Performance:** `10.03:1` (Target: $\ge 4.5:1$)

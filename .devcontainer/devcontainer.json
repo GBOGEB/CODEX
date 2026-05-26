@@ -1,0 +1,20 @@
+{
+  "name": "artstyle-wip-federation",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter",
+        "yzhang.markdown-all-in-one"
+      ]
+    }
+  },
+  "postCreateCommand": "pip install -r requirements.txt || true"
+}
