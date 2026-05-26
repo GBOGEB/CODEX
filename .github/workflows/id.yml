@@ -1,0 +1,18 @@
+name: ID-INSTRUMENTATION-DIAGNOSTICS
+on: [push]
+jobs:
+  run-cdx-analytics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install PyYAML
+      - run: python src/artstyle/cdx_engine.py
+      - run: python src/artstyle/semantic_validator.py
+      - name: Archive Generated Diagnostics Payload
+        uses: actions/upload-artifact@v4
+        with:
+          name: cdx-telemetry-snapshot
+          path: docs/

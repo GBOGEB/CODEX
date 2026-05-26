@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HBHS-EP Metrics Dashboard</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+body{margin:0;background:#07101f;color:#f8fafc;font-family:Arial,sans-serif}header{padding:24px 36px;background:linear-gradient(135deg,#0f172a,#172554);border-bottom:1px solid #334155}h1{margin:0;color:#7dd3fc}h2{color:#c4b5fd}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:24px}.card{background:#111827;border:1px solid #334155;border-radius:16px;padding:18px}.kpi{font-size:34px;color:#fde68a;font-weight:bold}.section{margin:24px;padding:20px;background:#111827;border:1px solid #334155;border-radius:16px}table{width:100%;border-collapse:collapse;font-size:13px}th,td{border:1px solid #334155;padding:8px}th{background:#172554;color:#bfdbfe}td{background:#0f172a}.good{color:#86efac}.warn{color:#fde68a}.risk{color:#fca5a5}.lineage svg{width:100%;height:auto;background:#0f172a;border-radius:12px;border:1px solid #334155}
+@media(max-width:1000px){.grid{grid-template-columns:1fr 1fr}}@media(max-width:700px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<h1>HBHS-EP v8.4 — Recursive DMAIC Metrics Dashboard</h1>
+<p>Tracks recursive lineage, wave completion, covariance trends, plot maturity, and engineering dashboard progression.</p>
+</header>
+<section class="grid">
+<div class="card"><div class="kpi">3 / 100</div><p>Plots complete</p></div>
+<div class="card"><div class="kpi">42%</div><p>SSoT coverage</p></div>
+<div class="card"><div class="kpi">8%</div><p>Proof backlog closure</p></div>
+<div class="card"><div class="kpi">25%</div><p>Control traceability</p></div>
+</section>
+<section class="section lineage">
+<h2>Recursive lineage graph</h2>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 260">
+<rect width="1400" height="260" fill="#0f172a"/>
+<g font-family="Arial" fill="#f8fafc">
+<line x1="120" y1="130" x2="1260" y2="130" stroke="#334155" stroke-width="8"/>
+<circle cx="120" cy="130" r="32" fill="#22c55e"/><text x="96" y="136">v8.0</text>
+<circle cx="250" cy="130" r="32" fill="#22c55e"/><text x="226" y="136">v8.1</text>
+<circle cx="380" cy="130" r="32" fill="#22c55e"/><text x="356" y="136">v8.2</text>
+<circle cx="510" cy="130" r="32" fill="#22c55e"/><text x="486" y="136">v8.3</text>
+<circle cx="640" cy="130" r="36" fill="#f59e0b"/><text x="615" y="136">v8.4</text>
+<circle cx="820" cy="130" r="32" fill="#475569"/><text x="796" y="136">v8.5</text>
+<circle cx="980" cy="130" r="32" fill="#475569"/><text x="956" y="136">v8.6</text>
+<circle cx="1140" cy="130" r="32" fill="#475569"/><text x="1116" y="136">v8.7</text>
+<text x="80" y="210">SSoT</text>
+<text x="200" y="210">DMAIC</text>
+<text x="330" y="210">Portal</text>
+<text x="455" y="210">CODEX</text>
+<text x="575" y="210">Metrics</text>
+<text x="760" y="210">Pressure</text>
+<text x="930" y="210">Monte Carlo</text>
+<text x="1085" y="210">Thermo</text>
+</g>
+</svg>
+</section>
+<section class="section">
+<h2>Wave completion metrics</h2>
+<table>
+<tr><th>Wave</th><th>Focus</th><th>Plots</th><th>SSoT</th><th>Proof</th><th>Dashboard</th><th>Control</th><th>Status</th></tr>
+<tr><td>0</td><td>Foundation</td><td>0/0</td><td>35%</td><td>5%</td><td>25%</td><td>20%</td><td class="good">COMPLETE</td></tr>
+<tr><td>1</td><td>Progress dashboard</td><td>3/10</td><td>42%</td><td>8%</td><td>35%</td><td>25%</td><td class="warn">ACTIVE</td></tr>
+<tr><td>2</td><td>Pressure envelopes</td><td>0/20</td><td>55%</td><td>22%</td><td>45%</td><td>35%</td><td>PLANNED</td></tr>
+<tr><td>3</td><td>Monte Carlo</td><td>0/20</td><td>65%</td><td>40%</td><td>58%</td><td>48%</td><td>PLANNED</td></tr>
+<tr><td>4</td><td>Thermodynamics</td><td>0/25</td><td>78%</td><td>62%</td><td>70%</td><td>62%</td><td>PLANNED</td></tr>
+<tr><td>5</td><td>Reliability/control</td><td>0/15</td><td>88%</td><td>78%</td><td>82%</td><td>78%</td><td>PLANNED</td></tr>
+<tr><td>6</td><td>Release polish</td><td>0/10</td><td>95%</td><td>90%</td><td>95%</td><td>92%</td><td>PLANNED</td></tr>
+</table>
+</section>
+<section class="section">
+<h2>Plotly KPI trend</h2>
+<div id="trendPlot" style="height:420px"></div>
+</section>
+<section class="section">
+<h2>Covariance guidance</h2>
+<ul>
+<li class="warn">Plot completion without proof closure indicates possible dilution.</li>
+<li class="warn">Dashboard maturity must not outpace SSoT governance.</li>
+<li class="risk">Generated artifacts without manifest traceability increase drift risk.</li>
+<li class="good">Preferred trend: SSoT + proof maturity lead plot growth.</li>
+</ul>
+<div id="covariancePlot" style="height:420px"></div>
+</section>
+<script>
+Plotly.newPlot('trendPlot',[
+{x:[0,1,2,3,4,5,6],y:[0,3,20,40,65,85,100],name:'Plot completion',type:'scatter'},
+{x:[0,1,2,3,4,5,6],y:[35,42,55,65,78,88,95],name:'SSoT coverage',type:'scatter'},
+{x:[0,1,2,3,4,5,6],y:[5,8,22,40,62,78,90],name:'Proof closure',type:'scatter'},
+{x:[0,1,2,3,4,5,6],y:[20,25,35,48,62,78,92],name:'Control maturity',type:'scatter'}
+],{paper_bgcolor:'#111827',plot_bgcolor:'#0f172a',font:{color:'#f8fafc'},title:'Wave maturity progression',xaxis:{title:'Wave'},yaxis:{title:'Completion %'}});
+Plotly.newPlot('covariancePlot',[
+{x:[3,20,40,65,85,100],y:[8,22,40,62,78,90],mode:'markers+lines',name:'Plots vs proof'},
+{x:[35,42,55,65,78,88],y:[20,25,35,48,62,78],mode:'markers+lines',name:'SSoT vs control'}
+],{paper_bgcolor:'#111827',plot_bgcolor:'#0f172a',font:{color:'#f8fafc'},title:'Covariance and maturity guidance',xaxis:{title:'Leading metric'},yaxis:{title:'Dependent maturity'}});
+</script>
+</body>
+</html>

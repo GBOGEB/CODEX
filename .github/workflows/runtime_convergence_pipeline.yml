@@ -1,0 +1,47 @@
+name: Runtime Convergence Pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'src/orchestration/**'
+      - 'src/runtime/**'
+      - 'ontology/**'
+      - '.github/workflows/runtime_convergence_pipeline.yml'
+
+jobs:
+  convergence-runtime:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install runtime dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy scipy scikit-learn statsmodels matplotlib plotly
+
+      - name: Execute semantic runtime pipeline bridge
+        run: |
+          python src/orchestration/semantic_runtime_pipeline_bridge_v1.py --out runtime_outputs/wave40
+
+      - name: Validate critical outputs
+        run: |
+          test -f runtime_outputs/wave40/telemetry.csv
+          test -f runtime_outputs/wave40/wave_stats.csv
+          test -f runtime_outputs/wave40/pca_components.csv
+          test -f runtime_outputs/wave40/anova_two_factor.csv
+          test -f runtime_outputs/wave40/plotly_wave_animation.html
+          test -f runtime_outputs/wave40/certification_summary.json
+
+      - name: Upload runtime artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-convergence-artifacts
+          path: runtime_outputs/wave40/
