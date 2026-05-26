@@ -1,14 +1,20 @@
 import sys
+from decimal import Decimal, ROUND_HALF_UP
+from pathlib import Path
 import yaml
 
 
 def verify_mass_fractions(fractions: list) -> bool:
     """Enforces absolute precision validation for fluid stream components to 4 decimal places."""
-    total = sum(round(f, 4) for f in fractions)
-    expected = round(1.0000, 4)
+    # Use Decimal for deterministic fixed-point arithmetic at 4 decimal places
+    quantize_pattern = Decimal("0.0001")
+    decimal_fractions = [Decimal(str(f)).quantize(quantize_pattern, rounding=ROUND_HALF_UP) for f in fractions]
+    total = sum(decimal_fractions)
+    expected = Decimal("1.0000")
+    
     if total != expected:
         print("CRITICAL FAULT: Stream mass fraction cumulative totals deviate from SSOT boundary condition.")
-        print(f"Expected: {expected:.4f}, Calculated: {total:.4f}, Delta: {abs(expected - total):.4f}")
+        print(f"Expected: {expected}, Calculated: {total}, Delta: {abs(expected - total)}")
         return False
     return True
 
@@ -33,8 +39,12 @@ def validate_2k_operational_flow(nominal_flow: float, target_flow: float, tolera
     return lower_bound <= round(nominal_flow, 4) <= upper_bound
 
 
-def run_governance_assimilation(ssot_path: str, active_flow: float, active_efficiency: float, mass_mix: list):
-    """Parses incoming SSOT parameters from the federated plane and enforces runtime compliance gates."""
+def run_governance_assimilation(ssot_path: str, active_flow: float, active_efficiency: float, mass_mix: list) -> bool:
+    """Parses incoming SSOT parameters from the federated plane and enforces runtime compliance gates.
+    
+    Returns:
+        bool: True if all gates pass, False otherwise.
+    """
     print("Executing Predatory Assimilation: Processing G10-TUPLE-HE-REF...")
 
     try:
@@ -42,15 +52,60 @@ def run_governance_assimilation(ssot_path: str, active_flow: float, active_effic
             ssot_data = yaml.safe_load(f)
     except Exception as e:
         print(f"Execution Halt: Failed to bind to governance contract mapping layer. Details: {e}")
-        sys.exit(1)
+        return False
 
-    he_tuple = next((c for c in ssot_data["ssot"]["components"] if c["id"] == "G10-TUPLE-HE-REF"), None)
+    # Validate yaml.safe_load() return value
+    if ssot_data is None or not isinstance(ssot_data, dict):
+        print("CRITICAL FAULT: SSOT file is empty or malformed (expected dict, got None or non-dict).")
+        return False
+
+    # Validate schema structure with explicit checks
+    ssot_root = ssot_data.get("ssot")
+    if not ssot_root or not isinstance(ssot_root, dict):
+        print("CRITICAL FAULT: SSOT schema missing 'ssot' root key or it is not a dict.")
+        return False
+
+    components = ssot_root.get("components")
+    if not components or not isinstance(components, list):
+        print("CRITICAL FAULT: SSOT schema missing 'components' list under 'ssot' root.")
+        return False
+
+    # Find target component with safe navigation
+    he_tuple = None
+    for c in components:
+        if isinstance(c, dict) and c.get("id") == "G10-TUPLE-HE-REF":
+            he_tuple = c
+            break
+    
     if not he_tuple:
         print("CRITICAL FAULT: Component identifier G10-TUPLE-HE-REF missing from runtime substrate.")
-        sys.exit(1)
+        return False
 
-    target_eff = he_tuple["modes"]["2K-SB"]["target_efficiency"]
-    target_flow = he_tuple["modes"]["2K-OP"]["nominal_flow_g_s"]
+    # Extract mode configurations with explicit schema validation
+    modes = he_tuple.get("modes")
+    if not modes or not isinstance(modes, dict):
+        print("CRITICAL FAULT: Component G10-TUPLE-HE-REF missing 'modes' configuration.")
+        return False
+
+    ksb_mode = modes.get("2K-SB")
+    if not ksb_mode or not isinstance(ksb_mode, dict):
+        print("CRITICAL FAULT: Mode '2K-SB' missing or malformed in G10-TUPLE-HE-REF.")
+        return False
+
+    kop_mode = modes.get("2K-OP")
+    if not kop_mode or not isinstance(kop_mode, dict):
+        print("CRITICAL FAULT: Mode '2K-OP' missing or malformed in G10-TUPLE-HE-REF.")
+        return False
+
+    target_eff = ksb_mode.get("target_efficiency")
+    if target_eff is None:
+        print("CRITICAL FAULT: '2K-SB.target_efficiency' parameter missing.")
+        return False
+
+    target_flow = kop_mode.get("nominal_flow_g_s")
+    if target_flow is None:
+        print("CRITICAL FAULT: '2K-OP.nominal_flow_g_s' parameter missing.")
+        return False
 
     gates = [
         verify_mass_fractions(mass_mix),
@@ -60,10 +115,11 @@ def run_governance_assimilation(ssot_path: str, active_flow: float, active_effic
 
     if not all(gates):
         print("\n[RESULT] G10 RUNTIME GOVERNANCE GATE: FAILED VERIFICATION")
-        sys.exit(1)
+        return False
 
     print("\n[RESULT] G10 RUNTIME GOVERNANCE GATE: PASS")
     print("All thermodynamic invariants align with MINERVA_QPLANT system baseline specification rules.")
+    return True
 
 
 if __name__ == "__main__":
@@ -71,9 +127,15 @@ if __name__ == "__main__":
     simulated_flow = 11.4850
     simulated_efficiency = 0.3620
 
-    run_governance_assimilation(
-        ssot_path="SSOT/g10_runtime_governance_ssot.yaml",
+    # Resolve SSOT path relative to repository root (parent of physics/)
+    repo_root = Path(__file__).parent.parent
+    ssot_path = repo_root / "SSOT" / "g10_runtime_governance_ssot.yaml"
+
+    success = run_governance_assimilation(
+        ssot_path=str(ssot_path),
         active_flow=simulated_flow,
         active_efficiency=simulated_efficiency,
         mass_mix=mock_mass_fractions,
     )
+    
+    sys.exit(0 if success else 1)
