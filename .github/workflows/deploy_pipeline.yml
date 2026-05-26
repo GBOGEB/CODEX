@@ -27,7 +27,7 @@ jobs:
     - name: Provision Statistical Analysis Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install numpy pandas pyyaml
+        pip install -r requirements.txt
 
     - name: Execute G3 Process Matrix and Generate Target Artifacts
       run: python orchestrate_g3.py
