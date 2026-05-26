@@ -2,6 +2,8 @@ name: Render Parity Synchronization
 on:
   push:
     branches: [ main, a6-renderer-governance-layer ]
+  pull_request:
+    branches: [ main ]
 jobs:
   parity:
     runs-on: ubuntu-latest
@@ -13,19 +15,19 @@ jobs:
           python-version: '3.11'
       - name: Verify Cross-Format Structural Alignment (HTML <-> Markdown)
         run: |
-         python - <<'PY'
-         import os
-         import sys
+          python - <<'PY'
+          import os
+          import sys
 
-         html_exists = os.path.exists(
-             "docs/deck-systems/abacus-render-pipeline/runtime_dashboard.html"
-         )
-         md_exists = os.path.exists(
-             "docs/deck-systems/abacus-render-pipeline/runtime_summary.md"
-         )
-         print("Parity Assessment Active")
-         if not (html_exists and md_exists):
-             print("Failure: runtime HTML/Markdown parity outputs are not both present.")
-             sys.exit(1)
-         print("Parity check passed.")
-         PY
+          html_exists = os.path.exists(
+              "docs/deck-systems/abacus-render-pipeline/runtime_dashboard.html"
+          )
+          md_exists = os.path.exists(
+              "docs/deck-systems/abacus-render-pipeline/runtime_summary.md"
+          )
+          print("Parity Assessment Active")
+          if not (html_exists and md_exists):
+              print("Failure: runtime HTML/Markdown parity outputs are not both present.")
+              sys.exit(1)
+          print("Parity check passed.")
+          PY

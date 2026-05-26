@@ -1,19 +1,39 @@
 #!/usr/bin/env python3
 import argparse
 import hashlib
+import json
 import sys
 from pathlib import Path
 
 
 class AbacusRuntimeEngineA6:
     def __init__(self):
-        self.bg_hex = "#4A3110"
-        self.txt_hex = "#FFE9A3"
+        self.bg_hex, self.txt_hex, self.minimum_wcag_ratio = (
+            self._load_theme_invariants()
+        )
         self.todo_items = (
             "Replace placeholder claimed/actual vectors with governed manifest inputs.",
             "Emit signed attestation payloads to a dedicated immutable audit log.",
             "Expand artifact lineage table with workflow run/job IDs.",
         )
+
+    def _load_theme_invariants(self):
+        manifest_path = Path("MANIFEST/manifest_a6.json")
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            theme = manifest["target_invariants"]["warning_dark_theme"]
+            bg_hex = theme["bg"]
+            txt_hex = theme["text"]
+            minimum_wcag_ratio = float(theme["minimum_wcag_ratio"])
+            return bg_hex, txt_hex, minimum_wcag_ratio
+        except FileNotFoundError as exc:
+            raise FileNotFoundError(
+                f"Missing governed manifest: {manifest_path.as_posix()}"
+            ) from exc
+        except (KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
+            raise ValueError(
+                "Invalid WCAG invariant configuration in MANIFEST/manifest_a6.json"
+            ) from exc
 
     def hex_to_luminance(self, hex_val):
         hex_val = hex_val.lstrip("#")
@@ -30,7 +50,7 @@ class AbacusRuntimeEngineA6:
 
     def _build_runtime_metrics(self):
         ratio = self.process_contrast()
-        compliance = "PASSED" if ratio >= 4.5 else "FAILED"
+        compliance = "PASSED" if ratio >= self.minimum_wcag_ratio else "FAILED"
         claimed = [0.2, 0.4, 0.6, 0.8, 1.0]
         actual = [0.2, 0.41, 0.59, 0.80, 1.00]
         mean_claimed = sum(claimed) / len(claimed)
@@ -94,7 +114,7 @@ class AbacusRuntimeEngineA6:
 
 ## Governance Metrics
 - Theme colors: `{self.bg_hex}` background, `{self.txt_hex}` text
-- Contrast ratio: `{ratio:.2f}:1` (WCAG AA gate `>= 4.5:1`)
+- Contrast ratio: `{ratio:.2f}:1` (WCAG AA gate `>= {self.minimum_wcag_ratio}:1`)
 - Compliance: `{compliance}`
 - Attestation token: `{attestation_token}`
 - Covariance sample: `{covariance:.6f}`
@@ -132,9 +152,10 @@ if __name__ == "__main__":
     engine = AbacusRuntimeEngineA6()
     if args.smoke:
         ratio = engine.process_contrast()
-        compliance = "PASSED" if ratio >= 4.5 else "FAILED"
+        compliance = "PASSED" if ratio >= engine.minimum_wcag_ratio else "FAILED"
         print("💨 Smoke check completed.")
         print(f"Contrast ratio: {ratio:.2f}:1 ({compliance})")
+        print(f"Governed threshold: {engine.minimum_wcag_ratio}:1")
         print("Missing buildout / TODO:")
         for item in engine.todo_items:
             print(f"- TODO: {item}")
@@ -144,6 +165,9 @@ if __name__ == "__main__":
 
     compliance = engine.generate_system_outputs()
     if compliance == "FAILED":
-        print("❌ Execution failed governance gate: WCAG contrast below 4.5:1.")
+        print(
+            f"❌ Execution failed governance gate: WCAG contrast below "
+            f"{engine.minimum_wcag_ratio}:1."
+        )
         sys.exit(1)
     print("✨ Execution successful. Runtime governance artifacts generated.")

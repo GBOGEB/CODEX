@@ -2,6 +2,8 @@ name: Renderer Lint Guard
 on:
   push:
     branches: [ main, a6-renderer-governance-layer ]
+  pull_request:
+    branches: [ main ]
 jobs:
   lint:
     runs-on: ubuntu-latest
