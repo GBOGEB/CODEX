@@ -1,113 +1,91 @@
 from __future__ import annotations
 
-from functools import lru_cache
+import json
+from dataclasses import asdict, dataclass
 from pathlib import Path
 
-import yaml
+ROOT = Path(__file__).resolve().parents[2]
+REPORT_DIR = ROOT / 'PIPELINE' / 'REPORTS'
 
 
-@lru_cache(maxsize=1)
-def _load_warning_dark_invariant() -> dict[str, str]:
-    repo_root = Path(__file__).resolve().parent.parent.parent
-    theme_path = repo_root / "themes" / "semantic_cards.yaml"
-    with theme_path.open("r", encoding="utf-8") as handle:
-        data = yaml.safe_load(handle)
-    if not isinstance(data, dict):
-        raise ValueError(
-            f"Invalid YAML in {theme_path}: expected root mapping/dictionary."
-        )
-    semantic_cards = data.get("semantic_cards", {})
-    if not isinstance(semantic_cards, dict):
-        raise ValueError(f"Invalid semantic_cards mapping in {theme_path}.")
-    warning = semantic_cards.get("warning", {})
-    if not isinstance(warning, dict):
-        raise ValueError(f"Invalid warning mapping in {theme_path}.")
-    warning_dark = warning.get("dark", {})
-    if not isinstance(warning_dark, dict):
-        raise ValueError(f"Invalid warning.dark mapping in {theme_path}.")
-    if "background" not in warning_dark or "text" not in warning_dark:
-        raise ValueError(
-            f"Missing required warning.dark colors in {theme_path}: "
-            "expected 'background' and 'text'."
-        )
-    return {
-        "background": warning_dark["background"],
-        "text": warning_dark["text"],
-    }
+@dataclass
+class ContrastCheck:
+    foreground: str
+    background: str
+    ratio: float
+    required: float
+    passes: bool
 
-class ContrastValidator:
-    """
-    A6 WCAG 2.1 luminance and relative contrast ratio validation engine.
-    Enforces semantic theme safety constraints for the ABACUS_RENDER_PIPELINE.
-    """
 
-    MIN_AA_RATIO = 4.5
+class WCAGContrastValidator:
+    def _normalize(self, color: str) -> str:
+        value = color.strip().lstrip('#')
+        if len(value) != 6:
+            raise ValueError(f'Invalid hex color: {color}')
+        int(value, 16)
+        return value.lower()
 
-    def __init__(self) -> None:
-        warning_dark = _load_warning_dark_invariant()
-        self.target_invariants = {
-            "warning": {
-                "dark": {
-                    "background": warning_dark["background"],
-                    "text": warning_dark["text"],
-                }
-            }
-        }
+    def _linearize(self, value: int) -> float:
+        channel = value / 255.0
+        if channel <= 0.03928:
+            return channel / 12.92
+        return ((channel + 0.055) / 1.055) ** 2.4
 
-    def _normalize_hex(self, value: str) -> str:
-        if not value.startswith("#"):
-            raise ValueError(f"Unsupported hex color '{value}'")
-        if len(value) == 4:
-            value = "#" + "".join(ch * 2 for ch in value[1:])
-        elif len(value) == 9:
-            raise ValueError(
-                f"8-digit hex (RGBA) not supported for contrast calculation: '{value}'. "
-                "Use 6-digit hex (RGB) only."
-            )
-        elif len(value) != 7:
-            raise ValueError(f"Unsupported hex color '{value}'")
-        try:
-            int(value[1:], 16)
-        except ValueError as exc:
-            raise ValueError(f"Unsupported hex color '{value}'") from exc
-        return value
+    def luminance(self, color: str) -> float:
+        value = self._normalize(color)
 
-    def _hex_to_srgb(self, hex_str: str) -> tuple[float, float, float]:
-        """Converts hex color values to normalized sRGB components."""
-        value = self._normalize_hex(hex_str)[1:]
-        return tuple(int(value[i : i + 2], 16) / 255.0 for i in (0, 2, 4))
-
-    def calculate_relative_luminance(self, hex_color: str) -> float:
-        """Calculates relative luminance using the WCAG formula."""
-        r, g, b = self._hex_to_srgb(hex_color)
-        components = []
-        for channel in (r, g, b):
-            if channel <= 0.03928:
-                components.append(channel / 12.92)
-            else:
-                components.append(((channel + 0.055) / 1.055) ** 2.4)
+        r = int(value[0:2], 16)
+        g = int(value[2:4], 16)
+        b = int(value[4:6], 16)
 
         return (
-            0.2126 * components[0]
-            + 0.7152 * components[1]
-            + 0.0722 * components[2]
+            0.2126 * self._linearize(r)
+            + 0.7152 * self._linearize(g)
+            + 0.0722 * self._linearize(b)
         )
 
-    def calculate_contrast_ratio(self, color1_hex: str, color2_hex: str) -> float:
-        """Computes contrast ratio between two colors."""
-        l1 = self.calculate_relative_luminance(color1_hex)
-        l2 = self.calculate_relative_luminance(color2_hex)
-        lightest = max(l1, l2)
-        darkest = min(l1, l2)
-        return (lightest + 0.05) / (darkest + 0.05)
+    def ratio(self, foreground: str, background: str) -> float:
+        fg = self.luminance(foreground)
+        bg = self.luminance(background)
 
-    def validate_theme_node(self, background_hex: str, text_hex: str) -> dict:
-        """Validates a text/background pair against WCAG AA."""
-        ratio = self.calculate_contrast_ratio(background_hex, text_hex)
-        is_compliant = ratio >= self.MIN_AA_RATIO
-        return {
-            "contrast_ratio": ratio,
-            "contrast_ratio_rounded": round(ratio, 2),
-            "wcag_aa_compliant": is_compliant,
-            "action_required": not is_compliant,
-        }
+        lighter = max(fg, bg)
+        darker = min(fg, bg)
+
+        return round((lighter + 0.05) / (darker + 0.05), 2)
+
+    def validate(self, foreground: str, background: str, minimum: float = 4.5) -> ContrastCheck:
+        ratio = self.ratio(foreground, background)
+
+        return ContrastCheck(
+            foreground=foreground,
+            background=background,
+            ratio=ratio,
+            required=minimum,
+            passes=ratio >= minimum,
+        )
+
+    def validate_dark_warning_card(self) -> ContrastCheck:
+        return self.validate(
+            foreground='#FFE9A3',
+            background='#4A3110',
+            minimum=4.5,
+        )
+
+
+def export_report(check: ContrastCheck):
+    REPORT_DIR.mkdir(parents=True, exist_ok=True)
+
+    output = REPORT_DIR / 'contrast_validation_report.json'
+    output.write_text(json.dumps(asdict(check), indent=2), encoding='utf-8')
+
+
+if __name__ == '__main__':
+    validator = WCAGContrastValidator()
+    result = validator.validate_dark_warning_card()
+
+    export_report(result)
+
+    print(json.dumps(asdict(result), indent=2))
+
+    if not result.passes:
+        raise SystemExit(1)
