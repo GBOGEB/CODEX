@@ -2,15 +2,15 @@
   "generation": "G7",
   "lifecycle_phase": "L8_Integrated_Commissioning",
   "project_parent": "MINERVA_QPLANT",
-  "system_owner": "Gert",
-  "audit_status": "VERIFIED_PRODUCTION_READY",
+  "system_owner": "MINERVA_QPLANT_Team",
+  "audit_status": "SCAFFOLD_IN_PROGRESS",
   "components": [
     {
       "id": "G7-TUPLE-A66",
       "domain": "Control & Automation",
       "spatial_tag": "CCB.Room_01",
-      "upstream_path": "components/a66/specs.md",
-      "downstream_path": "controllers/a66_logic.py"
+      "upstream_path": "https://github.com/GBOGEB/abacus (external)",
+      "downstream_path": "https://github.com/GBOGEB/abacus (external)"
     },
     {
       "id": "G7-TUPLE-HE-REF",
@@ -20,8 +20,8 @@
         "2K-SB": { "signal_id": "HE_STATIC_BENCHMARK", "target_efficiency": 0.35 },
         "2K-OP": { "signal_id": "HE_DYNAMIC_OPERATIONAL", "nominal_flow_g_s": 11.5 }
       },
-      "upstream_path": "cryo/helium_refrigeration_requirements.md",
-      "downstream_path": "physics/helium_refrigeration_core.py"
+      "upstream_path": "https://github.com/GBOGEB/abacus (external)",
+      "downstream_path": "helium_refrigeration_core.py"
     },
     {
       "id": "G7-TUPLE-RENDER",
@@ -32,7 +32,7 @@
           "dark": { "background": "#4A3110", "text": "#FFE9A3" }
         }
       },
-      "upstream_path": "semantic_substrate/themes.json",
+      "upstream_path": "semantic_substrate/invariants.yaml",
       "downstream_path": "semantic_substrate/renderer/contrast_validator.py"
     }
   ]

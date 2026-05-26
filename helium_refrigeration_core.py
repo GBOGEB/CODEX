@@ -4,7 +4,6 @@
 class CryogenicHeliumEngineG7:
     def __init__(self, t0_ambient=298.15):
         self.T0 = t0_ambient
-        self.n2_precool_flow = 11.5
 
     def compute_g7_exergy_efficiency(self, mass_flow_he, h_in, h_out, s_in, s_out, power_input_kw, nitrogen_assist=True):
         delta_h = h_out - h_in
@@ -19,7 +18,7 @@ class CryogenicHeliumEngineG7:
             return 0.0
         return min(max(useful_work / power_input_kw, 0.0), 1.0)
 
-    def calculate_g7_anova(self, claimed_vector, actual_vector):
+    def calculate_pearson_correlation(self, claimed_vector, actual_vector):
         if len(claimed_vector) != len(actual_vector) or len(claimed_vector) < 2:
             return 0.0, 0.0
 

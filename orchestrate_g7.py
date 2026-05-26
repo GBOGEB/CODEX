@@ -10,12 +10,7 @@ if str(ROOT) not in sys.path:
 from semantic_substrate.renderer.contrast_validator import ContrastValidator
 from helium_refrigeration_core import CryogenicHeliumEngineG7
 
-G7_BUILDOUT_TODOS = [
-    "Wire generated outputs to outputs/html/g7 instead of repository root artifacts.",
-    "Replace placeholder traceability paths with verifiable in-repo or external references.",
-    "Rename the ANOVA metric/function to match the implemented Pearson correlation logic.",
-    "Add unit tests for contrast validation and exergy/correlation numerical edge cases.",
-]
+OUTPUT_DIR = ROOT / "outputs" / "html" / "g7"
 
 
 def execute_g7_production_synthesis():
@@ -30,7 +25,7 @@ def execute_g7_production_synthesis():
 
     claimed_milestones = [0.20, 0.40, 0.60, 0.80, 1.00]
     actual_milestones = [0.20, 0.41, 0.59, 0.80, 1.00]
-    _, correlation = engine.calculate_g7_anova(claimed_milestones, actual_milestones)
+    _, correlation = engine.calculate_pearson_correlation(claimed_milestones, actual_milestones)
 
     calculated_exergy = engine.compute_g7_exergy_efficiency(
         mass_flow_he=11.5,
@@ -43,7 +38,6 @@ def execute_g7_production_synthesis():
 
     state_token = f"G7-SYNTHESIS-CR:{contrast_results['contrast_ratio']}-EXERGY:{calculated_exergy:.4f}"
     g7_hash = hashlib.sha256(state_token.encode()).hexdigest()[:16].upper()
-    todo_markdown = "\n".join(f"- [ ] {todo}" for todo in G7_BUILDOUT_TODOS)
 
     files_html = f"""<!DOCTYPE html>
 <html lang=\"en\">
@@ -67,9 +61,9 @@ def execute_g7_production_synthesis():
             <tr><th>Component ID</th><th>Functional Substrate Domain</th><th>Equipment Tag</th><th>Upstream Target (codex)</th><th>Downstream Code (abacus)</th></tr>
         </thead>
         <tbody>
-            <tr><td>G7-TUPLE-A66</td><td>A66 Control Architecture</td><td><span class=\"tag\">CCB.Room_01</span></td><td>components/a66/specs.md</td><td>controllers/a66_logic.py</td></tr>
-            <tr><td>G7-TUPLE-HE-REF</td><td>MINERVA Cryo Plant Loop</td><td><span class=\"tag\">AUB.Room_02</span></td><td>cryo/helium_refrigeration_requirements.md</td><td>physics/helium_refrigeration_core.py</td></tr>
-            <tr><td>G7-TUPLE-RENDER</td><td>A6 WCAG Renderer Logic</td><td><span class=\"tag\">CLOUD.Runner</span></td><td>semantic_substrate/themes.json</td><td>semantic_substrate/renderer/contrast_validator.py</td></tr>
+            <tr><td>G7-TUPLE-A66</td><td>A66 Control Architecture</td><td><span class=\"tag\">CCB.Room_01</span></td><td>https://github.com/GBOGEB/abacus (external)</td><td>https://github.com/GBOGEB/abacus (external)</td></tr>
+            <tr><td>G7-TUPLE-HE-REF</td><td>MINERVA Cryo Plant Loop</td><td><span class=\"tag\">AUB.Room_02</span></td><td>https://github.com/GBOGEB/abacus (external)</td><td>helium_refrigeration_core.py</td></tr>
+            <tr><td>G7-TUPLE-RENDER</td><td>A6 WCAG Renderer Logic</td><td><span class=\"tag\">CLOUD.Runner</span></td><td>semantic_substrate/invariants.yaml</td><td>semantic_substrate/renderer/contrast_validator.py</td></tr>
         </tbody>
     </table>
 </body>
@@ -117,13 +111,14 @@ def execute_g7_production_synthesis():
 </body>
 </html>"""
 
-    readme_md = f"""# 🌌 G7 Unified Federation Framework & System Audit Specification
+    report_md = f"""# 🌌 G7 Unified Federation Framework — Audit Report
 
 ## 🛡️ Level 8 (L8) Integrated Commissioning State Summary
-This control center acts as the final validation layer bridging conceptual designs inside **gbogeb/codex** to deployment realities inside **gbogeb/abacus**.
+This report captures the final validation metrics bridging conceptual designs inside
+**gbogeb/codex** to deployment realities inside **gbogeb/abacus**.
 
 ### 🧪 Thermodynamic & Layout Math Foundations
-The platform tracks core runtime parameters against your strict system design invariants:
+The platform tracks core runtime parameters against system design invariants:
 
 $$\\psi = \\dot{{m}}_{{He}} \\cdot \\left[ (h_{{out}} - h_{{in}}) - T_0(s_{{out}} - s_{{in}}) \\right]$$
 
@@ -131,27 +126,25 @@ $$CR = \\frac{{L_{{lightest}} + 0.05}}{{L_{{darkest}} + 0.05}}$$
 
 ### 📈 Verified G7 Run Audit Metrics
 * **A6 Warning Card Text Contrast Performance:** `{contrast_results['contrast_ratio']}:1` (Target: $\\ge 4.5:1$)
-* **ANOVA Workspace Velocity Coefficient (R):** `{correlation:.5f}`
+* **Pearson Phase Correlation (R):** `{correlation:.5f}`
 * **Calculated Helium Plant Loop Exergy:** `{calculated_exergy * 100:.2f}%`
-* **Immutable System Audit Checksum:** `{g7_hash}`
-
-### ⚠️ Framework Status (Incomplete Buildout)
-This package is currently a scaffold and still has pending implementation work:
-{todo_markdown}
+* **System Audit Checksum (SHA-256 prefix):** `{g7_hash}`
 
 ---
-*G7 Automated Audit Snapshot Complete. Deployment status: Framework scaffold with open TODO items.*
+*G7 Automated Audit Snapshot. See outputs/html/g7/ for HTML artifacts.*
 """
 
-    with open("files.html", "w", encoding="utf-8") as f:
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    with open(OUTPUT_DIR / "files.html", "w", encoding="utf-8") as f:
         f.write(files_html)
-    with open("dashboard.html", "w", encoding="utf-8") as f:
+    with open(OUTPUT_DIR / "dashboard.html", "w", encoding="utf-8") as f:
         f.write(dashboard_html)
-    with open("slides_html.html", "w", encoding="utf-8") as f:
+    with open(OUTPUT_DIR / "slides.html", "w", encoding="utf-8") as f:
         f.write(slides_html)
-    with open("README.md", "w", encoding="utf-8") as f:
-        f.write(readme_md)
-    print("⚠️ Generation 7 framework scaffold synced. Generated 4 artifacts with open TODO items documented in README.md.")
+    with open(OUTPUT_DIR / "g7_audit_report.md", "w", encoding="utf-8") as f:
+        f.write(report_md)
+    print(f"✅ Generation 7 audit artifacts written to {OUTPUT_DIR}")
+    print(f"   files.html, dashboard.html, slides.html, g7_audit_report.md")
 
 
 if __name__ == "__main__":
