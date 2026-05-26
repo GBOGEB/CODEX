@@ -11,9 +11,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Check Markdown-first artifact parity
         run: |
           test -f README.md
           test -f SSOT/g10_runtime_governance_ssot.yaml
           test -f METRICS/g10_ascii_metrics.md
+      - name: Check for unauthorized HTML surfaces
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          else
+            BASE_SHA="${{ github.event.before }}"
+          fi
+          HEAD_SHA="${{ github.sha }}"
+
+          if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ]; then
+            BASE_SHA="$(git rev-list --max-parents=0 "$HEAD_SHA" | tail -n 1)"
+          fi
+
+          CHANGED_HTML="$(git diff --name-only --diff-filter=AMR "$BASE_SHA" "$HEAD_SHA" -- '*.html')"
+          UNAUTHORIZED_HTML="$(echo "$CHANGED_HTML" | grep -Ev '^(docs/|outputs/html/)' || true)"
+
+          if [ -n "$UNAUTHORIZED_HTML" ]; then
+            echo "CRITICAL: Unauthorized HTML surfaces detected:"
+            echo "$UNAUTHORIZED_HTML"
+            exit 1
+          fi
+
           echo "Assertion Verified: Zero unauthorized HTML surfaces detected."
