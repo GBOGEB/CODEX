@@ -10,7 +10,10 @@ class ContrastValidator:
         value = hex_color.strip().lstrip("#")
         if len(value) != 6:
             raise ValueError(f"Invalid hex color: {hex_color}")
-        return tuple(int(value[i:i+2], 16) / 255.0 for i in (0, 2, 4))
+        try:
+            return tuple(int(value[i:i+2], 16) / 255.0 for i in (0, 2, 4))
+        except ValueError as exc:
+            raise ValueError(f"Invalid hex color: {hex_color}") from exc
 
     @staticmethod
     def _linearize(channel: float) -> float:
