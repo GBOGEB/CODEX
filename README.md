@@ -200,7 +200,7 @@ For the `GBOGEB/(CODEX + ABACUS)` topology, treat CODEX and ABACUS as separate "
 
 ### Federation control plane
 1. **State emission in each repo**
-   - Emit normalized state records (`repo`, `workflow`, `run_id`, `state`, `ts`, `artifact_ref`).
+   - Emit normalized state records (`source_repo`, `workflow`, `run_id`, `state`, `timestamp`, `artifact`).
 2. **Knowledge-share transport**
    - Publish state and artifacts via GitHub releases/artifacts/issues and expose them through MCP resources.
 3. **Cross-repo orchestrator**
