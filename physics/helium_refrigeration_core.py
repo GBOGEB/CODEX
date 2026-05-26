@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import math
-import statistics
 
 
 class CryogenicHeliumEngineG5:
@@ -30,6 +29,9 @@ class CryogenicHeliumEngineG5:
             power_input_kw: Shaft/compressor power input (kW).
             nitrogen_assist: When True, applies a 10% helium mass-flow reduction
                 to model nitrogen pre-cooling assistance.
+            t0_ambient: Dead-state (ambient) temperature in Kelvin used for the
+                exergy calculation; defaults to 298.15 K (25 °C) as set on the
+                engine instance.
 
         Returns:
             Dimensionless exergy efficiency in [0, 1].  Consistent units require
