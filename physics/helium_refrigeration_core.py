@@ -4,7 +4,6 @@
 class CryogenicHeliumEngineG10:
     def __init__(self, t0_ambient=298.15):
         self.T0 = t0_ambient
-        self.n2_precool_flow = 11.5
 
     def compute_g10_exergy_efficiency(self, mass_flow_he, h_in, h_out, s_in, s_out, power_input_kw, nitrogen_assist=True):
         delta_h = h_out - h_in

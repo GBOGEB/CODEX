@@ -45,8 +45,8 @@ class ContrastValidator:
         l_text = self._luminance(text)
         lighter = max(l_bg, l_text)
         darker = min(l_bg, l_text)
-        contrast_ratio = (lighter + 0.05) / (darker + 0.05)
+        rounded_ratio = round((lighter + 0.05) / (darker + 0.05), 2)
         return {
-            "contrast_ratio": round(contrast_ratio, 2),
-            "passes_wcag_aa": contrast_ratio >= 4.5,
+            "contrast_ratio": rounded_ratio,
+            "passes_wcag_aa": rounded_ratio >= 4.5,
         }
