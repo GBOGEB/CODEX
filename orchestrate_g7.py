@@ -86,7 +86,7 @@ def execute_g7_production_synthesis():
     <div class=\"grid\">
         <div class=\"card\"><div class=\"lbl\">Helium Plant Exergy Efficiency</div><div class=\"val\">{calculated_exergy*100:.2f}%</div></div>
         <div class=\"card\"><div class=\"lbl\">A6 Warning Card Contrast Ratio</div><div class=\"val\">{contrast_results['contrast_ratio']}:1</div></div>
-        <div class=\"card\"><div class=\"lbl\">ANOVA Phase Correlation (R)</div><div class=\"val\">{correlation:.5f}</div></div>
+        <div class=\"card\"><div class=\"lbl\">Pearson Phase Correlation (r)</div><div class=\"val\">{correlation:.5f}</div></div>
     </div>
 </body>
 </html>"""

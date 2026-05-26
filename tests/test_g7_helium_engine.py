@@ -1,8 +1,5 @@
 """Unit tests for CryogenicHeliumEngineG7."""
-import pytest
-
 from helium_refrigeration_core import CryogenicHeliumEngineG7
-
 
 class TestComputeG7ExergyEfficiency:
     def setup_method(self):
