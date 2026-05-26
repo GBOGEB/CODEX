@@ -20,11 +20,31 @@ class AbacusRuntimeEngineA6:
     def _load_theme_invariants(self):
         manifest_path = Path("MANIFEST/manifest_a6.json")
         try:
-            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-            theme = manifest["target_invariants"]["warning_dark_theme"]
-            bg_hex = theme["bg"]
-            txt_hex = theme["text"]
-            minimum_wcag_ratio = float(theme["minimum_wcag_ratio"])
+            with manifest_path.open("r", encoding="utf-8") as manifest_file:
+                manifest = json.load(manifest_file)
+
+            target_invariants = manifest.get("target_invariants")
+            if not isinstance(target_invariants, dict):
+                raise ValueError("Missing manifest key: target_invariants")
+
+            theme = target_invariants.get("warning_dark_theme")
+            if not isinstance(theme, dict):
+                raise ValueError("Missing manifest key: target_invariants.warning_dark_theme")
+
+            bg_hex = theme.get("bg")
+            if not isinstance(bg_hex, str):
+                raise ValueError("Missing or invalid manifest key: warning_dark_theme.bg")
+
+            txt_hex = theme.get("text")
+            if not isinstance(txt_hex, str):
+                raise ValueError("Missing or invalid manifest key: warning_dark_theme.text")
+
+            minimum_wcag_ratio_raw = theme.get("minimum_wcag_ratio")
+            if minimum_wcag_ratio_raw is None:
+                raise ValueError(
+                    "Missing manifest key: warning_dark_theme.minimum_wcag_ratio"
+                )
+            minimum_wcag_ratio = float(minimum_wcag_ratio_raw)
             if minimum_wcag_ratio <= 0:
                 raise ValueError("WCAG ratio must be positive")
             return bg_hex, txt_hex, minimum_wcag_ratio
@@ -36,7 +56,7 @@ class AbacusRuntimeEngineA6:
             raise ValueError(
                 "Malformed JSON in MANIFEST/manifest_a6.json"
             ) from exc
-        except (KeyError, TypeError, ValueError) as exc:
+        except (TypeError, ValueError) as exc:
             raise ValueError(
                 "Invalid WCAG invariant configuration in MANIFEST/manifest_a6.json"
             ) from exc
