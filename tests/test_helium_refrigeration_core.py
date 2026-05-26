@@ -147,6 +147,20 @@ def test_run_governance_assimilation_fail_non_dict_yaml(tmp_path: Path) -> None:
     assert result is False
 
 
+def test_run_governance_assimilation_fail_malformed_yaml_syntax(tmp_path: Path) -> None:
+    """Test governance fails gracefully when YAML has syntax errors."""
+    ssot_file = tmp_path / "syntax_error.yaml"
+    ssot_file.write_text("invalid: yaml: syntax:\n  - broken\n  indentation")
+    
+    result = core.run_governance_assimilation(
+        ssot_path=str(ssot_file),
+        active_flow=11.5,
+        active_efficiency=0.36,
+        mass_mix=[0.9995, 0.0005],
+    )
+    assert result is False
+
+
 def test_run_governance_assimilation_fail_missing_ssot_root(tmp_path: Path) -> None:
     """Test governance fails when 'ssot' root key is missing."""
     ssot_file = tmp_path / "no_root.yaml"

@@ -7,8 +7,8 @@ import yaml
 def verify_mass_fractions(fractions: list) -> bool:
     """Enforces absolute precision validation for fluid stream components to 4 decimal places."""
     # Use Decimal for deterministic fixed-point arithmetic at 4 decimal places
-    quantize_pattern = Decimal("0.0001")
-    decimal_fractions = [Decimal(str(f)).quantize(quantize_pattern, rounding=ROUND_HALF_UP) for f in fractions]
+    four_decimal_places = Decimal("0.0001")
+    decimal_fractions = [Decimal(str(f)).quantize(four_decimal_places, rounding=ROUND_HALF_UP) for f in fractions]
     total = sum(decimal_fractions)
     expected = Decimal("1.0000")
     
@@ -127,9 +127,9 @@ if __name__ == "__main__":
     simulated_flow = 11.4850
     simulated_efficiency = 0.3620
 
-    # Resolve SSOT path relative to repository root (parent of physics/)
-    repo_root = Path(__file__).parent.parent
-    ssot_path = repo_root / "SSOT" / "g10_runtime_governance_ssot.yaml"
+    # Resolve SSOT path relative to this module's parent directory
+    module_parent_dir = Path(__file__).parent.parent
+    ssot_path = module_parent_dir / "SSOT" / "g10_runtime_governance_ssot.yaml"
 
     success = run_governance_assimilation(
         ssot_path=str(ssot_path),
