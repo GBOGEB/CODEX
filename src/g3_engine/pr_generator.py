@@ -34,7 +34,7 @@ def issue_g3_pull_request(repo_slug: str, head_branch: str, pr_title: str, pr_bo
         try:
             pr_url = response.json().get("html_url", "URL not provided in response")
         except JSONDecodeError as exc:
-            return {"success": False, "error": f"PR create failed: invalid JSON response ({exc})"}
+            return {"success": False, "error": f"PR created but response parsing failed: invalid JSON ({exc})"}
         return {"success": True, "pr_url": pr_url}
 
     return {"success": False, "error": f"PR create failed ({response.status_code}): {response.text}"}
