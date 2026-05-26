@@ -37,11 +37,15 @@ class AbacusRuntimeEngineA6:
 
             bg_hex = theme.get("bg")
             if not isinstance(bg_hex, str):
-                raise ValueError("Missing or invalid manifest key: warning_dark_theme.bg")
+                raise ValueError(
+                    "Missing or invalid manifest key: warning_dark_theme.bg"
+                )
 
             txt_hex = theme.get("text")
             if not isinstance(txt_hex, str):
-                raise ValueError("Missing or invalid manifest key: warning_dark_theme.text")
+                raise ValueError(
+                    "Missing or invalid manifest key: warning_dark_theme.text"
+                )
 
             minimum_wcag_ratio_raw = theme.get("minimum_wcag_ratio")
             if minimum_wcag_ratio_raw is None:
@@ -59,9 +63,7 @@ class AbacusRuntimeEngineA6:
                 f"Missing governed manifest: {manifest_path.as_posix()}"
             ) from exc
         except json.JSONDecodeError as exc:
-            raise ValueError(
-                "Malformed JSON in MANIFEST/manifest_a6.json"
-            ) from exc
+            raise ValueError("Malformed JSON in MANIFEST/manifest_a6.json") from exc
         except (TypeError, ValueError) as exc:
             raise ValueError(
                 f"Invalid WCAG invariant configuration in MANIFEST/manifest_a6.json: {exc}"
