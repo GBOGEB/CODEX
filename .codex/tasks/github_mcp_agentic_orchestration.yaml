@@ -3,7 +3,6 @@ task:
   type: "mcp_container"
   title: "Agentic GitHub MCP PR Follow-Up and Fix Loop"
   source_basis: "G10/A6.1 runtime governance pack"
-  source_file: "Pasted markdown(17).md"
 
   objective:
     - "Discover PR discrepancies from CI, review comments, lint, tests, and SSOT drift."
@@ -43,7 +42,7 @@ task:
     github_pr_comment:
       patterns:
         - "@copilot fix"
-        - "@copilot fix and commit"
+        - "@copilot fix (requires human confirmation before commit)"
         - "@codex fix"
         - "/agent fix"
         - "/agent explain"
@@ -57,4 +56,5 @@ task:
     - "AGENTIC/agentic_pr_followup_log.yaml"
     - "AGENTIC/proposed_fixes.yaml"
     - "AGENTIC/comment_response_drafts.md"
-    - "METRICS/agentic_ascii_metrics.md"
+    - "METRICS/agentic_ascii_metrics.md"  # Committed specification/template
+    - "METRICS/agentic_pr_scan_output.md"  # Runtime workflow output

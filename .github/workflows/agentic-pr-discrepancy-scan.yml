@@ -17,6 +17,8 @@ permissions:
 jobs:
   scan:
     runs-on: ubuntu-latest
+    # Only run on PR comments, not issue comments
+    if: github.event_name != 'issue_comment' || github.event.issue.pull_request
     steps:
       - uses: actions/checkout@v4
 
@@ -33,8 +35,8 @@ jobs:
 
       - name: Write ASCII metrics shell
         run: |
-          cat > METRICS/agentic_ascii_metrics.md <<'MD'
-          # Agentic PR Metrics
+          cat > METRICS/agentic_pr_scan_output.md <<'MD'
+          # Agentic PR Metrics (Runtime Output)
 
           Comment Intake       [####################] 100%
           Discrepancy Scan     [############--------] 60%
@@ -42,3 +44,12 @@ jobs:
           Human Confirm Gate   [####################] REQUIRED
           Commit Executed      [--------------------] 0%
           MD
+
+      - name: Upload scan artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentic-scan-artifacts
+          path: |
+            AGENTIC/
+            METRICS/agentic_pr_scan_output.md

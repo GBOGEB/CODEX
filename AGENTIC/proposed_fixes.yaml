@@ -9,8 +9,16 @@ proposed_fixes:
         - path: "<file>"
           change_type: "modify"
       summary: "<short fix summary>"
-    choices:
-      - "apply_and_commit"
-      - "stage_only"
-      - "answer_without_change"
-      - "reject"
+    user_action:
+      # Choices correspond to human_gate modes in .codex/tasks/github_mcp_agentic_orchestration.yaml
+      # confirm_each -> apply this fix and commit immediately
+      # bulk_confirm -> stage this fix for bulk commit with others
+      # answer_only -> respond without code changes
+      # fix_and_stage_only -> apply and stage but do not commit
+      # reject_fix -> reject the proposed fix
+      choices:
+        - "confirm_each"
+        - "bulk_confirm"
+        - "answer_only"
+        - "fix_and_stage_only"
+        - "reject_fix"
