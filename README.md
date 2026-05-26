@@ -288,7 +288,7 @@ This repository now includes a production-oriented federation bridge baseline fo
 - Orchestrator: [`scripts/orchestrate.py`](scripts/orchestrate.py)
 - CI workflow: [`.github/workflows/deploy_pipeline.yml`](.github/workflows/deploy_pipeline.yml)
 
-Running `python scripts/orchestrate.py` generates the four requested outputs under `output/federation_bridge/`:
+Running `python scripts/orchestrate.py` generates the four requested outputs under `outputs/html/federation_bridge/`:
 `files.html`, `dashboard.html`, `slides.html`, and `README.md`.
 
 
