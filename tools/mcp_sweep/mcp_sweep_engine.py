@@ -19,6 +19,7 @@ class MCPSweepEngine:
         self.state = AgentState.IDLE
         self.near_misses: List[Dict[str, Any]] = []
         self.transition_log: List[str] = []
+        self.pruned_count: int = 0
 
     def change_state(self, target_state: AgentState):
         """Logs transitions for the ASCII telemetry readout."""
@@ -50,6 +51,7 @@ class MCPSweepEngine:
         for item in discovered:
             if item["is_obsolete"]:
                 self.change_state(AgentState.PRUNING_STATE)
+                self.pruned_count += 1
                 continue
             self.change_state(AgentState.ESCALATING_TODO)
             self.near_misses.append(item)
@@ -66,7 +68,8 @@ class MCPSweepEngine:
         for item in self.near_misses:
             print(f"* [ ] **NEAR-MISS ESCALATED:** {item['suggestion']}")
             print(f"  - *Origin:* {item['origin']} (Verify and commit manually)")
-        print("\n* [-] **OBSOLETE STATE WIPED:** Cleared 1 stale configuration track.")
+        if self.pruned_count > 0:
+            print(f"\n* [-] **OBSOLETE STATE WIPED:** Cleared {self.pruned_count} stale configuration track(s).")
 
 
 if __name__ == "__main__":
