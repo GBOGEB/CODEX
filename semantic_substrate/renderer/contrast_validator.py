@@ -17,7 +17,11 @@ def _load_warning_dark_invariant() -> dict[str, str]:
             f"Invalid YAML in {theme_path}: expected root mapping/dictionary."
         )
     semantic_cards = data.get("semantic_cards", {})
+    if not isinstance(semantic_cards, dict):
+        raise ValueError(f"Invalid semantic_cards mapping in {theme_path}.")
     warning = semantic_cards.get("warning", {})
+    if not isinstance(warning, dict):
+        raise ValueError(f"Invalid warning mapping in {theme_path}.")
     warning_dark = warning.get("dark", {})
     if not isinstance(warning_dark, dict):
         raise ValueError(f"Invalid warning.dark mapping in {theme_path}.")
