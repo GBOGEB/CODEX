@@ -32,6 +32,7 @@ def execute_pipeline(script_name: str) -> bool:
         STATUS['FAILED'].append({
             'script': script_name,
             'error': str(e),
+            'stdout': getattr(e, 'stdout', ''),
             'stderr': getattr(e, 'stderr', ''),
         })
         return False
