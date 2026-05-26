@@ -33,12 +33,39 @@ def compile_g3_dashboard() -> None:
     matrix = json.loads(MATRIX_PATH.read_text(encoding="utf-8"))
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
+    tuple_row_details = [
+        {
+            "scope": "A66 Development Status",
+            "upstream": "components/a66/specs.md",
+            "downstream": "controllers/a66_logic.py",
+        },
+        {
+            "scope": "Helium Refrigeration Core",
+            "upstream": "cryo/helium_refrigeration_requirements.md",
+            "downstream": "physics/helium_refrigeration_core.py",
+        },
+        {
+            "scope": "GitHub Pull Request Engine",
+            "upstream": ".github/workflows/g3_gatekeeper.yml",
+            "downstream": "automation/pr_generator.py",
+        },
+    ]
+    tuple_rows = []
+    for index, tuple_data in enumerate(matrix.get("tuples", [])):
+        row_details = tuple_row_details[index] if index < len(tuple_row_details) else {}
+        tuple_rows.append(
+            "<tr>"
+            f"<td>{tuple_data.get('component_id', '')}</td>"
+            f"<td>{row_details.get('scope', '')}</td>"
+            f"<td>{row_details.get('upstream', '')}</td>"
+            f"<td>{row_details.get('downstream', '')}</td>"
+            "</tr>"
+        )
+
     files_html = f"""<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>G3 File Topography</title></head><body>
 <h2>G3 Deep-Tuple File Topography Lineage Map</h2>
 <table border=\"1\"><tr><th>Tuple ID</th><th>Scope</th><th>Upstream</th><th>Downstream</th></tr>
-<tr><td>{matrix['tuples'][0]['component_id']}</td><td>A66 Development Status</td><td>components/a66/specs.md</td><td>controllers/a66_logic.py</td></tr>
-<tr><td>{matrix['tuples'][1]['component_id']}</td><td>Helium Refrigeration Core</td><td>cryo/helium_refrigeration_requirements.md</td><td>physics/helium_refrigeration_core.py</td></tr>
-<tr><td>{matrix['tuples'][2]['component_id']}</td><td>GitHub Pull Request Engine</td><td>.github/workflows/g3_gatekeeper.yml</td><td>automation/pr_generator.py</td></tr>
+{''.join(tuple_rows)}
 </table></body></html>"""
 
     dashboard_html = f"""<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>G3 Telemetry Dashboard</title></head><body>
