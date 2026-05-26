@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from renderers.lint.overflow_lint import MAX_CARD_BODY_LINES, MAX_TITLE_LENGTH
+from .lint.thresholds import MAX_CARD_BODY_LINES, MAX_TITLE_LENGTH
 
 
 @dataclass
@@ -81,3 +81,13 @@ class AdaptiveLayoutEngine:
             )
 
         return decisions
+
+
+if __name__ == '__main__':
+    engine = AdaptiveLayoutEngine()
+    sample = CardLayoutInput(
+        title='Example renderer governance card',
+        body_line_count=8,
+    )
+    for decision in engine.decide_card_layout(sample):
+        print(f'{decision.component}: {decision.decision} ({decision.reason})')

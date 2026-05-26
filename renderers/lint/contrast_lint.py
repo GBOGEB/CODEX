@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from src.renderers.theme_runtime import SemanticThemeRuntime
+
 
 @dataclass
 class ContrastIssue:

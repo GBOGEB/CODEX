@@ -1,0 +1,22 @@
+{
+  "version": "HBHS-EP-v10.9-visual-evidence-parity",
+  "purpose": "Ensure every HTML, rendered Markdown, Plotly graph and user-facing view declares its backing data, references, evidence level and repo links.",
+  "parity_rule": "No visual or rendered claim should appear without an evidence pointer, SSoT source, proof level or explicit unsupported/speculative flag.",
+  "visual_evidence_parity_percent": 100,
+  "average_evidence_completion_percent": 49.1,
+  "dominant_gap": "Visual maturity exceeds operational evidence maturity in telemetry and real-gas validated layers.",
+  "launch_policy": {
+    "html_rule":"Every HTML page must expose source links and evidence level.",
+    "plotly_rule":"Every Plotly graph must expose backing JSON/YAML/CSV sources.",
+    "markdown_rule":"Every rendered Markdown report must expose references and supporting artifacts.",
+    "unsupported_rule":"Unsupported visuals must be marked speculative or E0."
+  },
+  "required_visual_metadata": [
+    "visual_id",
+    "source_data",
+    "supporting_references",
+    "proof_level",
+    "evidence_completion_percent",
+    "claim_status"
+  ]
+}

@@ -1,0 +1,20 @@
+runtime:
+  name: ABACUS_RUNTIME
+  version: 0.1.0
+
+modules:
+  - renderer
+  - topology
+  - validation
+  - deployment
+  - telemetry
+
+deployment:
+  pages:
+    enabled: true
+    strategy: github_actions
+
+metrics:
+  architecture_score_target: 82
+  portability_target: 75
+  runtime_modularity: 80

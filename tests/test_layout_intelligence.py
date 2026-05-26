@@ -14,10 +14,10 @@ def test_standard_layout_path() -> None:
         )
     )
 
-    assert any(
-        layout_decision.decision == 'standard_card_layout'
-        for layout_decision in result
-    )
+    assert len(result) == 1
+    assert result[0].component == 'layout'
+    assert result[0].decision == 'standard_card_layout'
+    assert 'governance thresholds' in result[0].reason
 
 
 def test_dense_layout_detection() -> None:
@@ -32,25 +32,20 @@ def test_dense_layout_detection() -> None:
         )
     )
 
-    # Assert on structured fields instead of string representation
-    components = [d.component for d in result]
-    decisions = [d.decision for d in result]
-    reasons = [d.reason for d in result]
-
-    # Check for body density decision
-    assert 'body' in components
-    body_decision = next((d for d in result if d.component == 'body'), None)
-    assert body_decision is not None
-    assert 'split_card_or_reduce_density' == body_decision.decision
-
-    # Check for layout decision (multiple figures + dense text)
-    assert 'layout' in components
-    layout_decision = next((d for d in result if d.component == 'layout'), None)
-    assert layout_decision is not None
-    assert 'use_two_column_or_figure_priority_layout' == layout_decision.decision
-
-    # Check for semantic emphasis decision
-    assert 'semantic-emphasis' in components
-    semantic_decision = next((d for d in result if d.component == 'semantic-emphasis'), None)
-    assert semantic_decision is not None
-    assert 'reserve_visual_priority' == semantic_decision.decision
+    # Should trigger: body split, layout adjustment, and semantic emphasis
+    assert len(result) == 3
+    
+    # Check that body split decision is present
+    body_decisions = [d for d in result if d.component == 'body']
+    assert len(body_decisions) == 1
+    assert 'split_card_or_reduce_density' in body_decisions[0].decision
+    
+    # Check that layout decision for figures+text is present
+    layout_decisions = [d for d in result if d.component == 'layout']
+    assert len(layout_decisions) == 1
+    assert 'two_column' in layout_decisions[0].decision.lower()
+    
+    # Check that semantic emphasis is present
+    semantic_decisions = [d for d in result if d.component == 'semantic-emphasis']
+    assert len(semantic_decisions) == 1
+    assert 'visual_priority' in semantic_decisions[0].decision

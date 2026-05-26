@@ -1,0 +1,62 @@
+{
+  "version": "HBHS-EP-v8.4-wave3-monte-carlo",
+  "purpose": "Canonical source for first Monte Carlo / PERT variance dashboards for WCS.LCC/PVPS and HCC suction conditions.",
+  "distributions": [
+    {
+      "id": "DIST-VLP-001",
+      "name": "PVPS suction pressure",
+      "unit": "mbar(abs)",
+      "type": "PERT/triangular screening",
+      "min": 250,
+      "mode": 400,
+      "max": 550,
+      "interpretation": "Represents VLP suction variability; low tail increases ingress/stability concern."
+    },
+    {
+      "id": "DIST-LP-001",
+      "name": "LP outlet / HCC suction pressure",
+      "unit": "mbar(abs)",
+      "type": "PERT/triangular screening",
+      "min": 800,
+      "mode": 1050,
+      "max": 1200,
+      "interpretation": "Represents PVPS outlet/HCC suction window; sets warm compressor inlet boundary."
+    },
+    {
+      "id": "DIST-LOSS-001",
+      "name": "QRB-WCS pressure loss",
+      "unit": "mbar",
+      "type": "screening triangular",
+      "min": 10,
+      "mode": 35,
+      "max": 50,
+      "interpretation": "Allowed approx 50 mbar; expected lower due to large pipe diameter."
+    }
+  ],
+  "covariance_assumptions": [
+    {
+      "id": "COV-001",
+      "x": "PVPS suction pressure",
+      "y": "LP outlet / HCC suction pressure",
+      "relationship": "positive control coupling expected but not yet vendor-validated",
+      "risk": "If suction drops while outlet requirement remains high, unit margin and VFD compensation become critical."
+    },
+    {
+      "id": "COV-002",
+      "x": "mass flow",
+      "y": "QRB-WCS pressure loss",
+      "relationship": "approximately quadratic screening relationship",
+      "risk": "High-flow operation can consume margin faster than linear assumptions suggest."
+    }
+  ],
+  "wave3_plot_targets": [
+    "PVPS suction distribution",
+    "LP outlet distribution",
+    "joint VLP/LP scatter",
+    "QRB-WCS pressure-loss distribution",
+    "variance tornado chart",
+    "probability of low-suction excursion",
+    "probability of high-outlet-pressure demand",
+    "pressure window overlap map"
+  ]
+}
