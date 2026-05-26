@@ -1,6 +1,6 @@
 # SNAPSHOT REGRESSION GOVERNANCE
 
-# Purpose
+## Purpose
 
 Introduce deterministic render-regression review for:
 
@@ -11,9 +11,9 @@ Introduce deterministic render-regression review for:
 
 ---
 
-# Target Validation Areas
+## Target Validation Areas
 
-## Layout Stability
+### Layout Stability
 
 Detect:
 
@@ -25,7 +25,7 @@ Detect:
 
 ---
 
-## Theme Stability
+### Theme Stability
 
 Detect:
 
@@ -35,7 +35,7 @@ Detect:
 
 ---
 
-## Navigation Stability
+### Navigation Stability
 
 Detect:
 
@@ -46,7 +46,7 @@ Detect:
 
 ---
 
-# Future Snapshot Workflow
+## Future Snapshot Workflow
 
 ```text
 RENDER
@@ -62,7 +62,7 @@ CI PASS/FAIL
 
 ---
 
-# Planned Tooling
+## Planned Tooling
 
 Future planned tooling:
 
@@ -76,7 +76,7 @@ renderers/regression/
 
 ---
 
-# Future CI Integration
+## Future CI Integration
 
 Planned GitHub Actions integration:
 
@@ -87,7 +87,7 @@ Planned GitHub Actions integration:
 
 ---
 
-# Governance Principle
+## Governance Principle
 
 Renderer quality must become:
 

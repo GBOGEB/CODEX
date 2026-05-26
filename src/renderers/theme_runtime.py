@@ -25,34 +25,43 @@ class SemanticThemeRuntime:
     - snapshot generation
     """
 
-    def __init__(self, config_path: str | Path | None = None) -> None:
+    def __init__(self, config_path: str | None = None) -> None:
         if config_path is None:
-            # Resolve to src/renderers/themes/semantic_cards.yaml
-            self.config_path = Path(__file__).resolve().parent / 'themes' / 'semantic_cards.yaml'
+            # Default to repo root themes/ directory, resolved relative to this file
+            repo_root = Path(__file__).resolve().parent.parent.parent
+            self.config_path = repo_root / 'themes' / 'semantic_cards.yaml'
         else:
             self.config_path = Path(config_path)
         self.data = self._load()
 
     def _load(self) -> dict[str, Any]:
         with self.config_path.open('r', encoding='utf-8') as handle:
-            return yaml.safe_load(handle) or {}
+            data = yaml.safe_load(handle)
+            if data is None or not isinstance(data, dict):
+                raise ValueError(
+                    f"Invalid YAML in {self.config_path}: expected dict, got {type(data).__name__}"
+                )
+            return data
 
     def resolve(self, semantic_type: str, mode: str) -> SemanticCardTheme:
         semantic_cards = self.data.get('semantic_cards')
-        if not isinstance(semantic_cards, dict):
-            raise KeyError("Missing 'semantic_cards' section in theme configuration.")
+        if semantic_cards is None:
+            raise ValueError("Missing 'semantic_cards' key in theme configuration")
 
-        semantic_entry = semantic_cards.get(semantic_type)
-        if not isinstance(semantic_entry, dict):
-            valid_semantic_types = ', '.join(sorted(semantic_cards.keys()))
-            raise KeyError(
-                f"Unknown semantic type '{semantic_type}'. Valid options: {valid_semantic_types}"
+        if semantic_type not in semantic_cards:
+            available = ', '.join(sorted(semantic_cards.keys()))
+            raise ValueError(
+                f"Unknown semantic_type '{semantic_type}'. Available types: {available}"
             )
 
-        entry = semantic_entry.get(mode)
-        if not isinstance(entry, dict):
-            valid_modes = ', '.join(sorted(semantic_entry.keys()))
-            raise KeyError(f"Unknown mode '{mode}' for '{semantic_type}'. Valid options: {valid_modes}")
+        type_config = semantic_cards[semantic_type]
+        if mode not in type_config:
+            available = ', '.join(sorted(type_config.keys()))
+            raise ValueError(
+                f"Unknown mode '{mode}' for semantic_type '{semantic_type}'. Available modes: {available}"
+            )
+
+        entry = type_config[mode]
 
         return SemanticCardTheme(
             background=entry['background'],

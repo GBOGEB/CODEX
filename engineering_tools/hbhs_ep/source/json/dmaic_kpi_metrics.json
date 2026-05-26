@@ -1,0 +1,46 @@
+{
+  "version": "HBHS-EP-v8.4-dmaic-kpi-dashboard",
+  "purpose": "Track recursive progress, completion, DMAIC maturity, wave completion, plot production and covariance between engineering maturity indicators.",
+  "current_wave": 1,
+  "overall_plot_target": 100,
+  "overall_completed_plots": 3,
+  "kpis": [
+    {"id": "KPI-001", "name": "Plot completion", "value": 3, "target": 100, "unit": "plots", "dmaic_phase": "Measure", "trend": "rising", "status": "early"},
+    {"id": "KPI-002", "name": "SSoT coverage", "value": 42, "target": 100, "unit": "%", "dmaic_phase": "Control", "trend": "rising", "status": "partial"},
+    {"id": "KPI-003", "name": "Proof backlog closure", "value": 8, "target": 100, "unit": "%", "dmaic_phase": "Analyze", "trend": "flat", "status": "low"},
+    {"id": "KPI-004", "name": "Dashboard navigability", "value": 35, "target": 100, "unit": "%", "dmaic_phase": "Improve", "trend": "rising", "status": "partial"},
+    {"id": "KPI-005", "name": "Manifest traceability", "value": 15, "target": 100, "unit": "%", "dmaic_phase": "Control", "trend": "rising", "status": "low"},
+    {"id": "KPI-006", "name": "Physics model maturity", "value": 5, "target": 100, "unit": "%", "dmaic_phase": "Analyze", "trend": "flat", "status": "low"}
+  ],
+  "wave_metrics": [
+    {"wave": 0, "name": "Foundation", "planned_plots": 0, "completed_plots": 0, "ssot_percent": 35, "proof_percent": 5, "dashboard_percent": 25, "control_percent": 20, "dmaic_phase": "Define", "status": "complete"},
+    {"wave": 1, "name": "Progress dashboard", "planned_plots": 10, "completed_plots": 3, "ssot_percent": 42, "proof_percent": 8, "dashboard_percent": 35, "control_percent": 25, "dmaic_phase": "Measure", "status": "in_progress"},
+    {"wave": 2, "name": "Pressure/compressor envelopes", "planned_plots": 20, "completed_plots": 0, "ssot_percent": 55, "proof_percent": 22, "dashboard_percent": 45, "control_percent": 35, "dmaic_phase": "Analyze", "status": "planned"},
+    {"wave": 3, "name": "Monte Carlo and variance", "planned_plots": 20, "completed_plots": 0, "ssot_percent": 65, "proof_percent": 40, "dashboard_percent": 58, "control_percent": 48, "dmaic_phase": "Analyze", "status": "planned"},
+    {"wave": 4, "name": "Thermodynamics and exergy", "planned_plots": 25, "completed_plots": 0, "ssot_percent": 78, "proof_percent": 62, "dashboard_percent": 70, "control_percent": 62, "dmaic_phase": "Improve", "status": "planned"},
+    {"wave": 5, "name": "Control and reliability", "planned_plots": 15, "completed_plots": 0, "ssot_percent": 88, "proof_percent": 78, "dashboard_percent": 82, "control_percent": 78, "dmaic_phase": "Control", "status": "planned"},
+    {"wave": 6, "name": "Release polish", "planned_plots": 10, "completed_plots": 0, "ssot_percent": 95, "proof_percent": 90, "dashboard_percent": 95, "control_percent": 92, "dmaic_phase": "Control", "status": "planned"}
+  ],
+  "lineage_nodes": [
+    {"id": "v8.0", "label": "SSoT lock", "wave": 0, "status": "done"},
+    {"id": "v8.1", "label": "DMAIC agent handover", "wave": 0, "status": "done"},
+    {"id": "v8.2", "label": "single-file launch portal", "wave": 0, "status": "done"},
+    {"id": "v8.3", "label": "CODEX portal baseline", "wave": 0, "status": "done"},
+    {"id": "v8.4", "label": "wave progress dashboard", "wave": 1, "status": "active"},
+    {"id": "v8.5", "label": "pressure and compressor plots", "wave": 2, "status": "planned"},
+    {"id": "v8.6", "label": "Monte Carlo variance", "wave": 3, "status": "planned"},
+    {"id": "v8.7", "label": "thermodynamic/exergy layer", "wave": 4, "status": "planned"},
+    {"id": "v8.8", "label": "control/reliability layer", "wave": 5, "status": "planned"},
+    {"id": "v8.9", "label": "release polish", "wave": 6, "status": "planned"}
+  ],
+  "covariance_guidance": {
+    "interpretation": "Plot completion alone is not maturity. Track covariance between SSoT coverage, proof closure, dashboard quality, and control traceability. A positive trend in plots with flat proof closure is a dilution warning.",
+    "risk_signals": [
+      "plot completion rises while proof closure stays flat",
+      "dashboard percent rises while SSoT coverage is low",
+      "physics model maturity remains low after Wave 2",
+      "manifest traceability lags generated artifact count"
+    ],
+    "preferred_trend": "SSoT coverage and proof closure should lead plot count growth, not follow it."
+  }
+}
