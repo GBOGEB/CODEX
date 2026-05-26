@@ -1,0 +1,57 @@
+telemetry_overview:
+  top_performers:
+    metric: "highest_convergence_scores"
+  bottom_performers:
+    metric: "highest_instability_scores"
+  KPI_categories:
+    - "governance"
+    - "federation"
+    - "CI_CD"
+    - "testing"
+    - "rendering"
+    - "topology"
+    - "runtime"
+    - "convergence"
+
+statistical_outputs:
+  - "moving_average"
+  - "standard_deviation"
+  - "PCA_variance"
+  - "convergence_trend"
+  - "confidence_interval"
+
+confidence_levels:
+  low:
+    range: [0.00, 0.40]
+  medium:
+    range: [0.41, 0.75]
+  high:
+    range: [0.76, 0.90]
+  governed:
+    range: [0.91, 1.00]
+
+performance_overview_baseline:
+  top:
+    - component: "ci_pipeline"
+      convergence: 0.92
+    - component: "markdown_governance"
+      convergence: 0.89
+  bottom:
+    - component: "runtime_observability"
+      convergence: 0.31
+    - component: "federation_bridge_sync"
+      convergence: 0.28
+
+process_tracking:
+  monitored:
+    - "convergence_score"
+    - "instability_index"
+    - "claim_evidence_gap"
+    - "governance_drift"
+    - "PR_failure_rate"
+    - "CI_success_rate"
+  statistical_models:
+    - "PCA"
+    - "moving_average"
+    - "trend_regression"
+    - "variance_tracking"
