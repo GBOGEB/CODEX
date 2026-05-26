@@ -33,9 +33,9 @@ def extract_theme_counts() -> dict[str, int]:
 
 
 def main() -> int:
+    args = parse_args()
     counts = extract_theme_counts()
     payload = json.dumps(counts, indent=2)
-    args = parse_args()
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(payload + "\n", encoding="utf-8")
