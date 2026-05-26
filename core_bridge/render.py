@@ -2,6 +2,7 @@
 """
 CODEX Transformation Engine - SLUG Format Matrix Generator
 """
+import html
 import sys
 from pathlib import Path
 
@@ -24,7 +25,18 @@ class SlugRenderPipeline:
         print(f"[+] Compiling Document Matrix: {source.name} -> Target format: [{target_format.upper()}]")
 
         if target_format == "html":
-            out_file.write_text(f"<html><body>{raw_data}</body></html>", encoding="utf-8")
+            escaped_data = html.escape(raw_data)
+            html_output = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none'; object-src 'none';">
+    <title>Rendered Output</title>
+</head>
+<body><pre>{escaped_data}</pre></body>
+</html>"""
+            out_file.write_text(html_output, encoding="utf-8")
         elif target_format == "pdf":
             out_file.write_text(f"PDF Output Layer Stream\nSource File: {source.name}", encoding="utf-8")
         elif target_format in ["sheet", "xlsx", "csv"]:
@@ -46,4 +58,8 @@ if __name__ == "__main__":
         print("Usage: ./render.py <source_path> <format_slug>")
         sys.exit(1)
     pipeline = SlugRenderPipeline()
-    print(pipeline.process_transform(sys.argv[1], sys.argv[2]))
+    result = pipeline.process_transform(sys.argv[1], sys.argv[2])
+    print(result)
+    # Exit with non-zero status if the result indicates an error
+    if result.startswith("[-] Error"):
+        sys.exit(1)
