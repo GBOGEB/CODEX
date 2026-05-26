@@ -31,12 +31,28 @@ BUILDOUT_TODO_STATUS = "No open buildout TODO items."
 
 
 def _load_warning_dark_invariant(manifest: dict) -> WarningDarkInvariant:
-    for component in manifest.get("components", []):
+    components = manifest.get("components", [])
+    if not isinstance(components, list):
+        raise ValueError(
+            "Manifest must include components[].target_invariant.warning.dark with background/text colors"
+        )
+
+    for component in components:
+        if not isinstance(component, dict):
+            continue
+
         target = component.get("target_invariant")
-        if target and "warning" in target and "dark" in target["warning"]:
-            warning_dark = target["warning"]["dark"]
-            if "background" in warning_dark and "text" in warning_dark:
-                return cast(WarningDarkInvariant, warning_dark)
+        if not isinstance(target, dict):
+            continue
+
+        warning = target.get("warning")
+        if not isinstance(warning, dict):
+            continue
+
+        warning_dark = warning.get("dark")
+        if isinstance(warning_dark, dict) and "background" in warning_dark and "text" in warning_dark:
+            return cast(WarningDarkInvariant, warning_dark)
+
     raise ValueError(
         "Manifest must include components[].target_invariant.warning.dark with background/text colors"
     )
