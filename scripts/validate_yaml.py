@@ -11,11 +11,12 @@ def main() -> int:
     for root in TARGETS:
         if not root.exists():
             continue
-        for file in root.rglob("*.yml"):
-            try:
-                yaml.safe_load(file.read_text(encoding="utf-8"))
-            except Exception as exc:
-                errors.append(f"{file}: {exc}")
+        for pattern in ("*.yml", "*.yaml"):
+            for file in root.rglob(pattern):
+                try:
+                    yaml.safe_load(file.read_text(encoding="utf-8"))
+                except Exception as exc:
+                    errors.append(f"{file}: {exc}")
     if errors:
         print("YAML validation failed:")
         for err in errors:
