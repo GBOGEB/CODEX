@@ -33,7 +33,7 @@ def _load_warning_dark_invariant() -> dict[str, str]:
 
 class ContrastValidator:
     """
-    G5 Hardened WCAG 2.1 Luminance and Relative Contrast Ratio Validation Engine.
+    A6 WCAG 2.1 luminance and relative contrast ratio validation engine.
     Enforces semantic theme safety constraints for the ABACUS_RENDER_PIPELINE.
     """
 
