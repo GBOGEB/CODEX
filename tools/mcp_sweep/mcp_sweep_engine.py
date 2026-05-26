@@ -18,9 +18,11 @@ class MCPSweepEngine:
         self.repo_path = repo_path
         self.state = AgentState.IDLE
         self.near_misses: List[Dict[str, Any]] = []
+        self.transition_log: List[str] = []
 
     def change_state(self, target_state: AgentState):
         """Logs transitions for the ASCII telemetry readout."""
+        self.transition_log.append(f"{self.state.name} -> {target_state.name}")
         self.state = target_state
 
     def scan_aborted_sessions(self) -> List[Dict[str, Any]]:
@@ -58,6 +60,9 @@ class MCPSweepEngine:
     def generate_telemetry_report(self):
         print("## [MCP SWEEP PROTOCOL: COMPLETED]")
         print("---")
+        print("* [i] **STATE TRANSITIONS:**")
+        for transition in self.transition_log:
+            print(f"  - {transition}")
         for item in self.near_misses:
             print(f"* [ ] **NEAR-MISS ESCALATED:** {item['suggestion']}")
             print(f"  - *Origin:* {item['origin']} (Verify and commit manually)")
