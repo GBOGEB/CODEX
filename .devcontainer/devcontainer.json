@@ -1,8 +1,14 @@
 {
   "name": "ARTSTYLE-Orchestration-Runtime",
-  "settings": {},
-  "extensions": [
-    "redhat.vscode-yaml",
-    "ms-python.python"
-  ]
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "postCreateCommand": "pip install --quiet -r requirements.txt 2>/dev/null || true",
+  "customizations": {
+    "vscode": {
+      "settings": {},
+      "extensions": [
+        "redhat.vscode-yaml",
+        "ms-python.python"
+      ]
+    }
+  }
 }
