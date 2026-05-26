@@ -42,12 +42,12 @@ task:
     github_pr_comment:
       patterns:
         - "@copilot fix"
-        - "@copilot fix (requires human confirmation before commit)"
         - "@codex fix"
         - "/agent fix"
         - "/agent explain"
         - "/agent propose"
       next: "read_comment_then_prepare_fix"
+      note: "All fix commands require human confirmation before commit (per human_gate.required_before_commit)"
 
     ci_failure:
       next: "diagnose_failure_prepare_patch"
