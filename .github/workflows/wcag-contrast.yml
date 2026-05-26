@@ -14,10 +14,22 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Install dependencies
+        run: pip install PyYAML
       - name: Verify WCAG contrast invariant
         run: |
           python - <<'PY'
           import sys
+          import yaml
+
+          # Load colors and threshold from SSOT
+          with open("SSOT/g10_runtime_governance_ssot.yaml") as f:
+              ssot = yaml.safe_load(f)
+          
+          invariant = ssot["ssot"]["invariants"]["wcag_warning_dark"]
+          bg_hex = invariant["background"]
+          text_hex = invariant["text"]
+          min_ratio = invariant["minimum_ratio"]
 
           def lum(hex_value):
               h = hex_value.lstrip("#")
@@ -25,13 +37,13 @@ jobs:
               lin = [v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4 for v in rgb]
               return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
 
-          bg = lum("#4A3110")
-          text = lum("#FFE9A3")
+          bg = lum(bg_hex)
+          text = lum(text_hex)
           ratio = (max(bg, text) + 0.05) / (min(bg, text) + 0.05)
 
           print(f"Calculated Contrast Ratio: {ratio:.2f}:1")
-          if ratio < 4.5:
-              print("CRITICAL: WCAG AA contrast invariant failed execution gate.")
+          if ratio < min_ratio:
+              print(f"CRITICAL: WCAG AA contrast invariant failed execution gate (threshold: {min_ratio}:1).")
               sys.exit(1)
-          print("SUCCESS: Contrast threshold cleared.")
+          print(f"SUCCESS: Contrast threshold cleared (threshold: {min_ratio}:1).")
           PY
