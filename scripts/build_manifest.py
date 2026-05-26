@@ -8,7 +8,7 @@ import json
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "MANIFEST.json"
+OUT = ROOT / "governance/runtime_manifest.json"
 
 
 def load_yaml(path: Path):

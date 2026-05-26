@@ -1,110 +1,58 @@
 {
-  "wave": "W000",
-  "runtime_governance": {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "version": "1.0.0",
-    "wave": "W000",
-    "runtime_state_machine": {
-      "states": [
-        {
-          "id": "planned",
-          "description": "Work is defined but not yet in execution."
-        },
-        {
-          "id": "active",
-          "description": "Work is in execution and producing telemetry."
-        },
-        {
-          "id": "sweep",
-          "description": "MCP sweep analyzes near-miss and obsolete artifacts."
-        },
-        {
-          "id": "closed",
-          "description": "Work is either merged, archived, or pruned."
-        }
-      ],
-      "transitions": [
-        {
-          "from": "planned",
-          "to": "active",
-          "trigger": "approved"
-        },
-        {
-          "from": "active",
-          "to": "sweep",
-          "trigger": "completed_or_aborted"
-        },
-        {
-          "from": "sweep",
-          "to": "closed",
-          "trigger": "classified"
-        }
-      ]
-    }
+  "project": "Q_Engineering_Tools",
+  "canonical_entrypoint": "docs/index.html",
+  "hosted_entrypoint": "https://<github-user-or-org>.github.io/<repo>/",
+  "repository_role": "engineering_source_of_truth",
+  "pages_role": "curated_verified_user_portal",
+  "status": "active",
+  "version": "1.3.0",
+  "dashboard_lineage": {
+    "canonical_dashboard": "losses",
+    "current_generation": "v3",
+    "same_branch_policy": "bugfix_or_equivalent_improvement_only",
+    "similar_branch_policy": "parallel_variant_requires_comparison_and_promotion_gate"
   },
-  "agent_registry": {
-    "version": "1.0.0",
-    "agents": [
-      {
-        "id": "abacus-governor",
-        "role": "governance-orchestrator",
-        "owner": "ABACUS",
-        "capabilities": [
-          "state-machine-control",
-          "telemetry-aggregation",
-          "policy-enforcement"
-        ]
-      },
-      {
-        "id": "codex-worker",
-        "role": "execution-worker",
-        "owner": "CODEX",
-        "capabilities": [
-          "patch-generation",
-          "test-execution",
-          "pr-preparation"
-        ]
-      },
-      {
-        "id": "mcp-sweep-mop",
-        "role": "post-session-curator",
-        "owner": "ABACUS",
-        "capabilities": [
-          "near-miss-detection",
-          "obsolete-pruning",
-          "remediation-ticketing"
-        ]
-      }
-    ]
+  "build": {
+    "master_builder": "tools/losses/src/build_all.py",
+    "publish_folder": "docs/",
+    "deterministic_required": true,
+    "idempotent_required": true
   },
-  "federation_registry": {
-    "version": "1.0.0",
-    "federation_links": [
-      {
-        "id": "office-link",
-        "kind": "exploit",
-        "provider": "FEDERATION",
-        "interface": "api",
-        "purpose": "document-processing"
-      },
-      {
-        "id": "diagram-link",
-        "kind": "exploit",
-        "provider": "FEDERATION",
-        "interface": "api",
-        "purpose": "diagram-rendering"
-      },
-      {
-        "id": "binary-link",
-        "kind": "exploit",
-        "provider": "FEDERATION",
-        "interface": "api",
-        "purpose": "external-binary-execution"
-      }
-    ],
-    "policies": {
-      "prefer_exploit_over_integrate": true,
-      "max_parallel_feature_branches": 3
-    }
+  "published_pages": [
+    "docs/index.html",
+    "docs/engineering_portal.html",
+    "docs/dashboard.html",
+    "docs/handover.html",
+    "docs/verification.html",
+    "docs/regression.html",
+    "docs/traceability.html",
+    "docs/manifest.html",
+    "docs/knowledge_transfer.html",
+    "docs/knowledge_transfer_slides.html",
+    "docs/plots/index.html",
+    "docs/plots/*.html",
+    "docs/gistau-ch15/*.html",
+    "docs/gistau-ch15/plots/*.html",
+    "docs/leak_baseline/index.html",
+    "docs/HUMAN.*.html",
+    "docs/qcell_svg_rebuild_v0_6_0/docs_rebuild_plan.html",
+    "docs/qps-slide-system/index.html",
+    "docs/qps-slide-system/html/*.html",
+    "docs/hbhs-ep-v8.3-tuplebridge/index.html",
+    "docs/hbhs-ep-v8.3-tuplebridge/runtime_dashboard.html"
+  ],
+  "controls": {
+    "link_check_required": true,
+    "stale_check_required": true,
+    "manifest_check_required": true,
+    "glob_policy_required": true,
+    "regression_check_required": true,
+    "post_publish_smoke_test_required": true
+  },
+  "promotion_rules": {
+    "main_must_be_deployable": true,
+    "pages_must_be_verified": true,
+    "experimental_outputs_must_not_replace_canonical_silently": true,
+    "public_urls_should_remain_stable": true
   }
 }

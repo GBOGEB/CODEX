@@ -18,10 +18,12 @@ This repository is bootstrapped for **W000** runtime governance.
 - `docs/runtime_map.md`
 - `scripts/validate_yaml.py`
 - `scripts/build_manifest.py`
+- `governance/runtime_manifest.json` (generated)
 
 ## Quickstart
 
 ```bash
 python3 scripts/validate_yaml.py
 python3 scripts/build_manifest.py
+# writes governance/runtime_manifest.json
 ```
