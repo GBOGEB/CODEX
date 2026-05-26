@@ -90,7 +90,7 @@ def _resolve_exergy_inputs(manifest_data: dict) -> tuple[float, float, float, fl
     """Resolve helium exergy inputs from manifest, converting mass flow from g/s to kg/s.
 
     Returns:
-        (mass_flow_he_kg_s, h_in, h_out, s_in, s_out, power_input_kw)
+        (mass_flow_he_kg_s, h_in, h_out, s_in, s_out, power_input_w)
     """
     mass_flow_he_kg_s = 11.5 / 1000.0  # fallback: 11.5 g/s → kg/s
     for component in manifest_data.get("components", []):
@@ -106,8 +106,8 @@ def _resolve_exergy_inputs(manifest_data: dict) -> tuple[float, float, float, fl
     h_out = float(exergy_inputs.get("h_out_j_kg", 32.0))
     s_in = float(exergy_inputs.get("s_in_j_kgk", 0.03))
     s_out = float(exergy_inputs.get("s_out_j_kgk", 0.06))
-    power_input_kw = float(exergy_inputs.get("power_input_kw", 210.0))
-    return mass_flow_he_kg_s, h_in, h_out, s_in, s_out, power_input_kw
+    power_input_w = float(exergy_inputs.get("power_input_w", 210000.0))
+    return mass_flow_he_kg_s, h_in, h_out, s_in, s_out, power_input_w
 
 
 def execute_g8_lifecycle_validation():
@@ -121,9 +121,9 @@ def execute_g8_lifecycle_validation():
     claimed_milestones, actual_milestones = _resolve_milestone_vectors(manifest_data)
     covariance, correlation = engine.calculate_g8_covariance_correlation(claimed_milestones, actual_milestones)
 
-    mass_flow_he, h_in, h_out, s_in, s_out, power_input_kw = _resolve_exergy_inputs(manifest_data)
+    mass_flow_he, h_in, h_out, s_in, s_out, power_input_w = _resolve_exergy_inputs(manifest_data)
     calculated_exergy = engine.compute_g8_exergy_efficiency(
-        mass_flow_he=mass_flow_he, h_in=h_in, h_out=h_out, s_in=s_in, s_out=s_out, power_input_kw=power_input_kw
+        mass_flow_he=mass_flow_he, h_in=h_in, h_out=h_out, s_in=s_in, s_out=s_out, power_input_w=power_input_w
     )
 
     state_token = f"G8-VALIDATION-CR:{contrast_results['contrast_ratio']:.2f}-EXERGY:{calculated_exergy:.4f}"
