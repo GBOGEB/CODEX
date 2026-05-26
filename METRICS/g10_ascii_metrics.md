@@ -11,7 +11,7 @@ Hosted HTML Avoidance Factor  [####################] 100%
 ## Automated Gate Status
 [PASS] WCAG Contrast Gate      (Target >= 4.5:1 | Actual: 4.69:1)
 [PASS] Smoke Test Environment  (Orchestration script bypass verified)
-[PASS] Lint Verification Gate  (Black/Flake8 layout check)
+[PASS] Lint Verification Gate  (Pytest + repo governance checks)
 [PASS] Render Parity Gate      (No orphaned HTML instances)
 [PASS] SSOT Existence Check    (Valid metadata structure)
 [PASS] CRYO MASS FRACTION GATE (Precision Tally: 1.0000 / 1.0000)
