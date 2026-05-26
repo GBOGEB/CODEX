@@ -47,6 +47,8 @@ class AbacusRuntimeEngineA6:
             minimum_wcag_ratio = float(minimum_wcag_ratio_raw)
             if minimum_wcag_ratio <= 0:
                 raise ValueError("WCAG ratio must be positive")
+            if minimum_wcag_ratio > 21:
+                raise ValueError("WCAG ratio must be <= 21")
             return bg_hex, txt_hex, minimum_wcag_ratio
         except FileNotFoundError as exc:
             raise FileNotFoundError(
@@ -58,7 +60,7 @@ class AbacusRuntimeEngineA6:
             ) from exc
         except (TypeError, ValueError) as exc:
             raise ValueError(
-                "Invalid WCAG invariant configuration in MANIFEST/manifest_a6.json"
+                f"Invalid WCAG invariant configuration in MANIFEST/manifest_a6.json: {exc}"
             ) from exc
 
     def hex_to_luminance(self, hex_val):
