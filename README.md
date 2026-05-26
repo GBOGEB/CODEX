@@ -215,10 +215,12 @@ Use one shared event schema across CODEX and ABACUS:
 {
   "federation": "repo-highway-v1",
   "source_repo": "GBOGEB/CODEX",
+  "workflow": "publish-overlay",
+  "run_id": "12345678",
   "target_repo": "GBOGEB/ABACUS",
   "state": "completed",
   "metric": {"name": "validation_score", "value": 0.98},
-  "artifact": {"kind": "manifest", "ref": "docs/.../generated_overlay_manifest.json"},
+  "artifact": {"kind": "manifest", "ref": "docs/gistau-ch15/data/generated_overlay_manifest.json"},
   "correlation_id": "<uuid>",
   "timestamp": "2026-05-26T00:00:00Z"
 }
