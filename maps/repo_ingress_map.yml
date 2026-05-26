@@ -1,0 +1,10 @@
+schema: "repo_ingress_map.v1"
+description: "Declares how tuple sources map into repository paths."
+repo_targets:
+  chat_tuple:
+    source_glob: "incubator/*.yml"
+    index_output: "docs/incubator_index.md"
+    runtime_map_output: "docs/incubator_runtime_map.md"
+    parser_script: "scripts/parse_chat_tuple.py"
+    index_builder_script: "scripts/build_incubator_index.py"
+    theme_extractor_script: "scripts/extract_themes.py"

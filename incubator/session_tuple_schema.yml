@@ -1,0 +1,43 @@
+schema: "session_tuple.v1"
+yaml_version: "1.2"
+description: "Human-editable schema for INCUBATOR chat/session tuple ingress records."
+naming_convention: "YY_Www_HH_MM__CATEGORY__THEME__TITLE__STATUS"
+required_fields:
+  - id
+  - date
+  - time_local
+  - iso_week
+  - category
+  - theme
+  - title
+  - wave
+  - status
+  - repo
+  - branch
+  - source_type
+field_types:
+  id: string
+  date: date
+  time_local: string
+  iso_week: string
+  category: string
+  theme: string
+  title: string
+  wave: string
+  status: string
+  repo: string
+  branch: string
+  source_type: string
+optional_fields:
+  - dmaic_phase
+  - tuple
+  - tags
+constraints:
+  id_pattern: "^[0-9]{2}_W[0-9]{2}_[0-9]{2}_[0-9]{2}__[A-Z0-9_]+__[A-Z0-9_]+__[A-Z0-9_]+__W[0-9]{3}$"
+  allowed_source_types:
+    - chat_tuple
+    - session_tuple
+  allowed_status:
+    - active
+    - archived
+    - draft
