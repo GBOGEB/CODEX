@@ -51,7 +51,7 @@ def generate_maturity_radar_chart(output_path: Path) -> None:
     # Ensure output directory exists
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
-    fig.write_html(str(output_path))
+    fig.write_html(str(output_path), include_plotlyjs='cdn')
     print(f'generated {output_path}')
 
 
