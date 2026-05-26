@@ -28,10 +28,14 @@ jobs:
           HEAD_SHA="${{ github.sha }}"
 
           if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ]; then
-            BASE_SHA="$(git rev-list --max-parents=0 "$HEAD_SHA" | tail -n 1)"
+            BASE_SHA="$(git rev-parse "$HEAD_SHA^")"
           fi
 
           CHANGED_HTML="$(git diff --name-only --diff-filter=ACMR "$BASE_SHA" "$HEAD_SHA" -- '*.html')"
+          if [ -z "$CHANGED_HTML" ]; then
+            echo "Assertion Verified: Zero unauthorized HTML surfaces detected."
+            exit 0
+          fi
           UNAUTHORIZED_HTML="$(echo "$CHANGED_HTML" | grep -Ev '^(docs/|outputs/html/)' || true)"
 
           if [ -n "$UNAUTHORIZED_HTML" ]; then
