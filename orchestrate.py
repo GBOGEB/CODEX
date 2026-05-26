@@ -5,7 +5,7 @@ Generates deployable artifacts:
 - docs/files.html
 - docs/dashboard.html
 - docs/slides_html.html
-- README.md
+- docs/federation_readme.md
 """
 from __future__ import annotations
 
