@@ -23,10 +23,16 @@ def validate_navigation_ids() -> list[NavigationIssue]:
     return []
 
 
-if __name__ == '__main__':
+def main() -> int:
     issues = validate_navigation_ids()
     if issues:
         for item in issues:
             print(f'[{item.severity}] {item.component}: {item.message}')
-    else:
-        print('navigation governance checks passed')
+        return 1
+
+    print('navigation governance checks passed')
+    return 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

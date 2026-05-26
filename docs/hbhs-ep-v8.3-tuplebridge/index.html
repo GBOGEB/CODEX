@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HBHS-EP v8.3 — CODEX/ABACUS TupleBridge</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --card: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --link: #93c5fd;
+      --accent: #34d399;
+      --code-bg: #1e293b;
+      --border: #374151;
+      --font: Inter, Arial, sans-serif;
+      --font-mono: Consolas, "Courier New", monospace;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.6; }
+    .wrap { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+    nav.toc { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 2rem; }
+    nav.toc h2 { margin: 0 0 0.5rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+    nav.toc ol { margin: 0; padding-left: 1.25rem; }
+    nav.toc li { margin: 0.2rem 0; font-size: 0.9rem; }
+    nav.toc a { color: var(--link); text-decoration: none; }
+    nav.toc a:hover { text-decoration: underline; }
+    section.doc { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; margin-bottom: 1.5rem; }
+    h1 { font-size: 1.6rem; margin: 0 0 0.75rem; color: var(--accent); }
+    h2 { font-size: 1.15rem; margin: 1.5rem 0 0.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+    h3 { font-size: 1rem; margin: 1.25rem 0 0.4rem; color: var(--link); }
+    h4 { font-size: 0.92rem; margin: 1rem 0 0.35rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    p { margin: 0.5rem 0 0.75rem; }
+    ul, ol { margin: 0.4rem 0 0.75rem; padding-left: 1.5rem; }
+    li { margin: 0.2rem 0; }
+    code { background: var(--code-bg); color: var(--accent); padding: 0.1rem 0.35rem; border-radius: 4px; font-family: var(--font-mono); font-size: 0.88em; }
+    pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; overflow-x: auto; }
+    pre code { background: none; padding: 0; font-size: 0.85rem; color: var(--text); }
+    table { width: 100%; border-collapse: collapse; margin: 0.75rem 0 1rem; font-size: 0.9rem; }
+    th { text-align: left; padding: 0.4rem 0.75rem; background: var(--card); border: 1px solid var(--border); color: var(--muted); }
+    td { padding: 0.4rem 0.75rem; border: 1px solid var(--border); }
+    tr:nth-child(even) td { background: var(--card); }
+    .badge { display: inline-block; background: var(--card); border: 1px solid var(--border); color: var(--muted); border-radius: 12px; padding: 0.15rem 0.6rem; font-size: 0.78rem; margin-left: 0.5rem; vertical-align: middle; }
+    a { color: var(--link); }
+    strong { color: #f3f4f6; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>HBHS-EP v8.3 — CODEX/ABACUS TupleBridge <span class="badge">design &amp; proposal</span></h1>
+  <p style="color:var(--muted)">Rendered documentation package. Source: <code>docs/hbhs-ep-v8.3-tuplebridge/</code></p>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#readme">README — Package overview</a></li>
+      <li><a href="#source-inputs">Source inputs</a></li>
+      <li><a href="#placement">Repository placement</a></li>
+      <li><a href="#intent">Integration intent</a></li>
+      <li><a href="#review-focus">Review focus</a></li>
+      <li><a href="#pr-notes">PR Notes — Integration proposals</a></li>
+      <li><a href="#tuple-mappings">Notable tuple mappings</a></li>
+      <li><a href="#follow-up">Follow-up proposals</a></li>
+    </ol>
+  </nav>
+
+  <!-- ── README ── -->
+  <section class="doc" id="readme">
+    <h2>Package overview</h2>
+    <p>This package <strong>documents and proposes</strong> the HBHS-EP v8.3 TupleBridge integration into CODEX as a reviewable, self-contained design and documentation subtree. It does not yet introduce runtime or automation components; those are candidates for follow-up PRs.</p>
+
+    <h2 id="source-inputs">Source inputs</h2>
+    <p>This package was assembled from the following upstream design materials (not included directly in this PR):</p>
+    <ul>
+      <li><code>v8.3_TUPLE_BRIDGE.html</code> — rendered tuple dashboard and registry view.</li>
+      <li><code>Here is the polished layout structu.md</code> — polished layout, archive generator, and multi-node knowledge topology.</li>
+      <li><code>To implement a self-documenting, re.md</code> — recursive engineering repository architecture and lifecycle model.</li>
+      <li><code>workspace_build.py</code> — recursive workspace generator engine (proposed; not yet added).</li>
+      <li><code>HBHS_EP_v8_3_CODEX_ABACUS_TupleBridge_FULL.zip</code> and <code>CORE.zip</code> — prior repo-ready integration archives.</li>
+    </ul>
+
+    <h2 id="placement">Repository placement</h2>
+    <p>This PR adds the following files:</p>
+    <pre><code>docs/hbhs-ep-v8.3-tuplebridge/
+├── README.md        ← design documentation
+├── index.html       ← this rendered HTML landing page (GitHub Pages)
+└── pr-notes.md      ← PR-level notes and integration proposals</code></pre>
+    <p>This avoids replacing the existing CODEX <code>/docs/index.html</code> root while adding a Pages-accessible HTML landing page under the TupleBridge subtree.</p>
+
+    <h2 id="intent">Integration intent</h2>
+    <p>The bridge captures the relationship between:</p>
+    <ul>
+      <li><strong>CODEX</strong> — domain-rich handover and hosted documentation hub.</li>
+      <li><strong>ABACUS</strong> — reusable infrastructure and build-pattern target.</li>
+      <li><strong>Codex_Abac</strong> — proposed neutral bridge repository for shared conventions.</li>
+    </ul>
+
+    <h2 id="review-focus">Review focus</h2>
+    <ol>
+      <li>Confirm the subtree path is acceptable for CODEX.</li>
+      <li>Confirm whether selected assets should later be promoted into the root <code>/docs</code> entry page.</li>
+      <li>Decide whether ABACUS should receive a follow-up PR containing only reusable CI/static-site primitives.</li>
+      <li>Decide whether to bootstrap a separate <code>Codex_Abac</code> repository from the proposal material.</li>
+    </ol>
+  </section>
+
+  <!-- ── PR Notes ── -->
+  <section class="doc" id="pr-notes">
+    <h2>PR Notes — HBHS-EP v8.3 TupleBridge</h2>
+
+    <h3>Summary</h3>
+    <p>Introduces a reviewable integration package for the HBHS-EP v8.3 CODEX/ABACUS TupleBridge initiative.</p>
+    <p>The payload consolidates:</p>
+    <ul>
+      <li>Tuple registry governance.</li>
+      <li>Recursive engineering repository topology.</li>
+      <li>Multi-node knowledge graph concepts.</li>
+      <li>GitHub Pages deployment patterns.</li>
+      <li>Self-documenting CI/CD lifecycle orchestration.</li>
+      <li>Recursive workspace generation tooling.</li>
+    </ul>
+
+    <h3>Key architectural rules</h3>
+    <ul>
+      <li><code>/docs</code> remains the GitHub Pages root.</li>
+      <li>Canonical source model remains source-controlled.</li>
+      <li>Generated assets are separated from canonical sources.</li>
+      <li>HTML/PDF/PPTX/Markdown outputs derive from shared source inputs.</li>
+      <li>Workspace transfer archives (<code>workspace_bundle.tar.gz</code>) are generated from canonical nodes.</li>
+    </ul>
+
+    <h3 id="tuple-mappings">Notable tuple mappings</h3>
+    <table>
+      <thead>
+        <tr><th>Tuple ID</th><th>Intent</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>TUPLE-HBHS-001</td><td>Define CODEX integration target</td></tr>
+        <tr><td>TUPLE-HBHS-002</td><td>Define ABACUS reusable pattern</td></tr>
+        <tr><td>TUPLE-HBHS-003</td><td>Propose Codex_Abac bridge repo</td></tr>
+        <tr><td>TUPLE-HBHS-004</td><td>Preserve <code>/docs</code> hosting convention</td></tr>
+        <tr><td>TUPLE-HBHS-010</td><td>Separate generated from canonical</td></tr>
+        <tr><td>TUPLE-HBHS-013</td><td>Use Codex_Abac as bridge</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="follow-up">Follow-up proposals</h3>
+
+    <h4>CODEX</h4>
+    <ul>
+      <li>Host domain-rich dashboards and handover portals.</li>
+      <li>Preserve interactive documentation and tuple visualization.</li>
+    </ul>
+
+    <h4>ABACUS</h4>
+    <ul>
+      <li>Extract reusable static-site patterns.</li>
+      <li>Extract CI/CD packaging primitives.</li>
+      <li>Centralize reusable archive-generation workflows.</li>
+    </ul>
+
+    <h4>Codex_Abac</h4>
+    <p>Potential future neutral repository containing:</p>
+    <ul>
+      <li>Shared topology conventions.</li>
+      <li>Shared Pages hosting structures.</li>
+      <li>Shared tuple schemas.</li>
+      <li>Shared manifest and RTM logic.</li>
+      <li>Shared visualization primitives.</li>
+    </ul>
+  </section>
+
+</div>
+</body>
+</html>

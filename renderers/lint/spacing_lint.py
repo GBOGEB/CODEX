@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import argparse
+import sys
 from dataclasses import dataclass
 
 
@@ -44,5 +46,24 @@ def validate_section_spacing(spacing_px: int) -> list[SpacingIssue]:
     return issues
 
 
+def main() -> int:
+    parser = argparse.ArgumentParser(description='Run spacing governance lint checks.')
+    parser.add_argument('--card-padding', type=int, default=MIN_CARD_PADDING)
+    parser.add_argument('--section-spacing', type=int, default=MIN_SECTION_SPACING)
+    args = parser.parse_args()
+
+    issues = [
+        *validate_card_padding(args.card_padding),
+        *validate_section_spacing(args.section_spacing),
+    ]
+    if issues:
+        for item in issues:
+            print(f'[{item.severity}] {item.component}: {item.message}', file=sys.stderr)
+        return 1
+
+    print('[info] spacing governance checks passed')
+    return 0
+
+
 if __name__ == '__main__':
-    print('spacing governance lint scaffold active')
+    raise SystemExit(main())
