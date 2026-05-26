@@ -86,6 +86,30 @@ def _render_component_rows(manifest_data: dict) -> str:
     return "".join(rows)
 
 
+def _resolve_exergy_inputs(manifest_data: dict) -> tuple[float, float, float, float, float, float]:
+    """Resolve helium exergy inputs from manifest, converting mass flow from g/s to kg/s.
+
+    Returns:
+        (mass_flow_he_kg_s, h_in, h_out, s_in, s_out, power_input_kw)
+    """
+    mass_flow_he_kg_s = 11.5 / 1000.0  # fallback: 11.5 g/s → kg/s
+    for component in manifest_data.get("components", []):
+        if component.get("id") == "G8-TUPLE-HE-REF":
+            op_mode = component.get("modes", {}).get("2K-OP", {})
+            nominal_flow_g_s = op_mode.get("nominal_flow_g_s")
+            if nominal_flow_g_s is not None:
+                mass_flow_he_kg_s = float(nominal_flow_g_s) / 1000.0  # g/s → kg/s
+            break
+
+    exergy_inputs = manifest_data.get("validation_inputs", {}).get("exergy_inputs", {})
+    h_in = float(exergy_inputs.get("h_in_j_kg", 15.0))
+    h_out = float(exergy_inputs.get("h_out_j_kg", 32.0))
+    s_in = float(exergy_inputs.get("s_in_j_kgk", 0.03))
+    s_out = float(exergy_inputs.get("s_out_j_kgk", 0.06))
+    power_input_kw = float(exergy_inputs.get("power_input_kw", 210.0))
+    return mass_flow_he_kg_s, h_in, h_out, s_in, s_out, power_input_kw
+
+
 def execute_g8_lifecycle_validation():
     manifest_data = _load_g8_manifest()
     validator = ContrastValidator()
@@ -97,8 +121,9 @@ def execute_g8_lifecycle_validation():
     claimed_milestones, actual_milestones = _resolve_milestone_vectors(manifest_data)
     covariance, correlation = engine.calculate_g8_covariance_correlation(claimed_milestones, actual_milestones)
 
+    mass_flow_he, h_in, h_out, s_in, s_out, power_input_kw = _resolve_exergy_inputs(manifest_data)
     calculated_exergy = engine.compute_g8_exergy_efficiency(
-        mass_flow_he=11.5, h_in=15.0, h_out=32.0, s_in=0.03, s_out=0.06, power_input_kw=210.0
+        mass_flow_he=mass_flow_he, h_in=h_in, h_out=h_out, s_in=s_in, s_out=s_out, power_input_kw=power_input_kw
     )
 
     state_token = f"G8-VALIDATION-CR:{contrast_results['contrast_ratio']:.2f}-EXERGY:{calculated_exergy:.4f}"
