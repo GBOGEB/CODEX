@@ -25,11 +25,15 @@ class AbacusRuntimeEngineA6:
 
             target_invariants = manifest.get("target_invariants")
             if not isinstance(target_invariants, dict):
-                raise ValueError("Missing manifest key: target_invariants")
+                raise ValueError(
+                    "Invalid manifest key: target_invariants must be a dictionary"
+                )
 
             theme = target_invariants.get("warning_dark_theme")
             if not isinstance(theme, dict):
-                raise ValueError("Missing manifest key: target_invariants.warning_dark_theme")
+                raise ValueError(
+                    "Invalid manifest key: target_invariants.warning_dark_theme must be a dictionary"
+                )
 
             bg_hex = theme.get("bg")
             if not isinstance(bg_hex, str):
