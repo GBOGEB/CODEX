@@ -13,21 +13,14 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Regenerate Artifacts
+        run: python src/abacus_render_pipeline/orchestrate.py
       - name: Verify Cross-Format Structural Alignment (HTML <-> Markdown)
         run: |
-          python - <<'PY'
-          import os
-          import sys
-
-          html_exists = os.path.exists(
-              "docs/deck-systems/abacus-render-pipeline/runtime_dashboard.html"
-          )
-          md_exists = os.path.exists(
-              "docs/deck-systems/abacus-render-pipeline/runtime_summary.md"
-          )
-          print("Parity Assessment Active")
-          if not (html_exists and md_exists):
-              print("Failure: runtime HTML/Markdown parity outputs are not both present.")
-              sys.exit(1)
-          print("Parity check passed.")
-          PY
+          if ! git diff --exit-code \
+              docs/deck-systems/abacus-render-pipeline/runtime_dashboard.html \
+              docs/deck-systems/abacus-render-pipeline/runtime_summary.md; then
+            echo "Parity failure: committed artifacts are out-of-date with the generator."
+            exit 1
+          fi
+          echo "Parity check passed."
