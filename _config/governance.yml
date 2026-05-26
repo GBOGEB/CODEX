@@ -1,0 +1,35 @@
+%YAML 1.2
+---
+runtime:
+  engine: "Alpha A6"
+  framework_version: "2026.1.0"
+  telemetry_format: "markdown-ascii"
+
+security_boundaries:
+  corporate:
+    auth_provider: "Windows Active Directory / Office 365"
+    storage_sync: "OneDrive"
+    allowed_formats: ["pptx", "docx", "xlsx", "pdf"]
+  federation:
+    allowed_tokens:
+      - "GITHUB_API_TOKEN"
+      - "OPENAI_API_TOKEN"
+      - "GEMINI_PRO_API_TOKEN"
+      - "ABACUS_API_TOKEN"
+
+wire_links:
+  strict_pruning: true
+  allow_ephemeral_exploitation: true
+  target_repositories:
+    - name: "GBOGEB/CODEX"
+      alias: "codex"
+    - name: "GBOGEB/ABACUS"
+      alias: "abacus"
+
+rendering_defaults:
+  vector:
+    visio_export: "svg"
+    drawio_export: "svg"
+    powerpoint_export: "emf"
+  plots:
+    engine: "static-svg" # No live Plotly JS payloads; raw SVG injection only
