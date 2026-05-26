@@ -11,11 +11,12 @@ _ATTR_RE = re.compile(r'(?:src|data|href)=["\']([^"\']+\.svg)["\']', re.IGNORECA
 _MD_RE = re.compile(r'(?:!\[[^\]]*\]|(?<!!)\[[^\]]*\])\(([^)]+\.svg)\)', re.IGNORECASE)
 
 
-def _local_svg_refs(text: str, base: Path) -> list[Path]:
+def _local_svg_refs(text, base):
     """Return resolved paths for local (non-URL) SVG references found in *text*."""
     refs = []
     for pattern in (_ATTR_RE, _MD_RE):
         for match in pattern.finditer(text):
+            # Strip fragment (#...) and query (?...) components from the target path
             target = match.group(1).split("#")[0].split("?")[0]
             if target.startswith(("http://", "https://", "//")):
                 continue
