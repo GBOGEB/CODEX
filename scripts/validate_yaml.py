@@ -42,6 +42,7 @@ def _validate_agent_registry(path: Path, data: dict) -> None:
     agents = data.get("agents")
     _require(path, isinstance(agents, list) and agents, "agents must be non-empty list")
     _require(path, all(isinstance(agent, dict) for agent in agents), "all agents entries must be mappings")
+    _require(path, all("id" in agent for agent in agents), "every agent entry must include id")
     ids = {agent.get("id") for agent in agents}
     _require(path, all(isinstance(agent_id, str) and agent_id for agent_id in ids), "every agent requires non-empty string id")
     _require(path, "gpt_codex_chat" in ids, "gpt_codex_chat agent is required")
