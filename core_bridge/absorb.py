@@ -79,6 +79,11 @@ class FederationBridgeEngine:
             r"<p class=\"muted\"\>.*?</p>",
             re.DOTALL,
         )
+        status_regex = re.compile(
+            r"<section(?:\s+class=\"section\")?\>\s*<h3>Implementation Status(?: \(Active Pipeline Connected\))?</h3>\s*"
+            r"<ul\>.*?</ul\>\s*<p class=\"muted\"\>.*?</p>\s*</section>",
+            re.DOTALL,
+        )
 
         new_block = f"""<h3>Implementation Status (Active Pipeline Connected)</h3>
       <ul>
@@ -88,16 +93,22 @@ class FederationBridgeEngine:
       </ul>
       <p class=\"muted\"><strong>Pipeline Status:</strong> Continuous deployment synchronization achieved via GitHub Pages.</p>"""
 
+        section_block = f"""<section class=\"section\">
+      {new_block}
+    </section>"""
+
         if target_regex.search(html_content):
             updated_html = target_regex.sub(new_block, html_content)
+        elif status_regex.search(html_content):
+            updated_html = status_regex.sub(section_block, html_content, count=1)
         elif "Implementation Gaps (Current Stub)" in html_content:
             updated_html = html_content.replace(
                 "<h3>Implementation Gaps (Current Stub)</h3>",
-                f"<h3>Implementation Status</h3>\n{new_block}",
+                new_block,
             )
         else:
             marker = "</main>" if "</main>" in html_content else "</body>"
-            updated_html = html_content.replace(marker, f"\n<section>{new_block}</section>\n{marker}")
+            updated_html = html_content.replace(marker, f"\n{section_block}\n{marker}")
 
         self.dashboard_path.write_text(updated_html, encoding="utf-8")
         print(f"[+] Success: Dynamic analytics patched to {self.dashboard_path.name}")
