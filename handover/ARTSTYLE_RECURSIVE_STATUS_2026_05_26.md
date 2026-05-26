@@ -31,7 +31,7 @@ Build a deterministic framework that is:
 - ADR_0020: Federated glossary governance
 - ADR_0021: Semantic integrity release gate
 
-## Wave Status
+## Wave Status (ART&Style-specific taxonomy; repository governed waves are A1–A9 in MANIFEST/WAVE_PROGRESSION.yaml)
 
 - **WAVE-000 (Bootstrap):** Active / Stable foundation (claimed 42.5%, actual 37.5%, delta -5%)
 - **WAVE-001 (Semantic Governance):** Active execution
@@ -51,19 +51,22 @@ Build a deterministic framework that is:
 - Real Runtime Data Integration: ~30%
 - Real Production Execution: ~35%
 
-## Implemented Runtime Artifacts
+## Implemented Runtime Artifacts (repository-tracked; real paths)
 
-- `src/artstyle/cdx_engine.py`
-- `src/artstyle/semantic_validator.py`
-- `tests/test_diagnostics.py`
-- `tests/test_semantic.py`
-- `tests/test_glossary.py`
-- `GLOSSARY.yaml`
-- `_config.yml`
-- `.github/workflows/{ci.yml,id.yml,cd.yml}`
-- `docs/index.html`
-- `docs/dashboards/`
-- `docs/diagnostics/`
+- `PIPELINE/GLOSSARY.yaml` — semantic control plane
+- `MANIFEST/WAVE_PROGRESSION.yaml` — governed wave progression (A1–A9)
+- `MANIFEST/CONVERGENCE_KPIS.yaml` — KPI definitions
+- `.github/workflows/ci.yml` — continuous integration
+- `.github/workflows/codex_semantic_runtime_ci.yml` — semantic runtime CI
+- `.github/workflows/render-governance-ci.yml` — render governance enforcement
+- `docs/index.html` — human surface entrypoint
+- `docs/dashboard.html` — primary telemetry dashboard
+- `governance/SEMANTIC_THEME.yaml` — semantic theme definitions
+- `governance/WCAG_CONTRAST_CHECKER.py` — accessibility enforcement
+- `scripts/check_manifest.py` — manifest validation
+- `scripts/check_globs.py` — glob policy enforcement
+- `scripts/check_stale.py` — stale artifact detection
+- `scripts/check_links.py` — link integrity validation
 
 ## KPI and Equation Governance
 
@@ -111,7 +114,7 @@ GITHUB PAGES
 
 ## Immutable Mantra
 
-- GLOSSARY.yaml is the semantic control plane.
+- PIPELINE/GLOSSARY.yaml is the semantic control plane.
 - Markdown is the content master.
 - YAML is the structural contract.
 - HTML is the executable human surface.
