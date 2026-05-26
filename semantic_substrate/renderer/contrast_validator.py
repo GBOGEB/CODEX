@@ -4,10 +4,10 @@ from pathlib import Path
 
 import yaml
 
-from governance.WCAG_CONTRAST_CHECKER import contrast_ratio
+from governance.WCAG_CONTRAST_CHECKER import DEFAULT_THEME, contrast_ratio
 
 
-THEME_PATH = Path(__file__).resolve().parents[2] / "governance" / "SEMANTIC_THEME.yaml"
+THEME_PATH = DEFAULT_THEME
 
 
 def _load_warning_dark_theme(path: Path = THEME_PATH) -> dict[str, str]:
