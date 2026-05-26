@@ -20,6 +20,10 @@ def _load_yaml(path: Path) -> dict:
     return yaml.safe_load(path.read_text(encoding="utf-8"))
 
 
+def _normalize_repo_path(path: Path) -> str:
+    return str(path.relative_to(ROOT)).replace("\\", "/")
+
+
 def main() -> int:
     payload = {
         "framework": "ABACUS-CODEX-FEDERATION",
@@ -35,9 +39,10 @@ def main() -> int:
         if version is None:
             raise ValueError(f"{path} is missing required 'version'")
         input_versions.add(version)
-        version_by_path[str(path.relative_to(ROOT)).replace("\\", "/")] = version
+        normalized_path = _normalize_repo_path(path)
+        version_by_path[normalized_path] = version
         payload["inputs"][key] = {
-            "path": str(path.relative_to(ROOT)).replace("\\", "/"),
+            "path": normalized_path,
             "version": version,
         }
 

@@ -19,6 +19,10 @@ class ValidationError(RuntimeError):
     """Raised when governance YAML validation fails."""
 
 
+def _is_non_empty_string(value: object) -> bool:
+    return isinstance(value, str) and bool(value)
+
+
 def _require(path: Path, condition: bool, message: str) -> None:
     if not condition:
         raise ValidationError(f"{path}: {message}")
@@ -45,7 +49,7 @@ def _validate_agent_registry(path: Path, data: dict) -> None:
     _require(path, all(isinstance(agent, dict) for agent in agents), "all agents entries must be mappings")
     _require(path, all("id" in agent for agent in agents), "every agent entry must include id")
     ids = [agent["id"] for agent in agents]
-    _require(path, all(isinstance(agent_id, str) and agent_id for agent_id in ids), "every agent requires non-empty string id")
+    _require(path, all(_is_non_empty_string(agent_id) for agent_id in ids), "every agent requires non-empty string id")
     _require(path, len(set(ids)) == len(ids), "agent ids must be unique")
     missing_ids = REQUIRED_AGENT_IDS - set(ids)
     _require(path, not missing_ids, f"missing required agents: {sorted(missing_ids)}")
