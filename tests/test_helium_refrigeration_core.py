@@ -1,75 +1,85 @@
 import pytest
 
-import physics.helium_refrigeration_core as helium_core
+from helium_refrigeration_core import CryogenicHeliumEngineG4
 
 
-def test_compute_g8_exergy_efficiency_delegates_to_shared_kernel(monkeypatch) -> None:
-    call_args = {}
-
-    def fake_specific_flow_exergy(**kwargs):
-        call_args.update(kwargs)
-        return 2.0
-
-    monkeypatch.setattr(helium_core, "specific_flow_exergy", fake_specific_flow_exergy)
-    engine = helium_core.CryogenicHeliumEngineG8(t0_ambient=300.0)
-
-    efficiency = engine.compute_g8_exergy_efficiency(
-        mass_flow_he=10.0,
-        h_in=15.0,
-        h_out=32.0,
-        s_in=0.03,
-        s_out=0.06,
-        power_input_kw=100.0,
-        nitrogen_assist=False,
+def test_compute_g4_dynamic_exergy_nominal_value() -> None:
+    engine = CryogenicHeliumEngineG4()
+    result = engine.compute_g4_dynamic_exergy(
+        mass_flow=11.5,
+        h_in=12.0,
+        h_out=28.5,
+        s_in=0.04,
+        s_out=0.07,
+        power_kw=220.0,
     )
-
-    assert efficiency == 0.2
-    assert call_args == {
-        "h_j_kg": 32.0,
-        "s_j_kgk": 0.06,
-        "h0_j_kg": 15.0,
-        "s0_j_kgk": 0.03,
-        "t0_k": 300.0,
-    }
+    assert result == pytest.approx(0.43444125)
 
 
-def test_compute_g8_exergy_efficiency_nitrogen_toggle_and_zero_power(monkeypatch) -> None:
-    monkeypatch.setattr(helium_core, "specific_flow_exergy", lambda **kwargs: 5.0)
-    engine = helium_core.CryogenicHeliumEngineG8(nitrogen_assist_gain=1.10)
-
-    with_assist = engine.compute_g8_exergy_efficiency(10.0, 1, 2, 3, 4, 100.0, nitrogen_assist=True)
-    without_assist = engine.compute_g8_exergy_efficiency(10.0, 1, 2, 3, 4, 100.0, nitrogen_assist=False)
-    zero_power = engine.compute_g8_exergy_efficiency(10.0, 1, 2, 3, 4, 0.0)
-
-    assert with_assist == 0.55
-    assert without_assist == 0.5
-    assert zero_power == 0.0
-
-
-def test_compute_g8_exergy_efficiency_clamps_to_unit_interval(monkeypatch) -> None:
-    monkeypatch.setattr(helium_core, "specific_flow_exergy", lambda **kwargs: 100.0)
-    engine = helium_core.CryogenicHeliumEngineG8()
-
-    assert engine.compute_g8_exergy_efficiency(10.0, 1, 2, 3, 4, 10.0) == 1.0
-
-
-def test_calculate_g8_covariance_correlation_and_alias() -> None:
-    engine = helium_core.CryogenicHeliumEngineG8()
-    covariance, correlation = engine.calculate_g8_covariance_correlation([1, 2, 3], [1, 2, 4])
-    old_covariance, old_correlation = engine.calculate_g8_anova([1, 2, 3], [1, 2, 4])
-
-    assert covariance == pytest.approx(1.5)
-    assert correlation == pytest.approx(0.9819805, rel=1e-6)
-    assert old_covariance == covariance
-    assert old_correlation == correlation
+def test_compute_g4_dynamic_exergy_ln2_assist_branch() -> None:
+    engine = CryogenicHeliumEngineG4()
+    with_assist = engine.compute_g4_dynamic_exergy(
+        mass_flow=11.5,
+        h_in=12.0,
+        h_out=28.5,
+        s_in=0.04,
+        s_out=0.07,
+        power_kw=220.0,
+        ln2_assist=True,
+    )
+    without_assist = engine.compute_g4_dynamic_exergy(
+        mass_flow=11.5,
+        h_in=12.0,
+        h_out=28.5,
+        s_in=0.04,
+        s_out=0.07,
+        power_kw=220.0,
+        ln2_assist=False,
+    )
+    assert with_assist > without_assist
+    assert without_assist == pytest.approx(0.39494659090909087)
 
 
-def test_calculate_g8_covariance_correlation_edge_cases() -> None:
-    engine = helium_core.CryogenicHeliumEngineG8()
+def test_compute_g4_dynamic_exergy_zero_or_negative_power() -> None:
+    engine = CryogenicHeliumEngineG4()
+    assert engine.compute_g4_dynamic_exergy(1.0, 10.0, 20.0, 0.01, 0.02, 0.0) == 0.0
+    assert engine.compute_g4_dynamic_exergy(1.0, 10.0, 20.0, 0.01, 0.02, -5.0) == 0.0
 
-    assert engine.calculate_g8_covariance_correlation([1], [1]) == (0.0, 0.0)
-    assert engine.calculate_g8_covariance_correlation([1, 2], [1]) == (0.0, 0.0)
 
-    covariance, correlation = engine.calculate_g8_covariance_correlation([1, 2, 3], [5, 5, 5])
-    assert covariance == 0.0
-    assert correlation == 0.0
+def test_compute_g4_dynamic_exergy_clamping() -> None:
+    engine = CryogenicHeliumEngineG4()
+    clamped_high = engine.compute_g4_dynamic_exergy(
+        mass_flow=1000.0,
+        h_in=12.0,
+        h_out=28.5,
+        s_in=0.04,
+        s_out=0.07,
+        power_kw=220.0,
+    )
+    clamped_low = engine.compute_g4_dynamic_exergy(
+        mass_flow=2.0,
+        h_in=30.0,
+        h_out=10.0,
+        s_in=0.00,
+        s_out=0.10,
+        power_kw=5.0,
+    )
+    assert clamped_high == 1.0
+    assert clamped_low == 0.0
+
+
+def test_compute_wave_metrics_anova_nominal_values() -> None:
+    engine = CryogenicHeliumEngineG4()
+    covariance, correlation = engine.compute_wave_metrics_anova(
+        [0.25, 0.50, 0.75, 1.00],
+        [0.22, 0.49, 0.74, 0.99],
+    )
+    assert covariance == pytest.approx(0.10666666666666667)
+    assert correlation == pytest.approx(0.9998169448073261)
+
+
+def test_compute_wave_metrics_anova_invalid_and_zero_variance_cases() -> None:
+    engine = CryogenicHeliumEngineG4()
+    assert engine.compute_wave_metrics_anova([0.1], [0.1]) == (0.0, 0.0)
+    assert engine.compute_wave_metrics_anova([0.1, 0.2], [0.1]) == (0.0, 0.0)
+    assert engine.compute_wave_metrics_anova([1.0, 1.0], [2.0, 2.0]) == (0.0, 0.0)

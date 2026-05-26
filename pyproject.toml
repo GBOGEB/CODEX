@@ -17,3 +17,6 @@ dev = ["pytest>=7.0"]
 [tool.pytest.ini_options]
 addopts = "-q"
 testpaths = ["tests"]
+
+[tool.setuptools.package-data]
+"src.renderers.themes" = ["*.yaml"]
