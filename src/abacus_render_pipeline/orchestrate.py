@@ -25,12 +25,18 @@ class AbacusRuntimeEngineA6:
             bg_hex = theme["bg"]
             txt_hex = theme["text"]
             minimum_wcag_ratio = float(theme["minimum_wcag_ratio"])
+            if minimum_wcag_ratio <= 0:
+                raise ValueError("WCAG ratio must be positive")
             return bg_hex, txt_hex, minimum_wcag_ratio
         except FileNotFoundError as exc:
             raise FileNotFoundError(
                 f"Missing governed manifest: {manifest_path.as_posix()}"
             ) from exc
-        except (KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
+        except json.JSONDecodeError as exc:
+            raise ValueError(
+                "Malformed JSON in MANIFEST/manifest_a6.json"
+            ) from exc
+        except (KeyError, TypeError, ValueError) as exc:
             raise ValueError(
                 "Invalid WCAG invariant configuration in MANIFEST/manifest_a6.json"
             ) from exc
