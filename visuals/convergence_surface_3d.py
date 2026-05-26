@@ -2,6 +2,10 @@ import plotly.graph_objects as go
 from pathlib import Path
 import yaml
 
+waves = ['A1','A2','A3','A4','A5','A6','A7','A8','A9']
+governance = [18,35,49,63,74,88,92,94,95]
+thermo = [2,4,9,14,22,31,38,44,52]
+publication = [8,22,35,48,61,76,83,88,91]
 
 def main() -> None:
     # Load wave metrics from governed manifest
@@ -15,18 +19,14 @@ def main() -> None:
     thermo = [wave_metrics['thermodynamic_progress'][w] for w in waves]
     publication = [wave_metrics['publication_progress'][w] for w in waves]
 
-    fig = go.Figure(
-        data=[
-            go.Scatter3d(
-                x=governance,
-                y=publication,
-                z=thermo,
-                mode='lines+markers+text',
-                text=waves,
-                name='Wave Convergence',
-            )
-        ]
-    )
+fig.update_layout(
+    title='A9 Convergence Topology Surface',
+    scene=dict(
+        xaxis_title='Governance',
+        yaxis_title='Publication',
+        zaxis_title='Thermodynamics',
+    ),
+)
 
     fig.update_layout(
         title='A8 Convergence Topology Surface',

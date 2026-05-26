@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
+REPO_ROOT = SCRIPT_DIR.parent
 
 REQUIRED_ARTIFACTS = [
     SCRIPT_DIR / "SEMANTIC_THEME.yaml",
@@ -12,6 +13,10 @@ REQUIRED_ARTIFACTS = [
     SCRIPT_DIR / "LAYOUT_CONTRACTS.yaml",
     SCRIPT_DIR / "RENDER_RULES.md",
     SCRIPT_DIR / "RENDER_TEST_SUITE.md",
+    REPO_ROOT / "MANIFEST" / "ROADMAP.md",
+    REPO_ROOT / "MANIFEST" / "MASTER_SLIDE_REGISTRY.yaml",
+    REPO_ROOT / "MANIFEST" / "MASTER_FIGURE_REGISTRY.yaml",
+    REPO_ROOT / "MANIFEST" / "LINEAGE.md",
 ]
 
 RULES = [

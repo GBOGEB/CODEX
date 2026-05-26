@@ -1,16 +1,13 @@
-import plotly.graph_objects as go
 from pathlib import Path
-import yaml
 
 
-def main() -> None:
-    # Load wave progression from governed manifest
-    manifest_path = Path(__file__).parent.parent / 'MANIFEST' / 'WAVE_PROGRESSION.yaml'
-    with manifest_path.open('r', encoding='utf-8') as f:
-        data = yaml.safe_load(f)
-    
-    waves = [w['wave'] for w in data['waves']]
-    completion = [w['completion'] for w in data['waves']]
+def build_wave_progress_figure():
+    try:
+        import plotly.graph_objects as go
+    except ImportError as exc:
+        raise SystemExit(
+            'Plotly is required to generate wave progress. Install it with: pip install plotly'
+        ) from exc
 
     fig = go.Figure()
 
@@ -28,9 +25,13 @@ def main() -> None:
         xaxis_title='Wave',
         yaxis_title='Completion %',
     )
+    return fig
 
-    output_path = Path(__file__).resolve().parent.parent / 'outputs' / 'html' / 'wave_progression.html'
+
+def main():
+    output_path = Path('outputs/wave_progression.html')
     output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig = build_wave_progress_figure()
     fig.write_html(str(output_path))
     print(f'generated {output_path}')
 
