@@ -1,0 +1,16 @@
+proposed_fixes:
+  - id: "FIX-001"
+    source: "review_comment_or_ci"
+    status: "pending_user_confirmation"
+    reviewer_comment: "<quoted comment here>"
+    diagnosis: "<what is actually wrong>"
+    proposed_change:
+      files:
+        - path: "<file>"
+          change_type: "modify"
+      summary: "<short fix summary>"
+    choices:
+      - "apply_and_commit"
+      - "stage_only"
+      - "answer_without_change"
+      - "reject"

@@ -1,0 +1,60 @@
+task:
+  id: "CODEX-MCP-GITHUB-AGENTIC-ORCHESTRATION"
+  type: "mcp_container"
+  title: "Agentic GitHub MCP PR Follow-Up and Fix Loop"
+  source_basis: "G10/A6.1 runtime governance pack"
+  source_file: "Pasted markdown(17).md"
+
+  objective:
+    - "Discover PR discrepancies from CI, review comments, lint, tests, and SSOT drift."
+    - "Prepare proposed fixes automatically."
+    - "Show the user the comment, diagnosis, and proposed patch before commit."
+    - "Support single confirm commit or bulk confirm commit."
+    - "Support @copilot-style delegation where available."
+
+  human_gate:
+    required_before_commit: true
+    modes:
+      - "confirm_each"
+      - "bulk_confirm"
+      - "answer_only"
+      - "fix_and_stage_only"
+      - "reject_fix"
+
+  agents:
+    github_mcp_reader:
+      purpose: "Read PR, files, comments, checks, reviews, changed files."
+    discrepancy_detector:
+      purpose: "Compare PR state against SSOT, workflows, tests, and review comments."
+    fix_planner:
+      purpose: "Generate proposed changes and explain why."
+    patch_applier:
+      purpose: "Apply local patch only after approval."
+    comment_responder:
+      purpose: "Draft reply to reviewer or @copilot-style comment."
+    commit_guard:
+      purpose: "Prevent unapproved commits."
+
+  triggers:
+    local_source_push:
+      command: "git push origin <branch>"
+      next: "open_or_update_pr"
+
+    github_pr_comment:
+      patterns:
+        - "@copilot fix"
+        - "@copilot fix and commit"
+        - "@codex fix"
+        - "/agent fix"
+        - "/agent explain"
+        - "/agent propose"
+      next: "read_comment_then_prepare_fix"
+
+    ci_failure:
+      next: "diagnose_failure_prepare_patch"
+
+  outputs:
+    - "AGENTIC/agentic_pr_followup_log.yaml"
+    - "AGENTIC/proposed_fixes.yaml"
+    - "AGENTIC/comment_response_drafts.md"
+    - "METRICS/agentic_ascii_metrics.md"

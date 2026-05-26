@@ -1,0 +1,44 @@
+name: Agentic PR Discrepancy Scan
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  pull_request_review_comment:
+    types: [created]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+  checks: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan PR context
+        run: |
+          mkdir -p AGENTIC METRICS
+          cat > AGENTIC/agentic_pr_followup_log.yaml <<'YAML_INNER'
+          scan:
+            status: "prepared"
+            mode: "read_only"
+            next_action: "local_agent_or_codex_reads_context_and_prepares_patch"
+            commit_gate: "human_required"
+          YAML_INNER
+
+      - name: Write ASCII metrics shell
+        run: |
+          cat > METRICS/agentic_ascii_metrics.md <<'MD'
+          # Agentic PR Metrics
+
+          Comment Intake       [####################] 100%
+          Discrepancy Scan     [############--------] 60%
+          Patch Prepared       [--------------------] 0%
+          Human Confirm Gate   [####################] REQUIRED
+          Commit Executed      [--------------------] 0%
+          MD
