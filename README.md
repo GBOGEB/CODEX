@@ -301,4 +301,4 @@ For G3 deep topology/lineage execution and metrics bake-out:
 - PR automation helper: [`src/g3_engine/pr_generator.py`](src/g3_engine/pr_generator.py)
 - G3 orchestrator: [`scripts/orchestrate_g3.py`](scripts/orchestrate_g3.py)
 
-Run `python scripts/orchestrate_g3.py` to generate G3 artifacts under `output/federation_bridge/g3/`.
+Run `python scripts/orchestrate_g3.py` to generate G3 artifacts under `outputs/html/federation_bridge/g3/`.
