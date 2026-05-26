@@ -12,6 +12,7 @@ TARGETS = [
     ROOT / "governance" / "agent_registry.yml",
     ROOT / "governance" / "federation_registry.yml",
 ]
+REQUIRED_AGENT_IDS = {"gpt_codex_chat"}
 
 
 class ValidationError(RuntimeError):
@@ -46,7 +47,8 @@ def _validate_agent_registry(path: Path, data: dict) -> None:
     ids = [agent["id"] for agent in agents]
     _require(path, all(isinstance(agent_id, str) and agent_id for agent_id in ids), "every agent requires non-empty string id")
     _require(path, len(set(ids)) == len(ids), "agent ids must be unique")
-    _require(path, "gpt_codex_chat" in ids, "gpt_codex_chat agent is required")
+    missing_ids = REQUIRED_AGENT_IDS - set(ids)
+    _require(path, not missing_ids, f"missing required agents: {sorted(missing_ids)}")
 
 
 def _validate_federation(path: Path, data: dict) -> None:
