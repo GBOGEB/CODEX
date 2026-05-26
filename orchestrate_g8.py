@@ -126,7 +126,7 @@ body {{ font-family: system-ui, sans-serif; padding: 40px; background: #020617; 
 </div></body></html>"""
 
     slides_html = f"""<!DOCTYPE html>
-<html lang=\"en\"><head><meta charset=\"UTF-8\"><title>G8 Audit Deck</title>
+<html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self'; img-src 'self' data:; style-src 'unsafe-inline'; script-src 'none'; base-uri 'self'; form-action 'none'\"><title>G8 Audit Deck</title>
 <style>
 body {{ font-family: system-ui, sans-serif; background: #000; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }}
 .deck {{ max-width: 800px; padding: 60px; background: #09090b; border: 1px solid #27272a; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }}
