@@ -26,13 +26,21 @@ def main() -> int:
         "version": 1,
         "inputs": {},
     }
+    input_versions = set()
 
     for key, path in INPUTS.items():
         data = _load_yaml(path)
+        version = data.get("version")
+        if version is None:
+            raise ValueError(f"{path} is missing required 'version'")
+        input_versions.add(version)
         payload["inputs"][key] = {
             "path": str(path.relative_to(ROOT)).replace("\\", "/"),
-            "version": data.get("version"),
+            "version": version,
         }
+
+    if len(input_versions) != 1:
+        raise ValueError(f"inconsistent input versions detected: {sorted(input_versions)}")
 
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")

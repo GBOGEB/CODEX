@@ -22,6 +22,7 @@ ownership:
 
 runtime_state_machine:
   initial_state: proposal
+  max_remediation_retries: 3
   states:
     - proposal
     - triage
@@ -30,6 +31,7 @@ runtime_state_machine:
     - validation
     - promoted
     - rolled_back
+    - failed
     - archived
   transitions:
     - from: proposal
@@ -55,7 +57,10 @@ runtime_state_machine:
       gate: retention_policy_satisfied
     - from: rolled_back
       to: triage
-      gate: remediation_ready
+      gate: remediation_ready_and_retry_available
+    - from: rolled_back
+      to: failed
+      gate: remediation_retry_exhausted
 
 mcp_agents:
   sweep:
