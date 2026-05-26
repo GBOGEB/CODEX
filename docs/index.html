@@ -1,46 +1,158 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Authoritative Control Plane Viewport</title>
-  <link rel="stylesheet" href="../tokens/color_taxonomy.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CODEX Repository Landing</title>
   <style>
-    body { background-color: #0b081a; color: #f2f2f7; font-family: ui-monospace, monospace; padding: 3rem 2rem; margin: 0; }
-    .hub-chassis { max-width: 1200px; margin: 0 auto; }
-    header { border-bottom: 2px solid #2d2d38; padding-bottom: 1.25rem; margin-bottom: 2.5rem; }
-    h1 { font-size: 1.5rem; color: #ffffff; margin: 0; font-weight: normal; }
-    .mantra-banner { border: 1px solid #ef4444; background: rgba(239, 68, 68, 0.04); padding: 1.25rem; border-radius: 4px; margin-bottom: 2.5rem; color: #ffffff; font-size: 0.95rem; }
-    .surface-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem; }
-    .card-panel { background: #1a2238; border: 1px solid #2d2d38; padding: 1.5rem; border-radius: 4px; }
-    .card-panel h2 { font-size: 1.1rem; color: #ddd6fe; margin: 0 0 0.75rem 0; text-transform: uppercase; letter-spacing: 0.05em; }
-    .equation-display { background: #030303; padding: 1rem; border-radius: 4px; border: 1px solid #111; color: #ddd6fe; overflow-x: auto; margin-top: 1rem; }
-    .action-link { color: #00ff66; text-decoration: none; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-top: 1rem; }
+    :root { --bg: #0f172a; --panel: #111827; --card: #1f2937; --text: #e5e7eb; --muted: #9ca3af; --link: #93c5fd; --accent: #34d399; }
+    body { margin: 0; font-family: Inter,Arial,sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+    main { max-width: 1100px; margin: 0 auto; padding: 24px 18px 36px; }
+    h1, h2, h3 { margin: 0 0 10px; }
+    p { margin: 0 0 12px; }
+    a { color: var(--link); }
+    .muted { color: var(--muted); }
+    .hero, .section { background: var(--panel); border: 1px solid #374151; border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+    .card { background: var(--card); border: 1px solid #4b5563; border-radius: 10px; padding: 12px; }
+    code { color: var(--accent); }
+    ul { margin: 8px 0 0 18px; }
   </style>
 </head>
-<body class="diagnostic-surface">
-  <div class="hub-chassis">
-    <header>
-      <h1>⚙️ Federated Semantic Control Plane Surface</h1>
-      <div style="color: #8e8e93; font-size: 0.8rem; margin-top: 0.4rem;">Authoritative Viewports: Microsoft Edge Desktop &amp; GitHub Pages iOS Mobile</div>
-    </header>
-    <div class="mantra-banner">
-      <strong>ARTSTYLE_ADR_0001 (CRITICAL DIRECTION):</strong> IF IT CANNOT RENDER, IT CANNOT GOVERN.
-    </div>
-    <main class="surface-grid">
-      <div class="card-panel">
-        <h2>EQ-WAVE_MATURITY</h2>
-        <p style="color: #8e8e93; font-size: 0.85rem; line-height: 1.5; margin: 0;">Calculates overall progress validation weights across active repository variables.</p>
-        <pre class="equation-display">$$M_{wave}=\sum_i w_i x_i$$</pre>
-        <a href="dashboards/compliance.json" class="action-link">→ INSPECT COMPLIANCE DATA METRICS</a>
+<body>
+  <h1>Q Engineering Tools Portal</h1>
+  <p>Canonical GitHub Pages entry point for curated engineering outputs.</p>
+  <ul>
+    <li><a href="engineering_portal.html">Engineering Portal (Enhanced Entry)</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="plots/index.html">Plots</a></li>
+    <li><a href="handover.html">Handover</a></li>
+    <li><a href="verification.html">Verification</a></li>
+    <li><a href="regression.html">Regression</a></li>
+    <li><a href="traceability.html">Traceability</a></li>
+    <li><a href="manifest.html">Manifest</a></li>
+    <li><a href="knowledge_transfer_slides.html">Knowledge Transfer Slides</a></li>
+    <li><a href="knowledge_transfer.html">Knowledge Transfer Plan</a></li>
+  </ul>
+  <main>
+    <section class="hero">
+      <h1>CODEX — Repository Landing Page</h1>
+      <p>This page is the repository-level GitHub Pages entry point. It sits above the topic dashboard, generated human reports, manifests, and source/build structure.</p>
+      <p class="muted">Design intent: keep <a href="dashboard.html">dashboard.html</a> as the topic/epic view, while this page provides the broader CODEX information architecture.</p>
+    </section>
+
+    <section class="section">
+      <h2>Overview</h2>
+      <p>CODEX combines source code and generators (<code>src/</code>, <code>scripts/</code>, <code>tests/</code>), canonical content structure (numbered folders and <code>book_md/10_books/</code>), and published outputs (<code>docs/</code>, <code>outputs/</code>).</p>
+    </section>
+
+    <section class="section">
+      <h2>Views / Navigation Modes</h2>
+      <div class="cards">
+        <article class="card"><h3>Global</h3><p>Repository-level structure and indexes.</p></article>
+        <article class="card"><h3>Local</h3><p>Source, scripts, tests, and canonical content areas.</p></article>
+        <article class="card"><h3>Detail</h3><p>Generated reports, manifests, and output artifacts.</p></article>
+        <article class="card"><h3>Bigger Picture</h3><p>Theme dashboard plus handover/governance context.</p></article>
       </div>
-      <div class="card-panel">
-        <h2>EQ-ITERATION_FORECAST</h2>
-        <p style="color: #8e8e93; font-size: 0.85rem; line-height: 1.5; margin: 0;">Predicts remaining local development validation cycles required until convergence limits pass.</p>
-        <pre class="equation-display">$$I_{remaining}=\frac{M_{ceiling}-M_{current}}{\Delta M_{avg}}$$</pre>
-        <a href="diagnostics/runtime_health.json" class="action-link">→ BROWSE CDX TELEMETRY FILTERS</a>
-      </div>
-    </main>
-  </div>
+    </section>
+
+    <section class="section">
+      <h2>Themes &amp; Dashboard</h2>
+      <ul>
+        <li><a href="dashboard.html">Core Topic EP Dashboard</a> (topic/epic launcher retained as-is)</li>
+        <li><a href="dashboard_topics.md">Dashboard blueprint notes</a></li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Human Reports &amp; Generated Outputs</h2>
+      <ul>
+        <li><a href="HUMAN.index.html">Human report index</a></li>
+        <li><a href="HUMAN.calculations.html">Human calculations</a></li>
+        <li><a href="HUMAN.traceability_table.html">Human traceability table</a></li>
+        <li><a href="../outputs/html/index.html">Generated HTML bundle index</a></li>
+        <li><a href="../outputs/json/calculation_inputs_outputs.json">Generated JSON calculation I/O</a></li>
+        <li><a href="plots/index.html">Plots index</a></li>
+        <li><a href="handover.html">Handover page</a></li>
+        <li><a href="verification.html">Verification page</a></li>
+        <li><a href="regression.html">Regression page</a></li>
+        <li><a href="traceability.html">Traceability page</a></li>
+        <li><a href="manifest.html">Manifest page</a></li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Manifests &amp; Indexes</h2>
+      <p class="muted">These canonical manifests are in the repository root; links open the files on GitHub.</p>
+      <ul>
+        <li><a href="https://github.com/GBOGEB/CODEX/blob/main/CODEX_Index.yaml">CODEX_Index.yaml</a> — canonical repository structure</li>
+        <li><a href="https://github.com/GBOGEB/CODEX/blob/main/OUTPUT_MANIFEST.json">OUTPUT_MANIFEST.json</a> — generated output inventory</li>
+        <li><a href="https://github.com/GBOGEB/CODEX/blob/main/GLOBAL_index.json">GLOBAL_index.json</a> — dataset/archive index</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Core Code / Build / Content Areas</h2>
+      <ul>
+        <li><a href="https://github.com/GBOGEB/CODEX/tree/main/src">src/</a>, <a href="https://github.com/GBOGEB/CODEX/tree/main/scripts">scripts/</a>, <a href="https://github.com/GBOGEB/CODEX/tree/main/tests">tests/</a></li>
+        <li><a href="https://github.com/GBOGEB/CODEX/tree/main/book_md/10_books">book_md/10_books/</a> canonical books/slides/data workspace</li>
+        <li>Numbered domains: <a href="https://github.com/GBOGEB/CODEX/tree/main/01_requirements">01_requirements/</a>, <a href="https://github.com/GBOGEB/CODEX/tree/main/02_design">02_design/</a>, <a href="https://github.com/GBOGEB/CODEX/tree/main/03_bom">03_bom/</a>, <a href="https://github.com/GBOGEB/CODEX/tree/main/04_quality">04_quality/</a>, <a href="https://github.com/GBOGEB/CODEX/tree/main/05_vendor">05_vendor/</a>, <a href="https://github.com/GBOGEB/CODEX/tree/main/06_arch">06_arch/</a>, <a href="https://github.com/GBOGEB/CODEX/tree/main/07_ops">07_ops/</a></li>
+        <li><a href="https://github.com/GBOGEB/CODEX/tree/main/99_handover">99_handover/</a> handover/governance pack</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Source → Generator → Outputs → Manifests</h2>
+      <p>Primary lineage:</p>
+      <ul>
+        <li>Source and content inputs in repository structure</li>
+        <li>Generator: <a href="https://github.com/GBOGEB/CODEX/blob/main/src/generate_human_outputs.py">src/generate_human_outputs.py</a></li>
+        <li>Outputs: <a href="HUMAN.index.html">docs/HUMAN.index.html</a>, <a href="HUMAN.calculations.html">docs/HUMAN.calculations.html</a>, <a href="HUMAN.traceability_table.html">docs/HUMAN.traceability_table.html</a>, and <a href="../outputs/html/index.html">outputs/html/*</a></li>
+        <li>Manifested by <a href="https://github.com/GBOGEB/CODEX/blob/main/OUTPUT_MANIFEST.json">OUTPUT_MANIFEST.json</a> and indexed structurally by <a href="https://github.com/GBOGEB/CODEX/blob/main/CODEX_Index.yaml">CODEX_Index.yaml</a></li>
+      </ul>
+    </section>
+
+
+    <section class="section">
+      <h2>QCell v0.6.2 Regression Correction Package</h2>
+      <p>Temperature and pressure are now explicitly separated: temperature is the primary analysis mode; pressure is secondary diagnostic only.</p>
+      <ul>
+        <li><a href="https://github.com/GBOGEB/CODEX/blob/main/svg/temperature_analysis_v0_6_2.svg">Temperature analysis SVG (v0.6.2)</a></li>
+        <li><a href="https://github.com/GBOGEB/CODEX/blob/main/svg/pressure_diagnostic_v0_6_2.svg">Pressure diagnostic SVG (v0.6.2)</a></li>
+        <li><a href="https://github.com/GBOGEB/CODEX/blob/main/src/qcell_view_policy_v0_6_2.yaml">SSOT view policy YAML (v0.6.2)</a></li>
+        <li><a href="https://github.com/GBOGEB/CODEX/blob/main/handoff/README.md">Handoff bundle rebuild instructions (binary outputs excluded from Git)</a></li>
+      </ul>
+      <details>
+        <summary>Layer toggle demo (explicit combined mode)</summary>
+        <label><input type="checkbox" id="tempToggle" checked> Temperature layer</label>
+        <label style="margin-left:12px;"><input type="checkbox" id="pressToggle" checked> Pressure layer</label>
+        <div style="position:relative; margin-top:12px; border:1px solid #4b5563; border-radius:8px; overflow:hidden; max-width:100%;">
+          <img id="tempLayer" src="https://raw.githubusercontent.com/GBOGEB/CODEX/main/svg/temperature_analysis_v0_6_2.svg" alt="Temperature primary layer" style="display:block; width:100%;">
+          <img id="pressLayer" src="https://raw.githubusercontent.com/GBOGEB/CODEX/main/svg/pressure_diagnostic_v0_6_2.svg" alt="Pressure diagnostic layer" style="display:block; width:100%; margin-top:8px;">
+        </div>
+      </details>
+    </section>
+
+    <script>
+      const tempToggle = document.getElementById('tempToggle');
+      const pressToggle = document.getElementById('pressToggle');
+      const tempLayer = document.getElementById('tempLayer');
+      const pressLayer = document.getElementById('pressLayer');
+      function syncLayers() {
+        tempLayer.style.display = tempToggle.checked ? 'block' : 'none';
+        pressLayer.style.display = pressToggle.checked ? 'block' : 'none';
+      }
+      tempToggle?.addEventListener('change', syncLayers);
+      pressToggle?.addEventListener('change', syncLayers);
+      syncLayers();
+    </script>
+    <section class="section">
+      <h2>Related Repositories (Extensible)</h2>
+      <ul>
+        <li>Current repository root: <a href="https://github.com/GBOGEB/CODEX">GBOGEB/CODEX</a></li>
+        <li class="muted">Reserved for future sibling/external repository links.</li>
+      </ul>
+    </section>
+  </main>
 </body>
 </html>
