@@ -30,7 +30,7 @@ def _load_wave_series() -> tuple[list[float], list[float]]:
         for wave, completion in convergence_kpis.get("convergence_kpis", {}).get("progression", {}).items()
     }
 
-    common_waves = sorted(set(claimed_by_wave) & set(actual_by_wave))
+    common_waves = sorted(set(claimed_by_wave) & set(actual_by_wave), key=lambda wave: int(wave[1:]))
     return [claimed_by_wave[wave] for wave in common_waves], [actual_by_wave[wave] for wave in common_waves]
 
 
