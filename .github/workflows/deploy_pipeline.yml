@@ -8,11 +8,9 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 jobs:
-  g3-compile-and-deploy:
+  g3-compile-and-validate:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Local Git Codebase Target
@@ -31,19 +29,3 @@ jobs:
 
     - name: Execute G3 Process Matrix and Generate Target Artifacts
       run: python orchestrate_g3.py
-
-    - name: Archive and Publish Production Dashboard Artifacts
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: 'docs'
-
-  deploy:
-    needs: g3-compile-and-deploy
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
