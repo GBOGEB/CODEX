@@ -12,7 +12,9 @@ Also emits docs/federation_metrics.json.
 from __future__ import annotations
 
 from pathlib import Path
+import html
 import json
+import re
 
 import numpy as np
 import yaml
@@ -61,22 +63,50 @@ def _write(path: Path, content: str) -> None:
     path.write_text(content, encoding="utf-8")
 
 
+_SAFE_REPO_PATH_RE = re.compile(r'^[A-Za-z0-9_.\-/]+$')
+
+
+def _safe_repo_path(value: str) -> str:
+    """Return *value* only if it looks like a safe GitHub owner/repo path.
+
+    Raises ValueError for values that contain characters outside the
+    allowed set (alphanumeric, ``-``, ``_``, ``.``, ``/``) to prevent
+    URL and attribute injection.
+    """
+    if not _SAFE_REPO_PATH_RE.match(value):
+        raise ValueError(f"Unsafe repo_target or branch value: {value!r}")
+    return value
+
+
 def build_files_html(glossary: dict) -> None:
     components = glossary.get("components", [])
-    rows = "".join(
-        f"<tr><td>{c['id']}</td><td>{c['name']}</td><td><a href='https://github.com/{c['repo_target']}'>{c['repo_target']}</a></td><td>{c['branch']}</td><td>{c['description']}</td></tr>"
-        for c in components
-    )
-    html = f"""<!DOCTYPE html>
+    rows_parts = []
+    for c in components:
+        c_id = html.escape(str(c["id"]))
+        c_name = html.escape(str(c["name"]))
+        repo_target = _safe_repo_path(str(c["repo_target"]))
+        branch = _safe_repo_path(str(c["branch"]))
+        c_desc = html.escape(str(c["description"]))
+        repo_target_escaped = html.escape(repo_target)
+        branch_escaped = html.escape(branch)
+        rows_parts.append(
+            f"<tr><td>{c_id}</td><td>{c_name}</td>"
+            f"<td><a href='https://github.com/{repo_target_escaped}'>{repo_target_escaped}</a></td>"
+            f"<td>{branch_escaped}</td><td>{c_desc}</td></tr>"
+        )
+    rows = "".join(rows_parts)
+    lineage_parent = html.escape(str(glossary.get("lineage_parent", "G1")))
+    system_generation = html.escape(str(glossary.get("system_generation", "G3")))
+    html_content = f"""<!DOCTYPE html>
 <html lang='en'>
 <head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>G3 Component Lineage Matrix</title>
 <style>body{{font-family:Segoe UI,Arial,sans-serif;margin:30px;background:#f4f6f9;color:#263247}}table{{width:100%;border-collapse:collapse}}th,td{{padding:10px;border:1px solid #d9e1ef}}th{{background:#2c3e50;color:#fff}}</style>
 </head><body>
 <h2>Generation 3 (G3) Component Lineage Matrix</h2>
-<p><strong>Lineage:</strong> {glossary.get('lineage_parent','G1')} → {glossary.get('system_generation','G3')}</p>
+<p><strong>Lineage:</strong> {lineage_parent} → {system_generation}</p>
 <table><thead><tr><th>ID</th><th>Component</th><th>Repo</th><th>Branch</th><th>Description</th></tr></thead><tbody>{rows}</tbody></table>
 </body></html>"""
-    _write(DOCS / "files.html", html)
+    _write(DOCS / "files.html", html_content)
 
 
 def build_dashboard_html(metrics: dict) -> None:
