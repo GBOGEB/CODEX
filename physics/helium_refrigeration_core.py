@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-import numpy as np
+import math
+import statistics
 
 
 class CryogenicHeliumEngineG5:
@@ -20,8 +21,24 @@ class CryogenicHeliumEngineG5:
         """
         Calculates localized plant exergy efficiency for the G5 tracking layer.
 
+        Args:
+            mass_flow_he: Helium mass flow rate (g/s).
+            h_in: Specific enthalpy at inlet (kJ/kg).
+            h_out: Specific enthalpy at outlet (kJ/kg).
+            s_in: Specific entropy at inlet (kJ/kg·K).
+            s_out: Specific entropy at outlet (kJ/kg·K).
+            power_input_kw: Shaft/compressor power input (kW).
+            nitrogen_assist: When True, applies a 10% helium mass-flow reduction
+                to model nitrogen pre-cooling assistance.
+
+        Returns:
+            Dimensionless exergy efficiency in [0, 1].  Consistent units require
+            (mass_flow_he [g/s] × exergy_helium [kJ/kg]) and power_input_kw [kW]
+            to be expressed in the same power dimension (multiply g/s by 1e-3 to
+            convert to kg/s before calling, or use kg/s directly).
+
         Formula:
-        $$\psi = \dot{m}_{He} \cdot \left[ (h_{out} - h_{in}) - T_0(s_{out} - s_{in}) \right]$$
+        $$\\psi = \\dot{m}_{He} \\cdot \\left[ (h_{out} - h_{in}) - T_0(s_{out} - s_{in}) \\right]$$
         """
         delta_h = h_out - h_in
         delta_s = s_out - s_in
@@ -29,8 +46,8 @@ class CryogenicHeliumEngineG5:
         useful_work = mass_flow_he * exergy_helium
 
         if nitrogen_assist:
-            # Accounts for the targeted 10% helium mass flow optimization reduction
-            useful_work *= 1.10
+            # Applies 10% helium mass-flow reduction due to nitrogen pre-cooling assistance
+            useful_work *= 0.90
 
         if power_input_kw <= 0:
             return 0.0
@@ -38,14 +55,33 @@ class CryogenicHeliumEngineG5:
 
     def calculate_wave_anova(self, claimed_vector, actual_vector):
         """
-        Performs analysis of variance tracking to calculate project deployment alignment.
+        Calculates sample covariance and Pearson correlation between two milestone vectors.
+
+        Args:
+            claimed_vector: Sequence of claimed milestone completion values.
+            actual_vector: Sequence of actual milestone completion values.
+
+        Returns:
+            Tuple of (sample_covariance, pearson_correlation).
+            Returns (0.0, 0.0) if vectors have mismatched lengths, fewer than 2
+            elements, or zero variance in either vector.
         """
-        c = np.array(claimed_vector, dtype=float)
-        a = np.array(actual_vector, dtype=float)
+        c = [float(v) for v in claimed_vector]
+        a = [float(v) for v in actual_vector]
         if len(c) != len(a) or len(c) < 2:
             return 0.0, 0.0
 
-        covariance_matrix = np.cov(c, a)
-        covariance = float(covariance_matrix[0, 1])
-        correlation = float(np.corrcoef(c, a)[0, 1])
+        n = len(c)
+        mean_c = sum(c) / n
+        mean_a = sum(a) / n
+
+        covariance = sum((c[i] - mean_c) * (a[i] - mean_a) for i in range(n)) / (n - 1)
+
+        var_c = sum((v - mean_c) ** 2 for v in c) / (n - 1)
+        var_a = sum((v - mean_a) ** 2 for v in a) / (n - 1)
+
+        if var_c <= 0.0 or var_a <= 0.0:
+            return covariance, 0.0
+
+        correlation = covariance / math.sqrt(var_c * var_a)
         return covariance, correlation
