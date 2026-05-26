@@ -35,7 +35,7 @@ jobs:
             fi
           fi
 
-          CHANGED_HTML="$(git diff --name-only --diff-filter=ACMR "$BASE_SHA" "$HEAD_SHA" -- '*.html')"
+          CHANGED_HTML="$(git diff --name-only --diff-filter=ACMR "$BASE_SHA" "$HEAD_SHA" | grep -E '\.html$' || true)"
           if [ -z "$CHANGED_HTML" ]; then
             echo "Assertion Verified: Zero unauthorized HTML surfaces detected."
             exit 0
