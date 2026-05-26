@@ -17,7 +17,7 @@ class CryogenicHeliumEngineG9:
             return 0.0
         return min(max(useful_work / power_input_kw, 0.0), 1.0)
 
-    def calculate_g9_anova(self, claimed_vector, actual_vector):
+    def calculate_g9_covariance_correlation(self, claimed_vector, actual_vector):
         c = [float(x) for x in claimed_vector]
         a = [float(x) for x in actual_vector]
         if len(c) != len(a) or len(c) < 2:
