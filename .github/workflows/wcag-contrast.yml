@@ -1,0 +1,37 @@
+name: WCAG Contrast Invariant Gatekeeper
+
+on:
+  push:
+    branches: [main, a6-renderer-governance-layer]
+  pull_request:
+    branches: [main]
+
+jobs:
+  wcag-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify WCAG contrast invariant
+        run: |
+          python - <<'PY'
+          import sys
+
+          def lum(hex_value):
+              h = hex_value.lstrip("#")
+              rgb = [int(h[i:i+2], 16) / 255 for i in (0, 2, 4)]
+              lin = [v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4 for v in rgb]
+              return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
+
+          bg = lum("#4A3110")
+          text = lum("#FFE9A3")
+          ratio = (max(bg, text) + 0.05) / (min(bg, text) + 0.05)
+
+          print(f"Calculated Contrast Ratio: {ratio:.2f}:1")
+          if ratio < 4.5:
+              print("CRITICAL: WCAG AA contrast invariant failed execution gate.")
+              sys.exit(1)
+          print("SUCCESS: Contrast threshold cleared.")
+          PY
