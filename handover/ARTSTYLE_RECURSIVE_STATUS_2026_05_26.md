@@ -2,7 +2,7 @@
 
 **As of:** 2026-05-26T01:23:44Z  
 **Classification:** Federated Semantic Control Plane + Telemetry Execution Layer  
-**Governor:** CDX-FIRST | ARTSTYLE_ADR_0001 | ARTSTYLE_ADR_0021
+**Governor:** CDX-FIRST | Internal ART&Style ADR IDs (`ARTSTYLE_ADR_0001`, `ARTSTYLE_ADR_0021`; not repository-tracked)
 
 ## Executive Summary
 
@@ -22,7 +22,7 @@ Build a deterministic framework that is:
 
 > **IF IT CANNOT RENDER, IT CANNOT GOVERN.**
 
-## Active ADRs (Locked)
+## Active ADRs (Locked — internal ART&Style IDs, not repository-tracked ADR files)
 
 - ADR_0001: Output-first engineering
 - ADR_0010: Human-readable priority
