@@ -69,7 +69,7 @@ def test_run_governance_assimilation_returns_false_when_gate_fails(tmp_path) -> 
         ssot_path=str(ssot_path),
         active_flow=8.0,
         active_efficiency=0.20,
-        mass_mix=[0.7, 0.2],
+        mass_mix=[0.9995, 0.0005],
     )
 
 

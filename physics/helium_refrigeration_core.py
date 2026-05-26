@@ -17,14 +17,15 @@ def verify_mass_fractions(fractions: list) -> bool:
     try:
         total = sum((_to_4dp_decimal(f) for f in fractions), Decimal("0.0000"))
     except (InvalidOperation, ValueError, TypeError):
-        print("CRITICAL FAULT: Stream mass fractions contain non-numeric values.")
+        print("CRITICAL FAULT: Stream mass fractions contain invalid values.")
         return False
 
     total = total.quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
     expected = Decimal("1.0000")
     if total != expected:
+        delta = abs(expected - total).quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
         print("CRITICAL FAULT: Stream mass fraction cumulative totals deviate from SSOT boundary condition.")
-        print(f"Expected: {expected:.4f}, Calculated: {total:.4f}, Delta: {abs(expected - total):.4f}")
+        print(f"Expected: {expected}, Calculated: {total}, Delta: {delta}")
         return False
     return True
 
