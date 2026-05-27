@@ -59,6 +59,13 @@ This PR establishes a **W000 runtime governance scaffold** for the ABACUS-CODEX-
 **Drift Risk**: LOW (stable YAML/JSON transformation)  
 **Needs Buildout**: No - complete for current scope
 
+**ENHANCEMENT (2026-05-27)**: Extended to include optional integration with:
+- `abacus_runtime/runtime_manifest.yaml`
+- `bridge_manifest.yaml`
+- `governance/agent_implementation_map.yml`
+
+Produces unified runtime manifest when all components are available.
+
 ---
 
 ### 3. Generated Artifacts (REAL OUTPUT)
@@ -224,3 +231,180 @@ All CI checks pass as of 2026-05-27:
 - **Repository**: CODEX
 - **Trace**: FEDERATION.RUNTIME.GOVERNANCE
 - **State**: ACTIVE
+
+---
+
+## 6. Bridge & Runtime Integration (2026-05-27 Enhancement)
+
+### A. Integration Analysis Document
+**File**: `governance/BRIDGE_INTEGRATION_ANALYSIS.md`
+
+**Purpose**: Comprehensive analysis of integration opportunities between W000 governance scaffold and existing CODEX/ABACUS infrastructure
+
+**Key Findings**:
+1. **Existing Bridge Infrastructure**: `bridges/` directory with office/diagram bridge configs aligns with W000 federation links
+2. **ABACUS Runtime**: `abacus_runtime/` has module registry that can integrate with W000 agent registry
+3. **Agent Runtime**: `agent_runtime/` architecture spec aligns with W000 agent definitions
+4. **Dormant Runtime Modules**: Identified 5+ runtime modules in `docs/wave_packages/runtime/` that can be bound to agent capabilities
+
+**Status**: ✅ Complete - provides roadmap for next wave buildout
+
+---
+
+### B. Bridge Orchestrator
+**File**: `scripts/bridge_orchestrator.py`
+
+**Type**: REAL CODE (Validation Utility)
+
+**Purpose**: Validates W000 federation links against existing bridge configurations
+
+**Functionality**:
+- Reads `governance/federation_registry.yml`
+- Checks for corresponding bridge configs in `bridges/` directory
+- Reports on bridge availability and configuration status
+- Integrates with bridge_manifest.yaml for repo tracking
+
+**Input**: 
+- `governance/federation_registry.yml`
+- `bridges/*.yml`
+- `bridge_manifest.yaml`
+
+**Output**: 
+- Console validation report
+- Bridge availability status
+
+**Status**: ✅ Functional - ready for CI integration
+
+---
+
+### C. Agent Implementation Map
+**File**: `governance/agent_implementation_map.yml`
+
+**Type**: SCAFFOLD + INTEGRATION BINDING
+
+**Purpose**: Explicitly binds agent capabilities to runtime module implementations
+
+**Structure**:
+- Maps all 9 agent capabilities across 3 agents
+- Identifies 3 available implementations (33% complete)
+- Flags 6 scaffold capabilities (67% needs buildout)
+- Links dormant runtime modules to agent capabilities
+
+**Key Bindings**:
+- `abacus-governor` / `telemetry-aggregation` → `telemetry_ingestion_runtime.py`
+- `codex-worker` / `patch-generation` → `self_healing_runtime.py`
+- `mcp-sweep-mop` / `near-miss-detection` → `adaptive_runtime_intelligence.py`
+
+**Input**: Agent registry + runtime module inventory  
+**Output**: Capability-to-implementation mapping  
+**Status**: ✅ Complete - documents current implementation state
+
+---
+
+### D. Agent Implementation Validator
+**File**: `scripts/validate_agent_implementations.py`
+
+**Type**: REAL CODE (Validation Utility)
+
+**Purpose**: Validates agent capability implementations against the implementation map
+
+**Functionality**:
+- Cross-validates agent registry with implementation map
+- Checks that all registered agents have capability mappings
+- Verifies implementation file paths exist
+- Reports implementation completeness statistics
+- Validates map statistics against actual counts
+
+**Input**: 
+- `governance/agent_registry.yml`
+- `governance/agent_implementation_map.yml`
+
+**Output**: 
+- Console validation report
+- Implementation completeness metrics (33% currently)
+
+**Status**: ✅ Functional - ready for CI integration
+
+---
+
+### E. Unified Runtime Manifest
+**Enhancement**: `scripts/build_manifest.py`
+
+**Type**: REAL CODE (Manifest Generator - Enhanced)
+
+**Purpose**: Generate unified runtime manifest integrating all governance components
+
+**New Functionality**:
+- Optionally includes `abacus_runtime/runtime_manifest.yaml`
+- Optionally includes `bridge_manifest.yaml`
+- Optionally includes `governance/agent_implementation_map.yml`
+- Produces comprehensive runtime view when all components available
+
+**Input** (extended):
+- All W000 governance registries (existing)
+- ABACUS runtime manifest (new, optional)
+- Bridge manifest (new, optional)
+- Agent implementation map (new, optional)
+
+**Output**: 
+- `governance/runtime_manifest.json` (unified view)
+
+**Status**: ✅ Enhanced - backward compatible, adds optional integrations
+
+---
+
+## 7. Updated Statistics (Post-Integration)
+
+### Component Inventory
+
+| Category | Count | Status |
+|----------|-------|--------|
+| Governance Registries | 3 | ✅ SCAFFOLD (validated) |
+| Integration Documents | 2 | ✅ DOCUMENTATION (complete) |
+| Validation Scripts | 3 | ✅ REAL CODE (functional) |
+| Implementation Maps | 1 | ✅ SCAFFOLD + BINDING (complete) |
+| Generated Manifests | 1 | ✅ REAL OUTPUT (unified) |
+| HTML Documentation | 2 | ✅ DOCUMENTATION (static) |
+
+### Implementation Completeness
+
+| Domain | Metric | Value |
+|--------|--------|-------|
+| **Governance** | Registries | 3/3 (100%) |
+| **Tooling** | Scripts | 5/5 (100%) |
+| **Agents** | Implementations | 3/9 capabilities (33%) |
+| **Federation** | Bridge Configs | 2/3 links (67%) |
+| **Documentation** | Analysis Docs | 2/2 (100%) |
+
+### Next Wave Priorities (Based on Analysis)
+
+1. **Implement missing bridge** (`bridges/binary_bridge.yml`) - HIGH priority
+2. **Build state machine orchestrator** - HIGH priority (enables runtime execution)
+3. **Implement scaffold agent capabilities** (6 remaining) - MEDIUM priority
+4. **Activate dormant runtime modules** - MEDIUM priority
+5. **Add telemetry hooks** - LOW priority (infrastructure exists)
+
+---
+
+## 8. CI Integration Readiness
+
+### Scripts Ready for CI
+
+1. ✅ `scripts/validate_yaml.py` - YAML parsing validation
+2. ✅ `scripts/build_manifest.py` - Unified manifest generation
+3. ✅ `scripts/bridge_orchestrator.py` - Bridge validation (NEW)
+4. ✅ `scripts/validate_agent_implementations.py` - Agent implementation check (NEW)
+
+### Suggested CI Workflow Enhancement
+
+```yaml
+- name: W000 Governance Validation
+  run: |
+    python3 scripts/validate_yaml.py
+    python3 scripts/build_manifest.py
+    python3 scripts/bridge_orchestrator.py
+    python3 scripts/validate_agent_implementations.py
+```
+
+---
+
