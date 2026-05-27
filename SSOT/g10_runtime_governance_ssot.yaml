@@ -1,8 +1,58 @@
 ssot:
+  id: "G10-RUNTIME-GOVERNANCE-SSOT"
+  generation: "G10"
+  lifecycle_phase: "L8_Commissioning_Signed_Off"
+  project_parent: "MINERVA_QPLANT"
+  owner: "GBO"
+  repositories:
+    codex:
+      role: "semantic_governance_source"
+      branch: "a6-renderer-governance-layer"
+    abacus:
+      role: "calculation_and_validation_runtime"
+
+  invariants:
+    wcag_warning_dark:
+      background: "#4A3110"
+      text: "#FFE9A3"
+      minimum_ratio: 4.5
+      gate: "block_merge_if_below_threshold"
+    markdown_first_visuals:
+      required: true
+      allowed_formats: ["markdown", "yaml", "plain_text_ascii"]
+      disallowed_formats: ["hosted_html_dashboard", "plotly", "webview"]
+
   components:
-    - id: G10-TUPLE-HE-REF
+    - id: "G10-TUPLE-A66"
+      domain: "Control & Automation"
+      spatial_tag: "CCB.Room_01"
+      upstream_path: "[PLACEHOLDER:external]"
+      downstream_path: "[PLACEHOLDER:external]"
+      note: "External component references - not tracked in CODEX repository"
+
+    - id: "G10-TUPLE-HE-REF"
+      domain: "Cryogenic System Engineering"
+      spatial_tag: "AUB.Room_02"
       modes:
-        2K-SB:
+        "2K-SB":
+          signal_id: "HE_STATIC_BENCHMARK"
           target_efficiency: 0.35
-        2K-OP:
+        "2K-OP":
+          signal_id: "HE_DYNAMIC_OPERATIONAL"
           nominal_flow_g_s: 11.5
+      upstream_path: "[PLACEHOLDER:external]"
+      downstream_path: "[PLACEHOLDER:external]"
+      note: "External component references - not tracked in CODEX repository"
+
+    - id: "G10-TUPLE-RENDER"
+      domain: "UI/UX Accessibility Engineering"
+      spatial_tag: "CLOUD.Runner"
+      upstream_path: "governance/SEMANTIC_THEME.yaml"
+      downstream_path: "semantic_substrate/renderer/contrast_validator.py"
+
+  acceptance_gates:
+    smoke_test: { required: true }
+    lint: { required: true }
+    render_parity: { required: true }
+    wcag_contrast: { required: true }
+    ascii_metrics: { required: true }

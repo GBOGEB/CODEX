@@ -1,141 +1,62 @@
-import sys
-from decimal import Decimal, ROUND_HALF_UP
-from pathlib import Path
-import yaml
+#!/usr/bin/env python3
+
+try:
+    from gistau_ch15.kernels.exergy import specific_flow_exergy
+except ModuleNotFoundError:  # pragma: no cover - local script execution path
+    from src.gistau_ch15.kernels.exergy import specific_flow_exergy
 
 
-def verify_mass_fractions(fractions: list) -> bool:
-    """Enforces absolute precision validation for fluid stream components to 4 decimal places."""
-    # Use Decimal for deterministic fixed-point arithmetic at 4 decimal places
-    four_decimal_places = Decimal("0.0001")
-    decimal_fractions = [Decimal(str(f)).quantize(four_decimal_places, rounding=ROUND_HALF_UP) for f in fractions]
-    total = sum(decimal_fractions)
-    expected = Decimal("1.0000")
-    
-    if total != expected:
-        print("CRITICAL FAULT: Stream mass fraction cumulative totals deviate from SSOT boundary condition.")
-        print(f"Expected: {expected}, Calculated: {total}, Delta: {abs(expected - total)}")
-        return False
-    return True
+class CryogenicHeliumEngineG8:
+    def __init__(self, t0_ambient=298.15, nitrogen_assist_gain=1.10):
+        self.T0 = t0_ambient
+        self.nitrogen_assist_gain = nitrogen_assist_gain
 
+    def compute_g8_exergy_efficiency(self, mass_flow_he, h_in, h_out, s_in, s_out, power_input_w, nitrogen_assist=True):
+        """Compute exergy efficiency of the G8 cryogenic helium engine.
 
-def validate_2k_static_benchmark(calculated_efficiency: float, target_efficiency: float) -> bool:
-    """Validates 2K Static Benchmark (2K-SB) operating mode limits."""
-    print(
-        f"[Mode: 2K-SB] Target Efficiency Min: {target_efficiency:.4f} | "
-        f"System Efficiency: {calculated_efficiency:.4f}"
-    )
-    return calculated_efficiency >= target_efficiency
+        Args:
+            mass_flow_he: Helium mass flow rate (kg/s).
+            h_in: Inlet specific enthalpy (J/kg).
+            h_out: Outlet specific enthalpy (J/kg).
+            s_in: Inlet specific entropy (J/(kg·K)).
+            s_out: Outlet specific entropy (J/(kg·K)).
+            power_input_w: Shaft power input (W).
+            nitrogen_assist: Whether nitrogen pre-cool assist gain is applied.
 
+        Returns:
+            Exergy efficiency in [0.0, 1.0].
+        """
+        exergy_helium = specific_flow_exergy(
+            h_j_kg=float(h_out),
+            s_j_kgk=float(s_out),
+            h0_j_kg=float(h_in),
+            s0_j_kgk=float(s_in),
+            t0_k=float(self.T0),
+        )
+        useful_work = mass_flow_he * exergy_helium
+        if nitrogen_assist:
+            useful_work *= self.nitrogen_assist_gain
+        if power_input_w <= 0:
+            return 0.0
+        return min(max(useful_work / power_input_w, 0.0), 1.0)
 
-def validate_2k_operational_flow(nominal_flow: float, target_flow: float, tolerance: float = 0.05) -> bool:
-    """Validates 2K Dynamic Operational (2K-OP) nominal mass flow rates."""
-    lower_bound = round(target_flow * (1.0 - tolerance), 4)
-    upper_bound = round(target_flow * (1.0 + tolerance), 4)
-    print(
-        f"[Mode: 2K-OP] Target Flow: {target_flow:.4f} g/s "
-        f"(Tol: {tolerance * 100:.1f}%) | Detected: {nominal_flow:.4f} g/s"
-    )
-    return lower_bound <= round(nominal_flow, 4) <= upper_bound
+    def calculate_g8_covariance_correlation(self, claimed_vector, actual_vector):
+        c = [float(x) for x in claimed_vector]
+        a = [float(x) for x in actual_vector]
+        n = len(c)
+        if n != len(a) or n < 2:
+            return 0.0, 0.0
 
+        mean_c = sum(c) / n
+        mean_a = sum(a) / n
+        cov = sum((c[i] - mean_c) * (a[i] - mean_a) for i in range(n)) / (n - 1)
 
-def run_governance_assimilation(ssot_path: str, active_flow: float, active_efficiency: float, mass_mix: list) -> bool:
-    """Parses incoming SSOT parameters from the federated plane and enforces runtime compliance gates.
-    
-    Returns:
-        bool: True if all gates pass, False otherwise.
-    """
-    print("Executing Predatory Assimilation: Processing G10-TUPLE-HE-REF...")
+        var_c = sum((x - mean_c) ** 2 for x in c) / (n - 1)
+        var_a = sum((x - mean_a) ** 2 for x in a) / (n - 1)
+        if var_c <= 0 or var_a <= 0:
+            return cov, 0.0
+        corr = cov / ((var_c ** 0.5) * (var_a ** 0.5))
+        return float(cov), float(corr)
 
-    try:
-        with open(ssot_path, "r", encoding="utf-8") as f:
-            ssot_data = yaml.safe_load(f)
-    except Exception as e:
-        print(f"Execution Halt: Failed to bind to governance contract mapping layer. Details: {e}")
-        return False
-
-    # Validate yaml.safe_load() return value
-    if ssot_data is None or not isinstance(ssot_data, dict):
-        print("CRITICAL FAULT: SSOT file is empty or malformed (expected dict, got None or non-dict).")
-        return False
-
-    # Validate schema structure with explicit checks
-    ssot_root = ssot_data.get("ssot")
-    if not ssot_root or not isinstance(ssot_root, dict):
-        print("CRITICAL FAULT: SSOT schema missing 'ssot' root key or it is not a dict.")
-        return False
-
-    components = ssot_root.get("components")
-    if not components or not isinstance(components, list):
-        print("CRITICAL FAULT: SSOT schema missing 'components' list under 'ssot' root.")
-        return False
-
-    # Find target component with safe navigation
-    he_tuple = None
-    for c in components:
-        if isinstance(c, dict) and c.get("id") == "G10-TUPLE-HE-REF":
-            he_tuple = c
-            break
-    
-    if not he_tuple:
-        print("CRITICAL FAULT: Component identifier G10-TUPLE-HE-REF missing from runtime substrate.")
-        return False
-
-    # Extract mode configurations with explicit schema validation
-    modes = he_tuple.get("modes")
-    if not modes or not isinstance(modes, dict):
-        print("CRITICAL FAULT: Component G10-TUPLE-HE-REF missing 'modes' configuration.")
-        return False
-
-    ksb_mode = modes.get("2K-SB")
-    if not ksb_mode or not isinstance(ksb_mode, dict):
-        print("CRITICAL FAULT: Mode '2K-SB' missing or malformed in G10-TUPLE-HE-REF.")
-        return False
-
-    kop_mode = modes.get("2K-OP")
-    if not kop_mode or not isinstance(kop_mode, dict):
-        print("CRITICAL FAULT: Mode '2K-OP' missing or malformed in G10-TUPLE-HE-REF.")
-        return False
-
-    target_eff = ksb_mode.get("target_efficiency")
-    if target_eff is None:
-        print("CRITICAL FAULT: '2K-SB.target_efficiency' parameter missing.")
-        return False
-
-    target_flow = kop_mode.get("nominal_flow_g_s")
-    if target_flow is None:
-        print("CRITICAL FAULT: '2K-OP.nominal_flow_g_s' parameter missing.")
-        return False
-
-    gates = [
-        verify_mass_fractions(mass_mix),
-        validate_2k_static_benchmark(active_efficiency, target_eff),
-        validate_2k_operational_flow(active_flow, target_flow),
-    ]
-
-    if not all(gates):
-        print("\n[RESULT] G10 RUNTIME GOVERNANCE GATE: FAILED VERIFICATION")
-        return False
-
-    print("\n[RESULT] G10 RUNTIME GOVERNANCE GATE: PASS")
-    print("All thermodynamic invariants align with MINERVA_QPLANT system baseline specification rules.")
-    return True
-
-
-if __name__ == "__main__":
-    mock_mass_fractions = [0.9995, 0.0005]
-    simulated_flow = 11.4850
-    simulated_efficiency = 0.3620
-
-    # Resolve SSOT path relative to this module's parent directory
-    module_parent_dir = Path(__file__).parent.parent
-    ssot_path = module_parent_dir / "SSOT" / "g10_runtime_governance_ssot.yaml"
-
-    success = run_governance_assimilation(
-        ssot_path=str(ssot_path),
-        active_flow=simulated_flow,
-        active_efficiency=simulated_efficiency,
-        mass_mix=mock_mass_fractions,
-    )
-    
-    sys.exit(0 if success else 1)
+    def calculate_g8_anova(self, claimed_vector, actual_vector):
+        return self.calculate_g8_covariance_correlation(claimed_vector, actual_vector)

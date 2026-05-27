@@ -261,3 +261,72 @@ The repository now contains coherent lineage across:
 - synchronization
 - renderer governance
 - publication pipeline direction
+
+---
+
+# MCP Sweep & Mop Trigger Criteria
+
+## Classification Policy
+
+Use deterministic scoring so cleanup behavior is predictable and auditable.
+
+### Near-Miss (retain + escalate)
+
+Mark an abandoned artifact as `[-] Near-Miss` when all required gates pass:
+
+1. **Not already merged**: no equivalent diff in `main` (exact hunk or semantic-equivalent logic).
+2. **Still context-compatible**: touched files/modules still exist and have not crossed a breaking interface boundary.
+3. **Objective fit**: change still maps to an active objective in runtime/renderer/pipeline TODO lists.
+4. **Risk bounded**: estimated blast radius stays below threshold (e.g., <=2 modules, no schema migration).
+
+Escalation action:
+- emit a compact TODO with source references (PR/session/branch id)
+- attach minimal patch sketch or commit-ready checklist
+- assign expiration review date (default 14 days)
+
+### Obsolete (prune)
+
+Mark artifact as `[-] Obsolete` when any prune trigger fires:
+
+1. **Superseded intent**: newer merged work solves the same root objective.
+2. **Contract drift**: required interfaces, schemas, or invariants changed so prior patch intent is invalid.
+3. **Strategy retirement**: originating approach is explicitly deprecated (e.g., HTML telemetry path replaced by Markdown-first governance).
+4. **Staleness timeout**: no revalidation signal before TTL expiry (default 30 days).
+
+Prune action:
+- preserve one-line tombstone note in session ledger
+- delete scratchpad artifacts/temporary branches
+- close linked chore with reason code
+
+## Decision Matrix (recommended)
+
+| Signal | Weight |
+|---|---:|
+| Semantic overlap with active TODO | +3 |
+| Buildable on current `main` with trivial edits | +3 |
+| Requires interface rewrite | -4 |
+| Duplicated by merged PR | -5 |
+| Author/owner revalidation present | +2 |
+| Exceeds staleness TTL | -3 |
+
+Default thresholds:
+- score `>= 3` -> `Near-Miss`
+- score `< 3` -> `Obsolete`
+
+## Telemetry Output Format
+
+```markdown
+* [X] Chore #118: Merge replay checkpoint validator -- (Merged via PR #109)
+* [/] Chore #121: Sweep cancelled branch `feat/render-lint` -- (Agent: Active)
+* [-] Chore #116: Legacy dashboard CSS polish -- ~~Obsolete: strategy retired~~
+* [-] Chore #120: Replay queue debounce patch -- (Near-Miss: TODO opened, review by 2026-06-09)
+```
+
+## Minimal MCP Sweep Loop
+
+1. Enumerate candidates from closed PRs, abandoned branches, and cancelled sessions.
+2. Normalize each candidate into `(intent, touched_files, diff_fingerprint, timestamp)`.
+3. Compare against `main` and active TODO map.
+4. Score with matrix and classify (`Near-Miss` vs `Obsolete`).
+5. Emit status rows and either escalate TODO or prune artifacts.
+6. Write audit log entry for deterministic replay.
