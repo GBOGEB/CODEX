@@ -13,7 +13,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 def test_build_bridge_report_passes_for_all_components() -> None:
     for component in ("codex", "abacus", "mcp-bridge"):
-        report = build_bridge_report(REPO_ROOT, component)
+        report = build_bridge_report(component=component, repo_root=REPO_ROOT)
         assert report["status"] == "pass"
         assert report["issues"] == []
         assert report["component"] == component
@@ -21,11 +21,11 @@ def test_build_bridge_report_passes_for_all_components() -> None:
 
 def test_build_bridge_report_rejects_unknown_component() -> None:
     with pytest.raises(ValueError, match="Unknown component 'unknown'"):
-        build_bridge_report(REPO_ROOT, "unknown")
+        build_bridge_report(component="unknown", repo_root=REPO_ROOT)
 
 
 def test_bridge_alignment_matrix_covers_runtime_manifest_modules() -> None:
-    report = build_bridge_report(REPO_ROOT, "mcp-bridge")
+    report = build_bridge_report(component="mcp-bridge", repo_root=REPO_ROOT)
     alignment = bridge_alignment_matrix()
 
     assert set(report["runtime"]["modules"]).issubset(alignment)
@@ -35,7 +35,9 @@ def test_bridge_alignment_matrix_covers_runtime_manifest_modules() -> None:
     ]
 
 
-def test_check_bridge_health_writes_json_report(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_check_bridge_health_outputs_and_writes_report(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     report_path = tmp_path / "bridge-report.json"
 
     assert check_bridge_health_main(["--component", "mcp-bridge", "--report", str(report_path)]) == 0

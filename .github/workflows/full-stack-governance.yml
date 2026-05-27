@@ -48,8 +48,7 @@ jobs:
           mkdir -p "reports/${{ matrix.component }}"
           python scripts/check_bridge_health.py \
             --component "${{ matrix.component }}" \
-            --report "reports/${{ matrix.component }}/summary.json" \
-            | tee "reports/${{ matrix.component }}/lineage.json"
+            --report "reports/${{ matrix.component }}/summary.json"
 
       - name: Upload governance artifacts
         if: always()

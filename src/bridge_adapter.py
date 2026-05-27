@@ -202,7 +202,8 @@ def create_abacus_codex_contract() -> BridgeAdapterContract:
 
 
 def bridge_alignment_matrix() -> dict[str, Tuple[str, ...]]:
-    return {module: paths for module, paths in RUNTIME_MODULE_ALIGNMENT.items()}
+    """Expose the stable module-to-path mapping used by bridge validation."""
+    return RUNTIME_MODULE_ALIGNMENT
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -212,7 +213,7 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     return payload
 
 
-def build_bridge_report(repo_root: Path | None = None, component: str = "codex") -> dict[str, Any]:
+def build_bridge_report(component: str = "codex", repo_root: Path | None = None) -> dict[str, Any]:
     if component not in BRIDGE_COMPONENT_PATHS:
         available = ", ".join(sorted(BRIDGE_COMPONENT_PATHS))
         raise ValueError(f"Unknown component '{component}'. Choose from: {available}")
@@ -238,14 +239,14 @@ def build_bridge_report(repo_root: Path | None = None, component: str = "codex")
         issues.append("abacus_runtime/runtime_manifest.yaml is missing a runtime mapping")
         runtime = {}
 
-    modules = runtime_manifest.get("modules", [])
-    if not isinstance(modules, list):
+    runtime_modules = runtime.get("modules", runtime_manifest.get("modules", []))
+    if not isinstance(runtime_modules, list):
         issues.append("abacus_runtime/runtime_manifest.yaml modules must be a list")
-        modules = []
+        runtime_modules = []
 
     module_alignment = {
         module: [path for path in RUNTIME_MODULE_ALIGNMENT.get(module, ()) if (root / path).exists()]
-        for module in modules
+        for module in runtime_modules
     }
     missing_module_alignment = [
         module for module, paths in module_alignment.items() if not paths
@@ -257,7 +258,7 @@ def build_bridge_report(repo_root: Path | None = None, component: str = "codex")
         )
 
     missing_module_templates = [
-        module for module in modules if module not in RUNTIME_MODULE_ALIGNMENT
+        module for module in runtime_modules if module not in RUNTIME_MODULE_ALIGNMENT
     ]
     if missing_module_templates:
         issues.append(
@@ -279,6 +280,9 @@ def build_bridge_report(repo_root: Path | None = None, component: str = "codex")
     if not isinstance(federation_root, dict):
         issues.append("federation contract is missing delta_1_runtime_federation_contract")
         federation_root = {}
+    repositories = federation_root.get("repositories", {})
+    if not isinstance(repositories, dict):
+        repositories = {}
 
     report = {
         "status": "pass" if not issues else "fail",
@@ -289,16 +293,12 @@ def build_bridge_report(repo_root: Path | None = None, component: str = "codex")
         "runtime": {
             "name": runtime.get("name"),
             "version": runtime.get("version"),
-            "modules": modules,
+            "modules": runtime_modules,
         },
         "alignment": module_alignment,
         "synchronization_domains": sync_domains,
-        "primary_execution_plane": federation_root.get("repositories", {}).get("primary_execution_plane")
-        if isinstance(federation_root.get("repositories", {}), dict)
-        else None,
-        "primary_governance_plane": federation_root.get("repositories", {}).get("primary_governance_plane")
-        if isinstance(federation_root.get("repositories", {}), dict)
-        else None,
+        "primary_execution_plane": repositories.get("primary_execution_plane"),
+        "primary_governance_plane": repositories.get("primary_governance_plane"),
         "issues": issues,
     }
     return report

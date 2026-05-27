@@ -34,7 +34,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = _build_parser().parse_args(argv)
-    report = build_bridge_report(component=args.component)
+    report = build_bridge_report(component=args.component, repo_root=REPO_ROOT)
     serialized = json.dumps(report, indent=2, sort_keys=True)
 
     if args.report:
