@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
 CODEX Federation Bridge - Core Ingestion & Dashboard Synchronization Engine
-Author: gbogeb
+Author: GBOGEB
 """
+import os
 import re
 import sys
 from pathlib import Path
@@ -18,26 +19,26 @@ class FederationBridgeEngine:
     def __init__(self, workspace_root="."):
         self.root = Path(workspace_root).resolve()
         self.glossary_path = self.root / "GLOSSARY.yaml"
-        self.dashboard_path = self.root / "docs" / "index.html"
-        if not self.dashboard_path.exists():
-            self.dashboard_path = self.root / "docs" / "federation_bridge_dashboard.html"
-
+        # Target the federation_bridge_dashboard specifically
+        self.dashboard_path = self.root / "docs" / "federation_bridge_dashboard.html"
+            
         self.ingress_path = self.root / "core_bridge" / "ingress"
         self.ingress_path.mkdir(parents=True, exist_ok=True)
         self.glossary = self._load_glossary()
-
+        
     def _load_glossary(self):
         if not self.glossary_path.exists():
             return {"terms": []}
-        with self.glossary_path.open("r", encoding="utf-8") as handle:
+        with open(self.glossary_path, "r", encoding="utf-8") as f:
             if HAS_YAML:
-                return yaml.safe_load(handle) or {"terms": []}
-            terms = []
-            for line in handle:
-                if line.strip().startswith("- tag:"):
-                    tag = line.split(":", 1)[1].strip().strip('"').strip("'")
-                    terms.append({"tag": tag})
-            return {"terms": terms}
+                return yaml.safe_load(f) or {"terms": []}
+            else:
+                terms = []
+                for line in f:
+                    if line.strip().startswith("- tag:"):
+                        tag = line.split(":", 1)[1].strip().strip('"').strip("'")
+                        terms.append({"tag": tag})
+                return {"terms": terms}
 
     def scan_workspace(self):
         """Recursively parses workspace for unallocated handovers, specs, and scripts."""
@@ -60,61 +61,59 @@ class FederationBridgeEngine:
 
     def execute_patch(self):
         if not self.dashboard_path.exists():
-            print("[-] Execution stopped: Target layout file not found.")
+            print(f"[-] Execution stopped: Target layout file not found.")
             return False
-
+            
+        with open(self.dashboard_path, "r", encoding="utf-8") as f:
+            html_content = f.read()
+        
+        # Check if already updated (idempotent operation)
+        if "Implementation Status (Active Pipeline Connected)" in html_content:
+            print(f"[*] Dashboard already updated - skipping patch (idempotent).")
+            return True
+            
         stats = self.scan_workspace()
         total_mapped = len(self.glossary.get("terms", []))
         total_files = sum(stats.values())
-
-        wave_output = (
-            f"DMAIC Layer Active | Processed N={total_files} files "
-            f"(Word: {stats['docx']}, Py: {stats['py_loose']}, Visio/SVG: {stats['visio_svg']})"
-        )
-
-        html_content = self.dashboard_path.read_text(encoding="utf-8")
-
+        
+        wave_output = f"DMAIC Layer Active | Processed N={total_files} files (Word: {stats['docx']}, Py: {stats['py_loose']}, Visio/SVG: {stats['visio_svg']})"
+        
+        # Rigid matching sequence targeting the static placeholder block
         target_regex = re.compile(
-            r"<h3>Implementation Gaps \(Current Stub\)</h3\>\s*<ul\>.*?</ul\>\s*"
-            r"<p class=\"muted\"\>.*?</p>",
-            re.DOTALL,
+            r"<h3>Implementation Gaps \(Current Stub\)</h3>\s*<ul>.*?</ul>\s*<p class=\"muted\">.*?</p>\s*<p>.*?</p>", 
+            re.DOTALL
         )
-        status_regex = re.compile(
-            r"<section(?:\s+class=\"section\")?\>\s*<h3>Implementation Status(?: \(Active Pipeline Connected\))?</h3>\s*"
-            r"<ul\>.*?</ul\>\s*<p class=\"muted\"\>.*?</p>\s*</section>",
-            re.DOTALL,
-        )
-
+        
         new_block = f"""<h3>Implementation Status (Active Pipeline Connected)</h3>
       <ul>
         <li><strong>Ingestion Layer:</strong> MCP-driven dynamic workspace tracking is active.</li>
         <li><strong>Traceability Master:</strong> {total_mapped} verified terms linked to canonical SSOT.</li>
         <li><strong>Wave Statistics:</strong> {wave_output}.</li>
       </ul>
-      <p class=\"muted\"><strong>Pipeline Status:</strong> Continuous deployment synchronization achieved via GitHub Pages.</p>"""
-
-        section_block = f"""<section class=\"section\">
-      {new_block}
-    </section>"""
+      <p class="muted"><strong>Pipeline Status:</strong> Continuous deployment synchronization achieved via GitHub Pages.</p>"""
 
         if target_regex.search(html_content):
             updated_html = target_regex.sub(new_block, html_content)
-        elif status_regex.search(html_content):
-            updated_html = status_regex.sub(section_block, html_content, count=1)
-        elif "Implementation Gaps (Current Stub)" in html_content:
-            updated_html = html_content.replace(
-                "<h3>Implementation Gaps (Current Stub)</h3>",
-                new_block,
-            )
         else:
-            marker = "</main>" if "</main>" in html_content else "</body>"
-            updated_html = html_content.replace(marker, f"\n{section_block}\n{marker}")
+            # Fallback inline replacement if text matches broad headers
+            if "Implementation Gaps (Current Stub)" in html_content:
+                updated_html = html_content.replace("<h3>Implementation Gaps (Current Stub)</h3>", f"<h3>Implementation Status</h3>\n{new_block}")
+            else:
+                print("[-] Error: Placeholder layout boundaries do not align with template regex.")
+                return False
 
-        self.dashboard_path.write_text(updated_html, encoding="utf-8")
+        with open(self.dashboard_path, "w", encoding="utf-8") as f:
+            f.write(updated_html)
         print(f"[+] Success: Dynamic analytics patched to {self.dashboard_path.name}")
         return True
 
 
-if __name__ == "__main__":
+def main():
+    """Main entry point for the Federation Bridge Engine."""
     engine = FederationBridgeEngine()
-    sys.exit(0 if engine.execute_patch() else 1)
+    success = engine.execute_patch()
+    return 0 if success else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

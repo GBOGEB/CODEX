@@ -1,6 +1,6 @@
 # LAYOUT GOVERNANCE
 
-# Purpose
+## Purpose
 
 Introduce deterministic layout-governance direction for ABACUS_RENDER_PIPELINE.
 
@@ -17,9 +17,9 @@ It should make explainable layout decisions based on:
 
 ---
 
-# Renderer Responsibilities
+## Renderer Responsibilities
 
-## Title Scaling
+### Title Scaling
 
 Renderer should:
 
@@ -30,7 +30,7 @@ Renderer should:
 
 ---
 
-## Card Density
+### Card Density
 
 Renderer should:
 
@@ -41,7 +41,7 @@ Renderer should:
 
 ---
 
-## Figure Governance
+### Figure Governance
 
 Renderer should:
 
@@ -52,7 +52,7 @@ Renderer should:
 
 ---
 
-## Semantic Weighting
+### Semantic Weighting
 
 Critical cards should:
 
@@ -63,7 +63,7 @@ Critical cards should:
 
 ---
 
-# Future Direction
+## Future Direction
 
 Future adaptive intelligence should include:
 
@@ -77,7 +77,7 @@ Future adaptive intelligence should include:
 
 ---
 
-# Governance Principle
+## Governance Principle
 
 Layout decisions must become:
 

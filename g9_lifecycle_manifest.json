@@ -1,0 +1,46 @@
+{
+  "generation": "G9",
+  "lifecycle_phase": "L8_Commissioning_Signed_Off",
+  "project_parent": "MINERVA_QPLANT",
+  "system_owner": "Gert",
+  "audit_status": "CLOSED_LOOP_VERIFIED",
+  "buildout_status": "framework_scaffold",
+  "todo": [
+    "Replace placeholder component traceability paths with real repository paths.",
+    "Load warning.dark invariant from theme runtime SSOT instead of hardcoded values.",
+    "Add unit tests for contrast validation and helium engine edge cases.",
+    "Write generated artifacts under outputs/html and keep README.md static."
+  ],
+  "components": [
+    {
+      "id": "G9-TUPLE-A66",
+      "domain": "Control & Automation",
+      "spatial_tag": "CCB.Room_01",
+      "upstream_path": null,
+      "downstream_path": null
+    },
+    {
+      "id": "G9-TUPLE-HE-REF",
+      "domain": "Cryogenic System Engineering",
+      "spatial_tag": "AUB.Room_02",
+      "modes": {
+        "2K-SB": { "signal_id": "HE_STATIC_BENCHMARK", "target_efficiency": 0.35 },
+        "2K-OP": { "signal_id": "HE_DYNAMIC_OPERATIONAL", "nominal_flow_g_s": 11.5 }
+      },
+      "upstream_path": "cryo/helium_refrigeration_requirements.md",
+      "downstream_path": "physics/helium_refrigeration_core.py"
+    },
+    {
+      "id": "G9-TUPLE-RENDER",
+      "domain": "UI/UX Accessibility Engineering",
+      "spatial_tag": "CLOUD.Runner",
+      "target_invariant": {
+        "warning": {
+          "dark": { "background": "#4A3110", "text": "#FFE9A3" }
+        }
+      },
+      "upstream_path": "semantic_substrate/themes.json",
+      "downstream_path": "semantic_substrate/renderer/contrast_validator.py"
+    }
+  ]
+}
