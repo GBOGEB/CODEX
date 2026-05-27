@@ -74,7 +74,8 @@ jobs:
               python telemetry/pca/drift_monitor.py --input telemetry/pca/drift_payload_sample.json > "${component_dir}/drift_report.json"
               cat "${component_dir}/drift_report.json"
               python scripts/check_version.py | tee "${component_dir}/version.txt"
-              checks="drift_monitor,version,pytest"
+              python scripts/export_abacus_runtime.py --report-json "${component_dir}/bridge_report.json" | tee "${component_dir}/runtime_export.txt"
+              checks="drift_monitor,version,pytest,runtime_export"
               ;;
           esac
 
