@@ -15,6 +15,8 @@ class PipelineStage:
 class PipelineRun:
     stages_executed: list[str] = field(default_factory=list)
     status: str = 'initialized'
+    failed_stage: str | None = None
+    error_message: str | None = None
 
 
 class DeterministicPipelineOrchestrator:
@@ -51,10 +53,15 @@ class DeterministicPipelineOrchestrator:
         result = PipelineRun(status='running')
 
         for stage in self.stages:
-            if stage.handler:
-                stage.handler()
-
-            result.stages_executed.append(stage.name)
+            try:
+                if stage.handler:
+                    stage.handler()
+                result.stages_executed.append(stage.name)
+            except Exception as exc:
+                result.failed_stage = stage.name
+                result.error_message = str(exc)
+                result.status = 'failed'
+                return result
 
         result.status = 'completed'
         return result
