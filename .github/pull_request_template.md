@@ -1,4 +1,4 @@
-# [WAVE] - ## Semantic Scope
+## [WAVE] Semantic Scope
 - [ ] Governance
 - [ ] Federation
 - [ ] Runtime
@@ -32,7 +32,7 @@
 ---
 
 ## Near-Miss Optimizations
-* * ---
+- [ ] None
 
 ## Render Validation
 - [ ] Markdown

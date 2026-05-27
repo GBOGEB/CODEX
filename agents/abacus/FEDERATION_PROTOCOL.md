@@ -13,11 +13,11 @@ ABACUS monitors the mathematical consistency, completion vector modeling, and PC
 ## Completion Vector Ingestion Matrix
 When a session state updates, ABACUS calculates the aggregate readiness matrix:
 
-$$C_{\text{vector}} = \begin{bmatrix} S_{\text{tructure}} \\ R_{\text{ender}} \\ F_{\text{ederation}} \\ T_{\text{race}} \\ O_{\text{rch}} \\ D_{\text{rift}} \end{bmatrix}$$
+$$C_{\text{vector}} = \begin{bmatrix} S_{\text{structure}} \\ R_{\text{render}} \\ F_{\text{federation}} \\ T_{\text{trace}} \\ O_{\text{orchestration}} \\ D_{\text{drift}} \end{bmatrix}$$
 
 Gating algorithms prevent branch merges if:
-* $F_{\text{ederation}} < 0.40$
-* $O_{\text{rch}} < 0.30$
-* $D_{\text{rift}} > 0.45$ (High variance/instability detected)
+* $F_{\text{federation}} < 0.40$
+* $O_{\text{orchestration}} < 0.30$
+* $D_{\text{drift}} > 0.45$ (High variance/instability detected)
 
 ```
