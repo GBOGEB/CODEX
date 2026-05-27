@@ -1,4 +1,4 @@
-# [WAVE] - ## Semantic Scope
+# [WAVE] - Semantic Scope
 - [ ] Governance
 - [ ] Federation
 - [ ] Runtime

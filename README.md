@@ -1,24 +1,56 @@
-# ARTSTYLE-WIP (Semantic Orchestration Fabric)
+# CODEX GitHub Interface Package
 
-This infrastructure operates as a formal semantic orchestration workspace optimizing recursive human-to-AI software interaction patterns. The workspace rejects standard unstructured chronological message storage, relying instead on a dual-render state management model.
+CODEX provides GitHub interface and authentication utilities for both GitHub.com and GitHub Enterprise Server without duplicating implementation logic. The Wave W000 federation/runtime/telemetry files in this repository are bootstrap scaffolding for broader repository governance, but the published Python package remains the GitHub interface package described below.
 
-## Bitemporal Tracking Nomenclature
-All state changes and file mutations are tracked via the following system address syntax:
-```text
-[SEMANTIC].[TRACE].[TEMPORAL].[WAVE]
-Example: GOVERNANCE.RUNTIME.2622_1535.W000
+## Install
 
+```bash
+python -m pip install -e '.[dev]'
 ```
 
-## Systematic Development Phasing
+## Quick start
 
-| Wave | Development Objective | Status |
-| --- | --- | --- |
-| **W000** | **Bootstrap Federation Layer & Environment Priming** | 🚀 **ACTIVE** |
-| W001 | Semantic Tuple Extraction Implementation | ⏳ Planned |
-| W002 | Drift Telemetry & PCA Monitoring Pipeline | ⏳ Planned |
-| W003 | Cross-Agent Handshake Protocols | ⏳ Planned |
-| W004 | Automated Render Verification Loops | ⏳ Planned |
-| W005 | Self-Cleaning Workspace Maintenance Routines | ⏳ Planned |
-| W006 | GitHub Pages Representation UI Visualizer | ⏳ Planned |
-| W007 | Runtime Self-Classification Systems | ⏳ Planned |
+```python
+from src import GitHubAuthenticator, GitHubInterface
+
+interface = GitHubInterface()
+authenticator = GitHubAuthenticator(interface)
+
+print(interface.api_url)
+print(interface.test_connection())
+```
+
+## Enterprise configuration
+
+```python
+from src import GitHubInterface
+
+interface = GitHubInterface(
+    base_url="https://github.company.com",
+    enterprise_mode=True,
+)
+
+print(interface.api_url)
+```
+
+## Examples
+
+```bash
+cd examples
+python usage_example.py
+```
+
+## Validation
+
+```bash
+python -m pytest -q tests/test_drift_monitor.py
+python scripts/check_manifest.py
+python scripts/check_globs.py
+python scripts/check_stale.py
+python scripts/check_links.py
+```
+
+## Repository scaffolding note
+
+- `federation/`, `runtime/`, `governance/`, `agents/`, and `telemetry/` contain early Wave W000 orchestration assets.
+- `telemetry/pca/drift_monitor.py` can now compare baseline and current metric JSON files when both inputs are supplied.
