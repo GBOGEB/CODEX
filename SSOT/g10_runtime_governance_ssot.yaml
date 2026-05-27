@@ -26,9 +26,9 @@ ssot:
     - id: "G10-TUPLE-A66"
       domain: "Control & Automation"
       spatial_tag: "CCB.Room_01"
-      upstream_path: "external:ABACUS:components/a66/specs.md"
-      downstream_path: "external:ABACUS:controllers/a66_logic.py"
-      note: "Cross-repository references to ABACUS calculation runtime"
+      upstream_path: "[PLACEHOLDER:external]"
+      downstream_path: "[PLACEHOLDER:external]"
+      note: "External component references - not tracked in CODEX repository"
 
     - id: "G10-TUPLE-HE-REF"
       domain: "Cryogenic System Engineering"
@@ -40,15 +40,15 @@ ssot:
         "2K-OP":
           signal_id: "HE_DYNAMIC_OPERATIONAL"
           nominal_flow_g_s: 11.5
-      upstream_path: "external:ABACUS:cryo/helium_refrigeration_requirements.md"
-      downstream_path: "external:ABACUS:physics/helium_refrigeration_core.py"
-      note: "Cross-repository references to ABACUS calculation runtime"
+      upstream_path: "[PLACEHOLDER:external]"
+      downstream_path: "[PLACEHOLDER:external]"
+      note: "External component references - not tracked in CODEX repository"
 
     - id: "G10-TUPLE-RENDER"
       domain: "UI/UX Accessibility Engineering"
       spatial_tag: "CLOUD.Runner"
       upstream_path: "governance/SEMANTIC_THEME.yaml"
-      downstream_path: ".github/workflows/wcag-contrast.yml"
+      downstream_path: "semantic_substrate/renderer/contrast_validator.py"
 
   acceptance_gates:
     smoke_test: { required: true }

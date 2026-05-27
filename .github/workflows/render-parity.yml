@@ -1,19 +1,26 @@
 name: Render Parity Synchronization
-
 on:
   push:
-    branches: [main, a6-renderer-governance-layer]
+    branches: [ main, a6-renderer-governance-layer ]
   pull_request:
-    branches: [main]
-
+    branches: [ main ]
 jobs:
   parity:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check Markdown-first artifact parity
+      - name: Initialize Processing Core
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Regenerate Artifacts
+        run: python src/abacus_render_pipeline/orchestrate.py
+      - name: Verify Cross-Format Structural Alignment (HTML <-> Markdown)
         run: |
-          test -f README.md
-          test -f SSOT/g10_runtime_governance_ssot.yaml
-          test -f METRICS/g10_ascii_metrics.md
-          echo "Assertion Verified: Required markdown-first artifacts are present."
+          if ! git diff --exit-code \
+              docs/deck-systems/abacus-render-pipeline/runtime_dashboard.html \
+              docs/deck-systems/abacus-render-pipeline/runtime_summary.md; then
+            echo "Parity failure: committed artifacts are out-of-date with the generator."
+            exit 1
+          fi
+          echo "Parity check passed."

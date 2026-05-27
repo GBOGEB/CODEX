@@ -4,17 +4,14 @@ import argparse
 import sys
 from dataclasses import dataclass
 
+from renderers.lint.thresholds import MAX_CARD_BODY_LINES, MAX_TITLE_LENGTH
+
 
 @dataclass
 class OverflowIssue:
     component: str
     severity: str
     message: str
-
-
-MAX_TITLE_LENGTH = 72
-MAX_CARD_BODY_LINES = 18
-
 
 def validate_title_length(title: str) -> list[OverflowIssue]:
     issues: list[OverflowIssue] = []

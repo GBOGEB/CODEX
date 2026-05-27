@@ -8,11 +8,14 @@ ASCII Log Engine              [####################] 100%
 Hosted HTML Avoidance Factor  [####################] 100%
 
 ## Automated Gate Status
-[TARGET] WCAG Contrast Gate      (Minimum required: >= 4.5:1)
-[TARGET] Smoke Test Environment  (Orchestration script compatibility)
-[TARGET] Lint Verification Gate  (Consistency with project conventions)
-[TARGET] Render Parity Gate      (Required markdown-first artifacts present)
-[TARGET] SSOT Existence Check    (Valid metadata structure)
+[PASS] WCAG Contrast Gate      (Target >= 4.5:1 | Via governance/WCAG_CONTRAST_CHECKER.py)
+[PASS] Test Suite              (pytest -q)
+[PASS] Manifest Check          (scripts/check_manifest.py)
+[PASS] Glob Policy Check       (scripts/check_globs.py)
+[PASS] Stale Artifact Check    (scripts/check_stale.py)
+[PASS] Link Validation         (scripts/check_links.py)
+[PASS] Render Governance       (governance/RENDER_LINTER.py)
+[PASS] Render Parity Gate      (Unauthorized HTML surface detection)
 
 ## Program Evolution Trend Tracking
 A6    | ##########---------- | 50%
