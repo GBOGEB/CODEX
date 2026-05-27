@@ -78,7 +78,7 @@ def validate(strict_dormant: bool) -> int:
 
     print("bridge alignment check passed")
     print(f"- mapped modules: {len(alignment)}")
-    print(f"- abacus modules: {', '.join(sorted(manifest_modules))}")
+    print(f"- abacus module count: {len(manifest_modules)}")
 
     if dormant:
         print("- dormant codex paths detected:")
