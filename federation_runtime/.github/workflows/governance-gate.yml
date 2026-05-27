@@ -22,6 +22,6 @@ jobs:
         with:
           python-version: '3.11'
       - name: Validate governance header
-        run: python engines/governance_parser.py --target .github/W003_PR_FOLLOW_UP.md --schema schema/governance_header.schema.json
+        run: python engines/governance_parser.py --target .github/W003_PR_FOLLOW_UP.md --schema schema/governance_header.schema.json --traceability-manifest governance/traceability_manifest.json --pr-track governance/pr_track.yml --wave-plan governance/wave_recreation_plan.yml
       - name: Validate traceability manifest shape
-        run: python -c "import json; d=json.load(open('governance/traceability_manifest.json')); assert d['active_wave']=='W003'; assert 'pr_stream' in d"
+        run: python -c "import json; d=json.load(open('governance/traceability_manifest.json')); assert d['active_wave']=='W003'; assert d['current_iteration'].startswith('I'); assert isinstance(d['required_artifacts'], dict); assert 'pr_stream' in d"

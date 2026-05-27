@@ -15,8 +15,14 @@ This enclave stages ABACUS ↔ CODEX governed semantic federation runtime assets
 ```bash
 python federation_runtime/engines/governance_parser.py \
   --target federation_runtime/.github/W003_PR_FOLLOW_UP.md \
-  --schema federation_runtime/schema/governance_header.schema.json
+  --schema federation_runtime/schema/governance_header.schema.json \
+  --traceability-manifest federation_runtime/governance/traceability_manifest.json \
+  --pr-track federation_runtime/governance/pr_track.yml \
+  --wave-plan federation_runtime/governance/wave_recreation_plan.yml
 ```
+
+The parser logs governed input paths, validation process steps, and structured output
+(`PR-ID`, `WAVE`, and stream coverage) to support drift detection and execution traceability.
 
 
 ## Handover lineage

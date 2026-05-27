@@ -49,17 +49,70 @@ def validate_metadata(metadata: dict[str, str], schema: dict) -> tuple[bool, lis
         if enum and value not in enum:
             errors.append(f"Enum mismatch for {key}: {value}")
 
-    if metadata.get("TYPE") != "GOVERNANCE" and metadata.get("SCHEMA MUTATION") == "YES":
+    if metadata.get("TYPE") != "GOVERNANCE" and metadata.get("SCHEMA MUTATION") in {"YES", "CONTROLLED"}:
         errors.append("Unauthorized schema mutation outside GOVERNANCE type")
 
     return (len(errors) == 0, errors)
 
 
-def run_header_compliance_audit(target_file: Path, schema_path: Path) -> int:
-    print("[PR-007] Running federation governance parser...")
+def _extract_yaml_scalar(yaml_path: Path, key: str) -> str | None:
+    key_pattern = re.compile(rf"^\s*{re.escape(key)}\s*:\s*(.+?)\s*$")
+    for raw_line in yaml_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        match = key_pattern.match(raw_line)
+        if not match:
+            continue
+        value = match.group(1).split("#", 1)[0].strip().strip("'").strip('"')
+        return value
+    return None
 
-    if not target_file.exists() or not schema_path.exists():
-        print("[PR-007][ERROR] Missing follow-up markdown or governance schema.")
+
+def _validate_required_artifacts(manifest: dict, root: Path) -> list[str]:
+    errors: list[str] = []
+    required_artifacts = manifest.get("required_artifacts", {})
+    for artifact_group in required_artifacts.values():
+        if not isinstance(artifact_group, list):
+            errors.append("Invalid required_artifacts shape in traceability manifest")
+            continue
+        for artifact in artifact_group:
+            if not isinstance(artifact, str):
+                errors.append("Invalid required artifact entry in traceability manifest")
+                continue
+            if Path(artifact).is_absolute():
+                errors.append(f"Required artifact must be a relative path: {artifact}")
+                continue
+            artifact_path = root / artifact
+            if not artifact_path.exists():
+                errors.append(f"Required artifact missing on disk: {artifact}")
+    return errors
+
+
+def run_header_compliance_audit(
+    target_file: Path,
+    schema_path: Path,
+    traceability_manifest_path: Path,
+    pr_track_path: Path,
+    wave_plan_path: Path,
+) -> int:
+    print("[PR-007] Running federation governance parser...")
+    print(
+        f"[PR-007] INPUTS target={target_file} schema={schema_path} "
+        f"traceability_manifest={traceability_manifest_path} pr_track={pr_track_path} "
+        f"wave_plan={wave_plan_path}"
+    )
+
+    required_paths = {
+        "target": target_file,
+        "schema": schema_path,
+        "traceability_manifest": traceability_manifest_path,
+        "pr_track": pr_track_path,
+        "wave_plan": wave_plan_path,
+    }
+    missing_inputs = [name for name, path in required_paths.items() if not path.exists()]
+    if missing_inputs:
+        print(f"[PR-007][ERROR] Missing required inputs: {', '.join(missing_inputs)}")
         return 1
 
     metadata = extract_governance_block(target_file.read_text(encoding="utf-8"))
@@ -68,13 +121,63 @@ def run_header_compliance_audit(target_file: Path, schema_path: Path) -> int:
         return 1
 
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
-    valid, errors = validate_metadata(metadata, schema)
-    if not valid:
+    manifest = json.loads(traceability_manifest_path.read_text(encoding="utf-8"))
+
+    process_steps = [
+        "header-extraction",
+        "schema-validation",
+        "artifact-validation",
+        "wave-drift-check",
+        "pr-order-check",
+    ]
+
+    _, schema_errors = validate_metadata(metadata, schema)
+    artifact_errors = _validate_required_artifacts(manifest, traceability_manifest_path.parent.parent)
+
+    drift_errors: list[str] = []
+    header_wave = metadata.get("WAVE")
+    manifest_wave = manifest.get("active_wave")
+    pr_track_wave = _extract_yaml_scalar(pr_track_path, "wave")
+    wave_plan_active_wave = _extract_yaml_scalar(wave_plan_path, "active_wave")
+
+    if header_wave and manifest_wave and header_wave != manifest_wave:
+        drift_errors.append(f"Wave drift: header={header_wave} manifest={manifest_wave}")
+    if header_wave and pr_track_wave and header_wave != pr_track_wave:
+        drift_errors.append(f"Wave drift: header={header_wave} pr_track={pr_track_wave}")
+    if header_wave and wave_plan_active_wave and header_wave != wave_plan_active_wave:
+        drift_errors.append(f"Wave drift: header={header_wave} wave_plan={wave_plan_active_wave}")
+
+    pr_order_errors: list[str] = []
+    header_pr_id = metadata.get("PR-ID")
+    pr_stream = manifest.get("pr_stream", [])
+    if header_pr_id and isinstance(pr_stream, list) and header_pr_id not in pr_stream:
+        pr_order_errors.append(f"PR-ID not in traceability manifest stream: {header_pr_id}")
+
+    pr_track_focus = _extract_yaml_scalar(pr_track_path, "current_focus")
+    if header_pr_id and pr_track_focus and header_pr_id != pr_track_focus:
+        pr_order_errors.append(f"PR track focus mismatch: header={header_pr_id} pr_track={pr_track_focus}")
+
+    errors = schema_errors + artifact_errors + drift_errors + pr_order_errors
+    if errors:
         for err in errors:
             print(f"[PR-007][ERROR] {err}")
         return 1
 
+    audit_output = {
+        "inputs": {k: str(v) for k, v in required_paths.items()},
+        "process": process_steps,
+        "output": {
+            "metadata": metadata,
+            "active_wave": header_wave,
+            "pr_id": header_pr_id,
+            "traceability_pr_stream_length": len(pr_stream) if isinstance(pr_stream, list) else 0,
+            "validation_status": "PASS",
+        },
+    }
+
     print(f"[PR-007] PR-ID={metadata.get('PR-ID')} WAVE={metadata.get('WAVE')} TYPE={metadata.get('TYPE')}")
+    print(f"[PR-007] PROCESS={','.join(process_steps)}")
+    print(f"[PR-007] OUTPUT={json.dumps(audit_output['output'], sort_keys=True)}")
     print("[PR-007] Governance header validated successfully.")
     return 0
 
@@ -92,5 +195,28 @@ if __name__ == "__main__":
         default=str(root / "schema" / "governance_header.schema.json"),
         help="Path to governance header schema",
     )
+    parser.add_argument(
+        "--traceability-manifest",
+        default=str(root / "governance" / "traceability_manifest.json"),
+        help="Path to governance traceability manifest",
+    )
+    parser.add_argument(
+        "--pr-track",
+        default=str(root / "governance" / "pr_track.yml"),
+        help="Path to governance PR track file",
+    )
+    parser.add_argument(
+        "--wave-plan",
+        default=str(root / "governance" / "wave_recreation_plan.yml"),
+        help="Path to wave recreation plan file",
+    )
     args = parser.parse_args()
-    sys.exit(run_header_compliance_audit(Path(args.target), Path(args.schema)))
+    sys.exit(
+        run_header_compliance_audit(
+            target_file=Path(args.target),
+            schema_path=Path(args.schema),
+            traceability_manifest_path=Path(args.traceability_manifest),
+            pr_track_path=Path(args.pr_track),
+            wave_plan_path=Path(args.wave_plan),
+        )
+    )
