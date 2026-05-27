@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -36,7 +37,7 @@ def test_main_reports_initialization_payload(capsys: pytest.CaptureFixture[str])
     assert payload["tracked_dimensions"] == list(TRACKED_DIMENSIONS)
 
 
-def test_main_reports_evaluated_variance(tmp_path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_main_reports_evaluated_variance(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     current_path = tmp_path / "current.json"
     baseline_path = tmp_path / "baseline.json"
     current_path.write_text(json.dumps(_metrics(0.9)), encoding="utf-8")

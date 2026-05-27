@@ -1,6 +1,8 @@
-# 🌌 G9 Unified Federation Framework & System Verification Specification
+# CODEX Unified Federation Framework & System Verification Specification
 
 ## 🛡️ Level 8 (L8) Closed-Loop Post-Commissioning Summary
+
+These metrics are retained as lineage-reference verification outputs from the repository's established engineering and publication workflows.
 
 * **A6 Warning Card Text Contrast Performance:** `10.03:1` (Target: $\ge 4.5:1$)
 * **ANOVA Workspace Velocity Coefficient (R):** `0.99976`
