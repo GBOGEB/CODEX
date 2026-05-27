@@ -17,6 +17,7 @@ Bootstrap artifacts are staged in:
 - `agents/codex/MCP_INSTRUCTION.md`
 - `agents/abacus/FEDERATION_PROTOCOL.md`
 - `.github/pull_request_template.md`
+- `runtime/incubator/.gitkeep`
 
 ---
 

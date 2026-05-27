@@ -14,11 +14,11 @@
 
 | Key | Value |
 |---|---|
-| Wave | W000 |
-| Trace | FEDERATION.RUNTIME |
-| State | ACTIVE |
-| Renderable | YES |
-| Drift Stable | YES |
+| Wave | `[WAVE_ID]` |
+| Trace | `[TRACE_NAME]` |
+| State | `[ACTIVE/INCUBATING/ARCHIVED]` |
+| Renderable | `[YES/NO]` |
+| Drift Stable | `[YES/NO/PENDING]` |
 
 ---
 
