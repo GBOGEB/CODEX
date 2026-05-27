@@ -4,6 +4,8 @@
 [TRACE]:       TELEMETRY.PCA.DRIFT_MONITOR
 [STATE]:       ACTIVE
 [WAVE]:        W000
+[DRIFT]:       UNASSESSED
+[NEARMISS]:    NONE
 [RENDER]:      PASSED
 """
 
