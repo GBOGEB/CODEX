@@ -1,0 +1,17 @@
+ssot_runtime_control:
+  debug_capability:
+    must_exist: true
+    execute_conditionally: true
+
+  governance_binding:
+    adr: governance/adr/ADR-0001-runtime-debug-governance.md
+    rule_set: governance/policy/runtime_debug_governance_rules.yml
+    kpi_source: governance/telemetry/kpi_telemetry_overview.yml
+    ci_gate: governance/ci/minimum_pr_governance.yml
+    federation_policy: governance/policy/federation_keb_topology.yml
+
+  runtime_modes:
+    - on_commit
+    - on_pull_request
+    - on_schedule
+    - manual
