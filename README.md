@@ -1,3 +1,19 @@
+
+## W000-FEDERATED-SEMANTIC-TRACE
+
+This repository now includes a Wave W000 bootstrap for a dual-render federation model connecting ABACUS, CODEX, and MCP runtime orchestration.
+
+- Human semantic layer for topic-first readability
+- Machine sequential layer for temporal orchestration and telemetry
+- Federated traceability with semantic prefix indexing
+- Completion-vector scaffolding and drift monitoring bootstrap
+
+See:
+- `federation/semantic_index/schema.yaml`
+- `telemetry/pca/drift_monitor.py`
+- `agents/codex/MCP_INSTRUCTION.md`
+- `agents/abacus/FEDERATION_PROTOCOL.md`
+
 # 🌌 G9 Unified Federation Framework & System Verification Specification
 
 ## 🛡️ Level 8 (L8) Closed-Loop Post-Commissioning Summary
@@ -281,3 +297,18 @@ For a direct, operations-ready definition of one full engineering cycle (clone/s
 - [`LINEAGE_BUILD_DEPLOY_CICD.md`](LINEAGE_BUILD_DEPLOY_CICD.md)
 
 Use this as the 100% completion checklist for build/deploy governance and release readiness.
+
+## W000 — ABACUS-CODEX-FEDERATION Runtime Governance Scaffold
+
+Baseline scaffold files are now available for governance bootstrap:
+
+- `_config.yml`
+- `governance/runtime_governance.yml`
+- `governance/agent_registry.yml`
+- `governance/federation_registry.yml`
+- `docs/index.md`
+- `docs/runtime_map.md`
+- `scripts/validate_yaml.py`
+- `scripts/build_manifest.py`
+
+This W000 foundation defines the ABACUS/CODEX/FEDERATION responsibility split, governance state-machine baseline, and starter utilities for YAML validation and manifest build.

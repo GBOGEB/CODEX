@@ -2,18 +2,28 @@
   "generation": "G8",
   "lifecycle_phase": "L8_Commissioning_Signed_Off",
   "project_parent": "MINERVA_QPLANT",
-  "system_owner": "Gert",
+  "system_owner": "MINERVA Systems Team",
   "audit_status": "CLOSED_LOOP_VERIFIED",
-  "lifecycle_inputs": {
-    "claimed_milestones": [0.2, 0.4, 0.6, 0.8, 1.0],
-    "actual_milestones": [0.2, 0.41, 0.59, 0.8, 1.0],
+  "buildout_status": "BUILDOUT_INCOMPLETE",
+  "buildout_todo": [
+    "Add true ANOVA metric reporting if ANOVA (not covariance/correlation) is required.",
+    "Add broader integration tests for G8 orchestrator artifact generation."
+  ],
+  "validation_inputs": {
+    "warning_dark": {
+      "background": "#4A3110",
+      "text": "#FFE9A3"
+    },
+    "milestones": {
+      "claimed": [0.2, 0.4, 0.6, 0.8, 1.0],
+      "actual": [0.2, 0.41, 0.59, 0.8, 1.0]
+    },
     "exergy_inputs": {
-      "mass_flow_he": 11.5,
-      "h_in": 15.0,
-      "h_out": 32.0,
-      "s_in": 0.03,
-      "s_out": 0.06,
-      "power_input_kw": 210.0
+      "h_in_j_kg": 15.0,
+      "h_out_j_kg": 32.0,
+      "s_in_j_kgk": 0.03,
+      "s_out_j_kgk": 0.06,
+      "power_input_w": 210000.0
     }
   },
   "components": [
@@ -21,8 +31,8 @@
       "id": "G8-TUPLE-A66",
       "domain": "Control & Automation",
       "spatial_tag": "CCB.Room_01",
-      "upstream_path": "components/a66/specs.md",
-      "downstream_path": "controllers/a66_logic.py"
+      "upstream_path": "https://github.com/GBOGEB/abacus/blob/main/components/a66/specs.md",
+      "downstream_path": "https://github.com/GBOGEB/abacus/blob/main/controllers/a66_logic.py"
     },
     {
       "id": "G8-TUPLE-HE-REF",
@@ -32,7 +42,7 @@
         "2K-SB": { "signal_id": "HE_STATIC_BENCHMARK", "target_efficiency": 0.35 },
         "2K-OP": { "signal_id": "HE_DYNAMIC_OPERATIONAL", "nominal_flow_g_s": 11.5 }
       },
-      "upstream_path": "cryo/helium_refrigeration_requirements.md",
+      "upstream_path": "https://github.com/GBOGEB/abacus/blob/main/cryo/helium_refrigeration_requirements.md",
       "downstream_path": "physics/helium_refrigeration_core.py"
     },
     {
@@ -44,7 +54,7 @@
           "dark": { "background": "#4A3110", "text": "#FFE9A3" }
         }
       },
-      "upstream_path": "semantic_substrate/themes.json",
+      "upstream_path": "themes/semantic_cards.yaml",
       "downstream_path": "semantic_substrate/renderer/contrast_validator.py"
     }
   ]

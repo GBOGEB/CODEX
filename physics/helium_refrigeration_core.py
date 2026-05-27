@@ -1,20 +1,44 @@
 #!/usr/bin/env python3
 
+try:
+    from gistau_ch15.kernels.exergy import specific_flow_exergy
+except ModuleNotFoundError:  # pragma: no cover - local script execution path
+    from src.gistau_ch15.kernels.exergy import specific_flow_exergy
+
 
 class CryogenicHeliumEngineG8:
-    def __init__(self, t0_ambient=298.15):
+    def __init__(self, t0_ambient=298.15, nitrogen_assist_gain=1.10):
         self.T0 = t0_ambient
+        self.nitrogen_assist_gain = nitrogen_assist_gain
 
-    def compute_g8_exergy_efficiency(self, mass_flow_he, h_in, h_out, s_in, s_out, power_input_kw, nitrogen_assist=True):
-        delta_h = h_out - h_in
-        delta_s = s_out - s_in
-        exergy_helium = delta_h - (self.T0 * delta_s)
+    def compute_g8_exergy_efficiency(self, mass_flow_he, h_in, h_out, s_in, s_out, power_input_w, nitrogen_assist=True):
+        """Compute exergy efficiency of the G8 cryogenic helium engine.
+
+        Args:
+            mass_flow_he: Helium mass flow rate (kg/s).
+            h_in: Inlet specific enthalpy (J/kg).
+            h_out: Outlet specific enthalpy (J/kg).
+            s_in: Inlet specific entropy (J/(kg·K)).
+            s_out: Outlet specific entropy (J/(kg·K)).
+            power_input_w: Shaft power input (W).
+            nitrogen_assist: Whether nitrogen pre-cool assist gain is applied.
+
+        Returns:
+            Exergy efficiency in [0.0, 1.0].
+        """
+        exergy_helium = specific_flow_exergy(
+            h_j_kg=float(h_out),
+            s_j_kgk=float(s_out),
+            h0_j_kg=float(h_in),
+            s0_j_kgk=float(s_in),
+            t0_k=float(self.T0),
+        )
         useful_work = mass_flow_he * exergy_helium
         if nitrogen_assist:
-            useful_work *= 1.10
-        if power_input_kw <= 0:
+            useful_work *= self.nitrogen_assist_gain
+        if power_input_w <= 0:
             return 0.0
-        return min(max(useful_work / power_input_kw, 0.0), 1.0)
+        return min(max(useful_work / power_input_w, 0.0), 1.0)
 
     def calculate_g8_covariance_correlation(self, claimed_vector, actual_vector):
         c = [float(x) for x in claimed_vector]
