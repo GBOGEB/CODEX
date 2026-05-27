@@ -70,9 +70,8 @@ jobs:
             mcp-bridge)
               python -m pytest -q tests/test_drift_monitor.py | tee "${component_dir}/pytest.txt"
               python telemetry/pca/drift_monitor.py | tee "${component_dir}/bootstrap.txt"
-              # Exercise the JSON input/output path with a known structure-only drift delta.
-              printf '%s\n' '{"current_vector":{"structure":1.0,"renderability":0.8},"baseline_vector":{"structure":0.7,"renderability":0.8}}' > "${component_dir}/drift_payload.json"
-              python telemetry/pca/drift_monitor.py --input "${component_dir}/drift_payload.json" | tee "${component_dir}/drift_report.json"
+              cp telemetry/pca/drift_payload_sample.json "${component_dir}/drift_payload.json"
+              python telemetry/pca/drift_monitor.py --input telemetry/pca/drift_payload_sample.json | tee "${component_dir}/drift_report.json"
               python scripts/check_version.py | tee "${component_dir}/version.txt"
               checks="drift_monitor,version,pytest"
               ;;
