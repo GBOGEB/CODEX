@@ -9,6 +9,7 @@ This page describes W000/W001 tuple ingress flow for the INCUBATOR layer.
 3. Build the Markdown index with `python scripts/build_incubator_index.py`.
 4. Extract simple theme counts with `python scripts/extract_themes.py`.
 5. Export runtime for portability with `python scripts/export_incubator_runtime.py`.
+6. Stage portable artifacts for downstream pipelines from `outputs/incubator_export/`.
 
 ## Mapping sources
 
@@ -34,6 +35,7 @@ See ABACUS bridge doc for category/theme alignment with DMAIC orchestration.
 ## Governance
 
 - **CI Validation**: `.github/workflows/ci.yml` runs `scripts/parse_chat_tuple.py`
+- **Portable Utility**: `scripts/export_incubator_runtime.py --output-dir <path>` for bridge handoff bundles
 - **Test Coverage**: `tests/incubator/` pytest suite
 - **Semantic Invariant**: INV-011 in `semantic_substrate/invariants.yaml`
 - **Wave Tracking**: `MANIFEST/WAVE_PROGRESSION.yaml` incubator_waves section
