@@ -4,8 +4,11 @@ import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
+import yaml
+
 ROOT = Path(__file__).resolve().parents[2]
 REPORT_DIR = ROOT / 'PIPELINE' / 'REPORTS'
+_THEME_PATH = ROOT / 'themes' / 'semantic_cards.yaml'
 
 
 @dataclass
@@ -70,6 +73,74 @@ class WCAGContrastValidator:
             background='#4A3110',
             minimum=4.5,
         )
+
+
+class ContrastValidator:
+    """Theme-aware WCAG contrast validator.
+
+    Loads governed token values from themes/semantic_cards.yaml and
+    exposes validate_theme_node() for per-node accessibility checks.
+    """
+
+    MIN_AA_RATIO: float = 4.5
+    MIN_AAA_RATIO: float = 7.0
+
+    def __init__(self) -> None:
+        with _THEME_PATH.open('r', encoding='utf-8') as fh:
+            data = yaml.safe_load(fh)
+        cards = data['semantic_cards']
+        self.target_invariants: dict = {
+            token: {
+                mode: {'background': spec['background'], 'text': spec['text']}
+                for mode, spec in modes.items()
+            }
+            for token, modes in cards.items()
+        }
+
+    @staticmethod
+    def _normalize_hex(color: str) -> str:
+        v = color.strip()
+        if not v.startswith('#'):
+            raise ValueError(f"Unsupported hex color '{color}'")
+        body = v[1:]
+        if len(body) == 3:
+            body = ''.join(ch * 2 for ch in body)
+        if len(body) == 8:
+            raise ValueError(
+                f"8-digit hex (RGBA) not supported for contrast calculation: '{color}'. "
+                'Use 6-digit hex (RGB) only.'
+            )
+        if len(body) != 6:
+            raise ValueError(f"Unsupported hex color '{color}'")
+        try:
+            int(body, 16)  # validate hex digits
+        except ValueError:
+            raise ValueError(f"Unsupported hex color '{color}'")
+        return '#' + body.lower()
+
+    def calculate_relative_luminance(self, color: str) -> float:
+        norm = self._normalize_hex(color).lstrip('#')
+        r, g, b = (int(norm[i:i + 2], 16) / 255 for i in (0, 2, 4))
+
+        def _linear(c: float) -> float:
+            return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+
+        return 0.2126 * _linear(r) + 0.7152 * _linear(g) + 0.0722 * _linear(b)
+
+    def validate_theme_node(self, background: str, foreground: str) -> dict:
+        """Return a dict with contrast_ratio, AA/AAA compliance, and action_required."""
+        l_bg = self.calculate_relative_luminance(background)
+        l_fg = self.calculate_relative_luminance(foreground)
+        lighter, darker = max(l_bg, l_fg), min(l_bg, l_fg)
+        ratio = round((lighter + 0.05) / (darker + 0.05), 2)
+        aa = ratio >= self.MIN_AA_RATIO
+        aaa = ratio >= self.MIN_AAA_RATIO
+        return {
+            'contrast_ratio': ratio,
+            'wcag_aa_compliant': aa,
+            'wcag_aaa_compliant': aaa,
+            'action_required': not aa,
+        }
 
 
 def export_report(check: ContrastCheck):

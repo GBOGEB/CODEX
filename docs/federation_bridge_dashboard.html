@@ -22,6 +22,7 @@
 <main>
   <h1>Federation Bridge Dashboard</h1>
   <p class="muted">Future-proof planning template for <strong>GBOGEB/CODEX</strong> and <strong>GBOGEB/ABACUS</strong>. Tracks lineage, build/deploy, CI/CD and wave analytics.</p>
+  <p style="background:var(--panel);border-left:3px solid var(--warn);padding:8px;margin:12px 0;"><strong>⚠️ STATUS: IN DEVELOPMENT</strong> — This is a planning shell. Live automation not yet implemented. See <a href="FEDERATION_BRIDGE_PROGRESS.md">FEDERATION_BRIDGE_PROGRESS.md</a> for detailed progress tracking.</p>
 
   <section class="grid">
     <article class="card">
@@ -53,16 +54,33 @@
         <li><strong>ANOVA:</strong> covariance drift checks between waves.</li>
       </ul>
     </article>
+
+    <article class="card">
+      <h3>Implementation Status (Active Pipeline Connected)</h3>
+      <ul>
+        <li><strong>Ingestion Layer:</strong> MCP-driven dynamic workspace tracking is active.</li>
+        <li><strong>Traceability Master:</strong> 2 verified terms linked to canonical SSOT.</li>
+        <li><strong>Wave Statistics:</strong> DMAIC Layer Active | Processed N=193 files (Word: 12, Py: 177, Visio/SVG: 1).</li>
+      </ul>
+      <p class="muted"><strong>Pipeline Status:</strong> Continuous deployment synchronization achieved via GitHub Pages.</p>
+    </article>
   </section>
 
   <section class="card" style="margin-top:12px;">
     <h2>Primary Artifacts</h2>
     <ul>
+      <li><a href="FEDERATION_BRIDGE_PROGRESS.md">📊 FEDERATION_BRIDGE_PROGRESS.md</a> <strong>(Progress Tracker - START HERE)</strong></li>
       <li><a href="federation_input_template.md">federation_input_template.md</a> (render-ready markdown source)</li>
       <li><a href="slides_html.html">slides_html.html</a> (slide-like visual brief)</li>
       <li><a href="dashboard.html">dashboard.html</a> (existing operations dashboard)</li>
       <li><a href="https://github.com/GBOGEB/CODEX">GBOGEB/CODEX</a></li>
       <li><a href="https://github.com/GBOGEB/ABACUS">GBOGEB/ABACUS</a></li>
+    </ul>
+    <h3 style="margin-top:12px;">Related PRs & Commits</h3>
+    <ul>
+      <li>PR Branch: <a href="https://github.com/GBOGEB/CODEX/tree/codex/implement-ci/cd-pipeline-for-repo-build-and-deploy">codex/implement-ci/cd-pipeline-for-repo-build-and-deploy</a></li>
+      <li>Commit <code>1d8d8b2</code>: Register federation HTML pages and document stub TODO gaps</li>
+      <li>Commit <code>e85ab02</code>: Clarify TODO owner and due date placeholders as TBD</li>
     </ul>
   </section>
 </main>

@@ -1,0 +1,57 @@
+{
+  "generation": "G3",
+  "system_owner": "Gert",
+  "project_parent": "MINERVA",
+  "federation_bridge": {
+    "upstream_anchor": "gbogeb/codex",
+    "downstream_anchor": "gbogeb/abacus"
+  },
+  "tuples": [
+    {
+      "component_id": "G3-TUPLE-A66",
+      "domain": "Control & Automation",
+      "scope": "A66 Module Development Status",
+      "lifecycle_level": "L4-Detailed-Design",
+      "upstream": {
+        "repo": "gbogeb/codex",
+        "file_path": "components/a66/specs.md",
+        "validation_schema": "schemas/a66_definition.yaml"
+      },
+      "downstream": {
+        "repo": "gbogeb/abacus",
+        "file_path": "controllers/a66_logic.py",
+        "test_suite": "tests/test_a66.py"
+      }
+    },
+    {
+      "component_id": "G3-TUPLE-HE-REF",
+      "domain": "Cryogenic System Engineering",
+      "scope": "Helium Refrigeration System",
+      "lifecycle_level": "L5-Manufacturing-Integration",
+      "upstream": {
+        "repo": "gbogeb/codex",
+        "file_path": "cryo/helium_refrigeration_requirements.md",
+        "modes": ["2K-SB", "2K-OP"]
+      },
+      "downstream": {
+        "repo": "gbogeb/abacus",
+        "file_path": "physics/helium_refrigeration_core.py",
+        "analytical_checks": ["Exergy", "ANOVA_Variance", "PCA_Waves"]
+      }
+    },
+    {
+      "component_id": "G3-TUPLE-GH-PR",
+      "domain": "CI/CD DevOps Infrastructure",
+      "scope": "GitHub PR Generation & Branch Verification",
+      "lifecycle_level": "L8-Integrated-Commissioning",
+      "upstream": {
+        "repo": "gbogeb/codex",
+        "file_path": ".github/workflows/g3_gatekeeper.yml"
+      },
+      "downstream": {
+        "repo": "gbogeb/abacus",
+        "file_path": "automation/pr_generator.py"
+      }
+    }
+  ]
+}
