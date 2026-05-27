@@ -1,0 +1,27 @@
+bridge:
+  trace: FEDERATION.WIRELINK.RUNTIME.W000
+  repositories:
+    codex: GBOGEB/CODEX
+    abacus: GBOGEB/ABACUS
+
+  module_alignment:
+    - abacus_module: renderer
+      codex_path: dashboards
+      workflow: .github/workflows/pages.yml
+      status: active
+    - abacus_module: topology
+      codex_path: federation/orchestration
+      workflow: .github/workflows/runtime_convergence_pipeline.yml
+      status: incubator
+    - abacus_module: validation
+      codex_path: governance
+      workflow: .github/workflows/ci.yml
+      status: active
+    - abacus_module: deployment
+      codex_path: .github/workflows
+      workflow: .github/workflows/full-stack-governance.yml
+      status: active
+    - abacus_module: telemetry
+      codex_path: telemetry
+      workflow: .github/workflows/runtime_convergence_pipeline.yml
+      status: incubator
