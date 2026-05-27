@@ -55,7 +55,7 @@ def test_validate_governance_header_rejects_controlled_schema_mutation_outside_g
         validate_governance_header(markdown, schema)
 
 
-def test_run_header_compliance_audit_succeeds_with_valid_header(tmp_path) -> None:
+def test_run_header_compliance_audit_succeeds_with_valid_header(tmp_path: Path) -> None:
     markdown_path = tmp_path / "governance.md"
     markdown_path.write_text(_markdown(), encoding="utf-8")
 
