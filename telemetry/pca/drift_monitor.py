@@ -35,8 +35,11 @@ def calculate_drift(current_vector: Mapping[str, float], baseline_vector: Mappin
 
 
 def _load_payload(path: Path) -> dict:
-    with path.open(encoding='utf-8') as handle:
-        return json.load(handle)
+    try:
+        with path.open(encoding='utf-8') as handle:
+            return json.load(handle)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"[TELEMETRY.PCA.DRIFT_MONITOR] Failed to load input payload: {exc}") from exc
 
 
 def main(argv: list[str] | None = None) -> int:
