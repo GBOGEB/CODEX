@@ -36,7 +36,7 @@ def load_metrics(path):
     try:
         data = json.loads(Path(path).read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
-        raise ValueError(f"{path} must contain valid JSON metrics") from exc
+        raise ValueError(f"{path} must contain valid JSON metrics: {exc}") from exc
     if not isinstance(data, dict):
         raise ValueError(f"{path} must contain a JSON object of metrics")
     return data
@@ -75,7 +75,7 @@ def parse_args(argv=None):
     args = parser.parse_args(argv)
 
     if (args.baseline is None) != (args.current is None):
-        parser.error("--baseline and --current must be provided together")
+        parser.error("Both --baseline and --current arguments are required when using drift comparison")
 
     return args
 
