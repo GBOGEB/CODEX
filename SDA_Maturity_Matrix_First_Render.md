@@ -113,6 +113,7 @@ graph TD
     <style>
         :root {
             --bg-color: #0f1115;
+            --panel-color: #1b1f27;
             --text-color: #abb2bf;
             --border-color: #3e4452;
             --accent-color: #61afef;
@@ -121,12 +122,81 @@ graph TD
             --medium: #d19a66;
             --high: #98c379;
             --governed: #56b6c2;
+            --score: 78%;
         }
-        /* trimmed for brevity in this handoff package */
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 24px;
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-family);
+        }
+        .matrix-card {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--panel-color);
+        }
+        .gauge {
+            position: relative;
+            height: 28px;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: #11161d;
+        }
+        .gauge-band { height: 100%; float: left; }
+        .low { width: 40%; background: var(--low); }
+        .medium { width: 35%; background: var(--medium); }
+        .high { width: 15%; background: var(--high); }
+        .governed { width: 10%; background: var(--governed); }
+        .marker {
+            position: absolute;
+            top: -6px;
+            left: calc(var(--score) - 2px);
+            width: 4px;
+            height: 40px;
+            background: #ffffff;
+            box-shadow: 0 0 0 2px rgba(15, 17, 21, 0.7);
+        }
+        .legend,
+        .summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 12px 0 0;
+            padding: 0;
+            list-style: none;
+        }
+        .legend span { font-weight: 700; }
     </style>
 </head>
 <body>
-    <!-- Full content preserved in source message; this package captures the structure and thresholds. -->
+    <section class="matrix-card">
+        <h1>ARTSTYLE Maturity Matrix</h1>
+        <p>Input score: <strong>0.78</strong> → Output zone: <strong>High</strong> (drift gate clear, governance pending).</p>
+        <div class="gauge" aria-label="Maturity score gauge for 0.78">
+            <div class="gauge-band low"></div>
+            <div class="gauge-band medium"></div>
+            <div class="gauge-band high"></div>
+            <div class="gauge-band governed"></div>
+            <div class="marker" aria-hidden="true"></div>
+        </div>
+        <ul class="legend">
+            <li><span>Low</span> 0.00-0.40</li>
+            <li><span>Medium</span> 0.41-0.75</li>
+            <li><span>High</span> 0.76-0.90</li>
+            <li><span>Governed</span> 0.91-1.00</li>
+        </ul>
+        <ul class="summary">
+            <li>Process: map normalized score to threshold band.</li>
+            <li>Version: first-render baseline.</li>
+            <li>Drift rule: blocker when drift &gt; 0.45.</li>
+        </ul>
+    </section>
 </body>
 </html>
 ```
@@ -151,12 +221,12 @@ gantt
 
     section Zones
     Low (0.00 - 0.40)      :a1, 0, 40
-    Medium (0.41 - 0.75)   :a2, 40, 75
-    High (0.76 - 0.90)     :a3, 75, 90
-    Governed (0.91 - 1.00) :a4, 90, 100
+    Medium (0.41 - 0.75)   :a2, 41, 75
+    High (0.76 - 0.90)     :a3, 76, 90
+    Governed (0.91 - 1.00) :a4, 91, 100
 
     section Gating Thresholds
-    BLOCKER (Drift > 0.45)      :milestone, 0, 0
+    BLOCKER (Drift > 0.45)      :milestone, 45, 45
     Integration (O_rch > 0.30)  :milestone, 30, 30
     Federation (F_ed > 0.40)    :milestone, 40, 40
     Stable (D_rift < 0.45)      :milestone, 45, 45
