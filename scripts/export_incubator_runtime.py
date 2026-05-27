@@ -93,7 +93,7 @@ def export_incubator_runtime(root: Path, output_dir: Path | None = None) -> Path
         "\n"
         "Bridge relevance:\n"
         "  - docs/INCUBATOR_ABACUS_BRIDGE.md\n"
-        "  - scripts/export_abacus_runtime.py\n"
+        "  - Bridge companion script: scripts/export_abacus_runtime.py\n"
         "\n"
         "For usage:\n"
         "  python scripts/parse_chat_tuple.py\n"

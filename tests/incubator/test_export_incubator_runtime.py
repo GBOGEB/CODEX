@@ -31,4 +31,4 @@ def test_export_incubator_runtime(tmp_path):
 
     metadata = (export_dir / "EXPORT_METADATA.txt").read_text(encoding="utf-8")
     assert "Tuple count validated pre-export" in metadata
-    assert "scripts/export_abacus_runtime.py" in metadata
+    assert "Bridge companion script: scripts/export_abacus_runtime.py" in metadata
