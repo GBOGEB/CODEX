@@ -68,7 +68,7 @@ def calculate_drift_variance(
 
 def main(argv: list[str] | None = None) -> int:
     args = _build_parser().parse_args(argv)
-    if bool(args.current_file) != bool(args.baseline_file):
+    if (args.current_file is None) != (args.baseline_file is None):
         raise ValueError("Provide both --current-file and --baseline-file together.")
 
     payload: dict[str, Any] = {

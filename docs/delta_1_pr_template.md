@@ -36,7 +36,7 @@ Capture structure, federation, telemetry, and renderability completion.
 Describe what reviewers should focus on.
 
 ## Near-Miss Optimizations
-- ---
+- None
 
 ## Lineage
 Program: DELTA_1
