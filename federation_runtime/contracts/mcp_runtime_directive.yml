@@ -23,7 +23,7 @@ mcp_execution_surface:
   mcp_ingress_rules:
     - rule_id: "MCP-W003-001"
       assertion: "verify_cryptographic_lineage"
-      action: "Verify SHA-256 signatures against dist/manifest.json before state updates."
+      action: "Verify governed lineage against MANIFEST.json before state updates."
     - rule_id: "MCP-W003-002"
       assertion: "enforce_density_protection"
       action: "Reject execution/PR events if semantic density drops below 2.0."

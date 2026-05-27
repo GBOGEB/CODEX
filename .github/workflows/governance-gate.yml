@@ -1,0 +1,59 @@
+name: W003 Governance Gate
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, edited, synchronize, reopened]
+  push:
+    branches: ["wave/W003-*", "pr/PR-007-*"]
+
+jobs:
+  governance-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: pip install jsonschema
+      - name: Run governance parser on PR metadata
+        if: github.event_name == 'pull_request'
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          follow_up_path="federation_runtime/.github/W003_PR_FOLLOW_UP.md"
+          if python - <<'PY'
+          import os
+          import re
+          import sys
+          body = os.environ.get("PR_BODY") or ""
+          sys.exit(0 if re.search(r"## PR CLASSIFICATION\n(.*?)\n---", body, re.DOTALL) else 1)
+          PY
+          then
+            printf '%s' "$PR_BODY" > /tmp/governance-pr-body.md
+            python federation_runtime/engines/governance_parser.py \
+              --markdown /tmp/governance-pr-body.md \
+              --schema federation_runtime/schema/governance_header.schema.json \
+              --source "pull request body"
+          elif git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- "$follow_up_path" | grep -q .
+          then
+            python federation_runtime/engines/governance_parser.py \
+              --markdown "$follow_up_path" \
+              --schema federation_runtime/schema/governance_header.schema.json \
+              --source "$follow_up_path"
+          else
+            echo "[PR-007][ERROR] Missing governance header in the pull request body and ${follow_up_path} was not updated in this PR."
+            exit 1
+          fi
+      - name: Run governance parser on tracked follow-up file
+        if: github.event_name == 'push'
+        run: |
+          python federation_runtime/engines/governance_parser.py \
+            --markdown federation_runtime/.github/W003_PR_FOLLOW_UP.md \
+            --schema federation_runtime/schema/governance_header.schema.json \
+            --source "federation_runtime/.github/W003_PR_FOLLOW_UP.md"
