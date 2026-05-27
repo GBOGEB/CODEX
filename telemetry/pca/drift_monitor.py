@@ -8,7 +8,6 @@
 """
 
 import sys
-import json
 
 
 def calculate_drift_variance(current_metrics, baseline_metrics):
