@@ -1,5 +1,7 @@
 """Unit tests for telemetry/pca/drift_monitor.py."""
 
+import dataclasses
+
 import pytest
 
 from telemetry.pca.drift_monitor import DriftSignal, compute_drift_score, evaluate_drift
@@ -8,7 +10,7 @@ from telemetry.pca.drift_monitor import DriftSignal, compute_drift_score, evalua
 def test_drift_signal_frozen() -> None:
     """DriftSignal is frozen and immutable."""
     signal = DriftSignal(score=0.1, stable=True)
-    with pytest.raises(Exception):
+    with pytest.raises(dataclasses.FrozenInstanceError):
         signal.score = 0.2  # type: ignore[misc]
 
 
@@ -26,7 +28,7 @@ def test_compute_drift_score_known_deviation() -> None:
     # Deviations: |0.9-0.88|=0.02, |0.75-0.71|=0.04, |0.4-0.5|=0.1
     # Mean: (0.02 + 0.04 + 0.1) / 3 = 0.16 / 3 ≈ 0.0533
     expected = (0.02 + 0.04 + 0.1) / 3
-    assert abs(compute_drift_score(baseline, observed) - expected) < 1e-6
+    assert compute_drift_score(baseline, observed) == pytest.approx(expected)
 
 
 def test_compute_drift_score_empty_vectors() -> None:
@@ -45,7 +47,7 @@ def test_compute_drift_score_single_element() -> None:
     """Drift score works correctly with single-element vectors."""
     baseline = [0.9]
     observed = [0.7]
-    assert abs(compute_drift_score(baseline, observed) - 0.2) < 1e-6
+    assert compute_drift_score(baseline, observed) == pytest.approx(0.2)
 
 
 def test_evaluate_drift_stable() -> None:
@@ -72,7 +74,7 @@ def test_evaluate_drift_threshold_boundary() -> None:
     observed = [0.15, 1.15]
     # Score = (0.15 + 0.15) / 2 = 0.15
     signal = evaluate_drift(baseline, observed, threshold=0.15)
-    assert abs(signal.score - 0.15) < 1e-6
+    assert signal.score == pytest.approx(0.15)
     assert signal.stable is True  # stable when score <= threshold
 
 
