@@ -116,6 +116,8 @@ invariants:
     validation:
       kind: tuple_schema
       schema_file: incubator/session_tuple_schema.yml
+      # Naming pattern: YY_Www_HH_MM__CATEGORY__THEME__TITLE__WXXX.yml
+      # YY = year, Www = ISO week (e.g., W22), HH_MM = time, WXXX = wave (e.g., W000)
       naming_pattern: '^[0-9]{2}_W[0-9]{2}_[0-9]{2}_[0-9]{2}__[A-Z0-9_]+__[A-Z0-9_]+__[A-Z0-9_]+__W[0-9]{3}\.yml$'
       required_fields: [id, date, time_local, iso_week, category, theme, title, wave, status, repo, branch, source_type]
       validation_script: scripts/parse_chat_tuple.py

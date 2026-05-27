@@ -21,7 +21,11 @@ from scripts.parse_chat_tuple import (
 
 
 def test_tuple_file_pattern():
-    """Test the tuple filename pattern matching."""
+    """Test the tuple filename pattern matching.
+    
+    Note: iso_week (e.g., W22) in filename represents calendar week,
+    while wave (e.g., W000) represents project wave. These are independent.
+    """
     # Valid patterns
     assert TUPLE_FILE_PATTERN.match("26_W22_12_35__INCUBATOR__RUNTIME_GOVERNANCE__CHAT_TUPLE_INGRESS_MAPPING__W000.yml")
     assert TUPLE_FILE_PATTERN.match("26_W01_08_45__DELIVERY__BUILD__CI_PIPELINE__W001.yml")

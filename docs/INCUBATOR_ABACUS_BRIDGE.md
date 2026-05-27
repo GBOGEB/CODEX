@@ -85,7 +85,7 @@ Local indexing        →    Export/import       →    Governance telemetry
 |----------------|-------------------|---------------|
 | RUNTIME_GOVERNANCE | Define | Policy definition and routing |
 | CHAT_TUPLE | Measure | Data capture and ingestion |
-| STATIC_RENDERING | Analyze | Index generation and theme extraction |
+| INDEX_GENERATION | Analyze | Index generation and theme extraction |
 | *Future themes* | Improve, Control | To be mapped in W002 |
 
 ## Integration Roadmap
