@@ -7,6 +7,7 @@ import argparse
 import json
 import re
 import sys
+from functools import lru_cache
 from pathlib import Path
 
 HEADER_PATTERN = re.compile(r"## PR CLASSIFICATION\n(.*?)\n---", re.DOTALL)
@@ -55,16 +56,23 @@ def validate_metadata(metadata: dict[str, str], schema: dict) -> tuple[bool, lis
     return (len(errors) == 0, errors)
 
 
+@lru_cache(maxsize=16)
+def _yaml_key_pattern(key: str) -> re.Pattern[str]:
+    return re.compile(rf"^\s*{re.escape(key)}\s*:\s*(.+?)\s*$")
+
+
 def _extract_yaml_scalar(yaml_path: Path, key: str) -> str | None:
-    key_pattern = re.compile(rf"^\s*{re.escape(key)}\s*:\s*(.+?)\s*$")
+    key_pattern = _yaml_key_pattern(key)
     for raw_line in yaml_path.read_text(encoding="utf-8").splitlines():
         line = raw_line.strip()
         if not line or line.startswith("#"):
             continue
-        match = key_pattern.match(raw_line)
+        match = key_pattern.match(line)
         if not match:
             continue
-        value = match.group(1).split("#", 1)[0].strip().strip("'").strip('"')
+        value = match.group(1).split("#", 1)[0].strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+            value = value[1:-1]
         return value
     return None
 
@@ -95,6 +103,7 @@ def run_header_compliance_audit(
     traceability_manifest_path: Path,
     pr_track_path: Path,
     wave_plan_path: Path,
+    runtime_root: Path,
 ) -> int:
     print("[PR-007] Running federation governance parser...")
     print(
@@ -132,7 +141,7 @@ def run_header_compliance_audit(
     ]
 
     _, schema_errors = validate_metadata(metadata, schema)
-    artifact_errors = _validate_required_artifacts(manifest, traceability_manifest_path.parent.parent)
+    artifact_errors = _validate_required_artifacts(manifest, runtime_root)
 
     drift_errors: list[str] = []
     header_wave = metadata.get("WAVE")
@@ -140,17 +149,32 @@ def run_header_compliance_audit(
     pr_track_wave = _extract_yaml_scalar(pr_track_path, "wave")
     wave_plan_active_wave = _extract_yaml_scalar(wave_plan_path, "active_wave")
 
-    if header_wave and manifest_wave and header_wave != manifest_wave:
-        drift_errors.append(f"Wave drift: header={header_wave} manifest={manifest_wave}")
-    if header_wave and pr_track_wave and header_wave != pr_track_wave:
-        drift_errors.append(f"Wave drift: header={header_wave} pr_track={pr_track_wave}")
-    if header_wave and wave_plan_active_wave and header_wave != wave_plan_active_wave:
-        drift_errors.append(f"Wave drift: header={header_wave} wave_plan={wave_plan_active_wave}")
+    wave_sources = [
+        ("manifest", manifest_wave),
+        ("pr_track", pr_track_wave),
+        ("wave_plan", wave_plan_active_wave),
+    ]
+    for source_name, source_wave in wave_sources:
+        if header_wave and source_wave and header_wave != source_wave:
+            drift_errors.append(f"Wave drift: header={header_wave} {source_name}={source_wave}")
 
     pr_order_errors: list[str] = []
     header_pr_id = metadata.get("PR-ID")
     pr_stream = manifest.get("pr_stream", [])
-    if header_pr_id and isinstance(pr_stream, list) and header_pr_id not in pr_stream:
+    valid_pr_stream: list[str] = []
+    if isinstance(pr_stream, list):
+        non_string_entries = [item for item in pr_stream if not isinstance(item, str)]
+        if non_string_entries:
+            invalid_types = sorted({type(item).__name__ for item in non_string_entries})
+            pr_order_errors.append(
+                f"Invalid pr_stream entries: {len(non_string_entries)} non-string item(s) "
+                f"(types: {', '.join(invalid_types)})"
+            )
+        valid_pr_stream = [item for item in pr_stream if isinstance(item, str)]
+    else:
+        pr_order_errors.append("Invalid pr_stream shape in traceability manifest")
+
+    if header_pr_id and header_pr_id not in valid_pr_stream:
         pr_order_errors.append(f"PR-ID not in traceability manifest stream: {header_pr_id}")
 
     pr_track_focus = _extract_yaml_scalar(pr_track_path, "current_focus")
@@ -170,7 +194,7 @@ def run_header_compliance_audit(
             "metadata": metadata,
             "active_wave": header_wave,
             "pr_id": header_pr_id,
-            "traceability_pr_stream_length": len(pr_stream) if isinstance(pr_stream, list) else 0,
+            "traceability_pr_stream_length": len(valid_pr_stream),
             "validation_status": "PASS",
         },
     }
@@ -218,5 +242,6 @@ if __name__ == "__main__":
             traceability_manifest_path=Path(args.traceability_manifest),
             pr_track_path=Path(args.pr_track),
             wave_plan_path=Path(args.wave_plan),
+            runtime_root=root,
         )
     )
