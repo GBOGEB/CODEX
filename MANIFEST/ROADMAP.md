@@ -6,6 +6,99 @@
 
 ALPHA A6
 
+Execution strategy alignment:
+
+- OPTION A = NOW
+- OPTION C = LATER
+
+Primary objective:
+
+- visible execution over storage optimization
+
+---
+
+# W000 — Stage 0 (NOW): Simple + Working
+
+Operational storage decision:
+
+- use GitHub Releases only
+- no Git LFS yet
+- no artifact registry yet
+- no S3 / federation storage layer yet
+
+Minimal operational model:
+
+- repo source + governance + HTML
+- runtime bundles published as release assets
+- Pages as the authoritative rendered surface
+
+Workflow:
+
+- build artifact
+- upload release asset
+- deploy Pages
+- validate runtime
+
+W000-W002 target:
+
+- execution stability
+- minimal operational burden
+- clean repo hygiene
+- gradual maturity increase
+
+Explicit restraint for W000:
+
+- no Kubernetes
+- no databases
+- no object storage
+- no microservices
+- no event buses
+- no distributed telemetry backend
+
+Stack focus:
+
+- GitHub
+- Pages
+- Actions
+- Plotly
+- Python
+- Markdown
+- YAML
+- HTML
+
+---
+
+# W003+ — Stage 1 (LATER): Controlled Growth
+
+Introduce Git LFS only after measurable friction appears, such as:
+
+- repeated large artifacts
+- telemetry snapshots
+- dashboards and image-heavy assets
+- model/runtime datasets
+- persistent binary governance assets
+
+Activation trigger:
+
+- measurable repository friction (not theoretical)
+- expected around W003+ or first federation synchronization wave
+
+---
+
+# Target Hybrid Governance Topology (Mature State)
+
+Layered responsibilities:
+
+- Git: source + governance
+- Releases: transient runtime bundles
+- Git LFS: persistent heavy assets
+- Pages: authoritative rendered surface
+- Actions Artifacts: ephemeral CI outputs
+
+Outcome:
+
+- federated runtime governance storage topology without premature infrastructure complexity
+
 ---
 
 # A6.1 — Renderer Enforcement Layer
