@@ -82,8 +82,8 @@ Every semantic card must satisfy contrast validation before release.
 
 Minimum requirements:
 
-- body text: WCAG 2.2 AA ratio >= 4.5:1
-- title text: WCAG 2.2 AA ratio >= 4.5:1, or >= 3:1 for large text (>= 18 pt regular or >= 14 pt bold)
+- body text (rendered HTML/PPTX output): WCAG contrast ratio >= 7:1
+- title text (rendered HTML/PPTX output): WCAG contrast ratio >= 7:1
 - badges and metadata: no white-on-pastel in dark mode
 - dark cards use darker semantic backgrounds and warmer pale text
 

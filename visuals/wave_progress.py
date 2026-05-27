@@ -1,7 +1,5 @@
 from pathlib import Path
 
-waves = ['A1','A2','A3','A4','A5','A6','A7']
-completion = [100,100,100,100,100,86,41]
 
 def build_wave_progress_figure():
     try:
