@@ -1,171 +1,71 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CODEX Repository Landing</title>
-  <style>
-    :root { --bg: #0f172a; --panel: #111827; --card: #1f2937; --text: #e5e7eb; --muted: #9ca3af; --link: #93c5fd; --accent: #34d399; }
-    body { margin: 0; font-family: Inter,Arial,sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
-    main { max-width: 1100px; margin: 0 auto; padding: 24px 18px 36px; }
-    h1, h2, h3 { margin: 0 0 10px; }
-    p { margin: 0 0 12px; }
-    a { color: var(--link); }
-    .muted { color: var(--muted); }
-    .hero, .section { background: var(--panel); border: 1px solid #374151; border-radius: 12px; padding: 16px; margin-bottom: 14px; }
-    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
-    .card { background: var(--card); border: 1px solid #4b5563; border-radius: 10px; padding: 12px; }
-    code { color: var(--accent); }
-    ul { margin: 8px 0 0 18px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABACUS-CODEX-FEDERATION Governance</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 { color: #24292e; }
+        h2 { color: #0366d6; border-bottom: 1px solid #eaecef; padding-bottom: 8px; }
+        pre {
+            background-color: #f6f8fa;
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+        code {
+            background-color: #f6f8fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        ul { padding-left: 30px; }
+    </style>
 </head>
 <body>
-  <h1>Q Engineering Tools Portal</h1>
-  <p>Canonical GitHub Pages entry point for curated engineering outputs.</p>
-  <ul>
-    <li><a href="engineering_portal.html">Engineering Portal (Enhanced Entry)</a></li>
-    <li><a href="dashboard.html">Dashboard</a></li>
-    <li><a href="federation_bridge_dashboard.html">Federation Bridge Dashboard</a></li>
-    <li><a href="slides_html.html">Federation Slides HTML</a></li>
-    <li><a href="federation_input_template.md">Federation Input Template (Markdown)</a></li>
-    <li><a href="plots/index.html">Plots</a></li>
-    <li><a href="handover.html">Handover</a></li>
-    <li><a href="verification.html">Verification</a></li>
-    <li><a href="regression.html">Regression</a></li>
-    <li><a href="traceability.html">Traceability</a></li>
-    <li><a href="manifest.html">Manifest</a></li>
-    <li><a href="knowledge_transfer_slides.html">Knowledge Transfer Slides</a></li>
-    <li><a href="knowledge_transfer.html">Knowledge Transfer Plan</a></li>
-  </ul>
-  <main>
-    <section class="hero">
-      <h1>CODEX — Repository Landing Page</h1>
-      <p>This page is the repository-level GitHub Pages entry point. It sits above the topic dashboard, generated human reports, manifests, and source/build structure.</p>
-      <p class="muted">Design intent: keep <a href="dashboard.html">dashboard.html</a> as the topic/epic view, while this page provides the broader CODEX information architecture.</p>
-    </section>
-
-    <section class="section">
-      <h2>Overview</h2>
-      <p>CODEX combines source code and generators (<code>src/</code>, <code>scripts/</code>, <code>tests/</code>), canonical content structure (numbered folders and <code>book_md/10_books/</code>), and published outputs (<code>docs/</code>, <code>outputs/</code>).</p>
-    </section>
-
-    <section class="section">
-      <h2>Views / Navigation Modes</h2>
-      <div class="cards">
-        <article class="card"><h3>Global</h3><p>Repository-level structure and indexes.</p></article>
-        <article class="card"><h3>Local</h3><p>Source, scripts, tests, and canonical content areas.</p></article>
-        <article class="card"><h3>Detail</h3><p>Generated reports, manifests, and output artifacts.</p></article>
-        <article class="card"><h3>Bigger Picture</h3><p>Theme dashboard plus handover/governance context.</p></article>
-      </div>
-    </section>
-
-    <section class="section">
-      <h2>Themes &amp; Dashboard</h2>
-      <ul>
-        <li><a href="dashboard.html">Core Topic EP Dashboard</a> (topic/epic launcher retained as-is)</li>
-        <li><a href="dashboard_topics.md">Dashboard blueprint notes</a></li>
-      </ul>
-    </section>
-
-    <section class="section">
-      <h2>Human Reports &amp; Generated Outputs</h2>
-      <ul>
-        <li><a href="HUMAN.index.html">Human report index</a></li>
-        <li><a href="HUMAN.calculations.html">Human calculations</a></li>
-        <li><a href="HUMAN.traceability_table.html">Human traceability table</a></li>
-        <li><a href="../outputs/html/index.html">Generated HTML bundle index</a></li>
-        <li><a href="../outputs/json/calculation_inputs_outputs.json">Generated JSON calculation I/O</a></li>
-        <li><a href="plots/index.html">Plots index</a></li>
-        <li><a href="handover.html">Handover page</a></li>
-        <li><a href="verification.html">Verification page</a></li>
-        <li><a href="regression.html">Regression page</a></li>
-        <li><a href="traceability.html">Traceability page</a></li>
-        <li><a href="manifest.html">Manifest page</a></li>
-      </ul>
-    </section>
-
-    <section class="section">
-      <h2>Manifests &amp; Indexes</h2>
-      <p class="muted">These canonical manifests are in the repository root; links open the files on GitHub.</p>
-      <ul>
-        <li><a href="https://github.com/GBOGEB/CODEX/blob/main/CODEX_Index.yaml">CODEX_Index.yaml</a> — canonical repository structure</li>
-        <li><a href="https://github.com/GBOGEB/CODEX/blob/main/OUTPUT_MANIFEST.json">OUTPUT_MANIFEST.json</a> — generated output inventory</li>
-        <li><a href="https://github.com/GBOGEB/CODEX/blob/main/GLOBAL_index.json">GLOBAL_index.json</a> — dataset/archive index</li>
-      </ul>
-    </section>
-
-    <section class="section">
-      <h2>Core Code / Build / Content Areas</h2>
-      <ul>
-        <li><a href="https://github.com/GBOGEB/CODEX/tree/main/src">src/</a>, <a href="https://github.com/GBOGEB/CODEX/tree/main/scripts">scripts/</a>, <a href="https://github.com/GBOGEB/CODEX/tree/main/tests">tests/</a></li>
-        <li><a href="https://github.com/GBOGEB/CODEX/tree/main/book_md/10_books">book_md/10_books/</a> canonical books/slides/data workspace</li>
-        <li>Numbered domains: <a href="https://github.com/GBOGEB/CODEX/tree/main/01_requirements">01_requirements/</a>, <a href="https://github.com/GBOGEB/CODEX/tree/main/02_design">02_design/</a>, <a href="https://github.com/GBOGEB/CODEX/tree/main/03_bom">03_bom/</a>, <a href="https://github.com/GBOGEB/CODEX/tree/main/04_quality">04_quality/</a>, <a href="https://github.com/GBOGEB/CODEX/tree/main/05_vendor">05_vendor/</a>, <a href="https://github.com/GBOGEB/CODEX/tree/main/06_arch">06_arch/</a>, <a href="https://github.com/GBOGEB/CODEX/tree/main/07_ops">07_ops/</a></li>
-        <li><a href="https://github.com/GBOGEB/CODEX/tree/main/99_handover">99_handover/</a> handover/governance pack</li>
-      </ul>
-    </section>
-
-    <section class="section">
-      <h2>Source → Generator → Outputs → Manifests</h2>
-      <p>Primary lineage:</p>
-      <ul>
-        <li>Source and content inputs in repository structure</li>
-        <li>Generator: <a href="https://github.com/GBOGEB/CODEX/blob/main/src/generate_human_outputs.py">src/generate_human_outputs.py</a></li>
-        <li>Outputs: <a href="HUMAN.index.html">docs/HUMAN.index.html</a>, <a href="HUMAN.calculations.html">docs/HUMAN.calculations.html</a>, <a href="HUMAN.traceability_table.html">docs/HUMAN.traceability_table.html</a>, and <a href="../outputs/html/index.html">outputs/html/*</a></li>
-        <li>Manifested by <a href="https://github.com/GBOGEB/CODEX/blob/main/OUTPUT_MANIFEST.json">OUTPUT_MANIFEST.json</a> and indexed structurally by <a href="https://github.com/GBOGEB/CODEX/blob/main/CODEX_Index.yaml">CODEX_Index.yaml</a></li>
-      </ul>
-    </section>
-
-
-    <section class="section">
-      <h2>QCell v0.6.2 Regression Correction Package</h2>
-      <p>Temperature and pressure are now explicitly separated: temperature is the primary analysis mode; pressure is secondary diagnostic only.</p>
-      <ul>
-        <li><a href="https://github.com/GBOGEB/CODEX/blob/main/svg/temperature_analysis_v0_6_2.svg">Temperature analysis SVG (v0.6.2)</a></li>
-        <li><a href="https://github.com/GBOGEB/CODEX/blob/main/svg/pressure_diagnostic_v0_6_2.svg">Pressure diagnostic SVG (v0.6.2)</a></li>
-        <li><a href="https://github.com/GBOGEB/CODEX/blob/main/src/qcell_view_policy_v0_6_2.yaml">SSOT view policy YAML (v0.6.2)</a></li>
-        <li><a href="https://github.com/GBOGEB/CODEX/blob/main/handoff/README.md">Handoff bundle rebuild instructions (binary outputs excluded from Git)</a></li>
-      </ul>
-      <details>
-        <summary>Layer toggle demo (explicit combined mode)</summary>
-        <label><input type="checkbox" id="tempToggle" checked> Temperature layer</label>
-        <label style="margin-left:12px;"><input type="checkbox" id="pressToggle" checked> Pressure layer</label>
-        <div style="position:relative; margin-top:12px; border:1px solid #4b5563; border-radius:8px; overflow:hidden; max-width:100%;">
-          <img id="tempLayer" src="https://raw.githubusercontent.com/GBOGEB/CODEX/main/svg/temperature_analysis_v0_6_2.svg" alt="Temperature primary layer" style="display:block; width:100%;">
-          <img id="pressLayer" src="https://raw.githubusercontent.com/GBOGEB/CODEX/main/svg/pressure_diagnostic_v0_6_2.svg" alt="Pressure diagnostic layer" style="display:block; width:100%; margin-top:8px;">
-        </div>
-      </details>
-    </section>
-
-    <script>
-      const tempToggle = document.getElementById('tempToggle');
-      const pressToggle = document.getElementById('pressToggle');
-      const tempLayer = document.getElementById('tempLayer');
-      const pressLayer = document.getElementById('pressLayer');
-      function syncLayers() {
-        tempLayer.style.display = tempToggle.checked ? 'block' : 'none';
-        pressLayer.style.display = pressToggle.checked ? 'block' : 'none';
-      }
-      tempToggle?.addEventListener('change', syncLayers);
-      pressToggle?.addEventListener('change', syncLayers);
-      syncLayers();
-    </script>
-    <section class="section">
-      <h2>Related Repositories (Extensible)</h2>
-      <ul>
-        <li>Current repository root: <a href="https://github.com/GBOGEB/CODEX">GBOGEB/CODEX</a></li>
-        <li><a href="https://github.com/GBOGEB/ABACUS">Bridge sibling: GBOGEB/ABACUS</a></li>
-      </ul>
-    </section>
-  
-    <section class="section">
-      <h3>Implementation Status (Active Pipeline Connected)</h3>
-      <ul>
-        <li><strong>Ingestion Layer:</strong> MCP-driven dynamic workspace tracking is active.</li>
-        <li><strong>Traceability Master:</strong> 2 verified terms linked to canonical SSOT.</li>
-        <li><strong>Wave Statistics:</strong> DMAIC Layer Active | Processed N=203 files (Word: 12, Py: 187, Visio/SVG: 1).</li>
-      </ul>
-      <p class="muted"><strong>Pipeline Status:</strong> Continuous deployment synchronization achieved via GitHub Pages.</p>
-    </section>
-  </main>
+    <h1>ABACUS-CODEX-FEDERATION Governance Bootstrap (W000)</h1>
+    
+    <p>This W000 scaffold establishes the runtime governance baseline.</p>
+    
+    <h2>Responsibility Split</h2>
+    <ul>
+        <li><strong>ABACUS</strong> = runtime governance / orchestration / telemetry</li>
+        <li><strong>CODEX</strong> = execution workers / agents / patches / PRs</li>
+        <li><strong>FEDERATION</strong> = capability mesh / Office / diagrams / binaries / APIs</li>
+    </ul>
+    
+    <h2>Workflow (ASCII)</h2>
+    <pre><code>User Intent
+   |
+   v
+GPT_(CODEX + consolidated agentic instruction)
+   |
+   v
+ABACUS Governance Intake -> MCP Sweep -> CODEX Workers -> Validation -> MCP Mop -> Promotion
+   |
+   v
+FEDERATION contracts (Office/Diagram/Binary/API)</code></pre>
+    
+    <h2>W000 Scope</h2>
+    <ul>
+        <li>Runtime governance state machine</li>
+        <li>Agent and federation registries</li>
+        <li>YAML validation utility</li>
+        <li>Runtime scaffold manifest generator</li>
+    </ul>
+    
+    <h2>Resources</h2>
+    <ul>
+        <li><a href="runtime_map.html">Runtime Map</a></li>
+        <li>See <code>governance/*.yml</code> for machine-readable registries</li>
+        <li>See <code>governance/runtime_manifest.json</code> for generated manifest</li>
+    </ul>
 </body>
 </html>

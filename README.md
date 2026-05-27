@@ -1,6 +1,31 @@
-<<<<<<< HEAD
 # ABACUS / CODEX / FEDERATION Runtime Governance Scaffold
-=======
+
+This repository is bootstrapped for **W000** runtime governance.
+
+## Responsibility split
+
+- **ABACUS**: runtime governance, orchestration, telemetry.
+- **CODEX**: execution workers, agents, patches, pull requests.
+- **FEDERATION**: capability mesh, Office/diagram adapters, binaries, APIs.
+
+## W000 scaffold
+
+- `governance/runtime_governance.yml`
+- `governance/agent_registry.yml`
+- `governance/federation_registry.yml`
+- `docs/index.html`
+- `docs/runtime_map.html`
+- `scripts/validate_yaml.py`
+- `scripts/build_manifest.py`
+- `governance/runtime_manifest.json` (generated)
+
+## Quickstart
+
+```bash
+python3 scripts/validate_yaml.py
+python3 scripts/build_manifest.py
+# writes governance/runtime_manifest.json
+```
 
 ## W000-FEDERATED-SEMANTIC-TRACE
 
@@ -18,37 +43,6 @@ See:
 - `agents/abacus/FEDERATION_PROTOCOL.md`
 
 # 🌌 G9 Unified Federation Framework & System Verification Specification
->>>>>>> origin/main
-
-This repository is bootstrapped for **W000** runtime governance.
-
-## Responsibility split
-
-- **ABACUS**: runtime governance, orchestration, telemetry.
-- **CODEX**: execution workers, agents, patches, pull requests.
-- **FEDERATION**: capability mesh, Office/diagram adapters, binaries, APIs.
-
-## W000 scaffold
-
-- `_config.yml`
-- `governance/runtime_governance.yml`
-- `governance/agent_registry.yml`
-- `governance/federation_registry.yml`
-- `docs/index.md`
-- `docs/runtime_map.md`
-- `scripts/validate_yaml.py`
-- `scripts/build_manifest.py`
-- `governance/runtime_manifest.json` (generated)
-
-## Quickstart
-
-```bash
-python3 scripts/validate_yaml.py
-python3 scripts/build_manifest.py
-# writes governance/runtime_manifest.json
-```
-<<<<<<< HEAD
-=======
 
 ## Benefits of Unified Approach
 
@@ -65,9 +59,6 @@ python3 scripts/build_manifest.py
 **NO** - This implementation demonstrates that you can have a single, unified codebase that works with both GitHub.com and GitHub Enterprise Server through configuration-based differences rather than code duplication.
 
 The same classes, methods, and logic work for both environments - only the URLs and configuration parameters change.
-
-
-
 
 ## Cross-Repository Federation (CODEX + ABACUS)
 
@@ -202,19 +193,3 @@ For a direct, operations-ready definition of one full engineering cycle (clone/s
 - [`LINEAGE_BUILD_DEPLOY_CICD.md`](LINEAGE_BUILD_DEPLOY_CICD.md)
 
 Use this as the 100% completion checklist for build/deploy governance and release readiness.
-
-## W000 — ABACUS-CODEX-FEDERATION Runtime Governance Scaffold
-
-Baseline scaffold files are now available for governance bootstrap:
-
-- `_config.yml`
-- `governance/runtime_governance.yml`
-- `governance/agent_registry.yml`
-- `governance/federation_registry.yml`
-- `docs/index.md`
-- `docs/runtime_map.md`
-- `scripts/validate_yaml.py`
-- `scripts/build_manifest.py`
-
-This W000 foundation defines the ABACUS/CODEX/FEDERATION responsibility split, governance state-machine baseline, and starter utilities for YAML validation and manifest build.
->>>>>>> origin/main
