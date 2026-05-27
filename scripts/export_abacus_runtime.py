@@ -30,7 +30,7 @@ def export_abacus_runtime(
     copied_files: list[str] = []
     copied_directory_count = 0
 
-    for item in sorted(source_dir.iterdir()):
+    for item in source_dir.iterdir():
         target = export_dir / item.name
 
         if item.is_file():
@@ -39,11 +39,11 @@ def export_abacus_runtime(
         elif item.is_dir():
             shutil.copytree(item, target)
             copied_directory_count += 1
-            copied_files.extend(
-                str(path.relative_to(source_dir))
-                for path in item.rglob('*')
-                if path.is_file()
-            )
+            for root, _, files in item.walk():
+                copied_files.extend(
+                    str((root / file_name).relative_to(source_dir))
+                    for file_name in files
+                )
 
     manifest_path = source_dir / 'runtime_manifest.yaml'
     manifest = {}
