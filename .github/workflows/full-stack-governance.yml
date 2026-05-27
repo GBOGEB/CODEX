@@ -31,6 +31,11 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+
       - name: Repository lineage
         run: |
           echo "component=${{ matrix.component }}"
@@ -38,22 +43,13 @@ jobs:
           echo "sha=${{ github.sha }}"
           echo "ref=${{ github.ref }}"
 
-      - name: Governance smoke test
+      - name: Governance bridge validation
         run: |
-          mkdir -p reports/${{ matrix.component }}
-          echo "Governance validation for ${{ matrix.component }}" > reports/${{ matrix.component }}/summary.txt
-          python - <<'PY'
-from pathlib import Path
-p = Path('reports') / '${{ matrix.component }}' / 'lineage.txt'
-p.write_text(
-    'governance=lineage-tracked\n'
-    'status=todo\n'
-    'detail=Real governance checks are not yet implemented in .github/workflows/full-stack-governance.yml\n'
-)
-print(p.read_text())
-PY
-          echo "Governance smoke test is a placeholder and must not report success without running real checks." >&2
-          exit 1
+          mkdir -p "reports/${{ matrix.component }}"
+          python scripts/check_bridge_health.py \
+            --component "${{ matrix.component }}" \
+            --report "reports/${{ matrix.component }}/summary.json" \
+            | tee "reports/${{ matrix.component }}/lineage.json"
 
       - name: Upload governance artifacts
         if: always()

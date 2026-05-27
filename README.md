@@ -322,6 +322,16 @@ Required dimensions:
 - `orchestration_readiness`
 - `drift_stability`
 
+### Bridge relevance utility
+
+To keep the W000 bootstrap connected to existing CODEX and in-repo ABACUS assets, run the bridge health utility:
+
+```bash
+python scripts/check_bridge_health.py --component mcp-bridge
+```
+
+It validates the CODEX/ABACUS bridge contract, the in-repo ABACUS runtime manifest, the federation synchronization contract, and the path coverage that connects ABACUS runtime modules back to concrete CODEX utilities and pipelines.
+
 Planned follow-on waves:
 
 - **W001**: register and replay semantic tuples against the runtime handoff contract.
