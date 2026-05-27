@@ -111,8 +111,7 @@ def export_incubator_runtime(root: Path, output_dir: Path | None = None) -> Path
 
 def main() -> int:
     args = parse_args()
-    root = Path(__file__).resolve().parents[1]
-    export_path = export_incubator_runtime(root, args.output_dir)
+    export_path = export_incubator_runtime(REPO_ROOT, args.output_dir)
     print(f"INCUBATOR runtime export complete: {export_path}")
     return 0
 
