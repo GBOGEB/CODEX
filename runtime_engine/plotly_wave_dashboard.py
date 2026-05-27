@@ -43,9 +43,10 @@ Plotly.newPlot('chart', [trace1, trace2], {
 
 def render_dashboard() -> None:
     if not TELEMETRY.exists():
-        print(f'Error: Telemetry file not found at {TELEMETRY}', file=sys.stderr)
-        print('Run: python -m runtime_engine.telemetry_pipeline', file=sys.stderr)
-        sys.exit(1)
+        raise FileNotFoundError(
+            f'Telemetry file not found at {TELEMETRY}. '
+            'Please run telemetry_pipeline.py first to generate the required data.'
+        )
     
     payload = json.loads(TELEMETRY.read_text(encoding='utf-8'))
 
@@ -57,7 +58,7 @@ def render_dashboard() -> None:
     html = html.replace('__WAVES__', json.dumps(waves))
     html = html.replace('__SCORES__', json.dumps(scores))
     html = html.replace('__COMPLETION__', json.dumps(completion))
-
+    
     OUTPUT.mkdir(parents=True, exist_ok=True)
     HTML.write_text(html, encoding='utf-8')
 

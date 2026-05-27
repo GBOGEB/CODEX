@@ -1,0 +1,29 @@
+version: 1
+updated_at: 2026-05-24T00:00:00Z
+federation:
+  repos:
+    - name: CODEX
+      repo_url: https://github.com/GBOGEB/CODEX
+      main_branch: main
+      role: platform_bridge
+      processes:
+        - github_adapter
+        - auth_adapter
+        - pages_publish
+    - name: ABACUS
+      repo_url: https://github.com/GBOGEB/ABACUS
+      main_branch: main
+      role: domain_orchestrator
+      processes:
+        - dmaic_runtime
+        - wave_analytics
+        - tuple_validation
+  glossary:
+    - term: cycle
+      definition: Clone-to-local or push-to-source execution unit.
+    - term: claimed_vs_actual
+      definition: Declared completion percentage compared with evidence-backed status.
+    - term: wave_tracking
+      definition: Statistical tracking using PCA, DMAIC, and ANOVA covariance checks.
+    - term: mcp_protocols
+      definition: Agent message and tool protocol layer used for orchestration visibility.

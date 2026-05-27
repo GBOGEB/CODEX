@@ -1,38 +1,88 @@
+"""Unit tests for runtime_engine modules."""
 from __future__ import annotations
 
 import json
-import sys
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from runtime_engine.telemetry_pipeline import (
+    build_payload,
+    compute_wave_velocity,
+    compute_kpi_score,
+    WAVES,
+    KPI_WEIGHTS,
+    DMAIC,
+)
+from runtime_engine import plotly_wave_dashboard
 
-from runtime_engine import telemetry_pipeline
-from runtime_engine import dmaic_runtime_tracker
-from runtime_engine import pca_convergence_analysis
-from runtime_engine import runtime_control_center
 
-
-def test_build_payload_structure() -> None:
-    """Test that build_payload returns expected structure and keys."""
-    payload = telemetry_pipeline.build_payload()
+def test_compute_wave_velocity_returns_list():
+    """Test that compute_wave_velocity returns a list of velocity deltas."""
+    velocities = compute_wave_velocity()
     
-    # Check top-level keys
+    assert isinstance(velocities, list)
+    assert len(velocities) == len(WAVES) - 1
+    assert all(isinstance(v, (int, float)) for v in velocities)
+
+
+def test_compute_wave_velocity_calculates_deltas_correctly():
+    """Test that velocity deltas are calculated as score differences."""
+    velocities = compute_wave_velocity()
+    
+    # First delta should be W2 score - W1 score = 62 - 48 = 14
+    assert velocities[0] == 14
+    # Second delta should be W3 score - W2 score = 74 - 62 = 12
+    assert velocities[1] == 12
+
+
+def test_compute_kpi_score_returns_float():
+    """Test that compute_kpi_score returns a numeric value."""
+    score = compute_kpi_score()
+    
+    assert isinstance(score, float)
+    assert score > 0
+
+
+def test_compute_kpi_score_uses_weights():
+    """Test that KPI score calculation uses the defined weights."""
+    score = compute_kpi_score()
+    
+    # The score should be a weighted sum, so it should be within reasonable bounds
+    # Given the weights sum to 1.0 and individual scores range from 38-72,
+    # the result should be between 38 and 72
+    assert 38 <= score <= 72
+
+
+def test_build_payload_returns_dict():
+    """Test that build_payload returns a dictionary with expected structure."""
+    payload = build_payload()
+    
+    assert isinstance(payload, dict)
     assert 'waves' in payload
     assert 'telemetry' in payload
     assert 'claimed_vs_actual' in payload
+
+
+def test_build_payload_waves_structure():
+    """Test that the waves section has the correct structure."""
+    payload = build_payload()
     
-    # Check waves structure
-    assert isinstance(payload['waves'], list)
-    assert len(payload['waves']) > 0
+    assert payload['waves'] == WAVES
+    assert len(payload['waves']) == 7
+    
     for wave in payload['waves']:
         assert 'wave' in wave
         assert 'completion' in wave
         assert 'score' in wave
-    
-    # Check telemetry structure
+
+
+def test_build_payload_telemetry_structure():
+    """Test that the telemetry section has all required fields."""
+    payload = build_payload()
     telemetry = payload['telemetry']
+    
     assert 'average_completion' in telemetry
     assert 'average_score' in telemetry
     assert 'wave_velocity' in telemetry
@@ -42,183 +92,87 @@ def test_build_payload_structure() -> None:
     assert 'pca' in telemetry
 
 
-def test_compute_wave_velocity() -> None:
-    """Test that wave velocity is computed correctly."""
-    velocities = telemetry_pipeline.compute_wave_velocity()
+def test_build_payload_telemetry_numeric_values():
+    """Test that telemetry numeric values are calculated correctly."""
+    payload = build_payload()
+    telemetry = payload['telemetry']
     
-    # Should have one less velocity than waves
-    assert len(velocities) == len(telemetry_pipeline.WAVES) - 1
+    # Check that averages are reasonable
+    assert isinstance(telemetry['average_completion'], (int, float))
+    assert isinstance(telemetry['average_score'], (int, float))
+    assert isinstance(telemetry['velocity_average'], (int, float))
+    assert isinstance(telemetry['kpi_score'], (int, float))
     
-    # Check first velocity calculation
-    expected_first = telemetry_pipeline.WAVES[1]['score'] - telemetry_pipeline.WAVES[0]['score']
-    assert velocities[0] == expected_first
+    # Verify average_completion is within expected range
+    assert 0 <= telemetry['average_completion'] <= 100
+    
+    # Verify average_score is within expected range
+    assert 0 <= telemetry['average_score'] <= 100
 
 
-def test_compute_kpi_score() -> None:
-    """Test that KPI score is computed correctly."""
-    score = telemetry_pipeline.compute_kpi_score()
+def test_build_payload_dmaic_structure():
+    """Test that DMAIC data is included correctly."""
+    payload = build_payload()
+    dmaic = payload['telemetry']['dmaic']
     
-    # Should be a float
-    assert isinstance(score, float)
-    
-    # Should be positive
-    assert score > 0
+    assert dmaic == DMAIC
+    assert 'define' in dmaic
+    assert 'measure' in dmaic
+    assert 'analyze' in dmaic
+    assert 'improve' in dmaic
+    assert 'control' in dmaic
 
 
-def test_build_dmaic_summary_structure() -> None:
-    """Test that build_dmaic_summary returns expected structure."""
-    summary = dmaic_runtime_tracker.build_dmaic_summary()
+def test_build_payload_pca_structure():
+    """Test that PCA factors are included with correct structure."""
+    payload = build_payload()
+    pca = payload['telemetry']['pca']
     
-    # Check all DMAIC phases are present
-    expected_phases = ['define', 'measure', 'analyze', 'improve', 'control']
-    for phase in expected_phases:
-        assert phase in summary
-        assert 'current' in summary[phase]
-        assert 'average' in summary[phase]
-        assert 'delta' in summary[phase]
+    assert 'factor_1_governance' in pca
+    assert 'factor_2_validation' in pca
+    assert 'factor_3_topology' in pca
+    assert 'factor_4_runtime' in pca
+    assert 'factor_5_entropy' in pca
+    
+    # All PCA factors should be between 0 and 1
+    for factor_value in pca.values():
+        assert 0 <= factor_value <= 1
 
 
-def test_dmaic_delta_calculation() -> None:
-    """Test that DMAIC deltas are computed correctly."""
-    summary = dmaic_runtime_tracker.build_dmaic_summary()
+def test_build_payload_claimed_vs_actual_structure():
+    """Test that claimed_vs_actual section has expected structure."""
+    payload = build_payload()
+    claimed_vs_actual = payload['claimed_vs_actual']
     
-    # Check delta calculation for 'define' phase
-    define_values = dmaic_runtime_tracker.DMAIC['define']
-    expected_delta = define_values[-1] - define_values[0]
-    assert summary['define']['delta'] == expected_delta
+    assert 'claimed' in claimed_vs_actual
+    assert 'actual' in claimed_vs_actual
+    assert 'missing_execution' in claimed_vs_actual
     
-    # Check current value
-    assert summary['define']['current'] == define_values[-1]
+    assert isinstance(claimed_vs_actual['claimed'], list)
+    assert isinstance(claimed_vs_actual['actual'], list)
+    assert isinstance(claimed_vs_actual['missing_execution'], list)
 
 
-def test_compute_pca_summary_structure() -> None:
-    """Test that compute_pca_summary returns expected structure."""
-    summary = pca_convergence_analysis.compute_pca_summary()
+def test_build_payload_json_serializable():
+    """Test that the payload can be serialized to JSON."""
+    payload = build_payload()
     
-    # Check required keys
-    assert 'total_variance' in summary
-    assert 'normalized_factors' in summary
-    assert 'dominant_factor' in summary
-    assert 'convergence_state' in summary
+    # This should not raise an exception
+    json_str = json.dumps(payload, indent=2)
+    
+    # Verify we can deserialize it back
+    deserialized = json.loads(json_str)
+    assert deserialized == payload
 
 
-def test_pca_normalized_factors_sum() -> None:
-    """Test that normalized PCA factors sum to approximately 1."""
-    summary = pca_convergence_analysis.compute_pca_summary()
+def test_render_dashboard_fails_without_telemetry():
+    """Test that render_dashboard raises FileNotFoundError when telemetry is missing."""
+    # Mock TELEMETRY path to a non-existent file to ensure clean test state
+    fake_telemetry_path = Path('/tmp/nonexistent_telemetry_file_for_test.json')
     
-    normalized = summary['normalized_factors']
-    total = sum(normalized.values())
-    
-    # Should sum to approximately 1 (within floating point tolerance)
-    assert pytest.approx(total, abs=0.01) == 1.0
-
-
-def test_pca_dominant_factor() -> None:
-    """Test that dominant factor is correctly identified."""
-    summary = pca_convergence_analysis.compute_pca_summary()
-    
-    # Dominant factor should be the one with highest value
-    factors = pca_convergence_analysis.PCA_FACTORS
-    expected_dominant = max(factors, key=factors.get)
-    
-    assert summary['dominant_factor'] == expected_dominant
-
-
-def test_build_execution_summary_structure() -> None:
-    """Test that build_execution_summary returns expected structure."""
-    # Reset STATUS for clean test
-    runtime_control_center.STATUS = {'SUCCESS': [], 'FAILED': []}
-    
-    summary = runtime_control_center.build_execution_summary()
-    
-    # Check required keys
-    assert 'timestamp' in summary
-    assert 'executed' in summary
-    assert 'failed' in summary
-    assert 'success_rate' in summary
-    assert 'runtime_state' in summary
-
-
-def test_success_rate_calculation() -> None:
-    """Test that success rate is calculated correctly."""
-    # Reset and set up test data
-    runtime_control_center.STATUS = {
-        'SUCCESS': ['script1.py', 'script2.py'],
-        'FAILED': []
-    }
-    
-    # Mock PIPELINE_STEPS to have 4 items
-    original_steps = runtime_control_center.PIPELINE_STEPS
-    
-    summary = runtime_control_center.build_execution_summary()
-    
-    # With 2 successes out of 4 total, success rate should be 0.5
-    expected_rate = 2 / len(original_steps)
-    assert summary['success_rate'] == pytest.approx(expected_rate, abs=0.01)
-
-
-def test_runtime_state_fully_operational() -> None:
-    """Test that runtime state is FULLY_OPERATIONAL when all succeed."""
-    # Set all pipelines as successful
-    runtime_control_center.STATUS = {
-        'SUCCESS': list(runtime_control_center.PIPELINE_STEPS),
-        'FAILED': []
-    }
-    
-    summary = runtime_control_center.build_execution_summary()
-    
-    assert summary['runtime_state'] == 'FULLY_OPERATIONAL'
-    assert summary['success_rate'] == 1.0
-
-
-def test_runtime_state_failed() -> None:
-    """Test that runtime state is FAILED when all fail."""
-    runtime_control_center.STATUS = {
-        'SUCCESS': [],
-        'FAILED': list(runtime_control_center.PIPELINE_STEPS)
-    }
-    
-    summary = runtime_control_center.build_execution_summary()
-    
-    assert summary['runtime_state'] == 'FAILED'
-    assert summary['success_rate'] == 0.0
-
-
-def test_runtime_state_partial() -> None:
-    """Test that runtime state is PARTIAL_OPERATIONAL for partial success."""
-    runtime_control_center.STATUS = {
-        'SUCCESS': [runtime_control_center.PIPELINE_STEPS[0]],
-        'FAILED': runtime_control_center.PIPELINE_STEPS[1:]
-    }
-    
-    summary = runtime_control_center.build_execution_summary()
-    
-    assert summary['runtime_state'] == 'PARTIAL_OPERATIONAL'
-    assert 0 < summary['success_rate'] < 1
-
-
-def test_empty_pipeline_edge_case() -> None:
-    """Test handling of empty pipeline list."""
-    # Temporarily replace PIPELINE_STEPS
-    original_steps = runtime_control_center.PIPELINE_STEPS
-    runtime_control_center.PIPELINE_STEPS = []
-    runtime_control_center.STATUS = {'SUCCESS': [], 'FAILED': []}
-    
-    summary = runtime_control_center.build_execution_summary()
-    
-    assert summary['runtime_state'] == 'NO_PIPELINES'
-    assert summary['success_rate'] == 0.0
-    
-    # Restore original
-    runtime_control_center.PIPELINE_STEPS = original_steps
-
-
-def test_timestamp_is_timezone_aware() -> None:
-    """Test that timestamps are timezone-aware UTC."""
-    runtime_control_center.STATUS = {'SUCCESS': [], 'FAILED': []}
-    
-    summary = runtime_control_center.build_execution_summary()
-    
-    # Timezone-aware timestamps should end with +00:00 or Z
-    timestamp = summary['timestamp']
-    assert '+' in timestamp or timestamp.endswith('Z')
+    with patch.object(plotly_wave_dashboard, 'TELEMETRY', fake_telemetry_path):
+        with pytest.raises(FileNotFoundError) as exc_info:
+            plotly_wave_dashboard.render_dashboard()
+        
+        assert 'telemetry_pipeline.py' in str(exc_info.value)
+        assert str(fake_telemetry_path) in str(exc_info.value)

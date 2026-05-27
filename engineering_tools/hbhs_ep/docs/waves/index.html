@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HBHS-EP Wave Dashboard</title>
+<style>
+body{margin:0;background:#07101f;color:#f8fafc;font-family:Arial,sans-serif}header{padding:24px 36px;background:linear-gradient(135deg,#0f172a,#172554);border-bottom:1px solid #334155}h1{margin:0;color:#7dd3fc}h2{color:#c4b5fd}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:24px}.card{background:#111827;border:1px solid #334155;border-radius:16px;padding:18px}.kpi{font-size:38px;color:#fde68a;font-weight:bold}.bar{height:16px;background:#0f172a;border-radius:999px;overflow:hidden;border:1px solid #334155}.fill{height:100%;background:linear-gradient(90deg,#38bdf8,#22c55e)}table{width:100%;border-collapse:collapse;font-size:13px}th,td{border:1px solid #334155;padding:8px}th{background:#172554;color:#bfdbfe}td{background:#0f172a}.wave{margin:18px 24px;padding:18px;background:#111827;border:1px solid #334155;border-radius:16px}.done{color:#86efac}.progress{color:#fde68a}.planned{color:#cbd5e1}svg{width:100%;height:auto;border-radius:12px;border:1px solid #334155;background:#0f172a}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<h1>HBHS-EP v8.4 — Visual Wave Dashboard</h1>
+<p>Engineering progress is tracked per wave with explicit plot/graph targets toward a 100-plot engineering portal.</p>
+</header>
+<section class="grid">
+<div class="card"><div class="kpi">100</div><p>Total target plots and graphs.</p></div>
+<div class="card"><div class="kpi">3</div><p>Current visible/generated engineering visuals.</p></div>
+<div class="card"><div class="kpi">6 Waves</div><p>Structured rollout path with DMAIC control.</p></div>
+</section>
+<section class="wave">
+<h2>Overall Completion</h2>
+<div class="bar"><div class="fill" style="width:3%"></div></div>
+<p>3 / 100 plots complete or represented.</p>
+</section>
+<section class="wave">
+<h2>Wave Progression</h2>
+<table>
+<tr><th>Wave</th><th>Focus</th><th>Target</th><th>Current</th><th>Status</th></tr>
+<tr><td>0</td><td>Portal foundation</td><td>0</td><td>0</td><td class="done">COMPLETE</td></tr>
+<tr><td>1</td><td>Dashboard + roadmap visuals</td><td>10</td><td>3</td><td class="progress">IN PROGRESS</td></tr>
+<tr><td>2</td><td>Pressure/compressor envelopes</td><td>20</td><td>0</td><td class="planned">PLANNED</td></tr>
+<tr><td>3</td><td>Monte Carlo and variance</td><td>20</td><td>0</td><td class="planned">PLANNED</td></tr>
+<tr><td>4</td><td>Thermodynamics and exergy</td><td>25</td><td>0</td><td class="planned">PLANNED</td></tr>
+<tr><td>5</td><td>Control and reliability</td><td>15</td><td>0</td><td class="planned">PLANNED</td></tr>
+<tr><td>6</td><td>Release polish</td><td>10</td><td>0</td><td class="planned">PLANNED</td></tr>
+</table>
+</section>
+<section class="wave">
+<h2>Wave Sequence Graphic</h2>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 260">
+<rect width="1200" height="260" fill="#0f172a"/>
+<g font-family="Arial" fill="#f8fafc">
+<line x1="90" y1="130" x2="1110" y2="130" stroke="#334155" stroke-width="10"/>
+<circle cx="120" cy="130" r="40" fill="#22c55e"/><text x="103" y="136">W0</text>
+<circle cx="280" cy="130" r="40" fill="#f59e0b"/><text x="263" y="136">W1</text>
+<circle cx="440" cy="130" r="40" fill="#475569"/><text x="423" y="136">W2</text>
+<circle cx="600" cy="130" r="40" fill="#475569"/><text x="583" y="136">W3</text>
+<circle cx="760" cy="130" r="40" fill="#475569"/><text x="743" y="136">W4</text>
+<circle cx="920" cy="130" r="40" fill="#475569"/><text x="903" y="136">W5</text>
+<circle cx="1080" cy="130" r="40" fill="#475569"/><text x="1063" y="136">W6</text>
+<text x="70" y="210" font-size="14">Foundation</text>
+<text x="230" y="210" font-size="14">Roadmap</text>
+<text x="370" y="210" font-size="14">Pressure</text>
+<text x="560" y="210" font-size="14">Monte Carlo</text>
+<text x="710" y="210" font-size="14">Thermo</text>
+<text x="885" y="210" font-size="14">Reliability</text>
+<text x="1040" y="210" font-size="14">Release</text>
+</g>
+</svg>
+</section>
+<section class="wave">
+<h2>Priority Plot Backlog</h2>
+<ul>
+<li>350 g/s vs 337.62 g/s proof-gap chart</li>
+<li>PVPS suction PERT distribution</li>
+<li>LP outlet Monte Carlo distribution</li>
+<li>JT vs wet turbine yield comparison</li>
+<li>QLH buffer ride-through transient</li>
+<li>Heat leak equivalent at 2 K</li>
+<li>N+1 redistribution under failure</li>
+<li>QRB-WCS pressure loss sensitivity</li>
+<li>Cold compressor suction stabilization</li>
+<li>Recovery compression tier split</li>
+</ul>
+</section>
+</body>
+</html>

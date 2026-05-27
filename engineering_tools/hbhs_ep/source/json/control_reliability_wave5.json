@@ -1,0 +1,42 @@
+{
+  "version": "HBHS-EP-v8.4-wave5-control-reliability",
+  "purpose": "Canonical source for Wave 5 control, reliability and operational state-transition engineering dashboards.",
+  "core_control_cases": [
+    {
+      "id": "CTRL-001",
+      "name": "Feed-forward heater compensation",
+      "scenario": "User load transient from 20 g/s to 50 g/s",
+      "control_action": "Electrical heaters ramp down to stabilize CC suction pressure",
+      "interpretation": "The thermal buffer and heater system acts as a dynamic shock absorber."
+    },
+    {
+      "id": "CTRL-002",
+      "name": "Cold compressor bypass",
+      "scenario": "Cold compressor instability or outage",
+      "control_action": "Ambient heater bypass routes flow to warm compressor train",
+      "interpretation": "Bypass preserves operational continuity during upset conditions."
+    },
+    {
+      "id": "CTRL-003",
+      "name": "LOOP ride-through",
+      "scenario": "Loss of Offsite Power",
+      "control_action": "QLH buffer and staged compressor rundown preserve thermal stability",
+      "interpretation": "Thermal buffering and staged transitions reduce quench/upset probability."
+    }
+  ],
+  "reliability_metrics": [
+    {"metric":"N+1 availability","target":"maintain operation with single-unit failure"},
+    {"metric":"CC suction stability","target":"avoid instability and ingress risk"},
+    {"metric":"Operational continuity","target":"controlled transition during LOOP/upsets"},
+    {"metric":"Buffer utilization","target":"maximize stabilization without excess exergy destruction"}
+  ],
+  "wave5_plot_targets": [
+    "state-transition graph",
+    "heater compensation response",
+    "LOOP ride-through timeline",
+    "cold-compressor bypass flow map",
+    "N+1 reliability state chart",
+    "fault-tree visualization",
+    "operational resilience Sankey"
+  ]
+}
