@@ -21,31 +21,29 @@ def test_drift_monitor_bootstrap_banner():
 def test_drift_monitor_reports_drift_from_metric_files(tmp_path):
     baseline_path = tmp_path / "baseline.json"
     current_path = tmp_path / "current.json"
+    baseline_metrics = {
+        "structure": 0.8,
+        "renderability": 0.7,
+        "federation": 0.6,
+        "semantic_traceability": 0.9,
+        "orchestration_readiness": 0.5,
+        "drift_stability": 0.4,
+    }
+    current_metrics = {
+        "structure": 0.9,
+        "renderability": 0.8,
+        "federation": 0.55,
+        "semantic_traceability": 0.95,
+        "orchestration_readiness": 0.45,
+        "drift_stability": 0.5,
+    }
 
     baseline_path.write_text(
-        json.dumps(
-            {
-                "structure": 0.8,
-                "renderability": 0.7,
-                "federation": 0.6,
-                "semantic_traceability": 0.9,
-                "orchestration_readiness": 0.5,
-                "drift_stability": 0.4,
-            }
-        ),
+        json.dumps(baseline_metrics),
         encoding="utf-8",
     )
     current_path.write_text(
-        json.dumps(
-            {
-                "structure": 0.9,
-                "renderability": 0.8,
-                "federation": 0.55,
-                "semantic_traceability": 0.95,
-                "orchestration_readiness": 0.45,
-                "drift_stability": 0.5,
-            }
-        ),
+        json.dumps(current_metrics),
         encoding="utf-8",
     )
 
@@ -65,15 +63,8 @@ def test_drift_monitor_reports_drift_from_metric_files(tmp_path):
 
     report = json.loads(result.stdout)
     expected_variance = round(
-        (
-            abs(0.9 - 0.8)
-            + abs(0.8 - 0.7)
-            + abs(0.55 - 0.6)
-            + abs(0.95 - 0.9)
-            + abs(0.45 - 0.5)
-            + abs(0.5 - 0.4)
-        )
-        / 6,
+        sum(abs(current_metrics[key] - baseline_metrics[key]) for key in baseline_metrics)
+        / len(baseline_metrics),
         6,
     )
     assert report["tracked_dimensions"] == [

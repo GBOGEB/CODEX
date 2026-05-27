@@ -33,7 +33,10 @@ def calculate_drift_variance(current_metrics, baseline_metrics):
 
 def load_metrics(path):
     """Load a JSON object containing telemetry metrics."""
-    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    try:
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"{path} must contain valid JSON metrics") from exc
     if not isinstance(data, dict):
         raise ValueError(f"{path} must contain a JSON object of metrics")
     return data
@@ -71,7 +74,7 @@ def parse_args(argv=None):
     )
     args = parser.parse_args(argv)
 
-    if bool(args.baseline) != bool(args.current):
+    if (args.baseline is None) != (args.current is None):
         parser.error("--baseline and --current must be provided together")
 
     return args
