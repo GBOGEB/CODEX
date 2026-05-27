@@ -26,7 +26,7 @@ properties:
       theme: { type: string, pattern: "^[A-Z0-9_]+$" }
       intent: { type: string }
       status: { type: string, enum: [ACTIVE, INCUBATING, DEPRECATED, SUSPENDED] }
-      wave: { type: string, pattern: "^W\\d{3,}$" }
+      wave: { type: string, pattern: "^W(?:\\d{3}|\\d{4,})$" }
       trace: { type: string, pattern: "^[A-Z0-9_.]+$" }
       related:
         type: array
@@ -45,7 +45,7 @@ properties:
       - completion_vector
     properties:
       stamp: { type: string, pattern: "^\\d{4}_\\d{4}$" }
-      wave: { type: string, pattern: "^W\\d{3,}$" }
+      wave: { type: string, pattern: "^W(?:\\d{3}|\\d{4,})$" }
       tuple_id: { type: string }
       temporal_index: { type: number }
       orchestration:

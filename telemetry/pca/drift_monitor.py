@@ -68,7 +68,8 @@ def calculate_drift_variance(
 
 def main(argv: list[str] | None = None) -> int:
     args = _build_parser().parse_args(argv)
-    if (args.current_file is None) != (args.baseline_file is None):
+    only_one_file_provided = (args.current_file is None) != (args.baseline_file is None)
+    if only_one_file_provided:
         missing_flag = "--current-file" if args.current_file is None else "--baseline-file"
         raise ValueError(
             f"{missing_flag} is missing; provide both --current-file and --baseline-file together or omit both."
