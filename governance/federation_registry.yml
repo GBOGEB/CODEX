@@ -1,7 +1,35 @@
-federation:
-  providers:
-    - github
-    - openai
-    - gemini
-  office365_bridge: bridges/office_bridge.yml
-  diagram_bridge: bridges/diagram_bridge.yml
+version: 1
+registry: federation_capability_mesh
+federation_nodes:
+  - id: office_runtime
+    type: office
+    capabilities:
+      - document_exchange
+      - approval_packets
+      - governance_briefs
+
+  - id: diagram_runtime
+    type: diagram
+    capabilities:
+      - ascii_workflow_publication
+      - svg_rendering
+      - plotly_export
+
+  - id: binary_runtime
+    type: binary
+    capabilities:
+      - artifact_packaging
+      - checksum_attestation
+      - immutable_release_bundle
+
+  - id: api_runtime
+    type: api
+    capabilities:
+      - contract_query
+      - event_ingestion
+      - telemetry_submission
+
+contracts:
+  integration_mode: exploit_federation_links_first
+  fallback_mode: local_degraded_execution
+  contract_validation: required

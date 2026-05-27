@@ -1,6 +1,86 @@
-wave: W000
-runtime_shell: PROGRAM-COOL
-governance_plane: ABACUS
-execution_plane: CODEX
-federation_plane: FEDERATION
-state: bootstrap
+version: 1
+framework: ABACUS-CODEX-FEDERATION
+ownership:
+  ABACUS:
+    mission: runtime governance / orchestration / telemetry
+    owns:
+      - runtime_state_machine
+      - governance_telemetry
+      - incident_escalation
+  CODEX:
+    mission: execution workers / agents / patches / PRs
+    owns:
+      - worker_dispatch
+      - patch_generation
+      - pull_request_operations
+  FEDERATION:
+    mission: capability mesh / Office / diagrams / binaries / APIs
+    owns:
+      - capability_registry
+      - integration_contracts
+      - binary_exchange
+      - api_exchange
+
+runtime_state_machine:
+  initial_state: proposal
+  max_remediation_retries: 3
+  states:
+    - proposal
+    - triage
+    - assigned
+    - execution
+    - validation
+    - promoted
+    - rolled_back
+    - failed
+    - archived
+  transitions:
+    - from: proposal
+      to: triage
+      gate: governance_intake_complete
+    - from: triage
+      to: assigned
+      gate: worker_selected
+    - from: assigned
+      to: execution
+      gate: execution_plan_approved
+    - from: execution
+      to: validation
+      gate: checks_completed
+    - from: validation
+      to: promoted
+      gate: release_policy_passed
+    - from: validation
+      to: rolled_back
+      gate: rollback_triggered
+    - from: promoted
+      to: archived
+      gate: retention_policy_satisfied
+    - from: rolled_back
+      to: triage
+      gate: remediation_ready_and_retry_available
+    - from: rolled_back
+      to: failed
+      gate: remediation_retry_exhausted
+
+runtime_agents:
+  model_scope: runtime responsibilities only; canonical agent contracts remain in governance/agent_registry.yml
+  sweep:
+    purpose: broad capability and dependency sweep before execution
+    authority: read + classify + route
+  mop:
+    purpose: reconcile residual drift after validation or rollback
+    authority: reconcile + patch + closeout
+
+governance_telemetry:
+  channels:
+    - runtime_events
+    - policy_decisions
+    - worker_health
+    - federation_contract_health
+  retention_days: 90
+
+traceability:
+  locked_contract_rtm: true
+  generic_topic_linking: enabled
+  disturbance_policy: no_mutation_of_locked_contract_entries

@@ -1,0 +1,23 @@
+federation_bridge:
+  version: "1.0.0"
+  domain: "gbogeb"
+  repos:
+    codex:
+      url: "https://github.com/gbogeb/codex"
+      branch: "main"
+      role: "upstream_conceptual"
+      focus: "Markdown, requirements, metadata, YAML glossary"
+    abacus:
+      url: "https://github.com/gbogeb/abacus"
+      branch: "main"
+      role: "downstream_functional"
+      focus: "Python math engines, calculation schemas, code execution"
+  orchestration:
+    mcp_enabled: true
+    protocols: ["git-sync", "telemetry-stream", "artifact-bake"]
+  wave_tracking:
+    analytics: ["PCA", "DMAIC", "ANOVA"]
+    metrics:
+      claimed_progress: float
+      actual_progress: float
+      covariance_threshold: 0.05
