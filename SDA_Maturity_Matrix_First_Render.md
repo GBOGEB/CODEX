@@ -162,6 +162,12 @@ graph TD
             background: #ffffff;
             box-shadow: 0 0 0 2px rgba(15, 17, 21, 0.7);
         }
+        figure {
+            margin: 16px 0 0;
+        }
+        figcaption {
+            margin-bottom: 12px;
+        }
         .legend,
         .summary {
             display: flex;
@@ -178,23 +184,26 @@ graph TD
     <section class="matrix-card">
         <h1>ARTSTYLE Maturity Matrix</h1>
         <p>Input score: <strong>0.78</strong> → Output zone: <strong>High</strong> (drift gate clear, governance pending).</p>
-        <div class="gauge" aria-label="Maturity score gauge for 0.78">
-            <div class="gauge-band low"></div>
-            <div class="gauge-band medium"></div>
-            <div class="gauge-band high"></div>
-            <div class="gauge-band governed"></div>
-            <div class="marker" aria-hidden="true"></div>
-        </div>
-        <ul class="legend">
-            <li><span>Low</span> 0.00-0.40</li>
-            <li><span>Medium</span> 0.41-0.75</li>
-            <li><span>High</span> 0.76-0.90</li>
-            <li><span>Governed</span> 0.91-1.00</li>
-        </ul>
+        <figure>
+            <figcaption>Gauge bands show the maturity zones and the white marker shows the current score.</figcaption>
+            <div class="gauge" aria-label="Maturity score gauge for 0.78">
+                <div class="gauge-band low"></div>
+                <div class="gauge-band medium"></div>
+                <div class="gauge-band high"></div>
+                <div class="gauge-band governed"></div>
+                <div class="marker" aria-hidden="true"></div>
+            </div>
+            <ul class="legend">
+                <li><span>Low</span> 0.00-0.40</li>
+                <li><span>Medium</span> 0.41-0.75</li>
+                <li><span>High</span> 0.76-0.90</li>
+                <li><span>Governed</span> 0.91-1.00</li>
+            </ul>
+        </figure>
         <ul class="summary">
             <li>Process: map normalized score to threshold band.</li>
             <li>Version: first-render baseline.</li>
-            <li>Drift rule: blocker when drift &gt; 0.45.</li>
+            <li>Drift rule: blocker when drift &ge; 0.45.</li>
         </ul>
     </section>
 </body>
@@ -226,7 +235,7 @@ gantt
     Governed (0.91 - 1.00) :a4, 91, 100
 
     section Gating Thresholds
-    BLOCKER (Drift > 0.45)      :milestone, 45, 45
+    BLOCKER (Drift ≥ 0.45)      :milestone, 45, 45
     Integration (O_rch > 0.30)  :milestone, 30, 30
     Federation (F_ed > 0.40)    :milestone, 40, 40
     Stable (D_rift < 0.45)      :milestone, 45, 45
