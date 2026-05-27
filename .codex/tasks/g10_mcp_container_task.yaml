@@ -1,0 +1,21 @@
+task:
+  id: "CODEX-MCP-G10-RUNTIME-GOVERNANCE"
+  type: "mcp_container"
+  title: "G10 Runtime Governance, SSOT, and ASCII Metrics Drop-In"
+  target_repo: "gbogeb/codex"
+  linked_repo: "gbogeb/abacus"
+  branch: "a6-renderer-governance-layer"
+  lifecycle:
+    generation: "G10"
+    phase: "L8_Commissioning_Signed_Off"
+    status: "PR_READY"
+  objective:
+    - "Isolate and execute targeted code-stitching runs without environment bloat."
+    - "Provide localized low-overhead testing infrastructure for features."
+  constraints:
+    no_hosted_html_dashboard: true
+    no_plotly: true
+    no_webview: true
+    markdown_first: true
+    yaml_ssot_required: true
+    ascii_metrics_required: true
