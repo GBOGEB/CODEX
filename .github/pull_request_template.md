@@ -12,7 +12,7 @@
 
 | Key | Value |
 |---|---|
-| Wave | |
+| Wave | W000 |
 | Trace | |
 | State | ACTIVE |
 | Renderable | YES / NO |
@@ -32,7 +32,11 @@
 ---
 
 ## Near-Miss Optimizations
-* ---
+- 
+- 
+- 
+
+---
 
 ## Render Verification
 - [ ] Markdown
