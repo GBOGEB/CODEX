@@ -35,6 +35,7 @@ jobs:
           if [ -f tools/losses/src/build_all.py ]; then
             python tools/losses/src/build_all.py
           fi
+          python orchestrate_g3.py
           python scripts/check_manifest.py
           python scripts/check_globs.py
           python scripts/check_stale.py

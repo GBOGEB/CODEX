@@ -1,97 +1,85 @@
-from __future__ import annotations
-
-import textwrap
-
 import pytest
 
-from physics.helium_refrigeration_core import (
-    RuntimeGovernanceError,
-    run_governance_assimilation,
-    verify_mass_fractions,
-)
+from helium_refrigeration_core import CryogenicHeliumEngineG4
 
 
-def test_verify_mass_fractions_respects_four_decimal_contract() -> None:
-    assert verify_mass_fractions([0.12344, 0.87655])
-
-
-def test_verify_mass_fractions_rejects_invalid_total() -> None:
-    assert not verify_mass_fractions([0.5000, 0.4998])
-
-
-def test_run_governance_assimilation_returns_true_for_valid_payload(tmp_path) -> None:
-    ssot_path = tmp_path / "ssot.yaml"
-    ssot_path.write_text(
-        textwrap.dedent(
-            """
-            ssot:
-              components:
-                - id: G10-TUPLE-HE-REF
-                  modes:
-                    2K-SB:
-                      target_efficiency: 0.35
-                    2K-OP:
-                      nominal_flow_g_s: 11.5
-            """
-        ).strip()
-        + "\n",
-        encoding="utf-8",
+def test_compute_g4_dynamic_exergy_nominal_value() -> None:
+    engine = CryogenicHeliumEngineG4()
+    result = engine.compute_g4_dynamic_exergy(
+        mass_flow=11.5,
+        h_in=12.0,
+        h_out=28.5,
+        s_in=0.04,
+        s_out=0.07,
+        power_kw=220.0,
     )
+    assert result == pytest.approx(0.43444125)
 
-    assert run_governance_assimilation(
-        ssot_path=str(ssot_path),
-        active_flow=11.5,
-        active_efficiency=0.35,
-        mass_mix=[0.9995, 0.0005],
+
+def test_compute_g4_dynamic_exergy_ln2_assist_branch() -> None:
+    engine = CryogenicHeliumEngineG4()
+    with_assist = engine.compute_g4_dynamic_exergy(
+        mass_flow=11.5,
+        h_in=12.0,
+        h_out=28.5,
+        s_in=0.04,
+        s_out=0.07,
+        power_kw=220.0,
+        ln2_assist=True,
     )
-
-
-def test_run_governance_assimilation_returns_false_when_gate_fails(tmp_path) -> None:
-    ssot_path = tmp_path / "ssot.yaml"
-    ssot_path.write_text(
-        textwrap.dedent(
-            """
-            ssot:
-              components:
-                - id: G10-TUPLE-HE-REF
-                  modes:
-                    2K-SB:
-                      target_efficiency: 0.35
-                    2K-OP:
-                      nominal_flow_g_s: 11.5
-            """
-        ).strip()
-        + "\n",
-        encoding="utf-8",
+    without_assist = engine.compute_g4_dynamic_exergy(
+        mass_flow=11.5,
+        h_in=12.0,
+        h_out=28.5,
+        s_in=0.04,
+        s_out=0.07,
+        power_kw=220.0,
+        ln2_assist=False,
     )
+    assert with_assist > without_assist
+    assert without_assist == pytest.approx(0.39494659090909087)
 
-    assert not run_governance_assimilation(
-        ssot_path=str(ssot_path),
-        active_flow=8.0,
-        active_efficiency=0.20,
-        mass_mix=[0.9995, 0.0005],
+
+def test_compute_g4_dynamic_exergy_zero_or_negative_power() -> None:
+    engine = CryogenicHeliumEngineG4()
+    assert engine.compute_g4_dynamic_exergy(1.0, 10.0, 20.0, 0.01, 0.02, 0.0) == 0.0
+    assert engine.compute_g4_dynamic_exergy(1.0, 10.0, 20.0, 0.01, 0.02, -5.0) == 0.0
+
+
+def test_compute_g4_dynamic_exergy_clamping() -> None:
+    engine = CryogenicHeliumEngineG4()
+    clamped_high = engine.compute_g4_dynamic_exergy(
+        mass_flow=1000.0,
+        h_in=12.0,
+        h_out=28.5,
+        s_in=0.04,
+        s_out=0.07,
+        power_kw=220.0,
     )
+    clamped_low = engine.compute_g4_dynamic_exergy(
+        mass_flow=2.0,
+        h_in=30.0,
+        h_out=10.0,
+        s_in=0.00,
+        s_out=0.10,
+        power_kw=5.0,
+    )
+    assert clamped_high == 1.0
+    assert clamped_low == 0.0
 
 
-def test_run_governance_assimilation_rejects_invalid_or_empty_payload(tmp_path) -> None:
-    empty_ssot = tmp_path / "empty.yaml"
-    empty_ssot.write_text("", encoding="utf-8")
+def test_compute_wave_metrics_anova_nominal_values() -> None:
+    engine = CryogenicHeliumEngineG4()
+    covariance, correlation = engine.compute_wave_metrics_anova(
+        [0.25, 0.50, 0.75, 1.00],
+        [0.22, 0.49, 0.74, 0.99],
+    )
+    assert covariance == pytest.approx(0.10666666666666667)
+    assert correlation == pytest.approx(0.9998169448073261)
 
-    with pytest.raises(RuntimeGovernanceError, match="missing 'ssot' mapping"):
-        run_governance_assimilation(
-            ssot_path=str(empty_ssot),
-            active_flow=11.5,
-            active_efficiency=0.35,
-            mass_mix=[0.9995, 0.0005],
-        )
 
-    list_ssot = tmp_path / "list.yaml"
-    list_ssot.write_text("- bad\n", encoding="utf-8")
-
-    with pytest.raises(RuntimeGovernanceError, match="top-level mapping"):
-        run_governance_assimilation(
-            ssot_path=str(list_ssot),
-            active_flow=11.5,
-            active_efficiency=0.35,
-            mass_mix=[0.9995, 0.0005],
-        )
+def test_compute_wave_metrics_anova_invalid_and_zero_variance_cases() -> None:
+    engine = CryogenicHeliumEngineG4()
+    assert engine.compute_wave_metrics_anova([0.1], [0.1]) == (0.0, 0.0)
+    assert engine.compute_wave_metrics_anova([0.1, 0.2], [0.1]) == (0.0, 0.0)
+    assert engine.compute_wave_metrics_anova([1.0, 1.0], [2.0, 2.0]) == (0.0, 0.0)
