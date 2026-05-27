@@ -108,3 +108,15 @@ invariants:
       kind: manifest_coverage
       manifest: semantic_substrate/repo_manifest.yaml
     roe_trigger: repo layout changes silently
+  - id: INV-011
+    title: INCUBATOR tuple integrity
+    statement: INCUBATOR tuple files shall conform to session_tuple_schema.yml naming and required fields.
+    severity: error
+    applies_to: [incubator, tuple_ingress]
+    validation:
+      kind: tuple_schema
+      schema_file: incubator/session_tuple_schema.yml
+      naming_pattern: '^[0-9]{2}_W[0-9]{2}_[0-9]{2}_[0-9]{2}__[A-Z0-9_]+__[A-Z0-9_]+__[A-Z0-9_]+__W[0-9]{3}\.yml$'
+      required_fields: [id, date, time_local, iso_week, category, theme, title, wave, status, repo, branch, source_type]
+      validation_script: scripts/parse_chat_tuple.py
+    roe_trigger: malformed tuple enters incubator, CI parse failure
