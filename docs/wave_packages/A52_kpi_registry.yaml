@@ -1,0 +1,47 @@
+metadata:
+  wave: A52
+  purpose: canonical KPI registry and weighting definitions
+
+KPIs:
+
+  maturity:
+    definition: current operational stability
+    equation: "maturity = stabilized_capabilities / total_capabilities"
+    weight: 0.20
+
+  convergence:
+    definition: alignment with federation and topology goals
+    equation: "convergence = aligned_domains / total_domains"
+    weight: 0.20
+
+  survivability:
+    definition: continuity under deployment, rollback, or drift
+    equation: "survivability = resilient_paths / total_paths"
+    weight: 0.20
+
+  completion:
+    definition: implemented and evidence-backed scope
+    equation: "completion = closed_items / total_items"
+    weight: 0.15
+
+  propagation_gain:
+    definition: downstream recursive improvement from a change
+    equation: "propagation_gain = sum(downstream_impact_i)"
+    weight: 0.10
+
+  dependency_compression:
+    definition: reduction of operational critical path
+    equation: "compression = baseline_path - optimized_path"
+    weight: 0.05
+
+  weighted_priority:
+    definition: effort-adjusted convergence leverage
+    equation: "WP = (weakness * propagation_gain * federation_impact) / effort"
+    weight: 0.10
+
+report_groups:
+  - governance
+  - runtime
+  - federation
+  - analytics
+  - closure
