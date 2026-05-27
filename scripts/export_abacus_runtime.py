@@ -28,7 +28,7 @@ def export_abacus_runtime(
     export_dir.mkdir(parents=True, exist_ok=True)
 
     copied_files: list[str] = []
-    copied_directories = 0
+    copied_directory_count = 0
 
     for item in sorted(source_dir.iterdir()):
         target = export_dir / item.name
@@ -38,10 +38,10 @@ def export_abacus_runtime(
             copied_files.append(item.name)
         elif item.is_dir():
             shutil.copytree(item, target)
-            copied_directories += 1
+            copied_directory_count += 1
             copied_files.extend(
                 str(path.relative_to(source_dir))
-                for path in sorted(item.rglob('*'))
+                for path in item.rglob('*')
                 if path.is_file()
             )
 
@@ -59,8 +59,8 @@ def export_abacus_runtime(
         "modules": manifest.get("modules", []),
         "deployment": manifest.get("deployment", {}),
         "copied_file_count": len(copied_files),
-        "copied_directory_count": copied_directories,
-        "copied_files": copied_files,
+        "copied_directory_count": copied_directory_count,
+        "copied_files": sorted(copied_files),
     }
 
     if report_path is not None:
