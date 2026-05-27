@@ -24,3 +24,10 @@ Use:
 
 Example:
 `GOVERNANCE.RUNTIME.2622_1535.W000`
+
+## Integration Threshold Gates
+Automated validation should stop code merges when the federation envelope falls outside these bounds:
+
+- Federation < 0.40
+- Orchestration readiness < 0.30
+- Drift > 0.45
