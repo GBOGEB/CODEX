@@ -29,3 +29,7 @@ The parser logs governed input paths, validation process steps, and structured o
 - Full PR trace: `docs/FULL_PR_TRACE.md`
 - Wave recreation plan: `governance/wave_recreation_plan.yml`
 - Execution handover brief: `.github/EXECUTION_HANDOVER.md`
+
+## Pipeline integration bridges
+- Main-repo governance gate: `.github/workflows/w003-governance-gate.yml`
+- Stack-level bridge validation: `.github/workflows/full-stack-governance.yml` (CODEX, ABACUS, MCP bridge components)

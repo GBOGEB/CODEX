@@ -31,11 +31,18 @@ def extract_governance_block(markdown_text: str) -> dict[str, str] | None:
 
 def validate_metadata(metadata: dict[str, str], schema: dict) -> tuple[bool, list[str]]:
     errors: list[str] = []
+    properties = schema.get("properties", {})
+    additional_properties_allowed = schema.get("additionalProperties", True)
+
     for key in schema.get("required", []):
         if key not in metadata:
             errors.append(f"Missing required key: {key}")
 
-    properties = schema.get("properties", {})
+    if additional_properties_allowed is False:
+        unknown_keys = sorted(key for key in metadata if key not in properties)
+        for key in unknown_keys:
+            errors.append(f"Unknown key not allowed by schema: {key}")
+
     for key, prop in properties.items():
         if key not in metadata:
             continue

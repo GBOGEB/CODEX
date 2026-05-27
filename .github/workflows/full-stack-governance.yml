@@ -38,22 +38,74 @@ jobs:
           echo "sha=${{ github.sha }}"
           echo "ref=${{ github.ref }}"
 
-      - name: Governance smoke test
+      - name: Governance integration checks
         run: |
           mkdir -p reports/${{ matrix.component }}
-          echo "Governance validation for ${{ matrix.component }}" > reports/${{ matrix.component }}/summary.txt
           python - <<'PY'
-from pathlib import Path
-p = Path('reports') / '${{ matrix.component }}' / 'lineage.txt'
-p.write_text(
-    'governance=lineage-tracked\n'
-    'status=todo\n'
-    'detail=Real governance checks are not yet implemented in .github/workflows/full-stack-governance.yml\n'
-)
-print(p.read_text())
-PY
-          echo "Governance smoke test is a placeholder and must not report success without running real checks." >&2
-          exit 1
+          from pathlib import Path
+          import os
+          import subprocess
+          import sys
+
+          component = os.environ["COMPONENT"]
+          report_dir = Path("reports") / component
+          report_dir.mkdir(parents=True, exist_ok=True)
+
+          checks = {
+              "codex": [
+                  ("federation_runtime/engines/governance_parser.py", "governance parser"),
+                  ("federation_runtime/schema/governance_header.schema.json", "governance schema"),
+              ],
+              "abacus": [
+                  ("abacus_render_pipeline", "abacus render pipeline"),
+                  ("src/abacus_render_pipeline", "abacus source runtime"),
+              ],
+              "mcp-bridge": [
+                  ("federation_bridge", "federation bridge"),
+                  ("output/federation_bridge", "bridge output namespace"),
+              ],
+          }
+
+          missing = []
+          for path, label in checks.get(component, []):
+              if not Path(path).exists():
+                  missing.append(f"{label} missing at {path}")
+
+          if component == "codex":
+              command = [
+                  sys.executable,
+                  "federation_runtime/engines/governance_parser.py",
+                  "--target",
+                  "federation_runtime/.github/W003_PR_FOLLOW_UP.md",
+                  "--schema",
+                  "federation_runtime/schema/governance_header.schema.json",
+                  "--traceability-manifest",
+                  "federation_runtime/governance/traceability_manifest.json",
+                  "--pr-track",
+                  "federation_runtime/governance/pr_track.yml",
+                  "--wave-plan",
+                  "federation_runtime/governance/wave_recreation_plan.yml",
+              ]
+              completed = subprocess.run(command, check=False, capture_output=True, text=True)
+              (report_dir / "governance_parser.log").write_text(completed.stdout + completed.stderr, encoding="utf-8")
+              if completed.returncode != 0:
+                  print(completed.stdout)
+                  print(completed.stderr)
+                  missing.append("governance parser command failed; see governance_parser.log")
+
+          status = "pass" if not missing else "fail"
+          details = "\n".join(missing) if missing else "all checks passed"
+          (report_dir / "lineage.txt").write_text(
+              f"governance=lineage-tracked\nstatus={status}\ndetail={details}\n",
+              encoding="utf-8",
+          )
+          print((report_dir / "lineage.txt").read_text(encoding="utf-8"))
+
+          if missing:
+              raise SystemExit(1)
+          PY
+        env:
+          COMPONENT: ${{ matrix.component }}
 
       - name: Upload governance artifacts
         if: always()

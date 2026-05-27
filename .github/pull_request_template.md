@@ -1,5 +1,19 @@
 # [WAVE]
 
+## Federation Governance Header (required when touching `federation_runtime/**`)
+
+## PR CLASSIFICATION
+- PR-ID: PR-XXX
+- WAVE: W003
+- SPRINT: Sx-Px
+- DOMAIN: EXECUTION_GOVERNANCE_INFRASTRUCTURE
+- TYPE: GOVERNANCE
+- CRITICALITY: HIGH
+- TOPOLOGY IMPACT: YES
+- SCHEMA MUTATION: CONTROLLED
+
+---
+
 ## Semantic Scope
 - [ ] Governance
 - [ ] Federation
