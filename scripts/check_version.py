@@ -1,7 +1,15 @@
 import json
 from pathlib import Path
 
-version = json.loads(Path("VERSION.json").read_text(encoding="utf-8"))
+version_path = Path("VERSION.json")
+
+try:
+    version = json.loads(version_path.read_text(encoding="utf-8"))
+except FileNotFoundError as exc:
+    raise SystemExit("VERSION.json missing") from exc
+except json.JSONDecodeError as exc:
+    raise SystemExit(f"VERSION.json is not valid JSON: {exc}") from exc
+
 required = ("version", "generated_at", "git")
 missing = [key for key in required if key not in version]
 non_string = [key for key in required if key in version and not isinstance(version[key], str)]
