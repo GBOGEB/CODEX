@@ -1,0 +1,39 @@
+{
+  "generation": "G7",
+  "lifecycle_phase": "L8_Integrated_Commissioning",
+  "project_parent": "MINERVA_QPLANT",
+  "system_owner": "GBOGEB",
+  "audit_status": "SCAFFOLD_IN_PROGRESS",
+  "components": [
+    {
+      "id": "G7-TUPLE-A66",
+      "domain": "Control & Automation",
+      "spatial_tag": "CCB.Room_01",
+      "upstream_path": "https://github.com/GBOGEB/abacus (external)",
+      "downstream_path": "https://github.com/GBOGEB/abacus (external)"
+    },
+    {
+      "id": "G7-TUPLE-HE-REF",
+      "domain": "Cryogenic System Engineering",
+      "spatial_tag": "AUB.Room_02",
+      "modes": {
+        "2K-SB": { "signal_id": "HE_STATIC_BENCHMARK", "target_efficiency": 0.35 },
+        "2K-OP": { "signal_id": "HE_DYNAMIC_OPERATIONAL", "nominal_flow_g_s": 11.5 }
+      },
+      "upstream_path": "https://github.com/GBOGEB/abacus (external)",
+      "downstream_path": "helium_refrigeration_core.py"
+    },
+    {
+      "id": "G7-TUPLE-RENDER",
+      "domain": "UI/UX Accessibility Engineering",
+      "spatial_tag": "CLOUD.Runner",
+      "target_invariant": {
+        "warning": {
+          "dark": { "background": "#4A3110", "text": "#FFE9A3" }
+        }
+      },
+      "upstream_path": "themes/semantic_cards.yaml",
+      "downstream_path": "semantic_substrate/renderer/contrast_validator.py"
+    }
+  ]
+}
