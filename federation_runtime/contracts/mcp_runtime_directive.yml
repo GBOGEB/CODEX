@@ -1,0 +1,29 @@
+mcp_execution_surface:
+  contract_context: "E0-W003-I002"
+  execution_rights: "LOCAL_AUTHORITATIVE_RECONCILIATION"
+  topology_version_lock:
+    major: 0
+    wave: "W003"
+    schema_generation: 2
+
+  measured_telemetry_snapshot:
+    execution_graph_nodes: 35
+    execution_graph_edges: 44
+    artifacts_signed: 9
+    files_classified: 14
+    semantic_density: 2.1
+    semantic_entropy: 2.298
+    traceability_coverage: 1.0
+
+  reconciliation_authority_model:
+    primary_authority: "engines/governance_parser.py"
+    drift_strategy: "zero_tolerance"
+    fallback_action: "immediate_execution_invalidation"
+
+  mcp_ingress_rules:
+    - rule_id: "MCP-W003-001"
+      assertion: "verify_cryptographic_lineage"
+      action: "Verify SHA-256 signatures against dist/manifest.json before state updates."
+    - rule_id: "MCP-W003-002"
+      assertion: "enforce_density_protection"
+      action: "Reject execution/PR events if semantic density drops below 2.0."
