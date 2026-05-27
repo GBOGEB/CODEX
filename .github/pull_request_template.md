@@ -47,5 +47,5 @@ Describe what reviewers should focus on.
 - None
 
 ## Lineage
-Program: <program>
+Program: DELTA_1
 Repository: CODEX
