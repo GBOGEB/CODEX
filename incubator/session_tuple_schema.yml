@@ -1,0 +1,62 @@
+$schema: "https://yaml.org/spec/1.2/spec.html"
+schema_id: "session_tuple.v1"
+description: "Schema contract for incubator chat/session tuple ingestion files."
+required:
+  - id
+  - date
+  - time_local
+  - iso_week
+  - category
+  - theme
+  - title
+  - wave
+  - status
+  - repo
+  - branch
+  - source_type
+  - tuple
+fields:
+  id:
+    type: string
+    pattern: "YY_Www_HH_MM__CATEGORY__THEME__TITLE__STATUS"
+  date:
+    type: string
+    format: date
+  time_local:
+    type: string
+    format: HH:MM
+  iso_week:
+    type: string
+    format: YYYY-Www
+  category:
+    type: string
+  theme:
+    type: string
+  title:
+    type: string
+  wave:
+    type: string
+  status:
+    type: string
+    enum: [active, paused, archived]
+  repo:
+    type: string
+  branch:
+    type: string
+  source_type:
+    type: string
+    enum: [chat_tuple, session_tuple]
+  tuple:
+    type: object
+    required: [actor, prompt, outcome]
+    fields:
+      actor:
+        type: string
+      prompt:
+        type: string
+      outcome:
+        type: string
+      tags:
+        type: list[string]
+      artifacts:
+        type: list[string]

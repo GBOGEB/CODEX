@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 version: "1.0.0"
 agents:
   - id: abacus-governor
@@ -21,3 +22,51 @@ agents:
       - near-miss-detection
       - obsolete-pruning
       - remediation-ticketing
+=======
+version: 1
+registry: codex_agent_registry
+agents:
+  - id: gpt_codex_chat
+    class: interactive_chat
+    platform: CODEX
+    description: GPT (Generative Pre-trained Transformer; CODEX + consolidated agentic instruction) chat entrypoint
+    accepts:
+      - user_intent
+      - task_constraints
+      - governance_context
+    emits:
+      - execution_ticket
+      - worker_plan
+      - audit_note
+    governance:
+      requires_runtime_state: triage
+      escalation_target: ABACUS
+
+  - id: mcp_sweep
+    class: governance_worker
+    platform: CODEX
+    description: Performs broad pre-execution capability and dependency sweep
+    accepts:
+      - execution_ticket
+      - federation_registry_snapshot
+    emits:
+      - sweep_report
+      - routing_recommendation
+    governance:
+      requires_runtime_state: assigned
+      escalation_target: ABACUS
+
+  - id: mcp_mop
+    class: governance_worker
+    platform: CODEX
+    description: Performs post-validation reconciliation and drift cleanup
+    accepts:
+      - validation_report
+      - drift_events
+    emits:
+      - remediation_patch_plan
+      - closeout_report
+    governance:
+      requires_runtime_state: validation
+      escalation_target: ABACUS
+>>>>>>> origin/main
