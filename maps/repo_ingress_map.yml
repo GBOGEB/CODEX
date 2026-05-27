@@ -1,0 +1,8 @@
+version: 1
+ingress:
+  chat_tuple:
+    source_dir: "incubator"
+    parser: "scripts/parse_chat_tuple.py"
+    index_builder: "scripts/build_incubator_index.py"
+    output_docs:
+      - "docs/incubator_index.md"

@@ -1,0 +1,41 @@
+{
+  "generation": "G4",
+  "phase": "Integrated_Commissioning_L8",
+  "system_owner": "Gert",
+  "facility_tag": "CCB.Room_01",
+  "implementation_status": {
+    "state": "framework_stub",
+    "missing": [
+      "runtime configuration for production telemetry endpoints"
+    ],
+    "todo": [
+      "Resolve private telemetry endpoints from deployment-local environment/config."
+    ]
+  },
+  "signal_matrix": {
+    "A66_Status": {
+      "component_id": "G4-TUPLE-A66",
+      "hardware_tag": "A66-TC-001",
+      "telemetry_stream": "g4.a66.status",
+      "lifecycle_gate": "L8_Verification"
+    },
+    "Helium_Refrigeration": {
+      "component_id": "G4-TUPLE-HE-REF",
+      "modes": {
+        "2K-SB": {
+          "signal_id": "HE-SB-STATIC",
+          "target_efficiency": 0.35
+        },
+        "2K-OP": {
+          "signal_id": "HE-OP-DYNAMIC",
+          "max_flow_g_s": 11.5
+        }
+      }
+    },
+    "Automation_Bridge": {
+      "component_id": "G4-TUPLE-GH-PR",
+      "webhook_target": "https://api.github.com/repos/gbogeb/abacus/dispatches",
+      "dispatch_event": "g4_telemetry_converged"
+    }
+  }
+}

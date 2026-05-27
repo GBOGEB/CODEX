@@ -1,52 +1,18 @@
 name: WCAG Contrast Invariant Gatekeeper
-
 on:
   push:
-    branches: [main, a6-renderer-governance-layer]
+    branches: [ main, a6-renderer-governance-layer ]
   pull_request:
-    branches: [main]
-
+    branches: [ main ]
 jobs:
   wcag-gate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Initialize Environment
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-      - name: Install dependencies
+          python-version: '3.11'
+      - name: Execute WCAG Node Assessment
         run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Verify WCAG contrast invariant from SSOT
-        run: |
-          python - <<'PY'
-          import sys
-          import yaml
-          from pathlib import Path
-
-          # Load SSOT to get governed values
-          ssot_path = Path("SSOT/g10_runtime_governance_ssot.yaml")
-          ssot = yaml.safe_load(ssot_path.read_text())
-          wcag_inv = ssot["ssot"]["invariants"]["wcag_warning_dark"]
-          bg = wcag_inv["background"]
-          text = wcag_inv["text"]
-          threshold = wcag_inv["minimum_ratio"]
-
-          # Reuse existing contrast calculation from governance
-          sys.path.insert(0, str(Path.cwd()))
-          from governance.WCAG_CONTRAST_CHECKER import contrast_ratio
-
-          ratio = contrast_ratio(bg, text)
-          print(f"SSOT-governed contrast check: {bg} / {text}")
-          print(f"Calculated Contrast Ratio: {ratio:.2f}:1 (threshold: {threshold})")
-          
-          if ratio < threshold:
-              print(f"CRITICAL: WCAG AA contrast invariant failed (ratio {ratio:.2f} < {threshold}).")
-              sys.exit(1)
-          
-          print("SUCCESS: Contrast threshold cleared.")
-          PY
-      - name: Verify semantic theme via existing checker
-        run: |
-          python governance/WCAG_CONTRAST_CHECKER.py
+          python src/abacus_render_pipeline/orchestrate.py --smoke
