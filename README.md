@@ -1,5 +1,32 @@
 # 🌌 G9 Unified Federation Framework & System Verification Specification
 
+## W000 Runtime Governance Bootstrap (ABACUS / CODEX / FEDERATION)
+
+Runtime governance scaffold introduced for wave **W000**:
+
+- **ABACUS** = runtime governance / orchestration / telemetry
+- **CODEX** = execution workers / agents / patches / PRs
+- **FEDERATION** = capability mesh / Office / diagrams / binaries / APIs
+
+Scaffold files:
+
+- `_config.yml`
+- `governance/runtime_governance.yml`
+- `governance/agent_registry.yml`
+- `governance/federation_registry.yml`
+- `docs/index.md`
+- `docs/runtime_map.md`
+- `scripts/validate_yaml.py`
+- `scripts/build_manifest.py`
+
+Quickstart:
+
+```bash
+python3 scripts/validate_yaml.py
+python3 scripts/build_manifest.py
+```
+
+
 ## 🛡️ Level 8 (L8) Closed-Loop Post-Commissioning Summary
 
 * **A6 Warning Card Text Contrast Performance:** `10.03:1` (Target: $\ge 4.5:1$)
