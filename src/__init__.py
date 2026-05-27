@@ -11,9 +11,36 @@ All differences are handled through configuration and runtime detection.
 from .github_interface import GitHubInterface
 from .authenticator import GitHubAuthenticator
 from .config import GitHubConfig, ConfigManager
+from .mcp_sweep import (
+    LineageDeltaStore,
+    MCPSweepEngine,
+    PullRequestCrawler,
+    SweepInputContract,
+    SweepOutputContract,
+    SweepStateStore,
+    TokenBoundaryGuard,
+    TokenScope,
+    load_governance_config,
+    validate_governance_schema,
+)
 
 __version__ = "1.3.0"
-__all__ = ["GitHubInterface", "GitHubAuthenticator", "GitHubConfig", "ConfigManager"]
+__all__ = [
+    "GitHubInterface",
+    "GitHubAuthenticator",
+    "GitHubConfig",
+    "ConfigManager",
+    "TokenScope",
+    "TokenBoundaryGuard",
+    "SweepInputContract",
+    "SweepOutputContract",
+    "SweepStateStore",
+    "LineageDeltaStore",
+    "PullRequestCrawler",
+    "MCPSweepEngine",
+    "validate_governance_schema",
+    "load_governance_config",
+]
 
 
 def create_github_client(config: GitHubConfig = None) -> tuple:
