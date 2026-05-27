@@ -64,6 +64,18 @@ def test_drift_monitor_reports_drift_from_metric_files(tmp_path):
     )
 
     report = json.loads(result.stdout)
+    expected_variance = round(
+        (
+            abs(0.9 - 0.8)
+            + abs(0.8 - 0.7)
+            + abs(0.55 - 0.6)
+            + abs(0.95 - 0.9)
+            + abs(0.45 - 0.5)
+            + abs(0.5 - 0.4)
+        )
+        / 6,
+        6,
+    )
     assert report["tracked_dimensions"] == [
         "structure",
         "renderability",
@@ -72,6 +84,6 @@ def test_drift_monitor_reports_drift_from_metric_files(tmp_path):
         "orchestration_readiness",
         "drift_stability",
     ]
-    assert report["drift_variance"] == 0.075
+    assert report["drift_variance"] == expected_variance
     assert report["deltas"]["structure"] == 0.1
     assert report["deltas"]["federation"] == -0.05
