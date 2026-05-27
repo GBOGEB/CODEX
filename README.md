@@ -208,6 +208,51 @@ The same classes, methods, and logic work for both environments - only the URLs 
 
 
 
+
+## Cross-Repository Federation (CODEX + ABACUS)
+
+For the `GBOGEB/(CODEX + ABACUS)` topology, treat CODEX and ABACUS as separate "core-sequence" systems connected through a federation layer rather than a monorepo merge.
+
+### Federation goals
+- Preserve each repository's independent orchestration, hierarchy, and agent behavior.
+- Share knowledge/events through GitHub + MCP contracts.
+- Trigger follow-up workflows from lifecycle states (`start`, `in_progress`, `completed`, `failed`).
+
+### Federation control plane
+1. **State emission in each repo**
+   - Emit normalized state records (`source_repo`, `workflow`, `run_id`, `state`, `timestamp`, `artifact`).
+2. **Knowledge-share transport**
+   - Publish state and artifacts via GitHub releases/artifacts/issues and expose them through MCP resources.
+3. **Cross-repo orchestrator**
+   - Subscribe to MCP resources and GitHub events; map conditions to actions.
+4. **Triggered actions**
+   - Open/close follow-up issues, dispatch workflows, or update status ledgers in peer repos.
+
+### Event contract (recommended)
+Use one shared event schema across CODEX and ABACUS:
+
+```json
+{
+  "federation": "repo-highway-v1",
+  "source_repo": "GBOGEB/CODEX",
+  "workflow": "publish-overlay",
+  "run_id": "12345678",
+  "target_repo": "GBOGEB/ABACUS",
+  "state": "completed",
+  "metric": {"name": "validation_score", "value": 0.98},
+  "artifact": {"kind": "manifest", "ref": "docs/gistau-ch15/data/generated_overlay_manifest.json"},
+  "correlation_id": "<uuid>",
+  "timestamp": "2026-05-26T00:00:00Z"
+}
+```
+
+### Practical trigger examples
+- **Completion trigger**: CODEX publish step reaches `completed` -> ABACUS ingest workflow starts.
+- **Quality gate trigger**: metric threshold crossed -> open ABACUS optimization issue automatically.
+- **Initiation trigger**: ABACUS experiment starts -> CODEX creates watch status/checkpoint.
+
+This keeps repo autonomy while enabling deterministic federation behavior through explicit contracts and event-driven orchestration.
+
 ## PR-H2 generated overlay pipeline
 
 This repository now includes the PR-H2 generated overlay pipeline layer for thermodynamic visualization artifacts.
