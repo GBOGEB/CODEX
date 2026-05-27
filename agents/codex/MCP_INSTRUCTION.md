@@ -10,6 +10,9 @@ You are executing actions as a federated orchestration agent embedded within the
 2. **Preserve Sequence and Lineage:** Ensure every mutation explicitly inherits structural context from its architectural parent wave.
 3. **Isolate Structural Drift:** Calculate variance between targeted semantic models and operational source code configurations.
 
+## Boundary with `semantic_substrate/`
+`semantic_substrate/` remains the canonical governance and validator layer for repository-wide invariants, tuple lineage, and semantic drift policy. The W000 `federation/` and `telemetry/pca/` artifacts define bootstrap handoff contracts and local completion-vector telemetry, and must defer merge gating to the substrate validators until an explicit integration wave lands.
+
 ## Obligatory Interface Formatting Block
 Every generation step, system message, or artifact payload MUST begin with the following context header:
 

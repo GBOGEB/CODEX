@@ -16,3 +16,6 @@ Automated validation checks must explicitly stop code merges if structural evalu
 * $F_{\text{ederation}} < 0.40$
 * $O_{\text{rch}} < 0.30$
 * $D_{\text{rift}} > 0.45$ (Flags elevated structural variance)
+
+## Boundary with `semantic_substrate/`
+Use federation completion vectors as local runtime inputs, but treat `semantic_substrate/analytics/drift_engine.py` and the substrate invariants as the repository-level source of truth for merge governance and semantic debt scoring.
