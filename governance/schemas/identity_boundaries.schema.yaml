@@ -1,0 +1,13 @@
+name: identity_boundaries
+required:
+  - lanes
+  - token_reuse_across_lanes
+properties:
+  lanes:
+    type: mapping
+    required:
+      - office365_graph_session
+      - github_session
+      - apple_personal_session
+  token_reuse_across_lanes:
+    type: bool

@@ -11,9 +11,24 @@ All differences are handled through configuration and runtime detection.
 from .github_interface import GitHubInterface
 from .authenticator import GitHubAuthenticator
 from .config import GitHubConfig, ConfigManager
+from .federation import (
+    FederationIdentityBroker,
+    MCPSweepEngine,
+    Office365GraphConnector,
+    validate_repository_ssot,
+)
 
 __version__ = "1.3.0"
-__all__ = ["GitHubInterface", "GitHubAuthenticator", "GitHubConfig", "ConfigManager"]
+__all__ = [
+    "GitHubInterface",
+    "GitHubAuthenticator",
+    "GitHubConfig",
+    "ConfigManager",
+    "FederationIdentityBroker",
+    "MCPSweepEngine",
+    "Office365GraphConnector",
+    "validate_repository_ssot",
+]
 
 
 def create_github_client(config: GitHubConfig = None) -> tuple:

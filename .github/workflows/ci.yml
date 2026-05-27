@@ -23,6 +23,10 @@ jobs:
           pip install pytest
           pip install -e .
 
+      - name: Validate SSOT schemas
+        run: |
+          python scripts/check_ssot_schemas.py
+
       - name: Build dashboard/pages
         run: |
           if [ -f tools/losses/src/build_all.py ]; then

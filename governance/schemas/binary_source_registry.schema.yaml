@@ -1,0 +1,17 @@
+name: binary_sources
+required:
+  - office365
+  - github
+properties:
+  office365:
+    type: mapping
+    required:
+      - system_of_record
+      - graph_base_url
+      - cache_root
+      - supported_formats
+  github:
+    type: mapping
+    required:
+      - system_of_record
+      - stores_only
