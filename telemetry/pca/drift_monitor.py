@@ -14,16 +14,18 @@ import sys
 
 def calculate_drift_variance(current_metrics, baseline_metrics):
     """
-    Calculates drift divergence between the current session parameters and established baseline.
+    Calculates the variance of per-dimension drift between the current session
+    parameters and the established baseline.
     Full feature implementation scheduled for execution in W002.
     """
-    variance_sum = 0.0
     tracked_dimensions = ['structure', 'renderability', 'federation', 'semantic_traceability', 'orchestration_readiness', 'drift_stability']
+    drift_values = []
 
     for metric in tracked_dimensions:
-        variance_sum += abs(current_metrics.get(metric, 0.0) - baseline_metrics.get(metric, 0.0))
+        drift_values.append(abs(current_metrics.get(metric, 0.0) - baseline_metrics.get(metric, 0.0)))
 
-    return variance_sum / len(tracked_dimensions)
+    mean_drift = sum(drift_values) / len(drift_values)
+    return sum((drift_value - mean_drift) ** 2 for drift_value in drift_values) / len(drift_values)
 
 
 def main():
