@@ -4,13 +4,7 @@
 PROPOSED
 
 ## Context
-
-The GG federated governance model requires:
-- stable runtime execution
-- convergence
-- low drift
-- measurable telemetry
-- evidence-backed governance
+The GG federated governance model requires stable runtime execution, convergence, low drift, measurable telemetry, and evidence-backed governance.
 
 Uncontrolled debug execution creates:
 - telemetry noise
@@ -26,7 +20,6 @@ Therefore debug capability must:
 - execute conditionally
 
 ## Decision
-
 The repository SHALL implement governed debug execution modes.
 
 Debug tooling SHALL be:
@@ -67,20 +60,21 @@ adr_governance:
 
 | Mode | Trigger | Scope |
 |---|---|---|
-| on_commit | local commit | light validation |
-| on_pull_request | PR creation/update | full governance validation |
-| on_schedule | scheduled workflow | deep convergence scan |
-| manual | human-triggered | targeted diagnostics |
+| `on_commit` | local commit | light validation |
+| `on_pull_request` | PR creation/update | full governance validation |
+| `on_schedule` | scheduled workflow | deep convergence scan |
+| `manual` | human-triggered | targeted diagnostics |
 
 ## Governance Rules
 
 1. Debug systems SHALL exist under `/runtime/debug/`
 2. Logs SHALL exist under `/runtime/logs/`
-3. All debug runs SHALL produce evidence
-4. Debug execution SHALL be traceable
-5. Debug execution SHALL support convergence analysis
-6. Debug execution SHALL NOT bypass CI/CD
-7. PRs SHALL satisfy minimum governance checks before merge
+3. The repository SHALL track placeholder files for required runtime directories, while generated logs remain runtime-only outputs.
+4. All debug runs SHALL produce evidence payloads.
+5. Debug execution SHALL be traceable via bitemporal identifiers.
+6. Debug execution SHALL support convergence trend analysis.
+7. Debug execution SHALL NOT bypass CI/CD gateway blocks.
+8. PRs SHALL satisfy minimum governance checks before merge authorization.
 
 ## Consequences
 
