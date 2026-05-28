@@ -211,12 +211,12 @@ def test_mcp_sweep_engine_prunes_state_once_per_run(tmp_path):
     class CountingStateStore(SweepStateStore):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
-            self.prune_calls = 0
+            self.load_pruned_calls = 0
             self.save_calls = 0
 
-        def prune(self, now):
-            self.prune_calls += 1
-            return super().prune(now)
+        def load_pruned(self, now):
+            self.load_pruned_calls += 1
+            return super().load_pruned(now)
 
         def save(self, payload):
             self.save_calls += 1
@@ -244,5 +244,5 @@ def test_mcp_sweep_engine_prunes_state_once_per_run(tmp_path):
     output = engine.run(contract, guard)
 
     assert len(output.near_misses) == 1
-    assert store.prune_calls == 1
-    assert store.save_calls == 2
+    assert store.load_pruned_calls == 1
+    assert store.save_calls == 1

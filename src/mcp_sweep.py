@@ -183,19 +183,22 @@ class SweepStateStore:
         self.state_path.parent.mkdir(parents=True, exist_ok=True)
         self.state_path.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
 
-    def prune(self, now: datetime) -> Dict[str, str]:
+    def load_pruned(self, now: datetime) -> Dict[str, str]:
         state = self.load()
         cutoff = now - timedelta(days=self.ttl_days)
-        kept = {k: v for k, v in state.items() if _parse_timestamp(v) >= cutoff}
+        return {k: v for k, v in state.items() if _parse_timestamp(v) >= cutoff}
+
+    def prune(self, now: datetime) -> Dict[str, str]:
+        kept = self.load_pruned(now)
         self.save(kept)
         return kept
 
     def should_include(self, dedupe_key: str, now: datetime) -> bool:
-        state = self.prune(now)
+        state = self.load_pruned(now)
         return dedupe_key not in state
 
     def record(self, dedupe_key: str, now: datetime) -> None:
-        state = self.prune(now)
+        state = self.load_pruned(now)
         state[dedupe_key] = now.isoformat()
         self.save(state)
 
@@ -421,7 +424,7 @@ class MCPSweepEngine:
 
         near_misses: List[SweepFinding] = []
         obsolete_items: List[SweepFinding] = []
-        state = self.state_store.prune(now) if self.state_store.state_path.exists() else {}
+        state = self.state_store.load_pruned(now) if self.state_store.state_path.exists() else {}
 
         for candidate in candidates:
             number = int(candidate.get("number", 0))
