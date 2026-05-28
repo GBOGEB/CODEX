@@ -186,6 +186,29 @@ def test_state_store_prunes_old_entries(tmp_path):
     assert "new" in remaining
 
 
+def test_state_store_record_saves_once(tmp_path):
+    class CountingStateStore(SweepStateStore):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.save_calls = 0
+
+        def save(self, payload):
+            self.save_calls += 1
+            super().save(payload)
+
+    store = CountingStateStore(tmp_path / "state.json", ttl_days=1)
+    now = datetime.now(timezone.utc)
+    store.save({"stale": (now - timedelta(days=2)).isoformat()})
+    store.save_calls = 0
+
+    store.record("new-key", now)
+
+    assert store.save_calls == 1
+    payload = store.load()
+    assert "stale" not in payload
+    assert "new-key" in payload
+
+
 def test_mcp_sweep_engine_prunes_state_once_per_run(tmp_path):
     class StubCrawler:
         def list_closed_pull_requests(self, *args, **kwargs):

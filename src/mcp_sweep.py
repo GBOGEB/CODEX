@@ -611,4 +611,3 @@ def _extract_parent_requirement(text: str) -> Optional[str]:
     if not match:
         return None
     return match.group(1)
-
