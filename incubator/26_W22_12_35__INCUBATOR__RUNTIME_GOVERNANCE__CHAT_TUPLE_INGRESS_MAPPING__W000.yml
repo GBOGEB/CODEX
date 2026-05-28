@@ -7,15 +7,18 @@ theme: "RUNTIME_GOVERNANCE"
 title: "CHAT_TUPLE_INGRESS_MAPPING"
 wave: "W000"
 status: "active"
-repo: "GBOGEB/CODEX"
+repo: "GBOGEB/PROGRAM-COOL"
 branch: "wave/W000-incubator-chat-tuple-ingress"
 source_type: "chat_tuple"
-dmaic_phase: "define"
 tuple:
-  actor: "system"
-  prompt_type: "scaffold_definition"
-  source_reference: "problem_statement"
-tags:
-  - "incubator"
-  - "ingress"
-  - "runtime_governance"
+  actor: "codex"
+  prompt: "Initialize incubator tuple ingestion scaffold with naming convention and index builder."
+  outcome: "Scaffold created for W000/W001 with tuple parser and markdown index generator."
+  tags:
+    - incubator
+    - tuple
+    - governance
+  artifacts:
+    - incubator/session_tuple_schema.yml
+    - scripts/parse_chat_tuple.py
+    - scripts/build_incubator_index.py

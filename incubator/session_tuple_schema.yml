@@ -1,8 +1,7 @@
-schema: "session_tuple.v1"
-yaml_version: "1.2"
-description: "Human-editable schema for INCUBATOR chat/session tuple ingress records."
-naming_convention: "YY_Www_HH_MM__CATEGORY__THEME__TITLE__W###"
-required_fields:
+$schema: "https://yaml.org/spec/1.2/spec.html"
+schema_id: "session_tuple.v1"
+description: "Schema contract for incubator chat/session tuple ingestion files."
+required:
   - id
   - date
   - time_local
@@ -15,29 +14,49 @@ required_fields:
   - repo
   - branch
   - source_type
-field_types:
-  id: string
-  date: date
-  time_local: string
-  iso_week: string
-  category: string
-  theme: string
-  title: string
-  wave: string
-  status: string
-  repo: string
-  branch: string
-  source_type: string
-optional_fields:
-  - dmaic_phase
   - tuple
-  - tags
-constraints:
-  id_pattern: "^[0-9]{2}_W[0-9]{2}_[0-9]{2}_[0-9]{2}__[A-Z0-9_]+__[A-Z0-9_]+__[A-Z0-9_]+__W[0-9]{3}$"
-  allowed_source_types:
-    - chat_tuple
-    - session_tuple
-  allowed_status:
-    - active
-    - archived
-    - draft
+fields:
+  id:
+    type: string
+    pattern: "YY_Www_HH_MM__CATEGORY__THEME__TITLE__STATUS"
+  date:
+    type: string
+    format: date
+  time_local:
+    type: string
+    format: HH:MM
+  iso_week:
+    type: string
+    format: YYYY-Www
+  category:
+    type: string
+  theme:
+    type: string
+  title:
+    type: string
+  wave:
+    type: string
+  status:
+    type: string
+    enum: [active, paused, archived]
+  repo:
+    type: string
+  branch:
+    type: string
+  source_type:
+    type: string
+    enum: [chat_tuple, session_tuple]
+  tuple:
+    type: object
+    required: [actor, prompt, outcome]
+    fields:
+      actor:
+        type: string
+      prompt:
+        type: string
+      outcome:
+        type: string
+      tags:
+        type: list[string]
+      artifacts:
+        type: list[string]

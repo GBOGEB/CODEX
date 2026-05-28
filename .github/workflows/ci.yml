@@ -49,14 +49,9 @@ jobs:
         run: |
           python scripts/check_links.py
 
-      - name: Validate INCUBATOR tuples
+      - name: Check CODEX-ABACUS bridge alignment
         run: |
-          python scripts/parse_chat_tuple.py --json-output /tmp/tuples.json
-          python scripts/validate_tuple.py
-
-      - name: Export INCUBATOR runtime bundle
-        run: |
-          python scripts/export_incubator_runtime.py --output-dir /tmp/incubator_export
+          python scripts/check_bridge_alignment.py
 
       - name: Render governance lint
         run: |
