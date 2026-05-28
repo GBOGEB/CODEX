@@ -1,4 +1,6 @@
-# [WAVE] - ## Semantic Scope
+# [WAVE]
+
+## Semantic Scope
 - [ ] Governance
 - [ ] Federation
 - [ ] Runtime
@@ -24,10 +26,12 @@
 
 | Domain | Completion |
 |---|---|
-| Structure | % |
-| Federation | % |
-| Telemetry | % |
-| Renderability | % |
+| Structure | 0.00 |
+| Federation | 0.00 |
+| Renderability | 0.00 |
+| Semantic Traceability | 0.00 |
+| Orchestration Readiness | 0.00 |
+| Drift Stability | 0.00 |
 
 ---
 

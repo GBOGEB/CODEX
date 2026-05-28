@@ -122,3 +122,66 @@ bridge:
 
             self.assertEqual(exit_code, 1)
             self.assertIn("strict dormant mode is enabled", buffer.getvalue())
+
+    def test_validate_reports_unmapped_modules_in_non_strict_mode(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            paths = self._paths_for_root(root)
+
+            _write(
+                paths["BRIDGE_MAP_PATH"],
+                """
+bridge:
+  module_alignment:
+    - abacus_module: renderer
+      codex_path: dashboards
+""".strip(),
+            )
+            _write(paths["ABACUS_MANIFEST_PATH"], "modules:\n  - renderer\n  - telemetry\n")
+            _write(paths["FEDERATION_CONTRACT_PATH"], "delta_1_runtime_federation_contract: {}\n")
+            _write(paths["SYNC_PATH"], "abacus_codex_recursive_sync: {}\n")
+            _write(
+                paths["SEMANTIC_SCHEMA_PATH"],
+                "properties:\n  human_render:\n    properties:\n      status:\n        enum: [ACTIVE]\n",
+            )
+            _write(root / "dashboards" / ".gitkeep", "\n")
+
+            with patch.multiple(bridge, **paths):
+                buffer = io.StringIO()
+                with redirect_stdout(buffer):
+                    exit_code = bridge.validate(strict_dormant=False, strict_coverage=False)
+
+            self.assertEqual(exit_code, 0)
+            self.assertIn("unmapped abacus modules detected", buffer.getvalue())
+            self.assertIn("telemetry", buffer.getvalue())
+
+    def test_validate_fails_on_unmapped_modules_in_strict_coverage_mode(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            paths = self._paths_for_root(root)
+
+            _write(
+                paths["BRIDGE_MAP_PATH"],
+                """
+bridge:
+  module_alignment:
+    - abacus_module: renderer
+      codex_path: dashboards
+""".strip(),
+            )
+            _write(paths["ABACUS_MANIFEST_PATH"], "modules:\n  - renderer\n  - telemetry\n")
+            _write(paths["FEDERATION_CONTRACT_PATH"], "delta_1_runtime_federation_contract: {}\n")
+            _write(paths["SYNC_PATH"], "abacus_codex_recursive_sync: {}\n")
+            _write(
+                paths["SEMANTIC_SCHEMA_PATH"],
+                "properties:\n  human_render:\n    properties:\n      status:\n        enum: [ACTIVE]\n",
+            )
+            _write(root / "dashboards" / ".gitkeep", "\n")
+
+            with patch.multiple(bridge, **paths):
+                buffer = io.StringIO()
+                with redirect_stdout(buffer):
+                    exit_code = bridge.validate(strict_dormant=False, strict_coverage=True)
+
+            self.assertEqual(exit_code, 1)
+            self.assertIn("strict coverage mode is enabled", buffer.getvalue())
