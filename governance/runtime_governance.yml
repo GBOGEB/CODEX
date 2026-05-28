@@ -64,7 +64,9 @@ runtime_state_machine:
       gate: remediation_retry_exhausted
 
 runtime_agents:
-  model_scope: runtime responsibilities only; canonical agent contracts remain in governance/agent_registry.yml
+  model_scope:
+    runtime_responsibilities_only: true
+    canonical_agent_contracts: governance/agent_registry.yml
   sweep:
     purpose: broad capability and dependency sweep before execution
     authority: read + classify + route

@@ -18,7 +18,7 @@ This W000 scaffold establishes the runtime governance baseline.
 User Intent
    |
    v
-GPT_(CODEX + consolidated agentic instruction)
+GPT_CODEX_Chat
    |
    v
 ABACUS Governance Intake -> MCP Sweep -> CODEX Workers -> Validation -> MCP Mop -> Promotion
