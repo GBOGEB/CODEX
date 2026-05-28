@@ -1,0 +1,23 @@
+version: "1.0.0"
+agents:
+  - id: abacus-governor
+    role: governance-orchestrator
+    owner: ABACUS
+    capabilities:
+      - state-machine-control
+      - telemetry-aggregation
+      - policy-enforcement
+  - id: codex-worker
+    role: execution-worker
+    owner: CODEX
+    capabilities:
+      - patch-generation
+      - test-execution
+      - pr-preparation
+  - id: mcp-sweep-mop
+    role: post-session-curator
+    owner: ABACUS
+    capabilities:
+      - near-miss-detection
+      - obsolete-pruning
+      - remediation-ticketing

@@ -1,0 +1,23 @@
+name: Renderer Lint Guard
+on:
+  push:
+    branches: [ main, a6-renderer-governance-layer ]
+  pull_request:
+    branches: [ main ]
+permissions:
+  contents: read
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Linters
+        run: pip install flake8 black
+      - name: Enforce Code Styling Rules
+        run: |
+          flake8 src/abacus_render_pipeline/ --count --select=E9,F63,F7,F82 --show-source --statistics
+          black --check src/abacus_render_pipeline/

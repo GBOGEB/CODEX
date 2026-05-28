@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "artstyle-wip-federation",
   "image": "mcr.microsoft.com/devcontainers/python:3.11",
   "features": {
@@ -8,13 +9,31 @@
     "vscode": {
       "settings": {
         "python.defaultInterpreterPath": "/usr/local/bin/python"
+=======
+  "name": "ARTSTYLE-WIP W000 Federation Bootstrap",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "postCreateCommand": "pip install --quiet -r requirements.txt 2>/dev/null || true",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "files.insertFinalNewline": true
+>>>>>>> refs/remotes/origin/main
       },
       "extensions": [
         "ms-python.python",
         "ms-toolsai.jupyter",
+<<<<<<< HEAD
         "yzhang.markdown-all-in-one"
       ]
     }
   },
   "postCreateCommand": "pip install -r requirements.txt && pip install -e ."
+=======
+        "yzhang.markdown-all-in-one",
+        "redhat.vscode-yaml"
+      ]
+    }
+  }
+>>>>>>> refs/remotes/origin/main
 }
