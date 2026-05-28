@@ -3,6 +3,8 @@ name: Runtime Release Gate
 on:
   workflow_dispatch:
   pull_request:
+permissions:
+  contents: read
 
 jobs:
   release-gate:
