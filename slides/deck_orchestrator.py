@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import os
 import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -20,6 +21,7 @@ from typing import Any, Iterable, Mapping, Sequence
 import yaml
 
 DEFAULT_OUTPUT_FORMATS: Sequence[str] = ("html", "md")
+SUPPORTED_OUTPUT_FORMATS = frozenset({"html", "md", "markdown"})
 BLOCK_KEYS: Sequence[str] = (
     "body",
     "objectives",
@@ -30,6 +32,7 @@ BLOCK_KEYS: Sequence[str] = (
     "artifacts",
     "notes",
 )
+HEADING_TOKEN_OVERRIDES = {"rtm": "RTM", "iso": "ISO", "css": "CSS"}
 
 
 @dataclass(frozen=True)
@@ -161,13 +164,17 @@ def _render_mapping_table(mapping: Mapping[str, Any]) -> str:
     return f"<table>{''.join(rows)}</table>" if rows else ""
 
 
+def _format_block_heading(key: str) -> str:
+    return " ".join(HEADING_TOKEN_OVERRIDES.get(token, token.title()) for token in key.split("_"))
+
+
 def _render_slide_blocks(slide: Mapping[str, Any]) -> str:
     blocks = []
     for key in BLOCK_KEYS:
         value = slide.get(key)
         if value in (None, ""):
             continue
-        heading = key.replace("_", " ").title()
+        heading = _format_block_heading(key)
         if key == "body" and isinstance(value, list):
             blocks.append(_render_sequence(value))
         elif isinstance(value, list):
@@ -224,7 +231,7 @@ def _markdown_for_value(key: str, value: Any) -> list[str]:
     if value in (None, ""):
         return lines
     if key != "body":
-        lines.extend([f"### {key.replace('_', ' ').title()}", ""])
+        lines.extend([f"### {_format_block_heading(key)}", ""])
     if isinstance(value, Mapping):
         lines.extend(["| Item | Detail |", "|---|---|"])
         for item_key, item_value in value.items():
@@ -262,6 +269,7 @@ def build_deck_assets(
     output_dir: Path,
     deck_id: str | None = None,
     formats: Iterable[str] = DEFAULT_OUTPUT_FORMATS,
+    generated_at: str | None = None,
 ) -> DeckBuildResult:
     """Run the content→presentation→artifact pipeline for one deck."""
 
@@ -272,7 +280,11 @@ def build_deck_assets(
     stem = deck["deck_id"]
 
     artifacts: list[DeckArtifact] = []
-    requested = set(formats)
+    requested = {str(item).lower() for item in formats}
+    unsupported = sorted(requested - SUPPORTED_OUTPUT_FORMATS)
+    if unsupported:
+        joined = ", ".join(unsupported)
+        raise ValueError(f"Unsupported format(s): {joined}")
     if "html" in requested:
         html_body = render_html_deck(deck, css)
         html_path = output_dir / f"{stem}.html"
@@ -284,10 +296,18 @@ def build_deck_assets(
         markdown_path.write_text(markdown_body, encoding="utf-8")
         artifacts.append(DeckArtifact("markdown", markdown_path, _sha256_file(markdown_path)))
 
+    source_date_epoch = os.environ.get("SOURCE_DATE_EPOCH")
+    if generated_at:
+        generated_at_value = generated_at
+    elif source_date_epoch:
+        generated_at_value = datetime.fromtimestamp(int(source_date_epoch), timezone.utc).isoformat()
+    else:
+        generated_at_value = datetime.now(timezone.utc).isoformat()
+
     manifest = {
         "deck_id": deck["deck_id"],
         "pipeline": "yaml_css_to_html_markdown_v1",
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": generated_at_value,
         "source": str(content_path),
         "style": str(css_path),
         "source_hash": deck["source_hash"],
@@ -298,7 +318,11 @@ def build_deck_assets(
             "rtm_appendix_present": any("rtm_map" in slide for slide in deck["slides"]),
         },
         "artifacts": [
-            {"kind": artifact.kind, "path": str(artifact.path), "sha256": artifact.sha256}
+            {
+                "kind": artifact.kind,
+                "path": artifact.path.relative_to(output_dir).as_posix(),
+                "sha256": artifact.sha256,
+            }
             for artifact in artifacts
         ],
     }
@@ -319,6 +343,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--style", type=Path, required=True, help="Deck CSS template")
     parser.add_argument("--output-dir", type=Path, required=True, help="Generated artifact directory")
     parser.add_argument("--deck-id", type=str, help="Override generated deck id")
+    parser.add_argument("--generated-at", type=str, help="Override generated_at value in manifest")
     parser.add_argument("--format", nargs="+", default=list(DEFAULT_OUTPUT_FORMATS), choices=["html", "md", "markdown"])
     return parser.parse_args(argv)
 
@@ -331,6 +356,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         output_dir=args.output_dir,
         deck_id=args.deck_id,
         formats=args.format,
+        generated_at=args.generated_at,
     )
     print(f"Generated {len(result.artifacts)} artifacts for {result.deck_id}")
     print(result.manifest_path)
