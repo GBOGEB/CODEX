@@ -1,0 +1,61 @@
+# maps/dmaic_phase_map.yml
+# ──────────────────────────────────────────────────────────────────────────────
+# INCUBATOR W002 — DMAIC Phase Mapping
+# Maps INCUBATOR themes and category codes to canonical ABACUS DMAIC phases.
+#
+# DMAIC canonical phases: Define | Measure | Analyze | Improve | Control
+# ──────────────────────────────────────────────────────────────────────────────
+version: 1
+
+# Theme → DMAIC phase alignment
+# INCUBATOR themes (from maps/theme_map.yml) mapped to ABACUS DMAIC phases
+theme_to_dmaic_phase:
+  RUNTIME_GOVERNANCE: Define
+  CHAT_TUPLE: Measure
+  INDEX_GENERATION: Analyze
+  SCHEMA_VALIDATION: Define
+  DELIVERY: Improve
+  COMPLIANCE: Control
+  TELEMETRY: Measure
+  ORCHESTRATION: Improve
+  CONVERGENCE: Control
+  QUALITY: Control
+
+# Category → DMAIC phase alignment
+# INCUBATOR categories (from maps/category_map.yml) mapped to ABACUS DMAIC phases
+category_to_dmaic_phase:
+  INCUBATOR: Define
+  DELIVERY: Improve
+  GOVERNANCE: Control
+
+# Canonical DMAIC phase metadata
+# Used by bridge_rtm_ingress.py for validation reporting
+dmaic_phases:
+  Define:
+    description: "Establish project scope, goals, and process boundaries."
+    abacus_cluster: "DOW Core — Define"
+  Measure:
+    description: "Quantify current process performance and collect data."
+    abacus_cluster: "DOW Core — Measure"
+  Analyze:
+    description: "Identify root causes of defects or variation."
+    abacus_cluster: "DOW Core — Analyze"
+  Improve:
+    description: "Develop, test, and implement solutions."
+    abacus_cluster: "DOW Core — Improve"
+  Control:
+    description: "Sustain improvements and monitor ongoing performance."
+    abacus_cluster: "DOW Core — Control"
+
+# W002 activation status
+w002_status:
+  phase_map_version: "1.0.0"
+  activation: in-progress
+  completed:
+    - phase_map_defined
+    - theme_alignment_documented
+    - category_alignment_documented
+  pending:
+    - tuple_handoff_protocol_to_abacus
+    - full_dmaic_validation_against_abacus_schema
+    - telemetry_sharing_integration

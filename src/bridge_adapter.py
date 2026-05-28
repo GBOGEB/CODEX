@@ -38,6 +38,12 @@ BRIDGE_COMPONENT_PATHS: dict[str, Tuple[str, ...]] = {
         "governance/synchronization/abacus-codex-recursive-sync.yaml",
         ".github/workflows/full-stack-governance.yml",
     ),
+    "keb": (
+        "KEB/governance/GLOSSARY.yml",
+        "KEB/governance/governance_rules.yml",
+        "KEB/governance/metrics.yml",
+        "src/keb/keb_client.py",
+    ),
 }
 
 RUNTIME_MODULE_ALIGNMENT: dict[str, Tuple[str, ...]] = {
