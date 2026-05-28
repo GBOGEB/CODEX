@@ -13,15 +13,12 @@ on:
 jobs:
   governance-gate:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: federation_runtime
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
       - name: Validate governance header
-        run: python engines/governance_parser.py --target .github/W003_PR_FOLLOW_UP.md --schema schema/governance_header.schema.json
+        run: python federation_runtime/engines/governance_parser.py --target federation_runtime/.github/W003_PR_FOLLOW_UP.md --schema federation_runtime/schema/governance_header.schema.json
       - name: Validate traceability manifest shape
-        run: python -c "import json; d=json.load(open('governance/traceability_manifest.json')); assert d['active_wave']=='W003'; assert 'pr_stream' in d"
+        run: python -c "import json; d=json.load(open('federation_runtime/governance/traceability_manifest.json')); assert d['active_wave']=='W003'; assert 'pr_stream' in d"
