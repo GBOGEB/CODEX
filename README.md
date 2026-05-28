@@ -2,6 +2,24 @@
 
 CODEX provides GitHub interface and authentication utilities for both GitHub.com and GitHub Enterprise Server without duplicating implementation logic. This repository also carries Wave W000 federation/runtime/telemetry bootstrap assets, but the published Python package remains the GitHub interface package described below.
 
+## W000 Federated Semantic Trace Bootstrap
+
+This repository now includes a federation bootstrap wave (`W000-FEDERATED-SEMANTIC-TRACE`) to bridge ABACUS, CODEX, and daily chat interaction with dual-render governance:
+
+- Human semantic readability first
+- Machine-sequential telemetry for orchestration
+- Prefix-driven traceability (`[TOPIC]`, `[TRACE]`, `[WAVE]`, `[DRIFT]`, etc.)
+- Completion-vector oriented runtime scoring
+
+Bootstrap artifacts are staged in:
+- `.devcontainer/devcontainer.json`
+- `federation/semantic_index/schema.yaml`
+- `telemetry/pca/drift_monitor.py`
+- `agents/codex/MCP_INSTRUCTION.md`
+- `agents/abacus/FEDERATION_PROTOCOL.md`
+- `.github/pull_request_template.md`
+- `runtime/incubator/.gitkeep`
+
 ## W000 build-out status
 
 The W000 assets are a mix of scaffolding and real executable code:
