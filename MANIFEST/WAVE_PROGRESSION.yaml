@@ -16,16 +16,27 @@ waves:
     completion: 100
   - wave: A6
     focus: governance_runtime_enforcement
-    completion: 86
+    completion: 100
+    completed_tasks:
+      - "overflow_lint, spacing_lint, navigation_lint wired into RENDER_LINTER.py"
+      - "navigation_lint.py validates docs/ site boundary (docs/ + outputs/ allowed)"
   - wave: A7
     focus: orchestration_dependency_and_visual_telemetry
-    completion: 41
+    completion: 65
+    completed_tasks:
+      - "visuals/orchestration_dependency_graph.py — reads agent_topology.json, Plotly network graph"
+      - "visuals/agent_telemetry_timeline.py — reads agent_metrics.json, Plotly bar timeline"
   - wave: A8
     focus: convergence_topology_and_kpi_telemetry
     completion: 67
   - wave: A9
     focus: scientific_convergence_and_thermo_command_center
-    completion: 52
+    completion: 72
+    completed_tasks:
+      - "physics/backend_registry.yaml — declares 5 backends with availability flags"
+      - "physics/backend_adapter.py — thin adapter interface; FallbackBackend + NISTBackend active"
+      - "tests/test_backend_adapter.py — 27 tests, mock-based, no commercial licences needed"
+      - "dashboards/thermo_command_center.py — now loads from backend_registry.yaml and YAML manifests"
 
 wave_metrics:
   renderer_governance_progress:
@@ -72,16 +83,17 @@ incubator_waves:
     description: "Local parser, Markdown index generation, theme extraction, CI validation"
   - wave: W002
     focus: dmaic_phase_mapping
-    completion: 30
+    completion: 65
     description: "DMAIC phase validation, category/theme refinement, ABACUS bridge metadata"
     roadmap_target: 60
     completed_tasks:
-      - "Expanded maps/category_map.yml with DMAIC-aligned categories (DELIVERY, GOVERNANCE, ANALYSIS, IMPROVEMENT, CONTROL)"
+      - "Expanded maps/category_map.yml with DMAIC-aligned categories"
       - "Expanded maps/theme_map.yml with DMAIC and scientific themes"
       - "Created maps/dmaic_phase_map.yml — INCUBATOR→DMAIC routing bridge artifact"
+      - "scripts/validate_dmaic_phase_map.py — validates all incubator tuples resolve to a DMAIC phase"
+      - "validate_dmaic_phase_map wired into CI workflow"
     pending_tasks:
-      - "scripts/validate_dmaic_phase_map.py — validate all incubator tuples resolve to a DMAIC phase"
-      - "Emit W002 completeness metric to CI"
+      - "Additional incubator tuples covering DMAIC MEASURE/ANALYZE phases"
   - wave: W003
     focus: visualization_and_dashboards
     completion: 0
@@ -97,7 +109,7 @@ incubator_metrics:
   infrastructure_progress:
     W000: 100
     W001: 100
-    W002: 30
+    W002: 65
     W003: 0
   
   governance_integration:

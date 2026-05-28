@@ -1,0 +1,54 @@
+# Physics Backend Registry
+# Declares available thermodynamic backends with availability flags and version pins.
+# Consumed by physics/backend_adapter.py and scripts/check_backend_registry.py.
+
+version: 1
+description: >
+  Registry of thermodynamic property backends for the ABACUS cryogenic analysis pipeline.
+  Availability flags control which backends are active at runtime.
+  Unavailable backends are scaffolded (interface defined) but skipped during execution.
+
+backends:
+  fallback:
+    description: "Minimal built-in approximations. Always available."
+    available: true
+    version: "1.0.0"
+    entrypoint: "physics.backend_adapter.FallbackBackend"
+    capabilities: [saturation_temperature, saturation_pressure]
+
+  nist:
+    description: "NIST WebBook helium property tables (local fixtures)."
+    available: true
+    version: "2018"
+    entrypoint: "physics.backend_adapter.NISTBackend"
+    capabilities: [saturation_temperature, saturation_pressure, density, entropy]
+    notes: "Fixture-based; no network call required."
+
+  coolprop:
+    description: "CoolProp open-source thermodynamic library."
+    available: false
+    version: "6.x"
+    entrypoint: "physics.backend_adapter.CoolPropBackend"
+    capabilities: [saturation_temperature, saturation_pressure, density, entropy, enthalpy]
+    install: "pip install CoolProp"
+    notes: "Set available: true after installing CoolProp."
+
+  refprop:
+    description: "NIST REFPROP (commercial licence required)."
+    available: false
+    version: "10.x"
+    entrypoint: "physics.backend_adapter.REFPROPBackend"
+    capabilities: [saturation_temperature, saturation_pressure, density, entropy, enthalpy, viscosity]
+    notes: "Requires REFPROP licence and ctREFPROP Python wrapper."
+
+  hepak:
+    description: "HEPAK helium properties package (commercial licence required)."
+    available: false
+    version: "3.4"
+    entrypoint: "physics.backend_adapter.HEPAKBackend"
+    capabilities: [saturation_temperature, saturation_pressure, density, entropy, enthalpy, He-II]
+    notes: "Requires HEPAK licence. Highest accuracy for He-II region."
+
+validation:
+  required_fields: [description, available, version, entrypoint, capabilities]
+  at_least_one_available: true
