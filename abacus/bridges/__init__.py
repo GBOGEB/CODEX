@@ -1,1 +1,0 @@
-"""ABACUS outbound payload bridges."""

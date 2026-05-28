@@ -1,1 +1,0 @@
-"""ABACUS federation support package."""

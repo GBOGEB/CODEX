@@ -1,13 +1,13 @@
-name: Receive ABACUS Telemetry Dispatch
+name: Receive SUPERPIPELINE Render Request
 
 on:
   repository_dispatch:
     types:
-      - abacus.telemetry.v1
+      - superpipeline.render_request.v1
   workflow_dispatch:
     inputs:
       payload:
-        description: 'ABACUS telemetry payload JSON for manual rendering'
+        description: 'SUPERPIPELINE render request JSON for manual rendering'
         required: true
         type: string
 
@@ -19,7 +19,7 @@ defaults:
     shell: bash
 
 jobs:
-  render-abacus-report:
+  render-superpipeline-request:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout CODEX
@@ -30,7 +30,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Extract ABACUS payload
+      - name: Extract SUPERPIPELINE request
         run: |
           mkdir -p federation_artifacts
           python - <<'PY'
@@ -43,23 +43,25 @@ jobs:
               payload = event["client_payload"]
           else:
               payload = json.loads(event.get("inputs", {}).get("payload", "{}"))
-          Path("federation_artifacts/abacus_payload.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+          Path("federation_artifacts/superpipeline_render_request.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
           PY
 
-      - name: Validate ABACUS payload
+      - name: Validate and unwrap render request
         run: |
-          python abacus/bridges/codex_payload.py \
-            --input federation_artifacts/abacus_payload.json \
-            --output federation_artifacts/repository_dispatch_body.json
+          python -m codex.bridges.superpipeline_payload \
+            --input federation_artifacts/superpipeline_render_request.json \
+            --telemetry-output federation_artifacts/renderer_telemetry.json \
+            --artifact-name-output federation_artifacts/artifact_name.txt
 
       - name: Render CODEX technical status report
         run: |
+          artifact_name="$(cat federation_artifacts/artifact_name.txt)"
           python -m codex.renderers.abacus_report \
-            --input federation_artifacts/abacus_payload.json \
-            --output federation_artifacts/abacus_technical_status_report.md
+            --input federation_artifacts/renderer_telemetry.json \
+            --output "federation_artifacts/${artifact_name}"
 
       - name: Upload rendered report
         uses: actions/upload-artifact@v4
         with:
-          name: abacus-technical-status-report
+          name: superpipeline-rendered-report
           path: federation_artifacts/
