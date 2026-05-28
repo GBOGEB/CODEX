@@ -57,7 +57,11 @@ def load_tuple_documents(incubator_dir: Path = INCUBATOR_DIR) -> list[dict[str, 
     documents: list[dict[str, Any]] = []
     for path in iter_tuple_files(incubator_dir):
         doc = load_yaml_file(path)
-        doc["_file"] = str(path.relative_to(ROOT))
+        # Try to compute relative path, fall back to absolute if outside repo
+        try:
+            doc["_file"] = str(path.relative_to(ROOT))
+        except ValueError:
+            doc["_file"] = str(path)
         documents.append(doc)
     return documents
 

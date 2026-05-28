@@ -6,7 +6,7 @@ This directory stores machine-readable chat/session tuple records for early-wave
 
 Tuple files use:
 
-`YY_Www_HH_MM__CATEGORY__THEME__TITLE__STATUS.yml`
+`YY_Www_HH_MM__CATEGORY__THEME__TITLE__W###.yml`
 
 Example:
 

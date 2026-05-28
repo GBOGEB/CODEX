@@ -28,7 +28,7 @@ def test_build_markdown():
     
     # Check for required notes
     assert "## Notes" in markdown
-    assert "YY_Www_HH_MM__CATEGORY__THEME__TITLE__STATUS" in markdown
+    assert "YY_Www_HH_MM__CATEGORY__THEME__TITLE__W###" in markdown
     assert "python scripts/build_incubator_index.py" in markdown
 
 
