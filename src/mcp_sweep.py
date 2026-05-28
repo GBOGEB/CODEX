@@ -35,7 +35,7 @@ DEFAULT_NEAR_MISS_MARKERS = ("todo", "follow-up", "followup", "optimiz", "improv
 class TokenScope(enum.Enum):
     """Supported runtime token scopes for strict handshake enforcement."""
 
-    GITHUB = "GITHUB_API_TOKEN"
+    GITHUB = "GITHUB_TOKEN"
     OPENAI = "OPENAI_API_TOKEN"
     GEMINI_PRO = "GEMINI_PRO_API_TOKEN"
     ABACUS = "ABACUS_API_TOKEN"
