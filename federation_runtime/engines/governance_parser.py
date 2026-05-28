@@ -15,7 +15,10 @@ SCHEMA_MUTATION_ENABLED_VALUE = "YES"
 
 
 def extract_governance_block(markdown_text: str) -> dict[str, str] | None:
-    """Extract PR classification metadata from markdown."""
+    """Extract PR classification metadata from markdown.
+
+    Returns metadata key-value pairs, or None when no governance block is found.
+    """
     match = HEADER_PATTERN.search(markdown_text)
     if not match:
         return None
@@ -31,6 +34,10 @@ def extract_governance_block(markdown_text: str) -> dict[str, str] | None:
 
 
 def validate_metadata_against_schema(metadata: dict[str, str], schema: dict) -> tuple[bool, list[str]]:
+    """Validate parsed governance metadata against the supplied schema.
+
+    Returns a tuple of (is_valid, error_list).
+    """
     errors: list[str] = []
     properties = schema.get("properties", {})
 
@@ -69,6 +76,10 @@ def validate_metadata_against_schema(metadata: dict[str, str], schema: dict) -> 
 
 
 def validate_pr_classification_header(target_file: Path, schema_path: Path) -> int:
+    """Validate the PR classification header for a target markdown file.
+
+    Returns 0 on success and 1 on failure.
+    """
     print("[PR-007] Running federation governance parser...")
 
     if not target_file.exists() or not schema_path.exists():
