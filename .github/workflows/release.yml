@@ -1,0 +1,157 @@
+name: Release & Package
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g. v1.2.0)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Release Artifacts
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Determine version
+        id: version
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Building release: $TAG"
+
+      - name: Validate critical files
+        run: |
+          echo "=== Pre-release validation ==="
+          ERRORS=0
+          for f in docs/index.html docs/dashboard.html pyproject.toml src/__init__.py; do
+            if [ ! -f "$f" ]; then
+              echo "❌ Missing: $f"
+              ERRORS=$((ERRORS+1))
+            else
+              echo "✅ $f"
+            fi
+          done
+          if [ $ERRORS -gt 0 ]; then
+            echo "Release blocked: $ERRORS missing files"
+            exit 1
+          fi
+
+      - name: Python syntax check
+        run: |
+          echo "=== Syntax validation ==="
+          ERRORS=0
+          while IFS= read -r f; do
+            if python3 -m py_compile "$f" 2>/dev/null; then
+              echo "✅ $f"
+            else
+              echo "❌ Syntax error: $f"
+              ERRORS=$((ERRORS+1))
+            fi
+          done < <(find src -name '*.py' -type f 2>/dev/null)
+          if [ $ERRORS -gt 0 ]; then
+            echo "Release blocked: $ERRORS files with syntax errors"
+            exit 1
+          fi
+
+      - name: Run tests
+        run: |
+          pip install -r requirements.txt --quiet
+          pip install pytest --quiet
+          pip install -e . --quiet
+          python -m pytest -q
+
+      - name: Package documentation and outputs
+        run: |
+          echo "=== Packaging release artifacts ==="
+          mkdir -p release-artifacts
+          MISSING_DIRS=()
+          for d in docs/ outputs/; do
+            [ -d "$d" ] || MISSING_DIRS+=("$d")
+          done
+          if [ ${#MISSING_DIRS[@]} -gt 0 ]; then
+            echo "⚠️  Missing optional directories: ${MISSING_DIRS[*]}"
+          fi
+          DIRS_TO_PACK=()
+          [ -d docs/ ]    && DIRS_TO_PACK+=(docs/)
+          [ -d outputs/ ] && DIRS_TO_PACK+=(outputs/)
+          if [ ${#DIRS_TO_PACK[@]} -gt 0 ]; then
+            tar czf release-artifacts/codex-docs-${{ steps.version.outputs.tag }}.tar.gz \
+              "${DIRS_TO_PACK[@]}"
+            echo "Package size: $(du -h release-artifacts/*.tar.gz | cut -f1)"
+          fi
+
+      - name: Build Python wheel
+        run: |
+          pip install build --quiet
+          python -m build --wheel --outdir release-artifacts/
+          echo "Wheel: $(ls release-artifacts/*.whl 2>/dev/null || echo 'none')"
+
+      - name: Generate release notes
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          COMMITS=$(git log --oneline $(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD 2>/dev/null | head -20 || echo "Initial release")
+          cat > release-artifacts/RELEASE_NOTES.md << EOF
+          # CODEX $TAG Release Notes
+
+          ## What's Included
+          - 🐍 Python package wheel
+          - 📖 Documentation bundle (docs/)
+          - 📊 Generated outputs (outputs/)
+
+          ## Recent Changes
+          $COMMITS
+
+          ## Installation
+          \`\`\`bash
+          pip install codex-$TAG-py3-none-any.whl
+          \`\`\`
+          EOF
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ steps.version.outputs.tag }}
+          path: release-artifacts/
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4.1.3
+        with:
+          name: release-${{ needs.build.outputs.tag }}
+          path: release-artifacts/
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.build.outputs.tag }}
+          name: "CODEX ${{ needs.build.outputs.tag }}"
+          body_path: release-artifacts/RELEASE_NOTES.md
+          files: |
+            release-artifacts/*.tar.gz
+            release-artifacts/*.whl
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
