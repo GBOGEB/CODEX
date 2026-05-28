@@ -5,6 +5,15 @@
 **Target:** `completion_estimate_percent ≥ 84` | `overall_convergence_score ≥ 88`  
 **Strategy:** Activate dormant layers first; raise stalled waves second.
 
+> **Metric definitions:**  
+> `completion_estimate_percent` — weighted average of all program dimension scores in  
+> `MANIFEST/PROGRAM_METRICS.yaml` (governance, renderer, CI/CD, orchestration, visualization,  
+> thermodynamics, validation, publication readiness).  
+> `overall_convergence_score` — ABACUS quality gate composite in `MANIFEST/CONVERGENCE_KPIS.yaml`  
+> calculated as the weighted mean of governance, orchestration, telemetry, renderer quality,  
+> publication readiness, thermodynamic validity, backend convergence, and scientific confidence  
+> scores. Both metrics are on a 0–100 scale.
+
 ---
 
 ## Current State Diagnosis
