@@ -1,6 +1,6 @@
 """KEB (Knowledge Exchange Bridge) client.
 
-Provides read-only access to the shared governance artefacts hosted in
+Provides read-only access to the shared governance artifacts hosted in
 ``KEB/governance/``:
 
 - ``GLOSSARY.yml``       — authoritative term definitions
@@ -8,7 +8,7 @@ Provides read-only access to the shared governance artefacts hosted in
 - ``metrics.yml``        — KPI categories and confidence levels
 
 The client is intentionally read-only and stateless: every call re-reads from
-the YAML files so that any update to governance artefacts is immediately
+the YAML files so that any update to governance artifacts is immediately
 visible without restarting the process.
 """
 
@@ -26,7 +26,7 @@ _DEFAULT_KEB_DIR = Path(__file__).resolve().parents[2] / "KEB" / "governance"
 
 
 class KebClient:
-    """Read-only client for KEB governance artefacts.
+    """Read-only client for KEB governance artifacts.
 
     Parameters
     ----------

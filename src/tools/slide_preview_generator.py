@@ -3,7 +3,7 @@
 Ported from GBOGEB/CODESPACES_jyperter (tools/extract_slide_previews.py) and
 adapted to CODEX conventions (main() guard, Path.mkdir, html.escape).
 
-Produces three artefacts in *outdir*:
+Produces three artifacts in *outdir*:
 
 - ``slide_texts.json``       — full per-slide text content
 - ``slide_digital_twins.json`` — compact summaries + styling hints
@@ -183,7 +183,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--outdir",
         required=True,
-        help="Output directory for generated artefacts.",
+        help="Output directory for generated artifacts.",
     )
     parser.add_argument(
         "--limit",
