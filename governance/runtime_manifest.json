@@ -1,0 +1,282 @@
+{
+  "wave": "W000",
+  "runtime_governance": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "version": "1.0.0",
+    "wave": "W000",
+    "runtime_state_machine": {
+      "states": [
+        {
+          "id": "planned",
+          "description": "Work is defined but not yet in execution."
+        },
+        {
+          "id": "active",
+          "description": "Work is in execution and producing telemetry."
+        },
+        {
+          "id": "sweep",
+          "description": "MCP sweep analyzes near-miss and obsolete artifacts."
+        },
+        {
+          "id": "closed",
+          "description": "Work is either merged, archived, or pruned."
+        }
+      ],
+      "transitions": [
+        {
+          "from": "planned",
+          "to": "active",
+          "trigger": "approved"
+        },
+        {
+          "from": "active",
+          "to": "sweep",
+          "trigger": "completed_or_aborted"
+        },
+        {
+          "from": "sweep",
+          "to": "closed",
+          "trigger": "classified"
+        }
+      ]
+    }
+  },
+  "agent_registry": {
+    "version": "1.0.0",
+    "agents": [
+      {
+        "id": "abacus-governor",
+        "role": "governance-orchestrator",
+        "owner": "ABACUS",
+        "capabilities": [
+          "state-machine-control",
+          "telemetry-aggregation",
+          "policy-enforcement"
+        ]
+      },
+      {
+        "id": "codex-worker",
+        "role": "execution-worker",
+        "owner": "CODEX",
+        "capabilities": [
+          "patch-generation",
+          "test-execution",
+          "pr-preparation"
+        ]
+      },
+      {
+        "id": "mcp-sweep-mop",
+        "role": "post-session-curator",
+        "owner": "ABACUS",
+        "capabilities": [
+          "near-miss-detection",
+          "obsolete-pruning",
+          "remediation-ticketing"
+        ]
+      }
+    ]
+  },
+  "federation_registry": {
+    "version": "1.0.0",
+    "federation_links": [
+      {
+        "id": "office-link",
+        "kind": "exploit",
+        "provider": "FEDERATION",
+        "interface": "api",
+        "purpose": "document-processing"
+      },
+      {
+        "id": "diagram-link",
+        "kind": "exploit",
+        "provider": "FEDERATION",
+        "interface": "api",
+        "purpose": "diagram-rendering"
+      },
+      {
+        "id": "binary-link",
+        "kind": "exploit",
+        "provider": "FEDERATION",
+        "interface": "api",
+        "purpose": "external-binary-execution"
+      }
+    ],
+    "policies": {
+      "prefer_exploit_over_integrate": true,
+      "max_parallel_feature_branches": 3
+    }
+  },
+  "abacus_runtime": {
+    "runtime": {
+      "name": "ABACUS_RUNTIME",
+      "version": "0.1.0"
+    },
+    "modules": [
+      "renderer",
+      "topology",
+      "validation",
+      "deployment",
+      "telemetry"
+    ],
+    "deployment": {
+      "pages": {
+        "enabled": true,
+        "strategy": "github_actions"
+      }
+    },
+    "metrics": {
+      "architecture_score_target": 82,
+      "portability_target": 75,
+      "runtime_modularity": 80
+    }
+  },
+  "bridge_manifest": {
+    "federation_bridge": {
+      "version": "1.0.0",
+      "domain": "gbogeb",
+      "repos": {
+        "codex": {
+          "url": "https://github.com/gbogeb/codex",
+          "branch": "main",
+          "role": "upstream_conceptual",
+          "focus": "Markdown, requirements, metadata, YAML glossary"
+        },
+        "abacus": {
+          "url": "https://github.com/gbogeb/abacus",
+          "branch": "main",
+          "role": "downstream_functional",
+          "focus": "Python math engines, calculation schemas, code execution"
+        }
+      },
+      "orchestration": {
+        "mcp_enabled": true,
+        "protocols": [
+          "git-sync",
+          "telemetry-stream",
+          "artifact-bake"
+        ]
+      },
+      "wave_tracking": {
+        "analytics": [
+          "PCA",
+          "DMAIC",
+          "ANOVA"
+        ],
+        "metrics": {
+          "claimed_progress": "float",
+          "actual_progress": "float",
+          "covariance_threshold": 0.05
+        }
+      }
+    }
+  },
+  "agent_implementation_map": {
+    "version": "1.0.0",
+    "wave": "W000",
+    "description": "Binds agent capabilities to runtime module implementations",
+    "mappings": [
+      {
+        "agent_id": "abacus-governor",
+        "role": "governance-orchestrator",
+        "owner": "ABACUS",
+        "capabilities": [
+          {
+            "capability": "state-machine-control",
+            "implementation": null,
+            "status": "scaffold",
+            "notes": "Requires state machine orchestrator (Priority 4)"
+          },
+          {
+            "capability": "telemetry-aggregation",
+            "implementation": "docs/wave_packages/runtime/telemetry_ingestion_runtime.py",
+            "status": "available",
+            "notes": "Runtime module exists - needs agent binding"
+          },
+          {
+            "capability": "policy-enforcement",
+            "implementation": null,
+            "status": "scaffold",
+            "notes": "Requires policy engine implementation"
+          }
+        ]
+      },
+      {
+        "agent_id": "codex-worker",
+        "role": "execution-worker",
+        "owner": "CODEX",
+        "capabilities": [
+          {
+            "capability": "patch-generation",
+            "implementation": "docs/wave_packages/runtime/self_healing_runtime.py",
+            "status": "available",
+            "notes": "Self-healing runtime can be adapted for patch generation"
+          },
+          {
+            "capability": "test-execution",
+            "implementation": null,
+            "status": "scaffold",
+            "notes": "Requires test orchestration framework"
+          },
+          {
+            "capability": "pr-preparation",
+            "implementation": null,
+            "status": "scaffold",
+            "notes": "Requires PR generation utilities"
+          }
+        ]
+      },
+      {
+        "agent_id": "mcp-sweep-mop",
+        "role": "post-session-curator",
+        "owner": "ABACUS",
+        "capabilities": [
+          {
+            "capability": "near-miss-detection",
+            "implementation": "docs/wave_packages/runtime/adaptive_runtime_intelligence.py",
+            "status": "available",
+            "notes": "Adaptive runtime can detect near-miss patterns"
+          },
+          {
+            "capability": "obsolete-pruning",
+            "implementation": null,
+            "status": "scaffold",
+            "notes": "Requires artifact lifecycle management"
+          },
+          {
+            "capability": "remediation-ticketing",
+            "implementation": null,
+            "status": "scaffold",
+            "notes": "Requires issue tracking integration"
+          }
+        ]
+      }
+    ],
+    "statistics": {
+      "total_agents": 3,
+      "total_capabilities": 9,
+      "implemented_capabilities": 3,
+      "scaffold_capabilities": 6,
+      "implementation_completeness_pct": 33.3
+    },
+    "integration": {
+      "dormant_modules_identified": [
+        "docs/wave_packages/runtime/federation_bridge_cli.py",
+        "docs/wave_packages/runtime/runtime_bridge.py",
+        "scripts/agent_runtime_monitor.py"
+      ],
+      "suggested_activations": [
+        {
+          "module": "docs/wave_packages/runtime/federation_bridge_cli.py",
+          "bind_to": "federation_registry.yml",
+          "purpose": "CLI frontend for bridge orchestration"
+        },
+        {
+          "module": "scripts/agent_runtime_monitor.py",
+          "bind_to": "agent_registry.yml",
+          "purpose": "Real-time agent execution monitoring"
+        }
+      ]
+    }
+  }
+}

@@ -1,23 +1,42 @@
-# ABACUS Federation Protocol
+# ABACUS ↔ CODEX Federation Protocol (W000)
 
-## Data-Plane Synchronizer
-ABACUS monitors the mathematical consistency, completion vector modeling, and PCA drift calculation across the orchestration fabric.
+## Core Contract
+- Preserve semantic traceability.
+- Preserve machine-sequential chronology.
+- Maintain dual-render synchronization.
+- Emit structured metadata for every orchestration action.
 
+## Data-Plane Operational Scope
+ABACUS is tasked with the analytical processing of state variables, dimensional tracking of completion matrices, and continuous telemetry evaluating architectural drift.
 
-```
-
+## Multi-View Composition Pattern
+To prevent context fragmentation, tracking configurations must align to the following naming syntax rules:
+```text
 [SEMANTIC].[TRACE].[TEMPORAL].[WAVE] -> GOVERNANCE.RUNTIME.2622_1535.W000
-
 ```
 
-## Completion Vector Ingestion Matrix
-When a session state updates, ABACUS calculates the aggregate readiness matrix:
+## Required Prefixes
+- [TOPIC]
+- [TRACE]
+- [WAVE]
+- [STATE]
+- [DRIFT]
+- [NEARMISS]
+- [RENDER]
+- [FEDERATION]
+- [DMAIC]
+- [SSOT]
 
-$$C_{\text{vector}} = \begin{bmatrix} S_{\text{structure}} \\ R_{\text{render}} \\ F_{\text{federation}} \\ T_{\text{trace}} \\ O_{\text{orchestration}} \\ D_{\text{drift}} \end{bmatrix}$$
+## Tuple Lineage Format
+Use:
+`[SEMANTIC].[TRACE].[TEMPORAL].[WAVE]`
 
-Gating algorithms prevent branch merges if:
-* $F_{\text{federation}} < 0.40$
-* $O_{\text{orchestration}} < 0.30$
-* $D_{\text{drift}} > 0.45$ (High variance/instability detected)
+Example:
+`GOVERNANCE.RUNTIME.2622_1535.W000`
 
-```
+## Integration Threshold Gates
+Automated validation should stop code merges when the federation envelope falls outside these bounds:
+
+- Federation < 0.40
+- Orchestration readiness < 0.30
+- Drift > 0.45

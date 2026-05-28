@@ -1,4 +1,4 @@
-## [WAVE] Semantic Scope
+# [WAVE] - Semantic Scope
 - [ ] Governance
 - [ ] Federation
 - [ ] Runtime
@@ -32,11 +32,15 @@
 ---
 
 ## Near-Miss Optimizations
-- [ ] None
+- 
+- 
+- 
 
-## Render Validation
+---
+
+## Render Verification
 - [ ] Markdown
 - [ ] YAML
 - [ ] HTML
 - [ ] GitHub Pages
-- [ ] Telemetry
+- [ ] Telemetry Validation
