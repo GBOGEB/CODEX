@@ -1,6 +1,6 @@
 # CODEX GitHub Interface Package
 
-<<<<<<< HEAD
+CODEX provides GitHub interface and authentication utilities for both GitHub.com and GitHub Enterprise Server without duplicating implementation logic. This repository also carries Wave W000 federation/runtime/telemetry bootstrap assets, but the published Python package remains the GitHub interface package described below.
 
 ## W000 Federated Semantic Trace Bootstrap
 
@@ -19,13 +19,6 @@ Bootstrap artifacts are staged in:
 - `agents/abacus/FEDERATION_PROTOCOL.md`
 - `.github/pull_request_template.md`
 - `runtime/incubator/.gitkeep`
-
----
-
-## 🛡️ Level 8 (L8) Closed-Loop Post-Commissioning Summary
-=======
-CODEX provides GitHub interface and authentication utilities for both GitHub.com and GitHub Enterprise Server without duplicating implementation logic. This repository also carries Wave W000 federation/runtime/telemetry bootstrap assets, but the published Python package remains the GitHub interface package described below.
->>>>>>> refs/remotes/origin/main
 
 ## W000 build-out status
 
