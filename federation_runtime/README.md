@@ -41,11 +41,27 @@ The parser logs governed input paths, validation process steps, and structured o
 | `federation_runtime/engines/governance_parser.py` | **Real** | Executable governance header validator |
 | `federation_runtime/schema/governance_header.schema.json` | **Real** | JSON schema with `additionalProperties:false` |
 | `federation_runtime/governance/traceability_manifest.json` | **Real** | W003 machine-readable traceability manifest |
-| `tests/test_governance_parser.py` | **Real** | Pytest coverage for parser enforcement cases |
+| `tests/test_governance_parser.py` | **Real** | Pytest coverage for parser enforcement cases (9 tests) |
 | `.github/workflows/w003-governance-gate.yml` | **Real** | Root CI workflow, discovered by GitHub Actions |
-| `.github/workflows/full-stack-governance.yml` | **Real** | CODEX/ABACUS/bridge stack CI |
+| `.github/workflows/full-stack-governance.yml` | **Real** | CODEX/ABACUS/bridge stack CI with federation bridge build |
 | `bridge_manifest.yaml` | **Real** | CODEX↔ABACUS bridge topology declaration |
-| `abacus_render_pipeline/A6_renderer_governance/TUPLE_OFFLOAD/` | **Scaffold** | Handover documentation; no executable code |
-| `output/federation_bridge/` | **Deprecated** | Canonical path is `outputs/html/federation_bridge/` (generate via `federation_bridge_cli.py`) |
+| `abacus_render_pipeline/A6_renderer_governance/TUPLE_OFFLOAD/tuple_offload_executor.py` | **Real** | Executable tuple offload and semantic state externalization |
+| `output/federation_bridge/` | **Deprecated** | Canonical path is `outputs/html/federation_bridge/` (generated in CI via `federation_bridge_cli.py`) |
 
 Run `python scripts/check_federation_governance.py` for a live status report.
+
+## Tuple offload executor
+
+The tuple offload executor processes conversation tuples and externalizes semantic state:
+
+```bash
+# Validate input only
+python abacus_render_pipeline/A6_renderer_governance/TUPLE_OFFLOAD/tuple_offload_executor.py --validate-only
+
+# Generate tuple manifest and summary
+python abacus_render_pipeline/A6_renderer_governance/TUPLE_OFFLOAD/tuple_offload_executor.py
+```
+
+Output artifacts:
+- `outputs/tuple_offload/tuple_manifest.json` - Full tuple manifest with lineage
+- `outputs/tuple_offload/tuple_summary.md` - Human-readable summary with maturity assessment

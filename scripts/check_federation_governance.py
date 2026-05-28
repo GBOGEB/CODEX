@@ -34,16 +34,13 @@ REAL_CODE: list[tuple[str, str]] = [
     ("docs/wave_packages/runtime/federation_bridge_cli.py", "federation bridge CLI"),
     ("docs/wave_packages/runtime/federation_repo_coverage.py", "federation repo coverage report"),
     ("bridge_manifest.yaml", "CODEX↔ABACUS bridge manifest"),
+    ("abacus_render_pipeline/A6_renderer_governance/TUPLE_OFFLOAD/tuple_offload_executor.py", "tuple offload executor"),
 ]
 
 SCAFFOLD_ONLY: list[tuple[str, str]] = [
     (
-        "abacus_render_pipeline/A6_renderer_governance/TUPLE_OFFLOAD/TOTAL_CONVERSATION_TUPLE_OFFLOAD.md",
-        "conversation offload handover doc (no executable code – documentation stub)",
-    ),
-    (
         "output/federation_bridge",
-        "deprecated output namespace; canonical path is outputs/html/federation_bridge/ (not yet generated)",
+        "deprecated output namespace; canonical path is outputs/html/federation_bridge/ (generated in CI)",
     ),
 ]
 
