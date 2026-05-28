@@ -1,21 +1,33 @@
-# ABACUS Core System Synchronizer Protocol
+# ABACUS ↔ CODEX Federation Protocol (W000)
 
-## Data-Plane Operational Scope
-ABACUS is tasked with the analytical processing of state variables, dimensional tracking of completion matrices, and continuous telemetry evaluating architectural drift.
+## Core Contract
+- Preserve semantic traceability.
+- Preserve machine-sequential chronology.
+- Maintain dual-render synchronization.
+- Emit structured metadata for every orchestration action.
 
-## Multi-View Composition Pattern
-To prevent context fragmentation, tracking configurations must align to the following naming syntax rules:
-```text
-[SEMANTIC].[TRACE].[TEMPORAL].[WAVE] -> GOVERNANCE.RUNTIME.2622_1535.W000
-```
+## Required Prefixes
+- [TOPIC]
+- [TRACE]
+- [WAVE]
+- [STATE]
+- [DRIFT]
+- [NEARMISS]
+- [RENDER]
+- [FEDERATION]
+- [DMAIC]
+- [SSOT]
+
+## Tuple Lineage Format
+Use:
+`[SEMANTIC].[TRACE].[TEMPORAL].[WAVE]`
+
+Example:
+`GOVERNANCE.RUNTIME.2622_1535.W000`
 
 ## Integration Threshold Gates
+Automated validation should stop code merges when the federation envelope falls outside these bounds:
 
-Automated validation checks must explicitly stop code merges if structural evaluations fall out of bounds:
-
-* $F_{\text{ederation}} < 0.40$
-* $O_{\text{rch}} < 0.30$
-* $D_{\text{rift}} > 0.45$ (Flags elevated structural variance)
-
-## Boundary with `semantic_substrate/`
-Use federation completion vectors as local runtime inputs, but treat `semantic_substrate/analytics/drift_engine.py` and the substrate invariants as the repository-level source of truth for merge governance and semantic debt scoring.
+- Federation < 0.40
+- Orchestration readiness < 0.30
+- Drift > 0.45

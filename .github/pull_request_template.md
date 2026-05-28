@@ -1,9 +1,4 @@
-# [WAVE] - <Title>
-
-## Summary
-Describe the governance or delivery change.
-
-## Semantic Scope
+# [WAVE] - Semantic Scope
 - [ ] Governance
 - [ ] Federation
 - [ ] Runtime
@@ -11,15 +6,19 @@ Describe the governance or delivery change.
 - [ ] Render
 - [ ] Drift
 
+---
+
 ## Tuple Metadata
 
 | Key | Value |
 |---|---|
-| Wave | |
+| Wave | W000 |
 | Trace | |
 | State | ACTIVE |
 | Renderable | YES / NO |
 | Drift Stable | YES / NO |
+
+---
 
 ## Completion Vector
 
@@ -30,22 +29,18 @@ Describe the governance or delivery change.
 | Telemetry | % |
 | Renderability | % |
 
-## Validation
-- [ ] Repository review completed
-- [ ] No secrets committed
-- [ ] Existing execution preserved
+---
+
+## Near-Miss Optimizations
+- 
+- 
+- 
+
+---
+
+## Render Verification
 - [ ] Markdown
 - [ ] YAML
 - [ ] HTML
 - [ ] GitHub Pages
-- [ ] Telemetry validation
-
-## Review objectives
-Describe what reviewers should focus on.
-
-## Near-Miss Optimizations
-- None
-
-## Lineage
-Program: DELTA_1
-Repository: CODEX
+- [ ] Telemetry Validation

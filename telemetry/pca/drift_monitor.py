@@ -11,99 +11,139 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
+from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Mapping
 
-VERSION = "0.1.0"
-TRACKED_DIMENSIONS = (
+TRACKED_DIMENSIONS = [
     "structure",
     "renderability",
     "federation",
     "semantic_traceability",
     "orchestration_readiness",
     "drift_stability",
-)
+]
 
 
-def _normalize_metrics(metrics: Mapping[str, Any], label: str) -> dict[str, float]:
-    missing = [metric for metric in TRACKED_DIMENSIONS if metric not in metrics]
-    if missing:
-        missing_list = ", ".join(missing)
-        raise ValueError(f"{label} is missing required dimensions: {missing_list}")
+@dataclass(frozen=True)
+class DriftSnapshot:
+    semantic_alignment: float
+    temporal_alignment: float
+    drift_score: float
+    pca_monitor: bool = True
 
-    return {metric: float(metrics[metric]) for metric in TRACKED_DIMENSIONS}
+
+def compute_drift(semantic_alignment: float, temporal_alignment: float) -> DriftSnapshot:
+    """Return a bounded drift snapshot."""
+    semantic = max(0.0, min(1.0, semantic_alignment))
+    temporal = max(0.0, min(1.0, temporal_alignment))
+    return DriftSnapshot(
+        semantic_alignment=semantic,
+        temporal_alignment=temporal,
+        drift_score=round(abs(semantic - temporal), 6),
+    )
 
 
-def _load_metrics(path: str) -> dict[str, Any]:
-    payload = json.loads(Path(path).read_text(encoding="utf-8"))
-    if not isinstance(payload, dict):
-        raise ValueError(f"Metrics file must contain a JSON object: {path}")
+def render_snapshot(snapshot: DriftSnapshot) -> dict:
+    """Render snapshot as serializable telemetry."""
+    payload = asdict(snapshot)
+    payload["state"] = "STABLE" if snapshot.drift_score <= 0.2 else "DRIFTING"
+    payload["trace"] = "FEDERATION.RUNTIME.W000"
     return payload
 
 
-def _build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Bootstrap completion-vector drift monitor.")
-    parser.add_argument("--current-file", help="Path to the current completion-vector JSON file.")
-    parser.add_argument("--baseline-file", help="Path to the baseline completion-vector JSON file.")
-    return parser
-
-
-def calculate_drift_variance(
-    current_metrics: Mapping[str, Any], baseline_metrics: Mapping[str, Any]
-) -> float:
-    """
-    Calculates drift divergence between the current session parameters and established baseline.
-    """
-    current = _normalize_metrics(current_metrics, "current_metrics")
-    baseline = _normalize_metrics(baseline_metrics, "baseline_metrics")
-
+def calculate_drift_variance(current_metrics, baseline_metrics):
+    """Calculate average absolute drift across the tracked telemetry dimensions."""
     variance_sum = 0.0
-
     for metric in TRACKED_DIMENSIONS:
-        variance_sum += abs(current[metric] - baseline[metric])
-
+        variance_sum += abs(current_metrics.get(metric, 0.0) - baseline_metrics.get(metric, 0.0))
     return variance_sum / len(TRACKED_DIMENSIONS)
 
 
-def main(argv: list[str] | None = None) -> int:
-    args = _build_parser().parse_args(argv)
-    only_one_file_provided = (args.current_file is None) != (args.baseline_file is None)
-    if only_one_file_provided:
-        missing_flag = "--current-file" if args.current_file is None else "--baseline-file"
-        raise ValueError(
-            f"{missing_flag} is missing; provide both --current-file and --baseline-file together or omit both."
-        )
 
-    payload: dict[str, Any] = {
-        "status": "initialized",
-        "topic": "TELEMETRY.PCA",
-        "trace": "TELEMETRY.PCA.DRIFT_MONITOR",
-        "wave": "W000",
-        "version": VERSION,
-        "tracked_dimensions": list(TRACKED_DIMENSIONS),
+def load_metrics(path):
+    """Load a JSON object containing numeric telemetry metrics."""
+    try:
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"{path} must contain valid JSON metrics: {exc}") from exc
+    if not isinstance(data, dict):
+        raise ValueError(f"{path} must contain a JSON object of metrics")
+
+    normalized = {}
+    for key, value in data.items():
+        if not isinstance(value, (int, float)):
+            raise ValueError(f"{path} field '{key}' must be numeric")
+        normalized[key] = float(value)
+    return normalized
+
+
+
+def average_alignment(metrics):
+    """Calculate the average tracked alignment score for a metric set."""
+    return sum(metrics.get(metric, 0.0) for metric in TRACKED_DIMENSIONS) / len(TRACKED_DIMENSIONS)
+
+
+
+def build_drift_report(current_metrics, baseline_metrics):
+    """Build a drift report for CLI output and downstream tooling."""
+    deltas = {}
+    for metric in TRACKED_DIMENSIONS:
+        baseline_value = baseline_metrics.get(metric, 0.0)
+        current_value = current_metrics.get(metric, 0.0)
+        deltas[metric] = round(current_value - baseline_value, 6)
+
+    snapshot = compute_drift(
+        semantic_alignment=average_alignment(current_metrics),
+        temporal_alignment=average_alignment(baseline_metrics),
+    )
+
+    return {
+        "tracked_dimensions": TRACKED_DIMENSIONS,
+        "drift_variance": round(calculate_drift_variance(current_metrics, baseline_metrics), 6),
+        "deltas": deltas,
+        "snapshot": render_snapshot(snapshot),
     }
 
-    if args.current_file and args.baseline_file:
-        payload.update(
-            {
-                "status": "evaluated",
-                "current_file": args.current_file,
-                "baseline_file": args.baseline_file,
-                "drift_variance": calculate_drift_variance(
-                    _load_metrics(args.current_file),
-                    _load_metrics(args.baseline_file),
-                ),
-            }
-        )
 
-    print(json.dumps(payload, indent=2, sort_keys=True))
+
+def parse_args(argv=None):
+    """Parse CLI arguments for optional drift comparisons."""
+    parser = argparse.ArgumentParser(
+        description="Bootstrap PCA drift monitor for Wave W000 telemetry."
+    )
+    parser.add_argument(
+        "--baseline",
+        type=Path,
+        help="Path to a JSON file containing baseline telemetry metrics.",
+    )
+    parser.add_argument(
+        "--current",
+        type=Path,
+        help="Path to a JSON file containing current telemetry metrics.",
+    )
+    args = parser.parse_args(argv)
+
+    if (args.baseline is None) != (args.current is None):
+        parser.error("Both --baseline and --current arguments are required when using drift comparison.")
+
+    return args
+
+
+
+def main(argv=None):
+    args = parse_args(argv)
+
+    if args.baseline is None:
+        print("[TELEMETRY.PCA.DRIFT_MONITOR] System initialized. Tracking operational loops.")
+        return 0
+
+    report = build_drift_report(
+        load_metrics(args.current),
+        load_metrics(args.baseline),
+    )
+    print(json.dumps(report, indent=2, sort_keys=True))
     return 0
 
 
 if __name__ == "__main__":
-    try:
-        sys.exit(main())
-    except ValueError as exc:
-        print(str(exc), file=sys.stderr)
-        sys.exit(1)
+    raise SystemExit(main())

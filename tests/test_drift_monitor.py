@@ -1,52 +1,80 @@
-from __future__ import annotations
-
 import json
+import subprocess
+import sys
 from pathlib import Path
 
-import pytest
-
-from telemetry.pca.drift_monitor import TRACKED_DIMENSIONS, calculate_drift_variance, main
-
-
-def _metrics(value: float) -> dict[str, float]:
-    return {metric: value for metric in TRACKED_DIMENSIONS}
+ROOT = Path(__file__).resolve().parents[1]
+DRIFT_MONITOR = ROOT / "telemetry" / "pca" / "drift_monitor.py"
 
 
-def test_calculate_drift_variance_averages_complete_vectors() -> None:
-    current_metrics = _metrics(0.75)
-    baseline_metrics = _metrics(0.25)
+def test_drift_monitor_bootstrap_banner():
+    result = subprocess.run(
+        [sys.executable, str(DRIFT_MONITOR)],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
 
-    assert calculate_drift_variance(current_metrics, baseline_metrics) == pytest.approx(0.5)
-
-
-def test_calculate_drift_variance_rejects_incomplete_vectors() -> None:
-    current_metrics = _metrics(0.5)
-    baseline_metrics = _metrics(0.5)
-    baseline_metrics.pop("drift_stability")
-
-    with pytest.raises(ValueError, match="baseline_metrics is missing required dimensions: drift_stability"):
-        calculate_drift_variance(current_metrics, baseline_metrics)
+    assert "System initialized" in result.stdout
 
 
-def test_main_reports_initialization_payload(capsys: pytest.CaptureFixture[str]) -> None:
-    assert main([]) == 0
-
-    payload = json.loads(capsys.readouterr().out)
-    assert payload["status"] == "initialized"
-    assert payload["version"] == "0.1.0"
-    assert payload["tracked_dimensions"] == list(TRACKED_DIMENSIONS)
-
-
-def test_main_reports_evaluated_variance(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
-    current_path = tmp_path / "current.json"
+def test_drift_monitor_reports_drift_from_metric_files(tmp_path):
     baseline_path = tmp_path / "baseline.json"
-    current_path.write_text(json.dumps(_metrics(0.9)), encoding="utf-8")
-    baseline_path.write_text(json.dumps(_metrics(0.4)), encoding="utf-8")
+    current_path = tmp_path / "current.json"
+    baseline_metrics = {
+        "structure": 0.8,
+        "renderability": 0.7,
+        "federation": 0.6,
+        "semantic_traceability": 0.9,
+        "orchestration_readiness": 0.5,
+        "drift_stability": 0.4,
+    }
+    current_metrics = {
+        "structure": 0.9,
+        "renderability": 0.8,
+        "federation": 0.55,
+        "semantic_traceability": 0.95,
+        "orchestration_readiness": 0.45,
+        "drift_stability": 0.5,
+    }
 
-    assert main(["--current-file", str(current_path), "--baseline-file", str(baseline_path)]) == 0
+    baseline_path.write_text(
+        json.dumps(baseline_metrics),
+        encoding="utf-8",
+    )
+    current_path.write_text(
+        json.dumps(current_metrics),
+        encoding="utf-8",
+    )
 
-    payload = json.loads(capsys.readouterr().out)
-    assert payload["status"] == "evaluated"
-    assert payload["current_file"] == str(current_path)
-    assert payload["baseline_file"] == str(baseline_path)
-    assert payload["drift_variance"] == pytest.approx(0.5)
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(DRIFT_MONITOR),
+            "--baseline",
+            str(baseline_path),
+            "--current",
+            str(current_path),
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    report = json.loads(result.stdout)
+    expected_variance = round(
+        sum(abs(current_metrics[key] - baseline_metrics[key]) for key in baseline_metrics)
+        / len(baseline_metrics),
+        6,
+    )
+    assert report["tracked_dimensions"] == [
+        "structure",
+        "renderability",
+        "federation",
+        "semantic_traceability",
+        "orchestration_readiness",
+        "drift_stability",
+    ]
+    assert report["drift_variance"] == expected_variance
+    assert report["deltas"]["structure"] == 0.1
+    assert report["deltas"]["federation"] == -0.05
