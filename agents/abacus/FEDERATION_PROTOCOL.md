@@ -35,9 +35,8 @@ Example:
 `GOVERNANCE.RUNTIME.2622_1535.W000`
 
 ## Integration Threshold Gates
+Automated validation should stop code merges when the federation envelope falls outside these bounds:
 
-Automated validation checks must explicitly stop code merges if structural evaluations fall out of bounds:
-
-* $F_{\text{federation}} < 0.40$
-* $O_{\text{orch}} < 0.30$
-* $D_{\text{drift}} > 0.45$ (Flags elevated structural variance)
+- Federation < 0.40
+- Orchestration readiness < 0.30
+- Drift > 0.45

@@ -1,11 +1,7 @@
-version: 1
-schema: FEDERATED_SEMANTIC_TRACE
-
 $schema: "http://json-schema.org/draft-07/schema#"
 title: "SemanticSessionTupleSchema"
 description: "Dual-render verification schema for tracking human intent against machine chronology."
-
-semantic_prefixes:
+x-semantic-prefixes:
   - "[TOPIC]"
   - "[TRACE]"
   - "[WAVE]"
@@ -16,116 +12,103 @@ semantic_prefixes:
   - "[FEDERATION]"
   - "[DMAIC]"
   - "[SSOT]"
-
-session_tuple:
-  semantic:
-    topic: "GOVERNANCE.RUNTIME.ORCHESTRATION"
-    theme: "ABACUS_CODEX_FEDERATION"
-    intent: "Semantic tracing bridge for recursive orchestration"
-    status: "ACTIVE"
-    wave: "W000"
-    trace: "FEDERATION.WIRELINK.RUNTIME"
-    related:
-      - ARTSTYLE
-      - MCP
-      - DMAIC
-      - PCA
-      - RENDER_GOVERNANCE
-  machine:
-    stamp: "2622_1535"
-    wave: "W000"
-    tuple_id: "FEDERATION.RUNTIME.WIRELINK"
-    temporal_index: 2026.22.1535
-    orchestration:
-      source: CHATGPT
-      federation:
-        - ABACUS
-        - CODEX
-        - MCP
-    semantic_hash:
-      primary: governance
-      secondary: runtime
-      tertiary: federation
-    drift_tracking:
-      enabled: true
-      pca_monitor: true
-
-completion_vector:
-  structure: 0.90
-  renderability: 0.75
-  federation: 0.40
-  semantic_traceability: 0.85
-  orchestration_readiness: 0.30
-  drift_stability: 0.55
-
-# JSON Schema validation rules for programmatic tuple verification
-json_schema_rules:
-  type: object
-  required:
-    - human_render
-    - machine_render
-  properties:
-    human_render:
-      type: object
-      required:
-        - topic
-        - theme
-        - intent
-        - status
-        - wave
-        - trace
-      properties:
-        topic: { type: string, pattern: "^[A-Z0-9_.]+$" }
-        theme: { type: string, pattern: "^[A-Z0-9_]+$" }
-        intent: { type: string }
-        status: { type: string, enum: [ACTIVE, INCUBATING, DEPRECATED, SUSPENDED] }
-        wave: { type: string, pattern: "^W\\d{3}$" }
-        trace: { type: string, pattern: "^[A-Z0-9_.]+$" }
-        related:
-          type: array
-          items: { type: string }
+type: object
+required:
+  - human_render
+  - machine_render
+properties:
+  human_render:
+    type: object
+    required:
+      - topic
+      - theme
+      - intent
+      - status
+      - wave
+      - trace
+    properties:
+      topic: { type: string, pattern: "^[A-Z0-9_.]+$" }
+      theme: { type: string, pattern: "^[A-Z0-9_]+$" }
+      intent: { type: string }
+      status: { type: string, enum: [ACTIVE, INCUBATING, DEPRECATED, SUSPENDED] }
+      wave: { type: string, pattern: "^W\\d{3}$" }
+      trace: { type: string, pattern: "^[A-Z0-9_.]+$" }
+      related:
+        type: array
+        items: { type: string }
+  machine_render:
+    type: object
+    required:
+      - stamp
+      - wave
+      - tuple_id
+      - temporal_index
+      - orchestration
+      - semantic_hash
+      - drift_tracking
+      - completion_vector
+    properties:
+      stamp: { type: string, pattern: "^\\d{4}_\\d{4}$" }
+      wave: { type: string, pattern: "^W\\d{3}$" }
+      tuple_id: { type: string }
+      temporal_index: { type: number }
+      orchestration:
+        type: object
+        required: [source, federation]
+        properties:
+          source: { type: string }
+          federation: { type: array, items: { type: string } }
+      semantic_hash:
+        type: object
+        required: [primary, secondary, tertiary]
+        properties:
+          primary: { type: string }
+          secondary: { type: string }
+          tertiary: { type: string }
+      drift_tracking:
+        type: object
+        required: [enabled, pca_monitor]
+        properties:
+          enabled: { type: boolean }
+          pca_monitor: { type: boolean }
+      completion_vector:
+        type: object
+        required: [structure, renderability, federation, semantic_traceability, orchestration_readiness, drift_stability]
+        properties:
+          structure: { type: number, minimum: 0, maximum: 1 }
+          renderability: { type: number, minimum: 0, maximum: 1 }
+          federation: { type: number, minimum: 0, maximum: 1 }
+          semantic_traceability: { type: number, minimum: 0, maximum: 1 }
+          orchestration_readiness: { type: number, minimum: 0, maximum: 1 }
+          drift_stability: { type: number, minimum: 0, maximum: 1 }
+examples:
+  - human_render:
+      topic: GOVERNANCE.RUNTIME.ORCHESTRATION
+      theme: ABACUS_CODEX_FEDERATION
+      intent: Semantic tracing bridge for recursive orchestration
+      status: ACTIVE
+      wave: W000
+      trace: FEDERATION.WIRELINK.RUNTIME
+      related: [ARTSTYLE, MCP, DMAIC, PCA, RENDER_GOVERNANCE]
     machine_render:
-      type: object
-      required:
-        - stamp
-        - wave
-        - tuple_id
-        - temporal_index
-        - orchestration
-        - semantic_hash
-        - drift_tracking
-        - completion_vector
-      properties:
-        stamp: { type: string, pattern: "^\\d{4}_\\d{4}$" }
-        wave: { type: string, pattern: "^W\\d{3}$" }
-        tuple_id: { type: string }
-        temporal_index: { type: number }
-        orchestration:
-          type: object
-          required: [source, federation]
-          properties:
-            source: { type: string }
-            federation: { type: array, items: { type: string } }
-        semantic_hash:
-          type: object
-          required: [primary, secondary, tertiary]
-          properties:
-            primary: { type: string }
-            secondary: { type: string }
-            tertiary: { type: string }
-        drift_tracking:
-          type: object
-          required: [enabled, pca_monitor]
-          properties:
-            enabled: { type: boolean }
-            pca_monitor: { type: boolean }
-        completion_vector:
-          type: object
-          required: [structure, renderability, federation, semantic_traceability, orchestration_readiness, drift_stability]
-          properties:
-            structure: { type: number, minimum: 0, maximum: 1 }
-            renderability: { type: number, minimum: 0, maximum: 1 }
-            federation: { type: number, minimum: 0, maximum: 1 }
-            semantic_traceability: { type: number, minimum: 0, maximum: 1 }
-            orchestration_readiness: { type: number, minimum: 0, maximum: 1 }
-            drift_stability: { type: number, minimum: 0, maximum: 1 }
+      stamp: "2622_1535"
+      wave: W000
+      tuple_id: FEDERATION.RUNTIME.WIRELINK
+      temporal_index: 2026.221535
+      orchestration:
+        source: CHATGPT
+        federation: [ABACUS, CODEX, MCP]
+      semantic_hash:
+        primary: governance
+        secondary: runtime
+        tertiary: federation
+      drift_tracking:
+        enabled: true
+        pca_monitor: true
+      completion_vector:
+        structure: 0.90
+        renderability: 0.75
+        federation: 0.40
+        semantic_traceability: 0.85
+        orchestration_readiness: 0.30
+        drift_stability: 0.55
