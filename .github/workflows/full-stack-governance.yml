@@ -89,7 +89,7 @@ jobs:
           name: governance-${{ matrix.component }}
           path: reports/${{ matrix.component }}
 
-  bridge-validation:
+  bridge-audit:
     runs-on: ubuntu-latest
     needs: lineage-governance
 
@@ -97,17 +97,73 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate bridge topology
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Federation governance bridge audit
+        run: python scripts/check_federation_governance.py
+
+  federation-bridge-build:
+    runs-on: ubuntu-latest
+    needs: lineage-governance
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
         run: |
-          echo 'CODEX <-> ABACUS <-> MCP bridge topology validated'
+          pip install -q plotly pyyaml
+
+      - name: Generate federation bridge artifacts
+        run: |
+          python docs/wave_packages/runtime/federation_bridge_cli.py
+          echo "✓ Federation bridge CLI executed"
+
+      - name: Verify canonical output path
+        run: |
+          if [ -d "docs/wave_packages/runtime/out" ]; then
+            echo "✓ Federation bridge artifacts generated"
+            ls -lh docs/wave_packages/runtime/out/
+          else
+            echo "⚠ No output artifacts generated"
+            exit 1
+          fi
+
+      - name: Copy to canonical outputs/html/federation_bridge
+        run: |
+          mkdir -p outputs/html/federation_bridge
+          if [ -d "docs/wave_packages/runtime/pages" ]; then
+            cp -r docs/wave_packages/runtime/pages/* outputs/html/federation_bridge/ || true
+            echo "✓ Artifacts copied to canonical outputs/html/federation_bridge/"
+          fi
+
+      - name: Upload federation bridge artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: federation-bridge-output
+          path: |
+            docs/wave_packages/runtime/out/
+            docs/wave_packages/runtime/pages/
+            outputs/html/federation_bridge/
 
   release-readiness:
     runs-on: ubuntu-latest
     needs:
-      - bridge-validation
+      - bridge-audit
+      - federation-bridge-build
 
     steps:
       - name: Release lineage gate
         run: |
           echo 'Release readiness gate passed'
           echo 'Version lineage preserved'
+          echo 'Federation bridge artifacts generated'

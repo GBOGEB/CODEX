@@ -1,0 +1,33 @@
+name: W003 Governance Gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'federation_runtime/**'
+  push:
+    branches: ['wave/W003-*', 'pr/PR-007-*']
+    paths:
+      - 'federation_runtime/**'
+
+jobs:
+  governance-gate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: federation_runtime
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate governance header
+        run: |
+          python engines/governance_parser.py \
+            --target .github/W003_PR_FOLLOW_UP.md \
+            --schema schema/governance_header.schema.json \
+            --traceability-manifest governance/traceability_manifest.json \
+            --pr-track governance/pr_track.yml \
+            --wave-plan governance/wave_recreation_plan.yml
+      - name: Validate traceability manifest shape
+        run: python -c "import json; d=json.load(open('governance/traceability_manifest.json')); assert d.get('active_wave')=='W003', 'active_wave must be W003'; assert str(d.get('current_iteration','')).startswith('I'), 'current_iteration must start with I'; assert isinstance(d.get('required_artifacts'), dict), 'required_artifacts must be an object'; assert 'pr_stream' in d, 'pr_stream is required'"
