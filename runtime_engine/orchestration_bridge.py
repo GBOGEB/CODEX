@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from subprocess import run
 
-ROOT = Path(__file__).resolve().parents[1]
+from .pipeline_config import PIPELINE_STEPS
 
 PIPELINE = [
     'telemetry_pipeline.py',
@@ -12,9 +13,9 @@ PIPELINE = [
 
 
 def execute_pipeline() -> None:
-    for step in PIPELINE:
+    for step in PIPELINE_STEPS:
         run(
-            ['python', str(ROOT / 'runtime_engine' / step)],
+            [sys.executable, str(ROOT / 'runtime_engine' / step)],
             check=True,
         )
 

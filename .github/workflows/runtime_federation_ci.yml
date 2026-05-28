@@ -1,0 +1,54 @@
+name: Runtime Federation CI
+
+on:
+  push:
+    branches:
+      - a28-glossary-reference-runtime
+  pull_request:
+permissions:
+  contents: read
+
+jobs:
+  runtime-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+
+      - name: Execute full federation bridge
+        run: |
+          python docs/wave_packages/runtime/federation_bridge_cli.py
+
+      - name: Run runtime tests
+        run: |
+          pytest tests/test_runtime_validation.py
+
+      - name: Verify bridge reports
+        run: |
+          test -f docs/wave_packages/runtime/out/federation_bridge_build_report.json
+          test -f docs/wave_packages/runtime/out/federation_bridge_build_report.md
+          test -f docs/wave_packages/runtime/out/runtime_status.md
+          test -f docs/wave_packages/runtime/out/topology_runtime.mmd
+          test -f docs/wave_packages/runtime/out/statistics_pca_report.json
+          test -f docs/wave_packages/runtime/pages/index.html
+          test -f docs/wave_packages/runtime/pages/plotly_runtime_dashboard.html
+          test -f docs/wave_packages/runtime/pages/runtime_bundle_index.html
+
+      - name: Upload runtime artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-federation-artifacts
+          path: |
+            docs/wave_packages/runtime/out/
+            docs/wave_packages/runtime/pages/
