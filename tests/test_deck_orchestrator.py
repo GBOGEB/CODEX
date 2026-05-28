@@ -67,6 +67,16 @@ def test_build_deck_assets_rejects_unsupported_formats(tmp_path):
         )
 
 
+def test_build_deck_assets_rejects_invalid_source_date_epoch(tmp_path, monkeypatch):
+    monkeypatch.setenv("SOURCE_DATE_EPOCH", "not-an-int")
+    with pytest.raises(ValueError, match="SOURCE_DATE_EPOCH must be an integer Unix timestamp"):
+        build_deck_assets(
+            content_path=FIXTURE_DIR / "deck_content.yaml",
+            css_path=FIXTURE_DIR / "deck_style.css",
+            output_dir=tmp_path,
+        )
+
+
 def test_build_deck_assets_preserves_acronym_casing_in_rendered_headings(tmp_path):
     build_deck_assets(
         content_path=FIXTURE_DIR / "deck_content.yaml",

@@ -168,6 +168,13 @@ def _format_block_heading(key: str) -> str:
     return " ".join(HEADING_TOKEN_OVERRIDES.get(token, token.title()) for token in key.split("_"))
 
 
+def _manifest_artifact_path(artifact_path: Path, output_dir: Path) -> str:
+    try:
+        return artifact_path.relative_to(output_dir).as_posix()
+    except ValueError as exc:  # pragma: no cover - defensive invariant check
+        raise ValueError(f"Artifact path must be within output_dir: {artifact_path}") from exc
+
+
 def _render_slide_blocks(slide: Mapping[str, Any]) -> str:
     blocks = []
     for key in BLOCK_KEYS:
@@ -271,7 +278,11 @@ def build_deck_assets(
     formats: Iterable[str] = DEFAULT_OUTPUT_FORMATS,
     generated_at: str | None = None,
 ) -> DeckBuildResult:
-    """Run the content→presentation→artifact pipeline for one deck."""
+    """Run the content→presentation→artifact pipeline for one deck.
+
+    Timestamp precedence for manifest reproducibility:
+    explicit ``generated_at`` value, then ``SOURCE_DATE_EPOCH``, then current UTC time.
+    """
 
     data = load_deck_content(content_path)
     css = load_css(css_path)
@@ -280,17 +291,18 @@ def build_deck_assets(
     stem = deck["deck_id"]
 
     artifacts: list[DeckArtifact] = []
-    requested = {str(item).lower() for item in formats}
-    unsupported = sorted(requested - SUPPORTED_OUTPUT_FORMATS)
+    requested_formats = {str(item).lower() for item in formats}
+    unsupported = sorted(requested_formats - SUPPORTED_OUTPUT_FORMATS)
     if unsupported:
         joined = ", ".join(unsupported)
-        raise ValueError(f"Unsupported format(s): {joined}")
-    if "html" in requested:
+        supported = ", ".join(sorted(SUPPORTED_OUTPUT_FORMATS))
+        raise ValueError(f"Unsupported format(s): {joined}. Supported formats: {supported}")
+    if "html" in requested_formats:
         html_body = render_html_deck(deck, css)
         html_path = output_dir / f"{stem}.html"
         html_path.write_text(html_body, encoding="utf-8")
         artifacts.append(DeckArtifact("html", html_path, _sha256_file(html_path)))
-    if "md" in requested or "markdown" in requested:
+    if "md" in requested_formats or "markdown" in requested_formats:
         markdown_body = render_markdown_deck(deck)
         markdown_path = output_dir / f"{stem}.md"
         markdown_path.write_text(markdown_body, encoding="utf-8")
@@ -300,7 +312,11 @@ def build_deck_assets(
     if generated_at:
         generated_at_value = generated_at
     elif source_date_epoch:
-        generated_at_value = datetime.fromtimestamp(int(source_date_epoch), timezone.utc).isoformat()
+        try:
+            generated_at_epoch = int(source_date_epoch)
+        except ValueError as exc:
+            raise ValueError("SOURCE_DATE_EPOCH must be an integer Unix timestamp") from exc
+        generated_at_value = datetime.fromtimestamp(generated_at_epoch, timezone.utc).isoformat()
     else:
         generated_at_value = datetime.now(timezone.utc).isoformat()
 
@@ -320,7 +336,7 @@ def build_deck_assets(
         "artifacts": [
             {
                 "kind": artifact.kind,
-                "path": artifact.path.relative_to(output_dir).as_posix(),
+                "path": _manifest_artifact_path(artifact.path, output_dir),
                 "sha256": artifact.sha256,
             }
             for artifact in artifacts
@@ -344,7 +360,12 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--output-dir", type=Path, required=True, help="Generated artifact directory")
     parser.add_argument("--deck-id", type=str, help="Override generated deck id")
     parser.add_argument("--generated-at", type=str, help="Override generated_at value in manifest")
-    parser.add_argument("--format", nargs="+", default=list(DEFAULT_OUTPUT_FORMATS), choices=["html", "md", "markdown"])
+    parser.add_argument(
+        "--format",
+        nargs="+",
+        default=list(DEFAULT_OUTPUT_FORMATS),
+        choices=sorted(SUPPORTED_OUTPUT_FORMATS),
+    )
     return parser.parse_args(argv)
 
 
