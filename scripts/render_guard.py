@@ -11,7 +11,7 @@ REQUIRED_GOVERNANCE = [
 ]
 
 REQUIRED_DOCS = [
-    Path("docs/index.md"),
+    Path("docs/runtime_governance.md"),
     Path("docs/runtime_map.md"),
     Path("docs/federation_map.md"),
     Path("docs/governance_states.md"),
