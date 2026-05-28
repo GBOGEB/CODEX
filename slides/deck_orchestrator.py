@@ -109,6 +109,7 @@ def normalize_deck(data: Mapping[str, Any], deck_id: str | None = None) -> dict[
     metadata = dict(data.get("metadata", {}))
     title = str(metadata.get("project") or metadata.get("title") or "Slide Deck")
     resolved_deck_id = deck_id or str(metadata.get("deck_id") or _slugify(title))
+    metadata["deck_id"] = resolved_deck_id
 
     normalized_slides: list[dict[str, Any]] = []
     for index, raw_slide in enumerate(data.get("slides", []), start=1):

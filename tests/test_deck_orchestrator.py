@@ -14,9 +14,18 @@ def test_normalize_deck_assigns_fixed_ids_and_sections():
     deck = normalize_deck(content)
 
     assert deck["deck_id"] == "qps-cybersecurity-ad07-slide-deck-2"
+    assert deck["metadata"]["deck_id"] == "qps-cybersecurity-ad07-slide-deck-2"
     assert len(deck["slides"]) == 4
     assert deck["slides"][1]["id"] == "QPS_CYBERSECURITY_AD07_SLIDE_DECK_2_002"
     assert deck["slides"][1]["section"] == "APPENDIX"
+
+
+def test_normalize_deck_sets_metadata_deck_id_to_override():
+    content = load_deck_content(FIXTURE_DIR / "deck_content.yaml")
+    deck = normalize_deck(content, deck_id="override-deck")
+
+    assert deck["deck_id"] == "override-deck"
+    assert deck["metadata"]["deck_id"] == "override-deck"
 
 
 def test_build_deck_assets_emits_html_markdown_and_abacus_manifest(tmp_path):
