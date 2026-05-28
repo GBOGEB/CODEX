@@ -1,0 +1,25 @@
+name: Wave W003 - Federated Presentation Graph Validation Pipeline
+on:
+  push:
+    branches: ["wave/W003-*", main]
+    paths: ["federation_runtime/**"]
+  pull_request:
+    branches: [main]
+    paths: ["federation_runtime/**"]
+jobs:
+  validate_and_build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: federation_runtime
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python engines/parser.py
+      - run: python engines/normalize.py
+      - run: python engines/governance_parser.py --target .github/W003_PR_FOLLOW_UP.md --schema schema/governance_header.schema.json
+      - run: python engines/validator.py
+      - run: python engines/html_renderer.py
+      - run: python engines/build_manifest.py

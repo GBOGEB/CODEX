@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Mandatory_Federation_Governance_Header_Schema",
+  "type": "object",
+  "required": [
+    "PR-ID",
+    "WAVE",
+    "SPRINT",
+    "DOMAIN",
+    "TYPE",
+    "CRITICALITY",
+    "TOPOLOGY IMPACT",
+    "SCHEMA MUTATION"
+  ],
+  "properties": {
+    "PR-ID": { "type": "string", "pattern": "^PR-[0-9]{3}$" },
+    "WAVE": { "type": "string", "pattern": "^W[0-9]{3}$" },
+    "SPRINT": { "type": "string", "pattern": "^S[0-9]-P[0-9]$" },
+    "DOMAIN": {
+      "type": "string",
+      "const": "EXECUTION_GOVERNANCE_INFRASTRUCTURE"
+    },
+    "TYPE": {
+      "type": "string",
+      "enum": ["FOUNDATION", "STRUCTURAL", "RUNTIME", "PLUGIN", "RENDERER", "GOVERNANCE", "CI_CD"]
+    },
+    "CRITICALITY": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+    "TOPOLOGY IMPACT": { "type": "string", "enum": ["YES", "NO"] },
+    "SCHEMA MUTATION": { "type": "string", "enum": ["YES", "NO", "CONTROLLED"] }
+  },
+  "additionalProperties": false
+}
