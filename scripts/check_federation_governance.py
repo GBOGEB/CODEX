@@ -82,15 +82,22 @@ def _validate_governance_parser() -> list[str]:
 
 
 def _validate_bridge_manifest() -> list[str]:
-    """Confirm bridge manifest declares both CODEX and ABACUS repos."""
+    """Confirm bridge manifest declares both CODEX and ABACUS repos.
+
+    Checks for top-level or nested ``codex:`` and ``abacus:`` YAML keys
+    (case-insensitive) so that superficial mentions in comments do not
+    satisfy the assertion.
+    """
     errors: list[str] = []
     manifest_path = ROOT / "bridge_manifest.yaml"
     if not manifest_path.exists():
-        return [f"  MISSING  bridge_manifest.yaml"]
+        return [f"  MISSING  bridge_manifest.yaml at {manifest_path}"]
     text = manifest_path.read_text(encoding="utf-8")
+    import re
     for required_key in ("codex", "abacus"):
-        if required_key not in text.lower():
-            errors.append(f"  MISSING  bridge_manifest.yaml does not reference '{required_key}'")
+        # Match a YAML key (possibly indented) followed by a colon
+        if not re.search(rf"^\s*{re.escape(required_key)}\s*:", text, re.IGNORECASE | re.MULTILINE):
+            errors.append(f"  MISSING  bridge_manifest.yaml does not define a '{required_key}:' key")
     return errors
 
 
