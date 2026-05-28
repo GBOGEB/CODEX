@@ -1,0 +1,23 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+version: "1.0.0"
+wave: "W000"
+runtime_state_machine:
+  states:
+    - id: planned
+      description: Work is defined but not yet in execution.
+    - id: active
+      description: Work is in execution and producing telemetry.
+    - id: sweep
+      description: MCP sweep analyzes near-miss and obsolete artifacts.
+    - id: closed
+      description: Work is either merged, archived, or pruned.
+  transitions:
+    - from: planned
+      to: active
+      trigger: approved
+    - from: active
+      to: sweep
+      trigger: completed_or_aborted
+    - from: sweep
+      to: closed
+      trigger: classified

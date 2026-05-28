@@ -1,0 +1,49 @@
+program_epoch: E0
+active_wave: W003
+current_iteration: I002
+objective: recreate_and_replay_all_local_waves_with_traceable_handover
+
+execution_order:
+  - id: PR-005
+    branch: pr/PR-005-execution-graph
+    outputs:
+      - build/execution_graph.json
+    checks:
+      - syntax
+      - ir_linkage
+  - id: PR-006
+    branch: pr/PR-006-reconciliation-engine
+    outputs:
+      - build/reconciliation_state.json
+    checks:
+      - reconciliation_consistency
+  - id: PR-008
+    branch: pr/PR-008-mutation-classifier
+    outputs:
+      - build/mutation_profile.json
+    checks:
+      - mutation_classification_consistency
+  - id: PR-007
+    branch: pr/PR-007-governance-parser
+    outputs:
+      - schema/governance_header.schema.json
+      - engines/governance_parser.py
+      - .github/workflows/governance-gate.yml
+    checks:
+      - governance_header_validation
+      - merge_order_gate
+      - schema_mutation_policy
+  - id: PR-009
+    branch: wave/W003-federation-authority
+    outputs:
+      - governance/federation_authority_registry.yml
+    checks:
+      - remote_reconciliation_readiness
+
+baseline_metrics:
+  execution_graph_nodes: 35
+  execution_graph_edges: 44
+  artifacts_signed: 9
+  semantic_density: 2.1
+  semantic_entropy: 2.298
+  traceability_coverage: 1.0
