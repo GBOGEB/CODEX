@@ -184,3 +184,65 @@ def test_state_store_prunes_old_entries(tmp_path):
     remaining = store.prune(now)
     assert "old" not in remaining
     assert "new" in remaining
+
+
+def test_mcp_sweep_engine_prunes_state_once_per_run(tmp_path):
+    class StubCrawler:
+        def list_closed_pull_requests(self, *args, **kwargs):
+            return [
+                {
+                    "number": 11,
+                    "closed_at": "2026-05-11T00:00:00+00:00",
+                    "base": {"ref": "main"},
+                }
+            ], {"pages_scanned": 1, "retries": 0, "auth_failures": 0}
+
+        def get_pull_request_signals(self, owner, repo, number):
+            return {
+                "number": number,
+                "title": "Optimize compressor staging REQ-MINERVA-CORE",
+                "labels": ["enhancement"],
+                "files": ["src/runtime/engine.py"],
+                "commits": ["follow-up optimization"],
+                "reviews": ["Looks good; TODO tighten thresholds"],
+                "html_url": f"https://github.com/{owner}/{repo}/pull/{number}",
+            }
+
+    class CountingStateStore(SweepStateStore):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.prune_calls = 0
+            self.save_calls = 0
+
+        def prune(self, now):
+            self.prune_calls += 1
+            return super().prune(now)
+
+        def save(self, payload):
+            self.save_calls += 1
+            super().save(payload)
+
+    now = datetime.now(timezone.utc)
+    state_path = tmp_path / "state.json"
+    state_path.write_text(
+        json.dumps({"stale": (now - timedelta(days=2)).isoformat()}),
+        encoding="utf-8",
+    )
+    store = CountingStateStore(state_path, ttl_days=1)
+    lineage_store = LineageDeltaStore(tmp_path / "lineage.md")
+    engine = MCPSweepEngine(crawler=StubCrawler(), state_store=store, lineage_store=lineage_store)
+
+    contract = SweepInputContract(
+        repo="GBOGEB/CODEX",
+        since="2026-05-01T00:00:00+00:00",
+        until="2026-05-20T00:00:00+00:00",
+        branch_filters=("main",),
+    )
+    guard = TokenBoundaryGuard()
+    guard.handshake(TokenScope.GITHUB, "gh")
+
+    output = engine.run(contract, guard)
+
+    assert len(output.near_misses) == 1
+    assert store.prune_calls == 1
+    assert store.save_calls == 2

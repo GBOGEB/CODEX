@@ -421,6 +421,7 @@ class MCPSweepEngine:
 
         near_misses: List[SweepFinding] = []
         obsolete_items: List[SweepFinding] = []
+        state = self.state_store.prune(now) if self.state_store.state_path.exists() else {}
 
         for candidate in candidates:
             number = int(candidate.get("number", 0))
@@ -430,9 +431,9 @@ class MCPSweepEngine:
             finding = self._classify_signal(signal, source="pull_request", source_ref=f"PR-{number}", now=now)
             if not finding:
                 continue
-            if not self.state_store.should_include(finding.dedupe_key, now):
+            if finding.dedupe_key in state:
                 continue
-            self.state_store.record(finding.dedupe_key, now)
+            state[finding.dedupe_key] = now.isoformat()
             if finding.status == "obsolete":
                 obsolete_items.append(finding)
             else:
@@ -447,13 +448,16 @@ class MCPSweepEngine:
             )
             if not finding:
                 continue
-            if not self.state_store.should_include(finding.dedupe_key, now):
+            if finding.dedupe_key in state:
                 continue
-            self.state_store.record(finding.dedupe_key, now)
+            state[finding.dedupe_key] = now.isoformat()
             if finding.status == "obsolete":
                 obsolete_items.append(finding)
             else:
                 near_misses.append(finding)
+
+        if self.state_store.state_path.exists() or state:
+            self.state_store.save(state)
 
         output = SweepOutputContract(
             repo=contract.repo,
