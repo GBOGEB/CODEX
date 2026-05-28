@@ -2,8 +2,6 @@ import pathlib
 import re
 import sys
 
-import yaml
-
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 SEMANTIC = ROOT / 'semantic_substrate'
 PIPELINE_GLOSSARY = ROOT / 'PIPELINE' / 'GLOSSARY.yaml'
@@ -58,10 +56,19 @@ def load_declared_terms() -> set[str]:
     if not PIPELINE_GLOSSARY.exists():
         return set()
 
-    payload = yaml.safe_load(PIPELINE_GLOSSARY.read_text(encoding='utf-8')) or {}
-    glossary = payload.get('glossary', {})
+    declared: set[str] = set()
+    in_glossary = False
+    for line in PIPELINE_GLOSSARY.read_text(encoding='utf-8').splitlines():
+        if line.startswith('glossary:'):
+            in_glossary = True
+            continue
+        if in_glossary and re.match(r'^[^\s].*:', line):
+            break
+        if in_glossary:
+            match = re.match(r'^\s{2}([a-z][a-z0-9_]*)\s*:\s*$', line)
+            if match:
+                declared.add(match.group(1))
 
-    declared = set(glossary.keys())
     declared.update({'ssot', 'yaml', 'json', 'runtime', 'render', 'lineage'})
     return declared
 
