@@ -40,7 +40,7 @@ def validate_metadata(metadata: dict[str, str], schema: dict) -> tuple[bool, lis
             continue
         value = metadata[key]
         pattern = prop.get("pattern")
-        if pattern and not re.match(pattern, value):
+        if pattern and not re.fullmatch(pattern, value):
             errors.append(f"Pattern mismatch for {key}: {value}")
         const = prop.get("const")
         if const and value != const:
