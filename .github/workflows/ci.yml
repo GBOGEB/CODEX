@@ -52,6 +52,7 @@ jobs:
       - name: Validate INCUBATOR tuples
         run: |
           python scripts/parse_chat_tuple.py --json-output /tmp/tuples.json
+          python scripts/validate_tuple.py
 
       - name: Export INCUBATOR runtime bundle
         run: |

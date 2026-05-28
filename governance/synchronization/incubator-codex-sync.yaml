@@ -1,0 +1,64 @@
+incubator_codex_sync:
+  moniker: W001
+  program: INCUBATOR
+  repository: CODEX
+
+  synchronization_domains:
+    - tuple_governance_semantics
+    - category_theme_normalization
+    - wave_progression_tracking
+    - ci_pipeline_integration
+    - export_runtime_portability
+
+  synchronization_requirements:
+    schema_validation: enabled
+    naming_contract_enforcement: enabled
+    ci_tuple_validation: enabled
+    export_bundle_validation: enabled
+
+  objectives:
+    - standardized_tuple_ingestion
+    - normalized_category_theme_classification
+    - automated_ci_validation
+    - portable_runtime_export
+    - abacus_bridge_alignment
+
+  dependencies:
+    - manifest: MANIFEST.json
+      usage: published_pages_registration
+    
+    - manifest: WAVE_PROGRESSION.yaml
+      usage: incubator_wave_tracking
+    
+    - manifest: maps/category_map.yml
+      usage: tuple_category_normalization
+    
+    - manifest: maps/theme_map.yml
+      usage: tuple_theme_normalization
+    
+    - manifest: maps/repo_ingress_map.yml
+      usage: repository_routing
+
+  validation_chain:
+    - stage: schema_validation
+      script: scripts/parse_chat_tuple.py
+      ci_integration: true
+    
+    - stage: index_generation
+      script: scripts/build_incubator_index.py
+      output: docs/incubator_index.md
+    
+    - stage: export_validation
+      script: scripts/export_incubator_runtime.py
+      ci_integration: true
+    
+    - stage: test_coverage
+      suite: tests/incubator/
+      tests: 13
+      coverage: comprehensive
+
+  bridge_alignment:
+    abacus_export_pattern: scripts/export_abacus_runtime.py
+    incubator_export_pattern: scripts/export_incubator_runtime.py
+    shared_governance: governance/synchronization/abacus-codex-recursive-sync.yaml
+    cross_repo_portability: enabled

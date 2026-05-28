@@ -1,0 +1,68 @@
+incubator_governance_interface_manifest:
+  interface_version: w001
+  program: INCUBATOR
+  repository: CODEX
+
+  governance_interfaces:
+    - tuple_schema_validation
+    - tuple_naming_contract_enforcement
+    - category_theme_normalization
+    - dmaic_phase_tagging
+    - wave_progression_tracking
+
+  interoperability:
+    abacus_bridge: enabled
+    codex_integration: enabled
+    recursive_governance_sync: enabled
+    runtime_export_portability: enabled
+
+  lifecycle:
+    validation_required: true
+    schema_enforcement: true
+    ci_integration: true
+    export_bundle_validation: true
+
+  data_flows:
+    - name: tuple_ingress
+      source: human_editable_yaml
+      validation: schema_and_naming
+      indexing: markdown_and_json
+      export: portable_bundle
+    
+    - name: category_mapping
+      source: maps/category_map.yml
+      usage: tuple_classification
+      governance: semantic_normalization
+    
+    - name: theme_mapping
+      source: maps/theme_map.yml
+      usage: tuple_classification
+      governance: semantic_normalization
+    
+    - name: repo_ingress_routing
+      source: maps/repo_ingress_map.yml
+      usage: repository_routing
+      governance: cross_repo_alignment
+
+  bridge_patterns:
+    - pattern: yaml_driven_governance
+      shared_with: [ABACUS, CODEX]
+      implementation: schema_files_and_manifests
+    
+    - pattern: wave_progression
+      shared_with: [ABACUS]
+      implementation: WAVE_PROGRESSION.yaml
+    
+    - pattern: export_portability
+      shared_with: [ABACUS]
+      implementation: export_incubator_runtime.py
+    
+    - pattern: ci_validation
+      shared_with: [CODEX]
+      implementation: .github/workflows/ci.yml
+
+  metrics:
+    W000_completion: 100
+    W001_completion: 100
+    governance_integration: 95
+    ci_integration: 100
