@@ -1,0 +1,67 @@
+# DMAIC Phase Map — INCUBATOR ↔ ABACUS Bridge Metadata
+# W002: DMAIC Phase Mapping (Wave completion artifact)
+# Generated: 2026-05-28
+
+version: 1
+description: >
+  Maps INCUBATOR session tuple categories and themes to DMAIC phases
+  (Define / Measure / Analyze / Improve / Control).
+  This is the core W002 bridge artifact enabling ABACUS multi-agent
+  orchestration to route INCUBATOR tuples to the correct DMAIC cluster.
+
+dmaic_phases:
+  DEFINE:
+    cluster: C1
+    description: "Scope the problem; capture charter and requirements."
+    incubator_categories: [INCUBATOR]
+    incubator_themes: [DEFINE, RUNTIME_GOVERNANCE]
+    abacus_domains: [prototype, requirements]
+    quality_gate: 70
+  MEASURE:
+    cluster: C2
+    description: "Collect baseline data; establish measurement system."
+    incubator_categories: [ANALYSIS]
+    incubator_themes: [MEASURE, SCIENTIFIC_VALIDATION, BACKEND_CONVERGENCE]
+    abacus_domains: [telemetry, benchmarks]
+    quality_gate: 70
+  ANALYZE:
+    cluster: C3
+    description: "Identify root causes; validate with data."
+    incubator_categories: [ANALYSIS]
+    incubator_themes: [ANALYZE, SCIENTIFIC_VALIDATION, BACKEND_CONVERGENCE]
+    abacus_domains: [analysis, residuals]
+    quality_gate: 70
+  IMPROVE:
+    cluster: C4
+    description: "Design and implement targeted solutions."
+    incubator_categories: [DELIVERY, IMPROVEMENT]
+    incubator_themes: [IMPROVE, BACKEND_CONVERGENCE]
+    abacus_domains: [execution, implementation]
+    quality_gate: 70
+  CONTROL:
+    cluster: C5
+    description: "Sustain gains; prevent regression."
+    incubator_categories: [GOVERNANCE, CONTROL]
+    incubator_themes: [CONTROL, RUNTIME_GOVERNANCE]
+    abacus_domains: [controls, governance]
+    quality_gate: 70
+
+routing_rules:
+  - priority: 1
+    condition: "tuple.category in dmaic_phase.incubator_categories AND tuple.theme in dmaic_phase.incubator_themes"
+    action: assign_phase
+  - priority: 2
+    condition: "tuple.category in dmaic_phase.incubator_categories"
+    action: assign_phase_by_category
+  - priority: 3
+    condition: "tuple.theme in dmaic_phase.incubator_themes"
+    action: assign_phase_by_theme
+  - priority: 4
+    condition: "unmatched"
+    action: assign_default_phase
+    default_phase: DEFINE
+
+validation:
+  required_tuple_fields: [id, date, category, theme, wave, status]
+  allowed_phases: [DEFINE, MEASURE, ANALYZE, IMPROVE, CONTROL]
+  unmatched_policy: flag_for_review
