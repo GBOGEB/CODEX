@@ -19,10 +19,9 @@ REQUIRED_FILES = [
 
 TOKEN_PATTERN = re.compile(r'\b(?:[a-z]+_){1,}[a-z0-9]+\b')
 SCAN_DIRS = [
-    ROOT / 'src',
-    ROOT / 'semantic_substrate',
+    ROOT,
 ]
-SCAN_SUFFIXES = {'.py', '.yaml', '.yml', '.md'}
+SCAN_SUFFIXES = {'.py', '.yaml', '.yml', '.md', '.json'}
 SKIP_FRAGMENTS = ('/.venv/', '/.git/', '/__pycache__/')
 
 BASELINE_ALLOWED_UNDOCUMENTED = {
