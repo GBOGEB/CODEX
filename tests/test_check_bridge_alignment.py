@@ -123,6 +123,122 @@ bridge:
             self.assertEqual(exit_code, 1)
             self.assertIn("strict dormant mode is enabled", buffer.getvalue())
 
+    def test_validate_fails_for_duplicate_module_mappings(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            paths = self._paths_for_root(root)
+
+            _write(
+                paths["BRIDGE_MAP_PATH"],
+                """
+bridge:
+  module_alignment:
+    - abacus_module: renderer
+      codex_path: dashboards
+    - abacus_module: renderer
+      codex_path: governance
+""".strip(),
+            )
+            _write(paths["ABACUS_MANIFEST_PATH"], "modules:\n  - renderer\n")
+            _write(paths["FEDERATION_CONTRACT_PATH"], "delta_1_runtime_federation_contract: {}\n")
+            _write(paths["SYNC_PATH"], "abacus_codex_recursive_sync: {}\n")
+            _write(paths["SEMANTIC_SCHEMA_PATH"], "type: object\n")
+            _write(root / "dashboards" / ".gitkeep", "\n")
+            _write(root / "governance" / ".gitkeep", "\n")
+
+            with patch.multiple(bridge, **paths):
+                buffer = io.StringIO()
+                with redirect_stdout(buffer):
+                    exit_code = bridge.validate(strict_dormant=False)
+
+            self.assertEqual(exit_code, 1)
+            self.assertIn("mapped more than once in bridge alignment", buffer.getvalue())
+
+    def test_validate_fails_for_invalid_workflow_path(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            paths = self._paths_for_root(root)
+
+            _write(
+                paths["BRIDGE_MAP_PATH"],
+                """
+bridge:
+  module_alignment:
+    - abacus_module: renderer
+      codex_path: dashboards
+      workflow: .github/workflows/missing.yml
+""".strip(),
+            )
+            _write(paths["ABACUS_MANIFEST_PATH"], "modules:\n  - renderer\n")
+            _write(paths["FEDERATION_CONTRACT_PATH"], "delta_1_runtime_federation_contract: {}\n")
+            _write(paths["SYNC_PATH"], "abacus_codex_recursive_sync: {}\n")
+            _write(paths["SEMANTIC_SCHEMA_PATH"], "type: object\n")
+            _write(root / "dashboards" / ".gitkeep", "\n")
+
+            with patch.multiple(bridge, **paths):
+                buffer = io.StringIO()
+                with redirect_stdout(buffer):
+                    exit_code = bridge.validate(strict_dormant=False)
+
+            self.assertEqual(exit_code, 1)
+            self.assertIn("workflow '.github/workflows/missing.yml' does not exist", buffer.getvalue())
+
+    def test_validate_status_check_uses_semantic_schema_enum(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            paths = self._paths_for_root(root)
+
+            _write(
+                paths["BRIDGE_MAP_PATH"],
+                """
+bridge:
+  module_alignment:
+    - abacus_module: renderer
+      codex_path: dashboards
+      status: INCUBATOR
+""".strip(),
+            )
+            _write(paths["ABACUS_MANIFEST_PATH"], "modules:\n  - renderer\n")
+            _write(paths["FEDERATION_CONTRACT_PATH"], "delta_1_runtime_federation_contract: {}\n")
+            _write(paths["SYNC_PATH"], "abacus_codex_recursive_sync: {}\n")
+            _write(
+                paths["SEMANTIC_SCHEMA_PATH"],
+                """
+properties:
+  human_render:
+    properties:
+      status:
+        enum: [ACTIVE, INCUBATOR]
+""".strip(),
+            )
+            _write(root / "dashboards" / ".gitkeep", "\n")
+
+            with patch.multiple(bridge, **paths):
+                ok_buffer = io.StringIO()
+                with redirect_stdout(ok_buffer):
+                    ok_exit_code = bridge.validate(strict_dormant=False)
+
+            self.assertEqual(ok_exit_code, 0)
+
+            _write(
+                paths["BRIDGE_MAP_PATH"],
+                """
+bridge:
+  module_alignment:
+    - abacus_module: renderer
+      codex_path: dashboards
+      status: SUSPICIOUS
+""".strip(),
+            )
+
+            with patch.multiple(bridge, **paths):
+                fail_buffer = io.StringIO()
+                with redirect_stdout(fail_buffer):
+                    fail_exit_code = bridge.validate(strict_dormant=False)
+
+            self.assertEqual(fail_exit_code, 1)
+            self.assertIn("status 'SUSPICIOUS' is invalid", fail_buffer.getvalue())
+
     def test_validate_reports_unmapped_modules_in_non_strict_mode(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

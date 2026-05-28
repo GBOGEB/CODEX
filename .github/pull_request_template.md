@@ -23,6 +23,7 @@
 ---
 
 ## Completion Vector
+Use normalized values from 0.00 to 1.00 (per `federation/semantic_index/schema.yaml`).
 
 | Domain | Completion |
 |---|---|

@@ -56,11 +56,10 @@ def validate(strict_dormant: bool, strict_coverage: bool = False) -> int:
         return 1
 
     bridge_map = _load_yaml(BRIDGE_MAP_PATH).get("bridge", {})
-    semantic_schema = _load_yaml(SEMANTIC_SCHEMA_PATH)
-    allowed_statuses = _allowed_statuses(semantic_schema)
     alignment = bridge_map.get("module_alignment", [])
     manifest_modules = set(_load_yaml(ABACUS_MANIFEST_PATH).get("modules", []))
     mapped_modules: set[str] = set()
+    allowed_statuses: set[str] | None = None
 
     errors: list[str] = []
     dormant: list[str] = []
@@ -75,7 +74,7 @@ def validate(strict_dormant: bool, strict_coverage: bool = False) -> int:
         if module not in manifest_modules:
             errors.append(f"module '{module}' is not defined in abacus_runtime/runtime_manifest.yaml")
         elif module in mapped_modules:
-            errors.append(f"module '{module}' is mapped more than once")
+            errors.append(f"module '{module}' is mapped more than once in bridge alignment")
         else:
             mapped_modules.add(module)
 
@@ -94,9 +93,12 @@ def validate(strict_dormant: bool, strict_coverage: bool = False) -> int:
         if workflow and not (ROOT / workflow).exists():
             errors.append(f"workflow '{workflow}' does not exist")
 
-        if status and allowed_statuses and status not in allowed_statuses:
-            allowed = ", ".join(sorted(allowed_statuses))
-            errors.append(f"status '{status}' is invalid (expected one of: {allowed})")
+        if status:
+            if allowed_statuses is None:
+                allowed_statuses = _allowed_statuses(_load_yaml(SEMANTIC_SCHEMA_PATH))
+            if allowed_statuses and status not in allowed_statuses:
+                allowed = ", ".join(sorted(allowed_statuses))
+                errors.append(f"status '{status}' is invalid (expected one of: {allowed})")
 
     if errors:
         print("bridge alignment check failed:")
@@ -113,7 +115,7 @@ def validate(strict_dormant: bool, strict_coverage: bool = False) -> int:
         coverage = len(mapped_modules) / len(manifest_modules)
         print(f"- module coverage: {coverage:.2f}")
     else:
-        print("- module coverage: 1.00")
+        print("- module coverage: N/A (no abacus modules declared)")
 
     if dormant:
         print("- dormant codex paths detected:")
