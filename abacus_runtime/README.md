@@ -31,3 +31,11 @@ Codex_Abac
 - recursive orchestration
 - multi-repository federation
 - runtime abstraction
+
+## Bridge Utility
+
+Generate an export bundle plus a machine-readable bridge report with:
+
+```bash
+python scripts/export_abacus_runtime.py --report-json outputs/runtime_export/bridge_report.json
+```

@@ -1,0 +1,35 @@
+{
+  "program_epoch": "E0",
+  "active_wave": "W003",
+  "current_iteration": "I002",
+  "domain": "FEDERATION_EXECUTION_GOVERNANCE",
+  "pr_stream": [
+    "PR-005",
+    "PR-006",
+    "PR-008",
+    "PR-007",
+    "PR-009"
+  ],
+  "required_artifacts": {
+    "schema": [
+      "schema/governance_header.schema.json"
+    ],
+    "engines": [
+      "engines/governance_parser.py"
+    ],
+    "ci": [
+      ".github/workflows/governance-gate.yml"
+    ],
+    "governance_docs": [
+      ".github/W003_PR_FOLLOW_UP.md",
+      "docs/pr_007_execution_checklist.md"
+    ]
+  },
+  "telemetry_baseline": {
+    "execution_graph_nodes": 35,
+    "execution_graph_edges": 44,
+    "semantic_density": 2.1,
+    "semantic_entropy": 2.298,
+    "traceability_coverage": 1.0
+  }
+}

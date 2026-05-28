@@ -4,7 +4,14 @@
 [TRACE]:       TELEMETRY.PCA.DRIFT_MONITOR
 [STATE]:       ACTIVE
 [WAVE]:        W000
+[DRIFT]:       UNASSESSED
+[NEARMISS]:    NONE
 [RENDER]:      PASSED
+
+W000 federated semantic drift monitor.
+
+Tracks drift between semantic and sequential layers and emits a lightweight
+telemetry payload for orchestration gating.
 """
 
 from __future__ import annotations
