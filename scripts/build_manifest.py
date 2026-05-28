@@ -23,7 +23,8 @@ def main() -> None:
         "agent_registry": load_yaml(ROOT / "governance/agent_registry.yml"),
         "federation_registry": load_yaml(ROOT / "governance/federation_registry.yml"),
     }
-    OUT.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    OUT.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {OUT}")
 
 
