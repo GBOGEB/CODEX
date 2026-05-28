@@ -525,7 +525,7 @@ class MCPSweepEngine:
         if url := signal.get("html_url"):
             provenance.append(str(url))
 
-        dedupe_key = f"{source}:{suggestion.lower()}".replace(" ", "-")
+        dedupe_key = f"{source}:{source_ref}:{suggestion.lower()}".replace(" ", "-")
         return SweepFinding(
             dedupe_key=dedupe_key,
             source=source,
