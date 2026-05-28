@@ -1,4 +1,6 @@
-# [WAVE] - Semantic Scope
+# [WAVE]
+
+## Semantic Scope
 - [ ] Governance
 - [ ] Federation
 - [ ] Runtime
@@ -8,39 +10,41 @@
 
 ---
 
-## Tuple Metadata
+# Tuple Metadata
 
 | Key | Value |
 |---|---|
-| Wave | |
-| Trace | |
-| State | ACTIVE |
-| Renderable | YES / NO |
-| Drift Stable | YES / NO |
+| Wave | `[WAVE_ID]` |
+| Trace | `[TRACE_NAME]` |
+| State | `[ACTIVE/INCUBATING/ARCHIVED]` |
+| Renderable | `[YES/NO]` |
+| Drift Stable | `[YES/NO/PENDING]` |
 
 ---
 
-## Completion Vector
+# Completion Vector
 
 | Domain | Completion |
 |---|---|
-| Structure | % |
-| Federation | % |
-| Telemetry | % |
-| Renderability | % |
+| Structure | [0-100%] |
+| Federation | [0-100%] |
+| Telemetry | [0-100%] |
+| Renderability | [0-100%] |
 
 ---
 
-## Near-Miss Optimizations
-- 
-- 
-- 
+# Near-Miss Optimizations
+
+- [NEARMISS_1] ...
+- [NEARMISS_2] ...
+- [NEARMISS_3] ...
 
 ---
 
-## Render Verification
+# Render Validation
+
 - [ ] Markdown
 - [ ] YAML
 - [ ] HTML
 - [ ] GitHub Pages
-- [ ] Telemetry Validation
+- [ ] Telemetry

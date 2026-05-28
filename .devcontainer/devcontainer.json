@@ -1,7 +1,9 @@
 {
-  "name": "ARTSTYLE-WIP W000 Federation Bootstrap",
+  "name": "artstyle-wip-federation",
   "image": "mcr.microsoft.com/devcontainers/python:3.11",
-  "postCreateCommand": "pip install --quiet -r requirements.txt 2>/dev/null || true",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
   "customizations": {
     "vscode": {
       "settings": {
@@ -15,5 +17,6 @@
         "redhat.vscode-yaml"
       ]
     }
-  }
+  },
+  "postCreateCommand": "pip install -r requirements.txt && pip install -e ."
 }
