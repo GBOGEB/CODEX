@@ -33,3 +33,19 @@ The parser logs governed input paths, validation process steps, and structured o
 ## Pipeline integration bridges
 - Main-repo governance gate: `.github/workflows/w003-governance-gate.yml`
 - Stack-level bridge validation: `.github/workflows/full-stack-governance.yml` (CODEX, ABACUS, MCP bridge components)
+- Bridge audit script: `scripts/check_federation_governance.py` (run locally or in CI to see real vs scaffold status)
+
+## Real code vs scaffold inventory
+| Path | Status | Notes |
+|---|---|---|
+| `federation_runtime/engines/governance_parser.py` | **Real** | Executable governance header validator |
+| `federation_runtime/schema/governance_header.schema.json` | **Real** | JSON schema with `additionalProperties:false` |
+| `federation_runtime/governance/traceability_manifest.json` | **Real** | W003 machine-readable traceability manifest |
+| `tests/test_governance_parser.py` | **Real** | Pytest coverage for parser enforcement cases |
+| `.github/workflows/w003-governance-gate.yml` | **Real** | Root CI workflow, discovered by GitHub Actions |
+| `.github/workflows/full-stack-governance.yml` | **Real** | CODEX/ABACUS/bridge stack CI |
+| `bridge_manifest.yaml` | **Real** | CODEX↔ABACUS bridge topology declaration |
+| `abacus_render_pipeline/A6_renderer_governance/TUPLE_OFFLOAD/` | **Scaffold** | Handover documentation; no executable code |
+| `output/federation_bridge/` | **Deprecated** | Canonical path is `outputs/html/federation_bridge/` (generate via `federation_bridge_cli.py`) |
+
+Run `python scripts/check_federation_governance.py` for a live status report.

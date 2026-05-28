@@ -114,7 +114,7 @@ jobs:
           name: governance-${{ matrix.component }}
           path: reports/${{ matrix.component }}
 
-  bridge-validation:
+  bridge-audit:
     runs-on: ubuntu-latest
     needs: lineage-governance
 
@@ -122,14 +122,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate bridge topology
-        run: |
-          echo 'CODEX <-> ABACUS <-> MCP bridge topology validated'
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Federation governance bridge audit
+        run: python scripts/check_federation_governance.py
 
   release-readiness:
     runs-on: ubuntu-latest
     needs:
-      - bridge-validation
+      - bridge-audit
 
     steps:
       - name: Release lineage gate
