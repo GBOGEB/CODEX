@@ -78,8 +78,8 @@ def build_telemetry_figure(metrics: dict):
             f"Overall Completion: {completion}%"
         ),
         showlegend=False,
-        plot_bgcolor="#111827",
-        paper_bgcolor="#0f172a",
+        plot_bgcolor="#1e1b4b",
+        paper_bgcolor="#312e81",
         font={"color": "#e5e7eb"},
         yaxis={"range": [0, 100], "title": "%"},
         yaxis2={"range": [0, 100], "title": "%"},

@@ -5,6 +5,7 @@ no commercial licences (REFPROP, HEPAK) are required.
 """
 from __future__ import annotations
 
+import sys
 import textwrap
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -114,15 +115,15 @@ class TestNISTBackend:
 
 class TestCoolPropBackend:
     def test_unavailable_when_not_installed(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setitem(__import__("sys").modules, "CoolProp", None)
+        monkeypatch.setitem(sys.modules, "CoolProp", None)
         backend = CoolPropBackend()
         assert backend.is_available() is False
 
     def test_raises_backend_unavailable_when_not_installed(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setitem(__import__("sys").modules, "CoolProp", None)
-        monkeypatch.setitem(__import__("sys").modules, "CoolProp.CoolProp", None)
+        monkeypatch.setitem(sys.modules, "CoolProp", None)
+        monkeypatch.setitem(sys.modules, "CoolProp.CoolProp", None)
         with pytest.raises(BackendUnavailable, match="CoolProp"):
             CoolPropBackend().get_saturation_properties(4.2)
 
@@ -130,7 +131,7 @@ class TestCoolPropBackend:
         mock_coolprop = MagicMock()
         mock_coolprop.CoolProp.PropsSI.return_value = 100000.0
         with patch.dict(
-            __import__("sys").modules,
+            sys.modules,
             {"CoolProp": mock_coolprop, "CoolProp.CoolProp": mock_coolprop.CoolProp},
         ):
             backend = CoolPropBackend()
