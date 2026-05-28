@@ -507,13 +507,13 @@ class MCPSweepEngine:
         body = " ".join(textual_parts).lower()
         parent_requirement = _extract_parent_requirement(" ".join(textual_parts))
 
-        is_marked_obsolete = bool(signal.get("is_obsolete"))
-        if not is_marked_obsolete:
-            is_marked_obsolete = any(marker in body for marker in DEFAULT_OBSOLETE_MARKERS)
+        explicitly_marked_obsolete = bool(signal.get("is_obsolete"))
+        has_obsolete_marker = any(marker in body for marker in DEFAULT_OBSOLETE_MARKERS)
+        is_marked_obsolete = explicitly_marked_obsolete or has_obsolete_marker
 
         if is_marked_obsolete:
             status = "obsolete"
-            confidence = 0.92 if any(marker in body for marker in DEFAULT_OBSOLETE_MARKERS) else 0.75
+            confidence = 0.92 if explicitly_marked_obsolete or has_obsolete_marker else 0.75
         else:
             status = "near_miss"
             confidence = 0.84 if any(marker in body for marker in DEFAULT_NEAR_MISS_MARKERS) else 0.68
