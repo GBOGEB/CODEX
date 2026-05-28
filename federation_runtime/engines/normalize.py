@@ -9,5 +9,4 @@ json.dump({"nodes":35,"edges":44}, (root/'build'/'execution_graph.json').open('w
 json.dump({"status":"stable"}, (root/'build'/'reconciliation_state.json').open('w'), indent=2)
 json.dump({"classified":14}, (root/'build'/'mutation_profile.json').open('w'), indent=2)
 json.dump({"traceability_coverage":1.0}, (root/'build'/'lineage_graph.json').open('w'), indent=2)
-json.dump({"semantic_density":2.1,"semantic_entropy":2.298}, (root/'telemetry'/'telemetry_runtime.json').open('w'), indent=2)
 print('normalized artifacts generated')
