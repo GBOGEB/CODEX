@@ -99,5 +99,5 @@ def test_validate_all_tuples():
     """Test validating all tuples in incubator directory."""
     tuples = validate_all_tuples()
     # Should have at least the W000 seed tuple
-    assert len(tuples) >= 0  # May be 0 or more depending on repo state
+    assert isinstance(tuples, list)
     assert all(isinstance(t, dict) for t in tuples)
