@@ -1,6 +1,4 @@
-# [WAVE]
-
-## Semantic Scope
+# [WAVE] - Semantic Scope
 - [ ] Governance
 - [ ] Federation
 - [ ] Runtime
@@ -14,7 +12,7 @@
 
 | Key | Value |
 |---|---|
-| Wave | |
+| Wave | W000 |
 | Trace | |
 | State | ACTIVE |
 | Renderable | YES / NO |
@@ -23,21 +21,22 @@
 ---
 
 ## Completion Vector
-Use normalized values from 0.00 to 1.00 (per `federation/semantic_index/schema.yaml`).
 
 | Domain | Completion |
 |---|---|
-| Structure | 0.00 |
-| Federation | 0.00 |
-| Renderability | 0.00 |
-| Semantic Traceability | 0.00 |
-| Orchestration Readiness | 0.00 |
-| Drift Stability | 0.00 |
+| Structure | % |
+| Federation | % |
+| Telemetry | % |
+| Renderability | % |
 
 ---
 
 ## Near-Miss Optimizations
-* ---
+- 
+- 
+- 
+
+---
 
 ## Render Verification
 - [ ] Markdown
