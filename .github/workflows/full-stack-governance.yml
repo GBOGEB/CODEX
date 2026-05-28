@@ -31,6 +31,11 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
       - name: Repository lineage
         run: |
           echo "component=${{ matrix.component }}"
@@ -38,22 +43,44 @@ jobs:
           echo "sha=${{ github.sha }}"
           echo "ref=${{ github.ref }}"
 
-      - name: Governance smoke test
+      - name: Governance validation
         run: |
-          mkdir -p reports/${{ matrix.component }}
-          echo "Governance validation for ${{ matrix.component }}" > reports/${{ matrix.component }}/summary.txt
-          python - <<'PY'
-from pathlib import Path
-p = Path('reports') / '${{ matrix.component }}' / 'lineage.txt'
-p.write_text(
-    'governance=lineage-tracked\n'
-    'status=todo\n'
-    'detail=Real governance checks are not yet implemented in .github/workflows/full-stack-governance.yml\n'
-)
-print(p.read_text())
-PY
-          echo "Governance smoke test is a placeholder and must not report success without running real checks." >&2
-          exit 1
+          set -euo pipefail
+          component_dir="reports/${{ matrix.component }}"
+          mkdir -p "${component_dir}"
+          {
+            echo "component=${{ matrix.component }}"
+            echo "workflow=${{ github.workflow }}"
+            echo "sha=${{ github.sha }}"
+            echo "ref=${{ github.ref }}"
+          } > "${component_dir}/summary.txt"
+
+          case "${{ matrix.component }}" in
+            codex)
+              python scripts/check_manifest.py | tee "${component_dir}/manifest.txt"
+              python scripts/check_links.py | tee "${component_dir}/links.txt"
+              checks="manifest,links"
+              ;;
+            abacus)
+              python scripts/check_globs.py | tee "${component_dir}/globs.txt"
+              python scripts/check_stale.py | tee "${component_dir}/stale.txt"
+              python governance/RENDER_LINTER.py | tee "${component_dir}/render_linter.txt"
+              checks="globs,stale,render_linter"
+              ;;
+            mcp-bridge)
+              python -m pytest -q tests/test_drift_monitor.py | tee "${component_dir}/pytest.txt"
+              python telemetry/pca/drift_monitor.py | tee "${component_dir}/bootstrap.txt"
+              cp telemetry/pca/drift_payload_sample.json "${component_dir}/drift_payload.json"
+              python telemetry/pca/drift_monitor.py --input telemetry/pca/drift_payload_sample.json > "${component_dir}/drift_report.json"
+              cat "${component_dir}/drift_report.json"
+              python scripts/check_version.py | tee "${component_dir}/version.txt"
+              python scripts/export_abacus_runtime.py --report-json "${component_dir}/bridge_report.json" | tee "${component_dir}/runtime_export.txt"
+              checks="drift_monitor,version,pytest,runtime_export"
+              ;;
+          esac
+
+          printf 'governance=lineage-tracked\nstatus=passed\nchecks=%s\n' "${checks}" > "${component_dir}/lineage.txt"
+          cat "${component_dir}/lineage.txt"
 
       - name: Upload governance artifacts
         if: always()
