@@ -5,10 +5,11 @@ from pathlib import Path
 import sys
 import yaml
 
+ROOT = Path(__file__).resolve().parents[1]
 TARGETS = [
-    Path("governance/runtime_governance.yml"),
-    Path("governance/agent_registry.yml"),
-    Path("governance/federation_registry.yml"),
+    ROOT / "governance/runtime_governance.yml",
+    ROOT / "governance/agent_registry.yml",
+    ROOT / "governance/federation_registry.yml",
 ]
 
 

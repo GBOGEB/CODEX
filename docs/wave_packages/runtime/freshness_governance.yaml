@@ -1,0 +1,21 @@
+version: 0.66.0
+purpose: freshness governance and synchronization policy
+runtime:
+  deterministic_required: true
+  topology_persistence_required: true
+  pages_continuity_required: true
+freshness:
+  max_lag_seconds:
+    telemetry: 300
+    topology: 900
+    pages_publication: 1800
+validation:
+  required_checks:
+    - manifest_validation
+    - topology_consistency
+    - artifact_existence
+    - post_publish_smoke_test
+regeneration:
+  autonomous_rebuilds: partial
+  self_healing_runtime: weak_medium
+  synchronization_target: medium_high

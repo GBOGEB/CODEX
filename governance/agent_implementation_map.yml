@@ -1,0 +1,85 @@
+version: "1.0.0"
+wave: "W000"
+description: "Binds agent capabilities to runtime module implementations"
+
+mappings:
+  - agent_id: abacus-governor
+    role: governance-orchestrator
+    owner: ABACUS
+    capabilities:
+      - capability: state-machine-control
+        implementation: null
+        status: scaffold
+        notes: "Requires state machine orchestrator (Priority 4)"
+        
+      - capability: telemetry-aggregation
+        implementation: docs/wave_packages/runtime/telemetry_ingestion_runtime.py
+        status: available
+        notes: "Runtime module exists - needs agent binding"
+        
+      - capability: policy-enforcement
+        implementation: null
+        status: scaffold
+        notes: "Requires policy engine implementation"
+  
+  - agent_id: codex-worker
+    role: execution-worker
+    owner: CODEX
+    capabilities:
+      - capability: patch-generation
+        implementation: docs/wave_packages/runtime/self_healing_runtime.py
+        status: available
+        notes: "Self-healing runtime can be adapted for patch generation"
+        
+      - capability: test-execution
+        implementation: null
+        status: scaffold
+        notes: "Requires test orchestration framework"
+        
+      - capability: pr-preparation
+        implementation: null
+        status: scaffold
+        notes: "Requires PR generation utilities"
+  
+  - agent_id: mcp-sweep-mop
+    role: post-session-curator
+    owner: ABACUS
+    capabilities:
+      - capability: near-miss-detection
+        implementation: docs/wave_packages/runtime/adaptive_runtime_intelligence.py
+        status: available
+        notes: "Adaptive runtime can detect near-miss patterns"
+        
+      - capability: obsolete-pruning
+        implementation: null
+        status: scaffold
+        notes: "Requires artifact lifecycle management"
+        
+      - capability: remediation-ticketing
+        implementation: null
+        status: scaffold
+        notes: "Requires issue tracking integration"
+
+# Statistics
+statistics:
+  total_agents: 3
+  total_capabilities: 9
+  implemented_capabilities: 3
+  scaffold_capabilities: 6
+  implementation_completeness_pct: 33.3
+
+# Integration notes
+integration:
+  dormant_modules_identified:
+    - docs/wave_packages/runtime/federation_bridge_cli.py
+    - docs/wave_packages/runtime/runtime_bridge.py
+    - scripts/agent_runtime_monitor.py
+  
+  suggested_activations:
+    - module: docs/wave_packages/runtime/federation_bridge_cli.py
+      bind_to: federation_registry.yml
+      purpose: "CLI frontend for bridge orchestration"
+    
+    - module: scripts/agent_runtime_monitor.py
+      bind_to: agent_registry.yml
+      purpose: "Real-time agent execution monitoring"

@@ -1,0 +1,32 @@
+version: 1
+wave: W000
+semantic_prefixes:
+  - "[TOPIC]"
+  - "[TRACE]"
+  - "[WAVE]"
+  - "[STATE]"
+  - "[DRIFT]"
+  - "[NEARMISS]"
+  - "[RENDER]"
+  - "[FEDERATION]"
+  - "[DMAIC]"
+  - "[SSOT]"
+
+session_tuple:
+  key_format: "[SEMANTIC].[TRACE].[TEMPORAL].[WAVE]"
+  temporal_pattern: "WWYY_HHMM"
+  required_fields:
+    - topic
+    - trace
+    - state
+    - wave
+    - tuple_id
+    - temporal_index
+
+completion_vector:
+  structure: { min: 0.0, max: 1.0 }
+  renderability: { min: 0.0, max: 1.0 }
+  federation: { min: 0.0, max: 1.0 }
+  semantic_traceability: { min: 0.0, max: 1.0 }
+  orchestration_readiness: { min: 0.0, max: 1.0 }
+  drift_stability: { min: 0.0, max: 1.0 }

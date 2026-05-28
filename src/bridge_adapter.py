@@ -9,13 +9,59 @@ work can depend on an explicit contract instead of duplicated implementations.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import List, Optional, Sequence, Tuple
+from pathlib import Path
+from typing import Any, List, Optional, Sequence, Tuple
+
+import yaml
 
 
 GREEK_TRACE_SEQUENCE: Tuple[str, ...] = (
     "alpha", "beta", "gamma", "delta", "epsilon", "zeta",
     "eta", "theta", "iota", "kappa", "lambda",
 )
+
+BRIDGE_COMPONENT_PATHS: dict[str, Tuple[str, ...]] = {
+    "codex": (
+        "README.md",
+        "src/github_interface.py",
+        "docs/index.html",
+        "telemetry/pca/drift_monitor.py",
+    ),
+    "abacus": (
+        "abacus_runtime/README.md",
+        "abacus_runtime/runtime_manifest.yaml",
+        "docs/ALPHA_BRIDGE_ABACUS_CODEX.md",
+    ),
+    "mcp-bridge": (
+        "src/bridge_adapter.py",
+        "governance/contracts/delta-1-runtime-federation-contract.yaml",
+        "governance/synchronization/abacus-codex-recursive-sync.yaml",
+        ".github/workflows/full-stack-governance.yml",
+    ),
+}
+
+RUNTIME_MODULE_ALIGNMENT: dict[str, Tuple[str, ...]] = {
+    "renderer": (
+        "dashboards/telemetry_dashboard.py",
+        "docs/dashboard.html",
+    ),
+    "topology": (
+        "src/bridge_adapter.py",
+        "docs/ALPHA_BRIDGE_ABACUS_CODEX.md",
+    ),
+    "validation": (
+        "scripts/check_manifest.py",
+        "scripts/check_bridge_health.py",
+    ),
+    "deployment": (
+        "scripts/export_abacus_runtime.py",
+        ".github/workflows/pages.yml",
+    ),
+    "telemetry": (
+        "telemetry/pca/drift_monitor.py",
+        "dashboards/telemetry_dashboard.py",
+    ),
+}
 
 
 @dataclass(frozen=True)
@@ -155,6 +201,109 @@ def create_abacus_codex_contract() -> BridgeAdapterContract:
     )
 
 
+def bridge_alignment_matrix() -> dict[str, Tuple[str, ...]]:
+    """Expose the stable module-to-path mapping used by bridge validation."""
+    return RUNTIME_MODULE_ALIGNMENT
+
+
+def _load_yaml(path: Path) -> dict[str, Any]:
+    payload = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"Expected YAML object in {path}")
+    return payload
+
+
+def build_bridge_report(component: str = "codex", repo_root: Path | None = None) -> dict[str, Any]:
+    if component not in BRIDGE_COMPONENT_PATHS:
+        available = ", ".join(sorted(BRIDGE_COMPONENT_PATHS))
+        raise ValueError(f"Unknown component '{component}'. Choose from: {available}")
+
+    root = (repo_root or Path(__file__).resolve().parents[1]).resolve()
+    contract = create_abacus_codex_contract()
+    runtime_manifest = _load_yaml(root / "abacus_runtime" / "runtime_manifest.yaml")
+    sync_manifest = _load_yaml(
+        root / "governance" / "synchronization" / "abacus-codex-recursive-sync.yaml"
+    )
+    federation_contract = _load_yaml(
+        root / "governance" / "contracts" / "delta-1-runtime-federation-contract.yaml"
+    )
+
+    issues = contract.validate()
+    component_paths = list(BRIDGE_COMPONENT_PATHS[component])
+    missing_paths = [path for path in component_paths if not (root / path).exists()]
+    if missing_paths:
+        issues.append(f"{component} is missing required bridge paths: {', '.join(missing_paths)}")
+
+    runtime = runtime_manifest.get("runtime", {})
+    if not isinstance(runtime, dict):
+        issues.append("abacus_runtime/runtime_manifest.yaml is missing a runtime mapping")
+        runtime = {}
+
+    runtime_modules = runtime.get("modules", runtime_manifest.get("modules", []))
+    if not isinstance(runtime_modules, list):
+        issues.append("abacus_runtime/runtime_manifest.yaml modules must be a list")
+        runtime_modules = []
+
+    module_alignment = {
+        module: [path for path in RUNTIME_MODULE_ALIGNMENT.get(module, ()) if (root / path).exists()]
+        for module in runtime_modules
+    }
+    missing_module_alignment = [
+        module for module, paths in module_alignment.items() if not paths
+    ]
+    if missing_module_alignment:
+        issues.append(
+            "Runtime modules missing CODEX bridge coverage: "
+            + ", ".join(sorted(missing_module_alignment))
+        )
+
+    missing_module_templates = [
+        module for module in runtime_modules if module not in RUNTIME_MODULE_ALIGNMENT
+    ]
+    if missing_module_templates:
+        issues.append(
+            "Runtime modules missing bridge alignment templates: "
+            + ", ".join(sorted(missing_module_templates))
+        )
+
+    sync_root = sync_manifest.get("abacus_codex_recursive_sync", {})
+    if not isinstance(sync_root, dict):
+        issues.append("governance synchronization manifest is missing abacus_codex_recursive_sync")
+        sync_root = {}
+
+    sync_domains = sync_root.get("synchronization_domains", [])
+    if not isinstance(sync_domains, list) or not sync_domains:
+        issues.append("synchronization_domains must list at least one bridge domain")
+        sync_domains = []
+
+    federation_root = federation_contract.get("delta_1_runtime_federation_contract", {})
+    if not isinstance(federation_root, dict):
+        issues.append("federation contract is missing delta_1_runtime_federation_contract")
+        federation_root = {}
+    repositories = federation_root.get("repositories", {})
+    if not isinstance(repositories, dict):
+        repositories = {}
+
+    report = {
+        "status": "pass" if not issues else "fail",
+        "component": component,
+        "boundary": contract.boundary,
+        "shared_resources": list(contract.shared_resources),
+        "component_paths": component_paths,
+        "runtime": {
+            "name": runtime.get("name"),
+            "version": runtime.get("version"),
+            "modules": runtime_modules,
+        },
+        "alignment": module_alignment,
+        "synchronization_domains": sync_domains,
+        "primary_execution_plane": repositories.get("primary_execution_plane"),
+        "primary_governance_plane": repositories.get("primary_governance_plane"),
+        "issues": issues,
+    }
+    return report
+
+
 def render_repo_ascii(roles: Optional[Sequence[RepoRole]] = None) -> str:
     roles = roles or (
         RepoRole("CODEX", "platform substrate", ("GitHub interface", "Enterprise adapter", "transport", "launcher conventions")),
@@ -182,7 +331,11 @@ def render_repo_ascii(roles: Optional[Sequence[RepoRole]] = None) -> str:
 __all__ = [
     "BridgeAdapterContract",
     "BridgeTraceStep",
+    "BRIDGE_COMPONENT_PATHS",
     "RepoRole",
+    "RUNTIME_MODULE_ALIGNMENT",
+    "bridge_alignment_matrix",
+    "build_bridge_report",
     "create_abacus_codex_contract",
     "default_trace_steps",
     "render_repo_ascii",

@@ -190,6 +190,18 @@ This enables:
 
 ---
 
+## Implemented validation utility
+
+The bridge now has an executable repository utility:
+
+```bash
+python scripts/check_bridge_health.py --component mcp-bridge
+```
+
+This keeps the review boundary actionable by checking the bridge contract, ABACUS runtime manifest, federation synchronization manifests, and the CODEX path coverage that backs the shared runtime modules.
+
+---
+
 ## Ε — Identified Pruning Candidates
 
 ## ABACUS
