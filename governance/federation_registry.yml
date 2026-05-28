@@ -1,35 +1,20 @@
-version: 1
-registry: federation_capability_mesh
-federation_nodes:
-  - id: office_runtime
-    type: office
-    capabilities:
-      - document_exchange
-      - approval_packets
-      - governance_briefs
-
-  - id: diagram_runtime
-    type: diagram
-    capabilities:
-      - ascii_workflow_publication
-      - svg_rendering
-      - plotly_export
-
-  - id: binary_runtime
-    type: binary
-    capabilities:
-      - artifact_packaging
-      - checksum_attestation
-      - immutable_release_bundle
-
-  - id: api_runtime
-    type: api
-    capabilities:
-      - contract_query
-      - event_ingestion
-      - telemetry_submission
-
-contracts:
-  integration_mode: exploit_federation_links_first
-  fallback_mode: local_degraded_execution
-  contract_validation: required
+version: "1.0.0"
+federation_links:
+  - id: office-link
+    kind: exploit
+    provider: FEDERATION
+    interface: api
+    purpose: document-processing
+  - id: diagram-link
+    kind: exploit
+    provider: FEDERATION
+    interface: api
+    purpose: diagram-rendering
+  - id: binary-link
+    kind: exploit
+    provider: FEDERATION
+    interface: api
+    purpose: external-binary-execution
+policies:
+  prefer_exploit_over_integrate: true
+  max_parallel_feature_branches: 3

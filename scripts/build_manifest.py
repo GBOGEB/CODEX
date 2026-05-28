@@ -1,60 +1,47 @@
-"""Build runtime governance scaffold manifest."""
+#!/usr/bin/env python3
+"""Build a minimal runtime manifest from governance registries."""
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
-
+import json
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "outputs" / "runtime_governance" / "manifest.json"
-INPUTS = {
-    "runtime_governance": ROOT / "governance" / "runtime_governance.yml",
-    "agent_registry": ROOT / "governance" / "agent_registry.yml",
-    "federation_registry": ROOT / "governance" / "federation_registry.yml",
-}
+OUT = ROOT / "governance/runtime_manifest.json"
 
 
-def _load_yaml(path: Path) -> dict:
-    return yaml.safe_load(path.read_text(encoding="utf-8"))
+def load_yaml(path: Path):
+    with path.open("r", encoding="utf-8") as handle:
+        return yaml.safe_load(handle)
 
 
-def _normalize_repo_path(path: Path) -> str:
-    return str(path.relative_to(ROOT)).replace("\\", "/")
-
-
-def main() -> int:
-    payload = {
-        "framework": "ABACUS-CODEX-FEDERATION",
-        "version": 1,
-        "inputs": {},
+def main() -> None:
+    manifest = {
+        "wave": "W000",
+        "runtime_governance": load_yaml(ROOT / "governance/runtime_governance.yml"),
+        "agent_registry": load_yaml(ROOT / "governance/agent_registry.yml"),
+        "federation_registry": load_yaml(ROOT / "governance/federation_registry.yml"),
     }
-    input_versions = set()
-    version_by_path = {}
-
-    for key, path in INPUTS.items():
-        data = _load_yaml(path)
-        version = data.get("version")
-        if version is None:
-            raise ValueError(f"{path} is missing required 'version'")
-        input_versions.add(version)
-        normalized_path = _normalize_repo_path(path)
-        version_by_path[normalized_path] = version
-        payload["inputs"][key] = {
-            "path": normalized_path,
-            "version": version,
-        }
-
-    if len(input_versions) != 1:
-        details = ", ".join(f"{path}={version}" for path, version in sorted(version_by_path.items()))
-        raise ValueError(f"inconsistent input versions detected: {details}")
-
-    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-    print(f"wrote {OUTPUT.relative_to(ROOT)}")
-    return 0
+    
+    # Integrate ABACUS runtime if available
+    abacus_runtime_path = ROOT / "abacus_runtime/runtime_manifest.yaml"
+    if abacus_runtime_path.exists():
+        manifest["abacus_runtime"] = load_yaml(abacus_runtime_path)
+    
+    # Integrate bridge manifest if available
+    bridge_manifest_path = ROOT / "bridge_manifest.yaml"
+    if bridge_manifest_path.exists():
+        manifest["bridge_manifest"] = load_yaml(bridge_manifest_path)
+    
+    # Integrate agent implementation map if available
+    agent_impl_path = ROOT / "governance/agent_implementation_map.yml"
+    if agent_impl_path.exists():
+        manifest["agent_implementation_map"] = load_yaml(agent_impl_path)
+    
+    OUT.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    print(f"Wrote {OUT}")
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()
