@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 
 HEADER_PATTERN = re.compile(r"## PR CLASSIFICATION\n(.*?)\n---", re.DOTALL)
-TYPE_GOVERNANCE = "GOVERNANCE"
-SCHEMA_MUTATION_YES = "YES"
+EXPECTED_SCHEMA_MUTATION_TYPE = "GOVERNANCE"
+SCHEMA_MUTATION_ENABLED_VALUE = "YES"
 
 
 def extract_governance_block(markdown_text: str) -> dict[str, str] | None:
@@ -30,7 +30,7 @@ def extract_governance_block(markdown_text: str) -> dict[str, str] | None:
     return metadata
 
 
-def validate_governance_metadata(metadata: dict[str, str], schema: dict) -> tuple[bool, list[str]]:
+def validate_metadata_against_schema(metadata: dict[str, str], schema: dict) -> tuple[bool, list[str]]:
     errors: list[str] = []
     properties = schema.get("properties", {})
 
@@ -56,13 +56,19 @@ def validate_governance_metadata(metadata: dict[str, str], schema: dict) -> tupl
         if enum and value not in enum:
             errors.append(f"Enum mismatch for {key}: {value}")
 
-    if metadata.get("TYPE") != TYPE_GOVERNANCE and metadata.get("SCHEMA MUTATION") == SCHEMA_MUTATION_YES:
-        errors.append("Unauthorized schema mutation outside GOVERNANCE type")
+    if (
+        metadata.get("TYPE") != EXPECTED_SCHEMA_MUTATION_TYPE
+        and metadata.get("SCHEMA MUTATION") == SCHEMA_MUTATION_ENABLED_VALUE
+    ):
+        errors.append(
+            f"SCHEMA MUTATION=YES is only allowed when TYPE={EXPECTED_SCHEMA_MUTATION_TYPE}. "
+            f"Current TYPE: {metadata.get('TYPE')}"
+        )
 
     return (len(errors) == 0, errors)
 
 
-def validate_header_compliance(target_file: Path, schema_path: Path) -> int:
+def validate_pr_classification_header(target_file: Path, schema_path: Path) -> int:
     print("[PR-007] Running federation governance parser...")
 
     if not target_file.exists() or not schema_path.exists():
@@ -75,7 +81,7 @@ def validate_header_compliance(target_file: Path, schema_path: Path) -> int:
         return 1
 
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
-    valid, errors = validate_governance_metadata(metadata, schema)
+    valid, errors = validate_metadata_against_schema(metadata, schema)
     if not valid:
         for err in errors:
             print(f"[PR-007][ERROR] {err}")
@@ -100,4 +106,4 @@ if __name__ == "__main__":
         help="Path to governance header schema",
     )
     args = parser.parse_args()
-    sys.exit(validate_header_compliance(Path(args.target), Path(args.schema)))
+    sys.exit(validate_pr_classification_header(Path(args.target), Path(args.schema)))
