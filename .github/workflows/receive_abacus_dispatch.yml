@@ -1,0 +1,65 @@
+name: Receive ABACUS Telemetry Dispatch
+
+on:
+  repository_dispatch:
+    types:
+      - abacus.telemetry.v1
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: 'ABACUS telemetry payload JSON for manual rendering'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  render-abacus-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout CODEX
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Extract ABACUS payload
+        run: |
+          mkdir -p federation_artifacts
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          event = json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text(encoding="utf-8"))
+          if "client_payload" in event:
+              payload = event["client_payload"]
+          else:
+              payload = json.loads(event.get("inputs", {}).get("payload", "{}"))
+          Path("federation_artifacts/abacus_payload.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+          PY
+
+      - name: Validate ABACUS payload
+        run: |
+          python abacus/bridges/codex_payload.py \
+            --input federation_artifacts/abacus_payload.json \
+            --output federation_artifacts/repository_dispatch_body.json
+
+      - name: Render CODEX technical status report
+        run: |
+          python -m codex.renderers.abacus_report \
+            --input federation_artifacts/abacus_payload.json \
+            --output federation_artifacts/abacus_technical_status_report.md
+
+      - name: Upload rendered report
+        uses: actions/upload-artifact@v4
+        with:
+          name: abacus-technical-status-report
+          path: federation_artifacts/

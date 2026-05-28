@@ -1,0 +1,70 @@
+name: Dispatch ABACUS Telemetry to CODEX
+
+on:
+  push:
+    branches:
+      - wave/W000-federation-bootstrap
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dispatch-codex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ABACUS
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Build telemetry payload
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          payload = {
+              "payload_version": "1.0.0",
+              "source": {
+                  "repository": os.environ["GITHUB_REPOSITORY"],
+                  "ref": os.environ["GITHUB_REF"],
+                  "sha": os.environ["GITHUB_SHA"],
+                  "run_id": os.environ["GITHUB_RUN_ID"],
+              },
+              "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+              "status": "success",
+              "summary": "ABACUS telemetry dispatch generated from GitHub Actions push context.",
+              "metrics": [
+                  {"name": "dispatch_ready", "value": True, "unit": "boolean", "status": "success"}
+              ],
+              "artifacts": [
+                  {
+                      "name": "source_commit",
+                      "path": os.environ["GITHUB_SHA"],
+                      "mime_type": "text/plain",
+                      "description": "ABACUS commit SHA that triggered CODEX rendering.",
+                  }
+              ],
+              "links": [
+                  {
+                      "label": "ABACUS run",
+                      "url": f"{os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}",
+                  }
+              ],
+          }
+          Path("abacus_telemetry_payload.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+          PY
+
+      - name: Validate and wrap dispatch payload
+        run: python abacus/bridges/codex_payload.py --input abacus_telemetry_payload.json --output codex_repository_dispatch.json
+
+      - name: Dispatch to CODEX
+        env:
+          GH_TOKEN: ${{ secrets.CODEX_REPOSITORY_DISPATCH_TOKEN }}
+        run: gh api repos/GBOGEB/CODEX/dispatches --method POST --input codex_repository_dispatch.json
