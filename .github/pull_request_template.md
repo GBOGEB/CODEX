@@ -12,7 +12,7 @@
 
 | Key | Value |
 |---|---|
-| Wave | W000 |
+| Wave | |
 | Trace | |
 | State | ACTIVE |
 | Renderable | YES / NO |
