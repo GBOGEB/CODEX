@@ -51,7 +51,8 @@ def test_token_boundary_guard_requires_explicit_handshake():
 
 
 def test_validate_and_load_governance_schema():
-    config_path = Path("/tmp/workspace/GBOGEB/CODEX/_config/governance.yml")
+    repo_root = Path(__file__).resolve().parents[1]
+    config_path = repo_root / "_config/governance.yml"
     payload = load_governance_config(config_path)
     assert payload["runtime"]["engine"] == "Alpha A6"
     assert validate_governance_schema(payload) == []
