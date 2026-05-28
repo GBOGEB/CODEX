@@ -1,7 +1,7 @@
 {
   "name": "ARTSTYLE-WIP W000 Federation Bootstrap",
   "image": "mcr.microsoft.com/devcontainers/python:3.11",
-  "postCreateCommand": "pip install -r requirements.txt",
+  "postCreateCommand": "pip install --quiet -r requirements.txt 2>/dev/null || true",
   "customizations": {
     "vscode": {
       "settings": {
@@ -11,7 +11,8 @@
       "extensions": [
         "ms-python.python",
         "ms-toolsai.jupyter",
-        "yzhang.markdown-all-in-one"
+        "yzhang.markdown-all-in-one",
+        "redhat.vscode-yaml"
       ]
     }
   }

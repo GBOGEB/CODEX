@@ -4,6 +4,8 @@ on:
     branches: [ main, a6-renderer-governance-layer ]
   pull_request:
     branches: [ main ]
+permissions:
+  contents: read
 jobs:
   smoke:
     runs-on: ubuntu-latest

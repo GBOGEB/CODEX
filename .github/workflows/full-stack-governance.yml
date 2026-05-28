@@ -31,6 +31,11 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
       - name: Repository lineage
         run: |
           echo "component=${{ matrix.component }}"
@@ -38,74 +43,44 @@ jobs:
           echo "sha=${{ github.sha }}"
           echo "ref=${{ github.ref }}"
 
-      - name: Governance integration checks
+      - name: Governance validation
         run: |
-          mkdir -p reports/${{ matrix.component }}
-          python - <<'PY'
-          from pathlib import Path
-          import os
-          import subprocess
-          import sys
+          set -euo pipefail
+          component_dir="reports/${{ matrix.component }}"
+          mkdir -p "${component_dir}"
+          {
+            echo "component=${{ matrix.component }}"
+            echo "workflow=${{ github.workflow }}"
+            echo "sha=${{ github.sha }}"
+            echo "ref=${{ github.ref }}"
+          } > "${component_dir}/summary.txt"
 
-          component = os.environ["COMPONENT"]
-          report_dir = Path("reports") / component
-          report_dir.mkdir(parents=True, exist_ok=True)
+          case "${{ matrix.component }}" in
+            codex)
+              python scripts/check_manifest.py | tee "${component_dir}/manifest.txt"
+              python scripts/check_links.py | tee "${component_dir}/links.txt"
+              checks="manifest,links"
+              ;;
+            abacus)
+              python scripts/check_globs.py | tee "${component_dir}/globs.txt"
+              python scripts/check_stale.py | tee "${component_dir}/stale.txt"
+              python governance/RENDER_LINTER.py | tee "${component_dir}/render_linter.txt"
+              checks="globs,stale,render_linter"
+              ;;
+            mcp-bridge)
+              python -m pytest -q tests/test_drift_monitor.py | tee "${component_dir}/pytest.txt"
+              python telemetry/pca/drift_monitor.py | tee "${component_dir}/bootstrap.txt"
+              cp telemetry/pca/drift_payload_sample.json "${component_dir}/drift_payload.json"
+              python telemetry/pca/drift_monitor.py --input telemetry/pca/drift_payload_sample.json > "${component_dir}/drift_report.json"
+              cat "${component_dir}/drift_report.json"
+              python scripts/check_version.py | tee "${component_dir}/version.txt"
+              python scripts/export_abacus_runtime.py --report-json "${component_dir}/bridge_report.json" | tee "${component_dir}/runtime_export.txt"
+              checks="drift_monitor,version,pytest,runtime_export"
+              ;;
+          esac
 
-          checks = {
-              "codex": [
-                  ("federation_runtime/engines/governance_parser.py", "governance parser"),
-                  ("federation_runtime/schema/governance_header.schema.json", "governance schema"),
-              ],
-              "abacus": [
-                  ("abacus_render_pipeline", "abacus render pipeline"),
-                  ("src/abacus_render_pipeline", "abacus source runtime"),
-              ],
-              "mcp-bridge": [
-                  ("federation_bridge", "federation bridge"),
-                  ("output/federation_bridge", "bridge output namespace"),
-              ],
-          }
-
-          missing = []
-          for path, label in checks.get(component, []):
-              if not Path(path).exists():
-                  missing.append(f"{label} missing at {path}")
-
-          if component == "codex":
-              command = [
-                  sys.executable,
-                  "federation_runtime/engines/governance_parser.py",
-                  "--target",
-                  "federation_runtime/.github/W003_PR_FOLLOW_UP.md",
-                  "--schema",
-                  "federation_runtime/schema/governance_header.schema.json",
-                  "--traceability-manifest",
-                  "federation_runtime/governance/traceability_manifest.json",
-                  "--pr-track",
-                  "federation_runtime/governance/pr_track.yml",
-                  "--wave-plan",
-                  "federation_runtime/governance/wave_recreation_plan.yml",
-              ]
-              completed = subprocess.run(command, check=False, capture_output=True, text=True)
-              (report_dir / "governance_parser.log").write_text(completed.stdout + completed.stderr, encoding="utf-8")
-              if completed.returncode != 0:
-                  print(completed.stdout)
-                  print(completed.stderr)
-                  missing.append("governance parser command failed; see governance_parser.log")
-
-          status = "pass" if not missing else "fail"
-          details = "\n".join(missing) if missing else "all checks passed"
-          (report_dir / "lineage.txt").write_text(
-              f"governance=lineage-tracked\nstatus={status}\ndetail={details}\n",
-              encoding="utf-8",
-          )
-          print((report_dir / "lineage.txt").read_text(encoding="utf-8"))
-
-          if missing:
-              raise SystemExit(1)
-          PY
-        env:
-          COMPONENT: ${{ matrix.component }}
+          printf 'governance=lineage-tracked\nstatus=passed\nchecks=%s\n' "${checks}" > "${component_dir}/lineage.txt"
+          cat "${component_dir}/lineage.txt"
 
       - name: Upload governance artifacts
         if: always()

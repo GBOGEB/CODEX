@@ -1,314 +1,66 @@
+# CODEX GitHub Interface Package
 
-## W000-FEDERATED-SEMANTIC-TRACE
+CODEX provides GitHub interface and authentication utilities for both GitHub.com and GitHub Enterprise Server without duplicating implementation logic. This repository also carries Wave W000 federation/runtime/telemetry bootstrap assets, but the published Python package remains the GitHub interface package described below.
 
-This repository now includes a Wave W000 bootstrap for a dual-render federation model connecting ABACUS, CODEX, and MCP runtime orchestration.
+## W000 build-out status
 
-- Human semantic layer for topic-first readability
-- Machine sequential layer for temporal orchestration and telemetry
-- Federated traceability with semantic prefix indexing
-- Completion-vector scaffolding and drift monitoring bootstrap
+The W000 assets are a mix of scaffolding and real executable code:
 
-See:
-- `federation/semantic_index/schema.yaml`
-- `telemetry/pca/drift_monitor.py`
-- `agents/codex/MCP_INSTRUCTION.md`
-- `agents/abacus/FEDERATION_PROTOCOL.md`
+- **Executable build-out:** `telemetry/pca/drift_monitor.py` now accepts `--baseline` and `--current` JSON metric inputs and emits a structured drift report.
+- **Contract scaffolding:** `federation/semantic_index/schema.yaml` defines the dual-render tuple contract and example prefixes.
+- **Process guidance:** `agents/codex/MCP_INSTRUCTION.md` and `agents/abacus/FEDERATION_PROTOCOL.md` document the federation metadata, lineage, and drift conventions.
+- **Documentation freshness:** repository checks keep documentation and published paths non-stale via manifest, glob, stale, and link validation.
 
-# 🌌 G9 Unified Federation Framework & System Verification Specification
+### Drift monitor inputs, outputs, and process
 
-## 🛡️ Level 8 (L8) Closed-Loop Post-Commissioning Summary
+- **Inputs:** two JSON files supplied through `--baseline` and `--current`
+- **Output:** a JSON report containing per-dimension deltas, aggregate `drift_variance`, and a bounded drift snapshot/state
+- **Process tracking:** covered by `tests/test_drift_monitor.py` and validated with the existing repository governance checks
 
-* **A6 Warning Card Text Contrast Performance:** `10.03:1` (Target: $\ge 4.5:1$)
-* **ANOVA Workspace Velocity Coefficient (R):** `0.99976`
-* **Calculated Helium Plant Loop Exergy:** `48.52%`
-* **Immutable System Audit Checksum:** `EC29FA9B3E3DCC60`
-## Key Principle: No Duplication Needed
+## Install
 
-**Answer to the question: "Do I need to duplicate in enterprise as well?"**  
-**NO** - This implementation eliminates the need for code duplication between standard GitHub and enterprise environments.
+```bash
+python -m pip install -e '.[dev]'
+```
 
+## Quick start
 
-## User entry pages (GitHub Pages)
-
-For end users, the primary launcher is the repository-level landing page in `/docs`, with the dashboard preserved as the topic/epic view:
-
-- **Primary entry**: [`docs/index.html`](docs/index.html)
-- **Topic dashboard**: [`docs/dashboard.html`](docs/dashboard.html)
-- **Published URL pattern**: `https://<org-or-user>.github.io/<repo>/` (landing) and `.../dashboard.html` (topic view)
-
-If GitHub Pages is configured to serve the `/docs` folder on `main`, users can access the rendered landing/dashboard/human-doc assets without browsing the full repository tree.
-
-## Features
-
-- ✅ **Unified Interface**: Same code works with GitHub.com and GitHub Enterprise Server
-- ✅ **Automatic Detection**: Environment-based detection of GitHub vs Enterprise
-- ✅ **Multiple Auth Methods**: Support for tokens, GitHub Apps, and OAuth
-- ✅ **Configuration-Driven**: All differences handled through configuration
-- ✅ **No Code Duplication**: Single implementation for both environments
-
-## Quick Start
-
-### Basic Usage (GitHub.com)
 ```python
-from src import GitHubInterface, GitHubAuthenticator
+from src import GitHubAuthenticator, GitHubInterface
 
-# Auto-detects GitHub.com
 interface = GitHubInterface()
 authenticator = GitHubAuthenticator(interface)
 
-# Test connection
-result = interface.test_connection()
-print(f"Connected to: {interface.api_url}")
+print(interface.api_url)
+print(interface.test_connection())
 ```
 
-### Enterprise Usage
-```python
-# Method 1: Environment variable
-import os
-os.environ['GITHUB_ENTERPRISE_URL'] = 'https://github.company.com'
-interface = GitHubInterface()  # Auto-detects enterprise
+## Enterprise configuration
 
-# Method 2: Direct configuration
+```python
+from src import GitHubInterface
+
 interface = GitHubInterface(
     base_url="https://github.company.com",
-    enterprise_mode=True
+    enterprise_mode=True,
 )
 
-print(f"Enterprise API: {interface.api_url}")
-# Output: Enterprise API: https://github.company.com/api/v3
+print(interface.api_url)
 ```
 
-## Architecture
-
-The unified architecture prevents duplication through:
-
-1. **Single Interface Class**: `GitHubInterface` handles both environments
-2. **Configuration-Based URLs**: API endpoints constructed based on environment
-3. **Unified Authentication**: Same `GitHubAuthenticator` for both environments
-4. **Environment Detection**: Automatic detection of GitHub vs Enterprise setup
-
-## Directory Structure
-
-```
-CODEX/
-├── src/
-│   ├── __init__.py              # Main package interface
-│   ├── github_interface.py      # Unified GitHub interface
-│   ├── authenticator.py         # Unified authentication
-│   └── config.py                # Configuration management
-├── examples/
-│   ├── usage_example.py         # Usage examples
-│   ├── github_com_config.json   # GitHub.com configuration
-│   └── enterprise_config.json   # Enterprise configuration
-└── README.md
-```
-
-## Environment Variables
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `GITHUB_ENTERPRISE_URL` | Enterprise GitHub base URL | `https://github.company.com` |
-| `GITHUB_TOKEN` | Personal access token | `ghp_xxx` |
-| `GITHUB_APP_ID` | GitHub App ID | `123456` |
-| `GITHUB_PRIVATE_KEY` | GitHub App private key | `-----BEGIN PRIVATE KEY-----` |
-| `GITHUB_INSTALLATION_ID` | GitHub App installation ID | `789012` |
-
-## Configuration Examples
-
-### GitHub.com Configuration
-```json
-{
-  "base_url": null,
-  "enterprise_mode": false,
-  "api_version": "2022-11-28",
-  "auth_method": "token"
-}
-```
-
-### Enterprise Configuration
-```json
-{
-  "base_url": "https://github.company.com",
-  "enterprise_mode": true,
-  "api_version": "2022-11-28",
-  "auth_method": "token",
-  "enterprise_ssl_verify": true
-}
-```
-
-## API Differences Handled Automatically
-
-| Environment | API Base URL | Handled By |
-|-------------|-------------|------------|
-| GitHub.com | `https://api.github.com` | Auto-detection |
-| Enterprise | `https://your-domain.com/api/v3` | URL construction |
-
-## Usage Patterns
-
-### Pattern 1: Environment-Based Auto-Detection
-```python
-# Set environment variable for enterprise
-os.environ['GITHUB_ENTERPRISE_URL'] = 'https://github.company.com'
-
-# Same code works for both environments
-interface = GitHubInterface()
-authenticator = GitHubAuthenticator(interface)
-```
-
-### Pattern 2: Configuration-Based Setup
-```python
-from src import GitHubConfig
-
-# Load configuration (works for both environments)
-config = GitHubConfig.from_environment()
-interface = GitHubInterface(
-    base_url=config.base_url,
-    enterprise_mode=config.enterprise_mode
-)
-```
-
-### Pattern 3: Multiple Environment Management
-```python
-from src import ConfigManager
-
-manager = ConfigManager()
-manager.add_config("github", GitHubConfig())
-manager.add_config("enterprise", GitHubConfig(
-    base_url="https://github.company.com",
-    enterprise_mode=True
-))
-
-# Switch between environments without code changes
-manager.set_current("enterprise")
-config = manager.get_current()
-```
-
-## Running Examples
+## Examples
 
 ```bash
 cd examples
 python usage_example.py
 ```
 
-## Benefits of Unified Approach
+## Validation
 
-1. **Maintenance**: Single codebase to maintain instead of duplicated code
-2. **Consistency**: Same API and behavior across environments
-3. **Testing**: Test once, works everywhere
-4. **Configuration**: Only configuration differs, not implementation
-5. **Deployment**: Same deployment process for both environments
-
-## Answer to Original Question
-
-**"Do I need to duplicate in enterprise as well?"**
-
-**NO** - This implementation demonstrates that you can have a single, unified codebase that works with both GitHub.com and GitHub Enterprise Server through configuration-based differences rather than code duplication.
-
-The same classes, methods, and logic work for both environments - only the URLs and configuration parameters change.
-
-
-
-## PR-H2 generated overlay pipeline
-
-This repository now includes the PR-H2 generated overlay pipeline layer for thermodynamic visualization artifacts.
-
-- **Lineage**: `PR-G2 (backend governance) -> PR-H (visual review infrastructure) -> PR-H2 (generated overlay pipeline)`.
-- **Main entrypoint**: `src/gistau_ch15/visualization/refresh_overlay_artifacts.py::refresh_overlay_artifacts()`.
-- **Manifest contract + loader/validator**: `src/gistau_ch15/visualization/overlay_artifact_manifest.py`.
-- **Default generated manifest location**: `docs/gistau-ch15/data/generated_overlay_manifest.json`.
-
-`refresh_overlay_artifacts()` refreshes Pages-visible overlay artifacts and regenerates a versioned manifest containing artifact path, checksum, and size metadata for CI and publication workflows.
-
-## Packaging conversation archives
-
-This repository now ships with a lightweight archiving pipeline that can zip conversation folders and produce consistent manifests.
-
-### Running the pipeline
 ```bash
-python -m scripts.build_index --source data/handover_final --output output --dataset-name handover_final
+python -m pytest -q tests/test_drift_monitor.py
+python scripts/check_manifest.py
+python scripts/check_globs.py
+python scripts/check_stale.py
+python scripts/check_links.py
 ```
-
-The command above writes ZIP archives to `output/handover_final/` and refreshes `GLOBAL_index.json`.
-
-### Tests
-```bash
-pytest
-```
-
-## Repo-level rendered Markdown (HTML) with user-friendly URL copy
-
-If you publish this repository README as rendered HTML, prefer a **plain-language "Copy URL" action** instead of exposing only a long trace-style link. End users should be able to copy one clean link and paste it directly into:
-
-- Microsoft Edge (Windows PC)
-- Safari (iPhone)
-- Chrome (iPhone)
-
-### UX requirements (recommended)
-
-1. Show a visible button label: **Copy URL**.
-2. Copy only the canonical page URL (not debug/tracing query parameters).
-3. Provide a fallback when clipboard APIs are blocked (manual select + copy prompt).
-4. Keep the button touch-friendly for iPhone (minimum 44px tap target).
-
-### Reference implementation (browser-compatible)
-
-```html
-<button id="copy-url-btn" type="button" aria-live="polite">Copy URL</button>
-<script>
-  (function () {
-    const btn = document.getElementById("copy-url-btn");
-    if (!btn) return;
-
-    function canonicalUrl() {
-      return window.location.origin + window.location.pathname;
-    }
-
-    async function copyUrl() {
-      const url = canonicalUrl();
-      try {
-        if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(url);
-          btn.textContent = "Copied";
-          setTimeout(() => (btn.textContent = "Copy URL"), 1200);
-          return;
-        }
-      } catch (_) {}
-
-      const ok = window.prompt("Copy this URL:", url);
-      if (ok !== null) {
-        btn.textContent = "Copy URL";
-      }
-    }
-
-    btn.addEventListener("click", copyUrl);
-  })();
-</script>
-```
-
-### Notes
-
-- On iPhone Safari/Chrome, Clipboard API behavior can vary by iOS version and page security context; the prompt fallback keeps the flow usable.
-- If governance requires traceability, store trace IDs in backend logs/metadata rather than forcing end users to copy parameter-heavy URLs.
-
-## One-cycle SDLC, lineage, and CI/CD reference
-
-For a direct, operations-ready definition of one full engineering cycle (clone/sync -> validate -> build -> test -> artifact lineage -> commit/push -> CI/CD gates), see:
-
-- [`LINEAGE_BUILD_DEPLOY_CICD.md`](LINEAGE_BUILD_DEPLOY_CICD.md)
-
-Use this as the 100% completion checklist for build/deploy governance and release readiness.
-
-## W000 — ABACUS-CODEX-FEDERATION Runtime Governance Scaffold
-
-Baseline scaffold files are now available for governance bootstrap:
-
-- `_config.yml`
-- `governance/runtime_governance.yml`
-- `governance/agent_registry.yml`
-- `governance/federation_registry.yml`
-- `docs/index.md`
-- `docs/runtime_map.md`
-- `scripts/validate_yaml.py`
-- `scripts/build_manifest.py`
-
-This W000 foundation defines the ABACUS/CODEX/FEDERATION responsibility split, governance state-machine baseline, and starter utilities for YAML validation and manifest build.
