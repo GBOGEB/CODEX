@@ -6,9 +6,10 @@ eliminating the need for code duplication between standard and enterprise enviro
 """
 
 import os
-import requests
 from typing import Optional, Dict, Any
 from urllib.parse import urljoin
+
+import requests
 
 
 class GitHubInterface:
@@ -137,3 +138,55 @@ class GitHubInterface:
                 }
         except requests.RequestException as e:
             return {"error": str(e)}
+
+    def api_get(
+        self,
+        path: str,
+        token: Optional[str] = None,
+        params: Optional[Dict[str, Any]] = None,
+        timeout: int = 10,
+    ) -> Dict[str, Any]:
+        """Execute a GET request against the configured GitHub API endpoint."""
+        if path.startswith("http://") or path.startswith("https://"):
+            url = path
+        else:
+            normalized_path = path if path.startswith("/") else f"/{path}"
+            url = urljoin(f"{self.api_url}/", normalized_path.lstrip("/"))
+
+        try:
+            response = requests.get(
+                url,
+                headers=self.get_api_headers(token),
+                params=params,
+                timeout=timeout,
+            )
+        except requests.RequestException as exc:
+            return {
+                "success": False,
+                "status_code": None,
+                "error": str(exc),
+                "message": str(exc),
+                "headers": {},
+            }
+
+        payload: Any
+        try:
+            payload = response.json()
+        except ValueError:
+            payload = response.text
+
+        success = response.status_code < 400
+        message = ""
+        if isinstance(payload, dict):
+            message = str(payload.get("message", ""))
+        elif isinstance(payload, str):
+            message = payload
+
+        return {
+            "success": success,
+            "status_code": response.status_code,
+            "data": payload if success else None,
+            "error": None if success else f"HTTP {response.status_code}",
+            "message": message,
+            "headers": dict(response.headers),
+        }
