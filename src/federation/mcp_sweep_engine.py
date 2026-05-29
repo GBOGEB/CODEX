@@ -207,7 +207,9 @@ class MCPSweepEngine:
 
         proposed = proposed_from_pr + proposed_from_sessions
         pruned = pruned_from_pr + pruned_from_lineage
-        active = [item for item in proposed if "merged" in item.origin.lower()]
+
+        active = [item for item in proposed if item.origin.lower().startswith("merged:")]
+        proposed = [item for item in proposed if item not in active]
 
         self.write_markdown_telemetry(proposed, pruned, active, telemetry_output_path)
         self.write_rtm_delta(proposed + active, rtm_delta_output_path)
