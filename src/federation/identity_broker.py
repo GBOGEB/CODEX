@@ -53,8 +53,10 @@ class FederationIdentityBroker:
                 raise ValueError(f"Tenant not allowed: {tenant}")
 
         if lane == LANE_GITHUB and self.allowed_repositories:
-            repository = str(metadata.get("repository", ""))
-            if repository and repository not in self.allowed_repositories:
+            repository = str(metadata.get("repository", "")).strip()
+            if not repository:
+                raise ValueError("Repository is required for github_session when an allowlist is configured")
+            if repository not in self.allowed_repositories:
                 raise ValueError(f"Repository not allowed: {repository}")
 
         if lane == LANE_APPLE and not self.apple_lane_enabled:
