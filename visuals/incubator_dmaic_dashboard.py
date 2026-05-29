@@ -190,7 +190,7 @@ def build_dmaic_dashboard(tuples: list[dict], phase_map: dict):
     return fig
 
 
-def main() -> None:
+def main() -> int:
     parser = argparse.ArgumentParser(description="Generate INCUBATOR DMAIC dashboard")
     parser.add_argument("--incubator", default=str(DEFAULT_INCUBATOR))
     parser.add_argument("--map", default=str(DEFAULT_MAP))
@@ -209,7 +209,8 @@ def main() -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.write_html(str(output_path))
     print(f"generated {output_path}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
