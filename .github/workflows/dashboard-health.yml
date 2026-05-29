@@ -160,13 +160,24 @@ PY
               '',
               '_Auto-opened by the daily dashboard health check. Please investigate and close when resolved._',
             ].join('\n');
-            await github.rest.issues.create({
+            const existing = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo:  context.repo.repo,
-              title: `🚨 Dashboard health check failure — ${new Date().toISOString().slice(0,10)}`,
-              body,
-              labels: ['bug', 'dashboard'],
+              state: 'open',
+              labels: 'dashboard-health',
             });
+            const alreadyOpen = existing.data.length > 0;
+            if (!alreadyOpen) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                title: `🚨 Dashboard health check failure — ${new Date().toISOString().slice(0,10)}`,
+                body,
+                labels: ['bug', 'dashboard', 'dashboard-health'],
+              });
+            } else {
+              console.log('Dashboard health issue already open — skipping duplicate.');
+            }
 
       - name: Fail job when dashboards are missing
         if: steps.check_files.outputs.missing_count != '0'
