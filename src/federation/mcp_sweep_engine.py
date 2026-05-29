@@ -156,9 +156,13 @@ class MCPSweepEngine:
             "| Unique ID | Parent Requirement | Proto-Need | Implementation Path | Verification Method | Status |",
             "| :--- | :--- | :--- | :--- | :--- | :--- |",
         ]
+
+        def _cell(value: Any) -> str:
+            return str(value).replace("\n", " ").replace("|", "\\|")
+
         for item in entries:
             lines.append(
-                f"| **{item.unique_id}** | {item.parent_requirement} | {item.proto_need} | {item.implementation_path} | {item.verification_method} | `[{item.status.upper()}]` |"
+                f"| **{_cell(item.unique_id)}** | {_cell(item.parent_requirement)} | {_cell(item.proto_need)} | {_cell(item.implementation_path)} | {_cell(item.verification_method)} | `[{_cell(item.status).upper()}]` |"
             )
         path.write_text("\n".join(lines) + "\n", encoding="utf-8")
         return path
