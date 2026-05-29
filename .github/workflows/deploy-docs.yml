@@ -43,20 +43,7 @@ jobs:
       - name: Check for broken internal links
         run: |
           echo "=== Checking internal link targets ==="
-          ERRORS=0
-          while IFS= read -r f; do
-            while IFS= read -r href; do
-              dir=$(dirname "$f")
-              target="$dir/$href"
-              target="${target%%#*}"
-              target="${target%%\?*}"
-              if [ -n "$target" ] && [ ! -e "$target" ]; then
-                echo "⚠️  Broken link in $f → $href"
-                ERRORS=$((ERRORS+1))
-              fi
-            done < <(grep -oP 'href="\K[^"]+' "$f" | grep -v '^http' | grep -v '^#' | grep -v '^mailto')
-          done < <(find docs -name '*.html' -type f)
-          echo "Link check complete. Warnings: $ERRORS"
+          python3 scripts/check_links.py
 
       - name: Summary
         if: always()
