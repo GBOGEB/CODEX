@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import pytest
 
-from gistau_ch15.properties.helium_property_engine import (
+from src.gistau_ch15.properties.helium_property_engine import (
     HeliumPropertyEngine,
     verify_mass_balance,
 )
-from gistau_ch15.kernels.helium_reference import T_LAMBDA_K
+from src.gistau_ch15.kernels.helium_reference import T_LAMBDA_K
 
 
 class TestHeliumPropertyEngine:
