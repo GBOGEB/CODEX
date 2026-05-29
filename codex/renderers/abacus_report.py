@@ -114,7 +114,9 @@ def _render_links(links: Any) -> str:
     rendered = []
     for link in links:
         item = _mapping(link, "link")
-        rendered.append(f"- [{_text(item.get('label', 'link'))}]({_text(item.get('url', '#'))})")
+        label = _text(item.get("label", "link")).replace("[", r"\\[").replace("]", r"\\]")
+        url = _text(item.get("url", "#")).replace(" ", "%20").replace("<", "%3C").replace(">", "%3E")
+        rendered.append(f"- [{label}](<{url}>)")
     return "\n".join(rendered)
 
 
