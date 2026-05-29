@@ -49,8 +49,10 @@ def _load_phase_map(path: Path) -> dict:
 
 def _load_tuples(incubator_dir: Path) -> list[dict]:
     tuples = []
-    for yml in sorted(incubator_dir.glob("*.yml")):
-        if yml.name in ("session_tuple_schema.yml",):
+    tuple_files = sorted(incubator_dir.glob("*.yml")) + sorted(incubator_dir.glob("*.yaml"))
+    schema_files = {"session_tuple_schema.yml", "session_tuple_schema.yaml"}
+    for yml in tuple_files:
+        if yml.name in schema_files:
             continue
         with open(yml, encoding="utf-8") as fh:
             data = yaml.safe_load(fh)

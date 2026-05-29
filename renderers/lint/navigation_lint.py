@@ -1,6 +1,4 @@
 from __future__ import annotations
-
-import re
 from dataclasses import dataclass
 from html.parser import HTMLParser
 from pathlib import Path
@@ -75,7 +73,7 @@ def validate_docs_link_boundaries(
                 continue
             resolved = (html_file.parent / link).resolve()
             if not any(
-                str(resolved).startswith(str(allowed) + "/") or resolved == allowed
+                resolved == allowed or _is_within_path(resolved, allowed)
                 for allowed in allowed_roots
             ):
                 rel_file = html_file.relative_to(repo_root)
@@ -88,6 +86,14 @@ def validate_docs_link_boundaries(
                 )
 
     return issues
+
+
+def _is_within_path(path: Path, parent: Path) -> bool:
+    try:
+        path.relative_to(parent)
+        return True
+    except ValueError:
+        return False
 
 
 def main() -> int:
@@ -106,4 +112,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

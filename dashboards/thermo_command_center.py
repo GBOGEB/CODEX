@@ -52,10 +52,21 @@ def _load_wave_progression() -> tuple[list[str], list[int], list[int], list[int]
         )
     data = _load_yaml(WAVE_PROGRESSION)
     metrics = data.get("wave_metrics", {})
-    waves = list(metrics.get("renderer_governance_progress", {}).keys())
-    renderer = list(metrics["renderer_governance_progress"].values())
-    publication = list(metrics.get("publication_progress", {}).values())
-    thermo = list(metrics.get("thermodynamic_progress", {}).values())
+    renderer_map = metrics.get("renderer_governance_progress", {}) or {}
+    publication_map = metrics.get("publication_progress", {}) or {}
+    thermo_map = metrics.get("thermodynamic_progress", {}) or {}
+
+    waves: list[str] = list(renderer_map.keys())
+    for wave in publication_map:
+        if wave not in waves:
+            waves.append(wave)
+    for wave in thermo_map:
+        if wave not in waves:
+            waves.append(wave)
+
+    renderer = [int(renderer_map.get(wave, 0)) for wave in waves]
+    publication = [int(publication_map.get(wave, 0)) for wave in waves]
+    thermo = [int(thermo_map.get(wave, 0)) for wave in waves]
     return waves, renderer, publication, thermo
 
 
@@ -142,11 +153,12 @@ def build_command_center():
     return fig
 
 
-def main() -> None:
+def main() -> int:
     fig = build_command_center()
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     fig.write_html(str(OUTPUT_PATH))
     print(f"generated {OUTPUT_PATH}")
+    return 0
 
 
 if __name__ == "__main__":

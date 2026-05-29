@@ -57,7 +57,7 @@ No DMAIC-phase-to-category bridge exists.
 
 Tasks:
 1. Expand `maps/category_map.yml` with DMAIC-aligned categories:
-   `DELIVERY`, `GOVERNANCE`, `ANALYSIS`, `IMPROVEMENT`, `CONTROL`
+   `DELIVERY`, `GOVERNANCE`, `ANALYSIS`, `IMPROVEMENT`, `CONTROL_OPS`
 2. Expand `maps/theme_map.yml` with domain themes:
    `SCIENTIFIC_VALIDATION`, `BACKEND_CONVERGENCE`, `DEFINE`, `MEASURE`, `ANALYZE`,
    `IMPROVE`, `CONTROL`
