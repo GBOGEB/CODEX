@@ -9,16 +9,14 @@ import re
 import sys
 from pathlib import Path
 
+from jsonschema import ValidationError, validate
+
+
 HEADER_PATTERN = re.compile(r"## PR CLASSIFICATION\n(.*?)\n---", re.DOTALL)
-EXPECTED_SCHEMA_MUTATION_TYPE = "GOVERNANCE"
-SCHEMA_MUTATION_ENABLED_VALUE = "YES"
+SCHEMA_MUTATION_VALUES = {"YES", "CONTROLLED"}
 
 
 def extract_governance_block(markdown_text: str) -> dict[str, str] | None:
-    """Extract PR classification metadata from markdown.
-
-    Returns metadata key-value pairs, or None when no governance block is found.
-    """
     match = HEADER_PATTERN.search(markdown_text)
     if not match:
         return None
@@ -33,88 +31,72 @@ def extract_governance_block(markdown_text: str) -> dict[str, str] | None:
     return metadata
 
 
-def validate_metadata_against_schema(metadata: dict[str, str], schema: dict) -> tuple[bool, list[str]]:
-    """Validate parsed governance metadata against the supplied schema.
-
-    Returns a tuple of (is_valid, error_list).
-    """
-    errors: list[str] = []
-    properties = schema.get("properties", {})
-
-    if schema.get("additionalProperties") is False:
-        for key in sorted(set(metadata) - set(properties)):
-            errors.append(f"Unexpected key: {key}. Allowed keys: {', '.join(sorted(properties))}")
-
-    for key in schema.get("required", []):
-        if key not in metadata:
-            errors.append(f"Missing required key: {key}")
-
-    for key, prop in properties.items():
-        if key not in metadata:
-            continue
-        value = metadata[key]
-        pattern = prop.get("pattern")
-        if pattern and not re.fullmatch(pattern, value):
-            errors.append(f"Pattern mismatch for {key}: {value}")
-        const = prop.get("const")
-        if const and value != const:
-            errors.append(f"Const mismatch for {key}: {value}")
-        enum = prop.get("enum")
-        if enum and value not in enum:
-            errors.append(f"Enum mismatch for {key}: {value}")
-
-    if (
-        metadata.get("TYPE") != EXPECTED_SCHEMA_MUTATION_TYPE
-        and metadata.get("SCHEMA MUTATION") == SCHEMA_MUTATION_ENABLED_VALUE
-    ):
-        errors.append(
-            f"SCHEMA MUTATION=YES is only allowed when TYPE={EXPECTED_SCHEMA_MUTATION_TYPE}. "
-            f"Current TYPE: {metadata.get('TYPE')}"
-        )
-
-    return (len(errors) == 0, errors)
-
-
-def validate_pr_classification_header(target_file: Path, schema_path: Path) -> int:
-    """Validate the PR classification header for a target markdown file.
-
-    Returns 0 on success and 1 on failure.
-    """
-    print("[PR-007] Running federation governance parser...")
-
-    if not target_file.exists() or not schema_path.exists():
-        print("[PR-007][ERROR] Missing follow-up markdown or governance schema.")
-        return 1
-
-    metadata = extract_governance_block(target_file.read_text(encoding="utf-8"))
+def validate_governance_header(markdown_text: str, schema: dict[str, object]) -> dict[str, str]:
+    metadata = extract_governance_block(markdown_text)
     if not metadata:
-        print("[PR-007][ERROR] Could not parse mandatory governance header block.")
-        return 1
+        raise ValueError("Could not parse mandatory governance header block.")
 
-    schema = json.loads(schema_path.read_text(encoding="utf-8"))
-    valid, errors = validate_metadata_against_schema(metadata, schema)
-    if not valid:
-        for err in errors:
-            print(f"[PR-007][ERROR] {err}")
-        return 1
+    try:
+        validate(instance=metadata, schema=schema)
+    except ValidationError as exc:
+        json_path = " -> ".join(str(part) for part in exc.path)
+        detail = f"{json_path}: {exc.message}" if json_path else exc.message
+        raise ValueError(detail) from exc
 
-    print(f"[PR-007] PR-ID={metadata.get('PR-ID')} WAVE={metadata.get('WAVE')} TYPE={metadata.get('TYPE')}")
-    print("[PR-007] Governance header validated successfully.")
-    return 0
+    if metadata.get("TYPE") != "GOVERNANCE" and metadata.get("SCHEMA MUTATION") in SCHEMA_MUTATION_VALUES:
+        raise ValueError("Unauthorized schema mutation outside GOVERNANCE type.")
+
+    return metadata
 
 
-if __name__ == "__main__":
+def run_header_compliance_audit(
+    markdown_path: Path | None = None,
+    schema_path: Path | None = None,
+    source: str | None = None,
+) -> None:
+    print("[PR-007] Running federation governance parser...")
     root = Path(__file__).resolve().parents[1]
-    parser = argparse.ArgumentParser(description="Validate federation governance PR header markdown")
+    follow_up_path = markdown_path or root / ".github" / "W003_PR_FOLLOW_UP.md"
+    schema_path = schema_path or root / "schema" / "governance_header.schema.json"
+    source = source or str(follow_up_path)
+
+    if not follow_up_path.exists() or not schema_path.exists():
+        print("[PR-007][ERROR] Missing required follow-up markdown or governance schema.")
+        sys.exit(1)
+
+    try:
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+        validate_governance_header(follow_up_path.read_text(encoding="utf-8"), schema)
+    except ValueError as exc:
+        print(f"[PR-007][ERROR] {exc}")
+        sys.exit(1)
+
+    print(f"[PR-007] Governance header validated successfully from {source}.")
+
+
+def parse_args() -> argparse.Namespace:
+    root = Path(__file__).resolve().parents[1]
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--target",
-        default=str(root / ".github" / "W003_PR_FOLLOW_UP.md"),
-        help="Path to markdown file containing mandatory governance header",
+        "--markdown",
+        type=Path,
+        default=root / ".github" / "W003_PR_FOLLOW_UP.md",
+        help="Path to the markdown source containing the governance header.",
     )
     parser.add_argument(
         "--schema",
-        default=str(root / "schema" / "governance_header.schema.json"),
-        help="Path to governance header schema",
+        type=Path,
+        default=root / "schema" / "governance_header.schema.json",
+        help="Path to the governance header JSON schema.",
     )
-    args = parser.parse_args()
-    sys.exit(validate_pr_classification_header(Path(args.target), Path(args.schema)))
+    parser.add_argument(
+        "--source",
+        default=None,
+        help="Human-readable label for the governance input being validated.",
+    )
+    return parser.parse_args()
+
+
+if __name__ == "__main__":
+    args = parse_args()
+    run_header_compliance_audit(markdown_path=args.markdown, schema_path=args.schema, source=args.source)

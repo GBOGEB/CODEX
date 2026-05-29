@@ -1,18 +1,13 @@
-# Jekyll static-render defaults for governance documentation
-
-title: ABACUS-CODEX-FEDERATION Runtime Governance
+title: ABACUS Runtime Governance
 markdown: kramdown
 theme: minima
-
+plugins: []
+exclude:
+  - .git/
+  - __pycache__/
+  - .pytest_cache/
 defaults:
   - scope:
-      path: "docs"
-      type: "pages"
+      path: ""
     values:
       layout: default
-      toc: true
-      runtime_plane: abacus_codex_federation
-
-exclude:
-  - outputs/
-  - .github/

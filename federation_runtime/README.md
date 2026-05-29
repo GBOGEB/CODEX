@@ -1,25 +1,18 @@
 # Federation Runtime (W003)
 
-This enclave stages ABACUS ↔ CODEX governed semantic federation runtime assets without mutating root topology.
+This subrepo enclave stages ABACUS ↔ CODEX governed semantic federation runtime assets without mutating root topology.
 
-## PR-007 implementation pack
-- Governance schema: `schema/governance_header.schema.json`
-- Governance parser: `engines/governance_parser.py`
-- CI gate: `.github/workflows/governance-gate.yml`
-- PR template: `.github/PULL_REQUEST_TEMPLATE.md`
-- Traceability manifest: `governance/traceability_manifest.json`
-- Execution checklist: `docs/pr_007_execution_checklist.md`
-- PR stream order: `governance/pr_track.yml`
+## Scope
+- Governance contracts and PR traceability.
+- Schema and parser enforcement for PR-007.
+- Deterministic runtime smoke artifacts and CI gates.
 
-## Local validation
-```bash
-python federation_runtime/engines/governance_parser.py \
-  --target federation_runtime/.github/W003_PR_FOLLOW_UP.md \
-  --schema federation_runtime/schema/governance_header.schema.json
-```
+## Mandatory Governance
+Governed PRs must supply the mandatory federation governance header described in:
+- `federation_runtime/schema/governance_header.schema.json`
+- `federation_runtime/.github/W003_PR_FOLLOW_UP.md`
 
-
-## Handover lineage
-- Full PR trace: `docs/FULL_PR_TRACE.md`
-- Wave recreation plan: `governance/wave_recreation_plan.yml`
-- Execution handover brief: `.github/EXECUTION_HANDOVER.md`
+## Validation Flow
+- Input: the PR body when it contains the `## PR CLASSIFICATION` block, otherwise the PR must update `federation_runtime/.github/W003_PR_FOLLOW_UP.md`.
+- Process: `federation_runtime/engines/governance_parser.py` validates the markdown block with `jsonschema`, rejects unknown keys, and blocks unauthorized schema drift outside `TYPE: GOVERNANCE`.
+- Output: the CI gate exits non-zero on malformed metadata and emits a traceable pass/fail message for the validated source.

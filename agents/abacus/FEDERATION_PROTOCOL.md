@@ -1,26 +1,20 @@
 # ABACUS ↔ CODEX Federation Protocol (W000)
 
-## Core Contract
-- Preserve semantic traceability.
-- Preserve machine-sequential chronology.
-- Maintain dual-render synchronization.
-- Emit structured metadata for every orchestration action.
+## Dual-render contract
+- Human semantic layer MUST remain readable and topic-grouped.
+- Machine temporal layer MUST remain sequential and telemetry-compatible.
+- Both layers MUST stay synchronized per tuple.
 
-## Required Prefixes
+## Tuple lineage policy
+- Never flatten semantic abstractions into raw chronological logs.
+- Keep tuple key format: `[SEMANTIC].[TRACE].[TEMPORAL].[WAVE]`.
+- Preserve references from chat input to orchestration artifacts.
+
+## Required metadata
 - [TOPIC]
 - [TRACE]
-- [WAVE]
 - [STATE]
+- [WAVE]
 - [DRIFT]
-- [NEARMISS]
 - [RENDER]
-- [FEDERATION]
-- [DMAIC]
-- [SSOT]
-
-## Tuple Lineage Format
-Use:
-`[SEMANTIC].[TRACE].[TEMPORAL].[WAVE]`
-
-Example:
-`GOVERNANCE.RUNTIME.2622_1535.W000`
+- [NEARMISS]
