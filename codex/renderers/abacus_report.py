@@ -37,13 +37,13 @@ def render_report(payload: Mapping[str, Any], template_path: str | Path = DEFAUL
 
     source = _mapping(payload.get("source"), "source")
     context = {
-        "payload_version": _text(payload.get("payload_version", "unknown")),
-        "source_repository": _text(source.get("repository", "unknown")),
-        "source_ref": _text(source.get("ref", "unknown")),
-        "source_sha": _text(source.get("sha", "unknown")),
-        "source_run_id": _text(source.get("run_id", "unknown")),
-        "generated_at": _text(payload.get("generated_at", "unknown")),
-        "status": _text(payload.get("status", "unknown")).upper(),
+        "payload_version": _escape_table(_text(payload.get("payload_version", "unknown"))),
+        "source_repository": _escape_table(_text(source.get("repository", "unknown"))),
+        "source_ref": _escape_table(_text(source.get("ref", "unknown"))),
+        "source_sha": _escape_table(_text(source.get("sha", "unknown"))),
+        "source_run_id": _escape_table(_text(source.get("run_id", "unknown"))),
+        "generated_at": _escape_table(_text(payload.get("generated_at", "unknown"))),
+        "status": _escape_table(_text(payload.get("status", "unknown")).upper()),
         "summary": _text(payload.get("summary", "No summary supplied.")),
         "metrics_table": _render_metrics(payload.get("metrics", [])),
         "artifacts_table": _render_artifacts(payload.get("artifacts", [])),
