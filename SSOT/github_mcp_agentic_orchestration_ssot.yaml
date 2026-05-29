@@ -1,0 +1,49 @@
+ssot:
+  id: "GITHUB-MCP-AGENTIC-SSOT"
+  version: "0.1.0"
+  default_branch: "main"
+  # Note: working_branch is derived from runtime context (not hardcoded here)
+
+  rules:
+    commit_without_user_confirmation: false
+    bulk_commit_allowed: true
+    auto_stage_allowed: true
+    auto_push_allowed: false
+    answer_comment_without_code_change_allowed: true
+    preserve_reviewer_intent: true
+
+  discrepancy_sources:
+    - pull_request_review_comments
+    - pull_request_reviews
+    - check_runs
+    - workflow_failures
+    - changed_files
+    - ssot_yaml
+    - lint_output
+    - test_output
+
+  decision_matrix:
+    comment_intent_fix:
+      action: "prepare_patch"
+      user_confirmation: "required"
+
+    comment_intent_question:
+      action: "draft_answer"
+      user_confirmation: "required_before_posting"
+
+    comment_intent_not_really_or_disagree:
+      action: "prepare_answer_or_alternative_fix"
+      user_confirmation: "required"
+
+    ci_failure:
+      action: "diagnose_and_prepare_patch"
+      user_confirmation: "required_before_commit"
+
+    ssot_drift:
+      action: "prepare_ssot_alignment_patch"
+      user_confirmation: "required"
+
+  confirmation_prompts:
+    single_fix: "Apply and commit this fix?"
+    bulk_fix: "Apply and commit all approved fixes?"
+    answer_only: "Post this answer without code changes?"

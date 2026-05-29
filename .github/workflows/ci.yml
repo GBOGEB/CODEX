@@ -53,6 +53,18 @@ jobs:
         run: |
           python scripts/check_links.py
 
+      - name: Check CODEX-ABACUS bridge alignment
+        run: |
+          python scripts/check_bridge_alignment.py
+
       - name: Render governance lint
         run: |
           python governance/RENDER_LINTER.py
+
+      - name: Validate DMAIC phase map
+        run: |
+          python scripts/validate_dmaic_phase_map.py
+
+      - name: Check backend registry
+        run: |
+          python scripts/check_backend_registry.py

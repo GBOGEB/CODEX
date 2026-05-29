@@ -1,0 +1,59 @@
+name: Runtime Pages Deployment
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - a28-glossary-reference-runtime
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-runtime-pages:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Execute federation bridge
+        run: |
+          python docs/wave_packages/runtime/federation_bridge_cli.py
+
+      - name: Persist runtime history
+        run: |
+          python docs/wave_packages/runtime/runtime_history_engine.py
+
+      - name: Generate runtime diff dashboard
+        run: |
+          python docs/wave_packages/runtime/runtime_diff_engine.py
+
+      - name: Prepare Pages artifact
+        run: |
+          mkdir -p _site/pages _site/out
+          cp -r docs/wave_packages/runtime/pages/* _site/pages/
+          cp -r docs/wave_packages/runtime/out/* _site/out/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    environment:
+      name: github-pages
+    runs-on: ubuntu-latest
+    needs: build-runtime-pages
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

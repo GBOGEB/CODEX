@@ -7,46 +7,15 @@ runtime:
 
 security_boundaries:
   corporate:
-    auth_provider: "Windows Active Directory / Entra ID / Office 365"
+    auth_provider: "Windows Active Directory / Office 365"
     storage_sync: "OneDrive"
     allowed_formats: ["pptx", "docx", "xlsx", "pdf"]
-    tenant_allowlist: []
   federation:
     allowed_tokens:
       - "GITHUB_API_TOKEN"
       - "OPENAI_API_TOKEN"
       - "GEMINI_PRO_API_TOKEN"
       - "ABACUS_API_TOKEN"
-
-identity_boundaries:
-  lanes:
-    office365_graph_session:
-      provider: "microsoft-graph"
-      token_env: "MS_GRAPH_TOKEN"
-      allowed_tenants: []
-      allows_cross_tenant_guest: false
-    github_session:
-      provider: "github"
-      token_env: "GITHUB_TOKEN"
-      allowed_repositories:
-        - "GBOGEB/CODEX"
-        - "GBOGEB/ABACUS"
-    apple_personal_session:
-      provider: "apple"
-      token_env: "APPLE_PERSONAL_TOKEN"
-      enabled: false
-      isolation: "personal-only"
-  token_reuse_across_lanes: false
-
-binary_sources:
-  office365:
-    system_of_record: true
-    graph_base_url: "https://graph.microsoft.com/v1.0"
-    cache_root: "outputs/office365_cache"
-    supported_formats: ["docx", "xlsx", "pptx", "pdf"]
-  github:
-    system_of_record: false
-    stores_only: ["metadata", "pointers", "checksums", "lineage", "telemetry"]
 
 wire_links:
   strict_pruning: true
@@ -57,18 +26,10 @@ wire_links:
     - name: "GBOGEB/ABACUS"
       alias: "abacus"
 
-mcp_sweep:
-  enabled: true
-  near_miss_keywords: ["near-miss", "follow-up", "todo"]
-  stale_status_values: ["stale", "obsolete", "cancelled"]
-  output:
-    telemetry_markdown: "outputs/telemetry/mcp_sweep_report.md"
-    rtm_delta: "traceability/RTM_LINEAGE_DELTA.md"
-
 rendering_defaults:
   vector:
     visio_export: "svg"
     drawio_export: "svg"
     powerpoint_export: "emf"
   plots:
-    engine: "static-svg"
+    engine: "static-svg" # No live Plotly JS payloads; raw SVG injection only

@@ -1,0 +1,35 @@
+---
+runtime_debug_governance:
+  id: "GG-ADR-0001"
+  principles:
+    - id: "DBG-001"
+      rule: "Debug capability SHALL always exist."
+    - id: "DBG-002"
+      rule: "Debug execution SHALL be conditional."
+    - id: "DBG-003"
+      rule: "All debug runs SHALL produce logs."
+    - id: "DBG-004"
+      rule: "All debug logs SHALL be traceable."
+    - id: "DBG-005"
+      rule: "PRs SHALL pass minimum governance validation."
+    - id: "DBG-006"
+      rule: "GLOSSARY.yml SHALL be globally accessible."
+    - id: "DBG-007"
+      rule: "Language governance SHALL execute before merge."
+    - id: "DBG-008"
+      rule: "All rendered links SHALL be validated."
+    - id: "DBG-009"
+      rule: "Generated artefacts SHALL be rebuildable from clone."
+    - id: "DBG-010"
+      rule: "Claim-evidence gaps SHALL be measured continuously."
+
+convergence_rules:
+  CR-001: >-
+    New functionality SHALL strengthen convergence, not artificially inflate
+    maturity scores.
+  CR-002: >-
+    New systems SHALL improve governance, execution, or evidence quality.
+  CR-003: "New additions SHALL NOT introduce topology bloat."
+  CR-004: >-
+    All generated artefacts SHALL be rebuildable from clean clone state.
+  CR-005: "All governance claims SHALL map to verifiable evidence footprints."

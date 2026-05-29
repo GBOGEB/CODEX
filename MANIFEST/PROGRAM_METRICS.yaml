@@ -4,43 +4,43 @@ program_metrics:
   maturity: ALPHA_A9
   metrics:
     governance:
-      score: 86
+      score: 92
       status: active
       intent: manifest contracts, lineage, renderer rules
     renderer:
-      score: 74
+      score: 78
       status: active
       intent: HTML/PDF/PPTX/Pages rendering governance
     ci_cd:
-      score: 62
-      status: scaffolded
-      intent: governance checks and future render regression
+      score: 78
+      status: active
+      intent: governance checks, DMAIC validation, backend registry, render regression
     orchestration:
-      score: 68
+      score: 74
       status: active
       intent: deterministic extract-normalize-validate-render-publish-lineage pipeline
     visualization:
-      score: 71
+      score: 76
       status: active
-      intent: Plotly dashboards, surfaces, matrices and review portal
+      intent: Plotly dashboards, surfaces, matrices, orchestration telemetry
     thermodynamics:
-      score: 38
-      status: early_active
-      intent: kernels, NIST/GISTAU validation, future HEPAK/REFPROP/CoolProp convergence
-    validation:
       score: 52
       status: active
-      intent: NIST fixtures, exergy/unit tests, backend comparison roadmap
+      intent: kernels, NIST/GISTAU validation, backend adapter, future HEPAK/REFPROP/CoolProp convergence
+    validation:
+      score: 64
+      status: active
+      intent: NIST fixtures, exergy/unit tests, backend adapter tests, backend comparison roadmap
     publication_readiness:
-      score: 58
+      score: 64
       status: emerging
       intent: review artifacts, GitHub Pages, snapshot governance
   kpis:
     open_governance_prs: 7
     merged_foundation_prs: 8
-    manifest_files: 10
-    runtime_scaffolds: 12
-    html_plotly_views: 6
-    validation_fixtures: 3
+    manifest_files: 12
+    runtime_scaffolds: 14
+    html_plotly_views: 8
+    validation_fixtures: 4
     ci_workflows: 2
-    completion_estimate_percent: 64
+    completion_estimate_percent: 72

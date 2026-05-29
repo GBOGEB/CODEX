@@ -11,11 +11,17 @@ All differences are handled through configuration and runtime detection.
 from .github_interface import GitHubInterface
 from .authenticator import GitHubAuthenticator
 from .config import GitHubConfig, ConfigManager
-from .federation import (
-    FederationIdentityBroker,
+from .mcp_sweep import (
+    LineageDeltaStore,
     MCPSweepEngine,
-    Office365GraphConnector,
-    validate_repository_ssot,
+    PullRequestCrawler,
+    SweepInputContract,
+    SweepOutputContract,
+    SweepStateStore,
+    TokenBoundaryGuard,
+    TokenScope,
+    load_governance_config,
+    validate_governance_schema,
 )
 
 __version__ = "1.3.0"
@@ -24,10 +30,16 @@ __all__ = [
     "GitHubAuthenticator",
     "GitHubConfig",
     "ConfigManager",
-    "FederationIdentityBroker",
+    "TokenScope",
+    "TokenBoundaryGuard",
+    "SweepInputContract",
+    "SweepOutputContract",
+    "SweepStateStore",
+    "LineageDeltaStore",
+    "PullRequestCrawler",
     "MCPSweepEngine",
-    "Office365GraphConnector",
-    "validate_repository_ssot",
+    "validate_governance_schema",
+    "load_governance_config",
 ]
 
 

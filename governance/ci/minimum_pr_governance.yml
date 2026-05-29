@@ -1,0 +1,26 @@
+minimum_pr_governance:
+  required:
+    - ruff_pass
+    - pytest_pass
+    - markdownlint_pass
+    - yamllint_pass
+    - vale_pass
+    - glossary_validation_pass
+    - link_validation_pass
+    - rebuild_validation_pass
+
+  optional:
+    - deep_runtime_scan
+    - PCA_regression_scan
+
+cicd_execution_layering:
+  - LOCAL
+  - PRE-COMMIT
+  - LIGHT DEBUG
+  - PR VALIDATION
+  - CI GOVERNANCE
+  - CD RENDER VALIDATION
+  - PLAYWRIGHT EVIDENCE
+  - PAGES DEPLOYMENT
+  - TELEMETRY UPDATE
+  - PCA RECALCULATION
