@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from gistau_ch15.kernels.helium_reference import T_LAMBDA_K
+from ..kernels.helium_reference import T_LAMBDA_K
 
 
 class HeliumPropertyEngine:
