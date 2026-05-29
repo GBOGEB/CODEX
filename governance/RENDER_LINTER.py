@@ -25,6 +25,18 @@ RULES = [
         "slide_id_required (lineage example)",
         [sys.executable, str(SCRIPT_DIR / "SLIDE_ID_ENFORCER.py"), str(SCRIPT_DIR / "LINEAGE_SCHEMA.yaml")],
     ),
+    (
+        "overflow_governance",
+        [sys.executable, "-m", "renderers.lint.overflow_lint"],
+    ),
+    (
+        "spacing_governance",
+        [sys.executable, "-m", "renderers.lint.spacing_lint"],
+    ),
+    (
+        "navigation_governance",
+        [sys.executable, "-m", "renderers.lint.navigation_lint"],
+    ),
 ]
 
 
@@ -39,7 +51,7 @@ def run() -> int:
     failed = False
     for name, command in RULES:
         print(f"CHECK: {name}")
-        result = subprocess.run(command, check=False)
+        result = subprocess.run(command, check=False, cwd=str(REPO_ROOT))
         if result.returncode != 0:
             failed = True
 
