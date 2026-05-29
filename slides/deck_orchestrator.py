@@ -13,6 +13,7 @@ import html
 import json
 import os
 import re
+import subprocess
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -52,6 +53,28 @@ class DeckBuildResult:
     output_dir: Path
     artifacts: tuple[DeckArtifact, ...]
     manifest_path: Path
+
+
+def _run_git(*args: str) -> str | None:
+    try:
+        return subprocess.check_output(
+            ["git", *args],
+            text=True,
+            cwd=Path(__file__).parent,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None
+
+
+def _parse_vcs_timestamp(vcs_time: str) -> str:
+    """Normalise a VCS ISO-8601 commit timestamp to a UTC isoformat string."""
+    return (
+        datetime.fromisoformat(vcs_time.replace("Z", "+00:00"))
+        .astimezone(timezone.utc)
+        .replace(microsecond=0)
+        .isoformat()
+    )
 
 
 def _slugify(value: str) -> str:
@@ -282,7 +305,8 @@ def build_deck_assets(
     """Run the content→presentation→artifact pipeline for one deck.
 
     Timestamp precedence for manifest reproducibility:
-    explicit ``generated_at`` value, then ``SOURCE_DATE_EPOCH``, then current UTC time.
+    explicit ``generated_at`` value, then ``SOURCE_DATE_EPOCH``, then VCS
+    commit time (``git show -s --format=%cI HEAD``), then ``"unknown"``.
     """
 
     data = load_deck_content(content_path)
@@ -318,8 +342,10 @@ def build_deck_assets(
         except ValueError as exc:
             raise ValueError("SOURCE_DATE_EPOCH must be an integer Unix timestamp") from exc
         generated_at_value = datetime.fromtimestamp(generated_at_epoch, timezone.utc).isoformat()
+    elif vcs_time := _run_git("show", "-s", "--format=%cI", "HEAD"):
+        generated_at_value = _parse_vcs_timestamp(vcs_time)
     else:
-        generated_at_value = datetime.now(timezone.utc).isoformat()
+        generated_at_value = "unknown"
 
     manifest = {
         "deck_id": deck["deck_id"],
