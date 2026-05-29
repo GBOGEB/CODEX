@@ -79,7 +79,7 @@ class MCPSweepEngine:
                 proposed.append(
                     SweepItem(
                         unique_id=f"RTM-A6-PR-{number}",
-                        origin=f"PR-{number}",
+                        origin=f"merged:PR-{number}" if merged_at else f"PR-{number}",
                         proto_need=title,
                         status="proposed",
                         implementation_path="federation-wire-link",
