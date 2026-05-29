@@ -77,9 +77,14 @@ class Office365GraphConnector:
     def download_binary(self, drive_id: str, item_id: str, target_name: str | None = None) -> Path:
         endpoint = f"{self.graph_base_url}/drives/{drive_id}/items/{item_id}/content"
         payload = self._get_binary(endpoint)
-        filename = f"{item_id}.bin" if target_name is None else Path(target_name).name
-        if target_name is not None and filename != target_name:
-            raise ValueError(f"Invalid target_name (must be a filename, not a path): {target_name}")
+        filename = target_name or f"{item_id}.bin"
+        
+        # Sanitize filename to prevent path traversal
+        if target_name:
+            filename = Path(target_name).name
+            if not filename or filename in (".", ".."):
+                raise ValueError(f"Invalid target_name: {target_name}")
+        
         output_path = self.cache_root / filename
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_bytes(payload)

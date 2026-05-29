@@ -76,10 +76,12 @@ class MCPSweepEngine:
             contains_near_miss = any(key in text for key in self.near_miss_keywords)
 
             if contains_near_miss:
+                # Mark merged PRs in origin field so they can be detected as active
+                origin_prefix = "merged:" if merged_at else "PR-"
                 proposed.append(
                     SweepItem(
                         unique_id=f"RTM-A6-PR-{number}",
-                        origin=f"merged:PR-{number}" if merged_at else f"PR-{number}",
+                        origin=f"{origin_prefix}{number}",
                         proto_need=title,
                         status="proposed",
                         implementation_path="federation-wire-link",
@@ -147,6 +149,11 @@ class MCPSweepEngine:
         return result
 
     @staticmethod
+    def _escape_markdown_table_cell(text: str) -> str:
+        """Escape pipe and newline characters to prevent Markdown table injection."""
+        return text.replace("|", "\\|").replace("\n", " ").replace("\r", "")
+    
+    @staticmethod
     def write_rtm_delta(entries: list[SweepItem], output_path: str | Path) -> Path:
         path = Path(output_path)
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -156,13 +163,17 @@ class MCPSweepEngine:
             "| Unique ID | Parent Requirement | Proto-Need | Implementation Path | Verification Method | Status |",
             "| :--- | :--- | :--- | :--- | :--- | :--- |",
         ]
-
-        def _cell(value: Any) -> str:
-            return str(value).replace("\n", " ").replace("|", "\\|")
-
         for item in entries:
+            # Escape all user-controlled fields to prevent Markdown injection
+            unique_id = MCPSweepEngine._escape_markdown_table_cell(item.unique_id)
+            parent_req = MCPSweepEngine._escape_markdown_table_cell(item.parent_requirement)
+            proto_need = MCPSweepEngine._escape_markdown_table_cell(item.proto_need)
+            impl_path = MCPSweepEngine._escape_markdown_table_cell(item.implementation_path)
+            verif_method = MCPSweepEngine._escape_markdown_table_cell(item.verification_method)
+            status = item.status.upper()
+            
             lines.append(
-                f"| **{_cell(item.unique_id)}** | {_cell(item.parent_requirement)} | {_cell(item.proto_need)} | {_cell(item.implementation_path)} | {_cell(item.verification_method)} | `[{_cell(item.status).upper()}]` |"
+                f"| **{unique_id}** | {parent_req} | {proto_need} | {impl_path} | {verif_method} | `[{status}]` |"
             )
         path.write_text("\n".join(lines) + "\n", encoding="utf-8")
         return path
@@ -187,11 +198,18 @@ class MCPSweepEngine:
             "",
         ]
         for item in proposed:
-            lines.append(f"* [ ] **NEAR-MISS ESCALATED:** {item.proto_need} ({item.origin})")
+            # Escape user-controlled fields to prevent injection
+            proto_need = MCPSweepEngine._escape_markdown_table_cell(item.proto_need)
+            origin = MCPSweepEngine._escape_markdown_table_cell(item.origin)
+            lines.append(f"* [ ] **NEAR-MISS ESCALATED:** {proto_need} ({origin})")
         for item in active:
-            lines.append(f"* [x] **ACTIVE DELTA:** {item.proto_need} ({item.origin})")
+            proto_need = MCPSweepEngine._escape_markdown_table_cell(item.proto_need)
+            origin = MCPSweepEngine._escape_markdown_table_cell(item.origin)
+            lines.append(f"* [x] **ACTIVE DELTA:** {proto_need} ({origin})")
         for item in pruned:
-            lines.append(f"* [-] **OBSOLETE STATE WIPED:** {item.proto_need} ({item.origin})")
+            proto_need = MCPSweepEngine._escape_markdown_table_cell(item.proto_need)
+            origin = MCPSweepEngine._escape_markdown_table_cell(item.origin)
+            lines.append(f"* [-] **OBSOLETE STATE WIPED:** {proto_need} ({origin})")
         path.write_text("\n".join(lines) + "\n", encoding="utf-8")
         return path
 
