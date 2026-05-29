@@ -63,3 +63,12 @@
 - Added HTML graph landing page and per-node detail pages.
 - Added side-by-side lineage review prototype (`html/review.html` + YAML review record).
 - Added density mode tokens for ultra-dense, engineering-dense, review, and presentation render profiles.
+
+## v0.7.0 - YAML/CSS deck orchestration functional blocks
+
+### Added
+
+- Added `slides.deck_orchestrator` for governed YAML content loading, CSS-based HTML rendering, Markdown handoff generation, and ABACUS manifest emission.
+- Added the MINERVA QPS Procurement / AD_07 cybersecurity appendix sample deck source and corporate CSS template.
+- Added generated HTML, Markdown, and manifest review artifacts for the first fixed-and-locked target deck.
+- Added tests covering normalization, artifact emission, and ABACUS governance controls.
