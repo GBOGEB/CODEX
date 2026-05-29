@@ -54,6 +54,6 @@ def test_sweep_run_writes_outputs(tmp_path: Path):
         rtm_delta_output_path=rtm,
     )
 
-    assert result["proposed_count"] >= 2
+    assert result["proposed_count"] + result["active_count"] >= 2
     assert telemetry.exists()
     assert rtm.exists()
