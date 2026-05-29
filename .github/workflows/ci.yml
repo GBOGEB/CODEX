@@ -1,5 +1,11 @@
 name: CI
 
+# TODO: Wave A6.3 — MCP Sweep CI Integration Pending
+# - Task A6.3.1.1: Create scripts/run_mcp_sweep.py CI script
+# - Task A6.3.1.2: Add MCP sweep step here (post-test, pre-publish placement)
+# - Task A6.3.1.3: Wire RTM lineage delta publishing to Pages workflow
+# See: MANIFEST/A6_FEDERATION_TODO_ROADMAP.md § Phase A6.3
+
 on:
   pull_request:
   push:
@@ -22,6 +28,10 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install pytest
           pip install -e .
+
+      - name: Validate SSOT schemas
+        run: |
+          python scripts/check_ssot_schemas.py
 
       - name: Build dashboard/pages
         run: |
@@ -64,3 +74,10 @@ jobs:
       - name: Check backend registry
         run: |
           python scripts/check_backend_registry.py
+
+      # TODO: Add MCP sweep step here (Wave A6.3)
+      # - name: Run MCP sweep
+      #   run: |
+      #     python scripts/run_mcp_sweep.py
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,5 +1,14 @@
 from __future__ import annotations
 
+# TODO: Wave A6.1 — Governance linter verification complete
+# ✅ Task A6.1.1.1: contrast_lint.py exists at renderers/lint/contrast_lint.py
+# ✅ Task A6.1.1.2: overflow_lint.py exists at renderers/lint/overflow_lint.py
+# ✅ Task A6.1.1.3: spacing_lint.py exists at renderers/lint/spacing_lint.py
+# ✅ Task A6.1.1.4: navigation_lint.py exists at renderers/lint/navigation_lint.py
+# ✅ All linters wired into RENDER_LINTER.py execution (see RULES list below)
+# Note: WCAG_CONTRAST_CHECKER.py may be redundant with contrast_lint.py — deduplication pending
+# See: MANIFEST/A6_FEDERATION_TODO_ROADMAP.md § Phase A6.1
+
 import subprocess
 import sys
 from pathlib import Path
