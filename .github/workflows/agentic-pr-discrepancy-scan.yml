@@ -59,17 +59,23 @@ jobs:
           echo "pr_number=${PR_NUM}" >> "$GITHUB_OUTPUT"
 
       - name: Scan PR context
+        env:
+          SCAN_EVENT: ${{ steps.ctx.outputs.event }}
+          SCAN_MODE: ${{ steps.ctx.outputs.mode }}
+          SCAN_PR: ${{ steps.ctx.outputs.pr_number }}
         run: |
           mkdir -p AGENTIC METRICS
-          cat > AGENTIC/agentic_pr_followup_log.yaml <<YAML_INNER
+          # Use quoted heredoc to prevent injection; inject values via env vars.
+          cat > AGENTIC/agentic_pr_followup_log.yaml <<'YAML_INNER'
           scan:
             status: "prepared"
-            trigger: "${{ steps.ctx.outputs.event }}"
-            mode: "${{ steps.ctx.outputs.mode }}"
-            pr_number: "${{ steps.ctx.outputs.pr_number }}"
             next_action: "local_agent_or_codex_reads_context_and_prepares_patch"
             commit_gate: "human_required"
           YAML_INNER
+          # Append the runtime-supplied fields using printf for safety.
+          printf '            trigger: "%s"\n' "${SCAN_EVENT}" >> AGENTIC/agentic_pr_followup_log.yaml
+          printf '            mode: "%s"\n' "${SCAN_MODE}" >> AGENTIC/agentic_pr_followup_log.yaml
+          printf '            pr_number: "%s"\n' "${SCAN_PR}" >> AGENTIC/agentic_pr_followup_log.yaml
 
       - name: Write ASCII metrics shell
         run: |

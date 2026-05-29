@@ -1,6 +1,6 @@
 # Agentic PR Metrics (Runtime Output)
 
-Trigger              local_offline  (2026-05-29T16:47:53.874724+00:00)
+Trigger              local_offline  (2026-05-29T16:50:19.358855+00:00)
 Mode                 scan_only
 PR                  latest
 

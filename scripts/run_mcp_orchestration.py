@@ -72,7 +72,7 @@ def scan_once(mode: str, pr_number: str, repo: str) -> dict:
         "repo": repo,
         "status": "prepared",
         "next_action": "local_agent_or_codex_reads_context_and_prepares_patch",
-        "commit_gate": "human_required" if not rules.get("commit_without_user_confirmation", True) else "auto",
+        "commit_gate": "auto" if rules.get("commit_without_user_confirmation", False) else "human_required",
         "auto_push_allowed": rules.get("auto_push_allowed", False),
     }
 
