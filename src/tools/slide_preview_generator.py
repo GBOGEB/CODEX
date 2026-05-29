@@ -28,11 +28,12 @@ from typing import Any
 
 try:
     from pptx import Presentation  # type: ignore[import-untyped]
-except ImportError as exc:
-    raise SystemExit(
-        "python-pptx is required to run this tool.\n"
-        "Install it with:  pip install python-pptx"
-    ) from exc
+except ImportError:
+    def Presentation(*args: Any, **kwargs: Any) -> Any:
+        raise ImportError(
+            "python-pptx is required to run this tool.\n"
+            "Install it with:  pip install python-pptx"
+        )
 
 
 # ── CSS embedded into the preview HTML ─────────────────────────────────────
