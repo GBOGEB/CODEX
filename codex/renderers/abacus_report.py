@@ -94,12 +94,14 @@ def _render_artifacts(artifacts: Any) -> str:
     for artifact in artifacts:
         item = _mapping(artifact, "artifact")
         rows.append(
-            "| {name} | `{path}` | {mime_type} | {description} |".format(
+        rows.append(
+            "| {name} | {path} | {mime_type} | {description} |".format(
                 name=_escape_table(_text(item.get("name", "unknown"))),
-                path=_text(item.get("path", "")),
+                path=_escape_table(_text(item.get("path", ""))),
                 mime_type=_escape_table(_text(item.get("mime_type", ""))),
                 description=_escape_table(_text(item.get("description", ""))),
             )
+        )
         )
     return "\n".join(rows)
 
