@@ -7,6 +7,26 @@ on:
     types: [created]
   issue_comment:
     types: [created]
+  # Ad-hoc / manual trigger — run from GitHub UI or `gh workflow run`
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Scan mode (scan_only | propose_fixes | answer_only)'
+        required: false
+        default: 'scan_only'
+        type: choice
+        options:
+          - scan_only
+          - propose_fixes
+          - answer_only
+      pr_number:
+        description: 'PR number to scan (leave blank to scan latest open PR)'
+        required: false
+        default: ''
+        type: string
+  # Continuous / scheduled — runs every 6 hours to catch drift between sessions
+  schedule:
+    - cron: '0 */6 * * *'
 
 permissions:
   contents: read
@@ -17,18 +37,36 @@ permissions:
 jobs:
   scan:
     runs-on: ubuntu-latest
-    # Only run on PR comments, not issue comments
-    if: github.event_name != 'issue_comment' || github.event.issue.pull_request
+    # Allow PR events, manual dispatch, and scheduled runs.
+    # For issue_comment events, only run when the comment is on a PR.
+    if: >
+      github.event_name == 'pull_request' ||
+      github.event_name == 'pull_request_review_comment' ||
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'schedule' ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request != null)
     steps:
       - uses: actions/checkout@v4
+
+      - name: Resolve scan mode and trigger
+        id: ctx
+        run: |
+          EVENT="${{ github.event_name }}"
+          MODE="${{ inputs.mode || 'scan_only' }}"
+          PR_NUM="${{ inputs.pr_number || '' }}"
+          echo "event=${EVENT}" >> "$GITHUB_OUTPUT"
+          echo "mode=${MODE}" >> "$GITHUB_OUTPUT"
+          echo "pr_number=${PR_NUM}" >> "$GITHUB_OUTPUT"
 
       - name: Scan PR context
         run: |
           mkdir -p AGENTIC METRICS
-          cat > AGENTIC/agentic_pr_followup_log.yaml <<'YAML_INNER'
+          cat > AGENTIC/agentic_pr_followup_log.yaml <<YAML_INNER
           scan:
             status: "prepared"
-            mode: "read_only"
+            trigger: "${{ steps.ctx.outputs.event }}"
+            mode: "${{ steps.ctx.outputs.mode }}"
+            pr_number: "${{ steps.ctx.outputs.pr_number }}"
             next_action: "local_agent_or_codex_reads_context_and_prepares_patch"
             commit_gate: "human_required"
           YAML_INNER

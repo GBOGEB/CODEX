@@ -35,6 +35,7 @@ task:
       purpose: "Prevent unapproved commits."
 
   triggers:
+    # ── EVENT-DRIVEN ──────────────────────────────────────────────────────────
     local_source_push:
       command: "git push origin <branch>"
       next: "open_or_update_pr"
@@ -51,6 +52,35 @@ task:
 
     ci_failure:
       next: "diagnose_failure_prepare_patch"
+
+    # ── AD-HOC / MANUAL ───────────────────────────────────────────────────────
+    workflow_dispatch:
+      description: >
+        Trigger from the GitHub Actions UI or via `gh workflow run` for on-demand
+        scans without a PR event.  Supports mode (scan_only | propose_fixes |
+        answer_only) and an optional pr_number input.
+      workflow_file: ".github/workflows/agentic-pr-discrepancy-scan.yml"
+      cli_example: >
+        gh workflow run agentic-pr-discrepancy-scan.yml \
+          -f mode=propose_fixes -f pr_number=42
+
+    local_offline:
+      description: >
+        Run entirely offline (no GitHub Actions) using the local runner.
+        Suitable for iterative, repetitive, or air-gapped environments.
+      script: "scripts/run_mcp_orchestration.py"
+      examples:
+        ad_hoc: "python scripts/run_mcp_orchestration.py --mode scan_only --pr 42"
+        continuous: "python scripts/run_mcp_orchestration.py --loop --interval 360"
+        iterative: "python scripts/run_mcp_orchestration.py --loop --iterations 5"
+
+    # ── CONTINUOUS / SCHEDULED ────────────────────────────────────────────────
+    scheduled:
+      description: >
+        GitHub Actions cron job — runs every 6 hours to catch SSOT drift and
+        open discrepancies between sessions.
+      cron: "0 */6 * * *"
+      workflow_file: ".github/workflows/agentic-pr-discrepancy-scan.yml"
 
   outputs:
     - "AGENTIC/agentic_pr_followup_log.yaml"
