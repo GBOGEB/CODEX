@@ -105,7 +105,13 @@ jobs:
       - name: Generate release notes
         run: |
           TAG="${{ steps.version.outputs.tag }}"
-          COMMITS=$(git log --oneline $(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD 2>/dev/null | head -20 || echo "Initial release")
+          if PREV_REF=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null); then
+            COMMITS=$(git log --oneline "$PREV_REF"..HEAD 2>/dev/null | head -20)
+          else
+            PREV_REF=$(git rev-list --max-parents=0 HEAD)
+            COMMITS=$(git log --oneline "$PREV_REF"..HEAD 2>/dev/null | head -20)
+          fi
+          [ -n "$COMMITS" ] || COMMITS="Initial release"
           cat > release-artifacts/RELEASE_NOTES.md << EOF
           # CODEX $TAG Release Notes
 
