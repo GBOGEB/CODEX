@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GBOGEB/CODEX/schemas/superpipeline_render_request.schema.json",
+  "title": "SUPERPIPELINE Render Request",
+  "description": "Dispatch envelope sent by GBOGEB/SUPERPIPELINE when CODEX should render a technical artifact from federated telemetry.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "payload_version",
+    "orchestration",
+    "telemetry",
+    "render"
+  ],
+  "properties": {
+    "payload_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "orchestration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hub_repository",
+        "source_repository",
+        "source_event_type",
+        "correlation_id",
+        "dispatch_run_id"
+      ],
+      "properties": {
+        "hub_repository": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$",
+          "const": "GBOGEB/SUPERPIPELINE"
+        },
+        "source_repository": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+        },
+        "source_event_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "correlation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dispatch_run_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "telemetry": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "payload_version",
+        "source",
+        "generated_at",
+        "status",
+        "summary",
+        "metrics",
+        "artifacts"
+      ]
+    },
+    "render": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "renderer",
+        "artifact_name"
+      ],
+      "properties": {
+        "renderer": {
+          "type": "string",
+          "const": "abacus_technical_status_report"
+        },
+        "artifact_name": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.-]+\\.md$"
+        }
+      }
+    }
+  }
+}
