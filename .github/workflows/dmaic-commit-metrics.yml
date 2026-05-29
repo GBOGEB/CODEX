@@ -5,6 +5,9 @@ name: CODEX Metrics — Per-Commit Tracking & Feedback Loop
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'docs/api/metrics.json'
+      - 'docs/rendered_outputs/metrics_chart.html'
   workflow_dispatch:
     inputs:
       phase:
@@ -247,7 +250,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "Metrics unchanged — no commit needed."
           else
-            git commit -m "metrics: update repository metrics for ${{ github.sha }}"
+            git commit -m "metrics: update repository metrics for ${{ github.sha }} [skip ci]"
             git push origin HEAD
           fi
 
