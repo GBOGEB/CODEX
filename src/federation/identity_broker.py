@@ -23,7 +23,13 @@ class SessionRecord:
 
 
 class FederationIdentityBroker:
-    """Issues scoped, lane-separated sessions with redacted telemetry."""
+    """Issues scoped, lane-separated sessions with redacted telemetry.
+    
+    TODO: Wave A7 — Lane dependency orchestration
+    - Task A7.1.1.3: Integrate with federation_lane_orchestrator.py
+    - Task A7.3.1.3: Support orchestration rule-driven lane invocation
+    - See: MANIFEST/A6_FEDERATION_TODO_ROADMAP.md § Phase A7.1
+    """
 
     def __init__(
         self,

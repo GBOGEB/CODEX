@@ -23,7 +23,13 @@ class BinaryIndexEntry:
 
 
 class Office365GraphConnector:
-    """Lightweight Office365 Graph adapter for binary metadata and download."""
+    """Lightweight Office365 Graph adapter for binary metadata and download.
+    
+    TODO: Wave A6 — Office365 binary classification rules needed
+    - Task A6.2.1.2: Implement classify_binary() method with MIME type detection
+    - Task A6.2.1.3: Wire classification into binary index ledger
+    - See: MANIFEST/A6_FEDERATION_TODO_ROADMAP.md § Phase A6.2
+    """
 
     def __init__(
         self,

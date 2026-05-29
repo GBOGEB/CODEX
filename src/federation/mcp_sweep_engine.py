@@ -24,7 +24,19 @@ class SweepItem:
 
 
 class MCPSweepEngine:
-    """Ingests closed PRs, aborted sessions, and stale lineage markers."""
+    """Ingests closed PRs, aborted sessions, and stale lineage markers.
+    
+    TODO: Wave A6 — CI integration needed
+    - Task A6.3.1.1: Create scripts/run_mcp_sweep.py CI script
+    - Task A6.3.1.2: Wire into .github/workflows/ci.yml (post-test, pre-publish)
+    - Task A6.3.1.3: Publish RTM delta to GitHub Pages
+    - See: MANIFEST/A6_FEDERATION_TODO_ROADMAP.md § Phase A6.3
+    
+    TODO: Wave A7 — Orchestration integration
+    - Task A7.1.1.3: Connect to federation_lane_orchestrator.py
+    - Task A7.2.1.1: MCP sweep telemetry dashboard visualization
+    - See: MANIFEST/A6_FEDERATION_TODO_ROADMAP.md § Phase A7.2
+    """
 
     def __init__(
         self,
