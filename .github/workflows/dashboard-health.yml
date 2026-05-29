@@ -1,0 +1,186 @@
+name: Dashboard Health Check
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # Daily at 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  health-check:
+    name: Validate Dashboards
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check all dashboard HTML files exist
+        id: check_files
+        run: |
+          echo "=== Dashboard file existence check ==="
+          EXPECTED=(
+            "docs/index.html"
+            "docs/dashboard.html"
+            "docs/engineering_portal.html"
+            "docs/handover.html"
+            "docs/federation_bridge_dashboard.html"
+            "docs/governance_w000.html"
+          )
+          MISSING=0
+          for f in "${EXPECTED[@]}"; do
+            if [ -f "$f" ]; then
+              echo "✅ $f ($(stat -c%s "$f") bytes)"
+            else
+              echo "❌ MISSING: $f"
+              MISSING=$((MISSING+1))
+            fi
+          done
+          echo "missing_count=$MISSING" >> "$GITHUB_OUTPUT"
+
+      - name: Validate JavaScript references
+        run: |
+          echo "=== Checking JS/CSS references ==="
+          for f in $(find docs -name '*.html' -type f); do
+            for src in $(grep -oP 'src="\K[^"]+' "$f" | grep -v '^http'); do
+              dir=$(dirname "$f")
+              if [ ! -f "$dir/$src" ] && [ ! -f "$src" ]; then
+                echo "⚠️  Missing JS: $f → $src"
+              fi
+            done
+            for href in $(grep -oP 'link.*href="\K[^"]+' "$f" | grep '\.css' | grep -v '^http'); do
+              dir=$(dirname "$f")
+              if [ ! -f "$dir/$href" ] && [ ! -f "$href" ]; then
+                echo "⚠️  Missing CSS: $f → $href"
+              fi
+            done
+          done
+          echo "JS/CSS reference check complete."
+
+      - name: Check data file availability
+        run: |
+          echo "=== Data file check ==="
+          for d in docs/api docs/assets outputs/html; do
+            if [ -d "$d" ]; then
+              echo "✅ Directory exists: $d ($(ls "$d" | wc -l) files)"
+            else
+              echo "⚠️  Directory missing: $d"
+            fi
+          done
+
+      - name: Report broken links
+        id: link_check
+        run: |
+          echo "=== Internal link report ==="
+          LOG_FILE="$(mktemp)"
+
+          if python3 scripts/check_links.py 2>&1 | tee "$LOG_FILE"; then
+            SCRIPT_STATUS=0
+          else
+            SCRIPT_STATUS=$?
+          fi
+
+          BROKEN="$(python3 - "$LOG_FILE" <<'PY'
+import pathlib
+import re
+import sys
+
+log_path = pathlib.Path(sys.argv[1])
+text = log_path.read_text(encoding="utf-8", errors="replace")
+
+patterns = [
+    r'broken_links=(\d+)',
+    r'Total broken internal links:\s*(\d+)',
+    r'Broken links:\s*(\d+)',
+]
+
+for pattern in patterns:
+    match = re.search(pattern, text, re.IGNORECASE)
+    if match:
+        print(match.group(1))
+        raise SystemExit(0)
+
+count = 0
+for line in text.splitlines():
+    lower = line.lower()
+    if "broken:" in lower or "broken link" in lower:
+        count += 1
+
+print(count)
+PY
+)"
+
+          if [ -z "$BROKEN" ]; then
+            if [ "$SCRIPT_STATUS" -ne 0 ]; then
+              BROKEN=1
+            else
+              BROKEN=0
+            fi
+          fi
+
+          echo "broken_links=$BROKEN" >> "$GITHUB_OUTPUT"
+
+          if [ "$SCRIPT_STATUS" -ne 0 ]; then
+            echo "Link checker exited with status $SCRIPT_STATUS."
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Dashboard Health Check Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          TOTAL=$(find docs -name '*.html' -type f | wc -l)
+          echo "| HTML files | $TOTAL |" >> $GITHUB_STEP_SUMMARY
+          echo "| Missing dashboards | ${{ steps.check_files.outputs.missing_count }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Broken links | ${{ steps.link_check.outputs.broken_links }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Run date | $(date -u) |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Open escalation issue on failure
+        if: >
+          steps.check_files.outputs.missing_count != '0' ||
+          steps.link_check.outputs.broken_links != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const missing = '${{ steps.check_files.outputs.missing_count }}';
+            const broken  = '${{ steps.link_check.outputs.broken_links }}';
+            const runUrl  = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = [
+              '## 🚨 Dashboard Health Check Failed',
+              '',
+              `| Issue | Count |`,
+              `|-------|-------|`,
+              `| Missing dashboards | ${missing} |`,
+              `| Broken internal links | ${broken} |`,
+              '',
+              `**Workflow run:** ${runUrl}`,
+              '',
+              '_Auto-opened by the daily dashboard health check. Please investigate and close when resolved._',
+            ].join('\n');
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              state: 'open',
+              labels: 'dashboard-health',
+            });
+            const alreadyOpen = existing.data.length > 0;
+            if (!alreadyOpen) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                title: `🚨 Dashboard health check failure — ${new Date().toISOString().slice(0,10)}`,
+                body,
+                labels: ['bug', 'dashboard', 'dashboard-health'],
+              });
+            } else {
+              console.log('Dashboard health issue already open — skipping duplicate.');
+            }
+
+      - name: Fail job when dashboards are missing
+        if: steps.check_files.outputs.missing_count != '0'
+        run: |
+          echo "❌ ${{ steps.check_files.outputs.missing_count }} dashboard(s) missing — failing job."
+          exit 1
