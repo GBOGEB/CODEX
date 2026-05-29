@@ -1,0 +1,55 @@
+name: Validate Documentation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'outputs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate HTML / CSS / JS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required HTML files exist
+        run: |
+          echo "=== Validating documentation structure ==="
+          for f in docs/index.html docs/dashboard.html docs/engineering_portal.html docs/handover.html; do
+            if [ ! -f "$f" ]; then
+              echo "❌ Missing: $f"
+              exit 1
+            fi
+            echo "✅ Found: $f"
+          done
+
+      - name: Validate HTML syntax
+        run: |
+          echo "=== Basic HTML validation ==="
+          for f in $(find docs -name '*.html' -type f); do
+            if ! grep -q '</html>' "$f"; then
+              echo "❌ Malformed HTML: $f"
+              exit 1
+            fi
+            echo "✅ Valid: $f"
+          done
+
+      - name: Check for broken internal links
+        run: |
+          echo "=== Checking internal link targets ==="
+          python3 scripts/check_links.py
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Documentation Validation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          TOTAL=$(find docs -name '*.html' -type f | wc -l)
+          echo "| HTML files validated | $TOTAL |" >> $GITHUB_STEP_SUMMARY
+          echo "| Run date | $(date -u) |" >> $GITHUB_STEP_SUMMARY
