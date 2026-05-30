@@ -163,8 +163,8 @@ class FederationArtifactExporter:
     ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
         if set(self.members) != set(FEDERATION_MEMBERS):
             raise FederationExportError(
-                f"write_outputs() requires the canonical federation member set "
-                f"{sorted(FEDERATION_MEMBERS)}, got {sorted(self.members)}"
+                f"write_outputs() requires exactly the canonical federation members "
+                f"{sorted(FEDERATION_MEMBERS)} (in any order), got {sorted(self.members)}"
             )
         repo_metrics = self._load_repo_metrics(metrics_dir)
         rollup_record = self.build_federation_rollup_export(repo_metrics, wave=wave, subwave=subwave)

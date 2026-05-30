@@ -229,8 +229,8 @@ class RuntimeRegistry:
     ) -> tuple[dict[str, Any], dict[str, Any]]:
         if set(self.members) != set(FEDERATION_MEMBERS):
             raise RuntimeRegistryError(
-                f"write_outputs() requires the canonical federation member set "
-                f"{sorted(FEDERATION_MEMBERS)}, got {sorted(self.members)}"
+                f"write_outputs() requires exactly the canonical federation members "
+                f"{sorted(FEDERATION_MEMBERS)} (in any order), got {sorted(self.members)}"
             )
         entries = self.load_runtime_entries(runtime_dir)
         repo_metrics = self._load_repo_metrics(metrics_dir)
