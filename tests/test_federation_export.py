@@ -91,3 +91,44 @@ class TestFederationArtifactExport:
         assert (federation_dir / "federation_rollup.json").exists()
         assert (federation_dir / "federation_scree.json").exists()
         assert bottleneck_output.exists()
+
+    def test_rejects_duplicate_members(self, tmp_path: Path):
+        import pytest
+        from src.qplant_presentation_engine.federation_export import FederationExportError
+        
+        federation_dir = tmp_path / "metrics" / "federation"
+        bottleneck_output = tmp_path / "bottleneck_report.json"
+
+        with pytest.raises(FederationExportError, match="canonical federation members"):
+            FederationArtifactExporter(members=("ABACUS", "ABACUS", "ARTSTYLE", "QPLANT")).write_outputs(
+                metrics_dir=_metrics_dir(),
+                federation_dir=federation_dir,
+                bottleneck_output=bottleneck_output,
+            )
+
+    def test_rejects_bool_in_federation_metrics(self, tmp_path: Path):
+        import pytest
+        from src.qplant_presentation_engine.federation_export import FederationExportError
+        
+        # Create a corrupted metrics file with boolean value
+        corrupted_metrics_dir = tmp_path / "metrics"
+        corrupted_metrics_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Copy valid metrics files
+        for member in ("ABACUS", "ARTSTYLE", "QPLANT", "CODEX"):
+            src_path = _metrics_dir() / f"{member.lower()}_metrics.json"
+            dst_path = corrupted_metrics_dir / f"{member.lower()}_metrics.json"
+            dst_path.write_text(src_path.read_text(encoding="utf-8"), encoding="utf-8")
+        
+        # Corrupt one file with boolean
+        abacus_path = corrupted_metrics_dir / "abacus_metrics.json"
+        data = json.loads(abacus_path.read_text(encoding="utf-8"))
+        data["metrics"]["geti"] = True  # Boolean instead of numeric
+        abacus_path.write_text(json.dumps(data), encoding="utf-8")
+        
+        exporter = FederationArtifactExporter()
+        repo_metrics = exporter._load_repo_metrics(corrupted_metrics_dir)
+        
+        with pytest.raises(FederationExportError, match="geti is bool"):
+            exporter.build_federation_rollup_export(repo_metrics)
+

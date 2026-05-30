@@ -46,14 +46,32 @@ class FederationArtifactExporter:
             repo_data = repo_metrics[member]
             metrics = self._metrics(repo_data)
             try:
+                # Extract raw values and validate they are not booleans
+                conv_score = metrics["forward_pca"]["convergence_score"]
+                reg_score = metrics["backward_pca"]["regression_score"]
+                geti_val = metrics["geti"]
+                pci_val = metrics["pci"]
+                exp_factor = metrics["expansion_factor"]
+                
+                # Reject booleans before float coercion
+                for key, val in [
+                    ("forward_pca.convergence_score", conv_score),
+                    ("backward_pca.regression_score", reg_score),
+                    ("geti", geti_val),
+                    ("pci", pci_val),
+                    ("expansion_factor", exp_factor),
+                ]:
+                    if isinstance(val, bool):
+                        raise ValueError(f"{key} is bool, expected numeric")
+                
                 summary = {
                     "member": member,
                     "repo": repo_data.get("repository", f"GBOGEB/{member}"),
-                    "forward_pca": float(metrics["forward_pca"]["convergence_score"]),
-                    "backward_pca": float(metrics["backward_pca"]["regression_score"]),
-                    "geti": float(metrics["geti"]),
-                    "pci": float(metrics["pci"]),
-                    "expansion_factor": float(metrics["expansion_factor"]),
+                    "forward_pca": float(conv_score),
+                    "backward_pca": float(reg_score),
+                    "geti": float(geti_val),
+                    "pci": float(pci_val),
+                    "expansion_factor": float(exp_factor),
                 }
             except (KeyError, TypeError, ValueError) as exc:
                 raise FederationExportError(
@@ -161,7 +179,7 @@ class FederationArtifactExporter:
         wave: str = "W007",
         subwave: str = "W007.2A",
     ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
-        if set(self.members) != set(FEDERATION_MEMBERS):
+        if sorted(self.members) != sorted(FEDERATION_MEMBERS):
             raise FederationExportError(
                 f"write_outputs() requires exactly the canonical federation members "
                 f"{sorted(FEDERATION_MEMBERS)} (in any order), got {sorted(self.members)}"

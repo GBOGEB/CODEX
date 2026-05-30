@@ -147,3 +147,46 @@ class TestRuntimeRegistryGeneration:
         assert status["coverage"]["runtime_validated"] == 0.0
         assert status["coverage"]["deployment_exists"] == 0.0
         assert status["coverage"]["truth_score_average"] == 0.0
+
+    def test_rejects_duplicate_members(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        registry_output = tmp_path / "runtime_registry.json"
+        report_output = tmp_path / "runtime_registry_report.json"
+        with pytest.raises(RuntimeRegistryError, match="canonical federation members"):
+            RuntimeRegistry(members=("ABACUS", "ABACUS", "ARTSTYLE", "QPLANT")).write_outputs(
+                runtime_dir=runtime_dir,
+                metrics_dir=_metrics_dir(),
+                registry_output=registry_output,
+                report_output=report_output,
+            )
+
+    def test_rejects_bool_in_numeric_fields(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        abacus_file = runtime_dir / "abacus_runtime.json"
+        data = json.loads(abacus_file.read_text(encoding="utf-8"))
+        data["truth_score"] = True
+        abacus_file.write_text(json.dumps(data), encoding="utf-8")
+
+        with pytest.raises(RuntimeRegistryError, match="truth_score.*expected number"):
+            RuntimeRegistry().load_runtime_entries(runtime_dir)
+
+    def test_rejects_out_of_range_pca_variance(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        abacus_file = runtime_dir / "abacus_runtime.json"
+        data = json.loads(abacus_file.read_text(encoding="utf-8"))
+        data["forward_pca"]["variance_explained"] = [1.5, 0.2, 0.1, 0.1, 0.1]
+        abacus_file.write_text(json.dumps(data), encoding="utf-8")
+
+        with pytest.raises(RuntimeRegistryError, match="variance_explained.*expected value in"):
+            RuntimeRegistry().load_runtime_entries(runtime_dir)
+
+    def test_rejects_out_of_range_pca_score(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        abacus_file = runtime_dir / "abacus_runtime.json"
+        data = json.loads(abacus_file.read_text(encoding="utf-8"))
+        data["forward_pca"]["convergence_score"] = 1.5
+        abacus_file.write_text(json.dumps(data), encoding="utf-8")
+
+        with pytest.raises(RuntimeRegistryError, match="convergence_score.*expected value in"):
+            RuntimeRegistry().load_runtime_entries(runtime_dir)
+

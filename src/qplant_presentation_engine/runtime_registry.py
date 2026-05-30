@@ -90,10 +90,23 @@ class RuntimeRegistry:
             raise RuntimeRegistryError(
                 f"Invalid runtime field '{field_name}.variance_explained' in {source}: expected 5 numeric values"
             )
+        # Validate variance ranges [0.0, 1.0]
+        for i, v in enumerate(variance):
+            if not 0.0 <= float(v) <= 1.0:
+                raise RuntimeRegistryError(
+                    f"Invalid runtime field '{field_name}.variance_explained[{i}]' in {source}: "
+                    f"expected value in [0.0, 1.0], got {v}"
+                )
         score = pca.get(score_key)
         if isinstance(score, bool) or not isinstance(score, (int, float)):
             raise RuntimeRegistryError(
                 f"Invalid runtime field '{field_name}.{score_key}' in {source}: expected number"
+            )
+        # Validate score range [0.0, 1.0]
+        if not 0.0 <= float(score) <= 1.0:
+            raise RuntimeRegistryError(
+                f"Invalid runtime field '{field_name}.{score_key}' in {source}: "
+                f"expected value in [0.0, 1.0], got {score}"
             )
 
     def load_runtime_entries(self, runtime_dir: Path) -> dict[str, dict[str, Any]]:
@@ -227,7 +240,7 @@ class RuntimeRegistry:
         registry_output: Path | None = None,
         report_output: Path | None = None,
     ) -> tuple[dict[str, Any], dict[str, Any]]:
-        if set(self.members) != set(FEDERATION_MEMBERS):
+        if sorted(self.members) != sorted(FEDERATION_MEMBERS):
             raise RuntimeRegistryError(
                 f"write_outputs() requires exactly the canonical federation members "
                 f"{sorted(FEDERATION_MEMBERS)} (in any order), got {sorted(self.members)}"
