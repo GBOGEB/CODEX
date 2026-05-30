@@ -108,6 +108,50 @@ class TestRuntimeRegistryValidation:
         with pytest.raises(RuntimeRegistryError, match="truth_score"):
             registry.validate_record(broken)
 
+    def test_non_string_repo_raises(self):
+        registry = RuntimeRegistry()
+        broken = dict(_runtime_records()["ABACUS"])
+        broken["repo"] = 123
+        with pytest.raises(RuntimeRegistryError, match="repo"):
+            registry.validate_record(broken)
+
+    def test_empty_string_repo_raises(self):
+        registry = RuntimeRegistry()
+        broken = dict(_runtime_records()["ABACUS"])
+        broken["repo"] = ""
+        with pytest.raises(RuntimeRegistryError, match="repo"):
+            registry.validate_record(broken)
+
+    def test_none_repo_raises(self):
+        registry = RuntimeRegistry()
+        broken = dict(_runtime_records()["ABACUS"])
+        broken["repo"] = None
+        with pytest.raises(RuntimeRegistryError, match="repo"):
+            registry.validate_record(broken)
+
+    def test_non_string_timestamp_raises(self):
+        registry = RuntimeRegistry()
+        for field in ("last_execution", "last_validation", "last_deployment"):
+            broken = dict(_runtime_records()["ABACUS"])
+            broken[field] = 0
+            with pytest.raises(RuntimeRegistryError, match=field):
+                registry.validate_record(broken)
+
+    def test_dict_timestamp_raises(self):
+        registry = RuntimeRegistry()
+        broken = dict(_runtime_records()["ABACUS"])
+        broken["last_execution"] = {}
+        with pytest.raises(RuntimeRegistryError, match="last_execution"):
+            registry.validate_record(broken)
+
+    def test_none_timestamp_is_valid(self):
+        registry = RuntimeRegistry()
+        record = dict(_runtime_records()["ABACUS"])
+        record["last_execution"] = None
+        record["last_validation"] = None
+        record["last_deployment"] = None
+        registry.validate_record(record)  # should not raise
+
 
 class TestRuntimeRegistryBuild:
     def test_truth_matrix_contains_all_members(self):

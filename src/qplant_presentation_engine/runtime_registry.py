@@ -77,9 +77,20 @@ class RuntimeRegistry:
         missing = [field for field in REQUIRED_FIELDS if field not in record]
         if missing:
             raise RuntimeRegistryError(f"Missing runtime fields for {record.get('repo', 'unknown')}: {missing}")
+        repo = record["repo"]
+        if not isinstance(repo, str) or not repo:
+            raise RuntimeRegistryError(
+                f"Field repo must be a non-empty string, got {repo!r}"
+            )
         for field in ("runtime_exists", "runtime_validated", "deployment_exists"):
             if not isinstance(record[field], bool):
                 raise RuntimeRegistryError(f"Field {field} must be boolean for {record['repo']}")
+        for field in ("last_execution", "last_validation", "last_deployment"):
+            value = record[field]
+            if value is not None and not isinstance(value, str):
+                raise RuntimeRegistryError(
+                    f"Field {field} must be a string or None for {record['repo']}, got {value!r}"
+                )
         for field in ("truth_score", "forward_pca", "backward_pca", "geti", "pci"):
             try:
                 float(record[field])

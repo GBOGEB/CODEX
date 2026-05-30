@@ -225,7 +225,13 @@ class FederationRollup:
             runtime_validated = bool(record.get("runtime_validated"))
             deployment_exists = bool(record.get("deployment_exists"))
             executed = bool(record.get("last_execution"))
-            truth_score = float(record.get("truth_score", 0.0))
+            raw_score = record.get("truth_score", 0.0)
+            try:
+                truth_score = float(raw_score)
+            except (TypeError, ValueError) as exc:
+                raise FederationRollupError(
+                    f"Field truth_score must be numeric for {record.get('repo', member)}: {raw_score!r}"
+                ) from exc
 
             runtime_exists_count += int(runtime_exists)
             runtime_validated_count += int(runtime_validated)

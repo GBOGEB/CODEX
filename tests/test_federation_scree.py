@@ -284,3 +284,44 @@ class TestMetricsJsonFiles:
         data = json.loads(path.read_text(encoding="utf-8"))
         assert "federation_scree" in data
         assert "pc1" in data["federation_scree"]
+
+
+def _runtime_records() -> dict:
+    return {
+        member: {
+            "repo": f"GBOGEB/{member}",
+            "runtime_exists": True,
+            "runtime_validated": True,
+            "deployment_exists": True,
+            "last_execution": "2026-05-30T09:00:00Z",
+            "last_validation": "2026-05-30T10:00:00Z",
+            "last_deployment": "2026-05-30T11:00:00Z",
+            "truth_score": 0.9,
+        }
+        for member in MEMBERS
+    }
+
+
+class TestBuildTruthMatrix:
+    def test_valid_records_return_matrix(self):
+        matrix = FederationScree.build_truth_matrix(_runtime_records())
+        assert len(matrix) == 4
+        assert matrix[0]["member"] == "ABACUS"
+
+    def test_none_truth_score_raises_federation_scree_error(self):
+        records = _runtime_records()
+        records["ABACUS"]["truth_score"] = None
+        with pytest.raises(FederationScreeError, match="truth_score"):
+            FederationScree.build_truth_matrix(records)
+
+    def test_non_numeric_truth_score_raises_federation_scree_error(self):
+        records = _runtime_records()
+        records["CODEX"]["truth_score"] = "not-a-number"
+        with pytest.raises(FederationScreeError, match="truth_score"):
+            FederationScree.build_truth_matrix(records)
+
+    def test_missing_member_raises_federation_scree_error(self):
+        records = _runtime_records()
+        del records["ARTSTYLE"]
+        with pytest.raises(FederationScreeError, match="ARTSTYLE"):
+            FederationScree.build_truth_matrix(records)

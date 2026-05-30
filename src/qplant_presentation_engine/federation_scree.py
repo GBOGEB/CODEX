@@ -168,6 +168,13 @@ class FederationScree:
             if member not in runtime_records:
                 raise FederationScreeError(f"Missing runtime record for member: {member}")
             record = runtime_records[member]
+            raw_score = record.get("truth_score", 0.0)
+            try:
+                truth_score = round(float(raw_score), 6)
+            except (TypeError, ValueError) as exc:
+                raise FederationScreeError(
+                    f"Field truth_score must be numeric for {record.get('repo', member)}: {raw_score!r}"
+                ) from exc
             truth_matrix.append(
                 {
                     "member": member,
@@ -176,7 +183,7 @@ class FederationScree:
                     "executed": bool(record.get("last_execution")),
                     "runtime_validated": bool(record.get("runtime_validated")),
                     "deployment_exists": bool(record.get("deployment_exists")),
-                    "truth_score": round(float(record.get("truth_score", 0.0)), 6),
+                    "truth_score": truth_score,
                 }
             )
         return truth_matrix
