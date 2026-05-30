@@ -131,6 +131,7 @@ class FederationScree:
         repo_metrics: dict[str, dict[str, Any]],
         wave: str = "W007",
         subwave: str = "W007.1",
+        runtime_records: dict[str, dict[str, Any]] | None = None,
     ) -> dict[str, Any]:
         """Build the full scree record for federation output (not yet written to disk)."""
         aggregated = self.aggregate_scree(repo_metrics)
@@ -141,7 +142,7 @@ class FederationScree:
             for member in MEMBERS
             if member in repo_metrics
         }
-        return {
+        record = {
             "wave": wave,
             "subwave": subwave,
             "members": list(MEMBERS),
@@ -153,17 +154,44 @@ class FederationScree:
             "cumulative_variance": cumulative,
             "per_member_scree": per_member,
         }
+        if runtime_records is not None:
+            record["truth_matrix"] = self.build_truth_matrix(runtime_records)
+        return record
+
+    @staticmethod
+    def build_truth_matrix(
+        runtime_records: dict[str, dict[str, Any]],
+    ) -> list[dict[str, Any]]:
+        """Return runtime truth-state view aligned to scree members."""
+        truth_matrix: list[dict[str, Any]] = []
+        for member in MEMBERS:
+            if member not in runtime_records:
+                raise FederationScreeError(f"Missing runtime record for member: {member}")
+            record = runtime_records[member]
+            truth_matrix.append(
+                {
+                    "member": member,
+                    "repo": record.get("repo", member),
+                    "runtime_exists": bool(record.get("runtime_exists")),
+                    "executed": bool(record.get("last_execution")),
+                    "runtime_validated": bool(record.get("runtime_validated")),
+                    "deployment_exists": bool(record.get("deployment_exists")),
+                    "truth_score": round(float(record.get("truth_score", 0.0)), 6),
+                }
+            )
+        return truth_matrix
 
     def write_scree(
         self,
         repo_metrics: dict[str, dict[str, Any]],
         output_path: Path,
+        runtime_records: dict[str, dict[str, Any]] | None = None,
     ) -> dict[str, Any]:
         """Write ``federation_scree.json`` to *output_path* and return the record.
 
         Parent directories are created if they do not exist.
         """
-        record = self.build_scree_record(repo_metrics)
+        record = self.build_scree_record(repo_metrics, runtime_records=runtime_records)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(json.dumps(record, indent=2), encoding="utf-8")
         return record

@@ -188,27 +188,83 @@ class FederationRollup:
         repo_metrics: dict[str, dict[str, Any]],
         wave: str = "W007",
         subwave: str = "W007.1",
+        runtime_records: dict[str, dict[str, Any]] | None = None,
     ) -> dict[str, Any]:
         """Build the complete rollup record (not yet written to disk)."""
         aggregated = self.aggregate(repo_metrics)
-        return {
+        record = {
             "wave": wave,
             "subwave": subwave,
             "members": list(MEMBERS),
             "weights": self.weights,
             "aggregated": aggregated,
         }
+        if runtime_records is not None:
+            record["runtime_status"] = self.build_runtime_status(runtime_records)
+        return record
+
+    def build_runtime_status(
+        self,
+        runtime_records: dict[str, dict[str, Any]],
+    ) -> dict[str, Any]:
+        """Build runtime evidence summary for federation members."""
+        for member in MEMBERS:
+            if member not in runtime_records:
+                raise FederationRollupError(f"Missing runtime record for member: {member}")
+
+        truth_matrix: list[dict[str, Any]] = []
+        runtime_exists_count = 0
+        runtime_validated_count = 0
+        deployment_exists_count = 0
+        execution_count = 0
+        weighted_truth_score = 0.0
+
+        for member in MEMBERS:
+            record = runtime_records[member]
+            runtime_exists = bool(record.get("runtime_exists"))
+            runtime_validated = bool(record.get("runtime_validated"))
+            deployment_exists = bool(record.get("deployment_exists"))
+            executed = bool(record.get("last_execution"))
+            truth_score = float(record.get("truth_score", 0.0))
+
+            runtime_exists_count += int(runtime_exists)
+            runtime_validated_count += int(runtime_validated)
+            deployment_exists_count += int(deployment_exists)
+            execution_count += int(executed)
+            weighted_truth_score += self.weights[member] * truth_score
+
+            truth_matrix.append(
+                {
+                    "member": member,
+                    "repo": record.get("repo", member),
+                    "runtime_exists": runtime_exists,
+                    "executed": executed,
+                    "runtime_validated": runtime_validated,
+                    "deployment_exists": deployment_exists,
+                    "truth_score": round(truth_score, 6),
+                }
+            )
+
+        return {
+            "runtime_exists_count": runtime_exists_count,
+            "execution_count": execution_count,
+            "runtime_validated_count": runtime_validated_count,
+            "deployment_exists_count": deployment_exists_count,
+            "weighted_truth_score": round(weighted_truth_score, 6),
+            "truth_matrix": truth_matrix,
+        }
 
     def write_rollup(
         self,
         repo_metrics: dict[str, dict[str, Any]],
         output_path: Path,
+        runtime_records: dict[str, dict[str, Any]] | None = None,
     ) -> dict[str, Any]:
         """Write ``federation_rollup.json`` to *output_path* and return the record.
 
         Parent directories are created if they do not exist.
         """
-        record = self.build_rollup_record(repo_metrics)
+        record = self.build_rollup_record(repo_metrics, runtime_records=runtime_records)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(json.dumps(record, indent=2), encoding="utf-8")
         return record

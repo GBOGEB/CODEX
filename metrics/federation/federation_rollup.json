@@ -1,24 +1,86 @@
 {
   "wave": "W007",
   "subwave": "W007.1",
-  "members": ["ABACUS", "ARTSTYLE", "QPLANT", "CODEX"],
+  "members": [
+    "ABACUS",
+    "ARTSTYLE",
+    "QPLANT",
+    "CODEX"
+  ],
   "weights": {
     "ABACUS": 0.35,
-    "ARTSTYLE": 0.20,
+    "ARTSTYLE": 0.2,
     "QPLANT": 0.25,
-    "CODEX": 0.20
+    "CODEX": 0.2
   },
   "aggregated": {
     "geti": 0.7915,
     "pci": 0.7635,
     "expansion_factor": 1.1685,
     "forward_pca": {
-      "variance_explained": [0.413, 0.261, 0.1785, 0.0975, 0.05],
+      "variance_explained": [
+        0.413,
+        0.261,
+        0.1785,
+        0.0975,
+        0.05
+      ],
       "convergence_score": 0.8115
     },
     "backward_pca": {
-      "variance_explained": [0.3905, 0.271, 0.191, 0.0975, 0.05],
+      "variance_explained": [
+        0.3905,
+        0.271,
+        0.191,
+        0.0975,
+        0.05
+      ],
       "regression_score": 0.779
     }
+  },
+  "runtime_status": {
+    "runtime_exists_count": 4,
+    "execution_count": 4,
+    "runtime_validated_count": 3,
+    "deployment_exists_count": 2,
+    "weighted_truth_score": 0.783333,
+    "truth_matrix": [
+      {
+        "member": "ABACUS",
+        "repo": "GBOGEB/ABACUS",
+        "runtime_exists": true,
+        "executed": true,
+        "runtime_validated": true,
+        "deployment_exists": true,
+        "truth_score": 1.0
+      },
+      {
+        "member": "ARTSTYLE",
+        "repo": "GBOGEB/ARTSTYLE",
+        "runtime_exists": true,
+        "executed": true,
+        "runtime_validated": false,
+        "deployment_exists": false,
+        "truth_score": 0.333333
+      },
+      {
+        "member": "QPLANT",
+        "repo": "GBOGEB/QPLANT",
+        "runtime_exists": true,
+        "executed": true,
+        "runtime_validated": true,
+        "deployment_exists": false,
+        "truth_score": 0.666667
+      },
+      {
+        "member": "CODEX",
+        "repo": "GBOGEB/CODEX",
+        "runtime_exists": true,
+        "executed": true,
+        "runtime_validated": true,
+        "deployment_exists": true,
+        "truth_score": 1.0
+      }
+    ]
   }
 }
