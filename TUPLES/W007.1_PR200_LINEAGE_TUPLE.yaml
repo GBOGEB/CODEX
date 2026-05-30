@@ -1,0 +1,70 @@
+lineage_tuple:
+  id: T-20260530-PR200-001
+  date: "2026-05-30"
+  repo: GBOGEB/CODEX
+  pr: 200
+  wave: W007
+  subwave: W007.1
+  branch: copilot/pr-w0071-federation-metrics-rollup
+  commit: 76937a4b5d40f7dc41dc8d7379c1906f6262a03c
+  status: OPEN
+  completion: implemented
+
+  description: >
+    Implements federation metric aggregation and rollup support (W007.1).
+    Establishes CODEX as the federation owner for cross-repository metrics,
+    rollup, scree analysis, and bottleneck detection across the four-member
+    federation (ABACUS, ARTSTYLE, QPLANT, CODEX).
+
+  topology_change:
+    before:
+      federation_owner: ABACUS
+      note: ABACUS held runtime, governance, metrics, and visualization
+    after:
+      federation_owner: CODEX
+      separation_of_concerns:
+        CODEX: federation / rollup / cross-repo metrics / bottleneck detection
+        ABACUS: governance / metrics source / validation
+        ARTSTYLE: rendering / visual runtime
+        QPLANT: domain content / cryogenics
+
+  artifacts:
+    new_files:
+      - metrics/repo/abacus_metrics.json
+      - metrics/repo/artstyle_metrics.json
+      - metrics/repo/qplant_metrics.json
+      - metrics/repo/codex_metrics.json
+      - metrics/federation/federation_metrics.json
+      - metrics/federation/federation_scree.json
+      - metrics/federation/federation_rollup.json
+      - src/qplant_presentation_engine/__init__.py
+      - src/qplant_presentation_engine/federation_rollup.py
+      - src/qplant_presentation_engine/federation_scree.py
+      - tests/test_federation_rollup.py
+      - tests/test_federation_scree.py
+
+  validation:
+    tests_passed: 62
+    codeql_alerts: 0
+    ci_status: pass
+    renderer_modified: false
+    content_modified: false
+
+  wave_sequence_note: >
+    W007 (federation metrics) reached 95% completion before W005 (GitHub Pages
+    runtime, 10%).  This is acceptable: federation metrics is a governance
+    capability while GitHub Pages is a delivery capability — they are loosely
+    coupled and the sequence inversion does not block either work stream.
+
+  current_bottleneck:
+    wave: W003.5
+    description: Renderer Integration — build_qplant_visualization.py
+    repo: GBOGEB/ABACUS
+
+  recommended_next_pr:
+    id: PR-W003.5-QPLANT-VISUALIZATION
+    repo: GBOGEB/ABACUS
+    objective: >
+      Close the governance/delivery imbalance (governance 95%, delivery 20%)
+      by producing the first visible runtime product:
+      QPLANT YAML → SVG/MathML → HTML → GitHub Pages.

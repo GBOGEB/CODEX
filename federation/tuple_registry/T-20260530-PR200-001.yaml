@@ -1,0 +1,87 @@
+tuple:
+  id: T-20260530-PR200-001
+  repo: GBOGEB/CODEX
+  pr: 200
+  wave: W007
+  subwave: W007.1
+  status: OPEN
+  completion: implemented
+
+  artifacts:
+    metrics_repo:
+      - metrics/repo/abacus_metrics.json
+      - metrics/repo/artstyle_metrics.json
+      - metrics/repo/qplant_metrics.json
+      - metrics/repo/codex_metrics.json
+    metrics_federation:
+      - metrics/federation/federation_metrics.json
+      - metrics/federation/federation_scree.json
+      - metrics/federation/federation_rollup.json
+    runtime:
+      - src/qplant_presentation_engine/federation_rollup.py
+      - src/qplant_presentation_engine/federation_scree.py
+
+  tests:
+    federation_rollup:
+      passed: 34
+    federation_scree:
+      passed: 28
+    total:
+      passed: 62
+
+  ci:
+    status: pass
+    codeql_alerts: 0
+
+  architecture:
+    federation_owner: CODEX
+    rationale: >
+      CODEX owns federation aggregation, rollup, and bottleneck detection.
+      ABACUS owns governance and metrics source data.
+      ARTSTYLE owns rendering runtime.
+      QPLANT owns domain content and cryogenic knowledge.
+
+  federation_map:
+    CODEX:
+      role: federation
+      capabilities:
+        - federation_rollup
+        - federation_scree
+        - cross_repo_metrics
+        - bottleneck_detection
+    ABACUS:
+      role: governance
+      capabilities:
+        - governance
+        - metrics_source
+        - validation
+    ARTSTYLE:
+      role: rendering
+      capabilities:
+        - visual_runtime
+        - rendering
+    QPLANT:
+      role: domain_content
+      capabilities:
+        - cryogenic_knowledge
+        - domain_content
+
+  wave_progress:
+    W001_runtime_foundation: 96
+    W003_scientific_visualization: 92
+    W005_github_pages_runtime: 10
+    W007_federation_metrics: 95
+    W009_rtm_integration: 2
+
+  current_bottleneck:
+    wave: W003.5
+    description: Renderer Integration
+    target: build_qplant_visualization.py
+    repo: GBOGEB/ABACUS
+
+  next_pr:
+    id: PR-W003.5-QPLANT-VISUALIZATION
+    repo: GBOGEB/ABACUS
+    rationale: >
+      W003.5 delivers the first visible runtime product (QPLANT YAML → SVG/MathML → HTML).
+      It directly addresses the governance/delivery imbalance (governance 95%, delivery 20%).
