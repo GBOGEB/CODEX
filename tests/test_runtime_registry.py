@@ -4,9 +4,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from src.qplant_presentation_engine.runtime_registry import (
     RUNTIME_FIELDS,
     RuntimeRegistry,
+    RuntimeRegistryError,
     generate_runtime_registry,
 )
 
@@ -21,6 +24,14 @@ def _runtime_dir() -> Path:
 
 def _metrics_dir() -> Path:
     return _root() / "metrics" / "repo"
+
+
+def _copy_runtime_inputs(destination: Path) -> Path:
+    source = _runtime_dir()
+    destination.mkdir(parents=True, exist_ok=True)
+    for name in ("abacus_runtime.json", "artstyle_runtime.json", "qplant_runtime.json", "codex_runtime.json"):
+        (destination / name).write_text((source / name).read_text(encoding="utf-8"), encoding="utf-8")
+    return destination
 
 
 class TestRuntimeEvidenceFiles:
@@ -39,10 +50,11 @@ class TestRuntimeEvidenceFiles:
 
 class TestRuntimeRegistryGeneration:
     def test_write_outputs_generates_registry_and_report(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
         registry_output = tmp_path / "runtime_registry.json"
         report_output = tmp_path / "runtime_registry_report.json"
         registry, report = RuntimeRegistry().write_outputs(
-            runtime_dir=_runtime_dir(),
+            runtime_dir=runtime_dir,
             metrics_dir=_metrics_dir(),
             registry_output=registry_output,
             report_output=report_output,
@@ -52,10 +64,15 @@ class TestRuntimeRegistryGeneration:
         assert json.loads(registry_output.read_text(encoding="utf-8")) == registry
         assert json.loads(report_output.read_text(encoding="utf-8")) == report
 
-    def test_registry_contains_all_members(self):
+    def test_registry_contains_all_members(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        registry_output = tmp_path / "runtime_registry.json"
+        report_output = tmp_path / "runtime_registry_report.json"
         registry, _ = RuntimeRegistry().write_outputs(
-            runtime_dir=_runtime_dir(),
+            runtime_dir=runtime_dir,
             metrics_dir=_metrics_dir(),
+            registry_output=registry_output,
+            report_output=report_output,
         )
         repos = {entry["repo"] for entry in registry["runtime_registry"]}
         assert repos == {
@@ -65,10 +82,15 @@ class TestRuntimeRegistryGeneration:
             "GBOGEB/CODEX",
         }
 
-    def test_report_integrates_rollup_scree_and_truth_matrix(self):
+    def test_report_integrates_rollup_scree_and_truth_matrix(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        registry_output = tmp_path / "runtime_registry.json"
+        report_output = tmp_path / "runtime_registry_report.json"
         _, report = RuntimeRegistry().write_outputs(
-            runtime_dir=_runtime_dir(),
+            runtime_dir=runtime_dir,
             metrics_dir=_metrics_dir(),
+            registry_output=registry_output,
+            report_output=report_output,
         )
         assert "federation_rollup" in report
         assert "federation_scree" in report
@@ -77,20 +99,51 @@ class TestRuntimeRegistryGeneration:
         assert "runtime_status" in report["federation_scree"]
         assert "rows" in report["truth_matrix"]
 
-    def test_rollup_consumes_runtime_status_per_member(self):
+    def test_rollup_consumes_runtime_status_per_member(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        registry_output = tmp_path / "runtime_registry.json"
+        report_output = tmp_path / "runtime_registry_report.json"
         _, report = RuntimeRegistry().write_outputs(
-            runtime_dir=_runtime_dir(),
+            runtime_dir=runtime_dir,
             metrics_dir=_metrics_dir(),
+            registry_output=registry_output,
+            report_output=report_output,
         )
         runtime_status = report["federation_rollup"]["runtime_status"]["members"]
         assert set(runtime_status.keys()) == {"ABACUS", "ARTSTYLE", "QPLANT", "CODEX"}
         assert runtime_status["ABACUS"]["runtime_validated"] is True
         assert runtime_status["ARTSTYLE"]["runtime_validated"] is False
 
-    def test_generate_runtime_registry_uses_defaults(self):
+    def test_generate_runtime_registry_uses_defaults(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
         registry, report = generate_runtime_registry(
-            runtime_dir=_runtime_dir(),
+            runtime_dir=runtime_dir,
             metrics_dir=_metrics_dir(),
         )
         assert registry["subwave"] == "W007.2"
         assert report["subwave"] == "W007.2"
+        assert (runtime_dir / "runtime_registry.json").exists()
+        assert (runtime_dir / "runtime_registry_report.json").exists()
+
+    def test_rejects_invalid_runtime_field_types(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        abacus_file = runtime_dir / "abacus_runtime.json"
+        data = json.loads(abacus_file.read_text(encoding="utf-8"))
+        data["runtime_exists"] = "false"
+        abacus_file.write_text(json.dumps(data), encoding="utf-8")
+
+        with pytest.raises(RuntimeRegistryError, match="runtime_exists"):
+            RuntimeRegistry().load_runtime_entries(runtime_dir)
+
+    def test_custom_unknown_member_raises_runtime_registry_error(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        with pytest.raises(RuntimeRegistryError, match="filename configured"):
+            RuntimeRegistry(members=("ABACUS", "UNKNOWN")).load_runtime_entries(runtime_dir)
+
+    def test_runtime_status_handles_empty_members(self):
+        status = RuntimeRegistry(members=())._runtime_status({})
+        assert status["members"] == {}
+        assert status["coverage"]["runtime_exists"] == 0.0
+        assert status["coverage"]["runtime_validated"] == 0.0
+        assert status["coverage"]["deployment_exists"] == 0.0
+        assert status["coverage"]["truth_score_average"] == 0.0

@@ -50,11 +50,53 @@ class RuntimeRegistry:
         missing = [field for field in RUNTIME_FIELDS if field not in entry]
         if missing:
             raise RuntimeRegistryError(f"Missing runtime fields in {source}: {', '.join(missing)}")
+        if not isinstance(entry["repo"], str) or not entry["repo"].strip():
+            raise RuntimeRegistryError(f"Invalid runtime field 'repo' in {source}: expected non-empty string")
+        for field in ("runtime_exists", "runtime_validated", "deployment_exists"):
+            if not isinstance(entry[field], bool):
+                raise RuntimeRegistryError(f"Invalid runtime field '{field}' in {source}: expected boolean")
+        for field in ("last_execution", "last_validation", "last_deployment"):
+            value = entry[field]
+            if value is not None and (not isinstance(value, str) or not value.strip()):
+                raise RuntimeRegistryError(
+                    f"Invalid runtime field '{field}' in {source}: expected non-empty string or null"
+                )
+        for field in ("truth_score", "geti", "pci"):
+            if not isinstance(entry[field], (int, float)):
+                raise RuntimeRegistryError(f"Invalid runtime field '{field}' in {source}: expected number")
+            if not 0.0 <= float(entry[field]) <= 1.0:
+                raise RuntimeRegistryError(
+                    f"Invalid runtime field '{field}' in {source}: expected value in [0.0, 1.0]"
+                )
+        self._validate_pca_block(entry, "forward_pca", "convergence_score", source)
+        self._validate_pca_block(entry, "backward_pca", "regression_score", source)
+
+    def _validate_pca_block(
+        self,
+        entry: dict[str, Any],
+        field_name: str,
+        score_key: str,
+        source: str,
+    ) -> None:
+        pca = entry.get(field_name)
+        if not isinstance(pca, dict):
+            raise RuntimeRegistryError(f"Invalid runtime field '{field_name}' in {source}: expected object")
+        variance = pca.get("variance_explained")
+        if not isinstance(variance, list) or len(variance) != 5 or not all(isinstance(v, (int, float)) for v in variance):
+            raise RuntimeRegistryError(
+                f"Invalid runtime field '{field_name}.variance_explained' in {source}: expected 5 numeric values"
+            )
+        if not isinstance(pca.get(score_key), (int, float)):
+            raise RuntimeRegistryError(
+                f"Invalid runtime field '{field_name}.{score_key}' in {source}: expected number"
+            )
 
     def load_runtime_entries(self, runtime_dir: Path) -> dict[str, dict[str, Any]]:
         entries: dict[str, dict[str, Any]] = {}
         for member in self.members:
-            filename = DEFAULT_RUNTIME_FILENAMES[member]
+            filename = DEFAULT_RUNTIME_FILENAMES.get(member)
+            if filename is None:
+                raise RuntimeRegistryError(f"No runtime evidence filename configured for member: {member}")
             path = runtime_dir / filename
             if not path.exists():
                 raise RuntimeRegistryError(f"Runtime evidence file missing for {member}: {path}")
@@ -83,6 +125,17 @@ class RuntimeRegistry:
         }
 
     def _runtime_status(self, entries: dict[str, dict[str, Any]]) -> dict[str, Any]:
+        total = float(len(self.members))
+        if total == 0.0:
+            return {
+                "members": {},
+                "coverage": {
+                    "runtime_exists": 0.0,
+                    "runtime_validated": 0.0,
+                    "deployment_exists": 0.0,
+                    "truth_score_average": 0.0,
+                },
+            }
         member_status = {
             member: {
                 "runtime_exists": bool(entries[member]["runtime_exists"]),
@@ -92,13 +145,12 @@ class RuntimeRegistry:
             }
             for member in self.members
         }
-        total = float(len(self.members))
         return {
             "members": member_status,
             "coverage": {
-                "runtime_exists": round(sum(1 for m in self.members if entries[m]["runtime_exists"]) / total, 6),
-                "runtime_validated": round(sum(1 for m in self.members if entries[m]["runtime_validated"]) / total, 6),
-                "deployment_exists": round(sum(1 for m in self.members if entries[m]["deployment_exists"]) / total, 6),
+                "runtime_exists": round(sum(1 for m in self.members if bool(entries[m]["runtime_exists"])) / total, 6),
+                "runtime_validated": round(sum(1 for m in self.members if bool(entries[m]["runtime_validated"])) / total, 6),
+                "deployment_exists": round(sum(1 for m in self.members if bool(entries[m]["deployment_exists"])) / total, 6),
                 "truth_score_average": round(sum(float(entries[m]["truth_score"]) for m in self.members) / total, 6),
             },
         }
