@@ -3,6 +3,35 @@ bridge:
   repositories:
     codex: GBOGEB/CODEX
     abacus: GBOGEB/ABACUS
+    artstyle: GBOGEB/ARTSTYLE
+    qplant: GBOGEB/QPLANT
+
+  federation_ownership:
+    # Updated W007.1 (T-20260530-PR200-001): CODEX now owns federation
+    CODEX:
+      role: federation
+      capabilities:
+        - federation_rollup
+        - federation_scree
+        - cross_repo_metrics
+        - bottleneck_detection
+      wave: W007.1
+    ABACUS:
+      role: governance
+      capabilities:
+        - governance
+        - metrics_source
+        - validation
+    ARTSTYLE:
+      role: rendering
+      capabilities:
+        - visual_runtime
+        - rendering
+    QPLANT:
+      role: domain_content
+      capabilities:
+        - cryogenic_knowledge
+        - domain_content
 
   module_alignment:
     - abacus_module: renderer
@@ -25,3 +54,12 @@ bridge:
       codex_path: telemetry
       workflow: .github/workflows/runtime_convergence_pipeline.yml
       status: INCUBATOR
+    - abacus_module: federation_rollup
+      codex_path: src/qplant_presentation_engine
+      artifacts:
+        - metrics/federation/federation_rollup.json
+        - metrics/federation/federation_scree.json
+        - metrics/federation/federation_metrics.json
+      wave: W007.1
+      tuple: T-20260530-PR200-001
+      status: ACTIVE
