@@ -179,7 +179,7 @@ class FederationArtifactExporter:
         wave: str = "W007",
         subwave: str = "W007.2A",
     ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
-        if sorted(self.members) != sorted(FEDERATION_MEMBERS):
+        if set(self.members) != set(FEDERATION_MEMBERS) or len(self.members) != len(FEDERATION_MEMBERS):
             raise FederationExportError(
                 f"write_outputs() requires exactly the canonical federation members "
                 f"{sorted(FEDERATION_MEMBERS)} (in any order), got {sorted(self.members)}"

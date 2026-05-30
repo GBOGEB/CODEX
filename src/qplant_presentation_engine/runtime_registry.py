@@ -240,7 +240,7 @@ class RuntimeRegistry:
         registry_output: Path | None = None,
         report_output: Path | None = None,
     ) -> tuple[dict[str, Any], dict[str, Any]]:
-        if sorted(self.members) != sorted(FEDERATION_MEMBERS):
+        if set(self.members) != set(FEDERATION_MEMBERS) or len(self.members) != len(FEDERATION_MEMBERS):
             raise RuntimeRegistryError(
                 f"write_outputs() requires exactly the canonical federation members "
                 f"{sorted(FEDERATION_MEMBERS)} (in any order), got {sorted(self.members)}"
