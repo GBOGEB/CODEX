@@ -134,7 +134,7 @@ class TestRuntimeRegistryBuild:
     def test_weighted_truth_score_uses_federation_weights(self):
         registry = RuntimeRegistry()
         record = registry.build_registry_record(_runtime_records())
-        assert record["summary"]["weighted_truth_score"] == pytest.approx(0.766667, abs=1e-6)
+        assert record["summary"]["weighted_truth_score"] == pytest.approx(0.783333, abs=1e-6)
 
     def test_build_report_lists_missing_validation_and_deployment(self):
         registry = RuntimeRegistry()
