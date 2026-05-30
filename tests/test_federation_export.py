@@ -4,8 +4,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from src.qplant_presentation_engine.federation_export import (
     FederationArtifactExporter,
+    FederationExportError,
     generate_federation_artifacts,
 )
 
@@ -93,9 +96,6 @@ class TestFederationArtifactExport:
         assert bottleneck_output.exists()
 
     def test_rejects_duplicate_members(self, tmp_path: Path):
-        import pytest
-        from src.qplant_presentation_engine.federation_export import FederationExportError
-        
         federation_dir = tmp_path / "metrics" / "federation"
         bottleneck_output = tmp_path / "bottleneck_report.json"
 
@@ -107,9 +107,6 @@ class TestFederationArtifactExport:
             )
 
     def test_rejects_bool_in_federation_metrics(self, tmp_path: Path):
-        import pytest
-        from src.qplant_presentation_engine.federation_export import FederationExportError
-        
         # Create a corrupted metrics file with boolean value
         corrupted_metrics_dir = tmp_path / "metrics"
         corrupted_metrics_dir.mkdir(parents=True, exist_ok=True)
