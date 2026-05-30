@@ -45,8 +45,8 @@ class FederationArtifactExporter:
         for member in self.members:
             repo_data = repo_metrics[member]
             metrics = self._metrics(repo_data)
-            repo_summaries.append(
-                {
+            try:
+                summary = {
                     "member": member,
                     "repo": repo_data.get("repository", f"GBOGEB/{member}"),
                     "forward_pca": float(metrics["forward_pca"]["convergence_score"]),
@@ -55,7 +55,11 @@ class FederationArtifactExporter:
                     "pci": float(metrics["pci"]),
                     "expansion_factor": float(metrics["expansion_factor"]),
                 }
-            )
+            except (KeyError, TypeError, ValueError) as exc:
+                raise FederationExportError(
+                    f"Failed to extract rollup metrics for {member}: {exc}"
+                ) from exc
+            repo_summaries.append(summary)
 
         return {
             "wave": wave,
@@ -157,6 +161,11 @@ class FederationArtifactExporter:
         wave: str = "W007",
         subwave: str = "W007.2A",
     ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
+        if set(self.members) != set(FEDERATION_MEMBERS):
+            raise FederationExportError(
+                f"write_outputs() requires the canonical federation member set "
+                f"{sorted(FEDERATION_MEMBERS)}, got {sorted(self.members)}"
+            )
         repo_metrics = self._load_repo_metrics(metrics_dir)
         rollup_record = self.build_federation_rollup_export(repo_metrics, wave=wave, subwave=subwave)
         scree_record = self.build_federation_scree_export(repo_metrics, wave=wave, subwave=subwave)

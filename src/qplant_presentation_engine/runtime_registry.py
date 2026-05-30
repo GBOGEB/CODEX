@@ -62,7 +62,7 @@ class RuntimeRegistry:
                     f"Invalid runtime field '{field}' in {source}: expected non-empty string or null"
                 )
         for field in ("truth_score", "geti", "pci"):
-            if not isinstance(entry[field], (int, float)):
+            if isinstance(entry[field], bool) or not isinstance(entry[field], (int, float)):
                 raise RuntimeRegistryError(f"Invalid runtime field '{field}' in {source}: expected number")
             if not 0.0 <= float(entry[field]) <= 1.0:
                 raise RuntimeRegistryError(
@@ -82,11 +82,16 @@ class RuntimeRegistry:
         if not isinstance(pca, dict):
             raise RuntimeRegistryError(f"Invalid runtime field '{field_name}' in {source}: expected object")
         variance = pca.get("variance_explained")
-        if not isinstance(variance, list) or len(variance) != 5 or not all(isinstance(v, (int, float)) for v in variance):
+        if (
+            not isinstance(variance, list)
+            or len(variance) != 5
+            or not all(not isinstance(v, bool) and isinstance(v, (int, float)) for v in variance)
+        ):
             raise RuntimeRegistryError(
                 f"Invalid runtime field '{field_name}.variance_explained' in {source}: expected 5 numeric values"
             )
-        if not isinstance(pca.get(score_key), (int, float)):
+        score = pca.get(score_key)
+        if isinstance(score, bool) or not isinstance(score, (int, float)):
             raise RuntimeRegistryError(
                 f"Invalid runtime field '{field_name}.{score_key}' in {source}: expected number"
             )
@@ -222,6 +227,11 @@ class RuntimeRegistry:
         registry_output: Path | None = None,
         report_output: Path | None = None,
     ) -> tuple[dict[str, Any], dict[str, Any]]:
+        if set(self.members) != set(FEDERATION_MEMBERS):
+            raise RuntimeRegistryError(
+                f"write_outputs() requires the canonical federation member set "
+                f"{sorted(FEDERATION_MEMBERS)}, got {sorted(self.members)}"
+            )
         entries = self.load_runtime_entries(runtime_dir)
         repo_metrics = self._load_repo_metrics(metrics_dir)
         registry_record = self.build_registry_record(entries)
