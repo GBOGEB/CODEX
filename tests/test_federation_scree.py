@@ -45,6 +45,35 @@ def _repo_metrics() -> dict:
     }
 
 
+def _write_runtime_registry(tmp_path: Path) -> Path:
+    """Write a temporary runtime registry directory."""
+    registry_dir = tmp_path / "runtime_registry"
+    registry_dir.mkdir(parents=True, exist_ok=True)
+    records = {
+        "abacus_runtime.json": "ABACUS",
+        "artstyle_runtime.json": "ARTSTYLE",
+        "qplant_runtime.json": "QPLANT",
+        "codex_runtime.json": "CODEX",
+    }
+    for filename, repo in records.items():
+        (registry_dir / filename).write_text(
+            json.dumps(
+                {
+                    "repo": repo,
+                    "runtime_exists": True,
+                    "runtime_validated": True,
+                    "deployment_exists": True,
+                    "last_execution": "2026-05-30T18:07:45Z",
+                    "last_validation": "2026-05-30T18:07:45Z",
+                    "last_deployment": "2026-05-30T18:07:45Z",
+                    "truth_score": 0.99,
+                }
+            ),
+            encoding="utf-8",
+        )
+    return registry_dir
+
+
 # ---------------------------------------------------------------------------
 # aggregate_scree()
 # ---------------------------------------------------------------------------
@@ -212,6 +241,15 @@ class TestBuildScreeRecord:
         record = scree.build_scree_record(metrics)
         aggregated = scree.aggregate_scree(metrics)
         assert record["federation_scree"] == aggregated
+
+    def test_includes_runtime_registry_when_directory_provided(self, tmp_path: Path):
+        scree = FederationScree()
+        registry_dir = _write_runtime_registry(tmp_path)
+        record = scree.build_scree_record(_repo_metrics(), runtime_registry_dir=registry_dir)
+        assert set(record["runtime_registry"].keys()) == set(MEMBERS)
+        assert record["runtime_status"]["runtime_exists"] is True
+        assert record["runtime_status"]["runtime_validated"] is True
+        assert record["runtime_status"]["deployment_exists"] is True
 
 
 # ---------------------------------------------------------------------------
