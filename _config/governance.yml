@@ -39,3 +39,38 @@ rendering_defaults:
     powerpoint_export: "emf"
   plots:
     engine: "static-svg" # No live Plotly JS payloads; raw SVG injection only
+
+identity_boundaries:
+  token_reuse_across_lanes: false
+  lanes:
+    office365_graph_session:
+      auth_provider: "Windows Active Directory / Office 365"
+    github_session:
+      auth_provider: "GitHub"
+    apple_personal_session:
+      auth_provider: "Apple ID"
+
+binary_sources:
+  office365:
+    system_of_record: "OneDrive"
+    graph_base_url: "https://graph.microsoft.com/v1.0"
+    cache_root: ".cache/office365"
+    supported_formats: ["pptx", "docx", "xlsx", "pdf"]
+  github:
+    system_of_record: "GitHub"
+    stores_only: true
+
+mcp_sweep:
+  enabled: true
+  near_miss_keywords:
+    - "TODO"
+    - "FIXME"
+    - "NEAR-MISS"
+    - "STALE"
+  stale_status_values:
+    - "STALE"
+    - "PENDING"
+    - "BLOCKED"
+  output:
+    telemetry_markdown: "metrics/mcp_sweep_telemetry.md"
+    rtm_delta: "metrics/rtm_lineage_delta.yaml"
