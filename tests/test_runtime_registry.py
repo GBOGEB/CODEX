@@ -263,4 +263,4 @@ class TestRuntimeRegistryGeneration:
         for path in [registry_output, report_output]:
             raw = path.read_text(encoding="utf-8")
             parsed = json.loads(raw)
-            assert raw == json.dumps(parsed, indent=2, sort_keys=True) + "\n" or raw == json.dumps(parsed, indent=2, sort_keys=True)
+            assert raw == json.dumps(parsed, indent=2, sort_keys=True)
