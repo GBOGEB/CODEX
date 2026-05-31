@@ -10,11 +10,11 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <meta charset=\"utf-8\" />
 <title>Runtime Federation Dashboard</title>
 <style>
-body { font-family: Arial, sans-serif; margin: 2rem; }
-.tile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
-.tile { border: 1px solid #ccc; border-radius: 8px; padding: 1rem; }
-.score { font-size: 2rem; font-weight: bold; }
-pre { white-space: pre-wrap; }
+body {{ font-family: Arial, sans-serif; margin: 2rem; }}
+.tile-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }}
+.tile {{ border: 1px solid #ccc; border-radius: 8px; padding: 1rem; }}
+.score {{ font-size: 2rem; font-weight: bold; }}
+pre {{ white-space: pre-wrap; }}
 </style>
 </head>
 <body>

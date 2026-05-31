@@ -17,6 +17,12 @@ DEFAULT_WEIGHTS: dict[str, float] = {
     "QPLANT": 0.25,
     "CODEX": 0.20,
 }
+_RUNTIME_FILENAMES: dict[str, str] = {
+    "ABACUS": "abacus_runtime.json",
+    "ARTSTYLE": "artstyle_runtime.json",
+    "QPLANT": "qplant_runtime.json",
+    "CODEX": "codex_runtime.json",
+}
 
 
 class FederationScreeError(Exception):
@@ -51,6 +57,28 @@ class FederationScree:
                 "Missing or invalid 'scree' key in repository metrics"
             )
         return scree  # type: ignore[return-value]
+
+    @staticmethod
+    def _load_runtime_registry_dir(runtime_registry_dir: Path) -> dict[str, dict[str, Any]]:
+        records: dict[str, dict[str, Any]] = {}
+        for member, filename in _RUNTIME_FILENAMES.items():
+            path = runtime_registry_dir / filename
+            try:
+                payload = json.loads(path.read_text(encoding="utf-8"))
+            except FileNotFoundError as exc:
+                raise FederationScreeError(
+                    f"Missing runtime artifact for {member}: {path}"
+                ) from exc
+            except json.JSONDecodeError as exc:
+                raise FederationScreeError(
+                    f"Invalid JSON in runtime artifact for {member}: {path}"
+                ) from exc
+            if not isinstance(payload, dict):
+                raise FederationScreeError(
+                    f"Runtime artifact must be an object for {member}: {path}"
+                )
+            records[member] = payload
+        return records
 
     # ------------------------------------------------------------------
     # Public API
@@ -132,8 +160,12 @@ class FederationScree:
         wave: str = "W007",
         subwave: str = "W007.1",
         runtime_records: dict[str, dict[str, Any]] | None = None,
+        runtime_registry_dir: Path | None = None,
     ) -> dict[str, Any]:
         """Build the full scree record for federation output (not yet written to disk)."""
+        if runtime_records is None and runtime_registry_dir is not None:
+            runtime_records = self._load_runtime_registry_dir(runtime_registry_dir)
+
         aggregated = self.aggregate_scree(repo_metrics)
         ranked = self.rank_components(aggregated)
         cumulative = self.cumulative_variance(aggregated)
@@ -155,8 +187,31 @@ class FederationScree:
             "per_member_scree": per_member,
         }
         if runtime_records is not None:
-            record["truth_matrix"] = self.build_truth_matrix(runtime_records)
+            truth_matrix = self.build_truth_matrix(runtime_records)
+            record["runtime_registry"] = runtime_records
+            record["truth_matrix"] = truth_matrix
+            record["runtime_status"] = self.build_runtime_status(truth_matrix)
         return record
+
+    def build_runtime_status(self, truth_matrix: list[dict[str, Any]]) -> dict[str, Any]:
+        runtime_exists_count = sum(int(entry["runtime_exists"]) for entry in truth_matrix)
+        runtime_validated_count = sum(int(entry["runtime_validated"]) for entry in truth_matrix)
+        deployment_exists_count = sum(int(entry["deployment_exists"]) for entry in truth_matrix)
+        execution_count = sum(int(entry["executed"]) for entry in truth_matrix)
+        weighted_truth_score = round(
+            sum(self.weights[entry["member"]] * float(entry["truth_score"]) for entry in truth_matrix),
+            6,
+        )
+        return {
+            "runtime_exists": runtime_exists_count == len(MEMBERS),
+            "runtime_validated": runtime_validated_count == len(MEMBERS),
+            "deployment_exists": deployment_exists_count == len(MEMBERS),
+            "runtime_exists_count": runtime_exists_count,
+            "execution_count": execution_count,
+            "runtime_validated_count": runtime_validated_count,
+            "deployment_exists_count": deployment_exists_count,
+            "weighted_truth_score": weighted_truth_score,
+        }
 
     @staticmethod
     def build_truth_matrix(
@@ -193,12 +248,17 @@ class FederationScree:
         repo_metrics: dict[str, dict[str, Any]],
         output_path: Path,
         runtime_records: dict[str, dict[str, Any]] | None = None,
+        runtime_registry_dir: Path | None = None,
     ) -> dict[str, Any]:
         """Write ``federation_scree.json`` to *output_path* and return the record.
 
         Parent directories are created if they do not exist.
         """
-        record = self.build_scree_record(repo_metrics, runtime_records=runtime_records)
+        record = self.build_scree_record(
+            repo_metrics,
+            runtime_records=runtime_records,
+            runtime_registry_dir=runtime_registry_dir,
+        )
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(json.dumps(record, indent=2), encoding="utf-8")
         return record

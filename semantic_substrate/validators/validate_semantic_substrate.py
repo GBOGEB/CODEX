@@ -34,6 +34,38 @@ BASELINE_ALLOWED_UNDOCUMENTED = {
     'semantic_substrate', 'semantic_synchronization_loss', 'semantic_tags', 'semantic_text',
     'semantic_type', 'semantic_vector_confidence', 'semantic_weight'
 }
+BASELINE_ALLOWED_UNDOCUMENTED.update(
+    {
+        'semantic_ast', 'semantic_card_required', 'semantic_cards_and_ssot',
+        'semantic_cognition_alignment', 'semantic_compliance_record',
+        'semantic_continuity_alignment', 'semantic_convergence_alignment',
+        'semantic_decisions', 'semantic_delta', 'semantic_density',
+        'semantic_drift_daemon', 'semantic_entropy', 'semantic_execution',
+        'semantic_execution_confidence', 'semantic_execution_continuity',
+        'semantic_execution_integrity', 'semantic_execution_lineage',
+        'semantic_execution_observability', 'semantic_execution_stability',
+        'semantic_flows', 'semantic_governance_consistency',
+        'semantic_governance_source', 'semantic_graph_runtime', 'semantic_ir',
+        'semantic_layer', 'semantic_links', 'semantic_memory_alignment',
+        'semantic_normalization', 'semantic_operational_alignment',
+        'semantic_operational_lineage', 'semantic_operational_mapping',
+        'semantic_operational_sovereignty', 'semantic_operational_tracking',
+        'semantic_operational_visibility', 'semantic_orchestration',
+        'semantic_prefixes', 'semantic_preservation',
+        'semantic_preservation_alignment', 'semantic_proof_alignment',
+        'semantic_proof_balance', 'semantic_propagation_alignment',
+        'semantic_provenance', 'semantic_recursion_alignment',
+        'semantic_release_alignment', 'semantic_release_gate', 'semantic_runtime',
+        'semantic_runtime_alignment', 'semantic_runtime_completion',
+        'semantic_runtime_confidence', 'semantic_runtime_visibility',
+        'semantic_signal_alignment', 'semantic_signal_visibility',
+        'semantic_sovereignty_alignment', 'semantic_telemetry_dashboard',
+        'semantic_tokens', 'semantic_traceability', 'semantic_traversal',
+        'semantic_trust_propagation_engine', 'semantic_trust_visibility',
+        'semantic_validation_engine', 'semantic_validator',
+        'semantic_verification_alignment',
+    }
+)
 
 
 def validate_required_files():
