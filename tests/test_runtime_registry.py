@@ -26,6 +26,14 @@ def _metrics_dir() -> Path:
     return _root() / "metrics" / "repo"
 
 
+def _copy_metrics_inputs(destination: Path) -> Path:
+    source = _metrics_dir()
+    destination.mkdir(parents=True, exist_ok=True)
+    for name in ("abacus_metrics.json", "artstyle_metrics.json", "qplant_metrics.json", "codex_metrics.json"):
+        (destination / name).write_text((source / name).read_text(encoding="utf-8"), encoding="utf-8")
+    return destination
+
+
 def _copy_runtime_inputs(destination: Path) -> Path:
     source = _runtime_dir()
     destination.mkdir(parents=True, exist_ok=True)
@@ -135,6 +143,20 @@ class TestRuntimeRegistryGeneration:
         with pytest.raises(RuntimeRegistryError, match="runtime_exists"):
             RuntimeRegistry().load_runtime_entries(runtime_dir)
 
+    def test_load_runtime_entries_rejects_malformed_json(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        (runtime_dir / "abacus_runtime.json").write_text("{", encoding="utf-8")
+
+        with pytest.raises(RuntimeRegistryError, match="Invalid runtime evidence JSON for ABACUS"):
+            RuntimeRegistry().load_runtime_entries(runtime_dir)
+
+    def test_load_runtime_entries_rejects_non_object_payload(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        (runtime_dir / "abacus_runtime.json").write_text("[]", encoding="utf-8")
+
+        with pytest.raises(RuntimeRegistryError, match="expected JSON object"):
+            RuntimeRegistry().load_runtime_entries(runtime_dir)
+
     def test_custom_unknown_member_raises_runtime_registry_error(self, tmp_path: Path):
         runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
         with pytest.raises(RuntimeRegistryError, match="filename configured"):
@@ -190,3 +212,16 @@ class TestRuntimeRegistryGeneration:
         with pytest.raises(RuntimeRegistryError, match="convergence_score.*expected value in"):
             RuntimeRegistry().load_runtime_entries(runtime_dir)
 
+    def test_load_repo_metrics_rejects_malformed_json(self, tmp_path: Path):
+        metrics_dir = _copy_metrics_inputs(tmp_path / "metrics")
+        (metrics_dir / "abacus_metrics.json").write_text("{", encoding="utf-8")
+
+        with pytest.raises(RuntimeRegistryError, match="Invalid repository metrics JSON for ABACUS"):
+            RuntimeRegistry()._load_repo_metrics(metrics_dir)
+
+    def test_load_repo_metrics_rejects_non_object_payload(self, tmp_path: Path):
+        metrics_dir = _copy_metrics_inputs(tmp_path / "metrics")
+        (metrics_dir / "abacus_metrics.json").write_text("[]", encoding="utf-8")
+
+        with pytest.raises(RuntimeRegistryError, match="expected JSON object"):
+            RuntimeRegistry()._load_repo_metrics(metrics_dir)

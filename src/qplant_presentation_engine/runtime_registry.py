@@ -118,7 +118,16 @@ class RuntimeRegistry:
             path = runtime_dir / filename
             if not path.exists():
                 raise RuntimeRegistryError(f"Runtime evidence file missing for {member}: {path}")
-            data = json.loads(path.read_text(encoding="utf-8"))
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError as exc:
+                raise RuntimeRegistryError(
+                    f"Invalid runtime evidence JSON for {member}: {path}: {exc.msg}"
+                ) from exc
+            if not isinstance(data, dict):
+                raise RuntimeRegistryError(
+                    f"Invalid runtime evidence payload for {member}: {path}: expected JSON object"
+                )
             self._validate_entry(data, str(path))
             inferred = self._member_from_repo(str(data["repo"]))
             if inferred != member:
@@ -210,7 +219,17 @@ class RuntimeRegistry:
             path = metrics_dir / f"{member.lower()}_metrics.json"
             if not path.exists():
                 raise RuntimeRegistryError(f"Repository metrics file missing for {member}: {path}")
-            loaded[member] = json.loads(path.read_text(encoding="utf-8"))
+            try:
+                payload = json.loads(path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError as exc:
+                raise RuntimeRegistryError(
+                    f"Invalid repository metrics JSON for {member}: {path}: {exc.msg}"
+                ) from exc
+            if not isinstance(payload, dict):
+                raise RuntimeRegistryError(
+                    f"Invalid repository metrics payload for {member}: {path}: expected JSON object"
+                )
+            loaded[member] = payload
         return loaded
 
     def build_runtime_report(

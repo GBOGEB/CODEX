@@ -21,6 +21,14 @@ def _metrics_dir() -> Path:
     return _root() / "metrics" / "repo"
 
 
+def _copy_metrics_inputs(destination: Path) -> Path:
+    source = _metrics_dir()
+    destination.mkdir(parents=True, exist_ok=True)
+    for name in ("abacus_metrics.json", "artstyle_metrics.json", "qplant_metrics.json", "codex_metrics.json"):
+        (destination / name).write_text((source / name).read_text(encoding="utf-8"), encoding="utf-8")
+    return destination
+
+
 class TestFederationArtifactExport:
     def test_write_outputs_generates_all_required_files(self, tmp_path: Path):
         federation_dir = tmp_path / "metrics" / "federation"
@@ -107,25 +115,52 @@ class TestFederationArtifactExport:
             )
 
     def test_rejects_bool_in_federation_metrics(self, tmp_path: Path):
-        # Create a corrupted metrics file with boolean value
-        corrupted_metrics_dir = tmp_path / "metrics"
-        corrupted_metrics_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Copy valid metrics files
-        for member in ("ABACUS", "ARTSTYLE", "QPLANT", "CODEX"):
-            src_path = _metrics_dir() / f"{member.lower()}_metrics.json"
-            dst_path = corrupted_metrics_dir / f"{member.lower()}_metrics.json"
-            dst_path.write_text(src_path.read_text(encoding="utf-8"), encoding="utf-8")
-        
-        # Corrupt one file with boolean
+        corrupted_metrics_dir = _copy_metrics_inputs(tmp_path / "metrics")
         abacus_path = corrupted_metrics_dir / "abacus_metrics.json"
         data = json.loads(abacus_path.read_text(encoding="utf-8"))
-        data["metrics"]["geti"] = True  # Boolean instead of numeric
+        data["metrics"]["geti"] = True
         abacus_path.write_text(json.dumps(data), encoding="utf-8")
-        
+
         exporter = FederationArtifactExporter()
         repo_metrics = exporter._load_repo_metrics(corrupted_metrics_dir)
-        
-        with pytest.raises(FederationExportError, match="geti is bool"):
+
+        with pytest.raises(FederationExportError, match="Invalid geti for ABACUS"):
             exporter.build_federation_rollup_export(repo_metrics)
 
+    def test_load_repo_metrics_rejects_malformed_json(self, tmp_path: Path):
+        corrupted_metrics_dir = _copy_metrics_inputs(tmp_path / "metrics")
+        (corrupted_metrics_dir / "abacus_metrics.json").write_text("{", encoding="utf-8")
+
+        with pytest.raises(FederationExportError, match="Invalid repository metrics JSON for ABACUS"):
+            FederationArtifactExporter()._load_repo_metrics(corrupted_metrics_dir)
+
+    def test_load_repo_metrics_rejects_non_object_payload(self, tmp_path: Path):
+        corrupted_metrics_dir = _copy_metrics_inputs(tmp_path / "metrics")
+        (corrupted_metrics_dir / "abacus_metrics.json").write_text("[]", encoding="utf-8")
+
+        with pytest.raises(FederationExportError, match="expected JSON object"):
+            FederationArtifactExporter()._load_repo_metrics(corrupted_metrics_dir)
+
+    def test_rollup_rejects_bool_in_pca_variance_explained(self, tmp_path: Path):
+        corrupted_metrics_dir = _copy_metrics_inputs(tmp_path / "metrics")
+        abacus_path = corrupted_metrics_dir / "abacus_metrics.json"
+        data = json.loads(abacus_path.read_text(encoding="utf-8"))
+        data["metrics"]["forward_pca"]["variance_explained"][0] = True
+        abacus_path.write_text(json.dumps(data), encoding="utf-8")
+
+        repo_metrics = FederationArtifactExporter()._load_repo_metrics(corrupted_metrics_dir)
+
+        with pytest.raises(FederationExportError, match="forward_pca.variance_explained"):
+            FederationArtifactExporter().build_federation_rollup_export(repo_metrics)
+
+    def test_scree_rejects_bool_component_values(self, tmp_path: Path):
+        corrupted_metrics_dir = _copy_metrics_inputs(tmp_path / "metrics")
+        abacus_path = corrupted_metrics_dir / "abacus_metrics.json"
+        data = json.loads(abacus_path.read_text(encoding="utf-8"))
+        data["metrics"]["scree"]["pc1"] = False
+        abacus_path.write_text(json.dumps(data), encoding="utf-8")
+
+        repo_metrics = FederationArtifactExporter()._load_repo_metrics(corrupted_metrics_dir)
+
+        with pytest.raises(FederationExportError, match="Invalid scree.pc1 for ABACUS"):
+            FederationArtifactExporter().build_federation_scree_export(repo_metrics)

@@ -6,8 +6,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from .federation_rollup import FederationRollup, MEMBERS as FEDERATION_MEMBERS
-from .federation_scree import FederationScree
+from .federation_rollup import (
+    FederationRollup,
+    FederationRollupError,
+    MEMBERS as FEDERATION_MEMBERS,
+)
+from .federation_scree import COMPONENTS as SCREE_COMPONENTS, FederationScree, FederationScreeError
 
 
 class FederationExportError(Exception):
@@ -26,12 +30,62 @@ class FederationArtifactExporter:
             path = metrics_dir / f"{member.lower()}_metrics.json"
             if not path.exists():
                 raise FederationExportError(f"Repository metrics file missing for {member}: {path}")
-            loaded[member] = json.loads(path.read_text(encoding="utf-8"))
+            try:
+                payload = json.loads(path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError as exc:
+                raise FederationExportError(
+                    f"Invalid repository metrics JSON for {member}: {path}: {exc.msg}"
+                ) from exc
+            if not isinstance(payload, dict):
+                raise FederationExportError(
+                    f"Invalid repository metrics payload for {member}: {path}: expected JSON object"
+                )
+            loaded[member] = payload
         return loaded
 
     @staticmethod
     def _metrics(repo_data: dict[str, Any]) -> dict[str, Any]:
         return repo_data.get("metrics", repo_data)  # type: ignore[return-value]
+
+    @staticmethod
+    def _validate_numeric(value: Any, field_name: str, member: str) -> float:
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise FederationExportError(f"Invalid {field_name} for {member}: expected numeric value")
+        return float(value)
+
+    def _validate_rollup_member_metrics(self, member: str, repo_data: dict[str, Any]) -> None:
+        metrics = self._metrics(repo_data)
+        if not isinstance(metrics, dict):
+            raise FederationExportError(f"Invalid metrics payload for {member}: expected object")
+        for field_name, pca_key, score_key in (
+            ("forward_pca", "forward_pca", "convergence_score"),
+            ("backward_pca", "backward_pca", "regression_score"),
+        ):
+            pca = metrics.get(pca_key)
+            if not isinstance(pca, dict):
+                raise FederationExportError(f"Invalid {field_name} for {member}: expected object")
+            variance = pca.get("variance_explained")
+            if (
+                not isinstance(variance, list)
+                or len(variance) != 5
+                or any(isinstance(component, bool) or not isinstance(component, (int, float)) for component in variance)
+            ):
+                raise FederationExportError(
+                    f"Invalid {field_name}.variance_explained for {member}: expected 5 numeric values"
+                )
+            self._validate_numeric(pca.get(score_key), f"{field_name}.{score_key}", member)
+        for field_name in ("geti", "pci", "expansion_factor"):
+            self._validate_numeric(metrics.get(field_name), field_name, member)
+
+    def _validate_scree_member_metrics(self, member: str, repo_data: dict[str, Any]) -> None:
+        metrics = self._metrics(repo_data)
+        if not isinstance(metrics, dict):
+            raise FederationExportError(f"Invalid metrics payload for {member}: expected object")
+        scree = metrics.get("scree")
+        if not isinstance(scree, dict):
+            raise FederationExportError(f"Invalid scree for {member}: expected object")
+        for component in SCREE_COMPONENTS:
+            self._validate_numeric(scree.get(component), f"scree.{component}", member)
 
     def build_federation_rollup_export(
         self,
@@ -40,44 +94,39 @@ class FederationArtifactExporter:
         subwave: str = "W007.2A",
     ) -> dict[str, Any]:
         rollup = FederationRollup()
-        aggregated = rollup.aggregate(repo_metrics)
         repo_summaries: list[dict[str, Any]] = []
         for member in self.members:
             repo_data = repo_metrics[member]
+            self._validate_rollup_member_metrics(member, repo_data)
             metrics = self._metrics(repo_data)
             try:
-                # Extract raw values and validate they are not booleans
-                conv_score = metrics["forward_pca"]["convergence_score"]
-                reg_score = metrics["backward_pca"]["regression_score"]
-                geti_val = metrics["geti"]
-                pci_val = metrics["pci"]
-                exp_factor = metrics["expansion_factor"]
-                
-                # Reject booleans before float coercion
-                for key, val in [
-                    ("forward_pca.convergence_score", conv_score),
-                    ("backward_pca.regression_score", reg_score),
-                    ("geti", geti_val),
-                    ("pci", pci_val),
-                    ("expansion_factor", exp_factor),
-                ]:
-                    if isinstance(val, bool):
-                        raise ValueError(f"{key} is bool, expected numeric")
-                
+                conv_score = self._validate_numeric(
+                    metrics["forward_pca"]["convergence_score"], "forward_pca.convergence_score", member
+                )
+                reg_score = self._validate_numeric(
+                    metrics["backward_pca"]["regression_score"], "backward_pca.regression_score", member
+                )
+                geti_val = self._validate_numeric(metrics["geti"], "geti", member)
+                pci_val = self._validate_numeric(metrics["pci"], "pci", member)
+                exp_factor = self._validate_numeric(metrics["expansion_factor"], "expansion_factor", member)
                 summary = {
                     "member": member,
                     "repo": repo_data.get("repository", f"GBOGEB/{member}"),
-                    "forward_pca": float(conv_score),
-                    "backward_pca": float(reg_score),
-                    "geti": float(geti_val),
-                    "pci": float(pci_val),
-                    "expansion_factor": float(exp_factor),
+                    "forward_pca": conv_score,
+                    "backward_pca": reg_score,
+                    "geti": geti_val,
+                    "pci": pci_val,
+                    "expansion_factor": exp_factor,
                 }
             except (KeyError, TypeError, ValueError) as exc:
                 raise FederationExportError(
                     f"Failed to extract rollup metrics for {member}: {exc}"
                 ) from exc
             repo_summaries.append(summary)
+        try:
+            aggregated = rollup.aggregate(repo_metrics)
+        except (FederationRollupError, KeyError, TypeError, ValueError) as exc:
+            raise FederationExportError(f"Failed to aggregate federation rollup: {exc}") from exc
 
         return {
             "wave": wave,
@@ -100,9 +149,14 @@ class FederationArtifactExporter:
         subwave: str = "W007.2A",
     ) -> dict[str, Any]:
         scree = FederationScree()
-        aggregated = scree.aggregate_scree(repo_metrics)
-        ranked = scree.rank_components(aggregated)
-        cumulative = scree.cumulative_variance(aggregated)
+        for member in self.members:
+            self._validate_scree_member_metrics(member, repo_metrics[member])
+        try:
+            aggregated = scree.aggregate_scree(repo_metrics)
+            ranked = scree.rank_components(aggregated)
+            cumulative = scree.cumulative_variance(aggregated)
+        except (FederationScreeError, KeyError, TypeError, ValueError) as exc:
+            raise FederationExportError(f"Failed to aggregate federation scree: {exc}") from exc
 
         pc_entries: dict[str, dict[str, Any]] = {}
         scree_components: list[dict[str, Any]] = []
