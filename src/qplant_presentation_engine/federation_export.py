@@ -24,9 +24,14 @@ class FederationArtifactExporter:
     def __init__(self, members: tuple[str, ...] = FEDERATION_MEMBERS) -> None:
         self.members = members
 
-    def _load_repo_metrics(self, metrics_dir: Path) -> dict[str, dict[str, Any]]:
+    def _load_repo_metrics(
+        self,
+        metrics_dir: Path,
+        members: tuple[str, ...] | None = None,
+    ) -> dict[str, dict[str, Any]]:
+        ordered_members = members or self.members
         loaded: dict[str, dict[str, Any]] = {}
-        for member in self.members:
+        for member in ordered_members:
             path = metrics_dir / f"{member.lower()}_metrics.json"
             if not path.exists():
                 raise FederationExportError(f"Repository metrics file missing for {member}: {path}")
@@ -92,10 +97,12 @@ class FederationArtifactExporter:
         repo_metrics: dict[str, dict[str, Any]],
         wave: str = "W007",
         subwave: str = "W007.2A",
+        members: tuple[str, ...] | None = None,
     ) -> dict[str, Any]:
+        ordered_members = members or self.members
         rollup = FederationRollup()
         repo_summaries: list[dict[str, Any]] = []
-        for member in self.members:
+        for member in ordered_members:
             repo_data = repo_metrics[member]
             self._validate_rollup_member_metrics(member, repo_data)
             metrics = self._metrics(repo_data)
@@ -131,7 +138,7 @@ class FederationArtifactExporter:
         return {
             "wave": wave,
             "subwave": subwave,
-            "members": list(self.members),
+            "members": list(ordered_members),
             "weights": rollup.weights,
             "forward_pca": aggregated["forward_pca"],
             "backward_pca": aggregated["backward_pca"],
@@ -147,9 +154,11 @@ class FederationArtifactExporter:
         repo_metrics: dict[str, dict[str, Any]],
         wave: str = "W007",
         subwave: str = "W007.2A",
+        members: tuple[str, ...] | None = None,
     ) -> dict[str, Any]:
+        ordered_members = members or self.members
         scree = FederationScree()
-        for member in self.members:
+        for member in ordered_members:
             self._validate_scree_member_metrics(member, repo_metrics[member])
         try:
             aggregated = scree.aggregate_scree(repo_metrics)
@@ -173,7 +182,7 @@ class FederationArtifactExporter:
         return {
             "wave": wave,
             "subwave": subwave,
-            "members": list(self.members),
+            "members": list(ordered_members),
             "weights": scree.weights,
             **pc_entries,
             "scree_components": scree_components,
@@ -241,10 +250,20 @@ class FederationArtifactExporter:
                 f"write_outputs() requires exactly the canonical federation members "
                 f"{sorted(FEDERATION_MEMBERS)} (in any order), got {sorted(self.members)}"
             )
-        self.members = FEDERATION_MEMBERS
-        repo_metrics = self._load_repo_metrics(metrics_dir)
-        rollup_record = self.build_federation_rollup_export(repo_metrics, wave=wave, subwave=subwave)
-        scree_record = self.build_federation_scree_export(repo_metrics, wave=wave, subwave=subwave)
+        canonical_members = FEDERATION_MEMBERS
+        repo_metrics = self._load_repo_metrics(metrics_dir, members=canonical_members)
+        rollup_record = self.build_federation_rollup_export(
+            repo_metrics,
+            wave=wave,
+            subwave=subwave,
+            members=canonical_members,
+        )
+        scree_record = self.build_federation_scree_export(
+            repo_metrics,
+            wave=wave,
+            subwave=subwave,
+            members=canonical_members,
+        )
         bottleneck_record = self.build_bottleneck_report(repo_metrics, wave=wave, subwave=subwave)
 
         federation_dir.mkdir(parents=True, exist_ok=True)

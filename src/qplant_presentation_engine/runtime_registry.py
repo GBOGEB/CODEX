@@ -40,9 +40,10 @@ class RuntimeRegistry:
     def __init__(self, members: tuple[str, ...] = FEDERATION_MEMBERS) -> None:
         self.members = members
 
-    def _member_from_repo(self, repo: str) -> str:
+    def _member_from_repo(self, repo: str, members: tuple[str, ...] | None = None) -> str:
+        ordered_members = members or self.members
         repo_name = repo.split("/")[-1].upper()
-        if repo_name not in self.members:
+        if repo_name not in ordered_members:
             raise RuntimeRegistryError(f"Unknown repository member in runtime entry: {repo}")
         return repo_name
 
@@ -109,9 +110,14 @@ class RuntimeRegistry:
                 f"expected value in [0.0, 1.0], got {score}"
             )
 
-    def load_runtime_entries(self, runtime_dir: Path) -> dict[str, dict[str, Any]]:
+    def load_runtime_entries(
+        self,
+        runtime_dir: Path,
+        members: tuple[str, ...] | None = None,
+    ) -> dict[str, dict[str, Any]]:
+        ordered_members = members or self.members
         entries: dict[str, dict[str, Any]] = {}
-        for member in self.members:
+        for member in ordered_members:
             filename = DEFAULT_RUNTIME_FILENAMES.get(member)
             if filename is None:
                 raise RuntimeRegistryError(f"No runtime evidence filename configured for member: {member}")
@@ -129,7 +135,7 @@ class RuntimeRegistry:
                     f"Invalid runtime evidence payload for {member}: {path}: expected JSON object"
                 )
             self._validate_entry(data, str(path))
-            inferred = self._member_from_repo(str(data["repo"]))
+            inferred = self._member_from_repo(str(data["repo"]), members=ordered_members)
             if inferred != member:
                 raise RuntimeRegistryError(
                     f"Runtime evidence member mismatch for {path.name}: expected {member}, got {inferred}"
@@ -142,17 +148,24 @@ class RuntimeRegistry:
         entries: dict[str, dict[str, Any]],
         wave: str = "W007",
         subwave: str = "W007.2A",
+        members: tuple[str, ...] | None = None,
     ) -> dict[str, Any]:
-        ordered_entries = [entries[member] for member in self.members]
+        ordered_members = members or self.members
+        ordered_entries = [entries[member] for member in ordered_members]
         return {
             "wave": wave,
             "subwave": subwave,
-            "members": list(self.members),
+            "members": list(ordered_members),
             "runtime_registry": ordered_entries,
         }
 
-    def _runtime_status(self, entries: dict[str, dict[str, Any]]) -> dict[str, Any]:
-        total = float(len(self.members))
+    def _runtime_status(
+        self,
+        entries: dict[str, dict[str, Any]],
+        members: tuple[str, ...] | None = None,
+    ) -> dict[str, Any]:
+        ordered_members = members or self.members
+        total = float(len(ordered_members))
         if total == 0.0:
             return {
                 "members": {},
@@ -170,21 +183,32 @@ class RuntimeRegistry:
                 "deployment_exists": bool(entries[member]["deployment_exists"]),
                 "truth_score": float(entries[member]["truth_score"]),
             }
-            for member in self.members
+            for member in ordered_members
         }
         return {
             "members": member_status,
             "coverage": {
-                "runtime_exists": round(sum(1 for m in self.members if bool(entries[m]["runtime_exists"])) / total, 6),
-                "runtime_validated": round(sum(1 for m in self.members if bool(entries[m]["runtime_validated"])) / total, 6),
-                "deployment_exists": round(sum(1 for m in self.members if bool(entries[m]["deployment_exists"])) / total, 6),
-                "truth_score_average": round(sum(float(entries[m]["truth_score"]) for m in self.members) / total, 6),
+                "runtime_exists": round(sum(1 for m in ordered_members if bool(entries[m]["runtime_exists"])) / total, 6),
+                "runtime_validated": round(
+                    sum(1 for m in ordered_members if bool(entries[m]["runtime_validated"])) / total,
+                    6,
+                ),
+                "deployment_exists": round(
+                    sum(1 for m in ordered_members if bool(entries[m]["deployment_exists"])) / total,
+                    6,
+                ),
+                "truth_score_average": round(sum(float(entries[m]["truth_score"]) for m in ordered_members) / total, 6),
             },
         }
 
-    def build_truth_matrix(self, entries: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    def build_truth_matrix(
+        self,
+        entries: dict[str, dict[str, Any]],
+        members: tuple[str, ...] | None = None,
+    ) -> dict[str, Any]:
+        ordered_members = members or self.members
         matrix: list[dict[str, Any]] = []
-        for member in self.members:
+        for member in ordered_members:
             entry = entries[member]
             runtime_exists = bool(entry["runtime_exists"])
             runtime_validated = bool(entry["runtime_validated"])
@@ -213,9 +237,14 @@ class RuntimeRegistry:
             "rows": matrix,
         }
 
-    def _load_repo_metrics(self, metrics_dir: Path) -> dict[str, dict[str, Any]]:
+    def _load_repo_metrics(
+        self,
+        metrics_dir: Path,
+        members: tuple[str, ...] | None = None,
+    ) -> dict[str, dict[str, Any]]:
+        ordered_members = members or self.members
         loaded: dict[str, dict[str, Any]] = {}
-        for member in self.members:
+        for member in ordered_members:
             path = metrics_dir / f"{member.lower()}_metrics.json"
             if not path.exists():
                 raise RuntimeRegistryError(f"Repository metrics file missing for {member}: {path}")
@@ -238,8 +267,10 @@ class RuntimeRegistry:
         repo_metrics: dict[str, dict[str, Any]],
         wave: str = "W007",
         subwave: str = "W007.2A",
+        members: tuple[str, ...] | None = None,
     ) -> dict[str, Any]:
-        runtime_status = self._runtime_status(entries)
+        ordered_members = members or self.members
+        runtime_status = self._runtime_status(entries, members=ordered_members)
         rollup = FederationRollup().build_rollup_record(repo_metrics, wave=wave, subwave=subwave)
         scree = FederationScree().build_scree_record(repo_metrics, wave=wave, subwave=subwave)
         rollup["runtime_status"] = runtime_status
@@ -249,7 +280,7 @@ class RuntimeRegistry:
             "subwave": subwave,
             "federation_rollup": rollup,
             "federation_scree": scree,
-            "truth_matrix": self.build_truth_matrix(entries),
+            "truth_matrix": self.build_truth_matrix(entries, members=ordered_members),
         }
 
     def write_outputs(
@@ -264,11 +295,11 @@ class RuntimeRegistry:
                 f"write_outputs() requires exactly the canonical federation members "
                 f"{sorted(FEDERATION_MEMBERS)} (in any order), got {sorted(self.members)}"
             )
-        self.members = FEDERATION_MEMBERS
-        entries = self.load_runtime_entries(runtime_dir)
-        repo_metrics = self._load_repo_metrics(metrics_dir)
-        registry_record = self.build_registry_record(entries)
-        report_record = self.build_runtime_report(entries, repo_metrics)
+        canonical_members = FEDERATION_MEMBERS
+        entries = self.load_runtime_entries(runtime_dir, members=canonical_members)
+        repo_metrics = self._load_repo_metrics(metrics_dir, members=canonical_members)
+        registry_record = self.build_registry_record(entries, members=canonical_members)
+        report_record = self.build_runtime_report(entries, repo_metrics, members=canonical_members)
         registry_output = registry_output or (runtime_dir / "runtime_registry.json")
         report_output = report_output or (runtime_dir / "runtime_registry_report.json")
         registry_output.parent.mkdir(parents=True, exist_ok=True)
