@@ -141,7 +141,7 @@ class RuntimeRegistry:
         self,
         entries: dict[str, dict[str, Any]],
         wave: str = "W007",
-        subwave: str = "W007.2",
+        subwave: str = "W007.2A",
     ) -> dict[str, Any]:
         ordered_entries = [entries[member] for member in self.members]
         return {
@@ -237,7 +237,7 @@ class RuntimeRegistry:
         entries: dict[str, dict[str, Any]],
         repo_metrics: dict[str, dict[str, Any]],
         wave: str = "W007",
-        subwave: str = "W007.2",
+        subwave: str = "W007.2A",
     ) -> dict[str, Any]:
         runtime_status = self._runtime_status(entries)
         rollup = FederationRollup().build_rollup_record(repo_metrics, wave=wave, subwave=subwave)
@@ -264,6 +264,7 @@ class RuntimeRegistry:
                 f"write_outputs() requires exactly the canonical federation members "
                 f"{sorted(FEDERATION_MEMBERS)} (in any order), got {sorted(self.members)}"
             )
+        self.members = FEDERATION_MEMBERS
         entries = self.load_runtime_entries(runtime_dir)
         repo_metrics = self._load_repo_metrics(metrics_dir)
         registry_record = self.build_registry_record(entries)

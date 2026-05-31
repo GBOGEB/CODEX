@@ -128,10 +128,31 @@ class TestRuntimeRegistryGeneration:
             runtime_dir=runtime_dir,
             metrics_dir=_metrics_dir(),
         )
-        assert registry["subwave"] == "W007.2"
-        assert report["subwave"] == "W007.2"
+        assert registry["subwave"] == "W007.2A"
+        assert report["subwave"] == "W007.2A"
         assert (runtime_dir / "runtime_registry.json").exists()
         assert (runtime_dir / "runtime_registry_report.json").exists()
+
+    def test_write_outputs_normalizes_member_order(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        registry_output = tmp_path / "runtime_registry.json"
+        report_output = tmp_path / "runtime_registry_report.json"
+
+        registry, report = RuntimeRegistry(members=("CODEX", "QPLANT", "ABACUS", "ARTSTYLE")).write_outputs(
+            runtime_dir=runtime_dir,
+            metrics_dir=_metrics_dir(),
+            registry_output=registry_output,
+            report_output=report_output,
+        )
+
+        assert registry["members"] == ["ABACUS", "ARTSTYLE", "QPLANT", "CODEX"]
+        assert [row["member"] for row in report["truth_matrix"]["rows"]] == ["ABACUS", "ARTSTYLE", "QPLANT", "CODEX"]
+        assert list(report["federation_rollup"]["runtime_status"]["members"].keys()) == [
+            "ABACUS",
+            "ARTSTYLE",
+            "QPLANT",
+            "CODEX",
+        ]
 
     def test_rejects_invalid_runtime_field_types(self, tmp_path: Path):
         runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")

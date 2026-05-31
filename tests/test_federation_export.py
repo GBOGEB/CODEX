@@ -114,6 +114,22 @@ class TestFederationArtifactExport:
                 bottleneck_output=bottleneck_output,
             )
 
+    def test_write_outputs_normalizes_member_order(self, tmp_path: Path):
+        federation_dir = tmp_path / "metrics" / "federation"
+        bottleneck_output = tmp_path / "bottleneck_report.json"
+
+        rollup, scree, _ = FederationArtifactExporter(
+            members=("CODEX", "QPLANT", "ABACUS", "ARTSTYLE")
+        ).write_outputs(
+            metrics_dir=_metrics_dir(),
+            federation_dir=federation_dir,
+            bottleneck_output=bottleneck_output,
+        )
+
+        assert rollup["members"] == ["ABACUS", "ARTSTYLE", "QPLANT", "CODEX"]
+        assert [entry["member"] for entry in rollup["repo_summaries"]] == ["ABACUS", "ARTSTYLE", "QPLANT", "CODEX"]
+        assert scree["members"] == ["ABACUS", "ARTSTYLE", "QPLANT", "CODEX"]
+
     def test_rejects_bool_in_federation_metrics(self, tmp_path: Path):
         corrupted_metrics_dir = _copy_metrics_inputs(tmp_path / "metrics")
         abacus_path = corrupted_metrics_dir / "abacus_metrics.json"

@@ -241,6 +241,7 @@ class FederationArtifactExporter:
                 f"write_outputs() requires exactly the canonical federation members "
                 f"{sorted(FEDERATION_MEMBERS)} (in any order), got {sorted(self.members)}"
             )
+        self.members = FEDERATION_MEMBERS
         repo_metrics = self._load_repo_metrics(metrics_dir)
         rollup_record = self.build_federation_rollup_export(repo_metrics, wave=wave, subwave=subwave)
         scree_record = self.build_federation_scree_export(repo_metrics, wave=wave, subwave=subwave)
