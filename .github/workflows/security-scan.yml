@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   security-scan:
-    name: Security Scan (${{ matrix.os }}, py${{ matrix.python-version }})
+    name: Security Scan (${{ matrix.os }}, py${{ matrix.python.version }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -23,11 +23,15 @@ jobs:
           - ubuntu-latest
           - windows-latest
           - macos-latest
-        python-version:
-          - "3.9"
-          - "3.10"
-          - "3.11"
-          - "3.12"
+        python:
+          - version: "3.9"
+            tag: "39"
+          - version: "3.10"
+            tag: "310"
+          - version: "3.11"
+            tag: "311"
+          - version: "3.12"
+            tag: "312"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,31 +39,19 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ matrix.python.version }}
+
+      - name: Install scanner
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install ruff
 
       - name: Generate SARIF report
         shell: bash
         run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-
-          output = Path("reports/security/results.sarif")
-          output.parent.mkdir(parents=True, exist_ok=True)
-
-          payload = {
-              "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
-              "version": "2.1.0",
-              "runs": [
-                  {
-                      "tool": {"driver": {"name": "codex-security-scan", "version": "1.0.0"}},
-                      "results": [],
-                  }
-              ],
-          }
-          output.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-          print(f"Wrote SARIF report: {output}")
-          PY
+          mkdir -p reports/security
+          ruff check . --select S --output-format sarif --output-file reports/security/results.sarif --exit-zero
 
       - name: Validate SARIF report
         id: validate-sarif
@@ -71,29 +63,34 @@ jobs:
           from pathlib import Path
 
           sarif_path = Path("reports/security/results.sarif")
+          expected_version = "2.1.0"  # GitHub code scanning currently expects SARIF 2.1.0
           valid = False
+          reason = "missing SARIF file"
 
           if sarif_path.exists() and sarif_path.is_file():
               try:
                   payload = json.loads(sarif_path.read_text(encoding="utf-8"))
                   valid = (
-                      payload.get("version") == "2.1.0"
+                      payload.get("version") == expected_version
                       and isinstance(payload.get("runs"), list)
                       and len(payload["runs"]) > 0
                   )
-              except Exception:
+                  if not valid:
+                      reason = "SARIF structure invalid (expected version 2.1.0 and non-empty runs)"
+              except (json.JSONDecodeError, OSError):
                   valid = False
+                  reason = "SARIF JSON parse failed"
 
           with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as f:
               f.write(f"valid={'true' if valid else 'false'}\n")
 
           if not valid:
-              raise SystemExit("SARIF report is missing or invalid.")
+              raise SystemExit(f"SARIF validation failed: {reason}")
           PY
 
       - name: Upload SARIF report
-        if: ${{ success() && steps.validate-sarif.outputs.valid == 'true' }}
+        if: ${{ steps.validate-sarif.outputs.valid == 'true' }}
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: reports/security/results.sarif
-          category: security-scan-${{ matrix.os }}-py${{ matrix.python-version }}
+          category: security-scan-${{ matrix.os }}-py${{ matrix.python.tag }}
