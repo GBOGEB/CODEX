@@ -164,3 +164,15 @@ class TestFederationArtifactExport:
 
         with pytest.raises(FederationExportError, match="Invalid scree.pc1 for ABACUS"):
             FederationArtifactExporter().build_federation_scree_export(repo_metrics)
+
+    def test_bottleneck_wraps_aggregation_errors(self, tmp_path: Path):
+        corrupted_metrics_dir = _copy_metrics_inputs(tmp_path / "metrics")
+        abacus_path = corrupted_metrics_dir / "abacus_metrics.json"
+        data = json.loads(abacus_path.read_text(encoding="utf-8"))
+        del data["metrics"]["geti"]
+        abacus_path.write_text(json.dumps(data), encoding="utf-8")
+
+        repo_metrics = FederationArtifactExporter()._load_repo_metrics(corrupted_metrics_dir)
+
+        with pytest.raises(FederationExportError, match="Failed to build bottleneck report"):
+            FederationArtifactExporter().build_bottleneck_report(repo_metrics)

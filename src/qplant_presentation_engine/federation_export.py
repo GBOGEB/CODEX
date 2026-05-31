@@ -192,8 +192,11 @@ class FederationArtifactExporter:
         threshold_factor: float = 0.9,
     ) -> dict[str, Any]:
         rollup = FederationRollup()
-        aggregated = rollup.aggregate(repo_metrics)
-        computed = rollup.compute_bottleneck(repo_metrics, aggregated, threshold_factor=threshold_factor)
+        try:
+            aggregated = rollup.aggregate(repo_metrics)
+            computed = rollup.compute_bottleneck(repo_metrics, aggregated, threshold_factor=threshold_factor)
+        except (FederationRollupError, KeyError, TypeError, ValueError) as exc:
+            raise FederationExportError(f"Failed to build bottleneck report: {exc}") from exc
         bottlenecks = computed["bottlenecks"]
 
         if bottlenecks:
