@@ -81,12 +81,7 @@ jobs:
             SCRIPT_STATUS=$?
           fi
 
-          BROKEN="$(
-            grep -Eo 'broken_links=[0-9]+|Total broken internal links:[[:space:]]*[0-9]+|Broken links:[[:space:]]*[0-9]+' "$LOG_FILE" \
-              | tail -1 \
-              | grep -Eo '[0-9]+' \
-              || true
-          )"
+          BROKEN="$(python3 -c "import pathlib, re, sys; text = pathlib.Path(sys.argv[1]).read_text(encoding='utf-8', errors='replace'); patterns = [r'broken_links=(\\d+)', r'Total broken internal links:\\s*(\\d+)', r'Broken links:\\s*(\\d+)']; matches = [re.search(pattern, text, re.IGNORECASE) for pattern in patterns]; match = next((candidate for candidate in matches if candidate), None); print(match.group(1) if match else sum(1 for line in text.splitlines() if 'broken:' in line.lower() or 'broken link' in line.lower()))" "$LOG_FILE")"
 
           if [ -z "$BROKEN" ]; then
             if [ "$SCRIPT_STATUS" -ne 0 ]; then

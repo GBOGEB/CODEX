@@ -112,22 +112,15 @@ jobs:
             COMMITS=$(git log --oneline "$PREV_REF"..HEAD 2>/dev/null | head -20)
           fi
           [ -n "$COMMITS" ] || COMMITS="Initial release"
-          cat > release-artifacts/RELEASE_NOTES.md << EOF
-          # CODEX $TAG Release Notes
-
-          ## What's Included
-          - 🐍 Python package wheel
-          - 📖 Documentation bundle (docs/)
-          - 📊 Generated outputs (outputs/)
-
-          ## Recent Changes
-          $COMMITS
-
-          ## Installation
-          \`\`\`bash
-          pip install codex-${TAG#v}-py3-none-any.whl
-          \`\`\`
-          EOF
+          {
+            printf '# CODEX %s Release Notes\n\n' "$TAG"
+            printf "## What's Included\n"
+            printf -- '- 🐍 Python package wheel\n'
+            printf -- '- 📖 Documentation bundle (docs/)\n'
+            printf -- '- 📊 Generated outputs (outputs/)\n\n'
+            printf '## Recent Changes\n%s\n\n' "$COMMITS"
+            printf '## Installation\n```bash\npip install codex-%s-py3-none-any.whl\n```\n' "${TAG#v}"
+          } > release-artifacts/RELEASE_NOTES.md
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4

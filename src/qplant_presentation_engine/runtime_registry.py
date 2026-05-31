@@ -27,7 +27,6 @@ DEFAULT_RUNTIME_FILENAMES: dict[str, str] = {
     "QPLANT": "qplant_runtime.json",
     "CODEX": "codex_runtime.json",
 }
-RUNTIME_REGISTRY_FILES = DEFAULT_RUNTIME_FILENAMES
 REQUIRED_RUNTIME_FIELDS: set[str] = {
     "repo",
     "runtime_exists",
@@ -354,7 +353,7 @@ def load_runtime_registry(runtime_registry_dir: Path | None = None) -> dict[str,
     """Load runtime registry evidence records from JSON files."""
     registry_dir = runtime_registry_dir or default_runtime_registry_dir()
     records: dict[str, dict[str, Any]] = {}
-    for member, filename in RUNTIME_REGISTRY_FILES.items():
+    for member, filename in DEFAULT_RUNTIME_FILENAMES.items():
         path = registry_dir / filename
         if not path.exists():
             continue
