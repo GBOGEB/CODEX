@@ -15,6 +15,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .runtime_registry import load_runtime_registry, summarize_runtime_registry
+
 MEMBERS: tuple[str, ...] = ("ABACUS", "ARTSTYLE", "QPLANT", "CODEX")
 DEFAULT_WEIGHTS: dict[str, float] = {
     "ABACUS": 0.35,
@@ -188,27 +190,37 @@ class FederationRollup:
         repo_metrics: dict[str, dict[str, Any]],
         wave: str = "W007",
         subwave: str = "W007.1",
+        runtime_registry_dir: Path | None = None,
     ) -> dict[str, Any]:
         """Build the complete rollup record (not yet written to disk)."""
         aggregated = self.aggregate(repo_metrics)
-        return {
+        record: dict[str, Any] = {
             "wave": wave,
             "subwave": subwave,
             "members": list(MEMBERS),
             "weights": self.weights,
             "aggregated": aggregated,
         }
+        runtime_registry = load_runtime_registry(runtime_registry_dir)
+        if runtime_registry:
+            record["runtime_registry"] = runtime_registry
+            record["runtime_status"] = summarize_runtime_registry(runtime_registry)
+        return record
 
     def write_rollup(
         self,
         repo_metrics: dict[str, dict[str, Any]],
         output_path: Path,
+        runtime_registry_dir: Path | None = None,
     ) -> dict[str, Any]:
         """Write ``federation_rollup.json`` to *output_path* and return the record.
 
         Parent directories are created if they do not exist.
         """
-        record = self.build_rollup_record(repo_metrics)
+        record = self.build_rollup_record(
+            repo_metrics,
+            runtime_registry_dir=runtime_registry_dir,
+        )
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(json.dumps(record, indent=2), encoding="utf-8")
         return record

@@ -9,6 +9,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .runtime_registry import load_runtime_registry, summarize_runtime_registry
+
 MEMBERS: tuple[str, ...] = ("ABACUS", "ARTSTYLE", "QPLANT", "CODEX")
 COMPONENTS: tuple[str, ...] = ("pc1", "pc2", "pc3", "pc4", "pc5")
 DEFAULT_WEIGHTS: dict[str, float] = {
@@ -131,6 +133,7 @@ class FederationScree:
         repo_metrics: dict[str, dict[str, Any]],
         wave: str = "W007",
         subwave: str = "W007.1",
+        runtime_registry_dir: Path | None = None,
     ) -> dict[str, Any]:
         """Build the full scree record for federation output (not yet written to disk)."""
         aggregated = self.aggregate_scree(repo_metrics)
@@ -141,7 +144,7 @@ class FederationScree:
             for member in MEMBERS
             if member in repo_metrics
         }
-        return {
+        record: dict[str, Any] = {
             "wave": wave,
             "subwave": subwave,
             "members": list(MEMBERS),
@@ -153,17 +156,26 @@ class FederationScree:
             "cumulative_variance": cumulative,
             "per_member_scree": per_member,
         }
+        runtime_registry = load_runtime_registry(runtime_registry_dir)
+        if runtime_registry:
+            record["runtime_registry"] = runtime_registry
+            record["runtime_status"] = summarize_runtime_registry(runtime_registry)
+        return record
 
     def write_scree(
         self,
         repo_metrics: dict[str, dict[str, Any]],
         output_path: Path,
+        runtime_registry_dir: Path | None = None,
     ) -> dict[str, Any]:
         """Write ``federation_scree.json`` to *output_path* and return the record.
 
         Parent directories are created if they do not exist.
         """
-        record = self.build_scree_record(repo_metrics)
+        record = self.build_scree_record(
+            repo_metrics,
+            runtime_registry_dir=runtime_registry_dir,
+        )
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(json.dumps(record, indent=2), encoding="utf-8")
         return record
