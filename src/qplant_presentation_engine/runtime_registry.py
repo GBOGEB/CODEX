@@ -122,6 +122,8 @@ class RuntimeRegistry:
             if member not in runtime_records:
                 raise RuntimeRegistryError(f"Missing runtime record for member: {member}")
             record = runtime_records[member]
+            # Validate per-member record to ensure consistent error contract
+            self.validate_record(record)
             truth_matrix.append(
                 {
                     "member": member,

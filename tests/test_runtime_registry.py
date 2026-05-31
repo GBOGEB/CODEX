@@ -167,6 +167,38 @@ class TestRuntimeRegistryBuild:
         artstyle = next(entry for entry in truth_matrix if entry["member"] == "ARTSTYLE")
         assert artstyle["executed"] is False
 
+    def test_build_truth_matrix_validates_per_member_record(self):
+        """build_truth_matrix() should validate each member record and raise RuntimeRegistryError for missing keys."""
+        registry = RuntimeRegistry()
+        records = _runtime_records()
+        records["ABACUS"].pop("truth_score")
+        with pytest.raises(RuntimeRegistryError, match="truth_score"):
+            registry.build_truth_matrix(records)
+
+    def test_build_truth_matrix_raises_on_invalid_repo_type(self):
+        """build_truth_matrix() should raise RuntimeRegistryError for non-string repo field."""
+        registry = RuntimeRegistry()
+        records = _runtime_records()
+        records["ARTSTYLE"]["repo"] = 123
+        with pytest.raises(RuntimeRegistryError, match="repo"):
+            registry.build_truth_matrix(records)
+
+    def test_build_truth_matrix_raises_on_malformed_timestamp(self):
+        """build_truth_matrix() should raise RuntimeRegistryError for non-string/None timestamp fields."""
+        registry = RuntimeRegistry()
+        records = _runtime_records()
+        records["QPLANT"]["last_execution"] = 0
+        with pytest.raises(RuntimeRegistryError, match="last_execution"):
+            registry.build_truth_matrix(records)
+
+    def test_build_truth_matrix_raises_on_missing_required_field(self):
+        """build_truth_matrix() should raise RuntimeRegistryError when a required field is missing."""
+        registry = RuntimeRegistry()
+        records = _runtime_records()
+        records["CODEX"].pop("deployment_exists")
+        with pytest.raises(RuntimeRegistryError, match="deployment_exists"):
+            registry.build_truth_matrix(records)
+
     def test_build_registry_record_contains_integrations(self):
         registry = RuntimeRegistry()
         rollup = FederationRollup().build_rollup_record(_repo_metrics(), runtime_records=_runtime_records())
