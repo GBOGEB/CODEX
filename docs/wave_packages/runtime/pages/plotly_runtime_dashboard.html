@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Plotly Runtime Dashboard</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+body { font-family: Arial, sans-serif; margin: 2rem; }
+.grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:1rem; }
+.tile { border:1px solid #ccc; border-radius:8px; padding:1rem; }
+.value { font-size:2rem; font-weight:bold; }
+#bar_chart, #radar_chart { width:100%; height:500px; }
+</style>
+</head>
+<body>
+<h1>Executable Federation Runtime Dashboard</h1>
+<p>Generated: 2026-05-31T19:23:47.862808+00:00</p>
+<div class="grid"><div class='tile'><h3>topology persistence</h3><div class='value'>90</div></div><div class='tile'><h3>synchronization runtime</h3><div class='value'>91</div></div><div class='tile'><h3>bridge orchestration</h3><div class='value'>88</div></div><div class='tile'><h3>pages continuity</h3><div class='value'>84</div></div><div class='tile'><h3>runtime observability</h3><div class='value'>85</div></div><div class='tile'><h3>covariance runtime</h3><div class='value'>68</div></div><div class='tile'><h3>abacus ingestion</h3><div class='value'>64</div></div><div class='tile'><h3>self healing runtime</h3><div class='value'>48</div></div></div>
+<div id="bar_chart"></div>
+<div id="radar_chart"></div>
+<script>
+const labels = ["topology_persistence", "synchronization_runtime", "bridge_orchestration", "pages_continuity", "runtime_observability", "covariance_runtime", "abacus_ingestion", "self_healing_runtime"];
+const values = [90, 91, 88, 84, 85, 68, 64, 48];
+
+Plotly.newPlot('bar_chart', [{
+  x: labels,
+  y: values,
+  type: 'bar'
+}], {
+  title: 'Runtime Capability Scores',
+  yaxis: { range: [0, 100] }
+});
+
+Plotly.newPlot('radar_chart', [{
+  type: 'scatterpolar',
+  r: values,
+  theta: labels,
+  fill: 'toself'
+}], {
+  polar: { radialaxis: { visible: true, range: [0, 100] } },
+  title: 'Federation Runtime Maturity Radar'
+});
+</script>
+</body>
+</html>
