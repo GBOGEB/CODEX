@@ -130,6 +130,24 @@ class TestFederationArtifactExport:
         assert [entry["member"] for entry in rollup["repo_summaries"]] == ["ABACUS", "ARTSTYLE", "QPLANT", "CODEX"]
         assert scree["members"] == ["ABACUS", "ARTSTYLE", "QPLANT", "CODEX"]
 
+    def test_rollup_rejects_non_canonical_member_set(self):
+        repo_metrics = FederationArtifactExporter()._load_repo_metrics(_metrics_dir())
+
+        with pytest.raises(FederationExportError, match="canonical federation members"):
+            FederationArtifactExporter().build_federation_rollup_export(
+                repo_metrics,
+                members=("ABACUS", "QPLANT"),
+            )
+
+    def test_scree_rejects_non_canonical_member_set(self):
+        repo_metrics = FederationArtifactExporter()._load_repo_metrics(_metrics_dir())
+
+        with pytest.raises(FederationExportError, match="canonical federation members"):
+            FederationArtifactExporter().build_federation_scree_export(
+                repo_metrics,
+                members=("ABACUS", "QPLANT"),
+            )
+
     def test_rejects_bool_in_federation_metrics(self, tmp_path: Path):
         corrupted_metrics_dir = _copy_metrics_inputs(tmp_path / "metrics")
         abacus_path = corrupted_metrics_dir / "abacus_metrics.json"

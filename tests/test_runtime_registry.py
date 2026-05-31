@@ -154,6 +154,18 @@ class TestRuntimeRegistryGeneration:
             "CODEX",
         ]
 
+    def test_runtime_report_rejects_non_canonical_member_set(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        entries = RuntimeRegistry().load_runtime_entries(runtime_dir)
+        repo_metrics = RuntimeRegistry()._load_repo_metrics(_metrics_dir())
+
+        with pytest.raises(RuntimeRegistryError, match="canonical federation members"):
+            RuntimeRegistry().build_runtime_report(
+                entries,
+                repo_metrics,
+                members=("ABACUS", "QPLANT"),
+            )
+
     def test_rejects_invalid_runtime_field_types(self, tmp_path: Path):
         runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
         abacus_file = runtime_dir / "abacus_runtime.json"

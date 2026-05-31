@@ -24,6 +24,20 @@ class FederationArtifactExporter:
     def __init__(self, members: tuple[str, ...] = FEDERATION_MEMBERS) -> None:
         self.members = members
 
+    def _canonical_members(
+        self,
+        members: tuple[str, ...] | None = None,
+        *,
+        caller: str,
+    ) -> tuple[str, ...]:
+        candidate_members = members or self.members
+        if set(candidate_members) != set(FEDERATION_MEMBERS) or len(candidate_members) != len(FEDERATION_MEMBERS):
+            raise FederationExportError(
+                f"{caller} requires exactly the canonical federation members "
+                f"{sorted(FEDERATION_MEMBERS)} (in any order), got {sorted(candidate_members)}"
+            )
+        return FEDERATION_MEMBERS
+
     def _load_repo_metrics(
         self,
         metrics_dir: Path,
@@ -99,7 +113,7 @@ class FederationArtifactExporter:
         subwave: str = "W007.2A",
         members: tuple[str, ...] | None = None,
     ) -> dict[str, Any]:
-        ordered_members = members or self.members
+        ordered_members = self._canonical_members(members, caller="build_federation_rollup_export()")
         rollup = FederationRollup()
         repo_summaries: list[dict[str, Any]] = []
         for member in ordered_members:
@@ -156,7 +170,7 @@ class FederationArtifactExporter:
         subwave: str = "W007.2A",
         members: tuple[str, ...] | None = None,
     ) -> dict[str, Any]:
-        ordered_members = members or self.members
+        ordered_members = self._canonical_members(members, caller="build_federation_scree_export()")
         scree = FederationScree()
         for member in ordered_members:
             self._validate_scree_member_metrics(member, repo_metrics[member])
@@ -247,12 +261,7 @@ class FederationArtifactExporter:
         subwave: str = "W007.2A",
         generated_at: str | None = None,
     ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
-        if set(self.members) != set(FEDERATION_MEMBERS) or len(self.members) != len(FEDERATION_MEMBERS):
-            raise FederationExportError(
-                f"write_outputs() requires exactly the canonical federation members "
-                f"{sorted(FEDERATION_MEMBERS)} (in any order), got {sorted(self.members)}"
-            )
-        canonical_members = FEDERATION_MEMBERS
+        canonical_members = self._canonical_members(caller="write_outputs()")
         repo_metrics = self._load_repo_metrics(metrics_dir, members=canonical_members)
         rollup_record = self.build_federation_rollup_export(
             repo_metrics,

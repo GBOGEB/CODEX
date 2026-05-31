@@ -40,6 +40,20 @@ class RuntimeRegistry:
     def __init__(self, members: tuple[str, ...] = FEDERATION_MEMBERS) -> None:
         self.members = members
 
+    def _canonical_members(
+        self,
+        members: tuple[str, ...] | None = None,
+        *,
+        caller: str,
+    ) -> tuple[str, ...]:
+        candidate_members = members or self.members
+        if set(candidate_members) != set(FEDERATION_MEMBERS) or len(candidate_members) != len(FEDERATION_MEMBERS):
+            raise RuntimeRegistryError(
+                f"{caller} requires exactly the canonical federation members "
+                f"{sorted(FEDERATION_MEMBERS)} (in any order), got {sorted(candidate_members)}"
+            )
+        return FEDERATION_MEMBERS
+
     def _member_from_repo(self, repo: str, members: tuple[str, ...] | None = None) -> str:
         ordered_members = members or self.members
         repo_name = repo.split("/")[-1].upper()
@@ -269,7 +283,7 @@ class RuntimeRegistry:
         subwave: str = "W007.2A",
         members: tuple[str, ...] | None = None,
     ) -> dict[str, Any]:
-        ordered_members = members or self.members
+        ordered_members = self._canonical_members(members, caller="build_runtime_report()")
         runtime_status = self._runtime_status(entries, members=ordered_members)
         rollup = FederationRollup().build_rollup_record(repo_metrics, wave=wave, subwave=subwave)
         scree = FederationScree().build_scree_record(repo_metrics, wave=wave, subwave=subwave)
@@ -290,12 +304,7 @@ class RuntimeRegistry:
         registry_output: Path | None = None,
         report_output: Path | None = None,
     ) -> tuple[dict[str, Any], dict[str, Any]]:
-        if set(self.members) != set(FEDERATION_MEMBERS) or len(self.members) != len(FEDERATION_MEMBERS):
-            raise RuntimeRegistryError(
-                f"write_outputs() requires exactly the canonical federation members "
-                f"{sorted(FEDERATION_MEMBERS)} (in any order), got {sorted(self.members)}"
-            )
-        canonical_members = FEDERATION_MEMBERS
+        canonical_members = self._canonical_members(caller="write_outputs()")
         entries = self.load_runtime_entries(runtime_dir, members=canonical_members)
         repo_metrics = self._load_repo_metrics(metrics_dir, members=canonical_members)
         registry_record = self.build_registry_record(entries, members=canonical_members)
