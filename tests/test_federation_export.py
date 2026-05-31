@@ -192,3 +192,30 @@ class TestFederationArtifactExport:
 
         with pytest.raises(FederationExportError, match="Failed to build bottleneck report"):
             FederationArtifactExporter().build_bottleneck_report(repo_metrics)
+
+    def test_bottleneck_injectable_timestamp(self):
+        repo_metrics = FederationArtifactExporter()._load_repo_metrics(_metrics_dir())
+        fixed_ts = "2026-01-01T00:00:00Z"
+        report = FederationArtifactExporter().build_bottleneck_report(
+            repo_metrics, generated_at=fixed_ts
+        )
+        assert report["timestamp"] == fixed_ts
+
+    def test_write_outputs_json_sorted_keys(self, tmp_path: Path):
+        federation_dir = tmp_path / "metrics" / "federation"
+        bottleneck_output = tmp_path / "bottleneck_report.json"
+
+        FederationArtifactExporter().write_outputs(
+            metrics_dir=_metrics_dir(),
+            federation_dir=federation_dir,
+            bottleneck_output=bottleneck_output,
+        )
+
+        for path in [
+            federation_dir / "federation_rollup.json",
+            federation_dir / "federation_scree.json",
+            bottleneck_output,
+        ]:
+            raw = path.read_text(encoding="utf-8")
+            parsed = json.loads(raw)
+            assert raw == json.dumps(parsed, indent=2, sort_keys=True) + "\n" or raw == json.dumps(parsed, indent=2, sort_keys=True)

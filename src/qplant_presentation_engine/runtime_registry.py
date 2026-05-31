@@ -304,8 +304,8 @@ class RuntimeRegistry:
         report_output = report_output or (runtime_dir / "runtime_registry_report.json")
         registry_output.parent.mkdir(parents=True, exist_ok=True)
         report_output.parent.mkdir(parents=True, exist_ok=True)
-        registry_output.write_text(json.dumps(registry_record, indent=2), encoding="utf-8")
-        report_output.write_text(json.dumps(report_record, indent=2), encoding="utf-8")
+        registry_output.write_text(json.dumps(registry_record, indent=2, sort_keys=True), encoding="utf-8")
+        report_output.write_text(json.dumps(report_record, indent=2, sort_keys=True), encoding="utf-8")
         return registry_record, report_record
 
 

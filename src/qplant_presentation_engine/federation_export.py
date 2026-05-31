@@ -199,6 +199,7 @@ class FederationArtifactExporter:
         wave: str = "W007",
         subwave: str = "W007.2A",
         threshold_factor: float = 0.9,
+        generated_at: str | None = None,
     ) -> dict[str, Any]:
         rollup = FederationRollup()
         try:
@@ -229,7 +230,7 @@ class FederationArtifactExporter:
             "dominant_wave": subwave,
             "dominant_bottleneck": dominant_bottleneck,
             "recommended_next_action": recommended_next_action,
-            "timestamp": datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+            "timestamp": generated_at if generated_at is not None else datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
             "bottleneck_count": int(computed["bottleneck_count"]),
             "bottlenecks": bottlenecks,
             "threshold_factor": threshold_factor,
@@ -244,6 +245,7 @@ class FederationArtifactExporter:
         bottleneck_output: Path,
         wave: str = "W007",
         subwave: str = "W007.2A",
+        generated_at: str | None = None,
     ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
         if set(self.members) != set(FEDERATION_MEMBERS) or len(self.members) != len(FEDERATION_MEMBERS):
             raise FederationExportError(
@@ -264,20 +266,22 @@ class FederationArtifactExporter:
             subwave=subwave,
             members=canonical_members,
         )
-        bottleneck_record = self.build_bottleneck_report(repo_metrics, wave=wave, subwave=subwave)
+        bottleneck_record = self.build_bottleneck_report(
+            repo_metrics, wave=wave, subwave=subwave, generated_at=generated_at
+        )
 
         federation_dir.mkdir(parents=True, exist_ok=True)
         bottleneck_output.parent.mkdir(parents=True, exist_ok=True)
 
         (federation_dir / "federation_rollup.json").write_text(
-            json.dumps(rollup_record, indent=2),
+            json.dumps(rollup_record, indent=2, sort_keys=True),
             encoding="utf-8",
         )
         (federation_dir / "federation_scree.json").write_text(
-            json.dumps(scree_record, indent=2),
+            json.dumps(scree_record, indent=2, sort_keys=True),
             encoding="utf-8",
         )
-        bottleneck_output.write_text(json.dumps(bottleneck_record, indent=2), encoding="utf-8")
+        bottleneck_output.write_text(json.dumps(bottleneck_record, indent=2, sort_keys=True), encoding="utf-8")
 
         return rollup_record, scree_record, bottleneck_record
 

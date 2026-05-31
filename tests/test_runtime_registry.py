@@ -246,3 +246,21 @@ class TestRuntimeRegistryGeneration:
 
         with pytest.raises(RuntimeRegistryError, match="expected JSON object"):
             RuntimeRegistry()._load_repo_metrics(metrics_dir)
+
+    def test_write_outputs_json_sorted_keys(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        metrics_dir = _copy_metrics_inputs(tmp_path / "metrics")
+        registry_output = tmp_path / "registry.json"
+        report_output = tmp_path / "report.json"
+
+        RuntimeRegistry().write_outputs(
+            runtime_dir=runtime_dir,
+            metrics_dir=metrics_dir,
+            registry_output=registry_output,
+            report_output=report_output,
+        )
+
+        for path in [registry_output, report_output]:
+            raw = path.read_text(encoding="utf-8")
+            parsed = json.loads(raw)
+            assert raw == json.dumps(parsed, indent=2, sort_keys=True) + "\n" or raw == json.dumps(parsed, indent=2, sort_keys=True)
