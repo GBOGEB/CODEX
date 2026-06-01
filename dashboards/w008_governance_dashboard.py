@@ -281,6 +281,7 @@ def main() -> None:
     repo_root = Path(__file__).parent.parent
 
     rollup = _load_json(repo_root / "metrics" / "federation" / "federation_rollup.json")
+    _ = _load_json(repo_root / "metrics" / "federation" / "federation_scree.json")
     registry = _load_json(
         repo_root / "federation" / "runtime_registry" / "runtime_registry.json"
     )
