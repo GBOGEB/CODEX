@@ -221,7 +221,6 @@ def _build_d4(report: dict) -> str:
         member = row.get("member", "—")
         truth_state = _esc(row.get("truth_state", "—"))
         truth_score = float(row.get("truth_score", 0.0))
-        truth_score = float(row.get("truth_score", 0.0))
 
         # lineage: has runtime_exists
         lineage = _bool_badge(bool(row.get("runtime_exists")))
