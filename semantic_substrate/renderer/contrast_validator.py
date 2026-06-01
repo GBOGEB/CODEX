@@ -118,14 +118,36 @@ class ContrastValidator:
             raise ValueError(f"Unsupported hex color '{color}'")
         return '#' + body.lower()
 
+    @staticmethod
+    def _hex_to_rgb(color: str) -> tuple[float, float, float]:
+        value = color.strip()
+        if not value.startswith("#") or len(value) != 7:
+            raise ValueError(f"Unsupported hex color '{color}'")
+        hex_value = value[1:]
+        try:
+            int(hex_value, 16)
+        except ValueError as exc:
+            raise ValueError(f"Unsupported hex color '{color}'") from exc
+        return (
+            int(hex_value[0:2], 16) / 255,
+            int(hex_value[2:4], 16) / 255,
+            int(hex_value[4:6], 16) / 255,
+        )
+
+    @staticmethod
+    def _linearize(channel: float) -> float:
+        return channel / 12.92 if channel <= 0.03928 else ((channel + 0.055) / 1.055) ** 2.4
+
+    def _relative_luminance(self, color: str) -> float:
+        normalized = self._normalize_hex(color)
+        r, g, b = (
+            int(normalized[i:i + 2], 16) / 255
+            for i in (1, 3, 5)
+        )
+        return 0.2126 * self._linearize(r) + 0.7152 * self._linearize(g) + 0.0722 * self._linearize(b)
+
     def calculate_relative_luminance(self, color: str) -> float:
-        norm = self._normalize_hex(color).lstrip('#')
-        r, g, b = (int(norm[i:i + 2], 16) / 255 for i in (0, 2, 4))
-
-        def _linear(c: float) -> float:
-            return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
-
-        return 0.2126 * _linear(r) + 0.7152 * _linear(g) + 0.0722 * _linear(b)
+        return self._relative_luminance(color)
 
     def validate_theme_node(self, background: str, foreground: str) -> dict:
         """Return a dict with contrast_ratio, AA/AAA compliance, and action_required."""
@@ -137,6 +159,8 @@ class ContrastValidator:
         aaa = ratio >= self.MIN_AAA_RATIO
         return {
             'contrast_ratio': ratio,
+            'passes_wcag_aa': aa,
+            'passes_wcag_aaa': aaa,
             'wcag_aa_compliant': aa,
             'wcag_aaa_compliant': aaa,
             'action_required': not aa,

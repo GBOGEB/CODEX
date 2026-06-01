@@ -40,7 +40,7 @@ BASELINE_ALLOWED_UNDOCUMENTED.update(
         'semantic_cognition_alignment', 'semantic_compliance_record',
         'semantic_continuity_alignment', 'semantic_convergence_alignment',
         'semantic_decisions', 'semantic_delta', 'semantic_density',
-        'semantic_drift_daemon', 'semantic_entropy', 'semantic_execution',
+        'semantic_entropy', 'semantic_execution',
         'semantic_execution_confidence', 'semantic_execution_continuity',
         'semantic_execution_integrity', 'semantic_execution_lineage',
         'semantic_execution_observability', 'semantic_execution_stability',
