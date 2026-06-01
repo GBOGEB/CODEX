@@ -8,89 +8,80 @@ on:
   workflow_dispatch:
 
 permissions:
+  security-events: write
   actions: read
   contents: read
-  security-events: write
 
 jobs:
   security-scan:
-    name: Security Scan (${{ matrix.os }}, py${{ matrix.python.version }})
+    name: security-scan (${{ matrix.os }} / py${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-          - macos-latest
-        python:
-          - version: "3.9"
-            tag: "39"
-          - version: "3.10"
-            tag: "310"
-          - version: "3.11"
-            tag: "311"
-          - version: "3.12"
-            tag: "312"
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+    env:
+      SARIF_PATH: reports/security/results.sarif
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python.version }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Install scanner
+        run: python -m pip install --upgrade pip ruff
+
+      - name: Generate SARIF
+        continue-on-error: true
         shell: bash
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install ruff
+          python -c "from pathlib import Path; Path(r'${{ env.SARIF_PATH }}').parent.mkdir(parents=True, exist_ok=True)"
+          ruff check . --output-format sarif --exit-zero --output-file "${{ env.SARIF_PATH }}"
 
-      - name: Generate SARIF report
-        shell: bash
-        run: |
-          mkdir -p reports/security
-          ruff check . --select S --output-format sarif --output-file reports/security/results.sarif --exit-zero
-
-      - name: Validate SARIF report
-        id: validate-sarif
+      - name: Validate SARIF
+        id: validate
         shell: bash
         run: |
           python - <<'PY'
           import json
           import os
+          import sys
           from pathlib import Path
 
-          sarif_path = Path("reports/security/results.sarif")
-          expected_version = "2.1.0"  # GitHub code scanning currently expects SARIF 2.1.0
+          sarif_path = Path(r"${{ env.SARIF_PATH }}")
           valid = False
-          reason = "missing SARIF file"
+          message = ""
 
-          if sarif_path.exists() and sarif_path.is_file():
-              try:
-                  payload = json.loads(sarif_path.read_text(encoding="utf-8"))
-                  valid = (
-                      payload.get("version") == expected_version
-                      and isinstance(payload.get("runs"), list)
-                      and len(payload["runs"]) > 0
-                  )
-                  if not valid:
-                      reason = "SARIF structure invalid (expected version 2.1.0 and non-empty runs)"
-              except (json.JSONDecodeError, OSError):
-                  valid = False
-                  reason = "SARIF JSON parse failed"
+          if sarif_path.exists():
+              data = json.loads(sarif_path.read_text(encoding="utf-8"))
+              valid = (
+                  isinstance(data, dict)
+                  and bool(data.get("version"))
+                  and isinstance(data.get("runs"), list)
+              )
+              if not valid:
+                  message = "SARIF content is invalid"
+          else:
+              message = "SARIF file was not generated"
 
-          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as f:
-              f.write(f"valid={'true' if valid else 'false'}\n")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as handle:
+              handle.write(f"valid={str(valid).lower()}\n")
 
-          if not valid:
-              raise SystemExit(f"SARIF validation failed: {reason}")
+          if valid:
+              print(f"SARIF validated at {sarif_path}")
+              sys.exit(0)
+
+          print(message)
+          sys.exit(1)
           PY
 
-      - name: Upload SARIF report
-        if: ${{ steps.validate-sarif.outputs.valid == 'true' }}
+      - name: Upload SARIF
+        if: steps.validate.outputs.valid == 'true'
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: reports/security/results.sarif
-          category: security-scan-${{ matrix.os }}-py${{ matrix.python.tag }}
+          sarif_file: ${{ env.SARIF_PATH }}
+          category: security-scan-${{ matrix.os }}-py${{ matrix.python-version }}

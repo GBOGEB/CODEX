@@ -1,0 +1,11 @@
+graph TD
+    ABACUS_feed --> bridge_runtime
+    bridge_runtime --> schema_validation
+    schema_validation --> KPI_ingestion
+    KPI_ingestion --> topology_synchronization
+    topology_synchronization --> CODEX_hydration
+    CODEX_hydration --> Pages_regeneration
+    runtime_insight --> glossary_update
+    glossary_update --> schema_refinement
+    schema_refinement --> topology_correction
+    topology_correction --> report_regeneration

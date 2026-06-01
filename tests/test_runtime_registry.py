@@ -6,302 +6,273 @@ from pathlib import Path
 
 import pytest
 
-from src.qplant_presentation_engine.federation_rollup import FederationRollup
-from src.qplant_presentation_engine.federation_scree import FederationScree
 from src.qplant_presentation_engine.runtime_registry import (
-    DEFAULT_REPORT_OUTPUT,
-    DEFAULT_REGISTRY_OUTPUT,
-    DEFAULT_RUNTIME_DIR,
-    MEMBERS,
-    REQUIRED_FIELDS,
+    RUNTIME_FIELDS,
     RuntimeRegistry,
     RuntimeRegistryError,
+    generate_runtime_registry,
 )
 
 
-ROOT = Path(__file__).resolve().parents[1]
+def _root() -> Path:
+    return Path(__file__).resolve().parents[1]
 
 
-def _runtime_records() -> dict[str, dict[str, object]]:
-    return {
-        "ABACUS": {
-            "repo": "GBOGEB/ABACUS",
-            "runtime_exists": True,
-            "runtime_validated": True,
-            "deployment_exists": True,
-            "last_execution": "2026-05-30T09:00:00Z",
-            "last_validation": "2026-05-30T10:00:00Z",
-            "last_deployment": "2026-05-30T11:00:00Z",
-            "truth_score": 1.0,
-            "forward_pca": 0.84,
-            "backward_pca": 0.81,
-            "geti": 0.82,
-            "pci": 0.79,
-        },
-        "ARTSTYLE": {
-            "repo": "GBOGEB/ARTSTYLE",
-            "runtime_exists": True,
-            "runtime_validated": False,
-            "deployment_exists": False,
-            "last_execution": "2026-05-29T14:00:00Z",
-            "last_validation": None,
-            "last_deployment": None,
-            "truth_score": 0.333333,
-            "forward_pca": 0.73,
-            "backward_pca": 0.70,
-            "geti": 0.71,
-            "pci": 0.68,
-        },
-        "QPLANT": {
-            "repo": "GBOGEB/QPLANT",
-            "runtime_exists": True,
-            "runtime_validated": True,
-            "deployment_exists": False,
-            "last_execution": "2026-05-30T08:30:00Z",
-            "last_validation": "2026-05-30T09:45:00Z",
-            "last_deployment": None,
-            "truth_score": 0.666667,
-            "forward_pca": 0.79,
-            "backward_pca": 0.75,
-            "geti": 0.77,
-            "pci": 0.74,
-        },
-        "CODEX": {
-            "repo": "GBOGEB/CODEX",
-            "runtime_exists": True,
-            "runtime_validated": True,
-            "deployment_exists": True,
-            "last_execution": "2026-05-30T12:00:00Z",
-            "last_validation": "2026-05-30T12:30:00Z",
-            "last_deployment": "2026-05-30T13:00:00Z",
-            "truth_score": 1.0,
-            "forward_pca": 0.87,
-            "backward_pca": 0.84,
-            "geti": 0.85,
-            "pci": 0.83,
-        },
-    }
+def _runtime_dir() -> Path:
+    return _root() / "federation" / "runtime_registry"
 
 
-def _repo_metrics() -> dict[str, dict[str, object]]:
-    return {
-        "ABACUS": {"metrics": {"forward_pca": {"variance_explained": [0.42, 0.26, 0.17, 0.10, 0.05], "convergence_score": 0.84}, "backward_pca": {"variance_explained": [0.40, 0.27, 0.18, 0.10, 0.05], "regression_score": 0.81}, "geti": 0.82, "pci": 0.79, "expansion_factor": 1.18, "scree": {"pc1": 0.42, "pc2": 0.26, "pc3": 0.17, "pc4": 0.10, "pc5": 0.05}}},
-        "ARTSTYLE": {"metrics": {"forward_pca": {"variance_explained": [0.38, 0.28, 0.19, 0.10, 0.05], "convergence_score": 0.73}, "backward_pca": {"variance_explained": [0.36, 0.29, 0.20, 0.10, 0.05], "regression_score": 0.70}, "geti": 0.71, "pci": 0.68, "expansion_factor": 1.22, "scree": {"pc1": 0.38, "pc2": 0.28, "pc3": 0.19, "pc4": 0.10, "pc5": 0.05}}},
-        "QPLANT": {"metrics": {"forward_pca": {"variance_explained": [0.44, 0.24, 0.18, 0.09, 0.05], "convergence_score": 0.79}, "backward_pca": {"variance_explained": [0.41, 0.25, 0.20, 0.09, 0.05], "regression_score": 0.75}, "geti": 0.77, "pci": 0.74, "expansion_factor": 1.15, "scree": {"pc1": 0.44, "pc2": 0.24, "pc3": 0.18, "pc4": 0.09, "pc5": 0.05}}},
-        "CODEX": {"metrics": {"forward_pca": {"variance_explained": [0.40, 0.27, 0.18, 0.10, 0.05], "convergence_score": 0.87}, "backward_pca": {"variance_explained": [0.38, 0.28, 0.19, 0.10, 0.05], "regression_score": 0.84}, "geti": 0.85, "pci": 0.83, "expansion_factor": 1.12, "scree": {"pc1": 0.40, "pc2": 0.27, "pc3": 0.18, "pc4": 0.10, "pc5": 0.05}}},
-    }
+def _metrics_dir() -> Path:
+    return _root() / "metrics" / "repo"
 
 
-class TestRuntimeRegistryValidation:
-    def test_default_weights_cover_all_members(self):
-        registry = RuntimeRegistry()
-        assert set(registry.weights) == set(MEMBERS)
-
-    def test_invalid_weight_total_raises(self):
-        with pytest.raises(RuntimeRegistryError, match="1.0"):
-            RuntimeRegistry(weights={"ABACUS": 0.4, "ARTSTYLE": 0.2, "QPLANT": 0.2, "CODEX": 0.1})
-
-    def test_missing_required_field_raises(self):
-        registry = RuntimeRegistry()
-        broken = dict(_runtime_records()["ABACUS"])
-        broken.pop("truth_score")
-        with pytest.raises(RuntimeRegistryError, match="truth_score"):
-            registry.validate_record(broken)
-
-    def test_non_string_repo_raises(self):
-        registry = RuntimeRegistry()
-        broken = dict(_runtime_records()["ABACUS"])
-        broken["repo"] = 123
-        with pytest.raises(RuntimeRegistryError, match="repo"):
-            registry.validate_record(broken)
-
-    def test_empty_string_repo_raises(self):
-        registry = RuntimeRegistry()
-        broken = dict(_runtime_records()["ABACUS"])
-        broken["repo"] = ""
-        with pytest.raises(RuntimeRegistryError, match="repo"):
-            registry.validate_record(broken)
-
-    def test_none_repo_raises(self):
-        registry = RuntimeRegistry()
-        broken = dict(_runtime_records()["ABACUS"])
-        broken["repo"] = None
-        with pytest.raises(RuntimeRegistryError, match="repo"):
-            registry.validate_record(broken)
-
-    def test_non_string_timestamp_raises(self):
-        registry = RuntimeRegistry()
-        for field in ("last_execution", "last_validation", "last_deployment"):
-            broken = dict(_runtime_records()["ABACUS"])
-            broken[field] = 0
-            with pytest.raises(RuntimeRegistryError, match=field):
-                registry.validate_record(broken)
-
-    def test_dict_timestamp_raises(self):
-        registry = RuntimeRegistry()
-        broken = dict(_runtime_records()["ABACUS"])
-        broken["last_execution"] = {}
-        with pytest.raises(RuntimeRegistryError, match="last_execution"):
-            registry.validate_record(broken)
-
-    def test_none_timestamp_is_valid(self):
-        registry = RuntimeRegistry()
-        record = dict(_runtime_records()["ABACUS"])
-        record["last_execution"] = None
-        record["last_validation"] = None
-        record["last_deployment"] = None
-        registry.validate_record(record)  # should not raise
+def _copy_metrics_inputs(destination: Path) -> Path:
+    source = _metrics_dir()
+    destination.mkdir(parents=True, exist_ok=True)
+    for name in ("abacus_metrics.json", "artstyle_metrics.json", "qplant_metrics.json", "codex_metrics.json"):
+        (destination / name).write_text((source / name).read_text(encoding="utf-8"), encoding="utf-8")
+    return destination
 
 
-class TestRuntimeRegistryBuild:
-    def test_truth_matrix_contains_all_members(self):
-        registry = RuntimeRegistry()
-        truth_matrix = registry.build_truth_matrix(_runtime_records())
-        assert [entry["member"] for entry in truth_matrix] == list(MEMBERS)
-
-    def test_executed_is_derived_from_last_execution(self):
-        registry = RuntimeRegistry()
-        records = _runtime_records()
-        records["ARTSTYLE"]["last_execution"] = None
-        truth_matrix = registry.build_truth_matrix(records)
-        artstyle = next(entry for entry in truth_matrix if entry["member"] == "ARTSTYLE")
-        assert artstyle["executed"] is False
-
-    def test_build_truth_matrix_validates_per_member_record(self):
-        """build_truth_matrix() should validate each member record and raise RuntimeRegistryError for missing keys."""
-        registry = RuntimeRegistry()
-        records = _runtime_records()
-        records["ABACUS"].pop("truth_score")
-        with pytest.raises(RuntimeRegistryError, match="truth_score"):
-            registry.build_truth_matrix(records)
-
-    def test_build_truth_matrix_raises_on_invalid_repo_type(self):
-        """build_truth_matrix() should raise RuntimeRegistryError for non-string repo field."""
-        registry = RuntimeRegistry()
-        records = _runtime_records()
-        records["ARTSTYLE"]["repo"] = 123
-        with pytest.raises(RuntimeRegistryError, match="repo"):
-            registry.build_truth_matrix(records)
-
-    def test_build_truth_matrix_raises_on_malformed_timestamp(self):
-        """build_truth_matrix() should raise RuntimeRegistryError for non-string/None timestamp fields."""
-        registry = RuntimeRegistry()
-        records = _runtime_records()
-        records["QPLANT"]["last_execution"] = 0
-        with pytest.raises(RuntimeRegistryError, match="last_execution"):
-            registry.build_truth_matrix(records)
-
-    def test_build_truth_matrix_raises_on_missing_required_field(self):
-        """build_truth_matrix() should raise RuntimeRegistryError when a required field is missing."""
-        registry = RuntimeRegistry()
-        records = _runtime_records()
-        records["CODEX"].pop("deployment_exists")
-        with pytest.raises(RuntimeRegistryError, match="deployment_exists"):
-            registry.build_truth_matrix(records)
-
-    def test_build_registry_record_contains_integrations(self):
-        registry = RuntimeRegistry()
-        rollup = FederationRollup().build_rollup_record(_repo_metrics(), runtime_records=_runtime_records())
-        scree = FederationScree().build_scree_record(_repo_metrics(), runtime_records=_runtime_records())
-        record = registry.build_registry_record(_runtime_records(), rollup=rollup, scree=scree)
-        assert record["integrations"]["federation_rollup"]["geti"] == pytest.approx(0.7915)
-        assert record["integrations"]["federation_scree"]["pc1"] == pytest.approx(0.413)
-
-    def test_weighted_truth_score_uses_federation_weights(self):
-        registry = RuntimeRegistry()
-        record = registry.build_registry_record(_runtime_records())
-        assert record["summary"]["weighted_truth_score"] == pytest.approx(0.783333, abs=1e-6)
-
-    def test_build_report_lists_missing_validation_and_deployment(self):
-        registry = RuntimeRegistry()
-        report = registry.build_report(registry.build_registry_record(_runtime_records()))
-        assert report["repos_missing_validation"] == ["ARTSTYLE"]
-        assert report["repos_missing_deployment"] == ["ARTSTYLE", "QPLANT"]
+def _copy_runtime_inputs(destination: Path) -> Path:
+    source = _runtime_dir()
+    destination.mkdir(parents=True, exist_ok=True)
+    for name in ("abacus_runtime.json", "artstyle_runtime.json", "qplant_runtime.json", "codex_runtime.json"):
+        (destination / name).write_text((source / name).read_text(encoding="utf-8"), encoding="utf-8")
+    return destination
 
 
-class TestRuntimeRegistryWrite:
-    def test_write_registry_writes_json(self, tmp_path: Path):
-        registry = RuntimeRegistry()
-        output = tmp_path / "runtime_registry.json"
-        record = registry.write_registry(_runtime_records(), output)
-        assert json.loads(output.read_text(encoding="utf-8")) == record
+class TestRuntimeEvidenceFiles:
+    def test_runtime_files_exist(self):
+        runtime_dir = _runtime_dir()
+        for name in ("abacus_runtime.json", "artstyle_runtime.json", "qplant_runtime.json", "codex_runtime.json"):
+            assert (runtime_dir / name).exists()
 
-    def test_write_report_writes_json(self, tmp_path: Path):
-        registry = RuntimeRegistry()
-        record = registry.build_registry_record(_runtime_records())
-        output = tmp_path / "runtime_registry_report.json"
-        report = registry.write_report(record, output)
-        assert json.loads(output.read_text(encoding="utf-8")) == report
+    def test_runtime_files_have_required_fields(self):
+        runtime_dir = _runtime_dir()
+        for name in ("abacus_runtime.json", "artstyle_runtime.json", "qplant_runtime.json", "codex_runtime.json"):
+            data = json.loads((runtime_dir / name).read_text(encoding="utf-8"))
+            for field in RUNTIME_FIELDS:
+                assert field in data, f"Missing field {field} in {name}"
 
-    def test_generate_writes_both_outputs(self, tmp_path: Path):
-        registry = RuntimeRegistry()
-        runtime_dir = tmp_path / "runtime_registry"
-        runtime_dir.mkdir()
-        for member, record in _runtime_records().items():
-            filename = f"{member.lower()}_runtime.json"
-            (runtime_dir / filename).write_text(json.dumps(record, indent=2), encoding="utf-8")
-        rollup_path = tmp_path / "federation_rollup.json"
-        scree_path = tmp_path / "federation_scree.json"
-        rollup_path.write_text(json.dumps(FederationRollup().build_rollup_record(_repo_metrics()), indent=2), encoding="utf-8")
-        scree_path.write_text(json.dumps(FederationScree().build_scree_record(_repo_metrics()), indent=2), encoding="utf-8")
+
+class TestRuntimeRegistryGeneration:
+    def test_write_outputs_generates_registry_and_report(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
         registry_output = tmp_path / "runtime_registry.json"
         report_output = tmp_path / "runtime_registry_report.json"
-        registry_record, report = registry.generate(
+        registry, report = RuntimeRegistry().write_outputs(
             runtime_dir=runtime_dir,
-            registry_output_path=registry_output,
-            report_output_path=report_output,
-            rollup_path=rollup_path,
-            scree_path=scree_path,
+            metrics_dir=_metrics_dir(),
+            registry_output=registry_output,
+            report_output=report_output,
         )
-        assert registry_record["summary"]["runtime_exists_count"] == 4
-        assert report["repo_count"] == 4
         assert registry_output.exists()
         assert report_output.exists()
+        assert json.loads(registry_output.read_text(encoding="utf-8")) == registry
+        assert json.loads(report_output.read_text(encoding="utf-8")) == report
 
+    def test_registry_contains_all_members(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        registry_output = tmp_path / "runtime_registry.json"
+        report_output = tmp_path / "runtime_registry_report.json"
+        registry, _ = RuntimeRegistry().write_outputs(
+            runtime_dir=runtime_dir,
+            metrics_dir=_metrics_dir(),
+            registry_output=registry_output,
+            report_output=report_output,
+        )
+        repos = {entry["repo"] for entry in registry["runtime_registry"]}
+        assert repos == {
+            "GBOGEB/ABACUS",
+            "GBOGEB/ARTSTYLE",
+            "GBOGEB/QPLANT",
+            "GBOGEB/CODEX",
+        }
 
-class TestFederationIntegration:
-    def test_rollup_includes_runtime_status(self):
-        record = FederationRollup().build_rollup_record(_repo_metrics(), runtime_records=_runtime_records())
-        assert record["runtime_status"]["runtime_validated_count"] == 3
-        assert record["runtime_status"]["truth_matrix"][0]["member"] == "ABACUS"
+    def test_report_integrates_rollup_scree_and_truth_matrix(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        registry_output = tmp_path / "runtime_registry.json"
+        report_output = tmp_path / "runtime_registry_report.json"
+        _, report = RuntimeRegistry().write_outputs(
+            runtime_dir=runtime_dir,
+            metrics_dir=_metrics_dir(),
+            registry_output=registry_output,
+            report_output=report_output,
+        )
+        assert "federation_rollup" in report
+        assert "federation_scree" in report
+        assert "truth_matrix" in report
+        assert "runtime_status" in report["federation_rollup"]
+        assert "runtime_status" in report["federation_scree"]
+        assert "rows" in report["truth_matrix"]
 
-    def test_scree_includes_truth_matrix(self):
-        record = FederationScree().build_scree_record(_repo_metrics(), runtime_records=_runtime_records())
-        assert len(record["truth_matrix"]) == 4
-        assert record["truth_matrix"][1]["member"] == "ARTSTYLE"
+    def test_rollup_consumes_runtime_status_per_member(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        registry_output = tmp_path / "runtime_registry.json"
+        report_output = tmp_path / "runtime_registry_report.json"
+        _, report = RuntimeRegistry().write_outputs(
+            runtime_dir=runtime_dir,
+            metrics_dir=_metrics_dir(),
+            registry_output=registry_output,
+            report_output=report_output,
+        )
+        runtime_status = report["federation_rollup"]["runtime_status"]["members"]
+        assert set(runtime_status.keys()) == {"ABACUS", "ARTSTYLE", "QPLANT", "CODEX"}
+        assert runtime_status["ABACUS"]["runtime_validated"] is True
+        assert runtime_status["ARTSTYLE"]["runtime_validated"] is False
 
+    def test_generate_runtime_registry_uses_defaults(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        registry, report = generate_runtime_registry(
+            runtime_dir=runtime_dir,
+            metrics_dir=_metrics_dir(),
+        )
+        assert registry["subwave"] == "W007.2A"
+        assert report["subwave"] == "W007.2A"
+        assert (runtime_dir / "runtime_registry.json").exists()
+        assert (runtime_dir / "runtime_registry_report.json").exists()
 
-class TestRuntimeRegistryArtifacts:
-    def test_runtime_source_files_exist(self):
-        for member in MEMBERS:
-            path = ROOT / DEFAULT_RUNTIME_DIR / f"{member.lower()}_runtime.json"
-            assert path.exists(), f"Missing runtime source: {path}"
+    def test_write_outputs_normalizes_member_order(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        registry_output = tmp_path / "runtime_registry.json"
+        report_output = tmp_path / "runtime_registry_report.json"
 
-    def test_runtime_source_files_have_required_fields(self):
-        for member in MEMBERS:
-            path = ROOT / DEFAULT_RUNTIME_DIR / f"{member.lower()}_runtime.json"
-            data = json.loads(path.read_text(encoding="utf-8"))
-            for field in REQUIRED_FIELDS:
-                assert field in data, f"Missing {field} in {path.name}"
+        registry, report = RuntimeRegistry(members=("CODEX", "QPLANT", "ABACUS", "ARTSTYLE")).write_outputs(
+            runtime_dir=runtime_dir,
+            metrics_dir=_metrics_dir(),
+            registry_output=registry_output,
+            report_output=report_output,
+        )
 
-    def test_generated_runtime_registry_json_exists(self):
-        path = ROOT / DEFAULT_REGISTRY_OUTPUT
-        assert path.exists()
-        data = json.loads(path.read_text(encoding="utf-8"))
-        assert data["summary"]["runtime_exists_count"] == 4
-        assert data["integrations"]["federation_rollup"]["geti"] == pytest.approx(0.7915)
+        assert registry["members"] == ["ABACUS", "ARTSTYLE", "QPLANT", "CODEX"]
+        assert [row["member"] for row in report["truth_matrix"]["rows"]] == ["ABACUS", "ARTSTYLE", "QPLANT", "CODEX"]
+        assert list(report["federation_rollup"]["runtime_status"]["members"].keys()) == [
+            "ABACUS",
+            "ARTSTYLE",
+            "QPLANT",
+            "CODEX",
+        ]
 
-    def test_generated_runtime_registry_report_json_exists(self):
-        path = ROOT / DEFAULT_REPORT_OUTPUT
-        assert path.exists()
-        data = json.loads(path.read_text(encoding="utf-8"))
-        assert data["runtime_validated_count"] == 3
-        assert data["repos_missing_validation"] == ["ARTSTYLE"]
+    def test_runtime_report_rejects_non_canonical_member_set(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        entries = RuntimeRegistry().load_runtime_entries(runtime_dir)
+        repo_metrics = RuntimeRegistry()._load_repo_metrics(_metrics_dir())
 
-    def test_generated_rollup_and_scree_include_runtime_evidence(self):
-        rollup_path = ROOT / "metrics" / "federation" / "federation_rollup.json"
-        scree_path = ROOT / "metrics" / "federation" / "federation_scree.json"
-        rollup = json.loads(rollup_path.read_text(encoding="utf-8"))
-        scree = json.loads(scree_path.read_text(encoding="utf-8"))
-        assert rollup["runtime_status"]["execution_count"] == 4
-        assert len(scree["truth_matrix"]) == 4
+        with pytest.raises(RuntimeRegistryError, match="canonical federation members"):
+            RuntimeRegistry().build_runtime_report(
+                entries,
+                repo_metrics,
+                members=("ABACUS", "QPLANT"),
+            )
+
+    def test_rejects_invalid_runtime_field_types(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        abacus_file = runtime_dir / "abacus_runtime.json"
+        data = json.loads(abacus_file.read_text(encoding="utf-8"))
+        data["runtime_exists"] = "false"
+        abacus_file.write_text(json.dumps(data), encoding="utf-8")
+
+        with pytest.raises(RuntimeRegistryError, match="runtime_exists"):
+            RuntimeRegistry().load_runtime_entries(runtime_dir)
+
+    def test_load_runtime_entries_rejects_malformed_json(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        (runtime_dir / "abacus_runtime.json").write_text("{", encoding="utf-8")
+
+        with pytest.raises(RuntimeRegistryError, match="Invalid runtime evidence JSON for ABACUS"):
+            RuntimeRegistry().load_runtime_entries(runtime_dir)
+
+    def test_load_runtime_entries_rejects_non_object_payload(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        (runtime_dir / "abacus_runtime.json").write_text("[]", encoding="utf-8")
+
+        with pytest.raises(RuntimeRegistryError, match="expected JSON object"):
+            RuntimeRegistry().load_runtime_entries(runtime_dir)
+
+    def test_custom_unknown_member_raises_runtime_registry_error(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        with pytest.raises(RuntimeRegistryError, match="filename configured"):
+            RuntimeRegistry(members=("ABACUS", "UNKNOWN")).load_runtime_entries(runtime_dir)
+
+    def test_runtime_status_handles_empty_members(self):
+        status = RuntimeRegistry(members=())._runtime_status({})
+        assert status["members"] == {}
+        assert status["coverage"]["runtime_exists"] == 0.0
+        assert status["coverage"]["runtime_validated"] == 0.0
+        assert status["coverage"]["deployment_exists"] == 0.0
+        assert status["coverage"]["truth_score_average"] == 0.0
+
+    def test_rejects_duplicate_members(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        registry_output = tmp_path / "runtime_registry.json"
+        report_output = tmp_path / "runtime_registry_report.json"
+        with pytest.raises(RuntimeRegistryError, match="canonical federation members"):
+            RuntimeRegistry(members=("ABACUS", "ABACUS", "ARTSTYLE", "QPLANT")).write_outputs(
+                runtime_dir=runtime_dir,
+                metrics_dir=_metrics_dir(),
+                registry_output=registry_output,
+                report_output=report_output,
+            )
+
+    def test_rejects_bool_in_numeric_fields(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        abacus_file = runtime_dir / "abacus_runtime.json"
+        data = json.loads(abacus_file.read_text(encoding="utf-8"))
+        data["truth_score"] = True
+        abacus_file.write_text(json.dumps(data), encoding="utf-8")
+
+        with pytest.raises(RuntimeRegistryError, match="truth_score.*expected number"):
+            RuntimeRegistry().load_runtime_entries(runtime_dir)
+
+    def test_rejects_out_of_range_pca_variance(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        abacus_file = runtime_dir / "abacus_runtime.json"
+        data = json.loads(abacus_file.read_text(encoding="utf-8"))
+        data["forward_pca"]["variance_explained"] = [1.5, 0.2, 0.1, 0.1, 0.1]
+        abacus_file.write_text(json.dumps(data), encoding="utf-8")
+
+        with pytest.raises(RuntimeRegistryError, match="variance_explained.*expected value in"):
+            RuntimeRegistry().load_runtime_entries(runtime_dir)
+
+    def test_rejects_out_of_range_pca_score(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        abacus_file = runtime_dir / "abacus_runtime.json"
+        data = json.loads(abacus_file.read_text(encoding="utf-8"))
+        data["forward_pca"]["convergence_score"] = 1.5
+        abacus_file.write_text(json.dumps(data), encoding="utf-8")
+
+        with pytest.raises(RuntimeRegistryError, match="convergence_score.*expected value in"):
+            RuntimeRegistry().load_runtime_entries(runtime_dir)
+
+    def test_load_repo_metrics_rejects_malformed_json(self, tmp_path: Path):
+        metrics_dir = _copy_metrics_inputs(tmp_path / "metrics")
+        (metrics_dir / "abacus_metrics.json").write_text("{", encoding="utf-8")
+
+        with pytest.raises(RuntimeRegistryError, match="Invalid repository metrics JSON for ABACUS"):
+            RuntimeRegistry()._load_repo_metrics(metrics_dir)
+
+    def test_load_repo_metrics_rejects_non_object_payload(self, tmp_path: Path):
+        metrics_dir = _copy_metrics_inputs(tmp_path / "metrics")
+        (metrics_dir / "abacus_metrics.json").write_text("[]", encoding="utf-8")
+
+        with pytest.raises(RuntimeRegistryError, match="expected JSON object"):
+            RuntimeRegistry()._load_repo_metrics(metrics_dir)
+
+    def test_write_outputs_json_sorted_keys(self, tmp_path: Path):
+        runtime_dir = _copy_runtime_inputs(tmp_path / "runtime_registry")
+        metrics_dir = _copy_metrics_inputs(tmp_path / "metrics")
+        registry_output = tmp_path / "registry.json"
+        report_output = tmp_path / "report.json"
+
+        RuntimeRegistry().write_outputs(
+            runtime_dir=runtime_dir,
+            metrics_dir=metrics_dir,
+            registry_output=registry_output,
+            report_output=report_output,
+        )
+
+        for path in [registry_output, report_output]:
+            raw = path.read_text(encoding="utf-8")
+            parsed = json.loads(raw)
+            assert raw == json.dumps(parsed, indent=2, sort_keys=True)

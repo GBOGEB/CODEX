@@ -41,26 +41,36 @@ rendering_defaults:
     engine: "static-svg" # No live Plotly JS payloads; raw SVG injection only
 
 identity_boundaries:
-  lanes:
-    office365_graph_session: "isolated"
-    github_session: "isolated"
-    apple_personal_session: "isolated"
   token_reuse_across_lanes: false
+  lanes:
+    office365_graph_session:
+      auth_provider: "Windows Active Directory / Office 365"
+    github_session:
+      auth_provider: "GitHub"
+    apple_personal_session:
+      auth_provider: "Apple ID"
 
 binary_sources:
   office365:
-    system_of_record: "office365"
-    graph_base_url: "https://graph.microsoft.com"
-    cache_root: "cache/office365"
+    system_of_record: "OneDrive"
+    graph_base_url: "https://graph.microsoft.com/v1.0"
+    cache_root: ".cache/office365"
     supported_formats: ["pptx", "docx", "xlsx", "pdf"]
   github:
-    system_of_record: "github"
-    stores_only: ["source", "metadata"]
+    system_of_record: "GitHub"
+    stores_only: true
 
 mcp_sweep:
-  enabled: false
-  near_miss_keywords: ["near-miss", "optimization"]
-  stale_status_values: ["stale", "deprecated", "superseded"]
+  enabled: true
+  near_miss_keywords:
+    - "TODO"
+    - "FIXME"
+    - "NEAR-MISS"
+    - "STALE"
+  stale_status_values:
+    - "STALE"
+    - "PENDING"
+    - "BLOCKED"
   output:
-    telemetry_markdown: "telemetry/mcp_sweep_latest.md"
-    rtm_delta: "semantic_substrate/rtm_lineage_delta.yaml"
+    telemetry_markdown: "metrics/mcp_sweep_telemetry.md"
+    rtm_delta: "metrics/rtm_lineage_delta.yaml"

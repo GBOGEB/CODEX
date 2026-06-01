@@ -1,86 +1,102 @@
 {
-  "wave": "W007",
-  "subwave": "W007.1",
-  "members": [
-    "ABACUS",
-    "ARTSTYLE",
-    "QPLANT",
-    "CODEX"
-  ],
-  "weights": {
-    "ABACUS": 0.35,
-    "ARTSTYLE": 0.2,
-    "QPLANT": 0.25,
-    "CODEX": 0.2
-  },
   "aggregated": {
-    "geti": 0.7915,
-    "pci": 0.7635,
-    "expansion_factor": 1.1685,
-    "forward_pca": {
-      "variance_explained": [
-        0.413,
-        0.261,
-        0.1785,
-        0.0975,
-        0.05
-      ],
-      "convergence_score": 0.8115
-    },
     "backward_pca": {
+      "regression_score": 0.779,
       "variance_explained": [
         0.3905,
         0.271,
         0.191,
         0.0975,
         0.05
-      ],
-      "regression_score": 0.779
-    }
+      ]
+    },
+    "expansion_factor": 1.1685,
+    "forward_pca": {
+      "convergence_score": 0.8115,
+      "variance_explained": [
+        0.413,
+        0.261,
+        0.1785,
+        0.0975,
+        0.05
+      ]
+    },
+    "geti": 0.7915,
+    "pci": 0.7635
   },
-  "runtime_status": {
-    "runtime_exists_count": 4,
-    "execution_count": 4,
-    "runtime_validated_count": 3,
-    "deployment_exists_count": 2,
-    "weighted_truth_score": 0.783333,
-    "truth_matrix": [
-      {
-        "member": "ABACUS",
-        "repo": "GBOGEB/ABACUS",
-        "runtime_exists": true,
-        "executed": true,
-        "runtime_validated": true,
-        "deployment_exists": true,
-        "truth_score": 1.0
-      },
-      {
-        "member": "ARTSTYLE",
-        "repo": "GBOGEB/ARTSTYLE",
-        "runtime_exists": true,
-        "executed": true,
-        "runtime_validated": false,
-        "deployment_exists": false,
-        "truth_score": 0.333333
-      },
-      {
-        "member": "QPLANT",
-        "repo": "GBOGEB/QPLANT",
-        "runtime_exists": true,
-        "executed": true,
-        "runtime_validated": true,
-        "deployment_exists": false,
-        "truth_score": 0.666667
-      },
-      {
-        "member": "CODEX",
-        "repo": "GBOGEB/CODEX",
-        "runtime_exists": true,
-        "executed": true,
-        "runtime_validated": true,
-        "deployment_exists": true,
-        "truth_score": 1.0
-      }
+  "backward_pca": {
+    "regression_score": 0.779,
+    "variance_explained": [
+      0.3905,
+      0.271,
+      0.191,
+      0.0975,
+      0.05
     ]
+  },
+  "expansion_factor": 1.1685,
+  "forward_pca": {
+    "convergence_score": 0.8115,
+    "variance_explained": [
+      0.413,
+      0.261,
+      0.1785,
+      0.0975,
+      0.05
+    ]
+  },
+  "geti": 0.7915,
+  "members": [
+    "ABACUS",
+    "ARTSTYLE",
+    "QPLANT",
+    "CODEX"
+  ],
+  "pci": 0.7635,
+  "repo_summaries": [
+    {
+      "backward_pca": 0.81,
+      "expansion_factor": 1.18,
+      "forward_pca": 0.84,
+      "geti": 0.82,
+      "member": "ABACUS",
+      "pci": 0.79,
+      "repo": "GBOGEB/ABACUS"
+    },
+    {
+      "backward_pca": 0.7,
+      "expansion_factor": 1.22,
+      "forward_pca": 0.73,
+      "geti": 0.71,
+      "member": "ARTSTYLE",
+      "pci": 0.68,
+      "repo": "GBOGEB/ARTSTYLE"
+    },
+    {
+      "backward_pca": 0.75,
+      "expansion_factor": 1.15,
+      "forward_pca": 0.79,
+      "geti": 0.77,
+      "member": "QPLANT",
+      "pci": 0.74,
+      "repo": "GBOGEB/QPLANT"
+    },
+    {
+      "backward_pca": 0.84,
+      "expansion_factor": 1.12,
+      "forward_pca": 0.87,
+      "geti": 0.85,
+      "member": "CODEX",
+      "pci": 0.83,
+      "repo": "GBOGEB/CODEX"
+    }
+  ],
+  "subwave": "W007.2A",
+  "wave": "W007",
+  "weights": {
+    "ABACUS": 0.35,
+    "ARTSTYLE": 0.2,
+    "CODEX": 0.2,
+    "QPLANT": 0.25
   }
 }
