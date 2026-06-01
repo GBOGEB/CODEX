@@ -32,11 +32,12 @@ def _normalize_hex(value: str) -> str:
     raise ValueError(f"Unsupported hex color '{value}'")
 
 
-def _contrast_ratio(a: str, b: str) -> float:
-    def _hex_to_rgb(value: str) -> tuple[float, float, float]:
-        rgb = _normalize_hex(value)[1:]
-        return int(rgb[0:2], 16) / 255, int(rgb[2:4], 16) / 255, int(rgb[4:6], 16) / 255
+def _hex_to_rgb(value: str) -> tuple[float, float, float]:
+    rgb = _normalize_hex(value)[1:]
+    return int(rgb[0:2], 16) / 255, int(rgb[2:4], 16) / 255, int(rgb[4:6], 16) / 255
 
+
+def _contrast_ratio(a: str, b: str) -> float:
     def _linear(channel: float) -> float:
         return channel / 12.92 if channel <= 0.03928 else ((channel + 0.055) / 1.055) ** 2.4
 

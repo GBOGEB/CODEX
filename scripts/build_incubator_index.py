@@ -3,26 +3,45 @@
 
 from __future__ import annotations
 
-import subprocess
 from pathlib import Path
+import sys
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from scripts.parse_chat_tuple import load_tuple_documents
+
+
+def build_markdown() -> str:
+    rows = [
+        "# Incubator Index",
+        "",
+        "Machine-readable tuple ingress index for governed incubator records.",
+        "",
+        "| ID | Date | Time | Category | Theme | Title | Wave | Status | Source |",
+        "|---|---|---|---|---|---|---|---|---|",
+    ]
+    for item in load_tuple_documents():
+        rows.append(
+            "| {id} | {date} | {time_local} | {category} | {theme} | {title} | {wave} | {status} | {source_type} |".format(
+                **item
+            )
+        )
+    rows.extend(
+        [
+            "",
+            "## Notes",
+            "- Filename and tuple ID convention: `YY_Www_HH_MM__CATEGORY__THEME__TITLE__W###`",
+            "- Regenerate with `python scripts/build_incubator_index.py`",
+        ]
+    )
+    return "\n".join(rows) + "\n"
 
 
 def main() -> None:
-    root = Path(__file__).resolve().parents[1]
-    parser = root / "scripts" / "parse_chat_tuple.py"
-    result = subprocess.check_output(["python3", str(parser), str(root / "incubator")], text=True)
-
-    import json
-
-    items = json.loads(result)
-    out = ["# Incubator Index", "", "| id | date | category | theme | status |", "|---|---|---|---|---|"]
-    for item in items:
-        out.append(
-            f"| {item.get('id','')} | {item.get('date','')} | {item.get('category','')} | {item.get('theme','')} | {item.get('status','')} |"
-        )
-
-    output = root / "docs" / "incubator_index.md"
-    output.write_text("\n".join(out) + "\n", encoding="utf-8")
+    output = REPO_ROOT / "docs" / "incubator_index.md"
+    output.write_text(build_markdown(), encoding="utf-8")
     print(f"Wrote {output}")
 
 
