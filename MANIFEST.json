@@ -19,8 +19,8 @@
     "idempotent_required": true
   },
   "renderer_governance": {
-    "theme_highlight_reference": "#FFE9A3",
-    "invariant_note": "semantic colors must transform by theme"
+    "warning_dark_text": "#FFE9A3",
+    "rule": "semantic colors must transform by theme"
   },
   "published_pages": [
     "docs/index.html",
@@ -55,7 +55,8 @@
     "docs/rendered_outputs/*.html",
     "docs/governance_w000.html",
     "docs/runtime_map.html",
-    "docs/incubator-dmaic-dashboard.html"
+    "docs/incubator-dmaic-dashboard.html",
+    "docs/w008-governance-dashboard.html"
   ],
   "controls": {
     "link_check_required": true,
@@ -64,10 +65,6 @@
     "glob_policy_required": true,
     "regression_check_required": true,
     "post_publish_smoke_test_required": true
-  },
-  "renderer_governance": {
-    "warning_dark_text": "#FFE9A3",
-    "rule": "semantic colors must transform by theme"
   },
   "promotion_rules": {
     "main_must_be_deployable": true,
