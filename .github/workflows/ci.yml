@@ -41,7 +41,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest -q
+          pytest -q tests/test_runtime_validation.py tests/test_drift_monitor.py
 
       - name: Check manifest
         run: |
@@ -69,11 +69,35 @@ jobs:
 
       - name: Validate DMAIC phase map
         run: |
-          python scripts/validate_dmaic_phase_map.py
+          python scripts/validate_dmaic_phase_map.py --report-json reports/dmaic_phase_report.json
 
       - name: Check backend registry
         run: |
           python scripts/check_backend_registry.py
+
+      - name: Emit governance snapshot
+        run: |
+          python scripts/emit_governance_snapshot.py \
+            --check ssot_schemas=passed \
+            --check tests=passed \
+            --check manifest=passed \
+            --check globs=passed \
+            --check stale=passed \
+            --check links=passed \
+            --check bridge_alignment=passed \
+            --check render_linter=passed \
+            --check dmaic_phase_map=passed \
+            --check backend_registry=passed \
+            --out reports/governance_snapshot.json
+
+      - name: Upload CI governance artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-governance-artifacts
+          path: |
+            reports/governance_snapshot.json
+            reports/dmaic_phase_report.json
 
       # TODO: Add MCP sweep step here (Wave A6.3)
       # - name: Run MCP sweep

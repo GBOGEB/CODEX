@@ -1,13 +1,17 @@
 name: Runtime Release Gate
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
   pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 
 jobs:
-  release-gate:
+  rtm-generation:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,6 +23,51 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install -e .
+
+      - name: Generate RTM bridge artifacts
+        run: |
+          python scripts/bridge_rtm_ingress.py --json-out reports/rtm_summary.json
+
+      - name: Verify RTM summary artifact
+        run: |
+          test -f reports/rtm_summary.json
+
+      - name: Upload RTM artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: rtm-artifacts
+          path: |
+            docs/rtm/incubator_rtm_bridge.md
+            reports/rtm_summary.json
+
+  runtime-evidence:
+    runs-on: ubuntu-latest
+    needs: rtm-generation
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install -e .
+
+      - name: Download RTM artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: rtm-artifacts
+
       - name: Execute federation bridge
         run: |
           python docs/wave_packages/runtime/federation_bridge_cli.py
@@ -26,6 +75,101 @@ jobs:
       - name: Generate reality tracker
         run: |
           python docs/wave_packages/runtime/reality_tracker.py
+
+      - name: Emit federation runtime status JSON
+        run: |
+          python scripts/emit_runtime_status.py --out reports/runtime_status.json
+
+      - name: Verify runtime evidence artifacts
+        run: |
+          test -f docs/wave_packages/runtime/out/deployment_readiness.json
+          test -f docs/wave_packages/runtime/out/reality_tracker.json
+          test -f reports/runtime_status.json
+
+      - name: Upload runtime evidence artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-evidence-artifacts
+          path: |
+            reports/rtm_summary.json
+            reports/runtime_status.json
+            docs/wave_packages/runtime/out/deployment_readiness.json
+            docs/wave_packages/runtime/out/reality_tracker.json
+            docs/wave_packages/runtime/out/federation_bridge_build_report.json
+            docs/wave_packages/runtime/pages/plotly_runtime_dashboard.html
+
+  governance-checks:
+    runs-on: ubuntu-latest
+    needs: runtime-evidence
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install -e .
+
+      - name: Download runtime evidence artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: runtime-evidence-artifacts
+
+      - name: Governance checks
+        run: |
+          python scripts/check_manifest.py
+          python scripts/check_globs.py
+          python scripts/check_stale.py
+          python scripts/check_links.py
+          python governance/RENDER_LINTER.py
+          python scripts/validate_dmaic_phase_map.py --report-json reports/dmaic_phase_report.json
+
+      - name: Emit governance snapshot
+        run: |
+          python scripts/emit_governance_snapshot.py \
+            --check manifest=passed \
+            --check globs=passed \
+            --check stale=passed \
+            --check links=passed \
+            --check render_linter=passed \
+            --check dmaic_phase_map=passed \
+            --out reports/governance_snapshot.json
+
+      - name: Verify governance artifacts
+        run: |
+          test -f reports/governance_snapshot.json
+          test -f reports/dmaic_phase_report.json
+
+      - name: Upload governance artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: governance-artifacts
+          path: |
+            reports/governance_snapshot.json
+            reports/dmaic_phase_report.json
+
+  release-gate:
+    runs-on: ubuntu-latest
+    needs: governance-checks
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download runtime evidence artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: runtime-evidence-artifacts
+
+      - name: Download governance artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: governance-artifacts
 
       - name: Enforce deployment threshold
         run: |
@@ -49,8 +193,25 @@ jobs:
               raise SystemExit('Reality alignment below release threshold (minimum PARTIAL classification)')
           PY
 
-      - name: Verify runtime artifacts
+      - name: Verify release artifacts
         run: |
           test -f docs/wave_packages/runtime/out/reality_tracker.json
           test -f docs/wave_packages/runtime/out/federation_bridge_build_report.json
           test -f docs/wave_packages/runtime/pages/plotly_runtime_dashboard.html
+          test -f reports/runtime_status.json
+          test -f reports/governance_snapshot.json
+          test -f reports/rtm_summary.json
+          test -f reports/dmaic_phase_report.json
+
+      - name: Upload release gate artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-gate-artifacts
+          path: |
+            reports/runtime_status.json
+            reports/governance_snapshot.json
+            reports/rtm_summary.json
+            reports/dmaic_phase_report.json
+            docs/wave_packages/runtime/out/deployment_readiness.json
+            docs/wave_packages/runtime/out/reality_tracker.json
