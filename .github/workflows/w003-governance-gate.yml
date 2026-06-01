@@ -21,10 +21,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Install governance parser dependency
+        run: |
+          python -m pip install --upgrade pip
+          pip install jsonschema
       - name: Validate governance header
         run: |
           python federation_runtime/engines/governance_parser.py \
-            --target federation_runtime/.github/W003_PR_FOLLOW_UP.md \
+            --markdown federation_runtime/.github/W003_PR_FOLLOW_UP.md \
             --schema federation_runtime/schema/governance_header.schema.json \
             --traceability-manifest federation_runtime/governance/traceability_manifest.json \
             --pr-track federation_runtime/governance/pr_track.yml \

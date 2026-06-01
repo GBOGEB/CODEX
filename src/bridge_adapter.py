@@ -67,6 +67,10 @@ RUNTIME_MODULE_ALIGNMENT: dict[str, Tuple[str, ...]] = {
         "telemetry/pca/drift_monitor.py",
         "dashboards/telemetry_dashboard.py",
     ),
+    "federation_rollup": (
+        "src/qplant_presentation_engine/federation_rollup.py",
+        "metrics/federation/federation_rollup.json",
+    ),
 }
 
 
