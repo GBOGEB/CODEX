@@ -81,35 +81,7 @@ jobs:
             SCRIPT_STATUS=$?
           fi
 
-          BROKEN="$(python3 - "$LOG_FILE" <<'PY'
-import pathlib
-import re
-import sys
-
-log_path = pathlib.Path(sys.argv[1])
-text = log_path.read_text(encoding="utf-8", errors="replace")
-
-patterns = [
-    r'broken_links=(\d+)',
-    r'Total broken internal links:\s*(\d+)',
-    r'Broken links:\s*(\d+)',
-]
-
-for pattern in patterns:
-    match = re.search(pattern, text, re.IGNORECASE)
-    if match:
-        print(match.group(1))
-        raise SystemExit(0)
-
-count = 0
-for line in text.splitlines():
-    lower = line.lower()
-    if "broken:" in lower or "broken link" in lower:
-        count += 1
-
-print(count)
-PY
-)"
+          BROKEN="$(python3 -c "import pathlib, re, sys; text = pathlib.Path(sys.argv[1]).read_text(encoding='utf-8', errors='replace'); patterns = [r'broken_links=(\\d+)', r'Total broken internal links:\\s*(\\d+)', r'Broken links:\\s*(\\d+)']; matches = [re.search(pattern, text, re.IGNORECASE) for pattern in patterns]; match = next((candidate for candidate in matches if candidate), None); print(match.group(1) if match else sum(1 for line in text.splitlines() if 'broken:' in line.lower() or 'broken link' in line.lower()))" "$LOG_FILE")"
 
           if [ -z "$BROKEN" ]; then
             if [ "$SCRIPT_STATUS" -ne 0 ]; then

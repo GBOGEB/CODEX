@@ -1,0 +1,134 @@
+{
+  "checks": [
+    {
+      "exists": true,
+      "id": "bridge_cli",
+      "ok": true,
+      "path": "docs/wave_packages/runtime/federation_bridge_cli.py",
+      "size_bytes": 5068,
+      "weight": 12
+    },
+    {
+      "exists": true,
+      "id": "ci_workflow",
+      "ok": true,
+      "path": ".github/workflows/runtime_federation_ci.yml",
+      "size_bytes": 1638,
+      "weight": 12
+    },
+    {
+      "exists": true,
+      "id": "plotly_dashboard",
+      "ok": true,
+      "path": "docs/wave_packages/runtime/pages/plotly_runtime_dashboard.html",
+      "size_bytes": 1988,
+      "weight": 10
+    },
+    {
+      "exists": true,
+      "id": "pages_bundle",
+      "ok": true,
+      "path": "docs/wave_packages/runtime/pages/runtime_bundle_index.html",
+      "size_bytes": 603,
+      "weight": 10
+    },
+    {
+      "exists": true,
+      "id": "runtime_status_md",
+      "ok": true,
+      "path": "docs/wave_packages/runtime/out/runtime_status.md",
+      "size_bytes": 403,
+      "weight": 8
+    },
+    {
+      "exists": true,
+      "id": "statistics_pca",
+      "ok": true,
+      "path": "docs/wave_packages/runtime/out/statistics_pca_report.json",
+      "size_bytes": 2164,
+      "weight": 10
+    },
+    {
+      "exists": true,
+      "id": "topology_graph",
+      "ok": true,
+      "path": "docs/wave_packages/runtime/out/topology_runtime.mmd",
+      "size_bytes": 439,
+      "weight": 8
+    },
+    {
+      "exists": true,
+      "id": "tests",
+      "ok": true,
+      "path": "tests/test_runtime_validation.py",
+      "size_bytes": 3018,
+      "weight": 10
+    },
+    {
+      "exists": true,
+      "id": "manifest",
+      "ok": true,
+      "path": "MANIFEST.json",
+      "size_bytes": 2306,
+      "weight": 10
+    },
+    {
+      "exists": true,
+      "id": "topology_runtime",
+      "ok": true,
+      "path": "docs/wave_packages/topology/topology_runtime.json",
+      "size_bytes": 1584,
+      "weight": 10
+    }
+  ],
+  "completion_percent": 100.0,
+  "status": "deployment-ready",
+  "timestamp": "2026-05-31T19:23:47.960895+00:00",
+  "todo": [
+    {
+      "item": "Confirm GitHub Pages repository settings publish docs/ or workflow artifact",
+      "priority": "high",
+      "status": "external-config-required"
+    },
+    {
+      "item": "Add real ABACUS feed source instead of default fixture payload",
+      "priority": "high",
+      "status": "integration-required"
+    },
+    {
+      "item": "Build out runtime HTML/index generators so CSS templates render without KeyError and bundle index artifacts are emitted",
+      "priority": "high",
+      "status": "buildout-required"
+    },
+    {
+      "item": "Implement non-dry-run pages regeneration adapter in runtime_bridge (current execute mode records plan only)",
+      "priority": "high",
+      "status": "framework-incomplete"
+    },
+    {
+      "item": "Persist runtime history across CI runs",
+      "priority": "high",
+      "status": "next-build"
+    },
+    {
+      "item": "Add live Plotly hydration from generated JSON reports",
+      "priority": "medium",
+      "status": "partial"
+    },
+    {
+      "item": "Add automated link checking for generated Pages bundle",
+      "priority": "medium",
+      "status": "next-build"
+    },
+    {
+      "item": "Add branch protection/status check policy after CI is stable",
+      "priority": "medium",
+      "status": "external-config-required"
+    },
+    {
+      "item": "Add release/promotion gate from PR branch to main",
+      "priority": "medium",
+      "status": "next-build"
+    }
+  ]
+}

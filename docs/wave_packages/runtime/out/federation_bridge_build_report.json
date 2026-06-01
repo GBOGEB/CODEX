@@ -1,0 +1,250 @@
+{
+  "artifacts": [
+    {
+      "exists": true,
+      "path": "docs/wave_packages/runtime/out/runtime_status.md",
+      "size_bytes": 403,
+      "status": "passed"
+    },
+    {
+      "exists": true,
+      "path": "docs/wave_packages/runtime/out/topology_runtime.mmd",
+      "size_bytes": 439,
+      "status": "passed"
+    },
+    {
+      "exists": true,
+      "path": "docs/wave_packages/runtime/out/statistics_pca_report.json",
+      "size_bytes": 2164,
+      "status": "passed"
+    },
+    {
+      "exists": true,
+      "path": "docs/wave_packages/runtime/out/deployment_readiness.json",
+      "size_bytes": 3504,
+      "status": "passed"
+    },
+    {
+      "exists": true,
+      "path": "docs/wave_packages/runtime/out/deployment_readiness.md",
+      "size_bytes": 1998,
+      "status": "passed"
+    },
+    {
+      "exists": true,
+      "path": "docs/wave_packages/runtime/out/self_healing_runtime_report.json",
+      "size_bytes": 312,
+      "status": "passed"
+    },
+    {
+      "exists": true,
+      "path": "docs/wave_packages/runtime/pages/index.html",
+      "size_bytes": 62,
+      "status": "passed"
+    },
+    {
+      "exists": true,
+      "path": "docs/wave_packages/runtime/pages/plotly_runtime_dashboard.html",
+      "size_bytes": 1988,
+      "status": "passed"
+    },
+    {
+      "exists": true,
+      "path": "docs/wave_packages/runtime/pages/plotly_runtime_dashboard.json",
+      "size_bytes": 221,
+      "status": "passed"
+    },
+    {
+      "exists": true,
+      "path": "docs/wave_packages/runtime/pages/runtime_bundle_index.html",
+      "size_bytes": 603,
+      "status": "passed"
+    },
+    {
+      "exists": true,
+      "path": "docs/wave_packages/runtime/pages/runtime_bundle_index.json",
+      "size_bytes": 374,
+      "status": "passed"
+    }
+  ],
+  "steps": [
+    {
+      "command": [
+        "/usr/bin/python",
+        "/tmp/workspace/GBOGEB/CODEX/docs/wave_packages/runtime/runtime_bridge.py"
+      ],
+      "finished": "2026-05-31T19:23:47.387345+00:00",
+      "returncode": 0,
+      "script": "runtime_bridge.py",
+      "started": "2026-05-31T19:23:47.338635+00:00",
+      "status": "passed",
+      "stderr_tail": "",
+      "stdout_tail": "{\n  \"events\": [\n    {\n      \"detail\": \"Loaded topology runtime from docs/wave_packages/topology/topology_runtime.json\",\n      \"stage\": \"topology\",\n      \"status\": \"ok\",\n      \"timestamp\": \"2026-05-31T19:23:47.380571+00:00\"\n    },\n    {\n      \"detail\": \"Payload satisfies A66 minimal bridge contract\",\n      \"stage\": \"schema_validation\",\n      \"status\": \"ok\",\n      \"timestamp\": \"2026-05-31T19:23:47.380586+00:00\"\n    },\n    {\n      \"detail\": \"federated\",\n      \"stage\": \"kpi_federation\",\n      \"status\": \"ok\",\n      \"timestamp\": \"2026-05-31T19:23:47.380595+00:00\"\n    },\n    {\n      \"detail\": \"Topology runtime state updated in memory\",\n      \"stage\": \"topology_sync\",\n      \"status\": \"ok\",\n      \"timestamp\": \"2026-05-31T19:23:47.380602+00:00\"\n    },\n    {\n      \"detail\": \"Hydrated 3 artifact(s)\",\n      \"stage\": \"runtime_hydration\",\n      \"status\": \"ok\",\n      \"timestamp\": \"2026-05-31T19:23:47.380607+00:00\"\n    },\n    {\n      \"detail\": \"planned\",\n      \"stage\": \"pages_regeneration\",\n      \"status\": \"ok\",\n      \"timestamp\": \"2026-05-31T19:23:47.380610+00:00\"\n    }\n  ],\n  \"kpi_federation\": {\n    \"metric_count\": 5,\n    \"metrics\": {\n      \"autonomous_regeneration\": 72,\n      \"bridge_orchestration\": 88,\n      \"ci_execution_closure\": 82,\n      \"pages_continuity\": 82,\n      \"topology_persistence\": 90\n    },\n    \"status\": \"federated\",\n    \"wave\": \"A66\"\n  },\n  \"mode\": \"dry_run\",\n  \"pages_regeneration\": {\n    \"actions\": [\n      \"validate MANIFEST.json\",\n      \"rebuild docs runtime bundle\",\n      \"publish docs/ via GitHub Pages workflow\",\n      \"run post-publish smoke checks\"\n    ],\n    \"dry_run\": true,\n    \"status\": \"planned\"\n  },\n  \"runtime_hydration\": {\n    \"artifact_count\": 3,\n    \"pages_continuity\": \"medium_high\",\n    \"source\": \"manual_fixture\",\n    \"status\": \"hydrated\",\n    \"topology_version\": \"0.66.1\",\n    \"wave\": \"A66\"\n  },\n  \"status\": \"ok\"\n}\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "/tmp/workspace/GBOGEB/CODEX/docs/wave_packages/runtime/synchronization_engine.py"
+      ],
+      "finished": "2026-05-31T19:23:47.430071+00:00",
+      "returncode": 0,
+      "script": "synchronization_engine.py",
+      "started": "2026-05-31T19:23:47.387403+00:00",
+      "status": "passed",
+      "stderr_tail": "",
+      "stdout_tail": "{\n  \"timestamp\": \"2026-05-31T19:23:47.424394+00:00\",\n  \"status\": \"operational\",\n  \"checks\": [\n    {\n      \"name\": \"manifest_validation\",\n      \"status\": \"ok\",\n      \"detail\": \"existing=22 missing=0\"\n    },\n    {\n      \"name\": \"topology_consistency\",\n      \"status\": \"ok\",\n      \"detail\": \"forward=7 backward=5\"\n    }\n  ]\n}\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "/tmp/workspace/GBOGEB/CODEX/docs/wave_packages/runtime/metrics_maturity.py"
+      ],
+      "finished": "2026-05-31T19:23:47.478638+00:00",
+      "returncode": 0,
+      "script": "metrics_maturity.py",
+      "started": "2026-05-31T19:23:47.430117+00:00",
+      "status": "passed",
+      "stderr_tail": "",
+      "stdout_tail": "mprove\": {\n      \"average_current\": 68.67,\n      \"count\": 3\n    },\n    \"Measure\": {\n      \"average_current\": 0.0,\n      \"count\": 0\n    }\n  },\n  \"fully_complete_count\": 0,\n  \"highest_remaining_debt\": [\n    {\n      \"completion_percent\": 48.0,\n      \"completion_ratio\": 0.48,\n      \"current\": 48.0,\n      \"delta\": 13.0,\n      \"dmaic\": \"Analyze\",\n      \"maturity_band\": \"conceptual-weak-runtime\",\n      \"name\": \"self_healing_runtime\",\n      \"previous\": 35.0,\n      \"remaining\": 52.0,\n      \"target\": 100.0\n    },\n    {\n      \"completion_percent\": 52.0,\n      \"completion_ratio\": 0.52,\n      \"current\": 52.0,\n      \"delta\": 22.0,\n      \"dmaic\": \"Improve\",\n      \"maturity_band\": \"partial-runtime\",\n      \"name\": \"abacus_feed_ingestion\",\n      \"previous\": 30.0,\n      \"remaining\": 48.0,\n      \"target\": 100.0\n    },\n    {\n      \"completion_percent\": 60.0,\n      \"completion_ratio\": 0.6,\n      \"current\": 60.0,\n      \"delta\": 15.0,\n      \"dmaic\": \"Analyze\",\n      \"maturity_band\": \"partial-runtime\",\n      \"name\": \"covariance_runtime\",\n      \"previous\": 45.0,\n      \"remaining\": 40.0,\n      \"target\": 100.0\n    },\n    {\n      \"completion_percent\": 72.0,\n      \"completion_ratio\": 0.72,\n      \"current\": 72.0,\n      \"delta\": 11.0,\n      \"dmaic\": \"Improve\",\n      \"maturity_band\": \"executable-scaffold\",\n      \"name\": \"autonomous_regeneration\",\n      \"previous\": 61.0,\n      \"remaining\": 28.0,\n      \"target\": 100.0\n    },\n    {\n      \"completion_percent\": 82.0,\n      \"completion_ratio\": 0.82,\n      \"current\": 82.0,\n      \"delta\": 8.0,\n      \"dmaic\": \"Control\",\n      \"maturity_band\": \"operational-medium-high\",\n      \"name\": \"ci_execution_closure\",\n      \"previous\": 74.0,\n      \"remaining\": 18.0,\n      \"target\": 100.0\n    }\n  ],\n  \"maturity_distribution\": {\n    \"conceptual-weak-runtime\": 1,\n    \"executable-scaffold\": 1,\n    \"operational-high\": 2,\n    \"operational-medium-high\": 3,\n    \"partial-runtime\": 2\n  },\n  \"status\": \"runtime-maturity-report\",\n  \"timestamp\": \"2026-05-31T19:23:47.471719+00:00\"\n}\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "/tmp/workspace/GBOGEB/CODEX/docs/wave_packages/runtime/covariance_runtime.py"
+      ],
+      "finished": "2026-05-31T19:23:47.515798+00:00",
+      "returncode": 0,
+      "script": "covariance_runtime.py",
+      "started": "2026-05-31T19:23:47.478687+00:00",
+      "status": "passed",
+      "stderr_tail": "",
+      "stdout_tail": "{\n  \"matrix_size\": 2,\n  \"non_negative_diagonal\": true,\n  \"score\": 100.0,\n  \"status\": \"ok\",\n  \"symmetry_error\": 0.0\n}\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "/tmp/workspace/GBOGEB/CODEX/docs/wave_packages/runtime/abacus_feed_runtime.py"
+      ],
+      "finished": "2026-05-31T19:23:47.549289+00:00",
+      "returncode": 0,
+      "script": "abacus_feed_runtime.py",
+      "started": "2026-05-31T19:23:47.515838+00:00",
+      "status": "passed",
+      "stderr_tail": "",
+      "stdout_tail": "{\n  \"source\": \"ABACUS\",\n  \"wave\": \"A67\",\n  \"timestamp\": \"2026-05-31T19:23:47.544911+00:00\",\n  \"signal_count\": 3,\n  \"signals\": {\n    \"temperature_K\": 4.5,\n    \"pressure_bar\": 1.2,\n    \"mass_flow_g_s\": 42.0\n  },\n  \"status\": \"validated\"\n}\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "/tmp/workspace/GBOGEB/CODEX/docs/wave_packages/runtime/statistics_pca_runtime.py"
+      ],
+      "finished": "2026-05-31T19:23:47.584308+00:00",
+      "returncode": 0,
+      "script": "statistics_pca_runtime.py",
+      "started": "2026-05-31T19:23:47.549325+00:00",
+      "status": "passed",
+      "stderr_tail": "",
+      "stdout_tail": "333333,\n        1.5,\n        6.833333,\n        8.666667,\n        13.0\n      ],\n      [\n        1.5,\n        1.0,\n        4.5,\n        6.0,\n        9.0\n      ],\n      [\n        6.833333,\n        4.5,\n        20.333333,\n        26.666667,\n        40.0\n      ],\n      [\n        8.666667,\n        6.0,\n        26.666667,\n        37.333333,\n        56.0\n      ],\n      [\n        13.0,\n        9.0,\n        40.0,\n        56.0,\n        84.0\n      ]\n    ]\n  },\n  \"kpi_summary\": {\n    \"average_delta\": 8.8,\n    \"average_latest\": 83.4,\n    \"strongest_metric\": \"sync\",\n    \"weakest_metric\": \"abacus\"\n  },\n  \"metrics\": [\n    \"bridge\",\n    \"sync\",\n    \"pages\",\n    \"covariance\",\n    \"abacus\"\n  ],\n  \"pca\": {\n    \"component\": \"PC1\",\n    \"eigenvalue\": 143.605555,\n    \"explained_variance_ratio\": 0.990383,\n    \"loadings\": {\n      \"abacus\": 0.764143,\n      \"bridge\": 0.120237,\n      \"covariance\": 0.509428,\n      \"pages\": 0.367832,\n      \"sync\": 0.082532\n    }\n  },\n  \"statistics\": {\n    \"abacus\": {\n      \"delta\": 18.0,\n      \"dmaic\": \"Improve\",\n      \"latest\": 70.0,\n      \"max\": 70.0,\n      \"mean\": 62.0,\n      \"min\": 52.0,\n      \"variance\": 84.0\n    },\n    \"bridge\": {\n      \"delta\": 3.0,\n      \"dmaic\": \"Control\",\n      \"latest\": 91.0,\n      \"max\": 91.0,\n      \"mean\": 89.3333,\n      \"min\": 88.0,\n      \"variance\": 2.3333\n    },\n    \"covariance\": {\n      \"delta\": 12.0,\n      \"dmaic\": \"Analyze\",\n      \"latest\": 72.0,\n      \"max\": 72.0,\n      \"mean\": 66.6667,\n      \"min\": 60.0,\n      \"variance\": 37.3333\n    },\n    \"pages\": {\n      \"delta\": 9.0,\n      \"dmaic\": \"Improve\",\n      \"latest\": 91.0,\n      \"max\": 91.0,\n      \"mean\": 86.3333,\n      \"min\": 82.0,\n      \"variance\": 20.3333\n    },\n    \"sync\": {\n      \"delta\": 2.0,\n      \"dmaic\": \"Control\",\n      \"latest\": 93.0,\n      \"max\": 93.0,\n      \"mean\": 92.0,\n      \"min\": 91.0,\n      \"variance\": 1.0\n    }\n  },\n  \"status\": \"statistics-pca-runtime-complete\",\n  \"timestamp\": \"2026-05-31T19:23:47.579685+00:00\",\n  \"waves\": [\n    \"A66\",\n    \"A67\",\n    \"A68\"\n  ]\n}\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "/tmp/workspace/GBOGEB/CODEX/docs/wave_packages/runtime/render_markdown_runtime.py"
+      ],
+      "finished": "2026-05-31T19:23:47.617647+00:00",
+      "returncode": 0,
+      "script": "render_markdown_runtime.py",
+      "started": "2026-05-31T19:23:47.584345+00:00",
+      "status": "passed",
+      "stderr_tail": "",
+      "stdout_tail": "# Runtime Status\n\nGenerated: `2026-05-31T19:23:47.613349+00:00`\n\n## Runtime Summary\n\n| Domain | Status | Score |\n|---|---|---:|\n| bridge | operational | 88 |\n| synchronization | operational | 91 |\n| covariance | emerging | 68 |\n| pages | medium-high | 82 |\n\n## Continuity\n\n- topology persistence active\n- Pages continuity scaffold active\n- synchronization runtime active\n- federation runtime executable\n\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "/tmp/workspace/GBOGEB/CODEX/docs/wave_packages/runtime/render_html_runtime.py"
+      ],
+      "finished": "2026-05-31T19:23:47.800712+00:00",
+      "returncode": 1,
+      "script": "render_html_runtime.py",
+      "started": "2026-05-31T19:23:47.617683+00:00",
+      "status": "failed",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"/tmp/workspace/GBOGEB/CODEX/docs/wave_packages/runtime/render_html_runtime.py\", line 72, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/tmp/workspace/GBOGEB/CODEX/docs/wave_packages/runtime/render_html_runtime.py\", line 61, in main\n    html = render_html(markdown)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/workspace/GBOGEB/CODEX/docs/wave_packages/runtime/render_html_runtime.py\", line 48, in render_html\n    return HTML_TEMPLATE.format(\n           ^^^^^^^^^^^^^^^^^^^^^\nKeyError: ' font-family'\n",
+      "stdout_tail": ""
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "/tmp/workspace/GBOGEB/CODEX/docs/wave_packages/runtime/topology_renderer.py"
+      ],
+      "finished": "2026-05-31T19:23:47.833483+00:00",
+      "returncode": 0,
+      "script": "topology_renderer.py",
+      "started": "2026-05-31T19:23:47.800768+00:00",
+      "status": "passed",
+      "stderr_tail": "",
+      "stdout_tail": "graph TD\n    ABACUS_feed --> bridge_runtime\n    bridge_runtime --> schema_validation\n    schema_validation --> KPI_ingestion\n    KPI_ingestion --> topology_synchronization\n    topology_synchronization --> CODEX_hydration\n    CODEX_hydration --> Pages_regeneration\n    runtime_insight --> glossary_update\n    glossary_update --> schema_refinement\n    schema_refinement --> topology_correction\n    topology_correction --> report_regeneration\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "/tmp/workspace/GBOGEB/CODEX/docs/wave_packages/runtime/plotly_runtime_dashboard.py"
+      ],
+      "finished": "2026-05-31T19:23:47.867348+00:00",
+      "returncode": 0,
+      "script": "plotly_runtime_dashboard.py",
+      "started": "2026-05-31T19:23:47.833533+00:00",
+      "status": "passed",
+      "stderr_tail": "",
+      "stdout_tail": "{\n  \"timestamp\": \"2026-05-31T19:23:47.863005+00:00\",\n  \"status\": \"plotly-dashboard-generated\",\n  \"output\": \"docs/wave_packages/runtime/pages/plotly_runtime_dashboard.html\",\n  \"metric_count\": 8,\n  \"average_score\": 77.25\n}\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "/tmp/workspace/GBOGEB/CODEX/docs/wave_packages/runtime/pages_runtime.py"
+      ],
+      "finished": "2026-05-31T19:23:47.900051+00:00",
+      "returncode": 0,
+      "script": "pages_runtime.py",
+      "started": "2026-05-31T19:23:47.867394+00:00",
+      "status": "passed",
+      "stderr_tail": "",
+      "stdout_tail": "{\n  \"timestamp\": \"2026-05-31T19:23:47.895754+00:00\",\n  \"status\": \"pages-runtime-generated\",\n  \"runtime_files\": [\n    \"docs/wave_packages/runtime/out/runtime_status.md\",\n    \"docs/wave_packages/runtime/pages/index.html\",\n    \"docs/wave_packages/runtime/pages/plotly_runtime_dashboard.html\",\n    \"docs/wave_packages/runtime/out/topology_runtime.mmd\"\n  ],\n  \"bundle_size\": 4\n}\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "/tmp/workspace/GBOGEB/CODEX/docs/wave_packages/runtime/self_healing_runtime.py"
+      ],
+      "finished": "2026-05-31T19:23:47.932548+00:00",
+      "returncode": 0,
+      "script": "self_healing_runtime.py",
+      "started": "2026-05-31T19:23:47.900087+00:00",
+      "status": "passed",
+      "stderr_tail": "",
+      "stdout_tail": "{\n  \"existing\": [\n    \"docs/wave_packages/runtime/out/runtime_status.md\",\n    \"docs/wave_packages/runtime/out/topology_runtime.mmd\"\n  ],\n  \"repair_count\": 1,\n  \"repaired\": [\n    \"docs/wave_packages/runtime/pages/index.html\"\n  ],\n  \"status\": \"repair-complete\",\n  \"timestamp\": \"2026-05-31T19:23:47.928216+00:00\"\n}\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "/tmp/workspace/GBOGEB/CODEX/docs/wave_packages/runtime/deployment_readiness.py"
+      ],
+      "finished": "2026-05-31T19:23:47.965484+00:00",
+      "returncode": 0,
+      "script": "deployment_readiness.py",
+      "started": "2026-05-31T19:23:47.932584+00:00",
+      "status": "passed",
+      "stderr_tail": "",
+      "stdout_tail": "{\n  \"status\": \"deployment-ready\",\n  \"completion_percent\": 100.0\n}\n"
+    }
+  ],
+  "summary": {
+    "artifacts_passed": 11,
+    "artifacts_total": 11,
+    "completion_percent": 95.83,
+    "status": "failed",
+    "steps_passed": 12,
+    "steps_total": 13,
+    "timestamp": "2026-05-31T19:23:47.966444+00:00"
+  }
+}
