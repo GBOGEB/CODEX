@@ -194,7 +194,36 @@ must not break governance lineage:
 7. `docs/index.html` functions as the stable human-facing runtime portal.
 8. Small PRs can progress independently without breaking governance lineage.
 
-## 8. Related documents
+## 8. Artifact Lineage Matrix
+
+This matrix formalises **who produces each artifact, who consumes it, and what
+authority it carries**. It is the executable companion to the lineage chain in
+§2 and is the reference for all subsequent PRs.
+
+**Authority levels:**
+
+- **SSOT** — source of truth; hand-authored / governed input. Nothing upstream
+  may override it.
+- **Derived** — generated *from* SSOT by an automated stage. Must never be
+  treated as a source of truth; always reproducible from SSOT.
+- **Published** — a derived artifact promoted for external consumption through a
+  gate (CD / federation), and therefore traceable back to SSOT.
+
+| Artifact | Producer | Consumer | Authority |
+| --- | --- | --- | --- |
+| `MANIFEST.json` / `MANIFEST/` / `VERSION.json` / `maps/dmaic_phase_map.yml` / `bridge_manifest.yaml` | Build (hand-authored SSOT) | CI gate | **SSOT** |
+| Evidence bundle (`reports/ci/*.json`) | CI | Portal | Derived |
+| Metrics store (`METRICS/dmaic/*.json`) | DMAIC | Dashboard | Derived |
+| Federation contract (`reports/bridge/*`, `reports/federation/*`) | Portal | Bridge / Federation | Published |
+| Release package | CD | Consumers | Published |
+
+**Invariant:** a `Derived` or `Published` artifact must never be edited by hand
+or consumed as if it were SSOT. If a value needs to change, change the SSOT and
+re-run the producing stage. This prevents the common failure mode where teams
+begin treating generated artifacts (evidence bundles, metrics, rollups) as
+sources of truth, breaking lineage.
+
+## 9. Related documents
 
 - `LINEAGE_BUILD_DEPLOY_CICD.md` — one-cycle build/deploy/CI-CD playbook
 - `GITHUB_CENTERED_SOFTWARE_DELIVERY.md` — delivery model
