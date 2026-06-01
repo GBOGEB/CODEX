@@ -5,7 +5,38 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
+from typing import Any
+
+try:
+    import yaml as _yaml
+    _YAML_AVAILABLE = True
+except ImportError:  # pragma: no cover
+    _YAML_AVAILABLE = False
+
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+
+# Required keys for every tuple document.
+REQUIRED_KEYS: frozenset[str] = frozenset({
+    "id",
+    "date",
+    "time_local",
+    "iso_week",
+    "category",
+    "theme",
+    "title",
+    "wave",
+    "status",
+    "repo",
+    "branch",
+    "source_type",
+})
+
+# Filename pattern: YY_Www_HH_MM__CATEGORY__THEME__TITLE__W###.yml
+TUPLE_FILE_PATTERN: re.Pattern[str] = re.compile(
+    r"^[0-9]{2}_W[0-9]{2}_[0-9]{2}_[0-9]{2}__[A-Z0-9_]+__[A-Z0-9_]+__[A-Z0-9_]+__W[0-9]{3}\.yml$"
+)
 
 
 def parse_simple_yaml(text: str) -> dict:
@@ -55,6 +86,70 @@ def parse_simple_yaml(text: str) -> dict:
             stack.append((indent + 2, container[key]))
 
     return root
+
+
+def load_yaml_file(path: Path) -> dict[str, Any]:
+    """Load and return a YAML tuple document as a dict.
+
+    Uses PyYAML when available, otherwise falls back to the built-in simple
+    parser.
+
+    Args:
+        path: Path to the ``.yml`` tuple file.
+
+    Returns:
+        Parsed document as a plain ``dict``.
+    """
+    text = path.read_text(encoding="utf-8")
+    if _YAML_AVAILABLE:
+        doc = _yaml.safe_load(text)
+    else:
+        doc = parse_simple_yaml(text)
+    if not isinstance(doc, dict):
+        doc = {}
+    return doc
+
+
+def iter_tuple_files(incubator_dir: Path) -> list[Path]:
+    """Return a sorted list of tuple files matching :data:`TUPLE_FILE_PATTERN`.
+
+    Args:
+        incubator_dir: Directory to scan for ``.yml`` tuple files.
+
+    Returns:
+        Sorted list of matching :class:`~pathlib.Path` objects.
+    """
+    return sorted(
+        p for p in incubator_dir.glob("*.yml")
+        if TUPLE_FILE_PATTERN.match(p.name)
+    )
+
+
+def load_tuple_documents(
+    incubator_dir: Path | None = None,
+) -> list[dict[str, Any]]:
+    """Load all tuple documents from *incubator_dir*.
+
+    Each returned document is the parsed YAML dict with an extra ``"_file"``
+    key set to ``"<dir_name>/<filename>"``.
+
+    Args:
+        incubator_dir: Directory containing tuple ``.yml`` files.  Defaults
+            to ``<repo_root>/incubator``.
+
+    Returns:
+        List of tuple document dicts, each with a ``"_file"`` key.
+    """
+    if incubator_dir is None:
+        incubator_dir = _REPO_ROOT / "incubator"
+
+    docs: list[dict[str, Any]] = []
+    for path in iter_tuple_files(incubator_dir):
+        doc = load_yaml_file(path)
+        if doc.get("id"):
+            doc["_file"] = f"{incubator_dir.name}/{path.name}"
+            docs.append(doc)
+    return docs
 
 
 def main() -> None:

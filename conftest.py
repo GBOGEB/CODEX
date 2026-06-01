@@ -1,7 +1,8 @@
-"""Root conftest: ensure the project root is on sys.path.
+"""Root conftest: ensure the project root and src/ are on sys.path.
 
-This makes the ``src`` package importable in all test modules without each
-test file having to insert the path manually.
+This makes both ``from src.<module> import ...`` and bare ``from <module>
+import ...`` patterns work in all test modules without each test file having
+to insert paths manually.
 """
 from __future__ import annotations
 
@@ -13,3 +14,9 @@ from pathlib import Path
 _ROOT = str(Path(__file__).resolve().parent)
 if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
+
+# Insert src/ so tests can import sub-packages directly, e.g.
+# ``from gistau_ch15.calculations.compressor import ...``
+_SRC = str(Path(__file__).resolve().parent / "src")
+if _SRC not in sys.path:
+    sys.path.insert(0, _SRC)

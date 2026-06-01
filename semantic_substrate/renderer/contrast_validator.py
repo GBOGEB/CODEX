@@ -97,6 +97,37 @@ class ContrastValidator:
             for token, modes in cards.items()
         }
 
+    def _hex_to_rgb(self, color: str) -> tuple[float, float, float]:
+        """Convert a 6-digit hex color string to an (r, g, b) tuple of floats in [0, 1].
+
+        Raises:
+            ValueError: If the string is not a valid 6-digit ``#RRGGBB`` hex.
+        """
+        v = color.strip()
+        if not v.startswith('#'):
+            raise ValueError(f"Invalid hex color: '{color}'")
+        body = v[1:]
+        if len(body) != 6:
+            raise ValueError(f"Invalid hex color: '{color}'")
+        try:
+            int(body, 16)
+        except ValueError:
+            raise ValueError(f"Invalid hex color: '{color}'")
+        r = int(body[0:2], 16) / 255.0
+        g = int(body[2:4], 16) / 255.0
+        b = int(body[4:6], 16) / 255.0
+        return r, g, b
+
+    def _linearize(self, channel: float) -> float:
+        """Apply sRGB linearisation to a channel value in [0, 1]."""
+        if channel <= 0.03928:
+            return channel / 12.92
+        return ((channel + 0.055) / 1.055) ** 2.4
+
+    def _relative_luminance(self, color: str) -> float:
+        """Return the WCAG relative luminance of *color* (alias for calculate_relative_luminance)."""
+        return self.calculate_relative_luminance(color)
+
     @staticmethod
     def _normalize_hex(color: str) -> str:
         v = color.strip()
@@ -138,6 +169,7 @@ class ContrastValidator:
         return {
             'contrast_ratio': ratio,
             'wcag_aa_compliant': aa,
+            'passes_wcag_aa': aa,
             'wcag_aaa_compliant': aaa,
             'action_required': not aa,
         }
