@@ -219,8 +219,8 @@ def _build_d4(report: dict) -> str:
     rows = ""
     for row in rows_data:
         member = row.get("member", "—")
-        repo = _esc(row.get("repo", "—"))
         truth_state = _esc(row.get("truth_state", "—"))
+        truth_score = float(row.get("truth_score", 0.0))
         truth_score = float(row.get("truth_score", 0.0))
 
         # lineage: has runtime_exists
