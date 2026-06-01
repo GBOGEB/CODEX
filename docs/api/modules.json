@@ -1,0 +1,4226 @@
+{
+  "generated_at": "2026-06-01T19:07:47.274269",
+  "module_count": 131,
+  "modules": {
+    "src/authenticator.py": {
+      "docstring": "GitHub Authenticator Module\n\nThis module provides authentication capabilities for both GitHub.com and GitHub Enterprise Server.\nIt uses a unified approach that eliminates the need for separate enterprise authentication logic.",
+      "members": [
+        {
+          "name": "GitHubAuthenticator",
+          "doc": "Unified GitHub authenticator for both standard and enterprise environments.\n\nSupports multiple authentication methods:\n- Personal Access Tokens\n- GitHub App authentication  \n- OAuth tokens\n\nNo separat"
+        },
+        {
+          "name": "__init__",
+          "doc": "Initialize authenticator.\n\nArgs:\n    github_interface: GitHubInterface instance to use for API calls"
+        },
+        {
+          "name": "authenticate_with_token",
+          "doc": "Authenticate using a personal access token or OAuth token.\n\nArgs:\n    token: GitHub personal access token or OAuth token\n    \nReturns:\n    Authentication result dictionary"
+        },
+        {
+          "name": "authenticate_with_app",
+          "doc": "Authenticate using GitHub App credentials.\n\nArgs:\n    app_id: GitHub App ID\n    private_key: GitHub App private key (PEM format)\n    installation_id: Installation ID for the app\n    \nReturns:\n    Auth"
+        },
+        {
+          "name": "get_current_token",
+          "doc": "Get the current cached authentication token.\n\nReturns:\n    Current token string or None if no valid token cached"
+        },
+        {
+          "name": "is_authenticated",
+          "doc": "Check if currently authenticated with a valid token."
+        },
+        {
+          "name": "authenticate_from_environment",
+          "doc": "Attempt to authenticate using environment variables.\n\nSupports:\n- GITHUB_TOKEN: Personal access token\n- GITHUB_APP_ID + GITHUB_PRIVATE_KEY + GITHUB_INSTALLATION_ID: App auth\n\nReturns:\n    Authenticati"
+        },
+        {
+          "name": "_generate_app_jwt",
+          "doc": "Generate JWT for GitHub App authentication.\n\nNote: This is a simplified implementation. In production, use a proper JWT library."
+        },
+        {
+          "name": "_get_installation_token",
+          "doc": "Get installation access token using JWT.\n\nArgs:\n    jwt_token: JWT token for the GitHub App\n    installation_id: Installation ID\n    \nReturns:\n    Installation token info or None if failed"
+        }
+      ]
+    },
+    "src/ch15_calculator_tool.py": {
+      "docstring": "Chapter 15 calculator utilities with version metadata support.",
+      "members": [
+        {
+          "name": "CalculatorVersion",
+          "doc": "Version metadata attached to calculator outputs."
+        },
+        {
+          "name": "Ch15InputSample",
+          "doc": "Input sample for Chapter 15 calculations."
+        },
+        {
+          "name": "load_version",
+          "doc": "Load version metadata from a VERSION.json-like file."
+        },
+        {
+          "name": "calculate_total_with_contingency",
+          "doc": "Return total cost after contingency percentage is applied."
+        },
+        {
+          "name": "calculate_failure_rate",
+          "doc": "Return failures per operating hour."
+        },
+        {
+          "name": "load_input_sample",
+          "doc": "Load a Chapter 15 input sample JSON and validate required fields."
+        },
+        {
+          "name": "build_sample_stats",
+          "doc": "Compute deterministic output stats for a sample input."
+        }
+      ]
+    },
+    "src/zip_pipeline.py": {
+      "docstring": "Utility pipeline for packaging conversation artifacts into ZIP archives.\n\nThe pipeline is intentionally lightweight so that it can be executed in offline\nCI environments.  It scans a source directory for conversation folders,\ncreates deterministic ZIP archives for every folder and writes a manifest ",
+      "members": [
+        {
+          "name": "ConversationArchive",
+          "doc": "Metadata describing an archived conversation."
+        },
+        {
+          "name": "ZipPipeline",
+          "doc": "Create ZIP archives and manifest metadata for conversation folders."
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "run",
+          "doc": "Run the pipeline and return the manifest path."
+        },
+        {
+          "name": "_iter_conversations",
+          "doc": ""
+        },
+        {
+          "name": "_create_archive",
+          "doc": ""
+        },
+        {
+          "name": "compute_file_hash",
+          "doc": ""
+        },
+        {
+          "name": "build_global_index",
+          "doc": ""
+        }
+      ]
+    },
+    "src/bridge_adapter.py": {
+      "docstring": "ABACUS <-> CODEX bridge adapter contracts.\n\nCODEX remains the lightweight platform layer. ABACUS remains the engineering\norchestration runtime. This module defines the boundary in code so downstream\nwork can depend on an explicit contract instead of duplicated implementations.",
+      "members": [
+        {
+          "name": "BridgeTraceStep",
+          "doc": "A managed bridge step using Greek trace naming."
+        },
+        {
+          "name": "RepoRole",
+          "doc": "Repository role in the CODEX/ABACUS bridge boundary."
+        },
+        {
+          "name": "BridgeAdapterContract",
+          "doc": "Reusable contract for bridge/adaptor integration work."
+        },
+        {
+          "name": "default_trace_steps",
+          "doc": ""
+        },
+        {
+          "name": "create_abacus_codex_contract",
+          "doc": ""
+        },
+        {
+          "name": "bridge_alignment_matrix",
+          "doc": "Expose the stable module-to-path mapping used by bridge validation."
+        },
+        {
+          "name": "_load_yaml",
+          "doc": ""
+        },
+        {
+          "name": "build_bridge_report",
+          "doc": ""
+        },
+        {
+          "name": "render_repo_ascii",
+          "doc": ""
+        },
+        {
+          "name": "as_markdown_row",
+          "doc": ""
+        },
+        {
+          "name": "ownership_lines",
+          "doc": ""
+        },
+        {
+          "name": "validate",
+          "doc": ""
+        },
+        {
+          "name": "render_markdown",
+          "doc": ""
+        }
+      ]
+    },
+    "src/mcp_sweep.py": {
+      "docstring": "Alpha A6 MCP sweep integration contracts and runtime pipeline.",
+      "members": [
+        {
+          "name": "TokenScope",
+          "doc": "Supported runtime token scopes for strict handshake enforcement."
+        },
+        {
+          "name": "SweepInputContract",
+          "doc": "Strict input contract for MCP sweep runs."
+        },
+        {
+          "name": "SweepFinding",
+          "doc": "Normalized finding from MCP sweep analysis."
+        },
+        {
+          "name": "SweepOutputContract",
+          "doc": "Normalized output contract with explicit near-miss/obsolete partitions."
+        },
+        {
+          "name": "TokenBoundaryGuard",
+          "doc": "Enforces explicit per-scope runtime handshake for token access."
+        },
+        {
+          "name": "SweepStateStore",
+          "doc": "State persistence with TTL pruning and dedupe protection."
+        },
+        {
+          "name": "LineageDeltaStore",
+          "doc": "Append-only local RTM lineage ledger for near-miss promotions."
+        },
+        {
+          "name": "PullRequestCrawler",
+          "doc": "Dedicated PR crawl service above GitHub interface/authenticator boundaries."
+        },
+        {
+          "name": "MCPSweepEngine",
+          "doc": "Bounded MCP sweep runtime pipeline with stage telemetry and lineage output."
+        },
+        {
+          "name": "validate_governance_schema",
+          "doc": "Validate Alpha A6 governance YAML shape for sweep runtime usage."
+        },
+        {
+          "name": "load_governance_config",
+          "doc": ""
+        },
+        {
+          "name": "_is_iso_timestamp",
+          "doc": ""
+        },
+        {
+          "name": "_parse_timestamp",
+          "doc": ""
+        },
+        {
+          "name": "_extract_parent_requirement",
+          "doc": ""
+        },
+        {
+          "name": "validate",
+          "doc": ""
+        },
+        {
+          "name": "to_dict",
+          "doc": ""
+        },
+        {
+          "name": "validate",
+          "doc": ""
+        },
+        {
+          "name": "to_dict",
+          "doc": ""
+        },
+        {
+          "name": "to_markdown",
+          "doc": ""
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "handshake",
+          "doc": ""
+        },
+        {
+          "name": "get_token",
+          "doc": ""
+        },
+        {
+          "name": "load",
+          "doc": ""
+        },
+        {
+          "name": "save",
+          "doc": ""
+        },
+        {
+          "name": "load_pruned",
+          "doc": ""
+        },
+        {
+          "name": "prune",
+          "doc": ""
+        },
+        {
+          "name": "should_include",
+          "doc": ""
+        },
+        {
+          "name": "record",
+          "doc": ""
+        },
+        {
+          "name": "append_near_misses",
+          "doc": ""
+        },
+        {
+          "name": "list_closed_pull_requests",
+          "doc": ""
+        },
+        {
+          "name": "get_pull_request_signals",
+          "doc": ""
+        },
+        {
+          "name": "_collect_paginated",
+          "doc": ""
+        },
+        {
+          "name": "_request_with_retry",
+          "doc": ""
+        },
+        {
+          "name": "_is_pr_in_window",
+          "doc": ""
+        },
+        {
+          "name": "_is_pr_on_target_branch",
+          "doc": ""
+        },
+        {
+          "name": "run",
+          "doc": ""
+        },
+        {
+          "name": "_load_aborted_sessions",
+          "doc": ""
+        },
+        {
+          "name": "_classify_signal",
+          "doc": ""
+        }
+      ]
+    },
+    "src/github_interface.py": {
+      "docstring": "GitHub Interface Management Module\n\nThis module provides a unified interface for both GitHub.com and GitHub Enterprise Server,\neliminating the need for code duplication between standard and enterprise environments.",
+      "members": [
+        {
+          "name": "GitHubInterface",
+          "doc": "Unified GitHub interface that works with both GitHub.com and GitHub Enterprise.\n\nThis design eliminates the need to duplicate code for enterprise environments\nby using configuration-based environment "
+        },
+        {
+          "name": "__init__",
+          "doc": "Initialize GitHub interface.\n\nArgs:\n    base_url: Base URL for GitHub instance (None for GitHub.com)\n    enterprise_mode: Whether this is a GitHub Enterprise instance\n    api_version: GitHub API versi"
+        },
+        {
+          "name": "_determine_base_url",
+          "doc": "Determine the base URL for the GitHub instance."
+        },
+        {
+          "name": "_construct_api_url",
+          "doc": "Construct the appropriate API URL for the GitHub instance."
+        },
+        {
+          "name": "get_api_headers",
+          "doc": "Get standard API headers for requests.\n\nArgs:\n    token: GitHub token for authentication\n    \nReturns:\n    Dictionary of headers for API requests"
+        },
+        {
+          "name": "test_connection",
+          "doc": "Test connection to the GitHub instance.\n\nArgs:\n    token: Optional GitHub token for authenticated requests\n    \nReturns:\n    Dictionary containing connection test results"
+        },
+        {
+          "name": "get_repository_info",
+          "doc": "Get repository information from GitHub.\n\nArgs:\n    owner: Repository owner\n    repo: Repository name  \n    token: Optional GitHub token\n    \nReturns:\n    Repository information dictionary"
+        },
+        {
+          "name": "api_get",
+          "doc": "Execute a GET request against the configured GitHub API endpoint."
+        }
+      ]
+    },
+    "src/__init__.py": {
+      "docstring": "CODEX GitHub Interface Package\n\nThis package provides unified GitHub interface management and authentication\nthat works seamlessly with both GitHub.com and GitHub Enterprise Server.\n\nKey principle: NO DUPLICATION NEEDED between standard and enterprise setups.\nAll differences are handled through conf",
+      "members": [
+        {
+          "name": "create_github_client",
+          "doc": "Factory function to create a configured GitHub client.\n\nArgs:\n    config: GitHubConfig instance, or None to load from environment\n    \nReturns:\n    Tuple of (GitHubInterface, GitHubAuthenticator)"
+        }
+      ]
+    },
+    "src/config.py": {
+      "docstring": "Configuration Management for CODEX GitHub Interface\n\nThis module handles configuration for both GitHub.com and GitHub Enterprise environments\nwithout requiring code duplication. All differences are handled through configuration.",
+      "members": [
+        {
+          "name": "GitHubConfig",
+          "doc": "Configuration class for GitHub interface.\n\nSupports both GitHub.com and Enterprise configurations through the same interface."
+        },
+        {
+          "name": "ConfigManager",
+          "doc": "Manages multiple GitHub configurations.\n\nThis allows switching between GitHub.com and enterprise configurations\nwithout code duplication."
+        },
+        {
+          "name": "from_environment",
+          "doc": "Create configuration from environment variables.\n\nEnvironment variables supported:\n- GITHUB_ENTERPRISE_URL: Enterprise GitHub URL\n- GITHUB_TOKEN: Personal access token\n- GITHUB_APP_ID: GitHub App ID\n-"
+        },
+        {
+          "name": "from_file",
+          "doc": "Load configuration from a JSON file.\n\nArgs:\n    config_path: Path to configuration JSON file\n    \nReturns:\n    GitHubConfig instance"
+        },
+        {
+          "name": "to_dict",
+          "doc": "Convert configuration to dictionary."
+        },
+        {
+          "name": "save_to_file",
+          "doc": "Save configuration to a JSON file.\n\nNote: Sensitive data like tokens and private keys are not saved."
+        },
+        {
+          "name": "is_enterprise",
+          "doc": "Check if this is an enterprise configuration."
+        },
+        {
+          "name": "get_display_name",
+          "doc": "Get a human-readable name for this configuration."
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "add_config",
+          "doc": "Add a named configuration."
+        },
+        {
+          "name": "set_current",
+          "doc": "Set the current configuration by name.\n\nArgs:\n    name: Configuration name\n    \nReturns:\n    True if successful, False if config not found"
+        },
+        {
+          "name": "get_current",
+          "doc": "Get the current configuration."
+        },
+        {
+          "name": "get_config",
+          "doc": "Get a configuration by name."
+        },
+        {
+          "name": "list_configs",
+          "doc": "List all configurations with their display names.\n\nReturns:\n    Dictionary mapping config names to display names"
+        },
+        {
+          "name": "load_from_directory",
+          "doc": "Load all configuration files from a directory.\n\nArgs:\n    config_dir: Directory containing JSON configuration files"
+        }
+      ]
+    },
+    "src/generate_human_outputs.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "project_version",
+          "doc": ""
+        },
+        {
+          "name": "calc",
+          "doc": ""
+        },
+        {
+          "name": "nav",
+          "doc": ""
+        },
+        {
+          "name": "page",
+          "doc": ""
+        },
+        {
+          "name": "run_git",
+          "doc": ""
+        },
+        {
+          "name": "normalize_iso8601",
+          "doc": ""
+        },
+        {
+          "name": "generated_at_value",
+          "doc": ""
+        },
+        {
+          "name": "git_value",
+          "doc": ""
+        },
+        {
+          "name": "render_svg_plot",
+          "doc": ""
+        },
+        {
+          "name": "build_pages",
+          "doc": ""
+        },
+        {
+          "name": "write_text",
+          "doc": ""
+        },
+        {
+          "name": "write_outputs",
+          "doc": ""
+        },
+        {
+          "name": "scale",
+          "doc": ""
+        },
+        {
+          "name": "x_pos",
+          "doc": ""
+        },
+        {
+          "name": "y_pos",
+          "doc": ""
+        }
+      ]
+    },
+    "src/thermo/helium_reference.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "HeliumState",
+          "doc": ""
+        },
+        {
+          "name": "HeliumReferenceKernel",
+          "doc": "Explicit helium reference-kernel scaffold.\n\nThis is not a substitute for HEPAK, REFPROP or validated NIST tables.\nIt is a governed internal kernel boundary for deterministic testing,\nlow-temperature s"
+        },
+        {
+          "name": "state_tp",
+          "doc": ""
+        }
+      ]
+    },
+    "src/thermo/backend_compare.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "BackendResidual",
+          "doc": "Backend comparison residual structure.\n\nFields represent absolute differences between two backends:\n- delta_h: enthalpy difference (J/kg)\n- delta_s: entropy difference (J/kg\u00b7K)\n- delta_rho: density di"
+        },
+        {
+          "name": "BackendComparisonEngine",
+          "doc": "Scientific convergence scaffold for backend comparison.\n\nTarget backends:\n- internal fallback\n- CoolProp\n- REFPROP\n- HEPAK\n- NIST references\n- GISTAU fixtures"
+        },
+        {
+          "name": "compare",
+          "doc": ""
+        }
+      ]
+    },
+    "src/thermo/saturation_stub.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "SaturationRegion",
+          "doc": ""
+        },
+        {
+          "name": "HeliumSaturationScaffold",
+          "doc": "Topology-aware helium saturation scaffold.\n\nThis does not claim validated phase-boundary accuracy. It marks regions\nwhere HEPAK/NIST/REFPROP/CoolProp convergence is required."
+        },
+        {
+          "name": "classify",
+          "doc": ""
+        }
+      ]
+    },
+    "src/orchestration/semantic_runtime_pipeline_bridge_v1.py": {
+      "docstring": "Wave 39 \u2014 Semantic Runtime Pipeline Bridge.\n\nA complete, directly executable bridge/orchestration runtime for the narrowed\nscope: convergence telemetry -> statistics -> certification -> artifacts.\n\nThis is intentionally self-contained so it can run even before the wider package\nstructure is fully no",
+      "members": [
+        {
+          "name": "RuntimeCategory",
+          "doc": ""
+        },
+        {
+          "name": "CertificationSummary",
+          "doc": ""
+        },
+        {
+          "name": "SemanticRuntimePipelineBridge",
+          "doc": "Executable orchestration pipeline for convergence analytics."
+        },
+        {
+          "name": "main",
+          "doc": ""
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "_default_categories",
+          "doc": ""
+        },
+        {
+          "name": "_phase_for_wave",
+          "doc": ""
+        },
+        {
+          "name": "_sigma_band",
+          "doc": ""
+        },
+        {
+          "name": "generate_telemetry",
+          "doc": ""
+        },
+        {
+          "name": "compute_wave_stats",
+          "doc": ""
+        },
+        {
+          "name": "compute_category_stats",
+          "doc": ""
+        },
+        {
+          "name": "compute_confidence_intervals",
+          "doc": ""
+        },
+        {
+          "name": "compute_pca",
+          "doc": ""
+        },
+        {
+          "name": "compute_anova",
+          "doc": ""
+        },
+        {
+          "name": "compute_dmaic",
+          "doc": ""
+        },
+        {
+          "name": "claimed_vs_actual",
+          "doc": ""
+        },
+        {
+          "name": "render_artifacts",
+          "doc": ""
+        },
+        {
+          "name": "execute",
+          "doc": ""
+        }
+      ]
+    },
+    "src/orchestration/autonomous_engineering_orchestrator_v1.py": {
+      "docstring": "Wave 19 \u2014 Autonomous Engineering Semantic Orchestration.\n\nThis module establishes the first autonomous orchestration runtime for the\nEngineering Semantic Runtime Platform.\n\nPurpose:\n- orchestrate engineering semantic workflows\n- coordinate graph/runtime/evidence reasoning\n- support engineering revie",
+      "members": [
+        {
+          "name": "TaskPriority",
+          "doc": ""
+        },
+        {
+          "name": "WorkflowState",
+          "doc": ""
+        },
+        {
+          "name": "SemanticTask",
+          "doc": ""
+        },
+        {
+          "name": "EngineeringRecommendation",
+          "doc": ""
+        },
+        {
+          "name": "RuntimeAgent",
+          "doc": ""
+        },
+        {
+          "name": "AutonomousEngineeringOrchestrator",
+          "doc": "Autonomous engineering semantic orchestration runtime.\n\nCapabilities:\n- semantic workflow orchestration\n- topology-aware review coordination\n- engineering recommendation generation\n- autonomous runtim"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "register_agent",
+          "doc": ""
+        },
+        {
+          "name": "create_task",
+          "doc": ""
+        },
+        {
+          "name": "assign_task",
+          "doc": ""
+        },
+        {
+          "name": "transition_task",
+          "doc": ""
+        },
+        {
+          "name": "generate_recommendation",
+          "doc": ""
+        },
+        {
+          "name": "export_json",
+          "doc": ""
+        }
+      ]
+    },
+    "src/orchestration/autonomous/wave17_autonomous_semantic_orchestrator.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "RuntimeSignal",
+          "doc": ""
+        },
+        {
+          "name": "OptimizationAction",
+          "doc": ""
+        },
+        {
+          "name": "AutonomousSemanticOrchestrator",
+          "doc": "Wave 17 Autonomous Semantic Orchestration Layer.\n\nPurpose:\n- provide autonomous runtime orchestration\n- establish semantic optimization loops\n- support adaptive engineering runtime learning\n- enable i"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "register_signal",
+          "doc": ""
+        },
+        {
+          "name": "evaluate_runtime_health",
+          "doc": ""
+        },
+        {
+          "name": "generate_optimization_actions",
+          "doc": ""
+        },
+        {
+          "name": "build_runtime_feedback_loop",
+          "doc": ""
+        }
+      ]
+    },
+    "src/reliability/convergence_assurance_runtime_v1.py": {
+      "docstring": "Wave 28 \u2014 Convergence Assurance Runtime.\n\nThis module establishes deterministic convergence assurance for recursive\nengineering semantic-runtime systems.\n\nPurpose:\n- quantify asymptotic convergence behavior\n- compute diminishing-return trajectories\n- estimate sigma-equivalent reliability progression",
+      "members": [
+        {
+          "name": "ConvergenceWaveMetric",
+          "doc": ""
+        },
+        {
+          "name": "ConvergenceAssessment",
+          "doc": ""
+        },
+        {
+          "name": "ConvergenceAssuranceRuntime",
+          "doc": "Deterministic convergence assurance runtime.\n\nCapabilities:\n- asymptotic convergence estimation\n- diminishing-return analysis\n- sigma-equivalent progression modeling\n- convergence hardening verificati"
+        },
+        {
+          "name": "generate_wave_metrics",
+          "doc": ""
+        },
+        {
+          "name": "assess_convergence",
+          "doc": ""
+        },
+        {
+          "name": "export_json",
+          "doc": ""
+        }
+      ]
+    },
+    "src/reliability/release_certification_orchestrator_v1.py": {
+      "docstring": "Wave 37 \u2014 Release Certification Orchestrator.\n\nPurpose:\n- orchestrate six-sigma-inspired semantic-runtime release certification\n- aggregate convergence evidence\n- evaluate pass/hold/fail release states\n- produce deterministic release-governance outputs",
+      "members": [
+        {
+          "name": "CertificationGate",
+          "doc": ""
+        },
+        {
+          "name": "CertificationResult",
+          "doc": ""
+        },
+        {
+          "name": "ReleaseCertificationOrchestrator",
+          "doc": "Deterministic semantic-runtime release certification orchestrator.\n\nCapabilities:\n- convergence evidence aggregation\n- sigma-threshold validation\n- release-governance assessment\n- pass/hold/fail orche"
+        },
+        {
+          "name": "evaluate_release",
+          "doc": ""
+        },
+        {
+          "name": "export_json",
+          "doc": ""
+        }
+      ]
+    },
+    "src/reliability/semantic_chaos_engineering_runtime_v1.py": {
+      "docstring": "Wave 26 \u2014 Reliability Verification & Semantic Chaos Engineering.\n\nThis module establishes semantic-runtime reliability hardening infrastructure.\n\nPurpose:\n- inject controlled semantic faults\n- simulate topology drift and OCR contamination\n- verify continuity recovery behavior\n- quantify residual ins",
+      "members": [
+        {
+          "name": "FaultType",
+          "doc": ""
+        },
+        {
+          "name": "ChaosFault",
+          "doc": ""
+        },
+        {
+          "name": "ReliabilityVerificationResult",
+          "doc": ""
+        },
+        {
+          "name": "SixSigmaConvergenceTarget",
+          "doc": ""
+        },
+        {
+          "name": "SemanticChaosEngineeringRuntime",
+          "doc": "Reliability-hardening runtime for semantic engineering systems.\n\nCapabilities:\n- semantic fault injection\n- topology drift simulation\n- OCR contamination resilience testing\n- governance degradation te"
+        },
+        {
+          "name": "gap",
+          "doc": ""
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "inject_fault",
+          "doc": ""
+        },
+        {
+          "name": "verify_recovery",
+          "doc": ""
+        },
+        {
+          "name": "evaluate_target",
+          "doc": ""
+        },
+        {
+          "name": "export_json",
+          "doc": ""
+        }
+      ]
+    },
+    "src/reliability/statistical_convergence_synthesis_runtime_v1.py": {
+      "docstring": "Wave 33 \u2014 Statistical Convergence Synthesis Runtime.\n\nPurpose:\n- synthesize multiple statistical convergence signals\n- combine ANOVA, PCA, CI, asymptotic and residual analysis\n- compute engineering-confidence arguments\n- quantify evidence-strength for deterministic stabilization claims",
+      "members": [
+        {
+          "name": "StatisticalSignal",
+          "doc": ""
+        },
+        {
+          "name": "ConvergenceEvidence",
+          "doc": ""
+        },
+        {
+          "name": "EngineeringArgument",
+          "doc": ""
+        },
+        {
+          "name": "StatisticalConvergenceSynthesisRuntime",
+          "doc": "Multi-statistical convergence synthesis runtime.\n\nCapabilities:\n- statistical evidence fusion\n- convergence-confidence estimation\n- deterministic stabilization assessment\n- sigma-equivalent evidence s"
+        },
+        {
+          "name": "synthesize",
+          "doc": ""
+        },
+        {
+          "name": "export_json",
+          "doc": ""
+        }
+      ]
+    },
+    "src/reliability/topology_fault_injection_matrix_v1.py": {
+      "docstring": "Wave 27 \u2014 Topology Fault Injection Matrix.\n\nThis module extends semantic chaos engineering into structured reliability\nverification matrices for topology-runtime validation.\n\nPurpose:\n- execute repeatable fault-injection campaigns\n- quantify subsystem resilience against semantic-runtime degradation\n",
+      "members": [
+        {
+          "name": "FaultInjectionScenario",
+          "doc": ""
+        },
+        {
+          "name": "FaultInjectionResult",
+          "doc": ""
+        },
+        {
+          "name": "TopologyFaultInjectionMatrix",
+          "doc": "Structured semantic-runtime fault injection matrix.\n\nCapabilities:\n- topology drift testing\n- OCR corruption campaigns\n- governance degradation simulation\n- reliability trend quantification\n- sigma-eq"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "register_scenario",
+          "doc": ""
+        },
+        {
+          "name": "execute_scenario",
+          "doc": ""
+        },
+        {
+          "name": "summarize_matrix",
+          "doc": ""
+        },
+        {
+          "name": "export_json",
+          "doc": ""
+        }
+      ]
+    },
+    "src/visual_runtime/html/wave30_html_runtime_core.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "RuntimeCard",
+          "doc": ""
+        },
+        {
+          "name": "RuntimeSlide",
+          "doc": ""
+        },
+        {
+          "name": "HTMLRuntimeCore",
+          "doc": "Wave 30 pivot runtime.\n\nConverts normalized engineering slide content into browser-ready HTML.\nThis is the visual execution layer after the semantic architecture pivot."
+        },
+        {
+          "name": "render_card",
+          "doc": ""
+        },
+        {
+          "name": "render_slide",
+          "doc": ""
+        },
+        {
+          "name": "render_document",
+          "doc": ""
+        }
+      ]
+    },
+    "src/inventory/multiformat_inventory_v2.py": {
+      "docstring": "Wave 14 \u2014 Multi-format Inventory and Extraction Pipeline V2.\n\nThis module implements the reusable abstraction layer for the Engineering Deck\nConvergence Platform. It is intentionally plugin-style rather than one large\nscript so new engineering formats can be added safely.\n\nPhase coverage in this fil",
+      "members": [
+        {
+          "name": "FileInventoryRecord",
+          "doc": ""
+        },
+        {
+          "name": "ExtractorPlugin",
+          "doc": ""
+        },
+        {
+          "name": "BaseExtractor",
+          "doc": ""
+        },
+        {
+          "name": "PptxExtractor",
+          "doc": ""
+        },
+        {
+          "name": "SvgExtractor",
+          "doc": ""
+        },
+        {
+          "name": "PdfExtractor",
+          "doc": ""
+        },
+        {
+          "name": "SpreadsheetExtractor",
+          "doc": ""
+        },
+        {
+          "name": "DocxExtractor",
+          "doc": ""
+        },
+        {
+          "name": "ImageExtractor",
+          "doc": ""
+        },
+        {
+          "name": "VisioExtractor",
+          "doc": ""
+        },
+        {
+          "name": "DrawioExtractor",
+          "doc": ""
+        },
+        {
+          "name": "DwgExtractor",
+          "doc": ""
+        },
+        {
+          "name": "HtmlExtractor",
+          "doc": ""
+        },
+        {
+          "name": "MultiFormatInventoryV2",
+          "doc": ""
+        },
+        {
+          "name": "extract_summary",
+          "doc": ""
+        },
+        {
+          "name": "extract_summary",
+          "doc": ""
+        },
+        {
+          "name": "extract_summary",
+          "doc": ""
+        },
+        {
+          "name": "extract_summary",
+          "doc": ""
+        },
+        {
+          "name": "extract_summary",
+          "doc": ""
+        },
+        {
+          "name": "extract_summary",
+          "doc": ""
+        },
+        {
+          "name": "extract_summary",
+          "doc": ""
+        },
+        {
+          "name": "extract_summary",
+          "doc": ""
+        },
+        {
+          "name": "extract_summary",
+          "doc": ""
+        },
+        {
+          "name": "extract_summary",
+          "doc": ""
+        },
+        {
+          "name": "extract_summary",
+          "doc": ""
+        },
+        {
+          "name": "extract_summary",
+          "doc": ""
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "scan",
+          "doc": ""
+        },
+        {
+          "name": "_iter_supported_files",
+          "doc": ""
+        },
+        {
+          "name": "_record_file",
+          "doc": ""
+        },
+        {
+          "name": "_plugin_for",
+          "doc": ""
+        },
+        {
+          "name": "_hash_file",
+          "doc": ""
+        },
+        {
+          "name": "_naming_group",
+          "doc": ""
+        },
+        {
+          "name": "_classify_tags",
+          "doc": ""
+        },
+        {
+          "name": "_classify_drawing_type",
+          "doc": ""
+        },
+        {
+          "name": "_assign_duplicate_groups",
+          "doc": ""
+        },
+        {
+          "name": "to_json",
+          "doc": ""
+        }
+      ]
+    },
+    "src/autonomy/self_healing/wave19_recursive_semantic_self_healing.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "DriftCondition",
+          "doc": ""
+        },
+        {
+          "name": "HealingAction",
+          "doc": ""
+        },
+        {
+          "name": "RecursiveSemanticSelfHealing",
+          "doc": "Wave 19 Recursive Semantic Self-Healing Layer.\n\nPurpose:\n- provide autonomous semantic correction\n- stabilize recursive runtime cognition\n- remediate semantic drift conditions\n- support adaptive evide"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "register_drift_condition",
+          "doc": ""
+        },
+        {
+          "name": "generate_healing_actions",
+          "doc": ""
+        },
+        {
+          "name": "calculate_runtime_stability",
+          "doc": ""
+        },
+        {
+          "name": "build_self_healing_summary",
+          "doc": ""
+        }
+      ]
+    },
+    "src/abacus_render_pipeline/orchestrate.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "AbacusRuntimeEngineA6",
+          "doc": ""
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "_load_theme_invariants",
+          "doc": ""
+        },
+        {
+          "name": "hex_to_luminance",
+          "doc": ""
+        },
+        {
+          "name": "process_contrast",
+          "doc": ""
+        },
+        {
+          "name": "_build_runtime_metrics",
+          "doc": ""
+        },
+        {
+          "name": "generate_system_outputs",
+          "doc": ""
+        }
+      ]
+    },
+    "src/abacus_render_pipeline/runtime_governance.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "RuntimeGovernanceA61",
+          "doc": "G5 Post-Commissioning Layout & Structural QA Validator Engine.\nHandles overflow warnings, layout spacing, and formatting parity.\n\nTODO:\n- Integrate this validator into the render pipeline execution lo"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "validate_spacing_matrix",
+          "doc": "Verifies that element margins adhere to the semantic structural grid."
+        },
+        {
+          "name": "verify_pdf_anchor_integrity",
+          "doc": "Guarantees that all document header elements contain matching HTML reference anchors."
+        },
+        {
+          "name": "detect_layout_overflow",
+          "doc": "Flag potential container viewport overflows during HTML rendering sweeps."
+        },
+        {
+          "name": "_slugify_header",
+          "doc": "Normalize a Markdown header into a lowercase dash-separated anchor slug."
+        }
+      ]
+    },
+    "src/pipeline/__init__.py": {
+      "docstring": "Pipeline package.",
+      "members": []
+    },
+    "src/pipeline/orchestrator.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "PipelineStage",
+          "doc": ""
+        },
+        {
+          "name": "PipelineRun",
+          "doc": ""
+        },
+        {
+          "name": "DeterministicPipelineOrchestrator",
+          "doc": "Deterministic publication orchestration scaffold.\n\nTarget lifecycle:\n\n    extract\n        -> normalize\n        -> validate\n        -> render\n        -> publish\n        -> lineage\n\nThe orchestrator bec"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "run",
+          "doc": ""
+        }
+      ]
+    },
+    "src/qplant_presentation_engine/federation_scree.py": {
+      "docstring": "Federation scree analysis: PC1\u2013PC5 variance explained across member repositories.\n\nMembers: ABACUS, ARTSTYLE, QPLANT, CODEX\nComponents: pc1, pc2, pc3, pc4, pc5",
+      "members": [
+        {
+          "name": "FederationScreeError",
+          "doc": "Raised when scree analysis fails."
+        },
+        {
+          "name": "FederationScree",
+          "doc": "Scree component analysis for federation metrics.\n\nExtracts PC1\u2013PC5 variance-explained values from per-repository metrics and\nproduces a weighted federation-level scree record.\n\nParameters\n----------\nw"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "_get_scree",
+          "doc": ""
+        },
+        {
+          "name": "_load_runtime_registry_dir",
+          "doc": ""
+        },
+        {
+          "name": "aggregate_scree",
+          "doc": "Compute weighted average scree components across federation members.\n\nParameters\n----------\nrepo_metrics:\n    Mapping from member name to its metrics dict.\n\nReturns\n-------\ndict\n    ``{\"pc1\": float, \""
+        },
+        {
+          "name": "rank_components",
+          "doc": "Return components sorted by variance explained (descending).\n\nParameters\n----------\nscree:\n    Scree dict (e.g. from ``aggregate_scree``).\n\nReturns\n-------\nlist of (component_name, variance_explained)"
+        },
+        {
+          "name": "cumulative_variance",
+          "doc": "Return cumulative variance explained in ranked order.\n\nParameters\n----------\nscree:\n    Scree dict (e.g. from ``aggregate_scree``).\n\nReturns\n-------\ndict\n    Component names mapped to their cumulative"
+        },
+        {
+          "name": "build_scree_record",
+          "doc": "Build the full scree record for federation output (not yet written to disk)."
+        },
+        {
+          "name": "build_runtime_status",
+          "doc": ""
+        },
+        {
+          "name": "build_truth_matrix",
+          "doc": "Return runtime truth-state view aligned to scree members."
+        },
+        {
+          "name": "write_scree",
+          "doc": "Write ``federation_scree.json`` to *output_path* and return the record.\n\nParent directories are created if they do not exist."
+        }
+      ]
+    },
+    "src/qplant_presentation_engine/federation_export.py": {
+      "docstring": "Canonical federation telemetry artifact export for ABACUS dashboard runtime.",
+      "members": [
+        {
+          "name": "FederationExportError",
+          "doc": "Raised when federation artifact export fails."
+        },
+        {
+          "name": "FederationArtifactExporter",
+          "doc": "Export federation rollup, scree, and bottleneck artifacts."
+        },
+        {
+          "name": "generate_federation_artifacts",
+          "doc": "Generate canonical federation telemetry export artifacts."
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "_canonical_members",
+          "doc": ""
+        },
+        {
+          "name": "_load_repo_metrics",
+          "doc": ""
+        },
+        {
+          "name": "_metrics",
+          "doc": ""
+        },
+        {
+          "name": "_validate_numeric",
+          "doc": ""
+        },
+        {
+          "name": "_validate_rollup_member_metrics",
+          "doc": ""
+        },
+        {
+          "name": "_validate_scree_member_metrics",
+          "doc": ""
+        },
+        {
+          "name": "build_federation_rollup_export",
+          "doc": ""
+        },
+        {
+          "name": "build_federation_scree_export",
+          "doc": ""
+        },
+        {
+          "name": "build_bottleneck_report",
+          "doc": ""
+        },
+        {
+          "name": "write_outputs",
+          "doc": ""
+        }
+      ]
+    },
+    "src/qplant_presentation_engine/federation_rollup.py": {
+      "docstring": "Federation metric rollup: weighted aggregation across member repositories.\n\nMembers: ABACUS, ARTSTYLE, QPLANT, CODEX\n\nSupported metrics:\n  - forward_pca   (convergence_score, variance_explained[5])\n  - backward_pca  (regression_score,  variance_explained[5])\n  - geti          Governance/Engineering ",
+      "members": [
+        {
+          "name": "FederationRollupError",
+          "doc": "Raised when federation rollup computation fails."
+        },
+        {
+          "name": "FederationRollup",
+          "doc": "Weighted aggregation of federation metrics across member repositories.\n\nParameters\n----------\nweights:\n    Per-member weight mapping.  Must sum to 1.0 and include all four\n    members.  Defaults to ``"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "_validate_weights",
+          "doc": ""
+        },
+        {
+          "name": "_metrics",
+          "doc": ""
+        },
+        {
+          "name": "_load_runtime_registry_dir",
+          "doc": ""
+        },
+        {
+          "name": "_weighted_scalar",
+          "doc": ""
+        },
+        {
+          "name": "_weighted_pca",
+          "doc": ""
+        },
+        {
+          "name": "aggregate",
+          "doc": "Return weighted federation-level aggregated metrics.\n\nParameters\n----------\nrepo_metrics:\n    Mapping from member name (ABACUS / ARTSTYLE / QPLANT / CODEX)\n    to that repository's metrics dict (as lo"
+        },
+        {
+          "name": "compute_bottleneck",
+          "doc": "Identify repositories whose scalar metrics fall below the threshold.\n\nA member is flagged when its value for a scalar metric is less than\n``threshold_factor * federation_average``.\n\nParameters\n-------"
+        },
+        {
+          "name": "build_rollup_record",
+          "doc": "Build the complete rollup record (not yet written to disk)."
+        },
+        {
+          "name": "build_runtime_status",
+          "doc": "Build runtime evidence summary for federation members."
+        },
+        {
+          "name": "write_rollup",
+          "doc": "Write ``federation_rollup.json`` to *output_path* and return the record.\n\nParent directories are created if they do not exist."
+        },
+        {
+          "name": "write_bottleneck_report",
+          "doc": "Write ``bottleneck_report.json`` to *output_path* and return the report.\n\nParent directories are created if they do not exist."
+        }
+      ]
+    },
+    "src/qplant_presentation_engine/__init__.py": {
+      "docstring": "qplant_presentation_engine \u2013 federation metrics rollup and scree analysis.",
+      "members": []
+    },
+    "src/qplant_presentation_engine/runtime_registry.py": {
+      "docstring": "Runtime registry generation for federation runtime evidence.",
+      "members": [
+        {
+          "name": "RuntimeRegistryError",
+          "doc": "Raised when runtime registry generation fails."
+        },
+        {
+          "name": "RuntimeRegistry",
+          "doc": "Build runtime evidence outputs from federation registry artifacts."
+        },
+        {
+          "name": "RuntimeRegistryError",
+          "doc": "Raised when runtime registry generation fails."
+        },
+        {
+          "name": "RuntimeRegistry",
+          "doc": "Build runtime evidence registry and report artifacts."
+        },
+        {
+          "name": "generate_runtime_registry",
+          "doc": "Generate runtime registry and runtime registry report artifacts."
+        },
+        {
+          "name": "default_runtime_registry_dir",
+          "doc": "Return the repository default runtime registry directory."
+        },
+        {
+          "name": "load_runtime_registry",
+          "doc": "Load runtime registry evidence records from JSON files."
+        },
+        {
+          "name": "main",
+          "doc": ""
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "_canonical_members",
+          "doc": ""
+        },
+        {
+          "name": "_member_from_repo",
+          "doc": ""
+        },
+        {
+          "name": "_validate_entry",
+          "doc": ""
+        },
+        {
+          "name": "_validate_pca_block",
+          "doc": ""
+        },
+        {
+          "name": "load_runtime_entries",
+          "doc": ""
+        },
+        {
+          "name": "build_registry_record",
+          "doc": ""
+        },
+        {
+          "name": "_runtime_status",
+          "doc": ""
+        },
+        {
+          "name": "build_truth_matrix",
+          "doc": ""
+        },
+        {
+          "name": "_load_repo_metrics",
+          "doc": ""
+        },
+        {
+          "name": "build_runtime_report",
+          "doc": ""
+        },
+        {
+          "name": "write_outputs",
+          "doc": ""
+        },
+        {
+          "name": "_validate_weights",
+          "doc": ""
+        },
+        {
+          "name": "load_runtime_records",
+          "doc": ""
+        },
+        {
+          "name": "build_truth_matrix",
+          "doc": ""
+        },
+        {
+          "name": "build_registry_record",
+          "doc": ""
+        },
+        {
+          "name": "build_report",
+          "doc": ""
+        },
+        {
+          "name": "write_registry",
+          "doc": ""
+        },
+        {
+          "name": "write_report",
+          "doc": ""
+        },
+        {
+          "name": "generate",
+          "doc": ""
+        }
+      ]
+    },
+    "src/agents/semantic/wave20_autonomous_engineering_agents.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "SemanticTask",
+          "doc": ""
+        },
+        {
+          "name": "AgentDecision",
+          "doc": ""
+        },
+        {
+          "name": "AutonomousEngineeringAgent",
+          "doc": "Wave 20 Autonomous Engineering Semantic Agent.\n\nPurpose:\n- provide autonomous engineering reasoning\n- support distributed semantic orchestration\n- enable recursive convergence planning\n- establish gen"
+        },
+        {
+          "name": "SemanticAgentCoordinator",
+          "doc": "Distributed semantic agent orchestration layer."
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "assign_task",
+          "doc": ""
+        },
+        {
+          "name": "evaluate_task",
+          "doc": ""
+        },
+        {
+          "name": "build_agent_summary",
+          "doc": ""
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "register_agent",
+          "doc": ""
+        },
+        {
+          "name": "distribute_task",
+          "doc": ""
+        },
+        {
+          "name": "build_coordination_summary",
+          "doc": ""
+        }
+      ]
+    },
+    "src/topology/connector_binding_runtime_v1.py": {
+      "docstring": "Wave 47 \u2014 Connector Binding and Optimized Flow Runtime.\n\nExecutable upgrades for the Wave 46 TODO list:\n- true connector-edge binding: binds connector-like shapes to nearest source/target nodes\n- engineering line continuity: chains same-slide directional edges into continuity groups\n- arrow detectio",
+      "members": [
+        {
+          "name": "BoundNode",
+          "doc": ""
+        },
+        {
+          "name": "BoundConnector",
+          "doc": ""
+        },
+        {
+          "name": "BoundEdge",
+          "doc": ""
+        },
+        {
+          "name": "ConnectorBindingRuntime",
+          "doc": "Connector-bound semantic topology reconstruction."
+        },
+        {
+          "name": "main",
+          "doc": ""
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "center",
+          "doc": ""
+        },
+        {
+          "name": "distance",
+          "doc": ""
+        },
+        {
+          "name": "infer_direction",
+          "doc": ""
+        },
+        {
+          "name": "build_nodes",
+          "doc": ""
+        },
+        {
+          "name": "build_connectors",
+          "doc": ""
+        },
+        {
+          "name": "nearest_node",
+          "doc": ""
+        },
+        {
+          "name": "bind_connectors",
+          "doc": ""
+        },
+        {
+          "name": "optimize_edges",
+          "doc": ""
+        },
+        {
+          "name": "assign_continuity_groups",
+          "doc": ""
+        },
+        {
+          "name": "execute",
+          "doc": ""
+        }
+      ]
+    },
+    "src/topology/pptx_topology_reconstruction_runtime_v1.py": {
+      "docstring": "Wave 45 \u2014 PPTX Topology Reconstruction Runtime.\n\nPurpose:\n- reconstruct engineering topology from PPTX geometry telemetry\n- infer nodes and edges from shapes/connectors\n- generate graph-ready topology telemetry\n- bridge geometry semantics into engineering-runtime graphs\n\nCurrent scope:\n- PPTX geomet",
+      "members": [
+        {
+          "name": "TopologyNode",
+          "doc": ""
+        },
+        {
+          "name": "TopologyEdge",
+          "doc": ""
+        },
+        {
+          "name": "PPTXTopologyReconstructionRuntime",
+          "doc": "Topology reconstruction from PPTX geometry telemetry."
+        },
+        {
+          "name": "main",
+          "doc": ""
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "center",
+          "doc": ""
+        },
+        {
+          "name": "distance",
+          "doc": ""
+        },
+        {
+          "name": "build_nodes",
+          "doc": ""
+        },
+        {
+          "name": "build_edges",
+          "doc": ""
+        },
+        {
+          "name": "execute",
+          "doc": ""
+        }
+      ]
+    },
+    "src/topology/engineering_graph_runtime_v1.py": {
+      "docstring": "Wave 16 \u2014 Engineering Topology Graph Runtime.\n\nThis module establishes the first executable engineering graph runtime for the\nEngineering Semantic Runtime Platform.\n\nPurpose:\n- model engineering systems as traversable graphs\n- normalize subsystem interfaces\n- represent TP/MIT/MIS semantic edges\n- su",
+      "members": [
+        {
+          "name": "NodeType",
+          "doc": ""
+        },
+        {
+          "name": "EdgeType",
+          "doc": ""
+        },
+        {
+          "name": "SemanticNode",
+          "doc": ""
+        },
+        {
+          "name": "SemanticEdge",
+          "doc": ""
+        },
+        {
+          "name": "EngineeringGraph",
+          "doc": ""
+        },
+        {
+          "name": "EngineeringTopologyRuntime",
+          "doc": "Executable engineering graph runtime.\n\nSupports:\n- subsystem dependency traversal\n- utility-flow graph extraction\n- MIT/MIS/MCS interface mapping\n- HVAC/PCW/RCW engineering topology\n- graph-aware sema"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "register_graph",
+          "doc": ""
+        },
+        {
+          "name": "add_node",
+          "doc": ""
+        },
+        {
+          "name": "add_edge",
+          "doc": ""
+        },
+        {
+          "name": "neighbors",
+          "doc": ""
+        },
+        {
+          "name": "classify_interface",
+          "doc": ""
+        },
+        {
+          "name": "export_graph_json",
+          "doc": ""
+        }
+      ]
+    },
+    "src/topology/pptx_topology_reconstruction_runtime_v2.py": {
+      "docstring": "Wave 45 \u2014 PPTX Topology Reconstruction Runtime.\n\nPurpose:\n- reconstruct engineering topology from PPTX geometry telemetry\n- infer nodes and edges from shapes/connectors\n- generate graph-ready topology telemetry\n- bridge geometry semantics into engineering-runtime graphs",
+      "members": [
+        {
+          "name": "TopologyNode",
+          "doc": ""
+        },
+        {
+          "name": "TopologyEdge",
+          "doc": ""
+        },
+        {
+          "name": "PPTXTopologyReconstructionRuntime",
+          "doc": ""
+        },
+        {
+          "name": "main",
+          "doc": ""
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "center",
+          "doc": ""
+        },
+        {
+          "name": "distance",
+          "doc": ""
+        },
+        {
+          "name": "build_nodes",
+          "doc": ""
+        },
+        {
+          "name": "build_edges",
+          "doc": ""
+        },
+        {
+          "name": "execute",
+          "doc": ""
+        }
+      ]
+    },
+    "src/topology/semantic_flow_runtime_v1.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "SemanticFlowRuntime",
+          "doc": ""
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "execute",
+          "doc": ""
+        }
+      ]
+    },
+    "src/ai/engineering_semantic_reasoning_runtime_v1.py": {
+      "docstring": "Wave 18 \u2014 AI Semantic Reasoning & Engineering Intent Runtime.\n\nThis module introduces engineering semantic reasoning primitives for the\nEngineering Semantic Runtime Platform.\n\nPurpose:\n- infer engineering intent from topology\n- detect semantic anomalies\n- reason about subsystem dependencies\n- suppor",
+      "members": [
+        {
+          "name": "EngineeringIntent",
+          "doc": ""
+        },
+        {
+          "name": "SemanticAnomaly",
+          "doc": ""
+        },
+        {
+          "name": "DependencyInference",
+          "doc": ""
+        },
+        {
+          "name": "EngineeringSemanticReasoningRuntime",
+          "doc": "Graph-assisted engineering semantic reasoning runtime.\n\nCapabilities:\n- infer subsystem operational intent\n- identify missing engineering relationships\n- detect topology anomalies\n- support engineerin"
+        },
+        {
+          "name": "infer_intent",
+          "doc": ""
+        },
+        {
+          "name": "detect_anomalies",
+          "doc": ""
+        },
+        {
+          "name": "infer_dependencies",
+          "doc": ""
+        },
+        {
+          "name": "export_json",
+          "doc": ""
+        }
+      ]
+    },
+    "src/keb/keb_client.py": {
+      "docstring": "KEB (Knowledge Exchange Bridge) client.\n\nProvides read-only access to the shared governance artifacts hosted in\n``KEB/governance/``:\n\n- ``GLOSSARY.yml``       \u2014 authoritative term definitions\n- ``governance_rules.yml`` \u2014 runtime debug and convergence rules\n- ``metrics.yml``        \u2014 KPI categories a",
+      "members": [
+        {
+          "name": "KebClient",
+          "doc": "Read-only client for KEB governance artifacts.\n\nParameters\n----------\nkeb_dir:\n    Path to the ``KEB/governance/`` directory.  Defaults to the standard\n    location inside the CODEX repository clone.\n"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "_load_yaml",
+          "doc": ""
+        },
+        {
+          "name": "resolve_term",
+          "doc": "Look up *term* in the KEB glossary.\n\nParameters\n----------\nterm:\n    Case-sensitive term key (e.g. ``\"KEB\"``, ``\"DRIFT\"``).\n\nReturns\n-------\nstr or None\n    The definition string, or ``None`` if the t"
+        },
+        {
+          "name": "list_terms",
+          "doc": "Return all term keys defined in the KEB glossary."
+        },
+        {
+          "name": "get_governance_rules",
+          "doc": "Return all runtime-debug and convergence governance rules.\n\nReturns\n-------\nlist[dict]\n    Each entry has ``\"id\"`` and ``\"rule\"`` (or ``\"text\"``) keys."
+        },
+        {
+          "name": "get_kpi_categories",
+          "doc": "Return the KPI category names from KEB metrics."
+        },
+        {
+          "name": "get_confidence_levels",
+          "doc": "Return confidence-level range definitions from KEB metrics."
+        }
+      ]
+    },
+    "src/keb/__init__.py": {
+      "docstring": "KEB (Knowledge Exchange Bridge) client package.\n\nLoads shared governance vocabulary and rules from KEB/governance/ and exposes\nthem for consumption by other CODEX modules.",
+      "members": []
+    },
+    "src/continuity/semantic_continuity_fabric_runtime_v1.py": {
+      "docstring": "Wave 25 \u2014 Recursive Engineering Semantic Continuity Fabric.\n\nThis module establishes persistent semantic-continuity infrastructure capable of:\n- snapshotting semantic runtime state\n- preserving topology continuity across runtime cycles\n- tracking engineering semantic lineage\n- restoring continuity a",
+      "members": [
+        {
+          "name": "ContinuityState",
+          "doc": ""
+        },
+        {
+          "name": "SemanticStateSnapshot",
+          "doc": ""
+        },
+        {
+          "name": "SemanticLineageEvent",
+          "doc": ""
+        },
+        {
+          "name": "ContinuityFabricRecord",
+          "doc": ""
+        },
+        {
+          "name": "SemanticContinuityFabricRuntime",
+          "doc": "Persistent recursive semantic-continuity runtime.\n\nCapabilities:\n- semantic state snapshotting\n- topology/evidence/governance continuity tracking\n- semantic lineage persistence\n- continuity-score calc"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "create_snapshot",
+          "doc": ""
+        },
+        {
+          "name": "register_fabric",
+          "doc": ""
+        },
+        {
+          "name": "attach_snapshot_to_fabric",
+          "doc": ""
+        },
+        {
+          "name": "create_lineage_event",
+          "doc": ""
+        },
+        {
+          "name": "attach_lineage_to_fabric",
+          "doc": ""
+        },
+        {
+          "name": "calculate_continuity_score",
+          "doc": ""
+        },
+        {
+          "name": "restore_latest_snapshot",
+          "doc": ""
+        },
+        {
+          "name": "export_json",
+          "doc": ""
+        }
+      ]
+    },
+    "src/runtime/interactive_knowledge_runtime_v1.py": {
+      "docstring": "Wave 17 \u2014 Interactive Engineering Knowledge Runtime.\n\nThis module introduces the first interactive engineering-runtime layer.\n\nPurpose:\n- traverse engineering semantic graphs\n- connect evidence assets to topology nodes\n- support semantic engineering search\n- enable subsystem dependency exploration\n-",
+      "members": [
+        {
+          "name": "EvidenceReference",
+          "doc": ""
+        },
+        {
+          "name": "RuntimeView",
+          "doc": ""
+        },
+        {
+          "name": "SemanticSearchResult",
+          "doc": ""
+        },
+        {
+          "name": "InteractiveKnowledgeRuntime",
+          "doc": "Interactive engineering-runtime orchestration.\n\nProvides:\n- semantic engineering navigation\n- graph-aware search\n- evidence-linked topology traversal\n- subsystem dependency exploration\n- runtime-view "
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "register_node",
+          "doc": ""
+        },
+        {
+          "name": "register_edge",
+          "doc": ""
+        },
+        {
+          "name": "link_evidence",
+          "doc": ""
+        },
+        {
+          "name": "semantic_search",
+          "doc": ""
+        },
+        {
+          "name": "generate_runtime_view",
+          "doc": ""
+        },
+        {
+          "name": "export_runtime_view",
+          "doc": ""
+        }
+      ]
+    },
+    "src/runtime/convergence_execution_engine_v1.py": {
+      "docstring": "Wave 38 \u2014 Convergence Execution Engine.\n\nExecutable semantic-runtime convergence engine.\n\nThis module moves beyond scaffolding and provides:\n- executable convergence analytics\n- PCA and ANOVA execution\n- heatmap generation\n- confidence interval computation\n- certification scoring\n- lineage-aware sem",
+      "members": [
+        {
+          "name": "WaveMetric",
+          "doc": ""
+        },
+        {
+          "name": "CertificationSummary",
+          "doc": ""
+        },
+        {
+          "name": "ConvergenceExecutionEngine",
+          "doc": "Fully executable convergence analytics runtime.\n\nFeatures:\n- generates convergence datasets\n- computes PCA\n- computes ANOVA\n- computes confidence intervals\n- generates PNG plots\n- exports certificatio"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "generate_dataset",
+          "doc": ""
+        },
+        {
+          "name": "compute_statistics",
+          "doc": ""
+        },
+        {
+          "name": "generate_progression_plot",
+          "doc": ""
+        },
+        {
+          "name": "generate_heatmap",
+          "doc": ""
+        },
+        {
+          "name": "export_summary",
+          "doc": ""
+        },
+        {
+          "name": "execute",
+          "doc": ""
+        }
+      ]
+    },
+    "src/runtime/orchestration/wave12_multi_deck_runtime_orchestrator.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "DeckManifest",
+          "doc": ""
+        },
+        {
+          "name": "RuntimeTemplate",
+          "doc": ""
+        },
+        {
+          "name": "MultiDeckRuntimeOrchestrator",
+          "doc": "Wave 12 Runtime Generalization + Multi-Deck Architecture.\n\nPurpose:\n- orchestrate multiple engineering decks\n- support reusable renderer templates\n- normalize convergence across domains\n- enable gener"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "register_deck",
+          "doc": ""
+        },
+        {
+          "name": "register_template",
+          "doc": ""
+        },
+        {
+          "name": "resolve_template",
+          "doc": ""
+        },
+        {
+          "name": "build_runtime_summary",
+          "doc": ""
+        }
+      ]
+    },
+    "src/runtime/layout/wave14_adaptive_semantic_layout_engine.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "LayoutCard",
+          "doc": ""
+        },
+        {
+          "name": "LayoutZone",
+          "doc": ""
+        },
+        {
+          "name": "AdaptiveSemanticLayoutEngine",
+          "doc": "Wave 14 Adaptive Semantic Layout Engine.\n\nPurpose:\n- dynamically optimize engineering semantic layouts\n- normalize spacing and hierarchy\n- stabilize responsive runtime behavior\n- reduce layout drift a"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "register_zone",
+          "doc": ""
+        },
+        {
+          "name": "calculate_zone_density",
+          "doc": ""
+        },
+        {
+          "name": "optimize_card_order",
+          "doc": ""
+        },
+        {
+          "name": "build_layout_manifest",
+          "doc": ""
+        }
+      ]
+    },
+    "src/runtime/interactive/wave13_interactive_runtime_layer.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "InteractiveRegion",
+          "doc": ""
+        },
+        {
+          "name": "InteractiveOverlay",
+          "doc": ""
+        },
+        {
+          "name": "InteractiveEngineeringRuntime",
+          "doc": "Wave 13 Interactive Engineering Runtime Layer.\n\nPurpose:\n- provide semantic engineering interaction\n- support clickable evidence regions\n- enable topology traversal\n- support runtime engineering overl"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "register_overlay",
+          "doc": ""
+        },
+        {
+          "name": "build_overlay_manifest",
+          "doc": ""
+        },
+        {
+          "name": "build_navigation_graph",
+          "doc": ""
+        }
+      ]
+    },
+    "src/evidence/ocr_evidence_runtime_v1.py": {
+      "docstring": "Wave 15 \u2014 OCR Orchestration & Engineering Evidence Runtime.\n\nThis module implements the first executable policy layer for deciding when OCR\nis allowed, how OCR output is governed, and how engineering evidence lineage is\npreserved.\n\nCore rule:\n    evidence image/vector/document remains primary;\n    O",
+      "members": [
+        {
+          "name": "EvidenceFormat",
+          "doc": ""
+        },
+        {
+          "name": "OCRDecision",
+          "doc": ""
+        },
+        {
+          "name": "EvidenceAsset",
+          "doc": ""
+        },
+        {
+          "name": "OCRSidecar",
+          "doc": ""
+        },
+        {
+          "name": "EvidenceLineageRecord",
+          "doc": ""
+        },
+        {
+          "name": "OCREvidenceRuntime",
+          "doc": "Conditional OCR and evidence-lineage engine.\n\nThe runtime does not perform OCR directly. It decides whether OCR should be\nrun, stores the governance decision, and preserves the evidence hierarchy.\nOCR"
+        },
+        {
+          "name": "decide_ocr",
+          "doc": ""
+        },
+        {
+          "name": "may_promote_ocr",
+          "doc": ""
+        },
+        {
+          "name": "build_lineage",
+          "doc": ""
+        },
+        {
+          "name": "asset_from_path",
+          "doc": ""
+        },
+        {
+          "name": "to_json",
+          "doc": ""
+        }
+      ]
+    },
+    "src/intelligence/graph/wave15_engineering_graph_intelligence.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "EngineeringNode",
+          "doc": ""
+        },
+        {
+          "name": "EngineeringEdge",
+          "doc": ""
+        },
+        {
+          "name": "EngineeringSemanticGraph",
+          "doc": "Wave 15 Engineering Graph Intelligence Layer.\n\nPurpose:\n- establish semantic engineering topology graphs\n- support cross-slide engineering continuity\n- enable evidence lineage tracing\n- provide runtim"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "add_node",
+          "doc": ""
+        },
+        {
+          "name": "add_edge",
+          "doc": ""
+        },
+        {
+          "name": "get_neighbors",
+          "doc": ""
+        },
+        {
+          "name": "build_lineage_graph",
+          "doc": ""
+        },
+        {
+          "name": "semantic_query",
+          "doc": ""
+        }
+      ]
+    },
+    "src/intelligence/query/wave16_semantic_runtime_query_engine.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "SemanticDocument",
+          "doc": ""
+        },
+        {
+          "name": "QueryResult",
+          "doc": ""
+        },
+        {
+          "name": "SemanticRuntimeQueryEngine",
+          "doc": "Wave 16 Semantic Runtime Query + Retrieval Engine.\n\nPurpose:\n- provide engineering semantic search\n- support evidence retrieval\n- enable cross-deck semantic indexing\n- establish runtime semantic retri"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "register_document",
+          "doc": ""
+        },
+        {
+          "name": "semantic_query",
+          "doc": ""
+        },
+        {
+          "name": "build_semantic_index",
+          "doc": ""
+        }
+      ]
+    },
+    "src/intelligence/inference/wave18_ai_semantic_inference_layer.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "SemanticInference",
+          "doc": ""
+        },
+        {
+          "name": "SemanticDriftSignal",
+          "doc": ""
+        },
+        {
+          "name": "AISemanticInferenceLayer",
+          "doc": "Wave 18 AI-Assisted Semantic Inference Layer.\n\nPurpose:\n- provide AI-assisted topology inference\n- detect semantic drift\n- establish semantic confidence scoring\n- support autonomous engineering interp"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "register_inference",
+          "doc": ""
+        },
+        {
+          "name": "register_drift_signal",
+          "doc": ""
+        },
+        {
+          "name": "calculate_semantic_confidence",
+          "doc": ""
+        },
+        {
+          "name": "detect_high_drift_regions",
+          "doc": ""
+        },
+        {
+          "name": "build_inference_summary",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/__init__.py": {
+      "docstring": "GISTAU Chapter 15 recursive cryogenic engineering package.\n\nModularization scaffold for PR-B.\nPreserves compatibility with v11 fallback engine while preparing\nREFPROP and HEPAK backend integration.",
+      "members": []
+    },
+    "src/gistau_ch15/validation/calculation_runner.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "CalculationRow",
+          "doc": ""
+        },
+        {
+          "name": "_delta",
+          "doc": ""
+        },
+        {
+          "name": "_row",
+          "doc": ""
+        },
+        {
+          "name": "run_seed_calculations",
+          "doc": "Run first executable calculation pass for selected GISTAU examples.\n\nThis is intentionally fallback-backend based. It provides executable rows,\ndeltas and status flags now, while REFPROP/HEPAK/CoolPro"
+        },
+        {
+          "name": "run_seed_calculation_report",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/validation/worked_example_runner.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "WorkedExampleRunner",
+          "doc": ""
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "load_worked_examples",
+          "doc": ""
+        },
+        {
+          "name": "run_for_backend",
+          "doc": ""
+        },
+        {
+          "name": "_run_single_example",
+          "doc": ""
+        },
+        {
+          "name": "_row",
+          "doc": ""
+        },
+        {
+          "name": "_status",
+          "doc": ""
+        },
+        {
+          "name": "_execute_mapped_example",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/kernels/helium_reference.py": {
+      "docstring": "Helium thermodynamic reference kernels.\n\nThese kernels provide analytical reference values for helium-4 based on\npublished NIST and GISTAU correlations.  They are intentionally simple and\nexplicit so they can be used for validation against licensed backends\n(CoolProp, REFPROP, HEPAK) without introdu",
+      "members": [
+        {
+          "name": "ideal_gas_density",
+          "doc": "Ideal-gas density approximation for helium [kg/m\u00b3].\n\nParameters\n----------\np_kpa:\n    Pressure [kPa].\nt_k:\n    Temperature [K].\n\nReturns\n-------\nfloat\n    Density [kg/m\u00b3]."
+        },
+        {
+          "name": "reduced_temperature",
+          "doc": "Reduced temperature relative to the helium-4 critical point.\n\nParameters\n----------\nt_k:\n    Temperature [K]."
+        },
+        {
+          "name": "reduced_pressure",
+          "doc": "Reduced pressure relative to the helium-4 critical point.\n\nParameters\n----------\np_kpa:\n    Pressure [kPa]."
+        },
+        {
+          "name": "is_supercritical",
+          "doc": "Return True when the state is above the critical point."
+        },
+        {
+          "name": "saturation_pressure_approx",
+          "doc": "Approximate helium-4 saturation pressure [kPa] via linear interpolation.\n\nValid range: T_lambda (2.1768 K) \u2264 T \u2264 T_critical (5.1953 K).\nUses NIST anchor points for interpolation; orientation-level acc"
+        },
+        {
+          "name": "nist_anchor_at_temperature",
+          "doc": "Return the NIST saturation anchor closest to *t_k*, or None.\n\nParameters\n----------\nt_k:\n    Query temperature [K].\ntolerance_k:\n    Maximum allowed deviation [K] before returning ``None``.\n\nReturns\n-"
+        }
+      ]
+    },
+    "src/gistau_ch15/kernels/saturation_curves.py": {
+      "docstring": "Saturation dome reconstruction kernels for helium-4.\n\nProvides deterministic sampling of the helium-4 saturation dome (T-s plane)\nusing NIST anchor data and lightweight interpolation.  The module is\nintentionally backend-free so it can run in CI without REFPROP or HEPAK.\n\nThe saturation dome is crit",
+      "members": [
+        {
+          "name": "SaturationPoint",
+          "doc": "One point on the helium-4 saturation dome.\n\nParameters\n----------\ntemperature_k:\n    Saturation temperature [K].\npressure_kpa:\n    Saturation pressure [kPa].\nentropy_liquid_j_kgk:\n    Specific entropy"
+        },
+        {
+          "name": "_estimate_entropy_span",
+          "doc": "Estimate liquid and vapor entropy using Clausius-Clapeyron.\n\nParameters\n----------\nh_liq, h_vap:\n    Saturated liquid/vapor enthalpies [J/kg].\nt_k:\n    Saturation temperature [K].\n\nReturns\n-------\n(s_"
+        },
+        {
+          "name": "build_nist_dome",
+          "doc": "Build a list of :class:`SaturationPoint` from NIST anchor data.\n\nReturns the points in ascending temperature order.  The critical point\nentry is included as a single degenerate point where liquid = va"
+        },
+        {
+          "name": "sample_dome",
+          "doc": "Interpolate the saturation dome between *t_min_k* and *t_max_k*.\n\nUses the NIST anchor points as control nodes and performs linear\ninterpolation in temperature space.\n\nParameters\n----------\nn_points:\n"
+        },
+        {
+          "name": "latent_heat_j_kg",
+          "doc": "Heat of vaporisation [J/kg]."
+        },
+        {
+          "name": "entropy_span_j_kgk",
+          "doc": "Difference between vapor and liquid entropy [J/(kg\u00b7K)]."
+        },
+        {
+          "name": "_interp_scalar",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/kernels/__init__.py": {
+      "docstring": "Numerical kernels for GISTAU Chapter 15 validation.\n\nThis package separates thermodynamic equations, reference helpers and unit\nnormalization from backend adapters such as CoolProp, REFPROP and HEPAK.",
+      "members": []
+    },
+    "src/gistau_ch15/kernels/saturation_stub.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "SaturationStubState",
+          "doc": "Placeholder saturation state used before real two-phase kernels."
+        },
+        {
+          "name": "saturation_state_stub",
+          "doc": "Return explicit placeholder saturation information.\n\nThis function intentionally does not solve two-phase helium physics.\nIt exists to keep validation paths deterministic until HEPAK/REFPROP/CoolProp\n"
+        }
+      ]
+    },
+    "src/gistau_ch15/kernels/units.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "bar_to_pa",
+          "doc": ""
+        },
+        {
+          "name": "mbar_to_pa",
+          "doc": ""
+        },
+        {
+          "name": "kpa_to_pa",
+          "doc": ""
+        },
+        {
+          "name": "pa_to_bar",
+          "doc": ""
+        },
+        {
+          "name": "celsius_to_kelvin",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/kernels/exergy.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "specific_flow_exergy",
+          "doc": "Specific flow exergy approximation.\n\nex = (h - h0) - T0 * (s - s0)\n\nThis kernel intentionally remains simple and explicit until real-fluid\nbackend validation is integrated."
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/refresh_overlay_artifacts.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "_resolve_under_root",
+          "doc": ""
+        },
+        {
+          "name": "refresh_overlay_artifacts",
+          "doc": "Refresh Pages artifacts and regenerate generated overlay manifest.\n\nArgs:\n    manifest_output: Path where the manifest JSON will be written.\n    root: Base directory for computing relative paths in th"
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/workbook_export_bundle.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "WorkbookExportBundle",
+          "doc": "Workbook-ready export bundle scaffold."
+        },
+        {
+          "name": "export",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/phase_map_sampling.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "PhaseMap",
+          "doc": ""
+        },
+        {
+          "name": "FallbackPhaseMapSampler",
+          "doc": "Deterministic low-temperature phase map scaffold."
+        },
+        {
+          "name": "sample",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/regenerate_overlay_json.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "regenerate",
+          "doc": "Regenerate overlay JSON with deterministic fallback data.\n\nArgs:\n    output_path: Path where the overlay JSON will be written."
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/phase_region_classifier.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "PhaseRegionClassifier",
+          "doc": "Deterministic low-temperature phase classifier scaffold."
+        },
+        {
+          "name": "classify",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/backend_agreement.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "AgreementMatrix",
+          "doc": ""
+        },
+        {
+          "name": "BackendAgreementBuilder",
+          "doc": "Deterministic agreement scaffold.\n\nFuture revisions will compute agreement metrics from executable backend\ncomparison outputs."
+        },
+        {
+          "name": "build",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/export_png.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "PublicationPNGExporter",
+          "doc": "Publication export scaffold.\n\nFuture revisions can integrate Plotly image export or matplotlib-based\nrendering while preserving deterministic CI-safe behavior."
+        },
+        {
+          "name": "export_placeholder",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/backend_delta_matrix.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "BackendDeltaMatrix",
+          "doc": ""
+        },
+        {
+          "name": "FallbackBackendDeltaBuilder",
+          "doc": "Deterministic backend delta scaffold.\n\nFuture implementations will populate these deltas from executable backend\ncomparisons and canonical validation references."
+        },
+        {
+          "name": "build",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/trace_json_export.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "PlotlyTraceJSONExporter",
+          "doc": "Export Plotly-compatible trace JSON for GitHub Pages dashboards."
+        },
+        {
+          "name": "export",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/__init__.py": {
+      "docstring": "Visualization generators for GISTAU Chapter 15 review artifacts.",
+      "members": []
+    },
+    "src/gistau_ch15/visualization/saturation_sampling.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "SaturationCurve",
+          "doc": ""
+        },
+        {
+          "name": "FallbackSaturationSampler",
+          "doc": "Deterministic saturation scaffold.\n\nFuture PRs will replace or augment this with:\n\n- CoolProp generated curves\n- REFPROP canonical overlays\n- HEPAK low-temperature helium surfaces"
+        },
+        {
+          "name": "sample",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/thermo_overlay_generator.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "ThermoOverlayGenerator",
+          "doc": "Deterministic visualization generator scaffold.\n\nParent rules:\n- generated artifacts must remain GitHub Pages visible\n- optional thermodynamic runtimes remain optional\n- fallback generation must alway"
+        },
+        {
+          "name": "build_seed_dataset",
+          "doc": ""
+        },
+        {
+          "name": "write_json",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/plotly_trace_builder.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "line_trace",
+          "doc": ""
+        },
+        {
+          "name": "bar_trace",
+          "doc": ""
+        },
+        {
+          "name": "heatmap_trace",
+          "doc": ""
+        },
+        {
+          "name": "PlotlyTraceBuilder",
+          "doc": "Build JSON-compatible Plotly trace dictionaries.\n\nThe dashboard stays static and GitHub Pages compatible; generated traces\ncan be written to JSON and rendered without a Python runtime in the browser."
+        },
+        {
+          "name": "saturation_traces",
+          "doc": ""
+        },
+        {
+          "name": "agreement_trace",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/coolprop_saturation_curves.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "CoolPropSaturationCurveGenerator",
+          "doc": "Optional CoolProp saturation curve generator.\n\nFalls back to deterministic sampling when CoolProp is unavailable."
+        },
+        {
+          "name": "generate",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/coolprop_runtime_hooks.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "CoolPropRuntimeHooks",
+          "doc": "Optional CoolProp visualization integration boundary.\n\nThis layer keeps CoolProp optional while providing a stable integration\npoint for future generated saturation curves and T-s trajectories."
+        },
+        {
+          "name": "adapter",
+          "doc": ""
+        },
+        {
+          "name": "available",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/ts_reconstruction.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "TSPath",
+          "doc": ""
+        },
+        {
+          "name": "FallbackTSReconstructor",
+          "doc": "Deterministic T-s path scaffold for review dashboards.\n\nThis module owns the T-s reconstruction boundary. Later revisions can\nreplace deterministic paths with backend-generated state trajectories."
+        },
+        {
+          "name": "build_paths",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/pages_artifact_refresh.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "PagesArtifactRefresh",
+          "doc": "Refresh GitHub Pages-visible visualization artifacts."
+        },
+        {
+          "name": "refresh",
+          "doc": "Refresh artifacts, optionally redirecting outputs.\n\nArgs:\n    overlay_output: Optional path for thermo_visual_overlay_seed.json\n    trace_output: Optional path for plotly_trace_export.json"
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/expander_validation.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "ExpanderValidationPoint",
+          "doc": ""
+        },
+        {
+          "name": "FallbackExpanderValidation",
+          "doc": "Deterministic cryogenic expander validation scaffold."
+        },
+        {
+          "name": "build",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/overlay_artifact_manifest.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "OverlayArtifactRecord",
+          "doc": "Manifest entry for one generated overlay artifact."
+        },
+        {
+          "name": "OverlayArtifactManifestBuilder",
+          "doc": "Build and persist manifest metadata for generated overlay artifacts."
+        },
+        {
+          "name": "build_records",
+          "doc": ""
+        },
+        {
+          "name": "write_manifest",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/visualization/executable_ts_paths.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "ExecutableTSPathGenerator",
+          "doc": "Executable T-s generation boundary.\n\nFuture revisions may use backend-generated state stepping while preserving\ndeterministic fallback behavior."
+        },
+        {
+          "name": "generate",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/calculations/compressor.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "CompressorResult",
+          "doc": ""
+        },
+        {
+          "name": "calculate_compressor",
+          "doc": "Fallback compressor calculation.\n\nThis implementation intentionally remains simple until\nREFPROP/HEPAK integration is available."
+        }
+      ]
+    },
+    "src/gistau_ch15/calculations/jt_valve.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "JTValveResult",
+          "doc": ""
+        },
+        {
+          "name": "calculate_jt_valve",
+          "doc": "Calculate a deterministic isenthalpic/free-expansion step.\n\nUnder fallback mode, outlet temperature is obtained through the backend's\nPH inverse. Real REFPROP/HEPAK backends will later supply phase an"
+        }
+      ]
+    },
+    "src/gistau_ch15/calculations/equivalent_power.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "EquivalentPowerResult",
+          "doc": ""
+        },
+        {
+          "name": "calculate_equivalent_power",
+          "doc": "Compute a simplified equivalent power metric.\n\nThe fallback formulation estimates the equivalent ambient power required\nto sustain refrigeration at low temperature."
+        }
+      ]
+    },
+    "src/gistau_ch15/calculations/expander.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "ExpanderResult",
+          "doc": ""
+        },
+        {
+          "name": "_isentropic_temperature_exponent",
+          "doc": ""
+        },
+        {
+          "name": "calculate_expander",
+          "doc": "Simplified deterministic expander tuple calculation.\n\nThe fallback model uses a reversible temperature drop proxy and applies\nisentropic efficiency. Real backends will later provide exact PS/PH states"
+        }
+      ]
+    },
+    "src/gistau_ch15/calculations/heat_exchanger.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "HeatExchangerResult",
+          "doc": ""
+        },
+        {
+          "name": "calculate_heat_exchanger",
+          "doc": "Simplified epsilon-NTU style fallback heat exchanger.\n\nThis deterministic implementation is intentionally conservative until\ncanonical validation and REFPROP/HEPAK coupling are added."
+        }
+      ]
+    },
+    "src/gistau_ch15/calculations/expander_replay.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "CryogenicReplayResult",
+          "doc": ""
+        },
+        {
+          "name": "CryogenicExpanderReplay",
+          "doc": "Replay engine for cryogenic expansion trajectories.\n\nExecution hierarchy:\ndeterministic proxy\n    \u2192 CoolProp states\n    \u2192 REFPROP gas-region states\n    \u2192 HEPAK wetness-aware expansion"
+        },
+        {
+          "name": "replay",
+          "doc": ""
+        },
+        {
+          "name": "as_dict",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/json_export.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "JsonExportWriter",
+          "doc": "Utility writer for backend comparison artifacts."
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "write_json",
+          "doc": ""
+        },
+        {
+          "name": "write_backend_reports",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/saturation_overlays.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "SaturationOverlayPoint",
+          "doc": ""
+        },
+        {
+          "name": "SaturationOverlayBuilder",
+          "doc": "Build saturation dome traces and rho-v overlay rows.\n\nThis is a data layer for docs/gistau-ch15/backend_delta_heatmap.html and\nfuture publication figures. It deliberately records backend failures per\n"
+        },
+        {
+          "name": "build_temperature_trace",
+          "doc": ""
+        },
+        {
+          "name": "as_rows",
+          "doc": ""
+        },
+        {
+          "name": "default_helium_2k_grid",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/availability_export.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "write_backend_availability",
+          "doc": "Write backend availability rows for GitHub Pages review artifacts."
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/export_coolprop_state_grid.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "write_coolprop_state_grid_report",
+          "doc": "Build and write the CoolProp state-grid report.\n\nThe helper is CI-safe because build_coolprop_state_grid_report returns\nexplicit unavailable rows when CoolProp is not installed."
+        },
+        {
+          "name": "main",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/errors.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "PropertyBackendUnavailable",
+          "doc": "Raised when a required property backend is not installed or not importable."
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/fallback_helium.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "FallbackHeliumBackend",
+          "doc": "Simplified fallback helium backend.\n\nThis backend intentionally uses approximate relationships so the\nengineering portal remains self-contained and operational without\nREFPROP or HEPAK."
+        },
+        {
+          "name": "state_pt",
+          "doc": ""
+        },
+        {
+          "name": "state_ph",
+          "doc": ""
+        },
+        {
+          "name": "state_ps",
+          "doc": ""
+        },
+        {
+          "name": "saturation_t",
+          "doc": ""
+        },
+        {
+          "name": "saturation_p",
+          "doc": ""
+        },
+        {
+          "name": "quality_ph",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/coolprop_adapter.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "CoolPropAdapter",
+          "doc": "Optional CoolProp backend scaffold.\n\nIntegration target:\n- local repository: GBOGEB/CoolProp\n- upstream project: coolprop.org / CoolProp\n\nThis adapter intentionally avoids a mandatory dependency. The "
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "state_pt",
+          "doc": ""
+        },
+        {
+          "name": "state_ph",
+          "doc": ""
+        },
+        {
+          "name": "state_ps",
+          "doc": ""
+        },
+        {
+          "name": "saturation_t",
+          "doc": ""
+        },
+        {
+          "name": "saturation_p",
+          "doc": ""
+        },
+        {
+          "name": "quality_ph",
+          "doc": ""
+        },
+        {
+          "name": "entropy_tq",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/experimental_correlation.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "ExperimentalCorrelationRow",
+          "doc": ""
+        },
+        {
+          "name": "ExperimentalCorrelation",
+          "doc": "Correlation utilities for cryogenic validation campaigns.\n\nThis module prepares the repository for:\n- publication reproduction,\n- experimental cryogenic comparison,\n- low-temperature correlation campa"
+        },
+        {
+          "name": "compare",
+          "doc": ""
+        },
+        {
+          "name": "as_dict",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/refprop_verification.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "RefpropVerificationRow",
+          "doc": ""
+        },
+        {
+          "name": "RefpropVerificationRunner",
+          "doc": "Execute canonical REFPROP gas-region verification rows.\n\nThe runner is backend-agnostic for testing, but is intended to receive\nREFPROPAdapter in real verification environments. It records unavailable"
+        },
+        {
+          "name": "run",
+          "doc": ""
+        },
+        {
+          "name": "_row_from_state",
+          "doc": ""
+        },
+        {
+          "name": "as_rows",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/helium_property_engine.py": {
+      "docstring": "He-4 enthalpy polynomial engine and mass-balance verifier.\n\nAdapted from GBOGEB/cryogenic-accelerator-workspace (src/physics_validator.py).\nProvides a self-contained NIST-fitted polynomial for helium-4 enthalpy near the\nlambda point (4\u201310 K range at 1 bar) and a mass-balance verification utility.\n\nR",
+      "members": [
+        {
+          "name": "HeliumPropertyEngine",
+          "doc": "Polynomial enthalpy model for He-4 at 1 bar.\n\nCoefficients are fitted to NIST data in the 4\u201310 K range.  For\ntemperatures at or below the lambda point a low-temperature approximation\nis used instead ("
+        },
+        {
+          "name": "verify_mass_balance",
+          "doc": "Verify helium mass-flow balance against a thermal heat load.\n\nFormula: ``\u1e41 = Q_total / \u0394h``\n\nParameters\n----------\ntotal_heat_load_w:\n    Total thermal load [W].\nt_in_k:\n    Inlet temperature [K].\nt_o"
+        },
+        {
+          "name": "main",
+          "doc": "Run a demonstration mass-balance check with default parameters."
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "get_enthalpy",
+          "doc": "Return specific enthalpy [J/g] for He-4 at the given state.\n\nParameters\n----------\ntemperature_k:\n    Temperature [K].  Must be positive.\npressure_bar:\n    Pressure [bar].  This implementation uses a "
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/base.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "State",
+          "doc": ""
+        },
+        {
+          "name": "SaturationState",
+          "doc": ""
+        },
+        {
+          "name": "PropertyBackend",
+          "doc": ""
+        },
+        {
+          "name": "state_pt",
+          "doc": ""
+        },
+        {
+          "name": "state_ph",
+          "doc": ""
+        },
+        {
+          "name": "state_ps",
+          "doc": ""
+        },
+        {
+          "name": "saturation_t",
+          "doc": ""
+        },
+        {
+          "name": "saturation_p",
+          "doc": ""
+        },
+        {
+          "name": "quality_ph",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/compare.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "BackendTier",
+          "doc": "Property backend tier classification for GISTAU Ch15 validation."
+        },
+        {
+          "name": "StatePointRequest",
+          "doc": ""
+        },
+        {
+          "name": "BackendStateResult",
+          "doc": ""
+        },
+        {
+          "name": "PropertyDelta",
+          "doc": ""
+        },
+        {
+          "name": "BackendDefinition",
+          "doc": ""
+        },
+        {
+          "name": "evaluate_state_points",
+          "doc": "Evaluate PT state points across available backends.\n\nMissing optional backends should be represented with backend=None so the\ncomparison report can show an explicit blocked/missing status instead of\ns"
+        },
+        {
+          "name": "compare_to_reference",
+          "doc": "Compare all backend results against a named reference backend.\n\nIntended references by maturity:\n- early development: CoolProp or fallback\n- canonical engineering: REFPROP or HEPAK depending on region"
+        },
+        {
+          "name": "as_report_rows",
+          "doc": "Serialize deltas for JSON, workbook, or static HTML tables."
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/backend_selector.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "BackendAvailability",
+          "doc": ""
+        },
+        {
+          "name": "_try_backend",
+          "doc": ""
+        },
+        {
+          "name": "select_available_backends",
+          "doc": "Return available property backends and explicit availability statuses.\n\nOptional backends must never hard-fail CI. Missing REFPROP, HEPAK or\nCoolProp is reported as structured status and the fallback "
+        },
+        {
+          "name": "availability_report_rows",
+          "doc": "Serialize backend availability for JSON and HTML review pages."
+        },
+        {
+          "name": "factory",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/hepak_adapter.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "HEPAKAdapter",
+          "doc": "Optional HEPAK backend scaffold.\n\nIntended future scope:\n- helium below 5 K,\n- saturated helium,\n- wetness fraction,\n- lambda-region awareness,\n- VLP return analysis,\n- cold-compressor validation.\n\nTh"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "_load_binding",
+          "doc": "Load HEPAK Python bindings from supported module names.\n\nThe loader tries `hepak` first, then `pyhepak` as a fallback because\nenvironments differ in published package/module naming.\nIf neither import "
+        },
+        {
+          "name": "_unavailable",
+          "doc": ""
+        },
+        {
+          "name": "state_pt",
+          "doc": ""
+        },
+        {
+          "name": "state_ph",
+          "doc": ""
+        },
+        {
+          "name": "state_ps",
+          "doc": ""
+        },
+        {
+          "name": "saturation_t",
+          "doc": ""
+        },
+        {
+          "name": "saturation_p",
+          "doc": ""
+        },
+        {
+          "name": "quality_ph",
+          "doc": ""
+        },
+        {
+          "name": "_bounded_quality",
+          "doc": ""
+        },
+        {
+          "name": "_to_state",
+          "doc": ""
+        },
+        {
+          "name": "_to_saturation",
+          "doc": ""
+        },
+        {
+          "name": "validate_two_phase_region",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/validation_dataset.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "ValidationPoint",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/wetness_validation.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "WetnessValidationRow",
+          "doc": ""
+        },
+        {
+          "name": "WetnessValidationRunner",
+          "doc": "Wetness-aware validation near the 2 K helium corridor.\n\nIntended primary backend:\nHEPAK.\n\nFallback/CoolProp/REFPROP executions remain useful for cross-checks,\nunavailable-state reporting and divergenc"
+        },
+        {
+          "name": "run",
+          "doc": ""
+        },
+        {
+          "name": "as_rows",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/frontier_runner.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "_UnavailableBackend",
+          "doc": ""
+        },
+        {
+          "name": "FrontierEngineeringRunner",
+          "doc": "End-to-end frontier engineering validation runner.\n\nThis runner intentionally executes with fallback-only environments while\nproducing explicit unavailable-state reports for REFPROP and HEPAK. When\nli"
+        },
+        {
+          "name": "main",
+          "doc": ""
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "_raise",
+          "doc": ""
+        },
+        {
+          "name": "state_pt",
+          "doc": ""
+        },
+        {
+          "name": "state_ph",
+          "doc": ""
+        },
+        {
+          "name": "state_ps",
+          "doc": ""
+        },
+        {
+          "name": "saturation_t",
+          "doc": ""
+        },
+        {
+          "name": "saturation_p",
+          "doc": ""
+        },
+        {
+          "name": "quality_ph",
+          "doc": ""
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "run",
+          "doc": ""
+        },
+        {
+          "name": "_backend_or_unavailable",
+          "doc": ""
+        },
+        {
+          "name": "_state_requests",
+          "doc": ""
+        },
+        {
+          "name": "_backend_definitions",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/refprop_adapter.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "REFPROPStatus",
+          "doc": ""
+        },
+        {
+          "name": "REFPROPAdapter",
+          "doc": "Optional REFPROP backend for canonical helium validation.\n\nThe implementation imports ctREFPROP lazily and keeps REFPROP optional.\nMissing bindings or library paths are reported through PropertyBacken"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "_load",
+          "doc": ""
+        },
+        {
+          "name": "_fluid_name",
+          "doc": ""
+        },
+        {
+          "name": "_call",
+          "doc": ""
+        },
+        {
+          "name": "_molar_mass",
+          "doc": ""
+        },
+        {
+          "name": "_h_or_s_molar_to_mass",
+          "doc": ""
+        },
+        {
+          "name": "_h_or_s_mass_to_molar",
+          "doc": ""
+        },
+        {
+          "name": "_density_molar_to_mass",
+          "doc": ""
+        },
+        {
+          "name": "state_pt",
+          "doc": ""
+        },
+        {
+          "name": "state_ph",
+          "doc": ""
+        },
+        {
+          "name": "state_ps",
+          "doc": ""
+        },
+        {
+          "name": "saturation_t",
+          "doc": ""
+        },
+        {
+          "name": "saturation_p",
+          "doc": ""
+        },
+        {
+          "name": "quality_ph",
+          "doc": ""
+        },
+        {
+          "name": "_quality_or_none",
+          "doc": ""
+        },
+        {
+          "name": "verify_helium_gas_region",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/uncertainty_quantification.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "UncertaintyResult",
+          "doc": ""
+        },
+        {
+          "name": "UncertaintyQuantification",
+          "doc": "Numerical uncertainty quantification utilities.\n\nIntended future usage:\n- REFPROP vs HEPAK divergence,\n- low-temperature uncertainty maps,\n- publication uncertainty envelopes,\n- experimental correlati"
+        },
+        {
+          "name": "summarize",
+          "doc": ""
+        },
+        {
+          "name": "as_dict",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/comparison_runner.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "ComparisonRunner",
+          "doc": "Publication-grade backend delta aggregation scaffold.\n\nPlanned outputs:\n- backend_comparison_report.json\n- backend_delta_summary.json\n- backend_heatmap_matrix.json"
+        },
+        {
+          "name": "build_rows",
+          "doc": ""
+        },
+        {
+          "name": "run_worked_example_comparisons",
+          "doc": ""
+        },
+        {
+          "name": "build_summary",
+          "doc": ""
+        },
+        {
+          "name": "build_heatmap_matrix",
+          "doc": "Build tuple-indexed temperature-delta matrix.\n\nLegacy rows from `gistau_ch15.properties.compare` use\n``delta_temperature_k`` directly.\nWorked-example rows use ``absolute_delta`` only for the\n``outlet_"
+        },
+        {
+          "name": "serialize",
+          "doc": ""
+        },
+        {
+          "name": "_status_counts",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/ts_reconstruction.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "ProcessNode",
+          "doc": ""
+        },
+        {
+          "name": "ProcessSegment",
+          "doc": ""
+        },
+        {
+          "name": "ReconstructionResult",
+          "doc": ""
+        },
+        {
+          "name": "TSReconstruction",
+          "doc": "Thermodynamic path reconstruction scaffold.\n\nPhase K foundation layer for:\n- compressor trajectories,\n- JT expansion lines,\n- expander entropy paths,\n- cold-box process chains,\n- cryoplant replay gene"
+        },
+        {
+          "name": "reconstruct",
+          "doc": ""
+        },
+        {
+          "name": "as_dict",
+          "doc": ""
+        }
+      ]
+    },
+    "src/gistau_ch15/properties/coolprop_state_grid.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "CoolPropGridPoint",
+          "doc": ""
+        },
+        {
+          "name": "_target_points",
+          "doc": "Initial low-temperature helium state grid targets.\n\nPressure is stored in mbar so it aligns with the visual portal and VLP\noperating-region language. CoolProp receives pressure in Pa."
+        },
+        {
+          "name": "_unavailable_rows",
+          "doc": ""
+        },
+        {
+          "name": "build_coolprop_state_grid",
+          "doc": "Build a CoolProp-backed state grid if CoolProp is installed.\n\nThe function is intentionally CI-safe. If CoolProp is missing, it returns\nexplicit unavailable rows instead of raising."
+        },
+        {
+          "name": "build_coolprop_state_grid_report",
+          "doc": ""
+        }
+      ]
+    },
+    "src/federation/mcp_sweep_engine.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "SweepItem",
+          "doc": ""
+        },
+        {
+          "name": "MCPSweepEngine",
+          "doc": "Ingests closed PRs, aborted sessions, and stale lineage markers.\n\nTODO: Wave A6 \u2014 CI integration needed\n- Task A6.3.1.1: Create scripts/run_mcp_sweep.py CI script\n- Task A6.3.1.2: Wire into .github/wo"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "_headers",
+          "doc": ""
+        },
+        {
+          "name": "fetch_closed_pull_requests",
+          "doc": ""
+        },
+        {
+          "name": "fetch_pull_diff_summary",
+          "doc": ""
+        },
+        {
+          "name": "extract_from_pull_requests",
+          "doc": ""
+        },
+        {
+          "name": "scan_aborted_sessions",
+          "doc": ""
+        },
+        {
+          "name": "scan_stale_lineage",
+          "doc": ""
+        },
+        {
+          "name": "_escape_markdown_table_cell",
+          "doc": "Escape pipe and newline characters to prevent Markdown table injection."
+        },
+        {
+          "name": "write_rtm_delta",
+          "doc": ""
+        },
+        {
+          "name": "write_markdown_telemetry",
+          "doc": ""
+        },
+        {
+          "name": "run",
+          "doc": ""
+        }
+      ]
+    },
+    "src/federation/__init__.py": {
+      "docstring": "",
+      "members": []
+    },
+    "src/federation/office365_graph_connector.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "BinaryIndexEntry",
+          "doc": ""
+        },
+        {
+          "name": "Office365GraphConnector",
+          "doc": "Lightweight Office365 Graph adapter for binary metadata and download.\n\nTODO: Wave A6 \u2014 Office365 binary classification rules needed\n- Task A6.2.1.2: Implement classify_binary() method with MIME type d"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "_headers",
+          "doc": ""
+        },
+        {
+          "name": "_get_json",
+          "doc": ""
+        },
+        {
+          "name": "_get_binary",
+          "doc": ""
+        },
+        {
+          "name": "list_library_items",
+          "doc": ""
+        },
+        {
+          "name": "fetch_file_metadata",
+          "doc": ""
+        },
+        {
+          "name": "download_binary",
+          "doc": ""
+        },
+        {
+          "name": "checksum_sha256",
+          "doc": ""
+        },
+        {
+          "name": "verify_checksum",
+          "doc": ""
+        },
+        {
+          "name": "prune_cache",
+          "doc": ""
+        },
+        {
+          "name": "build_binary_index_entry",
+          "doc": ""
+        },
+        {
+          "name": "write_binary_index_ledger",
+          "doc": ""
+        }
+      ]
+    },
+    "src/federation/identity_broker.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "SessionRecord",
+          "doc": ""
+        },
+        {
+          "name": "FederationIdentityBroker",
+          "doc": "Issues scoped, lane-separated sessions with redacted telemetry.\n\nTODO: Wave A7 \u2014 Lane dependency orchestration\n- Task A7.1.1.3: Integrate with federation_lane_orchestrator.py\n- Task A7.3.1.3: Support "
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "_fingerprint",
+          "doc": ""
+        },
+        {
+          "name": "_enforce_lane_rules",
+          "doc": ""
+        },
+        {
+          "name": "_issue",
+          "doc": ""
+        },
+        {
+          "name": "issue_office365_graph_session",
+          "doc": ""
+        },
+        {
+          "name": "issue_github_session",
+          "doc": ""
+        },
+        {
+          "name": "issue_apple_personal_session",
+          "doc": ""
+        },
+        {
+          "name": "render_markdown_ascii_telemetry",
+          "doc": ""
+        }
+      ]
+    },
+    "src/federation/schema_validation.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "_load_yaml",
+          "doc": ""
+        },
+        {
+          "name": "_validate_mapping",
+          "doc": ""
+        },
+        {
+          "name": "validate_repository_ssot",
+          "doc": ""
+        }
+      ]
+    },
+    "src/ingress/pptx_geometry_semantic_runtime_v1.py": {
+      "docstring": "Wave 44 \u2014 PPTX Geometry & Semantic Runtime.\n\nPurpose:\n- refine PPTX ingress beyond raw text extraction\n- extract geometric placement and visual hierarchy\n- preserve engineering layout semantics\n- export shape topology telemetry\n\nThis wave focuses on:\n- shape coordinates\n- z-order\n- grouped shapes\n- ",
+      "members": [
+        {
+          "name": "ShapeTelemetry",
+          "doc": ""
+        },
+        {
+          "name": "PPTXGeometrySemanticRuntime",
+          "doc": "Geometry-aware PPTX ingress runtime."
+        },
+        {
+          "name": "main",
+          "doc": ""
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "emu_to_mm",
+          "doc": ""
+        },
+        {
+          "name": "semantic_role",
+          "doc": ""
+        },
+        {
+          "name": "connector_like",
+          "doc": ""
+        },
+        {
+          "name": "extract_slide_shapes",
+          "doc": ""
+        },
+        {
+          "name": "execute",
+          "doc": ""
+        }
+      ]
+    },
+    "src/ingress/pptx_semantic_ingress_runtime_v1.py": {
+      "docstring": "Wave 42 \u2014 PPTX Semantic Ingress Runtime.\n\nPurpose:\n- perform REAL PPTX ingestion\n- extract slide text and notes\n- classify slide semantics\n- export structured telemetry\n- bridge ingestion into convergence-runtime analytics\n\nScope intentionally narrowed:\n- PPTX only\n- no Visio/DWG yet\n- OCR optional ",
+      "members": [
+        {
+          "name": "SlideSemanticRecord",
+          "doc": ""
+        },
+        {
+          "name": "PPTXSemanticIngressRuntime",
+          "doc": "Executable PPTX ingestion runtime."
+        },
+        {
+          "name": "main",
+          "doc": ""
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "normalize_text",
+          "doc": ""
+        },
+        {
+          "name": "classify_semantic",
+          "doc": ""
+        },
+        {
+          "name": "extract_notes",
+          "doc": ""
+        },
+        {
+          "name": "extract_slide",
+          "doc": ""
+        },
+        {
+          "name": "execute",
+          "doc": ""
+        }
+      ]
+    },
+    "src/renderers/__init__.py": {
+      "docstring": "Renderers package.",
+      "members": []
+    },
+    "src/renderers/theme_runtime.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "SemanticCardTheme",
+          "doc": ""
+        },
+        {
+          "name": "SemanticThemeRuntime",
+          "doc": "Runtime semantic-theme resolver.\n\nThis layer ensures semantic meaning survives:\n- dark mode\n- PDF rendering\n- HTML rendering\n- PPTX rendering\n- snapshot generation"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "_load",
+          "doc": ""
+        },
+        {
+          "name": "resolve",
+          "doc": ""
+        }
+      ]
+    },
+    "src/renderers/layout_intelligence.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "LayoutDecision",
+          "doc": ""
+        },
+        {
+          "name": "CardLayoutInput",
+          "doc": ""
+        },
+        {
+          "name": "AdaptiveLayoutEngine",
+          "doc": "Adaptive layout decision engine scaffold.\n\nThe renderer should not blindly dump content into fixed cards.\nIt should make deterministic, explainable layout decisions for:\n- title scaling\n- card sizing\n"
+        },
+        {
+          "name": "decide_card_layout",
+          "doc": ""
+        }
+      ]
+    },
+    "src/renderers/lint/thresholds.py": {
+      "docstring": "",
+      "members": []
+    },
+    "src/renderers/lint/__init__.py": {
+      "docstring": "",
+      "members": []
+    },
+    "src/copilot/recursive_engineering_copilot_runtime_v1.py": {
+      "docstring": "Wave 20 \u2014 Recursive Engineering Copilot Runtime.\n\nThis module establishes recursive engineering copilots capable of:\n- maintaining engineering semantic context\n- recursively refining subsystem reviews\n- collaborating across topology/runtime domains\n- generating adaptive engineering planning flows\n- ",
+      "members": [
+        {
+          "name": "CopilotMode",
+          "doc": ""
+        },
+        {
+          "name": "SemanticMemory",
+          "doc": ""
+        },
+        {
+          "name": "RecursiveReviewLoop",
+          "doc": ""
+        },
+        {
+          "name": "CopilotResponse",
+          "doc": ""
+        },
+        {
+          "name": "RecursiveEngineeringCopilotRuntime",
+          "doc": "Recursive engineering copilot runtime.\n\nCapabilities:\n- recursive subsystem reasoning\n- semantic engineering memory\n- iterative review convergence\n- adaptive engineering planning\n- multi-domain engine"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "store_memory",
+          "doc": ""
+        },
+        {
+          "name": "register_review_loop",
+          "doc": ""
+        },
+        {
+          "name": "recursive_review",
+          "doc": ""
+        },
+        {
+          "name": "generate_copilot_response",
+          "doc": ""
+        },
+        {
+          "name": "export_json",
+          "doc": ""
+        }
+      ]
+    },
+    "src/reconstruction/svg_engine/wave10_svg_abstraction_engine.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "SemanticRegion",
+          "doc": ""
+        },
+        {
+          "name": "SlideSemanticModel",
+          "doc": ""
+        },
+        {
+          "name": "SVGAbstractionEngine",
+          "doc": "Wave 10 prototype runtime.\n\nPurpose:\n- convert engineering slide semantics into lightweight SVG abstractions\n- preserve engineering topology and visual hierarchy\n- separate evidence imagery from conce"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "build_svg_canvas",
+          "doc": ""
+        },
+        {
+          "name": "render_heading_band",
+          "doc": ""
+        },
+        {
+          "name": "render_semantic_region",
+          "doc": ""
+        },
+        {
+          "name": "generate_slide_svg",
+          "doc": ""
+        }
+      ]
+    },
+    "src/ecosystem/distributed_semantic_ecosystem_runtime_v1.py": {
+      "docstring": "Wave 21 \u2014 Distributed Engineering Semantic Ecosystem Runtime.\n\nThis module establishes distributed engineering semantic ecosystems capable of:\n- synchronizing engineering-runtime agents\n- federating subsystem semantic memory\n- coordinating cross-domain topology reasoning\n- enabling distributed engin",
+      "members": [
+        {
+          "name": "EcosystemDomain",
+          "doc": ""
+        },
+        {
+          "name": "FederatedSemanticNode",
+          "doc": ""
+        },
+        {
+          "name": "EcosystemSynchronizationEvent",
+          "doc": ""
+        },
+        {
+          "name": "DistributedCopilotCluster",
+          "doc": ""
+        },
+        {
+          "name": "DistributedSemanticEcosystemRuntime",
+          "doc": "Distributed engineering semantic ecosystem runtime.\n\nCapabilities:\n- federated semantic synchronization\n- distributed engineering reasoning\n- recursive topology alignment\n- multi-domain engineering co"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "register_node",
+          "doc": ""
+        },
+        {
+          "name": "synchronize_domains",
+          "doc": ""
+        },
+        {
+          "name": "create_cluster",
+          "doc": ""
+        },
+        {
+          "name": "export_json",
+          "doc": ""
+        }
+      ]
+    },
+    "src/self_healing/recursive_self_healing_runtime_v1.py": {
+      "docstring": "Wave 24 \u2014 Recursive Self-Healing Engineering Semantic Runtime.\n\nThis module establishes self-healing semantic-runtime infrastructure capable of:\n- autonomous topology recovery\n- recursive semantic-runtime repair\n- engineering anomaly correction\n- governance recovery orchestration\n- continuity-preser",
+      "members": [
+        {
+          "name": "HealingAction",
+          "doc": ""
+        },
+        {
+          "name": "RuntimeAnomaly",
+          "doc": ""
+        },
+        {
+          "name": "HealingPlan",
+          "doc": ""
+        },
+        {
+          "name": "RecoveryState",
+          "doc": ""
+        },
+        {
+          "name": "RecursiveSelfHealingRuntime",
+          "doc": "Recursive self-healing engineering semantic runtime.\n\nCapabilities:\n- anomaly detection recovery orchestration\n- recursive semantic repair\n- topology continuity restoration\n- governance recovery coord"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "register_anomaly",
+          "doc": ""
+        },
+        {
+          "name": "generate_healing_plan",
+          "doc": ""
+        },
+        {
+          "name": "execute_recovery",
+          "doc": ""
+        },
+        {
+          "name": "export_json",
+          "doc": ""
+        }
+      ]
+    },
+    "src/g3_engine/pr_generator.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "issue_g3_pull_request",
+          "doc": ""
+        }
+      ]
+    },
+    "src/g3_engine/helium_refrigeration_core.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "CryogenicHeliumEngine",
+          "doc": ""
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "compute_exergy_efficiency",
+          "doc": ""
+        },
+        {
+          "name": "calculate_covariance",
+          "doc": ""
+        },
+        {
+          "name": "calculate_anova_variance",
+          "doc": "Deprecated: use calculate_covariance(); retained for backward compatibility."
+        }
+      ]
+    },
+    "src/governance/semantic_governance_mesh_runtime_v1.py": {
+      "docstring": "Wave 22 \u2014 Semantic Governance Mesh Runtime.\n\nThis module establishes governance and validation infrastructure across the\ndistributed engineering semantic ecosystem.\n\nPurpose:\n- validate semantic topology consistency\n- govern cross-domain synchronization\n- score semantic trustworthiness\n- manage runt",
+      "members": [
+        {
+          "name": "GovernanceSeverity",
+          "doc": ""
+        },
+        {
+          "name": "SemanticPolicy",
+          "doc": ""
+        },
+        {
+          "name": "GovernanceFinding",
+          "doc": ""
+        },
+        {
+          "name": "SemanticTrustScore",
+          "doc": ""
+        },
+        {
+          "name": "SemanticGovernanceMeshRuntime",
+          "doc": "Governance mesh for distributed engineering semantic ecosystems.\n\nCapabilities:\n- topology policy validation\n- semantic trust scoring\n- recursive governance enforcement\n- cross-domain consistency chec"
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "register_policy",
+          "doc": ""
+        },
+        {
+          "name": "validate_subsystem",
+          "doc": ""
+        },
+        {
+          "name": "calculate_trust_score",
+          "doc": ""
+        },
+        {
+          "name": "export_json",
+          "doc": ""
+        }
+      ]
+    },
+    "src/governance/runtime_validation/wave11_recursive_runtime_audit.py": {
+      "docstring": "",
+      "members": [
+        {
+          "name": "MetricSnapshot",
+          "doc": ""
+        },
+        {
+          "name": "RecursiveRuntimeAudit",
+          "doc": "Wave 11 Runtime Validation + Recursive Audit Engine.\n\nPurpose:\n- validate recursive renderer maturity\n- track cross-wave convergence\n- prevent architecture drift\n- quantify engineering semantic stabil"
+        },
+        {
+          "name": "weighted_score",
+          "doc": ""
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "add_metric",
+          "doc": ""
+        },
+        {
+          "name": "calculate_category_score",
+          "doc": ""
+        },
+        {
+          "name": "calculate_total_score",
+          "doc": ""
+        },
+        {
+          "name": "generate_audit_report",
+          "doc": ""
+        }
+      ]
+    },
+    "src/tools/slide_preview_generator.py": {
+      "docstring": "PPTX \u2192 digital-twin slide preview generator.\n\nPorted from GBOGEB/CODESPACES_jyperter (tools/extract_slide_previews.py) and\nadapted to CODEX conventions (main() guard, Path.mkdir, html.escape).\n\nProduces three artifacts in *outdir*:\n\n- ``slide_texts.json``       \u2014 full per-slide text content\n- ``slid",
+      "members": [
+        {
+          "name": "extract_slides",
+          "doc": "Extract text, shape metadata, and style hints from a PPTX file.\n\nParameters\n----------\npptx_path:\n    Path to the ``.pptx`` file.\nlimit:\n    Maximum number of slides to process.  ``None`` processes al"
+        },
+        {
+          "name": "build_digital_twins",
+          "doc": "Compact summary representation for each slide (digital twin format)."
+        },
+        {
+          "name": "write_html_preview",
+          "doc": "Write a self-contained HTML card deck preview for the extracted slides.\n\nAll user-supplied text is escaped via ``html.escape`` before insertion."
+        },
+        {
+          "name": "main",
+          "doc": ""
+        },
+        {
+          "name": "Presentation",
+          "doc": ""
+        }
+      ]
+    },
+    "src/tools/__init__.py": {
+      "docstring": "",
+      "members": []
+    },
+    "src/adaptive/adaptive_engineering_intelligence_mesh_runtime_v1.py": {
+      "docstring": "Wave 23 \u2014 Adaptive Engineering Intelligence Mesh Runtime.\n\nThis module establishes adaptive engineering intelligence meshes capable of:\n- self-optimizing semantic-runtime behavior\n- adaptive topology refinement\n- recursive ecosystem stabilization\n- dynamic engineering copilot coordination\n- runtime ",
+      "members": [
+        {
+          "name": "AdaptationMode",
+          "doc": ""
+        },
+        {
+          "name": "AdaptiveSignal",
+          "doc": ""
+        },
+        {
+          "name": "RuntimeResilienceProfile",
+          "doc": ""
+        },
+        {
+          "name": "AdaptiveOptimizationEvent",
+          "doc": ""
+        },
+        {
+          "name": "AdaptiveEngineeringIntelligenceMeshRuntime",
+          "doc": "Adaptive engineering semantic intelligence mesh runtime.\n\nCapabilities:\n- adaptive semantic optimization\n- recursive ecosystem stabilization\n- topology resilience analysis\n- semantic-runtime recovery "
+        },
+        {
+          "name": "__init__",
+          "doc": ""
+        },
+        {
+          "name": "register_signal",
+          "doc": ""
+        },
+        {
+          "name": "analyze_resilience",
+          "doc": ""
+        },
+        {
+          "name": "optimize_runtime",
+          "doc": ""
+        },
+        {
+          "name": "export_json",
+          "doc": ""
+        }
+      ]
+    }
+  }
+}
