@@ -126,7 +126,9 @@ def render_report(
         "",
     ]
 
-    rows, phase_counts, unknown_count = summary or summarize_tuples(tuples, phase_map)
+    rows, phase_counts, unknown_count = (
+        summary if summary is not None else summarize_tuples(tuples, phase_map)
+    )
 
     for phase, count in phase_counts.items():
         lines.append(f"- **{phase}**: {count}")
@@ -210,7 +212,9 @@ def build_summary_json(
     summary: tuple[list[dict[str, str]], dict[str, int], int] | None = None,
 ) -> dict[str, Any]:
     failures = failures or []
-    rows, phase_counts, unknown_count = summary or summarize_tuples(tuples, phase_map)
+    rows, phase_counts, unknown_count = (
+        summary if summary is not None else summarize_tuples(tuples, phase_map)
+    )
 
     return {
         "timestamp": datetime.now(timezone.utc).isoformat(),
