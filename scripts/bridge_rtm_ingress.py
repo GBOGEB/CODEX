@@ -106,6 +106,7 @@ def render_report(
     tuples: list[dict[str, Any]],
     phase_map: dict[str, str],
     failures: list[tuple[str, str]] | None = None,
+    summary: tuple[list[dict[str, str]], dict[str, int], int] | None = None,
 ) -> str:
     """Render a Markdown traceability bridge report."""
     failures = failures or []
@@ -125,7 +126,7 @@ def render_report(
         "",
     ]
 
-    rows, phase_counts, unknown_count = summarize_tuples(tuples, phase_map)
+    rows, phase_counts, unknown_count = summary or summarize_tuples(tuples, phase_map)
 
     for phase, count in phase_counts.items():
         lines.append(f"- **{phase}**: {count}")
@@ -206,9 +207,10 @@ def build_summary_json(
     tuples: list[dict[str, Any]],
     phase_map: dict[str, str],
     failures: list[tuple[str, str]] | None = None,
+    summary: tuple[list[dict[str, str]], dict[str, int], int] | None = None,
 ) -> dict[str, Any]:
     failures = failures or []
-    rows, phase_counts, unknown_count = summarize_tuples(tuples, phase_map)
+    rows, phase_counts, unknown_count = summary or summarize_tuples(tuples, phase_map)
 
     return {
         "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -259,10 +261,11 @@ def main(argv: list[str] | None = None) -> int:
 
     phase_map = load_phase_map(args.phase_map)
     tuples, failures = collect_tuples(args.export_dir)
+    summary = summarize_tuples(tuples, phase_map)
 
-    report = render_report(tuples, phase_map, failures)
+    report = render_report(tuples, phase_map, failures, summary)
 
-    json_summary = build_summary_json(tuples, phase_map, failures)
+    json_summary = build_summary_json(tuples, phase_map, failures, summary)
 
     if args.dry_run:
         print(report)
