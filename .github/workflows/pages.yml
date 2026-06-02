@@ -85,7 +85,10 @@ jobs:
               (step for step in report.get("steps", []) if step.get("script") == "render_html_runtime.py"),
               None,
           )
-          assert render_step and render_step.get("status") == "passed", render_step
+          assert render_step and render_step.get("status") == "passed", (
+              "render_html_runtime.py was missing from the federation bridge build report "
+              "or did not complete successfully"
+          )
           PY
 
       - name: Setup Pages
