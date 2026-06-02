@@ -70,7 +70,7 @@ jobs:
 
       - name: Execute federation bridge
         run: |
-          python docs/wave_packages/runtime/federation_bridge_cli.py
+          python docs/wave_packages/runtime/federation_bridge_cli.py --stop-on-failure
 
       - name: Generate reality tracker
         run: |
@@ -121,24 +121,46 @@ jobs:
         with:
           name: runtime-evidence-artifacts
 
-      - name: Governance checks
+      - name: Check manifest
+        id: manifest
         run: |
           python scripts/check_manifest.py
+
+      - name: Check glob policy
+        id: globs
+        run: |
           python scripts/check_globs.py
+
+      - name: Check stale artifacts
+        id: stale
+        run: |
           python scripts/check_stale.py
+
+      - name: Check links
+        id: links
+        run: |
           python scripts/check_links.py
+
+      - name: Render governance lint
+        id: render_linter
+        run: |
           python governance/RENDER_LINTER.py
+
+      - name: Validate DMAIC phase map
+        id: dmaic_phase_map
+        run: |
           python scripts/validate_dmaic_phase_map.py --report-json reports/dmaic_phase_report.json
 
       - name: Emit governance snapshot
+        if: always()
         run: |
           python scripts/emit_governance_snapshot.py \
-            --check manifest=passed \
-            --check globs=passed \
-            --check stale=passed \
-            --check links=passed \
-            --check render_linter=passed \
-            --check dmaic_phase_map=passed \
+            --check manifest=${{ steps.manifest.outcome }} \
+            --check globs=${{ steps.globs.outcome }} \
+            --check stale=${{ steps.stale.outcome }} \
+            --check links=${{ steps.links.outcome }} \
+            --check render_linter=${{ steps.render_linter.outcome }} \
+            --check dmaic_phase_map=${{ steps.dmaic_phase_map.outcome }} \
             --out reports/governance_snapshot.json
 
       - name: Verify governance artifacts
@@ -147,6 +169,7 @@ jobs:
           test -f reports/dmaic_phase_report.json
 
       - name: Upload governance artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: governance-artifacts

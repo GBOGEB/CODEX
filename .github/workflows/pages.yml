@@ -47,7 +47,7 @@ jobs:
       - name: Generate runtime evidence for hosted portal
         run: |
           python scripts/bridge_rtm_ingress.py --json-out reports/rtm_summary.json
-          python docs/wave_packages/runtime/federation_bridge_cli.py
+          python docs/wave_packages/runtime/federation_bridge_cli.py --stop-on-failure
           python docs/wave_packages/runtime/reality_tracker.py
           python scripts/emit_runtime_status.py --out reports/runtime_status.json
 
@@ -61,7 +61,12 @@ jobs:
           python scripts/check_globs.py
           python scripts/check_stale.py
           python scripts/check_links.py
-          pytest -q tests/test_runtime_validation.py tests/test_drift_monitor.py
+          pytest -q \
+            --ignore=tests/gistau_ch15 \
+            --ignore=tests/test_coolprop_state_grid.py \
+            --ignore=tests/test_exergy_kernel.py \
+            --ignore=tests/test_nist_validation_points.py \
+            --ignore=tests/test_units_kernel.py
 
       - name: Verify release artifacts prior to staging
         run: |

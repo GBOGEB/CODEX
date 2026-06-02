@@ -125,20 +125,7 @@ def render_report(
         "",
     ]
 
-    # Tally
-    phase_counts: dict[str, int] = {p: 0 for p in DMAIC_PHASES}
-    unknown_count = 0
-    rows: list[tuple[str, str, str, str]] = []
-
-    for t in tuples:
-        tid = t.get("tuple_id") or t.get("id") or t.get("_source_file", "(unknown)")
-        theme = t.get("theme", "")
-        resolved, status = validate_dmaic_phase(t, phase_map)
-        if resolved in phase_counts:
-            phase_counts[resolved] += 1
-        else:
-            unknown_count += 1
-        rows.append((str(tid), theme, resolved, status))
+    rows, phase_counts, unknown_count = summarize_tuples(tuples, phase_map)
 
     for phase, count in phase_counts.items():
         lines.append(f"- **{phase}**: {count}")
@@ -152,8 +139,10 @@ def render_report(
         "| Tuple ID | Theme | Resolved Phase | Status |",
         "|---|---|---|---|",
     ]
-    for tid, theme, phase, status in rows:
-        lines.append(f"| `{tid}` | {theme} | {phase} | {status} |")
+    for row in rows:
+        lines.append(
+            f"| `{row['tuple_id']}` | {row['theme']} | {row['resolved_phase']} | {row['status']} |"
+        )
 
     if not rows:
         lines.append("| *(no tuples found in export directory)* | — | — | — |")
@@ -185,20 +174,18 @@ def render_report(
     return "\n".join(lines)
 
 
-def build_summary_json(
+def summarize_tuples(
     tuples: list[dict[str, Any]],
     phase_map: dict[str, str],
-    failures: list[tuple[str, str]] | None = None,
-) -> dict[str, Any]:
-    failures = failures or []
+) -> tuple[list[dict[str, str]], dict[str, int], int]:
     phase_counts: dict[str, int] = {p: 0 for p in DMAIC_PHASES}
     unknown_count = 0
     rows: list[dict[str, str]] = []
 
-    for t in tuples:
-        tid = str(t.get("tuple_id") or t.get("id") or t.get("_source_file", "(unknown)"))
-        theme = str(t.get("theme", ""))
-        resolved, status = validate_dmaic_phase(t, phase_map)
+    for tuple_data in tuples:
+        tid = str(tuple_data.get("tuple_id") or tuple_data.get("id") or tuple_data.get("_source_file", "(unknown)"))
+        theme = str(tuple_data.get("theme", ""))
+        resolved, status = validate_dmaic_phase(tuple_data, phase_map)
         if resolved in phase_counts:
             phase_counts[resolved] += 1
         else:
@@ -211,6 +198,17 @@ def build_summary_json(
                 "status": status,
             }
         )
+
+    return rows, phase_counts, unknown_count
+
+
+def build_summary_json(
+    tuples: list[dict[str, Any]],
+    phase_map: dict[str, str],
+    failures: list[tuple[str, str]] | None = None,
+) -> dict[str, Any]:
+    failures = failures or []
+    rows, phase_counts, unknown_count = summarize_tuples(tuples, phase_map)
 
     return {
         "timestamp": datetime.now(timezone.utc).isoformat(),

@@ -30,6 +30,7 @@ jobs:
           pip install -e .
 
       - name: Validate SSOT schemas
+        id: ssot_schemas
         run: |
           python scripts/check_ssot_schemas.py
 
@@ -40,54 +41,69 @@ jobs:
           fi
 
       - name: Run tests
+        id: tests
         run: |
-          pytest -q tests/test_runtime_validation.py tests/test_drift_monitor.py
+          pytest -q \
+            --ignore=tests/gistau_ch15 \
+            --ignore=tests/test_coolprop_state_grid.py \
+            --ignore=tests/test_exergy_kernel.py \
+            --ignore=tests/test_nist_validation_points.py \
+            --ignore=tests/test_units_kernel.py
 
       - name: Check manifest
+        id: manifest
         run: |
           python scripts/check_manifest.py
 
       - name: Check glob policy
+        id: globs
         run: |
           python scripts/check_globs.py
 
       - name: Check stale artifacts
+        id: stale
         run: |
           python scripts/check_stale.py
 
       - name: Check links
+        id: links
         run: |
           python scripts/check_links.py
 
       - name: Check CODEX-ABACUS bridge alignment
+        id: bridge_alignment
         run: |
           python scripts/check_bridge_alignment.py
 
       - name: Render governance lint
+        id: render_linter
         run: |
           python governance/RENDER_LINTER.py
 
       - name: Validate DMAIC phase map
+        id: dmaic_phase_map
         run: |
           python scripts/validate_dmaic_phase_map.py --report-json reports/dmaic_phase_report.json
 
       - name: Check backend registry
+        id: backend_registry
         run: |
           python scripts/check_backend_registry.py
 
       - name: Emit governance snapshot
+        if: always()
         run: |
           python scripts/emit_governance_snapshot.py \
-            --check ssot_schemas=passed \
-            --check tests=passed \
-            --check manifest=passed \
-            --check globs=passed \
-            --check stale=passed \
-            --check links=passed \
-            --check bridge_alignment=passed \
-            --check render_linter=passed \
-            --check dmaic_phase_map=passed \
-            --check backend_registry=passed \
+            --check ssot_schemas=${{ steps.ssot_schemas.outcome }} \
+            --check tests=${{ steps.tests.outcome }} \
+            --check manifest=${{ steps.manifest.outcome }} \
+            --check globs=${{ steps.globs.outcome }} \
+            --check stale=${{ steps.stale.outcome }} \
+            --check links=${{ steps.links.outcome }} \
+            --check bridge_alignment=${{ steps.bridge_alignment.outcome }} \
+            --check render_linter=${{ steps.render_linter.outcome }} \
+            --check dmaic_phase_map=${{ steps.dmaic_phase_map.outcome }} \
+            --check backend_registry=${{ steps.backend_registry.outcome }} \
             --out reports/governance_snapshot.json
 
       - name: Upload CI governance artifacts
