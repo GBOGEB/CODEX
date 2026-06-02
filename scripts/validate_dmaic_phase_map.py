@@ -10,7 +10,9 @@ Exit codes:
 from __future__ import annotations
 
 import argparse
+import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import yaml
@@ -60,6 +62,7 @@ def resolve_phase(category: str, theme: str, index: dict[str, str]) -> str:
 def validate(
     incubator_dir: Path = DEFAULT_INCUBATOR_DIR,
     phase_map_path: Path = DEFAULT_PHASE_MAP,
+    report_json: Path | None = None,
 ) -> int:
     if not phase_map_path.exists():
         print(f"FAIL: phase map not found: {phase_map_path}", file=sys.stderr)
@@ -78,6 +81,30 @@ def validate(
 
     if not tuple_files:
         print(f"INFO: no session tuples found in {incubator_dir} — nothing to validate")
+        if report_json is not None:
+            report_json.parent.mkdir(parents=True, exist_ok=True)
+            report_json.write_text(
+                json.dumps(
+                    {
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                        "status": "no-tuples",
+                        "claimed_percent": 100,
+                        "actual_percent": 100,
+                        "convergence_delta": 0,
+                        "totals": {
+                            "tuples_total": 0,
+                            "resolved_total": 0,
+                            "unresolved_total": 0,
+                        },
+                        "results": [],
+                        "errors": [],
+                    },
+                    indent=2,
+                    sort_keys=True,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
         return 0
 
     errors: list[str] = []
@@ -110,6 +137,47 @@ def validate(
     for name, cat, theme, phase in results:
         print(f"  OK  {name}: {cat}/{theme} → {phase}")
 
+    tuples_total = len(tuple_files)
+    resolved_total = len(results)
+    unresolved_total = len(errors)
+    claimed_percent = 100
+    actual_percent = round((resolved_total / tuples_total) * 100, 2) if tuples_total else 100
+    convergence_delta = round(actual_percent - claimed_percent, 2)
+
+    if report_json is not None:
+        report_json.parent.mkdir(parents=True, exist_ok=True)
+        report_json.write_text(
+            json.dumps(
+                {
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "status": "failed" if errors else "passed",
+                    "claimed_percent": claimed_percent,
+                    "actual_percent": actual_percent,
+                    "convergence_delta": convergence_delta,
+                    "totals": {
+                        "tuples_total": tuples_total,
+                        "resolved_total": resolved_total,
+                        "unresolved_total": unresolved_total,
+                    },
+                    "results": [
+                        {
+                            "file": name,
+                            "category": cat,
+                            "theme": theme,
+                            "phase": phase,
+                        }
+                        for name, cat, theme, phase in results
+                    ],
+                    "errors": errors,
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        print(f"Wrote DMAIC phase evidence report → {report_json}")
+
     if errors:
         for e in errors:
             print(f"FAIL: {e}", file=sys.stderr)
@@ -135,8 +203,14 @@ def main(argv: list[str] | None = None) -> int:
         default=DEFAULT_PHASE_MAP,
         help="Path to maps/dmaic_phase_map.yml.",
     )
+    parser.add_argument(
+        "--report-json",
+        type=Path,
+        default=None,
+        help="Optional output path for JSON claim-vs-actual DMAIC evidence report.",
+    )
     args = parser.parse_args(argv)
-    return validate(args.incubator_dir, args.phase_map)
+    return validate(args.incubator_dir, args.phase_map, args.report_json)
 
 
 if __name__ == "__main__":
