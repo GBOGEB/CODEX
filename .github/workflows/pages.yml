@@ -72,7 +72,21 @@ jobs:
         run: |
           test -f reports/runtime_status.json
           test -f reports/rtm_summary.json
+          test -f docs/wave_packages/runtime/out/federation_bridge_build_report.json
           test -f docs/wave_packages/runtime/pages/index.html
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(
+              Path("docs/wave_packages/runtime/out/federation_bridge_build_report.json").read_text(encoding="utf-8")
+          )
+          render_step = next(
+              (step for step in report.get("steps", []) if step.get("script") == "render_html_runtime.py"),
+              None,
+          )
+          assert render_step and render_step.get("status") == "passed", render_step
+          PY
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
