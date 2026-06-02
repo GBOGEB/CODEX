@@ -1,12 +1,35 @@
 {
-  "wave": "W007",
-  "subwave": "W007.1",
-  "members": ["ABACUS", "ARTSTYLE", "QPLANT", "CODEX"],
-  "weights": {
-    "ABACUS": 0.35,
-    "ARTSTYLE": 0.20,
-    "QPLANT": 0.25,
-    "CODEX": 0.20
+  "PC1": {
+    "cumulative_variance": 0.413,
+    "rank": 1,
+    "variance": 0.413
+  },
+  "PC2": {
+    "cumulative_variance": 0.674,
+    "rank": 2,
+    "variance": 0.261
+  },
+  "PC3": {
+    "cumulative_variance": 0.8525,
+    "rank": 3,
+    "variance": 0.1785
+  },
+  "PC4": {
+    "cumulative_variance": 0.95,
+    "rank": 4,
+    "variance": 0.0975
+  },
+  "PC5": {
+    "cumulative_variance": 1.0,
+    "rank": 5,
+    "variance": 0.05
+  },
+  "cumulative_variance": {
+    "pc1": 0.413,
+    "pc2": 0.674,
+    "pc3": 0.8525,
+    "pc4": 0.95,
+    "pc5": 1.0
   },
   "federation_scree": {
     "pc1": 0.413,
@@ -15,73 +38,72 @@
     "pc4": 0.0975,
     "pc5": 0.05
   },
-  "ranked_components": [
-    {"component": "pc1", "variance_explained": 0.413},
-    {"component": "pc2", "variance_explained": 0.261},
-    {"component": "pc3", "variance_explained": 0.1785},
-    {"component": "pc4", "variance_explained": 0.0975},
-    {"component": "pc5", "variance_explained": 0.05}
+  "members": [
+    "ABACUS",
+    "ARTSTYLE",
+    "QPLANT",
+    "CODEX"
   ],
-  "cumulative_variance": {
-    "pc1": 0.413,
-    "pc2": 0.674,
-    "pc3": 0.8525,
-    "pc4": 0.95,
-    "pc5": 1.0
-  },
-  "per_member_scree": {
-    "ABACUS": {"pc1": 0.42, "pc2": 0.26, "pc3": 0.17, "pc4": 0.10, "pc5": 0.05},
-    "ARTSTYLE": {"pc1": 0.38, "pc2": 0.28, "pc3": 0.19, "pc4": 0.10, "pc5": 0.05},
-    "QPLANT": {"pc1": 0.44, "pc2": 0.24, "pc3": 0.18, "pc4": 0.09, "pc5": 0.05},
-    "CODEX": {"pc1": 0.40, "pc2": 0.27, "pc3": 0.18, "pc4": 0.10, "pc5": 0.05}
-  },
-  "runtime_registry": {
-    "ABACUS": {
-      "repo": "ABACUS",
-      "runtime_exists": true,
-      "runtime_validated": true,
-      "deployment_exists": true,
-      "last_execution": "2026-05-30T18:07:45Z",
-      "last_validation": "2026-05-30T18:07:45Z",
-      "last_deployment": "2026-05-30T18:07:45Z",
-      "truth_score": 0.99
+  "ranked_components": [
+    {
+      "component": "pc1",
+      "variance_explained": 0.413
     },
-    "ARTSTYLE": {
-      "repo": "ARTSTYLE",
-      "runtime_exists": true,
-      "runtime_validated": true,
-      "deployment_exists": true,
-      "last_execution": "2026-05-30T18:07:45Z",
-      "last_validation": "2026-05-30T18:07:45Z",
-      "last_deployment": "2026-05-30T18:07:45Z",
-      "truth_score": 0.97
+    {
+      "component": "pc2",
+      "variance_explained": 0.261
     },
-    "QPLANT": {
-      "repo": "QPLANT",
-      "runtime_exists": true,
-      "runtime_validated": true,
-      "deployment_exists": true,
-      "last_execution": "2026-05-30T18:07:45Z",
-      "last_validation": "2026-05-30T18:07:45Z",
-      "last_deployment": "2026-05-30T18:07:45Z",
-      "truth_score": 0.98
+    {
+      "component": "pc3",
+      "variance_explained": 0.1785
     },
-    "CODEX": {
-      "repo": "CODEX",
-      "runtime_exists": true,
-      "runtime_validated": true,
-      "deployment_exists": true,
-      "last_execution": "2026-05-30T18:07:45Z",
-      "last_validation": "2026-05-30T18:07:45Z",
-      "last_deployment": "2026-05-30T18:07:45Z",
-      "truth_score": 0.98
+    {
+      "component": "pc4",
+      "variance_explained": 0.0975
+    },
+    {
+      "component": "pc5",
+      "variance_explained": 0.05
     }
-  },
-  "runtime_status": {
-    "repositories": 4,
-    "runtime_exists": true,
-    "runtime_validated": true,
-    "deployment_exists": true,
-    "average_truth_score": 0.98
+  ],
+  "scree_components": [
+    {
+      "component": "PC1",
+      "cumulative_variance": 0.413,
+      "rank": 1,
+      "variance": 0.413
+    },
+    {
+      "component": "PC2",
+      "cumulative_variance": 0.674,
+      "rank": 2,
+      "variance": 0.261
+    },
+    {
+      "component": "PC3",
+      "cumulative_variance": 0.8525,
+      "rank": 3,
+      "variance": 0.1785
+    },
+    {
+      "component": "PC4",
+      "cumulative_variance": 0.95,
+      "rank": 4,
+      "variance": 0.0975
+    },
+    {
+      "component": "PC5",
+      "cumulative_variance": 1.0,
+      "rank": 5,
+      "variance": 0.05
+    }
+  ],
+  "subwave": "W007.2A",
+  "wave": "W007",
+  "weights": {
+    "ABACUS": 0.35,
+    "ARTSTYLE": 0.2,
+    "CODEX": 0.2,
+    "QPLANT": 0.25
   }
 }

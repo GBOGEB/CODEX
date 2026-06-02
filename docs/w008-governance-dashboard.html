@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>W008 Federation Governance Dashboard</title>
+  <style>
+    :root {
+      --bg:#0b1220; --panel:#121b2f; --card:#1a2540; --line:#33446f;
+      --txt:#edf2ff; --muted:#9cb0df; --ok:#50d890; --warn:#ffcb6b;
+      --info:#8ad3ff; --crit:#f87171;
+    }
+    body { margin:0; font-family:Inter,Arial,sans-serif; background:var(--bg); color:var(--txt); }
+    main { max-width:1200px; margin:0 auto; padding:20px; }
+    h1,h2,h3 { margin:0 0 10px; }
+    .muted { color:var(--muted); font-size:.9rem; }
+    .panel { background:var(--card); border:1px solid var(--line); border-radius:12px;
+              padding:18px; margin-bottom:18px; }
+    .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+                gap:12px; margin:14px 0; }
+    .kpi { background:var(--panel); border:1px solid var(--line); border-radius:8px;
+            padding:12px; text-align:center; }
+    .kpi-label { color:var(--muted); font-size:.8rem; text-transform:uppercase;
+                  letter-spacing:.05em; margin-bottom:6px; }
+    .kpi-value { font-size:1.5rem; font-weight:700; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; font-size:.9rem; }
+    th,td { border-bottom:1px solid var(--line); padding:8px 10px; text-align:left; }
+    th { color:var(--muted); font-weight:600; font-size:.8rem; text-transform:uppercase; }
+    .badge { display:inline-block; border-radius:999px; padding:2px 8px;
+              font-size:.8rem; font-weight:600; border:1px solid var(--line); }
+    .badge.ok { color:#0b1220; background:var(--ok); border-color:var(--ok); }
+    .badge.warn { color:#0b1220; background:var(--warn); border-color:var(--warn); }
+    .badge.crit { color:#0b1220; background:var(--crit); border-color:var(--crit); }
+    .notice { background:var(--panel); border-left:3px solid var(--warn);
+               padding:10px 14px; border-radius:4px; margin:12px 0; font-size:.9rem; }
+    a { color:var(--info); }
+    .back { display:block; margin-bottom:16px; }
+    header { border-bottom:1px solid var(--line); padding-bottom:14px; margin-bottom:18px; }
+  </style>
+</head>
+<body>
+<main>
+  <a class="back" href="index.html">← Back to index</a>
+  <header>
+    <h1>W008 — Federation Runtime Visualization &amp; Governance Dashboard</h1>
+    <p class="muted">
+      Subwave: <strong>W007.2A</strong> ·
+      Artifact consumption layer for federation governance visibility.
+    </p>
+  </header>
+
+  <section class="panel">
+    <h2>D1 — Federation Health</h2>
+    <p class="muted">Wave <strong>W007</strong> · Subwave <strong>W007.2A</strong> · Members: ABACUS, ARTSTYLE, QPLANT, CODEX</p>
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">GETI</div>
+        <div class="kpi-value" style="color:var(--warn)">0.7915</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">PCI</div>
+        <div class="kpi-value" style="color:var(--warn)">0.7635</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Expansion Factor</div>
+        <div class="kpi-value">1.1685</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Federation Status</div>
+        <div class="kpi-value" style="color:var(--warn)">DEGRADED</div>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>Member</th><th>GETI</th><th>PCI</th><th>Expansion Factor</th></tr></thead>
+      <tbody><tr><td>ABACUS</td><td style='color:var(--ok)'>0.8200</td><td style='color:var(--warn)'>0.7900</td><td>1.1800</td></tr>
+<tr><td>ARTSTYLE</td><td style='color:var(--warn)'>0.7100</td><td style='color:var(--crit)'>0.6800</td><td>1.2200</td></tr>
+<tr><td>QPLANT</td><td style='color:var(--warn)'>0.7700</td><td style='color:var(--warn)'>0.7400</td><td>1.1500</td></tr>
+<tr><td>CODEX</td><td style='color:var(--ok)'>0.8500</td><td style='color:var(--ok)'>0.8300</td><td>1.1200</td></tr>
+</tbody>
+    </table>
+  </section>
+
+  <section class="panel">
+    <h2>D2 — Runtime Registry</h2>
+    <p class="muted">Wave <strong>W007</strong> · Subwave <strong>W007.2A</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Repository</th>
+          <th>Runtime State</th>
+          <th>Evidence Count</th>
+          <th>Coverage %</th>
+        </tr>
+      </thead>
+      <tbody><tr><td>GBOGEB/ABACUS</td><td style='color:var(--ok)'>VALIDATED_DEPLOYED</td><td style='text-align:center'>3/3</td><td style='color:var(--ok)'>96.0%</td></tr>
+<tr><td>GBOGEB/ARTSTYLE</td><td style='color:var(--warn)'>EXECUTED_ONLY</td><td style='text-align:center'>1/3</td><td style='color:var(--crit)'>62.0%</td></tr>
+<tr><td>GBOGEB/QPLANT</td><td style='color:var(--info)'>EXECUTED_VALIDATED</td><td style='text-align:center'>2/3</td><td style='color:var(--ok)'>84.0%</td></tr>
+<tr><td>GBOGEB/CODEX</td><td style='color:var(--ok)'>VALIDATED_DEPLOYED</td><td style='text-align:center'>3/3</td><td style='color:var(--ok)'>93.0%</td></tr>
+</tbody>
+    </table>
+  </section>
+
+  <section class="panel">
+    <h2>D3 — Bottleneck Analysis</h2>
+    <p class="muted">Timestamp: 2026-05-30T18:30:17Z · Bottleneck count: 1</p>
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">Dominant Repo</div>
+        <div class="kpi-value" style="color:var(--warn)">ARTSTYLE</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Dominant Wave</div>
+        <div class="kpi-value">W007.2A</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Dominant Bottleneck</div>
+        <div class="kpi-value" style="color:var(--crit)">GETI</div>
+      </div>
+    </div>
+    <p class="notice"><strong>Recommended Action:</strong> Prioritize ARTSTYLE remediation on geti, then regenerate federation artifacts.</p>
+    <table>
+      <thead><tr><th>Member</th><th>Flags</th><th>Weight</th></tr></thead>
+      <tbody><tr><td>ARTSTYLE</td><td>GETI, PCI</td><td style='color:var(--crit)'>0.20</td></tr>
+</tbody>
+    </table>
+  </section>
+
+  <section class="panel">
+    <h2>D4 — Governance Rollup</h2>
+    <p class="muted">Wave <strong>W007</strong> · Subwave <strong>W007.2A</strong>
+      · Tracking: lineage, federation, renderability, drift</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Member</th>
+          <th>Truth Score</th>
+          <th>Truth State</th>
+          <th>Lineage</th>
+          <th>Federation</th>
+          <th>Renderability</th>
+          <th>Drift</th>
+        </tr>
+      </thead>
+      <tbody><tr style='font-weight:bold'><td>ABACUS</td><td style='color:var(--ok)'>0.96</td><td style='color:var(--ok)'>VALIDATED_DEPLOYED</td><td><span class="badge ok">✓ YES</span></td><td><span class="badge ok">✓ YES</span></td><td><span class="badge ok">✓ YES</span></td><td><span class="badge ok">✓ STABLE</span></td></tr>
+<tr style='font-weight:bold'><td>ARTSTYLE</td><td style='color:var(--crit)'>0.62</td><td style='color:var(--warn)'>EXECUTED_ONLY</td><td><span class="badge ok">✓ YES</span></td><td><span class="badge crit">✗ NO</span></td><td><span class="badge crit">✗ NO</span></td><td><span class="badge warn">⚠ DRIFT RISK</span></td></tr>
+<tr><td>QPLANT</td><td style='color:var(--ok)'>0.84</td><td style='color:var(--info)'>EXECUTED_VALIDATED</td><td><span class="badge ok">✓ YES</span></td><td><span class="badge ok">✓ YES</span></td><td><span class="badge crit">✗ NO</span></td><td><span class="badge ok">✓ STABLE</span></td></tr>
+<tr style='font-weight:bold'><td>CODEX</td><td style='color:var(--ok)'>0.93</td><td style='color:var(--ok)'>VALIDATED_DEPLOYED</td><td><span class="badge ok">✓ YES</span></td><td><span class="badge ok">✓ YES</span></td><td><span class="badge ok">✓ YES</span></td><td><span class="badge ok">✓ STABLE</span></td></tr>
+</tbody>
+    </table>
+  </section>
+</main>
+</body>
+</html>

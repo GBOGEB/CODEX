@@ -16,3 +16,4 @@
 - REQUIRED PREDECESSORS: PR-005, PR-006, PR-008
 - CURRENT TRACK: PR-007
 - BLOCKED SUCCESSOR: PR-009
+- FOLLOW-UP UPDATE: 2026-06-01 review-comment remediation recorded for W008 dashboard cleanup.

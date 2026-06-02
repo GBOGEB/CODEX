@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 import shutil
 from pathlib import Path
 
@@ -39,9 +40,10 @@ def export_abacus_runtime(
         elif item.is_dir():
             shutil.copytree(item, target)
             copied_directory_count += 1
-            for root, _, files in item.walk():
+            for root, _, files in os.walk(item):
+                root_path = Path(root)
                 copied_files.extend(
-                    str((root / file_name).relative_to(source_dir))
+                    str((root_path / file_name).relative_to(source_dir))
                     for file_name in files
                 )
 

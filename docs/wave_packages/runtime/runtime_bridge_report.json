@@ -1,0 +1,72 @@
+{
+  "events": [
+    {
+      "detail": "Loaded topology runtime from docs/wave_packages/topology/topology_runtime.json",
+      "stage": "topology",
+      "status": "ok",
+      "timestamp": "2026-05-31T19:23:47.380571+00:00"
+    },
+    {
+      "detail": "Payload satisfies A66 minimal bridge contract",
+      "stage": "schema_validation",
+      "status": "ok",
+      "timestamp": "2026-05-31T19:23:47.380586+00:00"
+    },
+    {
+      "detail": "federated",
+      "stage": "kpi_federation",
+      "status": "ok",
+      "timestamp": "2026-05-31T19:23:47.380595+00:00"
+    },
+    {
+      "detail": "Topology runtime state updated in memory",
+      "stage": "topology_sync",
+      "status": "ok",
+      "timestamp": "2026-05-31T19:23:47.380602+00:00"
+    },
+    {
+      "detail": "Hydrated 3 artifact(s)",
+      "stage": "runtime_hydration",
+      "status": "ok",
+      "timestamp": "2026-05-31T19:23:47.380607+00:00"
+    },
+    {
+      "detail": "planned",
+      "stage": "pages_regeneration",
+      "status": "ok",
+      "timestamp": "2026-05-31T19:23:47.380610+00:00"
+    }
+  ],
+  "kpi_federation": {
+    "metric_count": 5,
+    "metrics": {
+      "autonomous_regeneration": 72,
+      "bridge_orchestration": 88,
+      "ci_execution_closure": 82,
+      "pages_continuity": 82,
+      "topology_persistence": 90
+    },
+    "status": "federated",
+    "wave": "A66"
+  },
+  "mode": "dry_run",
+  "pages_regeneration": {
+    "actions": [
+      "validate MANIFEST.json",
+      "rebuild docs runtime bundle",
+      "publish docs/ via GitHub Pages workflow",
+      "run post-publish smoke checks"
+    ],
+    "dry_run": true,
+    "status": "planned"
+  },
+  "runtime_hydration": {
+    "artifact_count": 3,
+    "pages_continuity": "medium_high",
+    "source": "manual_fixture",
+    "status": "hydrated",
+    "topology_version": "0.66.1",
+    "wave": "A66"
+  },
+  "status": "ok"
+}

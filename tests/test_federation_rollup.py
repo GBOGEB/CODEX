@@ -397,3 +397,49 @@ class TestMetricsJsonFiles:
         data = json.loads(path.read_text(encoding="utf-8"))
         assert "aggregated" in data
         assert "geti" in data["aggregated"]
+
+
+def _runtime_records() -> dict:
+    return {
+        member: {
+            "repo": f"GBOGEB/{member}",
+            "runtime_exists": True,
+            "runtime_validated": True,
+            "deployment_exists": True,
+            "last_execution": "2026-05-30T09:00:00Z",
+            "last_validation": "2026-05-30T10:00:00Z",
+            "last_deployment": "2026-05-30T11:00:00Z",
+            "truth_score": 0.9,
+            "forward_pca": 0.84,
+            "backward_pca": 0.81,
+            "geti": 0.82,
+            "pci": 0.79,
+        }
+        for member in MEMBERS
+    }
+
+
+class TestBuildRuntimeStatus:
+    def test_valid_records_return_status(self):
+        status = FederationRollup().build_runtime_status(_runtime_records())
+        assert status["runtime_exists_count"] == 4
+        assert status["execution_count"] == 4
+        assert len(status["truth_matrix"]) == 4
+
+    def test_none_truth_score_raises_federation_rollup_error(self):
+        records = _runtime_records()
+        records["ABACUS"]["truth_score"] = None
+        with pytest.raises(FederationRollupError, match="truth_score"):
+            FederationRollup().build_runtime_status(records)
+
+    def test_non_numeric_truth_score_raises_federation_rollup_error(self):
+        records = _runtime_records()
+        records["CODEX"]["truth_score"] = "bad"
+        with pytest.raises(FederationRollupError, match="truth_score"):
+            FederationRollup().build_runtime_status(records)
+
+    def test_missing_member_raises_federation_rollup_error(self):
+        records = _runtime_records()
+        del records["QPLANT"]
+        with pytest.raises(FederationRollupError, match="QPLANT"):
+            FederationRollup().build_runtime_status(records)

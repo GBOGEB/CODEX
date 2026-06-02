@@ -1,0 +1,153 @@
+{
+  "wave": "W007",
+  "subwave": "W007.2",
+  "members": [
+    "ABACUS",
+    "ARTSTYLE",
+    "QPLANT",
+    "CODEX"
+  ],
+  "weights": {
+    "ABACUS": 0.35,
+    "ARTSTYLE": 0.2,
+    "QPLANT": 0.25,
+    "CODEX": 0.2
+  },
+  "summary": {
+    "runtime_exists_count": 4,
+    "execution_count": 4,
+    "runtime_validated_count": 3,
+    "deployment_exists_count": 2,
+    "weighted_truth_score": 0.783333
+  },
+  "truth_matrix": [
+    {
+      "member": "ABACUS",
+      "repo": "GBOGEB/ABACUS",
+      "runtime_exists": true,
+      "executed": true,
+      "runtime_validated": true,
+      "deployment_exists": true,
+      "truth_score": 1.0
+    },
+    {
+      "member": "ARTSTYLE",
+      "repo": "GBOGEB/ARTSTYLE",
+      "runtime_exists": true,
+      "executed": true,
+      "runtime_validated": false,
+      "deployment_exists": false,
+      "truth_score": 0.333333
+    },
+    {
+      "member": "QPLANT",
+      "repo": "GBOGEB/QPLANT",
+      "runtime_exists": true,
+      "executed": true,
+      "runtime_validated": true,
+      "deployment_exists": false,
+      "truth_score": 0.666667
+    },
+    {
+      "member": "CODEX",
+      "repo": "GBOGEB/CODEX",
+      "runtime_exists": true,
+      "executed": true,
+      "runtime_validated": true,
+      "deployment_exists": true,
+      "truth_score": 1.0
+    }
+  ],
+  "per_repository": {
+    "ABACUS": {
+      "repo": "GBOGEB/ABACUS",
+      "runtime_exists": true,
+      "runtime_validated": true,
+      "deployment_exists": true,
+      "last_execution": "2026-05-30T09:00:00Z",
+      "last_validation": "2026-05-30T10:00:00Z",
+      "last_deployment": "2026-05-30T11:00:00Z",
+      "truth_score": 1.0,
+      "forward_pca": 0.84,
+      "backward_pca": 0.81,
+      "geti": 0.82,
+      "pci": 0.79
+    },
+    "ARTSTYLE": {
+      "repo": "GBOGEB/ARTSTYLE",
+      "runtime_exists": true,
+      "runtime_validated": false,
+      "deployment_exists": false,
+      "last_execution": "2026-05-29T14:00:00Z",
+      "last_validation": null,
+      "last_deployment": null,
+      "truth_score": 0.333333,
+      "forward_pca": 0.73,
+      "backward_pca": 0.7,
+      "geti": 0.71,
+      "pci": 0.68
+    },
+    "QPLANT": {
+      "repo": "GBOGEB/QPLANT",
+      "runtime_exists": true,
+      "runtime_validated": true,
+      "deployment_exists": false,
+      "last_execution": "2026-05-30T08:30:00Z",
+      "last_validation": "2026-05-30T09:45:00Z",
+      "last_deployment": null,
+      "truth_score": 0.666667,
+      "forward_pca": 0.79,
+      "backward_pca": 0.75,
+      "geti": 0.77,
+      "pci": 0.74
+    },
+    "CODEX": {
+      "repo": "GBOGEB/CODEX",
+      "runtime_exists": true,
+      "runtime_validated": true,
+      "deployment_exists": true,
+      "last_execution": "2026-05-30T12:00:00Z",
+      "last_validation": "2026-05-30T12:30:00Z",
+      "last_deployment": "2026-05-30T13:00:00Z",
+      "truth_score": 1.0,
+      "forward_pca": 0.87,
+      "backward_pca": 0.84,
+      "geti": 0.85,
+      "pci": 0.83
+    }
+  },
+  "integrations": {
+    "federation_rollup": {
+      "geti": 0.7915,
+      "pci": 0.7635,
+      "expansion_factor": 1.1685,
+      "forward_pca": {
+        "variance_explained": [
+          0.413,
+          0.261,
+          0.1785,
+          0.0975,
+          0.05
+        ],
+        "convergence_score": 0.8115
+      },
+      "backward_pca": {
+        "variance_explained": [
+          0.3905,
+          0.271,
+          0.191,
+          0.0975,
+          0.05
+        ],
+        "regression_score": 0.779
+      }
+    },
+    "federation_scree": {
+      "pc1": 0.413,
+      "pc2": 0.261,
+      "pc3": 0.1785,
+      "pc4": 0.0975,
+      "pc5": 0.05
+    }
+  }
+}

@@ -18,7 +18,7 @@ security_boundaries:
     allowed_formats: ["pptx", "docx", "xlsx", "pdf"]
   federation:
     allowed_tokens:
-      - "GITHUB_API_TOKEN"
+      - "GITHUB_TOKEN"
       - "OPENAI_API_TOKEN"
       - "GEMINI_PRO_API_TOKEN"
       - "ABACUS_API_TOKEN"
@@ -41,38 +41,36 @@ rendering_defaults:
     engine: "static-svg" # No live Plotly JS payloads; raw SVG injection only
 
 identity_boundaries:
-  lanes:
-    office365_graph_session: "office365"
-    github_session: "github"
-    apple_personal_session: "personal"
   token_reuse_across_lanes: false
+  lanes:
+    office365_graph_session:
+      auth_provider: "Windows Active Directory / Office 365"
+    github_session:
+      auth_provider: "GitHub"
+    apple_personal_session:
+      auth_provider: "Apple ID"
 
 binary_sources:
   office365:
-    system_of_record: "office365"
-    graph_base_url: "https://graph.microsoft.com"
-    cache_root: "outputs/office365_cache"
-    supported_formats:
-      - "pptx"
-      - "docx"
-      - "xlsx"
-      - "pdf"
+    system_of_record: "OneDrive"
+    graph_base_url: "https://graph.microsoft.com/v1.0"
+    cache_root: ".cache/office365"
+    supported_formats: ["pptx", "docx", "xlsx", "pdf"]
   github:
-    system_of_record: "github"
-    stores_only:
-      - "metadata"
-      - "references"
+    system_of_record: "GitHub"
+    stores_only: true
 
 mcp_sweep:
-  enabled: false
+  enabled: true
   near_miss_keywords:
-    - "almost"
-    - "partial"
-    - "blocked"
+    - "TODO"
+    - "FIXME"
+    - "NEAR-MISS"
+    - "STALE"
   stale_status_values:
-    - "todo"
-    - "planned"
-    - "stale"
+    - "STALE"
+    - "PENDING"
+    - "BLOCKED"
   output:
-    telemetry_markdown: "telemetry/mcp_sweep_latest.md"
-    rtm_delta: "reports/rtm_lineage_delta.json"
+    telemetry_markdown: "metrics/mcp_sweep_telemetry.md"
+    rtm_delta: "metrics/rtm_lineage_delta.yaml"
