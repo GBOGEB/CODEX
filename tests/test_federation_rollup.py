@@ -175,6 +175,7 @@ class TestWeightValidation:
     def test_missing_member_weight_raises(self):
         bad = dict(DEFAULT_WEIGHTS)
         del bad["ANTHROPIC"]
+        bad["ABACUS"] += DEFAULT_WEIGHTS["ANTHROPIC"]
         with pytest.raises(FederationRollupError, match="ANTHROPIC"):
             FederationRollup(weights=bad)
 
