@@ -229,7 +229,7 @@ class TestRuntimeRegistryGeneration:
         registry_output = tmp_path / "runtime_registry.json"
         report_output = tmp_path / "runtime_registry_report.json"
         with pytest.raises(RuntimeRegistryError, match="canonical federation members"):
-            RuntimeRegistry(            members=("ABACUS", "ABACUS", "ARTSTYLE", "QPLANT", "CODEX", "GEMINI")).write_outputs(
+            RuntimeRegistry(members=("ABACUS", "ABACUS", "ARTSTYLE", "QPLANT", "CODEX", "GEMINI")).write_outputs(
                 runtime_dir=runtime_dir,
                 metrics_dir=_metrics_dir(),
                 registry_output=registry_output,
