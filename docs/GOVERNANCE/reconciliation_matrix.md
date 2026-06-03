@@ -19,7 +19,7 @@
 | New Artifact    | Canonical Source                  | Action    | Bridge File                    |
 |-----------------|-----------------------------------|-----------|--------------------------------|
 | `docs/ADR`      | `06_arch/ADR/`                    | BRIDGE    | `docs/ADR/README.md`           |
-| `docs/RTM`      | `docs/rtm/`, `MANIFEST/RTM.csv`   | MERGE     | `docs/RTM/README.md`           |
+| `docs/RTM`      | `docs/rtm/`, `01_requirements/RTM.csv` | MERGE     | `docs/RTM/README.md`           |
 | `docs/GOVERNANCE` | `GOVERNANCE.md`, `DELTA_1/`, `KEB/governance/`, `MANIFEST/` | REFERENCE | `docs/GOVERNANCE/README.md` |
 | `docs/DMAIC`    | `99_handover/PROCESS_DMAIC.md`    | BRIDGE    | `docs/DMAIC/README.md`         |
 
@@ -32,7 +32,7 @@
 
 ### RTM → MERGE
 - `docs/RTM/README.md` created as merge/reference layer.
-- Canonical ownership preserved in `MANIFEST/RTM.csv`.
+- Canonical ownership preserved in `01_requirements/RTM.csv`.
 - Local delta lineage referenced from `docs/rtm/local_rtm_lineage.md`.
 - Incubator bridge referenced from `docs/rtm/incubator_rtm_bridge.md`.
 - No parallel RTM schema created.
@@ -52,7 +52,7 @@
 | Risk | Severity | Mitigation |
 |------|----------|------------|
 | `GOVERNANCE.md` absent at repo root | Medium | Create or verify root `GOVERNANCE.md` before PR-001 |
-| Multiple RTM references may diverge | Low | Enforce `MANIFEST/RTM.csv` as single source of truth in PR review gates |
+| Multiple RTM references may diverge | Low | Enforce `01_requirements/RTM.csv` as single source of truth in PR review gates |
 | ADR template in `DELTA_1/` not yet linked from `06_arch/ADR/` | Low | Add cross-reference in `06_arch/ADR/ADR.md` |
 | `docs/GOVERNANCE/README.md` could attract new authoritative content | Low | Add governance lint check to CI if governance expands |
 

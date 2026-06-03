@@ -9,7 +9,7 @@
 
 | Source | Role |
 |--------|------|
-| [`GOVERNANCE.md`](../../GOVERNANCE.md) | Root governance authority *(create at repo root if absent)* |
+| [`KEB/governance/governance_rules.yml`](../../KEB/governance/governance_rules.yml) | Root governance authority |
 | [`DELTA_1/`](../../DELTA_1/) | Delta governance artifacts and operational ownership |
 | [`KEB/governance/`](../../KEB/governance/) | KEB governance rules, glossary, and metrics |
 | [`MANIFEST/`](../../MANIFEST/) | Programme manifests, KPIs, and registry |
@@ -26,15 +26,14 @@
 
 ```
 Repository Root
-├── GOVERNANCE.md                    ← Root authority
+├── KEB/governance/
+│   ├── governance_rules.yml         ← Root authority
+│   ├── GLOSSARY.yml
+│   └── metrics.yml
 ├── DELTA_1/
 │   ├── governance_adr_template.md   ← ADR template
 │   ├── governance_taxonomy.md       ← Taxonomy
 │   └── operational_ownership_matrix.md
-├── KEB/governance/
-│   ├── governance_rules.yml
-│   ├── GLOSSARY.yml
-│   └── metrics.yml
 └── MANIFEST/
     ├── RTM.csv
     ├── CONVERGENCE_KPIS.yaml
