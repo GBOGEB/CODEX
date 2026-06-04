@@ -15,7 +15,9 @@ Usage::
 from __future__ import annotations
 
 import argparse
+import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -30,6 +32,7 @@ if str(REPO_ROOT) not in sys.path:
 DEFAULT_EXPORT_DIR = REPO_ROOT / "outputs" / "incubator_export"
 DEFAULT_PHASE_MAP = REPO_ROOT / "maps" / "dmaic_phase_map.yml"
 DEFAULT_OUT = REPO_ROOT / "docs" / "rtm" / "incubator_rtm_bridge.md"
+DEFAULT_JSON_OUT = REPO_ROOT / "reports" / "rtm_summary.json"
 
 # DMAIC phases in canonical order
 DMAIC_PHASES = ("Define", "Measure", "Analyze", "Improve", "Control")
@@ -103,6 +106,7 @@ def render_report(
     tuples: list[dict[str, Any]],
     phase_map: dict[str, str],
     failures: list[tuple[str, str]] | None = None,
+    summary: tuple[list[dict[str, str]], dict[str, int], int] | None = None,
 ) -> str:
     """Render a Markdown traceability bridge report."""
     failures = failures or []
@@ -122,20 +126,9 @@ def render_report(
         "",
     ]
 
-    # Tally
-    phase_counts: dict[str, int] = {p: 0 for p in DMAIC_PHASES}
-    unknown_count = 0
-    rows: list[tuple[str, str, str, str]] = []
-
-    for t in tuples:
-        tid = t.get("tuple_id") or t.get("id") or t.get("_source_file", "(unknown)")
-        theme = t.get("theme", "")
-        resolved, status = validate_dmaic_phase(t, phase_map)
-        if resolved in phase_counts:
-            phase_counts[resolved] += 1
-        else:
-            unknown_count += 1
-        rows.append((str(tid), theme, resolved, status))
+    rows, phase_counts, unknown_count = (
+        summary if summary is not None else summarize_tuples(tuples, phase_map)
+    )
 
     for phase, count in phase_counts.items():
         lines.append(f"- **{phase}**: {count}")
@@ -149,8 +142,10 @@ def render_report(
         "| Tuple ID | Theme | Resolved Phase | Status |",
         "|---|---|---|---|",
     ]
-    for tid, theme, phase, status in rows:
-        lines.append(f"| `{tid}` | {theme} | {phase} | {status} |")
+    for row in rows:
+        lines.append(
+            f"| `{row['tuple_id']}` | {row['theme']} | {row['resolved_phase']} | {row['status']} |"
+        )
 
     if not rows:
         lines.append("| *(no tuples found in export directory)* | — | — | — |")
@@ -182,6 +177,59 @@ def render_report(
     return "\n".join(lines)
 
 
+def summarize_tuples(
+    tuples: list[dict[str, Any]],
+    phase_map: dict[str, str],
+) -> tuple[list[dict[str, str]], dict[str, int], int]:
+    phase_counts: dict[str, int] = {p: 0 for p in DMAIC_PHASES}
+    unknown_count = 0
+    rows: list[dict[str, str]] = []
+
+    for tuple_data in tuples:
+        tid = str(tuple_data.get("tuple_id") or tuple_data.get("id") or tuple_data.get("_source_file", "(unknown)"))
+        theme = str(tuple_data.get("theme", ""))
+        resolved, status = validate_dmaic_phase(tuple_data, phase_map)
+        if resolved in phase_counts:
+            phase_counts[resolved] += 1
+        else:
+            unknown_count += 1
+        rows.append(
+            {
+                "tuple_id": tid,
+                "theme": theme,
+                "resolved_phase": resolved,
+                "status": status,
+            }
+        )
+
+    return rows, phase_counts, unknown_count
+
+
+def build_summary_json(
+    tuples: list[dict[str, Any]],
+    phase_map: dict[str, str],
+    failures: list[tuple[str, str]] | None = None,
+    summary: tuple[list[dict[str, str]], dict[str, int], int] | None = None,
+) -> dict[str, Any]:
+    failures = failures or []
+    rows, phase_counts, unknown_count = (
+        summary if summary is not None else summarize_tuples(tuples, phase_map)
+    )
+
+    return {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "status": "passed" if not failures else "partial",
+        "tuples_processed": len(tuples),
+        "parse_failures": len(failures),
+        "phase_distribution": {
+            **phase_counts,
+            "UNKNOWN": unknown_count,
+        },
+        "tuples": rows,
+        "failures": [{"path": rel_path, "error": err_msg} for rel_path, err_msg in failures],
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="INCUBATOR → ABACUS RTM ingress bridge")
     parser.add_argument(
@@ -207,19 +255,32 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Print report to stdout without writing to disk.",
     )
+    parser.add_argument(
+        "--json-out",
+        type=Path,
+        default=DEFAULT_JSON_OUT,
+        help="Output JSON summary path (default: reports/rtm_summary.json).",
+    )
     args = parser.parse_args(argv)
 
     phase_map = load_phase_map(args.phase_map)
     tuples, failures = collect_tuples(args.export_dir)
+    summary = summarize_tuples(tuples, phase_map)
 
-    report = render_report(tuples, phase_map, failures)
+    report = render_report(tuples, phase_map, failures, summary)
+
+    json_summary = build_summary_json(tuples, phase_map, failures, summary)
 
     if args.dry_run:
         print(report)
+        print(json.dumps(json_summary, indent=2, sort_keys=True))
     else:
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(report, encoding="utf-8")
+        args.json_out.parent.mkdir(parents=True, exist_ok=True)
+        args.json_out.write_text(json.dumps(json_summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         print(f"Wrote RTM bridge report → {args.out}")
+        print(f"Wrote RTM JSON summary → {args.json_out}")
 
     return 0
 

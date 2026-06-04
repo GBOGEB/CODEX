@@ -79,6 +79,8 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--markdown",
+        "--target",
+        dest="markdown",
         type=Path,
         default=root / ".github" / "W003_PR_FOLLOW_UP.md",
         help="Path to the markdown source containing the governance header.",
@@ -93,6 +95,24 @@ def parse_args() -> argparse.Namespace:
         "--source",
         default=None,
         help="Human-readable label for the governance input being validated.",
+    )
+    parser.add_argument(
+        "--traceability-manifest",
+        type=Path,
+        default=None,
+        help="Reserved for workflow compatibility; not used by this validator.",
+    )
+    parser.add_argument(
+        "--pr-track",
+        type=Path,
+        default=None,
+        help="Reserved for workflow compatibility; not used by this validator.",
+    )
+    parser.add_argument(
+        "--wave-plan",
+        type=Path,
+        default=None,
+        help="Reserved for workflow compatibility; not used by this validator.",
     )
     return parser.parse_args()
 

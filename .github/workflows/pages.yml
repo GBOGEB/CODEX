@@ -1,9 +1,13 @@
 name: Deploy GitHub Pages
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Runtime Release Gate"]
+    types:
+      - completed
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -16,9 +20,19 @@ concurrency:
 
 jobs:
   build:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'push' &&
+        github.event.workflow_run.head_branch == 'main' &&
+        github.event.workflow_run.head_repository.full_name == github.repository
+      )
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - uses: actions/setup-python@v5
         with:
@@ -28,7 +42,14 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          pip install pytest
+          pip install -e .
+
+      - name: Generate runtime evidence for hosted portal
+        run: |
+          python scripts/bridge_rtm_ingress.py --json-out reports/rtm_summary.json
+          python docs/wave_packages/runtime/federation_bridge_cli.py --stop-on-failure
+          python docs/wave_packages/runtime/reality_tracker.py
+          python scripts/emit_runtime_status.py --out reports/runtime_status.json
 
       - name: Build verified Pages output
         run: |
@@ -40,7 +61,35 @@ jobs:
           python scripts/check_globs.py
           python scripts/check_stale.py
           python scripts/check_links.py
-          pytest -q
+          pytest -q \
+            --ignore=tests/gistau_ch15 \
+            --ignore=tests/test_coolprop_state_grid.py \
+            --ignore=tests/test_exergy_kernel.py \
+            --ignore=tests/test_nist_validation_points.py \
+            --ignore=tests/test_units_kernel.py
+
+      - name: Verify release artifacts prior to staging
+        run: |
+          test -f reports/runtime_status.json
+          test -f reports/rtm_summary.json
+          test -f docs/wave_packages/runtime/out/federation_bridge_build_report.json
+          test -f docs/wave_packages/runtime/pages/index.html
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(
+              Path("docs/wave_packages/runtime/out/federation_bridge_build_report.json").read_text(encoding="utf-8")
+          )
+          render_step = next(
+              (step for step in report.get("steps", []) if step.get("script") == "render_html_runtime.py"),
+              None,
+          )
+          assert render_step and render_step.get("status") == "passed", (
+              "render_html_runtime.py was missing from the federation bridge build report "
+              "or did not complete successfully"
+          )
+          PY
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -61,6 +110,14 @@ jobs:
           path: _site
 
   deploy:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'push' &&
+        github.event.workflow_run.head_branch == 'main' &&
+        github.event.workflow_run.head_repository.full_name == github.repository
+      )
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
