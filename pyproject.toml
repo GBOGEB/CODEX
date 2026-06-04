@@ -7,9 +7,18 @@ name = "codex"
 version = "1.3.0"
 description = "Utilities for packaging CODEX conversation archives"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 authors = [{ name = "CODEX Team" }]
-dependencies = ["PyYAML>=6.0,<7.0"]
+dependencies = [
+    "PyYAML>=6.0,<7.0",
+    "jinja2>=3.1,<4.0",
+    "openpyxl>=3.1,<4.0",
+    "pydantic>=2.0,<3.0",
+    "ruamel.yaml>=0.18,<0.19",
+]
+
+[project.scripts]
+contract-governance = "codex.contract_governance.cli:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=7.0"]
@@ -20,3 +29,5 @@ testpaths = ["tests"]
 
 [tool.setuptools.package-data]
 "src.renderers.themes" = ["*.yaml"]
+
+"codex.contract_governance.templates" = ["*.j2"]
