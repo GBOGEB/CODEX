@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-FEDERATION_MEMBERS: tuple[str, ...] = ("ABACUS", "ARTSTYLE", "QPLANT", "CODEX")
+FEDERATION_MEMBERS: tuple[str, ...] = ("ABACUS", "ARTSTYLE", "QPLANT", "CODEX", "GEMINI", "ANTHROPIC")
 
 RUNTIME_FIELDS: tuple[str, ...] = (
     "repo",
@@ -27,6 +27,8 @@ DEFAULT_RUNTIME_FILENAMES: dict[str, str] = {
     "ARTSTYLE": "artstyle_runtime.json",
     "QPLANT": "qplant_runtime.json",
     "CODEX": "codex_runtime.json",
+    "GEMINI": "gemini_runtime.json",
+    "ANTHROPIC": "anthropic_runtime.json",
 }
 REQUIRED_FIELDS: tuple[str, ...] = (
     "repo",

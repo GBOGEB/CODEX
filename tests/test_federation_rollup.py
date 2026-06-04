@@ -86,6 +86,38 @@ def _repo_metrics() -> dict:
                 "scree": {"pc1": 0.40, "pc2": 0.27, "pc3": 0.18, "pc4": 0.10, "pc5": 0.05},
             }
         },
+        "GEMINI": {
+            "metrics": {
+                "forward_pca": {
+                    "variance_explained": [0.39, 0.29, 0.17, 0.10, 0.05],
+                    "convergence_score": 0.80,
+                },
+                "backward_pca": {
+                    "variance_explained": [0.37, 0.30, 0.18, 0.10, 0.05],
+                    "regression_score": 0.78,
+                },
+                "geti": 0.79,
+                "pci": 0.76,
+                "expansion_factor": 1.11,
+                "scree": {"pc1": 0.39, "pc2": 0.29, "pc3": 0.17, "pc4": 0.10, "pc5": 0.05},
+            }
+        },
+        "ANTHROPIC": {
+            "metrics": {
+                "forward_pca": {
+                    "variance_explained": [0.39, 0.29, 0.17, 0.10, 0.05],
+                    "convergence_score": 0.80,
+                },
+                "backward_pca": {
+                    "variance_explained": [0.37, 0.30, 0.18, 0.10, 0.05],
+                    "regression_score": 0.78,
+                },
+                "geti": 0.79,
+                "pci": 0.76,
+                "expansion_factor": 1.11,
+                "scree": {"pc1": 0.39, "pc2": 0.29, "pc3": 0.17, "pc4": 0.10, "pc5": 0.05},
+            }
+        },
     }
 
 
@@ -98,6 +130,8 @@ def _write_runtime_registry(tmp_path: Path) -> Path:
         "artstyle_runtime.json": "ARTSTYLE",
         "qplant_runtime.json": "QPLANT",
         "codex_runtime.json": "CODEX",
+        "gemini_runtime.json": "GEMINI",
+        "anthropic_runtime.json": "ANTHROPIC",
     }
     for filename, repo in records.items():
         (registry_dir / filename).write_text(
@@ -128,18 +162,21 @@ class TestWeightValidation:
         assert set(rollup.weights.keys()) == set(MEMBERS)
 
     def test_custom_weights_accepted(self):
-        weights = {"ABACUS": 0.25, "ARTSTYLE": 0.25, "QPLANT": 0.25, "CODEX": 0.25}
+        weights = {member: 1 / len(MEMBERS) for member in MEMBERS}
         rollup = FederationRollup(weights=weights)
         assert rollup.weights == weights
 
     def test_weights_not_summing_to_one_raises(self):
-        bad = {"ABACUS": 0.30, "ARTSTYLE": 0.20, "QPLANT": 0.25, "CODEX": 0.20}
+        bad = dict(DEFAULT_WEIGHTS)
+        bad["ABACUS"] += 0.01
         with pytest.raises(FederationRollupError, match="1.0"):
             FederationRollup(weights=bad)
 
     def test_missing_member_weight_raises(self):
-        bad = {"ABACUS": 0.40, "ARTSTYLE": 0.30, "QPLANT": 0.30}
-        with pytest.raises(FederationRollupError, match="CODEX"):
+        bad = dict(DEFAULT_WEIGHTS)
+        del bad["ANTHROPIC"]
+        bad["ABACUS"] += DEFAULT_WEIGHTS["ANTHROPIC"]
+        with pytest.raises(FederationRollupError, match="ANTHROPIC"):
             FederationRollup(weights=bad)
 
 
@@ -162,32 +199,43 @@ class TestAggregate:
 
     def test_geti_weighted_average(self):
         rollup = FederationRollup()
-        result = rollup.aggregate(_repo_metrics())
-        expected = (0.35 * 0.82 + 0.20 * 0.71 + 0.25 * 0.77 + 0.20 * 0.85)
+        metrics = _repo_metrics()
+        result = rollup.aggregate(metrics)
+        expected = sum(DEFAULT_WEIGHTS[member] * metrics[member]["metrics"]["geti"] for member in MEMBERS)
         assert abs(result["geti"] - expected) < 1e-5
 
     def test_pci_weighted_average(self):
         rollup = FederationRollup()
-        result = rollup.aggregate(_repo_metrics())
-        expected = (0.35 * 0.79 + 0.20 * 0.68 + 0.25 * 0.74 + 0.20 * 0.83)
+        metrics = _repo_metrics()
+        result = rollup.aggregate(metrics)
+        expected = sum(DEFAULT_WEIGHTS[member] * metrics[member]["metrics"]["pci"] for member in MEMBERS)
         assert abs(result["pci"] - expected) < 1e-5
 
     def test_expansion_factor_weighted_average(self):
         rollup = FederationRollup()
-        result = rollup.aggregate(_repo_metrics())
-        expected = (0.35 * 1.18 + 0.20 * 1.22 + 0.25 * 1.15 + 0.20 * 1.12)
+        metrics = _repo_metrics()
+        result = rollup.aggregate(metrics)
+        expected = sum(DEFAULT_WEIGHTS[member] * metrics[member]["metrics"]["expansion_factor"] for member in MEMBERS)
         assert abs(result["expansion_factor"] - expected) < 1e-5
 
     def test_forward_pca_convergence_score_weighted(self):
         rollup = FederationRollup()
-        result = rollup.aggregate(_repo_metrics())
-        expected = (0.35 * 0.84 + 0.20 * 0.73 + 0.25 * 0.79 + 0.20 * 0.87)
+        metrics = _repo_metrics()
+        result = rollup.aggregate(metrics)
+        expected = sum(
+            DEFAULT_WEIGHTS[member] * metrics[member]["metrics"]["forward_pca"]["convergence_score"]
+            for member in MEMBERS
+        )
         assert abs(result["forward_pca"]["convergence_score"] - expected) < 1e-5
 
     def test_backward_pca_regression_score_weighted(self):
         rollup = FederationRollup()
-        result = rollup.aggregate(_repo_metrics())
-        expected = (0.35 * 0.81 + 0.20 * 0.70 + 0.25 * 0.75 + 0.20 * 0.84)
+        metrics = _repo_metrics()
+        result = rollup.aggregate(metrics)
+        expected = sum(
+            DEFAULT_WEIGHTS[member] * metrics[member]["metrics"]["backward_pca"]["regression_score"]
+            for member in MEMBERS
+        )
         assert abs(result["backward_pca"]["regression_score"] - expected) < 1e-5
 
     def test_forward_pca_variance_has_five_components(self):
@@ -208,10 +256,10 @@ class TestAggregate:
             rollup.aggregate(metrics)
 
     def test_equal_weights_produce_simple_average(self):
-        weights = {"ABACUS": 0.25, "ARTSTYLE": 0.25, "QPLANT": 0.25, "CODEX": 0.25}
+        weights = {member: 1 / len(MEMBERS) for member in MEMBERS}
         rollup = FederationRollup(weights=weights)
         result = rollup.aggregate(_repo_metrics())
-        expected_geti = (0.82 + 0.71 + 0.77 + 0.85) / 4
+        expected_geti = sum(_repo_metrics()[member]["metrics"]["geti"] for member in MEMBERS) / len(MEMBERS)
         assert abs(result["geti"] - expected_geti) < 1e-5
 
 
@@ -365,7 +413,14 @@ class TestWriteBottleneckReport:
 class TestMetricsJsonFiles:
     def test_repo_metrics_files_exist(self):
         root = Path(__file__).resolve().parents[1]
-        for name in ("abacus_metrics", "artstyle_metrics", "qplant_metrics", "codex_metrics"):
+        for name in (
+            "abacus_metrics",
+            "artstyle_metrics",
+            "qplant_metrics",
+            "codex_metrics",
+            "gemini_metrics",
+            "anthropic_metrics",
+        ):
             path = root / "metrics" / "repo" / f"{name}.json"
             assert path.exists(), f"Missing: {path}"
 
@@ -376,6 +431,8 @@ class TestMetricsJsonFiles:
             "artstyle_metrics": "ARTSTYLE",
             "qplant_metrics": "QPLANT",
             "codex_metrics": "CODEX",
+            "gemini_metrics": "GEMINI",
+            "anthropic_metrics": "ANTHROPIC",
         }
         loaded: dict = {}
         for filename, member in name_to_member.items():
@@ -422,9 +479,9 @@ def _runtime_records() -> dict:
 class TestBuildRuntimeStatus:
     def test_valid_records_return_status(self):
         status = FederationRollup().build_runtime_status(_runtime_records())
-        assert status["runtime_exists_count"] == 4
-        assert status["execution_count"] == 4
-        assert len(status["truth_matrix"]) == 4
+        assert status["runtime_exists_count"] == len(MEMBERS)
+        assert status["execution_count"] == len(MEMBERS)
+        assert len(status["truth_matrix"]) == len(MEMBERS)
 
     def test_none_truth_score_raises_federation_rollup_error(self):
         records = _runtime_records()
@@ -440,6 +497,6 @@ class TestBuildRuntimeStatus:
 
     def test_missing_member_raises_federation_rollup_error(self):
         records = _runtime_records()
-        del records["QPLANT"]
-        with pytest.raises(FederationRollupError, match="QPLANT"):
+        del records["ANTHROPIC"]
+        with pytest.raises(FederationRollupError, match="ANTHROPIC"):
             FederationRollup().build_runtime_status(records)
