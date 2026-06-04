@@ -1,0 +1,18 @@
+phase: Phase 0
+generated_at: '2026-06-04T11:52:22.701204+00:00'
+cross_repo_signals:
+- source_content_id: confluence:ACR:page:1023934467
+  target_repository: CODEX
+  requested_action: archive_confluence_artifacts_and_seed_semantic_tasks
+  payload_status: artifact_generation_initialized
+  trace_reference: outputs/confluence/page_1023934467
+- source_content_id: qplant:contractual-baseline:locked
+  target_repository: QPLANT
+  requested_action: review_locked_baseline_manifest_and_contractual_delta_policy
+  payload_status: baseline_ingestion_initialized
+  trace_reference: outputs/qplant/contractual_ingestion/change_deltas.yaml
+- source_content_id: phase0:dmaic:wave-anthology
+  target_repository: ABACUS
+  requested_action: prepare_future_semantic_enrichment_job_contract
+  payload_status: rudimentary_signal_ready
+  trace_reference: docs/governance/WAVE_ANTHOLOGY.md

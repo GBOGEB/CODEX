@@ -1,0 +1,29 @@
+phase: Phase 0
+cd_item: CD_Item2
+generated_at: '2026-06-04T11:52:22.006594+00:00'
+principle: Federation, not duplication
+constraints:
+- Do not overwrite locked baseline requirements
+- Do not reinterpret contractual obligations without trace markers
+- Preserve source references
+- Emit change deltas separately
+sources:
+- path: Book_Master.md
+  sha256: a1c11d2560f08751cee0830b1186466b23be9a1182a8ad91f39303e73e3e61ba
+  size_bytes: 330832
+  requirement_count: 394
+- path: VCR_Requirements.md
+  sha256: 2f939c2ec96c429fad5cae4c592c0b041836020c837932cb47d930e3962f7db5
+  size_bytes: 2544
+  requirement_count: 0
+- path: VCR_Summary.md
+  sha256: 27b9509c40653992f7c0cabfd158c9f92464ea5737efdf4042dfc8943f88378a
+  size_bytes: 5193
+  requirement_count: 0
+missing_sources: []
+outputs:
+  baseline_manifest: docs/qplant/baseline/contractual_baseline_manifest.yaml
+  requirements_json: outputs/qplant/contractual_ingestion/requirements.json
+  rtm_markdown: docs/qplant/rtm/requirements_traceability_matrix.md
+  change_deltas: outputs/qplant/contractual_ingestion/change_deltas.yaml
+requirement_count: 394
