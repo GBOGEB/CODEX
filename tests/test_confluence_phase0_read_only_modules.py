@@ -1,6 +1,7 @@
 import json
 import sys
 from pathlib import Path
+from urllib.parse import urlparse
 
 import yaml
 
@@ -94,7 +95,10 @@ def test_confluence_client_read_only_methods_and_download(tmp_path):
 
     saved = client.download_attachment("/download/attachments/1023934467/a.pdf", tmp_path / "a.pdf")
     assert Path(saved).read_bytes() == b"abcdef"
-    assert all(call["url"].startswith("https://myrrha.atlassian.net") for call in session.calls)
+    assert all(
+        (parsed.scheme == "https" and parsed.hostname == "myrrha.atlassian.net")
+        for parsed in (urlparse(call["url"]) for call in session.calls)
+    )
 
 
 def test_confluence_client_download_missing_raises(tmp_path):
