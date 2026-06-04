@@ -1,0 +1,63 @@
+name: Confluence-GitHub Bridge Phase 0
+
+on:
+  workflow_dispatch:
+    inputs:
+      live_confluence_read:
+        description: "Use Confluence REST API credentials instead of deterministic fixture mode"
+        required: false
+        default: "false"
+  pull_request:
+    paths:
+      - "federation_runtime/engines/confluence_artifact_pipeline.py"
+      - "federation_runtime/engines/qplant_contractual_ingestion.py"
+      - "federation_runtime/engines/phase0_orchestration.py"
+      - "docs/governance/WAVE_ANTHOLOGY.md"
+      - ".github/workflows/confluence-github-bridge-phase0.yml"
+  push:
+    branches: [main]
+
+jobs:
+  phase0-artifact-generation:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install runtime dependencies
+        run: python -m pip install -r requirements.txt
+      - name: CD_Item1 Confluence target read to GitHub artifacts
+        env:
+          CONFLUENCE_BASE_URL: ${{ secrets.CONFLUENCE_BASE_URL }}
+          CONFLUENCE_EMAIL: ${{ secrets.CONFLUENCE_EMAIL }}
+          CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
+        run: |
+          if [ "${{ github.event.inputs.live_confluence_read }}" = "true" ]; then
+            python federation_runtime/engines/confluence_artifact_pipeline.py --live
+          else
+            python federation_runtime/engines/confluence_artifact_pipeline.py
+          fi
+      - name: CD_Item2 QPLANT contractual baseline ingestion
+        run: python federation_runtime/engines/qplant_contractual_ingestion.py
+      - name: Generate orchestration signals
+        run: python federation_runtime/engines/phase0_orchestration.py
+      - name: Verify Phase 0 output set
+        run: |
+          test -s outputs/confluence/page_1023934467/raw_storage.html
+          test -s outputs/confluence/page_1023934467/content.md
+          test -s outputs/confluence/page_1023934467/metadata.yaml
+          test -s outputs/confluence/page_1023934467/links.json
+          test -s outputs/confluence/page_1023934467/attachments.json
+          test -s outputs/confluence/page_1023934467/hierarchy.json
+          test -s docs/qplant/baseline/contractual_baseline_manifest.yaml
+          test -s docs/qplant/rtm/requirements_traceability_matrix.md
+          test -s outputs/qplant/contractual_ingestion/requirements.json
+          test -s outputs/qplant/contractual_ingestion/change_deltas.yaml
+          test -s outputs/orchestration/task_links.yaml
+          test -s outputs/orchestration/cross_repo_signals.yaml
+
+      - name: Run Phase 0 tests
+        run: python -m pytest tests/test_phase0_federation_bridge.py tests/test_confluence_phase0_read_only_modules.py
