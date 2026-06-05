@@ -9,16 +9,7 @@ description = "Utilities for packaging CODEX conversation archives"
 readme = "README.md"
 requires-python = ">=3.12"
 authors = [{ name = "CODEX Team" }]
-dependencies = [
-    "PyYAML>=6.0,<7.0",
-    "jinja2>=3.1,<4.0",
-    "openpyxl>=3.1,<4.0",
-    "pydantic>=2.0,<3.0",
-    "ruamel.yaml>=0.18,<0.19",
-]
-
-[project.scripts]
-contract-governance = "codex.contract_governance.cli:main"
+dependencies = ["PyYAML>=6.0,<7.0", "requests>=2.25.0"]
 
 [project.optional-dependencies]
 dev = ["pytest>=7.0"]
