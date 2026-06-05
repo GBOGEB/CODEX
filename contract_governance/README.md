@@ -30,4 +30,4 @@ python -m pip install --no-build-isolation --no-deps -e .
 scripts/verify_contract_governance.sh
 ```
 
-The verification script fails if required runtime dependencies are absent, runs the contract governance test suite without dependency skips, then executes the generated snapshot build and validate commands.
+The verification script fails if required runtime dependencies are absent, runs the contract governance test suite without dependency skips/xfails/xpasses/zero collection, then executes the generated snapshot build and validate commands. In GitHub Actions, the script emits grouped log sections for the dependency check, pytest gate, CLI build, and CLI validate so merge status can be grounded in runner logs rather than local container networking.
