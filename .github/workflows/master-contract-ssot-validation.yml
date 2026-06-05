@@ -1,6 +1,7 @@
 name: MASTER Contract SSOT Validation
 
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       - "schemas/master_contract_ssot.schema.yaml"
@@ -10,6 +11,7 @@ on:
   push:
     branches:
       - main
+      - "wave/W000-master-contract-workbench"
     paths:
       - "schemas/master_contract_ssot.schema.yaml"
       - "ssot/master_contract_ssot_v0_2.yaml"
