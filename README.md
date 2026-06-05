@@ -84,3 +84,37 @@ python scripts/check_globs.py
 python scripts/check_stale.py
 python scripts/check_links.py
 ```
+
+## MASTER Contract Governance Workbench
+
+ABACUS owns contract data. CODEX owns automation. ARTSTYLE owns visualization.
+
+The MASTER Contract Governance Workbench uses YAML SSOT as the authoritative
+contract-follow-up record. Excel, HTML, dashboards, and reports are generated
+outputs only, and any direct edits to those generated outputs must become change
+requests back into SSOT.
+
+### Lifecycle stages
+
+- Selection complete
+- Applicant notification complete
+- ITT issued
+- Clarification period active
+- Applicant offers expected July 2026
+- Negotiation Round 1
+- Negotiation Round 2
+- BAFO
+- Award recommendation
+- Contract award
+- PO target 01-Jan-2027
+- Execution: 34 calendar months, 6 phases
+
+### Governance rules
+
+1. `MASTER_input/00_ITT_RELEASE_BASELINE/` is locked baseline material.
+2. Do not overwrite released ITT documents.
+3. All updates must be additive.
+4. YAML SSOT is authoritative.
+5. Excel, HTML, dashboards and reports are generated outputs only.
+6. Any Excel or HTML edits must become change requests back into SSOT.
+7. Preserve lineage from source document → requirement → clarification → applicant response → evaluation → negotiation → BAFO → award → execution deliverable.
