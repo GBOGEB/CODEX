@@ -1,0 +1,82 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://github.com/GBOGEB/CODEX/schemas/master_contract_ssot.schema.yaml"
+title: "MASTER Contract Governance Workbench SSOT"
+description: >-
+  Authoritative YAML SSOT schema for additive contract governance data across the
+  tender, negotiation, award, and execution lifecycle. Generated Excel, HTML,
+  dashboard, and report outputs must trace back to this SSOT.
+type: object
+required:
+  - ssot_version
+  - governance
+  - lifecycle
+  - lineage_model
+  - repositories
+properties:
+  ssot_version:
+    type: string
+  governance:
+    type: object
+    required:
+      - operating_model
+      - rules
+    properties:
+      operating_model:
+        type: string
+      rules:
+        type: array
+        minItems: 1
+        items:
+          type: string
+  lifecycle:
+    type: object
+    required:
+      - current_context
+      - stages
+    properties:
+      current_context:
+        type: string
+      stages:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          required:
+            - id
+            - name
+            - status
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            status:
+              type: string
+              enum: [complete, active, planned, target]
+            target_date:
+              type: string
+            notes:
+              type: string
+  lineage_model:
+    type: object
+    required:
+      - required_chain
+    properties:
+      required_chain:
+        type: array
+        items:
+          type: string
+  repositories:
+    type: object
+    required:
+      - baseline_path
+      - input_root
+      - generated_root
+    properties:
+      baseline_path:
+        type: string
+      input_root:
+        type: string
+      generated_root:
+        type: string
+additionalProperties: true
