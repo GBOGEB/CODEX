@@ -22,10 +22,14 @@ def visible_for_tier(audience: Audience, tier: Tier) -> bool:
     return tier == "internal" or audience == Audience.bidder
 
 
-def sheet_rows(sheet: GeneratedSheet, ssot: GovernanceSSOT, tier: Tier) -> list[dict[str, str]]:
+def sheet_rows(
+    sheet: GeneratedSheet, ssot: GovernanceSSOT, tier: Tier
+) -> list[dict[str, str]]:
     """Build canonical row dictionaries for a generated sheet."""
 
-    requirements = [req for req in ssot.requirements if visible_for_tier(req.audience, tier)]
+    requirements = [
+        req for req in ssot.requirements if visible_for_tier(req.audience, tier)
+    ]
     if sheet.name == "Requirements":
         return [_requirement_row(req) for req in requirements]
     if sheet.name == "Traceability Matrix":
@@ -69,7 +73,13 @@ def workbook_payload(ssot: GovernanceSSOT, tier: Tier) -> dict[str, object]:
     for sheet in ssot.generated_sheets:
         if not visible_for_tier(sheet.audience, tier):
             continue
-        sheets.append({"name": sheet.name, "columns": sheet.columns, "rows": sheet_rows(sheet, ssot, tier)})
+        sheets.append(
+            {
+                "name": sheet.name,
+                "columns": sheet.columns,
+                "rows": sheet_rows(sheet, ssot, tier),
+            }
+        )
     return {"package_id": ssot.package_id, "tier": tier, "sheets": sheets}
 
 
@@ -95,6 +105,7 @@ def build_artifacts(ssot: GovernanceSSOT, out_dir: Path, tier: Tier) -> dict[str
             "tier": tier,
             "content_hash_algorithm": ssot.build.content_hash_algorithm,
             "content_hash": digest,
+            "sheet_names": [sheet["name"] for sheet in payload["sheets"]],
             "generated_artifacts": {
                 "xlsx": xlsx_path.name,
                 "html": html_path.name,
@@ -103,7 +114,13 @@ def build_artifacts(ssot: GovernanceSSOT, out_dir: Path, tier: Tier) -> dict[str
         },
         manifest_path,
     )
-    return {"xlsx": str(xlsx_path), "html": str(html_path), "rtm": str(rtm_path), "manifest": str(manifest_path), "content_hash": digest}
+    return {
+        "xlsx": str(xlsx_path),
+        "html": str(html_path),
+        "rtm": str(rtm_path),
+        "manifest": str(manifest_path),
+        "content_hash": digest,
+    }
 
 
 def _requirement_row(req: Requirement) -> dict[str, str]:
@@ -117,7 +134,9 @@ def _requirement_row(req: Requirement) -> dict[str, str]:
     }
 
 
-def _write_workbook(payload: dict[str, object], ssot: GovernanceSSOT, path: Path) -> None:
+def _write_workbook(
+    payload: dict[str, object], ssot: GovernanceSSOT, path: Path
+) -> None:
     wb = Workbook()
     wb.remove(wb.active)
     fixed = ssot.build.fixed_docprops_timestamp.replace(tzinfo=None)
@@ -145,8 +164,13 @@ def _write_html(payload: dict[str, object], ssot: GovernanceSSOT, path: Path) ->
         autoescape=select_autoescape(["html"]),
     )
     template = env.get_template("workbook.html.j2")
-    path.write_text(template.render(ssot=ssot, payload=payload, content_hash=content_hash(payload)), encoding="utf-8")
+    path.write_text(
+        template.render(ssot=ssot, payload=payload, content_hash=content_hash(payload)),
+        encoding="utf-8",
+    )
 
 
 def _write_json(payload: dict[str, object], path: Path) -> None:
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )

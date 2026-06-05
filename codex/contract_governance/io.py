@@ -34,5 +34,7 @@ def canonicalize(value: Any) -> Any:
 def content_hash(payload: Any) -> str:
     """Hash canonical content, not generated binary container bytes."""
 
-    canonical = json.dumps(canonicalize(payload), ensure_ascii=False, separators=(",", ":"))
+    canonical = json.dumps(
+        canonicalize(payload), ensure_ascii=False, separators=(",", ":")
+    )
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()

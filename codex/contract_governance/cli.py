@@ -14,7 +14,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(prog="contract-governance")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    build = subparsers.add_parser("build", help="Generate internal and bidder artifacts")
+    build = subparsers.add_parser(
+        "build", help="Generate internal and bidder artifacts"
+    )
     build.add_argument("--ssot", type=Path, required=True)
     build.add_argument("--out", type=Path, required=True)
 

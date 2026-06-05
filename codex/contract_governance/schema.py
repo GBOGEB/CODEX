@@ -105,10 +105,14 @@ class GovernanceSSOT(BaseModel):
         doc_ids = {doc.doc_id for doc in self.source_documents}
         unknown = sorted({req.source_doc_id for req in self.requirements} - doc_ids)
         if unknown:
-            raise ValueError(f"requirements reference unknown source documents: {unknown}")
+            raise ValueError(
+                f"requirements reference unknown source documents: {unknown}"
+            )
 
         sheet_names = [sheet.name for sheet in self.generated_sheets]
-        duplicates = sorted({name for name in sheet_names if sheet_names.count(name) > 1})
+        duplicates = sorted(
+            {name for name in sheet_names if sheet_names.count(name) > 1}
+        )
         if duplicates:
             raise ValueError(f"duplicate generated sheet names: {duplicates}")
         return self

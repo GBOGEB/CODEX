@@ -24,8 +24,8 @@ jobs:
           python-version: "3.12"
       - name: Install package
         run: python -m pip install -e ".[dev]"
-      - name: Run contract governance tests
-        run: pytest tests/contract_governance
+      - name: Run contract governance tests without dependency skips
+        run: pytest tests/contract_governance -ra
       - name: Build governance snapshots
         run: python -m codex.contract_governance.cli build --ssot contract_governance/ssot/abacus_contract_governance.yaml --out snapshots/contract_governance
       - name: Validate governance snapshots
