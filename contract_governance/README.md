@@ -18,3 +18,16 @@ This additive workspace contains the CODEX-owned bootstrap foundation for the AB
 python -m codex.contract_governance.cli build --ssot contract_governance/ssot/abacus_contract_governance.yaml --out snapshots/contract_governance
 python -m codex.contract_governance.cli validate --ssot contract_governance/ssot/abacus_contract_governance.yaml --out snapshots/contract_governance
 ```
+
+
+## Runtime verification
+
+Install the pinned verification stack before running the gate:
+
+```bash
+python -m pip install -r requirements/contract-governance.txt
+python -m pip install --no-build-isolation --no-deps -e .
+scripts/verify_contract_governance.sh
+```
+
+The verification script fails if required runtime dependencies are absent, runs the contract governance test suite without dependency skips, then executes the generated snapshot build and validate commands.
