@@ -1,0 +1,24 @@
+policy_id: MASTER_CONTRACT_WORKBENCH_GENERATION_POLICY
+version: 1.0.0
+authority: YAML_SSOT
+derivative_artifact_policy:
+  commit_generated_derivatives: false
+  rationale: Generated Excel, HTML, reports, dashboards and checkpoint snapshots are reproducible derivatives and are excluded from version control to prevent source/output drift.
+  governed_directories:
+    - MASTER_input/generated/excel
+    - MASTER_input/generated/html
+    - MASTER_input/generated/reports
+    - MASTER_input/generated/dashboards
+    - MASTER_input/checkpoints
+ci_drift_guard:
+  command: python scripts/check_contract_workbench.py
+  behavior:
+    - validate_yaml_parse
+    - validate_ssot_governance_rules
+    - generate_derivatives_in_temporary_workspace
+    - fail_if_derivative_payloads_are_tracked
+checkpoint_retention:
+  committed_checkpoints: metadata_only
+  runtime_checkpoints: generated_on_demand
+  retention_owner: ABACUS
+  pruning_rule: archive or delete generated runtime checkpoints after formal lifecycle baselines are accepted
