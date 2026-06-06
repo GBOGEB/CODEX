@@ -1,0 +1,34 @@
+# ALaT Clarification Bridge — Review Checklist and Merge Gate
+
+## Draft PR gate
+
+Keep the PR in Draft until all of the following exist and run in CI:
+
+- SSOT validation tool: `tools/validate_ssot.py`
+- Artifact generator: `tools/generate_bridge.py`
+- CI workflow: `.github/workflows/build-clarification-bridge.yml`
+
+## Required validation checks
+
+- [ ] YAML loads successfully.
+- [ ] Exactly Q3, Q4, and Q5 are present.
+- [ ] Each parent question has at least one RTM link.
+- [ ] Each parent question has stakeholder ownership.
+- [ ] DBE actions exist for W and S nominal, transient, and abnormal handover boundaries.
+- [ ] Generated Markdown artifact exists.
+- [ ] Generated HTML artifact exists.
+- [ ] Generated Excel artifact exists when `openpyxl` is available.
+
+## Bidder-facing answer gate
+
+- [ ] Preserve the Q3/Q4/Q5 route.
+- [ ] Use short bullet roll-ups.
+- [ ] Keep internal sub-question numbers for SCK traceability only.
+- [ ] Do not duplicate pressure, temperature, or flow values controlled by input/interface tables.
+- [ ] Do not reference slides or internal preparation slide numbers in bidder-facing outputs.
+
+## RTM and OFFER_list gate
+
+- [ ] Confirm every `rtm_links` entry maps to `RTM_LINKS.yaml`.
+- [ ] Confirm every `offer_actions` entry maps to `OFFER_REGISTER.yaml`.
+- [ ] Confirm stakeholder owners accept open actions or update status before merge.
