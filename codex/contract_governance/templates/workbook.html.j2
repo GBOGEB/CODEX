@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ ssot.package_id }} {{ payload.tier }} governance snapshot</title>
+</head>
+<body>
+  <h1>{{ ssot.package_id }} {{ payload.tier|upper }} Governance Snapshot</h1>
+  <p><strong>Canonical content hash:</strong> {{ content_hash }}</p>
+  {% for sheet in payload.sheets %}
+  <section>
+    <h2>{{ sheet.name }}</h2>
+    <table>
+      <thead><tr>{% for column in sheet.columns %}<th>{{ column }}</th>{% endfor %}</tr></thead>
+      <tbody>
+        {% for row in sheet.rows %}
+        <tr>{% for column in sheet.columns %}<td>{{ row.get(column, "") }}</td>{% endfor %}</tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endfor %}
+</body>
+</html>

@@ -1,22 +1,49 @@
-# Governance Federation Navigation Hub
+# GOVERNANCE — Federation Index & Navigation Hub
 
-`docs/GOVERNANCE/` is a federation index and governance navigation hub. It is not an authoritative governance source and must not redefine repository governance authority.
+> **Status: REFERENCE**
+> This directory is a federation index and governance navigation hub.
+> It does **not** redefine governance authority.
+> All governance authority resides in the canonical sources listed below.
 
-## Canonical sources
+## Canonical Sources
 
-- `GOVERNANCE.md` owns the repository governance and operating model.
-- `DELTA_1/` owns DELTA_1 governance templates and release-governance references.
-- `KEB/governance/` owns KEB governance rules, metrics, and glossary material.
-- `MANIFEST/` owns manifest-level federation and layout governance references.
+| Source | Role |
+|--------|------|
+| [`KEB/governance/governance_rules.yml`](../../KEB/governance/governance_rules.yml) | Root governance authority |
+| [`DELTA_1/`](../../DELTA_1/) | Delta governance artifacts and operational ownership |
+| [`KEB/governance/`](../../KEB/governance/) | KEB governance rules, glossary, and metrics |
+| [`MANIFEST/`](../../MANIFEST/) | Programme manifests, KPIs, and registry |
 
-## Reconciliation action
+## Federation Index
 
-PR-000 governance bootstrap artifacts should be treated as bridge/reference material and routed to canonical governance sources. This hub should help readers find the correct source rather than creating a second governance hierarchy.
+| Federation Member | Governance Artifact | Location |
+|-------------------|---------------------|----------|
+| DELTA_1 | ADR template, taxonomy, operational ownership | `DELTA_1/` |
+| KEB | Governance rules, glossary, metrics | `KEB/governance/` |
+| MANIFEST | Programme metrics, convergence KPIs, layout governance | `MANIFEST/` |
 
-## Bridge usage
+## Governance Navigation
 
-1. Start with `GOVERNANCE.md` for the operating model.
-2. Use `DELTA_1/` for governance templates and release-support references.
-3. Use `KEB/governance/` for rule and metrics references.
-4. Use `MANIFEST/` for federation glossary and manifest governance references.
-5. Use `docs/GOVERNANCE/reconciliation_matrix.md` for PR-000A source mapping.
+```
+Repository Root
+├── KEB/governance/
+│   ├── governance_rules.yml         ← Root authority
+│   ├── GLOSSARY.yml
+│   └── metrics.yml
+├── DELTA_1/
+│   ├── governance_adr_template.md   ← ADR template
+│   ├── governance_taxonomy.md       ← Taxonomy
+│   └── operational_ownership_matrix.md
+└── MANIFEST/
+    ├── RTM.csv
+    ├── CONVERGENCE_KPIS.yaml
+    └── LAYOUT_GOVERNANCE.md
+```
+
+## Reconciliation Matrix
+
+See [`reconciliation_matrix.md`](reconciliation_matrix.md) for the full overlap record.
+
+> **Reconciliation Note:** Overlap with `GOVERNANCE.md` / `DELTA_1` / `KEB/governance` / `MANIFEST` measured at 76%.
+> This layer was converted from an authoritative source to a federation index / navigation hub
+> as part of PR-000A Governance Bootstrap Reconciliation.

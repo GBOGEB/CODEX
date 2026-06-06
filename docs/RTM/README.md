@@ -1,19 +1,33 @@
-# RTM Merge and Reference Layer
+# RTM — Merge & Reference Layer
 
-`docs/RTM/` is a merge/reference layer for PR-000 governance bootstrap traceability material. It does not define a new RTM schema and does not replace the existing RTM owners.
+> **Status: MERGE**
+> This directory merges concepts from multiple RTM sources.
+> Canonical RTM ownership is preserved in the sources listed below.
+> Do **not** create a parallel RTM schema here.
 
-## Canonical sources
+## Canonical Sources
 
-- `docs/rtm/` owns repository RTM bridge reports and local RTM lineage notes.
-- `01_requirements/RTM.csv` owns the requirements traceability matrix data.
+| Source | Description |
+|--------|-------------|
+| [`01_requirements/RTM.csv`](../../01_requirements/RTM.csv) | Primary requirements traceability matrix |
+| [`docs/rtm/local_rtm_lineage.md`](../rtm/local_rtm_lineage.md) | Local delta RTM lineage (Alpha A6) |
+| [`docs/rtm/incubator_rtm_bridge.md`](../rtm/incubator_rtm_bridge.md) | Incubator → ABACUS RTM bridge report |
 
-## Reconciliation action
+## Concept Merge Summary
 
-PR-000 RTM concepts should be merged by reference into the canonical RTM surfaces. Use this directory to document mapping and onboarding context only. Any executable or data-bearing RTM update should land in the canonical RTM files instead of creating a parallel schema here.
+This layer consolidates navigation to the above sources. Any additions to requirements traceability must be made in `01_requirements/RTM.csv` as the single authoritative record.
 
-## Bridge usage
+| Domain          | Canonical Location                    | Action             |
+|-----------------|---------------------------------------|--------------------|
+| Programme RTM   | `01_requirements/RTM.csv`             | Authoritative — do not replicate |
+| Local A6 deltas | `docs/rtm/local_rtm_lineage.md`       | Reference here     |
+| Incubator bridge| `docs/rtm/incubator_rtm_bridge.md`    | Reference here     |
 
-1. Use `01_requirements/RTM.csv` for requirement rows, verification classes, deliverables, and source references.
-2. Use `docs/rtm/` for bridge reports and lineage summaries.
-3. Add references from this layer when PR-000 governance bootstrap concepts need to be reconciled with existing traceability.
-4. Avoid duplicate CSV layouts, duplicate row identifiers, or alternate verification taxonomy.
+## References
+
+- [01_requirements/RTM.csv](../../01_requirements/RTM.csv)
+- [docs/rtm/](../rtm/)
+
+> **Reconciliation Note:** Overlap with `docs/rtm/` and `01_requirements/RTM.csv` measured at 72%.
+> This layer was converted from an authoritative source to a merge/reference layer
+> as part of PR-000A Governance Bootstrap Reconciliation.

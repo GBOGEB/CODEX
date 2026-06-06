@@ -1,0 +1,30 @@
+phase: Phase 0
+generated_at: '2026-06-04T11:52:22.701204+00:00'
+principle: Federation, not duplication
+task_links:
+- source_content_id: confluence:ACR:page:1023934467
+  source_title: DSBT Task 3 - Technical Support
+  github_issue: 'TBD: create/attach issue after repository owner confirms issue tracker
+    target'
+  engineering_task: CD_Item1 Confluence target read and artifact generation
+  repository_modules:
+  - federation_runtime/engines/confluence_artifact_pipeline.py
+  - outputs/confluence/page_1023934467
+  future_jobs:
+  - ABACUS semantic-section enrichment
+  - CODEX knowledge-graph construction
+  trace_reference: outputs/confluence/page_1023934467/metadata.yaml
+- source_content_id: qplant:contractual-baseline:locked
+  source_title: QPLANT locked contractual baseline
+  github_issue: 'TBD: create/attach issue after baseline governance owner confirms
+    tracker target'
+  engineering_task: CD_Item2 QPLANT contractual baseline ingestion
+  repository_modules:
+  - federation_runtime/engines/qplant_contractual_ingestion.py
+  - docs/qplant/baseline
+  - docs/qplant/rtm
+  future_jobs:
+  - RTM validation
+  - Contractual delta review
+  - ABACUS compliance roll-up
+  trace_reference: docs/qplant/baseline/contractual_baseline_manifest.yaml

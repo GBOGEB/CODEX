@@ -1,0 +1,11 @@
+bridge:
+  target: claude-mini-federation
+  mode: shared-architecture
+  topology: sub_confederation
+  hub: GBOGEB/CODEX
+  custodian: CLAUDE
+  members:
+    - GBOGEB/GEMINI
+    - GBOGEB/ANTHROPIC
+  mirrors:
+    anthropic: GEMINI

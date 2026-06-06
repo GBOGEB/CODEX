@@ -1,19 +1,32 @@
-# ADR Bridge and Reference Layer
+# ADR — Navigation & Reference Layer
 
-`docs/ADR/` is a navigation, onboarding, and reference layer only. It is not the authoritative ADR source and must not introduce duplicate ADR templates or a parallel ADR numbering scheme.
+> **Status: BRIDGE**
+> This directory is a navigation, onboarding, and reference layer.
+> It does **not** define authoritative ADR content.
 
-## Canonical sources
+## Canonical Source
 
-- `06_arch/ADR/` owns repository ADR records.
-- `DELTA_1/governance_adr_template.md` owns the governance ADR template pattern.
+All ADR content is owned by:
 
-## Reconciliation action
+- [`06_arch/ADR/ADR.md`](../../06_arch/ADR/ADR.md) — current decision records
+- [`DELTA_1/governance_adr_template.md`](../../DELTA_1/governance_adr_template.md) — ADR authoring template
 
-Use this directory to point readers to canonical ADR materials and to explain how PR-000 governance bootstrap artifacts map into existing ADR ownership. New ADRs should be created in the canonical ADR location, using the canonical template where governance-specific structure is required.
+Do not duplicate templates here. Refer to the canonical sources above for all ADR creation and review.
 
-## Bridge usage
+## Onboarding
 
-1. Start with `06_arch/ADR/` for accepted architectural decisions.
-2. Use `DELTA_1/governance_adr_template.md` for governance ADR formatting.
-3. Reference PR-000 bootstrap notes from here only when they help onboarding or migration review.
-4. Do not copy ADR templates into this directory.
+| Step | Action |
+|------|--------|
+| 1    | Read the canonical ADR at `06_arch/ADR/ADR.md` |
+| 2    | Use the template at `DELTA_1/governance_adr_template.md` to author new decisions |
+| 3    | Submit new ADRs for review via the standard PR process against `06_arch/ADR/` |
+
+## Navigation Index
+
+| ID       | Title                             | Location                       |
+|----------|-----------------------------------|--------------------------------|
+| ADR-001  | /FS Policy, Safety Populations    | `06_arch/ADR/ADR.md`           |
+
+> **Reconciliation Note:** Overlap with `06_arch/ADR/` measured at 68%.
+> This layer was converted from an authoritative source to a bridge/reference layer
+> as part of PR-000A Governance Bootstrap Reconciliation.
