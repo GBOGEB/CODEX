@@ -1,32 +1,49 @@
-# Governance Reference Hub
+# GOVERNANCE — Federation Index & Navigation Hub
 
-`docs/GOVERNANCE/` is a REFERENCE hub only. It enumerates canonical governance authorities and redefines nothing.
+> **Status: REFERENCE**
+> This directory is a federation index and governance navigation hub.
+> It does **not** redefine governance authority.
+> All governance authority resides in the canonical sources listed below.
 
-## Canonical Authorities
+## Canonical Sources
 
-| Authority | Canonical source |
-|---|---|
-| CODEX operating model | `GOVERNANCE.md` |
-| Governance baseline and ownership matrices | `DELTA_1/` |
-| Machine-readable rules, glossary, and metrics | `KEB/governance/` |
-| Manifest, lineage, roadmap, and federation metadata | `MANIFEST/` |
+| Source | Role |
+|--------|------|
+| [`KEB/governance/governance_rules.yml`](../../KEB/governance/governance_rules.yml) | Root governance authority |
+| [`DELTA_1/`](../../DELTA_1/) | Delta governance artifacts and operational ownership |
+| [`KEB/governance/`](../../KEB/governance/) | KEB governance rules, glossary, and metrics |
+| [`MANIFEST/`](../../MANIFEST/) | Programme manifests, KPIs, and registry |
 
 ## Federation Index
 
-| Participant | Canonical relationship |
-|---|---|
-| CODEX | Governed repository and federation integration authority; see `GOVERNANCE.md`. |
-| ABACUS | Execution/automation counterpart where assigned by DELTA_1 matrices. |
-| ARTSTYLE | Future style/render consumer only when backed by canonical ADR/RTM evidence. |
-| QPLANT | Domain-facing consumer of canonical requirements, ADR, and DMAIC evidence. |
+| Federation Member | Governance Artifact | Location |
+|-------------------|---------------------|----------|
+| DELTA_1 | ADR template, taxonomy, operational ownership | `DELTA_1/` |
+| KEB | Governance rules, glossary, metrics | `KEB/governance/` |
+| MANIFEST | Programme metrics, convergence KPIs, layout governance | `MANIFEST/` |
 
-## Related References
+## Governance Navigation
 
-| Reference | Purpose |
-|---|---|
-| `docs/GOVERNANCE/federation_review_closeout.md` | User-provided historical closure context for CODEX #202/#203 and ABACUS #517. |
-| `docs/GOVERNANCE/federation_workspace.md` | Workspace bootstrap reference for `GBOGEB_FEDERATION`. |
+```
+Repository Root
+├── KEB/governance/
+│   ├── governance_rules.yml         ← Root authority
+│   ├── GLOSSARY.yml
+│   └── metrics.yml
+├── DELTA_1/
+│   ├── governance_adr_template.md   ← ADR template
+│   ├── governance_taxonomy.md       ← Taxonomy
+│   └── operational_ownership_matrix.md
+└── MANIFEST/
+    ├── RTM.csv
+    ├── CONVERGENCE_KPIS.yaml
+    └── LAYOUT_GOVERNANCE.md
+```
 
-## PR-000A Status
+## Reconciliation Matrix
 
-Action: **REFERENCE**. Residual duplication target after reconciliation: **15%**.
+See [`reconciliation_matrix.md`](reconciliation_matrix.md) for the full overlap record.
+
+> **Reconciliation Note:** Overlap with `GOVERNANCE.md` / `DELTA_1` / `KEB/governance` / `MANIFEST` measured at 76%.
+> This layer was converted from an authoritative source to a federation index / navigation hub
+> as part of PR-000A Governance Bootstrap Reconciliation.

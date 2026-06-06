@@ -42,6 +42,16 @@ def _repo_metrics() -> dict:
                 "scree": {"pc1": 0.40, "pc2": 0.27, "pc3": 0.18, "pc4": 0.10, "pc5": 0.05},
             }
         },
+        "GEMINI": {
+            "metrics": {
+                "scree": {"pc1": 0.39, "pc2": 0.29, "pc3": 0.17, "pc4": 0.10, "pc5": 0.05},
+            }
+        },
+        "ANTHROPIC": {
+            "metrics": {
+                "scree": {"pc1": 0.39, "pc2": 0.29, "pc3": 0.17, "pc4": 0.10, "pc5": 0.05},
+            }
+        },
     }
 
 
@@ -54,6 +64,8 @@ def _write_runtime_registry(tmp_path: Path) -> Path:
         "artstyle_runtime.json": "ARTSTYLE",
         "qplant_runtime.json": "QPLANT",
         "codex_runtime.json": "CODEX",
+        "gemini_runtime.json": "GEMINI",
+        "anthropic_runtime.json": "ANTHROPIC",
     }
     for filename, repo in records.items():
         (registry_dir / filename).write_text(
@@ -87,14 +99,16 @@ class TestAggregateScree:
 
     def test_pc1_weighted_average(self):
         scree = FederationScree()
-        result = scree.aggregate_scree(_repo_metrics())
-        expected = 0.35 * 0.42 + 0.20 * 0.38 + 0.25 * 0.44 + 0.20 * 0.40
+        metrics = _repo_metrics()
+        result = scree.aggregate_scree(metrics)
+        expected = sum(DEFAULT_WEIGHTS[member] * metrics[member]["metrics"]["scree"]["pc1"] for member in MEMBERS)
         assert abs(result["pc1"] - expected) < 1e-5
 
     def test_pc2_weighted_average(self):
         scree = FederationScree()
-        result = scree.aggregate_scree(_repo_metrics())
-        expected = 0.35 * 0.26 + 0.20 * 0.28 + 0.25 * 0.24 + 0.20 * 0.27
+        metrics = _repo_metrics()
+        result = scree.aggregate_scree(metrics)
+        expected = sum(DEFAULT_WEIGHTS[member] * metrics[member]["metrics"]["scree"]["pc2"] for member in MEMBERS)
         assert abs(result["pc2"] - expected) < 1e-5
 
     def test_pc5_all_equal_to_0_05(self):
@@ -117,10 +131,10 @@ class TestAggregateScree:
             scree.aggregate_scree(metrics)
 
     def test_equal_weights_produce_simple_average(self):
-        weights = {"ABACUS": 0.25, "ARTSTYLE": 0.25, "QPLANT": 0.25, "CODEX": 0.25}
+        weights = {member: 1 / len(MEMBERS) for member in MEMBERS}
         scree = FederationScree(weights=weights)
         result = scree.aggregate_scree(_repo_metrics())
-        expected_pc1 = (0.42 + 0.38 + 0.44 + 0.40) / 4
+        expected_pc1 = sum(_repo_metrics()[member]["metrics"]["scree"]["pc1"] for member in MEMBERS) / len(MEMBERS)
         assert abs(result["pc1"] - expected_pc1) < 1e-5
 
     def test_all_values_non_negative(self):
@@ -290,6 +304,8 @@ class TestMetricsJsonFiles:
             "artstyle_metrics": "ARTSTYLE",
             "qplant_metrics": "QPLANT",
             "codex_metrics": "CODEX",
+            "gemini_metrics": "GEMINI",
+            "anthropic_metrics": "ANTHROPIC",
         }
         for filename in name_to_member:
             path = root / "metrics" / "repo" / f"{filename}.json"
@@ -303,6 +319,8 @@ class TestMetricsJsonFiles:
             "artstyle_metrics": "ARTSTYLE",
             "qplant_metrics": "QPLANT",
             "codex_metrics": "CODEX",
+            "gemini_metrics": "GEMINI",
+            "anthropic_metrics": "ANTHROPIC",
         }
         loaded: dict = {}
         for filename, member in name_to_member.items():
@@ -343,7 +361,7 @@ def _runtime_records() -> dict:
 class TestBuildTruthMatrix:
     def test_valid_records_return_matrix(self):
         matrix = FederationScree.build_truth_matrix(_runtime_records())
-        assert len(matrix) == 4
+        assert len(matrix) == len(MEMBERS)
         assert matrix[0]["member"] == "ABACUS"
 
     def test_none_truth_score_raises_federation_scree_error(self):
@@ -360,6 +378,6 @@ class TestBuildTruthMatrix:
 
     def test_missing_member_raises_federation_scree_error(self):
         records = _runtime_records()
-        del records["ARTSTYLE"]
-        with pytest.raises(FederationScreeError, match="ARTSTYLE"):
+        del records["ANTHROPIC"]
+        with pytest.raises(FederationScreeError, match="ANTHROPIC"):
             FederationScree.build_truth_matrix(records)

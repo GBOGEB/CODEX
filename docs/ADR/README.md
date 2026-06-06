@@ -1,23 +1,32 @@
-# ADR Bridge
+# ADR — Navigation & Reference Layer
 
-`docs/ADR/` is a BRIDGE only: navigation and onboarding that links to canonical ADR authority. It defines no ADR lifecycle, schema, status model, or template.
+> **Status: BRIDGE**
+> This directory is a navigation, onboarding, and reference layer.
+> It does **not** define authoritative ADR content.
 
-## Canonical Authority
+## Canonical Source
 
-| Need | Canonical source |
-|---|---|
-| Technical ADR register | `06_arch/ADR/` |
-| Governance ADR template | `DELTA_1/governance_adr_template.md` |
-| Requirement linkage | `01_requirements/RTM.csv` |
-| DMAIC evidence linkage | `99_handover/PROCESS_DMAIC.md` |
+All ADR content is owned by:
 
-## Contributor Route
+- [`06_arch/ADR/ADR.md`](../../06_arch/ADR/ADR.md) — current decision records
+- [`DELTA_1/governance_adr_template.md`](../../DELTA_1/governance_adr_template.md) — ADR authoring template
 
-1. Use this page to find the correct canonical source.
-2. Create or update ADR content in the canonical location.
-3. Link back to RTM/DMAIC evidence from the canonical artifact.
-4. Do not add ADR templates or decision records in `docs/ADR/`.
+Do not duplicate templates here. Refer to the canonical sources above for all ADR creation and review.
 
-## PR-000A Status
+## Onboarding
 
-Action: **BRIDGE**. Residual duplication target after reconciliation: **8%**.
+| Step | Action |
+|------|--------|
+| 1    | Read the canonical ADR at `06_arch/ADR/ADR.md` |
+| 2    | Use the template at `DELTA_1/governance_adr_template.md` to author new decisions |
+| 3    | Submit new ADRs for review via the standard PR process against `06_arch/ADR/` |
+
+## Navigation Index
+
+| ID       | Title                             | Location                       |
+|----------|-----------------------------------|--------------------------------|
+| ADR-001  | /FS Policy, Safety Populations    | `06_arch/ADR/ADR.md`           |
+
+> **Reconciliation Note:** Overlap with `06_arch/ADR/` measured at 68%.
+> This layer was converted from an authoritative source to a bridge/reference layer
+> as part of PR-000A Governance Bootstrap Reconciliation.

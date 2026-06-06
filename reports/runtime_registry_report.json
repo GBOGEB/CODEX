@@ -1,18 +1,305 @@
 {
-  "wave": "W007",
-  "subwave": "W007.2",
-  "repo_count": 4,
-  "runtime_exists_count": 4,
-  "execution_count": 4,
-  "runtime_validated_count": 3,
-  "deployment_exists_count": 2,
-  "weighted_truth_score": 0.783333,
-  "repos_missing_execution": [],
-  "repos_missing_validation": [
-    "ARTSTYLE"
-  ],
-  "repos_missing_deployment": [
-    "ARTSTYLE",
-    "QPLANT"
-  ]
+  "federation_rollup": {
+    "aggregated": {
+      "backward_pca": {
+        "regression_score": 0.7792,
+        "variance_explained": [
+          0.3864,
+          0.2768,
+          0.1888,
+          0.098,
+          0.05
+        ]
+      },
+      "expansion_factor": 1.1568,
+      "forward_pca": {
+        "convergence_score": 0.8092,
+        "variance_explained": [
+          0.4084,
+          0.2668,
+          0.1768,
+          0.098,
+          0.05
+        ]
+      },
+      "geti": 0.7912,
+      "pci": 0.7628
+    },
+    "members": [
+      "ABACUS",
+      "ARTSTYLE",
+      "QPLANT",
+      "CODEX",
+      "GEMINI",
+      "ANTHROPIC"
+    ],
+    "runtime_status": {
+      "coverage": {
+        "deployment_exists": 0.333333,
+        "runtime_exists": 1.0,
+        "runtime_validated": 0.833333,
+        "truth_score_average": 0.825
+      },
+      "members": {
+        "ABACUS": {
+          "deployment_exists": true,
+          "runtime_exists": true,
+          "runtime_validated": true,
+          "truth_score": 0.96
+        },
+        "ANTHROPIC": {
+          "deployment_exists": false,
+          "runtime_exists": true,
+          "runtime_validated": true,
+          "truth_score": 0.8
+        },
+        "ARTSTYLE": {
+          "deployment_exists": false,
+          "runtime_exists": true,
+          "runtime_validated": false,
+          "truth_score": 0.62
+        },
+        "CODEX": {
+          "deployment_exists": true,
+          "runtime_exists": true,
+          "runtime_validated": true,
+          "truth_score": 0.93
+        },
+        "GEMINI": {
+          "deployment_exists": false,
+          "runtime_exists": true,
+          "runtime_validated": true,
+          "truth_score": 0.8
+        },
+        "QPLANT": {
+          "deployment_exists": false,
+          "runtime_exists": true,
+          "runtime_validated": true,
+          "truth_score": 0.84
+        }
+      }
+    },
+    "subwave": "W007.2A",
+    "wave": "W007",
+    "weights": {
+      "ABACUS": 0.28,
+      "ANTHROPIC": 0.1,
+      "ARTSTYLE": 0.16,
+      "CODEX": 0.16,
+      "GEMINI": 0.1,
+      "QPLANT": 0.2
+    }
+  },
+  "federation_scree": {
+    "cumulative_variance": {
+      "pc1": 0.4084,
+      "pc2": 0.6752,
+      "pc3": 0.852,
+      "pc4": 0.95,
+      "pc5": 1.0
+    },
+    "federation_scree": {
+      "pc1": 0.4084,
+      "pc2": 0.2668,
+      "pc3": 0.1768,
+      "pc4": 0.098,
+      "pc5": 0.05
+    },
+    "members": [
+      "ABACUS",
+      "ARTSTYLE",
+      "QPLANT",
+      "CODEX",
+      "GEMINI",
+      "ANTHROPIC"
+    ],
+    "per_member_scree": {
+      "ABACUS": {
+        "pc1": 0.42,
+        "pc2": 0.26,
+        "pc3": 0.17,
+        "pc4": 0.1,
+        "pc5": 0.05
+      },
+      "ANTHROPIC": {
+        "pc1": 0.39,
+        "pc2": 0.29,
+        "pc3": 0.17,
+        "pc4": 0.1,
+        "pc5": 0.05
+      },
+      "ARTSTYLE": {
+        "pc1": 0.38,
+        "pc2": 0.28,
+        "pc3": 0.19,
+        "pc4": 0.1,
+        "pc5": 0.05
+      },
+      "CODEX": {
+        "pc1": 0.4,
+        "pc2": 0.27,
+        "pc3": 0.18,
+        "pc4": 0.1,
+        "pc5": 0.05
+      },
+      "GEMINI": {
+        "pc1": 0.39,
+        "pc2": 0.29,
+        "pc3": 0.17,
+        "pc4": 0.1,
+        "pc5": 0.05
+      },
+      "QPLANT": {
+        "pc1": 0.44,
+        "pc2": 0.24,
+        "pc3": 0.18,
+        "pc4": 0.09,
+        "pc5": 0.05
+      }
+    },
+    "ranked_components": [
+      {
+        "component": "pc1",
+        "variance_explained": 0.4084
+      },
+      {
+        "component": "pc2",
+        "variance_explained": 0.2668
+      },
+      {
+        "component": "pc3",
+        "variance_explained": 0.1768
+      },
+      {
+        "component": "pc4",
+        "variance_explained": 0.098
+      },
+      {
+        "component": "pc5",
+        "variance_explained": 0.05
+      }
+    ],
+    "runtime_status": {
+      "coverage": {
+        "deployment_exists": 0.333333,
+        "runtime_exists": 1.0,
+        "runtime_validated": 0.833333,
+        "truth_score_average": 0.825
+      },
+      "members": {
+        "ABACUS": {
+          "deployment_exists": true,
+          "runtime_exists": true,
+          "runtime_validated": true,
+          "truth_score": 0.96
+        },
+        "ANTHROPIC": {
+          "deployment_exists": false,
+          "runtime_exists": true,
+          "runtime_validated": true,
+          "truth_score": 0.8
+        },
+        "ARTSTYLE": {
+          "deployment_exists": false,
+          "runtime_exists": true,
+          "runtime_validated": false,
+          "truth_score": 0.62
+        },
+        "CODEX": {
+          "deployment_exists": true,
+          "runtime_exists": true,
+          "runtime_validated": true,
+          "truth_score": 0.93
+        },
+        "GEMINI": {
+          "deployment_exists": false,
+          "runtime_exists": true,
+          "runtime_validated": true,
+          "truth_score": 0.8
+        },
+        "QPLANT": {
+          "deployment_exists": false,
+          "runtime_exists": true,
+          "runtime_validated": true,
+          "truth_score": 0.84
+        }
+      }
+    },
+    "subwave": "W007.2A",
+    "wave": "W007",
+    "weights": {
+      "ABACUS": 0.28,
+      "ANTHROPIC": 0.1,
+      "ARTSTYLE": 0.16,
+      "CODEX": 0.16,
+      "GEMINI": 0.1,
+      "QPLANT": 0.2
+    }
+  },
+  "subwave": "W007.2A",
+  "truth_matrix": {
+    "legend": [
+      "REPO_ONLY",
+      "EXECUTED_ONLY",
+      "EXECUTED_VALIDATED",
+      "VALIDATED_DEPLOYED"
+    ],
+    "rows": [
+      {
+        "deployment_exists": true,
+        "member": "ABACUS",
+        "repo": "GBOGEB/ABACUS",
+        "runtime_exists": true,
+        "runtime_validated": true,
+        "truth_score": 0.96,
+        "truth_state": "VALIDATED_DEPLOYED"
+      },
+      {
+        "deployment_exists": false,
+        "member": "ARTSTYLE",
+        "repo": "GBOGEB/ARTSTYLE",
+        "runtime_exists": true,
+        "runtime_validated": false,
+        "truth_score": 0.62,
+        "truth_state": "EXECUTED_ONLY"
+      },
+      {
+        "deployment_exists": false,
+        "member": "QPLANT",
+        "repo": "GBOGEB/QPLANT",
+        "runtime_exists": true,
+        "runtime_validated": true,
+        "truth_score": 0.84,
+        "truth_state": "EXECUTED_VALIDATED"
+      },
+      {
+        "deployment_exists": true,
+        "member": "CODEX",
+        "repo": "GBOGEB/CODEX",
+        "runtime_exists": true,
+        "runtime_validated": true,
+        "truth_score": 0.93,
+        "truth_state": "VALIDATED_DEPLOYED"
+      },
+      {
+        "deployment_exists": false,
+        "member": "GEMINI",
+        "repo": "GBOGEB/GEMINI",
+        "runtime_exists": true,
+        "runtime_validated": true,
+        "truth_score": 0.8,
+        "truth_state": "EXECUTED_VALIDATED"
+      },
+      {
+        "deployment_exists": false,
+        "member": "ANTHROPIC",
+        "repo": "GBOGEB/ANTHROPIC",
+        "runtime_exists": true,
+        "runtime_validated": true,
+        "truth_score": 0.8,
+        "truth_state": "EXECUTED_VALIDATED"
+      }
+    ]
+  },
+  "wave": "W007"
 }
