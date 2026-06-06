@@ -5,6 +5,8 @@ bridge:
     abacus: GBOGEB/ABACUS
     artstyle: GBOGEB/ARTSTYLE
     qplant: GBOGEB/QPLANT
+    gemini: GBOGEB/GEMINI
+    anthropic: GBOGEB/ANTHROPIC
 
   federation_ownership:
     # Updated W007.1 (T-20260530-PR200-001): CODEX now owns federation
@@ -32,6 +34,39 @@ bridge:
       capabilities:
         - cryogenic_knowledge
         - domain_content
+    GEMINI:
+      role: mini_federation
+      custodian: CLAUDE
+      capabilities:
+        - integration_bridge
+        - shared_architecture
+        - confederated_runtime
+        - model_bridge
+      wave: W007.2B
+    ANTHROPIC:
+      role: mini_federation
+      custodian: CLAUDE
+      mirrors: GEMINI
+      capabilities:
+        - integration_bridge
+        - shared_architecture
+        - confederated_runtime
+        - model_bridge
+      wave: W007.2B
+
+  confederated_bridges:
+    - bridge_id: claude-mini-federation
+      topology: sub_confederation
+      hub_repository: GBOGEB/CODEX
+      bridge_file: bridges/claude_mini_federation_bridge.yml
+      custodian: CLAUDE
+      members:
+        - GBOGEB/GEMINI
+        - GBOGEB/ANTHROPIC
+      shared_architecture:
+        source_template: GBOGEB/GEMINI
+        mirrored_member: GBOGEB/ANTHROPIC
+      status: ACTIVE
 
   module_alignment:
     - abacus_module: renderer
