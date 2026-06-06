@@ -1,0 +1,57 @@
+checklist:
+  id: runtime_readiness_checklist
+  version: W007
+  status: active
+  owner: ABACUS release governance
+release_candidate_checks:
+  - id: RR-001
+    name: Repository audit exists
+    path: docs/reports/W007_REPO_AUDIT.md
+    status: complete
+  - id: RR-002
+    name: Dashboard specifications exist
+    paths:
+      - docs/TRACEABILITY_DASHBOARD_SPEC.md
+      - docs/GOVERNANCE_DASHBOARD_SPEC.md
+      - docs/RUNTIME_ARCHITECTURE.md
+    status: complete
+  - id: RR-003
+    name: Runtime SSOT models exist
+    paths:
+      - ssot/traceability_dashboard.yaml
+      - ssot/governance_dashboard.yaml
+      - ssot/runtime_metrics.yaml
+    status: complete
+  - id: RR-004
+    name: GitHub Pages dashboard foundation exists
+    paths:
+      - docs/index.html
+      - docs/dashboards/executive.html
+      - docs/dashboards/traceability.html
+      - docs/dashboards/governance.html
+    status: complete
+  - id: RR-005
+    name: Runtime validation workflows exist
+    paths:
+      - .github/workflows/rtm-validation.yml
+      - .github/workflows/manifest-validation.yml
+      - .github/workflows/release-readiness.yml
+    status: complete
+  - id: RR-006
+    name: Completion report exists
+    path: docs/reports/W007_COMPLETION_REPORT.md
+    status: pending
+review_gate_checks:
+  - id: RG-001
+    name: Q3-Q5 traceability chains represented
+    status: complete
+  - id: RG-002
+    name: Review package artifacts verified at expected paths
+    status: blocked
+    note: Audit did not locate the named W007 review package artifacts.
+  - id: RG-003
+    name: Open risks documented
+    status: pending_completion_report
+release_status:
+  state: release_candidate_foundation
+  readiness_percent: 72

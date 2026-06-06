@@ -1,0 +1,36 @@
+name: W007 Release Readiness
+
+on:
+  pull_request:
+    paths:
+      - 'governance/**'
+      - 'docs/reports/**'
+      - 'ssot/**'
+      - '.github/workflows/release-readiness.yml'
+  workflow_dispatch:
+
+jobs:
+  validate-release-readiness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate review gate and release readiness controls
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          required = [
+              'governance/artifact_promotion_policy.yaml',
+              'governance/runtime_readiness_checklist.yaml',
+              'governance/decision_log.md',
+              'docs/reports/W007_REPO_AUDIT.md',
+              'ssot/runtime_metrics.yaml',
+          ]
+          missing = [path for path in required if not Path(path).exists()]
+          if missing:
+              raise SystemExit('release readiness blocked; missing: ' + ', '.join(missing))
+          metrics = Path('ssot/runtime_metrics.yaml').read_text()
+          for token in ['review_status:', 'release_status:', 'artifact_counts:', 'coverage_metrics:']:
+              if token not in metrics:
+                  raise SystemExit(f'missing runtime metric section: {token}')
+          print('W007 release readiness control surface is complete')
+          PY
