@@ -1,6 +1,6 @@
 """Federation metric rollup: weighted aggregation across member repositories.
 
-Members: ABACUS, ARTSTYLE, QPLANT, CODEX
+Members: ABACUS, ARTSTYLE, QPLANT, CODEX, GEMINI, ANTHROPIC
 
 Supported metrics:
   - forward_pca   (convergence_score, variance_explained[5])
@@ -15,12 +15,14 @@ import json
 from pathlib import Path
 from typing import Any
 
-MEMBERS: tuple[str, ...] = ("ABACUS", "ARTSTYLE", "QPLANT", "CODEX")
+MEMBERS: tuple[str, ...] = ("ABACUS", "ARTSTYLE", "QPLANT", "CODEX", "GEMINI", "ANTHROPIC")
 DEFAULT_WEIGHTS: dict[str, float] = {
-    "ABACUS": 0.35,
-    "ARTSTYLE": 0.20,
-    "QPLANT": 0.25,
-    "CODEX": 0.20,
+    "ABACUS": 0.28,
+    "ARTSTYLE": 0.16,
+    "QPLANT": 0.20,
+    "CODEX": 0.16,
+    "GEMINI": 0.10,
+    "ANTHROPIC": 0.10,
 }
 SCALAR_METRICS: tuple[str, ...] = ("geti", "pci", "expansion_factor")
 _PCA_SCORE_KEYS: dict[str, str] = {
@@ -33,6 +35,8 @@ _RUNTIME_FILENAMES: dict[str, str] = {
     "ARTSTYLE": "artstyle_runtime.json",
     "QPLANT": "qplant_runtime.json",
     "CODEX": "codex_runtime.json",
+    "GEMINI": "gemini_runtime.json",
+    "ANTHROPIC": "anthropic_runtime.json",
 }
 
 
@@ -142,7 +146,7 @@ class FederationRollup:
         Parameters
         ----------
         repo_metrics:
-            Mapping from member name (ABACUS / ARTSTYLE / QPLANT / CODEX)
+            Mapping from member name (ABACUS / ARTSTYLE / QPLANT / CODEX / GEMINI / ANTHROPIC)
             to that repository's metrics dict (as loaded from its JSON file).
 
         Returns

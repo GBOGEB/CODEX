@@ -1,44 +1,33 @@
-# MASTER Contract Workbench SSOT
+# MASTER Input Scaffold
 
-`MASTER_input/` is the authoritative YAML-first Single Source of Truth (SSOT) for the MASTER Contract Workbench. Generated Excel workbooks, HTML workbenches, reports, dashboards and snapshots are derivative artefacts only; they must never become the System of Record.
+`MASTER_input/` is the additive evidence and lifecycle input area for the MASTER
+Contract Governance Workbench. The YAML SSOT remains authoritative; files placed
+here provide source context, evidence, or supporting materials that must be
+linked back into SSOT records.
 
-## Ownership model
+## Global rules
 
-| Owner | Responsibility |
-| --- | --- |
-| ABACUS | Contract data, governance, traceability and lifecycle state |
-| CODEX | Automation, generation, validation and CI/CD |
-| ARTSTYLE | Visualization, dashboards and user experience |
+1. `00_ITT_RELEASE_BASELINE/` is locked baseline material.
+2. Released ITT documents must not be overwritten or replaced in place.
+3. All lifecycle updates after ITT issue must be additive.
+4. Any manual Excel, HTML, dashboard, or report edits must be raised as SSOT
+   change requests before generated outputs are regenerated.
+5. Preserve lineage from source document → requirement → clarification →
+   applicant response → evaluation → negotiation → BAFO → award → execution
+   deliverable.
 
-## Directory map
+## Folder map
 
-| Path | Purpose |
-| --- | --- |
-| `schemas/contract_schema.yaml` | YAML 1.2 SSOT schema and governance constraints |
-| `contracts/master-contract/contract.yaml` | Baseline MASTER contract SSOT instance |
-| `change_requests/` | Approved change requests that bridge derivative edits back to YAML |
-| `checkpoints/` | Runtime lifecycle snapshots emitted from the SSOT; payloads are generated on demand and ignored by git |
-| `generated/excel/` | Generated workbook outputs; payloads are not committed |
-| `generated/html/` | Generated human workbench outputs; payloads are not committed |
-| `generated/reports/` | Generated audit/traceability reports; payloads are not committed |
-| `generated/dashboards/` | Generated dashboard-ready JSON/HTML outputs; payloads are not committed |
-
-## Governance rule
-
-If it cannot be traced, it cannot be governed. If it cannot be governed, it cannot be contracted. If it cannot be contracted, it cannot be executed.
-
-
-## Drift guard
-
-Run `python scripts/check_contract_workbench.py` before opening changes. The check validates the YAML SSOT, rejects tracked derivative payloads, regenerates derivatives twice in temporary workspaces, compares portable manifests plus SHA-256 output hashes, and fails if existing generated workspace payloads differ from regenerated hashes. When existing generated payloads are present, the guard reuses `generated_at` from the existing generated manifest so timestamp differences do not create false drift failures. It does not compare against committed generated artefacts because those artefacts are intentionally not committed. Runtime checkpoints are generated on demand; CI temporary workspaces are automatically deleted, but cleanup of user-invoked runtime outputs is a documented policy responsibility rather than an automated repository guarantee. Formal retention decisions belong to ABACUS per `generation_policy.yaml`.
-
-
-## Review verification matrix
-
-| Reviewer concern | Repository control |
-| --- | --- |
-| Drift guard scope | `scripts/check_contract_workbench.py` regenerates derivatives twice in temporary workspaces, compares the complete portable manifests including SHA-256 hashes, reuses existing manifest timestamps for workspace comparisons, and fails when existing generated payload hashes drift. |
-| Tracked generated payloads | The guard scans tracked files under `MASTER_input/generated/` and `MASTER_input/checkpoints/`; only `.gitignore` and `.gitkeep` placeholders are allowed. |
-| CI trigger paths | `.github/workflows/contract-workbench.yml` runs on changes to `MASTER_input/**`, `src/contract_workbench/**`, the generator/check scripts and the focused tests. |
-| Checkpoint retention | CI temporary workspaces are deleted automatically; user-invoked runtime output cleanup is policy-only, and formal archive/retention belongs to ABACUS. |
-| Negative-test isolation | Contract governance tests assert specific validation messages for each violation class. |
+- `00_ITT_RELEASE_BASELINE/` — locked released ITT package baseline.
+- `01_CONTRACT/` — draft/final contract inputs and additive contract deltas.
+- `02_TECHNICAL_REQUIREMENTS/` — technical requirement source inputs.
+- `03_RTM/` — requirement traceability matrix source inputs.
+- `04_ADDENDA/` — additive addenda issued after the locked ITT baseline.
+- `05_CLARIFICATIONS/` — clarification questions, answers, and dispositions.
+- `06_APPLICANT_RESPONSES/` — applicant response source inputs.
+- `07_EVALUATION/` — evaluation evidence and scoring inputs.
+- `08_NEGOTIATION/` — negotiation round records and deltas.
+- `09_BAFO/` — BAFO request/response inputs.
+- `10_AWARD/` — award recommendation and award governance inputs.
+- `11_EXECUTION/` — execution deliverable evidence and phase inputs.
+- `99_ARCHIVE/` — superseded additive inputs retained for lineage.
