@@ -14,7 +14,7 @@ python scripts/generate_contract_workbench.py
 python scripts/check_contract_workbench.py
 ```
 
-The generated artefacts remain non-authoritative; all edits must be merged back through approved change requests in the YAML SSOT. Generated payloads under `MASTER_input/generated/` and runtime checkpoints under `MASTER_input/checkpoints/` are intentionally ignored so binary workbooks and other derivative files do not drift from the YAML source. The guard proves deterministic on-demand generation by comparing portable manifests and SHA-256 output hashes from two temporary generations.
+The generated artefacts remain non-authoritative; all edits must be merged back through approved change requests in the YAML SSOT. Generated payloads under `MASTER_input/generated/` and runtime checkpoints under `MASTER_input/checkpoints/` are intentionally ignored so binary workbooks and other derivative files do not drift from the YAML source. The guard proves deterministic on-demand generation by comparing portable manifests and SHA-256 output hashes from two temporary generations, and it fails if existing generated workspace payloads no longer match regenerated hashes.
 
 ## W000 Federated Semantic Trace Bootstrap
 

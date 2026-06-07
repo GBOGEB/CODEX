@@ -9,6 +9,7 @@ SSOT can produce a deterministic, hash-manifested derivative set on demand.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import subprocess
 import sys
@@ -41,6 +42,41 @@ def _tracked_derivative_payloads() -> list[str]:
         if Path(line).name not in ALLOWED_TRACKED_NAMES:
             payloads.append(line)
     return payloads
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _workspace_path(portable_ref: str) -> Path:
+    return ROOT / "MASTER_input" / portable_ref
+
+
+def _workspace_derivative_drifts(expected_manifest: dict[str, object]) -> list[str]:
+    outputs = expected_manifest.get("outputs", {})
+    output_hashes = expected_manifest.get("output_hashes", {})
+    if not isinstance(outputs, dict) or not isinstance(output_hashes, dict):
+        return ["manifest missing outputs or output_hashes mappings"]
+
+    existing_names = [name for name, portable_ref in outputs.items() if _workspace_path(str(portable_ref)).exists()]
+    if not existing_names:
+        return []
+
+    drifts: list[str] = []
+    for name, portable_ref in outputs.items():
+        path = _workspace_path(str(portable_ref))
+        if not path.exists():
+            drifts.append(f"missing existing derivative payload: {portable_ref}")
+            continue
+        actual_hash = _sha256(path)
+        expected_hash = str(output_hashes.get(name, ""))
+        if actual_hash != expected_hash:
+            drifts.append(f"hash drift for {portable_ref}: expected {expected_hash}, got {actual_hash}")
+    return drifts
 
 
 def _generate_to(base: Path, contract: Path, schema: Path) -> dict[str, object]:
@@ -80,6 +116,13 @@ def main() -> int:
         if first_manifest != second_manifest:
             print("Generated derivative manifests are not deterministic:")
             print(json.dumps({"first": first_manifest, "second": second_manifest}, indent=2))
+            return 1
+
+        drifts = _workspace_derivative_drifts(first_manifest)
+        if drifts:
+            print("Existing generated derivatives drift from the YAML SSOT:")
+            for drift in drifts:
+                print(f"  - {drift}")
             return 1
 
     print("MASTER Contract Workbench SSOT validation and deterministic manifest drift guard passed.")

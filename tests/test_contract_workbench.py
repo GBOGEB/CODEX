@@ -176,3 +176,23 @@ def test_contract_workbench_workflow_triggers_for_generator_schema_and_tests() -
     assert '"tests/test_contract_workbench.py"' in workflow
     assert "python scripts/check_contract_workbench.py" in workflow
     assert "python -m pytest -q tests/test_contract_workbench.py" in workflow
+
+
+def test_guard_fails_when_existing_generated_payload_drifts(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    workspace = tmp_path / "workspace"
+    outputs = generate_outputs(
+        contract_path=CONTRACT,
+        schema_path=SCHEMA,
+        output_dir=workspace / "MASTER_input" / "generated",
+        checkpoint_dir=workspace / "MASTER_input" / "checkpoints",
+        generated_at="20260605T000000Z",
+    )
+    excel = Path(outputs["excel"])
+    excel.write_bytes(excel.read_bytes() + b"drift")
+
+    monkeypatch.setattr(guard, "ROOT", workspace)
+    monkeypatch.setattr(guard, "_tracked_derivative_payloads", lambda: [])
+    monkeypatch.setattr(sys, "argv", ["check_contract_workbench.py"])
+
+    assert guard.main() == 1
+    assert "Existing generated derivatives drift from the YAML SSOT" in capsys.readouterr().out

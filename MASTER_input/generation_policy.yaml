@@ -15,6 +15,7 @@ ci_drift_guard:
   guarantees:
     - tracked derivative payloads under governed directories fail the check
     - two deterministic regenerations from the same YAML SSOT produce identical portable manifests and SHA-256 output hashes
+    - existing untracked derivative payloads fail the check if their SHA-256 hashes differ from regenerated manifest hashes
     - manifest outputs use portable governed paths and output_hashes cover excel, html, trace, dashboard and checkpoint payloads
   non_goals:
     - compare against committed generated artefacts, because generated artefacts are intentionally not committed
@@ -23,6 +24,7 @@ ci_drift_guard:
     - validate_ssot_governance_rules
     - generate_derivatives_twice_in_temporary_workspaces
     - compare_deterministic_portable_manifests_and_output_hashes
+    - compare_existing_workspace_derivative_hashes_when_outputs_exist
     - fail_if_derivative_payloads_are_tracked
 checkpoint_retention:
   committed_checkpoints: metadata_only
