@@ -30,4 +30,4 @@ If it cannot be traced, it cannot be governed. If it cannot be governed, it cann
 
 ## Drift guard
 
-Run `python scripts/check_contract_workbench.py` before opening changes. The check validates the YAML SSOT, regenerates derivatives in a temporary workspace, and fails if generated derivative payloads are tracked in git. Runtime checkpoints are generated on demand; formal retention decisions belong to ABACUS per `generation_policy.yaml`.
+Run `python scripts/check_contract_workbench.py` before opening changes. The check validates the YAML SSOT, rejects tracked derivative payloads, regenerates derivatives twice in temporary workspaces, and compares manifest SHA-256 hashes to prove deterministic on-demand generation. It does not compare against committed generated artefacts because those artefacts are intentionally not committed. Runtime checkpoints are generated on demand; local/CI checkpoints should be deleted after validation, while formal retention decisions belong to ABACUS per `generation_policy.yaml`.

@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
-"""CI drift guard for the MASTER Contract Workbench YAML SSOT."""
+"""CI drift guard for the MASTER Contract Workbench YAML SSOT.
+
+The repository intentionally does not commit generated derivatives. This guard
+therefore prevents drift by rejecting tracked derivative payloads and proving the
+SSOT can produce a deterministic, hash-manifested derivative set on demand.
+"""
 
 from __future__ import annotations
 
 import argparse
+import json
 import subprocess
 import sys
 import tempfile
@@ -19,6 +25,7 @@ DERIVATIVE_ROOTS = (
     Path("MASTER_input/checkpoints"),
 )
 ALLOWED_TRACKED_NAMES = {".gitignore", ".gitkeep"}
+DETERMINISTIC_GENERATED_AT = "20260605T000000Z"
 
 
 def _tracked_derivative_payloads() -> list[str]:
@@ -34,6 +41,21 @@ def _tracked_derivative_payloads() -> list[str]:
         if Path(line).name not in ALLOWED_TRACKED_NAMES:
             payloads.append(line)
     return payloads
+
+
+def _generate_to(base: Path, contract: Path, schema: Path) -> dict[str, str]:
+    outputs = generate_outputs(
+        contract_path=contract,
+        schema_path=schema,
+        output_dir=base / "generated",
+        checkpoint_dir=base / "checkpoints",
+        generated_at=DETERMINISTIC_GENERATED_AT,
+    )
+    missing = [name for name, path in outputs.items() if not Path(path).exists()]
+    if missing:
+        raise RuntimeError(f"Missing generated outputs: {missing}")
+    manifest = json.loads(Path(outputs["manifest"]).read_text(encoding="utf-8"))
+    return manifest["output_hashes"]
 
 
 def main() -> int:
@@ -54,19 +76,14 @@ def main() -> int:
 
     with tempfile.TemporaryDirectory(prefix="contract-workbench-") as tmp:
         tmp_path = Path(tmp)
-        outputs = generate_outputs(
-            contract_path=args.contract,
-            schema_path=args.schema,
-            output_dir=tmp_path / "generated",
-            checkpoint_dir=tmp_path / "checkpoints",
-            generated_at="20260605T000000Z",
-        )
-        missing = [name for name, path in outputs.items() if not Path(path).exists()]
-        if missing:
-            print(f"Missing generated outputs: {missing}")
+        first_hashes = _generate_to(tmp_path / "first", args.contract, args.schema)
+        second_hashes = _generate_to(tmp_path / "second", args.contract, args.schema)
+        if first_hashes != second_hashes:
+            print("Generated derivative hashes are not deterministic:")
+            print(json.dumps({"first": first_hashes, "second": second_hashes}, indent=2))
             return 1
 
-    print("MASTER Contract Workbench SSOT validation and derivative drift guard passed.")
+    print("MASTER Contract Workbench SSOT validation and deterministic derivative drift guard passed.")
     return 0
 
 

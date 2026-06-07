@@ -103,3 +103,27 @@ def test_generate_outputs_creates_excel_html_trace_dashboard_manifest_and_checkp
     manifest_json = json.loads(manifest.read_text(encoding="utf-8"))
     assert manifest_json["derivatives_are_system_of_record"] is False
     assert set(manifest_json["outputs"]) == {"excel", "html", "trace", "dashboard", "checkpoint"}
+    assert set(manifest_json["output_hashes"]) == {"excel", "html", "trace", "dashboard", "checkpoint"}
+    assert all(len(value) == 64 for value in manifest_json["output_hashes"].values())
+
+
+def test_generate_outputs_is_deterministic_for_hash_manifest(tmp_path: Path) -> None:
+    first = generate_outputs(
+        contract_path=CONTRACT,
+        schema_path=SCHEMA,
+        output_dir=tmp_path / "first" / "generated",
+        checkpoint_dir=tmp_path / "first" / "checkpoints",
+        generated_at="20260605T000000Z",
+    )
+    second = generate_outputs(
+        contract_path=CONTRACT,
+        schema_path=SCHEMA,
+        output_dir=tmp_path / "second" / "generated",
+        checkpoint_dir=tmp_path / "second" / "checkpoints",
+        generated_at="20260605T000000Z",
+    )
+
+    first_manifest = json.loads(Path(first["manifest"]).read_text(encoding="utf-8"))
+    second_manifest = json.loads(Path(second["manifest"]).read_text(encoding="utf-8"))
+
+    assert first_manifest["output_hashes"] == second_manifest["output_hashes"]

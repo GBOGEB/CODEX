@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import zipfile
@@ -18,6 +19,7 @@ DEFAULT_CONTRACT = REPO_ROOT / "MASTER_input" / "contracts" / "master-contract" 
 DEFAULT_SCHEMA = REPO_ROOT / "MASTER_input" / "schemas" / "contract_schema.yaml"
 DEFAULT_OUTPUT = REPO_ROOT / "MASTER_input" / "generated"
 DEFAULT_CHECKPOINT_DIR = REPO_ROOT / "MASTER_input" / "checkpoints"
+ZIP_EPOCH = (1980, 1, 1, 0, 0, 0)
 
 
 class ContractWorkbenchError(ValueError):
@@ -228,18 +230,25 @@ def _sheet_xml(sheet: Sheet) -> str:
     return f'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>{"".join(row_xml)}</sheetData></worksheet>'
 
 
+def _write_zip_entry(archive: zipfile.ZipFile, name: str, payload: str) -> None:
+    entry = zipfile.ZipInfo(name, ZIP_EPOCH)
+    entry.compress_type = zipfile.ZIP_DEFLATED
+    entry.external_attr = 0o644 << 16
+    archive.writestr(entry, payload)
+
+
 def _write_xlsx(path: Path, sheets: list[Sheet]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     sheet_entries = "".join(f'<sheet name="{xml_escape(sheet.name[:31])}" sheetId="{index}" r:id="rId{index}"/>' for index, sheet in enumerate(sheets, start=1))
     rel_entries = "".join(f'<Relationship Id="rId{index}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet{index}.xml"/>' for index in range(1, len(sheets) + 1))
     content_overrides = "".join(f'<Override PartName="/xl/worksheets/sheet{index}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>' for index in range(1, len(sheets) + 1))
-    with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED) as xlsx:
-        xlsx.writestr("[Content_Types].xml", f'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>{content_overrides}</Types>')
-        xlsx.writestr("_rels/.rels", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>')
-        xlsx.writestr("xl/workbook.xml", f'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>{sheet_entries}</sheets></workbook>')
-        xlsx.writestr("xl/_rels/workbook.xml.rels", f'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">{rel_entries}</Relationships>')
+    with zipfile.ZipFile(path, "w") as xlsx:
+        _write_zip_entry(xlsx, "[Content_Types].xml", f'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>{content_overrides}</Types>')
+        _write_zip_entry(xlsx, "_rels/.rels", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>')
+        _write_zip_entry(xlsx, "xl/workbook.xml", f'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>{sheet_entries}</sheets></workbook>')
+        _write_zip_entry(xlsx, "xl/_rels/workbook.xml.rels", f'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">{rel_entries}</Relationships>')
         for index, sheet in enumerate(sheets, start=1):
-            xlsx.writestr(f"xl/worksheets/sheet{index}.xml", _sheet_xml(sheet))
+            _write_zip_entry(xlsx, f"xl/worksheets/sheet{index}.xml", _sheet_xml(sheet))
 
 
 def _display(value: Any) -> str:
@@ -296,6 +305,18 @@ def _generated_at_value(generated_at: str | None = None) -> str:
     return datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 
 
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _output_hashes(outputs: dict[str, Path]) -> dict[str, str]:
+    return {name: _sha256(path) for name, path in sorted(outputs.items())}
+
+
 def generate_outputs(
     contract_path: Path = DEFAULT_CONTRACT,
     schema_path: Path = DEFAULT_SCHEMA,
@@ -327,7 +348,9 @@ def generate_outputs(
     dashboard_path.write_text(json.dumps({"contract_id": contract_id, "generated_at": timestamp, "requirements": len(contract.get("requirements", [])), "questions": len(contract.get("questions", [])), "change_requests": len(contract.get("change_requests", [])), "authority": "YAML_SSOT"}, indent=2), encoding="utf-8")
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     checkpoint_path.write_text(json.dumps({"contract_id": contract_id, "version": contract.get("metadata", {}).get("version"), "generated_at": timestamp, "source": str(contract_path), "trace": trace}, indent=2), encoding="utf-8")
-    manifest_path.write_text(json.dumps({"contract_id": contract_id, "generated_at": timestamp, "source": str(contract_path), "derivatives_are_system_of_record": False, "outputs": {"excel": str(excel_path), "html": str(html_path), "trace": str(trace_path), "dashboard": str(dashboard_path), "checkpoint": str(checkpoint_path)}}, indent=2), encoding="utf-8")
+
+    derivative_paths = {"excel": excel_path, "html": html_path, "trace": trace_path, "dashboard": dashboard_path, "checkpoint": checkpoint_path}
+    manifest_path.write_text(json.dumps({"contract_id": contract_id, "generated_at": timestamp, "source": str(contract_path), "derivatives_are_system_of_record": False, "outputs": {name: str(path) for name, path in derivative_paths.items()}, "output_hashes": _output_hashes(derivative_paths)}, indent=2), encoding="utf-8")
     return {"excel": str(excel_path), "html": str(html_path), "trace": str(trace_path), "dashboard": str(dashboard_path), "checkpoint": str(checkpoint_path), "manifest": str(manifest_path)}
 
 
