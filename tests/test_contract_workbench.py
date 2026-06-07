@@ -196,3 +196,20 @@ def test_guard_fails_when_existing_generated_payload_drifts(tmp_path: Path, monk
 
     assert guard.main() == 1
     assert "Existing generated derivatives drift from the YAML SSOT" in capsys.readouterr().out
+
+
+def test_guard_reuses_existing_manifest_timestamp_for_workspace_comparison(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    workspace = tmp_path / "workspace"
+    generate_outputs(
+        contract_path=CONTRACT,
+        schema_path=SCHEMA,
+        output_dir=workspace / "MASTER_input" / "generated",
+        checkpoint_dir=workspace / "MASTER_input" / "checkpoints",
+        generated_at="20260101T010203Z",
+    )
+
+    monkeypatch.setattr(guard, "ROOT", workspace)
+    monkeypatch.setattr(guard, "_tracked_derivative_payloads", lambda: [])
+    monkeypatch.setattr(sys, "argv", ["check_contract_workbench.py"])
+
+    assert guard.main() == 0

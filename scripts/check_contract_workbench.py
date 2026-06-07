@@ -26,7 +26,7 @@ DERIVATIVE_ROOTS = (
     Path("MASTER_input/checkpoints"),
 )
 ALLOWED_TRACKED_NAMES = {".gitignore", ".gitkeep"}
-DETERMINISTIC_GENERATED_AT = "20260605T000000Z"
+DEFAULT_DETERMINISTIC_GENERATED_AT = "20260605T000000Z"
 
 
 def _tracked_derivative_payloads() -> list[str]:
@@ -56,7 +56,23 @@ def _workspace_path(portable_ref: str) -> Path:
     return ROOT / "MASTER_input" / portable_ref
 
 
-def _workspace_derivative_drifts(expected_manifest: dict[str, object]) -> list[str]:
+def _workspace_manifest_path(contract: dict[str, object]) -> Path:
+    contract_id = str(contract.get("metadata", {}).get("contract_id", "MASTER-CW"))
+    return _workspace_path(f"generated/reports/{contract_id}.manifest.json")
+
+
+def _comparison_generated_at(contract: dict[str, object]) -> str:
+    manifest_path = _workspace_manifest_path(contract)
+    if not manifest_path.exists():
+        return DEFAULT_DETERMINISTIC_GENERATED_AT
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    generated_at = manifest.get("generated_at")
+    if not isinstance(generated_at, str) or not generated_at:
+        raise ValueError(f"Existing manifest {manifest_path} does not define a generated_at timestamp")
+    return generated_at
+
+
+def _workspace_derivative_drifts(expected_manifest: dict[str, object], contract: dict[str, object]) -> list[str]:
     outputs = expected_manifest.get("outputs", {})
     output_hashes = expected_manifest.get("output_hashes", {})
     if not isinstance(outputs, dict) or not isinstance(output_hashes, dict):
@@ -67,6 +83,9 @@ def _workspace_derivative_drifts(expected_manifest: dict[str, object]) -> list[s
         return []
 
     drifts: list[str] = []
+    manifest_path = _workspace_manifest_path(contract)
+    if not manifest_path.exists():
+        drifts.append(f"missing existing derivative manifest: {manifest_path.relative_to(ROOT)}")
     for name, portable_ref in outputs.items():
         path = _workspace_path(str(portable_ref))
         if not path.exists():
@@ -79,13 +98,13 @@ def _workspace_derivative_drifts(expected_manifest: dict[str, object]) -> list[s
     return drifts
 
 
-def _generate_to(base: Path, contract: Path, schema: Path) -> dict[str, object]:
+def _generate_to(base: Path, contract: Path, schema: Path, generated_at: str) -> dict[str, object]:
     outputs = generate_outputs(
         contract_path=contract,
         schema_path=schema,
         output_dir=base / "generated",
         checkpoint_dir=base / "checkpoints",
-        generated_at=DETERMINISTIC_GENERATED_AT,
+        generated_at=generated_at,
     )
     missing = [name for name, path in outputs.items() if not Path(path).exists()]
     if missing:
@@ -109,16 +128,18 @@ def main() -> int:
             print(f"  - {payload}")
         return 1
 
+    generated_at = _comparison_generated_at(contract)
+
     with tempfile.TemporaryDirectory(prefix="contract-workbench-") as tmp:
         tmp_path = Path(tmp)
-        first_manifest = _generate_to(tmp_path / "first", args.contract, args.schema)
-        second_manifest = _generate_to(tmp_path / "second", args.contract, args.schema)
+        first_manifest = _generate_to(tmp_path / "first", args.contract, args.schema, generated_at)
+        second_manifest = _generate_to(tmp_path / "second", args.contract, args.schema, generated_at)
         if first_manifest != second_manifest:
             print("Generated derivative manifests are not deterministic:")
             print(json.dumps({"first": first_manifest, "second": second_manifest}, indent=2))
             return 1
 
-        drifts = _workspace_derivative_drifts(first_manifest)
+        drifts = _workspace_derivative_drifts(first_manifest, contract)
         if drifts:
             print("Existing generated derivatives drift from the YAML SSOT:")
             for drift in drifts:
