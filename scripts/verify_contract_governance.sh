@@ -10,7 +10,6 @@ printf '::group::Contract governance dependency check\n'
 python - <<'PY'
 import importlib.metadata
 import importlib.util
-import re
 
 required = [
     "pydantic",
@@ -33,16 +32,13 @@ for name in required:
 if missing:
     raise SystemExit(f"missing contract governance runtime dependencies: {', '.join(missing)}")
 
+from codex.contract_governance.runtime import ensure_pep660_pip_version
+
 pip_version = importlib.metadata.version("pip")
-pip_match = re.match(r"^(\d+)\.(\d+)", pip_version)
-if not pip_match:
-    raise SystemExit(f"unable to parse pip version for PEP 660 check: {pip_version}")
-pip_parts = tuple(int(part) for part in pip_match.groups())
-if pip_parts < (21, 3):
-    raise SystemExit(
-        "pip>=21.3 is required for PEP 660 editable installs; "
-        f"found pip=={pip_version}"
-    )
+try:
+    ensure_pep660_pip_version(pip_version)
+except (RuntimeError, ValueError) as exc:
+    raise SystemExit(str(exc)) from exc
 print(f"contract governance dependency check passed with pip=={pip_version}")
 PY
 printf '::endgroup::\n'
