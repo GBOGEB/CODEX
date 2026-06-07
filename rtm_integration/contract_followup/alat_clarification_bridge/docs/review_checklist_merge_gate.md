@@ -39,3 +39,13 @@ Keep the PR in Draft until all of the following exist and run in CI:
 ## Current PR status
 
 This bridge remains Draft until GitHub CI is green and stakeholder sign-off closes the route preservation, W/S DBE confirmation, and bidder-facing exclusion checks. The placeholders in the generated stakeholder review are intentional review controls, not completed approvals.
+
+## Pre-ready external blockers
+
+The code-level checks are intentionally separate from the final merge decision. Before changing the PR from Draft to Ready:
+
+- [ ] Confirm the GitHub Actions run for `.github/workflows/build-clarification-bridge.yml` is green on the PR branch.
+- [ ] Confirm the CI run produced `alat_clarification_bridge.xlsx` after installing `openpyxl`.
+- [ ] Confirm `tests/test_alat_clarification_bridge.py` is present in the PR file set and was executed by CI.
+- [ ] Close stakeholder sign-offs for route preservation, W/S DBE confirmation, and bidder-facing exclusion.
+- [ ] Post the completed status comment on the live PR if the automation environment could not update GitHub directly.

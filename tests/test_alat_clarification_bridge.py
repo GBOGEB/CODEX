@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import copy
 import importlib.util
+import sys
+import types
 from pathlib import Path
 
 import yaml
@@ -84,3 +86,33 @@ def test_generator_writes_template_outputs(tmp_path):
         assert (tmp_path / name).is_file()
     assert "{{" not in (tmp_path / "stakeholder_review.md").read_text(encoding="utf-8")
     assert "{{" not in (tmp_path / "management_summary.md").read_text(encoding="utf-8")
+
+
+def test_excel_generation_path_when_openpyxl_is_available(tmp_path, monkeypatch):
+    generator = load_module("alat_generate_bridge_excel", BRIDGE_ROOT / "tools" / "generate_bridge.py")
+    ssot = load_yaml(BRIDGE_ROOT / "ssot" / "alat_questions_ssot_v0_1.yaml")
+
+    class FakeSheet:
+        title = ""
+
+        def __init__(self):
+            self.rows = []
+
+        def append(self, row):
+            self.rows.append(row)
+
+    class FakeWorkbook:
+        def __init__(self):
+            self.active = FakeSheet()
+
+        def save(self, output_path):
+            output_path.write_text("fake workbook", encoding="utf-8")
+
+    fake_openpyxl = types.ModuleType("openpyxl")
+    fake_openpyxl.Workbook = FakeWorkbook
+    monkeypatch.setitem(sys.modules, "openpyxl", fake_openpyxl)
+
+    output_path = generator.generate_excel_if_available(ssot, tmp_path)
+
+    assert output_path == tmp_path / "alat_clarification_bridge.xlsx"
+    assert output_path.read_text(encoding="utf-8") == "fake workbook"

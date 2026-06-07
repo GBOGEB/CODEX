@@ -45,6 +45,7 @@ jobs:
 
       - name: Run bridge tests
         run: |
+          test -f tests/test_alat_clarification_bridge.py
           pytest tests/test_alat_clarification_bridge.py
 
       - name: Upload bridge artifacts
