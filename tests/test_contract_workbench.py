@@ -102,7 +102,13 @@ def test_generate_outputs_creates_excel_html_trace_dashboard_manifest_and_checkp
 
     manifest_json = json.loads(manifest.read_text(encoding="utf-8"))
     assert manifest_json["derivatives_are_system_of_record"] is False
-    assert set(manifest_json["outputs"]) == {"excel", "html", "trace", "dashboard", "checkpoint"}
+    assert manifest_json["outputs"] == {
+        "excel": "generated/excel/MASTER-CW-001.xlsx",
+        "html": "generated/html/MASTER-CW-001.html",
+        "trace": "generated/reports/MASTER-CW-001.trace.json",
+        "dashboard": "generated/dashboards/MASTER-CW-001.dashboard.json",
+        "checkpoint": "checkpoints/MASTER-CW-001-0.1.0.json",
+    }
     assert set(manifest_json["output_hashes"]) == {"excel", "html", "trace", "dashboard", "checkpoint"}
     assert all(len(value) == 64 for value in manifest_json["output_hashes"].values())
 
@@ -126,4 +132,15 @@ def test_generate_outputs_is_deterministic_for_hash_manifest(tmp_path: Path) -> 
     first_manifest = json.loads(Path(first["manifest"]).read_text(encoding="utf-8"))
     second_manifest = json.loads(Path(second["manifest"]).read_text(encoding="utf-8"))
 
-    assert first_manifest["output_hashes"] == second_manifest["output_hashes"]
+    assert first_manifest == second_manifest
+
+
+def test_derivative_ignore_rules_preserve_placeholders() -> None:
+    generated_ignore = (ROOT / "MASTER_input" / "generated" / ".gitignore").read_text(encoding="utf-8").splitlines()
+    checkpoint_ignore = (ROOT / "MASTER_input" / "checkpoints" / ".gitignore").read_text(encoding="utf-8").splitlines()
+
+    assert "*" in generated_ignore
+    assert "!.gitkeep" in generated_ignore
+    assert "!*/.gitkeep" in generated_ignore
+    assert "*" in checkpoint_ignore
+    assert "!.gitkeep" in checkpoint_ignore

@@ -317,6 +317,13 @@ def _output_hashes(outputs: dict[str, Path]) -> dict[str, str]:
     return {name: _sha256(path) for name, path in sorted(outputs.items())}
 
 
+def _portable_source(path: Path) -> str:
+    try:
+        return str(path.resolve().relative_to(REPO_ROOT))
+    except ValueError:
+        return path.name
+
+
 def generate_outputs(
     contract_path: Path = DEFAULT_CONTRACT,
     schema_path: Path = DEFAULT_SCHEMA,
@@ -347,10 +354,18 @@ def generate_outputs(
     dashboard_path.parent.mkdir(parents=True, exist_ok=True)
     dashboard_path.write_text(json.dumps({"contract_id": contract_id, "generated_at": timestamp, "requirements": len(contract.get("requirements", [])), "questions": len(contract.get("questions", [])), "change_requests": len(contract.get("change_requests", [])), "authority": "YAML_SSOT"}, indent=2), encoding="utf-8")
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
-    checkpoint_path.write_text(json.dumps({"contract_id": contract_id, "version": contract.get("metadata", {}).get("version"), "generated_at": timestamp, "source": str(contract_path), "trace": trace}, indent=2), encoding="utf-8")
+    source = _portable_source(contract_path)
+    checkpoint_path.write_text(json.dumps({"contract_id": contract_id, "version": contract.get("metadata", {}).get("version"), "generated_at": timestamp, "source": source, "trace": trace}, indent=2), encoding="utf-8")
 
     derivative_paths = {"excel": excel_path, "html": html_path, "trace": trace_path, "dashboard": dashboard_path, "checkpoint": checkpoint_path}
-    manifest_path.write_text(json.dumps({"contract_id": contract_id, "generated_at": timestamp, "source": str(contract_path), "derivatives_are_system_of_record": False, "outputs": {name: str(path) for name, path in derivative_paths.items()}, "output_hashes": _output_hashes(derivative_paths)}, indent=2), encoding="utf-8")
+    derivative_refs = {
+        "excel": f"generated/excel/{excel_path.name}",
+        "html": f"generated/html/{html_path.name}",
+        "trace": f"generated/reports/{trace_path.name}",
+        "dashboard": f"generated/dashboards/{dashboard_path.name}",
+        "checkpoint": f"checkpoints/{checkpoint_path.name}",
+    }
+    manifest_path.write_text(json.dumps({"contract_id": contract_id, "generated_at": timestamp, "source": source, "derivatives_are_system_of_record": False, "outputs": derivative_refs, "output_hashes": _output_hashes(derivative_paths)}, indent=2), encoding="utf-8")
     return {"excel": str(excel_path), "html": str(html_path), "trace": str(trace_path), "dashboard": str(dashboard_path), "checkpoint": str(checkpoint_path), "manifest": str(manifest_path)}
 
 

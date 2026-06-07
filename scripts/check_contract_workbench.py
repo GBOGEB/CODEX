@@ -43,7 +43,7 @@ def _tracked_derivative_payloads() -> list[str]:
     return payloads
 
 
-def _generate_to(base: Path, contract: Path, schema: Path) -> dict[str, str]:
+def _generate_to(base: Path, contract: Path, schema: Path) -> dict[str, object]:
     outputs = generate_outputs(
         contract_path=contract,
         schema_path=schema,
@@ -54,8 +54,7 @@ def _generate_to(base: Path, contract: Path, schema: Path) -> dict[str, str]:
     missing = [name for name, path in outputs.items() if not Path(path).exists()]
     if missing:
         raise RuntimeError(f"Missing generated outputs: {missing}")
-    manifest = json.loads(Path(outputs["manifest"]).read_text(encoding="utf-8"))
-    return manifest["output_hashes"]
+    return json.loads(Path(outputs["manifest"]).read_text(encoding="utf-8"))
 
 
 def main() -> int:
@@ -76,14 +75,14 @@ def main() -> int:
 
     with tempfile.TemporaryDirectory(prefix="contract-workbench-") as tmp:
         tmp_path = Path(tmp)
-        first_hashes = _generate_to(tmp_path / "first", args.contract, args.schema)
-        second_hashes = _generate_to(tmp_path / "second", args.contract, args.schema)
-        if first_hashes != second_hashes:
-            print("Generated derivative hashes are not deterministic:")
-            print(json.dumps({"first": first_hashes, "second": second_hashes}, indent=2))
+        first_manifest = _generate_to(tmp_path / "first", args.contract, args.schema)
+        second_manifest = _generate_to(tmp_path / "second", args.contract, args.schema)
+        if first_manifest != second_manifest:
+            print("Generated derivative manifests are not deterministic:")
+            print(json.dumps({"first": first_manifest, "second": second_manifest}, indent=2))
             return 1
 
-    print("MASTER Contract Workbench SSOT validation and deterministic derivative drift guard passed.")
+    print("MASTER Contract Workbench SSOT validation and deterministic manifest drift guard passed.")
     return 0
 
 
