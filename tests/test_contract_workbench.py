@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import json
 import sys
+import types
 import zipfile
 from pathlib import Path
 
@@ -12,6 +13,7 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.contract_workbench.generator import ContractWorkbenchError, build_dependency_trace, generate_outputs, load_contract, validate_contract
+import scripts.check_contract_workbench as guard
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "MASTER_input" / "contracts" / "master-contract" / "contract.yaml"
@@ -144,3 +146,33 @@ def test_derivative_ignore_rules_preserve_placeholders() -> None:
     assert "!*/.gitkeep" in generated_ignore
     assert "*" in checkpoint_ignore
     assert "!.gitkeep" in checkpoint_ignore
+
+
+def test_tracked_derivative_payload_filter_allows_placeholders_and_rejects_payloads(monkeypatch: pytest.MonkeyPatch) -> None:
+    def fake_run(*_args, **_kwargs):
+        return types.SimpleNamespace(
+            stdout="\n".join(
+                [
+                    "MASTER_input/generated/.gitkeep",
+                    "MASTER_input/generated/excel/.gitkeep",
+                    "MASTER_input/checkpoints/.gitignore",
+                    "MASTER_input/generated/excel/MASTER-CW-001.xlsx",
+                ]
+            )
+        )
+
+    monkeypatch.setattr(guard.subprocess, "run", fake_run)
+
+    assert guard._tracked_derivative_payloads() == ["MASTER_input/generated/excel/MASTER-CW-001.xlsx"]
+
+
+def test_contract_workbench_workflow_triggers_for_generator_schema_and_tests() -> None:
+    workflow = (ROOT / ".github" / "workflows" / "contract-workbench.yml").read_text(encoding="utf-8")
+
+    assert '"MASTER_input/**"' in workflow
+    assert '"src/contract_workbench/**"' in workflow
+    assert '"scripts/check_contract_workbench.py"' in workflow
+    assert '"scripts/generate_contract_workbench.py"' in workflow
+    assert '"tests/test_contract_workbench.py"' in workflow
+    assert "python scripts/check_contract_workbench.py" in workflow
+    assert "python -m pytest -q tests/test_contract_workbench.py" in workflow

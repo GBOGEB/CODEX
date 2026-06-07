@@ -31,3 +31,14 @@ If it cannot be traced, it cannot be governed. If it cannot be governed, it cann
 ## Drift guard
 
 Run `python scripts/check_contract_workbench.py` before opening changes. The check validates the YAML SSOT, rejects tracked derivative payloads, regenerates derivatives twice in temporary workspaces, and compares portable manifests plus SHA-256 output hashes to prove deterministic on-demand generation. It does not compare against committed generated artefacts because those artefacts are intentionally not committed. Runtime checkpoints are generated on demand; CI temporary workspaces are automatically deleted, but cleanup of user-invoked runtime outputs is a documented policy responsibility rather than an automated repository guarantee. Formal retention decisions belong to ABACUS per `generation_policy.yaml`.
+
+
+## Review verification matrix
+
+| Reviewer concern | Repository control |
+| --- | --- |
+| Drift guard scope | `scripts/check_contract_workbench.py` regenerates derivatives twice in temporary workspaces and compares the complete portable manifests, including SHA-256 hashes. |
+| Tracked generated payloads | The guard scans tracked files under `MASTER_input/generated/` and `MASTER_input/checkpoints/`; only `.gitignore` and `.gitkeep` placeholders are allowed. |
+| CI trigger paths | `.github/workflows/contract-workbench.yml` runs on changes to `MASTER_input/**`, `src/contract_workbench/**`, the generator/check scripts and the focused tests. |
+| Checkpoint retention | CI temporary workspaces are deleted automatically; user-invoked runtime output cleanup is policy-only, and formal archive/retention belongs to ABACUS. |
+| Negative-test isolation | Contract governance tests assert specific validation messages for each violation class. |
