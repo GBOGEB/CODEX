@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gbogeb.github.io/docx-rtm-automation/schemas/handover.schema.json",
+  "title": "Current Handover State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["wave", "status", "completed_tasks"],
+  "properties": {
+    "wave": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "minLength": 1
+    },
+    "completed_tasks": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^W0-[0-9]+$"
+      },
+      "uniqueItems": true
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
