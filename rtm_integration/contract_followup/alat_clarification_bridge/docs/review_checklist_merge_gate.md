@@ -17,6 +17,8 @@ Keep the PR in Draft until all of the following exist and run in CI:
 - [ ] DBE actions exist for W and S nominal, transient, and abnormal handover boundaries.
 - [ ] Generated Markdown artifact exists.
 - [ ] Generated HTML artifact exists.
+- [ ] Generated review checklist Markdown artifact exists.
+- [ ] Generated stakeholder review and management summary artifacts exist from their templates.
 - [ ] Generated Excel artifact exists when `openpyxl` is available.
 
 ## Bidder-facing answer gate
@@ -32,3 +34,8 @@ Keep the PR in Draft until all of the following exist and run in CI:
 - [ ] Confirm every `rtm_links` entry maps to `RTM_LINKS.yaml`.
 - [ ] Confirm every `offer_actions` entry maps to `OFFER_REGISTER.yaml`.
 - [ ] Confirm stakeholder owners accept open actions or update status before merge.
+
+
+## Current PR status
+
+This bridge remains Draft until GitHub CI is green and stakeholder sign-off closes the route preservation, W/S DBE confirmation, and bidder-facing exclusion checks. The placeholders in the generated stakeholder review are intentional review controls, not completed approvals.

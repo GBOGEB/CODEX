@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import html
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -13,6 +14,7 @@ import yaml
 BRIDGE_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SSOT = BRIDGE_ROOT / "ssot" / "alat_questions_ssot_v0_1.yaml"
 DEFAULT_OUTPUT = BRIDGE_ROOT / "build"
+TEMPLATE_DIR = BRIDGE_ROOT / "templates"
 
 
 def load_ssot(path: Path) -> dict[str, Any]:
@@ -29,6 +31,44 @@ def questions(data: dict[str, Any]) -> list[dict[str, Any]]:
 
 def md_list(items: list[Any]) -> str:
     return "\n".join(f"- {item}" for item in items)
+
+
+def resolve_question_value(question: dict[str, Any], expression: str) -> str:
+    expression = expression.strip()
+    join_match = re.fullmatch(r"question\.([\w.]+)\s*\|\s*join\('([^']*)'\)", expression)
+    if join_match:
+        value = nested_get(question, join_match.group(1))
+        return join_match.group(2).join(str(item) for item in value) if isinstance(value, list) else ""
+
+    direct_match = re.fullmatch(r"question\.([\w.]+)", expression)
+    if not direct_match:
+        return ""
+
+    value = nested_get(question, direct_match.group(1))
+    return str(value) if value is not None else ""
+
+
+def nested_get(mapping: dict[str, Any], dotted_path: str) -> Any:
+    current: Any = mapping
+    for key in dotted_path.split("."):
+        if not isinstance(current, dict):
+            return None
+        current = current.get(key)
+    return current
+
+
+def render_question_template(template_path: Path, data: dict[str, Any]) -> str:
+    template = template_path.read_text(encoding="utf-8")
+    pattern = re.compile(r"{%\s*for\s+question\s+in\s+questions\s*%}(.*?){%\s*endfor\s*%}", re.DOTALL)
+
+    def replace_loop(match: re.Match[str]) -> str:
+        block = match.group(1)
+        rendered: list[str] = []
+        for question in questions(data):
+            rendered.append(re.sub(r"{{\s*(.*?)\s*}}", lambda item: resolve_question_value(question, item.group(1)), block))
+        return "".join(rendered)
+
+    return pattern.sub(replace_loop, template)
 
 
 def generate_markdown(data: dict[str, Any]) -> str:
@@ -165,13 +205,17 @@ def main() -> int:
     markdown_path = args.out / "bidder_response.md"
     html_path = args.out / "bidder_response.html"
     review_path = args.out / "review_checklist.md"
+    stakeholder_review_path = args.out / "stakeholder_review.md"
+    management_summary_path = args.out / "management_summary.md"
 
     markdown_path.write_text(generate_markdown(data), encoding="utf-8")
     html_path.write_text(generate_html(data), encoding="utf-8")
     review_path.write_text(generate_review_summary(data), encoding="utf-8")
+    stakeholder_review_path.write_text(render_question_template(TEMPLATE_DIR / "stakeholder_review.md", data), encoding="utf-8")
+    management_summary_path.write_text(render_question_template(TEMPLATE_DIR / "management_summary.md", data), encoding="utf-8")
     excel_path = generate_excel_if_available(data, args.out)
 
-    outputs = [markdown_path, html_path, review_path]
+    outputs = [markdown_path, html_path, review_path, stakeholder_review_path, management_summary_path]
     if excel_path is not None:
         outputs.append(excel_path)
     print("Generated artifacts:")
