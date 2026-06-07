@@ -1,0 +1,165 @@
+metadata:
+  contract_id: MASTER-CW-001
+  title: MASTER Contract Workbench
+  version: 0.1.0
+  status: Draft
+  authority: YAML_SSOT
+  generated_outputs_are_system_of_record: false
+  target_programme_timeline:
+    applicant_offers: July 2026
+    negotiation_cycles: Q3-Q4 2026
+    bafo: Q4 2026
+    contract_award: Q4 2026
+    po_signature: January 2027
+    execution_duration: 34 Calendar Months
+governance:
+  principle: YAML SSOT is authoritative; generated artefacts are derivative.
+  strategic_statement:
+    - If it cannot be traced, it cannot be governed.
+    - If it cannot be governed, it cannot be contracted.
+    - If it cannot be contracted, it cannot be executed.
+  owners:
+    ABACUS:
+      - Contract Data
+      - Governance
+      - Traceability
+      - Lifecycle State
+    CODEX:
+      - Automation
+      - Generation
+      - Validation
+      - CI/CD
+    ARTSTYLE:
+      - Visualization
+      - Dashboards
+      - User Experience
+lifecycle:
+  phases:
+    - id: LC-001
+      name: Bid Clarifications
+      sequence: 1
+      target: Pre-award clarification period
+    - id: LC-002
+      name: Applicant Offers
+      sequence: 2
+      target: July 2026
+    - id: LC-003
+      name: Negotiation Round 1
+      sequence: 3
+      target: Q3 2026
+    - id: LC-004
+      name: Negotiation Round 2
+      sequence: 4
+      target: Q4 2026
+    - id: LC-005
+      name: BAFO
+      sequence: 5
+      target: Q4 2026
+    - id: LC-006
+      name: Contract Award
+      sequence: 6
+      target: Q4 2026
+    - id: LC-007
+      name: Purchase Order Placement
+      sequence: 7
+      target: January 2027
+    - id: LC-008
+      name: Contract Execution
+      sequence: 8
+      target: 34 Calendar Months
+    - id: LC-009
+      name: Contract Closeout
+      sequence: 9
+      target: Post-execution closeout
+stakeholders:
+  - id: STK-ABACUS
+    name: ABACUS
+    role: Data Owner
+    responsibilities: [Contract Data, Governance, Traceability, Lifecycle State]
+  - id: STK-CODEX
+    name: CODEX
+    role: Automation Owner
+    responsibilities: [Automation, Generation, Validation, CI/CD]
+  - id: STK-ARTSTYLE
+    name: ARTSTYLE
+    role: Experience Owner
+    responsibilities: [Visualization, Dashboards, User Experience]
+requirements:
+  - id: REQ-SSOT-001
+    title: YAML authority
+    text: YAML SSOT shall be the authoritative system of record.
+    owner: STK-ABACUS
+    lifecycle_phase: Bid Clarifications
+    status: Draft
+    depends_on: []
+    rtm_links: [RTM-001]
+  - id: REQ-GEN-001
+    title: Synchronized derivatives
+    text: Excel and HTML outputs shall be generated from the YAML SSOT.
+    owner: STK-CODEX
+    lifecycle_phase: Applicant Offers
+    status: Draft
+    depends_on: [REQ-SSOT-001]
+    rtm_links: [RTM-002]
+  - id: REQ-CR-001
+    title: Change request bridge
+    text: Derivative changes shall be merged back through approved change requests.
+    owner: STK-ABACUS
+    lifecycle_phase: Negotiation Round 1
+    status: Draft
+    depends_on: [REQ-SSOT-001]
+    rtm_links: [RTM-003]
+questions:
+  - id: Q-001
+    parent_id: null
+    requirement_id: REQ-SSOT-001
+    lifecycle_phase: Bid Clarifications
+    question: Confirm that YAML remains authoritative over generated Excel and HTML artefacts.
+    status: Open
+  - id: Q-001.1
+    parent_id: Q-001
+    requirement_id: REQ-GEN-001
+    lifecycle_phase: Applicant Offers
+    question: Confirm required workbook tabs and HTML navigation sections.
+    status: Open
+rtm:
+  - id: RTM-001
+    requirement_id: REQ-SSOT-001
+    verification_method: Governance inspection
+    evidence: Schema rule and generated lineage report
+  - id: RTM-002
+    requirement_id: REQ-GEN-001
+    verification_method: Generation test
+    evidence: Excel workbook and HTML workbench generated from YAML
+  - id: RTM-003
+    requirement_id: REQ-CR-001
+    verification_method: Audit review
+    evidence: Change request bridge report
+change_requests:
+  - id: CR-0001
+    title: Establish MASTER Contract Workbench baseline
+    status: Approved
+    source: YAML_SSOT
+    affected_requirements: [REQ-SSOT-001, REQ-GEN-001, REQ-CR-001]
+    decision: Baseline framework accepted for automation.
+changelog:
+  - version: 0.1.0
+    date: 2026-06-03
+    author: CODEX
+    summary: Initial YAML-first MASTER Contract Workbench SSOT baseline.
+checkpoints:
+  - id: CP-0001
+    version: 0.1.0
+    lifecycle_phase: Bid Clarifications
+    created_at: 2026-06-03T00:00:00Z
+    summary: Initial governance checkpoint.
+navigation:
+  sections:
+    - Metadata
+    - Lifecycle
+    - Stakeholders
+    - Requirements
+    - Parent/Child Questions
+    - RTM
+    - Change Requests
+    - Changelog
