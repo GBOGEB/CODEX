@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ABACUS P&amp;ID Semantic Viewer</title>
+<style>
+  :root { color-scheme: light; --panel:#f8fafc; --line:#0f172a; }
+  body { margin:0; font-family: Arial, sans-serif; color:#111827; background:#e5e7eb; }
+  header { padding:12px 16px; background:#111827; color:white; }
+  main { display:grid; grid-template-columns:320px 1fr 320px; gap:10px; padding:10px; }
+  aside, section { background:white; border:1px solid #cbd5e1; border-radius:8px; padding:10px; }
+  label { display:block; margin:6px 0; font-size:13px; }
+  #canvas { overflow:auto; max-height:calc(100vh - 96px); }
+  #svg-host svg { max-width:none; background:white; }
+  .meta { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; white-space:pre-wrap; font-size:12px; }
+  .mono-safe { stroke-dasharray: var(--semantic-dash, none); }
+  @page { size: A3 landscape; margin: 10mm; }
+  @media print { main { display:block; } aside { display:none; } #canvas { max-height:none; overflow:visible; } }
+</style>
+</head>
+<body>
+<header><strong>ABACUS P&amp;ID Semantic Viewer</strong> — original SVG preserved; semantic toggles hide/show extracted bins.</header>
+<main>
+<aside>
+  <h2>Toggles</h2>
+  <label><input type='checkbox' data-toggle='full drawing' checked> full drawing</label>
+<label><input type='checkbox' data-toggle='colour/process lines' checked> colour/process lines</label>
+<label><input type='checkbox' data-toggle='A / A′ 4.5 K line' checked> A / A′ 4.5 K line</label>
+<label><input type='checkbox' data-toggle='B / B′ 2 K line' checked> B / B′ 2 K line</label>
+<label><input type='checkbox' data-toggle='W coupler line' checked> W coupler line</label>
+<label><input type='checkbox' data-toggle='S line' checked> S line</label>
+<label><input type='checkbox' data-toggle='V vent line' checked> V vent line</label>
+<label><input type='checkbox' data-toggle='D/E manifold lines' checked> D/E manifold lines</label>
+<label><input type='checkbox' data-toggle='unknown/black/structure' checked> unknown/black/structure</label>
+<label><input type='checkbox' data-toggle='instruments only' checked> instruments only</label>
+<label><input type='checkbox' data-toggle='valves only' checked> valves only</label>
+<label><input type='checkbox' data-toggle='equipment only' checked> equipment only</label>
+<label><input type='checkbox' data-toggle='boundaries only' checked> boundaries only</label>
+<label><input type='checkbox' data-toggle='vacuum barrier' checked> vacuum barrier</label>
+<label><input type='checkbox' data-toggle='QM section' checked> QM section</label>
+<label><input type='checkbox' data-toggle='Jumper section' checked> Jumper section</label>
+<label><input type='checkbox' data-toggle='QVB section' checked> QVB section</label>
+<label><input type='checkbox' data-toggle='QINFRA/interface section' checked> QINFRA/interface section</label>
+<label><input type='checkbox' data-toggle='arrows / flow direction only' checked> arrows / flow direction only</label>
+<label><input type='checkbox' data-toggle='unresolved items' checked> unresolved items</label>
+  <h2>Search by tag</h2>
+  <input id="tag-search" placeholder="PT, TT, QVB..." style="width:100%;box-sizing:border-box">
+  <div id="search-results"></div>
+</aside>
+<section id="canvas"><div id="svg-host"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'><rect width='1200' height='800' fill='#fff'/><text x='60' y='90' font-size='28'>No expected P&amp;ID SVG input found in data/svg/</text></svg></div></section>
+<aside>
+  <h2>Metadata</h2>
+  <pre id="metadata" class="meta">Click an SVG item or search result.</pre>
+  <h2>Unresolved items</h2>
+  <div id="unresolved" class="meta"></div>
+</aside>
+</main>
+<script id="semantic-model" type="application/json">{&quot;arrow_direction_model&quot;: {&quot;arrows&quot;: [], &quot;counts&quot;: {&quot;resolved&quot;: 0, &quot;total&quot;: 0, &quot;unresolved&quot;: 0}, &quot;counts_by_source_colour&quot;: {}}, &quot;line_model&quot;: {&quot;colour_bins&quot;: {&quot;blue_A&quot;: {&quot;count&quot;: 0, &quot;label&quot;: &quot;A / A\u2032 4.5 K line&quot;, &quot;palette&quot;: [[0, 70, 170], [30, 110, 230], [60, 130, 255]], &quot;style&quot;: &quot;stroke-dasharray:none;&quot;, &quot;toggle&quot;: &quot;A / A\u2032 4.5 K line&quot;}, &quot;cyan_B_2K&quot;: {&quot;count&quot;: 0, &quot;label&quot;: &quot;B / B\u2032 2 K line&quot;, &quot;palette&quot;: [[0, 170, 210], [0, 200, 255], [80, 220, 255]], &quot;style&quot;: &quot;stroke-dasharray:8 4;&quot;, &quot;toggle&quot;: &quot;B / B\u2032 2 K line&quot;}, &quot;green_W_coupler&quot;: {&quot;count&quot;: 0, &quot;label&quot;: &quot;W coupler line&quot;, &quot;palette&quot;: [[0, 120, 40], [0, 150, 70], [60, 180, 90]], &quot;style&quot;: &quot;stroke-dasharray:2 4;&quot;, &quot;toggle&quot;: &quot;W coupler line&quot;}, &quot;grey_V_vent&quot;: {&quot;count&quot;: 0, &quot;label&quot;: &quot;V vent line&quot;, &quot;palette&quot;: [[90, 90, 90], [130, 130, 130], [170, 170, 170]], &quot;style&quot;: &quot;stroke-dasharray:10 4 2 4;&quot;, &quot;toggle&quot;: &quot;V vent line&quot;}, &quot;olive_S_line&quot;: {&quot;count&quot;: 0, &quot;label&quot;: &quot;S line&quot;, &quot;palette&quot;: [[90, 110, 20], [120, 140, 35], [150, 160, 60]], &quot;style&quot;: &quot;stroke-dasharray:12 3;&quot;, &quot;toggle&quot;: &quot;S line&quot;}, &quot;red_orange_D_E&quot;: {&quot;count&quot;: 0, &quot;label&quot;: &quot;D/E manifold lines&quot;, &quot;palette&quot;: [[180, 30, 20], [220, 80, 20], [240, 130, 20]], &quot;style&quot;: &quot;stroke-dasharray:4 3;&quot;, &quot;toggle&quot;: &quot;D/E manifold lines&quot;}, &quot;unknown_black_or_other&quot;: {&quot;count&quot;: 0, &quot;label&quot;: &quot;unknown/black/structure&quot;, &quot;palette&quot;: [[0, 0, 0], [40, 40, 40], [80, 80, 80]], &quot;style&quot;: &quot;stroke-dasharray:1 3;&quot;, &quot;toggle&quot;: &quot;unknown/black/structure&quot;}}, &quot;generated_at&quot;: &quot;2026-06-08T15:50:28.510828Z&quot;, &quot;inkscape_bridge_manifest&quot;: &quot;data/model/inkscape_bridge_manifest.json&quot;, &quot;input_files&quot;: [{&quot;found&quot;: false, &quot;path&quot;: &quot;data/svg/PFD-PID MINERVA QCELL-LB.svg&quot;, &quot;size_bytes&quot;: null}, {&quot;found&quot;: false, &quot;path&quot;: &quot;data/svg/PFD-PID MINERVA RFCELL seen by ACR.svg&quot;, &quot;size_bytes&quot;: null}, {&quot;found&quot;: false, &quot;path&quot;: &quot;data/ppt/PFD-PID of RFCELL - MASTER.pptx&quot;, &quot;size_bytes&quot;: null}, {&quot;found&quot;: false, &quot;path&quot;: &quot;data/ppt/PID MINERVA CryoCell (QCELL-LB).pptx&quot;, &quot;size_bytes&quot;: null}, {&quot;found&quot;: false, &quot;path&quot;: &quot;data/ppt/QSYS (and RFCELL) instrumentation location for LB and LBI.pptx&quot;, &quot;size_bytes&quot;: null}], &quot;lines&quot;: [], &quot;svg_load_status&quot;: [], &quot;unresolved_colours&quot;: []}, &quot;semantic_layer_model&quot;: {&quot;confidence_notes&quot;: [&quot;Semantic correctness is claimed only where colour, geometry, tag, or boundary evidence is recorded.&quot;, &quot;Unmapped items remain visible in unresolved/unknown bins rather than being silently inferred.&quot;], &quot;layers&quot;: {&quot;A / A\u2032 4.5 K line&quot;: [], &quot;B / B\u2032 2 K line&quot;: [], &quot;D/E manifold lines&quot;: [], &quot;Jumper section&quot;: [], &quot;QINFRA/interface section&quot;: [], &quot;QM section&quot;: [], &quot;QVB section&quot;: [], &quot;S line&quot;: [], &quot;V vent line&quot;: [], &quot;W coupler line&quot;: [], &quot;arrows / flow direction only&quot;: [], &quot;boundaries only&quot;: [], &quot;colour/process lines&quot;: [], &quot;equipment only&quot;: [], &quot;full drawing&quot;: [], &quot;instruments only&quot;: [], &quot;unknown/black/structure&quot;: [], &quot;unresolved items&quot;: [&quot;expected_svg_inputs&quot;], &quot;vacuum barrier&quot;: [], &quot;valves only&quot;: []}, &quot;toggles&quot;: [{&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;full drawing&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;colour/process lines&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;A / A\u2032 4.5 K line&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;B / B\u2032 2 K line&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;W coupler line&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;S line&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;V vent line&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;D/E manifold lines&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;unknown/black/structure&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;instruments only&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;valves only&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;equipment only&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;boundaries only&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;vacuum barrier&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;QM section&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;Jumper section&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;QVB section&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;QINFRA/interface section&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;toggle&quot;: &quot;arrows / flow direction only&quot;}, {&quot;item_count&quot;: 1, &quot;item_ids&quot;: [&quot;expected_svg_inputs&quot;], &quot;toggle&quot;: &quot;unresolved items&quot;}]}, &quot;subsystem_model&quot;: {&quot;subsystem_count&quot;: 0, &quot;subsystems&quot;: [{&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;subsystem&quot;: &quot;Jumper&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;subsystem&quot;: &quot;QINFRA/interface&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;subsystem&quot;: &quot;QM&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;subsystem&quot;: &quot;QVB&quot;}, {&quot;item_count&quot;: 0, &quot;item_ids&quot;: [], &quot;subsystem&quot;: &quot;vacuum barrier&quot;}]}, &quot;tag_layer_register&quot;: {&quot;resolved_tag_count&quot;: 0, &quot;tag_count&quot;: 0, &quot;tags&quot;: [], &quot;unresolved_tag_count&quot;: 0}}</script>
+<script>
+const model = JSON.parse(document.getElementById('semantic-model').textContent);
+const allLines = new Map(model.line_model.lines.map(item => [item.source_svg_element_id, item]));
+const tags = model.tag_layer_register.tags || [];
+const unresolved = [
+  ...(model.line_model.unresolved_colours || []),
+  ...(model.arrow_direction_model.arrows || []).filter(a => a.unresolved_reason),
+  ...tags.filter(t => t.unresolved_reason)
+];
+const toggleMap = Object.fromEntries(model.semantic_layer_model.toggles.map(t => [t.toggle, new Set(t.item_ids)]));
+function findBySvgId(id) { return model.line_model.lines.find(x => x.source_svg_element_id === id) || tags.find(x => x.tag_id === id) || model.arrow_direction_model.arrows.find(x => x.source_svg_element_id === id); }
+function setVisibleByIds(ids, visible) { ids.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = visible ? '' : 'none'; }); }
+function applyToggles() {
+  document.querySelectorAll('input[data-toggle]').forEach(input => {
+    const ids = toggleMap[input.dataset.toggle] || new Set();
+    setVisibleByIds(ids, input.checked);
+  });
+}
+document.querySelectorAll('input[data-toggle]').forEach(input => input.addEventListener('change', applyToggles));
+document.getElementById('svg-host').addEventListener('click', event => {
+  const target = event.target.closest('[id]');
+  const meta = target ? findBySvgId(target.id) || { source_svg_element_id: target.id, note: 'No extracted metadata for clicked element.' } : { note:'No SVG element id.' };
+  document.getElementById('metadata').textContent = JSON.stringify(meta, null, 2);
+});
+document.getElementById('tag-search').addEventListener('input', event => {
+  const q = event.target.value.toLowerCase();
+  const matches = q ? tags.filter(t => (t.text || '').toLowerCase().includes(q) || (t.matches || []).join(' ').toLowerCase().includes(q)).slice(0, 30) : [];
+  document.getElementById('search-results').innerHTML = matches.map(t => `<button data-id="${t.tag_id}">${t.text}</button>`).join('<br>');
+});
+document.getElementById('search-results').addEventListener('click', event => {
+  if (!event.target.dataset.id) return;
+  const meta = tags.find(t => t.tag_id === event.target.dataset.id);
+  document.getElementById('metadata').textContent = JSON.stringify(meta, null, 2);
+});
+document.getElementById('unresolved').textContent = JSON.stringify(unresolved, null, 2);
+</script>
+</body>
+</html>

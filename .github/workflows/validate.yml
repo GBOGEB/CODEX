@@ -1,0 +1,51 @@
+name: W001 Governance Validation
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    name: Validate governance handover artifacts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Run YAML SSOT validator
+        run: |
+          python tools/validators/ssot_validator.py \
+            --schema schemas/master_contract_ssot.schema.yaml \
+            --document ssot/master_contract_ssot_v0_2.yaml \
+            --json-report generated/validation_report.json \
+            --markdown-report generated/validation_report.md
+
+      - name: Run MASTER_input validator
+        run: |
+          python tools/validators/master_input_validator.py \
+            --root MASTER_input \
+            --json-report generated/master_input_validation.json \
+            --markdown-report generated/master_input_validation.md
+
+      - name: Publish validation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: w001-governance-validation
+          path: |
+            generated/validation_report.json
+            generated/validation_report.md
+            generated/master_input_validation.json
+            generated/master_input_validation.md
+          if-no-files-found: warn
