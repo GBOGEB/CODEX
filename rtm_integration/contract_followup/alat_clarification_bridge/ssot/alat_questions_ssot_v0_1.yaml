@@ -1,0 +1,134 @@
+meta:
+  bridge_id: alat_clarification_bridge
+  version: 0.1
+  status: draft
+  bidder_facing_rules:
+    - Bidder-facing answers use short bullet roll-ups.
+    - Internal sub-question numbers are retained for SCK traceability only.
+    - Pressure, temperature, and flow values are controlled by applicable input/interface tables.
+    - Slides are internal preparation material and must not appear in bidder-facing outputs.
+  controlled_value_policy:
+    pressure_temperature_flow: main_input_and_interface_tables
+    slide_references_allowed_in_bidder_outputs: false
+
+questions:
+  - id: Q3
+    title: Recovery System
+    theme: Recovery system and helium management
+    route: Q3/Q4/Q5
+    decision_posture: Clarify recovery philosophy while preserving interface-table control of design values.
+    stakeholders:
+      discipline_owner: Cryogenic process lead
+      contract_owner: Contract follow-up lead
+      rtm_owner: RTM coordinator
+      dbe_owner: DBE interface lead
+    rtm_links:
+      - RTM-ALAT-Q3-RECOVERY
+      - RTM-ALAT-HE-INVENTORY
+    offer_actions:
+      - OFFER-Q3-RECOVERY-SYSTEM
+      - OFFER-Q3-PURIFICATION-PHILOSOPHY
+    internal_traceability:
+      sub_questions:
+        - Q3.1 recovery system operating philosophy
+        - Q3.2 balloon location basis
+        - Q3.3 purification philosophy
+        - Q3.4 pressure temperature and flow table control
+    bidder_answer:
+      - The recovery system shall be treated as part of the helium management concept and coordinated with the applicable interface tables.
+      - Balloon location remains a layout and interface coordination item; bidders shall identify assumptions and constraints in the offer.
+      - Purification philosophy shall be described by the bidder, including normal operation, regeneration or replacement assumptions, and contamination-control interfaces.
+      - Pressure, temperature, and flow values shall not be restated in the answer and remain governed by the main input/interface tables.
+    controlled_references:
+      pressure_temperature_flow: main input/interface tables
+      bidder_output_exclusions:
+        - slide references
+        - internal preparation slide numbers
+
+  - id: Q4
+    title: Line S
+    theme: Line S handover and storage planning
+    route: Q3/Q4/Q5
+    decision_posture: Clarify Line S boundaries without changing controlled interface values.
+    stakeholders:
+      discipline_owner: Distribution line lead
+      contract_owner: Contract follow-up lead
+      rtm_owner: RTM coordinator
+      dbe_owner: DBE interface lead
+    rtm_links:
+      - RTM-ALAT-Q4-LINE-S
+      - RTM-ALAT-WSH-STORAGE
+      - RTM-ALAT-S-HANDOVER-BOUNDARY
+    offer_actions:
+      - OFFER-Q4-LINE-S-HANDOVER
+      - OFFER-Q4-WSH-STORAGE-BASIS
+    internal_traceability:
+      sub_questions:
+        - Q4.1 Line S nominal handover boundary
+        - Q4.2 Line S transient handover boundary
+        - Q4.3 Line S abnormal handover boundary
+        - Q4.4 WSH storage planning basis
+    bidder_answer:
+      - Line S shall be addressed as an interface-controlled handover route with bidder assumptions clearly identified.
+      - WSH storage planning shall be based on the contract input/interface tables and bidder-defined implementation assumptions.
+      - Nominal, transient, and abnormal operating boundaries shall be coordinated with the DBE interface action before final answer release.
+      - Pressure, temperature, and flow values shall not be restated in the answer and remain governed by the main input/interface tables.
+    dbe_actions:
+      - boundary: Line S nominal handover
+        action: DBE to confirm nominal Line S handover boundary and controlled interface-table references.
+        status: open
+      - boundary: Line S transient handover
+        action: DBE to confirm transient Line S handover boundary and interface response assumptions.
+        status: open
+      - boundary: Line S abnormal handover
+        action: DBE to confirm abnormal Line S handover boundary and fallback interface assumptions.
+        status: open
+    controlled_references:
+      pressure_temperature_flow: main input/interface tables
+      bidder_output_exclusions:
+        - slide references
+        - internal preparation slide numbers
+
+  - id: Q5
+    title: Line W
+    theme: Line W handover and boundary confirmation
+    route: Q3/Q4/Q5
+    decision_posture: Clarify Line W boundaries while preserving RTM and OFFER_list traceability.
+    stakeholders:
+      discipline_owner: Distribution line lead
+      contract_owner: Contract follow-up lead
+      rtm_owner: RTM coordinator
+      dbe_owner: DBE interface lead
+    rtm_links:
+      - RTM-ALAT-Q5-LINE-W
+      - RTM-ALAT-W-HANDOVER-BOUNDARY
+      - RTM-ALAT-DBE-ACTION
+    offer_actions:
+      - OFFER-Q5-LINE-W-HANDOVER
+      - OFFER-Q5-DBE-BOUNDARY-ACTION
+    internal_traceability:
+      sub_questions:
+        - Q5.1 Line W nominal handover boundary
+        - Q5.2 Line W transient handover boundary
+        - Q5.3 Line W abnormal handover boundary
+        - Q5.4 pressure temperature and flow table control
+    bidder_answer:
+      - Line W shall be addressed as an interface-controlled handover route with bidder assumptions clearly identified.
+      - Nominal, transient, and abnormal operating boundaries shall be coordinated with the DBE interface action before final answer release.
+      - Bidder responses shall state implementation assumptions and required interfaces, not duplicate controlled table values.
+      - Pressure, temperature, and flow values shall not be restated in the answer and remain governed by the main input/interface tables.
+    dbe_actions:
+      - boundary: Line W nominal handover
+        action: DBE to confirm nominal Line W handover boundary and controlled interface-table references.
+        status: open
+      - boundary: Line W transient handover
+        action: DBE to confirm transient Line W handover boundary and interface response assumptions.
+        status: open
+      - boundary: Line W abnormal handover
+        action: DBE to confirm abnormal Line W handover boundary and fallback interface assumptions.
+        status: open
+    controlled_references:
+      pressure_temperature_flow: main input/interface tables
+      bidder_output_exclusions:
+        - slide references
+        - internal preparation slide numbers
