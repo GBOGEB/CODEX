@@ -1,0 +1,67 @@
+name: Build ALaT Clarification Bridge
+
+on:
+  pull_request:
+    paths:
+      - 'rtm_integration/contract_followup/alat_clarification_bridge/**'
+      - 'tests/test_alat_clarification_bridge.py'
+      - '.github/workflows/build-clarification-bridge.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'rtm_integration/contract_followup/alat_clarification_bridge/**'
+      - 'tests/test_alat_clarification_bridge.py'
+      - '.github/workflows/build-clarification-bridge.yml'
+
+jobs:
+  build-clarification-bridge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install PyYAML openpyxl pytest
+
+      - name: Verify bridge dependencies
+        run: |
+          python -c "import openpyxl, yaml; print(f'openpyxl={openpyxl.__version__}')"
+          python -m pytest --version
+
+      - name: Validate SSOT
+        run: |
+          python rtm_integration/contract_followup/alat_clarification_bridge/tools/validate_ssot.py
+
+      - name: Generate bridge artifacts
+        run: |
+          python rtm_integration/contract_followup/alat_clarification_bridge/tools/generate_bridge.py
+          test -f rtm_integration/contract_followup/alat_clarification_bridge/build/bidder_response.md
+          test -f rtm_integration/contract_followup/alat_clarification_bridge/build/bidder_response.html
+          test -f rtm_integration/contract_followup/alat_clarification_bridge/build/review_checklist.md
+          test -f rtm_integration/contract_followup/alat_clarification_bridge/build/stakeholder_review.md
+          test -f rtm_integration/contract_followup/alat_clarification_bridge/build/management_summary.md
+          test -f rtm_integration/contract_followup/alat_clarification_bridge/build/alat_clarification_bridge.xlsx
+
+      - name: Run bridge tests
+        run: |
+          test -f tests/test_alat_clarification_bridge.py
+          pytest --strict-config --strict-markers tests/test_alat_clarification_bridge.py
+
+      - name: Upload bridge artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: alat-clarification-bridge
+          path: |
+            rtm_integration/contract_followup/alat_clarification_bridge/build/bidder_response.md
+            rtm_integration/contract_followup/alat_clarification_bridge/build/bidder_response.html
+            rtm_integration/contract_followup/alat_clarification_bridge/build/review_checklist.md
+            rtm_integration/contract_followup/alat_clarification_bridge/build/stakeholder_review.md
+            rtm_integration/contract_followup/alat_clarification_bridge/build/management_summary.md
+            rtm_integration/contract_followup/alat_clarification_bridge/build/alat_clarification_bridge.xlsx
+          if-no-files-found: ignore
