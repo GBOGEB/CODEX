@@ -8,6 +8,9 @@ on:
       - '.github/workflows/rtm-validation.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   validate-rtm-runtime:
     runs-on: ubuntu-latest
