@@ -35,6 +35,9 @@ jobs:
       - name: Run lineage validator
         run: python tools/traceability/lineage_engine.py
 
+      - name: Generate governance runtime export
+        run: python tools/export/governance_export.py
+
       - name: Publish validation artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -51,4 +54,7 @@ jobs:
             generated/lineage.json
             generated/lineage.md
             generated/lineage_graph.json
+            generated/governance_runtime.json
+            generated/governance_runtime.yaml
+            generated/governance_runtime.md
           if-no-files-found: warn
