@@ -8,6 +8,9 @@ on:
       - '.github/workflows/manifest-validation.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   validate-runtime-manifest:
     runs-on: ubuntu-latest
