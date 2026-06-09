@@ -18,6 +18,7 @@ from __future__ import annotations
 import json
 import logging
 import re
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -25,10 +26,11 @@ from urllib.parse import urlparse
 
 import yaml
 
-if __package__:
-    from .html_to_markdown import storage_html_to_markdown
-else:
-    from html_to_markdown import storage_html_to_markdown
+MODULE_DIR = Path(__file__).resolve().parent
+if str(MODULE_DIR) not in sys.path:
+    sys.path.insert(0, str(MODULE_DIR))
+
+from html_to_markdown import storage_html_to_markdown
 
 logger = logging.getLogger(__name__)
 

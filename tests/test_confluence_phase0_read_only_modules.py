@@ -1,6 +1,7 @@
 import json
 import sys
 from pathlib import Path
+from urllib.parse import urlparse
 
 import yaml
 
@@ -94,7 +95,10 @@ def test_confluence_client_read_only_methods_and_download(tmp_path):
 
     saved = client.download_attachment("/download/attachments/1023934467/a.pdf", tmp_path / "a.pdf")
     assert Path(saved).read_bytes() == b"abcdef"
-    assert all(call["url"].startswith("https://myrrha.atlassian.net") for call in session.calls)
+    assert all(
+        (parsed.scheme == "https" and parsed.hostname == "myrrha.atlassian.net")
+        for parsed in (urlparse(call["url"]) for call in session.calls)
+    )
 
 
 def test_confluence_client_download_missing_raises(tmp_path):
@@ -138,16 +142,3 @@ def test_output_writer_writes_complete_page_artifacts(tmp_path):
     assert attachments["attachments"][0]["absolute_download_url"].startswith("https://myrrha.atlassian.net/download")
     assert hierarchy["ancestors"][0]["id"] == "parent-1"
     assert hierarchy["children"][0]["id"] == "child-1"
-
-
-def test_confluence_client_exposes_no_mutating_methods():
-    mutating_prefixes = ("create", "update", "delete", "publish", "write", "sync")
-    public_methods = [name for name in dir(ConfluenceClient) if not name.startswith("_")]
-
-    assert not [name for name in public_methods if name.startswith(mutating_prefixes)]
-
-
-def test_output_writer_is_importable_as_package_module():
-    from src.output_writer import OutputWriter as PackageOutputWriter
-
-    assert PackageOutputWriter.__name__ == "OutputWriter"

@@ -12,6 +12,18 @@ federation_bridge:
       branch: "main"
       role: "downstream_functional"
       focus: "Python math engines, calculation schemas, code execution"
+    gemini:
+      url: "https://github.com/GBOGEB/GEMINI"
+      branch: "main"
+      role: "mini_federation"
+      focus: "Shared mini-federation template, integration bridge, independent confederated runtime"
+      custodian: "CLAUDE"
+    anthropic:
+      url: "https://github.com/GBOGEB/ANTHROPIC"
+      branch: "main"
+      role: "mini_federation"
+      focus: "Mirrored GEMINI mini-federation member for shared architecture and integration"
+      custodian: "CLAUDE"
   orchestration:
     mcp_enabled: true
     protocols:

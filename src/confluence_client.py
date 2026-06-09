@@ -11,7 +11,7 @@ from __future__ import annotations
 import logging
 import os
 from typing import Any, Dict, List, Optional
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin
 
 import requests
 
@@ -98,27 +98,6 @@ class ConfluenceClient:
             raise ConfluenceError(f"Expected JSON object from {url}, got {type(payload).__name__}")
         return payload
 
-    def _get_results(
-        self,
-        path: str,
-        params: Optional[Dict[str, Any]] = None,
-        limit: int = 100,
-    ) -> List[Dict[str, Any]]:
-        """Return all visible results for paged read-only endpoints."""
-        results: List[Dict[str, Any]] = []
-        start = 0
-        while True:
-            page_params = dict(params or {})
-            page_params.setdefault("limit", limit)
-            page_params["start"] = start
-            payload = self._get_json(path, params=page_params)
-            batch = payload.get("results", [])
-            results.extend(batch)
-            if len(batch) < int(page_params["limit"]):
-                break
-            start += len(batch)
-        return results
-
     def get_page(self, page_id: str, expand: Optional[str] = None) -> Dict[str, Any]:
         """Return a page with storage body and hierarchy metadata by default."""
         expansion = expand or "body.storage,version,ancestors,children.page,space,metadata.labels"
@@ -126,15 +105,16 @@ class ConfluenceClient:
 
     def get_attachments(self, page_id: str, limit: int = 200) -> List[Dict[str, Any]]:
         """Return attachment records for a page."""
-        return self._get_results(f"/content/{page_id}/child/attachment", limit=limit)
+        result = self._get_json(f"/content/{page_id}/child/attachment", params={"limit": limit})
+        return result.get("results", [])
 
     def get_children(self, page_id: str, limit: int = 100) -> List[Dict[str, Any]]:
         """Return child pages for a page."""
-        return self._get_results(
+        result = self._get_json(
             f"/content/{page_id}/child/page",
-            params={"expand": "version,ancestors"},
-            limit=limit,
+            params={"limit": limit, "expand": "version,ancestors"},
         )
+        return result.get("results", [])
 
     def download_attachment(
         self,
@@ -143,8 +123,7 @@ class ConfluenceClient:
     ) -> str:
         from pathlib import Path
 
-        parsed = urlparse(download_path)
-        full_url = download_path if parsed.scheme else f"{self.base_url}{download_path}"
+        full_url = f"{self.base_url}{download_path}"
         resp = self._session.get(full_url, stream=True, timeout=self.timeout)
 
         if resp.status_code == 404:
@@ -176,11 +155,11 @@ class ConfluenceClient:
         limit: int = 50,
     ) -> List[Dict[str, Any]]:
         """List all spaces visible to the authenticated user."""
-        return self._get_results(
+        result = self._get_json(
             "/space",
-            params={"type": space_type},
-            limit=limit,
+            params={"type": space_type, "limit": limit},
         )
+        return result.get("results", [])
 
     def list_pages_in_space(
         self,
@@ -188,15 +167,16 @@ class ConfluenceClient:
         limit: int = 100,
     ) -> List[Dict[str, Any]]:
         """List all pages in a space (shallow — no body expansion)."""
-        return self._get_results(
+        result = self._get_json(
             "/content",
             params={
                 "spaceKey": space_key,
                 "type": "page",
                 "expand": "version,ancestors",
+                "limit": limit,
             },
-            limit=limit,
         )
+        return result.get("results", [])
 
     def get_page_ancestors(self, page_id: str) -> List[Dict[str, Any]]:
         """Return ancestor chain (breadcrumb) for a page."""
@@ -208,8 +188,11 @@ class ConfluenceClient:
 
     def get_labels(self, page_id: str) -> List[str]:
         """Return list of label strings attached to a page."""
-        labels = self._get_results(f"/content/{page_id}/label", limit=100)
-        return [lbl["name"] for lbl in labels if "name" in lbl]
+        result = self._get_json(
+            f"/content/{page_id}/label",
+            params={"limit": 100},
+        )
+        return [lbl["name"] for lbl in result.get("results", []) if "name" in lbl]
 
     # ── Representation ────────────────────────────────────────────────
 

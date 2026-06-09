@@ -39,3 +39,7 @@ Generate an export bundle plus a machine-readable bridge report with:
 ```bash
 python scripts/export_abacus_runtime.py --report-json outputs/runtime_export/bridge_report.json
 ```
+
+## Governance Boundary
+
+ABACUS runtime components own ingestion and engine execution concerns, including manifest processing, SSOT generation, source indexing, RTM extraction, document processing, dashboard generation, and runtime validation. Governance authority remains routed through `GOVERNANCE.md`, `docs/GOVERNANCE/`, `MANIFEST/`, `DELTA_1/`, and `KEB/governance/`; ABACUS references those sources without redefining their canon.
