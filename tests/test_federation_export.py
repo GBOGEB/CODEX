@@ -11,6 +11,7 @@ from src.qplant_presentation_engine.federation_export import (
     FederationExportError,
     generate_federation_artifacts,
 )
+from src.qplant_presentation_engine.federation_rollup import MEMBERS
 
 
 def _root() -> Path:
@@ -24,7 +25,14 @@ def _metrics_dir() -> Path:
 def _copy_metrics_inputs(destination: Path) -> Path:
     source = _metrics_dir()
     destination.mkdir(parents=True, exist_ok=True)
-    for name in ("abacus_metrics.json", "artstyle_metrics.json", "qplant_metrics.json", "codex_metrics.json"):
+    for name in (
+        "abacus_metrics.json",
+        "artstyle_metrics.json",
+        "qplant_metrics.json",
+        "codex_metrics.json",
+        "gemini_metrics.json",
+        "anthropic_metrics.json",
+    ):
         (destination / name).write_text((source / name).read_text(encoding="utf-8"), encoding="utf-8")
     return destination
 
@@ -64,7 +72,7 @@ class TestFederationArtifactExport:
             "repo_summaries",
         ):
             assert key in rollup
-        assert len(rollup["repo_summaries"]) == 4
+        assert len(rollup["repo_summaries"]) == len(MEMBERS)
 
     def test_scree_has_pc1_to_pc5_with_variance_rank_and_cumulative(self):
         repo_metrics = FederationArtifactExporter()._load_repo_metrics(_metrics_dir())
@@ -108,7 +116,9 @@ class TestFederationArtifactExport:
         bottleneck_output = tmp_path / "bottleneck_report.json"
 
         with pytest.raises(FederationExportError, match="canonical federation members"):
-            FederationArtifactExporter(members=("ABACUS", "ABACUS", "ARTSTYLE", "QPLANT")).write_outputs(
+            FederationArtifactExporter(
+                members=("ABACUS", "ABACUS", "ARTSTYLE", "QPLANT", "CODEX", "GEMINI")
+            ).write_outputs(
                 metrics_dir=_metrics_dir(),
                 federation_dir=federation_dir,
                 bottleneck_output=bottleneck_output,
@@ -119,16 +129,16 @@ class TestFederationArtifactExport:
         bottleneck_output = tmp_path / "bottleneck_report.json"
 
         rollup, scree, _ = FederationArtifactExporter(
-            members=("CODEX", "QPLANT", "ABACUS", "ARTSTYLE")
+            members=("ANTHROPIC", "GEMINI", "CODEX", "QPLANT", "ABACUS", "ARTSTYLE")
         ).write_outputs(
             metrics_dir=_metrics_dir(),
             federation_dir=federation_dir,
             bottleneck_output=bottleneck_output,
         )
 
-        assert rollup["members"] == ["ABACUS", "ARTSTYLE", "QPLANT", "CODEX"]
-        assert [entry["member"] for entry in rollup["repo_summaries"]] == ["ABACUS", "ARTSTYLE", "QPLANT", "CODEX"]
-        assert scree["members"] == ["ABACUS", "ARTSTYLE", "QPLANT", "CODEX"]
+        assert rollup["members"] == list(MEMBERS)
+        assert [entry["member"] for entry in rollup["repo_summaries"]] == list(MEMBERS)
+        assert scree["members"] == list(MEMBERS)
 
     def test_rollup_rejects_non_canonical_member_set(self):
         repo_metrics = FederationArtifactExporter()._load_repo_metrics(_metrics_dir())

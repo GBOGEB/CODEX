@@ -1,0 +1,28 @@
+version: "1.0"
+federation:
+  name: GBOGEB_FEDERATION
+  members:
+    - CODEX
+    - GEMINI
+    - ABACUS
+    - ARTSTYLE
+    - QPLANT
+repositories:
+  CODEX:
+    branch: develop
+  GEMINI:
+    branch: main
+  ABACUS:
+    branch: develop
+python:
+  version: "3.12"
+virtual_environment:
+  name: federation
+bootstrap:
+  enabled: true
+recovery:
+  enabled: true
+evidence:
+  root: EVIDENCE/
+outputs:
+  root: OUTPUTS/

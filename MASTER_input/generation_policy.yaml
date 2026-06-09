@@ -1,0 +1,37 @@
+policy_id: MASTER_CONTRACT_WORKBENCH_GENERATION_POLICY
+version: 1.0.0
+authority: YAML_SSOT
+derivative_artifact_policy:
+  commit_generated_derivatives: false
+  rationale: Generated Excel, HTML, reports, dashboards and checkpoint snapshots are reproducible derivatives and are excluded from version control to prevent source/output drift.
+  governed_directories:
+    - MASTER_input/generated/excel
+    - MASTER_input/generated/html
+    - MASTER_input/generated/reports
+    - MASTER_input/generated/dashboards
+    - MASTER_input/checkpoints
+ci_drift_guard:
+  command: python scripts/check_contract_workbench.py
+  guarantees:
+    - tracked derivative payloads under governed directories fail the check
+    - two deterministic regenerations from the same YAML SSOT produce identical portable manifests and SHA-256 output hashes
+    - existing untracked derivative payloads fail the check if their SHA-256 hashes differ from regenerated manifest hashes
+    - existing workspace comparisons reuse generated_at from the existing manifest to avoid timestamp false positives
+    - manifest outputs use portable governed paths and output_hashes cover excel, html, trace, dashboard and checkpoint payloads
+  non_goals:
+    - compare against committed generated artefacts, because generated artefacts are intentionally not committed
+  behavior:
+    - validate_yaml_parse
+    - validate_ssot_governance_rules
+    - generate_derivatives_twice_in_temporary_workspaces
+    - compare_deterministic_portable_manifests_and_output_hashes
+    - reuse_existing_manifest_generated_at_for_workspace_hash_comparison
+    - compare_existing_workspace_derivative_hashes_when_outputs_exist
+    - fail_if_derivative_payloads_are_tracked
+checkpoint_retention:
+  committed_checkpoints: metadata_only
+  runtime_checkpoints: generated_on_demand
+  retention_owner: ABACUS
+  cleanup_owner: CODEX automation for local/CI workspaces; ABACUS for formally baselined runtime archives
+  enforcement: policy_only_for_user-invoked_runtime_outputs; CI temporary workspaces are automatically deleted
+  pruning_rule: delete local/CI runtime checkpoints after validation; archive or delete formal runtime checkpoints after lifecycle baselines are accepted

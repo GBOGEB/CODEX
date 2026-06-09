@@ -1,6 +1,6 @@
 """Federation scree analysis: PC1–PC5 variance explained across member repositories.
 
-Members: ABACUS, ARTSTYLE, QPLANT, CODEX
+Members: ABACUS, ARTSTYLE, QPLANT, CODEX, GEMINI, ANTHROPIC
 Components: pc1, pc2, pc3, pc4, pc5
 """
 from __future__ import annotations
@@ -9,19 +9,23 @@ import json
 from pathlib import Path
 from typing import Any
 
-MEMBERS: tuple[str, ...] = ("ABACUS", "ARTSTYLE", "QPLANT", "CODEX")
+MEMBERS: tuple[str, ...] = ("ABACUS", "ARTSTYLE", "QPLANT", "CODEX", "GEMINI", "ANTHROPIC")
 COMPONENTS: tuple[str, ...] = ("pc1", "pc2", "pc3", "pc4", "pc5")
 DEFAULT_WEIGHTS: dict[str, float] = {
-    "ABACUS": 0.35,
-    "ARTSTYLE": 0.20,
-    "QPLANT": 0.25,
-    "CODEX": 0.20,
+    "ABACUS": 0.28,
+    "ARTSTYLE": 0.16,
+    "QPLANT": 0.20,
+    "CODEX": 0.16,
+    "GEMINI": 0.10,
+    "ANTHROPIC": 0.10,
 }
 _RUNTIME_FILENAMES: dict[str, str] = {
     "ABACUS": "abacus_runtime.json",
     "ARTSTYLE": "artstyle_runtime.json",
     "QPLANT": "qplant_runtime.json",
     "CODEX": "codex_runtime.json",
+    "GEMINI": "gemini_runtime.json",
+    "ANTHROPIC": "anthropic_runtime.json",
 }
 
 

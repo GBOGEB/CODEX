@@ -1,153 +1,206 @@
 {
-  "wave": "W007",
-  "subwave": "W007.2",
   "members": [
     "ABACUS",
     "ARTSTYLE",
     "QPLANT",
-    "CODEX"
+    "CODEX",
+    "GEMINI",
+    "ANTHROPIC"
   ],
-  "weights": {
-    "ABACUS": 0.35,
-    "ARTSTYLE": 0.2,
-    "QPLANT": 0.25,
-    "CODEX": 0.2
-  },
-  "summary": {
-    "runtime_exists_count": 4,
-    "execution_count": 4,
-    "runtime_validated_count": 3,
-    "deployment_exists_count": 2,
-    "weighted_truth_score": 0.783333
-  },
-  "truth_matrix": [
+  "runtime_registry": [
     {
-      "member": "ABACUS",
-      "repo": "GBOGEB/ABACUS",
-      "runtime_exists": true,
-      "executed": true,
-      "runtime_validated": true,
-      "deployment_exists": true,
-      "truth_score": 1.0
-    },
-    {
-      "member": "ARTSTYLE",
-      "repo": "GBOGEB/ARTSTYLE",
-      "runtime_exists": true,
-      "executed": true,
-      "runtime_validated": false,
-      "deployment_exists": false,
-      "truth_score": 0.333333
-    },
-    {
-      "member": "QPLANT",
-      "repo": "GBOGEB/QPLANT",
-      "runtime_exists": true,
-      "executed": true,
-      "runtime_validated": true,
-      "deployment_exists": false,
-      "truth_score": 0.666667
-    },
-    {
-      "member": "CODEX",
-      "repo": "GBOGEB/CODEX",
-      "runtime_exists": true,
-      "executed": true,
-      "runtime_validated": true,
-      "deployment_exists": true,
-      "truth_score": 1.0
-    }
-  ],
-  "per_repository": {
-    "ABACUS": {
-      "repo": "GBOGEB/ABACUS",
-      "runtime_exists": true,
-      "runtime_validated": true,
-      "deployment_exists": true,
-      "last_execution": "2026-05-30T09:00:00Z",
-      "last_validation": "2026-05-30T10:00:00Z",
-      "last_deployment": "2026-05-30T11:00:00Z",
-      "truth_score": 1.0,
-      "forward_pca": 0.84,
-      "backward_pca": 0.81,
-      "geti": 0.82,
-      "pci": 0.79
-    },
-    "ARTSTYLE": {
-      "repo": "GBOGEB/ARTSTYLE",
-      "runtime_exists": true,
-      "runtime_validated": false,
-      "deployment_exists": false,
-      "last_execution": "2026-05-29T14:00:00Z",
-      "last_validation": null,
-      "last_deployment": null,
-      "truth_score": 0.333333,
-      "forward_pca": 0.73,
-      "backward_pca": 0.7,
-      "geti": 0.71,
-      "pci": 0.68
-    },
-    "QPLANT": {
-      "repo": "GBOGEB/QPLANT",
-      "runtime_exists": true,
-      "runtime_validated": true,
-      "deployment_exists": false,
-      "last_execution": "2026-05-30T08:30:00Z",
-      "last_validation": "2026-05-30T09:45:00Z",
-      "last_deployment": null,
-      "truth_score": 0.666667,
-      "forward_pca": 0.79,
-      "backward_pca": 0.75,
-      "geti": 0.77,
-      "pci": 0.74
-    },
-    "CODEX": {
-      "repo": "GBOGEB/CODEX",
-      "runtime_exists": true,
-      "runtime_validated": true,
-      "deployment_exists": true,
-      "last_execution": "2026-05-30T12:00:00Z",
-      "last_validation": "2026-05-30T12:30:00Z",
-      "last_deployment": "2026-05-30T13:00:00Z",
-      "truth_score": 1.0,
-      "forward_pca": 0.87,
-      "backward_pca": 0.84,
-      "geti": 0.85,
-      "pci": 0.83
-    }
-  },
-  "integrations": {
-    "federation_rollup": {
-      "geti": 0.7915,
-      "pci": 0.7635,
-      "expansion_factor": 1.1685,
-      "forward_pca": {
-        "variance_explained": [
-          0.413,
-          0.261,
-          0.1785,
-          0.0975,
-          0.05
-        ],
-        "convergence_score": 0.8115
-      },
       "backward_pca": {
+        "regression_score": 0.81,
         "variance_explained": [
-          0.3905,
-          0.271,
-          0.191,
-          0.0975,
+          0.4,
+          0.27,
+          0.18,
+          0.1,
           0.05
-        ],
-        "regression_score": 0.779
-      }
+        ]
+      },
+      "deployment_exists": true,
+      "forward_pca": {
+        "convergence_score": 0.84,
+        "variance_explained": [
+          0.42,
+          0.26,
+          0.17,
+          0.1,
+          0.05
+        ]
+      },
+      "geti": 0.82,
+      "last_deployment": "2026-05-29T11:30:00Z",
+      "last_execution": "2026-05-29T10:30:00Z",
+      "last_validation": "2026-05-29T11:00:00Z",
+      "pci": 0.79,
+      "repo": "GBOGEB/ABACUS",
+      "runtime_exists": true,
+      "runtime_validated": true,
+      "truth_score": 0.96
     },
-    "federation_scree": {
-      "pc1": 0.413,
-      "pc2": 0.261,
-      "pc3": 0.1785,
-      "pc4": 0.0975,
-      "pc5": 0.05
+    {
+      "backward_pca": {
+        "regression_score": 0.7,
+        "variance_explained": [
+          0.36,
+          0.29,
+          0.2,
+          0.1,
+          0.05
+        ]
+      },
+      "deployment_exists": false,
+      "forward_pca": {
+        "convergence_score": 0.73,
+        "variance_explained": [
+          0.38,
+          0.28,
+          0.19,
+          0.1,
+          0.05
+        ]
+      },
+      "geti": 0.71,
+      "last_deployment": null,
+      "last_execution": "2026-05-28T09:15:00Z",
+      "last_validation": null,
+      "pci": 0.68,
+      "repo": "GBOGEB/ARTSTYLE",
+      "runtime_exists": true,
+      "runtime_validated": false,
+      "truth_score": 0.62
+    },
+    {
+      "backward_pca": {
+        "regression_score": 0.75,
+        "variance_explained": [
+          0.41,
+          0.25,
+          0.2,
+          0.09,
+          0.05
+        ]
+      },
+      "deployment_exists": false,
+      "forward_pca": {
+        "convergence_score": 0.79,
+        "variance_explained": [
+          0.44,
+          0.24,
+          0.18,
+          0.09,
+          0.05
+        ]
+      },
+      "geti": 0.77,
+      "last_deployment": null,
+      "last_execution": "2026-05-30T07:45:00Z",
+      "last_validation": "2026-05-30T08:10:00Z",
+      "pci": 0.74,
+      "repo": "GBOGEB/QPLANT",
+      "runtime_exists": true,
+      "runtime_validated": true,
+      "truth_score": 0.84
+    },
+    {
+      "backward_pca": {
+        "regression_score": 0.84,
+        "variance_explained": [
+          0.38,
+          0.28,
+          0.19,
+          0.1,
+          0.05
+        ]
+      },
+      "deployment_exists": true,
+      "forward_pca": {
+        "convergence_score": 0.87,
+        "variance_explained": [
+          0.4,
+          0.27,
+          0.18,
+          0.1,
+          0.05
+        ]
+      },
+      "geti": 0.85,
+      "last_deployment": "2026-05-30T13:05:00Z",
+      "last_execution": "2026-05-30T12:20:00Z",
+      "last_validation": "2026-05-30T12:35:00Z",
+      "pci": 0.83,
+      "repo": "GBOGEB/CODEX",
+      "runtime_exists": true,
+      "runtime_validated": true,
+      "truth_score": 0.93
+    },
+    {
+      "backward_pca": {
+        "regression_score": 0.78,
+        "variance_explained": [
+          0.37,
+          0.3,
+          0.18,
+          0.1,
+          0.05
+        ]
+      },
+      "deployment_exists": false,
+      "forward_pca": {
+        "convergence_score": 0.8,
+        "variance_explained": [
+          0.39,
+          0.29,
+          0.17,
+          0.1,
+          0.05
+        ]
+      },
+      "geti": 0.79,
+      "last_deployment": null,
+      "last_execution": "2026-06-01T09:00:00Z",
+      "last_validation": "2026-06-01T10:00:00Z",
+      "pci": 0.76,
+      "repo": "GBOGEB/GEMINI",
+      "runtime_exists": true,
+      "runtime_validated": true,
+      "truth_score": 0.8
+    },
+    {
+      "backward_pca": {
+        "regression_score": 0.78,
+        "variance_explained": [
+          0.37,
+          0.3,
+          0.18,
+          0.1,
+          0.05
+        ]
+      },
+      "deployment_exists": false,
+      "forward_pca": {
+        "convergence_score": 0.8,
+        "variance_explained": [
+          0.39,
+          0.29,
+          0.17,
+          0.1,
+          0.05
+        ]
+      },
+      "geti": 0.79,
+      "last_deployment": null,
+      "last_execution": "2026-06-01T09:00:00Z",
+      "last_validation": "2026-06-01T10:00:00Z",
+      "pci": 0.76,
+      "repo": "GBOGEB/ANTHROPIC",
+      "runtime_exists": true,
+      "runtime_validated": true,
+      "truth_score": 0.8
     }
-  }
+  ],
+  "subwave": "W007.2A",
+  "wave": "W007"
 }

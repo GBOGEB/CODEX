@@ -1,14 +1,34 @@
 {
-  "wave": "W007",
-  "subwave": "W007.1",
-  "members": ["ABACUS", "ARTSTYLE", "QPLANT", "CODEX"],
   "aggregation": "weighted",
-  "weights": {
-    "ABACUS": 0.35,
-    "ARTSTYLE": 0.20,
-    "QPLANT": 0.25,
-    "CODEX": 0.20
+  "custodian": "CLAUDE",
+  "members": [
+    "ABACUS",
+    "ARTSTYLE",
+    "QPLANT",
+    "CODEX",
+    "GEMINI",
+    "ANTHROPIC"
+  ],
+  "mini_federation": {
+    "hub": "GBOGEB/CODEX",
+    "members": [
+      "GEMINI",
+      "ANTHROPIC"
+    ],
+    "mirror_source": "GEMINI",
+    "mirrored_member": "ANTHROPIC",
+    "topology": "sub_confederation"
   },
   "runtime_evidence": true,
-  "validation_evidence": true
+  "subwave": "W007.2B",
+  "validation_evidence": true,
+  "wave": "W007",
+  "weights": {
+    "ABACUS": 0.28,
+    "ANTHROPIC": 0.1,
+    "ARTSTYLE": 0.16,
+    "CODEX": 0.16,
+    "GEMINI": 0.1,
+    "QPLANT": 0.2
+  }
 }
