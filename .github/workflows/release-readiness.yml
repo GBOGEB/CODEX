@@ -9,6 +9,9 @@ on:
       - '.github/workflows/release-readiness.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   validate-release-readiness:
     runs-on: ubuntu-latest
