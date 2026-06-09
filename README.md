@@ -4,6 +4,18 @@ CODEX provides GitHub interface and authentication utilities for both GitHub.com
 
 > **Operating model:** CODEX is a governed federation-runtime repository where CI is the truth-verification gate, Pages is the human-facing portal, DMAIC is the iteration ledger, and bridge/federation outputs are the measurable integration layer. See [`GOVERNANCE.md`](GOVERNANCE.md) for repository identity, the workflow → lane map, and the CI-vs-CD contract.
 
+
+## MASTER Contract Workbench SSOT
+
+CODEX now includes the MASTER Contract Workbench framework under [`MASTER_input/`](MASTER_input/README.md). The framework treats YAML as the governing Single Source of Truth for pre-award, negotiation, award and execution lifecycle management, then generates synchronized Excel, HTML, trace report, dashboard and checkpoint artefacts as derivatives.
+
+```bash
+python scripts/generate_contract_workbench.py
+python scripts/check_contract_workbench.py
+```
+
+The generated artefacts remain non-authoritative; all edits must be merged back through approved change requests in the YAML SSOT. Generated payloads under `MASTER_input/generated/` and runtime checkpoints under `MASTER_input/checkpoints/` are intentionally ignored so binary workbooks and other derivative files do not drift from the YAML source. The guard proves deterministic on-demand generation by comparing portable manifests and SHA-256 output hashes from two temporary generations, reuses existing manifest timestamps for workspace comparisons, and fails if existing generated workspace payloads no longer match regenerated hashes.
+
 ## W000 Federated Semantic Trace Bootstrap
 
 This repository now includes a federation bootstrap wave (`W000-FEDERATED-SEMANTIC-TRACE`) to bridge ABACUS, CODEX, and daily chat interaction with dual-render governance:
