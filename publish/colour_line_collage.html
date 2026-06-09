@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABACUS Colour Line Collage</title>
+<style>
+@page { size: A3 landscape; margin: 8mm; }
+:root { --panel:#14213d; --accent:#fca311; --paper:#f7f7f7; }
+body { margin:0; font-family: system-ui, sans-serif; background:#111; color:#eee; }
+.app { display:grid; grid-template-columns: 340px 1fr 320px; min-height:100vh; }
+aside { background:var(--panel); padding:1rem; overflow:auto; }
+main { background:var(--paper); color:#111; overflow:auto; position:relative; }
+button,label,input { font:inherit; }
+.toggle { display:block; margin:.25rem 0; padding:.25rem; border-bottom:1px solid rgba(255,255,255,.1); }
+#canvas { position:relative; min-height:80vh; padding:1rem; }
+#svgHost svg { max-width:100%; height:auto; background:white; }
+.overlay { position:absolute; left:1rem; top:1rem; pointer-events:none; }
+.meta { white-space:pre-wrap; font-family: ui-monospace, monospace; font-size:12px; }
+.badge { display:inline-block; border:1px solid currentColor; border-radius:999px; padding:.1rem .4rem; margin:.1rem; }
+.line-label { background:white; color:#111; border:1px solid #111; font-size:11px; padding:1px 3px; }
+@media print { body { background:white; color:black; } .app { display:block; } aside { display:none; } main { overflow:visible; } }
+</style></head><body><div class="app">
+<aside><h1>P&amp;ID Viewer</h1><p>Original SVG is preserved; semantic overlays are toggleable and conservative.</p><input id="search" placeholder="Search by tag" style="width:100%"><h2>Toggles</h2><div id="toggles"></div></aside>
+<main><div id="canvas"><div id="svgHost"></div><svg id="overlay" class="overlay"></svg></div></main>
+<aside><h2>Metadata</h2><div id="meta" class="meta">Click an overlay item.</div><h2>Unresolved items</h2><div id="unresolved"></div></aside>
+</div><script>
+const MODEL = {"lines": [], "arrows": [], "tags": [], "boundaries": [], "layers": [{"layer_id": "full_drawing", "label": "full drawing", "item_count": 0}, {"layer_id": "colour_process_lines", "label": "colour/process lines", "item_count": 0}, {"layer_id": "blue_A", "label": "A / A\u2032 4.5 K line", "item_count": 0}, {"layer_id": "cyan_B_2K", "label": "B / B\u2032 2 K line", "item_count": 0}, {"layer_id": "green_W_coupler", "label": "W coupler line", "item_count": 0}, {"layer_id": "olive_S_line", "label": "S line", "item_count": 0}, {"layer_id": "grey_V_vent", "label": "V vent line", "item_count": 0}, {"layer_id": "red_orange_D_E", "label": "D/E manifold lines", "item_count": 0}, {"layer_id": "unknown_black_or_other", "label": "unknown/black/structure", "item_count": 0}, {"layer_id": "instruments_only", "label": "instruments only", "item_count": 0}, {"layer_id": "valves_only", "label": "valves only", "item_count": 0}, {"layer_id": "equipment_only", "label": "equipment only", "item_count": 0}, {"layer_id": "boundaries_only", "label": "boundaries only", "item_count": 0}, {"layer_id": "vacuum_barrier", "label": "vacuum barrier", "item_count": 0}, {"layer_id": "qm_section", "label": "QM section", "item_count": 0}, {"layer_id": "jumper_section", "label": "Jumper section", "item_count": 0}, {"layer_id": "qvb_section", "label": "QVB section", "item_count": 0}, {"layer_id": "qinfra_interface_section", "label": "QINFRA/interface section", "item_count": 0}, {"layer_id": "arrows_flow_direction", "label": "arrows / flow direction only", "item_count": 0}, {"layer_id": "unresolved_items", "label": "unresolved items", "item_count": 0}], "unresolved": {"arrows": [], "colours": [], "tags": []}, "svg_src": "../data/svg/PFD-PID MINERVA QCELL-LB.svg"};
+const active = new Set(MODEL.layers.map(l => l.layer_id));
+const toggles = document.getElementById('toggles');
+for (const layer of MODEL.layers) {
+  const label = document.createElement('label'); label.className='toggle';
+  label.innerHTML = `<input type="checkbox" checked data-layer="${layer.layer_id}"> ${layer.label} <span class="badge">${layer.item_count}</span>`;
+  toggles.appendChild(label);
+}
+toggles.addEventListener('change', e => { if (!e.target.dataset.layer) return; e.target.checked ? active.add(e.target.dataset.layer) : active.delete(e.target.dataset.layer); renderOverlay(); });
+document.getElementById('search').addEventListener('input', renderOverlay);
+fetch(MODEL.svg_src).then(r => r.ok ? r.text() : Promise.reject(new Error(r.status + ' ' + r.statusText))).then(txt => { document.getElementById('svgHost').innerHTML = txt; sizeOverlay(); renderOverlay(); }).catch(err => { document.getElementById('svgHost').innerHTML = `<div style="padding:2rem;background:white;border:2px dashed #999">SVG input unavailable: ${MODEL.svg_src}<br>${err.message}</div>`; renderOverlay(); });
+window.addEventListener('resize', () => { sizeOverlay(); renderOverlay(); });
+function sizeOverlay() { const svg = document.querySelector('#svgHost svg'); const ov = document.getElementById('overlay'); if (svg) { const b=svg.getBoundingClientRect(); ov.setAttribute('width', b.width); ov.setAttribute('height', b.height); } }
+function show(item) { document.getElementById('meta').textContent = JSON.stringify(item, null, 2); }
+function visible(item) { const ids = item.viewer_layer_ids || []; return active.has('full_drawing') || ids.some(x => active.has(x)); }
+function renderOverlay() {
+  const ov = document.getElementById('overlay'); ov.innerHTML=''; const q=document.getElementById('search').value.toLowerCase();
+  for (const line of MODEL.lines) { if (!visible(line)) continue; drawBox(ov,line,line.source_colour||'black','4 2'); }
+  for (const b of MODEL.boundaries) { if (!active.has('boundaries_only') && !active.has('full_drawing')) continue; drawBox(ov,b,'#7b2cbf','8 4'); }
+  for (const a of MODEL.arrows) { if (!active.has('arrows_flow_direction') && !active.has('full_drawing')) continue; drawArrow(ov,a); }
+  for (const t of MODEL.tags) { if (q && !t.text.toLowerCase().includes(q)) continue; if (!active.has('instruments_only') && !active.has('full_drawing')) continue; drawText(ov,t); }
+  renderUnresolved();
+}
+function drawBox(ov,item,color,dash) { if(!item.bbox) return; const r=document.createElementNS('http://www.w3.org/2000/svg','rect'); const b=item.bbox; r.setAttribute('x',b.x_min); r.setAttribute('y',b.y_min); r.setAttribute('width',Math.max(2,b.x_max-b.x_min)); r.setAttribute('height',Math.max(2,b.y_max-b.y_min)); r.setAttribute('fill','none'); r.setAttribute('stroke',color); r.setAttribute('stroke-width','2'); r.setAttribute('stroke-dasharray',dash); r.style.pointerEvents='all'; r.addEventListener('click',()=>show(item)); ov.appendChild(r); }
+function drawArrow(ov,a) { const p=a.arrow_tip_coordinate, s=a.start_body_coordinate; if(!p) return; const c=a.confidence>=0.7?'#d00000':'#ffba08'; const g=document.createElementNS('http://www.w3.org/2000/svg','g'); const circ=document.createElementNS('http://www.w3.org/2000/svg','circle'); circ.setAttribute('cx',p[0]); circ.setAttribute('cy',p[1]); circ.setAttribute('r','5'); circ.setAttribute('fill',c); g.appendChild(circ); if(s) { const line=document.createElementNS('http://www.w3.org/2000/svg','line'); line.setAttribute('x1',s[0]); line.setAttribute('y1',s[1]); line.setAttribute('x2',p[0]); line.setAttribute('y2',p[1]); line.setAttribute('stroke',c); line.setAttribute('stroke-width','2'); g.appendChild(line); } g.style.pointerEvents='all'; g.addEventListener('click',()=>show(a)); ov.appendChild(g); }
+function drawText(ov,t) { const el=document.createElementNS('http://www.w3.org/2000/svg','text'); el.setAttribute('x',t.coordinate[0]); el.setAttribute('y',t.coordinate[1]); el.setAttribute('class','line-label'); el.textContent=t.text.slice(0,28); el.style.pointerEvents='all'; el.addEventListener('click',()=>show(t)); ov.appendChild(el); }
+function renderUnresolved() { const u=document.getElementById('unresolved'); u.innerHTML=''; for (const [kind,items] of Object.entries(MODEL.unresolved)) { const h=document.createElement('h3'); h.textContent=`${kind} (${items.length})`; u.appendChild(h); for (const item of items.slice(0,40)) { const d=document.createElement('button'); d.textContent=item.arrow_id||item.line_id||item.tag_id||'unresolved'; d.onclick=()=>show(item); u.appendChild(d); u.appendChild(document.createElement('br')); } } }
+</script></body></html>
