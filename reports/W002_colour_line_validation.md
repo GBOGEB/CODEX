@@ -1,20 +1,44 @@
 # W002 Colour Line Validation
 
-## Actual input files found
+## Source archive acquisition
+| archive | status | size_bytes | error |
+| --- | --- | --- | --- |
+| Inkscape_full.zip | download_failed |  | <urlopen error Tunnel connection failed: 403 Forbidden> |
+| PFD-PID MINERVA QCELL-LB.zip | download_failed |  | <urlopen error Tunnel connection failed: 403 Forbidden> |
+
+## Files extracted from archives
+| archive | member | destination | status | note |
+| --- | --- | --- | --- | --- |
+| none |  |  | no extracted files |  |
+
+## Actual source files found
 | path | kind | size_bytes |
 | --- | --- | --- |
-| No required real input files found | n/a | 0 |
+| No extracted source files available | n/a | 0 |
+
+## Source file counts
+- SVG files found: 0
+- PDF files found: 0
+- PPT/PPTX files found: 0
 
 ## SVG load status
 | path | status | error |
 | --- | --- | --- |
-| data/svg/PFD-PID MINERVA QCELL-LB.svg | missing |  |
-| data/svg/PFD-PID MINERVA RFCELL seen by ACR.svg | missing |  |
+| none | not_loaded |  |
 
 ## Colour bins detected
-| colour_bin | path_line_count |
+| colour_bin | process_line_count |
 | --- | --- |
 | none | 0 |
+
+## Object counts
+- Process lines: 0
+- Tags: 0
+- Valves: 0
+- Instruments: 0
+- Equipment: 0
+- Arrows: 0
+- Boundaries: 0
 
 ## Arrow counts per colour
 | colour_bin | arrow_count |
@@ -27,27 +51,29 @@
 | none | 0 |
 
 ## Subsystem counts
-| subsystem | count |
+| subsystem | object_count |
 | --- | --- |
-| none | 0 |
-
-## Boundary counts
-- Boundaries detected: 0
+| QM | 0 |
+| Jumper | 0 |
+| QVB | 0 |
+| QINFRA | 0 |
+| Unknown | 0 |
 
 ## Unresolved counts
 - Unresolved arrows: 0
 - Unresolved colours: 0
 - Unresolved tags: 0
+- Unresolved boundaries: 0
+- Unresolved objects: 0
+
+## Completion status
+- incomplete_no_nonzero_semantic_counts
+- Complete semantic extraction is not reported unless actual non-zero line and tag counts exist.
 
 ## Confidence notes
-- Colour/process mappings are bin-level hypotheses from SVG stroke colour only.
-- Arrow direction is only inferred for SVG marker evidence with available endpoints; geometric arrow-head candidates remain unresolved.
-- Subsystem assignment requires visible text evidence or a conservative nearest-label association.
-
-## Known gaps
-- PPTX inputs are inventoried for traceability but not parsed in this W003 preparation step.
-- Valve/equipment symbol classification remains conservative until symbol templates are supplied.
-- If the real SVG files are absent, generated models intentionally contain no inferred process semantics.
+- Colour/process mappings use BLUE/CYAN/GREEN/GREY/OLIVE/RED-ORANGE/BLACK evidence.
+- Direction vectors are recorded only for explicit SVG marker evidence with body/tip geometry.
+- Subsystem bins are QM, Jumper, QVB, QINFRA, and Unknown.
 
 ## Unresolved colours
 | line_id | source_file | colour | reason |
