@@ -1,21 +1,17 @@
-"""Validate the W001 MASTER_input handover folder contract.
-
-The validator checks that the expected W001 intake folders exist, reports
-duplicate file names across those folders, and verifies a conservative naming
-convention for visible files/directories. It writes both JSON and Markdown
-reports and exits non-zero when validation errors are present.
-"""
+"""Validate the MASTER_input governance handover folder structure."""
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
-from dataclasses import asdict, dataclass
+from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Iterable
 
-DEFAULT_MASTER_INPUT_ROOT = Path("MASTER_input")
+DEFAULT_INPUT_ROOT = Path("MASTER_input")
 DEFAULT_JSON_REPORT_PATH = Path("generated/master_input_validation.json")
 DEFAULT_MARKDOWN_REPORT_PATH = Path("generated/master_input_validation.md")
 
@@ -28,206 +24,218 @@ REQUIRED_FOLDERS = (
     "Compliance",
     "Traceability",
 )
-NAMING_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_. -]*$")
+IGNORED_FILENAMES = {".gitkeep", ".DS_Store", "Thumbs.db"}
+NAMING_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
 
-@dataclass(frozen=True)
-class FolderFinding:
-    """A single MASTER_input validation finding."""
-
-    severity: str
-    code: str
-    path: str
-    message: str
+def _iter_files(root: Path) -> Iterable[Path]:
+    """Yield files under ``root`` in deterministic order."""
+    if not root.exists():
+        return []
+    return sorted(path for path in root.rglob("*") if path.is_file())
 
 
-def _is_visible(path: Path) -> bool:
-    return not any(part.startswith(".") for part in path.parts)
+def _sha256(path: Path) -> str:
+    """Return the SHA-256 digest of a file."""
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
-def _scan_required_tree(root: Path) -> list[Path]:
-    paths: list[Path] = []
-    for folder in REQUIRED_FOLDERS:
-        folder_path = root / folder
-        if folder_path.exists():
-            paths.extend(
-                path
-                for path in folder_path.rglob("*")
-                if _is_visible(path.relative_to(root))
-            )
-    return paths
+def _relative(path: Path, root: Path) -> str:
+    """Return a POSIX relative path where possible."""
+    try:
+        return path.relative_to(root).as_posix()
+    except ValueError:
+        return path.as_posix()
 
 
-def _missing_folder_findings(root: Path) -> list[FolderFinding]:
-    findings: list[FolderFinding] = []
-    for folder in REQUIRED_FOLDERS:
-        folder_path = root / folder
-        if not folder_path.is_dir():
-            findings.append(
-                FolderFinding(
-                    severity="error",
-                    code="missing_folder",
-                    path=str(folder_path),
-                    message=f"Required MASTER_input folder is missing: {folder}",
-                )
-            )
-    return findings
+def validate_master_input(input_root: Path | str = DEFAULT_INPUT_ROOT) -> dict[str, object]:
+    """Validate required folders, duplicate files, and file naming conventions."""
+    root = Path(input_root)
+    errors: list[dict[str, object]] = []
+    warnings: list[dict[str, object]] = []
 
-
-def _duplicate_file_findings(root: Path, paths: list[Path]) -> list[FolderFinding]:
-    by_name: dict[str, list[Path]] = {}
-    for path in paths:
-        if path.is_file():
-            by_name.setdefault(path.name.casefold(), []).append(path)
-
-    findings: list[FolderFinding] = []
-    for normalized_name, duplicates in sorted(by_name.items()):
-        if len(duplicates) > 1:
-            locations = ", ".join(str(path) for path in duplicates)
-            findings.append(
-                FolderFinding(
-                    severity="error",
-                    code="duplicate_file",
-                    path=normalized_name,
-                    message=f"Duplicate file name found in MASTER_input required folders: {locations}",
-                )
-            )
-    return findings
-
-
-def _naming_findings(root: Path, paths: list[Path]) -> list[FolderFinding]:
-    findings: list[FolderFinding] = []
-    for path in sorted(paths):
-        relative = path.relative_to(root)
-        for part in relative.parts:
-            if part.startswith("."):
-                continue
-            if not NAMING_PATTERN.fullmatch(part):
-                findings.append(
-                    FolderFinding(
-                        severity="error",
-                        code="naming_convention",
-                        path=str(path),
-                        message=(
-                            "Path component does not match naming convention "
-                            f"{NAMING_PATTERN.pattern!r}: {part!r}"
-                        ),
-                    )
-                )
-                break
-    return findings
-
-
-def validate_master_input(
-    root: str | Path = DEFAULT_MASTER_INPUT_ROOT,
-) -> dict[str, object]:
-    """Validate required MASTER_input folders, duplicates, and naming."""
-
-    root_path = Path(root)
-    findings: list[FolderFinding] = []
-    if not root_path.is_dir():
-        findings.append(
-            FolderFinding(
-                severity="error",
-                code="missing_root",
-                path=str(root_path),
-                message=f"MASTER_input root is missing: {root_path}",
-            )
+    if not root.exists():
+        errors.append(
+            {
+                "code": "missing_input_root",
+                "path": str(root),
+                "message": f"MASTER_input root does not exist: {root}",
+            }
         )
-        paths: list[Path] = []
-    else:
-        findings.extend(_missing_folder_findings(root_path))
-        paths = _scan_required_tree(root_path)
-        findings.extend(_duplicate_file_findings(root_path, paths))
-        findings.extend(_naming_findings(root_path, paths))
+    elif not root.is_dir():
+        errors.append(
+            {
+                "code": "input_root_not_directory",
+                "path": str(root),
+                "message": f"MASTER_input root is not a directory: {root}",
+            }
+        )
+
+    required_paths = [root / folder for folder in REQUIRED_FOLDERS]
+    for folder_path in required_paths:
+        if not folder_path.is_dir():
+            errors.append(
+                {
+                    "code": "missing_required_folder",
+                    "path": folder_path.as_posix(),
+                    "message": f"Missing required MASTER_input folder: {folder_path.as_posix()}",
+                }
+            )
+
+    existing_required_paths = [path for path in required_paths if path.is_dir()]
+    files: list[Path] = []
+    for folder_path in existing_required_paths:
+        files.extend(_iter_files(folder_path))
+
+    files = [path for path in files if path.name not in IGNORED_FILENAMES]
+
+    by_name: dict[str, list[Path]] = defaultdict(list)
+    by_digest: dict[str, list[Path]] = defaultdict(list)
+    for file_path in files:
+        by_name[file_path.name.casefold()].append(file_path)
+        by_digest[_sha256(file_path)].append(file_path)
+
+        if not NAMING_PATTERN.match(file_path.name):
+            errors.append(
+                {
+                    "code": "invalid_file_name",
+                    "path": _relative(file_path, root),
+                    "message": (
+                        "Invalid file name; use letters, numbers, dots, underscores, "
+                        f"and hyphens only: {_relative(file_path, root)}"
+                    ),
+                }
+            )
+
+    for duplicate_paths in by_name.values():
+        if len(duplicate_paths) > 1:
+            errors.append(
+                {
+                    "code": "duplicate_file_name",
+                    "paths": [_relative(path, root) for path in duplicate_paths],
+                    "message": "Duplicate file name found across MASTER_input required folders: "
+                    + ", ".join(_relative(path, root) for path in duplicate_paths),
+                }
+            )
+
+    for duplicate_paths in by_digest.values():
+        if len(duplicate_paths) > 1:
+            warnings.append(
+                {
+                    "code": "duplicate_file_content",
+                    "paths": [_relative(path, root) for path in duplicate_paths],
+                    "message": "Duplicate file content found across MASTER_input required folders: "
+                    + ", ".join(_relative(path, root) for path in duplicate_paths),
+                }
+            )
+
+    folder_status = {
+        folder: {
+            "path": (root / folder).as_posix(),
+            "exists": (root / folder).is_dir(),
+        }
+        for folder in REQUIRED_FOLDERS
+    }
 
     return {
-        "root": str(root_path),
-        "required_folders": list(REQUIRED_FOLDERS),
-        "valid": not any(finding.severity == "error" for finding in findings),
-        "error_count": sum(1 for finding in findings if finding.severity == "error"),
-        "findings": [asdict(finding) for finding in findings],
-        "checked_paths": (
-            [str(path) for path in sorted(paths)] if root_path.is_dir() else []
-        ),
-        "checked_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "status": "pass" if not errors else "fail",
+        "input_root": str(root),
+        "checked_at": datetime.now(timezone.utc).isoformat(),
+        "required_folders": folder_status,
+        "file_count": len(files),
+        "error_count": len(errors),
+        "warning_count": len(warnings),
+        "errors": errors,
+        "warnings": warnings,
+        "naming_convention": NAMING_PATTERN.pattern,
     }
 
 
-def _report_to_markdown(report: dict[str, object]) -> str:
-    status = "PASS" if report["valid"] else "FAIL"
+def _render_markdown(report: dict[str, object]) -> str:
+    status = "PASS" if report["status"] == "pass" else "FAIL"
     lines = [
         "# MASTER_input Validation Report",
         "",
         f"- Status: **{status}**",
-        f"- Root: `{report['root']}`",
+        f"- Input root: `{report['input_root']}`",
         f"- Checked at: `{report['checked_at']}`",
-        f"- Error count: **{report['error_count']}**",
+        f"- File count: `{report['file_count']}`",
+        f"- Error count: `{report['error_count']}`",
+        f"- Warning count: `{report['warning_count']}`",
         "",
         "## Required folders",
         "",
     ]
-    for folder in report["required_folders"]:  # type: ignore[index]
-        lines.append(f"- `{folder}`")
-    lines.append("")
 
-    findings = report["findings"]  # type: ignore[assignment]
-    if findings:
-        lines.append("## Findings")
-        lines.append("")
-        for finding in findings:  # type: ignore[union-attr]
-            lines.append(
-                f"- **{finding['severity']}** `{finding['code']}` `{finding['path']}`: {finding['message']}"
-            )
-        lines.append("")
+    required_folders = report["required_folders"]
+    assert isinstance(required_folders, dict)
+    for folder, details in required_folders.items():
+        assert isinstance(details, dict)
+        marker = "present" if details["exists"] else "missing"
+        lines.append(f"- `{folder}`: {marker} (`{details['path']}`)")
+
+    errors = report["errors"]
+    assert isinstance(errors, list)
+    if errors:
+        lines.extend(["", "## Errors", ""])
+        for error in errors:
+            assert isinstance(error, dict)
+            lines.append(f"- `{error['code']}`: {error['message']}")
     else:
-        lines.append("No validation findings.")
-        lines.append("")
+        lines.extend(["", "No blocking validation errors detected."])
+
+    warnings = report["warnings"]
+    assert isinstance(warnings, list)
+    if warnings:
+        lines.extend(["", "## Warnings", ""])
+        for warning in warnings:
+            assert isinstance(warning, dict)
+            lines.append(f"- `{warning['code']}`: {warning['message']}")
+
+    lines.append("")
     return "\n".join(lines)
 
 
 def generate_report(
-    report: dict[str, object],
-    json_path: str | Path = DEFAULT_JSON_REPORT_PATH,
-    markdown_path: str | Path = DEFAULT_MARKDOWN_REPORT_PATH,
+    result: dict[str, object],
+    json_report_path: Path | str = DEFAULT_JSON_REPORT_PATH,
+    markdown_report_path: Path | str = DEFAULT_MARKDOWN_REPORT_PATH,
 ) -> dict[str, Path]:
     """Write JSON and Markdown MASTER_input validation reports."""
+    json_path = Path(json_report_path)
+    markdown_path = Path(markdown_report_path)
+    json_path.parent.mkdir(parents=True, exist_ok=True)
+    markdown_path.parent.mkdir(parents=True, exist_ok=True)
 
-    json_output = Path(json_path)
-    markdown_output = Path(markdown_path)
-    json_output.parent.mkdir(parents=True, exist_ok=True)
-    markdown_output.parent.mkdir(parents=True, exist_ok=True)
-    json_output.write_text(
-        json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
-    markdown_output.write_text(_report_to_markdown(report), encoding="utf-8")
-    return {"json": json_output, "markdown": markdown_output}
+    json_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    markdown_path.write_text(_render_markdown(result), encoding="utf-8")
+    return {"json": json_path, "markdown": markdown_path}
 
 
-def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(
-        description="Validate the MASTER_input folder contract"
-    )
-    parser.add_argument("--root", type=Path, default=DEFAULT_MASTER_INPUT_ROOT)
+def main() -> int:
+    """CLI entrypoint. Returns non-zero when validation errors are present."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--input-root", type=Path, default=DEFAULT_INPUT_ROOT)
     parser.add_argument("--json-report", type=Path, default=DEFAULT_JSON_REPORT_PATH)
-    parser.add_argument(
-        "--markdown-report", type=Path, default=DEFAULT_MARKDOWN_REPORT_PATH
-    )
-    args = parser.parse_args(argv)
+    parser.add_argument("--markdown-report", type=Path, default=DEFAULT_MARKDOWN_REPORT_PATH)
+    args = parser.parse_args()
 
-    report = validate_master_input(args.root)
-    outputs = generate_report(report, args.json_report, args.markdown_report)
-    if report["valid"]:
-        print(
-            f"MASTER_input validation passed: {outputs['json']} {outputs['markdown']}"
-        )
-        return 0
-    print(f"MASTER_input validation failed with {report['error_count']} error(s):")
-    for finding in report["findings"]:  # type: ignore[index]
-        print(f"- {finding['code']} {finding['path']}: {finding['message']}")
-    print(f"Reports written: {outputs['json']} {outputs['markdown']}")
-    return 1
+    result = validate_master_input(args.input_root)
+    generate_report(result, args.json_report, args.markdown_report)
+
+    if result["status"] == "fail":
+        print(f"MASTER_input validation failed with {result['error_count']} error(s).")
+        for error in result["errors"]:
+            print(f"- {error['message']}")
+        return 1
+
+    print(f"MASTER_input validation passed for {args.input_root}.")
+    return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     raise SystemExit(main())

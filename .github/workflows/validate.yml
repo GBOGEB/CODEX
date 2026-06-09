@@ -1,15 +1,12 @@
-name: W001 Governance Validation
+name: Governance Validation
 
 on:
   push:
   pull_request:
 
-permissions:
-  contents: read
-
 jobs:
   validate:
-    name: Validate governance handover artifacts
+    name: Validate governance artifacts
     runs-on: ubuntu-latest
 
     steps:
@@ -19,33 +16,24 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e ".[dev]"
+          python -m pip install -r requirements.txt
 
-      - name: Run YAML SSOT validator
-        run: |
-          python tools/validators/ssot_validator.py \
-            --schema schemas/master_contract_ssot.schema.yaml \
-            --document ssot/master_contract_ssot_v0_2.yaml \
-            --json-report generated/validation_report.json \
-            --markdown-report generated/validation_report.md
+      - name: Run SSOT validator
+        run: python tools/validators/ssot_validator.py
 
-      - name: Run MASTER_input validator
-        run: |
-          python tools/validators/master_input_validator.py \
-            --root MASTER_input \
-            --json-report generated/master_input_validation.json \
-            --markdown-report generated/master_input_validation.md
+      - name: Run MASTER_input folder validator
+        run: python tools/validators/master_input_validator.py
 
       - name: Publish validation artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: w001-governance-validation
+          name: governance-validation-reports
           path: |
             generated/validation_report.json
             generated/validation_report.md

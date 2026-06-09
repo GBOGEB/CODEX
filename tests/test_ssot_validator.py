@@ -1,60 +1,51 @@
+from __future__ import annotations
+
+import json
 from pathlib import Path
 
-from tools.validators.ssot_validator import (
-    generate_report,
-    load_schema,
-    validate_document,
-)
+import yaml
+
+from tools.validators.ssot_validator import generate_report, load_schema, validate_document
 
 
-def test_load_schema_loads_mapping() -> None:
+def test_load_schema_loads_required_fields() -> None:
     schema = load_schema()
 
     assert schema["title"] == "MASTER Contract Governance Workbench SSOT"
-    assert "ssot_version" in schema["required"]
+    assert "governance" in schema["required"]
+    assert "repositories" in schema["properties"]
 
 
-def test_validate_document_accepts_current_ssot() -> None:
-    report = validate_document()
+def test_validate_document_passes_for_current_ssot() -> None:
+    schema = load_schema()
 
-    assert report["valid"] is True
-    assert report["errors"] == []
+    result = validate_document(schema=schema)
+
+    assert result["status"] == "pass"
+    assert result["error_count"] == 0
+    assert result["errors"] == []
 
 
 def test_validate_document_reports_missing_required_fields(tmp_path: Path) -> None:
-    schema = {
-        "type": "object",
-        "required": ["ssot_version", "governance"],
-        "properties": {
-            "ssot_version": {"type": "string"},
-            "governance": {
-                "type": "object",
-                "required": ["rules"],
-                "properties": {"rules": {"type": "array", "minItems": 1}},
-            },
-        },
-    }
+    invalid_document = tmp_path / "invalid.yaml"
+    invalid_document.write_text(yaml.safe_dump({"ssot_version": "0.2"}), encoding="utf-8")
 
-    report = validate_document(document={"governance": {"rules": []}}, schema=schema)
+    result = validate_document(invalid_document)
 
-    assert report["valid"] is False
-    assert {error["path"] for error in report["errors"]} == {
-        "ssot_version",
-        "governance/rules",
-    }
-    assert "Missing required field" in report["errors"][0]["message"]
+    assert result["status"] == "fail"
+    messages = [error["message"] for error in result["errors"]]
+    assert any("'governance' is a required property" in message for message in messages)
+    assert any("'lifecycle' is a required property" in message for message in messages)
 
 
 def test_generate_report_writes_json_and_markdown(tmp_path: Path) -> None:
-    report = validate_document(document={"name": "demo"}, schema={"type": "object"})
-    outputs = generate_report(
-        report,
-        json_path=tmp_path / "validation_report.json",
-        markdown_path=tmp_path / "validation_report.md",
-    )
+    result = validate_document()
+    json_report = tmp_path / "validation_report.json"
+    markdown_report = tmp_path / "validation_report.md"
 
-    assert outputs["json"].exists()
-    assert outputs["markdown"].exists()
-    assert "YAML SSOT Validation Report" in outputs["markdown"].read_text(
-        encoding="utf-8"
-    )
+    paths = generate_report(result, json_report, markdown_report)
+
+    assert paths["json"] == json_report
+    assert paths["markdown"] == markdown_report
+    assert json.loads(json_report.read_text(encoding="utf-8"))["status"] == "pass"
+    assert "MASTER SSOT Validation Report" in markdown_report.read_text(encoding="utf-8")

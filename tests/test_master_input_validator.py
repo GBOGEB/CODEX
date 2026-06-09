@@ -1,26 +1,13 @@
+from __future__ import annotations
+
 from pathlib import Path
 
-from tools.validators.master_input_validator import (
-    REQUIRED_FOLDERS,
-    generate_report,
-    validate_master_input,
-)
+from tools.validators.master_input_validator import REQUIRED_FOLDERS, validate_master_input
 
 
-def _create_required_tree(root: Path) -> None:
+def _create_required_folders(root: Path) -> None:
     for folder in REQUIRED_FOLDERS:
         (root / folder).mkdir(parents=True)
-
-
-def test_validate_master_input_passes_required_tree(tmp_path: Path) -> None:
-    root = tmp_path / "MASTER_input"
-    _create_required_tree(root)
-    (root / "ITT" / "ITT Baseline.pdf").write_text("demo", encoding="utf-8")
-
-    report = validate_master_input(root)
-
-    assert report["valid"] is True
-    assert report["findings"] == []
 
 
 def test_validate_master_input_reports_missing_folders(tmp_path: Path) -> None:
@@ -28,40 +15,42 @@ def test_validate_master_input_reports_missing_folders(tmp_path: Path) -> None:
     root.mkdir()
     (root / "ITT").mkdir()
 
-    report = validate_master_input(root)
+    result = validate_master_input(root)
 
-    assert report["valid"] is False
-    missing_codes = [finding["code"] for finding in report["findings"]]
-    assert missing_codes.count("missing_folder") == len(REQUIRED_FOLDERS) - 1
+    assert result["status"] == "fail"
+    missing = [error for error in result["errors"] if error["code"] == "missing_required_folder"]
+    assert len(missing) == len(REQUIRED_FOLDERS) - 1
+    assert any("Applicant" in error["message"] for error in missing)
 
 
-def test_validate_master_input_reports_duplicates_and_bad_names(tmp_path: Path) -> None:
+def test_validate_master_input_reports_duplicate_names(tmp_path: Path) -> None:
     root = tmp_path / "MASTER_input"
-    _create_required_tree(root)
-    (root / "ITT" / "Offer.pdf").write_text("one", encoding="utf-8")
-    (root / "Applicant" / "offer.PDF").write_text("two", encoding="utf-8")
-    (root / "SoR" / "bad@name.txt").write_text("bad", encoding="utf-8")
+    _create_required_folders(root)
+    (root / "ITT" / "requirement.yaml").write_text("id: one\n", encoding="utf-8")
+    (root / "SoR" / "requirement.yaml").write_text("id: two\n", encoding="utf-8")
 
-    report = validate_master_input(root)
+    result = validate_master_input(root)
 
-    assert report["valid"] is False
-    codes = {finding["code"] for finding in report["findings"]}
-    assert {"duplicate_file", "naming_convention"} <= codes
+    assert result["status"] == "fail"
+    assert any(error["code"] == "duplicate_file_name" for error in result["errors"])
 
 
-def test_generate_report_writes_master_input_outputs(tmp_path: Path) -> None:
+def test_validate_master_input_reports_invalid_names(tmp_path: Path) -> None:
     root = tmp_path / "MASTER_input"
-    _create_required_tree(root)
-    report = validate_master_input(root)
+    _create_required_folders(root)
+    (root / "Contracts" / "bad name.yaml").write_text("id: bad\n", encoding="utf-8")
 
-    outputs = generate_report(
-        report,
-        json_path=tmp_path / "master_input_validation.json",
-        markdown_path=tmp_path / "master_input_validation.md",
-    )
+    result = validate_master_input(root)
 
-    assert outputs["json"].exists()
-    assert outputs["markdown"].exists()
-    assert "MASTER_input Validation Report" in outputs["markdown"].read_text(
-        encoding="utf-8"
-    )
+    assert result["status"] == "fail"
+    assert any(error["code"] == "invalid_file_name" for error in result["errors"])
+
+
+def test_validate_master_input_passes_empty_required_tree(tmp_path: Path) -> None:
+    root = tmp_path / "MASTER_input"
+    _create_required_folders(root)
+
+    result = validate_master_input(root)
+
+    assert result["status"] == "pass"
+    assert result["error_count"] == 0
