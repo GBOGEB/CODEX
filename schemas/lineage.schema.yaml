@@ -1,0 +1,103 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://github.com/GBOGEB/ARTSTYLE-WIP/schemas/lineage.schema.yaml"
+title: "W003B Lineage Contract"
+description: >-
+  Contract for generated lineage reports. Every lineage node retains UUID-based
+  identity, timestamps, parent linkage, stage, title, and governed status.
+type: object
+required:
+  - status
+  - model
+  - nodes
+  - traversal
+  - node_count
+  - error_count
+  - errors
+properties:
+  checked_at:
+    type: string
+  status:
+    type: string
+    enum: [pass, fail]
+  model:
+    type: array
+    prefixItems:
+      - const: ITT
+      - const: Applicant Package
+      - const: Review
+      - const: Revision
+      - const: Approval
+      - const: Baseline
+    minItems: 6
+    maxItems: 6
+  node_count:
+    type: integer
+    minimum: 0
+  error_count:
+    type: integer
+    minimum: 0
+  errors:
+    type: array
+    items:
+      type: object
+  traversal:
+    type: array
+    items:
+      $ref: "#/$defs/uuid"
+  nodes:
+    type: array
+    items:
+      $ref: "#/$defs/lineage_node"
+$defs:
+  uuid:
+    type: string
+    format: uuid
+    pattern: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+  lineage_status:
+    type: string
+    enum:
+      - complete
+      - active
+      - planned
+      - approved
+      - superseded
+      - baseline
+  lineage_node:
+    type: object
+    required:
+      - id
+      - stage
+      - title
+      - created
+      - updated
+      - parent
+      - status
+    properties:
+      id:
+        $ref: "#/$defs/uuid"
+      stage:
+        type: string
+        enum:
+          - ITT
+          - Applicant Package
+          - Review
+          - Revision
+          - Approval
+          - Baseline
+      title:
+        type: string
+        minLength: 1
+      created:
+        type: string
+        minLength: 1
+      updated:
+        type: string
+        minLength: 1
+      parent:
+        anyOf:
+          - $ref: "#/$defs/uuid"
+          - type: "null"
+      status:
+        $ref: "#/$defs/lineage_status"
+    additionalProperties: false
+additionalProperties: true

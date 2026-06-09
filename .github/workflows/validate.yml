@@ -38,6 +38,15 @@ jobs:
       - name: Generate governance runtime export
         run: python tools/export/governance_export.py
 
+      - name: Validate dependency trace contract
+        run: python tools/contracts/dependency_trace_validator.py
+
+      - name: Validate lineage contract
+        run: python tools/contracts/lineage_validator.py
+
+      - name: Validate governance runtime contract
+        run: python tools/contracts/runtime_validator.py
+
       - name: Publish validation artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -57,4 +66,8 @@ jobs:
             generated/governance_runtime.json
             generated/governance_runtime.yaml
             generated/governance_runtime.md
+            generated/dependency_trace_validation.json
+            generated/lineage_validation.json
+            generated/runtime_validation.json
+            generated/runtime_validation.md
           if-no-files-found: warn
