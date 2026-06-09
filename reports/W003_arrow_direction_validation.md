@@ -1,10 +1,10 @@
 # W003 Arrow Direction Validation
 
 ## Source archive acquisition
-| archive | status | size_bytes | error |
-| --- | --- | --- | --- |
-| Inkscape_full.zip | download_failed |  | <urlopen error Tunnel connection failed: 403 Forbidden> |
-| PFD-PID MINERVA QCELL-LB.zip | download_failed |  | <urlopen error Tunnel connection failed: 403 Forbidden> |
+| archive | url | status | size_bytes | error |
+| --- | --- | --- | --- | --- |
+| Inkscape_full.zip | https://github.com/GBOGEB/github_documentorganisatiesysteem_GBOGEB/raw/master/Inkscape_full.zip | download_failed |  | <urlopen error Tunnel connection failed: 403 Forbidden> |
+| PFD-PID MINERVA QCELL-LB.zip | https://github.com/GBOGEB/github_documentorganisatiesysteem_GBOGEB/raw/master/PFD-PID%20MINERVA%20QCELL-LB.zip | download_failed |  | <urlopen error Tunnel connection failed: 403 Forbidden> |
 
 ## Files extracted from archives
 | archive | member | destination | status | note |

@@ -113,10 +113,25 @@ def tag_class(text: str):
     if not classes and TAG.search(text): classes.append("tag")
     return (classes[0] if classes else "annotation_or_label"), classes
 
+def locate_local_archive(name: str):
+    candidates = [ARCHIVE_DIR / name, ROOT / name, ROOT / "Input" / name]
+    candidates.extend(p for p in ROOT.rglob(name) if ".git" not in p.parts and p.is_file())
+    for candidate in candidates:
+        if candidate.exists() and candidate.stat().st_size:
+            return candidate
+    return None
+
 def acquire():
     ARCHIVE_DIR.mkdir(parents=True, exist_ok=True); out=[]
     for name, url in SOURCES:
-        target = ARCHIVE_DIR/name; rec={"archive":name,"url":url,"path":rel(target)}
+        target = ARCHIVE_DIR/name; rec={"archive":name,"url":url,"path":rel(target),"source_status":"configured"}
+        local = locate_local_archive(name)
+        if local and local != target:
+            if target.exists() and target.read_bytes() != local.read_bytes():
+                rec.update(status="local_conflict", local_path=rel(local), error="archive exists with different content; not renamed silently")
+            else:
+                shutil.copy2(local, target); rec.update(status="copied_from_local", local_path=rel(local), size_bytes=target.stat().st_size)
+            out.append(rec); continue
         if target.exists() and target.stat().st_size:
             rec.update(status="present", size_bytes=target.stat().st_size); out.append(rec); continue
         try:
@@ -140,9 +155,10 @@ def extract_archives():
                 if m.is_dir() or ext not in DATA_DIRS: continue
                 dst = DATA_DIRS[ext]/Path(m.filename).name; data=z.read(m); rec={"archive":rel(zp),"member":m.filename,"destination":rel(dst)}
                 if dst.exists() and dst.read_bytes()!=data: rec.update(status="conflict_skipped", reason="existing different file; not renamed silently")
+                elif dst.exists(): rec.update(status="already_present", size_bytes=dst.stat().st_size)
                 else:
-                    if not dst.exists(): dst.write_bytes(data)
-                    rec.update(status="extracted" if dst.stat().st_size == len(data) else "already_present", size_bytes=dst.stat().st_size)
+                    dst.write_bytes(data)
+                    rec.update(status="extracted", size_bytes=dst.stat().st_size)
                 rows.append(rec)
     return rows
 
@@ -222,10 +238,10 @@ def layers_model(cc,tc,lc,ac,bc,uc,sc):
     return [{"layer_id":a,"label":b,"item_count":c} for a,b,c in rows]
 
 def write_reports(run,inv,cc,ac,tc,sc,lines,arrows,tags,bounds,ua,uc,ut,ub,layers):
-    arch=[[x.get("archive"),x.get("status"),x.get("size_bytes",""),x.get("error","")] for x in run["source_archives"]] or [["not attempted","n/a","",""]]
+    arch=[[x.get("archive"),x.get("url"),x.get("status"),x.get("size_bytes",""),x.get("error","")] for x in run["source_archives"]] or [["not attempted","","n/a","",""]]
     ext=[[x.get("archive"),x.get("member",""),x.get("destination",""),x.get("status"),x.get("reason",x.get("error",""))] for x in run["extraction_results"]] or [["none","","","no extracted files",""]]
     inputs=[[x["path"],x["kind"],x["size_bytes"]] for x in run["inputs_found"]] or [["No extracted source files available","n/a",0]]
-    common=f"""## Source archive acquisition\n{table(arch,['archive','status','size_bytes','error'])}\n\n## Files extracted from archives\n{table(ext[:80],['archive','member','destination','status','note'])}\n\n## Actual source files found\n{table(inputs,['path','kind','size_bytes'])}\n\n## Source file counts\n- SVG files found: {len(inv['svg'])}\n- PDF files found: {len(inv['pdf'])}\n- PPT/PPTX files found: {len(inv['ppt'])}\n\n## SVG load status\n{table([[x['path'],x['status'],x.get('error') or ''] for x in run['svg_load_status']] or [['none','not_loaded','']], ['path','status','error'])}\n\n## Colour bins detected\n{table([[k,v] for k,v in sorted(cc.items())] or [['none',0]], ['colour_bin','process_line_count'])}\n\n## Object counts\n- Process lines: {len(lines)}\n- Tags: {len(tags)}\n- Valves: {tc.get('valve',0)}\n- Instruments: {tc.get('instrument',0)}\n- Equipment: {tc.get('equipment',0)}\n- Arrows: {len(arrows)}\n- Boundaries: {len(bounds)}\n\n## Arrow counts per colour\n{table([[k,v] for k,v in sorted(ac.items())] or [['none',0]], ['colour_bin','arrow_count'])}\n\n## Tag counts\n{table([[k,v] for k,v in sorted(tc.items())] or [['none',0]], ['tag_class','count'])}\n\n## Subsystem counts\n{table([[s,sc.get(s,0)] for s in SUBSYSTEMS], ['subsystem','object_count'])}\n\n## Unresolved counts\n- Unresolved arrows: {len(ua)}\n- Unresolved colours: {len(uc)}\n- Unresolved tags: {len(ut)}\n- Unresolved boundaries: {len(ub)}\n- Unresolved objects: {len(ua)+len(uc)+len(ut)+len(ub)}\n\n## Completion status\n- {run['completion_status']}\n- Complete semantic extraction is not reported unless actual non-zero line and tag counts exist.\n\n## Confidence notes\n- Colour/process mappings use BLUE/CYAN/GREEN/GREY/OLIVE/RED-ORANGE/BLACK evidence.\n- Direction vectors are recorded only for explicit SVG marker evidence with body/tip geometry.\n- Subsystem bins are QM, Jumper, QVB, QINFRA, and Unknown.\n"""
+    common=f"""## Source archive acquisition\n{table(arch,['archive','url','status','size_bytes','error'])}\n\n## Files extracted from archives\n{table(ext[:80],['archive','member','destination','status','note'])}\n\n## Actual source files found\n{table(inputs,['path','kind','size_bytes'])}\n\n## Source file counts\n- SVG files found: {len(inv['svg'])}\n- PDF files found: {len(inv['pdf'])}\n- PPT/PPTX files found: {len(inv['ppt'])}\n\n## SVG load status\n{table([[x['path'],x['status'],x.get('error') or ''] for x in run['svg_load_status']] or [['none','not_loaded','']], ['path','status','error'])}\n\n## Colour bins detected\n{table([[k,v] for k,v in sorted(cc.items())] or [['none',0]], ['colour_bin','process_line_count'])}\n\n## Object counts\n- Process lines: {len(lines)}\n- Tags: {len(tags)}\n- Valves: {tc.get('valve',0)}\n- Instruments: {tc.get('instrument',0)}\n- Equipment: {tc.get('equipment',0)}\n- Arrows: {len(arrows)}\n- Boundaries: {len(bounds)}\n\n## Arrow counts per colour\n{table([[k,v] for k,v in sorted(ac.items())] or [['none',0]], ['colour_bin','arrow_count'])}\n\n## Tag counts\n{table([[k,v] for k,v in sorted(tc.items())] or [['none',0]], ['tag_class','count'])}\n\n## Subsystem counts\n{table([[s,sc.get(s,0)] for s in SUBSYSTEMS], ['subsystem','object_count'])}\n\n## Unresolved counts\n- Unresolved arrows: {len(ua)}\n- Unresolved colours: {len(uc)}\n- Unresolved tags: {len(ut)}\n- Unresolved boundaries: {len(ub)}\n- Unresolved objects: {len(ua)+len(uc)+len(ut)+len(ub)}\n\n## Completion status\n- {run['completion_status']}\n- Complete semantic extraction is not reported unless actual non-zero line and tag counts exist.\n\n## Confidence notes\n- Colour/process mappings use BLUE/CYAN/GREEN/GREY/OLIVE/RED-ORANGE/BLACK evidence.\n- Direction vectors are recorded only for explicit SVG marker evidence with body/tip geometry.\n- Subsystem bins are QM, Jumper, QVB, QINFRA, and Unknown.\n"""
     (REPORTS_DIR/"W002_colour_line_validation.md").write_text("# W002 Colour Line Validation\n\n"+common+"\n## Unresolved colours\n"+table([[x['line_id'],x['source_file'],x['source_colour'],x['unresolved_reason']] for x in uc[:80]] or [['none','','','']], ['line_id','source_file','colour','reason'])+"\n")
     (REPORTS_DIR/"W003_semantic_layer_validation.md").write_text("# W003 Semantic Layer Validation\n\n"+common+"\n## Semantic layers\n"+table([[x['layer_id'],x['label'],x['item_count']] for x in layers], ['layer_id','label','count'])+"\n")
     (REPORTS_DIR/"W003_arrow_direction_validation.md").write_text("# W003 Arrow Direction Validation\n\n"+common+"\n## Unresolved arrows\n"+table([[x['arrow_id'],x['source_file'],x.get('source_colour'),x.get('associated_line_id') or '',x.get('unresolved_reason') or ''] for x in ua[:100]] or [['none','','','','']], ['arrow_id','source_file','colour','associated_line_id','reason'])+"\n")
