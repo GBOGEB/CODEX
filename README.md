@@ -4,6 +4,18 @@ CODEX provides GitHub interface and authentication utilities for both GitHub.com
 
 > **Operating model:** CODEX is a governed federation-runtime repository where CI is the truth-verification gate, Pages is the human-facing portal, DMAIC is the iteration ledger, and bridge/federation outputs are the measurable integration layer. See [`GOVERNANCE.md`](GOVERNANCE.md) for repository identity, the workflow → lane map, and the CI-vs-CD contract.
 
+
+## MASTER Contract Workbench SSOT
+
+CODEX now includes the MASTER Contract Workbench framework under [`MASTER_input/`](MASTER_input/README.md). The framework treats YAML as the governing Single Source of Truth for pre-award, negotiation, award and execution lifecycle management, then generates synchronized Excel, HTML, trace report, dashboard and checkpoint artefacts as derivatives.
+
+```bash
+python scripts/generate_contract_workbench.py
+python scripts/check_contract_workbench.py
+```
+
+The generated artefacts remain non-authoritative; all edits must be merged back through approved change requests in the YAML SSOT. Generated payloads under `MASTER_input/generated/` and runtime checkpoints under `MASTER_input/checkpoints/` are intentionally ignored so binary workbooks and other derivative files do not drift from the YAML source. The guard proves deterministic on-demand generation by comparing portable manifests and SHA-256 output hashes from two temporary generations, reuses existing manifest timestamps for workspace comparisons, and fails if existing generated workspace payloads no longer match regenerated hashes.
+
 ## W000 Federated Semantic Trace Bootstrap
 
 This repository now includes a federation bootstrap wave (`W000-FEDERATED-SEMANTIC-TRACE`) to bridge ABACUS, CODEX, and daily chat interaction with dual-render governance:
@@ -84,3 +96,37 @@ python scripts/check_globs.py
 python scripts/check_stale.py
 python scripts/check_links.py
 ```
+
+## MASTER Contract Governance Workbench
+
+ABACUS owns contract data. CODEX owns automation. ARTSTYLE owns visualization.
+
+The MASTER Contract Governance Workbench uses YAML SSOT as the authoritative
+contract-follow-up record. Excel, HTML, dashboards, and reports are generated
+outputs only, and any direct edits to those generated outputs must become change
+requests back into SSOT.
+
+### Lifecycle stages
+
+- Selection complete
+- Applicant notification complete
+- ITT issued
+- Clarification period active
+- Applicant offers expected July 2026
+- Negotiation Round 1
+- Negotiation Round 2
+- BAFO
+- Award recommendation
+- Contract award
+- PO target 01-Jan-2027
+- Execution: 34 calendar months, 6 phases
+
+### Governance rules
+
+1. `MASTER_input/00_ITT_RELEASE_BASELINE/` is locked baseline material.
+2. Do not overwrite released ITT documents.
+3. All updates must be additive.
+4. YAML SSOT is authoritative.
+5. Excel, HTML, dashboards and reports are generated outputs only.
+6. Any Excel or HTML edits must become change requests back into SSOT.
+7. Preserve lineage from source document → requirement → clarification → applicant response → evaluation → negotiation → BAFO → award → execution deliverable.

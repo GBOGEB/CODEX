@@ -1,0 +1,71 @@
+ssot_version: 0.1.0
+package_id: ABACUS-CGW-W000-W001
+build:
+  fixed_docprops_timestamp: 2026-01-01T00:00:00Z
+  content_hash_algorithm: sha256
+source_documents:
+  - doc_id: ITT-BASELINE
+    title: Frozen ITT Release Package
+    master_input_path: MASTER_input/00_ITT_RELEASE_BASELINE/
+    frozen_baseline: true
+  - doc_id: CGW-BOOTSTRAP
+    title: Contract Governance Workbench Bootstrap Notes
+    master_input_path: MASTER_input/contract_governance/bootstrap_notes.md
+    frozen_baseline: true
+requirements:
+  - req_id: REQ-W000-001
+    title: Frozen baseline protection
+    text: Never mutate, reformat, or overwrite the ITT release baseline.
+    source_doc_id: ITT-BASELINE
+    source_section: Governance Constraint 1
+    audience: bidder
+    header_bindings:
+      - header_name: Requirement ID
+        observed_column: A
+        observed_index: 1
+      - header_name: Requirement Text
+        observed_column: C
+        observed_index: 3
+  - req_id: REQ-W001-001
+    title: Generated tier stripping
+    text: Bidder artifacts must strip internal and evaluation sheets through the builder and validator.
+    source_doc_id: CGW-BOOTSTRAP
+    source_section: Governance Constraint 5
+    audience: internal
+    header_bindings:
+      - header_name: Requirement ID
+        observed_column: A
+        observed_index: 1
+      - header_name: Audience
+        observed_column: F
+        observed_index: 6
+generated_sheets:
+  - name: Requirements
+    audience: bidder
+    columns:
+      - Requirement ID
+      - Title
+      - Requirement Text
+      - Source Document
+      - Source Section
+      - Audience
+  - name: Traceability Matrix
+    audience: bidder
+    columns:
+      - Requirement ID
+      - Source Document
+      - Source Section
+      - Audience
+  - name: Extraction Audit
+    audience: internal
+    columns:
+      - Requirement ID
+      - Header Name
+      - Observed Column
+      - Observed Index
+  - name: Evaluation Notes
+    audience: evaluation
+    columns:
+      - Requirement ID
+      - Audience
+      - Note
