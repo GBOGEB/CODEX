@@ -9,6 +9,7 @@
 | validation | integrity verification |
 | deployment | Pages/CI deployment |
 | telemetry | runtime observability |
+| debug_spine | Governed Debug Adapter Protocol sessions with Swift backbone and federated Python/JavaScript/TypeScript targets |
 
 ---
 
@@ -28,6 +29,7 @@
 - renderer engine
 - validation engine
 - telemetry framework
+- debug spine governance contracts
 
 ---
 
