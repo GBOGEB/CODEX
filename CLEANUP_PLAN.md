@@ -1,6 +1,8 @@
 # ABACUS Cleanup Plan
 
-> Scope note: this is a structural cleanup plan from public GitHub-visible information. Before deleting anything, perform a successful local clone audit and compare against the user's local-only nested repositories.
+## First principle: ground truth before cleanup
+
+The previous Codex clone attempt failed with HTTP 403, so these documents must be treated as a hypothesis/checklist until the Windows workspace audit is run. The cleanup sequence starts with `ABACUS_LOCAL_GROUND_TRUTH_AUDIT.ps1`; do not delete, ignore, or move local-only folders before reviewing `_AUDIT\FOLDER_MAP.csv`.
 
 ## Target principle: one project, one repo
 
@@ -29,21 +31,23 @@ ABACUS/
 
 ## Ordered recommendations
 
-### Phase 0 — Protect local-only work
+### Phase 0 — Run the local ground-truth audit
 
-1. On the Windows machine, run the local nested-repo/ghost-file map for `rich_padding`, `CODESPACES_jyperter`, `codex_project`, and `integration_DOW_KEB_MASTER`.
-2. If those folders exist locally and contain real code, push them to their own GitHub repositories before any cleanup.
-3. If they are just scratch/generated workspaces, add them to `.gitignore` after archiving anything valuable.
+1. Open a fresh PowerShell window on the Windows machine.
+2. Run `ABACUS_LOCAL_GROUND_TRUTH_AUDIT.ps1` or paste its contents.
+3. Review `_AUDIT\FOLDER_MAP.csv`, `_AUDIT\EMBEDDED_repos.txt`, `_AUDIT\TRACKED_files.txt`, and `_AUDIT\BACKUP_folders.txt`.
+4. Use `_AUDIT\FOLDER_MAP.csv` as the source of truth for `TRACKED` versus `GHOST (not in ABACUS)`.
 
-### Phase 1 — Baseline exact metrics
+### Phase 1 — Protect local-only work
 
-1. Re-run the audit in an unrestricted clone with `git ls-files`, path-length checks, and `repo_analysis_toolkit`.
-2. Produce exact file counts, sizes, extension distribution, import graph, and duplicate hashes.
-3. Freeze a cleanup branch and avoid mixing feature work into cleanup commits.
+1. If `rich_padding` is an embedded repo and ghost, move it out of ABACUS and push it to its own GitHub repo.
+2. If `CODESPACES_jyperter` is an embedded repo and ghost, move it out of ABACUS and push it to its own GitHub repo.
+3. If `codex_project` is ghost and tiny/scratch, archive it or intentionally absorb it into ABACUS; if it is real source, split/push first.
+4. If `integration_DOW_KEB_MASTER` is ghost and real integration code, intentionally absorb it into ABACUS or split it; if scratch, archive it.
 
-### Phase 2 — Keep active core
+### Phase 2 — Keep active ABACUS core
 
-Keep these as the ABACUS core unless the exact audit disproves current use:
+Keep these as the ABACUS core unless the exact local audit disproves current use:
 
 - `src/`
 - `DMAIC_V3/`
@@ -57,7 +61,7 @@ Keep these as the ABACUS core unless the exact audit disproves current use:
 
 ### Phase 3 — Archive or split historical version streams
 
-Archive/split these after uniqueness comparison:
+After comparing for unique content, archive/split these rather than keeping them in the active repo root:
 
 - `ABACUS-v031/`
 - `ABACUS-v032/`
@@ -71,9 +75,9 @@ Recommended destination: `GBOGEB/ABACUS-archive` or GitHub releases, not the act
 
 ### Phase 4 — Remove generated outputs from source control
 
-Move or ignore generated/churn-heavy material:
+Move or ignore generated/churn-heavy material only after checking whether any outputs are intentionally versioned:
 
-- `DMAIC_V3_OUTPUT/reports/`
+- `DMAIC_V3_OUTPUT/`
 - non-whitelisted `reports/`
 - `logs/`
 - rolling `DOW_LOGS/`
@@ -90,7 +94,7 @@ Move or ignore generated/churn-heavy material:
 ### Phase 6 — Python/module cleanup
 
 1. Rename dotted Python filenames such as `agent_orchestrator_v3.0.py` to importable names like `agent_orchestrator_v3_0.py`, with temporary compatibility wrappers if needed.
-2. Remove or mark stub-only v2.3 agents once the active implementation is verified.
+2. Remove or mark stub-only/version-stamped agents once the active implementation is verified.
 3. Consolidate root scripts into `scripts/` or `tools/` with CLI entry points.
 4. Reduce multiple orchestrator variants to one canonical orchestrator plus documented adapters.
 
@@ -99,6 +103,7 @@ Move or ignore generated/churn-heavy material:
 | Disposition | Folders |
 |---|---|
 | Keep core | `src/`, `DMAIC_V3/`, `local_mcp/`, `scripts/`, `tools/`, `tests/`, `.github/`, `docs/`, `governance/`, `rtm/`, `ssot/`, `patterns/` |
-| Archive/split | `ABACUS-v031/`, `ABACUS-v032/`, `ABACUS-UNIFIED/`, `ABACUS_V21_DEPLOYMENT_PACKAGE/`, `deepagent-handover-package/`, `myrrha_handover/`, `section_readmes/`, `workflows-to-install/` |
-| Ignore/generated | `DMAIC_V3_OUTPUT/`, most of `reports/`, `logs/`, rolling `DOW_LOGS/`, `staging/`, scratch/demo workspaces |
-| Verify local-only first | `rich_padding/`, `CODESPACES_jyperter/`, `codex_project/`, `integration_DOW_KEB_MASTER/` |
+| Split/push if ghost | `rich_padding/`, `CODESPACES_jyperter/` |
+| Archive or absorb after audit | `codex_project/`, `integration_DOW_KEB_MASTER/` |
+| Archive/split historical snapshots | `ABACUS-v031/`, `ABACUS-v032/`, `ABACUS-UNIFIED/`, `ABACUS_V21_DEPLOYMENT_PACKAGE/`, `deepagent-handover-package/`, `myrrha_handover/`, `section_readmes/`, `workflows-to-install/` |
+| Ignore/generated after review | `DMAIC_V3_OUTPUT/`, most of `reports/`, `logs/`, rolling `DOW_LOGS/`, `staging/`, scratch/demo workspaces |

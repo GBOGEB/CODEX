@@ -1,22 +1,22 @@
 # ABACUS Dormant Code Audit
 
-> Scope note: exact dormant Python analysis requires a clone and source-content scan. Because `git clone` was blocked in this container, this report separates high-confidence structural dormant signals from items that need a local rerun.
+## Read this first: import analysis was not measured here
 
-## Python files never imported elsewhere
+The previous Codex run could not clone ABACUS, so it could not compute a real Python import graph or duplicate-file hashes. This file is a shortlist of patterns to verify locally after `_AUDIT\TRACKED_files.txt` exists.
 
-A definitive import graph was not computed. However, the repository's own dashboard and README identify several candidates that should be treated as dormant, duplicated, or compatibility-only until tested:
+## Python dormant-code candidates to verify
 
-| Candidate / pattern | Reason |
+| Candidate / pattern | Why to check |
 |---|---|
-| `*_corrupted.py` | Dashboard reports `full_pipeline_orchestrator_corrupted.py` contains merge conflict markers and that content is available in a fixed variant. |
-| Root-level one-off deployment/roundtrip scripts | README lists multiple root scripts (`deploy_full_integration.py`, `run_comprehensive_deployment.py`, `run_streamlined_deployment.py`, `run_cicd_roundtrip_test.py`) that should be consolidated into `scripts/` or `tools/`. |
-| `DMAIC_V3/local_mcp/agents/*_v2.3_OPTIMIZED.py` stubs | `code_index.yaml` identifies many v2.3 agent files as `0.0.0-stub`; keep only if they are compatibility placeholders. |
-| Multiple orchestrator variants | Dashboard says 4 pipeline orchestrator variants need consolidation study. |
-| `local_mcp/agent_orchestrator_v3.0.py` | README says it is an active compatibility wrapper, but dotted filenames are not directly importable as Python module names; keep but consider renaming with a compatibility shim. |
+| `*_corrupted.py` | Corrupted/merge-conflict variants should not remain active source if a fixed version exists |
+| Root-level one-off deployment/roundtrip scripts | Scripts such as deployment or roundtrip test runners should live under `scripts/` or `tools/`, not as scattered root one-offs |
+| `*_v2.3_OPTIMIZED.py` and other version-stamped variants | Version-stamped copies often indicate superseded code or compatibility shims |
+| Multiple orchestrator variants | Keep one canonical orchestrator plus documented adapters/shims |
+| Dotted Python filenames such as `agent_orchestrator_v3.0.py` | Dotted filenames are awkward to import as normal Python modules; prefer `_v3_0` naming with a compatibility wrapper if needed |
 
 ## One-off Markdown/report files
 
-The root listing contains many status/report/handover files that look like one-time execution artifacts rather than durable source documentation. Patterns to archive under `docs/archive/YYYY-MM/` or move out of the source repo:
+Archive or move generated report dumps after preserving anything still needed:
 
 - `*_STATUS_*.md`
 - `*_REPORT_*.md`
@@ -24,26 +24,31 @@ The root listing contains many status/report/handover files that look like one-t
 - `*_COMPLETE_SUMMARY.md`
 - `SESSION_HANDOVER_*.md`
 - `CICD_ITERATION_*_REPORT.md`
-- `ABACUS_V21_*SUMMARY.md`
 - `*_DEPLOYMENT_COMPLETE_SUMMARY.md`
 - `*_MIGRATION_COMPLETION_SUMMARY.md`
 
-Visible examples include `ABACUS_V21_COMPLETE_SESSION_SUMMARY.md`, `ABACUS_V21_DEPLOYMENT_COMPLETE_SUMMARY.md`, `CICD_HANDOVER_REPORT.md`, `CICD_ITERATION_1_COMPLETION_REPORT.md`, `CICD_ITERATION_2_COMPLETION_REPORT.md`, and `CICD_ROUNDTRIP_TEST_REPORT.md`.
-
-## Duplicate or near-duplicate clusters
+## Duplicate or near-duplicate clusters to verify
 
 | Cluster | Why it is likely duplicate / near-duplicate |
 |---|---|
-| `ABACUS-v031/`, `ABACUS-v032/`, `ABACUS-UNIFIED/`, `ABACUS_V21_DEPLOYMENT_PACKAGE/` | Version snapshots appear to preserve historical streams inside the active repo. |
-| `docs/`, `docs_versioned/`, `handover/`, `deepagent-handover-package/`, `myrrha_handover/`, `section_readmes/` | Multiple documentation/handover roots likely overlap. |
-| `tools/`, `tools_v2.3/`, `scripts/`, root Python scripts | Tooling is split across several eras/locations. |
-| `qplant/` and `content/qplant/` | Domain content appears duplicated across source/content roots. |
-| `reports/`, `DMAIC_V3_OUTPUT/reports/`, `logs/`, `DOW_LOGS/`, `metrics/federation/` | Generated output and metrics are partially versioned and partially ignored. |
+| `ABACUS-v031/`, `ABACUS-v032/`, `ABACUS-UNIFIED/`, `ABACUS_V21_DEPLOYMENT_PACKAGE/` | Version snapshots appear to preserve historical streams inside the active repo |
+| `docs/`, `docs_versioned/`, `handover/`, `deepagent-handover-package/`, `myrrha_handover/`, `section_readmes/` | Multiple documentation/handover roots likely overlap |
+| `tools/`, `tools_v2.3/`, `scripts/`, root Python scripts | Tooling is split across several eras/locations |
+| `qplant/` and `content/qplant/` | Domain content may be duplicated across source/content roots |
+| `reports/`, `DMAIC_V3_OUTPUT/`, `logs/`, `DOW_LOGS/`, `metrics/federation/` | Generated output and metrics are partially versioned and partially ignored |
 
-## Exact local rerun commands
+## Local rerun suggestions
 
-```bash
-python -m compileall .
-python repo_analysis_toolkit/analyze_repo.py --repo . --out reports/baseline.json
-python repo_analysis_toolkit/classify_artifacts.py --repo . --out reports/classification.csv --dedup
+After the ground-truth audit, run import/duplicate analysis locally with the tools available in the repo or with PowerShell hashes:
+
+```powershell
+Get-Content "_AUDIT\TRACKED_files.txt" |
+  Where-Object { $_ -like "*.py" } |
+  Out-File "_AUDIT\PYTHON_tracked_files.txt"
+
+Get-Content "_AUDIT\TRACKED_files.txt" |
+  ForEach-Object {
+    $p = Join-Path $PWD $_
+    if (Test-Path $p) { Get-FileHash $p -Algorithm SHA256 | Select-Object Hash,@{Name='Path';Expression={$_}} }
+  } | Export-Csv "_AUDIT\TRACKED_hashes.csv" -NoTypeInformation
 ```

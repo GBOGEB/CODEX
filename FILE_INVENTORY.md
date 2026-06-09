@@ -1,94 +1,49 @@
 # ABACUS File Inventory Audit
 
-> Scope note: a direct `git clone https://github.com/GBOGEB/ABACUS.git` was attempted from this container, but the environment's GitHub CONNECT tunnel returned HTTP 403. This inventory is therefore based on the public GitHub repository page, raw files that were accessible through the browser channel, and repository self-reported documentation; it should be re-run with `git ls-files` in an unrestricted clone before destructive cleanup.
+## Read this first: not ground truth from Codex
 
-## Repository-level counts
+A direct `git clone https://github.com/GBOGEB/ABACUS.git` was attempted from this container, but the environment's GitHub CONNECT tunnel returned HTTP 403. Therefore this file is **not a measured clone inventory**. Treat it as a checklist/hypothesis for what to verify on the Windows machine, not as authoritative file counts or sizes.
 
-| Metric | Observed / reported value | Source / confidence |
-|---|---:|---|
-| Git commits shown on GitHub root page | 1,786 | High: GitHub repository page |
-| Tracked file count | ~3,271 | Medium: user-provided context; clone unavailable to verify |
-| Repository dashboard commits snapshot | 558 | Medium: older/generated `docs/deep_analysis_dashboard.html` snapshot |
-| GitHub Actions workflows | 37 active in README; dashboard also mentions 32 active + 2 legacy / 32 active + 5 staged | Medium: internally inconsistent historical docs |
-| Total tracked byte size | Not verified | Requires `git ls-files -z | xargs -0 stat` in clone |
+The authoritative inventory must come from the local PowerShell audit in `ABACUS_LOCAL_GROUND_TRUTH_AUDIT.ps1`, which writes `_AUDIT\TRACKED_files.txt`, `_AUDIT\FOLDER_MAP.csv`, `_AUDIT\EMBEDDED_repos.txt`, and `_AUDIT\BACKUP_folders.txt` in the real Windows workspace.
 
-## Top-level folder inventory visible from GitHub root
+## Repository-level counts to verify locally
 
-The GitHub root listing exposes the following top-level directories. Exact per-folder file counts and sizes require an unrestricted clone; the cleanup priority is inferred from naming, README structure, and dashboard lineage.
-
-| Top-level path | Visible status / purpose | Cleanup interpretation |
+| Metric | Current status | Ground-truth source |
 |---|---|---|
-| `.devcontainer/` | Codespaces/dev-container configuration | Keep |
-| `.github/` | Workflows and repo metadata | Keep, but consolidate workflows |
-| `.vscode/` | Editor settings | Consider moving user-specific settings to ignore |
-| `ABACUS-UNIFIED/` | Historical unified version stream | Archive or split after diffing against active engine |
-| `ABACUS-v031/` | Historical/canonical foundation stream | Archive but preserve until canonical indexes are migrated |
-| `ABACUS-v032/` | Historical production-pipeline stream | Archive/split; keep unique pipeline assets only |
-| `ABACUS_V21_DEPLOYMENT_PACKAGE/` | Deployment package | Archive or release artifact, not active source |
-| `DELTA_1/` | Delta artifact folder | Review then archive |
-| `DMAIC_V3/` | Primary active DMAIC engine | Keep as core source |
-| `DMAIC_V3_OUTPUT/reports/` | Generated output/report area | Should be ignored or moved to artifact storage |
-| `DOW_LOGS/` | Dashboard/runtime JSON logs | Keep only intentionally versioned JSON; ignore rolling logs |
-| `MINERVA_PID/` | Domain/project artifact area | Review; probably split/archive if not core runtime |
-| `abacus_render_pipeline/A6_renderer_governance/TUPLE_OFFLOAD/` | Render pipeline/governance offload | Split into own module if active, otherwise archive |
-| `analyses/compressors/` | Analysis artifacts | Archive generated analyses unless source-like |
-| `analytics/runtime_convergence/` | Runtime analytics | Keep curated metrics, ignore generated outputs |
-| `bridges/hbhs_ep_bridge/` | Bridge implementation/docs | Keep if referenced by workflows/tests |
-| `content/qplant/` | QPLANT domain content | Keep curated source/domain docs |
-| `core/` | Core code | Keep |
-| `cryo_dashboard_v0_3_0/` | Dashboard version snapshot | Archive/split unless actively deployed |
-| `deepagent-handover-package/` | Handover artifacts | Archive generated package; keep generator/source references |
-| `demo_workspace/` | Demo workspace | Archive or move to examples if maintained |
-| `dmaic-sprint-system/` | Sprint system | Review for active integration, otherwise split/archive |
-| `docs/` | Current docs and dashboards | Keep, but separate generated HTML from source docs |
-| `docs_versioned/` | Versioned/historical docs | Keep as archive, but move bulky history to docs archive repo if large |
-| `federation/` | Federation logic/artifacts | Keep if active; otherwise archive generated outputs |
-| `governance/` | Governance docs/config | Keep |
-| `handover/` | Handover docs | Consolidate with `docs_versioned/handover/` |
-| `integration/` | Integration code/docs | Keep if workflow-covered |
-| `knowledge_packages/` | Knowledge packs | Keep curated packages; avoid generated copies |
-| `local_mcp/` | Active local MCP/orchestrator/agents | Keep as core source |
-| `logs/` | Logs | Ignore generated logs; keep `.gitkeep` only |
-| `metrics/federation/` | Selected metrics JSON allowed by `.gitignore` | Keep only blessed dashboard JSON |
-| `myrrha_handover/` | Handover/domain package | Archive/split unless actively referenced |
-| `ontology/glossary/` | Glossary/ontology | Keep curated source |
-| `patterns/scientific_visualization/` | Pattern/schema area | Keep schema/source patterns |
-| `production/monitoring/` | Production monitoring | Keep active monitoring source/config |
-| `qcell_svg_model/v0_8_1_option_b/handover/v1_1_full/` | Deep versioned handover/model path | Windows path-length risk; archive or flatten |
-| `qplant/` | QPLANT source/domain area | Keep or consolidate with `content/qplant/` |
-| `qplant_presentation_engine/` | Presentation engine | Split if substantial; otherwise keep under `tools/`/`src/` |
-| `renderers/` | Renderer source | Keep if active |
-| `repo_analysis_toolkit/` | Reusable cleanup toolkit | Keep; use it for the next full clone audit |
-| `reports/` | Generated reports with some whitelisted JSON | Mostly ignore/archive; keep only intentional status JSON |
-| `roadmaps/` | Planning docs | Archive stale roadmaps; keep current roadmap in docs |
-| `rtm/` | Requirements trace matrix | Keep curated trace matrix |
-| `rtm_integration/` | RTM integration | Keep if active |
-| `runtime/` | Runtime source/artifacts | Keep active source; ignore ephemeral state |
-| `scripts/` | Tool scripts | Keep and consolidate duplicate root scripts into here |
-| `section_readmes/` | Generated/section README docs | Archive if redundant with docs site |
-| `self_optimization/` | Self-optimization logic/docs | Keep if active, otherwise archive |
-| `slides/` | Slide templates/generators | Keep templates; ignore generated `.pptx` |
-| `src/` | Package source | Keep as primary source root |
-| `ssot/` | Single-source-of-truth artifacts | Keep curated canonical indexes |
-| `staging/` | Staging area | Ignore or archive; avoid tracked scratch space |
-| `tests/` | Tests | Keep |
-| `tools/` | Tools | Keep, consolidate with root scripts |
-| `tools_v2.3/` | Historical/active v2.3 tools | Migrate active tools into `tools/`, archive old copies |
-| `tracking_v2.3/` | Historical task tracking | Keep only canonical task JSON if still used |
-| `workflows-to-install/` | Workflow activation bundle | Archive after workflows are installed/verified |
+| Tracked file count | Not measured by Codex; user context says ~3,271 | `_AUDIT\TRACKED_files.txt` line count |
+| Total tracked byte size | Not measured by Codex | Run the size command below in a successful local clone |
+| Top-level folder counts/sizes | Not measured by Codex | Local `git ls-files` grouped by top-level folder |
+| File-type distribution | Not measured by Codex | Local `git ls-files` grouped by extension |
+
+## Minimum local commands for exact counts
+
+```powershell
+$root = "C:\Users\gbonthuy\OneDrive - Studiecentrum voor Kernenergie\Master_Input"
+Set-Location $root
+git --no-pager ls-files > "_AUDIT\TRACKED_files.txt"
+(Get-Content "_AUDIT\TRACKED_files.txt").Count
+```
+
+For exact tracked sizes, run from a Git Bash or another shell with `stat`, or adapt the same list to PowerShell `Get-Item`:
+
+```powershell
+Get-Content "_AUDIT\TRACKED_files.txt" | ForEach-Object {
+    $p = Join-Path $root $_
+    if (Test-Path $p) { [PSCustomObject]@{ Path = $_; Bytes = (Get-Item $p).Length } }
+} | Export-Csv "_AUDIT\TRACKED_sizes.csv" -NoTypeInformation
+```
+
+## Structural folders to verify
+
+The previous public-surface review saw these broad categories, but exact counts/sizes must be filled from the local audit:
+
+| Category | Folders / patterns | Provisional action |
+|---|---|---|
+| Active core candidates | `src/`, `DMAIC_V3/`, `local_mcp/`, `scripts/`, `tools/`, `tests/`, `.github/`, `docs/`, `governance/`, `rtm/`, `ssot/`, `patterns/` | Keep if tracked and tested |
+| GitHub-visible snapshot bloat | `ABACUS-v031/`, `ABACUS-v032/`, `ABACUS-UNIFIED/`, `ABACUS_V21_DEPLOYMENT_PACKAGE/` | Compare for uniqueness, then archive/split/remove from active repo |
+| Generated or churn-heavy candidates | `DMAIC_V3_OUTPUT/`, `reports/`, `logs/`, `DOW_LOGS/`, `staging/`, `demo_workspace/` | Ignore or move to artifacts after preserving intentional outputs |
+| Local-only candidates to protect first | `rich_padding/`, `CODESPACES_jyperter/`, `codex_project/`, `integration_DOW_KEB_MASTER/` | Verify with `_AUDIT\FOLDER_MAP.csv`; split/push/archive before cleanup |
 
 ## File-type distribution
 
-Exact extension counts could not be computed without a clone. The visible repository strongly skews toward:
-
-- Markdown documentation and status/handover reports (`*.md`).
-- Python orchestration, agents, scripts, and toolkit code (`*.py`).
-- JSON/YAML configuration, indexes, workflow definitions, and metrics (`*.json`, `*.yaml`, `*.yml`).
-- Generated HTML dashboards (`*.html`) under `docs/`.
-- Office/generated assets are intentionally discouraged by `.gitignore` (`*.pptx`, `*.pdf`, archives), although at least one `.docx` is visible in the root listing.
-
-## Next exact command for a full clone
-
-```bash
-git ls-files -z | perl -0ne 'chomp; print $_,"\0"' | xargs -0 stat --printf '%s\t%n\n'
-```
+Not measured here. The expected distribution is likely dominated by Markdown, Python, JSON/YAML, and generated HTML, but the exact `.py`, `.md`, `.json`, `.yml`, etc. counts should be generated from `_AUDIT\TRACKED_files.txt`.
