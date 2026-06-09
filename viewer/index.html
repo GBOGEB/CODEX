@@ -83,7 +83,15 @@ document.getElementById('svg-host').addEventListener('click', event => {
 document.getElementById('tag-search').addEventListener('input', event => {
   const q = event.target.value.toLowerCase();
   const matches = q ? tags.filter(t => (t.text || '').toLowerCase().includes(q) || (t.matches || []).join(' ').toLowerCase().includes(q)).slice(0, 30) : [];
-  document.getElementById('search-results').innerHTML = matches.map(t => `<button data-id="${t.tag_id}">${t.text}</button>`).join('<br>');
+  const searchResults = document.getElementById('search-results');
+  searchResults.replaceChildren();
+  matches.forEach((t, index) => {
+    const btn = document.createElement('button');
+    btn.dataset.id = String(t.tag_id ?? '');
+    btn.textContent = String(t.text ?? '');
+    searchResults.appendChild(btn);
+    if (index < matches.length - 1) searchResults.appendChild(document.createElement('br'));
+  });
 });
 document.getElementById('search-results').addEventListener('click', event => {
   if (!event.target.dataset.id) return;
