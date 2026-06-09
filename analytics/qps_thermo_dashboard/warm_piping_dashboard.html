@@ -1,0 +1,1216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QPS Warm Piping Dashboard</title>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <style>
+:root{color-scheme:dark;--bg:#08111f;--panel:#101c2f;--panel2:#162842;--text:#edf5ff;--muted:#9fb3ca;--accent:#59d0ff;--ok:#9cffc7;--warn:#ffd166;--border:#294766}body.light{color-scheme:light;--bg:#f4f7fb;--panel:#fff;--panel2:#eaf1fa;--text:#102033;--muted:#4e6178;--accent:#006de5;--ok:#007f5f;--warn:#9a6700;--border:#c7d5e6}*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,var(--bg),#05070c);color:var(--text);font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;overflow:hidden}.topbar{height:64px;display:flex;justify-content:space-between;align-items:center;padding:0 18px;border-bottom:1px solid var(--border);background:rgba(8,17,31,.88);backdrop-filter:blur(10px);position:fixed;inset:0 0 auto 0;z-index:3}.light .topbar{background:rgba(255,255,255,.88)}button,select{background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:8px 10px}button{cursor:pointer}.badge{margin-left:12px;padding:6px 10px;border-radius:999px;background:rgba(89,208,255,.14);color:var(--accent);font-size:12px}.controls{position:fixed;top:76px;left:18px;width:240px;z-index:2;background:rgba(16,28,47,.88);border:1px solid var(--border);border-radius:18px;padding:14px;display:grid;gap:12px}.light .controls{background:rgba(255,255,255,.9)}label{display:grid;gap:5px;color:var(--muted);font-size:13px}#deck{height:100vh;width:100vw}.slide{display:none;height:100vh;width:100vw;padding:88px 24px 24px 282px;gap:14px;grid-template-columns:360px 1fr;grid-template-rows:auto 1fr;overflow:hidden}.slide.active{display:grid}.slide-copy,.plot,.data-table{background:rgba(16,28,47,.78);border:1px solid var(--border);border-radius:22px;box-shadow:0 18px 50px rgba(0,0,0,.24)}.light .slide-copy,.light .plot,.light .data-table{background:rgba(255,255,255,.92)}.slide-copy{padding:22px;grid-row:1/3}.eyebrow{color:var(--accent);text-transform:uppercase;letter-spacing:.14em;font-weight:700;font-size:12px}h1{font-size:42px;line-height:1;margin:8px 0 12px}.slide-copy p{color:var(--muted);font-size:16px}.insights{display:grid;gap:10px;margin-top:20px}.insights span{display:block;border-left:4px solid var(--accent);padding:10px 12px;background:rgba(89,208,255,.10);border-radius:10px}.plot-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;min-height:0}.plot{min-height:360px}.data-table{grid-column:2;padding:14px;overflow:auto;max-height:32vh}table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px solid var(--border);padding:7px 9px;text-align:left;white-space:nowrap}th{color:var(--accent);position:sticky;top:0;background:var(--panel)}@media(max-width:1000px){body{overflow:auto}.topbar{position:sticky}.controls{position:static;width:auto;margin:76px 12px 0}.slide,.slide.active{display:block;height:auto;min-height:100vh;padding:12px}.slide:not(.active){display:none}.slide-copy,.plot,.data-table{margin-bottom:12px}.plot-grid{grid-template-columns:1fr}.plot{height:420px}}</style>
+</head>
+<body class="dark warm-only">
+  <header class="topbar">
+    <div>
+      <strong>QPS Warm Piping Dashboard</strong>
+      <span class="badge" id="traceBadge">CONTRACT → Table 7 / Table 9 / Figure 3 → SSOT_DERIVATIVE</span>
+    </div>
+    <nav>
+      
+      <button id="themeToggle">Light mode</button>
+      <button id="exportCsv">Export CSV</button>
+      <button id="exportPng">Export PNG</button>
+      <button id="exportSvg">Export SVG</button>
+    </nav>
+  </header>
+  <aside class="controls" aria-label="dashboard toggles">
+    <label>Scenario<select id="scenario"><option>2K-SB</option><option>2K-OP</option><option>BOTH</option></select></label>
+    <label>Metric<select id="metric"><option>Density</option><option>Velocity</option><option>Time-to-Reach</option></select></label>
+    <label>Distance<select id="distance"><option value="60m">60 m</option><option value="91_5m">91.5 m</option><option value="151_5m">151.5 m</option></select></label>
+    <label>Plot Type<select id="plotType"><option>Violin</option><option>Boxplot</option><option>Both</option></select></label>
+  </aside>
+  <main id="deck">
+      <section class="slide active" data-slide="1">
+        <div class="slide-copy"><p class="eyebrow">Warm-Piping Deep Dive</p><h1>U / W / S Recovery Analytics</h1><p>Dedicated warm-piping dashboard with flow, density, velocity, emergency recovery scenarios, and W example calculations.</p><div class="insights" id="insights-1"></div></div>
+        <div class="plot-grid"><div class="plot" id="plot-1-a"></div><div class="plot" id="plot-1-b"></div></div>
+        <div class="data-table" id="table-1"></div>
+      </section>
+    </main>
+  <script id="qps-data" type="application/json">{
+  "metadata": {
+    "module": "QPS User Interface Thermo Dashboard",
+    "artifact_class": "SSOT_DERIVATIVE",
+    "source": {
+      "document": "CONTRACT",
+      "section": "3 Technical Requirements / QPS User Interfaces",
+      "table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "figure": "Figure 3 QPS interface mapping"
+    }
+  },
+  "lineBasis": [
+    {
+      "line": "A",
+      "family": "cold",
+      "interface": "A",
+      "dn": "DN25",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 6.0,
+      "notes": "QPS supply interface A"
+    },
+    {
+      "line": "B",
+      "family": "cold",
+      "interface": "B",
+      "dn": "DN40",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 12.0,
+      "notes": "QPS return interface B; highest density variability"
+    },
+    {
+      "line": "D",
+      "family": "cold",
+      "interface": "D",
+      "dn": "DN32",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 9.0,
+      "notes": "QPS distribution interface D"
+    },
+    {
+      "line": "E",
+      "family": "cold",
+      "interface": "E",
+      "dn": "DN20",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 4.0,
+      "notes": "QPS trim/interface E; density-sensitive"
+    },
+    {
+      "line": "W",
+      "family": "warm",
+      "interface": "W",
+      "dn": "DN80",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 28.0,
+      "notes": "Warm recovery W; high velocity watch item"
+    },
+    {
+      "line": "U",
+      "family": "warm",
+      "interface": "U",
+      "dn": "DN65",
+      "route_length_m": 91.5,
+      "flow_basis_g_s": 20.0,
+      "notes": "Warm utility U, RTM-289 calculation basis"
+    },
+    {
+      "line": "S",
+      "family": "warm",
+      "interface": "S",
+      "dn": "DN150",
+      "route_length_m": 60.0,
+      "flow_basis_g_s": 45.0,
+      "notes": "Warm safety/header S, RTM-296 calculation basis"
+    }
+  ],
+  "scenarios": {
+    "2K-SB": {
+      "density_factor": 1.18,
+      "velocity_factor": 0.82,
+      "description": "2 K standby / low-flow stabilization"
+    },
+    "2K-OP": {
+      "density_factor": 0.82,
+      "velocity_factor": 1.22,
+      "description": "2 K operation / process-flow basis"
+    }
+  },
+  "metrics": [
+    {
+      "line": "A",
+      "family": "cold",
+      "interface": "A",
+      "scenario": "2K-SB",
+      "dn": "DN25",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 6.0,
+      "metric": "Density",
+      "min_value": 7.222,
+      "expected_value": 8.024,
+      "max_value": 8.826,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "A",
+      "family": "cold",
+      "interface": "A",
+      "scenario": "2K-SB",
+      "dn": "DN25",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 6.0,
+      "metric": "Velocity",
+      "min_value": 2.804,
+      "expected_value": 3.116,
+      "max_value": 3.428,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "A",
+      "family": "cold",
+      "interface": "A",
+      "scenario": "2K-OP",
+      "dn": "DN25",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 6.0,
+      "metric": "Density",
+      "min_value": 5.018,
+      "expected_value": 5.576,
+      "max_value": 6.134,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "A",
+      "family": "cold",
+      "interface": "A",
+      "scenario": "2K-OP",
+      "dn": "DN25",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 6.0,
+      "metric": "Velocity",
+      "min_value": 4.172,
+      "expected_value": 4.636,
+      "max_value": 5.1,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "B",
+      "family": "cold",
+      "interface": "B",
+      "scenario": "2K-SB",
+      "dn": "DN40",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 12.0,
+      "metric": "Density",
+      "min_value": 7.712,
+      "expected_value": 10.148,
+      "max_value": 12.584,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "B",
+      "family": "cold",
+      "interface": "B",
+      "scenario": "2K-SB",
+      "dn": "DN40",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 12.0,
+      "metric": "Velocity",
+      "min_value": 2.867,
+      "expected_value": 3.772,
+      "max_value": 4.677,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "B",
+      "family": "cold",
+      "interface": "B",
+      "scenario": "2K-OP",
+      "dn": "DN40",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 12.0,
+      "metric": "Density",
+      "min_value": 5.36,
+      "expected_value": 7.052,
+      "max_value": 8.744,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "B",
+      "family": "cold",
+      "interface": "B",
+      "scenario": "2K-OP",
+      "dn": "DN40",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 12.0,
+      "metric": "Velocity",
+      "min_value": 4.265,
+      "expected_value": 5.612,
+      "max_value": 6.959,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "D",
+      "family": "cold",
+      "interface": "D",
+      "scenario": "2K-SB",
+      "dn": "DN32",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 9.0,
+      "metric": "Density",
+      "min_value": 7.597,
+      "expected_value": 8.732,
+      "max_value": 9.867,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "D",
+      "family": "cold",
+      "interface": "D",
+      "scenario": "2K-SB",
+      "dn": "DN32",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 9.0,
+      "metric": "Velocity",
+      "min_value": 2.996,
+      "expected_value": 3.444,
+      "max_value": 3.892,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "D",
+      "family": "cold",
+      "interface": "D",
+      "scenario": "2K-OP",
+      "dn": "DN32",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 9.0,
+      "metric": "Density",
+      "min_value": 5.279,
+      "expected_value": 6.068,
+      "max_value": 6.857,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "D",
+      "family": "cold",
+      "interface": "D",
+      "scenario": "2K-OP",
+      "dn": "DN32",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 9.0,
+      "metric": "Velocity",
+      "min_value": 4.458,
+      "expected_value": 5.124,
+      "max_value": 5.79,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "E",
+      "family": "cold",
+      "interface": "E",
+      "scenario": "2K-SB",
+      "dn": "DN20",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 4.0,
+      "metric": "Density",
+      "min_value": 4.909,
+      "expected_value": 6.136,
+      "max_value": 7.363,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "E",
+      "family": "cold",
+      "interface": "E",
+      "scenario": "2K-SB",
+      "dn": "DN20",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 4.0,
+      "metric": "Velocity",
+      "min_value": 2.165,
+      "expected_value": 2.706,
+      "max_value": 3.247,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "E",
+      "family": "cold",
+      "interface": "E",
+      "scenario": "2K-OP",
+      "dn": "DN20",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 4.0,
+      "metric": "Density",
+      "min_value": 3.411,
+      "expected_value": 4.264,
+      "max_value": 5.117,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "E",
+      "family": "cold",
+      "interface": "E",
+      "scenario": "2K-OP",
+      "dn": "DN20",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 4.0,
+      "metric": "Velocity",
+      "min_value": 3.221,
+      "expected_value": 4.026,
+      "max_value": 4.831,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "W",
+      "family": "warm",
+      "interface": "W",
+      "scenario": "2K-SB",
+      "dn": "DN80",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 28.0,
+      "metric": "Density",
+      "min_value": 1.597,
+      "expected_value": 1.947,
+      "max_value": 2.297,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "W",
+      "family": "warm",
+      "interface": "W",
+      "scenario": "2K-SB",
+      "dn": "DN80",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 28.0,
+      "metric": "Velocity",
+      "min_value": 5.917,
+      "expected_value": 7.216,
+      "max_value": 8.515,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "W",
+      "family": "warm",
+      "interface": "W",
+      "scenario": "2K-OP",
+      "dn": "DN80",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 28.0,
+      "metric": "Density",
+      "min_value": 1.109,
+      "expected_value": 1.353,
+      "max_value": 1.597,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "W",
+      "family": "warm",
+      "interface": "W",
+      "scenario": "2K-OP",
+      "dn": "DN80",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 28.0,
+      "metric": "Velocity",
+      "min_value": 8.804,
+      "expected_value": 10.736,
+      "max_value": 12.668,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "U",
+      "family": "warm",
+      "interface": "U",
+      "scenario": "2K-SB",
+      "dn": "DN65",
+      "route_length_m": 91.5,
+      "flow_basis_g_s": 20.0,
+      "metric": "Density",
+      "min_value": 1.471,
+      "expected_value": 1.711,
+      "max_value": 1.951,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "U",
+      "family": "warm",
+      "interface": "U",
+      "scenario": "2K-SB",
+      "dn": "DN65",
+      "route_length_m": 91.5,
+      "flow_basis_g_s": 20.0,
+      "metric": "Velocity",
+      "min_value": 4.513,
+      "expected_value": 5.248,
+      "max_value": 5.983,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "U",
+      "family": "warm",
+      "interface": "U",
+      "scenario": "2K-OP",
+      "dn": "DN65",
+      "route_length_m": 91.5,
+      "flow_basis_g_s": 20.0,
+      "metric": "Density",
+      "min_value": 1.023,
+      "expected_value": 1.189,
+      "max_value": 1.355,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "U",
+      "family": "warm",
+      "interface": "U",
+      "scenario": "2K-OP",
+      "dn": "DN65",
+      "route_length_m": 91.5,
+      "flow_basis_g_s": 20.0,
+      "metric": "Velocity",
+      "min_value": 6.715,
+      "expected_value": 7.808,
+      "max_value": 8.901,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "S",
+      "family": "warm",
+      "interface": "S",
+      "scenario": "2K-SB",
+      "dn": "DN150",
+      "route_length_m": 60.0,
+      "flow_basis_g_s": 45.0,
+      "metric": "Density",
+      "min_value": 1.246,
+      "expected_value": 1.416,
+      "max_value": 1.586,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "S",
+      "family": "warm",
+      "interface": "S",
+      "scenario": "2K-SB",
+      "dn": "DN150",
+      "route_length_m": 60.0,
+      "flow_basis_g_s": 45.0,
+      "metric": "Velocity",
+      "min_value": 3.536,
+      "expected_value": 4.018,
+      "max_value": 4.5,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "S",
+      "family": "warm",
+      "interface": "S",
+      "scenario": "2K-OP",
+      "dn": "DN150",
+      "route_length_m": 60.0,
+      "flow_basis_g_s": 45.0,
+      "metric": "Density",
+      "min_value": 0.866,
+      "expected_value": 0.984,
+      "max_value": 1.102,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "S",
+      "family": "warm",
+      "interface": "S",
+      "scenario": "2K-OP",
+      "dn": "DN150",
+      "route_length_m": 60.0,
+      "flow_basis_g_s": 45.0,
+      "metric": "Velocity",
+      "min_value": 5.261,
+      "expected_value": 5.978,
+      "max_value": 6.695,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    }
+  ],
+  "controls": [
+    {
+      "line": "A",
+      "scenario": "2K-SB",
+      "density": 8.024,
+      "velocity": 3.116,
+      "travel_time_60m": 19.255,
+      "travel_time_91_5m": 29.365,
+      "travel_time_151_5m": 48.62,
+      "recommended_deadtime": 48.62,
+      "recommended_sample_period": 4.862,
+      "recommended_filter_constant": 16.207,
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "A",
+      "scenario": "2K-OP",
+      "density": 5.576,
+      "velocity": 4.636,
+      "travel_time_60m": 12.942,
+      "travel_time_91_5m": 19.737,
+      "travel_time_151_5m": 32.679,
+      "recommended_deadtime": 32.679,
+      "recommended_sample_period": 3.268,
+      "recommended_filter_constant": 10.893,
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "B",
+      "scenario": "2K-SB",
+      "density": 10.148,
+      "velocity": 3.772,
+      "travel_time_60m": 15.907,
+      "travel_time_91_5m": 24.258,
+      "travel_time_151_5m": 40.164,
+      "recommended_deadtime": 40.164,
+      "recommended_sample_period": 4.016,
+      "recommended_filter_constant": 13.388,
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "B",
+      "scenario": "2K-OP",
+      "density": 7.052,
+      "velocity": 5.612,
+      "travel_time_60m": 10.691,
+      "travel_time_91_5m": 16.304,
+      "travel_time_151_5m": 26.996,
+      "recommended_deadtime": 26.996,
+      "recommended_sample_period": 2.7,
+      "recommended_filter_constant": 8.999,
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "D",
+      "scenario": "2K-SB",
+      "density": 8.732,
+      "velocity": 3.444,
+      "travel_time_60m": 17.422,
+      "travel_time_91_5m": 26.568,
+      "travel_time_151_5m": 43.99,
+      "recommended_deadtime": 43.99,
+      "recommended_sample_period": 4.399,
+      "recommended_filter_constant": 14.663,
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "D",
+      "scenario": "2K-OP",
+      "density": 6.068,
+      "velocity": 5.124,
+      "travel_time_60m": 11.71,
+      "travel_time_91_5m": 17.857,
+      "travel_time_151_5m": 29.567,
+      "recommended_deadtime": 29.567,
+      "recommended_sample_period": 2.957,
+      "recommended_filter_constant": 9.856,
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "E",
+      "scenario": "2K-SB",
+      "density": 6.136,
+      "velocity": 2.706,
+      "travel_time_60m": 22.173,
+      "travel_time_91_5m": 33.814,
+      "travel_time_151_5m": 55.987,
+      "recommended_deadtime": 55.987,
+      "recommended_sample_period": 5.599,
+      "recommended_filter_constant": 18.662,
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "E",
+      "scenario": "2K-OP",
+      "density": 4.264,
+      "velocity": 4.026,
+      "travel_time_60m": 14.903,
+      "travel_time_91_5m": 22.727,
+      "travel_time_151_5m": 37.63,
+      "recommended_deadtime": 37.63,
+      "recommended_sample_period": 3.763,
+      "recommended_filter_constant": 12.543,
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "W",
+      "scenario": "2K-SB",
+      "density": 1.947,
+      "velocity": 7.216,
+      "travel_time_60m": 8.315,
+      "travel_time_91_5m": 12.68,
+      "travel_time_151_5m": 20.995,
+      "recommended_deadtime": 20.995,
+      "recommended_sample_period": 2.099,
+      "recommended_filter_constant": 6.998,
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "W",
+      "scenario": "2K-OP",
+      "density": 1.353,
+      "velocity": 10.736,
+      "travel_time_60m": 5.589,
+      "travel_time_91_5m": 8.523,
+      "travel_time_151_5m": 14.111,
+      "recommended_deadtime": 14.111,
+      "recommended_sample_period": 1.411,
+      "recommended_filter_constant": 4.704,
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "U",
+      "scenario": "2K-SB",
+      "density": 1.711,
+      "velocity": 5.248,
+      "travel_time_60m": 11.433,
+      "travel_time_91_5m": 17.435,
+      "travel_time_151_5m": 28.868,
+      "recommended_deadtime": 28.868,
+      "recommended_sample_period": 2.887,
+      "recommended_filter_constant": 9.623,
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "U",
+      "scenario": "2K-OP",
+      "density": 1.189,
+      "velocity": 7.808,
+      "travel_time_60m": 7.684,
+      "travel_time_91_5m": 11.719,
+      "travel_time_151_5m": 19.403,
+      "recommended_deadtime": 19.403,
+      "recommended_sample_period": 1.94,
+      "recommended_filter_constant": 6.468,
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "S",
+      "scenario": "2K-SB",
+      "density": 1.416,
+      "velocity": 4.018,
+      "travel_time_60m": 14.933,
+      "travel_time_91_5m": 22.773,
+      "travel_time_151_5m": 37.705,
+      "recommended_deadtime": 37.705,
+      "recommended_sample_period": 3.77,
+      "recommended_filter_constant": 12.568,
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    },
+    {
+      "line": "S",
+      "scenario": "2K-OP",
+      "density": 0.984,
+      "velocity": 5.978,
+      "travel_time_60m": 10.037,
+      "travel_time_91_5m": 15.306,
+      "travel_time_151_5m": 25.343,
+      "recommended_deadtime": 25.343,
+      "recommended_sample_period": 2.534,
+      "recommended_filter_constant": 8.448,
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping"
+    }
+  ],
+  "warm": [
+    {
+      "line": "W",
+      "family": "warm",
+      "interface": "W",
+      "scenario": "2K-SB",
+      "dn": "DN80",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 28.0,
+      "metric": "Density",
+      "min_value": 1.597,
+      "expected_value": 1.947,
+      "max_value": 2.297,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "rtm_calculation": "RTM-292",
+      "emergency_recovery_min": 2.156,
+      "emergency_recovery_expected": 2.628,
+      "emergency_recovery_max": 3.101
+    },
+    {
+      "line": "W",
+      "family": "warm",
+      "interface": "W",
+      "scenario": "2K-SB",
+      "dn": "DN80",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 28.0,
+      "metric": "Velocity",
+      "min_value": 5.917,
+      "expected_value": 7.216,
+      "max_value": 8.515,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "rtm_calculation": "RTM-292",
+      "emergency_recovery_min": 7.988,
+      "emergency_recovery_expected": 9.742,
+      "emergency_recovery_max": 11.495
+    },
+    {
+      "line": "W",
+      "family": "warm",
+      "interface": "W",
+      "scenario": "2K-OP",
+      "dn": "DN80",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 28.0,
+      "metric": "Density",
+      "min_value": 1.109,
+      "expected_value": 1.353,
+      "max_value": 1.597,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "rtm_calculation": "RTM-292",
+      "emergency_recovery_min": 1.497,
+      "emergency_recovery_expected": 1.827,
+      "emergency_recovery_max": 2.156
+    },
+    {
+      "line": "W",
+      "family": "warm",
+      "interface": "W",
+      "scenario": "2K-OP",
+      "dn": "DN80",
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 28.0,
+      "metric": "Velocity",
+      "min_value": 8.804,
+      "expected_value": 10.736,
+      "max_value": 12.668,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "rtm_calculation": "RTM-292",
+      "emergency_recovery_min": 11.885,
+      "emergency_recovery_expected": 14.494,
+      "emergency_recovery_max": 17.102
+    },
+    {
+      "line": "U",
+      "family": "warm",
+      "interface": "U",
+      "scenario": "2K-SB",
+      "dn": "DN65",
+      "route_length_m": 91.5,
+      "flow_basis_g_s": 20.0,
+      "metric": "Density",
+      "min_value": 1.471,
+      "expected_value": 1.711,
+      "max_value": 1.951,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "rtm_calculation": "RTM-289",
+      "emergency_recovery_min": 1.765,
+      "emergency_recovery_expected": 2.053,
+      "emergency_recovery_max": 2.341
+    },
+    {
+      "line": "U",
+      "family": "warm",
+      "interface": "U",
+      "scenario": "2K-SB",
+      "dn": "DN65",
+      "route_length_m": 91.5,
+      "flow_basis_g_s": 20.0,
+      "metric": "Velocity",
+      "min_value": 4.513,
+      "expected_value": 5.248,
+      "max_value": 5.983,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "rtm_calculation": "RTM-289",
+      "emergency_recovery_min": 5.416,
+      "emergency_recovery_expected": 6.298,
+      "emergency_recovery_max": 7.18
+    },
+    {
+      "line": "U",
+      "family": "warm",
+      "interface": "U",
+      "scenario": "2K-OP",
+      "dn": "DN65",
+      "route_length_m": 91.5,
+      "flow_basis_g_s": 20.0,
+      "metric": "Density",
+      "min_value": 1.023,
+      "expected_value": 1.189,
+      "max_value": 1.355,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "rtm_calculation": "RTM-289",
+      "emergency_recovery_min": 1.228,
+      "emergency_recovery_expected": 1.427,
+      "emergency_recovery_max": 1.626
+    },
+    {
+      "line": "U",
+      "family": "warm",
+      "interface": "U",
+      "scenario": "2K-OP",
+      "dn": "DN65",
+      "route_length_m": 91.5,
+      "flow_basis_g_s": 20.0,
+      "metric": "Velocity",
+      "min_value": 6.715,
+      "expected_value": 7.808,
+      "max_value": 8.901,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "rtm_calculation": "RTM-289",
+      "emergency_recovery_min": 8.058,
+      "emergency_recovery_expected": 9.37,
+      "emergency_recovery_max": 10.681
+    },
+    {
+      "line": "S",
+      "family": "warm",
+      "interface": "S",
+      "scenario": "2K-SB",
+      "dn": "DN150",
+      "route_length_m": 60.0,
+      "flow_basis_g_s": 45.0,
+      "metric": "Density",
+      "min_value": 1.246,
+      "expected_value": 1.416,
+      "max_value": 1.586,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "rtm_calculation": "RTM-296",
+      "emergency_recovery_min": 1.495,
+      "emergency_recovery_expected": 1.699,
+      "emergency_recovery_max": 1.903
+    },
+    {
+      "line": "S",
+      "family": "warm",
+      "interface": "S",
+      "scenario": "2K-SB",
+      "dn": "DN150",
+      "route_length_m": 60.0,
+      "flow_basis_g_s": 45.0,
+      "metric": "Velocity",
+      "min_value": 3.536,
+      "expected_value": 4.018,
+      "max_value": 4.5,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "rtm_calculation": "RTM-296",
+      "emergency_recovery_min": 4.243,
+      "emergency_recovery_expected": 4.822,
+      "emergency_recovery_max": 5.4
+    },
+    {
+      "line": "S",
+      "family": "warm",
+      "interface": "S",
+      "scenario": "2K-OP",
+      "dn": "DN150",
+      "route_length_m": 60.0,
+      "flow_basis_g_s": 45.0,
+      "metric": "Density",
+      "min_value": 0.866,
+      "expected_value": 0.984,
+      "max_value": 1.102,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "rtm_calculation": "RTM-296",
+      "emergency_recovery_min": 1.039,
+      "emergency_recovery_expected": 1.181,
+      "emergency_recovery_max": 1.322
+    },
+    {
+      "line": "S",
+      "family": "warm",
+      "interface": "S",
+      "scenario": "2K-OP",
+      "dn": "DN150",
+      "route_length_m": 60.0,
+      "flow_basis_g_s": 45.0,
+      "metric": "Velocity",
+      "min_value": 5.261,
+      "expected_value": 5.978,
+      "max_value": 6.695,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "rtm_calculation": "RTM-296",
+      "emergency_recovery_min": 6.313,
+      "emergency_recovery_expected": 7.174,
+      "emergency_recovery_max": 8.034
+    }
+  ],
+  "distances": [
+    {
+      "label": "60m",
+      "distance_m": 60.0
+    },
+    {
+      "label": "91_5m",
+      "distance_m": 91.5
+    },
+    {
+      "label": "151_5m",
+      "distance_m": 151.5
+    }
+  ]
+}</script>
+  <script>
+const DATA = JSON.parse(document.getElementById('qps-data').textContent);
+const WARM_ONLY = document.body.classList.contains('warm-only');
+let currentSlide = 1;
+const totalSlides = WARM_ONLY ? 1 : 6;
+const controls = ['scenario','metric','distance','plotType'].reduce((acc,id)=>{acc[id]=document.getElementById(id); return acc;},{});
+const template = () => document.body.classList.contains('light') ? 'plotly_white' : 'plotly_dark';
+const layoutBase = (title) => ({title, template: template(), margin:{l:55,r:20,t:55,b:55}, paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)', legend:{orientation:'h'}});
+const config = {responsive:true, displaylogo:false, modeBarButtonsToAdd:[{name:'Export SVG', icon:Plotly.Icons.camera, click:(gd)=>Plotly.downloadImage(gd,{format:'svg',filename:gd.id})}]};
+function scenarios(){return controls.scenario.value === 'BOTH' ? ['2K-SB','2K-OP'] : [controls.scenario.value];}
+function metricRows(metric=controls.metric.value){return DATA.metrics.filter(r => scenarios().includes(r.scenario) && (WARM_ONLY ? r.family === 'warm' : true) && r.metric === (metric === 'Time-to-Reach' ? 'Velocity' : metric));}
+function activePlotIds(){return [...document.querySelectorAll('.slide.active .plot')].map(e=>e.id);}
+function syntheticValues(row){const mid=row.expected_value, min=row.min_value, max=row.max_value; return [min,(min+mid)/2,mid,(mid+max)/2,max].map(v=>Number(v.toFixed(3)));}
+function renderDistribution(target, metric){
+  const rows = metricRows(metric);
+  let traces=[];
+  const type=controls.plotType.value;
+  rows.forEach(r=>{
+    const common={name:`${r.line} ${r.scenario}`, x:syntheticValues(r).map(()=>`${r.line}-${r.scenario}`), y:syntheticValues(r), box:{visible:true}, meanline:{visible:true}, points:'all'};
+    if(type==='Violin'||type==='Both') traces.push({...common, type:'violin'});
+    if(type==='Boxplot'||type==='Both') traces.push({name:`${r.line} ${r.scenario} box`, x:common.x, y:common.y, type:'box', boxpoints:'all'});
+  });
+  Plotly.react(target, traces, layoutBase(`${metric} envelope (${rows[0]?.unit||''})`), config);
+}
+function renderSystem(target){
+  const basis = DATA.lineBasis.filter(r => WARM_ONLY ? r.family === 'warm' : true);
+  Plotly.react(target, [{type:'bar', x:basis.map(r=>r.line), y:basis.map(r=>r.route_length_m), text:basis.map(r=>`${r.interface} / ${r.dn}`), marker:{color:basis.map(r=>r.family==='warm'?'#ffd166':'#59d0ff')}}], layoutBase('Figure 3 route length and interface map'), config);
+}
+function renderFlow(target){
+  const basis = DATA.lineBasis.filter(r => WARM_ONLY ? r.family === 'warm' : true);
+  Plotly.react(target, [{type:'scatter', mode:'markers+text', x:basis.map(r=>r.flow_basis_g_s), y:basis.map(r=>r.route_length_m), text:basis.map(r=>`${r.line} ${r.dn}`), textposition:'top center', marker:{size:basis.map(r=>Math.max(14,r.flow_basis_g_s/2)), color:'#9cffc7'}}], layoutBase('Table 9 flow basis vs route length'), config);
+}
+function renderTravel(target){
+  const rows = metricRows('Velocity');
+  const distance = DATA.distances.find(d=>d.label===controls.distance.value).distance_m;
+  const traces = ['min_value','expected_value','max_value'].map(key=>({type:'bar', name:key.replace('_value',''), x:rows.map(r=>`${r.line}-${r.scenario}`), y:rows.map(r=>Number((distance / r[key]).toFixed(3)))}));
+  Plotly.react(target, traces, layoutBase(`Time-to-reach at ${distance} m`), config);
+}
+function renderControls(target){
+  const rows = DATA.controls.filter(r=>scenarios().includes(r.scenario) && (WARM_ONLY ? ['U','W','S'].includes(r.line) : true));
+  const distKey = 'travel_time_' + controls.distance.value;
+  Plotly.react(target, [
+    {type:'bar', name:'transport lag', x:rows.map(r=>`${r.line}-${r.scenario}`), y:rows.map(r=>r[distKey])},
+    {type:'bar', name:'dead time', x:rows.map(r=>`${r.line}-${r.scenario}`), y:rows.map(r=>r.recommended_deadtime)},
+    {type:'scatter', mode:'lines+markers', name:'filter τ', x:rows.map(r=>`${r.line}-${r.scenario}`), y:rows.map(r=>r.recommended_filter_constant)}
+  ], layoutBase('Controls response estimate'), config);
+}
+function renderWarmRecovery(target){
+  const rows = DATA.warm.filter(r=>scenarios().includes(r.scenario) && r.metric===controls.metric.value.replace('Time-to-Reach','Velocity'));
+  Plotly.react(target, [{type:'bar', name:'emergency expected', x:rows.map(r=>`${r.line}-${r.scenario} ${r.rtm_calculation}`), y:rows.map(r=>r.emergency_recovery_expected), marker:{color:'#ffd166'}}], layoutBase('Warm emergency recovery envelope'), config);
+}
+function table(target, rows, cols){
+  document.getElementById(target).innerHTML = `<table><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${cols.map(c=>`<td>${r[c]??''}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+function insights(id, items){document.getElementById(id).innerHTML = items.map(i=>`<span>${i}</span>`).join('');}
+function renderSlide(){
+  document.querySelectorAll('.slide').forEach(s=>s.classList.toggle('active', Number(s.dataset.slide)===currentSlide));
+  const ind=document.getElementById('slideIndicator'); if(ind) ind.textContent = `${currentSlide} / ${totalSlides}`;
+  const metric=controls.metric.value;
+  if(WARM_ONLY){renderDistribution('plot-1-a', metric==='Time-to-Reach'?'Velocity':metric); renderWarmRecovery('plot-1-b'); table('table-1', DATA.warm.filter(r=>scenarios().includes(r.scenario)), ['line','scenario','metric','min_value','expected_value','max_value','rtm_calculation','emergency_recovery_expected','source_document','source_table']); insights('insights-1',['U/W/S only: cold A/B/D/E are intentionally excluded.','W RTM-292 example: emergency recovery envelope applies a 1.35 multiplier to the W expected value.','Trace badge confirms CONTRACT-derived governance.']); return;}
+  if(currentSlide===1){renderSystem('plot-1-a');renderFlow('plot-1-b');table('table-1', DATA.lineBasis, ['line','family','interface','dn','route_length_m','flow_basis_g_s','notes']);insights('insights-1',['Figure 3 mapping is rendered as route/interface basis.','Warm U/W/S are labelled separately from cold A/B/D/E.']);}
+  if(currentSlide===2){renderDistribution('plot-2-a','Density');renderDistribution('plot-2-b','Density');table('table-2', metricRows('Density'), ['line','scenario','dn','min_value','expected_value','max_value','unit','source_table']);insights('insights-2',['B-line density variability is the widest cold-line envelope.','E-line density is flagged as sensitivity-critical due to smaller DN and trim role.']);}
+  if(currentSlide===3){renderDistribution('plot-3-a','Velocity');renderDistribution('plot-3-b','Velocity');table('table-3', metricRows('Velocity'), ['line','scenario','dn','flow_basis_g_s','min_value','expected_value','max_value','unit']);insights('insights-3',['W-line velocity is the warm-piping watch item.','B-line velocity spread is preserved for controls lag studies.']);}
+  if(currentSlide===4){renderTravel('plot-4-a');renderControls('plot-4-b');table('table-4', DATA.controls.filter(r=>scenarios().includes(r.scenario)), ['line','scenario','travel_time_60m','travel_time_91_5m','travel_time_151_5m','source_document']);insights('insights-4',['Transit time is computed as distance divided by velocity envelope.','60 m, 91.5 m, and 151.5 m sections are selectable.']);}
+  if(currentSlide===5){renderWarmRecovery('plot-5-a');renderDistribution('plot-5-b',metric==='Time-to-Reach'?'Velocity':metric);table('table-5', DATA.warm.filter(r=>scenarios().includes(r.scenario)), ['line','scenario','metric','rtm_calculation','min_value','expected_value','max_value','emergency_recovery_expected']);insights('insights-5',['RTM-289 (U), RTM-292 (W), and RTM-296 (S) calculations are derived rows.','Warm piping is isolated from A/B/D/E to support recovery studies.']);}
+  if(currentSlide===6){renderControls('plot-6-a');renderTravel('plot-6-b');table('table-6', DATA.controls.filter(r=>scenarios().includes(r.scenario)), ['line','scenario','velocity','recommended_deadtime','recommended_sample_period','recommended_filter_constant']);insights('insights-6',['Recommended dead time uses the governing 151.5 m transit case.','Sample period targets one tenth of dead time with a 0.25 s floor.']);}
+}
+document.querySelectorAll('[data-step]').forEach(b=>b.addEventListener('click',()=>{currentSlide=((currentSlide-1+Number(b.dataset.step)+totalSlides)%totalSlides)+1; renderSlide();}));
+document.addEventListener('keydown',e=>{if(!WARM_ONLY&&['ArrowRight','PageDown',' '].includes(e.key)){currentSlide=currentSlide%totalSlides+1;renderSlide();} if(!WARM_ONLY&&['ArrowLeft','PageUp'].includes(e.key)){currentSlide=(currentSlide+totalSlides-2)%totalSlides+1;renderSlide();}});
+Object.values(controls).forEach(el=>el.addEventListener('change',renderSlide));
+document.getElementById('themeToggle').addEventListener('click',()=>{document.body.classList.toggle('light');document.body.classList.toggle('dark');document.getElementById('themeToggle').textContent=document.body.classList.contains('light')?'Dark mode':'Light mode';renderSlide();});
+document.getElementById('exportCsv').addEventListener('click',()=>{const rows = currentSlide===6 ? DATA.controls : (currentSlide===5 || WARM_ONLY ? DATA.warm : DATA.metrics); const cols=Object.keys(rows[0]); const csv=[cols.join(','),...rows.map(r=>cols.map(c=>JSON.stringify(r[c]??'')).join(','))].join('\n'); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download=WARM_ONLY?'warm_piping_export.csv':`qps_slide_${currentSlide}_export.csv`; a.click();});
+document.getElementById('exportPng').addEventListener('click',()=>{const id=activePlotIds()[0]; if(id) Plotly.downloadImage(id,{format:'png',filename:id});});
+document.getElementById('exportSvg').addEventListener('click',()=>{const id=activePlotIds()[0]; if(id) Plotly.downloadImage(id,{format:'svg',filename:id});});
+renderSlide();
+</script>
+</body>
+</html>
