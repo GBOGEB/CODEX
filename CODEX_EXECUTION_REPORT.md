@@ -2,7 +2,7 @@
 
 ## Wave-0 Completion Sprint
 
-- Repository: `GBOGEB/DOCX_RTM_Automation`
+- Repository: `GBOGEB/CODEX`
 - Branch: `feat/orchestration-bootstrap-wave0-pr01`
 - PR: `#16` (Draft)
 - Sprint date: `2026-06-07`
