@@ -8,13 +8,16 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from collections import Counter
 from pathlib import Path
 from typing import Any
 
-try:
-    from .lineage_report import generate_reports
-    from .trace_models import (
+# Handle both package-relative and direct-script execution
+if __name__ == "__main__" and not __package__:
+    sys.path.insert(0, str(Path(__file__).parent))
+    from lineage_report import generate_reports
+    from trace_models import (
         LINEAGE_STAGE_ORDER,
         LineageNode,
         LineageStage,
@@ -23,9 +26,9 @@ try:
         stable_uuid,
         utc_now,
     )
-except ImportError:
-    from lineage_report import generate_reports
-    from trace_models import (
+else:
+    from .lineage_report import generate_reports
+    from .trace_models import (
         LINEAGE_STAGE_ORDER,
         LineageNode,
         LineageStage,

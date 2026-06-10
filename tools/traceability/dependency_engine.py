@@ -8,22 +8,14 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
-try:
-    from .trace_models import (
-        TRACE_STAGE_ORDER,
-        TraceNode,
-        TraceStage,
-        ValidationIssue,
-        is_uuid,
-        stable_uuid,
-        utc_now,
-    )
-    from .trace_report import generate_reports
-except ImportError:
+# Handle both package-relative and direct-script execution
+if __name__ == "__main__" and not __package__:
+    sys.path.insert(0, str(Path(__file__).parent))
     from trace_models import (
         TRACE_STAGE_ORDER,
         TraceNode,
@@ -34,6 +26,17 @@ except ImportError:
         utc_now,
     )
     from trace_report import generate_reports
+else:
+    from .trace_models import (
+        TRACE_STAGE_ORDER,
+        TraceNode,
+        TraceStage,
+        ValidationIssue,
+        is_uuid,
+        stable_uuid,
+        utc_now,
+    )
+    from .trace_report import generate_reports
 
 DEFAULT_TRACE_INPUT_PATH = Path("MASTER_input/Traceability/dependency_trace.json")
 
