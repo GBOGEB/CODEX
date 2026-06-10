@@ -171,7 +171,7 @@ CODEX soft-refactor work should avoid disruptive rewrites. Recommended approach:
 | Remote branch/PR state not visible during this evaluation | Branch classifications may be incomplete | Re-run inventory with GitHub access before cleanup. |
 | Governance and workflow files are highly coupled | Accidental CI or release-gate breakage | Require workflow/governance owner review. |
 | Historical wave or research branches may contain context | Premature deletion could lose institutional memory | Prefer `archive/*` until owners approve deletion. |
-| Current local branch is `work`, not confirmed `main` | PR base/default branch assumptions may be wrong | Confirm default branch in GitHub UI/API before settings changes. |
+| Current checkout is detached HEAD; default branch not confirmed | PR base/default branch assumptions may be wrong | Confirm default branch in GitHub UI/API before settings changes. |
 
 ## Next actions
 
