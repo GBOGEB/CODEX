@@ -118,7 +118,7 @@ CODEX should use a governance-first, wave-based governance trunk model:
 | MERGE CANDIDATE | Active `feature/*`, `fix/*`, `docs/*`, `chore/*` with approved PRs | Short-lived work should merge through PR review | Confirm PR status and CI. |
 | ARCHIVE CANDIDATE | Completed `wave/*`, `research/*` with retained value, historical governance branches | Preserve context before deletion when uncertain | Decide archive naming and owner. |
 | DELETE CANDIDATE | Remote branches already merged into `main`, especially PR #203-#207 source branches if still present | Reduce branch noise after merged PRs | Confirm no open PRs, releases, or dependent work. |
-| UNKNOWN / NEEDS HUMAN REVIEW | Any branch not visible in this checkout; any branch not merged into `main`; current `work` branch | Remote inventory was unavailable in this environment | Owner must inspect GitHub branch list before cleanup. |
+| UNKNOWN / NEEDS HUMAN REVIEW | Any branch not visible in this checkout; any branch not merged into `main`; current checkout state | Remote inventory was unavailable in this environment | Owner must inspect GitHub branch list before cleanup. |
 
 ## Protection recommendations
 
