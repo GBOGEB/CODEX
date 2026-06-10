@@ -1,0 +1,25 @@
+{
+  "version": "0.1.0",
+  "track_id": "ABACUS_DEBUG_SPINE_W000",
+  "wave": "W001",
+  "adapter": "lldb-dap",
+  "type": "lldb-dap",
+  "request": "launch",
+  "name": "ABACUS Debug Spine Swift Runtime Proof",
+  "program": "${workspaceFolder}/abacus_runtime/debug_spine/swift/.build/debug/abacus-debug-spine",
+  "cwd": "${workspaceFolder}",
+  "args": [
+    "--trace-output",
+    "runtime/logs/abacus_debug_spine_w001_trace.jsonl",
+    "--target-language",
+    "Python"
+  ],
+  "env": {
+    "ABACUS_DEBUG_SPINE_TRACK": "ABACUS_DEBUG_SPINE_W000",
+    "ABACUS_DEBUG_SPINE_WAVE": "W001"
+  },
+  "evidence": {
+    "jsonl_trace": "runtime/logs/abacus_debug_spine_w001_trace.jsonl",
+    "markdown_render": "runtime/logs/abacus_debug_spine_w001_evidence.md"
+  }
+}
