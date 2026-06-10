@@ -10,21 +10,12 @@
 </head>
 <body class="dark">
   <header class="topbar">
-    <div>
-      <strong>QPS User Interface Thermo Dashboard</strong>
-      <span class="badge" id="traceBadge">CONTRACT → Table 7 / Table 9 / Figure 3 → SSOT_DERIVATIVE</span>
-    </div>
+    <div><strong>QPS User Interface Thermo Dashboard</strong><span class="badge" id="traceBadge">CONTRACT → Table 7 / Table 9 / Figure 3 → SSOT_DERIVATIVE</span></div>
     <nav>
-      
       <button data-step="-1" title="Previous slide">◀</button>
-      <span id="slideIndicator">1 / 6</span>
+      <span id="slideIndicator">1 / 7</span>
       <button data-step="1" title="Next slide">▶</button>
-    
-      <button id="themeToggle">Light mode</button>
-      <button id="exportCsv">Export CSV</button>
-      <button id="exportPng">Export PNG</button>
-      <button id="exportSvg">Export SVG</button>
-    </nav>
+    <button id="themeToggle">Light mode</button><button id="exportCsv">Export CSV</button><button id="exportPng">Export PNG</button><button id="exportSvg">Export SVG</button></nav>
   </header>
   <aside class="controls" aria-label="dashboard toggles">
     <label>Scenario<select id="scenario"><option>2K-SB</option><option>2K-OP</option><option>BOTH</option></select></label>
@@ -67,6 +58,12 @@
         <div class="slide-copy"><p class="eyebrow">Slide 6</p><h1>Controls Engineering View</h1><p>Transport lag, dead time, and first-order response estimates for 60 m, 91.5 m, and 151.5 m.</p><div class="insights" id="insights-6"></div></div>
         <div class="plot-grid"><div class="plot" id="plot-6-a"></div><div class="plot" id="plot-6-b"></div></div>
         <div class="data-table" id="table-6"></div>
+      </section>
+
+      <section class="slide" data-slide="7">
+        <div class="slide-copy"><p class="eyebrow">Slide 7</p><h1>Controls Engineering</h1><p>Transport delay, residence time, deadtime, and sample period with uncertainty bands for A/B/D/E/W/U/S.</p><div class="insights" id="insights-7"></div></div>
+        <div class="plot-grid"><div class="plot" id="plot-7-a"></div><div class="plot" id="plot-7-b"></div></div>
+        <div class="data-table" id="table-7"></div>
       </section></main>
   <script id="qps-data" type="application/json">{
   "metadata": {
@@ -76,7 +73,8 @@
       "document": "CONTRACT",
       "section": "3 Technical Requirements / QPS User Interfaces",
       "table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "figure": "Figure 3 QPS interface mapping"
+      "figure": "Figure 3 QPS interface mapping",
+      "requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     }
   },
   "lineBasis": [
@@ -85,6 +83,7 @@
       "family": "cold",
       "interface": "A",
       "dn": "DN25",
+      "diameter_m": 0.025,
       "route_length_m": 151.5,
       "flow_basis_g_s": 6.0,
       "notes": "QPS supply interface A"
@@ -94,6 +93,7 @@
       "family": "cold",
       "interface": "B",
       "dn": "DN40",
+      "diameter_m": 0.04,
       "route_length_m": 151.5,
       "flow_basis_g_s": 12.0,
       "notes": "QPS return interface B; highest density variability"
@@ -103,6 +103,7 @@
       "family": "cold",
       "interface": "D",
       "dn": "DN32",
+      "diameter_m": 0.032,
       "route_length_m": 151.5,
       "flow_basis_g_s": 9.0,
       "notes": "QPS distribution interface D"
@@ -112,6 +113,7 @@
       "family": "cold",
       "interface": "E",
       "dn": "DN20",
+      "diameter_m": 0.02,
       "route_length_m": 151.5,
       "flow_basis_g_s": 4.0,
       "notes": "QPS trim/interface E; density-sensitive"
@@ -121,6 +123,7 @@
       "family": "warm",
       "interface": "W",
       "dn": "DN80",
+      "diameter_m": 0.08,
       "route_length_m": 151.5,
       "flow_basis_g_s": 28.0,
       "notes": "Warm recovery W; high velocity watch item"
@@ -130,6 +133,7 @@
       "family": "warm",
       "interface": "U",
       "dn": "DN65",
+      "diameter_m": 0.065,
       "route_length_m": 91.5,
       "flow_basis_g_s": 20.0,
       "notes": "Warm utility U, RTM-289 calculation basis"
@@ -139,6 +143,7 @@
       "family": "warm",
       "interface": "S",
       "dn": "DN150",
+      "diameter_m": 0.15,
       "route_length_m": 60.0,
       "flow_basis_g_s": 45.0,
       "notes": "Warm safety/header S, RTM-296 calculation basis"
@@ -163,6 +168,7 @@
       "interface": "A",
       "scenario": "2K-SB",
       "dn": "DN25",
+      "diameter_m": 0.025,
       "route_length_m": 151.5,
       "flow_basis_g_s": 6.0,
       "metric": "Density",
@@ -173,7 +179,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "A",
@@ -181,6 +188,7 @@
       "interface": "A",
       "scenario": "2K-SB",
       "dn": "DN25",
+      "diameter_m": 0.025,
       "route_length_m": 151.5,
       "flow_basis_g_s": 6.0,
       "metric": "Velocity",
@@ -191,7 +199,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "A",
@@ -199,6 +208,7 @@
       "interface": "A",
       "scenario": "2K-OP",
       "dn": "DN25",
+      "diameter_m": 0.025,
       "route_length_m": 151.5,
       "flow_basis_g_s": 6.0,
       "metric": "Density",
@@ -209,7 +219,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "A",
@@ -217,6 +228,7 @@
       "interface": "A",
       "scenario": "2K-OP",
       "dn": "DN25",
+      "diameter_m": 0.025,
       "route_length_m": 151.5,
       "flow_basis_g_s": 6.0,
       "metric": "Velocity",
@@ -227,7 +239,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "B",
@@ -235,6 +248,7 @@
       "interface": "B",
       "scenario": "2K-SB",
       "dn": "DN40",
+      "diameter_m": 0.04,
       "route_length_m": 151.5,
       "flow_basis_g_s": 12.0,
       "metric": "Density",
@@ -245,7 +259,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "B",
@@ -253,6 +268,7 @@
       "interface": "B",
       "scenario": "2K-SB",
       "dn": "DN40",
+      "diameter_m": 0.04,
       "route_length_m": 151.5,
       "flow_basis_g_s": 12.0,
       "metric": "Velocity",
@@ -263,7 +279,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "B",
@@ -271,6 +288,7 @@
       "interface": "B",
       "scenario": "2K-OP",
       "dn": "DN40",
+      "diameter_m": 0.04,
       "route_length_m": 151.5,
       "flow_basis_g_s": 12.0,
       "metric": "Density",
@@ -281,7 +299,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "B",
@@ -289,6 +308,7 @@
       "interface": "B",
       "scenario": "2K-OP",
       "dn": "DN40",
+      "diameter_m": 0.04,
       "route_length_m": 151.5,
       "flow_basis_g_s": 12.0,
       "metric": "Velocity",
@@ -299,7 +319,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "D",
@@ -307,6 +328,7 @@
       "interface": "D",
       "scenario": "2K-SB",
       "dn": "DN32",
+      "diameter_m": 0.032,
       "route_length_m": 151.5,
       "flow_basis_g_s": 9.0,
       "metric": "Density",
@@ -317,7 +339,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "D",
@@ -325,6 +348,7 @@
       "interface": "D",
       "scenario": "2K-SB",
       "dn": "DN32",
+      "diameter_m": 0.032,
       "route_length_m": 151.5,
       "flow_basis_g_s": 9.0,
       "metric": "Velocity",
@@ -335,7 +359,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "D",
@@ -343,6 +368,7 @@
       "interface": "D",
       "scenario": "2K-OP",
       "dn": "DN32",
+      "diameter_m": 0.032,
       "route_length_m": 151.5,
       "flow_basis_g_s": 9.0,
       "metric": "Density",
@@ -353,7 +379,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "D",
@@ -361,6 +388,7 @@
       "interface": "D",
       "scenario": "2K-OP",
       "dn": "DN32",
+      "diameter_m": 0.032,
       "route_length_m": 151.5,
       "flow_basis_g_s": 9.0,
       "metric": "Velocity",
@@ -371,7 +399,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "E",
@@ -379,6 +408,7 @@
       "interface": "E",
       "scenario": "2K-SB",
       "dn": "DN20",
+      "diameter_m": 0.02,
       "route_length_m": 151.5,
       "flow_basis_g_s": 4.0,
       "metric": "Density",
@@ -389,7 +419,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "E",
@@ -397,6 +428,7 @@
       "interface": "E",
       "scenario": "2K-SB",
       "dn": "DN20",
+      "diameter_m": 0.02,
       "route_length_m": 151.5,
       "flow_basis_g_s": 4.0,
       "metric": "Velocity",
@@ -407,7 +439,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "E",
@@ -415,6 +448,7 @@
       "interface": "E",
       "scenario": "2K-OP",
       "dn": "DN20",
+      "diameter_m": 0.02,
       "route_length_m": 151.5,
       "flow_basis_g_s": 4.0,
       "metric": "Density",
@@ -425,7 +459,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "E",
@@ -433,6 +468,7 @@
       "interface": "E",
       "scenario": "2K-OP",
       "dn": "DN20",
+      "diameter_m": 0.02,
       "route_length_m": 151.5,
       "flow_basis_g_s": 4.0,
       "metric": "Velocity",
@@ -443,7 +479,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "W",
@@ -451,6 +488,7 @@
       "interface": "W",
       "scenario": "2K-SB",
       "dn": "DN80",
+      "diameter_m": 0.08,
       "route_length_m": 151.5,
       "flow_basis_g_s": 28.0,
       "metric": "Density",
@@ -461,7 +499,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "W",
@@ -469,6 +508,7 @@
       "interface": "W",
       "scenario": "2K-SB",
       "dn": "DN80",
+      "diameter_m": 0.08,
       "route_length_m": 151.5,
       "flow_basis_g_s": 28.0,
       "metric": "Velocity",
@@ -479,7 +519,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "W",
@@ -487,6 +528,7 @@
       "interface": "W",
       "scenario": "2K-OP",
       "dn": "DN80",
+      "diameter_m": 0.08,
       "route_length_m": 151.5,
       "flow_basis_g_s": 28.0,
       "metric": "Density",
@@ -497,7 +539,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "W",
@@ -505,6 +548,7 @@
       "interface": "W",
       "scenario": "2K-OP",
       "dn": "DN80",
+      "diameter_m": 0.08,
       "route_length_m": 151.5,
       "flow_basis_g_s": 28.0,
       "metric": "Velocity",
@@ -515,7 +559,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "U",
@@ -523,6 +568,7 @@
       "interface": "U",
       "scenario": "2K-SB",
       "dn": "DN65",
+      "diameter_m": 0.065,
       "route_length_m": 91.5,
       "flow_basis_g_s": 20.0,
       "metric": "Density",
@@ -533,7 +579,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "U",
@@ -541,6 +588,7 @@
       "interface": "U",
       "scenario": "2K-SB",
       "dn": "DN65",
+      "diameter_m": 0.065,
       "route_length_m": 91.5,
       "flow_basis_g_s": 20.0,
       "metric": "Velocity",
@@ -551,7 +599,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "U",
@@ -559,6 +608,7 @@
       "interface": "U",
       "scenario": "2K-OP",
       "dn": "DN65",
+      "diameter_m": 0.065,
       "route_length_m": 91.5,
       "flow_basis_g_s": 20.0,
       "metric": "Density",
@@ -569,7 +619,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "U",
@@ -577,6 +628,7 @@
       "interface": "U",
       "scenario": "2K-OP",
       "dn": "DN65",
+      "diameter_m": 0.065,
       "route_length_m": 91.5,
       "flow_basis_g_s": 20.0,
       "metric": "Velocity",
@@ -587,7 +639,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "S",
@@ -595,6 +648,7 @@
       "interface": "S",
       "scenario": "2K-SB",
       "dn": "DN150",
+      "diameter_m": 0.15,
       "route_length_m": 60.0,
       "flow_basis_g_s": 45.0,
       "metric": "Density",
@@ -605,7 +659,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "S",
@@ -613,6 +668,7 @@
       "interface": "S",
       "scenario": "2K-SB",
       "dn": "DN150",
+      "diameter_m": 0.15,
       "route_length_m": 60.0,
       "flow_basis_g_s": 45.0,
       "metric": "Velocity",
@@ -623,7 +679,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "S",
@@ -631,6 +688,7 @@
       "interface": "S",
       "scenario": "2K-OP",
       "dn": "DN150",
+      "diameter_m": 0.15,
       "route_length_m": 60.0,
       "flow_basis_g_s": 45.0,
       "metric": "Density",
@@ -641,7 +699,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "S",
@@ -649,6 +708,7 @@
       "interface": "S",
       "scenario": "2K-OP",
       "dn": "DN150",
+      "diameter_m": 0.15,
       "route_length_m": 60.0,
       "flow_basis_g_s": 45.0,
       "metric": "Velocity",
@@ -659,7 +719,8 @@
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     }
   ],
   "controls": [
@@ -671,13 +732,31 @@
       "travel_time_60m": 19.255,
       "travel_time_91_5m": 29.365,
       "travel_time_151_5m": 48.62,
-      "recommended_deadtime": 48.62,
-      "recommended_sample_period": 4.862,
-      "recommended_filter_constant": 16.207,
+      "travel_time_60m_min": 17.503,
+      "travel_time_60m_expected": 19.255,
+      "travel_time_60m_max": 21.398,
+      "travel_time_91_5m_min": 26.692,
+      "travel_time_91_5m_expected": 29.365,
+      "travel_time_91_5m_max": 32.632,
+      "travel_time_151_5m_min": 44.195,
+      "travel_time_151_5m_expected": 48.62,
+      "travel_time_151_5m_max": 54.03,
+      "reynolds_number": 208356.533,
+      "volumetric_flow_m3_s": 0.00153,
+      "residence_time_s": 48.62,
+      "transport_delay_s": 48.62,
+      "effective_deadtime_s": 72.93,
+      "recommended_controller_bandwidth_hz": 0.002182,
+      "recommended_scan_period_s": 3.647,
+      "recommended_pid_update_period_s": 7.293,
+      "recommended_deadtime": 72.93,
+      "recommended_sample_period": 3.647,
+      "recommended_filter_constant": 24.31,
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "A",
@@ -687,13 +766,31 @@
       "travel_time_60m": 12.942,
       "travel_time_91_5m": 19.737,
       "travel_time_151_5m": 32.679,
-      "recommended_deadtime": 32.679,
-      "recommended_sample_period": 3.268,
-      "recommended_filter_constant": 10.893,
+      "travel_time_60m_min": 11.765,
+      "travel_time_60m_expected": 12.942,
+      "travel_time_60m_max": 14.382,
+      "travel_time_91_5m_min": 17.941,
+      "travel_time_91_5m_expected": 19.737,
+      "travel_time_91_5m_max": 21.932,
+      "travel_time_151_5m_min": 29.706,
+      "travel_time_151_5m_expected": 32.679,
+      "travel_time_151_5m_max": 36.314,
+      "reynolds_number": 215419.467,
+      "volumetric_flow_m3_s": 0.002276,
+      "residence_time_s": 32.679,
+      "transport_delay_s": 32.679,
+      "effective_deadtime_s": 49.019,
+      "recommended_controller_bandwidth_hz": 0.003247,
+      "recommended_scan_period_s": 2.451,
+      "recommended_pid_update_period_s": 4.902,
+      "recommended_deadtime": 49.019,
+      "recommended_sample_period": 2.451,
+      "recommended_filter_constant": 16.34,
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "B",
@@ -703,13 +800,31 @@
       "travel_time_60m": 15.907,
       "travel_time_91_5m": 24.258,
       "travel_time_151_5m": 40.164,
-      "recommended_deadtime": 40.164,
-      "recommended_sample_period": 4.016,
-      "recommended_filter_constant": 13.388,
+      "travel_time_60m_min": 12.829,
+      "travel_time_60m_expected": 15.907,
+      "travel_time_60m_max": 20.928,
+      "travel_time_91_5m_min": 19.564,
+      "travel_time_91_5m_expected": 24.258,
+      "travel_time_91_5m_max": 31.915,
+      "travel_time_151_5m_min": 32.393,
+      "travel_time_151_5m_expected": 40.164,
+      "travel_time_151_5m_max": 52.843,
+      "reynolds_number": 510376.747,
+      "volumetric_flow_m3_s": 0.00474,
+      "residence_time_s": 40.164,
+      "transport_delay_s": 40.164,
+      "effective_deadtime_s": 60.246,
+      "recommended_controller_bandwidth_hz": 0.002642,
+      "recommended_scan_period_s": 3.012,
+      "recommended_pid_update_period_s": 6.025,
+      "recommended_deadtime": 60.246,
+      "recommended_sample_period": 3.012,
+      "recommended_filter_constant": 20.082,
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "B",
@@ -719,13 +834,31 @@
       "travel_time_60m": 10.691,
       "travel_time_91_5m": 16.304,
       "travel_time_151_5m": 26.996,
-      "recommended_deadtime": 26.996,
-      "recommended_sample_period": 2.7,
-      "recommended_filter_constant": 8.999,
+      "travel_time_60m_min": 8.622,
+      "travel_time_60m_expected": 10.691,
+      "travel_time_60m_max": 14.068,
+      "travel_time_91_5m_min": 13.148,
+      "travel_time_91_5m_expected": 16.304,
+      "travel_time_91_5m_max": 21.454,
+      "travel_time_151_5m_min": 21.77,
+      "travel_time_151_5m_expected": 26.996,
+      "travel_time_151_5m_max": 35.522,
+      "reynolds_number": 527677.653,
+      "volumetric_flow_m3_s": 0.007052,
+      "residence_time_s": 26.996,
+      "transport_delay_s": 26.996,
+      "effective_deadtime_s": 40.494,
+      "recommended_controller_bandwidth_hz": 0.00393,
+      "recommended_scan_period_s": 2.025,
+      "recommended_pid_update_period_s": 4.049,
+      "recommended_deadtime": 40.494,
+      "recommended_sample_period": 2.025,
+      "recommended_filter_constant": 13.498,
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "D",
@@ -735,13 +868,31 @@
       "travel_time_60m": 17.422,
       "travel_time_91_5m": 26.568,
       "travel_time_151_5m": 43.99,
-      "recommended_deadtime": 43.99,
-      "recommended_sample_period": 4.399,
-      "recommended_filter_constant": 14.663,
+      "travel_time_60m_min": 15.416,
+      "travel_time_60m_expected": 17.422,
+      "travel_time_60m_max": 20.027,
+      "travel_time_91_5m_min": 23.51,
+      "travel_time_91_5m_expected": 26.568,
+      "travel_time_91_5m_max": 30.541,
+      "travel_time_151_5m_min": 38.926,
+      "travel_time_151_5m_expected": 43.99,
+      "travel_time_151_5m_max": 50.567,
+      "reynolds_number": 320778.752,
+      "volumetric_flow_m3_s": 0.00277,
+      "residence_time_s": 43.99,
+      "transport_delay_s": 43.99,
+      "effective_deadtime_s": 65.985,
+      "recommended_controller_bandwidth_hz": 0.002412,
+      "recommended_scan_period_s": 3.299,
+      "recommended_pid_update_period_s": 6.598,
+      "recommended_deadtime": 65.985,
+      "recommended_sample_period": 3.299,
+      "recommended_filter_constant": 21.995,
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "D",
@@ -751,13 +902,31 @@
       "travel_time_60m": 11.71,
       "travel_time_91_5m": 17.857,
       "travel_time_151_5m": 29.567,
-      "recommended_deadtime": 29.567,
-      "recommended_sample_period": 2.957,
-      "recommended_filter_constant": 9.856,
+      "travel_time_60m_min": 10.363,
+      "travel_time_60m_expected": 11.71,
+      "travel_time_60m_max": 13.459,
+      "travel_time_91_5m_min": 15.803,
+      "travel_time_91_5m_expected": 17.857,
+      "travel_time_91_5m_max": 20.525,
+      "travel_time_151_5m_min": 26.166,
+      "travel_time_151_5m_expected": 29.567,
+      "travel_time_151_5m_max": 33.984,
+      "reynolds_number": 331652.608,
+      "volumetric_flow_m3_s": 0.004121,
+      "residence_time_s": 29.567,
+      "transport_delay_s": 29.567,
+      "effective_deadtime_s": 44.35,
+      "recommended_controller_bandwidth_hz": 0.003589,
+      "recommended_scan_period_s": 2.218,
+      "recommended_pid_update_period_s": 4.435,
+      "recommended_deadtime": 44.35,
+      "recommended_sample_period": 2.218,
+      "recommended_filter_constant": 14.783,
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "E",
@@ -767,13 +936,31 @@
       "travel_time_60m": 22.173,
       "travel_time_91_5m": 33.814,
       "travel_time_151_5m": 55.987,
-      "recommended_deadtime": 55.987,
-      "recommended_sample_period": 5.599,
-      "recommended_filter_constant": 18.662,
+      "travel_time_60m_min": 18.479,
+      "travel_time_60m_expected": 22.173,
+      "travel_time_60m_max": 27.714,
+      "travel_time_91_5m_min": 28.18,
+      "travel_time_91_5m_expected": 33.814,
+      "travel_time_91_5m_max": 42.263,
+      "travel_time_151_5m_min": 46.658,
+      "travel_time_151_5m_expected": 55.987,
+      "travel_time_151_5m_max": 69.977,
+      "reynolds_number": 110693.44,
+      "volumetric_flow_m3_s": 0.00085,
+      "residence_time_s": 55.987,
+      "transport_delay_s": 55.987,
+      "effective_deadtime_s": 83.98,
+      "recommended_controller_bandwidth_hz": 0.001895,
+      "recommended_scan_period_s": 4.199,
+      "recommended_pid_update_period_s": 8.398,
+      "recommended_deadtime": 83.98,
+      "recommended_sample_period": 4.199,
+      "recommended_filter_constant": 27.993,
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "E",
@@ -783,13 +970,31 @@
       "travel_time_60m": 14.903,
       "travel_time_91_5m": 22.727,
       "travel_time_151_5m": 37.63,
-      "recommended_deadtime": 37.63,
-      "recommended_sample_period": 3.763,
-      "recommended_filter_constant": 12.543,
+      "travel_time_60m_min": 12.42,
+      "travel_time_60m_expected": 14.903,
+      "travel_time_60m_max": 18.628,
+      "travel_time_91_5m_min": 18.94,
+      "travel_time_91_5m_expected": 22.727,
+      "travel_time_91_5m_max": 28.407,
+      "travel_time_151_5m_min": 31.36,
+      "travel_time_151_5m_expected": 37.63,
+      "travel_time_151_5m_max": 47.035,
+      "reynolds_number": 114445.76,
+      "volumetric_flow_m3_s": 0.001265,
+      "residence_time_s": 37.63,
+      "transport_delay_s": 37.63,
+      "effective_deadtime_s": 56.445,
+      "recommended_controller_bandwidth_hz": 0.00282,
+      "recommended_scan_period_s": 2.822,
+      "recommended_pid_update_period_s": 5.645,
+      "recommended_deadtime": 56.445,
+      "recommended_sample_period": 2.822,
+      "recommended_filter_constant": 18.815,
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "W",
@@ -799,13 +1004,31 @@
       "travel_time_60m": 8.315,
       "travel_time_91_5m": 12.68,
       "travel_time_151_5m": 20.995,
-      "recommended_deadtime": 20.995,
-      "recommended_sample_period": 2.099,
-      "recommended_filter_constant": 6.998,
+      "travel_time_60m_min": 7.046,
+      "travel_time_60m_expected": 8.315,
+      "travel_time_60m_max": 10.14,
+      "travel_time_91_5m_min": 10.746,
+      "travel_time_91_5m_expected": 12.68,
+      "travel_time_91_5m_max": 15.464,
+      "travel_time_151_5m_min": 17.792,
+      "travel_time_151_5m_expected": 20.995,
+      "travel_time_151_5m_max": 25.604,
+      "reynolds_number": 56198.208,
+      "volumetric_flow_m3_s": 0.036272,
+      "residence_time_s": 20.995,
+      "transport_delay_s": 20.995,
+      "effective_deadtime_s": 31.493,
+      "recommended_controller_bandwidth_hz": 0.005054,
+      "recommended_scan_period_s": 1.575,
+      "recommended_pid_update_period_s": 3.149,
+      "recommended_deadtime": 31.493,
+      "recommended_sample_period": 1.575,
+      "recommended_filter_constant": 10.498,
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "W",
@@ -815,13 +1038,31 @@
       "travel_time_60m": 5.589,
       "travel_time_91_5m": 8.523,
       "travel_time_151_5m": 14.111,
-      "recommended_deadtime": 14.111,
-      "recommended_sample_period": 1.411,
-      "recommended_filter_constant": 4.704,
+      "travel_time_60m_min": 4.736,
+      "travel_time_60m_expected": 5.589,
+      "travel_time_60m_max": 6.815,
+      "travel_time_91_5m_min": 7.223,
+      "travel_time_91_5m_expected": 8.523,
+      "travel_time_91_5m_max": 10.393,
+      "travel_time_151_5m_min": 11.959,
+      "travel_time_151_5m_expected": 14.111,
+      "travel_time_151_5m_max": 17.208,
+      "reynolds_number": 58103.232,
+      "volumetric_flow_m3_s": 0.053965,
+      "residence_time_s": 14.111,
+      "transport_delay_s": 14.111,
+      "effective_deadtime_s": 21.167,
+      "recommended_controller_bandwidth_hz": 0.007519,
+      "recommended_scan_period_s": 1.058,
+      "recommended_pid_update_period_s": 2.117,
+      "recommended_deadtime": 21.167,
+      "recommended_sample_period": 1.058,
+      "recommended_filter_constant": 7.056,
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "U",
@@ -831,13 +1072,31 @@
       "travel_time_60m": 11.433,
       "travel_time_91_5m": 17.435,
       "travel_time_151_5m": 28.868,
-      "recommended_deadtime": 28.868,
-      "recommended_sample_period": 2.887,
-      "recommended_filter_constant": 9.623,
+      "travel_time_60m_min": 10.028,
+      "travel_time_60m_expected": 11.433,
+      "travel_time_60m_max": 13.295,
+      "travel_time_91_5m_min": 15.293,
+      "travel_time_91_5m_expected": 17.435,
+      "travel_time_91_5m_max": 20.275,
+      "travel_time_151_5m_min": 25.322,
+      "travel_time_151_5m_expected": 28.868,
+      "travel_time_151_5m_max": 33.57,
+      "reynolds_number": 29182.816,
+      "volumetric_flow_m3_s": 0.017414,
+      "residence_time_s": 17.435,
+      "transport_delay_s": 28.868,
+      "effective_deadtime_s": 37.586,
+      "recommended_controller_bandwidth_hz": 0.004234,
+      "recommended_scan_period_s": 1.879,
+      "recommended_pid_update_period_s": 3.759,
+      "recommended_deadtime": 37.586,
+      "recommended_sample_period": 1.879,
+      "recommended_filter_constant": 12.529,
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "U",
@@ -847,13 +1106,31 @@
       "travel_time_60m": 7.684,
       "travel_time_91_5m": 11.719,
       "travel_time_151_5m": 19.403,
-      "recommended_deadtime": 19.403,
-      "recommended_sample_period": 1.94,
-      "recommended_filter_constant": 6.468,
+      "travel_time_60m_min": 6.741,
+      "travel_time_60m_expected": 7.684,
+      "travel_time_60m_max": 8.935,
+      "travel_time_91_5m_min": 10.28,
+      "travel_time_91_5m_expected": 11.719,
+      "travel_time_91_5m_max": 13.626,
+      "travel_time_151_5m_min": 17.021,
+      "travel_time_151_5m_expected": 19.403,
+      "travel_time_151_5m_max": 22.561,
+      "reynolds_number": 30172.064,
+      "volumetric_flow_m3_s": 0.025909,
+      "residence_time_s": 11.719,
+      "transport_delay_s": 19.403,
+      "effective_deadtime_s": 25.262,
+      "recommended_controller_bandwidth_hz": 0.0063,
+      "recommended_scan_period_s": 1.263,
+      "recommended_pid_update_period_s": 2.526,
+      "recommended_deadtime": 25.262,
+      "recommended_sample_period": 1.263,
+      "recommended_filter_constant": 8.421,
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "S",
@@ -863,13 +1140,31 @@
       "travel_time_60m": 14.933,
       "travel_time_91_5m": 22.773,
       "travel_time_151_5m": 37.705,
-      "recommended_deadtime": 37.705,
-      "recommended_sample_period": 3.77,
-      "recommended_filter_constant": 12.568,
+      "travel_time_60m_min": 13.333,
+      "travel_time_60m_expected": 14.933,
+      "travel_time_60m_max": 16.968,
+      "travel_time_91_5m_min": 20.333,
+      "travel_time_91_5m_expected": 22.773,
+      "travel_time_91_5m_max": 25.877,
+      "travel_time_151_5m_min": 33.667,
+      "travel_time_151_5m_expected": 37.705,
+      "travel_time_151_5m_max": 42.845,
+      "reynolds_number": 42671.16,
+      "volumetric_flow_m3_s": 0.071004,
+      "residence_time_s": 14.933,
+      "transport_delay_s": 37.705,
+      "effective_deadtime_s": 45.171,
+      "recommended_controller_bandwidth_hz": 0.003523,
+      "recommended_scan_period_s": 2.259,
+      "recommended_pid_update_period_s": 4.517,
+      "recommended_deadtime": 45.171,
+      "recommended_sample_period": 2.259,
+      "recommended_filter_constant": 15.057,
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     },
     {
       "line": "S",
@@ -879,13 +1174,31 @@
       "travel_time_60m": 10.037,
       "travel_time_91_5m": 15.306,
       "travel_time_151_5m": 25.343,
-      "recommended_deadtime": 25.343,
-      "recommended_sample_period": 2.534,
-      "recommended_filter_constant": 8.448,
+      "travel_time_60m_min": 8.962,
+      "travel_time_60m_expected": 10.037,
+      "travel_time_60m_max": 11.405,
+      "travel_time_91_5m_min": 13.667,
+      "travel_time_91_5m_expected": 15.306,
+      "travel_time_91_5m_max": 17.392,
+      "travel_time_151_5m_min": 22.629,
+      "travel_time_151_5m_expected": 25.343,
+      "travel_time_151_5m_max": 28.797,
+      "reynolds_number": 44117.64,
+      "volumetric_flow_m3_s": 0.10564,
+      "residence_time_s": 10.037,
+      "transport_delay_s": 25.343,
+      "effective_deadtime_s": 30.361,
+      "recommended_controller_bandwidth_hz": 0.005242,
+      "recommended_scan_period_s": 1.518,
+      "recommended_pid_update_period_s": 3.036,
+      "recommended_deadtime": 30.361,
+      "recommended_sample_period": 1.518,
+      "recommended_filter_constant": 10.12,
       "source_document": "CONTRACT",
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
-      "source_figure": "Figure 3 QPS interface mapping"
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     }
   ],
   "warm": [
@@ -895,6 +1208,7 @@
       "interface": "W",
       "scenario": "2K-SB",
       "dn": "DN80",
+      "diameter_m": 0.08,
       "route_length_m": 151.5,
       "flow_basis_g_s": 28.0,
       "metric": "Density",
@@ -906,7 +1220,11 @@
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
       "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "2 K standby / low-flow stabilization",
       "rtm_calculation": "RTM-292",
+      "travel_time_60m_expected": 8.315,
+      "transport_delay_s": 20.995,
       "emergency_recovery_min": 2.156,
       "emergency_recovery_expected": 2.628,
       "emergency_recovery_max": 3.101
@@ -917,6 +1235,7 @@
       "interface": "W",
       "scenario": "2K-SB",
       "dn": "DN80",
+      "diameter_m": 0.08,
       "route_length_m": 151.5,
       "flow_basis_g_s": 28.0,
       "metric": "Velocity",
@@ -928,7 +1247,11 @@
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
       "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "2 K standby / low-flow stabilization",
       "rtm_calculation": "RTM-292",
+      "travel_time_60m_expected": 8.315,
+      "transport_delay_s": 20.995,
       "emergency_recovery_min": 7.988,
       "emergency_recovery_expected": 9.742,
       "emergency_recovery_max": 11.495
@@ -939,6 +1262,7 @@
       "interface": "W",
       "scenario": "2K-OP",
       "dn": "DN80",
+      "diameter_m": 0.08,
       "route_length_m": 151.5,
       "flow_basis_g_s": 28.0,
       "metric": "Density",
@@ -950,7 +1274,11 @@
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
       "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "2 K operation / process-flow basis",
       "rtm_calculation": "RTM-292",
+      "travel_time_60m_expected": 5.589,
+      "transport_delay_s": 14.111,
       "emergency_recovery_min": 1.497,
       "emergency_recovery_expected": 1.827,
       "emergency_recovery_max": 2.156
@@ -961,6 +1289,7 @@
       "interface": "W",
       "scenario": "2K-OP",
       "dn": "DN80",
+      "diameter_m": 0.08,
       "route_length_m": 151.5,
       "flow_basis_g_s": 28.0,
       "metric": "Velocity",
@@ -972,7 +1301,11 @@
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
       "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "2 K operation / process-flow basis",
       "rtm_calculation": "RTM-292",
+      "travel_time_60m_expected": 5.589,
+      "transport_delay_s": 14.111,
       "emergency_recovery_min": 11.885,
       "emergency_recovery_expected": 14.494,
       "emergency_recovery_max": 17.102
@@ -983,6 +1316,7 @@
       "interface": "U",
       "scenario": "2K-SB",
       "dn": "DN65",
+      "diameter_m": 0.065,
       "route_length_m": 91.5,
       "flow_basis_g_s": 20.0,
       "metric": "Density",
@@ -994,7 +1328,11 @@
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
       "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "2 K standby / low-flow stabilization",
       "rtm_calculation": "RTM-289",
+      "travel_time_60m_expected": 11.433,
+      "transport_delay_s": 28.868,
       "emergency_recovery_min": 1.765,
       "emergency_recovery_expected": 2.053,
       "emergency_recovery_max": 2.341
@@ -1005,6 +1343,7 @@
       "interface": "U",
       "scenario": "2K-SB",
       "dn": "DN65",
+      "diameter_m": 0.065,
       "route_length_m": 91.5,
       "flow_basis_g_s": 20.0,
       "metric": "Velocity",
@@ -1016,7 +1355,11 @@
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
       "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "2 K standby / low-flow stabilization",
       "rtm_calculation": "RTM-289",
+      "travel_time_60m_expected": 11.433,
+      "transport_delay_s": 28.868,
       "emergency_recovery_min": 5.416,
       "emergency_recovery_expected": 6.298,
       "emergency_recovery_max": 7.18
@@ -1027,6 +1370,7 @@
       "interface": "U",
       "scenario": "2K-OP",
       "dn": "DN65",
+      "diameter_m": 0.065,
       "route_length_m": 91.5,
       "flow_basis_g_s": 20.0,
       "metric": "Density",
@@ -1038,7 +1382,11 @@
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
       "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "2 K operation / process-flow basis",
       "rtm_calculation": "RTM-289",
+      "travel_time_60m_expected": 7.684,
+      "transport_delay_s": 19.403,
       "emergency_recovery_min": 1.228,
       "emergency_recovery_expected": 1.427,
       "emergency_recovery_max": 1.626
@@ -1049,6 +1397,7 @@
       "interface": "U",
       "scenario": "2K-OP",
       "dn": "DN65",
+      "diameter_m": 0.065,
       "route_length_m": 91.5,
       "flow_basis_g_s": 20.0,
       "metric": "Velocity",
@@ -1060,7 +1409,11 @@
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
       "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "2 K operation / process-flow basis",
       "rtm_calculation": "RTM-289",
+      "travel_time_60m_expected": 7.684,
+      "transport_delay_s": 19.403,
       "emergency_recovery_min": 8.058,
       "emergency_recovery_expected": 9.37,
       "emergency_recovery_max": 10.681
@@ -1071,6 +1424,7 @@
       "interface": "S",
       "scenario": "2K-SB",
       "dn": "DN150",
+      "diameter_m": 0.15,
       "route_length_m": 60.0,
       "flow_basis_g_s": 45.0,
       "metric": "Density",
@@ -1082,7 +1436,11 @@
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
       "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "2 K standby / low-flow stabilization",
       "rtm_calculation": "RTM-296",
+      "travel_time_60m_expected": 14.933,
+      "transport_delay_s": 37.705,
       "emergency_recovery_min": 1.495,
       "emergency_recovery_expected": 1.699,
       "emergency_recovery_max": 1.903
@@ -1093,6 +1451,7 @@
       "interface": "S",
       "scenario": "2K-SB",
       "dn": "DN150",
+      "diameter_m": 0.15,
       "route_length_m": 60.0,
       "flow_basis_g_s": 45.0,
       "metric": "Velocity",
@@ -1104,7 +1463,11 @@
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
       "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "2 K standby / low-flow stabilization",
       "rtm_calculation": "RTM-296",
+      "travel_time_60m_expected": 14.933,
+      "transport_delay_s": 37.705,
       "emergency_recovery_min": 4.243,
       "emergency_recovery_expected": 4.822,
       "emergency_recovery_max": 5.4
@@ -1115,6 +1478,7 @@
       "interface": "S",
       "scenario": "2K-OP",
       "dn": "DN150",
+      "diameter_m": 0.15,
       "route_length_m": 60.0,
       "flow_basis_g_s": 45.0,
       "metric": "Density",
@@ -1126,7 +1490,11 @@
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
       "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "2 K operation / process-flow basis",
       "rtm_calculation": "RTM-296",
+      "travel_time_60m_expected": 10.037,
+      "transport_delay_s": 25.343,
       "emergency_recovery_min": 1.039,
       "emergency_recovery_expected": 1.181,
       "emergency_recovery_max": 1.322
@@ -1137,6 +1505,7 @@
       "interface": "S",
       "scenario": "2K-OP",
       "dn": "DN150",
+      "diameter_m": 0.15,
       "route_length_m": 60.0,
       "flow_basis_g_s": 45.0,
       "metric": "Velocity",
@@ -1148,10 +1517,658 @@
       "source_section": "3 Technical Requirements / QPS User Interfaces",
       "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
       "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "2 K operation / process-flow basis",
       "rtm_calculation": "RTM-296",
+      "travel_time_60m_expected": 10.037,
+      "transport_delay_s": 25.343,
       "emergency_recovery_min": 6.313,
       "emergency_recovery_expected": 7.174,
       "emergency_recovery_max": 8.034
+    },
+    {
+      "line": "U",
+      "family": "warm",
+      "interface": "U",
+      "scenario": "conditioning",
+      "dn": "DN65",
+      "diameter_m": 0.065,
+      "route_length_m": 91.5,
+      "flow_basis_g_s": 5.0,
+      "metric": "Density",
+      "min_value": 1.309,
+      "expected_value": 1.522,
+      "max_value": 1.735,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "U conditioning",
+      "rtm_calculation": "RTM-289",
+      "travel_time_60m_expected": 20.833,
+      "transport_delay_s": 52.604,
+      "emergency_recovery_min": 1.309,
+      "emergency_recovery_expected": 1.522,
+      "emergency_recovery_max": 1.735
+    },
+    {
+      "line": "U",
+      "family": "warm",
+      "interface": "U",
+      "scenario": "conditioning",
+      "dn": "DN65",
+      "diameter_m": 0.065,
+      "route_length_m": 91.5,
+      "flow_basis_g_s": 5.0,
+      "metric": "Velocity",
+      "min_value": 2.477,
+      "expected_value": 2.88,
+      "max_value": 3.283,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "U conditioning",
+      "rtm_calculation": "RTM-289",
+      "travel_time_60m_expected": 20.833,
+      "transport_delay_s": 52.604,
+      "emergency_recovery_min": 2.477,
+      "emergency_recovery_expected": 2.88,
+      "emergency_recovery_max": 3.283
+    },
+    {
+      "line": "U",
+      "family": "warm",
+      "interface": "U",
+      "scenario": "purge",
+      "dn": "DN65",
+      "diameter_m": 0.065,
+      "route_length_m": 91.5,
+      "flow_basis_g_s": 12.0,
+      "metric": "Density",
+      "min_value": 1.184,
+      "expected_value": 1.377,
+      "max_value": 1.57,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "U purge",
+      "rtm_calculation": "RTM-289",
+      "travel_time_60m_expected": 12.5,
+      "transport_delay_s": 31.562,
+      "emergency_recovery_min": 1.184,
+      "emergency_recovery_expected": 1.377,
+      "emergency_recovery_max": 1.57
+    },
+    {
+      "line": "U",
+      "family": "warm",
+      "interface": "U",
+      "scenario": "purge",
+      "dn": "DN65",
+      "diameter_m": 0.065,
+      "route_length_m": 91.5,
+      "flow_basis_g_s": 12.0,
+      "metric": "Velocity",
+      "min_value": 4.128,
+      "expected_value": 4.8,
+      "max_value": 5.472,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "U purge",
+      "rtm_calculation": "RTM-289",
+      "travel_time_60m_expected": 12.5,
+      "transport_delay_s": 31.562,
+      "emergency_recovery_min": 4.128,
+      "emergency_recovery_expected": 4.8,
+      "emergency_recovery_max": 5.472
+    },
+    {
+      "line": "U",
+      "family": "warm",
+      "interface": "U",
+      "scenario": "guard replenishment",
+      "dn": "DN65",
+      "diameter_m": 0.065,
+      "route_length_m": 91.5,
+      "flow_basis_g_s": 20.0,
+      "metric": "Density",
+      "min_value": 1.247,
+      "expected_value": 1.45,
+      "max_value": 1.653,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "U guard replenishment",
+      "rtm_calculation": "RTM-289",
+      "travel_time_60m_expected": 9.375,
+      "transport_delay_s": 23.672,
+      "emergency_recovery_min": 1.247,
+      "emergency_recovery_expected": 1.45,
+      "emergency_recovery_max": 1.653
+    },
+    {
+      "line": "U",
+      "family": "warm",
+      "interface": "U",
+      "scenario": "guard replenishment",
+      "dn": "DN65",
+      "diameter_m": 0.065,
+      "route_length_m": 91.5,
+      "flow_basis_g_s": 20.0,
+      "metric": "Velocity",
+      "min_value": 5.504,
+      "expected_value": 6.4,
+      "max_value": 7.296,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "U guard replenishment",
+      "rtm_calculation": "RTM-289",
+      "travel_time_60m_expected": 9.375,
+      "transport_delay_s": 23.672,
+      "emergency_recovery_min": 5.504,
+      "emergency_recovery_expected": 6.4,
+      "emergency_recovery_max": 7.296
+    },
+    {
+      "line": "W",
+      "family": "warm",
+      "interface": "W",
+      "scenario": "2K-SB",
+      "dn": "DN80",
+      "diameter_m": 0.08,
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 1.0,
+      "metric": "Density",
+      "min_value": 1.597,
+      "expected_value": 1.947,
+      "max_value": 2.297,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "W 2K-SB",
+      "rtm_calculation": "RTM-292",
+      "travel_time_60m_expected": 8.315,
+      "transport_delay_s": 20.995,
+      "emergency_recovery_min": 1.597,
+      "emergency_recovery_expected": 1.947,
+      "emergency_recovery_max": 2.297
+    },
+    {
+      "line": "W",
+      "family": "warm",
+      "interface": "W",
+      "scenario": "2K-SB",
+      "dn": "DN80",
+      "diameter_m": 0.08,
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 1.0,
+      "metric": "Velocity",
+      "min_value": 5.917,
+      "expected_value": 7.216,
+      "max_value": 8.515,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "W 2K-SB",
+      "rtm_calculation": "RTM-292",
+      "travel_time_60m_expected": 8.315,
+      "transport_delay_s": 20.995,
+      "emergency_recovery_min": 5.917,
+      "emergency_recovery_expected": 7.216,
+      "emergency_recovery_max": 8.515
+    },
+    {
+      "line": "W",
+      "family": "warm",
+      "interface": "W",
+      "scenario": "2K-OP",
+      "dn": "DN80",
+      "diameter_m": 0.08,
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 3.0,
+      "metric": "Density",
+      "min_value": 1.109,
+      "expected_value": 1.353,
+      "max_value": 1.597,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "W 2K-OP",
+      "rtm_calculation": "RTM-292",
+      "travel_time_60m_expected": 5.589,
+      "transport_delay_s": 14.111,
+      "emergency_recovery_min": 1.109,
+      "emergency_recovery_expected": 1.353,
+      "emergency_recovery_max": 1.597
+    },
+    {
+      "line": "W",
+      "family": "warm",
+      "interface": "W",
+      "scenario": "2K-OP",
+      "dn": "DN80",
+      "diameter_m": 0.08,
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 3.0,
+      "metric": "Velocity",
+      "min_value": 8.804,
+      "expected_value": 10.736,
+      "max_value": 12.668,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "W 2K-OP",
+      "rtm_calculation": "RTM-292",
+      "travel_time_60m_expected": 5.589,
+      "transport_delay_s": 14.111,
+      "emergency_recovery_min": 8.804,
+      "emergency_recovery_expected": 10.736,
+      "emergency_recovery_max": 12.668
+    },
+    {
+      "line": "W",
+      "family": "warm",
+      "interface": "W",
+      "scenario": "0-3 g/s envelope",
+      "dn": "DN80",
+      "diameter_m": 0.08,
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 3.0,
+      "metric": "Density",
+      "min_value": 1.353,
+      "expected_value": 1.65,
+      "max_value": 1.947,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "W 0\u20133 g/s envelope",
+      "rtm_calculation": "RTM-292",
+      "travel_time_60m_expected": 6.818,
+      "transport_delay_s": 17.216,
+      "emergency_recovery_min": 1.353,
+      "emergency_recovery_expected": 1.65,
+      "emergency_recovery_max": 1.947
+    },
+    {
+      "line": "W",
+      "family": "warm",
+      "interface": "W",
+      "scenario": "0-3 g/s envelope",
+      "dn": "DN80",
+      "diameter_m": 0.08,
+      "route_length_m": 151.5,
+      "flow_basis_g_s": 3.0,
+      "metric": "Velocity",
+      "min_value": 7.216,
+      "expected_value": 8.8,
+      "max_value": 10.384,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "W 0\u20133 g/s envelope",
+      "rtm_calculation": "RTM-292",
+      "travel_time_60m_expected": 6.818,
+      "transport_delay_s": 17.216,
+      "emergency_recovery_min": 7.216,
+      "emergency_recovery_expected": 8.8,
+      "emergency_recovery_max": 10.384
+    },
+    {
+      "line": "S",
+      "family": "warm",
+      "interface": "S",
+      "scenario": "residual",
+      "dn": "DN150",
+      "diameter_m": 0.15,
+      "route_length_m": 60.0,
+      "flow_basis_g_s": 10.0,
+      "metric": "Density",
+      "min_value": 1.162,
+      "expected_value": 1.32,
+      "max_value": 1.478,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "S residual",
+      "rtm_calculation": "RTM-296",
+      "travel_time_60m_expected": 40.816,
+      "transport_delay_s": 103.061,
+      "emergency_recovery_min": 1.162,
+      "emergency_recovery_expected": 1.32,
+      "emergency_recovery_max": 1.478
+    },
+    {
+      "line": "S",
+      "family": "warm",
+      "interface": "S",
+      "scenario": "residual",
+      "dn": "DN150",
+      "diameter_m": 0.15,
+      "route_length_m": 60.0,
+      "flow_basis_g_s": 10.0,
+      "metric": "Velocity",
+      "min_value": 1.294,
+      "expected_value": 1.47,
+      "max_value": 1.646,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "S residual",
+      "rtm_calculation": "RTM-296",
+      "travel_time_60m_expected": 40.816,
+      "transport_delay_s": 103.061,
+      "emergency_recovery_min": 1.294,
+      "emergency_recovery_expected": 1.47,
+      "emergency_recovery_max": 1.646
+    },
+    {
+      "line": "S",
+      "family": "warm",
+      "interface": "S",
+      "scenario": "100 g/s nominal",
+      "dn": "DN150",
+      "diameter_m": 0.15,
+      "route_length_m": 60.0,
+      "flow_basis_g_s": 100.0,
+      "metric": "Density",
+      "min_value": 1.056,
+      "expected_value": 1.2,
+      "max_value": 1.344,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "S 100 g/s nominal",
+      "rtm_calculation": "RTM-296",
+      "travel_time_60m_expected": 12.245,
+      "transport_delay_s": 30.918,
+      "emergency_recovery_min": 1.056,
+      "emergency_recovery_expected": 1.2,
+      "emergency_recovery_max": 1.344
+    },
+    {
+      "line": "S",
+      "family": "warm",
+      "interface": "S",
+      "scenario": "100 g/s nominal",
+      "dn": "DN150",
+      "diameter_m": 0.15,
+      "route_length_m": 60.0,
+      "flow_basis_g_s": 100.0,
+      "metric": "Velocity",
+      "min_value": 4.312,
+      "expected_value": 4.9,
+      "max_value": 5.488,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "S 100 g/s nominal",
+      "rtm_calculation": "RTM-296",
+      "travel_time_60m_expected": 12.245,
+      "transport_delay_s": 30.918,
+      "emergency_recovery_min": 4.312,
+      "emergency_recovery_expected": 4.9,
+      "emergency_recovery_max": 5.488
+    },
+    {
+      "line": "S",
+      "family": "warm",
+      "interface": "S",
+      "scenario": "150 g/s spike",
+      "dn": "DN150",
+      "diameter_m": 0.15,
+      "route_length_m": 60.0,
+      "flow_basis_g_s": 150.0,
+      "metric": "Density",
+      "min_value": 0.972,
+      "expected_value": 1.104,
+      "max_value": 1.236,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "S 150 g/s spike",
+      "rtm_calculation": "RTM-296",
+      "travel_time_60m_expected": 8.163,
+      "transport_delay_s": 20.612,
+      "emergency_recovery_min": 0.972,
+      "emergency_recovery_expected": 1.104,
+      "emergency_recovery_max": 1.236
+    },
+    {
+      "line": "S",
+      "family": "warm",
+      "interface": "S",
+      "scenario": "150 g/s spike",
+      "dn": "DN150",
+      "diameter_m": 0.15,
+      "route_length_m": 60.0,
+      "flow_basis_g_s": 150.0,
+      "metric": "Velocity",
+      "min_value": 6.468,
+      "expected_value": 7.35,
+      "max_value": 8.232,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "S 150 g/s spike",
+      "rtm_calculation": "RTM-296",
+      "travel_time_60m_expected": 8.163,
+      "transport_delay_s": 20.612,
+      "emergency_recovery_min": 6.468,
+      "emergency_recovery_expected": 7.35,
+      "emergency_recovery_max": 8.232
+    },
+    {
+      "line": "S",
+      "family": "warm",
+      "interface": "S",
+      "scenario": "200 g/s vacuum-break",
+      "dn": "DN150",
+      "diameter_m": 0.15,
+      "route_length_m": 60.0,
+      "flow_basis_g_s": 200.0,
+      "metric": "Density",
+      "min_value": 0.898,
+      "expected_value": 1.02,
+      "max_value": 1.142,
+      "unit": "kg/m^3",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "S 200 g/s vacuum-break",
+      "rtm_calculation": "RTM-296",
+      "travel_time_60m_expected": 6.122,
+      "transport_delay_s": 15.459,
+      "emergency_recovery_min": 0.898,
+      "emergency_recovery_expected": 1.02,
+      "emergency_recovery_max": 1.142
+    },
+    {
+      "line": "S",
+      "family": "warm",
+      "interface": "S",
+      "scenario": "200 g/s vacuum-break",
+      "dn": "DN150",
+      "diameter_m": 0.15,
+      "route_length_m": 60.0,
+      "flow_basis_g_s": 200.0,
+      "metric": "Velocity",
+      "min_value": 8.624,
+      "expected_value": 9.8,
+      "max_value": 10.976,
+      "unit": "m/s",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model",
+      "operating_basis": "S 200 g/s vacuum-break",
+      "rtm_calculation": "RTM-296",
+      "travel_time_60m_expected": 6.122,
+      "transport_delay_s": 15.459,
+      "emergency_recovery_min": 8.624,
+      "emergency_recovery_expected": 9.8,
+      "emergency_recovery_max": 10.976
+    }
+  ],
+  "bLine": [
+    {
+      "line": "B",
+      "scenario": "2K-SB",
+      "station": "QCELL outlet",
+      "route_position_m": 0.0,
+      "pressure_mbar": 31.0,
+      "temperature_k": 2.0,
+      "density": 10.148,
+      "velocity": 3.772,
+      "transport_lag_s": 0.0,
+      "basis": "31 mbar @ 2 K to 26 mbar @ 3.9 K from QCELL outlet to QRB interface",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
+    },
+    {
+      "line": "B",
+      "scenario": "2K-SB",
+      "station": "intermediate route",
+      "route_position_m": 75.75,
+      "pressure_mbar": 28.5,
+      "temperature_k": 2.95,
+      "density": 6.325,
+      "velocity": 6.052,
+      "transport_lag_s": 12.517,
+      "basis": "31 mbar @ 2 K to 26 mbar @ 3.9 K from QCELL outlet to QRB interface",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
+    },
+    {
+      "line": "B",
+      "scenario": "2K-SB",
+      "station": "QRB interface",
+      "route_position_m": 151.5,
+      "pressure_mbar": 26.0,
+      "temperature_k": 3.9,
+      "density": 4.365,
+      "velocity": 8.77,
+      "transport_lag_s": 17.275,
+      "basis": "31 mbar @ 2 K to 26 mbar @ 3.9 K from QCELL outlet to QRB interface",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
+    },
+    {
+      "line": "B",
+      "scenario": "2K-OP",
+      "station": "QCELL outlet",
+      "route_position_m": 0.0,
+      "pressure_mbar": 31.0,
+      "temperature_k": 2.0,
+      "density": 7.052,
+      "velocity": 5.612,
+      "transport_lag_s": 0.0,
+      "basis": "31 mbar @ 2 K to 26 mbar @ 3.9 K from QCELL outlet to QRB interface",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
+    },
+    {
+      "line": "B",
+      "scenario": "2K-OP",
+      "station": "intermediate route",
+      "route_position_m": 75.75,
+      "pressure_mbar": 28.5,
+      "temperature_k": 2.95,
+      "density": 4.395,
+      "velocity": 9.004,
+      "transport_lag_s": 8.413,
+      "basis": "31 mbar @ 2 K to 26 mbar @ 3.9 K from QCELL outlet to QRB interface",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
+    },
+    {
+      "line": "B",
+      "scenario": "2K-OP",
+      "station": "QRB interface",
+      "route_position_m": 151.5,
+      "pressure_mbar": 26.0,
+      "temperature_k": 3.9,
+      "density": 3.033,
+      "velocity": 13.048,
+      "transport_lag_s": 11.611,
+      "basis": "31 mbar @ 2 K to 26 mbar @ 3.9 K from QCELL outlet to QRB interface",
+      "source_document": "CONTRACT",
+      "source_section": "3 Technical Requirements / QPS User Interfaces",
+      "source_table": "Table 7 Helium Inventory; Table 9 QRB Measuring Points",
+      "source_figure": "Figure 3 QPS interface mapping",
+      "source_requirement": "RTM-289 / RTM-292 / RTM-296 / QPS controls response model"
     }
   ],
   "distances": [
@@ -1172,75 +2189,51 @@
   <script>
 const DATA = JSON.parse(document.getElementById('qps-data').textContent);
 const WARM_ONLY = document.body.classList.contains('warm-only');
+const B_LINE_ONLY = document.body.classList.contains('b-line-only');
 let currentSlide = 1;
-const totalSlides = WARM_ONLY ? 1 : 6;
+const totalSlides = (WARM_ONLY || B_LINE_ONLY) ? 1 : 7;
 const controls = ['scenario','metric','distance','plotType'].reduce((acc,id)=>{acc[id]=document.getElementById(id); return acc;},{});
 const template = () => document.body.classList.contains('light') ? 'plotly_white' : 'plotly_dark';
-const layoutBase = (title) => ({title, template: template(), margin:{l:55,r:20,t:55,b:55}, paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)', legend:{orientation:'h'}});
-const config = {responsive:true, displaylogo:false, modeBarButtonsToAdd:[{name:'Export SVG', icon:Plotly.Icons.camera, click:(gd)=>Plotly.downloadImage(gd,{format:'svg',filename:gd.id})}]};
+const chartMeta = () => ({source_document:DATA.metadata.source.document, source_table:DATA.metadata.source.table, source_figure:DATA.metadata.source.figure, source_requirement:DATA.metadata.source.requirement});
+const govern = traces => traces.map(t => ({...t, meta: chartMeta(), customdata:(t.x||[]).map(()=>chartMeta()), hovertemplate:(t.hovertemplate||'%{x}<br>%{y}') + '<br>source_document=%{customdata.source_document}<br>source_table=%{customdata.source_table}<br>source_figure=%{customdata.source_figure}<br>source_requirement=%{customdata.source_requirement}<extra></extra>'}));
+const layoutBase = title => ({title, template: template(), margin:{l:55,r:20,t:55,b:55}, paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)', legend:{orientation:'h'}, meta:chartMeta()});
+const config = {responsive:true, displaylogo:false, modeBarButtonsToAdd:[{name:'Export SVG', icon:Plotly.Icons.camera, click:gd=>Plotly.downloadImage(gd,{format:'svg',filename:gd.id})}]};
 function scenarios(){return controls.scenario.value === 'BOTH' ? ['2K-SB','2K-OP'] : [controls.scenario.value];}
 function metricRows(metric=controls.metric.value){return DATA.metrics.filter(r => scenarios().includes(r.scenario) && (WARM_ONLY ? r.family === 'warm' : true) && r.metric === (metric === 'Time-to-Reach' ? 'Velocity' : metric));}
 function activePlotIds(){return [...document.querySelectorAll('.slide.active .plot')].map(e=>e.id);}
 function syntheticValues(row){const mid=row.expected_value, min=row.min_value, max=row.max_value; return [min,(min+mid)/2,mid,(mid+max)/2,max].map(v=>Number(v.toFixed(3)));}
+function plot(target, traces, layout){Plotly.react(target, govern(traces), layout, config);}
 function renderDistribution(target, metric){
-  const rows = metricRows(metric);
-  let traces=[];
-  const type=controls.plotType.value;
-  rows.forEach(r=>{
-    const common={name:`${r.line} ${r.scenario}`, x:syntheticValues(r).map(()=>`${r.line}-${r.scenario}`), y:syntheticValues(r), box:{visible:true}, meanline:{visible:true}, points:'all'};
-    if(type==='Violin'||type==='Both') traces.push({...common, type:'violin'});
-    if(type==='Boxplot'||type==='Both') traces.push({name:`${r.line} ${r.scenario} box`, x:common.x, y:common.y, type:'box', boxpoints:'all'});
-  });
-  Plotly.react(target, traces, layoutBase(`${metric} envelope (${rows[0]?.unit||''})`), config);
+  const rows = metricRows(metric); let traces=[]; const type=controls.plotType.value;
+  rows.forEach(r=>{const common={name:`${r.line} ${r.scenario}`, x:syntheticValues(r).map(()=>`${r.line}-${r.scenario}`), y:syntheticValues(r), box:{visible:true}, meanline:{visible:true}, points:'all'}; if(type==='Violin'||type==='Both') traces.push({...common,type:'violin'}); if(type==='Boxplot'||type==='Both') traces.push({name:`${r.line} ${r.scenario} box`,x:common.x,y:common.y,type:'box',boxpoints:'all'});});
+  plot(target, traces, layoutBase(`${metric} envelope (${rows[0]?.unit||''})`));
 }
-function renderSystem(target){
-  const basis = DATA.lineBasis.filter(r => WARM_ONLY ? r.family === 'warm' : true);
-  Plotly.react(target, [{type:'bar', x:basis.map(r=>r.line), y:basis.map(r=>r.route_length_m), text:basis.map(r=>`${r.interface} / ${r.dn}`), marker:{color:basis.map(r=>r.family==='warm'?'#ffd166':'#59d0ff')}}], layoutBase('Figure 3 route length and interface map'), config);
-}
-function renderFlow(target){
-  const basis = DATA.lineBasis.filter(r => WARM_ONLY ? r.family === 'warm' : true);
-  Plotly.react(target, [{type:'scatter', mode:'markers+text', x:basis.map(r=>r.flow_basis_g_s), y:basis.map(r=>r.route_length_m), text:basis.map(r=>`${r.line} ${r.dn}`), textposition:'top center', marker:{size:basis.map(r=>Math.max(14,r.flow_basis_g_s/2)), color:'#9cffc7'}}], layoutBase('Table 9 flow basis vs route length'), config);
-}
-function renderTravel(target){
-  const rows = metricRows('Velocity');
-  const distance = DATA.distances.find(d=>d.label===controls.distance.value).distance_m;
-  const traces = ['min_value','expected_value','max_value'].map(key=>({type:'bar', name:key.replace('_value',''), x:rows.map(r=>`${r.line}-${r.scenario}`), y:rows.map(r=>Number((distance / r[key]).toFixed(3)))}));
-  Plotly.react(target, traces, layoutBase(`Time-to-reach at ${distance} m`), config);
-}
-function renderControls(target){
-  const rows = DATA.controls.filter(r=>scenarios().includes(r.scenario) && (WARM_ONLY ? ['U','W','S'].includes(r.line) : true));
-  const distKey = 'travel_time_' + controls.distance.value;
-  Plotly.react(target, [
-    {type:'bar', name:'transport lag', x:rows.map(r=>`${r.line}-${r.scenario}`), y:rows.map(r=>r[distKey])},
-    {type:'bar', name:'dead time', x:rows.map(r=>`${r.line}-${r.scenario}`), y:rows.map(r=>r.recommended_deadtime)},
-    {type:'scatter', mode:'lines+markers', name:'filter τ', x:rows.map(r=>`${r.line}-${r.scenario}`), y:rows.map(r=>r.recommended_filter_constant)}
-  ], layoutBase('Controls response estimate'), config);
-}
-function renderWarmRecovery(target){
-  const rows = DATA.warm.filter(r=>scenarios().includes(r.scenario) && r.metric===controls.metric.value.replace('Time-to-Reach','Velocity'));
-  Plotly.react(target, [{type:'bar', name:'emergency expected', x:rows.map(r=>`${r.line}-${r.scenario} ${r.rtm_calculation}`), y:rows.map(r=>r.emergency_recovery_expected), marker:{color:'#ffd166'}}], layoutBase('Warm emergency recovery envelope'), config);
-}
-function table(target, rows, cols){
-  document.getElementById(target).innerHTML = `<table><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${cols.map(c=>`<td>${r[c]??''}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
-}
-function insights(id, items){document.getElementById(id).innerHTML = items.map(i=>`<span>${i}</span>`).join('');}
+function renderSystem(target){const basis=DATA.lineBasis.filter(r=>WARM_ONLY?r.family==='warm':true); plot(target,[{type:'bar',x:basis.map(r=>r.line),y:basis.map(r=>r.route_length_m),text:basis.map(r=>`${r.interface} / ${r.dn}`),marker:{color:basis.map(r=>r.family==='warm'?'#ffd166':'#59d0ff')}}],layoutBase('Figure 3 route length and interface map'));}
+function renderFlow(target){const basis=DATA.lineBasis.filter(r=>WARM_ONLY?r.family==='warm':true); plot(target,[{type:'scatter',mode:'markers+text',x:basis.map(r=>r.flow_basis_g_s),y:basis.map(r=>r.route_length_m),text:basis.map(r=>`${r.line} ${r.dn}`),textposition:'top center',marker:{size:basis.map(r=>Math.max(14,r.flow_basis_g_s/2)),color:'#9cffc7'}}],layoutBase('Table 9 flow basis vs route length'));}
+function renderTravel(target){const rows=metricRows('Velocity'); const key='travel_time_'+controls.distance.value; const c=DATA.controls.filter(r=>scenarios().includes(r.scenario)); plot(target,['min','expected','max'].map(k=>({type:'bar',name:k,x:c.map(r=>`${r.line}-${r.scenario}`),y:c.map(r=>r[`${key}_${k}`])})),layoutBase(`Time-to-reach envelope ${controls.distance.options[controls.distance.selectedIndex].text}`));}
+function renderControls(target){const rows=DATA.controls.filter(r=>scenarios().includes(r.scenario) && (WARM_ONLY?['U','W','S'].includes(r.line):true)); const distKey='travel_time_'+controls.distance.value+'_expected'; plot(target,[{type:'bar',name:'transport delay',x:rows.map(r=>`${r.line}-${r.scenario}`),y:rows.map(r=>r.transport_delay_s),error_y:{type:'data',array:rows.map(r=>r.travel_time_151_5m_max-r.travel_time_151_5m_expected),arrayminus:rows.map(r=>r.travel_time_151_5m_expected-r.travel_time_151_5m_min),visible:true}},{type:'bar',name:'selected distance lag',x:rows.map(r=>`${r.line}-${r.scenario}`),y:rows.map(r=>r[distKey])},{type:'scatter',mode:'lines+markers',name:'effective deadtime',x:rows.map(r=>`${r.line}-${r.scenario}`),y:rows.map(r=>r.effective_deadtime_s)},{type:'scatter',mode:'lines+markers',name:'scan period',x:rows.map(r=>`${r.line}-${r.scenario}`),y:rows.map(r=>r.recommended_scan_period_s)}],layoutBase('Controls response model with uncertainty bands'));}
+function renderWarmRecovery(target){const rows=DATA.warm.filter(r=>r.metric===controls.metric.value.replace('Time-to-Reach','Velocity')); plot(target,[{type:'bar',name:'warm scenario expected',x:rows.map(r=>`${r.line} ${r.scenario}`),y:rows.map(r=>r.expected_value),marker:{color:'#ffd166'}}],layoutBase('Warm scenario envelope'));}
+function renderWarmDelay(target){const rows=DATA.warm.filter(r=>r.metric==='Velocity'); plot(target,[{type:'bar',name:'travel time 60 m',x:rows.map(r=>`${r.line} ${r.scenario}`),y:rows.map(r=>r.travel_time_60m_expected)},{type:'bar',name:'transport delay',x:rows.map(r=>`${r.line} ${r.scenario}`),y:rows.map(r=>r.transport_delay_s)}],layoutBase('Warm travel time and transport delay'));}
+function renderBLine(targetA,targetB){const rows=DATA.bLine.filter(r=>scenarios().includes(r.scenario)); plot(targetA,[{type:'scatter',mode:'lines+markers',name:'pressure mbar',x:rows.map(r=>`${r.station} ${r.scenario}`),y:rows.map(r=>r.pressure_mbar)},{type:'scatter',mode:'lines+markers',name:'density',x:rows.map(r=>`${r.station} ${r.scenario}`),y:rows.map(r=>r.density),yaxis:'y2'}],{...layoutBase('B-line pressure and density evolution'),yaxis2:{overlaying:'y',side:'right',title:'density kg/m³'}}); plot(targetB,[{type:'scatter',mode:'lines+markers',name:'velocity',x:rows.map(r=>`${r.station} ${r.scenario}`),y:rows.map(r=>r.velocity)},{type:'bar',name:'transport lag',x:rows.map(r=>`${r.station} ${r.scenario}`),y:rows.map(r=>r.transport_lag_s)}],layoutBase('B-line velocity and transport lag'));}
+function table(target, rows, cols){document.getElementById(target).innerHTML=`<table><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${cols.map(c=>`<td>${r[c]??''}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function insights(id,items){document.getElementById(id).innerHTML=items.map(i=>`<span>${i}</span>`).join('');}
 function renderSlide(){
-  document.querySelectorAll('.slide').forEach(s=>s.classList.toggle('active', Number(s.dataset.slide)===currentSlide));
-  const ind=document.getElementById('slideIndicator'); if(ind) ind.textContent = `${currentSlide} / ${totalSlides}`;
-  const metric=controls.metric.value;
-  if(WARM_ONLY){renderDistribution('plot-1-a', metric==='Time-to-Reach'?'Velocity':metric); renderWarmRecovery('plot-1-b'); table('table-1', DATA.warm.filter(r=>scenarios().includes(r.scenario)), ['line','scenario','metric','min_value','expected_value','max_value','rtm_calculation','emergency_recovery_expected','source_document','source_table']); insights('insights-1',['U/W/S only: cold A/B/D/E are intentionally excluded.','W RTM-292 example: emergency recovery envelope applies a 1.35 multiplier to the W expected value.','Trace badge confirms CONTRACT-derived governance.']); return;}
-  if(currentSlide===1){renderSystem('plot-1-a');renderFlow('plot-1-b');table('table-1', DATA.lineBasis, ['line','family','interface','dn','route_length_m','flow_basis_g_s','notes']);insights('insights-1',['Figure 3 mapping is rendered as route/interface basis.','Warm U/W/S are labelled separately from cold A/B/D/E.']);}
-  if(currentSlide===2){renderDistribution('plot-2-a','Density');renderDistribution('plot-2-b','Density');table('table-2', metricRows('Density'), ['line','scenario','dn','min_value','expected_value','max_value','unit','source_table']);insights('insights-2',['B-line density variability is the widest cold-line envelope.','E-line density is flagged as sensitivity-critical due to smaller DN and trim role.']);}
-  if(currentSlide===3){renderDistribution('plot-3-a','Velocity');renderDistribution('plot-3-b','Velocity');table('table-3', metricRows('Velocity'), ['line','scenario','dn','flow_basis_g_s','min_value','expected_value','max_value','unit']);insights('insights-3',['W-line velocity is the warm-piping watch item.','B-line velocity spread is preserved for controls lag studies.']);}
-  if(currentSlide===4){renderTravel('plot-4-a');renderControls('plot-4-b');table('table-4', DATA.controls.filter(r=>scenarios().includes(r.scenario)), ['line','scenario','travel_time_60m','travel_time_91_5m','travel_time_151_5m','source_document']);insights('insights-4',['Transit time is computed as distance divided by velocity envelope.','60 m, 91.5 m, and 151.5 m sections are selectable.']);}
-  if(currentSlide===5){renderWarmRecovery('plot-5-a');renderDistribution('plot-5-b',metric==='Time-to-Reach'?'Velocity':metric);table('table-5', DATA.warm.filter(r=>scenarios().includes(r.scenario)), ['line','scenario','metric','rtm_calculation','min_value','expected_value','max_value','emergency_recovery_expected']);insights('insights-5',['RTM-289 (U), RTM-292 (W), and RTM-296 (S) calculations are derived rows.','Warm piping is isolated from A/B/D/E to support recovery studies.']);}
-  if(currentSlide===6){renderControls('plot-6-a');renderTravel('plot-6-b');table('table-6', DATA.controls.filter(r=>scenarios().includes(r.scenario)), ['line','scenario','velocity','recommended_deadtime','recommended_sample_period','recommended_filter_constant']);insights('insights-6',['Recommended dead time uses the governing 151.5 m transit case.','Sample period targets one tenth of dead time with a 0.25 s floor.']);}
+  document.querySelectorAll('.slide').forEach(s=>s.classList.toggle('active',Number(s.dataset.slide)===currentSlide)); const ind=document.getElementById('slideIndicator'); if(ind) ind.textContent=`${currentSlide} / ${totalSlides}`; const metric=controls.metric.value;
+  if(B_LINE_ONLY){renderBLine('plot-1-a','plot-1-b'); table('table-1',DATA.bLine.filter(r=>scenarios().includes(r.scenario)),['line','scenario','station','pressure_mbar','temperature_k','density','velocity','transport_lag_s','source_requirement']); insights('insights-1',['Basis: 31 mbar @ 2 K to 26 mbar @ 3.9 K.','Route: QCELL outlet → intermediate route → QRB interface.','Plotly traces carry CONTRACT governance metadata.']); return;}
+  if(WARM_ONLY){renderWarmRecovery('plot-1-a'); renderWarmDelay('plot-1-b'); table('table-1',DATA.warm.filter(r=>r.metric==='Velocity'),['line','scenario','operating_basis','flow_basis_g_s','expected_value','travel_time_60m_expected','transport_delay_s','rtm_calculation','source_requirement']); insights('insights-1',['U: conditioning, purge, and guard replenishment.','W: 2K-SB, 2K-OP, and 0–3 g/s envelope.','S: residual, 100 g/s nominal, 150 g/s spike, and 200 g/s vacuum-break.']); return;}
+  if(currentSlide===1){renderSystem('plot-1-a');renderFlow('plot-1-b');table('table-1',DATA.lineBasis,['line','family','interface','dn','route_length_m','flow_basis_g_s','notes']);insights('insights-1',['Figure 3 mapping is rendered as route/interface basis.','Warm U/W/S are labelled separately from cold A/B/D/E.']);}
+  if(currentSlide===2){renderDistribution('plot-2-a','Density');renderDistribution('plot-2-b','Density');table('table-2',metricRows('Density'),['line','scenario','dn','min_value','expected_value','max_value','unit','source_table']);insights('insights-2',['B-line density variability is the widest cold-line envelope.','E-line density is flagged as sensitivity-critical due to smaller DN and trim role.']);}
+  if(currentSlide===3){renderDistribution('plot-3-a','Velocity');renderDistribution('plot-3-b','Velocity');table('table-3',metricRows('Velocity'),['line','scenario','dn','flow_basis_g_s','min_value','expected_value','max_value','unit']);insights('insights-3',['W-line velocity is the warm-piping watch item.','B-line velocity spread is preserved for controls lag studies.']);}
+  if(currentSlide===4){renderTravel('plot-4-a');renderControls('plot-4-b');table('table-4',DATA.controls.filter(r=>scenarios().includes(r.scenario)),['line','scenario','travel_time_60m_min','travel_time_60m_expected','travel_time_60m_max','travel_time_151_5m_min','travel_time_151_5m_expected','travel_time_151_5m_max']);insights('insights-4',['Transit time envelope uses Table 7 operational velocity bounds.','60 m, 91.5 m, and 151.5 m sections are selectable.']);}
+  if(currentSlide===5){renderWarmRecovery('plot-5-a');renderWarmDelay('plot-5-b');table('table-5',DATA.warm.filter(r=>r.metric==='Velocity'),['line','scenario','operating_basis','rtm_calculation','flow_basis_g_s','expected_value','travel_time_60m_expected','transport_delay_s']);insights('insights-5',['RTM-289 (U), RTM-292 (W), and RTM-296 (S) calculations are derived rows.','Warm scenarios include conditioning, purge, guard, 0–3 g/s, spikes, and vacuum-break.']);}
+  if(currentSlide===6){renderControls('plot-6-a');renderTravel('plot-6-b');table('table-6',DATA.controls.filter(r=>scenarios().includes(r.scenario)),['line','scenario','reynolds_number','volumetric_flow_m3_s','recommended_controller_bandwidth_hz','recommended_pid_update_period_s']);insights('insights-6',['Recommended dead time now uses effective controls deadtime.','Bandwidth, scan period, and PID update period are governed analytics outputs.']);}
+  if(currentSlide===7){renderControls('plot-7-a');renderTravel('plot-7-b');table('table-7',DATA.controls.filter(r=>scenarios().includes(r.scenario)),['line','scenario','transport_delay_s','residence_time_s','effective_deadtime_s','recommended_scan_period_s','recommended_pid_update_period_s','source_requirement']);insights('insights-7',['Slide 7 is the controls response model layer under the visualization dashboard.','Uncertainty bands are plotted from min/max travel-time envelopes.']);}
 }
-document.querySelectorAll('[data-step]').forEach(b=>b.addEventListener('click',()=>{currentSlide=((currentSlide-1+Number(b.dataset.step)+totalSlides)%totalSlides)+1; renderSlide();}));
-document.addEventListener('keydown',e=>{if(!WARM_ONLY&&['ArrowRight','PageDown',' '].includes(e.key)){currentSlide=currentSlide%totalSlides+1;renderSlide();} if(!WARM_ONLY&&['ArrowLeft','PageUp'].includes(e.key)){currentSlide=(currentSlide+totalSlides-2)%totalSlides+1;renderSlide();}});
+document.querySelectorAll('[data-step]').forEach(b=>b.addEventListener('click',()=>{currentSlide=((currentSlide-1+Number(b.dataset.step)+totalSlides)%totalSlides)+1;renderSlide();}));
+document.addEventListener('keydown',e=>{if(!WARM_ONLY&&!B_LINE_ONLY&&['ArrowRight','PageDown',' '].includes(e.key)){currentSlide=currentSlide%totalSlides+1;renderSlide();} if(!WARM_ONLY&&!B_LINE_ONLY&&['ArrowLeft','PageUp'].includes(e.key)){currentSlide=(currentSlide+totalSlides-2)%totalSlides+1;renderSlide();}});
 Object.values(controls).forEach(el=>el.addEventListener('change',renderSlide));
 document.getElementById('themeToggle').addEventListener('click',()=>{document.body.classList.toggle('light');document.body.classList.toggle('dark');document.getElementById('themeToggle').textContent=document.body.classList.contains('light')?'Dark mode':'Light mode';renderSlide();});
-document.getElementById('exportCsv').addEventListener('click',()=>{const rows = currentSlide===6 ? DATA.controls : (currentSlide===5 || WARM_ONLY ? DATA.warm : DATA.metrics); const cols=Object.keys(rows[0]); const csv=[cols.join(','),...rows.map(r=>cols.map(c=>JSON.stringify(r[c]??'')).join(','))].join('\n'); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download=WARM_ONLY?'warm_piping_export.csv':`qps_slide_${currentSlide}_export.csv`; a.click();});
+document.getElementById('exportCsv').addEventListener('click',()=>{const rows=B_LINE_ONLY?DATA.bLine:(WARM_ONLY||currentSlide===5?DATA.warm:(currentSlide>=6?DATA.controls:DATA.metrics)); const cols=Object.keys(rows[0]); const csv=[cols.join(','),...rows.map(r=>cols.map(c=>JSON.stringify(r[c]??'')).join(','))].join('\n'); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download=B_LINE_ONLY?'b_line_export.csv':(WARM_ONLY?'warm_piping_export.csv':`qps_slide_${currentSlide}_export.csv`); a.click();});
 document.getElementById('exportPng').addEventListener('click',()=>{const id=activePlotIds()[0]; if(id) Plotly.downloadImage(id,{format:'png',filename:id});});
 document.getElementById('exportSvg').addEventListener('click',()=>{const id=activePlotIds()[0]; if(id) Plotly.downloadImage(id,{format:'svg',filename:id});});
 renderSlide();

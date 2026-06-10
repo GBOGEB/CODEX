@@ -22,7 +22,9 @@ with:
 2. governed CSV datasets with row-level CONTRACT traceability;
 3. a six-slide Plotly slideshow dashboard;
 4. a dedicated warm-piping dashboard for U/W/S;
-5. controls response calculations derived from velocity transit time.
+5. controls response calculations derived from velocity transit-time envelopes;
+6. a governed B-line deep dive from QCELL outlet to QRB interface;
+7. Plotly trace metadata for source document, table, figure, and requirement.
 
 The module preserves `CONTRACT` as SSOT and labels generated dashboards and CSVs
 as derivative artifacts.
@@ -33,11 +35,16 @@ as derivative artifacts.
 - Plotly provides responsive browser rendering and PNG/SVG export.
 - CSV export is available both as files and through the browser UI.
 - Warm-piping studies can focus on U/W/S without cold-line A/B/D/E noise.
-- Controls engineers receive explicit dead-time, sample-period, and filter
-  constant recommendations for 60 m, 91.5 m, and 151.5 m transit lengths.
+- Controls engineers receive explicit Reynolds number, volumetric flow,
+  residence time, transport delay, effective deadtime, bandwidth, scan-period,
+  PID update-period, and filter recommendations for 60 m, 91.5 m, and 151.5 m
+  transit envelopes.
+- The B-line route has a dedicated pressure/density/velocity/lag page using the
+  31 mbar @ 2 K to 26 mbar @ 3.9 K basis.
 
 ## Traceability
 
 All generated rows include source fields for `CONTRACT`, the QPS user interface
-section, Table 7, Table 9, and Figure 3. The rendered HTML exposes the same
-lineage through a visible traceability badge.
+section, Table 7, Table 9, Figure 3, and the governing controls/warm-piping
+requirements. The rendered HTML exposes the same lineage through a visible
+traceability badge and Plotly trace metadata.

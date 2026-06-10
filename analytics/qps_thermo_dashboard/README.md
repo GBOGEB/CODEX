@@ -10,7 +10,8 @@ single source of truth (SSOT)**; all files in this directory are
 | Artifact | Purpose |
 | --- | --- |
 | `qps_thermo_slideshow_dashboard.html` | Full-screen six-slide Plotly dashboard covering system overview, density, velocity, travel time, warm piping, and controls engineering views. |
-| `warm_piping_dashboard.html` | Dedicated U/W/S warm-piping deep dive for flow, density, velocity, emergency recovery, and W example calculations. |
+| `warm_piping_dashboard.html` | Dedicated U/W/S warm-piping deep dive for flow, density, velocity, travel time, transport delay, emergency recovery, and W example calculations. |
+| `b_line_dashboard.html` | Dedicated B-line deep dive from QCELL outlet to intermediate route to QRB interface using the 31 mbar @ 2 K to 26 mbar @ 3.9 K basis. |
 
 Both HTML dashboards provide:
 
@@ -20,7 +21,8 @@ Both HTML dashboards provide:
 - PNG export;
 - SVG export;
 - CSV export;
-- CONTRACT traceability badge.
+- CONTRACT traceability badge;
+- Plotly trace metadata exposing `source_document`, `source_table`, `source_figure`, and `source_requirement`.
 
 ## Toggle framework
 
@@ -37,7 +39,8 @@ The slideshow and warm-piping dashboard expose the governed analysis toggles:
 | --- | --- |
 | `data/qps_density_velocity_dataset.csv` | Density and velocity envelopes by line, scenario, DN, flow basis, and route length. |
 | `data/qps_controls_response_dataset.csv` | Controls response dataset with travel times, recommended dead time, sample period, and filter constant. |
-| `data/qps_warm_piping_dataset.csv` | Warm U/W/S-only derivative dataset with RTM-289, RTM-292, and RTM-296 calculations. |
+| `data/qps_warm_piping_dataset.csv` | Warm U/W/S-only derivative dataset with RTM-289, RTM-292, RTM-296, travel time, transport delay, and expanded operating scenarios. |
+| `data/qps_b_line_response_dataset.csv` | B-line density, pressure, velocity, and transport-lag dataset from QCELL outlet to QRB interface. |
 
 Every dataset row carries source traceability fields equivalent to:
 
@@ -47,6 +50,7 @@ source:
   section: 3 Technical Requirements / QPS User Interfaces
   table: Table 7 Helium Inventory; Table 9 QRB Measuring Points
   figure: Figure 3 QPS interface mapping
+  requirement: RTM-289 / RTM-292 / RTM-296 / QPS controls response model
 ```
 
 ## Build
@@ -59,7 +63,10 @@ python analytics/qps_thermo_dashboard/build_qps_thermo_dashboard.py
 
 The builder is intentionally stdlib-only so the module can render and regenerate
 without installing additional Python packages. Plotly is loaded by the generated
-HTML at browser runtime.
+HTML at browser runtime. The controls response model adds Reynolds number,
+volumetric flow, residence time, transport delay, effective deadtime, controller
+bandwidth, scan period, and PID update-period recommendations to the governed
+CSV layer.
 
 ## Governance principle
 

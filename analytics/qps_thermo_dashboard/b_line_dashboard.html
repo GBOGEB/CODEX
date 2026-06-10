@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>QPS Warm Piping Dashboard</title>
+  <title>QPS B-Line Dashboard</title>
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
   <style>
 :root{color-scheme:dark;--bg:#08111f;--panel:#101c2f;--panel2:#162842;--text:#edf5ff;--muted:#9fb3ca;--accent:#59d0ff;--ok:#9cffc7;--warn:#ffd166;--border:#294766}body.light{color-scheme:light;--bg:#f4f7fb;--panel:#fff;--panel2:#eaf1fa;--text:#102033;--muted:#4e6178;--accent:#006de5;--ok:#007f5f;--warn:#9a6700;--border:#c7d5e6}*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,var(--bg),#05070c);color:var(--text);font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;overflow:hidden}.topbar{height:64px;display:flex;justify-content:space-between;align-items:center;padding:0 18px;border-bottom:1px solid var(--border);background:rgba(8,17,31,.88);backdrop-filter:blur(10px);position:fixed;inset:0 0 auto 0;z-index:3}.light .topbar{background:rgba(255,255,255,.88)}button,select{background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:8px 10px}button{cursor:pointer}.badge{margin-left:12px;padding:6px 10px;border-radius:999px;background:rgba(89,208,255,.14);color:var(--accent);font-size:12px}.controls{position:fixed;top:76px;left:18px;width:240px;z-index:2;background:rgba(16,28,47,.88);border:1px solid var(--border);border-radius:18px;padding:14px;display:grid;gap:12px}.light .controls{background:rgba(255,255,255,.9)}label{display:grid;gap:5px;color:var(--muted);font-size:13px}#deck{height:100vh;width:100vw}.slide{display:none;height:100vh;width:100vw;padding:88px 24px 24px 282px;gap:14px;grid-template-columns:360px 1fr;grid-template-rows:auto 1fr;overflow:hidden}.slide.active{display:grid}.slide-copy,.plot,.data-table{background:rgba(16,28,47,.78);border:1px solid var(--border);border-radius:22px;box-shadow:0 18px 50px rgba(0,0,0,.24)}.light .slide-copy,.light .plot,.light .data-table{background:rgba(255,255,255,.92)}.slide-copy{padding:22px;grid-row:1/3}.eyebrow{color:var(--accent);text-transform:uppercase;letter-spacing:.14em;font-weight:700;font-size:12px}h1{font-size:42px;line-height:1;margin:8px 0 12px}.slide-copy p{color:var(--muted);font-size:16px}.insights{display:grid;gap:10px;margin-top:20px}.insights span{display:block;border-left:4px solid var(--accent);padding:10px 12px;background:rgba(89,208,255,.10);border-radius:10px}.plot-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;min-height:0}.plot{min-height:360px}.data-table{grid-column:2;padding:14px;overflow:auto;max-height:32vh}table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px solid var(--border);padding:7px 9px;text-align:left;white-space:nowrap}th{color:var(--accent);position:sticky;top:0;background:var(--panel)}@media(max-width:1000px){body{overflow:auto}.topbar{position:sticky}.controls{position:static;width:auto;margin:76px 12px 0}.slide,.slide.active{display:block;height:auto;min-height:100vh;padding:12px}.slide:not(.active){display:none}.slide-copy,.plot,.data-table{margin-bottom:12px}.plot-grid{grid-template-columns:1fr}.plot{height:420px}}</style>
 </head>
-<body class="dark warm-only">
+<body class="dark b-line-only">
   <header class="topbar">
-    <div><strong>QPS Warm Piping Dashboard</strong><span class="badge" id="traceBadge">CONTRACT → Table 7 / Table 9 / Figure 3 → SSOT_DERIVATIVE</span></div>
+    <div><strong>QPS B-Line Dashboard</strong><span class="badge" id="traceBadge">CONTRACT → Table 7 / Table 9 / Figure 3 → SSOT_DERIVATIVE</span></div>
     <nav><button id="themeToggle">Light mode</button><button id="exportCsv">Export CSV</button><button id="exportPng">Export PNG</button><button id="exportSvg">Export SVG</button></nav>
   </header>
   <aside class="controls" aria-label="dashboard toggles">
@@ -21,7 +21,7 @@
   </aside>
   <main id="deck">
       <section class="slide active" data-slide="1">
-        <div class="slide-copy"><p class="eyebrow">Warm-Piping Deep Dive</p><h1>U / W / S Recovery Analytics</h1><p>U conditioning/purge/guard replenishment, W 2K-SB/2K-OP/0–3 g/s, and S residual/100/150/200 g/s scenarios.</p><div class="insights" id="insights-1"></div></div>
+        <div class="slide-copy"><p class="eyebrow">B-Line Deep Dive</p><h1>QCELL → QRB Transport Model</h1><p>Density, pressure, velocity, and transport lag from 31 mbar @ 2 K to 26 mbar @ 3.9 K.</p><div class="insights" id="insights-1"></div></div>
         <div class="plot-grid"><div class="plot" id="plot-1-a"></div><div class="plot" id="plot-1-b"></div></div>
         <div class="data-table" id="table-1"></div>
       </section></main>
