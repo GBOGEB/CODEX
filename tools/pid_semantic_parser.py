@@ -25,7 +25,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from tools.inkscape_input_bridge import build_bridge_manifest, write_bridge_manifest
+from tools.inkscape_input_bridge import build_bridge_manifest, write_bridge_manifest  # noqa: E402
 
 EXPECTED_SVG_INPUTS = [
     Path("data/svg/PFD-PID MINERVA QCELL-LB.svg"),
@@ -585,7 +585,6 @@ def build_models(svg_paths: list[Path] | None = None) -> dict[str, Any]:
     lines = [line for item in parsed for line in item["lines"]]
     arrows = [arrow for item in parsed for arrow in item["arrows"]]
     tags = [tag for item in parsed for tag in item["tags"]]
-    boundaries = [boundary for item in parsed for boundary in item["boundaries"]]
     unresolved_items = [
         unresolved for item in parsed for unresolved in item["unresolved_items"]
     ]
