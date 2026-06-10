@@ -13,9 +13,11 @@ TARGETS = [
 ]
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
+    targets = [Path(item) for item in argv] if argv else TARGETS
     ok = True
-    for target in TARGETS:
+    for target in targets:
         try:
             with target.open("r", encoding="utf-8") as handle:
                 yaml.safe_load(handle)

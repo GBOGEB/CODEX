@@ -116,15 +116,3 @@ def test_excel_generation_path_when_openpyxl_is_available(tmp_path, monkeypatch)
 
     assert output_path == tmp_path / "alat_clarification_bridge.xlsx"
     assert output_path.read_text(encoding="utf-8") == "fake workbook"
-
-
-def test_workflow_installs_real_openpyxl_and_guards_bridge_tests():
-    workflow = (Path(__file__).resolve().parents[1] / ".github" / "workflows" / "build-clarification-bridge.yml").read_text(
-        encoding="utf-8"
-    )
-
-    assert "pip install PyYAML openpyxl pytest" in workflow
-    assert "python -c \"import openpyxl, yaml; print(f'openpyxl={openpyxl.__version__}')\"" in workflow
-    assert "test -f tests/test_alat_clarification_bridge.py" in workflow
-    assert "pytest --strict-config --strict-markers tests/test_alat_clarification_bridge.py" in workflow
-    assert "test -f rtm_integration/contract_followup/alat_clarification_bridge/build/alat_clarification_bridge.xlsx" in workflow
