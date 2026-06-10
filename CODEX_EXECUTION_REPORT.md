@@ -2,10 +2,10 @@
 
 ## Scope
 
-Repository target: `GBOGEB/DOCX_RTM_Automation`  
+Repository target: `GBOGEB/CODEX`  
 Active branch requested: `feat/orchestration-bootstrap-wave0-pr01`  
 Local branch available in this execution environment: `work`  
-Active PR requested: `#16 (Draft)`
+Active PR requested: (not verified in this execution environment)
 
 > Note: the local checkout did not include a configured GitHub remote, and direct `git ls-remote https://github.com/GBOGEB/DOCX_RTM_Automation.git` failed with `CONNECT tunnel failed, response 403`. GitHub PR state and branch metadata therefore could not be independently verified from this container.
 
