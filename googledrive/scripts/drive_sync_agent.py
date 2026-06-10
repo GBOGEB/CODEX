@@ -151,6 +151,12 @@ class DriveSyncAgent:
                 "target_path": "",
                 "rationale": "Binary-looking content requires manual review outside this bridge.",
             }
+        if lower_name.endswith((".tmp", ".bak")):
+            return {
+                "strategy": "PRUNE",
+                "target_path": "",
+                "rationale": "Temporary or backup artifact is pruned from review-first routing.",
+            }
         if lower_name.endswith(".ipynb"):
             return {
                 "strategy": "PARALLEL",

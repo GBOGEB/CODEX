@@ -10,8 +10,7 @@ $Engine = Join-Path $ScriptDir "drive_sync_agent.py"
 
 & python -c "import google.genai" 2>$null
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "[*] Dependencies unverified. Staging google-genai package..." -ForegroundColor Yellow
-    & python -m pip install google-genai -q
+    Write-Warning "ENVIRONMENT-LIMITATION: google-genai is not installed; no dependency installation is performed by this PR runner."
 }
 
 & python $Engine
