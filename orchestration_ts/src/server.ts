@@ -13,7 +13,8 @@ app.get("/health", (_req, res) => {
 app.use("/jobs", jobsRoutes);
 app.use("/federation", federationRoutes);
 
-const port = Number(process.env.PORT ?? 3000);
+const parsedPort = Number.parseInt(process.env.PORT ?? "", 10);
+const port = Number.isFinite(parsedPort) ? parsedPort : 3000;
 
 if (require.main === module) {
   app.listen(port, () => {
