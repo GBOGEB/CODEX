@@ -148,3 +148,69 @@ route_wiring_commit: 3b79b95fa11389365de2df06a1c913de62140aa9
 3. `docs(orchestration): add env template workaround [Wave-0/PR-01]`
 4. `chore(orchestration): add ts package metadata [Wave-0/PR-01]`
 5. `feat(federation): persist accepted federation events [Wave-1/PR-01]`
+
+## Follow-up Remediation — Merge Readiness Blockers
+
+The review identified that the first recovery pass did not include executable TypeScript project metadata or route-level functional tests. This follow-up adds those missing merge-readiness assets.
+
+```yaml
+remediation_files:
+  - orchestration_ts/package.json
+  - orchestration_ts/tsconfig.json
+  - orchestration_ts/test/routes.test.ts
+  - orchestration_ts/src/types/runtime.d.ts
+  - orchestration_ts/env.template
+```
+
+### Added CI/Test Entry Points
+
+```yaml
+commands:
+  install_dependencies: "cd orchestration_ts && npm install"
+  compile: "cd orchestration_ts && npm run build"
+  route_tests: "cd orchestration_ts && npm test"
+```
+
+### Functional Route Coverage
+
+The new route test starts the exported Express app on an ephemeral local port, calls the runtime endpoints over HTTP, and asserts response status and JSON bodies:
+
+```yaml
+covered_endpoints:
+  - method: GET
+    path: /jobs
+    expected_status: 200
+    expected_body:
+      jobs: []
+      status: ready
+  - method: POST
+    path: /federation/event
+    expected_status: 202
+    expected_body_shape:
+      accepted: true
+      event: echoed_request_payload
+```
+
+### Current Verification Status
+
+```yaml
+json_validation: pass
+typescript_compile: pass_with_local_ambient_types
+npm_install: blocked
+npm_install_blocker: "npm registry access returned 403 for https://registry.npmjs.org/@types%2fexpress"
+npm_test: blocked
+npm_test_blocker: "tsx is not installed because npm install is blocked by registry 403"
+remote_verification: blocked
+remote_verification_blocker: "git ls-remote returned CONNECT tunnel failed, response 403"
+env_example_workaround_added: orchestration_ts/env.template
+```
+
+### Updated Merge Readiness
+
+```yaml
+merge_readiness: blocked
+remaining_blockers:
+  - "Restore npm registry access or provide a dependency cache, then run cd orchestration_ts && npm install && npm test."
+  - "Restore GitHub network/connector access, then push the branch and verify PR #16 exists remotely."
+  - "Validate whether the connector allowlist can permit safe .env.example files; until then use orchestration_ts/env.template."
+```
