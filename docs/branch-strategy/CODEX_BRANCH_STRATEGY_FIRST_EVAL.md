@@ -28,8 +28,8 @@ The current working copy has a detached HEAD checkout (no local branch refs were
 
 | Item | Observed value | Confidence | Notes |
 |---|---:|---|---|
-| Local branch | `work` | High | Current checkout branch. |
-| Remote branches | Not available | Low | No local remote refs were present; remote access was blocked. |
+| Local branch | Not available (detached HEAD) | High | `.git/HEAD` points directly to a commit SHA (no `refs/heads/*` found). |
+| Remote branches | Not available | Low | Only `origin/cca-head` remote ref was present locally; remote access was blocked so full remote inventory couldn't be fetched. |
 | Default branch | Expected `main` | Medium | Local merge commits repeatedly reference `main`; confirm in GitHub before settings changes. |
 | Open PRs | Not available | Low | Requires GitHub PR API/UI review. |
 | Closed/merged PRs | PR #203, #204, #205, #206, #207 observed in local merge history | Medium | Local history includes merge commits for these PRs. |
