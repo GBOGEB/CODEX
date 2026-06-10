@@ -2175,7 +2175,34 @@ function renderControls(target){const rows=DATA.controls.filter(r=>scenarios().i
 function renderWarmRecovery(target){const rows=DATA.warm.filter(r=>r.metric===controls.metric.value.replace('Time-to-Reach','Velocity')); plot(target,[{type:'bar',name:'warm scenario expected',x:rows.map(r=>`${r.line} ${r.scenario}`),y:rows.map(r=>r.expected_value),marker:{color:'#ffd166'}}],layoutBase('Warm scenario envelope'));}
 function renderWarmDelay(target){const rows=DATA.warm.filter(r=>r.metric==='Velocity'); plot(target,[{type:'bar',name:'travel time 60 m',x:rows.map(r=>`${r.line} ${r.scenario}`),y:rows.map(r=>r.travel_time_60m_expected)},{type:'bar',name:'transport delay',x:rows.map(r=>`${r.line} ${r.scenario}`),y:rows.map(r=>r.transport_delay_s)}],layoutBase('Warm travel time and transport delay'));}
 function renderBLine(targetA,targetB){const rows=DATA.bLine.filter(r=>scenarios().includes(r.scenario)); plot(targetA,[{type:'scatter',mode:'lines+markers',name:'pressure mbar',x:rows.map(r=>`${r.station} ${r.scenario}`),y:rows.map(r=>r.pressure_mbar)},{type:'scatter',mode:'lines+markers',name:'density',x:rows.map(r=>`${r.station} ${r.scenario}`),y:rows.map(r=>r.density),yaxis:'y2'}],{...layoutBase('B-line pressure and density evolution'),yaxis2:{overlaying:'y',side:'right',title:'density kg/m³'}}); plot(targetB,[{type:'scatter',mode:'lines+markers',name:'velocity',x:rows.map(r=>`${r.station} ${r.scenario}`),y:rows.map(r=>r.velocity)},{type:'bar',name:'transport lag',x:rows.map(r=>`${r.station} ${r.scenario}`),y:rows.map(r=>r.transport_lag_s)}],layoutBase('B-line velocity and transport lag'));}
-function table(target, rows, cols){document.getElementById(target).innerHTML=`<table><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${cols.map(c=>`<td>${r[c]??''}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
+function table(target, rows, cols){
+  const container = document.getElementById(target);
+  if(!container) return;
+  container.textContent = '';
+  const tbl = document.createElement('table');
+  const thead = document.createElement('thead');
+  const headRow = document.createElement('tr');
+  cols.forEach(c=>{
+    const th = document.createElement('th');
+    th.textContent = String(c);
+    headRow.appendChild(th);
+  });
+  thead.appendChild(headRow);
+  const tbody = document.createElement('tbody');
+  rows.forEach(r=>{
+    const tr = document.createElement('tr');
+    cols.forEach(c=>{
+      const td = document.createElement('td');
+      const v = r && r[c] != null ? r[c] : '';
+      td.textContent = String(v);
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(thead);
+  tbl.appendChild(tbody);
+  container.appendChild(tbl);
+}
 function insights(id,items){document.getElementById(id).innerHTML=items.map(i=>`<span>${i}</span>`).join('');}
 function renderSlide(){
   document.querySelectorAll('.slide').forEach(s=>s.classList.toggle('active',Number(s.dataset.slide)===currentSlide)); const ind=document.getElementById('slideIndicator'); if(ind) ind.textContent=`${currentSlide} / ${totalSlides}`; const metric=controls.metric.value;
