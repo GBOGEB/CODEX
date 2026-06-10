@@ -1,0 +1,95 @@
+track:
+  id: ABACUS_DEBUG_SPINE_W000
+  wave: W000
+  branch: wave/W000-debug-spine-lldb-dap-swift
+  status: scaffolded
+  mantra:
+    - IF IT CANNOT TRACE, IT CANNOT DEBUG.
+    - IF IT CANNOT DEBUG, IT CANNOT GOVERN.
+    - IF IT CANNOT RENDER, IT CANNOT GOVERN.
+
+control_surface:
+  protocol: Debug Adapter Protocol
+  adapter: lldb-dap
+  role: session_control
+  required: true
+
+native_backbone:
+  language: Swift
+  responsibilities:
+    - session_lifecycle
+    - dap_message_normalization
+    - trace_packet_emission
+    - evidence_bundle_indexing
+
+federated_targets:
+  - language: Python
+    runtime_family: interpreter
+    governance_role: pipeline_target
+    required_trace_hooks:
+      - launch_profile
+      - breakpoint_binding
+      - stack_snapshot
+  - language: JavaScript
+    runtime_family: node_or_browser
+    governance_role: pipeline_target
+    required_trace_hooks:
+      - launch_profile
+      - breakpoint_binding
+      - stack_snapshot
+  - language: TypeScript
+    runtime_family: transpiled_javascript
+    governance_role: pipeline_target
+    required_trace_hooks:
+      - launch_profile
+      - source_map_binding
+      - breakpoint_binding
+      - stack_snapshot
+
+abacus_governance:
+  layer: trace_render_evidence
+  trace_contract: trace_contract.schema.json
+  render_required: true
+  evidence_required: true
+  immutable_events:
+    - session.created
+    - dap.initialized
+    - breakpoint.bound
+    - execution.paused
+    - render.snapshot
+    - session.closed
+
+github_substrate:
+  repository: GBOGEB/ABACUS
+  persistence_channels:
+    - actions_log
+    - artifact_bundle
+    - issue_reference
+    - pull_request_lineage
+    - commit_sha
+  audit_required: true
+
+wave_exit_criteria:
+  - Debug spine manifest is present and valid.
+  - Trace contract schema is present and valid JSON.
+  - Runtime registry advertises the debug_spine module.
+  - Tests assert lldb-dap, Swift, Python, JavaScript, TypeScript, ABACUS, and GitHub invariants.
+
+runtime_proof:
+  wave: W001
+  branch: wave/W001-debug-spine-runtime-proof
+  swift_package: swift/Package.swift
+  executable: abacus-debug-spine
+  jsonl_trace_default: runtime/logs/abacus_debug_spine_w001_trace.jsonl
+  markdown_render_default: runtime/logs/abacus_debug_spine_w001_evidence.md
+  lldb_dap_launch_template: lldb-dap/launch.template.json
+  renderer: render_evidence.py
+  required_event_fields:
+    - session_id
+    - track_id
+    - adapter
+    - backbone
+    - target
+    - github
+    - event
+    - render
