@@ -36,7 +36,7 @@ The current working copy has a detached HEAD checkout (no local branch refs were
 | Stale branches | Not available | Low | Requires remote branch age inventory. |
 | Branches merged into `main` | Not available | Low | Requires remote refs and `git branch -r --merged origin/main`. |
 | Branches not merged into `main` | Not available | Low | Requires remote refs and `git branch -r --no-merged origin/main`. |
-| Recent branch activity | `work` at commit `df51cd6` on 2026-06-04 | High | Local log shows latest commit is a merge of PR #206. |
+| Recent checkout state | Detached HEAD | Medium | Record current commit with `git rev-parse HEAD`; branch/date attribution requires remote access. |
 
 ### Observed recent merged PR activity from local history
 
