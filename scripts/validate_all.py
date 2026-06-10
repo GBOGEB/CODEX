@@ -41,6 +41,7 @@ def validate_workflow() -> None:
 
 def validate_schema(path: str, required_fields: set[str]) -> None:
     schema = load_json(path)
+    Draft202012Validator.check_schema(schema)
     if schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema":
         fail(f"{path} must declare JSON Schema draft 2020-12")
     if schema.get("type") != "object":
