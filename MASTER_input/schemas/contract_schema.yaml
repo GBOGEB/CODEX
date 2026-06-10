@@ -1,0 +1,53 @@
+schema_id: MASTER_CONTRACT_WORKBENCH_SCHEMA
+schema_version: 1.0.0
+yaml_version: "1.2"
+authority: YAML_SSOT
+required_top_level_sections:
+  - metadata
+  - governance
+  - lifecycle
+  - stakeholders
+  - requirements
+  - questions
+  - change_requests
+  - changelog
+governance_rules:
+  generated_outputs_are_system_of_record: false
+  all_derivative_changes_require_change_request: true
+  every_requirement_requires_owner: true
+  every_requirement_requires_lifecycle_phase: true
+  every_question_requires_parent_or_root: true
+  every_rtm_link_requires_requirement: true
+allowed_lifecycle_phases:
+  - Bid Clarifications
+  - Applicant Offers
+  - Negotiation Round 1
+  - Negotiation Round 2
+  - BAFO
+  - Contract Award
+  - Purchase Order Placement
+  - Contract Execution
+  - Contract Closeout
+allowed_requirement_statuses:
+  - Draft
+  - Under Review
+  - Clarification Open
+  - Negotiation Open
+  - Agreed
+  - Awarded
+  - Executing
+  - Closed
+allowed_question_statuses:
+  - Open
+  - Answered
+  - Superseded
+  - Closed
+tab_colour_governance:
+  metadata: "#1F4E79"
+  lifecycle: "#70AD47"
+  stakeholders: "#7030A0"
+  requirements: "#C00000"
+  questions: "#FFC000"
+  rtm: "#5B9BD5"
+  change_requests: "#A5A5A5"
+  changelog: "#4472C4"
