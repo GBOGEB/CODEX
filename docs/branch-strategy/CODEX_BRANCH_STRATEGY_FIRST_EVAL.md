@@ -22,7 +22,7 @@ This document is a FIRST EVAL branch-strategy preparation artifact only.
 
 ### Inventory source and confidence
 
-The current working copy exposes only one local branch, `work`, and no configured Git remote was available in this checkout. Network attempts to query GitHub from the execution environment were blocked by a `403 CONNECT tunnel failed` response, so remote branch and PR inventory could not be verified directly during this FIRST EVAL.
+The current working copy has a detached HEAD checkout (no local branch refs were present), and a Git remote (`origin`) is configured, but network attempts to query GitHub from the execution environment were blocked by a `403 CONNECT tunnel failed` response, so remote branch and PR inventory could not be verified directly during this FIRST EVAL.
 
 ### Observed local branch state
 
