@@ -14,7 +14,7 @@ The active connector/session does not expose authenticated GitHub issue-write ca
 
 ## Workaround
 
-Use this file as the issue body and create the issue manually in `GBOGEB/DOCX_RTM_Automation` with the title and labels below:
+Use this file as the issue body and create the issue manually in `GBOGEB/CODEX` with the title and labels below:
 
 - Title: `Issue-001: .env.example creation blocked by connector`
 - Labels: `connector`, `investigation`
