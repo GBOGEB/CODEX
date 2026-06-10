@@ -175,9 +175,14 @@ class DriveSyncAgent:
             "rationale": "Text artifact is suitable for review-first bridge handling.",
         }
 
-    def target_is_unsafe(self, target: Path) -> bool:
-        windows_target = PureWindowsPath(str(target))
-        return target.is_absolute() or windows_target.is_absolute() or ".." in target.parts
+def target_is_unsafe(self, target: Path) -> bool:
+    windows_target = PureWindowsPath(str(target))
+    return (
+        target.is_absolute()
+        or windows_target.is_absolute()
+        or ".." in target.parts
+        or ".." in windows_target.parts
+    )
 
     def process_and_route(self) -> bool:
         if not self.staging_dir.exists():
