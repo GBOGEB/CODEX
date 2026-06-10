@@ -138,7 +138,10 @@ class StaticReconciler:
             source_path = entry_source_path(item)
             strategy = entry_strategy(item, source_path)
             destination = entry_destination(item)
-            source = self.exchange_dir / source_path
+            source_rel = Path(source_path)
+            if source_rel.is_absolute() or ".." in source_rel.parts:
+                raise ValueError(f"Unsafe source_path in manifest: {source_path}")
+            source = self.exchange_dir / source_rel
             exists = source.exists()
             telemetry[strategy] += 1
             if not exists:
