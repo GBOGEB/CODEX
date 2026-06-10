@@ -7,7 +7,7 @@ Active branch requested: `feat/orchestration-bootstrap-wave0-pr01`
 Local branch available in this execution environment: `work`  
 Active PR requested: (not verified in this execution environment)
 
-> Note: the local checkout did not include a configured GitHub remote, and direct `git ls-remote https://github.com/GBOGEB/DOCX_RTM_Automation.git` failed with `CONNECT tunnel failed, response 403`. GitHub PR state and branch metadata therefore could not be independently verified from this container.
+> Note: a GitHub remote is configured (`origin` -> https://github.com/GBOGEB/CODEX.git), but direct `git ls-remote` failed with `CONNECT tunnel failed, response 403`. GitHub PR state and branch metadata therefore could not be independently verified from this container.
 
 ## Task 1 — Inventory Existing Files
 
