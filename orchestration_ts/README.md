@@ -18,6 +18,10 @@ npm test
 
 The test suite starts the exported Express app on an ephemeral local port and exercises the runtime routes over HTTP.
 
+## CI validation
+
+Pull requests that touch this directory run the `Orchestration TypeScript CI` workflow. The workflow installs dependencies in `orchestration_ts/`, runs `npm run build`, and then runs `npm test`. This local environment could not complete those steps because npm registry access returned HTTP 403; the workflow is the required dependency-backed verification path once network access is available.
+
 ## Environment configuration
 
 Copy `env.template` to `.env` for local runtime configuration:

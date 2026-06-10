@@ -220,3 +220,22 @@ remaining_blockers:
   - "Restore GitHub network/connector access, then push the branch and verify PR #16 exists remotely."
   - "Validate whether the connector allowlist can permit safe .env.example files; until then use orchestration_ts/env.template."
 ```
+
+
+## Operating Contract Addendum
+
+The orchestration PR operating contract is now tracked in `orchestration_ts/MERGE_READINESS.md`. Current contract status is **BLOCKED — not ready to merge** because dependency-backed TypeScript build/test execution and GitHub remote verification are both environment-limited.
+
+```yaml
+intent: "Establish a minimal, review-first TypeScript orchestration runtime with auditable SHA-workflow recovery notes and dependency-backed route validation."
+goal: "Routes, SHA marker, documentation, and CI workflow exist; build/test/remote verification pass once npm and GitHub access are restored."
+sequence_tracks:
+  dependency_validation: "blocked by npm registry HTTP 403"
+  remote_validation: "blocked by GitHub CONNECT tunnel HTTP 403"
+parallel_tracks:
+  review_validation: "available for source, docs, env-template, and report review"
+hold_point: "Do not merge until npm install, npm run build, npm test, and remote PR verification pass."
+environment_limitations:
+  - "ENVIRONMENT-LIMITATION: npm registry access returned HTTP 403."
+  - "ENVIRONMENT-LIMITATION: GitHub remote access returned CONNECT tunnel HTTP 403."
+```
