@@ -1,0 +1,80 @@
+ssot_version: "0.2"
+program: "MASTER Contract Governance Workbench"
+repository: "GBOGEB/CODEX"
+current_state: >-
+  ITT has been issued. Selection from three interested parties to two Applicants
+  is complete. Applicants have been informed. The released ITT package is a
+  locked contractual baseline and must not be overwritten.
+
+governance:
+  operating_model: "ABACUS owns contract data. CODEX owns automation. ARTSTYLE owns visualization."
+  rules:
+    - "MASTER_input/00_ITT_RELEASE_BASELINE/ is locked baseline material."
+    - "Do not overwrite released ITT documents."
+    - "All updates must be additive."
+    - "YAML SSOT is authoritative."
+    - "Excel, HTML, dashboards, and reports are generated outputs only."
+    - "Any Excel or HTML edits must become change requests back into SSOT."
+    - "Preserve lineage from source document to requirement to clarification to applicant response to evaluation to negotiation to BAFO to award to execution deliverable."
+
+lifecycle:
+  current_context: "Clarification period active after applicant notification and ITT issuance."
+  stages:
+    - id: selection_complete
+      name: "Selection complete"
+      status: complete
+    - id: applicant_notification_complete
+      name: "Applicant notification complete"
+      status: complete
+    - id: itt_issued
+      name: "ITT issued"
+      status: complete
+    - id: clarification_period_active
+      name: "Clarification period active"
+      status: active
+    - id: applicant_offers_expected
+      name: "Applicant offers expected July 2026"
+      status: target
+      target_date: "2026-07"
+    - id: negotiation_round_1
+      name: "Negotiation Round 1"
+      status: planned
+    - id: negotiation_round_2
+      name: "Negotiation Round 2"
+      status: planned
+    - id: bafo
+      name: "BAFO"
+      status: planned
+    - id: award_recommendation
+      name: "Award recommendation"
+      status: planned
+    - id: contract_award
+      name: "Contract award"
+      status: planned
+    - id: po_target
+      name: "PO target 01-Jan-2027"
+      status: target
+      target_date: "2027-01-01"
+    - id: execution
+      name: "Execution: 34 calendar months, 6 phases"
+      status: planned
+      notes: "Execution governance is planned as six phases across 34 calendar months."
+
+lineage_model:
+  required_chain:
+    - source_document
+    - requirement
+    - clarification
+    - applicant_response
+    - evaluation
+    - negotiation
+    - bafo
+    - award
+    - execution_deliverable
+
+repositories:
+  input_root: "MASTER_input/"
+  baseline_path: "MASTER_input/00_ITT_RELEASE_BASELINE/"
+  generated_root: "generated/"
+  ssot_path: "ssot/master_contract_ssot_v0_2.yaml"
+  schema_path: "schemas/master_contract_ssot.schema.yaml"
