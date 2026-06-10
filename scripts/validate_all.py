@@ -8,6 +8,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+from jsonschema import Draft202012Validator
 ROOT = Path(__file__).resolve().parents[1]
 
 
