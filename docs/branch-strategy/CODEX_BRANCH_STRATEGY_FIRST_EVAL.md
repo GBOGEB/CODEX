@@ -45,8 +45,8 @@ The current working copy has a detached HEAD checkout (no local branch refs were
 | #203 | `copilot/pr-w0052-federation-dashboard` | Merged into `main` in local history | Treat source branch as archive/delete candidate after remote confirmation. |
 | #204 | `copilot/w008-federation-runtime-visualization` | Merged into `main` in local history | Treat source branch as archive/delete candidate after remote confirmation. |
 | #205 | `copilot/federation-impact-review` | Merged into `main` in local history | Treat source branch as archive/delete candidate after remote confirmation. |
-| #206 | `copilot/anthropic-gemini-integration` | Merged into current `work` history | Treat source branch as archive/delete candidate after remote confirmation. |
-| #207 | `codex/initialize-confluence-github-federation-phase-0` | Merged into current `work` history | Treat source branch as archive/delete candidate after remote confirmation. |
+| #206 | `copilot/anthropic-gemini-integration` | Merged into current checkout history | Treat source branch as archive/delete candidate after remote confirmation. |
+| #207 | `codex/initialize-confluence-github-federation-phase-0` | Merged into current checkout history | Treat source branch as archive/delete candidate after remote confirmation. |
 
 ### CI/workflow files observed
 
