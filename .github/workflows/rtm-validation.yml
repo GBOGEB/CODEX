@@ -1,0 +1,37 @@
+name: W007 RTM Validation
+
+on:
+  pull_request:
+    paths:
+      - 'ssot/**'
+      - 'docs/**'
+      - '.github/workflows/rtm-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-rtm-runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Q3-Q5 traceability references
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          model = Path('ssot/traceability_dashboard.yaml')
+          if not model.exists():
+              raise SystemExit('missing ssot/traceability_dashboard.yaml')
+          text = model.read_text()
+          required = ['Q3', 'Q4', 'Q5']
+          fields = ['rtm_reference', 'contractual_gap_reference', 'clarification_reference', 'answer_reference']
+          for q in required:
+              if f'question_id: {q}' not in text:
+                  raise SystemExit(f'missing traceability chain for {q}')
+              block = text.split(f'question_id: {q}', 1)[1].split('\n  - question_id:', 1)[0]
+              for field in fields:
+                  if f'{field}:' not in block:
+                      raise SystemExit(f'missing {field} for {q}')
+          print('Q3-Q5 RTM traceability references are present')
+          PY

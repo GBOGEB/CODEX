@@ -1,0 +1,41 @@
+dashboard:
+  id: governance_dashboard
+  version: W007
+  title: ABACUS Governance Dashboard
+  status: foundation_ready
+artifact_counts:
+  governance_controls: 3
+  ssot_models: 3
+  dashboard_pages: 4
+  validation_workflows: 3
+  review_artifacts_verified: 0
+review_status:
+  state: partial
+  gate_completion_percent: 70
+  required_controls:
+    artifact_promotion_policy: present
+    runtime_readiness_checklist: present
+    decision_log: present
+release_status:
+  state: release_candidate_pending_validation
+  readiness_percent: 72
+  blockers:
+    - Missing authoritative W007 review package artifacts at expected paths.
+controls:
+  - id: artifact_promotion_policy
+    path: governance/artifact_promotion_policy.yaml
+    status: planned_present
+  - id: runtime_readiness_checklist
+    path: governance/runtime_readiness_checklist.yaml
+    status: planned_present
+  - id: decision_log
+    path: governance/decision_log.md
+    status: planned_present
+promotion_summary:
+  candidate_artifacts: 17
+  promoted_artifacts: 0
+  policy_state: draft
+open_risks:
+  - id: W007-GOV-001
+    description: Existing baseline governance files named in the handoff are not discoverable in expected locations.
+    severity: medium
