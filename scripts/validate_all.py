@@ -53,15 +53,18 @@ def validate_schema(path: str, required_fields: set[str]) -> None:
 
 
 def validate_ts_tests() -> None:
-    job_queue_test = read("tests/job_queue.test.ts")
-    for marker in ["enqueue", "dequeue", "empty queue"]:
-        if marker not in job_queue_test:
-            fail(f"tests/job_queue.test.ts missing coverage marker: {marker}")
-
-    federation_test = read("tests/federation_validation.test.ts")
-    for marker in ["federation.schema.json", "handover.schema.json"]:
-        if marker not in federation_test:
-            fail(f"tests/federation_validation.test.ts missing schema marker: {marker}")
+    ts_tests = [
+        "tests/job_queue.test.ts",
+        "tests/federation_validation.test.ts",
+    ]
+    existing = [test for test in ts_tests if (ROOT / test).exists()]
+    if not existing:
+        return
+    subprocess.run(
+        ["npx", "tsx", "--test", *existing],
+        cwd=ROOT,
+        check=True,
+    )
 
 
 def validate_handover() -> None:
