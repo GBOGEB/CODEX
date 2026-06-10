@@ -151,15 +151,15 @@ route_wiring_commit: 3b79b95fa11389365de2df06a1c913de62140aa9
 
 ## Follow-up Remediation — Merge Readiness Blockers
 
-The review identified that the first recovery pass did not include executable TypeScript project metadata or route-level functional tests. This follow-up adds those missing merge-readiness assets.
+The review identified that the first recovery pass needed stronger merge-readiness handling around dependency-backed type checks, route-level functional tests, and the env-template workaround. This follow-up removes the hand-written Express ambient declarations, adds setup documentation, and makes the TypeScript project validate against real dependencies once npm registry access is available.
 
 ```yaml
 remediation_files:
   - orchestration_ts/package.json
   - orchestration_ts/tsconfig.json
   - orchestration_ts/test/routes.test.ts
-  - orchestration_ts/src/types/runtime.d.ts
   - orchestration_ts/env.template
+  - orchestration_ts/README.md
 ```
 
 ### Added CI/Test Entry Points
@@ -191,18 +191,24 @@ covered_endpoints:
       event: echoed_request_payload
 ```
 
+
+### Ambient Declaration Follow-up
+
+Hand-written Express ambient declarations were removed because they could mask mismatches with the real `express` and `@types/express` packages. The expected verification path is now dependency-backed: install the declared packages, then run `npm run build` and `npm test` against the actual runtime and type definitions.
+
 ### Current Verification Status
 
 ```yaml
 json_validation: pass
-typescript_compile: pass_with_local_ambient_types
+typescript_compile: blocked_until_dependencies_install
 npm_install: blocked
 npm_install_blocker: "npm registry access returned 403 for https://registry.npmjs.org/@types%2fexpress"
 npm_test: blocked
-npm_test_blocker: "tsx is not installed because npm install is blocked by registry 403"
+npm_test_blocker: "tsx and runtime dependencies are not installed because npm install is blocked by registry 403"
 remote_verification: blocked
 remote_verification_blocker: "git ls-remote returned CONNECT tunnel failed, response 403"
 env_example_workaround_added: orchestration_ts/env.template
+ambient_express_declarations: removed_to_avoid_masking_real_type_errors
 ```
 
 ### Updated Merge Readiness
@@ -210,7 +216,7 @@ env_example_workaround_added: orchestration_ts/env.template
 ```yaml
 merge_readiness: blocked
 remaining_blockers:
-  - "Restore npm registry access or provide a dependency cache, then run cd orchestration_ts && npm install && npm test."
+  - "Restore npm registry access or provide a dependency cache, then run cd orchestration_ts && npm install && npm run build && npm test."
   - "Restore GitHub network/connector access, then push the branch and verify PR #16 exists remotely."
   - "Validate whether the connector allowlist can permit safe .env.example files; until then use orchestration_ts/env.template."
 ```
