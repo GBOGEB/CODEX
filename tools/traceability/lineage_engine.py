@@ -8,25 +8,32 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from collections import Counter
 from pathlib import Path
 from typing import Any
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
-
-from tools.traceability.lineage_report import generate_reports
-from tools.traceability.trace_models import (
-    LINEAGE_STAGE_ORDER,
-    LineageNode,
-    LineageStage,
-    ValidationIssue,
-    is_uuid,
-    stable_uuid,
-    utc_now,
-)
+try:
+    from .lineage_report import generate_reports
+    from .trace_models import (
+        LINEAGE_STAGE_ORDER,
+        LineageNode,
+        LineageStage,
+        ValidationIssue,
+        is_uuid,
+        stable_uuid,
+        utc_now,
+    )
+except ImportError:
+    from lineage_report import generate_reports
+    from trace_models import (
+        LINEAGE_STAGE_ORDER,
+        LineageNode,
+        LineageStage,
+        ValidationIssue,
+        is_uuid,
+        stable_uuid,
+        utc_now,
+    )
 
 DEFAULT_LINEAGE_INPUT_PATH = Path("MASTER_input/Traceability/lineage.json")
 DEFAULT_CREATED = "2026-06-09T00:00:00+00:00"

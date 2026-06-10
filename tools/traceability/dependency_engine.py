@@ -8,25 +8,32 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
-
-from tools.traceability.trace_models import (
-    TRACE_STAGE_ORDER,
-    TraceNode,
-    TraceStage,
-    ValidationIssue,
-    is_uuid,
-    stable_uuid,
-    utc_now,
-)
-from tools.traceability.trace_report import generate_reports
+try:
+    from .trace_models import (
+        TRACE_STAGE_ORDER,
+        TraceNode,
+        TraceStage,
+        ValidationIssue,
+        is_uuid,
+        stable_uuid,
+        utc_now,
+    )
+    from .trace_report import generate_reports
+except ImportError:
+    from trace_models import (
+        TRACE_STAGE_ORDER,
+        TraceNode,
+        TraceStage,
+        ValidationIssue,
+        is_uuid,
+        stable_uuid,
+        utc_now,
+    )
+    from trace_report import generate_reports
 
 DEFAULT_TRACE_INPUT_PATH = Path("MASTER_input/Traceability/dependency_trace.json")
 
