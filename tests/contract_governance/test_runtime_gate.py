@@ -7,7 +7,9 @@ import pytest
 
 
 def _load_runtime_module():
-    module_path = Path("codex/contract_governance/runtime.py")
+    repo_root = Path(__file__).resolve().parents[2]
+    module_path = repo_root / "codex" / "contract_governance" / "runtime.py"
+    assert module_path.is_file(), f"missing runtime module at {module_path}"
     spec = importlib.util.spec_from_file_location("contract_governance_runtime", module_path)
     assert spec is not None
     assert spec.loader is not None
