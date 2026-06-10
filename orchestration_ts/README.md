@@ -22,6 +22,16 @@ The test suite starts the exported Express app on an ephemeral local port and ex
 
 Pull requests that touch this directory run the `Orchestration TypeScript CI` workflow. The workflow installs dependencies in `orchestration_ts/`, runs `npm run build`, and then runs `npm test`. This local environment could not complete those steps because npm registry access returned HTTP 403; the workflow is the required dependency-backed verification path once network access is available.
 
+## Network diagnostics
+
+If `npm install`, `npm run build`, `npm test`, or GitHub remote verification fail with HTTP 403 / CONNECT tunnel errors, run:
+
+```bash
+npm run diagnose:network
+```
+
+The diagnostic command checks redacted proxy environment variables, npm registry reachability, npm package metadata access, and GitHub `ls-remote` reachability. Any blocked check is reported as `ENVIRONMENT-LIMITATION`.
+
 ## Environment configuration
 
 Copy `env.template` to `.env` for local runtime configuration:

@@ -39,3 +39,9 @@ jobs:
       - name: Route tests
         working-directory: orchestration_ts
         run: npm test
+
+      - name: Network diagnostics
+        if: failure()
+        continue-on-error: true
+        working-directory: orchestration_ts
+        run: npm run diagnose:network

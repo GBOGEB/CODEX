@@ -239,3 +239,20 @@ environment_limitations:
   - "ENVIRONMENT-LIMITATION: npm registry access returned HTTP 403."
   - "ENVIRONMENT-LIMITATION: GitHub remote access returned CONNECT tunnel HTTP 403."
 ```
+
+
+## Network Diagnostic Follow-up
+
+A repeatable network diagnostic has been added for the recurring npm/GitHub HTTP 403 failures. The command is intentionally dependency-free and redacts proxy credentials before reporting environment state.
+
+```yaml
+command: "cd orchestration_ts && npm run diagnose:network"
+checks:
+  - "redacted proxy environment variables"
+  - "npm registry configuration"
+  - "npm registry ping"
+  - "@types/express npm metadata lookup"
+  - "GitHub ls-remote reachability"
+ci_behavior: "The Orchestration TypeScript CI workflow runs this diagnostic on failure with continue-on-error enabled."
+status: "ENVIRONMENT-LIMITATION remains active in this container until npm and GitHub checks stop returning HTTP 403."
+```

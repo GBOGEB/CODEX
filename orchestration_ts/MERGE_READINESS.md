@@ -30,6 +30,7 @@ The PR is ready for human review only when every item below is true at the same 
 | V8 | `npm test` passes and executes the HTTP route tests. | Blocked: npm registry returned HTTP 403, so `tsx` is unavailable |
 | V9 | Remote branch and PR are visible on GitHub. | Blocked: `git ls-remote` returned CONNECT tunnel HTTP 403 |
 | V10 | Every skipped verification is labeled `ENVIRONMENT-LIMITATION`. | Satisfied in this document and execution report |
+| V11 | A repeatable network diagnostic exists for npm/GitHub 403 recovery. | Satisfied by `npm run diagnose:network` |
 
 **Current status:** BLOCKED — not ready to merge.
 
@@ -44,13 +45,13 @@ Work stops when the Definition of Victory is met or an explicit blocker is hit. 
 
 ## 7. Sequence vs Parallel Plan
 
-- **[SEQ] Dependency validation:** restore npm access, run `npm install`, run `npm run build`, then run `npm test`.
+- **[SEQ] Dependency validation:** if registry access fails, run `npm run diagnose:network`; then restore npm access, run `npm install`, run `npm run build`, then run `npm test`.
 - **[SEQ] Remote validation:** restore GitHub access, push the branch, verify the remote branch/PR, then allow CI to run.
 - **[PAR] Review validation:** review route code, README, env-template handling, and report accuracy while environment blockers are being resolved.
 
 ## 8. Feedforward / Feedback Loop
 
-- **Feedforward:** next operator receives the route contract, exact validation commands, and known environment limitations before continuing.
+- **Feedforward:** next operator receives the route contract, exact validation commands, `npm run diagnose:network`, and known environment limitations before continuing.
 - **Feedback:** after dependency and remote validation, update `CODEX_EXECUTION_REPORT.md` with pass/fail outcomes and commit/CI links.
 
 ## 9. Reporting Format
