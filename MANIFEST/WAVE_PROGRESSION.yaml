@@ -72,6 +72,29 @@ wave_metrics:
     A8: 88
     A9: 91
 
+debug_spine_waves:
+  - wave: W000
+    track: ABACUS_DEBUG_SPINE_W000
+    focus: lldb_dap_swift_debug_governance_scaffold
+    completion: 20
+    branch: wave/W000-debug-spine-lldb-dap-swift
+    description: "Scaffold lldb-dap control surface, Swift session backbone, federated runtime targets, ABACUS evidence layer, and GitHub audit substrate"
+    completed_tasks:
+      - "Created abacus_runtime/debug_spine/debug_spine_manifest.yaml"
+      - "Created abacus_runtime/debug_spine/trace_contract.schema.json"
+      - "Registered debug_spine in abacus_runtime/runtime_manifest.yaml"
+  - wave: W001
+    track: ABACUS_DEBUG_SPINE_W000
+    focus: swift_runtime_trace_and_markdown_evidence_proof
+    completion: 35
+    branch: wave/W001-debug-spine-runtime-proof
+    description: "Add executable Swift runtime proof, JSONL trace emission, lldb-dap launch template, and Markdown evidence renderer"
+    completed_tasks:
+      - "Created abacus_runtime/debug_spine/swift/Package.swift"
+      - "Created abacus_runtime/debug_spine/swift/Sources/AbacusDebugSpine/main.swift"
+      - "Created abacus_runtime/debug_spine/lldb-dap/launch.template.json"
+      - "Created abacus_runtime/debug_spine/render_evidence.py"
+
 incubator_waves:
   - wave: W000
     focus: tuple_schema_and_naming_convention
