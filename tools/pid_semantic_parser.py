@@ -524,7 +524,7 @@ def parse_svg(svg_path: Path) -> dict[str, Any]:
         subsystem, subsystem_evidence = infer_subsystem(text, elem_id)
         if subsystem:
             subsystem_items[subsystem].append(elem_id)
-            if subsystem == "vacuum_barrier":
+            if subsystem == "vacuum barrier":
                 layer_items["vacuum barrier"].append(elem_id)
             if subsystem in {"QM", "QVB", "Jumper", "QINFRA/interface"}:
                 layer_items[f"{subsystem} section"].append(elem_id)
