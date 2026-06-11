@@ -819,8 +819,21 @@ def write_reports(models: dict[str, Any]) -> list[Path]:
 
 def first_svg_markup() -> str:
     for path in EXPECTED_SVG_INPUTS:
-        if path.exists():
-            return path.read_text(encoding="utf-8", errors="replace")
+        if not path.exists():
+            continue
+        raw = path.read_text(encoding="utf-8", errors="replace")
+        try:
+            root = ET.fromstring(raw)
+        except ET.ParseError:
+            return raw
+        parent = {child: node for node in root.iter() for child in list(node)}
+        for el in list(root.iter()):
+            for attr in list(el.attrib):
+                if attr.lower().startswith("on"):
+                    del el.attrib[attr]
+            if local_name(el.tag) == "script" and el in parent:
+                parent[el].remove(el)
+        return ET.tostring(root, encoding="unicode")
     return "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'><rect width='1200' height='800' fill='#fff'/><text x='60' y='90' font-size='28'>No expected P&amp;ID SVG input found in data/svg/</text></svg>"
 
 
