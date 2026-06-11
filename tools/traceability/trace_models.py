@@ -134,7 +134,7 @@ class LineageNode:
 
 def stable_uuid(name: str) -> str:
     """Return a deterministic UUID string for repository-seeded trace data."""
-    return str(uuid5(NAMESPACE_URL, f"GBOGEB/ARTSTYLE-WIP/W002/{name}"))
+    return str(uuid5(NAMESPACE_URL, f"GBOGEB/CODEX/W002/{name}"))
 
 
 def is_uuid(value: str) -> bool:
