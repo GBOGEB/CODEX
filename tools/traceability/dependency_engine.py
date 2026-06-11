@@ -163,7 +163,16 @@ def validate_trace_nodes(nodes: list[TraceNode]) -> dict[str, Any]:
     errors: list[ValidationIssue] = []
     errors.extend(_duplicate_id_issues(nodes))
     errors.extend(_uuid_issues(nodes))
-
+    for node in nodes:
+        for field_name in ("title", "source_path"):
+            if not getattr(node, field_name, None):
+                errors.append(
+                    ValidationIssue(
+                        "missing_trace_field",
+                        f"Trace node is missing required field: {field_name}",
+                        node.id,
+                    )
+                )
     nodes_by_id: dict[str, TraceNode] = {}
     for node in nodes:
         nodes_by_id.setdefault(node.id, node)
