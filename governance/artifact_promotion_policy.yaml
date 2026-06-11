@@ -1,0 +1,40 @@
+policy:
+  id: artifact_promotion_policy
+  version: W007
+  owner: ABACUS governance runtime
+  status: draft
+purpose: >-
+  Define minimum controls for promoting W007 runtime artifacts from draft
+  foundation to review-ready and release-candidate states.
+promotion_states:
+  - name: draft
+    description: Artifact exists and has initial owner intent.
+  - name: review_ready
+    description: Artifact has SSOT references, validation coverage, and review gate mapping.
+  - name: release_candidate
+    description: Artifact is included in completion reporting and release-readiness validation.
+  - name: promoted
+    description: Artifact is accepted as part of the governed runtime baseline.
+minimum_requirements:
+  review_ready:
+    - Artifact path is checked in.
+    - Artifact owner or governing workflow is identified.
+    - Required references are represented in SSOT or completion report.
+  release_candidate:
+    - Related validation workflow exists or explicit waiver is logged.
+    - Open risks are recorded in the completion report.
+    - Dashboard or report consumers are identified.
+  promoted:
+    - Review gate is complete.
+    - Release readiness is approved.
+    - Decision log records promotion decision.
+controls:
+  - id: AP-001
+    name: No orphan runtime artifact
+    rule: Every W007 runtime artifact must appear in the completion report.
+  - id: AP-002
+    name: Validation before release
+    rule: Runtime SSOT, dashboard, and governance control files must be covered by GitHub Actions validation.
+  - id: AP-003
+    name: Risk visibility
+    rule: Known placeholder data or missing upstream artifacts must be listed as open risks.

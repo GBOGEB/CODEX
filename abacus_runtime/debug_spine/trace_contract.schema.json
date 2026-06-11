@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gbogeb.example/schemas/abacus_debug_spine_w000_trace_contract.schema.json",
+  "title": "ABACUS_DEBUG_SPINE_W000 Trace Contract",
+  "type": "object",
+  "required": [
+    "session_id",
+    "track_id",
+    "adapter",
+    "backbone",
+    "target",
+    "github",
+    "events",
+    "render"
+  ],
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "track_id": {
+      "const": "ABACUS_DEBUG_SPINE_W000"
+    },
+    "adapter": {
+      "type": "object",
+      "required": ["name", "protocol"],
+      "properties": {
+        "name": {"const": "lldb-dap"},
+        "protocol": {"const": "Debug Adapter Protocol"}
+      },
+      "additionalProperties": true
+    },
+    "backbone": {
+      "type": "object",
+      "required": ["language"],
+      "properties": {
+        "language": {"const": "Swift"}
+      },
+      "additionalProperties": true
+    },
+    "target": {
+      "type": "object",
+      "required": ["language"],
+      "properties": {
+        "language": {
+          "enum": ["Python", "JavaScript", "TypeScript"]
+        }
+      },
+      "additionalProperties": true
+    },
+    "github": {
+      "type": "object",
+      "required": ["repository", "commit_sha"],
+      "properties": {
+        "repository": {"const": "GBOGEB/ABACUS"},
+        "commit_sha": {
+          "type": "string",
+          "minLength": 7
+        },
+        "pull_request": {"type": ["string", "null"]},
+        "artifact_uri": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    },
+    "events": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "type": "object",
+        "required": ["name", "timestamp", "evidence_ref"],
+        "properties": {
+          "name": {
+            "enum": [
+              "session.created",
+              "dap.initialized",
+              "breakpoint.bound",
+              "execution.paused",
+              "render.snapshot",
+              "session.closed"
+            ]
+          },
+          "timestamp": {"type": "string"},
+          "evidence_ref": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": true
+      }
+    },
+    "render": {
+      "type": "object",
+      "required": ["required", "status"],
+      "properties": {
+        "required": {"const": true},
+        "status": {
+          "enum": ["pending", "rendered", "failed"]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
