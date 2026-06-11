@@ -176,11 +176,11 @@ def validate_lineage_nodes(nodes: list[LineageNode]) -> dict[str, Any]:
         if count > 1:
             errors.append(ValidationIssue("duplicate_lineage_id", f"Duplicate lineage ID detected: {node_id}", node_id))
 
-    for node in nodes:
-        if not is_uuid(node.id):
-            errors.append(ValidationIssue("invalid_lineage_id", f"Lineage ID is not a valid UUID: {node.id}", node.id))
-        for field_name in ("created", "updated", "status"):
-            if not getattr(node, field_name):
+for node in nodes:
+    if not is_uuid(node.id):
+        errors.append(ValidationIssue("invalid_lineage_id", f"Lineage ID is not a valid UUID: {node.id}", node.id))
+    for field_name in ("title", "created", "updated", "status"):
+        if not getattr(node, field_name):
                 errors.append(
                     ValidationIssue(
                         "missing_lineage_field",
