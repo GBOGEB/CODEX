@@ -505,7 +505,7 @@ def parse_svg(svg_path: Path) -> dict[str, Any]:
             arrow = infer_arrow(element, line, len(arrows) + 1)
             if arrow:
                 arrows.append(arrow)
-                layer_items["arrows / flow direction only"].append(arrow.arrow_id)
+                layer_items["arrows / flow direction only"].append(elem_id)
                 if arrow.unresolved_reason:
                     unresolved_items.append(
                         {
