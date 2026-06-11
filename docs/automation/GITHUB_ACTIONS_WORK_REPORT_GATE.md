@@ -4,7 +4,7 @@ This document describes a future GitHub Actions gate for Universal Work Reports.
 
 ## Intended future checks
 
-1. Confirm `docs/reports/PR563_WORK_REPORT.md` exists for PR #563 or the matching report path exists for a future PR.
+1. Confirm the expected report (e.g., `docs/reports/PR<PR_NUMBER>_WORK_REPORT.md`) exists for the PR under review (or another configured report path for non-PR work units).
 2. Confirm a machine-readable YAML/JSON twin exists.
 3. Parse the twin against `schemas/universal_work_report.schema.yaml`.
 4. Verify blocker and environment-limitation fields are separate.
