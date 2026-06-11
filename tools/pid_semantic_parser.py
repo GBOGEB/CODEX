@@ -321,8 +321,8 @@ def infer_subsystem(
         return None, []
     raw = match.group(1).upper()
     mapping = {
-        "BARRIER": "vacuum_barrier",
-        "VACUUM": "vacuum_barrier",
+        "BARRIER": "vacuum barrier",
+        "VACUUM": "vacuum barrier",
         "INTERFACE": "QINFRA/interface",
         "JUMPER": "Jumper",
     }
