@@ -7,4 +7,4 @@ This directory collects repository-level governance anchors. For PR lifecycle an
 - `schemas/pr_lifecycle_checklist.schema.yaml`
 - `schemas/universal_work_report.schema.yaml`
 
-Current PR #563 posture: review-first, reversible documentation scaffold, no merge automation, no production runtime execution.
+For examples of review-first posture and completed reports, see `docs/reports/` (e.g., `docs/reports/PR563_WORK_REPORT.md`).
