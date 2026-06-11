@@ -1,0 +1,50 @@
+dashboard:
+  id: traceability_dashboard
+  version: W007
+  title: ABACUS Traceability Dashboard
+  status: foundation_ready
+coverage:
+  overall_percent: 75
+  required_questions: [Q3, Q4, Q5]
+  complete_chains: 0
+  partial_chains: 3
+  missing_references: 0
+artifact_counts:
+  rtm_references: 3
+  contractual_gap_references: 3
+  clarification_references: 3
+  answer_references: 3
+review_status:
+  state: pending_review_package_alignment
+  gate: partial
+  notes: Placeholder chain references are present; authoritative artifact backfill remains open.
+release_status:
+  state: release_candidate_foundation
+  readiness_percent: 70
+chains:
+  - question_id: Q3
+    question: Q3 runtime traceability chain
+    rtm_reference: RTM-Q3
+    contractual_gap_reference: GAP-Q3
+    clarification_reference: CLAR-Q3
+    answer_reference: ANSWER-Q3
+    status: partial
+  - question_id: Q4
+    question: Q4 runtime traceability chain
+    rtm_reference: RTM-Q4
+    contractual_gap_reference: GAP-Q4
+    clarification_reference: CLAR-Q4
+    answer_reference: ANSWER-Q4
+    status: partial
+  - question_id: Q5
+    question: Q5 runtime traceability chain
+    rtm_reference: RTM-Q5
+    contractual_gap_reference: GAP-Q5
+    clarification_reference: CLAR-Q5
+    answer_reference: ANSWER-Q5
+    status: partial
+open_items:
+  - id: W007-TRACE-001
+    description: Replace placeholder references with authoritative review package identifiers after source artifacts are restored.
+    owner: W008
+    severity: medium

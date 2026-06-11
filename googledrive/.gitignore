@@ -1,0 +1,11 @@
+# Runtime inbound artifacts can be large, private, or unreviewed. Keep only the placeholder.
+inbound_staging/*
+!inbound_staging/.gitkeep
+
+decision_log.jsonl
+# Local runtime state.
+*.tmp
+*.bak
+*.secret
+__pycache__/
+.ipynb_checkpoints/
