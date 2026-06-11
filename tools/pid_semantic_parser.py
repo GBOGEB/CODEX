@@ -616,7 +616,7 @@ def build_models(svg_paths: list[Path] | None = None) -> dict[str, Any]:
             layer_items.setdefault(layer, set()).update(ids)
         for subsystem, ids in item["subsystem_items"].items():
             subsystem_items.setdefault(subsystem, set()).update(ids)
-    layer_items["full drawing"].update(line["line_id"] for line in lines)
+    layer_items["full drawing"].update(line["source_svg_element_id"] for line in lines)
     layer_items["unresolved items"].update(item["id"] for item in unresolved_items)
 
     line_model = {
