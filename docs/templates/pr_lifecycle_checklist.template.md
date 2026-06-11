@@ -1,6 +1,6 @@
-# PR Lifecycle Checklist SSOT
+# PR Lifecycle Checklist — Template (mirrors SSOT)
 
-This file is the single source of truth for the drop-in Universal Lifecycle Checklist used by PRs, batches, waves, and child work units. It is intentionally generic and review-first: agents may complete evidence-backed execution items, but must not tick human-only merge-gate items.
+This file mirrors `docs/ssot/PR_LIFECYCLE_CHECKLIST.md` for copy/paste into PR bodies and batches. If you update this template, update the SSOT (and vice versa) to keep them identical.
 
 ```text
 # === PR TODO :: UNIVERSAL LIFECYCLE CHECKLIST (drop-in, generic) ===
