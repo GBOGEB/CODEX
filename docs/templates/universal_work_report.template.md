@@ -9,8 +9,29 @@ level: <PROGRAMME|WAVE|SUB-WAVE|PHASE|SPRINT|TASK|SUBTASK>
 parent_id: <PARENT-ID|null>
 track_type: <SEQ|PAR>
 risk_class: <REVERSIBLE|IRREVERSIBLE|SECRET-SENSITIVE|EXTERNAL-EFFECT>
-review_status: <REVIEW-FIRST|READY|BLOCKED>
+review_status: <REVIEW-FIRST|READY|BLOCKED|HOLD-POINT>
 merge_allowed: false
+victory:
+  overall: <MET|NOT MET|PARTIAL>
+  criteria:
+    - id: <V1>
+      status: <PASS|FAIL|PARTIAL|N/A>
+      evidence: <EVIDENCE>
+testing_ledger:
+  - command: <COMMAND>
+    status: <PASS|FAIL|ENVIRONMENT-LIMITATION>
+    evidence: <EVIDENCE>
+artifacts:
+  runtime_only: []
+  committed: []
+  persistent_verified: []
+audit:
+  tree_sha: null
+  container_head_sha: null
+  base_ref_stable: false
+  pin_container_sha: false
+  pin_remote_sha: true
+  merge_requires_human_go: true
 ```
 
 ## 0. Identity and mapping
