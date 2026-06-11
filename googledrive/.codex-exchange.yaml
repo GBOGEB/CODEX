@@ -1,0 +1,15 @@
+manifest_version: "1.2"
+source_origin: "googledrive-exchange"
+target_repository: "gbogeb/codex"
+reconciliation_mode: "review-first"
+
+lineage_mapping:
+  - source_path: "inbound_staging/utility_sensitivity_2026.yaml"
+    target_destination: "config/blsn_config.yaml"
+    action_strategy: "CHERRY-PICK"
+    rationale: "Update 2026 utility cost values into the single source of truth."
+
+  - source_path: "inbound_staging/experimental_parallel_flow.py"
+    target_destination: "src/agents/codex/experimental/flow_calc.py"
+    action_strategy: "PARALLEL"
+    rationale: "Isolate 2K stage mass-flow algorithms for parallel isolated testing."
