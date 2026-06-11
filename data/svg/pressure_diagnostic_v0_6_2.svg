@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">Pressure Diagnostic View v0.6.2</title>
+  <desc id="desc">Secondary pressure-only diagnostic layer with independent palette and no temperature colour reuse.</desc>
+  <defs>
+    <linearGradient id="pressure" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="35%" stop-color="#38bdf8"/>
+      <stop offset="60%" stop-color="#6b7280"/>
+      <stop offset="100%" stop-color="#1f2937"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="720" fill="#111827"/>
+  <text x="40" y="55" fill="#e5e7eb" font-size="30" font-family="Arial">QCell Pressure Diagnostic View (v0.6.2)</text>
+  <rect x="50" y="120" width="1100" height="300" fill="url(#pressure)" stroke="#e5e7eb" stroke-width="2"/>
+  <g fill="#d1d5db" font-family="Arial" font-size="20">
+    <text x="60" y="470">Low pressure: blue/cyan diagnostic zone</text>
+    <text x="60" y="505">Mid pressure: transition to neutral purple-grey</text>
+    <text x="60" y="540">High pressure: dark diagnostic zone</text>
+  </g>
+  <text x="40" y="615" fill="#fca5a5" font-size="18" font-family="Arial">Constraint: no cryogenic thermal colours in pressure view.</text>
+  <text x="40" y="660" fill="#9ca3af" font-size="16" font-family="Arial">Use only as secondary overlay or independent diagnostic mode.</text>
+</svg>

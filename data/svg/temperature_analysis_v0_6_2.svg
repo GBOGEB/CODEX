@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">Temperature Analysis v0.6.2</title>
+  <desc id="desc">Primary cryogenic thermal analysis view with dedicated 2 K to 77 K scale and separate warm range to 300 K.</desc>
+  <defs>
+    <linearGradient id="cryo" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#14213d"/>
+      <stop offset="15%" stop-color="#1d4e89"/>
+      <stop offset="35%" stop-color="#1f7a8c"/>
+      <stop offset="55%" stop-color="#38b000"/>
+      <stop offset="75%" stop-color="#ffb703"/>
+      <stop offset="100%" stop-color="#fb8500"/>
+    </linearGradient>
+    <linearGradient id="warm" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="50%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#7f1d1d"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="720" fill="#0b1020"/>
+  <text x="40" y="55" fill="#e5e7eb" font-size="30" font-family="Arial">QCell Thermal Analysis — Temperature Primary (v0.6.2)</text>
+  <rect x="50" y="100" width="1100" height="340" fill="url(#cryo)" stroke="#e5e7eb" stroke-width="2"/>
+  <text x="60" y="470" fill="#e5e7eb" font-size="22" font-family="Arial">Cryogenic temperature scale (2–77 K):</text>
+  <g fill="#d1d5db" font-family="Arial" font-size="18">
+    <text x="60" y="505">2 K</text><text x="180" y="505">4 K</text><text x="320" y="505">30 K</text><text x="470" y="505">50 K</text><text x="630" y="505">60 K</text><text x="810" y="505">77 K</text>
+  </g>
+  <rect x="50" y="540" width="1100" height="60" fill="url(#warm)" stroke="#e5e7eb" stroke-width="2"/>
+  <text x="60" y="635" fill="#e5e7eb" font-size="20" font-family="Arial">Warm extension (separate semantic band): 77–300 K</text>
+  <text x="40" y="690" fill="#9ca3af" font-size="16" font-family="Arial">Policy: pressure colours are excluded from this layer to preserve thermal grammar.</text>
+</svg>
