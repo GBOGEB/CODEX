@@ -498,10 +498,10 @@ def parse_svg(svg_path: Path) -> dict[str, Any]:
                 unresolved_reason=unresolved_reason,
             )
             lines.append(line)
-            layer_items["colour/process lines"].append(line.line_id)
-            layer_items[LINE_BINS[colour_bin]["toggle"]].append(line.line_id)
+            layer_items["colour/process lines"].append(elem_id)
+            layer_items[LINE_BINS[colour_bin]["toggle"]].append(elem_id)
             if subsystem:
-                subsystem_items[subsystem].append(line.line_id)
+                subsystem_items[subsystem].append(elem_id)
             arrow = infer_arrow(element, line, len(arrows) + 1)
             if arrow:
                 arrows.append(arrow)
