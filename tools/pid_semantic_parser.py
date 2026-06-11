@@ -509,7 +509,7 @@ def parse_svg(svg_path: Path) -> dict[str, Any]:
                 if arrow.unresolved_reason:
                     unresolved_items.append(
                         {
-                            "id": arrow.arrow_id,
+                            "id": elem_id,
                             "type": "arrow",
                             "reason": arrow.unresolved_reason,
                         }
