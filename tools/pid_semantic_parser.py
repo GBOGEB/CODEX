@@ -517,10 +517,10 @@ def parse_svg(svg_path: Path) -> dict[str, Any]:
             continue
 
         layer, layer_evidence = classify_layer(tag, element, text, None)
-        if layer in {"instruments", "valves", "equipment", "boundaries", "tags"}:
-            layer_items[layer].append(elem_id)
-        if layer == "boundaries":
-            boundaries.append(elem_id)
+        layer_key = {"instruments": "instruments only", "valves": "valves only", "equipment": "equipment only", "boundaries": "boundaries only", "tags": "tags"}.get(layer)
+        if layer_key:
+            layer_items[layer_key].append(elem_id)
+        if layer == "boundaries": boundaries.append(elem_id)
         subsystem, subsystem_evidence = infer_subsystem(text, elem_id)
         if subsystem:
             subsystem_items[subsystem].append(elem_id)
