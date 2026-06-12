@@ -327,7 +327,6 @@ def page_template(title: str, payload: str, page_kind: str = "main") -> str:
       <button data-step="1" title="Next slide">▶</button>
     """
     slides = {"main": main_slides, "warm": warm_slides, "b_line": b_line_slides}[page_kind]()
-    safe_payload = payload.replace("</", "<\\/")`r`n
     safe_payload = payload.replace("</", "<\/")
     return f"""<!doctype html>
 <html lang=\"en\">
