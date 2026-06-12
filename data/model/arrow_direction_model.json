@@ -1,9 +1,105 @@
 {
-  "arrows": [],
-  "counts": {
-    "resolved": 0,
-    "total": 0,
-    "unresolved": 0
+  "schema_version": "0.3",
+  "generated_at": "2026-06-11T11:50:20.717237+00:00",
+  "asset_discovery_mode": "local_only",
+  "inputs_found": [
+    {
+      "path": "data/svg/QCELL_PARASITIC.drawio.svg",
+      "size_bytes": 11360,
+      "kind": "svg"
+    },
+    {
+      "path": "data/svg/pressure_diagnostic_v0_6_2.svg",
+      "size_bytes": 1458,
+      "kind": "svg"
+    },
+    {
+      "path": "data/svg/qps-graph-mvp.svg",
+      "size_bytes": 1957,
+      "kind": "svg"
+    },
+    {
+      "path": "data/svg/temperature_analysis_v0_6_2.svg",
+      "size_bytes": 2007,
+      "kind": "svg"
+    }
+  ],
+  "svg_load_status": [
+    {
+      "path": "data/svg/QCELL_PARASITIC.drawio.svg",
+      "status": "loaded",
+      "error": null
+    },
+    {
+      "path": "data/svg/pressure_diagnostic_v0_6_2.svg",
+      "status": "loaded",
+      "error": null
+    },
+    {
+      "path": "data/svg/qps-graph-mvp.svg",
+      "status": "loaded",
+      "error": null
+    },
+    {
+      "path": "data/svg/temperature_analysis_v0_6_2.svg",
+      "status": "loaded",
+      "error": null
+    }
+  ],
+  "completion_status": "complete_nonzero",
+  "summary": {
+    "arrow_count": 1,
+    "arrow_colour_counts": {
+      "unknown_black_or_other": 1
+    },
+    "unresolved_arrow_count": 0
   },
-  "counts_by_source_colour": {}
+  "arrows": [
+    {
+      "arrow_id": "arrow_01_mx_3_00001",
+      "source_file": "data/svg/QCELL_PARASITIC.drawio.svg",
+      "source_svg_id": "sheet3:5",
+      "source_colour": "#000000",
+      "arrow_body_geometry": {
+        "coordinate": [
+          300.0,
+          200.0
+        ]
+      },
+      "arrow_tip_geometry": {
+        "coordinate": [
+          700.0,
+          200.0
+        ]
+      },
+      "direction_vector": [
+        400.0,
+        0.0
+      ],
+      "associated_line_id": "line_01_mx_3_00002",
+      "associated_subsystem": "QM",
+      "source_endpoint_labels": {
+        "source": "Thermal Shell (2 K mass)",
+        "target": "Pressure Diagnostic"
+      },
+      "subsystem_rule": "QM label token: THERMAL",
+      "confidence": 0.82,
+      "evidence": [
+        "draw.io mxCell endArrow/startArrow evidence",
+        "arrow=block",
+        "source=3",
+        "target=4",
+        "source label=Thermal Shell (2 K mass)",
+        "target label=Pressure Diagnostic",
+        "subsystem rule: QM label token: THERMAL"
+      ],
+      "unresolved_reason": null,
+      "colour_bin": "unknown_black_or_other",
+      "viewer_layer_ids": [
+        "arrows",
+        "unknown_black_or_other",
+        "subsystem_qm"
+      ]
+    }
+  ]
 }

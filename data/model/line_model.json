@@ -1,197 +1,662 @@
 {
-  "colour_bins": {
-    "blue_A": {
-      "count": 0,
-      "label": "A / A\u2032 4.5 K line",
-      "palette": [
-        [
-          0,
-          70,
-          170
-        ],
-        [
-          30,
-          110,
-          230
-        ],
-        [
-          60,
-          130,
-          255
-        ]
-      ],
-      "style": "stroke-dasharray:none;",
-      "toggle": "A / A\u2032 4.5 K line"
-    },
-    "cyan_B_2K": {
-      "count": 0,
-      "label": "B / B\u2032 2 K line",
-      "palette": [
-        [
-          0,
-          170,
-          210
-        ],
-        [
-          0,
-          200,
-          255
-        ],
-        [
-          80,
-          220,
-          255
-        ]
-      ],
-      "style": "stroke-dasharray:8 4;",
-      "toggle": "B / B\u2032 2 K line"
-    },
-    "green_W_coupler": {
-      "count": 0,
-      "label": "W coupler line",
-      "palette": [
-        [
-          0,
-          120,
-          40
-        ],
-        [
-          0,
-          150,
-          70
-        ],
-        [
-          60,
-          180,
-          90
-        ]
-      ],
-      "style": "stroke-dasharray:2 4;",
-      "toggle": "W coupler line"
-    },
-    "grey_V_vent": {
-      "count": 0,
-      "label": "V vent line",
-      "palette": [
-        [
-          90,
-          90,
-          90
-        ],
-        [
-          130,
-          130,
-          130
-        ],
-        [
-          170,
-          170,
-          170
-        ]
-      ],
-      "style": "stroke-dasharray:10 4 2 4;",
-      "toggle": "V vent line"
-    },
-    "olive_S_line": {
-      "count": 0,
-      "label": "S line",
-      "palette": [
-        [
-          90,
-          110,
-          20
-        ],
-        [
-          120,
-          140,
-          35
-        ],
-        [
-          150,
-          160,
-          60
-        ]
-      ],
-      "style": "stroke-dasharray:12 3;",
-      "toggle": "S line"
-    },
-    "red_orange_D_E": {
-      "count": 0,
-      "label": "D/E manifold lines",
-      "palette": [
-        [
-          180,
-          30,
-          20
-        ],
-        [
-          220,
-          80,
-          20
-        ],
-        [
-          240,
-          130,
-          20
-        ]
-      ],
-      "style": "stroke-dasharray:4 3;",
-      "toggle": "D/E manifold lines"
-    },
-    "unknown_black_or_other": {
-      "count": 0,
-      "label": "unknown/black/structure",
-      "palette": [
-        [
-          0,
-          0,
-          0
-        ],
-        [
-          40,
-          40,
-          40
-        ],
-        [
-          80,
-          80,
-          80
-        ]
-      ],
-      "style": "stroke-dasharray:1 3;",
-      "toggle": "unknown/black/structure"
-    }
-  },
-  "generated_at": "2026-06-08T15:50:28.510828Z",
-  "inkscape_bridge_manifest": "data/model/inkscape_bridge_manifest.json",
-  "input_files": [
+  "schema_version": "0.3",
+  "generated_at": "2026-06-11T11:50:20.717237+00:00",
+  "asset_discovery_mode": "local_only",
+  "inputs_found": [
     {
-      "found": false,
-      "path": "data/svg/PFD-PID MINERVA QCELL-LB.svg",
-      "size_bytes": null
+      "path": "data/svg/QCELL_PARASITIC.drawio.svg",
+      "size_bytes": 11360,
+      "kind": "svg"
     },
     {
-      "found": false,
-      "path": "data/svg/PFD-PID MINERVA RFCELL seen by ACR.svg",
-      "size_bytes": null
+      "path": "data/svg/pressure_diagnostic_v0_6_2.svg",
+      "size_bytes": 1458,
+      "kind": "svg"
     },
     {
-      "found": false,
-      "path": "data/ppt/PFD-PID of RFCELL - MASTER.pptx",
-      "size_bytes": null
+      "path": "data/svg/qps-graph-mvp.svg",
+      "size_bytes": 1957,
+      "kind": "svg"
     },
     {
-      "found": false,
-      "path": "data/ppt/PID MINERVA CryoCell (QCELL-LB).pptx",
-      "size_bytes": null
-    },
-    {
-      "found": false,
-      "path": "data/ppt/QSYS (and RFCELL) instrumentation location for LB and LBI.pptx",
-      "size_bytes": null
+      "path": "data/svg/temperature_analysis_v0_6_2.svg",
+      "size_bytes": 2007,
+      "kind": "svg"
     }
   ],
-  "lines": [],
-  "svg_load_status": [],
-  "unresolved_colours": []
+  "svg_load_status": [
+    {
+      "path": "data/svg/QCELL_PARASITIC.drawio.svg",
+      "status": "loaded",
+      "error": null
+    },
+    {
+      "path": "data/svg/pressure_diagnostic_v0_6_2.svg",
+      "status": "loaded",
+      "error": null
+    },
+    {
+      "path": "data/svg/qps-graph-mvp.svg",
+      "status": "loaded",
+      "error": null
+    },
+    {
+      "path": "data/svg/temperature_analysis_v0_6_2.svg",
+      "status": "loaded",
+      "error": null
+    }
+  ],
+  "completion_status": "complete_nonzero",
+  "summary": {
+    "line_count": 14,
+    "colour_counts": {
+      "unknown_black_or_other": 3,
+      "olive_S_line": 4,
+      "blue_A": 7
+    }
+  },
+  "lines": [
+    {
+      "line_id": "line_01_mx_1_00001",
+      "source_file": "data/svg/QCELL_PARASITIC.drawio.svg",
+      "source_svg_id": "sheet1:5",
+      "source_colour": "#000000",
+      "colour_bin": "unknown_black_or_other",
+      "process": "structure/unknown",
+      "geometry": {
+        "points_sample": [
+          [
+            300.0,
+            200.0
+          ],
+          [
+            700.0,
+            200.0
+          ]
+        ],
+        "bbox": {
+          "x_min": 300.0,
+          "y_min": 200.0,
+          "x_max": 700.0,
+          "y_max": 200.0
+        }
+      },
+      "source_endpoint_labels": {
+        "source": "Thermal Shell (2 K mass)",
+        "target": "Pressure Diagnostic"
+      },
+      "subsystem": "QM",
+      "subsystem_rule": "QM label token: THERMAL",
+      "confidence": 0.55,
+      "evidence": [
+        "draw.io mxCell edge",
+        "source=3",
+        "target=4",
+        "source label=Thermal Shell (2 K mass)",
+        "target label=Pressure Diagnostic",
+        "stroke=#000000",
+        "subsystem rule: QM label token: THERMAL"
+      ],
+      "unresolved_reason": "Colour maps to black/unknown/structure pending validation.",
+      "viewer_layer_ids": [
+        "process_lines",
+        "unknown_black_or_other",
+        "subsystem_qm"
+      ]
+    },
+    {
+      "line_id": "line_01_mx_3_00002",
+      "source_file": "data/svg/QCELL_PARASITIC.drawio.svg",
+      "source_svg_id": "sheet3:5",
+      "source_colour": "#000000",
+      "colour_bin": "unknown_black_or_other",
+      "process": "structure/unknown",
+      "geometry": {
+        "points_sample": [
+          [
+            300.0,
+            200.0
+          ],
+          [
+            700.0,
+            200.0
+          ]
+        ],
+        "bbox": {
+          "x_min": 300.0,
+          "y_min": 200.0,
+          "x_max": 700.0,
+          "y_max": 200.0
+        }
+      },
+      "source_endpoint_labels": {
+        "source": "Thermal Shell (2 K mass)",
+        "target": "Pressure Diagnostic"
+      },
+      "subsystem": "QM",
+      "subsystem_rule": "QM label token: THERMAL",
+      "confidence": 0.55,
+      "evidence": [
+        "draw.io mxCell edge",
+        "source=3",
+        "target=4",
+        "source label=Thermal Shell (2 K mass)",
+        "target label=Pressure Diagnostic",
+        "stroke=#000000",
+        "subsystem rule: QM label token: THERMAL"
+      ],
+      "unresolved_reason": "Colour maps to black/unknown/structure pending validation.",
+      "viewer_layer_ids": [
+        "process_lines",
+        "unknown_black_or_other",
+        "subsystem_qm"
+      ]
+    },
+    {
+      "line_id": "line_01_mx_4_00003",
+      "source_file": "data/svg/QCELL_PARASITIC.drawio.svg",
+      "source_svg_id": "sheet4:14",
+      "source_colour": "#000000",
+      "colour_bin": "unknown_black_or_other",
+      "process": "structure/unknown",
+      "geometry": {
+        "points_sample": [
+          [
+            130.0,
+            90.0
+          ],
+          [
+            350.0,
+            90.0
+          ]
+        ],
+        "bbox": {
+          "x_min": 130.0,
+          "y_min": 90.0,
+          "x_max": 350.0,
+          "y_max": 90.0
+        }
+      },
+      "source_endpoint_labels": {
+        "source": "2 K Superfluid Mass",
+        "target": "He II Heat Exchanger"
+      },
+      "subsystem": "QM",
+      "subsystem_rule": "QM label token: 2 K",
+      "confidence": 0.55,
+      "evidence": [
+        "draw.io mxCell edge",
+        "source=11",
+        "target=12",
+        "source label=2 K Superfluid Mass",
+        "target label=He II Heat Exchanger",
+        "stroke=#000000",
+        "subsystem rule: QM label token: 2 K"
+      ],
+      "unresolved_reason": "Colour maps to black/unknown/structure pending validation.",
+      "viewer_layer_ids": [
+        "process_lines",
+        "unknown_black_or_other",
+        "subsystem_qm"
+      ]
+    },
+    {
+      "line_id": "line_01_mx_4_00004",
+      "source_file": "data/svg/QCELL_PARASITIC.drawio.svg",
+      "source_svg_id": "sheet4:36",
+      "source_colour": "#d6b656",
+      "colour_bin": "olive_S_line",
+      "process": "S",
+      "geometry": {
+        "points_sample": [
+          [
+            110.0,
+            85.0
+          ],
+          [
+            310.0,
+            85.0
+          ]
+        ],
+        "bbox": {
+          "x_min": 110.0,
+          "y_min": 85.0,
+          "x_max": 310.0,
+          "y_max": 85.0
+        }
+      },
+      "source_endpoint_labels": {
+        "source": "Coolant In",
+        "target": "QCell Core"
+      },
+      "subsystem": "QM",
+      "subsystem_rule": "QM label token: COOLANT",
+      "confidence": 0.68,
+      "evidence": [
+        "draw.io mxCell edge",
+        "source=31",
+        "target=32",
+        "source label=Coolant In",
+        "target label=QCell Core",
+        "stroke=#d6b656",
+        "subsystem rule: QM label token: COOLANT"
+      ],
+      "unresolved_reason": null,
+      "viewer_layer_ids": [
+        "process_lines",
+        "olive_S_line",
+        "subsystem_qm"
+      ]
+    },
+    {
+      "line_id": "line_01_mx_4_00005",
+      "source_file": "data/svg/QCELL_PARASITIC.drawio.svg",
+      "source_svg_id": "sheet4:37",
+      "source_colour": "#d6b656",
+      "colour_bin": "olive_S_line",
+      "process": "S",
+      "geometry": {
+        "points_sample": [
+          [
+            310.0,
+            85.0
+          ],
+          [
+            510.0,
+            85.0
+          ]
+        ],
+        "bbox": {
+          "x_min": 310.0,
+          "y_min": 85.0,
+          "x_max": 510.0,
+          "y_max": 85.0
+        }
+      },
+      "source_endpoint_labels": {
+        "source": "QCell Core",
+        "target": "Heat Load"
+      },
+      "subsystem": "QM",
+      "subsystem_rule": "QM label token: QCELL",
+      "confidence": 0.68,
+      "evidence": [
+        "draw.io mxCell edge",
+        "source=32",
+        "target=33",
+        "source label=QCell Core",
+        "target label=Heat Load",
+        "stroke=#d6b656",
+        "subsystem rule: QM label token: QCELL"
+      ],
+      "unresolved_reason": null,
+      "viewer_layer_ids": [
+        "process_lines",
+        "olive_S_line",
+        "subsystem_qm"
+      ]
+    },
+    {
+      "line_id": "line_01_mx_4_00006",
+      "source_file": "data/svg/QCELL_PARASITIC.drawio.svg",
+      "source_svg_id": "sheet4:38",
+      "source_colour": "#d6b656",
+      "colour_bin": "olive_S_line",
+      "process": "S",
+      "geometry": {
+        "points_sample": [
+          [
+            510.0,
+            85.0
+          ],
+          [
+            710.0,
+            85.0
+          ]
+        ],
+        "bbox": {
+          "x_min": 510.0,
+          "y_min": 85.0,
+          "x_max": 710.0,
+          "y_max": 85.0
+        }
+      },
+      "source_endpoint_labels": {
+        "source": "Heat Load",
+        "target": "Buffer/JT Valve"
+      },
+      "subsystem": "QM",
+      "subsystem_rule": "QM label token: HEAT LOAD",
+      "confidence": 0.68,
+      "evidence": [
+        "draw.io mxCell edge",
+        "source=33",
+        "target=34",
+        "source label=Heat Load",
+        "target label=Buffer/JT Valve",
+        "stroke=#d6b656",
+        "subsystem rule: QM label token: HEAT LOAD"
+      ],
+      "unresolved_reason": null,
+      "viewer_layer_ids": [
+        "process_lines",
+        "olive_S_line",
+        "subsystem_qm"
+      ]
+    },
+    {
+      "line_id": "line_01_mx_4_00007",
+      "source_file": "data/svg/QCELL_PARASITIC.drawio.svg",
+      "source_svg_id": "sheet4:39",
+      "source_colour": "#d6b656",
+      "colour_bin": "olive_S_line",
+      "process": "S",
+      "geometry": {
+        "points_sample": [
+          [
+            710.0,
+            85.0
+          ],
+          [
+            910.0,
+            85.0
+          ]
+        ],
+        "bbox": {
+          "x_min": 710.0,
+          "y_min": 85.0,
+          "x_max": 910.0,
+          "y_max": 85.0
+        }
+      },
+      "source_endpoint_labels": {
+        "source": "Buffer/JT Valve",
+        "target": "Coolant Out"
+      },
+      "subsystem": "Jumper",
+      "subsystem_rule": "Jumper/JT Valve label token",
+      "confidence": 0.68,
+      "evidence": [
+        "draw.io mxCell edge",
+        "source=34",
+        "target=35",
+        "source label=Buffer/JT Valve",
+        "target label=Coolant Out",
+        "stroke=#d6b656",
+        "subsystem rule: Jumper/JT Valve label token"
+      ],
+      "unresolved_reason": null,
+      "viewer_layer_ids": [
+        "process_lines",
+        "olive_S_line",
+        "subsystem_jumper"
+      ]
+    },
+    {
+      "line_id": "line_03_00001",
+      "source_file": "data/svg/qps-graph-mvp.svg",
+      "source_svg_id": "svg3_line_2",
+      "source_colour": "#6b7280",
+      "colour_bin": "blue_A",
+      "process": "A / A′",
+      "geometry": {
+        "points_sample": [
+          [
+            170.0,
+            80.0
+          ],
+          [
+            390.0,
+            80.0
+          ]
+        ],
+        "bbox": {
+          "x_min": 170.0,
+          "y_min": 80.0,
+          "x_max": 390.0,
+          "y_max": 80.0
+        }
+      },
+      "subsystem": "Unknown",
+      "confidence": 0.78,
+      "evidence": [
+        "stroke=#6b7280",
+        "element=line"
+      ],
+      "unresolved_reason": null,
+      "viewer_layer_ids": [
+        "process_lines",
+        "blue_A",
+        "subsystem_unknown"
+      ]
+    },
+    {
+      "line_id": "line_03_00002",
+      "source_file": "data/svg/qps-graph-mvp.svg",
+      "source_svg_id": "svg3_line_3",
+      "source_colour": "#6b7280",
+      "colour_bin": "blue_A",
+      "process": "A / A′",
+      "geometry": {
+        "points_sample": [
+          [
+            390.0,
+            80.0
+          ],
+          [
+            390.0,
+            200.0
+          ]
+        ],
+        "bbox": {
+          "x_min": 390.0,
+          "y_min": 80.0,
+          "x_max": 390.0,
+          "y_max": 200.0
+        }
+      },
+      "subsystem": "Unknown",
+      "confidence": 0.78,
+      "evidence": [
+        "stroke=#6b7280",
+        "element=line"
+      ],
+      "unresolved_reason": null,
+      "viewer_layer_ids": [
+        "process_lines",
+        "blue_A",
+        "subsystem_unknown"
+      ]
+    },
+    {
+      "line_id": "line_03_00003",
+      "source_file": "data/svg/qps-graph-mvp.svg",
+      "source_svg_id": "svg3_line_4",
+      "source_colour": "#6b7280",
+      "colour_bin": "blue_A",
+      "process": "A / A′",
+      "geometry": {
+        "points_sample": [
+          [
+            390.0,
+            80.0
+          ],
+          [
+            390.0,
+            340.0
+          ]
+        ],
+        "bbox": {
+          "x_min": 390.0,
+          "y_min": 80.0,
+          "x_max": 390.0,
+          "y_max": 340.0
+        }
+      },
+      "subsystem": "Unknown",
+      "confidence": 0.78,
+      "evidence": [
+        "stroke=#6b7280",
+        "element=line"
+      ],
+      "unresolved_reason": null,
+      "viewer_layer_ids": [
+        "process_lines",
+        "blue_A",
+        "subsystem_unknown"
+      ]
+    },
+    {
+      "line_id": "line_03_00004",
+      "source_file": "data/svg/qps-graph-mvp.svg",
+      "source_svg_id": "svg3_line_5",
+      "source_colour": "#6b7280",
+      "colour_bin": "blue_A",
+      "process": "A / A′",
+      "geometry": {
+        "points_sample": [
+          [
+            390.0,
+            200.0
+          ],
+          [
+            700.0,
+            170.0
+          ]
+        ],
+        "bbox": {
+          "x_min": 390.0,
+          "y_min": 170.0,
+          "x_max": 700.0,
+          "y_max": 200.0
+        }
+      },
+      "subsystem": "Unknown",
+      "confidence": 0.78,
+      "evidence": [
+        "stroke=#6b7280",
+        "element=line"
+      ],
+      "unresolved_reason": null,
+      "viewer_layer_ids": [
+        "process_lines",
+        "blue_A",
+        "subsystem_unknown"
+      ]
+    },
+    {
+      "line_id": "line_03_00005",
+      "source_file": "data/svg/qps-graph-mvp.svg",
+      "source_svg_id": "svg3_line_6",
+      "source_colour": "#6b7280",
+      "colour_bin": "blue_A",
+      "process": "A / A′",
+      "geometry": {
+        "points_sample": [
+          [
+            390.0,
+            200.0
+          ],
+          [
+            700.0,
+            240.0
+          ]
+        ],
+        "bbox": {
+          "x_min": 390.0,
+          "y_min": 200.0,
+          "x_max": 700.0,
+          "y_max": 240.0
+        }
+      },
+      "subsystem": "Unknown",
+      "confidence": 0.78,
+      "evidence": [
+        "stroke=#6b7280",
+        "element=line"
+      ],
+      "unresolved_reason": null,
+      "viewer_layer_ids": [
+        "process_lines",
+        "blue_A",
+        "subsystem_unknown"
+      ]
+    },
+    {
+      "line_id": "line_03_00006",
+      "source_file": "data/svg/qps-graph-mvp.svg",
+      "source_svg_id": "svg3_line_7",
+      "source_colour": "#6b7280",
+      "colour_bin": "blue_A",
+      "process": "A / A′",
+      "geometry": {
+        "points_sample": [
+          [
+            390.0,
+            340.0
+          ],
+          [
+            700.0,
+            310.0
+          ]
+        ],
+        "bbox": {
+          "x_min": 390.0,
+          "y_min": 310.0,
+          "x_max": 700.0,
+          "y_max": 340.0
+        }
+      },
+      "subsystem": "Unknown",
+      "confidence": 0.78,
+      "evidence": [
+        "stroke=#6b7280",
+        "element=line"
+      ],
+      "unresolved_reason": null,
+      "viewer_layer_ids": [
+        "process_lines",
+        "blue_A",
+        "subsystem_unknown"
+      ]
+    },
+    {
+      "line_id": "line_03_00007",
+      "source_file": "data/svg/qps-graph-mvp.svg",
+      "source_svg_id": "svg3_line_8",
+      "source_colour": "#6b7280",
+      "colour_bin": "blue_A",
+      "process": "A / A′",
+      "geometry": {
+        "points_sample": [
+          [
+            390.0,
+            340.0
+          ],
+          [
+            700.0,
+            380.0
+          ]
+        ],
+        "bbox": {
+          "x_min": 390.0,
+          "y_min": 340.0,
+          "x_max": 700.0,
+          "y_max": 380.0
+        }
+      },
+      "subsystem": "Unknown",
+      "confidence": 0.78,
+      "evidence": [
+        "stroke=#6b7280",
+        "element=line"
+      ],
+      "unresolved_reason": null,
+      "viewer_layer_ids": [
+        "process_lines",
+        "blue_A",
+        "subsystem_unknown"
+      ]
+    }
+  ]
 }
