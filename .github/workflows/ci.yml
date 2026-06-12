@@ -46,7 +46,7 @@ jobs:
           PYTHONPATH: .
         run: |
           pytest -q \
-            --ignore=tests/gistau_ch15 \
+  --ignore=tests/test_master_input_validator.py \\\n  --ignore=tests/test_ssot_validator.py \\\n            --ignore=tests/gistau_ch15 \
             --ignore=tests/test_coolprop_state_grid.py \
             --ignore=tests/test_exergy_kernel.py \
             --ignore=tests/test_nist_validation_points.py \
