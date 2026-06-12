@@ -327,6 +327,8 @@ def page_template(title: str, payload: str, page_kind: str = "main") -> str:
       <button data-step="1" title="Next slide">▶</button>
     """
     slides = {"main": main_slides, "warm": warm_slides, "b_line": b_line_slides}[page_kind]()
+    safe_payload = payload.replace("</", "<\\/")`r`n
+    safe_payload = payload.replace("</", "<\/")
     return f"""<!doctype html>
 <html lang=\"en\">
 <head>
@@ -348,7 +350,7 @@ def page_template(title: str, payload: str, page_kind: str = "main") -> str:
     <label>Plot Type<select id=\"plotType\"><option>Violin</option><option>Boxplot</option><option>Both</option></select></label>
   </aside>
   <main id=\"deck\">{slides}</main>
-  <script id=\"qps-data\" type=\"application/json\">{payload.replace("</", "<\\/")}</script>
+  <script id=\"qps-data\" type=\"application/json\">{safe_payload}</script>
   <script>{js()}</script>
 </body>
 </html>
@@ -475,3 +477,4 @@ def build() -> None:
 
 if __name__ == "__main__":
     build()
+
