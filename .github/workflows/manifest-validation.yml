@@ -1,0 +1,39 @@
+name: W007 Manifest Validation
+
+on:
+  pull_request:
+    paths:
+      - 'docs/**'
+      - 'ssot/**'
+      - '.github/workflows/manifest-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-runtime-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate dashboard and SSOT manifest completeness
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          required = [
+              'docs/index.html',
+              'docs/dashboards/executive.html',
+              'docs/dashboards/traceability.html',
+              'docs/dashboards/governance.html',
+              'docs/TRACEABILITY_DASHBOARD_SPEC.md',
+              'docs/GOVERNANCE_DASHBOARD_SPEC.md',
+              'docs/RUNTIME_ARCHITECTURE.md',
+              'ssot/traceability_dashboard.yaml',
+              'ssot/governance_dashboard.yaml',
+              'ssot/runtime_metrics.yaml',
+          ]
+          missing = [path for path in required if not Path(path).exists()]
+          if missing:
+              raise SystemExit('missing runtime manifest entries: ' + ', '.join(missing))
+          print('W007 runtime manifest completeness check passed')
+          PY
