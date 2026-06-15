@@ -1,0 +1,129 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://abacus.local/schemas/universal_work_report.schema.yaml
+title: Universal Work Report
+type: object
+additionalProperties: true
+required:
+  - schema_name
+  - schema_version
+  - work_id
+  - agent
+  - level
+  - parent_id
+  - track_type
+  - risk_class
+  - review_status
+  - merge_allowed
+  - victory
+  - testing_ledger
+  - artifacts
+  - audit
+properties:
+  schema_name:
+    const: universal_work_report
+  schema_version:
+    type: string
+    pattern: '^1\.0\.0$'
+  work_id:
+    type: string
+    minLength: 1
+  agent:
+    type: string
+    minLength: 1
+  level:
+    type: string
+    enum: [PROGRAMME, WAVE, SUB-WAVE, PHASE, SPRINT, TASK, SUBTASK]
+  parent_id:
+    anyOf:
+      - type: string
+      - type: 'null'
+  depends_on:
+    type: array
+    items:
+      type: string
+  blocks:
+    type: array
+    items:
+      type: string
+  track_type:
+    type: string
+    enum: [SEQ, PAR]
+  risk_class:
+    type: string
+    enum: [REVERSIBLE, IRREVERSIBLE, SECRET-SENSITIVE, EXTERNAL-EFFECT]
+  review_status:
+    type: string
+    enum: [REVIEW-FIRST, READY, BLOCKED, HOLD-POINT]
+  merge_allowed:
+    type: boolean
+  patch_type:
+    type: string
+    enum: [FEATURE, FIX, HARDENING, VALIDATION, NO-OP]
+  victory:
+    type: object
+    required: [overall, criteria]
+    properties:
+      overall:
+        type: string
+        enum: [MET, NOT MET, PARTIAL]
+      criteria:
+        type: array
+        items:
+          type: object
+          required: [id, status, evidence]
+          properties:
+            id:
+              type: string
+            status:
+              type: string
+              enum: [PASS, FAIL, PARTIAL, N/A]
+            evidence:
+              type: string
+  testing_ledger:
+    type: array
+    items:
+      type: object
+      required: [command, status, evidence]
+      properties:
+        command:
+          type: string
+        status:
+          type: string
+          enum: [PASS, FAIL, ENVIRONMENT-LIMITATION]
+        evidence:
+          type: string
+  artifacts:
+    type: object
+    required: [runtime_only, committed, persistent_verified]
+    properties:
+      runtime_only:
+        type: array
+        items: {type: string}
+      committed:
+        type: array
+        items: {type: string}
+      persistent_verified:
+        type: array
+        items: {type: string}
+  audit:
+    type: object
+    required:
+      - tree_sha
+      - container_head_sha
+      - base_ref_stable
+      - pin_container_sha
+      - pin_remote_sha
+      - merge_requires_human_go
+    properties:
+      tree_sha:
+        anyOf: [{type: string}, {type: 'null'}]
+      container_head_sha:
+        anyOf: [{type: string}, {type: 'null'}]
+      base_ref_stable:
+        type: boolean
+      pin_container_sha:
+        type: boolean
+      pin_remote_sha:
+        type: boolean
+      merge_requires_human_go:
+        type: boolean
