@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GBOGEB/CODEX/ssot/schemas/block.schema.json",
+  "title": "CODEX reusable block",
+  "type": "object",
+  "required": [
+    "block_id",
+    "block_type",
+    "title",
+    "status",
+    "version",
+    "section",
+    "lineage",
+    "render",
+    "content"
+  ],
+  "properties": {
+    "block_id": {
+      "type": "string",
+      "pattern": "^BLK-[A-Z0-9-]+-[0-9]{3}$"
+    },
+    "block_type": {
+      "type": "string",
+      "enum": [
+        "requirement",
+        "heading",
+        "paragraph",
+        "code",
+        "table",
+        "checklist",
+        "diagram",
+        "prompt",
+        "config",
+        "render_instruction",
+        "validation_rule"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "active", "deprecated", "superseded"]
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "owner": {
+      "type": "string"
+    },
+    "source_repo": {
+      "type": "string"
+    },
+    "target_runtime": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["visual_studio_code", "google_colab", "jupyter", "python_cli", "github_actions"]
+      },
+      "uniqueItems": true
+    },
+    "language": {
+      "type": "string"
+    },
+    "section": {
+      "type": "object",
+      "required": ["heading_id", "heading_level", "word_style"],
+      "properties": {
+        "heading_id": {
+          "type": "string",
+          "pattern": "^SEC-[A-Z0-9-]+$"
+        },
+        "heading_level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9
+        },
+        "word_style": {
+          "type": "string",
+          "pattern": "^Heading [1-9]$"
+        }
+      },
+      "additionalProperties": true
+    },
+    "tags": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "lineage": {
+      "type": "object",
+      "required": ["created_from"],
+      "properties": {
+        "created_from": {"type": "string"},
+        "source_prompt_id": {"type": "string"},
+        "supersedes": {
+          "anyOf": [
+            {"type": "string"},
+            {"type": "null"}
+          ]
+        },
+        "superseded_by": {
+          "anyOf": [
+            {"type": "string"},
+            {"type": "null"}
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "render": {
+      "type": "object",
+      "required": ["markdown", "word", "excel", "html"],
+      "properties": {
+        "markdown": {"type": "boolean"},
+        "word": {"type": "boolean"},
+        "excel": {"type": "boolean"},
+        "html": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "content": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}
