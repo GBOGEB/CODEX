@@ -1,0 +1,25 @@
+project: MINERVA QPS TENDER
+reference: SCK CEN 90508872 2024-106-IVE
+methodology: Automated Bradley-Terry Pairwise Model with separate Monte Carlo validation
+execution:
+  total_offer_requirements: 50
+  model_iterations: 350
+  convergence_stability: 98.43 percent
+point_allocation_logic_weights:
+  safety_and_legal_mandate: mandated_hard_gate
+  reliability_2k_op: 0.40
+  thermal_performance: 0.30
+  system_functional: 0.20
+  quality_and_verification: 0.05
+  commercial_and_cost_decider: 0.05
+offer_25_trajectory_checkpoint_rank:
+  initial_self_rank: 25
+  iteration_10: 31
+  iteration_50: 26
+  iteration_100: 27
+  iteration_200: 35
+  iteration_350: 47
+federation_rule:
+  official_rank_engine: bradley_terry
+  validation_engine: monte_carlo
+  monte_carlo_may_override_rank: false
