@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GBOGEB/CODEX/ssot/schemas/heading.schema.json",
+  "title": "CODEX reusable block heading",
+  "type": "object",
+  "required": [
+    "heading_id",
+    "title",
+    "level",
+    "word_style",
+    "numbering",
+    "sort_order"
+  ],
+  "properties": {
+    "heading_id": {
+      "type": "string",
+      "pattern": "^SEC-[A-Z0-9-]+$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "level": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9
+    },
+    "word_style": {
+      "type": "string",
+      "pattern": "^Heading [1-9]$"
+    },
+    "parent_id": {
+      "anyOf": [
+        {"type": "string", "pattern": "^SEC-[A-Z0-9-]+$"},
+        {"type": "null"}
+      ]
+    },
+    "sort_order": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "numbering": {
+      "type": "object",
+      "required": ["mode", "list_template"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["generated_by_word"]
+        },
+        "list_template": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^SEC-[A-Z0-9-]+$"
+      },
+      "uniqueItems": true
+    }
+  },
+  "additionalProperties": true
+}
