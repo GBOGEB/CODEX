@@ -87,13 +87,26 @@ class TraceNode:
 
     @classmethod
     def from_mapping(cls, data: dict[str, Any]) -> "TraceNode":
-        return cls(
-            id=str(data["id"]),
-            stage=TraceStage(str(data["stage"])),
-            title=str(data["title"]),
-            parent=str(data["parent"]) if data.get("parent") else None,
-            source_path=str(data["source_path"]) if data.get("source_path") else None,
-        )
+        try:
+            node_id = data.get("id")
+            if not node_id:
+                raise ValueError("Missing required field: id")
+            stage_value = data.get("stage")
+            if not stage_value:
+                raise ValueError("Missing required field: stage")
+            title_value = data.get("title")
+            if not title_value:
+                raise ValueError("Missing required field: title")
+            
+            return cls(
+                id=str(node_id),
+                stage=TraceStage(str(stage_value)),
+                title=str(title_value),
+                parent=str(data["parent"]) if data.get("parent") else None,
+                source_path=str(data["source_path"]) if data.get("source_path") else None,
+            )
+        except (KeyError, TypeError, ValueError) as e:
+            raise ValueError(f"Failed to parse TraceNode from mapping: {e}") from e
 
 
 @dataclass(frozen=True)
@@ -121,15 +134,37 @@ class LineageNode:
 
     @classmethod
     def from_mapping(cls, data: dict[str, Any]) -> "LineageNode":
-        return cls(
-            id=str(data["id"]),
-            stage=LineageStage(str(data["stage"])),
-            title=str(data["title"]),
-            created=str(data["created"]),
-            updated=str(data["updated"]),
-            parent=str(data["parent"]) if data.get("parent") else None,
-            status=str(data["status"]),
-        )
+        try:
+            node_id = data.get("id")
+            if not node_id:
+                raise ValueError("Missing required field: id")
+            stage_value = data.get("stage")
+            if not stage_value:
+                raise ValueError("Missing required field: stage")
+            title_value = data.get("title")
+            if not title_value:
+                raise ValueError("Missing required field: title")
+            created_value = data.get("created")
+            if not created_value:
+                raise ValueError("Missing required field: created")
+            updated_value = data.get("updated")
+            if not updated_value:
+                raise ValueError("Missing required field: updated")
+            status_value = data.get("status")
+            if not status_value:
+                raise ValueError("Missing required field: status")
+            
+            return cls(
+                id=str(node_id),
+                stage=LineageStage(str(stage_value)),
+                title=str(title_value),
+                created=str(created_value),
+                updated=str(updated_value),
+                parent=str(data["parent"]) if data.get("parent") else None,
+                status=str(status_value),
+            )
+        except (KeyError, TypeError, ValueError) as e:
+            raise ValueError(f"Failed to parse LineageNode from mapping: {e}") from e
 
 
 def stable_uuid(name: str) -> str:
