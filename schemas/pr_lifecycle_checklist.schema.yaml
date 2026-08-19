@@ -1,0 +1,59 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://abacus.local/schemas/pr_lifecycle_checklist.schema.yaml
+title: PR Lifecycle Checklist
+type: object
+additionalProperties: false
+required:
+  - schema_name
+  - schema_version
+  - work_id
+  - phases
+  - final_status
+properties:
+  schema_name:
+    const: pr_lifecycle_checklist
+  schema_version:
+    const: 1.0.0
+  work_id:
+    type: string
+  symbols:
+    type: object
+    additionalProperties:
+      type: string
+  states:
+    type: array
+    items:
+      type: string
+      enum: [PASS, FAIL, PARTIAL, N/A]
+  phases:
+    type: array
+    minItems: 7
+    items:
+      type: object
+      required: [id, name, items]
+      properties:
+        id:
+          type: integer
+          minimum: 0
+          maximum: 6
+        name:
+          type: string
+        items:
+          type: array
+          items:
+            type: object
+            required: [text, state]
+            properties:
+              text:
+                type: string
+              state:
+                type: string
+                enum: [todo, in-progress, done, blocked, N/A]
+              human_only:
+                type: boolean
+  final_status:
+    type: string
+  merge_allowed:
+    type: boolean
+  human_go_required:
+    type: boolean

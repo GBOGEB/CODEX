@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>USER Interfaces — Cold and Warm Piping Descriptive Note</title>
+  <style>
+    :root { color-scheme: light; --ink: #18212f; --muted: #5d697a; --line: #d7dee8; --panel: #f7f9fc; --accent: #174ea6; }
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.55; margin: 0; color: var(--ink); background: white; }
+    main { max-width: 1120px; margin: 0 auto; padding: 2rem; }
+    h1, h2 { line-height: 1.2; }
+    h1 { border-bottom: 3px solid var(--accent); padding-bottom: 0.5rem; }
+    blockquote { border-left: 4px solid var(--accent); margin: 1rem 0; padding: 0.75rem 1rem; background: var(--panel); color: var(--ink); }
+    table { border-collapse: collapse; width: 100%; margin: 1rem 0 1.5rem; font-size: 0.95rem; }
+    th, td { border: 1px solid var(--line); padding: 0.55rem 0.7rem; vertical-align: top; }
+    th { background: var(--panel); text-align: left; }
+    td.num, th.num { text-align: right; white-space: nowrap; }
+    code { background: var(--panel); border: 1px solid var(--line); border-radius: 0.25rem; padding: 0.1rem 0.25rem; }
+    a { color: var(--accent); }
+    @media print { main { max-width: none; padding: 0.5in; } a { color: inherit; } }
+  </style>
+</head>
+<body>
+<main>
+  <h1>USER Interfaces — Cold and Warm Piping Descriptive Note</h1>
+  <blockquote><strong>Governance status:</strong> SSOT derivative, supplementary, descriptive, and user-facing. The CONTRACT remains the authoritative single source of truth (SSOT). This note is intended to be fixed/locked scientific configuration once reviewed, with ADR traceability.</blockquote>
+
+  <h2>1. Purpose</h2>
+  <p>This note describes the USER interfaces between the Cryogenic Users / QCELLs and the QPLANT. It consolidates the cold and warm piping interface hierarchy, terminal-point philosophy, contract-relevant figures and tables, route length basis, tap-off logic, and internal surface-area calculations.</p>
+  <p>The USER side is represented by the QCELLs, connected through the QDB, QVB and QM jumper interfaces. The QPLANT side is represented by the QRB / Cold Box Station, which provides or receives helium process services.</p>
+
+  <h2>2. Interface Hierarchy and Terminal Points</h2>
+  <p>Each interface Terminal Point has two functional sides:</p>
+  <table>
+    <thead><tr><th>Terminal Point Side</th><th>Role</th><th>System</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>TP1</td><td>Requestor of service</td><td>USER / QCELL</td><td>QCELL interface via QDB, QVB, QM and jumper connection</td></tr>
+      <tr><td>TP2</td><td>Provider of service</td><td>QPLANT / QRB</td><td>QPLANT interface via QRB / Cold Box Station</td></tr>
+    </tbody>
+  </table>
+  <p>The TP defines the mechanical, process, operational, commissioning and responsibility boundary between the USER and the QPLANT.</p>
+
+  <h2>3. Contract Figures and Tables Applicable to USER Interfaces</h2>
+  <table>
+    <thead><tr><th>Contract item</th><th>Applicability</th><th>Interface relevance</th></tr></thead>
+    <tbody>
+      <tr><td>Figure 1 — Overall layout of Cryogenic System</td><td>QPS, QPLANT, QRB, QDB, QVB, QCELL relationship</td><td>Shows how QPLANT connects to QDB and the 30 QCELLs</td></tr>
+      <tr><td>Figure 2 — Buildings related to QPS</td><td>Compressor room, storage area, cold box room, LTU</td><td>Shows physical routing context for QRB, QLM and warm lines</td></tr>
+      <tr><td>Figure 3 — Single QCELL representation</td><td>A, B, D, E and W line connections</td><td>Shows functional cold and warm process connections to one QCELL</td></tr>
+      <tr><td>Table 1 — Helium process lines</td><td>Defines A, B, D, E, U, W, S, G10, G20, HP, LP, VLP</td><td>Defines line names, functions and whether they form part of the cryogenic cycle</td></tr>
+      <tr><td>Figure 10 — QLM at QRB–QLM connection</td><td>Cold interface geometry</td><td>Gives indicative cold header sizes: A ~30 mm, B ~150 mm, D ~50 mm, E ~50 mm</td></tr>
+      <tr><td>Section 4.5.2 — Warm Piping System</td><td>WPS interface definition</td><td>Defines warm headers U, W and S and their user-side interface sizes</td></tr>
+    </tbody>
+  </table>
+
+  <h2>4. Cold USER Interfaces</h2>
+  <table>
+    <thead><tr><th>Line</th><th>Type</th><th>Function</th><th>Indicative size</th></tr></thead>
+    <tbody>
+      <tr><td>A</td><td>Cold</td><td>SHe supply line</td><td>~30 mm</td></tr>
+      <tr><td>B</td><td>Cold</td><td>VLP return line</td><td>~150 mm</td></tr>
+      <tr><td>D</td><td>Cold</td><td>TS supply line</td><td>~50 mm</td></tr>
+      <tr><td>E</td><td>Cold</td><td>TS return line</td><td>~50 mm</td></tr>
+    </tbody>
+  </table>
+  <p>The cold interface shall maintain continuity of the process pipes, thermal shield, multilayer insulation and vacuum jacket across the QRB–QLM connection.</p>
+
+  <h2>5. Warm USER Interfaces</h2>
+  <table>
+    <thead><tr><th>Line</th><th>Type</th><th>Function</th><th>User-side interface</th></tr></thead>
+    <tbody>
+      <tr><td>U</td><td>Warm</td><td>Warm GHe supply for purge, conditioning and auxiliary operation</td><td>DN25, CF40</td></tr>
+      <tr><td>W</td><td>Warm</td><td>Warm GHe recovery return from Cryogenic Users</td><td>DN40, CF63</td></tr>
+      <tr><td>S</td><td>Warm</td><td>Safety recovery return from relief / abnormal discharge paths</td><td>DN150, CF160</td></tr>
+    </tbody>
+  </table>
+
+  <h2>6. Length and Tap-Off Basis</h2>
+  <table>
+    <thead><tr><th>Parameter</th><th class="num">Value</th></tr></thead>
+    <tbody>
+      <tr><td>Total process line length per line</td><td class="num">151.5 m</td></tr>
+      <tr><td>Number of primary process pipes</td><td class="num">7</td></tr>
+      <tr><td>Cold pipes</td><td class="num">4</td></tr>
+      <tr><td>Warm pipes</td><td class="num">3</td></tr>
+      <tr><td>Final QCELL tap-off region</td><td class="num">91.5 m</td></tr>
+      <tr><td>First tap offset</td><td class="num">1.5 m</td></tr>
+      <tr><td>Regular QCELL spacing</td><td class="num">3.0 m</td></tr>
+      <tr><td>Number of QCELL taps</td><td class="num">30</td></tr>
+    </tbody>
+  </table>
+  <p>Tap-off logic:</p>
+  <ul>
+    <li>First QCELL tap starts at 1.5 m.</li>
+    <li>Subsequent taps repeat every 3.0 m.</li>
+    <li>For 30 QCELLs: final tap position = 1.5 + 29 × 3.0 = 88.5 m.</li>
+    <li>Remaining allowance in the 91.5 m region = 3.0 m.</li>
+  </ul>
+
+  <h2>7. Internal Surface Area Calculation</h2>
+  <p>Formula:</p>
+  <p><code>A = π × Di × L</code></p>
+  <table>
+    <thead><tr><th>Line</th><th>Type</th><th class="num">Diameter used</th><th class="num">Length</th><th class="num">Internal surface area</th></tr></thead>
+    <tbody>
+      <tr><td>A</td><td>Cold SHe supply</td><td class="num">30 mm</td><td class="num">151.5 m</td><td class="num">14.28 m²</td></tr>
+      <tr><td>B</td><td>Cold VLP return</td><td class="num">150 mm</td><td class="num">151.5 m</td><td class="num">71.39 m²</td></tr>
+      <tr><td>D</td><td>Cold TS supply</td><td class="num">50 mm</td><td class="num">151.5 m</td><td class="num">23.80 m²</td></tr>
+      <tr><td>E</td><td>Cold TS return</td><td class="num">50 mm</td><td class="num">151.5 m</td><td class="num">23.80 m²</td></tr>
+      <tr><td>U</td><td>Warm supply</td><td class="num">25 mm</td><td class="num">151.5 m</td><td class="num">11.90 m²</td></tr>
+      <tr><td>W</td><td>Warm recovery</td><td class="num">40 mm</td><td class="num">151.5 m</td><td class="num">19.04 m²</td></tr>
+      <tr><td>S</td><td>Warm safety recovery</td><td class="num">150 mm</td><td class="num">151.5 m</td><td class="num">71.39 m²</td></tr>
+    </tbody>
+  </table>
+  <p>Total internal surface area for all seven lines: <strong>235.60 m²</strong></p>
+
+  <h2>8. Structured Data Sources</h2>
+  <p>The numerical line data used by this note are also maintained as reusable structured artefacts for future calculation pipelines:</p>
+  <ul>
+    <li><a href="data/user_interface_lines.yaml">data/user_interface_lines.yaml</a></li>
+    <li><a href="data/user_interface_lines.json">data/user_interface_lines.json</a></li>
+  </ul>
+  <p>The data files preserve line identifiers, line family, functions, diameters, lengths, calculated internal surface areas, source basis, and SSOT-derivative status.</p>
+</main>
+</body>
+</html>

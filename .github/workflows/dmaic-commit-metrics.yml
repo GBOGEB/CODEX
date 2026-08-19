@@ -48,7 +48,7 @@ jobs:
           import json, pathlib, subprocess, datetime, sys, math
 
           repo_root = pathlib.Path(".")
-          out_dir   = repo_root / "outputs" / "api"
+          out_dir   = repo_root / "docs" / "api"
           out_dir.mkdir(parents=True, exist_ok=True)
           rendered_dir = repo_root / "docs" / "rendered_outputs"
           rendered_dir.mkdir(parents=True, exist_ok=True)
@@ -246,7 +246,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/api/metrics.json docs/rendered_outputs/metrics_chart.html
+          git add docs/api/metrics.json docs/rendered_outputs/metrics_chart.html || true
           if git diff --cached --quiet; then
             echo "Metrics unchanged — no commit needed."
           else
