@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools==80.9.0"]
+requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -12,7 +12,7 @@ authors = [{ name = "CODEX Team" }]
 dependencies = ["PyYAML>=6.0,<7.0", "requests>=2.25.0"]
 
 [project.optional-dependencies]
-dev = ["pytest>=7.0", "pytest-json-report>=1.5,<2.0"]
+dev = ["pytest>=7.0", "pytest-json-report>=1.5"]
 
 [tool.pytest.ini_options]
 addopts = "-q"

@@ -1,0 +1,55 @@
+# CODEX Word render profile for reusable block-library outputs
+# Purpose: define how YAML SSOT records map to Word template styles.
+
+render_profile_id: WORD-DOTM-GBO-001
+status: draft
+source_repo: CODEX
+template_file: user_template.dotm
+numbering_policy: generated_by_word
+
+principles:
+  - YAML/JSON SSOT records are authoritative.
+  - Markdown, Word, Excel and HTML are generated views.
+  - Word outline numbers are not stored as source authority.
+  - Heading level maps to Word style.
+  - The .dotm template owns multi-level numbering.
+
+style_map:
+  level_1: Heading 1
+  level_2: Heading 2
+  level_3: Heading 3
+  level_4: Heading 4
+  level_5: Heading 5
+  level_6: Heading 6
+  level_7: Heading 7
+  level_8: Heading 8
+  level_9: Heading 9
+  paragraph: Normal
+  code_block: Code Block
+  table: Table Grid
+  caption: Caption
+
+rules:
+  do_not_hardcode_heading_numbers: true
+  preserve_block_ids_as_bookmarks: true
+  preserve_heading_ids: true
+  preserve_requirement_ids: true
+  update_fields_on_open: true
+  manual_word_edits_require_change_request: true
+
+validation:
+  required_block_fields:
+    - block_id
+    - block_type
+    - title
+    - status
+    - version
+    - section
+    - lineage
+    - render
+    - content
+  required_section_fields:
+    - heading_id
+    - heading_level
+    - word_style
+  heading_style_rule: word_style must equal "Heading {heading_level}" for heading blocks and section mapping

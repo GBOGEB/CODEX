@@ -1,0 +1,25 @@
+project: qps_bt_engine
+iteration: 001
+source_owner: CODEX
+analysis_owner: ABACUS
+
+weights:
+  reliability: 0.40
+  performance: 0.30
+  functional: 0.20
+  quality: 0.05
+  cost: 0.05
+
+bradley_terry:
+  max_iterations: 350
+  convergence_threshold: 0.985
+
+monte_carlo:
+  enabled: true
+  iterations: 1000
+  seed: 42
+  weight_tolerance: 0.05
+
+outputs:
+  rankings_csv: outputs/bt_rankings_iteration_001.csv
+  confidence_csv: outputs/mc_rank_confidence_iteration_001.csv

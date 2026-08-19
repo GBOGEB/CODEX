@@ -1,0 +1,46 @@
+name: Validate reusable blocks
+
+on:
+  pull_request:
+    paths:
+      - "ssot/blocks/**"
+      - "ssot/schemas/**"
+      - "scripts/validate_blocks.py"
+      - "scripts/export_blocks_to_csv.py"
+      - "scripts/render_markdown_preview.py"
+      - ".github/workflows/validate_blocks.yml"
+  push:
+    branches:
+      - main
+      - "feature-block-library-*"
+    paths:
+      - "ssot/blocks/**"
+      - "ssot/schemas/**"
+      - "scripts/validate_blocks.py"
+      - "scripts/export_blocks_to_csv.py"
+      - "scripts/render_markdown_preview.py"
+      - ".github/workflows/validate_blocks.yml"
+
+jobs:
+  validate-block-library:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip pyyaml
+
+      - name: Validate block SSOT
+        run: python scripts/validate_blocks.py ssot/blocks/sample_blocks.yaml
+
+      - name: Generate CSV review register
+        run: python scripts/export_blocks_to_csv.py ssot/blocks/sample_blocks.yaml outputs/block_register.csv
+
+      - name: Generate Markdown preview
+        run: python scripts/render_markdown_preview.py ssot/blocks/sample_blocks.yaml outputs/block_library_preview.md

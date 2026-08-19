@@ -1,0 +1,122 @@
+# CODEX reusable block library seed data
+# Authority: YAML SSOT. Rendered Markdown, Word, Excel and HTML outputs are generated views.
+
+blocks:
+  - block_id: BLK-REQ-INSTALL-001
+    block_type: code
+    title: Python package installation requirements
+    status: active
+    version: 1.0.0
+    owner: GBO
+    source_repo: CODEX
+    target_runtime:
+      - visual_studio_code
+      - google_colab
+      - jupyter
+      - python_cli
+    language: bash
+    section:
+      heading_id: SEC-REQ-INSTALL
+      heading_level: 2
+      word_style: Heading 2
+    tags:
+      - requirements
+      - install
+      - python
+    dependencies:
+      requires: []
+    lineage:
+      created_from: chat_session
+      source_prompt_id: PROMPT-2026-06-24-BLOCK-LIBRARY-001
+      supersedes: null
+      superseded_by: null
+    render:
+      markdown: true
+      word: true
+      excel: true
+      html: true
+    content: |
+      pip install openai python-dotenv pandas pyyaml jsonschema openpyxl python-docx
+
+  - block_id: BLK-CONFIG-APIKEY-001
+    block_type: code
+    title: OpenAI API key configuration with dotenv
+    status: active
+    version: 1.0.0
+    owner: GBO
+    source_repo: CODEX
+    target_runtime:
+      - visual_studio_code
+      - jupyter
+      - python_cli
+    language: python
+    section:
+      heading_id: SEC-CONFIG-APIKEY
+      heading_level: 2
+      word_style: Heading 2
+    tags:
+      - config
+      - api-key
+      - openai
+      - dotenv
+    dependencies:
+      requires:
+        - BLK-REQ-INSTALL-001
+    lineage:
+      created_from: chat_session
+      source_prompt_id: PROMPT-2026-06-24-BLOCK-LIBRARY-001
+      supersedes: null
+      superseded_by: null
+    render:
+      markdown: true
+      word: true
+      excel: true
+      html: true
+    content: |
+      from dotenv import load_dotenv
+      from openai import OpenAI
+      import os
+
+      load_dotenv()
+      client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+  - block_id: BLK-PATH-ONEDRIVE-001
+    block_type: code
+    title: OneDrive project folder configuration
+    status: active
+    version: 1.0.0
+    owner: GBO
+    source_repo: CODEX
+    target_runtime:
+      - visual_studio_code
+      - jupyter
+      - python_cli
+    language: python
+    section:
+      heading_id: SEC-FILE-IO-ONEDRIVE
+      heading_level: 2
+      word_style: Heading 2
+    tags:
+      - file-io
+      - onedrive
+      - paths
+    dependencies:
+      requires: []
+    lineage:
+      created_from: chat_session
+      source_prompt_id: PROMPT-2026-06-24-BLOCK-LIBRARY-001
+      supersedes: null
+      superseded_by: null
+    render:
+      markdown: true
+      word: true
+      excel: true
+      html: true
+    content: |
+      from pathlib import Path
+
+      ONEDRIVE_ROOT = Path.home() / "OneDrive"
+      PROJECT_ROOT = ONEDRIVE_ROOT / "CODEX"
+      INPUT_DIR = PROJECT_ROOT / "input"
+      OUTPUT_DIR = PROJECT_ROOT / "output"
+      OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
