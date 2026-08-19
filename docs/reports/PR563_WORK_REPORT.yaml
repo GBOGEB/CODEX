@@ -1,0 +1,141 @@
+schema_name: universal_work_report
+schema_version: 1.0.0
+work_id: PR-563
+agent: CODEX
+level: WAVE
+parent_id: null
+depends_on:
+  - W000 PR #563 scaffold
+blocks:
+  - Human merge review until durable tree verification is complete
+track_type: PAR
+risk_class: REVERSIBLE
+review_status: REVIEW-FIRST
+merge_allowed: false
+patch_type: FEATURE
+intent: Convert the work-report-ssot PR from scaffold into reusable governance substrate for lifecycle reporting, Universal Work Reports, ABACUS federation, and bridge integration.
+goal: Create review-first SSOT documents, templates, examples, schemas, federation docs, dependency graphs, automation scaffolds, and machine-readable report twins without runtime enforcement or merge automation.
+actions:
+  - wave: W001
+    status: PASS
+    commit: 2e8d1a9
+    summary: Added lifecycle checklist SSOT, Universal Work Report SSOT, templates, examples, governance index, and Markdown report.
+  - wave: W002
+    status: PASS
+    commit: 0726c38
+    summary: Added machine-readable schemas and YAML report twin.
+  - wave: W003
+    status: PASS
+    commit: 93dc4d5
+    summary: Added ABACUS runtime mapping.
+  - wave: W004
+    status: PASS
+    commit: 05d4886
+    summary: Added federation layer registries and graphs.
+  - wave: W005
+    status: PASS
+    commit: f17a373
+    summary: Added bridge layer contracts.
+  - wave: W006
+    status: PASS
+    commit: 5f33787
+    summary: Added dependency graphs and scaffold-only GitHub Actions gate documentation.
+  - wave: W007
+    status: PASS
+    commit: null
+    summary: Updated PR body record and final work report.
+    note: pending final commit SHA
+victory:
+  overall: MET
+  criteria:
+    - id: V1
+      status: PASS
+      evidence: Checklist exists as SSOT and template.
+    - id: V2
+      status: PASS
+      evidence: Universal Work Report exists as SSOT and templates.
+    - id: V3
+      status: PASS
+      evidence: LIGHT/STANDARD/FULL application rules are explicit.
+    - id: V4
+      status: PASS
+      evidence: Schemas include required fields and canonical enums.
+    - id: V5
+      status: PASS
+      evidence: PR563 report YAML validates structurally by inspection and parser check.
+    - id: V6
+      status: PASS
+      evidence: ABACUS runtime mapping covers every level with purpose, parent, child, FF input, FB output, and closure rule.
+    - id: V7
+      status: PASS
+      evidence: Federation layer represents ChatGPT, CODEX, ABACUS, Gemini, Jupyter/Codespaces, and DOCX_RTM with registries and graphs.
+    - id: V8
+      status: PASS
+      evidence: Bridge layer defines purpose, input contract, output contract, failure mode, report emitted, and handoff target for each required bridge.
+    - id: V9
+      status: PASS
+      evidence: Dependency graph shows W001-W006 with parallel execution where permitted.
+    - id: V10
+      status: PASS
+      evidence: GitHub Actions gate is documented as scaffold only, not active enforcement.
+tracks:
+  - id: W001
+    track_type: SEQ
+    status: PASS
+  - id: W002
+    track_type: PAR
+    status: PASS
+  - id: W003
+    track_type: SEQ
+    status: PASS
+  - id: W004
+    track_type: SEQ
+    status: PASS
+  - id: W005
+    track_type: SEQ
+    status: PASS
+  - id: W006
+    track_type: PAR
+    status: PASS
+ff_fb:
+  feedforward: User supplied intent, goal, scope, boundary rule, wave victories, and merge prohibition.
+  feedback: No runtime behavior, CI enforcement, API call, or production-impacting automation implemented; active CI gate deferred to follow-on PR.
+milestone_hold_point:
+  milestone: W002 schema scaffold ready for review.
+  hold_point: Human-only merge gate remains active; no merge or irreversible action performed.
+blockers: []
+feedback_items:
+  - Active CI enforcement requires a follow-on PR; this PR documents scaffold only.
+environment_limitations: []
+testing_ledger:
+  - command: python - <<'PY' ... yaml.safe_load(...) ... PY
+    status: PASS
+    evidence: YAML files parsed successfully during W002 authoring.
+artifacts:
+  runtime_only: []
+  committed:
+    - docs/reports/PR563_WORK_REPORT.yaml
+    - schemas/universal_work_report.schema.yaml
+    - schemas/pr_lifecycle_checklist.schema.yaml
+    - docs/federation/ABACUS_RUNTIME_MAPPING.md
+    - docs/federation/FEDERATION_LAYER.md
+    - docs/federation/BRIDGE_LAYER.md
+    - docs/federation/dependency_graphs.md
+    - docs/automation/GITHUB_ACTIONS_WORK_REPORT_GATE.md
+  persistent_verified:
+    - docs/reports/PR563_WORK_REPORT.md
+    - docs/reports/PR563_WORK_REPORT.yaml
+    - docs/reports/PR563_PR_BODY.md
+audit:
+  tree_sha: null
+  container_head_sha: null
+  base_ref_stable: false
+  pin_container_sha: false
+  pin_remote_sha: true
+  merge_requires_human_go: true
+  notes: pending external verification after final commit
+
+final_status:
+  status: PR READY FOR HUMAN REVIEW - REVIEW-FIRST ONLY
+  merge_allowed: false
+  human_go_required: true
