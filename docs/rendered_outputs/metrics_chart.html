@@ -13,10 +13,10 @@
 </head><body>
 <div class="header">
   <h1>CODEX Repository Metrics
-    <span class="qs">94.0/100</span>
+    <span class="qs">97.0/100</span>
   </h1>
-  <div class="sub">SHA: 4c87a6255a5f · Generated: 2026-08-20 02:16:41 UTC
-    · Commits (30d): 4 / 1838 total
+  <div class="sub">SHA: 3ad6215174c5 · Generated: 2026-08-20 02:19:17 UTC
+    · Commits (30d): 10 / 1859 total
   </div>
 </div>
 <div class="charts">
@@ -28,7 +28,7 @@
 <script>
 const phases   = ["Define", "Measure", "Analyze", "Improve", "Control"];
 const scores   = [100, 100, 100, 60, 100];
-const files    = [136, 100, 42, 12, 33];
+const files    = [136, 106, 42, 12, 33];
 const radarScores = [...scores, scores[0]];
 const radarLabels = [...phases, phases[0]];
 
@@ -63,14 +63,14 @@ Plotly.newPlot('coverage', [{
 }, {responsive:true});
 
 const meta = {
-  'Total commits':    1838,
-  'Recent (30d)':     4,
-  'Python files':     434,
-  'Test files':       98,
+  'Total commits':    1859,
+  'Recent (30d)':     10,
+  'Python files':     451,
+  'Test files':       104,
   'HTML docs':        63,
-  'Markdown docs':    349,
+  'Markdown docs':    353,
   'Workflows':        47,
-  'Total LOC':        46097,
+  'Total LOC':        48332,
 };
 Plotly.newPlot('activity', [{
   type:'bar', x:Object.keys(meta), y:Object.values(meta),
