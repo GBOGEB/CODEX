@@ -1,0 +1,83 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://github.com/GBOGEB/ARTSTYLE-WIP/schemas/dependency_trace.schema.yaml"
+title: "W003B Dependency Trace Contract"
+description: >-
+  Contract for generated dependency trace matrix reports. Trace node identifiers
+  and parent references are UUID-based and stages are restricted to the W002
+  dependency trace model.
+type: object
+required:
+  - status
+  - model
+  - nodes
+  - node_count
+  - error_count
+  - errors
+properties:
+  checked_at:
+    type: string
+  status:
+    type: string
+    enum: [pass, fail]
+  model:
+    type: array
+    prefixItems:
+      - const: Requirement
+      - const: Applicant Response
+      - const: Review
+      - const: Change Request
+      - const: Approval
+      - const: Generated Artifact
+    minItems: 6
+    maxItems: 6
+  node_count:
+    type: integer
+    minimum: 0
+  error_count:
+    type: integer
+    minimum: 0
+  errors:
+    type: array
+    items:
+      type: object
+  nodes:
+    type: array
+    items:
+      $ref: "#/$defs/dependency_trace_node"
+$defs:
+  uuid:
+    type: string
+    format: uuid
+    pattern: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+  dependency_trace_node:
+    type: object
+    required:
+      - id
+      - stage
+      - title
+      - parent
+      - source_path
+    properties:
+      id:
+        $ref: "#/$defs/uuid"
+      stage:
+        type: string
+        enum:
+          - Requirement
+          - Applicant Response
+          - Review
+          - Change Request
+          - Approval
+          - Generated Artifact
+      title:
+        type: string
+        minLength: 1
+      parent:
+        anyOf:
+          - $ref: "#/$defs/uuid"
+          - type: "null"
+      source_path:
+        type: string
+        minLength: 1
+    additionalProperties: false
+additionalProperties: true

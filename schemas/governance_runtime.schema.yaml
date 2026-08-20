@@ -1,0 +1,268 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://github.com/GBOGEB/ARTSTYLE-WIP/schemas/governance_runtime.schema.yaml"
+title: "W003B Governance Runtime Contract"
+description: >-
+  Governing contract for the renderer-independent governance runtime export.
+  The runtime aggregates SSOT, MASTER_input validation, dependency trace,
+  lineage trace, and validation report summaries while preserving UUID-based
+  references.
+type: object
+required:
+  - schema_version
+  - runtime_id
+  - export_registry
+  - sources
+  - ssot
+  - master_input
+  - dependency_trace
+  - lineage_trace
+  - validation_reports
+properties:
+  schema_version:
+    type: string
+    minLength: 1
+  runtime_id:
+    $ref: "#/$defs/uuid"
+  export_registry:
+    type: array
+    minItems: 5
+    items:
+      type: object
+      required: [format, status]
+      properties:
+        format:
+          type: string
+          enum: [json, yaml, markdown, excel, html]
+        status:
+          type: string
+          enum: [implemented, placeholder, unsupported]
+      additionalProperties: false
+  sources:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required: [key, path, kind]
+      properties:
+        key:
+          type: string
+          minLength: 1
+        path:
+          type: string
+          minLength: 1
+        kind:
+          type: string
+          minLength: 1
+      additionalProperties: false
+  ssot:
+    type: object
+    required: [document_path, schema_path, document, validation]
+    properties:
+      document_path:
+        type: string
+        minLength: 1
+      schema_path:
+        type: string
+        minLength: 1
+      document:
+        type: object
+      validation:
+        $ref: "#/$defs/validation_payload"
+    additionalProperties: true
+  master_input:
+    type: object
+    required: [root, validation]
+    properties:
+      root:
+        type: string
+        minLength: 1
+      validation:
+        $ref: "#/$defs/validation_payload"
+    additionalProperties: true
+  dependency_trace:
+    type: object
+    required: [model, nodes, links, status]
+    properties:
+      model:
+        type: array
+        prefixItems:
+          - const: Requirement
+          - const: Applicant Response
+          - const: Review
+          - const: Change Request
+          - const: Approval
+          - const: Generated Artifact
+        minItems: 6
+        maxItems: 6
+      nodes:
+        type: array
+        items:
+          $ref: "#/$defs/dependency_trace_node"
+      links:
+        type: array
+        items:
+          allOf:
+            - $ref: "#/$defs/runtime_link"
+            - type: object
+              properties:
+                relationship:
+                  const: depends_on_parent
+      status:
+        type: string
+        enum: [pass, fail]
+    additionalProperties: false
+  lineage_trace:
+    type: object
+    required: [model, nodes, links, traversal, status]
+    properties:
+      model:
+        type: array
+        prefixItems:
+          - const: ITT
+          - const: Applicant Package
+          - const: Review
+          - const: Revision
+          - const: Approval
+          - const: Baseline
+        minItems: 6
+        maxItems: 6
+      nodes:
+        type: array
+        items:
+          $ref: "#/$defs/lineage_node"
+      links:
+        type: array
+        items:
+          allOf:
+            - $ref: "#/$defs/runtime_link"
+            - type: object
+              properties:
+                relationship:
+                  const: lineage_parent
+      traversal:
+        type: array
+        items:
+          $ref: "#/$defs/uuid"
+      status:
+        type: string
+        enum: [pass, fail]
+    additionalProperties: false
+  validation_reports:
+    type: array
+    items:
+      type: object
+      required: [key, status, error_count, report_path, errors]
+      properties:
+        key:
+          type: string
+          minLength: 1
+        status:
+          type: string
+          enum: [pass, fail]
+        error_count:
+          type: integer
+          minimum: 0
+        report_path:
+          type: string
+          minLength: 1
+        errors:
+          type: array
+          items:
+            type: object
+      additionalProperties: false
+$defs:
+  uuid:
+    type: string
+    format: uuid
+    pattern: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+  validation_payload:
+    type: object
+    required: [status, error_count, errors]
+    properties:
+      status:
+        type: string
+        enum: [pass, fail]
+      error_count:
+        type: integer
+        minimum: 0
+      errors:
+        type: array
+    additionalProperties: true
+  runtime_link:
+    type: object
+    required: [source, target, relationship]
+    properties:
+      source:
+        $ref: "#/$defs/uuid"
+      target:
+        $ref: "#/$defs/uuid"
+      relationship:
+        type: string
+    additionalProperties: false
+  dependency_trace_node:
+    type: object
+    required: [id, stage, title, parent, source_path]
+    properties:
+      id:
+        $ref: "#/$defs/uuid"
+      stage:
+        type: string
+        enum:
+          - Requirement
+          - Applicant Response
+          - Review
+          - Change Request
+          - Approval
+          - Generated Artifact
+      title:
+        type: string
+        minLength: 1
+      parent:
+        anyOf:
+          - $ref: "#/$defs/uuid"
+          - type: "null"
+      source_path:
+        type: string
+        minLength: 1
+    additionalProperties: false
+  lineage_status:
+    type: string
+    enum:
+      - complete
+      - active
+      - planned
+      - approved
+      - superseded
+      - baseline
+  lineage_node:
+    type: object
+    required: [id, stage, title, created, updated, parent, status]
+    properties:
+      id:
+        $ref: "#/$defs/uuid"
+      stage:
+        type: string
+        enum:
+          - ITT
+          - Applicant Package
+          - Review
+          - Revision
+          - Approval
+          - Baseline
+      title:
+        type: string
+        minLength: 1
+      created:
+        type: string
+        minLength: 1
+      updated:
+        type: string
+        minLength: 1
+      parent:
+        anyOf:
+          - $ref: "#/$defs/uuid"
+          - type: "null"
+      status:
+        $ref: "#/$defs/lineage_status"
+    additionalProperties: false
+additionalProperties: false

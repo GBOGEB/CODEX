@@ -29,6 +29,24 @@ jobs:
       - name: Run MASTER_input folder validator
         run: python tools/validators/master_input_validator.py
 
+      - name: Run dependency trace validator
+        run: python tools/traceability/dependency_engine.py
+
+      - name: Run lineage validator
+        run: python tools/traceability/lineage_engine.py
+
+      - name: Generate governance runtime export
+        run: python tools/export/governance_export.py
+
+      - name: Validate dependency trace contract
+        run: python tools/contracts/dependency_trace_validator.py
+
+      - name: Validate lineage contract
+        run: python tools/contracts/lineage_validator.py
+
+      - name: Validate governance runtime contract
+        run: python tools/contracts/runtime_validator.py
+
       - name: Publish validation artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -39,4 +57,17 @@ jobs:
             generated/validation_report.md
             generated/master_input_validation.json
             generated/master_input_validation.md
+            generated/trace_matrix.json
+            generated/trace_matrix.md
+            generated/trace_matrix.csv
+            generated/lineage.json
+            generated/lineage.md
+            generated/lineage_graph.json
+            generated/governance_runtime.json
+            generated/governance_runtime.yaml
+            generated/governance_runtime.md
+            generated/dependency_trace_validation.json
+            generated/lineage_validation.json
+            generated/runtime_validation.json
+            generated/runtime_validation.md
           if-no-files-found: warn
