@@ -66,3 +66,39 @@ jobs:
           if (-not (Test-Path (Join-Path $root 'MANIFEST.sha256'))) { throw 'Manifest was not created.' }
           $lines = @(Get-Content (Join-Path $root 'MANIFEST.sha256') | Where-Object { $_ -notmatch '^#' -and $_.Trim() })
           if ($lines.Count -ne 2) { throw "Expected 2 manifest records, got $($lines.Count)." }
+
+      - name: Synthetic immutable publication smoke test
+        shell: pwsh
+        run: |
+          $dist = Join-Path $env:RUNNER_TEMP 'qps-dist-smoke'
+          $releaseRoot = Join-Path $env:RUNNER_TEMP 'qps-release-root'
+          New-Item -ItemType Directory -Force $dist | Out-Null
+          New-Item -ItemType Directory -Force (Join-Path $dist 'nested') | Out-Null
+          Set-Content -Path (Join-Path $dist 'BUILD_META.json') -Value '{"qa":{"status":"PASS"}}' -NoNewline
+          Set-Content -Path (Join-Path $dist 'RELEASE_NOTES.md') -Value '# synthetic release' -NoNewline
+          Set-Content -Path (Join-Path $dist 'QA_REPORT.md') -Value '# PASS' -NoNewline
+          Set-Content -Path (Join-Path $dist 'nested/model.txt') -Value 'semantic-model' -NoNewline
+          New-Item -ItemType Directory -Force $releaseRoot | Out-Null
+
+          $result = & ./07_ops/qps_roundtrip/Publish-QpsRelease.ps1 `
+            -SourceDist $dist `
+            -ReleaseId 'synthetic-v1' `
+            -ReleaseRoot $releaseRoot `
+            -CreateOfficeReviewCopy | ConvertFrom-Json
+
+          if ($result.result -ne 'PASS') { throw 'Synthetic publication did not return PASS.' }
+          $published = Join-Path $releaseRoot 'synthetic-v1'
+          if (-not (Test-Path (Join-Path $published 'nested/model.txt'))) { throw 'Nested release content was not copied.' }
+          if (-not (Test-Path (Join-Path $published 'MANIFEST.sha256'))) { throw 'Published manifest is missing.' }
+
+          $costRoot = Split-Path -Parent $releaseRoot
+          $review = Join-Path (Join-Path $costRoot '20_WORKING_REVIEW') 'synthetic-v1'
+          if (-not (Test-Path (Join-Path $review 'nested/model.txt'))) { throw 'Office review copy was not created.' }
+
+          $duplicateFailed = $false
+          try {
+            & ./07_ops/qps_roundtrip/Publish-QpsRelease.ps1 -SourceDist $dist -ReleaseId 'synthetic-v1' -ReleaseRoot $releaseRoot | Out-Null
+          } catch {
+            $duplicateFailed = $true
+          }
+          if (-not $duplicateFailed) { throw 'Publisher did not protect the immutable release ID.' }
