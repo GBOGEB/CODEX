@@ -1,0 +1,68 @@
+name: QPS roundtrip policy
+
+on:
+  pull_request:
+    paths:
+      - '07_ops/qps_roundtrip/**'
+      - '.github/workflows/qps-roundtrip-policy.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - '07_ops/qps_roundtrip/**'
+      - '.github/workflows/qps-roundtrip-policy.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  policy-and-syntax:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate controlled-path binary policy
+        shell: pwsh
+        run: |
+          if ('${{ github.event_name }}' -eq 'pull_request') {
+            git fetch origin '${{ github.base_ref }}' --depth=1
+            $files = @(git diff --name-only "origin/${{ github.base_ref }}...HEAD")
+          } else {
+            $files = @(git show --pretty='' --name-only HEAD)
+          }
+          & ./07_ops/qps_roundtrip/Test-QpsTextOnlyPolicy.ps1 -RepositoryPath . -FileList $files
+
+      - name: Parse PowerShell source
+        shell: pwsh
+        run: |
+          $failed = $false
+          Get-ChildItem ./07_ops/qps_roundtrip -Filter *.ps1 -File | ForEach-Object {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$tokens, [ref]$errors) | Out-Null
+            if ($errors.Count -gt 0) {
+              Write-Host "::error file=$($_.FullName)::$($errors | Out-String)"
+              $failed = $true
+            }
+          }
+          if ($failed) { exit 1 }
+
+      - name: Validate BUILD_META template JSON
+        shell: pwsh
+        run: |
+          Get-Content ./07_ops/qps_roundtrip/BUILD_META.template.json -Raw | ConvertFrom-Json | Out-Null
+
+      - name: Synthetic manifest smoke test
+        shell: pwsh
+        run: |
+          $root = Join-Path $env:RUNNER_TEMP 'qps-manifest-smoke'
+          New-Item -ItemType Directory -Force $root | Out-Null
+          Set-Content -Path (Join-Path $root 'a.txt') -Value 'alpha' -NoNewline
+          New-Item -ItemType Directory -Force (Join-Path $root 'nested') | Out-Null
+          Set-Content -Path (Join-Path $root 'nested/b.txt') -Value 'beta' -NoNewline
+          & ./07_ops/qps_roundtrip/Get-QpsRecursiveManifest.ps1 -Root $root | Write-Host
+          if (-not (Test-Path (Join-Path $root 'MANIFEST.sha256'))) { throw 'Manifest was not created.' }
+          $lines = @(Get-Content (Join-Path $root 'MANIFEST.sha256') | Where-Object { $_ -notmatch '^#' -and $_.Trim() })
+          if ($lines.Count -ne 2) { throw "Expected 2 manifest records, got $($lines.Count)." }
