@@ -24,6 +24,17 @@ function Get-RelativeHashMap {
     return $map
 }
 
+function Copy-DirectoryContents {
+    param(
+        [Parameter(Mandatory = $true)][string]$Source,
+        [Parameter(Mandatory = $true)][string]$Destination
+    )
+
+    foreach ($item in Get-ChildItem -LiteralPath $Source -Force) {
+        Copy-Item -LiteralPath $item.FullName -Destination $Destination -Recurse -Force
+    }
+}
+
 if ([string]::IsNullOrWhiteSpace($ReleaseRoot)) {
     throw 'QPS_RELEASE_ROOT is not set and -ReleaseRoot was not provided.'
 }
@@ -45,7 +56,7 @@ if (Test-Path -LiteralPath $destination) {
 
 if ($PSCmdlet.ShouldProcess($destination, 'Publish immutable QPS release')) {
     New-Item -ItemType Directory -Path $destination -Force | Out-Null
-    Copy-Item -LiteralPath (Join-Path $SourceDist '*') -Destination $destination -Recurse -Force
+    Copy-DirectoryContents -Source $SourceDist -Destination $destination
 
     $sourceHashes = Get-RelativeHashMap -Root $SourceDist
     $destinationHashes = Get-RelativeHashMap -Root $destination
@@ -92,7 +103,7 @@ if ($PSCmdlet.ShouldProcess($destination, 'Publish immutable QPS release')) {
             throw "Office review destination already exists: $reviewDestination"
         }
         New-Item -ItemType Directory -Path $reviewDestination -Force | Out-Null
-        Copy-Item -LiteralPath (Join-Path $destination '*') -Destination $reviewDestination -Recurse -Force
+        Copy-DirectoryContents -Source $destination -Destination $reviewDestination
     }
 
     [ordered]@{
