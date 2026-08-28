@@ -1,7 +1,7 @@
 """Generate a deterministic semantic manifest for QPS release artifacts.
 
 The extractor intentionally separates semantic comparison from exact binary hashes.
-It uses only the Python standard library and supports XLSX, DOCX, PPTX and HTML.
+It supports XLSX, DOCX, PPTX and HTML.
 """
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ import re
 import unicodedata
 import zipfile
 from pathlib import Path, PurePosixPath
-from xml.etree import ElementTree as ET
+from defusedxml import ElementTree as ET
 
 NS = {
     "a": "http://schemas.openxmlformats.org/drawingml/2006/main",
@@ -111,8 +111,8 @@ def xlsx_manifest(path: Path) -> dict:
             for sh in wb.findall("s:sheets/s:sheet", NS):
                 rid = sh.attrib.get(f"{{{NS['r']}}}id", "")
                 target = rels.get(rid, "")
-                if target and not target.startswith("xl/"):
-                    target = "xl/" + target.lstrip("/")
+                if target:
+                    target = resolve_part("xl/workbook.xml", target)
                 sheets.append({"name": sh.attrib.get("name", ""), "target": target})
             for dn in wb.findall("s:definedNames/s:definedName", NS):
                 defined.append({"name": dn.attrib.get("name", ""), "value": norm_text(dn.text or "")})
@@ -218,8 +218,8 @@ def pptx_manifest(path: Path) -> dict:
             for sid in pres.findall("p:sldIdLst/p:sldId", NS):
                 rid = sid.attrib.get(f"{{{NS['r']}}}id", "")
                 target = rels.get(rid, "")
-                if target and not target.startswith("ppt/"):
-                    target = "ppt/" + target.lstrip("/")
+                if target:
+                    target = resolve_part("ppt/presentation.xml", target)
                 slide_paths.append(target)
         titles, text_hashes, counts, notes_hashes = [], [], [], []
         for spath in slide_paths:
@@ -256,7 +256,7 @@ def html_manifest(path: Path) -> dict:
     embedded = [sha256_text(x) for x in re.findall(r"<script[^>]+type=[\"']application/(?:json|ld\+json)[\"'][^>]*>(.*?)</script>", text, flags=re.IGNORECASE | re.DOTALL)]
     return {
         "kind": "html", "route_or_section_ids": ids, "heading_sequence": headings,
-        "local_asset_paths": assets, "normalized_text_hashes": [sha256_text(visible)],
+        "asset_references": assets, "normalized_text_hashes": [sha256_text(visible)],
         "embedded_data_hashes": embedded,
     }
 
