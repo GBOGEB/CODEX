@@ -1,4 +1,4 @@
-schema: qps-cost-master.bridge-pointer.v1
+schema: qps-cost-master.release-pointer.v1
 project: QPS COST_Master
 public_role: CODEX execution interface
 private_build_required: true
@@ -12,3 +12,12 @@ release_pointer_fields:
   - release_manifest_sha256
   - artifact_registry_sha256
   - onedrive_relative_path
+optional_release_pointer_fields:
+  - confidentiality
+acceptance_receipt_private_fields:
+  - codex_commit
+  - abacus_commit
+  - local_artifact_reference
+  - accepted_utc
+  - per_file_local_sha256
+  - per_file_onedrive_sha256

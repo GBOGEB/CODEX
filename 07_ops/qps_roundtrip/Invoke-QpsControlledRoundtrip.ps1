@@ -22,6 +22,18 @@ function Assert-Leaf {
     }
 }
 
+function Get-Sha256Text {
+    param([Parameter(Mandatory = $true)][string]$Text)
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes($Text)
+        return ([System.BitConverter]::ToString($sha.ComputeHash($bytes))).Replace('-', '').ToLowerInvariant()
+    }
+    finally {
+        $sha.Dispose()
+    }
+}
+
 $toolRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $startWave2 = Join-Path $toolRoot 'Start-QpsWave2.ps1'
 $verifyEvidence = Join-Path $toolRoot 'Test-QpsEvidenceRegistry.ps1'
@@ -132,10 +144,17 @@ foreach ($name in $semanticNames) {
     $a = Join-Path $builds[0].semantic_dir $name
     $b = Join-Path $builds[1].semantic_dir $name
     $receipt = Join-Path $comparisonRoot ($name -replace '\.semantic\.json$', '.comparison.json')
-    python $semanticCompare $a $b -o $receipt
+    python $semanticCompare $a $b --output $receipt
     if ($LASTEXITCODE -ne 0) { throw "Semantic comparison failed for $name" }
     $comparisons += (Get-Content -LiteralPath $receipt -Raw | ConvertFrom-Json)
 }
+
+$semanticSetLines = foreach ($name in $semanticNames | Sort-Object) {
+    $manifest = Get-Content -LiteralPath (Join-Path $builds[0].semantic_dir $name) -Raw | ConvertFrom-Json
+    if (-not $manifest.semantic_sha256) { throw "Semantic manifest is missing semantic_sha256: $name" }
+    "$name=$($manifest.semantic_sha256)"
+}
+$privateSourceSemanticSha256 = Get-Sha256Text -Text ($semanticSetLines -join "`n")
 
 $sourceCommit = ''
 $codexPath = Join-Path $RepoRoot 'CODEX'
@@ -173,6 +192,7 @@ $roundtripReceipt = [ordered]@{
     generated_utc = [DateTime]::UtcNow.ToString('o')
     release_id = $ReleaseId
     source_commit = $sourceCommit
+    private_source_semantic_sha256 = $privateSourceSemanticSha256
     bootstrap_result = $bootstrap.result
     evidence_result = $evidence.result
     evidence_receipt = $evidenceReceiptPath
