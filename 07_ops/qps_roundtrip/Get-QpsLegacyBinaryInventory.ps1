@@ -11,6 +11,12 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+$ControlledPaths = @(
+    '07_ops/qps_roundtrip/',
+    'analytics/qps_cost_estimate_roundtrip/',
+    'qps_cost_overlay/'
+)
+
 Push-Location $RepositoryPath
 try {
     $root = (Get-Location).Path
@@ -18,21 +24,30 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'git ls-files failed.' }
 
     $records = foreach ($relative in $tracked) {
-        $ext = [System.IO.Path]::GetExtension($relative).ToLowerInvariant()
+        $normalized = $relative.Replace('\','/')
+        $ext = [System.IO.Path]::GetExtension($normalized).ToLowerInvariant()
         if ($Extensions -notcontains $ext) { continue }
 
         $full = Join-Path $root $relative
         $size = if (Test-Path -LiteralPath $full) { (Get-Item -LiteralPath $full).Length } else { $null }
-        $classification = if ($relative -like '07_ops/qps_roundtrip/*') {
+        $inControlledPath = $false
+        foreach ($prefix in $ControlledPaths) {
+            if ($normalized.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+                $inControlledPath = $true
+                break
+            }
+        }
+
+        $classification = if ($inControlledPath) {
             'POLICY_VIOLATION'
-        } elseif ($relative -match '(^|/)(build|dist|output|outputs|render|preview|generated)(/|$)' -or $ext -in @('.png','.jpg','.jpeg','.gif')) {
+        } elseif ($normalized -match '(^|/)(build|dist|output|outputs|render|preview|generated)(/|$)' -or $ext -in @('.png','.jpg','.jpeg','.gif')) {
             'REGENERATE_OR_MIGRATE'
         } else {
             'REVIEW_KEEP_OR_MIGRATE'
         }
 
         [pscustomobject]@{
-            path = $relative.Replace('\','/')
+            path = $normalized
             extension = $ext
             size_bytes = $size
             classification = $classification
