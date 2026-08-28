@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Generate a deterministic semantic manifest for QPS release artifacts.
 
 The extractor intentionally separates semantic comparison from exact binary hashes.
@@ -12,7 +11,7 @@ import json
 import re
 import unicodedata
 import zipfile
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from xml.etree import ElementTree as ET
 
 NS = {
@@ -23,6 +22,7 @@ NS = {
     "s": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
     "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
 }
+REL_NS = "http://schemas.openxmlformats.org/package/2006/relationships"
 
 
 def norm_text(value: str) -> str:
@@ -53,10 +53,59 @@ def relmap(zf: zipfile.ZipFile, name: str) -> dict[str, str]:
     }
 
 
+def relationship_targets(zf: zipfile.ZipFile, name: str) -> list[tuple[str, str]]:
+    root = xml_root(zf, name)
+    if root is None:
+        return []
+    return [
+        (el.attrib.get("Type", ""), el.attrib.get("Target", ""))
+        for el in root.findall(f"{{{REL_NS}}}Relationship")
+    ]
+
+
+def resolve_part(base_part: str, target: str) -> str:
+    if target.startswith("/"):
+        return target.lstrip("/")
+    return str(PurePosixPath(PurePosixPath(base_part).parent, target))
+
+
+def xlsx_shared_strings(zf: zipfile.ZipFile) -> list[str]:
+    root = xml_root(zf, "xl/sharedStrings.xml")
+    if root is None:
+        return []
+    values = []
+    for item in root.findall("s:si", NS):
+        values.append(norm_text("".join(t.text or "" for t in item.findall(".//s:t", NS))))
+    return values
+
+
+def xlsx_cell_value(cell, shared_strings: list[str]) -> str | None:
+    cell_type = cell.attrib.get("t", "")
+    if cell_type == "inlineStr":
+        inline = cell.find("s:is", NS)
+        if inline is None:
+            return ""
+        return norm_text("".join(t.text or "" for t in inline.findall(".//s:t", NS)))
+
+    value = cell.find("s:v", NS)
+    if value is None:
+        return None
+    raw = norm_text(value.text or "")
+    if cell_type == "s":
+        try:
+            return shared_strings[int(raw)]
+        except (ValueError, IndexError):
+            return raw
+    if cell_type == "b":
+        return "TRUE" if raw == "1" else "FALSE" if raw == "0" else raw
+    return raw
+
+
 def xlsx_manifest(path: Path) -> dict:
     with zipfile.ZipFile(path) as zf:
         wb = xml_root(zf, "xl/workbook.xml")
         rels = relmap(zf, "xl/_rels/workbook.xml.rels")
+        shared_strings = xlsx_shared_strings(zf)
         sheets = []
         defined = []
         formulas = {}
@@ -78,13 +127,14 @@ def xlsx_manifest(path: Path) -> dict:
                 continue
             for cell in root.findall(".//s:c", NS):
                 ref = cell.attrib.get("r", "")
-                f = cell.find("s:f", NS)
-                v = cell.find("s:v", NS)
+                formula = cell.find("s:f", NS)
                 key = f"{sh['name']}!{ref}"
-                if f is not None:
-                    formulas[key] = norm_text(f.text or "")
-                elif v is not None:
-                    controlled_values[key] = norm_text(v.text or "")
+                if formula is not None:
+                    formulas[key] = norm_text(formula.text or "")
+                else:
+                    resolved = xlsx_cell_value(cell, shared_strings)
+                    if resolved is not None:
+                        controlled_values[key] = resolved
         for name in sorted(n for n in zf.namelist() if n.startswith("xl/tables/") and n.endswith(".xml")):
             root = xml_root(zf, name)
             if root is not None:
@@ -143,6 +193,31 @@ def docx_manifest(path: Path) -> dict:
         }
 
 
+def pptx_notes_path(zf: zipfile.ZipFile, slide_path: str) -> str | None:
+    slide_name = PurePosixPath(slide_path).name
+    rel_path = str(PurePosixPath(slide_path).parent / "_rels" / f"{slide_name}.rels")
+    for rel_type, target in relationship_targets(zf, rel_path):
+        if rel_type.endswith("/notesSlide"):
+            return resolve_part(slide_path, target)
+    return None
+
+
+def pptx_object_count(root) -> int:
+    if root is None:
+        return 0
+    sp_tree = root.find("p:cSld/p:spTree", NS)
+    if sp_tree is None:
+        return 0
+    object_tags = {
+        f"{{{NS['p']}}}sp",
+        f"{{{NS['p']}}}pic",
+        f"{{{NS['p']}}}graphicFrame",
+        f"{{{NS['p']}}}grpSp",
+        f"{{{NS['p']}}}cxnSp",
+    }
+    return sum(1 for child in sp_tree if child.tag in object_tags)
+
+
 def pptx_manifest(path: Path) -> dict:
     with zipfile.ZipFile(path) as zf:
         pres = xml_root(zf, "ppt/presentation.xml")
@@ -161,17 +236,20 @@ def pptx_manifest(path: Path) -> dict:
             texts = []
             if root is not None:
                 texts = [norm_text(t.text or "") for t in root.findall(".//a:t", NS) if norm_text(t.text or "")]
-                counts.append(sum(1 for _ in root.iter()))
-            else:
-                counts.append(0)
+            counts.append(pptx_object_count(root))
             titles.append(texts[0] if texts else "")
             text_hashes.append(sha256_text("\n".join(texts)))
-            m = re.search(r"slide(\d+)\.xml$", spath)
+
             note_text = ""
-            if m:
-                nroot = xml_root(zf, f"ppt/notesSlides/notesSlide{m.group(1)}.xml")
+            notes_path = pptx_notes_path(zf, spath)
+            if notes_path:
+                nroot = xml_root(zf, notes_path)
                 if nroot is not None:
-                    note_text = "\n".join(norm_text(t.text or "") for t in nroot.findall(".//a:t", NS) if norm_text(t.text or ""))
+                    note_text = "\n".join(
+                        norm_text(t.text or "")
+                        for t in nroot.findall(".//a:t", NS)
+                        if norm_text(t.text or "")
+                    )
             notes_hashes.append(sha256_text(note_text))
         chart_hashes = []
         for name in sorted(n for n in zf.namelist() if n.startswith("ppt/charts/") and n.endswith(".xml")):
@@ -191,11 +269,28 @@ def pptx_manifest(path: Path) -> dict:
 
 def html_manifest(path: Path) -> dict:
     text = path.read_text(encoding="utf-8", errors="replace")
-    ids = re.findall(r"\bid=[\"']([^\"']+)[\"']", text, flags=re.I)
-    headings = [norm_text(re.sub(r"<[^>]+>", "", x)) for x in re.findall(r"<h[1-6][^>]*>(.*?)</h[1-6]>", text, flags=re.I | re.S)]
-    assets = sorted(set(re.findall(r"(?:src|href)=[\"']([^\"']+)[\"']", text, flags=re.I)))
-    visible = norm_text(re.sub(r"<script\b.*?</script>|<style\b.*?</style>|<[^>]+>", " ", text, flags=re.I | re.S))
-    embedded = [sha256_text(x) for x in re.findall(r"<script[^>]+type=[\"']application/(?:json|ld\+json)[\"'][^>]*>(.*?)</script>", text, flags=re.I | re.S)]
+    ids = re.findall(r"\bid=[\"']([^\"']+)[\"']", text, flags=re.IGNORECASE)
+    headings = [
+        norm_text(re.sub(r"<[^>]+>", "", x))
+        for x in re.findall(r"<h[1-6][^>]*>(.*?)</h[1-6]>", text, flags=re.IGNORECASE | re.DOTALL)
+    ]
+    assets = sorted(set(re.findall(r"(?:src|href)=[\"']([^\"']+)[\"']", text, flags=re.IGNORECASE)))
+    visible = norm_text(
+        re.sub(
+            r"<script\b.*?</script>|<style\b.*?</style>|<[^>]+>",
+            " ",
+            text,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+    )
+    embedded = [
+        sha256_text(x)
+        for x in re.findall(
+            r"<script[^>]+type=[\"']application/(?:json|ld\+json)[\"'][^>]*>(.*?)</script>",
+            text,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+    ]
     return {
         "kind": "html",
         "route_or_section_ids": ids,
@@ -208,13 +303,19 @@ def html_manifest(path: Path) -> dict:
 
 def build(path: Path) -> dict:
     ext = path.suffix.lower()
-    handlers = {".xlsx": xlsx_manifest, ".docx": docx_manifest, ".pptx": pptx_manifest, ".html": html_manifest, ".htm": html_manifest}
+    handlers = {
+        ".xlsx": xlsx_manifest,
+        ".docx": docx_manifest,
+        ".pptx": pptx_manifest,
+        ".html": html_manifest,
+        ".htm": html_manifest,
+    }
     if ext not in handlers:
         raise SystemExit(f"Unsupported artifact type: {ext}")
     result = handlers[ext](path)
-    result["artifact_name"] = path.name
     canonical = json.dumps(result, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     result["semantic_sha256"] = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+    result["artifact_name"] = path.name
     return result
 
 
