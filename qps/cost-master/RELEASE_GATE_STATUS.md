@@ -8,6 +8,9 @@ The public CODEX bridge was integrated by PR #243. That merge closes the reposit
 
 - CODEX public source-only bridge integrated into `main`.
 - Public schemas, bridge contract, roundtrip documentation and source-policy surface established.
+- Evidence verification, semantic-manifest extraction/comparison, immutable publication and release-receipt tooling established.
+- Controlled Windows roundtrip orchestration established by PR #248.
+- Accepted-release parity tooling is source-ready in PR #250; it is not evidence that a real release has passed.
 - Generated Office/PDF/image/archive artifacts remain outside the public repository.
 
 ## Controlling acceptance gate
@@ -24,12 +27,16 @@ The accepted-release gate remains closed until a controlled user-PC rebuild prod
 8. exact local-to-OneDrive SHA-256 parity for the complete accepted publication set;
 9. acceptance timestamp and disposition.
 
-Until those conditions are satisfied, the release disposition is **HOLD** even though the public bridge is already merged.
+The acceptance adapter must also confirm a PASS controlled-roundtrip receipt, Build A/B semantic equality, and a PASS published-release receipt before it may emit an `ACCEPTED` disposition.
+
+Until those conditions are satisfied, the release disposition is **HOLD** even though the public bridge and automation are merged or source-ready.
 
 ## State interpretation
 
 - Repository integration: **COMPLETE**
 - Public bridge baseline: **ESTABLISHED**
+- Roundtrip orchestration: **ESTABLISHED**
+- Accepted-release parity tooling: **SOURCE-READY / PR #250**
 - PC accepted-release receipt: **PENDING**
 - OneDrive raw SHA-256 parity: **PENDING**
 - QPS COST_Master accepted-release gate: **HOLD**
