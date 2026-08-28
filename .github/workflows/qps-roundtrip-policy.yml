@@ -57,9 +57,11 @@ jobs:
         shell: pwsh
         run: python -m pip install defusedxml
 
-      - name: Compile Python semantic extractor
+      - name: Compile Python roundtrip tools
         shell: pwsh
-        run: python -m py_compile ./07_ops/qps_roundtrip/Get-QpsSemanticManifest.py
+        run: |
+          python -m py_compile ./07_ops/qps_roundtrip/Get-QpsSemanticManifest.py
+          python -m py_compile ./07_ops/qps_roundtrip/Compare-QpsSemanticManifests.py
 
       - name: Validate BUILD_META template JSON
         shell: pwsh
@@ -73,12 +75,54 @@ jobs:
           New-Item -ItemType Directory -Force $root | Out-Null
           $html = Join-Path $root 'index.html'
           Set-Content -LiteralPath $html -Encoding utf8 -Value '<!doctype html><html><body><section id="summary"><h1>QPS Summary</h1><a href="local.css">style</a><script type="application/json">{"value":1}</script></section></body></html>'
-          $out = Join-Path $root 'semantic.json'
-          python ./07_ops/qps_roundtrip/Get-QpsSemanticManifest.py $html -o $out
-          $manifest = Get-Content $out -Raw | ConvertFrom-Json
+          $left = Join-Path $root 'semantic-left.json'
+          $right = Join-Path $root 'semantic-right.json'
+          python ./07_ops/qps_roundtrip/Get-QpsSemanticManifest.py $html -o $left
+          Copy-Item -LiteralPath $left -Destination $right
+          $manifest = Get-Content $left -Raw | ConvertFrom-Json
           if ($manifest.kind -ne 'html') { throw 'Unexpected semantic kind.' }
           if ($manifest.heading_sequence[0] -ne 'QPS Summary') { throw 'Heading extraction failed.' }
           if (-not $manifest.semantic_sha256) { throw 'Semantic SHA-256 missing.' }
+
+          $comparison = Join-Path $root 'semantic-comparison.json'
+          python ./07_ops/qps_roundtrip/Compare-QpsSemanticManifests.py $left $right --output $comparison
+          $receipt = Get-Content $comparison -Raw | ConvertFrom-Json
+          if (-not $receipt.semantic_match) { throw 'Identical semantic manifests did not compare equal.' }
+
+      - name: Synthetic evidence-registry verification smoke test
+        shell: pwsh
+        run: |
+          $root = Join-Path $env:RUNNER_TEMP 'qps-evidence-smoke'
+          $vault = Join-Path $root 'vault'
+          New-Item -ItemType Directory -Force (Join-Path $vault 'Offers') | Out-Null
+          $evidenceFile = Join-Path $vault 'Offers/example.txt'
+          Set-Content -LiteralPath $evidenceFile -Value 'verified-evidence' -NoNewline
+          $hash = (Get-FileHash -LiteralPath $evidenceFile -Algorithm SHA256).Hash.ToLowerInvariant()
+          $registry = Join-Path $root 'evidence_registry.yaml'
+          @"
+schema_version: 1
+control_id: GOV-001
+registry_status: PARTIAL_VERIFIED
+build_blocking: true
+evidence:
+  - id: TEST_EVIDENCE
+    required: true
+    expected_filename: example.txt
+    relative_path: Offers/example.txt
+    sha256: $hash
+    size_bytes: null
+    verification_status: HASH_VERIFIED_SIZE_PENDING
+"@ | Set-Content -LiteralPath $registry -Encoding utf8
+          $receiptPath = Join-Path $root 'EVIDENCE_VERIFICATION_RECEIPT.json'
+          $verifiedRegistry = Join-Path $root 'evidence_registry.verified.yaml'
+          $result = & ./07_ops/qps_roundtrip/Test-QpsEvidenceRegistry.ps1 `
+            -RegistryPath $registry `
+            -EvidenceRoot $vault `
+            -ReceiptPath $receiptPath `
+            -VerifiedRegistryOutput $verifiedRegistry | ConvertFrom-Json
+          if ($result.result -ne 'PASS') { throw 'Synthetic evidence verification did not pass.' }
+          if (-not (Select-String -LiteralPath $verifiedRegistry -Pattern '^registry_status: VERIFIED$' -Quiet)) { throw 'Verified registry was not promoted.' }
+          if (-not (Select-String -LiteralPath $verifiedRegistry -Pattern '^\s+verification_status: VERIFIED$' -Quiet)) { throw 'Evidence record was not promoted.' }
 
       - name: Tracked binary inventory smoke test
         shell: pwsh
@@ -103,7 +147,7 @@ jobs:
           $lines = @(Get-Content (Join-Path $root 'MANIFEST.sha256') | Where-Object { $_ -notmatch '^#' -and $_.Trim() })
           if ($lines.Count -ne 2) { throw "Expected 2 manifest records, got $($lines.Count)." }
 
-      - name: Synthetic immutable publication smoke test
+      - name: Synthetic immutable publication and receipt smoke test
         shell: pwsh
         run: |
           $dist = Join-Path $env:RUNNER_TEMP 'qps-dist-smoke'
@@ -126,6 +170,15 @@ jobs:
           $published = Join-Path $releaseRoot 'synthetic-v1'
           if (-not (Test-Path (Join-Path $published 'nested/model.txt'))) { throw 'Nested release content was not copied.' }
           if (-not (Test-Path (Join-Path $published 'MANIFEST.sha256'))) { throw 'Published manifest is missing.' }
+
+          $releaseReceiptPath = Join-Path $env:RUNNER_TEMP 'RELEASE_RECEIPT.json'
+          $releaseReceipt = & ./07_ops/qps_roundtrip/New-QpsReleaseReceipt.ps1 `
+            -ReleaseDirectory $published `
+            -ReleaseId 'synthetic-v1' `
+            -SourceCommit '${{ github.sha }}' `
+            -ReceiptPath $releaseReceiptPath | ConvertFrom-Json
+          if ($releaseReceipt.result -ne 'PASS') { throw 'Synthetic release receipt did not pass.' }
+          if (-not $releaseReceipt.manifest_sha256) { throw 'Release receipt manifest hash is missing.' }
 
           $costRoot = Split-Path -Parent $releaseRoot
           $review = Join-Path (Join-Path $costRoot '20_WORKING_REVIEW') 'synthetic-v1'
