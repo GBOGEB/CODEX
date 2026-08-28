@@ -1,0 +1,23 @@
+schema_version: 1
+bridge_id: QPS-WCS-QRB-ENERGY-REV1-7
+status: AMBER
+wave: W006
+source_release: rev1.7
+abacus:
+  repository: GBOGEB/ABACUS
+  target_path: qplant/energy_exergy/rev1_7
+  role: technical_analysis_and_contract_data
+codex:
+  repository: GBOGEB/CODEX
+  evidence_registry: 07_ops/qps_roundtrip/evidence_registry.qps_wcs_qrb_rev1_7.yaml
+  role: automation_roundtrip_ci_release_receipts
+release_manifest_sha256: 274c0538c3dcd45b5702429c85f13b3a3e5227ad2675a00e6f3661a500783a19
+ssot_snapshot_sha256: badda30ac7b35f1d14d9e7bf01de85af2fac36198df2cc05627c3b450bc36ff3
+promotion_gate:
+  - real_evidence_registry_pass
+  - abacus_ci_pass
+  - codex_qps_roundtrip_ci_pass
+  - clean_clone_receipt
+  - semantic_rebuild_match
+  - recursive_manifest_pass
+  - stale_reference_pass
