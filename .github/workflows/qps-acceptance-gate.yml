@@ -1,0 +1,77 @@
+name: QPS accepted-release gate
+
+on:
+  pull_request:
+    paths:
+      - '07_ops/qps_roundtrip/New-QpsAcceptanceReceipt.ps1'
+      - '07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1'
+      - '07_ops/qps_roundtrip/tests/Test-QpsAcceptanceSynthetic.ps1'
+      - 'qps/cost-master/BRIDGE_CONTRACT.yaml'
+      - 'qps/cost-master/schemas/release_pointer.schema.json'
+      - '.github/workflows/qps-acceptance-gate.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - '07_ops/qps_roundtrip/New-QpsAcceptanceReceipt.ps1'
+      - '07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1'
+      - '07_ops/qps_roundtrip/tests/Test-QpsAcceptanceSynthetic.ps1'
+      - 'qps/cost-master/BRIDGE_CONTRACT.yaml'
+      - 'qps/cost-master/schemas/release_pointer.schema.json'
+      - '.github/workflows/qps-acceptance-gate.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance-contract:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Parse PowerShell acceptance sources
+        shell: pwsh
+        run: |
+          $failed = $false
+          @(
+            './07_ops/qps_roundtrip/New-QpsAcceptanceReceipt.ps1',
+            './07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1',
+            './07_ops/qps_roundtrip/tests/Test-QpsAcceptanceSynthetic.ps1'
+          ) | ForEach-Object {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $_), [ref]$tokens, [ref]$errors) | Out-Null
+            if ($errors.Count -gt 0) {
+              Write-Host "::error file=$_::$($errors | Out-String)"
+              $failed = $true
+            }
+          }
+          if ($failed) { exit 1 }
+
+      - name: Install pointer validation dependencies
+        shell: pwsh
+        run: python -m pip install jsonschema pyyaml
+
+      - name: Validate bridge contract identifier
+        shell: pwsh
+        run: |
+          $line = Get-Content ./qps/cost-master/BRIDGE_CONTRACT.yaml | Select-Object -First 1
+          if ($line -ne 'schema: qps-cost-master.release-pointer.v1') {
+            throw "Bridge contract does not match release-pointer schema: $line"
+          }
+
+      - name: Synthetic HOLD-to-ACCEPTED gate
+        shell: pwsh
+        run: |
+          $root = Join-Path $env:RUNNER_TEMP 'qps-acceptance-smoke'
+          New-Item -ItemType Directory -Force $root | Out-Null
+          $result = & ./07_ops/qps_roundtrip/tests/Test-QpsAcceptanceSynthetic.ps1 `
+            -ToolRoot (Resolve-Path ./07_ops/qps_roundtrip) `
+            -SchemaPath (Resolve-Path ./qps/cost-master/schemas/release_pointer.schema.json) `
+            -WorkRoot $root | ConvertFrom-Json
+          if ($result.result -ne 'PASS') { throw 'Synthetic acceptance gate failed.' }
+          if ($result.disposition -ne 'ACCEPTED') { throw 'Synthetic acceptance did not reach ACCEPTED.' }
