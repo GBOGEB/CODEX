@@ -33,7 +33,12 @@ jobs:
             statsmodels
 
       - name: "Execute Ruff Lint Verification"
-        run: ruff check telemetry/pca/drift_monitor.py src/orchestration/semantic_runtime_pipeline_bridge_v1.py --quiet
+        run: |
+          # Keep correctness linting active while quarantining three known
+          # style-only findings in the behaviour-frozen Wave-39 bridge.
+          # Remove these exemptions when that legacy bridge is modernised.
+          ruff check telemetry/pca/drift_monitor.py --quiet
+          ruff check src/orchestration/semantic_runtime_pipeline_bridge_v1.py --quiet --ignore UP006,UP035,I001
 
       - name: "Execute YAML Schema Integration Test"
         run: yamllint KEB/governance/
