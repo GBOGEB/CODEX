@@ -49,7 +49,7 @@ foreach ($line in Get-Content -LiteralPath $manifestPath) {
     }
     $actual = (Get-FileHash -LiteralPath $filePath -Algorithm SHA256).Hash.ToLowerInvariant()
     $status = if ($actual -eq $expected) { 'VERIFIED' } else { 'HASH_MISMATCH' }
-    if ($status -ne 'VERIFIED') { $failures += "$relative: $status" }
+    if ($status -ne 'VERIFIED') { $failures += "${relative}: $status" }
     $entries += [pscustomobject]@{ path = $relative; expected_sha256 = $expected; actual_sha256 = $actual; status = $status }
 }
 
@@ -62,7 +62,7 @@ $receipt = [ordered]@{
     release_directory = $resolved
     manifest_sha256 = $manifestHash
     build_meta_qa_status = $buildMeta.qa.status
-    verified_file_count = @($entries | Where-Object status -eq 'VERIFIED').Count
+    verified_file_count = @($entries | Where-Object { $_.status -eq 'VERIFIED' }).Count
     file_count = $entries.Count
     all_manifest_entries_verified = ($failures.Count -eq 0)
     files = $entries
