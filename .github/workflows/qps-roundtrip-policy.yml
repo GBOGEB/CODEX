@@ -23,6 +23,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
       - name: Validate controlled-path binary policy
         shell: pwsh
         run: |
@@ -49,10 +53,42 @@ jobs:
           }
           if ($failed) { exit 1 }
 
+      - name: Install semantic extractor dependency
+        shell: pwsh
+        run: python -m pip install defusedxml
+
+      - name: Compile Python semantic extractor
+        shell: pwsh
+        run: python -m py_compile ./07_ops/qps_roundtrip/Get-QpsSemanticManifest.py
+
       - name: Validate BUILD_META template JSON
         shell: pwsh
         run: |
           Get-Content ./07_ops/qps_roundtrip/BUILD_META.template.json -Raw | ConvertFrom-Json | Out-Null
+
+      - name: Synthetic semantic manifest smoke test
+        shell: pwsh
+        run: |
+          $root = Join-Path $env:RUNNER_TEMP 'qps-semantic-smoke'
+          New-Item -ItemType Directory -Force $root | Out-Null
+          $html = Join-Path $root 'index.html'
+          Set-Content -LiteralPath $html -Encoding utf8 -Value '<!doctype html><html><body><section id="summary"><h1>QPS Summary</h1><a href="local.css">style</a><script type="application/json">{"value":1}</script></section></body></html>'
+          $out = Join-Path $root 'semantic.json'
+          python ./07_ops/qps_roundtrip/Get-QpsSemanticManifest.py $html -o $out
+          $manifest = Get-Content $out -Raw | ConvertFrom-Json
+          if ($manifest.kind -ne 'html') { throw 'Unexpected semantic kind.' }
+          if ($manifest.heading_sequence[0] -ne 'QPS Summary') { throw 'Heading extraction failed.' }
+          if (-not $manifest.semantic_sha256) { throw 'Semantic SHA-256 missing.' }
+
+      - name: Tracked binary inventory smoke test
+        shell: pwsh
+        run: |
+          $out = Join-Path $env:RUNNER_TEMP 'qps-binary-inventory.json'
+          $result = & ./07_ops/qps_roundtrip/Get-QpsLegacyBinaryInventory.ps1 -RepositoryPath . -OutputPath $out | ConvertFrom-Json
+          if (-not (Test-Path $out)) { throw 'Binary inventory was not created.' }
+          if ($result.policy_violations -ne 0) { throw 'Controlled QPS path contains tracked binaries.' }
+          Write-Host "Tracked legacy binaries: $($result.tracked_binary_count)"
+          Write-Host "Regenerate/migrate candidates: $($result.regenerate_or_migrate)"
 
       - name: Synthetic manifest smoke test
         shell: pwsh
