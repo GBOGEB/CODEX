@@ -42,7 +42,7 @@ jobs:
         shell: pwsh
         run: |
           $failed = $false
-          Get-ChildItem ./07_ops/qps_roundtrip -Filter *.ps1 -File | ForEach-Object {
+          Get-ChildItem ./07_ops/qps_roundtrip -Filter *.ps1 -File -Recurse | ForEach-Object {
             $tokens = $null
             $errors = $null
             [System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$tokens, [ref]$errors) | Out-Null
@@ -191,3 +191,47 @@ evidence:
             $duplicateFailed = $true
           }
           if (-not $duplicateFailed) { throw 'Publisher did not protect the immutable release ID.' }
+
+      - name: Synthetic full controlled roundtrip smoke test
+        shell: pwsh
+        run: |
+          $root = Join-Path $env:RUNNER_TEMP 'qps-full-roundtrip'
+          $vault = Join-Path $root 'vault'
+          $workspace = Join-Path $root 'workspace'
+          $releaseRoot = Join-Path $root 'releases'
+          New-Item -ItemType Directory -Force (Join-Path $vault 'Offers') | Out-Null
+          New-Item -ItemType Directory -Force $releaseRoot | Out-Null
+          $evidenceFile = Join-Path $vault 'Offers/example.txt'
+          Set-Content -LiteralPath $evidenceFile -Value 'verified-evidence' -NoNewline
+          $hash = (Get-FileHash -LiteralPath $evidenceFile -Algorithm SHA256).Hash.ToLowerInvariant()
+          $registry = Join-Path $root 'evidence_registry.yaml'
+          @"
+schema_version: 1
+control_id: GOV-001
+registry_status: PARTIAL_VERIFIED
+build_blocking: true
+evidence:
+  - id: TEST_EVIDENCE
+    required: true
+    expected_filename: example.txt
+    relative_path: Offers/example.txt
+    sha256: $hash
+    size_bytes: null
+    verification_status: HASH_VERIFIED_SIZE_PENDING
+"@ | Set-Content -LiteralPath $registry -Encoding utf8
+
+          $repoRoot = Split-Path -Parent $env:GITHUB_WORKSPACE
+          $builder = Join-Path $env:GITHUB_WORKSPACE '07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1'
+          $result = & ./07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1 `
+            -RepoRoot $repoRoot `
+            -WorkspaceRoot $workspace `
+            -EvidenceRoot $vault `
+            -ReleaseRoot $releaseRoot `
+            -ReleaseId 'synthetic-roundtrip-v1' `
+            -BuilderScript $builder `
+            -RegistryPath $registry `
+            -SkipRepositoryUpdate | ConvertFrom-Json
+
+          if ($result.result -ne 'PASS') { throw 'Full controlled roundtrip did not return PASS.' }
+          if (-not $result.all_semantic_comparisons_pass) { throw 'Build A/B semantic comparison did not pass.' }
+          if ($result.semantic_comparison_count -ne 4) { throw "Expected four semantic comparisons, got $($result.semantic_comparison_count)." }
