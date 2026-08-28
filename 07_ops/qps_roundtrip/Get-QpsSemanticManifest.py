@@ -1,7 +1,7 @@
 """Generate a deterministic semantic manifest for QPS release artifacts.
 
 The extractor intentionally separates semantic comparison from exact binary hashes.
-It supports XLSX, DOCX, PPTX and HTML.
+It supports XLSX, DOCX, PPTX and HTML using defusedxml for XML safety.
 """
 from __future__ import annotations
 
