@@ -1,0 +1,101 @@
+{
+  "payload_version": "1.0.0",
+  "exchange_type": "knowledge_exchange",
+  "correlation_id": "QPS-FED-W02",
+  "source": {
+    "repository": "GBOGEB/cryoplant-project",
+    "ref": "main",
+    "sha": "4c32a8be1ad3b03be2d3d6abec7fb017703b1c71",
+    "run_id": "source-bound-wave-02"
+  },
+  "operations": [
+    "glossary_alignment",
+    "semantic_drift_check",
+    "adr_index_exchange",
+    "evidence_reference_exchange",
+    "maturity_telemetry_exchange",
+    "lineage_receipt"
+  ],
+  "terms": [
+    "KEB",
+    "Knowledge Exchange Bridge",
+    "DOW",
+    "SSOT",
+    "semantic governance",
+    "semantic drift"
+  ],
+  "adr_index": [
+    {
+      "id": "ADR-QPS-001",
+      "path": "ocd-adr/20_canonical/adr/QPS_ADR_REGISTER_v0.3.md",
+      "status": "PROPOSED_DECISION"
+    },
+    {
+      "id": "ADR-QPS-005",
+      "path": "ocd-adr/20_canonical/adr/QPS_ADR_REGISTER_v0.3.md",
+      "status": "PROPOSED_DECISION"
+    },
+    {
+      "id": "ADR-QPS-010",
+      "path": "ocd-adr/20_canonical/adr/QPS_ADR_REGISTER_v0.3.md",
+      "status": "CANDIDATE"
+    }
+  ],
+  "evidence_references": [
+    {
+      "id": "QPS-OCD-0.8",
+      "path": "ocd-adr/20_canonical/ocd/QPS_OCD_v0.8_CONSOLIDATED.md",
+      "authority": "QPS_CHILD_SSOT"
+    },
+    {
+      "id": "QPS-ADR-REGISTER-0.3",
+      "path": "ocd-adr/20_canonical/adr/QPS_ADR_REGISTER_v0.3.md",
+      "authority": "QPS_CHILD_SSOT"
+    },
+    {
+      "id": "QPS-TODO-REGISTER-2",
+      "path": "ocd-adr/metrics/todo/QPS_TODO_REGISTER_v2.md",
+      "authority": "QPS_WORKFLOW_METRIC"
+    },
+    {
+      "id": "QPS-TABLE10-ALLOCATION",
+      "path": "ocd-adr/scripts/evaluate_table10_allocation.py",
+      "authority": "QPS_FAIL_CLOSED_ANALYTICAL_CONTROL"
+    }
+  ],
+  "maturity_telemetry": {
+    "tracked_todo_items": 11,
+    "done_items": 5,
+    "live_items": 6,
+    "declared_obligation_volume": 90,
+    "closed_obligation_volume": 64,
+    "remaining_obligation_volume": 26,
+    "breadth_closed": 33,
+    "breadth_total": 45,
+    "depth_closed": 31,
+    "depth_total": 45,
+    "todo_002_closed_volume": 11,
+    "todo_002_declared_volume": 12
+  },
+  "authority_rule": "CODEX findings and exchanged metadata are governance/advisory outputs; GBOGEB/cryoplant-project child disposition controls promotion and Contract/Addendum remains primary engineering authority",
+  "requested_return": {
+    "finding_fields": [
+      "finding_id",
+      "source_reference",
+      "target_ocd_or_adr",
+      "finding_type",
+      "confidence",
+      "proposed_action",
+      "authority_level",
+      "input_hash",
+      "output_hash",
+      "disposition"
+    ],
+    "exchange_fields": [
+      "adr_index",
+      "evidence_references",
+      "maturity_telemetry"
+    ],
+    "disposition_owner": "GBOGEB/cryoplant-project"
+  }
+}

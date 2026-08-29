@@ -1,0 +1,91 @@
+name: QPS KEB Wave 02 Full Exchange
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'codex/bridges/knowledge_exchange.py'
+      - 'federation/qps/wave-02/**'
+      - 'PIPELINE/GLOSSARY.yaml'
+      - '.github/workflows/qps-keb-wave02-full-exchange.yml'
+
+permissions:
+  contents: read
+
+env:
+  CORRELATION_ID: QPS-FED-W02
+
+jobs:
+  keb-full-exchange:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout CODEX
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install runtime dependency
+        run: python -m pip install pyyaml
+
+      - name: Validate bridge
+        run: python -m py_compile codex/bridges/knowledge_exchange.py
+
+      - name: Execute source-bound full KEB exchange
+        run: |
+          mkdir -p federation/qps/wave-02/output
+          python -m codex.bridges.knowledge_exchange \
+            --input federation/qps/wave-02/knowledge_exchange_request.json \
+            --glossary PIPELINE/GLOSSARY.yaml \
+            --output federation/qps/wave-02/output/keb_exchange_receipt.json
+
+      - name: Verify full exchange mechanics and lineage
+        run: |
+          python - <<'PY'
+          import json
+          import re
+          from pathlib import Path
+
+          req = json.loads(Path('federation/qps/wave-02/knowledge_exchange_request.json').read_text())
+          rec = json.loads(Path('federation/qps/wave-02/output/keb_exchange_receipt.json').read_text())
+          assert req['correlation_id'] == rec['correlation_id'] == 'QPS-FED-W02'
+          assert re.fullmatch(r'[0-9a-f]{40}', req['source']['sha'])
+          assert not req['source']['sha'].startswith('UNKNOWN')
+          assert rec['source'] == req['source']
+          assert rec['requested_operations'] == req['operations']
+          assert rec['executed_operations'] == req['operations']
+          assert rec['exchanged']['adr_index'] == req['adr_index']
+          assert rec['exchanged']['evidence_references'] == req['evidence_references']
+          assert rec['exchanged']['maturity_telemetry'] == req['maturity_telemetry']
+          assert rec['input_sha256'] and rec['output_sha256'] and rec['glossary_sha256']
+          assert rec['child_disposition_required'] is True
+          assert all(f['disposition'] is None for f in rec['findings'])
+          assert all(f['input_hash'] and f['output_hash'] for f in rec['findings'])
+          PY
+
+      - name: Regression - warm-up request remains valid
+        run: |
+          mkdir -p /tmp/qps-keb-wave01
+          python -m codex.bridges.knowledge_exchange \
+            --input federation/qps/wave-01/knowledge_exchange_request.json \
+            --glossary PIPELINE/GLOSSARY.yaml \
+            --output /tmp/qps-keb-wave01/receipt.json
+
+      - name: Publish execution summary
+        run: |
+          echo "## KEB Wave 02 — ${CORRELATION_ID}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Source-bound QPS exchange: ADR index + evidence references + maturity telemetry + governed glossary/semantic checks + lineage." >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat federation/qps/wave-02/output/keb_exchange_receipt.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload full exchange receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: qps-keb-wave02-${{ github.run_id }}
+          path: |
+            federation/qps/wave-02/knowledge_exchange_request.json
+            federation/qps/wave-02/output/keb_exchange_receipt.json
