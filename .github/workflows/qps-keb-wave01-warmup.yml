@@ -2,6 +2,12 @@ name: QPS KEB Wave 01 Warm-up
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'codex/bridges/knowledge_exchange.py'
+      - 'federation/qps/wave-01/**'
+      - '.github/workflows/qps-keb-wave01-warmup.yml'
 
 permissions:
   contents: read
@@ -62,22 +68,9 @@ jobs:
       - name: Publish visible stage summary
         run: |
           echo "## KEB Wave 01 — ${CORRELATION_ID}" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
           echo '```text' >> "$GITHUB_STEP_SUMMARY"
-          echo 'QPS CHILD SSOT' >> "$GITHUB_STEP_SUMMARY"
-          echo '      |' >> "$GITHUB_STEP_SUMMARY"
-          echo '      v' >> "$GITHUB_STEP_SUMMARY"
-          echo 'CODEX KEB' >> "$GITHUB_STEP_SUMMARY"
-          echo '  1 request validation' >> "$GITHUB_STEP_SUMMARY"
-          echo '  2 glossary / semantic check' >> "$GITHUB_STEP_SUMMARY"
-          echo '  3 stable finding generation' >> "$GITHUB_STEP_SUMMARY"
-          echo '  4 lineage + hash receipt' >> "$GITHUB_STEP_SUMMARY"
-          echo '  5 artifact publication' >> "$GITHUB_STEP_SUMMARY"
-          echo '      |' >> "$GITHUB_STEP_SUMMARY"
-          echo '      v' >> "$GITHUB_STEP_SUMMARY"
-          echo 'RETURN -> CHILD DISPOSITION' >> "$GITHUB_STEP_SUMMARY"
+          printf '%s\n' 'QPS CHILD SSOT' '      |' '      v' 'CODEX KEB' '  1 request validation' '  2 glossary / semantic check' '  3 stable finding generation' '  4 lineage + hash receipt' '  5 artifact publication' '      |' '      v' 'RETURN -> CHILD DISPOSITION' >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
           echo '```json' >> "$GITHUB_STEP_SUMMARY"
           cat federation/qps/wave-01/output/keb_exchange_receipt.json >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
