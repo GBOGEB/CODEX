@@ -27,12 +27,15 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install KEB runtime dependency
+        run: python -m pip install pyyaml
+
       - name: Stage 0 - show execution architecture
         run: |
           echo "QPS CHILD SSOT"
           echo "      |"
           echo "      v"
-          echo "CODEX KEB: validate -> glossary/semantic check -> findings -> hashes -> receipt"
+          echo "CODEX KEB: validate -> requested operations -> typed findings -> lineage hashes -> receipt"
           echo "      |"
           echo "      v"
           echo "RETURN ARTIFACT -> QPS CHILD DISPOSITION"
@@ -49,27 +52,45 @@ jobs:
             --glossary PIPELINE/GLOSSARY.yaml \
             --output federation/qps/wave-01/output/keb_exchange_receipt.json
 
-      - name: Verify child-owned disposition and hashes
+      - name: Verify executed operations, child disposition and hashes
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
           p = Path('federation/qps/wave-01/output/keb_exchange_receipt.json')
           data = json.loads(p.read_text(encoding='utf-8'))
+          request = json.loads(Path('federation/qps/wave-01/knowledge_exchange_request.json').read_text(encoding='utf-8'))
           assert data['correlation_id'] == 'QPS-FED-W01'
+          assert data['requested_operations'] == request['operations']
+          assert data['executed_operations'] == request['operations']
           assert data['input_sha256'] and data['output_sha256'] and data['glossary_sha256']
+          assert data['glossary_source'] == 'PIPELINE/GLOSSARY.yaml'
           assert data['child_disposition_required'] is True
+          stage_ops = [s.get('operation') for s in data['stages'] if s.get('operation')]
+          assert stage_ops == request['operations']
           for finding in data['findings']:
               assert finding['finding_id'].startswith('KEB-')
               assert finding['disposition'] is None
               assert finding['input_hash'] and finding['output_hash']
+              assert finding['source_reference'].startswith('GBOGEB/CODEX/PIPELINE/GLOSSARY.yaml@sha256:')
+          PY
+
+      - name: Regression - parsed glossary identity is not raw substring matching
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from codex.bridges.knowledge_exchange import _load_governed_terms, _normalize_term
+          terms, _, _ = _load_governed_terms(Path('PIPELINE/GLOSSARY.yaml'))
+          assert _normalize_term('semantic governance') in terms
+          assert _normalize_term('semantic drift') not in terms or _normalize_term('semantic_drift') in terms
+          assert _normalize_term('DOW') not in terms  # must not match the letters inside unrelated YAML prose
           PY
 
       - name: Publish visible stage summary
         run: |
           echo "## KEB Wave 01 — ${CORRELATION_ID}" >> "$GITHUB_STEP_SUMMARY"
           echo '```text' >> "$GITHUB_STEP_SUMMARY"
-          printf '%s\n' 'QPS CHILD SSOT' '      |' '      v' 'CODEX KEB' '  1 request validation' '  2 glossary / semantic check' '  3 stable finding generation' '  4 lineage + hash receipt' '  5 artifact publication' '      |' '      v' 'RETURN -> CHILD DISPOSITION' >> "$GITHUB_STEP_SUMMARY"
+          printf '%s\n' 'QPS CHILD SSOT' '      |' '      v' 'CODEX KEB' '  1 request validation' '  2 glossary alignment (if requested)' '  3 semantic drift check (if requested)' '  4 lineage receipt (if requested)' '  5 stable findings + output hash' '      |' '      v' 'RETURN -> CHILD DISPOSITION' >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
           echo '```json' >> "$GITHUB_STEP_SUMMARY"
           cat federation/qps/wave-01/output/keb_exchange_receipt.json >> "$GITHUB_STEP_SUMMARY"
