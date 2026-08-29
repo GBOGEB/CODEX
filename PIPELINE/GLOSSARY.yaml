@@ -1,4 +1,4 @@
-version: 0.2.0
+version: 0.3.0
 system:
   name: GBOGEB/CODEX
   codename: ABACUS_RENDER_PIPELINE
@@ -13,6 +13,25 @@ glossary:
   semantic_sha256:
     definition: SHA-256 digest calculated from normalized meaning-bearing structure rather than volatile container metadata; used separately from the raw artifact SHA-256.
 
+  semantic_drift:
+    definition: Meaning-bearing divergence between governed artifacts, terminology, lineage, or runtime interpretation that requires detection and disposition.
+
+  dow:
+    canonical_term: DOW
+    definition: Parent-owned Document/Domain/Decision-oriented workflow integration path in ABACUS used for classification, recursive processing, convergence, knowledge extraction, self-ranking, and validation.
+    authority_note: DOW findings are advisory/derived until accepted by the consuming child domain under its own authority model.
+
+  keb:
+    canonical_term: KEB
+    expansion: Knowledge Exchange Bridge
+    definition: Typed bidirectional federation bridge for governed knowledge exchange, semantic alignment, lineage, findings, hashes, telemetry, and child-owned disposition.
+    prohibited_meaning: Scheduling or calendar semantics.
+
+  knowledge_exchange_bridge:
+    canonical_term: Knowledge Exchange Bridge
+    abbreviation: KEB
+    definition: Full-form governed synonym for KEB; used for parent-child exchange of typed findings and version-bound lineage without granting upstream self-approval of child engineering decisions.
+
   tuple:
     definition: Atomic semantic continuity unit containing intent, lineage, and runtime meaning.
 
@@ -26,7 +45,7 @@ glossary:
     definition: Accumulated unresolved semantic inconsistencies, missing lineage, or runtime governance gaps.
 
   semantic_drift_daemon:
-    definition: Runtime monitor that detects semantic drift across governed artifacts and execution traces.
+    definition: Runtime daemon that tracks semantic drift signals and flags continuity divergence.
 
   digital_twin:
     definition: Reconstructable semantic representation of repository cognition and runtime state.
@@ -42,9 +61,6 @@ glossary:
 
   semantic_colors_transform_by_theme:
     definition: Renderer invariant requiring semantic colors to adapt meaningfully to dark/light themes instead of naive inversion.
-
-  semantic_drift_daemon:
-    definition: Runtime daemon that tracks semantic drift signals and flags continuity divergence.
 
   ssot:
     definition: Single source of truth YAML model used to deterministically generate outputs.
@@ -73,3 +89,4 @@ runtime_maturity:
   wcag_validation: operational
   renderer_linting: operational
   responsive_rendering_qa: planned
+  keb_federation_vocabulary: governed
