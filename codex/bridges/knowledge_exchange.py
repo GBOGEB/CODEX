@@ -5,8 +5,11 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Any
+
+import yaml
 
 PAYLOAD_VERSION = "1.0.0"
 ALLOWED_OPERATIONS = {"glossary_alignment", "semantic_drift_check", "lineage_receipt"}
@@ -26,9 +29,23 @@ def _sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def _normalize_term(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", " ", value.lower()).strip()
+
+
 def _stable_finding_id(correlation_id: str, term: str, finding_type: str) -> str:
-    seed = f"{correlation_id}|{term.lower()}|{finding_type}".encode("utf-8")
+    seed = f"{correlation_id}|{_normalize_term(term)}|{finding_type}".encode("utf-8")
     return f"KEB-{hashlib.sha256(seed).hexdigest()[:12]}"
+
+
+def _load_governed_terms(glossary_path: Path) -> tuple[set[str], str, str]:
+    raw = glossary_path.read_bytes()
+    parsed = yaml.safe_load(raw.decode("utf-8"))
+    if not isinstance(parsed, dict) or not isinstance(parsed.get("glossary"), dict):
+        raise KnowledgeExchangeError("glossary source must contain a mapping at key 'glossary'")
+    terms = {_normalize_term(str(key)) for key in parsed["glossary"].keys()}
+    terms.discard("")
+    return terms, _sha256_bytes(raw), glossary_path.as_posix()
 
 
 def validate_request(request: dict[str, Any]) -> None:
@@ -51,12 +68,17 @@ def validate_request(request: dict[str, Any]) -> None:
     operations = request["operations"]
     if not isinstance(operations, list) or not operations:
         raise KnowledgeExchangeError("operations must be a non-empty array")
+    if not all(isinstance(op, str) for op in operations):
+        raise KnowledgeExchangeError("operations must contain strings")
     unknown = sorted(set(operations) - ALLOWED_OPERATIONS)
     if unknown:
         raise KnowledgeExchangeError(f"unsupported operations: {', '.join(unknown)}")
-    if not isinstance(request["terms"], list) or not all(isinstance(x, str) and x for x in request["terms"]):
+    terms = request["terms"]
+    if not isinstance(terms, list) or not terms or not all(isinstance(x, str) and x for x in terms):
         raise KnowledgeExchangeError("terms must be a non-empty string array")
     requested = request["requested_return"]
+    if not isinstance(requested, dict):
+        raise KnowledgeExchangeError("requested_return must be an object")
     if requested.get("disposition_owner") == "GBOGEB/CODEX":
         raise KnowledgeExchangeError("disposition must remain child-owned")
 
@@ -66,20 +88,19 @@ def run_exchange(request_path: Path, glossary_path: Path, output_path: Path) -> 
     request = json.loads(raw_request.decode("utf-8"))
     validate_request(request)
 
-    glossary_text = glossary_path.read_text(encoding="utf-8")
-    glossary_lower = glossary_text.lower()
+    governed_terms, glossary_hash, glossary_ref = _load_governed_terms(glossary_path)
     input_hash = _sha256_bytes(raw_request)
-    glossary_hash = _sha256_bytes(glossary_text.encode("utf-8"))
-
     findings: list[dict[str, Any]] = []
+    stages: list[dict[str, Any]] = [{"stage": "request_validation", "operation": None, "status": "PASS"}]
+
     if "glossary_alignment" in request["operations"]:
+        before = len(findings)
         for term in request["terms"]:
-            present = term.lower() in glossary_lower
-            if not present:
+            if _normalize_term(term) not in governed_terms:
                 finding_type = "GLOSSARY_DRIFT"
                 findings.append({
                     "finding_id": _stable_finding_id(request["correlation_id"], term, finding_type),
-                    "source_reference": f"GBOGEB/CODEX/PIPELINE/GLOSSARY.yaml@sha256:{glossary_hash[:16]}",
+                    "source_reference": f"GBOGEB/CODEX/{glossary_ref}@sha256:{glossary_hash[:16]}",
                     "target_ocd_or_adr": "QPS_DOW_KEB_EXECUTION_ARCHITECTURE_SSOT_v0.1",
                     "finding_type": finding_type,
                     "confidence": 1.0,
@@ -89,6 +110,16 @@ def run_exchange(request_path: Path, glossary_path: Path, output_path: Path) -> 
                     "output_hash": None,
                     "disposition": None,
                 })
+        stages.append({"stage": "glossary_alignment", "operation": "glossary_alignment", "status": "PASS", "terms_checked": len(request["terms"]), "findings": len(findings) - before})
+
+    if "semantic_drift_check" in request["operations"]:
+        # Warm-up semantic drift is intentionally bounded to governed vocabulary identity.
+        # Deeper artifact-semantic comparison remains owned by the existing semantic-manifest roundtrip tooling.
+        missing = [term for term in request["terms"] if _normalize_term(term) not in governed_terms]
+        stages.append({"stage": "semantic_drift_check", "operation": "semantic_drift_check", "status": "PASS", "scope": "governed_vocabulary_identity", "drift_terms": len(missing)})
+
+    if "lineage_receipt" in request["operations"]:
+        stages.append({"stage": "lineage_receipt", "operation": "lineage_receipt", "status": "PASS", "source": glossary_ref, "source_sha256": glossary_hash})
 
     receipt: dict[str, Any] = {
         "schema": "codex-keb-exchange-receipt/v1",
@@ -96,19 +127,20 @@ def run_exchange(request_path: Path, glossary_path: Path, output_path: Path) -> 
         "exchange_type": "knowledge_exchange",
         "correlation_id": request["correlation_id"],
         "source": request["source"],
-        "stages": [
-            {"stage": "request_validation", "status": "PASS"},
-            {"stage": "semantic_glossary_check", "status": "PASS", "terms_checked": len(request["terms"])},
-            {"stage": "stable_finding_generation", "status": "PASS", "findings": len(findings)},
-            {"stage": "lineage_hash_receipt", "status": "PASS"},
-        ],
+        "requested_operations": request["operations"],
+        "executed_operations": [stage["operation"] for stage in stages if stage.get("operation")],
+        "stages": stages,
         "input_sha256": input_hash,
+        "glossary_source": glossary_ref,
         "glossary_sha256": glossary_hash,
         "findings": findings,
         "child_disposition_required": True,
         "allowed_child_dispositions": sorted(DISPOSITIONS),
         "authority_rule": request["authority_rule"],
     }
+    if receipt["executed_operations"] != request["operations"]:
+        raise KnowledgeExchangeError("not all requested operations were executed in request order")
+
     provisional = json.dumps(receipt, sort_keys=True, separators=(",", ":")).encode("utf-8")
     output_hash = _sha256_bytes(provisional)
     receipt["output_sha256"] = output_hash
