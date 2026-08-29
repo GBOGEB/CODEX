@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'codex/bridges/knowledge_exchange.py'
+      - 'PIPELINE/GLOSSARY.yaml'
       - 'federation/qps/wave-01/**'
       - '.github/workflows/qps-keb-wave01-warmup.yml'
 
@@ -75,15 +76,17 @@ jobs:
               assert finding['source_reference'].startswith('GBOGEB/CODEX/PIPELINE/GLOSSARY.yaml@sha256:')
           PY
 
-      - name: Regression - parsed glossary identity is not raw substring matching
+      - name: Regression - governed federation vocabulary uses parsed glossary identity
         run: |
           python - <<'PY'
           from pathlib import Path
           from codex.bridges.knowledge_exchange import _load_governed_terms, _normalize_term
           terms, _, _ = _load_governed_terms(Path('PIPELINE/GLOSSARY.yaml'))
           assert _normalize_term('semantic governance') in terms
-          assert _normalize_term('semantic drift') not in terms or _normalize_term('semantic_drift') in terms
-          assert _normalize_term('DOW') not in terms  # must not match the letters inside unrelated YAML prose
+          assert _normalize_term('semantic drift') in terms
+          assert _normalize_term('DOW') in terms
+          assert _normalize_term('KEB') in terms
+          assert _normalize_term('Knowledge Exchange Bridge') in terms
           PY
 
       - name: Publish visible stage summary
