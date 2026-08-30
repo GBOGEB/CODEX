@@ -1,0 +1,113 @@
+schema_version: "0.1"
+document_id: CODEX_QPS_W04_KEB_QA_ACTIONS
+status: parent_QA_action_contract
+correlation_id: QPS-FED-W04-T10-SAFE-CTRL
+child_repo: GBOGEB/cryoplant-project
+child_prs: [141, 142, 143]
+parent_pr: 267
+purpose: >-
+  Capture parent-side CODEX QA/DevOps actions exposed by the QPS W04 exchange. This keeps CODEX governance
+  and semantic exchange hardening separate from child QPS engineering authority while making returned KEB evidence machine-checkable.
+
+authority_boundary:
+  CODEX_role: parent_KEB_governance_semantic_schema_exchange_lane
+  child_authority: QPS owns engineering SSOT, Table-10 interpretation, Safety acceptance, compliance and completion.
+  prohibition: CODEX findings cannot self-promote into QPS maturity, compliance, bidder evaluation or lifecycle cost.
+
+receipt_contract:
+  required_fields:
+    - correlation_id
+    - child_source_ref
+    - parent_commit_sha
+    - run_id
+    - artifact_id
+    - input_hash
+    - glossary_hash
+    - output_hash
+    - requested_operations
+    - executed_operations
+    - semantic_findings
+    - child_disposition_placeholder
+  required_operation_checks:
+    - requested_equals_executed
+    - source_ref_is_bound
+    - glossary_or_schema_version_recorded
+    - no_child_authority_claim
+
+QA_actions:
+  - id: CODEX-W04-QA-001
+    title: enforce W04 KEB receipt schema
+    action: add schema/check for correlation, source identity, requested/executed operation parity and hashes
+    status: proposed
+  - id: CODEX-W04-QA-002
+    title: typed semantic drift findings
+    action: return stable finding IDs for Table10, Safety, RAMS/RCM/Inspectability, L1-L8 and controls/interface vocabulary
+    status: proposed
+  - id: CODEX-W04-QA-003
+    title: glossary/schema regression
+    action: add fixture covering QPS:CIS, MCS, MIS, MIT, interlocks, softlocks, permissives, abnormal controls and utility start/run conditions
+    status: proposed
+  - id: CODEX-W04-QA-004
+    title: child authority boundary
+    action: receipt must state CODEX returns governance only and cannot promote QPS engineering decisions
+    status: proposed
+  - id: CODEX-W04-QA-005
+    title: parent feedback intake
+    action: accept QPS ACCEPT/REJECT/DEFER feedback to update glossary/schema/exchange tests without QPS engineering promotion
+    status: proposed
+
+finding_types_expected:
+  - semantic_drift
+  - glossary_gap
+  - schema_gap
+  - evidence_reference_gap
+  - lifecycle_taxonomy_gap
+  - controls_interface_terms_gap
+  - lineage_or_hash_gap
+
+terms_under_W04_guard:
+  - Table_10
+  - support_system_permissive
+  - run_permissive
+  - start_permissive
+  - RAMS
+  - RCM
+  - Inspectability
+  - Safety_gate
+  - QPS_CIS
+  - MCS
+  - MIS
+  - MIT
+  - interlock
+  - softlock
+  - abnormal_controls
+  - utility_start_load
+  - utility_running_load
+  - L3_BUILD
+  - L4_SITE_INTEGRATION
+  - L6_PROJECT_STOP
+  - L7_SAT
+  - L8_QCELL_INTEGRATION
+
+CI_or_DevOps_expectations:
+  - receipt_schema_validation
+  - requested_equals_executed_check
+  - glossary_hash_check
+  - correlation_id_check
+  - no_confidential_payload_check
+  - no_child_authority_claim_check
+  - typed_findings_lint
+
+child_return_contract:
+  expected_child_dispositions: [ACCEPT, REJECT, DEFER]
+  parent_learning_fields:
+    - disposition_summary
+    - accepted_glossary_or_schema_update
+    - rejected_reason
+    - deferred_reason
+    - future_fixture_update
+
+completion_effect:
+  CODEX_parent_maturity_delta: 0
+  QPS_child_completion_delta: 0
+  reason: parent_QA_contract_only_until CI_and_receipts_exist
