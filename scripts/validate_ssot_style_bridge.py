@@ -16,6 +16,10 @@ DEFAULT_MANIFEST = ROOT / "ssot" / "ssot_style_bridge.json"
 HEX_RE = re.compile(r"^#[0-9A-Fa-f]{6}$")
 REQUIRED_FEDERATION_LANES = {"html", "pdf", "pptx", "excel", "graphs", "ci", "dow", "keb"}
 REQUIRED_METHOD_ORDER = ["DMAIC", "PCA_REVERSED_P5_TO_P1", "BT_PRIORITY"]
+REQUIRED_BLOCKING_CONCLUSIONS = {"failure", "timed_out", "action_required"}
+REQUIRED_MANUAL_REVIEW_CONCLUSIONS = {"cancelled"}
+REQUIRED_PENDING_STATUSES = {"queued", "in_progress", "requested", "waiting", "pending"}
+REQUIRED_REPAIR_PRS = {"GBOGEB/ABACUS": 754, "GBOGEB/CODEX": 298}
 
 
 def load_manifest(path: Path) -> dict[str, Any]:
@@ -95,8 +99,28 @@ def validate_manifest(manifest: dict[str, Any]) -> list[str]:
     require(not missing_lanes, f"missing federation shared lane(s): {format_missing(missing_lanes)}", errors)
     method_order = require_string_list(consumers.get("method_order", []), "federation_consumers.method_order", errors)
     require(method_order == REQUIRED_METHOD_ORDER, "method_order must be DMAIC, PCA_REVERSED_P5_TO_P1, BT_PRIORITY", errors)
+    validate_handoff_check_policy(manifest, errors)
     validate_palette_bridge(manifest, errors)
     return errors
+
+
+def validate_handoff_check_policy(manifest: dict[str, Any], errors: list[str]) -> None:
+    policy = manifest.get("handoff_check_policy", {})
+    require(policy.get("wave_id") == "SSOT-STYLE-W04", "handoff check policy wave_id must be SSOT-STYLE-W04", errors)
+    require(policy.get("linked_repair_prs") == REQUIRED_REPAIR_PRS, "handoff check policy must link ABACUS #754 and CODEX #298", errors)
+
+    blocking = set(require_string_list(policy.get("blocking_conclusions", []), "handoff_check_policy.blocking_conclusions", errors))
+    manual = set(require_string_list(policy.get("manual_review_conclusions", []), "handoff_check_policy.manual_review_conclusions", errors))
+    pending = set(require_string_list(policy.get("pending_statuses", []), "handoff_check_policy.pending_statuses", errors))
+    require(REQUIRED_BLOCKING_CONCLUSIONS <= blocking, f"missing blocking conclusion(s): {format_missing(REQUIRED_BLOCKING_CONCLUSIONS - blocking)}", errors)
+    require(REQUIRED_MANUAL_REVIEW_CONCLUSIONS <= manual, f"missing manual-review conclusion(s): {format_missing(REQUIRED_MANUAL_REVIEW_CONCLUSIONS - manual)}", errors)
+    require(REQUIRED_PENDING_STATUSES <= pending, f"missing pending status(es): {format_missing(REQUIRED_PENDING_STATUSES - pending)}", errors)
+
+    all_clear_rule = policy.get("all_clear_rule", "")
+    require(isinstance(all_clear_rule, str) and "no pending required checks" in all_clear_rule, "handoff all-clear rule must block pending required checks", errors)
+    feedback = policy.get("repository_feedback", {})
+    require("ABACUS" in feedback.get("from_abacus", ""), "handoff policy must capture feedback from ABACUS", errors)
+    require("CODEX" in feedback.get("to_abacus", ""), "handoff policy must capture feedback to ABACUS", errors)
 
 
 def score_awake_probes(manifest: dict[str, Any]) -> dict[str, Any]:
@@ -237,6 +261,7 @@ def build_report(manifest: dict[str, Any]) -> dict[str, Any]:
         "bt_priority": manifest.get("bt_priority", {}),
         "dmaic": manifest.get("dmaic", {}),
         "federation_consumers": manifest.get("federation_consumers", {}),
+        "handoff_check_policy": manifest.get("handoff_check_policy", {}),
     }
 
 

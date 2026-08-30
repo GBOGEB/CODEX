@@ -57,6 +57,32 @@ class TestValidateSsotStyleBridge(unittest.TestCase):
         self.assertIn("federation_consumers.shared_lanes must be a list of strings", errors)
         self.assertIn("federation_consumers.method_order must be a list of strings", errors)
 
+    def test_handoff_check_policy_requires_repair_pr_links(self):
+        broken = copy.deepcopy(self.manifest)
+        broken["handoff_check_policy"]["linked_repair_prs"]["GBOGEB/ABACUS"] = 730
+        errors = validator.validate_manifest(broken)
+        self.assertIn("handoff check policy must link ABACUS #754 and CODEX #298", errors)
+
+    def test_handoff_check_policy_blocks_known_failure_states(self):
+        broken = copy.deepcopy(self.manifest)
+        broken["handoff_check_policy"]["blocking_conclusions"].remove("action_required")
+        broken["handoff_check_policy"]["manual_review_conclusions"] = []
+        broken["handoff_check_policy"]["pending_statuses"].remove("queued")
+        errors = validator.validate_manifest(broken)
+        self.assertIn("missing blocking conclusion(s): action_required", errors)
+        self.assertIn("missing manual-review conclusion(s): cancelled", errors)
+        self.assertIn("missing pending status(es): queued", errors)
+
+    def test_handoff_check_policy_requires_bidirectional_feedback(self):
+        broken = copy.deepcopy(self.manifest)
+        broken["handoff_check_policy"]["repository_feedback"] = {
+            "from_abacus": "artifact readiness",
+            "to_abacus": "validation meaning",
+        }
+        errors = validator.validate_manifest(broken)
+        self.assertIn("handoff policy must capture feedback from ABACUS", errors)
+        self.assertIn("handoff policy must capture feedback to ABACUS", errors)
+
     def test_awake_score_counts_existing_probe_paths(self):
         score = validator.score_awake_probes(self.manifest)
         self.assertGreaterEqual(score["score"], 90.0)

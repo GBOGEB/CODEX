@@ -216,5 +216,32 @@
       "cryoplant-project may emit status, hashes, counts and evidence references only.",
       "Heavy PPTX/PDF/XLSX/HTML rendering evidence belongs in full or scheduled tiers unless the PR touches the local validator itself."
     ]
+  },
+  "handoff_check_policy": {
+    "wave_id": "SSOT-STYLE-W04",
+    "linked_repair_prs": {
+      "GBOGEB/ABACUS": 754,
+      "GBOGEB/CODEX": 298
+    },
+    "blocking_conclusions": [
+      "failure",
+      "timed_out",
+      "action_required"
+    ],
+    "manual_review_conclusions": [
+      "cancelled"
+    ],
+    "pending_statuses": [
+      "queued",
+      "in_progress",
+      "requested",
+      "waiting",
+      "pending"
+    ],
+    "all_clear_rule": "A DMAIC/PCA/BT handoff all-clear may be recorded only when CODEX and ABACUS head and merge checks have no blocking conclusions, no unwaived cancelled checks, and no pending required checks.",
+    "repository_feedback": {
+      "from_abacus": "ABACUS provides user-facing artifact readiness, runtime receipt and scenario-I/O status back to CODEX bridge governance.",
+      "to_abacus": "CODEX provides reusable validation meaning, check-disposition taxonomy and release-manifest expectations to ABACUS."
+    }
   }
 }
