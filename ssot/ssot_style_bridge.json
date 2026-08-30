@@ -1,0 +1,194 @@
+{
+  "version": "0.1.0",
+  "status": "draft_control",
+  "owner": "GBO",
+  "purpose": "CODEX-side bridge for style/readability/render QA controls consumed by ABACUS and controlled evidence lanes.",
+  "authority": {
+    "mode": "bridge_contract",
+    "primary_consumer": "GBOGEB/ABACUS",
+    "source_repo": "GBOGEB/CODEX",
+    "controlled_evidence_lane": "generic_private_adapter",
+    "binary_policy": "generated_artifacts_are_validated_locally_or_in_ci_and_are_not_required_in_git"
+  },
+  "palette_bridge": {
+    "source": "themes/semantic_cards.yaml",
+    "required_cards": [
+      "warning",
+      "decision",
+      "ssot"
+    ],
+    "required_modes": [
+      "light",
+      "dark"
+    ],
+    "required_tokens": [
+      "background",
+      "text",
+      "border"
+    ],
+    "minimum_contrast_ratio": 7.0
+  },
+  "artifact_lanes": {
+    "html": {
+      "role": "primary_render_surface",
+      "controls": [
+        "semantic_html",
+        "dashboard_health",
+        "link_validation",
+        "console_error_watch",
+        "overflow_watch"
+      ]
+    },
+    "pdf": {
+      "role": "release_render_surface",
+      "controls": [
+        "page_render",
+        "blank_page_detection",
+        "footer_traceability",
+        "checksum_manifest"
+      ]
+    },
+    "pptx": {
+      "role": "presentation_render_surface",
+      "controls": [
+        "theme_tokens",
+        "slide_render",
+        "overlap_detection",
+        "source_notes"
+      ]
+    },
+    "excel": {
+      "role": "numeric_ssot_consumer",
+      "controls": [
+        "schema_trace",
+        "formula_error_detection",
+        "scenario_roundtrip",
+        "checksum_manifest"
+      ]
+    },
+    "graphs": {
+      "role": "topology_and_runtime_surface",
+      "controls": [
+        "node_manifest",
+        "edge_manifest",
+        "runtime_status",
+        "federation_export"
+      ]
+    }
+  },
+  "awake_probes": [
+    {
+      "id": "semantic_cards",
+      "kind": "style",
+      "path": "themes/semantic_cards.yaml",
+      "weight": 4
+    },
+    {
+      "id": "wcag_contrast_workflow",
+      "kind": "ci",
+      "path": ".github/workflows/wcag-contrast.yml",
+      "weight": 3
+    },
+    {
+      "id": "render_governance_workflow",
+      "kind": "ci",
+      "path": ".github/workflows/render-governance-ci.yml",
+      "weight": 4
+    },
+    {
+      "id": "render_regression_workflow",
+      "kind": "ci",
+      "path": ".github/workflows/render-regression.yml",
+      "weight": 4
+    },
+    {
+      "id": "runtime_federation_workflow",
+      "kind": "federation",
+      "path": ".github/workflows/runtime_federation_ci.yml",
+      "weight": 4
+    },
+    {
+      "id": "dashboard_health_workflow",
+      "kind": "html",
+      "path": ".github/workflows/dashboard-health.yml",
+      "weight": 3
+    },
+    {
+      "id": "render_guard",
+      "kind": "render",
+      "path": "scripts/render_guard.py",
+      "weight": 3
+    },
+    {
+      "id": "theme_runtime_tests",
+      "kind": "test",
+      "path": "tests/test_theme_runtime.py",
+      "weight": 3
+    },
+    {
+      "id": "contrast_tests",
+      "kind": "test",
+      "path": "tests/test_g7_contrast_validator.py",
+      "weight": 3
+    },
+    {
+      "id": "keb_client_tests",
+      "kind": "keb",
+      "path": "tests/test_keb_client.py",
+      "weight": 2
+    },
+    {
+      "id": "federation_scree_tests",
+      "kind": "pca",
+      "path": "tests/test_federation_scree.py",
+      "weight": 2
+    }
+  ],
+  "pca_axes": [
+    {
+      "id": "P5",
+      "name": "keb_feedback_depth",
+      "load_direction": "catchup",
+      "focus": "explicit KEB runtime evidence, queue status and feedback-loop closure"
+    },
+    {
+      "id": "P4",
+      "name": "render_regression_depth",
+      "load_direction": "catchup",
+      "focus": "replace placeholders with screenshot/html semantic diffs and Playwright output"
+    },
+    {
+      "id": "P3",
+      "name": "artifact_lane_binding",
+      "load_direction": "catchup",
+      "focus": "bind HTML/PDF/PPTX/Excel/graph lanes to one manifest and checksum family"
+    },
+    {
+      "id": "P2",
+      "name": "style_authority",
+      "load_direction": "stabilize",
+      "focus": "semantic card palette and high-contrast token policy"
+    },
+    {
+      "id": "P1",
+      "name": "ci_governance",
+      "load_direction": "stabilize",
+      "focus": "workflow grouping, slim/full tiers and release gates"
+    }
+  ],
+  "bt_priority": {
+    "method": "rank_by_low_score_then_high_weight_then_release_impact",
+    "current_top_focus": [
+      "keb_feedback_depth",
+      "render_regression_depth",
+      "artifact_lane_binding"
+    ]
+  },
+  "dmaic": {
+    "define": "CODEX is the reusable style/render/CI governance bridge, not the numeric or private evidence SSOT.",
+    "measure": "Score palette, artifact lane, awake probe and penetration depth independently.",
+    "analyze": "Use reversed PCA loading order P5 to P1 to lift underdeveloped KEB/render lanes first.",
+    "improve": "Add one code-only validator before binding it into larger CI tiers.",
+    "control": "Keep the bridge manifest small, testable and binary-free."
+  }
+}
