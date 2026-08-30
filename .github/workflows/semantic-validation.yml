@@ -2,14 +2,26 @@ name: semantic-validation
 
 on:
   pull_request:
+    branches: [main]
+    paths:
+      - 'semantic_substrate/**'
+      - '.github/workflows/semantic-validation.yml'
   push:
     branches:
       - main
-      - feat/**
+    paths:
+      - 'semantic_substrate/**'
+      - '.github/workflows/semantic-validation.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: semantic-validation-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   validate-semantic-substrate:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
 
