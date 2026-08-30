@@ -190,5 +190,31 @@
     "analyze": "Use reversed PCA loading order P5 to P1 to lift underdeveloped KEB/render lanes first.",
     "improve": "Add one code-only validator before binding it into larger CI tiers.",
     "control": "Keep the bridge manifest small, testable and binary-free."
+  },
+  "federation_consumers": {
+    "wave_id": "SSOT-STYLE-W04",
+    "public_consumer": "GBOGEB/ABACUS",
+    "controlled_adapter": "GBOGEB/cryoplant-project",
+    "shared_lanes": [
+      "html",
+      "pdf",
+      "pptx",
+      "excel",
+      "graphs",
+      "ci",
+      "dow",
+      "keb"
+    ],
+    "method_order": [
+      "DMAIC",
+      "PCA_REVERSED_P5_TO_P1",
+      "BT_PRIORITY"
+    ],
+    "bridge_rules": [
+      "CODEX defines reusable validation meaning, not final artifact release status.",
+      "ABACUS owns user-facing artifact readiness summaries and scenario-I/O state.",
+      "cryoplant-project may emit status, hashes, counts and evidence references only.",
+      "Heavy PPTX/PDF/XLSX/HTML rendering evidence belongs in full or scheduled tiers unless the PR touches the local validator itself."
+    ]
   }
 }
