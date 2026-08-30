@@ -1,13 +1,31 @@
 name: Governance Validation
 
 on:
+  workflow_dispatch:
   push:
+    branches: [main]
+    paths: &governance_paths
+      - 'MASTER_input/**'
+      - 'docs/governance/**'
+      - 'generated/**'
+      - 'tools/validators/**'
+      - 'tools/traceability/**'
+      - 'tools/contracts/**'
+      - 'tools/export/**'
+      - 'requirements.txt'
+      - '.github/workflows/validate.yml'
   pull_request:
+    paths: *governance_paths
+
+concurrency:
+  group: governance-validation-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   validate:
     name: Validate governance artifacts
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Check out repository
