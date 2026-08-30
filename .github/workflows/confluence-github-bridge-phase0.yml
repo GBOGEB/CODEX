@@ -8,7 +8,7 @@ on:
         required: false
         default: "false"
   pull_request:
-    paths:
+    paths: &phase0_paths
       - "federation_runtime/engines/confluence_artifact_pipeline.py"
       - "federation_runtime/engines/qplant_contractual_ingestion.py"
       - "federation_runtime/engines/phase0_orchestration.py"
@@ -16,10 +16,16 @@ on:
       - ".github/workflows/confluence-github-bridge-phase0.yml"
   push:
     branches: [main]
+    paths: *phase0_paths
+
+concurrency:
+  group: confluence-phase0-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   phase0-artifact-generation:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
     steps:
@@ -58,6 +64,5 @@ jobs:
           test -s outputs/qplant/contractual_ingestion/change_deltas.yaml
           test -s outputs/orchestration/task_links.yaml
           test -s outputs/orchestration/cross_repo_signals.yaml
-
       - name: Run Phase 0 tests
         run: python -m pytest tests/test_phase0_federation_bridge.py tests/test_confluence_phase0_read_only_modules.py
