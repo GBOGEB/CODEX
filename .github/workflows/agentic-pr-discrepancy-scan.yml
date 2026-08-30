@@ -14,11 +14,19 @@ permissions:
   issues: read
   checks: read
 
+concurrency:
+  group: agentic-pr-scan-${{ github.event.pull_request.number || github.event.issue.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   scan:
     runs-on: ubuntu-latest
-    # Only run on PR comments, not issue comments
-    if: github.event_name != 'issue_comment' || github.event.issue.pull_request
+    timeout-minutes: 10
+    # Comments only matter when they belong to a pull request.
+    if: >-
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'pull_request_review_comment' && github.event.pull_request != null) ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request != null)
     steps:
       - uses: actions/checkout@v4
 
