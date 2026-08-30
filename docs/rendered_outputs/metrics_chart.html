@@ -15,8 +15,8 @@
   <h1>CODEX Repository Metrics
     <span class="qs">100/100</span>
   </h1>
-  <div class="sub">SHA: b9f7ac2d02b0 · Generated: 2026-08-30 00:06:46 UTC
-    · Commits (30d): 103 / 1955 total
+  <div class="sub">SHA: 680c12267e21 · Generated: 2026-08-30 14:30:29 UTC
+    · Commits (30d): 109 / 1961 total
   </div>
 </div>
 <div class="charts">
@@ -28,7 +28,7 @@
 <script>
 const phases   = ["Define", "Measure", "Analyze", "Improve", "Control"];
 const scores   = [100, 100, 100, 60, 100];
-const files    = [136, 106, 42, 12, 33];
+const files    = [136, 107, 43, 12, 33];
 const radarScores = [...scores, scores[0]];
 const radarLabels = [...phases, phases[0]];
 
@@ -63,14 +63,14 @@ Plotly.newPlot('coverage', [{
 }, {responsive:true});
 
 const meta = {
-  'Total commits':    1955,
-  'Recent (30d)':     103,
-  'Python files':     455,
-  'Test files':       104,
+  'Total commits':    1961,
+  'Recent (30d)':     109,
+  'Python files':     457,
+  'Test files':       105,
   'HTML docs':        63,
-  'Markdown docs':    366,
+  'Markdown docs':    367,
   'Workflows':        51,
-  'Total LOC':        49019,
+  'Total LOC':        49289,
 };
 Plotly.newPlot('activity', [{
   type:'bar', x:Object.keys(meta), y:Object.values(meta),
