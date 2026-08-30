@@ -7,6 +7,7 @@ on:
     types: [created]
   issue_comment:
     types: [created]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -22,14 +23,19 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # Comments only matter when they belong to a pull request.
+    # Automatic PR lifecycle events are scanned. Comment-driven scans are
+    # human-only so review bots cannot recursively trigger more agentic work.
     if: >-
+      github.event_name == 'workflow_dispatch' ||
       github.event_name == 'pull_request' ||
-      (github.event_name == 'pull_request_review_comment' && github.event.pull_request != null) ||
-      (github.event_name == 'issue_comment' && github.event.issue.pull_request != null)
+      (github.event_name == 'pull_request_review_comment' &&
+       github.event.pull_request != null &&
+       github.event.comment.user.type != 'Bot') ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request != null &&
+       github.event.comment.user.type != 'Bot')
     steps:
       - uses: actions/checkout@v4
-
       - name: Scan PR context
         run: |
           mkdir -p AGENTIC METRICS
@@ -40,7 +46,6 @@ jobs:
             next_action: "local_agent_or_codex_reads_context_and_prepares_patch"
             commit_gate: "human_required"
           YAML_INNER
-
       - name: Write ASCII metrics shell
         run: |
           cat > METRICS/agentic_pr_scan_output.md <<'MD'
@@ -52,7 +57,6 @@ jobs:
           Human Confirm Gate   [####################] REQUIRED
           Commit Executed      [--------------------] 0%
           MD
-
       - name: Upload scan artifacts
         if: always()
         uses: actions/upload-artifact@v4
