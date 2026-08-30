@@ -32,6 +32,18 @@ def require(condition: bool, message: str, errors: list[str]) -> None:
         errors.append(message)
 
 
+def require_string_list(value: Any, field_name: str, errors: list[str]) -> list[str]:
+    """Validate JSON/YAML list-of-string fields before set/order checks."""
+    if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
+        errors.append(f"{field_name} must be a list of strings")
+        return []
+    return value
+
+
+def format_missing(values: set[str]) -> str:
+    return ", ".join(sorted(values))
+
+
 def validate_palette_bridge(manifest: dict[str, Any], errors: list[str]) -> None:
     bridge = manifest.get("palette_bridge", {})
     palette_path = ROOT / bridge.get("source", "")
@@ -78,9 +90,11 @@ def validate_manifest(manifest: dict[str, Any]) -> list[str]:
     require(consumers.get("wave_id") == "SSOT-STYLE-W04", "federation consumer wave_id must be SSOT-STYLE-W04", errors)
     require(consumers.get("public_consumer") == "GBOGEB/ABACUS", "public consumer must be GBOGEB/ABACUS", errors)
     require(consumers.get("controlled_adapter") == "GBOGEB/cryoplant-project", "controlled adapter must be GBOGEB/cryoplant-project", errors)
-    missing_lanes = REQUIRED_FEDERATION_LANES - set(consumers.get("shared_lanes", []))
-    require(not missing_lanes, f"missing federation shared lane(s): {sorted(missing_lanes)}", errors)
-    require(consumers.get("method_order") == REQUIRED_METHOD_ORDER, "method_order must be DMAIC, PCA_REVERSED_P5_TO_P1, BT_PRIORITY", errors)
+    shared_lanes = require_string_list(consumers.get("shared_lanes", []), "federation_consumers.shared_lanes", errors)
+    missing_lanes = REQUIRED_FEDERATION_LANES - set(shared_lanes)
+    require(not missing_lanes, f"missing federation shared lane(s): {format_missing(missing_lanes)}", errors)
+    method_order = require_string_list(consumers.get("method_order", []), "federation_consumers.method_order", errors)
+    require(method_order == REQUIRED_METHOD_ORDER, "method_order must be DMAIC, PCA_REVERSED_P5_TO_P1, BT_PRIORITY", errors)
     validate_palette_bridge(manifest, errors)
     return errors
 

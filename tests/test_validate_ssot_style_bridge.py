@@ -29,6 +29,34 @@ class TestValidateSsotStyleBridge(unittest.TestCase):
         errors = validator.validate_manifest(broken)
         self.assertIn("method_order must be DMAIC, PCA_REVERSED_P5_TO_P1, BT_PRIORITY", errors)
 
+    def test_federation_consumers_require_wave_id(self):
+        broken = copy.deepcopy(self.manifest)
+        broken["federation_consumers"]["wave_id"] = "SSOT-STYLE-W03"
+        errors = validator.validate_manifest(broken)
+        self.assertIn("federation consumer wave_id must be SSOT-STYLE-W04", errors)
+
+    def test_federation_consumers_require_public_consumer(self):
+        broken = copy.deepcopy(self.manifest)
+        broken["federation_consumers"]["public_consumer"] = "GBOGEB/CODEX"
+        errors = validator.validate_manifest(broken)
+        self.assertIn("public consumer must be GBOGEB/ABACUS", errors)
+
+    def test_federation_consumers_require_all_shared_lanes(self):
+        broken = copy.deepcopy(self.manifest)
+        broken["federation_consumers"]["shared_lanes"] = [
+            lane for lane in broken["federation_consumers"]["shared_lanes"] if lane != "keb"
+        ]
+        errors = validator.validate_manifest(broken)
+        self.assertIn("missing federation shared lane(s): keb", errors)
+
+    def test_federation_consumers_reject_non_list_contract_fields(self):
+        broken = copy.deepcopy(self.manifest)
+        broken["federation_consumers"]["shared_lanes"] = "html,pdf"
+        broken["federation_consumers"]["method_order"] = "DMAIC"
+        errors = validator.validate_manifest(broken)
+        self.assertIn("federation_consumers.shared_lanes must be a list of strings", errors)
+        self.assertIn("federation_consumers.method_order must be a list of strings", errors)
+
     def test_awake_score_counts_existing_probe_paths(self):
         score = validator.score_awake_probes(self.manifest)
         self.assertGreaterEqual(score["score"], 90.0)
