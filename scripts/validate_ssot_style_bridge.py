@@ -14,6 +14,8 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_MANIFEST = ROOT / "ssot" / "ssot_style_bridge.json"
 HEX_RE = re.compile(r"^#[0-9A-Fa-f]{6}$")
+REQUIRED_FEDERATION_LANES = {"html", "pdf", "pptx", "excel", "graphs", "ci", "dow", "keb"}
+REQUIRED_METHOD_ORDER = ["DMAIC", "PCA_REVERSED_P5_TO_P1", "BT_PRIORITY"]
 
 
 def load_manifest(path: Path) -> dict[str, Any]:
@@ -72,6 +74,13 @@ def validate_manifest(manifest: dict[str, Any]) -> list[str]:
     pca_axes = manifest.get("pca_axes", [])
     require([axis.get("id") for axis in pca_axes] == ["P5", "P4", "P3", "P2", "P1"], "pca_axes must be ordered P5 to P1", errors)
     require(bool(manifest.get("bt_priority", {}).get("current_top_focus")), "bt priority current_top_focus missing", errors)
+    consumers = manifest.get("federation_consumers", {})
+    require(consumers.get("wave_id") == "SSOT-STYLE-W04", "federation consumer wave_id must be SSOT-STYLE-W04", errors)
+    require(consumers.get("public_consumer") == "GBOGEB/ABACUS", "public consumer must be GBOGEB/ABACUS", errors)
+    require(consumers.get("controlled_adapter") == "GBOGEB/cryoplant-project", "controlled adapter must be GBOGEB/cryoplant-project", errors)
+    missing_lanes = REQUIRED_FEDERATION_LANES - set(consumers.get("shared_lanes", []))
+    require(not missing_lanes, f"missing federation shared lane(s): {sorted(missing_lanes)}", errors)
+    require(consumers.get("method_order") == REQUIRED_METHOD_ORDER, "method_order must be DMAIC, PCA_REVERSED_P5_TO_P1, BT_PRIORITY", errors)
     validate_palette_bridge(manifest, errors)
     return errors
 
@@ -213,6 +222,7 @@ def build_report(manifest: dict[str, Any]) -> dict[str, Any]:
         "pca_axes": manifest.get("pca_axes", []),
         "bt_priority": manifest.get("bt_priority", {}),
         "dmaic": manifest.get("dmaic", {}),
+        "federation_consumers": manifest.get("federation_consumers", {}),
     }
 
 

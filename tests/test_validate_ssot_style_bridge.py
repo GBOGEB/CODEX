@@ -17,6 +17,18 @@ class TestValidateSsotStyleBridge(unittest.TestCase):
         errors = validator.validate_manifest(broken)
         self.assertIn("pca_axes must be ordered P5 to P1", errors)
 
+    def test_federation_consumers_bind_public_and_private_repos(self):
+        broken = copy.deepcopy(self.manifest)
+        broken["federation_consumers"]["controlled_adapter"] = "public-export"
+        errors = validator.validate_manifest(broken)
+        self.assertIn("controlled adapter must be GBOGEB/cryoplant-project", errors)
+
+    def test_federation_consumers_require_method_order(self):
+        broken = copy.deepcopy(self.manifest)
+        broken["federation_consumers"]["method_order"] = ["BT_PRIORITY", "DMAIC"]
+        errors = validator.validate_manifest(broken)
+        self.assertIn("method_order must be DMAIC, PCA_REVERSED_P5_TO_P1, BT_PRIORITY", errors)
+
     def test_awake_score_counts_existing_probe_paths(self):
         score = validator.score_awake_probes(self.manifest)
         self.assertGreaterEqual(score["score"], 90.0)

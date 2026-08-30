@@ -30,6 +30,20 @@ The bridge tracks five lanes: HTML, PDF, PPTX, Excel and graphs. Each lane has a
 2. `render_regression_depth`: replace placeholders with Playwright, screenshot and semantic HTML evidence.
 3. `artifact_lane_binding`: bind HTML/PDF/PPTX/Excel/graph outputs to shared manifests and checksums.
 
+## W04 Federation Consumer Contract
+
+`federation_consumers` in `ssot/ssot_style_bridge.json` binds CODEX to the W04
+style/rendering wave without making CODEX the outward artifact owner.
+
+CODEX contributes reusable meaning for the shared lanes: HTML, PDF, PPTX, Excel,
+graphs, CI, DOW and KEB. ABACUS consumes that meaning for outward readiness, while
+`GBOGEB/cryoplant-project` is the controlled adapter allowed to emit private
+evidence status, hashes, counts and references.
+
+The method order is deliberately fixed as DMAIC, reversed PCA from P5 to P1, then
+BT priority. This keeps weak rendered-output, graph, DOW and KEB lanes visible
+before stable CI/style controls dominate the score.
+
 ## Validation
 
 ```bash
