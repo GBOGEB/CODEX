@@ -1,0 +1,21 @@
+schema_version: "0.1"
+document_id: QPS_W04_CHILD_FEEDBACK_FOR_KEB
+authority: sanitized_child_feedback_non_engineering
+source_child: GBOGEB/cryoplant-project
+source_disposition_commit: f65d06e8f4e9ffc7644d45a7f577d51c3d30fce5
+return_metrics: {typed: 13, accepted: 11, deferred: 2, rejected: 0, acceptance_rate: 0.8461538462}
+learned_constraints:
+- classify_glossary_delta_as_missing_alias_missing_canonical_conflict_or_child_specific_controlled_term
+- canonicalize_L3_BUILD_and_L7_SAT_while_retaining_accepted_aliases
+- schema_enum_alignment_should_emit_exact_missing_extra_conflicting_values
+- lifecycle_taxonomy_and_external_standard_reference_findings_are_separate
+- absence_of_standard_reference_is_not_evidence_for_a_standard_change
+- preserve_child_authority_and_evidence_class
+next_return_requirements:
+- exact_term_or_enum_delta
+- source_lineage
+- candidate_alias_or_canonical_form
+- novelty_or_duplicate_against_prior_feedback
+- unresolved_semantic_gap_burndown
+- cycle_id_and_parent_child_parent_elapsed_time
+no_credit_rule: this fixture improves KEB semantic governance only and grants no QPS engineering authority or completion credit.
