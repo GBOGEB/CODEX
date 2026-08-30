@@ -8,6 +8,8 @@ on:
       - 'MASTER_input/**'
       - 'docs/governance/**'
       - 'generated/**'
+      - 'schemas/**'
+      - 'ssot/**'
       - 'tools/validators/**'
       - 'tools/traceability/**'
       - 'tools/contracts/**'
@@ -30,41 +32,30 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
-
       - name: Run SSOT validator
         run: python tools/validators/ssot_validator.py
-
       - name: Run MASTER_input folder validator
         run: python tools/validators/master_input_validator.py
-
       - name: Run dependency trace validator
         run: python tools/traceability/dependency_engine.py
-
       - name: Run lineage validator
         run: python tools/traceability/lineage_engine.py
-
       - name: Generate governance runtime export
         run: python tools/export/governance_export.py
-
       - name: Validate dependency trace contract
         run: python tools/contracts/dependency_trace_validator.py
-
       - name: Validate lineage contract
         run: python tools/contracts/lineage_validator.py
-
       - name: Validate governance runtime contract
         run: python tools/contracts/runtime_validator.py
-
       - name: Publish validation artifacts
         if: always()
         uses: actions/upload-artifact@v4
