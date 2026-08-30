@@ -1,0 +1,63 @@
+schema_version: "0.1"
+correlation_id: QPS-FED-W04-T10-SAFE-CTRL
+lane: CODEX_KEB
+status: REQUESTED
+child:
+  repository: GBOGEB/cryoplant-project
+  pull_request: 141
+  authority: child_owns_engineering_SSOT_compliance_and_disposition
+purpose: >-
+  Run the reusable CODEX Knowledge Exchange Bridge in parallel with ABACUS DOW for the current QPS
+  Table-10/support-system, Safety, controls and lifecycle wave. Govern vocabulary, schema, semantic drift,
+  reference lineage and exchange receipts without self-promoting QPS engineering claims.
+exchange_domains:
+  - Table10_failure_class_and_preserved_state
+  - operational_scenario_and_transition
+  - support_system_permissive
+  - start_permissive_and_run_permissive
+  - utility_loss_impact
+  - C24_C30_configuration
+  - online_N_plus_1
+  - degraded_operation
+  - warehouse_spare
+  - RAMS
+  - Inspectability
+  - RCM
+  - Safety_gate
+  - lifecycle_L1_L8
+  - L3_BUILD
+  - L4_site_integration
+  - L6_project_stop
+  - L7_SAT
+  - L8_QCELL_integration
+  - QPS_CIS_MIS_MIT_MCS_interfaces
+requested_KEB_operations:
+  - glossary_alignment
+  - semantic_drift_check
+  - schema_and_enum_alignment
+  - ADR_index_exchange
+  - evidence_reference_exchange
+  - lifecycle_and_standard_reference_exchange
+  - maturity_telemetry_exchange
+  - lineage_hash_receipt
+required_return:
+  - stable_finding_id
+  - correlation_id
+  - operation
+  - governed_term_or_reference
+  - drift_or_validation_result
+  - recommended_child_action
+  - input_glossary_output_hashes
+  - disposition_unset
+prohibited:
+  - bidder_confidential_values
+  - commercial_values
+  - CODEX_generated_QPS_compliance
+  - CODEX_generated_Table10_allocation
+  - parent_self_promotion_into_child_SSOT
+child_disposition_required: [ACCEPT, REJECT_WITH_REASON, DEFER_PENDING_EVIDENCE, DUPLICATE]
+bidirectional_feedback:
+  accepted: update_parent_governed_vocabulary_schema_or_regression_fixture_if_reusable
+  rejected: record_false_positive_or_child_context_rule
+  deferred: record_authority_or_evidence_dependency
+closure_test: returned_KEB_receipt_plus_child_disposition_plus_parent_feedback_receipt
