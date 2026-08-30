@@ -2,10 +2,31 @@ name: Runtime Release Gate
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+    paths: &runtime_paths
+      - 'federation_runtime/**'
+      - 'docs/wave_packages/runtime/**'
+      - 'docs/rtm/**'
+      - 'governance/**'
+      - 'scripts/bridge_rtm_ingress.py'
+      - 'scripts/emit_runtime_status.py'
+      - 'scripts/check_manifest.py'
+      - 'scripts/check_globs.py'
+      - 'scripts/check_stale.py'
+      - 'scripts/check_links.py'
+      - 'scripts/validate_dmaic_phase_map.py'
+      - 'scripts/emit_governance_snapshot.py'
+      - 'requirements.txt'
+      - 'pyproject.toml'
+      - '.github/workflows/runtime_release_gate.yml'
   pull_request:
+    paths: *runtime_paths
   workflow_dispatch:
+
+concurrency:
+  group: runtime-release-gate-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   actions: read
@@ -13,32 +34,18 @@ permissions:
 jobs:
   rtm-generation:
     runs-on: ubuntu-latest
-
+    timeout-minutes: 15
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install dependencies
-        run: |
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install -e .
-
-      - name: Generate RTM bridge artifacts
-        run: |
-          python scripts/bridge_rtm_ingress.py --json-out reports/rtm_summary.json
-
-      - name: Verify RTM summary artifact
-        run: |
-          test -f reports/rtm_summary.json
-
-      - name: Upload RTM artifacts
-        uses: actions/upload-artifact@v4
+      - run: python scripts/bridge_rtm_ingress.py --json-out reports/rtm_summary.json
+      - run: test -f reports/rtm_summary.json
+      - uses: actions/upload-artifact@v4
         with:
           name: rtm-artifacts
           path: |
@@ -47,47 +54,26 @@ jobs:
 
   runtime-evidence:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: rtm-generation
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install dependencies
-        run: |
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install -e .
-
-      - name: Download RTM artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: rtm-artifacts
-
-      - name: Execute federation bridge
-        run: |
-          python docs/wave_packages/runtime/federation_bridge_cli.py --stop-on-failure
-
-      - name: Generate reality tracker
-        run: |
-          python docs/wave_packages/runtime/reality_tracker.py
-
-      - name: Emit federation runtime status JSON
-        run: |
-          python scripts/emit_runtime_status.py --out reports/runtime_status.json
-
-      - name: Verify runtime evidence artifacts
-        run: |
+      - uses: actions/download-artifact@v4
+        with: {name: rtm-artifacts}
+      - run: python docs/wave_packages/runtime/federation_bridge_cli.py --stop-on-failure
+      - run: python docs/wave_packages/runtime/reality_tracker.py
+      - run: python scripts/emit_runtime_status.py --out reports/runtime_status.json
+      - run: |
           test -f docs/wave_packages/runtime/out/deployment_readiness.json
           test -f docs/wave_packages/runtime/out/reality_tracker.json
           test -f reports/runtime_status.json
-
-      - name: Upload runtime evidence artifacts
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: runtime-evidence-artifacts
           path: |
@@ -100,59 +86,31 @@ jobs:
 
   governance-checks:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: runtime-evidence
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install dependencies
-        run: |
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install -e .
-
-      - name: Download runtime evidence artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: runtime-evidence-artifacts
-
-      - name: Check manifest
-        id: manifest
-        run: |
-          python scripts/check_manifest.py
-
-      - name: Check glob policy
-        id: globs
-        run: |
-          python scripts/check_globs.py
-
-      - name: Check stale artifacts
-        id: stale
-        run: |
-          python scripts/check_stale.py
-
-      - name: Check links
-        id: links
-        run: |
-          python scripts/check_links.py
-
-      - name: Render governance lint
-        id: render_linter
-        run: |
-          python governance/RENDER_LINTER.py
-
-      - name: Validate DMAIC phase map
-        id: dmaic_phase_map
-        run: |
-          python scripts/validate_dmaic_phase_map.py --report-json reports/dmaic_phase_report.json
-
-      - name: Emit governance snapshot
-        if: always()
+      - uses: actions/download-artifact@v4
+        with: {name: runtime-evidence-artifacts}
+      - id: manifest
+        run: python scripts/check_manifest.py
+      - id: globs
+        run: python scripts/check_globs.py
+      - id: stale
+        run: python scripts/check_stale.py
+      - id: links
+        run: python scripts/check_links.py
+      - id: render_linter
+        run: python governance/RENDER_LINTER.py
+      - id: dmaic_phase_map
+        run: python scripts/validate_dmaic_phase_map.py --report-json reports/dmaic_phase_report.json
+      - if: always()
         run: |
           python scripts/emit_governance_snapshot.py \
             --check manifest=${{ steps.manifest.outcome }} \
@@ -162,14 +120,10 @@ jobs:
             --check render_linter=${{ steps.render_linter.outcome }} \
             --check dmaic_phase_map=${{ steps.dmaic_phase_map.outcome }} \
             --out reports/governance_snapshot.json
-
-      - name: Verify governance artifacts
-        run: |
+      - run: |
           test -f reports/governance_snapshot.json
           test -f reports/dmaic_phase_report.json
-
-      - name: Upload governance artifacts
-        if: always()
+      - if: always()
         uses: actions/upload-artifact@v4
         with:
           name: governance-artifacts
@@ -179,55 +133,30 @@ jobs:
 
   release-gate:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: governance-checks
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Download runtime evidence artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: runtime-evidence-artifacts
-
-      - name: Download governance artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: governance-artifacts
-
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: {name: runtime-evidence-artifacts}
+      - uses: actions/download-artifact@v4
+        with: {name: governance-artifacts}
       - name: Enforce deployment threshold
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
-
-          deploy = json.loads(Path('docs/wave_packages/runtime/out/deployment_readiness.json').read_text())
-          reality = json.loads(Path('docs/wave_packages/runtime/out/reality_tracker.json').read_text())
-
-          deploy_score = deploy['completion_percent']
-          reality_score = reality['average_actual']
-
-          print(f'Deployment score: {deploy_score}')
-          print(f'Reality score: {reality_score}')
-
-          if deploy_score < 90:
-              raise SystemExit('Deployment readiness below release threshold')
-
-          if reality_score < 50:
-              raise SystemExit('Reality alignment below release threshold (minimum PARTIAL classification)')
+          deploy=json.loads(Path('docs/wave_packages/runtime/out/deployment_readiness.json').read_text())
+          reality=json.loads(Path('docs/wave_packages/runtime/out/reality_tracker.json').read_text())
+          if deploy['completion_percent'] < 90: raise SystemExit('Deployment readiness below release threshold')
+          if reality['average_actual'] < 50: raise SystemExit('Reality alignment below release threshold')
           PY
-
-      - name: Verify release artifacts
-        run: |
-          test -f docs/wave_packages/runtime/out/reality_tracker.json
-          test -f docs/wave_packages/runtime/out/federation_bridge_build_report.json
-          test -f docs/wave_packages/runtime/pages/plotly_runtime_dashboard.html
+      - run: |
           test -f reports/runtime_status.json
           test -f reports/governance_snapshot.json
           test -f reports/rtm_summary.json
           test -f reports/dmaic_phase_report.json
-
-      - name: Upload release gate artifacts
-        if: always()
+      - if: always()
         uses: actions/upload-artifact@v4
         with:
           name: release-gate-artifacts
