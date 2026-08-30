@@ -1,14 +1,28 @@
 name: ABACUS Render Pipeline Smoke Test
+
 on:
   push:
-    branches: [ main, a6-renderer-governance-layer ]
+    branches: [main, a6-renderer-governance-layer]
+    paths:
+      - 'src/abacus_render_pipeline/**'
+      - '.github/workflows/abacus-render-pipeline-smoke.yml'
   pull_request:
-    branches: [ main ]
+    branches: [main]
+    paths:
+      - 'src/abacus_render_pipeline/**'
+      - '.github/workflows/abacus-render-pipeline-smoke.yml'
+
+concurrency:
+  group: abacus-render-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
+
 jobs:
   smoke:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
