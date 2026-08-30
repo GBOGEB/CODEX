@@ -100,19 +100,19 @@ jobs:
           $hash = (Get-FileHash -LiteralPath $evidenceFile -Algorithm SHA256).Hash.ToLowerInvariant()
           $registry = Join-Path $root 'evidence_registry.yaml'
           @"
-schema_version: 1
-control_id: GOV-001
-registry_status: PARTIAL_VERIFIED
-build_blocking: true
-evidence:
-  - id: TEST_EVIDENCE
-    required: true
-    expected_filename: example.txt
-    relative_path: Offers/example.txt
-    sha256: $hash
-    size_bytes: null
-    verification_status: HASH_VERIFIED_SIZE_PENDING
-"@ | Set-Content -LiteralPath $registry -Encoding utf8
+          schema_version: 1
+          control_id: GOV-001
+          registry_status: PARTIAL_VERIFIED
+          build_blocking: true
+          evidence:
+            - id: TEST_EVIDENCE
+              required: true
+              expected_filename: example.txt
+              relative_path: Offers/example.txt
+              sha256: $hash
+              size_bytes: null
+              verification_status: HASH_VERIFIED_SIZE_PENDING
+          "@ | Set-Content -LiteralPath $registry -Encoding utf8
           $receiptPath = Join-Path $root 'EVIDENCE_VERIFICATION_RECEIPT.json'
           $verifiedRegistry = Join-Path $root 'evidence_registry.verified.yaml'
           $result = & ./07_ops/qps_roundtrip/Test-QpsEvidenceRegistry.ps1 `
@@ -206,19 +206,19 @@ evidence:
           $hash = (Get-FileHash -LiteralPath $evidenceFile -Algorithm SHA256).Hash.ToLowerInvariant()
           $registry = Join-Path $root 'evidence_registry.yaml'
           @"
-schema_version: 1
-control_id: GOV-001
-registry_status: PARTIAL_VERIFIED
-build_blocking: true
-evidence:
-  - id: TEST_EVIDENCE
-    required: true
-    expected_filename: example.txt
-    relative_path: Offers/example.txt
-    sha256: $hash
-    size_bytes: null
-    verification_status: HASH_VERIFIED_SIZE_PENDING
-"@ | Set-Content -LiteralPath $registry -Encoding utf8
+          schema_version: 1
+          control_id: GOV-001
+          registry_status: PARTIAL_VERIFIED
+          build_blocking: true
+          evidence:
+            - id: TEST_EVIDENCE
+              required: true
+              expected_filename: example.txt
+              relative_path: Offers/example.txt
+              sha256: $hash
+              size_bytes: null
+              verification_status: HASH_VERIFIED_SIZE_PENDING
+          "@ | Set-Content -LiteralPath $registry -Encoding utf8
 
           $repoRoot = Split-Path -Parent $env:GITHUB_WORKSPACE
           $builder = Join-Path $env:GITHUB_WORKSPACE '07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1'
