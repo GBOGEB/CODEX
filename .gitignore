@@ -89,3 +89,27 @@ __pycache__/
 .ipynb_checkpoints/
 googledrive/inbound_staging/*
 !googledrive/inbound_staging/.gitkeep
+
+# --- Binaries segregation (QPS triage, GBO, 2026-08-30) ---
+# GISTAU already has the right pattern above (ignore the binary, keep a
+# manifest.yaml + checksums.sha256 alongside it) -- extending the same
+# convention repo-wide instead of only under GISTAU/sources/master/, since
+# the same class of binary (Office docs, PDFs, spreadsheets) shows up
+# elsewhere in this repo too.
+*.docx
+*.xlsx
+*.xlsm
+*.pdf
+!GISTAU/sources/master/source_manifest.yaml
+!GISTAU/sources/master/checksums.sha256
+!**/*manifest*.yaml
+!**/*manifest*.json
+!**/checksums.sha256
+
+# Installer/app binaries and IDE extension packages -- never belong in a
+# git repo (same category as the AbacusAI/Codex desktop installers and
+# GitHub.copilot*.vsix files found cluttering OneDrive Master_Input this
+# round).
+*.exe
+*.msi
+*.vsix
