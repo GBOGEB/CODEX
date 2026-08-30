@@ -1,0 +1,78 @@
+schema_version: "0.1"
+fixture_id: qps_w04_keb_receipt_fixture
+correlation_id: QPS-FED-W04-T10-SAFE-CTRL
+purpose: >-
+  Non-confidential CI fixture for validating CODEX W04 KEB receipt shape before semantic findings are treated as returned evidence.
+
+receipt_required_fields:
+  - run_id
+  - artifact_id
+  - parent_commit_sha
+  - correlation_id
+  - input_hash
+  - output_hash
+  - requested_operations
+  - executed_operations
+  - operation_status
+  - typed_semantic_findings
+  - authority_boundary
+
+example_valid_receipt:
+  run_id: CODEX-W04-RUN-TBD
+  artifact_id: CODEX-W04-ARTIFACT-TBD
+  parent_commit_sha: TBD_PARENT_SHA
+  correlation_id: QPS-FED-W04-T10-SAFE-CTRL
+  input_hash: TBD_INPUT_HASH
+  output_hash: TBD_OUTPUT_HASH
+  requested_operations:
+    - glossary_alignment
+    - semantic_drift_check
+    - schema_and_enum_alignment
+    - evidence_reference_exchange
+    - lifecycle_reference_exchange
+    - maturity_telemetry_exchange
+    - lineage_hash_receipt
+  executed_operations:
+    - glossary_alignment
+    - semantic_drift_check
+    - schema_and_enum_alignment
+    - evidence_reference_exchange
+    - lifecycle_reference_exchange
+    - maturity_telemetry_exchange
+    - lineage_hash_receipt
+  operation_status:
+    glossary_alignment: not_run_fixture_only
+    semantic_drift_check: not_run_fixture_only
+    schema_and_enum_alignment: not_run_fixture_only
+    evidence_reference_exchange: not_run_fixture_only
+    lifecycle_reference_exchange: not_run_fixture_only
+    maturity_telemetry_exchange: not_run_fixture_only
+    lineage_hash_receipt: not_run_fixture_only
+  typed_semantic_findings: []
+  authority_boundary: CODEX_returns_governance_findings_only_QPS_child_disposes
+
+validation_rules:
+  - id: CODEX-W04-CI-001
+    rule: receipt_must_include_correlation_id_equal_QPS_FED_W04_T10_SAFE_CTRL
+  - id: CODEX-W04-CI-002
+    rule: receipt_must_include_input_and_output_hashes_before_QPS_can_bind_as_runtime_evidence
+  - id: CODEX-W04-CI-003
+    rule: requested_operations_and_executed_operations_must_be_compared
+  - id: CODEX-W04-CI-004
+    rule: every_operation_requires_operation_status
+  - id: CODEX-W04-CI-005
+    rule: typed_semantic_findings_must_not_claim_QPS_authority_or_completion
+
+semantic_domains_for_regression:
+  - Table10_failure_class_and_preserved_state
+  - Safety_non_compensating_gate
+  - RAMS_RCM_Inspectability
+  - lifecycle_L1_L8
+  - QPS_CIS_MCS_MIS_MIT
+  - support_system_permissive
+  - softlock_interlock_permissive
+
+expected_CI_next_step:
+  implement_validator: TBD
+  validator_scope: schema_semantic_domain_and_authority_boundary_only
+  completion_effect: none_for_QPS_until_runtime_receipt_and_child_disposition
