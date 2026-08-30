@@ -35,7 +35,16 @@ jobs:
         run: |
           pytest tests/test_theme_runtime.py
 
-      - name: Placeholder regression execution
+      - name: Emit render QA receipts
         run: |
-          echo 'future screenshot diff execution pending'
-          echo 'future html semantic diff pending'
+          python scripts/emit_render_qa_receipts.py --output reports/render_qa_receipts.json
+
+      - name: Execute render QA receipt tests
+        run: |
+          pytest tests/test_render_qa_receipts.py
+
+      - name: Upload render QA receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: render-qa-receipts
+          path: reports/render_qa_receipts.json
