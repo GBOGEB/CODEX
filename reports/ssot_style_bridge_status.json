@@ -1,0 +1,381 @@
+{
+  "artifact_lanes": {
+    "controls": 21,
+    "families": 5,
+    "score": 100.0
+  },
+  "awake": {
+    "awake_weight": 35,
+    "by_kind": {
+      "ci": {
+        "awake": 11,
+        "total": 11
+      },
+      "federation": {
+        "awake": 4,
+        "total": 4
+      },
+      "html": {
+        "awake": 3,
+        "total": 3
+      },
+      "keb": {
+        "awake": 2,
+        "total": 2
+      },
+      "pca": {
+        "awake": 2,
+        "total": 2
+      },
+      "render": {
+        "awake": 3,
+        "total": 3
+      },
+      "style": {
+        "awake": 4,
+        "total": 4
+      },
+      "test": {
+        "awake": 6,
+        "total": 6
+      }
+    },
+    "details": [
+      {
+        "exists": true,
+        "id": "semantic_cards",
+        "kind": "style",
+        "path": "themes/semantic_cards.yaml",
+        "weight": 4
+      },
+      {
+        "exists": true,
+        "id": "wcag_contrast_workflow",
+        "kind": "ci",
+        "path": ".github/workflows/wcag-contrast.yml",
+        "weight": 3
+      },
+      {
+        "exists": true,
+        "id": "render_governance_workflow",
+        "kind": "ci",
+        "path": ".github/workflows/render-governance-ci.yml",
+        "weight": 4
+      },
+      {
+        "exists": true,
+        "id": "render_regression_workflow",
+        "kind": "ci",
+        "path": ".github/workflows/render-regression.yml",
+        "weight": 4
+      },
+      {
+        "exists": true,
+        "id": "runtime_federation_workflow",
+        "kind": "federation",
+        "path": ".github/workflows/runtime_federation_ci.yml",
+        "weight": 4
+      },
+      {
+        "exists": true,
+        "id": "dashboard_health_workflow",
+        "kind": "html",
+        "path": ".github/workflows/dashboard-health.yml",
+        "weight": 3
+      },
+      {
+        "exists": true,
+        "id": "render_guard",
+        "kind": "render",
+        "path": "scripts/render_guard.py",
+        "weight": 3
+      },
+      {
+        "exists": true,
+        "id": "theme_runtime_tests",
+        "kind": "test",
+        "path": "tests/test_theme_runtime.py",
+        "weight": 3
+      },
+      {
+        "exists": true,
+        "id": "contrast_tests",
+        "kind": "test",
+        "path": "tests/test_g7_contrast_validator.py",
+        "weight": 3
+      },
+      {
+        "exists": true,
+        "id": "keb_client_tests",
+        "kind": "keb",
+        "path": "tests/test_keb_client.py",
+        "weight": 2
+      },
+      {
+        "exists": true,
+        "id": "federation_scree_tests",
+        "kind": "pca",
+        "path": "tests/test_federation_scree.py",
+        "weight": 2
+      }
+    ],
+    "score": 100.0,
+    "total_weight": 35
+  },
+  "bt_priority": {
+    "current_top_focus": [
+      "keb_feedback_depth",
+      "render_regression_depth",
+      "artifact_lane_binding"
+    ],
+    "method": "rank_by_low_score_then_high_weight_then_release_impact"
+  },
+  "dmaic": {
+    "analyze": "Use reversed PCA loading order P5 to P1 to lift underdeveloped KEB/render lanes first.",
+    "control": "Keep the bridge manifest small, testable and binary-free.",
+    "define": "CODEX is the reusable style/render/CI governance bridge, not the numeric or private evidence SSOT.",
+    "improve": "Add one code-only validator before binding it into larger CI tiers.",
+    "measure": "Score palette, artifact lane, awake probe and penetration depth independently."
+  },
+  "errors": [],
+  "federation_consumers": {
+    "bridge_rules": [
+      "CODEX defines reusable validation meaning, not final artifact release status.",
+      "ABACUS owns user-facing artifact readiness summaries and scenario-I/O state.",
+      "cryoplant-project may emit status, hashes, counts and evidence references only.",
+      "Heavy PPTX/PDF/XLSX/HTML rendering evidence belongs in full or scheduled tiers unless the PR touches the local validator itself."
+    ],
+    "controlled_adapter": "GBOGEB/cryoplant-project",
+    "method_order": [
+      "DMAIC",
+      "PCA_REVERSED_P5_TO_P1",
+      "BT_PRIORITY"
+    ],
+    "public_consumer": "GBOGEB/ABACUS",
+    "shared_lanes": [
+      "html",
+      "pdf",
+      "pptx",
+      "excel",
+      "graphs",
+      "ci",
+      "dow",
+      "keb"
+    ],
+    "wave_id": "SSOT-STYLE-W04"
+  },
+  "pca_axes": [
+    {
+      "focus": "explicit KEB runtime evidence, queue status and feedback-loop closure",
+      "id": "P5",
+      "load_direction": "catchup",
+      "name": "keb_feedback_depth"
+    },
+    {
+      "focus": "replace placeholders with screenshot/html semantic diffs and Playwright output",
+      "id": "P4",
+      "load_direction": "catchup",
+      "name": "render_regression_depth"
+    },
+    {
+      "focus": "bind HTML/PDF/PPTX/Excel/graph lanes to one manifest and checksum family",
+      "id": "P3",
+      "load_direction": "catchup",
+      "name": "artifact_lane_binding"
+    },
+    {
+      "focus": "semantic card palette and high-contrast token policy",
+      "id": "P2",
+      "load_direction": "stabilize",
+      "name": "style_authority"
+    },
+    {
+      "focus": "workflow grouping, slim/full tiers and release gates",
+      "id": "P1",
+      "load_direction": "stabilize",
+      "name": "ci_governance"
+    }
+  ],
+  "penetration": {
+    "by_kind": {
+      "ci": {
+        "depth": 12,
+        "total": 12
+      },
+      "federation": {
+        "depth": 4,
+        "total": 4
+      },
+      "html": {
+        "depth": 3,
+        "total": 4
+      },
+      "keb": {
+        "depth": 3,
+        "total": 4
+      },
+      "pca": {
+        "depth": 4,
+        "total": 4
+      },
+      "render": {
+        "depth": 4,
+        "total": 4
+      },
+      "style": {
+        "depth": 4,
+        "total": 4
+      },
+      "test": {
+        "depth": 6,
+        "total": 8
+      }
+    },
+    "depth": 40,
+    "details": [
+      {
+        "depth": 4,
+        "id": "semantic_cards",
+        "kind": "style",
+        "path": "themes/semantic_cards.yaml",
+        "signals": [
+          "exists",
+          "semantic_cards",
+          "dark_mode",
+          "hex_palette"
+        ],
+        "total": 4
+      },
+      {
+        "depth": 4,
+        "id": "wcag_contrast_workflow",
+        "kind": "ci",
+        "path": ".github/workflows/wcag-contrast.yml",
+        "signals": [
+          "exists",
+          "pull_request",
+          "python_setup",
+          "validator_or_test"
+        ],
+        "total": 4
+      },
+      {
+        "depth": 4,
+        "id": "render_governance_workflow",
+        "kind": "ci",
+        "path": ".github/workflows/render-governance-ci.yml",
+        "signals": [
+          "exists",
+          "pull_request",
+          "python_setup",
+          "validator_or_test"
+        ],
+        "total": 4
+      },
+      {
+        "depth": 4,
+        "id": "render_regression_workflow",
+        "kind": "ci",
+        "path": ".github/workflows/render-regression.yml",
+        "signals": [
+          "exists",
+          "pull_request",
+          "python_setup",
+          "validator_or_test"
+        ],
+        "total": 4
+      },
+      {
+        "depth": 4,
+        "id": "runtime_federation_workflow",
+        "kind": "federation",
+        "path": ".github/workflows/runtime_federation_ci.yml",
+        "signals": [
+          "exists",
+          "runtime",
+          "federation",
+          "artifact_upload"
+        ],
+        "total": 4
+      },
+      {
+        "depth": 3,
+        "id": "dashboard_health_workflow",
+        "kind": "html",
+        "path": ".github/workflows/dashboard-health.yml",
+        "signals": [
+          "exists",
+          "dashboard",
+          "health"
+        ],
+        "total": 4
+      },
+      {
+        "depth": 4,
+        "id": "render_guard",
+        "kind": "render",
+        "path": "scripts/render_guard.py",
+        "signals": [
+          "exists",
+          "render_language",
+          "guardrail",
+          "checksum_or_manifest"
+        ],
+        "total": 4
+      },
+      {
+        "depth": 3,
+        "id": "theme_runtime_tests",
+        "kind": "test",
+        "path": "tests/test_theme_runtime.py",
+        "signals": [
+          "exists",
+          "non_empty",
+          "structured"
+        ],
+        "total": 4
+      },
+      {
+        "depth": 3,
+        "id": "contrast_tests",
+        "kind": "test",
+        "path": "tests/test_g7_contrast_validator.py",
+        "signals": [
+          "exists",
+          "non_empty",
+          "structured"
+        ],
+        "total": 4
+      },
+      {
+        "depth": 3,
+        "id": "keb_client_tests",
+        "kind": "keb",
+        "path": "tests/test_keb_client.py",
+        "signals": [
+          "exists",
+          "test",
+          "client"
+        ],
+        "total": 4
+      },
+      {
+        "depth": 4,
+        "id": "federation_scree_tests",
+        "kind": "pca",
+        "path": "tests/test_federation_scree.py",
+        "signals": [
+          "exists",
+          "test",
+          "federation",
+          "scree_or_pca"
+        ],
+        "total": 4
+      }
+    ],
+    "score": 90.9,
+    "total": 44
+  },
+  "valid": true,
+  "version": "0.1.0"
+}
