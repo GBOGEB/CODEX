@@ -1,0 +1,55 @@
+schema_version: "0.1"
+correlation_id: QPS-FED-W05-BIDDER-EVAL
+lane: CODEX_KEB_PARENT_FEEDBACK_RECEIPT
+status: CHILD_DISPOSITION_RECEIVED
+source_parent_runtime:
+  pr: 311
+  semantic_repair_pr: 312
+  receipt_observability_pr: 314
+  run_id: 33358327082
+  artifact_id: 9745847900
+  output_hash: 19b9a43c5c25a67922ffd2a1689444b160f6cbcd9552f4d70cec68757c584f5e
+  glossary_hash: 48b82507ba68b7d66996340ca683f1c0a71fb3b810fdd3ebf65eabdfcbce477d
+  receipt_validation: PASS
+  repository_semantic_substrate_after_receipt: FAIL_BASELINE_DEBT
+source_child_disposition:
+  repository: GBOGEB/cryoplant-project
+  pr: 193
+  merge_sha: 169e2b8c1ceba1838da92190c8561a85b85bca8d
+  artifact: ocd-adr/20_canonical/analysis/QPS_BIDDER_EVAL_W05_CHILD_DISPOSITION_v0.1.yaml
+feedback:
+  candidate_normalizations_returned: 9
+  normalizations_accepted: 9
+  normalizations_rejected: 0
+  downstream_consequence_deferrals: 2
+  engineering_completion_credit: 0
+  accepted_finding_ids:
+    - CODEX-W05-76b2ecb2597b
+    - CODEX-W05-f53c86be3569
+    - CODEX-W05-c387a03193d9
+    - CODEX-W05-2f35b04b3a98
+    - CODEX-W05-939766f712bf
+    - CODEX-W05-836911b39975
+    - CODEX-W05-cf8d814b7051
+    - CODEX-W05-4e5d0cde519d
+    - CODEX-W05-2ef8a1d75673
+accepted_semantic_controls:
+  - governed_alias_normalization
+  - certificate_scope_is_not_project_contract_scope
+  - document_issue_review_approval_hold_witness_as_built_are_distinct
+  - L4_installation_L5_standalone_commissioning_L6_SAT_are_distinct
+  - typed_edges_preserve_DIRECT_SUPPORTING_EVIDENCE_ONLY_CONTRADICTS_ALLOCATION_SHIFT_MULTI_NODE_INTERNAL_CONTRADICTION
+  - bidder_proposed_reference_precedence_does_not_promote_to_contract_authority
+  - welding_and_NDT_aliases_preserve_code_standard_identity
+  - P0_to_P6_proof_levels_are_distinct_and_multi_node_reuse_does_not_duplicate_credit
+  - semantic_drift_flags_are_review_candidates_not_compliance_findings
+child_control_confirmation:
+  QPS_child_retains_engineering_and_compliance_authority: true
+  valid_receipt_does_not_override_failed_global_parent_control: true
+  Addendum_I_commercial_or_payment_consequence_remains_DEFER: true
+  confidential_bidder_evidence_must_not_enter_parent_learning: true
+closure:
+  parent_feedback_receipt_complete: true
+  further_KEB_return_required_for_W05: false
+  semantic_substrate_debt_remains_separate_parent_repair_lane: true
+  next_child_priority: P1_RAMS_HSE_ODH_SAT_contradiction_acceptance_burndown
