@@ -1,0 +1,54 @@
+schema_version: "0.3"
+correlation_id: QPS-FED-W05-BIDDER-EVAL
+lane: CODEX_KEB
+status: REQUESTED
+child:
+  repository: GBOGEB/cryoplant-project
+  baseline_sha: 1960710735177c398123af955c33daa8711ece60
+  authority: child_owns_engineering_SSOT_compliance_and_disposition
+input_contract:
+  source_wave: QPS-BIDDER-EVAL-W03
+  bidders: [BIDDER_A,BIDDER_B]
+  confidentiality: sanitized_terms_and_evidence_types_only
+exchange_domains:
+  - HSE_SHE_safety_file
+  - RAMS_MSRA_LMRA_HAZID_HAZOP
+  - PID_P_and_ID_tagging_cause_effect_alarm_trip
+  - QMS_QAP_QA_QC_ITP_DDS_NCR
+  - ISO9001_certificate_scope_vs_contract_scope
+  - WPS_WPQR_welder_operator_NDT_orbital_welding
+  - codes_standards_law_and_regulation_hierarchy
+  - lifecycle_L1_L6_operation_maintenance_warranty
+  - Addendum_I_Addendum_II_OFFER_RTM_AD_reference_hierarchy
+  - evidence_location_document_status_and_proof_level
+  - edge_semantics
+requested_KEB_operations:
+  - normalize_aliases_and_governed_vocabulary
+  - distinguish_certificate_accreditation_certification_and_project_QMS_application
+  - distinguish_document_issue_status_information_review_approval_hold_witness_record_as_built
+  - normalize_lifecycle_terms_and_prevent_L4_L5_L6_semantic_collapse
+  - normalize_direct_supporting_evidence_only_contradiction_allocation_shift_multi_node_internal_contradiction_edges
+  - validate_reference_hierarchy_without_promoting_bidder_proposed_precedence_to_contract_authority
+  - normalize_welding_and_NDT_terms_while_preserving_code_standard_identity
+  - validate_evidence_location_lineage_and_multi_node_reuse_without_duplicate_credit
+  - flag_semantic_drift_between_HSE_compliance_matrix_GSHRC_DDS_scope_matrix_and_contract_nodes
+required_return:
+  - stable_finding_id
+  - correlation_id
+  - governed_term_or_reference
+  - operation
+  - drift_or_validation_result
+  - recommended_child_action
+  - input_glossary_output_hashes
+  - disposition_unset
+prohibited:
+  - bidder_names
+  - bidder_confidential_text
+  - commercial_values
+  - CODEX_generated_QPS_compliance
+  - automatic_contract_authority_promotion
+  - parent_self_promotion_into_child_SSOT
+child_disposition_contract:
+  governed_values: [ACCEPT,REJECT,DEFER]
+  parent_findings_are_candidates: true
+closure_test: returned_KEB_receipt_plus_child_disposition_plus_feedback_receipt
