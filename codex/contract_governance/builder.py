@@ -12,6 +12,7 @@ from openpyxl.styles import Font, PatternFill
 
 from .docx_builder import build_docx
 from .io import content_hash
+from .pptx_builder import build_pptx
 from .schema import Audience, GeneratedSheet, GovernanceSSOT, Requirement
 
 Tier = Literal["internal", "bidder"]
@@ -85,7 +86,7 @@ def workbook_payload(ssot: GovernanceSSOT, tier: Tier) -> dict[str, object]:
 
 
 def build_artifacts(ssot: GovernanceSSOT, out_dir: Path, tier: Tier) -> dict[str, str]:
-    """Generate XLSX, HTML, RTM JSON, DOCX, and a manifest for an output tier."""
+    """Generate XLSX, HTML, RTM JSON, DOCX, PPTX, and a manifest for an output tier."""
 
     tier_dir = out_dir / tier
     tier_dir.mkdir(parents=True, exist_ok=True)
@@ -96,12 +97,14 @@ def build_artifacts(ssot: GovernanceSSOT, out_dir: Path, tier: Tier) -> dict[str
     html_path = tier_dir / f"{ssot.package_id}_{tier}.html"
     rtm_path = tier_dir / f"{ssot.package_id}_{tier}_rtm.json"
     docx_path = tier_dir / f"{ssot.package_id}_{tier}.docx"
+    pptx_path = tier_dir / f"{ssot.package_id}_{tier}.pptx"
     manifest_path = tier_dir / f"{ssot.package_id}_{tier}_manifest.json"
 
     _write_workbook(payload, ssot, xlsx_path)
     _write_html(payload, ssot, html_path)
     _write_json(payload, rtm_path)
     build_docx(payload, ssot, docx_path)
+    build_pptx(payload, ssot, pptx_path)
     _write_json(
         {
             "package_id": ssot.package_id,
@@ -114,6 +117,7 @@ def build_artifacts(ssot: GovernanceSSOT, out_dir: Path, tier: Tier) -> dict[str
                 "html": html_path.name,
                 "rtm": rtm_path.name,
                 "docx": docx_path.name,
+                "pptx": pptx_path.name,
             },
         },
         manifest_path,
@@ -123,6 +127,7 @@ def build_artifacts(ssot: GovernanceSSOT, out_dir: Path, tier: Tier) -> dict[str
         "html": str(html_path),
         "rtm": str(rtm_path),
         "docx": str(docx_path),
+        "pptx": str(pptx_path),
         "manifest": str(manifest_path),
         "content_hash": digest,
     }

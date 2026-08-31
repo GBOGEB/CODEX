@@ -8,6 +8,7 @@ from typing import Literal
 
 from docx import Document
 from openpyxl import load_workbook
+from pptx import Presentation
 
 from .builder import workbook_payload
 from .io import content_hash
@@ -27,7 +28,13 @@ def validate_generated(ssot: GovernanceSSOT, out_dir: Path, tier: Tier) -> None:
     manifest_path = tier_dir / f"{ssot.package_id}_{tier}_manifest.json"
     xlsx_path = tier_dir / f"{ssot.package_id}_{tier}.xlsx"
     docx_path = tier_dir / f"{ssot.package_id}_{tier}.docx"
-    if not manifest_path.exists() or not xlsx_path.exists() or not docx_path.exists():
+    pptx_path = tier_dir / f"{ssot.package_id}_{tier}.pptx"
+    if (
+        not manifest_path.exists()
+        or not xlsx_path.exists()
+        or not docx_path.exists()
+        or not pptx_path.exists()
+    ):
         raise ValidationError(f"missing generated artifacts for tier {tier}")
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -96,6 +103,7 @@ def _validate_bidder_stripping(
         "html": _read_named_artifact(tier_dir, manifest, "html"),
         "rtm": _read_named_artifact(tier_dir, manifest, "rtm"),
         "docx": _docx_text(_named_artifact_path(tier_dir, manifest, "docx")),
+        "pptx": _pptx_text(_named_artifact_path(tier_dir, manifest, "pptx")),
         "manifest": json.dumps(manifest, sort_keys=True),
     }
     for artifact_name, text in artifact_text.items():
@@ -151,3 +159,17 @@ def _docx_text(path: Path) -> str:
         for cell in row.cells
     )
     return "\n".join([paragraph_text, table_text])
+
+
+def _pptx_text(path: Path) -> str:
+    prs = Presentation(path)
+    fragments: list[str] = []
+    for slide in prs.slides:
+        for shape in slide.shapes:
+            if shape.has_text_frame:
+                fragments.append(shape.text_frame.text)
+            if shape.has_table:
+                for row in shape.table.rows:
+                    for cell in row.cells:
+                        fragments.append(cell.text)
+    return "\n".join(fragments)
