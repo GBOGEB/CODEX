@@ -1,0 +1,121 @@
+schema_version: "0.1"
+correlation_id: QPS-FED-W06-COST-FRONTIER-R2
+lane: CODEX_KEB_RETURN
+status: CANDIDATE_RETURN_FOR_CHILD_DISPOSITION
+source_request:
+  pr: 309
+  merge_sha: e4c9e2248d028d9e630fb48c7b2f4eaae1f6c84d
+  child_baseline_sha: d62819a664ce54325ddf7b4758e8744abf19ea22
+authority:
+  child_owns_engineering_SSOT_compliance_cost_interpretation_and_disposition: true
+  parent_findings_are_candidates_only: true
+normalizations:
+  - stable_finding_id: KEB-W06-CF-001
+    governed_term_or_reference: source_support_class
+    operation: DEFINE_SEPARATE_AXIS
+    drift_or_validation_result: >-
+      Source support describes evidence provenance/authority and must not encode the
+      completeness of quantitative commercial binding.
+    recommended_child_action: ACCEPT
+
+  - stable_finding_id: KEB-W06-CF-002
+    governed_term_or_reference: quantitative_binding_state
+    operation: DEFINE_GOVERNED_ENUM
+    drift_or_validation_result: >-
+      Use FULLY_BOUND, PARTIAL, SCREENING_ONLY and MISSING only for quantitative
+      binding completeness. Do not use this enum as an evidence-source class.
+    recommended_child_action: ACCEPT
+
+  - stable_finding_id: KEB-W06-CF-003
+    governed_term_or_reference: FULLY_BOUND
+    operation: DEFINE
+    drift_or_validation_result: >-
+      Controlled quantitative value, canonical source and evidence class are all bound
+      sufficiently for governed quantitative comparison, subject to non-compensating gates.
+    recommended_child_action: ACCEPT
+
+  - stable_finding_id: KEB-W06-CF-004
+    governed_term_or_reference: PARTIAL
+    operation: DEFINE
+    drift_or_validation_result: >-
+      Source and cost mechanism are known but at least one controlled quantitative
+      allocation remains unresolved. Ranking may be exploratory with an evidence-gap marker.
+    recommended_child_action: ACCEPT
+
+  - stable_finding_id: KEB-W06-CF-005
+    governed_term_or_reference: SCREENING_ONLY
+    operation: DEFINE
+    drift_or_validation_result: >-
+      Directional or normalized controlled-derived intensity only. It may support triage
+      but cannot be promoted to bidder price, quantitative closure or compliance evidence.
+    recommended_child_action: ACCEPT
+
+  - stable_finding_id: KEB-W06-CF-006
+    governed_term_or_reference: MISSING
+    operation: DEFINE
+    drift_or_validation_result: >-
+      Cost consequence is suspected but no controlled quantitative binding is available.
+      The value is not rank eligible and must never be zero-imputed.
+    recommended_child_action: ACCEPT
+
+  - stable_finding_id: KEB-W06-CF-007
+    governed_term_or_reference: rank_delta
+    operation: RESTRICT_SEMANTICS
+    drift_or_validation_result: >-
+      technical_rank_minus_cost_rank is an attention/catch-up metric only. It does not
+      imply compliance, maturity, importance waiver or bidder-commercial superiority.
+    recommended_child_action: ACCEPT
+
+  - stable_finding_id: KEB-W06-CF-008
+    governed_term_or_reference: lifecycle
+    operation: PRESERVE_LEVELS
+    drift_or_validation_result: >-
+      L1-L6 must remain distinct lifecycle phases. Parent normalization must not collapse
+      design, fabrication, installation, commissioning and acceptance evidence.
+    recommended_child_action: ACCEPT
+
+  - stable_finding_id: KEB-W06-CF-009
+    governed_term_or_reference: typed_dependency_edges
+    operation: VALIDATE_NAMESPACE
+    drift_or_validation_result: >-
+      COMMON_UTILITY_BOUNDARY, OPERATING_COST_COUPLING, EXECUTION_HSE_DEPENDENCY,
+      ACCEPTANCE_RESOURCE_DEPENDENCY, ACCEPTANCE_EVIDENCE_DEPENDENCY and
+      LIFECYCLE_SUPPORT_DEPENDENCY are relationship semantics, not proof or compliance classes.
+    recommended_child_action: ACCEPT
+
+  - stable_finding_id: KEB-W06-CF-010
+    governed_term_or_reference: RTM_OFFER_identity
+    operation: PRESERVE_AUTHORITY_HIERARCHY
+    drift_or_validation_result: >-
+      RTM and OFFER identifiers remain separate governed node types. Crosswalk edges do not
+      promote OFFER evidence into RTM contract authority or vice versa.
+    recommended_child_action: ACCEPT
+
+schema_recommendations:
+  required_child_fields:
+    - source_support_class
+    - quantitative_binding_state
+    - lifecycle
+    - parent_ids
+    - next_evidence
+    - disposition
+  optional_attention_fields:
+    - rank_delta70
+    - rank_delta100
+    - reverse_load
+  prohibited_semantic_conflations:
+    - source_support_equals_quantitative_closure
+    - source_coverage_equals_compliance
+    - screening_only_equals_zero_cost
+    - rank_delta_equals_compliance_priority
+    - offer_evidence_equals_rtm_authority
+control:
+  no_compliance_credit: true
+  no_completion_credit: true
+  no_bidder_score: true
+  no_zero_imputation: true
+  non_compensating_gates_preserved: true
+return_summary:
+  candidate_normalizations: 10
+  accept_recommendations: 10
+  child_disposition_required: true
