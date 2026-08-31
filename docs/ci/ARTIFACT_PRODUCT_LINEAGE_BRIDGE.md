@@ -126,7 +126,7 @@ Report at least:
 - **Define:** user decision/interaction and release boundary.
 - **Measure:** functional coverage and lineage resolution.
 - **Analyse:** non-credit-bearing PCA on interaction debt, lineage gaps, render debt, scenario-I/O gaps and test coverage.
-- **Improve:** prioritize behaviour and traceability fixes before metadata expansion.
+- **Improve:** prioritise behaviour and traceability fixes before metadata expansion.
 - **Control:** require repeated functional/browser/workbook receipts and stale-propagation tests across releases.
 
 ## BT ordering for product controls
