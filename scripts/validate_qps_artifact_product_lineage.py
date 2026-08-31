@@ -24,10 +24,15 @@ def validate_contract(data: dict[str, Any]) -> list[str]:
     build = data.get("build_model", {})
     outputs = build.get("outputs", [])
     output_names = [entry.get("artifact_type") for entry in outputs if isinstance(entry, dict)]
-    declared = set(build.get("required_outputs", []))
+    required_outputs = build.get("required_outputs", [])
 
-    if declared != REQUIRED_OUTPUTS:
-        errors.append(f"required_outputs must be exactly {sorted(REQUIRED_OUTPUTS)}")
+    if (
+        not isinstance(required_outputs, list)
+        or not all(isinstance(value, str) and value for value in required_outputs)
+        or set(required_outputs) != REQUIRED_OUTPUTS
+        or len(required_outputs) != len(REQUIRED_OUTPUTS)
+    ):
+        errors.append(f"required_outputs must list each of {sorted(REQUIRED_OUTPUTS)} exactly once")
     if set(output_names) != REQUIRED_OUTPUTS or len(output_names) != len(REQUIRED_OUTPUTS):
         errors.append("outputs must define each required artifact exactly once")
     if build.get("peer_artifacts_may_depend_on_each_other") is not False:
