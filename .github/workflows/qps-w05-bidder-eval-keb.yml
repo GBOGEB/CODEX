@@ -36,12 +36,14 @@ jobs:
       - name: Produce W05 KEB receipt
         run: python tools/run_qps_w05_bidder_eval_keb.py
       - name: Validate W05 KEB receipt
-        run: python tools/validate_qps_w05_bidder_eval_keb.py federation/qps/runtime/QPS_FED_W05_BIDDER_EVAL_KEB_RECEIPT.yaml
-      - name: Validate semantic substrate
-        run: python semantic_substrate/validators/validate_semantic_substrate.py
-      - name: Upload W05 KEB receipt
+        run: >-
+          python tools/validate_qps_w05_bidder_eval_keb.py
+          federation/qps/runtime/QPS_FED_W05_BIDDER_EVAL_KEB_RECEIPT.yaml
+      - name: Upload validated W05 KEB receipt
         uses: actions/upload-artifact@v4
         with:
           name: qps-w05-bidder-eval-keb-${{ github.run_id }}
           path: federation/qps/runtime/QPS_FED_W05_BIDDER_EVAL_KEB_RECEIPT.yaml
           if-no-files-found: error
+      - name: Validate repository semantic substrate
+        run: python semantic_substrate/validators/validate_semantic_substrate.py
