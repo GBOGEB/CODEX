@@ -63,8 +63,15 @@ def git_sha(root: Path = Path(".")) -> str:
         if loose.exists():
             head = loose.read_text(encoding="utf-8").strip()
         else:
-            packed = (root / ".git" / "packed-refs").read_text(encoding="utf-8")
-            matches = [line.split()[0] for line in packed.splitlines() if line.endswith(" " + ref)]
+            packed_path = root / ".git" / "packed-refs"
+            if not packed_path.exists():
+                raise SystemExit("unable to resolve parent git SHA")
+            packed = packed_path.read_text(encoding="utf-8")
+            matches = [
+                line.split()[0]
+                for line in packed.splitlines()
+                if line and not line.startswith("#") and line.endswith(" " + ref)
+            ]
             if len(matches) != 1:
                 raise SystemExit("unable to resolve parent git SHA")
             head = matches[0]
