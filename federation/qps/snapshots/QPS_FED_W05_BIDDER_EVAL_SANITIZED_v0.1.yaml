@@ -1,0 +1,71 @@
+schema_version: "0.1"
+correlation_id: QPS-FED-W05-BIDDER-EVAL
+source_wave: QPS-BIDDER-EVAL-W03
+source_child:
+  repository: GBOGEB/cryoplant-project
+  source_pr: 179
+  source_merge_sha: 53baac108920d36210ec6ba36799a61cc1da8982
+  evidence_class: DERIVED_SANITIZED_SNAPSHOT
+confidentiality:
+  bidder_names_removed: true
+  bidder_text_removed: true
+  prices_removed: true
+  payment_percentages_removed: true
+semantic_domains:
+  HSE_SHE_safety_file:
+    aliases: [HSE,SHE,safety_file,project_safety_file,Contractor_HSE_Plan]
+  RAMS_MSRA_LMRA_HAZID_HAZOP:
+    aliases: [RAMS,MSRA,LMRA,HAZID,HAZOP,risk_assessment,method_statement]
+  PID_P_and_ID_tagging_cause_effect_alarm_trip:
+    aliases: [PID,P_and_ID,tagging,cause_effect,alarm_trip,interlock]
+  QMS_QAP_QA_QC_ITP_DDS_NCR:
+    aliases: [QMS,QAP,QA,QC,ITP,DDS,NCR,quality_plan,inspection_plan]
+  ISO9001_certificate_scope_vs_contract_scope:
+    aliases: [ISO9001,ISO_9001,certificate_scope,project_QMS,contract_scope]
+  WPS_WPQR_welder_operator_NDT_orbital_welding:
+    aliases: [WPS,WPQR,welder,operator,NDT,orbital_welding,automatic_welding]
+  codes_standards_law_and_regulation_hierarchy:
+    aliases: [PED,EN_13480,EN_13445,ISO_9712,EN_17636,ISO_5817,IEC_61508,IEC_61511]
+  lifecycle_L1_L6_operation_maintenance_warranty:
+    aliases: [L1,L2,L3,L4,L5,L6,operation,maintenance,warranty]
+  Addendum_I_Addendum_II_OFFER_RTM_AD_reference_hierarchy:
+    aliases: [Addendum_I,Addendum_II,OFFER,RTM,AD_02,Applicable_Document]
+  evidence_location_document_status_and_proof_level:
+    aliases: [P0,P1,P2,P3,P4,P5,P6,IFI,IFE,IFU,IFD,IFR,IFA,FR,AB,approval,review,hold,witness,as_built]
+  edge_semantics:
+    aliases: [DIRECT,SUPPORTING,EVIDENCE_ONLY,CONTRADICTS,ALLOCATION_SHIFT,MULTI_NODE_EVIDENCE,INTERNAL_CONTRADICTION]
+bidder_semantic_patterns:
+  BIDDER_A:
+    - HSE_responsibility_shift
+    - ODH_test_scope_narrowing
+    - leak_monitoring_scope_shift
+    - energy_measurement_scope_shift
+    - PID_tagging_divergence
+    - welding_code_identity_reconciliation
+    - maintenance_QMS_scope_narrowing
+  BIDDER_B:
+    - HSE_matrix_deviation_set
+    - GSHRC_declined_simulator
+    - ODH_scope_internal_contradiction
+    - SAT_safety_function_retest_narrowing
+    - noise_internal_value_or_measurement_scope_inconsistency
+    - energy_measurement_method_deferred
+    - document_status_mapping_required
+lifecycle_semantics:
+  L4: installation
+  L5: standalone_commissioning
+  L6: site_acceptance_testing
+proof_semantics:
+  P0: bidder_claim_or_compliance_matrix
+  P1: named_future_deliverable_or_method
+  P2: submitted_project_specific_document
+  P3: reviewed_and_approved_document
+  P4: implemented_inspected_traceable_record
+  P5: witnessed_commissioning_or_test_record
+  P6: SAT_acceptance_evidence
+rules:
+  - certificate_scope_is_not_project_contract_scope
+  - document_issue_status_is_not_approval_status
+  - bidder_proposed_precedence_is_not_contract_authority
+  - lifecycle_L4_L5_L6_must_not_collapse
+  - evidence_edge_type_does_not_equal_compliance
