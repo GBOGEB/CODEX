@@ -12,14 +12,27 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $repositories = @(
-    [pscustomobject]@{ Name = 'ABACUS'; Url = 'https://github.com/GBOGEB/ABACUS.git' },
-    [pscustomobject]@{ Name = 'CODEX'; Url = 'https://github.com/GBOGEB/CODEX.git' },
-    [pscustomobject]@{ Name = 'cryoplant-project'; Url = 'https://github.com/GBOGEB/cryoplant-project.git' },
-    [pscustomobject]@{ Name = 'DOCX_RTM_Automation'; Url = 'https://github.com/GBOGEB/DOCX_RTM_Automation.git' }
+    [pscustomobject]@{
+        Name = 'ABACUS'
+        Url = 'https://github.com/GBOGEB/ABACUS.git'
+    },
+    [pscustomobject]@{
+        Name = 'CODEX'
+        Url = 'https://github.com/GBOGEB/CODEX.git'
+    },
+    [pscustomobject]@{
+        Name = 'cryoplant-project'
+        Url = 'https://github.com/GBOGEB/cryoplant-project.git'
+    },
+    [pscustomobject]@{
+        Name = 'DOCX_RTM_Automation'
+        Url = 'https://github.com/GBOGEB/DOCX_RTM_Automation.git'
+    }
 )
 
 function Assert-Command {
     param([Parameter(Mandatory = $true)][string]$Name)
+
     if (-not (Get-Command $Name -ErrorAction SilentlyContinue)) {
         throw "Required command is not available: $Name"
     }
@@ -33,8 +46,17 @@ function Assert-CleanRepository {
         throw "Unable to read Git status: $Path"
     }
     if ($status.Count -gt 0) {
-        throw "Repository has local changes and will not be updated automatically: $Path"
+        throw "Repository has local changes: $Path"
     }
+}
+
+function Normalize-GitRemote {
+    param([Parameter(Mandatory = $true)][string]$Remote)
+
+    $value = $Remote.Trim().TrimEnd('/')
+    $value = $value -replace '\.git$', ''
+    $value = $value -replace '^git@github\.com:', 'https://github.com/'
+    $value.ToLowerInvariant()
 }
 
 Assert-Command -Name 'git'
@@ -51,22 +73,37 @@ if (-not $SkipClone) {
         if (-not (Test-Path -LiteralPath $path)) {
             if ($PSCmdlet.ShouldProcess($path, "Clone $($repo.Url)")) {
                 git clone $repo.Url $path
-                if ($LASTEXITCODE -ne 0) { throw "Clone failed: $($repo.Name)" }
+                if ($LASTEXITCODE -ne 0) {
+                    throw "Clone failed: $($repo.Name)"
+                }
             }
-        } else {
+        }
+        else {
             if (-not (Test-Path -LiteralPath (Join-Path $path '.git'))) {
                 throw "Existing path is not a Git clone: $path"
             }
             Assert-CleanRepository -Path $path
-            if ($PSCmdlet.ShouldProcess($path, 'Fetch and fast-forward default branch')) {
+            if ($PSCmdlet.ShouldProcess(
+                    $path,
+                    'Fetch and fast-forward default branch')) {
                 git -C $path fetch --all --prune
-                if ($LASTEXITCODE -ne 0) { throw "Fetch failed: $($repo.Name)" }
-                $defaultBranch = (git -C $path symbolic-ref refs/remotes/origin/HEAD).Trim() -replace '^refs/remotes/origin/', ''
-                if ([string]::IsNullOrWhiteSpace($defaultBranch)) { throw "Unable to determine default branch: $($repo.Name)" }
+                if ($LASTEXITCODE -ne 0) {
+                    throw "Fetch failed: $($repo.Name)"
+                }
+                $defaultBranch = (
+                    git -C $path symbolic-ref refs/remotes/origin/HEAD
+                ).Trim() -replace '^refs/remotes/origin/', ''
+                if ([string]::IsNullOrWhiteSpace($defaultBranch)) {
+                    throw "Unable to determine default branch: $($repo.Name)"
+                }
                 git -C $path switch $defaultBranch
-                if ($LASTEXITCODE -ne 0) { throw "Switch failed: $($repo.Name)" }
+                if ($LASTEXITCODE -ne 0) {
+                    throw "Switch failed: $($repo.Name)"
+                }
                 git -C $path pull --ff-only
-                if ($LASTEXITCODE -ne 0) { throw "Fast-forward pull failed: $($repo.Name)" }
+                if ($LASTEXITCODE -ne 0) {
+                    throw "Fast-forward pull failed: $($repo.Name)"
+                }
             }
         }
     }
@@ -75,9 +112,11 @@ if (-not $SkipClone) {
 $env:QPS_EVIDENCE_ROOT = $EvidenceRoot
 $env:QPS_RELEASE_ROOT = $ReleaseRoot
 
-$initializer = Join-Path $RepoRoot 'CODEX\07_ops\qps_roundtrip\Initialize-QpsWorkspace.ps1'
+$initializer = Join-Path `
+    $RepoRoot `
+    'CODEX\07_ops\qps_roundtrip\Initialize-QpsWorkspace.ps1'
 if (-not (Test-Path -LiteralPath $initializer)) {
-    throw "QPS workspace initializer not found. Ensure the CODEX Wave 1 tooling is merged/present: $initializer"
+    throw "QPS workspace initializer not found: $initializer"
 }
 
 $initArgs = @{
@@ -86,30 +125,86 @@ $initArgs = @{
     EvidenceRoot = $EvidenceRoot
     ReleaseRoot = $ReleaseRoot
 }
-if ($CreateOneDriveFolders) { $initArgs.CreateOneDriveFolders = $true }
+if ($CreateOneDriveFolders) {
+    $initArgs.CreateOneDriveFolders = $true
+}
 
 & $initializer @initArgs | Write-Host
 
 $repoState = foreach ($repo in $repositories) {
     $path = Join-Path $RepoRoot $repo.Name
-    if (Test-Path -LiteralPath (Join-Path $path '.git')) {
-        [pscustomobject]@{
-            repository = $repo.Name
-            path = $path
-            branch = (git -C $path branch --show-current).Trim()
-            commit = (git -C $path rev-parse HEAD).Trim()
-            clean = (@(git -C $path status --porcelain).Count -eq 0)
-        }
+    $gitPath = Join-Path $path '.git'
+    if (-not (Test-Path -LiteralPath $gitPath)) {
+        throw "Required repository is missing: $path"
+    }
+
+    Assert-CleanRepository -Path $path
+
+    $branch = (git -C $path branch --show-current).Trim()
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($branch)) {
+        throw "Repository is not on a named branch: $($repo.Name)"
+    }
+
+    $commit = (git -C $path rev-parse HEAD).Trim()
+    if ($LASTEXITCODE -ne 0 -or $commit -notmatch '^[0-9a-f]{40}$') {
+        throw "Unable to capture HEAD SHA: $($repo.Name)"
+    }
+
+    $origin = (git -C $path remote get-url origin).Trim()
+    if ($LASTEXITCODE -ne 0) {
+        throw "Unable to read origin URL: $($repo.Name)"
+    }
+    if ((Normalize-GitRemote $origin) -ne (Normalize-GitRemote $repo.Url)) {
+        throw "Unexpected origin for $($repo.Name): $origin"
+    }
+
+    $upstream = (git -C $path rev-parse '@{u}').Trim()
+    if ($LASTEXITCODE -ne 0 -or $upstream -notmatch '^[0-9a-f]{40}$') {
+        throw "Unable to capture upstream SHA: $($repo.Name)"
+    }
+    if ($commit -ne $upstream) {
+        throw "Repository is not at upstream HEAD: $($repo.Name)"
+    }
+
+    [pscustomobject]@{
+        repository = $repo.Name
+        branch = $branch
+        commit = $commit
+        upstream_commit = $upstream
+        clean = $true
+        origin_verified = $true
     }
 }
 
-[ordered]@{
+if (@($repoState).Count -ne $repositories.Count) {
+    throw 'A1 repository baseline is incomplete.'
+}
+
+$receipt = [ordered]@{
+    schema = 'qps-cost-master.a1-repo-baseline.v1'
     phase = 'W002-bootstrap'
-    repo_root = $RepoRoot
-    workspace_root = $WorkspaceRoot
-    evidence_root = $EvidenceRoot
-    release_root = $ReleaseRoot
-    repositories = @($repoState)
+    action_id = 'A1'
     timestamp_utc = [DateTime]::UtcNow.ToString('o')
-    result = 'READY_FOR_EVIDENCE_BINDING'
-} | ConvertTo-Json -Depth 5
+    repositories = @($repoState)
+    required_repository_count = $repositories.Count
+    verified_repository_count = @($repoState).Count
+    clean_repository_count = @(
+        $repoState | Where-Object clean
+    ).Count
+    origin_verified_count = @(
+        $repoState | Where-Object origin_verified
+    ).Count
+    result = 'PASS'
+    next_action = 'A2_BIND_GOVERNED_EVIDENCE_ROOT'
+}
+
+$logRoot = Join-Path $WorkspaceRoot '_logs'
+if (-not (Test-Path -LiteralPath $logRoot)) {
+    New-Item -ItemType Directory -Path $logRoot -Force | Out-Null
+}
+$receiptPath = Join-Path $logRoot 'A1_REPO_BASELINE_RECEIPT.json'
+$receiptJson = $receipt | ConvertTo-Json -Depth 6
+Set-Content -LiteralPath $receiptPath -Value $receiptJson -Encoding utf8
+
+$receiptJson
+Write-Host "A1 receipt: $receiptPath"
