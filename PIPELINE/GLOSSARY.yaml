@@ -1,4 +1,4 @@
-version: 0.3.0
+version: 0.3.1
 system:
   name: GBOGEB/CODEX
   codename: ABACUS_RENDER_PIPELINE
@@ -15,6 +15,27 @@ glossary:
 
   semantic_drift:
     definition: Meaning-bearing divergence between governed artifacts, terminology, lineage, or runtime interpretation that requires detection and disposition.
+
+  semantic_comparison_count:
+    definition: Count of governed semantic comparisons evaluated in a regression, round-trip, or rebuild validation run.
+
+  semantic_domains_for_regression:
+    definition: Governed set of semantic domains selected for regression comparison in a validation or round-trip run.
+
+  semantic_drift_check:
+    definition: Explicit operation that compares governed meaning, terminology, lineage, or evidence references for semantic drift without promoting findings to child authority.
+
+  semantic_findings:
+    definition: Typed candidate findings produced by semantic validation or knowledge exchange and requiring downstream authority disposition before adoption.
+
+  semantic_html:
+    definition: HTML projection used to inspect governed semantic output or comparison results; it is a review surface rather than an authoritative data store.
+
+  semantic_match:
+    definition: Positive comparison result indicating that the governed semantic representation matches its expected reference under the applicable normalization rules.
+
+  semantic_rebuild_match:
+    definition: Positive reproducibility result indicating that a rebuilt semantic artifact matches the governed reference after deterministic reconstruction.
 
   dow:
     canonical_term: DOW
