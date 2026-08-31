@@ -1,0 +1,82 @@
+schema_version: "0.5"
+correlation_id: QPS-FED-W06-COST-FRONTIER-R2
+lane: CODEX_KEB
+status: REQUESTED
+child:
+  repository: GBOGEB/cryoplant-project
+  baseline_sha: d62819a664ce54325ddf7b4758e8744abf19ea22
+  authority: child_owns_engineering_SSOT_compliance_cost_interpretation_and_disposition
+lineage:
+  predecessor_child_wave: QPS-BIDDER-EVAL-W03
+  predecessor_abacus_pr: 764
+  predecessor_codex_pr: 305
+  merged_child_prs: [179, 180, 181]
+  merged_control_repairs: [306]
+  source_frontier: ocd-adr/20_canonical/analysis/QPS_COST_STAGE3_CHILD_FRONTIER_v0.1.yaml
+input_contract:
+  confidentiality: sanitized_semantic_graph_only
+  bidder_count: 2
+  no_raw_bidder_prices: true
+  no_payment_percentages: true
+  no_confidential_offer_text: true
+  proof_levels: [P0, P1, P2, P3, P4, P5, P6]
+  governed_dimensions:
+    - source_support_class
+    - quantitative_binding_state
+    - lifecycle_phase
+    - parent_child_link
+    - typed_edge
+    - acceptance_route
+    - owner_boundary
+    - rank_delta
+  stage3_children:
+    - {id: S3-C01, parents: [RTM-433], topic: LOOP_BACKUP_INSTRUMENT_AIR, source_support_class: SOURCE_SUPPORTED_CONTRACT, quantitative_binding_state: PARTIAL, lifecycle: [L2, L4, L5, L6]}
+    - {id: S3-C02, parents: [OFFER-35, RTM-434, RTM-435], topic: HVAC_HEAT_REJECTION, source_support_class: SOURCE_SUPPORTED_CONTRACT_AND_OFFER, quantitative_binding_state: PARTIAL, lifecycle: [L2, L4, L5, L6]}
+    - {id: S3-C03, parents: [OFFER-34, RTM-411, RTM-426, RTM-427], topic: COOLING_WATER_FLOW_AND_HEAT_LOAD, source_support_class: SOURCE_SUPPORTED_CONTRACT_AND_OFFER, quantitative_binding_state: PARTIAL, lifecycle: [L2, L4, L5, L6]}
+    - {id: S3-C04, parents: [OFFER-33], topic: ELECTRICAL_LOAD_AND_DISTRIBUTION, source_support_class: SOURCE_SUPPORTED_OFFER, quantitative_binding_state: PARTIAL, lifecycle: [L2, L4, L5, L6]}
+    - {id: S3-C05, parents: [OFFER-32], topic: TRANSPORT_INSTALLATION_AND_LIFTING, source_support_class: SOURCE_SUPPORTED_OFFER, quantitative_binding_state: SCREENING_ONLY, lifecycle: [L2, L4]}
+    - {id: S3-C06, parents: [RTM-495, OFFER-39], topic: FAT_SAT_TEST_UTILITIES_AND_RESOURCES, source_support_class: SOURCE_SUPPORTED_CONTRACT_AND_OFFER, quantitative_binding_state: PARTIAL, lifecycle: [L2, L3, L4, L5, L6]}
+    - {id: S3-C07, parents: [RTM-605, RTM-608], topic: HSE_CERTIFICATION_AND_METHOD_STATEMENTS, source_support_class: SOURCE_SUPPORTED_CONTRACT_AND_HSE, quantitative_binding_state: PARTIAL, lifecycle: [L1, L2, L3, L4, L5, L6], mandatory_gate: true}
+    - {id: S3-C08, parents: [RTM-146, RTM-147, OFFER-15], topic: VIBRATION_AND_NOISE_VERIFICATION, source_support_class: SOURCE_SUPPORTED_CONTRACT_AND_OFFER, quantitative_binding_state: SCREENING_ONLY, lifecycle: [L2, L5, L6]}
+    - {id: S3-C09, parents: [RTM-560, OFFER-41], topic: STRATEGIC_SPARES, source_support_class: SOURCE_SUPPORTED_CONTRACT_AND_OFFER, quantitative_binding_state: PARTIAL, lifecycle: [L2, L3, L6]}
+    - {id: S3-C10, parents: [RTM-064, OFFER-42, OFFER-43], topic: MAINTENANCE_SERVICE_AND_INTERVENTION, source_support_class: SOURCE_SUPPORTED_CONTRACT_AND_OFFER, quantitative_binding_state: PARTIAL, lifecycle: [L1, L2, L6]}
+  typed_edges:
+    - {from: S3-C02, to: S3-C03, type: COMMON_UTILITY_BOUNDARY}
+    - {from: S3-C03, to: S3-C04, type: OPERATING_COST_COUPLING}
+    - {from: S3-C05, to: S3-C07, type: EXECUTION_HSE_DEPENDENCY}
+    - {from: S3-C06, to: S3-C03, type: ACCEPTANCE_RESOURCE_DEPENDENCY}
+    - {from: S3-C06, to: S3-C04, type: ACCEPTANCE_RESOURCE_DEPENDENCY}
+    - {from: S3-C08, to: S3-C06, type: ACCEPTANCE_EVIDENCE_DEPENDENCY}
+    - {from: S3-C09, to: S3-C10, type: LIFECYCLE_SUPPORT_DEPENDENCY}
+requested_KEB_operations:
+  - normalize_source_support_class_vs_quantitative_binding_state_as_separate_governed_dimensions
+  - validate_enum_names_and_aliases_for_FULLY_BOUND_PARTIAL_SCREENING_ONLY_MISSING
+  - validate_lifecycle_L1_L6_terms_without_collapsing_installation_commissioning_or_acceptance
+  - normalize_parent_child_and_typed_edge_semantics
+  - normalize_acceptance_resource_dependency_execution_HSE_dependency_and_lifecycle_support_dependency
+  - validate_rank_delta_and_reverse_load_terms_as_attention_metrics_not_compliance_or_maturity
+  - preserve_exact_parent_RTM_OFFER_identifiers_without_promoting_offer_evidence_to_contract_authority
+  - validate_no_zero_imputation_semantics_for_missing_commercial_evidence
+  - return_semantic_drift_or_schema_gaps_for_child_ACCEPT_REJECT_DEFER
+required_return:
+  - stable_finding_id
+  - correlation_id
+  - governed_term_or_reference
+  - operation
+  - drift_or_validation_result
+  - affected_child_ids
+  - recommended_child_action
+  - reusable_parent_pattern_candidate
+  - input_glossary_output_hashes
+  - disposition_unset
+prohibited:
+  - real_or_confidential_bidder_identity
+  - bidder_confidential_text
+  - commercial_values
+  - CODEX_generated_QPS_compliance
+  - automatic_contract_authority_promotion
+  - parent_generated_maturity_or_completion_credit
+child_disposition_contract:
+  governed_values: [ACCEPT, REJECT, DEFER]
+  parent_findings_are_candidates: true
+closure_test: returned_KEB_receipt_plus_child_disposition_plus_parent_feedback_receipt
