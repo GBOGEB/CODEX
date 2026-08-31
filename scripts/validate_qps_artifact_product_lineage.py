@@ -43,11 +43,17 @@ def validate_contract(data: dict[str, Any]) -> list[str]:
             errors.append(f"{entry.get('artifact_type')} has incomplete output controls")
 
     baseline = data.get("evidence_baseline", {})
-    rtm = int(baseline.get("rtm_nodes", 0))
-    offer = int(baseline.get("offer_nodes", 0))
-    edges = int(baseline.get("crosswalk_edges", 0))
-    reviewed = int(baseline.get("reviewed_edges", 0))
-    if not math.isclose(float(baseline.get("reviewed_edge_coverage", -1)), _ratio(reviewed, edges), rel_tol=1e-9):
+    try:
+        rtm = int(baseline.get("rtm_nodes", 0))
+        offer = int(baseline.get("offer_nodes", 0))
+        edges = int(baseline.get("crosswalk_edges", 0))
+        reviewed = int(baseline.get("reviewed_edges", 0))
+        reviewed_edge_coverage = float(baseline.get("reviewed_edge_coverage", -1))
+    except (TypeError, ValueError):
+        errors.append("evidence_baseline numeric fields must be numbers")
+        rtm = offer = edges = reviewed = 0
+        reviewed_edge_coverage = -1.0
+    if not math.isclose(reviewed_edge_coverage, _ratio(reviewed, edges), rel_tol=1e-9):
         errors.append("reviewed_edge_coverage does not match reviewed_edges/crosswalk_edges")
 
     pca = data.get("pca_screening", {})
