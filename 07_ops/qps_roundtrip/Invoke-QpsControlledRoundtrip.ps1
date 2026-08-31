@@ -113,7 +113,7 @@ foreach ($label in @('A', 'B')) {
         $semanticName = ([System.IO.Path]::GetFileNameWithoutExtension($artifactName) + '.semantic.json')
         $semanticPath = Join-Path $semanticDir $semanticName
         python $semanticExtractor $artifact -o $semanticPath
-        if ($LASTEXITCODE -ne 0) { throw "Semantic extraction failed for build $label: $artifactName" }
+        if ($LASTEXITCODE -ne 0) { throw "Semantic extraction failed for build $($label): $artifactName" }
         $semanticFiles += $semanticPath
     }
 
