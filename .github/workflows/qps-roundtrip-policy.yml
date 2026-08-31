@@ -199,8 +199,38 @@ jobs:
           $vault = Join-Path $root 'vault'
           $workspace = Join-Path $root 'workspace'
           $releaseRoot = Join-Path $root 'releases'
+          $repoRoot = Join-Path $root 'repos'
           New-Item -ItemType Directory -Force (Join-Path $vault 'Offers') | Out-Null
-          New-Item -ItemType Directory -Force $releaseRoot | Out-Null
+          New-Item -ItemType Directory -Force $releaseRoot, $repoRoot | Out-Null
+
+          $repoSpecs = @(
+            @{ Name = 'ABACUS'; Url = 'https://github.com/GBOGEB/ABACUS.git' },
+            @{ Name = 'CODEX'; Url = 'https://github.com/GBOGEB/CODEX.git' },
+            @{ Name = 'cryoplant-project'; Url = 'https://github.com/GBOGEB/cryoplant-project.git' },
+            @{ Name = 'DOCX_RTM_Automation'; Url = 'https://github.com/GBOGEB/DOCX_RTM_Automation.git' }
+          )
+          foreach ($spec in $repoSpecs) {
+            $repoPath = Join-Path $repoRoot $spec.Name
+            New-Item -ItemType Directory -Force $repoPath | Out-Null
+            git -C $repoPath init -b main
+            git -C $repoPath config user.email 'qps-ci@example.invalid'
+            git -C $repoPath config user.name 'QPS Synthetic CI'
+            Set-Content -LiteralPath (Join-Path $repoPath '.qps-synthetic') -Value $spec.Name -NoNewline
+            if ($spec.Name -eq 'CODEX') {
+              $toolDir = Join-Path $repoPath '07_ops/qps_roundtrip'
+              New-Item -ItemType Directory -Force $toolDir | Out-Null
+              Copy-Item `
+                -LiteralPath './07_ops/qps_roundtrip/Initialize-QpsWorkspace.ps1' `
+                -Destination (Join-Path $toolDir 'Initialize-QpsWorkspace.ps1')
+            }
+            git -C $repoPath add .
+            git -C $repoPath commit -m 'synthetic baseline'
+            git -C $repoPath remote add origin $spec.Url
+            $head = (git -C $repoPath rev-parse HEAD).Trim()
+            git -C $repoPath update-ref refs/remotes/origin/main $head
+            git -C $repoPath branch --set-upstream-to=origin/main main
+          }
+
           $evidenceFile = Join-Path $vault 'Offers/example.txt'
           Set-Content -LiteralPath $evidenceFile -Value 'verified-evidence' -NoNewline
           $hash = (Get-FileHash -LiteralPath $evidenceFile -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -220,7 +250,6 @@ jobs:
               verification_status: HASH_VERIFIED_SIZE_PENDING
           "@ | Set-Content -LiteralPath $registry -Encoding utf8
 
-          $repoRoot = Split-Path -Parent $env:GITHUB_WORKSPACE
           $builder = Join-Path $env:GITHUB_WORKSPACE '07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1'
           $result = & ./07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1 `
             -RepoRoot $repoRoot `
