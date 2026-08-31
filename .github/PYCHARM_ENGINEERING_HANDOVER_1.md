@@ -1,8 +1,45 @@
 # PyCharm Engineering Handover — QPLANT_GitHub_Integration &harr; ABACUS &harr; CODEX &harr; cryoplant-project
 
 Round 21, corrected and substantially extended in Round 22, corrected again in Round 23, extended
-with a new finding in Round 24. Written for whoever (including future-you) opens this work in
-PyCharm next.
+with a new finding in Round 24, extended with five new build capabilities in Round 25. Written for
+whoever (including future-you) opens this work in PyCharm next.
+
+> **Round 25 update, read this first.** &sect;8 item 6 below records GBO deciding to keep the
+> OneDrive sync-folder path as the only editing mechanism and defer Graph API/Office COM
+> automation/docx-pptx-pdf authoring. Minutes later, GBO reversed that call and asked for all four
+> to be built. All four are now built and pushed to `origin/main`:
+>
+> - **docx authoring** (`codex/contract_governance/docx_builder.py`) -- tiered `.docx` snapshot,
+>   wired into `build_artifacts()` alongside the existing xlsx/html.
+> - **pptx authoring** (`codex/contract_governance/pptx_builder.py`) -- tiered `.pptx` deck,
+>   paginated table slides. Also fixed a pre-existing gap: `python-pptx` was an implicit read-side
+>   dependency of `src/ingress/*.py` but was never actually declared in `requirements.txt`.
+> - **PDF authoring** (`codex/contract_governance/pdf_builder.py`) -- tiered `.pdf` report via
+>   reportlab, rendered directly from the same payload (not a docx/pptx conversion), so it works
+>   on `ubuntu-latest` CI with no external Office/LibreOffice binary.
+> - **Office COM automation** (`src/office_com.py`) -- one narrow `convert_document_to_pdf()`
+>   helper via Word's COM `ExportAsFixedFormat`, Windows-only, lazy-imported so the module still
+>   imports cleanly everywhere else. **Not verified end-to-end**: this machine has `pywin32`
+>   uninstalled, so the real-conversion test currently skips via `pytest.importorskip`. GBO must
+>   run `pip install -e .[windows]` then `pytest tests/office_com/ -v` against a real local Word
+>   install to confirm it actually works -- that check needs the real machine, not an assumption.
+> - **Microsoft Graph API client** (`src/graph_client.py`) -- `GraphConfig`/`GraphClient` mirroring
+>   `src/confluence_client.py`'s shape, `upload_file()`/`download_file()` against
+>   `/me/drive/root:/{path}:/content` via msal client-credentials auth. Fully covered by 8 mocked
+>   tests, no live Azure dependency to run them. **Cannot be provisioned by me**: real use needs
+>   GBO to register an Azure AD app (Azure Portal -> App registrations, a client secret, Microsoft
+>   Graph Application permissions `Files.ReadWrite.All`/`Sites.ReadWrite.All` with admin consent)
+>   and set `GRAPH_TENANT_ID`/`GRAPH_CLIENT_ID`/`GRAPH_CLIENT_SECRET`. Until then, real calls 401 --
+>   expected, not a bug.
+>
+> One disclosed deviation from the build plan: `msal` was added only to `pyproject.toml`'s new
+> `graph` optional-dependencies group, not to the unconditional `requirements.txt` -- it pulls in
+> `cryptography`/`cffi`/`PyJWT` and is only ever lazily imported, and GitHub's Dependabot count on
+> this repo had already jumped from 2 to **39** vulnerabilities (2 high, 33 moderate, 4 low) after
+> the docx/pptx/pdf/pywin32 additions in the four commits before it -- flagged here since that
+> count is a real, disclosed side effect of this round's work, not something quietly absorbed.
+> Worth a look at `github.com/GBOGEB/CODEX/security/dependabot` before relying on this dependency
+> set in anything security-sensitive.
 
 > **Round 24 addendum, read this first.** &sect;4 below (Rounds 21-23) describes the ALAT
 > Q3/Q4/Q5 clarification-bridge overlap as a two-way question -- "ABACUS has a package, this
@@ -390,26 +427,25 @@ siblings. Not done this round -- flagged for your decision.
    better IDE specifically for working with Claude and repo navigation (still learning PyCharm and
    its GitHub-integration side). Both stay in use for different purposes -- no need to retire
    either or force a single-tool standardization.
-6. **Decided (GBO, 2026-08-31).** Option (A) from &sect;9: keep the existing
-   local-OneDrive-folder sync path (`Publish-QpsRelease.ps1` -> `$env:QPS_RELEASE_ROOT`,
-   `-CreateOfficeReviewCopy` -> `20_WORKING_REVIEW`, `New-QpsReviewChange.ps1`'s disposition
-   ledger) as the only OneDrive/Office365 editing mechanism for now -- no new work needed, it
-   already does what was asked. (B) Graph API and (C) Office COM automation are deferred, to be
-   revisited later rather than built speculatively. Whether to build docx/pptx/pdf *authoring*
-   capability (currently absent from CODEX; &sect;9) remains open and is a separate question from
-   this one.
+6. **Decided, then reversed and built (GBO, 2026-08-31).** Initially decided: option (A) from
+   &sect;9, keep the existing local-OneDrive-folder sync path as the only OneDrive/Office365
+   editing mechanism, defer (B) Graph API and (C) Office COM automation, leave docx/pptx/pdf
+   authoring open. Minutes later, GBO reversed this and asked for all four to be built. **All four
+   are now built** -- see the Round 25 note at the top of this file for what shipped, what's
+   verified, and what still needs GBO's local/Azure follow-up.
 
-## 9. Binary/document artifact inventory and OneDrive/Office365 editing options (round 24 addendum)
+## 9. Binary/document artifact inventory and OneDrive/Office365 editing options (round 24 addendum,
+table below updated round 25)
 
-**What CODEX can create today, confirmed by reading the actual code (not inferred):**
+**What CODEX can create, confirmed by reading the actual code (not inferred):**
 
 | Format | Creatable? | Where |
 |---|---|---|
 | `.xlsx` | **Yes** | `codex/contract_governance/builder.py` (`openpyxl.Workbook`) -- Requirements / Traceability Matrix / Extraction Audit / Evaluation Notes sheets, tiered `internal`/`bidder` visibility. Also `rtm_integration/contract_followup/alat_clarification_bridge/tools/generate_bridge.py` (produces an xlsx + an html view). |
 | `.html` | **Yes** | Same ALaT bridge tool; `analytics/qps_thermo_dashboard/*.html`; `src/tools/slide_preview_generator.py`'s `slide_preview.html`. |
-| `.pptx` | **Read/ingest only, not authoring.** | `src/ingress/pptx_semantic_ingress_runtime_v1.py`, `src/ingress/pptx_geometry_semantic_runtime_v1.py`, `src/tools/slide_preview_generator.py` all open existing `.pptx` files (`python-pptx`'s `Presentation(path)`) to extract text/geometry/preview JSON+HTML. None of them write a new `.pptx`. |
-| `.docx` | **No capability found.** | No `python-docx` import anywhere in this repo outside `.venv`. |
-| `.pdf` | **No capability found in CODEX.** | Not produced by anything in this repo. |
+| `.docx` | **Yes, as of round 25.** | `codex/contract_governance/docx_builder.py`, wired into `build_artifacts()`. |
+| `.pptx` | **Yes, as of round 25 (previously read/ingest only).** | `codex/contract_governance/pptx_builder.py` (write mode, wired into `build_artifacts()`), alongside the pre-existing `src/ingress/pptx_semantic_ingress_runtime_v1.py` / `pptx_geometry_semantic_runtime_v1.py` / `src/tools/slide_preview_generator.py` (read/extract, unchanged). |
+| `.pdf` | **Yes, as of round 25.** | `codex/contract_governance/pdf_builder.py` (reportlab, renders directly from the governance payload -- not a docx/pptx conversion, so it works on Linux CI). An optional higher-fidelity Word-conversion path also exists via `src/office_com.py::convert_document_to_pdf()`, Windows+Word only, not wired into the builder. |
 
 **Specified but deliberately not implemented here**: `07_ops/qps_roundtrip/BUILDER_CONTRACT.md`
 requires an external builder to produce exactly `QPS_COST_Master.xlsx`,
@@ -449,22 +485,20 @@ directly answers "I want the write to local OneDrive which is also OneDrive in t
 - Confirmed real evidence root already in use: `C:\Users\gbonthuy\OneDrive - Studiecentrum voor
   Kernenergie\Master\_Input\OFFERS\_ITT` (`07_ops/qps_roundtrip/QPS_WCS_QRB_rev1_7_roundtrip.md`).
 
-**What is not yet built, if more than the sync-folder path is wanted** (see &sect;8 item 6 for the
-decision this needs):
+**Built as of round 25** (see the Round 25 note at the top of this file for the full rundown):
 
-- **Microsoft Graph API** integration (`/me/drive/root:/path:/content` etc.) -- lets a script push
-  to OneDrive/SharePoint directly over HTTPS without depending on the desktop sync client being
-  installed or running, and opens the door to real-time co-authoring session info, comment threads,
-  and version history via API rather than filesystem inspection. Requires an Azure AD app
-  registration and delegated/application permissions -- a real security/governance decision, not
-  something to add unilaterally.
-- **Local Office COM automation** (`pywin32` / `win32com.client`, Windows-only, requires desktop
-  Office installed) -- for precise formatting operations `openpyxl`/`python-pptx`/`python-docx`
-  can't reach (e.g. exact PowerPoint animation timing, Word field codes, Excel pivot-table
-  refresh), or for driving an already-open document. Heavier and more fragile than the file-based
-  approaches above; worth it only for specific formatting gaps, not as a general strategy.
-- **`.docx`/`.pptx`/`.pdf` authoring in Python** (`python-docx`, `python-pptx` write mode, a
-  PDF renderer) -- currently zero capability in CODEX for any of the three, versus full `.xlsx`
-  authoring already in place. If CODEX is meant to produce (not just ingest) the docx/pptx/pdf
-  outputs `BUILDER_CONTRACT.md` names, this is real, unstarted implementation work, separate from
-  the OneDrive-write question above.
+- **Microsoft Graph API** client (`src/graph_client.py`) -- `upload_file()`/`download_file()`
+  against `/me/drive/root:/path:/content` via msal client-credentials auth, mirroring
+  `src/confluence_client.py`'s shape. 8 mocked tests pass; real use still needs GBO to register an
+  Azure AD app -- that provisioning step could not be done by this session.
+- **Local Office COM automation** (`src/office_com.py`) -- one narrow `convert_document_to_pdf()`
+  helper via Word's COM `ExportAsFixedFormat`, Windows-only, lazily imported. Guard tests pass
+  everywhere; the real-conversion test currently skips on this machine (no `pywin32` installed)
+  and needs GBO's local verification against a real Word install.
+- **`.docx`/`.pptx`/`.pdf` authoring in Python** (`codex/contract_governance/{docx,pptx,pdf}_
+  builder.py`) -- all three now wired into `build_artifacts()` alongside the pre-existing `.xlsx`
+  authoring, reusing the same `GovernanceSSOT`/`workbook_payload`/`content_hash` pipeline. This
+  does not build the QPS-cost-specific `BUILDER_CONTRACT.md` deliverables themselves (that builder
+  deliberately lives outside CODEX, per &sect;7's scope boundary) -- it gives CODEX's own generic
+  governance data the same five renderings `.xlsx` already had, which any external QPS builder
+  could import as building blocks.
