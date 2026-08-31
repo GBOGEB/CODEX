@@ -1,4 +1,4 @@
-version: 0.3.1
+version: 0.3.2
 system:
   name: GBOGEB/CODEX
   codename: ABACUS_RENDER_PIPELINE
@@ -36,6 +36,24 @@ glossary:
 
   semantic_html:
     definition: Normalized meaning-bearing representation of HTML headings, identifiers, text, assets, links, and embedded governed data used for reproducibility comparison.
+
+  semantic_normalization_and_drift_validation:
+    definition: Governed KEB operation that normalizes terminology while preserving source identity, then reports semantic divergence for child disposition.
+
+  semantic_risks:
+    definition: Structured semantic failure modes or ambiguity risks retained as review candidates rather than compliance findings.
+
+  semantic_gap_burn_down:
+    definition: Control metric describing reduction of identified semantic gaps across governed repair iterations without implying engineering completion.
+
+  semantic_repair_pr:
+    definition: Pull request whose bounded purpose is to repair deterministic semantic-governance or validation debt.
+
+  semantic_drift_flags_are_review_candidates_not_compliance_findings:
+    definition: Authority invariant stating that semantic drift flags require review and disposition and do not themselves establish contract compliance.
+
+  semantic_substrate_debt_remains_separate_parent_repair_lane:
+    definition: Authority invariant separating CODEX semantic-substrate maintenance debt from QPS child engineering closure and bidder evaluation credit.
 
   dow:
     canonical_term: DOW
@@ -100,7 +118,6 @@ glossary:
 
   publication_pipeline:
     definition: End-to-end extraction, governance, rendering, validation, and publication workflow.
-
 
 runtime_maturity:
   semantic_governance: operational
