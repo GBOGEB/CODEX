@@ -19,10 +19,20 @@ whoever (including future-you) opens this work in PyCharm next.
 >   on `ubuntu-latest` CI with no external Office/LibreOffice binary.
 > - **Office COM automation** (`src/office_com.py`) -- one narrow `convert_document_to_pdf()`
 >   helper via Word's COM `ExportAsFixedFormat`, Windows-only, lazy-imported so the module still
->   imports cleanly everywhere else. **Not verified end-to-end**: this machine has `pywin32`
->   uninstalled, so the real-conversion test currently skips via `pytest.importorskip`. GBO must
->   run `pip install -e .[windows]` then `pytest tests/office_com/ -v` against a real local Word
->   install to confirm it actually works -- that check needs the real machine, not an assumption.
+>   imports cleanly everywhere else. **Now verified end-to-end on GBO's real machine** with
+>   `pywin32` installed and a real Word conversion actually run -- two real bugs surfaced and got
+>   fixed along the way, both diagnosed by direct reproduction outside pytest, neither in
+>   `office_com.py`'s own logic: (1) GBO had an unrelated, already-hung Word instance open
+>   (`QPS_Corrigendum_AD07.docx`) that plain `Dispatch("Word.Application")` picked up instead of
+>   launching fresh, causing the first attempt to hang -- resolved by GBO closing it, not a code
+>   change, since reusing a running instance is intentional COM behavior a user's open session
+>   should be respected by, not force-killed by automation; (2) the test itself used pytest's
+>   `tmp_path` fixture, which -- like `tempfile.mkdtemp()` -- creates its directory with an
+>   owner-only ACL (documented Python security hardening) that on this machine turned out to be
+>   scoped tighter than "same Windows user account" (confirmed via `icacls`: even an interactive
+>   PowerShell session in the same account got "Access is denied" listing it), so a freshly
+>   launched Word process couldn't read it either -- fixed by building the test's working directory
+>   with a plain `Path.mkdir()` instead. All 3 `tests/office_com/` tests now pass for real.
 > - **Microsoft Graph API client** (`src/graph_client.py`) -- `GraphConfig`/`GraphClient` mirroring
 >   `src/confluence_client.py`'s shape, `upload_file()`/`download_file()` against
 >   `/me/drive/root:/{path}:/content` via msal client-credentials auth. Fully covered by 8 mocked
@@ -492,9 +502,10 @@ directly answers "I want the write to local OneDrive which is also OneDrive in t
   `src/confluence_client.py`'s shape. 8 mocked tests pass; real use still needs GBO to register an
   Azure AD app -- that provisioning step could not be done by this session.
 - **Local Office COM automation** (`src/office_com.py`) -- one narrow `convert_document_to_pdf()`
-  helper via Word's COM `ExportAsFixedFormat`, Windows-only, lazily imported. Guard tests pass
-  everywhere; the real-conversion test currently skips on this machine (no `pywin32` installed)
-  and needs GBO's local verification against a real Word install.
+  helper via Word's COM `ExportAsFixedFormat`, Windows-only, lazily imported. **Verified
+  end-to-end** with `pywin32` installed and a real Word conversion run on GBO's machine; see the
+  Round 25 note at the top of this file for the two real bugs (an unrelated hung Word instance,
+  and a pytest-fixture ACL issue) found and fixed along the way.
 - **`.docx`/`.pptx`/`.pdf` authoring in Python** (`codex/contract_governance/{docx,pptx,pdf}_
   builder.py`) -- all three now wired into `build_artifacts()` alongside the pre-existing `.xlsx`
   authoring, reusing the same `GovernanceSSOT`/`workbook_payload`/`content_hash` pipeline. This
