@@ -1,0 +1,67 @@
+schema_version: "0.1"
+correlation_id: QPS-FED-W05-BIDDER-EVAL
+source_wave: QPS-BIDDER-EVAL-W03
+confidentiality: SANITIZED_TERMS_AND_EVIDENCE_CLASSES_ONLY
+source_identity:
+  child_repository: GBOGEB/cryoplant-project
+  child_artifact: ocd-adr/40_implementation/QPS_BIDDER_PARALLEL_EVAL_W03_v0.1.yaml
+  child_baseline_sha: 1960710735177c398123af955c33daa8711ece60
+exchange_domains:
+  - HSE_SHE_safety_file
+  - RAMS_MSRA_LMRA_HAZID_HAZOP
+  - PID_P_and_ID_tagging_cause_effect_alarm_trip
+  - QMS_QAP_QA_QC_ITP_DDS_NCR
+  - ISO9001_certificate_scope_vs_contract_scope
+  - WPS_WPQR_welder_operator_NDT_orbital_welding
+  - codes_standards_law_and_regulation_hierarchy
+  - lifecycle_L1_L6_operation_maintenance_warranty
+  - Addendum_I_Addendum_II_OFFER_RTM_AD_reference_hierarchy
+  - evidence_location_document_status_and_proof_level
+  - edge_semantics
+edge_semantics:
+  - DIRECT
+  - SUPPORTING
+  - EVIDENCE_ONLY
+  - CONTRADICTS
+  - ALLOCATION_SHIFT
+  - MULTI_NODE_EVIDENCE
+  - INTERNAL_CONTRADICTION
+proof_levels: [P0,P1,P2,P3,P4,P5,P6]
+document_status_terms: [information,review,approval,hold,witness,record,as_built]
+lifecycle_terms: [L1,L2,L3,L4,L5,L6,operation,maintenance,warranty]
+normalization_targets:
+  HSE_SHE_safety_file:
+    aliases: [HSE,SHE,safety_file,project_safety_file]
+  RAMS_MSRA_LMRA_HAZID_HAZOP:
+    aliases: [RAMS,MSRA,LMRA,HAZID,HAZOP,FMECA]
+  PID_P_and_ID_tagging_cause_effect_alarm_trip:
+    aliases: [PID,P_and_ID,tagging,cause_effect,alarm_trip,interlock]
+  QMS_QAP_QA_QC_ITP_DDS_NCR:
+    aliases: [QMS,QAP,QA,QC,ITP,DDS,NCR]
+  WPS_WPQR_welder_operator_NDT_orbital_welding:
+    aliases: [WPS,WPQR,welder,operator,NDT,orbital_welding,automatic_welding]
+semantic_risks:
+  - id: KEB-W05-DOC-STATUS
+    term_group: document_status
+    risk: named_deliverable_must_not_equal_approved_contract_file_or_holdpoint_release
+  - id: KEB-W05-CERT-SCOPE
+    term_group: ISO9001
+    risk: certificate_scope_must_not_equal_project_specific_contract_application
+  - id: KEB-W05-LIFECYCLE
+    term_group: lifecycle
+    risk: L4_L5_L6_must_not_collapse_into_generic_commissioning_or_acceptance
+  - id: KEB-W05-EDGE
+    term_group: evidence_edges
+    risk: multi_node_evidence_must_not_be_counted_as_independent_duplicate_proof
+  - id: KEB-W05-HIERARCHY
+    term_group: reference_hierarchy
+    risk: bidder_proposed_precedence_must_not_override_controlled_contract_authority
+  - id: KEB-W05-WELDING
+    term_group: welding_NDT
+    risk: normalize_aliases_without_erasing_code_standard_identity_or_qualification_basis
+parent_rules:
+  no_bidder_names: true
+  no_confidential_text: true
+  no_commercial_values: true
+  no_contract_authority_promotion: true
+  findings_require_child_disposition: true
