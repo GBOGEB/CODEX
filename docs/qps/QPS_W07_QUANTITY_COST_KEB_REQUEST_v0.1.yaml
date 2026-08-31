@@ -1,0 +1,26 @@
+schema_version: "0.1"
+wave_id: W07
+correlation_id: QPS-W07-QUANTITY-COST-TRANSFORM
+authority: QPS_child
+child_merge_sha: 3ca89f5ab0318a11d6beb3b193b04badad17486d
+purpose: normalize quantity, unit, coefficient, currency, lifecycle and provenance semantics for governed quantity-to-cost exposure transforms.
+targets: [S3-C03, S3-C05, S3-C02, S3-C06]
+required_returns:
+  - canonical_quantity_and_unit_terms
+  - coefficient_semantics
+  - currency_and_price_basis_semantics
+  - lifecycle_basis_semantics
+  - provenance_conflicts
+  - dimension_conflicts
+  - missing_governed_coefficients
+  - novel_vs_duplicate_findings
+  - semantic_gap_burn_down
+  - parent_child_cycle_time
+controls:
+  parent_output_candidate_only: true
+  preserve_source_support_vs_quantitative_binding: true
+  no_guessed_unit_cost: true
+  no_zero_imputation: true
+  no_cross_bidder_price_substitution: true
+  no_engineering_or_commercial_credit: true
+  pca_bt_rerank_only_after_controlled_numeric_cost_input_change: true
