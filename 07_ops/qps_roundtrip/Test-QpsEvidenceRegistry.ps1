@@ -27,7 +27,7 @@ $current = $null
 function Complete-Record {
     param($Record)
 
-    if ($null -ne $Record -and $Record.ContainsKey('id')) {
+    if ($null -ne $Record -and $Record.Contains('id')) {
         $script:records += [pscustomobject]$Record
     }
 }
