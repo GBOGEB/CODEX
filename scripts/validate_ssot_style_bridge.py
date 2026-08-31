@@ -24,6 +24,11 @@ REQUIRED_ALL_CLEAR_REQUIREMENTS = {"no_blocking_conclusions", "no_unwaived_cance
 REQUIRED_FEDERATION_REPOS = {"GBOGEB/ABACUS", "GBOGEB/CODEX", "GBOGEB/cryoplant-project"}
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+REQUIRED_BASELINE_SHA256 = {
+    "GBOGEB/ABACUS": "8735c00c95c880578148639238ea4dcdcf25779d22e382e0c5dde4d0b39498f5",
+    "GBOGEB/CODEX": "b6f2c4451ba9de761c4c97a89978aeb436e51f63d7ce8ab8571697797ae8bbf4",
+    "GBOGEB/cryoplant-project": "1209db158f25f393a7c33963bb149ada5485b29238afd8fd4345af678d04b80f",
+}
 
 
 def load_manifest(path: Path) -> dict[str, Any]:
@@ -153,10 +158,11 @@ def validate_lineage_binding(manifest: dict[str, Any], errors: list[str]) -> Non
     require(lineage.get("contract_version") == "0.2.0", "lineage contract_version must be 0.2.0", errors)
     require(lineage.get("status") == "pending_retest", "lineage status must be pending_retest", errors)
     inputs = require_mapping(lineage.get("baseline_inputs", {}), "lineage_binding.baseline_inputs", errors)
-    for repo in REQUIRED_FEDERATION_REPOS:
+    for repo in sorted(REQUIRED_FEDERATION_REPOS):
         binding = require_mapping(inputs.get(repo, {}), f"lineage_binding.baseline_inputs.{repo}", errors)
         require(bool(SHA_RE.fullmatch(str(binding.get("commit_sha", "")))), f"invalid commit SHA for {repo}", errors)
         require(bool(SHA256_RE.fullmatch(str(binding.get("manifest_sha256", "")))), f"invalid manifest SHA256 for {repo}", errors)
+        require(binding.get("manifest_sha256") == REQUIRED_BASELINE_SHA256[repo], f"baseline manifest SHA256 mismatch for {repo}", errors)
         require(bool(binding.get("manifest_path")), f"manifest path missing for {repo}", errors)
 
 
