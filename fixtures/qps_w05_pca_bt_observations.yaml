@@ -1,0 +1,32 @@
+schema_version: "0.1"
+wave_id: W05
+node: CODEX
+status: diagnostic_seed_pending_runtime_refresh
+observations:
+  - timestamp: "2026-08-31T03:00:00Z"
+    factor_or_intervention_id: PCA-STABILITY
+    metric_name: queued_jobs
+    metric_value: 0
+    unit: jobs
+    evidence_reference: github_actions_queue_snapshot
+    authority_class: derived_operational_analysis
+    disposition_state: diagnostic_only
+  - timestamp: "2026-08-31T03:00:00Z"
+    factor_or_intervention_id: PCA-STABILITY
+    metric_name: active_jobs
+    metric_value: 0
+    unit: jobs
+    evidence_reference: github_actions_queue_snapshot
+    authority_class: derived_operational_analysis
+    disposition_state: diagnostic_only
+  - timestamp: "2026-08-31T03:00:00Z"
+    factor_or_intervention_id: BT-P5
+    metric_name: helper_capacity_candidate
+    metric_value: 0
+    unit: workers
+    evidence_reference: CODEX_W05_zero_backlog_control_state
+    authority_class: diagnostic_only
+    disposition_state: no_treatment_needed
+notes:
+  - CODEX zero-backlog state is a control observation, not proof of engineering maturity.
+  - Extra helpers remain low priority until targetable CODEX work or cycle-time pressure reappears.
