@@ -11,29 +11,64 @@ confidentiality:
   bidder_text_removed: true
   prices_removed: true
   payment_percentages_removed: true
-semantic_domains:
+exchange_domain_definitions:
   HSE_SHE_safety_file:
-    aliases: [HSE,SHE,safety_file,project_safety_file,Contractor_HSE_Plan]
+    aliases: [HSE, SHE, safety_file, project_safety_file, Contractor_HSE_Plan]
   RAMS_MSRA_LMRA_HAZID_HAZOP:
-    aliases: [RAMS,MSRA,LMRA,HAZID,HAZOP,risk_assessment,method_statement]
+    aliases: [RAMS, MSRA, LMRA, HAZID, HAZOP, risk_assessment, method_statement]
   PID_P_and_ID_tagging_cause_effect_alarm_trip:
-    aliases: [PID,P_and_ID,tagging,cause_effect,alarm_trip,interlock]
+    aliases: [PID, P_and_ID, tagging, cause_effect, alarm_trip, interlock]
   QMS_QAP_QA_QC_ITP_DDS_NCR:
-    aliases: [QMS,QAP,QA,QC,ITP,DDS,NCR,quality_plan,inspection_plan]
+    aliases: [QMS, QAP, QA, QC, ITP, DDS, NCR, quality_plan, inspection_plan]
   ISO9001_certificate_scope_vs_contract_scope:
-    aliases: [ISO9001,ISO_9001,certificate_scope,project_QMS,contract_scope]
+    aliases: [ISO9001, ISO_9001, certificate_scope, project_QMS, contract_scope]
   WPS_WPQR_welder_operator_NDT_orbital_welding:
-    aliases: [WPS,WPQR,welder,operator,NDT,orbital_welding,automatic_welding]
+    aliases: [WPS, WPQR, welder, operator, NDT, orbital_welding, automatic_welding]
   codes_standards_law_and_regulation_hierarchy:
-    aliases: [PED,EN_13480,EN_13445,ISO_9712,EN_17636,ISO_5817,IEC_61508,IEC_61511]
+    aliases:
+      - PED
+      - EN_13480
+      - EN_13445
+      - ISO_9712
+      - EN_17636
+      - ISO_5817
+      - IEC_61508
+      - IEC_61511
   lifecycle_L1_L6_operation_maintenance_warranty:
-    aliases: [L1,L2,L3,L4,L5,L6,operation,maintenance,warranty]
+    aliases: [L1, L2, L3, L4, L5, L6, operation, maintenance, warranty]
   Addendum_I_Addendum_II_OFFER_RTM_AD_reference_hierarchy:
-    aliases: [Addendum_I,Addendum_II,OFFER,RTM,AD_02,Applicable_Document]
+    aliases: [Addendum_I, Addendum_II, OFFER, RTM, AD_02, Applicable_Document]
   evidence_location_document_status_and_proof_level:
-    aliases: [P0,P1,P2,P3,P4,P5,P6,IFI,IFE,IFU,IFD,IFR,IFA,FR,AB,approval,review,hold,witness,as_built]
+    aliases:
+      - P0
+      - P1
+      - P2
+      - P3
+      - P4
+      - P5
+      - P6
+      - IFI
+      - IFE
+      - IFU
+      - IFD
+      - IFR
+      - IFA
+      - FR
+      - AB
+      - approval
+      - review
+      - hold
+      - witness
+      - as_built
   edge_semantics:
-    aliases: [DIRECT,SUPPORTING,EVIDENCE_ONLY,CONTRADICTS,ALLOCATION_SHIFT,MULTI_NODE_EVIDENCE,INTERNAL_CONTRADICTION]
+    aliases:
+      - DIRECT
+      - SUPPORTING
+      - EVIDENCE_ONLY
+      - CONTRADICTS
+      - ALLOCATION_SHIFT
+      - MULTI_NODE_EVIDENCE
+      - INTERNAL_CONTRADICTION
 bidder_semantic_patterns:
   BIDDER_A:
     - HSE_responsibility_shift
