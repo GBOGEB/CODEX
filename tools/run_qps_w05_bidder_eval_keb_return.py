@@ -31,8 +31,10 @@ def digest(paths: list[Path]) -> str:
 
 
 def git_sha() -> str:
-    return subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
-
+    value = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+    if not re.fullmatch(r"[0-9a-f]{40}", value):
+        raise SystemExit("unable to resolve parent git SHA")
+    return value
 
 def norm(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "_", value.lower()).strip("_")
