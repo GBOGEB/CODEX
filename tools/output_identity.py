@@ -73,10 +73,10 @@ def validate_commit(commit: str) -> str:
     return commit
 
 
-def validate_hashes(values: Iterable[str], field: str) -> list[str]:
+def validate_hashes(values: Iterable[object], field: str) -> list[str]:
     result: list[str] = []
     for raw in values:
-        value = raw.strip().lower()
+        value = str(raw).strip().lower()
         if not re.fullmatch(r"[0-9a-f]{64}", value):
             raise ValueError(f"{field} entries must be lowercase SHA-256 values")
         result.append(value)
