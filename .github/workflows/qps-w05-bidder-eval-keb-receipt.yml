@@ -1,3 +1,4 @@
+---
 name: QPS W05 Bidder Evaluation KEB receipt
 
 on:
@@ -5,16 +6,20 @@ on:
   pull_request:
     paths:
       - 'federation/qps/QPS_FED_W05_BIDDER_EVAL_KEB_REQUEST.yaml'
+      - 'federation/qps/QPS_FED_W05_PARENT_SSOT_MANIFEST_v0.1.yaml'
       - 'federation/qps/snapshots/QPS_FED_W05_BIDDER_EVAL_KEB_SANITIZED_SNAPSHOT_v0.1.yaml'
       - 'tools/run_qps_w05_bidder_eval_keb_return.py'
+      - 'tests/test_qps_w05_bidder_eval_keb_return.py'
       - 'PIPELINE/GLOSSARY.yaml'
       - '.github/workflows/qps-w05-bidder-eval-keb-receipt.yml'
   push:
     branches: [main]
     paths:
       - 'federation/qps/QPS_FED_W05_BIDDER_EVAL_KEB_REQUEST.yaml'
+      - 'federation/qps/QPS_FED_W05_PARENT_SSOT_MANIFEST_v0.1.yaml'
       - 'federation/qps/snapshots/QPS_FED_W05_BIDDER_EVAL_KEB_SANITIZED_SNAPSHOT_v0.1.yaml'
       - 'tools/run_qps_w05_bidder_eval_keb_return.py'
+      - 'tests/test_qps_w05_bidder_eval_keb_return.py'
       - 'PIPELINE/GLOSSARY.yaml'
       - '.github/workflows/qps-w05-bidder-eval-keb-receipt.yml'
 
@@ -25,41 +30,53 @@ jobs:
   execute-w05-keb-runtime:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
       - name: Install dependency
         run: python -m pip install --disable-pip-version-check PyYAML
+      - name: Test fail-closed semantic mechanics
+        run: python -m unittest tests.test_qps_w05_bidder_eval_keb_return -v
       - name: Produce runtime receipt
         run: python tools/run_qps_w05_bidder_eval_keb_return.py
       - name: Validate receipt contract
         shell: bash
         run: |
           python - <<'PY'
-          import pathlib, yaml
-          p=pathlib.Path('federation/qps/runtime/QPS_FED_W05_BIDDER_EVAL_KEB_RUNTIME_RECEIPT.yaml')
-          d=yaml.safe_load(p.read_text())
-          assert d['correlation_id']=='QPS-FED-W05-BIDDER-EVAL'
-          assert d['requested_operations']==d['executed_operations']
-          assert d['child_disposition_placeholder']=='UNSET'
-          assert d['typed_semantic_findings']
-          assert len(d['output_hash'])==64
-          required_finding_keys={
-              'stable_finding_id','correlation_id','governed_term_or_reference','operation',
-              'drift_or_validation_result','recommended_child_action','input_glossary_output_hashes',
-              'disposition_unset','qps_authority'
-          }
-          for f in d['typed_semantic_findings']:
-              missing=required_finding_keys-set(f)
-              assert not missing, f"missing finding keys: {sorted(missing)}"
-              assert f['operation'] in d['requested_operations']
-              assert f.get('qps_authority') is False
-              assert f.get('disposition_unset') is True
-          print('W05 KEB receipt PASS', len(d['typed_semantic_findings']), 'findings')
+          import pathlib
+          import re
+          import yaml
+
+          path = pathlib.Path(
+              'federation/qps/runtime/'
+              'QPS_FED_W05_BIDDER_EVAL_KEB_RUNTIME_RECEIPT.yaml'
+          )
+          data = yaml.safe_load(path.read_text())
+          assert data['receipt_contract_version'] == '0.2.0'
+          assert data['correlation_id'] == 'QPS-FED-W05-BIDDER-EVAL'
+          assert data['requested_operations'] == data['executed_operations']
+          assert data['child_disposition_placeholder'] == 'UNSET'
+          assert re.fullmatch(r'[0-9a-f]{64}', data['output_hash'])
+          for operation, status in data['operation_status'].items():
+              assert status['executed'] is True, operation
+              assert status['status'] == 'PASS_EXECUTED_MECHANIC', operation
+              assert re.fullmatch(r'[0-9a-f]{64}', status['result_sha256'])
+          for finding in data['typed_semantic_findings']:
+              assert finding['qps_authority'] is False
+              assert finding['disposition_unset'] is True
+              hashes = finding['input_glossary_output_hashes']
+              assert set(hashes) == {
+                  'request_sha256', 'snapshot_sha256',
+                  'glossary_sha256', 'operation_result_sha256'
+              }
+              assert all(re.fullmatch(r'[0-9a-f]{64}', value) for value in hashes.values())
+          print('W05 KEB executed-mechanics receipt PASS', len(data['typed_semantic_findings']))
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: qps-w05-bidder-eval-keb-runtime-receipt-${{ github.run_id }}
-          path: federation/qps/runtime/QPS_FED_W05_BIDDER_EVAL_KEB_RUNTIME_RECEIPT.yaml
+          name: qps-w05-bidder-eval-keb-${{ github.run_id }}
+          path: >-
+            federation/qps/runtime/
+            QPS_FED_W05_BIDDER_EVAL_KEB_RUNTIME_RECEIPT.yaml
           if-no-files-found: error
