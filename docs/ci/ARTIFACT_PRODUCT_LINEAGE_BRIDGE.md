@@ -4,7 +4,7 @@ Status: Wave B reusable governance bridge
 
 ## Purpose
 
-CODEX provides reusable contracts and validators for outward artifact behaviour. The bridge is deliberately broader than style SSOT validation: it governs functional Excel/HTML behaviour, recursive lineage, interaction QA and stale propagation that ABACUS can consume.
+CODEX provides reusable contracts and validators for outward artifact behaviour. The bridge is deliberately broader than style single-source-of-truth (SSOT) validation: it governs functional Excel/HTML behaviour, recursive lineage, interaction QA and stale propagation that ABACUS can consume.
 
 ## Product-first lanes
 
