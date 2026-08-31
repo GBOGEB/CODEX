@@ -1,0 +1,40 @@
+schema_version: "0.1"
+correlation_id: QPS-FED-W07-COST-BINDING-CATCHUP
+lane: CODEX_KEB
+status: REQUEST
+source_child:
+  repository: GBOGEB/cryoplant-project
+  pr: 190
+  merge_sha: e9c44087ab27d728d8d0db83d5c99bb11fd6a16e
+  artifact: >-
+    ocd-adr/20_canonical/analysis/
+    QPS_COST_FRONTIER_W07_EVIDENCE_HARVEST_v0.1.yaml
+sanitized_payload:
+  node_id: S3-C03
+  quantitative_binding_state: PARTIAL
+  values:
+    - name: FSD575_package_CW_duty_kWth
+      value: 323.0
+      unit: kWth
+      evidence_class: PROVENANCE_PENDING_CANDIDATE
+    - name: CW_flow_at_deltaT_5K_m3_per_h
+      value: 55.55
+      unit: m3_per_h
+      evidence_class: CONTROLLED_DERIVED_FROM_CANDIDATE
+    - name: CW_flow_at_deltaT_10K_m3_per_h
+      value: 27.77
+      unit: m3_per_h
+      evidence_class: CONTROLLED_DERIVED_FROM_CANDIDATE
+requested_return:
+  - normalize candidate_source_bound versus controlled_derived semantics
+  - define promotion criteria from PARTIAL to FULLY_BOUND
+  - define provenance fields for bidder/OEM source, state, package count and allocation
+  - confirm derived values cannot independently create authority or bidder score
+  - preserve same-population rank-delta and no-zero-imputation controls
+controls:
+  source_support_is_not_quantitative_closure: true
+  candidate_is_not_bidder_price: true
+  derived_is_not_primary_source: true
+  no_zero_imputation: true
+  no_compliance_or_completion_credit: true
+  child_owns_final_disposition: true
