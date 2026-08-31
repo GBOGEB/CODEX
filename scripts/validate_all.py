@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -81,6 +82,9 @@ def validate_handover() -> None:
     missing_fields = required - set(handover)
     if missing_fields:
         fail(f"handover/CURRENT.json missing required fields: {sorted(missing_fields)}")
+    source_main_sha = handover.get("source_main_sha", "")
+    if not isinstance(source_main_sha, str) or re.fullmatch(r"[0-9a-f]{40}", source_main_sha) is None:
+        fail("handover/CURRENT.json source_main_sha must be a 40-character commit SHA")
     if handover.get("wave") != "Wave-0":
         fail("handover/CURRENT.json wave must be Wave-0")
     if handover.get("status") != "near-complete":
@@ -93,7 +97,7 @@ def validate_handover() -> None:
 
 def validate_report() -> None:
     report = read("CODEX_EXECUTION_REPORT.md")
-    for marker in ["Commit SHAs", "Issue-001", "Wave-0 completion", "Wave-1 completion"]:
+    for marker in ["Issue-001", "Wave-0 completion", "Wave-1 completion"]:
         if marker not in report:
             fail(f"CODEX_EXECUTION_REPORT.md missing marker: {marker}")
 
