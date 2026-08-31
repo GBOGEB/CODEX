@@ -16,10 +16,14 @@ DEFAULT_MANIFEST = ROOT / "ssot" / "ssot_style_bridge.json"
 HEX_RE = re.compile(r"^#[0-9A-Fa-f]{6}$")
 REQUIRED_FEDERATION_LANES = {"html", "pdf", "pptx", "excel", "graphs", "ci", "dow", "keb"}
 REQUIRED_METHOD_ORDER = ["DMAIC", "PCA_REVERSED_P5_TO_P1", "BT_PRIORITY"]
-REQUIRED_BLOCKING_CONCLUSIONS = {"failure", "timed_out", "action_required"}
+REQUIRED_BLOCKING_CONCLUSIONS = {"failure", "timed_out", "action_required", "startup_failure", "stale"}
 REQUIRED_MANUAL_REVIEW_CONCLUSIONS = {"cancelled"}
 REQUIRED_PENDING_STATUSES = {"queued", "in_progress", "requested", "waiting", "pending"}
-REQUIRED_REPAIR_PRS = {"GBOGEB/ABACUS": 754, "GBOGEB/CODEX": 298}
+REQUIRED_REPAIR_PRS = {"GBOGEB/ABACUS": {754, 756}, "GBOGEB/CODEX": {298, 300}}
+REQUIRED_ALL_CLEAR_REQUIREMENTS = {"no_blocking_conclusions", "no_unwaived_cancelled_checks", "no_pending_required_checks", "no_unresolved_material_reviews", "repaired_sha_retested", "downstream_return_receipt_accepted"}
+REQUIRED_FEDERATION_REPOS = {"GBOGEB/ABACUS", "GBOGEB/CODEX", "GBOGEB/cryoplant-project"}
+SHA_RE = re.compile(r"^[0-9a-f]{40}$")
+SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
 
 def load_manifest(path: Path) -> dict[str, Any]:
@@ -44,8 +48,24 @@ def require_string_list(value: Any, field_name: str, errors: list[str]) -> list[
     return value
 
 
-def format_missing(values: set[str]) -> str:
-    return ", ".join(sorted(values))
+def format_missing(values: set[Any]) -> str:
+    return ", ".join(str(value) for value in sorted(values))
+
+
+def require_mapping(value: Any, field_name: str, errors: list[str]) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        errors.append(f"{field_name} must be an object")
+        return {}
+    return value
+
+
+def require_pr_set(value: Any, field_name: str, errors: list[str]) -> set[int]:
+    if isinstance(value, int):
+        return {value}
+    if not isinstance(value, list) or not all(isinstance(item, int) for item in value):
+        errors.append(f"{field_name} must be an integer or list of integers")
+        return set()
+    return set(value)
 
 
 def validate_palette_bridge(manifest: dict[str, Any], errors: list[str]) -> None:
@@ -90,7 +110,7 @@ def validate_manifest(manifest: dict[str, Any]) -> list[str]:
     pca_axes = manifest.get("pca_axes", [])
     require([axis.get("id") for axis in pca_axes] == ["P5", "P4", "P3", "P2", "P1"], "pca_axes must be ordered P5 to P1", errors)
     require(bool(manifest.get("bt_priority", {}).get("current_top_focus")), "bt priority current_top_focus missing", errors)
-    consumers = manifest.get("federation_consumers", {})
+    consumers = require_mapping(manifest.get("federation_consumers", {}), "federation_consumers", errors)
     require(consumers.get("wave_id") == "SSOT-STYLE-W04", "federation consumer wave_id must be SSOT-STYLE-W04", errors)
     require(consumers.get("public_consumer") == "GBOGEB/ABACUS", "public consumer must be GBOGEB/ABACUS", errors)
     require(consumers.get("controlled_adapter") == "GBOGEB/cryoplant-project", "controlled adapter must be GBOGEB/cryoplant-project", errors)
@@ -100,14 +120,19 @@ def validate_manifest(manifest: dict[str, Any]) -> list[str]:
     method_order = require_string_list(consumers.get("method_order", []), "federation_consumers.method_order", errors)
     require(method_order == REQUIRED_METHOD_ORDER, "method_order must be DMAIC, PCA_REVERSED_P5_TO_P1, BT_PRIORITY", errors)
     validate_handoff_check_policy(manifest, errors)
+    validate_lineage_binding(manifest, errors)
     validate_palette_bridge(manifest, errors)
     return errors
 
 
 def validate_handoff_check_policy(manifest: dict[str, Any], errors: list[str]) -> None:
-    policy = manifest.get("handoff_check_policy", {})
+    policy = require_mapping(manifest.get("handoff_check_policy", {}), "handoff_check_policy", errors)
     require(policy.get("wave_id") == "SSOT-STYLE-W04", "handoff check policy wave_id must be SSOT-STYLE-W04", errors)
-    require(policy.get("linked_repair_prs") == REQUIRED_REPAIR_PRS, "handoff check policy must link ABACUS #754 and CODEX #298", errors)
+    repair_links = require_mapping(policy.get("linked_repair_prs", {}), "handoff_check_policy.linked_repair_prs", errors)
+    for repo, required in REQUIRED_REPAIR_PRS.items():
+        observed = require_pr_set(repair_links.get(repo, []), f"handoff_check_policy.linked_repair_prs.{repo}", errors)
+        missing = required - observed
+        require(not missing, f"linked repair PR(s) missing for {repo}: {format_missing(missing)}", errors)
 
     blocking = set(require_string_list(policy.get("blocking_conclusions", []), "handoff_check_policy.blocking_conclusions", errors))
     manual = set(require_string_list(policy.get("manual_review_conclusions", []), "handoff_check_policy.manual_review_conclusions", errors))
@@ -116,11 +141,23 @@ def validate_handoff_check_policy(manifest: dict[str, Any], errors: list[str]) -
     require(REQUIRED_MANUAL_REVIEW_CONCLUSIONS <= manual, f"missing manual-review conclusion(s): {format_missing(REQUIRED_MANUAL_REVIEW_CONCLUSIONS - manual)}", errors)
     require(REQUIRED_PENDING_STATUSES <= pending, f"missing pending status(es): {format_missing(REQUIRED_PENDING_STATUSES - pending)}", errors)
 
-    all_clear_rule = policy.get("all_clear_rule", "")
-    require(isinstance(all_clear_rule, str) and "no pending required checks" in all_clear_rule, "handoff all-clear rule must block pending required checks", errors)
-    feedback = policy.get("repository_feedback", {})
-    require("ABACUS" in feedback.get("from_abacus", ""), "handoff policy must capture feedback from ABACUS", errors)
-    require("CODEX" in feedback.get("to_abacus", ""), "handoff policy must capture feedback to ABACUS", errors)
+    requirements = set(require_string_list(policy.get("all_clear_requirements", []), "handoff_check_policy.all_clear_requirements", errors))
+    require(REQUIRED_ALL_CLEAR_REQUIREMENTS <= requirements, f"missing all-clear requirement(s): {format_missing(REQUIRED_ALL_CLEAR_REQUIREMENTS - requirements)}", errors)
+    feedback = require_mapping(policy.get("repository_feedback", {}), "handoff_check_policy.repository_feedback", errors)
+    for field in ("from_abacus", "to_abacus"):
+        require(isinstance(feedback.get(field), str) and bool(feedback[field].strip()), f"repository_feedback.{field} must be a non-empty string", errors)
+
+
+def validate_lineage_binding(manifest: dict[str, Any], errors: list[str]) -> None:
+    lineage = require_mapping(manifest.get("lineage_binding", {}), "lineage_binding", errors)
+    require(lineage.get("contract_version") == "0.2.0", "lineage contract_version must be 0.2.0", errors)
+    require(lineage.get("status") == "pending_retest", "lineage status must be pending_retest", errors)
+    inputs = require_mapping(lineage.get("baseline_inputs", {}), "lineage_binding.baseline_inputs", errors)
+    for repo in REQUIRED_FEDERATION_REPOS:
+        binding = require_mapping(inputs.get(repo, {}), f"lineage_binding.baseline_inputs.{repo}", errors)
+        require(bool(SHA_RE.fullmatch(str(binding.get("commit_sha", "")))), f"invalid commit SHA for {repo}", errors)
+        require(bool(SHA256_RE.fullmatch(str(binding.get("manifest_sha256", "")))), f"invalid manifest SHA256 for {repo}", errors)
+        require(bool(binding.get("manifest_path")), f"manifest path missing for {repo}", errors)
 
 
 def score_awake_probes(manifest: dict[str, Any]) -> dict[str, Any]:
