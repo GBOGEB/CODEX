@@ -372,9 +372,11 @@ siblings. Not done this round -- flagged for your decision.
    `sbs_scope_of_supply.yaml`'s confidence tags from `STATED_BY_GBO` to cite
    `cryoplant-project:ocd-adr/architecture/knowledge_tree.yaml` directly (a small, mechanical
    change, not done yet).
-2. Decide whether `QPLANT_GitHub_Integration` should formally take on the `supervisory_analysis` /
-   "BigBrother" role named in `federation_model.yaml`, informally align with it without the formal
-   label, or stay independent of that federation entirely.
+2. **TODO, low priority (GBO, 2026-08-31).** Decide whether `QPLANT_GitHub_Integration` should
+   formally take on the `supervisory_analysis` / "BigBrother" role named in `federation_model.yaml`,
+   informally align with it without the formal label, or stay independent of that federation
+   entirely. Explicitly deprioritized in favor of binary/document artifact output and
+   OneDrive/Office365 editing integration -- see the new &sect;9.
 3. Decide how to reconcile the &sect;4 ALAT clarification-bridge overlap -- now confirmed
    three-way (ABACUS's package, CODEX's own independently-built package at
    `rtm_integration/contract_followup/alat_clarification_bridge/`, and the QPLANT_GitHub_
@@ -383,4 +385,86 @@ siblings. Not done this round -- flagged for your decision.
    they can't silently drift apart. Not something to guess at.
 4. Decide whether to adopt cryoplant-project/CODEX's binaries-manifest + checksum-sidecar
    convention for this repo's own binaries (&sect;7).
-5. Decide on the PyCharm-vs-existing-VS-Code-workspace question in &sect;1a.
+5. **Partly settled (GBO, 2026-08-31).** &sect;1a's PyCharm-vs-VS-Code question isn't an either/or:
+   GBO knows the VS Code environment well and will keep using it day to day, but finds PyCharm the
+   better IDE specifically for working with Claude and repo navigation (still learning PyCharm and
+   its GitHub-integration side). Both stay in use for different purposes -- no need to retire
+   either or force a single-tool standardization.
+6. **New (GBO, 2026-08-31).** Decide which OneDrive/Office365 editing-integration option in
+   &sect;9 to invest in beyond what already exists: (A) keep the existing local-OneDrive-folder
+   sync path as the only mechanism (zero new work, already governed), (B) add a Microsoft Graph
+   API integration for direct programmatic read/write to OneDrive/SharePoint without depending on
+   the desktop sync client being running, or (C) add local Office COM automation
+   (`pywin32`/`win32com.client`, Windows-only) for precise Word/Excel/PowerPoint formatting Python
+   libraries can't reach. Also decide whether to build the docx/pptx/pdf authoring capability
+   `BUILDER_CONTRACT.md` specifies (currently deliberately unimplemented in CODEX -- see &sect;9).
+
+## 9. Binary/document artifact inventory and OneDrive/Office365 editing options (round 24 addendum)
+
+**What CODEX can create today, confirmed by reading the actual code (not inferred):**
+
+| Format | Creatable? | Where |
+|---|---|---|
+| `.xlsx` | **Yes** | `codex/contract_governance/builder.py` (`openpyxl.Workbook`) -- Requirements / Traceability Matrix / Extraction Audit / Evaluation Notes sheets, tiered `internal`/`bidder` visibility. Also `rtm_integration/contract_followup/alat_clarification_bridge/tools/generate_bridge.py` (produces an xlsx + an html view). |
+| `.html` | **Yes** | Same ALaT bridge tool; `analytics/qps_thermo_dashboard/*.html`; `src/tools/slide_preview_generator.py`'s `slide_preview.html`. |
+| `.pptx` | **Read/ingest only, not authoring.** | `src/ingress/pptx_semantic_ingress_runtime_v1.py`, `src/ingress/pptx_geometry_semantic_runtime_v1.py`, `src/tools/slide_preview_generator.py` all open existing `.pptx` files (`python-pptx`'s `Presentation(path)`) to extract text/geometry/preview JSON+HTML. None of them write a new `.pptx`. |
+| `.docx` | **No capability found.** | No `python-docx` import anywhere in this repo outside `.venv`. |
+| `.pdf` | **No capability found in CODEX.** | Not produced by anything in this repo. |
+
+**Specified but deliberately not implemented here**: `07_ops/qps_roundtrip/BUILDER_CONTRACT.md`
+requires an external builder to produce exactly `QPS_COST_Master.xlsx`,
+`QPS_Cost_Engineering_Handover.docx`, `QPS_Cost_Management_Deck.pptx`,
+`QPS_Cost_Engineering_Handover.pdf`, `index.html`, `QA_REPORT.md`, `RELEASE_NOTES.md`,
+`BUILD_META.json` -- but `07_ops/qps_roundtrip/README.md`'s own scope boundary states this
+directory is "deliberately generic" and "must not contain QPS bidder values, confidential evidence
+text or generated deliverables"; `Invoke-QpsControlledRoundtrip.ps1` "deliberately does not embed
+the QPS cost-model builder. It orchestrates any approved builder that satisfies this interface."
+The docx/pptx/pdf-producing builder itself lives outside CODEX (per the same file, canonical QPS
+analytics remain in `GBOGEB/ABACUS`; project-specific confidential text in a private overlay).
+
+**The OneDrive write/publish/review pipeline already exists and is already governed** -- this
+directly answers "I want the write to local OneDrive which is also OneDrive in the cloud":
+
+- `Initialize-QpsWorkspace.ps1` builds working trees **outside** OneDrive (so Git and the OneDrive
+  sync client never fight over the same files while a build is in progress).
+- `Publish-QpsRelease.ps1` then copies the *completed* release into
+  `$env:QPS_RELEASE_ROOT` (an env var pointed at `<OneDriveRoot>\QPS\Cost Estimate\10_RELEASES` --
+  never hardcoded in source, per README's explicit rule), verifying every file's SHA-256 at the
+  destination before declaring success. Because that destination is inside the OneDrive-synced
+  folder tree, the local write **is** the cloud write -- the OneDrive client picks it up and
+  syncs it automatically; no separate cloud-upload step or API call exists or is needed for the
+  basic publish path.
+- `-CreateOfficeReviewCopy` on that same script additionally writes a second, mutable copy into
+  `20_WORKING_REVIEW` (sibling of `10_RELEASES`) -- this is the actual **editing environment**:
+  open that copy directly in desktop Word/Excel/PowerPoint (native OneDrive integration handles
+  save/sync) or in Office 365 for the web (office.com opens the same synced file straight from
+  OneDrive/SharePoint) -- either way, no custom integration code required for basic open/edit/save.
+- `New-QpsReviewChange.ps1` is the governed loop *back*: every edit made in that Office review copy
+  gets logged as a CSV ledger row (`QPS-CHG-#####`) with reviewer, change class
+  (`DATA`/`CALCULATION_LOGIC`/`NARRATIVE`/`FORMATTING`), rationale, and a disposition state machine
+  (`OPEN` -> `ACCEPTED`/`REJECTED`/`SUPERSEDED`/`IMPLEMENTED`) -- matching README's stated sequence
+  "...create separate Office review copy -> register review changes -> assimilate approved changes
+  into text source." Edits in Office never silently become the new source of truth; they're
+  proposals until dispositioned.
+- Confirmed real evidence root already in use: `C:\Users\gbonthuy\OneDrive - Studiecentrum voor
+  Kernenergie\Master\_Input\OFFERS\_ITT` (`07_ops/qps_roundtrip/QPS_WCS_QRB_rev1_7_roundtrip.md`).
+
+**What is not yet built, if more than the sync-folder path is wanted** (see &sect;8 item 6 for the
+decision this needs):
+
+- **Microsoft Graph API** integration (`/me/drive/root:/path:/content` etc.) -- lets a script push
+  to OneDrive/SharePoint directly over HTTPS without depending on the desktop sync client being
+  installed or running, and opens the door to real-time co-authoring session info, comment threads,
+  and version history via API rather than filesystem inspection. Requires an Azure AD app
+  registration and delegated/application permissions -- a real security/governance decision, not
+  something to add unilaterally.
+- **Local Office COM automation** (`pywin32` / `win32com.client`, Windows-only, requires desktop
+  Office installed) -- for precise formatting operations `openpyxl`/`python-pptx`/`python-docx`
+  can't reach (e.g. exact PowerPoint animation timing, Word field codes, Excel pivot-table
+  refresh), or for driving an already-open document. Heavier and more fragile than the file-based
+  approaches above; worth it only for specific formatting gaps, not as a general strategy.
+- **`.docx`/`.pptx`/`.pdf` authoring in Python** (`python-docx`, `python-pptx` write mode, a
+  PDF renderer) -- currently zero capability in CODEX for any of the three, versus full `.xlsx`
+  authoring already in place. If CODEX is meant to produce (not just ingest) the docx/pptx/pdf
+  outputs `BUILDER_CONTRACT.md` names, this is real, unstarted implementation work, separate from
+  the OneDrive-write question above.
