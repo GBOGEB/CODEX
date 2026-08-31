@@ -390,14 +390,14 @@ siblings. Not done this round -- flagged for your decision.
    better IDE specifically for working with Claude and repo navigation (still learning PyCharm and
    its GitHub-integration side). Both stay in use for different purposes -- no need to retire
    either or force a single-tool standardization.
-6. **New (GBO, 2026-08-31).** Decide which OneDrive/Office365 editing-integration option in
-   &sect;9 to invest in beyond what already exists: (A) keep the existing local-OneDrive-folder
-   sync path as the only mechanism (zero new work, already governed), (B) add a Microsoft Graph
-   API integration for direct programmatic read/write to OneDrive/SharePoint without depending on
-   the desktop sync client being running, or (C) add local Office COM automation
-   (`pywin32`/`win32com.client`, Windows-only) for precise Word/Excel/PowerPoint formatting Python
-   libraries can't reach. Also decide whether to build the docx/pptx/pdf authoring capability
-   `BUILDER_CONTRACT.md` specifies (currently deliberately unimplemented in CODEX -- see &sect;9).
+6. **Decided (GBO, 2026-08-31).** Option (A) from &sect;9: keep the existing
+   local-OneDrive-folder sync path (`Publish-QpsRelease.ps1` -> `$env:QPS_RELEASE_ROOT`,
+   `-CreateOfficeReviewCopy` -> `20_WORKING_REVIEW`, `New-QpsReviewChange.ps1`'s disposition
+   ledger) as the only OneDrive/Office365 editing mechanism for now -- no new work needed, it
+   already does what was asked. (B) Graph API and (C) Office COM automation are deferred, to be
+   revisited later rather than built speculatively. Whether to build docx/pptx/pdf *authoring*
+   capability (currently absent from CODEX; &sect;9) remains open and is a separate question from
+   this one.
 
 ## 9. Binary/document artifact inventory and OneDrive/Office365 editing options (round 24 addendum)
 
