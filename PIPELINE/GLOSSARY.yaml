@@ -1,4 +1,4 @@
-version: 0.3.1
+version: 0.3.0
 system:
   name: GBOGEB/CODEX
   codename: ABACUS_RENDER_PIPELINE
@@ -17,25 +17,25 @@ glossary:
     definition: Meaning-bearing divergence between governed artifacts, terminology, lineage, or runtime interpretation that requires detection and disposition.
 
   semantic_comparison_count:
-    definition: Count of governed semantic comparisons evaluated in a regression, round-trip, or rebuild validation run.
-
-  semantic_domains_for_regression:
-    definition: Governed set of semantic domains selected for regression comparison in a validation or round-trip run.
-
-  semantic_drift_check:
-    definition: Explicit operation that compares governed meaning, terminology, lineage, or evidence references for semantic drift without promoting findings to child authority.
-
-  semantic_findings:
-    definition: Typed candidate findings produced by semantic validation or knowledge exchange and requiring downstream authority disposition before adoption.
-
-  semantic_html:
-    definition: HTML projection used to inspect governed semantic output or comparison results; it is a review surface rather than an authoritative data store.
+    definition: Count of governed semantic output classes compared between independent builds in one reproducibility roundtrip.
 
   semantic_match:
-    definition: Positive comparison result indicating that the governed semantic representation matches its expected reference under the applicable normalization rules.
+    definition: Boolean comparison result stating that two normalized semantic manifests are equivalent under the governed semantic contract.
 
   semantic_rebuild_match:
-    definition: Positive reproducibility result indicating that a rebuilt semantic artifact matches the governed reference after deterministic reconstruction.
+    definition: Reproducibility result stating that an independently rebuilt output matches the governed normalized semantic state of its comparison build.
+
+  semantic_drift_check:
+    definition: Explicit control that compares governed semantic states and reports unexplained meaning-bearing divergence before acceptance.
+
+  semantic_findings:
+    definition: Structured findings emitted by semantic extraction, comparison, validation, or federation controls for downstream disposition.
+
+  semantic_domains_for_regression:
+    definition: Governed semantic output domains selected for regression comparison across builds or releases.
+
+  semantic_html:
+    definition: Normalized meaning-bearing representation of HTML headings, identifiers, text, assets, links, and embedded governed data used for reproducibility comparison.
 
   dow:
     canonical_term: DOW
@@ -100,6 +100,22 @@ glossary:
 
   publication_pipeline:
     definition: End-to-end extraction, governance, rendering, validation, and publication workflow.
+
+
+  semantic_comparison_count:
+    definition: Number of governed semantic comparisons evaluated in a validation or regression cycle.
+  semantic_domains_for_regression:
+    definition: Declared semantic domains included in a deterministic regression comparison.
+  semantic_drift_check:
+    definition: Governed comparison that detects meaning-bearing divergence between bound inputs and regenerated outputs.
+  semantic_findings:
+    definition: Typed semantic observations requiring downstream disposition before they can create maturity or completion credit.
+  semantic_html:
+    definition: HTML representation generated from governed semantic structure and bound to its source lineage.
+  semantic_match:
+    definition: Evidence-backed result showing that compared semantic structures agree under the declared normalization rules.
+  semantic_rebuild_match:
+    definition: Semantic match obtained after deterministic regeneration from the bound source inputs.
 
 runtime_maturity:
   semantic_governance: operational

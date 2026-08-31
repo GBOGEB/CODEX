@@ -113,7 +113,7 @@ foreach ($label in @('A', 'B')) {
         $semanticName = ([System.IO.Path]::GetFileNameWithoutExtension($artifactName) + '.semantic.json')
         $semanticPath = Join-Path $semanticDir $semanticName
         python $semanticExtractor $artifact -o $semanticPath
-        if ($LASTEXITCODE -ne 0) { throw "Semantic extraction failed for build $label: $artifactName" }
+        if ($LASTEXITCODE -ne 0) { throw "Semantic extraction failed for build $($label): $artifactName" }
         $semanticFiles += $semanticPath
     }
 
@@ -144,7 +144,7 @@ foreach ($name in $semanticNames) {
     $a = Join-Path $builds[0].semantic_dir $name
     $b = Join-Path $builds[1].semantic_dir $name
     $receipt = Join-Path $comparisonRoot ($name -replace '\.semantic\.json$', '.comparison.json')
-    python $semanticCompare $a $b --output $receipt
+    python $semanticCompare $a $b --output $receipt | Out-Null
     if ($LASTEXITCODE -ne 0) { throw "Semantic comparison failed for $name" }
     $comparisons += (Get-Content -LiteralPath $receipt -Raw | ConvertFrom-Json)
 }

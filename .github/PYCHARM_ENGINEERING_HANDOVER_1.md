@@ -1,7 +1,27 @@
 # PyCharm Engineering Handover — QPLANT_GitHub_Integration &harr; ABACUS &harr; CODEX &harr; cryoplant-project
 
-Round 21, corrected and substantially extended in Round 22, corrected again in Round 23. Written
-for whoever (including future-you) opens this work in PyCharm next.
+Round 21, corrected and substantially extended in Round 22, corrected again in Round 23, extended
+with a new finding in Round 24. Written for whoever (including future-you) opens this work in
+PyCharm next.
+
+> **Round 24 addendum, read this first.** &sect;4 below (Rounds 21-23) describes the ALAT
+> Q3/Q4/Q5 clarification-bridge overlap as a two-way question -- "ABACUS has a package, this
+> session's work covers the same ground." That framing is stale. **CODEX itself already has its
+> own independent copy** of the same package at
+> `rtm_integration/contract_followup/alat_clarification_bridge/` in this repo -- full `README.md`,
+> `ssot/alat_questions_ssot_v0_1.yaml`, `RTM_LINKS.yaml`, `OFFER_REGISTER.yaml`, `tools/
+> generate_bridge.py` + `tools/validate_ssot.py`, a review-gate doc, and a dedicated test file
+> (`tests/test_alat_clarification_bridge.py`), with real git history of its own going back to
+> `d7e2d80 "C017 add ALaT review merge gate"`. Nothing in that package's files or commit history
+> references ABACUS's package of the same name and purpose. So this is not a two-way "ABACUS vs.
+> this session" overlap any more -- it is a **three-way duplication** (ABACUS, CODEX, and the
+> QPLANT_GitHub_Integration session work), and on the CODEX side it is not just awareness of a
+> risk, it is a full, tested, independently-built implementation. Both CODEX guard scripts
+> (`scripts/validate_master_contract_ssot.py`, `scripts/check_contract_workbench.py`) still exit 0
+> with this package present, so nothing here is broken -- the duplication is a reconciliation
+> question, not a defect. Full detail added inline in &sect;4 below; &sect;8 item 3 updated to
+> reflect the three-way state. No file other than this handover has been changed to record this
+> finding -- no SSOT was merged, and no code was moved between repos.
 
 > **Round 23 correction, read this first.** Round 22's &sect;0 "RESOLVED" verdict overclaimed. It
 > confirmed this session's `QINFRA = WPS + WSH` tree by citing
@@ -247,6 +267,28 @@ as this handover goes, since actually reconciling them (deciding which SSOT is a
 the Q3/Q4/Q5 clarification questions specifically, separate from the broader RTM/OFFER compliance
 tracking this project owns) is a decision for you, not something to guess at.
 
+> **UPDATED, round 24 -- this is a three-way duplication, not two-way.** CODEX (this repo) has its
+> own full copy of the same package, independently built, at
+> `rtm_integration/contract_followup/alat_clarification_bridge/`:
+> `README.md`, `ssot/alat_questions_ssot_v0_1.yaml`, `RTM_LINKS.yaml`, `OFFER_REGISTER.yaml`,
+> `tools/generate_bridge.py`, `tools/validate_ssot.py`, `docs/review_checklist_merge_gate.md`,
+> three response/summary templates, and a dedicated pytest file
+> (`tests/test_alat_clarification_bridge.py`) that asserts the SSOT/RTM/OFFER trio validates
+> clean. Its git history is real and CODEX-native --
+> `d7e2d80 "C017 add ALaT review merge gate"`, `7b8a39d "Address ALaT bridge review gate gaps"`,
+> `73fe6a4 "Clarify ALaT bridge pre-ready gates"`, `b45d5c3`/`d87c687` ("Potential fix for pull
+> request finding") -- not a copy-paste of ABACUS's package: a `grep -rn "ABACUS"` across the whole
+> directory returns nothing, so the two were built without cross-reference. CODEX's `README.md`
+> states the same posture ABACUS's and this session's do: contractual origin locked to source
+> documents, "does not replace the locked contract source." Practical effect: there are now three
+> independent SSOT surfaces for the identical Q3 (Recovery System) / Q4 (Line S) / Q5 (Line W)
+> clarification questions -- ABACUS's, CODEX's, and the QPLANT_GitHub_Integration session's
+> `QPS_SBS_Scope_Boundary_and_Recovery_Navigator.html`. All three currently pass their own local
+> checks in isolation, which is exactly the failure mode that lets three SSOTs quietly drift apart
+> without anyone noticing until a bidder-facing answer disagrees with itself across repos. Not
+> reconciled this round -- flagged so the &sect;8 decision is made with the real (three-way) shape
+> of the problem, not the two-way shape Rounds 21-23 described.
+
 ## 5. Git/VCS handling across four repos in one PyCharm window layout
 
 - `QPLANT_GitHub_Integration` is a local-only git repo (`main` branch) with no remote configured —
@@ -333,9 +375,12 @@ siblings. Not done this round -- flagged for your decision.
 2. Decide whether `QPLANT_GitHub_Integration` should formally take on the `supervisory_analysis` /
    "BigBrother" role named in `federation_model.yaml`, informally align with it without the formal
    label, or stay independent of that federation entirely.
-3. Decide whether the &sect;4 ALAT clarification-bridge overlap (Q3/Q4/Q5 = Recovery/Line
-   S/Line W) should be merged into this session's SSOT, left as ABACUS's separate ownership, or
-   explicitly cross-linked.
+3. Decide how to reconcile the &sect;4 ALAT clarification-bridge overlap -- now confirmed
+   three-way (ABACUS's package, CODEX's own independently-built package at
+   `rtm_integration/contract_followup/alat_clarification_bridge/`, and the QPLANT_GitHub_
+   Integration session's Q3/Q4/Q5 = Recovery/Line S/Line W coverage): pick one as authoritative
+   and retire or cross-link the other two, or keep all three and add explicit cross-references so
+   they can't silently drift apart. Not something to guess at.
 4. Decide whether to adopt cryoplant-project/CODEX's binaries-manifest + checksum-sidecar
    convention for this repo's own binaries (&sect;7).
 5. Decide on the PyCharm-vs-existing-VS-Code-workspace question in &sect;1a.
