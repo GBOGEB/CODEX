@@ -1,7 +1,36 @@
 # PyCharm Engineering Handover — QPLANT_GitHub_Integration &harr; ABACUS &harr; CODEX &harr; cryoplant-project
 
-Round 21, corrected and substantially extended in Round 22. Written for whoever (including
-future-you) opens this work in PyCharm next.
+Round 21, corrected and substantially extended in Round 22, corrected again in Round 23. Written
+for whoever (including future-you) opens this work in PyCharm next.
+
+> **Round 23 correction, read this first.** Round 22's &sect;0 "RESOLVED" verdict overclaimed. It
+> confirmed this session's `QINFRA = WPS + WSH` tree by citing
+> `cryoplant-project:ocd-adr/architecture/knowledge_tree.yaml` -- but that file says of itself
+> (line 2-3) that it is *"navigation and structure, not a substitute for governed source evidence
+> or the generated OCD/ADR artefacts."* Working this round from CODEX's own local clone (this
+> repo) which contains the actual Addendum II contract text ingested as `book_md/`, three
+> contract-official abbreviation-table facts settle this independently of either prior tree:
+> `book_md/I1_abbreviations.md:22` defines **CSS = QPLANT + QINFRA + QDIST** verbatim;
+> `book_md/1_introduction.md:32` states **"QDIST comprises the QLM, the string of QVBs, and the
+> QVE"**; `book_md/I1_abbreviations.md:101` defines **QCELL = QVB + QM**. The CSS formula is
+> direct textual support for ABACUS's `QPLANT/QINFRA/QDIST` peer-branch tree, not for this
+> session's `QINFRA = WPS + WSH` tree. Separately, `cryoplant-project`'s own canonical (not
+> navigation-index) artifact, `ocd-adr/20_canonical/ocd/QPS_OCD_v0.8_CONSOLIDATED.md` --
+> RTM-cited, `canonical_role: primary_engineering_output` in `knowledge_tree.yaml`'s own schema --
+> draws WSH as a direct child of QPS (not nested under QINFRA) and places WPS, QDB, and
+> "QCELLs / cryogenic users" *outside* the QPS boundary entirely as external interfaces; this is
+> corroborated by `cryoplant-project`'s `ADR-QPS-006`, which states the WPS Contractor (not the
+> QPS Contractor) owns site connection. So: **Round 22's "confirmed correct, ABACUS superseded"
+> verdict does not hold.** ABACUS's `QPLANT/QINFRA/QDIST` peer structure has direct contract-text
+> support; this session's `QINFRA = WPS + WSH` does not, on either contract-text or
+> `cryoplant-project`'s own canonical-artifact grounds. Per `cryoplant-project`'s own
+> `federation_model.yaml`, `contract_addendum_ii` is `precedence: 1, tie_rule: contract_wins` over
+> both the RTM projection (precedence 2) and any navigation index -- so the contract abbreviation
+> table outranks all three prior trees where they conflict with it. Full reconciled tree and
+> reasoning: see the correction block inserted into &sect;0 below. No file outside this handover
+> and `federation_bridge/bridge_manifest.yaml` (a read-only reference entry, no content copied) has
+> been changed this round; `sbs_scope_of_supply.yaml` itself was not touched -- that edit is still
+> a decision for you, now with better evidence to make it from.
 
 > **Round 22 update, read this first.** Round 21 (below, mostly kept intact for traceability)
 > could not locate `cryoplant-project` on GitHub and left &sect;0's SBS discrepancy and &sect;4's
@@ -13,7 +42,8 @@ future-you) opens this work in PyCharm next.
 > see the new &sect;7 and the correction notes inline in &sect;0 and &sect;1 below. This is a
 > materially better answer than Round 20/21's guesses, and it disagrees with part of what Round 20
 > concluded (specifically, the "what does the parent pipeline do with this information" answer) --
-> flagged explicitly rather than silently replaced.
+> flagged explicitly rather than silently replaced. **Round 22's &sect;0 verdict itself was
+> partly wrong -- see the Round 23 correction above, and inline in &sect;0 below.**
 
 ## 0. Read this first: a real SBS-hierarchy discrepancy between this session and ABACUS
 
@@ -73,6 +103,50 @@ surfaces the finding.
 > `GBOGEB/cryoplant-project:ocd-adr/architecture/knowledge_tree.yaml` directly -- not done yet in
 > this file (a YAML edit, not a markdown one), flagged here so it isn't lost. ABACUS's older
 > QCELL/QDIST-based document should be treated as superseded prior art, not a live discrepancy.
+
+> **SUPERSEDED, round 23.** The paragraph immediately above over-trusted
+> `knowledge_tree.yaml` -- a file whose own header (line 2-3) calls it "navigation and structure,
+> not a substitute for governed source evidence." Reconciled tree, built this round from (a) the
+> Addendum II contract text as ingested into CODEX's `book_md/` (the highest-precedence source per
+> `cryoplant-project`'s own `federation_model.yaml`: `contract_addendum_ii`,
+> `precedence: 1, tie_rule: contract_wins`), and (b) `cryoplant-project`'s own canonical
+> `QPS_OCD_v0.8_CONSOLIDATED.md` + `ADR-QPS-006`:
+>
+> ```text
+> CSS (Cryogenic Supply System)  -- book_md/I1_abbreviations.md:22, verbatim contract definition
+> ├── QPLANT                      -- main refrigeration plant
+> │   ├── WCS                     -- Warm Compressor Station
+> │   └── QRB                     -- "QPLANT Refrigeration Cold Box" (I1_abbreviations.md:111)
+> ├── QINFRA                      -- interface/infrastructure branch; U/W/S warm lines into WCS.VLP
+> └── QDIST                       -- "comprises the QLM, the string of QVBs, and the QVE"
+>                                     (1_introduction.md:32)
+>
+> QCELL = QVB + QM (I1_abbreviations.md:101)  -- user cryomodules; per cryoplant-project's own
+>   QPS_OCD_v0.8_CONSOLIDATED.md, explicitly OUTSIDE the QPS/CSS boundary, not a QPLANT/QINFRA child
+> WSH (Warm Storage Helium) -- direct QPS-level sibling of QPLANT in QPS_OCD_v0.8_CONSOLIDATED.md,
+>   NOT nested under QINFRA; functionally an intermediate reservoir tied to WCS
+> WPS (Warm Piping System) -- per ADR-QPS-006, owned/site-connected by a separate "WPS Contractor",
+>   external to QPS entirely; interfaces to QRB only via the QINFRA.U/W/S terminal points
+> QDB -- appears in ADR-QPS-006 ("QRB-QDB/QLM interface") but is NOT in the contract's own
+>   abbreviations table; given QLM is the core of QDIST and RTM-281..285 describe a
+>   "QDB-Contractor"-led interface, QDB is most likely a contractor/round-specific label for the
+>   QDIST-side boundary, not a fifth distinct system -- flagged as probable, not confirmed; worth
+>   a direct question to GBO rather than further inference.
+> ```
+>
+> **Net effect on the three-way dispute:** ABACUS's `QSYS → QPLANT/QINFRA/QCELL/QDIST` peer
+> structure is directly supported by the contract's own CSS definition -- it was closer to right
+> than Round 21/22 credited, not "superseded prior art." This session's round-19
+> `QINFRA = WPS + WSH` tree is not supported by the contract text or by `cryoplant-project`'s own
+> canonical OCD/ADR content -- WPS is external to QPS per `ADR-QPS-006`, and WSH sits directly
+> under QPS per `QPS_OCD_v0.8_CONSOLIDATED.md`, not under QINFRA. Recommended action on
+> `sbs_scope_of_supply.yaml`: correct it to the reconciled tree above (citing
+> `book_md/I1_abbreviations.md`, `book_md/1_introduction.md`, and
+> `cryoplant-project:ocd-adr/20_canonical/ocd/QPS_OCD_v0.8_CONSOLIDATED.md` as sources, at
+> `CONTRACT_TEXT` / `CONFIRMED_CANONICAL_REPO` confidence respectively) rather than the
+> `STATED_BY_GBO` -> `CONFIRMED_CANONICAL_REPO` upgrade Round 22 proposed. Not done yet -- still a
+> YAML edit belonging to you, now with contract-grounded evidence to make it from. `QDB` remains
+> open and should be asked about directly rather than assumed.
 
 ## 1. Repo triage — what was actually confirmed, and what was not
 
