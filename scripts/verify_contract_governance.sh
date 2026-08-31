@@ -9,7 +9,7 @@ printf '::group::Contract governance dependency check\n'
 python - <<'PY'
 import importlib.util
 
-required = ["pydantic", "ruamel.yaml", "jinja2", "openpyxl", "pytest", "docx", "pptx"]
+required = ["pydantic", "ruamel.yaml", "jinja2", "openpyxl", "pytest", "docx", "pptx", "reportlab", "pypdf"]
 missing = []
 for name in required:
     try:

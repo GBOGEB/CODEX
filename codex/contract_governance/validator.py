@@ -9,6 +9,7 @@ from typing import Literal
 from docx import Document
 from openpyxl import load_workbook
 from pptx import Presentation
+from pypdf import PdfReader
 
 from .builder import workbook_payload
 from .io import content_hash
@@ -29,11 +30,13 @@ def validate_generated(ssot: GovernanceSSOT, out_dir: Path, tier: Tier) -> None:
     xlsx_path = tier_dir / f"{ssot.package_id}_{tier}.xlsx"
     docx_path = tier_dir / f"{ssot.package_id}_{tier}.docx"
     pptx_path = tier_dir / f"{ssot.package_id}_{tier}.pptx"
+    pdf_path = tier_dir / f"{ssot.package_id}_{tier}.pdf"
     if (
         not manifest_path.exists()
         or not xlsx_path.exists()
         or not docx_path.exists()
         or not pptx_path.exists()
+        or not pdf_path.exists()
     ):
         raise ValidationError(f"missing generated artifacts for tier {tier}")
 
@@ -104,6 +107,7 @@ def _validate_bidder_stripping(
         "rtm": _read_named_artifact(tier_dir, manifest, "rtm"),
         "docx": _docx_text(_named_artifact_path(tier_dir, manifest, "docx")),
         "pptx": _pptx_text(_named_artifact_path(tier_dir, manifest, "pptx")),
+        "pdf": _pdf_text(_named_artifact_path(tier_dir, manifest, "pdf")),
         "manifest": json.dumps(manifest, sort_keys=True),
     }
     for artifact_name, text in artifact_text.items():
@@ -173,3 +177,8 @@ def _pptx_text(path: Path) -> str:
                     for cell in row.cells:
                         fragments.append(cell.text)
     return "\n".join(fragments)
+
+
+def _pdf_text(path: Path) -> str:
+    reader = PdfReader(path)
+    return "\n".join(page.extract_text() or "" for page in reader.pages)
