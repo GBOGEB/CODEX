@@ -1,0 +1,44 @@
+schema_version: "0.1"
+correlation_id: QPS-FED-W06-COST-FRONTIER-R2
+lane: CODEX_KEB_PARENT_FEEDBACK_RECEIPT
+status: CHILD_DISPOSITION_RECEIVED
+source_parent_return:
+  pr: 313
+  merge_sha: a36c1344034dadd84c9fbb562d1aab73bd18a41c
+source_child_disposition:
+  repository: GBOGEB/cryoplant-project
+  pr: 187
+  merge_sha: cca826de58072c0af595da02ca0e9c1985b4c4c1
+  artifact: ocd-adr/20_canonical/analysis/QPS_COST_FRONTIER_W06_CHILD_DISPOSITION_v0.1.yaml
+feedback:
+  candidate_normalizations_returned: 10
+  normalizations_accepted: 10
+  normalizations_rejected: 0
+  accepted_finding_ids:
+    - KEB-W06-CF-001
+    - KEB-W06-CF-002
+    - KEB-W06-CF-003
+    - KEB-W06-CF-004
+    - KEB-W06-CF-005
+    - KEB-W06-CF-006
+    - KEB-W06-CF-007
+    - KEB-W06-CF-008
+    - KEB-W06-CF-009
+    - KEB-W06-CF-010
+accepted_semantic_controls:
+  - source_support_class_is_separate_from_quantitative_binding_state
+  - quantitative_binding_enum_is_FULLY_BOUND_PARTIAL_SCREENING_ONLY_MISSING
+  - rank_delta_is_attention_only_and_requires_same_population
+  - lifecycle_levels_remain_distinct
+  - typed_dependency_edges_are_relationship_semantics_not_proof
+  - RTM_and_OFFER_authority_remain_separate
+  - missing_quantitative_evidence_is_not_zero_imputed
+child_control_confirmation:
+  structural_acceptance_is_not_compliance_or_completion: true
+  commercial_closure_requires_private_overlay_binding: true
+  mandatory_gates_non_compensating: true
+  invalid_cross_population_rank_deltas_prohibited: true
+closure:
+  parent_feedback_receipt_complete: true
+  further_KEB_return_required_for_W06: false
+  next_wave: QPS-FED-W07-COST-BINDING-CATCHUP
