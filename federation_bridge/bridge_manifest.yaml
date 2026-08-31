@@ -1,5 +1,5 @@
 federation_bridge:
-  version: "1.0.0"
+  version: "1.1.0"
   domain: "gbogeb"
   repos:
     codex:
@@ -7,11 +7,33 @@ federation_bridge:
       branch: "main"
       role: "upstream_conceptual"
       focus: "Markdown, requirements, metadata, YAML glossary"
+      federation_model_ref: "governance_automation plane per cryoplant-project:ocd-adr/architecture/federation_model.yaml (schema ocd-adr-federation-model/v2)"
     abacus:
       url: "https://github.com/gbogeb/abacus"
       branch: "main"
       role: "downstream_functional"
       focus: "Python math engines, calculation schemas, code execution"
+      federation_model_ref: "runtime_analysis plane per cryoplant-project:ocd-adr/architecture/federation_model.yaml (schema ocd-adr-federation-model/v2)"
+    cryoplant_project:
+      url: "https://github.com/GBOGEB/cryoplant-project"
+      local_path: "C:/Users/gbonthuy/cryoplant-project"
+      visibility: "private"
+      branch: "gitignore/binaries-segregation-20260830"
+      role: "qps_domain_product"
+      focus: "Governed QPS OCD/ADR knowledge model (ocd-adr/20_canonical), AS-IS Contract/RTM/OFFER-request baseline, QPS knowledge hierarchy, ADR register"
+      reference_only: true
+      note: >-
+        Read-only reference entry -- added by CODEX-side smoke/bridge check on 2026-08-31.
+        No content copied from cryoplant-project into this repo. cryoplant-project's own
+        ocd-adr/architecture/federation_model.yaml (schema ocd-adr-federation-model/v2) names
+        this repo (CODEX) as its governance_automation plane and ABACUS as its runtime_analysis
+        plane; a fourth supervisory_analysis plane is listed there as
+        UNRESOLVED_BIGBROTHER_REPOSITORY (status: provisional_until_exact_repo_identity_is_confirmed).
+        Authoritative source for QPS SBS/hierarchy questions is
+        cryoplant-project:ocd-adr/20_canonical/ocd/QPS_OCD_v0.8_CONSOLIDATED.md (RTM-cited,
+        canonical_role: primary_engineering_output), not the lighter
+        ocd-adr/architecture/knowledge_tree.yaml navigation index, which explicitly disclaims
+        being "a substitute for governed source evidence or the generated OCD/ADR artefacts."
   orchestration:
     mcp_enabled: true
     protocols: ["git-sync", "telemetry-stream", "artifact-bake"]
