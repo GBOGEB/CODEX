@@ -1,0 +1,65 @@
+name: QPS W05 Bidder Evaluation KEB receipt
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'federation/qps/QPS_FED_W05_BIDDER_EVAL_KEB_REQUEST.yaml'
+      - 'federation/qps/snapshots/QPS_FED_W05_BIDDER_EVAL_KEB_SANITIZED_SNAPSHOT_v0.1.yaml'
+      - 'tools/run_qps_w05_bidder_eval_keb_return.py'
+      - 'PIPELINE/GLOSSARY.yaml'
+      - '.github/workflows/qps-w05-bidder-eval-keb-receipt.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'federation/qps/QPS_FED_W05_BIDDER_EVAL_KEB_REQUEST.yaml'
+      - 'federation/qps/snapshots/QPS_FED_W05_BIDDER_EVAL_KEB_SANITIZED_SNAPSHOT_v0.1.yaml'
+      - 'tools/run_qps_w05_bidder_eval_keb_return.py'
+      - 'PIPELINE/GLOSSARY.yaml'
+      - '.github/workflows/qps-w05-bidder-eval-keb-receipt.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  execute-w05-keb-runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependency
+        run: python -m pip install --disable-pip-version-check PyYAML
+      - name: Produce runtime receipt
+        run: python tools/run_qps_w05_bidder_eval_keb_return.py
+      - name: Validate receipt contract
+        shell: bash
+        run: |
+          python - <<'PY'
+          import pathlib, yaml
+          p=pathlib.Path('federation/qps/runtime/QPS_FED_W05_BIDDER_EVAL_KEB_RUNTIME_RECEIPT.yaml')
+          d=yaml.safe_load(p.read_text())
+          assert d['correlation_id']=='QPS-FED-W05-BIDDER-EVAL'
+          assert d['requested_operations']==d['executed_operations']
+          assert d['child_disposition_placeholder']=='UNSET'
+          assert d['typed_semantic_findings']
+          assert len(d['output_hash'])==64
+          required_finding_keys={
+              'stable_finding_id','correlation_id','governed_term_or_reference','operation',
+              'drift_or_validation_result','recommended_child_action','input_glossary_output_hashes',
+              'disposition_unset','qps_authority'
+          }
+          for f in d['typed_semantic_findings']:
+              missing=required_finding_keys-set(f)
+              assert not missing, f"missing finding keys: {sorted(missing)}"
+              assert f['operation'] in d['requested_operations']
+              assert f.get('qps_authority') is False
+              assert f.get('disposition_unset') is True
+          print('W05 KEB receipt PASS', len(d['typed_semantic_findings']), 'findings')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qps-w05-bidder-eval-keb-runtime-receipt-${{ github.run_id }}
+          path: federation/qps/runtime/QPS_FED_W05_BIDDER_EVAL_KEB_RUNTIME_RECEIPT.yaml
+          if-no-files-found: error
