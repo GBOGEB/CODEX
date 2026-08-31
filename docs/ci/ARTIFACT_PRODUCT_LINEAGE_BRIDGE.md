@@ -14,8 +14,8 @@ The reusable lanes are:
 2. Excel scenario/configuration interaction;
 3. HTML navigation and scenario interaction;
 4. HTML export/deep-link behaviour;
-5. recursive lineage graph and stale propagation;
-6. semantic crosswalk across Excel/HTML/PPTX/PDF/Markdown/evidence;
+5. Recursive lineage graph and stale propagation;
+6. Semantic crosswalk across Excel/HTML/PPTX/PDF/Markdown/evidence;
 7. rendered readability/style behaviour;
 8. browser and workbook QA receipts.
 
