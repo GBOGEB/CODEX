@@ -1,0 +1,88 @@
+schema_version: "0.1"
+document_id: QPS_TENDER_GAP_RFI_NEGOTIATION_REGISTER
+status: CONTROLLED_OPEN
+decision_rule: inferred_or_postulated_content_grants_no_tender_credit_until_source_bound_and_dispositioned
+
+sources:
+  numerical_ssot:
+    evidence_class: CONTROLLED
+    path: QPS_OFFER_Cluster_v3_4_BT_RTM_Standards_Evidence.xlsx
+    sha256: 00a5f0ed3ded00620a33edd045706ba5fb9a67b5fb7fe63c495305f911c43ccb
+  child_authority:
+    evidence_class: CONTROLLED
+    path: ocd-adr/40_implementation/QPS_BIDDER_PARALLEL_EVAL_W03_v0.1.yaml
+    merge_sha: 53baac108920d36210ec6ba36799a61cc1da8982
+    sha256: b979fa91dc8f4e0a89bde6f7e959f7ec08eaa5b27e63964f4a19acb1c572bc87
+  pca_screening:
+    evidence_class: DERIVED
+    path: ocd-adr/metrics/QPS_COST_PRIMAL_SCREENING_RECEIPT_v0.1.yaml
+
+topics:
+  - id: TT-001
+    topic: bidder_scope_and_owner_transfer
+    current_class: DERIVED
+    current_position: PC1 identifies owner/scope transfer as the strongest disclosed loading; screened coverage is only 26 of 772 nodes.
+    gap: allocation by RTM/OFFER item is not fully bidder-confirmed
+    route: RFI
+    request: provide item-level responsibility matrix with inclusions, exclusions, assumptions, price and schedule effects
+    negotiation_gate: unresolved allocations become explicit commercial reservations, not assumed scope
+  - id: TT-002
+    topic: acceptance_and_execution_evidence
+    current_class: SOURCE-SUPPORTED
+    current_position: evidence lineage requires per-finding hashes and real executed mechanics
+    gap: parent claims are not yet backed by one accepted downstream receipt on final parent SHAs
+    route: RFI_AND_NEGOTIATION
+    request: identify acceptance tests, witnesses, records, approvers and source hashes for every claimed completion
+    negotiation_gate: agree acceptance evidence and rejection/rework consequences
+  - id: TT-003
+    topic: capex_opex_service_and_spares
+    current_class: DERIVED
+    current_position: PC1 and PC2 expose material CAPEX/OPEX/service-spares coupling
+    gap: lifecycle price basis, escalation, spares quantities and service boundary are incomplete
+    route: RFI_AND_NEGOTIATION
+    request: provide cost-basis bridge, lifecycle assumptions, escalation indices, spares schedule and service exclusions
+    negotiation_gate: normalize commercial basis before comparing offers
+  - id: TT-004
+    topic: safety_quality_welding_and_certification
+    current_class: SOURCE-SUPPORTED
+    current_position: KEB runtime tests semantics and reference hierarchy but does not prove bidder implementation
+    gap: certification, QMS, welding qualifications and inspection records remain bidder evidence
+    route: RFI
+    request: provide named certificates, procedures, WPS/PQR/WPQ, inspection plan, validity and issuing authority
+    negotiation_gate: close mandatory evidence gaps before technical acceptance
+  - id: TT-005
+    topic: outward_artifact_product
+    current_class: CONTROLLED
+    current_position: six peer outputs must branch from one normalized model and carry fresh content and semantic hashes
+    gap: no current six-format build receipt proves Excel HTML DOCX PPTX PDF and Markdown parity
+    route: INTERNAL_REPAIR_THEN_RFI_IF_BIDDER_SOURCE_MISSING
+    request: supply missing source documents and clarification only where the normalized model cannot be populated from controlled sources
+    negotiation_gate: do not use presentation completeness as evidence completeness
+  - id: TT-006
+    topic: semantic_contract_and_federation
+    current_class: SOURCE-SUPPORTED
+    current_position: semantic_id debug_spine ssot_style parity and federation-report markers are known control gaps
+    gap: schema/runtime/report agreement is not yet proven on repaired head and merge SHAs
+    route: INTERNAL_REPAIR
+    request: none_to_bidder_unless_semantic_meaning_is_ambiguous
+    negotiation_gate: technical governance issue; no bidder penalty without source evidence
+  - id: TT-007
+    topic: inferred_improvement_claims
+    current_class: POSTULATED
+    current_position: improvement opportunities may be useful but are not tender facts
+    gap: benefit, feasibility, owner, cost, schedule and contract impact are unverified
+    route: NEGOTIATION
+    request: bidder to accept reject or qualify each proposed improvement with quantified impact and evidence
+    negotiation_gate: convert only accepted source-bound items into controlled commitments
+
+metrics:
+  topic_count: 7
+  rfi_or_rfi_and_negotiation_topics: 4
+  internal_repair_topics: 2
+  negotiation_topics_including_postulated: 4
+  controlled_or_source_supported_topics: 4
+  derived_topics: 2
+  postulated_topics: 1
+  closure_formula: dispositioned_topics_with_source_hash_and_owner / topic_count
+  current_closure: 0.0
+
