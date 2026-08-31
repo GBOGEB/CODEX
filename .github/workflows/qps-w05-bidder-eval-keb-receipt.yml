@@ -45,6 +45,17 @@ jobs:
           assert d['child_disposition_placeholder']=='UNSET'
           assert d['typed_semantic_findings']
           assert len(d['output_hash'])==64
+          required_finding_keys={
+              'stable_finding_id','correlation_id','governed_term_or_reference','operation',
+              'drift_or_validation_result','recommended_child_action','input_glossary_output_hashes',
+              'disposition_unset','qps_authority'
+          }
+          for f in d['typed_semantic_findings']:
+              missing=required_finding_keys-set(f)
+              assert not missing, f"missing finding keys: {sorted(missing)}"
+              assert f['operation'] in d['requested_operations']
+              assert f.get('qps_authority') is False
+              assert f.get('disposition_unset') is True
           print('W05 KEB receipt PASS', len(d['typed_semantic_findings']), 'findings')
           PY
       - uses: actions/upload-artifact@v4
