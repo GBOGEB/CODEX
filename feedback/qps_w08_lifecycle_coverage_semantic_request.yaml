@@ -1,0 +1,53 @@
+schema_version: "0.1"
+document_id: QPS_W08_LIFECYCLE_COVERAGE_SEMANTIC_REQUEST
+status: parent_candidate_request
+authority: CODEX_parent_semantic_ci_support
+source_child_issue: GBOGEB/cryoplant-project#196
+source_child_pr: GBOGEB/cryoplant-project#219
+source_abacus_pr: GBOGEB/ABACUS#795
+return_to_child: GBOGEB/cryoplant-project
+purpose: >-
+  Provide sanitized CODEX semantic/schema/CI support for the QPS W08 lifecycle coverage baseline.
+  CODEX should normalize terms, validate no-credit controls and return candidate KEB findings only.
+control_boundary:
+  parent_role: candidate_semantic_schema_ci_support_only
+  child_authority_required: true
+  confidential_bidder_payload_allowed: false
+  parent_credit_promotion_allowed: false
+  formal_completion_delta: 0
+  bidder_compliance_delta: 0
+  safety_credit_delta: 0
+  pca_bt_rerank_delta: 0
+  missing_values_zero_imputation_allowed: false
+  outward_artifact_update_allowed: false
+semantic_checks:
+  - check_id: S01_TAXONOMY_COMPLETENESS
+    description: Confirm all 17 W08 workstreams remain separate and non-collapsed.
+  - check_id: S02_SAFETY_NON_COMPENSATING
+    description: Ensure Safety is one standalone non-compensating lane and not merged into controls, RAMS or HSE text.
+  - check_id: S03_NO_ZERO_IMPUTATION
+    description: Refuse missing evidence treated as zero, closure or compliance.
+  - check_id: S04_PARENT_CANDIDATE_ONLY
+    description: Refuse parent findings promoted to QPS child completion before ACCEPT/REJECT/DEFER.
+  - check_id: S05_RANK_POPULATION_SEPARATION
+    description: Keep technical default, 70/30 COST:TECH and 100 percent COST rankings separate.
+  - check_id: S06_REQUIRED_FIELDS
+    description: Validate authority, owner, phase, evidence class, disposition, RTM/OFFER/ADR/OCD route or declared gap.
+  - check_id: S07_HTML_PRESENTATION_BOUNDARY
+    description: Ensure ABACUS HTML/presenter output is review-only, sanitized and not a child SSOT.
+expected_return_fields:
+  - finding_id
+  - workstream_id
+  - check_id
+  - semantic_signal
+  - schema_signal
+  - severity
+  - normalized_term
+  - conflicting_term
+  - recommended_child_disposition
+  - no_credit_statement
+return_contract:
+  accepted_states_from_parent: [CANDIDATE_ONLY]
+  child_disposition_required: [ACCEPT, REJECT, DEFER]
+  no_credit_statement_required: true
+  sanitized_only: true
