@@ -82,7 +82,10 @@
         },
         "lexical_score": {"type": "number", "minimum": 0, "maximum": 1},
         "reviewer_state": {"enum": ["UNREVIEWED", "ACCEPT", "REJECT", "DEFER"]}
-      }
+      },
+      "if": {"properties": {"target_type": {"const": "RTM"}}},
+      "then": {"properties": {"target_id": {"pattern": "^RTM-[0-9]+$"}}},
+      "else": {"properties": {"target_id": {"pattern": "^OFFER-[0-9]+$"}}}
     }
   }
 }

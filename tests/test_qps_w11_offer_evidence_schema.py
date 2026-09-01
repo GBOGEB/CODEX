@@ -7,7 +7,6 @@ from pathlib import Path
 import jsonschema
 import pytest
 
-
 SCHEMA_PATH = Path("schemas/qps_w11_offer_evidence.schema.json")
 
 
@@ -83,5 +82,22 @@ def test_control_flags_fail_closed() -> None:
 def test_target_id_must_be_governed_rtm_or_offer_id() -> None:
     candidate = copy.deepcopy(_valid_register())
     candidate["relations"][0]["target_id"] = "REQ-514"
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.Draft202012Validator(_schema()).validate(candidate)
+
+
+@pytest.mark.parametrize(
+    "target_type,target_id",
+    [
+        ("RTM", "OFFER-001"),
+        ("OFFER", "RTM-514"),
+    ],
+)
+def test_target_type_and_target_id_must_be_consistent(
+    target_type: str, target_id: str
+) -> None:
+    candidate = copy.deepcopy(_valid_register())
+    candidate["relations"][0]["target_type"] = target_type
+    candidate["relations"][0]["target_id"] = target_id
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.Draft202012Validator(_schema()).validate(candidate)
