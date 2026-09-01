@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GBOGEB/CODEX/schemas/qps_w08_workstream_coverage.schema.json",
+  "title": "QPS W08 Workstream Coverage Baseline",
+  "type": "object",
+  "required": ["schema_version", "document_id", "authority", "controls", "workstreams"],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "document_id": {"const": "QPS_W08_WORKSTREAM_COVERAGE_BASELINE"},
+    "authority": {"const": "QPS_child"},
+    "controls": {
+      "type": "object",
+      "required": [
+        "safety_non_compensating",
+        "no_missing_evidence_zero_imputation",
+        "no_parent_self_promotion",
+        "technical_default_rank_separate_from_cost_views"
+      ],
+      "properties": {
+        "safety_non_compensating": {"const": true},
+        "no_missing_evidence_zero_imputation": {"const": true},
+        "no_parent_self_promotion": {"const": true},
+        "technical_default_rank_separate_from_cost_views": {"const": true}
+      }
+    },
+    "workstreams": {
+      "type": "array",
+      "minItems": 17,
+      "maxItems": 17,
+      "items": {
+        "type": "object",
+        "required": [
+          "workstream_id",
+          "name",
+          "domain_ref",
+          "authority",
+          "owner",
+          "lifecycle_phase",
+          "mandatory_gate",
+          "node_count",
+          "gap_status",
+          "rfi_required",
+          "negotiation_topic_required",
+          "parent_route",
+          "child_disposition_state",
+          "credit_allowed"
+        ],
+        "properties": {
+          "workstream_id": {"type": "string", "pattern": "^W08-[A-Z0-9-]+$"},
+          "domain_ref": {"type": "string", "pattern": "^DEV-[A-Z0-9-]+$"},
+          "authority": {"const": "QPS_child"},
+          "mandatory_gate": {"type": "boolean"},
+          "node_count": {"type": "integer", "minimum": 0},
+          "gap_status": {"type": "string"},
+          "rfi_required": {"type": "boolean"},
+          "negotiation_topic_required": {"type": "boolean"},
+          "parent_route": {"type": "array", "items": {"enum": ["ABACUS_DOW", "CODEX_KEB"]}},
+          "child_disposition_state": {"enum": ["BASELINE_PENDING", "ACCEPT", "REJECT", "DEFER"]},
+          "credit_allowed": {"const": false}
+        }
+      }
+    }
+  }
+}
