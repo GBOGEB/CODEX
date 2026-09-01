@@ -103,12 +103,12 @@ def test_semantic_checks_cover_taxonomy_safety_ranking_and_html_boundary():
 def test_pr_head_aht_snapshot_embeds_failed_check_threshold():
     snapshot = load_yaml(PR_HEAD_AHT)
     assert snapshot["pull_request"] == "GBOGEB/CODEX#330"
-    assert snapshot["head_sha"] == "fe77f6646efee97558a598a9cdb971c32162ac81"
+    assert snapshot["head_sha"] == "3479d8926d0c3a64e0ef396126025bbb76937940"
     assert snapshot["status"] == "THRESHOLD_BREACHED"
     assert snapshot["evidence_class"] == "SOURCE-SUPPORTED"
     assert snapshot["threshold_policy"]["threshold_reached"] is True
     assert snapshot["aht_statistics_bridge"]["method"] == "classify_failed_check_threshold"
     assert snapshot["measure"]["failed_checks"] == 5
     assert snapshot["measure"]["blocker_checks"] == 5
-    assert snapshot["measure"]["total_decisive_checks"] == 21
+    assert snapshot["measure"]["total_decisive_checks"] == 25
     assert snapshot["control"]["completion_credit_allowed"] is False

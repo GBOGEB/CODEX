@@ -6,9 +6,9 @@ authority: CODEX_parent_semantic_ci_support
 source_child_pr: GBOGEB/cryoplant-project#219
 source_peer_pr: GBOGEB/ABACUS#795
 pull_request: GBOGEB/CODEX#330
-head_sha: fe77f6646efee97558a598a9cdb971c32162ac81
-synthetic_merge_sha: a6749bbeee07d298364e64d129b30cb2f8d0122c
-observed_at_utc: "2026-09-01T07:59:25Z"
+head_sha: 3479d8926d0c3a64e0ef396126025bbb76937940
+synthetic_merge_sha: fc2fb696649b807524915fcf96d525b9cecfb29b
+observed_at_utc: "2026-09-01T08:18:00Z"
 aht_statistics_bridge:
   source_file: GBOGEB/ABACUS:aht_statistics_bridge.py
   method: classify_failed_check_threshold
@@ -18,33 +18,33 @@ threshold_policy:
   threshold_reached: true
 measure:
   rolling_window: current_pr_head_workflow_runs
-  successful_checks: 16
+  successful_checks: 20
   failed_checks: 5
   action_required_checks: 0
   blocker_checks: 5
-  total_decisive_checks: 21
-  failure_rate: 0.2380952381
+  total_decisive_checks: 25
+  failure_rate: 0.2
   current_failure_runs:
     - run_id: 33478773774
       name: W003 Governance Gate
       conclusion: failure
-      url: https://github.com/GBOGEB/CODEX/actions/runs/33478773774
+      url: https://github.com/GBOGEB/CODEX/actions/runs/33485885951
     - run_id: 33478773993
       name: Full Stack Governance
       conclusion: failure
-      url: https://github.com/GBOGEB/CODEX/actions/runs/33478773993
+      url: https://github.com/GBOGEB/CODEX/actions/runs/33485885827
     - run_id: 33478773849
       name: Validate Federation
       conclusion: failure
-      url: https://github.com/GBOGEB/CODEX/actions/runs/33478773849
+      url: https://github.com/GBOGEB/CODEX/actions/runs/33485885883
     - run_id: 33478773813
       name: CODEX Semantic Runtime CI
       conclusion: failure
-      url: https://github.com/GBOGEB/CODEX/actions/runs/33478773813
+      url: https://github.com/GBOGEB/CODEX/actions/runs/33485885918
     - run_id: 33478773823
       name: CI
       conclusion: failure
-      url: https://github.com/GBOGEB/CODEX/actions/runs/33478773823
+      url: https://github.com/GBOGEB/CODEX/actions/runs/33485885753
 analyse:
   failure_class:
     - governance_policy_gap
