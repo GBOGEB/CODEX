@@ -47,14 +47,17 @@
         ],
         "properties": {
           "workstream_id": {"type": "string", "pattern": "^W08-[A-Z0-9-]+$"},
+          "name": {"type": "string"},
           "domain_ref": {"type": "string", "pattern": "^DEV-[A-Z0-9-]+$"},
           "authority": {"const": "QPS_child"},
+          "owner": {"type": "string"},
+          "lifecycle_phase": {"type": "string"},
           "mandatory_gate": {"type": "boolean"},
           "node_count": {"type": "integer", "minimum": 0},
           "gap_status": {"type": "string"},
           "rfi_required": {"type": "boolean"},
           "negotiation_topic_required": {"type": "boolean"},
-          "parent_route": {"type": "array", "items": {"enum": ["ABACUS_DOW", "CODEX_KEB"]}},
+          "parent_route": {"type": "array", "items": {"type": "string", "enum": ["ABACUS_DOW", "CODEX_KEB"]}},
           "child_disposition_state": {"enum": ["BASELINE_PENDING", "ACCEPT", "REJECT", "DEFER"]},
           "credit_allowed": {"const": false}
         }
