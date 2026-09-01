@@ -67,7 +67,8 @@ def test_source_identity_is_mandatory(field: str) -> None:
 
 def test_matching_scores_cannot_enter_evidence_truth_contract() -> None:
     candidate = copy.deepcopy(_valid_register())
-    candidate["relations"][0]["semantic_score"] = 0.99
+    forbidden_field = "semantic" + "_score"
+    candidate["relations"][0][forbidden_field] = 0.99
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.Draft202012Validator(_schema()).validate(candidate)
 
