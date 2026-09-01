@@ -1,0 +1,51 @@
+schema_version: "0.1"
+document_id: QPS_W08_KEB_CANDIDATE_RETURN_RECEIPT
+status: CANDIDATE_INCOMPLETE
+signal_class: SOURCE_SUPPORTED_PARENT_METADATA
+authority: CODEX_parent_semantic_ci_support
+return_to_child: GBOGEB/cryoplant-project
+source_parent_pr: GBOGEB/CODEX#330
+source_parent_merge_sha: a8525f61102d00cbbe5a7cbe832ac1573a86783c
+source_child_pr: GBOGEB/cryoplant-project#219
+peer_abacus_pr: GBOGEB/ABACUS#796
+peer_abacus_predecessor_pr: GBOGEB/ABACUS#795
+candidate_state: CANDIDATE_ONLY
+child_disposition: UNSET
+runtime_binding:
+  final_runtime_run_id: null
+  runtime_artifact_id: null
+  runtime_artifact_sha256: null
+  semantic_result_artifact_id: null
+  semantic_result_sha256: null
+  release_manifest_sha256: null
+  complete: false
+required_checks:
+  - CODEX Semantic Runtime CI
+  - CI
+  - Validate Federation
+  - Runtime Federation CI
+  - Runtime Governance Gate
+  - Governance Validation
+  - W003 Governance Gate
+  - Full Stack Governance
+control_boundary:
+  parent_credit_promotion_allowed: false
+  child_acceptance_required: true
+  missing_hash_inference_allowed: false
+  formal_completion_delta: 0
+  bidder_compliance_delta: 0
+  safety_credit_delta: 0
+  pca_bt_rerank_delta: 0
+handoff_gate:
+  state: CLOSED
+  reasons:
+    - runtime artifact identifiers not yet bound
+    - runtime/result SHA256 hashes not yet bound
+  opens_only_when:
+    - all required runtime/result artifact identifiers are populated
+    - all required SHA256 fields are populated
+    - relevant final parent runtime checks are confirmed passing
+note: >-
+  This receipt records the merged CODEX parent lineage without claiming that
+  merge status alone is a complete KEB return. The QPS child must verify the
+  final runtime/result hashes and explicitly ACCEPT, REJECT or DEFER the return.

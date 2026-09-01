@@ -16,4 +16,4 @@
 - REQUIRED PREDECESSORS: GBOGEB/cryoplant-project#219, GBOGEB/ABACUS#795
 - CURRENT TRACK: GBOGEB/CODEX#330
 - BLOCKED SUCCESSOR: QPS child W08 ACCEPT/REJECT/DEFER disposition
-- FOLLOW-UP UPDATE: W08 semantic/schema validator contract, exact child-owned workstream taxonomy and thresholded PR-head control stats.
+- FOLLOW-UP UPDATE: W08 semantic/schema validator contract, exact child-owned workstream taxonomy, thresholded PR-head control stats, and candidate return-receipt semantic artifact vocabulary.
