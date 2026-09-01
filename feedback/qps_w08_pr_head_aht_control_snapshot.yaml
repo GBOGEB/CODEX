@@ -1,0 +1,70 @@
+schema_version: "0.1"
+document_id: QPS_W08_PR_HEAD_AHT_CONTROL_SNAPSHOT
+status: THRESHOLD_BREACHED
+evidence_class: SOURCE-SUPPORTED
+authority: CODEX_parent_semantic_ci_support
+source_child_pr: GBOGEB/cryoplant-project#219
+source_peer_pr: GBOGEB/ABACUS#795
+pull_request: GBOGEB/CODEX#330
+head_sha: fe77f6646efee97558a598a9cdb971c32162ac81
+synthetic_merge_sha: a6749bbeee07d298364e64d129b30cb2f8d0122c
+observed_at_utc: "2026-09-01T07:59:25Z"
+aht_statistics_bridge:
+  source_file: GBOGEB/ABACUS:aht_statistics_bridge.py
+  method: classify_failed_check_threshold
+  hypothesis: PR head remains below failed-check control threshold
+threshold_policy:
+  failed_or_action_required_checks: 1
+  threshold_reached: true
+measure:
+  rolling_window: current_pr_head_workflow_runs
+  successful_checks: 16
+  failed_checks: 5
+  action_required_checks: 0
+  blocker_checks: 5
+  total_decisive_checks: 21
+  failure_rate: 0.2380952381
+  current_failure_runs:
+    - run_id: 33478773774
+      name: W003 Governance Gate
+      conclusion: failure
+      url: https://github.com/GBOGEB/CODEX/actions/runs/33478773774
+    - run_id: 33478773993
+      name: Full Stack Governance
+      conclusion: failure
+      url: https://github.com/GBOGEB/CODEX/actions/runs/33478773993
+    - run_id: 33478773849
+      name: Validate Federation
+      conclusion: failure
+      url: https://github.com/GBOGEB/CODEX/actions/runs/33478773849
+    - run_id: 33478773813
+      name: CODEX Semantic Runtime CI
+      conclusion: failure
+      url: https://github.com/GBOGEB/CODEX/actions/runs/33478773813
+    - run_id: 33478773823
+      name: CI
+      conclusion: failure
+      url: https://github.com/GBOGEB/CODEX/actions/runs/33478773823
+analyse:
+  failure_class:
+    - governance_policy_gap
+    - semantic_validator_contract_gap
+    - federation_report_contract_gap
+    - stale_runtime_expectation
+  current_root_signals:
+    - missing W003 governance header in PR body or tracked follow-up file
+    - exact 17-ID taxonomy uniqueness not fully enforced before this repair wave
+    - metadata constraints too broad before this repair wave
+    - recurring timestamp debug_spine ssot_style and execution-report failures
+improve:
+  current_repair_wave:
+    - update W003 tracked governance header for CODEX#330
+    - enforce exact child-owned W08 workstream IDs
+    - require unique 17-item workstream array and non-empty name owner lifecycle_phase fields
+    - embed this PR-head control snapshot for downstream retest evidence
+control:
+  stop_condition: >-
+    Close only after CODEX#330 repaired head and merge SHA pass, the child repository records
+    ACCEPT/REJECT/DEFER for semantic findings, and no failed, cancelled, action_required or unresolved
+    material review signal remains.
+  completion_credit_allowed: false
