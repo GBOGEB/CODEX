@@ -7,8 +7,9 @@ return_to_child: GBOGEB/cryoplant-project
 source_parent_pr: GBOGEB/CODEX#330
 source_parent_merge_sha: a8525f61102d00cbbe5a7cbe832ac1573a86783c
 source_child_pr: GBOGEB/cryoplant-project#219
-peer_abacus_pr: GBOGEB/ABACUS#796
-peer_abacus_predecessor_pr: GBOGEB/ABACUS#795
+peer_abacus_pr: GBOGEB/ABACUS#805
+peer_abacus_merged_repair_pr: GBOGEB/ABACUS#802
+peer_abacus_historical_predecessor_pr: GBOGEB/ABACUS#795
 candidate_state: CANDIDATE_ONLY
 child_disposition: UNSET
 runtime_binding:
@@ -47,5 +48,7 @@ handoff_gate:
     - relevant final parent runtime checks are confirmed passing
 note: >-
   This receipt records the merged CODEX parent lineage without claiming that
-  merge status alone is a complete KEB return. The QPS child must verify the
-  final runtime/result hashes and explicitly ACCEPT, REJECT or DEFER the return.
+  merge status alone is a complete KEB return. The active ABACUS peer is #805,
+  with merged repair #802 and historical predecessor #795 retained explicitly.
+  The QPS child must verify the final runtime/result hashes and explicitly
+  ACCEPT, REJECT or DEFER the return.
