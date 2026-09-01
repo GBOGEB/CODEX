@@ -35,7 +35,10 @@ def test_incomplete_runtime_hash_binding_fails_closed():
     data = load(RECEIPT)
     binding = data["runtime_binding"]
     assert binding["complete"] is False
+    assert binding["final_runtime_run_id"] is None
+    assert binding["runtime_artifact_id"] is None
     assert binding["runtime_artifact_sha256"] is None
+    assert binding["semantic_result_artifact_id"] is None
     assert binding["semantic_result_sha256"] is None
     assert binding["release_manifest_sha256"] is None
     assert data["handoff_gate"]["state"] == "CLOSED"

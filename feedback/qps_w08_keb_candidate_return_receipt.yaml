@@ -39,12 +39,10 @@ handoff_gate:
   reasons:
     - runtime artifact identifiers not yet bound
     - runtime/result SHA256 hashes not yet bound
-    - child disposition remains UNSET
   opens_only_when:
     - all required runtime/result artifact identifiers are populated
     - all required SHA256 fields are populated
     - relevant final parent runtime checks are confirmed passing
-    - receipt remains CANDIDATE_ONLY for child disposition
 note: >-
   This receipt records the merged CODEX parent lineage without claiming that
   merge status alone is a complete KEB return. The QPS child must verify the
