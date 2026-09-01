@@ -1,15 +1,17 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/GBOGEB/CODEX/schemas/qps_w08_workstream_coverage.schema.json",
+  "$id": "https://gbogeb.github.io/CODEX/schemas/qps_w08_workstream_coverage.schema.json",
   "title": "QPS W08 Workstream Coverage Baseline",
   "type": "object",
   "required": ["schema_version", "document_id", "authority", "controls", "workstreams"],
+  "additionalProperties": false,
   "properties": {
     "schema_version": {"type": "string"},
     "document_id": {"const": "QPS_W08_WORKSTREAM_COVERAGE_BASELINE"},
     "authority": {"const": "QPS_child"},
     "controls": {
       "type": "object",
+      "additionalProperties": false,
       "required": [
         "safety_non_compensating",
         "no_missing_evidence_zero_imputation",
@@ -29,6 +31,7 @@
       "maxItems": 17,
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "workstream_id",
           "name",
