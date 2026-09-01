@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime
 from pathlib import Path
 from typing import Literal
+from xml.etree import ElementTree as ET
+from zipfile import ZIP_DEFLATED, ZipFile
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from openpyxl import Workbook
@@ -149,6 +152,36 @@ def _requirement_row(req: Requirement) -> dict[str, str]:
     }
 
 
+def _pin_xlsx_core_properties(path: Path, fixed: datetime) -> None:
+    """Restore deterministic XLSX core timestamps after openpyxl save-time mutation."""
+
+    core_name = "docProps/core.xml"
+    temp_path = path.with_suffix(".tmp.xlsx")
+    namespaces = {
+        "cp": "http://schemas.openxmlformats.org/package/2006/metadata/core-properties",
+        "dc": "http://purl.org/dc/elements/1.1/",
+        "dcterms": "http://purl.org/dc/terms/",
+        "dcmitype": "http://purl.org/dc/dcmitype/",
+        "xsi": "http://www.w3.org/2001/XMLSchema-instance",
+    }
+    for prefix, uri in namespaces.items():
+        ET.register_namespace(prefix, uri)
+
+    stamp = fixed.replace(microsecond=0).isoformat(timespec="seconds") + "Z"
+    with ZipFile(path, "r") as source, ZipFile(temp_path, "w", ZIP_DEFLATED) as target:
+        for info in source.infolist():
+            data = source.read(info.filename)
+            if info.filename == core_name:
+                root = ET.fromstring(data)
+                for tag in ("created", "modified"):
+                    node = root.find(f"{{{namespaces['dcterms']}}}{tag}")
+                    if node is not None:
+                        node.text = stamp
+                data = ET.tostring(root, encoding="utf-8", xml_declaration=True)
+            target.writestr(info, data)
+    temp_path.replace(path)
+
+
 def _write_workbook(
     payload: dict[str, object], ssot: GovernanceSSOT, path: Path
 ) -> None:
@@ -171,6 +204,7 @@ def _write_workbook(
             ws.append([row.get(column, "") for column in columns])
         ws.freeze_panes = "A2"
     wb.save(path)
+    _pin_xlsx_core_properties(path, fixed)
 
 
 def _write_html(payload: dict[str, object], ssot: GovernanceSSOT, path: Path) -> None:

@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gbogeb.github.io/CODEX/schemas/qps_w08_workstream_coverage.schema.json",
+  "title": "QPS W08 Workstream Coverage Baseline",
+  "type": "object",
+  "required": ["schema_version", "document_id", "authority", "controls", "workstreams"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"type": "string"},
+    "document_id": {"const": "QPS_W08_WORKSTREAM_COVERAGE_BASELINE"},
+    "authority": {"const": "QPS_child"},
+    "controls": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "safety_non_compensating",
+        "no_missing_evidence_zero_imputation",
+        "no_parent_self_promotion",
+        "technical_default_rank_separate_from_cost_views"
+      ],
+      "properties": {
+        "safety_non_compensating": {"const": true},
+        "no_missing_evidence_zero_imputation": {"const": true},
+        "no_parent_self_promotion": {"const": true},
+        "technical_default_rank_separate_from_cost_views": {"const": true}
+      }
+    },
+    "workstreams": {
+      "type": "array",
+      "minItems": 17,
+      "maxItems": 17,
+      "uniqueItems": true,
+      "allOf": [
+        {"contains": {"properties": {"workstream_id": {"const": "W08-REVIEW"}}, "required": ["workstream_id"]}},
+        {"contains": {"properties": {"workstream_id": {"const": "W08-COVERAGE"}}, "required": ["workstream_id"]}},
+        {"contains": {"properties": {"workstream_id": {"const": "W08-OFFER"}}, "required": ["workstream_id"]}},
+        {"contains": {"properties": {"workstream_id": {"const": "W08-ADR-OCD"}}, "required": ["workstream_id"]}},
+        {"contains": {"properties": {"workstream_id": {"const": "W08-COST"}}, "required": ["workstream_id"]}},
+        {"contains": {"properties": {"workstream_id": {"const": "W08-RAMS"}}, "required": ["workstream_id"]}},
+        {"contains": {"properties": {"workstream_id": {"const": "W08-INTERFACES"}}, "required": ["workstream_id"]}},
+        {"contains": {"properties": {"workstream_id": {"const": "W08-SUPPORT"}}, "required": ["workstream_id"]}},
+        {"contains": {"properties": {"workstream_id": {"const": "W08-3D"}}, "required": ["workstream_id"]}},
+        {"contains": {"properties": {"workstream_id": {"const": "W08-SAFETY"}}, "required": ["workstream_id"]}},
+        {"contains": {"properties": {"workstream_id": {"const": "W08-CYBER"}}, "required": ["workstream_id"]}},
+        {"contains": {"properties": {"workstream_id": {"const": "W08-CONTROLS"}}, "required": ["workstream_id"]}},
+        {"contains": {"properties": {"workstream_id": {"const": "W08-EXCLUSIONS"}}, "required": ["workstream_id"]}},
+        {"contains": {"properties": {"workstream_id": {"const": "W08-CODES"}}, "required": ["workstream_id"]}},
+        {"contains": {"properties": {"workstream_id": {"const": "W08-DELIVERABLES"}}, "required": ["workstream_id"]}},
+        {"contains": {"properties": {"workstream_id": {"const": "W08-LIFECYCLE"}}, "required": ["workstream_id"]}},
+        {"contains": {"properties": {"workstream_id": {"const": "W08-SPARES-RCM"}}, "required": ["workstream_id"]}}
+      ],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "workstream_id",
+          "name",
+          "domain_ref",
+          "authority",
+          "owner",
+          "lifecycle_phase",
+          "mandatory_gate",
+          "node_count",
+          "gap_status",
+          "rfi_required",
+          "negotiation_topic_required",
+          "parent_route",
+          "child_disposition_state",
+          "credit_allowed"
+        ],
+        "properties": {
+          "workstream_id": {
+            "type": "string",
+            "enum": [
+              "W08-REVIEW",
+              "W08-COVERAGE",
+              "W08-OFFER",
+              "W08-ADR-OCD",
+              "W08-COST",
+              "W08-RAMS",
+              "W08-INTERFACES",
+              "W08-SUPPORT",
+              "W08-3D",
+              "W08-SAFETY",
+              "W08-CYBER",
+              "W08-CONTROLS",
+              "W08-EXCLUSIONS",
+              "W08-CODES",
+              "W08-DELIVERABLES",
+              "W08-LIFECYCLE",
+              "W08-SPARES-RCM"
+            ]
+          },
+          "name": {"type": "string", "minLength": 1},
+          "domain_ref": {"type": "string", "pattern": "^DEV-[A-Z0-9-]+$"},
+          "authority": {"const": "QPS_child"},
+          "owner": {"type": "string", "minLength": 1},
+          "lifecycle_phase": {"type": "string", "minLength": 1},
+          "mandatory_gate": {"type": "boolean"},
+          "node_count": {"type": "integer", "minimum": 0},
+          "gap_status": {
+            "enum": [
+              "BASELINE_PENDING",
+              "ZERO_COVERAGE_DECLARED",
+              "UNKNOWN_OR_PARTIAL",
+              "SOURCE_DISCOVERED",
+              "SOURCE_SUPPORTED",
+              "PARTIAL_BOUND",
+              "VALIDATED_DISPOSITIONED",
+              "CLOSED_ACCEPTED"
+            ]
+          },
+          "rfi_required": {"type": "boolean"},
+          "negotiation_topic_required": {"type": "boolean"},
+          "parent_route": {"type": "array", "items": {"type": "string", "enum": ["ABACUS_DOW", "CODEX_KEB"]}},
+          "child_disposition_state": {"enum": ["BASELINE_PENDING", "ACCEPT", "REJECT", "DEFER"]},
+          "credit_allowed": {"const": false}
+        }
+      }
+    }
+  }
+}

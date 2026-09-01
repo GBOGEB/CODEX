@@ -22,6 +22,8 @@ REQUIRED_PENDING_STATUSES = {"queued", "in_progress", "requested", "waiting", "p
 REQUIRED_REPAIR_PRS = {"GBOGEB/ABACUS": {754, 756}, "GBOGEB/CODEX": {298, 300}}
 REQUIRED_ALL_CLEAR_REQUIREMENTS = {"no_blocking_conclusions", "no_unwaived_cancelled_checks", "no_pending_required_checks", "no_unresolved_material_reviews", "repaired_sha_retested", "downstream_return_receipt_accepted"}
 REQUIRED_FEDERATION_REPOS = {"GBOGEB/ABACUS", "GBOGEB/CODEX", "GBOGEB/cryoplant-project"}
+VALID_MANIFEST_VERSIONS = {"0.1.0", "0.2.0"}
+VALID_CONTROL_STATUSES = {"draft_control", "controlled", "control_retest"}
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 REQUIRED_BASELINE_SHA256 = {
@@ -94,8 +96,16 @@ def validate_palette_bridge(manifest: dict[str, Any], errors: list[str]) -> None
 
 def validate_manifest(manifest: dict[str, Any]) -> list[str]:
     errors: list[str] = []
-    require(manifest.get("version") == "0.1.0", "version must be 0.1.0", errors)
-    require(manifest.get("status") in {"draft_control", "controlled"}, "status must be draft_control or controlled", errors)
+    require(
+        manifest.get("version") in VALID_MANIFEST_VERSIONS,
+        "version must be 0.1.0 or 0.2.0",
+        errors,
+    )
+    require(
+        manifest.get("status") in VALID_CONTROL_STATUSES,
+        "status must be draft_control, controlled or control_retest",
+        errors,
+    )
     require(manifest.get("authority", {}).get("source_repo") == "GBOGEB/CODEX", "source_repo must be GBOGEB/CODEX", errors)
     require(manifest.get("authority", {}).get("mode") == "bridge_contract", "authority mode must be bridge_contract", errors)
 

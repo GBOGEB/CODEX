@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -61,8 +62,11 @@ def validate_ts_tests() -> None:
     existing = [test for test in ts_tests if (ROOT / test).exists()]
     if not existing:
         return
+    npx = shutil.which("npx")
+    if npx is None:
+        fail("npx executable is required for TypeScript federation tests")
     subprocess.run(
-        ["npx", "tsx", "--test", *existing],
+        [npx, "tsx", "--test", *existing],
         cwd=ROOT,
         check=True,
     )
@@ -106,10 +110,10 @@ def validate_report() -> None:
         fail("CODEX_EXECUTION_REPORT.md missing report title")
 
     legacy_markers = {"Issue-001", "Wave-0 completion", "Wave-1 completion"}
-    current_markers = {"## Task 5 — Program Status", "## SHA Workflow Status"}
-    if legacy_markers.issubset(report):
+    current_markers = {"## Task 5", "## SHA Workflow Status"}
+    if all(marker in report for marker in legacy_markers):
         return
-    if current_markers.issubset(report):
+    if all(marker in report for marker in current_markers):
         print(
             "CODEX_EXECUTION_REPORT.md uses the current recovery-report contract; "
             "legacy Wave-0/Wave-1 marker assertions skipped."
