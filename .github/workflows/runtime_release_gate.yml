@@ -138,32 +138,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
-        with: {name: runtime-evidence-artifacts}
+        with:
+          name: runtime-evidence-artifacts
+          path: .release/runtime
       - uses: actions/download-artifact@v4
-        with: {name: governance-artifacts}
+        with:
+          name: governance-artifacts
+          path: .release/governance
+      - name: Verify downloaded release evidence
+        run: |
+          test -f .release/runtime/reports/runtime_status.json
+          test -f .release/runtime/reports/rtm_summary.json
+          test -f .release/runtime/docs/wave_packages/runtime/out/deployment_readiness.json
+          test -f .release/runtime/docs/wave_packages/runtime/out/reality_tracker.json
+          test -f .release/governance/reports/governance_snapshot.json
+          test -f .release/governance/reports/dmaic_phase_report.json
       - name: Enforce deployment threshold
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
-          deploy=json.loads(Path('docs/wave_packages/runtime/out/deployment_readiness.json').read_text())
-          reality=json.loads(Path('docs/wave_packages/runtime/out/reality_tracker.json').read_text())
+          deploy=json.loads(Path('.release/runtime/docs/wave_packages/runtime/out/deployment_readiness.json').read_text())
+          reality=json.loads(Path('.release/runtime/docs/wave_packages/runtime/out/reality_tracker.json').read_text())
           if deploy['completion_percent'] < 90: raise SystemExit('Deployment readiness below release threshold')
           if reality['average_actual'] < 50: raise SystemExit('Reality alignment below release threshold')
           PY
-      - run: |
-          test -f reports/runtime_status.json
-          test -f reports/governance_snapshot.json
-          test -f reports/rtm_summary.json
-          test -f reports/dmaic_phase_report.json
       - if: always()
         uses: actions/upload-artifact@v4
         with:
           name: release-gate-artifacts
-          path: |
-            reports/runtime_status.json
-            reports/governance_snapshot.json
-            reports/rtm_summary.json
-            reports/dmaic_phase_report.json
-            docs/wave_packages/runtime/out/deployment_readiness.json
-            docs/wave_packages/runtime/out/reality_tracker.json
+          path: .release/
