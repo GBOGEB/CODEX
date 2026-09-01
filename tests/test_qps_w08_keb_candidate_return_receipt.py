@@ -30,10 +30,22 @@ class TestQpsW08KebCandidateReturnReceipt(unittest.TestCase):
         self.assertEqual(
             data["source_parent_merge_sha"], "a8525f61102d00cbbe5a7cbe832ac1573a86783c"
         )
-        self.assertEqual(data["peer_abacus_pr"], "GBOGEB/ABACUS#805")
-        self.assertEqual(data["peer_abacus_merged_repair_pr"], "GBOGEB/ABACUS#802")
+        self.assertEqual(data["peer_abacus_latest_merged_repair_pr"], "GBOGEB/ABACUS#805")
+        self.assertEqual(
+            data["peer_abacus_latest_merged_repair_sha"],
+            "1ce4815b82beacc6d63de4fae31ad79be3d8e724",
+        )
+        self.assertEqual(data["peer_abacus_predecessor_repair_pr"], "GBOGEB/ABACUS#802")
+        self.assertEqual(
+            data["peer_abacus_predecessor_repair_sha"],
+            "98ddbeeb6fa1e1e099e40893ee2ef7de0ba64501",
+        )
         self.assertEqual(
             data["peer_abacus_historical_predecessor_pr"], "GBOGEB/ABACUS#795"
+        )
+        self.assertEqual(
+            data["peer_abacus_historical_predecessor_sha"],
+            "83f1680e5405c082b414343dbdcad20ab8c9eac9",
         )
 
     def test_incomplete_runtime_hash_binding_fails_closed(self):
@@ -50,10 +62,24 @@ class TestQpsW08KebCandidateReturnReceipt(unittest.TestCase):
 
     def test_semantic_request_tracks_current_abacus_repair_lineage(self):
         request = load(REQUEST)
-        self.assertEqual(request["source_abacus_pr"], "GBOGEB/ABACUS#805")
         self.assertEqual(
-            request["source_abacus_merged_repair_pr"], "GBOGEB/ABACUS#802"
+            request["source_abacus_latest_merged_repair_pr"], "GBOGEB/ABACUS#805"
+        )
+        self.assertEqual(
+            request["source_abacus_latest_merged_repair_sha"],
+            "1ce4815b82beacc6d63de4fae31ad79be3d8e724",
+        )
+        self.assertEqual(
+            request["source_abacus_predecessor_repair_pr"], "GBOGEB/ABACUS#802"
+        )
+        self.assertEqual(
+            request["source_abacus_predecessor_repair_sha"],
+            "98ddbeeb6fa1e1e099e40893ee2ef7de0ba64501",
         )
         self.assertEqual(
             request["source_abacus_historical_predecessor_pr"], "GBOGEB/ABACUS#795"
+        )
+        self.assertEqual(
+            request["source_abacus_historical_predecessor_sha"],
+            "83f1680e5405c082b414343dbdcad20ab8c9eac9",
         )
