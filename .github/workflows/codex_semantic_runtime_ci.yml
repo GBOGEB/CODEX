@@ -107,10 +107,69 @@ jobs:
           cat qps_w08_keb_return/SHA256SUMS
 
       - name: Upload QPS W08 KEB runtime return
+        id: upload_keb_payload
         uses: actions/upload-artifact@v4
         with:
           name: qps-w08-keb-runtime-return-${{ github.run_id }}
           path: qps_w08_keb_return/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Build post-upload KEB binding
+        env:
+          KEB_ARTIFACT_ID: ${{ steps.upload_keb_payload.outputs.artifact-id }}
+          KEB_ARTIFACT_DIGEST: ${{ steps.upload_keb_payload.outputs.artifact-digest }}
+          KEB_ARTIFACT_URL: ${{ steps.upload_keb_payload.outputs.artifact-url }}
+        run: |
+          mkdir -p qps_w08_keb_binding
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          artifact_id = os.environ.get("KEB_ARTIFACT_ID", "").strip()
+          artifact_digest = os.environ.get("KEB_ARTIFACT_DIGEST", "").strip()
+          if not artifact_id:
+              raise SystemExit("upload-artifact did not return artifact-id")
+          if not artifact_digest.startswith("sha256:"):
+              raise SystemExit("upload-artifact did not return a sha256 artifact-digest")
+          binding = {
+              "schema_version": "0.1",
+              "document_id": "QPS_W08_KEB_RUNTIME_BINDING",
+              "status": "CANDIDATE_ONLY",
+              "authority": "CODEX_parent_semantic_runtime",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "commit_sha": os.environ["GITHUB_SHA"],
+              "run_id": os.environ["GITHUB_RUN_ID"],
+              "run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT", "1"),
+              "workflow": os.environ["GITHUB_WORKFLOW"],
+              "ref": os.environ["GITHUB_REF"],
+              "runtime_artifact_id": artifact_id,
+              "runtime_artifact_digest": artifact_digest,
+              "runtime_artifact_url": os.environ.get("KEB_ARTIFACT_URL", ""),
+              "semantic_runtime_checks_passed": True,
+              "child_disposition": "UNSET",
+              "parent_credit_promotion_allowed": False,
+              "missing_hash_inference_allowed": False,
+          }
+          out = Path("qps_w08_keb_binding/runtime_binding.json")
+          out.write_text(
+              json.dumps(binding, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+          (
+            cd qps_w08_keb_binding
+            sha256sum runtime_binding.json > SHA256SUMS
+          )
+          cat qps_w08_keb_binding/runtime_binding.json
+          cat qps_w08_keb_binding/SHA256SUMS
+
+      - name: Upload post-upload KEB binding
+        uses: actions/upload-artifact@v4
+        with:
+          name: qps-w08-keb-runtime-binding-${{ github.run_id }}
+          path: qps_w08_keb_binding/
           if-no-files-found: error
           retention-days: 30
 
