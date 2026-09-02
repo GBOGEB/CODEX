@@ -125,14 +125,17 @@ jobs:
           python - <<'PY'
           import json
           import os
+          import re
           from pathlib import Path
 
           artifact_id = os.environ.get("KEB_ARTIFACT_ID", "").strip()
-          artifact_digest = os.environ.get("KEB_ARTIFACT_DIGEST", "").strip()
+          raw_digest = os.environ.get("KEB_ARTIFACT_DIGEST", "").strip()
           if not artifact_id:
               raise SystemExit("upload-artifact did not return artifact-id")
-          if not artifact_digest.startswith("sha256:"):
-              raise SystemExit("upload-artifact did not return a sha256 artifact-digest")
+          digest_hex = raw_digest.removeprefix("sha256:")
+          if not re.fullmatch(r"[0-9a-fA-F]{64}", digest_hex):
+              raise SystemExit("upload-artifact did not return a valid SHA256 digest")
+          artifact_digest = f"sha256:{digest_hex.lower()}"
           binding = {
               "schema_version": "0.1",
               "document_id": "QPS_W08_KEB_RUNTIME_BINDING",
