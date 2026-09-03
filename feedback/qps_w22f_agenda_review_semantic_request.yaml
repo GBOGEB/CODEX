@@ -1,0 +1,145 @@
+schema_version: "0.1"
+document_id: QPS_W22F_AGENDA_REVIEW_SEMANTIC_REQUEST
+status: PARENT_CANDIDATE_REQUEST
+authority: CODEX_parent_semantic_keb_support
+return_to_child: GBOGEB/cryoplant-project
+source_child_prs:
+  - GBOGEB/cryoplant-project#307
+  - GBOGEB/cryoplant-project#308
+  - GBOGEB/cryoplant-project#300
+source_document:
+  reference: SCK_CEN_99733122
+  negotiation_date: "2026-09-10"
+  confidentiality_rule: SANITIZED_STRUCTURE_ONLY_NO_BIDDER_VERBATIM
+measured_child_review_surface:
+  agenda_topic_blocks: 114
+  comment_atoms: 230
+  compliance_matrix_rows: 86
+  explicit_agenda_entity_edges: 165
+purpose: >-
+  Ask KEB to normalize and validate the semantic contract introduced by the full QPS agenda review:
+  keep bidder/source facts independent from reviewer compliance assessment and action routing; preserve
+  attributed internal PCO-to-GBO review; normalize partial/multi-condition compliance; and validate
+  negotiation/RFI/deferred/re-entry relationships without parent-side compliance promotion.
+required_semantic_axes:
+  source_fact:
+    allowed:
+      - ACCEPTANCE_OR_COMPLIANCE_STATEMENT
+      - DEVIATION
+      - CLARIFICATION
+      - ASSUMPTION
+      - EXCLUSION
+      - SUGGESTION_OR_ALTERNATIVE
+      - MISSING_OR_DEFERRED_EVIDENCE
+  reviewer_assessment:
+    allowed:
+      - COMPLY
+      - PARTIAL
+      - ACCEPTED_VARIANCE
+      - REVIEW_REQUIRED
+      - NOK
+      - TBD
+  action_route:
+    allowed:
+      - CLOSE
+      - CLARIFY
+      - RFI
+      - NEG
+      - COMMERCIAL_NEG
+      - DEFER_POST_AWARD_PROOF
+      - HOLD
+  evidence_maturity:
+    allowed:
+      - NONE
+      - PROMISED
+      - PHASE_BOUND
+      - SUBMITTED
+      - REVIEWED
+      - APPROVED
+      - VERIFIED
+semantic_invariants:
+  - source_fact_DEVIATION_must_not_imply_reviewer_assessment_NOK
+  - source_fact_CLARIFICATION_must_not_imply_COMPLY_or_NOK_without_requirement_interpretation
+  - MISSING_OR_DEFERRED_EVIDENCE_defaults_to_RFI_or_CLARIFY_not_NOK_unless_explicit_requirement_failure_exists
+  - PARTIAL_must_retain_satisfied_conditions_and_residual_conditions
+  - ACCEPTED_VARIANCE_must_preserve_original_requirement_and_accepted_change_lineage
+  - PCO_TO_GBO_is_INTERNAL_REVIEW_REQUEST_not_bidder_evidence_or_acceptance
+  - consolidated_SCK_CEN_comment_is_distinct_from_GBO_and_PCO_source_attribution
+  - PROMISED_or_PHASE_BOUND_is_not_SUBMITTED_APPROVED_or_VERIFIED
+  - AGREED_is_not_CLOSED_without_required_reentry_evidence
+  - no_cross_bidder_substitution
+  - no_inference_PCA_BT_or_parent_semantic_credit_to_child_compliance
+relationship_taxonomy:
+  - PCO_TO_GBO
+  - COMMENT_TO_TOPIC
+  - AGENDA_TOPIC_TO_ENTITY
+  - TOPIC_TO_SOURCE_FACT
+  - TOPIC_TO_REVIEW_ASSESSMENT
+  - TOPIC_TO_ACTION_ROUTE
+  - AGENDA_TO_DELIVERABLE_ROUTE
+  - TOPIC_TO_UPDATED_OFFER_RETURN
+  - UPDATED_OFFER_RETURN_TO_REENTRY_EVIDENCE
+  - DEVIATION_TO_NEGOTIATION_OBJECT
+  - MISSING_EVIDENCE_TO_RFI
+  - CLARIFICATION_TO_REVIEW_DISPOSITION
+  - ACCEPTED_VARIANCE_TO_EFFECTIVE_REQUIREMENT
+  - REENTRY_SUPERSEDES_PRIOR_POSITION
+  - CONSISTENCY_RECONCILIATION
+priority_semantic_cases:
+  - id: HP_N_MINUS_1
+    agenda: T6.2
+    expected_model: >-
+      installed_four_units may be supporting architecture evidence while selected three-of-four
+      duty, utility availability, trip recovery and common-cause proof remain residual; do not
+      collapse the whole requirement to NOK solely because proof is incomplete.
+  - id: PVPS_N_PLUS_1
+    agenda: T6.3
+    expected_model: >-
+      installed/running/reserve counts, guaranteed capacity and common dependencies are separate
+      subconditions whose source and review states must remain independently visible.
+  - id: CC_COMMON_CAUSE
+    agenda: T6.4
+    anchors: [RTM-595, TODO-014]
+    expected_model: common-cause/non-overlap missing evidence routes to RFI/NEG and cannot be inferred as zero.
+  - id: CYBERSECURITY
+    agenda: T5.4
+    anchors: [OFFER-25]
+    expected_model: >-
+      explicit current capability/evidence gap can support a review-required or noncompliant assessment
+      only through the governing requirement; future capability statements remain promised evidence.
+  - id: FAT_SAT_ACCEPTANCE
+    agenda: [T7.1, T7.2, T7.4, T7.5, T7.6, T7.7]
+    anchors: [RTM-514, OFFER-39, COM_ID_45, COM_ID_84]
+    expected_model: technical verification proof and commercial remedy/deemed-acceptance negotiation are separate axes.
+  - id: RISK_ASSESSMENT
+    agenda: [T8.5, U1.17]
+    anchors: [OFFER-46]
+    expected_model: confidential_methodology_exclusion does not remove need for auditable project risk evidence.
+  - id: UPDATED_OFFER_REENTRY
+    agenda: [U4.3, U4.4, U4.5, U4.6]
+    expected_model: >-
+      final BAFO deviation register, document index, compliance matrices and consistency confirmation
+      must reconcile/supersede prior positions without deleting historical lineage.
+requested_keb_outputs:
+  - normalized_terms_and_aliases
+  - invalid_semantic_promotions
+  - ambiguous_source_fact_vs_review_assessment_rows
+  - deviation_to_negotiation_route_candidates
+  - missing_evidence_to_rfi_route_candidates
+  - partial_compliance_schema_findings
+  - attribution_and_direction_findings
+  - reentry_and_supersession_findings
+  - duplicate_or_conflicting_effective_requirement_edges
+return_contract:
+  disposition_owner: GBOGEB/cryoplant-project
+  parent_disposition: UNSET
+  allowed_child_dispositions: [ACCEPT, REJECT, DEFER]
+  formal_closure_delta: 0
+  negotiation_resolution_delta: 0
+  required_for_acceptance:
+    - parent_commit_sha
+    - request_sha256
+    - runtime_or_result_reference
+    - result_sha256
+    - finding_ids
+    - child_disposition
