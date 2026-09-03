@@ -1,0 +1,59 @@
+schema_version: 1
+semantic_id: qplant.review_metrics.exact_union.w37.20260903
+evidence_class: DERIVED
+population:
+  RTM_total: 722
+reviewers:
+  RDA_SEH:
+    RTM_edges: 39
+  GBO:
+    RTM_edges: 13
+    exact_ids: [RTM-599, RTM-600, RTM-601, RTM-602, RTM-603, RTM-604, RTM-605, RTM-606, RTM-607, RTM-608, RTM-609, RTM-610, RTM-611]
+  DKO:
+    RTM_edges: 7
+    exact_ids: [RTM-437, RTM-438, RTM-439, RTM-441, RTM-442, RTM-443, RTM-447]
+    domain: Design & Fabrication
+    bidder_scope: [ALAT, LKT]
+overlap:
+  RDA_GBO: 7
+  DKO_RDA: 0
+  DKO_GBO: 0
+  DKO_prior_union: 0
+exact_union:
+  before_unique_RTM: 45
+  after_unique_RTM: 52
+  unique_delta: 7
+  before_pct: 6.23
+  after_pct: 7.20
+  percentage_point_delta: 0.97
+  relative_uplift_pct: 15.56
+  reviewer_RTM_edges: 59
+domain_effect:
+  Design_Fabrication:
+    denominator: 35
+    DKO_reviewed_unique_RTM: 7
+    DKO_share_pct: 20.0
+    total_human_review_domain_pct: PENDING_FULL_52_NODE_DOMAIN_PROJECTION
+formal_control:
+  engineering: {closed: 70, total: 90, delta: 0}
+  negotiation: {closed: 0, total: 20, delta: 0}
+PCA:
+  reviewer_feature_coverage_pct: 7.20
+  readiness_target_pct: 60.0
+  gap_percentage_points: 52.80
+  recompute_authorized: false
+next_projection:
+  dimensions: [reviewer, RTM, domain, bidder]
+  outputs:
+    - exact_domain_reviewed_numerator
+    - domain_denominator
+    - domain_coverage_pct
+    - domain_gap_count
+    - reviewer_domain_matrix
+    - bidder_specific_review_density
+controls:
+  deduplicate_population_by_RTM_ID: true
+  preserve_multi_reviewer_edges: true
+  reviewed_is_not_compliant: true
+  no_formal_credit_from_review_union: true
+  no_domain_undercoverage_rank_without_exact_numerator: true
