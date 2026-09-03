@@ -1,0 +1,21 @@
+schema_version: "0.1"
+semantic_id: qplant.review_metrics.catchup.w39.20260903
+evidence_class: DERIVED
+source_review: ABACUS/docs/qps_offer_rtm_evaluation/current/RTM_EVIDENCE_161_351_517.md
+baseline: {reviewed: 52, denominator: 722, pct: 7.20, domains_active: 5, reviewer_rtm_edges: 59}
+pulses:
+  - {pulse: 1, rtm: RTM-161, rank: 50, tier: T1_PRIMARY, domain: Subsystems, disposition: REJECT_DOCUMENTATION_REDUCTION, reviewed_after: 53, global_pct_after: 7.34, domain_pct_after: 0.50}
+  - {pulse: 2, rtm: RTM-351, rank: 53, tier: T1_PRIMARY, domain: Control_and_Interlock, disposition: POSITIVE_EVIDENCE_REQUIRED, reviewed_after: 54, global_pct_after: 7.48, domain_pct_after: 1.16}
+  - {pulse: 3, rtm: RTM-517, rank: 54, tier: T1_PRIMARY, domain: Acceptance_Testing, disposition: REJECT_SAT_SCOPE_REDUCTION, reviewed_after: 55, global_pct_after: 7.62, domain_pct_after: 1.52}
+after: {reviewed: 55, denominator: 722, pct: 7.62, domains_active: 8, zero_review_domains: 14, reviewer_rtm_edges: 62}
+P1_remaining:
+  Subsystems: {reviewed: 1, denominator: 202, to_60pct: 121}
+  Control_and_Interlock: {reviewed: 1, denominator: 86, to_60pct: 51}
+  Acceptance_Testing: {reviewed: 1, denominator: 66, to_60pct: 39}
+  Buildings_and_Utilities: {reviewed: 0, denominator: 53, to_60pct: 32}
+controls:
+  reviewed_is_not_compliant: true
+  closure_credit: 0
+  pca_recompute: false
+  pca_target_pct: 60
+  next_domain_first: Buildings_and_Utilities
