@@ -1,0 +1,50 @@
+schema: qps-w51-helium-property-worker/v1
+payload_version: '1.0'
+wave: W51
+worker: HELIUM_PROPERTY_WORKER
+role: KNOWLEDGE_EXCHANGE_BRIDGE_WORKER
+authority: candidate_only
+formal_credit_delta: 0
+provider:
+  repo: GBOGEB/ABACUS
+  module: models.helium_properties.provider
+  function: state_tp
+  runtime_backend: CoolProp==7.2.0
+independent_reference:
+  provider: HEPAK
+  mode: frozen_engineer_generated_csv
+  path: docs/qps_line_s_recovery/he_reference_hepak.csv
+  missing_behavior: UNVALIDATED
+request:
+  required: [correlation_id, temperature_K, pressure_Pa]
+  optional: [requested_properties, engineering_context]
+response:
+  required:
+    - schema
+    - payload_version
+    - correlation_id
+    - worker
+    - input_sha256
+    - status
+    - result
+    - backend
+    - backend_version
+    - validation
+    - regime
+    - formal_credit_delta
+guards:
+  - no_parent_self_approval
+  - no_automatic_compliance_credit
+  - sub_lambda_requires_HEPAK_validation
+  - missing_HEPAK_reference_is_UNVALIDATED_not_PASS
+  - reject_outside_governed_temperature_envelope
+routing:
+  request: cryoplant-project -> CODEX/KEB -> ABACUS/HELIUM_PROPERTY_WORKER
+  return: ABACUS -> CODEX/KEB -> cryoplant-project
+pca_bt:
+  candidate: helium_property_activation
+  expected_effect:
+    reuse_value: high
+    federation_leverage: high
+    validation_gap: high_until_HEPAK_table
+    activation_effort: medium
