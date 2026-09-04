@@ -1,0 +1,40 @@
+schema_version: "0.1"
+document_id: QPS_W41_P03_CHILD_AUTHORITY_CORRECTION_KEB
+wave: W41
+pulse: P03
+status: SEMANTIC_PARENT_CORRECTION_NO_CHILD_CREDIT
+child_repo: GBOGEB/cryoplant-project
+child_authority_pr: 375
+supersedes_parent_return_pr: 351
+purpose: >-
+  Correct the stale candidate Buildings & Utilities mapping count in the merged W41 KEB return while preserving
+  its semantic anti-promotion rules and the private-child-authority boundary.
+correction:
+  stale_parent_candidate_mapping: {count: 24, denominator: 53, pct: 45.28}
+  child_authoritative_candidate_mapping: {count: 26, denominator: 53, pct: 49.06}
+  source: GBOGEB/cryoplant-project#375
+  child_corrections:
+    - NFS-007 candidate mapping uses RTM-417, RTM-418 and RTM-424; RTM-416-only mapping is removed.
+    - NFS-008 bidder scope remains BOTH; LKT page is bound and ALAT chemistry page remains pending.
+preserved_semantics:
+  page_bound_review: {buildings_utilities: "51/53 = 96.23%", nfs_reviewer_RTM_edges: 61}
+  global_review_union: "116/722 = 16.07%"
+  reviewer_RTM_edges: 123
+  original_MSG_paragraph_attribution: "0/53 exact"
+  fixed_W40_3D_exact_edges: "3->7"
+  fixed_W40_3D_M_floor_mean: "1.05->1.15"
+  rules:
+    - review_comment_NE_bidder_fact
+    - page_bound_review_NE_MSG_paragraph_attribution
+    - candidate_mapping_NE_governed_reviewer_coverage
+    - reviewed_NE_compliant
+    - parent_derived_edge_NE_child_SSOT_authority
+    - postulated_cost_NE_financial_penalty
+formal_effect:
+  engineering_closure: "70/90 = 77.78%"
+  negotiation_resolution: "0/20"
+  evaluated_price_delta_eur: 0
+  child_credit_delta: 0
+return_to_child:
+  target: GBOGEB/cryoplant-project
+  disposition: ACCEPT_SEMANTIC_CORRECTION_SUBJECT_TO_CHILD_RELEASE_CONTROL
