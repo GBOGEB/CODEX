@@ -26,8 +26,20 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          pip install pytest
+          pip install pytest "ruff==0.16.6"
           pip install -e .
+
+      - name: Lint (ruff)
+        id: ruff
+        # Report-only for now: a full-repo run currently surfaces ~1,000
+        # pre-existing violations under ruff's default rule set, which is
+        # unrelated debt this step isn't scoped to fix. Pinning the version
+        # here removes local/CI drift (REX rule: lint tools must be pinned
+        # exactly); promoting this to a blocking gate is a separate,
+        # tracked follow-up once that backlog is triaged.
+        continue-on-error: true
+        run: |
+          ruff check . --exclude tests
 
       - name: Validate SSOT schemas
         id: ssot_schemas
@@ -99,6 +111,7 @@ jobs:
         run: |
           python scripts/emit_governance_snapshot.py \
             --check ssot_schemas=${{ steps.ssot_schemas.outcome }} \
+            --check ruff=${{ steps.ruff.outcome }} \
             --check tests=${{ steps.tests.outcome }} \
             --check manifest=${{ steps.manifest.outcome }} \
             --check globs=${{ steps.globs.outcome }} \
