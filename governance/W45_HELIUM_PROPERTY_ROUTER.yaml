@@ -1,0 +1,36 @@
+schema_version: "0.1"
+wave: W45
+repository: GBOGEB/CODEX
+role: keb_router_and_validator
+router_id: helium_property_router
+
+physics_authority: GBOGEB/ABACUS
+child_authority: GBOGEB/cryoplant-project
+
+accepted_operations:
+  - state_tp
+  - state_ph
+  - state_ps
+  - saturation_t
+  - saturation_p
+
+routing_rules:
+  - do_not_duplicate_physics_ssot
+  - route_request_to_declared_provider
+  - validate_units_provenance_provider_commit_and_regime
+  - preserve_request_id_and_correlation_id
+  - fail_closed_on_unknown_provider_or_regime
+  - heii_requires_validated_low_temperature_provider
+
+return_states:
+  - VALID
+  - INVALID
+  - DEFER_PROVIDER_UNAVAILABLE
+  - DEFER_REGIME_UNSUPPORTED
+
+promotion:
+  runtime_to_engineering_credit: forbidden
+  child_disposition_required: true
+
+formal_credit_delta: 0
+negotiation_credit_delta: 0
