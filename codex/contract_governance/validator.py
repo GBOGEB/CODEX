@@ -6,7 +6,10 @@ import json
 from pathlib import Path
 from typing import Literal
 
+from docx import Document
 from openpyxl import load_workbook
+from pptx import Presentation
+from pypdf import PdfReader
 
 from .builder import workbook_payload
 from .io import content_hash
@@ -25,7 +28,16 @@ def validate_generated(ssot: GovernanceSSOT, out_dir: Path, tier: Tier) -> None:
     tier_dir = out_dir / tier
     manifest_path = tier_dir / f"{ssot.package_id}_{tier}_manifest.json"
     xlsx_path = tier_dir / f"{ssot.package_id}_{tier}.xlsx"
-    if not manifest_path.exists() or not xlsx_path.exists():
+    docx_path = tier_dir / f"{ssot.package_id}_{tier}.docx"
+    pptx_path = tier_dir / f"{ssot.package_id}_{tier}.pptx"
+    pdf_path = tier_dir / f"{ssot.package_id}_{tier}.pdf"
+    if (
+        not manifest_path.exists()
+        or not xlsx_path.exists()
+        or not docx_path.exists()
+        or not pptx_path.exists()
+        or not pdf_path.exists()
+    ):
         raise ValidationError(f"missing generated artifacts for tier {tier}")
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -93,6 +105,9 @@ def _validate_bidder_stripping(
         "workbook": _workbook_text(workbook),
         "html": _read_named_artifact(tier_dir, manifest, "html"),
         "rtm": _read_named_artifact(tier_dir, manifest, "rtm"),
+        "docx": _docx_text(_named_artifact_path(tier_dir, manifest, "docx")),
+        "pptx": _pptx_text(_named_artifact_path(tier_dir, manifest, "pptx")),
+        "pdf": _pdf_text(_named_artifact_path(tier_dir, manifest, "pdf")),
         "manifest": json.dumps(manifest, sort_keys=True),
     }
     for artifact_name, text in artifact_text.items():
@@ -113,9 +128,9 @@ def _workbook_text(workbook: object) -> str:
     )
 
 
-def _read_named_artifact(
+def _named_artifact_path(
     tier_dir: Path, manifest: dict[str, object], artifact_key: str
-) -> str:
+) -> Path:
     generated_artifacts = manifest.get("generated_artifacts")
     if not isinstance(generated_artifacts, dict):
         raise ValidationError("manifest generated_artifacts must be an object")
@@ -127,4 +142,43 @@ def _read_named_artifact(
     artifact_path = tier_dir / artifact_name
     if not artifact_path.exists():
         raise ValidationError(f"missing generated artifact: {artifact_path}")
-    return artifact_path.read_text(encoding="utf-8")
+    return artifact_path
+
+
+def _read_named_artifact(
+    tier_dir: Path, manifest: dict[str, object], artifact_key: str
+) -> str:
+    return _named_artifact_path(tier_dir, manifest, artifact_key).read_text(
+        encoding="utf-8"
+    )
+
+
+def _docx_text(path: Path) -> str:
+    document = Document(path)
+    paragraph_text = "\n".join(paragraph.text for paragraph in document.paragraphs)
+    table_text = "\n".join(
+        cell.text
+        for table in document.tables
+        for row in table.rows
+        for cell in row.cells
+    )
+    return "\n".join([paragraph_text, table_text])
+
+
+def _pptx_text(path: Path) -> str:
+    prs = Presentation(path)
+    fragments: list[str] = []
+    for slide in prs.slides:
+        for shape in slide.shapes:
+            if shape.has_text_frame:
+                fragments.append(shape.text_frame.text)
+            if shape.has_table:
+                for row in shape.table.rows:
+                    for cell in row.cells:
+                        fragments.append(cell.text)
+    return "\n".join(fragments)
+
+
+def _pdf_text(path: Path) -> str:
+    reader = PdfReader(path)
+    return "\n".join(page.extract_text() or "" for page in reader.pages)

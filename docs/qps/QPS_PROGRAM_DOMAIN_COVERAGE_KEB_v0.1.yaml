@@ -1,0 +1,16 @@
+schema_version: "0.1"
+contract: QPS_PROGRAM_DOMAIN_COVERAGE_KEB
+child_authority: GBOGEB/cryoplant-project
+child_merge: c8d08eec5c1af54345a29a0baf35e4e99f6936f9
+mode: candidate_findings_only
+domains: [Review,Coverage,Offer_ingestion,ADR_OCD,Cost_CAPEX_OPEX,Reliability_Configuration_RAMS,Interfaces,Support_Buildings_Utilities,ThreeD_Model,SAFETY,Cybersecurity,Control_System,Exclusions,Codes_and_Standards,Deliverables,Lifecycle,Spare_Parts_RCM]
+KEB_tasks:
+  - normalize canonical domain terms, aliases and enums
+  - map evidence references across RTM, OFFER, ADR/OCD, deliverables and lifecycle
+  - identify semantic gaps, unsupported claims and authority conflicts
+  - preserve bidder separation and source-supported vs inferred vs derived evidence classes
+  - treat Safety as standalone non-compensating and prevent semantic dilution
+  - identify missing codes/standards provenance and cybersecurity/control-system evidence boundaries
+  - return top undercovered domains and evidence-retrieval targets
+  - emit novelty, duplicate rate, semantic gap burn-down, cycle time and evidence references
+no_credit: [parent_semantic_growth, mention_count, unvalidated_findings]

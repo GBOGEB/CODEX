@@ -71,6 +71,10 @@ RUNTIME_MODULE_ALIGNMENT: dict[str, Tuple[str, ...]] = {
         "src/qplant_presentation_engine/federation_rollup.py",
         "metrics/federation/federation_rollup.json",
     ),
+    "debug_spine": (
+        "abacus_runtime/debug_spine/debug_spine_manifest.yaml",
+        "tests/runtime/test_debug_spine_w000.py",
+    ),
 }
 
 

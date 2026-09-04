@@ -1,14 +1,16 @@
-schema_version: "0.3"
+schema_version: "0.4"
 correlation_id: QPS-FED-W05-BIDDER-EVAL
 lane: CODEX_KEB
 status: REQUESTED
 child:
   repository: GBOGEB/cryoplant-project
-  baseline_sha: 1960710735177c398123af955c33daa8711ece60
+  baseline_sha: 53baac108920d36210ec6ba36799a61cc1da8982
+  artifact: ocd-adr/40_implementation/QPS_BIDDER_PARALLEL_EVAL_W03_v0.1.yaml
+  artifact_sha256: b979fa91dc8f4e0a89bde6f7e959f7ec08eaa5b27e63964f4a19acb1c572bc87
   authority: child_owns_engineering_SSOT_compliance_and_disposition
 input_contract:
   source_wave: QPS-BIDDER-EVAL-W03
-  bidders: [BIDDER_A,BIDDER_B]
+  bidders: [BIDDER_A, BIDDER_B]
   confidentiality: sanitized_terms_and_evidence_types_only
 exchange_domains:
   - HSE_SHE_safety_file
@@ -49,6 +51,6 @@ prohibited:
   - automatic_contract_authority_promotion
   - parent_self_promotion_into_child_SSOT
 child_disposition_contract:
-  governed_values: [ACCEPT,REJECT,DEFER]
+  governed_values: [ACCEPT, REJECT, DEFER]
   parent_findings_are_candidates: true
 closure_test: returned_KEB_receipt_plus_child_disposition_plus_feedback_receipt

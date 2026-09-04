@@ -1,0 +1,97 @@
+schema_version: "0.1"
+document_id: QPS_W22_1_TRI_REPO_KEB_VALIDATION_RECEIPT
+status: BOUNDED_PARENT_KEB_VALIDATION_RECEIPT_NO_CHILD_PROMOTION
+snapshot_date: 2026-09-04
+repository: GBOGEB/CODEX
+child_repository: GBOGEB/cryoplant-project
+correlation_id: QPS_W22_1_TRI_REPO_IMPLEMENTATION_TRIAGE
+
+purpose: >-
+  Provide the CODEX-side semantic and governance validation contract for the W22.1
+  tri-repository implementation wave. CODEX validates evidence classes, edge typing,
+  anchor rules, public-parent confidentiality and fail-closed promotion predicates; it
+  cannot override the private child SSOT or promote compliance/price effects.
+
+semantic_controls:
+  evidence_classes:
+    allowed:
+      - CONTROLLED
+      - SOURCE_SUPPORTED_REVIEW_COMMENT
+      - OFFER_SOURCE_PENDING
+      - MSG_ANCHOR_PENDING
+      - BIDDER_PAGE_ANCHORED_CANDIDATE
+      - CONTRACT_ANCHORED_CANDIDATE
+      - DERIVED
+      - POSTULATED
+    forbidden_promotions:
+      - review_comment_to_compliance_credit_without_msg_locator
+      - offer_reference_to_bidder_fact_without_exact_quote
+      - parent_metric_to_child_authority_without_disposition
+      - postulated_cost_to_evaluated_price_without_procurement_method
+  edge_semantics:
+    allowed_candidate_edges:
+      - exact_msg_locator_to_review_comment
+      - exact_msg_review_comment_to_reviewer_rtm_edge
+      - bidder_page_anchor_to_bidder_state_candidate
+      - sck_cen_local_standard_to_rtm_support_candidate
+      - legal_decree_norm_to_execution_deliverable_requirement
+      - execution_deliverable_to_rtm_proof_when_accepted
+      - parent_return_to_child_accept_reject_defer
+    required_promotion_edge:
+      - accepted_child_disposition_to_promoted_edge
+  local_standards_semantics:
+    rule: >-
+      SCK CEN curated local standards, SEH-referenced standards and Belgian law/decree norms
+      may support applicability and proof planning. They do not close RTM fulfilment unless
+      connected to accepted project execution deliverables or agreed proof artefacts.
+    omission_rule: unintended_omissions_to_be_discussed_and_agreed_by_mutual_consent
+
+validation_predicates:
+  exact_source_anchors:
+    - each MSG-derived promoted edge has filename, hash, sender/date/subject and paragraph locator
+    - each bidder-state mutation has exact offer file, page, section and quote/summary anchor
+    - each legal/standard node has authority class, source anchor and evidence class
+  confidentiality:
+    - public parents contain identifiers, metrics and guardrails only
+    - no raw MSG/email/tender/commercial content copied into public parents
+  child_authority:
+    - parent outputs are candidates until child accept/reject/defer
+    - child private SSOT remains authoritative for promotion
+  scoring:
+    - no formal compliance movement in W22.1
+    - no negotiation-resolution movement in W22.1
+    - no evaluated-price movement in W22.1
+    - EUR 378000 remains POSTULATED until procurement method and cost dedup pass
+
+expected_child_return_fields:
+  - source_id
+  - source_sha256
+  - semantic_sha256
+  - authority
+  - lifecycle_status
+  - hierarchy_node
+  - trace_links
+  - producer_repository
+  - producer_commit
+  - parser_or_builder_version
+  - artifact_hashes
+  - freshness_state
+  - supersedes
+  - child_disposition
+
+fail_closed_rules:
+  - missing_child_disposition: FAIL
+  - missing_exact_locator_for_promoted_msg_edge: FAIL
+  - missing_exact_quote_for_bidder_state_mutation: FAIL
+  - local_standard_used_as_final_proof_without_deliverable: FAIL
+  - public_parent_contains_private_source_text: FAIL
+  - formal_credit_delta_nonzero_in_w22_1: FAIL
+  - evaluated_price_delta_nonzero_in_w22_1: FAIL
+
+qa_status:
+  semantic_boundary_declared: PASS
+  evidence_classes_enumerated: PASS
+  edge_promotion_predicates_defined: PASS
+  local_standards_rule_declared: PASS
+  public_parent_confidentiality_gate_declared: PASS
+  child_disposition_required: PASS

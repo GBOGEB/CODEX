@@ -52,8 +52,9 @@ BASELINE_ALLOWED_UNDOCUMENTED = {
     'semantic_telemetry_dashboard', 'semantic_tokens', 'semantic_traceability', 'semantic_traversal',
     'semantic_trust_propagation_engine', 'semantic_trust_visibility', 'semantic_validation_engine',
     'semantic_validator', 'semantic_verification_alignment',
-    # terms introduced by SVG/P&ID and QPS user-interface PRs
+    # terms introduced by SVG/P&ID, QPS user-interface, and W08 semantic PRs
     'semantic_class', 'semantic_classes', 'semantic_label', 'semantic_layer_model',
+    'semantic_checks', 'semantic_signal',
 }
 BASELINE_ALLOWED_UNDOCUMENTED.update(
     {

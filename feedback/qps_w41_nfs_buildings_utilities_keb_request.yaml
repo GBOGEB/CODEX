@@ -1,0 +1,56 @@
+schema_version: "0.1"
+document_id: QPS_W41_NFS_BUILDINGS_UTILITIES_KEB_REQUEST
+wave_id: W41
+status: PARENT_SEMANTIC_FEDERATION_REQUEST_NO_CHILD_CREDIT
+child_repo: GBOGEB/cryoplant-project
+child_pr: 369
+abacus_dow_pr: 825
+child_source_control: ocd-adr/40_implementation/QPS_NFS_BUILDINGS_UTILITIES_BURNDOWN_W41_v0.1.yaml
+public_parent_boundary: >-
+  Do not copy raw tender evidence, MSG/email contents, bidder PDFs, reviewer quotations, or confidential commercial
+  material from the private child. Validate only the bounded semantics and return derived governance receipts.
+purpose: >-
+  Govern semantic preservation and federation for the W41 NFS / Buildings / Utilities / Support Systems lane.
+  Validate evidence classes, reviewer/domain edge semantics, exact-anchor requirements, cost-posture guardrails and
+  child re-entry rules so DOW analysis can be safely consumed without promoting review depth into compliance.
+required_keb_checks:
+  - preserve_SOURCE_SUPPORTED_REVIEW_COMMENT_as_review_evidence_not_bidder_source_fact
+  - preserve_OFFER_SOURCE_PENDING_until_exact_PDF_page_or_section_anchor_exists
+  - preserve_POSTULATED_RESIDUAL_INTEGRATION_COST_as_non_authoritative_cost_posture
+  - forbid_EUR_378k_from_becoming_hard_penalty_without_controlled_cost_method_and_procurement_acceptance
+  - preserve_reviewer_x_RTM_x_bidder_x_domain_edges_as_distinct_from_unique_RTM_breadth
+  - preserve_existing_DKO_overlap_for_RTM_438_442_447
+  - prevent_duplicate_reviewer_edges_from_inflating_review_coverage
+  - require_exact_topic_to_RTM_ownership_before_new_unique_RTM_breadth_is_claimed
+  - preserve_broad_building_utility_topic_as_open_dependency_until_child_predicate_is_known
+  - preserve_reviewed_not_compliant_and_RFI_not_closed
+  - preserve_parent_derived_output_as_non_authoritative_to_child_SSOT
+  - validate_public_parent_confidentiality_boundary
+  - emit_child_dispositionable_semantic_receipt
+semantic_types:
+  evidence_classes:
+    - SOURCE_SUPPORTED_REVIEW_COMMENT
+    - OFFER_SOURCE_PENDING
+    - POSTULATED_RESIDUAL_INTEGRATION_COST
+  edge_types:
+    - REVIEWER_TO_RTM
+    - REVIEWER_TO_DOMAIN
+    - RTM_TO_OFFER
+    - RTM_TO_BUILDING_INTERFACE
+    - RTM_TO_UTILITY_INTERFACE
+    - RTM_TO_INSTALLATION_DEPENDENCY
+    - TOPIC_TO_RTM_CANDIDATE_PENDING_OWNERSHIP
+    - COST_CANDIDATE_TO_NEGOTIATION_LEVER
+  forbidden_promotions:
+    - REVIEW_COMMENT_TO_COMPLIANCE_CREDIT
+    - PENDING_OFFER_REFERENCE_TO_VERIFIED_OFFER_EVIDENCE
+    - POSTULATED_COST_TO_CONTROLLED_FINANCIAL_PENALTY
+    - PARENT_DERIVED_EDGE_TO_CHILD_SSOT_AUTHORITY
+bridge_contract:
+  ABACUS_DOW_runtime_receipt_required: true
+  CODEX_KEB_semantic_receipt_required: true
+  child_accept_reject_defer_required: true
+  child_authority_wins: true
+  return_target: GBOGEB/cryoplant-project#369
+formal_credit: 0
+negotiation_credit: 0
