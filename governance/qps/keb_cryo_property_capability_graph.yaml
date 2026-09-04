@@ -1,0 +1,176 @@
+schema: codex-keb-capability-graph/v1
+capability_id: KEB_CRYO_PROPERTY_ROUTING
+state: PARTIALLY_DISCOVERED
+formal_credit_delta: 0
+source_repo_sha: 51fed017cf576f4f98178bb73eac7a3f261de4ea
+
+external_authority:
+  repository: GBOGEB/ABACUS
+  capability: CRYO_HE4_PROPERTY_SURFACE
+  source_prs: [850, 851]
+  source_merge_shas:
+    - be81f8e8865942a91f51c34298279c71c7ff6db3
+    - 168f00d9f0875ef706131f68dd76ffadb514afb6
+  rule: CODEX_MUST_NOT_DUPLICATE_OR_SELF_PROMOTE_PHYSICS_PROVIDER
+
+nodes:
+  - id: KEB-NODE-CLIENT
+    kind: KNOWLEDGE_EXCHANGE_BRIDGE_CLIENT
+    path: src/keb/keb_client.py
+    lifecycle: ACTIVE
+
+  - id: KEB-NODE-GOVERNANCE
+    kind: GOVERNANCE_VOCABULARY
+    path: KEB/governance
+    lifecycle: ACTIVE
+
+  - id: KEB-NODE-FEDERATION-TOPOLOGY
+    kind: FEDERATION_POLICY
+    path: governance/policy/federation_keb_topology.yml
+    lifecycle: ACTIVE
+
+  - id: KEB-NODE-RUNTIME-MANIFEST
+    kind: RUNTIME_AND_AGENT_REGISTRY
+    path: governance/runtime_manifest.json
+    lifecycle: ACTIVE
+
+  - id: KEB-NODE-MCP-SWEEP
+    kind: MCP_RUNTIME
+    path: scripts/run_mcp_sweep.py
+    lifecycle: ACTIVE
+
+  - id: KEB-NODE-FED-BRIDGE-CLI
+    kind: FEDERATION_BRIDGE_CLI
+    path: docs/wave_packages/runtime/federation_bridge_cli.py
+    lifecycle: DORMANT_AVAILABLE
+
+  - id: KEB-NODE-RUNTIME-BRIDGE
+    kind: RUNTIME_BRIDGE
+    path: docs/wave_packages/runtime/runtime_bridge.py
+    lifecycle: DORMANT_AVAILABLE
+
+  - id: KEB-NODE-AGENT-MONITOR
+    kind: AGENT_RUNTIME_MONITOR
+    path: scripts/agent_runtime_monitor.py
+    lifecycle: DORMANT_AVAILABLE
+
+  - id: KEB-NODE-CRYO-PROPERTY-ROUTER
+    kind: DOMAIN_CAPABILITY_ROUTER
+    lifecycle: PLANNED
+    provider_repository: GBOGEB/ABACUS
+
+  - id: EXT-NODE-ABACUS-HE4-PROPERTY
+    kind: EXTERNAL_DOMAIN_PROVIDER
+    repository: GBOGEB/ABACUS
+    capability: CRYO_HE4_PROPERTY_SURFACE
+    lifecycle: ACTIVE_EXTERNAL
+
+atoms:
+  - id: KEB-ATOM-PARENT-NO-AUTHORITY
+    subject: CODEX_KEB
+    predicate: cannot_create_qps_engineering_or_compliance_authority
+    status: ACTIVE_GUARD
+
+  - id: KEB-ATOM-EXTERNAL-PHYSICS-SSOT
+    subject: helium_property_provider
+    predicate: physics_execution_remains_in_abacus
+    status: ACTIVE_GUARD
+
+  - id: KEB-ATOM-HEII-ROUTING-GUARD
+    subject: He4_HeII
+    predicate: route_only_to_provider_with_explicit_low_temperature_validity
+    status: ACTIVE_GUARD
+
+  - id: KEB-ATOM-HEPAK-UNPROVEN
+    subject: HEPAK
+    predicate: runtime_import_is_not_proven
+    status: ACTIVE_GUARD
+
+edges:
+  - id: KEB-EDGE-001
+    source: KEB-NODE-CLIENT
+    target: KEB-NODE-GOVERNANCE
+    type: LOADS_GOVERNANCE_FROM
+    status: ACTIVE
+
+  - id: KEB-EDGE-002
+    source: KEB-NODE-RUNTIME-MANIFEST
+    target: KEB-NODE-FEDERATION-TOPOLOGY
+    type: GOVERNED_BY
+    status: ACTIVE
+
+  - id: KEB-EDGE-003
+    source: KEB-NODE-MCP-SWEEP
+    target: KEB-NODE-RUNTIME-MANIFEST
+    type: REGISTERED_RUNTIME_IN
+    status: ACTIVE
+
+  - id: KEB-EDGE-004
+    source: KEB-NODE-FED-BRIDGE-CLI
+    target: KEB-NODE-RUNTIME-MANIFEST
+    type: CANDIDATE_ACTIVATION_FOR
+    status: DORMANT
+
+  - id: KEB-EDGE-005
+    source: KEB-NODE-RUNTIME-BRIDGE
+    target: KEB-NODE-RUNTIME-MANIFEST
+    type: CANDIDATE_ACTIVATION_FOR
+    status: DORMANT
+
+  - id: KEB-EDGE-006
+    source: KEB-NODE-AGENT-MONITOR
+    target: KEB-NODE-RUNTIME-MANIFEST
+    type: CANDIDATE_ACTIVATION_FOR
+    status: DORMANT
+
+  - id: KEB-EDGE-007
+    source: KEB-NODE-CRYO-PROPERTY-ROUTER
+    target: EXT-NODE-ABACUS-HE4-PROPERTY
+    type: ROUTES_DOMAIN_REQUEST_TO
+    status: READY_FOR_CONTRACT_BINDING
+    guard: NO_LOCAL_PHYSICS_DUPLICATION
+
+  - id: KEB-EDGE-008
+    source: KEB-NODE-MCP-SWEEP
+    target: KEB-NODE-CRYO-PROPERTY-ROUTER
+    type: MAY_DISCOVER_OR_VALIDATE
+    status: PLANNED
+
+  - id: KEB-EDGE-009
+    source: EXT-NODE-ABACUS-HE4-PROPERTY
+    target: KEB-NODE-CRYO-PROPERTY-ROUTER
+    type: RETURNS_TYPED_PROPERTY_RECEIPT_TO
+    status: READY_FOR_CONTRACT_BINDING
+
+activation_metrics:
+  discovered_nodes: 10
+  active_or_external: 6
+  dormant_available: 3
+  planned: 1
+  penetration_fraction: 0.6
+  note: descriptive capability penetration only; not formal QPS closure
+
+promotion_gates:
+  ROUTER_PLANNED_TO_BOUND:
+    - exact_abacus_source_sha
+    - normalized_property_schema
+    - capability_registry_entry
+    - stale_sha_rejection
+  BOUND_TO_TESTED:
+    - positive_route_case
+    - unsupported_property_fail_closed
+    - HeII_invalid_provider_fail_closed
+    - missing_provider_fail_closed
+    - receipt_hash_validation
+  TESTED_TO_ON_DUTY:
+    - real_qps_workload_roundtrip
+    - abacus_result_receipt
+    - child_disposition
+    - regression_guard
+
+wave_links:
+  - W45_end_to_end_bridge_roundtrip
+  - W46_MCP_worker_fabric
+  - W49_real_cryoplant_workload_proof
+  - W50_provenance_closure
+  - W51_autonomous_planning
