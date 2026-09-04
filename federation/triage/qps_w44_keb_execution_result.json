@@ -1,0 +1,81 @@
+{
+  "schema_version": "0.1",
+  "result": "QPS_W44_KEB_EXECUTION_RESULT",
+  "parent": "CODEX",
+  "role": "KNOWLEDGE_EXCHANGE_BRIDGE",
+  "source_child": {
+    "repository": "GBOGEB/cryoplant-project",
+    "pr": 388,
+    "merge_sha": "29c2fb587403c5ccab690392026a51ecd8fd92d8"
+  },
+  "supersedes_contract_child_anchor": {
+    "pr": 383,
+    "merge_sha": "c3cb08af3d1c3dddef12af2aa71f8508849e4a2e",
+    "reason": "W43 parent contract predates merged child #388 authority"
+  },
+  "executed_operations": [
+    "validate_source_identity",
+    "normalize_governed_terms",
+    "check_semantic_drift",
+    "check_authority_and_promotion_boundaries",
+    "validate_lineage_and_hashes",
+    "emit_child_dispositionable_findings"
+  ],
+  "semantic_findings": [
+    {
+      "finding_id": "KEB-W44-S01",
+      "semantic_scope": "candidate-vs-compliance",
+      "source_refs": ["B&U candidate mapping 26/53", "B&U page-bound review 51/53"],
+      "reason": "Candidate and review-depth states must remain distinct from accepted compliance.",
+      "recommended_child_disposition": "ACCEPT_AS_DERIVED_EVIDENCE"
+    },
+    {
+      "finding_id": "KEB-W44-S02",
+      "semantic_scope": "lkt-status",
+      "source_refs": ["TBD-CONFIRM", "NOK / DEVIATION", "PARTIAL"],
+      "reason": "TBD-CONFIRM remains clarification; deviation is not automatically final NOK; PARTIAL retains residual subconditions.",
+      "recommended_child_disposition": "ACCEPT_AS_DERIVED_EVIDENCE"
+    }
+  ],
+  "lineage_findings": [
+    {
+      "finding_id": "KEB-W44-L01",
+      "semantic_scope": "parent-child-freshness",
+      "source_refs": ["cryoplant-project#388", "CODEX#357"],
+      "reason": "Parent contract source-child anchor is stale and must rebase from #383 to #388.",
+      "recommended_child_disposition": "ACCEPT_AS_DERIVED_EVIDENCE"
+    },
+    {
+      "finding_id": "KEB-W44-L02",
+      "semantic_scope": "source-provenance",
+      "source_refs": ["raw MSG exact attribution 0/53"],
+      "reason": "Missing exact original-message provenance blocks semantic promotion of those review comments.",
+      "recommended_child_disposition": "DEFER_PENDING_SOURCE"
+    }
+  ],
+  "promotion_guard_findings": [
+    {
+      "finding_id": "KEB-W44-P01",
+      "semantic_scope": "formal-credit",
+      "source_refs": ["70/90", "0/20 negotiation"],
+      "reason": "Neither parent result, CI green state, review coverage nor graph depth may create formal or negotiation credit.",
+      "recommended_child_disposition": "ACCEPT_AS_DERIVED_EVIDENCE"
+    },
+    {
+      "finding_id": "KEB-W44-P02",
+      "semantic_scope": "duplicate-atoms",
+      "source_refs": ["reviewer→RTM edges 123", "cryoplant-project#375", "cryoplant-project#388"],
+      "reason": "Do not mint duplicate compliance atoms from already-governed graph/reviewer relationships.",
+      "recommended_child_disposition": "DUPLICATE_EXISTING_WORK"
+    }
+  ],
+  "guards": [
+    "KEB means Knowledge Exchange Bridge",
+    "KEB is not an execution scheduler",
+    "reviewed != compliant",
+    "candidate mapping != accepted evidence",
+    "parent semantics cannot override child SSOT authority",
+    "missing exact lineage fails closed"
+  ],
+  "formal_credit_delta": 0
+}
