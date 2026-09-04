@@ -140,7 +140,9 @@ jobs:
       - uses: actions/download-artifact@v4
         with: {name: runtime-evidence-artifacts}
       - uses: actions/download-artifact@v4
-        with: {name: governance-artifacts}
+        with:
+          name: governance-artifacts
+          path: reports
       - name: Enforce deployment threshold
         run: |
           python - <<'PY'

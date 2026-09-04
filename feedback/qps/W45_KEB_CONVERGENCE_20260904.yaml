@@ -1,0 +1,43 @@
+schema: codex-keb-exchange-receipt/v1
+payload_version: 1
+wave: W45
+correlation_id: QPS-FED-W45-CONVERGENCE
+role: CODEX_KEB
+source_child:
+  repo: GBOGEB/cryoplant-project
+  authority: merged_PR_395
+  merge_sha: 7a598666a1f50553fa12dffcb2a5ed992f0660c6
+semantic_contract:
+  allowed_edge_classes:
+    - EXACT_REVIEWER_TO_RTM
+    - EXACT_BIDDER_SOURCE_EVIDENCE
+    - CANDIDATE_MSG_TO_RTM
+    - EXACT_PR_LINEAGE
+    - EXACT_SELECTED_DESIGN_EVIDENCE
+    - EXACT_ACCEPTANCE_EVIDENCE
+  forbidden_promotions:
+    - review_to_compliance
+    - candidate_to_exact_without_source_locator
+    - bidder_offer_edge_to_reviewer_edge
+    - parent_request_to_parent_return
+    - parent_return_to_child_truth_without_disposition
+    - postulated_cost_to_evaluated_price
+    - component_MTBF_to_Table10_service_event_rate
+    - generated_binary_to_governed_release_without_acceptance
+  source_stream_partition:
+    page_bound_workbook_review: {reviewed_RTM: '116/722', reviewer_edges: 123, buildings_utilities: '51/53'}
+    original_MSG_stream: {exact_buildings_utilities: '0/53', candidate: '24/53'}
+  formal_boundary: {engineering: '70/90', negotiation: '0/20', evaluated_price_delta_EUR: 0}
+validation_targets:
+  - exact_original_MSG_identity_hash_sender_date_subject_paragraph_locator
+  - RTM595_common_cause_Table10_rate_semantics
+  - OFFER49_Belgian_AREI_RGIE_authority_semantics
+  - selected_design_LineS_WSH_LOOP_source_binding
+  - reliability_service_event_non_overlap_and_common_cause_semantics
+  - model_object_SBS_BOM_ICD_building_utility_bridge_exactness
+  - binary_release_SHA_and_visual_acceptance_semantics
+return_contract:
+  child_disposition_required: true
+  dispositions: [ACCEPT,REJECT,DEFER,DUPLICATE]
+  no_self_promotion: true
+formal_credit_delta: 0

@@ -1,0 +1,59 @@
+schema_version: 1
+semantic_id: qplant.review_metrics.dko.w36.20260903
+evidence_class: DERIVED
+source_evidence: qplant.dko.3d_compliance.20260903
+reviewer:
+  id: DKO
+  domain: 3D_CAD_spatial_integration
+coverage:
+  bidders: {covered: 2, total: 2, pct: 100.0}
+  scoped_records: 18
+  explicit_dispositions: 17
+  disposition_pct: 94.44
+  unique_RTM_ids: [RTM-437, RTM-438, RTM-439, RTM-441, RTM-442, RTM-443, RTM-447]
+  unique_OFFER_ids: [OFFER-36]
+  model_findings: 6
+dispositions:
+  COMPLIANT: 2
+  CONDITIONALLY_COMPLIANT: 2
+  NEGOTIABLE: 4
+  NOT_COMPLIANT: 9
+  OPEN: 1
+risk_metrics:
+  hard_noncompliance_pct: 50.0
+  adverse_or_conditional_count: 16
+  adverse_or_conditional_pct: 88.89
+owner_cost_exposure:
+  evidence_class: POSTULATED
+  ALAT_eur: 261000
+  LKT_eur: 288000
+  delta_eur: 27000
+baseline_controls:
+  formal: {before: 70, total: 90, after: 70, pct: 77.78, delta: 0}
+  negotiation: {before: 0, total: 20, after: 0, delta: 0}
+  global_human_review: {unique_RTM: 45, total_RTM: 722, pct: 6.23, exact_union_with_DKO: PENDING}
+  direct_offer_review: {reviewed: 40, total: 50, pct: 80.0, OFFER_36_increment_credit: NONE_UNTIL_EXACT_UNION}
+BT:
+  BT1: [LKT_RTM_441, LKT_RTM_442_LoR99, LKT_RTM_447, ALAT_RTM_438_442]
+  BT2: [ALAT_RTM_443, ALAT_RTM_439_442]
+PCA:
+  material_feature_enrichment: true
+  global_recompute_authorized: false
+  reason: sparse domain-specific reviewer cohort versus fixed N=722
+  exact_union_required: true
+review_metric_contract:
+  - population_coverage
+  - disposition_coverage
+  - reviewer_domain_coverage
+  - bidder_coverage
+  - closure_evidence_coverage
+  - adverse_finding_density
+  - open_clarification_rate
+  - reviewer_to_requirement_edge_count
+  - reviewer_to_model_finding_edge_count
+  - source_supported_vs_postulated_ratio
+controls:
+  review_presence_is_not_compliance: true
+  no_formal_credit_without_canonical_reentry: true
+  no_cost_double_counting: true
+  no_arithmetic_union_without_exact_ID_deduplication: true

@@ -1,0 +1,49 @@
+schema_version: 1
+semantic_id: qplant.dko.3d_compliance.20260903
+reviewer: DKO
+source:
+  document: SCK CEN/101648634
+  file: QPS- 3D _DKO.pptx
+  author: Diamantis Kounadis
+  date: 2026-08-25
+classification_rules:
+  compliance_findings: SOURCE-SUPPORTED
+  integration_cost_penalties: POSTULATED
+controls:
+  do_not_overwrite_bidder_values: true
+  require_provenance_for_scoring: true
+  require_owner_approval_for_cost_penalty: true
+  prevent_double_counting: true
+findings:
+  - {bidder: ALAT, req: RTM-438, status: NOT_COMPLIANT, topic: STEP_AP242}
+  - {bidder: ALAT, req: RTM-442, status: NOT_COMPLIANT, topic: metadata}
+  - {bidder: ALAT, req: RTM-443, status: NOT_COMPLIANT, topic: LoR_exchange}
+  - {bidder: ALAT, req: RTM-447, status: NOT_COMPLIANT, topic: model_management_platform}
+  - {bidder: ALAT, req: OFFER-36, status: NOT_COMPLIANT, topic: model_management_and_AP242}
+  - {bidder: ALAT, req: RTM-439, status: NEGOTIABLE, topic: naming_crosswalk}
+  - {bidder: LKT, req: RTM-441, status: NOT_COMPLIANT, topic: coordinate_system}
+  - {bidder: LKT, req: RTM-442, status: NOT_COMPLIANT, topic: as_built_LoR99}
+  - {bidder: LKT, req: RTM-443, status: NOT_COMPLIANT, topic: LoR_exchange}
+  - {bidder: LKT, req: RTM-447, status: OPEN, topic: model_management_platform}
+postulated_owner_cost_exposure_eur:
+  basis_eur_per_hour: 150
+  schedule_months: 36
+  ALAT: {concept: 27000, detailed: 108000, construction: 90000, commissioning: 36000, total: 261000}
+  LKT: {concept: 36000, detailed: 90000, construction: 72000, commissioning: 90000, total: 288000}
+negotiation_gates:
+  - {bidder: LKT, priority: P1, gate: accept_MINERVA_coordinate_system}
+  - {bidder: LKT, priority: P1, gate: maintain_3D_as_built_LoR99}
+  - {bidder: LKT, priority: P1, gate: clarify_RTM_447_platform}
+  - {bidder: ALAT, priority: P1, gate: metadata_and_interface_crosswalk_if_no_AP242}
+  - {bidder: ALAT, priority: P2, gate: continuous_model_exchange_review_gates}
+graph_edges:
+  - DKO_review -> RTM
+  - DKO_review -> OFFER
+  - RTM -> tender_scoring_matrix
+  - OFFER -> tender_scoring_matrix
+  - DKO_review -> negotiation_agenda
+  - DKO_review -> owner_cost_exposure
+  - RTM-439 -> ICD
+  - RTM-442 -> ICD
+  - ICD -> SBS_crosswalk
+  - SBS_crosswalk -> digital_twin

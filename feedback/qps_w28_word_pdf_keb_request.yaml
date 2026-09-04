@@ -1,0 +1,39 @@
+schema_version: "0.1"
+document_id: QPS_W28_WORD_PDF_KEB_REQUEST
+wave_id: W28
+status: PARENT_SEMANTIC_FEDERATION_REQUEST_NO_CHILD_CREDIT
+child_repo: GBOGEB/cryoplant-project
+child_pr: 319
+abacus_dow_pr: 816
+source:
+  title: QPS AGENDA_fuLL-COMMENT-REOSLUTION.docx
+  sckcen_reference: SCK CEN/99733122
+  sha256: cd16f80619c00fe84616c648dbdaf44ca801f63e294fb7d9c1b60c0bfaaf4959
+  outward_direct_word_link: false
+purpose: >-
+  Govern semantic preservation and federation for the QPS Word-to-PDF special case.
+  The KEB return must ensure that a rendered PDF preserves the agenda identity, sequence,
+  reviewer attribution, source references and action semantics while avoiding duplicate or
+  competing outward authorities.
+required_keb_checks:
+  - preserve_agenda_IDs_and_sequence
+  - preserve_bidder_source_fact_separate_from_reviewer_assessment
+  - preserve_Deviation_not_NOK
+  - preserve_PARTIAL_supported_and_residual
+  - preserve_comment_severity_as_independent_internal_judgement
+  - preserve_NEG_RFI_CLARIFY_route_transition_semantics
+  - preserve_T0_tier_and_consequence_badge_semantics
+  - detect_semantic_loss_or_silent_rewording_between_DOCX_and_PDF
+  - detect_duplicate_or_competing_document_authority
+  - bind_source_SHA_and_generated_PDF_SHA
+  - emit_child_dispositionable_receipt
+prune_contract:
+  rule: >-
+    A new Word/PDF surface must supersede or reference existing outward artifacts explicitly;
+    it must not create another unlabelled parallel SSOT.
+bridge_contract:
+  ABACUS_DOW_visual_runtime_receipt_required: true
+  CODEX_KEB_semantic_receipt_required: true
+  child_accept_reject_defer_required: true
+  promotion_target: governed_PDF_link_in_HTML_XLSX_PPT_and_canonical_outward_index
+formal_credit: 0

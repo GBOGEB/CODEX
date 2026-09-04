@@ -11,6 +11,11 @@ class TestValidateSsotStyleBridge(unittest.TestCase):
     def test_manifest_is_valid(self):
         self.assertEqual([], validator.validate_manifest(self.manifest))
 
+    def test_current_retest_status_and_version_are_valid(self):
+        self.manifest["version"] = "0.2.0"
+        self.manifest["status"] = "control_retest"
+        self.assertEqual([], validator.validate_manifest(self.manifest))
+
     def test_pca_axes_must_stay_reversed_for_catchup(self):
         broken = copy.deepcopy(self.manifest)
         broken["pca_axes"] = list(reversed(broken["pca_axes"]))

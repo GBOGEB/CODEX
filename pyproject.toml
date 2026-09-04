@@ -13,6 +13,8 @@ dependencies = ["PyYAML>=6.0,<7.0", "requests>=2.25.0"]
 
 [project.optional-dependencies]
 dev = ["pytest>=7.0", "pytest-json-report>=1.5"]
+windows = ["pywin32>=306; sys_platform == 'win32'"]
+graph = ["msal>=1.28,<2.0"]
 
 [tool.pytest.ini_options]
 addopts = "-q"

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gbogeb.example/schemas/qps_artifact_product_lineage.schema.json",
+  "title": "QPS Artifact Product Lineage Contract",
+  "type": "object",
+  "required": ["schema_version", "document_id", "status", "authority", "build_model", "evidence_baseline", "pca_screening", "completion_gate"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "document_id": {"const": "QPS_ARTIFACT_PRODUCT_LINEAGE_CONTRACT"},
+    "status": {"enum": ["HOLD_PENDING_BUILD_RECEIPT", "CONTROLLED"]},
+    "build_model": {
+      "type": "object",
+      "required": ["shared_parent", "peer_artifacts_may_depend_on_each_other", "required_outputs", "outputs"]
+    },
+    "completion_gate": {
+      "type": "object",
+      "required": ["required_build_receipt", "completion_claim_allowed", "stop_conditions"]
+    }
+  },
+  "additionalProperties": true
+}

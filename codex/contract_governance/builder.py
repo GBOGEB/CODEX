@@ -3,14 +3,20 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime
 from pathlib import Path
 from typing import Literal
+from xml.etree import ElementTree as ET
+from zipfile import ZIP_DEFLATED, ZipFile
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill
 
+from .docx_builder import build_docx
 from .io import content_hash
+from .pdf_builder import build_pdf
+from .pptx_builder import build_pptx
 from .schema import Audience, GeneratedSheet, GovernanceSSOT, Requirement
 
 Tier = Literal["internal", "bidder"]
@@ -84,7 +90,7 @@ def workbook_payload(ssot: GovernanceSSOT, tier: Tier) -> dict[str, object]:
 
 
 def build_artifacts(ssot: GovernanceSSOT, out_dir: Path, tier: Tier) -> dict[str, str]:
-    """Generate XLSX, HTML, RTM JSON, and a manifest for an output tier."""
+    """Generate XLSX, HTML, RTM JSON, DOCX, PPTX, PDF, and a manifest for an output tier."""
 
     tier_dir = out_dir / tier
     tier_dir.mkdir(parents=True, exist_ok=True)
@@ -94,11 +100,17 @@ def build_artifacts(ssot: GovernanceSSOT, out_dir: Path, tier: Tier) -> dict[str
     xlsx_path = tier_dir / f"{ssot.package_id}_{tier}.xlsx"
     html_path = tier_dir / f"{ssot.package_id}_{tier}.html"
     rtm_path = tier_dir / f"{ssot.package_id}_{tier}_rtm.json"
+    docx_path = tier_dir / f"{ssot.package_id}_{tier}.docx"
+    pptx_path = tier_dir / f"{ssot.package_id}_{tier}.pptx"
+    pdf_path = tier_dir / f"{ssot.package_id}_{tier}.pdf"
     manifest_path = tier_dir / f"{ssot.package_id}_{tier}_manifest.json"
 
     _write_workbook(payload, ssot, xlsx_path)
     _write_html(payload, ssot, html_path)
     _write_json(payload, rtm_path)
+    build_docx(payload, ssot, docx_path)
+    build_pptx(payload, ssot, pptx_path)
+    build_pdf(payload, ssot, pdf_path)
     _write_json(
         {
             "package_id": ssot.package_id,
@@ -110,6 +122,9 @@ def build_artifacts(ssot: GovernanceSSOT, out_dir: Path, tier: Tier) -> dict[str
                 "xlsx": xlsx_path.name,
                 "html": html_path.name,
                 "rtm": rtm_path.name,
+                "docx": docx_path.name,
+                "pptx": pptx_path.name,
+                "pdf": pdf_path.name,
             },
         },
         manifest_path,
@@ -118,6 +133,9 @@ def build_artifacts(ssot: GovernanceSSOT, out_dir: Path, tier: Tier) -> dict[str
         "xlsx": str(xlsx_path),
         "html": str(html_path),
         "rtm": str(rtm_path),
+        "docx": str(docx_path),
+        "pptx": str(pptx_path),
+        "pdf": str(pdf_path),
         "manifest": str(manifest_path),
         "content_hash": digest,
     }
@@ -132,6 +150,36 @@ def _requirement_row(req: Requirement) -> dict[str, str]:
         "Source Section": req.source_section,
         "Audience": req.audience.value,
     }
+
+
+def _pin_xlsx_core_properties(path: Path, fixed: datetime) -> None:
+    """Restore deterministic XLSX core timestamps after openpyxl save-time mutation."""
+
+    core_name = "docProps/core.xml"
+    temp_path = path.with_suffix(".tmp.xlsx")
+    namespaces = {
+        "cp": "http://schemas.openxmlformats.org/package/2006/metadata/core-properties",
+        "dc": "http://purl.org/dc/elements/1.1/",
+        "dcterms": "http://purl.org/dc/terms/",
+        "dcmitype": "http://purl.org/dc/dcmitype/",
+        "xsi": "http://www.w3.org/2001/XMLSchema-instance",
+    }
+    for prefix, uri in namespaces.items():
+        ET.register_namespace(prefix, uri)
+
+    stamp = fixed.replace(microsecond=0).isoformat(timespec="seconds") + "Z"
+    with ZipFile(path, "r") as source, ZipFile(temp_path, "w", ZIP_DEFLATED) as target:
+        for info in source.infolist():
+            data = source.read(info.filename)
+            if info.filename == core_name:
+                root = ET.fromstring(data)
+                for tag in ("created", "modified"):
+                    node = root.find(f"{{{namespaces['dcterms']}}}{tag}")
+                    if node is not None:
+                        node.text = stamp
+                data = ET.tostring(root, encoding="utf-8", xml_declaration=True)
+            target.writestr(info, data)
+    temp_path.replace(path)
 
 
 def _write_workbook(
@@ -156,6 +204,7 @@ def _write_workbook(
             ws.append([row.get(column, "") for column in columns])
         ws.freeze_panes = "A2"
     wb.save(path)
+    _pin_xlsx_core_properties(path, fixed)
 
 
 def _write_html(payload: dict[str, object], ssot: GovernanceSSOT, path: Path) -> None:

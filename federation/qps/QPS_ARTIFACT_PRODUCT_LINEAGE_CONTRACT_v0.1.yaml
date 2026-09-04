@@ -1,0 +1,102 @@
+schema_version: "0.1"
+document_id: QPS_ARTIFACT_PRODUCT_LINEAGE_CONTRACT
+status: HOLD_PENDING_BUILD_RECEIPT
+evidence_class: CONTROLLED
+
+authority:
+  workbook:
+    path: QPS_OFFER_Cluster_v3_4_BT_RTM_Standards_Evidence.xlsx
+    sha256: 00a5f0ed3ded00620a33edd045706ba5fb9a67b5fb7fe63c495305f911c43ccb
+    role: numerical_ssot
+  child_model:
+    repository: GBOGEB/cryoplant-project
+    path: ocd-adr/40_implementation/QPS_BIDDER_PARALLEL_EVAL_W03_v0.1.yaml
+    merge_sha: 53baac108920d36210ec6ba36799a61cc1da8982
+    sha256: b979fa91dc8f4e0a89bde6f7e959f7ec08eaa5b27e63964f4a19acb1c572bc87
+    role: ocd_adr_rtm_offer_authority
+
+build_model:
+  shared_parent: normalized_model
+  peer_artifacts_may_depend_on_each_other: false
+  required_outputs: [Excel, HTML, DOCX, PPTX, PDF, Markdown]
+  outputs:
+    - artifact_type: Excel
+      parent: normalized_model
+      required_controls: [content_hash, semantic_hash, freshness, qa_status, evidence_coverage]
+    - artifact_type: HTML
+      parent: normalized_model
+      required_controls: [content_hash, semantic_hash, freshness, qa_status, evidence_coverage]
+    - artifact_type: DOCX
+      parent: normalized_model
+      required_controls: [content_hash, semantic_hash, freshness, qa_status, evidence_coverage]
+    - artifact_type: PPTX
+      parent: normalized_model
+      required_controls: [content_hash, semantic_hash, freshness, qa_status, evidence_coverage]
+    - artifact_type: PDF
+      parent: normalized_model
+      required_controls: [content_hash, semantic_hash, freshness, qa_status, evidence_coverage]
+    - artifact_type: Markdown
+      parent: normalized_model
+      required_controls: [content_hash, semantic_hash, freshness, qa_status, evidence_coverage]
+
+evidence_baseline:
+  evidence_class: CONTROLLED
+  rtm_nodes: 722
+  offer_nodes: 50
+  crosswalk_edges: 377
+  reviewed_edges: 234
+  proposed_or_review_edges: 143
+  reviewed_edge_coverage: 0.6206896552
+
+pca_screening:
+  evidence_class: DERIVED
+  status: CONTROLLED_DERIVED_SCREENING
+  source_path: ocd-adr/metrics/QPS_COST_PRIMAL_SCREENING_RECEIPT_v0.1.yaml
+  screened_nodes: 26
+  screened_rtm_nodes: 12
+  screened_offer_nodes: 14
+  canonical_nodes: 772
+  node_coverage: 0.0336787565
+  retained_pc_count: 7
+  numerical_rank: 7
+  cumulative_explained_variance: 1.0
+  explained_variance_ratio:
+    PC1: 0.3157042732
+    PC2: 0.3020008637
+    PC3: 0.1570210584
+    PC4: 0.1223148684
+    PC5: 0.0559183158
+    PC6: 0.0330275783
+    PC7: 0.0140130422
+  disclosed_dominant_loading_vectors: 3
+  dominant_loading_disclosure_coverage: 0.4285714286
+  dominant_loadings:
+    PC1:
+      owner_scope_transfer: 0.507492
+      capex_spread_prominence: 0.487187
+      service_spares_exposure: -0.436366
+      lifecycle_opex_exposure: -0.415932
+    PC2:
+      acceptance_execution: -0.580601
+      lifecycle_opex_exposure: 0.397177
+      explicit_cost_reason: -0.389086
+      capex_spread_prominence: 0.385625
+    PC3:
+      explicit_cost_reason: 0.706442
+      safety_implementation: -0.627517
+  interpretation: screening_only_no_engineering_or_tender_credit
+
+completion_gate:
+  required_build_receipt: true
+  current_build_receipt: null
+  binary_release_coverage: null
+  evidence_node_coverage: 0.0336787565
+  dominant_pc_loading_disclosure_coverage: 0.4285714286
+  completion_claim_allowed: false
+  stop_conditions:
+    - six fresh hash-bound outputs exist from one normalized model build
+    - every output passes structural semantic and rendered QA
+    - evidence coverage denominators and exclusions are explicit
+    - PCA loadings are version-bound and remain DERIVED until approved
+    - downstream cryoplant receipt binds parent merge and artifact hashes
+

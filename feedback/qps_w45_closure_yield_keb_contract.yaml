@@ -1,0 +1,44 @@
+schema_version: '0.1'
+document_id: QPS_W45_CLOSURE_YIELD_KEB_CONTRACT
+parent: CODEX
+role: KNOWLEDGE_EXCHANGE_BRIDGE
+source_child:
+  repository: GBOGEB/cryoplant-project
+  pr: 399
+  source_main_sha: 47366543fb3d5e878b5f649c5699bf4ade96551f
+upstream_result:
+  pr: 364
+  state: OPEN_REBASED_RESULT
+  head_sha: fdc87c13dec14a6ec11fb2ee67194e6fbaf2ec12
+semantic_focus:
+  - preserve_review_candidate_compliance_surface_separation
+  - preserve_TBD_CONFIRM_PARTIAL_and_deviation_semantics
+  - enforce_original_MSG_provenance_fail_closed
+  - prevent_duplicate_compliance_atoms
+  - prevent_parent_self_promotion
+  - enforce_child_ACCEPT_REJECT_DEFER
+  - require_versioned_return_lineage_before_reentry
+hot_lane_guards:
+  RTM_595_TODO_014:
+    missing_common_cause_data_NE_zero_common_cause
+    quantitative_beta_optional_if_not_used_but_absence_must_be_explicit
+  OFFER_49_HSE:
+    preserve_33_item_population
+    preserve_3_actual_source_answers
+    preserve_30_missing_answers_as_missing_not_rejected
+  Buildings_Utilities:
+    page_bound_review: '51/53 = 96.23%'
+    candidate_mapping: '26/53 = 49.06%'
+    original_MSG_exact: '0/53'
+    rule: DO_NOT_CONFLATE_SURFACES
+  COST:
+    amount_eur: 378000
+    state: POSTULATED_ONLY
+    rule: NO_PRICE_OR_COMPLIANCE_MUTATION
+allowed_effects: [SEMANTIC_GUARD, LINEAGE, BLOCKER, DERIVED_EVIDENCE]
+forbidden_effects: [COMPLIANCE_CREDIT, NEGOTIATION_CREDIT, PRICE_MUTATION, PCA_PROMOTION, MULTIPLIER_PROMOTION]
+formal_effect:
+  engineering_closure: '70/90 = 77.78%'
+  negotiation_resolution: '0/20'
+  formal_credit_delta: 0
+  evaluated_price_delta_eur: 0

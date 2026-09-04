@@ -1,4 +1,4 @@
-version: 0.3.2
+version: 0.3.4
 system:
   name: GBOGEB/CODEX
   codename: ABACUS_RENDER_PIPELINE
@@ -12,6 +12,18 @@ glossary:
 
   semantic_sha256:
     definition: SHA-256 digest calculated from normalized meaning-bearing structure rather than volatile container metadata; used separately from the raw artifact SHA-256.
+
+  semantic_result_artifact_id:
+    definition: Stable identifier for the governed semantic-result artifact captured as evidence for downstream lineage, comparison, and child-owned KEB disposition.
+
+  semantic_result_sha256:
+    definition: SHA-256 digest of the governed semantic-result artifact recorded as bound evidence for semantic validation, lineage verification, and fail-closed return receipts.
+
+  semantic_score:
+    definition: Normalized 0-to-1 semantic similarity or relevance score attached to a governed evidence relation; it is a ranking signal only and does not establish compliance, acceptance, or child-owned closure.
+
+  semantic_runtime_checks_passed:
+    definition: Boolean parent-runtime receipt field stating that the governed semantic runtime checks preceding artifact publication completed successfully; it records execution state only and does not establish child acceptance, compliance, or score credit.
 
   semantic_drift:
     definition: Meaning-bearing divergence between governed artifacts, terminology, lineage, or runtime interpretation that requires detection and disposition.
@@ -54,6 +66,12 @@ glossary:
 
   semantic_substrate_debt_remains_separate_parent_repair_lane:
     definition: Authority invariant separating CODEX semantic-substrate maintenance debt from QPS child engineering closure and bidder evaluation credit.
+
+  semantic_guardrails:
+    definition: Structured set of fail-closed semantic constraints that prevent a derived schema, receipt, renderer or parent finding from changing child-owned compliance meaning, including rules such as deviation not mechanically implying NOK and PARTIAL retaining supported and residual conditions.
+
+  semantic_invariants:
+    definition: Structured list of meaning-preservation rules that must remain true across normalization, federation, rendering and re-entry; violations are semantic-governance failures and do not themselves create child compliance findings.
 
   dow:
     canonical_term: DOW
@@ -118,6 +136,21 @@ glossary:
 
   publication_pipeline:
     definition: End-to-end extraction, governance, rendering, validation, and publication workflow.
+
+  semantic_id:
+    definition: Durable cross-artifact identifier binding the same governed meaning across source, model, workbook, HTML, DOCX, PPTX, PDF and Markdown outputs.
+
+  semantic_hash:
+    definition: SHA-256 digest of canonicalized meaning-bearing content used to test cross-artifact parity independently of binary layout.
+
+  semantic_domain_coverage:
+    definition: Ratio of evaluated governed semantic domains to the requested semantic domains, with an explicit denominator.
+
+  semantic_contract_and_federation:
+    definition: Governed topic joining schema, validator, report and parent-child exchange semantics without transferring child engineering authority.
+
+  semantic_validator_contract_gap:
+    definition: Controlled failure class for a semantic validation rule, schema, or governed vocabulary item that is present in a parent PR head but not yet accepted as closed child evidence.
 
 runtime_maturity:
   semantic_governance: operational
