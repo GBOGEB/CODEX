@@ -1,0 +1,45 @@
+schema_version: "0.1"
+wave: W45
+repository: GBOGEB/CODEX
+plane: keb_governance
+intent: execute_typed_line_s_property_roundtrip
+
+request_route:
+  source: CODEX_KEB
+  target: ABACUS_HE4_PROVIDER
+  workload: QPS_LINE_S
+  required_fields:
+    - request_id
+    - property
+    - state_inputs
+    - units
+    - consumer_commit
+
+return_validation:
+  required_fields:
+    - provider_id
+    - value
+    - units
+    - validity_regime
+    - provider_commit
+    - provenance
+  checks:
+    - request_id_matches
+    - units_present
+    - provenance_present
+    - provider_commit_present
+    - regime_supported
+
+negative_tests:
+  heii_without_hepak_or_equivalent: MUST_FAIL_CLOSED
+  missing_units: MUST_FAIL_CLOSED
+  stale_provider_commit: MUST_FAIL_CLOSED
+  unsupported_property: MUST_FAIL_CLOSED
+
+child_disposition:
+  authority: GBOGEB/cryoplant-project
+  states: [ACCEPT, REJECT, DEFER]
+  automatic_promotion: false
+
+formal_credit_delta: 0
+negotiation_credit_delta: 0
