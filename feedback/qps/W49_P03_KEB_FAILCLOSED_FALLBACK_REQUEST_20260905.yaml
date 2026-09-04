@@ -1,0 +1,43 @@
+schema_version: "0.1"
+document_id: W49_P03_KEB_FAILCLOSED_FALLBACK_REQUEST
+wave: W49
+pulse: P03
+child_repo: GBOGEB/cryoplant-project
+child_commit: 0192a88a9c26f823b7034e4210ef311a7dd09e7c
+intent: >-
+  Validate semantic and provenance boundaries for the W49 P03 fail-closed
+  RTM-595 lane and HSE/provenance fallback execution.
+checks:
+  rtm595:
+    - typed_absence_is_not_zero_rate
+    - independent_stage_candidate_is_not_common_cause_evidence
+    - Table10_promotion_requires_authoritative_source
+    - no_cross_bidder_semantic_substitution
+  hse026:
+    - evidence_class_is_SOURCE_BOUND_REVIEW_EVIDENCE
+    - literal_2_meter_answer_preserved
+    - item_identity_and_section_5_2_5_preserved
+    - review_answer_does_not_become_bidder_compliance
+  hse029:
+    - evidence_class_is_SOURCE_BOUND_REVIEW_EVIDENCE
+    - literal_OK_answer_preserved
+    - item_identity_and_section_5_3_10_preserved
+    - review_answer_does_not_become_bidder_compliance
+  nfs:
+    - exact_original_MSG_requires_full_locator_tuple
+    - secondary_page_bound_projection_is_not_original_MSG_attribution
+  model_edges:
+    - exact_edge_requires_model_object_and_SBS_BOM_ICD_and_interface_binding
+    - indirect_review_density_is_not_exact_edge
+return_required:
+  - correlation_id
+  - semantic_findings
+  - provenance_findings
+  - evidence_classes
+  - recommended_child_dispositions
+  - immutable_return_hash
+guards:
+  - child_is_only_ACCEPT_REJECT_DEFER_authority
+  - no_formal_or_PCA_credit
+  - no_invented_source
+  - no_duplicate_credit
