@@ -1,0 +1,91 @@
+schema: codex-repo-coverage-control/v1
+wave: W52
+repo: GBOGEB/CODEX
+baseline_sha: 72207e5da4d9047bf157372ad408e355ca267d0b
+formal_credit_delta: 0
+
+definitions:
+  coverage: relevant repository surface wired into governed runtime/federation
+  penetration: maturity of discovered capability nodes
+  bidirectionality: forward request and reverse return both executed without material loss
+
+coverage:
+  denominator_state: OPEN
+  denominator_confidence: MEDIUM
+  eligible_classes:
+    - keb_client
+    - governance_vocabulary
+    - federation_policy
+    - runtime_manifest
+    - adapter_bridge
+    - mcp_worker
+    - agent_orchestrator
+    - ci_workflow
+    - regression_test
+    - qps_domain_adapter
+    - provenance_receipt
+    - external_typed_edge
+  subsystem_census:
+    KEB: {state: PARTIAL}
+    federation: {state: PARTIAL}
+    MCP: {state: PARTIAL}
+    agents_orchestration: {state: PARTIAL}
+    CI: {state: PARTIAL}
+    QPS_domain_adapters: {state: PARTIAL}
+    provenance_receipts: {state: PARTIAL}
+  publish_ratio: false
+  reason: denominator remains open while dormant runtime modules and domain adapters are still being triaged
+
+penetration:
+  lifecycle: [DISCOVERED, DECLARED, IMPORTABLE, TESTED, INTEGRATED, ON_DUTY]
+  cryo_property_router_snapshot:
+    discovered_nodes: 10
+    coarse_active_or_external_nodes: 6
+    coarse_fraction: 0.6
+    strict_on_duty_fraction: null
+  dormant_available:
+    - docs/wave_packages/runtime/federation_bridge_cli.py
+    - docs/wave_packages/runtime/runtime_bridge.py
+    - scripts/agent_runtime_monitor.py
+  rules:
+    - available_is_not_on_duty
+    - contract_binding_is_not_runtime_proof
+    - merged_is_not_victory
+
+bidirectionality:
+  peer: GBOGEB/ABACUS
+  forward: CODEX_KEB_REQUEST_TO_ABACUS_PROVIDER
+  reverse: ABACUS_PROPERTY_RECEIPT_TO_CODEX_KEB
+  required_metrics:
+    - forward_route_defined
+    - reverse_route_defined
+    - forward_executed
+    - reverse_executed
+    - exact_sha_match
+    - stale_sha_rejected
+    - request_schema_complete
+    - response_schema_complete
+    - receipt_hash_valid
+    - negative_case_fail_closed
+    - information_loss_fields
+    - semantic_mutation_count
+    - roundtrip_success
+  current_state: CONTRACT_BOUND_NOT_EXECUTION_PROVEN
+
+roundtrip_target:
+  workload: QPS_LINE_S
+  route_owner: CODEX_KEB
+  execution_owner: GBOGEB/ABACUS
+  validation_owner: CODEX_KEB
+  child_authority: GBOGEB/cryoplant-project
+  guards:
+    - no_local_physics_duplication
+    - stale_provider_sha_fails_closed
+    - HeII_requires_explicit_valid_low_temperature_provider
+    - parent_result_is_derived_only
+
+control_rules:
+  - newly_discovered_nodes_may_lower_coverage_without_being_regression
+  - CODEX_routes_and_validates_but_does_not_own_helium_physics
+  - unknown_or_unsupported_provider_state_fails_closed
+  - runtime_success_creates_no_automatic_QPS_credit
