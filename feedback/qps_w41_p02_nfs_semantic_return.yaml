@@ -1,0 +1,103 @@
+schema_version: "0.1"
+document_id: QPS_W41_P02_NFS_SEMANTIC_RETURN
+status: SEMANTIC_PARENT_RETURN_READY_FOR_CHILD_DISPOSITION
+created_utc: "2026-09-04T10:00:00Z"
+repo_role: CODEX_PARENT_SEMANTIC_CONTROL
+source_request:
+  child_repo: GBOGEB/cryoplant-project
+  child_request_pr: 369
+  semantic_request_pr: 350
+  paired_dow_parent_repo: GBOGEB/ABACUS
+  paired_dow_return_expected: true
+public_parent_boundary:
+  raw_msg_content_copied: false
+  tender_pdf_content_copied: false
+  confidential_bidder_text_copied: false
+  semantic_contract_only: true
+
+semantic_validation:
+  evidence_class_rules:
+    review_comment:
+      class: SOURCE_SUPPORTED_REVIEW_COMMENT_WHEN_MSG_METADATA_BOUND
+      may_support: [review_presence, reviewer_edge, rfi_candidate, negotiation_topic]
+      may_not_support: [bidder_fact, compliance_closure, evaluated_price_adjustment]
+    bidder_page_anchor:
+      class: SOURCE_SUPPORTED_BIDDER_POSITION_WHEN_EXACT_PAGE_BOUND
+      may_support: [bidder_statement, offer_deviation_candidate, rfi_close_predicate]
+      may_not_support: [reviewer_intent, owner_cost_quantum_without_model]
+    postulated_cost:
+      class: POSTULATED_UNTIL_CONTROLLED_COST_MODEL_AND_PROCUREMENT_METHOD_ACCEPTED
+      may_support: [negotiation_lever, residual_owner_burden_candidate]
+      may_not_support: [evaluated_price_delta, financial_penalty, bidder_capex_override]
+    parent_return:
+      class: DERIVED_PARENT_RETURN
+      may_support: [bt_ordering, taxonomy_consistency, candidate_edges]
+      may_not_support: [child_ssot_override, raw_source_substitution]
+
+edge_typing_contract:
+  allowed_edges_now:
+    - REVIEWER_COMMENT_PENDING_MSG_LOCATOR -> suggests -> NFS_FINDING
+    - BIDDER_PAGE_ANCHOR -> supports_candidate -> BIDDER_POSITION
+    - NFS_FINDING -> candidate_maps_to -> RTM
+    - NFS_FINDING -> raises -> RFI_NEGOTIATION_TOPIC
+    - DOW_RETURN -> proposes -> BT_ORDERING
+    - SEMANTIC_RETURN -> constrains -> EDGE_PROMOTION
+    - CHILD_DISPOSITION -> accepts_or_defers -> PARENT_RETURN
+  forbidden_edges_now:
+    - REVIEWER_COMMENT_WITHOUT_MSG_LOCATOR -> closes -> RTM
+    - PARENT_RETURN -> overrides -> CHILD_SSOT
+    - POSTULATED_COST -> mutates -> EVALUATED_PRICE
+    - BIDDER_PAGE_ANCHOR_ALONE -> proves -> COMPLIANCE_STATUS
+    - CANDIDATE_RTM_MAPPING -> increments -> GOVERNED_REVIEW_COVERAGE
+  promotion_gate:
+    governed_review_coverage_requires:
+      - exact_msg_filename
+      - exact_msg_sha256
+      - sender_date_subject
+      - paragraph_or_section_locator
+      - substantive_match_to_rtm_or_offer_topic
+      - child_acceptance
+
+semantic_findings:
+  S1: "The W41/P02 state is correctly fail-closed: bidder-page anchors may mature bidder-position evidence, but cannot substitute for missing MSG reviewer locators."
+  S2: "The candidate Buildings & Utilities RTM union may be kept as candidate coverage, not governed exact review coverage."
+  S3: "The ABACUS DOW return may order BT and reverse-loading work, but may not inflate unique reviewed RTM breadth."
+  S4: "The EUR 378k value may remain a negotiation lever only; any scoring use requires cost-driver deduplication and procurement acceptance."
+  S5: "Graph atoms should separate source nodes, reviewer nodes, bidder-position nodes, RTM nodes, RFI nodes and cost-candidate nodes."
+
+node_atom_model:
+  source_nodes:
+    - NFS_MSG_REVIEW_SOURCE_PENDING_METADATA
+    - LKT_BIDDER_PAGE_ANCHOR_SET
+    - ALAT_BIDDER_PAGE_ANCHOR_SET
+    - ABACUS_DOW_RETURN_W41_P02
+    - CODEX_SEMANTIC_RETURN_W41_P02
+  evidence_atoms:
+    - REVIEW_COMMENT_ATOM
+    - BIDDER_POSITION_ATOM
+    - CANDIDATE_RTM_MAPPING_ATOM
+    - RFI_NEGOTIATION_ATOM
+    - POSTULATED_COST_ATOM
+    - CHILD_DISPOSITION_ATOM
+  graph_partition:
+    public_parent_graph: derived_edges_only
+    private_child_graph: controlled_source_and_disposition_edges
+
+recommended_child_disposition:
+  disposition: ACCEPT_SEMANTIC_GUARDS_AND_DEFER_PROMOTION
+  accept_now:
+    - evidence_class_rules
+    - edge_typing_contract
+    - promotion_gate
+    - atom_partition
+  defer_until_msg_recovery:
+    - governed_nfs_coverage_delta
+    - formal_credit_delta
+    - negotiation_resolution_delta
+    - evaluated_price_delta
+
+return_contract:
+  child_must_accept_reject_or_defer: true
+  formal_credit_delta: 0
+  negotiation_resolution_delta: 0
+  evaluated_price_delta_eur: 0

@@ -1,0 +1,80 @@
+{
+  "payload_version": "1.0.0",
+  "exchange_type": "knowledge_exchange",
+  "correlation_id": "QPS-FED-W43",
+  "source": {
+    "repository": "GBOGEB/cryoplant-project",
+    "ref": "main",
+    "sha": "29c2fb587403c5ccab690392026a51ecd8fd92d8",
+    "run_id": "w43-triage-source-bound"
+  },
+  "operations": [
+    "glossary_alignment",
+    "semantic_drift_check",
+    "adr_index_exchange",
+    "evidence_reference_exchange",
+    "maturity_telemetry_exchange",
+    "lineage_receipt"
+  ],
+  "terms": [
+    "KEB",
+    "Knowledge Exchange Bridge",
+    "DOW",
+    "SSOT",
+    "semantic governance",
+    "semantic drift",
+    "child disposition",
+    "source-bound",
+    "triage",
+    "closure yield"
+  ],
+  "adr_index": [],
+  "evidence_references": [
+    {
+      "id": "QPS-W42-ROUNDTRIP-REENTRY",
+      "path": "ocd-adr/40_implementation/QPS_W42_BINARY_ROUNDTRIP_REENTRY_v0.1.yaml",
+      "authority": "QPS_CHILD_SSOT"
+    },
+    {
+      "id": "QPS-W43-TRIAGE-CONTRACT",
+      "path": "ocd-adr/40_implementation/QPS_W43_TRIAGE_FEDERATION_EXECUTION_v0.1.json",
+      "authority": "QPS_CHILD_SSOT"
+    }
+  ],
+  "maturity_telemetry": {
+    "engineering_closed": 70,
+    "engineering_total": 90,
+    "engineering_closure_percent": 77.78,
+    "remaining_obligations": 20,
+    "negotiation_closed": 0,
+    "negotiation_total": 20,
+    "unique_reviewed_rtms": 116,
+    "rtm_population": 722,
+    "reviewer_rtm_edges": 123,
+    "buildings_utilities_page_bound_reviewed": 51,
+    "buildings_utilities_population": 53,
+    "buildings_utilities_candidate_mapped": 26,
+    "raw_msg_exact_attribution": 0
+  },
+  "authority_rule": "CODEX KEB findings are governance/advisory outputs; GBOGEB/cryoplant-project child disposition controls promotion and Contract/Addendum remains primary engineering authority",
+  "requested_return": {
+    "finding_fields": [
+      "finding_id",
+      "source_reference",
+      "target_ocd_or_adr",
+      "finding_type",
+      "confidence",
+      "proposed_action",
+      "authority_level",
+      "input_hash",
+      "output_hash",
+      "disposition"
+    ],
+    "exchange_fields": [
+      "adr_index",
+      "evidence_references",
+      "maturity_telemetry"
+    ],
+    "disposition_owner": "GBOGEB/cryoplant-project"
+  }
+}

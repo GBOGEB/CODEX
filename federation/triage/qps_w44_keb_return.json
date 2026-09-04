@@ -1,0 +1,71 @@
+{
+  "schema_version": "0.1",
+  "return_id": "QPS_W44_KEB_RETURN",
+  "source_contract": "QPS_W43_KEB_EXECUTION",
+  "source_child_sha": "29c2fb587403c5ccab690392026a51ecd8fd92d8",
+  "source_child": {
+    "repository": "GBOGEB/cryoplant-project",
+    "baseline_pr": 388,
+    "baseline_merge_sha": "29c2fb587403c5ccab690392026a51ecd8fd92d8"
+  },
+  "executed_operations": [
+    "validate_source_identity",
+    "normalize_governed_terms",
+    "check_semantic_drift",
+    "check_authority_and_promotion_boundaries",
+    "validate_lineage_and_hashes",
+    "emit_child_dispositionable_findings"
+  ],
+  "semantic_findings": [
+    {
+      "finding_id": "KEB-W44-001",
+      "semantic_scope": "evidence surface separation",
+      "source_refs": ["cryoplant-project#388", "CODEX#357"],
+      "reason": "Maintain four independent surfaces: page-bound review, candidate mapping, exact original-MSG attribution, and compliance disposition. Promotion between them requires explicit source-bound lineage.",
+      "recommended_child_disposition": "ACCEPT_AS_DERIVED_EVIDENCE"
+    },
+    {
+      "finding_id": "KEB-W44-002",
+      "semantic_scope": "parent authority",
+      "source_refs": ["cryoplant-project#388", "CODEX#357"],
+      "reason": "DOW/KEB outputs remain candidate parent findings. Only the child may ACCEPT/REJECT/DEFER and mutate governed engineering state.",
+      "recommended_child_disposition": "ACCEPT_AS_DERIVED_EVIDENCE"
+    },
+    {
+      "finding_id": "KEB-W44-003",
+      "semantic_scope": "graph and multiplier promotion",
+      "source_refs": ["cryoplant-project#388", "CODEX#357"],
+      "reason": "Review adjacency and candidate graph links cannot promote exact 3D multiplier edges without source-bound model-object to interface lineage.",
+      "recommended_child_disposition": "ACCEPT_AS_DERIVED_EVIDENCE"
+    }
+  ],
+  "lineage_findings": [
+    {
+      "finding_id": "KEB-W44-L01",
+      "semantic_scope": "original MSG provenance",
+      "source_refs": ["cryoplant-project#388"],
+      "reason": "Exact original-MSG attribution remains unbound; missing filename/SHA/sender/date/paragraph locators must fail closed.",
+      "recommended_child_disposition": "DEFER_PENDING_SOURCE"
+    }
+  ],
+  "promotion_guard_findings": [
+    {
+      "finding_id": "KEB-W44-G01",
+      "semantic_scope": "formal closure and negotiation",
+      "source_refs": ["cryoplant-project#388"],
+      "reason": "No new bidder written return, selected-design evidence, or accepted promotion lineage was introduced by W43 contracts; formal and negotiation deltas stay zero.",
+      "recommended_child_disposition": "DEFER_PENDING_SOURCE"
+    }
+  ],
+  "guards": [
+    "reviewed is not compliant",
+    "candidate mapping is not accepted evidence",
+    "Deviation is not automatically NOK",
+    "TBD-CONFIRM is not closure",
+    "parent semantics cannot override child SSOT",
+    "one compliance atom has one credit opportunity"
+  ],
+  "formal_credit_delta": 0,
+  "return_hash_basis": "sha256(canonical_json_without_return_hash)",
+  "return_hash": "99a7e11af1f8ee363208cf3af9e41c26ebaa3efac2bbbbc1c4aa1459d4c155cf"
+}
