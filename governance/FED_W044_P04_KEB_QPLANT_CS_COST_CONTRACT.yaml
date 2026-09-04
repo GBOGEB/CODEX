@@ -1,0 +1,71 @@
+schema_version: "0.1"
+wave: FED-W044
+pulse: P04
+repository: GBOGEB/CODEX
+plane: KEB_governance
+intent: validate_typed_qplant_and_qps_cs_cost_driver_returns_before_child_reentry
+
+accepted_return_types:
+  - QCELL_PRESSURE_MARGIN
+  - LINE_B_SEGMENT_DP
+  - HELIUM_PROPERTY_STATE
+  - HP_POWER
+  - PVPS_POWER
+  - HEAT_RECOVERY_DUTY
+  - COOLING_WATER_DUTY
+  - CONTROL_ELEMENT_COUNT
+  - IO_COUNT
+  - LOOP_COUNT
+  - SEQUENCE_MODE_COUNT
+  - CODING_HOURS_ESTIMATE
+  - FAT_SAT_HOURS_ESTIMATE
+  - SPARES_EXPOSURE
+  - LIFECYCLE_DRIVER
+
+required_metadata:
+  - source_sha
+  - calculation_version
+  - input_state_hash
+  - units
+  - evidence_class
+  - uncertainty
+  - validity_regime
+  - producer
+
+validation:
+  reject_if:
+    - missing_units
+    - missing_source_sha
+    - unknown_evidence_class
+    - derived_value_presented_as_bidder_price
+    - heii_value_from_unproven_backend
+    - child_cost_state_self_promoted
+  evidence_classes:
+    - CONTRACT_RTM
+    - BIDDER_SELECTED_SOURCE_SUPPORTED
+    - DERIVED_THERMODYNAMICS
+    - DERIVED_COST
+    - POSTULATED
+
+cost_lineage:
+  child_authority: GBOGEB/cryoplant-project
+  existing_pr_chain: [251, 311, 314, 229, 230, 406, 428, 429]
+  parallel_cost_model: forbidden
+
+child_disposition:
+  states: [ACCEPT, REJECT, DEFER]
+  automatic_acceptance: false
+
+pca_bt_ingress:
+  after_child_validation: true
+  candidate_dimensions:
+    - qve_pressure_margin
+    - c24_c30_delta
+    - energy_opex_uncertainty
+    - controls_capex_uncertainty
+    - controls_engineering_hour_uncertainty
+    - spares_lifecycle_uncertainty
+    - property_backend_uncertainty
+
+formal_credit_delta: 0
+negotiation_credit_delta: 0
