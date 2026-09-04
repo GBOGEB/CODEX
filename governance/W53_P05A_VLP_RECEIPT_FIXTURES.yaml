@@ -1,0 +1,50 @@
+schema_version: '0.1'
+wave: W53/P05A
+fixtures:
+  - id: valid_normal_fluid_exact_geometry
+    expected: PASS_TO_CHILD_REVIEW
+    conditions:
+      units: present
+      source_sha: exact
+      geometry: SOURCE_BOUND_EXACT
+      provider_regime: VALIDATED
+      per_qcell_trace: true
+      ranked_population: true
+  - id: heii_unvalidated_provider
+    expected: DEFER
+    conditions:
+      provider_regime: HEII_UNVALIDATED
+  - id: bounded_geometry_claimed_as_built
+    expected: REJECT
+    conditions:
+      geometry: BOUNDED_DIAGNOSTIC
+      claimed_as_built: true
+  - id: aggregate_only
+    expected: REJECT
+    conditions:
+      per_qcell_trace: false
+  - id: qve_assumed_worst
+    expected: REJECT
+    conditions:
+      ranked_population: false
+      controlling_qcell_claim: QVE
+  - id: stale_source_sha
+    expected: REJECT
+    conditions:
+      source_sha: stale
+required_receipt_fields:
+  - request_id
+  - correlation_id
+  - qcell_id
+  - scenario_id
+  - configuration_id
+  - units
+  - source_sha
+  - geometry_provenance
+  - provider_id
+  - provider_version
+  - validity_regime
+  - predicted_local_pressure_mbar_abs
+  - pressure_margin_mbar
+  - disposition_candidate
+child_authority: cryoplant-project
