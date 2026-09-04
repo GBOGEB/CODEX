@@ -1,0 +1,58 @@
+schema_version: '0.1'
+document_id: QPS_W42_TRI_REPO_KEB_TRIAGE_REQUEST
+status: ACTIVE_PARENT_KEB_TRIAGE_REQUEST
+repository: GBOGEB/CODEX
+branch: feedback/qps-w42-tri-repo-keb-triage
+source_child: GBOGEB/cryoplant-project
+source_child_context:
+  child_pr_369: W41_NFS_PARENT_FEDERATION_REQUEST
+  child_pr_375: W41_NODE_EDGE_GRAPH_ATOM_RECONCILIATION
+  child_pr_380: W41_SESSION_CLOSURE_BINARY_MANIFEST
+  planned_child_pr: W42_TRI_REPO_IMPLEMENTATION_TRIAGE
+purpose: >-
+  Provide a bounded public-parent KEB semantic/governance request for W42 tri-repo implementation triage. CODEX
+  should validate evidence classes, edge typing, exact-anchor rules, parent/child disposition semantics and no-credit
+  boundaries without copying confidential child source content.
+
+semantic_controls_requested:
+  - preserve_reviewed_not_compliant
+  - preserve_PROMISED_not_VERIFIED
+  - preserve_AGREED_not_CLOSED
+  - preserve_exact_workbook_review_union_as_metric_surface
+  - preserve_MSG_gated_bidder_binding_as_candidate_surface_only
+  - prevent_parent_edges_from_overriding_private_child_SSOT
+  - require_child_accept_reject_defer_for_parent_returns
+  - keep_EUR_378k_postulated_until_procurement_method_and_dedup_acceptance
+  - prevent_M_ERL_PCA_refresh_without_accepted_denominator_or_comparable_vector
+
+edge_typing_contract:
+  exact_review_edge: requires_concrete_review_page_locator_or_child_accepted_source_locator
+  candidate_binding_edge: requires_bidder_offer_page_or_contract_anchor_but_MSG_locator_pending
+  parent_advisory_edge: requires_public_safe_parent_return_and_child_disposition
+  cost_candidate_edge: requires_procurement_method_gate_and_double_counting_check
+  no_credit_edge: always_points_to_formal_negotiation_M_ERL_PCA_boundaries_until_child_score_authority_accepts
+
+return_contract:
+  expected_outputs:
+    - semantic_validation_receipt
+    - edge_type_recommendations
+    - no_credit_gate_findings
+    - dispositionable_parent_return_packet
+    - public_parent_boundary_check
+  child_disposition_required: true
+  allowed_child_dispositions: [ACCEPT, REJECT, DEFER]
+  no_credit_rule: >-
+    CODEX KEB output is advisory until the private child repository accepts, rejects or defers it. No parent semantic
+    receipt creates formal compliance credit, negotiation credit, evaluated-price mutation, M/ERL computation or PCA refresh.
+
+known_boundaries:
+  formal_engineering: {closed: 70, total: 90, pct: 77.78, delta: 0}
+  negotiation: {resolved: 0, total: 20, pct: 0.0, delta: 0}
+  cost_candidate: {eur: 378000, status: POSTULATED_ONLY, evaluated_price_delta_eur: 0}
+  M_status: NOT_COMPUTED
+  ERL_status: NOT_COMPUTED
+  PCA_status: NO_REFRESH
+
+public_parent_boundary: >-
+  Keep this parent request and any parent return public-safe. Use abstracted IDs, derived semantics and bounded
+  governance contracts only; do not reproduce private MSG/email/tender source text or confidential evidence.
