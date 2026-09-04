@@ -1,0 +1,30 @@
+schema_version: '0.1'
+wave: W53/P05C
+receipt_class: BOUNDED_NUMERICAL_DIAGNOSTIC
+required:
+  - source_sha
+  - solver_sha
+  - property_provider_id
+  - property_provider_version
+  - validity_regime
+  - explicit_bounds
+  - population_size
+  - worst_case
+  - sensitivity_ranking
+validation:
+  classification_must_equal: DIAGNOSTIC_ONLY
+  bounded_geometry_must_not_equal: AS_BUILT
+  heii_unvalidated_must_not_promote: true
+  missing_input_must_not_be_zero: true
+  pressure_units: mbar_abs
+  delta_pressure_units: mbar
+  sensitivity_metric: margin_span_mbar
+negative_cases:
+  - diagnostic_receipt_claims_acceptance
+  - missing_bounds
+  - missing_provider_provenance
+  - heii_claimed_valid_without_reference
+  - qve_claimed_controlling_without_population
+  - sensitivity_rank_without_metric
+child_action: use ranked uncertainty drivers to prioritize P05D source substitution and retest
+formal_credit_delta: 0
