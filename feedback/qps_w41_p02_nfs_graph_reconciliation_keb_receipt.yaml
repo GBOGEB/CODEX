@@ -1,0 +1,96 @@
+schema_version: '0.1'
+document_id: QPS_W41_P02_NFS_GRAPH_RECONCILIATION_KEB_RECEIPT
+status: PARENT_SEMANTIC_RECEIPT_NO_CHILD_CREDIT
+source_child_repo: GBOGEB/cryoplant-project
+source_child_lineage: '#361-#371 merged'
+source_child_followup_pr: 377
+source_parent_request: 350
+paired_abacus_receipt_pr: 826
+
+semantic_contract:
+  node_types:
+    - REVIEW_SOURCE_ARTIFACT
+    - ORIGINAL_MSG_SOURCE
+    - REVIEWER
+    - REVIEW_FINDING_ATOM
+    - RTM
+    - OFFER
+    - BIDDER_OFFER_PAGE
+    - BUILDING_UTILITY_DOMAIN
+    - INTERFACE_TOPIC
+    - NEGOTIATION_ASK
+    - COST_CANDIDATE
+    - GRAPH_HOTSPOT
+    - EVIDENCE_GATE
+  edge_types:
+    - REVIEW_SOURCE_TO_FINDING_ATOM
+    - REVIEWER_TO_RTM_PAGE_BOUND
+    - MSG_TO_FINDING_ATOM_PENDING
+    - MSG_PARAGRAPH_TO_RTM_PENDING
+    - FINDING_ATOM_TO_RTM_CANDIDATE
+    - BIDDER_PAGE_TO_FINDING_ATOM
+    - RTM_TO_DOMAIN
+    - RTM_TO_OFFER
+    - RTM_TO_BUILDING_INTERFACE
+    - RTM_TO_UTILITY_INTERFACE
+    - RTM_TO_INSTALLATION_DEPENDENCY
+    - FINDING_ATOM_TO_NEGOTIATION_ASK
+    - COST_CANDIDATE_TO_NEGOTIATION_LEVER
+    - HOTSPOT_TO_DOWNSTREAM_DOMAIN
+
+metric_semantics:
+  page_bound_review_projection:
+    reviewer_RTM_edges_added: 61
+    buildings_utilities: '51/53 = 96.23%'
+    global_unique_reviewed_RTM: '116/722 = 16.07%'
+    reviewer_RTM_edges_total: 123
+    authority: REVIEW_DEPTH_ONLY
+  bidder_page_candidate_mapping:
+    buildings_utilities: '24/53 = 45.28%'
+    authority: CANDIDATE_FINDING_TO_CONTRACT_MAPPING
+  original_MSG_paragraph_attribution:
+    buildings_utilities: '0/53'
+    authority: PENDING_EXACT_SOURCE_IDENTITY_AND_LOCATOR
+
+required_invariants:
+  - PAGE_BOUND_REVIEW_EDGE_NE_MSG_PARAGRAPH_EDGE
+  - BIDDER_PAGE_CANDIDATE_MAPPING_NE_TOTAL_REVIEWER_COVERAGE
+  - REVIEWED_NE_COMPLIANT
+  - SOURCE_SUPPORTED_REVIEW_COMMENT_NE_BIDDER_FACT
+  - POSTULATED_COST_NE_CONTROLLED_FINANCIAL_PENALTY
+  - PARENT_RECEIPT_NE_CHILD_SSOT_AUTHORITY
+  - PROSPECTIVE_GRAPH_EDGE_NE_EXACT_MULTIPLIER_EDGE
+  - NO_DOUBLE_COUNT_PAGE_BOUND_AND_MSG_ATTRIBUTION
+
+atom_semantics:
+  nfs_review_finding_atoms: 16
+  negotiation_ask_atoms: 7
+  cost_atom:
+    id: COST-NFS-378K
+    value_eur: 378000
+    class: POSTULATED_RESIDUAL_INTEGRATION_COST_NEGOTIATION_CANDIDATE
+    formal_credit: 0
+  promotion_rule: >-
+    A finding atom may gain an exact MSG_PARAGRAPH_TO_RTM edge only after the original message filename/hash/sender/date
+    and paragraph locator are recovered and the paragraph substantively matches the governed RTM. Existing page-bound
+    review edges remain valid review-depth evidence but cannot be silently retyped as MSG attribution.
+
+graph_multiplier_semantics:
+  fixed_W40_3D_cohort: [RTM-442, RTM-443, RTM-447, OFFER-36]
+  exact_edges: '3->7'
+  M_floor_mean: '1.05->1.15'
+  direct_new_NFS_fixed_cohort_edges: 0
+  rule: >-
+    Do not increase the 3D multiplier from the dense NFS downstream review neighbourhood alone. Require exact source-bound
+    model-object -> building/utility/interface edges first.
+
+child_reentry:
+  required: true
+  disposition: ACCEPT_REJECT_DEFER
+  child_authority_wins: true
+
+formal_boundary:
+  engineering_closure: '70/90 = 77.78%'
+  negotiation_resolution: '0/20'
+  compliance_credit_delta: 0
+  evaluated_price_delta_eur: 0
