@@ -1,0 +1,115 @@
+name: QPS KEB W43 TRIAGE
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'codex/bridges/knowledge_exchange.py'
+      - 'PIPELINE/GLOSSARY.yaml'
+      - 'federation/triage/qps_w43_keb_execution_contract.json'
+      - 'federation/qps/wave-43/**'
+      - '.github/workflows/qps-keb-w43-triage.yml'
+
+permissions:
+  contents: read
+
+env:
+  CORRELATION_ID: QPS-FED-W43
+  SOURCE_CHILD_SHA: 29c2fb587403c5ccab690392026a51ecd8fd92d8
+
+jobs:
+  keb-w43-triage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout CODEX
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install runtime dependency
+        run: python -m pip install pyyaml
+
+      - name: Validate Knowledge Exchange Bridge
+        run: python -m py_compile codex/bridges/knowledge_exchange.py
+
+      - name: Stage 0 - show W43 execution architecture
+        run: |
+          echo 'QPS W43 CHILD SSOT'
+          echo '      | exact source SHA'
+          echo '      v'
+          echo 'CODEX KEB: source -> glossary -> semantic drift -> authority -> lineage -> findings'
+          echo '      |'
+          echo '      v'
+          echo 'TRIAGE RETURN -> QPS CHILD DISPOSITION'
+          echo "correlation_id=${CORRELATION_ID} source_child_sha=${SOURCE_CHILD_SHA}"
+
+      - name: Execute source-bound W43 KEB exchange
+        run: |
+          mkdir -p federation/qps/wave-43/output
+          python -m codex.bridges.knowledge_exchange \
+            --input federation/qps/wave-43/knowledge_exchange_request.json \
+            --glossary PIPELINE/GLOSSARY.yaml \
+            --output federation/qps/wave-43/output/keb_triage_receipt.json
+
+      - name: Verify execution truth, semantics and lineage
+        run: |
+          python - <<'PY'
+          import json
+          import re
+          from pathlib import Path
+
+          req = json.loads(Path('federation/qps/wave-43/knowledge_exchange_request.json').read_text())
+          rec = json.loads(Path('federation/qps/wave-43/output/keb_triage_receipt.json').read_text())
+
+          assert req['correlation_id'] == rec['correlation_id'] == 'QPS-FED-W43'
+          assert re.fullmatch(r'[0-9a-f]{40}', req['source']['sha'])
+          assert req['source']['sha'] == '29c2fb587403c5ccab690392026a51ecd8fd92d8'
+          assert rec['source'] == req['source']
+          assert rec['requested_operations'] == req['operations']
+          assert rec['executed_operations'] == req['operations']
+          assert rec['exchanged']['adr_index'] == req['adr_index']
+          assert rec['exchanged']['evidence_references'] == req['evidence_references']
+          assert rec['exchanged']['maturity_telemetry'] == req['maturity_telemetry']
+          assert rec['input_sha256'] and rec['output_sha256'] and rec['glossary_sha256']
+          assert rec['child_disposition_required'] is True
+          assert all(f['disposition'] is None for f in rec['findings'])
+          assert all(f['input_hash'] and f['output_hash'] for f in rec['findings'])
+          PY
+
+      - name: Guard controlled W43 semantics
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          req = json.loads(Path('federation/qps/wave-43/knowledge_exchange_request.json').read_text())
+          mt = req['maturity_telemetry']
+          assert mt['engineering_closed'] == 70 and mt['engineering_total'] == 90
+          assert mt['remaining_obligations'] == 20
+          assert mt['negotiation_closed'] == 0 and mt['negotiation_total'] == 20
+          assert mt['unique_reviewed_rtms'] == 116 and mt['rtm_population'] == 722
+          assert mt['buildings_utilities_page_bound_reviewed'] == 51
+          assert mt['buildings_utilities_candidate_mapped'] == 26
+          assert mt['raw_msg_exact_attribution'] == 0
+          PY
+
+      - name: Publish visible KEB summary
+        run: |
+          echo "## KEB W43 TRIAGE — ${CORRELATION_ID}" >> "$GITHUB_STEP_SUMMARY"
+          echo '```text' >> "$GITHUB_STEP_SUMMARY"
+          printf '%s\n' 'QPS CHILD SSOT' '      | exact SHA' '      v' 'CODEX / Knowledge Exchange Bridge' '  1 source identity' '  2 governed terms' '  3 semantic drift' '  4 authority/promotion guards' '  5 lineage/hashes' '  6 dispositionable findings' '      |' '      v' 'TRIAGE RETURN -> CHILD DISPOSITION' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat federation/qps/wave-43/output/keb_triage_receipt.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload W43 KEB artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: qps-keb-w43-${{ github.run_id }}
+          path: |
+            federation/qps/wave-43/knowledge_exchange_request.json
+            federation/qps/wave-43/output/keb_triage_receipt.json
