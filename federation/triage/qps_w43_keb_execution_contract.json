@@ -1,0 +1,72 @@
+{
+  "schema_version": "0.1",
+  "contract": "QPS_W43_KEB_EXECUTION",
+  "parent": "CODEX",
+  "role": "KNOWLEDGE_EXCHANGE_BRIDGE",
+  "child": {
+    "repository": "GBOGEB/cryoplant-project",
+    "baseline_pr": 383,
+    "baseline_merge_sha": "c3cb08af3d1c3dddef12af2aa71f8508849e4a2e"
+  },
+  "prior_return": {
+    "pr": 352,
+    "merge_sha": "0fcbeed2a68156b9aaabcaa498e6185837d18160"
+  },
+  "execution": {
+    "mode": "PARALLEL_WITH_DOW",
+    "required_operations": [
+      "validate_source_identity",
+      "normalize_governed_terms",
+      "check_semantic_drift",
+      "check_authority_and_promotion_boundaries",
+      "validate_lineage_and_hashes",
+      "emit_child_dispositionable_findings"
+    ],
+    "triage_tasks": [
+      "detect_stale_parent_metrics_against_child_authority",
+      "detect_semantic_promotion_from_review_or_candidate_state_to_compliance",
+      "validate_node_edge_atom_vocabulary_and_non_duplicate_credit",
+      "validate_dow_return_semantics_without_recomputing_dow_analysis",
+      "flag_missing_source_sha_or_unbound_lineage",
+      "emit_machine_readable_governance_findings"
+    ]
+  },
+  "input_control": {
+    "engineering_closure": "70/90 = 77.78%",
+    "remaining_obligations": 20,
+    "reviewed_rtms": "116/722 = 16.07%",
+    "reviewer_rtm_edges": 123,
+    "buildings_utilities_page_bound": "51/53 = 96.23%",
+    "buildings_utilities_candidate_mapping": "26/53 = 49.06%",
+    "raw_msg_exact_attribution": "0/53 pending",
+    "attention_80": "LKT + current near-final LKT agenda priority",
+    "attention_20": "other supporting/comparator/recovery inputs including ALAT and CEA/DSBT"
+  },
+  "return_schema": {
+    "required": [
+      "source_child_sha",
+      "executed_operations",
+      "semantic_findings",
+      "lineage_findings",
+      "promotion_guard_findings",
+      "return_hash"
+    ],
+    "finding_required": ["finding_id", "semantic_scope", "source_refs", "reason", "recommended_child_disposition"],
+    "recommended_child_dispositions": [
+      "ACCEPT_AS_DERIVED_EVIDENCE",
+      "REJECT_WITH_REASON",
+      "DEFER_PENDING_SOURCE",
+      "DUPLICATE_EXISTING_WORK"
+    ]
+  },
+  "guards": [
+    "KEB means Knowledge Exchange Bridge",
+    "KEB is not a scheduler or execution backbone",
+    "reviewed is not compliant",
+    "Deviation is not automatically NOK",
+    "TBD-CONFIRM remains confirmation or clarification",
+    "PARTIAL retains residual subconditions",
+    "parent semantics cannot override child SSOT authority"
+  ],
+  "formal_credit_delta": 0
+}
