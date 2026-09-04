@@ -1,0 +1,29 @@
+schema_version: '0.1'
+wave: W53/P05
+role: semantic_provenance_validator
+physics_authority: ABACUS
+child_authority: cryoplant-project
+validate:
+  - request_and_correlation_identity
+  - units
+  - source_sha
+  - property_provider_and_version
+  - property_validity_regime
+  - geometry_provenance_class
+  - qcell_identity_and_position
+  - scenario_and_configuration_identity
+  - pressure_margin_sign_and_units
+reject_or_defer:
+  - missing_provenance
+  - stale_sha
+  - unknown_units
+  - unvalidated_heii_provider
+  - bounded_geometry_claimed_as_as_built
+  - aggregate_result_without_per_qcell_trace
+  - qve_declared_controlling_without_ranked_population
+routing:
+  request: cryoplant-project -> CODEX -> ABACUS
+  receipt: ABACUS -> CODEX -> cryoplant-project
+child_disposition_only: [ACCEPT, REJECT, DEFER]
+formal_credit_delta: 0
+victory: validated provenance-bound VLP receipt reaches child with no semantic or regime ambiguity
