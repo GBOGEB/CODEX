@@ -1,0 +1,96 @@
+wave: W43
+role: CODEX
+scope: federation_orchestration_agentic_mcp
+formal_credit_delta: 0
+principles:
+  - schema_validation_is_not_physical_validation
+  - independent_oracle_must_not_reuse_sut_algorithm
+  - render_success_is_not_compliance_closure
+  - unsupported_inference_never_promotes_controlled_evidence
+sut:
+  name: qps_engineering_calculation_or_worker
+  responsibilities:
+    - execute_detailed_calculation
+    - emit_value_units_method_and_lineage
+    - expose_assumptions_and_source_hashes
+test_system:
+  independent: true
+  responsibilities:
+    - validate_schema_and_units
+    - compare_independent_rule_of_thumb_oracle
+    - enforce_physical_bounds
+    - detect_regression_drift
+    - classify_failures_without_auto_promoting_results
+oracle_contract:
+  example: HCC_total_skid_flow
+  inputs:
+    skid_count: 3
+    max_flow_per_skid_g_s: 112
+  nominal_estimate_g_s: 336
+  plausibility_window_g_s: [320, 380]
+  fail_examples_g_s: [1, 50, 1000]
+  result_policy:
+    inside_window: PASS_SANITY
+    outside_window: FLAG_INVESTIGATION
+    note: outside_window_is_not_automatically_wrong
+worker_protocol:
+  federation:
+    consumes: versioned_release_manifest
+    emits: hash_bound_worker_receipt
+  bridge:
+    require_exact_source_sha: true
+    prohibit_cross_repo_unversioned_copy: true
+  orchestration:
+    stages:
+      - validate_input
+      - execute_sut
+      - execute_independent_oracle
+      - compare
+      - classify
+      - persist_receipt
+  agentic:
+    allowed:
+      - propose_root_cause
+      - propose_smallest_repair
+      - schedule_retest
+    prohibited:
+      - invent_evidence
+      - convert_warning_to_compliance_credit
+      - silently_change_units_or_assumptions
+  mcp_workers:
+    task_contract_required: true
+    required_fields:
+      - worker_id
+      - task_id
+      - source_sha
+      - input_hash
+      - output_hash
+      - test_suite
+      - status
+      - started_at
+      - completed_at
+metrics:
+  counters:
+    - tests_total
+    - tests_passed
+    - tests_failed
+    - repairs_attempted
+    - repairs_passed
+    - retests_total
+    - oracle_divergences
+    - unit_guard_failures
+    - schema_guard_failures
+    - backlog_open
+    - backlog_closed
+  separation:
+    formal_compliance_closure: independent
+    multiplication_coverage: independent
+    render_coverage: independent
+    execution_health: independent
+acceptance:
+  - exact_units_are_explicit
+  - oracle_is_algorithmically_diverse
+  - out_of_window_result_is_flagged
+  - failure_receipt_is_hash_bound
+  - repaired_case_is_retested
+  - zero_automatic_formal_credit
