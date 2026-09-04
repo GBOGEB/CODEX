@@ -12,11 +12,21 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUT = REPO_ROOT / "reports" / "governance_snapshot.json"
 
 
+_OUTCOME_ALIASES = {"success": "passed", "failure": "failed"}
+
+
 def _parse_check(raw: str) -> tuple[str, str]:
     if "=" not in raw:
         raise ValueError(f"Invalid --check value '{raw}', expected name=status")
     name, status = raw.split("=", 1)
-    return name.strip(), status.strip().lower()
+    status = status.strip().lower()
+    # CI callers pass GitHub Actions' `steps.<id>.outcome` verbatim, which
+    # uses success/failure/skipped/cancelled — not this script's own
+    # passed/failed vocabulary. Without this normalization every check
+    # compared unequal to "passed" and the snapshot silently reported every
+    # run as failed regardless of actual CI outcome.
+    status = _OUTCOME_ALIASES.get(status, status)
+    return name.strip(), status
 
 
 def main(argv: list[str] | None = None) -> int:
