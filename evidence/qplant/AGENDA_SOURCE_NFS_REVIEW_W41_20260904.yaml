@@ -1,0 +1,74 @@
+schema_version: "0.1"
+semantic_id: qplant.review.agenda_nfs.w41.20260904
+evidence_class: DERIVED
+child_authority: GBOGEB/cryoplant-project
+child_pr: 367
+
+source_roles:
+  email_transmittal: PROVENANCE_ONLY
+  DOC_B_QPS_Agenda_LKT: OUTWARD_WORKING_AGENDA
+  DOC_A2_LKT_agenda_APPLICANT: CONDENSED_INTERNAL_CONTEXT
+  DOC_CEA_QPS_AGENDA_CEA_LKT: CORE_TECHNICAL_MINIMUM_BASELINE_CROSSCHECK
+  DBE_negotiation_items_yaml: CURATED_METADATA_SUPPORT
+  controlled_RTM_OFFER_contract: COMPLIANCE_REQUIREMENT_AUTHORITY
+
+source_hashes:
+  DOC_B: 26f7a5a17ce0ed2385b52b313b8343f2fa75cec1ce59aaa09873af7f0e37edf4
+  DOC_A2: ec4872e35e73c215705f24a1415b48c278a6741431246437f11ef84bf80f3da3
+  DOC_CEA: ed0538109e94426dd937197def959458d6f7df2e14b917d3d20ca9e5c09ce286
+  NFS_review_workbook: dd3fd6e2d63618dfb3f33c6c3ad07f6207456aec836c4a4ba7bfa3bb7a8a6ab7
+
+review_coverage:
+  before: {unique_RTM: 55, denominator: 722, pct: 7.62, reviewer_RTM_edges: 62}
+  NFS_exact_page_bound: {unique_RTM: 61, overlap_with_before: 0}
+  after: {unique_RTM: 116, denominator: 722, pct: 16.07, reviewer_RTM_edges: 123}
+
+NFS_review:
+  reviewer: NFS_Buildings_Utilities
+  evidence_class: SOURCE_SUPPORTED_REVIEW_COMMENT_WITH_PAGE_LOCATOR
+  admission_rule: concrete_NFS_review_PDF_page_locator_required
+  RTMs: [RTM-386,RTM-387,RTM-388,RTM-389,RTM-390,RTM-391,RTM-392,RTM-393,RTM-394,RTM-395,RTM-396,RTM-397,RTM-398,RTM-399,RTM-400,RTM-401,RTM-402,RTM-403,RTM-404,RTM-405,RTM-406,RTM-407,RTM-408,RTM-409,RTM-410,RTM-411,RTM-412,RTM-413,RTM-414,RTM-415,RTM-416,RTM-417,RTM-418,RTM-419,RTM-420,RTM-421,RTM-422,RTM-423,RTM-424,RTM-425,RTM-426,RTM-427,RTM-428,RTM-429,RTM-430,RTM-431,RTM-432,RTM-433,RTM-434,RTM-435,RTM-436,RTM-465,RTM-466,RTM-467,RTM-468,RTM-469,RTM-470,RTM-471,RTM-542,RTM-543,RTM-544]
+  excluded: {not_highlighted: [RTM-045,RTM-046,RTM-047], blank_locator: [RTM-384,RTM-385]}
+  Buildings_Utilities: {reviewed: 51, denominator: 53, pct: 96.23, remaining: [RTM-384,RTM-385]}
+
+agenda_semantics:
+  - email_transmittal_is_not_technical_source
+  - DOCX_working_agenda_is_not_requirement_authority
+  - YAML_metadata_is_not_bidder_fact
+  - CEA_baseline_detects_removed_content_but_does_not_create_LKT_findings
+  - agenda_presence_is_not_compliance_credit
+  - agenda_removal_is_not_requirement_removal
+  - reviewer_evidence_is_not_compliance
+  - deviation_is_not_NOK
+  - partial_is_unresolved
+  - cost_is_metadata_only
+
+technical_recovery_controls:
+  - cold_box_roof_opening_and_installation_route_under_DOC_B_T6
+  - helium_inventory_and_inert_gas_FAT_SAT_under_T1_T15
+  - RTM_528_internal_CEA_SCK_hold_no_applicant_question_until_owner_position
+  - QDB_WPS_interface_child_evidence_retained
+  - failed_test_retest_and_no_cross_compensation_retained_below_agenda_surface
+
+cost_control:
+  integration_candidate_eur: 378000
+  evidence_class: POSTULATED
+  use: NEGOTIATION_LEVER_ONLY
+  hard_penalty: false
+  double_count_guard: reconcile_with_DKO_cost_scenarios_before_aggregation
+
+multiplier_control:
+  W40_fixed_population: [RTM-442,RTM-443,RTM-447,OFFER-36]
+  W40_exact_edges: {before: 3, after: 7, ratio: 2.3333333333}
+  W41_direct_new_edges_to_fixed_population: 0
+  Digital_Model_Configuration: CANDIDATE_NOT_ACTIVE
+  AsBuilt_Data_Continuity: CANDIDATE_NOT_ACTIVE
+
+controls:
+  reviewed_is_not_compliant: true
+  source_role_does_not_change_bidder_state: true
+  postulated_cost_has_zero_formal_credit: true
+  no_cross_bidder_substitution: true
+  child_owns_accept_reject_defer: true
+  formal_engineering: "70/90"
+  negotiation_resolution: "0/20"
