@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gbogeb.github.io/CODEX/schemas/qps_ssot_view_build_receipt.schema.json",
+  "title": "QPS SSOT View Build Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "document_id",
+    "source_sha256",
+    "row_count",
+    "outputs",
+    "style_contract",
+    "semantic_guardrails",
+    "formal_credit"
+  ],
+  "properties": {
+    "document_id": {"const": "QPS_SSOT_VIEW_BUILD_RECEIPT"},
+    "source_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "row_count": {"type": "integer", "minimum": 1},
+    "outputs": {
+      "type": "array",
+      "minItems": 2,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "style_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["font_family", "palette_source", "legend_parity", "visual_qa_required"],
+      "properties": {
+        "font_family": {"const": "Aptos"},
+        "palette_source": {"type": "string", "minLength": 1},
+        "legend_parity": {"const": true},
+        "visual_qa_required": {"const": true}
+      }
+    },
+    "semantic_guardrails": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deviation_not_nok", "partial_supported_residual", "reviewed_not_compliant", "promised_not_verified"],
+      "properties": {
+        "deviation_not_nok": {"const": true},
+        "partial_supported_residual": {"const": true},
+        "reviewed_not_compliant": {"const": true},
+        "promised_not_verified": {"const": true}
+      }
+    },
+    "visual_qa": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["playwright", "excel_render", "ppt_render", "pdf_render", "cross_format_parity"],
+      "properties": {
+        "playwright": {"enum": ["NOT_RUN", "PASS", "FAIL"]},
+        "excel_render": {"enum": ["NOT_RUN", "PASS", "FAIL"]},
+        "ppt_render": {"enum": ["NOT_APPLICABLE", "NOT_RUN", "PASS", "FAIL"]},
+        "pdf_render": {"enum": ["NOT_APPLICABLE", "NOT_RUN", "PASS", "FAIL"]},
+        "cross_format_parity": {"enum": ["NOT_RUN", "PASS", "FAIL"]}
+      }
+    },
+    "formal_credit": {"const": 0}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"visual_qa": {"properties": {"playwright": {"const": "FAIL"}}}}},
+      "then": {"properties": {"formal_credit": {"const": 0}}}
+    }
+  ]
+}

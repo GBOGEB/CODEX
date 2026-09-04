@@ -1,0 +1,98 @@
+schema_version: "0.1"
+document_id: CODEX_QPS_W42_TRIAGE_KEB_EXECUTION_RETURN
+status: BOUNDED_PUBLIC_PARENT_KEB_EXECUTION_RETURN
+snapshot_date: 2026-09-04
+repository_role: public_parent_keb
+repo: GBOGEB/CODEX
+child_repo: GBOGEB/cryoplant-project
+upstream_lineage:
+  prior_parent_pr: 352
+  paired_dow_return: GBOGEB/ABACUS#827
+  child_references:
+    - cryoplant-project#339
+    - cryoplant-project#372
+purpose: >-
+  Provide the KEB semantic and governance side of the W42 three-repo triage implementation wave.
+  This public parent return carries bounded semantic guards only and must not copy private tender,
+  MSG/email, reviewer or commercial evidence from the child repository.
+public_parent_boundary:
+  copies_private_evidence: false
+  carries_semantic_guards_only: true
+  child_accept_reject_defer_required: true
+  creates_child_compliance_credit: false
+semantic_wave_plan:
+  KEB_W42_P1_evidence_classes:
+    objective: lock evidence vocabulary before any promotion
+    classes:
+      - SOURCE_SUPPORTED_REVIEW_COMMENT
+      - OFFER_SOURCE_PENDING
+      - MSG_ANCHOR_PENDING
+      - POSTULATED_COST_CANDIDATE
+      - RENDER_QA_ARTIFACT_EVIDENCE
+      - PARENT_DERIVED_METRIC_CANDIDATE
+      - CHILD_ACCEPTED_CONTROLLED_EVIDENCE
+  KEB_W42_P2_edge_rules:
+    objective: prevent invalid semantic edge promotion
+    rules:
+      - review_comment_may_support_review_state_not_bidder_fact
+      - offer_page_anchor_required_before_bidder_state_mutation
+      - parent_metric_candidate_requires_child_disposition
+      - render_success_does_not_close_requirement
+      - 80_20_filter_does_not_delete_obligations
+      - cost_candidate_is_not_evaluated_price_without_procurement_gate
+  KEB_W42_P3_atom_guards:
+    objective: define compliance atom guards
+    guards:
+      - atom_id_is_stable
+      - atom_has_source_class
+      - atom_has_promotion_blocker_when_not_formal
+      - atom_has_child_disposition_status
+      - atom_has_no_confidential_parent_payload
+  KEB_W42_P4_return_contract:
+    objective: produce child-dispositionable semantic receipt
+    return_fields:
+      - semantic_id
+      - rule
+      - prohibited_inference
+      - allowed_use
+      - child_disposition_required
+semantic_atoms:
+  - id: KEB-ATOM-001
+    label: review evidence is not bidder fact
+    rule: REVIEW_COMMENT_TO_REVIEW_STATE_ONLY
+    promote: false
+  - id: KEB-ATOM-002
+    label: exact offer anchor required
+    rule: BIDDER_STATE_REQUIRES_EXACT_PDF_PAGE_SECTION_QUOTE
+    promote: false
+  - id: KEB-ATOM-003
+    label: parent return needs child disposition
+    rule: ACCEPT_REJECT_DEFER_BEFORE_PROMOTION
+    promote: false
+  - id: KEB-ATOM-004
+    label: render QA is artifact quality evidence only
+    rule: RENDER_SUCCESS_NOT_COMPLIANCE_CLOSURE
+    promote: false
+  - id: KEB-ATOM-005
+    label: 80/20 is a view filter not scope reduction
+    rule: FILTER_NOT_REQUIREMENT_DELETION
+    promote: false
+  - id: KEB-ATOM-006
+    label: EUR 378k stays postulated
+    rule: POSTULATED_COST_NOT_EVALUATED_PRICE
+    promote: false
+  - id: KEB-ATOM-007
+    label: NFS MSG anchors are required for governed exact review coverage
+    rule: MSG_LOCATOR_REQUIRED_FOR_PROMOTION
+    promote: false
+qa:
+  public_boundary_preserved: PASS
+  no_confidential_evidence_copied: PASS
+  formal_delta_zero: PASS
+  child_disposition_required: PASS
+  semantic_drift_guarded: PASS
+return_to_child:
+  action: child_accept_reject_defer_required
+  suggested_child_next: >-
+    Add these KEB atoms to the child triage ledger and enforce them as graph/edge promotion guards
+    before any binary, negotiation, compliance or evaluated-price movement.

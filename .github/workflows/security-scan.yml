@@ -33,7 +33,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install scanner
-        run: python -m pip install --upgrade pip ruff
+        run: python -m pip install --upgrade pip "ruff==0.16.6"
 
       - name: Generate SARIF
         continue-on-error: true

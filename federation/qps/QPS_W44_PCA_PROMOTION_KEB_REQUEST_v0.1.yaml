@@ -1,0 +1,42 @@
+schema_version: "0.1"
+document_id: QPS_W44_PCA_PROMOTION_KEB_REQUEST
+status: BOUNDED_PARENT_REQUEST
+snapshot_date: 2026-09-04
+parent_repo: GBOGEB/CODEX
+child_repo: GBOGEB/cryoplant-project
+child_W43_anchor:
+  pr: 386
+  merge_sha: e9b6567239ba451899686162fad0635180329612
+prior_parent_anchor:
+  pr: 355
+  merge_sha: bfe9074a2858bb801799a69c8b6fdd5d8ad66cae
+
+request:
+  objective: >-
+    Validate semantic identity and promotion safety for candidate mappings involving RTM-075,
+    OFFER-39 and OFFER-20. Return validation only; promotion remains child-owned.
+  candidates: [RTM-075, OFFER-39, OFFER-20]
+  semantic_questions:
+    - is_candidate_semantically_equivalent_to_one_legacy_PCA_atom
+    - is_candidate_overlapping_an_existing_promoted_atom
+    - is_offer_evidence_being_mistaken_for_requirement_identity
+    - is_bidder_scope_explicit
+    - is_proof_level_explicit
+    - are_residual_conditions_preserved
+    - would_promotion_double_count_any_existing_atom
+
+KEB_controls:
+  - reviewed_does_not_equal_compliant
+  - source_filled_does_not_equal_promoted
+  - crosswalk_edge_does_not_equal_atom_identity
+  - one_PCA_atom_one_numerator_opportunity
+  - parent_cannot_override_child_SSOT
+  - no_cross_bidder_substitution
+  - child_ACCEPT_REJECT_DEFER_required
+  - formal_and_PCA_controls_remain_separate
+
+return_effect:
+  formal_delta: 0
+  PCA_delta: 0
+  negotiation_delta: 0
+  evaluated_price_delta: 0

@@ -1,0 +1,65 @@
+schema_version: "0.2"
+document_id: QPS_W08_KEB_CANDIDATE_RETURN_RECEIPT
+status: TEMPLATE_PRE_UPLOAD
+signal_class: SOURCE_SUPPORTED_PARENT_METADATA
+authority: CODEX_parent_semantic_ci_support
+return_to_child: GBOGEB/cryoplant-project
+source_parent_pr: GBOGEB/CODEX#337
+source_parent_merge_sha: 0dd4ff3e40e0ee03dcd8814b549aeb1e2ec00a40
+source_child_pr: GBOGEB/cryoplant-project#283
+peer_abacus_latest_merged_repair_pr: GBOGEB/ABACUS#811
+peer_abacus_latest_merged_repair_sha: 22dd6be9ca3fb9c0d8df9c9f524ba43d4ac52c74
+candidate_state: CANDIDATE_ONLY
+child_disposition: UNSET
+binding_contract:
+  mode: TWO_PHASE_POST_UPLOAD_SELF_BINDING
+  rationale: >-
+    A GitHub artifact cannot know its own artifact ID or platform digest before
+    upload. The runtime payload therefore binds run identity and internal file
+    hashes before upload; the workflow then publishes a separate post-upload
+    binding containing the payload artifact ID and platform SHA256 digest.
+  child_must_pair_payload_and_binding: true
+  same_run_id_required: true
+  same_commit_sha_required: true
+  payload_self_id_may_be_inferred: false
+runtime_binding:
+  final_runtime_run_id: RUNTIME_INJECTED
+  runtime_commit_sha: RUNTIME_INJECTED
+  runtime_artifact_id: POST_UPLOAD_EXTERNAL_BINDING
+  runtime_artifact_sha256: POST_UPLOAD_EXTERNAL_BINDING
+  release_manifest_sha256: RUNTIME_INJECTED
+  internal_sha256s_complete: RUNTIME_INJECTED
+  semantic_runtime_checks_passed: RUNTIME_INJECTED
+  pre_upload_complete: false
+  post_upload_binding_required: true
+required_checks:
+  - CODEX Semantic Runtime CI
+  - CI
+  - Validate Federation
+  - Runtime Federation CI
+  - Runtime Governance Gate
+  - Governance Validation
+  - W003 Governance Gate
+  - Full Stack Governance
+control_boundary:
+  parent_credit_promotion_allowed: false
+  child_acceptance_required: true
+  missing_hash_inference_allowed: false
+  formal_completion_delta: 0
+  bidder_compliance_delta: 0
+  safety_credit_delta: 0
+  pca_bt_rerank_delta: 0
+handoff_gate:
+  state: TEMPLATE
+  opens_only_when:
+    - runtime template is materialized inside a successful runtime run
+    - internal SHA256SUMS validates
+    - separate post-upload binding supplies payload artifact ID and platform digest
+    - payload and binding share repository, commit SHA, run ID and run attempt
+    - QPS child explicitly ACCEPTS the paired return
+note: >-
+  This file is a pre-upload contract template, not a completed return. The
+  semantic runtime workflow materializes it with run-bound fields inside the
+  payload. Self artifact identity remains external by construction and is
+  supplied by the post-upload binding artifact; it must never be guessed or
+  inferred by the parent or child.

@@ -1,0 +1,16 @@
+schema_version: "0.1"
+semantic_id: qplant.review.manual_allocation.w40.20260903
+evidence_class: DERIVED
+review_coverage: {unique_RTM: 55, denominator: 722, pct: 7.62}
+peer_review_lanes:
+  - {reviewer: RDA_SEH, RTM_count: 39, open_confirmation: [RTM-605,RTM-689,RTM-696,RTM-702], OFFER_items: [OFFER-49]}
+  - {reviewer: DKO, RTM_count: 7, RTMs: [RTM-437,RTM-438,RTM-439,RTM-441,RTM-442,RTM-443,RTM-447], OFFER_items: [OFFER-36]}
+owner_review_confirmation:
+  - {RTM: RTM-161, OFFER: null}
+  - {RTM: RTM-351, OFFER: OFFER-29}
+  - {RTM: RTM-517, OFFER: OFFER-39}
+manual_priority_batches:
+  minutes_0_30: [RTM-517,RTM-447,RTM-442,RTM-441]
+  minutes_30_60: [RTM-438,RTM-689,RTM-351,RTM-161]
+  minutes_60_90: [RTM-605,RTM-696,RTM-702,Buildings_and_Utilities_next_BT_ranked]
+controls: {reviewed_is_not_compliant: true, confirmation_is_not_closure: true, peer_reviewed_offer_items: [OFFER-36,OFFER-49], linked_non_peer_offer_items: [OFFER-29,OFFER-39]}
