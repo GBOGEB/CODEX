@@ -1,0 +1,24 @@
+pulse_id: QPS-P43
+role: CODEX
+parent_pr: 352
+parent_merge_sha: 0fcbeed2a68156b9aaabcaa498e6185837d18160
+purpose: semantic orchestration and agent-dispatch contract for three-repo QPS triage
+inputs:
+  - ABACUS:DOW_RECEIPT
+  - cryoplant-project:PROJECT_TRIAGE_STATE
+outputs:
+  - KEB_SEMANTIC_RECEIPT
+  - AGENT_DISPATCH_ENVELOPE
+  - VALIDATION_RESULT
+workers:
+  - codex_agent
+  - semantic_validation
+  - github_bridge
+  - mcp_worker_dispatch
+gates:
+  - preserve_zero_automatic_compliance_credit
+  - require_hash_bound_parent_receipts
+  - fail_closed_on_missing_lineage
+next_handoff:
+  target: cryoplant-project
+  event: AGENT_RESULT
