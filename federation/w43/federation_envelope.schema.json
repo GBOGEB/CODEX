@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GBOGEB/CODEX/federation/w43/federation_envelope.schema.json",
+  "title": "W43 QPS Federation Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["trace_id","wave","pulse","producer_repo","producer_sha","consumer_repo","artifact_type","authority_class","payload_sha256","disposition"],
+  "properties": {
+    "trace_id": {"type": "string", "minLength": 1},
+    "wave": {"const": "W43"},
+    "pulse": {"type": "string", "pattern": "^P[0-9]+$"},
+    "producer_repo": {"type": "string", "minLength": 1},
+    "producer_sha": {"type": "string", "pattern": "^[0-9a-f]{7,40}$"},
+    "consumer_repo": {"type": "string", "minLength": 1},
+    "consumer_sha_expected": {"type": ["string","null"]},
+    "artifact_type": {"enum": ["DOW_REQUEST","DOW_RETURN","KEB_REQUEST","KEB_RECEIPT","MCP_TASK","MCP_RETURN","AGENT_TASK","AGENT_RETURN","CHILD_DISPOSITION","REENTRY_ATOM"]},
+    "authority_class": {"enum": ["CHILD_SSOT","PARENT_DERIVED","RUNTIME_RECEIPT"]},
+    "confidentiality_class": {"enum": ["PUBLIC_BOUNDED","PRIVATE_CHILD","HASH_ONLY"]},
+    "semantic_class": {"type": "string"},
+    "evidence_class": {"type": "string"},
+    "source_hashes": {"type": "array", "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
+    "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "disposition": {"enum": ["PENDING","ACCEPT","REJECT","DEFER"]}
+  }
+}
