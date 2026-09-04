@@ -1,0 +1,66 @@
+schema_version: "0.1"
+id: QPS_W43_TRIAGE_KEB_RETURN
+state: CANDIDATE_ONLY
+repo: GBOGEB/CODEX
+parent_role: KEB
+source_main_sha: 1a1ca735f25d13fa92bb8165603a99c9bf1bc762
+child_authority:
+  repo: GBOGEB/cryoplant-project
+  main_sha: c3cb08af3d1c3dddef12af2aa71f8508849e4a2e
+  controlling_pr: 383
+
+supersedes_unmerged_attempt:
+  pr: 353
+  head_sha: d1aff180b5d32cd34748abe0c9018fbd3e87ebea
+
+semantic_contract:
+  reviewed_rtm_union: 116
+  reviewed_rtm_denominator: 722
+  reviewer_rtm_edges: 123
+  buildings_utilities_page_bound: 51
+  buildings_utilities_denominator: 53
+  buildings_utilities_candidate_mapping: 26
+  buildings_utilities_original_msg_exact: 0
+  formal_engineering_percent: 77.78
+  negotiation_resolved: 0
+  negotiation_total: 20
+
+correction:
+  stale_parent_candidate_mapping: 24
+  corrected_child_authority_candidate_mapping: 26
+  delta: 2
+  corrected_percent: 49.06
+
+semantic_guards:
+  - PAGE_BOUND_REVIEW_NE_CANDIDATE_MAPPING
+  - CANDIDATE_MAPPING_NE_ACCEPTED_EVIDENCE
+  - ORIGINAL_MSG_EXACT_MUST_REQUIRE_EXACT_LOCATOR
+  - REVIEWED_NE_COMPLIANT
+  - DEVIATION_NE_NOK
+  - TBD_CONFIRM_NE_CLOSURE
+  - PARTIAL_RETAINS_RESIDUAL_SUBCONDITIONS
+  - PARENT_DERIVED_EDGE_CANNOT_OVERRIDE_CHILD_SSOT
+  - PCA_IS_EXPLORATORY_ONLY
+  - NO_FORMAL_OR_NEGOTIATION_CREDIT_FROM_THIS_RETURN
+
+triage_waves:
+  T01:
+    name: FEDERATION_CONVERGENCE
+    actual: CHILD_26_OF_53_OVERRIDES_STALE_PARENT_24_OF_53
+    status: EXECUTED
+  T02:
+    name: GRAPH_WAKE_AND_LINEAGE
+    actual: SEMANTIC_SURFACES_SEPARATED_AND_NO_3D_EDGE_PROMOTION
+    status: EXECUTED
+  T03:
+    name: DYNAMIC_BASELINE_INPUT
+    actual: PROVIDE_TYPED_COUNTS_AND_GUARDS_WITHOUT_FABRICATED_DYNAMIC_VALUES
+    status: EXECUTED
+  T04:
+    name: RETURN_REENTRY
+    actual: REQUIRE_CHILD_ACCEPT_REJECT_DEFER
+    status: READY_FOR_CHILD
+
+child_disposition: UNSET
+formal_credit_delta: 0
+negotiation_credit_delta: 0
