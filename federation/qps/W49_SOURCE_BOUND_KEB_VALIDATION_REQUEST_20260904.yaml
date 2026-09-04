@@ -1,0 +1,30 @@
+schema_version: "0.1"
+document_id: W49_SOURCE_BOUND_KEB_VALIDATION_REQUEST
+correlation_id: QPS-W49-OFFER49-HSE024
+source_child_repo: GBOGEB/cryoplant-project
+source_child_commit: 427e8c758ab5dfba326e5a0ec190e7fcf957d34d
+wave: W49
+intent: semantically validate first complete source-bound evidence promotion chain without parent self-promotion
+candidate:
+  target: OFFER-49/HSE_ID_024
+  source_fact: source_bound_reviewer_answer_OK_exists
+  evidence_class: SOURCE_BOUND_REVIEW_EVIDENCE
+  formal_credit_candidate: false
+required_keb_checks:
+  - validate_typed_evidence_class
+  - validate_reviewer_evidence_not_equated_to_bidder_compliance
+  - validate_answer_set_member_row_semantics
+  - validate_no_cross_bidder_substitution
+  - validate_no_duplicate_credit
+  - validate_source_child_commit_and_lineage
+  - emit_immutable_return_hash
+return_fields: [correlation_id, source_child_commit, executed_checks, semantic_findings, lineage_findings, promotion_findings, recommended_child_disposition, return_hash]
+guards:
+  - parent_output_is_derived_only
+  - child_is_canonical_disposition_authority
+  - no_invented_source
+  - no_formal_or_PCA_self_promotion
+expected_result:
+  recommended_child_disposition: ACCEPT_AS_REVIEW_EVIDENCE
+  formal_delta: 0
+  pca_delta: 0
