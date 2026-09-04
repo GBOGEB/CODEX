@@ -1,0 +1,64 @@
+schema: qps-w50-hidden-capability-keb/v1
+wave: W50
+repo: GBOGEB/CODEX
+role: KNOWLEDGE_EXCHANGE_BRIDGE
+formal_credit_delta: 0
+intent: >-
+  Route latent ABACUS/DOW engineering capabilities into the tri-repo decision layer without allowing
+  the parent bridge to self-approve cryoplant engineering conclusions.
+
+source_parent:
+  repo: GBOGEB/ABACUS
+  contract: federation/triage/W50_HIDDEN_CAPABILITY_PENETRATION.yaml
+
+target_child:
+  repo: GBOGEB/cryoplant-project
+  authority: engineering_child
+
+exchange_types:
+  - capability_discovery
+  - property_oracle_request
+  - validation_result
+  - provenance_receipt
+  - gap_signal
+  - pca_bt_candidate
+
+promotions:
+  helium_property_engine:
+    source: ABACUS
+    worker_target: helium-properties-worker
+    skill_target: helium-thermophysical-properties
+    order:
+      - stabilize_engine_contract
+      - populate_independent_HEPAK_reference
+      - differential_validate
+      - expose_worker
+      - expose_skill
+    current_state: ENGINE_PARTIAL_WORKER_NOT_PROVEN_SKILL_NOT_EXPOSED
+
+bidirectional_requirements:
+  downstream:
+    - ABACUS capability -> CODEX typed exchange -> cryoplant candidate/evidence
+  upstream:
+    - cryoplant validation/gap -> CODEX typed return -> ABACUS DOW improvement
+  receipts:
+    - source_repo
+    - source_sha
+    - contract_version
+    - backend_version
+    - validation_status
+    - engineering_disposition
+
+ranking_guardrails:
+  - ranking_never_overrides_engineering_authority
+  - PCA_loadings_recomputed_from_current_candidate_matrix
+  - BT_pairing_uses_current_candidate_values
+  - preserve_Pareto_front_and_sign_of_each_component
+  - negative_pressure_and_covariance_are_supplemental_not_hidden
+  - missing_evidence_is_not_zero_risk
+
+victory:
+  - typed roundtrip works both directions
+  - hidden capability candidates enter W50 decision population
+  - HEPAK reference absence propagates as a blocker
+  - no parent self-approval
