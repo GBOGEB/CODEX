@@ -1,0 +1,39 @@
+schema_version: "0.1"
+document_id: QPS_W43_KEB_BRIDGE_RECEIPT
+status: BOUNDED_PARENT_RETURN_CANDIDATE
+snapshot_date: 2026-09-04
+parent_repo: GBOGEB/CODEX
+role: KEB_semantic_governance_parent
+child_anchor:
+  repo: GBOGEB/cryoplant-project
+  pr: 383
+  merge_sha: c3cb08af3d1c3dddef12af2aa71f8508849e4a2e
+prior_parent_anchor:
+  pr: 352
+  merge_sha: 0fcbeed2a68156b9aaabcaa498e6185837d18160
+semantic_guards:
+  - reviewed_does_not_equal_compliant
+  - candidate_mapping_does_not_equal_accepted_evidence
+  - original_MSG_attribution_remains_zero_until_exact_locators_exist
+  - parent_semantics_cannot_override_child_SSOT
+  - one_compliance_atom_one_credit_opportunity
+  - no_cross_bidder_substitution
+acknowledged_child_state:
+  buildings_utilities_page_bound: 51/53
+  buildings_utilities_candidate_mapping: 26/53
+  original_MSG_exact_attribution: 0/53
+  reviewed_RTM_union: 116/722
+  reviewer_RTM_edges: 123
+supersedes_stale_lane:
+  pr: 353
+  state: CLOSED_UNMERGED
+  action: DO_NOT_REVIVE_AS_AUTHORITY
+no_double_counting_statement: >-
+  KEB may validate semantic consistency, graph typing and governance but cannot self-promote child
+  engineering state or create duplicate compliance/PCA/formal credit.
+zero_credit_statement:
+  formal_completion_delta: 0
+  negotiation_resolution_delta: 0
+  PCA_engineering_evidence_delta: 0
+  evaluated_price_delta: 0
+child_disposition_required: true
