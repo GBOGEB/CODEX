@@ -1,0 +1,97 @@
+wave: W43
+pulse_id: W43-FED-001
+repo: GBOGEB/CODEX
+role: KEB_SEMANTIC_TASK_AND_WORKER_CONTROL
+base_lineage:
+  merged_pr: 352
+  title: federation(qps): W42 binary KEB return
+  paired_abacus_pr: 827
+  child_authority_repo: GBOGEB/cryoplant-project
+  child_reference_pr: 339
+
+purpose: >-
+  Generalize the current KEB semantic return into a common federation task/worker
+  contract shared with ABACUS and the child authority. CODEX validates semantics,
+  task execution contracts, worker capability matches, and return evidence, but
+  cannot self-promote child engineering/compliance state.
+
+shared_contract:
+  session_identity:
+    required: [session_id, federation_id, repo, branch, commit_sha, wave, pulse_id]
+  event_envelope:
+    required: [event_id, session_id, parent_event_id, event_type, timestamp, producer, evidence_class, payload_ref]
+  task_identity:
+    required: [task_id, session_id, capability_required, priority, expected_outputs]
+  bridge_identity:
+    required: [bridge_request_id, source_repo, destination_repo, operation, disposition_required]
+
+orchestration_state_machine:
+  nominal: [QUEUED, CLAIMED, RUNNING, EVIDENCE_PENDING, VALIDATING, RETURN_PENDING, DISPOSITION_PENDING]
+  terminal: [ACCEPTED, REJECTED, DEFERRED]
+  repair: [FAILED, DIAGNOSED, REPAIRING, RETEST, RUNNING]
+  retain_attempt_history: true
+
+worker_model:
+  selection: task_requirement -> capability_match -> availability -> trust_evidence_level -> assignment
+  first_class_types:
+    - github.worker
+    - filesystem.worker
+    - test.worker
+    - render.worker
+    - schema.worker
+    - browser.worker
+    - dap.worker
+    - python.worker
+    - node.worker
+    - swift.worker
+    - analysis.worker
+  required_worker_fields: [worker_id, protocol, capabilities, evidence_required]
+
+agent_model:
+  registered_initially: [CODEX, ABACUS, GEMINI, ANTHROPIC]
+  required_agent_fields: [agent_id, repo, role, capabilities, evidence_output, authority_level]
+  default_roles:
+    CODEX: implementation_repair_test_semantic_validation
+    ABACUS: governance_graph_metrics_rendering
+    GEMINI: parallel_analysis_critique_alternate_projection
+    ANTHROPIC: long_context_review_semantic_critique
+
+active_front:
+  W002_CI_EVIDENCE: {priority: P0}
+  W003_SESSION_REGISTRY: {priority: P0}
+  W004_CANONICAL_EVENTS: {priority: P0}
+  W005_PYTHON_ADAPTER: {priority: P1, depth: scaffold_and_first_path}
+  W006_NODE_TYPESCRIPT_ADAPTER: {priority: P1, depth: scaffold_and_first_path}
+  W007_SWIFT_SESSION_BROKER: {priority: P1, depth: scaffold_and_first_path}
+  W008_FEDERATION_REGISTRY: {priority: P1, depth: scaffold_and_contract}
+
+semantic_guards:
+  evidence_layers_must_remain_distinct: true
+  reviewed_is_not_compliant: true
+  candidate_mapping_is_not_exact_source_attribution: true
+  parent_return_requires_child_disposition: true
+  formal_credit_delta: 0
+  negotiation_credit_delta: 0
+
+metrics_contract:
+  retain_history: true
+  track:
+    - tasks_total
+    - tasks_completed
+    - tasks_failed
+    - tasks_deferred
+    - retry_count
+    - worker_attempts
+    - worker_success_rate
+    - agent_invocations_total
+    - successful_agent_invocations
+    - bridge_requests_total
+    - bridge_returns_total
+    - first_pass_success_rate
+    - final_success_rate
+    - mean_retries_per_success
+
+exit_demo: >-
+  Accept a child-issued federation task, capability-match one worker or agent,
+  execute with canonical events, validate evidence, return a bounded KEB receipt,
+  and retain the full failed/repaired/retested attempt history where applicable.
