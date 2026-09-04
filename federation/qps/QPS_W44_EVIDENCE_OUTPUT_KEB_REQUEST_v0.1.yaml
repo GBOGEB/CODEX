@@ -1,0 +1,62 @@
+schema: qps-w44-evidence-output-keb-request/v1
+payload_version: "0.1"
+correlation_id: qps-w44-evidence-output-20260904
+source:
+  repo: GBOGEB/cryoplant-project
+  branch: triage/w44-evidence-output-reverse-load
+  contract: ocd-adr/40_implementation/QPS_W44_EVIDENCE_OUTPUT_REVERSE_LOAD_v0.1.yaml
+role: KNOWLEDGE_EXCHANGE_BRIDGE
+formal_credit_delta: 0
+
+objective: >-
+  Execute the semantic/governance half of W44: enforce source identity, authority classes,
+  exact lineage, versioned receipt semantics and promotion boundaries for evidence and outward artifacts.
+
+operations:
+  - id: KEB-W44-01
+    operation: validate_source_identity
+    required: [filename, sha256, source_role, source_locator]
+  - id: KEB-W44-02
+    operation: normalize_authority_and_evidence_class
+    classes: [SOURCE_BOUND, CALCULATED, INFERRED, ALLOCATED, UNRESOLVED]
+  - id: KEB-W44-03
+    operation: detect_semantic_promotion_errors
+    guards:
+      - reviewed_not_equal_compliant
+      - candidate_not_equal_accepted
+      - deviation_not_equal_NOK
+      - deferred_not_equal_rejected
+      - render_pass_not_equal_engineering_closure
+  - id: KEB-W44-04
+    operation: validate_parent_return_contracts
+    required_fields: [schema, payload_version, correlation_id, source, child_source_sha, operations, findings, formal_credit_delta]
+  - id: KEB-W44-05
+    operation: validate_cross_format_lineage
+    artifacts: [xlsx, html, pptx, pdf]
+    requirements: [hash_binding, metric_parity, child_authority, stale_reference_guard]
+  - id: KEB-W44-06
+    operation: emit_child_dispositionable_findings
+    outcomes: [ACCEPT, REJECT, DEFER]
+
+return_contract:
+  schema: codex-keb-exchange-receipt/v1
+  payload_version: "1"
+  exchange_type: knowledge_exchange
+  required_fields:
+    - schema
+    - payload_version
+    - exchange_type
+    - correlation_id
+    - source
+    - child_source_sha
+    - stages
+    - findings
+    - formal_credit_delta
+    - return_sha256
+
+anti_overclaim:
+  - KEB_does_not_create_compliance
+  - KEB_does_not_create_price_delta
+  - KEB_does_not_override_child_SSOT
+  - versioned_receipt_required_for_W44
+  - stale_parent_metrics_must_be_rejected_or_marked_superseded
