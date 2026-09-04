@@ -1,0 +1,93 @@
+schema_version: '0.1'
+document_id: QPS_W42_P01_THREE_REPO_TRIAGE_KEB_REQUEST
+status: BOUNDED_PARENT_SEMANTIC_REQUEST_NO_CHILD_CREDIT
+wave: W42
+pulse: P01
+parent: GBOGEB/CODEX
+child: GBOGEB/cryoplant-project
+child_pr: 387
+purpose: >-
+  Validate the semantic and governance boundaries for the W42/P01 three-repository triage.
+  The KEB plane must prevent silent promotion between review evidence, bidder evidence, exact source
+  attribution, RTM mapping, compliance, price and graph multiplier state.
+public_parent_boundary:
+  forbidden_content:
+    - raw_MSG_or_email_body
+    - tender_PDF_content
+    - confidential_commercial_text
+    - bidder_private_document_extracts
+  allowed_content:
+    - hashes
+    - counts
+    - sanitized_identifiers
+    - schemas
+    - semantic_rules
+    - derived_metrics
+semantic_contract:
+  evidence_layers:
+    - PAGE_BOUND_REVIEW_EVIDENCE
+    - BIDDER_PAGE_CANDIDATE_MAPPING
+    - ORIGINAL_MSG_EXACT_ATTRIBUTION
+    - EXACT_PROMOTED_MSG_BIDDER_RTM_BINDING
+    - CANONICAL_REQUIREMENT_ACCEPTANCE
+  mandatory_distinctions:
+    - page_bound_review_NE_original_MSG_exact_attribution
+    - candidate_mapping_NE_exact_binding
+    - reviewed_NE_compliant
+    - deviation_NE_NOK
+    - clarification_NE_rejection
+    - parent_derived_NE_child_authority
+    - postulated_cost_NE_evaluated_price_delta
+    - graph_adjacency_NE_exact_multiplier_edge
+  source_promotion_rule: >-
+    Exact MSG attribution requires exact filename, SHA256, sender, date/time, subject and paragraph locator,
+    followed by substantive match. Exact bidder evidence requires document identity plus page/section locator.
+    Exact RTM promotion requires predicate-level substantive alignment; keyword proximity is insufficient.
+  coverage_rule: >-
+    The Buildings & Utilities denominator remains frozen at 53. Report page-bound review, bidder-page
+    candidate mapping, original-MSG exact attribution and exact promoted union as independent surfaces.
+  multiplier_rule: >-
+    The fixed W40 3D cohort remains unchanged until new direct source-bound model-object -> building/utility/interface
+    edges are admitted. Do not increase M from downstream review density alone.
+  pca_rule: NO_REFRESH_IN_W42_P01
+frozen_metrics:
+  formal_engineering: '70/90 = 77.78%'
+  negotiation: '0/20'
+  global_unique_reviewed_RTM: '116/722 = 16.07%'
+  reviewer_RTM_edges: 123
+  buildings_utilities_page_bound: '51/53 = 96.23%'
+  buildings_utilities_candidate: '26/53 = 49.06%'
+  original_MSG_exact: '0/53'
+  fixed_W40_3D_exact_edges: '3 -> 7'
+  fixed_W40_M_floor_mean: '1.05 -> 1.15'
+  cost_candidate: 'EUR 378000 POSTULATED_ONLY'
+  evaluated_price_delta_eur: 0
+validation_tasks:
+  - id: KEB-W42-001
+    priority: P0
+    task: validate_source_identity_schema_and_promotion_gate
+  - id: KEB-W42-002
+    priority: P0
+    task: validate_four_surface_53_RTM_coverage_semantics
+  - id: KEB-W42-003
+    priority: P0
+    task: validate_child_parent_accept_reject_defer_contract
+  - id: KEB-W42-004
+    priority: P1
+    task: validate_multiplier_and_PCA_no_premature_promotion
+  - id: KEB-W42-005
+    priority: P1
+    task: emit_child_dispositionable_semantic_return
+return_contract:
+  path_hint: federation/returns/qps_w42_p01_three_repo_triage_keb_return.json
+  child_disposition_required: true
+  required_fields:
+    - semantic_checks
+    - violations
+    - accepted_rules
+    - deferred_rules
+    - no_credit_confirmation
+formal_effect:
+  formal_credit_delta: 0
+  negotiation_credit_delta: 0
+  evaluated_price_delta_eur: 0
