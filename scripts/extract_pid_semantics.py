@@ -461,7 +461,16 @@ def build() -> dict[str, Any]:
         write_json(LINES_DIR / filename, {**run, "colour_bin": colour_bin, "line_count": len(bin_lines), "lines": bin_lines})
     write_reports(run, assets, counts, layers)
     write_viewer()
-    return {"status": "OK", "discovered_local_assets": assets, "extraction_status": run["completion_status"], "validation_status": "passed_svg_count_nonzero", **counts}
+    svg_load_errors = [result for result in svg_results if result["status"] == "load_error"]
+    overall_status = "PARTIAL_SVG_LOAD_ERRORS" if svg_load_errors else "OK"
+    return {
+        "status": overall_status,
+        "svg_load_error_count": len(svg_load_errors),
+        "discovered_local_assets": assets,
+        "extraction_status": run["completion_status"],
+        "validation_status": "passed_svg_count_nonzero",
+        **counts,
+    }
 
 
 def main(argv: list[str] | None = None) -> int:
