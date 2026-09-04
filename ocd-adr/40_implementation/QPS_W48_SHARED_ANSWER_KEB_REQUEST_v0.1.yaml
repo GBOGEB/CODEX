@@ -1,0 +1,36 @@
+schema_version: '0.1'
+document_id: QPS_W48_SHARED_ANSWER_KEB_REQUEST
+status: PARENT_DERIVED_SEMANTIC_VALIDATION_REQUEST
+child_repo: GBOGEB/cryoplant-project
+child_pr: 412
+purpose: Validate typed ANSWER_SET semantics for one-answer-to-many-row relationships without collapsing canonical obligations, bidder partitions, or evidence predicates.
+typed_nodes: [ANSWER_SET, MEMBER_ROW, RTM, OFFER, COM, GEN, TEC, HSE, GSHRC, QPS_CB, SOURCE_DOCUMENT]
+typed_edges:
+  - ANSWER_SET_COVERS_MEMBER_ROW
+  - MEMBER_ROW_REFERENCES_REQUIREMENT_OR_REVIEW_OBJECT
+  - QPS_CB_REFERENCES_ANSWER_SET
+  - ANSWER_SET_HAS_SOURCE_LOCATOR
+semantic_invariants:
+  - one_answer_set_may_cover_many_member_rows
+  - member_rows_keep_independent_compliance_evidence_materiality_and_closure_predicates
+  - answer_set_is_not_compliance_atom
+  - no_cross_bidder_answer_set_between_LKT_and_ALAT
+  - exact_text_duplicate_does_not_imply_equal_requirement_scope
+  - near_duplicate_candidate_never_auto_merges
+  - generic_pointer_only_is_not_substantive_evidence
+  - prestudy_lineage_does_not_override_current_offer
+  - content_block_identity_remains_QPS_CB_not_answer_set_id
+applicability_states: [PENDING, APPLY_TO_SET, APPLY_TO_SUBSET, GENERIC_POINTER_ONLY, TEXT_DUP_ONLY, DO_NOT_MERGE]
+metrics_to_validate:
+  total_answer_sets: 140
+  exact_answer_sets: 127
+  cross_item_sets: 69
+  intra_item_fanout_sets: 71
+  max_exact_cross_item_fanout: 42
+guards:
+  parent_may_mutate_child_compliance: false
+  parent_may_reduce_child_obligation_denominator: false
+  formal_credit_delta: 0
+return_contract:
+  accepted_outputs: [typed_schema_findings, semantic_conflict_findings, alias_vs_shared_answer_guidance, evidence_edge_rules]
+  child_gate: ACCEPT_REJECT_DEFER

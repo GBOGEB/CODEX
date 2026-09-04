@@ -1,0 +1,40 @@
+schema_version: '0.1'
+document_id: QPS_W47_FULL_COMMENT_KEB_REQUEST
+status: SEMANTIC_PARITY_REQUEST_NO_CHILD_CREDIT
+source_repo: GBOGEB/cryoplant-project
+source_wave: W47
+source_branch: control/w47-full-comment-filter-ui
+canonical_identity:
+  content_block_id_pattern: '^QPS-CB-[0-9]{4}$'
+  expected_count: 453
+requested_keb_checks:
+  - content_block_id_uniqueness_and_stability
+  - RTM_and_OFFER_are_primary_explicit_links_only
+  - COM_ID_GEN_ID_TEC_ID_HSE_ID_TODO_are_secondary_native_links
+  - deviation_source_type_is_independent_from_compliance_state
+  - severity_is_independent_from_compliance_state
+  - commercial_contractual_is_independent_from_Addendum_I
+  - Addendum_I_explicit_context_is_fail_closed
+  - RTM_linked_does_not_mean_every_deviation_is_Addendum_II
+  - OFFER_link_is_optional_not_required_for_every_deviation
+  - filtered_selection_roundtrip_preserves_block_identity
+  - delta_reentry_rejects_unidentified_or_topic_only_mutations
+  - parent_return_cannot_self_promote_to_child_closure
+expected_facets:
+  Major_Crucial: 199
+  Commercial_Contractual: 135
+  COM_ID_contract_clause: 96
+  RTM_linked: 23
+  OFFER_linked: 33
+  No_primary_RTM_or_OFFER: 405
+schema_request:
+  disposition_enum: [ACCEPT_AS_IS, ACCEPT_WITH_WORDING, REJECT, CLARIFY, WRITTEN_RETURN, DEFER]
+  required_delta_fields: [content_block_id, source_locator, disposition, evidence_class, evidence_maturity, reviewer_or_authority]
+  optional_corrigendum_fields: [existing_wording, bidder_proposed_wording, sck_position, agreed_wording, corrigendum_target]
+  rule: agreed_wording_requires_explicit_acceptance_source
+return_contract:
+  child_disposition_required: true
+  parent_role: KEB_SCHEMA_SEMANTIC_VALIDATION_ONLY
+formal_effect:
+  compliance_credit_delta: 0
+  negotiation_credit_delta: 0
