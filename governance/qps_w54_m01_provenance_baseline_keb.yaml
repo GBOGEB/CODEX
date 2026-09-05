@@ -1,0 +1,46 @@
+schema_version: "0.1"
+wave: W54
+pulse: M01
+role: CODEX_KEB
+status: CANDIDATE_ONLY
+child_authority: GBOGEB/cryoplant-project
+child_pr: 459
+child_head_sha: 9d9b03c1883151ba3c4d3aff101d674b9b95b69f
+
+source_return:
+  prior_wave: W53-P05D
+  merged_pr: 388
+  merge_sha: ba3756dd73e0069512db8f9fca3c5190523606c4
+
+lineage_predicates:
+  exact_source_document_and_locator: false
+  source_version_or_sha: false
+  scenario_and_configuration_identity: true
+  units_and_same_boundary_semantics: true
+
+metric_projection:
+  IBC:
+    verified_fields: 2
+    required_fields: 7
+    percent: 28.57
+    authority: child_scoped_B0
+  LCR:
+    verified_predicates: 2
+    required_predicates: 4
+    percent: 50.0
+    authority: child_scoped_B0
+  SFR:
+    current_version_bound_independent_B_source_surfaces: 0
+    active_surfaces: 1
+    percent: 0.0
+    authority: child_scoped_B0
+
+semantic_guards:
+  - required_predicate_is_not_evidence_of_satisfaction
+  - missing_locator_is_false_not_unknown_credit
+  - scenario_identity_does_not_substitute_for_source_identity
+  - source_freshness_requires_current_version_bound_source
+  - pca_not_eligible_from_single_scoped_baseline
+  - no_formal_or_residual_credit
+
+next_metric_family: [ECR, ASI, DCR]
