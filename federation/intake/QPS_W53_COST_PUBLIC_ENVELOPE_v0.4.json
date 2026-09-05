@@ -1,0 +1,37 @@
+{
+  "correlation_id": "QPS-W53-COST-FED-REPAIR-001",
+  "cost_structure": {
+    "historic_current_rule": "HISTORIC_REFERENCE_CANNOT_OVERRIDE_CURRENT_OFFER",
+    "installation": {
+      "source_support": "CURRENT_OFFER_BUDGETARY",
+      "quantitative_binding_state": "PARTIAL",
+      "subsegment_quantitative_binding_state": "MISSING"
+    },
+    "qps_cs": {
+      "source_support": ["CURRENT_OFFER", "CONTROL_ARCHITECTURE"],
+      "architecture_support": "SUPPORTED_NON_QUANTITATIVE",
+      "quantitative_binding_state": "MISSING",
+      "ranking_eligibility": "INELIGIBLE_UNTIL_QUANTITIES_BOUND"
+    },
+    "spares": {
+      "source_support": "CURRENT_OFFER_SOURCE_SUPPORTED_SUBSET",
+      "quantitative_binding_state": "PARTIAL",
+      "rule": "SPARE_BASKET_ANCHORS_ARE_NOT_PARENT_PACKAGE_CAPEX"
+    },
+    "storage": {
+      "source_support": "CURRENT_OFFER_EXPECTED",
+      "quantitative_binding_state": "MISSING",
+      "normalization_rule": "EXCLUDE_ONLY_AFTER_PRIVATE_CHILD_BINDS_EXACT_LINE"
+    }
+  },
+  "formal_credit_delta": 0,
+  "negotiation_credit_delta": 0,
+  "private_child": {
+    "payload_digest_sha256": "299239602528faa939587a0ebfede84af2249baeffaea790687974b32cff9334",
+    "payload_id": "QPS_W53_COST_PRIVATE_PAYLOAD_v0.2",
+    "raw_commercial_values_exported": false,
+    "repo_class": "PRIVATE_CHILD_OVERLAY"
+  },
+  "quantitative_binding_enum": ["FULLY_BOUND", "PARTIAL", "SCREENING_ONLY", "MISSING"],
+  "schema": "qps-cost-federation-public-envelope/v0.4"
+}
