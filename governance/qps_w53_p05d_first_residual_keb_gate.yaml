@@ -1,0 +1,27 @@
+schema_version: "0.1"
+wave: W53
+pulse: P05D
+role: CODEX_KEB
+status: CONTROLLED_DEFER_GATE
+residual_target: QCELL_mass
+formal_credit_delta: 0
+
+required_evidence_for_child_review:
+  - exact_source_document_and_locator
+  - scenario_and_configuration_identity
+  - active_QCELL_population
+  - per_QCELL_B_flow_values_or_governed_derivation_rule
+  - units
+  - same_boundary_semantics
+  - source_sha
+
+reject_if:
+  - B_is_only_A_minus_W_and_claimed_independent
+  - equal_split_is_presented_as_source_supported_without_source_rule
+  - missing_QCELL_rows_are_zero_filled
+  - contract_projection_is_promoted_without_exact_locator
+  - aggregate_B_only_is_claimed_as_distributed_QCELL_proof
+
+receipt_outcome_without_required_evidence: DEFER
+pass_threshold_percent: 0.5
+child_authority: cryoplant-project_ACCEPT_REJECT_DEFER
