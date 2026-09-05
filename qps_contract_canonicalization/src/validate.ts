@@ -1,0 +1,2 @@
+import fs from "node:fs"; import { FederationContract } from "./schema.js";
+const p=new URL("../ssot/federation_contract.json",import.meta.url); const s=FederationContract.parse(JSON.parse(fs.readFileSync(p,"utf8"))); console.log(JSON.stringify({validated:true,scoreEligible:s.requirements.filter(r=>r.scoreEligible).length,removedScopeLeak:s.requirements.filter(r=>r.scoreEligible&&r.scopeTags.some(t=>s.removedScopeTags.includes(t))).length},null,2));
