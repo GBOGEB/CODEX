@@ -1,0 +1,20 @@
+schema_version: '0.1'
+wave: W53/P05I
+lanes:
+  distributed_vlp:
+    status: CONDITIONAL_DIAGNOSTIC_PASS
+    requirement: per-QCELL cumulative flow and local pressure trace
+    pass_objective_mbar: 4
+    reject_if: [aggregate_only, inferred_geometry_claimed_as_built, unvalidated_HeII_claimed_as_acceptance]
+  thermodynamics:
+    status: OPEN_STRICT_RESIDUAL
+    require: [same_boundary_state_points, governed_property_provider, independent_reference, enthalpy_or_mass_energy_residual, source_locator]
+    prestudy_cannot_override_current_offer: true
+  line_s:
+    status: EXECUTABLE_DIAGNOSTIC
+    require: [source_bound_effective_volume, source_bound_release_profile, recovery_capacity_and_start_timing, HP_path_availability, time_integrated_energy_model]
+    reject_if: [gamma_bound_claimed_as_transient_energy_solution, placeholder_inventory_claimed_as_design, runtime_claimed_as_compliance]
+common_controls:
+  formal_credit_delta: 0
+  missing_is_not_zero: true
+  child_authority_required: true
