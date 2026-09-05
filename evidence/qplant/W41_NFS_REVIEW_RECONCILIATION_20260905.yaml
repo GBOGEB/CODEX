@@ -1,0 +1,20 @@
+schema_version: "0.1"
+semantic_id: qplant.review.nfs_reconciliation.w41.20260905
+evidence_class: DERIVED
+source: ABACUS/feedback/qps_w41_p02_nfs_graph_reconciliation_dow_receipt.yaml
+review_reconciliation:
+  before: {unique_RTM: 55, denominator: 722, pct: 7.62, reviewer_edges: 62}
+  after: {unique_RTM: 116, denominator: 722, pct: 16.07, reviewer_edges: 123}
+  delta: {unique_RTM: 61, pct_pp: 8.45, reviewer_edges: 61}
+buildings_utilities:
+  page_bound_review: {reviewed: 51, denominator: 53, pct: 96.23}
+  bidder_candidate_union: {reviewed: 24, denominator: 53, pct: 45.28}
+  exact_original_MSG_paragraph_attribution: {reviewed: 0, denominator: 53, pct: 0.0}
+  remaining_page_bound_gaps: [RTM-384, RTM-385]
+manual_next_block: [RTM-384, RTM-385, NFS_MSG_exact_paragraph_locators, model_object_to_building_utility_interface_edge_sample]
+controls:
+  reviewed_is_not_compliant: true
+  parent_derived_is_not_child_authority: true
+  formal_credit: 0
+  negotiation_credit: 0
+  pca_recompute: false
