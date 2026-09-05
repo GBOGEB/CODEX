@@ -1,0 +1,18 @@
+schema_version: '0.1'
+wave: W53/P05E
+required_fields: [temperature_K, pressure_mbar_abs, density_kg_m3, viscosity_Pa_s, provider_id, provider_version, validity_regime, source_sha, classification]
+rules:
+  temperature_positive: true
+  pressure_absolute_positive: true
+  density_positive: true
+  viscosity_positive: true
+  provider_provenance_required: true
+  source_sha_required: true
+  classification_must_equal: DIAGNOSTIC_ONLY
+  heii_requires_independent_validation: true
+  fallback_constants_forbidden: true
+  missing_property_is_not_zero: true
+on_valid_normal_fluid_receipt: PASS_TO_P05C_SENSITIVITY_EXECUTION
+on_unvalidated_heii: DEFER
+on_missing_provenance: REJECT
+formal_credit_delta: 0
