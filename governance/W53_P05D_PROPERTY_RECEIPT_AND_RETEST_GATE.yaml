@@ -1,0 +1,21 @@
+schema_version: '0.1'
+wave: W53/P05D
+required_property_receipt:
+  fields: [temperature_K, pressure_mbar_abs, density_kg_m3, viscosity_pa_s, provider_id, provider_version, validity_regime, source_sha]
+  reject_if:
+    - density_or_viscosity_nonpositive
+    - provider_or_version_missing
+    - source_sha_missing_or_stale
+    - heii_validity_claim_without_independent_reference
+required_p05c_result:
+  fields: [population_size, worst_case, sensitivity_ranking, classification]
+  classification: DIAGNOSTIC_ONLY
+source_substitution_validation:
+  require_same_solver_sha_before_after: true
+  require_same_population_except_substituted_factor: true
+  require_exact_source_locator_for_substituted_factor: true
+  require_before_after_margin_span: true
+  require_uncertainty_reduction_metric: true
+  reject_if_multiple_factors_changed_without_separate_attribution: true
+child_disposition: ACCEPT_DIAGNOSTIC_RETEST_OR_DEFER
+formal_credit_delta: 0
