@@ -1,0 +1,29 @@
+schema_version: '0.1'
+wave: W53/P05G
+input_receipt:
+  workflow_run_id: 33965693549
+  artifact_digest: sha256:5f6d9c0f6bc0388a2133b8caed562b44a1a76c75c11fa04d16aca0b2d9bf07f8
+  classification: DIAGNOSTIC_ONLY
+measured_ranking:
+  - {rank: 1, factor: diameter_m, margin_span_mbar: 16.273195785992396}
+  - {rank: 2, factor: mass_flow_kg_s, margin_span_mbar: 13.80653862339354}
+  - {rank: 3, factor: distance_m, margin_span_mbar: 6.237662820566774}
+  - {rank: 4, factor: k_local, margin_span_mbar: 2.2273427587011545}
+  - {rank: 5, factor: roughness_m, margin_span_mbar: 0.8626382909112831}
+rank1_recovery_target: diameter_m
+required_source_proof:
+  - exact Line-B internal diameter by segment
+  - source document identifier and locator
+  - source file hash or repository SHA
+  - units
+  - segment/QCELL applicability
+substitution_test:
+  keep_solver_identical: true
+  replace_only_rank1_bounded_diameter: true
+  rerun_same_population: true
+  report_before_after_margin_and_uncertainty: true
+reject_if:
+  - nominal_DN_is_used_as_internal_diameter_without_proof
+  - inferred_diameter_is_claimed_as_as_built
+  - source_locator_missing
+formal_credit_delta: 0
