@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - 'federation/qps/w56/QPS_W56_KEB_HASH_RECEIPT_v0.1.yaml'
-      - 'scripts/qps_w56_verify_hash_receipt.py'
+      - 'scripts/qps_w56_verify_hash_receipt_v2.py'
       - '.github/workflows/qps-w56-keb-hash-gate.yml'
   workflow_dispatch:
 
@@ -23,4 +23,4 @@ jobs:
       - name: Install receipt parser
         run: pip install pyyaml
       - name: Recompute exact child source and canonical payload SHA256
-        run: python scripts/qps_w56_verify_hash_receipt.py
+        run: python scripts/qps_w56_verify_hash_receipt_v2.py
