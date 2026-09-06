@@ -1,0 +1,45 @@
+schema_version: "0.1"
+document_id: QPS_W53_P06B_OCD_ADR_KEB_CONTRACT
+wave_id: W53-P06B
+status: PARENT_SEMANTIC_CONTRACT_REPAIR_NO_CHILD_CREDIT
+parent_repo: GBOGEB/CODEX
+parent_role: KEB
+source_child: GBOGEB/cryoplant-project
+source_child_pr: 581
+child_authority_rule: >-
+  CODEX validates semantics, provenance, trace and release predicates only. Parent result
+  states never become child CANDIDATE/OPEN state and never award compliance or closure credit.
+validation_contract:
+  required_validations:
+    - semantic_validation
+    - provenance_validation
+    - trace_validation
+    - manifest_validation
+    - rejected_promotions
+  child_disposition_required: true
+  allowed_child_dispositions:
+    - ACCEPT
+    - REJECT
+    - DEFER
+  forbidden_parent_promotions:
+    - CANDIDATE
+    - OPEN
+    - COMPLIANCE_PROMOTION
+    - ENGINEERING_CLOSURE_CREDIT
+release_contract:
+  primary_output_dir: artifacts/OCD_ADR/primary
+  products:
+    DOCX: QPS_OCD_ADR_REVIEW.docx
+    PDF: QPS_OCD_ADR_REVIEW.pdf
+    XLSX: QPS_TRACE_EVIDENCE_REVIEW.xlsx
+    PPTX: QPS_OCD_ADR_REVIEW_BRIEF.pptx
+    HTML: QPS_OCD_ADR_NAVIGATOR.html
+  required_receipts:
+    - SOURCE_MANIFEST.json
+    - RENDER_QA_RECEIPT.json
+    - RECURSIVE_SHA256.json
+  fail_closed:
+    - source_git_commit must equal release HEAD
+    - product SHA256 must match SOURCE_MANIFEST
+    - RENDER_QA_RECEIPT status must be PASS
+    - recursive manifest must cover products and receipts
