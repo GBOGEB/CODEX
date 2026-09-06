@@ -7,11 +7,12 @@ parent_role: KEB
 source_child: GBOGEB/cryoplant-project
 source_child_pr: 581
 child_authority_rule: >-
-  CODEX validates semantics, provenance, trace and release predicates only. Parent result
-  states never become child CANDIDATE/OPEN state and never award compliance or closure credit.
+  CODEX checks meaning, provenance, trace and release predicates only.
+  Parent result states never become child CANDIDATE or OPEN state and
+  never award compliance or closure credit.
 validation_contract:
   required_validations:
-    - semantic_validation
+    - meaning_validation
     - provenance_validation
     - trace_validation
     - manifest_validation
