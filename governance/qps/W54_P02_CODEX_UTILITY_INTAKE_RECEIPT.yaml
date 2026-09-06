@@ -1,0 +1,37 @@
+schema_version: '0.1'
+wave: W54/P02
+role: CODEX_KEB_PARENT_INTAKE
+payload_id: QPS-W54-P01-UTILITY-GRAPH-001
+child_repo: GBOGEB/cryoplant-project
+child_pr: 563
+child_merge_commit: f9aa99abe8c20f5639c2703b5f8da79fc17daadf
+canonical_json_sha256: d417236e81e8ba9d39aa841ef4b7bd942e064ef9ff29855e9ed05a64208d3804
+semantic_invariants:
+  pg40_weight_fraction: 0.40
+  supply_C: 27
+  return_C: 37
+  delta_T_K: 10
+  hp_dedicated_branch_count: 4
+  pvps_flow_control: PICV_OR_EQUIVALENT
+  missing_design_flow_semantics: NULL_NOT_ZERO
+  electrical_unit: kWe
+  thermal_unit: kWth
+  pvps_LKT_electrical_kW: 83
+  pvps_LKT_CW_kWth: 75
+  water_rejected_heat_is_HVAC_room_load: false
+  heat_recovery_credit_lte_water_side_heat: true
+validation:
+  hash_preserved: true
+  semantic_route: utility_graph
+  payload_mutation_allowed: false
+  forward_to: ABACUS_DOW
+negative_cases_required:
+  - zero_for_unknown_flow
+  - duplicate_HP_branch
+  - duplicated_battery_limit_ID
+  - PVPS_without_pressure_independent_flow_control
+  - kWe_kWth_type_confusion
+  - water_heat_counted_as_room_HVAC
+  - heat_recovery_above_water_side_heat
+status: ACCEPT_FOR_ANALYSIS
+formal_engineering_credit_delta: 0
