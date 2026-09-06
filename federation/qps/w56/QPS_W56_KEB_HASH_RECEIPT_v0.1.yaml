@@ -1,6 +1,6 @@
 schema_version: "0.1"
 receipt_id: QPS-W56-KEB-HASH-RECEIPT-001
-status: HASH_COMPUTATION_REQUIRED
+status: PASS
 source:
   child_repo: GBOGEB/cryoplant-project
   child_pr: 588
@@ -8,15 +8,21 @@ source:
   source_path: ocd-adr/20_canonical/architecture/QPS_COMPONENT_UTILITY_ICD_SSOT_W55_v0.1.yaml
   git_blob_sha1: dd9098b411bb1d5b447c1630c9401c9fb4b8af71
 hash_contract:
-  source_sha256: PENDING_EXACT_BYTE_COMPUTATION
-  canonical_payload_sha256: PENDING_CANONICAL_SERIALIZATION
+  source_sha256: 4afd7e4e77737297165368282471d1e9d926918510ddb9f05854a62c4496d557
+  canonical_payload_sha256: da745e3488a9eebf356056610b8612c8f53cea8afd71d459553c89bc27346b63
   algorithm: SHA-256
   source_bytes_rule: exact Git blob bytes at pinned child merge
   canonical_payload_rule: UTF-8 JSON, sorted keys, compact separators, trailing newline forbidden
-semantic_result: PENDING
-provenance_result: PENDING
+proof:
+  child_proof_pr: 610
+  child_proof_head_sha: e70fdea29fa4dc7e7f6dfca63153629714872898
+  child_proof_workflow_run_id: 34056861463
+  child_proof_job_id: 101550230565
+  child_proof_result: PASS
+semantic_result: PASS
+provenance_result: PASS
 route_gate:
-  DOW_execution_allowed: false
+  DOW_execution_allowed: true
   fail_closed: true
 formal_credit_delta: 0
 formal_engineering_closure: 70/90
