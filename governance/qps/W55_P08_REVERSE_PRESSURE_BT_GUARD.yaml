@@ -1,0 +1,14 @@
+schema_version: '0.1'
+wave: W55/P08
+role: KEB_REVERSE_PRESSURE_BT_GUARD
+rules:
+  - reverse_pressure_origin_is_controlling_QCELL_not_QRB
+  - local_Psat_requirement_is_source_or_owner_bound
+  - forward_and_reverse_use_same_geometry_flow_and_property_receipt
+  - BT_ranks_actions_not_compliance
+  - observed_sensitivity_is_prior_evidence_not_new_measurement
+  - HEPAK_property_uncertainty_enters_priority_when_numeric_receipt_exists
+  - Pareto_efficient_alternatives_cannot_be_suppressed_by_single_BT_winner
+  - WCS_VLP_downstream_backpressure_is_separate_from_cold_Line_B_identity
+child_return: [controlling_node,forward_reverse_residual,BT_pairwise_digest,BT_ranking,Pareto_frontier,source_gaps]
+formal_engineering_delta: 0
