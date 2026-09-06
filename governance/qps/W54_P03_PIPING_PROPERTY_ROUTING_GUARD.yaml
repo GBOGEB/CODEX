@@ -1,0 +1,31 @@
+schema_version: '0.1'
+wave: W54/P03
+role: CODEX_KEB_PROPERTY_ROUTING_GUARD
+status: SEMANTIC_GUARD_READY
+formal_engineering_credit_delta: 0
+
+routing_invariants:
+  cold_transfer_lines: [A, B, D, E]
+  cold_transfer_length_m_owner_basis: 150
+  warm_lines: [W, U, WPS]
+  conditional_line: S
+  main_warm_interconnect: [WCS.HP, WCS.LP, WCS.VLP]
+
+semantic_guards:
+  - A_B_D_E_must_not_route_to_fixed_300K_properties
+  - B_cold_VLP_must_not_alias_WCS.VLP_warm_header
+  - S_normal_routes_warm_but_abnormal_state_routes_by_actual_T_P_phase
+  - HEPAK_governs_promoted_2_to_4p5K_properties
+  - D_E_remain_cryogenic_even_above_4p5K
+  - W_U_WPS_WCS_are_warm_by_normal_operating_class_not_by_pressure_name
+  - unknown_exact_lengths_diameters_KCv_remain_null_until_source_bound
+
+required_parent_worker_outputs:
+  cold_transfer: [h, s, rho, Cp, Cv, mu, k, phase, quality, velocity, Reynolds, dp, inventory]
+  warm_transfer: [h, s, rho, Cp, Cv, mu, k, gamma, Pr, compressibility, dp]
+  abnormal_S: [time_state, P, T, phase, rho, h, inventory, dPdt]
+
+child_reentry_rule:
+  accept: exact_service_class_preserved_and_backend_provenance_present
+  reject: warm_cold_alias_or_backend_semantic_mutation
+  defer: property_or_geometry_source_missing
