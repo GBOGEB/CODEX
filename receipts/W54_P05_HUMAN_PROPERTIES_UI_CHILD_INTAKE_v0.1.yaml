@@ -1,0 +1,23 @@
+schema: codex-w54-p05-human-properties-ui-intake/v1
+source_repo: GBOGEB/cryoplant-project
+source_pr: 583
+source_head_sha: 8d2109b89da98b4fbac49882c7812f1aa64e6454
+source_receipt: controls/W54_P05_RUNTIME_UI_ROUNDTRIP_RECEIPT_v0.1.yaml
+review_scope:
+  - schema_semantics
+  - provenance
+  - human_UI_contract
+  - SSOT_digest_contract
+  - child_authority_preservation
+checks:
+  human_UI_no_runtime_internals: REQUIRED
+  excel_three_visible_sheets_max: REQUIRED
+  html_excel_same_SSOT_digest: REQUIRED_WHEN_SSOT_EXISTS
+  pca_benchmark_not_promoted: REQUIRED
+  exact_HEPAK_receipt_absence_must_fail_closed: REQUIRED
+  no_parent_self_promotion: REQUIRED
+expected_return:
+  disposition: ACCEPT_REJECT_DEFER
+  findings: []
+  semantic_mutation_allowed: false
+formal_engineering_delta: 0
