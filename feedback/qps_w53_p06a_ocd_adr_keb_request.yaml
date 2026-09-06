@@ -1,0 +1,44 @@
+schema_version: "0.1"
+document_id: QPS_W53_P06A_OCD_ADR_KEB_REQUEST
+wave_id: W53-P06A
+status: PARENT_SEMANTIC_FEDERATION_REQUEST_NO_CHILD_CREDIT
+parent_repo: GBOGEB/CODEX
+parent_role: KEB
+source_child: GBOGEB/cryoplant-project
+source_child_pr: 568
+source_child_head_sha: d45ee7b4c5eb10113790a71298554bb0884875ae
+child_authority_rule: >-
+  CODEX validates semantics, provenance, serialization, trace and release predicates only.
+  Child ACCEPT/REJECT/DEFER and engineering closure remain owned by cryoplant-project.
+validation_request:
+  - validate canonical OCD and ADR-register identifiers referenced by the release control
+  - validate evidence-class and parent/child authority invariants
+  - validate that HTML is derived/read-only and cannot become an authoritative data store
+  - validate release-manifest requirements for Git SHA and source/output SHA256 binding
+  - validate complete-trace fail-closed semantics for controlled release
+  - reject any parent result that promotes CANDIDATE or OPEN child dispositions
+expected_release_contract:
+  generated_primary_dir: artifacts/OCD_ADR/primary
+  generated_views_dir: artifacts/OCD_ADR/views
+  required_manifest: RELEASE_MANIFEST.json
+  expected_types:
+    - DOCX
+    - PDF
+    - XLSX
+    - PPTX
+    - HTML
+    - JSON
+return_contract:
+  path_hint: federation/returns/qps_w53_p06a_ocd_adr_keb_return.yaml
+  child_disposition_required: true
+  required_fields:
+    - semantic_validation
+    - provenance_validation
+    - trace_validation
+    - manifest_validation
+    - rejected_promotions
+  forbidden:
+    - CHILD_ACCEPT
+    - CHILD_REJECT
+    - CHILD_DEFER
+    - COMPLIANCE_PROMOTION
