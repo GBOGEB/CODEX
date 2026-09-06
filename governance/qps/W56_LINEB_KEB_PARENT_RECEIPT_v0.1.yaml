@@ -1,0 +1,30 @@
+schema_version: "0.1"
+document_id: W56_LINEB_KEB_PARENT_RECEIPT
+role: PARENT_SEMANTIC_PROVENANCE_CHALLENGE
+child_source:
+  repo: GBOGEB/cryoplant-project
+  pr: 613
+  head_sha: 89881b6e19048565db5c2114eec557e78ebb4ef8
+  canonical_file: controls/W56_LINEB_FULL_ROUNDTRIP_RECEIPT_v0.1.yaml
+semantic_guards:
+  - preserve_27mbar_QRB_QDB_vs_31mbar_local_QCELL_distinction
+  - preserve_conceptual_geometry_evidence_class
+  - preserve_JT_flash_as_internal_phase_split_not_extra_B_stream
+  - preserve_HEPAK_as_governing_authority_where_project_profile_requires
+  - preserve_parent_nonpromotion
+  - preserve_formal_70_of_90_and_zero_delta
+challenge:
+  bounded_proof: CONSISTENT_WITH_CHILD_PRIOR_ACCEPTANCE
+  detailed_geometry: DEFER
+  exact_local_losses: DEFER
+  per_QCELL_flow: DEFER
+  spatial_thermal_field: DEFER
+  HEPAK_numeric_receipt: DEFER
+return_candidate:
+  bounded_LineB_state_consistency: ACCEPT_PRESERVE_PRIOR_CHILD_DECISION
+  all_detailed_subreceipts: DEFER
+  parent_engineering_credit: 0
+hash_gate:
+  status: CHILD_HEAD_SHA_BOUND
+  child_head_sha: 89881b6e19048565db5c2114eec557e78ebb4ef8
+  note: canonical file content digest to be frozen by child POST tooling; KEB must consume unchanged bytes/digest when available
