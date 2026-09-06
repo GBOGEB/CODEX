@@ -1,0 +1,13 @@
+schema_version: '0.1'
+wave: W55/P07
+role: KEB_PCA_GUARD
+rules:
+  - PCA_input_digest_equals_hydraulic_runtime_digest
+  - observations_are_segments_or_nodes
+  - only_observed_or_directly_derived_features_enter_fit
+  - planning_BT_scores_never_enter_PCA_fit
+  - benchmark_84p2_12p5_2p8_remains_expected_until_reproduced
+  - measured_loadings_and_variance_take_precedence
+  - missing_HEPAK_lowT_rows_cause_DEFER_not_imputation
+return_required: [matrix_digest,N,K,explained_variance,loadings,hotspots,provenance,child_disposition_request]
+formal_engineering_delta: 0
