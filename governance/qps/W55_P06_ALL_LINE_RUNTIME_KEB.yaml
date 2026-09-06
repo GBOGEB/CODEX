@@ -1,0 +1,18 @@
+schema_version: '0.1'
+wave: W55/P06
+role: KEB_RUNTIME_GUARD
+semantic_invariants:
+  - A_B_D_E_are_cold_150m
+  - WPS_S_U_W_are_parallel_warm_150m
+  - WCS_HP_LP_VLP_are_warm_65m_WCS_QRB
+  - cold_B_ne_warm_WCS_VLP
+  - velocity_is_local_not_global
+  - DN_ne_internal_diameter_without_wall_confirmation
+  - reverse_pressure_march_starts_at_controlling_QCELL_requirement
+  - missing_values_are_null_not_zero
+receipt_gate:
+  require_same_input_digest: true
+  require_provider_provenance: true
+  require_forward_reverse_pressure_residual: true
+  require_child_disposition: true
+formal_engineering_delta: 0
