@@ -1,0 +1,70 @@
+schema_version: "0.1"
+intake_id: QPS-W56-KEB-COMPONENT-UTILITY-001
+role: CODEX_KEB_SEMANTIC_PROVENANCE_ROUTER
+input:
+  child_repo: GBOGEB/cryoplant-project
+  child_pr: 588
+  child_merge_sha: f16d3c2e2f26309097f56cb962b3e8c25c970b13
+  child_source_path: ocd-adr/20_canonical/architecture/QPS_COMPONENT_UTILITY_ICD_SSOT_W55_v0.1.yaml
+  child_source_git_blob_sha1: dd9098b411bb1d5b447c1630c9401c9fb4b8af71
+  child_payload_contract_path: federation/QPS_W55_COMPONENT_UTILITY_ICD_FEDERATION_PAYLOAD_v0.1.json
+  source_sha256_state: MUST_BE_COMPUTED_FROM_EXACT_CHILD_MERGE_BYTES
+  payload_sha256_state: MUST_BE_COMPUTED_FROM_CANONICAL_DISPATCH_JSON
+
+required_invariants:
+  - PVPS_PARENT_QPLANT
+  - WSH_PARENT_QPS
+  - WPS_EXTERNAL_TO_QPS
+  - PS01_PAB12_SITE_UTILITY_NOT_QPS_OWNED
+  - PG40_40WT_27C_37C_DT10K
+  - FOUR_WCS_HP_CW_BRANCH_IDENTITIES
+  - THREE_QRB_CC_CW_BRANCH_IDENTITIES
+  - THREE_QRB_CC_ELECTRICAL_FEEDS_45KW_CONTRACT_ENVELOPE
+  - NO_HVAC_DOUBLE_COUNT_OF_WATER_REJECTED_HEAT
+  - NO_PROMOTED_COMPONENT_WITHOUT_SOURCE_LOCATOR
+  - SAME_SOURCE_DOCUMENT_AND_DIGEST_ACROSS_ALL_PROJECTIONS
+
+required_projections:
+  - ICD
+  - EQUIPMENT_CARD
+  - UTILITY_CARD
+  - TAXONOMY
+  - HTML
+  - RUNTIME
+
+semantic_mutation:
+  allowed: false
+  rule: >-
+    KEB may validate, classify, normalize aliases and append a receipt, but it may not alter child ownership,
+    source class, engineering values, component parentage, utility temperatures, branch cardinality or disposition.
+
+hash_gate:
+  required_before_DOW_route: true
+  required_receipt_fields:
+    - child_merge_sha
+    - child_source_git_blob_sha1
+    - source_sha256
+    - canonical_payload_sha256
+    - schema_result
+    - invariant_results
+  fail_closed: true
+
+routing:
+  next_repo: GBOGEB/ABACUS
+  next_role: DOW_DERIVED_ANALYSIS
+  permitted_analyses:
+    - dependency_graph
+    - PCA_feature_projection
+    - graph_connectivity
+    - utility_boundary_diagnostics
+    - component_completeness_gap_analysis
+  prohibition: ABACUS_MAY_NOT_MUTATE_CHILD_SSOT_OR_PROMOTE_ENGINEERING_FACTS
+
+child_return:
+  route: ABACUS_TO_CODEX_TO_CRYOPLANT_PROJECT
+  dispositions: [ACCEPT, REJECT, DEFER]
+  promotion_rule: NO_PARENT_FINDING_BECOMES_CHILD_FACT_WITHOUT_CHILD_REENTRY_DISPOSITION
+
+status: KEB_INTAKE_READY_HASH_RECEIPT_PENDING
+formal_credit_delta: 0
+formal_engineering_closure: 70/90
