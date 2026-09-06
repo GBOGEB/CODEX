@@ -1,0 +1,23 @@
+schema: codex-w54-p09-wsh-sline-propagation-review/v1
+source_repo: GBOGEB/cryoplant-project
+source_pr: 583
+source_head_sha: 13ac7a2b45aea6840954b6988e92befa49060af8
+review_role: KEB_SCHEMA_SEMANTICS_PROVENANCE_AND_STALE_REFERENCE_GUARD
+
+must_validate:
+  - RTM_minimum_vessel_count_is_at_least_3_vertical_without_120m3_unit_requirement
+  - ALAT_3x185m3_and_LKT_4x150m3_remain_bidder_specific
+  - LKT_use_split_one_normal_plus_three_recovery_preserved
+  - 3x120m3_and_associated_mass_screens_are_historic_only
+  - S_line_pressure_hierarchy_is_1p05_min_1p10_nominal_1p30_max_plus_separate_PSV
+  - PSV_setpoint_is_not_inferred_from_1p30_bara
+  - HEPAK_2_to_4p5K_is_core_governing_numeric_output
+  - CoolProp_above_4p5K_and_NIST_validation_only
+  - no_cross_bidder_substitution
+  - no_parent_self_promotion_of_engineering_acceptance
+
+return_contract:
+  findings_namespace: KEB-W54-P09
+  mutation_allowed: false
+  dispositions: [ACCEPT_CANDIDATE, REJECT_CANDIDATE, DEFER_CANDIDATE]
+  child_reentry_required: true
