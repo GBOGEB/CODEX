@@ -1,0 +1,37 @@
+schema_version: "0.1"
+document_id: QPS_W053_P06D_KEB_CLEAN_RECEIPT
+wave_id: W053
+sprint_id: S6-P4
+status: PARENT_KEB_GATE_REPAIR_NO_CHILD_CREDIT
+parent_repo: GBOGEB/CODEX
+parent_role: KEB
+source_child:
+  repo: GBOGEB/cryoplant-project
+  pr: 581
+  merge_sha: ae9010f9
+predecessor_parent_repairs:
+  - pr: 409
+    merge_sha: da6c782e9bfab6fa8775e6c2d33327bdab6b2a3d
+  - pr: 412
+    merge_sha: 827c1e084575287ed691a56ab344b74ad0676f83
+repair_scope:
+  - canonical W053 governance metadata
+  - governed declaration of semantic runtime vocabulary
+  - no weakening of semantic validator
+  - no child engineering promotion
+required_gate_result: ALL_PR_HEAD_CHECKS_GREEN
+child_authority:
+  disposition_required: true
+  allowed:
+    - ACCEPT
+    - REJECT
+    - DEFER
+  forbidden_parent_promotions:
+    - CANDIDATE
+    - OPEN
+    - COMPLIANCE_PROMOTION
+    - ENGINEERING_CLOSURE_CREDIT
+formal_engineering_closure:
+  numerator: 70
+  denominator: 90
+  delta_from_this_repair: 0
