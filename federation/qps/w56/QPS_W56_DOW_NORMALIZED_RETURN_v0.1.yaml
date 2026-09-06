@@ -1,0 +1,55 @@
+schema_version: "0.1"
+return_id: QPS-W56-DOW-NORMALIZED-RETURN-001
+status: READY_FOR_CHILD_REENTRY
+lineage:
+  child_merge_sha: f16d3c2e2f26309097f56cb962b3e8c25c970b13
+  source_sha256: >-
+    4afd7e4e77737297165368282471d1e9d926918510ddb9f05854a62c4496d557
+  canonical_payload_sha256: >-
+    da745e3488a9eebf356056610b8612c8f53cea8afd71d459553c89bc27346b63
+  keb_hash_receipt_commit: 0fc661daae7ebc5607f2ee535373f42143f33f2c
+  abacus_dow_pr: 922
+  abacus_dow_merge_sha: 1ee9480c6ba13dde48013db2337ef12d45983fc3
+mutation_assertion:
+  payload_mutated_by_keb: false
+  payload_mutated_by_dow: false
+  source_sha256_preserved: true
+  canonical_payload_sha256_preserved: true
+candidates:
+  - finding_id: DOW-W56-001
+    normalized_class: NO_FINDING
+    proposed_child_disposition: ACCEPT
+    semantic: PS01.PAB12 remains external site utility and heat sink.
+  - finding_id: DOW-W56-002
+    normalized_class: NO_FINDING
+    proposed_child_disposition: ACCEPT
+    semantic: Exactly three CC cooling-water branches remain governed.
+  - finding_id: DOW-W56-003
+    normalized_class: CANDIDATE_IMPROVEMENT
+    proposed_child_disposition: ACCEPT
+    semantic: >-
+      Treat 3x45 kW only as the contract electrical-feed envelope; do not infer
+      a fixed 45 kW bidder-selected CC machine rating.
+  - finding_id: DOW-W56-004
+    normalized_class: OBSERVED_GAP
+    proposed_child_disposition: DEFER
+    semantic: >-
+      Exact source-bound HP, PVPS and CC cooling-water duties and flows remain
+      required for numerical utility closure.
+  - finding_id: DOW-W56-005
+    normalized_class: OBSERVED_GAP
+    proposed_child_disposition: DEFER
+    semantic: >-
+      Bidder-selected WCS/QRB component counts, ratings and geometry remain
+      RFI_UNKNOWN without exact source locators.
+  - finding_id: DOW-W56-006
+    normalized_class: NO_FINDING
+    proposed_child_disposition: ACCEPT
+    semantic: >-
+      Water-rejected heat is excluded from HVAC room-load double counting.
+authority:
+  normalization_may_change_finding_wording: true
+  normalization_may_change_governed_payload: false
+  child_owns_final_disposition: true
+  parent_credit_delta: 0
+formal_engineering_closure: 70/90
