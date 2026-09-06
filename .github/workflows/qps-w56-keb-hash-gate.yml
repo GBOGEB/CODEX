@@ -1,0 +1,26 @@
+name: QPS W56 KEB Exact Hash Gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'federation/qps/w56/QPS_W56_KEB_HASH_RECEIPT_v0.1.yaml'
+      - 'scripts/qps_w56_verify_hash_receipt.py'
+      - '.github/workflows/qps-w56-keb-hash-gate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  exact-hash-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install receipt parser
+        run: pip install pyyaml
+      - name: Recompute exact child source and canonical payload SHA256
+        run: python scripts/qps_w56_verify_hash_receipt.py
