@@ -1,0 +1,39 @@
+schema_version: '0.1'
+wave: W54/P02B
+role: CODEX_KEB_PARENT_RETURN
+payload_id: QPS-W54-P01-UTILITY-GRAPH-001
+canonical_json_sha256: d417236e81e8ba9d39aa841ef4b7bd942e064ef9ff29855e9ed05a64208d3804
+upstream_receipts:
+  CODEX_intake_PR: 406
+  CODEX_merge: 324df3fd4e8d4a5ed92cf2fa38b3eb1132a6279a
+  ABACUS_analysis_PR: 908
+  ABACUS_merge: a69a3bb204087c5b4c1c128ce8b3d7dd37da8ed3
+roundtrip_validation:
+  input_hash_equals_output_hash: true
+  semantic_mutation: false
+  information_loss: false
+  child_authority_preserved: true
+preserved_semantics:
+  - PG40_40wtpct_27_37C
+  - four_unique_HP_CW_branches
+  - PVPS_PICV_OR_EQUIVALENT
+  - unknown_flow_NULL_NOT_ZERO
+  - kWe_kWth_typed
+  - LKT_PVPS_83kWe_75kWth
+  - no_water_heat_double_count_as_HVAC
+  - heat_recovery_credit_capped_at_water_side_heat
+parent_findings:
+  accepted:
+    - utility_graph_topology
+    - source_bound_PVPS_power_and_CW_atoms
+    - semantic_and_accounting_guards
+  deferred:
+    - PG40_design_flow_source_binding
+    - HP_branch_design_flow_source_binding
+    - PVPS_same_point_independent_power_receipt
+  PCA_priority:
+    - PG40_properties_and_flow
+    - HP_branch_flows
+    - PVPS_same_point_power
+child_reentry_disposition: ACCEPT_FOR_CHILD_REENTRY
+formal_engineering_credit_delta: 0
