@@ -1,0 +1,42 @@
+schema_version: "0.1"
+receipt_id: QPS-W54-P03-KEB-RETURN-001
+role: CODEX_KEB_RETURN_AND_SEMANTIC_DIFF
+forward_input:
+  child_payload_id: QPS-W54-P01-UTILITY-GRAPH-001
+  child_payload_sha256: d417236e81e8ba9d39aa841ef4b7bd942e064ef9ff29855e9ed05a64208d3804
+  child_merge_sha: f9aa99abe8c20f5639c2703b5f8da79fc17daadf
+  KEB_forward_PR: 403
+DOW_return:
+  ABACUS_PR: 906
+  receipt_id: QPS-W54-P02-DOW-UTILITY-001
+  payload_bytes_mutated: false
+  source_classes_mutated: false
+  child_SSOT_mutated: false
+  derived_findings_only: true
+semantic_diff:
+  accepted_findings:
+    - QRB_CC_is_high_value_missing_utility_consumer
+    - add_QRB_CC_parent_and_CC1_CC2_CC3_nodes
+    - add_three_distinct_CC_CW_branches
+    - add_PICV_or_equivalent_fixed_flow_function_per_CC_branch
+    - add_individual_NA_ES_electrical_edges_per_CC
+    - keep_CW_heat_out_of_HVAC
+    - propagate_same_atoms_to_ICD_cards_HTML
+  deferred_findings:
+    - exact_CC_CW_flow_per_branch
+    - exact_CC_water_heat_rejection_per_branch
+    - exact_contract_3x45kW_table_cell_locator
+  prohibited_promotions:
+    - bidder_selected_lower_CC_power_may_not_reduce_owner_contract_envelope
+    - historic_ALAT_3x15kW_may_not_be_promoted_to_current_offer_or_contract
+    - no_numeric_PCA_fit_from_single_payload
+return_to_child:
+  disposition_recommendation: PARTIAL_ACCEPT_WITH_DEFERRED_EVIDENCE
+  child_authority_required: true
+  required_child_actions:
+    - accept_topology_and_boundary_findings
+    - defer_unresolved_flow_heat_and_exact_RTM_cell
+    - enforce_CC_cardinality_CW_and_ELEC_edges_fail_closed
+    - preserve_parent_receipt_hash_and_lineage
+status: KEB_RETURN_READY_FOR_CHILD
+formal_credit_delta: 0
