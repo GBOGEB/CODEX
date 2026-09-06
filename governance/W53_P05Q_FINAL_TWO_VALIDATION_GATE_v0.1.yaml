@@ -1,0 +1,43 @@
+schema_version: "0.1"
+wave: W53/P05Q
+role: KEB_validation_gate
+formal_bt_priority_1: RTM-595_Table-10_common-cause_non-overlap
+strict_score_input: "3/5"
+validation_rules:
+  pvps_power:
+    require_for_PASS:
+      - current_bidder_2K_OP_running_count
+      - per_running_pump_frequency_or_load
+      - same_point_suction_discharge_state
+      - package_auxiliary_split_or_equivalent_independent_power_curve
+      - aggregate_prediction_vs_83kW_with_governed_tolerance
+    reject_shortcuts:
+      - installed_count_equals_running_count
+      - nameplate_sum_equals_package_power_without_boundary_definition
+  line_b_state:
+    recovered_historic_geometry:
+      DN: 150
+      OD_mm: 168.3
+      wall_mm: 2.77
+      derived_ID_mm: 162.76
+      source_class: HISTORIC_PRESTUDY_DESIGN_RATIONALE
+      promotion_ceiling: DIAGNOSTIC_ONLY
+    require_for_PASS:
+      - current_design_or_as_built_geometry_revision
+      - per_segment_lengths
+      - fittings_K_or_Cv
+      - local_QCELL_suction_pressure_basis
+      - validated_low_temperature_property_provider
+    allow:
+      - diagnostic_rerun_to_quantify_uncertainty_reduction
+  hepak:
+    exact_states:
+      A: {T_K: 4.5, P_Pa_abs: 300000}
+      B: {T_K: 3.6, P_Pa_abs: 2200}
+    require_numeric_output_from_licensed_HEPAK_v3_4_or_controlled_equivalent: true
+    reject_cached_example_or_fabricated_output: true
+score_control:
+  no_PVPS_PASS_without_all_predicates: true
+  no_LineB_state_PASS_from_historic_geometry_alone: true
+  no_formal_credit_from_numerical_residuals: true
+  formal_BT1_must_not_be_displaced: true
