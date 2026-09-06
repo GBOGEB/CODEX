@@ -1,0 +1,33 @@
+schema_version: "0.1"
+receipt_id: QPS-W54-P02-KEB-SEMANTIC-001
+role: CODEX_KEB_SEMANTIC_PROVENANCE_ROUTER
+input:
+  child_repo: GBOGEB/cryoplant-project
+  child_merge_sha: f9aa99abe8c20f5639c2703b5f8da79fc17daadf
+  payload_id: QPS-W54-P01-UTILITY-GRAPH-001
+  payload_sha256: d417236e81e8ba9d39aa841ef4b7bd942e064ef9ff29855e9ed05a64208d3804
+  path: federation/qps/w54/input/qps_utility_graph_payload_v1.json
+validation:
+  exact_payload_bytes_preserved: true
+  schema_version_preserved: true
+  source_classes_preserved: true
+  null_unknown_flows_preserved: true
+  quantity_types_preserved: true
+  hp_branch_cardinality_4: true
+  hp_unique_supply_battery_limits: true
+  hp_unique_return_battery_limits: true
+  pvps_fixed_flow_function_present: true
+  water_heat_not_HVAC: true
+  heat_recovery_not_above_bound_water_heat: true
+  commercial_confidentiality: PUBLIC_SAFE_NO_RAW_COMMERCIAL_VALUES
+semantic_mutation:
+  allowed: false
+  observed: false
+routing:
+  next_repo: GBOGEB/ABACUS
+  next_role: DOW_DERIVED_ANALYSIS
+  required_input_sha256: d417236e81e8ba9d39aa841ef4b7bd942e064ef9ff29855e9ed05a64208d3804
+  required_analyses: [dependency_graph, PCA_feature_projection, graph_connectivity, utility_boundary_diagnostics]
+  prohibition: ABACUS_MAY_NOT_MUTATE_CHILD_SSOT_OR_SOURCE_CLASS
+status: KEB_VALIDATED_READY_FOR_DOW
+formal_credit_delta: 0
