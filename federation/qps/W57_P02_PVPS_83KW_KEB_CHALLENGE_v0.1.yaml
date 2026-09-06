@@ -1,0 +1,42 @@
+schema_version: "0.1"
+document_id: W57_P02_PVPS_83KW_KEB_CHALLENGE
+child_pr: "GBOGEB/cryoplant-project#604"
+child_head_sha: d6757844f26c91e8a5390aaa57519d12252fb420
+source_sha256: d92af4666cc10ec6a4f8ac6cfe57aef477bca116f72a12f9156a680ce7e1e35e
+source: "LKT P230000201 / MOL-16 / Issue 01 / 2026-08-10"
+authority: KEB_SEMANTIC_PROVENANCE_CHALLENGE
+
+accepted_source_facts:
+  installed_pumps: 4
+  model: "Leybold SOGEVAC SV750 BF"
+  per_pump_motor_rated_power_kW: 18.5
+  aggregate_motor_rated_power_kW: 74.0
+  drive: VFD
+  process_suction_range_mbara: [130, 450]
+  discharge_bara: 1.05
+  offer_2K_OP_PVPS_electrical_kW: 83
+  offer_2K_OP_PVPS_cooling_heat_kW: 75
+
+findings:
+  - id: KEB-PVPS-01
+    severity: BLOCKING
+    result: FAIL_INTERNAL_ARITHMETIC
+    statement: "Current-offer electrical table prints '4 x 18.5 = 78'; exact arithmetic is 74 kW."
+  - id: KEB-PVPS-02
+    severity: BLOCKING
+    result: BOUNDARY_UNRESOLVED
+    statement: "83 kW exceeds aggregate motor nameplate by 9 kW; package boundary/auxiliary/VFD basis is not source-defined."
+  - id: KEB-PVPS-03
+    severity: BLOCKING
+    result: SAME_POINT_INCOMPLETE
+    statement: "Installed count and automatic staging do not establish 2K-OP running count, per-pump frequency/load, or same-point PVPS mass flow/suction temperature."
+
+required_dow_challenge:
+  - quantify the three source power boundaries: 74 kW motor nameplate, erroneous 78 kW printed total, 83 kW mode consumption
+  - test plausible boundary interpretations without promoting assumptions
+  - compare 75 kW cooling duty against each boundary and state what can/cannot be inferred
+  - use historic SV630BF OEM/LKT prestudy only as diagnostic prior, never current-design proof
+  - return ACCEPT, REJECT, or DEFER recommendation with explicit evidence deficit
+
+keb_preliminary_disposition: DEFER_TO_DOW_INDEPENDENT_CHALLENGE
+engineering_credit_delta: 0
