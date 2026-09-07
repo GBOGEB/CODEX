@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Resolve CODEX SSOT logical IDs through the root manifest.
+"""Resolve CODEX SSOT logical IDs through the canonical root manifest.
 
-This resolver is intentionally read-only. Remote authorities are references,
-not mutable local engineering truth.
+This module is the single resolver implementation. Compatibility imports may
+re-export it, but consumers must resolve logical IDs rather than hard-coded
+authority paths. Remote authorities are references and never writable local
+engineering truth.
 """
 from __future__ import annotations
 
@@ -39,7 +41,13 @@ def load_manifest(path: Path = DEFAULT_MANIFEST) -> dict[str, Any]:
     return data
 
 
-def resolve_ssot(logical_id: str, manifest_path: Path = DEFAULT_MANIFEST) -> dict[str, Any]:
+def resolve_ssot(
+    logical_id: str,
+    manifest_path: Path = DEFAULT_MANIFEST,
+    *,
+    require_local: bool = False,
+) -> dict[str, Any]:
+    """Resolve exactly one active authority by logical ID and fail closed."""
     manifest = load_manifest(manifest_path)
     authorities = manifest.get("authorities", {})
     if not isinstance(authorities, dict):
@@ -56,14 +64,31 @@ def resolve_ssot(logical_id: str, manifest_path: Path = DEFAULT_MANIFEST) -> dic
         raise SsotResolutionError(f"DUPLICATE_AUTHORITY:{logical_id}:{len(matches)}")
 
     key, node = matches[0]
+    if node.get("lifecycle", "ACTIVE") != "ACTIVE":
+        raise SsotResolutionError(f"NON_ACTIVE_AUTHORITY:{logical_id}")
+
     authority_class = str(node.get("authority_class", ""))
+    if authority_class not in {"LOCAL_AUTHORITATIVE", "REMOTE_AUTHORITATIVE"}:
+        raise SsotResolutionError(f"INVALID_AUTHORITY_CLASS:{logical_id}")
+
+    if require_local and authority_class == "REMOTE_AUTHORITATIVE":
+        raise SsotResolutionError(f"REMOTE_AUTHORITY:{logical_id}")
+
+    writable = authority_class == "LOCAL_AUTHORITATIVE"
+    mutation_allowed = node.get("mutation_allowed", writable)
+    if authority_class == "REMOTE_AUTHORITATIVE" and mutation_allowed is not False:
+        raise SsotResolutionError(f"REMOTE_MUTATION_ALLOWED:{logical_id}")
+
     result: dict[str, Any] = {
         "key": key,
         "logical_id": logical_id,
         "authority_class": authority_class,
         "owner": node.get("owner") or node.get("owner_repository"),
-        "mutation_allowed": node.get("mutation_allowed", authority_class != "REMOTE_AUTHORITATIVE"),
+        "mutation_allowed": mutation_allowed,
+        "writable": writable,
     }
+    if node.get("owner_repository"):
+        result["owner_repository"] = node["owner_repository"]
 
     raw_path = node.get("path")
     if raw_path:
@@ -72,13 +97,11 @@ def resolve_ssot(logical_id: str, manifest_path: Path = DEFAULT_MANIFEST) -> dic
             raise SsotResolutionError(f"MISSING_FILE:{logical_id}:{raw_path}")
         result.update({
             "path": str(raw_path),
+            "resolved_path": str(resolved),
             "sha256": _sha256(resolved),
         })
     elif authority_class != "REMOTE_AUTHORITATIVE":
         raise SsotResolutionError(f"MISSING_FILE:{logical_id}:no-path")
-
-    if authority_class == "REMOTE_AUTHORITATIVE" and result["mutation_allowed"]:
-        raise SsotResolutionError(f"REMOTE_MUTATION_ALLOWED:{logical_id}")
 
     if node.get("schema"):
         schema_path = ROOT / str(node["schema"])
@@ -94,9 +117,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("logical_id")
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
+    parser.add_argument("--require-local", action="store_true")
     args = parser.parse_args()
     try:
-        result = resolve_ssot(args.logical_id, args.manifest)
+        result = resolve_ssot(
+            args.logical_id,
+            args.manifest,
+            require_local=args.require_local,
+        )
     except SsotResolutionError as exc:
         print(json.dumps({"status": "FAIL", "error": str(exc)}, sort_keys=True))
         return 2
