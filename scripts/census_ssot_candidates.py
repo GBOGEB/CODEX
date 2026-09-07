@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
-"""Inventory and classify non-binary SSOT candidates for CODEX 2.0 convergence.
+"""Inventory, classify and bind governed CODEX 2.0 SSOT candidates.
 
-Classification is evidence, not authority. Only manifest/registry-bound nodes may be
-reported as DECLARED. Heuristic results remain INFERRED or UNCLASSIFIED and can
-never establish engineering truth.
+Classification is evidence, not authority. Authority is established only by the
+canonical manifest. The logical-ID registry may identify governed consumers and
+compatibility surfaces but can never promote them into authority.
 """
 from __future__ import annotations
 
 import hashlib
 import json
 from pathlib import Path
+
+import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 SKIP_PARTS = {".git", "node_modules", ".venv", "venv", "dist", "build"}
@@ -35,11 +37,7 @@ def infer_role(rel: str, cls: str) -> tuple[str, str, str]:
         return "RECEIPT", "CODEX", "INFERRED"
     if cls == "SCHEMA_CANDIDATE":
         return "CONTRACT", "CODEX", "INFERRED"
-    if lower.startswith("semantic_substrate/"):
-        return "LOCAL_AUTHORITY_CANDIDATE", "CODEX", "INFERRED"
-    if lower.startswith("governance/policy/"):
-        return "LOCAL_AUTHORITY_CANDIDATE", "CODEX", "INFERRED"
-    if lower.startswith("ssot/"):
+    if lower.startswith(("semantic_substrate/", "governance/policy/", "ssot/")):
         return "LOCAL_AUTHORITY_CANDIDATE", "CODEX", "INFERRED"
     if any(token in lower for token in ("qps", "cryoplant")):
         return "REMOTE_ENGINEERING_REFERENCE_CANDIDATE", "GBOGEB/cryoplant-project", "INFERRED"
@@ -59,7 +57,32 @@ def lifecycle(rel: str) -> str:
     return "ACTIVE_CANDIDATE"
 
 
+def load_declared_ids() -> dict[str, dict[str, str]]:
+    bindings: dict[str, dict[str, str]] = {}
+    manifest = yaml.safe_load((ROOT / "ssot/manifest.yaml").read_text(encoding="utf-8")) or {}
+    for section in ("authorities", "derived_or_compatibility"):
+        for node in (manifest.get(section) or {}).values():
+            path = node.get("path")
+            logical_id = node.get("logical_id")
+            if path and logical_id:
+                bindings[path] = {
+                    "logical_id": logical_id,
+                    "logical_id_status": "DECLARED_AUTHORITY" if section == "authorities" else "DECLARED_VIEW_OR_COMPATIBILITY",
+                }
+    registry_path = ROOT / "ssot/registry/logical_id_registry.yaml"
+    if registry_path.exists():
+        registry = yaml.safe_load(registry_path.read_text(encoding="utf-8")) or {}
+        for logical_id, node in (registry.get("nodes") or {}).items():
+            path = node.get("path")
+            if path:
+                if path in bindings and bindings[path]["logical_id"] != logical_id:
+                    raise ValueError(f"duplicate logical ID binding for {path}")
+                bindings[path] = {"logical_id": logical_id, "logical_id_status": "DECLARED_GOVERNED_NODE"}
+    return bindings
+
+
 def main() -> int:
+    bindings = load_declared_ids()
     rows = []
     for path in sorted(ROOT.rglob("*")):
         if not path.is_file() or path.suffix.lower() not in TEXT_SUFFIXES:
@@ -74,6 +97,7 @@ def main() -> int:
         cls = candidate_class(path)
         authority, owner, confidence = infer_role(rel_text, cls)
         data = path.read_bytes()
+        binding = bindings.get(rel_text, {"logical_id": None, "logical_id_status": "UNRESOLVED"})
         rows.append({
             "path": rel_text,
             "suffix": path.suffix.lower(),
@@ -84,8 +108,7 @@ def main() -> int:
             "owner_classification": owner,
             "classification_confidence": confidence,
             "lifecycle_state": lifecycle(rel_text),
-            "logical_id": None,
-            "logical_id_status": "UNRESOLVED",
+            **binding,
         })
 
     def tally(field: str) -> dict[str, int]:
@@ -96,21 +119,24 @@ def main() -> int:
         return dict(sorted(counts.items()))
 
     classified = sum(row["classification_confidence"] != "UNCLASSIFIED" for row in rows)
+    resolved = sum(row["logical_id"] is not None for row in rows)
     report = {
-        "schema_version": "2.0",
-        "purpose": "CODEX_2_0_SSOT_CLASSIFICATION_CENSUS",
-        "constitutional_rule": "classification does not establish authority",
+        "schema_version": "2.1",
+        "purpose": "CODEX_2_0_SSOT_CLASSIFICATION_AND_ID_CENSUS",
+        "constitutional_rule": "classification and governed IDs do not establish authority",
         "candidate_count": len(rows),
         "classified_candidate_count": classified,
         "classification_penetration_pct": round((classified / len(rows) * 100) if rows else 0.0, 2),
-        "logical_id_resolved_count": 0,
-        "logical_id_penetration_pct": 0.0,
+        "logical_id_resolved_count": resolved,
+        "logical_id_penetration_pct": round((resolved / len(rows) * 100) if rows else 0.0, 2),
+        "declared_binding_count": len(bindings),
         "counts": {
             "candidate_class": tally("candidate_class"),
             "authority_classification": tally("authority_classification"),
             "owner_classification": tally("owner_classification"),
             "classification_confidence": tally("classification_confidence"),
             "lifecycle_state": tally("lifecycle_state"),
+            "logical_id_status": tally("logical_id_status"),
         },
         "candidates": rows,
     }
@@ -119,8 +145,9 @@ def main() -> int:
     out.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(
         "SSOT_CENSUS_PASS "
-        f"candidates={len(rows)} classified={classified} "
-        f"penetration={report['classification_penetration_pct']}% "
+        f"candidates={len(rows)} classified={classified} resolved={resolved} "
+        f"classification_penetration={report['classification_penetration_pct']}% "
+        f"id_penetration={report['logical_id_penetration_pct']}% "
         f"output={out.relative_to(ROOT)}"
     )
     return 0
