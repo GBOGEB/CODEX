@@ -1,0 +1,21 @@
+id: KEB-xOCD-W57
+version: 0.1.0
+repo: GBOGEB/CODEX
+purpose: executable governance description for semantic and provenance validation
+pipeline:
+  - receive_child_payload
+  - validate_schema
+  - normalize_semantics
+  - validate_provenance
+  - apply_policy_and_governance_ADR
+  - map_bridge_and_adaptor
+  - authorize_runtime_execution
+  - receive_DOW_receipt
+  - reconcile_exact_digests
+  - emit_KEB_receipt
+  - return_to_child
+binary_family:
+  - KEB_ARCHITECTURE.xlsx
+  - KEB_ARCHITECTURE.html
+  - KEB_ARCHITECTURE.pptx
+  - KEB_ARCHITECTURE.pdf
