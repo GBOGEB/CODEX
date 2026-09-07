@@ -1,0 +1,186 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W005
+pulse: P4
+status: PRODUCT_MAP_POPULATED_ZERO_DELTA_DEFINED_NOT_EXECUTED
+source_reentry:
+  from_w05_p3_pr: 472
+  from_w05_p3_merge: 863715b1f19025a1029a1133fa3f7589d4ebeeaa
+  rule: >-
+    This pulse populates the release-readiness consumer map at category/path-contract
+    level and defines the zero-delta workflow. It does not run zero-delta, does
+    not regenerate products, does not create a release tag, and does not promote
+    generated products to authority.
+product_consumer_map:
+  status: POPULATED_BY_CATEGORY_AND_REQUIRED_EDGES
+  products:
+    html:
+      product_class: DERIVED_REPORT_OUTPUT
+      allowed_extensions: [.html]
+      expected_consumers:
+        - browser_visual_qa
+        - release_review_packet
+        - dashboard_or_docs_publish_if_bound
+      required_edges:
+        - authority_id
+        - source_ssot_path
+        - renderer_or_builder_path
+        - rebuild_command_or_recipe
+        - provenance_receipt_path
+        - sha256_entry
+        - zero_delta_receipt_or_visual_tolerance_receipt
+      authority_by_presence: false
+    xlsx:
+      product_class: DERIVED_SPREADSHEET_OUTPUT
+      allowed_extensions: [.xlsx]
+      expected_consumers:
+        - reviewer_workbook
+        - reconciliation_or_census_review
+        - release_review_packet
+      required_edges:
+        - authority_id
+        - source_ssot_path
+        - builder_or_exporter_path
+        - rebuild_command_or_recipe
+        - provenance_receipt_path
+        - sha256_entry
+        - zero_delta_receipt_or_cell_tolerance_receipt
+      authority_by_presence: false
+    pptx:
+      product_class: DERIVED_PRESENTATION_OUTPUT
+      allowed_extensions: [.pptx]
+      expected_consumers:
+        - stakeholder_deck_review
+        - release_review_packet
+      required_edges:
+        - authority_id
+        - source_ssot_path
+        - deck_builder_path
+        - rebuild_command_or_recipe
+        - provenance_receipt_path
+        - sha256_entry
+        - zero_delta_receipt_or_render_tolerance_receipt
+      authority_by_presence: false
+    pdf:
+      product_class: DERIVED_FIXED_LAYOUT_OUTPUT
+      allowed_extensions: [.pdf]
+      expected_consumers:
+        - outward_release_packet
+        - immutable_review_snapshot
+        - visual_diff_review
+      required_edges:
+        - authority_id
+        - source_ssot_path
+        - pdf_builder_or_export_path
+        - rebuild_command_or_recipe
+        - provenance_receipt_path
+        - sha256_entry
+        - zero_delta_receipt_or_visual_tolerance_receipt
+      authority_by_presence: false
+    docx:
+      product_class: DERIVED_DOCUMENT_OUTPUT
+      allowed_extensions: [.docx]
+      expected_consumers:
+        - reviewer_document
+        - source_to_pdf_export_if_bound
+      required_edges:
+        - authority_id
+        - source_ssot_path
+        - document_builder_path
+        - rebuild_command_or_recipe
+        - provenance_receipt_path
+        - sha256_entry
+        - zero_delta_receipt_or_render_tolerance_receipt
+      authority_by_presence: false
+sha256s_contract:
+  status: PATH_RESERVED_NOT_POPULATED
+  preferred_paths:
+    - release/SHA256SUMS
+    - release/checksums.sha256
+    - artifacts/SHA256SUMS
+  minimum_fields:
+    - product_path
+    - sha256
+    - generated_at_utc
+    - source_commit_sha
+    - builder_id
+    - authority_id
+  rule: >-
+    Every release product must have a SHA256 entry before RC or formal release.
+rebuild_log_contract:
+  status: PATH_RESERVED_NOT_POPULATED
+  preferred_paths:
+    - release/REBUILD_LOG.yaml
+    - release/rebuild_receipts.yaml
+    - artifacts/REBUILD_LOG.yaml
+  minimum_fields:
+    - product_path
+    - rebuild_command
+    - builder_script_or_workflow
+    - source_inputs
+    - environment_or_runner
+    - output_sha256
+    - timestamp_utc
+    - result
+  rule: >-
+    Every generated product must be reproducible from explicit source inputs and
+    a governed rebuild command or workflow.
+zero_delta_workflow_definition:
+  status: DEFINED_NOT_EXECUTED
+  objective: >-
+    Prove that repeated regeneration from the same authority inputs produces
+    either byte-identical output or a governed tolerance receipt for non-byte-stable
+    rendered formats.
+  phases:
+    - phase: input_freeze
+      required_inputs:
+        - source_commit_sha
+        - authority_registry_snapshot
+        - source_ssot_paths
+        - builder_scripts_or_workflows
+        - dependency_lock_or_runner_description
+    - phase: first_rebuild
+      outputs:
+        - product_files
+        - SHA256SUMS
+        - REBUILD_LOG
+    - phase: second_rebuild_same_inputs
+      outputs:
+        - second_product_files
+        - second_SHA256SUMS
+        - second_REBUILD_LOG
+    - phase: compare
+      byte_stable_formats:
+        - yaml
+        - json
+        - csv
+        - selected_xlsx_when_canonicalized
+      tolerance_formats:
+        - html_visual_snapshot
+        - pptx_render_snapshot
+        - pdf_render_snapshot
+        - docx_render_snapshot
+      required_result: PASS_OR_EXPLICIT_TOLERANCE_RECEIPT
+    - phase: receipt_write
+      preferred_paths:
+        - release/ZERO_DELTA_RECEIPT.yaml
+        - artifacts/ZERO_DELTA_RECEIPT.yaml
+  execution_status: NOT_RUN
+  pass_claim_allowed: false
+release_readiness_position:
+  product_consumer_map: POPULATED_BY_CATEGORY_NOT_FILE_COMPLETE
+  sha256s_path: RESERVED_NOT_POPULATED
+  rebuild_log_path: RESERVED_NOT_POPULATED
+  zero_delta_workflow: DEFINED_NOT_EXECUTED
+  product_regeneration: NOT_RUN
+  product_parity: NOT_YET
+  release_manifest_inputs: PARTIAL_CONTRACT_ONLY
+  main_protection: BLOCKED_ADMIN
+  global_codex_2_0: NOT_YET
+next_mechanical_steps:
+  - exact_head_ci_for_this_receipt
+  - enumerate concrete product files from census/output manifests
+  - populate SHA256SUMS with actual hashes after product regeneration
+  - populate REBUILD_LOG after actual rebuild
+  - run zero_delta workflow and write ZERO_DELTA_RECEIPT only after execution
+  - then progress to W05/P5 product-file-level map or W06 release gate status matrix
