@@ -1,0 +1,139 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W004
+pulse: P11
+status: DEEP_AGENT_CICD_SUBREPO_REPORT
+source_dependency:
+  p10_pr: 464
+  p10_merge: a21a76a6187e6075afbb47f95604840a902eeff0
+  reason_for_follow_on: >-
+    P10 correctly found no repository-local autonomous agent runtime, but it was
+    too shallow because CODEX contains a GitHub Actions agentic scan shell and
+    deeper task/report/subrepo-style surfaces that must be recorded before W05.
+constitutional_rule: >-
+  A CODEX agent surface can be a task contract, CI/CD executable shell,
+  generated report/output, registry, visualization utility, external connector
+  runner, or autonomous runtime. Only the last category establishes repository
+  local agent-runtime authority. CI/CD shells are execution surfaces, not
+  autonomous runtime brains.
+full_report_scope:
+  task_contracts:
+    - .codex/tasks/github_mcp_agentic_orchestration.yaml
+    - .codex/tasks/g10_mcp_container_task.yaml
+  cicd:
+    - .github/workflows/agentic-pr-discrepancy-scan.yml
+    - .github/workflows/*
+  agent_surfaces:
+    - AGENTIC/
+    - METRICS/
+    - agent_runtime/
+    - agents/
+    - visuals/agent_telemetry_timeline.py
+    - visuals/orchestration_dependency_graph.py
+  subrepo_depth:
+    - repository root enclave list
+    - federation_runtime/
+    - runtime_engine/
+    - triage/
+    - abacus_render_pipeline/
+    - SSOT/
+    - ssot/
+observations:
+  task_contract:
+    path: .codex/tasks/github_mcp_agentic_orchestration.yaml
+    type: mcp_container
+    declared_agents:
+      - github_mcp_reader
+      - discrepancy_detector
+      - fix_planner
+      - patch_applier
+      - comment_responder
+      - commit_guard
+    human_gate: required_before_commit
+    triggers:
+      - local_source_push
+      - github_pr_comment
+      - ci_failure
+    outputs:
+      - AGENTIC/agentic_pr_followup_log.yaml
+      - AGENTIC/proposed_fixes.yaml
+      - AGENTIC/comment_response_drafts.md
+      - METRICS/agentic_ascii_metrics.md
+      - METRICS/agentic_pr_scan_output.md
+    classification: TASK_CONTRACT_NOT_RUNTIME_BRAIN
+  cicd_shell:
+    path: .github/workflows/agentic-pr-discrepancy-scan.yml
+    workflow_name: Agentic PR Discrepancy Scan
+    triggers:
+      - pull_request_opened_synchronize_reopened_ready_for_review
+      - pull_request_review_comment_created
+      - issue_comment_created
+      - workflow_dispatch
+    permissions:
+      contents: read
+      pull_requests: read
+      issues: read
+      checks: read
+    recursion_guard: bot_comments_do_not_trigger_recursive_agentic_work
+    execution:
+      runner: ubuntu-latest
+      timeout_minutes: 10
+      steps:
+        - checkout
+        - create_AGEN TIC_agentic_pr_followup_log_yaml
+        - create_METRICS_agentic_pr_scan_output_md
+        - upload_agentic_scan_artifacts
+    classification: CI_CD_READ_ONLY_AGENTIC_SCAN_SHELL
+    runtime_authority: false
+    mutation_authority: false
+  generated_outputs:
+    AGENTIC/agentic_pr_followup_log.yaml: RUNTIME_OUTPUT_LOG
+    AGENTIC/proposed_fixes.yaml: GENERATED_PROPOSED_FIX_SURFACE
+    AGENTIC/comment_response_drafts.md: GENERATED_REPLY_DRAFT_SURFACE
+    METRICS/agentic_ascii_metrics.md: METRICS_TEMPLATE_OR_OUTPUT
+    METRICS/agentic_pr_scan_output.md: RUNTIME_METRICS_OUTPUT
+  repo_local_agent_runtime:
+    agents_path_entrypoint: NOT_FOUND_BY_CURRENT_SEARCH
+    agent_runtime_entrypoint: NOT_FOUND_BY_CURRENT_SEARCH
+    visualization_utilities:
+      - visuals/agent_telemetry_timeline.py
+      - visuals/orchestration_dependency_graph.py
+    conclusion: >-
+      No repository-local autonomous agent runtime/brain is confirmed. The
+      visible executable layer is CI/CD read-only scan shell plus report outputs.
+  subrepo_depth:
+    git_submodule_file: NOT_CONFIRMED
+    nested_runtime_enclaves:
+      - federation_runtime
+      - runtime_engine
+      - abacus_render_pipeline
+      - triage
+      - SSOT
+      - ssot
+    external_repo_authority_model: >-
+      External repositories are represented by federation/authority references,
+      not by mounted Git submodules in the evidence inspected here.
+risk_assessment:
+  overclaim_risk: >-
+    Calling the task contract or workflow an autonomous agent runtime would
+    overpromote CI/CD scaffolding. Calling it absent would understate the real
+    agentic scan shell. Correct classification is CI/CD read-only shell with
+    external-runner/agent-brain residual.
+  release_gate_effect: >-
+    This does not block MCP runtime uniqueness or federation runtime
+    discrimination. It leaves a scoped W05/W06 consumer validation item: prove
+    where agentic-scan artifacts are consumed if external worker closure is
+    required.
+decision:
+  prune_allowed: false
+  migration_allowed: false
+  duplicate_runtime_confirmed: false
+  w04_agent_status: PASS_WITH_CICD_SHELL_AND_EXTERNAL_AGENT_BRAIN_RESIDUAL
+  global_codex_2_0: NOT_YET
+recommended_next:
+  primary: W05_RELEASE_READINESS_CONSUMER_VALIDATION
+  consumer_validation_targets:
+    - verify agentic-scan-artifacts consumers
+    - verify METRICS and AGENTIC outputs do not feed ungoverned mutation
+    - verify branch protection and required checks before RC
+    - verify no stale/generated output is promoted as authority
