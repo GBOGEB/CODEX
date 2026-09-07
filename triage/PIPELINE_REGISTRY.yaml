@@ -1,0 +1,18 @@
+schema_version: "1.0"
+repository: GBOGEB/CODEX
+pipelines:
+  - id: KEB_VALIDATION
+    state: CANONICAL_ACTIVE
+    flow: [receive_payload, schema, semantic_normalize, provenance_hash, typed_receipt]
+  - id: FEDERATION_BRIDGE
+    state: CANONICAL_ACTIVE
+    implementation: [src/bridge_adapter.py, scripts/bridge_orchestrator.py, scripts/check_bridge_health.py]
+    flow: [receipt, dispatch, parent_response, normalize, return]
+  - id: MCP_GOVERNANCE
+    state: CANONICAL_ACTIVE
+    implementation: [scripts/run_mcp_sweep.py, src/federation/mcp_sweep_engine.py]
+    flow: [plan, govern, execute, sweep, monitor, close]
+  - id: CONTRACT_RELEASE_VERIFICATION
+    state: CANONICAL_ACTIVE
+    implementation: [codex/contract_governance/builder.py, codex/contract_governance/validator.py]
+quality_gates: [schema, semantic, provenance, hash, federation_contract, CI]

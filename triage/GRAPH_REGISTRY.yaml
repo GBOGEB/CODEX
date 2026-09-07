@@ -1,0 +1,18 @@
+schema_version: "1.0"
+repository: GBOGEB/CODEX
+graphs:
+  - id: SEMANTIC_GOVERNANCE_GRAPH
+    state: CANONICAL_ACTIVE
+    roots: [semantic_substrate, PIPELINE, governance]
+    nodes: [source, semantic_atom, requirement, decision, policy, receipt]
+    edges: [derived_from, normalizes, validates, governs, supersedes, violates]
+  - id: FEDERATION_BRIDGE_GRAPH
+    state: CANONICAL_ACTIVE
+    roots: [federation, federation_runtime, src/bridge_adapter.py]
+    nodes: [repository, payload, bridge_endpoint, workflow, receipt, normalized_return]
+    edges: [dispatches, federates_with, hashes, returns, maps_to]
+  - id: AGENT_RUNTIME_GRAPH
+    state: CANONICAL_ACTIVE
+    roots: [.codex/tasks, agents, scripts]
+    nodes: [agent, task, MCP_sweep, workflow, work_unit]
+    edges: [governs, executes, monitors, produces]
