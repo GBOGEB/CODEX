@@ -1,0 +1,36 @@
+schema_version: "1.0"
+repository: GBOGEB/CODEX
+role: SEMANTIC_PROVENANCE_GOVERNANCE
+purpose: KEB semantic normalization, provenance/hash governance, federation policy, CI truth verification and MCP governance
+asset_state_enum: [CANONICAL_ACTIVE, ACTIVE_COMPATIBILITY, GENERATED, HISTORICAL, DOCUMENTATION_ONLY, DORMANT, UNKNOWN]
+canonical_roots:
+  - {path: PIPELINE, state: CANONICAL_ACTIVE}
+  - {path: semantic_substrate, state: CANONICAL_ACTIVE}
+  - {path: federation, state: CANONICAL_ACTIVE}
+  - {path: federation_runtime, state: CANONICAL_ACTIVE}
+  - {path: governance, state: CANONICAL_ACTIVE}
+  - {path: src, state: CANONICAL_ACTIVE}
+  - {path: scripts, state: CANONICAL_ACTIVE}
+  - {path: schemas, state: CANONICAL_ACTIVE}
+  - {path: qps_contract_canonicalization, state: CANONICAL_ACTIVE}
+  - {path: .codex/tasks, state: CANONICAL_ACTIVE}
+ssot_surfaces:
+  - ssot/master_contract_ssot_v0_2.yaml
+  - semantic_substrate/overlay_ssot.yaml
+  - SSOT/g10_runtime_governance_ssot.yaml
+  - SSOT/github_mcp_agentic_orchestration_ssot.yaml
+  - ssot/ssot_style_bridge.json
+  - PIPELINE/GLOSSARY.yaml
+architecture:
+  node_classes: [source, semantic_atom, requirement, decision, finding, receipt, work_unit, agent, runtime, repository, artifact, manifest, bridge_endpoint, policy, workflow]
+  edge_classes: [derived_from, normalizes, validates, governs, hashes, dispatches, returns, supersedes, maps_to, federates_with, violates, produces]
+validation:
+  zod: [qps_contract_canonicalization/src/schema.ts]
+  python: [scripts/validate_master_contract_ssot.py, tools/validators/ssot_validator.py, scripts/check_ssot_schemas.py]
+bridge:
+  adapter: src/bridge_adapter.py
+  orchestrator: scripts/bridge_orchestrator.py
+  health: scripts/check_bridge_health.py
+authority:
+  may_mutate_child_payload: false
+  may_award_child_engineering_credit: false

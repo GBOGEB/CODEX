@@ -1,0 +1,18 @@
+schema_version: "1.0"
+repository: GBOGEB/CODEX
+runtime:
+  - {path: src/bridge_adapter.py, role: federation_adapter, state: CANONICAL_ACTIVE}
+  - {path: scripts/bridge_orchestrator.py, role: bridge_orchestration, state: CANONICAL_ACTIVE}
+  - {path: scripts/check_bridge_health.py, role: bridge_health, state: CANONICAL_ACTIVE}
+  - {path: src/federation/mcp_sweep_engine.py, role: MCP_sweep_runtime, state: CANONICAL_ACTIVE}
+  - {path: scripts/run_mcp_sweep.py, role: MCP_entrypoint, state: CANONICAL_ACTIVE}
+  - {path: telemetry/pca/drift_monitor.py, role: drift_monitor, state: CANONICAL_ACTIVE}
+agents:
+  - {path: agents, state: CANONICAL_ACTIVE}
+  - {path: .codex/tasks, state: CANONICAL_ACTIVE}
+ssot:
+  - SSOT/github_mcp_agentic_orchestration_ssot.yaml
+  - SSOT/g10_runtime_governance_ssot.yaml
+containers:
+  - {path: .devcontainer, state: ACTIVE_COMPATIBILITY}
+policy: agentic_runtime_may_validate_route_and_normalize_but_not_self_award_child_engineering_credit
