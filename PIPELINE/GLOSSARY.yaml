@@ -1,232 +1,190 @@
-version: 0.3.5
+version: 0.3.6
 system:
   name: GBOGEB/CODEX
   codename: ABACUS_RENDER_PIPELINE
 
 glossary:
+  semantic_atom:
+    definition: Singular governed meaning-bearing unit used to compose typed semantic relations and contracts.
+  semantic_atoms:
+    definition: Collection of the smallest governed meaning-bearing units used to construct typed relations, findings, and federation payloads.
+  semantic_contracts:
+    definition: Collection of machine-readable agreements governing meaning, provenance, authority, and validation across exchanges.
+  semantic_delta_zero_and_receipts_stable:
+    definition: Zero-delta reproducibility condition requiring unchanged normalized semantics and stable bound receipts across an equivalent rerun.
+  semantic_normalize:
+    definition: Governed operation that normalizes meaning-bearing content without changing source authority or engineering truth.
+  semantic_policy_change_requires_governance_acceptance:
+    definition: Invariant requiring explicit governance acceptance before a semantic policy mutation becomes authoritative.
+  semantic_receipt_contract:
+    definition: Machine-readable contract defining required semantic receipt identity, provenance, hashes, authority boundaries, and status fields.
+  semantic_receipt_contract_pct:
+    definition: Coverage percentage of required semantic receipt-contract fields or governed receipt instances; the denominator must be explicit.
+  semantic_receipt_without_matching_payload_sha_is_invalid:
+    definition: Fail-closed invariant declaring a semantic receipt invalid when its bound payload SHA does not match the governed payload.
+  semantic_result:
+    definition: Governed normalized result of semantic validation, comparison, extraction, or federation processing.
+  semantic_schema_coverage_pct:
+    definition: Percentage of governed semantic interfaces or nodes covered by an applicable schema, with an explicit denominator.
+  semantic_schema_version:
+    definition: Version identifier of the schema governing a semantic payload, contract, or receipt.
+  semantic_status:
+    definition: Governed execution or validation status of a semantic operation; it does not establish child engineering acceptance.
+  semantic_term:
+    definition: Individual governed vocabulary token with declared meaning and authority context.
+  semantic_validation_failure_rate:
+    definition: Ratio of semantic validation failures to evaluated semantic validations over a declared measurement window.
+  semantic_vocabulary:
+    definition: Authoritative CODEX registry of governed terms and definitions used by semantic validation and federation.
   semantic_governance:
     definition: Governance layer responsible for invariants, lineage, tuple continuity, and semantic reproducibility.
-
   semantic_outputs:
     definition: Governed collection of meaning-bearing outputs produced by a semantic extraction or validation step for downstream comparison, lineage, or release control.
-
   semantic_sha256:
     definition: SHA-256 digest calculated from normalized meaning-bearing structure rather than volatile container metadata; used separately from the raw artifact SHA-256.
-
   semantic_result_artifact_id:
     definition: Stable identifier for the governed semantic-result artifact captured as evidence for downstream lineage, comparison, and child-owned KEB disposition.
-
   semantic_result_sha256:
     definition: SHA-256 digest of the governed semantic-result artifact recorded as bound evidence for semantic validation, lineage verification, and fail-closed return receipts.
-
   semantic_score:
     definition: Normalized 0-to-1 semantic similarity or relevance score attached to a governed evidence relation; it is a ranking signal only and does not establish compliance, acceptance, or child-owned closure.
-
   semantic_runtime_checks_passed:
     definition: Boolean parent-runtime receipt field stating that the governed semantic runtime checks preceding artifact publication completed successfully; it records execution state only and does not establish child acceptance, compliance, or score credit.
-
   semantic_drift:
     definition: Meaning-bearing divergence between governed artifacts, terminology, lineage, or runtime interpretation that requires detection and disposition.
-
   semantic_comparison_count:
     definition: Count of governed semantic output classes compared between independent builds in one reproducibility roundtrip.
-
   semantic_match:
     definition: Boolean comparison result stating that two normalized semantic manifests are equivalent under the governed semantic contract.
-
   semantic_rebuild_match:
     definition: Reproducibility result stating that an independently rebuilt output matches the governed normalized semantic state of its comparison build.
-
   semantic_drift_check:
     definition: Explicit control that compares governed semantic states and reports unexplained meaning-bearing divergence before acceptance.
-
   semantic_findings:
     definition: Structured findings emitted by semantic extraction, comparison, validation, or federation controls for downstream disposition.
-
   semantic_domains_for_regression:
     definition: Governed semantic output domains selected for regression comparison across builds or releases.
-
   semantic_html:
     definition: Normalized meaning-bearing representation of HTML headings, identifiers, text, assets, links, and embedded governed data used for reproducibility comparison.
-
   semantic_normalization_and_drift_validation:
     definition: Governed KEB operation that normalizes terminology while preserving source identity, then reports semantic divergence for child disposition.
-
   semantic_risks:
     definition: Structured semantic failure modes or ambiguity risks retained as review candidates rather than compliance findings.
-
   semantic_gap_burn_down:
     definition: Control metric describing reduction of identified semantic gaps across governed repair iterations without implying engineering completion.
-
   semantic_repair_pr:
     definition: Pull request whose bounded purpose is to repair deterministic semantic-governance or validation debt.
-
   semantic_drift_flags_are_review_candidates_not_compliance_findings:
     definition: Authority invariant stating that semantic drift flags require review and disposition and do not themselves establish contract compliance.
-
   semantic_substrate_debt_remains_separate_parent_repair_lane:
     definition: Authority invariant separating CODEX semantic-substrate maintenance debt from QPS child engineering closure and bidder evaluation credit.
-
   semantic_guardrails:
-    definition: Structured set of fail-closed semantic constraints that prevent a derived schema, receipt, renderer or parent finding from changing child-owned compliance meaning, including rules such as deviation not mechanically implying NOK and PARTIAL retaining supported and residual conditions.
-
+    definition: Structured set of fail-closed semantic constraints that prevent a derived schema, receipt, renderer or parent finding from changing child-owned compliance meaning.
   semantic_invariants:
-    definition: Structured list of meaning-preservation rules that must remain true across normalization, federation, rendering and re-entry; violations are semantic-governance failures and do not themselves create child compliance findings.
-
+    definition: Structured list of meaning-preservation rules that must remain true across normalization, federation, rendering and re-entry.
   semantic_and_accounting_guards:
     definition: Combined meaning and accounting safeguards that preserve provenance, score boundaries, and child-owned closure authority.
-
-  semantic_atoms:
-    definition: Smallest governed meaning-bearing units used to construct larger typed relations, findings, and federation payloads.
-
   semantic_boundary_declared:
     definition: Boolean or status assertion that the governed meaning boundary for a payload, operation, or receipt has been explicitly stated.
-
   semantic_conflict_findings:
     definition: Structured findings identifying incompatible meanings, classifications, lineage claims, or authority interpretations that require disposition.
-
   semantic_contract:
     definition: Machine-readable agreement defining meaning, vocabulary, provenance, authority, and validation rules for a governed exchange.
-
   semantic_contract_only:
     definition: Scope marker stating that an operation changes or validates the semantic contract without changing child engineering evidence or closure state.
-
   semantic_controls:
     definition: Governed checks that preserve meaning, lineage, authority, and deterministic interpretation across runtime and federation operations.
-
   semantic_controls_requested:
     definition: Structured list or flag recording which governed semantic controls a caller asks a parent runtime to execute.
-
   semantic_crosswalk:
     definition: Traceable mapping between meaning-bearing terms, identifiers, schemas, or artifact structures across governed sources and outputs.
-
   semantic_diff:
     definition: Structured comparison of normalized meaning-bearing content between two governed states or artifacts.
-
   semantic_drift_guarded:
     definition: Status indicating that semantic divergence is covered by an explicit detector, threshold, or fail-closed disposition rule.
-
   semantic_focus:
     definition: Bounded meaning domain selected for a specific validation, analysis, or federation operation.
-
   semantic_guards:
     definition: Explicit fail-closed rules that prevent ungoverned meaning changes, authority promotion, or provenance loss.
-
   semantic_mutation:
     definition: Controlled change to governed meaning, vocabulary, schema interpretation, or semantic state.
-
   semantic_mutation_allowed:
     definition: Boolean authorization stating whether a specified semantic mutation is permitted under the active governance contract.
-
   semantic_mutation_count:
     definition: Count of governed semantic mutations observed or authorized within a bounded operation or release.
-
   semantic_provenance_validator:
     definition: Validator that checks meaning-bearing lineage, source identity, derivation boundaries, and authority continuity.
-
   semantic_questions:
     definition: Structured unresolved meaning or interpretation questions retained for explicit analysis or child disposition.
-
   semantic_request_pr:
     definition: Pull request used to request a bounded semantic validation, normalization, or federation action without conferring child closure credit.
-
   semantic_route:
     definition: Governed path by which meaning-bearing payloads move between child and parent domains while preserving lineage and authority.
-
   semantic_rules:
     definition: Machine-readable or documented rules governing interpretation, normalization, mutation, validation, and federation of meaning-bearing content.
-
   semantic_scope:
     definition: Explicit boundary defining which meaning-bearing domains, artifacts, identifiers, or relations are included in an operation.
-
   semantic_types:
     definition: Governed type vocabulary used to classify meaning-bearing nodes, edges, findings, payloads, and validation results.
-
   semantic_validation:
     definition: Governed process that checks declared meaning, vocabulary, lineage, and invariants without itself establishing child engineering acceptance.
-
   semantic_validation_receipt:
     definition: Immutable or version-bound record of semantic validation inputs, outcomes, lineage, and execution status for downstream review.
-
   semantic_wave_plan:
     definition: Governed plan describing the intended sequence, scope, and victory conditions of a semantic repair or validation wave.
-
   dow:
     canonical_term: DOW
     definition: Parent-owned Document/Domain/Decision-oriented workflow integration path in ABACUS used for classification, recursive processing, convergence, knowledge extraction, self-ranking, and validation.
     authority_note: DOW findings are advisory/derived until accepted by the consuming child domain under its own authority model.
-
   keb:
     canonical_term: KEB
     expansion: Knowledge Exchange Bridge
     definition: Typed bidirectional federation bridge for governed knowledge exchange, semantic alignment, lineage, findings, hashes, telemetry, and child-owned disposition.
     prohibited_meaning: Scheduling or calendar semantics.
-
   knowledge_exchange_bridge:
     canonical_term: Knowledge Exchange Bridge
     abbreviation: KEB
     definition: Full-form governed synonym for KEB; used for parent-child exchange of typed findings and version-bound lineage without granting upstream self-approval of child engineering decisions.
-
   tuple:
     definition: Atomic semantic continuity unit containing intent, lineage, and runtime meaning.
-
   replay_engine:
     definition: Runtime component responsible for reconstructing semantic state from repository artifacts.
-
   orchestration_loop:
     definition: Runtime execution loop coordinating replay, drift detection, debt evaluation, and recommendations.
-
   semantic_debt:
     definition: Accumulated unresolved semantic inconsistencies, missing lineage, or runtime governance gaps.
-
   semantic_drift_daemon:
     definition: Runtime daemon that tracks semantic drift signals and flags continuity divergence.
-
   digital_twin:
     definition: Reconstructable semantic representation of repository cognition and runtime state.
-
   renderer_governance:
     definition: Deterministic rendering governance system covering layout, typography, spacing, contrast, and reproducibility.
-
   contrast_validator:
     definition: WCAG-aware runtime validator that checks semantic surface readability and accessibility.
-
   renderer_lint_engine:
     definition: Executable governance engine validating manifest structure and renderer governance rules.
-
   semantic_colors_transform_by_theme:
     definition: Renderer invariant requiring semantic colors to adapt meaningfully to dark/light themes instead of naive inversion.
-
   ssot:
     definition: Single source of truth YAML model used to deterministically generate outputs.
-
   master_slide_registry:
     definition: Canonical registry mapping stable slide identifiers to source lineage and render outputs.
-
   master_figure_registry:
     definition: Canonical registry of immutable figure identifiers used by rendering and publication systems.
-
   cognition_runtime:
     definition: Adaptive runtime layer capable of reasoning, prioritization, recommendation, and replay continuity.
-
   deterministic_rendering:
     definition: Reproducible rendering behavior where equivalent semantic inputs generate equivalent outputs.
-
   publication_pipeline:
     definition: End-to-end extraction, governance, rendering, validation, and publication workflow.
-
   semantic_id:
     definition: Durable cross-artifact identifier binding the same governed meaning across source, model, workbook, HTML, DOCX, PPTX, PDF and Markdown outputs.
-
   semantic_hash:
     definition: SHA-256 digest of canonicalized meaning-bearing content used to test cross-artifact parity independently of binary layout.
-
   semantic_domain_coverage:
     definition: Ratio of evaluated governed semantic domains to the requested semantic domains, with an explicit denominator.
-
   semantic_contract_and_federation:
     definition: Governed topic joining schema, validator, report and parent-child exchange semantics without transferring child engineering authority.
-
   semantic_validator_contract_gap:
     definition: Controlled failure class for a semantic validation rule, schema, or governed vocabulary item that is present in a parent PR head but not yet accepted as closed child evidence.
 
