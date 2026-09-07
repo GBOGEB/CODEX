@@ -1,0 +1,63 @@
+schema_version: "0.1"
+document_id: QPS_W60_VIEW_TAXONOMY_SEMANTIC_PARITY
+status: SEMANTIC_PARENT_VALIDATION_REQUEST
+source_child_pr: GBOGEB/cryoplant-project#634
+source_child_head: dc003f599ef7b782ac3853f32de46f2c36b0cbd7
+repo_role: CODEX_PARENT_SEMANTIC_CONTROL
+scope:
+  - ROLL_OUT
+  - FAN_OUT
+  - PROPAGATE
+  - ROLL_UP
+  - ROUNDTRIP
+  - RE_ENTRY
+  - FEDERATE
+  - board_first_grouped_navigation
+semantic_contract:
+  ROLL_OUT:
+    may: [copy_taxonomy, copy_group_structure, copy_navigation_labels, copy_schema_contract]
+    may_not: [transfer_bidder_values, change_compliance_state, create_credit]
+  FAN_OUT:
+    may: [reference_one_source_or_answer_from_many_explicit_members]
+    must_preserve: [member_predicate, obligation_count, bidder_partition, source_locator]
+    may_not: [collapse_requirement_denominator, duplicate_formal_credit, cross_bidder_answer_share]
+  PROPAGATE:
+    classes:
+      NAVIGATION_ONLY: no_compliance_effect
+      EVIDENCE_REFERENCE: no_member_disposition_effect
+      SEMANTIC_STATE: only_if_same_target_granularity_is_explicitly_valid
+      COMPLIANCE_STATE: exact_child_reentry_required
+  ROLL_UP:
+    rule: explicit_reducer_plus_one_credit_rule
+    result_is: presentation_or_diagnostic_summary
+    result_is_not: new_evidence_object
+  ROUNDTRIP:
+    rule: child_source_or_payload_to_parent_challenge_to_child_accept_reject_defer
+    parent_self_promotion: forbidden
+  RE_ENTRY:
+    rule: source_bound_delta_to_exact_affected_canonical_atoms_only
+  FEDERATE:
+    rule: preserve_child_parent_authority_and_provenance_boundaries
+navigation_contract:
+  top_level_groups_exactly:
+    - G0_BOARD
+    - G1_CONTRACT_NEGOTIATION
+    - G2_ENGINEERING_ACCEPTANCE
+    - G3_EVIDENCE_DELIVERY
+    - G4_GOVERNANCE_LINEAGE
+    - G5_HANDOVER
+  taxonomy_first_class_view: true
+  raw_tables_are_drilldown: true
+  no_dropdown_only_taxonomy: true
+  board_core_slide_count: 8
+validation_requests:
+  - assert_all_terms_are_semantically_non_overlapping_enough_for_machine_routing
+  - assert_PROPAGATE_COMPLIANCE_STATE_requires_child_reentry
+  - assert_FAN_OUT_cannot_reduce_obligation_denominator
+  - assert_ROLL_OUT_cannot_transfer_LKT_values_to_ALAT_or_reverse
+  - assert_board_rollup_is_navigation_diagnostic_only
+  - return_ACCEPT_REJECT_DEFER_semantic_receipt_to_child
+formal_effect:
+  engineering_closure_delta: 0
+  negotiation_resolution_delta: 0
+  evaluated_price_delta_eur: 0
