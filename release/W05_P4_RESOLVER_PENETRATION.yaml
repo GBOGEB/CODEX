@@ -1,0 +1,50 @@
+schema_version: "1.0"
+receipt_id: CODEX_2_0_W05_P4_RESOLVER_PENETRATION
+wave: W05
+pulse: P4
+pressure: 2x3PR
+basis:
+  observed_census_candidates: 477
+  observed_census_bound_ids: 7
+  observed_bound_id_penetration_pct: 1.47
+  observed_consumer_candidates: 364
+  observed_mapped_consumers: 53
+problem:
+  duplicate_resolver_implementations: 2
+  authority_catalog_drift: true
+  drift_examples:
+    - CODEX_RELEASE_IDENTITY resolved to VERSION.json in registry but ssot/domain/repo/release.yaml in manifest
+    - master contract logical ID differed between registry and manifest
+    - semantic vocabulary logical ID differed between registry and manifest
+control_decision:
+  canonical_authority_catalog: ssot/manifest.yaml
+  canonical_resolver: tools/ssot_resolver.py
+  compatibility_import: codex/ssot_resolver.py
+  authority_registry_role: MATERIALIZED_VIEW
+  rule: consumers resolve logical IDs; they do not own canonical authority paths
+migrated_consumer:
+  path: scripts/release_self_smoke.py
+  logical_ids:
+    - CODEX_RELEASE_IDENTITY
+    - CODEX_MASTER_CONTRACT
+    - CODEX_SEMANTIC_VOCABULARY
+    - CODEX_RUNTIME_GOVERNANCE
+    - CODEX_MCP_GOVERNANCE
+    - QPS_ENGINEERING_TRUTH
+negative_tests:
+  - UNKNOWN_ID
+  - DUPLICATE_AUTHORITY
+  - REMOTE_AUTHORITY
+  - REMOTE_MUTATION_ALLOWED
+  - NON_ACTIVE_AUTHORITY
+session_victory:
+  one_resolver_implementation: true
+  manifest_registry_id_drift_removed_for_declared_authorities: true
+  release_self_smoke_uses_canonical_logical_ids: true
+  destructive_resolver_tests_present: true
+  exact_head_ci_required: true
+next:
+  - regenerate consumer map on exact head
+  - measure mapped and resolver-bound executable consumers separately
+  - migrate next highest-consumer hard-coded authority paths
+  - feed measured delta to 3P3_PCA_BT
