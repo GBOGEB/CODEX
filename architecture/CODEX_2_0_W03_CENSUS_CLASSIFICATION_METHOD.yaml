@@ -1,0 +1,48 @@
+schema_version: "1.0"
+wave: W03
+purpose: convert discovery census into governed classification evidence
+constitutional_rule: >-
+  CODEX may classify and understand engineering data, but classification cannot
+  establish or mutate engineering authority.
+classification_dimensions:
+  - candidate_class
+  - authority_classification
+  - owner_classification
+  - classification_confidence
+  - lifecycle_state
+  - sha256
+  - logical_id_status
+evidence_levels:
+  DECLARED:
+    meaning: bound by canonical manifest or authority registry
+    may_establish_codex_authority: true
+  INFERRED:
+    meaning: path/content heuristic used for census triage
+    may_establish_codex_authority: false
+  UNCLASSIFIED:
+    meaning: insufficient evidence
+    may_establish_codex_authority: false
+remote_authority_rules:
+  qps:
+    owner: GBOGEB/cryoplant-project
+    codex_role: REMOTE_ENGINEERING_REFERENCE_CANDIDATE
+    mutation_allowed: false
+  dow:
+    owner: GBOGEB/ABACUS
+    codex_role: REMOTE_CHALLENGE_REFERENCE_CANDIDATE
+    automatic_engineering_promotion: false
+burndown:
+  p1: classify all discoverable candidates by role/owner/lifecycle/confidence
+  p2: bind authority candidates to logical IDs and manifest evidence
+  p3: map executable consumers to resolved logical IDs and expose hard-coded paths
+  p4: detect duplicate authority, competing runtime and orphan consumer groups
+  p5: feed measured results into 3P3 -> PCA -> BT
+victory:
+  session:
+    - no inferred classification is reported as authoritative
+    - every candidate has SHA256 and lifecycle classification
+    - classification penetration is measured separately from logical-ID penetration
+  release:
+    - every active authority has exactly one declared logical ID and owner
+    - every critical consumer resolves through the shared resolver
+    - zero unauthorized remote engineering mutation paths
