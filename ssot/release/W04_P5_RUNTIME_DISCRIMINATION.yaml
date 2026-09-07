@@ -56,7 +56,7 @@ agent_orchestration:
     still requires explicit identification before any consolidation.
 gates:
   mcp_donor_facade_conversion:
-    blocked_until: [primary_ci_green, semantic_runtime_green, runtime_federation_green]
+    blocked_until: [primary_ci_green, semantic_runtime_checks_passed, runtime_federation_green]
   runtime_mutation:
     allowed: false
   next_after_gate:
