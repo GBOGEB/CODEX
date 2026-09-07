@@ -1,0 +1,41 @@
+wave: W005
+pulse: P6
+pr: 457
+logical_authority: CODEX_MASTER_CONTRACT
+canonical_resolver: codex.ssot_resolver.resolve_ssot
+status: REGENERATED
+source_head_before_map: df1bb8685001160fd671b0e43652d66eb03c5347
+consumer_edges:
+  - consumer: scripts/validate_master_contract_ssot.py
+    previous_binding:
+      document: ssot/master_contract_ssot_v0_2.yaml
+      schema: schemas/master_contract_ssot.schema.yaml
+      binding_type: HARD_CODED_EXECUTABLE_DEFAULT
+    current_binding:
+      logical_id: CODEX_MASTER_CONTRACT
+      require_local: true
+      binding_type: CANONICAL_LOGICAL_AUTHORITY
+    hard_coded_authority_edge_remaining: false
+  - consumer: tools/validators/ssot_validator.py
+    previous_binding:
+      document: ssot/master_contract_ssot_v0_2.yaml
+      schema: schemas/master_contract_ssot.schema.yaml
+      binding_type: HARD_CODED_EXECUTABLE_DEFAULT
+    current_binding:
+      logical_id: CODEX_MASTER_CONTRACT
+      require_local: true
+      binding_type: CANONICAL_LOGICAL_AUTHORITY
+    hard_coded_authority_edge_remaining: false
+summary:
+  executable_edges_targeted: 2
+  executable_edges_migrated: 2
+  hard_coded_edges_remaining_in_target_set: 0
+  migration_penetration_percent: 100
+verification:
+  method:
+    - PR diff deletes literal executable defaults in both target consumers
+    - both consumers now call resolve_ssot("CODEX_MASTER_CONTRACT", require_local=True)
+    - explicit CLI overrides remain available for diagnostics and adversarial tests
+  exact_head_ci_required: true
+  exact_head_ci_state: PENDING
+  w05_dov: PENDING_EXACT_HEAD_GREEN

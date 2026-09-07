@@ -9,8 +9,18 @@ from typing import Any
 import yaml
 from jsonschema import Draft202012Validator
 
-DEFAULT_SCHEMA = Path("schemas/master_contract_ssot.schema.yaml")
-DEFAULT_SSOT = Path("ssot/master_contract_ssot_v0_2.yaml")
+from codex.ssot_resolver import resolve_ssot
+
+
+def _default_authority_paths() -> tuple[Path, Path]:
+    """Resolve the canonical MASTER contract document and schema from authority."""
+    node = resolve_ssot("CODEX_MASTER_CONTRACT", require_local=True)
+    if "path" not in node or "schema" not in node:
+        raise RuntimeError("CODEX_MASTER_CONTRACT must declare both path and schema")
+    return Path(node["schema"]), Path(node["path"])
+
+
+DEFAULT_SCHEMA, DEFAULT_SSOT = _default_authority_paths()
 
 
 def load_yaml(path: Path) -> Any:
