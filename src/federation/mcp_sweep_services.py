@@ -216,6 +216,8 @@ class PullRequestCrawler:
 
 @dataclass
 class AppendOnlyLineageStore:
+    """Append-only RTM writer that preserves the pre-W04 outward table contract."""
+
     output_path: Path
 
     def append_rows(self, rows: list[dict[str, str]]) -> None:
@@ -225,16 +227,19 @@ class AppendOnlyLineageStore:
         if not self.output_path.exists():
             self.output_path.write_text(
                 "# Local Requirements Traceability Matrix (RTM) Lineage Delta\n\n"
-                "| Unique ID | Parent Requirement | Proto-Need | Origin | Status |\n"
-                "|---|---|---|---|---|\n",
+                "| Unique ID | Parent Requirement | Proto-Need | Implementation Path | Verification Method | Status |\n"
+                "| :--- | :--- | :--- | :--- | :--- | :--- |\n",
                 encoding="utf-8",
             )
         existing = self.output_path.read_text(encoding="utf-8")
+        seen = {row["unique_id"] for row in rows if f"**{row['unique_id']}**" in existing}
         with self.output_path.open("a", encoding="utf-8") as handle:
             for row in rows:
                 uid = row["unique_id"]
-                if f"| {uid} |" in existing:
+                if uid in seen:
                     continue
                 handle.write(
-                    f"| {uid} | {row['parent_requirement']} | {row['proto_need']} | {row['origin']} | {row['status']} |\n"
+                    f"| **{uid}** | {row['parent_requirement']} | {row['proto_need']} | "
+                    f"{row['implementation_path']} | {row['verification_method']} | `[{row['status'].upper()}]` |\n"
                 )
+                seen.add(uid)

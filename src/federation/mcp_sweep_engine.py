@@ -41,7 +41,8 @@ class MCPSweepEngine:
         self.near_miss_keywords = [i.lower() for i in (near_miss_keywords or ["near-miss", "todo", "follow-up"])]
         self.stale_status_values = {i.lower() for i in (stale_status_values or {"stale", "obsolete", "cancelled"})}
         self.token_guard = TokenBoundaryGuard()
-        self.token_guard.handshake(TokenScope.GITHUB, github_token)
+        if github_token:
+            self.token_guard.handshake(TokenScope.GITHUB, github_token)
 
     def validate_contract(self, repo: str, max_prs: int = 50, since: str | None = None,
                           until: str | None = None, branch_filters: tuple[str, ...] = ()) -> list[str]:
@@ -51,9 +52,26 @@ class MCPSweepEngine:
                                    since: str | None = None, until: str | None = None,
                                    branch_filters: tuple[str, ...] = (), max_prs: int = 50
                                    ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+        if not self.github_token:
+            return [], {"pages_scanned": 0, "retries": 0, "auth_failures": 0, "errors": [], "total_candidates": 0}
         crawler = PullRequestCrawler(self.github_interface, self.token_guard.get_token(TokenScope.GITHUB), per_page=per_page)
         return crawler.list_closed_pull_requests(owner, repo, since=since, until=until,
                                                  branch_filters=branch_filters, max_prs=max_prs)
+
+    def _fetch_for_run(self, owner: str, repo: str, *, since: str | None, until: str | None,
+                       branch_filters: tuple[str, ...], max_prs: int
+                       ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+        """Normalize legacy list-returning overrides and the enriched P4 crawler contract."""
+        enriched = any((since, until, branch_filters, max_prs != 50))
+        if enriched:
+            fetched = self.fetch_closed_pull_requests(owner, repo, since=since, until=until,
+                                                       branch_filters=branch_filters, max_prs=max_prs)
+        else:
+            fetched = self.fetch_closed_pull_requests(owner, repo)
+        if isinstance(fetched, tuple):
+            return fetched
+        return fetched, {"pages_scanned": 0, "retries": 0, "auth_failures": 0,
+                         "errors": [], "total_candidates": len(fetched)}
 
     def extract_from_pull_requests(self, pulls: list[dict[str, Any]]) -> tuple[list[SweepItem], list[SweepItem]]:
         proposed: list[SweepItem] = []
@@ -109,7 +127,8 @@ class MCPSweepEngine:
             "unique_id": item.unique_id,
             "parent_requirement": item.parent_requirement,
             "proto_need": MCPSweepEngine._escape_markdown_table_cell(item.proto_need),
-            "origin": MCPSweepEngine._escape_markdown_table_cell(item.origin),
+            "implementation_path": MCPSweepEngine._escape_markdown_table_cell(item.implementation_path),
+            "verification_method": MCPSweepEngine._escape_markdown_table_cell(item.verification_method),
             "status": item.status,
         } for item in entries])
         return path
@@ -137,8 +156,8 @@ class MCPSweepEngine:
         issues = self.validate_contract(f"{owner}/{repo}", max_prs, since, until, branch_filters)
         if issues:
             raise ValueError("; ".join(issues))
-        pulls, metrics = self.fetch_closed_pull_requests(owner, repo, since=since, until=until,
-                                                         branch_filters=branch_filters, max_prs=max_prs)
+        pulls, metrics = self._fetch_for_run(owner, repo, since=since, until=until,
+                                             branch_filters=branch_filters, max_prs=max_prs)
         proposed_pr, pruned_pr = self.extract_from_pull_requests(pulls)
         proposed = proposed_pr + self.scan_aborted_sessions(session_log_dir)
         pruned = pruned_pr + self.scan_stale_lineage(lineage_path)
