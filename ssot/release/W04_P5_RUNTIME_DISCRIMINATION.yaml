@@ -1,0 +1,67 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W004
+pulse: P5
+status: CLASSIFICATION_ONLY_PENDING_MCP_PARITY_GATE
+constitutional_rule: classification_does_not_establish_runtime_authority
+source_evidence:
+  prior_family_counts:
+    FEDERATION_RUNTIME: 26
+    AGENT_ORCHESTRATION: 5
+  canonical_runtime_registry: ssot/registry/runtime_registry.yaml
+  repo_census: triage/REPO_CENSUS.yaml
+  graph_registry: triage/GRAPH_REGISTRY.yaml
+  runtime_agent_registry: triage/RUNTIME_AGENT_REGISTRY.yaml
+federation_runtime:
+  canonical_root:
+    path: federation_runtime/
+    role: CANONICAL_RUNTIME_ENCLAVE
+    state: ACTIVE
+  executable_engine_candidates:
+    - {path: federation_runtime/engines/governance_parser.py, role: EXECUTABLE_ENGINE, disposition: KEEP_REVIEW}
+    - {path: federation_runtime/engines/phase0_orchestration.py, role: EXECUTABLE_ORCHESTRATOR, disposition: KEEP_REVIEW}
+    - {path: federation_runtime/engines/confluence_artifact_pipeline.py, role: EXECUTABLE_ENGINE, disposition: KEEP_REVIEW}
+  validation_or_runner_candidates:
+    - {path: scripts/check_federation_governance.py, role: VALIDATOR, disposition: NON_RUNTIME_AUTHORITY}
+    - {path: scripts/validate_all.py, role: VALIDATION_RUNNER, disposition: NON_RUNTIME_AUTHORITY}
+  schema_and_governance:
+    - {path: federation_runtime/schema/governance_header.schema.json, role: SCHEMA, disposition: NON_RUNTIME}
+    - {path: federation_runtime/.github/W003_PR_FOLLOW_UP.md, role: GOVERNANCE_DOC, disposition: NON_RUNTIME}
+  tests_and_docs_rule: "tests/docs/registries/workflows matching federation_runtime are not duplicate runtimes"
+  next_required_measurement:
+    - enumerate_all_26_hits
+    - classify_engine_adapter_validator_test_schema_registry_workflow_doc
+    - identify_import_call_edges
+    - flag_multiple_active_orchestration_entrypoints_only
+agent_orchestration:
+  authority:
+    path: SSOT/github_mcp_agentic_orchestration_ssot.yaml
+    role: LOCAL_AUTHORITATIVE_GOVERNANCE
+  task_contract:
+    path: .codex/tasks/github_mcp_agentic_orchestration.yaml
+    role: TASK_CONTRACT
+  runtime_registry:
+    path: triage/RUNTIME_AGENT_REGISTRY.yaml
+    role: REGISTRY
+  generated_or_review_surface:
+    path: AGENTIC/proposed_fixes.yaml
+    role: PROPOSED_OUTPUT
+  metrics:
+    path: agent_runtime/agent_metrics.json
+    role: METRICS_VIEW
+  conclusion: >-
+    Current five-hit population is not five competing runtimes. It contains at
+    least one authority SSOT, one task contract, one registry, one generated
+    proposal surface and one metrics view. Executable agent runtime authority
+    still requires explicit identification before any consolidation.
+gates:
+  mcp_donor_facade_conversion:
+    blocked_until: [primary_ci_green, semantic_runtime_green, runtime_federation_green]
+  runtime_mutation:
+    allowed: false
+  next_after_gate:
+    - convert_src_mcp_sweep_to_compatibility_facade
+    - rerun_runtime_consumer_map
+    - enumerate_and_classify_all_federation_runtime_26
+    - identify_agent_executable_runtime_from_5_family
+    - emit_duplicate_runtime_candidates_only_when_import_or_entrypoint_evidence_supports_them
