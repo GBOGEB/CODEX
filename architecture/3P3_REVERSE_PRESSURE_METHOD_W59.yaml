@@ -1,9 +1,9 @@
-version: 0.1.0
+version: 0.2.0
 moniker: 3PR
 scheme: 3P3
 pulse: P2_KEB
 role: semantic_governance
-purpose: self-evaluate governance residuals and emit bounded recommendations for next-pass scope, coverage and review intensity
+purpose: self-evaluate governance residuals and emit a canonical ThreeP3SelfEvaluation payload while preserving exact child SHA
 
 self_eval:
   measures:
@@ -15,14 +15,17 @@ self_eval:
     - adaptor_gap
     - unresolved_receipts
     - semantic_validation_failure_rate
-  outputs:
-    - reverse_pressure_vector
-    - ranked_BT_recommendations
-    - proposed_scope_delta
-    - proposed_coverage_delta
-    - proposed_review_frequency_delta
-    - expected_DoV_gain
-    - confidence
+  canonical_outputs:
+    - payloadSha256
+    - priorPulseReceiptSha256
+    - reversePressure
+    - recommendations
+    - dovScore
+    - pcaResidualScore
+    - btPriorityScore
+    - stopConditions
+    - nextPulseAllowed
+    - generatedAt
 
 recommendations:
   allowed: [HOLD, NARROW, EXPAND_SCOPE, ADD_COVERAGE, INCREASE_FREQUENCY, DECREASE_FREQUENCY, REQUIRE_HUMAN_REVIEW]
@@ -31,6 +34,7 @@ recommendations:
   semantic_policy_change_requires_governance_acceptance: true
 
 auto_execution:
+  bounds_contract: architecture/w60/3P3_EXECUTION_BOUNDS.yaml
   bounded_actions_only:
     - bounded_validation_retry
     - read_only_coverage_expansion
