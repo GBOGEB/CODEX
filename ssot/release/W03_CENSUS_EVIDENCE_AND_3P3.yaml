@@ -1,0 +1,79 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W03
+source:
+  pr: 444
+  head_sha: b0b9006088b39bafe9c69f3911d358e68cb7910b
+  merge_sha: b07cb456f4265743effa0175abd72595812168e2
+  ci_run: 34161568189
+  ci_conclusion: PASS
+  artifact_id: 10032782454
+  artifact_sha256: 825bde05090e30a5549ecd851fec6a8320ebdbb41974a1ba00b3b69c2cc8ab72
+census:
+  candidates: 469
+  classified: 346
+  classification_penetration_pct: 73.77
+  unclassified: 123
+  logical_id_resolved: 0
+  logical_id_unresolved: 469
+  logical_id_penetration_pct: 0.0
+  candidate_classes:
+    authority: 24
+    schema: 45
+    receipt: 38
+    consumer_or_contract: 362
+  authority_roles:
+    local_authority_candidate: 24
+    contract: 45
+    receipt: 38
+    executable_consumer_candidate: 177
+    remote_qps_engineering_reference_candidate: 48
+    remote_abacus_challenge_reference_candidate: 14
+    unclassified: 123
+  owners:
+    CODEX: 284
+    GBOGEB/cryoplant-project: 48
+    GBOGEB/ABACUS: 14
+    unclassified: 123
+  lifecycle:
+    active_candidate: 459
+    generated_or_derived_candidate: 10
+three_p3:
+  produce:
+    result: PASS
+    note: classification census executed under primary CI and retained as hashed artifact
+  challenge:
+    result: PARTIAL
+    dominant_gap: all 469 candidates still lack census-bound logical IDs
+    secondary_gap: 123 candidates remain unclassified by role/owner
+    governance_metadata_issue: W003 domain header used noncanonical domain; corrected after run
+  reenter:
+    decision: KEEP_SSOT_CONVERGENCE_AHEAD_OF_RUNTIME_DEDUP
+pca:
+  authority_semantic_identity_debt: 0.94
+  unclassified_population_debt: 0.68
+  executable_runtime_duplication_debt: 0.61
+  federation_input_completeness_debt: 0.43
+bt:
+  - rank: 1
+    item: BIND_LOGICAL_IDS_TO_AUTHORITY_AND_CONTRACT_POPULATION
+    score: 0.94
+  - rank: 2
+    item: CLASSIFY_REMAINING_123_AND_DETECT_ORPHANS
+    score: 0.82
+  - rank: 3
+    item: MAP_177_EXECUTABLE_CONSUMERS_TO_RESOLVER_AND_FIND_HARDCODED_PATHS
+    score: 0.78
+  - rank: 4
+    item: MCP_RUNTIME_OWNER_CONVERGENCE
+    score: 0.66
+next_pulse:
+  scope: W03_P2_LOGICAL_ID_BINDING
+  workers: 2
+  qa: HIGH
+  victory:
+    - declared authority candidates have unique logical IDs
+    - duplicate logical authorities fail closed
+    - resolver penetration is measured independently of heuristic classification
+    - remote QPS references remain non-writable
+    - consumer mapping exposes competing runtime owners before runtime consolidation
