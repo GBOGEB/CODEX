@@ -28,15 +28,25 @@ jobs:
 
       - name: Lint (ruff)
         id: ruff
-        # Report-only for now: a full-repo run currently surfaces ~1,000
-        # pre-existing violations under ruff's default rule set, which is
-        # unrelated debt this step isn't scoped to fix. Pinning the version
-        # here removes local/CI drift (REX rule: lint tools must be pinned
-        # exactly); promoting this to a blocking gate is a separate,
-        # tracked follow-up once that backlog is triaged.
         continue-on-error: true
         run: |
           ruff check . --exclude tests
+
+      - name: Check CODEX authority integrity
+        id: authority_integrity
+        run: |
+          python scripts/check_authority_integrity.py
+
+      - name: Check release identity
+        id: release_identity
+        run: |
+          python scripts/check_release_identity.py
+
+      - name: Census SSOT candidates
+        id: ssot_census
+        run: |
+          python scripts/census_ssot_candidates.py
+          python -m json.tool reports/codex_2_0_ssot_candidate_census.json >/dev/null
 
       - name: Validate SSOT schemas
         id: ssot_schemas
@@ -121,6 +131,9 @@ jobs:
         if: always()
         run: |
           python scripts/emit_governance_snapshot.py \
+            --check authority_integrity=${{ steps.authority_integrity.outcome }} \
+            --check release_identity=${{ steps.release_identity.outcome }} \
+            --check ssot_census=${{ steps.ssot_census.outcome }} \
             --check ssot_schemas=${{ steps.ssot_schemas.outcome }} \
             --check ruff=${{ steps.ruff.outcome }} \
             --check tests=${{ steps.tests.outcome }} \
@@ -143,6 +156,7 @@ jobs:
           path: |
             reports/governance_snapshot.json
             reports/dmaic_phase_report.json
+            reports/codex_2_0_ssot_candidate_census.json
             outputs/federation/sweep_summary.json
             outputs/federation/sweep_telemetry.md
             outputs/federation/rtm_delta.md
