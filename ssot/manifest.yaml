@@ -1,4 +1,4 @@
-schema_version: "1.1"
+schema_version: "1.2"
 repository: GBOGEB/CODEX
 release_program: CODEX_2_0
 
@@ -24,53 +24,84 @@ authorities:
   codex_release_identity:
     logical_id: CODEX_RELEASE_IDENTITY
     authority_class: LOCAL_AUTHORITATIVE
-    owner: release_governance
+    lifecycle: ACTIVE
+    owner: CODEX_RELEASE_GOVERNANCE
     path: ssot/domain/repo/release.yaml
 
-  master_contract:
-    logical_id: MASTER_CONTRACT_GOVERNANCE
+  authority_manifest:
+    logical_id: CODEX_AUTHORITY_MANIFEST
     authority_class: LOCAL_AUTHORITATIVE
-    owner: contract_governance
+    lifecycle: ACTIVE
+    owner: CODEX_GOVERNANCE
+    path: ssot/manifest.yaml
+
+  master_contract:
+    logical_id: CODEX_MASTER_CONTRACT
+    authority_class: LOCAL_AUTHORITATIVE
+    lifecycle: ACTIVE
+    owner: CODEX_CONTRACT_GOVERNANCE
     path: ssot/master_contract_ssot_v0_2.yaml
     schema: schemas/master_contract_ssot.schema.yaml
+
+  semantic_vocabulary:
+    logical_id: CODEX_SEMANTIC_VOCABULARY
+    authority_class: LOCAL_AUTHORITATIVE
+    lifecycle: ACTIVE
+    owner: CODEX_SEMANTIC_GOVERNANCE
+    path: PIPELINE/GLOSSARY.yaml
 
   semantic_substrate:
     logical_id: CODEX_SEMANTIC_SUBSTRATE
     authority_class: LOCAL_AUTHORITATIVE
-    owner: semantic_governance
+    lifecycle: ACTIVE
+    owner: CODEX_SEMANTIC_GOVERNANCE
     path: semantic_substrate/overlay_ssot.yaml
 
   runtime_governance:
     logical_id: CODEX_RUNTIME_GOVERNANCE
     authority_class: LOCAL_AUTHORITATIVE
-    owner: runtime_governance
+    lifecycle: ACTIVE
+    owner: CODEX_RUNTIME_GOVERNANCE
     path: SSOT/g10_runtime_governance_ssot.yaml
+
+  runtime_registry:
+    logical_id: CODEX_RUNTIME_REGISTRY
+    authority_class: LOCAL_AUTHORITATIVE
+    lifecycle: ACTIVE
+    owner: CODEX_RUNTIME_GOVERNANCE
+    path: ssot/registry/runtime_registry.yaml
 
   mcp_governance:
     logical_id: CODEX_MCP_GOVERNANCE
     authority_class: LOCAL_AUTHORITATIVE
-    owner: federation_runtime
+    lifecycle: ACTIVE
+    owner: CODEX_FEDERATION_GOVERNANCE
     path: SSOT/github_mcp_agentic_orchestration_ssot.yaml
 
-  glossary:
-    logical_id: CODEX_PIPELINE_GLOSSARY
+  tri_repo_release_assurance:
+    logical_id: TRI_REPO_RELEASE_ASSURANCE_CONTRACT
     authority_class: LOCAL_AUTHORITATIVE
-    owner: pipeline_governance
-    path: PIPELINE/GLOSSARY.yaml
+    lifecycle: ACTIVE
+    owner: CODEX_RELEASE_GOVERNANCE
+    path: release/TRI_REPO_RELEASE_ASSURANCE_CONTRACT_v1.yaml
 
   qps_engineering_truth:
     logical_id: QPS_ENGINEERING_TRUTH
     authority_class: REMOTE_AUTHORITATIVE
+    lifecycle: ACTIVE
+    owner: QPS_ENGINEERING
     owner_repository: GBOGEB/cryoplant-project
     local_role: MIRRORED_REFERENCE
     mutation_allowed: false
     promotion_allowed: false
 
   dow_execution_truth:
-    logical_id: DOW_EXECUTION_RECEIPT
+    logical_id: ABACUS_DOW_CHALLENGE
     authority_class: REMOTE_AUTHORITATIVE
+    lifecycle: ACTIVE
+    owner: ABACUS_DOW
     owner_repository: GBOGEB/ABACUS
-    local_role: RECEIPT
+    local_role: RECEIPT_ONLY
     mutation_allowed: false
     engineering_promotion_allowed: false
 
@@ -80,6 +111,11 @@ derived_or_compatibility:
     authority_class: MATERIALIZED_VIEW
     path: VERSION.json
     parent: CODEX_RELEASE_IDENTITY
+  authority_registry:
+    logical_id: CODEX_AUTHORITY_REGISTRY_VIEW
+    authority_class: MATERIALIZED_VIEW
+    path: ssot/registry/authority_registry.yaml
+    parent: CODEX_AUTHORITY_MANIFEST
   ssot_style_bridge:
     logical_id: CODEX_SSOT_STYLE_BRIDGE
     authority_class: COMPATIBILITY
@@ -87,17 +123,11 @@ derived_or_compatibility:
     owner: render_governance
 
 candidate_census:
-  status: COMPLETE_FOR_DECLARED_R00_SURFACES
+  status: RECURSIVE_W05_ACTIVE
   source: triage/REPO_CENSUS.yaml
-  declared_candidates: 6
-  authoritative_local: 5
-  remote_authoritative: 2
-  compatibility_or_views: 2
-  unknown_declared_candidates: 0
   note: >-
-    This census closes the SSOT surfaces explicitly declared by the existing
-    R00 repository census. Recursive census v2 remains a later release wave
-    and may discover additional candidates; discovery must fail visible.
+    Recursive census is active. Discovery does not establish authority; only
+    entries in this canonical manifest establish declared authority.
 
 invariants:
   one_authority_per_logical_fact: true
