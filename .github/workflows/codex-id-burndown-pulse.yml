@@ -1,0 +1,95 @@
+name: CODEX ID Burndown Pulse
+
+on:
+  workflow_dispatch:
+    inputs:
+      workers:
+        description: Discovery shards; power of two, capped at 64
+        required: true
+        default: '16'
+        type: choice
+        options: ['1','2','4','8','16','32','64']
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      shards: ${{ steps.plan.outputs.shards }}
+    steps:
+      - id: plan
+        shell: python
+        env:
+          WORKERS: ${{ inputs.workers }}
+        run: |
+          import json, os
+          n = int(os.environ['WORKERS'])
+          allowed = {1,2,4,8,16,32,64}
+          if n not in allowed:
+              raise SystemExit(f'unsupported worker count: {n}')
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as f:
+              f.write('shards=' + json.dumps(list(range(n)), separators=(',', ':')) + '\n')
+
+  discover:
+    needs: plan
+    strategy:
+      fail-fast: false
+      max-parallel: 64
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install YAML dependency
+        run: pip install 'PyYAML>=6,<7'
+      - name: Run canonical census and extract deterministic shard
+        env:
+          SHARD: ${{ matrix.shard }}
+          WORKERS: ${{ inputs.workers }}
+        run: |
+          python scripts/census_ssot_candidates.py
+          python - <<'PY'
+          import json, os, time
+          from pathlib import Path
+          shard = int(os.environ['SHARD'])
+          workers = int(os.environ['WORKERS'])
+          source = Path('reports/codex_2_0_ssot_candidate_census.json')
+          data = json.loads(source.read_text(encoding='utf-8'))
+          t0 = time.time()
+          rows = [r for i, r in enumerate(data['candidates']) if i % workers == shard]
+          unresolved = [r for r in rows if r.get('logical_id') is None]
+          active = [r for r in unresolved if r.get('lifecycle_state') == 'ACTIVE_CANDIDATE']
+          out = {
+              'schema_version': '1.0',
+              'purpose': 'CODEX_ID_BURNDOWN_DISCOVERY_SHARD',
+              'workers': workers,
+              'shard': shard,
+              'candidate_rows': len(rows),
+              'unresolved_rows': len(unresolved),
+              'active_unresolved_rows': len(active),
+              'elapsed_extract_seconds': round(time.time() - t0, 6),
+              'candidates': active,
+          }
+          path = Path(f'reports/id_burndown/shard-{shard:02d}.json')
+          path.parent.mkdir(parents=True, exist_ok=True)
+          path.write_text(json.dumps(out, indent=2) + '\n', encoding='utf-8')
+          print(f"ID_SHARD_PASS shard={shard}/{workers} rows={len(rows)} unresolved={len(unresolved)} active={len(active)}")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: id-burndown-shard-${{ matrix.shard }}
+          path: reports/id_burndown/shard-*.json
+
+  reconcile:
+    needs: discover
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Discovery pulse result
+        run: |
+          echo 'Discovery shards completed. Central logical-ID registry mutation remains serialized and is not performed by this workflow.'
