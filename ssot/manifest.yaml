@@ -1,0 +1,81 @@
+schema_version: "1.0"
+repository: GBOGEB/CODEX
+release_program: CODEX_2_0
+
+principles:
+  engineering_awareness: true
+  engineering_authority: false
+  doctrine: >-
+    CODEX may understand engineering truth, transport it, interrogate it and
+    challenge it. CODEX must not own or silently change engineering truth
+    unless that engineering domain is explicitly assigned to CODEX.
+
+authority_classes:
+  - LOCAL_AUTHORITATIVE
+  - REMOTE_AUTHORITATIVE
+  - DERIVED
+  - MATERIALIZED_VIEW
+  - RECEIPT
+  - COMPATIBILITY
+  - HISTORICAL
+  - MIRRORED_REFERENCE
+
+authorities:
+  codex_release_identity:
+    logical_id: CODEX_RELEASE_IDENTITY
+    authority_class: LOCAL_AUTHORITATIVE
+    owner: release_governance
+    path: VERSION.json
+
+  master_contract:
+    logical_id: MASTER_CONTRACT_GOVERNANCE
+    authority_class: LOCAL_AUTHORITATIVE
+    owner: contract_governance
+    path: ssot/master_contract_ssot_v0_2.yaml
+    schema: schemas/master_contract_ssot.schema.yaml
+
+  semantic_substrate:
+    logical_id: CODEX_SEMANTIC_SUBSTRATE
+    authority_class: LOCAL_AUTHORITATIVE
+    owner: semantic_governance
+    path: semantic_substrate/overlay_ssot.yaml
+
+  runtime_governance:
+    logical_id: CODEX_RUNTIME_GOVERNANCE
+    authority_class: LOCAL_AUTHORITATIVE
+    owner: runtime_governance
+    path: SSOT/g10_runtime_governance_ssot.yaml
+
+  qps_engineering_truth:
+    logical_id: QPS_ENGINEERING_TRUTH
+    authority_class: REMOTE_AUTHORITATIVE
+    owner_repository: GBOGEB/cryoplant-project
+    local_role: MIRRORED_REFERENCE
+    mutation_allowed: false
+    promotion_allowed: false
+
+  dow_execution_truth:
+    logical_id: DOW_EXECUTION_RECEIPT
+    authority_class: REMOTE_AUTHORITATIVE
+    owner_repository: GBOGEB/ABACUS
+    local_role: RECEIPT
+    engineering_promotion_allowed: false
+
+invariants:
+  one_authority_per_logical_fact: true
+  remote_engineering_mutation_forbidden: true
+  receipt_cannot_become_engineering_source: true
+  derived_view_cannot_become_authority: true
+  dow_result_cannot_auto_promote_child_state: true
+  child_disposition_remains_child_owned: true
+  exact_source_identity_required:
+    - commit_sha
+    - git_blob_sha
+    - sha256
+
+release_gates:
+  authority_integrity:
+    duplicate_authority_count: 0
+    unauthorized_engineering_mutation_count: 0
+    orphan_authoritative_node_count: 0
+    unknown_authority_node_count: 0
