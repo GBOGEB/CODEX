@@ -1,4 +1,4 @@
-schema_version: "1.0"
+schema_version: "1.1"
 repository: GBOGEB/CODEX
 release_program: CODEX_2_0
 
@@ -25,7 +25,7 @@ authorities:
     logical_id: CODEX_RELEASE_IDENTITY
     authority_class: LOCAL_AUTHORITATIVE
     owner: release_governance
-    path: VERSION.json
+    path: ssot/domain/repo/release.yaml
 
   master_contract:
     logical_id: MASTER_CONTRACT_GOVERNANCE
@@ -46,6 +46,18 @@ authorities:
     owner: runtime_governance
     path: SSOT/g10_runtime_governance_ssot.yaml
 
+  mcp_governance:
+    logical_id: CODEX_MCP_GOVERNANCE
+    authority_class: LOCAL_AUTHORITATIVE
+    owner: federation_runtime
+    path: SSOT/github_mcp_agentic_orchestration_ssot.yaml
+
+  glossary:
+    logical_id: CODEX_PIPELINE_GLOSSARY
+    authority_class: LOCAL_AUTHORITATIVE
+    owner: pipeline_governance
+    path: PIPELINE/GLOSSARY.yaml
+
   qps_engineering_truth:
     logical_id: QPS_ENGINEERING_TRUTH
     authority_class: REMOTE_AUTHORITATIVE
@@ -59,7 +71,33 @@ authorities:
     authority_class: REMOTE_AUTHORITATIVE
     owner_repository: GBOGEB/ABACUS
     local_role: RECEIPT
+    mutation_allowed: false
     engineering_promotion_allowed: false
+
+derived_or_compatibility:
+  version_json:
+    logical_id: CODEX_RELEASE_IDENTITY_VIEW
+    authority_class: MATERIALIZED_VIEW
+    path: VERSION.json
+    parent: CODEX_RELEASE_IDENTITY
+  ssot_style_bridge:
+    logical_id: CODEX_SSOT_STYLE_BRIDGE
+    authority_class: COMPATIBILITY
+    path: ssot/ssot_style_bridge.json
+    owner: render_governance
+
+candidate_census:
+  status: COMPLETE_FOR_DECLARED_R00_SURFACES
+  source: triage/REPO_CENSUS.yaml
+  declared_candidates: 6
+  authoritative_local: 5
+  remote_authoritative: 2
+  compatibility_or_views: 2
+  unknown_declared_candidates: 0
+  note: >-
+    This census closes the SSOT surfaces explicitly declared by the existing
+    R00 repository census. Recursive census v2 remains a later release wave
+    and may discover additional candidates; discovery must fail visible.
 
 invariants:
   one_authority_per_logical_fact: true
