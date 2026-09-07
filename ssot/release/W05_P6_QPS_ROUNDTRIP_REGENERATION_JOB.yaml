@@ -1,0 +1,62 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W005
+pulse: P6
+status: PRODUCT_SPECIFIC_REGENERATION_JOB_ADDED_NOT_YET_PROVEN_ON_MAIN
+source_reentry:
+  from_w05_p5_pr: 478
+  from_w05_p5_merge: 994886789e4c1c1e9b58bf2b54dd9ef35b7ef688
+harness_artifact_inspection:
+  source_run: 34171277991
+  artifact_id: 10035793811
+  artifact_digest: sha256:d44f081bfd0c943f5ef8c5cb7aeec64712afdd42b2591afff77b9c2674e98497
+  job_conclusion: success
+  observed_files:
+    PRODUCT_FILE_ENUMERATION.txt: PRESENT
+    SHA256SUMS: PRESENT_WITH_MISSING_PRODUCTS
+    REBUILD_LOG.yaml: PRESENT_NOT_REGENERATED
+    ZERO_DELTA_RECEIPT.yaml: PRESENT_NOT_EXECUTED
+  finding: >-
+    The W05/P5 harness successfully executed and uploaded artifacts, but all five
+    target products were marked MISSING and the zero-delta receipt was correctly
+    NOT_EXECUTED. No product parity or zero-delta pass was claimed.
+product_specific_regeneration_job:
+  workflow_path: .github/workflows/w05-qps-roundtrip-regeneration-zero-delta.yml
+  harness_path: 07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1
+  builder_contract: 07_ops/qps_roundtrip/BUILDER_CONTRACT.md
+  synthetic_builder: 07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1
+  product_family: qps_cost_roundtrip
+  products:
+    - QPS_COST_Master.xlsx
+    - QPS_Cost_Engineering_Handover.docx
+    - QPS_Cost_Management_Deck.pptx
+    - QPS_Cost_Engineering_Handover.pdf
+    - index.html
+  execution_design:
+    - verify required harness and builder paths
+    - run first synthetic regeneration
+    - run second synthetic regeneration
+    - hash first and second product sets
+    - write release/SHA256SUMS
+    - write release/REBUILD_LOG.yaml
+    - write release/ZERO_DELTA_RECEIPT.yaml
+    - fail workflow if hashes differ or products are missing
+  authority_boundary: >-
+    This workflow proves synthetic harness repeatability only. It does not prove
+    real external office/product builder parity unless the production builder is
+    substituted for the synthetic builder under the same contract.
+current_claims:
+  p5_harness_run: SUCCESS_WITH_MISSING_PRODUCTS
+  product_regeneration_job_added: true
+  synthetic_two_pass_regeneration_executed: NOT_YET_ON_THIS_PR
+  real_product_builder_executed: false
+  sha256s_written_from_actual_regeneration: PENDING_WORKFLOW_RUN
+  rebuild_log_written_from_actual_regeneration: PENDING_WORKFLOW_RUN
+  zero_delta_receipt_pass: PENDING_WORKFLOW_RUN
+  global_codex_2_0: NOT_YET
+next_mechanical_steps:
+  - merge this PR after review if acceptable
+  - run W05 QPS Roundtrip Regeneration Zero-Delta workflow
+  - inspect artifact w05-qps-roundtrip-zero-delta
+  - if synthetic pass, create follow-on production-builder lane or mark synthetic-only boundary
+  - do not claim production parity until production builder output is used
