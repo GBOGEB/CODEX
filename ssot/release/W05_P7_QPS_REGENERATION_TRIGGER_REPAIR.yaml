@@ -1,0 +1,38 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W005
+pulse: P7
+status: QPS_REGENERATION_WORKFLOW_TRIGGER_REPAIR
+source_reentry:
+  from_w05_p6_pr: 480
+  from_w05_p6_merge: 35c2889259bf4c00ea2386a3616ab651c35a1f8c
+observations:
+  p6_pr_state: MERGED
+  p6_pr_head: 0e3877d0357fa54a82a4ca7ed48b0c2ec0d5a854
+  p6_merge_commit: 35c2889259bf4c00ea2386a3616ab651c35a1f8c
+  p6_regeneration_workflow_run_found_on_head: false
+  p6_regeneration_workflow_run_found_on_merge: false
+  reason: >-
+    The workflow was introduced by P6 and did not self-execute on that pull
+    request or merge commit under the available run query. A follow-on trigger
+    repair is required before synthetic zero-delta evidence can be harvested.
+trigger_repair:
+  workflow_path: .github/workflows/w05-qps-roundtrip-regeneration-zero-delta.yml
+  change_applied: >-
+    Added push coverage for main and the trigger-repair release branch, while
+    keeping workflow_dispatch and pull_request coverage.
+  expected_next_run: >-
+    After this PR is opened or merged, the workflow should appear in the run set
+    and produce w05-qps-roundtrip-zero-delta artifacts.
+release_readiness_position:
+  p5_harness: PASS_AS_NOT_EXECUTED_HARNESS
+  p6_regeneration_workflow_installed: true
+  p6_regeneration_workflow_executed: false
+  synthetic_zero_delta_pass: NOT_YET
+  production_builder_parity: NOT_YET
+  global_codex_2_0: NOT_YET
+next_mechanical_steps:
+  - open trigger repair PR
+  - inspect W05 QPS Roundtrip Regeneration Zero-Delta run for this branch or merge
+  - harvest SHA256SUMS REBUILD_LOG ZERO_DELTA_RECEIPT artifact
+  - if synthetic pass, create production-builder parity lane
