@@ -1,0 +1,73 @@
+schema_version: "1.0"
+registry_id: CODEX_LOGICAL_ID_REGISTRY
+release_program: CODEX_2_0
+purpose: >-
+  Stable logical identifiers for governed CODEX nodes that are not themselves
+  authoritative facts. Registration never promotes a node into authority.
+rules:
+  authority_promotion_forbidden: true
+  path_unique_within_registry: true
+  logical_id_unique: true
+  generated_output_cannot_become_authority: true
+  remote_engineering_mutation_forbidden: true
+nodes:
+  CODEX_FEDERATION_GOVERNANCE_PARSER:
+    path: federation_runtime/engines/governance_parser.py
+    role: EXECUTABLE_VALIDATION_ENGINE
+    owner: CODEX_FEDERATION_GOVERNANCE
+    lifecycle: ACTIVE
+    authority_class: CONSUMER
+  CODEX_PHASE0_ORCHESTRATION_ENGINE:
+    path: federation_runtime/engines/phase0_orchestration.py
+    role: EXECUTABLE_ORCHESTRATION_ENGINE
+    owner: CODEX_FEDERATION_GOVERNANCE
+    lifecycle: ACTIVE
+    authority_class: CONSUMER
+  CODEX_CONFLUENCE_ARTIFACT_PIPELINE:
+    path: federation_runtime/engines/confluence_artifact_pipeline.py
+    role: EXECUTABLE_ARTIFACT_PIPELINE
+    owner: CODEX_FEDERATION_GOVERNANCE
+    lifecycle: ACTIVE
+    authority_class: CONSUMER
+  CODEX_PHASE0_BRIDGE_WORKFLOW:
+    path: .github/workflows/confluence-github-bridge-phase0.yml
+    role: CICD_ORCHESTRATION_SHELL
+    owner: CODEX_FEDERATION_GOVERNANCE
+    lifecycle: ACTIVE
+    authority_class: CONSUMER
+  CODEX_AGENTIC_PR_SCAN_WORKFLOW:
+    path: .github/workflows/agentic-pr-discrepancy-scan.yml
+    role: READ_ONLY_AGENTIC_CICD_SHELL
+    owner: CODEX_RELEASE_GOVERNANCE
+    lifecycle: ACTIVE
+    authority_class: CONSUMER
+  CODEX_MCP_SWEEP_ENGINE:
+    path: src/federation/mcp_sweep_engine.py
+    role: CANONICAL_RUNTIME_ENGINE
+    owner: CODEX_FEDERATION_GOVERNANCE
+    lifecycle: ACTIVE
+    authority_class: CONSUMER
+  CODEX_MCP_SWEEP_COMPAT:
+    path: src/federation/mcp_sweep_compat.py
+    role: COMPATIBILITY_SURFACE
+    owner: CODEX_FEDERATION_GOVERNANCE
+    lifecycle: ACTIVE
+    authority_class: COMPATIBILITY
+  CODEX_MCP_SWEEP_FACADE:
+    path: src/mcp_sweep.py
+    role: COMPATIBILITY_FACADE
+    owner: CODEX_FEDERATION_GOVERNANCE
+    lifecycle: ACTIVE
+    authority_class: COMPATIBILITY
+  CODEX_MASTER_CONTRACT_VALIDATOR_SCRIPT:
+    path: scripts/validate_master_contract_ssot.py
+    role: EXECUTABLE_VALIDATOR
+    owner: CODEX_CONTRACT_GOVERNANCE
+    lifecycle: ACTIVE
+    authority_class: CONSUMER
+  CODEX_MASTER_CONTRACT_VALIDATOR_TOOL:
+    path: tools/validators/ssot_validator.py
+    role: EXECUTABLE_VALIDATOR
+    owner: CODEX_CONTRACT_GOVERNANCE
+    lifecycle: ACTIVE
+    authority_class: CONSUMER
