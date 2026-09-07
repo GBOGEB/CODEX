@@ -9,6 +9,12 @@ from src.federation.mcp_sweep_engine import MCPSweepEngine
 from src.github_interface import GitHubInterface
 
 
+def _fake_crawl(pulls):
+    def fetch(owner, repo, per_page=30, *, since=None, until=None, branch_filters=(), max_prs=50):
+        return pulls, {"pages_scanned": 1, "retries": 0, "returned": len(pulls)}
+    return fetch
+
+
 def test_mcp_sweep_pipeline_classifies_and_emits_outputs(tmp_path, monkeypatch):
     engine = MCPSweepEngine(
         repo_path=tmp_path,
@@ -30,7 +36,7 @@ def test_mcp_sweep_pipeline_classifies_and_emits_outputs(tmp_path, monkeypatch):
             "merged_at": None,
         },
     ]
-    monkeypatch.setattr(engine, "fetch_closed_pull_requests", lambda owner, repo: pulls)
+    monkeypatch.setattr(engine, "fetch_closed_pull_requests", _fake_crawl(pulls))
 
     session_dir = tmp_path / "sessions"
     session_dir.mkdir()
@@ -70,22 +76,23 @@ def test_mcp_sweep_pipeline_classifies_and_emits_outputs(tmp_path, monkeypatch):
     assert result["active_count"] == 1
     assert result["proposed_count"] == 1
     assert result["pruned_count"] == 2
+    assert result["crawl_metrics"]["pages_scanned"] == 1
     assert telemetry.is_file()
     assert rtm_delta.is_file()
 
     text = rtm_delta.read_text(encoding="utf-8")
     assert "near-miss follow-up \\| runtime" in text
-    assert "merged:101" not in text  # origin is telemetry, not an RTM table column
+    assert "merged:101" not in text
     assert "RTM-A6-PR-101" in text
 
 
-def test_mcp_sweep_is_public_metadata_only_by_construction(tmp_path, monkeypatch):
+def test_mcp_sweep_uses_explicit_token_boundary_even_for_stubbed_public_metadata(tmp_path, monkeypatch):
     engine = MCPSweepEngine(
         repo_path=tmp_path,
         github_interface=GitHubInterface(),
-        github_token="",
+        github_token="test-token",
     )
-    monkeypatch.setattr(engine, "fetch_closed_pull_requests", lambda owner, repo: [])
+    monkeypatch.setattr(engine, "fetch_closed_pull_requests", _fake_crawl([]))
 
     result = engine.run(
         owner="GBOGEB",
