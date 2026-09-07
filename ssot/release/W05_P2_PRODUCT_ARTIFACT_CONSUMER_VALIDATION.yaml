@@ -1,0 +1,92 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W005
+pulse: P2
+status: PRODUCT_ARTIFACT_CONSUMER_VALIDATION_PARTIAL
+source_reentry:
+  from_w05_p1_pr: 466
+  from_w05_p1_merge: 0cad11b3897f45d261a6ad9005c8383a2976a9ca
+  rule: >-
+    Product artifacts and release outputs are consumers or derivatives unless a
+    governed authority chain proves otherwise. No generated HTML/XLSX/PPTX/PDF
+    surface may be promoted to authority by presence alone.
+validation_scope:
+  product_artifact_extensions:
+    - html
+    - xlsx
+    - pptx
+    - pdf
+    - docx
+  release_controls:
+    - release_manifest
+    - checksum_or_sha256_sidecars
+    - zero_delta_or_repeatability_inputs
+    - product_regeneration_parity
+    - main_protection_and_required_checks
+observations:
+  binary_output_classification:
+    evidence_path: triage/run_repo_census.py
+    rule_found: >-
+      The census classifier treats .xlsx, .pptx, .pdf, .docx and .html files as
+      binary_output class by extension.
+    conclusion: >-
+      HTML/XLSX/PPTX/PDF/DOCX are product or report outputs unless separately
+      bound to an authority registry and provenance/checksum chain.
+  provenance_layer:
+    observed_terms:
+      - evidence
+      - receipt
+      - provenance
+      - manifest
+      - checksum
+      - sha256
+    conclusion: >-
+      Evidence/manifests/checksums are the provenance layer for products; the
+      product binaries themselves are not source authority.
+  consumer_search:
+    product_consumer_query: html xlsx pptx pdf release manifest zero delta artifact consumer
+    result: >-
+      Search primarily returned W05_P1 and major-release burndown records rather
+      than a completed product-consumer implementation.
+    conclusion: PRODUCT_CONSUMER_MAP_NOT_YET_COMPLETE
+  zero_delta_search:
+    query: zero_delta zero-delta release manifest rc manifest parity regeneration
+    result: NO_DIRECT_IMPLEMENTATION_FOUND
+    conclusion: ZERO_DELTA_INPUTS_NOT_YET_LOCATED
+  release_burndown_dependency:
+    path: release/CODEX_2_0_MAJOR_RELEASE_BURNDOWN.yaml
+    observed_controls:
+      - classify remaining active executable consumers
+      - migrate highest-value direct authority paths
+      - artifact_and_schema_negative_tests
+      - immutable_rc_manifest_and_all_release_gates_green
+      - MAIN_PROTECTION BLOCKED_ADMIN
+    conclusion: >-
+      W05 product validation feeds later consumer classification, adversarial QA,
+      RC manifest, and main-protection gates. It does not close them.
+authority_boundary:
+  generated_output_promotion: BLOCKED
+  product_presence_as_authority: FORBIDDEN
+  acceptable_promotion_conditions:
+    - authority_registry_entry
+    - logical_id_or_bound_id
+    - provenance_manifest
+    - checksum_or_sha256
+    - regeneration_recipe_or_rebuild_log
+    - consumer_map_showing_direction_from_authority_to_product
+    - zero_delta_or_tolerance_receipt
+release_readiness_position:
+  product_artifact_consumer_validation: PARTIAL_PASS_CLASSIFICATION_ONLY
+  html_xlsx_pptx_pdf_authority_status: DERIVED_OUTPUTS_UNLESS_PROVEN_OTHERWISE
+  release_manifest_inputs: NOT_YET_COMPLETE
+  zero_delta_inputs: NOT_YET_LOCATED
+  product_parity: NOT_YET
+  main_protection: BLOCKED_ADMIN
+  global_codex_2_0: NOT_YET
+next_mechanical_steps:
+  - exact_head_ci_for_this_receipt
+  - build_or_update product_consumer_map for HTML/XLSX/PPTX/PDF/DOCX
+  - locate or create release_manifest input contract
+  - locate or create zero_delta repeatability contract
+  - connect generated product surfaces to authority sources only by explicit edge
+  - keep main protection as final release blocker until admin state changes
