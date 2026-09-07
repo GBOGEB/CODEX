@@ -1,4 +1,4 @@
-schema_version: "1.0"
+schema_version: "1.1"
 registry_id: CODEX_AUTHORITY_REGISTRY
 release_program: CODEX_2_0
 rules:
@@ -43,6 +43,16 @@ nodes:
     lifecycle: ACTIVE
     owner: CODEX_RUNTIME_GOVERNANCE
     path: SSOT/g10_runtime_governance_ssot.yaml
+  CODEX_RUNTIME_REGISTRY:
+    authority_class: LOCAL_AUTHORITATIVE
+    lifecycle: ACTIVE
+    owner: CODEX_RUNTIME_GOVERNANCE
+    path: ssot/registry/runtime_registry.yaml
+  TRI_REPO_RELEASE_ASSURANCE_CONTRACT:
+    authority_class: LOCAL_AUTHORITATIVE
+    lifecycle: ACTIVE
+    owner: CODEX_RELEASE_GOVERNANCE
+    path: release/TRI_REPO_RELEASE_ASSURANCE_CONTRACT_v1.yaml
   QPS_ENGINEERING_TRUTH:
     authority_class: REMOTE_AUTHORITATIVE
     lifecycle: ACTIVE
