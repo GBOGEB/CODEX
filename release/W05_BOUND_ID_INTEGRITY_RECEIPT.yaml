@@ -1,0 +1,93 @@
+schema_version: "1.0"
+receipt_id: CODEX_2_0_W05_BOUND_ID_INTEGRITY
+wave: W05
+pulse: P3
+pressure: 2x3PR
+basis:
+  census_candidate_count: 472
+  previous_bound_local_count: 5
+  previous_penetration_pct: 1.06
+  previous_unresolved_count: 467
+  previous_unresolved_role_owner: 124
+registry_validation:
+  declared_nodes_before: 9
+  local_path_nodes_before: 7
+  remote_nodes_before: 2
+  validation:
+    unique_logical_ids: PASS
+    unique_local_paths: PASS
+    remote_qps_mutation_forbidden: PASS
+    abacus_receipt_not_engineering_authority: PASS
+    child_disposition_child_owned: PASS
+new_declared_bindings:
+  - logical_id: CODEX_RUNTIME_REGISTRY
+    path: ssot/registry/runtime_registry.yaml
+    owner: CODEX_RUNTIME_GOVERNANCE
+    authority_class: LOCAL_AUTHORITATIVE
+    confidence: HIGH
+    evidence: merged W04 runtime convergence established this as the explicit runtime-family authority map
+  - logical_id: TRI_REPO_RELEASE_ASSURANCE_CONTRACT
+    path: release/TRI_REPO_RELEASE_ASSURANCE_CONTRACT_v1.yaml
+    owner: CODEX_RELEASE_GOVERNANCE
+    authority_class: LOCAL_AUTHORITATIVE
+    confidence: HIGH
+    evidence: canonical tri-repo release-assurance contract already consumed by release governance
+post_binding:
+  declared_registry_nodes: 11
+  local_path_nodes: 9
+  remote_nodes: 2
+  expected_census_bound_local_count: 7
+  expected_census_penetration_pct: 1.48
+  expected_unresolved_count: 465
+  newly_bound_count: 2
+  duplicate_authority_count: 0
+  remote_mutation_violation_count: 0
+qualification:
+  status: SOURCE_AND_REGISTRY_VALIDATED_PENDING_CI_REGENERATION
+  note: >-
+    Counts above are deterministic from the existing 472-candidate census plus two
+    newly declared candidate paths. CI must regenerate the census and binding report
+    on this exact head before the expected values become observed execution receipts.
+threeP3:
+  self_evaluation:
+    authority_uniqueness: 1.00
+    remote_mutation_safety: 1.00
+    bound_id_penetration: 0.0148
+    unresolved_role_owner_pressure: HIGH
+    executable_consumer_pressure: HIGH
+    runtime_duplication_pressure: MEDIUM
+  recommendation:
+    scope: unresolved owner/role candidates with executable or authority relevance
+    frequency: continue bounded W05 pulses
+    workers: 2x3PR
+    evidence: require DECLARED registry or manifest evidence before binding
+    qa: destructive duplicate-authority and remote-mutation tests remain mandatory
+pca:
+  interpretation: structure-only; not direct priority
+  components:
+    - name: AUTHORITY_PENETRATION_DEFICIT
+      loading: VERY_HIGH
+      evidence: 465 of 472 candidates expected unresolved after this pulse
+    - name: OWNER_ROLE_AMBIGUITY
+      loading: HIGH
+      evidence: baseline 124 unresolved role/owner candidates
+    - name: CONSUMER_RESOLVER_GAP
+      loading: HIGH
+      evidence: active executable consumers remain incompletely bound
+    - name: RUNTIME_COMPETITION
+      loading: MEDIUM
+      evidence: MCP first convergence complete; federation and agent families remain for discrimination
+bt:
+  priority_order:
+    - rank: 1
+      target: high-confidence owner/role candidates that are active authority or executable surfaces
+      action: bind to existing logical IDs before creating new IDs
+    - rank: 2
+      target: executable consumers with hard-coded authority paths
+      action: migrate to resolver and record consumer-to-logical-ID edge
+    - rank: 3
+      target: federation runtime and agent orchestration families
+      action: discriminate canonical runtime vs adapter/test/config before consolidation
+next_gate:
+  continue_W05_if: observed bound-ID penetration remains dominant release deficit
+  redirect_if: consumer resolver or runtime competition becomes quantitatively larger after regeneration
