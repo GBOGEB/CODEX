@@ -1,0 +1,33 @@
+id: KEB-cADR-W57
+version: 0.1.0
+repo: GBOGEB/CODEX
+plane: governance
+role: semantic-governance-authority
+status: PROPOSED_CONTROL
+owns:
+  - semantic_contracts
+  - provenance_rules
+  - policy
+  - schema_governance
+  - bridge_definitions
+  - adaptor_contracts
+  - federation_protocol
+  - agent_governance
+does_not_own:
+  - final_engineering_design
+  - numerical_engineering_truth
+  - runtime_execution
+interaction:
+  input_from: GBOGEB/cryoplant-project
+  output_to: GBOGEB/ABACUS
+  return_to: GBOGEB/cryoplant-project
+outward_binary_targets:
+  - KEB_ARCHITECTURE.xlsx
+  - KEB_ARCHITECTURE.html
+  - KEB_ARCHITECTURE.pptx
+  - KEB_ARCHITECTURE.pdf
+  - KEB_SCHEMA_REGISTER.xlsx
+  - KEB_BRIDGE_REGISTER.xlsx
+  - KEB_ADAPTOR_REGISTER.xlsx
+  - KEB_FEDERATION_MAP.html
+release_rule: governance receipts must bind exact child payload digest and runtime receipt digest
