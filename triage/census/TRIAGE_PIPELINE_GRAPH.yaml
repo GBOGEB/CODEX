@@ -1,0 +1,20 @@
+schema_version: triage-pipeline/1.0.0
+repo: GBOGEB/CODEX
+owned_stages: [P5_KEB, P7_NORMALIZE]
+upstream: P4_HASH
+analysis_peer: P6_DOW
+downstream: P8_REENTRY
+bridges:
+  - {name: Federation_Bridge, from: cryoplant-project, to: CODEX}
+  - {name: DOW_Bridge, from: CODEX, to: ABACUS}
+  - {name: Analysis_Return_Bridge, from: ABACUS, to: CODEX}
+  - {name: Reentry_Bridge, from: CODEX, to: cryoplant-project}
+adaptors:
+  - payload_to_semantics
+  - semantics_to_route
+  - findings_to_normalized_return
+invariants:
+  - preserve_exact_child_SHA256
+  - append_receipts_only
+  - engineering_mutation_forbidden
+  - child_final_disposition_authority
