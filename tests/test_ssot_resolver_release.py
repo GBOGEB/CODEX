@@ -25,8 +25,9 @@ def test_release_identity_resolves_to_authoritative_yaml():
 def test_qps_is_remote_and_immutable():
     node = resolve_ssot("QPS_ENGINEERING_TRUTH")
     assert node["authority_class"] == "REMOTE_AUTHORITATIVE"
-    assert node["owner"] == "GBOGEB/cryoplant-project"
+    assert node["owner_repository"] == "GBOGEB/cryoplant-project"
     assert node["mutation_allowed"] is False
+    assert node["writable"] is False
 
 
 def test_unknown_logical_id_fails_closed():
@@ -39,7 +40,7 @@ def test_duplicate_authority_fails_closed(tmp_path):
     data["authorities"]["duplicate"] = dict(data["authorities"]["master_contract"])
     manifest = _write_manifest(tmp_path, data)
     with pytest.raises(SsotResolutionError, match="DUPLICATE_AUTHORITY"):
-        resolve_ssot("MASTER_CONTRACT_GOVERNANCE", manifest)
+        resolve_ssot("CODEX_MASTER_CONTRACT", manifest)
 
 
 def test_remote_mutation_permission_fails_closed(tmp_path):
@@ -55,4 +56,4 @@ def test_missing_local_file_fails_closed(tmp_path):
     data["authorities"]["master_contract"]["path"] = "does/not/exist.yaml"
     manifest = _write_manifest(tmp_path, data)
     with pytest.raises(SsotResolutionError, match="MISSING_FILE"):
-        resolve_ssot("MASTER_CONTRACT_GOVERNANCE", manifest)
+        resolve_ssot("CODEX_MASTER_CONTRACT", manifest)

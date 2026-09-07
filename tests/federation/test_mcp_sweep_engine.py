@@ -6,8 +6,18 @@ from src.github_interface import GitHubInterface
 
 
 class FakeSweepEngine(MCPSweepEngine):
-    def fetch_closed_pull_requests(self, owner: str, repo: str, per_page: int = 30):
-        return [
+    def fetch_closed_pull_requests(
+        self,
+        owner: str,
+        repo: str,
+        per_page: int = 30,
+        *,
+        since: str | None = None,
+        until: str | None = None,
+        branch_filters: tuple[str, ...] = (),
+        max_prs: int = 50,
+    ):
+        pulls = [
             {
                 "number": 1,
                 "title": "Near-miss: improve thermal bridge",
@@ -21,6 +31,7 @@ class FakeSweepEngine(MCPSweepEngine):
                 "merged_at": None,
             },
         ]
+        return pulls, {"pages_scanned": 1, "retries": 0, "returned": len(pulls)}
 
 
 def test_sweep_run_writes_outputs(tmp_path: Path):
@@ -55,5 +66,6 @@ def test_sweep_run_writes_outputs(tmp_path: Path):
     )
 
     assert result["proposed_count"] + result["active_count"] >= 2
+    assert result["crawl_metrics"]["pages_scanned"] == 1
     assert telemetry.exists()
     assert rtm.exists()
