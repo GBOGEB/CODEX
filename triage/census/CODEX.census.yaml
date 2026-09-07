@@ -1,0 +1,61 @@
+schema_version: triage-repo-census/1.0.0
+identity:
+  repo: GBOGEB/CODEX
+  role: KEB_SEMANTIC_CONTROL
+  authority: semantic vocabulary provenance routing and federation normalization
+locations:
+  canonical: [01_requirements, 02_design, 06_arch]
+  runtime: [qps_contract_canonicalization/src]
+  schemas: [qps_contract_canonicalization/src, triage/census]
+  docs: [docs, roadmap, 99_handover]
+  tests: [qps_contract_canonicalization]
+  workflows: [.github/workflows]
+  artifacts: [99_handover]
+  federation: [federation]
+architecture:
+  nodes: [payload, schema, semantic_term, contract, operation, source_lineage, hash, route, repo, finding, receipt, disposition_candidate]
+  edges: [conforms_to, originated_from, bound_to, defined_by, routed_to, returned_by, normalized_to, derived_from]
+  atoms: [term, operation, provenance_pointer, digest, route, receipt]
+  graphs: [semantic_graph, federation_graph, operation_graph, provenance_graph]
+contracts:
+  ssot: [schemas, vocabulary, routing_contracts, federation_envelopes, operations, style_render_contracts, normalization_receipts]
+  zod: [qps_contract_canonicalization/src/schema.ts]
+  json_schema: []
+  yaml_schema: []
+execution:
+  python: [scripts/check_ssot_schemas.py]
+  typescript: [qps_contract_canonicalization/src]
+  shell: []
+  powershell: []
+pipeline:
+  ingress: [child_canonical_payload]
+  validate: [syntax, schema, provenance, semantic_vocabulary, operation]
+  transform: [normalize_semantics, bind_route]
+  analyze: [semantic_checks]
+  render: [governance_views]
+  federate: [CODEX_to_ABACUS, ABACUS_to_CODEX, CODEX_to_child]
+  return: [normalized_disposition_candidate]
+outward_products:
+  excel: []
+  html: [ADR_OCD_Background.html, governance_views]
+  pptx: []
+  pdf: []
+  docx: []
+  machine: [YAML, JSON, receipts]
+automation:
+  agents: [AGENTIC, agentic-pr-discrepancy-scan]
+  skills: [skills/helium-evidence-triage]
+  mcp: [.codex/tasks/g10_mcp_container_task.yaml, .codex/tasks/github_mcp_agentic_orchestration.yaml]
+  containers: [.devcontainer]
+  runners: [GitHub_Actions]
+  github_actions: [codex_semantic_runtime_ci, build-clarification-bridge, contract-governance, orchestration-ts, qps-acceptance-gate, qps-canonicalization]
+integration:
+  orchestration: [TRIAGE_control_plane, GitHub_MCP_agentic_orchestration]
+  federation: [child_to_CODEX, CODEX_to_ABACUS, ABACUS_to_CODEX, CODEX_to_child]
+  bridges: [Federation_Bridge, DOW_Bridge, Analysis_Return_Bridge, Reentry_Bridge, SSOT_STYLE_BRIDGE]
+  adaptors: [payload_to_semantics, semantics_to_route, findings_to_normalized_return]
+governance:
+  provenance: preserve child provenance and append KEB receipts without engineering mutation
+  hashes: exact child payload SHA256 remains immutable across KEB routing
+  disposition: CODEX emits normalized candidates; child remains final disposition authority
+  promotion_rules: parent repo may not promote engineering facts
