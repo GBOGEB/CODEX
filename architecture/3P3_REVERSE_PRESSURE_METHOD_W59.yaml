@@ -1,0 +1,58 @@
+version: 0.1.0
+moniker: 3PR
+scheme: 3P3
+pulse: P2_KEB
+role: semantic_governance
+purpose: self-evaluate governance residuals and emit bounded recommendations for next-pass scope, coverage and review intensity
+
+self_eval:
+  measures:
+    - dov_gap
+    - schema_gap
+    - provenance_gap
+    - policy_gap
+    - bridge_gap
+    - adaptor_gap
+    - unresolved_receipts
+    - semantic_validation_failure_rate
+  outputs:
+    - reverse_pressure_vector
+    - ranked_BT_recommendations
+    - proposed_scope_delta
+    - proposed_coverage_delta
+    - proposed_review_frequency_delta
+    - expected_DoV_gain
+    - confidence
+
+recommendations:
+  allowed: [HOLD, NARROW, EXPAND_SCOPE, ADD_COVERAGE, INCREASE_FREQUENCY, DECREASE_FREQUENCY, REQUIRE_HUMAN_REVIEW]
+  recommendations_are_not_authority: true
+  engineering_scope_change_requires_child_acceptance: true
+  semantic_policy_change_requires_governance_acceptance: true
+
+auto_execution:
+  bounded_actions_only:
+    - bounded_validation_retry
+    - read_only_coverage_expansion
+    - review_frequency_adjustment_within_configured_bounds
+  prohibited:
+    - engineering_truth_mutation
+    - provenance_reclassification_without_source
+    - formal_compliance_promotion
+    - unbounded_frequency_increase
+
+rollup_contribution:
+  consumes: P1_QPS_self_eval
+  emits: P2_KEB_self_eval
+  preserves_exact_payload_sha: true
+  next_pulse_gate: recommendation_only_until_rollup
+
+self_awareness:
+  tracks:
+    - validation_success_rate
+    - provenance_failure_rate
+    - policy_exception_rate
+    - recommendation_hit_rate
+    - recommendation_false_positive_rate
+    - unresolved_receipt_age
+  learning_rule: tune recommendation thresholds and review allocation only; never mutate engineering truth autonomously
