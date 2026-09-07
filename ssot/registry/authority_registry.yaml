@@ -1,0 +1,59 @@
+schema_version: "1.0"
+registry_id: CODEX_AUTHORITY_REGISTRY
+release_program: CODEX_2_0
+rules:
+  one_authority_per_logical_id: true
+  remote_engineering_mutation_forbidden: true
+  derived_view_cannot_become_authority: true
+  receipt_cannot_become_engineering_source: true
+  child_disposition_remains_child_owned: true
+nodes:
+  CODEX_RELEASE_IDENTITY:
+    authority_class: LOCAL_AUTHORITATIVE
+    lifecycle: ACTIVE
+    owner: CODEX_RELEASE_GOVERNANCE
+    path: VERSION.json
+  CODEX_AUTHORITY_MANIFEST:
+    authority_class: LOCAL_AUTHORITATIVE
+    lifecycle: ACTIVE
+    owner: CODEX_GOVERNANCE
+    path: ssot/manifest.yaml
+  CODEX_SEMANTIC_VOCABULARY:
+    authority_class: LOCAL_AUTHORITATIVE
+    lifecycle: ACTIVE
+    owner: CODEX_SEMANTIC_GOVERNANCE
+    path: PIPELINE/GLOSSARY.yaml
+  CODEX_SEMANTIC_SUBSTRATE:
+    authority_class: LOCAL_AUTHORITATIVE
+    lifecycle: ACTIVE
+    owner: CODEX_SEMANTIC_GOVERNANCE
+    path: semantic_substrate/overlay_ssot.yaml
+  CODEX_MASTER_CONTRACT:
+    authority_class: LOCAL_AUTHORITATIVE
+    lifecycle: ACTIVE
+    owner: CODEX_CONTRACT_GOVERNANCE
+    path: ssot/master_contract_ssot_v0_2.yaml
+  CODEX_MCP_GOVERNANCE:
+    authority_class: LOCAL_AUTHORITATIVE
+    lifecycle: ACTIVE
+    owner: CODEX_FEDERATION_GOVERNANCE
+    path: SSOT/github_mcp_agentic_orchestration_ssot.yaml
+  CODEX_RUNTIME_GOVERNANCE:
+    authority_class: LOCAL_AUTHORITATIVE
+    lifecycle: ACTIVE
+    owner: CODEX_RUNTIME_GOVERNANCE
+    path: SSOT/g10_runtime_governance_ssot.yaml
+  QPS_ENGINEERING_TRUTH:
+    authority_class: REMOTE_AUTHORITATIVE
+    lifecycle: ACTIVE
+    owner: QPS_ENGINEERING
+    owner_repository: GBOGEB/cryoplant-project
+    local_representation: MIRRORED_REFERENCE
+    mutation_allowed: false
+  ABACUS_DOW_CHALLENGE:
+    authority_class: REMOTE_AUTHORITATIVE
+    lifecycle: ACTIVE
+    owner: ABACUS_DOW
+    owner_repository: GBOGEB/ABACUS
+    local_representation: RECEIPT_ONLY
+    engineering_promotion_allowed: false

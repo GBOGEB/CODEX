@@ -1,0 +1,63 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W02
+source:
+  pr: 438
+  head_sha: db6f2f29101f67d28f57d03e94b37b2714ce05e6
+  merge_sha: 10d980dafdc6a94514fe7fb0a2a38c9eaa48a2bb
+  ci_artifact_sha256: 0031098a275d198efda5f43417d1e1fbc092145cf22a50475c3c46362aba4d94
+observations:
+  authority_integrity: {status: PASS, residual: 0.15}
+  release_identity: {status: PASS, residual: 0.10}
+  ssot_census:
+    status: PASS
+    candidate_count: 460
+    authority_candidates: 20
+    schema_candidates: 45
+    receipt_candidates: 38
+    consumer_contract_candidates: 357
+    unclassified_authority_owner_logical_id: 460
+    residual: 0.95
+  semantic_runtime:
+    status: FAIL
+    undocumented_semantic_terms: 14
+    residual: 0.85
+  mcp_federation: {status: PASS, residual: 0.20}
+  runtime_governance: {status: PASS, residual: 0.20}
+  primary_ci: {status: PASS, residual: 0.20}
+  w003_governance:
+    status: FAIL
+    cause: missing_mandatory_pr_classification_header
+    residual: 0.30
+pca:
+  dominant_latent_factor: AUTHORITY_SEMANTIC_CLASSIFICATION_DEBT
+  secondary_factor: RUNTIME_DUPLICATION_DEBT
+  rationale: >-
+    The census exposes universal missing logical-ID/owner/authority classification,
+    while MCP federation and runtime governance both passed. Semantic runtime failure
+    is also vocabulary/contract debt rather than an execution failure.
+bt_priority:
+  - rank: 1
+    candidate: SSOT_LOGICAL_ID_CLASSIFICATION_AND_SHARED_RESOLVER
+    score: 0.91
+  - rank: 2
+    candidate: SEMANTIC_REGISTRY_CLOSURE
+    score: 0.86
+  - rank: 3
+    candidate: MCP_RUNTIME_DEDUPLICATION
+    score: 0.63
+  - rank: 4
+    candidate: DEBUG_PORT_DAP
+    score: 0.31
+three_p3:
+  decision: PROCEED_W02_AUTHORITY_RESOLVER
+  scope: NARROW
+  workers: 2
+  coverage: authority_candidates_plus_semantic_failure_set
+  qa: HIGH
+  frequency: PER_PR
+  next:
+    - classify canonical authority nodes with logical_id owner lifecycle
+    - introduce shared manifest resolver
+    - close semantic registry gap without engineering-state promotion
+    - retain MCP runtime deduplication for W03 unless new collision evidence dominates
