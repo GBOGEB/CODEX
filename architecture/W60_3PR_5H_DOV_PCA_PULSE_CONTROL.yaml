@@ -1,0 +1,120 @@
+wave_set: TRIAGE-W60-3PR-5H-DOV
+repo: GBOGEB/CODEX
+plane: KEB_governance_semantics
+created_at: 2026-09-07
+authority:
+  engineering_truth_source: accepted_child_SSOT_from_QPS
+  role_authority: validate_semantics_provenance_policy_and_receipt_integrity
+  promotion_rule: KEB may recommend but cannot promote global DoV without QPS child re-entry and DOW runtime receipt
+  false_compliance_guard:
+    - semantic_receipt_without_matching_payload_sha_is_invalid
+    - policy_pass_does_not_replace_runtime_QA
+    - planning_DOV_does_not_equal_global_DOV
+session_chat_dov:
+  scope: current_chat_and_branch_only
+  can_close:
+    - governance_control_packet_defined
+    - 5_horizon_model_recorded
+    - KEB_receipt_requirements_defined
+  cannot_close:
+    - real_KEB_receipt_for_future_payload
+    - DOW_runtime_validation
+    - child_acceptance
+global_dov:
+  scope: merged_state_across_QPS_KEB_DOW_and_artifact_binaries
+  close_requires:
+    - exact_QPS_payload_sha_preserved
+    - KEB_receipt_references_same_sha
+    - DOW_receipt_references_same_sha
+    - child_ACCEPT_REJECT_DEFER_reentry
+    - accepted_SSOT_binary_regeneration
+    - cross_binary_QA
+    - zero_delta_roundtrip
+    - duplicate_schema_cleanup
+five_horizons:
+  H0_session_chat:
+    target: this_branch
+    dov_kind: session_chat
+    expected_dov: 0.63
+    evidence: control/schema only
+  H1_next_pulse:
+    target: P1_to_P3
+    dov_kind: global_incremental
+    expected_dov: 0.71
+    evidence: KEB_receipt_for_identical_QPS_sha
+  H5_five_wave:
+    target: P4_to_P6
+    dov_kind: global_artifact
+    expected_dov: 0.83
+    evidence: KEB_policy_receipts_for_regenerated_artifacts
+  H50_portfolio:
+    target: cross_repo_schema_convergence
+    dov_kind: global_structural
+    expected_dov: 0.92
+    evidence: one_receipt_contract_family_and_low_duplication
+  H100_sustained:
+    target: governed_semantic_autonomy
+    dov_kind: global_sustained
+    expected_dov: 0.97
+    evidence: stable_policy_versioning_and_low_manual_reconciliation
+pulses:
+  P1_identical_sha_qps_to_keb_dow_roundtrip:
+    status: CONTROL_DEFINED_PENDING_QPS_PAYLOAD
+    gate: KEB_receives_exact_QPS_sha_and_records_no_mutation
+  P2_real_keb_dow_receipts:
+    status: KEB_RECEIPT_SCHEMA_READY_PENDING_REAL_RUN
+    required_output: KEB_semantic_receipt_sha256
+    gate: receipt_includes_payload_sha_policy_version_provenance_result_and_recommendation
+  P3_child_accept_reject_defer_reentry:
+    status: PENDING_P2
+    gate: KEB_recommendation_returned_to_QPS_without_authority_promotion
+  P4_regenerate_xlsx_html_pptx_pdf:
+    status: GOVERNANCE_OBSERVER_ONLY_UNTIL_ACCEPT
+    gate: KEB_validates_artifact_lineage_not_render_quality
+  P5_cross_binary_sha_tuple_playwright_render_qa:
+    status: GOVERNANCE_OBSERVER_ONLY_UNTIL_P4
+    gate: KEB_checks_tuple_policy_and_provenance; DOW_checks_render_runtime
+  P6_repeat_zero_delta_roundtrip:
+    status: BLOCKED_UNTIL_P5
+    gate: semantic_delta_zero_and_receipts_stable
+  P7_duplicate_schema_historical_cleanup:
+    status: CONTROL_DEFINED_DEFERRED
+    gate: cleanup_does_not_break_prior_receipts
+pca:
+  granularity: subdimension_scores_with_reverse_load_priority
+  low_score_threshold: 0.50
+  reverse_load_formula: residual_weight * authority_weight * unblock_weight * recurrence_weight
+  dimensions:
+    - id: exact_hash_governance
+      score: 0.48
+      residual_weight: 0.52
+      reverse_load_priority: 0.79
+      emphasis: P1/P2 same-SHA KEB receipt is the first governance unlock
+    - id: child_reentry_semantics
+      score: 0.33
+      residual_weight: 0.67
+      reverse_load_priority: 0.90
+      emphasis: low score drives reverse-load priority for P3
+    - id: duplicate_schema_governance
+      score: 0.42
+      residual_weight: 0.58
+      reverse_load_priority: 0.69
+      emphasis: cleanup after stable zero-delta baseline
+    - id: binary_lineage_policy
+      score: 0.39
+      residual_weight: 0.61
+      reverse_load_priority: 0.81
+      emphasis: P4/P5 artifact lineage must reference accepted SSOT
+bt:
+  priority_order:
+    - P2_real_KEB_receipt_contract
+    - P3_child_reentry_recommendation_path
+    - P1_identical_SHA_governance_gate
+    - P5_cross_binary_policy_tuple_check
+    - P6_zero_delta_semantic_recheck
+    - P7_duplicate_schema_cleanup
+kpi_rollup:
+  session_chat_dov_current: 0.63
+  global_dov_current: 0.47
+  global_dov_note: KEB controls advanced; global DoV remains pending until real receipts exist
+  next_required_receipt: KEB_semantic_receipt_for_QPS_payload_sha
