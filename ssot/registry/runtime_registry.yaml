@@ -1,0 +1,44 @@
+schema_version: "1.0"
+registry_id: CODEX_RUNTIME_REGISTRY
+release_program: CODEX_2_0
+rules:
+  one_canonical_runtime_per_family: true
+  compatibility_may_not_self_promote: true
+  test_and_registry_surfaces_are_not_runtime_authority: true
+families:
+  MCP_SWEEP:
+    canonical_runtime:
+      path: src/federation/mcp_sweep_engine.py
+      evidence:
+        ci_runner: scripts/run_mcp_sweep.py
+        state: ACTIVE
+    runner:
+      path: scripts/run_mcp_sweep.py
+      role: THIN_RUNNER
+    compatibility_candidates:
+      - path: src/mcp_sweep.py
+        role: ALTERNATE_TESTED_RUNTIME
+        disposition: REQUALIFY_BEFORE_FOLD
+        evidence: tests/test_mcp_sweep.py
+      - path: tools/mcp_sweep/mcp_sweep_engine.py
+        role: LEGACY_DEMO_IMPLEMENTATION
+        disposition: COLLAPSE_TO_COMPATIBILITY_WRAPPER
+    non_runtime_members:
+      - tests/federation/test_mcp_sweep_engine.py
+      - tests/federation/test_run_mcp_sweep.py
+      - tests/test_mcp_sweep.py
+      - triage/GRAPH_REGISTRY.yaml
+      - triage/PIPELINE_REGISTRY.yaml
+      - triage/RUNTIME_AGENT_REGISTRY.yaml
+  MCP_HEALTH:
+    canonical_runtime:
+      path: scripts/mcp_health_server.py
+      state: ACTIVE
+  FEDERATION_RUNTIME:
+    canonical_root:
+      path: federation_runtime/
+      state: ACTIVE
+    note: family-membership alone does not imply duplicate runtime
+  AGENT_ORCHESTRATION:
+    state: REVIEW_REQUIRED
+    note: registry/config/task files must be separated from executable runtime before convergence
