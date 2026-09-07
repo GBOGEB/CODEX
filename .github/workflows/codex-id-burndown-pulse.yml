@@ -9,6 +9,12 @@ on:
         default: '16'
         type: choice
         options: ['1','2','4','8','16','32','64']
+  pull_request:
+    paths:
+      - '.github/workflows/codex-id-burndown-pulse.yml'
+      - 'scripts/census_ssot_candidates.py'
+      - 'ssot/manifest.yaml'
+      - 'ssot/registry/logical_id_registry.yaml'
 
 permissions:
   contents: read
@@ -18,19 +24,22 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       shards: ${{ steps.plan.outputs.shards }}
+      workers: ${{ steps.plan.outputs.workers }}
     steps:
       - id: plan
         shell: python
         env:
-          WORKERS: ${{ inputs.workers }}
+          REQUESTED_WORKERS: ${{ github.event_name == 'workflow_dispatch' && inputs.workers || '16' }}
         run: |
           import json, os
-          n = int(os.environ['WORKERS'])
+          n = int(os.environ['REQUESTED_WORKERS'])
           allowed = {1,2,4,8,16,32,64}
           if n not in allowed:
               raise SystemExit(f'unsupported worker count: {n}')
           with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as f:
               f.write('shards=' + json.dumps(list(range(n)), separators=(',', ':')) + '\n')
+              f.write(f'workers={n}\n')
+          print(f'ID_PULSE_PLAN workers={n} sue={n * 3}')
 
   discover:
     needs: plan
@@ -50,29 +59,29 @@ jobs:
       - name: Run canonical census and extract deterministic shard
         env:
           SHARD: ${{ matrix.shard }}
-          WORKERS: ${{ inputs.workers }}
+          WORKERS: ${{ needs.plan.outputs.workers }}
         run: |
+          start=$(date +%s%N)
           python scripts/census_ssot_candidates.py
           python - <<'PY'
-          import json, os, time
+          import json, os
           from pathlib import Path
           shard = int(os.environ['SHARD'])
           workers = int(os.environ['WORKERS'])
           source = Path('reports/codex_2_0_ssot_candidate_census.json')
           data = json.loads(source.read_text(encoding='utf-8'))
-          t0 = time.time()
           rows = [r for i, r in enumerate(data['candidates']) if i % workers == shard]
           unresolved = [r for r in rows if r.get('logical_id') is None]
           active = [r for r in unresolved if r.get('lifecycle_state') == 'ACTIVE_CANDIDATE']
           out = {
-              'schema_version': '1.0',
+              'schema_version': '1.1',
               'purpose': 'CODEX_ID_BURNDOWN_DISCOVERY_SHARD',
               'workers': workers,
+              'sue': workers * 3,
               'shard': shard,
               'candidate_rows': len(rows),
               'unresolved_rows': len(unresolved),
               'active_unresolved_rows': len(active),
-              'elapsed_extract_seconds': round(time.time() - t0, 6),
               'candidates': active,
           }
           path = Path(f'reports/id_burndown/shard-{shard:02d}.json')
@@ -80,6 +89,8 @@ jobs:
           path.write_text(json.dumps(out, indent=2) + '\n', encoding='utf-8')
           print(f"ID_SHARD_PASS shard={shard}/{workers} rows={len(rows)} unresolved={len(unresolved)} active={len(active)}")
           PY
+          end=$(date +%s%N)
+          echo "ID_SHARD_NS=$((end-start))"
       - uses: actions/upload-artifact@v4
         with:
           name: id-burndown-shard-${{ matrix.shard }}
