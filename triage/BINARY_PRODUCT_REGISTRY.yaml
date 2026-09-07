@@ -1,0 +1,12 @@
+schema_version: "1.0"
+repository: GBOGEB/CODEX
+authority_rule: generated_products_are_release_children
+product_families:
+  qps_cost_roundtrip:
+    state: GENERATED
+    products: [QPS_COST_Master.xlsx, QPS_Cost_Engineering_Handover.docx, QPS_Cost_Management_Deck.pptx, QPS_Cost_Engineering_Handover.pdf, index.html]
+    controls: [QA_REPORT.md, RELEASE_NOTES.md, BUILD_META.json]
+  contract_governance:
+    state: GENERATED
+    products: [XLSX, HTML, trace_report, dashboard]
+required_lineage: [governing_ssot, source_digest, builder_contract, validator_receipt]
