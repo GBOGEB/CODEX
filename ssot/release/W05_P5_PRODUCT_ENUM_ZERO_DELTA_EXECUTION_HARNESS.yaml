@@ -1,0 +1,144 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W005
+pulse: P5
+status: PRODUCT_ENUMERATED_ZERO_DELTA_HARNESS_READY_NOT_EXECUTED
+source_reentry:
+  from_w05_p4_pr: 475
+  from_w05_p4_merge: 52a9457f55fcdc65fdf3ee33a199901c39321b5a
+  rule: >-
+    P5 enumerates concrete product candidates from the repository-visible binary
+    product registry and defines the execution harness for SHA256SUMS, REBUILD_LOG
+    and ZERO_DELTA_RECEIPT. Actual hashes, rebuild receipts and zero-delta pass
+    claims require execution over repository bytes and regenerated outputs.
+concrete_product_enumeration:
+  source_manifest:
+    path: triage/BINARY_PRODUCT_REGISTRY.yaml
+    evidence_status: FOUND_BY_REPO_SEARCH
+    authority_rule: generated_products_are_release_children
+  product_families:
+    qps_cost_roundtrip:
+      state: GENERATED
+      products:
+        - QPS_COST_Master.xlsx
+        - QPS_Cost_Engineering_Handover.docx
+        - QPS_Cost_Management_Deck.pptx
+        - QPS_Cost_Engineering_Handover.pdf
+        - index.html
+      controls:
+        - QA_REPORT.md
+        - RELEASE_NOTES.md
+        - BUILD_META.json
+      classification: DERIVED_RELEASE_CHILDREN_NOT_AUTHORITY
+product_consumer_map_population:
+  status: POPULATED_FOR_VISIBLE_QPS_COST_ROUNDTRIP_FAMILY
+  entries:
+    - product_path: QPS_COST_Master.xlsx
+      product_type: xlsx
+      consumer_role: reviewer_workbook_and_reconciliation_surface
+      authority_status: DERIVED_OUTPUT
+      required_hash: true
+      required_rebuild_log: true
+      required_zero_delta_or_tolerance: true
+      current_hash_status: PENDING_EXECUTION
+      current_rebuild_status: PENDING_EXECUTION
+      current_zero_delta_status: PENDING_EXECUTION
+    - product_path: QPS_Cost_Engineering_Handover.docx
+      product_type: docx
+      consumer_role: reviewer_document_and_pdf_source_if_bound
+      authority_status: DERIVED_OUTPUT
+      required_hash: true
+      required_rebuild_log: true
+      required_zero_delta_or_tolerance: true
+      current_hash_status: PENDING_EXECUTION
+      current_rebuild_status: PENDING_EXECUTION
+      current_zero_delta_status: PENDING_EXECUTION
+    - product_path: QPS_Cost_Management_Deck.pptx
+      product_type: pptx
+      consumer_role: stakeholder_deck_review
+      authority_status: DERIVED_OUTPUT
+      required_hash: true
+      required_rebuild_log: true
+      required_zero_delta_or_tolerance: true
+      current_hash_status: PENDING_EXECUTION
+      current_rebuild_status: PENDING_EXECUTION
+      current_zero_delta_status: PENDING_EXECUTION
+    - product_path: QPS_Cost_Engineering_Handover.pdf
+      product_type: pdf
+      consumer_role: immutable_fixed_layout_review_snapshot
+      authority_status: DERIVED_OUTPUT
+      required_hash: true
+      required_rebuild_log: true
+      required_zero_delta_or_tolerance: true
+      current_hash_status: PENDING_EXECUTION
+      current_rebuild_status: PENDING_EXECUTION
+      current_zero_delta_status: PENDING_EXECUTION
+    - product_path: index.html
+      product_type: html
+      consumer_role: browser_visual_qa_and_dashboard_review
+      authority_status: DERIVED_OUTPUT
+      required_hash: true
+      required_rebuild_log: true
+      required_zero_delta_or_tolerance: true
+      current_hash_status: PENDING_EXECUTION
+      current_rebuild_status: PENDING_EXECUTION
+      current_zero_delta_status: PENDING_EXECUTION
+sha256s_execution_contract:
+  preferred_output_path: release/SHA256SUMS
+  alternate_output_paths:
+    - release/checksums.sha256
+    - artifacts/SHA256SUMS
+  execution_command_template: >-
+    find . -type f \( -name '*.xlsx' -o -name '*.docx' -o -name '*.pptx' -o -name '*.pdf' -o -name '*.html' \)
+    -print0 | sort -z | xargs -0 sha256sum > release/SHA256SUMS
+  execution_status: NOT_RUN_IN_THIS_PR
+  reason_not_run: >-
+    GitHub connector can create repository receipts but cannot execute repo build
+    or hash binary bytes in this turn. Exact hashes must be produced by CI or a
+    checked-out runner.
+rebuild_log_execution_contract:
+  preferred_output_path: release/REBUILD_LOG.yaml
+  alternate_output_paths:
+    - release/rebuild_receipts.yaml
+    - artifacts/REBUILD_LOG.yaml
+  required_fields:
+    - source_commit_sha
+    - builder_workflow_or_script
+    - product_path
+    - input_authority_paths
+    - generated_at_utc
+    - output_sha256
+    - result
+  execution_status: NOT_RUN_IN_THIS_PR
+zero_delta_execution_harness:
+  preferred_receipt_path: release/ZERO_DELTA_RECEIPT.yaml
+  alternate_receipt_path: artifacts/ZERO_DELTA_RECEIPT.yaml
+  workflow_status: DEFINED_READY_NOT_EXECUTED
+  required_steps:
+    - checkout_exact_source_commit
+    - freeze_authority_inputs
+    - first_regeneration
+    - write_first_SHA256SUMS_and_REBUILD_LOG
+    - clean_output_workspace
+    - second_regeneration_same_inputs
+    - write_second_SHA256SUMS_and_REBUILD_LOG
+    - compare_hashes_or_render_tolerance_receipts
+    - write_ZERO_DELTA_RECEIPT_only_after_execution
+  pass_claim_allowed_now: false
+  pass_claim_rule: >-
+    ZERO_DELTA_PASS may only be claimed after both generations complete and the
+    receipt records byte-identical hashes or explicit governed tolerance deltas.
+execution_boundary:
+  products_regenerated: false
+  actual_sha256s_written: false
+  actual_rebuild_log_written: false
+  zero_delta_run: false
+  zero_delta_receipt_written: false
+  product_parity: NOT_YET
+  global_codex_2_0: NOT_YET
+next_mechanical_steps:
+  - add_ci_workflow_or_runner_job_to_execute_sha256s_and_rebuild_log
+  - execute product regeneration for qps_cost_roundtrip
+  - commit or upload SHA256SUMS and REBUILD_LOG as governed artifacts
+  - execute second regeneration and write ZERO_DELTA_RECEIPT
+  - only then promote product_parity from NOT_YET
