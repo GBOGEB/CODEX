@@ -1,0 +1,136 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W004
+pulse: P7
+status: CLASSIFICATION_ONLY_POST_MCP_FACADE_MERGE
+constitutional_rule: >-
+  Family membership, text match, registry presence, workflow presence, or test
+  coverage does not establish executable runtime authority. Only import edges,
+  entrypoint evidence, and actively executed code may create a competing-runtime
+  candidate.
+post_mcp_state:
+  source_pr: 459
+  source_merge: 82bcc56f6eedb34da1ba38eb1282fbe6307f0fe2
+  mcp_runtime_authority_count: 1
+  canonical_mcp_runtime: src/federation/mcp_sweep_engine.py
+  compatibility_facades:
+    - src/mcp_sweep.py
+    - src/federation/mcp_sweep_compat.py
+  rule: compatibility facade is not runtime authority
+prior_discrimination:
+  source_pr: 458
+  raw_family_counts:
+    FEDERATION_RUNTIME: 26
+    AGENT_ORCHESTRATION: 5
+  conclusion: raw family counts are candidates only, not duplicate runtime counts
+federation_runtime_26_reentry:
+  canonical_enclave:
+    path: federation_runtime/
+    role: CANONICAL_RUNTIME_ENCLAVE
+    state: ACTIVE
+  executable_candidates_requiring_import_edge_review:
+    - path: federation_runtime/engines/governance_parser.py
+      role: EXECUTABLE_VALIDATION_ENGINE
+      evidence: shebang_and_argparse_governance_header_parser
+      disposition: KEEP_AS_ENGINE_UNLESS_DUPLICATE_ENTRYPOINT_FOUND
+    - path: federation_runtime/engines/phase0_orchestration.py
+      role: EXECUTABLE_ORCHESTRATION_CANDIDATE
+      evidence: phase0_orchestration_mentions_runtime_modules_and_future_jobs
+      disposition: REVIEW_IMPORT_EDGES_AND_RUNTIME_OWNERSHIP
+    - path: federation_runtime/engines/confluence_artifact_pipeline.py
+      role: EXECUTABLE_ARTIFACT_PIPELINE_CANDIDATE
+      evidence: referenced_by_phase0_orchestration_and_task_links
+      disposition: REVIEW_AS_PIPELINE_NOT_RUNTIME_DUPLICATE_BY_DEFAULT
+  validators_and_runners:
+    - path: scripts/check_federation_governance.py
+      role: VALIDATOR_WITH_REAL_CODE_INVENTORY
+      evidence: maintains_real_code_vs_scaffold_inventory
+      disposition: NON_RUNTIME_AUTHORITY
+    - path: scripts/validate_all.py
+      role: VALIDATION_RUNNER
+      evidence: includes federation runtime smoke tests
+      disposition: NON_RUNTIME_AUTHORITY
+    - path: scripts/map_runtime_consumers.py
+      role: RUNTIME_CONSUMER_MAPPER
+      evidence: maps FEDERATION_RUNTIME and AGENT_ORCHESTRATION by token family
+      disposition: MEASUREMENT_TOOL_NOT_RUNTIME
+  contracts_schemas_docs_registries:
+    - path: federation_runtime/schema/governance_header.schema.json
+      role: SCHEMA
+      disposition: NON_RUNTIME
+    - path: federation_runtime/README.md
+      role: DOCUMENTATION
+      disposition: NON_RUNTIME
+    - path: federation_runtime/docs/FULL_PR_TRACE.md
+      role: DOCUMENTATION_TRACE
+      disposition: NON_RUNTIME
+    - path: federation_runtime/.github/W003_PR_FOLLOW_UP.md
+      role: GOVERNANCE_DOCUMENT
+      disposition: NON_RUNTIME
+    - path: triage/GRAPH_REGISTRY.yaml
+      role: GRAPH_REGISTRY
+      disposition: NON_RUNTIME
+    - path: triage/REPO_CENSUS.yaml
+      role: CENSUS_REGISTRY
+      disposition: NON_RUNTIME
+    - path: ssot/registry/runtime_registry.yaml
+      role: RUNTIME_REGISTRY_AUTHORITY_MAP
+      disposition: AUTHORITY_MAP_NOT_EXECUTABLE
+    - path: outputs/orchestration/task_links.yaml
+      role: GENERATED_ORCHESTRATION_LINK_VIEW
+      disposition: DERIVED_NON_RUNTIME
+  current_executable_competition_status: REVIEW_REQUIRED
+  executable_competition_candidates_count: 0
+  reason: >-
+    No pair of active executable files has yet been shown by import/entrypoint
+    evidence to implement the same federation-runtime contract. Three files are
+    executable candidates, but currently appear to be distinct validation,
+    orchestration, and artifact-pipeline roles.
+agent_orchestration_5_reentry:
+  observed_role_split:
+    - path: SSOT/github_mcp_agentic_orchestration_ssot.yaml
+      role: LOCAL_AUTHORITATIVE_GOVERNANCE_SSOT
+      disposition: AUTHORITY_NOT_EXECUTABLE_RUNTIME
+    - path: .codex/tasks/github_mcp_agentic_orchestration.yaml
+      role: TASK_CONTRACT
+      disposition: CONTRACT_NOT_RUNTIME
+    - path: triage/RUNTIME_AGENT_REGISTRY.yaml
+      role: RUNTIME_AGENT_REGISTRY
+      disposition: REGISTRY_NOT_RUNTIME
+    - path: AGENTIC/proposed_fixes.yaml
+      role: GENERATED_OR_PROPOSED_FIX_SURFACE
+      disposition: GENERATED_NON_RUNTIME
+    - path: agent_runtime/agent_metrics.json
+      role: METRICS_VIEW
+      disposition: DERIVED_NON_RUNTIME
+  executable_agent_runtime_identified: false
+  executable_competition_candidates_count: 0
+  next_required_probe:
+    - find_importers_of_task_contract
+    - identify_executable_agent_entrypoint_if_any
+    - verify whether agents/ path or external MCP worker owns execution
+    - do_not_prune_task_contract_or_ssot
+runtime_consumer_map_reentry:
+  required: true
+  reason: #459 changed src/mcp_sweep.py from implementation to facade
+  next_command_intent: regenerate_reports_codex_2_0_runtime_consumer_map_json
+  expected_delta:
+    MCP_SWEEP: independent_implementation_count_decreases_to_one
+    FEDERATION_RUNTIME: raw_family_count_remains_candidate_population
+    AGENT_ORCHESTRATION: raw_family_count_remains_mixed_non_runtime_population
+allowed_next_work:
+  - narrow_import_edge_census_for_three_federation_executable_candidates
+  - locate_agent_execution_entrypoint_or_confirm_absent
+  - update_runtime_registry_with_declared_non_runtime_roles
+blocked_next_work:
+  - deleting_federation_runtime_files_without_import_edge_duplication_evidence
+  - pruning_agent_orchestration_ssot_or_task_contract
+  - claiming_global_codex_2_0_dov
+w04_dov_position:
+  mcp_capability_migration: PASS_13_OF_13
+  mcp_duplicate_shell_retirement: IMPLEMENTED_MERGED
+  mcp_runtime_authorities: ONE_CANONICAL_PLUS_COMPATIBILITY_FACADES
+  federation_runtime_discrimination: PARTIAL_REENTRY
+  agent_orchestration_discrimination: PARTIAL_REENTRY
+  pca_bt_3p3: NOT_YET
+  global_codex_2_0: NOT_YET
