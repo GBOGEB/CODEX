@@ -1,0 +1,115 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W005
+pulse: P3
+status: PRODUCT_CONSUMER_MAP_AND_ZERO_DELTA_CONTRACTS_STARTED
+source_reentry:
+  from_w05_p2_pr: 470
+  from_w05_p2_merge: 8efb7c584adc049002571a33b82147143c769750
+  rule: >-
+    This pulse creates the first explicit contract skeleton for product consumer
+    mapping, release-manifest inputs and zero-delta repeatability. It does not
+    regenerate products, sign a release, or promote generated outputs.
+constitutional_boundary: >-
+  Generated products are consumers of governed source authority. A product file
+  can be release evidence only when connected by authority id, source path,
+  rebuild recipe, provenance receipt, checksum and zero-delta/tolerance receipt.
+product_consumer_contract:
+  required_edge_fields:
+    - product_id
+    - product_path
+    - product_type
+    - source_authority_id
+    - source_authority_path
+    - provenance_manifest_path
+    - rebuild_recipe_path
+    - checksum_sha256
+    - consumer_role
+    - promotion_status
+    - zero_delta_receipt_path
+  product_types:
+    html:
+      authority_status: DERIVED_OUTPUT
+      allowed_roles: [dashboard, report_view, presenter_view]
+    xlsx:
+      authority_status: DERIVED_OUTPUT
+      allowed_roles: [workbook_view, calculation_output, audit_table]
+    pptx:
+      authority_status: DERIVED_OUTPUT
+      allowed_roles: [presentation_view, review_pack]
+    pdf:
+      authority_status: DERIVED_OUTPUT
+      allowed_roles: [frozen_report, narrative_export]
+    docx:
+      authority_status: DERIVED_OUTPUT
+      allowed_roles: [draft_report, redline_source_if_declared]
+  forbidden_conditions:
+    - product_presence_as_authority
+    - generated_binary_without_source_authority
+    - checksum_without_rebuild_recipe
+    - manifest_without_logical_id
+    - zero_delta_claim_without_receipt
+release_manifest_input_contract:
+  required_fields:
+    - release_id
+    - release_candidate_id
+    - source_commit_sha
+    - source_tree_sha
+    - included_authority_ids
+    - included_generated_products
+    - product_consumer_map_path
+    - sha256sums_path
+    - rebuild_log_path
+    - zero_delta_receipt_path
+    - ci_status_matrix_path
+    - main_protection_status
+    - exceptions
+  blocked_until:
+    - main_protection_resolved_or_exception_recorded
+    - required_status_checks_green_or_exception_recorded
+    - product_consumer_map_complete
+    - sha256sums_complete
+    - zero_delta_receipt_complete
+zero_delta_repeatability_contract:
+  objective: >-
+    Prove that governed source authority regenerates the same product set or an
+    explicitly tolerated equivalent set across repeated builds.
+  required_inputs:
+    - source_commit_sha
+    - build_environment_id
+    - dependency_lock_or_record
+    - rebuild_command_or_workflow
+    - generated_product_manifest_before
+    - generated_product_manifest_after
+    - sha256_before
+    - sha256_after
+    - accepted_tolerance_policy
+  required_outputs:
+    - zero_delta_status
+    - changed_files
+    - changed_hashes
+    - tolerated_differences
+    - failed_products
+    - rerun_count
+    - receipt_path
+  status_values:
+    - PASS_EXACT
+    - PASS_TOLERATED
+    - FAIL_DELTA
+    - NOT_RUN
+current_validation_position:
+  product_consumer_map: CONTRACT_CREATED_NOT_POPULATED
+  release_manifest_inputs: CONTRACT_CREATED_NOT_POPULATED
+  zero_delta_repeatability: CONTRACT_CREATED_NOT_RUN
+  product_regeneration: NOT_RUN
+  product_parity: NOT_YET
+  generated_output_promotion: BLOCKED
+  main_protection: BLOCKED_ADMIN
+  global_codex_2_0: NOT_YET
+next_mechanical_steps:
+  - exact_head_ci_for_this_contract_receipt
+  - populate product_consumer_map from census and output manifests
+  - locate or create sha256sums_path for generated products
+  - locate or create rebuild_log_path for generated products
+  - run or define zero_delta workflow without claiming pass before execution
+  - keep release manifest draft blocked until product and protection gates close
