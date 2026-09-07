@@ -1,4 +1,4 @@
-schema_version: "1.0"
+schema_version: "1.1"
 registry_id: CODEX_LOGICAL_ID_REGISTRY
 release_program: CODEX_2_0
 purpose: >-
@@ -71,3 +71,33 @@ nodes:
     owner: CODEX_CONTRACT_GOVERNANCE
     lifecycle: ACTIVE
     authority_class: CONSUMER
+  CODEX_RELEASE_SELF_SMOKE:
+    path: scripts/release_self_smoke.py
+    role: EXECUTABLE_RELEASE_VALIDATOR
+    owner: CODEX_RELEASE_GOVERNANCE
+    lifecycle: ACTIVE
+    authority_class: CONSUMER
+  CODEX_CANONICAL_SSOT_RESOLVER:
+    path: tools/ssot_resolver.py
+    role: CANONICAL_AUTHORITY_RESOLVER
+    owner: CODEX_RELEASE_GOVERNANCE
+    lifecycle: ACTIVE
+    authority_class: CONSUMER
+  CODEX_SSOT_RESOLVER_COMPAT:
+    path: codex/ssot_resolver.py
+    role: COMPATIBILITY_IMPORT
+    owner: CODEX_RELEASE_GOVERNANCE
+    lifecycle: ACTIVE
+    authority_class: COMPATIBILITY
+  CODEX_SSOT_CENSUS_GENERATOR:
+    path: scripts/census_ssot_candidates.py
+    role: EXECUTABLE_CENSUS_GENERATOR
+    owner: CODEX_RELEASE_GOVERNANCE
+    lifecycle: ACTIVE
+    authority_class: CONSUMER
+  CODEX_SSOT_ID_BINDER:
+    path: scripts/bind_ssot_logical_ids.py
+    role: LEGACY_AUTHORITY_BINDING_REPORTER
+    owner: CODEX_RELEASE_GOVERNANCE
+    lifecycle: ACTIVE
+    authority_class: COMPATIBILITY
