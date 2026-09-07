@@ -1,0 +1,109 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W004
+pulse: P9
+status: W04_RUNTIME_DISCRIMINATION_CONTROL_LOOP
+source_sequence:
+  - pr: 459
+    result: MCP duplicate orchestration shell retired into compatibility facade
+    merge: 82bcc56f6eedb34da1ba38eb1282fbe6307f0fe2
+  - pr: 461
+    result: post-MCP runtime role and edge census re-entered
+    merge: 60beb0470a7f626b53d6d95762be433f9d001074
+  - pr: 462
+    result: import-edge probe found zero confirmed duplicate runtime pairs
+    merge: 1b20cdd68abf914899b504658fd54d6bd7d91fa1
+constitutional_boundary: >-
+  This receipt closes a W04 runtime-discrimination control loop. It does not
+  tag CODEX 2.0, regenerate release binaries, or promote global release DoV.
+  Runtime pruning remains forbidden without duplicate executable-contract
+  evidence.
+produce:
+  evidence:
+    mcp_capability_migration: 13_of_13
+    mcp_facade_retirement: implemented_and_merged
+    runtime_consumer_reentry: recorded
+    federation_import_edge_probe: completed
+    agent_orchestration_probe: completed_for_token_family
+  output: W04 runtime discrimination evidence chain exists through P3-P9
+challenge:
+  findings:
+    - id: C1
+      claim: MCP runtime authority count is one canonical runtime plus compatibility facades
+      result: PASS
+      residual_risk: LOW
+    - id: C2
+      claim: Federation Runtime 26 contained duplicate executable runtimes
+      result: NOT_PROVEN
+      residual_risk: MEDIUM_LOW
+      reason: three executable roles were identified, but no duplicate contract pair was proven
+    - id: C3
+      claim: Agent Orchestration 5 contained five runtimes
+      result: FALSE
+      residual_risk: MEDIUM
+      reason: current evidence resolves to SSOT, task contract, registry, generated surface, and metrics/view surfaces
+    - id: C4
+      claim: migration_or_prune_is_now_allowed
+      result: FAIL_CLOSED
+      residual_risk: LOW
+      reason: zero confirmed duplicate runtime candidates
+reenter:
+  decision: NO_PRUNE_NO_MIGRATION
+  next_allowed_options:
+    - W04_P10_NARROW_AGENT_ENTRYPOINT_PROBE
+    - W05_RELEASE_READINESS_CONSUMER_VALIDATION
+  blocked_options:
+    - prune_federation_runtime_engines
+    - prune_agentic_orchestration_ssot_or_task_contract
+    - claim_global_codex_2_0_dov
+pca:
+  dominant_residuals:
+    - name: AGENT_EXECUTABLE_ENTRYPOINT_UNKNOWN
+      weight: 0.74
+      evidence: agent orchestration token family did not expose executable owner
+    - name: RELEASE_PRODUCT_PARITY_NOT_RUN
+      weight: 0.68
+      evidence: W04 did not regenerate four-product release artifacts
+    - name: GLOBAL_RELEASE_ZERO_DELTA_NOT_RUN
+      weight: 0.64
+      evidence: zero-delta release repeat is still outside this wave
+    - name: FEDERATION_RUNTIME_SUBENGINE_BOUNDARIES_NOT_DECLARED
+      weight: 0.42
+      evidence: federation runtime engines appear distinct but registry lacks declared sub-role contracts for all engines
+bt:
+  ranked_next_targets:
+    - rank: 1
+      id: NARROW_AGENT_ENTRYPOINT_PROBE
+      score: 0.78
+      action: search agents/ and agent_runtime/ for executable entrypoint and bind or explicitly mark absent
+      scope: narrow
+      workers: 1
+    - rank: 2
+      id: DECLARE_FEDERATION_SUBENGINE_ROLES
+      score: 0.61
+      action: update runtime registry with explicit subengine roles if W04 closure is accepted
+      scope: narrow
+      workers: 1
+    - rank: 3
+      id: W05_RELEASE_READINESS_CONSUMER_VALIDATION
+      score: 0.58
+      action: validate consumers after MCP facade and W04 discrimination closures
+      scope: medium
+      workers: 2
+three_p3:
+  produce_result: PASS
+  challenge_result: PASS_WITH_RESIDUALS
+  reenter_result: PASS_NO_PRUNE
+  reverse_pressure:
+    recommended_next_pulse: W04_P10_NARROW_AGENT_ENTRYPOINT_PROBE
+    alternate_next_wave: W05_RELEASE_READINESS_CONSUMER_VALIDATION
+    multiplier: 1
+    reason: evidence quality is high enough to block pruning, but not enough to close agent runtime ownership globally
+w04_dov:
+  mcp_runtime_uniqueness: PASS
+  federation_runtime_discrimination: PASS_NO_DUPLICATE_CONFIRMED
+  agent_orchestration_discrimination: PARTIAL_EXECUTABLE_ENTRYPOINT_UNKNOWN
+  migration_prune_decision: BLOCKED
+  pca_bt_3p3: COMPLETE_IN_THIS_RECEIPT
+  w04_overall: PASS_WITH_AGENT_ENTRYPOINT_RESIDUAL
+  global_codex_2_0: NOT_YET
