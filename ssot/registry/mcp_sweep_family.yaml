@@ -1,0 +1,33 @@
+schema_version: "1.0"
+family: MCP_SWEEP
+authority_invariant: ONE_CANONICAL_RUNTIME
+engineering_authority_mutation: false
+canonical_runtime: src/federation/mcp_sweep_engine.py
+canonical_runner: scripts/run_mcp_sweep.py
+victory:
+  runtime_authorities: 1
+  runners: 1
+  duplicated_execution_logic: 0
+  unique_capability_loss: 0
+members:
+  - {path: src/federation/mcp_sweep_engine.py, role: CANONICAL_RUNTIME, disposition: KEEP, active: true}
+  - {path: scripts/run_mcp_sweep.py, role: THIN_RUNNER, disposition: KEEP, active: true}
+  - path: src/mcp_sweep.py
+    role: SERVICE_CONTRACT_DONOR
+    disposition: MIGRATE_CAPABILITY
+    active: true
+    unique_capabilities: [typed_input_contract, typed_output_contract, token_scope_handshake, date_window_filter, branch_filter, pagination, transient_retry, retry_metrics, ttl_dedupe_state, idempotence, append_only_rtm_lineage, confidence_validation, provenance_validation, governance_schema_validation]
+  - {path: tools/mcp_sweep/mcp_sweep_engine.py, role: COMPATIBILITY_WRAPPER, disposition: WRAP, active: true}
+  - {path: tests/federation/test_mcp_sweep_engine.py, role: TEST, disposition: NON_RUNTIME, active: true}
+  - {path: tests/federation/test_run_mcp_sweep.py, role: TEST, disposition: NON_RUNTIME, active: true}
+  - {path: tests/test_mcp_sweep.py, role: TEST, disposition: NON_RUNTIME, active: true, unique_capabilities: [contract_regression, token_boundary_test, retry_test, idempotence_test, ttl_test, lineage_test]}
+  - {path: src/__init__.py, role: REGISTRY, disposition: REQUALIFY_BEFORE_FOLD, active: true}
+  - {path: src/federation/__init__.py, role: REGISTRY, disposition: KEEP, active: true}
+  - {path: _config/governance.yml, role: CONFIG, disposition: NON_RUNTIME, active: true}
+  - {path: governance/schemas/sweep_classification.schema.yaml, role: SCHEMA, disposition: NON_RUNTIME, active: true}
+  - {path: triage/PIPELINE_REGISTRY.yaml, role: REGISTRY, disposition: NON_RUNTIME, active: true}
+  - {path: triage/RUNTIME_AGENT_REGISTRY.yaml, role: REGISTRY, disposition: NON_RUNTIME, active: true}
+notes:
+  - The W03 scanner family count is heuristic; this registry is the controlled 13-member MCP convergence set.
+  - src/mcp_sweep.py may not be retired until every listed unique capability is migrated or explicitly rejected with evidence.
+  - tests, schemas, config and registries do not count as competing runtime implementations.
