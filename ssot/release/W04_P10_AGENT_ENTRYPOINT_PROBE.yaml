@@ -1,0 +1,105 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W004
+pulse: P10
+status: AGENT_ENTRYPOINT_PROBE_NO_RUNTIME_CONFIRMED
+source_dependency:
+  p9_pr: 463
+  p9_head: 87f160d410f1820bb01fa78a9a0659873ca084f8
+  dependency_status: P9_OPEN_AT_PROBE_START
+  rule: >-
+    This pulse is additive evidence for the P9 BT#1 recommendation. It does not
+    require or perform runtime pruning, and it does not claim global CODEX 2.0 DoV.
+probe_scope:
+  included:
+    - agents/
+    - agent_runtime/
+    - .codex/tasks/github_mcp_agentic_orchestration.yaml
+    - AGENTIC/proposed_fixes.yaml
+    - METRICS/agentic_pr_scan_output.md
+    - METRICS/agentic_ascii_metrics.md
+  excluded:
+    - runtime pruning
+    - migration of task contracts
+    - promotion of generated proposed fixes to runtime authority
+    - global release tagging
+search_results:
+  agents_path_entrypoint_search:
+    query: "agents/ entrypoint main argparse click typer __main__ agent"
+    result: NO_MATCHES
+    conclusion: >-
+      No executable agent entrypoint was found in the agents/ family by this
+      token search.
+  agent_runtime_entrypoint_search:
+    query: "agent_runtime main argparse __main__ run agent"
+    result: ONLY_VISUAL_METRICS_UTILITIES_FOUND
+    observed_candidates:
+      - path: visuals/orchestration_dependency_graph.py
+        role: VISUALIZATION_UTILITY
+        evidence: argparse main generates orchestration dependency graph
+        runtime_authority: false
+      - path: visuals/agent_telemetry_timeline.py
+        role: VISUALIZATION_UTILITY
+        evidence: reads metrics agents and has __main__ wrapper
+        runtime_authority: false
+    conclusion: >-
+      The found executable Python files are visualization/reporting utilities,
+      not the agent orchestration runtime.
+  task_contract_read:
+    path: .codex/tasks/github_mcp_agentic_orchestration.yaml
+    type: mcp_container
+    title: Agentic GitHub MCP PR Follow-Up and Fix Loop
+    declared_agents:
+      - github_mcp_reader
+      - discrepancy_detector
+      - fix_planner
+      - patch_applier
+      - comment_responder
+      - commit_guard
+    triggers:
+      - local_source_push
+      - github_pr_comment
+      - ci_failure
+    outputs:
+      - AGENTIC/agentic_pr_followup_log.yaml
+      - AGENTIC/proposed_fixes.yaml
+      - AGENTIC/comment_response_drafts.md
+      - METRICS/agentic_ascii_metrics.md
+      - METRICS/agentic_pr_scan_output.md
+    command_hooks_found:
+      - git push origin <branch>
+    executable_runtime_entrypoint_found: false
+    conclusion: >-
+      The task contract defines roles, triggers, human gates and output products.
+      It does not name a repository-local executable agent runtime entrypoint.
+classification:
+  agent_orchestration_family:
+    SSOT/github_mcp_agentic_orchestration_ssot.yaml: GOVERNANCE_AUTHORITY_NOT_RUNTIME
+    .codex/tasks/github_mcp_agentic_orchestration.yaml: TASK_CONTRACT_NOT_RUNTIME
+    triage/RUNTIME_AGENT_REGISTRY.yaml: REGISTRY_NOT_RUNTIME
+    AGENTIC/proposed_fixes.yaml: GENERATED_PROPOSAL_SURFACE_NOT_RUNTIME
+    agent_runtime/agent_metrics.json: METRICS_VIEW_NOT_RUNTIME
+    visuals/agent_telemetry_timeline.py: REPORTING_UTILITY_NOT_RUNTIME_AUTHORITY
+    visuals/orchestration_dependency_graph.py: REPORTING_UTILITY_NOT_RUNTIME_AUTHORITY
+decision:
+  executable_agent_runtime_identified: false
+  duplicate_agent_runtime_pair_confirmed: false
+  prune_allowed: false
+  migration_allowed: false
+  w04_agent_residual: >-
+    Agent orchestration appears to be a governed MCP/container/task pattern
+    with human-gated outputs, not a repository-local executable runtime authority
+    in the current evidence set.
+recommended_next:
+  primary: >-
+    Accept W04 runtime discrimination as PASS_WITH_AGENT_ENTRYPOINT_RESIDUAL
+    and move to W05 release-readiness/consumer validation.
+  alternate: >-
+    If stricter closure is required, inspect external MCP/container execution
+    records or CI workflow logs for the runner that consumes this task contract.
+w04_dov_position_after_p10:
+  mcp_runtime_uniqueness: PASS
+  federation_runtime_discrimination: PASS_NO_DUPLICATE_CONFIRMED
+  agent_orchestration_discrimination: PASS_NO_REPO_LOCAL_EXECUTABLE_CONFIRMED_WITH_EXTERNAL_RUNNER_RESIDUAL
+  migration_prune_decision: BLOCKED_NO_EVIDENCE
+  global_codex_2_0: NOT_YET
