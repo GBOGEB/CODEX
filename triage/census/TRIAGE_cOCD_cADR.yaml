@@ -1,0 +1,23 @@
+schema_version: triage-architecture/1.0.0
+cOCD:
+  id: TRIAGE-OCD-KEB
+  repo: GBOGEB/CODEX
+  role: KEB_SEMANTIC_CONTROL
+  mission: [semantic_validation, provenance_validation, operation_validation, federation_routing, style_contract_governance, parent_return_normalization]
+  owns: [vocabulary, schema_contracts, routing_contracts, operation_registry, federation_protocol, normalized_receipts]
+  does_not_own: [QPS_engineering_values, compliance_decisions, DOW_numerical_findings]
+  interfaces: [child_in, analysis_out, analysis_in, child_return]
+cADR:
+  id: TRIAGE-ADR-KEB-001
+  title: KEB routes meaning without changing meaning
+  status: ACCEPTED
+  decision:
+    mutation_policy: APPEND_RECEIPTS_ONLY
+    payload_identity: EXACT_SHA256
+    semantic_normalization: ALLOWED
+    engineering_mutation: FORBIDDEN
+  gates: [schema, vocabulary, provenance, hash, route, return_contract]
+  failure_mode:
+    unknown_term: FAIL_OR_DEFER
+    digest_mismatch: REJECT_ROUTE
+    missing_provenance: DEFER
