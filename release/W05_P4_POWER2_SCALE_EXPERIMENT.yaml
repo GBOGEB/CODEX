@@ -1,0 +1,72 @@
+schema_version: "1.0"
+experiment_id: CODEX_W05_P4_POWER2_SCALE
+release_program: CODEX_2_0
+purpose: measure whether power-of-two worker escalation improves governed logical-ID burn-down throughput without increasing collisions or rework
+baseline:
+  historical_w03:
+    resolved_ids: 0
+    candidates_approx: 469
+  early_w05:
+    resolved_ids: 5
+    candidates: 472
+  pr_452:
+    governed_ids_added: 2
+    observed_pr_seconds: 83
+    worker_multiple_3pr: 2
+    sue_capacity: 6
+  pr_468:
+    governed_ids_added: 5
+    observed_pr_seconds: 39
+    worker_multiple_3pr: 4
+    sue_capacity: 12
+    registry_nodes_after: 15
+trial:
+  discovery_multiple_3pr: 16
+  discovery_sue_capacity: 48
+  mutation_multiple_3pr: 8
+  mutation_sue_capacity: 24
+  partitions:
+    - authority
+    - runtime_engines
+    - contracts
+    - schemas
+    - workflows
+    - products_views
+    - compatibility
+    - orphan_duplicate_qa
+  single_writer_registry: true
+metrics:
+  queue_depth_actionable_baseline: 124
+  queue_per_discovery_sue_baseline: 2.58
+  collect:
+    - accepted_governed_ids
+    - elapsed_active_minutes
+    - accepted_ids_per_minute
+    - accepted_ids_per_minute_per_sue
+    - discovery_queue_depth
+    - queue_depth_per_sue
+    - duplicate_id_collision_count
+    - path_collision_count
+    - rework_count
+    - exact_head_green_gate_count
+    - exact_head_red_gate_count
+    - exact_head_pending_gate_count
+scale_policy:
+  sequence: [1, 2, 4, 8, 16, 32, 64]
+  promote_to_32_if:
+    minimum_queue_per_sue: 1.5
+    maximum_rework_fraction: 0.10
+    maximum_collision_count: 0
+    maximum_speed_per_sue_degradation_fraction: 0.20
+  promote_to_64_if:
+    condition: only_if_actionable_queue_expands_enough_to_keep_queue_per_sue_at_or_above_1_5
+  reverse_pressure: true
+control_plane_residuals:
+  semantic_runtime:
+    state: RED_AT_PR468_HEAD
+    defect: semantic_runtime_green term requires governed vocabulary disposition
+  governance_validation:
+    state: RED_AT_PR468_HEAD
+    defect: direct validator invocation cannot import codex.ssot_resolver
+  mutation_scale_cap_until_green: 8
+status: STARTED
