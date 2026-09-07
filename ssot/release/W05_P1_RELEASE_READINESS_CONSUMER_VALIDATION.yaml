@@ -1,0 +1,97 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W005
+pulse: P1
+status: RELEASE_READINESS_CONSUMER_VALIDATION_STARTED
+source_reentry:
+  from_w04_p11_pr: 465
+  from_w04_p11_merge: feb84eab4b0dd486362b8d721fd2636fe47f97ee
+  w04_runtime_position: PASS_WITH_CICD_SHELL_AND_EXTERNAL_AGENT_BRAIN_RESIDUAL
+  rule: >-
+    W05 validates consumers, mutation guards, CI/CD coverage and authority
+    boundaries. It does not promote generated outputs into authority and does
+    not perform release tagging.
+validation_scope:
+  artifact_consumers:
+    - AGENTIC/agentic_pr_followup_log.yaml
+    - AGENTIC/proposed_fixes.yaml
+    - AGENTIC/comment_response_drafts.md
+    - METRICS/agentic_ascii_metrics.md
+    - METRICS/agentic_pr_scan_output.md
+    - agentic-scan-artifacts
+  mutation_guards:
+    - human_gate.required_before_commit
+    - workflow permissions
+    - bot recursion guard
+    - generated surface classification
+  ci_cd_gates:
+    - .github/workflows/agentic-pr-discrepancy-scan.yml
+    - .github/workflows/ci.yml
+    - .github/workflows/codex_semantic_runtime_ci.yml
+    - .github/workflows/runtime-federation-ci.yml
+    - .github/workflows/validate-federation.yml
+    - security and render workflows
+  branch_release_controls:
+    - main_protection
+    - required_status_checks
+    - release_manifest
+    - zero_delta
+    - product regeneration parity
+observations:
+  agentic_artifact_producers:
+    task_contract:
+      path: .codex/tasks/github_mcp_agentic_orchestration.yaml
+      declares_outputs:
+        - AGENTIC/agentic_pr_followup_log.yaml
+        - AGENTIC/proposed_fixes.yaml
+        - AGENTIC/comment_response_drafts.md
+        - METRICS/agentic_ascii_metrics.md
+        - METRICS/agentic_pr_scan_output.md
+      classification: CONTRACT_DECLARATION_NOT_RUNTIME_AUTHORITY
+    cicd_shell:
+      path: .github/workflows/agentic-pr-discrepancy-scan.yml
+      permissions: READ_ONLY
+      writes_runtime_outputs:
+        - AGENTIC/agentic_pr_followup_log.yaml
+        - METRICS/agentic_pr_scan_output.md
+      uploads_artifact: agentic-scan-artifacts
+      classification: READ_ONLY_EXECUTION_SHELL_NOT_MUTATION_AUTHORITY
+  consumer_search:
+    in_repo_artifact_consumer_found: false
+    evidence_summary: >-
+      Search found producer declarations and the CI/CD shell, but no in-repo
+      consumer that downloads agentic-scan-artifacts or applies AGENTIC/METRICS
+      outputs as repository mutations.
+  mutation_guard_assessment:
+    workflow_permissions_write_scope_found: false
+    current_agentic_workflow_permissions: [contents_read, pull_requests_read, issues_read, checks_read]
+    human_gate_present: true
+    bot_recursion_guard_present: true
+    mutation_path_confirmed: false
+    conclusion: >-
+      Current repo-visible agentic path is read-only and human-gated. Generated
+      artifacts are report/proposal surfaces and must not be authority inputs
+      without an explicit human-confirmed patch path.
+  branch_protection_release_gate:
+    main_protection_recorded_state: BLOCKED_ADMIN
+    evidence_source: release/CODEX_2_0_MAJOR_RELEASE_BURNDOWN.yaml
+    required_before_final_release: true
+    conclusion: >-
+      Global CODEX 2.0 release remains blocked until main protection and required
+      status checks are established or a governed administrative exception is
+      documented.
+release_readiness_position:
+  w04_runtime_gate: PASS_WITH_RESIDUAL
+  w05_consumer_validation: STARTED_PARTIAL_PASS
+  artifact_authority_promotion: BLOCKED
+  mutation_guard: PASS_FOR_REPO_VISIBLE_AGENTIC_SHELL
+  main_protection: BLOCKED_ADMIN
+  product_parity: NOT_YET
+  zero_delta: NOT_YET
+  formal_release: NOT_YET
+next_mechanical_steps:
+  - exact_head_ci_for_this_receipt
+  - optional_fetch_workflow_status_matrix_for_main_after_merge
+  - validate_product_artifact_consumers_for_html_xlsx_pptx_pdf
+  - validate_release_manifest_and_zero_delta_inputs
+  - repair_or_document_main_protection_gap
