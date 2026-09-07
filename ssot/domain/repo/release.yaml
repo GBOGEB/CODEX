@@ -1,0 +1,38 @@
+schema_version: "1.0"
+logical_id: CODEX_RELEASE_IDENTITY
+authority_class: AUTHORITATIVE
+lifecycle_state: ACTIVE
+owner: release_governance
+product:
+  name: CODEX
+  current_version: "1.4.0"
+  current_version_source: VERSION.json
+  release_program: CODEX_2_0
+  target_major_version: "2.0.0"
+  state: PRE_MAJOR_RELEASE
+interpretation:
+  current_version_is_product_identity: true
+  release_program_is_target_program_identity: true
+  target_major_is_not_yet_released: true
+  engine_api_protocol_namespaces_are_not_renamed_by_product_release: true
+formal_releases:
+  github_release_count_at_r00: 0
+  first_2_0_release_requires_release_dov: true
+compatibility:
+  version_json:
+    path: VERSION.json
+    role: MATERIALIZED_VIEW
+    expected_version: "1.4.0"
+  package_metadata:
+    role: MATERIALIZED_VIEW
+    expected_version: "1.4.0"
+release_gate:
+  ambiguity_resolved: true
+  promotion_to_2_0_0_allowed: false
+  required_before_promotion:
+    - release_assurance_contract_pass
+    - ssot_authority_pass
+    - exact_sha_federation_pass
+    - release_smoke_pass
+    - zero_delta_pass
+    - immutable_release_manifest
