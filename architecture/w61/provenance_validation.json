@@ -1,0 +1,24 @@
+{
+  "contract": "W61_KEB_PROVENANCE_VALIDATION",
+  "child_payload_sha256": "edd87184c94afeb4c0c7afef938f5bfac7838ed67f0ab2089e82f1bb956a2bbe",
+  "child_schema_version": "qps.w61.roundtrip/v1",
+  "engineering_graph_sha256": "6256e1ea3af8548048ea62962e0c319c08d1a049251bc48991a0ba5f5dfd847f",
+  "evidence_registry_sha256": "d9312fbcbd36cd815d867278d80a54a99c3c873f82159976e48863404b62f282",
+  "payload_git_blob_sha1": "b23cfcf56450375599865c247f5d33f4fe82fe23",
+  "checks": {
+    "schema_valid": true,
+    "provenance_locators_present": true,
+    "evidence_class_valid": true,
+    "no_unsupported_promotion": true,
+    "ownership_boundary_preserved": true,
+    "child_payload_sha256_preserved": true
+  },
+  "bidder_isolation": {
+    "shared_grain": "RTM",
+    "lkt_to_alat_final_state_copy": false,
+    "alat_to_lkt_final_state_copy": false,
+    "comparison_views_are_non_closing": true
+  },
+  "scope_note": "PASS validates the W61 registry/graph provenance contract and fail-closed semantics; it does not assert that every bidder RTM is formally closed or that all ALAT legacy comparator rows have exact bidder text.",
+  "result": "PASS"
+}
