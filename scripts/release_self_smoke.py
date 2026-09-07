@@ -39,25 +39,35 @@ def main() -> int:
 
     release_identity = resolve_ssot("CODEX_RELEASE_IDENTITY")
     qps = resolve_ssot("QPS_ENGINEERING_TRUTH")
-    master = resolve_ssot("MASTER_CONTRACT_GOVERNANCE")
+    master = resolve_ssot("CODEX_MASTER_CONTRACT")
+    glossary = resolve_ssot("CODEX_SEMANTIC_VOCABULARY")
+    runtime = resolve_ssot("CODEX_RUNTIME_GOVERNANCE")
+    mcp = resolve_ssot("CODEX_MCP_GOVERNANCE")
 
     receipt = {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
         "repository": "GBOGEB/CODEX",
-        "wave": "R01",
-        "pressure": "1x3PR",
+        "wave": "W05",
+        "pulse": "P4",
+        "pressure": "2x3PR",
         "git_commit_sha": head,
         "git_tree_sha": tree,
         "files": files,
         "checks": {
             "release_identity": "PASS",
             "master_contract": "PASS",
+            "semantic_vocabulary": "PASS",
+            "runtime_governance": "PASS",
+            "mcp_governance": "PASS",
             "qps_remote_authority": "PASS" if qps["mutation_allowed"] is False else "FAIL",
             "exact_sha_binding": "PASS",
         },
         "resolved": {
             "release_identity": release_identity,
             "master_contract": master,
+            "semantic_vocabulary": glossary,
+            "runtime_governance": runtime,
+            "mcp_governance": mcp,
             "qps_engineering_truth": qps,
         },
     }
