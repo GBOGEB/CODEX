@@ -1,5 +1,7 @@
 name: CODEX ID Burndown Pulse
 
+# TRIAGE-aligned execution: immutable producer payload, append-only worker receipts,
+# single-writer authority reconciliation.
 on:
   workflow_dispatch:
     inputs:
@@ -26,7 +28,9 @@ jobs:
     outputs:
       shards: ${{ steps.plan.outputs.shards }}
       workers: ${{ steps.plan.outputs.workers }}
-      queue: ${{ steps.census.outputs.queue }}
+      queue: ${{ steps.balance.outputs.queue }}
+      expected_count_skew: ${{ steps.balance.outputs.count_skew }}
+      expected_weight_skew: ${{ steps.balance.outputs.weight_skew }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -40,7 +44,8 @@ jobs:
         run: |
           import json, os
           n = int(os.environ['REQUESTED_WORKERS'])
-          if n not in {1,2,4,8,16,32,64}: raise SystemExit(f'unsupported worker count: {n}')
+          if n not in {1,2,4,8,16,32,64}:
+              raise SystemExit(f'unsupported worker count: {n}')
           with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as f:
               f.write('shards=' + json.dumps(list(range(n)), separators=(',', ':')) + '\n')
               f.write(f'workers={n}\n')
@@ -51,21 +56,74 @@ jobs:
         run: |
           start=$(date +%s%N)
           python scripts/census_ssot_candidates.py
-          python - <<'PY'
-          import json, os
-          from pathlib import Path
-          p=Path('reports/codex_2_0_ssot_candidate_census.json')
-          d=json.loads(p.read_text(encoding='utf-8'))
-          q=sum(1 for r in d['candidates'] if r.get('logical_id') is None and r.get('lifecycle_state') == 'ACTIVE_CANDIDATE')
-          with open(os.environ['GITHUB_OUTPUT'],'a',encoding='utf-8') as f: f.write(f'queue={q}\n')
-          print(f'ID_CENSUS_QUEUE={q}')
-          PY
           end=$(date +%s%N)
           echo "ID_PRODUCER_NS=$((end-start))"
+      - id: balance
+        name: Build deterministic balanced work packets
+        shell: python
+        env:
+          WORKERS: ${{ steps.plan.outputs.workers }}
+        run: |
+          import json, math, os
+          from pathlib import Path
+          n = int(os.environ['WORKERS'])
+          census = json.loads(Path('reports/codex_2_0_ssot_candidate_census.json').read_text(encoding='utf-8'))
+          queue = [r for r in census['candidates'] if r.get('logical_id') is None and r.get('lifecycle_state') == 'ACTIVE_CANDIDATE']
+
+          # Longest-processing-time style deterministic balancing. Weight encodes
+          # expected governance effort rather than file count alone.
+          class_weight = {
+              'AUTHORITY_CANDIDATE': 4.0,
+              'SCHEMA_CANDIDATE': 3.0,
+              'CONSUMER_OR_CONTRACT_CANDIDATE': 2.0,
+              'RECEIPT_CANDIDATE': 1.0,
+          }
+          def weight(row):
+              base = class_weight.get(row.get('candidate_class'), 2.0)
+              size = min(2.0, math.log2(max(1, int(row.get('bytes', 0)))) / 20.0)
+              return round(base + size, 4)
+
+          ranked = sorted(queue, key=lambda r: (-weight(r), r['path']))
+          bins = [{'shard': i, 'weight': 0.0, 'items': []} for i in range(n)]
+          for row in ranked:
+              target = min(bins, key=lambda b: (b['weight'], len(b['items']), b['shard']))
+              item = dict(row)
+              item['work_weight'] = weight(row)
+              target['items'].append(item)
+              target['weight'] = round(target['weight'] + item['work_weight'], 4)
+
+          counts = [len(b['items']) for b in bins]
+          weights = [b['weight'] for b in bins]
+          def skew(values):
+              if not values or max(values) == 0: return 0.0
+              return round((max(values) - min(values)) / max(values), 4)
+
+          plan = {
+              'schema_version': '1.0',
+              'workers': n,
+              'sue': n * 3,
+              'queue': len(queue),
+              'count_min': min(counts) if counts else 0,
+              'count_max': max(counts) if counts else 0,
+              'count_skew': skew(counts),
+              'weight_min': min(weights) if weights else 0,
+              'weight_max': max(weights) if weights else 0,
+              'weight_skew': skew(weights),
+              'bins': bins,
+          }
+          Path('reports/id_burndown').mkdir(parents=True, exist_ok=True)
+          Path('reports/id_burndown/work_plan.json').write_text(json.dumps(plan, indent=2) + '\n', encoding='utf-8')
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as f:
+              f.write(f"queue={len(queue)}\n")
+              f.write(f"count_skew={plan['count_skew']}\n")
+              f.write(f"weight_skew={plan['weight_skew']}\n")
+          print(f"ID_BALANCE_PASS queue={len(queue)} workers={n} count={plan['count_min']}..{plan['count_max']} count_skew={plan['count_skew']} weight_skew={plan['weight_skew']}")
       - uses: actions/upload-artifact@v4
         with:
-          name: id-burndown-canonical-census
-          path: reports/codex_2_0_ssot_candidate_census.json
+          name: id-burndown-work-packet
+          path: |
+            reports/codex_2_0_ssot_candidate_census.json
+            reports/id_burndown/work_plan.json
 
   discover:
     needs: producer
@@ -76,37 +134,56 @@ jobs:
         shard: ${{ fromJSON(needs.producer.outputs.shards) }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # No checkout/setup-python: hosted runners already provide Python and the
+      # consumer only reads the immutable producer artifact.
       - uses: actions/download-artifact@v4
         with:
-          name: id-burndown-canonical-census
+          name: id-burndown-work-packet
           path: reports
-      - name: Extract deterministic consumer shard
+      - name: Consume balanced work packet
         env:
           SHARD: ${{ matrix.shard }}
           WORKERS: ${{ needs.producer.outputs.workers }}
         run: |
           start=$(date +%s%N)
           python - <<'PY'
-          import json, os
+          import json, os, time
           from pathlib import Path
-          shard=int(os.environ['SHARD']); workers=int(os.environ['WORKERS'])
-          p=Path('reports/codex_2_0_ssot_candidate_census.json')
-          data=json.loads(p.read_text(encoding='utf-8'))
-          rows=[r for i,r in enumerate(data['candidates']) if i % workers == shard]
-          unresolved=[r for r in rows if r.get('logical_id') is None]
-          active=[r for r in unresolved if r.get('lifecycle_state') == 'ACTIVE_CANDIDATE']
-          out={'schema_version':'2.0','purpose':'CODEX_ID_BURNDOWN_DISCOVERY_SHARD','workers':workers,'sue':workers*3,'shard':shard,'candidate_rows':len(rows),'unresolved_rows':len(unresolved),'active_unresolved_rows':len(active),'candidates':active}
-          path=Path(f'reports/id_burndown/shard-{shard:02d}.json'); path.parent.mkdir(parents=True,exist_ok=True)
-          path.write_text(json.dumps(out,indent=2)+'\n',encoding='utf-8')
-          print(f'ID_SHARD_PASS shard={shard}/{workers} rows={len(rows)} unresolved={len(unresolved)} active={len(active)}')
+          shard = int(os.environ['SHARD']); workers = int(os.environ['WORKERS'])
+          plan = json.loads(Path('reports/id_burndown/work_plan.json').read_text(encoding='utf-8'))
+          bucket = plan['bins'][shard]
+          out = {
+              'schema_version': '3.0',
+              'purpose': 'CODEX_ID_BURNDOWN_DISCOVERY_RECEIPT',
+              'workers': workers,
+              'sue': workers * 3,
+              'shard': shard,
+              'queue': plan['queue'],
+              'assigned_count': len(bucket['items']),
+              'assigned_weight': bucket['weight'],
+              'candidates': bucket['items'],
+              'authority_mutation': 'FORBIDDEN',
+          }
+          path = Path(f'reports/id_burndown/receipt-{shard:02d}.json')
+          path.parent.mkdir(parents=True, exist_ok=True)
+          path.write_text(json.dumps(out, indent=2) + '\n', encoding='utf-8')
+          print(f"ID_CONSUMER_PASS shard={shard}/{workers} assigned={len(bucket['items'])} weight={bucket['weight']}")
           PY
           end=$(date +%s%N)
-          echo "ID_CONSUMER_NS=$((end-start))"
+          elapsed=$((end-start))
+          python - <<PY
+          import json
+          from pathlib import Path
+          p=Path('reports/id_burndown/receipt-${SHARD}.json')
+          d=json.loads(p.read_text())
+          d['elapsed_ns']=$elapsed
+          p.write_text(json.dumps(d,indent=2)+'\n')
+          PY
+          echo "ID_CONSUMER_NS=$elapsed"
       - uses: actions/upload-artifact@v4
         with:
-          name: id-burndown-shard-${{ matrix.shard }}
-          path: reports/id_burndown/shard-*.json
+          name: id-burndown-receipt-${{ matrix.shard }}
+          path: reports/id_burndown/receipt-*.json
 
   control:
     needs: [producer, discover]
@@ -114,11 +191,45 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Recommend next power-of-two pulse
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: id-burndown-receipt-*
+          path: reports/id_burndown/receipts
+          merge-multiple: true
+      - name: Aggregate skew and recommend next pulse
         env:
           WORKERS: ${{ needs.producer.outputs.workers }}
           QUEUE: ${{ needs.producer.outputs.queue }}
+          EXPECTED_COUNT_SKEW: ${{ needs.producer.outputs.expected_count_skew }}
+          EXPECTED_WEIGHT_SKEW: ${{ needs.producer.outputs.expected_weight_skew }}
         run: |
-          # All matrix consumers must complete before this job; therefore active capacity for this completed sample equals requested workers.
-          python scripts/id_pulse_scale_controller.py --current "$WORKERS" --queue "$QUEUE" --active-workers "$WORKERS" --rework-rate 0 --collisions 0
+          python - <<'PY'
+          import json, os, statistics
+          from pathlib import Path
+          receipts=[json.loads(p.read_text()) for p in sorted(Path('reports/id_burndown/receipts').glob('receipt-*.json'))]
+          counts=[r['assigned_count'] for r in receipts]
+          weights=[r['assigned_weight'] for r in receipts]
+          elapsed=[r.get('elapsed_ns',0) for r in receipts]
+          def spread(v):
+              return 0.0 if not v or max(v)==0 else (max(v)-min(v))/max(v)
+          stats={
+              'completed_workers': len(receipts),
+              'count_min': min(counts) if counts else 0,
+              'count_max': max(counts) if counts else 0,
+              'count_skew': round(spread(counts),4),
+              'weight_skew': round(spread(weights),4),
+              'processing_time_skew': round(spread(elapsed),4),
+              'processing_ns_p50': int(statistics.median(elapsed)) if elapsed else 0,
+              'processing_ns_max': max(elapsed) if elapsed else 0,
+          }
+          Path('reports/id_burndown/control_stats.json').write_text(json.dumps(stats,indent=2)+'\n')
+          print('ID_CONTROL_STATS '+json.dumps(stats,sort_keys=True))
+          PY
+          active=$(find reports/id_burndown/receipts -name 'receipt-*.json' | wc -l)
+          python scripts/id_pulse_scale_controller.py --current "$WORKERS" --queue "$QUEUE" --active-workers "$active" --rework-rate 0 --collisions 0
+          echo "EXPECTED_COUNT_SKEW=$EXPECTED_COUNT_SKEW EXPECTED_WEIGHT_SKEW=$EXPECTED_WEIGHT_SKEW"
           echo 'Authority-bearing logical-ID registry mutation remains serialized outside discovery workers.'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: id-burndown-control-stats
+          path: reports/id_burndown/control_stats.json
