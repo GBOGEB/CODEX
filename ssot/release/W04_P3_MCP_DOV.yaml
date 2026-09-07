@@ -1,0 +1,41 @@
+schema_version: "1.0"
+wave: W004
+pulse: P3
+status: EXECUTING
+objective: migrate donor capabilities beneath canonical MCP runtime and prove parity before donor-shell retirement
+session_dov:
+  p1_runtime_authority_declared: PASS
+  p1_legacy_tools_runtime_collapsed: PASS
+  p2_13_family_taxonomy: PASS
+  p2_zod_runtime_uniqueness: PASS
+  p3_shared_service_extraction: IMPLEMENTED_PENDING_CI
+  p3_canonical_consumes_shared_services: IMPLEMENTED_PENDING_CI
+  p3_representative_parity: PENDING_CI
+  p3_adversarial_parity: PENDING_CI
+  donor_shell_retirement: BLOCKED_UNTIL_PARITY_PASS
+mcp_capability_migration:
+  migrated_now: [typed_input_contract, typed_output_contract, token_scope_handshake, ttl_dedupe_state, confidence_validation, provenance_validation]
+  still_to_migrate_or_requalify: [date_window_filter, branch_filter, pagination, transient_retry, retry_metrics, idempotence_full_pipeline, append_only_rtm_lineage, governance_schema_validation]
+  unique_capability_loss_allowed: 0
+next_gate:
+  require: [primary_ci_green, representative_tests_green, adversarial_tests_green, donor_capability_crosswalk_complete]
+  on_pass: retire_duplicate_orchestration_shell_then_discriminate_federation_runtime_26_and_agent_orchestration_5
+  on_fail: keep_donor_shell_and_attack_highest_residual
+global_codex_2_0_dov:
+  release_identity: PASS
+  authority_manifest: PASS
+  repo_census_discovery: PASS
+  logical_id_binding: PARTIAL
+  ssot_governance: PARTIAL
+  runtime_uniqueness: PARTIAL_IMPROVING
+  zod_contracts: PARTIAL_IMPROVING
+  semantic_runtime: PASS_CURRENT_EVIDENCE
+  federation: PARTIAL
+  agent_execution: PARTIAL
+  mcp: PARTIAL_IMPROVING
+  tests_t0_t8: PARTIAL
+  four_product_parity: NOT_YET
+  exact_sha_roundtrip: NOT_YET_RELEASE_GATE
+  zero_delta_release_repeat: NOT_YET
+  immutable_release_manifest: NOT_YET
+  release_2_0_0_rc1: BLOCKED
