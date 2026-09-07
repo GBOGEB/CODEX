@@ -1,0 +1,85 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W004
+pulse: P8
+status: IMPORT_EDGE_PROBE_NO_DUPLICATE_RUNTIME_CONFIRMED
+source_reentry:
+  prior_pr: 461
+  prior_merge: 60beb0470a7f626b53d6d95762be433f9d001074
+  rule: >-
+    P7 established role families only. P8 evaluates whether import, workflow,
+    or entrypoint evidence converts any candidate into a genuine competing
+    executable runtime. It does not prune files.
+constitutional_rule: >-
+  A runtime duplicate requires two or more active executable entrypoints that
+  implement the same runtime contract. Documentation references, manifests,
+  tests, schemas, generated views, and workflow triggers are evidence surfaces,
+  not duplicate runtimes by themselves.
+federation_runtime_probe:
+  candidates:
+    - path: federation_runtime/engines/governance_parser.py
+      observed_edges:
+        - federation_runtime/README.md describes it as validating PR governance metadata
+        - scripts/check_federation_governance.py lists it in REAL_CODE inventory
+        - federation_runtime/contracts/mcp_runtime_directive.yml names it primary_authority for reconciliation
+        - federation_runtime/governance/traceability_manifest.json lists it as engine evidence
+      role_conclusion: GOVERNANCE_HEADER_VALIDATION_ENGINE
+      duplicate_runtime_status: NOT_CONFIRMED
+      reason: >-
+        Evidence points to governance metadata validation authority. No active
+        second implementation of the same parser contract is identified.
+    - path: federation_runtime/engines/phase0_orchestration.py
+      observed_edges:
+        - .github/workflows/confluence-github-bridge-phase0.yml runs it in Generate orchestration signals
+        - docs/reports/W007_REPO_AUDIT.md lists it among federation_runtime engines
+        - W04_P5 runtime discrimination already tagged it as executable orchestrator candidate
+      role_conclusion: PHASE0_ORCHESTRATION_ENTRYPOINT
+      duplicate_runtime_status: NOT_CONFIRMED
+      reason: >-
+        Workflow evidence confirms it is executable, but its role is Phase 0
+        orchestration. No paired implementation of that same orchestration
+        contract is identified.
+    - path: federation_runtime/engines/confluence_artifact_pipeline.py
+      observed_edges:
+        - .github/workflows/confluence-github-bridge-phase0.yml can run it directly with --live
+        - phase0_orchestration.py references it as repository module for Confluence artifact generation
+        - outputs/orchestration/task_links.yaml records it as repository module
+      role_conclusion: CONFLUENCE_ARTIFACT_PIPELINE_ENTRYPOINT
+      duplicate_runtime_status: NOT_CONFIRMED
+      reason: >-
+        Workflow and orchestration evidence confirm a pipeline role, not a
+        competing implementation of phase0_orchestration or governance_parser.
+  confirmed_duplicate_runtime_candidates: []
+  narrow_next_if_needed:
+    - inspect qplant_contractual_ingestion.py because the same Phase 0 workflow also names it
+    - inspect engines/html_renderer.py normalize.py parser.py validator.py as possible pipeline sub-engines, not presumed duplicates
+agent_orchestration_probe:
+  raw_family_search_token: agentic_orchestration
+  observed_edges:
+    - scripts/map_runtime_consumers.py maps AGENT_ORCHESTRATION by agentic_orchestration and agent_orchestration tokens
+    - docs/reports/W007_REPO_AUDIT.md lists .codex/tasks/github_mcp_agentic_orchestration.yaml and SSOT/github_mcp_agentic_orchestration_ssot.yaml
+    - AGENTIC/proposed_fixes.yaml references the task contract for human_gate modes
+    - triage/RUNTIME_AGENT_REGISTRY.yaml records agents and .codex/tasks as canonical-active surfaces
+    - authority_registry.yaml assigns SSOT/github_mcp_agentic_orchestration_ssot.yaml to CODEX_FEDERATION_GOVERNANCE
+  executable_agent_entrypoint_identified: false
+  confirmed_duplicate_runtime_candidates: []
+  role_conclusion: >-
+    Current evidence still shows governance SSOT, task contract, registry,
+    generated proposed-fix surface, metrics/view surfaces, and census references.
+    It does not identify the executable agent runtime entrypoint.
+  narrow_next_if_needed:
+    - search agents/ for entrypoint scripts or CLIs
+    - search agent_runtime/ for executable Python modules rather than metrics only
+    - inspect .codex/tasks/github_mcp_agentic_orchestration.yaml for declared command/tool hooks
+p8_decision:
+  federation_prune_allowed: false
+  agent_prune_allowed: false
+  migration_allowed: false
+  reason: no duplicate executable runtime pair is proven
+  recommended_next: W04_PCA_BT_3P3_WITH_NO_PRUNE_DECISION_OR_NARROW_AGENT_ENTRYPOINT_PROBE
+w04_dov_position:
+  mcp_runtime_uniqueness: PASS_AFTER_459
+  federation_runtime_discrimination: IMPROVED_NO_DUPLICATE_CONFIRMED
+  agent_orchestration_discrimination: IMPROVED_EXECUTABLE_ENTRYPOINT_NOT_FOUND
+  pca_bt_3p3: READY_NEXT
+  global_codex_2_0: NOT_YET
