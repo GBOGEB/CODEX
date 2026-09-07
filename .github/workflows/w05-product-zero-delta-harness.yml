@@ -1,0 +1,79 @@
+name: W05 Product Zero-Delta Harness
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'triage/BINARY_PRODUCT_REGISTRY.yaml'
+      - 'ssot/release/W05_P5_PRODUCT_ENUM_ZERO_DELTA_EXECUTION_HARNESS.yaml'
+      - '.github/workflows/w05-product-zero-delta-harness.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  product-zero-delta-harness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare release artifact directories
+        run: |
+          mkdir -p release artifacts
+
+      - name: Enumerate concrete products
+        run: |
+          cat > release/PRODUCT_FILE_ENUMERATION.txt <<'EOF'
+          QPS_COST_Master.xlsx
+          QPS_Cost_Engineering_Handover.docx
+          QPS_Cost_Management_Deck.pptx
+          QPS_Cost_Engineering_Handover.pdf
+          index.html
+          EOF
+
+      - name: Write SHA256SUMS for present products
+        run: |
+          : > release/SHA256SUMS
+          while IFS= read -r product; do
+            [ -z "$product" ] && continue
+            if [ -f "$product" ]; then
+              sha256sum "$product" >> release/SHA256SUMS
+            else
+              printf 'MISSING  %s\n' "$product" >> release/SHA256SUMS
+            fi
+          done < release/PRODUCT_FILE_ENUMERATION.txt
+
+      - name: Write rebuild log skeleton
+        run: |
+          cat > release/REBUILD_LOG.yaml <<EOF
+          schema_version: "1.0"
+          source_commit_sha: "${GITHUB_SHA}"
+          workflow: ".github/workflows/w05-product-zero-delta-harness.yml"
+          products_file: "release/PRODUCT_FILE_ENUMERATION.txt"
+          sha256s_path: "release/SHA256SUMS"
+          regeneration_status: "NOT_REGENERATED_BY_THIS_HARNESS"
+          result: "HASHED_PRESENT_PRODUCTS_OR_MARKED_MISSING"
+          EOF
+
+      - name: Write zero-delta receipt as not executed
+        run: |
+          cat > release/ZERO_DELTA_RECEIPT.yaml <<EOF
+          schema_version: "1.0"
+          source_commit_sha: "${GITHUB_SHA}"
+          status: "NOT_EXECUTED"
+          reason: "This harness enumerates and hashes present products but does not perform first/second regeneration."
+          pass_claimed: false
+          sha256s_path: "release/SHA256SUMS"
+          rebuild_log_path: "release/REBUILD_LOG.yaml"
+          EOF
+
+      - name: Upload release readiness artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: w05-product-zero-delta-harness
+          path: |
+            release/PRODUCT_FILE_ENUMERATION.txt
+            release/SHA256SUMS
+            release/REBUILD_LOG.yaml
+            release/ZERO_DELTA_RECEIPT.yaml
