@@ -1,19 +1,26 @@
 {
-  "contract": "TRIAGE_3PR_W60_PARENT_RECEIPT",
+  "contract": "W58_KEB_RECEIPT_CONTRACT",
+  "wave": "W60.1",
   "parent": "KEB_CODEX",
   "pulse": "P2_KEB",
-  "scope": "P1_P2_identical_sha_roundtrip",
-  "payloadSha256": "aff1b8cccd0911080278d07169e17e32ceed1fa0323d6fad929bfe9dc8701998",
-  "payloadGitBlobSha1": "715644d5c8e212f84c6367417fd95c455a39a35c",
-  "status": "PASS",
+  "child_payload_sha256": "aff1b8cccd0911080278d07169e17e32ceed1fa0323d6fad929bfe9dc8701998",
+  "child_payload_git_blob_sha1": "715644d5c8e212f84c6367417fd95c455a39a35c",
+  "semantic_schema_version": "ThreeP3SelfEvaluationSchema@W60-0.2.0",
+  "semantic_status": "PASS",
+  "provenance_status": "DEFER",
+  "policy_status": "PASS",
+  "findings_digest": "a019bfa3564a96dc29d832fbc847f52b799d6379069d2ce9acf5d8fd7626ae4b",
   "checks": {
-    "exactPayloadShaPreserved": true,
-    "canonicalSchemaAlignment": true,
-    "provenanceInvariantPreserved": true,
-    "executionBoundsContractPresent": true,
-    "engineeringTruthMutation": false,
-    "formalCompliancePromotion": false
+    "schema_valid": true,
+    "provenance_locators_present": "NOT_RERUN_W60_1",
+    "evidence_class_valid": "NOT_RERUN_W60_1",
+    "no_unsupported_promotion": true,
+    "ownership_boundary_preserved": true,
+    "child_payload_sha256_preserved": true
   },
-  "engineeringCreditGranted": false,
-  "next": "P3_CHILD_REENTRY"
+  "overall_status": "DEFER",
+  "engineering_credit_granted": false,
+  "formal_compliance_promoted": false,
+  "receipt_hash_method": "sha256(canonical-json-without-receipt_sha256)",
+  "receipt_sha256": "271e6e0454157e2ed34f355647d417667f56793de668fb2695306270de0dfd65"
 }
