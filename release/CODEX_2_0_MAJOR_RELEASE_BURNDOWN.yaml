@@ -1,0 +1,79 @@
+program: CODEX_2_0
+baseline_sha: 855acb78b2c15fe3854bc32360b7469ab175e152
+strategy: VISIBLE_MULTI_LANE_3PR_BURNDOWN
+rules:
+  unit: 3PR
+  scale_ladder: [1, 2, 4, 8, 16]
+  scale_is_earned_and_reversible: true
+  start_all_lanes_for_visibility: true
+  mutation_requires_predecessor_gate: true
+  release_dov_is_and_gated: true
+workers:
+  W_AUTHORITY: {multiplier: 4, capacity_pr: 12, state: ACTIVE}
+  W_RUNTIME: {multiplier: 4, capacity_pr: 12, state: ACTIVE, active_pr: 458}
+  W_FEDERATION: {multiplier: 2, capacity_pr: 6, state: STARTED_READ_ONLY}
+  W_CAPABILITY: {multiplier: 4, capacity_pr: 12, state: STARTED_READ_ONLY}
+  W_PRODUCT: {multiplier: 4, capacity_pr: 12, state: STARTED_READ_ONLY}
+  W_ADVERSARY: {multiplier: 4, capacity_pr: 12, state: STARTED_READ_ONLY}
+  W_REBUILD: {multiplier: 2, capacity_pr: 6, state: STARTED_READ_ONLY}
+  W_ZERO_DELTA: {multiplier: 1, capacity_pr: 3, state: STARTED_READ_ONLY}
+  W_RC: {multiplier: 2, capacity_pr: 6, state: STARTED_READ_ONLY}
+  W_RELEASE: {multiplier: 1, capacity_pr: 3, state: STARTED_READ_ONLY}
+lanes:
+  - id: W05_AUTHORITY_PENETRATION
+    state: ACTIVE
+    done: [authority_foundation, ssot_census, bound_id_contract, canonical_resolver, resolver_duplication_collapsed, first_bound_id_expansion, first_executable_consumers_2_of_2]
+    next_3pr:
+      - classify remaining active executable consumers
+      - migrate highest-value direct authority paths
+      - regenerate consumer and bound-ID metrics
+    dov: all_declared_authorities_unique_and_valid_and_critical_executable_consumers_resolver_bound_or_exempted
+  - id: W04_RUNTIME_DISCRIMINATION
+    state: ACTIVE
+    pr: 458
+    next_3pr: [enumerate_26_federation_candidates, enumerate_5_agent_candidates, classify_runtime_adapter_schema_registry_test_view]
+    dov: no_unclassified_critical_runtime_candidate_and_only_proven_duplicates_retired
+  - id: W06_FEDERATION_EXACT_SHA
+    state: STARTED
+    branch: release/codex-2.0-w06-federation-exact-sha
+    next_3pr: [freeze_payload_contract, CODEX_to_ABACUS_exact_sha_receipt, child_reentry_accept_reject_defer]
+    dov: identical_sha_roundtrip_with_provenance_and_child_disposition
+  - id: W07_CAPABILITY_REQUALIFICATION
+    state: STARTED
+    next_3pr: [mcp_differential_parity, federation_runtime_requalification, agent_orchestration_requalification]
+    dov: all_active_capabilities_canonical_or_explicitly_deferred
+  - id: W08_FOUR_PRODUCT_PARITY
+    state: STARTED
+    branch: release/codex-2.0-w08-product-parity
+    products: [XLSX, HTML, PPTX, PDF]
+    next_3pr: [define_semantic_tuple, regenerate_products, cross_product_hash_and_tuple_assertions]
+    dov: four_products_same_authoritative_tuple_and_registry_digest
+  - id: W09_ADVERSARIAL_RELEASE_QA
+    state: STARTED
+    branch: release/codex-2.0-w09-adversarial-qa
+    next_3pr: [authority_attack_matrix, federation_replay_and_tamper, artifact_and_schema_negative_tests]
+    dov: all_critical_adversarial_cases_fail_closed
+  - id: CLEAN_REBUILD
+    state: STARTED
+    next_3pr: [clean_checkout, dependency_rebuild, regenerate_and_compare]
+    dov: clean_environment_rebuild_passes_without_hidden_state
+  - id: W11_ZERO_DELTA
+    state: STARTED
+    branch: release/codex-2.0-w11-zero-delta
+    next_3pr: [repeat_build, compare_semantic_tuple, compare_hashes_or_explain_nondeterminism]
+    dov: repeated_release_build_zero_semantic_delta
+  - id: W10_RC_FREEZE
+    state: STARTED
+    branch: release/codex-2.0-w10-rc-freeze
+    next_3pr: [freeze_manifest, validate_version_and_tags, freeze_residual_deferrals]
+    dov: immutable_rc_manifest_and_all_release_gates_green
+  - id: MAIN_PROTECTION
+    state: BLOCKED_ADMIN
+    evidence: main_protected_false_required_status_checks_off
+    dov: main_protected_and_canonical_required_checks_enforced
+  - id: W12_FORMAL_RELEASE
+    state: STARTED_BLOCKED
+    branch: release/codex-2.0-w12-formal-release
+    next_3pr: [release_manifest, signed_or_verified_tag, github_release]
+    dov: formal_release_published_from_green_rc
+priority_order: [W05_AUTHORITY_PENETRATION, W04_RUNTIME_DISCRIMINATION, W06_FEDERATION_EXACT_SHA, W07_CAPABILITY_REQUALIFICATION, W08_FOUR_PRODUCT_PARITY, W09_ADVERSARIAL_RELEASE_QA, CLEAN_REBUILD, W11_ZERO_DELTA, W10_RC_FREEZE, MAIN_PROTECTION, W12_FORMAL_RELEASE]
