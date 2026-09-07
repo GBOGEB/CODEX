@@ -2,6 +2,15 @@ name: W05 QPS Roundtrip Regeneration Zero-Delta
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+      - 'release/codex-2.0-w05-p7-qps-regen-trigger-repair'
+    paths:
+      - '.github/workflows/w05-qps-roundtrip-regeneration-zero-delta.yml'
+      - '07_ops/qps_roundtrip/**'
+      - 'triage/BINARY_PRODUCT_REGISTRY.yaml'
+      - 'ssot/release/**'
   pull_request:
     paths:
       - '.github/workflows/w05-qps-roundtrip-regeneration-zero-delta.yml'
