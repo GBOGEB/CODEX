@@ -1,0 +1,53 @@
+version: 0.1.0
+wave: W58
+repo: GBOGEB/CODEX
+role: governance_parent
+purpose: executable_receipt_contract
+
+input_contract:
+  required:
+    - child_payload_sha256
+    - child_schema_version
+    - engineering_graph_sha256
+    - evidence_registry_sha256
+
+validation:
+  semantic_status: [PASS, DEFER, FAIL]
+  provenance_status: [PASS, DEFER, FAIL]
+  policy_status: [PASS, DEFER, FAIL]
+  required_checks:
+    - schema_valid
+    - provenance_locators_present
+    - evidence_class_valid
+    - no_unsupported_promotion
+    - ownership_boundary_preserved
+    - child_payload_sha256_preserved
+
+receipt:
+  required:
+    - child_payload_sha256
+    - semantic_schema_version
+    - semantic_status
+    - provenance_status
+    - policy_status
+    - findings_digest
+    - receipt_sha256
+
+return_rules:
+  PASS:
+    requires:
+      - semantic_status == PASS
+      - provenance_status == PASS
+      - policy_status == PASS
+  FAIL:
+    when_any:
+      - semantic_status == FAIL
+      - provenance_status == FAIL
+      - policy_status == FAIL
+  DEFER:
+    otherwise: true
+
+boundary:
+  may_mutate_engineering_truth: false
+  may_return_findings: true
+  may_return_governance_receipt: true

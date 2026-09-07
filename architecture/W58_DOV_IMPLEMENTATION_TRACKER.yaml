@@ -1,0 +1,128 @@
+wave_set: TRIAGE-W58-DOV
+repo: GBOGEB/CODEX
+plane: governance
+baseline:
+  prior_wave: W57
+  prior_pr: 424
+  prior_state: MERGED
+current_wave:
+  id: W58
+  role: +1
+  intent: operationalize semantic, provenance, bridge and policy governance into measurable parent receipts
+  definition_of_victory:
+    - one governed semantic receipt contract
+    - provenance invariants machine-checkable
+    - bridge/adaptor states classified ACTIVE_PARTIAL_DOCUMENTED_LEGACY
+    - exact child payload digest preserved
+    - governance KPI scorecard live
+horizons:
+  plus_1:
+    target_wave: W58
+    objective: governance receipt activation
+    expected_dov: 0.64
+    required:
+      - semantic_receipt_contract
+      - provenance_gate_baseline
+      - bridge_state_registry
+      - KPI_baseline
+  plus_5:
+    target_wave: W62
+    objective: closed semantic/runtime handoff with ABACUS and child reentry
+    expected_dov: 0.78
+    required:
+      - exact_SHA_propagation
+      - governed_execution_receipt
+      - bridge_adapter_contract_tests
+      - parent_return_join_verified
+  plus_50:
+    target_wave: W107
+    objective: schema and policy convergence across federation
+    expected_dov: 0.91
+    required:
+      - generated_shared_schema_consumers
+      - provenance_drift_detection
+      - bridge_registry_low_duplication
+      - contract_compatibility_tests
+  plus_100:
+    target_wave: W157
+    objective: sustained governance autonomy
+    expected_dov: 0.97
+    required:
+      - deterministic semantic receipts
+      - reproducible federation contracts
+      - stable policy versioning
+      - low manual bridge reconciliation
+DMAIC:
+  Define:
+    status: COMPLETE
+    statement: governance authority and non-authority boundaries frozen in W57
+  Measure:
+    status: ACTIVE
+    measures:
+      - semantic_schema_coverage_pct
+      - provenance_gate_pass_pct
+      - bridge_state_classification_pct
+      - exact_hash_preservation_pct
+      - policy_rule_coverage_pct
+  Analyse:
+    status: ACTIVE
+    method:
+      - PCA for correlated governance debt dimensions only
+      - BT for priority ordering of actionable governance gaps
+  Improve:
+    status: NEXT
+    actions:
+      - bind semantic receipt schema
+      - classify bridge/adaptor maturity
+      - normalize shared contract versioning
+  Control:
+    status: TARGET
+    gates:
+      - child_hash_unchanged
+      - semantics_valid
+      - provenance_valid
+      - policy_version_recorded
+      - receipt_emitted
+PCA:
+  dimensions:
+    - schema_duplication
+    - provenance_gap
+    - bridge_maturity_gap
+    - policy_gap
+    - federation_gap
+    - test_gap
+BT:
+  priority_order:
+    - P1_semantic_receipt_schema
+    - P2_provenance_exact_hash_gate
+    - P3_bridge_adapter_maturity_registry
+    - P4_shared_schema_consumer_model
+    - P5_legacy_governance_cleanup
+KPI:
+  DoV_score:
+    formula: weighted governance gate completion across semantics, provenance, bridge, federation and test dimensions
+    current_estimate: 0.57
+    note: planning estimate for implementation tracking, not engineering compliance credit
+  targets:
+    W58: 0.64
+    W62: 0.78
+    W107: 0.91
+    W157: 0.97
+  supporting:
+    architecture_authority_split_pct: 100
+    semantic_receipt_contract_pct: 25
+    bridge_state_classification_pct: 20
+    exact_hash_preservation_control_pct: 50
+wave_tracking:
+  cadence: each merged pulse updates actuals, blockers, delta and next BT target
+  required_fields:
+    - wave
+    - PR
+    - merged_sha
+    - KPI_before
+    - KPI_after
+    - DoV_before
+    - DoV_after
+    - PCA_shift
+    - BT_next
+    - blockers
