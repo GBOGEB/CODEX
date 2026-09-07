@@ -1,0 +1,52 @@
+{
+  "moniker": "3PR",
+  "scheme": "3P3",
+  "pulse": "P2_KEB",
+  "payloadSha256": "aff1b8cccd0911080278d07169e17e32ceed1fa0323d6fad929bfe9dc8701998",
+  "reversePressure": [
+    {
+      "axis": "evidence",
+      "level": "HIGH",
+      "score": 0.7,
+      "residual": 0.7,
+      "sourceMetrics": ["W58_KEB_RECEIPT_CONTRACT.input_contract", "provenance_locators_present", "evidence_class_valid"],
+      "rationale": "Exact-SHA transport is proven, but the active W58 KEB provenance and evidence-registry checks were not rerun against a fully bound engineering graph and evidence registry in W60.1."
+    },
+    {
+      "axis": "schema",
+      "level": "MEDIUM",
+      "score": 0.35,
+      "residual": 0.35,
+      "sourceMetrics": ["ThreeP3SelfEvaluationSchema", "W60 producer-field alignment repair"],
+      "rationale": "Producer fields are aligned; complete runtime Zod and receipt-path validation remains to be demonstrated."
+    }
+  ],
+  "recommendations": [
+    {
+      "action": "ADD_COVERAGE",
+      "targetAxis": "coverage",
+      "proposedDelta": 0.2,
+      "boundedBy": ["architecture/w60/3P3_EXECUTION_BOUNDS.yaml", "architecture/W58_KEB_RECEIPT_CONTRACT.yaml"],
+      "requiresChildAcceptance": false,
+      "autoExecutable": true,
+      "expectedBenefit": 0.2,
+      "confidence": 0.9
+    },
+    {
+      "action": "ESCALATE_EVIDENCE_RECOVERY",
+      "targetAxis": "evidence",
+      "proposedDelta": 0.2,
+      "boundedBy": ["read-only provenance/source-locator validation", "QPS engineering authority"],
+      "requiresChildAcceptance": true,
+      "autoExecutable": false,
+      "expectedBenefit": 0.25,
+      "confidence": 0.9
+    }
+  ],
+  "dovScore": 0.55,
+  "pcaResidualScore": 0.5,
+  "btPriorityScore": 0.8,
+  "stopConditions": ["provenance_registry_validation_not_rerun"],
+  "nextPulseAllowed": false,
+  "generatedAt": "2026-09-07T16:19:00Z"
+}
