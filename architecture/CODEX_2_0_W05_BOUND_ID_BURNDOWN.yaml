@@ -1,0 +1,86 @@
+schema_version: "1.0"
+wave: W05
+pressure: 2x3PR
+purpose: increase defensible bound logical-ID penetration without authority dilution
+baseline:
+  census_candidates: 472
+  bound_local_census_nodes: 5
+  bound_local_penetration_pct: 1.06
+  unresolved_logical_id_candidates: 467
+  unresolved_role_owner_candidates: 124
+  declared_registry_nodes_total: 9
+bound_id_policy:
+  definition: >-
+    A bound ID is a logical ID linked to explicit authority class, owner, lifecycle,
+    source path or remote repository identity, and integrity evidence. Classification
+    alone is not a binding.
+  required_fields:
+    - logical_id
+    - authority_class
+    - owner
+    - lifecycle
+    - evidence_level
+  local_binding_requires:
+    - canonical_path
+    - path_exists
+    - declared_authority_evidence
+  remote_binding_requires:
+    - owner_repository
+    - local_representation
+    - mutation_policy
+  forbidden:
+    - promote_INFERRED_to_DECLARED_without_manifest_or_registry_evidence
+    - bind_two_authorities_to_same_logical_partition
+    - treat_receipt_as_engineering_authority
+    - mutate_QPS_remote_authority
+lanes:
+  lane_a_bound_id_integrity:
+    objective: preserve and validate existing declared IDs before expansion
+    actions:
+      - validate all 9 registry nodes
+      - distinguish census-visible local bindings from remote/non-census bindings
+      - verify owner, lifecycle, path/repository and mutation constraints
+      - detect duplicate logical IDs or duplicate authoritative partitions
+      - emit bound-ID integrity receipt
+  lane_b_evidence_backed_expansion:
+    objective: burn down unresolved owner/role and executable-consumer candidates
+    priority_order:
+      - active authority candidates with explicit canonical source evidence
+      - active executable consumers with explicit registry/runtime ownership
+      - schema and contract authorities with named canonical producers
+      - remote references with explicit owner repository
+      - compatibility nodes only after canonical parent is bound
+    actions:
+      - assign candidate to existing logical ID where evidence proves identity
+      - create new logical ID only when no existing ID semantically covers candidate
+      - record evidence_level DECLARED or INFERRED separately
+      - leave ambiguous candidates unresolved rather than invent authority
+metrics:
+  - total_declared_registry_nodes
+  - census_bound_logical_ids
+  - bound_id_penetration_pct
+  - newly_bound_ids
+  - unresolved_logical_ids
+  - unresolved_role_owner
+  - executable_consumer_bound_count
+  - duplicate_authority_count
+  - remote_mutation_violation_count
+  - inferred_not_promoted_count
+victory:
+  session:
+    - existing bound IDs remain valid
+    - bound-ID penetration increases through declared evidence only
+    - unresolved role/owner population decreases
+    - executable consumer binding increases
+    - duplicate authority remains zero
+    - remote mutation violations remain zero
+  global:
+    - every active authority has exactly one declared logical ID and owner
+    - every critical executable consumer resolves to declared authority through shared resolver
+    - compatibility and derived nodes point to a bound canonical parent
+next_decision:
+  feed: 3P3 -> PCA -> BT
+  choose_between:
+    - continue_bound_ID_penetration
+    - broader_runtime_convergence
+    - resolver_consumer_migration
