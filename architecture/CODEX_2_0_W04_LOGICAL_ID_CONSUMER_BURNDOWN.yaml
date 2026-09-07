@@ -1,0 +1,57 @@
+schema_version: "1.0"
+wave: W04
+release_phase: R02_CONTRACT
+pressure: 2x3PR
+purpose: bind W03 census candidates to declared logical IDs and measure consumer resolver penetration
+constitutional_rule: >-
+  Classification evidence cannot establish authority. A logical ID is release-creditable
+  only when bound to declared owner/authority evidence; remote QPS engineering truth remains
+  owned by GBOGEB/cryoplant-project and ABACUS/DOW challenge truth remains remote.
+input:
+  w03_merge: b07cb456f4265743effa0175abd72595812168e2
+  main_start: 5409a9d379321c855242583ff546ed1d8b285023
+  census_generator: scripts/census_ssot_candidates.py
+  declared_initial_logical_id_penetration_pct: 0.0
+lanes:
+  lane_a_authority_binding:
+    - execute W03 census on current head
+    - persist measured census report
+    - bind authority candidates to manifest/registry logical IDs
+    - detect duplicate and competing declared authority
+    - preserve remote owner and mutation constraints
+  lane_b_consumer_penetration:
+    - inventory executable consumers of SSOT/contract/runtime data
+    - identify shared-resolver consumers
+    - identify hard-coded path consumers
+    - identify orphan and unresolved consumers
+    - measure resolver penetration separately from classification penetration
+metrics:
+  - candidate_count
+  - classification_penetration_pct
+  - logical_id_penetration_pct
+  - declared_authority_count
+  - duplicate_declared_authority_count
+  - remote_mutation_path_count
+  - executable_consumer_count
+  - resolver_bound_consumer_count
+  - resolver_penetration_pct
+  - hard_coded_path_consumer_count
+  - orphan_consumer_count
+scale_gate:
+  promote_or_redirect_only_after:
+    - measured census persisted
+    - logical-ID deficit quantified
+    - consumer resolver deficit quantified
+    - duplicate authority quantified
+    - runtime/MCP duplication quantified enough for PCA comparison
+    - 3P3 self-evaluation completed
+    - PCA and BT select next residual
+victory:
+  session:
+    - W04 has measured rather than assumed authority and consumer deficits
+    - no remote engineering authority is promoted locally
+    - next W05 lane is selected quantitatively
+  global:
+    - every active authority has exactly one declared logical ID and owner
+    - every critical consumer resolves through the shared resolver
+    - zero unauthorized remote mutation paths
