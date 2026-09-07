@@ -1,0 +1,70 @@
+schema_version: "1.0"
+repository: GBOGEB/CODEX
+wave: R00_R01
+pressure: 1x3PR
+status: EXECUTING
+base_sha: 8addf68e9c057fc3b6c9c129cfc0b990e1933873
+
+observations:
+  authority_manifest:
+    status: PRESENT
+    path: ssot/manifest.yaml
+  qps_remote_authority:
+    status: PASS
+    owner_repository: GBOGEB/cryoplant-project
+    mutation_allowed: false
+  dow_receipt_boundary:
+    status: PASS
+    owner_repository: GBOGEB/ABACUS
+    auto_engineering_promotion: false
+  shared_resolver:
+    status: IMPLEMENTED_CANDIDATE
+    path: tools/ssot_resolver.py
+  tri_repo_release_contract:
+    status: IMPLEMENTED_CANDIDATE
+    path: release/TRI_REPO_RELEASE_ASSURANCE_CONTRACT_v1.yaml
+  release_identity:
+    status: NEEDS_RECONCILIATION
+    evidence:
+      manifest_release_program: CODEX_2_0
+      version_json: 1.4.0
+      github_release_count: 0
+    release_gate: BLOCKED_UNTIL_RECONCILED
+
+self_eval:
+  pca_seed:
+    highest_pressure_dimensions:
+      - release_identity
+      - manifest_coverage
+      - resolver_penetration
+      - duplicate_authority_detection
+      - schema_coverage
+      - receipt_normalization
+  bt_priority:
+    - release_identity_reconciliation
+    - complete_ssot_candidate_census
+    - authority_uniqueness_validator
+    - resolver_tests_and_penetration
+    - federation_receipt_contract
+  three_p3:
+    current: 1x3PR
+    recommendation: HOLD_1x3PR
+    reason: release identity is not yet unambiguous and resolver has not yet passed CI/self-smoke
+
+scale_gate_to_2x3PR:
+  all_required: true
+  conditions:
+    - release_identity_unambiguous
+    - duplicate_authority_count_zero
+    - qps_remote_authority_immutable
+    - resolver_positive_tests_pass
+    - resolver_negative_tests_pass
+    - exact_base_and_head_sha_receipt_available
+    - no_authoritative_ssot_collision
+
+next_pulse:
+  - reconcile CODEX product release identity without renaming engine/API namespaces
+  - index every SSOT candidate into the root manifest or explicit census disposition
+  - add authority uniqueness and remote-mutation tests
+  - add resolver self-smoke
+  - bind CODEX return receipts to the tri-repo contract

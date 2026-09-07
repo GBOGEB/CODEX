@@ -1,0 +1,163 @@
+schema_version: "1.0"
+contract_id: TRI_REPO_RELEASE_ASSURANCE
+release_program: CODEX_2_0
+status: ACTIVE_CANDIDATE
+
+repositories:
+  cryoplant:
+    repository: GBOGEB/cryoplant-project
+    role: ENGINEERING_AUTHORITY
+    may:
+      - own_qps_engineering_truth
+      - accept_reject_defer_parent_returns
+      - publish_qps_release_products
+    must_not:
+      - silently_delegate_engineering_authority
+  codex:
+    repository: GBOGEB/CODEX
+    role: GOVERNANCE_SEMANTICS_PROVENANCE
+    may:
+      - understand_remote_engineering_truth
+      - validate_semantics
+      - validate_provenance
+      - route_exact_sha_payloads
+      - emit_receipts
+    must_not:
+      - mutate_remote_engineering_truth
+      - auto_promote_child_engineering_state
+  abacus:
+    repository: GBOGEB/ABACUS
+    role: ANALYSIS_RUNTIME_CHALLENGE
+    may:
+      - execute_analysis
+      - challenge_payloads
+      - compute_pca
+      - compute_bt
+      - recommend_three_p3_pressure
+      - emit_receipts
+    must_not:
+      - mutate_remote_engineering_truth
+      - auto_promote_child_engineering_state
+
+authority_classes:
+  - AUTHORITATIVE
+  - DERIVED
+  - MATERIALIZED_VIEW
+  - RECEIPT
+  - COMPATIBILITY
+  - HISTORICAL
+
+lifecycle_states:
+  - ACTIVE
+  - DORMANT
+  - DEPRECATED
+  - RETIRED
+  - CLOSED
+
+remote_authority:
+  qps_engineering_truth:
+    logical_id: QPS_ENGINEERING_TRUTH
+    owner_repository: GBOGEB/cryoplant-project
+    local_codex_role: MIRRORED_REFERENCE
+    local_abacus_role: DERIVED_ANALYSIS_INPUT
+    mutation_allowed_outside_owner: false
+
+invariants:
+  - id: ONE_AUTHORITY_PER_LOGICAL_PARTITION
+    rule: one logical_id plus partition has exactly one authoritative owner
+  - id: REMOTE_ENGINEERING_MUTATION_FORBIDDEN
+    rule: CODEX and ABACUS may not mutate QPS engineering truth
+  - id: RECEIPT_NOT_AUTHORITY
+    rule: receipt or derived output cannot silently become source authority
+  - id: CHILD_DISPOSITION_REQUIRED
+    rule: parent results change child state only after child ACCEPT, REJECT or DEFER
+  - id: EXACT_IDENTITY_REQUIRED
+    fields:
+      - git_commit_sha
+      - git_blob_sha
+      - sha256
+  - id: RELEASE_GATE_IS_CONJUNCTIVE
+    rule: critical release gates are AND gates, not compensating weighted averages
+
+release_tuple:
+  required:
+    - product
+    - version
+    - repository
+    - git_commit_sha
+    - git_tree_sha
+    - manifest_sha256
+    - ssot_sha256
+    - schema_sha256
+    - run_id
+    - wave
+    - pulse
+    - self_eval_sha256
+    - outbound_sha256
+    - return_sha256
+    - disposition
+    - test_receipt_sha256
+    - census_receipt_sha256
+  outward_products:
+    - html_sha256
+    - xlsx_sha256
+    - pptx_sha256
+    - pdf_sha256
+
+execution_loop:
+  - FREEZE_INTENT
+  - CENSUS
+  - AUTHORITY_MAP
+  - EVIDENCE_CLOSURE
+  - CONTRACT_ENFORCEMENT
+  - EXECUTION_ASSURANCE
+  - FEDERATION_ROUNDTRIP
+  - PRODUCT_REGENERATION
+  - PARITY_INTEGRITY
+  - SELF_EVALUATION
+  - RELEASE_CANDIDATE
+  - RELEASE
+
+self_evaluation:
+  method: DMAIC_RECURSIVE
+  structure:
+    pca_role: latent_deficit_structure
+    bt_role: pairwise_execution_priority
+    three_p3_role: bounded_scope_workers_frequency_qa_recommendation
+  may_change:
+    - execution_priority
+    - bounded_worker_count
+    - scope
+    - frequency
+    - qa_depth
+    - evidence_hunt_depth
+  may_not_change:
+    - engineering_truth
+    - contract_authority
+    - compliance_state_without_child_reentry
+
+scaling:
+  allowed_pressure:
+    - 1x3PR
+    - 2x3PR
+    - 4x3PR
+    - 8x3PR
+    - 16x3PR
+  rule: scale_up_only_after_self_evaluation_confidence_and_collision_checks_pass
+  reversible: true
+
+release_dov:
+  required_gates:
+    - PRODUCT
+    - AUTHORITY
+    - EVIDENCE
+    - CONTRACT
+    - EXECUTION
+    - CAPABILITY_REQUALIFICATION
+    - FEDERATION
+    - PRODUCT_PARITY
+    - PROVENANCE
+    - ADVERSARIAL_QA
+    - CLEAN_REBUILD
+    - ZERO_DELTA
+    - RESIDUAL_DISPOSITION
