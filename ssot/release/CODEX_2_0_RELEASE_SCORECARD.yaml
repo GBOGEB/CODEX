@@ -1,0 +1,84 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+status: ACTIVE_PRE_MAJOR_CONVERGENCE
+current_version_baseline: "1.4.0"
+release_candidate_target: "2.0.0-rc1"
+report_basis:
+  w00: {pr: 437, status: MERGED}
+  w01: {pr: 438, status: MERGED}
+  w02: {pr: 441, status: MERGED, merge_sha: 75541a332acc4987b991e9e6403192562e835023}
+measured_repo_stats:
+  ssot_candidates_total: 460
+  authority_candidates: 20
+  schema_candidates: 45
+  receipt_candidates: 38
+  consumer_contract_candidates: 357
+  classified_initial_authority_nodes: 9
+  initial_authority_candidate_penetration_pct: 45.0
+  full_candidate_classification_penetration_pct: 1.96
+  release_identity_divergence_before_w01: true
+  release_identity_divergence_after_w01: false
+  undocumented_semantic_terms_w01: 14
+  undocumented_semantic_terms_w02: 0
+ci_status_w02_head:
+  primary_ci: PASS
+  semantic_runtime: PASS
+  w003_governance: PASS
+  runtime_federation: PASS
+  runtime_governance: PASS
+  full_stack_governance: PASS
+  validate_federation: PASS
+  qps_canonicalization: PASS
+  render_parity: PASS
+  render_regression: PASS
+  bandit: PASS
+  semgrep: PASS
+  osv_scanner: PASS
+  codeql: PASS
+  qps_keb_w43_triage: FAIL
+  qps_keb_w43_failure_class: FEDERATION_INPUT_COMPLETENESS
+  qps_keb_w43_failure_detail: adr_index must be a non-empty object array
+scorecard:
+  repository_identity: {baseline: 3.0, current: 4.2, target: 5.0}
+  code_health: {baseline: 3.6, current: 3.9, target: 4.6}
+  runtime_uniqueness: {baseline: 2.7, current: 2.9, target: 4.8}
+  debug_observability: {baseline: 3.0, current: 3.1, target: 4.5}
+  testing: {baseline: 4.0, current: 4.4, target: 4.8}
+  semantic_runtime: {baseline: 4.1, current: 4.6, target: 5.0}
+  provenance: {baseline: 4.6, current: 4.8, target: 5.0}
+  dmaic: {baseline: 4.2, current: 4.3, target: 4.8}
+  pca: {baseline: 4.0, current: 4.3, target: 4.7}
+  bt: {baseline: 3.8, current: 4.2, target: 4.7}
+  three_p3: {baseline: 4.4, current: 4.7, target: 5.0}
+  ssot_governance: {baseline: 3.8, current: 4.3, target: 5.0}
+  zod_contracts: {baseline: 4.1, current: 4.3, target: 5.0}
+  agent_execution: {baseline: 3.5, current: 3.6, target: 4.7}
+  mcp: {baseline: 3.8, current: 4.0, target: 4.8}
+  skills_blocks: {baseline: 3.4, current: 3.5, target: 4.7}
+  federation: {baseline: 4.3, current: 4.5, target: 5.0}
+  census_index: {baseline: 4.1, current: 4.6, target: 5.0}
+  github_roundtrip: {baseline: 4.7, current: 4.7, target: 5.0}
+  ui_pages: {baseline: 3.5, current: 3.5, target: 4.6}
+  four_product_parity: {baseline: 3.2, current: 3.4, target: 5.0}
+  release_reproducibility: {baseline: 2.8, current: 3.8, target: 5.0}
+authority_integrity:
+  engineering_aware: true
+  engineering_non_authoritative: true
+  qps_engineering_owner: GBOGEB/cryoplant-project
+  qps_local_role: MIRRORED_REFERENCE
+  qps_mutation_allowed: false
+  dow_auto_promotion_allowed: false
+  child_disposition_owner: GBOGEB/cryoplant-project
+release_deficit_priority:
+  - COMPLETE_AUTHORITY_CLASSIFICATION_AND_RESOLVER_PENETRATION
+  - REPAIR_W43_FEDERATION_INPUT_COMPLETENESS
+  - MCP_RUNTIME_DUPLICATION_AND_OWNER_CONVERGENCE
+  - STRUCTURED_EXECUTION_DEBUG_RECEIPTS
+  - FOUR_PRODUCT_SEMANTIC_PARITY
+  - ZERO_DELTA_RELEASE_MANIFEST_AND_TAGGING
+session_dov:
+  w00_authority_foundation: PASS
+  w01_version_and_census: PASS
+  w02_semantic_and_resolver_core: PASS
+  w02_federation_input_completeness: FAIL
+  global_release_dov: NOT_YET
