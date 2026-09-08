@@ -1,0 +1,100 @@
+name: W70 Dynamic CODEX Publish Burndown
+
+on:
+  pull_request: {}
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  dynamic-burndown:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install requirements
+        run: python -m pip install -r requirements.txt
+      - name: Execute terminal evidence probes
+        shell: bash
+        run: |
+          set +e
+          mkdir -p release/w70
+          python scripts/release/codex_portability_probe.py; echo $? > release/w70/portability.rc
+          python scripts/release/codex_repro_probe.py; echo $? > release/w70/repro.rc
+          python scripts/release/codex_rc_preflight.py; echo $? > release/w70/preflight.rc
+          python scripts/release/codex_determinism_exec.py; echo $? > release/w70/determinism.rc
+          python scripts/release/codex_rc_manifest_generate.py; echo $? > release/w70/manifest.rc
+          exit 0
+      - name: Emit evidence-aware burndown
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          def rc(name):
+              p=Path('release/w70')/f'{name}.rc'
+              return int(p.read_text().strip()) if p.exists() else 999
+
+          def zero_delta_state():
+              candidates=list(Path('release').rglob('ZERO_DELTA_RECEIPT.yaml'))
+              for p in candidates:
+                  text=p.read_text(encoding='utf-8', errors='ignore').lower()
+                  if 'status: "pass"' in text or 'status: pass' in text or 'result: "pass"' in text or 'result: pass' in text:
+                      return 'PASS', str(p)
+              return 'OPEN', None
+
+          portability=rc('portability')
+          repro=rc('repro')
+          preflight=rc('preflight')
+          determinism=rc('determinism')
+          manifest=rc('manifest')
+          zd_state, zd_path=zero_delta_state()
+
+          states={
+              'clean_execution': 'PASS' if portability==0 else 'OPEN',
+              'aggregate_release_smoke': 'PASS' if portability==0 and repro==0 and preflight==0 else 'OPEN',
+              'deterministic_repeat': 'PASS' if determinism==0 else 'OPEN',
+              'zero_delta_execution': zd_state,
+              'adversarial_release_qa': 'OPEN',
+              'immutable_rc_manifest': 'PASS' if manifest==0 else 'PARTIAL',
+              'version_freeze': 'OPEN',
+              'main_protection': 'BLOCKED_EXTERNAL_ADMIN',
+              'formal_release': 'BLOCKED_TERMINAL',
+          }
+          passed=sum(v=='PASS' for v in states.values())
+          payload={
+              'schema_version':'2.0',
+              'gate':'CODEX_PUBLISH_BURNDOWN_DYNAMIC',
+              'source_sha':'${{ github.event.pull_request.head.sha || github.sha }}',
+              'tracked_total':len(states),
+              'passed':passed,
+              'outstanding':len(states)-passed,
+              'states':states,
+              'probe_rc':{
+                  'portability':portability,
+                  'repro':repro,
+                  'preflight':preflight,
+                  'determinism':determinism,
+                  'manifest':manifest,
+              },
+              'zero_delta_receipt_path':zd_path,
+              'unallocated_external':['main_protection'],
+              'post_terminal':['formal_release'],
+              'boundary':'Only exact-head observed PASS removes an item.'
+          }
+          p=Path('release/W70_CODEX_PUBLISH_BURNDOWN_RECEIPT.json')
+          p.write_text(json.dumps(payload,indent=2)+'\n',encoding='utf-8')
+          print(p.read_text())
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: w70-codex-dynamic-publish-burndown
+          path: |
+            release/W70_CODEX_PUBLISH_BURNDOWN_RECEIPT.json
+            release/w70/*.rc
+          if-no-files-found: error
