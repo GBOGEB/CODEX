@@ -1,0 +1,39 @@
+name: W69 QPS Zero-Delta Execution
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  zero-delta:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute two controlled synthetic regenerations
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force -Path release | Out-Null
+          ./07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1 -BuilderScript ./07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1 -ReleaseRoot release/W69/first -CreateOfficeReviewCopy:$false
+          ./07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1 -BuilderScript ./07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1 -ReleaseRoot release/W69/second -CreateOfficeReviewCopy:$false
+      - name: Compare product family and emit receipt
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $products = @('QPS_COST_Master.xlsx','QPS_Cost_Engineering_Handover.docx','QPS_Cost_Management_Deck.pptx','QPS_Cost_Engineering_Handover.pdf','index.html')
+          $aRoot='release/W69/first/10_RELEASES/latest'; $bRoot='release/W69/second/10_RELEASES/latest'; $pass=$true; $rows=@()
+          foreach($p in $products){$a=Join-Path $aRoot $p;$b=Join-Path $bRoot $p;if(!(Test-Path $a)-or !(Test-Path $b)){$pass=$false;$rows+="MISSING  $p";continue};$ha=(Get-FileHash -Algorithm SHA256 $a).Hash.ToLowerInvariant();$hb=(Get-FileHash -Algorithm SHA256 $b).Hash.ToLowerInvariant();$rows+="$ha  first/$p";$rows+="$hb  second/$p";if($ha-ne$hb){$pass=$false}}
+          $rows | Set-Content release/SHA256SUMS -Encoding utf8
+          if($pass){$result='PASS'}else{$result='FAIL'}
+          "schema_version: '1.0'`nsource_commit_sha: '$env:GITHUB_SHA'`nstatus: '$result'`npass_claimed: $($pass.ToString().ToLowerInvariant())`ncomparison: 'w69_two_pass_synthetic_qps_roundtrip'" | Set-Content release/ZERO_DELTA_RECEIPT.yaml -Encoding utf8
+          if(-not $pass){throw 'W69 zero-delta comparison failed'}
+      - name: Upload W69 zero-delta receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: w69-qps-zero-delta
+          path: |
+            release/SHA256SUMS
+            release/ZERO_DELTA_RECEIPT.yaml
+          if-no-files-found: error

@@ -1,0 +1,26 @@
+name: CODEX Zero Delta Preflight
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    paths:
+      - '.github/workflows/codex-zero-delta-preflight.yml'
+      - '.github/workflows/qps-roundtrip-zero-delta.yml'
+      - 'ssot/release/**'
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          test -f .github/workflows/qps-roundtrip-zero-delta.yml
+          test -f ssot/release/W05_P10_QPS_WORKFLOW_RECREATE.yaml
+          test -f ssot/release/W05_P6_QPS_ROUNDTRIP_REGENERATION_JOB.yaml
+          printf 'status: PASS\nqualification: CODEX_ZERO_DELTA_PREFLIGHT\nsha: %s\n' "$GITHUB_SHA" > CODEX_ZERO_DELTA_PREFLIGHT.yaml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: codex-zero-delta-preflight
+          path: CODEX_ZERO_DELTA_PREFLIGHT.yaml
+          if-no-files-found: error
