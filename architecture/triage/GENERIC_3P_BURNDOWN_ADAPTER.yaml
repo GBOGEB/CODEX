@@ -1,0 +1,55 @@
+schema_version: TRIAGE-CODEX-3P-ADAPTER-1.0.0
+role: semantic_governance_and_orchestration
+reference_implementation:
+  repo: GBOGEB/ABACUS
+  path: architecture/w64/GENERIC_3PM_3PR_BURNDOWN_METHOD.yaml
+  expected_schema: W64-GENERIC-3P-FAMILY-1.1.0
+contract:
+  root_item_id_immutable: true
+  facet_id_pattern: root__variant__pulse__capability__attempt
+  facet_ids_do_not_count_as_new_burndown_items: true
+  single_writer_reentry: true
+variant_selection:
+  evidence_space_unknown: 3PE
+  known_queue_authority_or_disposition_uncertain: 3PC
+  candidate_change_needs_proof: 3PV
+  search_relationship_learning_primary: 3PL
+  cross_repo_bidirectional_receipt: 3PR
+orchestration:
+  discovery_read_only: true
+  worker_pool_may_scale: true
+  scale_ladder: [1, 2, 4, 5, 8, 16, 32]
+  workers_may_emit:
+    - evidence_edges
+    - semantic_findings
+    - provenance_gaps
+    - timing_metrics
+    - variant_recommendations
+  workers_may_not_emit:
+    - engineering_truth_changes
+    - formal_compliance_promotion
+    - release_credit
+    - new_root_item_ids_for_existing_scope
+semantic_receipt:
+  require_exact_root_id: true
+  require_source_sha: true
+  require_method_version: true
+  require_variant_and_pulse: true
+  preserve_parent_child_lineage: true
+  recommendations_are_not_authority: true
+statistical_use:
+  consume_history_from: architecture/w64/GENERIC_3P_BURNDOWN_HISTORY.jsonl
+  below_threshold: descriptive_only
+  covariance_activation: n_complete_at_least_max_30_and_10p
+  pca_activation: n_complete_at_least_max_50_and_10p
+  empirical_BT_activation: terminal_n_at_least_30_and_positive_outcomes_at_least_5
+learning:
+  allowed:
+    - variant_selection
+    - search_order
+    - runner_allocation
+    - threshold_tuning_with_history
+  prohibited:
+    - autonomous_truth_mutation
+    - provenance_reclassification_without_source
+    - compliance_or_DoV_promotion
