@@ -1,0 +1,27 @@
+{
+  "schema_version": "creq-approval/0.1.0",
+  "id": "CReq_CODEX_002",
+  "repo": "GBOGEB/CODEX",
+  "overrides": "CReq_005",
+  "scope": "GBOGEB/CODEX only",
+  "decision": "APPROVED",
+  "risk_class": "operational_metadata_only",
+  "engineering_authority_credit": false,
+  "compliance_credit": false,
+  "approval_chain": [
+    {"level":1,"role":"local_repo_owner","state":"APPROVED","basis":"CODEX local operational classification"},
+    {"level":2,"role":"parent_cADR_or_cOCD_authority","state":"APPROVED","basis":"Does not weaken global separation of editorial and functional maturity"},
+    {"level":3,"role":"global_CReq_authority","state":"APPROVED","basis":"Scoped specialization preserves CReq_005 intent outside CODEX"}
+  ],
+  "bootstrap_separation_of_duties": {
+    "mode": "single_accountable_owner_multiple_roles",
+    "accepted_for": "federation_bootstrap_only",
+    "future_control": "global governance may require distinct approvers without changing resolver precedence semantics"
+  },
+  "invariants": [
+    "CReq_005 remains unchanged globally",
+    "override is effective only for GBOGEB/CODEX",
+    "editorial-only work receives zero functional maturity credit",
+    "no engineering, compliance, negotiation, or child-disposition authority is created"
+  ]
+}
