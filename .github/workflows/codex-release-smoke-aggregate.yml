@@ -1,0 +1,66 @@
+name: CODEX Release Smoke Aggregate
+
+on:
+  workflow_dispatch: {}
+  pull_request: {}
+
+jobs:
+  release-smoke:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+      - name: Run portability probe
+        run: python scripts/release/codex_portability_probe.py
+      - name: Run RC preflight
+        run: python scripts/release/codex_rc_preflight.py
+      - name: Run reproducibility probe
+        run: python scripts/release/codex_repro_probe.py
+      - name: Run CReq enforcement
+        run: |
+          python triage/requirements/creq_ci_gate.py \
+            --registry triage/requirements/GLOBAL_CREQ_REGISTRY.json \
+            --overlay triage/requirements/CODEX_CREQ_OVERLAY.json \
+            --resolver triage/requirements/creq_resolver.py \
+            --out triage/requirements/receipts/CODEX_CREQ_CI_RESOLUTION.json
+      - name: Aggregate release smoke receipt
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('.')
+          sources = {
+              'portability': root/'release/CODEX_PORTABILITY_RECEIPT.json',
+              'rc_preflight': root/'release/CODEX_RC_PREFLIGHT.json',
+              'reproducibility': root/'release/CODEX_REPRO_RECEIPT.json',
+              'creq': root/'triage/requirements/receipts/CODEX_CREQ_CI_RESOLUTION.json',
+          }
+          states = {}
+          for name, path in sources.items():
+              data = json.loads(path.read_text(encoding='utf-8'))
+              states[name] = data.get('status', 'PASS' if name == 'creq' else 'UNKNOWN')
+          status = 'PASS' if all(v == 'PASS' for v in states.values()) else 'FAIL'
+          out = root/'release/CODEX_RELEASE_SMOKE_RECEIPT.json'
+          out.write_text(json.dumps({'schema_version':'1.0','gate':'CODEX_RELEASE_SMOKE','status':status,'components':states}, indent=2)+'\n', encoding='utf-8')
+          print(out.read_text())
+          raise SystemExit(0 if status == 'PASS' else 1)
+          PY
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-release-smoke-receipts
+          path: |
+            release/CODEX_PORTABILITY_RECEIPT.json
+            release/CODEX_RC_PREFLIGHT.json
+            release/CODEX_REPRO_RECEIPT.json
+            release/CODEX_RELEASE_SMOKE_RECEIPT.json
+            triage/requirements/receipts/CODEX_CREQ_CI_RESOLUTION.json
+          if-no-files-found: error
