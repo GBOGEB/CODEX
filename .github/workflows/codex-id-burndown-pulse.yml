@@ -21,8 +21,7 @@ jobs:
         env: {REQUESTED_WORKERS: "${{ github.event_name == 'workflow_dispatch' && inputs.workers || '16' }}", REQUESTED_TRANSPORT: "${{ github.event_name == 'workflow_dispatch' && inputs.transport || 'local_pool' }}"}
         run: |
           import os
-          n=int(os.environ['REQUESTED_WORKERS']); t=os.environ['REQUESTED_TRANSPORT']
-          assert n in {1,2,4,8,16,32,64} and t in {'local_pool','physical_fanout'}
+          n=int(os.environ['REQUESTED_WORKERS']); t=os.environ['REQUESTED_TRANSPORT']; assert n in {1,2,4,8,16,32,64} and t in {'local_pool','physical_fanout'}
           with open(os.environ['GITHUB_OUTPUT'],'a') as f: f.write(f'workers={n}\ntransport={t}\n')
           print(f'ID_PULSE_PLAN workers={n} sue_depth={n*3} transport={t}')
       - name: Produce canonical census once
@@ -31,16 +30,15 @@ jobs:
         shell: python
         env: {WORKERS: '${{ steps.plan.outputs.workers }}'}
         run: |
-          import json,math,os
+          import json,math,os,time
           from pathlib import Path
-          n=int(os.environ['WORKERS']); c=json.loads(Path('reports/codex_2_0_ssot_candidate_census.json').read_text()); q=[r for r in c['candidates'] if r.get('logical_id') is None and r.get('lifecycle_state')=='ACTIVE_CANDIDATE']
-          cw={'AUTHORITY_CANDIDATE':4.,'SCHEMA_CANDIDATE':3.,'CONSUMER_OR_CONTRACT_CANDIDATE':2.,'RECEIPT_CANDIDATE':1.}
+          n=int(os.environ['WORKERS']); c=json.loads(Path('reports/codex_2_0_ssot_candidate_census.json').read_text()); q=[r for r in c['candidates'] if r.get('logical_id') is None and r.get('lifecycle_state')=='ACTIVE_CANDIDATE']; cw={'AUTHORITY_CANDIDATE':4.,'SCHEMA_CANDIDATE':3.,'CONSUMER_OR_CONTRACT_CANDIDATE':2.,'RECEIPT_CANDIDATE':1.}
           def w(r): return round(cw.get(r.get('candidate_class'),2.)+min(2.,math.log2(max(1,int(r.get('bytes',0))))/20.),4)
           bins=[{'shard':i,'weight':0.,'items':[]} for i in range(n)]
           for r in sorted(q,key=lambda x:(-w(x),x['path'])):
             b=min(bins,key=lambda x:(x['weight'],len(x['items']),x['shard'])); z=dict(r); z['work_weight']=w(r); b['items'].append(z); b['weight']=round(b['weight']+z['work_weight'],4)
           counts=[len(b['items']) for b in bins]; weights=[b['weight'] for b in bins]; skew=lambda v:0 if not v or max(v)==0 else round((max(v)-min(v))/max(v),4)
-          plan={'schema_version':'1.3','workers':n,'sue_depth':n*3,'queue':len(q),'queue_per_sue':round(len(q)/(n*3),4),'count_min':min(counts),'count_max':max(counts),'count_skew':skew(counts),'weight_skew':skew(weights),'bins':bins}
+          plan={'schema_version':'1.4','plan_created_epoch_ns':time.time_ns(),'workers':n,'sue_depth':n*3,'queue':len(q),'queue_per_sue':round(len(q)/(n*3),4),'count_min':min(counts),'count_max':max(counts),'count_skew':skew(counts),'weight_skew':skew(weights),'bins':bins}
           Path('reports/id_burndown').mkdir(parents=True,exist_ok=True); Path('reports/id_burndown/work_plan.json').write_text(json.dumps(plan,indent=2)+'\n'); open(os.environ['GITHUB_OUTPUT'],'a').write(f"queue={len(q)}\n"); print('ID_BALANCE_PASS '+json.dumps({k:v for k,v in plan.items() if k!='bins'}))
       - name: Measure 5-slot work-conserving scheduler
         run: python scripts/id_scheduler_sample.py --plan reports/id_burndown/work_plan.json --out reports/id_burndown/scheduler_sample.json --pool-size 5
@@ -70,9 +68,7 @@ jobs:
       - name: Operational scheduler and scale telemetry
         env: {WORKERS: '${{ needs.producer.outputs.workers }}', QUEUE: '${{ needs.producer.outputs.queue }}'}
         run: |
-          active=$(find reports/id_burndown/local-receipts -name 'receipt-*.json' | wc -l)
-          wall=$(python -c "import json;print(json.load(open('reports/id_burndown/local-receipts/pool_stats.json'))['wall_ms'])")
-          echo '--- scheduler sample ---'; cat reports/id_burndown/scheduler_sample.json
-          echo '--- pool stats ---'; cat reports/id_burndown/local-receipts/pool_stats.json
-          python scripts/id_pulse_scale_controller.py --current "$WORKERS" --queue "$QUEUE" --active-workers "$active" --previous-queue 464 --previous-wall-ms 9.4298 --wall-ms "$wall" --sample-count 2 --rework-rate 0 --collisions 0
-          echo 'Scale is governed by convergence efficiency; authority mutation remains serialized.'
+          active=$(find reports/id_burndown/local-receipts -name 'receipt-*.json' | wc -l); wall=$(python -c "import json;print(json.load(open('reports/id_burndown/local-receipts/pool_stats.json'))['wall_ms'])")
+          echo '--- scheduler sample ---'; cat reports/id_burndown/scheduler_sample.json; echo '--- pool stats ---'; cat reports/id_burndown/local-receipts/pool_stats.json
+          python scripts/id_pulse_scale_controller.py --current "$WORKERS" --queue "$QUEUE" --active-workers "$active" --previous-queue 465 --previous-wall-ms 6.2602 --wall-ms "$wall" --sample-count 3 --rework-rate 0 --collisions 0
+          echo 'Scale is governed by convergence efficiency; external admission and internal queue age are separate telemetry.'
