@@ -1,0 +1,38 @@
+name: CODEX Cross-Version Self Smoke
+
+on:
+  workflow_dispatch: {}
+  pull_request: {}
+
+jobs:
+  self-smoke:
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.12']
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -r requirements.txt
+      - run: python scripts/release/codex_portability_probe.py
+      - run: python scripts/release/codex_rc_preflight.py
+      - name: Emit self-smoke receipt
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path('release')/f"CODEX_SELF_SMOKE_{os.environ['PYVER'].replace('.','_')}.json"
+          p.write_text(json.dumps({'schema_version':'1.0','gate':'CODEX_SELF_SMOKE','python':os.environ['PYVER'],'status':'PASS'}, indent=2)+'\n')
+          PY
+        env:
+          PYVER: ${{ matrix.python }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: codex-self-smoke-${{ matrix.python }}
+          path: release/CODEX_SELF_SMOKE_*.json
+          if-no-files-found: error
