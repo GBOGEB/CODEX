@@ -1,0 +1,18 @@
+schema: TRIAGE-W68-3PR-B-1.0
+wave: W068
+lane: B
+intent: execute existing QPS Roundtrip Zero-Delta workflow on a fresh distinct head
+baseline:
+  cluster_PXA_pct: 62
+  zero_delta_subscore_pct: 25
+BT: 0.92
+negative_loading: release_reproducibility_zero_delta
+victory:
+  workflow: .github/workflows/qps-roundtrip-zero-delta.yml
+  required_artifact: w05-qps-roundtrip-zero-delta
+  required_receipt: release/ZERO_DELTA_RECEIPT.yaml
+  required_status: PASS
+promotion_boundary:
+  synthetic_pass_does_not_equal_production_builder_parity: true
+  engineering_credit_delta: 0
+  publish_credit_requires_cluster_AND_gate: true
