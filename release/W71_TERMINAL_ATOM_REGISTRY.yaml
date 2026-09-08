@@ -1,0 +1,120 @@
+schema: codex.w71.terminal-atom-registry/v1
+as_of: '2026-09-08T10:14:00+02:00'
+classification: RELEASE_CONTROL_DIAGNOSTIC_ONLY
+source_learning: ABACUS_EXACT_PATH_ATOMS_PLUS_QPS_ABSOLUTE_DENOMINATORS_PLUS_TRIAGE_DELTA_RULE
+
+baseline:
+  terminal_atoms_total: 9
+  strict_pass_from_w70_dynamic_receipt: 4
+  strict_outstanding: 5
+  observed_pass_including_unbound_same_head_evidence: 5
+  reconciliation_candidates: 1
+  external_admin_atoms: 1
+  terminal_post_gate_atoms: 1
+
+atoms:
+  - id: CTP01
+    logical_item: clean_execution
+    state: PASS
+    allocation: COMPLETE
+    evidence:
+      exact_head: 69f658ab8eda801a383e3d78d6aecd388a8e4ed9
+      run_id: 34202487752
+      surface: scripts/release/codex_portability_probe.py
+      folder: scripts/release
+  - id: CTP02
+    logical_item: aggregate_release_smoke
+    state: PASS
+    allocation: COMPLETE
+    evidence:
+      exact_head: 69f658ab8eda801a383e3d78d6aecd388a8e4ed9
+      run_id: 34202487752
+      surface: W70 Dynamic CODEX Publish Burndown
+      folder: .github/workflows
+  - id: CTP03
+    logical_item: deterministic_repeat
+    state: PASS
+    allocation: COMPLETE
+    evidence:
+      exact_head: 69f658ab8eda801a383e3d78d6aecd388a8e4ed9
+      run_id: 34202487752
+      surface: scripts/release/codex_determinism_exec.py
+      folder: scripts/release
+  - id: CTP04
+    logical_item: zero_delta_execution
+    state: OPEN
+    allocation: ACTIVE_REPAIR
+    evidence:
+      last_failed_workflow: W69 QPS Zero-Delta Execution
+      prior_failure_stage: two_pass_regeneration
+      current_diagnostic_surface: .github/workflows/w70-zero-delta-diagnostic.yml
+      folder: .github/workflows
+    prerequisite_for: [production_builder_parity]
+  - id: CTP05
+    logical_item: adversarial_release_qa
+    state: PASS_OBSERVED_NOT_BOUND_IN_DYNAMIC_RECEIPT
+    allocation: RECONCILE_EXISTING_EVIDENCE
+    evidence:
+      exact_head: 69f658ab8eda801a383e3d78d6aecd388a8e4ed9
+      run_id: 34202487800
+      workflow: CODEX Adversarial Governance Replay
+      surface: .github/workflows/codex-adversarial-governance-replay.yml
+      folder: .github/workflows
+    strict_credit_rule: 'do not raise strict PASS denominator until the governed aggregate binds this same-head receipt'
+  - id: CTP06
+    logical_item: immutable_rc_manifest
+    state: PASS
+    allocation: COMPLETE_CANDIDATE_ONLY
+    evidence:
+      exact_head: 69f658ab8eda801a383e3d78d6aecd388a8e4ed9
+      run_id: 34202487752
+      surface: scripts/release/codex_rc_manifest_generate.py
+      folder: scripts/release
+      promotion_allowed: false
+  - id: CTP07
+    logical_item: version_freeze
+    state: OPEN
+    allocation: DEPENDENCY_BLOCKED
+    evidence:
+      current_version: 1.4.0
+      target_version: 2.0.0
+      surface: VERSION.json
+      folder: repo_root
+    blocked_by: [CTP04, CTP05]
+  - id: CTP08
+    logical_item: main_protection
+    state: BLOCKED_EXTERNAL_ADMIN
+    allocation: ADMIN_EXTERNAL
+    evidence:
+      surface: repository_ruleset_or_branch_protection
+      folder: github_repository_settings
+    owner_class: REPOSITORY_ADMIN
+  - id: CTP09
+    logical_item: formal_release
+    state: BLOCKED_TERMINAL
+    allocation: POST_RC
+    evidence:
+      surface: git_tag_plus_github_release
+      folder: github_release_plane
+    blocked_by: [CTP04, CTP05, CTP07, CTP08]
+
+outside_terminal_denominator:
+  - id: CTPX01
+    logical_item: production_builder_parity
+    state: OPEN
+    allocation: DEPENDENCY_BLOCKED
+    blocked_by: CTP04
+    rule: 'synthetic zero-delta PASS is necessary but not sufficient for production-builder parity'
+
+cross_learning_controls:
+  absolute_denominator_frozen_within_wave: true
+  every_atom_has_location_or_external_owner: true
+  partial_or_unbound_evidence_not_counted_as_strict_pass: true
+  before_observed_delta_target_remaining_required: true
+  no_pr_creation_credit: true
+
+burndown:
+  before_w70_dynamic: {pass: 1, outstanding: 8}
+  after_w70_dynamic: {pass: 4, outstanding: 5, delta_outstanding: -3}
+  w71_reconciliation_potential_without_new_implementation: {candidate_atoms: 1, atom: CTP05}
+  next_target: {strict_pass: 5, outstanding: 4}
