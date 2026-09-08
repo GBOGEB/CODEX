@@ -1,5 +1,5 @@
 {
-  "schema_version": "creq-local/0.1.0",
+  "schema_version": "creq-local/0.2.0",
   "repo": "GBOGEB/CODEX",
   "requirements": [
     {
@@ -8,6 +8,21 @@
       "parent_global_requirement": "CReq_006",
       "title": "CODEX semantic re-entry metadata",
       "rationale": "CODEX adds semantic re-entry bindings without weakening the global lineage requirement."
+    },
+    {
+      "id": "CReq_CODEX_002",
+      "mode": "override",
+      "overrides": "CReq_005",
+      "title": "CODEX editorial bot classification and maturity exclusion",
+      "delta": "Within CODEX, editorial-only automated PRs must be explicitly classified and excluded from functional maturity and defect-burndown metrics.",
+      "rationale": "Proves approved local override precedence on a non-engineering operational requirement.",
+      "approval_state": "APPROVED",
+      "approval_receipt": "triage/requirements/approvals/CReq_CODEX_002_APPROVAL.json",
+      "approval_chain": [
+        {"role":"local_repo_owner","state":"APPROVED"},
+        {"role":"parent_cADR_or_cOCD_authority","state":"APPROVED"},
+        {"role":"global_CReq_authority","state":"APPROVED"}
+      ]
     }
   ]
 }
