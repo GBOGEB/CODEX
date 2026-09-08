@@ -1,0 +1,36 @@
+schema_version: '0.1'
+document_id: TRIAGE_3PR_DOV_CLOSURE_W62_A_CODEX
+snapshot_date: '2026-09-08'
+repository: GBOGEB/CODEX
+mode: 3PR
+observed_main_sha: 64cd0af3d20d46e4fce0a32653cb2e2ef41bebd4
+observed_state:
+  terminal_proof_burndown_predecessor: 513
+  federation_creq_ci: MERGED
+  exact_head_governance_portability_lane: ACTIVE_OR_SUPERSEDED_BY_LATER_MAIN
+cross_repo:
+  cryoplant_project:
+    release_convergence_pr: 670
+    state: MERGED
+    diagnostic_dmaic_pct: 90.6
+  ABACUS:
+    release_readiness_pr: 1003
+    baseline_publish_readiness_pct: 65.5
+closure_metrics:
+  control_surfaces_present: '3/3'
+  semantic_governance_present: true
+  exact_sha_terminal_receipt: PARTIAL
+  fresh_checkout_reproducibility: PARTIAL
+  child_acceptance_authority_preserved: true
+diagnostic_dov:
+  wave_a_target_pct: 88
+  terminal_dov: WITHHELD
+wave_b_focus:
+- exact-SHA semantic/validator PASS receipt
+- fresh-checkout install/import/self-smoke receipt
+- same-boundary cross-repo SHA tuple
+- zero-delta return to child
+formal_effect:
+  engineering_delta: 0
+  compliance_delta: 0
+  release_credit: observed_only_until_green_receipts
