@@ -1,8 +1,32 @@
-schema_version: '1.0'
+schema_version: '1.1'
 wave: W05
-pulse: P12
-purpose: efficiency-aware work-conserving execution control
+pulse: P14
+purpose: observed efficiency-aware work-conserving execution control
 credit: EXECUTION_CONTROL_ONLY
+
+observed_sample:
+  source_run_id: 34179700296
+  producer_job_id: 101916107257
+  local_pool_job_id: 101916580388
+  queue: 465
+  logical_workers: 16
+  sue_depth: 48
+  queue_per_sue: 9.6875
+  physical_runner_slots: 1
+  local_threads: 16
+  completed_workers: 16
+  wall_ms: 6.2602
+  items_per_wall_second: 74278.6584
+  items_per_sue_second: 1547.47205
+  count_skew: 0.0333
+  weight_skew: 0.013
+  processing_ns_p50: 819
+  processing_ns_max: 3345
+  processing_time_skew: 0.8694
+  interpretation:
+    - local execution is microtask dominated; nanosecond processing skew is not a useful scheduling objective yet
+    - one-runner local pool is materially faster than the previous 16x and 32x samples, supporting 16x as nominal
+    - external Actions admission delay dominates local execution and must be tracked separately from item queue age
 
 pool_model:
   example_total_slots: 5
@@ -25,23 +49,30 @@ queue_policy:
     numerator: convergence_gain + 0.5*stability_gain + 0.75*unblock_gain
     denominator: estimated_remaining_time + checkpoint_cost
     modifiers: [queue_age_urgency, setup_affinity]
+    observed_tuning: HOLD_WEIGHTS_PENDING_REAL_ITEM_RUNTIME
   squeeze_work:
     enabled: true
     rule: fill predicted idle windows with useful queued work whose estimated remaining time fits
   cooperative_preemption:
     enabled: true
     checkpoints_only: true
-    minimum_value_density_ratio: 1.5
+    minimum_value_density_ratio: 2.0
+    previous_ratio: 1.5
+    rationale: microtask local execution is only 6.2602ms total; require stronger benefit before paying checkpoint/context-switch overhead
     non_resumable_jobs: never_preempt
 
 starvation_control:
   per_item_max_queue_s: required
   aging: quadratic_until_deadline
   at_or_after_deadline: mandatory_priority_class
+  tuning_state: HOLD_UNTIL_REAL_ENQUEUE_TIMESTAMPS
+  external_admission_wait_is_not_item_age: true
   metrics:
-    - queue_depth
-    - max_queue_age_s
-    - p50_queue_age_s
+    - external_runner_admission_wait_s
+    - internal_queue_depth
+    - real_item_queue_age_p50_s
+    - real_item_queue_age_p95_s
+    - real_item_queue_age_max_s
     - overdue_count
     - deadline_miss_count
     - dispatch_wait_s
@@ -56,6 +87,8 @@ starvation_control:
 
 scale_control:
   normal_operating_point: 16x3PR
+  nominal_sue_depth: 48
+  observed_nominal_wall_ms: 6.2602
   burst_candidate: 32x3PR
   64x3PR: blocked_until_repeated_wall_clock_gain
   scale_on: measured_convergence_gain_per_wall_second
