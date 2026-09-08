@@ -1,0 +1,34 @@
+schema_version: '0.1'
+document_id: W63_P7_KEB_DISPOSITION_CLOSURE
+status: CANDIDATE_SEMANTIC_RECEIPT
+wave: W63
+formal_engineering_credit_delta: 0
+
+observed_input:
+  w62_keb_pr: 503
+  w62_head: b7772df240719d23689b7828a7c8622070d97d83
+  role: semantic_provenance_policy_authority_not_child_engineering_authority
+
+semantic_contract:
+  accepted_dispositions: [ACTIVE, SUPERSEDED, HISTORICAL, QUARANTINED]
+  runtime_eligible_only: [ACTIVE]
+  preserve_lineage_for: [SUPERSEDED, HISTORICAL, QUARANTINED]
+  reject_if:
+    - disposition_missing
+    - runtime_eligible_true_for_non_ACTIVE
+    - supersession_reason_missing_for_SUPERSEDED
+    - evidence_class_missing
+    - child_authority_claimed_by_parent
+
+KEB_receipt_predicate:
+  PASS_when:
+    - child_P7_contract_schema_valid
+    - every_candidate_has_explicit_disposition
+    - non_ACTIVE_candidates_cannot_be_current_authority
+    - provenance_and_reproducibility_are_preserved
+  current_state: READY_FOR_EXACT_HEAD_EXECUTION
+
+return_to_child:
+  on_PASS: SEMANTIC_DISPOSITION_VALID
+  on_FAIL: DEFER_WITH_EXACT_FIELD_ERROR
+  engineering_credit: 0
