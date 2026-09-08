@@ -1,0 +1,39 @@
+schema: TRIAGE-CLUSTER-PUBLISH-READINESS-0.1
+as_of: 2026-09-08
+cluster_publish_readiness: 67.0
+cluster_pxa_completeness: 58.0
+publish_decision: NO_GO
+repo_role: semantic-orchestration-control-plane
+repo_local_issue: 500
+repo_local_todo:
+  - close W003 Governance Gate on exact head
+  - close Governance Validation / SSOT package invocation
+  - retain exact-head governance-clean receipt
+  - execute production regeneration contract
+  - require ZERO_DELTA_RECEIPT PASS before parity/release credit
+  - expose node-edge-atom and schema/Zod versions
+  - expose MCP, trigger, agent and orchestration registry versions
+  - bind product SHA256 hashes to cluster receipt
+cluster_dependencies:
+  - cryoplant exact-head green
+  - ABACUS governance green
+  - synchronized CReq/federation digest
+  - superfederation receipt
+  - superpipeline receipt
+pxa_components:
+  governance_exact_head: 72
+  schema_zod: 62
+  agent_orchestration: 86
+  mcp_trigger_plane: 68
+  product_reproducibility: 38
+  zero_delta: 25
+bt_priority:
+  governance_red_closure: 0.94
+  production_zero_delta: 0.92
+  graph_zod_freeze: 0.86
+  mcp_trigger_agent_receipt: 0.80
+  scheduler_scaling: 0.14
+credit_boundary:
+  engineering_credit_delta: 0
+  release_credit_without_zero_delta: 0
+  publish_rule: cluster_AND_gate
