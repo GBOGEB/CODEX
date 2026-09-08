@@ -7,7 +7,8 @@ formal_engineering_credit_delta: 0
 observed_input:
   w62_keb_pr: 503
   w62_head: b7772df240719d23689b7828a7c8622070d97d83
-  role: semantic_provenance_policy_authority_not_child_engineering_authority
+  role: SEMANTIC_PROVENANCE_GOVERNANCE
+  authority_rule: preserve_child_parent_authority_and_provenance_boundaries
 
 semantic_contract:
   accepted_dispositions: [ACTIVE, SUPERSEDED, HISTORICAL, QUARANTINED]
@@ -26,7 +27,17 @@ KEB_receipt_predicate:
     - every_candidate_has_explicit_disposition
     - non_ACTIVE_candidates_cannot_be_current_authority
     - provenance_and_reproducibility_are_preserved
-  current_state: READY_FOR_EXACT_HEAD_EXECUTION
+  current_state: REPAIR_EXACT_HEAD_PENDING
+
+repair_lineage:
+  failed_PR: 505
+  failed_head: 2c8b2ddc3732c2c743d342031fd6739d64a7e19d
+  observed_failures:
+    - W003_governance_header_missing
+    - undocumented_semantic_term_in_role
+  repairs:
+    - use_governed_role_SEMANTIC_PROVENANCE_GOVERNANCE
+    - require_mandatory_PR_CLASSIFICATION_header_on_repair_PR
 
 return_to_child:
   on_PASS: SEMANTIC_DISPOSITION_VALID
