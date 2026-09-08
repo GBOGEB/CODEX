@@ -1,0 +1,35 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W005
+pulse: P11
+status: QPS_WORKFLOW_PARSER_REPAIR
+source_reentry:
+  blocker_issue: 492
+  p10_pr: 494
+  p10_merge: b4edb7699473ca8956fa4a57d1da72f334ff0dd0
+  p10_run: 34180240638
+observations:
+  workflow_file: .github/workflows/qps-roundtrip-zero-delta.yml
+  workflow_registered: true
+  workflow_run_found: true
+  workflow_run_status: completed
+  workflow_run_conclusion: failure
+  jobs_exposed: 0
+  artifact_found: false
+  inferred_gate: PRE_JOB_OR_WORKFLOW_PARSER_FAILURE
+repair:
+  quote_on_key: true
+  explicit_event_maps: true
+  remove_powershell_ternary: true
+  preserve_workflow_dispatch: true
+  preserve_push_main_release: true
+  preserve_pull_request: true
+release_readiness_position:
+  synthetic_zero_delta_pass: NOT_YET
+  production_builder_parity: NOT_YET
+  global_codex_2_0: NOT_YET
+next_mechanical_steps:
+  - inspect P11 PR-head workflow run
+  - if run reaches jobs, inspect steps and artifact
+  - if ZERO_DELTA_RECEIPT.yaml says PASS, open production-builder parity lane
+  - if pre-job failure persists, treat as repository Actions policy/parser blocker
