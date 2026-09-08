@@ -1,0 +1,72 @@
+schema_version: '1.0'
+wave: W05
+pulse: P12
+purpose: efficiency-aware work-conserving execution control
+credit: EXECUTION_CONTROL_ONLY
+
+pool_model:
+  example_total_slots: 5
+  coordinator:
+    slots: 1
+    roles: [PRE, DISPATCH, POST, RECONCILE]
+    same_worker_pre_post: true
+  execution:
+    slots: 4
+    reusable_across_pulses: true
+    pulse_affinity: preferred_not_required
+    pulse_boundary_blocks_reuse: false
+
+queue_policy:
+  discipline: WORK_CONSERVING_NON_FIFO_WITH_AGING
+  fifo: false
+  lifo: false
+  primary_objective: minimize_time_to_governed_convergence
+  dispatch_score:
+    numerator: convergence_gain + 0.5*stability_gain + 0.75*unblock_gain
+    denominator: estimated_remaining_time + checkpoint_cost
+    modifiers: [queue_age_urgency, setup_affinity]
+  squeeze_work:
+    enabled: true
+    rule: fill predicted idle windows with useful queued work whose estimated remaining time fits
+  cooperative_preemption:
+    enabled: true
+    checkpoints_only: true
+    minimum_value_density_ratio: 1.5
+    non_resumable_jobs: never_preempt
+
+starvation_control:
+  per_item_max_queue_s: required
+  aging: quadratic_until_deadline
+  at_or_after_deadline: mandatory_priority_class
+  metrics:
+    - queue_depth
+    - max_queue_age_s
+    - p50_queue_age_s
+    - overdue_count
+    - deadline_miss_count
+    - dispatch_wait_s
+    - useful_busy_fraction
+    - coordinator_fraction
+    - squeeze_fill_fraction
+    - preemption_count
+    - preemption_waste_s
+    - items_per_wall_second
+    - convergence_gain_per_wall_second
+    - convergence_gain_per_sue_second
+
+scale_control:
+  normal_operating_point: 16x3PR
+  burst_candidate: 32x3PR
+  64x3PR: blocked_until_repeated_wall_clock_gain
+  scale_on: measured_convergence_gain_per_wall_second
+  reverse_pressure_on:
+    - coordination_overhead_growth
+    - queue_shallowing
+    - rework
+    - collisions
+    - deadline_misses
+    - throughput_per_sue_degradation
+
+authority:
+  worker_authority_mutation: FORBIDDEN
+  final_registry_writer: SINGLE_SERIALIZED_WRITER
