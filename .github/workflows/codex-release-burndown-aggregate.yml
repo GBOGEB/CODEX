@@ -1,0 +1,59 @@
+name: CODEX Release Burndown Aggregate
+
+on:
+  workflow_dispatch: {}
+  pull_request: {}
+
+jobs:
+  aggregate:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r requirements.txt
+      - run: python scripts/release/codex_portability_probe.py
+      - run: python scripts/release/codex_repro_probe.py
+      - run: python scripts/release/codex_rc_preflight.py
+      - name: Emit publish burndown receipt
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          states = {
+            'clean_execution': 'PASS',
+            'aggregate_release_smoke': 'OPEN',
+            'deterministic_repeat': 'OPEN',
+            'zero_delta_execution': 'OPEN',
+            'adversarial_release_qa': 'OPEN',
+            'immutable_rc_manifest': 'PARTIAL',
+            'version_freeze': 'OPEN',
+            'main_protection': 'BLOCKED',
+            'formal_release': 'BLOCKED',
+          }
+          total=len(states)
+          passed=sum(v=='PASS' for v in states.values())
+          outstanding=total-passed
+          payload={
+            'schema_version':'1.0',
+            'gate':'CODEX_PUBLISH_BURNDOWN',
+            'tracked_total':total,
+            'passed':passed,
+            'outstanding':outstanding,
+            'reduction_from_9_item_terminal_baseline':9-outstanding,
+            'states':states,
+            'boundary':'Only observed PASS removes an item; PARTIAL/BLOCKED remain outstanding.'
+          }
+          Path('release').mkdir(exist_ok=True)
+          p=Path('release/CODEX_PUBLISH_BURNDOWN_RECEIPT.json')
+          p.write_text(json.dumps(payload, indent=2)+'\n', encoding='utf-8')
+          print(p.read_text())
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: codex-publish-burndown-receipt
+          path: release/CODEX_PUBLISH_BURNDOWN_RECEIPT.json
+          if-no-files-found: error
