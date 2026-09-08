@@ -1,0 +1,23 @@
+schema_version: "0.1"
+document_id: W57_R19_3PR_B_KEB_DOV_PRESSURE
+role: PARENT_SEMANTIC_DOV_PRESSURE
+observed_metrics:
+  source_return_control_pct: 100.0
+  real_physical_source_conversion_pct: 0.0
+  governed_reverse_pressure_executable: false
+  child_formal_engineering_pct: 77.78
+semantic_BT_order:
+  - HEPAK_numeric_receipt
+  - selected_LineB_geometry
+  - per_QCELL_B_flow_positions
+  - spatial_heat_leak_Tx_hx
+  - governed_reverse_pressure_receipt
+guards:
+  - no_control_completion_as_engineering_credit
+  - no_review_status_as_source_return
+  - no_cross_packet_substitution
+  - no_parent_self_promotion
+return:
+  child_new_physical_items: DEFER
+  formal_delta: 0
+  next_valid_progress_event: REAL_SOURCE_BEARING_PACKET
