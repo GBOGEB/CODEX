@@ -1,0 +1,30 @@
+schema_version: "0.1"
+document_id: W57_3PR_A_KEB_SOURCE_RETURN_CHALLENGE
+role: KEB_SEMANTIC_PROVENANCE_CHALLENGE
+child_pr: GBOGEB/cryoplant-project#683
+child_head_sha: 7ca668213915b5250d87e9f5cafa53315794ed81
+
+observed_child_claims:
+  formal_engineering: "70/90 = 77.78%"
+  strict_numerical: "4/5 = 80%"
+  runtime_mean_percent: 87.0
+  real_source_packets_present: 0
+
+challenge:
+  authority_boundary: PASS
+  source_vs_control_separation: PASS
+  placeholder_as_evidence_guard: PASS
+  cross_packet_substitution_guard: PASS
+  parent_self_promotion_guard: PASS
+  information_loss_risk: LOW_IF_CHILD_DIGEST_PRESERVED
+
+semantic_findings:
+  - runtime_and_release_readiness_may_advance_without_formal_engineering_credit
+  - source_return_pipeline_maturity_is_not_source_return_completion
+  - owner_bound_LineB_diameter_may_support_interim_engineering_but_not_bidder_compliance
+  - HEPAK_numeric_receipt_remains_external_execution_artifact
+  - strict_4_of_5_must_not_be_promoted_by_control_plane_completion
+
+KEB_disposition: ACCEPT_FOR_DOW_CHALLENGE_AND_CHILD_REENTRY
+engineering_credit_delta: 0
+negotiation_credit_delta: 0
