@@ -1,0 +1,38 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W005
+pulse: P10
+status: QPS_WORKFLOW_RECREATED_FOR_REGISTRATION
+source_reentry:
+  blocker_issue: 492
+  from_w05_p9_pr: 490
+  from_w05_p9_merge: ad83f38ca4cebd8eb81c989e4542c343e567a096
+observed_blocker:
+  workflow_file_present_on_main: true
+  old_workflow_path: .github/workflows/w05-qps-roundtrip-regeneration-zero-delta.yml
+  old_workflow_name: W05 QPS Roundtrip Regeneration Zero-Delta
+  old_workflow_visible_in_run_sets: false
+  artifact_harvested: false
+repair:
+  action: RECREATE_WORKFLOW_WITH_STABLE_REGISTRATION_NAME
+  new_workflow_path: .github/workflows/qps-roundtrip-zero-delta.yml
+  new_workflow_name: QPS Roundtrip Zero-Delta
+  trigger_policy:
+    workflow_dispatch: true
+    pull_request_unfiltered: true
+    push_branches:
+      - main
+      - release/**
+  artifact_name: w05-qps-roundtrip-zero-delta
+expected_outputs:
+  - release/SHA256SUMS
+  - release/REBUILD_LOG.yaml
+  - release/ZERO_DELTA_RECEIPT.yaml
+controlled_claims:
+  synthetic_zero_delta_pass: NOT_YET
+  production_builder_parity: NOT_YET
+  global_codex_2_0: NOT_YET
+next_gate:
+  inspect_run_name: QPS Roundtrip Zero-Delta
+  if_artifact_receipt_pass: OPEN_PRODUCTION_BUILDER_PARITY_LANE
+  if_run_absent: ACTIONS_REGISTRATION_OR_POLICY_BLOCKER
