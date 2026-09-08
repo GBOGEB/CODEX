@@ -1,0 +1,38 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W005
+pulse: P9
+status: QPS_WORKFLOW_VISIBILITY_REPAIR_OPENED
+source_reentry:
+  from_w05_p8_pr: 483
+  from_w05_p8_merge: 088d4bf57b3032098896cf93ec22dbdfab014dce
+observations:
+  p8_pr_state: MERGED
+  p8_pr_head: 4a47e157126b8681df4a39b5e1c7d154aeafcdb7
+  p8_merge_commit: 088d4bf57b3032098896cf93ec22dbdfab014dce
+  qps_workflow_file_present_on_main: true
+  qps_workflow_run_visible_for_p8_head: false
+  qps_workflow_run_visible_for_p8_merge_query: false
+  actions_workflow_api_direct_verify: CONNECTOR_ENDPOINT_NOT_AVAILABLE
+repair:
+  workflow_path: .github/workflows/w05-qps-roundtrip-regeneration-zero-delta.yml
+  changes:
+    - remove_pull_request_path_filter
+    - broaden_push_branches_to_main_and_release_glob
+    - add_visibility_marker_step
+  expected_result: >-
+    A fresh pull_request run set should include W05 QPS Roundtrip Regeneration
+    Zero-Delta. If it remains absent, the blocker is workflow registration or
+    repository Actions configuration, not QPS product parity.
+release_readiness_position:
+  synthetic_regeneration_workflow_installed: true
+  synthetic_regeneration_workflow_visible: NOT_YET_CONFIRMED
+  synthetic_zero_delta_pass: NOT_YET
+  production_builder_parity: NOT_YET
+  global_codex_2_0: NOT_YET
+next_mechanical_steps:
+  - open this trigger visibility repair PR
+  - inspect PR-head workflow runs for W05 QPS Roundtrip Regeneration Zero-Delta
+  - if run appears, inspect jobs and artifacts
+  - if ZERO_DELTA_RECEIPT.yaml says PASS, open production-builder parity lane
+  - if run remains absent, escalate repository Actions workflow visibility/registration gate
