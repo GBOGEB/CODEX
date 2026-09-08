@@ -1,0 +1,30 @@
+schema_version: "1.0"
+policy_id: TRIAGE-UNKNOWN-BURNDOWN-V3
+repository: GBOGEB/CODEX
+baseline:
+  census_merge_sha: 08833a98a048a16c77a9d818fc5c70523929f150
+  tracked_files: 1669
+  awake_ratio: 0.256
+  unknown_files: 952
+principle: UNKNOWN is classification debt, never deletion authority.
+dispositions:
+  PROMOTE_CANONICAL_ACTIVE:
+    evidence_required: [referenced_by_current_main_runtime_or_ci, or_named_by_repo_cadr_ocd_registry]
+  RETAIN_ACTIVE_COMPATIBILITY:
+    evidence_required: [current_adapter_or_wrapper_calls_canonical_runtime, or_current_ci_requires_surface]
+  ARCHIVE_CANDIDATE:
+    evidence_required: [superseded_or_versioned_surface, no_current_main_runtime_or_ci_reference]
+  DOCUMENTATION_ONLY:
+    evidence_required: [non_executable_bridge_or_architecture_proposal]
+  INVESTIGATE:
+    evidence_required: [ambiguous_or_conflicting_signals]
+reverse_loading_order: [duplicate_runtime_stems, active_ssot_candidates, workflows, bridge_adapter, agentic, runtime, deployment]
+hard_rules:
+  - filename alone cannot establish runtime authority
+  - documentation-only bridge proposals do not count as live bridge edges
+  - generated artifacts do not count as semantic authority
+  - KEB may validate and normalize but may not award child engineering closure
+victory:
+  metric: unknown_ratio
+  target_direction: decrease
+  guardrails: [registry_missing_paths_must_not_increase, duplicate_authority_must_not_increase]
