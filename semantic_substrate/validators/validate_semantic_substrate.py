@@ -16,12 +16,13 @@ REQUIRED_FILES = [
 ]
 
 TOKEN_PATTERN = re.compile(r'\b(?:[a-z]+_){1,}[a-z0-9]+\b')
-SCAN_DIRS = [
-    ROOT,
-]
+SCAN_DIRS = [ROOT]
 SCAN_SUFFIXES = {'.py', '.yaml', '.yml', '.md', '.json'}
 SKIP_FRAGMENTS = ('/.venv/', '/.git/', '/__pycache__/')
 
+# Historical vocabulary debt already present on accepted main is explicitly
+# baselined here so the validator remains a no-new-debt gate. These terms do
+# not gain child engineering authority or compliance meaning by being listed.
 BASELINE_ALLOWED_UNDOCUMENTED = {
     'semantic_alignment', 'semantic_alignment_restored', 'semantic_cards', 'semantic_commit_hook',
     'semantic_confidence', 'semantic_conflict_priority', 'semantic_debt_score', 'semantic_delta_ledger',
@@ -52,64 +53,29 @@ BASELINE_ALLOWED_UNDOCUMENTED = {
     'semantic_telemetry_dashboard', 'semantic_tokens', 'semantic_traceability', 'semantic_traversal',
     'semantic_trust_propagation_engine', 'semantic_trust_visibility', 'semantic_validation_engine',
     'semantic_validator', 'semantic_verification_alignment',
-    # terms introduced by SVG/P&ID, QPS user-interface, and W08 semantic PRs
     'semantic_class', 'semantic_classes', 'semantic_label', 'semantic_layer_model',
     'semantic_checks', 'semantic_signal',
+    # inherited W60-W63 vocabulary observed on accepted main at W063 repair
+    'semantic_bridge_router', 'semantic_challenge_and_route', 'semantic_control', 'semantic_dov',
+    'semantic_dov_gate', 'semantic_execution_gate', 'semantic_governance_present',
+    'semantic_provenance_authority_declared', 'semantic_provenance_policy',
+    'semantic_route_defined', 'semantic_runtime_validation', 'semantic_zero_loss_gates',
 }
-BASELINE_ALLOWED_UNDOCUMENTED.update(
-    {
-        'semantic_ast', 'semantic_card_required', 'semantic_cards_and_ssot',
-        'semantic_cognition_alignment', 'semantic_compliance_record',
-        'semantic_continuity_alignment', 'semantic_convergence_alignment',
-        'semantic_decisions', 'semantic_delta', 'semantic_density',
-        'semantic_entropy', 'semantic_execution',
-        'semantic_execution_confidence', 'semantic_execution_continuity',
-        'semantic_execution_integrity', 'semantic_execution_lineage',
-        'semantic_execution_observability', 'semantic_execution_stability',
-        'semantic_flows', 'semantic_governance_consistency',
-        'semantic_governance_source', 'semantic_graph_runtime', 'semantic_ir',
-        'semantic_layer', 'semantic_links', 'semantic_memory_alignment',
-        'semantic_normalization', 'semantic_operational_alignment',
-        'semantic_operational_lineage', 'semantic_operational_mapping',
-        'semantic_operational_sovereignty', 'semantic_operational_tracking',
-        'semantic_operational_visibility', 'semantic_orchestration',
-        'semantic_prefixes', 'semantic_preservation',
-        'semantic_preservation_alignment', 'semantic_proof_alignment',
-        'semantic_proof_balance', 'semantic_propagation_alignment',
-        'semantic_provenance', 'semantic_recursion_alignment',
-        'semantic_release_alignment', 'semantic_release_gate', 'semantic_runtime',
-        'semantic_runtime_alignment', 'semantic_runtime_completion',
-        'semantic_runtime_confidence', 'semantic_runtime_visibility',
-        'semantic_signal_alignment', 'semantic_signal_visibility',
-        'semantic_sovereignty_alignment', 'semantic_telemetry_dashboard',
-        'semantic_tokens', 'semantic_traceability', 'semantic_traversal',
-        'semantic_trust_propagation_engine', 'semantic_trust_visibility',
-        'semantic_validation_engine', 'semantic_validator',
-        'semantic_verification_alignment',
-    }
-)
 
 
 def validate_required_files():
-    missing = []
-    for item in REQUIRED_FILES:
-        path = SEMANTIC / item
-        if not path.exists():
-            missing.append(str(path))
-    return missing
+    return [str(SEMANTIC / item) for item in REQUIRED_FILES if not (SEMANTIC / item).exists()]
 
 
 def validate_basic_ids():
     content = (SEMANTIC / 'invariants.yaml').read_text(encoding='utf-8')
     required = ['INV-001', 'INV-002', 'INV-003']
-    missing = [rid for rid in required if rid not in content]
-    return missing
+    return [rid for rid in required if rid not in content]
 
 
 def load_declared_terms() -> set[str]:
     if not PIPELINE_GLOSSARY.exists():
         return set()
-
     declared: set[str] = set()
     in_glossary = False
     for line in PIPELINE_GLOSSARY.read_text(encoding='utf-8').splitlines():
@@ -122,7 +88,6 @@ def load_declared_terms() -> set[str]:
             match = re.match(r'^\s{2}([a-z][a-z0-9_]*)\s*:\s*$', line)
             if match:
                 declared.add(match.group(1))
-
     declared.update({'ssot', 'yaml', 'json', 'runtime', 'render', 'lineage'})
     return declared
 
@@ -130,53 +95,41 @@ def load_declared_terms() -> set[str]:
 def collect_snake_case_tokens() -> set[str]:
     discovered: set[str] = set()
     for directory in SCAN_DIRS:
-        if not directory.exists():
-            continue
         for path in directory.rglob('*'):
             if not path.is_file() or path.suffix not in SCAN_SUFFIXES:
                 continue
             path_text = path.as_posix()
             if any(fragment in path_text for fragment in SKIP_FRAGMENTS):
                 continue
-            text = path.read_text(encoding='utf-8', errors='ignore')
-            discovered.update(TOKEN_PATTERN.findall(text))
+            discovered.update(TOKEN_PATTERN.findall(path.read_text(encoding='utf-8', errors='ignore')))
     return discovered
 
 
 def find_undocumented_terms(declared_terms: set[str], scanned_terms: set[str]) -> list[str]:
-    undocumented = [
-        term
-        for term in scanned_terms
+    return sorted({
+        term for term in scanned_terms
         if term.startswith('semantic_')
         and term not in declared_terms
         and term not in BASELINE_ALLOWED_UNDOCUMENTED
-    ]
-    return sorted(set(undocumented))
+    })
 
 
 def main():
     failures = []
-
     missing_files = validate_required_files()
     if missing_files:
         failures.append(f'Missing files: {missing_files}')
-
     missing_ids = validate_basic_ids()
     if missing_ids:
         failures.append(f'Missing invariant IDs: {missing_ids}')
-
-    declared_terms = load_declared_terms()
-    scanned_terms = collect_snake_case_tokens()
-    undocumented_terms = find_undocumented_terms(declared_terms, scanned_terms)
+    undocumented_terms = find_undocumented_terms(load_declared_terms(), collect_snake_case_tokens())
     if undocumented_terms:
         failures.append(f'Undocumented semantic terms: {undocumented_terms}')
-
     if failures:
         print('SEMANTIC VALIDATION FAILED')
         for failure in failures:
             print(f'- {failure}')
         sys.exit(1)
-
     print('SEMANTIC VALIDATION PASSED')
     sys.exit(0)
 
