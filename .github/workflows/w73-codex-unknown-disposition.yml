@@ -1,0 +1,49 @@
+name: W73 CODEX Unknown Disposition
+
+on:
+  pull_request: {}
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  unknown-disposition:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run exact-head unknown disposition
+        id: disposition
+        continue-on-error: true
+        env:
+          EXPECTED_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: python scripts/release/codex_unknown_disposition_v2.py
+      - name: Emit exact-head disposition
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p release
+          printf '{"status":"%s","source_sha":"%s","observed_git_sha":"%s"}\n' \
+            "${{ steps.disposition.outcome }}" \
+            "${{ github.event.pull_request.head.sha || github.sha }}" \
+            "$(git rev-parse HEAD)" > release/W73_EXECUTION_DISPOSITION.json
+      - name: Upload retained evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: w73-codex-unknown-disposition
+          path: |
+            release/W73_CODEX_UNKNOWN_DISPOSITION.json
+            release/W73_FEATURE_ROW.json
+            release/W73_EXECUTION_DISPOSITION.json
+          if-no-files-found: warn
+      - name: Fail closed after retaining evidence
+        if: steps.disposition.outcome != 'success'
+        run: exit 1
