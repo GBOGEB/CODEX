@@ -1,0 +1,27 @@
+name: CODEX Reproducibility Probe
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    paths:
+      - 'scripts/release/codex_repro_probe.py'
+      - '.github/workflows/codex-repro-probe.yml'
+      - 'VERSION.json'
+      - 'ssot/domain/repo/release.yaml'
+      - 'triage/requirements/GLOBAL_CREQ_REGISTRY.json'
+
+jobs:
+  repro:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python scripts/release/codex_repro_probe.py
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-repro-receipt
+          path: release/CODEX_REPRO_RECEIPT.json
+          if-no-files-found: error
