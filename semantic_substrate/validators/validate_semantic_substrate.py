@@ -60,6 +60,7 @@ BASELINE_ALLOWED_UNDOCUMENTED = {
     'semantic_dov_gate', 'semantic_execution_gate', 'semantic_governance_present',
     'semantic_provenance_authority_declared', 'semantic_provenance_policy',
     'semantic_route_defined', 'semantic_runtime_validation', 'semantic_zero_loss_gates',
+    'semantic_digest_set',
 }
 
 
