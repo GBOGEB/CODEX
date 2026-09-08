@@ -1,0 +1,34 @@
+name: CODEX Manifest Preflight
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    paths:
+      - '.github/workflows/codex-manifest-preflight.yml'
+      - 'VERSION.json'
+      - 'ssot/domain/repo/release.yaml'
+
+jobs:
+  manifest-preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          test -f VERSION.json
+          test -f ssot/domain/repo/release.yaml
+          current=$(python -c "import json; print(json.load(open('VERSION.json'))['version'])")
+          grep -q 'target_major_version: "2.0.0"' ssot/domain/repo/release.yaml
+          grep -q 'immutable_release_manifest' ssot/domain/repo/release.yaml
+          {
+            echo 'status: PASS'
+            echo 'qualification: CODEX_MANIFEST_PREFLIGHT'
+            echo "current_version: $current"
+            echo 'target_version: 2.0.0'
+            echo "sha: $GITHUB_SHA"
+          } > CODEX_MANIFEST_PREFLIGHT.yaml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: codex-manifest-preflight
+          path: CODEX_MANIFEST_PREFLIGHT.yaml
+          if-no-files-found: error
