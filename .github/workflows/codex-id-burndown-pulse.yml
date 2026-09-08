@@ -1,45 +1,16 @@
 name: CODEX ID Burndown Pulse
-
-# TRIAGE-aligned execution: one immutable producer payload, append-only worker
-# receipts, and single-writer authority reconciliation. Logical worker scale is
-# deliberately decoupled from GitHub runner admission.
 on:
   workflow_dispatch:
     inputs:
-      workers:
-        description: Logical discovery workers; power of two, capped at 64
-        required: true
-        default: '16'
-        type: choice
-        options: ['1','2','4','8','16','32','64']
-      transport:
-        description: local_pool avoids hosted-runner queue amplification
-        required: true
-        default: local_pool
-        type: choice
-        options: [local_pool, physical_fanout]
+      workers: {description: 'Logical workers', required: true, default: '32', type: choice, options: ['1','2','4','8','16','32','64']}
+      transport: {description: 'Execution transport', required: true, default: local_pool, type: choice, options: [local_pool, physical_fanout]}
   pull_request:
-    paths:
-      - '.github/workflows/codex-id-burndown-pulse.yml'
-      - 'scripts/census_ssot_candidates.py'
-      - 'scripts/id_pulse_scale_controller.py'
-      - 'scripts/id_pulse_local_pool.py'
-      - 'ssot/manifest.yaml'
-      - 'ssot/registry/logical_id_registry.yaml'
-
-permissions:
-  contents: read
-
+    paths: ['.github/workflows/codex-id-burndown-pulse.yml','scripts/census_ssot_candidates.py','scripts/id_pulse_scale_controller.py','scripts/id_pulse_local_pool.py','ssot/manifest.yaml','ssot/registry/logical_id_registry.yaml']
+permissions: {contents: read}
 jobs:
   producer:
     runs-on: ubuntu-latest
-    outputs:
-      shards: ${{ steps.plan.outputs.shards }}
-      workers: ${{ steps.plan.outputs.workers }}
-      transport: ${{ steps.plan.outputs.transport }}
-      queue: ${{ steps.balance.outputs.queue }}
-      expected_count_skew: ${{ steps.balance.outputs.count_skew }}
-      expected_weight_skew: ${{ steps.balance.outputs.weight_skew }}
+    outputs: {workers: '${{ steps.plan.outputs.workers }}', transport: '${{ steps.plan.outputs.transport }}', queue: '${{ steps.balance.outputs.queue }}'}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -47,50 +18,32 @@ jobs:
       - run: pip install 'PyYAML>=6,<7'
       - id: plan
         shell: python
-        env:
-          REQUESTED_WORKERS: ${{ github.event_name == 'workflow_dispatch' && inputs.workers || '16' }}
-          REQUESTED_TRANSPORT: ${{ github.event_name == 'workflow_dispatch' && inputs.transport || 'local_pool' }}
+        env: {REQUESTED_WORKERS: "${{ github.event_name == 'workflow_dispatch' && inputs.workers || '32' }}", REQUESTED_TRANSPORT: "${{ github.event_name == 'workflow_dispatch' && inputs.transport || 'local_pool' }}"}
         run: |
-          import json, os
-          n=int(os.environ['REQUESTED_WORKERS']); transport=os.environ['REQUESTED_TRANSPORT']
-          if n not in {1,2,4,8,16,32,64}: raise SystemExit(f'unsupported worker count: {n}')
-          if transport not in {'local_pool','physical_fanout'}: raise SystemExit(f'unsupported transport: {transport}')
-          with open(os.environ['GITHUB_OUTPUT'],'a',encoding='utf-8') as f:
-              f.write('shards='+json.dumps(list(range(n)),separators=(',',':'))+'\n')
-              f.write(f'workers={n}\ntransport={transport}\n')
-          print(f'ID_PULSE_PLAN workers={n} sue={n*3} transport={transport}')
+          import os
+          n=int(os.environ['REQUESTED_WORKERS']); t=os.environ['REQUESTED_TRANSPORT']
+          assert n in {1,2,4,8,16,32,64} and t in {'local_pool','physical_fanout'}
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f: f.write(f'workers={n}\ntransport={t}\n')
+          print(f'ID_PULSE_PLAN workers={n} sue_depth={n*3} transport={t}')
       - name: Produce canonical census once
-        run: |
-          start=$(date +%s%N); python scripts/census_ssot_candidates.py; end=$(date +%s%N)
-          echo "ID_PRODUCER_NS=$((end-start))"
+        run: start=$(date +%s%N); python scripts/census_ssot_candidates.py; end=$(date +%s%N); echo "ID_PRODUCER_NS=$((end-start))"
       - id: balance
         shell: python
         env: {WORKERS: '${{ steps.plan.outputs.workers }}'}
         run: |
-          import json, math, os
+          import json,math,os
           from pathlib import Path
-          n=int(os.environ['WORKERS'])
-          census=json.loads(Path('reports/codex_2_0_ssot_candidate_census.json').read_text())
-          queue=[r for r in census['candidates'] if r.get('logical_id') is None and r.get('lifecycle_state')=='ACTIVE_CANDIDATE']
-          cw={'AUTHORITY_CANDIDATE':4.0,'SCHEMA_CANDIDATE':3.0,'CONSUMER_OR_CONTRACT_CANDIDATE':2.0,'RECEIPT_CANDIDATE':1.0}
-          def weight(r): return round(cw.get(r.get('candidate_class'),2.0)+min(2.0,math.log2(max(1,int(r.get('bytes',0))))/20.0),4)
-          bins=[{'shard':i,'weight':0.0,'items':[]} for i in range(n)]
-          for row in sorted(queue,key=lambda r:(-weight(r),r['path'])):
-              b=min(bins,key=lambda x:(x['weight'],len(x['items']),x['shard'])); item=dict(row); item['work_weight']=weight(row)
-              b['items'].append(item); b['weight']=round(b['weight']+item['work_weight'],4)
-          counts=[len(b['items']) for b in bins]; weights=[b['weight'] for b in bins]
-          def skew(v): return 0.0 if not v or max(v)==0 else round((max(v)-min(v))/max(v),4)
-          plan={'schema_version':'1.1','workers':n,'sue':n*3,'queue':len(queue),'count_min':min(counts),'count_max':max(counts),'count_skew':skew(counts),'weight_min':min(weights),'weight_max':max(weights),'weight_skew':skew(weights),'bins':bins}
-          Path('reports/id_burndown').mkdir(parents=True,exist_ok=True); Path('reports/id_burndown/work_plan.json').write_text(json.dumps(plan,indent=2)+'\n')
-          with open(os.environ['GITHUB_OUTPUT'],'a') as f: f.write(f"queue={len(queue)}\ncount_skew={plan['count_skew']}\nweight_skew={plan['weight_skew']}\n")
-          print(f"ID_BALANCE_PASS queue={len(queue)} workers={n} count={plan['count_min']}..{plan['count_max']} count_skew={plan['count_skew']} weight_skew={plan['weight_skew']}")
+          n=int(os.environ['WORKERS']); c=json.loads(Path('reports/codex_2_0_ssot_candidate_census.json').read_text()); q=[r for r in c['candidates'] if r.get('logical_id') is None and r.get('lifecycle_state')=='ACTIVE_CANDIDATE']
+          cw={'AUTHORITY_CANDIDATE':4.,'SCHEMA_CANDIDATE':3.,'CONSUMER_OR_CONTRACT_CANDIDATE':2.,'RECEIPT_CANDIDATE':1.}
+          def w(r): return round(cw.get(r.get('candidate_class'),2.)+min(2.,math.log2(max(1,int(r.get('bytes',0))))/20.),4)
+          bins=[{'shard':i,'weight':0.,'items':[]} for i in range(n)]
+          for r in sorted(q,key=lambda x:(-w(x),x['path'])):
+            b=min(bins,key=lambda x:(x['weight'],len(x['items']),x['shard'])); z=dict(r); z['work_weight']=w(r); b['items'].append(z); b['weight']=round(b['weight']+z['work_weight'],4)
+          counts=[len(b['items']) for b in bins]; weights=[b['weight'] for b in bins]; skew=lambda v:0 if not v or max(v)==0 else round((max(v)-min(v))/max(v),4)
+          plan={'schema_version':'1.2','workers':n,'sue_depth':n*3,'queue':len(q),'queue_per_sue':round(len(q)/(n*3),4),'count_min':min(counts),'count_max':max(counts),'count_skew':skew(counts),'weight_skew':skew(weights),'bins':bins}
+          Path('reports/id_burndown').mkdir(parents=True,exist_ok=True); Path('reports/id_burndown/work_plan.json').write_text(json.dumps(plan,indent=2)+'\n'); open(os.environ['GITHUB_OUTPUT'],'a').write(f"queue={len(q)}\n"); print('ID_BALANCE_PASS '+json.dumps({k:v for k,v in plan.items() if k!='bins'}))
       - uses: actions/upload-artifact@v4
-        with:
-          name: id-burndown-work-packet
-          path: |
-            reports/codex_2_0_ssot_candidate_census.json
-            reports/id_burndown/work_plan.json
-
+        with: {name: id-burndown-work-packet, path: "reports/codex_2_0_ssot_candidate_census.json\nreports/id_burndown/work_plan.json"}
   local-pool:
     needs: producer
     if: needs.producer.outputs.transport == 'local_pool'
@@ -99,51 +52,22 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with: {name: id-burndown-work-packet, path: reports}
-      - name: Execute all logical workers inside one admitted runner
-        run: python scripts/id_pulse_local_pool.py --plan reports/id_burndown/work_plan.json --out-dir reports/id_burndown/local-receipts
+      - run: python scripts/id_pulse_local_pool.py --plan reports/id_burndown/work_plan.json --out-dir reports/id_burndown/local-receipts
       - uses: actions/upload-artifact@v4
-        with:
-          name: id-burndown-local-pool-receipts
-          path: reports/id_burndown/local-receipts
-
-  physical-fanout:
-    needs: producer
-    if: needs.producer.outputs.transport == 'physical_fanout'
-    strategy:
-      fail-fast: false
-      max-parallel: 64
-      matrix: {shard: '${{ fromJSON(needs.producer.outputs.shards) }}'}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with: {name: id-burndown-work-packet, path: reports}
-      - name: Consume one balanced packet
-        env: {SHARD: '${{ matrix.shard }}', WORKERS: '${{ needs.producer.outputs.workers }}'}
-        run: |
-          start=$(date +%s%N)
-          python - <<'PY'
-          import json,os
-          from pathlib import Path
-          s=int(os.environ['SHARD']); w=int(os.environ['WORKERS']); plan=json.loads(Path('reports/id_burndown/work_plan.json').read_text()); b=plan['bins'][s]
-          out={'schema_version':'4.0','purpose':'CODEX_ID_BURNDOWN_DISCOVERY_RECEIPT','execution_transport':'PHYSICAL_FANOUT','workers':w,'sue':w*3,'shard':s,'queue':plan['queue'],'assigned_count':len(b['items']),'assigned_weight':b['weight'],'candidates':b['items'],'authority_mutation':'FORBIDDEN'}
-          Path('reports/id_burndown').mkdir(parents=True,exist_ok=True); Path(f'reports/id_burndown/receipt-{s:02d}.json').write_text(json.dumps(out,indent=2)+'\n')
-          PY
-          end=$(date +%s%N); echo "ID_CONSUMER_NS=$((end-start))"
-      - uses: actions/upload-artifact@v4
-        with: {name: 'id-burndown-receipt-${{ matrix.shard }}', path: 'reports/id_burndown/receipt-*.json'}
-
+        with: {name: id-burndown-local-pool-receipts, path: reports/id_burndown/local-receipts}
   control-local:
-    needs: [producer, local-pool]
-    if: always() && needs.producer.result == 'success' && needs.local-pool.result == 'success'
+    needs: [producer,local-pool]
+    if: always() && needs.local-pool.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with: {name: id-burndown-local-pool-receipts, path: reports/id_burndown/local-receipts}
-      - name: Controller decision from completed logical workers
+      - name: Damped controller with sample telemetry
         env: {WORKERS: '${{ needs.producer.outputs.workers }}', QUEUE: '${{ needs.producer.outputs.queue }}'}
         run: |
           active=$(find reports/id_burndown/local-receipts -name 'receipt-*.json' | wc -l)
+          wall=$(python -c "import json;print(json.load(open('reports/id_burndown/local-receipts/pool_stats.json'))['wall_ms'])")
           cat reports/id_burndown/local-receipts/pool_stats.json
-          python scripts/id_pulse_scale_controller.py --current "$WORKERS" --queue "$QUEUE" --active-workers "$active" --rework-rate 0 --collisions 0
-          echo 'Authority-bearing logical-ID registry mutation remains serialized outside discovery workers.'
+          python scripts/id_pulse_scale_controller.py --current "$WORKERS" --queue "$QUEUE" --active-workers "$active" --previous-queue 464 --previous-wall-ms 9.4298 --wall-ms "$wall" --sample-count 1 --rework-rate 0 --collisions 0
+          echo '32->64 requires a second comparable 32x sample; authority mutation remains serialized.'
