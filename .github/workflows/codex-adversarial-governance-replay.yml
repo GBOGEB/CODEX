@@ -1,0 +1,58 @@
+name: CODEX Adversarial Governance Replay
+
+on:
+  workflow_dispatch: {}
+  pull_request: {}
+
+jobs:
+  governance-adversary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install jsonschema
+      - name: Build valid and invalid governance headers
+        run: |
+          cat > /tmp/valid.md <<'EOF'
+          ## PR CLASSIFICATION
+          - PR-ID: PR-999
+          - WAVE: W005
+          - SPRINT: S5-P5
+          - DOMAIN: EXECUTION_GOVERNANCE_INFRASTRUCTURE
+          - TYPE: CI_CD
+          - CRITICALITY: HIGH
+          - TOPOLOGY IMPACT: NO
+          - SCHEMA MUTATION: NO
+          ---
+          EOF
+          cat > /tmp/invalid.md <<'EOF'
+          ## PR CLASSIFICATION
+          - PR-ID: PR-999
+          - WAVE: CODEX_2_0
+          - SPRINT: S5-P5
+          - DOMAIN: EXECUTION_GOVERNANCE_INFRASTRUCTURE
+          - TYPE: GOVERNANCE + CI
+          - CRITICALITY: HIGH
+          - TOPOLOGY IMPACT: NO
+          - SCHEMA MUTATION: NO
+          ---
+          EOF
+      - name: Valid header must pass
+        run: python federation_runtime/engines/governance_parser.py --markdown /tmp/valid.md --schema federation_runtime/schema/governance_header.schema.json --source adversarial-valid
+      - name: Invalid header must fail closed
+        run: |
+          if python federation_runtime/engines/governance_parser.py --markdown /tmp/invalid.md --schema federation_runtime/schema/governance_header.schema.json --source adversarial-invalid; then
+            echo 'Invalid governance header unexpectedly passed'
+            exit 1
+          fi
+      - name: Emit adversarial receipt
+        run: |
+          mkdir -p release
+          printf '%s\n' '{"schema_version":"1.0","gate":"CODEX_ADVERSARIAL_GOVERNANCE","status":"PASS","valid_case":"PASS","invalid_case":"FAIL_CLOSED"}' > release/CODEX_ADVERSARIAL_GOVERNANCE_RECEIPT.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: codex-adversarial-governance-receipt
+          path: release/CODEX_ADVERSARIAL_GOVERNANCE_RECEIPT.json
+          if-no-files-found: error
