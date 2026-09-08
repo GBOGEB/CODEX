@@ -1,0 +1,39 @@
+schema_version: "1.0"
+release_program: CODEX_2_0
+wave: W005
+pulse: P8
+status: QPS_REGENERATION_EXECUTION_TRIGGER_CREATED
+source_reentry:
+  from_w05_p7_pr: 482
+  from_w05_p7_merge: 2def20fdcc1fab8f5c4c943ece7bc5dd3e53ae42
+observations:
+  w05_qps_workflow_present_on_main: true
+  workflow_path: .github/workflows/w05-qps-roundtrip-regeneration-zero-delta.yml
+  inspected_main_workflow:
+    triggers:
+      - workflow_dispatch
+      - push
+      - pull_request
+    push_branches:
+      - main
+      - release/codex-2.0-w05-p7-qps-regen-trigger-repair
+    paths:
+      - .github/workflows/w05-qps-roundtrip-regeneration-zero-delta.yml
+      - 07_ops/qps_roundtrip/**
+      - triage/BINARY_PRODUCT_REGISTRY.yaml
+      - ssot/release/**
+  p7_head_run_qps_workflow_found: false
+  p7_merge_run_qps_workflow_found: false
+execution_trigger:
+  touched_path: 07_ops/qps_roundtrip/W05_QPS_REGENERATION_TRIGGER.md
+  intended_effect: >-
+    Create a fresh pull request after the workflow exists on the default branch,
+    so the pull_request path filter can execute the QPS regeneration job.
+boundary:
+  synthetic_zero_delta_pass: NOT_CLAIMED
+  production_builder_parity: NOT_YET
+  global_codex_2_0: NOT_YET
+next_mechanical_steps:
+  - inspect this PR head runs for W05 QPS Roundtrip Regeneration Zero-Delta
+  - harvest artifact if run appears
+  - only if artifact ZERO_DELTA_RECEIPT status is PASS open production-builder parity lane
