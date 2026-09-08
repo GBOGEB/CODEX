@@ -1,0 +1,23 @@
+schema_version: "0.1"
+document_id: W57_3PR_B_ZERO_LOSS_TERMINAL_RETURN
+role: KEB_TERMINAL_RETURN
+child_reentry_pr: GBOGEB/cryoplant-project#690
+
+semantic_zero_loss_gates:
+  formal_score_preserved: PASS
+  strict_score_preserved: PASS
+  external_DEFER_preserved: PASS
+  runtime_score_not_promoted_before_POST: PASS
+  release_readiness_not_aliased_to_engineering_DoV: PASS
+  parent_authority_not_promoted: PASS
+
+required_exact_return_fields:
+  - child_payload_sha256
+  - KEB_receipt_sha256
+  - DOW_receipt_sha256
+  - child_disposition
+  - UI_evidence_digest
+  - POST_runtime_receipt_sha256
+
+terminal_semantic_disposition: ACCEPT_FOR_DOW_TERMINAL_MEASUREMENT
+credit_delta: 0
