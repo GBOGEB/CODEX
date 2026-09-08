@@ -5,18 +5,8 @@ on:
   push:
     branches:
       - main
-      - 'release/codex-2.0-w05-p7-qps-regen-trigger-repair'
-    paths:
-      - '.github/workflows/w05-qps-roundtrip-regeneration-zero-delta.yml'
-      - '07_ops/qps_roundtrip/**'
-      - 'triage/BINARY_PRODUCT_REGISTRY.yaml'
-      - 'ssot/release/**'
+      - 'release/**'
   pull_request:
-    paths:
-      - '.github/workflows/w05-qps-roundtrip-regeneration-zero-delta.yml'
-      - '07_ops/qps_roundtrip/**'
-      - 'triage/BINARY_PRODUCT_REGISTRY.yaml'
-      - 'ssot/release/**'
 
 permissions:
   contents: read
@@ -24,10 +14,18 @@ permissions:
 
 jobs:
   qps-roundtrip-zero-delta:
+    name: qps-roundtrip-zero-delta-visible
     runs-on: windows-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+
+      - name: Verify workflow visibility marker
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Write-Host 'W05/P9 workflow visibility repair active.'
+          Write-Host "event=$env:GITHUB_EVENT_NAME sha=$env:GITHUB_SHA ref=$env:GITHUB_REF"
 
       - name: Verify QPS roundtrip harness inputs
         shell: pwsh
