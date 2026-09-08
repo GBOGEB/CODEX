@@ -1,0 +1,28 @@
+schema_version: triage-dov-receipt/1.0.0
+repo: GBOGEB/CODEX
+role: KEB_SEMANTIC_CONTROL
+predecessor: TRIAGE_W60_OBSERVED_COMPLETION
+wave_status: READY_FOR_SYNCHRONIZED_EXECUTION
+observed:
+  w58_w59_pr_pairs_merged: true
+  local_census_contract: PRESENT
+  local_fail_closed_validator: PRESENT
+  KEB_bridge_contract: PRESENT
+  MCP_orchestration_inventory: PRESENT
+  no_engineering_mutation_guard: PRESENT
+  local_observed_score_pct: 90
+cross_repo_victory_gates:
+  G1_three_repo_census_present: READY
+  G2_three_repo_authority_non_overlap: READY
+  G3_exact_payload_digest_roundtrip: OPEN
+  G4_DOW_return_digest_binding: OPEN
+  G5_normalized_child_disposition_contract: READY
+  G6_projection_binary_lineage: READY
+  G7_zero_delta_second_pass: OPEN
+session_dov:
+  semantic_control: ACHIEVED
+  orchestration_control: ACHIEVED
+  terminal_runtime_proof: WITHHELD
+  global_dov: WITHHELD
+promotion_rule: KEB may report global DoV only after identical digest survives both passes and child reentry
+next_execution: route one immutable census tuple through KEB and DOW, normalize return without semantic mutation, then repeat
