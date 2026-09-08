@@ -1,0 +1,74 @@
+wave: W66
+pulse: CODEX_TERMINAL_EXECUTION_BURNDOWN
+role: semantic_execution_gate
+source_gate: triage/W58_3PR_B_KEB_DOV_GATE.yaml
+source_main_sha: 412714a1db8d078113b046e4cfb290604729be4d
+intent: convert static semantic readiness gates into independently executable proof lanes
+rules:
+  merged_is_not_victory: true
+  execution_receipt_required: true
+  child_authority_retained: true
+  source_return_required_for_R5: true
+  no_cross_bidder_promotion: true
+  no_release_credit_from_structure_only: true
+lanes:
+  playground_contract:
+    state: EXECUTABLE
+    predecessor: PARTIAL
+    proof: triage/W58_3PR_A_KEB_PLAYGROUND_ROUTE.yaml
+    victory: route contract plus observed consumer/playground receipt on same child digest
+  semantic_runtime_validation:
+    state: EXECUTABLE
+    predecessor: OPEN
+    workflow: .github/workflows/codex_semantic_runtime_ci.yml
+    victory: semantic validator + orchestration + engines + tests PASS and retained runtime binding
+  playwright_observed_receipt:
+    state: EXTERNAL_CONSUMER_PROOF_REQUIRED
+    predecessor: OPEN
+    victory: child-side observed browser receipt bound to same canonical digest and returned through CODEX
+  KEB_DOW_roundtrip_receipt:
+    state: EXECUTABLE_FEDERATED
+    predecessor: OPEN
+    dependency: [GBOGEB/cryoplant-project, GBOGEB/ABACUS]
+    victory: exact child SHA -> CODEX binding -> ABACUS receipt -> child re-entry receipt
+  R5_source_return:
+    state: BLOCKED_EXTERNAL_SOURCE
+    predecessor: OPEN
+    victory: real source-bearing bidder/OEM packet, source challenge and child disposition
+  exact_SHA_release_zero_delta:
+    state: EXECUTABLE
+    predecessor: OPEN
+    workflow: .github/workflows/qps-roundtrip-zero-delta.yml
+    victory: ZERO_DELTA_RECEIPT status PASS on exact CODEX candidate SHA
+burndown:
+  total_gates: 6
+  pass_observed: 0
+  executable_now: 3
+  executable_federated: 1
+  external_consumer_proof: 1
+  blocked_external_source: 1
+  target_after_internal_execution:
+    pass: 2
+    partial_or_federated: 3
+    blocked_external: 1
+  target_effective_completion_percent_min: 41.67
+reverse_loading:
+  - rank: 1
+    gate: semantic_runtime_validation
+    reason: fully CODEX-local and already backed by executable CI
+  - rank: 2
+    gate: exact_SHA_release_zero_delta
+    reason: fully CODEX-local and release-discriminating
+  - rank: 3
+    gate: KEB_DOW_roundtrip_receipt
+    reason: highest federation conversion leverage
+  - rank: 4
+    gate: playground_contract
+    reason: closes only with observed child consumer receipt
+  - rank: 5
+    gate: playwright_observed_receipt
+    reason: child/browser evidence required
+  - rank: 6
+    gate: R5_source_return
+    reason: external evidence cannot be manufactured internally
+DoV: EXECUTION_IN_PROGRESS
