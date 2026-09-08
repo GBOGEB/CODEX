@@ -1,0 +1,47 @@
+schema_version: TRIAGE-CODEX-3P-SELECTOR-CONSUMER-1.0.0
+role: semantic_orchestration_consumer
+upstream:
+  reference_repo: GBOGEB/ABACUS
+  selector: tools/generic_3p_selector.py
+  agent_DoD: architecture/w64/GENERIC_3P_AGENT_ORCHESTRATION_DOD.yaml
+  sampling_cadence: architecture/w64/GENERIC_3P_SAMPLING_AND_PCA_CADENCE.yaml
+contract:
+  root_item_id_immutable: true
+  consume_variant_chain_without_reminting_root_id: true
+  facet_ids_are_execution_history_not_new_items: true
+  read_only_workers_before_P3: true
+selection_inputs:
+  progression_state: [S0_UNKNOWN,S1_DISCOVERED,S2_CLASSIFIED,S3_PROOF_CANDIDATE,S4_REINTRODUCED,S5_REENTRY_PENDING,S6_TERMINAL]
+  semantic_weights: [E,C,V,L,R,I,A]
+  process_signals: [AHT_pressure,low_yield_pressure,rework_pressure,DoV_gap]
+CODEX_responsibility:
+  - validate_selector_inputs_and_method_chain_semantics
+  - orchestrate_worker_allocation_and_variant_order
+  - prevent_duplicate_root_work_across_agents
+  - challenge_cross_repo_receipt_integrity
+  - append_3PR_when_cross_repo_reentry_required
+  - preserve_exact_child_and_parent_lineage
+CODEX_prohibited:
+  - engineering_truth_mutation
+  - bidder_or_RTM_acceptance
+  - evidence_deletion
+  - release_or_DoV_promotion_without_local_authority
+parallel_variant_policy:
+  discovery_arm: [3PE,3PL]
+  discrimination_arm: [3PC,3PV]
+  same_frozen_root_ids_required: true
+  compare: [wall_time_ms,AHT_ms,evidence_yield,edge_yield,rework_rate,disagreement_rate,coverage_depth]
+  no_winner_claim_below_statistical_threshold: true
+learning_cadence:
+  every_run: operational_signals_and_rule_based_PCA_BT
+  every_5_valid_runs: coverage_semantic_weight_drift_variant_transition_and_candidate_PCA_refresh
+  every_10_valid_runs: robust_distribution_and_control_band_refresh
+  empirical_covariance_gate: complete_n_at_least_max_30_and_10p
+  empirical_PCA_gate: complete_n_at_least_max_50_and_10p
+  empirical_BT_gate: terminal_n_at_least_30_and_positive_outcomes_at_least_5
+DoD:
+  - selector_decision_bound_to_root_id_and_source_sha
+  - all_worker_assignments_unique_within_arm
+  - failed_missing_or_duplicate_receipts_visible
+  - no_authority_bearing_mutation_from_read_only_workers
+  - P3_reentry_receipt_exactly_lineaged_when_required
