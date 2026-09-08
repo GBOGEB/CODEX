@@ -1,0 +1,125 @@
+name: QPS Roundtrip Zero-Delta
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - 'release/**'
+  pull_request:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qps-roundtrip-zero-delta:
+    name: qps-roundtrip-zero-delta
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify recreated workflow registration
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Write-Host 'W05/P10 recreated QPS roundtrip zero-delta workflow active.'
+          Write-Host "event=$env:GITHUB_EVENT_NAME sha=$env:GITHUB_SHA ref=$env:GITHUB_REF"
+
+      - name: Verify QPS roundtrip harness inputs
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $required = @(
+            '07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1',
+            '07_ops/qps_roundtrip/BUILDER_CONTRACT.md',
+            '07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1',
+            'triage/BINARY_PRODUCT_REGISTRY.yaml'
+          )
+          foreach ($path in $required) {
+            if (-not (Test-Path $path)) { throw "Missing required path: $path" }
+          }
+
+      - name: Run first synthetic regeneration
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force -Path release | Out-Null
+          ./07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1 `
+            -BuilderScript ./07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1 `
+            -ReleaseRoot release/W05_QPS_ZERO_DELTA/first `
+            -CreateOfficeReviewCopy:$false
+
+      - name: Run second synthetic regeneration
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          ./07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1 `
+            -BuilderScript ./07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1 `
+            -ReleaseRoot release/W05_QPS_ZERO_DELTA/second `
+            -CreateOfficeReviewCopy:$false
+
+      - name: Compare regenerated product hashes
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $products = @(
+            'QPS_COST_Master.xlsx',
+            'QPS_Cost_Engineering_Handover.docx',
+            'QPS_Cost_Management_Deck.pptx',
+            'QPS_Cost_Engineering_Handover.pdf',
+            'index.html'
+          )
+          $firstRoot = 'release/W05_QPS_ZERO_DELTA/first/10_RELEASES/latest'
+          $secondRoot = 'release/W05_QPS_ZERO_DELTA/second/10_RELEASES/latest'
+          New-Item -ItemType Directory -Force -Path release | Out-Null
+          $rows = @()
+          $pass = $true
+          foreach ($product in $products) {
+            $a = Join-Path $firstRoot $product
+            $b = Join-Path $secondRoot $product
+            if (-not (Test-Path $a) -or -not (Test-Path $b)) {
+              $rows += "MISSING  $product"
+              $pass = $false
+              continue
+            }
+            $ha = (Get-FileHash -Algorithm SHA256 $a).Hash.ToLowerInvariant()
+            $hb = (Get-FileHash -Algorithm SHA256 $b).Hash.ToLowerInvariant()
+            $rows += "$ha  first/$product"
+            $rows += "$hb  second/$product"
+            if ($ha -ne $hb) { $pass = $false }
+          }
+          $rows | Set-Content -Path release/SHA256SUMS -Encoding utf8
+          @"
+schema_version: "1.0"
+source_commit_sha: "$env:GITHUB_SHA"
+workflow: ".github/workflows/qps-roundtrip-zero-delta.yml"
+builder: "07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1"
+harness: "07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1"
+first_release_root: "$firstRoot"
+second_release_root: "$secondRoot"
+result: "$($pass ? 'PASS' : 'FAIL')"
+"@ | Set-Content -Path release/REBUILD_LOG.yaml -Encoding utf8
+          @"
+schema_version: "1.0"
+source_commit_sha: "$env:GITHUB_SHA"
+status: "$($pass ? 'PASS' : 'FAIL')"
+pass_claimed: $($pass.ToString().ToLowerInvariant())
+comparison: "two_pass_synthetic_qps_roundtrip_hash_compare"
+sha256s_path: "release/SHA256SUMS"
+rebuild_log_path: "release/REBUILD_LOG.yaml"
+product_family: "qps_cost_roundtrip"
+"@ | Set-Content -Path release/ZERO_DELTA_RECEIPT.yaml -Encoding utf8
+          if (-not $pass) { throw 'Zero-delta synthetic QPS roundtrip comparison failed.' }
+
+      - name: Upload regeneration and zero-delta artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: w05-qps-roundtrip-zero-delta
+          path: |
+            release/SHA256SUMS
+            release/REBUILD_LOG.yaml
+            release/ZERO_DELTA_RECEIPT.yaml
+            release/W05_QPS_ZERO_DELTA/**
