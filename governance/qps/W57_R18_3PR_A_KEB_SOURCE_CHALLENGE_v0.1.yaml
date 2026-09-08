@@ -1,0 +1,25 @@
+schema_version: "0.1"
+document_id: W57_R18_3PR_A_KEB_SOURCE_CHALLENGE
+role: PARENT_SEMANTIC_SOURCE_CHALLENGE
+child_round: W57_R18_3PR_A
+observed_state:
+  source_packet_classes_targeted: [RFI_HEPAK_001, RFI_LINEB_001, RFI_BFLOW_001]
+  real_returns_observed: 0
+  child_formal_engineering: "70/90"
+challenge_guards:
+  - fixtures_are_not_evidence
+  - placeholders_are_not_evidence
+  - HEPAK_frontend_is_not_numeric_receipt
+  - historic_DN150_is_not_current_selected_geometry
+  - aggregate_B_flow_must_not_be_arbitrarily_split_per_QCELL
+  - JT_flash_is_not_an_extra_external_B_stream
+  - parent_cannot_promote_child_truth
+return_candidate:
+  RFI_HEPAK_001: DEFER_WAITING_REAL_RETURN
+  RFI_LINEB_001: DEFER_WAITING_REAL_RETURN
+  RFI_BFLOW_001: DEFER_WAITING_REAL_RETURN
+  formal_delta: 0
+  source_conversion_credit: 0
+next_semantic_gate: >-
+  On first real return bind source/revision/hash, exact boundary semantics, evidence class and
+  requested packet identity before routing to engineering challenge. Do not backfill one packet class from another.
