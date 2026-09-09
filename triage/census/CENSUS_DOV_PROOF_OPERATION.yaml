@@ -1,0 +1,16 @@
+schema: triage-operation-registry/1.0.0
+operation: CENSUS_DOV_PROOF
+canonical_term: census_dov_proof
+owner: CODEX_KEB
+status: GOVERNED
+purpose: Prove deterministic TRIAGE census tuple roundtrip across child, KEB and DOW boundaries while preserving semantic content and authority.
+authority:
+  grants_engineering_credit: false
+  grants_compliance_credit: false
+  grants_negotiation_credit: false
+  child_disposition_required: true
+validation:
+  unknown_term: FAIL_OR_DEFER
+  canonical_json: RFC8785_LIKE_SORTED_UTF8_NO_WHITESPACE
+  hash_algorithm: SHA256
+  text_checkout_eol: LF
