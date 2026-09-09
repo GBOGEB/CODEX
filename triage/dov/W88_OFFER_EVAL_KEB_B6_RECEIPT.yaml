@@ -1,0 +1,33 @@
+schema: TRIAGE-OFFER-EVAL-DOV-1.0
+wave: W088
+repo: GBOGEB/CODEX
+role: KEB_semantic_provenance
+scope: offer_eval_terminal_proof
+upstream:
+  cryoplant_terminal_ledger_pr: GBOGEB/cryoplant-project#712
+  codex_semantic_repair_pr: GBOGEB/CODEX#525
+  abacus_docs_repair_pr: GBOGEB/ABACUS#1031
+observed_prerequisites:
+  semantic_validation: PASS
+  runtime_federation_ci: PASS
+  validate_federation: PASS
+  full_stack_governance_ci: PASS
+  qps_canonicalization: PASS
+terminal_gate:
+  id: B6_HASH_STALE_FAIL_CLOSED
+  status: READY_FOR_EXACT_HEAD_EXECUTION
+  required_assertions:
+    - receipt_payload_sha_matches_bound_payload
+    - stale_receipt_is_rejected
+    - bidder_namespace_is_preserved
+    - parent_receipt_has_zero_child_compliance_authority
+    - exact_head_is_recorded
+return_contract:
+  on_pass: RETURN_HASH_BOUND_KEB_RECEIPT_TO_DOW
+  on_fail: FAIL_CLOSED_TO_CHILD
+  child_reentry_required: true
+credit_delta:
+  engineering: 0
+  compliance: 0
+  negotiation: 0
+victory: exact-head B6 challenge PASS and immutable KEB receipt available for DOW binding
