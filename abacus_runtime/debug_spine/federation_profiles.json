@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "track_id": "ABACUS_DEBUG_SPINE_W002",
+  "semantic_owner": "CODEX/KEB",
+  "canonical_control_adapter": "lldb-dap",
+  "backbone": "Swift",
+  "profiles": [
+    {"language": "Swift", "adapter": "lldb-dap", "transport": "native-dap", "modes": ["launch", "attach"]},
+    {"language": "Python", "adapter": "debugpy", "transport": "federated-dap", "modes": ["launch", "attach"]},
+    {"language": "JavaScript", "adapter": "js-debug", "transport": "federated-dap", "modes": ["launch", "attach"]},
+    {"language": "TypeScript", "adapter": "js-debug", "transport": "federated-dap", "modes": ["launch", "attach"]}
+  ],
+  "required_events": [
+    "session.created",
+    "federation.profile.bound",
+    "dap.initialized",
+    "dap.request.normalized",
+    "breakpoint.bound",
+    "execution.paused",
+    "render.snapshot",
+    "session.closed"
+  ],
+  "fail_closed": [
+    "unsupported target language",
+    "unsupported request mode",
+    "launch without program",
+    "attach without process id"
+  ]
+}
