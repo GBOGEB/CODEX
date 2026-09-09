@@ -1,0 +1,46 @@
+schema_version: '1.0'
+document_id: TRIAGE_CODEX_RUNTIME_CONSOLIDATION_W91
+status: CONTROLLED_DISCRIMINATION
+baseline_duplicate_stem_groups: 7
+policy:
+  one_canonical_implementation_per_runtime_role: true
+  compatibility_shims_may_not_own_business_logic: true
+  same_basename_different_role_is_not_duplicate: true
+  deletion_requires_call_graph_and_CI_evidence: true
+families:
+  - family: mcp_sweep_engine
+    canonical: src/federation/mcp_sweep_engine.py
+    compatibility:
+      - federation_runtime/engines/mcp_sweep_engine.py
+    disposition: CONSOLIDATED_ALREADY
+    rationale: federation_runtime path is a thin compatibility shim importing the canonical implementation
+  - family: build_manifest
+    members:
+      - scripts/build_manifest.py
+      - federation_runtime/engines/build_manifest.py
+    disposition: RETAIN_DISTINCT_ROLES
+    rationale: scripts/build_manifest.py builds repository MANIFEST files; federation_runtime engine builds federation run manifests
+  - family: saturation
+    members:
+      - src/thermo/saturation_stub.py
+      - src/gistau_ch15/kernels/saturation_stub.py
+      - src/gistau_ch15/kernels/saturation_curves.py
+      - src/gistau_ch15/properties/saturation_overlays.py
+      - src/gistau_ch15/visualization/saturation_sampling.py
+    disposition: ROLE_SEPARATED_MODERNIZE
+    canonical_contract: src/gistau_ch15/properties/base.py::PropertyBackend
+    rationale: backend contract, reconstruction kernel, overlay builder and visualization sampler are separate roles; generic src/thermo scaffold must not become competing numerical authority
+  - family: helium_backend
+    canonical: src/gistau_ch15/properties/fallback_helium.py
+    disposition: CANONICAL_FALLBACK_BACKEND
+    rationale: current implementation plan explicitly places fallback backend under gistau_ch15 properties
+  - family: package___init__
+    disposition: HARMLESS_NAMESPACE_COLLISION
+controls:
+  strong_competing_runtime_groups_remaining: 0
+  false_positive_groups_retired: true
+  engineering_credit_delta: 0
+next:
+  - deployment_docker_state
+  - root_level_runtimes
+  - remove_or_shim_generic_thermo_scaffolds_only_after_import_and_test evidence
