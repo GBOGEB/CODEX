@@ -1,0 +1,51 @@
+schema_version: "0.1"
+document_id: W57_P03_PVPS_83KW_KEB_RETURN
+parent_keb_pr: "GBOGEB/CODEX#414"
+parent_keb_head_sha: 9630a1ff3e4184ef11249b7200170ed1ef1b5dcb
+dow_pr: "GBOGEB/ABACUS#916"
+dow_head_sha: 17352847bdab41e6248e8deb992d37bbecb3723f
+child_source_pr: "GBOGEB/cryoplant-project#604"
+child_source_head_sha: d6757844f26c91e8a5390aaa57519d12252fb420
+source_sha256: d92af4666cc10ec6a4f8ac6cfe57aef477bca116f72a12f9156a680ce7e1e35e
+authority: KEB_RETURN
+
+return_findings:
+  printed_offer_arithmetic: REJECT
+  83kW_same_point_boundary: DEFER
+  75kW_cooling_reconciliation: DEFER
+  historic_sv630bf_as_current_proof: REJECT
+
+independent_values:
+  exact_aggregate_motor_nameplate_kW: 74.0
+  erroneous_offer_printed_total_kW: 78.0
+  offer_2K_OP_PVPS_consumption_kW: 83.0
+  offer_2K_OP_cooling_heat_kW: 75.0
+  delta_83_minus_74_kW: 9.0
+  delta_83_over_74_percent: 12.1621621622
+  cooling_over_83_percent: 90.3614457831
+
+keb_return_disposition: DEFER
+reason: >-
+  DOW independently reproduced the current-source inconsistency. The 83 kW value cannot be accepted or rejected
+  as a same-point PVPS package requirement until LKT/OEM defines the electrical boundary, running pump count,
+  per-pump VFD state, PVPS-specific helium flow and exact suction/discharge thermodynamic state. The erroneous
+  4 x 18.5 = 78 expression is rejected as arithmetic, but that does not by itself invalidate a separately defined
+  83 kW package-consumption boundary.
+
+required_child_action:
+  disposition: DEFER
+  preserve_current_source: true
+  issue_targeted_bidder_return: true
+  required_return_fields:
+    - exact 2K-OP number of PVPS pumps running
+    - each running pump VFD frequency or load fraction
+    - PVPS helium mass flow at the same point
+    - suction pressure and temperature at the same point
+    - discharge pressure at the same point
+    - explicit 83 kW package boundary and auxiliary/VFD-loss content
+    - correction or withdrawal of the printed 4 x 18.5 = 78 expression
+    - explicit 75 kW cooling-water duty boundary and reconciliation
+
+engineering_credit_delta: 0
+formal_engineering: "70/90"
+negotiation: "0/20"
