@@ -20,8 +20,8 @@ def test_swift_executable_package_is_versioned() -> None:
 
     assert "// swift-tools-version: 5.9" in package
     assert 'name: "abacus-debug-spine"' in package
-    assert "ABACUS_DEBUG_SPINE_W000" in main
-    assert "abacus_debug_spine_w001_trace.jsonl" in main
+    assert "ABACUS_DEBUG_SPINE_W002" in main
+    assert "abacus_debug_spine_w002_trace.jsonl" in main
 
 
 def test_lldb_dap_launch_template_pins_runtime_evidence_paths() -> None:
@@ -95,6 +95,8 @@ def test_swift_runtime_emits_jsonl_trace(tmp_path: Path) -> None:
             "pytest-swift",
             "--target-language",
             "TypeScript",
+            "--program",
+            "pytest-target",
             "--branch",
             "wave/W001-debug-spine-runtime-proof",
             "--commit-sha",
