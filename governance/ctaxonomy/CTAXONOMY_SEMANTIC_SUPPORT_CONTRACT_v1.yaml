@@ -1,0 +1,41 @@
+schema: keb-ctaxonomy-semantic-support/1.0.0
+status: VALIDATION_CONTRACT
+wave: W94
+repo: GBOGEB/CODEX
+role: KEB_SEMANTIC_PROVENANCE_AUTHORITY
+source_authority:
+  repo: GBOGEB/cryoplant-project
+  path: ctaxonomy/CTAXONOMY_SEMANTIC_SUPPORT_v1.yaml
+  owner_role: CHILD_ENGINEERING_AUTHORITY
+
+validation:
+  canonical_term_unique_per_taxonomy_id: REQUIRED
+  canonical_definition_present: REQUIRED
+  alias_resolves_to_exactly_one_taxonomy_id: REQUIRED
+  abbreviation_has_exactly_one_expansion: REQUIRED
+  parent_child_references_resolve: REQUIRED
+  deprecated_term_names_replacement: REQUIRED_WHEN_PRESENT
+  alias_is_not_taxonomy_identity: REQUIRED
+  glossary_change_cannot_change_engineering_disposition: REQUIRED
+  parent_cannot_create_child_taxonomy_id: REQUIRED
+
+required_active_ids: [PLOC, BFLOW, GEO, GEO-A, GEO-B, THERM, THERM-A, THERM-B]
+
+semantic_guards:
+  - pressure_value_without_location_does_not_satisfy_PLOC
+  - checksum_flow_does_not_become_independent_BFLOW
+  - historic_geometry_does_not_become_current_GEO
+  - alias_resolution_does_not_create_engineering_evidence
+  - abbreviation_expansion_does_not_change_scope
+  - bidder_language_may_map_to_alias_but_not_replace_canonical_id
+
+receipt:
+  allowed: [PASS, FAIL, DEFER_SOURCE_UNAVAILABLE]
+  engineering_credit_delta: 0
+  negotiation_credit_delta: 0
+  child_disposition_authority: false
+
+rollout:
+  downstream_repo: GBOGEB/ABACUS
+  downstream_role: render_and_runtime_consumer
+  rule: downstream_must_preserve_canonical_ids_and_may_only_add_display_labels
