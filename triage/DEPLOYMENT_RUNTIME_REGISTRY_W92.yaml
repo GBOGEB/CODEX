@@ -1,0 +1,27 @@
+schema_version: '1.0'
+document_id: TRIAGE_CODEX_DEPLOYMENT_RUNTIME_REGISTRY_W92
+status: CANONICAL_CONTAINER_SURFACE_ADDED
+canonical:
+  dockerfile: Dockerfile
+  compose: compose.yaml
+  entrypoint: python scripts/validate_all.py
+  python_contract: pyproject.toml
+  dependency_contract: requirements.txt
+role: semantic_provenance_and_federation_validation_container
+constraints:
+  - container is a validation/execution environment, not an engineering authority
+  - package requires Python >=3.11
+  - validation entrypoint is the existing repository-native scripts/validate_all.py
+  - Node/tsx tests remain conditionally invoked by validate_all when present; Node is not yet installed in this image
+known_gate:
+  id: CODEX_W92_NODE_RUNTIME
+  state: OPEN
+  reason: validate_all may require npx/tsx for TypeScript federation tests, while the first canonical image is Python-only
+  next_action: either add a pinned Node runtime to the image or split TypeScript validation into a governed companion image
+collision_disposition:
+  historical_dockerfiles: NONE_FOUND_ON_CURRENT_MAIN_SEARCH
+  canonical_count: 1
+controls:
+  engineering_credit_delta: 0
+  require_docker_build_receipt: true
+  require_validator_execution_receipt: true
