@@ -12,6 +12,16 @@ from abacus_runtime.debug_spine.render_evidence import REQUIRED_EVENT_NAMES, loa
 ROOT = Path(__file__).resolve().parents[2]
 DEBUG_SPINE_DIR = ROOT / "abacus_runtime" / "debug_spine"
 SWIFT_DIR = DEBUG_SPINE_DIR / "swift"
+W002_EVENT_NAMES = [
+    "session.created",
+    "federation.profile.bound",
+    "dap.initialized",
+    "dap.request.normalized",
+    "breakpoint.bound",
+    "execution.paused",
+    "render.snapshot",
+    "session.closed",
+]
 
 
 def test_swift_executable_package_is_versioned() -> None:
@@ -107,5 +117,5 @@ def test_swift_runtime_emits_jsonl_trace(tmp_path: Path) -> None:
     )
 
     events = load_trace_jsonl(trace_path)
-    assert [event["event"]["name"] for event in events] == REQUIRED_EVENT_NAMES
+    assert [event["event"]["name"] for event in events] == W002_EVENT_NAMES
     assert {event["target"]["language"] for event in events} == {"TypeScript"}
