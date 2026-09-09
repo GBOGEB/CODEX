@@ -8,14 +8,17 @@ from typing import Iterable
 
 REQUIRED_EVENT_NAMES = [
     "session.created",
-    "federation.profile.bound",
     "dap.initialized",
-    "dap.request.normalized",
     "breakpoint.bound",
     "execution.paused",
     "render.snapshot",
     "session.closed",
 ]
+
+ALLOWED_EVENT_NAMES = set(REQUIRED_EVENT_NAMES) | {
+    "federation.profile.bound",
+    "dap.request.normalized",
+}
 
 REQUIRED_EVENT_FIELDS = [
     "session_id",
@@ -40,7 +43,7 @@ def load_trace_jsonl(trace_path: Path) -> list[dict]:
         if missing:
             raise ValueError(f"Line {line_number} missing required fields: {', '.join(missing)}")
         event_name = event["event"].get("name")
-        if event_name not in REQUIRED_EVENT_NAMES:
+        if event_name not in ALLOWED_EVENT_NAMES:
             raise ValueError(f"Line {line_number} has unexpected event name: {event_name}")
         for nested_field in ("name", "timestamp", "evidence_ref"):
             if nested_field not in event["event"]:
