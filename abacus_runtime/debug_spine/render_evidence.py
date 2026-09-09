@@ -8,7 +8,9 @@ from typing import Iterable
 
 REQUIRED_EVENT_NAMES = [
     "session.created",
+    "federation.profile.bound",
     "dap.initialized",
+    "dap.request.normalized",
     "breakpoint.bound",
     "execution.paused",
     "render.snapshot",
