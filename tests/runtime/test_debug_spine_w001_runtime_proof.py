@@ -106,9 +106,9 @@ def test_swift_runtime_emits_jsonl_trace(tmp_path: Path) -> None:
             "--target-language",
             "TypeScript",
             "--program",
-            "pytest-target",
+            "/tmp/triage-typescript-target",
             "--branch",
-            "wave/W001-debug-spine-runtime-proof",
+            "fix/w63-codex-w002-runtime-tests",
             "--commit-sha",
             "pytest-sha",
         ],
@@ -118,4 +118,30 @@ def test_swift_runtime_emits_jsonl_trace(tmp_path: Path) -> None:
 
     events = load_trace_jsonl(trace_path)
     assert [event["event"]["name"] for event in events] == W002_EVENT_NAMES
+    assert {event["track_id"] for event in events} == {"ABACUS_DEBUG_SPINE_W002"}
     assert {event["target"]["language"] for event in events} == {"TypeScript"}
+    assert {event["normalized_request"]["command"] for event in events} == {"launch"}
+    assert {event["normalized_request"]["program"] for event in events} == {"/tmp/triage-typescript-target"}
+
+
+@pytest.mark.skipif(subprocess.run(["bash", "-lc", "command -v swift"], capture_output=True).returncode != 0, reason="swift is not installed")
+def test_swift_launch_without_program_fails_closed(tmp_path: Path) -> None:
+    result = subprocess.run(
+        [
+            "swift",
+            "run",
+            "--package-path",
+            str(SWIFT_DIR),
+            "abacus-debug-spine",
+            "--trace-output",
+            str(tmp_path / "must_not_exist.jsonl"),
+            "--target-language",
+            "TypeScript",
+        ],
+        capture_output=True,
+        text=True,
+        cwd=ROOT,
+    )
+
+    assert result.returncode == 2
+    assert "launch mode requires --program" in result.stderr
