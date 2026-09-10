@@ -9,12 +9,12 @@ before:
   job: 102696890773
   semantic_validation: FAIL
   defect_count: 1
-  defect: semantic_provenance_and_federation_validation_container
-  class: undocumented_semantic_role_token
+  defect: legacy compound role label outside governed vocabulary
+  class: undocumented_role_label
 action:
   type: REPAIR
   target: triage/DEPLOYMENT_RUNTIME_REGISTRY_W92.yaml
-  change: replace the undocumented compound role with the already-governed semantic_provenance_validator role
+  change: replace the legacy compound role label with the already-governed semantic_provenance_validator role
   authority_change: false
 expected_after:
   defect_count: 0
