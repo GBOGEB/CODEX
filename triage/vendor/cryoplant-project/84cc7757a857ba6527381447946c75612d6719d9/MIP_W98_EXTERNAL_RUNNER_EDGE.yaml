@@ -1,0 +1,24 @@
+schema_version: '1.0'
+mip_id: MIP-PILOT-002
+phase: INNOVATE
+repository: GBOGEB/cryoplant-project
+current_path:
+  execution: native_github_hosted_runner
+  observed_state: PRE_STEP_RUNNER_ADMISSION_FAILURE
+candidate_path:
+  execution: external_healthy_repo_runner_lane
+  invariants:
+    - preserve exact child SHA
+    - preserve validator command identity
+    - preserve inputs and fail-closed semantics
+    - external result is diagnostic evidence only
+hypothesis: if unchanged child proof passes on a healthy external lane while native child remains pre-step red, runner admission rather than repository semantics is the dominant cause
+target_metric:
+  external_executed_steps: '>0'
+  external_validator_result: PASS
+  native_child_execution_required_for_perpetuation: true
+perpetuation_gate:
+  distinct_native_exact_sha_passes_required: 2
+credit:
+  engineering_delta: 0
+  release_delta: 0
