@@ -1,0 +1,16 @@
+{
+  "schema_version":"0.1",
+  "document_id":"QPS_W103_COST_KEB_SOURCE_IDENTITY",
+  "wave":"W103",
+  "status":"WAITING_AUTHORITATIVE_BOM_REBIND",
+  "child_stack":[828,829,830],
+  "first_red":"C1_SOURCE_IDENTITY",
+  "required_identity":["source_id","revision","sha256","WHM_scope","WPS_S_U_W_scope","row_identity_rule","supersession_status"],
+  "evidence_classes":["VERIFIED","INHERITED","STALE_CANDIDATE","SUPERSEDED","UNKNOWN"],
+  "guards":["timestamp_is_not_freshness_proof","historical_BOM_cannot_silently_become_current","no_cost_promotion_before_C1_PASS","explicit_scope_owner_for_overlap"],
+  "PASS":"unique authoritative current WHM+WPS BOM/MTO source set is revision and SHA bound",
+  "DEFER":"identity missing ambiguous stale or supersession unresolved",
+  "next_on_pass":"C2_ROW_BY_ROW_RECONCILIATION",
+  "engineering_credit_delta":0,
+  "negotiation_credit_delta":0
+}
