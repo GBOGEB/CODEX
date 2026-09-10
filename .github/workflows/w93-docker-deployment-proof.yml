@@ -1,0 +1,43 @@
+name: W93 Docker Deployment Proof
+
+on:
+  pull_request:
+    paths:
+      - Dockerfile
+      - compose.yaml
+      - package.json
+      - package-lock.json
+      - requirements.txt
+      - scripts/validate_all.py
+      - triage/DEPLOYMENT_RUNTIME_REGISTRY_W92.yaml
+      - .github/workflows/w93-docker-deployment-proof.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  canonical-validator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate compose model
+        run: docker compose config --quiet
+      - name: Build exact-head validator image
+        run: docker build --pull -t codex-w93:${GITHUB_SHA} .
+      - name: Prove mixed runtime availability
+        run: |
+          docker run --rm --entrypoint sh codex-w93:${GITHUB_SHA} -c 'python --version && node --version && npm --version && npx --version'
+      - name: Execute canonical validator inside container
+        run: docker run --rm codex-w93:${GITHUB_SHA} | tee w93_codex_docker_execution.txt
+      - name: Assert executable receipt
+        run: |
+          grep -q '^Federation validation passed\.$' w93_codex_docker_execution.txt
+          printf 'source_sha=%s\nruntime_role=KEB_VALIDATOR\npython_node_parity=PASS\nvalidator_execution=PASS\ncompose_validation=PASS\nengineering_credit_delta=0\n' "$GITHUB_SHA" | tee w93_codex_docker_receipt.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: w93-codex-docker-${{ github.sha }}
+          path: |
+            w93_codex_docker_execution.txt
+            w93_codex_docker_receipt.txt
