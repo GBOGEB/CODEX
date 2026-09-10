@@ -1,0 +1,21 @@
+{
+  "schema_version": "0.1",
+  "mip_id": "MIP-PILOT-002",
+  "role": "KEB",
+  "authority": "advisory_validation_only",
+  "modernize_includes_repair": true,
+  "repair_classes": ["runner", "workflow", "container", "dependency", "semantic_contract", "provenance", "portability", "fail_open_behavior"],
+  "observed_precedents": [
+    {"pr": 570, "class": "runner", "pattern": "alternate hosted runner path after child pre-step failure"},
+    {"pr": 572, "class": "provenance", "pattern": "exact vendored proof inputs after cross-repo token failure"},
+    {"pr": 571, "class": "container", "pattern": "canonical containerized validation runtime"}
+  ],
+  "innovation_contract": {
+    "requires": ["current_path", "candidate_path", "hypothesis", "target_metric", "measured_result"],
+    "candidate_may_be": ["alternate_edge", "substitute_dependency", "new_node", "hierarchy_change", "execution_boundary", "analogous_implementation"]
+  },
+  "return_states": ["PASS", "FAIL", "DEFER", "NOT_APPLICABLE"],
+  "promotion_authority": false,
+  "engineering_credit_delta": 0,
+  "release_credit_delta": 0
+}
