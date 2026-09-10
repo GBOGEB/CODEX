@@ -1,0 +1,19 @@
+schema: gbogeb-federation-activity/1.0.0
+as_of: '2026-09-10T06:52:00+02:00'
+repo: GBOGEB/CODEX
+classification: CORE_ACTIVE
+federation_role: KEB_SEMANTIC_PROVENANCE_AND_CONTRACT_AUTHORITY
+last_wave: W98_QPS_GLOSSARY_3PC_3PR
+recent_activity: [{pr: 587, state: MERGED, role: glossary_semantic_validation}]
+mip_state: {modernize: ACTIVE, innovate: ACTIVE, perpetuate: ACTIVE_WITH_GUARDS}
+three_p_capability: {P1_source_atom: false, P2_integration_graph: true, P3_evidence_control: true}
+runtime_proof: {state: PASS_FOR_W98, w003_run: 34438173960, semantic_runtime_run: 34438174180}
+source_authority: {state: SEMANTIC_PROVENANCE_ONLY, may_mutate_qps_disposition: false}
+produces_receipts: [keb_semantic_receipt, provenance_validation_receipt]
+consumes_receipts: [redacted_child_contract]
+current_blocker: W69 zero-delta execution red remains separate from accepted W98 semantic receipt
+next_victory: recurse only on W69 exact red while preserving W98 accepted semantic receipt
+federation_dependencies:
+  upstream: [GBOGEB/cryoplant-project]
+  downstream: [GBOGEB/ABACUS, GBOGEB/pipeline-automation-hub]
+controls: {engineering_credit: false, compliance_credit: false, negotiation_credit: false}
