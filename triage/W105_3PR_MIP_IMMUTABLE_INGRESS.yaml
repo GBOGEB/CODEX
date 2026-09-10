@@ -1,0 +1,37 @@
+schema: w105-3pr-mip-immutable-ingress/v1
+scope: immutable binary recovery/transport only
+credit:
+  engineering_delta: 0
+  negotiation_delta: 0
+  release_delta: 0
+3PR:
+  P1_recover:
+    intent: recover original bytes from an existing immutable source only
+    accepted_sources:
+      - repository immutable-inputs path
+      - existing GitHub Actions artifact by repository/run/name
+    prohibited:
+      - workbook regeneration
+      - workbook normalization
+      - substitute binary construction
+  P2_prove:
+    gate: W101 exact filename plus SHA256 validator
+    required: 4
+    pass_state: PASS_4_OF_4_IMMUTABLE_INPUTS
+    red_rule: recurse on first MISSING or HASH_MISMATCH only
+  P3_reenter:
+    precondition: 4_of_4_exact_sha_pass
+    action: execute existing W100 B1 diagnostic
+    native_release_credit: requires subsequent cryoplant exact-SHA execution
+MIP:
+  modernize:
+    change: remove stale assumption that the gate only observes repository-carried binaries
+    result: state-driven immutable admission
+  innovate:
+    change: permit an existing GitHub Actions artifact as a transport seam
+    constraint: downloaded bytes are still independently SHA256-verified before B1
+  perpetuate:
+    loop: recover -> verify -> recurse_first_red_or_B1 -> retain_receipts -> native_reentry
+    score_rule: red pulse or diagnostic-only PASS gives zero formal release credit
+victory:
+  next: obtain an existing artifact or repository path containing the four unchanged originals and observe 4/4 exact SHA PASS
