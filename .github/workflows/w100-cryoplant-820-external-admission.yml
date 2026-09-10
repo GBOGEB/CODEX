@@ -1,0 +1,54 @@
+name: W100 Cryoplant 820 External Admission Probe
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/w100-cryoplant-820-external-admission.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  admission-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout CODEX probe revision
+        uses: actions/checkout@v4
+
+      - name: Prove hosted runner admission and bind child exact head
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out/w100
+          cat > out/w100/CRYOPLANT_820_EXTERNAL_ADMISSION_RECEIPT.json <<'JSON'
+          {
+            "schema": "cryoplant-external-admission/v1",
+            "classification": "DIAGNOSTIC_ONLY_NO_RELEASE_CREDIT",
+            "child_repository": "GBOGEB/cryoplant-project",
+            "child_pr": 820,
+            "child_head_sha": "a00785568f617db729a3968127d258027b5daa33",
+            "child_workflow": "W99 ALAT B1 Materialization",
+            "required_observation": {
+              "external_runner_steps_executed_min": 1,
+              "exact_child_sha_preserved": true
+            },
+            "authority_effect": "NONE",
+            "engineering_credit_delta": 0,
+            "negotiation_credit_delta": 0,
+            "release_credit_delta": 0
+          }
+          JSON
+          test "$(python -c "import json; print(json.load(open('out/w100/CRYOPLANT_820_EXTERNAL_ADMISSION_RECEIPT.json'))['child_head_sha'])")" = "a00785568f617db729a3968127d258027b5daa33"
+          sha256sum out/w100/CRYOPLANT_820_EXTERNAL_ADMISSION_RECEIPT.json > out/w100/SHA256SUMS
+          echo "PASS external_runner_admitted exact_child_sha=a00785568f617db729a3968127d258027b5daa33"
+
+      - name: Upload diagnostic receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: w100-cryoplant-820-external-admission
+          path: |
+            out/w100/CRYOPLANT_820_EXTERNAL_ADMISSION_RECEIPT.json
+            out/w100/SHA256SUMS
+          if-no-files-found: error
