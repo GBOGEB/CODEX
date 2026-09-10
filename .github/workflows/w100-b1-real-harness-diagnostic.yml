@@ -1,0 +1,37 @@
+name: W100 B1 Real Harness Diagnostic
+on:
+  pull_request:
+    paths:
+      - 'triage/w100_b1_real_harness_diagnostic.py'
+      - '.github/workflows/w100-b1-real-harness-diagnostic.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  b1-diagnostic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute cryoplant 820 governed-input gate unchanged in semantics
+        id: diag
+        continue-on-error: true
+        run: python triage/w100_b1_real_harness_diagnostic.py
+      - name: Upload diagnostic receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: w100-b1-real-harness-${{ github.sha }}
+          path: out/W100_B1_DIAGNOSTIC_RECEIPT.json
+          if-no-files-found: error
+      - name: Classify result without creating release credit
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          d=json.load(open('out/W100_B1_DIAGNOSTIC_RECEIPT.json'))
+          print('observed_status='+d['status'])
+          print('source_head_sha='+d['source_head_sha'])
+          states={k:v['state'] for k,v in d['governed_inputs'].items()}
+          print('input_states='+json.dumps(states,sort_keys=True))
+          assert d['source_head_sha']=='a00785568f617db729a3968127d258027b5daa33'
+          PY
