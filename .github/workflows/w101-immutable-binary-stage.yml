@@ -1,0 +1,38 @@
+name: W101 Immutable Binary Recovery Gate
+on:
+  pull_request:
+    paths:
+      - 'triage/W101_IMMUTABLE_BINARY_RECOVERY_3PC.yaml'
+      - 'triage/w101_validate_immutable_binary_stage.py'
+      - '.github/workflows/w101-immutable-binary-stage.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  immutable-stage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify immutable stage only
+        id: verify
+        continue-on-error: true
+        run: python triage/w101_validate_immutable_binary_stage.py immutable-inputs
+      - name: Upload fail-closed recovery receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: w101-immutable-stage-${{ github.sha }}
+          path: out/W101_IMMUTABLE_STAGE_RECEIPT.json
+          if-no-files-found: error
+      - name: Enforce no false transport PASS
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          d=json.load(open('out/W101_IMMUTABLE_STAGE_RECEIPT.json'))
+          print('immutable_stage_status='+d['status'])
+          print('immutable_stage_passed='+str(d['passed'])+'/'+str(d['required']))
+          assert d['policy']=='VERIFY_ONLY_DO_NOT_REGENERATE'
+          # This PR contains no binary payload; DEFER is the truthful expected state.
+          assert d['status']=='DEFER_IMMUTABLE_INPUT_STAGE'
+          PY
