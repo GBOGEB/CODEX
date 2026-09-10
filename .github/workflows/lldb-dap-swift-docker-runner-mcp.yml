@@ -1,0 +1,35 @@
+name: LLDB-DAP Swift Docker Runner MCP Proof
+
+on:
+  pull_request:
+    paths:
+      - "scripts/lldb_dap_runtime_probe.py"
+      - "runtime/debug/lldb_dap_probe/**"
+      - ".github/workflows/lldb-dap-swift-docker-runner-mcp.yml"
+  workflow_dispatch:
+
+jobs:
+  census:
+    name: census surfaces
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: LLDB-DAP census PASS
+        run: python3 scripts/lldb_dap_runtime_probe.py --mode census --receipt receipts/keb/lldb_dap_census.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lldb-dap-census
+          path: receipts/keb/lldb_dap_census.json
+
+  probe:
+    name: execute Swift LLDB probe
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute real Swift LLDB probe and emit exact-SHA KEB receipt
+        run: python3 scripts/lldb_dap_runtime_probe.py --mode probe --receipt receipts/keb/LLDB_DAP_SWIFT_DOCKER_RUNNER_MCP_RECEIPT.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: keb-lldb-dap-swift-docker-runner-mcp-receipt
+          path: receipts/keb/LLDB_DAP_SWIFT_DOCKER_RUNNER_MCP_RECEIPT.json
