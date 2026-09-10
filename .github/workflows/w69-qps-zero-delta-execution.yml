@@ -15,8 +15,9 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           New-Item -ItemType Directory -Force -Path release | Out-Null
-          ./07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1 -BuilderScript ./07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1 -ReleaseRoot release/W69/first -CreateOfficeReviewCopy:$false
-          ./07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1 -BuilderScript ./07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1 -ReleaseRoot release/W69/second -CreateOfficeReviewCopy:$false
+          New-Item -ItemType Directory -Force -Path evidence | Out-Null
+          ./07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1 -BuilderScript ./07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1 -EvidenceRoot evidence -ReleaseRoot release/W69/first -ReleaseId W69-FIRST -SkipRepositoryUpdate
+          ./07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1 -BuilderScript ./07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1 -EvidenceRoot evidence -ReleaseRoot release/W69/second -ReleaseId W69-SECOND -SkipRepositoryUpdate
       - name: Compare product family and emit receipt
         shell: pwsh
         run: |
