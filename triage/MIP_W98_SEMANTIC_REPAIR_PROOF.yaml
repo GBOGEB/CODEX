@@ -1,0 +1,18 @@
+schema_version: '1.0'
+mip_id: MIP-PILOT-002
+phase: MODERNIZE_REPAIR
+repository: GBOGEB/CODEX
+repair_atom: semantic_container_role_vocabulary
+before:
+  failing_term: semantic_provenance_and_federation_validation_container
+  observed_failure: undocumented semantic term
+repair:
+  replacement_term: semantic_provenance_validator
+  authority_change: none
+  rationale: reuse existing governed vocabulary rather than baseline new debt
+proof_request:
+  require_pr_head_semantic_validation: true
+  require_exact_sha_binding: true
+credit:
+  engineering_delta: 0
+  release_delta: 0
