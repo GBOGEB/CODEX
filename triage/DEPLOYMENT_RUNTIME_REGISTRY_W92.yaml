@@ -7,7 +7,7 @@ canonical:
   entrypoint: python scripts/validate_all.py
   python_contract: pyproject.toml
   dependency_contract: requirements.txt
-role: semantic_provenance_and_federation_validation_container
+role: semantic_provenance_validator
 constraints:
   - container is a validation/execution environment, not an engineering authority
   - package requires Python >=3.11
