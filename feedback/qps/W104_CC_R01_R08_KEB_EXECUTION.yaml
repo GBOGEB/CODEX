@@ -1,0 +1,39 @@
+schema_version: "0.1"
+document_id: W104_CC_R01_R08_KEB_EXECUTION
+wave: W104
+role: CODEX_KEB
+child_contract: QPS_W104_CC_R01_R08_ROUNDTRIP
+status: EXECUTION_REQUEST
+atom_set: [CC-R01, CC-R02, CC-R03, CC-R04, CC-R05, CC-R06, CC-R07, CC-R08]
+required_execution_per_atom:
+  - validate_atom_identity_and_no_silent_collapse
+  - validate_source_authority_class
+  - validate_original_vs_derived_message_semantics
+  - validate_common_cause_vs_independent_stage_semantics
+  - validate_no_cross_bidder_substitution
+  - validate_no_duplicate_credit
+  - emit_atom_semantic_disposition_candidate
+receipt:
+  type: REAL_KEB_EXECUTION_RECEIPT
+  must_include:
+    - exact_source_commit
+    - all_8_atom_results
+    - executed_count
+    - semantic_pass_fail_defer_counts
+    - provenance_gaps
+    - receipt_payload_sha256
+  fail_closed_if:
+    - executed_count_is_not_8
+    - any_atom_is_silently_dropped
+    - absence_is_typed_as_zero_rate
+    - derived_email_is_typed_as_original_source
+    - provisional_independent_stage_rate_is_typed_as_common_cause
+email_provenance:
+  EMAIL_ORIG: ORIGINAL_SOURCE_MESSAGE_when_raw_hash_headers_and_locator_bound
+  EMAIL_REFINED: DERIVED_ANALYSIS
+  required_edge: EMAIL_REFINED_DERIVED_FROM_EMAIL_ORIG
+credit_guard:
+  engineering_delta: 0
+  negotiation_delta: 0
+  parent_has_no_child_score_authority: true
+return_to: GBOGEB/cryoplant-project
