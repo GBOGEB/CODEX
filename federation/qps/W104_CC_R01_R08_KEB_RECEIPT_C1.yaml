@@ -1,0 +1,41 @@
+schema_version: "0.1"
+document_id: W104_CC_R01_R08_KEB_RECEIPT_C1
+wave: W104
+role: CODEX_KEB
+receipt_type: REAL_KEB_EXECUTION_RECEIPT
+execution_basis:
+  request_merge_sha: 6da7a1fdf919bd0969a27c02ecf4a344f523d416
+  observed_main_sha: 98e986d6dcd8a3b2bf91b15d130339c465391105
+  atom_set: [CC-R01, CC-R02, CC-R03, CC-R04, CC-R05, CC-R06, CC-R07, CC-R08]
+semantic_checks:
+  preserve_atom_identity: PASS
+  missing_is_not_zero: PASS
+  provisional_independent_rate_is_not_common_cause: PASS
+  refined_email_is_not_original_source: PASS
+  cross_bidder_substitution_forbidden: PASS
+  duplicate_credit_forbidden: PASS
+execution_summary:
+  executed_count: 8
+  pass_count: 0
+  fail_count: 0
+  defer_count: 8
+  silently_dropped_count: 0
+atom_results:
+  - {atom_id: CC-R01, source_authority: SOURCE_MISSING, provenance_state: UNRESOLVED, semantic_disposition: DEFER_SOURCE_MISSING}
+  - {atom_id: CC-R02, source_authority: SOURCE_MISSING, provenance_state: UNRESOLVED, semantic_disposition: DEFER_SOURCE_MISSING}
+  - {atom_id: CC-R03, source_authority: SOURCE_MISSING, provenance_state: UNRESOLVED, semantic_disposition: DEFER_SOURCE_MISSING}
+  - {atom_id: CC-R04, source_authority: SOURCE_MISSING, provenance_state: UNRESOLVED, semantic_disposition: DEFER_SOURCE_MISSING}
+  - {atom_id: CC-R05, source_authority: SOURCE_MISSING, provenance_state: UNRESOLVED, semantic_disposition: DEFER_SOURCE_MISSING}
+  - {atom_id: CC-R06, source_authority: SOURCE_MISSING, provenance_state: UNRESOLVED, semantic_disposition: DEFER_SOURCE_MISSING}
+  - {atom_id: CC-R07, source_authority: SOURCE_MISSING, provenance_state: UNRESOLVED, semantic_disposition: DEFER_SOURCE_MISSING}
+  - {atom_id: CC-R08, source_authority: SOURCE_MISSING, provenance_state: UNRESOLVED, semantic_disposition: DEFER_SOURCE_MISSING}
+provenance_gaps:
+  - authoritative_common_cause_non_overlap_source
+  - same_boundary_source_per_atom
+  - raw_EMAIL_ORIG_hash_and_headers_if_email_evidence_is_used
+payload_sha256: 0999e56e3e801702d80f0cb7c00d218b0fc35ea3eeb6b1369344f84ab47c37b9
+credit_guard:
+  engineering_delta: 0
+  negotiation_delta: 0
+  parent_has_no_child_score_authority: true
+return_to: GBOGEB/cryoplant-project
