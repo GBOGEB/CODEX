@@ -1,0 +1,48 @@
+schema: w102-file-library-ingress-handoff/v1
+wave: W102
+purpose: immutable_binary_ingress_only
+policy: DO_NOT_REGENERATE_OR_TRANSFORM
+source_recovery:
+  status: PASS_4_OF_4_ORIGINAL_LIBRARY_OBJECTS_LOCATED
+  note: Exact governed filenames are present in the user's controlled File Library; runner-visible raw bytes remain unavailable to this GitHub execution path.
+required_inputs:
+  - filename: QPS_OFFER_Cluster_v3_4_BT_RTM_Standards_Evidence.xlsx
+    sha256: 00a5f0ed3ded00620a33edd045706ba5fb9a67b5fb7fe63c495305f911c43ccb
+    source_state: ORIGINAL_FILE_LIBRARY_OBJECT_LOCATED
+    ingress_state: BYTES_NOT_MOUNTED
+  - filename: QPS_ALAT_SSOT_CURRENT_2026-09-07.xlsx
+    sha256: 5c4c845f7e9d88c1bfe002817c98e5584135cc8bc85bf9ea6596c183318a1907
+    source_state: ORIGINAL_FILE_LIBRARY_OBJECT_LOCATED
+    ingress_state: BYTES_NOT_MOUNTED
+  - filename: QPS_LKT_NEG_RFI_REVIEW_MASTER_W21_2.xlsx
+    sha256: 6d763cce948a1ee14c30c42b0367226f97dc4712beb6ab4b6e641ad0e8b00f3f
+    source_state: ORIGINAL_FILE_LIBRARY_OBJECT_LOCATED_WITH_SHA256SUMS_COMPANION
+    ingress_state: BYTES_NOT_MOUNTED
+  - filename: QPS_LKT_ALAT_RTM_COMPLIANCE_W22L_RETURN_PACKAGES.xlsx
+    sha256: b745ef62417d921495bffdc3154e8fc0340216d4ba7ad85e847a0b468a5327e4
+    source_state: ORIGINAL_FILE_LIBRARY_OBJECT_LOCATED
+    ingress_state: BYTES_NOT_MOUNTED
+historical_artifact_census:
+  cryoplant_w83_pr_binary_refresh_run_34385997176:
+    artifacts_found: 0
+    result: NO_RECOVERY_SOURCE
+  cryoplant_releases:
+    artifacts_found: 0
+    result: NO_RECOVERY_SOURCE
+acceptance:
+  staging_directory: immutable-inputs
+  validator: triage/w101_validate_immutable_binary_stage.py
+  required_pass: 4/4 exact filename and SHA256
+  hash_mismatch_action: DEFER
+  missing_action: DEFER
+  substitution_allowed: false
+  regeneration_allowed: false
+next_victory_condition: >-
+  Place the four unchanged original byte streams into the runner-visible immutable-inputs
+  staging directory, execute W101, obtain 4/4 exact-SHA PASS, then hand the same directory
+  unchanged to the existing B1 materialisation harness. Native cryoplant execution remains
+  mandatory before release credit.
+score_guard:
+  engineering_delta: 0
+  negotiation_delta: 0
+  release_delta: 0
