@@ -8,17 +8,43 @@ on:
       - 'triage/w100_b1_real_harness_diagnostic.py'
       - '.github/workflows/w101-immutable-binary-stage.yml'
   workflow_dispatch:
+    inputs:
+      source_repository:
+        description: 'Optional GitHub repository containing an existing immutable workflow artifact'
+        required: false
+        default: ''
+      source_run_id:
+        description: 'Optional workflow run ID containing the immutable artifact'
+        required: false
+        default: ''
+      source_artifact_name:
+        description: 'Optional artifact name containing the four original XLSX files'
+        required: false
+        default: ''
 permissions:
   contents: read
+  actions: read
 jobs:
   immutable-stage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Recover immutable bytes from existing GitHub artifact
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.source_run_id != '' && inputs.source_artifact_name != '' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.source_artifact_name }}
+          path: immutable-inputs
+          repository: ${{ inputs.source_repository != '' && inputs.source_repository || github.repository }}
+          run-id: ${{ inputs.source_run_id }}
+          github-token: ${{ github.token }}
+
       - name: Verify immutable stage only
         id: verify
         continue-on-error: true
         run: python triage/w101_validate_immutable_binary_stage.py immutable-inputs
+
       - name: Upload immutable-stage receipt
         if: always()
         uses: actions/upload-artifact@v4
@@ -26,7 +52,8 @@ jobs:
           name: w101-immutable-stage-${{ github.sha }}
           path: out/W101_IMMUTABLE_STAGE_RECEIPT.json
           if-no-files-found: error
-      - name: Classify immutable admission
+
+      - name: Classify immutable admission and recurse on first red
         id: admission
         if: always()
         run: |
@@ -38,11 +65,14 @@ jobs:
           assert d['policy']=='VERIFY_ONLY_DO_NOT_REGENERATE'
           if d['status']!='PASS_4_OF_4_IMMUTABLE_INPUTS':
               bad={k:v['state'] for k,v in d['files'].items() if v['state']!='PASS_EXACT_SHA256'}
-              raise SystemExit('IMMUTABLE_INGRESS_BLOCKED '+json.dumps(bad,sort_keys=True))
+              first=next(iter(bad.items()),('UNKNOWN','UNKNOWN'))
+              raise SystemExit('RECURSE_FIRST_RED '+first[0]+'='+first[1]+' all='+json.dumps(bad,sort_keys=True))
           PY
+
       - name: Execute B1 input diagnostic only after 4-of-4 exact SHA PASS
         if: success()
         run: python triage/w100_b1_real_harness_diagnostic.py
+
       - name: Upload B1 diagnostic receipt
         if: success()
         uses: actions/upload-artifact@v4
