@@ -14,10 +14,30 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
+          $root = Join-Path $env:RUNNER_TEMP 'w69-qps-zero-delta'
+          $vault = Join-Path $root 'vault'
+          New-Item -ItemType Directory -Force (Join-Path $vault 'Offers') | Out-Null
           New-Item -ItemType Directory -Force -Path release | Out-Null
-          New-Item -ItemType Directory -Force -Path evidence | Out-Null
-          ./07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1 -BuilderScript ./07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1 -EvidenceRoot evidence -ReleaseRoot release/W69/first -ReleaseId W69-FIRST -SkipRepositoryUpdate
-          ./07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1 -BuilderScript ./07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1 -EvidenceRoot evidence -ReleaseRoot release/W69/second -ReleaseId W69-SECOND -SkipRepositoryUpdate
+          $evidenceFile = Join-Path $vault 'Offers/example.txt'
+          Set-Content -LiteralPath $evidenceFile -Value 'verified-evidence' -NoNewline
+          $hash = (Get-FileHash -LiteralPath $evidenceFile -Algorithm SHA256).Hash.ToLowerInvariant()
+          $registry = Join-Path $root 'evidence_registry.yaml'
+          @"
+          schema_version: 1
+          control_id: GOV-001
+          registry_status: PARTIAL_VERIFIED
+          build_blocking: true
+          evidence:
+            - id: TEST_EVIDENCE
+              required: true
+              expected_filename: example.txt
+              relative_path: Offers/example.txt
+              sha256: $hash
+              size_bytes: null
+              verification_status: HASH_VERIFIED_SIZE_PENDING
+          "@ | Set-Content -LiteralPath $registry -Encoding utf8
+          ./07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1 -BuilderScript ./07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1 -EvidenceRoot $vault -RegistryPath $registry -ReleaseRoot release/W69/first -ReleaseId W69-FIRST -SkipRepositoryUpdate
+          ./07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1 -BuilderScript ./07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1 -EvidenceRoot $vault -RegistryPath $registry -ReleaseRoot release/W69/second -ReleaseId W69-SECOND -SkipRepositoryUpdate
       - name: Compare product family and emit receipt
         shell: pwsh
         run: |
