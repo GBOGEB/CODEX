@@ -1,0 +1,28 @@
+schema_version: '1.0'
+mip_id: MIP-PILOT-002
+wave: W98
+phase: MODERNIZE_REPAIR
+repository: GBOGEB/CODEX
+before:
+  source_head: b0ea3d4757f5503eba7d7b7ac79b947c287a5bd8
+  workflow_run: 34421233170
+  job: 102696890773
+  semantic_validation: FAIL
+  defect_count: 1
+  defect: semantic_provenance_and_federation_validation_container
+  class: undocumented_semantic_role_token
+action:
+  type: REPAIR
+  target: triage/DEPLOYMENT_RUNTIME_REGISTRY_W92.yaml
+  change: replace the undocumented compound role with the already-governed semantic_provenance_validator role
+  authority_change: false
+expected_after:
+  defect_count: 0
+  semantic_validation: PASS
+promotion:
+  target_state: MODERNIZED
+  perpetuated: false
+  perpetuation_requires: two distinct exact-SHA PASS executions plus history append and no regression
+credit:
+  engineering_delta: 0
+  release_delta: 0
