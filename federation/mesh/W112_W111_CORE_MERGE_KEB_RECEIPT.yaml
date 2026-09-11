@@ -28,7 +28,7 @@ dow_postmerge_repair:
   source_head_sha: c0f3567220761d9d1723f46e0e3524f989eaaa8b
   source_merge_sha: f3e1afc2db86b8ff9615b12fa5edde3f833eb12e
   repair_pr: 1120
-  repair_exact_head_sha: 9d52e65ad37cf33097880f7826109ac60189ed60
+  repair_exact_head_sha: ab42e4370cf2708f89b8c85427329df992f765f8
   receipt: federation/mesh/W112_W111_DOW_POSTMERGE_RECEIPT.yaml
   expected_disposition: ACCEPT_W111_DERIVED_PROJECTION_WITH_EXACT_MERGE_TUPLE_DEFER_QPS_RUNTIME_AND_BIDDER_CLOSURE
 codex_governance_gate:
@@ -39,6 +39,16 @@ codex_governance_gate:
   repair: add mandatory PR classification metadata to merged PR #615
   verification_run_id: 34577373709
   verification_conclusion: success
+semantic_validator_repair:
+  first_red_run_id: 34577860309
+  first_red_job_id: 103194348237
+  undocumented_term: semantic_readiness
+  origin: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+  origin_pr: 616
+  origin_merge_sha: ded67cdf28f845289158eabe53044d9c6e17c8e9
+  repair_class: SR
+  repair: register semantic_readiness in PIPELINE/GLOSSARY.yaml and declare scheduler-status versus action-class namespace boundary
+  namespace_invariant: MESH_STATUS_DIMENSION.SR_NE_ACTION_CLASS.SR
 observed_semantic_runtime:
   target_head_sha: 3d46e231424de47780f58016e1577bfb625d149c
   CODEX_Semantic_Runtime_CI: success
