@@ -1,4 +1,4 @@
-schema: gbogeb-mesh-dock/1.1
+schema: gbogeb-mesh-dock/1.2
 repo: GBOGEB/CODEX
 node_id: repo.codex
 ring: R0_CORE_AUTHORITY
@@ -8,6 +8,7 @@ local_ssot:
   glossary: PIPELINE/GLOSSARY.yaml
   global_census: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml
   action_taxonomy: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
+  closure_controller: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
   glob: GLOB.yaml
 global_directory:
   repo: GBOGEB/CODEX
@@ -18,16 +19,24 @@ global_directory:
   where_used: federation/mesh/GLOBAL_WHERE_USED_v1.yaml
   dock_protocol: federation/mesh/GLOBAL_MESH_DOCK_PROTOCOL_v1.yaml
   status_contract: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+  closure_controller: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
 authority:
-  may: [semantic_normalization, provenance_validation, exact_SHA_receipts, mesh_routing_vocabulary]
+  may: [semantic_normalization, provenance_validation, exact_SHA_receipts, mesh_routing_vocabulary, closure_controller_semantics]
   must_not: [promote_QPS_engineering_truth, redefine_child_domain_terms]
 inputs: [child_evidence_tuples, worker_receipts, glossary_extensions, runtime_results]
-outputs: [KEB_receipts, semantic_findings, global_mesh_index, routing_contracts]
+outputs: [KEB_receipts, semantic_findings, global_mesh_index, routing_contracts, closure_control_decisions]
 action_monikers: [CLOSE, RED, RUNTIME, SEM, SSOT, RECEIPT, ENABLE, HARDEN, CLEAN, MAINT, READ, EXP, WATCH]
 reserved_status_keys: [CG, WD, RR, DR, SR, HK, EX, FE, QH, KR, CR, PB, BG]
+composite_controller:
+  canonical_prompt: mesh closure control this
+  contract: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
+  rule: select atomic actions and methods; never redefine status keys or engineering authority
 lookup_examples:
   - what can CODEX do?
   - show RED
+  - mesh closure control this
+  - minimum path to DoV
+  - done, repair, or repeat?
   - what is blocking the current gate?
   - show inbound evidence
   - show outbound actions
