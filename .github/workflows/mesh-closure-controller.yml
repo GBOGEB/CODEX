@@ -1,0 +1,39 @@
+name: Mesh Closure Controller
+
+on:
+  pull_request:
+    paths:
+      - 'GLOB.yaml'
+      - '.mesh/MESH_DOCK.yaml'
+      - 'federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json'
+      - 'governance/mesh/MESH_STATUS_CONTRACT_v1.yaml'
+      - 'qps_contract_canonicalization/src/meshClosureControllerSchema.ts'
+      - 'qps_contract_canonicalization/src/meshClosureControllerSchema.test.ts'
+      - 'qps_contract_canonicalization/src/validateMeshClosureController.ts'
+      - 'qps_contract_canonicalization/package.json'
+      - '.github/workflows/mesh-closure-controller.yml'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install validator dependencies
+        working-directory: qps_contract_canonicalization
+        run: npm install --no-audit --no-fund
+
+      - name: Validate closure controller contract
+        working-directory: qps_contract_canonicalization
+        run: npm run validate:mesh-closure
+
+      - name: Prove zero-step and exact-SHA guards
+        working-directory: qps_contract_canonicalization
+        run: npm test
