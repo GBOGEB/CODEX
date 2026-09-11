@@ -4,6 +4,8 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '17 4 * * 1'
 
 permissions:
   contents: read
@@ -26,6 +28,7 @@ jobs:
           echo "CARRIER_SHA=${GITHUB_SHA}"
           echo "OFFICIAL_SHA=${OFFICIAL_SHA}"
           echo "CONSUMER_BASELINE_SHA=${CONSUMER_BASELINE_SHA}"
+          echo "EVENT_NAME=${GITHUB_EVENT_NAME}"
           echo "RUNNER_NAME=${RUNNER_NAME}"
 
       - name: Checkout exact official MCP source
@@ -111,14 +114,15 @@ jobs:
 
           event = json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text(encoding="utf-8"))
           pr = event.get("pull_request") or {}
-          head = (pr.get("head") or {}).get("sha")
+          pr_head = (pr.get("head") or {}).get("sha")
           response = Path(os.environ["RESPONSE_PATH"]).read_bytes()
           receipt = {
               "mission_id": "M03_GITHUB_MCP_SERVER",
               "pulse_id": "P_M03_KEB_INDEPENDENT_CONSUMER_01",
               "consumer_repo": os.environ["GITHUB_REPOSITORY"],
-              "consumer_head_sha": head,
+              "consumer_head_sha": pr_head or os.environ["GITHUB_SHA"],
               "carrier_sha": os.environ["GITHUB_SHA"],
+              "event_name": os.environ["GITHUB_EVENT_NAME"],
               "consumer_target_sha": os.environ["CONSUMER_BASELINE_SHA"],
               "consumer_target_path": os.environ["TARGET_PATH"],
               "run_id": os.environ["GITHUB_RUN_ID"],
@@ -130,6 +134,7 @@ jobs:
               "executed_steps_claim": ">0",
               "result": "PASS",
               "evidence_role": "KEB_INDEPENDENT_CONSUMER_RUNTIME_PROOF",
+              "control_mode": "WEEKLY_SCHEDULE_PLUS_PR_REPLAY",
               "authority": "INDEPENDENT_CONSUMER_READ_PROOF_NOT_TERMINAL_DOV",
           }
           out = Path("m03_keb_independent_consumer_receipt.json")
