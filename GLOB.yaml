@@ -1,14 +1,15 @@
-schema: gbogeb-glob/1.1
+schema: gbogeb-glob/1.2
 wave: W113
-status: ACTIVE_GLOBAL_LOOKUP_CONTROL
+status: CANDIDATE_GLOBAL_LOOKUP_CONTROL
 name: GLOB
 expansion: Global Lookup and Operations Board
 purpose: >-
   Single human/machine entrypoint for discovering what the global hive can do,
   what a node/lane accepts or emits, which action moniker to use, which status
-  dimensions to inspect, where canonical authority lives, and what reusable REX
-  experience exists. GLOB is an index and resolver; it is not a new engineering
-  SSOT or scheduler.
+  dimensions to inspect, where canonical authority lives, what reusable REX
+  experience exists, and whether the current scope should stop, repair/re-enter,
+  harden, create, or run one propagation proof. GLOB is an index and resolver;
+  it is not a new engineering SSOT or scheduler.
 
 authority:
   global_index_owner: GBOGEB/CODEX
@@ -18,6 +19,8 @@ authority:
   action_where_used: federation/mesh/GLOBAL_ACTION_WHERE_USED_v1.yaml
   status_contract: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
   status_taxonomy: governance/mesh/MESH_EXECUTION_TAXONOMY_v1.md
+  closure_controller: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
+  closure_controller_zod: qps_contract_canonicalization/src/meshClosureControllerSchema.ts
   rex_taxonomy: federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml
   rex_ledger: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
   rex_resolver: federation/rex/GLOB_REX_LOOKUP_v1.yaml
@@ -50,6 +53,13 @@ navigation:
     evidence_dov:
       answers: what is observed, proven, accepted, blocked or still missing for victory
       status_focus: [EX, QH, KR, BG, CG, WD]
+    closure_control:
+      answers: >-
+        whether the current scope is DONE, REPAIR_REENTRY, HARDENING,
+        NEW_CAPABILITY, PROPAGATION_PROOF, or REPEAT; and which minimum method
+        sequence can produce genuinely new evidence or protection
+      controller: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
+      status_focus: [CG, BG, EX, QH, KR, DR, SR, WD, PB]
     rex_control:
       answers: >-
         what failed, where, how severe/frequent/recurring it was, how it was
@@ -70,6 +80,7 @@ lookup:
     by_lane: this_file.navigation.views
     by_action_moniker: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
     by_status_dimension: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+    by_closure_control: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
     by_term: federation/mesh/GLOBAL_GLOSSARY_v1.yaml
     by_where_used: federation/mesh/GLOBAL_WHERE_USED_v1.yaml
     by_direction: this_file.colour_schedule
@@ -88,7 +99,35 @@ status_namespace:
 action_namespace:
   monikers: [CLOSE, RED, RUNTIME, SEM, SSOT, RECEIPT, ENABLE, HARDEN, CLEAN, MAINT, READ, EXP, WATCH]
   taxonomy: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
-  rule: action monikers are task verbs and MUST NOT collide with status keys
+  rule: action monikers are atomic task verbs and MUST NOT collide with status keys
+
+closure_control:
+  kind: COMPOSITE_DECISION_CONTROLLER
+  canonical_prompt: mesh closure control this
+  aliases:
+    - closure-control this
+    - minimum path to DoV
+    - done, repair, or repeat?
+  contract: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
+  zod: qps_contract_canonicalization/src/meshClosureControllerSchema.ts
+  classifications: [DONE, REPAIR_REENTRY, HARDENING, NEW_CAPABILITY, PROPAGATION_PROOF, REPEAT]
+  default_sequence: [3PR, MIP_IF_NEEDED, 3PC_IF_TRANSACTIONAL, 3P3_IF_GENERALISATION_MISSING]
+  rule: >-
+    Choose the minimum sequence that can create new evidence, remove the first
+    material blocker, or add missing protection. Do not execute a method merely
+    because it appears in the toolbox.
+  stop_rule:
+    when_dov_satisfied: STOP
+    rerun_mip: ONLY_IF_NEW_STRUCTURAL_GAP_OBSERVED
+    run_3p3: ONLY_IF_GENERALISATION_PROOF_IS_MISSING
+    repeat_3pr: ONLY_IF_REPO_PR_CHECK_OR_EVIDENCE_STATE_CHANGED_MATERIALLY
+  proof_rule:
+    PASS_requires: [EX_GT_0, QH_PASS, KR_BOUND_TO_EXACT_OBSERVED_SHA]
+    zero_step_badge: NOT_PROOF
+  authority_rule: >-
+    Closure control can route CLOSE/RED/RUNTIME/SEM/SSOT/RECEIPT and other atomic
+    actions, but QPS engineering promotion still requires QPS child authority and
+    child re-entry.
 
 rex_namespace:
   record_prefix: REX-
@@ -105,6 +144,10 @@ what_can_you_ask:
   - {ask: what can CODEX do?, resolves_to: node_snippet}
   - {ask: what can ABACUS do?, resolves_to: node_snippet}
   - {ask: what can cryoplant-project do?, resolves_to: node_snippet}
+  - {ask: mesh closure control this, resolves_to: closure_control}
+  - {ask: closure-control this, resolves_to: closure_control}
+  - {ask: minimum path to DoV, resolves_to: closure_control}
+  - {ask: 'done, repair, or repeat?', resolves_to: closure_control}
   - {ask: show RED, resolves_to: action_snippet}
   - {ask: show RECEIPT, resolves_to: action_snippet}
   - ask: what is blocking the current gate?
@@ -131,8 +174,9 @@ what_can_you_ask:
 
 capability_menu:
   closure:
+    controller: mesh closure control
     monikers: [CLOSE, RED]
-    prompts: [close_current_gate, repair_first_red]
+    prompts: [mesh_closure_control, close_current_gate, repair_first_red]
   repair:
     monikers: [RUNTIME, SEM, SSOT, RECEIPT]
     prompts: [repair_runtime, align_semantics, resolve_ssot, bind_receipt]
@@ -156,7 +200,7 @@ capability_menu:
       - show_repair_method
 
 popup_snippet_contract:
-  schema: gbogeb-glob-popup/1.1
+  schema: gbogeb-glob-popup/1.2
   max_lines: 12
   required_fields: [kind, title, identity, purpose, authority, first_use_case]
   optional_fields:
@@ -176,6 +220,8 @@ popup_snippet_contract:
     - recurrence
     - control_status
     - repair_method
+    - classification
+    - stop_condition
   compact: true
   authority_visible: true
   freshness_visible_when_evidence_bound: true
@@ -189,6 +235,15 @@ popup_snippet_contract:
       status_keys: [BG, CR, EX, QH, KR]
       first_use_case: repair first failing semantic/runtime gate
       next_asks: [show blocker, run same gate, bind receipt]
+    closure_controller:
+      kind: controller
+      title: Mesh closure control
+      identity: GLOBAL_MESH_CLOSURE_CONTROLLER
+      purpose: select minimum non-repeating path to DoV and stop when proof is sufficient
+      authority: routing/semantic controller only; child authority remains unchanged
+      status_keys: [CG, BG, EX, QH, KR, DR, SR, WD, PB]
+      first_use_case: decide whether current wave is done, repair/re-entry, hardening, new capability, propagation proof, or repeat
+      next_asks: [show first blocker, run minimum sequence, show stop condition]
     rex:
       kind: rex
       title: Zero-step GitHub Actions pre-execution failure
@@ -213,6 +268,7 @@ lanes:
   control:
     primary_nodes: [repo.codex, repo.abacus, repo.cryoplant]
     default_actions: [CLOSE, RED, RECEIPT]
+    closure_controller: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
     rex_resolver: federation/rex/GLOB_REX_LOOKUP_v1.yaml
 
 mip:
@@ -220,17 +276,22 @@ mip:
     - separate W108 status namespace from W111 action namespace
     - migrate active W111 consumers to verb monikers
     - convert failure history from disconnected observations into stable REX signatures
+    - replace ceremonial framework chains with evidence-conditioned closure control
   innovate:
     - add GLOB as one-entry lookup and capability menu
     - add compact popup/snippet contract and direction-aware navigation
     - add repo/severity/frequency/recurrence REX lookup
+    - add composite closure control over existing atomic action and status namespaces
   perpetuate:
-    - expose GLOB and REX from .mesh/MESH_DOCK.yaml
+    - expose GLOB, closure control and REX from .mesh/MESH_DOCK.yaml
+    - validate closure stop/proof invariants with Zod and CI
     - validate namespace disjointness and resolver integrity in CI/tests
     - preserve current repo/GitHub experience in DMAIC Control
-    - propagate receiver pointers without authority transfer
+    - propagate receiver pointers only after the controller authority/control PR merges, without authority transfer
 
 first_use_case: >-
-  Ask "what can you do?", select RED, inspect BG/EX/QH/KR, repair the first
-  observed blocker, bind RECEIPT, then preserve the experience in REX so the
-  same signature can be recognized, counted and controlled when it returns.
+  Ask "mesh closure control this". Classify the current scope, inspect CG/BG/EX/QH/KR,
+  select only the minimum useful combination of 3PR, targeted MIP, 3PC and one optional
+  3P3, recurse on the first observed blocker, bind exact-SHA evidence, stop when bounded
+  DoV is satisfied, and preserve material failure/repair experience in REX so the same
+  signature can be recognized and controlled when it returns.
