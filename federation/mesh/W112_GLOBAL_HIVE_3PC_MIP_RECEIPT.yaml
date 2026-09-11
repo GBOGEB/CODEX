@@ -1,0 +1,96 @@
+schema: w112-global-hive-3pc-mip-receipt/1.0
+wave: W112
+subject: GLOBAL_HIVE_GLOB_ACTION_STATUS_CONVERGENCE
+producer: GBOGEB/CODEX
+baseline:
+  main_sha_at_start: f550c883749bfbf91106b8e251b599b8b51a1229
+  pre_receipt_branch_sha: d203d3c2ffe9041e0903c64fc77f2b8c37379a38
+  branch: w112/global-hive-3pc-mip-glob
+
+3pc:
+  canonical_role: read_only_role_authority_lifecycle_consumer_classification
+  classification:
+    role:
+      status_namespace: scheduler-facing mesh state
+      action_namespace: user/agent task verbs
+      glob: read-only lookup/resolver
+    authority:
+      status_contract: GBOGEB/CODEX:governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+      action_taxonomy: GBOGEB/CODEX:federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
+      qps_engineering_truth: GBOGEB/cryoplant-project
+      runtime_orchestration: GBOGEB/ABACUS
+      authority_transfer: false
+    lifecycle:
+      W108_status_keys: ACTIVE_RESERVED
+      W111_colliding_action_aliases: HISTORICAL_DEPRECATED
+      W112_action_monikers: ACTIVE_CANDIDATE
+    consumers:
+      - .mesh/MESH_DOCK.yaml
+      - federation/mesh/GLOBAL_ACTION_WHERE_USED_v1.yaml
+      - federation/mesh/W111_CIS_30_CELL_KEB_CONSUMER.yaml
+      - federation/mesh/GLOBAL_MESH_DOCK_PROTOCOL_v1.yaml
+      - GLOB.yaml
+      - tools/glob_lookup.py
+  finding:
+    severity: HIGH_SEMANTIC_COLLISION
+    detail: W111 action codes reused all thirteen W108 status-dimension tokens with different meanings
+    first_red: ACTION_STATUS_NAMESPACE_COLLISION
+  disposition: REPAIR_AND_SUPERSEDE_ACTION_ALIASES
+  repaired_mapping: {CG: CLOSE, RR: RED, CR: RUNTIME, SR: SEM, DR: SSOT, PB: RECEIPT, FE: ENABLE, QH: HARDEN, HK: CLEAN, BG: MAINT, KR: READ, EX: EXP, WD: WATCH}
+
+mip:
+  modernize:
+    status: DONE_ON_BRANCH
+    changes:
+      - reserve W108 two-letter keys exclusively for status
+      - replace new action identifiers with verb monikers
+      - migrate merged W111 consumers and mesh dock protocol
+  innovate:
+    status: DONE_ON_BRANCH
+    changes:
+      - add root GLOB.yaml as the Global Lookup and Operations Board
+      - add what-can-I-ask capability menu
+      - add node/lane/action/status/direction lookup model
+      - add popup snippet contract
+      - preserve dashboard direction colours BLUE/ORANGE/TEAL/PURPLE
+  perpetuate:
+    status: PARTIAL_PENDING_CI_AND_CROSS_PLANE_RECEIVERS
+    changes:
+      - add executable tools/glob_lookup.py
+      - add tests/test_glob_lookup.py namespace/lookup regression checks
+      - bind GLOB into .mesh/MESH_DOCK.yaml
+    pending:
+      - GitHub CI PASS on branch head
+      - ABACUS DOW receiver exact-SHA binding
+      - cryoplant child receiver exact-SHA binding
+
+proof:
+  local_fresh_checkout:
+    status: BLOCKED_ENVIRONMENT
+    attempted: true
+    failure: DNS resolution of github.com unavailable in execution container
+    interpretation: NOT_A_REPO_PASS_OR_FAIL
+  github_ci:
+    status: PENDING_PR
+  static_contract:
+    status: REVIEWED
+    invariants:
+      - action monikers and reserved status keys are disjoint
+      - legacy aliases are historical-only
+      - GLOB declares no scheduler or engineering authority
+      - action popup includes first-use registry enrichment
+
+colour_navigation_contract:
+  IN: BLUE
+  OUT: ORANGE
+  PROPAGATE: TEAL_DASHED
+  RECURSE: PURPLE_DOTTED
+
+victory_condition:
+  - focused GLOB tests execute greater_than_0 and PASS in GitHub CI
+  - no active consumer emits W108 status tokens as W112 action identifiers
+  - ABACUS consumes the exact CODEX producer receipt without claiming child authority
+  - cryoplant child records ACCEPT/REJECT/DEFER for taxonomy/lookup adoption without engineering authority transfer
+  - GLOB remains an index/resolver and existing orchestration remains scheduler
+
+current_disposition: DEFER_CROSS_PLANE_CONSUMMATION_PENDING_CI_AND_RECEIVERS

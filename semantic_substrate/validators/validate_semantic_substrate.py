@@ -4,7 +4,10 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 SEMANTIC = ROOT / 'semantic_substrate'
-PIPELINE_GLOSSARY = ROOT / 'PIPELINE' / 'GLOSSARY.yaml'
+PIPELINE_GLOSSARIES = [
+    ROOT / 'PIPELINE' / 'GLOSSARY.yaml',
+    ROOT / 'PIPELINE' / 'GLOSSARY_EXTENSIONS.yaml',
+]
 
 REQUIRED_FILES = [
     'overlay_ssot.yaml',
@@ -76,12 +79,12 @@ def validate_basic_ids():
     return [rid for rid in required if rid not in content]
 
 
-def load_declared_terms() -> set[str]:
-    if not PIPELINE_GLOSSARY.exists():
+def declared_terms_from(path: pathlib.Path) -> set[str]:
+    if not path.exists():
         return set()
     declared: set[str] = set()
     in_glossary = False
-    for line in PIPELINE_GLOSSARY.read_text(encoding='utf-8').splitlines():
+    for line in path.read_text(encoding='utf-8').splitlines():
         if line.startswith('glossary:'):
             in_glossary = True
             continue
@@ -91,6 +94,13 @@ def load_declared_terms() -> set[str]:
             match = re.match(r'^\s{2}([a-z][a-z0-9_]*)\s*:\s*$', line)
             if match:
                 declared.add(match.group(1))
+    return declared
+
+
+def load_declared_terms() -> set[str]:
+    declared: set[str] = set()
+    for path in PIPELINE_GLOSSARIES:
+        declared.update(declared_terms_from(path))
     declared.update({'ssot', 'yaml', 'json', 'runtime', 'render', 'lineage'})
     return declared
 
