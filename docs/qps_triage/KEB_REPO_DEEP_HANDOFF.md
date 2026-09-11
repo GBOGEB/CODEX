@@ -59,6 +59,16 @@ Prefer an existing validator, W003/semantic-runtime path, unit test, replay, or 
 
 Classify the first observed blocking predicate as metadata, semantic vocabulary, schema, runtime, dependency, provenance or source missing. Repair only that invariant and rerun the same gate. A source gap becomes an explicit DEFER, not a synthetic PASS.
 
+Observed QTG first red on PR #605, head `9a0ee7d1f75efdadce68a9c04f2f5506c049e1bf`:
+
+- W003 run `34554036514` reached GitHub hosted runner `1000236655`;
+- setup, checkout, Python setup and dependency installation all PASSed;
+- first failing step was `Run governance parser on PR metadata`;
+- the PR body used a non-native QTG classification instead of the exact mandatory eight-field governance schema;
+- repair: PR #605 body now uses `PR-ID: PR-605`, `WAVE: W108`, `SPRINT: S5-P9`, exact domain, `TYPE: GOVERNANCE`, `CRITICALITY: HIGH`, `TOPOLOGY IMPACT: NO`, and `SCHEMA MUTATION: CONTROLLED`.
+
+This commit intentionally triggers a fresh exact-head execution after that metadata-only repair. W69 zero-delta remains a separately tracked pre-existing execution lane unless evidence demonstrates a causal QTG regression.
+
 ### QTG-04 — dispatch to DOW
 
 ABACUS receives only the immutable KEB receipt tuple needed for independent consumption/challenge. Narrative claims without exact producer identity do not qualify for promotion.
