@@ -1,5 +1,5 @@
-schema: w111-cis-30-cell-keb-consumer/1.0
-wave: W111
+schema: w111-cis-30-cell-keb-consumer/1.1
+wave: W112
 consumer: GBOGEB/CODEX
 role: KEB_SEMANTIC_PROVENANCE_RUNTIME
 producer:
@@ -36,11 +36,15 @@ reverse_fanout_P0:
   - RFI-CIS-15
   - RFI-CIS-12
 action_semantics:
-  current_internal_action: DR
-  ranking_repair: SR
-  authoritative_bidder_return: CG
-  after_issue_without_return: WD
-  return_binding: PB
+  namespace: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
+  current_internal_action: SSOT
+  ranking_repair: SEM
+  authoritative_bidder_return: CLOSE
+  after_issue_without_return: WATCH
+  return_binding: RECEIPT
+status_semantics:
+  namespace: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+  rule: CG_WD_RR_DR_SR_HK_EX_FE_QH_KR_CR_PB_BG are status dimensions only and are not action codes
 disposition: ACCEPT_SEMANTIC_PROJECTION_PENDING_DOW_AND_CHILD_REENTRY
 boundary: >-
   KEB accepts identity, source-state semantics, counts and ranking projection only.
