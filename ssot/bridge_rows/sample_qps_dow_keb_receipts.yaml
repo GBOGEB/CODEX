@@ -1,0 +1,60 @@
+# Sample QPS / DOW / KEB bridge rows.
+# Purpose: seed exact source PR/SHA/file digest binding for future receipts.
+
+qps_rows:
+  - qps_item_id: QPS-ITEM-0001
+    object_type: QPS_DEFERRED_RETURN
+    source_repo: GBOGEB/CODEX
+    source_locator: docs/qps_triage_prompt_sequence.md
+    requirement_id: TBD
+    offer_ref: TBD
+    state: DEFER
+    confidence: source_missing
+    bt_driver: null
+    pca_feature: null
+    decision_effect: none
+    next_evidence_needed: authoritative source locator or bidder return
+    receipt_binding:
+      source_pr: 604
+      source_sha: 5e6e129bcefda99feb27fcf0e7883c295a8c65f5
+      file_digest: TBD
+    lineage:
+      chat_session: 2026-09-11-qps-triage-cryo-dow-keb
+      originating_prompt: update-cryoplant-dow-keb
+      created_by: chat_to_github_bridge
+
+dow_rows:
+  - dow_item_id: DOW-ITEM-0001
+    object_type: DOW_DISPOSITION
+    source_repo: GBOGEB/CODEX
+    source_pr: 604
+    source_sha: 5e6e129bcefda99feb27fcf0e7883c295a8c65f5
+    receipt_id: KEB-ITEM-0001
+    child_repo: GBOGEB/cryoplant-project
+    child_pr: 852
+    disposition: DEFER
+    predicate: source_digest_missing
+    reason: source PR/SHA is known but file digest is not yet bound
+    next_action: compute and bind file digest before ACCEPT
+    file_digest: TBD
+    lineage:
+      chat_session: 2026-09-11-qps-triage-cryo-dow-keb
+      originating_prompt: update-cryoplant-dow-keb
+      created_by: chat_to_github_bridge
+
+keb_rows:
+  - keb_item_id: KEB-ITEM-0001
+    object_type: KEB_SOURCE_RECEIPT
+    source_repo: GBOGEB/CODEX
+    source_pr: 604
+    source_sha: 5e6e129bcefda99feb27fcf0e7883c295a8c65f5
+    source_locator: docs/qps_triage_prompt_sequence.md
+    source_digest: TBD
+    replay_status: DEFER
+    validation_result: DEFER_DIGEST_MISSING
+    downstream_consumer: GBOGEB/cryoplant-project#852
+    next_action: bind exact file digest and rerun row completeness validation
+    lineage:
+      chat_session: 2026-09-11-qps-triage-cryo-dow-keb
+      originating_prompt: update-cryoplant-dow-keb
+      created_by: chat_to_github_bridge
