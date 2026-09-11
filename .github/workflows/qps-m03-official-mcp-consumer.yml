@@ -1,0 +1,147 @@
+name: QPS M03 Official MCP Independent Consumer
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  independent-consumer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      OFFICIAL_SHA: 7d13a7ad6f2a17f351a6d77ce280c85ae1821f4d
+      CONSUMER_BASELINE_SHA: 1a80176358ffde62459cd257455a51402c847302
+      TARGET_PATH: docs/qps_dow_keb_receipt_binding_policy.md
+      GITHUB_PERSONAL_ACCESS_TOKEN: ${{ github.token }}
+    steps:
+      - name: Probe consumer identity
+        run: |
+          echo "QPS_MISSION=M03_GITHUB_MCP_SERVER"
+          echo "QPS_PULSE=P_M03_KEB_INDEPENDENT_CONSUMER_01"
+          echo "CONSUMER_REPO=${GITHUB_REPOSITORY}"
+          echo "CARRIER_SHA=${GITHUB_SHA}"
+          echo "OFFICIAL_SHA=${OFFICIAL_SHA}"
+          echo "CONSUMER_BASELINE_SHA=${CONSUMER_BASELINE_SHA}"
+          echo "RUNNER_NAME=${RUNNER_NAME}"
+
+      - name: Checkout exact official MCP source
+        uses: actions/checkout@v4
+        with:
+          repository: github/github-mcp-server
+          ref: ${{ env.OFFICIAL_SHA }}
+          path: official
+          fetch-depth: 1
+
+      - name: Set up Go from exact official source
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: official/go.mod
+          cache: false
+
+      - name: Build official server and client
+        working-directory: official
+        run: |
+          go build -o "$RUNNER_TEMP/github-mcp-server" ./cmd/github-mcp-server
+          go build -o "$RUNNER_TEMP/mcpcurl" ./cmd/mcpcurl
+
+      - name: Execute independent exact-SHA repository read
+        id: consumer_read
+        working-directory: official
+        run: |
+          set -euo pipefail
+          SERVER_CMD="$RUNNER_TEMP/github-mcp-server stdio --toolsets=repos"
+          RESPONSE="$GITHUB_WORKSPACE/m03_keb_consumer_response.json"
+          "$RUNNER_TEMP/mcpcurl" \
+            --pretty=false \
+            --stdio-server-cmd "$SERVER_CMD" \
+            tools get_file_contents \
+            --owner GBOGEB \
+            --repo CODEX \
+            --path "$TARGET_PATH" \
+            --sha "$CONSUMER_BASELINE_SHA" \
+            > "$RESPONSE"
+          test -s "$RESPONSE"
+          RESPONSE="$RESPONSE" python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          path = Path(os.environ["RESPONSE"])
+          payload = json.loads(path.read_text(encoding="utf-8"))
+          if "error" in payload:
+              raise SystemExit(f"MCP JSON-RPC error: {payload['error']}")
+          result = payload.get("result") or {}
+          if result.get("isError") is True:
+              raise SystemExit("get_file_contents returned isError=true")
+          content = result.get("content") or []
+          texts = [x.get("text", "") for x in content if x.get("type") == "text"]
+          resources = [x for x in content if x.get("type") == "resource"]
+          if not texts or not resources:
+              raise SystemExit("expected success text plus embedded resource")
+          resource = resources[0].get("resource") or {}
+          text = resource.get("text", "")
+          if "QPS / DOW / KEB Receipt Binding Policy" not in text:
+              raise SystemExit("independent consumer did not recover KEB policy identity")
+          if "DoV-2" not in text or "exact SHA" not in text:
+              raise SystemExit("consumer payload missing expected KEB evidence semantics")
+          uri = resource.get("uri", "")
+          if os.environ["CONSUMER_BASELINE_SHA"] not in uri:
+              raise SystemExit("embedded resource URI is not bound to requested CODEX SHA")
+          print(json.dumps({
+              "content_items": len(content),
+              "embedded_uri": uri,
+              "response_bytes": path.stat().st_size,
+          }, sort_keys=True))
+          PY
+          echo "response_path=$RESPONSE" >> "$GITHUB_OUTPUT"
+
+      - name: Emit independent KEB consumer receipt
+        env:
+          RESPONSE_PATH: ${{ steps.consumer_read.outputs.response_path }}
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          event = json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text(encoding="utf-8"))
+          pr = event.get("pull_request") or {}
+          head = (pr.get("head") or {}).get("sha")
+          response = Path(os.environ["RESPONSE_PATH"]).read_bytes()
+          receipt = {
+              "mission_id": "M03_GITHUB_MCP_SERVER",
+              "pulse_id": "P_M03_KEB_INDEPENDENT_CONSUMER_01",
+              "consumer_repo": os.environ["GITHUB_REPOSITORY"],
+              "consumer_head_sha": head,
+              "carrier_sha": os.environ["GITHUB_SHA"],
+              "consumer_target_sha": os.environ["CONSUMER_BASELINE_SHA"],
+              "consumer_target_path": os.environ["TARGET_PATH"],
+              "run_id": os.environ["GITHUB_RUN_ID"],
+              "official_repo": "github/github-mcp-server",
+              "official_source_sha": os.environ["OFFICIAL_SHA"],
+              "toolset": "repos",
+              "tool": "get_file_contents",
+              "response_sha256": hashlib.sha256(response).hexdigest(),
+              "executed_steps_claim": ">0",
+              "result": "PASS",
+              "evidence_role": "KEB_INDEPENDENT_CONSUMER_RUNTIME_PROOF",
+              "authority": "INDEPENDENT_CONSUMER_READ_PROOF_NOT_TERMINAL_DOV",
+          }
+          out = Path("m03_keb_independent_consumer_receipt.json")
+          out.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          print(json.dumps(receipt, sort_keys=True))
+          PY
+
+      - name: Upload consumer response and receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: m03-keb-independent-consumer-proof
+          path: |
+            m03_keb_consumer_response.json
+            m03_keb_independent_consumer_receipt.json
+          if-no-files-found: error
