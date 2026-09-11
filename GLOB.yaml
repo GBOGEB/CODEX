@@ -140,10 +140,10 @@ rex_namespace:
     stars are control signals only and do not establish engineering authority.
 
 what_can_you_ask:
-  - {ask: what can you do?, resolves_to: capability_menu}
-  - {ask: what can CODEX do?, resolves_to: node_snippet}
-  - {ask: what can ABACUS do?, resolves_to: node_snippet}
-  - {ask: what can cryoplant-project do?, resolves_to: node_snippet}
+  - {ask: "what can you do?", resolves_to: capability_menu}
+  - {ask: "what can CODEX do?", resolves_to: node_snippet}
+  - {ask: "what can ABACUS do?", resolves_to: node_snippet}
+  - {ask: "what can cryoplant-project do?", resolves_to: node_snippet}
   - {ask: mesh closure control this, resolves_to: closure_control}
   - {ask: closure-control this, resolves_to: closure_control}
   - {ask: minimum path to DoV, resolves_to: closure_control}
@@ -156,19 +156,19 @@ what_can_you_ask:
   - ask: did it actually run and pass?
     resolves_to: status_snippet
     inspect: [EX, QH, KR]
-  - {ask: what comes into this lane?, resolves_to: direction_snippet, filter: IN}
-  - {ask: what leaves this lane?, resolves_to: direction_snippet, filter: OUT}
-  - {ask: what propagates laterally?, resolves_to: direction_snippet, filter: PROPAGATE}
+  - {ask: "what comes into this lane?", resolves_to: direction_snippet, filter: IN}
+  - {ask: "what leaves this lane?", resolves_to: direction_snippet, filter: OUT}
+  - {ask: "what propagates laterally?", resolves_to: direction_snippet, filter: PROPAGATE}
   - {ask: recurse first red, resolves_to: action_snippet, moniker: RED}
-  - {ask: where is this used?, resolves_to: where_used_snippet}
-  - {ask: who owns this truth?, resolves_to: authority_snippet}
+  - {ask: "where is this used?", resolves_to: where_used_snippet}
+  - {ask: "who owns this truth?", resolves_to: authority_snippet}
   - {ask: show REX for cryoplant-project, resolves_to: rex_snippet, repo: GBOGEB/cryoplant-project}
   - {ask: show REX for CODEX, resolves_to: rex_snippet, repo: GBOGEB/CODEX}
   - {ask: show REX for ABACUS, resolves_to: rex_snippet, repo: GBOGEB/ABACUS}
   - {ask: show recurring failures, resolves_to: rex_snippet, recurring: true}
   - {ask: show five-star REX, resolves_to: rex_snippet, severity_stars: 5}
-  - {ask: what failed most often in W112?, resolves_to: rex_snippet, sort: observed_count_desc}
-  - {ask: which problems crossed repos?, resolves_to: rex_snippet, min_impacted_repo_count: 2}
+  - {ask: "what failed most often in W112?", resolves_to: rex_snippet, sort: observed_count_desc}
+  - {ask: "which problems crossed repos?", resolves_to: rex_snippet, min_impacted_repo_count: 2}
   - {ask: show open Control-phase blockers, resolves_to: rex_snippet, control_status: [OPEN, DEFERRED]}
   - {ask: how was semantic_readiness repaired?, resolves_to: rex_snippet, query: semantic_readiness}
 
