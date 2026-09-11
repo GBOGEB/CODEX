@@ -7,3 +7,23 @@ glossary:
     introduced_by: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
     status_key: SR
     first_use_case: distinguish meaning/schema compatibility from repository/dependency readiness before orchestration executes a mesh transition.
+  semantic_and_governance:
+    definition: Release-support gate grouping semantic validation with governance validation; it is a control-plane label and does not create engineering authority.
+    introduced_by: release/W126_POINT_RELEASE_CANDIDATE.yaml
+    status_key: W126_K4
+    first_use_case: group CODEX semantic-runtime and governance checks for the bounded W126 point-release candidate.
+  semantic_provenance_policy_governance:
+    definition: CODEX support role covering semantic provenance and policy validation for release evidence; child engineering disposition remains external to this role.
+    introduced_by: release/W126_POINT_RELEASE_CANDIDATE.yaml
+    status_key: KEB
+    first_use_case: name KEB ownership of semantic and provenance policy checks in the W126 release lane.
+  semantic_runtime_run_id:
+    definition: GitHub Actions run identifier for an observed semantic-runtime validation execution; the identifier is evidence metadata and not a semantic disposition itself.
+    introduced_by: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
+    status_key: RUN_ID
+    first_use_case: bind a recorded semantic-runtime PASS to the exact workflow run that produced it.
+  semantic_taxonomy:
+    definition: Structured mapping of governed semantic categories and their allowed values used by a bounded validation surface.
+    introduced_by: triage/W111_QPS_POWER_UTILITY_KEB_BRIDGE.yaml
+    status_key: TAXONOMY
+    first_use_case: constrain W111 electrical and utility evidence categories without promoting engineering truth.
