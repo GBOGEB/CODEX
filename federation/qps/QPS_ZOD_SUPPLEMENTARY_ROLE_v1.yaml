@@ -1,0 +1,45 @@
+schema_version: qps-zod-supplementary-role/1.0.0
+repo: GBOGEB/CODEX
+role: KEB_SEMANTIC_CONTROL
+status: CONTROLLED_CANDIDATE
+
+qps_authority_boundary:
+  child_engineering_authority: GBOGEB/cryoplant-project
+  keb_authority: semantic_provenance_policy_governance
+  zod_authority: executable_contract_validation_only
+
+zod_may:
+  - validate_payload_shape
+  - validate_required_fields
+  - validate_enums_and_constraints
+  - validate_contract_and_schema_version
+  - validate_cross_field_semantic_invariants
+  - reject_malformed_or_semantically_inconsistent_payloads
+
+zod_must_not:
+  - promote_engineering_truth
+  - replace_source_authority
+  - choose_qps_next_priority
+  - override_child_ACCEPT_REJECT_DEFER
+  - convert_UNKNOWN_or_DEFER_to_PASS_zero_or_false
+
+invariants:
+  - ZOD_PASS_NE_CHILD_ACCEPT
+  - KEB_PASS_NE_CHILD_ACCEPT
+  - HISTORICAL_SCHEMA_PASS_NE_CURRENT_SHA_EXECUTION
+  - CONTRACT_IDENTITY_MUST_TRAVEL_WITH_MATERIAL_RECEIPTS
+
+federation_path:
+  - child_payload
+  - zod_contract_parse
+  - keb_semantic_provenance_policy_checks
+  - keb_receipt
+  - child_reentry
+
+dov:
+  state: WITHHELD
+  requires:
+    - exact_child_payload_identity
+    - actual_runtime_execution_gt_zero_steps
+    - exact_sha_schema_version_receipt
+    - child_reentry_disposition
