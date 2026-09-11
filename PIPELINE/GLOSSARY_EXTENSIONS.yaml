@@ -7,3 +7,19 @@ glossary:
     introduced_by: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
     status_key: SR
     first_use_case: distinguish meaning/schema compatibility from repository/dependency readiness before orchestration executes a mesh transition.
+  semantic_taxonomy:
+    definition: Source-bound classification of electrical and thermal boundaries used by the W111 power-utility bridge; labels identify scope and do not independently confirm numerical values.
+    introduced_by: triage/W111_QPS_POWER_UTILITY_KEB_BRIDGE.yaml
+    first_use_case: distinguish shaft, motor, skid, plant and facility power before comparing efficiency or invCOP.
+  semantic_and_governance:
+    definition: K4 release gate grouping the selected semantic runtime, governance and CI workflows under the release candidate's accepted blocking policy.
+    introduced_by: release/W126_POINT_RELEASE_CANDIDATE.yaml
+    first_use_case: require the selected release checks to pass or receive an explicit nonblocking classification from accepted release authority.
+  semantic_provenance_policy_governance:
+    definition: KEB authority over terminology, provenance policy and governance; child engineering authority remains with cryoplant-project and Zod validates executable contracts.
+    introduced_by: federation/qps/QPS_ZOD_SUPPLEMENTARY_ROLE_v1.yaml
+    first_use_case: separate KEB, child engineering and Zod responsibilities in the QPS federation.
+  semantic_runtime_run_id:
+    definition: GitHub Actions run identifier for semantic runtime verification, interpreted with the accompanying repository, head SHA and result.
+    introduced_by: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
+    first_use_case: locate the observed semantic verification run supporting a retained REX lesson; the identifier alone is not proof of success.
