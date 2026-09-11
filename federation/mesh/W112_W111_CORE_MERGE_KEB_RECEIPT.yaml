@@ -1,0 +1,69 @@
+# yamllint disable rule:line-length
+schema: w112-w111-core-merge-keb-receipt/1.0
+wave: W112
+role: KEB_EXACT_MERGE_BINDING
+source_wave: W111
+w111_exact_merge_tuple:
+  codex:
+    repo: GBOGEB/CODEX
+    pr: 615
+    reviewed_head_sha: 3d46e231424de47780f58016e1577bfb625d149c
+    merge_sha: 1ad94ae3e2244a76b3b3aaa0d47d858518c79557
+  qps_child:
+    repo: GBOGEB/cryoplant-project
+    pr: 880
+    reviewed_head_sha: 6563b1f7fe9318625e0346a244415207d8f9b952
+    merge_sha: 8843eb4a4ac6155f35f4284b81385ab34e5b4556
+  abacus:
+    repo: GBOGEB/ABACUS
+    pr: 1115
+    reviewed_head_sha: 38f9fe175420fee61c207307858950d1f615ff5b
+    merge_sha: 496323ce828a9266ed04898af964433cd3a7e2f0
+immutable_qps_baseline:
+  pr: 877
+  merge_sha: 067e1ad9c6c461018ccb43bc2e50f6a5b2b89ee7
+dow_postmerge_repair:
+  repo: GBOGEB/ABACUS
+  pr: 1118
+  exact_head_sha: c0f3567220761d9d1723f46e0e3524f989eaaa8b
+  receipt: federation/mesh/W112_W111_DOW_POSTMERGE_RECEIPT.yaml
+  expected_disposition: ACCEPT_W111_DERIVED_PROJECTION_WITH_EXACT_MERGE_TUPLE_DEFER_QPS_RUNTIME_AND_BIDDER_CLOSURE
+codex_governance_gate:
+  target_head_sha: 3d46e231424de47780f58016e1577bfb625d149c
+  first_red_run_id: 34576162207
+  first_red_conclusion: failure
+  repair_class: RR
+  repair: add mandatory PR classification metadata to merged PR #615
+  verification_run_id: 34577373709
+  verification_conclusion: success
+observed_semantic_runtime:
+  target_head_sha: 3d46e231424de47780f58016e1577bfb625d149c
+  CODEX_Semantic_Runtime_CI: success
+  Runtime_Federation_CI: success
+  CODEX_Determinism_Execution: success
+  Validate_Federation: success
+qps_runtime_boundary:
+  status: DEFER_RUNTIME_EXECUTION
+  action_class: CR
+  evidence:
+    w69_run_id: 34576080052
+    ubuntu_latest: {conclusion: failure, steps_executed: 0, runner_id: 0}
+    ubuntu_2204: {conclusion: failure, steps_executed: 0, runner_id: 0}
+    windows_latest: {conclusion: failure, steps_executed: 0, runner_id: 0}
+  invariant: RUNTIME_GREEN_NE_ENGINEERING_ACCEPTANCE
+  interpretation: >-
+    The child runner family did not start any steps. This is a runtime provisioning/execution blocker,
+    not evidence that the QPS W111 semantic artifact failed and not evidence of runtime acceptance.
+measured_projection:
+  denominator_cells: 30
+  source_bound_partial_or_gap: 15
+  unknown_after_search: 15
+  fully_closed_by_offer: 0
+  materially_narrowed: 15
+  external_packages_per_bidder: 3
+reverse_fanout_P0: [RFI-CIS-01, RFI-CIS-02, RFI-CIS-03, RFI-CIS-07, RFI-CIS-08, RFI-CIS-10, RFI-CIS-14, RFI-CIS-04, RFI-CIS-15, RFI-CIS-12]
+authority:
+  may: [bind_semantic_identity, bind_provenance, publish_KEB_receipt]
+  must_not: [promote_QPS_engineering_truth, close_bidder_RFI, reinterpret_DOW_as_child_authority]
+keb_disposition: ACCEPT_W111_SEMANTIC_AND_PROVENANCE_TUPLE_DEFER_CHILD_RUNTIME_AND_BIDDER_CLOSURE
+next: QPS child re-entry consumes this KEB receipt and the W112 DOW post-merge receipt; child alone records ACCEPT/REJECT/DEFER.
