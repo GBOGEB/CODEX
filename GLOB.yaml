@@ -1,138 +1,138 @@
-schema: gbogeb-glob/1.2
-wave: W113
-status: CANDIDATE_GLOBAL_LOOKUP_CONTROL
-name: GLOB
-expansion: Global Lookup and Operations Board
+version: 1.1
 purpose: >-
-  Single human/machine entrypoint for discovering what the global hive can do,
-  what a node/lane accepts or emits, which action moniker to use, which status
-  dimensions to inspect, where canonical authority lives, what reusable REX
-  experience exists, and whether the current scope should stop, repair/re-enter,
-  harden, create, or run one propagation proof. GLOB is an index and resolver;
-  it is not a new engineering SSOT or scheduler.
-
-authority:
-  global_index_owner: GBOGEB/CODEX
-  global_census: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml
-  global_glossary: federation/mesh/GLOBAL_GLOSSARY_v1.yaml
-  action_taxonomy: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
-  action_where_used: federation/mesh/GLOBAL_ACTION_WHERE_USED_v1.yaml
-  status_contract: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
-  status_taxonomy: governance/mesh/MESH_EXECUTION_TAXONOMY_v1.md
-  closure_controller: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
-  closure_controller_zod: qps_contract_canonicalization/src/meshClosureControllerSchema.ts
-  rex_taxonomy: federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml
-  rex_ledger: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
-  rex_resolver: federation/rex/GLOB_REX_LOOKUP_v1.yaml
-  qps_engineering_authority: GBOGEB/cryoplant-project
-  runtime_orchestration_plane: GBOGEB/ABACUS
-  invariant: GLOBAL_INDEX_NE_GLOBAL_AUTHORITY
-
-navigation:
-  default_view: overview
-  views:
-    overview:
-      answers: what exists, who owns what, and how the hive connects
-      filters: [node_type, edge_type, lane]
-    roll_up_in:
-      answers: what evidence/state enters a node, lane or global control view
-      direction: IN
-      colour_semantic: BLUE
-    roll_out_out:
-      answers: what actions/contracts/products leave a node, lane or control view
-      direction: OUT
-      colour_semantic: ORANGE
-    propagate:
-      answers: what moves laterally between lanes/repos without authority transfer
-      direction: PROPAGATE
-      colour_semantic: TEAL_DASHED
-    recurse:
-      answers: what first-red/blocker is repaired and re-entered
-      direction: RECURSE
-      colour_semantic: PURPLE_DOTTED
-    evidence_dov:
-      answers: what is observed, proven, accepted, blocked or still missing for victory
-      status_focus: [EX, QH, KR, BG, CG, WD]
-    closure_control:
-      answers: >-
-        whether the current scope is DONE, REPAIR_REENTRY, HARDENING,
-        NEW_CAPABILITY, PROPAGATION_PROOF, or REPEAT; and which minimum method
-        sequence can produce genuinely new evidence or protection
-      controller: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
-      status_focus: [CG, BG, EX, QH, KR, DR, SR, WD, PB]
-    rex_control:
-      answers: >-
-        what failed, where, how severe/frequent/recurring it was, how it was
-        repaired, whether the repair held, and what Control guard remains
-      resolver: federation/rex/GLOB_REX_LOOKUP_v1.yaml
-      lifecycle_phase: DMAIC_CONTROL
-
-colour_schedule:
-  IN: {colour: BLUE, meaning: inbound evidence/state/roll-up}
-  OUT: {colour: ORANGE, meaning: outbound action/control/product/roll-out}
-  PROPAGATE: {colour: TEAL, line: dashed, meaning: lateral federation propagation}
-  RECURSE: {colour: PURPLE, line: dotted, meaning: repair/feedback/re-entry}
-  CONTROL: {colour: NEUTRAL, meaning: authority/index/control/REX lookup node}
-
-lookup:
-  dimensions:
-    by_node: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml
-    by_lane: this_file.navigation.views
-    by_action_moniker: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
-    by_status_dimension: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
-    by_closure_control: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
-    by_term: federation/mesh/GLOBAL_GLOSSARY_v1.yaml
-    by_where_used: federation/mesh/GLOBAL_WHERE_USED_v1.yaml
-    by_direction: this_file.colour_schedule
-    by_first_use_case: federation/mesh/GLOBAL_ACTION_WHERE_USED_v1.yaml
-    by_rex: federation/rex/GLOB_REX_LOOKUP_v1.yaml
-    by_rex_repo: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
-    by_rex_severity: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
-    by_rex_recurrence: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
-    by_rex_control_status: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
+  Global lookup surface for CODEX capabilities, actions, status vocabulary,
+  federation REX controls, and natural-language asks. This file is navigation
+  and control metadata only; it does not establish child engineering authority.
 
 status_namespace:
-  reserved_keys: [CG, WD, RR, DR, SR, HK, EX, FE, QH, KR, CR, PB, BG]
-  contract: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
-  rule: status keys describe state and MUST NOT identify task actions
+  SR: semantic_readiness
+  RR: repository_readiness
+  DR: dependency_readiness
+  TR: transition_readiness
+  EX: execution
+  QH: quality_health
+  KR: knowledge_receipt
+  AR: acceptance_reentry
+  CG: change_gate
+  BG: blocker_gate
 
 action_namespace:
-  monikers: [CLOSE, RED, RUNTIME, SEM, SSOT, RECEIPT, ENABLE, HARDEN, CLEAN, MAINT, READ, EXP, WATCH]
-  taxonomy: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
-  rule: action monikers are atomic task verbs and MUST NOT collide with status keys
+  lookup:
+    meaning: resolve a named node, action, status, or control surface
+    where_used:
+      - tools/glob_lookup.py
+      - federation/rex/GLOB_REX_LOOKUP_v1.yaml
+    ask_examples:
+      - "what can CODEX do?"
+      - "show me the REX control"
+  inspect:
+    meaning: read a bounded control or capability surface without mutating it
+    where_used:
+      - tools/glob_lookup.py
+    ask_examples:
+      - "inspect mesh closure control"
+  execute:
+    meaning: run an already-governed executable path and retain its result
+    where_used:
+      - semantic_substrate/runtime/orchestration_loop.py
+      - .github/workflows/semantic-runtime.yml
+    ask_examples:
+      - "execute semantic runtime"
+  validate:
+    meaning: apply an existing predicate or contract and emit PASS/FAIL/DEFER
+    where_used:
+      - semantic_substrate/validators/validate_semantic_substrate.py
+      - .github/workflows/w003-governance-gate.yml
+    ask_examples:
+      - "validate this exact head"
+  emit:
+    meaning: materialize a governed status, receipt, manifest, or projection
+    where_used:
+      - scripts/emit_mesh_status.py
+      - federation/rex/GLOBAL_REX_LEDGER_v1.yaml
+    ask_examples:
+      - "emit mesh status"
+  federate:
+    meaning: route bounded evidence or capability between registered repos
+    where_used:
+      - federation/
+      - governance/mesh/
+    ask_examples:
+      - "federate this receipt"
+  recurse:
+    meaning: stop on the first real red, repair only that invariant, and rerun
+    where_used:
+      - governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+      - federation/rex/GLOBAL_REX_LEDGER_v1.yaml
+    ask_examples:
+      - "recurse on first red"
+  freeze:
+    meaning: bind an accepted exact head and prevent uncontrolled scope change
+    where_used:
+      - release/
+    ask_examples:
+      - "freeze the release candidate"
+  publish:
+    meaning: create a governed release only after all noncompensating gates pass
+    where_used:
+      - release/
+    ask_examples:
+      - "publish the accepted point release"
 
-closure_control:
-  kind: COMPOSITE_DECISION_CONTROLLER
-  canonical_prompt: mesh closure control this
-  aliases:
-    - closure-control this
-    - minimum path to DoV
-    - done, repair, or repeat?
-  contract: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
-  zod: qps_contract_canonicalization/src/meshClosureControllerSchema.ts
-  classifications: [DONE, REPAIR_REENTRY, HARDENING, NEW_CAPABILITY, PROPAGATION_PROOF, REPEAT]
-  default_sequence: [3PR, MIP_IF_NEEDED, 3PC_IF_TRANSACTIONAL, 3P3_IF_GENERALISATION_MISSING]
-  rule: >-
-    Choose the minimum sequence that can create new evidence, remove the first
-    material blocker, or add missing protection. Do not execute a method merely
-    because it appears in the toolbox.
-  stop_rule:
-    when_dov_satisfied: STOP
-    rerun_mip: ONLY_IF_NEW_STRUCTURAL_GAP_OBSERVED
-    run_3p3: ONLY_IF_GENERALISATION_PROOF_IS_MISSING
-    repeat_3pr: ONLY_IF_REPO_PR_CHECK_OR_EVIDENCE_STATE_CHANGED_MATERIALLY
-  proof_rule:
-    PASS_requires: [EX_GT_0, QH_PASS, KR_BOUND_TO_EXACT_OBSERVED_SHA]
-    zero_step_badge: NOT_PROOF
-  authority_rule: >-
-    Closure control can route CLOSE/RED/RUNTIME/SEM/SSOT/RECEIPT and other atomic
-    actions, but QPS engineering promotion still requires QPS child authority and
-    child re-entry.
+legacy_action_map:
+  READ: lookup
+  FIND: lookup
+  SEARCH: lookup
+  INSPECT: inspect
+  RUN: execute
+  EXECUTE: execute
+  TEST: validate
+  VALIDATE: validate
+  EMIT: emit
+  EXPORT: emit
+  FEDERATE: federate
+  PROPAGATE: federate
+  RECURSE: recurse
+  RETRY: recurse
+  FREEZE: freeze
+  RELEASE: publish
+  PUBLISH: publish
 
-rex_namespace:
-  record_prefix: REX-
-  taxonomy: federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml
-  ledger: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
+capability_menu:
+  CODEX:
+    role: KEB semantic, provenance, runtime and release-support plane
+    capabilities:
+      - semantic validation
+      - governance validation
+      - deterministic execution
+      - release smoke and manifest support
+      - zero-delta support
+      - federation routing
+    authority_boundary: >-
+      CODEX does not mutate cryoplant engineering or negotiation truth.
+  ABACUS:
+    role: DOW lineage, repeatability, census and orchestration plane
+    capabilities:
+      - canonicalization
+      - matrix validation
+      - exact-SHA census
+      - lineage and repeatability analysis
+      - orchestration support
+    authority_boundary: >-
+      ABACUS provides analytical and orchestration evidence only.
+  cryoplant-project:
+    role: QPS child engineering and final release authority
+    capabilities:
+      - source and SSOT control
+      - native runtime validation
+      - artifact materialization
+      - browser and binary QA
+      - final ACCEPT/REJECT/DEFER
+      - point-release authority
+    authority_boundary: final child disposition and publish authority
+
+rex_control:
+  registry: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
   resolver: federation/rex/GLOB_REX_LOOKUP_v1.yaml
   lifecycle_phase: DMAIC_CONTROL
   rule: >-
@@ -140,158 +140,9 @@ rex_namespace:
     stars are control signals only and do not establish engineering authority.
 
 what_can_you_ask:
-  - {ask: what can you do?, resolves_to: capability_menu}
-  - {ask: what can CODEX do?, resolves_to: node_snippet}
-  - {ask: what can ABACUS do?, resolves_to: node_snippet}
-  - {ask: what can cryoplant-project do?, resolves_to: node_snippet}
+  - {ask: "what can you do?", resolves_to: capability_menu}
+  - {ask: "what can CODEX do?", resolves_to: node_snippet}
+  - {ask: "what can ABACUS do?", resolves_to: node_snippet}
+  - {ask: "what can cryoplant-project do?", resolves_to: node_snippet}
   - {ask: mesh closure control this, resolves_to: closure_control}
   - {ask: closure-control this, resolves_to: closure_control}
-  - {ask: minimum path to DoV, resolves_to: closure_control}
-  - {ask: 'done, repair, or repeat?', resolves_to: closure_control}
-  - {ask: show RED, resolves_to: action_snippet}
-  - {ask: show RECEIPT, resolves_to: action_snippet}
-  - ask: what is blocking the current gate?
-    resolves_to: status_snippet
-    inspect: [CG, BG]
-  - ask: did it actually run and pass?
-    resolves_to: status_snippet
-    inspect: [EX, QH, KR]
-  - {ask: what comes into this lane?, resolves_to: direction_snippet, filter: IN}
-  - {ask: what leaves this lane?, resolves_to: direction_snippet, filter: OUT}
-  - {ask: what propagates laterally?, resolves_to: direction_snippet, filter: PROPAGATE}
-  - {ask: recurse first red, resolves_to: action_snippet, moniker: RED}
-  - {ask: where is this used?, resolves_to: where_used_snippet}
-  - {ask: who owns this truth?, resolves_to: authority_snippet}
-  - {ask: show REX for cryoplant-project, resolves_to: rex_snippet, repo: GBOGEB/cryoplant-project}
-  - {ask: show REX for CODEX, resolves_to: rex_snippet, repo: GBOGEB/CODEX}
-  - {ask: show REX for ABACUS, resolves_to: rex_snippet, repo: GBOGEB/ABACUS}
-  - {ask: show recurring failures, resolves_to: rex_snippet, recurring: true}
-  - {ask: show five-star REX, resolves_to: rex_snippet, severity_stars: 5}
-  - {ask: what failed most often in W112?, resolves_to: rex_snippet, sort: observed_count_desc}
-  - {ask: which problems crossed repos?, resolves_to: rex_snippet, min_impacted_repo_count: 2}
-  - {ask: show open Control-phase blockers, resolves_to: rex_snippet, control_status: [OPEN, DEFERRED]}
-  - {ask: how was semantic_readiness repaired?, resolves_to: rex_snippet, query: semantic_readiness}
-
-capability_menu:
-  closure:
-    controller: mesh closure control
-    monikers: [CLOSE, RED]
-    prompts: [mesh_closure_control, close_current_gate, repair_first_red]
-  repair:
-    monikers: [RUNTIME, SEM, SSOT, RECEIPT]
-    prompts: [repair_runtime, align_semantics, resolve_ssot, bind_receipt]
-  enable_and_harden:
-    monikers: [ENABLE, HARDEN]
-    prompts: [enable_reusable_capability, harden_quality]
-  background:
-    monikers: [CLEAN, MAINT, READ, EXP]
-    prompts: [clean_debt, refresh_health, read_reference, run_experiment]
-  waiting:
-    monikers: [WATCH]
-    prompts: [show_waiting_dependency, resume_when_changed]
-  control_rex:
-    resolver: federation/rex/GLOB_REX_LOOKUP_v1.yaml
-    prompts:
-      - show_repo_experience
-      - show_recurring_failures
-      - show_high_severity_rex
-      - show_top_failure_frequency
-      - show_controlled_vs_deferred
-      - show_repair_method
-
-popup_snippet_contract:
-  schema: gbogeb-glob-popup/1.2
-  max_lines: 12
-  required_fields: [kind, title, identity, purpose, authority, first_use_case]
-  optional_fields:
-    - moniker
-    - lane
-    - direction
-    - status_keys
-    - inputs
-    - outputs
-    - consumers
-    - next_asks
-    - evidence
-    - freshness
-    - rex_id
-    - severity_stars
-    - observed_count
-    - recurrence
-    - control_status
-    - repair_method
-    - classification
-    - stop_condition
-  compact: true
-  authority_visible: true
-  freshness_visible_when_evidence_bound: true
-  examples:
-    action:
-      kind: action
-      title: Recurse first red
-      identity: RED
-      purpose: repair earliest observed blocker and rerun unchanged
-      authority: does not create or transfer engineering authority
-      status_keys: [BG, CR, EX, QH, KR]
-      first_use_case: repair first failing semantic/runtime gate
-      next_asks: [show blocker, run same gate, bind receipt]
-    closure_controller:
-      kind: controller
-      title: Mesh closure control
-      identity: GLOBAL_MESH_CLOSURE_CONTROLLER
-      purpose: select minimum non-repeating path to DoV and stop when proof is sufficient
-      authority: routing/semantic controller only; child authority remains unchanged
-      status_keys: [CG, BG, EX, QH, KR, DR, SR, WD, PB]
-      first_use_case: decide whether current wave is done, repair/re-entry, hardening, new capability, propagation proof, or repeat
-      next_asks: [show first blocker, run minimum sequence, show stop condition]
-    rex:
-      kind: rex
-      title: Zero-step GitHub Actions pre-execution failure
-      identity: REX-W112-006
-      purpose: preserve recurring runtime experience for Control and lookup
-      authority: runtime experience only; no QPS engineering acceptance
-      severity_stars: 5
-      recurrence: CROSS_WORKFLOW_RECURRING
-      first_use_case: identify RUNTIME before RED when no job step executed
-      next_asks: [show affected workflows, show repair method, show open blocker]
-
-lanes:
-  domain: {primary_nodes: [repo.cryoplant], default_actions: [CLOSE, SSOT, SEM, RECEIPT]}
-  governance: {primary_nodes: [repo.codex], default_actions: [SEM, RECEIPT, HARDEN, CLOSE]}
-  runtime: {primary_nodes: [repo.abacus], default_actions: [RED, RUNTIME, RECEIPT, MAINT]}
-  execution: {resolver: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml, default_actions: [RUNTIME, RED, HARDEN]}
-  artifact: {resolver: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml, default_actions: [ENABLE, HARDEN, RECEIPT]}
-  assurance: {resolver: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml, default_actions: [HARDEN, RECEIPT, SEM]}
-  knowledge: {resolver: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml, default_actions: [READ, EXP]}
-  recursion: {resolver: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml, default_actions: [RED, MAINT]}
-  experiment: {resolver: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml, default_actions: [EXP, ENABLE]}
-  control:
-    primary_nodes: [repo.codex, repo.abacus, repo.cryoplant]
-    default_actions: [CLOSE, RED, RECEIPT]
-    closure_controller: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
-    rex_resolver: federation/rex/GLOB_REX_LOOKUP_v1.yaml
-
-mip:
-  modernize:
-    - separate W108 status namespace from W111 action namespace
-    - migrate active W111 consumers to verb monikers
-    - convert failure history from disconnected observations into stable REX signatures
-    - replace ceremonial framework chains with evidence-conditioned closure control
-  innovate:
-    - add GLOB as one-entry lookup and capability menu
-    - add compact popup/snippet contract and direction-aware navigation
-    - add repo/severity/frequency/recurrence REX lookup
-    - add composite closure control over existing atomic action and status namespaces
-  perpetuate:
-    - expose GLOB, closure control and REX from .mesh/MESH_DOCK.yaml
-    - validate closure stop/proof invariants with Zod and CI
-    - validate namespace disjointness and resolver integrity in CI/tests
-    - preserve current repo/GitHub experience in DMAIC Control
-    - propagate receiver pointers only after the controller authority/control PR merges, without authority transfer
-
-first_use_case: >-
-  Ask "mesh closure control this". Classify the current scope, inspect CG/BG/EX/QH/KR,
-  select only the minimum useful combination of 3PR, targeted MIP, 3PC and one optional
-  3P3, recurse on the first observed blocker, bind exact-SHA evidence, stop when bounded
-  DoV is satisfied, and preserve material failure/repair experience in REX so the same
-  signature can be recognized and controlled when it returns.
