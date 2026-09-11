@@ -1,0 +1,66 @@
+schema: keb.m03.official_mcp_consumer_acceptance.v1
+mission_id: M03_GITHUB_MCP_SERVER
+pulse_id: P_M03_KEB_INDEPENDENT_CONSUMER_01
+state: ACCEPT_RUNTIME_EVIDENCE_DEFER_TERMINAL_DOV
+
+consumer_execution:
+  repo: GBOGEB/CODEX
+  pr: 640
+  consumer_head_sha: 3d44692e969ac9fa211ad82366335ad1624bcd26
+  pull_request_merge_ref_carrier_sha: b09ecbc66a0805ea6ab6f0cc5d07ff4047243d3c
+  target_sha: 1a80176358ffde62459cd257455a51402c847302
+  target_path: docs/qps_dow_keb_receipt_binding_policy.md
+  run_id: 34623862619
+  job_id: 103344100422
+  runner: GitHub_Actions_1000250056
+  executed_steps: GT_ZERO
+  result: PASS
+  response_sha256: 37c8dbe31060252ef5173b10e321d95525c2c0f493fa296ecb28e102e1a68805
+  artifact:
+    id: 10273550519
+    digest: sha256:17499293481f53fc67e6735a4ba49e49a1dd2e615938fa97e1b3cb6e3d2e8ca0
+  embedded_resource_uri: repo://GBOGEB/CODEX/sha/1a80176358ffde62459cd257455a51402c847302/contents/docs/qps_dow_keb_receipt_binding_policy.md
+
+official_transport:
+  repo: github/github-mcp-server
+  source_sha: 7d13a7ad6f2a17f351a6d77ce280c85ae1821f4d
+  toolset: repos
+  tool: get_file_contents
+  transport: stdio_via_official_mcpcurl
+
+independence:
+  M03_carrier_repo: GBOGEB/github-mcp-server
+  consumer_repo: GBOGEB/CODEX
+  independent_repo: true
+  inherited_success_used: false
+  exact_consumer_execution_required: true
+
+acceptance:
+  QA:
+    disposition: PASS
+    basis: real_runner_plus_gt_zero_steps_plus_exact_source_and_artifact_receipt
+  TM_KEB:
+    disposition: ACCEPT_WITHIN_TRANSPORT_SCOPE
+    basis: >-
+      CODEX independently recovered its exact-SHA KEB binding policy through the
+      exact official MCP source and validated the embedded resource URI and content.
+    limitation: no_claim_for_all_GitHub_operations_or_engineering_validity
+  PM_DOW:
+    disposition: PENDING_DOW_CONSUMER_EDGE_CLOSURE
+  Governor:
+    disposition: HOLD_ACTUAL_TRANSPORT_DELETION
+    release_condition: DOW_binding_plus_contract_parity_plus_control_repeat
+
+DoV:
+  independent_consumer_runtime: PASS
+  KEB_evidence_binding: PASS
+  DOW_work_closure: PENDING
+  DoV_2: WITHHELD_UNTIL_DOW_CLOSURE
+  DoV_3: WITHHELD_UNTIL_FRESH_REPEAT_AND_CONTROL
+
+control_repeat:
+  trigger: this_binding_commit_changes_PR_head
+  required_next: >-
+    The unchanged independent-consumer workflow must execute again on the new PR head.
+    A second exact-source PASS will establish the first fresh-head recurrence vector;
+    failure must recurse on FIRST RED without inheriting the prior PASS.
