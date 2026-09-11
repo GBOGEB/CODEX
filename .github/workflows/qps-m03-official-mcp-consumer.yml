@@ -3,6 +3,8 @@ name: QPS M03 Official MCP Independent Consumer
 on:
   pull_request:
     branches: [main]
+  push:
+    branches: [main]
   workflow_dispatch:
   schedule:
     - cron: '17 4 * * 1'
@@ -134,7 +136,7 @@ jobs:
               "executed_steps_claim": ">0",
               "result": "PASS",
               "evidence_role": "KEB_INDEPENDENT_CONSUMER_RUNTIME_PROOF",
-              "control_mode": "WEEKLY_SCHEDULE_PLUS_PR_REPLAY",
+              "control_mode": "WEEKLY_SCHEDULE_PLUS_PUSH_PLUS_PR_REPLAY",
               "authority": "INDEPENDENT_CONSUMER_READ_PROOF_NOT_TERMINAL_DOV",
           }
           out = Path("m03_keb_independent_consumer_receipt.json")
