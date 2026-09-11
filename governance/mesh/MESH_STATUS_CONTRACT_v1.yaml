@@ -1,10 +1,18 @@
-schema_version: '1.0'
+schema_version: '1.1'
 document_id: GLOBAL_MESH_STATUS_CONTRACT
 status: PROPOSED_SHARED_CONTRACT
 purpose: >-
   Give every repository a stable scheduler-facing status vector so global orchestration consumes
   governed state instead of scraping commit, PR and workflow noise.
 query_vector: [CG, RR, CR, SR, DR, PB, FE, QH, HK, BG, KR, EX, WD]
+closure_controller:
+  contract: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
+  canonical_prompt: mesh closure control this
+  role: composite_selector_not_atomic_action
+  selection: [3PR, MIP_IF_NEEDED, 3PC_IF_TRANSACTIONAL, 3P3_IF_GENERALISATION_MISSING]
+  stop_rule: STOP_WHEN_DOV_SATISFIED_AND_NO_NEW_PROOF_OR_PROTECTION_IS_REQUIRED
+  recurse_rule: FIRST_MATERIAL_OBSERVED_BG_ONLY
+  execution_rule: QH_PASS_REQUIRES_EX_GT_0_AND_EXACT_SHA_KR
 code_semantics:
   policy: >-
     Codes are stable protocol keys. Human-readable meanings are maintained by this registry and may
@@ -66,6 +74,17 @@ scheduler:
     - then_high_fanout_dependency_blockers
     - then_AMBER_semantic_or_quality_debt
     - then_GREEN_maintenance
+  closure_control:
+    classification_order: [REPAIR_REENTRY, HARDENING, NEW_CAPABILITY, PROPAGATION_PROOF, DONE, REPEAT]
+    default_method_sequence: [3PR, MIP_IF_NEEDED, 3PC_IF_TRANSACTIONAL, 3P3_IF_GENERALISATION_MISSING]
+    stop_conditions:
+      - DOV_SATISFIED
+      - NEXT_METHOD_WOULD_ADD_NO_NEW_EVIDENCE
+      - NEXT_METHOD_WOULD_ADD_NO_NEW_PROTECTION
+    do_not_stop_on:
+      - ZERO_STEP_WORKFLOW_BADGE
+      - FLOATING_BRANCH_REFERENCE
+      - UNBOUND_PR_STATE
   drilldown_rule: >-
     Commit/PR/workflow detail is diagnostic drill-down only after the status contract identifies a
     degraded, stale or ambiguous dimension.
@@ -75,8 +94,8 @@ rollup:
   no_greenwashing: UNKNOWN_DEFER_and_stale_are_not_GREEN
 MIP:
   Modernize: replace_commit_scraping_with_contract_query
-  Innovate: dependency_aware_status_vector_and_blocking_atom_routing
-  Perpetuate: emit_vector_from_repo_runtime_and_recompute_on_receipt_or_gate_change
+  Innovate: dependency_aware_status_vector_blocking_atom_and_composite_closure_controller
+  Perpetuate: emit_vector_recompute_on_receipt_or_gate_change_and_stop_on_satisfied_DOV
 acceptance:
   - schema_validates
   - all_13_dimension_keys_present
@@ -85,3 +104,5 @@ acceptance:
   - every_dimension_has_evidence_and_confidence
   - blocked_state_exposes_smallest_known_blocking_atom
   - scheduler_can_choose_next_action_without_commit_scraping
+  - closure_controller_selects_minimum_non_repeating_method_sequence
+  - QH_PASS_requires_EX_gt_0_and_exact_SHA_KR
