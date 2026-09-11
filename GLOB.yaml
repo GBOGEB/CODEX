@@ -1,13 +1,14 @@
-schema: gbogeb-glob/1.0
-wave: W112
-status: CANDIDATE_GLOBAL_LOOKUP_CONTROL
+schema: gbogeb-glob/1.1
+wave: W113
+status: ACTIVE_GLOBAL_LOOKUP_CONTROL
 name: GLOB
 expansion: Global Lookup and Operations Board
 purpose: >-
   Single human/machine entrypoint for discovering what the global hive can do,
   what a node/lane accepts or emits, which action moniker to use, which status
-  dimensions to inspect, and where canonical authority lives. GLOB is an index
-  and resolver; it is not a new engineering SSOT or scheduler.
+  dimensions to inspect, where canonical authority lives, and what reusable REX
+  experience exists. GLOB is an index and resolver; it is not a new engineering
+  SSOT or scheduler.
 
 authority:
   global_index_owner: GBOGEB/CODEX
@@ -17,6 +18,9 @@ authority:
   action_where_used: federation/mesh/GLOBAL_ACTION_WHERE_USED_v1.yaml
   status_contract: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
   status_taxonomy: governance/mesh/MESH_EXECUTION_TAXONOMY_v1.md
+  rex_taxonomy: federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml
+  rex_ledger: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
+  rex_resolver: federation/rex/GLOB_REX_LOOKUP_v1.yaml
   qps_engineering_authority: GBOGEB/cryoplant-project
   runtime_orchestration_plane: GBOGEB/ABACUS
   invariant: GLOBAL_INDEX_NE_GLOBAL_AUTHORITY
@@ -46,13 +50,19 @@ navigation:
     evidence_dov:
       answers: what is observed, proven, accepted, blocked or still missing for victory
       status_focus: [EX, QH, KR, BG, CG, WD]
+    rex_control:
+      answers: >-
+        what failed, where, how severe/frequent/recurring it was, how it was
+        repaired, whether the repair held, and what Control guard remains
+      resolver: federation/rex/GLOB_REX_LOOKUP_v1.yaml
+      lifecycle_phase: DMAIC_CONTROL
 
 colour_schedule:
   IN: {colour: BLUE, meaning: inbound evidence/state/roll-up}
   OUT: {colour: ORANGE, meaning: outbound action/control/product/roll-out}
   PROPAGATE: {colour: TEAL, line: dashed, meaning: lateral federation propagation}
   RECURSE: {colour: PURPLE, line: dotted, meaning: repair/feedback/re-entry}
-  CONTROL: {colour: NEUTRAL, meaning: authority/index/control node}
+  CONTROL: {colour: NEUTRAL, meaning: authority/index/control/REX lookup node}
 
 lookup:
   dimensions:
@@ -64,6 +74,11 @@ lookup:
     by_where_used: federation/mesh/GLOBAL_WHERE_USED_v1.yaml
     by_direction: this_file.colour_schedule
     by_first_use_case: federation/mesh/GLOBAL_ACTION_WHERE_USED_v1.yaml
+    by_rex: federation/rex/GLOB_REX_LOOKUP_v1.yaml
+    by_rex_repo: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
+    by_rex_severity: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
+    by_rex_recurrence: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
+    by_rex_control_status: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
 
 status_namespace:
   reserved_keys: [CG, WD, RR, DR, SR, HK, EX, FE, QH, KR, CR, PB, BG]
@@ -75,41 +90,44 @@ action_namespace:
   taxonomy: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
   rule: action monikers are task verbs and MUST NOT collide with status keys
 
+rex_namespace:
+  record_prefix: REX-
+  taxonomy: federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml
+  ledger: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
+  resolver: federation/rex/GLOB_REX_LOOKUP_v1.yaml
+  lifecycle_phase: DMAIC_CONTROL
+  rule: >-
+    REX preserves measured experience and prevention knowledge. Frequency and
+    stars are control signals only and do not establish engineering authority.
+
 what_can_you_ask:
-  - ask: what can you do?
-    resolves_to: capability_menu
-  - ask: what can CODEX do?
-    resolves_to: node_snippet
-  - ask: what can ABACUS do?
-    resolves_to: node_snippet
-  - ask: what can cryoplant-project do?
-    resolves_to: node_snippet
-  - ask: show RED
-    resolves_to: action_snippet
-  - ask: show RECEIPT
-    resolves_to: action_snippet
+  - {ask: what can you do?, resolves_to: capability_menu}
+  - {ask: what can CODEX do?, resolves_to: node_snippet}
+  - {ask: what can ABACUS do?, resolves_to: node_snippet}
+  - {ask: what can cryoplant-project do?, resolves_to: node_snippet}
+  - {ask: show RED, resolves_to: action_snippet}
+  - {ask: show RECEIPT, resolves_to: action_snippet}
   - ask: what is blocking the current gate?
     resolves_to: status_snippet
     inspect: [CG, BG]
   - ask: did it actually run and pass?
     resolves_to: status_snippet
     inspect: [EX, QH, KR]
-  - ask: what comes into this lane?
-    resolves_to: direction_snippet
-    filter: IN
-  - ask: what leaves this lane?
-    resolves_to: direction_snippet
-    filter: OUT
-  - ask: what propagates laterally?
-    resolves_to: direction_snippet
-    filter: PROPAGATE
-  - ask: recurse first red
-    resolves_to: action_snippet
-    moniker: RED
-  - ask: where is this used?
-    resolves_to: where_used_snippet
-  - ask: who owns this truth?
-    resolves_to: authority_snippet
+  - {ask: what comes into this lane?, resolves_to: direction_snippet, filter: IN}
+  - {ask: what leaves this lane?, resolves_to: direction_snippet, filter: OUT}
+  - {ask: what propagates laterally?, resolves_to: direction_snippet, filter: PROPAGATE}
+  - {ask: recurse first red, resolves_to: action_snippet, moniker: RED}
+  - {ask: where is this used?, resolves_to: where_used_snippet}
+  - {ask: who owns this truth?, resolves_to: authority_snippet}
+  - {ask: show REX for cryoplant-project, resolves_to: rex_snippet, repo: GBOGEB/cryoplant-project}
+  - {ask: show REX for CODEX, resolves_to: rex_snippet, repo: GBOGEB/CODEX}
+  - {ask: show REX for ABACUS, resolves_to: rex_snippet, repo: GBOGEB/ABACUS}
+  - {ask: show recurring failures, resolves_to: rex_snippet, recurring: true}
+  - {ask: show five-star REX, resolves_to: rex_snippet, severity_stars: 5}
+  - {ask: what failed most often in W112?, resolves_to: rex_snippet, sort: observed_count_desc}
+  - {ask: which problems crossed repos?, resolves_to: rex_snippet, min_impacted_repo_count: 2}
+  - {ask: show open Control-phase blockers, resolves_to: rex_snippet, control_status: [OPEN, DEFERRED]}
+  - {ask: how was semantic_readiness repaired?, resolves_to: rex_snippet, query: semantic_readiness}
 
 capability_menu:
   closure:
@@ -127,12 +145,37 @@ capability_menu:
   waiting:
     monikers: [WATCH]
     prompts: [show_waiting_dependency, resume_when_changed]
+  control_rex:
+    resolver: federation/rex/GLOB_REX_LOOKUP_v1.yaml
+    prompts:
+      - show_repo_experience
+      - show_recurring_failures
+      - show_high_severity_rex
+      - show_top_failure_frequency
+      - show_controlled_vs_deferred
+      - show_repair_method
 
 popup_snippet_contract:
-  schema: gbogeb-glob-popup/1.0
+  schema: gbogeb-glob-popup/1.1
   max_lines: 12
   required_fields: [kind, title, identity, purpose, authority, first_use_case]
-  optional_fields: [moniker, lane, direction, status_keys, inputs, outputs, consumers, next_asks, evidence, freshness]
+  optional_fields:
+    - moniker
+    - lane
+    - direction
+    - status_keys
+    - inputs
+    - outputs
+    - consumers
+    - next_asks
+    - evidence
+    - freshness
+    - rex_id
+    - severity_stars
+    - observed_count
+    - recurrence
+    - control_status
+    - repair_method
   compact: true
   authority_visible: true
   freshness_visible_when_evidence_bound: true
@@ -146,14 +189,16 @@ popup_snippet_contract:
       status_keys: [BG, CR, EX, QH, KR]
       first_use_case: repair first failing semantic/runtime gate
       next_asks: [show blocker, run same gate, bind receipt]
-    node:
-      kind: node
-      title: CODEX
-      identity: repo.codex
-      purpose: semantic/provenance governance and federation automation
-      authority: semantic normalization and receipts; not QPS engineering truth
-      first_use_case: validate child evidence tuple before DOW consumption
-      next_asks: [show inbound, show outbound, show status, show actions]
+    rex:
+      kind: rex
+      title: Zero-step GitHub Actions pre-execution failure
+      identity: REX-W112-006
+      purpose: preserve recurring runtime experience for Control and lookup
+      authority: runtime experience only; no QPS engineering acceptance
+      severity_stars: 5
+      recurrence: CROSS_WORKFLOW_RECURRING
+      first_use_case: identify RUNTIME before RED when no job step executed
+      next_asks: [show affected workflows, show repair method, show open blocker]
 
 lanes:
   domain: {primary_nodes: [repo.cryoplant], default_actions: [CLOSE, SSOT, SEM, RECEIPT]}
@@ -165,21 +210,27 @@ lanes:
   knowledge: {resolver: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml, default_actions: [READ, EXP]}
   recursion: {resolver: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml, default_actions: [RED, MAINT]}
   experiment: {resolver: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml, default_actions: [EXP, ENABLE]}
-  control: {primary_nodes: [repo.codex, repo.abacus, repo.cryoplant], default_actions: [CLOSE, RED, RECEIPT]}
+  control:
+    primary_nodes: [repo.codex, repo.abacus, repo.cryoplant]
+    default_actions: [CLOSE, RED, RECEIPT]
+    rex_resolver: federation/rex/GLOB_REX_LOOKUP_v1.yaml
 
 mip:
   modernize:
     - separate W108 status namespace from W111 action namespace
     - migrate active W111 consumers to verb monikers
+    - convert failure history from disconnected observations into stable REX signatures
   innovate:
     - add GLOB as one-entry lookup and capability menu
     - add compact popup/snippet contract and direction-aware navigation
+    - add repo/severity/frequency/recurrence REX lookup
   perpetuate:
-    - expose GLOB from .mesh/MESH_DOCK.yaml
+    - expose GLOB and REX from .mesh/MESH_DOCK.yaml
     - validate namespace disjointness and resolver integrity in CI/tests
-    - propagate receiver pointers to ABACUS and cryoplant without authority transfer
+    - preserve current repo/GitHub experience in DMAIC Control
+    - propagate receiver pointers without authority transfer
 
 first_use_case: >-
   Ask "what can you do?", select RED, inspect BG/EX/QH/KR, repair the first
-  observed blocker, rerun unchanged, bind RECEIPT, then CLOSE through the
-  entitled child authority.
+  observed blocker, bind RECEIPT, then preserve the experience in REX so the
+  same signature can be recognized, counted and controlled when it returns.

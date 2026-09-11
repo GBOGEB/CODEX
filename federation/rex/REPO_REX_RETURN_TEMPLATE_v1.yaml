@@ -1,0 +1,65 @@
+schema: gbogeb-repo-rex-return/1.0
+repo: GBOGEB/example
+measurement_window:
+  start: YYYY-MM-DDTHH:MM:SSZ
+  end: YYYY-MM-DDTHH:MM:SSZ
+  basis: exact_heads_workflow_runs_reviews_and_observed_failures
+  denominator_notes: declare execution opportunities when a rate is reported
+
+repo_state:
+  head_sha: <exact_sha>
+  branch_or_pr: <ref>
+  dmaic_phase: CONTROL
+  rex_status: CURRENT
+
+records:
+  - rex_id: REX-<REPO>-<YYYYMMDD>-001
+    signature: <stable.family.signature>
+    issue_kind: <ERROR|FAILURE|BUG|DEFECT|PROBLEM|BLOCKER|GAP|DEBT|INCIDENT|REVIEW_FINDING>
+    family: <SEMANTIC|NAMESPACE|LINEAGE|AUTHORITY|RUNTIME|CI_CD|VALIDATION|DATA_SSOT|ARTIFACT|FEDERATION|SECURITY|PERFORMANCE|UX_LOOKUP>
+    repo:
+      primary: GBOGEB/example
+      impacted: [GBOGEB/example]
+    first_seen: <run_pr_sha_or_timestamp>
+    last_seen: <run_pr_sha_or_timestamp>
+    severity_stars: 3
+    frequency:
+      observed_count: 1
+      unit: occurrences
+      impacted_repo_count: 1
+      impacted_workflow_count: 1
+      measurement_window: <window_label>
+    recurrence: <UNIQUE|CLUSTERED_LOCAL|REPEATED_SAME_SIGNATURE|CROSS_WORKFLOW_RECURRING|CROSS_REPO_RECURRING|INTERMITTENT|CHRONIC|SYSTEMIC|UNKNOWN>
+    symptom: <what was observed>
+    root_cause: <observed_root_cause_or_UNKNOWN>
+    action_moniker: <RED|RUNTIME|SEM|SSOT|RECEIPT|HARDEN|CLEAN|WATCH>
+    repair_method: <what was actually changed or why repair is deferred>
+    verification:
+      run_id: <run_id_or_null>
+      job_id: <job_id_or_null>
+      exact_head_sha: <sha>
+      result: <PASS|FAIL|DEFER|NOT_RUN>
+    control_guard:
+      - <test_monitor_contract_or_lookup_guard>
+    control_status: <OPEN|CONTAINED|REPAIRED|VERIFIED|CONTROLLED|DEFERRED|SUPERSEDED>
+    lesson: <reusable one-sentence experience>
+    lookup_tags: [example, tag]
+
+summary:
+  total_records: 1
+  open_or_deferred: 0
+  five_star_open: 0
+  recurring_records: 0
+  cross_repo_records: 0
+  verified_or_controlled: 0
+
+return_contract:
+  consumer: GBOGEB/CODEX
+  global_taxonomy: federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml
+  merge_key: signature_plus_authority_relevant_scope
+  merge_rule: >-
+    Existing global REX signatures are updated for first/last seen, count,
+    recurrence, reopen count and new proof. Do not mint a disconnected duplicate
+    when the same controlled problem returns.
+  authority_transfer: false
+  score_rule: severity/frequency/recurrence may prioritize Control work but do not confer engineering acceptance
