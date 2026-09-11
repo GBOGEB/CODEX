@@ -1,0 +1,88 @@
+schema: gbogeb-global-glossary-actions/1.0
+wave: W111
+status: CANDIDATE_GLOBAL_FEDERATION_VOCABULARY
+owner: GBOGEB/CODEX
+authority_rule: >-
+  These codes govern mesh scheduling vocabulary only. They do not transfer
+  engineering, source, compliance, release or child disposition authority.
+
+terms:
+  CG:
+    canonical_name: CLOSURE_GATE
+    definition: Action that directly closes or advances a declared DoV, AND-gate, acceptance, release or authority-owned decision.
+    default_band: P0
+    first_use_case: child re-entry after matching KEB and DOW receipts
+  RR:
+    canonical_name: RECURSE_FIRST_RED
+    definition: Reproduce and repair the earliest material observed failure, then rerun the same gate unchanged.
+    default_band: P0_P1
+    first_use_case: W003 or semantic-runtime first-red repair
+  CR:
+    canonical_name: CICD_RUNTIME_REPAIR
+    definition: Repair CI/CD, runner, dependency, build, Docker, MCP or workflow infrastructure blocking proof.
+    default_band: P1
+    first_use_case: cryoplant hosted-runner allocation/configurable-label repair
+  SR:
+    canonical_name: SEMANTIC_CONTRACT_REPAIR
+    definition: Repair terminology, schema, identifier or meaning drift without changing source authority.
+    default_band: P1
+    first_use_case: VNV versus QRB.VV and Expected-versus-Most-Likely repair
+  DR:
+    canonical_name: SSOT_DATA_REPAIR
+    definition: Repair missing, stale, conflicting or unresolvable SSOT pointers, canonical data or lineage.
+    default_band: P1
+    first_use_case: W111 correction of satellite SSOT visibility from assumed-missing to discovered-and-indexed
+  PB:
+    canonical_name: PROVENANCE_RECEIPT_BINDING
+    definition: Bind exact SHA, source locator, digest, artifact identity and execution/receipt state.
+    default_band: P1
+    first_use_case: DOCX_RTM Wave-9 external artifact registry receipt
+  FE:
+    canonical_name: FEATURE_ENABLEMENT
+    definition: Add a reusable function, skill, agent, dock, bridge or capability that unlocks multiple future tasks.
+    default_band: P1_P2
+    first_use_case: W111 global yellow-pages mesh dock
+  QH:
+    canonical_name: QUALITY_HARDENING
+    definition: Improve tests, determinism, negative fixtures, security or resilience after core behavior exists.
+    default_band: P2
+    first_use_case: Level-1 PCA/BT guards and native-runtime-anchor checks
+  HK:
+    canonical_name: HOUSEKEEPING
+    definition: Regular cleanup with low immediate closure leverage.
+    default_band: P3
+    first_use_case: import-order or line-length cleanup when not itself the first red
+  BG:
+    canonical_name: BACKGROUND_MAINTENANCE
+    definition: Recurring non-blocking health, dependency, census or metric refresh work.
+    default_band: P3
+    first_use_case: periodic repo census and metrics refresh
+  KR:
+    canonical_name: KNOWLEDGE_READING
+    definition: Reference/research intake with no direct engineering promotion.
+    default_band: P3
+    first_use_case: upstream/reference review supporting a bounded implementation question
+  EX:
+    canonical_name: EXPERIMENT_SANDBOX
+    definition: Exploratory prototype or hypothesis test outside production authority.
+    default_band: P3
+    first_use_case: orchestration-sandbox or multi-agent DMAIC prototype
+  WD:
+    canonical_name: WATCH_DEFERRED
+    definition: Known dependency waiting for external input, future condition or unavailable evidence.
+    default_band: P4
+    first_use_case: authoritative bidder/OEM return or external WPS MTO wait state
+
+qps_rfi_namespace:
+  canonical_prefix: RFI-CIS-
+  authority: GBOGEB/cryoplant-project
+  glossary_pointer: controls/QPS_CIS_RFI_GLOSSARY_v1.yaml
+  source_baseline:
+    pr: GBOGEB/cryoplant-project#875
+    merge_sha: 264cf1df06368631a3e2c49b653a741615b8f2cf
+  current_census_baseline:
+    pr: GBOGEB/cryoplant-project#877
+    merge_sha: 067e1ad9c6c461018ccb43bc2e50f6a5b2b89ee7
+  rule: >-
+    CODEX may register and route RFI-CIS identifiers, but titles, questions,
+    evidence interpretation and QPS engineering consequence remain child-owned.
