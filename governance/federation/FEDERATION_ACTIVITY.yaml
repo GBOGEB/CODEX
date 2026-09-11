@@ -1,19 +1,41 @@
-schema: gbogeb-federation-activity/1.0.0
-as_of: '2026-09-10T06:52:00+02:00'
+schema: gbogeb-federation-activity/1.1.0
+as_of: '2026-09-11T04:17:00+02:00'
 repo: GBOGEB/CODEX
 classification: CORE_ACTIVE
-federation_role: KEB_SEMANTIC_PROVENANCE_AND_CONTRACT_AUTHORITY
-last_wave: W98_QPS_GLOSSARY_3PC_3PR
-recent_activity: [{pr: 587, state: MERGED, role: glossary_semantic_validation}]
-mip_state: {modernize: ACTIVE, innovate: ACTIVE, perpetuate: ACTIVE_WITH_GUARDS}
+federation_role: KEB_SEMANTIC_PROVENANCE_CONTRACT_AND_EXECUTION_AUTHORITY
+last_wave: QTG_KEB_REPO_DEEP
+recent_activity:
+  - {pr: 600, state: MERGED, role: w107_runtime_health_keb_receipt_producer}
+  - {pr: 603, state: MERGED, role: qps_triage_prompt_sequence_baseline}
+  - {pr: 605, state: OPEN_DRAFT, role: qps_triage_keb_repo_deep_contract_and_test}
+mip_state: {modernize: ACTIVE, innovate: BOUNDED, perpetuate: EVIDENCE_GATED}
 three_p_capability: {P1_source_atom: false, P2_integration_graph: true, P3_evidence_control: true}
-runtime_proof: {state: PASS_FOR_W98, w003_run: 34438173960, semantic_runtime_receipt_run: 34438174180}
+runtime_proof:
+  inherited_w107:
+    state: PASS
+    producer_pr: 600
+    producer_head_sha: 7f062faf8c76a6e89780bb0fbb1ee1fe96f5af4b
+    dow_accept_pr: GBOGEB/ABACUS#1107
+    real_probe_steps: 10
+  qtg_repo_deep:
+    state: PENDING_EXACT_HEAD_EXECUTION
+    pr: 605
 source_authority: {state: SEMANTIC_PROVENANCE_ONLY, may_mutate_qps_disposition: false}
-produces_receipts: [keb_semantic_receipt, provenance_validation_receipt]
+produces_receipts: [keb_semantic_receipt, provenance_validation_receipt, runtime_receipt]
 consumes_receipts: [redacted_child_contract]
-current_blocker: W69 zero-delta execution red remains separate from accepted W98 semantic receipt
-next_victory: recurse only on W69 exact red while preserving W98 accepted semantic receipt
+current_blockers:
+  - QTG PR 605 exact-head contract test has not yet been observed PASS
+  - W69 zero-delta residual remains an independent historical execution lane and is not silently closed by QTG
+first_red_rule: repair_or_defer_first_observed_predicate_then_rerun_same_gate
+fifo_rule: oldest_actionable_blocker_first_with_same_surface_low_cost_adjacency_only
+next_victory: >-
+  Observe PR 605 contract checks on its exact head, then bind the matching ABACUS DOW
+  consumer/challenge and cryoplant child-authority re-entry contracts without copying private QPS evidence.
 federation_dependencies:
   upstream: [GBOGEB/cryoplant-project]
   downstream: [GBOGEB/ABACUS, GBOGEB/pipeline-automation-hub]
-controls: {engineering_credit: false, compliance_credit: false, negotiation_credit: false}
+controls:
+  engineering_credit: false
+  compliance_credit: false
+  negotiation_credit: false
+  merge_is_not_runtime_pass: true
