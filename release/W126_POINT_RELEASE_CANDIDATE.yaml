@@ -1,0 +1,60 @@
+schema: triage.point-release-candidate/v1
+wave: W126
+repo: GBOGEB/CODEX
+role: KEB_SEMANTIC_AND_RELEASE_PROOF
+base_main_sha: 34798bc9d1bccbd6daaf2b6118cf0369f6cafe4b
+status: RC_CANDIDATE_PROBE_NO_RELEASE_CREDIT
+purpose: >-
+  Trigger one fresh exact-head release-candidate proof pulse using existing CODEX
+  release, semantic, determinism, zero-delta and federation machinery. This file
+  adds no feature architecture and grants no release credit by merge alone.
+
+release_gates:
+  - id: K1
+    gate: release_smoke_and_burndown
+    evidence:
+      - CODEX Release Smoke Aggregate
+      - CODEX Release Burndown Aggregate
+    pass: both workflows PASS on this exact PR head
+  - id: K2
+    gate: rc_manifest_and_determinism
+    evidence:
+      - CODEX RC Manifest Generate
+      - CODEX Determinism Execution
+    pass: both workflows PASS on this exact PR head
+  - id: K3
+    gate: zero_delta_and_federation
+    evidence:
+      - W69 QPS Zero-Delta Execution
+      - Validate Federation
+      - Runtime Federation CI
+    pass: all applicable workflows PASS on this exact PR head
+  - id: K4
+    gate: semantic_and_governance
+    evidence:
+      - CODEX Semantic Runtime CI
+      - W003 Governance Gate
+      - CI
+    pass: each selected release-blocking workflow PASS or is explicitly classified nonblocking by accepted release authority
+
+workers:
+  KEB: semantic_provenance_policy
+  QA: exact_head_receipt_review
+  Technical_Manager: validity_domain_and_semantic_boundary
+  Governor: release_gate_disposition
+
+stop_rule: first real red -> repair only that invariant -> rerun same gate
+handoff_to_child:
+  required:
+    - exact_repo
+    - exact_head_sha
+    - workflow_run_ids
+    - executed_steps_gt_0
+    - release_gate_disposition
+  authority: diagnostic_and_semantic_only
+  child_release_authority: GBOGEB/cryoplant-project
+
+credit_guard:
+  engineering_delta: 0
+  negotiation_delta: 0
+  release_delta: 0
