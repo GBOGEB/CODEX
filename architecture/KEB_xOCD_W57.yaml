@@ -1,7 +1,14 @@
 id: KEB-xOCD-W57
-version: 0.1.0
+version: 0.2.0
 repo: GBOGEB/CODEX
 purpose: executable governance description for semantic and provenance validation
+authority_scope: REPO_LOCAL_SEMANTIC_RUNTIME
+qps_authority_source:
+  repo: GBOGEB/cryoplant-project
+  artifact: ocd-adr/20_canonical/control/QPS_GLOBAL_ADR_OCD_SSOT_v1.json
+  projection_role: EXECUTABLE_SEMANTIC_PROVENANCE_GOVERNANCE
+  engineering_promotion_forbidden: true
+  source_or_payload_digest_when_exchanged: REQUIRED
 pipeline:
   - receive_child_payload
   - validate_schema
@@ -14,6 +21,10 @@ pipeline:
   - reconcile_exact_digests
   - emit_KEB_receipt
   - return_to_child
+invariants:
+  - qps_engineering_content_is_child_projection
+  - qps_engineering_promotion_requires_child_reentry
+  - exact_payload_identity_survives_roundtrip
 binary_family:
   - KEB_ARCHITECTURE.xlsx
   - KEB_ARCHITECTURE.html
