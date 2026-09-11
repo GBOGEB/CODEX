@@ -1,17 +1,19 @@
-schema: gbogeb-global-mesh-dock/1.0
-wave: W111
-status: CANDIDATE_GLOBAL_DISCOVERY_PORT
+schema: gbogeb-global-mesh-dock/1.1
+wave: W112
+status: ACTIVE_AFTER_3PC_COLLISION_REPAIR
 canonical_directory:
   repo: GBOGEB/CODEX
+  glob: GLOB.yaml
   census: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml
   glossary: federation/mesh/GLOBAL_GLOSSARY_v1.yaml
   where_used: federation/mesh/GLOBAL_WHERE_USED_v1.yaml
   action_taxonomy: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
+  status_contract: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
 
 purpose: >-
   Provide a stable discovery port in each participating repository. The global
   directory acts as yellow pages; the repo-local dock states identity, local
-  SSOTs, authority boundary, graph edges, action classes and first use case.
+  SSOTs, authority boundary, graph edges, action monikers and first use case.
   The dock points to truth; it is not itself a replacement engineering SSOT.
 
 canonical_local_path: .mesh/MESH_DOCK.yaml
@@ -23,14 +25,14 @@ required_fields:
   - authority
   - local_ssot
   - global_directory
+  - action_monikers
+  - first_use_case
+
+recommended_fields:
   - provides
   - consumes
   - edges
-  - action_classes
-  - first_use_case
   - authority_transfer
-
-recommended_fields:
   - default_branch
   - local_glossary
   - runtime_entrypoints
@@ -42,20 +44,32 @@ recommended_fields:
   - last_observed_sha
 
 resolution_order:
-  - read .mesh/MESH_DOCK.yaml
+  - read GLOB.yaml for human/machine navigation and lookup
+  - read .mesh/MESH_DOCK.yaml for repo-local identity and pointers
   - resolve canonical local_ssot path(s)
   - resolve GLOBAL_HIVE_CENSUS_v1.yaml entry for the repo
   - resolve GLOBAL_GLOSSARY_v1.yaml and domain glossary pointers
-  - resolve GLOBAL_ACTION_TAXONOMY_v1.yaml for work classification
+  - resolve GLOBAL_ACTION_TAXONOMY_v1.yaml for task/action classification
+  - resolve MESH_STATUS_CONTRACT_v1.yaml for scheduler-facing state
   - inspect exact-head receipt only when execution/proof is required
   - defer to child/domain authority for acceptance
+
+namespace_rule:
+  status_dimensions:
+    namespace: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+    reserved: [CG, WD, RR, DR, SR, HK, EX, FE, QH, KR, CR, PB, BG]
+  action_monikers:
+    namespace: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
+    allowed: [CLOSE, RED, RUNTIME, SEM, SSOT, RECEIPT, ENABLE, HARDEN, CLEAN, MAINT, READ, EXP, WATCH]
+  invariant: status dimension keys and action monikers MUST NOT overlap
 
 state_model:
   DOCK_PRESENT: local dock exists on declared default branch or bound branch
   SSOT_RESOLVABLE: all declared local_ssot paths resolve
   GLOBAL_REGISTERED: repo is indexed in GLOBAL_HIVE_CENSUS_v1.yaml
   EDGE_RESOLVABLE: at least one provides/consumes edge maps to a known node
-  ACTION_RESOLVABLE: action classes map to GLOBAL_ACTION_TAXONOMY_v1.yaml
+  ACTION_RESOLVABLE: action monikers map to GLOBAL_ACTION_TAXONOMY_v1.yaml
+  STATUS_RESOLVABLE: status keys map only to MESH_STATUS_CONTRACT_v1.yaml
   RECEIPT_BOUND: executable proof has exact head plus immutable output/receipt digest
   AUTHORITY_ACCEPTED: declared consuming authority has accepted the result
 
@@ -68,41 +82,44 @@ port_contract:
   fail_closed_on:
     - missing local SSOT path
     - conflicting authority claims
-    - unknown action class
+    - unknown action moniker
+    - action/status namespace collision
     - receipt SHA mismatch
     - attempt to treat global registration as engineering acceptance
 
 minimal_dock_example:
-  schema: gbogeb-mesh-dock/1.0
+  schema: gbogeb-mesh-dock/1.1
   repo: GBOGEB/example
   role: EXAMPLE_WORKER
   authority:
-    may: [perform bounded local work]
-    must_not: [promote QPS engineering truth]
+    may: [perform_bounded_local_work]
+    must_not: [promote_QPS_engineering_truth]
   local_ssot: [level1/ssot.json]
   global_directory:
     repo: GBOGEB/CODEX
-    path: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml
+    glob: GLOB.yaml
   provides: [example_result]
   consumes: [example_request]
   edges:
     - {to: GBOGEB/CODEX, type: EXAMPLE_RECEIPT}
-  action_classes: [FE, QH, BG]
+  action_monikers: [ENABLE, HARDEN, MAINT]
   first_use_case: produce one deterministic receipt for a bounded request
   authority_transfer: false
 
 resource_focus_contract:
-  foreground_classes: [CG, RR, CR, SR, DR, PB]
-  enablement_classes: [FE, QH]
-  residual_capacity_classes: [HK, BG, KR, EX]
-  waiting_class: [WD]
+  foreground_monikers: [CLOSE, RED]
+  repair_monikers: [RUNTIME, SEM, SSOT, RECEIPT]
+  enablement_monikers: [ENABLE, HARDEN]
+  residual_capacity_monikers: [CLEAN, MAINT, READ, EXP]
+  waiting_moniker: [WATCH]
   rule: >-
     Repo activity may alter polling/census cadence, but finite execution capacity
-    is allocated from importance/action class plus evidence readiness and blocker
-    consequence. High-churn HK/BG work cannot preempt a bounded CG/RR gate.
+    is allocated from importance/action moniker plus evidence readiness and blocker
+    consequence. High-churn CLEAN/MAINT work cannot preempt a bounded CLOSE/RED gate.
 
 victory:
-  - every R0/R1 participating repo exposes .mesh/MESH_DOCK.yaml
+  - every R0/R1 participating repo exposes .mesh/MESH_DOCK.yaml or an explicit equivalent
   - every dock points to its local SSOT rather than copying it
   - global census can be regenerated from docks plus observed receipts
-  - action queues can be filtered by class/priority independent of repo activity
+  - action queues can be filtered by moniker/priority independent of repo activity
+  - no current record uses a W108 status key as a W112 action moniker
