@@ -1,0 +1,133 @@
+{
+  "schema_version": "mip-canonical-ssot-registry/1.0",
+  "wave": "W110",
+  "created_utc": "2026-09-11T07:10:00Z",
+  "purpose": "Expose a canonical, shared, visible SSOT registry for the core QPS triage triad and smaller active repos, with MIP actions and exact-head receipt discipline.",
+  "authority_boundary": {
+    "child_engineering_truth": "GBOGEB/cryoplant-project",
+    "dow_consumption_analysis": "GBOGEB/ABACUS",
+    "keb_semantic_runtime_receipts": "GBOGEB/CODEX",
+    "smaller_active_repos": "indexed as runtime/tooling satellites; no engineering authority transfer"
+  },
+  "current_triad": {
+    "cryoplant": {
+      "repo": "GBOGEB/cryoplant-project",
+      "current_main_observed_sha": "a91fa8f6c1b43f632163483ce470488817173d7e",
+      "current_open_prs": [
+        "https://github.com/GBOGEB/cryoplant-project/pull/876",
+        "https://github.com/GBOGEB/cryoplant-project/pull/877"
+      ],
+      "role": "CHILD_ENGINEERING_AUTHORITY"
+    },
+    "abacus": {
+      "repo": "GBOGEB/ABACUS",
+      "current_main_observed_sha": "356754d5c3b2bdb5de27ef68cb44e39795022563",
+      "role": "DOW_DERIVED_ANALYSIS_AND_CONSUMPTION"
+    },
+    "codex": {
+      "repo": "GBOGEB/CODEX",
+      "current_main_observed_sha": "5d6b5e91657827d47589beb405efb5c6206c96ff",
+      "role": "KEB_SEMANTIC_AND_RUNTIME_RECEIPT"
+    }
+  },
+  "previous_tail": {
+    "status": "FIXED_AS_HISTORICAL_ACCEPT_NOT_CURRENT_HEAD",
+    "lane": "LLDB-DAP Swift Docker Runner MCP",
+    "codex_pr": "https://github.com/GBOGEB/CODEX/pull/598",
+    "codex_exact_head_sha": "5e58badb150df9ce0423e1d02f9d913380d4597d",
+    "codex_workflow_run": "https://github.com/GBOGEB/CODEX/actions/runs/34508749625",
+    "codex_receipt_artifact_id": 10164897765,
+    "codex_receipt_artifact_digest": "sha256:1e66581b7e2c53db6526eb08490cf744554618025e52e7691ed74373de0ad150",
+    "codex_receipt_sha256": "3b32650abf18b824b5f3f06a113139ce470900c0957cef9d44c4b4e6e920f2d1",
+    "probe_status": "ACCEPT",
+    "dov_status": "PASS",
+    "real_lldb_steps": 10,
+    "abacus_pr": "https://github.com/GBOGEB/ABACUS/pull/1103",
+    "abacus_final_head_sha": "0dce7cf74c1139cb53d5b2fb703b7daa4821a184",
+    "cryoplant_pr": "https://github.com/GBOGEB/cryoplant-project/pull/842",
+    "cryoplant_final_head_sha": "3b63e605030a5721cad3188d2407ac2b1d1200d2",
+    "note": "This fixes the previous tail as a receipt-backed ACCEPT lineage. It is historical proof and is not reused as current-head proof for W110."
+  },
+  "active_last_24h_satellites": [
+    {
+      "repo": "GBOGEB/codespaces-jupyter",
+      "observed_head_sha": "98e18d6e80a7335b329bbcd39f651e8ba95de1e6",
+      "observed_at_utc": "2026-09-10T18:18:19Z",
+      "evidence_url": "https://github.com/GBOGEB/codespaces-jupyter/commit/98e18d6e80a7335b329bbcd39f651e8ba95de1e6",
+      "current_role": "JUPYTER_RUNTIME_PRODUCER",
+      "mip_level_1_status": "CANDIDATE_ACTIVE",
+      "ssot_visibility": "NEEDS_CANONICAL_INDEX_POINTER"
+    },
+    {
+      "repo": "GBOGEB/CODESPACES_jyperter",
+      "observed_head_sha": "eda6aa0f576e276a3dd335555ebcf7f740f7f1b2",
+      "observed_at_utc": "2026-09-11T03:28:01Z",
+      "evidence_url": "https://github.com/GBOGEB/CODESPACES_jyperter/commit/eda6aa0f576e276a3dd335555ebcf7f740f7f1b2",
+      "current_role": "CODESPACE_RUNTIME_PROOF",
+      "mip_level_1_status": "ACTIVE_EXACT_HEAD_PROOF_REPORTED",
+      "ssot_visibility": "NEEDS_SHARED_REGISTRY_BINDING"
+    },
+    {
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "observed_head_sha": "28cc8d97c751cff2bad44a5cbf83ebcf6379641d",
+      "observed_at_utc": "2026-09-11T06:39:58Z",
+      "evidence_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/commit/28cc8d97c751cff2bad44a5cbf83ebcf6379641d",
+      "current_role": "DOCX_RTM_AUTOMATION",
+      "mip_level_1_status": "ACTIVE_CI_REGISTRY_RECEIPT",
+      "ssot_visibility": "NEEDS_EXPORTABLE_CANONICAL_POINTER"
+    },
+    {
+      "repo": "GBOGEB/cryogenic-accelerator-workspace",
+      "observed_head_sha": "771b4b6f4e45722125aa65bd42f9052f3659f5bf",
+      "observed_at_utc": "2026-09-11T03:36:35Z",
+      "evidence_url": "https://github.com/GBOGEB/cryogenic-accelerator-workspace/commit/771b4b6f4e45722125aa65bd42f9052f3659f5bf",
+      "current_role": "BRIDGE_RUNTIME_PROOF",
+      "mip_level_1_status": "ACTIVE_P6_BRIDGE_PROOF",
+      "ssot_visibility": "NEEDS_SHARED_REGISTRY_BINDING"
+    },
+    {
+      "repo": "GBOGEB/cryo_leak_rate_dashboard",
+      "observed_head_sha": "6ef501f37bc9c41dc50c4c0b54095963b02630f6",
+      "observed_at_utc": "2026-09-11T03:36:22Z",
+      "evidence_url": "https://github.com/GBOGEB/cryo_leak_rate_dashboard/commit/6ef501f37bc9c41dc50c4c0b54095963b02630f6",
+      "current_role": "LEAK_EVIDENCE_RUNTIME_PROOF",
+      "mip_level_1_status": "ACTIVE_P5_LEAK_PROOF",
+      "ssot_visibility": "NEEDS_SHARED_REGISTRY_BINDING"
+    }
+  ],
+  "dormant_candidates": [
+    {
+      "repo": "GBOGEB/Q_engineering_tools",
+      "observed_head_sha": "4f9304fed18168e8e152cdbcca93864dead34490",
+      "observed_at_utc": "2026-05-29T06:29:41Z",
+      "reason": "useful engineering-tool candidate but not active in last 24h"
+    },
+    {
+      "repo": "GBOGEB/GEMINI",
+      "observed_head_sha": "436836d6466218ba6e4de1505a379f8f353b2c65",
+      "observed_at_utc": "2026-06-02T11:21:05Z",
+      "reason": "governance bootstrap candidate but not active in last 24h"
+    }
+  ],
+  "mip": {
+    "modernize": [
+      "Repair stale or tail records by classifying historical ACCEPT receipts separately from current-head proof.",
+      "Expose each repo's role, observed SHA, SSOT visibility state and next validation action."
+    ],
+    "innovate": [
+      "Treat active small repos as satellite producers/consumers around the same KEB -> DOW -> child chain.",
+      "Use one cross-repo registry that can be consumed by JSON, Markdown and Zod-aware tooling."
+    ],
+    "perpetuate": [
+      "Keep exact-head SHA and receipt artifacts mandatory for promotion.",
+      "Use ACCEPT / REJECT / DEFER records and fail closed when a repo is active but not yet bound to a canonical SSOT."
+    ]
+  },
+  "zod_contract": "federation/mip/W110_CANONICAL_SSOT_REGISTRY.zod.ts",
+  "disposition": "DEFER_FOR_SMALL_REPOS_UNTIL_REPO_LOCAL_SSOT_POINTERS_EXIST",
+  "child_disposition_rule": {
+    "ACCEPT": "Core triad proof exists and satellite repo has visible SSOT pointer plus exact-head receipt.",
+    "REJECT": "Exact-head mismatch, missing required receipt fields, or a repo claims authority outside its role.",
+    "DEFER": "Satellite repo is active but not yet bound to a visible canonical SSOT pointer."
+  }
+}
