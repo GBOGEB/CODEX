@@ -1,0 +1,106 @@
+schema_version: gloob-bifurcation-census/1.0.0
+wave: W111
+repo: GBOGEB/CODEX
+purpose: >-
+  Identify CODEX surfaces that overlap with GLOOB semantic-book projection,
+  preserve unique renderer nuance, and converge only duplicate view-state/control logic.
+
+canonical_projection:
+  name: GLOOB
+  runtime: src/orchestration/global_mesh_book_runtime_v1.py
+  contract: federation/global_mesh/GLOBAL_MESH_VIEW_CONTRACT_v1.yaml
+  view_manifest: federation/global_mesh/view_manifest.default.json
+  zod: federation/global_mesh/global_mesh_view.zod.ts
+  authority: PRESENTATION_ONLY
+
+principle:
+  eliminate: DUPLICATE_CONTROL_PLANES
+  preserve: UNIQUE_RENDERER_CAPABILITIES
+  migration_style: ADAPTER_FIRST_NO_DESTRUCTIVE_DELETE
+
+families:
+  - id: CODEX_BOOK_MD_PANDOC
+    paths: [book_md/, book_md/book_order.txt, book_md/10_books/, CODEX_Index.yaml]
+    overlap: HIGH
+    preserve_nuance:
+      - ordered long-form Markdown source assembly
+      - Pandoc/XeLaTeX frozen PDF rendering
+      - static HTML export
+      - existing book source organization
+    converge:
+      - semantic depth state
+      - lens state
+      - boundary state
+      - artifact identity/receipt state
+    disposition: SOURCE_AND_FROZEN_RENDER_ADAPTER
+
+  - id: CODEX_WAVE_RUNTIME_RENDER_STACK
+    paths:
+      - docs/wave_packages/runtime/render_markdown_runtime.py
+      - docs/wave_packages/runtime/render_html_runtime.py
+      - docs/wave_packages/runtime/pages_runtime.py
+      - docs/wave_packages/runtime/topology_renderer.py
+      - docs/wave_packages/runtime/federation_bridge_cli.py
+      - docs/wave_packages/runtime/runtime_registry.yaml
+    overlap: HIGH
+    preserve_nuance:
+      - runtime status table extraction
+      - tile dashboard presentation
+      - Pages bundle/index generation
+      - Mermaid forward/backward topology rendering
+      - step-by-step bridge execution reports
+    converge:
+      - book/flow/graph view selection
+      - depth/lens/boundary state
+      - common provenance footer
+      - common view manifest
+    known_debt:
+      - historical HTML template failure exists in runtime build report
+      - Pages bundle currently coordinates a parallel view surface
+    disposition: LEGACY_PRODUCER_COMPATIBILITY_ADAPTER
+
+  - id: SEMANTIC_RUNTIME_PIPELINE
+    paths:
+      - src/orchestration/semantic_runtime_pipeline_bridge_v1.py
+      - src/governance/semantic_governance_mesh_runtime_v1.py
+    overlap: LOW
+    preserve_nuance:
+      - telemetry/statistics/PCA/ANOVA
+      - semantic policy validation
+      - trust scoring
+    disposition: INPUT_PRODUCER_KEEP
+
+  - id: SLIDE_AND_DECK_RENDERERS
+    paths: [slides/deck_orchestrator.py, book_md/10_books/20_slides/]
+    overlap: LOW
+    preserve_nuance:
+      - PPTX layout semantics
+      - slide-specific HTML/PDF
+      - deck artifact hashing
+    disposition: SPECIALIST_RENDERER_KEEP
+
+  - id: LEGACY_STATIC_HANDOVER_HTML
+    paths: [handoff/, docs/]
+    overlap: MEDIUM
+    preserve_nuance:
+      - historical frozen navigation/context
+    disposition: FROZEN_REFERENCE_OR_IMPORT_ADAPTER
+
+convergence_rules:
+  - one GLOOB view manifest owns depth, lens, boundary, mode and filters
+  - repo-native engines may own format-specific pagination/layout/interaction details
+  - source authority and evidence class are never rewritten by adapters
+  - frozen PDF/static HTML remain reproducible projections, not independent SSOTs
+  - adapters must declare every preserved capability before any legacy control plane is retired
+  - no deletion until parity receipt proves preserved capabilities remain reachable
+
+retirement_gate:
+  required:
+    - capability census complete
+    - adapter parity PASS
+    - exact-head receipt PASS
+    - source authority unchanged
+    - frozen render reproducibility PASS
+  action_if_missing: KEEP_LEGACY_SURFACE
+
+status: CONVERGENCE_WITH_NUANCE_PRESERVATION_IN_PROGRESS
