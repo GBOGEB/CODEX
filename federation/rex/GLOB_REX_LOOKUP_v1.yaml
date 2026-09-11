@@ -1,0 +1,100 @@
+schema: gbogeb-glob-rex-lookup/1.0
+wave: W113
+parent: GLOB.yaml
+role: DMAIC_CONTROL_REX_SUBRESOLVER
+purpose: >-
+  Query and summarize Return of Experience records by repository, severity,
+  recurrence, family, signature, control status and repair method. The resolver
+  is read-only; it does not schedule work, alter source issues or promote
+  engineering acceptance.
+
+sources:
+  taxonomy: federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml
+  ledger: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
+
+query_dimensions:
+  by_rex_id: exact REX identifier
+  by_repo: primary or impacted repository
+  by_severity: 1..5 stars
+  by_recurrence: recurrence class
+  by_family: error/problem family
+  by_issue_kind: ERROR/FAILURE/BUG/DEFECT/PROBLEM/BLOCKER/GAP/DEBT/INCIDENT/REVIEW_FINDING
+  by_control_status: OPEN/CONTAINED/REPAIRED/VERIFIED/CONTROLLED/DEFERRED/SUPERSEDED
+  by_action_moniker: repair/control method
+  by_tag: lookup_tags
+  by_signature: stable problem signature
+
+natural_asks:
+  - ask: show REX for cryoplant-project
+    query: {repo: GBOGEB/cryoplant-project}
+  - ask: show recurring failures
+    query: {recurrence_not: UNIQUE}
+  - ask: show five-star REX
+    query: {severity_stars: 5}
+  - ask: what failed most often in W112?
+    query: {sort: observed_count_desc, limit: 5}
+  - ask: which problems crossed repos?
+    query: {min_impacted_repo_count: 2}
+  - ask: show open Control-phase blockers
+    query: {control_status: [OPEN, DEFERRED]}
+  - ask: how was semantic_readiness repaired?
+    query: {signature_contains: semantic_readiness}
+  - ask: show runtime REX
+    query: {family: RUNTIME}
+  - ask: show REX repaired with SEM
+    query: {action_moniker: SEM}
+
+popup_contract:
+  max_records: 10
+  fields:
+    - rex_id
+    - repo
+    - severity_glyph
+    - observed_count
+    - recurrence
+    - family
+    - issue_kind
+    - symptom
+    - action_moniker
+    - control_status
+    - lesson
+    - verification
+  sort_default: [severity_desc, observed_count_desc]
+
+repo_return_contract:
+  schema: gbogeb-repo-rex-return/1.0
+  required:
+    - repo
+    - measurement_window
+    - records
+  each_record_requires:
+    - signature
+    - issue_kind
+    - family
+    - severity_stars
+    - frequency
+    - recurrence
+    - action_moniker
+    - control_status
+    - lesson
+  merge_rule: >-
+    Match by stable signature plus authority-relevant scope. Update counts,
+    first/last seen and recurrence instead of emitting disconnected duplicates.
+  provenance_rule: every promoted/global count remains tied to an explicit observed window
+
+control_metrics:
+  - total_rex_records
+  - open_or_deferred_count
+  - recurrence_rate_by_signature
+  - five_star_open_count
+  - cross_repo_recurrence_count
+  - reopened_count
+  - verified_repair_count
+  - controlled_guard_count
+  - top_failure_families
+  - top_repair_monikers
+
+first_use_case: >-
+  Query W112 Global Hive experience and immediately distinguish controlled
+  semantic/validation defects from the still-deferred cryoplant zero-step
+  runtime blocker.
