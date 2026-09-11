@@ -5,8 +5,15 @@ role: KEB_SEMANTIC_AND_RELEASE_PROOF
 base_main_sha: 34798bc9d1bccbd6daaf2b6118cf0369f6cafe4b
 status: RC_CANDIDATE_PROBE_NO_RELEASE_CREDIT
 governance_replay:
-  reason: prior W003 PR body used invalid TYPE RELEASE_CONTROL
-  correction: TYPE GOVERNANCE
+  attempt: 3
+  prior_reds:
+    - TYPE_RELEASE_CONTROL_INVALID
+    - SCHEMA_MUTATION_NONE_INVALID
+    - PR_ID_NON_NUMERIC_INVALID
+  correction:
+    PR_ID: PR-635
+    TYPE: GOVERNANCE
+    SCHEMA_MUTATION: NO
   required_result: fresh W003 PASS on this PR event
 purpose: >-
   Trigger one fresh exact-head release-candidate proof pulse using existing CODEX
