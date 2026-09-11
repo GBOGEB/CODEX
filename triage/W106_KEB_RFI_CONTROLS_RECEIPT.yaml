@@ -1,0 +1,37 @@
+schema: qps-w106-keb-rfi-controls-receipt/v1
+wave: W106
+role: KNOWLEDGE_EXCHANGE_BRIDGE
+bindings:
+  child:
+    repo: GBOGEB/cryoplant-project
+    pr: 875
+  dow:
+    repo: GBOGEB/ABACUS
+    pr: 1113
+subject: LKT_ALAT_CONTROL_SYSTEM_RFI
+semantic_contract:
+  common_questions: 15
+  same_baseline_for_bidders: true
+  bidder_specific_questions_only_from_source_evidence: true
+  control_hierarchy_target:
+    overarching: QPLANT:CIS
+    subordinate: [WCS:CS, QRB:CS]
+    conditional: [WSH, QSN]
+  preserve_local_equipment_protection: true
+  prohibit_inference_promotion: true
+required_return_atoms:
+  - bidder
+  - rfi_id
+  - response_locator
+  - evidence_state
+  - offered_architecture_atom
+  - mapped_SBS_node
+  - compliance_or_deviation_state
+  - unresolved_question
+allowed_disposition: [ACCEPT, REJECT, DEFER]
+current_disposition: DEFER
+reason: authoritative_bidder_responses_not_yet_bound
+formal_credit: 0
+next_gate: >-
+  Merge child and DOW contracts, bind exact SHAs, ingest authoritative LKT and ALAT responses,
+  map each response to QPLANT:CIS/WCS:CS/QRB:CS/WSH/QSN, then emit exact-SHA child disposition.
