@@ -1,0 +1,185 @@
+schema: gbogeb-glob/1.0
+wave: W112
+status: CANDIDATE_GLOBAL_LOOKUP_CONTROL
+name: GLOB
+expansion: Global Lookup and Operations Board
+purpose: >-
+  Single human/machine entrypoint for discovering what the global hive can do,
+  what a node/lane accepts or emits, which action moniker to use, which status
+  dimensions to inspect, and where canonical authority lives. GLOB is an index
+  and resolver; it is not a new engineering SSOT or scheduler.
+
+authority:
+  global_index_owner: GBOGEB/CODEX
+  global_census: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml
+  global_glossary: federation/mesh/GLOBAL_GLOSSARY_v1.yaml
+  action_taxonomy: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
+  action_where_used: federation/mesh/GLOBAL_ACTION_WHERE_USED_v1.yaml
+  status_contract: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+  status_taxonomy: governance/mesh/MESH_EXECUTION_TAXONOMY_v1.md
+  qps_engineering_authority: GBOGEB/cryoplant-project
+  runtime_orchestration_plane: GBOGEB/ABACUS
+  invariant: GLOBAL_INDEX_NE_GLOBAL_AUTHORITY
+
+navigation:
+  default_view: overview
+  views:
+    overview:
+      answers: what exists, who owns what, and how the hive connects
+      filters: [node_type, edge_type, lane]
+    roll_up_in:
+      answers: what evidence/state enters a node, lane or global control view
+      direction: IN
+      colour_semantic: BLUE
+    roll_out_out:
+      answers: what actions/contracts/products leave a node, lane or control view
+      direction: OUT
+      colour_semantic: ORANGE
+    propagate:
+      answers: what moves laterally between lanes/repos without authority transfer
+      direction: PROPAGATE
+      colour_semantic: TEAL_DASHED
+    recurse:
+      answers: what first-red/blocker is repaired and re-entered
+      direction: RECURSE
+      colour_semantic: PURPLE_DOTTED
+    evidence_dov:
+      answers: what is observed, proven, accepted, blocked or still missing for victory
+      status_focus: [EX, QH, KR, BG, CG, WD]
+
+colour_schedule:
+  IN: {colour: BLUE, meaning: inbound evidence/state/roll-up}
+  OUT: {colour: ORANGE, meaning: outbound action/control/product/roll-out}
+  PROPAGATE: {colour: TEAL, line: dashed, meaning: lateral federation propagation}
+  RECURSE: {colour: PURPLE, line: dotted, meaning: repair/feedback/re-entry}
+  CONTROL: {colour: NEUTRAL, meaning: authority/index/control node}
+
+lookup:
+  dimensions:
+    by_node: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml
+    by_lane: this_file.navigation.views
+    by_action_moniker: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
+    by_status_dimension: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+    by_term: federation/mesh/GLOBAL_GLOSSARY_v1.yaml
+    by_where_used: federation/mesh/GLOBAL_WHERE_USED_v1.yaml
+    by_direction: this_file.colour_schedule
+    by_first_use_case: federation/mesh/GLOBAL_ACTION_WHERE_USED_v1.yaml
+
+status_namespace:
+  reserved_keys: [CG, WD, RR, DR, SR, HK, EX, FE, QH, KR, CR, PB, BG]
+  contract: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+  rule: status keys describe state and MUST NOT identify task actions
+
+action_namespace:
+  monikers: [CLOSE, RED, RUNTIME, SEM, SSOT, RECEIPT, ENABLE, HARDEN, CLEAN, MAINT, READ, EXP, WATCH]
+  taxonomy: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
+  rule: action monikers are task verbs and MUST NOT collide with status keys
+
+what_can_you_ask:
+  - ask: what can you do?
+    resolves_to: capability_menu
+  - ask: what can CODEX do?
+    resolves_to: node_snippet
+  - ask: what can ABACUS do?
+    resolves_to: node_snippet
+  - ask: what can cryoplant-project do?
+    resolves_to: node_snippet
+  - ask: show RED
+    resolves_to: action_snippet
+  - ask: show RECEIPT
+    resolves_to: action_snippet
+  - ask: what is blocking the current gate?
+    resolves_to: status_snippet
+    inspect: [CG, BG]
+  - ask: did it actually run and pass?
+    resolves_to: status_snippet
+    inspect: [EX, QH, KR]
+  - ask: what comes into this lane?
+    resolves_to: direction_snippet
+    filter: IN
+  - ask: what leaves this lane?
+    resolves_to: direction_snippet
+    filter: OUT
+  - ask: what propagates laterally?
+    resolves_to: direction_snippet
+    filter: PROPAGATE
+  - ask: recurse first red
+    resolves_to: action_snippet
+    moniker: RED
+  - ask: where is this used?
+    resolves_to: where_used_snippet
+  - ask: who owns this truth?
+    resolves_to: authority_snippet
+
+capability_menu:
+  closure:
+    monikers: [CLOSE, RED]
+    prompts: [close_current_gate, repair_first_red]
+  repair:
+    monikers: [RUNTIME, SEM, SSOT, RECEIPT]
+    prompts: [repair_runtime, align_semantics, resolve_ssot, bind_receipt]
+  enable_and_harden:
+    monikers: [ENABLE, HARDEN]
+    prompts: [enable_reusable_capability, harden_quality]
+  background:
+    monikers: [CLEAN, MAINT, READ, EXP]
+    prompts: [clean_debt, refresh_health, read_reference, run_experiment]
+  waiting:
+    monikers: [WATCH]
+    prompts: [show_waiting_dependency, resume_when_changed]
+
+popup_snippet_contract:
+  schema: gbogeb-glob-popup/1.0
+  max_lines: 12
+  required_fields: [kind, title, identity, purpose, authority, first_use_case]
+  optional_fields: [moniker, lane, direction, status_keys, inputs, outputs, consumers, next_asks, evidence, freshness]
+  compact: true
+  authority_visible: true
+  freshness_visible_when_evidence_bound: true
+  examples:
+    action:
+      kind: action
+      title: Recurse first red
+      identity: RED
+      purpose: repair earliest observed blocker and rerun unchanged
+      authority: does not create or transfer engineering authority
+      status_keys: [BG, CR, EX, QH, KR]
+      first_use_case: repair first failing semantic/runtime gate
+      next_asks: [show blocker, run same gate, bind receipt]
+    node:
+      kind: node
+      title: CODEX
+      identity: repo.codex
+      purpose: semantic/provenance governance and federation automation
+      authority: semantic normalization and receipts; not QPS engineering truth
+      first_use_case: validate child evidence tuple before DOW consumption
+      next_asks: [show inbound, show outbound, show status, show actions]
+
+lanes:
+  domain: {primary_nodes: [repo.cryoplant], default_actions: [CLOSE, SSOT, SEM, RECEIPT]}
+  governance: {primary_nodes: [repo.codex], default_actions: [SEM, RECEIPT, HARDEN, CLOSE]}
+  runtime: {primary_nodes: [repo.abacus], default_actions: [RED, RUNTIME, RECEIPT, MAINT]}
+  execution: {resolver: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml, default_actions: [RUNTIME, RED, HARDEN]}
+  artifact: {resolver: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml, default_actions: [ENABLE, HARDEN, RECEIPT]}
+  assurance: {resolver: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml, default_actions: [HARDEN, RECEIPT, SEM]}
+  knowledge: {resolver: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml, default_actions: [READ, EXP]}
+  recursion: {resolver: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml, default_actions: [RED, MAINT]}
+  experiment: {resolver: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml, default_actions: [EXP, ENABLE]}
+  control: {primary_nodes: [repo.codex, repo.abacus, repo.cryoplant], default_actions: [CLOSE, RED, RECEIPT]}
+
+mip:
+  modernize:
+    - separate W108 status namespace from W111 action namespace
+    - migrate active W111 consumers to verb monikers
+  innovate:
+    - add GLOB as one-entry lookup and capability menu
+    - add compact popup/snippet contract and direction-aware navigation
+  perpetuate:
+    - expose GLOB from .mesh/MESH_DOCK.yaml
+    - validate namespace disjointness and resolver integrity in CI/tests
+    - propagate receiver pointers to ABACUS and cryoplant without authority transfer
+
+first_use_case: >-
+  Ask "what can you do?", select RED, inspect BG/EX/QH/KR, repair the first
+  observed blocker, rerun unchanged, bind RECEIPT, then CLOSE through the
+  entitled child authority.
