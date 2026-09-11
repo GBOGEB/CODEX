@@ -1,8 +1,15 @@
 # yamllint disable rule:line-length
-schema: w112-w111-core-merge-keb-receipt/1.0
+schema: w112-w111-core-merge-keb-receipt/1.1
 wave: W112
 role: KEB_EXACT_MERGE_BINDING
 source_wave: W111
+action_namespace:
+  source_pr: 619
+  exact_head_sha: 537cd69aebbd9b75a39266723ad6c0fcfd1ba74e
+  status_dimension_contract: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+  action_taxonomy: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
+  rule: W108 two-letter keys are status dimensions only; tasks emit verb action monikers
+  legacy_w111_action_aliases: DEPRECATED_PARSE_ONLY
 w111_exact_merge_tuple:
   codex:
     repo: GBOGEB/CODEX
@@ -28,14 +35,14 @@ dow_postmerge_repair:
   source_head_sha: c0f3567220761d9d1723f46e0e3524f989eaaa8b
   source_merge_sha: f3e1afc2db86b8ff9615b12fa5edde3f833eb12e
   repair_pr: 1120
-  repair_exact_head_sha: ab42e4370cf2708f89b8c85427329df992f765f8
+  repair_exact_head_sha: 60c31f13ac620e64c7f966262143bad40586b6e7
   receipt: federation/mesh/W112_W111_DOW_POSTMERGE_RECEIPT.yaml
   expected_disposition: ACCEPT_W111_DERIVED_PROJECTION_WITH_EXACT_MERGE_TUPLE_DEFER_QPS_RUNTIME_AND_BIDDER_CLOSURE
 codex_governance_gate:
   target_head_sha: 3d46e231424de47780f58016e1577bfb625d149c
   first_red_run_id: 34576162207
   first_red_conclusion: failure
-  repair_class: RR
+  repair_action_moniker: RED
   repair: add mandatory PR classification metadata to merged PR #615
   verification_run_id: 34577373709
   verification_conclusion: success
@@ -46,9 +53,9 @@ validator_repair:
   origin: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
   origin_pr: 616
   origin_merge_sha: ded67cdf28f845289158eabe53044d9c6e17c8e9
-  repair_class: SR
-  repair: register semantic_readiness in PIPELINE/GLOSSARY.yaml and declare scheduler-status versus action-class namespace boundary
-  namespace_invariant: MESH_STATUS_DIMENSION.SR_NE_ACTION_CLASS.SR
+  repair_action_moniker: SEM
+  repair: register semantic_readiness in PIPELINE/GLOSSARY.yaml and declare scheduler-status versus action-moniker namespace boundary
+  namespace_invariant: MESH_STATUS_DIMENSION.SR_NE_ACTION_MONIKER.SEM
 observed_semantic_runtime:
   target_head_sha: 3d46e231424de47780f58016e1577bfb625d149c
   CODEX_Semantic_Runtime_CI: success
@@ -56,8 +63,11 @@ observed_semantic_runtime:
   CODEX_Determinism_Execution: success
   Validate_Federation: success
 qps_runtime_boundary:
-  status: DEFER_RUNTIME_EXECUTION
-  action_class: CR
+  disposition: DEFER_RUNTIME_EXECUTION
+  action_moniker: RUNTIME
+  status_snapshot:
+    EX: RED
+    BG: BLOCKED
   evidence:
     w69_run_id: 34576080052
     ubuntu_latest: {conclusion: failure, steps_executed: 0, runner_id: 0}
@@ -79,4 +89,5 @@ authority:
   may: [bind_semantic_identity, bind_provenance, publish_KEB_receipt]
   must_not: [promote_QPS_engineering_truth, close_bidder_RFI, reinterpret_DOW_as_child_authority]
 keb_disposition: ACCEPT_W111_SEMANTIC_AND_PROVENANCE_TUPLE_DEFER_CHILD_RUNTIME_AND_BIDDER_CLOSURE
+next_action_moniker: CLOSE
 next: QPS child re-entry consumes this KEB receipt and the DOW post-merge repair; child alone records ACCEPT/REJECT/DEFER.
