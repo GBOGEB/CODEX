@@ -36,8 +36,20 @@ jobs:
               size_bytes: null
               verification_status: HASH_VERIFIED_SIZE_PENDING
           "@ | Set-Content -LiteralPath $registry -Encoding utf8
-          ./07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1 -BuilderScript ./07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1 -EvidenceRoot $vault -RegistryPath $registry -ReleaseRoot release/W69/first -ReleaseId W69-FIRST -SkipRepositoryUpdate
-          ./07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1 -BuilderScript ./07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1 -EvidenceRoot $vault -RegistryPath $registry -ReleaseRoot release/W69/second -ReleaseId W69-SECOND -SkipRepositoryUpdate
+
+          # W69 is a deterministic synthetic-builder gate. Do not invoke the
+          # workstation/multi-repository bootstrap from a single-repo hosted
+          # checkout: that bootstrap intentionally requires ABACUS, CODEX,
+          # cryoplant-project and DOCX_RTM_Automation to exist locally.
+          $builder = Resolve-Path './07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1'
+          foreach ($label in @('first','second')) {
+            $dist = Join-Path "release/W69/$label" '10_RELEASES/latest'
+            New-Item -ItemType Directory -Force -Path $dist | Out-Null
+            & $builder -OutputDirectory $dist -EvidenceRoot $vault -RepoRoot $env:GITHUB_WORKSPACE -ReleaseId "W69-$($label.ToUpperInvariant())" -BuildLabel $label
+            if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) {
+              throw "Synthetic builder returned exit code $LASTEXITCODE for $label"
+            }
+          }
       - name: Compare product family and emit receipt
         shell: pwsh
         run: |
