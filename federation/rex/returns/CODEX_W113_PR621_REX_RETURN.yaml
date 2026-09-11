@@ -3,62 +3,86 @@ repo: GBOGEB/CODEX
 measurement_window:
   start: 2026-09-11T08:36:31Z
   end: OPEN
-  basis: PR621 exact-head GitHub Actions and review experience
-  denominator_notes: one observed W003 governance-gate execution opportunity so far
+  basis: W113 W003 governance-gate Control loop across PR621 and PR624
+  denominator_notes: two observed failed W003 execution opportunities; fresh control probe pending
 
 repo_state:
-  head_sha: 40d898f6c8f647cb581794d39b346294938274db
-  branch_or_pr: GBOGEB/CODEX#621
+  head_sha: 0357a3a34772124a174f0770bedf6a1e44e04a81
+  branch_or_pr: w113/rex-w003-control-close
   dmaic_phase: CONTROL
   rex_status: CURRENT_OPEN
 
 records:
   - rex_id: REX-W113-CODEX-001
-    signature: CI_CD.W003.PR_METADATA.MISSING_GOVERNANCE_HEADER
+    signature: CI_CD.W003.PR_METADATA.GOVERNANCE_CONTRACT_INVALID
     issue_kind: FAILURE
     family: CI_CD
     repo:
       primary: GBOGEB/CODEX
       impacted: [GBOGEB/CODEX]
     first_seen: 34580026684
-    last_seen: 34580026684
+    last_seen: 34580243250
     severity_stars: 3
     frequency:
-      observed_count: 1
+      observed_count: 2
       unit: failed_governance_gate_runs
       impacted_repo_count: 1
       impacted_workflow_count: 1
-      measurement_window: CODEX_PR621_W113
-    recurrence: UNIQUE
+      measurement_window: CODEX_W113_W003_CONTROL
+    recurrence: REPEATED_SAME_SIGNATURE
+    reopened_count: 1
     symptom: >-
-      W003 Governance Gate executed normally but rejected PR #621 because the
-      pull-request body had no mandatory PR CLASSIFICATION governance header.
-    root_cause: PR metadata authoring omitted the repository governance header contract
+      W003 Governance Gate executed normally and rejected two successive forms of
+      invalid PR governance metadata: PR #621 omitted the mandatory PR CLASSIFICATION
+      block; PR #624 included the block but used SPRINT S1-C1, which violates the
+      governed S<number>-P<number> schema contract.
+    root_cause: >-
+      PR metadata authoring did not conform to the executable governance-header
+      contract before CI: first by omission, then by an invalid SPRINT value.
     action_moniker: RED
     repair_method: >-
-      Add the required governance classification block to PR #621 without
-      changing the W003 parser or weakening the gate; then rerun via pull_request edited event.
+      Preserve the fail-closed W003 parser/schema unchanged. Author a fresh control PR
+      with the complete governance block and schema-valid SPRINT S1-P1, then require
+      the same W003 gate to execute more than zero steps and PASS.
     verification:
-      run_id: 34580026684
-      job_id: 103201189313
-      exact_head_sha: 40d898f6c8f647cb581794d39b346294938274db
-      result: FAIL_BEFORE_REPAIR
-      failing_step: Run governance parser on PR metadata
-      error_code: PR-007
+      initial_failure:
+        run_id: 34580026684
+        job_id: 103201189313
+        exact_head_sha: 40d898f6c8f647cb581794d39b346294938274db
+        result: FAIL_MISSING_HEADER
+        failing_step: Run governance parser on PR metadata
+        error_code: PR-007
+      first_control_probe:
+        pr: 624
+        run_id: 34580243250
+        job_id: 103201867572
+        exact_head_sha: 0b1a2d4a101e5f8989fd3d896626b018fd8ba43a
+        runner_id: 1000242099
+        result: FAIL_INVALID_SPRINT_SCHEMA
+        failing_step: Run governance parser on PR metadata
+        observed_steps_before_failure: 5
+      fresh_control_probe:
+        pr: PENDING
+        run_id: PENDING
+        job_id: PENDING
+        exact_head_sha: PENDING
+        result: PENDING
     control_guard:
       - W003 Governance Gate remains fail-closed
-      - PR template or authoring helper should emit governance header before first CI
+      - PR authoring must emit the complete governance header before first CI
+      - SPRINT must satisfy the governed S<number>-P<number> pattern
+      - CONTROLLED requires an unchanged-gate PASS with durable exact-run proof
     control_status: OPEN
     lesson: >-
-      PR metadata is executable governance input; author the required header at PR
-      creation time so semantic/code CI is not delayed by a preventable Control failure.
-    lookup_tags: [w003, governance, pr-metadata, header, pr-007, codex]
+      PR metadata is executable governance input. Control requires both presence and
+      schema conformance; a visually complete header is not sufficient evidence.
+    lookup_tags: [w003, governance, pr-metadata, header, schema, sprint, pr-007, codex]
 
 summary:
   total_records: 1
   open_or_deferred: 1
   five_star_open: 0
-  recurring_records: 0
+  recurring_records: 1
   cross_repo_records: 0
   verified_or_controlled: 0
 
