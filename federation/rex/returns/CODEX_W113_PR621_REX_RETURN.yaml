@@ -1,0 +1,70 @@
+schema: gbogeb-repo-rex-return/1.0
+repo: GBOGEB/CODEX
+measurement_window:
+  start: 2026-09-11T08:36:31Z
+  end: OPEN
+  basis: PR621 exact-head GitHub Actions and review experience
+  denominator_notes: one observed W003 governance-gate execution opportunity so far
+
+repo_state:
+  head_sha: 40d898f6c8f647cb581794d39b346294938274db
+  branch_or_pr: GBOGEB/CODEX#621
+  dmaic_phase: CONTROL
+  rex_status: CURRENT_OPEN
+
+records:
+  - rex_id: REX-W113-CODEX-001
+    signature: CI_CD.W003.PR_METADATA.MISSING_GOVERNANCE_HEADER
+    issue_kind: FAILURE
+    family: CI_CD
+    repo:
+      primary: GBOGEB/CODEX
+      impacted: [GBOGEB/CODEX]
+    first_seen: 34580026684
+    last_seen: 34580026684
+    severity_stars: 3
+    frequency:
+      observed_count: 1
+      unit: failed_governance_gate_runs
+      impacted_repo_count: 1
+      impacted_workflow_count: 1
+      measurement_window: CODEX_PR621_W113
+    recurrence: UNIQUE
+    symptom: >-
+      W003 Governance Gate executed normally but rejected PR #621 because the
+      pull-request body had no mandatory PR CLASSIFICATION governance header.
+    root_cause: PR metadata authoring omitted the repository governance header contract
+    action_moniker: RED
+    repair_method: >-
+      Add the required governance classification block to PR #621 without
+      changing the W003 parser or weakening the gate; then rerun via pull_request edited event.
+    verification:
+      run_id: 34580026684
+      job_id: 103201189313
+      exact_head_sha: 40d898f6c8f647cb581794d39b346294938274db
+      result: FAIL_BEFORE_REPAIR
+      failing_step: Run governance parser on PR metadata
+      error_code: PR-007
+    control_guard:
+      - W003 Governance Gate remains fail-closed
+      - PR template or authoring helper should emit governance header before first CI
+    control_status: OPEN
+    lesson: >-
+      PR metadata is executable governance input; author the required header at PR
+      creation time so semantic/code CI is not delayed by a preventable Control failure.
+    lookup_tags: [w003, governance, pr-metadata, header, pr-007, codex]
+
+summary:
+  total_records: 1
+  open_or_deferred: 1
+  five_star_open: 0
+  recurring_records: 0
+  cross_repo_records: 0
+  verified_or_controlled: 0
+
+return_contract:
+  consumer: GBOGEB/CODEX
+  global_taxonomy: federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml
+  merge_key: signature_plus_authority_relevant_scope
+  promotion_state: HOLD_UNTIL_SAME_GATE_PASS
+  authority_transfer: false
