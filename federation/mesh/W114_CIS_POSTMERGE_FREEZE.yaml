@@ -1,0 +1,165 @@
+# yamllint disable rule:line-length
+schema: w114-cis-postmerge-freeze/1.1
+wave: W114
+role: KEB_POSTMERGE_FREEZE_AND_ROLLUP
+purpose: >-
+  Bind the completed W111 CIS source-penetration chain and the W112/W113
+  action-status convergence to immutable merge identities without promoting
+  child engineering, bidder-compliance or runtime acceptance.
+
+canonical_namespace:
+  status_contract: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+  action_taxonomy: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
+  rule: W108 two-letter keys are status dimensions only; tasks emit verb action monikers
+  producer:
+    pr: 619
+    reviewed_head_sha: 537cd69aebbd9b75a39266723ad6c0fcfd1ba74e
+    merge_sha: a330210ef092c4aeb74b2b5878f5a9a8e555b423
+  child_projection:
+    repo: GBOGEB/cryoplant-project
+    pr: 886
+    reviewed_head_sha: ab01af58dd5b99ef5a1b0a8a72fb686193a018db
+    merge_sha: 3316a51bbb68465402306f56f243b1ab7f4ab79e
+
+w111_source_tuple:
+  qps_baseline:
+    repo: GBOGEB/cryoplant-project
+    pr: 877
+    merge_sha: 067e1ad9c6c461018ccb43bc2e50f6a5b2b89ee7
+  qps_penetration:
+    repo: GBOGEB/cryoplant-project
+    pr: 880
+    reviewed_head_sha: 6563b1f7fe9318625e0346a244415207d8f9b952
+    merge_sha: 8843eb4a4ac6155f35f4284b81385ab34e5b4556
+  keb_projection:
+    repo: GBOGEB/CODEX
+    pr: 615
+    reviewed_head_sha: 3d46e231424de47780f58016e1577bfb625d149c
+    merge_sha: 1ad94ae3e2244a76b3b3aaa0d47d858518c79557
+  dow_projection:
+    repo: GBOGEB/ABACUS
+    pr: 1115
+    reviewed_head_sha: 38f9fe175420fee61c207307858950d1f615ff5b
+    merge_sha: 496323ce828a9266ed04898af964433cd3a7e2f0
+
+postmerge_receipts:
+  dow_source:
+    repo: GBOGEB/ABACUS
+    pr: 1118
+    merge_sha: f3e1afc2db86b8ff9615b12fa5edde3f833eb12e
+  dow_repair:
+    repo: GBOGEB/ABACUS
+    pr: 1120
+    reviewed_head_sha: 60c31f13ac620e64c7f966262143bad40586b6e7
+    merge_sha: c2ecd1ce7411d77c13a460073c80655cc55145ad
+  keb_receipt:
+    repo: GBOGEB/CODEX
+    pr: 618
+    reviewed_head_sha: b2888f25184963d14c41276caee909aa5a7d4a36
+    merge_sha: f96f342bdee9aeb89001cd5ba86123bcd7e01be8
+  qps_child_reentry:
+    repo: GBOGEB/cryoplant-project
+    pr: 885
+    reviewed_head_sha: ec1eb62736c48b4a588742c01131911836b1fc72
+    merge_sha: 1c97ad125c038344a055cc53bf6a12e3c94b82b5
+
+dow_namespace_receiver:
+  repo: GBOGEB/ABACUS
+  pr: 1119
+  exact_head_sha: 9a4139a926f4b4d90b197be76877e27d01b86fb1
+  merge_sha: 8b1dca3652735156542e9dd14bf6b5b7a6080482
+  current_disposition: ACCEPT_CONTRACT_AND_ROUTING_VOCABULARY
+
+measured_cis_state:
+  denominator_cells: 30
+  source_bound_partial_or_gap: 15
+  unknown_after_search: 15
+  fully_closed_by_offer: 0
+  materially_narrowed: 15
+  external_packages_per_bidder: 3
+  reverse_fanout_P0:
+    - RFI-CIS-01
+    - RFI-CIS-02
+    - RFI-CIS-03
+    - RFI-CIS-07
+    - RFI-CIS-08
+    - RFI-CIS-10
+    - RFI-CIS-14
+    - RFI-CIS-04
+    - RFI-CIS-15
+    - RFI-CIS-12
+
+observed_proof:
+  codex_615_governance_repair:
+    action_moniker: RED
+    verification_run_id: 34577373709
+    conclusion: PASS
+  codex_618_runtime:
+    action_moniker: SEM
+    run_id: 34578695693
+    validator: PASS
+    orchestration_loop: PASS
+    tuple_registry: PASS
+    tests: PASS
+    keb_runtime_return: PASS
+  codex_619_governance:
+    action_moniker: RED
+    run_id: 34578608930
+    conclusion: PASS
+  abacus_1120_docs:
+    action_moniker: HARDEN
+    run_id: 34578670019
+    conclusion: PASS
+  qps_child_runtime:
+    action_moniker: RUNTIME
+    disposition: DEFER_RUNNER_PRESTEP
+    status_snapshot:
+      EX: RED
+      BG: BLOCKED
+    evidence:
+      release_probe_run_id: 34578731639
+      canonicalization_run_id: 34578731673
+      observation: configured and hosted jobs were created without executable step lists
+
+rollup_disposition:
+  w111_source_identity: ACCEPT
+  postmerge_provenance_identity: ACCEPT
+  status_action_namespace: ACCEPT
+  dow_namespace_receiver_merge: ACCEPT
+  qps_runtime_execution: DEFER_RUNNER_PRESTEP
+  bidder_contractual_closure: DEFER_AUTHORITATIVE_RETURN_REQUIRED
+  engineering_credit: 0
+  compliance_credit: 0
+  negotiation_credit: 0
+  overall: DEFER
+
+authority:
+  may:
+    - bind_exact_identity
+    - publish_keb_provenance_freeze
+    - expose_status_and_next_actions
+  must_not:
+    - promote_qps_engineering_truth
+    - close_bidder_rfi
+    - reinterpret_dow_as_child_authority
+    - convert_zero_step_runner_failure_to_application_failure
+
+next_actions:
+  - moniker: RUNTIME
+    action: restore cryoplant repository runner provisioning until a governed probe executes greater than zero steps
+  - moniker: CLOSE
+    action: issue the three consolidated bidder CIS packages per bidder without semantic loss
+  - moniker: WATCH
+    action: await authoritative bidder return without repeatedly reranking unchanged unknowns
+  - moniker: RECEIPT
+    action: bind returned source identity and payload digest
+  - moniker: CLOSE
+    action: QPS child records ACCEPT REJECT or DEFER per RFI atom and package
+
+invariants:
+  - STATUS_KEYS_NE_ACTION_MONIKERS
+  - ACTIVITY_NE_IMPORTANCE
+  - RUNTIME_GREEN_NE_ENGINEERING_ACCEPTANCE
+  - BT_RANKING_NE_AUTHORITY
+  - PREFILLABLE_NE_ANSWERABLE
+  - NO_CREDIT_WITHOUT_AUTHORITATIVE_SOURCE

@@ -1,0 +1,39 @@
+name: Validate QPS DOW KEB bridge rows
+
+on:
+  pull_request:
+    paths:
+      - "ssot/bridge_rows/**"
+      - "ssot/schemas/*_row.schema.yaml"
+      - "scripts/validate_bridge_rows.py"
+      - ".github/workflows/validate_bridge_rows.yml"
+  push:
+    branches:
+      - main
+      - "ci-qps-dow-keb-bridge-rows"
+    paths:
+      - "ssot/bridge_rows/**"
+      - "ssot/schemas/*_row.schema.yaml"
+      - "scripts/validate_bridge_rows.py"
+      - ".github/workflows/validate_bridge_rows.yml"
+
+jobs:
+  validate-bridge-rows-draft:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip pyyaml
+
+      - name: Validate bridge rows in draft mode
+        run: python scripts/validate_bridge_rows.py
+
+      - name: Show strict-mode command without enforcing it
+        run: echo "Promotion gate: python scripts/validate_bridge_rows.py --strict"

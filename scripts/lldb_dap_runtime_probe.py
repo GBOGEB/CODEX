@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """LLDB-DAP / Swift / Docker / runner / MCP runtime probe."""
 from __future__ import annotations
 
@@ -8,8 +7,8 @@ import json
 import os
 import platform
 import shutil
-import subprocess
-from datetime import datetime, timezone
+import subprocess  # nosec B404
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -19,7 +18,7 @@ PROBE_SOURCE = ROOT / "runtime" / "debug" / "lldb_dap_probe" / "Probe.swift"
 
 
 def utc_now() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    return datetime.now(UTC).replace(microsecond=0).isoformat()
 
 
 def sha256_text(value: str) -> str:
@@ -28,10 +27,17 @@ def sha256_text(value: str) -> str:
 
 def run(cmd: list[str], *, cwd: Path = ROOT, timeout: int = 120) -> dict[str, Any]:
     try:
-        proc = subprocess.run(cmd, cwd=str(cwd), text=True, capture_output=True, timeout=timeout, check=False)
+        proc = subprocess.run(  # nosec B603
+            cmd,
+            cwd=str(cwd),
+            text=True,
+            capture_output=True,
+            timeout=timeout,
+            check=False,
+        )
         return {"cmd": cmd, "returncode": proc.returncode, "stdout": proc.stdout[-8000:], "stderr": proc.stderr[-8000:]}
-    except Exception as exc:
-        return {"cmd": cmd, "returncode": 127, "stdout": "", "stderr": repr(exc)}
+    except subprocess.TimeoutExpired as exc:
+        return {"cmd": cmd, "returncode": 124, "stdout": exc.stdout or "", "stderr": exc.stderr or "timed out"}
 
 
 def git_sha() -> str:
@@ -88,14 +94,14 @@ def execute_swift_lldb_probe() -> dict[str, Any]:
     if shutil.which("lldb") is None:
         return {"status": "DEFER", "reason": "lldb_missing", "steps": 0}
 
-    compile_result = run(["swiftc", "-g", str(PROBE_SOURCE), "-o", str(binary)])
+    compile_result = run(["swiftc", "-g", "-parse-as-library", str(PROBE_SOURCE), "-o", str(binary)])
     if compile_result["returncode"] != 0:
         return {"status": "REJECT", "reason": "swift_compile_failed", "steps": 0, "compile": compile_result}
 
     lldb_result = run([
         "lldb", "--batch",
         "-o", f"target create {binary}",
-        "-o", "breakpoint set --name main",
+        "-o", "breakpoint set --file Probe.swift --line 4",
         "-o", "run",
         "-o", "thread step-over",
         "-o", "thread step-over",

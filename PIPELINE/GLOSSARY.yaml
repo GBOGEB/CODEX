@@ -1,4 +1,4 @@
-version: 0.3.9
+version: 0.3.11
 system:
   name: GBOGEB/CODEX
   codename: ABACUS_RENDER_PIPELINE
@@ -38,6 +38,10 @@ glossary:
     definition: Version identifier of the schema governing a semantic payload, contract, or receipt.
   semantic_status:
     definition: Governed execution or validation status of a semantic operation; it does not establish child engineering acceptance.
+  semantic_readiness:
+    definition: Scheduler-facing mesh status dimension stating whether semantic contracts, vocabulary, authority boundaries and meaning-preservation rules are sufficiently defined for the next governed transition; this status dimension is distinct from action-class SR (SEMANTIC_CONTRACT_REPAIR) and grants no child engineering or compliance authority.
+    authority: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+    namespace_note: MESH_STATUS_DIMENSION.SR_NE_ACTION_CLASS.SR
   semantic_term:
     definition: Individual governed vocabulary token with declared meaning and authority context.
   semantic_validation_failure_rate:
@@ -64,6 +68,8 @@ glossary:
     definition: Normalized 0-to-1 semantic similarity or relevance score attached to a governed evidence relation; it is a ranking signal only and does not establish compliance, acceptance, or child-owned closure.
   semantic_runtime_checks_passed:
     definition: Boolean parent-runtime receipt field stating that the governed semantic runtime checks preceding artifact publication completed successfully; it records execution state only and does not establish child acceptance, compliance, or score credit.
+  semantic_runtime_receipt_run:
+    definition: Exact GitHub Actions workflow-run identifier bound to a semantic-runtime receipt as execution-lineage telemetry; it records which run produced the receipt and grants no child engineering, compliance, negotiation, or release authority.
   semantic_drift:
     definition: Meaning-bearing divergence between governed artifacts, terminology, lineage, or runtime interpretation that requires detection and disposition.
   semantic_comparison_count:

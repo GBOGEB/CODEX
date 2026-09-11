@@ -1,0 +1,108 @@
+schema_version: '1.1'
+document_id: GLOBAL_MESH_STATUS_CONTRACT
+status: PROPOSED_SHARED_CONTRACT
+purpose: >-
+  Give every repository a stable scheduler-facing status vector so global orchestration consumes
+  governed state instead of scraping commit, PR and workflow noise.
+query_vector: [CG, RR, CR, SR, DR, PB, FE, QH, HK, BG, KR, EX, WD]
+closure_controller:
+  contract: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
+  canonical_prompt: mesh closure control this
+  role: composite_selector_not_atomic_action
+  selection: [3PR, MIP_IF_NEEDED, 3PC_IF_TRANSACTIONAL, 3P3_IF_GENERALISATION_MISSING]
+  stop_rule: STOP_WHEN_DOV_SATISFIED_AND_NO_NEW_PROOF_OR_PROTECTION_IS_REQUIRED
+  recurse_rule: FIRST_MATERIAL_OBSERVED_BG_ONLY
+  execution_rule: QH_PASS_REQUIRES_EX_GT_0_AND_EXACT_SHA_KR
+code_semantics:
+  policy: >-
+    Codes are stable protocol keys. Human-readable meanings are maintained by this registry and may
+    be refined without changing the wire key. Do not locally redefine a code in a child repository.
+  CG: current_gate
+  RR: repo_readiness
+  CR: critical_risk
+  SR: semantic_readiness
+  DR: dependency_readiness
+  PB: progress_burndown
+  FE: federation_exchange
+  QH: quality_health
+  HK: handshake_hooks
+  BG: blocking_gate
+  KR: knowledge_receipt
+  EX: executable_runtime
+  WD: work_disposition
+state_enum: [GREEN, AMBER, RED, BLOCKED, DEFER, UNKNOWN, NA]
+confidence_enum: [HIGH, MEDIUM, LOW, UNKNOWN]
+evidence_class_enum:
+  - RUNTIME_RECEIPT
+  - EXACT_SHA_ARTIFACT
+  - CANONICAL_SOURCE
+  - SOURCE_BOUND_INFERENCE
+  - MANUAL_ASSERTION
+  - UNKNOWN
+required_envelope:
+  - schema_version
+  - repo
+  - source_sha
+  - freshness_timestamp
+  - dimensions
+  - next_action
+  - blocking_atom
+required_per_dimension:
+  - state
+  - confidence
+  - evidence_class
+  - observed_at
+  - source_ref
+freshness:
+  rule: freshness_timestamp_is_time_the_complete_vector_was_observed
+  stale_policy: >-
+    Scheduler shall treat a vector older than its configured lane TTL as stale rather than silently
+    treating the last GREEN value as current.
+source_binding:
+  rule: source_sha_is_exact_repo_head_or_exact_observed_commit_for_the_status_vector
+  prohibit: [floating_main_as_proof, branch_name_only_as_proof, unbound_commit_noise]
+blocking_atom:
+  null_meaning: no_single_blocking_atom_identified
+  rule: >-
+    When state is BLOCKED or RED and a smallest actionable blocker is known, blocking_atom shall name
+    that atom rather than repeat a narrative status.
+next_action:
+  rule: one_smallest_executable_or_verifiable_action
+scheduler:
+  default_priority_logic:
+    - BLOCKED_or_RED_with_high_confidence_exact_evidence_first
+    - then_high_fanout_dependency_blockers
+    - then_AMBER_semantic_or_quality_debt
+    - then_GREEN_maintenance
+  closure_control:
+    classification_order: [REPAIR_REENTRY, HARDENING, NEW_CAPABILITY, PROPAGATION_PROOF, DONE, REPEAT]
+    default_method_sequence: [3PR, MIP_IF_NEEDED, 3PC_IF_TRANSACTIONAL, 3P3_IF_GENERALISATION_MISSING]
+    stop_conditions:
+      - DOV_SATISFIED
+      - NEXT_METHOD_WOULD_ADD_NO_NEW_EVIDENCE
+      - NEXT_METHOD_WOULD_ADD_NO_NEW_PROTECTION
+    do_not_stop_on:
+      - ZERO_STEP_WORKFLOW_BADGE
+      - FLOATING_BRANCH_REFERENCE
+      - UNBOUND_PR_STATE
+  drilldown_rule: >-
+    Commit/PR/workflow detail is diagnostic drill-down only after the status contract identifies a
+    degraded, stale or ambiguous dimension.
+rollup:
+  repo_to_lane: worst_material_state_with_evidence_and_freshness_preserved
+  lane_to_mesh: dependency_aware_not_simple_average
+  no_greenwashing: UNKNOWN_DEFER_and_stale_are_not_GREEN
+MIP:
+  Modernize: replace_commit_scraping_with_contract_query
+  Innovate: dependency_aware_status_vector_blocking_atom_and_composite_closure_controller
+  Perpetuate: emit_vector_recompute_on_receipt_or_gate_change_and_stop_on_satisfied_DOV
+acceptance:
+  - schema_validates
+  - all_13_dimension_keys_present
+  - exact_SHA_present
+  - freshness_timestamp_present
+  - every_dimension_has_evidence_and_confidence
+  - blocked_state_exposes_smallest_known_blocking_atom
+  - scheduler_can_choose_next_action_without_commit_scraping
+  - closure_controller_selects_minimum_non_repeating_method_sequence
+  - QH_PASS_requires_EX_gt_0_and_exact_SHA_KR

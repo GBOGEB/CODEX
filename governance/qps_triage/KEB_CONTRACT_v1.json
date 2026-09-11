@@ -1,0 +1,90 @@
+{
+  "schema": "qps-triage-keb-contract/1.0.0",
+  "as_of": "2026-09-11T04:15:00+02:00",
+  "repo": "GBOGEB/CODEX",
+  "role": "KEB_SEMANTIC_PROVENANCE_CONTRACT_AND_EXECUTION_AUTHORITY",
+  "authority": {
+    "may_mutate_qps_engineering_truth": false,
+    "may_mutate_qps_compliance": false,
+    "may_mutate_qps_negotiation": false,
+    "may_emit_semantic_receipt": true,
+    "may_emit_provenance_receipt": true,
+    "may_emit_runtime_receipt": true
+  },
+  "predecessor": {
+    "prompt_method_pr": 603,
+    "prompt_method_merge_sha": "c3cd9d151754435a48b207010f7ff535cee666c6",
+    "runtime_health_pr": 600,
+    "runtime_health_head_sha": "7f062faf8c76a6e89780bb0fbb1ee1fe96f5af4b",
+    "runtime_health_merge_sha": "97cb14e1f2e35db0692d63228ee8497cbb9e7026",
+    "dow_consumer_pr": 1107,
+    "dow_consumer_merge_sha": "49663e929bf38d3b72720b4fc79fd864faecfa4a"
+  },
+  "accepted_inputs": [
+    "redacted_child_contract",
+    "source_bound_object_ids",
+    "schema_or_semantic_challenge",
+    "runtime_probe_request"
+  ],
+  "object_classes": [
+    "KEB_CONTRACT",
+    "KEB_SEMANTIC_TERM",
+    "KEB_PROVENANCE_EDGE",
+    "KEB_VALIDATOR",
+    "KEB_RUNTIME_PROBE",
+    "KEB_EXACT_SHA_RECEIPT",
+    "KEB_DEFERRED_SOURCE_GAP"
+  ],
+  "required_receipt_fields": [
+    "producer_repo",
+    "producer_pr",
+    "producer_head_sha",
+    "source_object_ids",
+    "contract_version",
+    "workflow_or_validator",
+    "executed_steps",
+    "result",
+    "receipt_sha256",
+    "downstream_consumer",
+    "child_reentry_target"
+  ],
+  "result_enum": ["PASS", "FAIL", "DEFER"],
+  "first_red_classes": [
+    "METADATA",
+    "SEMANTIC_VOCABULARY",
+    "SCHEMA",
+    "RUNTIME",
+    "DEPENDENCY",
+    "PROVENANCE",
+    "SOURCE_MISSING"
+  ],
+  "first_red_rule": "Repair or explicitly DEFER the first empirically observed blocking predicate, rerun the same gate, and advance only after PASS or evidenced DEFER.",
+  "runtime_gate": {
+    "pass_requires_executed_steps_gt_zero": true,
+    "pass_requires_exact_head_sha": true,
+    "pass_requires_receipt_digest": true,
+    "merge_is_not_runtime_pass": true
+  },
+  "privacy_boundary": {
+    "public_repo": true,
+    "copy_private_qps_evidence": false,
+    "allow_redacted_semantic_contract": true,
+    "allow_digest_and_object_identity": true
+  },
+  "repo_surfaces": {
+    "prompt_sequence": "docs/qps_triage_prompt_sequence.md",
+    "federation_activity": "governance/federation/FEDERATION_ACTIVITY.yaml",
+    "semantic_vocabulary": "PIPELINE/GLOSSARY.yaml",
+    "repo_deep_handoff": "docs/qps_triage/KEB_REPO_DEEP_HANDOFF.md",
+    "contract": "governance/qps_triage/KEB_CONTRACT_v1.json",
+    "contract_test": "tests/test_qps_triage_keb_contract.py"
+  },
+  "waves": [
+    {"id": "QTG-00", "name": "recover_and_census", "exit": "active_pr_branch_and_first_red_identified"},
+    {"id": "QTG-01", "name": "contract_and_semantic_binding", "exit": "contract_and_semantic_checks_pass_or_defer"},
+    {"id": "QTG-02", "name": "runtime_receipt", "exit": "exact_sha_receipt_with_positive_execution"},
+    {"id": "QTG-03", "name": "dow_dispatch", "exit": "exact_receipt_consumable_by_abacus"},
+    {"id": "QTG-04", "name": "child_reentry", "exit": "cryoplant_records_accept_reject_or_defer"}
+  ],
+  "promotion_rule": "KEB evidence may support but never self-promote child engineering, compliance, negotiation, or release state."
+}

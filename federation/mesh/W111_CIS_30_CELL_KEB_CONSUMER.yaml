@@ -1,0 +1,52 @@
+schema: w111-cis-30-cell-keb-consumer/1.1
+wave: W112
+consumer: GBOGEB/CODEX
+role: KEB_SEMANTIC_PROVENANCE_RUNTIME
+producer:
+  repo: GBOGEB/cryoplant-project
+  pr: 880
+  exact_head_sha: 6563b1f7fe9318625e0346a244415207d8f9b952
+  file: ocd-adr/40_implementation/QPS_W111_CIS_30_CELL_PENETRATION_v0.1.yaml
+immutable_baseline:
+  pr: 877
+  merge_sha: 067e1ad9c6c461018ccb43bc2e50f6a5b2b89ee7
+measured_counts:
+  denominator_cells: 30
+  source_bound_partial_or_gap: 15
+  unknown_after_search: 15
+  fully_closed_by_offer: 0
+  narrowed_question_count: 15
+  bidder_packages: {LKT: 3, ALAT: 3}
+semantic_checks:
+  - all 30 bidder-question cells remain represented by stable RFI-CIS IDs
+  - prefillable is not equated with fully answerable
+  - unsupported partial state is not preserved without source anchor
+  - hierarchy is not inferred from PLC/component presence
+  - RFI-CIS-01 is retained as P0 and moves to rank 1 in the superseding fanout projection
+  - stable 15-atom semantics survive consolidation into bidder-specific packages
+reverse_fanout_P0:
+  - RFI-CIS-01
+  - RFI-CIS-02
+  - RFI-CIS-03
+  - RFI-CIS-07
+  - RFI-CIS-08
+  - RFI-CIS-10
+  - RFI-CIS-14
+  - RFI-CIS-04
+  - RFI-CIS-15
+  - RFI-CIS-12
+action_semantics:
+  namespace: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
+  current_internal_action: SSOT
+  ranking_repair: SEM
+  authoritative_bidder_return: CLOSE
+  after_issue_without_return: WATCH
+  return_binding: RECEIPT
+status_semantics:
+  namespace: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+  rule: CG_WD_RR_DR_SR_HK_EX_FE_QH_KR_CR_PB_BG are status dimensions only and are not action codes
+disposition: ACCEPT_SEMANTIC_PROJECTION_PENDING_DOW_AND_CHILD_REENTRY
+boundary: >-
+  KEB accepts identity, source-state semantics, counts and ranking projection only.
+  It does not accept bidder compliance or transfer QPS engineering authority.
+next_action: DOW consumes this exact producer tuple and measured projection, then returns scoped disposition to child.

@@ -1,0 +1,91 @@
+schema: gbogeb-global-glossary-actions/1.1
+wave: W112
+status: ACTIVE_AFTER_3PC_COLLISION_REPAIR
+owner: GBOGEB/CODEX
+authority_rule: >-
+  Action monikers govern human/task routing vocabulary only. W108 two-letter
+  mesh status dimensions remain reserved for status. Neither namespace transfers
+  engineering, source, compliance, release or child disposition authority.
+
+terms:
+  CLOSE:
+    canonical_name: CLOSURE_GATE_ACTION
+    definition: Directly close or advance a declared gate, DoV, acceptance, release or authority-owned decision.
+    default_band: P0
+    first_use_case: child re-entry after matching KEB and DOW receipts
+  RED:
+    canonical_name: RECURSE_FIRST_RED_ACTION
+    definition: Reproduce and repair the earliest material observed failure, rerun unchanged, then advance.
+    default_band: P0_P1
+    first_use_case: W003 or semantic-runtime first-red repair
+  RUNTIME:
+    canonical_name: CICD_RUNTIME_REPAIR_ACTION
+    definition: Repair CI/CD, runner, dependency, build, Docker, MCP or workflow infrastructure blocking proof.
+    default_band: P1
+    first_use_case: cryoplant hosted-runner allocation/configurable-label repair
+  SEM:
+    canonical_name: SEMANTIC_CONTRACT_REPAIR_ACTION
+    definition: Repair terminology, schema, identifier or meaning drift without changing source authority.
+    default_band: P1
+    first_use_case: VNV versus QRB.VV and Expected-versus-Most-Likely repair
+  SSOT:
+    canonical_name: SSOT_LINEAGE_REPAIR_ACTION
+    definition: Repair missing, stale, conflicting or unresolvable SSOT pointers, canonical data or lineage.
+    default_band: P1
+    first_use_case: W111 correction of satellite SSOT visibility from assumed-missing to discovered-and-indexed
+  RECEIPT:
+    canonical_name: PROVENANCE_RECEIPT_BINDING_ACTION
+    definition: Bind exact SHA, source locator, digest, artifact identity and execution/receipt state.
+    default_band: P1
+    first_use_case: DOCX_RTM Wave-9 external artifact registry receipt
+  ENABLE:
+    canonical_name: FEATURE_ENABLEMENT_ACTION
+    definition: Add or activate a reusable function, skill, agent, dock, bridge or capability.
+    default_band: P1_P2
+    first_use_case: W111 global yellow-pages mesh dock
+  HARDEN:
+    canonical_name: QUALITY_HARDENING_ACTION
+    definition: Improve tests, determinism, negative fixtures, security or resilience after core behavior exists.
+    default_band: P2
+    first_use_case: Level-1 PCA/BT guards and native-runtime-anchor checks
+  CLEAN:
+    canonical_name: HOUSEKEEPING_ACTION
+    definition: Regular low-consequence cleanup that must not preempt closure work.
+    default_band: P3
+    first_use_case: import-order or line-length cleanup when not itself first red
+  MAINT:
+    canonical_name: BACKGROUND_MAINTENANCE_ACTION
+    definition: Recurring non-blocking health, dependency, census or metric refresh work.
+    default_band: P3
+    first_use_case: periodic repo census and metrics refresh
+  READ:
+    canonical_name: KNOWLEDGE_READING_ACTION
+    definition: Reference/research intake with no direct engineering promotion.
+    default_band: P3
+    first_use_case: upstream/reference review supporting a bounded implementation question
+  EXP:
+    canonical_name: EXPERIMENT_SANDBOX_ACTION
+    definition: Exploratory prototype or hypothesis test outside production authority.
+    default_band: P3
+    first_use_case: orchestration-sandbox or multi-agent DMAIC prototype
+  WATCH:
+    canonical_name: WATCH_DEFERRED_ACTION
+    definition: Keep a known dependency visible while waiting for external input, future condition or unavailable evidence.
+    default_band: P4
+    first_use_case: authoritative bidder/OEM return or external WPS MTO wait state
+
+reserved_status_namespace:
+  contract: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+  taxonomy: governance/mesh/MESH_EXECUTION_TAXONOMY_v1.md
+  keys: [CG, WD, RR, DR, SR, HK, EX, FE, QH, KR, CR, PB, BG]
+  rule: these tokens MUST NOT be emitted as new task/action monikers
+
+legacy_w111_aliases:
+  status: HISTORICAL_ONLY
+  mapping: {CG: CLOSE, RR: RED, CR: RUNTIME, SR: SEM, DR: SSOT, PB: RECEIPT, FE: ENABLE, QH: HARDEN, HK: CLEAN, BG: MAINT, KR: READ, EX: EXP, WD: WATCH}
+
+qps_rfi_namespace:
+  canonical_prefix: RFI-CIS-
+  authority: GBOGEB/cryoplant-project
+  glossary_pointer: controls/QPS_CIS_RFI_GLOSSARY_v1.yaml
+  rule: CODEX may register and route identifiers; QPS engineering consequence remains child-owned.

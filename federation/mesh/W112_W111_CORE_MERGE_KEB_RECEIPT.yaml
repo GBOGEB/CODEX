@@ -1,0 +1,93 @@
+# yamllint disable rule:line-length
+schema: w112-w111-core-merge-keb-receipt/1.1
+wave: W112
+role: KEB_EXACT_MERGE_BINDING
+source_wave: W111
+action_namespace:
+  source_pr: 619
+  exact_head_sha: 537cd69aebbd9b75a39266723ad6c0fcfd1ba74e
+  status_dimension_contract: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+  action_taxonomy: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
+  rule: W108 two-letter keys are status dimensions only; tasks emit verb action monikers
+  legacy_w111_action_aliases: DEPRECATED_PARSE_ONLY
+w111_exact_merge_tuple:
+  codex:
+    repo: GBOGEB/CODEX
+    pr: 615
+    reviewed_head_sha: 3d46e231424de47780f58016e1577bfb625d149c
+    merge_sha: 1ad94ae3e2244a76b3b3aaa0d47d858518c79557
+  qps_child:
+    repo: GBOGEB/cryoplant-project
+    pr: 880
+    reviewed_head_sha: 6563b1f7fe9318625e0346a244415207d8f9b952
+    merge_sha: 8843eb4a4ac6155f35f4284b81385ab34e5b4556
+  abacus:
+    repo: GBOGEB/ABACUS
+    pr: 1115
+    reviewed_head_sha: 38f9fe175420fee61c207307858950d1f615ff5b
+    merge_sha: 496323ce828a9266ed04898af964433cd3a7e2f0
+immutable_qps_baseline:
+  pr: 877
+  merge_sha: 067e1ad9c6c461018ccb43bc2e50f6a5b2b89ee7
+dow_postmerge_repair:
+  repo: GBOGEB/ABACUS
+  source_pr: 1118
+  source_head_sha: c0f3567220761d9d1723f46e0e3524f989eaaa8b
+  source_merge_sha: f3e1afc2db86b8ff9615b12fa5edde3f833eb12e
+  repair_pr: 1120
+  repair_exact_head_sha: 60c31f13ac620e64c7f966262143bad40586b6e7
+  receipt: federation/mesh/W112_W111_DOW_POSTMERGE_RECEIPT.yaml
+  expected_disposition: ACCEPT_W111_DERIVED_PROJECTION_WITH_EXACT_MERGE_TUPLE_DEFER_QPS_RUNTIME_AND_BIDDER_CLOSURE
+codex_governance_gate:
+  target_head_sha: 3d46e231424de47780f58016e1577bfb625d149c
+  first_red_run_id: 34576162207
+  first_red_conclusion: failure
+  repair_action_moniker: RED
+  repair: add mandatory PR classification metadata to merged PR #615
+  verification_run_id: 34577373709
+  verification_conclusion: success
+validator_repair:
+  first_red_run_id: 34577860309
+  first_red_job_id: 103194348237
+  undocumented_term: semantic_readiness
+  origin: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+  origin_pr: 616
+  origin_merge_sha: ded67cdf28f845289158eabe53044d9c6e17c8e9
+  repair_action_moniker: SEM
+  repair: register semantic_readiness in PIPELINE/GLOSSARY.yaml and declare scheduler-status versus action-moniker namespace boundary
+  namespace_invariant: MESH_STATUS_DIMENSION.SR_NE_ACTION_MONIKER.SEM
+observed_semantic_runtime:
+  target_head_sha: 3d46e231424de47780f58016e1577bfb625d149c
+  CODEX_Semantic_Runtime_CI: success
+  Runtime_Federation_CI: success
+  CODEX_Determinism_Execution: success
+  Validate_Federation: success
+qps_runtime_boundary:
+  disposition: DEFER_RUNTIME_EXECUTION
+  action_moniker: RUNTIME
+  status_snapshot:
+    EX: RED
+    BG: BLOCKED
+  evidence:
+    w69_run_id: 34576080052
+    ubuntu_latest: {conclusion: failure, steps_executed: 0, runner_id: 0}
+    ubuntu_2204: {conclusion: failure, steps_executed: 0, runner_id: 0}
+    windows_latest: {conclusion: failure, steps_executed: 0, runner_id: 0}
+  invariant: RUNTIME_GREEN_NE_ENGINEERING_ACCEPTANCE
+  interpretation: >-
+    The child runner family did not start any steps. This is a runtime provisioning/execution blocker,
+    not evidence that the QPS W111 semantic artifact failed and not evidence of runtime acceptance.
+measured_projection:
+  denominator_cells: 30
+  source_bound_partial_or_gap: 15
+  unknown_after_search: 15
+  fully_closed_by_offer: 0
+  materially_narrowed: 15
+  external_packages_per_bidder: 3
+reverse_fanout_P0: [RFI-CIS-01, RFI-CIS-02, RFI-CIS-03, RFI-CIS-07, RFI-CIS-08, RFI-CIS-10, RFI-CIS-14, RFI-CIS-04, RFI-CIS-15, RFI-CIS-12]
+authority:
+  may: [bind_semantic_identity, bind_provenance, publish_KEB_receipt]
+  must_not: [promote_QPS_engineering_truth, close_bidder_RFI, reinterpret_DOW_as_child_authority]
+keb_disposition: ACCEPT_W111_SEMANTIC_AND_PROVENANCE_TUPLE_DEFER_CHILD_RUNTIME_AND_BIDDER_CLOSURE
+next_action_moniker: CLOSE
+next: QPS child re-entry consumes this KEB receipt and the DOW post-merge repair; child alone records ACCEPT/REJECT/DEFER.

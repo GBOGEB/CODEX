@@ -1,0 +1,270 @@
+schema: gbogeb-global-rex-ledger/1.0
+wave: W113
+owner_repo: GBOGEB/CODEX
+measurement_window:
+  label: W112_GLOBAL_HIVE_CONVERGENCE
+  date: 2026-09-11
+  scope: CODEX_ABACUS_CRYOPLANT observed GitHub experience
+  note: Counts are evidence-bound minimums, not estimates of lifetime frequency.
+
+records:
+  - rex_id: REX-W112-001
+    signature: NAMESPACE.ACTION_STATUS.COLLISION
+    issue_kind: DEFECT
+    family: NAMESPACE
+    repo:
+      primary: GBOGEB/CODEX
+      impacted:
+        - GBOGEB/CODEX
+        - GBOGEB/ABACUS
+        - GBOGEB/cryoplant-project
+    first_seen: W112_3PC
+    last_seen: W112_ACTIVE_DOCK_SWEEP
+    severity_stars: 5
+    frequency:
+      observed_count: 13
+      unit: colliding_short_tokens
+      impacted_repo_count: 3
+      impacted_workflow_count: 0
+      measurement_window: W112
+    recurrence: SYSTEMIC
+    symptom: >-
+      W111 task/action aliases reused all thirteen W108 scheduler status keys
+      with unrelated meanings, making routing ambiguous.
+    root_cause: namespace reuse without role/lifecycle/consumer 3PC challenge
+    action_moniker: SEM
+    repair_method: >-
+      Reserve W108 two-letter keys for status and replace actions with verb
+      monikers CLOSE/RED/RUNTIME/SEM/SSOT/RECEIPT/ENABLE/HARDEN/CLEAN/MAINT/READ/EXP/WATCH.
+    verification:
+      repo: GBOGEB/CODEX
+      head_sha: 537cd69aebbd9b75a39266723ad6c0fcfd1ba74e
+      ci_run_id: 34577942623
+      result: PASS
+    control_guard:
+      - tests/test_glob_lookup.py namespace-disjointness assertion
+      - GLOB.yaml separate status_namespace and action_namespace
+      - active mesh-dock migration in all three core repos
+    control_status: CONTROLLED
+    lesson: >-
+      Shared short identifiers must be globally role-classified before they are
+      reused as task verbs, states or authority signals.
+    lookup_tags: [namespace, status, action, moniker, 3pc, glob, systemic]
+
+  - rex_id: REX-W112-002
+    signature: SEMANTIC.VOCAB.UNREGISTERED.semantic_readiness
+    issue_kind: FAILURE
+    family: SEMANTIC
+    repo:
+      primary: GBOGEB/CODEX
+      impacted: [GBOGEB/CODEX]
+    first_seen: 34577727320
+    last_seen: 34577727320
+    severity_stars: 3
+    frequency:
+      observed_count: 1
+      unit: failed_semantic_validator_run
+      impacted_repo_count: 1
+      impacted_workflow_count: 1
+      measurement_window: W112
+    recurrence: UNIQUE
+    symptom: semantic runtime rejected undocumented token semantic_readiness
+    root_cause: new governed semantic token introduced outside the declared glossary surface
+    action_moniker: SEM
+    repair_method: >-
+      Register semantic_readiness in a controlled glossary extension and teach
+      the semantic validator to consume controlled extensions without weakening
+      the no-new-debt gate.
+    verification:
+      repo: GBOGEB/CODEX
+      head_sha: 537cd69aebbd9b75a39266723ad6c0fcfd1ba74e
+      semantic_runtime_run_id: 34577942657
+      result: PASS
+    control_guard:
+      - PIPELINE/GLOSSARY_EXTENSIONS.yaml
+      - semantic_substrate/validators/validate_semantic_substrate.py
+    control_status: CONTROLLED
+    lesson: new semantic_* vocabulary must be registered at introduction time
+    lookup_tags: [semantic, vocabulary, validator, glossary, first-red]
+
+  - rex_id: REX-W112-003
+    signature: VALIDATION.YAML.LINE_LENGTH
+    issue_kind: DEFECT
+    family: VALIDATION
+    repo:
+      primary: GBOGEB/ABACUS
+      impacted: [GBOGEB/ABACUS]
+    first_seen: 34578242418
+    last_seen: 34578242418
+    severity_stars: 2
+    frequency:
+      observed_count: 8
+      unit: violating_lines
+      impacted_repo_count: 1
+      impacted_workflow_count: 1
+      measurement_window: W112
+    recurrence: CLUSTERED_LOCAL
+    symptom: Changed docs lint reported eight YAML lines longer than 80 characters
+    root_cause: generated/manual receiver YAML used long inline values
+    action_moniker: CLEAN
+    repair_method: fold long scalar/list values without changing semantics
+    verification:
+      repo: GBOGEB/ABACUS
+      head_sha: 7d57f91964e22f3e0fff3f9d62dfc04a522dc942
+      docs_validation_run_id: 34578423700
+      result: PASS
+    control_guard:
+      - changed-docs YAML lint remains unchanged
+    control_status: VERIFIED
+    lesson: formatting failures are low-severity unless they are the first blocking gate
+    lookup_tags: [yaml, lint, line-length, abacus, docs]
+
+  - rex_id: REX-W112-004
+    signature: FEDERATION.ACTIVE_DOCK.STALE_ACTION_NAMESPACE
+    issue_kind: REVIEW_FINDING
+    family: FEDERATION
+    repo:
+      primary: GBOGEB/ABACUS
+      impacted:
+        - GBOGEB/ABACUS
+        - GBOGEB/cryoplant-project
+    first_seen: ABACUS_PR_1119_REVIEW
+    last_seen: CRYOPLANT_PR_886_ACTIVE_DOCK_SWEEP
+    severity_stars: 4
+    frequency:
+      observed_count: 2
+      unit: affected_active_docks
+      impacted_repo_count: 2
+      impacted_workflow_count: 0
+      measurement_window: W112
+    recurrence: CROSS_REPO_RECURRING
+    symptom: >-
+      New receiver records used W112 monikers while active .mesh/MESH_DOCK.yaml
+      files still advertised legacy W111 action_classes.
+    root_cause: receiver-only migration did not initially include active discovery consumers
+    action_moniker: SEM
+    repair_method: migrate active docks and explicitly expose action_monikers plus reserved_status_keys
+    verification:
+      abacus_head_sha: 7d57f91964e22f3e0fff3f9d62dfc04a522dc942
+      abacus_docs_validation_run_id: 34578423700
+      cryoplant_head_sha: ab01af58dd5b99ef5a1b0a8a72fb686193a018db
+      result: ABACUS_PASS_CHILD_RUNTIME_NOT_STARTED
+    control_guard:
+      - mesh dock protocol 1.1 requires separate namespaces
+      - CODEX GLOB tests assert its active dock migration
+    control_status: CONTROLLED
+    lesson: migration is incomplete until active discovery/dispatch consumers change, not only new receipts
+    lookup_tags: [mesh-dock, federation, consumer, stale, cross-repo]
+
+  - rex_id: REX-W112-005
+    signature: AUTHORITY.PROOF_GATE.UNBOUND_PROMOTION
+    issue_kind: REVIEW_FINDING
+    family: AUTHORITY
+    repo:
+      primary: GBOGEB/cryoplant-project
+      impacted: [GBOGEB/cryoplant-project]
+    first_seen: CRYOPLANT_PR_886_REVIEW
+    last_seen: CRYOPLANT_PR_886_REVIEW
+    severity_stars: 4
+    frequency:
+      observed_count: 2
+      unit: review_findings
+      impacted_repo_count: 1
+      impacted_workflow_count: 0
+      measurement_window: W112
+    recurrence: CLUSTERED_LOCAL
+    symptom: >-
+      Child routing could have enabled moniker use before producer CI proof, and
+      a superseding producer could have been accepted without rebinding the
+      exact consumer chain.
+    root_cause: proof-gate permission and exact-head lineage were initially expressed too loosely
+    action_moniker: RECEIPT
+    repair_method: >-
+      Gate child moniker selection on bound proof and freeze exact CODEX and
+      ABACUS heads plus matching run/job evidence into child re-entry.
+    verification:
+      child_head_sha: ab01af58dd5b99ef5a1b0a8a72fb686193a018db
+      code_review_findings_addressed: 2
+      result: STATIC_CONTRACT_REPAIRED
+    control_guard:
+      - exact_head_sha required at both upstream planes
+      - child permission says may_select_action_moniker_after_bound_proof
+    control_status: CONTROLLED
+    lesson: a later green producer is not proof unless every consuming receipt is rebound to it
+    lookup_tags: [authority, exact-sha, proof-gate, promotion, child]
+
+  - rex_id: REX-W112-006
+    signature: RUNTIME.GITHUB_ACTIONS.ZERO_STEP_PREEXECUTION
+    issue_kind: BLOCKER
+    family: RUNTIME
+    repo:
+      primary: GBOGEB/cryoplant-project
+      impacted: [GBOGEB/cryoplant-project]
+    first_seen: 34578622119
+    last_seen: 34578800214
+    severity_stars: 5
+    frequency:
+      observed_count: 8
+      unit: proven_zero_step_failed_jobs
+      impacted_repo_count: 1
+      impacted_workflow_count: 4
+      measurement_window: W112 final child proof window
+      evidence_minimum: true
+    recurrence: CROSS_WORKFLOW_RECURRING
+    symptom: >-
+      Multiple child GitHub Actions jobs failed before recording any execution
+      steps; a bounded Federation Smoke rerun reproduced the same zero-step state.
+    root_cause: UNKNOWN_PREEXECUTION_RUNNER_OR_ALLOCATION_LAYER
+    action_moniker: RUNTIME
+    repair_method: >-
+      Do not patch application/contract code without an observed failing step;
+      repair runner/allocation until any relevant job executes >0 steps, then
+      recurse on the first actual red.
+    verification:
+      federation_smoke_first_run_id: 34578622119
+      federation_smoke_first_job_id: 103196779014
+      federation_smoke_rerun_job_id: 103197105873
+      final_head_federation_run_id: 34578800214
+      final_head_federation_job_id: 103197333388
+      verify_ssot_run_id: 34578622175
+      runner_sentinel_run_id: 34578622100
+      runner_family_run_id: 34578622097
+      result: REPRODUCED_ZERO_STEP
+    control_guard:
+      - distinguish EX=ZERO_STEPS from executed test failure
+      - child receipt explicitly withholds global runtime DoV
+      - RUNTIME precedes RED until execution actually starts
+    control_status: DEFERRED
+    lesson: zero-step failures are infrastructure evidence, not evidence that repo code failed its tests
+    lookup_tags: [runner, github-actions, zero-step, preexecution, runtime, blocker]
+
+summary:
+  record_count: 6
+  by_severity_stars:
+    5: 2
+    4: 2
+    3: 1
+    2: 1
+    1: 0
+  unresolved_or_deferred: 1
+  controlled_or_verified: 5
+  highest_recurrence_signal:
+    rex_id: REX-W112-006
+    reason: 8 proven zero-step failed jobs across 4 workflow families
+  broadest_systemic_signal:
+    rex_id: REX-W112-001
+    reason: 13 colliding identifiers affecting 3 core repos by shared contract design
+
+control_next:
+  current_repo_experience_return: >-
+    W112 produced six reusable REX families. Five are repaired/controlled; one
+    runtime blocker remains deferred because child GitHub Actions cannot start
+    meaningful execution.
+  lookup_examples:
+    - show REX for cryoplant-project
+    - show recurring failures
+    - show five-star REX
+    - what failed most often in W112?
+    - how was semantic_readiness repaired?
+    - which problems crossed repos?
+    - show open Control-phase blockers
