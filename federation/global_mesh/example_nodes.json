@@ -1,0 +1,54 @@
+{
+  "schema_version": "global-mesh-node-set/1.0.0",
+  "nodes": [
+    {
+      "id": "mesh.global",
+      "title": "Global Hive",
+      "depth": 0,
+      "boundary": "GLOBAL_HIVE",
+      "lens": "NARRATIVE",
+      "content": "GBOGEB mesh roll-up across governed repositories.",
+      "status": "PASS",
+      "evidence_class": "CONTROLLED",
+      "source_sha": "EXAMPLE"
+    },
+    {
+      "id": "mesh.qps",
+      "parent_id": "mesh.global",
+      "title": "QPS Project",
+      "depth": 1,
+      "boundary": "PROJECT",
+      "lens": "NARRATIVE",
+      "content": "QPS child engineering authority with CODEX semantic governance and ABACUS runtime analysis.",
+      "status": "PASS",
+      "evidence_class": "SOURCE_SUPPORTED",
+      "source_sha": "EXAMPLE"
+    },
+    {
+      "id": "mesh.qps.codex",
+      "parent_id": "mesh.qps",
+      "title": "CODEX KEB Plane",
+      "depth": 2,
+      "boundary": "REPO",
+      "lens": "ARCHITECTURE",
+      "content": "Semantic governance, orchestration, receipts, projection adapters.",
+      "status": "PASS",
+      "evidence_class": "CONTROLLED",
+      "source_sha": "EXAMPLE"
+    },
+    {
+      "id": "mesh.qps.codex.runtime",
+      "parent_id": "mesh.qps.codex",
+      "title": "Runtime Receipt",
+      "depth": 4,
+      "boundary": "ARTEFACT",
+      "lens": "RUNTIME",
+      "content": "Exact-SHA runtime evidence remains independent from presentation state.",
+      "status": "DEFER",
+      "evidence_class": "DERIVED",
+      "source_sha": "EXAMPLE",
+      "next_action": "Bind a real exact-head workflow receipt.",
+      "blocking_atom": "REAL_RUNTIME_RECEIPT"
+    }
+  ]
+}
