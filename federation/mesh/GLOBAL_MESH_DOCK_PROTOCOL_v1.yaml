@@ -1,0 +1,108 @@
+schema: gbogeb-global-mesh-dock/1.0
+wave: W111
+status: CANDIDATE_GLOBAL_DISCOVERY_PORT
+canonical_directory:
+  repo: GBOGEB/CODEX
+  census: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml
+  glossary: federation/mesh/GLOBAL_GLOSSARY_v1.yaml
+  where_used: federation/mesh/GLOBAL_WHERE_USED_v1.yaml
+  action_taxonomy: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
+
+purpose: >-
+  Provide a stable discovery port in each participating repository. The global
+  directory acts as yellow pages; the repo-local dock states identity, local
+  SSOTs, authority boundary, graph edges, action classes and first use case.
+  The dock points to truth; it is not itself a replacement engineering SSOT.
+
+canonical_local_path: .mesh/MESH_DOCK.yaml
+
+required_fields:
+  - schema
+  - repo
+  - role
+  - authority
+  - local_ssot
+  - global_directory
+  - provides
+  - consumes
+  - edges
+  - action_classes
+  - first_use_case
+  - authority_transfer
+
+recommended_fields:
+  - default_branch
+  - local_glossary
+  - runtime_entrypoints
+  - receipt_entrypoints
+  - privacy_boundary
+  - current_priority_band
+  - current_action_id
+  - health_state
+  - last_observed_sha
+
+resolution_order:
+  - read .mesh/MESH_DOCK.yaml
+  - resolve canonical local_ssot path(s)
+  - resolve GLOBAL_HIVE_CENSUS_v1.yaml entry for the repo
+  - resolve GLOBAL_GLOSSARY_v1.yaml and domain glossary pointers
+  - resolve GLOBAL_ACTION_TAXONOMY_v1.yaml for work classification
+  - inspect exact-head receipt only when execution/proof is required
+  - defer to child/domain authority for acceptance
+
+state_model:
+  DOCK_PRESENT: local dock exists on declared default branch or bound branch
+  SSOT_RESOLVABLE: all declared local_ssot paths resolve
+  GLOBAL_REGISTERED: repo is indexed in GLOBAL_HIVE_CENSUS_v1.yaml
+  EDGE_RESOLVABLE: at least one provides/consumes edge maps to a known node
+  ACTION_RESOLVABLE: action classes map to GLOBAL_ACTION_TAXONOMY_v1.yaml
+  RECEIPT_BOUND: executable proof has exact head plus immutable output/receipt digest
+  AUTHORITY_ACCEPTED: declared consuming authority has accepted the result
+
+port_contract:
+  read_only_discovery: true
+  globally_addressable_identity: repo full name
+  transport: Git repository path plus exact SHA when proof-bound
+  content_formats: [YAML, JSON, Markdown]
+  authority_transfer: false
+  fail_closed_on:
+    - missing local SSOT path
+    - conflicting authority claims
+    - unknown action class
+    - receipt SHA mismatch
+    - attempt to treat global registration as engineering acceptance
+
+minimal_dock_example:
+  schema: gbogeb-mesh-dock/1.0
+  repo: GBOGEB/example
+  role: EXAMPLE_WORKER
+  authority:
+    may: [perform bounded local work]
+    must_not: [promote QPS engineering truth]
+  local_ssot: [level1/ssot.json]
+  global_directory:
+    repo: GBOGEB/CODEX
+    path: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml
+  provides: [example_result]
+  consumes: [example_request]
+  edges:
+    - {to: GBOGEB/CODEX, type: EXAMPLE_RECEIPT}
+  action_classes: [FE, QH, BG]
+  first_use_case: produce one deterministic receipt for a bounded request
+  authority_transfer: false
+
+resource_focus_contract:
+  foreground_classes: [CG, RR, CR, SR, DR, PB]
+  enablement_classes: [FE, QH]
+  residual_capacity_classes: [HK, BG, KR, EX]
+  waiting_class: [WD]
+  rule: >-
+    Repo activity may alter polling/census cadence, but finite execution capacity
+    is allocated from importance/action class plus evidence readiness and blocker
+    consequence. High-churn HK/BG work cannot preempt a bounded CG/RR gate.
+
+victory:
+  - every R0/R1 participating repo exposes .mesh/MESH_DOCK.yaml
+  - every dock points to its local SSOT rather than copying it
+  - global census can be regenerated from docks plus observed receipts
+  - action queues can be filtered by class/priority independent of repo activity

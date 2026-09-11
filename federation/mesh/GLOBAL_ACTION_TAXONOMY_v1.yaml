@@ -1,0 +1,261 @@
+schema: gbogeb-global-action-taxonomy/1.0
+wave: W111
+status: CANDIDATE_GLOBAL_ACTION_CONTROL
+owner_repo: GBOGEB/CODEX
+purpose: >-
+  Separate activity telemetry from importance/priority so Bradley-Terry action
+  ranking and orchestration allocate finite pipeline resources to the most
+  consequential work rather than the noisiest repository.
+
+invariants:
+  - ACTIVITY_NE_IMPORTANCE
+  - COMMIT_COUNT_NE_CLOSURE_LEVERAGE
+  - RECENT_NE_CRITICAL
+  - HOUSEKEEPING_NE_FIRST_RED_REPAIR
+  - RUNTIME_GREEN_NE_ENGINEERING_ACCEPTANCE
+  - BT_RANKING_NE_AUTHORITY
+  - PAIRWISE_BT_REQUIRES_OBSERVED_OR_DECLARED_COMPARISON_BASIS
+  - NO_CROSS_LANE_SCORE_WITHOUT_NORMALIZED_FEATURES
+
+activity_telemetry:
+  intent: describe how much and how recently a node/action is moving
+  fields:
+    recency_hours: hours since last observed meaningful change
+    commits_24h: observed commits in the last 24 hours
+    prs_open: current open pull requests
+    workflow_runs_24h: observed workflow runs in the last 24 hours
+    executed_steps: observed executed steps where available
+    churn_files: files changed in the current wave
+    queue_age_hours: time waiting for action
+  rule: activity telemetry may trigger attention but does not itself increase importance
+
+importance_features:
+  closure_leverage:
+    range: 0..5
+    meaning: how directly completion advances a declared DoV/victory condition
+  blocker_fanout:
+    range: 0..5
+    meaning: number/importance of downstream nodes, gates or artifacts blocked
+  authority_consequence:
+    range: 0..5
+    meaning: consequence of the action to engineering, compliance, release, negotiation or canonical state
+  evidence_readiness:
+    range: 0..5
+    meaning: how close required source/receipt/proof is to being sufficient for a bounded action
+  failure_specificity:
+    range: 0..5
+    meaning: whether a concrete first red/root cause is observed versus only a vague concern
+  recurrence_risk:
+    range: 0..5
+    meaning: likelihood the issue will repeatedly consume resources if not fixed structurally
+  blast_radius:
+    range: 0..5
+    meaning: number and criticality of consumers affected by defect or change
+  reversibility:
+    range: 0..5
+    meaning: ease of safe rollback; high score means easy/low-risk rollback
+  effort_cost:
+    range: 0..5
+    meaning: expected bounded effort; lower is cheaper
+  automation_fit:
+    range: 0..5
+    meaning: suitability for deterministic runner/agent execution
+  confidence:
+    range: 0..5
+    meaning: confidence that the classified action and its expected consequence are source/evidence supported
+
+priority_lanes:
+  CLOSURE_GATE:
+    code: CG
+    default_band: P0
+    definition: directly closes or advances a declared AND-gate, DoV, acceptance, release or authority-owned decision
+    examples: [bind final exact-SHA receipt, authoritative bidder return, child ACCEPT_REJECT_DEFER re-entry]
+    scheduling_rule: preempts lower lanes when bounded and evidence-ready
+
+  RECURSE_FIRST_RED:
+    code: RR
+    default_band: P0_P1
+    definition: reproduce and repair the first observed deterministic failure, then rerun the same gate unchanged
+    examples: [schema validation red, semantic contract red, first failing test, wrong runner allocation after step-zero diagnosis]
+    scheduling_rule: recurse only on first red; do not branch into unrelated cleanup
+
+  CICD_RUNTIME_REPAIR:
+    code: CR
+    default_band: P1
+    definition: repair CI/CD, runner, dependency, build, workflow, Docker, MCP or execution infrastructure that prevents meaningful proof
+    examples: [GitHub Actions bug, runner label mismatch, dependency install failure, artifact upload mismatch]
+    scheduling_rule: raise to P0 only when it blocks a P0 closure gate and the defect is observed
+
+  SEMANTIC_CONTRACT_REPAIR:
+    code: SR
+    default_band: P1
+    definition: repair terminology, schema, identifier, contract or meaning drift without changing source authority
+    examples: [VNV versus QRB.VV collision, Expected versus Most Likely semantic mismatch, undocumented runtime vocabulary]
+    scheduling_rule: prioritize by downstream semantic fanout and false-promotion risk
+
+  SSOT_DATA_REPAIR:
+    code: DR
+    default_band: P1
+    definition: repair missing, stale, conflicting or unresolvable canonical data/SSOT pointers and lineage
+    examples: [missing local SSOT dock, stale authority locator, duplicate canonical candidate, supersession ambiguity]
+    scheduling_rule: prefer pointer/lineage repair over copying data into a new parallel SSOT
+
+  PROVENANCE_RECEIPT_BINDING:
+    code: PB
+    default_band: P1
+    definition: bind exact SHA, source locator, digest, artifact identity, execution state or cross-repo receipt
+    examples: [exact-head KEB receipt, private-vault hash receipt, artifact registry digest]
+    scheduling_rule: high priority when it is the only missing proof after functional work is complete
+
+  FEATURE_ENABLEMENT:
+    code: FE
+    default_band: P1_P2
+    definition: add a reusable function, skill, agent, orchestrator, dock, bridge or capability that unlocks multiple future tasks
+    examples: [global mesh dock, reusable validator, dispatcher, shared schema]
+    scheduling_rule: prioritize when reuse fanout exceeds one repo and does not defer an active P0 closure
+
+  QUALITY_HARDENING:
+    code: QH
+    default_band: P2
+    definition: improve tests, lint, determinism, negative fixtures, security or resilience after core behavior exists
+    examples: [PCA zero-variance guard, BT disconnected-graph guard, regression tests]
+    scheduling_rule: can rise to P1 for repeated defects or large blast radius
+
+  HOUSEKEEPING:
+    code: HK
+    default_band: P3
+    definition: regular cleanup with low immediate closure leverage
+    examples: [formatting, stale comments, naming cleanup, dead-file cleanup, metadata refresh]
+    scheduling_rule: batch; do not interrupt P0/P1 work unless housekeeping is itself causing a gate failure
+
+  BACKGROUND_MAINTENANCE:
+    code: BG
+    default_band: P3
+    definition: recurring maintenance, telemetry refresh, dependency census or non-blocking health work
+    examples: [periodic repo census, dependency inventory, metrics refresh, cache cleanup]
+    scheduling_rule: use spare capacity or scheduled lanes; promote only on detected threshold/failure
+
+  KNOWLEDGE_READING:
+    code: KR
+    default_band: P3
+    definition: read/reference/research intake with no immediate governed engineering promotion
+    examples: [cookbook review, upstream library reading, design-resource survey]
+    scheduling_rule: execute when it answers an active evidence question or feeds a bounded experiment
+
+  EXPERIMENT_SANDBOX:
+    code: EX
+    default_band: P3
+    definition: exploratory prototype, alternate method or hypothesis test outside production authority
+    examples: [new orchestration approach, alternate PCA feature set, experimental agent topology]
+    scheduling_rule: bounded budget; requires explicit promotion path before affecting production priority
+
+  WATCH_DEFERRED:
+    code: WD
+    default_band: P4
+    definition: known dependency waiting on external input, future condition or evidence not currently available
+    examples: [await bidder response, unavailable authoritative source, runner availability not under repo control]
+    scheduling_rule: keep visible; do not repeatedly burn active compute unless a condition changes
+
+priority_bands:
+  P0: terminal/near-terminal blocker or first-red repair with direct closure consequence
+  P1: high-leverage enabling or proof work affecting multiple downstream gates
+  P2: hardening or useful improvement with bounded but non-terminal consequence
+  P3: housekeeping, background, knowledge and experiments under capacity budget
+  P4: deferred/watch state; no active resource burn absent changed condition
+
+bt_action_model:
+  method: Bradley-Terry pairwise action ranking
+  scope_rule: compare actions inside the same normalized decision queue or across queues only after feature normalization
+  activity_separation: activity fields are explanatory covariates and tie-breakers, never direct wins
+  pairwise_preference_order:
+    - closure_leverage
+    - blocker_fanout
+    - authority_consequence
+    - failure_specificity
+    - evidence_readiness
+    - recurrence_risk
+    - blast_radius
+    - effort_cost_inverse
+    - automation_fit
+    - confidence
+  hard_overrides:
+    - observed P0 first-red blocking terminal DoV beats housekeeping/background regardless of activity
+    - authority/source missing DEFER cannot be forced upward by BT score
+    - safety/compliance evidence guards cannot be weakened by priority ranking
+    - a noisy repo with many commits receives no priority bonus without closure consequence
+  outputs:
+    - bt_strength
+    - pairwise_wins
+    - pairwise_losses
+    - comparison_count
+    - uncertainty_or_sparse_graph_flag
+    - lane
+    - priority_band
+    - rationale_features
+
+resource_queues:
+  foreground_closure:
+    bands: [P0, P1]
+    capacity_policy: reserve majority of interactive/runner capacity
+  repair_lane:
+    classes: [RR, CR, SR, DR, PB]
+    capacity_policy: recurse on bounded observed defects, one first-red at a time
+  enablement_lane:
+    classes: [FE, QH]
+    capacity_policy: use when fanout/reuse justifies temporary diversion from closure
+  background_lane:
+    classes: [HK, BG, KR, EX]
+    capacity_policy: batch or consume residual capacity; must not starve foreground closure
+  watch_lane:
+    classes: [WD]
+    capacity_policy: zero/minimal active compute until trigger changes
+
+state_transitions:
+  - from: WD
+    to: CG
+    when: awaited authoritative input arrives and becomes closure-ready
+  - from: BG
+    to: CR
+    when: background health check observes a concrete CI/CD/runtime red
+  - from: HK
+    to: RR
+    when: housekeeping defect is proven to be the first failing gate
+  - from: EX
+    to: FE
+    when: experiment has repeatable benefit, bounded contract and declared consumers
+  - from: FE
+    to: PB
+    when: functionality exists and only exact proof/receipt binding remains
+  - from: PB
+    to: CG
+    when: receipt is the final required closure atom
+
+minimum_action_record:
+  required:
+    - action_id
+    - repo_or_node
+    - action_class
+    - priority_band
+    - activity_state
+    - importance_features
+    - blocking_or_consumed_edges
+    - evidence_state
+    - authority_boundary
+    - victory_condition
+    - next_executable_step
+  first_use_case_requirement: every new global action class must name at least one concrete observed use case
+
+first_use_cases:
+  CG: cryoplant child re-entry after matching KEB and DOW receipts
+  RR: CODEX W003 or semantic-runtime first-red repair and unchanged rerun
+  CR: cryoplant runner-allocation/configurable runner repair
+  SR: QPS VNV versus QRB.VV and Expected versus Most-Likely semantic repair
+  DR: W111 correction from alleged missing satellite SSOT to discovered local level1/ssot.json plus global registration
+  PB: DOCX_RTM Wave-9 external CI artifact registry receipt
+  FE: W111 global yellow-pages/dock federation
+  QH: MIP Level-1 PCA/BT negative guards and native-runtime-anchor enforcement
+  HK: line-length/import-order cleanup once it is no longer a terminal blocker
+  BG: periodic repo metrics and census refresh
+  KR: upstream/reference repository review used to answer a bounded implementation question
+  EX: orchestration-sandbox or multi-agent DMAIC prototype
+  WD: bidder/OEM source-return or external WPS MTO wait state

@@ -1,0 +1,252 @@
+schema: gbogeb-global-glossary/1.0
+wave: W111
+status: CANDIDATE_GLOBAL_FEDERATION_VOCABULARY
+authority_model:
+  global_owner: GBOGEB/CODEX
+  rule: global vocabulary governs federation meaning only; domain meaning remains with declared local authority
+  domain_authorities:
+    QPS_ENGINEERING: GBOGEB/cryoplant-project:controls/QPS_GLOBAL_GLOSSARY_v1.yaml
+    CODEX_SEMANTICS: GBOGEB/CODEX:PIPELINE/GLOSSARY.yaml
+    DOW_ANALYTICS: GBOGEB/ABACUS
+    DOCX_RTM: GBOGEB/DOCX_RTM_Automation:glossary/GLOSSARY.yaml
+
+usage_contract:
+  - prefer canonical_term in machine-readable data
+  - preserve domain aliases only when the domain glossary explicitly permits them
+  - ambiguous terms require namespace qualification
+  - a local glossary may extend but shall not silently redefine a global federation term
+  - every promoted global term should have at least one where-used entry
+  - every repo-specific term remains local unless a cross-repo edge requires shared meaning
+
+sections:
+  GLOBAL_MESH:
+    HIVE:
+      definition: the complete set of repositories, control surfaces, workers, authorities, references and experiments considered as one federated system
+      canonical_use: human-readable system concept
+    MESH:
+      definition: typed graph representation of the hive as nodes, edges, roles, authorities, states and dependencies
+      canonical_use: machine/governance topology
+    NODE:
+      definition: repository or governed control surface participating in the mesh
+    EDGE:
+      definition: directed typed relationship between nodes carrying requests, evidence, receipts, knowledge, routing or disposition
+    RING:
+      definition: coarse mesh tier grouping nodes by authority and operational role, not by importance alone
+    SATELLITE:
+      definition: non-core repo that produces or consumes governed outputs around the core authority triad
+    CORE_TRIAD:
+      definition: cryoplant child authority, CODEX KEB semantic/provenance authority and ABACUS DOW derived-consumption authority
+    GLOBAL_INDEX:
+      definition: cross-repo resolver that points to local authorities and SSOTs without replacing them
+    GLOBAL_REGISTRATION:
+      definition: act of adding a local repo/SSOT pointer to the global mesh index with role and authority metadata
+    CONSUMER_RESOLVABLE:
+      definition: state in which another node can determine what a repo accepts, produces, may claim and where its local SSOT lives
+    FIRST_USE_CASE:
+      definition: minimum concrete observed or intended mesh interaction proving why a node or term belongs in the global index
+
+  SSOT_AND_AUTHORITY:
+    SSOT:
+      expansion: Single Source of Truth
+      definition: declared authoritative source for a bounded domain or object class
+    LOCAL_SSOT:
+      definition: SSOT whose authority is scoped to one repo/domain and remains locally owned
+    FEDERATED_SSOT_POINTER:
+      definition: global registry reference to a local SSOT locator, identity and authority boundary
+    AUTHORITY_BOUNDARY:
+      definition: explicit statement of what a node may determine and what it must not promote
+    AUTHORITY_TRANSFER:
+      definition: transfer of decision or truth ownership between nodes
+      default: false
+    GLOBAL_INDEX_NE_GLOBAL_AUTHORITY:
+      definition: invariant that global discoverability does not transfer the underlying local authority
+    SOURCE_AUTHORITY:
+      definition: right of a source to establish evidence content or identity for a bounded claim
+    ENGINEERING_AUTHORITY:
+      definition: right to accept/reject engineering truth or disposition within the child domain
+    SEMANTIC_AUTHORITY:
+      definition: right to normalize and validate meaning without promoting engineering acceptance
+    DERIVED_ANALYSIS:
+      definition: calculated, ranked, transformed or interpreted output that remains subordinate to its source authority
+
+  EVIDENCE_AND_RECEIPTS:
+    RECEIPT:
+      definition: version-bound record linking execution or transformation inputs, source/head identity, outputs, status and hashes
+    EXACT_HEAD:
+      definition: exact Git commit SHA whose checkout was executed or evaluated
+    RECEIPT_BOUND:
+      definition: state where source/head identity and immutable output/receipt digest are tied together, with positive execution evidence when applicable
+    OBSERVED_EVIDENCE:
+      definition: evidence actually observed from source or runtime rather than inferred from repository structure or documentation
+    PROMOTED_STATE:
+      definition: accepted state after the entitled authority consumes and dispositions upstream evidence
+    FAIL_CLOSED:
+      definition: unresolved, missing or contradictory evidence produces DEFER/REJECT rather than manufactured PASS
+    ACCEPT:
+      definition: authority-scoped positive disposition
+    REJECT:
+      definition: authority-scoped negative disposition due to contradiction, invalidity or prohibited claim
+    DEFER:
+      definition: controlled unresolved disposition pending required evidence, execution or authority action
+    HISTORICAL_ACCEPT:
+      definition: previously valid receipt-backed acceptance that is retained as lineage but not reused as proof of current head state
+    ZERO_STEP:
+      definition: runtime state where a scheduled executable job did not execute any actual step; not equivalent to code failure or PASS
+
+  FEDERATION_AND_ORCHESTRATION:
+    KEB:
+      expansion: Knowledge Exchange Bridge
+      definition: typed semantic/provenance exchange path implemented primarily in CODEX
+    DOW:
+      definition: ABACUS parent consumption/challenge/disposition path; exact expansion is domain-defined and context-qualified
+    FEDERATION:
+      definition: governed exchange of typed information among autonomous repos while preserving local authority
+    ORCHESTRATION:
+      definition: controlled dispatch, sequencing and correlation of work across nodes
+    ROUTING:
+      definition: selection of a target worker or consumer for a typed request without asserting result validity
+    DISPATCH:
+      definition: act of sending a bounded work request to a worker node
+    RE_ENTRY:
+      definition: return of parent/satellite evidence to the child authority for final scoped disposition
+    ROUNDTRIP:
+      definition: complete source -> producer -> consumer/challenge -> authority-return cycle with identity continuity
+    BRIDGE:
+      definition: governed mapping or transport surface between otherwise independent schemas, repos or authority domains
+    CROSSWALK:
+      definition: traceable mapping between equivalent or related identifiers, terms, schemas or artifacts
+
+  MIP_AND_IMPROVEMENT:
+    MIP:
+      expansion: Modernize Innovate Perpetuate
+      definition: recursive improvement model used across repo modernization and Level-1 work
+    MODERNIZE:
+      definition: repair, update, simplify, remove staleness and expose current executable/control state
+    INNOVATE:
+      definition: create useful new connections, capabilities, representations, dependencies or viewpoints
+    PERPETUATE:
+      definition: make improvements repeatable through automation, metrics, runners, receipts and recurring control loops
+    FIRST_RED:
+      definition: earliest material failing or missing gate in an ordered verification sequence
+    RECURSE_ON_FIRST_RED:
+      definition: repair the earliest material observed failure, rerun the unchanged chain, then advance only when that gate clears
+    DMAIC:
+      expansion: Define Measure Analyze Improve Control
+      definition: cyclic structured improvement method
+    PCA:
+      expansion: Principal Component Analysis
+      definition: statistical dimensionality-reduction method; in this hive it is valid for measured feature matrices, not invented priority evidence
+    BT:
+      expansion: Bradley-Terry
+      definition: pairwise comparison/ranking model; requires a sufficiently connected observed comparison graph
+    DOV:
+      expansion: Definition of Victory
+      definition: evidence-based condition proving the intended gate/outcome was achieved
+    DOD:
+      expansion: Definition of Done
+      definition: completion condition for the current bounded task/session/deliverable, distinct from global project victory
+
+  RUNTIME_AND_TOOLING:
+    LEVEL_1:
+      definition: repo maturity/control convention using canonical SSOT, manifest, skill, executable runtime, MIP/DMAIC/PCA/BT and exact-head proof gates
+    CENSUS:
+      definition: measured inventory of repo capabilities, control surfaces, runtime state, SSOTs and evidence status
+    RUNTIME_PROBE:
+      definition: small executable test proving actual environment/tool behavior rather than file presence
+    SELF_TEST:
+      definition: repo-local test of the Level-1 kernel or capability contract
+    RUNNER:
+      definition: execution environment used by CI/workflow jobs
+    MCP:
+      expansion: Model Context Protocol
+      definition: protocol/integration surface for exposing structured tools/resources to agents or clients
+    LLDB_DAP:
+      definition: LLDB Debug Adapter Protocol surface used in runtime/debug health probes
+    ZOD:
+      definition: TypeScript schema-validation library used for machine-readable contract checking in selected governance surfaces
+    DOCKER:
+      definition: container runtime/build surface used for reproducibility and execution isolation
+    CODESPACE:
+      definition: GitHub-hosted development environment used as a reproducible runtime or exploratory environment
+    NOTEBOOK:
+      definition: executable literate-computing artifact; output remains non-authoritative until governed by source and authority rules
+
+  ARTIFACTS_AND_DOCUMENTS:
+    ARTIFACT:
+      definition: generated, transformed or collected file/object emitted by a pipeline or runtime
+    OUTWARD_ARTIFACT:
+      definition: user/stakeholder-facing generated artifact such as HTML, workbook, report, slide deck, PDF or index
+    CANONICAL_ARTIFACT:
+      definition: declared authoritative generated representation for its bounded output role, still subordinate to source truth where derived
+    LINEAGE:
+      definition: traceable chain from source through transformations, commits, hashes and receipts to outputs and dispositions
+    MANIFEST:
+      definition: machine-readable inventory of controlled files, gates, versions, dependencies or provenance
+    INDEX:
+      definition: navigational or resolver structure that identifies and links governed objects
+    GLOSSARY:
+      definition: controlled vocabulary with definitions, namespaces, authority and usage rules
+    DOMAIN_GLOSSARY:
+      definition: glossary extension owned by a bounded technical or operational domain
+    WHERE_USED:
+      definition: cross-reference from a controlled term, node or SSOT to the repos, artifacts and use cases that consume it
+    RTM:
+      expansion: Requirements Traceability Matrix
+    DTM:
+      definition: document/decision traceability matrix in the DOCX/RTM bridge context; use domain definition when more specific
+    ADR:
+      definition: Architecture Decision Record unless a local document taxonomy gives a more specific controlled expansion
+    OCD:
+      definition: Operational Concept Document unless a local document taxonomy gives a more specific controlled expansion
+
+  KNOWLEDGE_AND_REFERENCE:
+    REFERENCE_NODE:
+      definition: repository used for reading, examples, libraries, standards-adjacent methods or inspiration, without project truth authority
+    KNOWLEDGE_NODE:
+      definition: repo whose primary mesh value is curated information, reusable explanations, patterns or examples
+    SUPPORT_NODE:
+      definition: repo providing tooling, validation, schema, runtime, build, formatting, connector or infrastructure support
+    EXPERIMENT_NODE:
+      definition: exploratory repo whose results may inform later work but are not production authority by default
+    REFERENCE_ONLY:
+      definition: explicit authority status preventing direct promotion of content to engineering evidence
+    CONSIDERED:
+      definition: visible to routing/analysis as a potential dependency or source, without implying selected/accepted use
+
+  QPS_DOMAIN_BRIDGE:
+    QPS:
+      authority: GBOGEB/cryoplant-project:controls/QPS_GLOBAL_GLOSSARY_v1.yaml
+      definition: use the child-domain definition; global glossary only registers the namespace
+    SBS:
+      definition: System Breakdown Structure in QPS system architecture context
+      authority: QPS domain glossary/controlled SBS sources
+    CIS:
+      definition: QPLANT control/interlock system namespace in current QPS architecture
+      authority: QPS domain glossary/controlled SBS-CIS sources
+    VNV:
+      definition: canonical machine identifier for Verification and Validation in QPS
+      authority: QPS domain glossary
+    QRB_VV:
+      display: QRB.VV
+      definition: QRB Vacuum Vessel; bare VV is not Verification and Validation in QPS machine identifiers
+      authority: QPS domain glossary
+    WPS_SYSTEM:
+      display: WPS
+      definition: Warm Piping System in QPS system context
+      authority: QPS domain glossary
+    WPS_WELDING:
+      display: WPS
+      definition: Welding Procedure Specification
+      authority: QPS domain glossary
+
+namespace_rules:
+  VV:
+    rule: prohibited as unqualified global machine token because QPS reserves QRB.VV for Vacuum Vessel
+  WPS:
+    rule: qualify as WPS_SYSTEM or WPS_WELDING in machine-readable global data
+  CI:
+    rule: qualify when ambiguity exists between Continuous Integration and Confidence Interval
+  PM:
+    rule: qualify Project Manager versus Project Management when machine-readable
+  TP:
+    rule: domain qualification required
