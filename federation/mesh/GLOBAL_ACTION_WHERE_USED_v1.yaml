@@ -1,0 +1,27 @@
+schema: gbogeb-global-action-where-used/1.0
+wave: W111
+status: CANDIDATE_GLOBAL_USAGE_CROSSWALK
+rule: every action code must have at least one concrete use case; activity does not determine priority
+records:
+  CG: {first_use_case: cryoplant child re-entry after KEB+DOW, typical_nodes: [repo.cryoplant, repo.codex, repo.abacus]}
+  RR: {first_use_case: first failing governance or semantic gate repair, typical_nodes: [repo.codex, repo.abacus, repo.cryoplant]}
+  CR: {first_use_case: hosted-runner allocation and workflow repair, typical_nodes: [repo.cryoplant, repo.codex, repo.codespaces_jyperter]}
+  SR: {first_use_case: RFI-CIS-01 P0 row/list contradiction and QPS terminology drift, typical_nodes: [repo.cryoplant, repo.codex]}
+  DR: {first_use_case: W111 local-SSOT discovery/global-registration correction, typical_nodes: [repo.codex, repo.pipeline_hub]}
+  PB: {first_use_case: exact-head child/KEB/DOW and artifact receipt binding, typical_nodes: [repo.docx_rtm, repo.codex, repo.abacus]}
+  FE: {first_use_case: standard .mesh/MESH_DOCK.yaml yellow-pages port, typical_nodes: [repo.pipeline_hub, repo.codex]}
+  QH: {first_use_case: Level-1 PCA/BT/native-anchor hardening, typical_nodes: [repo.docx_rtm, repo.document_org, repo.codespaces_jyperter]}
+  HK: {first_use_case: low-consequence lint/metadata cleanup, typical_nodes: [repo.codespaces_jyperter]}
+  BG: {first_use_case: periodic census/metrics/dependency refresh, typical_nodes: [repo.codex, repo.abacus]}
+  KR: {first_use_case: bounded reference-repo reading supporting an active implementation question, typical_nodes: [reference_knowledge_catalog]}
+  EX: {first_use_case: orchestration and multi-agent DMAIC sandbox experiments, typical_nodes: [experiment_sandbox_catalog]}
+  WD: {first_use_case: wait for bidder/OEM return or missing owner MTO without repeated compute burn, typical_nodes: [repo.cryoplant]}
+current_operational_use:
+  object: QPS_W111_CIS_30_CELL_PENETRATION
+  sequence:
+    - {class: DR, action: source-bind and repair cell states}
+    - {class: SR, action: supersede contradictory historical ranking projection}
+    - {class: CG, action: obtain authoritative bidder residual return}
+    - {class: WD, action: wait after issue until response state changes}
+    - {class: PB, action: bind returned source identity and receipt}
+    - {class: CG, action: child final disposition}
