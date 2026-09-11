@@ -42,11 +42,18 @@ def resolve(root: Path, rel: str) -> dict[str, Any]:
 
 def action_record(glob: dict[str, Any], moniker: str) -> dict[str, Any]:
     taxonomy = resolve(ROOT, glob["authority"]["action_taxonomy"])
+    where_used = resolve(ROOT, glob["authority"]["action_where_used"])
     key = moniker.upper()
     record = taxonomy.get("action_monikers", {}).get(key)
     if not record:
         raise KeyError(f"Unknown action moniker: {moniker}")
-    return {"kind": "action", "identity": key, **record}
+    usage = where_used.get("records", {}).get(key, {})
+    return {
+        "kind": "action",
+        "identity": key,
+        **record,
+        "first_use_case": usage.get("first_use_case", "See action where-used registry"),
+    }
 
 
 def status_record(glob: dict[str, Any], key: str) -> dict[str, Any]:
