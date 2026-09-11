@@ -36,4 +36,5 @@ jobs:
         run: python scripts/validate_bridge_rows.py
 
       - name: Show strict-mode command without enforcing it
-        run: echo "Promotion gate: python scripts/validate_bridge_rows.py --strict"
+        run: |
+          echo "Promotion gate: python scripts/validate_bridge_rows.py --strict"
