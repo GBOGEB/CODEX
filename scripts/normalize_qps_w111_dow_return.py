@@ -16,6 +16,9 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DOW = ROOT / "triage" / "returns" / "DOW_W111_POWER_UTILITY_RECEIPT.json"
 EXPECTED_PAYLOAD_SHA256 = "cb66708b29a57abd8cd2721e40706a114f74e1941c1692af8c465370d96e124b"
 EXPECTED_CHILD_SSOT_BLOB = "d19975a150a3530cc4db3bd2fbbf4180f757c2a4"
+ISOTHERMAL_TOLERANCE = 0.001
+ISENTROPIC_MODEL_TOLERANCE = 0.002
+ISENTROPIC_MODEL_CLASS = "IDEAL_GAS_GAMMA_VS_REAL_FLUID_PROPERTY_MODEL"
 
 
 def file_sha256(path: Path) -> str:
@@ -35,27 +38,74 @@ def require(condition: bool, message: str) -> None:
 
 
 def normalize(dow: dict, dow_file_sha256: str) -> dict:
-    require(dow.get("authority_scope") == "REPO_LOCAL_ANALYTICAL_RUNTIME", "DOW authority scope mismatch")
-    require(dow.get("engineering_promotion_forbidden") is True, "DOW promotion guard missing")
+    require(
+        dow.get("authority_scope") == "REPO_LOCAL_ANALYTICAL_RUNTIME",
+        "DOW authority scope mismatch",
+    )
+    require(
+        dow.get("engineering_promotion_forbidden") is True,
+        "DOW promotion guard missing",
+    )
     source = dow.get("source_contract", {})
-    require(source.get("source_ssot_git_blob_sha") == EXPECTED_CHILD_SSOT_BLOB, "child SSOT identity mismatch")
-    require(source.get("input_payload_sha256") == EXPECTED_PAYLOAD_SHA256, "DOW input payload digest mismatch")
+    require(
+        source.get("source_ssot_git_blob_sha") == EXPECTED_CHILD_SSOT_BLOB,
+        "child SSOT identity mismatch",
+    )
+    require(
+        source.get("input_payload_sha256") == EXPECTED_PAYLOAD_SHA256,
+        "DOW input payload digest mismatch",
+    )
     require(source.get("payload_digest_verified") is True, "DOW payload verification missing")
     require(source.get("keb_receipt_verified") is True, "DOW did not verify KEB receipt")
-    require(source.get("coolprop_receipt_verified") is True, "DOW did not verify CoolProp receipt")
+    require(
+        source.get("coolprop_receipt_verified") is True,
+        "DOW did not verify CoolProp receipt",
+    )
 
     inv = dow.get("invCOP_screen", {})
-    require(abs(float(inv.get("unreconciled_electrical_kW")) - 153.13) < 1e-6, "DOW residual changed")
-    require(inv.get("residual_classification") == "SOURCE_GAP_NOT_BASELOAD", "DOW residual semantic changed")
-    require(dow.get("baseload", {}).get("status") == "DEFER_NOT_IDENTIFIED", "baseload must remain DEFER")
-    require("DEFER" in str(dow.get("pca", {}).get("status", "")), "PCA must remain deferred for inadequate sample")
+    require(
+        abs(float(inv.get("unreconciled_electrical_kW")) - 153.13) < 1e-6,
+        "DOW residual changed",
+    )
+    require(
+        inv.get("residual_classification") == "SOURCE_GAP_NOT_BASELOAD",
+        "DOW residual semantic changed",
+    )
+    require(
+        dow.get("baseload", {}).get("status") == "DEFER_NOT_IDENTIFIED",
+        "baseload must remain DEFER",
+    )
+    require(
+        "DEFER" in str(dow.get("pca", {}).get("status", "")),
+        "PCA must remain deferred for inadequate sample",
+    )
 
     cross = dow.get("independent_thermophysical_crosscheck", {})
-    require(abs(float(cross.get("isothermal_relative_delta"))) < 0.001, "CoolProp isothermal crosscheck outside tolerance")
-    require(abs(float(cross.get("isentropic_reference_relative_delta"))) < 0.001, "CoolProp isentropic reference crosscheck outside tolerance")
+    require(
+        abs(float(cross.get("isothermal_relative_delta"))) < ISOTHERMAL_TOLERANCE,
+        "CoolProp isothermal crosscheck outside tolerance",
+    )
+    require(
+        abs(float(cross.get("efficiency_relative_delta"))) < ISOTHERMAL_TOLERANCE,
+        "CoolProp isothermal-efficiency crosscheck outside tolerance",
+    )
+    require(
+        float(cross.get("isentropic_model_tolerance_fraction"))
+        == ISENTROPIC_MODEL_TOLERANCE,
+        "DOW isentropic model-form tolerance changed",
+    )
+    require(
+        cross.get("isentropic_model_difference_class") == ISENTROPIC_MODEL_CLASS,
+        "DOW isentropic model-form classification changed",
+    )
+    require(
+        abs(float(cross.get("isentropic_reference_relative_delta")))
+        < ISENTROPIC_MODEL_TOLERANCE,
+        "CoolProp isentropic reference crosscheck outside declared model-form tolerance",
+    )
 
     return {
-        "schema": "codex-keb-w111-dow-return/0.1",
+        "schema": "codex-keb-w111-dow-return/0.2",
         "receipt_id": "KEB-W111-POWER-UTILITY-RETURN",
         "authority_scope": "REPO_LOCAL_SEMANTIC_RUNTIME",
         "engineering_promotion_forbidden": True,
@@ -67,6 +117,11 @@ def normalize(dow: dict, dow_file_sha256: str) -> dict:
         "dow_receipt_file_sha256": dow_file_sha256,
         "semantic_normalization": "PASS_NO_NUMERIC_MUTATION",
         "source_gap_disposition_candidate": "DEFER_SOURCE_GAPS",
+        "model_form_policy": {
+            "isothermal_tolerance_fraction": ISOTHERMAL_TOLERANCE,
+            "isentropic_model_tolerance_fraction": ISENTROPIC_MODEL_TOLERANCE,
+            "isentropic_model_difference_class": ISENTROPIC_MODEL_CLASS,
+        },
         "preserved_findings": {
             "compression_points": dow.get("compression_points"),
             "independent_thermophysical_crosscheck": cross,
@@ -90,7 +145,10 @@ def main() -> int:
     result = normalize(dow, file_sha256(inp))
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    out.write_text(
+        json.dumps(result, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
     print("QPS_W111_KEB_DOW_RETURN_NORMALIZATION=PASS")
     print(f"payload_sha256={EXPECTED_PAYLOAD_SHA256}")
     print(f"dow_receipt_sha256={result['dow_receipt_file_sha256']}")
