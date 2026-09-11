@@ -1,0 +1,95 @@
+{
+  "authority_scope": "REPO_LOCAL_ANALYTICAL_RUNTIME",
+  "baseload": {
+    "reason": "Need >=3 independent same-boundary operating points and explicit electrical metering boundary before fitting an intercept.",
+    "status": "DEFER_NOT_IDENTIFIED"
+  },
+  "compression_points": [
+    {
+      "ideal_isothermal_kW": 130.66369333019867,
+      "input": {
+        "P1_bara": 1.05,
+        "P2_bara": 14.0,
+        "T1_K": 298.0,
+        "frequency_Hz": 56.0,
+        "mass_flow_kg_s": 0.0815,
+        "name": "LKT_HP_56Hz_each",
+        "package_input_kW": 203.5
+      },
+      "isentropic_reference": {
+        "apparent_full_ratio_efficiency": 1.1267649477780628,
+        "classification": "REFERENCE_ONLY",
+        "ideal_isentropic_reference_kW": 229.29666687283577,
+        "reason": "Full 1.05->14 bara HP package is strongly intercooled/multistage; an apparent efficiency above one proves the single adiabatic-stage reference does not match the package work/control-volume boundary."
+      },
+      "package_isothermal_efficiency": 0.6420820311066273
+    },
+    {
+      "ideal_isothermal_kW": 179.56237611021166,
+      "input": {
+        "P1_bara": 1.05,
+        "P2_bara": 14.0,
+        "T1_K": 298.0,
+        "frequency_Hz": 72.0,
+        "mass_flow_kg_s": 0.112,
+        "name": "LKT_HP_72Hz_each",
+        "package_input_kW": 357.0
+      },
+      "isentropic_reference": {
+        "apparent_full_ratio_efficiency": 0.8826528738037706,
+        "classification": "CANDIDATE_IF_CONTROL_VOLUME_MATCHES",
+        "ideal_isentropic_reference_kW": 315.1070759479461,
+        "reason": "Numerically physical, but stage/control-volume compatibility is still required before promotion."
+      },
+      "package_isothermal_efficiency": 0.502975843445971
+    }
+  ],
+  "engineering_promotion_forbidden": true,
+  "independent_thermophysical_crosscheck": {
+    "coolprop_git_head": "7d07e23f9001031b09571083809ec95ec321a058",
+    "coolprop_ideal_isentropic_reference_kW": 229.58890530320735,
+    "coolprop_ideal_isothermal_kW": 130.66658548280085,
+    "coolprop_package_isothermal_efficiency": 0.6420962431587266,
+    "coolprop_version": "7.2.1dev",
+    "disposition": "CORROBORATES_IDEAL_WORK_WITHIN_DECLARED_MODEL_FORM_TOLERANCE_NOT_ENGINEERING_PROMOTION",
+    "efficiency_relative_delta": -2.2133834687099315e-05,
+    "isentropic_model_difference_class": "IDEAL_GAS_GAMMA_VS_REAL_FLUID_PROPERTY_MODEL",
+    "isentropic_model_tolerance_fraction": 0.002,
+    "isentropic_reference_relative_delta": -0.001272876971061112,
+    "isothermal_relative_delta": -2.2133834686962095e-05,
+    "isothermal_tolerance_fraction": 0.001,
+    "local_ideal_isentropic_reference_kW": 229.29666687283577,
+    "local_ideal_isothermal_kW": 130.66369333019867,
+    "local_package_isothermal_efficiency": 0.6420820311066273,
+    "source": "GBOGEB/CoolProp exact workflow receipt"
+  },
+  "invCOP_screen": {
+    "Qeq_margin_kW": 3.423,
+    "bidder_implied_total_electrical_kW": 1061.13,
+    "bidder_reference_invCOP_W_per_W": 310.0,
+    "controlled_operating_subtotal_kW": 908.0,
+    "controlled_subtotal_invCOP_W_per_W": 265.2643879637745,
+    "residual_classification": "SOURCE_GAP_NOT_BASELOAD",
+    "unreconciled_electrical_kW": 153.13
+  },
+  "next_BG": "UNRECONCILED_E3_ELECTRICAL_BOUNDARY_AND_MISSING_HP_PVPS_AUXILIARY_SPLIT",
+  "next_CG": "SOURCE_BOUND_SLD_LOAD_SCHEDULE_PLUS_SAME_POINT_MOTOR_VFD_AUXILIARY_DECOMPOSITION",
+  "pca": {
+    "minimum_sample_rule": "n >= max(10, 3*p) unless alternate adequacy test is documented",
+    "status": "DEFER_SAMPLE_INADEQUATE_FOR_CURRENT_TWO_POINT_HP_SET"
+  },
+  "schema": "abacus-dow-w111-power-utility-receipt/0.4",
+  "source_contract": {
+    "coolprop_receipt_sha256": "85c8a7c0796fa031381c3b2144820af7adff4bab3e4bf31e41b89b2649f5a022",
+    "coolprop_receipt_verified": true,
+    "coolprop_run_id": 34604175050,
+    "input_payload_sha256": "cb66708b29a57abd8cd2721e40706a114f74e1941c1692af8c465370d96e124b",
+    "keb_artifact_id": 10266200791,
+    "keb_receipt_verified": true,
+    "keb_run_id": 34605581034,
+    "payload_digest_verified": true,
+    "qps_child": "GBOGEB/cryoplant-project",
+    "source_ssot": "ocd-adr/20_canonical/control/QPS_W111_POWER_UTILITY_SOURCE_SSOT_v1.json",
+    "source_ssot_git_blob_sha": "d19975a150a3530cc4db3bd2fbbf4180f757c2a4"
+  }
+}

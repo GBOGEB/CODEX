@@ -1,4 +1,4 @@
-schema_version: "1.0"
+schema_version: "1.1"
 repository: GBOGEB/CODEX
 pipelines:
   - id: KEB_VALIDATION
@@ -8,6 +8,15 @@ pipelines:
     state: CANONICAL_ACTIVE
     implementation: [src/bridge_adapter.py, scripts/bridge_orchestrator.py, scripts/check_bridge_health.py]
     flow: [receipt, dispatch, parent_response, normalize, return]
+  - id: KEB_W111_QPS_POWER_UTILITY
+    state: CONTROL_CANDIDATE
+    child_authority: GBOGEB/cryoplant-project
+    child_source_ssot: ocd-adr/20_canonical/control/QPS_W111_POWER_UTILITY_SOURCE_SSOT_v1.json
+    manifest: triage/W111_QPS_POWER_UTILITY_KEB_BRIDGE.yaml
+    validator: scripts/validate_qps_w111_power_utility_bridge.py
+    workflow: .github/workflows/qps-w111-power-utility-keb.yml
+    flow: [sanitized_child_payload, exact_digest, evidence_locator_check, E0_E4_T0_T5_normalize, DOW_dispatch, DOW_receipt, digest_reconcile, KEB_typed_return, child_reentry]
+    prohibitions: [QPS_engineering_promotion, source_value_mutation, raw_confidential_offer_replication]
   - id: MCP_GOVERNANCE
     state: CANONICAL_ACTIVE
     implementation: [scripts/run_mcp_sweep.py, src/federation/mcp_sweep_engine.py]
@@ -15,4 +24,4 @@ pipelines:
   - id: CONTRACT_RELEASE_VERIFICATION
     state: CANONICAL_ACTIVE
     implementation: [codex/contract_governance/builder.py, codex/contract_governance/validator.py]
-quality_gates: [schema, semantic, provenance, hash, federation_contract, CI]
+quality_gates: [schema, semantic, provenance, hash, confidentiality_boundary, federation_contract, CI]
