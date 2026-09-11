@@ -1,4 +1,4 @@
-schema: gbogeb-mesh-dock/1.2
+schema: gbogeb-mesh-dock/1.3
 repo: GBOGEB/CODEX
 node_id: repo.codex
 ring: R0_CORE_AUTHORITY
@@ -8,6 +8,7 @@ local_ssot:
   glossary: PIPELINE/GLOSSARY.yaml
   global_census: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml
   action_taxonomy: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
+  closure_controller: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
   glob: GLOB.yaml
   rex_taxonomy: federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml
   rex_ledger: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
@@ -21,6 +22,7 @@ global_directory:
   where_used: federation/mesh/GLOBAL_WHERE_USED_v1.yaml
   dock_protocol: federation/mesh/GLOBAL_MESH_DOCK_PROTOCOL_v1.yaml
   status_contract: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+  closure_controller: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
   rex:
     taxonomy: federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml
     ledger: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
@@ -31,6 +33,7 @@ authority:
     - provenance_validation
     - exact_SHA_receipts
     - mesh_routing_vocabulary
+    - closure_controller_semantics
     - aggregate_evidence_bound_REX
   must_not:
     - promote_QPS_engineering_truth
@@ -47,6 +50,7 @@ outputs:
   - semantic_findings
   - global_mesh_index
   - routing_contracts
+  - closure_control_decisions
   - global_REX_lookup
 action_monikers:
   - CLOSE
@@ -76,9 +80,18 @@ reserved_status_keys:
   - CR
   - PB
   - BG
+composite_controller:
+  canonical_prompt: mesh closure control this
+  contract: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
+  rule: >-
+    Select the minimum evidence-producing method/action sequence and stop when bounded
+    DoV is satisfied; never redefine status keys or engineering authority.
 lookup_examples:
   - what can CODEX do?
   - show RED
+  - mesh closure control this
+  - minimum path to DoV
+  - done, repair, or repeat?
   - what is blocking the current gate?
   - show inbound evidence
   - show outbound actions
@@ -96,5 +109,6 @@ dmaic_control:
     Repeated observations update stable REX signatures and recurrence state;
     they do not create disconnected duplicate lessons.
 first_use_case: >-
-  Validate and bind a child evidence/runtime tuple before DOW consumption, then
-  preserve material failure/repair experience as a queryable REX Control record.
+  Run mesh closure control to decide the minimum path to DoV, validate and bind a
+  child evidence/runtime tuple before DOW consumption, then preserve material
+  failure/repair experience as a queryable REX Control record.
