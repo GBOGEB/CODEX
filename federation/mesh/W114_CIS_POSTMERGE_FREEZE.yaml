@@ -1,5 +1,5 @@
 # yamllint disable rule:line-length
-schema: w114-cis-postmerge-freeze/1.0
+schema: w114-cis-postmerge-freeze/1.1
 wave: W114
 role: KEB_POSTMERGE_FREEZE_AND_ROLLUP
 purpose: >-
@@ -67,7 +67,7 @@ dow_namespace_receiver:
   repo: GBOGEB/ABACUS
   pr: 1119
   exact_head_sha: 9a4139a926f4b4d90b197be76877e27d01b86fb1
-  merge_sha: PENDING
+  merge_sha: 8b1dca3652735156542e9dd14bf6b5b7a6080482
   current_disposition: ACCEPT_CONTRACT_AND_ROUTING_VOCABULARY
 
 measured_cis_state:
@@ -125,7 +125,7 @@ rollup_disposition:
   w111_source_identity: ACCEPT
   postmerge_provenance_identity: ACCEPT
   status_action_namespace: ACCEPT
-  dow_namespace_receiver_merge: DEFER_PENDING_MERGE
+  dow_namespace_receiver_merge: ACCEPT
   qps_runtime_execution: DEFER_RUNNER_PRESTEP
   bidder_contractual_closure: DEFER_AUTHORITATIVE_RETURN_REQUIRED
   engineering_credit: 0
@@ -145,8 +145,6 @@ authority:
     - convert_zero_step_runner_failure_to_application_failure
 
 next_actions:
-  - moniker: RECEIPT
-    action: bind ABACUS 1119 merge identity after review and merge
   - moniker: RUNTIME
     action: restore cryoplant repository runner provisioning until a governed probe executes greater than zero steps
   - moniker: CLOSE
