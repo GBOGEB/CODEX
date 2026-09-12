@@ -2,7 +2,9 @@
 """Real Docker -> lldb-server -> host LLDB remote-attach proof.
 
 Docker is an execution primitive here, not a census field. The host port is
-allocated by Docker on loopback and then observed from `docker port`.
+allocated by Docker on loopback and then observed from `docker port`. Symbols
+are extracted from a separate created container before the live debug container
+starts, avoiding lifecycle races when the debug target exits.
 """
 from __future__ import annotations
 
@@ -71,7 +73,6 @@ def main() -> int:
 
     sha = os.getenv("GITHUB_SHA", "local")[:12]
     image = f"qps-perpetual-debug:{sha}"
-    container_id = None
     with tempfile.TemporaryDirectory(prefix="qps-docker-debug-") as td:
         work = Path(td)
         (work / "probe.c").write_text(
@@ -93,7 +94,38 @@ def main() -> int:
             receipt({"schema": "qps.perpetual.docker_lldb.v1", "status": "REJECT", "build": build})
             return 2
         inspect = run([docker, "image", "inspect", image, "--format", "{{.Id}}"])
-        start = run([docker, "run", "-d", "--rm", "-p", "127.0.0.1::4711", image])
+
+        # Extract the exact in-image debug binary before starting the live
+        # lldb-server container. This avoids racing target exit/auto-removal.
+        symbol_create = run([docker, "create", image])
+        symbol_container = symbol_create.get("stdout", "").strip()
+        if symbol_create["returncode"] != 0 or not symbol_container:
+            receipt(
+                {
+                    "schema": "qps.perpetual.docker_lldb.v1",
+                    "status": "REJECT",
+                    "reason": "symbol_container_create_failed",
+                    "symbol_create": symbol_create,
+                }
+            )
+            return 2
+        copy = run([docker, "cp", f"{symbol_container}:/opt/qps/probe", str(work / "probe")])
+        symbol_cleanup = run([docker, "rm", symbol_container], 30)
+        if copy["returncode"] != 0:
+            receipt(
+                {
+                    "schema": "qps.perpetual.docker_lldb.v1",
+                    "status": "REJECT",
+                    "reason": "symbol_copy_failed",
+                    "copy": copy,
+                    "symbol_cleanup": symbol_cleanup,
+                }
+            )
+            return 2
+
+        # Keep the live container observable after target exit; explicit
+        # cleanup below is part of the acceptance predicate.
+        start = run([docker, "run", "-d", "-p", "127.0.0.1::4711", image])
         if start["returncode"] != 0:
             receipt({"schema": "qps.perpetual.docker_lldb.v1", "status": "REJECT", "start": start})
             return 2
@@ -108,17 +140,20 @@ def main() -> int:
                 break
             time.sleep(0.25)
         if port is None:
-            run([docker, "rm", "-f", container_id], 30)
+            logs = run([docker, "logs", container_id], 30)
+            cleanup = run([docker, "rm", "-f", container_id], 30)
             receipt(
                 {
                     "schema": "qps.perpetual.docker_lldb.v1",
                     "status": "REJECT",
                     "reason": "dynamic_loopback_port_not_observed",
                     "port_observation": port_observation,
+                    "container_logs": logs,
+                    "cleanup": cleanup,
                 }
             )
             return 2
-        copy = run([docker, "cp", f"{container_id}:/opt/qps/probe", str(work / "probe")])
+
         debug = run(
             [
                 lldb,
@@ -144,10 +179,10 @@ def main() -> int:
         steps = combined.count("frame #") + combined.count("stop reason")
         logs = run([docker, "logs", container_id], 30)
         cleanup = run([docker, "rm", "-f", container_id], 30)
-        container_id = None
         accepted = (
             build["returncode"] == 0
             and copy["returncode"] == 0
+            and symbol_cleanup["returncode"] == 0
             and debug["returncode"] == 0
             and steps > 0
             and port > 0
@@ -160,13 +195,15 @@ def main() -> int:
             "dov_status": "PASS" if accepted else "WITHHELD",
             "image": image,
             "image_id": inspect.get("stdout", "").strip(),
-            "container_id": start.get("stdout", "").strip(),
+            "container_id": container_id,
             "host_binding": f"127.0.0.1:{port}",
             "container_port": 4711,
             "port_allocation": "docker_dynamic_host_port",
             "build": build,
-            "port_observation": port_observation,
+            "symbol_create": symbol_create,
             "copy": copy,
+            "symbol_cleanup": symbol_cleanup,
+            "port_observation": port_observation,
             "debug": debug,
             "container_logs": logs,
             "cleanup": cleanup,
