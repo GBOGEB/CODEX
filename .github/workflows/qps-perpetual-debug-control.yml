@@ -33,18 +33,186 @@ jobs:
   native-protocol:
     name: live lldb-dap and MCP
     runs-on: macos-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - name: Execute live lldb-dap DAP session
         id: lldb_dap
         continue-on-error: true
         run: python3 scripts/qps_debug_protocol_probe.py lldb-dap
-      - name: Execute live LLDB MCP session or emit bounded BD
+      - name: Materialise official LLVM lldb-mcp toolchain
+        id: mcp_toolchain
+        run: |
+          set -euo pipefail
+          if command -v lldb-mcp >/dev/null 2>&1; then
+            MCP_BIN="$(command -v lldb-mcp)"
+            MCP_SOURCE="preinstalled-path"
+          else
+            export HOMEBREW_NO_AUTO_UPDATE=1
+            brew install lldb
+            LLDB_PREFIX="$(brew --prefix lldb)"
+            MCP_BIN="${LLDB_PREFIX}/bin/lldb-mcp"
+            MCP_SOURCE="homebrew-lldb"
+            test -x "${MCP_BIN}"
+            echo "${LLDB_PREFIX}/bin" >> "${GITHUB_PATH}"
+          fi
+          mkdir -p artifacts/qps_debug/perpetual
+          MCP_VERSION="$(brew list --versions lldb 2>/dev/null || true)"
+          MCP_SHA256="$(shasum -a 256 "${MCP_BIN}" | awk '{print $1}')"
+          export MCP_BIN MCP_SOURCE MCP_VERSION MCP_SHA256
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          payload = {
+              'schema': 'qps.perpetual.lldb_mcp_toolchain.v1',
+              'binary': os.environ['MCP_BIN'],
+              'source': os.environ['MCP_SOURCE'],
+              'package_version': os.environ['MCP_VERSION'],
+              'sha256': os.environ['MCP_SHA256'],
+              'authority_guards': {
+                  'formal_engineering_credit_delta': 0,
+                  'negotiation_credit_delta': 0,
+              },
+          }
+          path = Path('artifacts/qps_debug/perpetual/lldb_mcp_toolchain.json')
+          path.write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + '\n',
+              encoding='utf-8',
+          )
+          print(json.dumps(payload, indent=2, sort_keys=True))
+          PY
+      - name: Execute live LLDB MCP session with held backend
         id: mcp
-        if: always()
+        if: always() && steps.mcp_toolchain.outcome == 'success'
         continue-on-error: true
-        run: python3 scripts/qps_debug_protocol_probe.py mcp
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/qps_debug/perpetual
+          LLDB_PREFIX="$(brew --prefix lldb)"
+          LLDB_DRIVER="${LLDB_PREFIX}/bin/lldb"
+          BACKEND_STDOUT="artifacts/qps_debug/perpetual/lldb_mcp_backend.stdout"
+          BACKEND_STDERR="artifacts/qps_debug/perpetual/lldb_mcp_backend.stderr"
+          FIFO="${RUNNER_TEMP}/qps-lldb-mcp-stdin"
+          test -x "${LLDB_DRIVER}"
+          rm -f "${FIFO}"
+          mkfifo "${FIFO}"
+          exec 9<>"${FIFO}"
+          "${LLDB_DRIVER}" -O "protocol-server start MCP" \
+            <&9 >"${BACKEND_STDOUT}" 2>"${BACKEND_STDERR}" &
+          BACKEND_PID="$!"
+          cleanup() {
+            kill "${BACKEND_PID}" 2>/dev/null || true
+            wait "${BACKEND_PID}" 2>/dev/null || true
+            exec 9>&- || true
+            rm -f "${FIFO}"
+          }
+          trap cleanup EXIT
+
+          sleep 2
+          if ! kill -0 "${BACKEND_PID}" 2>/dev/null; then
+            cat "${BACKEND_STDOUT}" || true
+            cat "${BACKEND_STDERR}" || true
+            export BACKEND_PID LLDB_DRIVER
+            python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          payload = {
+              'schema': 'qps.perpetual.lldb_mcp_backend.v1',
+              'status': 'FAIL',
+              'driver': os.environ['LLDB_DRIVER'],
+              'pid': int(os.environ['BACKEND_PID']),
+              'held_input': True,
+              'reason': 'official LLDB MCP backend exited before probe',
+          }
+          Path('artifacts/qps_debug/perpetual/lldb_mcp_backend.json').write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + '\n',
+              encoding='utf-8',
+          )
+          Path('artifacts/qps_debug/perpetual/lldb_mcp_live.json').write_text(
+              json.dumps(
+                  {
+                      'schema': 'qps.perpetual.lldb_mcp.v1',
+                      'status': 'DEFER',
+                      'dov_status': 'WITHHELD',
+                      'reason': 'official LLDB MCP backend exited before probe',
+                      'bd_id': 'BD04-MCP-BACKEND',
+                  },
+                  indent=2,
+                  sort_keys=True,
+              )
+              + '\n',
+              encoding='utf-8',
+          )
+          PY
+            exit 2
+          fi
+
+          set +e
+          LLDB_MCP_LOG=1 python3 scripts/qps_debug_protocol_probe.py mcp
+          PROBE_RC="$?"
+          set -e
+          BACKEND_ALIVE=false
+          if kill -0 "${BACKEND_PID}" 2>/dev/null; then
+            BACKEND_ALIVE=true
+          fi
+          cat "${BACKEND_STDOUT}" || true
+          cat "${BACKEND_STDERR}" || true
+          export BACKEND_PID BACKEND_ALIVE LLDB_DRIVER PROBE_RC
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          payload = {
+              'schema': 'qps.perpetual.lldb_mcp_backend.v1',
+              'status': 'PASS' if os.environ['BACKEND_ALIVE'] == 'true' else 'FAIL',
+              'driver': os.environ['LLDB_DRIVER'],
+              'pid': int(os.environ['BACKEND_PID']),
+              'held_input': True,
+              'alive_after_probe': os.environ['BACKEND_ALIVE'] == 'true',
+              'probe_returncode': int(os.environ['PROBE_RC']),
+              'mode': 'official_lldb_protocol_server_held_open',
+              'authority_guards': {
+                  'formal_engineering_credit_delta': 0,
+                  'negotiation_credit_delta': 0,
+              },
+          }
+          Path('artifacts/qps_debug/perpetual/lldb_mcp_backend.json').write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + '\n',
+              encoding='utf-8',
+          )
+          print(json.dumps(payload, indent=2, sort_keys=True))
+          PY
+          exit "${PROBE_RC}"
+      - name: Emit bounded MCP BD if toolchain failed
+        if: always() && steps.mcp_toolchain.outcome != 'success'
+        run: |
+          mkdir -p artifacts/qps_debug/perpetual
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path('artifacts/qps_debug/perpetual/lldb_mcp_live.json')
+          path.write_text(
+              json.dumps(
+                  {
+                      'schema': 'qps.perpetual.lldb_mcp.v1',
+                      'status': 'DEFER',
+                      'dov_status': 'WITHHELD',
+                      'reason': 'official LLVM lldb-mcp toolchain materialisation failed',
+                      'bd_id': 'BD04-MCP-TOOLCHAIN',
+                  },
+                  indent=2,
+                  sort_keys=True,
+              )
+              + '\n',
+              encoding='utf-8',
+          )
+          PY
       - name: Enforce lldb-dap runtime DoV
         if: always()
         run: |
@@ -55,6 +223,18 @@ jobs:
           assert p['status'] == 'ACCEPT', p
           assert p['session']['initialize_success'] is True, p
           assert p['session']['stack_frames'] > 0, p
+          PY
+      - name: Enforce LLDB MCP runtime DoV
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = json.loads(Path('artifacts/qps_debug/perpetual/lldb_mcp_live.json').read_text())
+          assert p['status'] == 'ACCEPT', p
+          expected = {'session_create', 'command', 'sessions_list', 'session_close'}
+          assert expected.issubset(set(p['tool_names'])), p
+          assert p['session_uri'].startswith('lldb-mcp://'), p
           PY
       - uses: actions/upload-artifact@v4
         if: always()
