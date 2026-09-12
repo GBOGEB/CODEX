@@ -95,8 +95,6 @@ def main() -> int:
             return 2
         inspect = run([docker, "image", "inspect", image, "--format", "{{.Id}}"])
 
-        # Extract the exact in-image debug binary before starting the live
-        # lldb-server container. This avoids racing target exit/auto-removal.
         symbol_create = run([docker, "create", image])
         symbol_container = symbol_create.get("stdout", "").strip()
         if symbol_create["returncode"] != 0 or not symbol_container:
@@ -123,9 +121,27 @@ def main() -> int:
             )
             return 2
 
-        # Keep the live container observable after target exit; explicit
-        # cleanup below is part of the acceptance predicate.
-        start = run([docker, "run", "-d", "-p", "127.0.0.1::4711", image])
+        # LLDB/lldb-server requires ptrace and the personality syscall used to
+        # control ASLR. Grant only those debugger-specific capabilities to the
+        # disposable target container; do not use --privileged.
+        security_profile = {
+            "cap_add": ["SYS_PTRACE"],
+            "security_opt": ["seccomp=unconfined"],
+            "privileged": False,
+        }
+        start = run(
+            [
+                docker,
+                "run",
+                "-d",
+                "--cap-add=SYS_PTRACE",
+                "--security-opt",
+                "seccomp=unconfined",
+                "-p",
+                "127.0.0.1::4711",
+                image,
+            ]
+        )
         if start["returncode"] != 0:
             receipt({"schema": "qps.perpetual.docker_lldb.v1", "status": "REJECT", "start": start})
             return 2
@@ -150,6 +166,7 @@ def main() -> int:
                     "port_observation": port_observation,
                     "container_logs": logs,
                     "cleanup": cleanup,
+                    "security_profile": security_profile,
                 }
             )
             return 2
@@ -190,7 +207,7 @@ def main() -> int:
             and cleanup["returncode"] == 0
         )
         body = {
-            "schema": "qps.perpetual.docker_lldb.v1",
+            "schema": "qps.perpetual.docker_lldb.v2",
             "status": "ACCEPT" if accepted else "REJECT",
             "dov_status": "PASS" if accepted else "WITHHELD",
             "image": image,
@@ -199,6 +216,7 @@ def main() -> int:
             "host_binding": f"127.0.0.1:{port}",
             "container_port": 4711,
             "port_allocation": "docker_dynamic_host_port",
+            "security_profile": security_profile,
             "build": build,
             "symbol_create": symbol_create,
             "copy": copy,
