@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'scripts/qps_debug_protocol_probe.py'
+      - 'scripts/qps_js_debug_probe.py'
       - 'scripts/qps_docker_remote_lldb_probe.py'
       - 'scripts/qps_perpetual_control.py'
       - 'runtime/debug/federation/**'
@@ -12,6 +13,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/qps_debug_protocol_probe.py'
+      - 'scripts/qps_js_debug_probe.py'
       - 'scripts/qps_docker_remote_lldb_probe.py'
       - 'scripts/qps_perpetual_control.py'
       - 'runtime/debug/federation/**'
@@ -94,7 +96,7 @@ jobs:
         if: always() && steps.js_build.outcome == 'success'
         continue-on-error: true
         run: |
-          python scripts/qps_debug_protocol_probe.py js-debug \
+          python scripts/qps_js_debug_probe.py \
             --server-path "${RUNNER_TEMP}/vscode-js-debug/dist/src/dapDebugServer.js"
       - name: Emit js-debug BD if server build failed
         if: always() && steps.js_build.outcome != 'success'
