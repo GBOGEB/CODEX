@@ -3,12 +3,12 @@ repo: GBOGEB/CODEX
 measurement_window:
   start: 2026-09-11T08:36:31Z
   end: OPEN
-  basis: W113 W003 governance-gate Control loop across PR621 and PR624
-  denominator_notes: two observed failed W003 execution opportunities; fresh control probe pending
+  basis: W113 W003 governance-gate Control loop across PR621, PR624, PR638, and final convergence probe
+  denominator_notes: five observed failed W003 execution opportunities before the final draft-controlled convergence probe
 
 repo_state:
-  head_sha: 0357a3a34772124a174f0770bedf6a1e44e04a81
-  branch_or_pr: w113/rex-w003-control-close
+  base_sha: c4e92de867c1b70f12445e401b803d087b73eadb
+  branch_or_pr: w113/rex-final-convergence
   dmaic_phase: CONTROL
   rex_status: CURRENT_OPEN
 
@@ -21,38 +21,46 @@ records:
       primary: GBOGEB/CODEX
       impacted: [GBOGEB/CODEX]
     first_seen: 34580026684
-    last_seen: 34580243250
+    last_seen: 34618519113
     severity_stars: 3
     frequency:
-      observed_count: 2
+      observed_count: 5
       unit: failed_governance_gate_runs
       impacted_repo_count: 1
       impacted_workflow_count: 1
       measurement_window: CODEX_W113_W003_CONTROL
     recurrence: REPEATED_SAME_SIGNATURE
-    reopened_count: 1
+    reopened_count: 0
     symptom: >-
-      W003 Governance Gate executed normally and rejected two successive forms of
-      invalid PR governance metadata: PR #621 omitted the mandatory PR CLASSIFICATION
-      block; PR #624 included the block but used SPRINT S1-C1, which violates the
-      governed S<number>-P<number> schema contract.
+      W003 Governance Gate executed normally and repeatedly rejected invalid PR governance
+      metadata while remaining fail-closed: the mandatory classification block was first
+      absent, then present with an invalid SPRINT value, and later present with an invalid
+      SCHEMA MUTATION enum value.
     root_cause: >-
-      PR metadata authoring did not conform to the executable governance-header
-      contract before CI: first by omission, then by an invalid SPRINT value.
+      PR metadata authoring did not conform to the executable governance-header contract
+      before CI. The failures were metadata/schema contract defects, not runner or parser
+      availability failures.
     action_moniker: RED
     repair_method: >-
-      Preserve the fail-closed W003 parser/schema unchanged. Author a fresh control PR
-      with the complete governance block and schema-valid SPRINT S1-P1, then require
-      the same W003 gate to execute more than zero steps and PASS.
+      Preserve the W003 parser and schema unchanged. Use a fresh draft PR from current main
+      with the complete classification block and schema-valid values, require W003 to execute
+      more than zero steps and PASS, then repair any independent Semantic Runtime and Main CI
+      first-reds on the same branch before binding one exact-head convergence receipt.
     verification:
       initial_failure:
+        pr: 621
         run_id: 34580026684
         job_id: 103201189313
         exact_head_sha: 40d898f6c8f647cb581794d39b346294938274db
         result: FAIL_MISSING_HEADER
         failing_step: Run governance parser on PR metadata
         error_code: PR-007
-      first_control_probe:
+      pr624_opened_probe:
+        pr: 624
+        run_id: 34580228649
+        exact_head_sha: 0b1a2d4a101e5f8989fd3d896626b018fd8ba43a
+        result: FAIL
+      pr624_edited_probe:
         pr: 624
         run_id: 34580243250
         job_id: 103201867572
@@ -61,7 +69,21 @@ records:
         result: FAIL_INVALID_SPRINT_SCHEMA
         failing_step: Run governance parser on PR metadata
         observed_steps_before_failure: 5
-      fresh_control_probe:
+      pr638_opened_probe:
+        pr: 638
+        run_id: 34618507616
+        job_id: 103326306632
+        exact_head_sha: c33f26adb9559265627a3b87d07ae1937741293d
+        runner_id: 1000248755
+        result: FAIL_INVALID_SCHEMA_MUTATION_ENUM
+        failing_step: Run governance parser on PR metadata
+        observed_steps_before_failure: 5
+      pr638_parallel_probe:
+        pr: 638
+        run_id: 34618519113
+        exact_head_sha: c33f26adb9559265627a3b87d07ae1937741293d
+        result: FAIL_INVALID_SCHEMA_MUTATION_ENUM
+      final_convergence_probe:
         pr: PENDING
         run_id: PENDING
         job_id: PENDING
@@ -71,12 +93,15 @@ records:
       - W003 Governance Gate remains fail-closed
       - PR authoring must emit the complete governance header before first CI
       - SPRINT must satisfy the governed S<number>-P<number> pattern
-      - CONTROLLED requires an unchanged-gate PASS with durable exact-run proof
+      - SCHEMA MUTATION must use a governed enum value such as NO
+      - CONTROLLED requires W003 plus Semantic Runtime plus Main CI PASS on one exact head
+      - the exact-head receipt must be committed before the draft PR is released for merge
     control_status: OPEN
     lesson: >-
-      PR metadata is executable governance input. Control requires both presence and
-      schema conformance; a visually complete header is not sufficient evidence.
-    lookup_tags: [w003, governance, pr-metadata, header, schema, sprint, pr-007, codex]
+      PR metadata is executable governance input. Control requires both presence and exact
+      schema conformance, and convergence proof must be bound before promotion rather than
+      inferred from a later merge.
+    lookup_tags: [w003, governance, pr-metadata, header, schema, sprint, schema-mutation, pr-007, codex]
 
 summary:
   total_records: 1
@@ -90,5 +115,5 @@ return_contract:
   consumer: GBOGEB/CODEX
   global_taxonomy: federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml
   merge_key: signature_plus_authority_relevant_scope
-  promotion_state: HOLD_UNTIL_SAME_GATE_PASS
+  promotion_state: HOLD_UNTIL_EXACT_HEAD_CONVERGENCE
   authority_transfer: false
