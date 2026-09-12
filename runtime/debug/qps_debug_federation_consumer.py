@@ -6,6 +6,9 @@ Two evidence modes are explicit and intentionally non-interchangeable:
 - FEDERATED_EXACT_PAYLOAD: exact QPS target bytes executed on a healthy
   federated runner, requiring exact source SHA, payload hash, real LLDB steps,
   and adapter readiness while the QPS repo-local runner gate stays withheld.
+
+Federated evidence may be either the direct runtime receipt emitted in the same
+job or its later durable normalized form. The acceptance checks are identical.
 """
 from __future__ import annotations
 
@@ -64,7 +67,9 @@ def evaluate_repo_local(envelope: dict) -> dict:
 
 def evaluate_federated(receipt: dict) -> dict:
     source = receipt.get("source", {})
-    execution = receipt.get("execution", {})
+    # Direct runtime receipts carry execution result fields at the top level;
+    # durable normalized receipts place them under "execution".
+    execution = receipt.get("execution") or receipt
     adapter = receipt.get("adapter", {})
     guards = receipt.get("authority_guards", {})
     source_repo_ok = source.get("repository") == "GBOGEB/cryoplant-project"
@@ -78,7 +83,9 @@ def evaluate_federated(receipt: dict) -> dict:
         and adapter.get("surface_state") == "READY"
         and adapter.get("surface_probe_returncode") == 0
     )
-    local_gate_separate = guards.get("qps_repo_local_runner_gate") == "WITHHELD_EXTERNAL"
+    local_gate_separate = (
+        guards.get("qps_repo_local_runner_gate") == "WITHHELD_EXTERNAL"
+    )
     accept = bool(
         source_repo_ok
         and exact_sha
@@ -94,7 +101,10 @@ def evaluate_federated(receipt: dict) -> dict:
         "mode": "FEDERATED_EXACT_PAYLOAD",
         "accept": accept,
         "exact_sha": exact_sha,
-        "source_receipt_sha256": receipt.get("original_receipt_sha256"),
+        "source_receipt_sha256": (
+            receipt.get("original_receipt_sha256")
+            or receipt.get("receipt_sha256")
+        ),
         "checks": {
             "producer_identity_valid": source_repo_ok,
             "producer_status_accept": exec_accept and dov_pass,
@@ -115,7 +125,10 @@ def main() -> int:
     group.add_argument("--federated-receipt", type=Path)
     args = parser.parse_args()
 
-    federated = load_json(args.federated_receipt, "QPS_FEDERATED_DEBUG_RECEIPT_JSON")
+    federated = load_json(
+        args.federated_receipt,
+        "QPS_FEDERATED_DEBUG_RECEIPT_JSON",
+    )
     envelope = load_json(args.envelope, "QPS_DEBUG_ENVELOPE_JSON")
 
     if federated:
