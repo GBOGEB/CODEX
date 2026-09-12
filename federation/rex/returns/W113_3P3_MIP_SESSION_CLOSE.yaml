@@ -1,0 +1,131 @@
+version: 1.0
+record_id: W113_3P3_MIP_SESSION_CLOSE
+record_date: 2026-09-12
+purpose: deletion-safe W113 control checkpoint and next-lane restart vector
+authority: GBOGEB/CODEX execution-governance control record
+
+frozen_state:
+  codex_pr: 650
+  proof_carrier_sha: 7fe41be49df97f39d7759842ce038a0ff9b69075
+  merge_sha: 631bc364a68b10acfa7d166ed661b708fdbe8c16
+  post_merge_metrics_head: 3b86c42149cb1eb484c84292047e5704941558b4
+  w003: PASS
+  semantic_runtime: PASS
+  main_ci: PASS
+  rex_id: REX-W113-CODEX-001
+  rex_control_status: CONTROLLED
+  measured_failure_count: 5
+  reopened_count: 0
+  codex_w113_dod: ACHIEVED
+  codex_w113_dov: ACHIEVED
+  global_dov: WITHHELD
+
+three_p:
+  P1_preserve_pin:
+    status: PASS
+    result: frozen state and proof identifiers retained durably
+  P2_prove_partition:
+    status: PASS
+    achieved_partition: CODEX convergence controlled
+    unresolved_partition: cryoplant executable runtime
+  P3_propagate_park:
+    status: PASS
+    next_method: 3PR
+    park_nonblocking_bd: true
+
+mip:
+  modernize:
+    status: PASS
+    actions:
+      - retire W003 Semantic Runtime and Main CI as active W113 blockers
+      - retain failed attempts as REX lineage rather than active work
+      - resolve current state through PR 650 proof carrier
+  innovate:
+    status: PASS
+    lessons:
+      - draft controlled convergence prevents merge from outrunning proof
+      - receipt carrier must itself be revalidated
+      - governed semantic vocabulary extends via glossary rather than validator weakening
+      - queue or wait is not failure
+  perpetuate:
+    status: PASS
+    invariants:
+      - exact SHA evidence only
+      - no gate weakening
+      - no speculative code repair before first real failing step
+      - authority remains with owning repo or domain
+      - federation transports proof and is not a fourth SSOT
+
+current_gate:
+  CG: cryoplant_executable_runtime_closure
+  BG: zero_step_preexecution_runtime_condition
+  required_EX: runner_id_nonzero_and_steps_gt_zero
+  required_QH: classify_first_actual_red_or_pass
+  required_KR: exact_sha_child_receipt
+
+victory_condition:
+  sequence:
+    - ordinary_cryoplant_job
+    - runner_id_nonzero
+    - steps_gt_zero
+    - first_real_red_or_pass
+    - exact_sha_child_receipt
+    - CODEX_KEB_challenge
+    - ABACUS_DOW_challenge
+    - cryoplant_child_reentry
+    - ACCEPT_REJECT_DEFER
+
+three_pr:
+  - cryoplant_child_execution
+  - CODEX_KEB_semantic_provenance_challenge
+  - ABACUS_DOW_runtime_science_challenge
+  - cryoplant_child_reentry_disposition
+
+bt_bd_order:
+  - rank: 1
+    action: RUNTIME
+    target: cryoplant_real_execution
+    blocking: true
+  - rank: 2
+    action: RECEIPT
+    target: exact_sha_child_evidence
+    blocking: true
+  - rank: 3
+    action: ENABLE
+    target: ABACUS_and_cryoplant_repo_local_REX_returns
+    blocking: false
+  - rank: 4
+    action: ENABLE
+    target: cross_repo_REX_GLOB_aggregation
+    blocking: false
+  - rank: 5
+    action: HARDEN
+    target: measured_REX_Pareto_recurrence_PCA_reverse_BT
+    blocking: false
+
+control_invariants:
+  status_semantics:
+    CG: target transition
+    BG: blocker preventing transition
+    EX: something actually ran
+    QH: run acceptability
+    KR: durable execution proof
+  zero_step_rule: classify_as_RUNTIME_infrastructure_until_real_step_executes
+  codex_reopen_rule: do_not_reopen_W113_without_new_contradictory_evidence
+
+deletion_safety:
+  state_pinned: PASS
+  proof_pinned: PASS
+  authority_boundary_pinned: PASS
+  next_gate_pinned: PASS
+  bd_queue_ranked: PASS
+  restart_vector_emitted: PASS
+  score: 6/6
+  percentage: 100
+  effective_after_merge_to_main: true
+
+restart_instruction: >-
+  Recursively check the present cryoplant runtime state and existing REX evidence,
+  then execute the smallest action capable of producing runner_id != 0 and more
+  than zero executed steps. Do not revisit CODEX W113 convergence unless new
+  contradictory evidence appears.
