@@ -5,7 +5,10 @@ on:
     branches: [main]
     paths:
       - 'federation/qps/w56/QPS_W56_KEB_HASH_RECEIPT_v0.1.yaml'
-      - 'scripts/qps_w56_verify_hash_receipt_v2.py'
+      - 'federation/qps/w56/QPS_W56_KEB_CHILD_HASH_PROOF_v0.1.yaml'
+      - 'federation/qps/w56/QPS_W56_KEB_COMPONENT_UTILITY_INTAKE_v0.1.yaml'
+      - 'federation/qps/w56/QPS_W56_DOW_NORMALIZED_RETURN_v0.1.yaml'
+      - 'scripts/qps_w56_verify_hash_receipt_v3.py'
       - '.github/workflows/qps-w56-keb-hash-gate.yml'
   workflow_dispatch:
 
@@ -22,5 +25,5 @@ jobs:
           python-version: '3.11'
       - name: Install receipt parser
         run: pip install pyyaml
-      - name: Recompute exact child source and canonical payload SHA256
-        run: python scripts/qps_w56_verify_hash_receipt_v2.py
+      - name: Verify returned child evidence without cross-repo pull
+        run: python scripts/qps_w56_verify_hash_receipt_v3.py
