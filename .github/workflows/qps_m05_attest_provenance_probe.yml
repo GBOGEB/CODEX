@@ -1,0 +1,78 @@
+name: QPS M05 Official Attest Provenance Probe
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/qps_m05_attest_provenance_probe.yml"
+      - "docs/qps_m05/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+  artifact-metadata: write
+
+jobs:
+  attest-provenance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact CODEX head
+        uses: actions/checkout@v4
+
+      - name: Create deterministic subject and checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/m05
+          printf 'QPS-M05\nrepo=%s\nsha=%s\n' "$GITHUB_REPOSITORY" "$GITHUB_SHA" > artifacts/m05/qps_m05_subject.txt
+          sha256sum artifacts/m05/qps_m05_subject.txt > artifacts/m05/qps_m05_subject.sha256
+
+      - name: Create official GitHub provenance attestation
+        id: attest
+        uses: actions/attest@v4
+        with:
+          subject-path: artifacts/m05/qps_m05_subject.txt
+
+      - name: Bind exact receipt
+        shell: bash
+        env:
+          ATTESTATION_ID: ${{ steps.attest.outputs.attestation-id }}
+          ATTESTATION_URL: ${{ steps.attest.outputs.attestation-url }}
+          BUNDLE_PATH: ${{ steps.attest.outputs.bundle-path }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, json, os, pathlib
+          subject = pathlib.Path('artifacts/m05/qps_m05_subject.txt')
+          digest = hashlib.sha256(subject.read_bytes()).hexdigest()
+          bundle_src = pathlib.Path(os.environ['BUNDLE_PATH'])
+          bundle_dst = pathlib.Path('artifacts/m05/attestation.bundle.json')
+          bundle_dst.write_bytes(bundle_src.read_bytes())
+          receipt = {
+              'schema': 'qps.m05.attestation_receipt.v1',
+              'repo': os.environ['GITHUB_REPOSITORY'],
+              'source_sha': os.environ['GITHUB_SHA'],
+              'run_id': os.environ['GITHUB_RUN_ID'],
+              'run_attempt': os.environ['GITHUB_RUN_ATTEMPT'],
+              'action': 'actions/attest@v4',
+              'subject': str(subject),
+              'subject_sha256': digest,
+              'attestation_id': os.environ['ATTESTATION_ID'],
+              'attestation_url': os.environ['ATTESTATION_URL'],
+              'bundle_file': str(bundle_dst),
+              'authority': 'PROVENANCE_ONLY_NOT_ENGINEERING_ACCEPTANCE',
+              'status': 'PASS',
+          }
+          pathlib.Path('artifacts/m05/qps_m05_attestation_receipt.json').write_text(
+              json.dumps(receipt, indent=2, sort_keys=True) + '\n', encoding='utf-8'
+          )
+          PY
+          sha256sum artifacts/m05/qps_m05_attestation_receipt.json > artifacts/m05/qps_m05_attestation_receipt.sha256
+
+      - name: Upload M05 retained evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: qps-m05-attest-provenance-${{ github.sha }}
+          path: artifacts/m05/
+          if-no-files-found: error
