@@ -44,6 +44,21 @@ def run(args: list[str], timeout: int = 180) -> dict:
         }
 
 
+def resolve_tool(*names: str) -> tuple[str | None, str]:
+    for name in names:
+        direct = shutil.which(name)
+        if direct:
+            return direct, "PATH"
+    xcrun = shutil.which("xcrun")
+    if xcrun:
+        for name in names:
+            result = run([xcrun, "--find", name], 30)
+            candidate = result.get("stdout", "").strip()
+            if result.get("returncode") == 0 and candidate:
+                return candidate, "XCRUN"
+    return None, "NOT_FOUND"
+
+
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -54,9 +69,14 @@ def main() -> int:
     observed_hash = sha256(payload)
     payload_hash_ok = observed_hash == manifest["source_sha256"]
 
-    swiftc = shutil.which("swiftc")
-    lldb = shutil.which("lldb")
-    lldb_dap = shutil.which("lldb-dap") or shutil.which("lldb-vscode")
+    swiftc, swiftc_source = resolve_tool("swiftc")
+    lldb, lldb_source = resolve_tool("lldb")
+    lldb_dap, lldb_dap_source = resolve_tool("lldb-dap", "lldb-vscode")
+    adapter_probe = (
+        run([lldb_dap, "--help"], 30)
+        if lldb_dap
+        else {"returncode": None, "reason": "lldb_dap_not_found"}
+    )
     OUT.mkdir(parents=True, exist_ok=True)
     binary = OUT / "qps_federated_probe"
 
@@ -114,7 +134,7 @@ def main() -> int:
             )
 
     receipt = {
-        "schema": "codex.qps_federated_lldb_receipt.v1",
+        "schema": "codex.qps_federated_lldb_receipt.v2",
         "receipt_id": "CODEX-QPS-FEDERATED-LLDB-001",
         "created_utc": datetime.now(UTC).replace(microsecond=0).isoformat(),
         "classification": "MAINTENANCE_RUNTIME_ONLY",
@@ -134,13 +154,19 @@ def main() -> int:
             "runner_os": os.getenv("RUNNER_OS"),
             "runner_arch": os.getenv("RUNNER_ARCH"),
             "swiftc": swiftc,
+            "swiftc_resolution": swiftc_source,
             "lldb": lldb,
+            "lldb_resolution": lldb_source,
             "lldb_dap": lldb_dap,
+            "lldb_dap_resolution": lldb_dap_source,
         },
         "adapter": {
             "canonical": "lldb-dap",
             "surface_present": bool(lldb_dap),
+            "surface_probe_returncode": adapter_probe.get("returncode"),
+            "surface_state": "READY" if lldb_dap else "DEFER_NOT_FOUND",
             "execution_driver": "lldb-cli-batch",
+            "execution_backend": "LLDB",
         },
         "probe_status": status,
         "dov_status": "PASS" if status == "ACCEPT" else "WITHHELD",
@@ -160,6 +186,7 @@ def main() -> int:
         },
         "compile": compile_result,
         "lldb": debug_result,
+        "adapter_probe": adapter_probe,
         "authority_guards": {
             "qps_repo_local_runner_gate": "WITHHELD_EXTERNAL",
             "federated_execution_does_not_claim_repo_local_runner_recovery": True,
