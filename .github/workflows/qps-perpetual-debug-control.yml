@@ -1,0 +1,216 @@
+name: QPS Perpetual Debug Control
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/qps_debug_protocol_probe.py'
+      - 'scripts/qps_docker_remote_lldb_probe.py'
+      - 'scripts/qps_perpetual_control.py'
+      - 'runtime/debug/federation/**'
+      - '.github/workflows/qps-perpetual-debug-control.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/qps_debug_protocol_probe.py'
+      - 'scripts/qps_docker_remote_lldb_probe.py'
+      - 'scripts/qps_perpetual_control.py'
+      - 'runtime/debug/federation/**'
+      - '.github/workflows/qps-perpetual-debug-control.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qps-perpetual-debug-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  native-protocol:
+    name: live lldb-dap and MCP
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute live lldb-dap DAP session
+        id: lldb_dap
+        continue-on-error: true
+        run: python3 scripts/qps_debug_protocol_probe.py lldb-dap
+      - name: Execute live LLDB MCP session or emit bounded BD
+        id: mcp
+        if: always()
+        continue-on-error: true
+        run: python3 scripts/qps_debug_protocol_probe.py mcp
+      - name: Enforce lldb-dap runtime DoV
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = json.loads(Path('artifacts/qps_debug/perpetual/lldb_dap_live.json').read_text())
+          assert p['status'] == 'ACCEPT', p
+          assert p['session']['initialize_success'] is True, p
+          assert p['session']['stack_frames'] > 0, p
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qps-perpetual-native-protocol
+          path: artifacts/qps_debug/perpetual/
+          if-no-files-found: error
+
+  adapter-family:
+    name: live debugpy and js-debug
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install debugpy
+        run: python -m pip install --disable-pip-version-check 'debugpy>=1.8,<2'
+      - name: Execute debugpy DAP session
+        id: debugpy
+        continue-on-error: true
+        run: python scripts/qps_debug_protocol_probe.py debugpy
+      - name: Materialise pinned js-debug DAP server
+        id: js_build
+        continue-on-error: true
+        run: |
+          git clone --filter=blob:none https://github.com/microsoft/vscode-js-debug.git "${RUNNER_TEMP}/vscode-js-debug"
+          cd "${RUNNER_TEMP}/vscode-js-debug"
+          git checkout 41bd9bb831a46c2668cab14d8455e8e3bff58477
+          npm install --legacy-peer-deps --ignore-scripts
+          npm run compile -- dapDebugServer
+          test -f dist/src/dapDebugServer.js
+      - name: Execute js-debug DAP session
+        id: js_debug
+        if: always() && steps.js_build.outcome == 'success'
+        continue-on-error: true
+        run: |
+          python scripts/qps_debug_protocol_probe.py js-debug \
+            --server-path "${RUNNER_TEMP}/vscode-js-debug/dist/src/dapDebugServer.js"
+      - name: Emit js-debug BD if server build failed
+        if: always() && steps.js_build.outcome != 'success'
+        run: |
+          mkdir -p artifacts/qps_debug/perpetual
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('artifacts/qps_debug/perpetual/js_debug_live.json')
+          p.write_text(json.dumps({
+            'schema':'qps.perpetual.js_debug.v1',
+            'status':'DEFER',
+            'dov_status':'WITHHELD',
+            'reason':'pinned js-debug server build failed',
+            'bd_id':'BD-RUNTIME-JS-DEBUG-BUILD'
+          }, indent=2) + '\n')
+          PY
+      - name: Enforce adapter-family runtime DoV
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          for name in ('debugpy_live.json', 'js_debug_live.json'):
+              p = json.loads(Path('artifacts/qps_debug/perpetual', name).read_text())
+              assert p['status'] == 'ACCEPT', (name, p)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qps-perpetual-adapter-family
+          path: artifacts/qps_debug/perpetual/
+          if-no-files-found: error
+
+  docker-runtime:
+    name: Docker real runtime LLDB
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure host LLDB exists
+        run: |
+          if ! command -v lldb >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y lldb
+          fi
+          docker version
+          lldb --version
+      - name: Execute Docker dynamic-port remote LLDB proof
+        id: docker_probe
+        continue-on-error: true
+        run: python3 scripts/qps_docker_remote_lldb_probe.py
+      - name: Enforce Docker execution primitive DoV
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = json.loads(Path('artifacts/qps_debug/perpetual/docker_remote_lldb.json').read_text())
+          assert p['status'] == 'ACCEPT', p
+          assert p['real_probe_steps'] > 0, p
+          assert p['port_allocation'] == 'docker_dynamic_host_port', p
+          assert p['host_binding'].startswith('127.0.0.1:'), p
+          assert p['cleanup']['returncode'] == 0, p
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qps-perpetual-docker-runtime
+          path: artifacts/qps_debug/perpetual/
+          if-no-files-found: error
+
+  control:
+    name: heartbeat and terminal control gate
+    if: always()
+    needs: [native-protocol, adapter-family, docker-runtime]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: qps-perpetual-*
+          path: artifacts/qps_debug/evidence
+          merge-multiple: true
+      - name: Aggregate heartbeat and BD state
+        id: aggregate
+        continue-on-error: true
+        run: |
+          python3 scripts/qps_perpetual_control.py \
+            --evidence-root artifacts/qps_debug/evidence
+      - name: Publish control summary
+        if: always()
+        run: |
+          cat artifacts/qps_debug/perpetual/perpetual_control_status.json
+          {
+            echo '## QPS perpetual-debug control'
+            echo '```json'
+            cat artifacts/qps_debug/perpetual/perpetual_control_status.json
+            echo '```'
+          } >> "${GITHUB_STEP_SUMMARY}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qps-perpetual-control-status
+          path: artifacts/qps_debug/perpetual/perpetual_control_status.json
+          if-no-files-found: error
+      - name: Enforce federated perpetual CONTROL
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = json.loads(Path('artifacts/qps_debug/perpetual/perpetual_control_status.json').read_text())
+          assert p['federated_perpetual_control'] == 'CONTROL', p
+          assert p['heartbeat']['threshold_met'] is True, p
+          # Terminal global DoV is intentionally stricter and may remain WITHHELD
+          # while EXT-RUNNER-001 or LLDB-MCP remains open.
+          PY
