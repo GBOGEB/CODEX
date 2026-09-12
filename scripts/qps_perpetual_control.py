@@ -26,9 +26,19 @@ def load_json(path: Path) -> dict[str, Any] | None:
 
 
 def accepted(doc: dict[str, Any] | None) -> bool:
+    """Normalize live and durable receipt schemas into one ACCEPT predicate."""
     if not doc:
         return False
-    return doc.get("status") == "ACCEPT" or doc.get("dov_status") == "PASS"
+    execution = doc.get("execution") if isinstance(doc.get("execution"), dict) else {}
+    return any(
+        (
+            doc.get("status") == "ACCEPT",
+            doc.get("probe_status") == "ACCEPT",
+            doc.get("dov_status") == "PASS",
+            execution.get("probe_status") == "ACCEPT",
+            execution.get("dov_status") == "PASS",
+        )
+    )
 
 
 def find_named(root: Path, filename: str) -> dict[str, Any] | None:
@@ -62,6 +72,7 @@ def main() -> int:
                     "run_id": seed.get("workflow", {}).get("run_id"),
                     "executor_sha": seed.get("execution", {}).get("executor_workflow_sha"),
                     "source_sha": seed.get("source", {}).get("exact_sha"),
+                    "real_probe_steps": seed.get("execution", {}).get("real_probe_steps"),
                 }
             )
     if accepted(lldb_dap):
@@ -72,6 +83,7 @@ def main() -> int:
                 "run_id": None,
                 "executor_sha": None,
                 "source_sha": lldb_dap.get("source_exact_sha"),
+                "real_probe_steps": lldb_dap.get("session", {}).get("stack_frames"),
             }
         )
 
@@ -123,7 +135,7 @@ def main() -> int:
         burndown.append(item)
 
     status = {
-        "schema": "qps.perpetual.control.v1",
+        "schema": "qps.perpetual.control.v2",
         "created_utc": datetime.now(UTC).replace(microsecond=0).isoformat(),
         "classification": "MAINTENANCE_RUNTIME_ONLY",
         "controlled_baseline": {
