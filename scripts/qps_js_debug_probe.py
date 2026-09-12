@@ -103,6 +103,12 @@ def execute_js_debug_session(
         reason = repr(exc)
         result["accepted"] = False
     finally:
+        # FramedDAP has a daemon reader blocked on the socket. Shut down the
+        # transport first so that reader wakes before the file wrappers close.
+        try:
+            sock.shutdown(socket.SHUT_RDWR)
+        except OSError:
+            pass
         try:
             writer.close()
         except OSError:
@@ -111,10 +117,7 @@ def execute_js_debug_session(
             reader.close()
         except OSError:
             pass
-        try:
-            sock.close()
-        except OSError:
-            pass
+        sock.close()
     return result, dap.transcript[-160:], stage, reason
 
 
