@@ -1,0 +1,19 @@
+schema: qps.m05.pulse.v1
+mission: M05_ATTEST_PROVENANCE_QA
+pulse: P02_REGISTERED_WORKFLOW_TRIGGER
+parent_merge_sha: aaf09b31812267d6a8db1735d2f52b61dc3ee9b6
+state_before: WORKFLOW_MERGED_NOT_YET_EXECUTED
+BG:
+  - id: BG-M05-RUNTIME-UNPROVEN
+    owner: [QA_Officer_Signalman, The_Engineer]
+CG: official_actions_attest_executes_and_emits_exact_SHA_receipt
+action: touch_registered_docs_path_then_merge_to_main_to_trigger_existing_push_workflow
+expected_outcomes:
+  runner_zero: route_Dockmaster
+  steps_gt_zero_red: classify_first_actual_step_failure
+  full_green: accept_DoV_1_and_dispatch_independent_consumer
+metric_class: OBSERVED_TRIGGER
+credit:
+  engineering: 0
+  compliance: 0
+  release: 0
