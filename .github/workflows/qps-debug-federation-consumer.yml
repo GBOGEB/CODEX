@@ -1,6 +1,11 @@
 name: QPS Debug Federation Consumer
 
 on:
+  pull_request:
+    paths:
+      - 'runtime/debug/qps_debug_federation_consumer.py'
+      - 'runtime/debug/federation/receipts/**'
+      - '.github/workflows/qps-debug-federation-consumer.yml'
   workflow_dispatch:
   repository_dispatch:
     types: [qps-debug-envelope]
@@ -9,18 +14,42 @@ permissions:
   contents: read
 
 jobs:
-  consume-qps-debug-envelope:
+  consume-qps-debug-evidence:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
       QPS_DEBUG_ENVELOPE_JSON: ${{ toJson(github.event.client_payload.envelope) }}
     steps:
       - uses: actions/checkout@v4
-      - name: Consume QPS envelope fail-closed
+      - name: Validate retained federated exact-payload receipt
+        run: |
+          python3 runtime/debug/qps_debug_federation_consumer.py \
+            --federated-receipt \
+            runtime/debug/federation/receipts/QPS_FEDERATED_LLDB_W1F_B_ACCEPT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = json.loads(
+              Path('runtime/debug/generated/qps_debug_keb_binding.json')
+              .read_text()
+          )
+          assert p['status'] == 'ACCEPT', p
+          assert p['evidence_mode'] == 'FEDERATED_EXACT_PAYLOAD', p
+          assert p['checks']['source_payload_hash_match'] is True, p
+          assert p['checks']['runtime_steps_gt_zero'] is True, p
+          assert p['checks']['adapter_surface_ready'] is True, p
+          assert p['checks']['repo_local_runner_recovered'] is False, p
+          PY
+      - name: Consume live QPS envelope fail-closed
+        if: ${{ github.event_name == 'repository_dispatch' }}
         run: python3 runtime/debug/qps_debug_federation_consumer.py
-      - name: Assert absent/non-ACCEPT input never becomes KEB ACCEPT
+      - name: Assert manual invocation without evidence remains DEFER
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        run: grep -q '"status": "DEFER"' runtime/debug/generated/qps_debug_keb_binding.json
+        run: |
+          env -u QPS_DEBUG_ENVELOPE_JSON \
+            python3 runtime/debug/qps_debug_federation_consumer.py
+          grep -q '"status": "DEFER"' \
+            runtime/debug/generated/qps_debug_keb_binding.json
       - uses: actions/upload-artifact@v4
         with:
           name: qps-debug-keb-binding

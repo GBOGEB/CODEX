@@ -1,0 +1,53 @@
+{
+  "schema": "codex.qps_federated_lldb_durable_receipt.v2",
+  "receipt_id": "CODEX-QPS-FEDERATED-LLDB-W1F-B-ACCEPT",
+  "classification": "MAINTENANCE_RUNTIME_ONLY",
+  "evidence_mode": "FEDERATED_EXACT_PAYLOAD",
+  "workflow": {
+    "name": "QPS Federated Native LLDB",
+    "run_id": 34706705606,
+    "job_id": 103587952865,
+    "artifact_id": 10301961248,
+    "artifact_name": "qps-federated-native-lldb-receipt",
+    "artifact_digest": "sha256:e5108f5002b8202f1d96089cb1e6d3ea3f4c4f71c808760b192dafeec49522d9"
+  },
+  "source": {
+    "repository": "GBOGEB/cryoplant-project",
+    "exact_sha": "5ba7a25fa45f78b9336523f7311f5a58f36c6d89",
+    "path": "triage/runtime_health/lldb_probe/Probe.swift",
+    "git_blob_sha": "b1e30aa74912c1088c7d13fcca60013fd2618647",
+    "expected_sha256": "663a1dac2feb456b6f9678a0da51966615b80dbbb60b5a4a117b44a235eeac53",
+    "observed_sha256": "663a1dac2feb456b6f9678a0da51966615b80dbbb60b5a4a117b44a235eeac53",
+    "payload_hash_match": true
+  },
+  "execution": {
+    "executor_repository": "GBOGEB/CODEX",
+    "executor_workflow_sha": "b9ca063ed3b85888e71a98cb0778cc059d9e0315",
+    "runner_name": "GitHub Actions 1000255625",
+    "runner_os": "macOS",
+    "runner_arch": "ARM64",
+    "swift_compile_returncode": 0,
+    "lldb_returncode": 0,
+    "real_probe_steps": 10,
+    "observed_value": 42,
+    "probe_status": "ACCEPT",
+    "dov_status": "PASS"
+  },
+  "adapter": {
+    "canonical": "lldb-dap",
+    "surface_present": true,
+    "surface_state": "READY",
+    "surface_probe_returncode": 0,
+    "resolution": "XCRUN",
+    "resolved_path": "/Applications/Xcode_26.6.app/Contents/Developer/usr/bin/lldb-dap",
+    "execution_backend": "LLDB",
+    "execution_driver": "lldb-cli-batch"
+  },
+  "original_receipt_sha256": "8becd761308ac8b90fa8df4786d87146c6da386fe70acd4afa68f1ab5104794d",
+  "authority_guards": {
+    "qps_repo_local_runner_gate": "WITHHELD_EXTERNAL",
+    "federated_execution_does_not_claim_repo_local_runner_recovery": true,
+    "formal_engineering_credit_delta": 0,
+    "negotiation_credit_delta": 0
+  }
+}
