@@ -23,3 +23,15 @@ glossary:
     definition: GitHub Actions run identifier for semantic runtime verification, interpreted with the accompanying repository, head SHA and result.
     introduced_by: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
     first_use_case: locate the observed semantic verification run supporting a retained REX lesson; the identifier alone is not proof of success.
+  semantic_run_id:
+    definition: GitHub Actions run identifier for the semantic-runtime lane in an exact-head REX convergence receipt; it must be interpreted with repository, exact head SHA, job identifiers and result.
+    introduced_by: federation/rex/returns/CODEX_W113_PR621_REX_RETURN.yaml
+    first_use_case: bind the semantic-runtime run used in the PR650 Control proof without treating a run identifier alone as quality or acceptance evidence.
+  semantic_job_id:
+    definition: GitHub Actions job identifier for a semantic-runtime verification job recorded in a REX receipt; it is provenance metadata and does not by itself prove execution quality or engineering acceptance.
+    introduced_by: federation/rex/returns/CODEX_W113_PR621_REX_RETURN.yaml
+    first_use_case: locate the semantic-runtime job associated with an observed failed or passing exact-head convergence attempt.
+  semantic_validation_job_id:
+    definition: GitHub Actions job identifier specifically for the semantic-validation job within the semantic-runtime workflow, interpreted with run identifier, exact head SHA and result.
+    introduced_by: federation/rex/returns/CODEX_W113_PR621_REX_RETURN.yaml
+    first_use_case: bind the semantic-validation job that passed validator, orchestration and tests in the PR650 Control proof.
