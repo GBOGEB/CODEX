@@ -9,9 +9,12 @@ import tempfile
 import threading
 import time
 from pathlib import Path
+from queue import Empty
 from typing import Any
 
 from qps_debug_protocol_probe import FramedDAP, write_receipt
+
+DAP_WAIT_ERRORS = (Empty, TimeoutError, EOFError, OSError)
 
 
 def execute_js_debug_session(
@@ -78,7 +81,7 @@ def execute_js_debug_session(
                 timeout,
             )
             result["terminal_event"] = term.get("event")
-        except Exception as exc:
+        except DAP_WAIT_ERRORS as exc:
             result["terminal_event"] = None
             reason = repr(exc)
 
@@ -96,7 +99,7 @@ def execute_js_debug_session(
         )
         if result["accepted"]:
             stage = "complete"
-    except Exception as exc:
+    except DAP_WAIT_ERRORS as exc:
         reason = repr(exc)
         result["accepted"] = False
     finally:
@@ -203,7 +206,7 @@ def main() -> int:
         if accepted:
             reason = None
             failure_stage = "complete"
-    except Exception as exc:
+    except (RuntimeError, OSError) as exc:
         session = {"accepted": False, "observed_output_42": False}
         transcript = []
         status = "DEFER"
