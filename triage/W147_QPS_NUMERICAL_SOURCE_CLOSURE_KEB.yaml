@@ -1,0 +1,113 @@
+schema_version: codex-keb-qps-w147-numerical-source-closure/0.1
+wave: W147
+status: CONTROLLED_SEMANTIC_SOURCE_CLOSURE_EXTERNAL_GATES_WITHHELD
+repo: GBOGEB/CODEX
+authority_scope: REPO_LOCAL_SEMANTIC_AND_PROVENANCE_ONLY
+engineering_promotion_forbidden: true
+
+qps_child_authority:
+  repo: GBOGEB/cryoplant-project
+  source_closure_PR: 1029
+  source_closure_merge_sha: fe6670d20f4ea4b67f42bc370d472e7a03c6bb66
+  ledger: triage/w147/QPS_W147_NUMERICAL_AUTHORITY_SOURCE_CLOSURE_v0.1.yaml
+  prior_numerical_federation_PR: 1026
+  W146_namespace_control_PR: 1028
+  rule: QPS_child_retains_engineering_ACCEPT_REJECT_DEFER_authority
+
+semantic_promotions_allowed:
+  offered_equal_exergy_method: PASS_SOURCE_BOUND
+  returned_cold_single_credit_semantics: PASS_SOURCE_BOUND
+  SAT_capacity_test_topology: PASS_SOURCE_BOUND
+  HP_package_topology: PARTIAL_SOURCE_BOUND
+  PVPS_74_78_83_meaning: PASS_SEMANTIC_CONTRADICTION_TYPED
+
+controlled_offer_method:
+  Qeq_kW_4p5K: 3.35
+  total_power_kW: 1038.0
+  invCOP_contract_W_per_W: 310.0
+  expected_invCOP_SAT_W_per_W: 296.0
+  expanded_uncertainty_W_per_W: 15.0
+  equal_exergy_reference: {T_K: 300.0, P_bara: 1.0}
+  direct_refrigerator_kW: 908.0
+  modeled_CWS_kW: 80.8
+  pre_uncertainty_kW: 988.8
+  reconstructed_plus_5pct_kW: 1038.24
+  returned_stream_rule: negative_terms_already_embedded_in_single_equal_exergy_sum_no_duplicate_credit
+
+SAT_semantic_split:
+  capacity_test:
+    measurement_period_h: 8
+    primary_2K_load_simulator: CCPS_electrical_heater
+    capacity_acceptance_quantity: cold_compressor_suction_mass_flow
+    mCPLR_test: downstream_flow_meter
+    thermal_shield_test: internal_bypass_plus_electrical_heater
+    state: PASS_SOURCE_BOUND_TOPOLOGY
+  invCOP_measurement:
+    state: DEFER_EXTERNAL_APPROVED_PROCEDURE_AND_METER_BOUNDARY
+  commercial_k_threshold_text:
+    state: NEGOTIATION_TEXT_NOT_FINAL_AUTHORITY
+    reason: same_compliance_matrix_marks_energy_efficiency_penalty_as_contractor_rejected_deviation
+
+HP_semantics:
+  aggregate_2KOP: {flow_g_s: 326.0, electrical_kW: 814.0, CW_kWth: 733.0}
+  normal_frequency_Hz: 56.0
+  frequency_class: OWNER_CONFIRMED_IMMUTABLE_INPUT
+  selected_package: KAESER_FSD575_SFC_wc
+  dedicated_auxiliary_oil_pump: SOURCE_CLARIFICATION_NOT_REQUIRED
+  max_reference_each: {frequency_Hz: 72.0, flow_g_s: 112.0, package_kW: 357.0, motor_rating_kW: 315.0}
+  same_state_56Hz_decomposition: DEFER
+  guards:
+    - 814_div_4_is_derived_not_measured
+    - 357_minus_315_is_not_auxiliary_measurement
+    - no_generic_oil_pump_baseload
+
+PVPS_semantics:
+  selected_model: Leybold_SOGEVAC_SV750_BF
+  installed: 4
+  motor_nameplate_each_kW: 18.5
+  exact_motor_sum_kW: 74.0
+  printed_expression_4x18p5_eq_78: SOURCE_ARITHMETIC_ERROR
+  package_2KOP_kW: 83.0
+  CW_2KOP_kWth: 75.0
+  nine_kW_difference: DERIVED_UNALLOCATED_NOT_AUXILIARY_FACT
+  same_state_package_decomposition: DEFER
+
+HEPAK_semantics:
+  state: DEFER_LICENSED_NUMERICAL_RECEIPT_ABSENT
+  qps_issue: 663
+  CoolProp_W145: COMPATIBILITY_REFERENCE_PASS_NOT_AUTHORITY
+
+source_identity_invariant:
+  bookmarked_sha256: 8d074db4d07bf6d904635d7666664ebd54a2d0d7fc80d53b8f256be9e48911d0
+  other_controlled_representation_sha256: d92af4666cc10ec6a4f8ac6cfe57aef477bca116f72a12f9156a680ce7e1e35e
+  relation: BYTE_IDENTITY_NOT_PROVEN
+  guard: NEVER_CROSS_SUBSTITUTE_BY_FILENAME_SIMILARITY
+
+open_noncompensating_gates:
+  SAT_E3_APPROVED_INVCOP_PROCEDURE_EXECUTION: {state: WITHHELD, qps_issue: 1021}
+  HEPAK_LOW_T_AUTHORITY: {state: WITHHELD, qps_issue: 663}
+  HP_56HZ_E2_DECOMPOSITION: {state: WITHHELD, qps_issue: 1022}
+  PVPS_E2_DECOMPOSITION: {state: WITHHELD, qps_issues: [553, 962]}
+  NUMERICAL_BASELOAD: {state: WITHHELD}
+  FORMAL_INVCOP_SAT: {state: WITHHELD}
+  GLOBAL_PROJECT_DOV: {state: WITHHELD}
+
+keb_invariants:
+  - SOURCE_METHOD_PASS_NE_EXECUTED_SAT
+  - CAPACITY_TEST_TOPOLOGY_NE_INVCOP_METER_BOUNDARY
+  - NEGOTIATION_TEXT_NE_FINAL_CONTRACT
+  - COOLPROP_PASS_NE_HEPAK_PASS
+  - SINGLE_POINT_RESIDUAL_NE_BASELOAD
+  - PVPS_9KW_DIFFERENCE_NE_AUXILIARY_FACT
+  - HP_42KW_MAX_REFERENCE_DIFFERENCE_NE_AUXILIARY_FACT
+  - RETURNED_COLD_ONE_CREDIT_ONLY
+  - UNKNOWN_OR_DEFER_NE_ZERO
+
+output_contract:
+  downstream: GBOGEB/ABACUS
+  allowed: [typed_gate_matrix, evidence_priority, analytical_diagnostics, reverse_pressure_ranking]
+  forbidden: [engineering_promotion, final_contract_invention, SAT_promotion, OPEX_credit, baseload_invention]
+
+DoV:
+  KEB_semantic_source_closure: PASS_PENDING_MERGE
+  engineering_numerical_DoV: WITHHELD_CHILD_EXTERNAL_GATES
