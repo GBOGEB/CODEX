@@ -83,60 +83,113 @@ jobs:
           )
           print(json.dumps(payload, indent=2, sort_keys=True))
           PY
-      - name: Warm official LLVM MCP backend
-        id: mcp_warmup
-        if: steps.mcp_toolchain.outcome == 'success'
+      - name: Execute live LLDB MCP session with held backend
+        id: mcp
+        if: always() && steps.mcp_toolchain.outcome == 'success'
+        continue-on-error: true
         run: |
           set -euo pipefail
           mkdir -p artifacts/qps_debug/perpetual
-          START="$(date +%s)"
+          LLDB_PREFIX="$(brew --prefix lldb)"
+          LLDB_DRIVER="${LLDB_PREFIX}/bin/lldb"
+          BACKEND_STDOUT="artifacts/qps_debug/perpetual/lldb_mcp_backend.stdout"
+          BACKEND_STDERR="artifacts/qps_debug/perpetual/lldb_mcp_backend.stderr"
+          FIFO="${RUNNER_TEMP}/qps-lldb-mcp-stdin"
+          test -x "${LLDB_DRIVER}"
+          rm -f "${FIFO}"
+          mkfifo "${FIFO}"
+          exec 9<>"${FIFO}"
+          "${LLDB_DRIVER}" -O "protocol-server start MCP" \
+            <&9 >"${BACKEND_STDOUT}" 2>"${BACKEND_STDERR}" &
+          BACKEND_PID="$!"
+          cleanup() {
+            kill "${BACKEND_PID}" 2>/dev/null || true
+            wait "${BACKEND_PID}" 2>/dev/null || true
+            exec 9>&- || true
+            rm -f "${FIFO}"
+          }
+          trap cleanup EXIT
+
+          sleep 2
+          if ! kill -0 "${BACKEND_PID}" 2>/dev/null; then
+            cat "${BACKEND_STDOUT}" || true
+            cat "${BACKEND_STDERR}" || true
+            export BACKEND_PID LLDB_DRIVER
+            python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          payload = {
+              'schema': 'qps.perpetual.lldb_mcp_backend.v1',
+              'status': 'FAIL',
+              'driver': os.environ['LLDB_DRIVER'],
+              'pid': int(os.environ['BACKEND_PID']),
+              'held_input': True,
+              'reason': 'official LLDB MCP backend exited before probe',
+          }
+          Path('artifacts/qps_debug/perpetual/lldb_mcp_backend.json').write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + '\n',
+              encoding='utf-8',
+          )
+          Path('artifacts/qps_debug/perpetual/lldb_mcp_live.json').write_text(
+              json.dumps(
+                  {
+                      'schema': 'qps.perpetual.lldb_mcp.v1',
+                      'status': 'DEFER',
+                      'dov_status': 'WITHHELD',
+                      'reason': 'official LLDB MCP backend exited before probe',
+                      'bd_id': 'BD04-MCP-BACKEND',
+                  },
+                  indent=2,
+                  sort_keys=True,
+              )
+              + '\n',
+              encoding='utf-8',
+          )
+          PY
+            exit 2
+          fi
+
           set +e
-          LLDB_MCP_LOG=1 lldb-mcp </dev/null \
-            >artifacts/qps_debug/perpetual/lldb_mcp_warmup.stdout \
-            2>artifacts/qps_debug/perpetual/lldb_mcp_warmup.stderr
-          RC="$?"
+          LLDB_MCP_LOG=1 python3 scripts/qps_debug_protocol_probe.py mcp
+          PROBE_RC="$?"
           set -e
-          END="$(date +%s)"
-          cat artifacts/qps_debug/perpetual/lldb_mcp_warmup.stderr || true
-          export RC START END
+          BACKEND_ALIVE=false
+          if kill -0 "${BACKEND_PID}" 2>/dev/null; then
+            BACKEND_ALIVE=true
+          fi
+          cat "${BACKEND_STDOUT}" || true
+          cat "${BACKEND_STDERR}" || true
+          export BACKEND_PID BACKEND_ALIVE LLDB_DRIVER PROBE_RC
           python3 - <<'PY'
           import json
           import os
           from pathlib import Path
 
-          rc = int(os.environ['RC'])
           payload = {
-              'schema': 'qps.perpetual.lldb_mcp_warmup.v1',
-              'status': 'PASS' if rc == 0 else 'FAIL',
-              'returncode': rc,
-              'duration_seconds': int(os.environ['END']) - int(os.environ['START']),
-              'mode': 'official_lldb_mcp_cold_start_then_stdio_eof',
+              'schema': 'qps.perpetual.lldb_mcp_backend.v1',
+              'status': 'PASS' if os.environ['BACKEND_ALIVE'] == 'true' else 'FAIL',
+              'driver': os.environ['LLDB_DRIVER'],
+              'pid': int(os.environ['BACKEND_PID']),
+              'held_input': True,
+              'alive_after_probe': os.environ['BACKEND_ALIVE'] == 'true',
+              'probe_returncode': int(os.environ['PROBE_RC']),
+              'mode': 'official_lldb_protocol_server_held_open',
               'authority_guards': {
                   'formal_engineering_credit_delta': 0,
                   'negotiation_credit_delta': 0,
               },
           }
-          Path('artifacts/qps_debug/perpetual/lldb_mcp_warmup.json').write_text(
+          Path('artifacts/qps_debug/perpetual/lldb_mcp_backend.json').write_text(
               json.dumps(payload, indent=2, sort_keys=True) + '\n',
               encoding='utf-8',
           )
           print(json.dumps(payload, indent=2, sort_keys=True))
-          if rc != 0:
-              raise SystemExit(rc)
           PY
-      - name: Execute live LLDB MCP session
-        id: mcp
-        if: >-
-          always() &&
-          steps.mcp_toolchain.outcome == 'success' &&
-          steps.mcp_warmup.outcome == 'success'
-        continue-on-error: true
-        run: python3 scripts/qps_debug_protocol_probe.py mcp
-      - name: Emit bounded MCP BD if toolchain or warmup failed
-        if: >-
-          always() &&
-          (steps.mcp_toolchain.outcome != 'success' ||
-           steps.mcp_warmup.outcome != 'success')
+          exit "${PROBE_RC}"
+      - name: Emit bounded MCP BD if toolchain failed
+        if: always() && steps.mcp_toolchain.outcome != 'success'
         run: |
           mkdir -p artifacts/qps_debug/perpetual
           python3 - <<'PY'
@@ -150,7 +203,7 @@ jobs:
                       'schema': 'qps.perpetual.lldb_mcp.v1',
                       'status': 'DEFER',
                       'dov_status': 'WITHHELD',
-                      'reason': 'official LLVM lldb-mcp toolchain or cold-start warmup failed',
+                      'reason': 'official LLVM lldb-mcp toolchain materialisation failed',
                       'bd_id': 'BD04-MCP-TOOLCHAIN',
                   },
                   indent=2,
