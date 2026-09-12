@@ -5,6 +5,7 @@ on:
     paths:
       - 'runtime/debug/federation/qps_payload/**'
       - 'runtime/debug/federation/qps_federated_payload_manifest.json'
+      - 'runtime/debug/qps_debug_federation_consumer.py'
       - 'scripts/qps_federated_lldb_exec.py'
       - '.github/workflows/qps-federated-native-lldb.yml'
   workflow_dispatch:
@@ -14,7 +15,7 @@ permissions:
 
 jobs:
   qps-exact-payload-native-lldb:
-    name: execute exact QPS payload on macOS LLDB
+    name: execute exact QPS payload and bind KEB on macOS
     runs-on: macos-latest
     timeout-minutes: 10
     steps:
@@ -34,13 +35,36 @@ jobs:
           assert p['source']['payload_hash_match'] is True, p
           assert p['real_probe_steps'] > 0, p
           assert p['minimum_victory_condition']['observed_value_42'] is True, p
+          assert p['adapter']['surface_state'] == 'READY', p
+          assert p['adapter']['surface_probe_returncode'] == 0, p
           assert p['authority_guards']['qps_repo_local_runner_gate'] \
               == 'WITHHELD_EXTERNAL', p
           assert p['authority_guards']['formal_engineering_credit_delta'] == 0
           PY
+      - name: Bind same runtime receipt into CODEX KEB
+        run: |
+          python3 runtime/debug/qps_debug_federation_consumer.py \
+            --federated-receipt \
+            artifacts/qps_debug/qps_federated_lldb_receipt.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = json.loads(
+              Path('runtime/debug/generated/qps_debug_keb_binding.json')
+              .read_text()
+          )
+          assert p['status'] == 'ACCEPT', p
+          assert p['evidence_mode'] == 'FEDERATED_EXACT_PAYLOAD', p
+          assert p['checks']['runtime_steps_gt_zero'] is True, p
+          assert p['checks']['source_payload_hash_match'] is True, p
+          assert p['checks']['adapter_surface_ready'] is True, p
+          assert p['checks']['repo_local_runner_recovered'] is False, p
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: qps-federated-native-lldb-receipt
-          path: artifacts/qps_debug/qps_federated_lldb_receipt.json
+          name: qps-federated-native-lldb-keb-evidence
+          path: |
+            artifacts/qps_debug/qps_federated_lldb_receipt.json
+            runtime/debug/generated/qps_debug_keb_binding.json
           if-no-files-found: error
