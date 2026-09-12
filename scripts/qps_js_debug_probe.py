@@ -17,49 +17,128 @@ from qps_debug_protocol_probe import FramedDAP, write_receipt
 DAP_WAIT_ERRORS = (Empty, TimeoutError, EOFError, OSError)
 
 
+def open_dap(host: str, port: int) -> tuple[socket.socket, Any, Any, FramedDAP]:
+    sock = socket.create_connection((host, port), timeout=10)
+    reader = sock.makefile("rb")
+    writer = sock.makefile("wb")
+    return sock, reader, writer, FramedDAP(reader, writer)
+
+
+def close_dap(sock: socket.socket, reader: Any, writer: Any) -> None:
+    """Unblock the reader thread before closing its buffered wrappers."""
+    try:
+        sock.shutdown(socket.SHUT_RDWR)
+    except OSError:
+        pass
+    try:
+        writer.close()
+    except OSError:
+        pass
+    try:
+        reader.close()
+    except OSError:
+        pass
+    sock.close()
+
+
+def initialize_and_launch(
+    dap: FramedDAP,
+    initialize_args: dict[str, Any],
+    launch_args: dict[str, Any],
+    timeout: float,
+    result: dict[str, Any],
+    prefix: str,
+) -> None:
+    init_seq = dap.request("initialize", initialize_args)
+    init = dap.wait_response(init_seq, timeout)
+    result[f"{prefix}_initialize_success"] = init.get("success") is True
+
+    launch_seq = dap.request("launch", launch_args)
+    initialized = dap.wait_event("initialized", timeout)
+    result[f"{prefix}_initialized_event"] = initialized.get("event") == "initialized"
+
+    config_seq = dap.request("configurationDone", {})
+    config = dap.wait_response(config_seq, timeout)
+    result[f"{prefix}_configuration_done_success"] = config.get("success") is True
+
+    launch = dap.wait_response(launch_seq, timeout)
+    result[f"{prefix}_launch_success"] = launch.get("success") is True
+
+
 def execute_js_debug_session(
     host: str,
     port: int,
     initialize_args: dict[str, Any],
     launch_args: dict[str, Any],
     timeout: float = 60,
-) -> tuple[dict[str, Any], list[dict[str, Any]], str, str | None]:
-    """Execute js-debug while preserving the exact wait stage on failure."""
-    sock = socket.create_connection((host, port), timeout=10)
-    reader = sock.makefile("rb")
-    writer = sock.makefile("wb")
-    dap = FramedDAP(reader, writer)
+) -> tuple[
+    dict[str, Any],
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+    str,
+    str | None,
+]:
+    """Execute js-debug's logical parent plus concrete child DAP session."""
+    parent_sock, parent_reader, parent_writer, parent = open_dap(host, port)
+    child_sock: socket.socket | None = None
+    child_reader: Any = None
+    child_writer: Any = None
+    child: FramedDAP | None = None
     result: dict[str, Any] = {}
-    stage = "initialize_response"
+    stage = "parent_initialize_and_launch"
     reason: str | None = None
+
     try:
-        init_seq = dap.request("initialize", initialize_args)
-        init = dap.wait_response(init_seq, timeout)
-        result["initialize_success"] = init.get("success") is True
+        initialize_and_launch(
+            parent,
+            initialize_args,
+            launch_args,
+            timeout,
+            result,
+            "parent",
+        )
 
-        stage = "initialized_event"
-        launch_seq = dap.request("launch", launch_args)
-        initialized = dap.wait_event("initialized", timeout)
-        result["initialized_event"] = initialized.get("event") == "initialized"
+        stage = "start_debugging_request"
+        start_request = parent.wait(
+            lambda m: m.get("type") == "request"
+            and m.get("command") == "startDebugging",
+            timeout,
+        )
+        result["start_debugging_request"] = True
+        arguments = start_request.get("arguments", {})
+        configuration = arguments.get("configuration", {})
+        pending_target_id = configuration.get("__pendingTargetId")
+        if not pending_target_id:
+            raise ValueError("startDebugging request missing __pendingTargetId")
+        result["pending_target_id_present"] = True
 
-        stage = "configuration_done_response"
-        config_seq = dap.request("configurationDone", {})
-        config = dap.wait_response(config_seq, timeout)
-        result["configuration_done_success"] = config.get("success") is True
+        stage = "child_connect"
+        child_sock, child_reader, child_writer, child = open_dap(host, port)
+        child_launch = dict(configuration)
+        child_launch["request"] = arguments.get("request", "launch")
 
-        stage = "launch_response"
-        launch = dap.wait_response(launch_seq, timeout)
-        result["launch_success"] = launch.get("success") is True
+        stage = "child_initialize_and_launch"
+        initialize_and_launch(
+            child,
+            initialize_args,
+            child_launch,
+            timeout,
+            result,
+            "child",
+        )
 
-        stage = "stopped_event"
-        stopped = dap.wait_event("stopped", timeout)
+        parent.respond(start_request, True, {})
+        result["start_debugging_response_success"] = True
+
+        stage = "child_stopped_event"
+        stopped = child.wait_event("stopped", timeout)
         thread_id = stopped.get("body", {}).get("threadId")
         result["stopped_event"] = True
         result["thread_id"] = thread_id
 
-        stage = "stack_trace_response"
-        stack_seq = dap.request("stackTrace", {"threadId": thread_id})
-        stack = dap.wait_response(stack_seq, timeout)
+        stage = "child_stack_trace_response"
+        stack_seq = child.request("stackTrace", {"threadId": thread_id})
+        stack = child.wait_response(stack_seq, timeout)
         frames = (
             stack.get("body", {}).get("stackFrames", [])
             if stack.get("success")
@@ -68,14 +147,14 @@ def execute_js_debug_session(
         result["stack_trace_success"] = stack.get("success") is True
         result["stack_frames"] = len(frames)
 
-        stage = "continue_response"
-        continue_seq = dap.request("continue", {"threadId": thread_id})
-        cont = dap.wait_response(continue_seq, timeout)
+        stage = "child_continue_response"
+        continue_seq = child.request("continue", {"threadId": thread_id})
+        cont = child.wait_response(continue_seq, timeout)
         result["continue_success"] = cont.get("success") is True
 
-        stage = "terminal_event"
+        stage = "child_terminal_event"
         try:
-            term = dap.wait(
+            term = child.wait(
                 lambda m: m.get("type") == "event"
                 and m.get("event") in {"terminated", "exited"},
                 timeout,
@@ -87,10 +166,17 @@ def execute_js_debug_session(
 
         result["accepted"] = all(
             [
-                result.get("initialize_success"),
-                result.get("initialized_event"),
-                result.get("configuration_done_success"),
-                result.get("launch_success"),
+                result.get("parent_initialize_success"),
+                result.get("parent_initialized_event"),
+                result.get("parent_configuration_done_success"),
+                result.get("parent_launch_success"),
+                result.get("start_debugging_request"),
+                result.get("pending_target_id_present"),
+                result.get("child_initialize_success"),
+                result.get("child_initialized_event"),
+                result.get("child_configuration_done_success"),
+                result.get("child_launch_success"),
+                result.get("start_debugging_response_success"),
                 result.get("stopped_event"),
                 result.get("stack_trace_success"),
                 result.get("stack_frames", 0) > 0,
@@ -99,26 +185,21 @@ def execute_js_debug_session(
         )
         if result["accepted"]:
             stage = "complete"
-    except DAP_WAIT_ERRORS as exc:
+    except (*DAP_WAIT_ERRORS, ValueError) as exc:
         reason = repr(exc)
         result["accepted"] = False
     finally:
-        # FramedDAP has a daemon reader blocked on the socket. Shut down the
-        # transport first so that reader wakes before the file wrappers close.
-        try:
-            sock.shutdown(socket.SHUT_RDWR)
-        except OSError:
-            pass
-        try:
-            writer.close()
-        except OSError:
-            pass
-        try:
-            reader.close()
-        except OSError:
-            pass
-        sock.close()
-    return result, dap.transcript[-160:], stage, reason
+        if child_sock is not None and child is not None:
+            close_dap(child_sock, child_reader, child_writer)
+        close_dap(parent_sock, parent_reader, parent_writer)
+
+    return (
+        result,
+        parent.transcript[-160:],
+        child.transcript[-160:] if child is not None else [],
+        stage,
+        reason,
+    )
 
 
 def main() -> int:
@@ -171,36 +252,38 @@ def main() -> int:
     try:
         if not ready:
             raise RuntimeError("js-debug server did not announce readiness")
-        session, transcript, failure_stage, reason = execute_js_debug_session(
-            "127.0.0.1",
-            port,
-            {
-                "clientID": "qps-triage",
-                "clientName": "QPS TRIAGE",
-                "adapterID": "pwa-node",
-                "pathFormat": "path",
-                "linesStartAt1": True,
-                "columnsStartAt1": True,
-                "supportsRunInTerminalRequest": False,
-                "supportsStartDebuggingRequest": False,
-            },
-            {
-                "name": "QPS js-debug",
-                "type": "pwa-node",
-                "request": "launch",
-                "program": str(target),
-                "cwd": str(target_dir),
-                "console": "internalConsole",
-                "stopOnEntry": True,
-                "sourceMaps": False,
-                "runtimeExecutable": "node",
-                "outputCapture": "console",
-            },
-            timeout=60,
+        session, parent_transcript, child_transcript, failure_stage, reason = (
+            execute_js_debug_session(
+                "127.0.0.1",
+                port,
+                {
+                    "clientID": "qps-triage",
+                    "clientName": "QPS TRIAGE",
+                    "adapterID": "pwa-node",
+                    "pathFormat": "path",
+                    "linesStartAt1": True,
+                    "columnsStartAt1": True,
+                    "supportsRunInTerminalRequest": False,
+                    "supportsStartDebuggingRequest": True,
+                },
+                {
+                    "name": "QPS js-debug",
+                    "type": "pwa-node",
+                    "request": "launch",
+                    "program": str(target),
+                    "cwd": str(target_dir),
+                    "console": "internalConsole",
+                    "stopOnEntry": True,
+                    "sourceMaps": False,
+                    "runtimeExecutable": "node",
+                    "outputCapture": "console",
+                },
+                timeout=60,
+            )
         )
         output = "\n".join(
             str(x.get("message", {}).get("body", {}).get("output", ""))
-            for x in transcript
+            for x in child_transcript
             if x.get("message", {}).get("event") == "output"
         )
         session["observed_output_42"] = "observed=42" in output
@@ -211,7 +294,8 @@ def main() -> int:
             failure_stage = "complete"
     except (RuntimeError, OSError) as exc:
         session = {"accepted": False, "observed_output_42": False}
-        transcript = []
+        parent_transcript = []
+        child_transcript = []
         status = "DEFER"
         reason = repr(exc)
         failure_stage = "server_startup"
@@ -223,7 +307,7 @@ def main() -> int:
             server.kill()
 
     body = {
-        "schema": "qps.perpetual.js_debug.v4",
+        "schema": "qps.perpetual.js_debug.v5",
         "status": status,
         "dov_status": "PASS" if status == "ACCEPT" else "WITHHELD",
         "server_path": args.server_path,
@@ -234,7 +318,9 @@ def main() -> int:
         "session": session,
         "server_stdout": stdout_lines[-40:],
         "server_stderr": stderr_lines[-80:],
-        "transcript_tail": transcript[-160:],
+        "parent_transcript_tail": parent_transcript[-160:],
+        "child_transcript_tail": child_transcript[-160:],
+        "transcript_tail": child_transcript[-160:],
     }
     write_receipt("js_debug_live", body)
     return 0 if status == "ACCEPT" else 2
