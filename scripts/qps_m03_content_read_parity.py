@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import json
 import os
 from pathlib import Path
 import re
 import subprocess
+import time
 import urllib.error
+import urllib.parse
 import urllib.request
 
 OWNER = "GBOGEB"
@@ -32,20 +35,53 @@ def raw_url(path: str) -> str:
     return f"https://raw.githubusercontent.com/{OWNER}/{REPO}/{TARGET_SHA}/{path}"
 
 
-def raw_fetch(path: str) -> tuple[int, bytes]:
-    request = urllib.request.Request(raw_url(path), headers={"User-Agent": "QPS-M03-Parity/1.0"})
+def anonymous_raw_fetch(path: str) -> tuple[int, bytes, float]:
+    request = urllib.request.Request(raw_url(path), headers={"User-Agent": "QPS-M03-Parity/2.0"})
+    started = time.perf_counter()
     try:
         with urllib.request.urlopen(request, timeout=30) as response:
-            return int(response.status), response.read()
+            return int(response.status), response.read(), time.perf_counter() - started
     except urllib.error.HTTPError as exc:
-        return int(exc.code), exc.read()
+        return int(exc.code), exc.read(), time.perf_counter() - started
+
+
+def api_url(path: str) -> str:
+    encoded_path = urllib.parse.quote(path, safe="/")
+    encoded_ref = urllib.parse.quote(TARGET_SHA, safe="")
+    return f"https://api.github.com/repos/{OWNER}/{REPO}/contents/{encoded_path}?ref={encoded_ref}"
+
+
+def authenticated_api_fetch(path: str, token: str) -> tuple[int, bytes, float]:
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "Authorization": f"Bearer {token}",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "QPS-M03-Parity/2.0",
+    }
+    request = urllib.request.Request(api_url(path), headers=headers)
+    started = time.perf_counter()
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            status = int(response.status)
+            payload = json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        return int(exc.code), exc.read(), time.perf_counter() - started
+
+    if status != 200:
+        return status, json.dumps(payload).encode("utf-8"), time.perf_counter() - started
+    if not isinstance(payload, dict) or payload.get("type") != "file":
+        raise SystemExit("authenticated REST candidate did not return a file object")
+    encoded = payload.get("content")
+    if not isinstance(encoded, str):
+        raise SystemExit("authenticated REST candidate returned no base64 content")
+    return status, base64.b64decode(encoded), time.perf_counter() - started
 
 
 def run_official(
     mcpcurl: Path,
     server: Path,
     path: str,
-) -> tuple[dict, bytes]:
+) -> tuple[dict, bytes, float]:
     server_cmd = f"{server} stdio --toolsets=repos"
     command = [
         str(mcpcurl),
@@ -63,6 +99,7 @@ def run_official(
         "--sha",
         TARGET_SHA,
     ]
+    started = time.perf_counter()
     completed = subprocess.run(
         command,
         check=False,
@@ -71,13 +108,14 @@ def run_official(
         env=os.environ.copy(),
         timeout=45,
     )
+    elapsed = time.perf_counter() - started
     if completed.returncode != 0:
         raise SystemExit(
             f"official MCP process failed rc={completed.returncode}: "
             f"{completed.stderr.decode('utf-8', errors='replace')}"
         )
     payload = json.loads(completed.stdout.decode("utf-8"))
-    return payload, completed.stdout
+    return payload, completed.stdout, elapsed
 
 
 def result_content(payload: dict) -> list[dict]:
@@ -124,57 +162,80 @@ def classify_official_not_found(payload: dict) -> tuple[bool, str]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="QPS M03 exact content-read transport parity")
+    parser = argparse.ArgumentParser(description="QPS M03 pragmatic content-read transport decision probe")
     parser.add_argument("--mcpcurl", required=True, type=Path)
     parser.add_argument("--server", required=True, type=Path)
     parser.add_argument("--out", default="m03_content_read_parity_receipt.json", type=Path)
     args = parser.parse_args()
 
-    raw_status, raw_bytes = raw_fetch(TARGET_PATH)
-    if raw_status != 200:
-        raise SystemExit(f"legacy raw transport positive read returned HTTP {raw_status}")
+    token = os.environ.get("GITHUB_PERSONAL_ACCESS_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    if not token:
+        raise SystemExit("GitHub token missing: cannot execute authenticated REST or official MCP candidate")
 
-    raw_blob = git_blob_sha1(raw_bytes)
-    if raw_blob != EXPECTED_BLOB_SHA1:
-        raise SystemExit(f"legacy raw transport blob SHA mismatch: {raw_blob}")
+    # Preserve the FIRST RED as evidence. The local W56 helper currently uses this exact
+    # anonymous raw transport. A 404 is therefore a measured viability defect, not a
+    # reason to rewrite history or silently pretend that the legacy transport passed.
+    anonymous_status, anonymous_bytes, anonymous_elapsed = anonymous_raw_fetch(TARGET_PATH)
+    anonymous_viable = anonymous_status == 200
 
-    official_payload, official_wire = run_official(args.mcpcurl, args.server, TARGET_PATH)
+    # Pragmatic low-complexity candidate: GitHub Contents REST with the workflow token.
+    # This is intentionally separate from the official MCP candidate so the cutover
+    # decision can distinguish transport standardization benefit from runtime overhead.
+    rest_status, rest_bytes, rest_elapsed = authenticated_api_fetch(TARGET_PATH, token)
+    if rest_status != 200:
+        raise SystemExit(f"authenticated REST candidate positive read returned HTTP {rest_status}")
+    rest_blob = git_blob_sha1(rest_bytes)
+    if rest_blob != EXPECTED_BLOB_SHA1:
+        raise SystemExit(f"authenticated REST candidate blob SHA mismatch: {rest_blob}")
+
+    official_payload, official_wire, official_elapsed = run_official(args.mcpcurl, args.server, TARGET_PATH)
     official_bytes, embedded_uri, success_texts = extract_embedded_bytes(official_payload)
-
     if TARGET_SHA not in embedded_uri:
         raise SystemExit("official embedded resource URI is not bound to exact target SHA")
-    if raw_bytes != official_bytes:
-        raise SystemExit(
-            "positive transport parity failed: legacy raw bytes differ from official MCP embedded bytes"
-        )
+    if rest_bytes != official_bytes:
+        raise SystemExit("positive parity failed: authenticated REST bytes differ from official MCP embedded bytes")
 
-    raw_missing_status, _ = raw_fetch(MISSING_PATH)
-    if raw_missing_status != 404:
-        raise SystemExit(f"legacy missing-path classification expected 404, got {raw_missing_status}")
+    anonymous_missing_status, _, anonymous_missing_elapsed = anonymous_raw_fetch(MISSING_PATH)
+    rest_missing_status, _, rest_missing_elapsed = authenticated_api_fetch(MISSING_PATH, token)
+    if rest_missing_status != 404:
+        raise SystemExit(f"authenticated REST missing-path classification expected 404, got {rest_missing_status}")
 
-    official_missing_payload, official_missing_wire = run_official(
+    official_missing_payload, official_missing_wire, official_missing_elapsed = run_official(
         args.mcpcurl, args.server, MISSING_PATH
     )
-    official_not_found, official_missing_message = classify_official_not_found(
-        official_missing_payload
-    )
+    official_not_found, official_missing_message = classify_official_not_found(official_missing_payload)
     if not official_not_found:
-        raise SystemExit(
-            "official missing-path response did not map to NOT_FOUND/isError semantics"
-        )
+        raise SystemExit("official missing-path response did not map to NOT_FOUND/isError semantics")
 
-    text_sha_candidates = []
+    text_sha_candidates: list[str] = []
     for text in success_texts:
         text_sha_candidates.extend(re.findall(r"\b[0-9a-f]{40}\b", text.lower()))
 
+    if anonymous_viable:
+        anonymous_sha = sha256(anonymous_bytes)
+        anonymous_byte_exact = anonymous_bytes == rest_bytes
+        anonymous_disposition = "VIABLE_BUT_REDUNDANT_CANDIDATE"
+    else:
+        anonymous_sha = None
+        anonymous_byte_exact = False
+        anonymous_disposition = "CURRENTLY_NONVIABLE_IN_ACTIONS_CONTEXT"
+
     receipt = {
-        "schema": "qps.m03.content_read_transport_parity.v1",
+        "schema": "qps.m03.content_read_transport_decision.v2",
         "mission_id": "M03_GITHUB_MCP_SERVER",
-        "pulse_id": "P_M03_CONTENT_READ_PARITY_01",
+        "pulse_id": "P_M03_CONTENT_READ_PARITY_FIRST_RED_REPAIR_01",
+        "first_red": {
+            "source_run_id": "34625309676",
+            "job_id": "103348864135",
+            "step": "Execute exact positive and NOT_FOUND parity",
+            "observed_error": "legacy raw transport positive read returned HTTP 404",
+            "classification": "LOCAL_LEGACY_TRANSPORT_ACCESS_VIABILITY",
+            "not_official_mcp_failure": True,
+        },
         "local_duplicate": {
             "repo": "GBOGEB/CODEX",
             "path": "scripts/qps_w56_verify_hash_receipt_v2.py",
-            "transport": "raw.githubusercontent.com_via_urllib",
+            "transport": "raw.githubusercontent.com_via_urllib_without_auth_header",
             "function": "fetch_bytes",
         },
         "target": {
@@ -183,35 +244,56 @@ def main() -> int:
             "path": TARGET_PATH,
             "expected_blob_sha1": EXPECTED_BLOB_SHA1,
         },
-        "official_transport": {
+        "legacy_anonymous_raw": {
+            "positive_http_status": anonymous_status,
+            "positive_sha256": anonymous_sha,
+            "byte_exact_when_available": anonymous_byte_exact,
+            "missing_http_status": anonymous_missing_status,
+            "positive_elapsed_s": round(anonymous_elapsed, 6),
+            "missing_elapsed_s": round(anonymous_missing_elapsed, 6),
+            "disposition": anonymous_disposition,
+        },
+        "minimal_authenticated_rest_candidate": {
+            "transport": "api.github.com_contents_with_workflow_token",
+            "positive_http_status": rest_status,
+            "positive_sha256": sha256(rest_bytes),
+            "blob_sha1": rest_blob,
+            "missing_http_status": rest_missing_status,
+            "missing_class": "NOT_FOUND",
+            "positive_elapsed_s": round(rest_elapsed, 6),
+            "missing_elapsed_s": round(rest_missing_elapsed, 6),
+            "runtime_dependencies": ["python_stdlib", "workflow_token"],
+            "result": "PASS",
+        },
+        "official_mcp_candidate": {
             "repo": "github/github-mcp-server",
             "source_sha": OFFICIAL_SHA,
             "toolset": "repos",
             "tool": "get_file_contents",
-        },
-        "positive_parity": {
-            "legacy_http_status": raw_status,
-            "raw_sha256": sha256(raw_bytes),
-            "official_embedded_sha256": sha256(official_bytes),
-            "byte_exact": raw_bytes == official_bytes,
+            "positive_embedded_sha256": sha256(official_bytes),
+            "positive_byte_exact_vs_rest": rest_bytes == official_bytes,
             "embedded_uri": embedded_uri,
-            "official_wire_sha256": sha256(official_wire),
+            "positive_wire_sha256": sha256(official_wire),
+            "missing_class": "NOT_FOUND",
+            "missing_is_error_and_not_found": official_not_found,
+            "missing_wire_sha256": sha256(official_missing_wire),
+            "missing_message_sha256": sha256(official_missing_message.encode("utf-8")),
+            "positive_elapsed_s": round(official_elapsed, 6),
+            "missing_elapsed_s": round(official_missing_elapsed, 6),
             "official_success_text_sha_candidates": sorted(set(text_sha_candidates)),
-        },
-        "missing_resource_parity": {
-            "legacy_http_status": raw_missing_status,
-            "legacy_class": "NOT_FOUND",
-            "official_is_error_and_not_found": official_not_found,
-            "official_class": "NOT_FOUND" if official_not_found else "UNCLASSIFIED",
-            "official_wire_sha256": sha256(official_missing_wire),
-            "official_message_sha256": sha256(official_missing_message.encode("utf-8")),
+            "result": "PASS",
         },
         "permission_parity": {
             "status": "DEFER_NO_SAFE_DETERMINISTIC_PERMISSION_DENIED_FIXTURE",
             "credit": "NONE",
         },
-        "result": "PASS_POSITIVE_AND_NOT_FOUND_PARITY_PERMISSION_DEFERRED",
-        "cutover_authority": "NONE_PARITY_EVIDENCE_ONLY",
+        "decision_rule": {
+            "agent_or_orchestration_transport": "PREFER_OFFICIAL_MCP_WHEN_SEMANTICS_AND_RUNTIME_COST_ARE_ACCEPTABLE",
+            "tiny_deterministic_ci_fetch": "PREFER_MINIMAL_AUTHENTICATED_REST_WHEN_FULL_MCP_ADDS_NO_CONTROL_VALUE",
+            "anonymous_raw_private_repo_path": "RETIRE_OR_REPAIR_DO_NOT_PRESERVE_AS_FALLBACK",
+        },
+        "result": "PASS_PRAGMATIC_PARITY_WITH_LEGACY_FIRST_RED_PRESERVED",
+        "cutover_authority": "DECISION_EVIDENCE_ONLY_NO_DELETION",
     }
     args.out.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(receipt, sort_keys=True))
