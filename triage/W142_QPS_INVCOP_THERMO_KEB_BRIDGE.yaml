@@ -1,0 +1,94 @@
+schema_version: codex-keb-qps-invcop-thermo/0.1
+wave: W142
+status: CONTROL_CANDIDATE
+repo: GBOGEB/CODEX
+authority_scope: REPO_LOCAL_SEMANTIC_PROVENANCE
+engineering_promotion_forbidden: true
+
+qps_child_authority:
+  repo: GBOGEB/cryoplant-project
+  child_pr: 998
+  child_head_sha: 4615f6647a1a66751da8fe03cf532b8b203766a0
+  child_contract: triage/w142/QPS_W142_INVCOP_THERMO_RETURN_COLD_CONTROL_v0.1.yaml
+  child_manifest: triage/w142/QPS_W142_INVCOP_FEDERATION_MANIFEST_v0.1.yaml
+  rule: QPS_engineering_truth_and_ACCEPT_REJECT_DEFER_remain_child_owned
+
+purpose: >-
+  Type and validate the W142 QPS invCOP thermodynamic semantics without mutating engineering values. Preserve E0-E4 power
+  boundaries, separate isothermal/isentropic/package efficiencies, reject false baseload promotion, and guarantee that one
+  physical refrigeration export receives one denominator credit.
+
+semantic_taxonomy:
+  electrical_boundary: [E0_SHAFT, E1_MOTOR_INPUT, E2_SKID_PACKAGE_INPUT, E3_QPLANT_PROCESS_FEED, E4_FACILITY_ALL_IN]
+  efficiency_basis: [ISOTHERMAL_SHAFT, ISOTHERMAL_PACKAGE, ISENTROPIC_SHAFT, ISENTROPIC_PACKAGE, INVCOP]
+  evidence_class: [MEASURED, VENDOR_STATED, CONTROLLED_SOURCE_SUPPORTED, CALCULATED, INFERRED, POSTULATED, UNKNOWN]
+  baseload_state: [FIXED_OR_WEAK_FLOW_DEPENDENT, FLOW_CORRELATED, SPEED_CORRELATED, HEAT_REJECTION_CORRELATED, UNEXPLAINED, DEFER]
+  return_cold_state: [PASS_UNIQUE_CREDIT, RED_DUPLICATE_CREDIT, DEFER_ENTHALPY_CROSSWALK]
+
+hard_invariants:
+  - direct_LKT_refrigerator_subtotal_current_is_908_kW_not_905
+  - modeled_LKT_CWS_current_is_80p8_kW
+  - current_LKT_bidder_total_power_point_is_about_1038_kW_at_3p35_kW_eq
+  - retired_153p13_kW_residual_must_not_reappear
+  - bidder_total_power_boundary_must_not_be_relabelled_owner_E3_or_site_E4
+  - baseload_requires_multistate_same_boundary_or_direct_auxiliary_evidence
+  - motor_nameplate_is_not_operating_package_power
+  - isothermal_efficiency_is_not_isentropic_efficiency
+  - package_efficiency_is_not_compressor_internal_efficiency
+  - heat_recovery_is_not_negative_electrical_power
+  - residual_return_cold_is_not_a_second_exported_refrigeration_credit
+  - UNKNOWN_or_DEFER_is_not_zero
+
+calculation_atom_registry:
+  EN-CALC-ISO:
+    formula: m_dot*R*T1*ln(P2/P1)
+    role: thermodynamic_diagnostic
+  EN-CALC-IS:
+    formula: m_dot*cp*T1*((P2/P1)^((gamma-1)/gamma)-1)
+    role: thermodynamic_diagnostic
+  EN-CALC-ETA-ISO-E2:
+    formula: W_iso/P_E2
+    role: package_diagnostic
+  EN-CALC-ETA-IS-E2:
+    formula: W_is/P_E2
+    role: package_diagnostic
+  EN-CALC-INVCOP-C:
+    formula: P_E3/Q_4p5K_eq
+    role: owner_acceptance_only_when_E3_and_Qeq_bound
+  EN-CALC-QUSER:
+    formula: sum(m_dot*(h_return-h_supply))
+    role: net_user_boundary_heat
+  EN-CALC-DUPCHECK:
+    formula: uniqueness_of_physical_credit_keys
+    role: denominator_non_overlap_guard
+
+ingress_required:
+  identity: [source_repo, source_sha, schema_version, operating_state]
+  boundaries: [electrical_boundary, refrigeration_boundary, steady_state_window]
+  provenance: [evidence_class, source_locator_or_child_atom_id]
+  denominator: [Q_4p5K_eq_kW, credit_keys]
+
+decision_logic:
+  baseload:
+    if_single_point_residual_only: DEFER
+    if_same_boundary_multistate_or_direct_auxiliary_metering: CLASSIFY
+  owner_invCOP:
+    if_E3_or_Qeq_boundary_unbound: DEFER_SOURCE_GAP
+    else: CALCULATE_WITHOUT_CHANGING_CHILD_VALUES
+  return_cold:
+    if_duplicate_credit_keys: REJECT_SEMANTIC
+    if_enthalpy_crosswalk_missing: DEFER_SOURCE_GAP
+    else: PASS_SEMANTIC
+
+output_contract:
+  receipt_id: KEB-W142-INVCOP-THERMO
+  allowed_dispositions: [PASS_SEMANTIC, REJECT_SEMANTIC, DEFER_SOURCE_GAP]
+  required: [child_head_sha, semantic_checks, provenance_checks, boundary_checks, duplicate_credit_check, engineering_promotion_forbidden]
+  child_action: ACCEPT_REJECT_OR_DEFER_AFTER_DOW_ROUNDTRIP
+
+DoD:
+  typed_semantics: PASS
+  provenance_guards: PASS
+  non_overlap_guard: PASS
+  engineering_authority_preserved: PASS
+  executable_runtime_receipt: WITHHELD
