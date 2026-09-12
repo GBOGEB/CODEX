@@ -2,15 +2,16 @@ schema: gbogeb-repo-rex-return/1.0
 repo: GBOGEB/CODEX
 measurement_window:
   start: 2026-09-11T08:36:31Z
-  end: OPEN
-  basis: W113 W003 governance-gate Control loop across PR621, PR624, PR638, and final convergence probe
-  denominator_notes: five observed failed W003 execution opportunities before the final draft-controlled convergence probe
+  end: 2026-09-12T09:14:40Z
+  basis: W113 W003 governance-gate Control loop across PR621, PR624, PR638, and final convergence PR650
+  denominator_notes: five observed failed W003 execution opportunities before the successful draft-controlled convergence proof
 
 repo_state:
   base_sha: c4e92de867c1b70f12445e401b803d087b73eadb
-  branch_or_pr: w113/rex-final-convergence
+  branch_or_pr: PR-650
+  proof_subject_sha: 7b746219b0445302471149dc1c5a1634c9219031
   dmaic_phase: CONTROL
-  rex_status: CURRENT_OPEN
+  rex_status: CONTROLLED
 
 records:
   - rex_id: REX-W113-CODEX-001
@@ -44,8 +45,8 @@ records:
     repair_method: >-
       Preserve the W003 parser and schema unchanged. Use a fresh draft PR from current main
       with the complete classification block and schema-valid values, require W003 to execute
-      more than zero steps and PASS, then repair any independent Semantic Runtime and Main CI
-      first-reds on the same branch before binding one exact-head convergence receipt.
+      more than zero steps and PASS, repair the first independent downstream red only, then
+      prove W003 plus Semantic Runtime plus Main CI green on one exact head before promotion.
     verification:
       initial_failure:
         pr: 621
@@ -83,37 +84,72 @@ records:
         run_id: 34618519113
         exact_head_sha: c33f26adb9559265627a3b87d07ae1937741293d
         result: FAIL_INVALID_SCHEMA_MUTATION_ENUM
+      pr650_first_convergence_attempt:
+        pr: 650
+        exact_head_sha: ac1e60866eaef51e23fae40a33ee8eb8955c069d
+        w003_run_id: 34685159691
+        w003_job_id: 103530769407
+        w003_result: PASS
+        semantic_run_id: 34685159660
+        semantic_job_id: 103530769229
+        semantic_result: FAIL_TESTS
+        ci_run_id: 34685159693
+        ci_job_id: 103530769581
+        ci_result: FAIL_TESTS
+        first_red: GLOB.yaml line 173 unquoted question mark in a flow-mapping ask value
+        repair_commit_sha: 7b746219b0445302471149dc1c5a1634c9219031
       final_convergence_probe:
-        pr: PENDING
-        run_id: PENDING
-        job_id: PENDING
-        exact_head_sha: PENDING
-        result: PENDING
+        pr: 650
+        exact_head_sha: 7b746219b0445302471149dc1c5a1634c9219031
+        result: PASS_EXACT_HEAD_CONVERGENCE
+        w003:
+          run_id: 34685282303
+          job_id: 103531101554
+          runner_id: 1000252599
+          result: PASS
+          parser_step_executed: true
+        semantic_runtime:
+          run_id: 34685282185
+          semantic_validation_job_id: 103531101632
+          renderer_governance_job_id: 103531101576
+          runner_id: 1000252591
+          tests_result: PASS
+          runtime_receipt_and_binding: PASS
+          result: PASS
+        main_ci:
+          run_id: 34685282433
+          job_id: 103531102015
+          runner_id: 1000252610
+          tests_result: PASS
+          downstream_checks_result: PASS
+          result: PASS
     control_guard:
       - W003 Governance Gate remains fail-closed
       - PR authoring must emit the complete governance header before first CI
       - SPRINT must satisfy the governed S<number>-P<number> pattern
       - SCHEMA MUTATION must use a governed enum value such as NO
+      - natural-language YAML flow-mapping values containing question marks must be quoted
       - CONTROLLED requires W003 plus Semantic Runtime plus Main CI PASS on one exact head
-      - the exact-head receipt must be committed before the draft PR is released for merge
-    control_status: OPEN
+      - the exact-head proof receipt is committed before the draft PR is released for merge
+    control_status: CONTROLLED
     lesson: >-
       PR metadata is executable governance input. Control requires both presence and exact
-      schema conformance, and convergence proof must be bound before promotion rather than
-      inferred from a later merge.
-    lookup_tags: [w003, governance, pr-metadata, header, schema, sprint, schema-mutation, pr-007, codex]
+      schema conformance. The final convergence also showed that a green governance gate is
+      not sufficient by itself: downstream test suites must be run on the same head and the
+      first independent red repaired without weakening the gates.
+    lookup_tags: [w003, governance, pr-metadata, header, schema, sprint, schema-mutation, pr-007, codex, exact-head]
 
 summary:
   total_records: 1
-  open_or_deferred: 1
+  open_or_deferred: 0
   five_star_open: 0
   recurring_records: 1
   cross_repo_records: 0
-  verified_or_controlled: 0
+  verified_or_controlled: 1
 
 return_contract:
   consumer: GBOGEB/CODEX
   global_taxonomy: federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml
   merge_key: signature_plus_authority_relevant_scope
-  promotion_state: HOLD_UNTIL_EXACT_HEAD_CONVERGENCE
+  promotion_state: REPO_LOCAL_CONTROLLED
   authority_transfer: false
