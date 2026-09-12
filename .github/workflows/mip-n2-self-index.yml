@@ -30,8 +30,11 @@ jobs:
 
       - name: Verify exact-SHA binding and repeatability
         run: |
-          python scripts/mip_verify_self_index.py \
-            --summary "${RUNNER_TEMP}/mip-n2-self-index-summary.json"
+          mkdir -p .mip-n2-tmp
+          trap 'rmdir .mip-n2-tmp 2>/dev/null || true' EXIT
+          TMPDIR="${GITHUB_WORKSPACE}/.mip-n2-tmp" \
+            python scripts/mip_verify_self_index.py \
+              --summary "${RUNNER_TEMP}/mip-n2-self-index-summary.json"
 
       - name: Confirm verifier left source checkout clean
         run: test -z "$(git status --porcelain)"
