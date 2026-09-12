@@ -1,0 +1,113 @@
+schema: qps.m05.attest_delegate_retain.v1
+mission: M05_PROVENANCE_ATTESTATION
+pulse: P_M05_EXACT_SHA_RUNTIME_02
+state: DOV1_CANDIDATE_EXACT_PIN_RUNTIME_PENDING
+
+source_census:
+  actions_attest:
+    repo: actions/attest
+    observed_main_sha: 60c80190bb1a4fb35e5724ede753db5656412b68
+    selected_runtime_sha: 1e69f48acb82d1966a394da916b4c1698aa569d6
+    selected_version: v4.2.2
+    role: PRIMARY_NEW_IMPLEMENTATION
+  attest_build_provenance:
+    repo: actions/attest-build-provenance
+    observed_main_sha: 9d57eef8c06cd9d6b433effeeb7a6a77b3ff94ad
+    role: REFERENCE_WRAPPER_EXISTING_APPLICATIONS
+    exact_wrapper_dependency: 1e69f48acb82d1966a394da916b4c1698aa569d6
+    upstream_guidance: new_implementations_should_use_actions_attest_directly
+  attest_sbom:
+    repo: actions/attest-sbom
+    observed_main_sha: 4c8abdcbea4a6b66f70fd1169e70af4bf5b13701
+    role: CONDITIONAL_SPECIALIST_WHEN_SBOM_SUBJECT_EXISTS
+  local_fork:
+    repo: GBOGEB/attest-build-provenance
+    observed_main_sha: 10334b5f1e684784025c3fc0a277c88c19089275
+    role: REFERENCE_HISTORY_NOT_NEW_INFRASTRUCTURE
+
+delegate_to_official:
+  - OIDC_backed_attestation_signing
+  - Sigstore_certificate_and_signature_generation
+  - Rekor_transparency_log_submission_when_applicable
+  - GitHub_attestations_API_upload
+  - standard_build_provenance_predicate_generation
+  - attestation_bundle_generation
+  - standard_SBOM_attestation_when_an_SBOM_exists
+
+retain_in_QPS_KEB_DOW:
+  - subject_selection_and_scope_boundary
+  - exact_source_head_and_carrier_SHA_binding
+  - subject_digest_and_receipt_digest
+  - evidence_class_and_authority_boundary
+  - FIRST_RED_and_BG_CG_state_reduction
+  - PM_TM_QA_Governor_acceptance
+  - child_reentry_and_ACCEPT_REJECT_DEFER
+  - retention_policy_and_cross_repo_return_contract
+  - engineering_semantic_and_physical_validity
+  - DoD_DoV_and_DMAIC_Control
+
+observed_runtime_vector_1:
+  carrier_repo: GBOGEB/CODEX
+  source_head_sha: 456cb9a89f06f918e427651d27e9dc797b2eb490
+  pull_request_merge_ref_sha: 9addac371de0c8d998830d03e4c92e60a07ac3ae
+  run_id: 34684195078
+  job_id: 103528177890
+  result: PASS
+  executed_steps: GT_ZERO
+  action_resolved_sha: 1e69f48acb82d1966a394da916b4c1698aa569d6
+  subject_sha256: 0f6678a3e6c15db34d936a124cc0409bd19625964951fb071603e03878051934
+  attestation_id: 47037248
+  sigstore: PUBLIC_GOOD_INSTANCE
+  rekor_log_index: 2805327800
+  retained_artifact:
+    id: 10294693929
+    size_bytes: 8351
+    digest: sha256:0eadbaf645659951359c5c0fbd5727bd02faed65a70e902dafafddbff5f1fa21
+  interpretation: >-
+    Real public-repository attestation creation succeeded with hosted execution,
+    OIDC, Sigstore signing, Rekor transparency logging, GitHub attestation upload,
+    local bundle retention and a returned artifact. This proves the bounded
+    provenance primitive, not engineering correctness or release acceptance.
+
+exact_pin_improvement:
+  reason: >-
+    Vector 1 resolved actions/attest@v4 to an exact commit at runtime. This pulse
+    pins that same tested commit in workflow source and separately records source
+    head versus pull-request merge carrier SHA so the receipt is reproducible and
+    unambiguous.
+  checkout_sha: 11d5960a326750d5838078e36cf38b85af677262
+  attest_sha: 1e69f48acb82d1966a394da916b4c1698aa569d6
+  upload_artifact_sha: ea165f8d65b6e75b540449e92b4886f43607fa02
+
+management_boundary:
+  QA: may_accept_provenance_integrity_evidence
+  TM: retains_engineering_and_validity_authority
+  PM: retains_delivery_and_work_closure_authority
+  Governor: retains_promotion_authority
+  prohibition:
+    - attestation_PASS_does_not_equal_engineering_PASS
+    - attestation_PASS_does_not_equal_semantic_PASS
+    - attestation_PASS_does_not_equal_release_APPROVED
+    - wrapper_fork_does_not_become_SSOT
+
+BG:
+  before: runnable_official_provenance_primitive_not_exact_source_pinned
+  current: exact_pinned_repeat_not_yet_observed
+CG: >-
+  Execute this exact-pinned workflow on the current branch; require runner_id > 0,
+  more than zero executed steps, official attestation creation, exact subject digest,
+  bundle retention and artifact return. On GREEN, mark bounded DoV-1 PASS and route
+  the returned receipt to an independent QPS/KEB/DOW consumer for DoV-2.
+
+DoD:
+  exact_family_census: PASS
+  supersession_boundary: PASS
+  delegate_retain_boundary: PASS
+  first_real_runtime_vector: PASS
+  exact_runtime_action_pin_in_source: READY_PENDING_EXECUTION
+  independent_consumer: PENDING
+
+DoV:
+  DoV_1: CANDIDATE_PENDING_EXACT_PIN_REPEAT
+  DoV_2: NOT_REACHED
+  DoV_3: NOT_REACHED

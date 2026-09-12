@@ -18,30 +18,37 @@ permissions:
   attestations: write
   artifact-metadata: write
 
+env:
+  M05_ATTEST_ACTION_SHA: 1e69f48acb82d1966a394da916b4c1698aa569d6
+
 jobs:
   attest-provenance:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact CODEX head
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Create deterministic subject and checksum
         shell: bash
+        env:
+          SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
           mkdir -p artifacts/m05
-          printf 'QPS-M05\nrepo=%s\nsha=%s\n' "$GITHUB_REPOSITORY" "$GITHUB_SHA" > artifacts/m05/qps_m05_subject.txt
+          printf 'QPS-M05\nrepo=%s\ncarrier_sha=%s\nsource_head_sha=%s\n' \
+            "$GITHUB_REPOSITORY" "$GITHUB_SHA" "$SOURCE_HEAD_SHA" > artifacts/m05/qps_m05_subject.txt
           sha256sum artifacts/m05/qps_m05_subject.txt > artifacts/m05/qps_m05_subject.sha256
 
       - name: Create official GitHub provenance attestation
         id: attest
-        uses: actions/attest@v4
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
         with:
           subject-path: artifacts/m05/qps_m05_subject.txt
 
       - name: Bind exact receipt
         shell: bash
         env:
+          SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           ATTESTATION_ID: ${{ steps.attest.outputs.attestation-id }}
           ATTESTATION_URL: ${{ steps.attest.outputs.attestation-url }}
           BUNDLE_PATH: ${{ steps.attest.outputs.bundle-path }}
@@ -55,12 +62,15 @@ jobs:
           bundle_dst = pathlib.Path('artifacts/m05/attestation.bundle.json')
           bundle_dst.write_bytes(bundle_src.read_bytes())
           receipt = {
-              'schema': 'qps.m05.attestation_receipt.v1',
+              'schema': 'qps.m05.attestation_receipt.v2',
               'repo': os.environ['GITHUB_REPOSITORY'],
-              'source_sha': os.environ['GITHUB_SHA'],
+              'source_head_sha': os.environ['SOURCE_HEAD_SHA'],
+              'carrier_sha': os.environ['GITHUB_SHA'],
               'run_id': os.environ['GITHUB_RUN_ID'],
               'run_attempt': os.environ['GITHUB_RUN_ATTEMPT'],
-              'action': 'actions/attest@v4',
+              'action': 'actions/attest',
+              'action_sha': os.environ['M05_ATTEST_ACTION_SHA'],
+              'action_version': 'v4.2.2',
               'subject': str(subject),
               'subject_sha256': digest,
               'attestation_id': os.environ['ATTESTATION_ID'],
@@ -76,7 +86,7 @@ jobs:
           sha256sum artifacts/m05/qps_m05_attestation_receipt.json > artifacts/m05/qps_m05_attestation_receipt.sha256
 
       - name: Upload M05 retained evidence
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: qps-m05-attest-provenance-${{ github.sha }}
           path: artifacts/m05/
