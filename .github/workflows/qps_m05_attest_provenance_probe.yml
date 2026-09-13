@@ -1,3 +1,4 @@
+# MIP v2 W114/S2-P2 governed KEB envelope producer
 name: QPS M05 Official Attest Provenance Probe
 
 on:
@@ -94,6 +95,77 @@ jobs:
           PY
           sha256sum artifacts/m05/qps_m05_attestation_receipt.json \
             > artifacts/m05/qps_m05_attestation_receipt.sha256
+
+      - name: Emit canonical MIP v2 KEB envelope
+        if: github.event_name == 'pull_request'
+        shell: bash
+        env:
+          SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PRODUCER_PR: ${{ github.event.pull_request.number }}
+          ATTESTATION_ID: ${{ steps.attest.outputs.attestation-id }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, json, os, pathlib
+
+          source_path = pathlib.Path('docs/qps_m05/QPS_G5_KEB_CHALLENGE_v0.2.json')
+          attestation_path = pathlib.Path('artifacts/m05/qps_m05_attestation_receipt.json')
+          challenge = json.loads(source_path.read_text(encoding='utf-8'))
+          attestation = json.loads(attestation_path.read_text(encoding='utf-8'))
+
+          execution = challenge['execution']
+          predicate = challenge['challenge_predicate']
+          assert challenge['schema'] == 'qps.g5.keb_challenge.v2'
+          assert challenge['authority'] == 'SEMANTIC_PROVENANCE_CHALLENGE_ONLY_NOT_ENGINEERING_ACCEPTANCE'
+          assert execution['job_conclusion'] == 'success'
+          assert int(execution['runner_id']) != 0
+          assert int(execution['observed_completed_step_count']) > 0
+          assert all(
+              step['status'] == 'completed' and step['conclusion'] == 'success'
+              for step in execution['required_payload_steps']
+          )
+          assert predicate['promotion_authority'] is False
+          assert attestation['status'] == 'PASS'
+          assert attestation['source_head_sha'] == os.environ['SOURCE_HEAD_SHA']
+
+          receipt = {
+              'producer_repo': 'GBOGEB/CODEX',
+              'producer_pr': int(os.environ['PRODUCER_PR']),
+              'producer_head_sha': os.environ['SOURCE_HEAD_SHA'],
+              'source_object_ids': [
+                  'docs/qps_m05/QPS_G5_KEB_CHALLENGE_v0.2.json',
+                  f"cryoplant-project#1043@{challenge['source']['child_candidate_head']}",
+                  f"Q_engineering_tools#19/run/{execution['run']}/job/{execution['job']}",
+                  f"artifact:{execution['artifact_id']}:{execution['artifact_digest']}",
+                  f"attestation:{os.environ['ATTESTATION_ID']}",
+              ],
+              'contract_version': 'qps-triage-keb-contract/1.0.0',
+              'workflow_or_validator': 'QPS M05 Official Attest Provenance Probe / G5 KEB semantic challenge',
+              'executed_steps': 4,
+              'result': 'PASS',
+              'downstream_consumer': 'GBOGEB/ABACUS',
+              'child_reentry_target': 'GBOGEB/cryoplant-project',
+              'authority': 'SEMANTIC_PROVENANCE_ONLY_NOT_ENGINEERING_ACCEPTANCE',
+              'source_challenge_schema': challenge['schema'],
+              'underlying_execution': {
+                  'repo': execution['repo'],
+                  'run': execution['run'],
+                  'job': execution['job'],
+                  'runner_id': execution['runner_id'],
+                  'observed_completed_step_count': execution['observed_completed_step_count'],
+                  'artifact_digest': execution['artifact_digest'],
+              },
+              'digest_rule': 'sha256(canonical_json_without_receipt_sha256)',
+          }
+          payload = json.dumps(receipt, sort_keys=True, separators=(',', ':')).encode('utf-8')
+          receipt['receipt_sha256'] = hashlib.sha256(payload).hexdigest()
+
+          target = pathlib.Path('artifacts/m05/qps_triage_keb_receipt_v1.json')
+          target.write_text(json.dumps(receipt, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+          print('MIP_V2_KEB_RECEIPT_BEGIN')
+          print(json.dumps(receipt, sort_keys=True))
+          print('MIP_V2_KEB_RECEIPT_END')
+          PY
 
       - name: Upload M05 retained evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
