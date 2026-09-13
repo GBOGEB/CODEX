@@ -1,0 +1,127 @@
+name: QPS LLDB MCP Strict DoV
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/qps_debug_protocol_probe.py'
+      - '.github/workflows/qps-lldb-mcp-strict.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qps-lldb-mcp-strict-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  strict-mcp:
+    name: official LLVM dev lldb-mcp four-tool proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure official LLVM development repository
+        run: |
+          set -euo pipefail
+          . /etc/os-release
+          CODENAME="${VERSION_CODENAME}"
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key \
+            | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc >/dev/null
+          echo "deb https://apt.llvm.org/${CODENAME}/ llvm-toolchain-${CODENAME} main" \
+            | sudo tee /etc/apt/sources.list.d/llvm-dev.list
+          sudo apt-get update
+          sudo apt-get install -y lldb-24
+
+      - name: Bind exact lldb-mcp development binary
+        id: toolchain
+        run: |
+          set -euo pipefail
+          MCP_BIN=""
+          for candidate in \
+            /usr/lib/llvm-24/bin/lldb-mcp \
+            /usr/bin/lldb-mcp-24 \
+            /usr/bin/lldb-mcp; do
+            if [ -x "${candidate}" ]; then
+              MCP_BIN="${candidate}"
+              break
+            fi
+          done
+          test -n "${MCP_BIN}"
+          mkdir -p "${RUNNER_TEMP}/qps-mcp-bin" artifacts/qps_debug/perpetual
+          ln -sf "${MCP_BIN}" "${RUNNER_TEMP}/qps-mcp-bin/lldb-mcp"
+          echo "${RUNNER_TEMP}/qps-mcp-bin" >> "${GITHUB_PATH}"
+          PACKAGE_VERSION="$(dpkg-query -W -f='${Version}' lldb-24)"
+          MCP_SHA256="$(sha256sum "${MCP_BIN}" | awk '{print $1}')"
+          export MCP_BIN PACKAGE_VERSION MCP_SHA256
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          payload = {
+              'schema': 'qps.perpetual.lldb_mcp_toolchain.v2',
+              'source': 'apt.llvm.org-development',
+              'package': 'lldb-24',
+              'package_version': os.environ['PACKAGE_VERSION'],
+              'binary': os.environ['MCP_BIN'],
+              'sha256': os.environ['MCP_SHA256'],
+              'required_upstream_feature_commit': '9208fc3409e3afff53338b0fdaf22319752949db',
+              'required_tools': [
+                  'session_create',
+                  'command',
+                  'sessions_list',
+                  'session_close',
+              ],
+              'authority_guards': {
+                  'formal_engineering_credit_delta': 0,
+                  'negotiation_credit_delta': 0,
+                  'qps_repo_local_runner_gate': 'WITHHELD_EXTERNAL',
+              },
+          }
+          Path('artifacts/qps_debug/perpetual/lldb_mcp_toolchain.json').write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + '\n',
+              encoding='utf-8',
+          )
+          print(json.dumps(payload, indent=2, sort_keys=True))
+          PY
+
+      - name: Execute strict four-tool LLDB MCP sequence
+        id: mcp
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          LLDB_MCP_LOG=1 python3 scripts/qps_debug_protocol_probe.py mcp --strict
+
+      - name: Enforce strict MCP DoV
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          p = json.loads(
+              Path('artifacts/qps_debug/perpetual/lldb_mcp_live.json').read_text()
+          )
+          expected = {'session_create', 'command', 'sessions_list', 'session_close'}
+          assert p['status'] == 'ACCEPT', p
+          assert p['dov_status'] == 'PASS', p
+          assert expected.issubset(set(p['tool_names'])), p
+          assert p['session_uri'].startswith('lldb-mcp://'), p
+          transcript = p.get('transcript_tail', [])
+          sent_tools = {
+              x.get('message', {}).get('params', {}).get('name')
+              for x in transcript
+              if x.get('direction') == 'send'
+              and x.get('message', {}).get('method') == 'tools/call'
+          }
+          assert {'session_create', 'command', 'session_close'}.issubset(sent_tools), p
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qps-lldb-mcp-strict
+          path: artifacts/qps_debug/perpetual/
+          if-no-files-found: error
