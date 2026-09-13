@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'scripts/qps_debug_protocol_probe.py'
+      - 'scripts/qps_lldb_mcp_probe.py'
       - 'scripts/qps_js_debug_probe.py'
       - 'scripts/qps_docker_remote_lldb_probe.py'
       - 'scripts/qps_perpetual_control.py'
@@ -13,6 +14,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/qps_debug_protocol_probe.py'
+      - 'scripts/qps_lldb_mcp_probe.py'
       - 'scripts/qps_js_debug_probe.py'
       - 'scripts/qps_docker_remote_lldb_probe.py'
       - 'scripts/qps_perpetual_control.py'
@@ -47,30 +49,48 @@ jobs:
           if command -v lldb-mcp >/dev/null 2>&1; then
             MCP_BIN="$(command -v lldb-mcp)"
             MCP_SOURCE="preinstalled-path"
+            MCP_VERSION="UNCLAIMED_PREINSTALLED_PATH"
+            MCP_DIR="$(dirname "${MCP_BIN}")"
+            LLDB_DRIVER="${MCP_DIR}/lldb"
+            test -x "${LLDB_DRIVER}"
           else
             export HOMEBREW_NO_AUTO_UPDATE=1
             brew install lldb
             LLDB_PREFIX="$(brew --prefix lldb)"
             MCP_BIN="${LLDB_PREFIX}/bin/lldb-mcp"
             MCP_SOURCE="homebrew-lldb"
+            MCP_VERSION="$(brew list --versions lldb)"
+            LLDB_DRIVER="${LLDB_PREFIX}/bin/lldb"
             test -x "${MCP_BIN}"
+            test -x "${LLDB_DRIVER}"
             echo "${LLDB_PREFIX}/bin" >> "${GITHUB_PATH}"
           fi
           mkdir -p artifacts/qps_debug/perpetual
-          MCP_VERSION="$(brew list --versions lldb 2>/dev/null || true)"
           MCP_SHA256="$(shasum -a 256 "${MCP_BIN}" | awk '{print $1}')"
-          export MCP_BIN MCP_SOURCE MCP_VERSION MCP_SHA256
+          {
+            echo "MCP_BIN=${MCP_BIN}"
+            echo "MCP_SOURCE=${MCP_SOURCE}"
+            echo "MCP_VERSION=${MCP_VERSION}"
+            echo "LLDB_DRIVER=${LLDB_DRIVER}"
+          } >> "${GITHUB_ENV}"
+          export MCP_BIN MCP_SOURCE MCP_VERSION MCP_SHA256 LLDB_DRIVER
           python3 - <<'PY'
           import json
           import os
           from pathlib import Path
 
           payload = {
-              'schema': 'qps.perpetual.lldb_mcp_toolchain.v1',
+              'schema': 'qps.perpetual.lldb_mcp_toolchain.v2',
               'binary': os.environ['MCP_BIN'],
               'source': os.environ['MCP_SOURCE'],
               'package_version': os.environ['MCP_VERSION'],
+              'lldb_driver': os.environ['LLDB_DRIVER'],
               'sha256': os.environ['MCP_SHA256'],
+              'version_authority': (
+                  'homebrew-package'
+                  if os.environ['MCP_SOURCE'] == 'homebrew-lldb'
+                  else 'not-claimed-use-runtime-serverInfo'
+              ),
               'authority_guards': {
                   'formal_engineering_credit_delta': 0,
                   'negotiation_credit_delta': 0,
@@ -90,8 +110,6 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p artifacts/qps_debug/perpetual
-          LLDB_PREFIX="$(brew --prefix lldb)"
-          LLDB_DRIVER="${LLDB_PREFIX}/bin/lldb"
           BACKEND_STDOUT="artifacts/qps_debug/perpetual/lldb_mcp_backend.stdout"
           BACKEND_STDERR="artifacts/qps_debug/perpetual/lldb_mcp_backend.stderr"
           FIFO="${RUNNER_TEMP}/qps-lldb-mcp-stdin"
@@ -135,7 +153,7 @@ jobs:
           Path('artifacts/qps_debug/perpetual/lldb_mcp_live.json').write_text(
               json.dumps(
                   {
-                      'schema': 'qps.perpetual.lldb_mcp.v1',
+                      'schema': 'qps.perpetual.lldb_mcp.v2',
                       'status': 'DEFER',
                       'dov_status': 'WITHHELD',
                       'reason': 'official LLDB MCP backend exited before probe',
@@ -152,7 +170,7 @@ jobs:
           fi
 
           set +e
-          LLDB_MCP_LOG=1 python3 scripts/qps_debug_protocol_probe.py mcp
+          LLDB_MCP_LOG=1 python3 scripts/qps_lldb_mcp_probe.py
           PROBE_RC="$?"
           set -e
           BACKEND_ALIVE=false
@@ -200,7 +218,7 @@ jobs:
           path.write_text(
               json.dumps(
                   {
-                      'schema': 'qps.perpetual.lldb_mcp.v1',
+                      'schema': 'qps.perpetual.lldb_mcp.v2',
                       'status': 'DEFER',
                       'dov_status': 'WITHHELD',
                       'reason': 'official LLVM lldb-mcp toolchain materialisation failed',
@@ -232,9 +250,25 @@ jobs:
           from pathlib import Path
           p = json.loads(Path('artifacts/qps_debug/perpetual/lldb_mcp_live.json').read_text())
           assert p['status'] == 'ACCEPT', p
-          expected = {'session_create', 'command', 'sessions_list', 'session_close'}
-          assert expected.issubset(set(p['tool_names'])), p
+          assert p['command_version_verified'] is True, p
           assert p['session_uri'].startswith('lldb-mcp://'), p
+          profile = p['contract_profile']
+          tools = set(p['tool_names'])
+          if profile == 'llvm_release_23_1_registry_v1':
+              assert p['server_version'].startswith('23.1.'), p
+              assert {'command', 'sessions_list'}.issubset(tools), p
+              assert p['managed_session_closed'] is None, p
+          elif profile == 'llvm_managed_session_v1':
+              expected = {
+                  'session_create',
+                  'command',
+                  'sessions_list',
+                  'session_close',
+              }
+              assert expected.issubset(tools), p
+              assert p['managed_session_closed'] is True, p
+          else:
+              raise AssertionError(p)
           PY
       - uses: actions/upload-artifact@v4
         if: always()
@@ -394,5 +428,5 @@ jobs:
           assert p['federated_perpetual_control'] == 'CONTROL', p
           assert p['heartbeat']['threshold_met'] is True, p
           # Terminal global DoV is intentionally stricter and may remain WITHHELD
-          # while EXT-RUNNER-001 or LLDB-MCP remains open.
+          # while EXT-RUNNER-001 remains open.
           PY
