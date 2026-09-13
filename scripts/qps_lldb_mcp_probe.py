@@ -64,7 +64,31 @@ def main() -> int:
         text=True,
         bufsize=1,
     )
-    assert proc.stdin is not None and proc.stdout is not None
+    if proc.stdin is None or proc.stdout is None:
+        proc.terminate()
+        try:
+            proc.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+        write_receipt(
+            "lldb_mcp_live",
+            {
+                "schema": "qps.perpetual.lldb_mcp.v2",
+                "status": "REJECT",
+                "dov_status": "WITHHELD",
+                "binary": binary,
+                "binary_resolution": resolution,
+                "reason": "lldb-mcp stdio pipes unavailable",
+                "bd_id": "HIST-BD-014",
+                "authority_guards": {
+                    "formal_engineering_credit_delta": 0,
+                    "negotiation_credit_delta": 0,
+                    "qps_repo_local_runner_gate": "WITHHELD_EXTERNAL",
+                },
+            },
+        )
+        return 2
+
     transcript: list[dict[str, Any]] = []
     tool_names: list[str] = []
     session_uri: str | None = None
