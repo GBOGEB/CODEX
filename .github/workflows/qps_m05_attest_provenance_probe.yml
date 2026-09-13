@@ -28,6 +28,9 @@ jobs:
       - name: Checkout exact CODEX head
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
+      - name: Execute G5 KEB semantic challenge
+        run: python docs/qps_m05/qps_g5_keb_challenge.py
+
       - name: Create deterministic subject and checksum
         shell: bash
         env:
@@ -35,8 +38,10 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p artifacts/m05
-          printf 'QPS-M05\nrepo=%s\ncarrier_sha=%s\nsource_head_sha=%s\n' \
-            "$GITHUB_REPOSITORY" "$GITHUB_SHA" "$SOURCE_HEAD_SHA" > artifacts/m05/qps_m05_subject.txt
+          G5_SHA="$(sha256sum artifacts/m05/g5_keb_challenge_receipt.json | cut -d' ' -f1)"
+          printf 'QPS-M05\nrepo=%s\ncarrier_sha=%s\nsource_head_sha=%s\ng5_keb_receipt_sha256=%s\n' \
+            "$GITHUB_REPOSITORY" "$GITHUB_SHA" "$SOURCE_HEAD_SHA" "$G5_SHA" \
+            > artifacts/m05/qps_m05_subject.txt
           sha256sum artifacts/m05/qps_m05_subject.txt > artifacts/m05/qps_m05_subject.sha256
 
       - name: Create official GitHub provenance attestation
@@ -57,12 +62,14 @@ jobs:
           python - <<'PY'
           import hashlib, json, os, pathlib
           subject = pathlib.Path('artifacts/m05/qps_m05_subject.txt')
+          g5_receipt = pathlib.Path('artifacts/m05/g5_keb_challenge_receipt.json')
           digest = hashlib.sha256(subject.read_bytes()).hexdigest()
+          g5_digest = hashlib.sha256(g5_receipt.read_bytes()).hexdigest()
           bundle_src = pathlib.Path(os.environ['BUNDLE_PATH'])
           bundle_dst = pathlib.Path('artifacts/m05/attestation.bundle.json')
           bundle_dst.write_bytes(bundle_src.read_bytes())
           receipt = {
-              'schema': 'qps.m05.attestation_receipt.v2',
+              'schema': 'qps.m05.attestation_receipt.v3',
               'repo': os.environ['GITHUB_REPOSITORY'],
               'source_head_sha': os.environ['SOURCE_HEAD_SHA'],
               'carrier_sha': os.environ['GITHUB_SHA'],
@@ -73,6 +80,8 @@ jobs:
               'action_version': 'v4.2.2',
               'subject': str(subject),
               'subject_sha256': digest,
+              'g5_keb_challenge_receipt': str(g5_receipt),
+              'g5_keb_challenge_receipt_sha256': g5_digest,
               'attestation_id': os.environ['ATTESTATION_ID'],
               'attestation_url': os.environ['ATTESTATION_URL'],
               'bundle_file': str(bundle_dst),
@@ -83,7 +92,8 @@ jobs:
               json.dumps(receipt, indent=2, sort_keys=True) + '\n', encoding='utf-8'
           )
           PY
-          sha256sum artifacts/m05/qps_m05_attestation_receipt.json > artifacts/m05/qps_m05_attestation_receipt.sha256
+          sha256sum artifacts/m05/qps_m05_attestation_receipt.json \
+            > artifacts/m05/qps_m05_attestation_receipt.sha256
 
       - name: Upload M05 retained evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
