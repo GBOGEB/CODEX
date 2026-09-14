@@ -1,0 +1,139 @@
+schema: qps-utilities-reconciliation/1.0
+version: 1.6.1
+authority: ENGINEERING_RECONCILIATION_CANDIDATE_NOT_DESIGN_APPROVAL
+bd: V16-BD-004
+state: PARTIAL_RECONCILIATION_FIRST_RED_NARROWED
+
+rules:
+  - preserve every source value until its semantic role is identified
+  - arithmetic decomposition is DERIVED evidence, not source authority
+  - interface-list/load-basis confirmation is required before CONTROL closure
+  - utility consequence does not itself assign a safety or hard-trip class
+
+source_set:
+  - QPS_Suporting_Sytems.pptx
+  - QPS_Supporting_Systems_FULL_SLINE_parallel_canonical_v3_appendix.pptx
+  - NA.AA_BMA003 - Interface List CRYO - ACC NF.xlsx  # referenced by source deck; not ingested here
+
+reconciliations:
+  - id: UREC-01
+    topic: PCW_WCS_HCC_load_basis
+    source_facts:
+      facility_pcw_design_capacity_kw: 1300
+      wcs_hp_allocation_kw: 1199
+      pvps_allocation_kw: 57
+      qrb_allocation_kw: 44
+      hcc_pcw_working_summary_kw_approx: 1200
+      displayed_pcw_surface_kw_approx: 1256
+      displayed_note: "1199 kW HX1"
+    derived_checks:
+      - expression: "1199 + 57 = 1256"
+        class: DERIVED
+        interpretation_candidate: WCS_total_PCW_equals_HP_plus_PVPS
+      - expression: "1199 + 57 + 44 = 1300"
+        class: DERIVED
+        interpretation_candidate: facility_total_equals_WCS_HP_plus_PVPS_plus_QRB
+    disposition:
+      value_1199_kw: WCS_HP_OR_HX1_EXACT_ALLOCATION_CANDIDATE
+      value_1200_kw_approx: ROUNDED_HCC_HP_WORKING_SUMMARY_CANDIDATE
+      value_1256_kw_approx: WCS_TOTAL_HP_PLUS_PVPS_DERIVED_MATCH_CANDIDATE
+      value_1300_kw: FACILITY_PCW_DESIGN_CAPACITY_SOURCE_EXPLICIT
+    closure_needed:
+      - confirm labels and equipment boundaries against NA.AA_BMA003 interface list
+      - confirm whether 1199 is exactly HX1-only or full HP/HCC PCW allocation
+      - confirm whether 1256 was intentionally WCS-total rather than a duplicated HCC label
+    state: SEMANTIC_DECOMPOSITION_CANDIDATE_GOVERNING_SOURCE_CONFIRMATION_REQUIRED
+
+  - id: UREC-02
+    topic: HVAC_capacity_vs_room_heat
+    source_facts:
+      facility_hvac_capacity_kw: 124
+      facility_hvac_breakdown_kw:
+        WCS_HV03: 114
+        QRB_HV02: 10
+      wcs_room_heat_working_estimate_kw_approx: 120
+    derived_checks:
+      - expression: "114 + 10 = 124"
+        class: DERIVED
+        interpretation_candidate: facility_HVAC_capacity_breakdown_is_arithmetically_complete
+    disposition:
+      124_kw: FACILITY_INSTALLED_OR_DESIGN_HVAC_CAPACITY
+      120_kw_approx: WCS_COMPRESSOR_ROOM_HEAT_WORKING_ESTIMATE
+      relation: DISTINCT_SEMANTIC_QUANTITIES_NOT_AUTOMATICALLY_EQUIVALENT
+    closure_needed:
+      - reconcile WCS 114 kW HVAC allocation with approximately 120 kW room heat estimate
+      - identify bypass/exhaust/diversity/design-margin basis if any
+    state: PARTIAL_RECONCILIATION
+
+  - id: UREC-03
+    topic: gaseous_nitrogen_balance
+    source_facts:
+      total_lpm: 375
+      WCS_listed_lpm: 50
+      QRB_listed_lpm: 50
+    derived_checks:
+      - expression: "375 - 50 - 50 = 275 LPM"
+        class: DERIVED
+        interpretation_candidate: residual_unallocated_or_unlisted_capacity
+    disposition:
+      listed_allocations_lpm: 100
+      residual_lpm: 275
+      residual_class: DERIVED_UNALLOCATED_NOT_INVENTED_SUBSYSTEM_LOAD
+    closure_needed:
+      - governing utility balance or interface list identifying remaining allocation/capacity
+    state: OPEN_RESIDUAL_EXPLICIT
+
+  - id: UREC-04
+    topic: PGB20_chilled_water_role
+    source_facts:
+      supply_temperature_C: 7
+      later_appendix_legend: "PGB20 chilled water 7 C, currently for HVAC"
+      working_deck_language: "partial / parallel / diversity supply; WIP"
+      sizing_expression: "load x 1.15"
+    disposition:
+      physical_utility_presence: SOURCE_EXPLICIT
+      baseline_QPS_cooling_role: NOT_FROZEN
+      diversity_or_partial_cooling_role: CANDIDATE_WIP
+      sizing_expression_status: SOURCE_DESIGN_EXPRESSION_NOT_REQUIREMENT
+    closure_needed:
+      - ICD/PID/load balance
+      - owner decision on baseline versus diversity-only use
+    state: OPEN_ROLE_NOT_FROZEN
+
+  - id: UREC-05
+    topic: support_system_consequence_semantics
+    entries:
+      HV03:
+        source_semantics: [ventilation, room_heat_management, occupancy_specific, slow_not_universal_hard_trip]
+        utilities_disposition: MODE_AND_OCCUPANCY_DEPENDENT
+      HV02:
+        source_semantics: [QRB_room_HVAC, occupancy_specific]
+        utilities_disposition: MODE_AND_OCCUPANCY_DEPENDENT
+      HV06:
+        source_semantics: [heat_recovery, should_work, no_QPS_operational_impact_by_design_in_working_source]
+        utilities_disposition: NON_BLOCKING_CANDIDATE
+      PAB12:
+        source_semantics: [primary_PCW, LOOP_backup_logic, core_support]
+        utilities_disposition: OPERATION_CRITICAL_SUPPORT
+      PGB20:
+        source_semantics: [chilled_water, HVAC_current_role, diversity_candidate]
+        utilities_disposition: ROLE_NOT_FROZEN
+      ES02:
+        source_semantics: [normal_electrical_context, 350_kW_LOOP_backup_for_one_HP]
+        utilities_disposition: LOOP_CRITICAL_SUPPORT
+      QJB10:
+        source_semantics: [instrument_air, core_support]
+        utilities_disposition: OPERATION_CRITICAL_SUPPORT
+      QJB30:
+        source_semantics: [gaseous_nitrogen, source_says_failure_not_2K_operation_blocker]
+        utilities_disposition: NON_2K_BLOCKING_CANDIDATE
+    note: Controls owns final signal classification; this table only constrains physical/support consequence semantics.
+    state: READY_FOR_CONTROL_CROSS_BINDING
+
+bd_assessment:
+  V16-BD-004: PARTIAL
+  close_when:
+    - governing interface/load basis confirms UREC-01 labels
+    - HVAC 114 versus approximately 120 kW basis is dispositioned
+    - GN2 275 LPM residual is allocated or explicitly retained as spare/unallocated capacity
+    - PGB20 baseline/diversity role is frozen
