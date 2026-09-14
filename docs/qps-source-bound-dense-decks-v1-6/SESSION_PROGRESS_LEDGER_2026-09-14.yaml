@@ -218,6 +218,12 @@ entries:
       - bd005_u15_negotiation_closure_route_v1_6.yaml added
       - triage_v1_6.yaml advanced to v1.6.11
       - full handover and drop-in continuation synchronized to the U1.5 route
+    repo_receipt:
+      PR_720_merge: 5bc3874210304e0a8f377405e5f3efed2c4cfd7d
+      post_merge_metrics_head: d4acc990898268f91269b8a61b09332ac52553d2
+    governance_execution:
+      W003_on_PR720_head: PASS
+      qps_canonicalization_on_PR720_head: PASS
     bd_movement:
       BD_005: U1_5_FORMAL_RETURN_ROUTE_BOUND_SUPPLIER_EVIDENCE_OPEN
       BD_006: NO_CHANGE_PARTIAL_EVIDENCE_BOUND
@@ -231,6 +237,36 @@ entries:
     global_project_dov: WITHHELD
     engineering_credit_delta: 0
 
+  - tuple_id: TUPLE-008
+    user_intent: >-
+      Execute the deterministic U1.5 rule: check for a new source-bound OFFER-21 bidder/BAFO return;
+      if absent keep BD-005 OPEN with zero credit, otherwise bind and disposition the return before
+      recursing on the next non-compensating electrical/hydraulic/thermal red.
+    executed_delta:
+      - searched current ChatGPT Library negotiation, offer-evaluation and peer-review evidence for U1.5 / OFFER-21 / BAFO / updated-offer recovery material
+      - latest QPS_LKT_NEGO_RFI_COMPLIANCE_SSOT_v1.8_SECONDARY_REFS_W42.xlsx still shows U1.5 OPEN / REVIEW_REQUIRED with Bidder_Return empty, BAFO_Evidence_Location empty, Reentry_State OPEN and Closure_Credit 0
+      - broader recent-source search recovered only the already-known TEC_ID_065 approximately-110-g/s deviation, not a new U1.5 written return
+      - connector-native Google Drive searches for U1.5/OFFER-21/BAFO/LKT updated-offer recovery evidence returned no matching artifact
+      - bd005_u15_return_check_receipt_v1_6.yaml added as an evidence-availability receipt
+    disposition:
+      result: DEFER
+      reason: REQUIRED_SOURCE_BOUND_UPDATED_OFFER_OR_BAFO_RETURN_NOT_FOUND_IN_CONNECTED_EVIDENCE_SURFACES
+      BD_005: OPEN
+      closure_credit_delta: 0
+      engineering_credit_delta: 0
+    non_claims:
+      - absence from connected/indexed stores is not proof that no supplier response exists anywhere
+      - TEC_ID_065 existing offer wording is not reclassified as a new U1.5 return
+      - interpolation from the 112 g/s / 357 kW maximum point remains prohibited as a closure substitute
+    next_first_red:
+      receipt_of_source_bound_U1_5_or_equivalent_BAFO_return
+    on_receipt:
+      - bind exact source identity/version/hash
+      - map supplier response to each requested quantitative LOOP item
+      - disposition ACCEPT_REJECT_DEFER per obligation
+      - recurse on first remaining non_compensating electrical_hydraulic_thermal red
+    global_project_dov: WITHHELD
+
 restart_reconstruction:
   order:
     - triage_v1_6.yaml
@@ -238,6 +274,7 @@ restart_reconstruction:
     - DROP_IN_CONTINUATION_2026-09-14.md
     - SESSION_PROGRESS_LEDGER_2026-09-14.yaml
     - evidence_ledgers_named_by_current_TRIAGE
+    - bd005_u15_return_check_receipt_v1_6.yaml
   rule: >-
     The canonical files establish current truth. This progression ledger explains major state transitions.
     Historical tuple entries are never allowed to override stronger current evidence or current TRIAGE.
