@@ -4,6 +4,10 @@
 
 `DEBT-007 multi_format_receipts = PARTIAL_PENDING_STABILITY_REPROOF`
 
+Governing repair PR: `PR-701`.
+
+The PR was created during concurrent repository activity and GitHub assigned `PR-701` after `PR-700` was consumed. The PR governance header was corrected to the exact identifier before this trace commit. Only CI emitted from this corrected-head re-entry may be used for A9.3 PR-head DoV; any initial event carrying the provisional identifier is non-governing.
+
 A9.2 closed the debt from a real exact-main hosted publication proof. That proof remains valid historical evidence. A later exact-main burn-in exposed a separate repeatability defect, so current governance reopens the debt rather than allowing an earlier success to compensate for a newer failure.
 
 A10 snapshot proof remains independently valid and `DEBT-008 snapshot_receipt` remains CLOSED. This repair does not unwind A10 image-native evidence.
