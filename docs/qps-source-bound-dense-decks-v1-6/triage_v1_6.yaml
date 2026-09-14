@@ -1,58 +1,75 @@
-schema: qps-visual-system-triage/1.0
-version: 1.6
+schema: qps-visual-system-triage/1.1
+version: 1.6.1
 state: SOURCE_BOUND_PARTIAL_CONTROL
 authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
 
 completed:
   - source deck filenames bound
   - exact source slide ranges bound for core Utilities content
-  - exact source slide ranges bound for core Controls content
   - dense Utilities canonical candidate written
   - dense Controls canonical candidate written
   - cross-domain ownership boundary established
   - source inconsistencies preserved as review items
+  - utilities reconciliation register added with explicit derived/source separation
+  - first-pass controls signal classification register added
+  - generic governed publication carrier #690/#691 confirmed as reusable infrastructure
+
+cross_repo_evidence:
+  - repository: GBOGEB/cryoplant-project
+    artifact: ocd-adr/40_implementation/QPS_VISUAL_N200_REMAINING_W176_SELECTION.csv
+    evidence: source_sha256 values are recorded for several v1.6 source filenames
+    authority: DISCOVERED_CROSS_REPO_EVIDENCE_NOT_YET_PROMOTED_INTO_V1_6_LINEAGE
+    note: do not close BD-001 from filename/hash correspondence alone; bind exact controlled bytes/locator and provenance first
+  - repository: GBOGEB/CODEX
+    prs: [690, 691]
+    evidence: receipt-governed HTML/PPTX/PDF/Markdown/GitHub-Pages publication carrier plus deterministic PPTX/PDF native telemetry
+    authority: GENERIC_PUBLICATION_INFRASTRUCTURE
+    limitation: Microsoft PowerPoint/Office host reflow is not proven
 
 open_first_red:
   - id: V16-BD-001
     topic: source_digests
     priority: P0
-    state: OPEN
-    closure: ingest exact source PPTX bytes and record SHA256
+    state: PARTIAL_EVIDENCE_DISCOVERED
+    closure: bind exact source PPTX bytes/locator and verified SHA256 into v1.6 source lineage
+    note: cross-repo SHA evidence exists for SRC-UTIL-CORE, SRC-UTIL-CANONICAL-APPENDIX and SRC-CTRL-CORE; SRC-NAMING-CONTROL hash still requires exact evidence binding
   - id: V16-BD-002
     topic: source_slide_renders
     priority: P0
     state: OPEN
-    closure: produce stable image/render per bound source slide
+    closure: produce stable image/render per bound source slide and record render hash
   - id: V16-BD-003
     topic: source_vs_curated_visual_dov
     priority: P0
     state: OPEN
-    closure: compare source render and curated slide/object with content-loss disposition
+    closure: compare every bound source render with curated slide/object and record KEEP/MERGE/REFERENCE/SUPERSEDE/DROP_WITH_RATIONALE plus content-loss verdict
   - id: V16-BD-004
     topic: utilities_value_reconciliation
     priority: P0
-    state: OPEN
-    closure: resolve 1199/~1200/~1256 kW PCW definitions from load basis/interface evidence
+    state: PARTIAL_RECONCILIATION
+    artifact: utilities_reconciliation_v1_6.yaml
+    closure: governing interface/load-basis evidence confirms semantic definitions and remaining HVAC/GN2/PGB20 questions
   - id: V16-BD-005
     topic: loop_evidence
     priority: P0
     state: OPEN
-    closure: bind 17 kW / 350 kW / 6 h / ~2 h source statements to transient/load evidence and operating scenario
+    closure: bind 17 kW / 350 kW / 6 h / ~2 h statements to transient/load evidence, equipment state and operating scenario
   - id: V16-BD-006
     topic: control_signal_classification
     priority: P0
-    state: OPEN
-    closure: map every candidate signal to monitor/warning/permissive/hard-trip/mode-inhibit/occupancy class
+    state: PARTIAL_SUBSTANTIVE_CLASSIFICATION
+    artifact: control_signal_classification_v1_6.yaml
+    closure: discipline-approved cause/effect/fail-safe matrix closes ambiguous utility statuses; L2 exact I/O remains BD-007
   - id: V16-BD-007
     topic: detailed_io
     priority: P1
     state: OPEN
-    closure: exact point counts and marshalling frozen at L2
+    closure: exact point counts, marshalling and implementation frozen at L2
   - id: V16-BD-008
     topic: graph_binding_refresh
     priority: P1
     state: OPEN
-    closure: graph nodes link to promoted v1.6 objects and lineage records
+    closure: WCS/HCC/QINFRA/QPS:CIS graph nodes link to promoted v1.6 objects and exact lineage/review records
   - id: V16-BD-009
     topic: deterministic_render
     priority: P1
@@ -61,8 +78,12 @@ open_first_red:
   - id: V16-BD-010
     topic: governed_exports
     priority: P1
-    state: DEFER_TO_V1_8
-    closure: source-bound HTML renders to receipt-governed PDF/PPTX/ODP
+    state: REFRAME_BIND_EXISTING_CARRIER
+    closure: adapt source-bound QPS semantic objects into existing #690/#691 governed publication carrier and prove QPS-specific parity/DoV
+    explicit_non_goals:
+      - do not build a second multi-format exporter
+      - do not claim ODP parity unless implemented
+      - do not claim Office host reflow from OpenXML structural telemetry
 
 non_compensating_rules:
   - a visual or navigation PASS cannot grant engineering acceptance
@@ -70,12 +91,32 @@ non_compensating_rules:
   - safety/interlock classification requires discipline evidence
   - utilities source inconsistencies remain OPEN until reconciled by governing engineering sources
   - candidate I/O remains candidate until L2/detail control design freezes it
+  - cross-repo hash evidence cannot replace exact byte/locator provenance binding
+  - generic publication success cannot replace QPS-specific source-vs-curated DoV
+
+parallel_execution:
+  source_proof:
+    - V16-BD-001 exact byte/hash/locator binding
+    - V16-BD-002 stable per-slide render/hash
+    - V16-BD-003 starts only where render predicate exists
+  utilities:
+    - V16-BD-004 confirm reconciliation against governing interface/load basis
+    - V16-BD-005 bind LOOP scenario evidence
+  controls:
+    - V16-BD-006 close ambiguous classifications with discipline evidence
+    - V16-BD-007 remains L2-gated
+  graph:
+    - V16-BD-008 after promoted v1.6 records are stable
+  publication:
+    - V16-BD-010 adapt to #690/#691 after source-bound objects are promotion-ready
 
 next_execution_order:
-  - V16-BD-001 source digests
-  - V16-BD-002 source slide renders
-  - V16-BD-004 utilities value reconciliation
-  - V16-BD-006 signal classification
-  - V16-BD-003 source-vs-curated visual DoV
-  - V16-BD-005 LOOP evidence
-  - V16-BD-008 graph refresh
+  - V16-BD-001 bind discovered source SHA evidence to exact controlled bytes/locators
+  - V16-BD-002 produce stable source slide renders
+  - V16-BD-004 validate semantic reconciliation with interface/load basis
+  - V16-BD-006 complete cause/effect classification
+  - V16-BD-003 execute content-loss DoV per rendered source slide
+  - V16-BD-005 bind LOOP transient/load scenario evidence
+  - V16-BD-008 refresh graph bindings
+
+global_project_dov: WITHHELD
