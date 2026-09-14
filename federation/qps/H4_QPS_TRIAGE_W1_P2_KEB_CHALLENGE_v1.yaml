@@ -1,5 +1,5 @@
 schema: qps-h4-w1-p2-keb-challenge/1.0
-as_of: '2026-09-14T10:15:00+02:00'
+as_of: '2026-09-14T10:36:00+02:00'
 mission: H4_QPS_TRIAGE
 wave: H4_QPS_TRIAGE:W1
 pulse: H4-QPS-W1-P2
@@ -7,7 +7,7 @@ horizontal_lane: H2_KEB
 method: 3PR
 repository: GBOGEB/CODEX
 role: SEMANTIC_PROVENANCE_EXACT_SOURCE_CHALLENGE
-status: DEFER_KR_INHERITED_SEMANTIC_DEBT
+status: EXACT_HEAD_RECHECK_AFTER_OWNER_MERGE
 formal_credit_delta: 0
 authority_transfer: false
 
@@ -28,7 +28,7 @@ inputs:
   mission_control_candidate:
     repo: GBOGEB/pipeline-automation-hub
     pr: 113
-    head_sha_observed: 154934368e665ba3fb9028f35d26b7e828425d8f
+    head_sha_observed: c0eb5adc4691fc22fe045df39ad62fb386b54935
     method_profile: >-
       mission-control/qps-triage-ultra/methods/
       QPS_TRIAGE_GLOBAL_METHOD_PROFILE_v1.md
@@ -41,16 +41,21 @@ inputs:
     repo: GBOGEB/CODEX
     artifact: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
     required_method_catalog: [3PR, MIP, 3PC, 3P3]
-  inherited_semantic_owner:
+  semantic_owner_canonical:
     pr: 678
     title: A7.2 real semantic ledgers and deterministic replay
-    state: OPEN
-    terms_pending_on_main:
-      - semantic_authority_transferred
-      - semantic_delta_replay
-      - semantic_lineage
-      - semantic_promotions_allowed
-      - semantic_tuple_ledger
+    state: MERGED
+    merge_sha: be763c10fb0c8575ce1d9f36700316be3a05d912
+    content_repairs:
+      - semantic_replay governed in PIPELINE/GLOSSARY_EXTENSIONS.yaml
+      - closed-loop expectation aligned to 10 tuples and 9 edges
+      - ABACUS Semantic Runtime PASS before merge
+      - CODEX Semantic Runtime CI PASS before merge
+    governance_note: >-
+      W003 governance metadata was repaired in the PR body after merge. The
+      semantic/runtime content itself had already reached PASS; this pulse now
+      requires one fresh exact-head run against current main to retire the
+      inherited-base qualifier.
 
 challenge_contract:
   - id: KEB-QT-001
@@ -102,34 +107,22 @@ observed_semantic_assessment:
   mission_control_authority_guard: PASS_CANDIDATE
   pca_bt_authority_guard: PASS_CANDIDATE
   stop_rule_alignment: PASS_CANDIDATE
-  exact_head_supporting_checks:
-    - Runtime Federation CI
-    - CODEX Determinism Execution
-    - W69 QPS Zero-Delta Execution
-    - Validate Federation
-    - Full Stack Governance CI
-    - qps-canonicalization
-    - CI
-  inherited_red:
-    workflow: CODEX Semantic Runtime CI
-    owner_pr: 678
-    classification: PRE_EXISTING_BASE_SEMANTIC_DEBT
-    action: DO_NOT_DUPLICATE_OR_REPAIR_IN_P2
-  note: >-
-    The bounded QPS challenge is semantically acceptable, but its durable KR is
-    withheld while the canonical main branch lacks the A7.2 glossary terms.
+  owner_semantic_debt: RETIRED_BY_PR_678_MERGE
+  exact_head_requirement: >-
+    Run this bounded one-file challenge once on current main and require semantic
+    runtime plus normal federation/governance checks to pass before P2 KR.
 
-CG: KEB_CHALLENGE_PASS_AFTER_A7_2_MAIN_REENTRY
-BG: INHERITED_A7_2_SEMANTIC_TERMS_NOT_YET_ON_MAIN
-EX: EXACT_HEAD_SUPPORTING_CHECKS_EXECUTED
-QH: PASS_CANDIDATE_WITH_INHERITED_BASE_GATE
-KR: WITHHELD_PENDING_A7_2_MAIN_REENTRY
+CG: KEB_CHALLENGE_EXACT_HEAD_PASS_THEN_STOP
+BG: FRESH_EXACT_HEAD_P2_RECEIPT_NOT_YET_OBSERVED_AFTER_OWNER_MERGE
+EX: RECHECK_TRIGGERED
+QH: PENDING_CURRENT_HEAD
+KR: PENDING_CURRENT_HEAD
 DR: READY
 SR: PASS_CANDIDATE
-WD: DEFER_OWNER_PR_678
+WD: RECHECK_ONCE_THEN_STOP
 PB: ZERO_AUTHORITY_CREDIT
 
 stop_rule: >-
-  Do not widen this PR. When A7.2 lands on main, refresh once on the new base and
-  require the semantic runtime gate to pass. Then emit P2 KR and stop KEB
-  expansion unless new semantic debt appears.
+  If the current exact-head checks pass against main containing PR 678, emit P2
+  KR and stop KEB expansion. Re-enter only if new semantic debt appears; do not
+  create a further ontology or method layer.
