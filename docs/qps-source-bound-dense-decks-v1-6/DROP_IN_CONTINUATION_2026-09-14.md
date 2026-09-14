@@ -3,7 +3,7 @@
 Use this block to restart the next session without architecture rediscovery.
 
 ```text
-Continue GBOGEB/CODEX QPS Visual Knowledge System from the 2026-09-14 v1.6.9 control handover.
+Continue GBOGEB/CODEX QPS Visual Knowledge System from the 2026-09-14 v1.6.10 control handover.
 
 READ FIRST:
 - docs/qps-source-bound-dense-decks-v1-6/triage_v1_6.yaml
@@ -11,6 +11,7 @@ READ FIRST:
 - docs/qps-source-bound-dense-decks-v1-6/DROP_IN_CONTINUATION_2026-09-14.md
 - docs/qps-source-bound-dense-decks-v1-6/SESSION_PROGRESS_LEDGER_2026-09-14.yaml
 - docs/qps-source-bound-dense-decks-v1-6/bd005_addendum_loop_boundary_v1_6.yaml
+- docs/qps-source-bound-dense-decks-v1-6/bd005_current_lkt_fsd575_loop_point_v1_6.yaml
 - docs/qps-source-bound-dense-decks-v1-6/d2_1_behavioral_lineage_v1_6.yaml
 - docs/qps-source-bound-dense-decks-v1-6/d2_1_mode_state_matrix_v1_6.yaml
 - docs/qps-source-bound-dense-decks-v1-6/graph_binding_overlay_v1_6.yaml
@@ -39,6 +40,7 @@ HARD RULES:
 - D2.1 is the PROCESS CONCEPTUAL DESIGN anchor;
 - D2.2 is the TECHNICAL + PROJECT REQUIREMENTS anchor;
 - current Addendum II requirements refine the contractual tender boundary without erasing D2.1/D2.2 provenance;
+- current bidder maximum/equipment data do not automatically become the proven LOOP operating point;
 - source age/maturity is separate from provenance/evidence authority;
 - derivative requirement tables cannot override authoritative Addendum numbering/content;
 - process fallback semantics do not automatically define SIL/MIS/MIT/HARD_TRIP;
@@ -53,7 +55,7 @@ CURRENT BD QUEUE:
 - native source text CLOSED — 63 slide identities bound independently of OCR.
 - BD-003 CLOSED_CONTENT_TRACE_DOV — 63/63 explicit disposition, zero silent drops, five lineage repairs.
 - BD-004 CLOSED_SCOPE_RECONCILED — 1199/~1200/1256/1300 kW semantic scopes only.
-- BD-005 OPEN — CONTRACTUAL LOOP BOUNDARY SHARPENED; selected equipment/hydraulic/thermal transient inputs remain unproven.
+- BD-005 OPEN — CURRENT SELECTED FSD575 MAX POINT / EPS ROUTING / AIR-SIDE BOUND; exact <=350 kW LOOP point, Recovery Cooling Water and thermal transient inputs remain open.
 - BD-006 PARTIAL_EVIDENCE_BOUND — tender-level + D2.1 fallback/mode semantics; discipline cause/effect remains open.
 - BD-007 OPEN_L2_GATED.
 - BD-008 PREPARED_P0_GATED — source mode/state matrix bound; diagram/valve/colour visual extraction and P0 engineering edges remain unresolved.
@@ -89,27 +91,50 @@ PRIOR BD-005 FIRST-RED INPUT SUPERSET (retained for lossless history):
 9. measurable criterion behind ~6 h stabilization;
 10. first-law WCS transient + uncertainty + independent review.
 
-V1.6.9 CURRENT CONTRACTUAL LOOP DELTA:
+V1.6.9 CONTRACTUAL LOOP DELTA (retained):
 - RTM-401: up to 350 kW backup diesel power after a few minutes; NOT proof of full one-HP allocation.
 - RTM-428: up to 350 kW backup PCW after a few minutes; common WCS header; reduced total flow allowed.
 - RTM-432/433: six-hour requirement = pneumatic backup autonomy under full helium-recovery load, NOT thermal stabilization proof.
 - RTM-434/435: dedicated HP exhaust ducts; steady-state WCS room-air heat <=120 kW; at least 50% direct to ducts.
 - RTM-436: LOOP HP exhaust ducts remain available without restriction; compressor-room ambient heat <=15 kW.
 - RTM-258/260/261/262: limited-service recovery; abnormal QRB.S return >=100 g/s; recovery to normal circulation required.
-- bidder ~110 g/s / one emergency compressor remains REVIEW_REQUIRED evidence.
-- 72 Hz / ~112 g/s / ~357 kW remains equipment maximum reference; no linear power/CW scaling into selected LOOP point.
 - derivative Support System ICD RTM labels are navigation clues only where they conflict with authoritative Addendum II.
 
+V1.6.10 CURRENT LKT / FSD575 DELTA:
+- current bidder source = LKT - Offer 1.pdf, Issue 01, 2026-08-10, SHA256 d92af4666cc10ec6a4f8ac6cfe57aef477bca116f72a12f9156a680ce7e1e35e.
+- current selected HP fleet = 4 x KAESER FSD575 SFC water-cooled.
+- current maximum point = 112.0 g/s (-2/+5%) at 14 bara / 72 Hz; package power = 357 kW +/-5%.
+- EPS power limitation = 350 kW.
+- two main compressors are connected to EPS, but generator size permits only one to operate during LOOP.
+- bidder LOOP claim = up to approximately 110 g/s with one emergency-powered compressor.
+- exact ~110 g/s Hz/power point is NOT stated; no linear interpolation credit.
+- current normal compressor cooling water = 4 x 18.5 m3/h; 3-8 barg; 20-30 C supply; <=45 C return; <=15 K rise.
+- Recovery Cooling Water without glycol = explicitly TO BE DEFINED in current Basis of Process Design; normal 18.5 m3/h is NOT promoted to PAB12 LOOP flow.
+- selected-package cooling air = 5000 m3/h main + 4200 m3/h SFC; maximum added duct pressure drop = 40 Pa.
+- current heat paths = 17.4 kW compressor cooling air + 10.7 kW SFC cooling air + 13.9 kW ambient radiation.
+- 13.9 kW is below the RTM-436 <=15 kW ambient ceiling but does NOT replace installed duct or room-transient proof.
+- OFFER-35 points HP compressor response to Technical Part Chapter 6; flow and allowable pressure drop are source-bound.
+- TAX06 locates/dimensions cooling-air interfaces, but no single unambiguous duct connection size has been promoted.
+- exhaust ducting remains Contracting Authority scope; current offer requires exhaust cooling air to be led outside the compressor room.
+
 CURRENT BD-005 FIRST-RED:
-1. current OEM/contractor HP operating point at selected ~110 g/s: Hz, kW, CW rejection;
-2. ES02 auxiliary load split and margin inside up-to-350-kW backup boundary;
-3. actual PAB12 LOOP flow, pressure, temperatures, pump/fan power, valve state;
-4. OFFER-35 HP duct size, flow rate and allowable pressure drop;
-5. quantitative HV03 degraded room airflow/heat-removal state or model proof that RTM-436 duct path + <=15 kW ambient ceiling is sufficient;
-6. effective free room volume + equipment/building thermal mass;
+1. exact bidder/OEM LOOP Hz / flow / package-power point that delivers ~110 g/s with adequate margin inside 350 kW EPS;
+2. complete ES02 critical auxiliary load split and simultaneity;
+3. actual PAB12 / Recovery Cooling Water LOOP flow, pressure, temperatures, pump/fan power and valve state — presently TO BE DEFINED;
+4. unambiguous OFFER-35 duct connection size / vendor connection specification;
+5. effective free room volume + equipment/building thermal mass;
+6. quantitative degraded HV03 room airflow/heat-removal state or proof that installed duct path + <=15 kW ambient boundary is sufficient;
 7. physical variable/limit behind working ~2 h onset;
 8. measurable thermal criterion behind working ~6 h stabilization, separate from pneumatic autonomy;
 9. first-law WCS transient + uncertainty + independent review.
+
+NON-COMPENSATING BD-005 RULES:
+- selected FSD575 maximum point != proven LOOP operating point.
+- 357 kW +/-5% at 112 g/s does not prove margin inside 350 kW EPS.
+- two compressors connected to EPS != two simultaneously operating during LOOP.
+- 18.5 m3/h normal per-compressor CW != Recovery Cooling Water / PAB12 LOOP flow.
+- 13.9 kW ambient radiation below 15 kW contractual ceiling != room transient closure.
+- OFFER-35 airflow + 40 Pa != duct connection-size closure.
 
 BD-008 PARALLEL NEXT:
 - enumerate Appendix 8.4 diagram/page -> mode mapping;
@@ -140,5 +165,5 @@ Innovate with bounded alternate edges/models and explicit metrics.
 Perpetuate by updating the SAME canonical TRIAGE/full-handover/drop-in files plus append-only progression and additive evidence ledgers.
 
 IMMEDIATE ACTION:
-Continue here. Acquire the current selected ~110 g/s HP operating point, ES02 split, PAB12 degraded hydraulic state and OFFER-35 duct data. Do not execute/credit the first-law transient until those inputs are evidence-bound. In parallel, continue Appendix 8.4 graph extraction without closing BD-005/006.
+Chase the exact LKT/KAESER ~110 g/s <=350 kW LOOP operating point first. In parallel chase Recovery Cooling Water/PAB12 degraded hydraulics and the current duct connection size. Do not execute or credit the first-law transient until electrical, hydraulic and thermal-inventory inputs are evidence-bound. Keep BD-006 and BD-008 non-compensating.
 ```
