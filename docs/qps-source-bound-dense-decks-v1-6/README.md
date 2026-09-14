@@ -21,7 +21,7 @@ All four exact named source objects are now located in the persistent File Libra
 
 ## Source-proof movement in v1.6.2
 
-`source_proof_execution_v1_6.yaml` records the current BD-001/002 execution boundary.
+`source_proof_execution_v1_6.yaml` (schema `qps-source-proof-execution/1.1`) records the current BD-001/002 execution boundary.
 
 - `SRC-CTRL-CORE` is joined to a pre-existing governed W176 exact source identity tuple containing the same persistent source locator and SHA256. The raw bytes were not independently re-hashed again in this pulse.
 - `SRC-UTIL-CORE` and `SRC-UTIL-CANONICAL-APPENDIX` each have a persistent source object plus a W162 source-gate SHA256 candidate, but those two facts are not yet joined by an independent raw-byte re-hash in this pulse.
