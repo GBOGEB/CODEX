@@ -1,0 +1,47 @@
+schema: qps-bd005-u1_5-return-check/1.0
+version: '1.6.12'
+checked_at_local: '2026-09-14T23:40:00+02:00'
+authority: EVIDENCE_AVAILABILITY_CHECK_NOT_ENGINEERING_ACCEPTANCE
+bd_id: V16-BD-005
+route:
+  agenda_id: U1.5
+  offer_id: OFFER-21
+  topic: LOOP recovery concept
+  canonical_reentry_test: SOURCE_BOUND_RETURN_MUST_BE_DISPOSITIONED_AND_PASS_EXACT_OBLIGATION_SPECIFIC_REENTRY_TEST
+search_surfaces:
+  - ChatGPT Library semantic search across current negotiation, offer-evaluation and peer-review artifacts
+  - Google Drive connector-native search for U1.5 / OFFER-21 / BAFO / updated-offer recovery evidence
+latest_canonical_negotiation_surface:
+  file: QPS_LKT_NEGO_RFI_COMPLIANCE_SSOT_v1.8_SECONDARY_REFS_W42.xlsx
+  observation:
+    disposition: OPEN
+    compliance_state: REVIEW_REQUIRED
+    closure_credit: 0
+    bidder_return: EMPTY
+    bafo_evidence_location: EMPTY
+    reentry_state: OPEN
+search_result:
+  new_source_bound_u1_5_return_found: false
+  new_bafo_evidence_found: false
+  only_recovered_bidder_wording: EXISTING_TEC_ID_065_APPROX_110_G_S_DEVIATION_ALREADY_BOUND
+  google_drive_direct_match: NONE
+obligation_disposition:
+  result: DEFER
+  reason: REQUIRED_SOURCE_BOUND_UPDATED_OFFER_OR_BAFO_RETURN_NOT_FOUND
+  bd_state: OPEN
+  engineering_credit_delta: 0
+  acceptance_credit_delta: 0
+non_claims:
+  - absence from indexed/searchable surfaces is not proof that no supplier response exists anywhere outside connected evidence stores
+  - existing TEC_ID_065 wording is not a new U1.5 return
+  - no interpolation from 112 g/s / 357 kW is permitted as a substitute
+  - no PAB12 degraded hydraulic point is inferred
+  - no first-law transient is credited
+next_predicate:
+  first_red: RECEIPT_OF_SOURCE_BOUND_U1_5_OR_EQUIVALENT_BAFO_RETURN
+  on_receipt:
+    - bind exact source identity/version/hash
+    - map response items to requested quantitative LOOP chain
+    - disposition ACCEPT_REJECT_DEFER per obligation
+    - recurse on first remaining non_compensating electrical_hydraulic_thermal red
+  if_absent: KEEP_BD005_OPEN_ZERO_CREDIT
