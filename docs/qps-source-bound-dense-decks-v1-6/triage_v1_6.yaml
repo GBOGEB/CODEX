@@ -1,13 +1,13 @@
 schema: qps-visual-system-triage/1.5
-version: '1.6.9'
-state: SOURCE_DOV_COMPLETE_D21_PROCESS_D22_REQUIREMENTS_BOUND_BD005_CONTRACT_BOUNDARY_SHARPENED_CONTROLS_PARTIAL_GRAPH_MODE_MATRIX_BOUND
+version: '1.6.10'
+state: SOURCE_DOV_COMPLETE_D21_PROCESS_D22_REQUIREMENTS_BOUND_BD005_CURRENT_FSD575_MAX_EPS_AND_AIRSIDE_BOUND_CONTROLS_PARTIAL_GRAPH_MODE_MATRIX_BOUND
 authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
 global_project_dov: WITHHELD
 state_reconciliation: state_reconciliation_v1_6.yaml
 session_handover: SESSION_HANDOVER_2026-09-14.md
 drop_in_continuation: DROP_IN_CONTINUATION_2026-09-14.md
 session_progress_ledger: SESSION_PROGRESS_LEDGER_2026-09-14.yaml
-first_red: V16-BD-005_CURRENT_OEM_PAB12_HV03_EXECUTABLE_INPUTS
+first_red: V16-BD-005_EXACT_110GS_350KW_POINT_RECOVERY_CW_AND_THERMAL_INPUTS
 
 handover_reproduction_contract:
   canonical_outputs:
@@ -62,6 +62,13 @@ completed:
   - V16-BD-005 Addendum II contractual LOOP power, PCW, instrument-air, HVAC and abnormal-return boundaries bound
   - V16-BD-005 six-hour pneumatic autonomy separated from the working six-hour thermal-stabilization statement
   - V16-BD-005 LOOP compressor-room ambient heat ceiling bound at no more than 15 kW while HP exhaust ducts remain available without restriction
+  - V16-BD-005 current LKT selected equipment bound as four KAESER FSD575 SFC water-cooled compressors
+  - V16-BD-005 current bidder 72 Hz maximum point bound at 112.0 g/s and 357 kW plus/minus 5 percent
+  - V16-BD-005 current bidder cooling-air flows, added duct pressure drop and air-side heat-path split bound
+  - V16-BD-005 current normal compressor cooling-water reference bound at 18.5 m3/h per compressor without promoting it to LOOP flow
+  - V16-BD-005 current EPS topology reconciled as two compressors connected for redundancy but one simultaneously operable due generator size
+  - V16-BD-005 current Basis of Process Design binds 350 kW emergency-power limitation and leaves Recovery Cooling Water without glycol explicitly to be defined
+  - V16-BD-005 OFFER-35 flow and allowable pressure-drop response bound; duct connection size remains open
   - derivative Support System ICD RTM labels demoted to navigation clues where they conflict with authoritative Addendum II numbering
   - D2.1 retained as process conceptual-design anchor and split into topology, model-physics and behavioral-state lanes
   - D2.1 Appendix 8.4 behavioral semantics recovered for minor QCELL fault, loss of utility, cryoplant trip and quench proposal
@@ -113,23 +120,30 @@ open_first_red:
   - id: V16-BD-005
     topic: loop_evidence
     priority: P0
-    state: CONTRACTUAL_LOOP_BOUNDARY_SHARPENED_EXECUTABLE_TRANSIENT_INPUTS_OPEN
-    closure: validate the exact selected emergency WCS operating state and derive the temporal envelope with a traceable first-law transient
+    state: CURRENT_SELECTED_MODEL_MAX_POINT_EPS_ROUTING_AND_AIRSIDE_BOUND_EXECUTABLE_LOOP_POINT_OPEN
+    closure: validate the exact selected emergency WCS operating point inside the 350 kW EPS limit, bind degraded recovery cooling water and thermal inventory, then derive the temporal envelope with a traceable first-law transient
     progress:
-      - bidder approximately 110 g/s emergency-power recovery claim bound as REVIEW_REQUIRED bidder evidence only
       - contractual RTM-261 requires at least 100 g/s abnormal QRB.S return capability
-      - contractual RTM-401 provides up to 350 kW backup diesel power after an interruption of a few minutes without assigning the full boundary to one HP compressor
-      - contractual RTM-428 provides up to 350 kW backup cooling water after an interruption of a few minutes on the hydraulically common WCS header with reduced total flow allowed
+      - current LKT bidder claims maximum approximately 110 g/s abnormal/LOOP recovery with one emergency-powered compressor
+      - current selected equipment is four KAESER FSD575 SFC water-cooled compressors, 315 kW motor rated power each
+      - current bidder maximum compressor point is 112.0 g/s at 14 bara and 72 Hz with 357 kW plus/minus 5 percent package power
+      - current EPS power limitation is 350 kW; exact approximately-110-g/s Hz/power point and guaranteed margin are not stated
+      - current OFFER-22 resolves the apparent architecture conflict: two main compressors are connected to emergency power for redundancy but generator size permits only one to run
+      - current preliminary SLD shows approximately 500 W UPS per compressor local control path but does not bind complete ES02 critical auxiliary split
+      - current normal compressor cooling-water reference is 4 x 18.5 m3/h with 3-8 barg supply, 20-30 C supply, <=45 C return and <=15 K temperature rise
+      - current Basis of Process Design marks Recovery Cooling Water without glycol TO BE DEFINED, so normal 18.5 m3/h per compressor is not promoted to PAB12 LOOP flow
+      - contractual RTM-428 provides up to 350 kW backup cooling-water capacity after an interruption of a few minutes on the hydraulically common WCS header with reduced total flow allowed
+      - current bidder air path is 5000 m3/h main cooling air plus 4200 m3/h SFC cooling air with maximum added duct pressure drop 40 Pa
+      - current bidder heat-path split is 17.4 kW compressor cooling-air heat, 10.7 kW SFC cooling-air heat and 13.9 kW ambient radiation at the stated maximum package point
+      - current 13.9 kW ambient-radiation term is numerically below the contractual RTM-436 LOOP ambient-room ceiling of no more than 15 kW but does not replace installed duct or room-transient proof
+      - current OFFER-35 response points HP compressor HVAC data to Technical Part Chapter 6; flow and allowable pressure drop are now source-bound
+      - TAX06 current offer drawing shows cooling-air inlet/outlet interface locations and dimensions but no single unambiguous duct connection size has been promoted
+      - exhaust ducting is Contracting Authority scope and current offer requires compressor cooling air to be led outside the compressor room
       - contractual RTM-432/433 bind no continuous normal instrument air during LOOP, initial-actuation header reserve, and six-hour pneumatic backup autonomy under full recovery load
-      - contractual RTM-434/435 bind dedicated HP exhaust ducts, maximum 120 kW steady-state WCS room-air heat, and at least 50 percent direct duct transfer
-      - contractual RTM-436 requires HP exhaust ducts to remain available without restriction during LOOP and limits compressor-room ambient heat to no more than 15 kW
       - working approximately 6 h thermal-stabilization wording is not validated by the separate RTM-433 six-hour pneumatic autonomy requirement
-      - current analytical SSOT keeps 72 Hz / approximately 112 g/s / approximately 357 kW as an equipment-maximum reference and forbids linear power/CW scaling to the approximately-110-g/s LOOP point
       - WCS-room transient remains separated from D2.1/Line-S cryogenic-return transient without diminishing D2.1 authority for its own process lane
       - D2.1 Section 5.6.5 and Appendix 8.4 provide abnormal-event timing, fallback and available-path process evidence for the Line-S lane
       - D2.1 mode/state matrix binds source process sequence separately from current WCS-room engineering acceptance
-      - historical FSD575 source gives 5000 m3/h package cooling air, 4200 m3/h VFD cooling air, 17.4 kW cooling-air heat, 14.2 kW ambient heat and 5.7 kW VFD heat
-      - historical approximately 17 kW path remains provenance evidence but the contractual LOOP ambient room-heat ceiling is now no more than 15 kW
       - D2.2 CRYO-REQ-336 gives 16 x 14 m, approximately 220 m2, approximately 6.5 m ceiling and is the more specific direct anchor for the present room-volume diagnostic
       - approximately 8.5 m drawing section remains retained provenance and is not globally declared obsolete
       - gross D2.2 rectangular volume screen is approximately 1430-1456 m3, not free/effective air volume
@@ -142,6 +156,7 @@ open_first_red:
       - loop_hvac_boundary_v1_6.yaml
       - loop_contract_boundary_v1_6.yaml
       - bd005_addendum_loop_boundary_v1_6.yaml
+      - bd005_current_lkt_fsd575_loop_point_v1_6.yaml
       - d2_1_behavioral_lineage_v1_6.yaml
       - d2_1_mode_state_matrix_v1_6.yaml
   - id: V16-BD-006
@@ -204,32 +219,33 @@ sanitized_d2_1_binding:
   next_action: bind exact sanitized file/version/hash when surfaced
 
 bd005_contract_first_red:
-  - obtain current OEM or contractor HP operating point for the selected approximately-110-g/s emergency recovery state, including frequency, electrical input and cooling-water rejection
-  - bind ES02 auxiliary load split and demonstrate margin within the contractual up-to-350-kW backup-power boundary
-  - bind actual PAB12 LOOP flow, pressure, supply/return temperatures, pump/fan power and valve state within the RTM-428 reduced-flow common-header boundary
-  - obtain OFFER-35 HP duct interface size, flow rate and allowable pressure drop for the selected package
-  - bind quantitative HV03 degraded/LOOP room airflow or prove that RTM-436 duct path plus ambient-heat ceiling is sufficient for the selected thermal model boundary
+  - obtain bidder or OEM table/curve/written confirmation of the exact LOOP Hz, helium flow and package power that delivers approximately 110 g/s with sufficient margin inside the 350 kW EPS limit; do not interpolate linearly from 72 Hz
+  - bind complete ES02 emergency critical-load list, auxiliary split and simultaneity; current preliminary SLD is incomplete
+  - bind actual PAB12 / Recovery Cooling Water LOOP flow, pressure, supply/return temperatures, pump/fan power and valve state; current bidder source explicitly marks Recovery Cooling Water without glycol TO BE DEFINED
+  - bind unambiguous OFFER-35 duct connection size or vendor connection specification; current flow and 40 Pa allowance are already bound
   - bind effective building/equipment thermal mass and free/effective room volume
+  - bind quantitative HV03 degraded/LOOP room airflow or prove the installed duct path plus ambient-heat boundary is sufficient for the selected thermal model
   - define the physical variable and limit behind the working approximately-2-h onset statement
   - define the measurable thermal stabilization criterion behind the working approximately-6-h statement without confusing it with RTM-433 pneumatic autonomy
   - execute and independently review first-law WCS LOOP transient with uncertainty
 
 next_execution_order:
-  - V16-BD-005 acquire current OEM/contractor approximately-110-g/s operating point and OFFER-35 duct data
-  - V16-BD-005 bind PAB12 degraded hydraulic state and ES02 auxiliary split against contractual RTM-401/428 boundaries
-  - V16-BD-005 execute first-law WCS transient only after those inputs and thermal mass are evidence-bound
+  - V16-BD-005 chase exact approximately-110-g/s / <=350-kW selected compressor operating point from current bidder/OEM evidence
+  - V16-BD-005 chase Recovery Cooling Water/PAB12 degraded hydraulic definition now explicitly identified as TO BE DEFINED in current bidder Basis of Process Design
+  - V16-BD-005 bind complete ES02 critical auxiliary split and OFFER-35 duct connection size
+  - V16-BD-005 execute first-law WCS transient only after electrical/hydraulic/thermal inventory inputs are evidence-bound
   - V16-BD-006 close remaining classifications only with discipline cause/effect evidence; do not infer consequence from process fallback or LOOP assumptions
   - V16-BD-008 in parallel complete Appendix 8.4 diagram/page and colour/valve-state visual binding into the existing overlay; do not close the graph while P0 engineering edges remain open
 
 three_pr_session_receipt:
-  P1_recover: PASS_CURRENT_MAIN_SOURCE_LINEAGE_GRAPH_AND_D2_1_BEHAVIOR_RE_READ
-  P2_reconcile: PASS_AUTHORITY_LANES_TRANSIENT_LANES_SANITIZED_IDENTITY_GRAPH_CARRIER_AND_ADDENDUM_LOOP_BOUNDARY_RECONCILED
-  P3_reenter: ACCEPT_CONTRACTUAL_LOOP_BOUNDARY_REENTRY_DEFER_EXECUTABLE_TRANSIENT_AND_ENGINEERING_CLOSURE
+  P1_recover: PASS_CURRENT_LKT_SOURCE_EXACT_FSD575_MAX_POINT_EPS_AND_OFFER35_RE_READ
+  P2_reconcile: PASS_TWO_CONNECTED_ONE_RUNNING_EPS_SEMANTICS_AND_CURRENT_AIR_SIDE_RECONCILED_EXACT_110GS_POWER_AND_RECOVERY_CW_OPEN
+  P3_reenter: ACCEPT_CURRENT_SELECTED_MODEL_MAX_POINT_AND_AIR_SIDE_EVIDENCE_DEFER_EXECUTABLE_LOOP_POINT_AND_TRANSIENT
 
 mip_session_receipt:
-  modernize: corrected derivative RTM crosswalk against authoritative Addendum II and separated pneumatic six-hour autonomy from thermal stabilization wording
-  innovate: converted Addendum II limited-utility requirements into an explicit degraded-state model boundary without inventing missing flow or thermal-state inputs
-  perpetuate: canonical TRIAGE/full-handover/drop-in files are refreshed in place after bounded pulses and major tuples; progression plus additive evidence ledgers remain separate
+  modernize: replaced historical-selected-model inference with direct current LKT Offer 1 evidence and resolved two-connected-versus-one-running EPS semantics
+  innovate: decomposed the remaining LOOP proof into exact electrical operating point, explicit recovery-cooling-water TBD, duct-size geometry, and thermal-inventory predicates
+  perpetuate: canonical TRIAGE/full-handover/drop-in files remain synchronized after major tuples; progression plus additive evidence ledgers remain separate
 
 non_compensating_rules:
   - a visual/navigation/publication PASS cannot grant engineering acceptance
@@ -239,8 +255,13 @@ non_compensating_rules:
   - derivative requirement tables cannot override authoritative Addendum numbering/content
   - source age is not source invalidity; D2.1 and D2.2 remain traceable anchors until explicit governed replacement/withdrawal is established
   - D2.1 is process conceptual-design authority; D2.2 is technical/project-requirements authority; current Addendum II refines the contractual tender boundary
-  - contractual 350 kW backup power does not equal a proven single-HP load allocation
+  - current selected FSD575 maximum point is not automatically the LOOP operating point
+  - 357 kW plus/minus 5 percent at 112 g/s does not prove margin inside the 350 kW EPS limit
+  - two compressors connected to EPS does not mean two compressors run simultaneously during LOOP
+  - current normal 18.5 m3/h per compressor cooling-water reference does not equal LOOP Recovery Cooling Water flow
   - contractual 350 kW backup PCW does not equal a proven emergency flow rate
+  - 13.9 kW current ambient radiation below the 15 kW contractual ceiling does not replace installed duct proof or a room transient
+  - OFFER-35 airflow and 40 Pa allowance do not close the duct connection size
   - six-hour pneumatic backup autonomy does not validate six-hour thermal stabilization
   - RTM-436 15 kW is a LOOP ambient heat ceiling, not a complete room thermal model
   - duct availability does not equal quantitative HV03 room airflow
