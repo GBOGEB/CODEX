@@ -1,0 +1,39 @@
+{
+  "schema": "qsvg-visual-control-runtime/0.1.0",
+  "authority": "VISUAL_SEMANTIC_ONLY",
+  "producer_repo": "GBOGEB/CODEX",
+  "pr": 685,
+  "subject_head_sha": "280c17e0b5b9f57b775d2d7c0665c44444446a88",
+  "workflow": "QCELL SVG Visual Control",
+  "run_id": 34839673188,
+  "job_id": 103961455798,
+  "runner_id": 1000273745,
+  "status": "PASS",
+  "observed_steps": [
+    {"number": 2, "name": "Checkout exact SHA", "conclusion": "success"},
+    {"number": 3, "name": "Setup Python", "conclusion": "success"},
+    {"number": 4, "name": "Run fail-closed QCELL visual-control checks", "conclusion": "success"}
+  ],
+  "checked_contracts": [
+    "required_layer_groups",
+    "big_teaching_arrows_off_default",
+    "dotted_endpoint_guides_present",
+    "A_B_D_E_semantic_labels_present",
+    "temperature_heatmap_present",
+    "pressure_overlay_absent_deferred",
+    "persistent_layer_state_present",
+    "zero_forbidden_exclusive_box_overlaps"
+  ],
+  "bd_effect": {
+    "QSVG-BD-003": "PASS_EXACT_HEAD_CANDIDATE_CLOSE",
+    "QSVG-BD-004": "PASS_EXACT_HEAD_CANDIDATE_CLOSE",
+    "QSVG-BD-005": "OPEN_GENERATOR_DETERMINISM_NOT_PROVEN",
+    "QSVG-BD-010": "WITHHELD"
+  },
+  "promotion_authority": false,
+  "engineering_credit": false,
+  "sat_credit": false,
+  "opex_credit": false,
+  "negotiation_credit": false,
+  "release_credit": false
+}

@@ -1,0 +1,80 @@
+{
+  "schema": "qsvg-visual-receipt/0.2.1",
+  "receipt_version": "0.7.7-review-repair",
+  "authority": "VISUAL_SEMANTIC_ONLY",
+  "producer_repo": "GBOGEB/CODEX",
+  "subject_branch": "qps/qcell-svg-p1a-v0-7-7",
+  "subject_head_sha": "b4f6f6e238b861a744f18deb9beb56ef66aba1e5",
+  "phase": "QSVG-P1A",
+  "artifact_set": {
+    "ssot": "qcell_svg_model/v0_7_7/src/qcell_main_v0_7_7.yaml",
+    "ssot_blob_sha": "eb11498604af72c73b8863c09958b55e78a33b84",
+    "svg": "qcell_svg_model/v0_7_7/svg/qcell_main_v0_7_7.svg",
+    "svg_blob_sha": "02f5572749e3997f8f23a87a4aa48c4af9d0e752",
+    "html": "qcell_svg_model/v0_7_7/docs/index.html",
+    "html_blob_sha": "7a014cea26b0603c26b7e990118df41fca29f046",
+    "collision_review": "qcell_svg_model/v0_7_7/reviews/QSVG_P1A_COLLISION_REVIEW_v0.7.7.md",
+    "post_review_repeat": "qcell_svg_model/v0_7_7/lineage/QSVG_P1A_REPEAT_AFTER_REVIEW_v0.8.3.md"
+  },
+  "review_repairs": {
+    "directional_parasitic_gradients": "PASS_REPAIRED",
+    "50K_boundary_single_authoritative_colour": "PASS_REPAIRED",
+    "A_B_text_contrast": "PASS_REPAIRED",
+    "endpoint_explanation_card_collision": "PASS_REPAIRED"
+  },
+  "normalized_layers": [
+    "thermal_body",
+    "parasitic_loads",
+    "compact_flow_legend",
+    "endpoint_guides",
+    "temperature_legend",
+    "big_teaching_arrows"
+  ],
+  "default_visibility": {
+    "thermal_body": true,
+    "parasitic_loads": true,
+    "compact_flow_legend": true,
+    "endpoint_guides": true,
+    "temperature_legend": true,
+    "big_teaching_arrows": false,
+    "pressure_overlay": false
+  },
+  "semantic_checks": {
+    "single_MAIN": "PASS",
+    "temperature_primary": "PASS",
+    "50K_boundary_value_to_colour": "PASS_SOLID_00e7c0",
+    "pressure_palette_separate": "PASS_POLICY_DEFERRED_IMPLEMENTATION",
+    "big_arrow_default_off": "PASS",
+    "dotted_endpoint_guides_default_on": "PASS",
+    "stream_A_4p5K_3bar": "PASS",
+    "stream_B_2to4K_26to31mbar": "PASS",
+    "stream_D_30to40K_12to13bar": "PASS",
+    "stream_E_50to60K_deltaT20": "PASS",
+    "outer_parasitic_red_to_orange_path_direction": "PASS",
+    "inner_parasitic_orange_to_blue_path_direction": "PASS",
+    "temperature_heatmap_present": "PASS"
+  },
+  "collision": {
+    "status": "PASS_STRUCTURAL_AFTER_BOUNDED_REPAIR_AUTOMATION_IN_P1B",
+    "known_endpoint_card_conflict": "REPAIRED",
+    "automated_scan": false
+  },
+  "qps_bd": {
+    "QSVG-BD-001": "IMPLEMENTED_PENDING_REVIEW_RECHECK",
+    "QSVG-BD-002": "CLOSED_IMPLEMENTATION",
+    "QSVG-BD-003": "PARTIAL_P1B_AUTOMATION_REQUIRED",
+    "QSVG-BD-004": "PARTIAL_P1B_CONTROL_REQUIRED",
+    "QSVG-BD-005": "OPEN_DETERMINISM_NOT_PROVEN",
+    "QSVG-BD-006": "DEFERRED_NONBLOCKING",
+    "QSVG-BD-007": "DEFERRED_NONBLOCKING",
+    "QSVG-BD-008": "IMPLEMENTED_TYPED_RECEIPT",
+    "QSVG-BD-009": "CLOSED_PASS_STABLE_ARTIFACT_REPEAT_AFTER_REVIEW",
+    "QSVG-BD-010": "WITHHELD"
+  },
+  "promotion_authority": false,
+  "engineering_credit": false,
+  "sat_credit": false,
+  "opex_credit": false,
+  "negotiation_credit": false,
+  "release_credit": false
+}
