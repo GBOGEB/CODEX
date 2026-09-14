@@ -18,8 +18,14 @@ jobs:
   deterministic-render:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout exact SHA
+      - name: Checkout exact subject SHA
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      - name: Record exact subject SHA
+        run: |
+          echo "checked_out_sha=$(git rev-parse HEAD)"
+          test "$(git rev-parse HEAD)" = "${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -49,7 +55,7 @@ jobs:
       - name: Retain deterministic render evidence
         uses: actions/upload-artifact@v4
         with:
-          name: qcell-svg-determinism-${{ github.sha }}
+          name: qcell-svg-determinism-${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
           path: |
             ${{ runner.temp }}/qsvg-a/qcell_main_v0_7_7.svg
             ${{ runner.temp }}/qsvg-a/index.html
