@@ -1,6 +1,6 @@
 schema: qps-visual-system-triage/1.0
 version: 1.6
-state: SOURCE_BOUND_PARTIAL_CONTROL
+state: SOURCE_PROOF_BOUND_UTILITIES_SCOPE_RECONCILED_CONTROLS_PARTIAL
 authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
 
 completed:
@@ -11,38 +11,49 @@ completed:
   - dense Controls canonical candidate written
   - cross-domain ownership boundary established
   - source inconsistencies preserved as review items
+  - V16-BD-001 exact source PPTX bytes bound to controlled Library file/version IDs and SHA256
+  - V16-BD-002 stable PNG render plus SHA256 recorded for every v1.6-bound source slide
+  - V16-BD-004 1199/~1200/~1256 kW PCW scopes reconciled without changing underlying source values
 
-open_first_red:
+closed_first_red:
   - id: V16-BD-001
     topic: source_digests
     priority: P0
-    state: OPEN
-    closure: ingest exact source PPTX bytes and record SHA256
+    state: CLOSED
+    closure: exact source PPTX bytes bound to controlled ChatGPT Library file/version IDs and SHA256 recorded
+    evidence: source_proof_receipt.json
   - id: V16-BD-002
     topic: source_slide_renders
     priority: P0
-    state: OPEN
-    closure: produce stable image/render per bound source slide
+    state: CLOSED
+    closure: stable PNG render and SHA256 recorded for all 63 bound source slides
+    evidence: source_render_manifest.yaml
+  - id: V16-BD-004
+    topic: utilities_value_reconciliation
+    priority: P0
+    state: CLOSED_SCOPE_RECONCILED
+    closure: 1199 kW = WCS HP only; ~1200 kW = rounded HP/HCC working representation; 1256 kW = 1199 HP + 57 PVPS; 1300 kW = 1256 WCS subtotal + 44 QRB
+    evidence: engineering_reconciliation_v1_6.yaml
+    non_claim: underlying NA.AA_BMA003 workbook was not independently ingested; coolant sizing and facility approval remain outside this closure
+
+open_first_red:
+  - id: V16-BD-006
+    topic: control_signal_classification
+    priority: P0
+    state: PARTIAL_EVIDENCE_BOUND
+    closure: map every tender candidate signal group to a controlled class and disposition conflicts with discipline evidence
+    progress: source-explicit monitoring, warning, permissive and hard-trip groups classified; HVAC and selected utility-loss consequences remain conflicted/open
+    evidence: engineering_reconciliation_v1_6.yaml
   - id: V16-BD-003
     topic: source_vs_curated_visual_dov
     priority: P0
     state: OPEN
     closure: compare source render and curated slide/object with content-loss disposition
-  - id: V16-BD-004
-    topic: utilities_value_reconciliation
-    priority: P0
-    state: OPEN
-    closure: resolve 1199/~1200/~1256 kW PCW definitions from load basis/interface evidence
   - id: V16-BD-005
     topic: loop_evidence
     priority: P0
     state: OPEN
     closure: bind 17 kW / 350 kW / 6 h / ~2 h source statements to transient/load evidence and operating scenario
-  - id: V16-BD-006
-    topic: control_signal_classification
-    priority: P0
-    state: OPEN
-    closure: map every candidate signal to monitor/warning/permissive/hard-trip/mode-inhibit/occupancy class
   - id: V16-BD-007
     topic: detailed_io
     priority: P1
@@ -62,20 +73,35 @@ open_first_red:
     topic: governed_exports
     priority: P1
     state: DEFER_TO_V1_8
-    closure: source-bound HTML renders to receipt-governed PDF/PPTX/ODP
+    closure: bind source-controlled QPS semantic deck objects into the existing receipt-governed publication carrier from #690/#691; ODP remains separately unproven
+
+adjacent_utilities_open:
+  - HVAC 124 kW versus ~120 kW room heat and recovered 134 kW total-HVAC source drift
+  - gaseous-nitrogen 375 LPM total versus only 50 + 50 LPM listed allocations
+  - PGB20 7 C role/diversity/requirement status
+  - exact HX allocation, coolant state points and sizing basis
 
 non_compensating_rules:
   - a visual or navigation PASS cannot grant engineering acceptance
   - source evidence gaps cannot be offset by layout quality
   - safety/interlock classification requires discipline evidence
-  - utilities source inconsistencies remain OPEN until reconciled by governing engineering sources
+  - utilities arithmetic reconciliation cannot grant facility design approval
   - candidate I/O remains candidate until L2/detail control design freezes it
+  - source proof does not constitute source-vs-curated DoV
+  - PNG rendering does not prove Microsoft PowerPoint or Office365 host-render parity
 
 next_execution_order:
-  - V16-BD-001 source digests
-  - V16-BD-002 source slide renders
-  - V16-BD-004 utilities value reconciliation
-  - V16-BD-006 signal classification
+  - V16-BD-006 close remaining signal-class conflicts if discipline evidence supports it
   - V16-BD-003 source-vs-curated visual DoV
   - V16-BD-005 LOOP evidence
   - V16-BD-008 graph refresh
+
+source_proof_receipt:
+  path: source_proof_receipt.json
+  render_manifest: source_render_manifest.yaml
+  render_bundle_sha256: f9a20d08d6c85c0bbcab58bfe57452957b5a5c1268eb30213c1fd92423a50132
+  authority: SOURCE_PROOF_ONLY_NOT_ENGINEERING_ACCEPTANCE
+
+engineering_reconciliation:
+  path: engineering_reconciliation_v1_6.yaml
+  authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL

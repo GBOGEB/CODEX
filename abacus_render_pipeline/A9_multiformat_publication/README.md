@@ -123,9 +123,11 @@ Different file formats do not need byte identity. The Pages candidate is the exc
 
 ## Governance state
 
-`DEBT-007 multi_format_receipts` remains **PARTIAL** until a `main` deployment produces a hosted Pages receipt and independent network revalidation reaches one atomic `PROMOTE`. Closure is a separate evidence-bound governance update; this implementation PR does not pre-close the debt.
+`DEBT-007 multi_format_receipts` is **CLOSED** by the exact-main hosted proof recorded in `A9_2_HOSTED_PAGES_DOV.md`.
 
-`INV-008` makes the hosted-publication boundary explicit: a local Pages directory is not publication evidence.
+Source commit `ed641574dedcf4f062ad333e07ef79d19388f3eb`, Actions run `34867675282`, successfully executed real `deploy-pages`, hosted network fetch, independent network refetch, exact hosted/governed SHA-256 equality, semantic coverage `1.0`, and one final atomic `PROMOTE` receipt.
+
+`INV-008` remains the governing boundary: a local Pages directory is not publication evidence.
 
 ## Authority boundary
 
@@ -133,6 +135,6 @@ Generated HTML/PPTX/PDF/Markdown/Pages outputs remain non-canonical derivatives.
 
 Microsoft PowerPoint/Office365 host-native reflow remains outside the OpenXML structural receipt unless that host engine is separately executed and evidenced.
 
-## Frontier after DEBT-007 closure
+## Next publication frontier
 
 `DEBT-008 snapshot_receipt` remains open intentionally. Snapshot/image rendering should only join the contract after a real renderer supplies image-native evidence.
