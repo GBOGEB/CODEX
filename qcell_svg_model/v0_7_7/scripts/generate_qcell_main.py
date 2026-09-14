@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Deterministically render QCELL MAIN SVG/HTML from versioned SSOT + renderer templates.
 
 The renderer is intentionally small and fail-closed. It proves reproducible visual
@@ -9,8 +8,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import yaml
 
