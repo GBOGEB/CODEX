@@ -36,7 +36,7 @@ def evaluate() -> dict[str, Any]:
         "snapshot_execution_receipt_accepted": snapshot.get("decision") == "accept",
         "snapshot_content_address_revalidated": snapshot.get("snapshot_sha256") is not None,
         "source_commit_bound": snapshot.get("source_commit") == a9.get("source_commit"),
-        "semantic_closed_loop_passed": closed_loop.get("status") == "PASS",
+        "closed_loop_passed": closed_loop.get("status") == "PASS",
         "semantic_replay_passed": replay.get("status") == "PASS",
         "traceable_tuple_count": closed_loop.get("completeness", {}).get("tuple_count", 0) >= 13,
     }
