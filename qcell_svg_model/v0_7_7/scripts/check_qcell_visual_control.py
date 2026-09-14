@@ -40,6 +40,10 @@ REQUIRED_THERMAL_TOKENS = {
     'id="innerHeatRev"': "reverse-direction inner heat gradient missing",
     'stroke="url(#outerHeatRev)"': "right-side 300→50 K path is not direction-correct",
     'stroke="url(#innerHeatRev)"': "right-side 50→2 K path is not direction-correct",
+    'id="heatArrowOuter"': "outer heat endpoint marker missing",
+    'id="heatArrowInner"': "inner heat endpoint marker missing",
+    'marker-end="url(#heatArrowInner)"': "inner heat paths do not terminate with the blue 2 K marker",
+    'fill="#0618aa"': "authoritative deep-blue 2 K endpoint colour missing",
     'class="txt small white"': "A/B high-contrast legend text class missing",
     'class="txt micro white"': "A/B high-contrast legend value class missing",
 }
@@ -93,6 +97,12 @@ def main() -> int:
 
     if 'stroke="url(#shield50)"' in svg_text:
         fail("nominal 50 K shield uses a multi-temperature spatial gradient")
+    if 'id="heatArrow"' in svg_text:
+        fail("legacy shared heat marker present; inner and outer endpoints must remain temperature-specific")
+    if svg_text.count('marker-end="url(#heatArrowInner)"') != 2:
+        fail("exactly two inner parasitic paths must use the blue endpoint marker")
+    if svg_text.count('marker-end="url(#heatArrowOuter)"') != 2:
+        fail("exactly two outer parasitic paths must use the orange endpoint marker")
 
     if "localStorage" not in html_text or "qcell-main-v0.7.7-layer-state" not in html_text:
         fail("persistent layer-state contract missing")
@@ -110,7 +120,7 @@ def main() -> int:
         fail(f"forbidden exclusive-box overlaps: {collisions}")
 
     result = {
-        "schema": "qsvg-visual-control-check/0.2.0",
+        "schema": "qsvg-visual-control-check/0.3.0",
         "status": "PASS",
         "authority": "VISUAL_SEMANTIC_ONLY",
         "required_groups": sorted(REQUIRED_GROUPS),
@@ -121,6 +131,7 @@ def main() -> int:
         "endpoint_guides": "DOTTED_PRESENT",
         "temperature_50K_mapping": "SOLID_AUTHORITATIVE_COLOUR",
         "heat_gradient_direction": "PATH_DIRECTION_CORRECTED",
+        "heat_endpoint_markers": "OUTER_ORANGE_INNER_2K_BLUE",
         "AB_text_contrast": "WHITE_CLASS_ENFORCED",
         "persistent_layer_state": "PRESENT",
         "engineering_promotion_authority": False,
