@@ -1,5 +1,7 @@
 # QPS ⇄ QCELL SVG Triage Handover v0.8.0
 
+> **Current-state note (post #684–#689):** this file remains the historical lane-entry handover, but its original P1 execution wording is superseded by the merged canonical-MAIN, visual-control, deterministic-render and checker-repair pulses. Hosted/static HTML remains a **non-blocking expansion item** and is not a prerequisite for QSVG CONTROL.
+
 ## Purpose
 
 Integrate the current QCELL SVG/HTML engineering handover into QPS triage without promoting visual artefacts into engineering authority.
@@ -12,13 +14,13 @@ The target remains one canonical MAIN drawing with toggleable visual layers.
 
 Canonical chain:
 
-`SSOT YAML → versioned SVG → hosted interactive HTML → rendered Markdown → optional PPT/PDF export`
+`SSOT YAML → versioned SVG → interactive HTML → rendered Markdown → optional PPT/PDF export`
 
-PPT is reference/export only.
+Hosted/static publication is a downstream consumption path, not part of the core CONTROL gate. PPT is reference/export only.
 
 ## Current visual state
 
-Latest working lineage:
+Historical working lineage:
 
 - v0.7.1 — separated flow layer; smaller arrows; A/B/D/E in arrowheads; red 300 K boundary; parasitic gradients
 - v0.7.2 — single canonical drawing; top manifold headers; dotted endpoint guides; items-included legend
@@ -27,6 +29,14 @@ Latest working lineage:
 - v0.7.5 — HTML card progression with embedded SVG and plotly-like mute controls
 - v0.7.6 — Draw.io four-sheet evolution review
 - v0.8.0 — full engineering + coding handover package
+
+Execution progression after this handover:
+
+- #684 — canonical MAIN v0.7.7
+- #685 — collision and layer-state control
+- #686 — deterministic SSOT render and typed receipt path
+- #688 — CONTROL qualification / final thermal-map repair
+- #689 — post-review checker repair with live structure validation
 
 ## Draw.io visual evolution source
 
@@ -96,81 +106,53 @@ Pressure is secondary/diagnostic and must use an independent non-thermal palette
 
 ## Layer policy
 
-MAIN should support plotly-like muting for:
+MAIN supports governed visual-layer control for:
 
 - thermal body / masses
 - A/B/D/E flow layer
 - dotted endpoint guides
 - parasitic heat paths
-- annotation cards
+- annotation cards where present
 - temperature legend
-- pressure diagnostic layer
-- items-included legend
+- pressure diagnostic layer when later implemented
+- teaching/debug overlays, OFF by default on canonical MAIN
 
 Layers are for conflict testing and readability. They are not separate canonical drawings.
 
-## Known regressions / active triage
-
-1. Large arrows repeatedly became visually dominant.
-2. Flow placement drifted between iterations.
-3. Annotation text can overlap coloured paths.
-4. Temperature and pressure were previously conflated in one colour grammar.
-5. Slide progression regressed to bare text before embedded SVG/card recovery.
-6. Multiple variants risked obscuring the single-MAIN objective.
-
-## QPS triage actions
-
-### P0 — protect canonical semantics
+## P0 non-regression rules
 
 - preserve temperature/pressure separation
 - preserve one-MAIN-drawing policy
 - preserve dotted endpoint logic
 - prevent reintroduction of large-arrow dominance
 - prevent PPT-first source-of-truth regression
+- preserve exact-head deterministic render evidence
+- preserve typed receipt authority=`VISUAL_SEMANTIC_ONLY`
 
-### P1 — v0.7.7 canonical MAIN merge
+## Current disposition
 
-Merge the strongest traits from the four Draw.io sheets:
+The historical `IMPROVE / VISUAL_CONTROL_BUILDOUT` state recorded by the original handover has been executed through #684–#689. The current gate is now governed by the exact-head CONTROL qualification evidence and any remaining formally open BD predicates, not by the old P1 task list.
 
-- grouped regions from Sheet 2
-- small flow legend/header from Sheet 3
-- endpoint placement from Sheet 4
-- Sheet 1 retained only as historical baseline
+No engineering, compliance, SAT, OPEX, negotiation, or release credit is granted by this visual lane.
 
-### P1 — robust layer state
+## CONTROL promotion condition — reconciled
 
-- per-layer mute/unmute
-- deterministic default visibility
-- no geometry mutation when layers are toggled
+Core CONTROL requires:
 
-### P1 — text-bump control
+- canonical MAIN accepted;
+- layer-state defaults and persistence stable;
+- no forbidden annotation/legend collision under the declared visual-control contract;
+- temperature/pressure semantic separation stable;
+- generated HTML/SVG reproducible from SSOT on exact subject SHA;
+- typed visual receipt emitted and validated;
+- checker predicates bound to live SVG structure rather than comments/global token presence;
+- required review / local visual DoV formally closed.
 
-- cards sized as grouped text blocks
-- avoid text-line overlap
-- preserve legibility against thermal colours
+The following remain **non-blocking expansion** items and do not gate CONTROL:
 
-### P2 — pressure diagnostic
+- GitHub Pages / externally hosted HTML path;
+- pressure diagnostic overlay;
+- equation-backed parasitic model;
+- transient cooldown/warmup/reversal expansion.
 
-- separate palette
-- low/high pressure bands
-- pressure hidden by default in temperature analysis
-
-### P2 — SSOT generator hardening
-
-- YAML drives labels, colours, values, visibility, lineage
-- repeated generation from the same source must be idempotent
-
-## Triage disposition
-
-Current state: `IMPROVE / VISUAL_CONTROL_BUILDOUT`
-
-No engineering, compliance, SAT, OPEX, negotiation, or release credit is granted by this package.
-
-Promotion condition to CONTROL:
-
-- canonical MAIN accepted
-- layer states stable
-- no major text overlap
-- temperature/pressure semantics stable
-- generated HTML/SVG reproducible from SSOT
-- GitHub-hosted artefact path verified
+Authority remains `VISUAL_SEMANTIC_ONLY` regardless of CONTROL state.
