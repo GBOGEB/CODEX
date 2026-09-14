@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Keep the v1.6 source-bound Utilities/Controls work aligned with the active QPS TRIAGE model without transferring authority between lanes.
+Keep the v1.6 source-bound Utilities/Controls work aligned with the active QPS TRIAGE model without transferring authority between lanes, and bind this work to the already-merged generic publication infrastructure rather than creating another exporter.
 
 ## Parallel lanes
 
@@ -28,19 +28,25 @@ Purpose:
 Authority:
 `VISUAL_SEMANTIC_ONLY`
 
-Merged progression observed in CODEX:
-- #683 triage integration
-- #684 canonical MAIN
-- #685 visual-control automation
-- #686 deterministic renderer / receipt path
-- #688 CONTROL qualification attempt
-- #689 post-review checker repair
+Canonical QSVG progression now includes #693 documentation reconciliation after #689 checker repair. Hosted/static HTML and pressure-overlay work remain non-blocking. Distinct-SHA repeat remains evidence-governed and cannot be inferred from one deterministic run.
 
-The #689 repair closes the two concrete checker defects raised after #688 by replacing raw-regex structural discovery with structure-aware live-SVG validation and element-bound 300 K / 50 K predicates. That QSVG lane should not be reimplemented inside v1.6.
+### Lane C — Generic CODEX publication carrier
+
+Merged #690/#691 provide the reusable publication plane:
+
+`semantic SSOT → governed HTML/PPTX/PDF/Markdown/GitHub Pages → per-format hashes + native telemetry + semantic parity + cross-format parity + promotion receipt`
+
+Authority:
+`GENERIC_PUBLICATION_INFRASTRUCTURE`
+
+QPS implication:
+- `V16-BD-010` is not "invent a QPS exporter";
+- it is "adapt source-bound QPS objects into the existing governed carrier and prove QPS-specific parity/content DoV";
+- ODP remains separate unless implemented;
+- PPTX structural/native telemetry is not Microsoft PowerPoint/Office host-reflow proof;
+- generic publication success grants no QPS engineering or acceptance credit.
 
 ## Shared control philosophy
-
-Both lanes follow the same higher-order rules:
 
 1. **SSOT before render** — render surfaces cannot silently become source authority.
 2. **Exact source identity** — SHA / slide / object provenance is required for controlled promotion.
@@ -48,46 +54,84 @@ Both lanes follow the same higher-order rules:
 4. **No authority leakage** — visual quality cannot grant engineering/safety/acceptance authority.
 5. **First-red execution** — repair the first concrete failing predicate before adding another architecture layer.
 6. **Additive lineage** — preserve old versions and supersede explicitly.
+7. **Cross-repo evidence is evidence, not automatic promotion** — discovered SHA/source records must still bind to exact controlled bytes/locators before v1.6 source lineage closes.
 
-## v1.6 QPS TRIAGE pressure surface
+## v1.6 source-proof status
 
-### P0 — source integrity
+CODEX `source_lineage.yaml` still has null source digests, so `V16-BD-001` is not closed.
 
-- source-file SHA256;
-- exact source slide renders;
-- source-vs-curated comparison;
-- no fabricated slide identities;
-- no silent deletion of technical statements.
+However, the controlled `GBOGEB/cryoplant-project` visual-selection corpus exposes SHA256 records for several exact filenames used by v1.6, including:
 
-### P0 — engineering reconciliation
+- `QPS_Suporting_Sytems.pptx` → `6d694db8e7ad85193f73a61a1c7b06938e3724c34401435b38a0111e656c5507`
+- `QPS_Supporting_Systems_FULL_SLINE_parallel_canonical_v3_appendix.pptx` → `a629886b7af5d13e62b9b70cd10041e94dd6aa4f74234894d466843c5da87cba`
+- `QPS_Control_Core_TOPIC - Copy.pptx` → `8e15b95ad2a2fefc1548367352eda0df6e2eb60eee878264c5f1f7a80579479a`
 
-- cooling-load basis: 1199 / ~1200 / ~1256 kW surfaces;
-- HVAC 124 kW versus ~120 kW room-heat context;
-- Gaseous-N2 total versus listed subsystem allocations;
-- LOOP 17 kW / 350 kW / ~6 h / ~2 h evidence chain;
-- PGB20 role and diversity basis;
-- HV03/HV02/HV06 mode-specific consequence.
+These are treated as `DISCOVERED_CROSS_REPO_EVIDENCE_NOT_YET_PROMOTED_INTO_V1_6_LINEAGE` until exact source-byte/locator provenance is bound. `QPS_naming_control_0304.pptx` still requires an equivalent exact hash evidence binding.
 
-### P0 — controls classification
+## Utilities reconciliation edge
 
-- candidate I/O → signal class;
-- monitor / warning / permissive / hard trip / mode inhibit / occupancy constraint;
-- MIT / MIS / MCS boundary;
-- MCS-loss autonomy;
-- QINFRA S/U/W control authority.
+`utilities_reconciliation_v1_6.yaml` now narrows `V16-BD-004` without falsely closing it.
 
-### P1 — navigation / graph burn-in
+The source surfaces support this arithmetic decomposition candidate:
 
-After P0 source and classification work:
-- refresh WCS/HCC/QINFRA/QPS:CIS node pages;
-- bind exact Utilities/Controls slide IDs;
-- expose lineage and open validation items from graph-node inspectors.
+```text
+1199 kW WCS HP + 57 kW PVPS = 1256 kW WCS total candidate
+1256 kW + 44 kW QRB = 1300 kW facility PCW design capacity
+```
 
-### P1 — render hardening
+This explains why `1199`, `~1200`, `~1256`, and `1300 kW` can coexist without forcing them to be the same quantity. The exact semantic labels still require the governing interface/load-basis evidence.
 
-Defer to v1.7/v1.8 rather than mixing into this pulse:
-- true YAML → SVG/HTML generator;
-- receipt-governed PDF/PPTX/ODP publication.
+The same register keeps `124 kW` facility HVAC capacity distinct from `~120 kW` WCS room heat, exposes the `275 LPM` gaseous-N2 residual as unallocated rather than invented load, and keeps PGB20 baseline/diversity role open.
+
+## Controls classification edge
+
+`control_signal_classification_v1_6.yaml` provides a first source-bound tender-level classification for the candidate signals while keeping `V16-BD-007` L2 detail open.
+
+Important consequences:
+- MIT telemetry stays `MONITOR`/`WARNING` unless another source establishes interlock semantics;
+- MIS path alone does not imply `HARD_TRIP`;
+- common trip/ESD and explicit safe isolation are `HARD_TRIP` candidates because the source says so;
+- HV02/HV03 remain occupancy/mode-sensitive rather than universal fast trips;
+- HV06 remains non-blocking under the current working source;
+- PAB12/IA can act as permissive/core-support conditions while exact timing and fail-safe logic remain detailed cause/effect work;
+- QPS local autonomy on MCS loss remains a separate requirement from supervisory visibility.
+
+## Source-vs-curated review contract
+
+For every bound source slide that reaches rendered proof:
+
+`SOURCE FILE + SHA → SOURCE SLIDE → SOURCE RENDER HASH → EXTRACTED CONTENT → CURATED ID → KEEP | MERGE | REFERENCE | SUPERSEDE | DROP_WITH_RATIONALE → CONTENT-LOSS VERDICT`
+
+No slide may disappear silently. A polished curated object is not evidence that every technical statement survived.
+
+## Active first-red topology
+
+```text
+TRACK A — SOURCE PROOF
+V16-BD-001 exact byte/hash/locator binding
+      ↓
+V16-BD-002 stable per-slide render + render hash
+      ↓
+V16-BD-003 source-vs-curated content-loss DoV
+
+TRACK B — UTILITIES
+V16-BD-004 semantic reconciliation confirmation
+      ↓
+V16-BD-005 LOOP transient/load evidence
+
+TRACK C — CONTROLS
+V16-BD-006 cause/effect/fail-safe completion
+      ↓
+V16-BD-007 exact L2 I/O when evidence exists
+
+TRACK D — GRAPH
+V16-BD-008 promoted v1.6 node/link refresh
+
+TRACK E — PUBLICATION
+V16-BD-010 bind QPS objects into #690/#691 carrier
+```
+
+`V16-BD-009` remains the v1.7 deterministic QPS render-hardening lane. Do not add a second publication architecture.
 
 ## Decision rule
 
@@ -108,14 +152,8 @@ PROMOTED NAVIGATION / DECK SURFACE
 
 No item skips the source-fact stage merely because it already appears in a polished slide or HTML view.
 
-## Immediate next pulse after this PR
+## Global boundary
 
-If source binaries can be ingested into a controlled repository/source-vault path, execute:
+`GLOBAL_PROJECT_DOV = WITHHELD`
 
-`V16-P1 = SOURCE_DIGEST + SLIDE_RENDER + SOURCE_VS_CURATED`
-
-In parallel, engineering review can execute:
-
-`V16-P2 = UTILITIES_RECONCILIATION + CONTROL_SIGNAL_CLASSIFICATION`
-
-These can proceed concurrently because they consume the same source-bound manifest but close different predicates.
+Local source, visual, classification, reconciliation or publication proof cannot compensate for independent engineering, safety, verification, project or acceptance gates.
