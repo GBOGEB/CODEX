@@ -83,3 +83,19 @@ glossary:
     definition: SSOT publication component identifying a card whose styling and validation are selected by semantic role and theme rather than by fixed presentation colour values.
     introduced_by: abacus_render_pipeline/A8_renderer_execution_receipt/ssot/reference_publication.yaml
     first_use_case: drive the A8 reference renderer through the governed warning-card theme runtime while preserving semantic meaning across dark and light modes.
+  semantic_parity:
+    definition: Cross-format publication check proving that required canonical semantic tokens from one SSOT payload remain present in each governed rendered format; parity is evidence of content preservation, not engineering acceptance by itself.
+    introduced_by: abacus_render_pipeline/A9_multiformat_publication/multiformat_execution.py
+    first_use_case: require HTML, PPTX, PDF, Markdown and GitHub Pages artifacts to preserve the same package identity, canonical content hash, sheet identities and requirement identifiers before publication promotion.
+  semantic_tokens:
+    definition: Bounded canonical identifiers selected from the publication payload for deterministic cross-format content-preservation checks.
+    introduced_by: abacus_render_pipeline/A9_multiformat_publication/multiformat_execution.py
+    first_use_case: provide stable package, content-hash, sheet and requirement identifiers used by the A9 semantic parity gate.
+  semantic_token_count:
+    definition: Count of canonical semantic tokens required by a multi-format parity evaluation for one governed publication execution.
+    introduced_by: abacus_render_pipeline/A9_multiformat_publication/multiformat_execution.py
+    first_use_case: make parity coverage measurable and receipt-visible across all required A9 publication formats.
+  semantic_replay_summary:
+    definition: Promotion-receipt summary of the already-governed deterministic semantic replay state used when making a multi-format publication promotion decision.
+    introduced_by: abacus_render_pipeline/A9_multiformat_publication/publication_promotion.py
+    first_use_case: bind the final A9 PROMOTE or REJECT decision to reconstructable semantic lineage without creating a new engineering authority layer.
