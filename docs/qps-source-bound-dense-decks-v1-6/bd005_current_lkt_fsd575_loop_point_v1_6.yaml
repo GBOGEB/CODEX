@@ -1,0 +1,168 @@
+schema: qps-bd005-current-lkt-fsd575-loop-point/1.0
+version: '1.6.10'
+status: CURRENT_SELECTED_MODEL_AND_LOOP_EVIDENCE_BOUND_EXACT_350KW_OPERATING_POINT_AND_RECOVERY_CW_OPEN
+authority: BIDDER_SOURCE_EVIDENCE_NOT_ACCEPTANCE
+bd: V16-BD-005
+global_project_dov: WITHHELD
+
+source:
+  id: SRC-CURRENT-LKT-OFFER-2026-I1
+  name: LKT - Offer 1.pdf
+  file_id: file_00000000433c820ab884f0f9514af8b8
+  version_id: '1'
+  sha256: d92af4666cc10ec6a4f8ac6cfe57aef477bca116f72a12f9156a680ce7e1e35e
+  date: 2026-08-10
+  issue: '01'
+  role: CURRENT_LKT_BIDDER_SOURCE
+
+current_selected_equipment:
+  model: KAESER_FSD575_SFC_wc
+  quantity: 4
+  evidence_page: 112
+  motor_rated_power_each_kW: 315
+  electrical_supply: 400V_3ph
+  cooling: water_cooled
+  classification: CURRENT_BIDDER_EXPLICIT
+
+current_maximum_point:
+  evidence_page: 113
+  suction_pressure_bara: 1.05
+  suction_temperature_K: 298
+  discharge_pressure_bara: 14
+  frequency_Hz: 72
+  helium_flow_g_s:
+    nominal: 112.0
+    tolerance: '-2%/+5%'
+  package_power_input_kW:
+    nominal: 357
+    tolerance: '+/-5%'
+  classification: CURRENT_BIDDER_EXPLICIT_MAXIMUM_POINT
+  non_claims:
+    - not_equal_to_proven_LOOP_operating_point
+    - no_linear_flow_power_interpolation_credit
+    - does_not_by_itself_prove_margin_inside_350kW_EPS
+
+current_air_side_and_heat_paths:
+  evidence_page: 113
+  max_additional_duct_pressure_drop_Pa: 40
+  main_cooling_air_flow_m3_h: 5000
+  SFC_cooling_air_flow_m3_h: 4200
+  compressor_cooling_air_heat_kW: 17.4
+  SFC_cooling_air_heat_kW: 10.7
+  waste_heat_to_ambient_radiation_kW: 13.9
+  heat_recovery_at_max_load:
+    thermal_power_kW: 229
+    water_flow_m3_h: 7.9
+    deltaT_C: 25
+  classification: CURRENT_BIDDER_EXPLICIT
+  reconciliation:
+    ambient_radiation_vs_RTM436: 13.9_kW_is_below_15_kW_contractual_LOOP_ambient_ceiling_but_installed_degraded_state_still_requires_route_and_boundary_proof
+    cooling_air_terms: explicitly_cooling_air_not_automatically_room_heat
+    ducting_scope: Contracting_Authority_scope_per_current_Technical_Part
+
+current_normal_cooling_water_reference:
+  evidence_page: 107
+  supply_pressure_barg: '3-8'
+  supply_temperature_C: '20-30'
+  return_temperature_C_max: 45
+  deltaT_K_max: 15
+  compressor_fleet_flow_m3_h: 78
+  per_compressor_reference_m3_h: 18.5
+  classification: CURRENT_BIDDER_NORMAL_UTILITY_REFERENCE
+  non_claim: not_promoted_to_LOOP_PAB12_flow_because_reduced_emergency_flow_is_allowed_and_recovery_CW_is_separately_TBD
+
+current_emergency_power_and_recovery_logic:
+  basis_of_process_design_page: 172
+  emergency_voltage_V: 400
+  phases: 3
+  frequency_Hz: 50
+  power_limitation_kW: 350
+  recovery_cooling_water_without_glycol: TO_BE_DEFINED
+  offer22_page: 407
+  EPS_connection_logic:
+    compressors_connected_to_emergency_power: 2
+    simultaneously_operable_due_generator_size: 1
+  loop_recovery_claim:
+    flow_g_s_max: 110
+    active_compressors: 1
+  classification: CURRENT_BIDDER_EXPLICIT
+  reconciliation:
+    two_connected_vs_one_running: RESOLVED_AS_REDUNDANT_CONNECTION_WITH_SINGLE_SIMULTANEOUS_OPERATION
+    one_vs_two_compressor_architecture_conflict: CLOSED_SOURCE_RECONCILED
+    exact_110g_s_power_margin: OPEN
+
+current_single_line_auxiliary_clues:
+  evidence_page: 302
+  compressor_main_drive_each_kW: 315
+  local_UPS_each_W_approx: 500
+  main_required_power_field: APPROX_XX_KW_UNRESOLVED_IN_SLD
+  classification: CURRENT_BIDDER_PRELIMINARY_SLD
+  non_claim: does_not_close_total_ES02_auxiliary_split
+
+OFFER_35:
+  requirement_response_page: 378
+  bidder_response: HP_Compressor_refer_to_Technical_Part_Chapter_6
+  current_values_closed:
+    cooling_air_flow_main_m3_h: 5000
+    cooling_air_flow_SFC_m3_h: 4200
+    allowable_added_duct_pressure_drop_Pa: 40
+    ambient_radiation_kW: 13.9
+    compressor_cooling_air_heat_kW: 17.4
+    SFC_cooling_air_heat_kW: 10.7
+  current_drawing:
+    reference: TAX06_Typical_FSD_Compressor_Drawing
+    offer_page: 182
+    interface_locations_visible: true
+    unambiguous_duct_connection_size_extracted: false
+  state: PARTIAL_CURRENT_SOURCE_BOUND_SIZE_GEOMETRY_OPEN
+
+first_red_diagnostics:
+  - id: EPS-POWER-POINT
+    observation: current_maximum_point_is_112g_s_at_72Hz_and_357kW_plus_minus_5pct_while_EPS_limit_is_350kW
+    state: OPEN_EXACT_LOWER_POINT_REQUIRED
+    required: bidder_or_OEM_table_curve_or_written_confirmation_of_LOOP_Hz_flow_power_with_margin
+  - id: RECOVERY-CW
+    observation: current_Basis_of_Process_Design_marks_recovery_cooling_water_without_glycol_TO_BE_DEFINED
+    state: OPEN
+    required: LOOP_flow_pressure_supply_return_temperatures_valve_state_and_available_capacity
+  - id: ES02-AUX
+    observation: preliminary_SLD_exposes_approximately_500W_UPS_per_compressor_but_main_required_power_is_unresolved_and_total_critical_auxiliary_split_is_not_bound
+    state: OPEN
+    required: complete_EPS_load_list_and_simultaneity
+  - id: OFFER35-DUCT-SIZE
+    observation: current_offer_closes_flow_and_allowable_pressure_drop_and_shows_TAX06_interface_geometry_but_no_single_unambiguous_duct_connection_size_was_promoted
+    state: OPEN
+    required: controlled_dimension_or_vendor_connection_specification
+  - id: ROOM-TRANSIENT
+    observation: current_package_ambient_radiation_is_13.9kW_and_contractual_LOOP_ceiling_is_15kW_but_effective_room_thermal_mass_and_degraded_room_airflow_are_not_bound
+    state: OPEN
+
+newly_closed_subquestions:
+  - current_selected_HP_compressor_model
+  - current_72Hz_maximum_flow_and_power_reference
+  - current_main_and_SFC_cooling_air_flows
+  - current_allowable_added_duct_pressure_drop
+  - current_air_side_heat_path_breakdown
+  - current_normal_per_compressor_cooling_water_reference
+  - EPS_two_connected_vs_one_running_semantics
+  - OFFER35_current_flow_and_pressure_drop_response
+
+remaining_close_predicate:
+  exact_LOOP_operating_point_Hz_flow_power_margin: FAIL_MISSING
+  complete_ES02_critical_load_split: FAIL_MISSING
+  recovery_PCW_hydraulic_state: FAIL_EXPLICIT_TBD
+  duct_connection_size: FAIL_UNAMBIGUOUS_SIZE_NOT_BOUND
+  effective_room_thermal_inventory: FAIL_MISSING
+  degraded_room_airflow_or_sufficient_boundary_proof: FAIL_MISSING
+  two_hour_physical_threshold: FAIL_MISSING
+  six_hour_thermal_stabilization_criterion: FAIL_MISSING
+  first_law_transient: FAIL_NOT_EXECUTABLE_YET
+  bd_close_allowed: false
+
+non_compensating_rules:
+  - current_selected_model_does_not_convert_maximum_point_into_LOOP_point
+  - one_running_compressor_does_not_prove_350kW_margin
+  - current_normal_18_5_m3_h_per_compressor_does_not_equal_LOOP_recovery_CW_flow
+  - 13_9kW_ambient_radiation_below_15kW_ceiling_does_not_replace_room_transient_or_installed_duct_proof
+  - OFFER35_flow_and_pressure_drop_do_not_close_duct_connection_size
+  - global_project_dov_remains_WITHHELD
