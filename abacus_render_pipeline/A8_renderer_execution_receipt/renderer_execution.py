@@ -133,6 +133,7 @@ def execute(ssot_path: Path = DEFAULT_SSOT) -> dict[str, Any]:
 
     decision = "accept" if all(check["pass"] for check in checks.values()) else "reject"
     publication = ssot["publication"]
+    source_commit = os.environ.get("ABACUS_SOURCE_SHA") or os.environ.get("GITHUB_SHA") or "local"
 
     receipt = {
         "receipt_version": "A8.0",
@@ -144,7 +145,7 @@ def execute(ssot_path: Path = DEFAULT_SSOT) -> dict[str, Any]:
         "checks": checks,
         "tuple_ledger_sha256": sha256_bytes(TUPLE_LEDGER.read_bytes()),
         "decision": decision,
-        "source_commit": os.environ.get("GITHUB_SHA", "local"),
+        "source_commit": source_commit,
         "publication_id": publication["id"],
     }
 
