@@ -1,39 +1,27 @@
-# QPS Visual Knowledge System v1.6 — Source-Bound Dense Utilities + Controls
+# QPS Visual Knowledge System v1.6 — Current Restart Surface
 
 **State:** `SOURCE_BOUND_PARTIAL_CONTROL`  
 **First red:** `RAW_SOURCE_BYTE_MATERIALIZATION`  
 **Authority:** `ENGINEERING_CURATION_NOT_DESIGN_APPROVAL`  
 **Global/project DoV:** `WITHHELD`
 
-## Active controlled surfaces
+Use these files as the restart order:
 
-- [`index.html`](index.html) — compact current navigation / first-red surface.
-- [`source_lineage.yaml`](source_lineage.yaml) — exact source names, persistent File Library locators, slide bindings and typed digest/render state.
-- [`source_proof_execution_v1_6.yaml`](source_proof_execution_v1_6.yaml) — BD-001/002 execution receipt (`qps-source-proof-execution/1.1`).
-- [`triage_v1_6.yaml`](triage_v1_6.yaml) — authoritative current BD state and execution order.
-- [`utilities_dense.md`](utilities_dense.md) + [`utilities_reconciliation_v1_6.yaml`](utilities_reconciliation_v1_6.yaml).
-- [`controls_dense.md`](controls_dense.md) + [`control_signal_classification_v1_6.yaml`](control_signal_classification_v1_6.yaml).
-- [`qps_triage_alignment.md`](qps_triage_alignment.md) — QPS/QSVG/#690/#691 authority boundaries.
+1. `triage_v1_6.yaml`
+2. `source_proof_execution_v1_6.yaml`
+3. `source_lineage.yaml`
+4. `utilities_reconciliation_v1_6.yaml`
+5. `control_signal_classification_v1_6.yaml`
+6. `utilities_dense.md`
+7. `controls_dense.md`
+8. `qps_triage_alignment.md`
+9. `index.html`
 
-## Source-proof movement
+## Current source proof
 
-All four exact named source objects are located in the persistent File Library:
+All four exact source filenames resolve to persistent File Library objects. `SRC-CTRL-CORE` has a pre-existing governed W176 exact persistent-locator + SHA256 identity tuple. The two Utilities sources have persistent locators plus W162 source-gate SHA256 candidates but still need independent raw-byte re-hash binding. `SRC-NAMING-CONTROL` still lacks a governed digest in searched evidence.
 
-- `QPS_Suporting_Sytems.pptx`
-- `QPS_Supporting_Systems_FULL_SLINE_parallel_canonical_v3_appendix.pptx`
-- `QPS_Control_Core_TOPIC - Copy.pptx`
-- `QPS_naming_control_0304.pptx`
-
-Current evidence is deliberately typed rather than flattened:
-
-- `SRC-CTRL-CORE` has a pre-existing governed W176 persistent-locator + SHA256 identity tuple; this pulse does not pretend an independent byte re-hash occurred.
-- the two Utilities sources have persistent locators and prior W162 SHA256 candidates, but the current objects still need independent raw-byte re-hash binding.
-- `SRC-NAMING-CONTROL` still lacks a governed SHA256 in the searched evidence.
-- historical W176 slide-1 renders do not satisfy BD-002; the Utilities slide-1 renders were duplicate observations with zero credit.
-
-No current tool path materialized these File Library PPTX objects as raw bytes in the executable container. Therefore no fresh per-slide render/hash evidence is claimed.
-
-## Current BD state
+No raw File Library PPTX bytes are currently materialized into the executable container. Consequently `V16-BD-002` has zero fresh per-slide render/hash tuples. Historical slide-1 census renders are not a substitute; the two Utilities slide-1 renders were duplicate observations with zero credit.
 
 ```text
 BD-001  PARTIAL_IDENTITY_BINDING
@@ -48,30 +36,20 @@ BD-009  DEFER_TO_V1_7
 BD-010  REFRAME_BIND_EXISTING_CARRIER
 ```
 
-## Immediate execution order
+## Next executable chain
 
 ```text
-exact File Library object
-    ↓
-raw PPTX byte materialization
-    ↓
+raw PPTX materialization
+  ↓
 independent SHA256 repeat / missing naming digest
-    ↓
-stable fixed-setting render + SHA256 for every bound slide
-    ↓
-BD-003 KEEP / MERGE / REFERENCE / SUPERSEDE / DROP_WITH_RATIONALE
-    ↓
+  ↓
+stable fixed-setting render + SHA256 for every bound source slide
+  ↓
+BD-003 slide-complete KEEP / MERGE / REFERENCE / SUPERSEDE / DROP_WITH_RATIONALE
+  ↓
 content-loss verdict
-    ↓
-LOOP evidence / graph refresh / #690/#691 publication binding where justified
 ```
 
-## Publication boundary
+Continue BD-004 and BD-006 in parallel only where evidence is independent. Then bind LOOP evidence, refresh graph nodes, and bind QPS semantic objects into existing #690/#691 governed publication infrastructure.
 
-Merged #690/#691 already provide the generic receipt-governed publication carrier for HTML/PPTX/PDF/Markdown/GitHub Pages. QPS binds into that carrier; it does not build another exporter.
-
-ODP remains separate until implemented. OpenXML/PPTX structural telemetry does not prove Microsoft PowerPoint/Office host reflow.
-
-## Non-compensating rule
-
-No visual, navigation, documentation, classification, reconciliation or publication success grants unrelated engineering, safety, verification, acceptance or project-level credit.
+Do not build a second exporter. ODP and Microsoft Office host reflow remain separate proof boundaries. No visual/document/publication result grants unrelated engineering, safety, acceptance or project-level credit.
