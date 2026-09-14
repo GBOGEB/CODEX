@@ -1,6 +1,6 @@
-schema: qps-visual-system-triage/1.1
+schema: qps-visual-system-triage/1.2
 version: '1.6'
-state: SOURCE_DOV_COMPLETE_LOOP_EVIDENCE_BOUND_CONTROLS_PARTIAL
+state: SOURCE_DOV_COMPLETE_LOOP_PRESSURE_LOADED_CONTROLS_PARTIAL
 authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
 
 completed:
@@ -16,6 +16,7 @@ completed:
   - EXTRACTED-TEXT-BINDING native source text extracted for all 63 bound slides and bound by per-slide SHA256
   - V16-BD-003 all 63 bound source slides reviewed against curated objects with explicit KEEP/MERGE/REFERENCE/SUPERSEDE disposition and no silent drop
   - V16-BD-004 1199/~1200/~1256 kW PCW scopes reconciled without changing underlying source values
+  - V16-BD-005 pressure loading split WCS room LOOP from Line-S cryogenic return transient and bound the remaining first-reds
 
 closed_first_red:
   - id: V16-BD-001
@@ -56,10 +57,19 @@ open_first_red:
   - id: V16-BD-005
     topic: loop_evidence
     priority: P0
-    state: EVIDENCE_BOUND_OPEN_TRANSIENT_MODEL_REQUIRED
-    closure: bind 17 kW / 350 kW / 6 h / ~2 h source statements to transient/load evidence and exact operating scenario
-    progress: exact source scenario/value binding completed; transient heat balance, thermal inventory, recovery-capacity proof and meaning of ~2 h onset are still missing
-    evidence: loop_evidence_v1_6.yaml
+    state: PRESSURE_LOADED_SCOPE_CONFLICTS_BOUND_MODEL_PENDING
+    closure: validate the exact WCS one-HP LOOP state and derive the claimed temporal envelope with a traceable first-law transient
+    progress:
+      - exact source scenario/value binding completed
+      - WCS room LOOP separated from D2.1/Line-S cryogenic-return transient; cross-domain analogy explicitly forbidden
+      - approximately 17 kW historical source lineage found but scope remains conflicted against 14+17 kW package air paths and 50-81 kW room residual sensitivities
+      - 350 kW diesel single-HP source allocation bound, but exact LOOP operating point remains open because current maximum package screen is approximately 357 kW before auxiliary allocation
+      - 350 kW emergency PCW source allocation bound, but PAB12 emergency hydraulic/temperature/pump-fan state remains unproven
+      - approximately 2 h onset remains physically undefined
+      - approximately 6 h stabilization remains unvalidated because room/equipment thermal inventory and criterion are missing
+    evidence:
+      - loop_evidence_v1_6.yaml
+      - loop_pressure_loading_v1_6.yaml
   - id: V16-BD-007
     topic: detailed_io
     priority: P1
@@ -94,6 +104,15 @@ adjacent_utilities_open:
   - PGB20 7 C role/diversity/requirement status
   - exact HX allocation, coolant state points and sizing basis
 
+bd005_pressure_first_red:
+  - freeze exact LOOP one-HP frequency / mass flow / electrical point and ES02 auxiliary split
+  - bind emergency PAB12 flow / pressure / temperatures / pump-fan power / valve state
+  - reconcile approximately 17 kW against package air-path and room-residual boundaries
+  - bind WCS room/equipment thermal inventory and HV03 LOOP airflow
+  - define the physical meaning and limit behind OR LOSS onset approximately 2 h
+  - define measurable stabilization criterion behind approximately 6 h
+  - execute and independently review first-law WCS thermal transient
+
 non_compensating_rules:
   - a visual or navigation PASS cannot grant engineering acceptance
   - source evidence gaps cannot be offset by layout quality
@@ -103,11 +122,13 @@ non_compensating_rules:
   - source/content DoV does not validate OPEN/WIP engineering statements
   - PNG rendering does not prove Microsoft PowerPoint or Office365 host-render parity
   - LOOP source repetition does not replace transient/load validation
+  - the D2.1/Line-S cryogenic transient cannot close the WCS-room LOOP transient by analogy
+  - nominal interface capacities do not prove the exact degraded operating point has electrical or hydraulic margin
   - Global/project DoV remains WITHHELD
 
 next_execution_order:
-  - V16-BD-006 close remaining signal-class conflicts only when discipline evidence supports it
-  - V16-BD-005 obtain transient/load evidence, thermal inventory and recovery-capacity proof
+  - V16-BD-005 freeze one-HP LOOP operating point plus ES02/PAB12/HV03 boundary conditions, then execute WCS first-law transient
+  - V16-BD-006 close remaining signal-class conflicts only when discipline evidence supports it; do not infer consequence from BD-005 working assumptions
   - V16-BD-008 refresh graph bindings to corrected v1.6 lineage after P0 engineering evidence is dispositioned
 
 source_proof_receipt:
@@ -125,5 +146,6 @@ engineering_reconciliation:
 
 loop_evidence:
   path: loop_evidence_v1_6.yaml
-  state: EVIDENCE_BOUND_OPEN_TRANSIENT_MODEL_REQUIRED
-  authority: SOURCE_SCENARIO_BINDING_NOT_TRANSIENT_VALIDATION
+  pressure_loading: loop_pressure_loading_v1_6.yaml
+  state: PRESSURE_LOADED_SCOPE_CONFLICTS_BOUND_MODEL_PENDING
+  authority: SOURCE_SCENARIO_BINDING_PLUS_PRESSURE_TEST_NOT_TRANSIENT_VALIDATION
