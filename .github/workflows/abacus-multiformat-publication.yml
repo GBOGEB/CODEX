@@ -1,0 +1,82 @@
+name: ABACUS Multi-Format Publication
+
+on:
+  pull_request:
+    paths:
+      - 'abacus_render_pipeline/A7_executable_semantic_runtime/**'
+      - 'abacus_render_pipeline/A9_multiformat_publication/**'
+      - 'codex/contract_governance/**'
+      - 'contract_governance/**'
+      - 'PIPELINE/GLOSSARY_EXTENSIONS.yaml'
+      - 'requirements/contract-governance.txt'
+      - '.github/workflows/abacus-multiformat-publication.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'abacus_render_pipeline/A7_executable_semantic_runtime/**'
+      - 'abacus_render_pipeline/A9_multiformat_publication/**'
+      - 'codex/contract_governance/**'
+      - 'contract_governance/**'
+      - 'PIPELINE/GLOSSARY_EXTENSIONS.yaml'
+      - 'requirements/contract-governance.txt'
+      - '.github/workflows/abacus-multiformat-publication.yml'
+
+jobs:
+  multiformat-publication:
+    runs-on: ubuntu-latest
+    env:
+      ABACUS_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install pinned production renderer dependencies
+        run: |
+          python -m pip install -r requirements/contract-governance.txt
+          python -m pip install jsonschema
+          python -m pip install --no-build-isolation --no-deps -e .
+
+      - name: Validate semantic vocabulary before rendering
+        run: python semantic_substrate/validators/validate_semantic_substrate.py
+
+      - name: Prove production PPTX and PDF builder regressions
+        run: |
+          pytest tests/contract_governance/test_pptx_builder.py tests/contract_governance/test_pdf_builder.py -q
+
+      - name: Execute production multi-format publication
+        working-directory: abacus_render_pipeline/A9_multiformat_publication
+        run: python multiformat_execution.py
+
+      - name: Independently validate all artifact hashes and parity
+        working-directory: abacus_render_pipeline/A9_multiformat_publication
+        run: python receipt_validation.py
+
+      - name: Issue one governed publication promotion receipt
+        working-directory: abacus_render_pipeline/A9_multiformat_publication
+        run: python publication_promotion.py
+
+      - name: Run A9 tamper parity and promotion tests
+        working-directory: abacus_render_pipeline/A9_multiformat_publication
+        run: python test_multiformat_execution.py
+
+      - name: Re-prove semantic closed loop after TUP-0012
+        working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
+        run: |
+          python test_closed_loop.py
+          python semantic_delta_replay.py
+
+      - name: Upload multi-format artifacts and governed receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: abacus-multiformat-publication-${{ env.ABACUS_SOURCE_SHA }}
+          if-no-files-found: warn
+          path: |
+            abacus_render_pipeline/A9_multiformat_publication/outputs/**
+            abacus_render_pipeline/A9_multiformat_publication/receipts/multiformat_execution_receipt.json
+            abacus_render_pipeline/A9_multiformat_publication/receipts/publication_promotion_receipt.json
