@@ -18,7 +18,7 @@ RECEIPT = HERE / "receipts" / "multiformat_execution_receipt.json"
 def _synthetic_hosted_receipt(result: dict) -> dict:
     pages = result["formats"]["github_pages"]
     return {
-        "receipt_version": "A9.1-PAGES",
+        "receipt_version": "A9.3-PAGES",
         "publication_id": result["publication_id"],
         "source_commit": result["source_commit"],
         "page_url": "https://example.invalid/CODEX/",
@@ -30,8 +30,13 @@ def _synthetic_hosted_receipt(result: dict) -> dict:
         "hosted_sha256": pages["artifact_sha256"],
         "hosted_bytes": pages["artifact_bytes"],
         "semantic_parity": pages["semantic_parity"],
-        "network_fetch_count": 1,
+        "network_fetch_count": 2,
         "fetch_method": "synthetic_test_fixture_no_network",
+        "required_consecutive_matches": 2,
+        "propagation_observations": [
+            {"attempt": 1, "hash_match": True, "semantic_pass": True, "consecutive_governed_matches": 1},
+            {"attempt": 2, "hash_match": True, "semantic_pass": True, "consecutive_governed_matches": 2},
+        ],
         "fetched_at_utc": "2026-09-14T00:00:00+00:00",
         "decision": "accept",
     }
@@ -106,6 +111,7 @@ def test_hosted_pages_receipt_unlocks_one_atomic_promotion() -> None:
             refetch=False,
         )
         assert hosted["decision"] == "accept"
+        assert hosted["required_consecutive_matches"] == 2
         promotion = evaluate(
             hosted_pages_receipt=hosted_path,
             refetch_hosted=False,
@@ -114,6 +120,22 @@ def test_hosted_pages_receipt_unlocks_one_atomic_promotion() -> None:
     assert set(promotion["artifact_sha256"]) == set(REQUIRED_FORMATS)
     assert promotion["checks"]["github_pages_hosted_receipt_valid"] is True
     assert promotion["hosted_pages"]["hosted_sha256"] == result["formats"]["github_pages"]["artifact_sha256"]
+
+
+def test_single_observation_hosted_receipt_is_rejected() -> None:
+    result = execute()
+    hosted = _synthetic_hosted_receipt(result)
+    hosted["required_consecutive_matches"] = 1
+    with tempfile.TemporaryDirectory() as temp_dir:
+        hosted_path = Path(temp_dir) / "hosted-single-observation.json"
+        hosted_path.write_text(json.dumps(hosted), encoding="utf-8")
+        promotion = evaluate(
+            hosted_pages_receipt=hosted_path,
+            refetch_hosted=False,
+        )
+    assert promotion["decision"] == "REJECT"
+    assert promotion["checks"]["github_pages_hosted_receipt_valid"] is False
+    assert "stable consecutive convergence" in str(promotion["hosted_pages_receipt_error"])
 
 
 def test_tampered_hosted_pages_hash_rejects_promotion() -> None:
@@ -140,5 +162,6 @@ if __name__ == "__main__":
     test_tampered_format_hash_is_rejected()
     test_atomic_promotion_withholds_without_hosted_pages_evidence()
     test_hosted_pages_receipt_unlocks_one_atomic_promotion()
+    test_single_observation_hosted_receipt_is_rejected()
     test_tampered_hosted_pages_hash_rejects_promotion()
-    print("A9.1 multi-format + hosted Pages receipt tests: PASS")
+    print("A9.3 multi-format + stable hosted Pages receipt tests: PASS")
