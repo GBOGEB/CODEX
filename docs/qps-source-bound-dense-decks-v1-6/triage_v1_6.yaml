@@ -1,13 +1,13 @@
 schema: qps-visual-system-triage/1.5
-version: '1.6.8'
-state: SOURCE_DOV_COMPLETE_D21_PROCESS_D22_REQUIREMENTS_BOUND_BD005_OPEN_CONTROLS_PARTIAL_GRAPH_MODE_MATRIX_BOUND
+version: '1.6.9'
+state: SOURCE_DOV_COMPLETE_D21_PROCESS_D22_REQUIREMENTS_BOUND_BD005_CONTRACT_BOUNDARY_SHARPENED_CONTROLS_PARTIAL_GRAPH_MODE_MATRIX_BOUND
 authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
 global_project_dov: WITHHELD
 state_reconciliation: state_reconciliation_v1_6.yaml
 session_handover: SESSION_HANDOVER_2026-09-14.md
 drop_in_continuation: DROP_IN_CONTINUATION_2026-09-14.md
 session_progress_ledger: SESSION_PROGRESS_LEDGER_2026-09-14.yaml
-first_red: V16-BD-005_LOOP_DEGRADED_BOUNDARY_AND_TRANSIENT_INPUTS
+first_red: V16-BD-005_CURRENT_OEM_PAB12_HV03_EXECUTABLE_INPUTS
 
 handover_reproduction_contract:
   canonical_outputs:
@@ -39,11 +39,16 @@ source_anchor_policy:
     reference: DSBT-TN-2024-19_Rev_4_0
     status: AGED_ACTIVE_ANCHOR_CURRENTNESS_CHECK_REQUIRED
     role: TECHNICAL_AND_PROJECT_REQUIREMENTS_ANCHOR
+  current_contractual_refinement:
+    title: Addendum II Technical Requirements
+    reference: SCK_CEN_90508872
+    role: CURRENT_CONTRACTUAL_REQUIREMENTS_SURFACE
+    rule: refines_current_contractual_boundary_without_erasing_D2_1_or_D2_2_provenance
   rule: >-
     Later revisions, interface lists, bidder evidence and analytical SSOTs may refine or challenge
     anchored values, but do not silently erase D2.1/D2.2 lineage. D2.1 process-concept behavior
-    and D2.2 requirement authority remain separate. A current final-design claim requires explicit
-    revision/change reconciliation.
+    and D2.2 requirement authority remain separate. Current contractual Addendum requirements govern
+    the tender boundary where applicable while retaining the D2.1/D2.2 provenance chain.
 
 completed:
   - V16-BD-001 exact source PPTX bytes bound to controlled Library file/version IDs and SHA256
@@ -54,6 +59,10 @@ completed:
   - five source-lineage misbindings repaired by BD-003 review
   - V16-BD-005 source scenario values bound and WCS-room LOOP separated from Line-S cryogenic-return transient
   - V16-BD-005 historical FSD575 air-side heat paths and diagnostic building geometry bound
+  - V16-BD-005 Addendum II contractual LOOP power, PCW, instrument-air, HVAC and abnormal-return boundaries bound
+  - V16-BD-005 six-hour pneumatic autonomy separated from the working six-hour thermal-stabilization statement
+  - V16-BD-005 LOOP compressor-room ambient heat ceiling bound at no more than 15 kW while HP exhaust ducts remain available without restriction
+  - derivative Support System ICD RTM labels demoted to navigation clues where they conflict with authoritative Addendum II numbering
   - D2.1 retained as process conceptual-design anchor and split into topology, model-physics and behavioral-state lanes
   - D2.1 Appendix 8.4 behavioral semantics recovered for minor QCELL fault, loss of utility, cryoplant trip and quench proposal
   - D2.1 source mode/state matrix extracted for cooldown, warmup, purge/fill and principal abnormal events
@@ -104,32 +113,35 @@ open_first_red:
   - id: V16-BD-005
     topic: loop_evidence
     priority: P0
-    state: ANCHOR_SOURCES_BOUND_CONTRACT_ROOM_GEOMETRY_AND_SITE_UTILITIES_BOUND_LOOP_DEGRADED_BOUNDARY_OPEN
-    closure: validate the exact one-HP WCS LOOP state and derive the temporal envelope with a traceable first-law transient
+    state: CONTRACTUAL_LOOP_BOUNDARY_SHARPENED_EXECUTABLE_TRANSIENT_INPUTS_OPEN
+    closure: validate the exact selected emergency WCS operating state and derive the temporal envelope with a traceable first-law transient
     progress:
-      - one-HP / 350 kW diesel / 350 kW emergency-PCW / approximately 17 kW / approximately 2 h / approximately 6 h source chain bound
-      - bidder approximately 110 g/s emergency-power claim bound as bidder evidence only
-      - WCS-room transient separated from D2.1/Line-S cryogenic-return transient without diminishing D2.1 authority for its own process lane
+      - bidder approximately 110 g/s emergency-power recovery claim bound as REVIEW_REQUIRED bidder evidence only
+      - contractual RTM-261 requires at least 100 g/s abnormal QRB.S return capability
+      - contractual RTM-401 provides up to 350 kW backup diesel power after an interruption of a few minutes without assigning the full boundary to one HP compressor
+      - contractual RTM-428 provides up to 350 kW backup cooling water after an interruption of a few minutes on the hydraulically common WCS header with reduced total flow allowed
+      - contractual RTM-432/433 bind no continuous normal instrument air during LOOP, initial-actuation header reserve, and six-hour pneumatic backup autonomy under full recovery load
+      - contractual RTM-434/435 bind dedicated HP exhaust ducts, maximum 120 kW steady-state WCS room-air heat, and at least 50 percent direct duct transfer
+      - contractual RTM-436 requires HP exhaust ducts to remain available without restriction during LOOP and limits compressor-room ambient heat to no more than 15 kW
+      - working approximately 6 h thermal-stabilization wording is not validated by the separate RTM-433 six-hour pneumatic autonomy requirement
+      - current analytical SSOT keeps 72 Hz / approximately 112 g/s / approximately 357 kW as an equipment-maximum reference and forbids linear power/CW scaling to the approximately-110-g/s LOOP point
+      - WCS-room transient remains separated from D2.1/Line-S cryogenic-return transient without diminishing D2.1 authority for its own process lane
       - D2.1 Section 5.6.5 and Appendix 8.4 provide abnormal-event timing, fallback and available-path process evidence for the Line-S lane
-      - D2.1 mode/state matrix now binds the source process sequence separately from current WCS-room engineering acceptance
+      - D2.1 mode/state matrix binds source process sequence separately from current WCS-room engineering acceptance
       - historical FSD575 source gives 5000 m3/h package cooling air, 4200 m3/h VFD cooling air, 17.4 kW cooling-air heat, 14.2 kW ambient heat and 5.7 kW VFD heat
-      - approximately 17 kW has strong provenance to one air-side path but is not total room-heat proof
+      - historical approximately 17 kW path remains provenance evidence but the contractual LOOP ambient room-heat ceiling is now no more than 15 kW
       - D2.2 CRYO-REQ-336 gives 16 x 14 m, approximately 220 m2, approximately 6.5 m ceiling and is the more specific direct anchor for the present room-volume diagnostic
       - approximately 8.5 m drawing section remains retained provenance and is not globally declared obsolete
       - gross D2.2 rectangular volume screen is approximately 1430-1456 m3, not free/effective air volume
-      - corrected air-only screen is approximately 35 K/h at 17 kW with zero ventilation/solid thermal mass and earns no design credit
-      - D2.2 CRYO-REQ-338 makes contractor dissipated-heat input mandatory and labels approximately 100 kW HVAC capability preliminary
-      - D2.2 section 7.4 binds 40% propylene glycol, 27 +/- 2 C supply, approximately 10 K rise and maximum 100 m3/h compressor-cooling flow
-      - later working WCS flow approximately 106 m3/h differs from the D2.2 100 m3/h anchor by about 6 percent; design-evolution/change reconciliation remains open
-      - D2.2 normal 1.2 MW compressor-room power and later 1397 kW WCS allocation are distinct dated surfaces; neither is discarded solely because the other is later
-      - CRYO-REQ-409 requires loss-of-utility safe-shutdown functional testing but does not set trip class or LOOP endurance
+      - derivative Support System ICD sheet exposed useful clues but its RTM numbering is not authoritative where it conflicts with Addendum II
       - approximately 2 h onset remains physically undefined
-      - approximately 6 h stabilization remains unvalidated
+      - approximately 6 h thermal stabilization remains unvalidated
     evidence:
       - loop_evidence_v1_6.yaml
       - loop_pressure_loading_v1_6.yaml
       - loop_hvac_boundary_v1_6.yaml
       - loop_contract_boundary_v1_6.yaml
+      - bd005_addendum_loop_boundary_v1_6.yaml
       - d2_1_behavioral_lineage_v1_6.yaml
       - d2_1_mode_state_matrix_v1_6.yaml
   - id: V16-BD-006
@@ -142,7 +154,7 @@ open_first_red:
       - d2_1_behavioral_lineage_v1_6.yaml
       - d2_1_mode_state_matrix_v1_6.yaml
     progress: tender-level classification plus source-bound D2.1 fallback/mode semantics are substantive but do not close discipline cause/effect, fail-safe/loss-of-signal, protocol ownership or L2 I/O
-    rule: D2.1 fallback semantics and CRYO-REQ-409 loss-of-utility safe-shutdown testing shall not force HARD_TRIP classification
+    rule: D2.1 fallback semantics and utility/LOOP requirements shall not force HARD_TRIP classification
   - id: V16-BD-007
     topic: detailed_io
     priority: P1
@@ -192,31 +204,31 @@ sanitized_d2_1_binding:
   next_action: bind exact sanitized file/version/hash when surfaced
 
 bd005_contract_first_red:
-  - bind current approved revisions/change lineage while retaining D2.1 and D2.2 as named evidence/provenance anchors
-  - obtain current contractor/OEM WCS dissipated-heat schedule required by CRYO-REQ-338
-  - obtain current OEM/VFD electrical input at bidder-claimed approximately 110 g/s LOOP state and bind ES02 auxiliary split
-  - bind emergency PAB12 flow/pressure/temperatures/pump-fan power/valve state against the diagnostic approximately 23-31 m3/h emergency target
-  - bind quantitative HV03 degraded/LOOP airflow, fan power and heat-removal state
-  - freeze package/VFD ducting and treatment of 17.4/14.2/5.7 kW air-side heat paths
+  - obtain current OEM or contractor HP operating point for the selected approximately-110-g/s emergency recovery state, including frequency, electrical input and cooling-water rejection
+  - bind ES02 auxiliary load split and demonstrate margin within the contractual up-to-350-kW backup-power boundary
+  - bind actual PAB12 LOOP flow, pressure, supply/return temperatures, pump/fan power and valve state within the RTM-428 reduced-flow common-header boundary
+  - obtain OFFER-35 HP duct interface size, flow rate and allowable pressure drop for the selected package
+  - bind quantitative HV03 degraded/LOOP room airflow or prove that RTM-436 duct path plus ambient-heat ceiling is sufficient for the selected thermal model boundary
   - bind effective building/equipment thermal mass and free/effective room volume
-  - define the physical variable and limit behind OR LOSS onset approximately 2 h
-  - define the measurable stabilization criterion behind approximately 6 h
+  - define the physical variable and limit behind the working approximately-2-h onset statement
+  - define the measurable thermal stabilization criterion behind the working approximately-6-h statement without confusing it with RTM-433 pneumatic autonomy
   - execute and independently review first-law WCS LOOP transient with uncertainty
 
 next_execution_order:
-  - V16-BD-005 reconcile current revision/change lineage plus degraded ES02/PAB12/HV03 boundary conditions without deleting D2.1/D2.2 provenance
-  - V16-BD-005 execute first-law WCS transient only after those inputs are evidence-bound
+  - V16-BD-005 acquire current OEM/contractor approximately-110-g/s operating point and OFFER-35 duct data
+  - V16-BD-005 bind PAB12 degraded hydraulic state and ES02 auxiliary split against contractual RTM-401/428 boundaries
+  - V16-BD-005 execute first-law WCS transient only after those inputs and thermal mass are evidence-bound
   - V16-BD-006 close remaining classifications only with discipline cause/effect evidence; do not infer consequence from process fallback or LOOP assumptions
   - V16-BD-008 in parallel complete Appendix 8.4 diagram/page and colour/valve-state visual binding into the existing overlay; do not close the graph while P0 engineering edges remain open
 
 three_pr_session_receipt:
   P1_recover: PASS_CURRENT_MAIN_SOURCE_LINEAGE_GRAPH_AND_D2_1_BEHAVIOR_RE_READ
-  P2_reconcile: PASS_AUTHORITY_LANES_TRANSIENT_LANES_SANITIZED_IDENTITY_AND_GRAPH_CARRIER_RECONCILED
-  P3_reenter: ACCEPT_SOURCE_LINEAGE_GRAPH_REENTRY_DEFER_ENGINEERING_CLOSURE
+  P2_reconcile: PASS_AUTHORITY_LANES_TRANSIENT_LANES_SANITIZED_IDENTITY_GRAPH_CARRIER_AND_ADDENDUM_LOOP_BOUNDARY_RECONCILED
+  P3_reenter: ACCEPT_CONTRACTUAL_LOOP_BOUNDARY_REENTRY_DEFER_EXECUTABLE_TRANSIENT_AND_ENGINEERING_CLOSURE
 
 mip_session_receipt:
-  modernize: repaired stale role semantics and reused existing graph/publication carriers
-  innovate: introduced D2.1 behavioral-edge overlay and source mode/state matrix without schema fork
+  modernize: corrected derivative RTM crosswalk against authoritative Addendum II and separated pneumatic six-hour autonomy from thermal stabilization wording
+  innovate: converted Addendum II limited-utility requirements into an explicit degraded-state model boundary without inventing missing flow or thermal-state inputs
   perpetuate: canonical TRIAGE/full-handover/drop-in files are refreshed in place after bounded pulses and major tuples; progression plus additive evidence ledgers remain separate
 
 non_compensating_rules:
@@ -224,15 +236,16 @@ non_compensating_rules:
   - source/content DoV does not validate OPEN/WIP engineering statements
   - retained source receipts cannot be invalidated by a stale narrative snapshot without contradictory execution evidence
   - historical tuple summaries cannot override stronger current TRIAGE/evidence
+  - derivative requirement tables cannot override authoritative Addendum numbering/content
   - source age is not source invalidity; D2.1 and D2.2 remain traceable anchors until explicit governed replacement/withdrawal is established
-  - D2.1 is process conceptual-design authority; D2.2 is technical/project-requirements authority
+  - D2.1 is process conceptual-design authority; D2.2 is technical/project-requirements authority; current Addendum II refines the contractual tender boundary
+  - contractual 350 kW backup power does not equal a proven single-HP load allocation
+  - contractual 350 kW backup PCW does not equal a proven emergency flow rate
+  - six-hour pneumatic backup autonomy does not validate six-hour thermal stabilization
+  - RTM-436 15 kW is a LOOP ambient heat ceiling, not a complete room thermal model
+  - duct availability does not equal quantitative HV03 room airflow
   - historical vendor data identifies provenance but is not current accepted design
-  - normal electrical/PCW/HVAC site interfaces are not emergency-mode guarantees
-  - preliminary HVAC sizing is not final HVAC capacity
-  - package cooling-air flow is not HV03 room airflow
-  - diagnostic room-air heating rates are not HVAC/safety calculations
   - D2.1 process fallback state does not assign SIL/MIS/MIT or HARD_TRIP by itself
-  - CRYO-REQ-409 does not assign a hard-trip class by itself
   - green or other drawing colour is not globally equated to valve OPEN/CLOSED without per-diagram legend/state binding
   - source-text mode extraction does not substitute for per-diagram visual valve-state proof
   - candidate I/O remains candidate until L2/detail design freezes it
