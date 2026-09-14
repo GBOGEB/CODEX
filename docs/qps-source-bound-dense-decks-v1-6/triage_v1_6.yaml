@@ -1,12 +1,22 @@
 schema: qps-visual-system-triage/1.5
-version: '1.6.6'
-state: SOURCE_DOV_COMPLETE_D21_PROCESS_D22_REQUIREMENTS_BOUND_BD005_OPEN_CONTROLS_PARTIAL_GRAPH_PREPARED
+version: '1.6.7'
+state: SOURCE_DOV_COMPLETE_D21_PROCESS_D22_REQUIREMENTS_BOUND_BD005_OPEN_CONTROLS_PARTIAL_GRAPH_MODE_MATRIX_BOUND
 authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
 global_project_dov: WITHHELD
 state_reconciliation: state_reconciliation_v1_6.yaml
 session_handover: SESSION_HANDOVER_2026-09-14.md
 drop_in_continuation: DROP_IN_CONTINUATION_2026-09-14.md
 first_red: V16-BD-005_LOOP_DEGRADED_BOUNDARY_AND_TRANSIENT_INPUTS
+
+handover_reproduction_contract:
+  canonical_outputs:
+    - triage_v1_6.yaml
+    - SESSION_HANDOVER_2026-09-14.md
+    - DROP_IN_CONTINUATION_2026-09-14.md
+  update_rule: after each bounded pulse refresh these same canonical outputs in place and preserve additive evidence ledgers separately
+  restart_rule: next session reads canonical outputs first, then only the evidence files named by current TRIAGE
+  no_architecture_restart: true
+  no_handover_framework_fork: true
 
 source_anchor_policy:
   principle: TEMPORAL_MATURITY_IS_SEPARATE_FROM_PROVENANCE_AUTHORITY
@@ -42,6 +52,8 @@ completed:
   - V16-BD-005 historical FSD575 air-side heat paths and diagnostic building geometry bound
   - D2.1 retained as process conceptual-design anchor and split into topology, model-physics and behavioral-state lanes
   - D2.1 Appendix 8.4 behavioral semantics recovered for minor QCELL fault, loss of utility, cryoplant trip and quench proposal
+  - D2.1 source mode/state matrix extracted for cooldown, warmup, purge/fill and principal abnormal events
+  - D2.1 named-valve behavior partially bound: CV503 cooldown flow; HV510/HV520 local purge/fill
   - D2.2 DSBT-TN-2024-19 Rev 4.0 retained as technical/project-requirements anchor
   - D2.2 CRYO-REQ-336 compressor-room geometry bound as the more specific present diagnostic geometry anchor
   - D2.2 CRYO-REQ-338 preliminary HVAC sizing obligation bound
@@ -49,6 +61,7 @@ completed:
   - D2.2 normal electrical and 40% propylene-glycol PCW site-interface boundaries bound
   - stale-branch merge collision from PR #700 reconciled by retained-evidence precedence
   - BD-008 source/lineage graph overlay prepared on existing v1.5 carrier without schema fork
+  - canonical handover refresh contract frozen so TRIAGE, full handover and drop-in restart remain synchronized
 
 closed_first_red:
   - id: V16-BD-001
@@ -92,7 +105,8 @@ open_first_red:
       - one-HP / 350 kW diesel / 350 kW emergency-PCW / approximately 17 kW / approximately 2 h / approximately 6 h source chain bound
       - bidder approximately 110 g/s emergency-power claim bound as bidder evidence only
       - WCS-room transient separated from D2.1/Line-S cryogenic-return transient without diminishing D2.1 authority for its own process lane
-      - D2.1 Section 5.6.5 and Appendix 8.4 now provide abnormal-event timing, fallback and available-path process evidence for the Line-S lane
+      - D2.1 Section 5.6.5 and Appendix 8.4 provide abnormal-event timing, fallback and available-path process evidence for the Line-S lane
+      - D2.1 mode/state matrix now binds the source process sequence separately from current WCS-room engineering acceptance
       - historical FSD575 source gives 5000 m3/h package cooling air, 4200 m3/h VFD cooling air, 17.4 kW cooling-air heat, 14.2 kW ambient heat and 5.7 kW VFD heat
       - approximately 17 kW has strong provenance to one air-side path but is not total room-heat proof
       - D2.2 CRYO-REQ-336 gives 16 x 14 m, approximately 220 m2, approximately 6.5 m ceiling and is the more specific direct anchor for the present room-volume diagnostic
@@ -112,6 +126,7 @@ open_first_red:
       - loop_hvac_boundary_v1_6.yaml
       - loop_contract_boundary_v1_6.yaml
       - d2_1_behavioral_lineage_v1_6.yaml
+      - d2_1_mode_state_matrix_v1_6.yaml
   - id: V16-BD-006
     topic: control_signal_classification
     priority: P0
@@ -120,7 +135,8 @@ open_first_red:
       - engineering_reconciliation_v1_6.yaml
       - control_signal_classification_v1_6.yaml
       - d2_1_behavioral_lineage_v1_6.yaml
-    progress: tender-level classification plus D2.1 process fallback semantics are substantive but do not close discipline cause/effect, fail-safe/loss-of-signal, protocol ownership or L2 I/O
+      - d2_1_mode_state_matrix_v1_6.yaml
+    progress: tender-level classification plus source-bound D2.1 fallback/mode semantics are substantive but do not close discipline cause/effect, fail-safe/loss-of-signal, protocol ownership or L2 I/O
     rule: D2.1 fallback semantics and CRYO-REQ-409 loss-of-utility safe-shutdown testing shall not force HARD_TRIP classification
   - id: V16-BD-007
     topic: detailed_io
@@ -133,8 +149,14 @@ open_first_red:
     evidence:
       - graph_binding_overlay_v1_6.yaml
       - d2_1_behavioral_lineage_v1_6.yaml
-    progress: source/provenance overlay is ready on the existing v1.5 tree/interface/control carrier; engineering edges remain open
-    closure: disposition BD-005/006 engineering edges and bind Appendix 8.4 mode-by-mode valve/legend semantics without schema fork
+      - d2_1_mode_state_matrix_v1_6.yaml
+    progress:
+      - source/provenance overlay ready on existing v1.5 tree/interface/control carrier
+      - source mode families bound for cooldown, warmup, purge/fill and principal abnormal events
+      - CV503 cooldown and HV510/HV520 purge/fill functions source-bound
+      - NC/NO fallback behavior source-bound for minor QCELL fault, loss of utility and cryoplant trip
+      - engineering edges remain open
+    closure: disposition BD-005/006 engineering edges and complete Appendix 8.4 diagram/page valve/colour-legend binding without schema fork
   - id: V16-BD-009
     topic: deterministic_render
     priority: P1
@@ -180,7 +202,7 @@ next_execution_order:
   - V16-BD-005 reconcile current revision/change lineage plus degraded ES02/PAB12/HV03 boundary conditions without deleting D2.1/D2.2 provenance
   - V16-BD-005 execute first-law WCS transient only after those inputs are evidence-bound
   - V16-BD-006 close remaining classifications only with discipline cause/effect evidence; do not infer consequence from process fallback or LOOP assumptions
-  - V16-BD-008 in parallel extract Appendix 8.4 per-mode valve/legend semantics into the existing overlay; do not close the graph while P0 engineering edges remain open
+  - V16-BD-008 in parallel complete Appendix 8.4 diagram/page and colour/valve-state visual binding into the existing overlay; do not close the graph while P0 engineering edges remain open
 
 three_pr_session_receipt:
   P1_recover: PASS_CURRENT_MAIN_SOURCE_LINEAGE_GRAPH_AND_D2_1_BEHAVIOR_RE_READ
@@ -189,8 +211,8 @@ three_pr_session_receipt:
 
 mip_session_receipt:
   modernize: repaired stale role semantics and reused existing graph/publication carriers
-  innovate: introduced D2.1 behavioral-edge overlay without schema fork
-  perpetuate: froze exact restart/handover, non-compensating gates and current BD queue
+  innovate: introduced D2.1 behavioral-edge overlay and source mode/state matrix without schema fork
+  perpetuate: canonical TRIAGE/full-handover/drop-in files are refreshed in place after bounded pulses; additive evidence ledgers remain separate
 
 non_compensating_rules:
   - a visual/navigation/publication PASS cannot grant engineering acceptance
@@ -206,6 +228,7 @@ non_compensating_rules:
   - D2.1 process fallback state does not assign SIL/MIS/MIT or HARD_TRIP by itself
   - CRYO-REQ-409 does not assign a hard-trip class by itself
   - green or other drawing colour is not globally equated to valve OPEN/CLOSED without per-diagram legend/state binding
+  - source-text mode extraction does not substitute for per-diagram visual valve-state proof
   - candidate I/O remains candidate until L2/detail design freezes it
   - Microsoft Office host reflow and ODP remain separate proof boundaries
   - Global/project DoV remains WITHHELD
