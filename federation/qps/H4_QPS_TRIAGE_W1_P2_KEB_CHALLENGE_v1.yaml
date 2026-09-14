@@ -1,0 +1,102 @@
+schema: qps-h4-w1-p2-keb-challenge/1.0
+as_of: '2026-09-14T09:57:00+02:00'
+mission: H4_QPS_TRIAGE
+wave: H4_QPS_TRIAGE:W1
+pulse: H4-QPS-W1-P2
+horizontal_lane: H2_KEB
+method: 3PR
+repository: GBOGEB/CODEX
+role: SEMANTIC_PROVENANCE_EXACT_SOURCE_CHALLENGE
+status: CHALLENGE_ARMED
+formal_credit_delta: 0
+authority_transfer: false
+
+purpose: >-
+  Test the proposed QPS TRIAGE applicability v0.3 reliability and Mission Control additions
+  against existing CODEX mesh-controller semantics, exact-source lineage and state-class separation.
+  Reuse canonical semantics; do not create a duplicate method framework.
+
+inputs:
+  applicability_candidate:
+    repo: GBOGEB/DOCX_RTM_Automation
+    pr: 56
+    head_sha_observed: 07f18595d65e6e9d982ddc153e4b3398ae4daa7c
+    artifact: federation/ADR_OCD/qps_triage_applicability.yaml
+    version: 0.3.0
+  mission_control_candidate:
+    repo: GBOGEB/pipeline-automation-hub
+    pr: 113
+    head_sha_observed: 154934368e665ba3fb9028f35d26b7e828425d8f
+    method_profile: mission-control/qps-triage-ultra/methods/QPS_TRIAGE_GLOBAL_METHOD_PROFILE_v1.md
+  child_boundary_candidate:
+    repo: GBOGEB/cryoplant-project
+    pr: 1121
+    head_sha_observed: 3ef8bae1ad8400ce0cb85b4b9df726d77129b616
+    artifact: controls/QPS_H4_W1_P1_RELIABILITY_CHILD_REENTRY_v0.1.yaml
+  canonical_controller:
+    repo: GBOGEB/CODEX
+    artifact: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
+    required_method_catalog: [3PR, MIP, 3PC, 3P3]
+
+challenge_contract:
+  - id: KEB-QT-001
+    name: method_semantic_reuse
+    expected: >-
+      Candidate method descriptions must be compatible with existing controller semantics and must
+      not redefine 3PR, MIP, 3PC or 3P3 into new authorities.
+  - id: KEB-QT-002
+    name: state_class_separation
+    expected: >-
+      QPS child engineering, tooling triage, reliability model and mission execution are separately
+      typed. Shared human words such as ACCEPT or ACTIVE do not imply cross-class promotion.
+  - id: KEB-QT-003
+    name: exact_source_lineage
+    expected: >-
+      SOURCE_BOUND reliability atoms preserve an exact child source locator/identity and bidder boundary
+      through the analytical consumer. Scenario and user override inputs remain visibly distinct.
+  - id: KEB-QT-004
+    name: component_system_anti_overclaim
+    expected: >-
+      Component MTBF/lambda cannot be interpreted as a system-event MTBF, Table-10 rate, N+1 proof or
+      accepted consequence without child architecture/recovery/common-cause/consequence re-entry.
+  - id: KEB-QT-005
+    name: mission_control_non_authority
+    expected: >-
+      Mission Control may plan, route, measure, compare and recommend with authority_transfer=false;
+      it cannot mutate child engineering disposition.
+  - id: KEB-QT-006
+    name: pca_bt_non_authority
+    expected: >-
+      PCA, BT, reverse pressure and PB remain diagnostics or scheduler signals and cannot create
+      engineering/compliance/negotiation/acceptance/release credit.
+  - id: KEB-QT-007
+    name: first_blocker_recursion
+    expected: >-
+      3PR refreshes state, MIP runs only for an observed gap, 3PC is bounded/transactional, and 3P3
+      runs once only when local DoV is satisfied but reusable propagation proof remains missing.
+
+observed_semantic_assessment:
+  method_catalog_match: PASS_CANDIDATE
+  state_class_separation: PASS_CANDIDATE
+  exact_source_requirement: PASS_CANDIDATE
+  component_system_boundary: PASS_CANDIDATE
+  mission_control_authority_guard: PASS_CANDIDATE
+  pca_bt_authority_guard: PASS_CANDIDATE
+  stop_rule_alignment: PASS_CANDIDATE
+  note: >-
+    These are document-level semantic challenge results only. Exact-head repository validation is still
+    required before this pulse can emit a durable KR receipt.
+
+CG: KEB_SEMANTIC_CHALLENGE_EXACT_HEAD_PASS_WITH_NO_DUPLICATE_FRAMEWORK
+BG: EXACT_HEAD_VALIDATION_NOT_YET_OBSERVED
+EX: CANDIDATE_DOCUMENT_REVIEWED
+QH: PASS_CANDIDATE
+KR: PENDING_EXACT_SHA_RUNTIME_OR_REPO_CHECK
+DR: READY
+SR: PASS_CANDIDATE
+WD: CONTINUE_TO_EXACT_HEAD_PROOF
+PB: ZERO_AUTHORITY_CREDIT
+
+stop_rule: >-
+  If exact-head validation passes without new semantic debt, emit the P2 receipt and stop KEB expansion.
+  Do not add further ontology or method layers merely for symmetry.
