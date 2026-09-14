@@ -188,9 +188,11 @@ def execute() -> dict[str, Any]:
     markdown_path = OUTPUT_DIR / f"{ssot.package_id}_{TIER}.md"
     _render_markdown(payload, canonical_digest, markdown_path)
 
-    pages_path = OUTPUT_DIR / "github_pages" / "index.html"
-    pages_path.parent.mkdir(parents=True, exist_ok=True)
+    pages_dir = OUTPUT_DIR / "github_pages"
+    pages_path = pages_dir / "index.html"
+    pages_dir.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(html_path, pages_path)
+    (pages_dir / ".nojekyll").write_text("", encoding="utf-8")
 
     html_text = _html_text(html_path)
     pptx_text, pptx_postbuild = _pptx_text(pptx_path)
@@ -250,13 +252,15 @@ def execute() -> dict[str, Any]:
         "github_pages": _format_receipt(
             name="github_pages",
             path=pages_path,
-            renderer_version="abacus-github-pages-adapter/1.0.0",
+            renderer_version="abacus-github-pages-adapter/1.1.0",
             text=pages_text,
             telemetry={
                 "layout_pass": True,
                 "overflow_pass": True,
-                "method": "byte-identical_production_html_deployment_surface",
+                "method": "byte_identical_production_html_pages_deployment_candidate",
                 "source_html_sha256": sha256_path(html_path),
+                "hosted_deployment_required": True,
+                "hosted_deployment_proven": False,
             },
             parity=_parity(pages_text, expected_tokens),
         ),

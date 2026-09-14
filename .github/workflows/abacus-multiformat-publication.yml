@@ -25,6 +25,8 @@ on:
 jobs:
   multiformat-publication:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     env:
       ABACUS_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
 
@@ -48,29 +50,29 @@ jobs:
         run: |
           pytest tests/contract_governance/test_pptx_builder.py tests/contract_governance/test_pdf_builder.py -q
 
-      - name: Execute production multi-format publication
+      - name: Execute production multi-format publication candidates
         working-directory: abacus_render_pipeline/A9_multiformat_publication
         run: python multiformat_execution.py
 
-      - name: Independently validate all artifact hashes and parity
+      - name: Independently validate all candidate artifact hashes and parity
         working-directory: abacus_render_pipeline/A9_multiformat_publication
         run: python receipt_validation.py
 
-      - name: Issue one governed publication promotion receipt
+      - name: Prove atomic promotion is withheld before hosted Pages evidence
         working-directory: abacus_render_pipeline/A9_multiformat_publication
-        run: python publication_promotion.py
+        run: python publication_promotion.py --allow-withhold
 
-      - name: Run A9 tamper parity and promotion tests
+      - name: Run A9.3 tamper parity hosted-Pages and promotion tests
         working-directory: abacus_render_pipeline/A9_multiformat_publication
         run: python test_multiformat_execution.py
 
-      - name: Re-prove semantic closed loop after TUP-0012
+      - name: Re-prove semantic closed loop at TUP-0012 stability gate
         working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
         run: |
           python test_closed_loop.py
           python semantic_delta_replay.py
 
-      - name: Upload multi-format artifacts and governed receipts
+      - name: Upload multi-format candidates and pre-deployment receipts
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -79,4 +81,72 @@ jobs:
           path: |
             abacus_render_pipeline/A9_multiformat_publication/outputs/**
             abacus_render_pipeline/A9_multiformat_publication/receipts/multiformat_execution_receipt.json
+            abacus_render_pipeline/A9_multiformat_publication/receipts/publication_promotion_receipt.json
+
+      - name: Package governed Pages candidate for real deployment
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: abacus_render_pipeline/A9_multiformat_publication/outputs/github_pages
+
+  deploy-and-prove-pages:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: multiformat-publication
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+
+    steps:
+      - name: Deploy governed artifact to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install independent receipt validation dependencies
+        run: |
+          python -m pip install -r requirements/contract-governance.txt
+          python -m pip install jsonschema
+          python -m pip install --no-build-isolation --no-deps -e .
+
+      - name: Recover exact candidate artifacts and execution receipt
+        uses: actions/download-artifact@v4
+        with:
+          name: abacus-multiformat-publication-${{ github.sha }}
+          path: abacus_render_pipeline/A9_multiformat_publication
+
+      - name: Wait for hosted Pages to converge and create execution receipt
+        working-directory: abacus_render_pipeline/A9_multiformat_publication
+        env:
+          ABACUS_SOURCE_SHA: ${{ github.sha }}
+          ABACUS_PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: python hosted_pages_receipt.py
+
+      - name: Independently reconverge hosted Pages and issue one atomic promotion receipt
+        working-directory: abacus_render_pipeline/A9_multiformat_publication
+        env:
+          ABACUS_SOURCE_SHA: ${{ github.sha }}
+          ABACUS_VERIFY_HOSTED_PAGES: '1'
+        run: python publication_promotion.py
+
+      - name: Upload hosted publication proof and final promotion receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: abacus-pages-proof-${{ github.sha }}
+          if-no-files-found: warn
+          path: |
+            abacus_render_pipeline/A9_multiformat_publication/receipts/github_pages_hosted_receipt.json
             abacus_render_pipeline/A9_multiformat_publication/receipts/publication_promotion_receipt.json

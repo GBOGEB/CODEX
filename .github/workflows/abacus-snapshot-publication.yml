@@ -1,0 +1,81 @@
+name: ABACUS Snapshot Publication
+
+on:
+  pull_request:
+    paths:
+      - 'abacus_render_pipeline/A7_executable_semantic_runtime/**'
+      - 'abacus_render_pipeline/A9_multiformat_publication/**'
+      - 'abacus_render_pipeline/A10_snapshot_publication/**'
+      - 'codex/contract_governance/**'
+      - 'contract_governance/**'
+      - 'PIPELINE/GLOSSARY_EXTENSIONS.yaml'
+      - 'requirements/contract-governance.txt'
+      - '.github/workflows/abacus-snapshot-publication.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'abacus_render_pipeline/A7_executable_semantic_runtime/**'
+      - 'abacus_render_pipeline/A9_multiformat_publication/**'
+      - 'abacus_render_pipeline/A10_snapshot_publication/**'
+      - 'codex/contract_governance/**'
+      - 'contract_governance/**'
+      - '.github/workflows/abacus-snapshot-publication.yml'
+
+jobs:
+  snapshot-publication:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      ABACUS_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install governed publication and snapshot dependencies
+        run: |
+          python -m pip install -r requirements/contract-governance.txt
+          python -m pip install playwright==1.55.0
+          python -m pip install --no-build-isolation --no-deps -e .
+          python -m playwright install --with-deps chromium
+
+      - name: Validate semantic vocabulary before visual execution
+        run: python semantic_substrate/validators/validate_semantic_substrate.py
+
+      - name: Execute real Chromium PNG snapshot from governed A9 HTML
+        working-directory: abacus_render_pipeline/A10_snapshot_publication
+        run: python snapshot_execution.py
+
+      - name: Independently validate PNG and carrier content hashes
+        working-directory: abacus_render_pipeline/A10_snapshot_publication
+        run: python receipt_validation.py
+
+      - name: Issue one six-surface governed promotion receipt
+        working-directory: abacus_render_pipeline/A10_snapshot_publication
+        run: python snapshot_promotion.py
+
+      - name: Run snapshot tamper telemetry and promotion tests
+        working-directory: abacus_render_pipeline/A10_snapshot_publication
+        run: python test_snapshot_execution.py
+
+      - name: Re-prove semantic closed loop at TUP-0013
+        working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
+        run: |
+          python test_closed_loop.py
+          python semantic_delta_replay.py
+
+      - name: Upload image-native execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: abacus-snapshot-publication-${{ env.ABACUS_SOURCE_SHA }}
+          if-no-files-found: error
+          path: |
+            abacus_render_pipeline/A10_snapshot_publication/outputs/governance_snapshot.png
+            abacus_render_pipeline/A10_snapshot_publication/receipts/snapshot_execution_receipt.json
+            abacus_render_pipeline/A10_snapshot_publication/receipts/snapshot_promotion_receipt.json
+            abacus_render_pipeline/A9_multiformat_publication/receipts/multiformat_execution_receipt.json
