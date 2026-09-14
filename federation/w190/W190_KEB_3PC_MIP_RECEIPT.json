@@ -1,0 +1,45 @@
+{
+  "schema_version": "w190-keb-3pc-mip-receipt/1.0",
+  "wave": "W190",
+  "created_utc": "2026-09-14T17:14:00Z",
+  "repo": "GBOGEB/CODEX",
+  "role": "KEB_SEMANTIC_RUNTIME_RECEIPT",
+  "consumed_child": {
+    "pr": "https://github.com/GBOGEB/cryoplant-project/pull/1178",
+    "head_sha": "bc93ce38e3266099470e49904749c5bd2d31d64d"
+  },
+  "consumed_dow": {
+    "pr": "https://github.com/GBOGEB/ABACUS/pull/1213",
+    "head_sha": "857152cca43a1ac10a68f5db3e81153f70830a15"
+  },
+  "three_pc_receipt": {
+    "PREPARE": "PASS_EXACT_HEAD_CHAIN_IDENTIFIED",
+    "PROVE": "PARTIAL_HANDOVER_CHAIN_PRESENT_OPEN_BLOCKERS_REMAIN",
+    "COMMIT": "DEFER_GLOBAL_DOV_WITH_RECEIPT_CHAIN_OPEN"
+  },
+  "mip_receipt": {
+    "modernize": "Codifies the restart/handover surface as durable exact-head receipt records.",
+    "innovate": "Makes the handover itself a governed cross-repo payload.",
+    "perpetuate": "Preserves exact-SHA, ACCEPT/REJECT/DEFER and fresh-checkout repeat gates."
+  },
+  "keb_disposition": "ACCEPT_HANDOVER_CHAIN_DEFER_GLOBAL_DOV",
+  "reason": "Child and DOW handover records exist at exact PR heads. KEB accepts the handover chain while withholding global engineering/release DoV until open blockers close and child re-entry repeats.",
+  "disposition_records": [
+    {
+      "disposition": "ACCEPT",
+      "current": true,
+      "scope": "W190 handover chain receipt"
+    },
+    {
+      "disposition": "REJECT",
+      "current": false,
+      "scope": "exact-SHA mismatch or invalid DOW/child payload"
+    },
+    {
+      "disposition": "DEFER",
+      "current": true,
+      "scope": "global engineering/release DoV"
+    }
+  ],
+  "drop_in_text_pointer": "cryoplant-project:federation/w190/W190_FULL_3PC_MIP_HANDOVER.md"
+}
