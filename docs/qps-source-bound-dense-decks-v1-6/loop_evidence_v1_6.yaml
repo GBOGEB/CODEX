@@ -1,0 +1,158 @@
+schema: qps-loop-evidence/1.0
+version: '1.6'
+authority: SOURCE_SCENARIO_BINDING_NOT_TRANSIENT_VALIDATION
+bd_id: V16-BD-005
+state: EVIDENCE_BOUND_OPEN_TRANSIENT_MODEL_REQUIRED
+scenario_id: LOOP-OFFSITE-POWER-LOSS-WCS-ONE-HP
+scenario:
+  start_condition: loss of off-site power
+  source_operating_description: reduced cooling / backup operation with one HCC or HP compressor supported by backup power
+  affected_support_systems: [ES02, HV03, PS01, PGB20]
+  equipment_state:
+    wcs_hcc: one HCC / HP compressor operating on backup basis
+    pab12: backup fans and pump stated as powered in the working scenario
+    ventilation: maintained for equipment safety in the working scenario
+    odh_monitoring: active
+  occupancy:
+    state: RESTRICTED_OR_NOT_ALLOWED
+    source_wording: occupancy not allowed without full BA set; HV03/HV02 context is source-specific
+    authority: SOURCE_WORKING_SCENARIO
+  thermal_inventory:
+    state: NOT_SPECIFIED_IN_BOUND_SOURCES
+    consequence: no independent thermal transient can be reconstructed from the bound slides alone
+  recovery_objective:
+    source_wording: approximately 6 h window sufficient for stabilization, OR LOSS
+    normalized_for_curation: stabilization/recovery working window
+    guarantee: false
+values:
+  - id: LOOP-VAL-001
+    quantity: electrical_backup
+    value: 350
+    unit: kW
+    scope: single_HP_compressor_backup_basis
+    source_evidence:
+      - source_id: SRC-UTIL-CANONICAL-APPENDIX
+        source_slide: 53
+        statement: Diesel Backup 350 kW; LOOP Event; 400 V 3-phase for a single HP compressor.
+      - source_id: SRC-UTIL-CORE
+        source_slide: 20
+        statement: running 1 HCC skid with 350 kW back-up power.
+    evidence_status: SOURCE_EXPLICIT_SCENARIO_BOUND
+    acceptance_credit: NONE
+  - id: LOOP-VAL-002
+    quantity: emergency_pcw_capacity
+    value: 350
+    unit: kW
+    scope: dedicated_LOOP_event_PAB12_backup_logic
+    source_evidence:
+      - source_id: SRC-UTIL-CANONICAL-APPENDIX
+        source_slide: 53
+        statement: Emergency PCW 350 kW dedicated for LOOP event; served by PAB12 backup logic.
+    evidence_status: SOURCE_EXPLICIT_INTERFACE_TABLE
+    acceptance_credit: NONE
+  - id: LOOP-VAL-003
+    quantity: residual_heat_dissipation
+    value: 17
+    unit: kW
+    qualifier: APPROXIMATE
+    scope: working LOOP scenario with one HCC skid on 350 kW backup power
+    source_evidence:
+      - source_id: SRC-UTIL-CORE
+        source_slide: 19
+        statement: Residual heat dissipation approximately 17 kW.
+      - source_id: SRC-UTIL-CORE
+        source_slide: 20
+        statement: Residual heat approximately 17 kW; running 1 HCC skid with 350 kW back-up power.
+      - source_id: SRC-UTIL-CORE
+        source_slide: 21
+        statement: Residual heat dissipation approximately 17 kW.
+    evidence_status: SOURCE_EXPLICIT_WORKING_SCENARIO_UNVALIDATED
+    missing_validation: equipment heat balance / room thermal transient for the exact degraded state
+    acceptance_credit: NONE
+  - id: LOOP-VAL-004
+    quantity: stabilization_recovery_window
+    value: 6
+    unit: h
+    qualifier: APPROXIMATE
+    scope: source working scenario after loss of off-site power
+    source_evidence:
+      - source_id: SRC-UTIL-CORE
+        source_slide: 19
+        statement: 6-hour recovery window sufficient for stabilization, OR LOSS.
+      - source_id: SRC-UTIL-CORE
+        source_slide: 20
+        statement: Recovery window approximately 6 hours; sufficient for stabilization, OR LOSS.
+      - source_id: SRC-UTIL-CORE
+        source_slide: 21
+        statement: 6-hour recovery window sufficient for stabilization, OR LOSS.
+    evidence_status: SOURCE_EXPLICIT_WORKING_SCENARIO_UNVALIDATED
+    missing_validation: transient model defining stabilization criterion, thermal inventory, recovery capacity and boundary conditions
+    acceptance_credit: NONE
+  - id: LOOP-VAL-005
+    quantity: onset_concern
+    value: 2
+    unit: h
+    qualifier: APPROXIMATE
+    scope: source working scenario; exact onset mechanism is not defined in the bound slide
+    source_evidence:
+      - source_id: SRC-UTIL-CORE
+        source_slide: 20
+        statement: OR LOSS - onset 2 hours.
+    evidence_status: SOURCE_EXPLICIT_AMBIGUOUS_UNVALIDATED
+    missing_validation: define the physical variable/limit that reaches onset and prove it by transient calculation
+    acceptance_credit: NONE
+conditions:
+  ventilation:
+    source_state: MAINTAINED_FOR_EQUIPMENT_SAFETY
+    evidence:
+      - [SRC-UTIL-CORE, 19]
+      - [SRC-UTIL-CORE, 20]
+      - [SRC-UTIL-CORE, 21]
+    open_question: exact LOOP power/airflow capacity for HV03/HV02 is not quantified in the bound slides
+  odh:
+    source_state: MONITORING_ACTIVE
+    evidence:
+      - [SRC-UTIL-CORE, 19]
+      - [SRC-UTIL-CORE, 20]
+      - [SRC-UTIL-CORE, 21]
+    note: active ODH monitoring does not itself prove safe occupancy
+  occupancy:
+    source_state: RESTRICTED
+    evidence:
+      - [SRC-UTIL-CORE, 19]
+      - [SRC-UTIL-CORE, 20]
+      - [SRC-UTIL-CORE, 21]
+    note: source slide 20 explicitly states NOT ALLOWED without full BA set; exact facility rule remains to be governed by ODH/safety basis
+controls_boundary:
+  controls_may_own:
+    - detected LOOP / utility-availability state
+    - degraded-mode selection
+    - permissive or mode-inhibit consequence when discipline evidence supports it
+    - operator indication and warning
+    - occupancy/access state input
+    - controlled shutdown/recovery sequencing
+  controls_must_not_infer:
+    - automatic HARD_TRIP solely from utility loss
+    - 6 h autonomy guarantee
+    - 2 h safety threshold
+    - validated 17 kW transient heat load
+close_predicate:
+  exact_scenario_binding: PASS
+  source_value_binding: PASS
+  transient_load_validation: FAIL_MISSING
+  thermal_inventory_binding: FAIL_MISSING
+  recovery_capacity_validation: FAIL_MISSING
+  bd_close_allowed: false
+next_evidence_required:
+  - transient room/equipment heat-balance for one-HCC LOOP state
+  - defined thermal inventory and initial conditions
+  - verified ES02 load list and single-HP operating envelope
+  - verified emergency-PCW/PAB12 flow and capacity under LOOP
+  - defined meaning and physical mechanism of the ~2 h onset statement
+  - defined stabilization/recovery criterion for the ~6 h statement
+non_compensating_rules:
+  - source repetition is not transient validation
+  - arithmetic consistency is not a recovery proof
+  - controls classification cannot manufacture missing thermal evidence
+  - no design, safety, acceptance or global/project DoV credit is granted
+  - Global/project DoV remains WITHHELD
