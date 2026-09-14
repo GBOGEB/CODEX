@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ABACUS Multi-format Renderer Execution Receipt",
+  "type": "object",
+  "required": [
+    "receipt_version",
+    "publication_id",
+    "source_commit",
+    "theme",
+    "render_mode",
+    "required_formats",
+    "ssot_sha256",
+    "tuple_ledger_sha256",
+    "expected_content_sha256",
+    "artifacts",
+    "cross_format_parity",
+    "semantic_replay",
+    "decision"
+  ],
+  "properties": {
+    "receipt_version": {"const": "A8.2"},
+    "publication_id": {"type": "string"},
+    "source_commit": {"type": "string"},
+    "theme": {"enum": ["light", "dark"]},
+    "render_mode": {"type": "string"},
+    "required_formats": {
+      "type": "array",
+      "prefixItems": [{"const": "pptx"}, {"const": "pdf"}],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "ssot_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "tuple_ledger_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "expected_content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifacts": {
+      "type": "object",
+      "required": ["pptx", "pdf"],
+      "properties": {
+        "pptx": {"$ref": "#/$defs/artifact"},
+        "pdf": {"$ref": "#/$defs/artifact"}
+      }
+    },
+    "cross_format_parity": {
+      "type": "object",
+      "required": ["pass", "pptx_content_sha256", "pdf_content_sha256"],
+      "properties": {
+        "pass": {"type": "boolean"},
+        "pptx_content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "pdf_content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "semantic_replay": {
+      "type": "object",
+      "required": ["pass", "status"],
+      "properties": {
+        "pass": {"type": "boolean"},
+        "status": {"type": "string"}
+      }
+    },
+    "decision": {"enum": ["accept", "reject"]}
+  },
+  "$defs": {
+    "artifact": {
+      "type": "object",
+      "required": [
+        "artifact_sha256",
+        "renderer_version",
+        "mime_type",
+        "native_telemetry",
+        "checks",
+        "decision"
+      ],
+      "properties": {
+        "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "renderer_version": {"type": "string"},
+        "mime_type": {"type": "string"},
+        "native_telemetry": {"type": "object"},
+        "checks": {
+          "type": "object",
+          "required": ["layout", "overflow", "content"],
+          "properties": {
+            "layout": {"type": "object", "required": ["pass"]},
+            "overflow": {"type": "object", "required": ["pass"]},
+            "content": {"type": "object", "required": ["pass"]}
+          }
+        },
+        "decision": {"enum": ["accept", "reject"]}
+      }
+    }
+  }
+}
