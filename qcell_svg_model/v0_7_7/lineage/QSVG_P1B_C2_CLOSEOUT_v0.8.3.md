@@ -1,71 +1,72 @@
 # QSVG-P1B C2 visual-control closeout — v0.8.3
 
-## Disposition
+## Final disposition
 
 `C2_VISUAL_CONTROL = CLOSED_PASS_EXACT_HEAD_REPEAT`
 
 This closeout is limited to visual-control semantics. It grants no engineering/SAT/OPEX/negotiation/release authority.
 
-## BD contraction
+## Evidence correction retained
 
-- `QSVG-BD-003 text/annotation collision control` → **CLOSED_PASS_EXACT_HEAD_REPEAT**
-- `QSVG-BD-004 layer-state control` → **CLOSED_PASS_EXACT_HEAD_REPEAT**
+The first workflow version named its checkout step “exact SHA” but used default `actions/checkout` pull-request behavior. Those runs exercised the synthetic PR merge ref and are retained only as integration evidence.
 
-## Implemented controls
+The repaired workflow explicitly checks out the PR head SHA, records `git rev-parse HEAD`, and fails unless they match.
+
+## Final semantic contract enforced
 
 1. Persistent local layer state with governed reset-to-default.
 2. Explicit collision-box contract for exclusive annotation/legend regions.
 3. Fail-closed executable checker.
-4. CI workflow `QCELL SVG Visual Control`.
-5. Big teaching arrows required OFF by default.
-6. Dotted endpoint guides required present.
-7. Pressure overlay required absent/deferred in current MAIN.
-8. A/B/D/E values required present.
-9. Temperature heat-map label required present.
-10. Review-derived thermal semantic guards added:
-   - nominal 50 K shield must use a single authoritative 50 K colour;
-   - right-to-left parasitic heat paths must use direction-correct reversed gradients;
-   - A/B dark-card text contrast must be explicitly white.
+4. Big teaching arrows OFF by default.
+5. Dotted endpoint guides present.
+6. Pressure overlay absent/deferred.
+7. A/B/D/E semantic labels present.
+8. Temperature heat-map label present.
+9. Nominal 50 K shield uses one authoritative 50 K colour.
+10. Right-to-left heat paths use direction-correct gradients.
+11. A/B dark-card text uses explicit white contrast.
+12. Outer parasitic endpoint markers terminate orange.
+13. Inner 50→2 K endpoint markers terminate authoritative 2 K blue (`#0618aa`).
 
-## Exact-head runtime evidence
+## Exact-head repeat evidence
 
-### Run A
-- head: `280c17e0b5b9f57b775d2d7c0665c44444446a88`
-- run: `34839673188`
-- job: `103961455798`
-- result: PASS
+### Final-semantics A
 
-### Run B
-- head: `86e31ba3b6cec24dca0dfee7e238818733be1a4a`
-- run: `34839729228`
-- job: `103961635886`
-- result: PASS
+- subject head: `c2722c6e82b9fc189e7ce7bbdeb15254c0fb0f52`
+- run: `34840954601`
+- job: `103965576478`
+- result: **PASS**
+- exact subject checkout: success
+- explicit SHA equality assertion: success
+- strengthened visual-control checker: success
 
-### Run C — strengthened semantic checker
-- head: `deabaaacd7cb4c103fab25ae84e402c74be6b27d`
-- run: `34840022581`
-- job: `103962561407`
-- result: PASS
+### Final-semantics B — distinct SHA
 
-All observed runs completed the exact-SHA checkout, Python setup, and fail-closed QCELL visual-control step successfully.
+- subject head: `8b326c1be3e33e094cf1bb74eb23c28a6fc751c1`
+- run: `34841132734`
+- job: `103966131277`
+- result: **PASS**
+- exact subject checkout: success
+- explicit SHA equality assertion: success
+- strengthened visual-control checker: success
 
-## Remaining critical-path BD
+No canonical SVG/HTML/SSOT semantic change was introduced between A and B; B is the required distinct-head repeat.
 
-The active core lane now contracts to **C3 PROOF_AND_REPEAT**, principally:
+## BD contraction
 
-- `QSVG-BD-005` — clean YAML→SVG→HTML regeneration determinism: OPEN.
-- `QSVG-BD-008` — typed visual receipt: implemented but should be promoted from draft to generator-bound canonical receipt during P1C.
-- `QSVG-BD-009` — stable-artifact distinct-SHA repeat: CLOSED on P1A after review repair.
+- `QSVG-BD-003` → `CLOSED_PASS_EXACT_HEAD_REPEAT`
+- `QSVG-BD-004` → `CLOSED_PASS_EXACT_HEAD_REPEAT`
+- `C2_VISUAL_CONTROL` → `CLOSED_PASS_EXACT_HEAD_REPEAT`
 
-`QSVG-BD-010 CONTROL` remains WITHHELD until C3 closes.
+## Remaining core frontier
 
-## Deferred/non-blocking
+Only C3 remains on the local core path:
+- `QSVG-BD-005` deterministic SSOT regeneration;
+- `QSVG-BD-008` generator-bound canonical typed receipt.
 
-- `QSVG-BD-006` pressure overlay.
-- `QSVG-BD-007` hosted HTML path.
+`QSVG-BD-009` remains closed after post-review stable-artifact repeat.
+`QSVG-BD-010 CONTROL` remains WITHHELD until C1 and C3 are formally closed.
 
-## Next frontier
+Deferred/non-blocking: BD-006 pressure overlay and BD-007 hosted HTML.
 
-`QSVG-P1C — deterministic SSOT regeneration + canonical receipt`.
-
-Do not reopen MAIN geometry unless an observed review/runtime failure demands a bounded repair.
+Authority: `VISUAL_SEMANTIC_ONLY`.
