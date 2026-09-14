@@ -1,7 +1,7 @@
 # QPS Visual Knowledge System — Lossless Session Handover
 
 Date: 2026-09-14
-Current control version: `v1.6.9`
+Current control version: `v1.6.10`
 Repository: `GBOGEB/CODEX`
 Scope: QPS v1.6 source-bound Utilities / Controls / Naming / LOOP / graph lineage
 Authority: `ENGINEERING_CURATION_NOT_DESIGN_APPROVAL`
@@ -295,13 +295,13 @@ Critical reconciliations:
 - `72 Hz / ~112 g/s / ~357 kW` remains an equipment-maximum reference and is not linearly scalable into the selected LOOP point;
 - the derivative Support System ICD sheet is retained as a navigation clue only where its RTM numbering diverges from Addendum II.
 
-### Current BD-005 state
+### Current BD-005 state at v1.6.9
 
 `CONTRACTUAL_LOOP_BOUNDARY_SHARPENED_EXECUTABLE_TRANSIENT_INPUTS_OPEN`
 
 Newly closed subquestions are contractual backup-power ceiling/delay, backup-PCW thermal ceiling/common-header degraded-flow allowance, pneumatic-autonomy scope, LOOP ambient-room heat ceiling, HP exhaust-duct availability, and contractual abnormal QRB.S minimum flow.
 
-### Current first-red after v1.6.9
+### First-red after v1.6.9
 
 1. current OEM/contractor HP operating point at selected `~110 g/s`: Hz, kW, cooling-water rejection;
 2. ES02 auxiliary split and margin within the up-to-350-kW backup boundary;
@@ -312,5 +312,95 @@ Newly closed subquestions are contractual backup-power ceiling/delay, backup-PCW
 7. physical variable/limit behind working `~2 h` onset;
 8. measurable thermal criterion behind working `~6 h` stabilization, kept separate from IA autonomy;
 9. first-law WCS transient with uncertainty and independent review.
+
+BD-006 remains `PARTIAL_EVIDENCE_BOUND`; BD-008 remains `PREPARED_P0_GATED`; global/project DoV remains `WITHHELD`.
+
+## 14. v1.6.10 current delta — direct current LKT FSD575 / EPS / OFFER-35 evidence
+
+This section is additive. It supersedes only the uncertainty identified in the v1.6.9 first-red where direct current bidder evidence has now been recovered; it does not delete the earlier state/history.
+
+New evidence ledger: `bd005_current_lkt_fsd575_loop_point_v1_6.yaml`.
+
+### Direct current bidder selection and maximum point
+
+The current LKT Offer 1 directly selects **four KAESER FSD575 SFC water-cooled compressors**. The current technical table gives, for one selected package:
+
+- motor rated power: **315 kW**;
+- suction: **1.05 bara / 298 K**;
+- discharge design condition: **14 bara**;
+- maximum helium flow: **112.0 g/s (-2/+5%) at 72 Hz**;
+- package power input at that point: **357 kW ±5%**.
+
+This is now current bidder evidence; the historical/prestudy bridge is no longer needed to establish the selected model or the 72 Hz maximum point.
+
+It is still **not** the proven LOOP operating point because the current bidder also sets the emergency-power limitation at **350 kW** and separately claims maximum LOOP recovery of approximately **110 g/s**. No exact bidder/OEM Hz + power value for that lower LOOP point has yet been found, and linear scaling remains prohibited as acceptance proof.
+
+### EPS topology reconciled
+
+The current proposal interface table says emergency supply is provided for at least two compressors. OFFER-22 resolves the apparent contradiction:
+
+- **two main compressors are connected to emergency power**;
+- because of diesel-generator size, **only one compressor can operate** during LOOP;
+- the claimed abnormal/LOOP S-line recovery capacity is **up to approximately 110 g/s** with that one compressor.
+
+Therefore the former “one vs two compressor” architectural conflict is closed as **redundant electrical connection / single simultaneous operation**. The remaining electrical first-red is quantitative: prove the exact one-compressor LOOP operating point and total EPS load margin inside 350 kW.
+
+The preliminary single-line diagram exposes approximately **500 W UPS per compressor** for local control but leaves the main required-power field unresolved; it is not a complete ES02 critical-load list.
+
+### Current cooling-air / OFFER-35 evidence
+
+The selected current FSD575 table binds:
+
+- main cooling air: **5000 m³/h**;
+- SFC cooling air: **4200 m³/h**;
+- maximum additional duct pressure drop: **40 Pa**;
+- compressor cooling-air heat: **17.4 kW**;
+- SFC cooling-air heat: **10.7 kW**;
+- ambient radiation: **13.9 kW**;
+- heat-recovery branch at max load: **229 kW at 7.9 m³/h for ΔT 25°C**.
+
+The OFFER-35 response explicitly points the HP-compressor answer to Technical Part Chapter 6. Thus **airflow and allowable pressure drop are now current-source-bound**. TAX06 shows the cooling-air inlet/outlet interface locations and dimensions, but no single unambiguous duct-connection size has been promoted; that geometry remains open.
+
+The current technical proposal also places exhaust ducting in Contracting Authority scope and requires compressor exhaust cooling air to be led outside the compressor room.
+
+The **13.9 kW ambient-radiation term** is numerically below the contractual RTM-436 LOOP ambient-room ceiling of **≤15 kW**, but this is not a room-transient closure. The 17.4/10.7 kW terms are explicitly cooling-air paths; installed routing, effective room thermal mass and degraded-room/HV03 behavior still require proof.
+
+### Current cooling-water evidence
+
+The current normal utility table gives compressor cooling water as **4 × 18.5 = 78 m³/h**, with:
+
+- supply pressure **3–8 barg**;
+- supply temperature **20–30°C**;
+- return temperature **≤45°C**;
+- temperature rise **≤15 K**.
+
+This is a current **normal** per-compressor reference, not a LOOP/PAB12 hydraulic state. The current Basis of Process Design explicitly marks **Recovery Cooling Water without glycol: TO BE DEFINED**. That statement is stronger than any inference from the normal 18.5 m³/h value and keeps PAB12 degraded hydraulics open.
+
+### Current BD-005 state after v1.6.10
+
+`CURRENT_SELECTED_MODEL_MAX_POINT_EPS_ROUTING_AND_AIRSIDE_BOUND_EXECUTABLE_LOOP_POINT_OPEN`
+
+Newly closed subquestions:
+
+- selected current HP compressor model;
+- current 72 Hz maximum flow/power reference;
+- main/SFC cooling-air flows;
+- allowable added duct Δp;
+- current air-side heat-path split;
+- normal per-compressor cooling-water reference;
+- two-EPS-connected vs one-running semantics;
+- OFFER-35 airflow and allowable pressure-drop response.
+
+### Sharpened first-red after v1.6.10
+
+1. obtain bidder/OEM confirmation of the exact **LOOP Hz / flow / package-power point** that delivers approximately 110 g/s with adequate margin inside the 350 kW EPS limit;
+2. bind the complete **ES02 critical auxiliary load split and simultaneity**;
+3. bind actual **PAB12 / Recovery Cooling Water** flow, pressure, supply/return temperatures, pump/fan power and valve state — currently explicitly `TO BE DEFINED`;
+4. bind an unambiguous **OFFER-35 duct connection size / vendor connection specification**;
+5. bind effective room/equipment thermal mass and free/effective air volume;
+6. bind quantitative degraded HV03/room airflow, or prove that the installed duct path plus ambient boundary is sufficient for the selected thermal model;
+7. define the physical variable/limit behind working `~2 h` onset;
+8. define the measurable thermal criterion behind working `~6 h` stabilization without conflating it with six-hour pneumatic autonomy;
+9. only then execute the first-law WCS LOOP transient with uncertainty and independent review.
 
 BD-006 remains `PARTIAL_EVIDENCE_BOUND`; BD-008 remains `PREPARED_P0_GATED`; global/project DoV remains `WITHHELD`.

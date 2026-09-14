@@ -143,6 +143,49 @@ entries:
     global_project_dov: WITHHELD
     engineering_credit_delta: 0
 
+  - tuple_id: TUPLE-006
+    user_intent: >-
+      Proceed with the current BD-005 first-red in the same chat while maintaining the lossless
+      major-tuple artifacts and preserving non-compensating engineering gates.
+    executed_delta:
+      - direct current LKT Offer 1 source was re-read rather than relying on the analytical SSOT abstraction
+      - current selected HP equipment was bound as four KAESER FSD575 SFC water-cooled compressors
+      - current bidder maximum point was bound at 112.0 g/s at 14 bara and 72 Hz with 357 kW plus/minus 5 percent package power
+      - current bidder cooling-air paths were bound at 5000 m3/h main and 4200 m3/h SFC with 40 Pa maximum added duct pressure drop
+      - current bidder heat-path split was bound at 17.4 kW compressor cooling-air heat, 10.7 kW SFC cooling-air heat and 13.9 kW ambient radiation
+      - current normal compressor cooling-water reference was bound at 4 x 18.5 m3/h with 3-8 barg supply, 20-30 C supply, <=45 C return and <=15 K rise
+      - current Basis of Process Design confirmed emergency-power limitation 350 kW while Recovery Cooling Water without glycol remains explicitly TO BE DEFINED
+      - current OFFER-22 resolved apparent two-compressor conflict: two main compressors are connected to emergency power for redundancy but generator size permits only one to operate
+      - current LOOP recovery claim remains maximum approximately 110 g/s with one emergency-powered compressor
+      - OFFER-35 direct response now binds flow and allowable pressure drop through Technical Part Chapter 6; duct interface size remains not unambiguously bound
+      - TAX06 current offer drawing confirms cooling-air inlet/outlet interface locations and dimensions are represented without promoting an uncertain connection size
+      - bd005_current_lkt_fsd575_loop_point_v1_6.yaml added
+    bd_movement:
+      BD_005: OPEN_BUT_CURRENT_SELECTED_MODEL_MAX_POINT_EPS_ROUTING_AND_AIR_SIDE_BOUND
+      BD_006: NO_CHANGE_PARTIAL_EVIDENCE_BOUND
+      BD_008: NO_CHANGE_PREPARED_P0_GATED
+    newly_closed_subquestions:
+      - current_selected_HP_compressor_model
+      - current_72Hz_maximum_flow_and_power_reference
+      - current_main_and_SFC_cooling_air_flow
+      - current_allowable_added_duct_pressure_drop
+      - current_air_side_heat_path_breakdown
+      - current_normal_per_compressor_cooling_water_reference
+      - EPS_two_connected_vs_one_running_semantics
+      - OFFER35_flow_and_allowable_pressure_drop
+    sharpened_first_red:
+      - exact_LOOP_Hz_flow_power_point_that_delivers_claimed_approximately_110_g_s_with_margin_inside_350_kW_EPS
+      - complete_ES02_critical_auxiliary_load_split_and_simultaneity
+      - actual_PAB12_recovery_cooling_water_flow_pressure_temperatures_pump_fan_power_and_valve_state
+      - unambiguous_OFFER35_duct_connection_size_or_vendor_connection_specification
+      - effective_room_and_equipment_thermal_inventory
+      - quantitative_degraded_room_airflow_or_sufficient_installed_boundary_proof
+      - physical_definition_of_working_approximately_2_h_onset
+      - measurable_definition_of_working_approximately_6_h_stabilization
+      - first_law_WCS_LOOP_transient_and_independent_review
+    global_project_dov: WITHHELD
+    engineering_credit_delta: 0
+
 restart_reconstruction:
   order:
     - triage_v1_6.yaml
