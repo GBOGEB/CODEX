@@ -37,7 +37,7 @@ def evaluate() -> dict[str, Any]:
         "snapshot_content_address_revalidated": snapshot.get("snapshot_sha256") is not None,
         "source_commit_bound": snapshot.get("source_commit") == a9.get("source_commit"),
         "closed_loop_passed": closed_loop.get("status") == "PASS",
-        "semantic_replay_passed": replay.get("status") == "PASS",
+        "replay_passed": replay.get("status") == "PASS",
         "traceable_tuple_count": closed_loop.get("completeness", {}).get("tuple_count", 0) >= 13,
     }
     promote = all(checks.values())
