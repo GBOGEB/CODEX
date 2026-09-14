@@ -96,10 +96,50 @@ entries:
       - append-only SESSION_PROGRESS_LEDGER_2026-09-14.yaml introduced
       - same three canonical outputs remain the only handover surfaces to refresh in place
       - minor turns are folded into the next major tuple to avoid noisy repository churn
+    repo_receipt:
+      PR_712_merge: 7bb7e624859afe84ab5c1754169e791b2b30a66a
     bd_movement:
       BD_005: NO_CHANGE_OPEN_FIRST_RED
       BD_006: NO_CHANGE_PARTIAL
       BD_008: NO_CHANGE_PREPARED_P0_GATED
+    global_project_dov: WITHHELD
+    engineering_credit_delta: 0
+
+  - tuple_id: TUPLE-005
+    user_intent: >-
+      Continue execution in the same chat under the lossless major-tuple contract, with BD-005 as the
+      first-red and source/lineage work remaining non-compensating.
+    executed_delta:
+      - current negotiation evidence independently reconfirmed the approximately-110-g/s single-emergency-compressor bidder concept as REVIEW_REQUIRED/OPEN
+      - current analytical SSOT reconfirmed 72-Hz / approximately-112-g/s / approximately-357-kW as an equipment-maximum reference, not a valid interpolated LOOP operating point
+      - authoritative Addendum II RTM-401 bound up-to-350-kW diesel power after a few minutes without assigning that full boundary to one HP compressor
+      - authoritative Addendum II RTM-428 bound up-to-350-kW backup cooling water after a few minutes on the hydraulically common WCS header with reduced total flow allowed
+      - authoritative Addendum II RTM-432/433 separated six-hour pneumatic backup autonomy from the unrelated working approximately-six-hour thermal-stabilization statement
+      - authoritative Addendum II RTM-434/435/436 bound HP exhaust-duct topology, steady-state air-side limits, unrestricted LOOP duct availability, and no-more-than-15-kW compressor-room ambient heat during LOOP
+      - authoritative Addendum II RTM-258/260/261/262 bound limited-service LOOP recovery and at-least-100-g/s abnormal QRB.S return requirement
+      - derivative Support System ICD sheet retained only as a navigation clue after its RTM numbering was shown to diverge from authoritative Addendum II numbering
+      - bd005_addendum_loop_boundary_v1_6.yaml added
+    bd_movement:
+      BD_005: OPEN_BUT_CONTRACTUAL_DEGRADED_BOUNDARY_MATERIALLY_SHARPENED
+      BD_006: NO_CHANGE_PARTIAL_EVIDENCE_BOUND
+      BD_008: NO_CHANGE_PREPARED_P0_GATED
+    newly_closed_subquestions:
+      - contractual_LOOP_power_ceiling_and_delay
+      - contractual_LOOP_PCW_thermal_ceiling_and_common_header_degraded_flow_allowance
+      - six_hour_pneumatic_autonomy_semantic_scope
+      - contractual_LOOP_ambient_room_heat_ceiling
+      - contractual_HP_exhaust_duct_availability
+      - contractual_abnormal_QRB_S_minimum_flow
+    remaining_first_red:
+      - exact_OEM_or_contractor_HP_operating_point_near_110_g_per_s
+      - ES02_auxiliary_split_and_margin
+      - actual_PAB12_degraded_hydraulic_state
+      - OFFER_35_duct_flow_size_and_allowable_pressure_drop
+      - quantitative_HV03_degraded_room_airflow_or_heat_removal_state
+      - effective_building_and_equipment_thermal_mass
+      - physical_definition_of_working_approximately_2_h_onset
+      - measurable_definition_of_working_approximately_6_h_stabilization
+      - first_law_WCS_LOOP_transient_and_independent_review
     global_project_dov: WITHHELD
     engineering_credit_delta: 0
 
