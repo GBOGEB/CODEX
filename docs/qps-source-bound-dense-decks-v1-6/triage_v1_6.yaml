@@ -1,0 +1,81 @@
+schema: qps-visual-system-triage/1.0
+version: 1.6
+state: SOURCE_BOUND_PARTIAL_CONTROL
+authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
+
+completed:
+  - source deck filenames bound
+  - exact source slide ranges bound for core Utilities content
+  - exact source slide ranges bound for core Controls content
+  - dense Utilities canonical candidate written
+  - dense Controls canonical candidate written
+  - cross-domain ownership boundary established
+  - source inconsistencies preserved as review items
+
+open_first_red:
+  - id: V16-BD-001
+    topic: source_digests
+    priority: P0
+    state: OPEN
+    closure: ingest exact source PPTX bytes and record SHA256
+  - id: V16-BD-002
+    topic: source_slide_renders
+    priority: P0
+    state: OPEN
+    closure: produce stable image/render per bound source slide
+  - id: V16-BD-003
+    topic: source_vs_curated_visual_dov
+    priority: P0
+    state: OPEN
+    closure: compare source render and curated slide/object with content-loss disposition
+  - id: V16-BD-004
+    topic: utilities_value_reconciliation
+    priority: P0
+    state: OPEN
+    closure: resolve 1199/~1200/~1256 kW PCW definitions from load basis/interface evidence
+  - id: V16-BD-005
+    topic: loop_evidence
+    priority: P0
+    state: OPEN
+    closure: bind 17 kW / 350 kW / 6 h / ~2 h source statements to transient/load evidence and operating scenario
+  - id: V16-BD-006
+    topic: control_signal_classification
+    priority: P0
+    state: OPEN
+    closure: map every candidate signal to monitor/warning/permissive/hard-trip/mode-inhibit/occupancy class
+  - id: V16-BD-007
+    topic: detailed_io
+    priority: P1
+    state: OPEN
+    closure: exact point counts and marshalling frozen at L2
+  - id: V16-BD-008
+    topic: graph_binding_refresh
+    priority: P1
+    state: OPEN
+    closure: graph nodes link to promoted v1.6 objects and lineage records
+  - id: V16-BD-009
+    topic: deterministic_render
+    priority: P1
+    state: DEFER_TO_V1_7
+    closure: YAML drives HTML/SVG without hand-maintained layout truth
+  - id: V16-BD-010
+    topic: governed_exports
+    priority: P1
+    state: DEFER_TO_V1_8
+    closure: source-bound HTML renders to receipt-governed PDF/PPTX/ODP
+
+non_compensating_rules:
+  - a visual or navigation PASS cannot grant engineering acceptance
+  - source evidence gaps cannot be offset by layout quality
+  - safety/interlock classification requires discipline evidence
+  - utilities source inconsistencies remain OPEN until reconciled by governing engineering sources
+  - candidate I/O remains candidate until L2/detail control design freezes it
+
+next_execution_order:
+  - V16-BD-001 source digests
+  - V16-BD-002 source slide renders
+  - V16-BD-004 utilities value reconciliation
+  - V16-BD-006 signal classification
+  - V16-BD-003 source-vs-curated visual DoV
+  - V16-BD-005 LOOP evidence
+  - V16-BD-008 graph refresh
