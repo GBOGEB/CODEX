@@ -1,0 +1,168 @@
+schema: qps-engineering-reconciliation/1.0
+version: '1.6'
+authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
+created: '2026-09-14'
+
+utilities:
+  bd_id: V16-BD-004
+  topic: PCW_scope_reconciliation
+  state: CLOSED_SCOPE_RECONCILED
+  governing_surface:
+    source: QPS_Supporting_Systems_FULL_SLINE_parallel_canonical_v3_appendix.pptx
+    source_slides: [53, 54]
+    upstream_pointer: NA.AA_BMA003 - Interface List CRYO - ACC NF.xlsx / SCK CEN/48341616
+    upstream_workbook_ingested: false
+  reconciliation:
+    - value_kw: 1199
+      semantic_scope: WCS_HP_ONLY
+      evidence_class: SOURCE_EXPLICIT
+      note: Interface table allocation for WCS HP.
+    - value_kw: 1200
+      qualifier: APPROXIMATE
+      semantic_scope: WCS_HP_OR_HCC_ROUNDED_WORKING_VALUE
+      evidence_class: SOURCE_EXPLICIT_ROUNDED
+      relation: approximately 1199 kW
+    - value_kw: 57
+      semantic_scope: PVPS
+      evidence_class: SOURCE_EXPLICIT
+    - value_kw: 1256
+      semantic_scope: WCS_HP_PLUS_PVPS
+      evidence_class: DERIVED_EXACT_ARITHMETIC_FROM_SOURCE_EXPLICIT_ALLOCATIONS
+      equation: 1199 + 57 = 1256
+      caution: Some working slides visually label 1256 kW as HCC/PCW; treat that label as scope-imprecise, not as a competing HP-only duty.
+    - value_kw: 44
+      semantic_scope: QRB
+      evidence_class: SOURCE_EXPLICIT
+    - value_kw: 1300
+      semantic_scope: TOTAL_QPS_PCW_INTERFACE_CAPACITY
+      evidence_class: SOURCE_EXPLICIT_AND_ARITHMETICALLY_CLOSED
+      equation: 1199 + 57 + 44 = 1300
+  conclusion: The 1199/~1200/~1256 kW values are not three competing design duties. 1199 kW is WCS HP-only; ~1200 kW is its rounded working representation; 1256 kW is the exact WCS HP+PVPS subtotal; 1300 kW is the QPS PCW interface total after adding 44 kW QRB.
+  non_claims:
+    - This does not prove the underlying NA.AA_BMA003 workbook because that exact workbook was not found/ingested.
+    - This does not freeze coolant temperatures, glycol derating, flow, diversity, or equipment sizing.
+    - This does not disposition LOOP emergency PCW.
+
+  adjacent_open_items:
+    HVAC:
+      state: OPEN_SEMANTIC_DISTINCTION
+      observations:
+        - 124 kW appears as a facility/interface HVAC capacity in one source surface.
+        - 120 kW appears as an approximate compressor-room heat-load working value.
+        - Another recovered source surface carries 134 kW total HVAC with 124 kW WCS + 10 kW QRB, demonstrating source drift that must not be silently normalized.
+    gaseous_nitrogen:
+      state: OPEN_ALLOCATION
+      source_total_lpm: 375
+      listed_allocations_lpm:
+        WCS: 50
+        QRB: 50
+      residual_unallocated_lpm: 275
+      note: Preserve residual as unallocated; do not manufacture subsystem balance.
+    PGB20:
+      state: OPEN_WIP
+      source_role: chilled_water_7C_currently_for_HVAC
+      open_questions: [baseline_role, chilled_water_duty, diversity_assumption, requirement_vs_design_proposal_vs_WIP]
+
+controls:
+  bd_id: V16-BD-006
+  state: PARTIAL_EVIDENCE_BOUND_CONFLICT_REMAINS
+  classification_authority: TENDER_CANDIDATE_ONLY
+  taxonomy: [MONITOR, WARNING, PERMISSIVE, SLOW_INTERLOCK, HARD_TRIP, MODE_INHIBIT, OCCUPANCY_CONSTRAINT]
+  candidate_groups:
+    - logical_id: WCS-CW-AVAILABLE
+      source_group: Cooling-water available
+      path: MIS / MIT
+      source_intent: Permissive + monitor
+      classification: PERMISSIVE
+      secondary_behavior: MONITOR
+      status: SOURCE_EXPLICIT_TENDER_CANDIDATE
+    - logical_id: WCS-HVAC-HEALTHY
+      source_group: HVAC healthy / airflow proven
+      path: MIS
+      source_intent: Startup permissive
+      classification: OCCUPANCY_CONSTRAINT
+      secondary_behavior: MODE_INHIBIT_CANDIDATE
+      status: CONFLICT_REQUIRES_DISCIPLINE_DISPOSITION
+      conflict: Another source states HV02/HV03 failure is slow/not interlock and occupancy-specific. Do not promote to hard trip.
+    - logical_id: WCS-IA-AVAILABLE
+      source_group: Instrument air available
+      path: MIS / MIT
+      source_intent: Support utility status
+      classification: SLOW_INTERLOCK
+      secondary_behavior: MONITOR
+      status: SOURCE_SUPPORTED_BUT_CAUSE_EFFECT_DETAIL_PENDING
+    - logical_id: WCS-COMPRESSOR-STATUS
+      source_group: Compressor run / ready / fault
+      path: MIT
+      source_intent: HMI + sequence
+      classification: MONITOR
+      status: SOURCE_EXPLICIT_TENDER_CANDIDATE
+    - logical_id: WCS-PROCESS-TELEMETRY
+      source_group: Pressure / temperature / flow
+      path: MIT
+      source_intent: Process telemetry
+      classification: MONITOR
+      status: SOURCE_EXPLICIT_TENDER_CANDIDATE
+    - logical_id: WCS-COMMON-TRIP-ESD
+      source_group: Common trip / ESD chain
+      path: MIS
+      source_intent: Hard interlock
+      classification: HARD_TRIP
+      status: SOURCE_EXPLICIT_TENDER_CANDIDATE
+    - logical_id: WCS-ALARM-SUMMARY
+      source_group: Alarm summary to MCS
+      path: Broker / MIT
+      source_intent: Remote operator view
+      classification: WARNING
+      status: SOURCE_EXPLICIT_TENDER_CANDIDATE
+    - logical_id: QINFRA-HEADER-PT
+      source_group: S/U/W header P-T at TP
+      path: MIT
+      source_intent: Monitoring
+      classification: MONITOR
+      status: SOURCE_EXPLICIT_TENDER_CANDIDATE
+    - logical_id: QINFRA-BRANCH-P-ALARM
+      source_group: Branch high / low pressure alarm
+      path: MIT / MCS
+      source_intent: Operations alarm
+      classification: WARNING
+      status: SOURCE_EXPLICIT_TENDER_CANDIDATE
+    - logical_id: QINFRA-ODH-SUPPORT-NONTRIP
+      source_group: ODH / support non-trip alarms
+      path: MIS slow
+      source_intent: Warning / permissive
+      classification: WARNING
+      secondary_behavior: PERMISSIVE_CANDIDATE
+      status: SOURCE_EXPLICIT_NONTRIP_BOUNDARY
+    - logical_id: QINFRA-HARD-TRIP-SAFE-ISOLATION
+      source_group: Hard trip / safe isolation
+      path: MIS
+      source_intent: Interlock
+      classification: HARD_TRIP
+      status: SOURCE_EXPLICIT_TENDER_CANDIDATE
+    - logical_id: QINFRA-ACCESSORY-STATUS
+      source_group: Accessory status
+      path: MCS_QINFRA_3lines
+      source_intent: Ancillary control
+      classification: MONITOR
+      status: SOURCE_EXPLICIT_TENDER_CANDIDATE
+    - logical_id: QINFRA-OPERATOR-SUMMARY
+      source_group: Operator summary to MCS
+      path: Broker / MIT
+      source_intent: Remote overview
+      classification: MONITOR
+      status: SOURCE_EXPLICIT_TENDER_CANDIDATE
+  unresolved:
+    - HVAC startup-permissive wording versus occupancy-specific slow/non-interlock wording requires discipline disposition.
+    - Isolation valve command/feedback combines a command function with feedback; exact permissive/interlock consequence remains L2/ICD work.
+    - Instrument-air loss consequence needs exact cause/effect and fail-safe state.
+    - Exact point counts, marshalling, PLC allocation and package-level expansion remain V16-BD-007/L2.
+  bd_close_predicate: Every candidate group has one controlled primary classification and conflicts are dispositioned by discipline evidence.
+  current_bd_disposition: KEEP_OPEN
+
+non_compensating_rules:
+  - Utilities arithmetic reconciliation does not create facility capacity approval.
+  - Tender candidate control classification does not create functional-safety credit.
+  - MIS path membership is not inferred solely from operational importance.
+  - Detailed I/O remains candidate until L2 freezes it.
+  - Global/project DoV remains WITHHELD.
