@@ -70,29 +70,93 @@ def _extract_html_text(data: bytes) -> str:
     return parser.text()
 
 
-def _fetch_hosted_bytes(url: str, retries: int = 3, delay_seconds: float = 2.0) -> tuple[int, bytes, str]:
+def _fetch_hosted_match(
+    url: str,
+    *,
+    expected_sha256: str,
+    expected_tokens: list[str],
+    retries: int = 12,
+    delay_seconds: float = 5.0,
+    required_consecutive_matches: int = 2,
+) -> tuple[int, bytes, str, int]:
+    if required_consecutive_matches < 2:
+        raise ValueError("hosted Pages independent validation requires at least two consecutive matches")
+
     last_error: Exception | None = None
+    consecutive_matches = 0
+    last_match: tuple[int, bytes, str, int] | None = None
+    observations: list[dict[str, Any]] = []
+
     for attempt in range(1, retries + 1):
         request = urllib.request.Request(
             url,
             headers={
-                "User-Agent": "ABACUS-A9-independent-pages-validator/1.0",
+                "User-Agent": "ABACUS-A9-independent-pages-validator/1.1",
                 "Cache-Control": "no-cache",
                 "Pragma": "no-cache",
             },
         )
+        observation: dict[str, Any] = {"attempt": attempt}
         try:
             with urllib.request.urlopen(request, timeout=30) as response:
                 status = int(getattr(response, "status", 200))
                 body = response.read()
-                if status == 200 and body:
-                    return status, body, str(response.geturl())
-                last_error = RuntimeError(f"unexpected hosted response status={status} bytes={len(body)}")
+                final_url = str(response.geturl())
+                fetched_sha = hashlib.sha256(body).hexdigest()
+                hosted_text = _extract_html_text(body) if body else ""
+                missing_tokens = [token for token in expected_tokens if token not in hosted_text]
+                governed_match = (
+                    status == 200
+                    and bool(body)
+                    and fetched_sha == expected_sha256
+                    and not missing_tokens
+                )
+                observation.update(
+                    {
+                        "http_status": status,
+                        "bytes": len(body),
+                        "sha256": fetched_sha,
+                        "hash_match": fetched_sha == expected_sha256,
+                        "semantic_pass": not missing_tokens,
+                        "missing_token_count": len(missing_tokens),
+                        "final_url": final_url,
+                    }
+                )
+                if governed_match:
+                    consecutive_matches += 1
+                    last_match = (status, body, final_url, attempt)
+                    observation["consecutive_governed_matches"] = consecutive_matches
+                    observations.append(observation)
+                    if consecutive_matches >= required_consecutive_matches:
+                        assert last_match is not None
+                        return last_match
+                else:
+                    consecutive_matches = 0
+                    observation["consecutive_governed_matches"] = 0
+                    observations.append(observation)
+                    last_error = ValueError(
+                        "hosted response has not converged to governed candidate: "
+                        f"status={status} sha={fetched_sha} expected={expected_sha256} "
+                        f"missing_tokens={len(missing_tokens)}"
+                    )
         except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
+            consecutive_matches = 0
             last_error = exc
+            observation.update(
+                {
+                    "network_error": str(exc),
+                    "consecutive_governed_matches": 0,
+                }
+            )
+            observations.append(observation)
+
         if attempt < retries:
             time.sleep(delay_seconds)
-    raise ValueError(f"independent hosted Pages refetch failed after {retries} attempts: {last_error}")
+
+    raise ValueError(
+        "independent hosted Pages did not converge to the governed artifact after "
+        f"{retries} attempts: last_error={last_error}; tail={json.dumps(observations[-5:], sort_keys=True)}"
+    )
 
 
 def load_and_validate_receipt(receipt_path: Path) -> dict[str, Any]:
@@ -218,7 +282,7 @@ def load_and_validate_hosted_pages_receipt(
     missing = sorted(required - set(hosted))
     if missing:
         raise ValueError(f"hosted Pages receipt missing fields: {missing}")
-    if hosted["receipt_version"] != "A9.1-PAGES":
+    if hosted["receipt_version"] != "A9.3-PAGES":
         raise ValueError(f"unexpected hosted Pages receipt version: {hosted['receipt_version']}")
     if hosted["publication_id"] != execution["publication_id"]:
         raise ValueError("hosted Pages publication_id mismatch")
@@ -250,25 +314,27 @@ def load_and_validate_hosted_pages_receipt(
         raise ValueError("hosted Pages semantic parity did not pass")
     if float(hosted["semantic_parity"].get("coverage", 0.0)) != 1.0:
         raise ValueError("hosted Pages semantic parity coverage is not 1.0")
+    if int(hosted.get("required_consecutive_matches", 0)) < 2:
+        raise ValueError("hosted Pages receipt did not require stable consecutive convergence")
     if hosted["decision"] != "accept":
         raise ValueError(f"hosted Pages receipt decision is not accept: {hosted['decision']}")
 
     if refetch:
-        status, body, final_url = _fetch_hosted_bytes(str(hosted["page_url"]))
-        if status != 200:
-            raise ValueError(f"independent hosted Pages HTTP status is not 200: {status}")
-        fetched_sha = hashlib.sha256(body).hexdigest()
-        if fetched_sha != local_sha:
-            raise ValueError(
-                f"independent hosted Pages hash mismatch: hosted={fetched_sha} governed={local_sha}"
-            )
         ssot_path = ROOT / execution["ssot_relpath"]
         ssot = load_ssot(ssot_path)
         payload = workbook_payload(ssot, execution["render_mode"])
         canonical = content_hash(payload)
         expected_tokens = _semantic_tokens(payload, canonical)
-        hosted_text = _extract_html_text(body)
-        missing_tokens = [token for token in expected_tokens if token not in hosted_text]
+        status, body, final_url, _ = _fetch_hosted_match(
+            str(hosted["page_url"]),
+            expected_sha256=local_sha,
+            expected_tokens=expected_tokens,
+        )
+        if status != 200:
+            raise ValueError(f"independent hosted Pages HTTP status is not 200: {status}")
+        if hashlib.sha256(body).hexdigest() != local_sha:
+            raise ValueError("independent hosted Pages hash mismatch")
+        missing_tokens = [token for token in expected_tokens if token not in _extract_html_text(body)]
         if missing_tokens:
             raise ValueError(
                 "independent hosted Pages semantic parity failed: missing=" + ", ".join(missing_tokens)
