@@ -1,0 +1,40 @@
+version: A7.0
+runtime: executable_semantic_reconstruction
+
+inputs:
+  - semantic_tuple_ledger
+  - active_invariants
+  - semantic_debt
+  - reconstruction_manifest
+
+outputs:
+  - latest_tuple
+  - active_branches
+  - tuple_count
+  - invariant_count
+  - open_debt_count
+  - replay_ready
+  - validation_status
+
+pillars:
+  idempotent:
+    requirement: repeated reconstruction from identical ledgers produces identical state
+  iterative:
+    requirement: new tuples extend prior state without deleting lineage
+  recursive:
+    requirement: reconstructed state can seed the next handover and execution pulse
+  evolutionary:
+    requirement: competing branches remain explicit until evidence supports convergence
+
+gates:
+  tuple_count_min: 1
+  invariant_count_min: 1
+  replay_ready_required: true
+
+next_extensions:
+  - tuple_schema_validation
+  - branch_DAG_reconstruction
+  - semantic_delta_replay
+  - renderer_governance_binding
+  - CI_gate
+  - completeness_metric
