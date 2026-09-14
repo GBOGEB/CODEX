@@ -404,3 +404,19 @@ Newly closed subquestions:
 9. only then execute the first-law WCS LOOP transient with uncertainty and independent review.
 
 BD-006 remains `PARTIAL_EVIDENCE_BOUND`; BD-008 remains `PREPARED_P0_GATED`; global/project DoV remains `WITHHELD`.
+
+## 15. TUPLE-006 governance execution receipt — PR #714
+
+PR #714 merged at `1bc865a07c1c57e951b2c1d2633c45ab419aafa4`; the subsequent metrics receipt moved `main` to `cab4ffcb85c0a6cbcaa8a6fb1cef790a5dfdece4`.
+
+The engineering evidence in v1.6.10 is unchanged by the following control exception:
+
+- `qps-canonicalization` passed on the PR #714 head;
+- `W003 Governance Gate` failed with `PR-007` because the pull-request classification block omitted the literal `---` delimiter required by the metadata parser;
+- the failed step did not parse or reject the QPS engineering evidence; its scope was PR metadata only;
+- PR #714 was merged concurrently before a fresh W003 recheck could run;
+- the PR body was then corrected to include the required delimiter;
+- this control exception creates **zero engineering credit and zero BD state movement**;
+- a bounded follow-up receipt PR is required to pass both W003 and qps-canonicalization and to preserve the exception transparently in the progression record.
+
+The current engineering state remains v1.6.10 exactly as stated in Section 14. Global/project DoV remains `WITHHELD`.

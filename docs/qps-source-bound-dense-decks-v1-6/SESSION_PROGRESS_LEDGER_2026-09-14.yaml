@@ -160,6 +160,24 @@ entries:
       - OFFER-35 direct response now binds flow and allowable pressure drop through Technical Part Chapter 6; duct interface size remains not unambiguously bound
       - TAX06 current offer drawing confirms cooling-air inlet/outlet interface locations and dimensions are represented without promoting an uncertain connection size
       - bd005_current_lkt_fsd575_loop_point_v1_6.yaml added
+    repo_receipt:
+      PR_714_merge: 1bc865a07c1c57e951b2c1d2633c45ab419aafa4
+      post_merge_main_metrics_head: cab4ffcb85c0a6cbcaa8a6fb1cef790a5dfdece4
+    governance_execution:
+      qps_canonicalization_on_PR714_head: PASS
+      W003_on_PR714_head: FAIL_PR007_MISSING_CLASSIFICATION_DELIMITER
+      failure_scope: PR_METADATA_PARSER_ONLY
+      failure_cause: PR classification block omitted required literal delimiter line ---
+      evidence_or_engineering_effect: NONE
+      merge_timing: PR_714_was_merged_concurrently_before_fresh_W003_recheck
+      post_merge_PR_body_repair: required_delimiter_added
+      corrective_PR: PR_717
+      corrective_PR_attempt_1_qps_canonicalization: PASS
+      corrective_PR_attempt_1_W003: FAIL_PR007_REQUIRED_PR_ID
+      corrective_PR_attempt_1_failure_scope: PR_METADATA_SCHEMA_ONLY
+      corrective_PR_attempt_1_repair: added_PR_ID_PR_717_to_classification_block
+      corrective_PR_fresh_head_required: true
+      triage_engineering_state_change_from_exception: NONE
     bd_movement:
       BD_005: OPEN_BUT_CURRENT_SELECTED_MODEL_MAX_POINT_EPS_ROUTING_AND_AIR_SIDE_BOUND
       BD_006: NO_CHANGE_PARTIAL_EVIDENCE_BOUND
