@@ -1,6 +1,6 @@
-schema: qps-visual-system-triage/1.0
-version: 1.6
-state: SOURCE_PROOF_BOUND_UTILITIES_SCOPE_RECONCILED_CONTROLS_PARTIAL
+schema: qps-visual-system-triage/1.1
+version: '1.6'
+state: SOURCE_DOV_COMPLETE_LOOP_EVIDENCE_BOUND_CONTROLS_PARTIAL
 authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
 
 completed:
@@ -13,6 +13,8 @@ completed:
   - source inconsistencies preserved as review items
   - V16-BD-001 exact source PPTX bytes bound to controlled Library file/version IDs and SHA256
   - V16-BD-002 stable PNG render plus SHA256 recorded for every v1.6-bound source slide
+  - EXTRACTED-TEXT-BINDING native source text extracted for all 63 bound slides and bound by per-slide SHA256
+  - V16-BD-003 all 63 bound source slides reviewed against curated objects with explicit KEEP/MERGE/REFERENCE/SUPERSEDE disposition and no silent drop
   - V16-BD-004 1199/~1200/~1256 kW PCW scopes reconciled without changing underlying source values
 
 closed_first_red:
@@ -28,6 +30,13 @@ closed_first_red:
     state: CLOSED
     closure: stable PNG render and SHA256 recorded for all 63 bound source slides
     evidence: source_render_manifest.yaml
+  - id: V16-BD-003
+    topic: source_vs_curated_visual_dov
+    priority: P0
+    state: CLOSED_CONTENT_TRACE_DOV
+    closure: all 63 bound source renders plus native extracted text were compared with their curated engineering object/reference target; all non-carried content has explicit disposition and silent_drop_count is zero
+    evidence: source_vs_curated_dov_v1_6.yaml
+    non_claim: this is curation/content-trace DoV, not pixel parity, Office host-render parity, engineering correctness, design approval or acceptance
   - id: V16-BD-004
     topic: utilities_value_reconciliation
     priority: P0
@@ -44,16 +53,13 @@ open_first_red:
     closure: map every tender candidate signal group to a controlled class and disposition conflicts with discipline evidence
     progress: source-explicit monitoring, warning, permissive and hard-trip groups classified; HVAC and selected utility-loss consequences remain conflicted/open
     evidence: engineering_reconciliation_v1_6.yaml
-  - id: V16-BD-003
-    topic: source_vs_curated_visual_dov
-    priority: P0
-    state: OPEN
-    closure: compare source render and curated slide/object with content-loss disposition
   - id: V16-BD-005
     topic: loop_evidence
     priority: P0
-    state: OPEN
-    closure: bind 17 kW / 350 kW / 6 h / ~2 h source statements to transient/load evidence and operating scenario
+    state: EVIDENCE_BOUND_OPEN_TRANSIENT_MODEL_REQUIRED
+    closure: bind 17 kW / 350 kW / 6 h / ~2 h source statements to transient/load evidence and exact operating scenario
+    progress: exact source scenario/value binding completed; transient heat balance, thermal inventory, recovery-capacity proof and meaning of ~2 h onset are still missing
+    evidence: loop_evidence_v1_6.yaml
   - id: V16-BD-007
     topic: detailed_io
     priority: P1
@@ -63,7 +69,7 @@ open_first_red:
     topic: graph_binding_refresh
     priority: P1
     state: OPEN
-    closure: graph nodes link to promoted v1.6 objects and lineage records
+    closure: graph nodes link to promoted v1.6 objects and corrected lineage records
   - id: V16-BD-009
     topic: deterministic_render
     priority: P1
@@ -73,7 +79,14 @@ open_first_red:
     topic: governed_exports
     priority: P1
     state: DEFER_TO_V1_8
-    closure: bind source-controlled QPS semantic deck objects into the existing receipt-governed publication carrier from #690/#691; ODP remains separately unproven
+    closure: bind source-controlled QPS semantic deck objects into existing receipt-governed publication carrier from #690/#691; ODP remains separately unproven
+
+lineage_repairs_from_bd003:
+  - SRC-UTIL-CORE slide 25 rebound from stale Controls grouping to NAMING_SBS reference
+  - SRC-CTRL-CORE slide 8 rebound from Controls hierarchy to Utilities cooling/HVAC reference
+  - SRC-CTRL-CORE slide 24 rebound from CTRL-04 tender I/O to CTRL-06/CTRL-07 readiness/inhibition
+  - SRC-CTRL-CORE slides 22-23 rebound from CTRL-05 interface architecture to CTRL-06/CTRL-07 readiness/inhibition
+  - SRC-NAMING-CONTROL slides 21-24 rebound from Controls coverage to NAMING_SBS documentation/tagging reference
 
 adjacent_utilities_open:
   - HVAC 124 kW versus ~120 kW room heat and recovered 134 kW total-HVAC source drift
@@ -87,21 +100,30 @@ non_compensating_rules:
   - safety/interlock classification requires discipline evidence
   - utilities arithmetic reconciliation cannot grant facility design approval
   - candidate I/O remains candidate until L2/detail control design freezes it
-  - source proof does not constitute source-vs-curated DoV
+  - source/content DoV does not validate OPEN/WIP engineering statements
   - PNG rendering does not prove Microsoft PowerPoint or Office365 host-render parity
+  - LOOP source repetition does not replace transient/load validation
+  - Global/project DoV remains WITHHELD
 
 next_execution_order:
-  - V16-BD-006 close remaining signal-class conflicts if discipline evidence supports it
-  - V16-BD-003 source-vs-curated visual DoV
-  - V16-BD-005 LOOP evidence
-  - V16-BD-008 graph refresh
+  - V16-BD-006 close remaining signal-class conflicts only when discipline evidence supports it
+  - V16-BD-005 obtain transient/load evidence, thermal inventory and recovery-capacity proof
+  - V16-BD-008 refresh graph bindings to corrected v1.6 lineage after P0 engineering evidence is dispositioned
 
 source_proof_receipt:
   path: source_proof_receipt.json
   render_manifest: source_render_manifest.yaml
+  text_manifest: source_text_manifest.yaml
+  dov_ledger: source_vs_curated_dov_v1_6.yaml
   render_bundle_sha256: f9a20d08d6c85c0bbcab58bfe57452957b5a5c1268eb30213c1fd92423a50132
-  authority: SOURCE_PROOF_ONLY_NOT_ENGINEERING_ACCEPTANCE
+  text_bundle_sha256: 081353101bf82a060c6a5f5fab573a11b246d0228aa251cac2696f2defb7eb52
+  authority: SOURCE_AND_CURATION_TRACE_ONLY_NOT_ENGINEERING_ACCEPTANCE
 
 engineering_reconciliation:
   path: engineering_reconciliation_v1_6.yaml
   authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
+
+loop_evidence:
+  path: loop_evidence_v1_6.yaml
+  state: EVIDENCE_BOUND_OPEN_TRANSIENT_MODEL_REQUIRED
+  authority: SOURCE_SCENARIO_BINDING_NOT_TRANSIENT_VALIDATION
