@@ -1,0 +1,127 @@
+schema: qps-source-vs-curated-review/1.0
+version: '1.6'
+authority: ENGINEERING_CURATION_REVIEW_NOT_DESIGN_APPROVAL
+review_state: DISPOSITION_LEDGER_COMPLETE_VISUAL_RENDER_CONFIRMATION_PENDING
+bd:
+  id: V16-BD-003
+  state: PARTIAL_DISPOSITION_LEDGER_BOUND
+  close_predicate: every bound source render compared with curated object and content-loss disposition explicit
+  remaining_first_red:
+    - reopen the exact SHA-bound PNG render bytes from the controlled source-render bundle
+    - execute render-to-curated visual comparison for all 63 bound slides
+    - confirm statement-level content survival and reviewer disposition
+rules:
+  allowed_dispositions: [KEEP, MERGE, REFERENCE, SUPERSEDE, DROP_WITH_RATIONALE]
+  no_silent_drop: true
+  no_silent_reconciliation: true
+  render_is_not_source_authority: true
+  visual_pass_is_not_engineering_pass: true
+source_proof:
+  manifest: source_render_manifest.yaml
+  receipt: source_proof_receipt.json
+  bound_render_count: 63
+  source_count: 4
+sources:
+  SRC-UTIL-CORE:
+    source_file: QPS_Suporting_Sytems.pptx
+    source_digest: 6d694db8e7ad85193f73a61a1c7b06938e3724c34401435b38a0111e656c5507
+  SRC-UTIL-CANONICAL-APPENDIX:
+    source_file: QPS_Supporting_Systems_FULL_SLINE_parallel_canonical_v3_appendix.pptx
+    source_digest: a629886b7af5d13e62b9b70cd10041e94dd6aa4f74234894d466843c5da87cba
+  SRC-CTRL-CORE:
+    source_file: QPS_Control_Core_TOPIC - Copy.pptx
+    source_digest: 8e15b95ad2a2fefc1548367352eda0df6e2eb60eee878264c5f1f7a80579479a
+  SRC-NAMING-CONTROL:
+    source_file: QPS_naming_control_0304.pptx
+    source_digest: 660ea8e3697ebafd8f73a1e4bb4bc7b2cb5f69ec645dc7b7905055e88f2e4684
+review_contract:
+  render_ref_format: source_render_manifest.yaml#<source_id>/slide-<n>
+  content_state: CURATED_MAPPING_ESTABLISHED_STATEMENT_LEVEL_CONFIRMATION_PENDING
+  note: >-
+    This ledger makes every currently bound source slide disposition explicit. It does not claim
+    BD-003 closure because the controlled SHA-bound PNG bytes were not independently reopened in
+    this pulse. Technical conflict/WIP material is retained as validation debt rather than normalized.
+reviews:
+  - {source_id: SRC-UTIL-CORE, source_slide: 1, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-1', curated_ids: [UTIL-00], disposition: REFERENCE, rationale: 'style/tender context retained as visual lineage; not engineering authority'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 2, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-2', curated_ids: [UTIL-00], disposition: REFERENCE, rationale: 'style/tender context retained as visual lineage; not engineering authority'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 3, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-3', curated_ids: [UTIL-00], disposition: REFERENCE, rationale: 'purpose/style grammar retained without promoting decorative content to engineering fact'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 4, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-4', curated_ids: [UTIL-00], disposition: REFERENCE, rationale: 'agenda/content context represented by curated navigation'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 7, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-7', curated_ids: [UTIL-01], disposition: MERGE, rationale: 'QPS/QPLANT/QINFRA scope and hierarchy merged into utility context'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 8, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-8', curated_ids: [UTIL-01], disposition: MERGE, rationale: 'system hierarchy/utility roles merged; source wording remains lineage'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 9, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-9', curated_ids: [UTIL-01], disposition: MERGE, rationale: 'ownership and support responsibility merged without granting approval authority'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 10, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-10', curated_ids: [UTIL-01], disposition: MERGE, rationale: 'stakeholder/responsibility content merged into utility context'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 11, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-11', curated_ids: [UTIL-02, UTIL-03], disposition: MERGE, rationale: 'HCC cooling loads and heat paths merged; 1199/~1200/~1256 semantics controlled by BD-004 receipt'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 12, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-12', curated_ids: [UTIL-02, UTIL-03], disposition: MERGE, rationale: 'PCW/RCW/HVAC values and interfaces merged; WIP retained as validation'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 13, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-13', curated_ids: [UTIL-01, UTIL-03], disposition: MERGE, rationale: 'interface ownership/TP context retained'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 14, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-14', curated_ids: [UTIL-03], disposition: MERGE, rationale: 'support architecture and cooling heat-flow topology merged'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 15, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-15', curated_ids: [UTIL-02, UTIL-03], disposition: MERGE, rationale: 'cooling/HVAC content merged; PGB20/diversity WIP remains OPEN'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 16, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-16', curated_ids: [UTIL-02, UTIL-03], disposition: MERGE, rationale: 'cooling/HVAC values retained with separate room-heat and capacity semantics'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 17, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-17', curated_ids: [UTIL-02, UTIL-03], disposition: MERGE, rationale: 'HCC HX topology and PCW/RCW/room-heat flows merged'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 18, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-18', curated_ids: [UTIL-01, UTIL-03], disposition: MERGE, rationale: 'interface parameter table and support-system scope merged; unresolved assumptions remain validation items'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 19, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-19', curated_ids: [UTIL-04], disposition: MERGE, rationale: 'LOOP affected systems, 17 kW, ventilation/ODH and ~6 h working scenario retained as source scenario'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 20, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-20', curated_ids: [UTIL-04], disposition: MERGE, rationale: 'one-HCC/350 kW backup, occupancy restriction, ~6 h and ~2 h onset wording retained; not frozen guarantee'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 21, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-21', curated_ids: [UTIL-04], disposition: MERGE, rationale: 'LOOP support/operational context merged; transient proof remains BD-005'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 22, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-22', curated_ids: [CTRL-00, CTRL-01], disposition: REFERENCE, rationale: 'cross-domain control overview referenced into Controls; Utilities does not duplicate control ownership'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 23, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-23', curated_ids: [CTRL-01], disposition: REFERENCE, rationale: 'control lifecycle/modularity cross-reference retained in Controls'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 24, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-24', curated_ids: [CTRL-05], disposition: REFERENCE, rationale: 'MIT/MIS signal philosophy cross-reference retained; exact classification governed by BD-006'}
+  - {source_id: SRC-UTIL-CORE, source_slide: 25, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CORE/slide-25', curated_ids: [CTRL-06], disposition: REFERENCE, rationale: 'inhibition concept cross-reference retained; no universal hard-trip inference'}
+
+  - {source_id: SRC-UTIL-CANONICAL-APPENDIX, source_slide: 51, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CANONICAL-APPENDIX/slide-51', curated_ids: [UTIL-01], disposition: MERGE, rationale: 'system scope/hierarchy merged'}
+  - {source_id: SRC-UTIL-CANONICAL-APPENDIX, source_slide: 52, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CANONICAL-APPENDIX/slide-52', curated_ids: [UTIL-01], disposition: MERGE, rationale: 'responsibility/interface context merged'}
+  - {source_id: SRC-UTIL-CANONICAL-APPENDIX, source_slide: 53, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CANONICAL-APPENDIX/slide-53', curated_ids: [UTIL-02, UTIL-04], disposition: MERGE, rationale: '1300 kW PCW breakdown and 350 kW emergency/diesel LOOP surfaces retained with semantic labels'}
+  - {source_id: SRC-UTIL-CANONICAL-APPENDIX, source_slide: 54, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CANONICAL-APPENDIX/slide-54', curated_ids: [UTIL-01, UTIL-02], disposition: MERGE, rationale: 'TP2 utility legend merged; N2 and PGB20 remain explicit open reconciliation'}
+  - {source_id: SRC-UTIL-CANONICAL-APPENDIX, source_slide: 55, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CANONICAL-APPENDIX/slide-55', curated_ids: [UTIL-03], disposition: MERGE, rationale: 'support-system architecture and heat-flow topology merged'}
+  - {source_id: SRC-UTIL-CANONICAL-APPENDIX, source_slide: 56, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CANONICAL-APPENDIX/slide-56', curated_ids: [UTIL-03], disposition: MERGE, rationale: 'support-system architecture continuation retained'}
+  - {source_id: SRC-UTIL-CANONICAL-APPENDIX, source_slide: 57, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CANONICAL-APPENDIX/slide-57', curated_ids: [UTIL-02, UTIL-03], disposition: MERGE, rationale: 'cooling/HVAC load surfaces merged without normalizing source labels'}
+  - {source_id: SRC-UTIL-CANONICAL-APPENDIX, source_slide: 58, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CANONICAL-APPENDIX/slide-58', curated_ids: [UTIL-02, UTIL-03], disposition: MERGE, rationale: 'PGB20/heat-flow WIP retained as OPEN validation'}
+  - {source_id: SRC-UTIL-CANONICAL-APPENDIX, source_slide: 59, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CANONICAL-APPENDIX/slide-59', curated_ids: [UTIL-02, UTIL-03], disposition: MERGE, rationale: 'cooling/HVAC values retained; WIP status preserved'}
+  - {source_id: SRC-UTIL-CANONICAL-APPENDIX, source_slide: 60, render_ref: 'source_render_manifest.yaml#SRC-UTIL-CANONICAL-APPENDIX/slide-60', curated_ids: [UTIL-01, UTIL-03], disposition: MERGE, rationale: 'interface parameters/support links merged; no assumption silently promoted'}
+
+  - {source_id: SRC-CTRL-CORE, source_slide: 2, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-2', curated_ids: [CTRL-00], disposition: MERGE, rationale: 'stakeholder/control ownership context merged'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 3, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-3', curated_ids: [CTRL-00], disposition: MERGE, rationale: 'responsibility context merged without changing authority'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 4, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-4', curated_ids: [CTRL-01], disposition: MERGE, rationale: 'WCS.HCC HP1-HP4 modular control hierarchy merged'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 5, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-5', curated_ids: [CTRL-01], disposition: MERGE, rationale: 'L1/L2/FAT/SAT control-development progression merged'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 6, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-6', curated_ids: [CTRL-01, CTRL-05], disposition: MERGE, rationale: 'MIT/MIS/MCS philosophy merged; protocol detail remains to freeze'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 7, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-7', curated_ids: [CTRL-02], disposition: MERGE, rationale: 'SBS/control hierarchy and support interface grammar merged'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 8, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-8', curated_ids: [CTRL-02], disposition: MERGE, rationale: 'QPS hierarchy and terminal-point architecture merged'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 9, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-9', curated_ids: [CTRL-02], disposition: MERGE, rationale: 'location/naming/control hierarchy content merged'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 10, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-10', curated_ids: [CTRL-02], disposition: MERGE, rationale: 'tag/location/terminal-point context merged'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 11, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-11', curated_ids: [CTRL-03], disposition: MERGE, rationale: 'support-system interface map merged as typed links rather than tree children'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 12, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-12', curated_ids: [CTRL-03], disposition: MERGE, rationale: 'QPS:CIS/support-system map merged as typed links'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 13, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-13', curated_ids: [CTRL-04], disposition: MERGE, rationale: 'tender WCS/QINFRA candidate I/O content merged; candidate status preserved'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 14, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-14', curated_ids: [CTRL-04], disposition: MERGE, rationale: 'refined candidate I/O groups merged with typed classification state'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 15, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-15', curated_ids: [CTRL-04], disposition: MERGE, rationale: 'candidate signal groups merged; exact L2 point count remains BD-007'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 16, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-16', curated_ids: [CTRL-04], disposition: MERGE, rationale: 'candidate classifications retained; no importance-to-MIS shortcut'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 17, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-17', curated_ids: [CTRL-05], disposition: MERGE, rationale: 'QPS:CIS interface architecture merged'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 18, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-18', curated_ids: [CTRL-05], disposition: MERGE, rationale: 'hierarchy/terminal-point and MIS relation merged'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 19, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-19', curated_ids: [CTRL-05], disposition: MERGE, rationale: 'hierarchy/terminal-point control notes merged'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 20, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-20', curated_ids: [CTRL-05], disposition: MERGE, rationale: 'interlock versus normal data-path separation merged'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 21, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-21', curated_ids: [CTRL-05], disposition: MERGE, rationale: 'interface architecture continuation merged'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 22, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-22', curated_ids: [CTRL-05], disposition: MERGE, rationale: 'normal/interlock path diagram semantics merged'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 23, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-23', curated_ids: [CTRL-02, CTRL-05], disposition: MERGE, rationale: 'control hierarchy and TP meaning merged'}
+  - {source_id: SRC-CTRL-CORE, source_slide: 24, render_ref: 'source_render_manifest.yaml#SRC-CTRL-CORE/slide-24', curated_ids: [CTRL-04], disposition: MERGE, rationale: 'candidate WCS/QINFRA I/O list merged; detailed implementation remains BD-007'}
+
+  - {source_id: SRC-NAMING-CONTROL, source_slide: 21, render_ref: 'source_render_manifest.yaml#SRC-NAMING-CONTROL/slide-21', curated_ids: [CTRL-02], disposition: REFERENCE, rationale: 'secondary naming source cross-checks tag roots, line identification and TP context'}
+  - {source_id: SRC-NAMING-CONTROL, source_slide: 22, render_ref: 'source_render_manifest.yaml#SRC-NAMING-CONTROL/slide-22', curated_ids: [CTRL-02, CTRL-05], disposition: REFERENCE, rationale: 'secondary source cross-checks QPS:CIS hierarchy and MIT/MIS/MCS signal intent'}
+  - {source_id: SRC-NAMING-CONTROL, source_slide: 23, render_ref: 'source_render_manifest.yaml#SRC-NAMING-CONTROL/slide-23', curated_ids: [CTRL-02, CTRL-05], disposition: REFERENCE, rationale: 'secondary source cross-checks hierarchy/terminal-point semantics'}
+  - {source_id: SRC-NAMING-CONTROL, source_slide: 24, render_ref: 'source_render_manifest.yaml#SRC-NAMING-CONTROL/slide-24', curated_ids: [CTRL-04], disposition: REFERENCE, rationale: 'secondary source cross-checks tender candidate I/O; exact point count remains L2'}
+  - {source_id: SRC-NAMING-CONTROL, source_slide: 34, render_ref: 'source_render_manifest.yaml#SRC-NAMING-CONTROL/slide-34', curated_ids: [CTRL-02], disposition: REFERENCE, rationale: 'secondary source cross-checks expanded tags/shorthand/warm-line branches'}
+  - {source_id: SRC-NAMING-CONTROL, source_slide: 35, render_ref: 'source_render_manifest.yaml#SRC-NAMING-CONTROL/slide-35', curated_ids: [CTRL-02, CTRL-05], disposition: REFERENCE, rationale: 'secondary source cross-checks QPS:CIS control hierarchy and broker relation'}
+  - {source_id: SRC-NAMING-CONTROL, source_slide: 36, render_ref: 'source_render_manifest.yaml#SRC-NAMING-CONTROL/slide-36', curated_ids: [CTRL-05], disposition: REFERENCE, rationale: 'secondary source cross-checks MIT/MCS/MIS signal path; source reliability caveat preserved'}
+summary:
+  review_rows: 63
+  silent_drop_rows: 0
+  disposition_counts:
+    MERGE: 50
+    REFERENCE: 13
+    KEEP: 0
+    SUPERSEDE: 0
+    DROP_WITH_RATIONALE: 0
+  engineering_conflicts_preserved:
+    - HVAC_124_kW_vs_room_heat_120_kW_and_recovered_134_kW
+    - gaseous_nitrogen_375_LPM_vs_50_plus_50_allocations
+    - PGB20_7C_role_and_diversity_basis
+    - LOOP_transient_basis
+    - HVAC_and_support_signal_mode_consequence
+  bd_credit: PARTIAL_ONLY
+  global_project_dov: WITHHELD
