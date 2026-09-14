@@ -1,6 +1,6 @@
 schema: qps-visual-system-triage/1.0
 version: 1.6
-state: SOURCE_BOUND_PARTIAL_CONTROL
+state: SOURCE_PROOF_BOUND_ENGINEERING_RECONCILIATION_OPEN
 authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
 
 completed:
@@ -11,18 +11,24 @@ completed:
   - dense Controls canonical candidate written
   - cross-domain ownership boundary established
   - source inconsistencies preserved as review items
+  - V16-BD-001 exact source PPTX bytes bound to controlled Library file/version IDs and SHA256
+  - V16-BD-002 stable PNG render plus SHA256 recorded for every v1.6-bound source slide
 
-open_first_red:
+closed_first_red:
   - id: V16-BD-001
     topic: source_digests
     priority: P0
-    state: OPEN
-    closure: ingest exact source PPTX bytes and record SHA256
+    state: CLOSED
+    closure: exact source PPTX bytes bound to controlled ChatGPT Library file/version IDs and SHA256 recorded
+    evidence: source_proof_receipt.json
   - id: V16-BD-002
     topic: source_slide_renders
     priority: P0
-    state: OPEN
-    closure: produce stable image/render per bound source slide
+    state: CLOSED
+    closure: stable PNG render and SHA256 recorded for all 63 bound source slides
+    evidence: source_render_manifest.yaml
+
+open_first_red:
   - id: V16-BD-003
     topic: source_vs_curated_visual_dov
     priority: P0
@@ -62,7 +68,7 @@ open_first_red:
     topic: governed_exports
     priority: P1
     state: DEFER_TO_V1_8
-    closure: source-bound HTML renders to receipt-governed PDF/PPTX/ODP
+    closure: bind source-controlled QPS semantic deck objects into the existing receipt-governed publication carrier from #690/#691; ODP remains separately unproven
 
 non_compensating_rules:
   - a visual or navigation PASS cannot grant engineering acceptance
@@ -70,12 +76,18 @@ non_compensating_rules:
   - safety/interlock classification requires discipline evidence
   - utilities source inconsistencies remain OPEN until reconciled by governing engineering sources
   - candidate I/O remains candidate until L2/detail control design freezes it
+  - source proof does not constitute source-vs-curated DoV
+  - PNG rendering does not prove Microsoft PowerPoint or Office365 host-render parity
 
 next_execution_order:
-  - V16-BD-001 source digests
-  - V16-BD-002 source slide renders
   - V16-BD-004 utilities value reconciliation
   - V16-BD-006 signal classification
   - V16-BD-003 source-vs-curated visual DoV
   - V16-BD-005 LOOP evidence
   - V16-BD-008 graph refresh
+
+source_proof_receipt:
+  path: source_proof_receipt.json
+  render_manifest: source_render_manifest.yaml
+  render_bundle_sha256: f9a20d08d6c85c0bbcab58bfe57452957b5a5c1268eb30213c1fd92423a50132
+  authority: SOURCE_PROOF_ONLY_NOT_ENGINEERING_ACCEPTANCE
