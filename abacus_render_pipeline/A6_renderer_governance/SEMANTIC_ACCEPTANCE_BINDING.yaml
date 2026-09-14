@@ -1,0 +1,29 @@
+version: A6-A7.1
+purpose: Require both visual renderer validation and reconstructable governed state before publication promotion.
+
+renderer_acceptance:
+  generated_outputs_are_canonical: false
+  required_checks:
+    - render_validation_passed
+    - schema_parentage_reconstruction_dag_completeness_passed
+    - semantic_delta_replay_passed
+    - replay_ready
+    - traceable_tuple_count
+  result_key: semantic_promotions_allowed
+
+promotion_policy:
+  allow_when: all_required_checks_pass
+  deny_when: any_required_check_fails
+  generated_outputs:
+    - html
+    - pptx
+    - pdf
+    - markdown
+    - github_pages
+
+lineage:
+  tuple_ledger: ../A7_executable_semantic_runtime/data/semantic_tuple_ledger.json
+  governance_ledger: ../A7_executable_semantic_runtime/data/governance_ledger.json
+  reconstruction_runtime: ../A7_executable_semantic_runtime/closed_loop.py
+  replay_runtime: ../A7_executable_semantic_runtime/semantic_delta_replay.py
+  acceptance_runtime: ../A7_executable_semantic_runtime/semantic_acceptance_gate.py
