@@ -1,0 +1,28 @@
+name: ABACUS Semantic Runtime
+
+on:
+  pull_request:
+    paths:
+      - 'abacus_render_pipeline/**'
+      - '.github/workflows/abacus-semantic-runtime.yml'
+  push:
+    paths:
+      - 'abacus_render_pipeline/**'
+
+jobs:
+  semantic-runtime:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate executable semantic runtime
+        run: python closed_loop.py
+      - name: Run runtime tests
+        run: |
+          python test_runtime.py
+          python test_closed_loop.py
