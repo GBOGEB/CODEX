@@ -4,25 +4,40 @@ on:
   pull_request:
     paths:
       - 'abacus_render_pipeline/**'
+      - 'PIPELINE/GLOSSARY_EXTENSIONS.yaml'
       - '.github/workflows/abacus-semantic-runtime.yml'
   push:
     paths:
       - 'abacus_render_pipeline/**'
+      - 'PIPELINE/GLOSSARY_EXTENSIONS.yaml'
 
 jobs:
   semantic-runtime:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Validate executable semantic runtime
-        run: python closed_loop.py
+
+      - name: Run repository semantic vocabulary validator
+        run: python semantic_substrate/validators/validate_semantic_substrate.py
+
+      - name: Run first-red sequence
+        working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
+        run: python first_red_gate.py
+
+      - name: Prove semantic delta replay
+        working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
+        run: python semantic_delta_replay.py
+
+      - name: Enforce renderer semantic acceptance
+        working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
+        run: python semantic_acceptance_gate.py
+
       - name: Run runtime tests
+        working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
         run: |
           python test_runtime.py
           python test_closed_loop.py
+          python test_semantic_replay_and_acceptance.py
