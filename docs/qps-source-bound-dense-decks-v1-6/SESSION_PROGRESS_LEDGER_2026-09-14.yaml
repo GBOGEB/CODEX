@@ -1,0 +1,115 @@
+schema: qps-session-progression-ledger/1.0
+session_date: 2026-09-14
+repository: GBOGEB/CODEX
+authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
+global_project_dov: WITHHELD
+purpose: >-
+  Preserve the progression of major user-prompt / assistant-execution tuples in addition to the
+  canonical end-state handover, so a restart can recover both current truth and the path by which
+  that truth was reached without relying on chat memory.
+
+major_tuple_policy:
+  major_when_any:
+    - evidence_or_source_lineage_changes
+    - BD_state_priority_or_close_predicate_changes
+    - source_authority_or_currentness_interpretation_changes
+    - execution_sequence_or_first_red_changes
+    - graph_or_behavioral_semantics_change
+    - canonical_handover_or_reproduction_contract_changes
+    - a_material_repository_PR_merge_or_reconciliation_changes_restart_context
+  minor_turn_rule: >-
+    Minor acknowledgements, wording-only exchanges, or turns with no state/evidence/sequence delta
+    do not force repository churn; they are folded into the next major tuple summary.
+  after_major_tuple:
+    - append_one_entry_to_this_ledger
+    - refresh_triage_v1_6_yaml
+    - refresh_SESSION_HANDOVER_2026_09_14_md
+    - refresh_DROP_IN_CONTINUATION_2026_09_14_md
+    - preserve_additive_evidence_ledgers
+    - verify_governance_and_qps_canonicalization_when_PR_is_opened
+    - merge_only_with_explicit_non_compensating_state
+    - post_merge_read_from_main
+  no_new_handover_framework: true
+
+entries:
+  - tuple_id: TUPLE-001
+    user_intent: >-
+      Preserve D2.1 and D2.2 as valuable aged-but-active anchors; distinguish D2.1 process conceptual
+      design from D2.2 technical/project requirements and trace D2.1 appendix behavior including PFD,
+      abnormal scenarios and valve-state semantics.
+    executed_delta:
+      - D2.1 role frozen as PROCESS_CONCEPTUAL_DESIGN_ANCHOR
+      - D2.2 role frozen as TECHNICAL_AND_PROJECT_REQUIREMENTS_ANCHOR
+      - temporal maturity separated from provenance authority
+      - D2.1 Appendix 8.2/8.3/8.4 split into topology/model/behavior evidence lanes
+      - graph overlay prepared without schema fork
+    repo_receipts:
+      - PR_709_merge: 1a190468d70ee9c09c2d90287c999bfab497d6c5
+      - PR_710_merge: f6874584e34b9affbf8147ea55357b3756e18a77
+    bd_movement:
+      BD_005: OPEN
+      BD_006: PARTIAL_EVIDENCE_BOUND
+      BD_008: PREPARED_P0_GATED
+    engineering_credit_delta: 0
+
+  - tuple_id: TUPLE-002
+    user_intent: >-
+      Conclude the live BD queue, execute 3PR and MIP, produce lossless session handover and a drop-in
+      continuation while respecting read/lineage/graph precedence.
+    executed_delta:
+      - current BD queue frozen in canonical TRIAGE
+      - 3PR Recover/Reconcile/Re-enter receipt recorded
+      - MIP Modernize/Innovate/Perpetuate receipt recorded
+      - SESSION_HANDOVER_2026-09-14.md created
+      - DROP_IN_CONTINUATION_2026-09-14.md created
+      - graph re-entry kept source/lineage-only with engineering closure deferred
+    repo_receipt:
+      PR_710_merge: f6874584e34b9affbf8147ea55357b3756e18a77
+    global_project_dov: WITHHELD
+    engineering_credit_delta: 0
+
+  - tuple_id: TUPLE-003
+    user_intent: >-
+      Continue in the same workstream while keeping the full output current and easily reproducible
+      as a lossless drop-in handover.
+    executed_delta:
+      - d2_1_mode_state_matrix_v1_6.yaml added
+      - cooldown/warmup/purge-fill/abnormal mode families source-bound
+      - CV503 cooldown function source-bound
+      - HV510/HV520 local purge-fill function source-bound
+      - NC/NO fallback process semantics strengthened without cause-effect promotion
+      - canonical TRIAGE/full-handover/drop-in refresh contract frozen
+    repo_receipt:
+      PR_711_merge: 16edbb9004161ef8704f74972679e0736dd65019
+    bd_movement:
+      BD_005: OPEN
+      BD_006: PARTIAL_EVIDENCE_BOUND
+      BD_008: PREPARED_P0_GATED
+    engineering_credit_delta: 0
+
+  - tuple_id: TUPLE-004
+    user_intent: >-
+      Continue execution in this same session/chat and maintain the lossless artifacts after each
+      major prompt/reply tuple of the conversation progression.
+    executed_delta:
+      - major_tuple_policy added as an explicit repository control
+      - append-only SESSION_PROGRESS_LEDGER_2026-09-14.yaml introduced
+      - same three canonical outputs remain the only handover surfaces to refresh in place
+      - minor turns are folded into the next major tuple to avoid noisy repository churn
+    bd_movement:
+      BD_005: NO_CHANGE_OPEN_FIRST_RED
+      BD_006: NO_CHANGE_PARTIAL
+      BD_008: NO_CHANGE_PREPARED_P0_GATED
+    global_project_dov: WITHHELD
+    engineering_credit_delta: 0
+
+restart_reconstruction:
+  order:
+    - triage_v1_6.yaml
+    - SESSION_HANDOVER_2026-09-14.md
+    - DROP_IN_CONTINUATION_2026-09-14.md
+    - SESSION_PROGRESS_LEDGER_2026-09-14.yaml
+    - evidence_ledgers_named_by_current_TRIAGE
+  rule: >-
+    The canonical files establish current truth. This progression ledger explains major state transitions.
+    Historical tuple entries are never allowed to override stronger current evidence or current TRIAGE.
