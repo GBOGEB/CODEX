@@ -34,6 +34,15 @@ REQUIRED_TEXT = {
     "50→2 K radiation",
     "50→2 K conduction",
 }
+REQUIRED_THERMAL_TOKENS = {
+    'stroke="#00e7c0"': "50 K shield must use the authoritative single 50 K colour",
+    'id="outerHeatRev"': "reverse-direction outer heat gradient missing",
+    'id="innerHeatRev"': "reverse-direction inner heat gradient missing",
+    'stroke="url(#outerHeatRev)"': "right-side 300→50 K path is not direction-correct",
+    'stroke="url(#innerHeatRev)"': "right-side 50→2 K path is not direction-correct",
+    'class="txt small white"': "A/B high-contrast legend text class missing",
+    'class="txt micro white"': "A/B high-contrast legend value class missing",
+}
 
 
 def fail(msg: str) -> None:
@@ -78,6 +87,13 @@ def main() -> int:
         if token not in svg_text:
             fail(f"required semantic label missing: {token}")
 
+    for token, message in REQUIRED_THERMAL_TOKENS.items():
+        if token not in svg_text:
+            fail(message)
+
+    if 'stroke="url(#shield50)"' in svg_text:
+        fail("nominal 50 K shield uses a multi-temperature spatial gradient")
+
     if "localStorage" not in html_text or "qcell-main-v0.7.7-layer-state" not in html_text:
         fail("persistent layer-state contract missing")
     if "Reset view" not in html_text:
@@ -94,7 +110,7 @@ def main() -> int:
         fail(f"forbidden exclusive-box overlaps: {collisions}")
 
     result = {
-        "schema": "qsvg-visual-control-check/0.1.0",
+        "schema": "qsvg-visual-control-check/0.2.0",
         "status": "PASS",
         "authority": "VISUAL_SEMANTIC_ONLY",
         "required_groups": sorted(REQUIRED_GROUPS),
@@ -103,6 +119,9 @@ def main() -> int:
         "pressure_overlay": "ABSENT_DEFERRED",
         "big_teaching_arrows": "OFF_DEFAULT",
         "endpoint_guides": "DOTTED_PRESENT",
+        "temperature_50K_mapping": "SOLID_AUTHORITATIVE_COLOUR",
+        "heat_gradient_direction": "PATH_DIRECTION_CORRECTED",
+        "AB_text_contrast": "WHITE_CLASS_ENFORCED",
         "persistent_layer_state": "PRESENT",
         "engineering_promotion_authority": False,
     }
