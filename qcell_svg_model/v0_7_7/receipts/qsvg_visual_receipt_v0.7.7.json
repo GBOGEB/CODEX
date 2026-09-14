@@ -1,0 +1,69 @@
+{
+  "schema": "qsvg-visual-receipt/0.1.0",
+  "receipt_version": "0.7.7",
+  "authority": "VISUAL_SEMANTIC_ONLY",
+  "producer_repo": "GBOGEB/CODEX",
+  "subject_branch": "qps/qcell-svg-p1a-v0-7-7",
+  "subject_head_sha": "acaade883b5ac14b2c9799ae5cce221319c0ec15",
+  "phase": "QSVG-P1A",
+  "artifact_set": {
+    "ssot": "qcell_svg_model/v0_7_7/src/qcell_main_v0_7_7.yaml",
+    "svg": "qcell_svg_model/v0_7_7/svg/qcell_main_v0_7_7.svg",
+    "html": "qcell_svg_model/v0_7_7/docs/index.html",
+    "collision_review": "qcell_svg_model/v0_7_7/reviews/QSVG_P1A_COLLISION_REVIEW_v0.7.7.md"
+  },
+  "normalized_layers": [
+    "thermal_body",
+    "parasitic_loads",
+    "compact_flow_legend",
+    "endpoint_guides",
+    "temperature_legend",
+    "big_teaching_arrows"
+  ],
+  "default_visibility": {
+    "thermal_body": true,
+    "parasitic_loads": true,
+    "compact_flow_legend": true,
+    "endpoint_guides": true,
+    "temperature_legend": true,
+    "big_teaching_arrows": false,
+    "pressure_overlay": false
+  },
+  "semantic_checks": {
+    "single_MAIN": "PASS",
+    "temperature_primary": "PASS",
+    "pressure_palette_separate": "PASS_POLICY_DEFERRED_IMPLEMENTATION",
+    "big_arrow_default_off": "PASS",
+    "dotted_endpoint_guides_default_on": "PASS",
+    "stream_A_4p5K_3bar": "PASS",
+    "stream_B_2to4K_26to31mbar": "PASS",
+    "stream_D_30to40K_12to13bar": "PASS",
+    "stream_E_50to60K_deltaT20": "PASS",
+    "outer_parasitic_red_to_orange": "PASS",
+    "inner_parasitic_orange_to_blue": "PASS",
+    "temperature_heatmap_present": "PASS"
+  },
+  "collision": {
+    "status": "PASS_STRUCTURAL_WITH_AUTOMATED_COLLISION_CHECK_PENDING",
+    "forbidden_overlaps_observed": 0,
+    "automated_scan": false
+  },
+  "qps_bd": {
+    "QSVG-BD-001": "IMPLEMENTED_PENDING_REVIEW",
+    "QSVG-BD-002": "CLOSED_IMPLEMENTATION",
+    "QSVG-BD-003": "PARTIAL_STATIC_PASS_AUTOMATION_PENDING",
+    "QSVG-BD-004": "PARTIAL_LAYER_TOGGLES_IMPLEMENTED_REPEAT_PENDING",
+    "QSVG-BD-005": "OPEN_DETERMINISM_NOT_PROVEN",
+    "QSVG-BD-006": "DEFERRED_NONBLOCKING",
+    "QSVG-BD-007": "DEFERRED_NONBLOCKING",
+    "QSVG-BD-008": "IMPLEMENTED_RECEIPT_DRAFT",
+    "QSVG-BD-009": "OPEN_DISTINCT_SHA_REPEAT_PENDING",
+    "QSVG-BD-010": "WITHHELD"
+  },
+  "promotion_authority": false,
+  "engineering_credit": false,
+  "sat_credit": false,
+  "opex_credit": false,
+  "negotiation_credit": false,
+  "release_credit": false
+}
