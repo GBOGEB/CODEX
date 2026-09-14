@@ -15,8 +15,7 @@ Purpose:
 - provide graph/navigation targets for Utilities and Controls;
 - prove exact source identity and per-slide render lineage before source-vs-curated promotion.
 
-Authority:
-`ENGINEERING_CURATION_NOT_DESIGN_APPROVAL`
+Authority: `ENGINEERING_CURATION_NOT_DESIGN_APPROVAL`
 
 ### Lane B — QSVG QCELL visual-control lane
 
@@ -26,8 +25,7 @@ Purpose:
 - enforce collision/layer/thermal-semantic invariants;
 - emit typed visual receipts.
 
-Authority:
-`VISUAL_SEMANTIC_ONLY`
+Authority: `VISUAL_SEMANTIC_ONLY`
 
 Canonical QSVG progression includes #693 documentation reconciliation after #689 checker repair. Hosted/static HTML and pressure-overlay work remain non-blocking. Distinct-SHA repeat remains evidence-governed and cannot be inferred from one deterministic run.
 
@@ -37,8 +35,7 @@ Merged #690/#691 provide the reusable publication plane:
 
 `semantic SSOT → governed HTML/PPTX/PDF/Markdown/GitHub Pages → per-format hashes + native telemetry + semantic parity + cross-format parity + promotion receipt`
 
-Authority:
-`GENERIC_PUBLICATION_INFRASTRUCTURE`
+Authority: `GENERIC_PUBLICATION_INFRASTRUCTURE`
 
 QPS implication:
 - `V16-BD-010` is not "invent a QPS exporter";
@@ -61,7 +58,7 @@ QPS implication:
 
 ## v1.6 source-proof status
 
-`source_proof_execution_v1_6.yaml` is the active BD-001/002 receipt and `source_lineage.yaml` now records persistent source locators plus typed digest/render states.
+`source_proof_execution_v1_6.yaml` (schema `qps-source-proof-execution/1.1`) is the active BD-001/002 receipt and `source_lineage.yaml` records persistent source locators plus typed digest/render states.
 
 ### What is bound
 
@@ -84,9 +81,7 @@ Current typed state:
 - `V16-BD-002 = BLOCKED_ON_RAW_BYTE_MATERIALIZATION`;
 - `V16-BD-003 = PREDICATE_BLOCKED_BD002_FALSE`.
 
-The current first red is:
-
-`RAW_SOURCE_BYTE_MATERIALIZATION`
+The current first red is `RAW_SOURCE_BYTE_MATERIALIZATION`.
 
 File Library references are persistent source locators but are not currently materialized as raw PPTX bytes in the executable container. No hash or render is fabricated across that boundary.
 
