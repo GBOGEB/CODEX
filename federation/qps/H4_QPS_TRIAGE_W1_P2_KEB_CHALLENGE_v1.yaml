@@ -1,0 +1,136 @@
+schema: qps-h4-w1-p2-keb-challenge/1.0
+as_of: '2026-09-14T10:39:00+02:00'
+mission: H4_QPS_TRIAGE
+wave: H4_QPS_TRIAGE:W1
+pulse: H4-QPS-W1-P2
+horizontal_lane: H2_KEB
+method: 3PR
+repository: GBOGEB/CODEX
+role: SEMANTIC_PROVENANCE_EXACT_SOURCE_CHALLENGE
+status: EXACT_HEAD_RECHECK_AFTER_OWNER_MERGE
+formal_credit_delta: 0
+authority_transfer: false
+
+governance_classification:
+  PR-ID: PR-679
+  WAVE: W001
+  SPRINT: S1-P2
+  DOMAIN: EXECUTION_GOVERNANCE_INFRASTRUCTURE
+  TYPE: GOVERNANCE
+  CRITICALITY: HIGH
+  TOPOLOGY IMPACT: NO
+  SCHEMA MUTATION: NO
+
+purpose: >-
+  Test canonical QPS TRIAGE applicability v0.3 reliability and Mission Control
+  semantics against the existing CODEX mesh controller, exact-source lineage,
+  and state-class separation. Reuse canonical semantics and do not create a
+  duplicate method framework.
+
+inputs:
+  applicability_canonical:
+    repo: GBOGEB/DOCX_RTM_Automation
+    pr: 56
+    merge_sha: a3bc7919bfc0c8d4ba572a6d6c95628406875c4b
+    artifact: federation/ADR_OCD/qps_triage_applicability.yaml
+    version: 0.3.0
+    exact_head_ci_before_merge: PASS
+  mission_control_candidate:
+    repo: GBOGEB/pipeline-automation-hub
+    pr: 113
+    head_sha_observed: c0eb5adc4691fc22fe045df39ad62fb386b54935
+    method_profile: >-
+      mission-control/qps-triage-ultra/methods/
+      QPS_TRIAGE_GLOBAL_METHOD_PROFILE_v1.md
+  child_boundary_candidate:
+    repo: GBOGEB/cryoplant-project
+    pr: 1121
+    head_sha_observed: 3ef8bae1ad8400ce0cb85b4b9df726d77129b616
+    artifact: controls/QPS_H4_W1_P1_RELIABILITY_CHILD_REENTRY_v0.1.yaml
+  canonical_controller:
+    repo: GBOGEB/CODEX
+    artifact: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
+    required_method_catalog: [3PR, MIP, 3PC, 3P3]
+  semantic_owner_canonical:
+    pr: 678
+    title: A7.2 real semantic ledgers and deterministic replay
+    state: MERGED
+    merge_sha: be763c10fb0c8575ce1d9f36700316be3a05d912
+    content_repairs:
+      - semantic_replay governed in PIPELINE/GLOSSARY_EXTENSIONS.yaml
+      - closed-loop expectation aligned to 10 tuples and 9 edges
+      - ABACUS Semantic Runtime PASS before merge
+      - CODEX Semantic Runtime CI PASS before merge
+    governance_note: >-
+      The owner lane is now canonical on main. This pulse performs one fresh
+      exact-head recheck and then stops if the semantic/governance gates pass.
+
+challenge_contract:
+  - id: KEB-QT-001
+    name: method_semantic_reuse
+    expected: >-
+      Candidate method descriptions must be compatible with existing controller
+      semantics and must not redefine 3PR, MIP, 3PC or 3P3 into new authorities.
+  - id: KEB-QT-002
+    name: state_class_separation
+    expected: >-
+      QPS child engineering, tooling triage, reliability model and mission
+      execution are separately typed. Shared human words such as ACCEPT or
+      ACTIVE do not imply cross-class promotion.
+  - id: KEB-QT-003
+    name: exact_source_lineage
+    expected: >-
+      SOURCE_BOUND reliability atoms preserve an exact child source locator and
+      identity through the analytical consumer. Scenario and user override
+      inputs remain visibly distinct.
+  - id: KEB-QT-004
+    name: component_system_anti_overclaim
+    expected: >-
+      Component MTBF or lambda cannot become system-event MTBF, Table-10 rate,
+      N+1 proof or accepted consequence without child architecture, recovery,
+      common-cause and consequence re-entry.
+  - id: KEB-QT-005
+    name: mission_control_non_authority
+    expected: >-
+      Mission Control may plan, route, measure, compare and recommend with
+      authority_transfer=false; it cannot mutate child engineering disposition.
+  - id: KEB-QT-006
+    name: pca_bt_non_authority
+    expected: >-
+      PCA, BT, reverse pressure and PB remain diagnostics or scheduler signals
+      and cannot create engineering, compliance, negotiation, acceptance or
+      release credit.
+  - id: KEB-QT-007
+    name: first_blocker_recursion
+    expected: >-
+      3PR refreshes state, MIP runs only for an observed gap, 3PC is bounded and
+      transactional, and 3P3 runs once only when local DoV is satisfied but
+      reusable propagation proof remains missing.
+
+observed_semantic_assessment:
+  method_catalog_match: PASS_CANDIDATE
+  state_class_separation: PASS_CANDIDATE
+  exact_source_requirement: PASS_CANDIDATE
+  component_system_boundary: PASS_CANDIDATE
+  mission_control_authority_guard: PASS_CANDIDATE
+  pca_bt_authority_guard: PASS_CANDIDATE
+  stop_rule_alignment: PASS_CANDIDATE
+  owner_semantic_debt: RETIRED_BY_PR_678_MERGE
+  exact_head_requirement: >-
+    Run this bounded one-file challenge once on current main and require semantic
+    runtime plus normal federation/governance checks to pass before P2 KR.
+
+CG: KEB_CHALLENGE_EXACT_HEAD_PASS_THEN_STOP
+BG: FRESH_EXACT_HEAD_P2_RECEIPT_NOT_YET_OBSERVED_AFTER_OWNER_MERGE
+EX: RECHECK_TRIGGERED
+QH: PENDING_CURRENT_HEAD
+KR: PENDING_CURRENT_HEAD
+DR: READY
+SR: PASS_CANDIDATE
+WD: RECHECK_ONCE_THEN_STOP
+PB: ZERO_AUTHORITY_CREDIT
+
+stop_rule: >-
+  If the current exact-head checks pass against main containing PR 678, emit P2
+  KR and stop KEB expansion. Re-enter only if new semantic debt appears; do not
+  create a further ontology or method layer.
