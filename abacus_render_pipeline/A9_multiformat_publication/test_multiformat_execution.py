@@ -6,10 +6,7 @@ from pathlib import Path
 
 from multiformat_execution import REQUIRED_FORMATS, execute
 from publication_promotion import evaluate
-from receipt_validation import (
-    load_and_validate_hosted_pages_receipt,
-    load_and_validate_receipt,
-)
+from receipt_validation import load_and_validate_hosted_pages_receipt, load_and_validate_receipt
 
 HERE = Path(__file__).resolve().parent
 RECEIPT = HERE / "receipts" / "multiformat_execution_receipt.json"
@@ -34,8 +31,8 @@ def _synthetic_hosted_receipt(result: dict) -> dict:
         "fetch_method": "synthetic_test_fixture_no_network",
         "required_consecutive_matches": 2,
         "propagation_observations": [
-            {"attempt": 1, "hash_match": True, "semantic_pass": True, "consecutive_governed_matches": 1},
-            {"attempt": 2, "hash_match": True, "semantic_pass": True, "consecutive_governed_matches": 2},
+            {"attempt": 1, "hash_match": True, "parity_pass": True, "consecutive_governed_matches": 1},
+            {"attempt": 2, "hash_match": True, "parity_pass": True, "consecutive_governed_matches": 2},
         ],
         "fetched_at_utc": "2026-09-14T00:00:00+00:00",
         "decision": "accept",
@@ -48,14 +45,12 @@ def test_multiformat_execution_accepts_all_required_format_candidates() -> None:
     assert result["cross_format_parity"]["pass"] is True
     assert result["semantic_replay"]["pass"] is True
     assert tuple(result["formats"].keys()) == REQUIRED_FORMATS
-
     for name in REQUIRED_FORMATS:
         item = result["formats"][name]
         assert item["decision"] == "accept"
         assert item["semantic_parity"]["coverage"] == 1.0
         assert item["telemetry"]["layout_pass"] is True
         assert item["telemetry"]["overflow_pass"] is True
-
     assert result["formats"]["pptx"]["telemetry"]["geometry_overflow_count"] == 0
     assert result["formats"]["pdf"]["telemetry"]["empty_page_count"] == 0
     assert result["formats"]["github_pages"]["telemetry"]["hosted_deployment_required"] is True
