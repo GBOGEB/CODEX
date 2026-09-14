@@ -1,25 +1,38 @@
-schema: qps-visual-system-triage/1.1
-version: 1.6.1
+schema: qps-visual-system-triage/1.2
+version: 1.6.2
 state: SOURCE_BOUND_PARTIAL_CONTROL
 authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
 
+global_project_dov: WITHHELD
+
 completed:
   - source deck filenames bound
-  - exact source slide ranges bound for core Utilities content
-  - dense Utilities canonical candidate written
-  - dense Controls canonical candidate written
+  - exact source slide ranges bound for core Utilities and Controls content
+  - dense Utilities and Controls canonical candidates written
   - cross-domain ownership boundary established
   - source inconsistencies preserved as review items
   - utilities reconciliation register added with explicit derived/source separation
   - first-pass controls signal classification register added
   - generic governed publication carrier #690/#691 confirmed as reusable infrastructure
+  - all four v1.6 source filenames resolved to persistent File Library objects
+  - SRC-CTRL-CORE joined to a pre-existing governed W176 exact source identity tuple
+  - source-proof execution receipt added
+
+source_proof_receipt: source_proof_execution_v1_6.yaml
 
 cross_repo_evidence:
   - repository: GBOGEB/cryoplant-project
-    artifact: ocd-adr/40_implementation/QPS_VISUAL_N200_REMAINING_W176_SELECTION.csv
-    evidence: source_sha256 values are recorded for several v1.6 source filenames
-    authority: DISCOVERED_CROSS_REPO_EVIDENCE_NOT_YET_PROMOTED_INTO_V1_6_LINEAGE
-    note: do not close BD-001 from filename/hash correspondence alone; bind exact controlled bytes/locator and provenance first
+    selection: ocd-adr/40_implementation/QPS_VISUAL_N200_REMAINING_W176_SELECTION.csv
+    evidence: W162 candidate SHA256 values for SRC-UTIL-CORE, SRC-UTIL-CANONICAL-APPENDIX and SRC-CTRL-CORE
+    authority: SOURCE_GATE_HASH_EVIDENCE_ZERO_ENGINEERING_CREDIT
+  - repository: GBOGEB/cryoplant-project
+    collection: ocd-adr/40_implementation/QPS_VISUAL_N200_COLLECTION_W176_PPTX_AUTH_RECONCILED.csv
+    evidence: SRC-CTRL-CORE exact persistent source asset locator and SHA256 coexist in one governed tuple
+    authority: PREEXISTING_VISUAL_PROVENANCE_IDENTITY_ONLY
+  - repository: GBOGEB/cryoplant-project
+    receipt: triage/w176/QPS_W176_PPTX_TOPUP_v0.1.yaml
+    evidence: SRC-UTIL-CORE and SRC-UTIL-CANONICAL-APPENDIX slide-1 renders were classified duplicate and earned zero visual credit
+    authority: VISUAL_COLLECTION_EXECUTION_ONLY
   - repository: GBOGEB/CODEX
     prs: [690, 691]
     evidence: receipt-governed HTML/PPTX/PDF/Markdown/GitHub-Pages publication carrier plus deterministic PPTX/PDF native telemetry
@@ -30,51 +43,67 @@ open_first_red:
   - id: V16-BD-001
     topic: source_digests
     priority: P0
-    state: PARTIAL_EVIDENCE_DISCOVERED
-    closure: bind exact source PPTX bytes/locator and verified SHA256 into v1.6 source lineage
-    note: cross-repo SHA evidence exists for SRC-UTIL-CORE, SRC-UTIL-CANONICAL-APPENDIX and SRC-CTRL-CORE; SRC-NAMING-CONTROL hash still requires exact evidence binding
+    state: PARTIAL_IDENTITY_BINDING
+    artifact: source_proof_execution_v1_6.yaml
+    detail:
+      SRC-CTRL-CORE: IDENTITY_BOUND_FROM_PREEXISTING_GOVERNED_TUPLE_REHASH_NOT_REPEATED
+      SRC-UTIL-CORE: LOCATOR_AND_HASH_COEXIST_NOT_YET_EXACT_BYTE_REHASH_BOUND
+      SRC-UTIL-CANONICAL-APPENDIX: LOCATOR_AND_HASH_COEXIST_NOT_YET_EXACT_BYTE_REHASH_BOUND
+      SRC-NAMING-CONTROL: OPEN_DIGEST
+    closure: materialize all four exact PPTX byte objects through an approved raw-source path, independently SHA256 them, and bind all digests into source_lineage.yaml
+
   - id: V16-BD-002
     topic: source_slide_renders
     priority: P0
-    state: OPEN
-    closure: produce stable image/render per bound source slide and record render hash
+    state: BLOCKED_ON_RAW_BYTE_MATERIALIZATION
+    artifact: source_proof_execution_v1_6.yaml
+    prior_evidence: W176 slide-1 renders exist for some candidates but are insufficient; Utilities slide-1 renders were duplicate observations
+    closure: fixed renderer/settings produce one stable render and SHA256 for every bound source slide
+
   - id: V16-BD-003
     topic: source_vs_curated_visual_dov
     priority: P0
-    state: OPEN
-    closure: compare every bound source render with curated slide/object and record KEEP/MERGE/REFERENCE/SUPERSEDE/DROP_WITH_RATIONALE plus content-loss verdict
+    state: PREDICATE_BLOCKED_BD002_FALSE
+    closure: compare every bound source render with curated object and record KEEP/MERGE/REFERENCE/SUPERSEDE/DROP_WITH_RATIONALE plus explicit content-loss verdict
+
   - id: V16-BD-004
     topic: utilities_value_reconciliation
     priority: P0
     state: PARTIAL_RECONCILIATION
     artifact: utilities_reconciliation_v1_6.yaml
     closure: governing interface/load-basis evidence confirms semantic definitions and remaining HVAC/GN2/PGB20 questions
+
   - id: V16-BD-005
     topic: loop_evidence
     priority: P0
     state: OPEN
     closure: bind 17 kW / 350 kW / 6 h / ~2 h statements to transient/load evidence, equipment state and operating scenario
+
   - id: V16-BD-006
     topic: control_signal_classification
     priority: P0
     state: PARTIAL_SUBSTANTIVE_CLASSIFICATION
     artifact: control_signal_classification_v1_6.yaml
     closure: discipline-approved cause/effect/fail-safe matrix closes ambiguous utility statuses; L2 exact I/O remains BD-007
+
   - id: V16-BD-007
     topic: detailed_io
     priority: P1
     state: OPEN
     closure: exact point counts, marshalling and implementation frozen at L2
+
   - id: V16-BD-008
     topic: graph_binding_refresh
     priority: P1
     state: OPEN
     closure: WCS/HCC/QINFRA/QPS:CIS graph nodes link to promoted v1.6 objects and exact lineage/review records
+
   - id: V16-BD-009
     topic: deterministic_render
     priority: P1
     state: DEFER_TO_V1_7
     closure: YAML drives HTML/SVG without hand-maintained layout truth
+
   - id: V16-BD-010
     topic: governed_exports
     priority: P1
@@ -91,14 +120,19 @@ non_compensating_rules:
   - safety/interlock classification requires discipline evidence
   - utilities source inconsistencies remain OPEN until reconciled by governing engineering sources
   - candidate I/O remains candidate until L2/detail control design freezes it
-  - cross-repo hash evidence cannot replace exact byte/locator provenance binding
+  - a prior W162/W176 SHA does not equal an independently repeated byte rehash unless the exact object is materialized and hashed
+  - a slide-1 visual census render cannot satisfy per-slide BD-002
+  - duplicate-render evidence cannot be promoted as independent proof
   - generic publication success cannot replace QPS-specific source-vs-curated DoV
 
 parallel_execution:
   source_proof:
-    - V16-BD-001 exact byte/hash/locator binding
-    - V16-BD-002 stable per-slide render/hash
-    - V16-BD-003 starts only where render predicate exists
+    first_red: RAW_SOURCE_BYTE_MATERIALIZATION
+    then:
+      - independent SHA256 repeat for four PPTX objects
+      - establish missing SRC-NAMING-CONTROL digest
+      - stable per-slide renders and hashes for all bound slides
+      - BD-003 disposition ledger
   utilities:
     - V16-BD-004 confirm reconciliation against governing interface/load basis
     - V16-BD-005 bind LOOP scenario evidence
@@ -111,12 +145,10 @@ parallel_execution:
     - V16-BD-010 adapt to #690/#691 after source-bound objects are promotion-ready
 
 next_execution_order:
-  - V16-BD-001 bind discovered source SHA evidence to exact controlled bytes/locators
-  - V16-BD-002 produce stable source slide renders
-  - V16-BD-004 validate semantic reconciliation with interface/load basis
-  - V16-BD-006 complete cause/effect classification
-  - V16-BD-003 execute content-loss DoV per rendered source slide
-  - V16-BD-005 bind LOOP transient/load scenario evidence
-  - V16-BD-008 refresh graph bindings
-
-global_project_dov: WITHHELD
+  - materialize exact four File Library PPTX objects as raw bytes without conversion
+  - sha256sum and bind source digests
+  - render only the bound slide set with fixed renderer/version/settings and hash every render
+  - execute V16-BD-003 content-loss ledger immediately after render predicate exists
+  - continue V16-BD-004 / V16-BD-006 in parallel where evidence is independent
+  - V16-BD-005 LOOP evidence
+  - V16-BD-008 graph refresh
