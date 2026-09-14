@@ -1,7 +1,7 @@
 # QPS Visual Knowledge System — Lossless Session Handover
 
 Date: 2026-09-14
-Current control version: `v1.6.10`
+Current control version: `v1.6.11`
 Repository: `GBOGEB/CODEX`
 Scope: QPS v1.6 source-bound Utilities / Controls / Naming / LOOP / graph lineage
 Authority: `ENGINEERING_CURATION_NOT_DESIGN_APPROVAL`
@@ -405,7 +405,7 @@ Newly closed subquestions:
 
 BD-006 remains `PARTIAL_EVIDENCE_BOUND`; BD-008 remains `PREPARED_P0_GATED`; global/project DoV remains `WITHHELD`.
 
-## 15. TUPLE-006 governance execution receipt — PR #714
+## 15. TUPLE-006 governance execution receipt — PR #714 / corrective PR #717
 
 PR #714 merged at `1bc865a07c1c57e951b2c1d2633c45ab419aafa4`; the subsequent metrics receipt moved `main` to `cab4ffcb85c0a6cbcaa8a6fb1cef790a5dfdece4`.
 
@@ -413,10 +413,59 @@ The engineering evidence in v1.6.10 is unchanged by the following control except
 
 - `qps-canonicalization` passed on the PR #714 head;
 - `W003 Governance Gate` failed with `PR-007` because the pull-request classification block omitted the literal `---` delimiter required by the metadata parser;
-- the failed step did not parse or reject the QPS engineering evidence; its scope was PR metadata only;
 - PR #714 was merged concurrently before a fresh W003 recheck could run;
-- the PR body was then corrected to include the required delimiter;
-- this control exception creates **zero engineering credit and zero BD state movement**;
-- a bounded follow-up receipt PR is required to pass both W003 and qps-canonicalization and to preserve the exception transparently in the progression record.
+- corrective PR #717 preserved the exception transparently;
+- #717 first failed because `PR-ID` was required, then because `SCHEMA MUTATION: NONE` was not an allowed enum;
+- the header was repaired to include `PR-ID` and `SCHEMA MUTATION: NO`;
+- exact head `817e93dd3cfd53961f0b0ab86221182665f56b0b` passed both `W003 Governance Gate` and `qps-canonicalization`;
+- PR #717 merged at `92f80b5027108a14a26c22f32c70d13b587dc853`;
+- the control exception creates **zero engineering credit and zero BD state movement**.
 
-The current engineering state remains v1.6.10 exactly as stated in Section 14. Global/project DoV remains `WITHHELD`.
+## 16. v1.6.11 current delta — U1.5 / OFFER-21 formal supplier-return closure route
+
+This section changes the execution route, not the engineering evidence state.
+
+New evidence ledger: `bd005_u15_negotiation_closure_route_v1_6.yaml`.
+
+Canonical negotiation item `QPS-GLOBAL-AGENDA-U1-5 / OFFER-21 — LOOP recovery concept` is now bound as the formal closure route for the missing quantitative LOOP chain. The current negotiation SSOT classifies it as `OPEN_ACTION / REVIEW_REQUIRED` with **closure credit 0**.
+
+The required written updated-offer return explicitly asks for:
+
+- initial plant state;
+- helium inventory requiring recovery;
+- expected peak recovery flow;
+- duration of recovery;
+- available approximately 110 g/s capacity;
+- required cooling-water flow;
+- instrument-air requirement;
+- electrical/emergency-power requirement;
+- storage capacity;
+- consequence if a required utility is unavailable;
+- resulting preserved plant state.
+
+The same canonical row requires a source-bound return to be dispositioned and pass the exact obligation-specific re-entry test. No source-bound bidder return or BAFO evidence location is currently bound.
+
+### Execution consequence
+
+The prior v1.6.10 first-red of repeatedly hunting or deriving an exact ~110 g/s / <=350 kW point is replaced by a stronger first-red:
+
+**receive and disposition the U1.5 / OFFER-21 source-bound supplier return.**
+
+The 112 g/s / 357 kW maximum point remains valid equipment context, but interpolation from it cannot close U1.5 or BD-005. Route binding is not evidence receipt and therefore grants zero engineering closure credit.
+
+### Current BD-005 state at v1.6.11
+
+`U1_5_FORMAL_RETURN_ROUTE_BOUND_SUPPLIER_EVIDENCE_OPEN`
+
+First-red sequence:
+
+1. receive and bind the U1.5 written updated-offer return by exact source identity/version/hash;
+2. disposition `ACCEPT / REJECT / DEFER` against the obligation-specific re-entry test;
+3. if accepted/partial, bind the supplier-supported LOOP Hz/flow/package-power point and total EPS margin;
+4. bind Recovery Cooling Water/PAB12 degraded hydraulics and ES02 critical auxiliary split;
+5. bind remaining duct and thermal-model inputs;
+6. execute the first-law WCS LOOP transient only after accepted electrical/hydraulic/thermal evidence is complete enough for the model.
+
+Non-compensating rule: `INTERPOLATION != SUPPLIER EVIDENCE`, `ROUTE BINDING != EVIDENCE RECEIPT`, and negotiation source coverage/silence does not equal confirmed compliance.
+
+BD-006 remains `PARTIAL_EVIDENCE_BOUND`; BD-008 remains `PREPARED_P0_GATED`; global/project DoV remains `WITHHELD`.

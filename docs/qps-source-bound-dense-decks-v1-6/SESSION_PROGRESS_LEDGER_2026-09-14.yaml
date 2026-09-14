@@ -172,11 +172,10 @@ entries:
       merge_timing: PR_714_was_merged_concurrently_before_fresh_W003_recheck
       post_merge_PR_body_repair: required_delimiter_added
       corrective_PR: PR_717
-      corrective_PR_attempt_1_qps_canonicalization: PASS
-      corrective_PR_attempt_1_W003: FAIL_PR007_REQUIRED_PR_ID
-      corrective_PR_attempt_1_failure_scope: PR_METADATA_SCHEMA_ONLY
-      corrective_PR_attempt_1_repair: added_PR_ID_PR_717_to_classification_block
-      corrective_PR_fresh_head_required: true
+      corrective_PR_final_head: 817e93dd3cfd53961f0b0ab86221182665f56b0b
+      corrective_PR_final_W003: PASS
+      corrective_PR_final_qps_canonicalization: PASS
+      corrective_PR_merge: 92f80b5027108a14a26c22f32c70d13b587dc853
       triage_engineering_state_change_from_exception: NONE
     bd_movement:
       BD_005: OPEN_BUT_CURRENT_SELECTED_MODEL_MAX_POINT_EPS_ROUTING_AND_AIR_SIDE_BOUND
@@ -201,6 +200,34 @@ entries:
       - physical_definition_of_working_approximately_2_h_onset
       - measurable_definition_of_working_approximately_6_h_stabilization
       - first_law_WCS_LOOP_transient_and_independent_review
+    global_project_dov: WITHHELD
+    engineering_credit_delta: 0
+
+  - tuple_id: TUPLE-007
+    user_intent: >-
+      Finish the incomplete v1.6.11 canonical refresh, gate and merge it, and change the BD-005
+      execution path so receipt and disposition of U1.5 supplier evidence is the first-red rather
+      than interpolation from the 112 g/s / 357 kW equipment maximum.
+    executed_delta:
+      - canonical negotiation U1.5 / OFFER-21 bound as the formal closure route for the missing quantitative LOOP chain
+      - U1.5 state bound as OPEN_ACTION / REVIEW_REQUIRED with closure credit 0
+      - U1.5 requested-return scope bound to initial state, inventory, peak flow, duration, available ~110 g/s capacity, cooling-water flow, instrument air, emergency electrical requirement, storage, utility-loss consequence and preserved state
+      - current bidder return / BAFO evidence remains unbound and therefore engineering closure remains open
+      - interpolation from the 112 g/s / 357 kW maximum point removed from the closure execution path
+      - first-red changed to source-bound U1.5 return receipt and obligation-specific disposition
+      - bd005_u15_negotiation_closure_route_v1_6.yaml added
+      - triage_v1_6.yaml advanced to v1.6.11
+      - full handover and drop-in continuation synchronized to the U1.5 route
+    bd_movement:
+      BD_005: U1_5_FORMAL_RETURN_ROUTE_BOUND_SUPPLIER_EVIDENCE_OPEN
+      BD_006: NO_CHANGE_PARTIAL_EVIDENCE_BOUND
+      BD_008: NO_CHANGE_PREPARED_P0_GATED
+    first_red:
+      receipt_and_disposition_of_source_bound_U1_5_OFFER_21_written_updated_offer_return
+    non_compensating:
+      - route_binding_is_not_evidence_receipt
+      - interpolation_is_not_supplier_evidence
+      - negotiation_source_coverage_or_silence_is_not_confirmed_compliance
     global_project_dov: WITHHELD
     engineering_credit_delta: 0
 
