@@ -1,11 +1,12 @@
 schema: qps-visual-system-triage/1.5
-version: '1.6.7'
+version: '1.6.8'
 state: SOURCE_DOV_COMPLETE_D21_PROCESS_D22_REQUIREMENTS_BOUND_BD005_OPEN_CONTROLS_PARTIAL_GRAPH_MODE_MATRIX_BOUND
 authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
 global_project_dov: WITHHELD
 state_reconciliation: state_reconciliation_v1_6.yaml
 session_handover: SESSION_HANDOVER_2026-09-14.md
 drop_in_continuation: DROP_IN_CONTINUATION_2026-09-14.md
+session_progress_ledger: SESSION_PROGRESS_LEDGER_2026-09-14.yaml
 first_red: V16-BD-005_LOOP_DEGRADED_BOUNDARY_AND_TRANSIENT_INPUTS
 
 handover_reproduction_contract:
@@ -13,8 +14,11 @@ handover_reproduction_contract:
     - triage_v1_6.yaml
     - SESSION_HANDOVER_2026-09-14.md
     - DROP_IN_CONTINUATION_2026-09-14.md
-  update_rule: after each bounded pulse refresh these same canonical outputs in place and preserve additive evidence ledgers separately
-  restart_rule: next session reads canonical outputs first, then only the evidence files named by current TRIAGE
+  progression_ledger: SESSION_PROGRESS_LEDGER_2026-09-14.yaml
+  update_rule: after each bounded pulse or major prompt/reply tuple refresh these same canonical outputs in place and append progression evidence separately
+  major_tuple_rule: changes to evidence, BD state/priority, authority/lineage, execution sequence, graph semantics, or the handover contract require a progression-ledger entry
+  minor_turn_rule: wording-only or no-state-change turns may be folded into the next major tuple to avoid noisy repository churn
+  restart_rule: next session reads canonical outputs first, then progression ledger, then only the evidence files named by current TRIAGE
   no_architecture_restart: true
   no_handover_framework_fork: true
 
@@ -62,6 +66,7 @@ completed:
   - stale-branch merge collision from PR #700 reconciled by retained-evidence precedence
   - BD-008 source/lineage graph overlay prepared on existing v1.5 carrier without schema fork
   - canonical handover refresh contract frozen so TRIAGE, full handover and drop-in restart remain synchronized
+  - major prompt/reply progression ledger frozen so current state and major state transitions are both reproducible
 
 closed_first_red:
   - id: V16-BD-001
@@ -212,12 +217,13 @@ three_pr_session_receipt:
 mip_session_receipt:
   modernize: repaired stale role semantics and reused existing graph/publication carriers
   innovate: introduced D2.1 behavioral-edge overlay and source mode/state matrix without schema fork
-  perpetuate: canonical TRIAGE/full-handover/drop-in files are refreshed in place after bounded pulses; additive evidence ledgers remain separate
+  perpetuate: canonical TRIAGE/full-handover/drop-in files are refreshed in place after bounded pulses and major tuples; progression plus additive evidence ledgers remain separate
 
 non_compensating_rules:
   - a visual/navigation/publication PASS cannot grant engineering acceptance
   - source/content DoV does not validate OPEN/WIP engineering statements
   - retained source receipts cannot be invalidated by a stale narrative snapshot without contradictory execution evidence
+  - historical tuple summaries cannot override stronger current TRIAGE/evidence
   - source age is not source invalidity; D2.1 and D2.2 remain traceable anchors until explicit governed replacement/withdrawal is established
   - D2.1 is process conceptual-design authority; D2.2 is technical/project-requirements authority
   - historical vendor data identifies provenance but is not current accepted design

@@ -1,7 +1,7 @@
 # QPS Visual Knowledge System — Lossless Session Handover
 
 Date: 2026-09-14
-Current control version: `v1.6.7`
+Current control version: `v1.6.8`
 Repository: `GBOGEB/CODEX`
 Scope: QPS v1.6 source-bound Utilities / Controls / Naming / LOOP / graph lineage
 Authority: `ENGINEERING_CURATION_NOT_DESIGN_APPROVAL`
@@ -227,7 +227,27 @@ read TRIAGE
 
 This makes the session state reproducible from repository truth without relying on chat memory.
 
-## 10. Non-compensating controls
+## 10. Major prompt/reply tuple progression contract
+
+In addition to the three canonical current-state outputs above, maintain the append-only progression ledger:
+
+- `SESSION_PROGRESS_LEDGER_2026-09-14.yaml`
+
+A tuple is **major** when it changes evidence/source lineage, BD state/priority/close predicate, source authority/currentness interpretation, first-red/execution sequence, graph/behavior semantics, the handover contract, or material PR/merge context needed for restart.
+
+After each major tuple:
+
+- append one progression-ledger entry capturing user intent, executed delta, repository receipt, BD movement/non-movement, and DoV/credit boundary;
+- refresh the same three canonical current-state outputs in the same bounded PR;
+- preserve additive engineering/source ledgers separately;
+- verify governance/canonicalization gates where applicable;
+- post-merge read from `main`.
+
+Minor acknowledgements or wording-only turns with no state/evidence/sequence delta may be folded into the next major tuple to avoid meaningless repository churn.
+
+The progression ledger explains how the current state was reached but never overrides stronger current TRIAGE/evidence.
+
+## 11. Non-compensating controls
 
 - `RENDER != SOURCE AUTHORITY`
 - `VISUAL PASS != ENGINEERING PASS`
@@ -238,9 +258,10 @@ This makes the session state reproducible from repository truth without relying 
 - green/color semantics require per-drawing legend/state binding;
 - process fallback semantics do not automatically assign SIL or HARD_TRIP;
 - candidate I/O remains candidate until L2/detail design;
+- historical tuple summaries do not override stronger current evidence;
 - global/project DoV remains `WITHHELD`.
 
-## 11. Restart victory condition
+## 12. Restart victory condition
 
 The next high-value victory is not another deck or renderer. It is one of:
 
