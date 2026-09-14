@@ -35,3 +35,43 @@ glossary:
     definition: GitHub Actions job identifier specifically for the semantic-validation job within the semantic-runtime workflow, interpreted with run identifier, exact head SHA and result.
     introduced_by: federation/rex/returns/CODEX_W113_PR621_REX_RETURN.yaml
     first_use_case: bind the semantic-validation job that passed validator, orchestration and tests in the PR650 Control proof.
+  semantic_authority_transferred:
+    definition: Tuple-state flag indicating that semantic authority has moved from an earlier representation into a governed SSOT or runtime representation; it does not transfer child engineering or compliance authority.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/data/semantic_tuple_ledger.json
+    first_use_case: record the evolution from source/reference artifacts toward governed YAML and executable semantic runtime state.
+  semantic_delta_replay:
+    definition: Deterministic replay of ordered tuple deltas to reconstruct how semantic state evolved from root tuple to current state.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/semantic_delta_replay.py
+    first_use_case: prove the TUP-0001 through TUP-0008 evolution path rather than only inspecting the final reconstructed state.
+  semantic_lineage:
+    definition: Explicit parent-child provenance connecting semantic tuples, decisions, branches and derived runtime state.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/data/semantic_tuple_ledger.json
+    first_use_case: derive branch topology and reconstruct semantic ancestry without maintaining a separate hand-authored DAG.
+  semantic_metrics:
+    definition: Quantified runtime measures describing semantic completeness, debt, branch topology and reconstructability; metrics are governance indicators, not engineering acceptance evidence by themselves.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/closed_loop.py
+    first_use_case: expose completeness and open-debt measures used to drive the next governed execution action.
+  semantic_promotions_allowed:
+    definition: Acceptance-gate result indicating whether semantic validation, replay and traceability prerequisites permit promotion of a generated render or publication artifact.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/semantic_acceptance_gate.py
+    first_use_case: prevent renderer promotion when semantic state is not reconstructable even if visual rendering itself succeeds.
+  semantic_spacing:
+    definition: Governed spacing and whitespace semantics used by the renderer layout engine to preserve hierarchy, readability and overflow constraints across themes and outputs.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/data/governance_ledger.json
+    first_use_case: track renderer-governance debt for spacing and overflow validation.
+  semantic_tuple_ledger:
+    definition: Machine-readable ordered registry of semantic tuples containing stable identifiers, parentage, branch, intent, progress and next action used by the A7 reconstruction runtime.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/data/semantic_tuple_ledger.json
+    first_use_case: replace fixture-only reconstruction with the real CODEX conversation lineage ledger.
+  semantic_acceptance_gate:
+    definition: Executable promotion gate that combines renderer validation with reconstruction, replay, traceability and readiness checks before allowing publication promotion.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/semantic_acceptance_gate.py
+    first_use_case: couple A6 renderer governance to A7 reconstructability so visual success alone cannot promote an artifact.
+  semantic_delta_replay_passed:
+    definition: Boolean acceptance check indicating that deterministic tuple replay completed successfully for the governed ledger and expected tuple sequence.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/semantic_acceptance_gate.py
+    first_use_case: provide an explicit replay prerequisite within the A6-A7 renderer promotion contract.
+  semantic_replay:
+    definition: Governed semantic-runtime capability proving that ordered semantic tuple history can be replayed deterministically from source state to the current reconstructed state; it is replay evidence, not child engineering authority.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/test_semantic_replay_and_acceptance.py
+    first_use_case: name the bounded deterministic replay capability exercised by the A7 semantic replay and renderer-acceptance tests.
