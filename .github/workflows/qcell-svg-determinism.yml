@@ -30,8 +30,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install renderer dependency
-        run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Install renderer dependencies
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.2 defusedxml==0.7.1
       - name: Run fail-closed visual-control predicates
         run: python qcell_svg_model/v0_7_7/scripts/check_qcell_visual_control.py
       - name: Render A from SSOT
