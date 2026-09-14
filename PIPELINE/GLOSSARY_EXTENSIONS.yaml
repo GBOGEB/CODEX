@@ -63,3 +63,11 @@ glossary:
     definition: Machine-readable ordered registry of semantic tuples containing stable identifiers, parentage, branch, intent, progress and next action used by the A7 reconstruction runtime.
     introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/data/semantic_tuple_ledger.json
     first_use_case: replace fixture-only reconstruction with the real CODEX conversation lineage ledger.
+  semantic_acceptance_gate:
+    definition: Executable promotion gate that combines renderer validation with reconstruction, replay, traceability and readiness checks before allowing publication promotion.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/semantic_acceptance_gate.py
+    first_use_case: couple A6 renderer governance to A7 reconstructability so visual success alone cannot promote an artifact.
+  semantic_delta_replay_passed:
+    definition: Boolean acceptance check indicating that deterministic tuple replay completed successfully for the governed ledger and expected tuple sequence.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/semantic_acceptance_gate.py
+    first_use_case: provide an explicit replay prerequisite within the A6-A7 renderer promotion contract.
