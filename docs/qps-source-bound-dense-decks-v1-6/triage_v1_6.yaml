@@ -5,14 +5,7 @@ authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
 global_project_dov: WITHHELD
 source_proof_receipt: source_proof_execution_v1_6.yaml
 source_proof_receipt_schema: qps-source-proof-execution/1.1
-completed:
-  - source deck filenames and exact source slide ranges bound
-  - dense Utilities and Controls canonical candidates written
-  - utilities reconciliation and first-pass controls signal-classification registers added
-  - all four source filenames resolved to persistent File Library objects
-  - SRC-CTRL-CORE joined to a pre-existing governed W176 exact source identity tuple
-  - source lineage, source-proof receipt, navigator and alignment surfaces updated
-  - generic governed publication carrier #690/#691 confirmed as reusable infrastructure
+first_red: RAW_SOURCE_BYTE_MATERIALIZATION
 open_first_red:
   - {id: V16-BD-001, topic: source_digests, priority: P0, state: PARTIAL_IDENTITY_BINDING, artifact: source_proof_execution_v1_6.yaml}
   - {id: V16-BD-002, topic: source_slide_renders, priority: P0, state: BLOCKED_ON_RAW_BYTE_MATERIALIZATION, artifact: source_proof_execution_v1_6.yaml}
@@ -24,21 +17,21 @@ open_first_red:
   - {id: V16-BD-008, topic: graph_binding_refresh, priority: P1, state: OPEN}
   - {id: V16-BD-009, topic: deterministic_render, priority: P1, state: DEFER_TO_V1_7}
   - {id: V16-BD-010, topic: governed_exports, priority: P1, state: REFRAME_BIND_EXISTING_CARRIER}
-first_red: RAW_SOURCE_BYTE_MATERIALIZATION
 next_execution_order:
   - materialize exact four File Library PPTX objects as raw bytes without conversion
-  - sha256sum and bind source digests
-  - render only the bound slide set with fixed renderer/version/settings and hash every render
-  - execute V16-BD-003 content-loss ledger immediately after render predicate exists
-  - continue V16-BD-004 and V16-BD-006 in parallel where evidence is independent
-  - bind V16-BD-005 LOOP transient/load scenario evidence
-  - refresh V16-BD-008 graph bindings
+  - independently SHA256 all four and establish missing SRC-NAMING-CONTROL digest
+  - render every bound source slide at fixed settings and hash each render
+  - execute BD-003 slide-complete disposition/content-loss ledger
+  - continue BD-004 and BD-006 in parallel only where evidence is independent
+  - bind BD-005 LOOP evidence
+  - refresh BD-008 graph bindings
+  - bind QPS objects into existing #690/#691 publication carrier
 non_compensating_rules:
+  - no source digest is invented
+  - a prior W162/W176 SHA is not an independently repeated rehash without materialized exact bytes
+  - a slide-1 census render cannot satisfy BD-002
+  - duplicate render evidence earns no independent proof credit
   - visual/navigation/publication PASS cannot grant engineering acceptance
-  - source evidence gaps cannot be offset by layout quality
-  - a prior W162/W176 SHA does not equal an independently repeated byte rehash unless the exact object is materialized and hashed
-  - a slide-1 census render cannot satisfy per-slide BD-002
-  - duplicate-render evidence cannot be promoted as independent proof
   - safety/interlock classification requires discipline evidence
   - candidate I/O remains candidate until L2/detail control design freezes it
-  - QPS publication shall reuse #690/#691; ODP and Office host reflow remain separate proof boundaries
+  - ODP and Microsoft Office host reflow remain separate proof boundaries
