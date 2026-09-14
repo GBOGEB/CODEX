@@ -1,27 +1,35 @@
 schema: qps-visual-system-triage/1.5
-version: '1.6.5'
-state: SOURCE_DOV_COMPLETE_D21_D22_ANCHORS_BOUND_BD005_OPEN_CONTROLS_PARTIAL
+version: '1.6.6'
+state: SOURCE_DOV_COMPLETE_D21_PROCESS_D22_REQUIREMENTS_BOUND_BD005_OPEN_CONTROLS_PARTIAL_GRAPH_PREPARED
 authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
 global_project_dov: WITHHELD
 state_reconciliation: state_reconciliation_v1_6.yaml
+session_handover: SESSION_HANDOVER_2026-09-14.md
+drop_in_continuation: DROP_IN_CONTINUATION_2026-09-14.md
 first_red: V16-BD-005_LOOP_DEGRADED_BOUNDARY_AND_TRANSIENT_INPUTS
 
 source_anchor_policy:
   principle: TEMPORAL_MATURITY_IS_SEPARATE_FROM_PROVENANCE_AUTHORITY
   D2_1:
-    title: D2.1 Preliminary Design
-    reference: SCK_CEN_81777062
+    title: D2.1 Conceptual Design Report for MINERVA Cryogenic System
+    reference: DSBT-TN-24-37-3.0
+    project_reference: SCK_CEN_81777062
     status: AGED_ACTIVE_ANCHOR_CURRENTNESS_CHECK_REQUIRED
-    role: specific preliminary-design evidence and provenance anchor
+    role: PROCESS_CONCEPTUAL_DESIGN_ANCHOR
+    evidence_lanes:
+      appendix_8_2: PROCESS_TOPOLOGY_PFD
+      appendix_8_3: PROCESS_PHYSICS_SIMCRYOGENICS_MODEL_LINEAGE
+      appendix_8_4: OPERATING_ABNORMAL_MODE_AND_VALVE_STATE_BEHAVIOR
   D2_2:
     title: D2.2 Technical Specification for MINERVA Cryogenic System
     reference: DSBT-TN-2024-19_Rev_4_0
     status: AGED_ACTIVE_ANCHOR_CURRENTNESS_CHECK_REQUIRED
-    role: specific technical-specification evidence and provenance anchor
+    role: TECHNICAL_AND_PROJECT_REQUIREMENTS_ANCHOR
   rule: >-
     Later revisions, interface lists, bidder evidence and analytical SSOTs may refine or challenge
-    the anchored values, but do not silently erase D2.1/D2.2 lineage. A current final-design claim
-    requires explicit revision/change reconciliation.
+    anchored values, but do not silently erase D2.1/D2.2 lineage. D2.1 process-concept behavior
+    and D2.2 requirement authority remain separate. A current final-design claim requires explicit
+    revision/change reconciliation.
 
 completed:
   - V16-BD-001 exact source PPTX bytes bound to controlled Library file/version IDs and SHA256
@@ -32,13 +40,15 @@ completed:
   - five source-lineage misbindings repaired by BD-003 review
   - V16-BD-005 source scenario values bound and WCS-room LOOP separated from Line-S cryogenic-return transient
   - V16-BD-005 historical FSD575 air-side heat paths and diagnostic building geometry bound
-  - D2.1 identified and retained as Preliminary Design anchor SCK CEN/81777062 for source-specific evidence and provenance
-  - D2.2 DSBT-TN-2024-19 Rev 4.0 retained as technical-specification anchor for source-specific evidence and provenance
+  - D2.1 retained as process conceptual-design anchor and split into topology, model-physics and behavioral-state lanes
+  - D2.1 Appendix 8.4 behavioral semantics recovered for minor QCELL fault, loss of utility, cryoplant trip and quench proposal
+  - D2.2 DSBT-TN-2024-19 Rev 4.0 retained as technical/project-requirements anchor
   - D2.2 CRYO-REQ-336 compressor-room geometry bound as the more specific present diagnostic geometry anchor
   - D2.2 CRYO-REQ-338 preliminary HVAC sizing obligation bound
   - D2.2 CRYO-REQ-345 compressor-room 5-40 C operating environment bound
   - D2.2 normal electrical and 40% propylene-glycol PCW site-interface boundaries bound
   - stale-branch merge collision from PR #700 reconciled by retained-evidence precedence
+  - BD-008 source/lineage graph overlay prepared on existing v1.5 carrier without schema fork
 
 closed_first_red:
   - id: V16-BD-001
@@ -81,7 +91,8 @@ open_first_red:
     progress:
       - one-HP / 350 kW diesel / 350 kW emergency-PCW / approximately 17 kW / approximately 2 h / approximately 6 h source chain bound
       - bidder approximately 110 g/s emergency-power claim bound as bidder evidence only
-      - WCS-room transient separated from D2.1/Line-S cryogenic-return transient without diminishing D2.1 source authority for its own lane
+      - WCS-room transient separated from D2.1/Line-S cryogenic-return transient without diminishing D2.1 authority for its own process lane
+      - D2.1 Section 5.6.5 and Appendix 8.4 now provide abnormal-event timing, fallback and available-path process evidence for the Line-S lane
       - historical FSD575 source gives 5000 m3/h package cooling air, 4200 m3/h VFD cooling air, 17.4 kW cooling-air heat, 14.2 kW ambient heat and 5.7 kW VFD heat
       - approximately 17 kW has strong provenance to one air-side path but is not total room-heat proof
       - D2.2 CRYO-REQ-336 gives 16 x 14 m, approximately 220 m2, approximately 6.5 m ceiling and is the more specific direct anchor for the present room-volume diagnostic
@@ -100,6 +111,7 @@ open_first_red:
       - loop_pressure_loading_v1_6.yaml
       - loop_hvac_boundary_v1_6.yaml
       - loop_contract_boundary_v1_6.yaml
+      - d2_1_behavioral_lineage_v1_6.yaml
   - id: V16-BD-006
     topic: control_signal_classification
     priority: P0
@@ -107,8 +119,9 @@ open_first_red:
     evidence:
       - engineering_reconciliation_v1_6.yaml
       - control_signal_classification_v1_6.yaml
-    progress: tender-level classification child is substantive but does not close discipline cause/effect, fail-safe/loss-of-signal, protocol ownership or L2 I/O
-    rule: CRYO-REQ-409 loss-of-utility safe-shutdown testing is a cross-reference only and shall not force HARD_TRIP classification
+      - d2_1_behavioral_lineage_v1_6.yaml
+    progress: tender-level classification plus D2.1 process fallback semantics are substantive but do not close discipline cause/effect, fail-safe/loss-of-signal, protocol ownership or L2 I/O
+    rule: D2.1 fallback semantics and CRYO-REQ-409 loss-of-utility safe-shutdown testing shall not force HARD_TRIP classification
   - id: V16-BD-007
     topic: detailed_io
     priority: P1
@@ -116,7 +129,12 @@ open_first_red:
   - id: V16-BD-008
     topic: graph_binding_refresh
     priority: P1
-    state: OPEN
+    state: PREPARED_P0_GATED
+    evidence:
+      - graph_binding_overlay_v1_6.yaml
+      - d2_1_behavioral_lineage_v1_6.yaml
+    progress: source/provenance overlay is ready on the existing v1.5 tree/interface/control carrier; engineering edges remain open
+    closure: disposition BD-005/006 engineering edges and bind Appendix 8.4 mode-by-mode valve/legend semantics without schema fork
   - id: V16-BD-009
     topic: deterministic_render
     priority: P1
@@ -137,6 +155,15 @@ merge_collision_reconciliation:
     - control_signal_classification_v1_6.yaml
   rule: later merge timestamp alone cannot reopen a predicate with retained stronger execution evidence
 
+sanitized_d2_1_binding:
+  user_reported_state: sanitized_derivative_exists_with_bidder_references_removed
+  currently_indexed_native_candidate: D2_1_CRYOGENIC_SYSTEM_CONCEPTUAL_NATIVE.docx
+  current_candidate_status: NOT_CONFIRMED_AS_SANITIZED_COPY
+  observation:
+    LKT_exact_match: none_observed
+    ALAT_exact_match: one_reference_section_match_observed
+  next_action: bind exact sanitized file/version/hash when surfaced
+
 bd005_contract_first_red:
   - bind current approved revisions/change lineage while retaining D2.1 and D2.2 as named evidence/provenance anchors
   - obtain current contractor/OEM WCS dissipated-heat schedule required by CRYO-REQ-338
@@ -152,20 +179,33 @@ bd005_contract_first_red:
 next_execution_order:
   - V16-BD-005 reconcile current revision/change lineage plus degraded ES02/PAB12/HV03 boundary conditions without deleting D2.1/D2.2 provenance
   - V16-BD-005 execute first-law WCS transient only after those inputs are evidence-bound
-  - V16-BD-006 close remaining classifications only with discipline cause/effect evidence; do not infer consequence from LOOP assumptions
-  - V16-BD-008 refresh graph bindings after P0 engineering evidence is dispositioned
+  - V16-BD-006 close remaining classifications only with discipline cause/effect evidence; do not infer consequence from process fallback or LOOP assumptions
+  - V16-BD-008 in parallel extract Appendix 8.4 per-mode valve/legend semantics into the existing overlay; do not close the graph while P0 engineering edges remain open
+
+three_pr_session_receipt:
+  P1_recover: PASS_CURRENT_MAIN_SOURCE_LINEAGE_GRAPH_AND_D2_1_BEHAVIOR_RE_READ
+  P2_reconcile: PASS_AUTHORITY_LANES_TRANSIENT_LANES_SANITIZED_IDENTITY_AND_GRAPH_CARRIER_RECONCILED
+  P3_reenter: ACCEPT_SOURCE_LINEAGE_GRAPH_REENTRY_DEFER_ENGINEERING_CLOSURE
+
+mip_session_receipt:
+  modernize: repaired stale role semantics and reused existing graph/publication carriers
+  innovate: introduced D2.1 behavioral-edge overlay without schema fork
+  perpetuate: froze exact restart/handover, non-compensating gates and current BD queue
 
 non_compensating_rules:
   - a visual/navigation/publication PASS cannot grant engineering acceptance
   - source/content DoV does not validate OPEN/WIP engineering statements
   - retained source receipts cannot be invalidated by a stale narrative snapshot without contradictory execution evidence
   - source age is not source invalidity; D2.1 and D2.2 remain traceable anchors until explicit governed replacement/withdrawal is established
+  - D2.1 is process conceptual-design authority; D2.2 is technical/project-requirements authority
   - historical vendor data identifies provenance but is not current accepted design
   - normal electrical/PCW/HVAC site interfaces are not emergency-mode guarantees
   - preliminary HVAC sizing is not final HVAC capacity
   - package cooling-air flow is not HV03 room airflow
   - diagnostic room-air heating rates are not HVAC/safety calculations
+  - D2.1 process fallback state does not assign SIL/MIS/MIT or HARD_TRIP by itself
   - CRYO-REQ-409 does not assign a hard-trip class by itself
+  - green or other drawing colour is not globally equated to valve OPEN/CLOSED without per-diagram legend/state binding
   - candidate I/O remains candidate until L2/detail design freezes it
   - Microsoft Office host reflow and ODP remain separate proof boundaries
   - Global/project DoV remains WITHHELD
