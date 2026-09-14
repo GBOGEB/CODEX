@@ -1,7 +1,7 @@
 schema_version: 0.7.7
 package: qcell_canonical_main
-phase: QSVG-P1A
-state: MAIN_CONVERGENCE_IMPLEMENTED
+phase: QSVG-P1C
+state: DETERMINISTIC_RENDER_PROOF
 engineering_authority: false
 authority: VISUAL_SEMANTIC_ONLY
 source_lessons:
@@ -37,15 +37,43 @@ regions:
     style: dotted
     default_visible: true
 streams:
-  A: {role: 2K_supply, T_K: 4.5, P: 3_bar, endpoint: 2K_interface}
-  B: {role: 2K_return, T_K: 2_to_4, P: 26_to_31_mbar, endpoint: 2K_return_interface}
-  D: {role: 50K_shield_supply, T_K: 30_to_40, P: 12_to_13_bar_nominal, endpoint: 50K_membrane}
-  E: {role: 50K_shield_return, T_K: 50_to_60, delta_T_K: 20, endpoint: 50K_membrane_return}
+  A:
+    role: 2K_supply
+    T_K: 4.5
+    P: 3_bar
+    endpoint: 2K_interface
+    display: "4.5 K · 3 bar"
+  B:
+    role: 2K_return
+    T_K: 2_to_4
+    P: 26_to_31_mbar
+    endpoint: 2K_return_interface
+    display: "2–4 K · 26–31 mbar"
+  D:
+    role: 50K_shield_supply
+    T_K: 30_to_40
+    P: 12_to_13_bar_nominal
+    endpoint: 50K_membrane
+    display: "30–40 K · 12–13 bar"
+  E:
+    role: 50K_shield_return
+    T_K: 50_to_60
+    delta_T_K: 20
+    endpoint: 50K_membrane_return
+    display: "50–60 K · ΔT≈20 K"
 colour_policy:
   temperature:
     cryogenic_tags_K: [2, 4, 30, 50, 60, 77]
     warm_range_K: [77, 300]
     semantic_role: primary_heatmap
+    value_colours:
+      2: "#0618aa"
+      4: "#1268ff"
+      30: "#00c8ff"
+      50: "#00e7c0"
+      60: "#7aff00"
+      77: "#ffd400"
+      300: "#cc0000"
   pressure:
     palette: purple_grey
     semantic_role: diagnostic_only
@@ -62,12 +90,22 @@ layer_defaults:
   temperature_legend: true
   pressure_overlay: false
   big_teaching_arrows: false
+render_contract:
+  renderer_schema: qcell-renderer/0.1.0
+  svg_template: templates/qcell_main_v0_7_7.svg.tpl
+  html_template: templates/index.html.tpl
+  storage_key: qcell-main-v0.7.7-layer-state
+  pressure_status_label: Pressure palette intentionally deferred / OFF.
+  tracked_svg: svg/qcell_main_v0_7_7.svg
+  tracked_html: docs/index.html
+  normalize_newline: LF
+  encoding: UTF-8
 qps_bd_effect:
-  QSVG-BD-001: IMPLEMENTED_PENDING_REVIEW
-  QSVG-BD-002: IMPLEMENTED_POLICY_ENFORCED
-  QSVG-BD-003: ACTIVE
-  QSVG-BD-004: ACTIVE
-  QSVG-BD-005: ACTIVE
-  QSVG-BD-008: ACTIVE
-  QSVG-BD-009: ACTIVE
+  QSVG-BD-001: CLOSE_CANDIDATE
+  QSVG-BD-002: CLOSED_IMPLEMENTATION
+  QSVG-BD-003: CLOSED_P1B
+  QSVG-BD-004: CLOSED_P1B
+  QSVG-BD-005: ACTIVE_P1C
+  QSVG-BD-008: ACTIVE_P1C
+  QSVG-BD-009: CLOSED_STABLE_ARTIFACT_REPEAT
   QSVG-BD-010: WITHHELD
