@@ -17,3 +17,9 @@
 - CURRENT TRACK: GBOGEB/CODEX#330
 - BLOCKED SUCCESSOR: QPS child W08 ACCEPT/REJECT/DEFER disposition
 - FOLLOW-UP UPDATE: W08 semantic/schema validator contract, exact child-owned workstream taxonomy, thresholded PR-head control stats, and candidate return-receipt semantic artifact vocabulary.
+
+## A8.1 FOLLOW-UP — PR-682
+- PURPOSE: preserve W003 governance-gate compatibility while A8.1 repairs the renderer-receipt vocabulary first-red.
+- CHANGE BOUNDARY: `semantic_card` glossary governance plus exact PR-head SHA binding for ABACUS renderer receipts.
+- AUTHORITY: governance/provenance only; no child engineering authority or QPS acceptance semantics are changed.
+- EXPECTED PROOF: exact-head ABACUS renderer execution receipt + promotion receipt + W003 governance gate PASS before merge.
