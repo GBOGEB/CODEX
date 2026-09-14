@@ -1,4 +1,4 @@
-schema: qps-loop-pressure-loading/1.0
+schema: qps-loop-pressure-loading/1.1
 version: '1.6'
 authority: ENGINEERING_PRESSURE_TEST_NOT_DESIGN_APPROVAL
 bd_id: V16-BD-005
@@ -67,6 +67,10 @@ pressure_findings:
         library_file_id: file_00000000f77c71f4810e616eda4b4da8
         statement: Diesel Backup 350 kW; LOOP Event; 400 V 3-phase for a single HP compressor.
         class: SOURCE_EXPLICIT_INTERFACE_TABLE
+      - source: QPS_LKT_NEG_RFI_REVIEW_MASTER_W21_2.xlsx
+        library_file_id: file_00000000317c8210b6ac33ae91f4f9ed
+        statement: LKT states approximately 110 g/s recovery from Line S during abnormal operation including LOOP with one compressor supplied from emergency power.
+        class: BIDDER_RESPONSE_NOT_ACCEPTED_DESIGN
       - source: QPS_LKT_SSOT_CURRENT_2026-09-07_PARSED_SOURCE_INDEX.jsonl
         library_file_id: file_00000000f7348210833c269996706bb6
         statement: 72 Hz / approximately 112 g/s / approximately 357 kW package point is equipment maximum and not the normal 2 K operating point.
@@ -75,16 +79,25 @@ pressure_findings:
         library_file_id: file_00000000ef1881f49bdf61a9648c4183
         statement: planning/nameplate screen is approximately 350 kW at 112.5 g/s / 72 Hz and requires OEM confirmation.
         class: PLANNING_SCREEN
+    diagnostic_bounds:
+      bidder_LOOP_flow_fraction_of_112_gps_reference: approximately_98_percent
+      diesel_vs_357_kW_max_reference: approximately_minus_7_kW_or_minus_2_percent_before_auxiliaries
+      interpretation: >-
+        The bidder's approximately 110 g/s emergency-power claim is close to the approximately
+        112 g/s maximum-flow reference. These approximate screens therefore leave no demonstrated
+        continuous electrical margin for auxiliaries and cannot establish the true VFD power point.
     pressure_result: >-
       A 350 kW diesel allocation cannot automatically be credited for the maximum approximately
-      357 kW package point plus auxiliaries. The LOOP operating point must therefore be explicitly
-      lower than the maximum, or the electrical allocation/rating and auxiliary supply split must
-      be clarified. No continuous 72 Hz LOOP credit is granted by the current evidence.
+      357 kW package point plus auxiliaries. The new bidder response makes the required LOOP flow
+      point approximately 110 g/s explicit, but that is itself bidder evidence and sits close to
+      the maximum package-flow reference. The electrical point, rating and auxiliary supply split
+      remain open. No continuous 72 Hz LOOP credit is granted by the current evidence.
     required_closure:
-      - exact LOOP HP frequency, mass flow and electrical input
+      - exact LOOP HP frequency, mass flow and OEM electrical input at approximately 110 g/s credited flow
       - diesel continuous/standby rating and permitted overload duration
       - auxiliary loads carried by the same 350 kW bus versus separately backed loads
       - motor/VFD starting and restart transient basis
+      - contractual disposition of bidder approximately 110 g/s emergency-power claim
 
   - id: BD005-P03
     topic: emergency_PCW_350kW
@@ -103,12 +116,21 @@ pressure_findings:
         library_file_id: file_00000000469c71f892eda9c1f45d5cc9
         statement: PAB12 P&ID provides physical branch/tag evidence but the retrieved parse does not establish the credited LOOP flow/capacity.
         class: PHYSICAL_INTERFACE_EVIDENCE_ONLY
+    diagnostic_bounds:
+      basis: proportional scaling from source WCS full-duty 1199 kW at approximately 106 m3/h; diagnostic only
+      emergency_flow_at_same_duty_per_flow_basis: approximately_31_m3_per_h
+      sensitivity_if_deltaT_relaxes_from_11K_to_15K_with_other_properties_held_constant: approximately_23_m3_per_h
+      rule: >-
+        These are target orders for evidence review, not credited hydraulic capacity. Actual fluid
+        properties, branch pressure drop, pump curve, valve state, fan availability and equipment
+        temperature limits must govern the final result.
     pressure_result: >-
-      The 350 kW emergency thermal duty is source explicit, but the backup hydraulic path is not
-      closed. Available evidence does not yet bind the LOOP pump/fan duty, branch flow, supply and
-      return temperatures, valve state or backup electrical consumption.
+      The 350 kW emergency thermal duty is source explicit and now implies an order-of-magnitude
+      target of roughly 23-31 m3/h under the source full-duty/delta-T basis. The backup hydraulic
+      path is still not closed because available evidence does not bind pump/fan duty, branch flow,
+      pressure, supply/return temperatures, valve state or backup electrical consumption.
     required_closure:
-      - emergency PAB12 flow at the WCS terminal point
+      - emergency PAB12 flow at the WCS terminal point against the diagnostic 23-31 m3/h target range
       - LOOP supply/return temperature envelope and allowable delta-T
       - backup pump and fan availability/power
       - branch valve/check-valve state and minimum differential pressure
@@ -195,6 +217,8 @@ minimum_WCS_transient_model_contract:
 close_predicate:
   scenario_identity: PASS
   source_value_identity: PASS
+  bidder_110_gps_loop_claim_bound: PASS_AS_BIDDER_EVIDENCE_ONLY
+  diagnostic_emergency_PCW_flow_target: PASS_DIAGNOSTIC_ONLY
   seventeen_kW_scope: FAIL_SCOPE_CONFLICT
   ES02_single_HP_operating_point: FAIL_NOT_FROZEN
   PAB12_emergency_hydraulics: FAIL_NOT_BOUND
@@ -205,8 +229,8 @@ close_predicate:
   bd_close_allowed: false
 
 next_attack_order:
-  - freeze exact LOOP one-HP electrical/frequency/mass-flow state and ES02 auxiliary split
-  - freeze emergency PAB12 hydraulic/temperature state at WCS terminal point
+  - obtain OEM/VFD electrical power for the bidder-claimed approximately 110 g/s LOOP point and bind ES02 auxiliary split
+  - verify emergency PAB12 hydraulic state against the diagnostic approximately 23-31 m3/h target range
   - reconcile 17 kW against 14+17 kW package air paths and 50-81 kW room residual sensitivities
   - acquire WCS room/equipment thermal inventory and HV03 LOOP airflow
   - define the physical meaning of OR LOSS onset
@@ -214,7 +238,9 @@ next_attack_order:
 
 non_compensating_rules:
   - the Line-S/D2.1 transient cannot close the WCS room transient by analogy
+  - bidder approximately 110 g/s emergency-power wording is not accepted design authority
   - a 350 kW interface allocation is not proof that the exact operating point fits inside it
+  - diagnostic flow/power screens are not acceptance evidence
   - source repetition is not a thermal calculation
   - controls classification cannot manufacture thermal or electrical margin
   - no engineering, functional-safety, design, acceptance, release or global/project DoV credit is granted
