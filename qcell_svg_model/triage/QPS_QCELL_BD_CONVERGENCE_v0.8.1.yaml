@@ -1,0 +1,131 @@
+schema_version: 0.8.1
+package: qps_qcell_bd_convergence
+repo: GBOGEB/CODEX
+pr: 683
+branch: qps/qcell-svg-triage-integration-v0-8-0
+state: IMPROVE_CONVERGENCE
+engineering_authority: false
+
+todo_contraction:
+  before:
+    active_items: 9
+    description:
+      - canonical MAIN
+      - large-arrow policy enforcement
+      - text collision control
+      - layer-state persistence
+      - deterministic SSOT rebuild
+      - pressure overlay
+      - hosted HTML
+      - typed visual receipt
+      - distinct-SHA repeat
+  after:
+    active_lanes: 3
+    deferred_lanes: 1
+    lanes:
+      C1_MAIN_CONVERGENCE:
+        absorbs: [QSVG-BD-001, QSVG-BD-002]
+        objective: "One accepted MAIN with big arrows off by default and dotted endpoint guides preserved."
+      C2_VISUAL_CONTROL:
+        absorbs: [QSVG-BD-003, QSVG-BD-004]
+        objective: "Stable layer muting plus no major text/annotation collisions."
+      C3_PROOF_AND_REPEAT:
+        absorbs: [QSVG-BD-005, QSVG-BD-008, QSVG-BD-009]
+        objective: "Deterministic YAML→SVG→HTML render, typed receipt, and distinct-SHA repeat."
+      C4_DEFERRED_EXPANSION:
+        absorbs: [QSVG-BD-006, QSVG-BD-007]
+        blocking: false
+        objective: "Pressure overlay and hosted HTML after core MAIN converges."
+
+bd_register:
+  QSVG-BD-001:
+    title: canonical MAIN not consolidated
+    status: CONTRACTED_INTO_C1
+    closes_when: "v0.7.7 MAIN accepted as the single canonical visual."
+  QSVG-BD-002:
+    title: large-arrow implementation regression
+    status: CONTRACTED_INTO_C1
+    closes_when: "teaching arrows are optional/off by default and do not dominate MAIN."
+  QSVG-BD-003:
+    title: text and annotation collision
+    status: CONTRACTED_INTO_C2
+    closes_when: "collision scan has zero major overlaps in the three canonical render states."
+  QSVG-BD-004:
+    title: layer-state persistence not hardened
+    status: CONTRACTED_INTO_C2
+    closes_when: "mute/unmute behavior is deterministic and stable across reload/render states."
+  QSVG-BD-005:
+    title: SSOT rebuild not proven deterministic
+    status: CONTRACTED_INTO_C3
+    closes_when: "normalized SVG and HTML hashes repeat from unchanged SSOT."
+  QSVG-BD-006:
+    title: pressure diagnostic overlay absent
+    status: DEFERRED_NONBLOCKING
+    closes_when: "separate purple/grey pressure view is integrated without thermal-palette reuse."
+  QSVG-BD-007:
+    title: hosted HTML path not verified
+    status: DEFERRED_NONBLOCKING
+    closes_when: "static hosted path resolves and preserves layer controls."
+  QSVG-BD-008:
+    title: typed visual receipt absent
+    status: CONTRACTED_INTO_C3
+    closes_when: "receipt binds repo/SHA/schema/layers/checks/hashes with VISUAL_SEMANTIC_ONLY authority."
+  QSVG-BD-009:
+    title: distinct-SHA repeat absent
+    status: CONTRACTED_INTO_C3
+    closes_when: "second distinct SHA reproduces accepted normalized output and receipt predicates."
+  QSVG-BD-010:
+    title: CONTROL promotion
+    status: WITHHELD_DEPENDENT
+    dependency: [C1_MAIN_CONVERGENCE, C2_VISUAL_CONTROL, C3_PROOF_AND_REPEAT]
+
+execution_sequence:
+  pulse_1:
+    name: QSVG-P1A
+    lane: C1_MAIN_CONVERGENCE
+    actions:
+      - build v0.7.7 canonical MAIN
+      - retain three visual regions: thermal body, compact flow/header region, parasitic/annotation region
+      - large arrows off by default
+      - dotted endpoints on
+      - temperature legend linked dynamically to thermal values
+    expected_contraction: "BD active count 10 -> 8 effective unresolved"
+  pulse_2:
+    name: QSVG-P1B
+    lane: C2_VISUAL_CONTROL
+    actions:
+      - render thermal-only
+      - render thermal-plus-parasitics
+      - render full MAIN
+      - run collision/overlap scan
+      - stabilize layer-state engine
+    expected_contraction: "C2 -> CONTROL candidate"
+  pulse_3:
+    name: QSVG-P1C
+    lane: C3_PROOF_AND_REPEAT
+    actions:
+      - normalize render output
+      - emit typed visual receipt
+      - repeat on distinct SHA
+      - compare normalized hashes and semantic predicates
+    expected_contraction: "C3 -> CONTROL candidate"
+
+convergence_metrics:
+  active_core_lanes: 3
+  deferred_nonblocking_lanes: 1
+  target_core_open_after_P1A: 2
+  target_core_open_after_P1B: 1
+  target_core_open_after_P1C: 0
+  control_promotion_allowed_only_if:
+    - C1_MAIN_CONVERGENCE == CLOSED
+    - C2_VISUAL_CONTROL == CLOSED
+    - C3_PROOF_AND_REPEAT == CLOSED
+    - authority == VISUAL_SEMANTIC_ONLY
+
+frontier_order:
+  - F1_CANONICAL_MAIN
+  - F2_VISUAL_CONTROL_ENGINE
+  - F3_TYPED_VISUAL_RECEIPT_AND_REPEAT
+  - F4_PRESSURE_DIAGNOSTIC
+  - F5_HOSTED_CONSUMPTION
+  - F6_TRANSIENT_PHYSICS
