@@ -1,4 +1,4 @@
-schema: qps-source-proof-execution/1.0
+schema: qps-source-proof-execution/1.1
 version: 1.6.2
 as_of: '2026-09-14'
 authority: SOURCE_IDENTITY_AND_RENDER_PROVENANCE_ONLY_NOT_ENGINEERING_APPROVAL
@@ -10,6 +10,7 @@ rules:
   - do not treat slide-1 visual census renders as per-slide source render proof
   - do not promote duplicate-render evidence into independent source/render authority
   - no source-vs-curated DoV starts until the relevant per-slide render predicate exists
+  - a pre-existing governed identity tuple may bind historical identity evidence but does not claim an independent rehash in this pulse
 
 source_proof:
   - source_id: SRC-UTIL-CORE
@@ -88,7 +89,7 @@ source_proof:
 execution_environment:
   current_conversation_container:
     source_binary_mounts_found: 0
-    note: File Library references are not local sandbox paths; /mnt/data contained no source PPTX binaries
+    note: File Library references are not local sandbox paths; no source PPTX binaries are mounted into the execution container
   google_drive_search:
     QPS_Suporting_Sytems_pptx: NOT_FOUND
   file_library:
@@ -99,11 +100,11 @@ execution_environment:
 bd_result:
   V16-BD-001:
     state: PARTIAL_IDENTITY_BINDING
-    closed_sources: []
+    globally_closed: false
     identity_bound_sources: [SRC-CTRL-CORE]
     hash_candidate_plus_locator_unjoined: [SRC-UTIL-CORE, SRC-UTIL-CANONICAL-APPENDIX]
     missing_digest: [SRC-NAMING-CONTROL]
-    note: BD-001 remains globally OPEN because closure requires all exact source PPTX bytes/digests to be bound; no source digest is invented
+    note: no source digest is invented; global closure requires all four exact source PPTX objects to have verified digest/locator binding
   V16-BD-002:
     state: BLOCKED_ON_RAW_BYTE_MATERIALIZATION
     per_slide_render_count: 0
