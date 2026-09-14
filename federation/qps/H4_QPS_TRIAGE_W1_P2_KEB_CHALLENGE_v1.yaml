@@ -1,5 +1,5 @@
 schema: qps-h4-w1-p2-keb-challenge/1.0
-as_of: '2026-09-14T10:39:00+02:00'
+as_of: '2026-09-14T10:49:00+02:00'
 mission: H4_QPS_TRIAGE
 wave: H4_QPS_TRIAGE:W1
 pulse: H4-QPS-W1-P2
@@ -7,12 +7,12 @@ horizontal_lane: H2_KEB
 method: 3PR
 repository: GBOGEB/CODEX
 role: SEMANTIC_PROVENANCE_EXACT_SOURCE_CHALLENGE
-status: EXACT_HEAD_RECHECK_AFTER_OWNER_MERGE
+status: SEMANTIC_KEY_AND_W003_METADATA_REPAIR_EXACT_HEAD_PENDING
 formal_credit_delta: 0
 authority_transfer: false
 
 governance_classification:
-  PR-ID: PR-679
+  PR-ID: PR-680
   WAVE: W001
   SPRINT: S1-P2
   DOMAIN: EXECUTION_GOVERNANCE_INFRASTRUCTURE
@@ -20,6 +20,9 @@ governance_classification:
   CRITICALITY: HIGH
   TOPOLOGY IMPACT: NO
   SCHEMA MUTATION: NO
+  repair_note: >-
+    Reuse the bounded P2 sprint identity. The rejected S1-P2R label was PR
+    metadata syntax only and did not create a new mission or method state.
 
 purpose: >-
   Test canonical QPS TRIAGE applicability v0.3 reliability and Mission Control
@@ -42,16 +45,17 @@ inputs:
     method_profile: >-
       mission-control/qps-triage-ultra/methods/
       QPS_TRIAGE_GLOBAL_METHOD_PROFILE_v1.md
-  child_boundary_candidate:
+  child_boundary_canonical:
     repo: GBOGEB/cryoplant-project
     pr: 1121
-    head_sha_observed: 3ef8bae1ad8400ce0cb85b4b9df726d77129b616
+    merge_sha: 342bc5a601a6e9d102722bfec1a0a291787d3b54
     artifact: controls/QPS_H4_W1_P1_RELIABILITY_CHILD_REENTRY_v0.1.yaml
+    exact_head_runtime_receipt: WITHHELD_RUNNER_PLATFORM
   canonical_controller:
     repo: GBOGEB/CODEX
     artifact: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
     required_method_catalog: [3PR, MIP, 3PC, 3P3]
-  semantic_owner_canonical:
+  owner_lane_canonical:
     pr: 678
     title: A7.2 real semantic ledgers and deterministic replay
     state: MERGED
@@ -62,8 +66,9 @@ inputs:
       - ABACUS Semantic Runtime PASS before merge
       - CODEX Semantic Runtime CI PASS before merge
     governance_note: >-
-      The owner lane is now canonical on main. This pulse performs one fresh
-      exact-head recheck and then stops if the semantic/governance gates pass.
+      The owner lane is canonical on main. This P2 repair only renames an
+      accidental semantic-prefixed metadata key that triggered the semantic
+      vocabulary guard after PR 679 merged.
 
 challenge_contract:
   - id: KEB-QT-001
@@ -116,21 +121,27 @@ observed_semantic_assessment:
   pca_bt_authority_guard: PASS_CANDIDATE
   stop_rule_alignment: PASS_CANDIDATE
   owner_semantic_debt: RETIRED_BY_PR_678_MERGE
+  merged_p2_first_red: >-
+    The semantic validator rejected an accidental semantic-prefixed owner
+    metadata key. The repair reuses owner_lane_canonical instead of inventing
+    a new governed semantic concept.
+  repair_first_red: >-
+    W003 rejected S1-P2R because the governed sprint schema requires
+    S<number>-P<number>. PR metadata and this receipt now reuse S1-P2.
   exact_head_requirement: >-
-    Run this bounded one-file challenge once on current main and require semantic
-    runtime plus normal federation/governance checks to pass before P2 KR.
+    Require semantic runtime plus W003 and normal federation/governance checks
+    to pass on this bounded repair before declaring P2 KR.
 
 CG: KEB_CHALLENGE_EXACT_HEAD_PASS_THEN_STOP
-BG: FRESH_EXACT_HEAD_P2_RECEIPT_NOT_YET_OBSERVED_AFTER_OWNER_MERGE
-EX: RECHECK_TRIGGERED
-QH: PENDING_CURRENT_HEAD
-KR: PENDING_CURRENT_HEAD
+BG: P2_REPAIR_EXACT_HEAD_NOT_YET_GREEN
+EX: REPAIR_TRIGGERED
+QH: PENDING_REPAIR_HEAD
+KR: PENDING_REPAIR_HEAD
 DR: READY
 SR: PASS_CANDIDATE
-WD: RECHECK_ONCE_THEN_STOP
+WD: RECHECK_REPAIR_ONCE_THEN_STOP
 PB: ZERO_AUTHORITY_CREDIT
 
 stop_rule: >-
-  If the current exact-head checks pass against main containing PR 678, emit P2
-  KR and stop KEB expansion. Re-enter only if new semantic debt appears; do not
-  create a further ontology or method layer.
+  If the repair exact-head checks pass, merge the bounded repair, emit P2 KR and
+  stop KEB expansion. Re-enter only if a new semantic first-red appears.
