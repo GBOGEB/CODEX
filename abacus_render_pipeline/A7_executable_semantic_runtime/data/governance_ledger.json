@@ -1,0 +1,18 @@
+{
+  "ledger_version": "A7.1",
+  "invariants": [
+    {"id":"INV-001","statement":"Generated outputs are non-canonical; MASTER YAML and governed registries remain authoritative."},
+    {"id":"INV-002","statement":"Semantic colours transform by theme rather than simple inversion."},
+    {"id":"INV-003","statement":"Every major semantic change must preserve tuple lineage."},
+    {"id":"INV-004","statement":"Reconstruction is idempotent for identical source ledgers."},
+    {"id":"INV-005","statement":"Competing branches remain explicit until evidence supports convergence."}
+  ],
+  "semantic_debt": [
+    {"id":"DEBT-001","status":"open","topic":"renderer_linting","next_action":"Wire renderer linter into CI"},
+    {"id":"DEBT-002","status":"open","topic":"wcag_gate","next_action":"Automate contrast validation"},
+    {"id":"DEBT-003","status":"open","topic":"semantic_spacing","next_action":"Implement spacing and overflow governance"},
+    {"id":"DEBT-004","status":"open","topic":"figure_registry_browser","next_action":"Build MASTER figure browser"},
+    {"id":"DEBT-005","status":"open","topic":"semantic_metrics","next_action":"Expose completeness, debt and branch metrics"},
+    {"id":"DEBT-006","status":"open","topic":"renderer_binding","next_action":"Bind YAML SSOT to render engine"}
+  ]
+}
