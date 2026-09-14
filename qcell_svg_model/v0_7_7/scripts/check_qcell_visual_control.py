@@ -5,9 +5,10 @@ This checks visual/semantic invariants only. It does not grant engineering autho
 from __future__ import annotations
 
 import json
-import re
 import sys
 from pathlib import Path
+
+from defusedxml import ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 SVG = ROOT / "svg" / "qcell_main_v0_7_7.svg"
@@ -34,8 +35,6 @@ REQUIRED_TEXT = {
     "50→2 K conduction",
 }
 REQUIRED_THERMAL_TOKENS = {
-    'stroke="#cc0000"': "300 K membrane must use the authoritative single 300 K colour",
-    'stroke="#00e7c0"': "50 K shield must use the authoritative single 50 K colour",
     'id="outerHeatRev"': "reverse-direction outer heat gradient missing",
     'id="innerHeatRev"': "reverse-direction inner heat gradient missing",
     'stroke="url(#outerHeatRev)"': "right-side 300→50 K path is not direction-correct",
@@ -63,28 +62,56 @@ def overlaps(a: dict, b: dict) -> bool:
     )
 
 
+def local_name(tag: str) -> str:
+    return tag.rsplit("}", 1)[-1]
+
+
+def find_by_id(root, element_id: str):
+    return next((el for el in root.iter() if el.attrib.get("id") == element_id), None)
+
+
 def main() -> int:
-    for p in (SVG, HTML, BOXES):
-        if not p.exists():
-            fail(f"missing required artifact: {p.relative_to(ROOT)}")
+    for path in (SVG, HTML, BOXES):
+        if not path.exists():
+            fail(f"missing required artifact: {path.relative_to(ROOT)}")
 
     svg_text = SVG.read_text(encoding="utf-8")
     html_text = HTML.read_text(encoding="utf-8")
+    root = ET.fromstring(svg_text)
 
-    ids = set(re.findall(r'\bid="([^"]+)"', svg_text))
+    ids = {el.attrib.get("id") for el in root.iter() if el.attrib.get("id")}
     missing = REQUIRED_GROUPS - ids
     if missing:
-        fail(f"missing SVG layer groups: {sorted(missing)}")
+        fail(f"missing live SVG layer groups: {sorted(missing)}")
 
-    if 'id="pressure_overlay"' in svg_text:
+    if find_by_id(root, "pressure_overlay") is not None:
         fail("pressure overlay present in MAIN despite deferred/OFF policy")
 
-    big_match = re.search(r'<g\b[^>]*\bid="big_teaching_arrows"[^>]*>', svg_text)
-    if big_match is None or "display:none" not in big_match.group(0).replace(" ", ""):
+    big = find_by_id(root, "big_teaching_arrows")
+    if big is None or "display:none" not in big.attrib.get("style", "").replace(" ", ""):
         fail("big teaching arrows are not fail-closed OFF by default")
 
-    if 'class="guide"' not in svg_text or "stroke-dasharray:9 7" not in svg_text:
-        fail("dotted endpoint-guide contract missing")
+    thermal = find_by_id(root, "thermal_body")
+    if thermal is None:
+        fail("thermal_body group missing")
+    thermal_paths = [child for child in thermal if local_name(child.tag) == "path"]
+    if len(thermal_paths) < 3:
+        fail("thermal_body structure does not expose warm/vacuum/shield paths")
+    warm_membrane = thermal_paths[0]
+    shield_membrane = thermal_paths[2]
+    if warm_membrane.attrib.get("stroke") != "#cc0000":
+        fail("300 K membrane is not bound to authoritative solid 300 K colour #cc0000")
+    if shield_membrane.attrib.get("stroke") != "#00e7c0":
+        fail("50 K shield is not bound to authoritative solid 50 K colour #00e7c0")
+
+    guides = find_by_id(root, "endpoint_guides")
+    if guides is None:
+        fail("endpoint guide group missing")
+    guide_paths = [el for el in guides.iter() if local_name(el.tag) == "path"]
+    if len(guide_paths) != 4 or any("guide" not in el.attrib.get("class", "").split() for el in guide_paths):
+        fail("dotted endpoint-guide structure is not exactly four live guide paths")
+    if "stroke-dasharray:9 7" not in svg_text:
+        fail("dotted endpoint-guide style contract missing")
 
     for token in REQUIRED_TEXT:
         if token not in svg_text:
@@ -111,17 +138,17 @@ def main() -> int:
         fail("governed reset-to-default control missing")
 
     payload = json.loads(BOXES.read_text(encoding="utf-8"))
-    boxes = [b for b in payload["boxes"] if b.get("class") == "exclusive"]
+    boxes = [box for box in payload["boxes"] if box.get("class") == "exclusive"]
     collisions = []
-    for i, a in enumerate(boxes):
-        for b in boxes[i + 1 :]:
-            if overlaps(a, b):
-                collisions.append([a["id"], b["id"]])
+    for index, first in enumerate(boxes):
+        for second in boxes[index + 1 :]:
+            if overlaps(first, second):
+                collisions.append([first["id"], second["id"]])
     if collisions:
         fail(f"forbidden exclusive-box overlaps: {collisions}")
 
     result = {
-        "schema": "qsvg-visual-control-check/0.4.0",
+        "schema": "qsvg-visual-control-check/0.5.0",
         "status": "PASS",
         "authority": "VISUAL_SEMANTIC_ONLY",
         "required_groups": sorted(REQUIRED_GROUPS),
@@ -129,9 +156,9 @@ def main() -> int:
         "forbidden_overlaps": 0,
         "pressure_overlay": "ABSENT_DEFERRED",
         "big_teaching_arrows": "OFF_DEFAULT",
-        "endpoint_guides": "DOTTED_PRESENT",
-        "temperature_300K_mapping": "SOLID_AUTHORITATIVE_COLOUR",
-        "temperature_50K_mapping": "SOLID_AUTHORITATIVE_COLOUR",
+        "endpoint_guides": "DOTTED_LIVE_GROUP_PRESENT",
+        "temperature_300K_mapping": "STRUCTURE_BOUND_SOLID_AUTHORITATIVE_COLOUR",
+        "temperature_50K_mapping": "STRUCTURE_BOUND_SOLID_AUTHORITATIVE_COLOUR",
         "heat_gradient_direction": "PATH_DIRECTION_CORRECTED",
         "heat_endpoint_markers": "OUTER_ORANGE_INNER_2K_BLUE",
         "AB_text_contrast": "WHITE_CLASS_ENFORCED",
