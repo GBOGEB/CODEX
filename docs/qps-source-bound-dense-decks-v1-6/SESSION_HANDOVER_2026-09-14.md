@@ -1,7 +1,7 @@
 # QPS Visual Knowledge System — Lossless Session Handover
 
 Date: 2026-09-14
-Current control version: `v1.6.8`
+Current control version: `v1.6.9`
 Repository: `GBOGEB/CODEX`
 Scope: QPS v1.6 source-bound Utilities / Controls / Naming / LOOP / graph lineage
 Authority: `ENGINEERING_CURATION_NOT_DESIGN_APPROVAL`
@@ -45,6 +45,10 @@ The Library native candidate `D2_1_CRYOGENIC_SYSTEM_CONCEPTUAL_NATIVE.docx` is n
 
 D2.2 is the **technical and project requirements anchor**. It carries technical constraints, project requirements, interface/test requirements and project boundary conditions. It does not replace D2.1 process behavior.
 
+### Current contractual refinement
+
+`SCK CEN/90508872` Addendum II is treated as the current contractual tender-requirements surface where its requirements apply. It refines the current contractual boundary without erasing D2.1 or D2.2 provenance.
+
 ## 3. D2.1 behavioral lineage recovered
 
 D2.1 Appendix 8.2 / 8.3 / 8.4 are treated as three separate evidence lanes:
@@ -66,30 +70,47 @@ These are process-concept behavior edges. They are not a frozen cause/effect mat
 
 ## 4. v1.6.7 bounded pulse — source mode/state matrix
 
-The latest pulse adds `d2_1_mode_state_matrix_v1_6.yaml` and advances BD-008 source extraction without granting engineering credit.
+The pulse added `d2_1_mode_state_matrix_v1_6.yaml` and advanced BD-008 source extraction without granting engineering credit.
 
-Source-bound mode families now include:
+Source-bound mode families include cool-down, warm-up, purge/fill, distribution vacuum loss, single-QM vacuum loss, minor QCELL fault, quench proposal, loss of utility and cryoplant trip.
 
-- cool-down sequence;
-- warm-up sequence;
-- purge/fill;
-- distribution vacuum loss;
-- single-QM vacuum loss;
-- minor QCELL fault;
-- quench proposal;
-- loss of utility;
-- cryoplant trip.
-
-Named valve behavior now source-bound at text level includes:
+Named valve behavior source-bound at text level includes:
 
 - `CV503`: controls bottom helium supply used for cavity gas circulation during cool-down;
 - `HV510` / `HV520`: local manual purge/fill hand valves;
 - minor QCELL fault: supply `NC` / return `NO` process fallback semantics;
 - loss of utility / cryoplant trip: `NO` paths open and `NC` paths close according to the conceptual fallback description.
 
-This is a **source mode/state matrix**, not a final cause/effect matrix. Exact Appendix 8.4 diagram-to-mode mapping, visible valve-state extraction and colour-legend decoding remain open. Green or another drawing colour is not globally equated to OPEN/CLOSED until the relevant diagram or legend proves it.
+This is a **source mode/state matrix**, not a final cause/effect matrix. Exact Appendix 8.4 diagram-to-mode mapping, visible valve-state extraction and colour-legend decoding remain open.
 
-## 5. BD queue at current close
+## 5. v1.6.9 bounded pulse — contractual LOOP boundary sharpened
+
+`bd005_addendum_loop_boundary_v1_6.yaml` now binds the authoritative Addendum II degraded-utility requirements and separates them from bidder, derivative and working-slide statements.
+
+### Contractual LOOP boundary
+
+- **RTM-401:** up to 350 kW backup diesel power is available after an interruption of a few minutes. This does not allocate the full 350 kW to one HP compressor.
+- **RTM-428:** up to 350 kW backup cooling-water capacity is available after a few minutes; the backup header is hydraulically common with the normal WCS header and may operate at reduced total flow.
+- **RTM-432 / RTM-433:** no continuous normal instrument air is available during LOOP beyond initial valve actuations; QPS must provide pneumatic backup for helium recovery with **6 h autonomy under full recovery load**.
+- **RTM-434 / RTM-435:** dedicated exhaust ducts connect to each HP compressor; steady-state WCS heat to room air is capped at 120 kW and at least 50% shall be transferred directly to the exhaust ducts.
+- **RTM-436:** during LOOP the HP exhaust ducts remain available without restriction and **no more than 15 kW may be dissipated to the compressor-room ambient air**.
+- **RTM-258 / 260 / 261 / 262:** limited services shall support LOOP helium recovery; abnormal QRB.S return capability is at least 100 g/s; recovery to normal circulation is required.
+
+### Semantic corrections
+
+- The source **6 h pneumatic autonomy** requirement is not proof of the separate working `~6 h` WCS-room thermal-stabilization statement.
+- The historical `~17 kW` heat path remains useful provenance, but the current contractual LOOP ambient-room heat ceiling is **≤15 kW**.
+- The current bidder `~110 g/s` one-emergency-compressor claim remains `REVIEW_REQUIRED`; it is not the contractual acceptance point.
+- The current analytical `72 Hz / ~112 g/s / ~357 kW` point remains an equipment maximum reference; it shall not be linearly scaled into the LOOP operating point.
+- The derivative `Support System ICD & Requirements Update` is retained as a navigation clue only where its RTM numbering diverges from Addendum II. Addendum II numbering/content controls the contractual crosswalk.
+
+### What this closes vs does not close
+
+This pulse closes the *contractual boundary subquestions* for backup power, backup-PCW thermal capacity/topology, pneumatic autonomy, LOOP room ambient-heat ceiling, HP exhaust-duct availability and minimum abnormal QRB.S return flow.
+
+It does **not** close BD-005. The executable first-law transient still needs the selected OEM/contractor operating point, actual degraded hydraulic state, duct-flow data, thermal mass and temporal criteria.
+
+## 6. BD queue at current close
 
 | ID | Priority | State | Current meaning |
 |---|---|---|---|
@@ -98,117 +119,86 @@ This is a **source mode/state matrix**, not a final cause/effect matrix. Exact A
 | native-text binding | P0 | CLOSED | native text bound to same slide identities |
 | BD-003 | P0 | CLOSED_CONTENT_TRACE_DOV | 63/63 reviewed, zero silent drop; five lineage repairs |
 | BD-004 | P0 | CLOSED_SCOPE_RECONCILED | utilities value scopes reconciled only |
-| **BD-005** | **P0** | **OPEN** | degraded WCS boundary + executable first-law transient still missing |
+| **BD-005** | **P0** | **CONTRACTUAL_LOOP_BOUNDARY_SHARPENED / OPEN** | contractual degraded limits now bound; selected equipment/hydraulic/thermal transient inputs remain open |
 | **BD-006** | **P0** | **PARTIAL_EVIDENCE_BOUND** | process fallback + tender classification bound; discipline cause/effect open |
 | BD-007 | P1 | OPEN_L2_GATED | detailed I/O awaits L2/detail design |
-| BD-008 | P1 | PREPARED_P0_GATED | source mode/state matrix now bound; diagram/colour visual binding + P0 engineering edges remain open |
+| BD-008 | P1 | PREPARED_P0_GATED | source mode/state matrix bound; diagram/colour visual binding + P0 engineering edges remain open |
 | BD-009 | P1 | DEFER_TO_V1_7 | deterministic render after engineering/graph stabilization |
 | BD-010 | P1 | REFRAME_BIND_EXISTING_CARRIER | reuse merged #690/#691 publication carrier |
 
-## 6. First-red and TODO
+## 7. First-red and TODO
 
 ### P0 — BD-005 LOOP / degraded state
 
-Close only after the following are evidence-bound:
+The first-red is now narrower. Obtain and bind:
 
-1. current approved revision/change lineage while retaining D2.1/D2.2 provenance;
-2. current contractor/OEM WCS dissipated-heat schedule;
-3. exact one-HP emergency electrical/VFD operating point and ES02 auxiliary split;
-4. PAB12 emergency PCW flow, pressure, supply/return temperatures, pump/fan power and valve state;
-5. quantitative HV03 degraded/LOOP airflow, fan power and heat-removal state;
-6. package/VFD ducting boundary for 17.4 / 14.2 / 5.7 kW heat paths;
-7. effective free room volume and equipment/building thermal mass;
-8. physical variable and limit behind the `~2 h` onset statement;
-9. measurable stabilization criterion behind `~6 h`;
-10. first-law WCS LOOP transient with uncertainty and independent review.
+1. current OEM/contractor HP operating point for the selected `~110 g/s` emergency-recovery state, including frequency, electrical input and cooling-water rejection;
+2. ES02 auxiliary split and demonstrated margin within the contractual up-to-350-kW backup-power boundary;
+3. actual PAB12 LOOP flow, pressure, supply/return temperatures, pump/fan power and valve state within the RTM-428 reduced-flow common-header boundary;
+4. OFFER-35 duct interface size, flow rate and allowable pressure drop for the selected HP package;
+5. quantitative HV03 degraded/LOOP room airflow or proof that the RTM-436 duct path plus ≤15 kW ambient ceiling is sufficient for the selected model boundary;
+6. effective free room volume and equipment/building thermal mass;
+7. physical variable and limit behind the working `~2 h` onset statement;
+8. measurable thermal stabilization criterion behind the working `~6 h` statement, kept separate from RTM-433 pneumatic autonomy;
+9. first-law WCS LOOP transient with uncertainty and independent review.
 
-D2.1 Line-S transient evidence is a separate lane and must not be used as a substitute for the WCS-room thermal model.
+D2.1 Line-S transient evidence remains a separate lane and shall not substitute for the WCS-room thermal model.
 
 ### P0 — BD-006 Controls
 
-Only close classifications when discipline evidence proves:
-
-- cause/effect;
-- fail-safe / loss-of-signal behavior;
-- exact protocol/owner boundary;
-- trip/permissive consequence;
-- relevant L2 I/O allocation.
-
-D2.1 fallback valve behavior strengthens process semantics but does not automatically create a hard trip.
+Only close classifications when discipline evidence proves cause/effect, fail-safe/loss-of-signal behavior, exact protocol/owner boundary, trip/permissive consequence and relevant L2 I/O allocation. D2.1 fallback behavior and utility/LOOP requirements do not automatically create a hard trip.
 
 ### P1 — BD-008 graph
 
-Use the existing v1.5 graph carrier. The source/lineage overlay is now strengthened by the mode/state matrix. Next graph work is:
+Use the existing v1.5 graph carrier. The source/lineage overlay is strengthened by the mode/state matrix. Next graph work remains: diagram/page → mode mapping; exact valve-state extraction; per-diagram colour/legend binding; contradiction checking; keep BD-005/006 engineering edges visibly OPEN.
 
-- enumerate Appendix 8.4 diagram/page → mode-family mapping;
-- bind visible valve tags and states where source resolution permits exact reading;
-- bind each diagram's colour/state convention or explicit legend;
-- compare visual valve state with the source-text mode matrix and flag contradictions;
-- keep BD-005/006 engineering edges visibly OPEN.
-
-## 7. 3PR receipt
+## 8. 3PR receipt
 
 ### P1 — Recover
 
-Recovered and re-read current source identity, current `main` TRIAGE, v1.5 graph carrier, D2.1 native conceptual-design text, Appendix 8.4 mode pages, and source-vs-curated lineage.
+Recovered current `main`, negotiation/compliance evidence, current analytical SSOT, Addendum II contractual requirements, Drive derivative surfaces and existing D2.1/D2.2 lineage.
 
 ### P2 — Reconcile / prove
 
-Reconciled:
-
-- D2.1 process-concept role vs D2.2 requirement role;
-- aged source status vs retained provenance authority;
-- WCS-room LOOP transient vs Line-S cryogenic-return transient;
-- v1.5 graph carrier vs richer v1.6 semantic overlay;
-- sanitized derivative identity vs unsanitized/native source candidate;
-- source-text mode behavior vs still-open per-diagram colour/valve visual proof.
-
-No engineering acceptance was promoted by semantic reconciliation.
+Reconciled D2.1 process role, D2.2 requirements role, current Addendum contractual refinement, bidder ~110 g/s claim, equipment-maximum ~112 g/s/~357 kW analytical guard, derivative ICD crosswalk, six-hour pneumatic autonomy and separate thermal-stabilization wording.
 
 ### P3 — Re-enter
 
-Re-entry is accepted only at the source/lineage layer:
+Addendum II degraded-utility boundaries may enter BD-005 as contractual model constraints. Executable transient/engineering acceptance remains deferred.
 
-- D2.1 behavioral lineage and source mode/state matrix may enter the graph overlay now;
-- BD-008 remains `PREPARED_P0_GATED`, not CLOSED;
-- engineering-dependent edges remain gated by BD-005/006;
-- global/project DoV remains WITHHELD.
-
-## 8. MIP receipt
+## 9. MIP receipt
 
 ### Modernize
 
-- repaired stale source-role language;
-- separated temporal age from source authority;
-- separated process-concept behavior from project requirements;
-- reused the existing graph carrier instead of creating a second graph architecture;
-- preserved the retained-evidence precedence rule after the #700 stale-state collision.
+- corrected derivative RTM crosswalk against authoritative Addendum II;
+- separated pneumatic six-hour autonomy from thermal-stabilization wording;
+- replaced vague LOOP room-heat assumptions with explicit contractual ≤15 kW ambient ceiling while retaining historical provenance.
 
 ### Innovate
 
-- introduced a behavioral-edge evidence lane from D2.1 Appendix 8.4;
-- added a source-derived mode/state matrix with explicit named-valve behavior where text supports it;
-- represented fallback/path semantics as overlay metadata projected onto existing `tree/interface/control` edge types;
-- separated WCS-room thermal survival from Line-S cryogenic return behavior so each can mature independently.
+- converted limited-utility requirements into a typed degraded-state model boundary without fabricating missing hydraulic, airflow or thermal-mass inputs;
+- separated contractual ceilings from selected-equipment operating-point evidence.
 
 ### Perpetuate
 
 - source/provenance and engineering-acceptance states remain explicitly separate;
-- OPEN edges remain OPEN in graph publication;
-- the sanitized D2.1 derivative requires its own exact file/version identity;
-- deterministic rendering remains deferred until graph/engineering stability;
-- governed publication continues through #690/#691 rather than a QPS-specific duplicate exporter;
-- the same canonical TRIAGE, full handover and drop-in files are refreshed after each bounded pulse.
+- same canonical TRIAGE/full-handover/drop-in outputs remain synchronized;
+- `SESSION_PROGRESS_LEDGER_2026-09-14.yaml` records this as `TUPLE-005`;
+- additive evidence stays in dedicated ledgers.
 
-## 9. Lossless reproduction contract
+## 10. Lossless reproduction contract
 
-To keep the handover current without creating another framework, every subsequent bounded pulse shall update these **same three canonical outputs**:
+The same three canonical outputs remain the current-state surfaces:
 
-1. `triage_v1_6.yaml` — machine-readable current state, BD queue, evidence pointers and non-compensating gates.
-2. `SESSION_HANDOVER_2026-09-14.md` — full human-readable lossless state and lineage.
-3. `DROP_IN_CONTINUATION_2026-09-14.md` — compact restart block that is safe to paste into a new session.
+1. `triage_v1_6.yaml`
+2. `SESSION_HANDOVER_2026-09-14.md`
+3. `DROP_IN_CONTINUATION_2026-09-14.md`
 
-Additive evidence should remain in dedicated ledgers such as `d2_1_mode_state_matrix_v1_6.yaml`; do **not** duplicate the handover architecture.
+The append-only progression surface is:
+
+4. `SESSION_PROGRESS_LEDGER_2026-09-14.yaml`
+
+Additive engineering/source evidence remains in dedicated ledgers; do **not** fork the handover architecture.
 
 Reproduction sequence:
 
@@ -216,56 +206,55 @@ Reproduction sequence:
 read TRIAGE
 → read full handover
 → read drop-in restart
+→ read progression ledger
 → read only evidence files named by current TRIAGE
 → execute first-red / parallel lanes
 → refresh evidence ledger(s)
-→ refresh TRIAGE + full handover + drop-in in the same PR
+→ append major tuple progression entry
+→ refresh TRIAGE + full handover + drop-in in same PR
 → verify canonicalization/governance gates
 → merge
 → post-merge read from main
 ```
 
-This makes the session state reproducible from repository truth without relying on chat memory.
-
-## 10. Major prompt/reply tuple progression contract
-
-In addition to the three canonical current-state outputs above, maintain the append-only progression ledger:
-
-- `SESSION_PROGRESS_LEDGER_2026-09-14.yaml`
+## 11. Major prompt/reply tuple progression contract
 
 A tuple is **major** when it changes evidence/source lineage, BD state/priority/close predicate, source authority/currentness interpretation, first-red/execution sequence, graph/behavior semantics, the handover contract, or material PR/merge context needed for restart.
 
 After each major tuple:
 
-- append one progression-ledger entry capturing user intent, executed delta, repository receipt, BD movement/non-movement, and DoV/credit boundary;
+- append one progression-ledger entry capturing user intent, executed delta, repository receipt, BD movement/non-movement and DoV/credit boundary;
 - refresh the same three canonical current-state outputs in the same bounded PR;
 - preserve additive engineering/source ledgers separately;
 - verify governance/canonicalization gates where applicable;
 - post-merge read from `main`.
 
-Minor acknowledgements or wording-only turns with no state/evidence/sequence delta may be folded into the next major tuple to avoid meaningless repository churn.
+Minor no-state-change turns may be folded into the next major tuple. Historical tuple summaries never override stronger current TRIAGE/evidence.
 
-The progression ledger explains how the current state was reached but never overrides stronger current TRIAGE/evidence.
-
-## 11. Non-compensating controls
+## 12. Non-compensating controls
 
 - `RENDER != SOURCE AUTHORITY`
 - `VISUAL PASS != ENGINEERING PASS`
 - `DOCUMENT POLISH != ACCEPTANCE CREDIT`
 - source/content DoV does not validate open engineering claims;
-- source age is not source invalidity;
-- source-text mode extraction is not per-diagram valve/colour proof;
-- green/color semantics require per-drawing legend/state binding;
+- derivative requirement tables cannot override authoritative Addendum requirements;
+- 350 kW backup power is a boundary, not proof of one-compressor allocation;
+- 350 kW backup PCW is thermal capacity, not a proven emergency flow;
+- 6 h pneumatic autonomy is not a 6 h thermal-transient validation;
+- 15 kW LOOP ambient heat is a source ceiling, not a complete room thermal model;
+- duct availability is not quantitative HV03 airflow;
 - process fallback semantics do not automatically assign SIL or HARD_TRIP;
 - candidate I/O remains candidate until L2/detail design;
-- historical tuple summaries do not override stronger current evidence;
 - global/project DoV remains `WITHHELD`.
 
-## 12. Restart victory condition
+## 13. Restart victory condition
 
-The next high-value victory is not another deck or renderer. It is one of:
+The next high-value victory is now:
 
-- obtain enough BD-005 degraded-state inputs to execute the first defensible WCS-room first-law transient; or
+- bind the **current selected ~110 g/s HP operating point + ES02 margin + PAB12 degraded hydraulic state + OFFER-35 duct data**, then execute the first defensible WCS-room first-law transient;
+
+or, independently:
+
 - obtain discipline cause/effect evidence that closes one real BD-006 classification conflict.
 
-In parallel, Appendix 8.4 diagram/valve/colour extraction may continue as source/lineage work, but it cannot bypass those P0 engineering gates.
+In parallel, Appendix 8.4 diagram/valve/colour extraction may continue as source/lineage work, but it cannot bypass the P0 engineering gates.
