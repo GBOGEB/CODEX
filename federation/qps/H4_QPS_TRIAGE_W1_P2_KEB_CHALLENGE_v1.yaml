@@ -1,5 +1,5 @@
 schema: qps-h4-w1-p2-keb-challenge/1.0
-as_of: '2026-09-14T10:47:00+02:00'
+as_of: '2026-09-14T10:49:00+02:00'
 mission: H4_QPS_TRIAGE
 wave: H4_QPS_TRIAGE:W1
 pulse: H4-QPS-W1-P2
@@ -122,12 +122,12 @@ observed_semantic_assessment:
   stop_rule_alignment: PASS_CANDIDATE
   owner_semantic_debt: RETIRED_BY_PR_678_MERGE
   merged_p2_first_red: >-
-    Semantic validator rejected the ungoverned metadata token
-    semantic_owner_canonical; repaired by reusing owner_lane_canonical instead
-    of inventing a new semantic_* term.
+    The semantic validator rejected an accidental semantic-prefixed owner
+    metadata key. The repair reuses owner_lane_canonical instead of inventing
+    a new governed semantic concept.
   repair_first_red: >-
-    W003 rejected S1-P2R because the governed sprint schema requires S<number>-P<number>.
-    PR metadata and this receipt now reuse S1-P2.
+    W003 rejected S1-P2R because the governed sprint schema requires
+    S<number>-P<number>. PR metadata and this receipt now reuse S1-P2.
   exact_head_requirement: >-
     Require semantic runtime plus W003 and normal federation/governance checks
     to pass on this bounded repair before declaring P2 KR.
