@@ -71,3 +71,7 @@ glossary:
     definition: Boolean acceptance check indicating that deterministic tuple replay completed successfully for the governed ledger and expected tuple sequence.
     introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/semantic_acceptance_gate.py
     first_use_case: provide an explicit replay prerequisite within the A6-A7 renderer promotion contract.
+  semantic_replay:
+    definition: Governed semantic-runtime capability proving that ordered semantic tuple history can be replayed deterministically from source state to the current reconstructed state; it is replay evidence, not child engineering authority.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/test_semantic_replay_and_acceptance.py
+    first_use_case: name the bounded deterministic replay capability exercised by the A7 semantic replay and renderer-acceptance tests.
