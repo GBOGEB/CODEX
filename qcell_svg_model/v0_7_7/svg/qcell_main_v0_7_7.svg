@@ -3,13 +3,14 @@
 <desc id="desc">Single layered QCELL thermal concept drawing. Temperature is the primary heat-map variable. Compact A/B/D/E flow legend is on the right; dotted guides connect to thermal endpoints. Large teaching arrows and pressure overlay are absent from the default MAIN view.</desc>
 <defs>
   <style>
-    .txt{font-family:Arial,Helvetica,sans-serif;fill:#111827}.title{font-size:28px;font-weight:800}.stage{font-size:19px;font-weight:800}.small{font-size:14px}.micro{font-size:11px}.tag{font-size:18px;font-weight:900;fill:#fff}.card{fill:#fff;stroke:#cbd5e1;stroke-width:1.5}.guide{fill:none;stroke-width:4;stroke-dasharray:9 7}.heat{fill:none;stroke-width:6;stroke-dasharray:12 8}.muted{fill:#475569}
+    .txt{font-family:Arial,Helvetica,sans-serif;fill:#111827}.title{font-size:28px;font-weight:800}.stage{font-size:19px;font-weight:800}.small{font-size:14px}.micro{font-size:11px}.tag{font-size:18px;font-weight:900;fill:#fff}.white{fill:#fff!important}.card{fill:#fff;stroke:#cbd5e1;stroke-width:1.5}.guide{fill:none;stroke-width:4;stroke-dasharray:9 7}.heat{fill:none;stroke-width:6;stroke-dasharray:12 8}.muted{fill:#475569}
   </style>
   <linearGradient id="warm300" x1="0" x2="1"><stop offset="0%" stop-color="#ffcf00"/><stop offset="55%" stop-color="#ff5a00"/><stop offset="100%" stop-color="#cc0000"/></linearGradient>
-  <linearGradient id="shield50" x1="0" x2="1"><stop offset="0%" stop-color="#00c8ff"/><stop offset="35%" stop-color="#00e7c0"/><stop offset="67%" stop-color="#7aff00"/><stop offset="100%" stop-color="#ffd400"/></linearGradient>
   <radialGradient id="mass2k"><stop offset="0%" stop-color="#eefaff"/><stop offset="42%" stop-color="#75c6ff"/><stop offset="76%" stop-color="#1268ff"/><stop offset="100%" stop-color="#0618aa"/></radialGradient>
   <linearGradient id="outerHeat" x1="0" x2="1"><stop offset="0%" stop-color="#d00000"/><stop offset="100%" stop-color="#ff8a00"/></linearGradient>
+  <linearGradient id="outerHeatRev" x1="0" x2="1"><stop offset="0%" stop-color="#ff8a00"/><stop offset="100%" stop-color="#d00000"/></linearGradient>
   <linearGradient id="innerHeat" x1="0" x2="1"><stop offset="0%" stop-color="#ff8a00"/><stop offset="100%" stop-color="#075bff"/></linearGradient>
+  <linearGradient id="innerHeatRev" x1="0" x2="1"><stop offset="0%" stop-color="#075bff"/><stop offset="100%" stop-color="#ff8a00"/></linearGradient>
   <linearGradient id="tempCryo" x1="0" x2="1"><stop offset="0%" stop-color="#0618aa"/><stop offset="20%" stop-color="#1268ff"/><stop offset="40%" stop-color="#00c8ff"/><stop offset="62%" stop-color="#00e7c0"/><stop offset="82%" stop-color="#7aff00"/><stop offset="100%" stop-color="#ffd400"/></linearGradient>
   <marker id="heatArrow" markerWidth="14" markerHeight="12" refX="13" refY="6" orient="auto"><path d="M0 0 L14 6 L0 12 Z" fill="#ff7a00"/></marker>
 </defs>
@@ -22,7 +23,7 @@
   <text x="125" y="248" class="txt micro" fill="#7f1d1d">293.15 K nominal ambient · 300 K design boundary</text>
   <path d="M255 290 H985 L1025 330 V685 L985 725 H255 L215 685 V330 Z" fill="#ffffff" stroke="#e5e7eb" stroke-width="22" stroke-linejoin="round"/>
   <text x="280" y="320" class="txt small" fill="#64748b">vacuum: 300 K → 50 K</text>
-  <path d="M380 370 H860 L900 410 V600 L860 640 H380 L340 600 V410 Z" fill="none" stroke="url(#shield50)" stroke-width="28" stroke-linejoin="round"/>
+  <path d="M380 370 H860 L900 410 V600 L860 640 H380 L340 600 V410 Z" fill="none" stroke="#00e7c0" stroke-width="28" stroke-linejoin="round"/>
   <text x="405" y="410" class="txt stage" fill="#047857">50 K thermal shield</text>
   <text x="405" y="432" class="txt micro" fill="#047857">D/E intercept and control this membrane</text>
   <path d="M485 445 H755 L780 470 V545 L755 570 H485 L460 545 V470 Z" fill="#ffffff" stroke="#eef2ff" stroke-width="16" stroke-linejoin="round"/>
@@ -37,8 +38,8 @@
 </g>
 <g id="parasitic_loads">
   <path d="M160 310 C235 345 285 380 350 420" class="heat" stroke="url(#outerHeat)" marker-end="url(#heatArrow)"/>
-  <path d="M1045 690 C965 655 920 620 870 585" class="heat" stroke="url(#outerHeat)" marker-end="url(#heatArrow)"/>
-  <path d="M820 420 C760 460 718 485 682 500" class="heat" stroke="url(#innerHeat)" marker-end="url(#heatArrow)"/>
+  <path d="M1045 690 C965 655 920 620 870 585" class="heat" stroke="url(#outerHeatRev)" marker-end="url(#heatArrow)"/>
+  <path d="M820 420 C760 460 718 485 682 500" class="heat" stroke="url(#innerHeatRev)" marker-end="url(#heatArrow)"/>
   <path d="M415 625 C480 585 535 550 565 535" class="heat" stroke="url(#innerHeat)" marker-end="url(#heatArrow)"/>
   <g id="parasitic_labels">
     <rect x="112" y="340" width="225" height="55" rx="10" fill="#fff1f2" stroke="#fecaca"/><text x="130" y="365" class="txt small" font-weight="700">300→50 K radiation</text><text x="130" y="383" class="txt micro">red → orange</text>
@@ -51,8 +52,8 @@
   <rect x="1175" y="190" width="255" height="420" rx="18" class="card"/>
   <text x="1200" y="222" class="txt stage">Flow / stream legend</text>
   <text x="1200" y="244" class="txt micro muted">compact explanatory layer; not dimensional piping</text>
-  <g id="stream_A"><rect x="1200" y="270" width="205" height="58" rx="13" fill="#0868ff"/><circle cx="1229" cy="299" r="19" fill="#0035b8"/><text x="1229" y="306" text-anchor="middle" class="tag">A</text><text x="1260" y="294" class="txt small" fill="#fff" font-weight="700">2 K supply</text><text x="1260" y="314" class="txt micro" fill="#fff">4.5 K · 3 bar</text></g>
-  <g id="stream_B"><rect x="1200" y="344" width="205" height="58" rx="13" fill="#0048d8"/><circle cx="1229" cy="373" r="19" fill="#002579"/><text x="1229" y="380" text-anchor="middle" class="tag">B</text><text x="1260" y="368" class="txt small" fill="#fff" font-weight="700">2 K return</text><text x="1260" y="388" class="txt micro" fill="#fff">2–4 K · 26–31 mbar</text></g>
+  <g id="stream_A"><rect x="1200" y="270" width="205" height="58" rx="13" fill="#0868ff"/><circle cx="1229" cy="299" r="19" fill="#0035b8"/><text x="1229" y="306" text-anchor="middle" class="tag">A</text><text x="1260" y="294" class="txt small white" font-weight="700">2 K supply</text><text x="1260" y="314" class="txt micro white">4.5 K · 3 bar</text></g>
+  <g id="stream_B"><rect x="1200" y="344" width="205" height="58" rx="13" fill="#0048d8"/><circle cx="1229" cy="373" r="19" fill="#002579"/><text x="1229" y="380" text-anchor="middle" class="tag">B</text><text x="1260" y="368" class="txt small white" font-weight="700">2 K return</text><text x="1260" y="388" class="txt micro white">2–4 K · 26–31 mbar</text></g>
   <g id="stream_D"><rect x="1200" y="418" width="205" height="58" rx="13" fill="#00c8ff"/><circle cx="1229" cy="447" r="19" fill="#0085a1"/><text x="1229" y="454" text-anchor="middle" class="tag">D</text><text x="1260" y="442" class="txt small" fill="#073642" font-weight="700">50 K supply</text><text x="1260" y="462" class="txt micro" fill="#073642">30–40 K · 12–13 bar</text></g>
   <g id="stream_E"><rect x="1200" y="492" width="205" height="58" rx="13" fill="#b7f500"/><circle cx="1229" cy="521" r="19" fill="#6c8200"/><text x="1229" y="528" text-anchor="middle" class="tag">E</text><text x="1260" y="516" class="txt small" fill="#243000" font-weight="700">50 K return</text><text x="1260" y="536" class="txt micro" fill="#243000">50–60 K · ΔT≈20 K</text></g>
   <text x="1200" y="582" class="txt micro muted">A/B terminate at 2 K interface.</text>
