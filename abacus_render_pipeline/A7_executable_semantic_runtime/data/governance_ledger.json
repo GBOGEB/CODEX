@@ -1,5 +1,5 @@
 {
-  "ledger_version": "A10.0",
+  "ledger_version": "A10.1",
   "invariants": [
     {"id":"INV-001","statement":"Generated outputs are non-canonical; MASTER YAML and governed registries remain authoritative."},
     {"id":"INV-002","statement":"Semantic colours transform by theme rather than simple inversion."},
@@ -9,7 +9,8 @@
     {"id":"INV-006","statement":"Publication promotion requires a content-addressed renderer execution receipt whose hashes and checks are independently revalidated."},
     {"id":"INV-007","statement":"Multi-format publication promotion is atomic: every required renderer receipt, renderer-native check and cross-format parity check must pass before one bundle promotion receipt may PROMOTE."},
     {"id":"INV-008","statement":"GitHub Pages counts as published only after a real Pages deployment returns a hosted URL and an independent network fetch of that hosted URL reproduces the governed Pages artifact hash and semantic token set for the exact source commit."},
-    {"id":"INV-009","statement":"Visual snapshot promotion requires a real browser-rendered PNG bound to the same source commit and A9 carrier receipt, with independently revalidated hashes and passing dimensions, clipping, overflow, text-visibility, contrast, element-coverage, semantic-parity and replay checks."}
+    {"id":"INV-009","statement":"Visual snapshot promotion requires a real browser-rendered PNG bound to the same source commit and A9 carrier receipt, with independently revalidated hashes and passing dimensions, clipping, overflow, text-visibility, contrast, element-coverage, semantic-parity and replay checks."},
+    {"id":"INV-010","statement":"A GitHub Pages deployment-success signal is not sufficient hosted evidence: promotion requires at least two consecutive exact governed hosted responses while holding the repository-wide Pages deployment concurrency boundary, followed by an independent repeat of that convergence check."}
   ],
   "semantic_debt": [
     {"id":"DEBT-001","status":"open","topic":"renderer_linting","next_action":"Wire remaining production renderer linter signals into per-format execution telemetry"},
@@ -18,7 +19,7 @@
     {"id":"DEBT-004","status":"open","topic":"figure_registry_browser","next_action":"Build MASTER figure browser"},
     {"id":"DEBT-005","status":"open","topic":"semantic_metrics","next_action":"Expose completeness, debt and branch metrics"},
     {"id":"DEBT-006","status":"closed","topic":"renderer_binding","next_action":"Completed by A8 reference SSOT -> renderer -> artifact -> receipt -> promotion loop"},
-    {"id":"DEBT-007","status":"closed","topic":"multi_format_receipts","next_action":"Closed by exact-main hosted Pages proof for source ed641574dedcf4f062ad333e07ef79d19388f3eb in Actions run 34867675282: HTML/PPTX/PDF/Markdown/Pages receipts accepted, hosted Pages independently refetched with exact hash equality and semantic coverage 1.0, final atomic decision PROMOTE. Continue with DEBT-008 snapshot_receipt rather than reopening this carrier without a concrete defect."},
-    {"id":"DEBT-008","status":"closed","topic":"snapshot_receipt","next_action":"Closed by A10 real Chromium PNG execution receipt: content-addressed snapshot, image-native dimensions/clipping/overflow/text-visibility/contrast/element-coverage telemetry, semantic parity/replay, independent hash validation and six-surface promotion gating. Reopen only on concrete visual-renderer defect or stronger snapshot authority requirement."}
+    {"id":"DEBT-007","status":"partial","topic":"multi_format_receipts","next_action":"A valid hosted PROMOTE proof exists for source ed641574dedcf4f062ad333e07ef79d19388f3eb in run 34867675282, but post-closure burn-in run 34868367167 exposed a repeatability defect: deploy-pages reported success yet the immediate hosted HTTP 200 returned SHA 39a754786ab9c2108d84d68fb29194901f5000032aea6d31f9326bf497acdefc instead of governed candidate 6737e566b54b907cf54d53dd91160ccb4d09aba3e34fba2035a1bae0eb90214c, with semantic coverage 0.0. Repair by sharing the repository-wide pages concurrency group and requiring repeated exact hash plus semantic convergence; re-close only after a new exact-main hosted run reaches atomic PROMOTE under A9.3."},
+    {"id":"DEBT-008","status":"closed","topic":"snapshot_receipt","next_action":"Closed by A10 real Chromium PNG execution receipt: content-addressed snapshot, image-native dimensions/clipping/overflow/text-visibility/contrast/element-coverage telemetry, semantic parity/replay, independent hash validation and six-surface promotion gating. This closure remains valid and is not reopened by the separate A9 hosted-Pages stability regression."}
   ]
 }
