@@ -1,12 +1,8 @@
-# QPS Visual Knowledge System v1.6 — Current Restart Surface
+# QPS Visual Knowledge System v1.6 — Restart Pointer
 
-**State:** `SOURCE_BOUND_PARTIAL_CONTROL`  
-**First red:** `RAW_SOURCE_BYTE_MATERIALIZATION`  
-**Authority:** `ENGINEERING_CURATION_NOT_DESIGN_APPROVAL`  
-**Global/project DoV:** `WITHHELD`
+`SOURCE_BOUND_PARTIAL_CONTROL` · first red `RAW_SOURCE_BYTE_MATERIALIZATION` · `GLOBAL_PROJECT_DOV = WITHHELD`
 
-Use these files as the restart order:
-
+Read in order:
 1. `triage_v1_6.yaml`
 2. `source_proof_execution_v1_6.yaml`
 3. `source_lineage.yaml`
@@ -17,39 +13,16 @@ Use these files as the restart order:
 8. `qps_triage_alignment.md`
 9. `index.html`
 
-## Current source proof
+Current source-proof state:
+- all four exact source names resolve to persistent File Library objects;
+- Controls core has a pre-existing governed exact locator+SHA tuple;
+- Utilities core + canonical appendix have prior W162 SHA candidates but need independent raw-byte re-hash joins;
+- naming/control still lacks a governed digest;
+- fresh per-slide render/hash count is zero because raw File Library PPTX bytes are not materialized in the executable path;
+- historical slide-1 census renders do not satisfy BD-002; Utilities slide-1 renders were duplicate zero-credit observations.
 
-All four exact source filenames resolve to persistent File Library objects. `SRC-CTRL-CORE` has a pre-existing governed W176 exact persistent-locator + SHA256 identity tuple. The two Utilities sources have persistent locators plus W162 source-gate SHA256 candidates but still need independent raw-byte re-hash binding. `SRC-NAMING-CONTROL` still lacks a governed digest in searched evidence.
+Current BD states: `BD-001 PARTIAL_IDENTITY_BINDING`, `BD-002 BLOCKED_ON_RAW_BYTE_MATERIALIZATION`, `BD-003 PREDICATE_BLOCKED_BD002_FALSE`, `BD-004 PARTIAL_RECONCILIATION`, `BD-005 OPEN`, `BD-006 PARTIAL_SUBSTANTIVE_CLASSIFICATION`, `BD-007 OPEN_L2_GATED`, `BD-008 OPEN`, `BD-009 DEFER_TO_V1_7`, `BD-010 REFRAME_BIND_EXISTING_CARRIER`.
 
-No raw File Library PPTX bytes are currently materialized into the executable container. Consequently `V16-BD-002` has zero fresh per-slide render/hash tuples. Historical slide-1 census renders are not a substitute; the two Utilities slide-1 renders were duplicate observations with zero credit.
+Next chain: raw PPTX materialization → SHA256 repeat/missing naming digest → stable render+hash for every bound source slide → BD-003 disposition/content-loss ledger. Continue independent BD-004/006 evidence in parallel, then LOOP, graph refresh and #690/#691 publication binding.
 
-```text
-BD-001  PARTIAL_IDENTITY_BINDING
-BD-002  BLOCKED_ON_RAW_BYTE_MATERIALIZATION
-BD-003  PREDICATE_BLOCKED_BD002_FALSE
-BD-004  PARTIAL_RECONCILIATION
-BD-005  OPEN
-BD-006  PARTIAL_SUBSTANTIVE_CLASSIFICATION
-BD-007  OPEN_L2_GATED
-BD-008  OPEN
-BD-009  DEFER_TO_V1_7
-BD-010  REFRAME_BIND_EXISTING_CARRIER
-```
-
-## Next executable chain
-
-```text
-raw PPTX materialization
-  ↓
-independent SHA256 repeat / missing naming digest
-  ↓
-stable fixed-setting render + SHA256 for every bound source slide
-  ↓
-BD-003 slide-complete KEEP / MERGE / REFERENCE / SUPERSEDE / DROP_WITH_RATIONALE
-  ↓
-content-loss verdict
-```
-
-Continue BD-004 and BD-006 in parallel only where evidence is independent. Then bind LOOP evidence, refresh graph nodes, and bind QPS semantic objects into existing #690/#691 governed publication infrastructure.
-
-Do not build a second exporter. ODP and Microsoft Office host reflow remain separate proof boundaries. No visual/document/publication result grants unrelated engineering, safety, acceptance or project-level credit.
+Do not build another exporter. ODP and Microsoft Office host reflow remain separate proof boundaries. No visual/document/publication result grants engineering/safety/acceptance credit.
