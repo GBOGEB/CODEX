@@ -1,21 +1,43 @@
-version: A6-A8.0
-purpose: Require a verified renderer execution receipt plus reconstructable governed semantic state before publication promotion.
+version: A6-A8.2
+purpose: Require verified content-addressed renderer receipts plus reconstructable governed state before publication promotion, with atomic multi-format promotion for production publication bundles.
 
 renderer_acceptance:
   generated_outputs_are_canonical: false
   renderer_boolean_override_allowed: false
-  required_receipt_fields:
-    - artifact_sha256
-    - ssot_sha256
-    - renderer_version
-    - theme
-    - render_mode
-    - checks.contrast
-    - checks.layout
-    - checks.overflow
-    - checks.semantic_replay
-    - tuple_ledger_sha256
-    - decision
+  reference_html_receipt:
+    required_receipt_fields:
+      - artifact_sha256
+      - ssot_sha256
+      - renderer_version
+      - theme
+      - render_mode
+      - checks.contrast
+      - checks.layout
+      - checks.overflow
+      - checks.semantic_replay
+      - tuple_ledger_sha256
+      - decision
+  production_multiformat_receipt:
+    required_formats: [pptx, pdf]
+    required_bundle_fields:
+      - ssot_sha256
+      - tuple_ledger_sha256
+      - expected_content_sha256
+      - artifacts.pptx.artifact_sha256
+      - artifacts.pptx.native_telemetry
+      - artifacts.pptx.checks
+      - artifacts.pdf.artifact_sha256
+      - artifacts.pdf.native_telemetry
+      - artifacts.pdf.checks
+      - cross_format_parity
+      - semantic_replay
+      - decision
+    atomic_promotion: true
+    rule: >-
+      One production promotion receipt may PROMOTE only when every required format
+      independently revalidates, every renderer-native check passes, the exact
+      SSOT-derived content survives cross-format parity, and governed replay state
+      remains valid. One failed required format rejects the bundle.
   required_checks:
     - renderer_execution_receipt_valid
     - renderer_execution_accepted
@@ -36,12 +58,21 @@ promotion_policy:
     - pdf
     - markdown
     - github_pages
+  production_phase_a8_2:
+    active: [pptx, pdf]
+    remaining: [markdown, github_pages]
 
 receipt_evidence:
-  renderer_execution: ../A8_renderer_execution_receipt/renderer_execution.py
-  receipt_schema: ../A8_renderer_execution_receipt/receipt_schema.json
-  receipt_validator: ../A8_renderer_execution_receipt/receipt_validation.py
-  generated_receipt: ../A8_renderer_execution_receipt/receipts/renderer_execution_receipt.json
+  reference_renderer_execution: ../A8_renderer_execution_receipt/renderer_execution.py
+  reference_receipt_schema: ../A8_renderer_execution_receipt/receipt_schema.json
+  reference_receipt_validator: ../A8_renderer_execution_receipt/receipt_validation.py
+  reference_generated_receipt: ../A8_renderer_execution_receipt/receipts/renderer_execution_receipt.json
+  multiformat_renderer_execution: ../A8_renderer_execution_receipt/multiformat_execution.py
+  multiformat_receipt_schema: ../A8_renderer_execution_receipt/multiformat_receipt_schema.json
+  multiformat_receipt_validator: ../A8_renderer_execution_receipt/multiformat_validation.py
+  multiformat_promotion: ../A8_renderer_execution_receipt/multiformat_promotion.py
+  multiformat_generated_receipt: ../A8_renderer_execution_receipt/receipts/multiformat_execution_receipt.json
+  multiformat_promotion_receipt: ../A8_renderer_execution_receipt/receipts/multiformat_promotion_receipt.json
 
 lineage:
   tuple_ledger: ../A7_executable_semantic_runtime/data/semantic_tuple_ledger.json
