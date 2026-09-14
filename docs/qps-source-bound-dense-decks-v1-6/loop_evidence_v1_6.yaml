@@ -1,17 +1,19 @@
-schema: qps-loop-evidence/1.0
+schema: qps-loop-evidence/1.1
 version: '1.6'
-authority: SOURCE_SCENARIO_BINDING_NOT_TRANSIENT_VALIDATION
+authority: SOURCE_SCENARIO_BINDING_PLUS_PRESSURE_TEST_NOT_TRANSIENT_VALIDATION
 bd_id: V16-BD-005
-state: EVIDENCE_BOUND_OPEN_TRANSIENT_MODEL_REQUIRED
+state: PRESSURE_LOADED_SCOPE_CONFLICTS_BOUND_MODEL_PENDING
 scenario_id: LOOP-OFFSITE-POWER-LOSS-WCS-ONE-HP
+pressure_loading: loop_pressure_loading_v1_6.yaml
+
 scenario:
   start_condition: loss of off-site power
   source_operating_description: reduced cooling / backup operation with one HCC or HP compressor supported by backup power
   affected_support_systems: [ES02, HV03, PS01, PGB20]
   equipment_state:
-    wcs_hcc: one HCC / HP compressor operating on backup basis
-    pab12: backup fans and pump stated as powered in the working scenario
-    ventilation: maintained for equipment safety in the working scenario
+    wcs_hcc: one HCC / HP compressor operating on backup basis; exact frequency, mass flow and electrical power remain open
+    pab12: backup fans and pump stated as powered; credited LOOP hydraulic state remains open
+    ventilation: maintained for equipment safety in the working scenario; exact airflow/power remains open
     odh_monitoring: active
   occupancy:
     state: RESTRICTED_OR_NOT_ALLOWED
@@ -19,11 +21,21 @@ scenario:
     authority: SOURCE_WORKING_SCENARIO
   thermal_inventory:
     state: NOT_SPECIFIED_IN_BOUND_SOURCES
-    consequence: no independent thermal transient can be reconstructed from the bound slides alone
+    consequence: no independent WCS room/equipment transient can yet be reconstructed
   recovery_objective:
     source_wording: approximately 6 h window sufficient for stabilization, OR LOSS
     normalized_for_curation: stabilization/recovery working window
     guarantee: false
+
+scope_boundary:
+  WCS_ROOM_LOOP:
+    role: PRIMARY_BD005_CLOSURE_LANE
+    values: [350_kW_diesel, 350_kW_emergency_PCW, approximately_17_kW, approximately_6_h, approximately_2_h]
+  LINE_S_CRYO_LOOP:
+    role: ADJACENT_SEPARATE_TRANSIENT_LANE
+    repository_reference: GBOGEB/ABACUS PR #582 merged at 893a53b971bb14282ce70141385e05b6ddca425b
+    rule: D2.1 cryogenic return/release timing and flows cannot be used to close the WCS room thermal transient by analogy
+
 values:
   - id: LOOP-VAL-001
     quantity: electrical_backup
@@ -37,8 +49,15 @@ values:
       - source_id: SRC-UTIL-CORE
         source_slide: 20
         statement: running 1 HCC skid with 350 kW back-up power.
-    evidence_status: SOURCE_EXPLICIT_SCENARIO_BOUND
+    pressure_evidence:
+      - source: QPS_LKT_SSOT_CURRENT_2026-09-07_PARSED_SOURCE_INDEX.jsonl
+        statement: 72 Hz / approximately 112 g/s / approximately 357 kW package is equipment maximum and not normal per-unit utility point.
+      - source: QPS_MTBF_WCS_ALIGNED_REVIEWGBO_FULL_v5.pptx
+        statement: approximately 350 kW at 112.5 g/s / 72 Hz is a planning/nameplate screen requiring OEM confirmation.
+    evidence_status: SOURCE_CAPACITY_BOUND_OPERATING_POINT_OPEN
+    pressure_result: 350 kW cannot automatically be credited for the approximately 357 kW maximum package point plus auxiliaries; exact LOOP frequency/flow/power and auxiliary split must be frozen
     acceptance_credit: NONE
+
   - id: LOOP-VAL-002
     quantity: emergency_pcw_capacity
     value: 350
@@ -48,8 +67,15 @@ values:
       - source_id: SRC-UTIL-CANONICAL-APPENDIX
         source_slide: 53
         statement: Emergency PCW 350 kW dedicated for LOOP event; served by PAB12 backup logic.
-    evidence_status: SOURCE_EXPLICIT_INTERFACE_TABLE
+    pressure_evidence:
+      - source: QPLANT - WCS water cooling (IADR overview)_0304.pptx
+        statement: PAB12/WCS working basis carries approximately 27 C supply, approximately 11 K normal rise, 15 K maximum-rise context and full-duty flow values; exact emergency branch state is not frozen.
+      - source: AD_01.10 P_ID_PCW (TP2=PS01.PAB12).pdf
+        statement: physical PAB12 branch/tag evidence exists but the retrieved evidence does not establish credited LOOP flow/capacity.
+    evidence_status: THERMAL_DUTY_BOUND_HYDRAULIC_BACKUP_OPEN
+    pressure_result: emergency thermal allocation is source explicit but pump/fan availability, branch flow, pressure, valve state and supply/return temperatures under LOOP remain unproven
     acceptance_credit: NONE
+
   - id: LOOP-VAL-003
     quantity: residual_heat_dissipation
     value: 17
@@ -66,9 +92,16 @@ values:
       - source_id: SRC-UTIL-CORE
         source_slide: 21
         statement: Residual heat dissipation approximately 17 kW.
-    evidence_status: SOURCE_EXPLICIT_WORKING_SCENARIO_UNVALIDATED
-    missing_validation: equipment heat balance / room thermal transient for the exact degraded state
+    pressure_evidence:
+      - source: QPLANT - WCS water cooling (IADR overview)_0304.pptx
+        statement: historical LKT pre-study example assumes 17 kW per FSD575 at approximately 112 g/s / 72 Hz and shows 17 x 2 kW for a dual-skid example.
+      - source: QPS_PROJECT_SSOT_rev1_8.xlsx
+        statement: package air-out interface carries 14 + 17 kW air paths at max basis while room residual sensitivity is 50-81 kW depending boundary/ducting assumptions.
+    evidence_status: SOURCE_ORIGIN_BOUND_SCOPE_CONFLICT_OPEN
+    pressure_result: approximately 17 kW has a plausible package air/bypass lineage but is not yet proven as total one-HP heat entering the WCS room in the LOOP state
+    missing_validation: freeze HX1/HX2/HX3/HX4/Q5 heat-path states and total room heat rejection for exact degraded configuration
     acceptance_credit: NONE
+
   - id: LOOP-VAL-004
     quantity: stabilization_recovery_window
     value: 6
@@ -85,44 +118,35 @@ values:
       - source_id: SRC-UTIL-CORE
         source_slide: 21
         statement: 6-hour recovery window sufficient for stabilization, OR LOSS.
-    evidence_status: SOURCE_EXPLICIT_WORKING_SCENARIO_UNVALIDATED
-    missing_validation: transient model defining stabilization criterion, thermal inventory, recovery capacity and boundary conditions
+    evidence_status: UNVALIDATED_TEMPORAL_CLAIM
+    pressure_result: no WCS room thermal inventory, initial condition, time-dependent heat removal or measurable stabilization criterion has been found that derives 6 h
     acceptance_credit: NONE
+
   - id: LOOP-VAL-005
     quantity: onset_concern
     value: 2
     unit: h
     qualifier: APPROXIMATE
-    scope: source working scenario; exact onset mechanism is not defined in the bound slide
+    scope: source working scenario
     source_evidence:
       - source_id: SRC-UTIL-CORE
         source_slide: 20
         statement: OR LOSS - onset 2 hours.
-    evidence_status: SOURCE_EXPLICIT_AMBIGUOUS_UNVALIDATED
-    missing_validation: define the physical variable/limit that reaches onset and prove it by transient calculation
+    evidence_status: UNVALIDATED_AND_PHYSICALLY_UNDEFINED
+    pressure_result: source does not identify the state variable or governing limit that reaches onset; D2.1 Line-S timing is a separate cryogenic-return phenomenon and cannot define it by analogy
     acceptance_credit: NONE
+
 conditions:
   ventilation:
     source_state: MAINTAINED_FOR_EQUIPMENT_SAFETY
-    evidence:
-      - [SRC-UTIL-CORE, 19]
-      - [SRC-UTIL-CORE, 20]
-      - [SRC-UTIL-CORE, 21]
-    open_question: exact LOOP power/airflow capacity for HV03/HV02 is not quantified in the bound slides
+    open_question: exact LOOP HV03 airflow, power source and heat-removal capacity are not quantified
   odh:
     source_state: MONITORING_ACTIVE
-    evidence:
-      - [SRC-UTIL-CORE, 19]
-      - [SRC-UTIL-CORE, 20]
-      - [SRC-UTIL-CORE, 21]
     note: active ODH monitoring does not itself prove safe occupancy
   occupancy:
     source_state: RESTRICTED
-    evidence:
-      - [SRC-UTIL-CORE, 19]
-      - [SRC-UTIL-CORE, 20]
-      - [SRC-UTIL-CORE, 21]
-    note: source slide 20 explicitly states NOT ALLOWED without full BA set; exact facility rule remains to be governed by ODH/safety basis
+    note: source slide 20 explicitly states NOT ALLOWED without full BA set; exact facility rule remains governed by ODH/safety basis
+
 controls_boundary:
   controls_may_own:
     - detected LOOP / utility-availability state
@@ -135,24 +159,53 @@ controls_boundary:
     - automatic HARD_TRIP solely from utility loss
     - 6 h autonomy guarantee
     - 2 h safety threshold
-    - validated 17 kW transient heat load
+    - validated 17 kW total room transient heat load
+    - electrical or PCW margin from nominal interface values alone
+
+minimum_WCS_transient_model_contract:
+  required_inputs:
+    - exact LOOP HP frequency, mass flow and electrical input
+    - ES02 continuous/standby rating, overload duration and backed auxiliary split
+    - heat-path split to PCW, RCW/bypass, room and exhaust
+    - emergency PAB12 flow, pressure, supply/return temperature and valve state
+    - HV03 LOOP airflow, inlet condition and electrical source
+    - WCS room geometry/effective thermal mass, initial temperature and external boundary condition
+    - OEM/package critical temperature limits and relevant thermal capacitances
+  required_outputs:
+    - room and critical-equipment temperatures versus time
+    - emergency PCW thermal/hydraulic margin versus time
+    - time to first governing limit
+    - state at 2 h and 6 h
+    - defined stabilization/recovery time
+  uncertainty_rule: every non-source-controlled input must carry pedigree/range and sensitivity
+
 close_predicate:
   exact_scenario_binding: PASS
   source_value_binding: PASS
+  cross_domain_transient_separation: PASS
+  seventeen_kW_scope: FAIL_SCOPE_CONFLICT
+  ES02_single_HP_operating_point: FAIL_NOT_FROZEN
+  PAB12_emergency_hydraulics: FAIL_NOT_BOUND
+  room_thermal_inventory: FAIL_MISSING
   transient_load_validation: FAIL_MISSING
-  thermal_inventory_binding: FAIL_MISSING
-  recovery_capacity_validation: FAIL_MISSING
+  two_hour_physical_definition: FAIL_MISSING
+  six_hour_stabilization_validation: FAIL_MISSING
   bd_close_allowed: false
+
 next_evidence_required:
-  - transient room/equipment heat-balance for one-HCC LOOP state
-  - defined thermal inventory and initial conditions
-  - verified ES02 load list and single-HP operating envelope
-  - verified emergency-PCW/PAB12 flow and capacity under LOOP
-  - defined meaning and physical mechanism of the ~2 h onset statement
-  - defined stabilization/recovery criterion for the ~6 h statement
+  - freeze exact one-HP LOOP frequency / mass flow / electrical operating point and ES02 auxiliary allocation
+  - bind diesel rating type, overload duration and start/restart requirements
+  - bind emergency PAB12 flow, pressure, temperatures, pump/fan power and valve state at WCS terminal point
+  - reconcile 17 kW against 14 + 17 kW package air paths and 50-81 kW room residual sensitivities
+  - acquire WCS room/equipment thermal inventory and HV03 LOOP airflow
+  - define the physical variable and limit represented by OR LOSS onset approximately 2 h
+  - define the stabilization criterion represented by approximately 6 h
+  - execute first-law WCS room/equipment transient with uncertainty and independent review
+
 non_compensating_rules:
   - source repetition is not transient validation
-  - arithmetic consistency is not a recovery proof
+  - the Line-S/D2.1 transient cannot close the WCS room transient by analogy
+  - arithmetic consistency is not electrical or hydraulic margin proof
   - controls classification cannot manufacture missing thermal evidence
   - no design, safety, acceptance or global/project DoV credit is granted
   - Global/project DoV remains WITHHELD

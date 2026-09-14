@@ -1,0 +1,247 @@
+schema: qps-loop-pressure-loading/1.1
+version: '1.6'
+authority: ENGINEERING_PRESSURE_TEST_NOT_DESIGN_APPROVAL
+bd_id: V16-BD-005
+state: PRESSURE_LOADED_SCOPE_CONFLICTS_BOUND_MODEL_PENDING
+created: '2026-09-14'
+
+purpose: >-
+  Load the currently available internal evidence against the LOOP working scenario without
+  converting repeated source statements into validated transient performance. Separate the
+  WCS/room thermal-survival problem from the LINAC/Line-S cryogenic-return problem.
+
+scope_split:
+  WCS_ROOM_LOOP:
+    canonical_scenario: LOOP-OFFSITE-POWER-LOSS-WCS-ONE-HP
+    question: >-
+      Can one WCS HP/HCC package operate safely in the degraded LOOP state using ES02 backup,
+      emergency PAB12 cooling and maintained ventilation for the claimed time window?
+    owns_values: [350_kW_diesel, 350_kW_emergency_PCW, approximately_17_kW_room_or_air_path, approximately_6_h_window, approximately_2_h_onset]
+    closure_role: PRIMARY_FOR_BD005
+  LINE_S_CRYO_LOOP:
+    canonical_scenario: D2.1_LOSS_OF_UTILITY_CRYOGENIC_RETURN
+    question: >-
+      What helium return/release transient reaches Line S after loss of utilities and what
+      recovery/pressure-buffer capacity is required?
+    evidence_role: ADJACENT_NOT_WCS_ROOM_CLOSURE_EVIDENCE
+    closure_role: SEPARATE_TRANSIENT_FRONT
+    note: >-
+      The D2.1 approximately-one-hour-plus-one-hour bath/release behaviour and 120-200 g/s
+      return-flow evidence shall not be used to justify the WCS room approximately-2 h onset
+      or approximately-6 h stabilization claim without an explicit physical coupling model.
+
+pressure_findings:
+  - id: BD005-P01
+    topic: residual_heat_scope
+    current_working_claim: approximately 17 kW residual heat while one HCC skid operates on 350 kW backup
+    state: SOURCE_ORIGIN_BOUND_SCOPE_CONFLICT_OPEN
+    evidence:
+      - source: QPS_Suporting_Sytems.pptx
+        library_file_id: file_000000003bcc720a954cc3468cb6c101
+        statement: LOOP slides carry approximately 17 kW residual heat for one HCC skid on backup.
+        class: SOURCE_WORKING_SCENARIO
+      - source: QPLANT - WCS water cooling (IADR overview)_0304.pptx
+        library_file_id: file_00000000d4e4720cba48fe8a447cda5d
+        statement: historical LKT pre-study example assumes 17 kW per FSD575 at approximately 112 g/s and 72 Hz; dual-skid example therefore shows 17 x 2 kW.
+        class: HISTORICAL_SOURCE_ORIGIN
+      - source: QPS_PROJECT_SSOT_rev1_8.xlsx
+        library_file_id: file_0000000069e881f48c0b52fe90bdad93
+        statement: package air-out interface carries 14 + 17 kW air paths at max basis; residual room-heat sensitivity is 50-81 kW depending boundary/ducting assumptions.
+        class: INFERRED_SCOPE_SENSITIVITY
+    pressure_result: >-
+      The approximately 17 kW number now has a plausible historical origin, but it is not yet
+      proven to equal total heat released to the WCS room by the exact one-HP LOOP configuration.
+      It may represent one air/bypass path at a maximum package point. Do not use it as the sole
+      room transient heat input until HX4/Q5/motor-air/bypass boundaries are frozen.
+    required_closure:
+      - freeze exact LOOP one-HP package configuration and frequency/flow point
+      - identify which of HX1/HX2/HX3/HX4/Q5 remain active and where each heat path rejects
+      - quantify total heat entering WCS_CCB.CR under LOOP, not only one package air path
+
+  - id: BD005-P02
+    topic: ES02_350kW_single_HP
+    current_working_claim: 350 kW diesel backup supports one HP compressor
+    state: SOURCE_CAPACITY_BOUND_OPERATING_POINT_OPEN
+    evidence:
+      - source: QPS_Supporting_Systems_FULL_SLINE_parallel_canonical_v3_appendix.pptx
+        library_file_id: file_00000000f77c71f4810e616eda4b4da8
+        statement: Diesel Backup 350 kW; LOOP Event; 400 V 3-phase for a single HP compressor.
+        class: SOURCE_EXPLICIT_INTERFACE_TABLE
+      - source: QPS_LKT_NEG_RFI_REVIEW_MASTER_W21_2.xlsx
+        library_file_id: file_00000000317c8210b6ac33ae91f4f9ed
+        statement: LKT states approximately 110 g/s recovery from Line S during abnormal operation including LOOP with one compressor supplied from emergency power.
+        class: BIDDER_RESPONSE_NOT_ACCEPTED_DESIGN
+      - source: QPS_LKT_SSOT_CURRENT_2026-09-07_PARSED_SOURCE_INDEX.jsonl
+        library_file_id: file_00000000f7348210833c269996706bb6
+        statement: 72 Hz / approximately 112 g/s / approximately 357 kW package point is equipment maximum and not the normal 2 K operating point.
+        class: SOURCE_SUPPORTED_PLUS_DERIVED
+      - source: QPS_MTBF_WCS_ALIGNED_REVIEWGBO_FULL_v5.pptx
+        library_file_id: file_00000000ef1881f49bdf61a9648c4183
+        statement: planning/nameplate screen is approximately 350 kW at 112.5 g/s / 72 Hz and requires OEM confirmation.
+        class: PLANNING_SCREEN
+    diagnostic_bounds:
+      bidder_LOOP_flow_fraction_of_112_gps_reference: approximately_98_percent
+      diesel_vs_357_kW_max_reference: approximately_minus_7_kW_or_minus_2_percent_before_auxiliaries
+      interpretation: >-
+        The bidder's approximately 110 g/s emergency-power claim is close to the approximately
+        112 g/s maximum-flow reference. These approximate screens therefore leave no demonstrated
+        continuous electrical margin for auxiliaries and cannot establish the true VFD power point.
+    pressure_result: >-
+      A 350 kW diesel allocation cannot automatically be credited for the maximum approximately
+      357 kW package point plus auxiliaries. The new bidder response makes the required LOOP flow
+      point approximately 110 g/s explicit, but that is itself bidder evidence and sits close to
+      the maximum package-flow reference. The electrical point, rating and auxiliary supply split
+      remain open. No continuous 72 Hz LOOP credit is granted by the current evidence.
+    required_closure:
+      - exact LOOP HP frequency, mass flow and OEM electrical input at approximately 110 g/s credited flow
+      - diesel continuous/standby rating and permitted overload duration
+      - auxiliary loads carried by the same 350 kW bus versus separately backed loads
+      - motor/VFD starting and restart transient basis
+      - contractual disposition of bidder approximately 110 g/s emergency-power claim
+
+  - id: BD005-P03
+    topic: emergency_PCW_350kW
+    current_working_claim: 350 kW emergency PCW through PAB12 supports the LOOP event
+    state: THERMAL_DUTY_BOUND_HYDRAULIC_BACKUP_OPEN
+    evidence:
+      - source: QPS_Supporting_Systems_FULL_SLINE_parallel_canonical_v3_appendix.pptx
+        library_file_id: file_00000000f77c71f4810e616eda4b4da8
+        statement: Emergency PCW 350 kW dedicated for LOOP event; served by PAB12 backup logic.
+        class: SOURCE_EXPLICIT_INTERFACE_TABLE
+      - source: QPLANT - WCS water cooling (IADR overview)_0304.pptx
+        library_file_id: file_00000000d4e4720cba48fe8a447cda5d
+        statement: PCW nominal supply approximately 27 C; full-system design uses approximately 11 K rise with 15 K maximum-rise context and approximately 106 m3/h WCS / 115 m3/h QPS total full-duty values.
+        class: SOURCE_ENGINEERING_WORKING_BASIS
+      - source: AD_01.10  P_ID_PCW  (TP2=PS01.PAB12).pdf
+        library_file_id: file_00000000469c71f892eda9c1f45d5cc9
+        statement: PAB12 P&ID provides physical branch/tag evidence but the retrieved parse does not establish the credited LOOP flow/capacity.
+        class: PHYSICAL_INTERFACE_EVIDENCE_ONLY
+    diagnostic_bounds:
+      basis: proportional scaling from source WCS full-duty 1199 kW at approximately 106 m3/h; diagnostic only
+      emergency_flow_at_same_duty_per_flow_basis: approximately_31_m3_per_h
+      sensitivity_if_deltaT_relaxes_from_11K_to_15K_with_other_properties_held_constant: approximately_23_m3_per_h
+      rule: >-
+        These are target orders for evidence review, not credited hydraulic capacity. Actual fluid
+        properties, branch pressure drop, pump curve, valve state, fan availability and equipment
+        temperature limits must govern the final result.
+    pressure_result: >-
+      The 350 kW emergency thermal duty is source explicit and now implies an order-of-magnitude
+      target of roughly 23-31 m3/h under the source full-duty/delta-T basis. The backup hydraulic
+      path is still not closed because available evidence does not bind pump/fan duty, branch flow,
+      pressure, supply/return temperatures, valve state or backup electrical consumption.
+    required_closure:
+      - emergency PAB12 flow at the WCS terminal point against the diagnostic 23-31 m3/h target range
+      - LOOP supply/return temperature envelope and allowable delta-T
+      - backup pump and fan availability/power
+      - branch valve/check-valve state and minimum differential pressure
+      - demonstrate that the exact one-HP heat rejection fits the emergency-PCW envelope
+
+  - id: BD005-P04
+    topic: six_hour_stabilization
+    current_working_claim: approximately 6 h recovery window is sufficient for stabilization
+    state: UNVALIDATED_TEMPORAL_CLAIM
+    pressure_result: >-
+      No WCS-room thermal inventory, initial room/equipment state, envelope heat capacity,
+      ventilation heat removal or measurable stabilization criterion has been found that derives
+      the approximately 6 h value. Source repetition is not validation.
+    required_closure:
+      - define stabilization variable and threshold
+      - bind initial room/equipment temperatures and external design condition
+      - bind room/equipment effective heat capacity and heat-transfer boundaries
+      - bind emergency PCW and ventilation removal as functions of time
+      - solve and independently review the transient to at least the 6 h horizon
+
+  - id: BD005-P05
+    topic: two_hour_onset
+    current_working_claim: OR LOSS onset approximately 2 h
+    state: UNVALIDATED_AND_PHYSICALLY_UNDEFINED
+    pressure_result: >-
+      The source does not identify what reaches onset at approximately 2 h. It is not known whether
+      this means room temperature, compressor oil temperature, cooling-water temperature, helium
+      inventory loss, pressure, ODH/access state, or another limit. The D2.1 Line-S approximately
+      one-hour-plus-one-hour sequence is a separate cryogenic-return phenomenon and cannot be used
+      as a surrogate definition.
+    required_closure:
+      - name the physical state variable and governing limit
+      - identify sensor/calculation and threshold
+      - derive time-to-limit from the WCS LOOP transient model
+      - disposition whether the source wording is retained, superseded or dropped with rationale
+
+  - id: BD005-P06
+    topic: line_s_adjacent_transient
+    state: SEPARATE_MODEL_EXISTS_BUT_DOES_NOT_CLOSE_BD005_WCS_LANE
+    evidence:
+      - source: Appendix_D2_1_Concept_Design.pdf
+        library_file_id: file_00000000778c71fda27440e2e117768b
+        statement: D2.1 loss-of-utility/SIMCRYOGENICS lineage provides cryogenic return/release behaviour.
+        class: DESIGN_STUDY_SOURCE
+      - source: GBOGEB/ABACUS PR #582
+        repository: GBOGEB/ABACUS
+        merge_commit: 893a53b971bb14282ce70141385e05b6ddca425b
+        statement: reduced Line-S recovery model scaffold; explicitly not a full SIMCRYOGENICS reproduction.
+        class: CONTROLLED_ANALYTICAL_SCAFFOLD
+      - source: REVIEW_AND_CONVERGENCE_PLAN.md
+        library_file_id: file_00000000181c71f4a8ad977e662c4453
+        statement: current reduced Line-S model has open energy-balance, effective-volume, recovery-power and heat-to-flow lineage issues.
+        class: ADVERSARIAL_REVIEW
+    pressure_result: >-
+      Keep this model as an adjacent cryogenic-return front. It may inform recovery architecture and
+      Line-S pressure risk, but it earns zero WCS-room LOOP transient closure credit.
+
+minimum_WCS_transient_model_contract:
+  state_variables:
+    - WCS room air temperature
+    - critical HP package/oil temperatures or OEM limiting proxy
+    - PCW supply and return temperature
+  inputs:
+    - exact one-HP LOOP electrical/frequency/flow state
+    - heat paths to PCW, ventilation/exhaust and room
+    - emergency PCW flow and temperatures
+    - HV03 airflow and inlet/outlet conditions
+    - room geometry/effective thermal mass and external boundary condition
+    - time-dependent availability/restart of utilities
+  outputs:
+    - maximum room temperature versus time
+    - critical equipment temperature margins versus time
+    - emergency PCW duty/flow margin versus time
+    - time to first governing limit
+    - state at 2 h and 6 h
+    - stabilization/recovery time under defined criterion
+  uncertainty:
+    - parameter pedigree and range for every non-source-controlled input
+    - sensitivity for heat-path split, ventilation and PCW availability
+  acceptance_rule: >-
+    No approximately-2 h or approximately-6 h temporal claim may be promoted unless the governing
+    variable, threshold, initial condition and uncertainty range are explicit and traceable.
+
+close_predicate:
+  scenario_identity: PASS
+  source_value_identity: PASS
+  bidder_110_gps_loop_claim_bound: PASS_AS_BIDDER_EVIDENCE_ONLY
+  diagnostic_emergency_PCW_flow_target: PASS_DIAGNOSTIC_ONLY
+  seventeen_kW_scope: FAIL_SCOPE_CONFLICT
+  ES02_single_HP_operating_point: FAIL_NOT_FROZEN
+  PAB12_emergency_hydraulics: FAIL_NOT_BOUND
+  room_thermal_inventory: FAIL_MISSING
+  two_hour_physical_definition: FAIL_MISSING
+  six_hour_stabilization_validation: FAIL_MISSING
+  line_s_cross_domain_separation: PASS
+  bd_close_allowed: false
+
+next_attack_order:
+  - obtain OEM/VFD electrical power for the bidder-claimed approximately 110 g/s LOOP point and bind ES02 auxiliary split
+  - verify emergency PAB12 hydraulic state against the diagnostic approximately 23-31 m3/h target range
+  - reconcile 17 kW against 14+17 kW package air paths and 50-81 kW room residual sensitivities
+  - acquire WCS room/equipment thermal inventory and HV03 LOOP airflow
+  - define the physical meaning of OR LOSS onset
+  - execute first-law transient and test the 2 h / 6 h statements
+
+non_compensating_rules:
+  - the Line-S/D2.1 transient cannot close the WCS room transient by analogy
+  - bidder approximately 110 g/s emergency-power wording is not accepted design authority
+  - a 350 kW interface allocation is not proof that the exact operating point fits inside it
+  - diagnostic flow/power screens are not acceptance evidence
+  - source repetition is not a thermal calculation
+  - controls classification cannot manufacture thermal or electrical margin
+  - no engineering, functional-safety, design, acceptance, release or global/project DoV credit is granted
+  - Global/project DoV remains WITHHELD
