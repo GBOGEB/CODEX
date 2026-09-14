@@ -20,6 +20,16 @@ from .pca_core import PCAResult, fit_pca, inverse_transform, transform
 from .pca_loadings import communality, loadings, top_features
 from .pca_metrics import components_for_threshold, compression_ratio, cumulative_variance
 from .pca_reconstruction import reconstruction_metrics, reconstruct
+from .plotly_payloads import (
+    covariance_heatmap_payload,
+    eigen_spectrum_payload,
+    frequency_spectrum_payload,
+    metric_history_payload,
+    pca_loadings_payload,
+    pca_scree_payload,
+    reverse_pressure_payload,
+    time_response_payload,
+)
 from .preprocessing import PreprocessResult, prepare_numeric
 
 __all__ = [
@@ -31,6 +41,9 @@ __all__ = [
     "transfer_function_diagnostics", "closed_loop_transfer", "transfer_to_state_space", "step_response",
     "fit_bradley_terry", "bootstrap_bradley_terry", "comparisons_from_utilities",
     "compare_empirical_scenarios", "bt_rank_payload", "scenario_delta_payload",
+    "metric_history_payload", "covariance_heatmap_payload", "pca_scree_payload",
+    "pca_loadings_payload", "eigen_spectrum_payload", "reverse_pressure_payload",
+    "frequency_spectrum_payload", "time_response_payload",
 ]
 
 __version__ = "0.3.0"
