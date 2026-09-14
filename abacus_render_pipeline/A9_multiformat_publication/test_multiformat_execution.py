@@ -6,13 +6,38 @@ from pathlib import Path
 
 from multiformat_execution import REQUIRED_FORMATS, execute
 from publication_promotion import evaluate
-from receipt_validation import load_and_validate_receipt
+from receipt_validation import (
+    load_and_validate_hosted_pages_receipt,
+    load_and_validate_receipt,
+)
 
 HERE = Path(__file__).resolve().parent
 RECEIPT = HERE / "receipts" / "multiformat_execution_receipt.json"
 
 
-def test_multiformat_execution_accepts_all_required_formats() -> None:
+def _synthetic_hosted_receipt(result: dict) -> dict:
+    pages = result["formats"]["github_pages"]
+    return {
+        "receipt_version": "A9.1-PAGES",
+        "publication_id": result["publication_id"],
+        "source_commit": result["source_commit"],
+        "page_url": "https://example.invalid/CODEX/",
+        "fetched_url": "https://example.invalid/CODEX/",
+        "http_status": 200,
+        "deployment_run_id": "test-run",
+        "local_artifact_relpath": pages["artifact_relpath"],
+        "local_artifact_sha256": pages["artifact_sha256"],
+        "hosted_sha256": pages["artifact_sha256"],
+        "hosted_bytes": pages["artifact_bytes"],
+        "semantic_parity": pages["semantic_parity"],
+        "network_fetch_count": 1,
+        "fetch_method": "synthetic_test_fixture_no_network",
+        "fetched_at_utc": "2026-09-14T00:00:00+00:00",
+        "decision": "accept",
+    }
+
+
+def test_multiformat_execution_accepts_all_required_format_candidates() -> None:
     result = execute()
     assert result["decision"] == "accept"
     assert result["cross_format_parity"]["pass"] is True
@@ -28,6 +53,8 @@ def test_multiformat_execution_accepts_all_required_formats() -> None:
 
     assert result["formats"]["pptx"]["telemetry"]["geometry_overflow_count"] == 0
     assert result["formats"]["pdf"]["telemetry"]["empty_page_count"] == 0
+    assert result["formats"]["github_pages"]["telemetry"]["hosted_deployment_required"] is True
+    assert result["formats"]["github_pages"]["telemetry"]["hosted_deployment_proven"] is False
     assert (
         result["formats"]["html"]["artifact_sha256"]
         == result["formats"]["github_pages"]["artifact_sha256"]
@@ -56,17 +83,62 @@ def test_tampered_format_hash_is_rejected() -> None:
             raise AssertionError("tampered multi-format receipt must be rejected")
 
 
-def test_one_promotion_receipt_binds_all_formats() -> None:
+def test_atomic_promotion_withholds_without_hosted_pages_evidence() -> None:
     execute()
-    promotion = evaluate()
+    with tempfile.TemporaryDirectory() as temp_dir:
+        missing = Path(temp_dir) / "not-created.json"
+        promotion = evaluate(hosted_pages_receipt=missing, refetch_hosted=False)
+    assert promotion["decision"] == "WITHHOLD"
+    assert promotion["checks"]["github_pages_hosted_receipt_present"] is False
+    assert promotion["checks"]["github_pages_hosted_receipt_valid"] is False
+
+
+def test_hosted_pages_receipt_unlocks_one_atomic_promotion() -> None:
+    result = execute()
+    with tempfile.TemporaryDirectory() as temp_dir:
+        hosted_path = Path(temp_dir) / "hosted.json"
+        hosted_path.write_text(
+            json.dumps(_synthetic_hosted_receipt(result)), encoding="utf-8"
+        )
+        hosted = load_and_validate_hosted_pages_receipt(
+            hosted_path,
+            RECEIPT,
+            refetch=False,
+        )
+        assert hosted["decision"] == "accept"
+        promotion = evaluate(
+            hosted_pages_receipt=hosted_path,
+            refetch_hosted=False,
+        )
     assert promotion["decision"] == "PROMOTE"
     assert set(promotion["artifact_sha256"]) == set(REQUIRED_FORMATS)
-    assert all(promotion["checks"].values())
+    assert promotion["checks"]["github_pages_hosted_receipt_valid"] is True
+    assert promotion["hosted_pages"]["hosted_sha256"] == result["formats"]["github_pages"]["artifact_sha256"]
+
+
+def test_tampered_hosted_pages_hash_rejects_promotion() -> None:
+    result = execute()
+    hosted = _synthetic_hosted_receipt(result)
+    hosted["hosted_sha256"] = "0" * 64
+    with tempfile.TemporaryDirectory() as temp_dir:
+        hosted_path = Path(temp_dir) / "hosted-tampered.json"
+        hosted_path.write_text(json.dumps(hosted), encoding="utf-8")
+        promotion = evaluate(
+            hosted_pages_receipt=hosted_path,
+            refetch_hosted=False,
+        )
+    assert promotion["decision"] == "REJECT"
+    assert promotion["checks"]["github_pages_hosted_receipt_valid"] is False
+    assert "do not match governed deployment candidate" in str(
+        promotion["hosted_pages_receipt_error"]
+    )
 
 
 if __name__ == "__main__":
-    test_multiformat_execution_accepts_all_required_formats()
+    test_multiformat_execution_accepts_all_required_format_candidates()
     test_receipt_revalidates_artifact_ssot_and_tuple_hashes()
     test_tampered_format_hash_is_rejected()
-    test_one_promotion_receipt_binds_all_formats()
-    print("A9 multi-format execution receipt tests: PASS")
+    test_atomic_promotion_withholds_without_hosted_pages_evidence()
+    test_hosted_pages_receipt_unlocks_one_atomic_promotion()
+    test_tampered_hosted_pages_hash_rejects_promotion()
+    print("A9.1 multi-format + hosted Pages receipt tests: PASS")
