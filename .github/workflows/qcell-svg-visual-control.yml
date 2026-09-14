@@ -18,8 +18,14 @@ jobs:
   visual-control:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout exact SHA
+      - name: Checkout exact subject SHA
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      - name: Record exact subject SHA
+        run: |
+          echo "checked_out_sha=$(git rev-parse HEAD)"
+          test "$(git rev-parse HEAD)" = "${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
