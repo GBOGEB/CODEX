@@ -1,74 +1,75 @@
 # QSVG-P1B C2 visual-control closeout — v0.8.3
 
-## Corrected disposition
+## Current disposition
 
-`C2_VISUAL_CONTROL = CLOSE_CANDIDATE_EXACT_HEAD_A_PASS`
+`C2_VISUAL_CONTROL = CLOSE_CANDIDATE_FINAL_SEMANTICS_EXACT_HEAD_A_PASS`
 
 This closeout is limited to visual-control semantics. It grants no engineering/SAT/OPEX/negotiation/release authority.
 
-## Evidence correction
+## Evidence correction retained
 
-The first workflow version named its checkout step “exact SHA” but used the default `actions/checkout` pull-request behavior. Those runs therefore exercised the synthetic PR merge ref, not a proven exact head checkout. They remain useful integration evidence but are **not** counted as exact-head proof.
+The first workflow version named its checkout step “exact SHA” but used default `actions/checkout` pull-request behavior. Those runs exercised the synthetic PR merge ref and are retained only as integration evidence.
 
-The workflow has now been repaired to:
+The repaired workflow explicitly checks out the PR head SHA, records `git rev-parse HEAD`, and fails unless they match.
 
-- explicitly check out `github.event.pull_request.head.sha` on PR events;
-- record `git rev-parse HEAD`;
-- fail unless the checked-out SHA equals the requested subject SHA.
-
-This correction narrows prior claims rather than silently retaining them.
-
-## BD contraction
-
-- `QSVG-BD-003 text/annotation collision control` → **CLOSE_CANDIDATE_EXACT_HEAD_A_PASS**
-- `QSVG-BD-004 layer-state control` → **CLOSE_CANDIDATE_EXACT_HEAD_A_PASS**
-
-## Implemented controls
+## Final semantic contract now enforced
 
 1. Persistent local layer state with governed reset-to-default.
 2. Explicit collision-box contract for exclusive annotation/legend regions.
 3. Fail-closed executable checker.
-4. CI workflow `QCELL SVG Visual Control`.
-5. Big teaching arrows required OFF by default.
-6. Dotted endpoint guides required present.
-7. Pressure overlay required absent/deferred in current MAIN.
-8. A/B/D/E values required present.
-9. Temperature heat-map label required present.
-10. Review-derived thermal semantic guards:
-   - nominal 50 K shield uses one authoritative 50 K colour;
-   - right-to-left parasitic heat paths use direction-correct reversed gradients;
-   - A/B dark-card text contrast is explicitly white.
+4. Big teaching arrows OFF by default.
+5. Dotted endpoint guides present.
+6. Pressure overlay absent/deferred.
+7. A/B/D/E semantic labels present.
+8. Temperature heat-map label present.
+9. Nominal 50 K shield uses one authoritative 50 K colour.
+10. Right-to-left heat paths use direction-correct gradients.
+11. A/B dark-card text uses explicit white contrast.
+12. Outer parasitic endpoint markers terminate orange.
+13. Inner 50→2 K endpoint markers terminate authoritative 2 K blue (`#0618aa`), closing the final Codex P2 marker finding.
 
-## Earlier PR-merge-ref evidence — retained but not exact-head credit
+## Earlier exact-head evidence — pre-final marker semantics
 
-- `280c17e0...` / run `34839673188` / PASS
-- `86e31ba3...` / run `34839729228` / PASS
-- `deabaaacd...` / run `34840022581` / PASS with strengthened semantic checker
+- `817fd4a893c8078bb857dbca06788dcd5aabe534`
+- run `34840579855`
+- job `103964362990`
+- PASS with explicit subject-SHA equality
 
-## Exact-head evidence A
+Useful control evidence, but not counted as the final-semantics repeat pair because the inner endpoint marker repair landed later.
 
-- subject head: `817fd4a893c8078bb857dbca06788dcd5aabe534`
-- run: `34840579855`
-- job: `103964362990`
+## Final-semantics exact-head evidence A
+
+- subject head: `c2722c6e82b9fc189e7ce7bbdeb15254c0fb0f52`
+- run: `34840954601`
+- job: `103965576478`
 - result: **PASS**
-- checkout exact subject SHA: success
+- exact subject checkout: success
 - explicit SHA equality assertion: success
-- fail-closed visual-control check: success
+- strengthened visual-control checker v0.3.0: success
 
-## Repeat requirement
+## Repeat B
 
-One further distinct exact-head execution is required before labeling C2 `CLOSED_PASS_EXACT_HEAD_REPEAT`. This file update itself creates a distinct head and should trigger that repeat without modifying MAIN geometry or semantics.
+This metadata-only closeout update intentionally creates a distinct head without changing canonical SVG/HTML/SSOT semantics. The triggered exact-head workflow is Repeat B.
 
-## Remaining critical-path BD
+Closure predicate:
+- Repeat B PASS;
+- explicit subject-SHA equality PASS;
+- visual-control checker PASS.
 
-After exact-head repeat, the active core lane contracts to **C3 PROOF_AND_REPEAT**:
+Then:
+- `QSVG-BD-003` → `CLOSED_PASS_EXACT_HEAD_REPEAT`
+- `QSVG-BD-004` → `CLOSED_PASS_EXACT_HEAD_REPEAT`
+- `C2_VISUAL_CONTROL` → `CLOSED_PASS_EXACT_HEAD_REPEAT`
 
-- `QSVG-BD-005` clean YAML→SVG→HTML regeneration determinism;
-- `QSVG-BD-008` generator-bound canonical visual receipt.
+## Remaining core frontier
 
-`QSVG-BD-009` stable-artifact repeat is already closed on P1A after review repair.
-`QSVG-BD-010 CONTROL` remains WITHHELD.
+After Repeat B, only C3 remains on the core path:
+- `QSVG-BD-005` deterministic SSOT regeneration;
+- `QSVG-BD-008` generator-bound canonical receipt.
 
-Deferred/non-blocking: pressure overlay BD-006 and hosted HTML BD-007.
+`QSVG-BD-009` remains closed after post-review stable-artifact repeat.
+`QSVG-BD-010 CONTROL` remains WITHHELD until C3 closes.
+
+Deferred/non-blocking: BD-006 pressure overlay and BD-007 hosted HTML.
 
 Authority: `VISUAL_SEMANTIC_ONLY`.
