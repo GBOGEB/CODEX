@@ -1,0 +1,61 @@
+{
+  "schema": "qps-source-proof-receipt/1.0",
+  "version": "1.6",
+  "generated_utc": "2026-09-14T16:06:54Z",
+  "authority": "SOURCE_PROOF_ONLY_NOT_ENGINEERING_ACCEPTANCE",
+  "source_vault": {
+    "type": "CHATGPT_LIBRARY",
+    "render_bundle_path": "/QPS/CODEX/source-proof/v1.6/QPS_v1.6_source_render_bundle_20260914.zip",
+    "render_bundle_file_id": "file_0000000030e88210bcac721c8d99dd14",
+    "render_bundle_library_file_id": "libfile_6e0b1f749ff0819190b8f1ecd442105e",
+    "render_bundle_sha256": "f9a20d08d6c85c0bbcab58bfe57452957b5a5c1268eb30213c1fd92423a50132"
+  },
+  "checks": {
+    "exact_source_bytes_hashed": true,
+    "native_slide_counts_confirmed": true,
+    "all_63_bound_source_slides_rendered": true,
+    "all_bound_renders_sha256_bound": true
+  },
+  "sources": [
+    {
+      "source_id": "SRC-UTIL-CORE",
+      "source_sha256": "6d694db8e7ad85193f73a61a1c7b06938e3724c34401435b38a0111e656c5507",
+      "native_slide_count": 55,
+      "bound_slide_count": 23,
+      "bound_render_status": "PASS",
+      "note": "Slides 54-55 were not emitted by the renderer but are outside every v1.6 binding."
+    },
+    {
+      "source_id": "SRC-UTIL-CANONICAL-APPENDIX",
+      "source_sha256": "a629886b7af5d13e62b9b70cd10041e94dd6aa4f74234894d466843c5da87cba",
+      "native_slide_count": 102,
+      "bound_slide_count": 10,
+      "bound_render_status": "PASS"
+    },
+    {
+      "source_id": "SRC-CTRL-CORE",
+      "source_sha256": "8e15b95ad2a2fefc1548367352eda0df6e2eb60eee878264c5f1f7a80579479a",
+      "native_slide_count": 24,
+      "bound_slide_count": 23,
+      "bound_render_status": "PASS"
+    },
+    {
+      "source_id": "SRC-NAMING-CONTROL",
+      "source_sha256": "660ea8e3697ebafd8f73a1e4bb4bc7b2cb5f69ec645dc7b7905055e88f2e4684",
+      "native_slide_count": 47,
+      "bound_slide_count": 7,
+      "bound_render_status": "PASS"
+    }
+  ],
+  "bd_disposition": {
+    "V16-BD-001": "CLOSED_EXACT_BYTES_BOUND_TO_CONTROLLED_LIBRARY_AND_SHA256",
+    "V16-BD-002": "CLOSED_ALL_BOUND_SLIDES_RENDERED_AND_SHA256_BOUND",
+    "V16-BD-003": "OPEN_SOURCE_VS_CURATED_DOV_NOT_EXECUTED"
+  },
+  "non_claims": [
+    "No engineering value was reconciled by source proof.",
+    "No source-vs-curated visual DoV was executed.",
+    "No Microsoft PowerPoint or Office365 host-render parity is claimed.",
+    "Global/project DoV remains WITHHELD."
+  ]
+}
