@@ -1,7 +1,7 @@
 # QPS Visual Knowledge System — Lossless Session Handover
 
 Date: 2026-09-14
-Current control version: `v1.6.8`
+Current control version: `v1.6.9`
 Repository: `GBOGEB/CODEX`
 Scope: QPS v1.6 source-bound Utilities / Controls / Naming / LOOP / graph lineage
 Authority: `ENGINEERING_CURATION_NOT_DESIGN_APPROVAL`
@@ -89,23 +89,23 @@ Named valve behavior now source-bound at text level includes:
 
 This is a **source mode/state matrix**, not a final cause/effect matrix. Exact Appendix 8.4 diagram-to-mode mapping, visible valve-state extraction and colour-legend decoding remain open. Green or another drawing colour is not globally equated to OPEN/CLOSED until the relevant diagram or legend proves it.
 
-## 5. BD queue at current close
+## 5. BD queue at session close before v1.6.9 refinement
 
-| ID | Priority | State | Current meaning |
+| ID | Priority | State | Session-close meaning |
 |---|---|---|---|
 | BD-001 | P0 | CLOSED | exact source bytes bound |
 | BD-002 | P0 | CLOSED | 63 source renders bound |
 | native-text binding | P0 | CLOSED | native text bound to same slide identities |
 | BD-003 | P0 | CLOSED_CONTENT_TRACE_DOV | 63/63 reviewed, zero silent drop; five lineage repairs |
 | BD-004 | P0 | CLOSED_SCOPE_RECONCILED | utilities value scopes reconciled only |
-| **BD-005** | **P0** | **OPEN** | degraded WCS boundary + executable first-law transient still missing |
-| **BD-006** | **P0** | **PARTIAL_EVIDENCE_BOUND** | process fallback + tender classification bound; discipline cause/effect open |
+| BD-005 | P0 | OPEN | D2.1/D2.2 anchors and several LOOP values bound; degraded WCS boundary + executable first-law transient still missing |
+| BD-006 | P0 | PARTIAL_EVIDENCE_BOUND | tender-level classifications plus D2.1 fallback semantics; discipline cause/effect remains open |
 | BD-007 | P1 | OPEN_L2_GATED | detailed I/O awaits L2/detail design |
-| BD-008 | P1 | PREPARED_P0_GATED | source mode/state matrix now bound; diagram/colour visual binding + P0 engineering edges remain open |
+| BD-008 | P1 | PREPARED_P0_GATED | source/lineage graph overlay prepared; engineering closure gated by BD-005/006 and per-mode valve extraction |
 | BD-009 | P1 | DEFER_TO_V1_7 | deterministic render after engineering/graph stabilization |
 | BD-010 | P1 | REFRAME_BIND_EXISTING_CARRIER | reuse merged #690/#691 publication carrier |
 
-## 6. First-red and TODO
+## 6. First-red and TODO before v1.6.9 refinement
 
 ### P0 — BD-005 LOOP / degraded state
 
@@ -138,15 +138,17 @@ D2.1 fallback valve behavior strengthens process semantics but does not automati
 
 ### P1 — BD-008 graph
 
-Use the existing v1.5 graph carrier. The source/lineage overlay is now strengthened by the mode/state matrix. Next graph work is:
+Use the existing v1.5 graph carrier. Bind the new overlay additively:
 
-- enumerate Appendix 8.4 diagram/page → mode-family mapping;
-- bind visible valve tags and states where source resolution permits exact reading;
-- bind each diagram's colour/state convention or explicit legend;
-- compare visual valve state with the source-text mode matrix and flag contradictions;
-- keep BD-005/006 engineering edges visibly OPEN.
+- D2.1 -> Appendix 8.2 topology;
+- D2.1 -> Appendix 8.3 physics/model lineage;
+- D2.1 -> Appendix 8.4 behavior/state;
+- D2.2 -> requirement/constraint edges;
+- OPEN BD-005/006 edges remain visibly OPEN.
 
-## 7. 3PR receipt
+Next graph extraction task: decode Appendix 8.4 per-mode valve states and legends, especially green-highlighted paths, without assuming globally that green means open until each drawing/legend proves that meaning.
+
+## 7. 3PR receipt through v1.6.8
 
 ### P1 — Recover
 
@@ -174,7 +176,7 @@ Re-entry is accepted only at the source/lineage layer:
 - engineering-dependent edges remain gated by BD-005/006;
 - global/project DoV remains WITHHELD.
 
-## 8. MIP receipt
+## 8. MIP receipt through v1.6.8
 
 ### Modernize
 
@@ -208,6 +210,10 @@ To keep the handover current without creating another framework, every subsequen
 2. `SESSION_HANDOVER_2026-09-14.md` — full human-readable lossless state and lineage.
 3. `DROP_IN_CONTINUATION_2026-09-14.md` — compact restart block that is safe to paste into a new session.
 
+The append-only progression surface is:
+
+4. `SESSION_PROGRESS_LEDGER_2026-09-14.yaml`
+
 Additive evidence should remain in dedicated ledgers such as `d2_1_mode_state_matrix_v1_6.yaml`; do **not** duplicate the handover architecture.
 
 Reproduction sequence:
@@ -216,9 +222,11 @@ Reproduction sequence:
 read TRIAGE
 → read full handover
 → read drop-in restart
+→ read progression ledger
 → read only evidence files named by current TRIAGE
 → execute first-red / parallel lanes
 → refresh evidence ledger(s)
+→ append major tuple progression entry
 → refresh TRIAGE + full handover + drop-in in the same PR
 → verify canonicalization/governance gates
 → merge
@@ -229,15 +237,11 @@ This makes the session state reproducible from repository truth without relying 
 
 ## 10. Major prompt/reply tuple progression contract
 
-In addition to the three canonical current-state outputs above, maintain the append-only progression ledger:
-
-- `SESSION_PROGRESS_LEDGER_2026-09-14.yaml`
-
 A tuple is **major** when it changes evidence/source lineage, BD state/priority/close predicate, source authority/currentness interpretation, first-red/execution sequence, graph/behavior semantics, the handover contract, or material PR/merge context needed for restart.
 
 After each major tuple:
 
-- append one progression-ledger entry capturing user intent, executed delta, repository receipt, BD movement/non-movement, and DoV/credit boundary;
+- append one progression-ledger entry capturing user intent, executed delta, repository receipt, BD movement/non-movement and DoV/credit boundary;
 - refresh the same three canonical current-state outputs in the same bounded PR;
 - preserve additive engineering/source ledgers separately;
 - verify governance/canonicalization gates where applicable;
@@ -261,11 +265,52 @@ The progression ledger explains how the current state was reached but never over
 - historical tuple summaries do not override stronger current evidence;
 - global/project DoV remains `WITHHELD`.
 
-## 12. Restart victory condition
+## 12. Restart victory condition before v1.6.9 refinement
 
-The next high-value victory is not another deck or renderer. It is one of:
+The next high-value victory was one of:
 
 - obtain enough BD-005 degraded-state inputs to execute the first defensible WCS-room first-law transient; or
 - obtain discipline cause/effect evidence that closes one real BD-006 classification conflict.
 
 In parallel, Appendix 8.4 diagram/valve/colour extraction may continue as source/lineage work, but it cannot bypass those P0 engineering gates.
+
+## 13. v1.6.9 current delta — Addendum II contractual LOOP boundary
+
+This section is additive and updates the current interpretation without deleting the earlier evidence/history above.
+
+`bd005_addendum_loop_boundary_v1_6.yaml` binds the authoritative Addendum II degraded-utility constraints:
+
+- **RTM-401:** up to 350 kW backup diesel power after an interruption of a few minutes; this is a power boundary, not proof that one HP compressor may consume the full 350 kW.
+- **RTM-428:** up to 350 kW backup cooling-water capacity after a few minutes; common WCS header; reduced total flow is allowed.
+- **RTM-432 / RTM-433:** normal continuous IA is not available during LOOP beyond initial actuations; QPS pneumatic backup shall support helium recovery for **6 h under full recovery load**.
+- **RTM-434 / RTM-435:** dedicated HP exhaust ducts are part of the HVAC boundary; steady-state WCS heat to room air is limited to 120 kW and at least 50% is transferred directly to those ducts.
+- **RTM-436:** during LOOP the HP exhaust ducts remain available without restriction and compressor-room ambient heat is limited to **≤15 kW**.
+- **RTM-258 / 260 / 261 / 262:** limited services support helium recovery; abnormal QRB.S return capability is **≥100 g/s** and normal circulation recovery is required.
+
+Critical reconciliations:
+
+- the source `6 h` requirement above is **pneumatic autonomy**, not proof of the separate working `~6 h` thermal-stabilization statement;
+- the historical `~17 kW` path remains provenance, while the contractual LOOP ambient-room design ceiling is now `≤15 kW`;
+- bidder `~110 g/s` with one emergency compressor remains `REVIEW_REQUIRED` evidence;
+- `72 Hz / ~112 g/s / ~357 kW` remains an equipment-maximum reference and is not linearly scalable into the selected LOOP point;
+- the derivative Support System ICD sheet is retained as a navigation clue only where its RTM numbering diverges from Addendum II.
+
+### Current BD-005 state
+
+`CONTRACTUAL_LOOP_BOUNDARY_SHARPENED_EXECUTABLE_TRANSIENT_INPUTS_OPEN`
+
+Newly closed subquestions are contractual backup-power ceiling/delay, backup-PCW thermal ceiling/common-header degraded-flow allowance, pneumatic-autonomy scope, LOOP ambient-room heat ceiling, HP exhaust-duct availability, and contractual abnormal QRB.S minimum flow.
+
+### Current first-red after v1.6.9
+
+1. current OEM/contractor HP operating point at selected `~110 g/s`: Hz, kW, cooling-water rejection;
+2. ES02 auxiliary split and margin within the up-to-350-kW backup boundary;
+3. actual PAB12 LOOP flow/pressure/temperatures/pump-fan power/valve state;
+4. OFFER-35 HP duct size, flow rate and allowable pressure drop;
+5. quantitative HV03 degraded room airflow/heat-removal state, or model proof that the RTM-436 duct path plus `≤15 kW` ambient ceiling is sufficient;
+6. effective free room volume and equipment/building thermal mass;
+7. physical variable/limit behind working `~2 h` onset;
+8. measurable thermal criterion behind working `~6 h` stabilization, kept separate from IA autonomy;
+9. first-law WCS transient with uncertainty and independent review.
+
+BD-006 remains `PARTIAL_EVIDENCE_BOUND`; BD-008 remains `PREPARED_P0_GATED`; global/project DoV remains `WITHHELD`.
