@@ -105,19 +105,14 @@ def _fetch_hosted_match(
                 fetched_sha = hashlib.sha256(body).hexdigest()
                 hosted_text = _extract_html_text(body) if body else ""
                 missing_tokens = [token for token in expected_tokens if token not in hosted_text]
-                governed_match = (
-                    status == 200
-                    and bool(body)
-                    and fetched_sha == expected_sha256
-                    and not missing_tokens
-                )
+                governed_match = status == 200 and bool(body) and fetched_sha == expected_sha256 and not missing_tokens
                 observation.update(
                     {
                         "http_status": status,
                         "bytes": len(body),
                         "sha256": fetched_sha,
                         "hash_match": fetched_sha == expected_sha256,
-                        "semantic_pass": not missing_tokens,
+                        "parity_pass": not missing_tokens,
                         "missing_token_count": len(missing_tokens),
                         "final_url": final_url,
                     }
@@ -162,14 +157,9 @@ def _fetch_hosted_match(
 def load_and_validate_receipt(receipt_path: Path) -> dict[str, Any]:
     receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
     schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
-    errors = sorted(
-        Draft202012Validator(schema).iter_errors(receipt), key=lambda error: list(error.path)
-    )
+    errors = sorted(Draft202012Validator(schema).iter_errors(receipt), key=lambda error: list(error.path))
     if errors:
-        raise ValueError(
-            "receipt schema validation failed: "
-            + "; ".join(error.message for error in errors)
-        )
+        raise ValueError("receipt schema validation failed: " + "; ".join(error.message for error in errors))
 
     ssot_path = ROOT / receipt["ssot_relpath"]
     if not ssot_path.exists():
@@ -188,16 +178,11 @@ def load_and_validate_receipt(receipt_path: Path) -> dict[str, Any]:
         if receipt.get(field) != actual
     ]
     if top_mismatches:
-        raise ValueError(
-            "receipt top-level content-address validation failed: "
-            + "; ".join(top_mismatches)
-        )
+        raise ValueError("receipt top-level content-address validation failed: " + "; ".join(top_mismatches))
 
     env_source = os.environ.get("ABACUS_SOURCE_SHA")
     if env_source and receipt.get("source_commit") != env_source:
-        raise ValueError(
-            f"receipt source_commit mismatch: receipt={receipt.get('source_commit')} env={env_source}"
-        )
+        raise ValueError(f"receipt source_commit mismatch: receipt={receipt.get('source_commit')} env={env_source}")
 
     format_errors: list[str] = []
     for name in REQUIRED_FORMATS:
@@ -208,39 +193,26 @@ def load_and_validate_receipt(receipt_path: Path) -> dict[str, Any]:
             continue
         actual_sha = sha256_path(artifact)
         if item["artifact_sha256"] != actual_sha:
-            format_errors.append(
-                f"{name}: artifact sha mismatch receipt={item['artifact_sha256']} actual={actual_sha}"
-            )
+            format_errors.append(f"{name}: artifact sha mismatch receipt={item['artifact_sha256']} actual={actual_sha}")
         actual_bytes = artifact.stat().st_size
         if item["artifact_bytes"] != actual_bytes:
-            format_errors.append(
-                f"{name}: artifact byte-size mismatch receipt={item['artifact_bytes']} actual={actual_bytes}"
-            )
+            format_errors.append(f"{name}: artifact byte-size mismatch receipt={item['artifact_bytes']} actual={actual_bytes}")
         telemetry = item["telemetry"]
         layout_pass = bool(telemetry.get("layout_pass"))
         overflow_pass = bool(telemetry.get("overflow_pass"))
         parity_pass = bool(item["semantic_parity"].get("pass"))
-        expected_decision = (
-            "accept" if layout_pass and overflow_pass and parity_pass else "reject"
-        )
+        expected_decision = "accept" if layout_pass and overflow_pass and parity_pass else "reject"
         if item["decision"] != expected_decision:
-            format_errors.append(
-                f"{name}: decision={item['decision']} expected={expected_decision}"
-            )
+            format_errors.append(f"{name}: decision={item['decision']} expected={expected_decision}")
 
     if format_errors:
         raise ValueError("format receipt validation failed: " + "; ".join(format_errors))
 
     html_sha = receipt["formats"]["html"]["artifact_sha256"]
     pages_sha = receipt["formats"]["github_pages"]["artifact_sha256"]
-    parity_expected = (
-        all(receipt["formats"][name]["semantic_parity"]["pass"] for name in REQUIRED_FORMATS)
-        and html_sha == pages_sha
-    )
+    parity_expected = all(receipt["formats"][name]["semantic_parity"]["pass"] for name in REQUIRED_FORMATS) and html_sha == pages_sha
     if receipt["cross_format_parity"]["pass"] != parity_expected:
-        raise ValueError(
-            "cross-format parity decision inconsistent with validated format evidence"
-        )
+        raise ValueError("cross-format parity decision inconsistent with validated format evidence")
     if receipt["cross_format_parity"]["canonical_content_sha256"] != canonical:
         raise ValueError("cross-format parity canonical content hash mismatch")
 
@@ -252,9 +224,7 @@ def load_and_validate_receipt(receipt_path: Path) -> dict[str, Any]:
         else "reject"
     )
     if receipt["decision"] != expected_decision:
-        raise ValueError(
-            f"receipt decision inconsistent with evidence: receipt={receipt['decision']} expected={expected_decision}"
-        )
+        raise ValueError(f"receipt decision inconsistent with evidence: receipt={receipt['decision']} expected={expected_decision}")
     return receipt
 
 
@@ -267,17 +237,9 @@ def load_and_validate_hosted_pages_receipt(
     execution = load_and_validate_receipt(execution_receipt_path)
     hosted = json.loads(hosted_receipt_path.read_text(encoding="utf-8"))
     required = {
-        "receipt_version",
-        "publication_id",
-        "source_commit",
-        "page_url",
-        "http_status",
-        "local_artifact_relpath",
-        "local_artifact_sha256",
-        "hosted_sha256",
-        "hosted_bytes",
-        "semantic_parity",
-        "decision",
+        "receipt_version", "publication_id", "source_commit", "page_url", "http_status",
+        "local_artifact_relpath", "local_artifact_sha256", "hosted_sha256", "hosted_bytes",
+        "semantic_parity", "decision",
     }
     missing = sorted(required - set(hosted))
     if missing:
@@ -291,9 +253,7 @@ def load_and_validate_hosted_pages_receipt(
 
     env_source = os.environ.get("ABACUS_SOURCE_SHA")
     if env_source and hosted["source_commit"] != env_source:
-        raise ValueError(
-            f"hosted Pages source_commit mismatch: receipt={hosted['source_commit']} env={env_source}"
-        )
+        raise ValueError(f"hosted Pages source_commit mismatch: receipt={hosted['source_commit']} env={env_source}")
 
     pages_item = execution["formats"]["github_pages"]
     if hosted["local_artifact_relpath"] != pages_item["artifact_relpath"]:
@@ -326,9 +286,7 @@ def load_and_validate_hosted_pages_receipt(
         canonical = content_hash(payload)
         expected_tokens = _semantic_tokens(payload, canonical)
         status, body, final_url, _ = _fetch_hosted_match(
-            str(hosted["page_url"]),
-            expected_sha256=local_sha,
-            expected_tokens=expected_tokens,
+            str(hosted["page_url"]), expected_sha256=local_sha, expected_tokens=expected_tokens
         )
         if status != 200:
             raise ValueError(f"independent hosted Pages HTTP status is not 200: {status}")
@@ -336,27 +294,13 @@ def load_and_validate_hosted_pages_receipt(
             raise ValueError("independent hosted Pages hash mismatch")
         missing_tokens = [token for token in expected_tokens if token not in _extract_html_text(body)]
         if missing_tokens:
-            raise ValueError(
-                "independent hosted Pages semantic parity failed: missing=" + ", ".join(missing_tokens)
-            )
+            raise ValueError("independent hosted Pages semantic parity failed: missing=" + ", ".join(missing_tokens))
         if hosted.get("fetched_url") and str(hosted["fetched_url"]) != final_url:
-            raise ValueError(
-                f"independent hosted Pages final URL changed: receipt={hosted['fetched_url']} actual={final_url}"
-            )
+            raise ValueError(f"independent hosted Pages final URL changed: receipt={hosted['fetched_url']} actual={final_url}")
     return hosted
 
 
 if __name__ == "__main__":
     receipt_path = DEFAULT_EXECUTION_RECEIPT
     validated = load_and_validate_receipt(receipt_path)
-    print(
-        json.dumps(
-            {
-                "status": "PASS",
-                "decision": validated["decision"],
-                "formats": list(validated["formats"]),
-                "cross_format_parity": validated["cross_format_parity"]["pass"],
-            },
-            indent=2,
-        )
-    )
+    print(json.dumps({"status": "PASS", "decision": validated["decision"], "formats": list(validated["formats"]), "cross_format_parity": validated["cross_format_parity"]["pass"]}, indent=2))
