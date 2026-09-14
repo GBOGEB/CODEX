@@ -1,28 +1,113 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "w190-keb-3pc-mip-receipt/1.0",
+  "$id": "w190-keb-3pc-mip-receipt/1.1",
   "type": "object",
-  "required": ["schema_version", "wave", "repo", "consumed_child", "consumed_dow", "keb_disposition"],
+  "required": [
+    "schema_version",
+    "wave",
+    "repo",
+    "consumed_child",
+    "consumed_dow",
+    "three_pc_receipt",
+    "mip_receipt",
+    "keb_disposition",
+    "disposition_records",
+    "credit_delta"
+  ],
   "properties": {
-    "schema_version": {"const": "w190-keb-3pc-mip-receipt/1.0"},
+    "schema_version": {"const": "w190-keb-3pc-mip-receipt/1.1"},
     "wave": {"const": "W190"},
     "repo": {"const": "GBOGEB/CODEX"},
+    "role": {"const": "KEB_SEMANTIC_RUNTIME_RECEIPT"},
+    "created_utc": {"type": "string"},
+    "reconciled_utc": {"type": "string"},
     "consumed_child": {
       "type": "object",
-      "required": ["pr", "head_sha"],
+      "required": [
+        "pr",
+        "final_head_sha",
+        "merge_sha",
+        "execution_receipt_path",
+        "execution_receipt_declared_head_sha",
+        "execution_receipt_state",
+        "runner_evidence"
+      ],
       "properties": {
         "pr": {"type": "string", "format": "uri"},
-        "head_sha": {"type": "string", "pattern": "^[a-f0-9]{40}$"}
-      }
+        "final_head_sha": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+        "merge_sha": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+        "execution_receipt_path": {"type": "string"},
+        "execution_receipt_declared_head_sha": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+        "execution_receipt_state": {"const": "WITHHELD_INFRA_PREEXECUTION"},
+        "runner_evidence": {"type": "string"},
+        "superseded_interim_head_sha": {"type": "string", "pattern": "^[a-f0-9]{40}$"}
+      },
+      "additionalProperties": false
     },
     "consumed_dow": {
       "type": "object",
-      "required": ["pr", "head_sha"],
+      "required": [
+        "original_pr",
+        "lineage_repair_pr",
+        "lineage_repair_head_sha",
+        "lineage_repair_merge_sha",
+        "execution_repair_pr",
+        "execution_repair_head_sha",
+        "execution_repair_merge_sha",
+        "execution_repair_path"
+      ],
       "properties": {
-        "pr": {"type": "string", "format": "uri"},
-        "head_sha": {"type": "string", "pattern": "^[a-f0-9]{40}$"}
+        "original_pr": {"type": "string", "format": "uri"},
+        "lineage_repair_pr": {"type": "string", "format": "uri"},
+        "lineage_repair_head_sha": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+        "lineage_repair_merge_sha": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+        "execution_repair_pr": {"type": "string", "format": "uri"},
+        "execution_repair_head_sha": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+        "execution_repair_merge_sha": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+        "execution_repair_path": {"type": "string"},
+        "superseded_interim_dow_head_sha": {"type": "string", "pattern": "^[a-f0-9]{40}$"}
+      },
+      "additionalProperties": false
+    },
+    "lineage_repair": {"type": "string"},
+    "three_pc_receipt": {
+      "type": "object",
+      "required": ["PREPARE", "PROVE", "COMMIT"],
+      "properties": {
+        "PREPARE": {"type": "string"},
+        "PROVE": {"type": "string"},
+        "COMMIT": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "mip_receipt": {
+      "type": "object",
+      "required": ["modernize", "innovate", "perpetuate"],
+      "properties": {
+        "modernize": {"type": "string"},
+        "innovate": {"type": "string"},
+        "perpetuate": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "keb_disposition": {"enum": ["ACCEPT_FINAL_HANDOVER_CHAIN_DEFER_GLOBAL_DOV", "REJECT", "DEFER"]},
+    "reason": {"type": "string"},
+    "disposition_records": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["disposition", "current", "scope"],
+        "properties": {
+          "disposition": {"enum": ["ACCEPT", "REJECT", "DEFER"]},
+          "current": {"type": "boolean"},
+          "scope": {"type": "string"}
+        },
+        "additionalProperties": false
       }
     },
-    "keb_disposition": {"enum": ["ACCEPT_HANDOVER_CHAIN_DEFER_GLOBAL_DOV", "REJECT", "DEFER"]}
-  }
+    "drop_in_text_pointer": {"type": "string"},
+    "credit_delta": {"const": 0}
+  },
+  "additionalProperties": false
 }
