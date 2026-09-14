@@ -1,0 +1,193 @@
+schema: qps-loop-hvac-boundary/1.0
+version: '1.6'
+authority: ENGINEERING_PRESSURE_TEST_NOT_HVAC_DESIGN_APPROVAL
+bd_id: V16-BD-005
+state: HVAC_HEAT_PATH_AND_GEOMETRY_PARTIAL_BOUNDARY_AIRFLOW_OPEN
+created: '2026-09-14'
+
+purpose: >-
+  Pressure-test the WCS compressor-room/HV03 boundary needed for the LOOP first-law transient.
+  Bind available building geometry and compressor air-side heat-path evidence while keeping
+  emergency ventilation airflow, effective thermal mass and ducting state explicitly open.
+
+source_evidence:
+  building_geometry:
+    - source: QPLANT Buildings.pdf
+      library_file_id: file_00000000badc71f4962c7f5b366375dc
+      page: 16
+      source_reference: SCK CEN/81503739
+      evidence: CCB ground-floor plan / CCB plus gas-storage building layout
+      class: BUILDING_NAVIGATION_DRAWING
+    - source: QPLANT Buildings.pdf
+      library_file_id: file_00000000badc71f4962c7f5b366375dc
+      page: 17
+      source_reference: SCK CEN/81505150
+      evidence: CCB cross-section with sloping roof
+      class: BUILDING_NAVIGATION_DRAWING
+    - source: QPLANT Buildings.pdf
+      library_file_id: file_00000000badc71f4962c7f5b366375dc
+      page: 18
+      source_reference: SCK CEN/81506075
+      evidence: WCS cross-section with approximately +8.50 m upper section reference from +0.00 floor datum
+      class: BUILDING_NAVIGATION_DRAWING_VISUAL_READ
+    - source: QPLANT Buildings.pdf
+      library_file_id: file_00000000badc71f4962c7f5b366375dc
+      page: 19
+      source_reference: SCK CEN/81503739
+      evidence: WCS room-detail drawing visually labels main SAB1 room approximately 222 m2
+      class: BUILDING_NAVIGATION_DRAWING_VISUAL_READ
+  hvac_interface:
+    - source: QPS_Supporting_Systems_FULL_SLINE_parallel_canonical_v3_appendix.pptx
+      library_file_id: file_00000000f77c71f4810e616eda4b4da8
+      evidence: later utility surface states HVAC 124 kW total = 114 kW WCS HV03 + 10 kW QRB HV02
+      class: SOURCE_EXPLICIT_LATER_INTERFACE_SURFACE
+    - source: CCB_HVAC_excerpt.pptx
+      library_file_id: file_00000000a3e871f4b2e33939f81dbf2e
+      evidence: earlier utility surface states HVAC 134 kW total = 124 kW WCS HV03 + 10 kW QRB HV02; adequate compressor-room ventilation/ducting is marked TBD QPLANT Design & Build
+      class: SOURCE_EXPLICIT_EARLIER_INTERFACE_SURFACE_WITH_TBD
+    - source: Comparison_AL vs LKT_v1_GBO.pptx
+      library_file_id: file_0000000006ec823089ccd5776e60207d
+      evidence: pre-study comparison carried WCS HVAC heat loads approximately 79-84 kW and recommended approximately 90 kW before later load growth
+      class: HISTORICAL_PRESTUDY_CONTEXT
+  compressor_air_paths:
+    - source: SRC-HIST-ALAT-C1393-TN-011-2023__C1393-TN-011_2_PreStudy_Final_Report_appendices_4_.pdf
+      library_file_id: file_00000000acc4820ab3df748747f5eae6
+      evidence:
+        equipment: FSD 575 SFC water-cooled reference
+        helium_flow_reference: approximately 110 g/s per compressor in the 2x FSD575 at 72 Hz pre-study option
+        cooling_air_quantity_watercooled_m3_per_h: 5000
+        cooling_air_quantity_frequency_drive_m3_per_h: 4200
+        heat_up_cooling_air_K: 10.4
+        heat_dissipation_by_cooling_air_kW: 17.4
+        waste_heat_to_ambient_kW: 14.2
+        frequency_drive_heat_dissipation_kW: 5.7
+        cooling_water_heat_dissipation_kW: 323.9
+        package_dimensions_mm: [3240, 2145, 2360]
+        package_weight_kg: 6770
+      class: HISTORICAL_VENDOR_PRESTUDY_DATASHEET_NOT_CURRENT_ACCEPTED_DESIGN
+
+missing_primary_documents:
+  - source_reference: SCK CEN/53746611
+    title: Layout Compressor Room CCB.pdf
+    state: POINTER_FOUND_BYTES_NOT_INDEXED_AS_EXACT_DOCUMENT
+    required_for: detailed equipment arrangement / duct routing / free room volume cross-check
+  - source_reference: SCK CEN/55426722
+    title: Fixed SAB AUB plus CCB specific room details
+    state: POINTER_FOUND_BYTES_NOT_INDEXED_AS_EXACT_DOCUMENT
+    required_for: approved room geometry / architectural boundary
+  - source_reference: SCK CEN/54107968
+    title: NFS internal analyses following CR1246 CSS capacity increase
+    state: POINTER_FOUND_BYTES_NOT_INDEXED_AS_EXACT_DOCUMENT
+    required_for: facility HVAC / capacity basis and degraded-mode evidence
+
+geometry_diagnostics:
+  main_room_floor_area_m2:
+    value: 222
+    qualifier: APPROXIMATE_VISUAL_DRAWING_READ
+    source: QPLANT Buildings.pdf page 19 / SCK CEN/81503739
+  section_height_reference_m:
+    value: 8.5
+    qualifier: APPROXIMATE_VISUAL_SECTION_REFERENCE
+    source: QPLANT Buildings.pdf page 18 / SCK CEN/81506075
+  gross_rectangular_air_volume_m3:
+    value: 1887
+    equation: 222 m2 x 8.5 m
+    qualifier: DIAGNOSTIC_UPPER_ORDER_ONLY
+    caution: sloping roof, actual clear height, equipment displacement, electrical-room separation and architectural details are not accounted for
+  package_cooling_air_ACH_on_gross_volume:
+    value: 2.65
+    equation: 5000 m3/h / 1887 m3
+    qualifier: DIAGNOSTIC_ONLY_NOT_HV03_AIR_CHANGE_RATE
+  package_plus_VFD_air_ACH_if_independent_room_draws:
+    value: 4.88
+    equation: (5000 + 4200) m3/h / 1887 m3
+    qualifier: DIAGNOSTIC_ONLY
+    caution: whether the package and VFD streams draw from or discharge to the room is not frozen
+
+heat_path_pressure_result:
+  seventeen_kW_lineage:
+    state: STRONG_NUMERICAL_LINEAGE_CANDIDATE_SCOPE_NOT_CLOSED
+    finding: >-
+      The historical FSD575 SFC datasheet gives 17.4 kW heat dissipation by cooling air with
+      5000 m3/h cooling air and a 10.4 K temperature rise. This closely matches the approximately
+      17 kW LOOP slide statement and materially strengthens its provenance.
+    non_claim: the 17.4 kW historical datasheet row is not proof that exactly 17 kW is the total heat entering WCS_CCB.CR in the current LOOP design
+  additional_air_side_paths:
+    explicit_rows:
+      cooling_air_kW: 17.4
+      ambient_waste_heat_kW: 14.2
+      VFD_heat_kW: 5.7
+    current_project_crosscheck: project SSOT separately carries approximately 14 + 17 kW package air paths
+    additivity_status: VFD_OVERLAP_OR_SEPARATE_PATH_NOT_FROZEN
+    pressure_result: >-
+      The approximately 17 kW value is only one explicit air-side heat path in the historical
+      package data. A separate 14.2 kW ambient row exists, and a 5.7 kW VFD heat row also exists.
+      The current project 14+17 kW representation therefore has direct historical support, but
+      the exact ducting and VFD overlap must be frozen before total room heat is assigned.
+  ducting_cases:
+    CASE_A_HOT_PACKAGE_AIR_DUCTED_OUTSIDE:
+      room_source_term: ambient and non-exported VFD/other losses only
+      state: PLAUSIBLE_NOT_BOUND
+    CASE_B_PACKAGE_AIR_RETURNS_TO_ROOM:
+      room_source_term: package cooling-air heat plus ambient/VFD/other losses
+      state: PLAUSIBLE_NOT_BOUND
+    governing_gap: exact LOOP damper/duct/fan state and which heat paths are rejected directly outside versus into HV03 room air
+
+room_air_only_sanity_screen:
+  authority: DIAGNOSTIC_PHYSICS_ONLY
+  assumptions:
+    gross_volume_m3: 1887
+    air_density_kg_per_m3: 1.2
+    air_cp_kJ_per_kgK: 1.005
+    no_ventilation: true
+    no_wall_floor_equipment_thermal_mass: true
+    no_heat_loss: true
+  effective_air_heat_capacity_MJ_per_K: 2.28
+  temperature_rise_rate_at_17_kW_K_per_h: approximately_27
+  interpretation: >-
+    Room air inventory alone is far too small to explain a 2 h or 6 h temporal claim. The real
+    LOOP transient must be governed by ventilation/ducting, building and equipment thermal mass,
+    emergency PCW heat rejection, external boundary conditions and control/recovery sequencing.
+  acceptance_credit: NONE
+
+normal_vs_LOOP_hvac_boundary:
+  normal_HV03_capacity:
+    later_source_WCS_kW: 114
+    earlier_source_WCS_kW: 124
+    historical_prestudy_WCS_kW: approximately_79_to_90
+    state: SOURCE_EVOLUTION_NOT_SILENTLY_NORMALIZED
+  LOOP_source_wording:
+    ventilation: maintained for equipment safety
+    HVAC_load_and_cooling: temporarily reduced
+    quantitative_airflow: NOT_FOUND_IN_INDEXED_SOURCE_EVIDENCE
+    quantitative_heat_removal: NOT_FOUND_FOR_LOOP_MODE
+  rule: normal 114/124 kW interface capacity shall not be credited as LOOP heat-removal capacity without NFS degraded-mode evidence
+
+hvac_close_predicate:
+  package_air_heat_path_identity: PASS_HISTORICAL_SOURCE_BOUND
+  gross_room_geometry: PASS_DIAGNOSTIC_DRAWING_BOUND
+  exact_approved_room_geometry: FAIL_PRIMARY_DOCUMENT_NOT_INGESTED
+  exact_LOOP_ducting_state: FAIL_NOT_BOUND
+  exact_LOOP_HV03_airflow: FAIL_NOT_BOUND
+  exact_LOOP_HV03_heat_removal: FAIL_NOT_BOUND
+  effective_building_equipment_thermal_mass: FAIL_MISSING
+  VFD_heat_path_overlap: FAIL_NOT_FROZEN
+  bd005_close_allowed: false
+
+next_evidence_actions:
+  - acquire SCK CEN/54107968 and extract HV03 normal/LOOP airflow, fan power, temperature control and emergency-power state
+  - acquire SCK CEN/55426722 and freeze approved WCS room geometry / clear volume / envelope construction
+  - acquire SCK CEN/53746611 and freeze compressor/VFD duct routing and equipment arrangement
+  - obtain current bidder/OEM FSD575 heat-rejection and cooling-air data at the approximately 110 g/s LOOP operating point
+  - freeze whether 17.4 kW package cooling air is directly exhausted, recirculated or handled by HV03 in LOOP mode
+  - freeze treatment of 14.2 kW ambient and 5.7 kW VFD heat paths and prove whether they overlap
+  - then execute the WCS room first-law transient with uncertainty
+
+non_compensating_rules:
+  - historical vendor data may identify provenance but does not become current accepted design by repetition
+  - building navigation drawings provide diagnostic geometry, not HVAC acceptance
+  - normal HV03 capacity is not emergency/LOOP capacity
+  - package cooling-air flow is not the same as room ventilation airflow
+  - diagnostic ACH and air-only heat-up screens are not safety or design calculations
+  - Controls may consume a proven degraded-state consequence but may not invent HVAC thermal margin
+  - Global/project DoV remains WITHHELD
