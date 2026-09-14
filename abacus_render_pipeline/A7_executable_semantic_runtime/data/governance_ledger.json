@@ -1,5 +1,5 @@
 {
-  "ledger_version": "A8.2",
+  "ledger_version": "A9.1",
   "invariants": [
     {"id":"INV-001","statement":"Generated outputs are non-canonical; MASTER YAML and governed registries remain authoritative."},
     {"id":"INV-002","statement":"Semantic colours transform by theme rather than simple inversion."},
@@ -7,7 +7,8 @@
     {"id":"INV-004","statement":"Reconstruction is idempotent for identical source ledgers."},
     {"id":"INV-005","statement":"Competing branches remain explicit until evidence supports convergence."},
     {"id":"INV-006","statement":"Publication promotion requires a content-addressed renderer execution receipt whose hashes and checks are independently revalidated."},
-    {"id":"INV-007","statement":"Multi-format publication promotion is atomic: every required renderer receipt, renderer-native check and cross-format parity check must pass before one bundle promotion receipt may PROMOTE."}
+    {"id":"INV-007","statement":"Multi-format publication promotion is atomic: every required renderer receipt, renderer-native check and cross-format parity check must pass before one bundle promotion receipt may PROMOTE."},
+    {"id":"INV-008","statement":"GitHub Pages counts as published only after a real Pages deployment returns a hosted URL and an independent network fetch of that hosted URL reproduces the governed Pages artifact hash and semantic token set for the exact source commit."}
   ],
   "semantic_debt": [
     {"id":"DEBT-001","status":"open","topic":"renderer_linting","next_action":"Wire remaining production renderer linter signals into per-format execution telemetry"},
@@ -16,6 +17,6 @@
     {"id":"DEBT-004","status":"open","topic":"figure_registry_browser","next_action":"Build MASTER figure browser"},
     {"id":"DEBT-005","status":"open","topic":"semantic_metrics","next_action":"Expose completeness, debt and branch metrics"},
     {"id":"DEBT-006","status":"closed","topic":"renderer_binding","next_action":"Completed by A8 reference SSOT -> renderer -> artifact -> receipt -> promotion loop"},
-    {"id":"DEBT-007","status":"partial","topic":"multi_format_receipts","next_action":"PPTX/PDF production receipts are bound by A8.2; extend the same atomic receipt/parity contract to Markdown and GitHub Pages, then close the debt."}
+    {"id":"DEBT-007","status":"partial","topic":"multi_format_receipts","next_action":"Markdown and the Pages deployment candidate are receipt-bound; execute a real GitHub Pages deployment, independently refetch the hosted URL, prove exact hash plus semantic parity, then close this debt in a separate evidence-bound update."}
   ]
 }
