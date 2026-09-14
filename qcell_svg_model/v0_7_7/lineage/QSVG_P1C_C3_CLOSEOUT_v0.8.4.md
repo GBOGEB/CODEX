@@ -1,12 +1,12 @@
 # QSVG-P1C C3 proof-and-repeat closeout — v0.8.4
 
-## Current disposition
+## Final disposition
 
-`C3_PROOF_AND_REPEAT = CLOSE_CANDIDATE_TYPED_RECEIPT_EXACT_HEAD_A_PASS`
+`C3_PROOF_AND_REPEAT = CLOSED_PASS_EXACT_HEAD_REPEAT`
 
 Authority remains `VISUAL_SEMANTIC_ONLY`. This evidence cannot grant engineering, SAT, OPEX, negotiation, compliance, or release authority.
 
-## Contract now implemented
+## Contract implemented
 
 The P1C evidence chain is:
 
@@ -44,26 +44,40 @@ Receipt emission occurs only after:
 - artifact id: `10354360435`
 - artifact digest: `sha256:9cac7606061813665eed6747ce424cc5a1b6c203740e37830bea8260ace96417`
 
-## Distinct-SHA Repeat B
+## Exact-head evidence B — distinct SHA
 
-This closeout file is metadata-only and intentionally does not change SSOT, renderer templates, SVG, HTML, collision boxes, or visual semantics. Its commit creates the required distinct head for Repeat B.
+- subject head: `b14c21f5e4f4747d8d78369b162ad115da71e37b`
+- deterministic workflow run: `34858456381`
+- job: `104024058781`
+- result: **PASS**
+- exact subject checkout: **PASS**
+- explicit subject-SHA equality assertion: **PASS**
+- fail-closed visual predicates: **PASS**
+- deterministic A/B render equality: **PASS**
+- tracked-canonical equality: **PASS**
+- contracted typed-receipt emission: **PASS**
+- artifact: `qcell-svg-determinism-b14c21f5e4f4747d8d78369b162ad115da71e37b`
+- artifact id: `10354435334`
+- artifact digest: `sha256:947120f6fdb0be9bbb1e15d69618bd2fa9b52d83899899dfab6e30ddeaa5ae69`
 
-Closure predicate:
+The Repeat B commit changed only this lineage/closeout metadata and did not change SSOT, renderer templates, canonical SVG/HTML, collision boxes, or visual semantics.
 
-- exact subject-SHA assertion PASS;
-- fail-closed visual predicates PASS;
-- deterministic A/B render equality PASS;
-- tracked-canonical equality PASS;
-- contracted typed receipt emission PASS.
-
-After Repeat B:
+## BD contraction
 
 - `QSVG-BD-005` -> `CLOSED_PASS_EXACT_HEAD_REPEAT`
 - `QSVG-BD-008` -> `CLOSED_TYPED_RECEIPT_GENERATOR_BOUND`
 - `QSVG-BD-009` -> remains `CLOSED_PASS_STABLE_ARTIFACT_REPEAT`
 - `C3_PROOF_AND_REPEAT` -> `CLOSED_PASS_EXACT_HEAD_REPEAT`
 
-`QSVG-BD-010 CONTROL` remains WITHHELD until C1 is also formally closed and the Local visual DoV decision is recorded.
+## Remaining decision boundary
+
+C3 is closed locally. `QSVG-BD-010 CONTROL` remains WITHHELD until:
+
+1. C1 MAIN convergence is formally closed by final visual-semantic review; and
+2. the Local visual DoV decision is recorded.
+
+Federation DoV remains separate and requires a downstream consumer to accept the typed visual receipt while preserving `VISUAL_SEMANTIC_ONLY` authority.
+Global/project DoV remains withheld because visual acceptance is not engineering acceptance.
 
 ## Deferred/non-blocking
 
