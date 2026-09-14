@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Fail-closed static visual-control checks for QCELL MAIN v0.7.7.
 
 This checks visual/semantic invariants only. It does not grant engineering authority.
@@ -6,9 +5,9 @@ This checks visual/semantic invariants only. It does not grant engineering autho
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
-import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 SVG = ROOT / "svg" / "qcell_main_v0_7_7.svg"
@@ -35,6 +34,7 @@ REQUIRED_TEXT = {
     "50→2 K conduction",
 }
 REQUIRED_THERMAL_TOKENS = {
+    'stroke="#cc0000"': "300 K membrane must use the authoritative single 300 K colour",
     'stroke="#00e7c0"': "50 K shield must use the authoritative single 50 K colour",
     'id="outerHeatRev"': "reverse-direction outer heat gradient missing",
     'id="innerHeatRev"': "reverse-direction inner heat gradient missing",
@@ -70,18 +70,17 @@ def main() -> int:
 
     svg_text = SVG.read_text(encoding="utf-8")
     html_text = HTML.read_text(encoding="utf-8")
-    root = ET.fromstring(svg_text)
 
-    ids = {el.attrib.get("id") for el in root.iter() if el.attrib.get("id")}
+    ids = set(re.findall(r'\bid="([^"]+)"', svg_text))
     missing = REQUIRED_GROUPS - ids
     if missing:
         fail(f"missing SVG layer groups: {sorted(missing)}")
 
     if 'id="pressure_overlay"' in svg_text:
-        fail("pressure overlay present in P1B MAIN despite deferred/OFF policy")
+        fail("pressure overlay present in MAIN despite deferred/OFF policy")
 
-    big = next((el for el in root.iter() if el.attrib.get("id") == "big_teaching_arrows"), None)
-    if big is None or "display:none" not in big.attrib.get("style", "").replace(" ", ""):
+    big_match = re.search(r'<g\b[^>]*\bid="big_teaching_arrows"[^>]*>', svg_text)
+    if big_match is None or "display:none" not in big_match.group(0).replace(" ", ""):
         fail("big teaching arrows are not fail-closed OFF by default")
 
     if 'class="guide"' not in svg_text or "stroke-dasharray:9 7" not in svg_text:
@@ -95,6 +94,8 @@ def main() -> int:
         if token not in svg_text:
             fail(message)
 
+    if 'stroke="url(#warm300)"' in svg_text:
+        fail("nominal 300 K membrane uses the warm-range spatial gradient")
     if 'stroke="url(#shield50)"' in svg_text:
         fail("nominal 50 K shield uses a multi-temperature spatial gradient")
     if 'id="heatArrow"' in svg_text:
@@ -120,7 +121,7 @@ def main() -> int:
         fail(f"forbidden exclusive-box overlaps: {collisions}")
 
     result = {
-        "schema": "qsvg-visual-control-check/0.3.0",
+        "schema": "qsvg-visual-control-check/0.4.0",
         "status": "PASS",
         "authority": "VISUAL_SEMANTIC_ONLY",
         "required_groups": sorted(REQUIRED_GROUPS),
@@ -129,6 +130,7 @@ def main() -> int:
         "pressure_overlay": "ABSENT_DEFERRED",
         "big_teaching_arrows": "OFF_DEFAULT",
         "endpoint_guides": "DOTTED_PRESENT",
+        "temperature_300K_mapping": "SOLID_AUTHORITATIVE_COLOUR",
         "temperature_50K_mapping": "SOLID_AUTHORITATIVE_COLOUR",
         "heat_gradient_direction": "PATH_DIRECTION_CORRECTED",
         "heat_endpoint_markers": "OUTER_ORANGE_INNER_2K_BLUE",
