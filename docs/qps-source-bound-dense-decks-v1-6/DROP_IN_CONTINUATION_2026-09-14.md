@@ -136,6 +136,15 @@ NON-COMPENSATING BD-005 RULES:
 - 13.9 kW ambient radiation below 15 kW contractual ceiling != room transient closure.
 - OFFER-35 airflow + 40 Pa != duct connection-size closure.
 
+PR714 GOVERNANCE EXECUTION RECEIPT:
+- PR #714 merged at 1bc865a07c1c57e951b2c1d2633c45ab419aafa4; metrics main head became cab4ffcb85c0a6cbcaa8a6fb1cef790a5dfdece4.
+- qps-canonicalization on the PR #714 head = PASS.
+- W003 on the PR #714 head = FAIL PR-007 because the PR classification block omitted the required literal --- delimiter.
+- failure scope = PR metadata parser only; engineering evidence effect = NONE.
+- #714 merged concurrently before a fresh W003 recheck.
+- PR body was repaired post-merge to include the required delimiter.
+- follow-up governance receipt PR must pass W003 + qps-canonicalization; no BD or engineering state moves from this control repair.
+
 BD-008 PARALLEL NEXT:
 - enumerate Appendix 8.4 diagram/page -> mode mapping;
 - bind visible valve tags/states where source resolution supports exact reading;
@@ -165,5 +174,5 @@ Innovate with bounded alternate edges/models and explicit metrics.
 Perpetuate by updating the SAME canonical TRIAGE/full-handover/drop-in files plus append-only progression and additive evidence ledgers.
 
 IMMEDIATE ACTION:
-Chase the exact LKT/KAESER ~110 g/s <=350 kW LOOP operating point first. In parallel chase Recovery Cooling Water/PAB12 degraded hydraulics and the current duct connection size. Do not execute or credit the first-law transient until electrical, hydraulic and thermal-inventory inputs are evidence-bound. Keep BD-006 and BD-008 non-compensating.
+First close the PR #714 governance receipt with W003 + qps-canonicalization both green. Then resume the exact LKT/KAESER ~110 g/s <=350 kW LOOP operating-point hunt, in parallel with Recovery Cooling Water/PAB12 degraded hydraulics and current duct connection size. Do not execute or credit the first-law transient until electrical, hydraulic and thermal-inventory inputs are evidence-bound. Keep BD-006 and BD-008 non-compensating.
 ```
