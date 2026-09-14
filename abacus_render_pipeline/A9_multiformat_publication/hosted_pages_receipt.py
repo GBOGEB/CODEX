@@ -66,30 +66,97 @@ def _parity(text: str, expected_tokens: list[str]) -> dict[str, Any]:
     }
 
 
-def _fetch(url: str, retries: int = 12, delay_seconds: float = 5.0) -> tuple[int, bytes, str, int]:
+def _extract_text(data: bytes) -> str:
+    parser = _TextExtractor()
+    parser.feed(data.decode("utf-8"))
+    return parser.text()
+
+
+def _fetch_until_governed_match(
+    url: str,
+    *,
+    expected_sha256: str,
+    expected_tokens: list[str],
+    retries: int = 24,
+    delay_seconds: float = 5.0,
+    required_consecutive_matches: int = 2,
+) -> tuple[int, bytes, str, int, list[dict[str, Any]], dict[str, Any]]:
     last_error: Exception | None = None
+    consecutive_matches = 0
+    observations: list[dict[str, Any]] = []
+    matched: tuple[int, bytes, str, int, dict[str, Any]] | None = None
+
     for attempt in range(1, retries + 1):
         request = urllib.request.Request(
             url,
             headers={
-                "User-Agent": "ABACUS-A9-hosted-pages-proof/1.0",
+                "User-Agent": "ABACUS-A9-hosted-pages-proof/1.1",
                 "Cache-Control": "no-cache",
                 "Pragma": "no-cache",
             },
         )
+        observation: dict[str, Any] = {"attempt": attempt}
         try:
             with urllib.request.urlopen(request, timeout=30) as response:
                 status = int(getattr(response, "status", 200))
                 body = response.read()
                 final_url = str(response.geturl())
-                if status == 200 and body:
-                    return status, body, final_url, attempt
-                last_error = RuntimeError(f"unexpected hosted response status={status} bytes={len(body)}")
+                hosted_sha = _sha256(body)
+                parity = _parity(_extract_text(body), expected_tokens) if body else {
+                    "pass": False,
+                    "expected_token_count": len(expected_tokens),
+                    "present_token_count": 0,
+                    "coverage": 0.0,
+                    "missing_tokens": expected_tokens,
+                }
+                hash_match = hosted_sha == expected_sha256
+                governed_match = status == 200 and bool(body) and hash_match and parity["pass"]
+                observation.update(
+                    {
+                        "http_status": status,
+                        "bytes": len(body),
+                        "sha256": hosted_sha,
+                        "hash_match": hash_match,
+                        "semantic_pass": bool(parity["pass"]),
+                        "semantic_coverage": parity["coverage"],
+                        "final_url": final_url,
+                    }
+                )
+                if governed_match:
+                    consecutive_matches += 1
+                    matched = (status, body, final_url, attempt, parity)
+                    observation["consecutive_governed_matches"] = consecutive_matches
+                    observations.append(observation)
+                    if consecutive_matches >= required_consecutive_matches:
+                        assert matched is not None
+                        return (*matched[:4], observations, matched[4])
+                else:
+                    consecutive_matches = 0
+                    observation["consecutive_governed_matches"] = 0
+                    observations.append(observation)
+                    last_error = RuntimeError(
+                        "hosted response has not converged to governed candidate: "
+                        f"status={status} sha={hosted_sha} expected={expected_sha256} "
+                        f"semantic_coverage={parity['coverage']}"
+                    )
         except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
+            consecutive_matches = 0
             last_error = exc
+            observation.update(
+                {
+                    "network_error": str(exc),
+                    "consecutive_governed_matches": 0,
+                }
+            )
+            observations.append(observation)
+
         if attempt < retries:
             time.sleep(delay_seconds)
-    raise RuntimeError(f"hosted Pages fetch failed after {retries} attempts: {last_error}")
+
+    raise RuntimeError(
+        "hosted Pages did not converge to the governed artifact after "
+        f"{retries} attempts; last_error={last_error}; tail={json.dumps(observations[-5:], sort_keys=True)}"
+    )
 
 
 def execute(page_url: str | None = None) -> dict[str, Any]:
@@ -106,15 +173,11 @@ def execute(page_url: str | None = None) -> dict[str, Any]:
 
     pages_item = execution["formats"]["github_pages"]
     local_path = (HERE / pages_item["artifact_relpath"]).resolve()
-    local_bytes = local_path.read_bytes()
-    local_sha = _sha256(local_bytes)
+    local_sha = _sha256(local_path.read_bytes())
     if local_sha != pages_item["artifact_sha256"]:
         raise ValueError(
             f"local Pages candidate hash mismatch: execution={pages_item['artifact_sha256']} actual={local_sha}"
         )
-
-    status, hosted_bytes, final_url, fetch_count = _fetch(resolved_url)
-    hosted_sha = _sha256(hosted_bytes)
 
     ssot_path = ROOT / execution["ssot_relpath"]
     ssot = load_ssot(ssot_path)
@@ -122,15 +185,18 @@ def execute(page_url: str | None = None) -> dict[str, Any]:
     canonical_digest = content_hash(payload)
     if canonical_digest != execution["canonical_content_sha256"]:
         raise ValueError("canonical content hash changed before hosted Pages proof")
+    expected_tokens = _semantic_tokens(payload, canonical_digest)
 
-    parser = _TextExtractor()
-    parser.feed(hosted_bytes.decode("utf-8"))
-    parity = _parity(parser.text(), _semantic_tokens(payload, canonical_digest))
-    hash_match = hosted_sha == local_sha == pages_item["artifact_sha256"]
-    accepted = status == 200 and hash_match and parity["pass"]
+    status, hosted_bytes, final_url, fetch_count, observations, parity = _fetch_until_governed_match(
+        resolved_url,
+        expected_sha256=local_sha,
+        expected_tokens=expected_tokens,
+    )
+    hosted_sha = _sha256(hosted_bytes)
+    accepted = status == 200 and hosted_sha == local_sha == pages_item["artifact_sha256"] and parity["pass"]
 
     receipt = {
-        "receipt_version": "A9.1-PAGES",
+        "receipt_version": "A9.3-PAGES",
         "publication_id": execution["publication_id"],
         "source_commit": source_commit,
         "page_url": resolved_url,
@@ -143,7 +209,9 @@ def execute(page_url: str | None = None) -> dict[str, Any]:
         "hosted_bytes": len(hosted_bytes),
         "semantic_parity": parity,
         "network_fetch_count": fetch_count,
-        "fetch_method": "network_get_after_actions_deploy_pages",
+        "fetch_method": "network_get_after_actions_deploy_pages_until_governed_match",
+        "required_consecutive_matches": 2,
+        "propagation_observations": observations,
         "fetched_at_utc": datetime.now(timezone.utc).isoformat(),
         "decision": "accept" if accepted else "reject",
     }
