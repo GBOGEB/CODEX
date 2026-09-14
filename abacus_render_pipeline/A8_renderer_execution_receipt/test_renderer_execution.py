@@ -4,6 +4,7 @@ import json
 import tempfile
 from pathlib import Path
 
+from promotion_receipt import promote
 from renderer_execution import RECEIPT_DIR, execute
 from receipt_validation import load_and_validate_receipt
 
@@ -25,6 +26,15 @@ def test_execution_receipt_is_content_addressed_and_deterministic():
     assert validated["artifact_sha256"] == first["artifact_sha256"]
 
 
+def test_governed_promotion_receipt_is_persisted():
+    execution = execute()
+    result = promote()
+    assert result["decision"] == "PROMOTE"
+    assert result["semantic_promotions_allowed"] is True
+    assert result["artifact_sha256"] == execution["artifact_sha256"]
+    assert (RECEIPT_DIR / "promotion_receipt.json").exists()
+
+
 def test_tampered_receipt_is_rejected():
     execute()
     source = json.loads((RECEIPT_DIR / "renderer_execution_receipt.json").read_text(encoding="utf-8"))
@@ -42,5 +52,6 @@ def test_tampered_receipt_is_rejected():
 
 if __name__ == "__main__":
     test_execution_receipt_is_content_addressed_and_deterministic()
+    test_governed_promotion_receipt_is_persisted()
     test_tampered_receipt_is_rejected()
     print("A8 renderer execution receipt tests: PASS")
