@@ -2,45 +2,19 @@ schema: qps-visual-system-triage/1.2
 version: 1.6.2
 state: SOURCE_BOUND_PARTIAL_CONTROL
 authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
-
 global_project_dov: WITHHELD
-
-completed:
-  - source deck filenames bound
-  - exact source slide ranges bound for core Utilities and Controls content
-  - dense Utilities and Controls canonical candidates written
-  - cross-domain ownership boundary established
-  - source inconsistencies preserved as review items
-  - utilities reconciliation register added with explicit derived/source separation
-  - first-pass controls signal classification register added
-  - generic governed publication carrier #690/#691 confirmed as reusable infrastructure
-  - all four v1.6 source filenames resolved to persistent File Library objects
-  - SRC-CTRL-CORE joined to a pre-existing governed W176 exact source identity tuple
-  - source-proof execution receipt schema 1.1 added
-  - source lineage updated with persistent locators and typed digest/render states
-  - navigator and triage alignment updated to the raw-source materialization first-red
-
 source_proof_receipt: source_proof_execution_v1_6.yaml
 source_proof_receipt_schema: qps-source-proof-execution/1.1
 
-cross_repo_evidence:
-  - repository: GBOGEB/cryoplant-project
-    selection: ocd-adr/40_implementation/QPS_VISUAL_N200_REMAINING_W176_SELECTION.csv
-    evidence: W162 candidate SHA256 values for SRC-UTIL-CORE, SRC-UTIL-CANONICAL-APPENDIX and SRC-CTRL-CORE
-    authority: SOURCE_GATE_HASH_EVIDENCE_ZERO_ENGINEERING_CREDIT
-  - repository: GBOGEB/cryoplant-project
-    collection: ocd-adr/40_implementation/QPS_VISUAL_N200_COLLECTION_W176_PPTX_AUTH_RECONCILED.csv
-    evidence: SRC-CTRL-CORE exact persistent source asset locator and SHA256 coexist in one governed tuple
-    authority: PREEXISTING_VISUAL_PROVENANCE_IDENTITY_ONLY
-  - repository: GBOGEB/cryoplant-project
-    receipt: triage/w176/QPS_W176_PPTX_TOPUP_v0.1.yaml
-    evidence: SRC-UTIL-CORE and SRC-UTIL-CANONICAL-APPENDIX slide-1 renders were classified duplicate and earned zero visual credit
-    authority: VISUAL_COLLECTION_EXECUTION_ONLY
-  - repository: GBOGEB/CODEX
-    prs: [690, 691]
-    evidence: receipt-governed HTML/PPTX/PDF/Markdown/GitHub-Pages publication carrier plus deterministic PPTX/PDF native telemetry
-    authority: GENERIC_PUBLICATION_INFRASTRUCTURE
-    limitation: Microsoft PowerPoint/Office host reflow is not proven
+completed:
+  - source deck filenames and exact source slide ranges bound
+  - dense Utilities and Controls canonical candidates written
+  - utilities reconciliation and first-pass controls signal-classification registers added
+  - all four v1.6 source filenames resolved to persistent File Library objects
+  - SRC-CTRL-CORE joined to a pre-existing governed W176 exact source identity tuple
+  - source lineage updated with persistent locators and typed digest/render states
+  - source-proof receipt, navigator and alignment surfaces updated
+  - generic governed publication carrier #690/#691 confirmed as reusable infrastructure
 
 open_first_red:
   - id: V16-BD-001
@@ -54,104 +28,65 @@ open_first_red:
       SRC-UTIL-CANONICAL-APPENDIX: LOCATOR_AND_HASH_COEXIST_NOT_YET_EXACT_BYTE_REHASH_BOUND
       SRC-NAMING-CONTROL: OPEN_DIGEST
     closure: materialize all four exact PPTX byte objects through an approved raw-source path, independently SHA256 them, and bind all digests into source_lineage.yaml
-
   - id: V16-BD-002
     topic: source_slide_renders
     priority: P0
     state: BLOCKED_ON_RAW_BYTE_MATERIALIZATION
     artifact: source_proof_execution_v1_6.yaml
-    prior_evidence: W176 slide-1 renders exist for some candidates but are insufficient; Utilities slide-1 renders were duplicate observations
+    prior_evidence: W176 slide-1 renders are insufficient; the two Utilities slide-1 renders were duplicate observations with zero credit
     closure: fixed renderer/settings produce one stable render and SHA256 for every bound source slide
-
   - id: V16-BD-003
     topic: source_vs_curated_visual_dov
     priority: P0
     state: PREDICATE_BLOCKED_BD002_FALSE
-    closure: compare every bound source render with curated object and record KEEP/MERGE/REFERENCE/SUPERSEDE/DROP_WITH_RATIONALE plus explicit content-loss verdict
-
+    closure: compare every bound source render with curated object and record KEEP/MERGE/REFERENCE/SUPERSEDE/DROP_WITH_RATIONALE plus content-loss verdict
   - id: V16-BD-004
     topic: utilities_value_reconciliation
     priority: P0
     state: PARTIAL_RECONCILIATION
     artifact: utilities_reconciliation_v1_6.yaml
-    closure: governing interface/load-basis evidence confirms semantic definitions and remaining HVAC/GN2/PGB20 questions
-
   - id: V16-BD-005
     topic: loop_evidence
     priority: P0
     state: OPEN
-    closure: bind 17 kW / 350 kW / 6 h / ~2 h statements to transient/load evidence, equipment state and operating scenario
-
   - id: V16-BD-006
     topic: control_signal_classification
     priority: P0
     state: PARTIAL_SUBSTANTIVE_CLASSIFICATION
     artifact: control_signal_classification_v1_6.yaml
-    closure: discipline-approved cause/effect/fail-safe matrix closes ambiguous utility statuses; L2 exact I/O remains BD-007
-
   - id: V16-BD-007
     topic: detailed_io
     priority: P1
-    state: OPEN
-    closure: exact point counts, marshalling and implementation frozen at L2
-
+    state: OPEN_L2_GATED
   - id: V16-BD-008
     topic: graph_binding_refresh
     priority: P1
     state: OPEN
-    closure: WCS/HCC/QINFRA/QPS:CIS graph nodes link to promoted v1.6 objects and exact lineage/review records
-
   - id: V16-BD-009
     topic: deterministic_render
     priority: P1
     state: DEFER_TO_V1_7
-    closure: YAML drives HTML/SVG without hand-maintained layout truth
-
   - id: V16-BD-010
     topic: governed_exports
     priority: P1
     state: REFRAME_BIND_EXISTING_CARRIER
-    closure: adapt source-bound QPS semantic objects into existing #690/#691 governed publication carrier and prove QPS-specific parity/DoV
-    explicit_non_goals:
-      - do not build a second multi-format exporter
-      - do not claim ODP parity unless implemented
-      - do not claim Office host reflow from OpenXML structural telemetry
 
-non_compensating_rules:
-  - a visual or navigation PASS cannot grant engineering acceptance
-  - source evidence gaps cannot be offset by layout quality
-  - safety/interlock classification requires discipline evidence
-  - utilities source inconsistencies remain OPEN until reconciled by governing engineering sources
-  - candidate I/O remains candidate until L2/detail control design freezes it
-  - a prior W162/W176 SHA does not equal an independently repeated byte rehash unless the exact object is materialized and hashed
-  - a slide-1 visual census render cannot satisfy per-slide BD-002
-  - duplicate-render evidence cannot be promoted as independent proof
-  - generic publication success cannot replace QPS-specific source-vs-curated DoV
-
-parallel_execution:
-  source_proof:
-    first_red: RAW_SOURCE_BYTE_MATERIALIZATION
-    then:
-      - independent SHA256 repeat for four PPTX objects
-      - establish missing SRC-NAMING-CONTROL digest
-      - stable per-slide renders and hashes for all bound slides
-      - BD-003 disposition ledger
-  utilities:
-    - V16-BD-004 confirm reconciliation against governing interface/load basis
-    - V16-BD-005 bind LOOP scenario evidence
-  controls:
-    - V16-BD-006 close ambiguous classifications with discipline evidence
-    - V16-BD-007 remains L2-gated
-  graph:
-    - V16-BD-008 after promoted v1.6 records are stable
-  publication:
-    - V16-BD-010 adapt to #690/#691 after source-bound objects are promotion-ready
-
+first_red: RAW_SOURCE_BYTE_MATERIALIZATION
 next_execution_order:
   - materialize exact four File Library PPTX objects as raw bytes without conversion
   - sha256sum and bind source digests
   - render only the bound slide set with fixed renderer/version/settings and hash every render
   - execute V16-BD-003 content-loss ledger immediately after render predicate exists
-  - continue V16-BD-004 / V16-BD-006 in parallel where evidence is independent
-  - V16-BD-005 LOOP evidence
-  - V16-BD-008 graph refresh
+  - continue V16-BD-004 and V16-BD-006 in parallel where evidence is independent
+  - bind V16-BD-005 LOOP transient/load scenario evidence
+  - refresh V16-BD-008 graph bindings
+
+non_compensating_rules:
+  - visual/navigation/publication PASS cannot grant engineering acceptance
+  - source evidence gaps cannot be offset by layout quality
+  - a prior W162/W176 SHA does not equal an independently repeated byte rehash unless the exact object is materialized and hashed
+  - a slide-1 census render cannot satisfy per-slide BD-002
+  - duplicate-render evidence cannot be promoted as independent proof
+  - safety/interlock classification requires discipline evidence
+  - candidate I/O remains candidate until L2/detail control design freezes it
+  - QPS publication shall reuse #690/#691; ODP and Office host reflow remain separate proof boundaries
