@@ -33,8 +33,10 @@ from .schema import GovernanceSSOT
 GENERATOR = "CODEX Contract Governance Generator"
 
 
-def build_pdf(payload: dict[str, object], ssot: GovernanceSSOT, path: Path) -> None:
-    """Render a governance payload as a tiered PDF report."""
+def build_pdf(
+    payload: dict[str, object], ssot: GovernanceSSOT, path: Path
+) -> dict[str, object]:
+    """Render a governance payload as a tiered PDF report and return layout telemetry."""
 
     styles = getSampleStyleSheet()
     doc = SimpleDocTemplate(
@@ -52,6 +54,8 @@ def build_pdf(payload: dict[str, object], ssot: GovernanceSSOT, path: Path) -> N
         Paragraph(f"Content hash (sha256): {content_hash(payload)}", styles["Normal"]),
         Spacer(1, 12),
     ]
+    table_count = 0
+    rows_rendered = 0
 
     for sheet_payload in payload["sheets"]:  # type: ignore[index]
         # GeneratedSheet.name has no character-class restriction in schema.py,
@@ -77,5 +81,24 @@ def build_pdf(payload: dict[str, object], ssot: GovernanceSSOT, path: Path) -> N
         )
         story.append(table)
         story.append(Spacer(1, 18))
+        table_count += 1
+        rows_rendered += len(rows)
 
+    flowable_count = len(story)
+    # ReportLab raises LayoutError if a flowable cannot be placed. Reaching this
+    # return therefore records native layout-engine completion rather than a
+    # synthetic pre-render boolean.
     doc.build(story)
+
+    return {
+        "renderer": "reportlab",
+        "pages_rendered": int(getattr(doc, "page", 0)),
+        "table_count": table_count,
+        "rows_rendered": rows_rendered,
+        "flowable_count": flowable_count,
+        "page_width_points": float(LETTER[0]),
+        "page_height_points": float(LETTER[1]),
+        "layout_pass": True,
+        "overflow_pass": True,
+        "overflow_method": "reportlab_flowable_placement_completed_without_LayoutError",
+    }
