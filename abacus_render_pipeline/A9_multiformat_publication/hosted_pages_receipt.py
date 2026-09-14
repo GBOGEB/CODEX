@@ -117,8 +117,8 @@ def _fetch_until_governed_match(
                         "bytes": len(body),
                         "sha256": hosted_sha,
                         "hash_match": hash_match,
-                        "semantic_pass": bool(parity["pass"]),
-                        "semantic_coverage": parity["coverage"],
+                        "parity_pass": bool(parity["pass"]),
+                        "coverage": parity["coverage"],
                         "final_url": final_url,
                     }
                 )
@@ -137,7 +137,7 @@ def _fetch_until_governed_match(
                     last_error = RuntimeError(
                         "hosted response has not converged to governed candidate: "
                         f"status={status} sha={hosted_sha} expected={expected_sha256} "
-                        f"semantic_coverage={parity['coverage']}"
+                        f"coverage={parity['coverage']}"
                     )
         except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
             consecutive_matches = 0
