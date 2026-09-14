@@ -5,10 +5,10 @@ def test_real_ledgers_form_valid_closed_loop():
     result = run()
     assert result["status"] == "PASS"
     assert result["schema_errors"] == []
-    assert result["completeness"]["tuple_count"] == 8
+    assert result["completeness"]["tuple_count"] == 10
     assert result["completeness"]["parentage_valid"] is True
-    assert len(result["branch_dag"]["nodes"]) == 8
-    assert len(result["branch_dag"]["edges"]) == 7
+    assert len(result["branch_dag"]["nodes"]) == 10
+    assert len(result["branch_dag"]["edges"]) == 9
     assert result["runtime"]["state"]["replay_ready"] is True
 
 
