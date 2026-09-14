@@ -75,3 +75,7 @@ glossary:
     definition: Governed semantic-runtime capability proving that ordered semantic tuple history can be replayed deterministically from source state to the current reconstructed state; it is replay evidence, not child engineering authority.
     introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/test_semantic_replay_and_acceptance.py
     first_use_case: name the bounded deterministic replay capability exercised by the A7 semantic replay and renderer-acceptance tests.
+  semantic_acceptance_status:
+    definition: Persisted promotion-receipt field recording the pass/fail outcome of the semantic acceptance gate for the exact renderer execution receipt being promoted.
+    introduced_by: abacus_render_pipeline/A8_renderer_execution_receipt/promotion_receipt.py
+    first_use_case: bind the final PROMOTE or REJECT decision to the same content-addressed artifact, SSOT, tuple ledger and semantic-runtime evidence.

@@ -52,8 +52,8 @@ def run_first_red() -> Dict[str, Any]:
     replay_result = replay(tuples)
     stages.append(("semantic_delta_replay", replay_result["status"] == "PASS", replay_result.get("final_state", replay_result)))
 
-    acceptance = evaluate(render_validation_passed=True)
-    stages.append(("renderer_acceptance_binding", acceptance["status"] == "PASS", acceptance))
+    acceptance = evaluate()
+    stages.append(("renderer_execution_receipt_acceptance", acceptance["status"] == "PASS", acceptance))
 
     stage_results = []
     first_red = None
