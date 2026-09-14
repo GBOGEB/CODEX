@@ -1,0 +1,28 @@
+name: QCELL SVG Visual Control
+
+on:
+  pull_request:
+    paths:
+      - 'qcell_svg_model/**'
+      - '.github/workflows/qcell-svg-visual-control.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'qcell_svg_model/**'
+      - '.github/workflows/qcell-svg-visual-control.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  visual-control:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact SHA
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run fail-closed QCELL visual-control checks
+        run: python qcell_svg_model/v0_7_7/scripts/check_qcell_visual_control.py
