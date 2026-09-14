@@ -1,0 +1,131 @@
+schema: qps-d2.1-behavioral-lineage/1.0
+version: '1.6.6'
+authority: ENGINEERING_EVIDENCE_AND_PROVENANCE_NOT_FINAL_DESIGN_APPROVAL
+source_policy:
+  D2_1:
+    role: PROCESS_CONCEPTUAL_DESIGN_ANCHOR
+    reference: DSBT-TN-24-37-3.0
+    task: D2.1 Conceptual Design Report for MINERVA Cryogenic System
+    status: AGED_ACTIVE_ANCHOR_CURRENTNESS_CHECK_REQUIRED
+    exact_native_candidate:
+      library_name: D2_1_CRYOGENIC_SYSTEM_CONCEPTUAL_NATIVE.docx
+      privacy_note: NOT_CONFIRMED_AS_SANITIZED_COPY
+      observed_exact_name_checks:
+        LKT: no_exact_match_observed
+        ALAT: one_reference_section_match_observed
+    sanitized_derivative:
+      state: IDENTITY_NOT_YET_BOUND
+      rule: bind separately when exact file/version identity is surfaced; do not substitute by filename inference
+  D2_2:
+    role: TECHNICAL_AND_PROJECT_REQUIREMENTS_ANCHOR
+    reference: DSBT-TN-2024-19_Rev_4_0
+    status: AGED_ACTIVE_ANCHOR_CURRENTNESS_CHECK_REQUIRED
+separation_rule: >-
+  D2.1 defines process concept, topology, process/model assumptions and behavioral scenarios.
+  D2.2 defines technical and project requirements/constraints. Neither silently replaces the other.
+appendix_lanes:
+  appendix_8_2:
+    title: General PFD of the MINERVA Cryogenic System
+    role: PROCESS_TOPOLOGY_ANCHOR
+    evidence:
+      - cryoplant and WCS topology
+      - storage and recovery/purification paths
+      - QRB/QLR/QLM/QCELL/QVE connectivity
+      - named process lines and valve identities
+  appendix_8_3:
+    title: SIMCRYOGENICS model of the conceptual design
+    role: PROCESS_PHYSICS_AND_MODEL_LINEAGE_ANCHOR
+    decomposition:
+      - 300_K_to_30_K
+      - 30_K_to_4_K
+      - LINAC
+    non_claim: conceptual model lineage is not current final accepted process performance
+  appendix_8_4:
+    title: MODES
+    role: BEHAVIORAL_STATE_AND_EDGE_ANCHOR
+    source_statement: transient modes are implemented on the Process Flow Diagram and compiled in a dedicated diagrams ZIP
+    evidence_classes:
+      - operating_mode_to_valve_alignment
+      - fallback_state
+      - available_or_isolated_flow_path
+      - process_state_transition
+      - precursor_to_FMECA_and_high_level_control_logic
+    visual_semantics:
+      green_highlight:
+        interpretation: ACTIVE_OR_RELEVANT_PATH_CANDIDATE
+        confidence: SOURCE_VISUAL_SEMANTIC_REQUIRES_PER_DIAGRAM_BINDING
+        rule: do not globally equate green with open until each mode legend/valve state is explicitly bound
+      valve_colour_or_symbol:
+        interpretation: STATE_OR_TYPE_ENCODING_CANDIDATE
+        rule: decode per legend/drawing and preserve source-specific meaning
+behavioral_edges:
+  - event: MINOR_FAULT_QCELL
+    evidence_state: SOURCE_EXPLICIT_TEXT
+    supply_valves: CLOSE
+    return_valves: OPEN
+    fallback_type:
+      supply: NORMALLY_CLOSED
+      return: NORMALLY_OPEN
+    process_intent: recover_as_much_helium_as_possible_from_affected_QCELL
+  - event: LOSS_OF_UTILITY
+    evidence_state: SOURCE_EXPLICIT_TEXT
+    cryogenic_system: STOP
+    components: FALLBACK_POSITION
+    cryoplant_interface_valves: CLOSE_NORMALLY_CLOSED
+    qvb_valves: CLOSE_EXCEPT_RETURN
+    qvb_return_valves: REMAIN_OPEN_NORMALLY_OPEN
+    process_intent: passive_fallback_then_recovery_or_relief_if_duration_excessive
+  - event: CRYOPLANT_TRIP
+    evidence_state: SOURCE_EXPLICIT_TEXT
+    relation: SIMILAR_TO_LOSS_OF_UTILITY
+    components: FALLBACK_POSITION
+    process_intent: restart_at_least_one_compressor_to_recover_and_store_helium
+  - event: QUENCH
+    evidence_state: SOURCE_CONCEPTUAL_PROPOSAL
+    superfluid_supply_valves: COULD_CLOSE
+    vlp_return_valves: COULD_CONTINUE_PRESSURE_CONTROL
+    thermal_shields_and_couplers: MAINTAIN_COOLING_AS_LONG_AS_POSSIBLE
+    non_claim: proposal is not frozen cause_effect
+abnormal_transient_lane:
+  LOOP_loss_of_power:
+    source_section: D2.1_5.6.5
+    baseline:
+      relief_start: approximately_1_h
+      vLP_safety_valve_setpoint: approximately_1.5_bar_abs
+      average_or_dominant_flow: greater_than_120_g_s_or_100_to_150_g_s_source_views
+      peak: greater_than_150_g_s_with_short_approximately_200_g_s_spike
+    high_initial_pressure_case:
+      initial_state: 1.2_bar_4.4_K
+      relief_start: approximately_15_to_20_min
+    thermal_shield_mitigation:
+      shield_temperature: approximately_50_K
+      release_start: approximately_3.5_h
+      release_flow: approximately_20_g_s
+      short_peak: approximately_30_g_s
+      additional_requirement: partial_refrigerator_operation_and_approximately_80_g_s_TS_flow
+    non_claim: this Line-S/cryogenic-return transient does not close the separate WCS-room LOOP thermal transient
+trace_to_triage:
+  BD_005:
+    contribution:
+      - Line_S_abnormal_return_inflow_profiles
+      - recovery_path_availability_by_mode
+      - timing_and_fallback_process_evidence
+    closure_credit: PARTIAL_ONLY
+  BD_006:
+    contribution:
+      - valve_normal_state_and_fallback_semantics
+      - process_intent_for_selected_abnormal_events
+    closure_credit: PARTIAL_ONLY
+    rule: process fallback semantics do not by themselves assign MIS/MIT class, SIL, or HARD_TRIP
+  BD_008:
+    contribution:
+      - topology_edges_from_8_2
+      - physics_lineage_from_8_3
+      - behavioral_state_edges_from_8_4
+    state: READY_FOR_GATED_BINDING_OVERLAY
+non_compensating_rules:
+  - visual_colour alone is not valve-state proof without legend/per-diagram binding
+  - process-concept evidence is not a current approved cause-effect matrix
+  - D2.1 behavior cannot manufacture missing D2.2 requirement acceptance
+  - D2.2 requirement wording cannot manufacture missing D2.1 process behavior
+  - no bidder-specific source shall be copied into the sanitized D2.1 derivative without explicit provenance handling
