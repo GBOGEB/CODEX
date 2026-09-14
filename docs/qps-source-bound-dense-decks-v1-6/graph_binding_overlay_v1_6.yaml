@@ -1,0 +1,115 @@
+schema: qps-graph-binding-overlay/1.0
+version: '1.6.6'
+carrier:
+  path: handoff/v0_6_2/qps_svg_graph_navigation_mvp_v1_5
+  contract: graph-contract.json
+  allowed_edge_types: [tree, interface, control]
+  rule: overlay enriches lineage semantics without changing the carrier graph schema
+state: PREPARED_P0_GATED
+bd_008_close_allowed: false
+nodes:
+  - id: D2_1
+    label: D2.1 Process Conceptual Design
+    authority_role: PROCESS_CONCEPTUAL_DESIGN_ANCHOR
+  - id: D2_1_PFD
+    label: D2.1 Appendix 8.2 General PFD
+    authority_role: PROCESS_TOPOLOGY_ANCHOR
+  - id: D2_1_SIM
+    label: D2.1 Appendix 8.3 SIMCRYOGENICS
+    authority_role: PROCESS_PHYSICS_MODEL_LINEAGE
+  - id: D2_1_MODES
+    label: D2.1 Appendix 8.4 Modes
+    authority_role: BEHAVIORAL_STATE_EDGE_ANCHOR
+  - id: D2_2
+    label: D2.2 Technical and Project Requirements
+    authority_role: TECHNICAL_PROJECT_REQUIREMENTS_ANCHOR
+  - id: BD_005_WCS_LOOP
+    label: BD-005 WCS-room LOOP transient
+    authority_role: OPEN_ENGINEERING_TRANSIENT
+  - id: BD_005_LINES
+    label: BD-005 Line-S abnormal return transient
+    authority_role: PARTIAL_SOURCE_BOUND_ENGINEERING_LANE
+  - id: BD_006
+    label: BD-006 Controls classification
+    authority_role: PARTIAL_TENDER_LEVEL_CLASSIFICATION
+  - id: BD_008
+    label: BD-008 Graph binding refresh
+    authority_role: GRAPH_BINDING_GATE
+edges:
+  - from: D2_1
+    to: D2_1_PFD
+    carrier_edge_type: tree
+    semantic_relation: decomposes_to_topology
+    evidence_state: SOURCE_BOUND
+  - from: D2_1
+    to: D2_1_SIM
+    carrier_edge_type: tree
+    semantic_relation: decomposes_to_process_physics_model
+    evidence_state: SOURCE_BOUND
+  - from: D2_1
+    to: D2_1_MODES
+    carrier_edge_type: tree
+    semantic_relation: decomposes_to_operating_and_abnormal_state_behavior
+    evidence_state: SOURCE_BOUND
+  - from: D2_1_PFD
+    to: BD_005_LINES
+    carrier_edge_type: interface
+    semantic_relation: defines_recovery_and_relief_topology
+    evidence_state: SOURCE_BOUND_PARTIAL_ENGINEERING
+  - from: D2_1_SIM
+    to: BD_005_LINES
+    carrier_edge_type: interface
+    semantic_relation: supplies_conceptual_transient_and_model_lineage
+    evidence_state: SOURCE_BOUND_PARTIAL_ENGINEERING
+  - from: D2_1_MODES
+    to: BD_005_LINES
+    carrier_edge_type: control
+    semantic_relation: determines_available_recovery_path_by_state
+    evidence_state: SOURCE_BOUND_REQUIRES_PER_MODE_VALVE_BINDING
+  - from: D2_1_MODES
+    to: BD_006
+    carrier_edge_type: control
+    semantic_relation: supplies_normal_state_fallback_and_process_intent
+    evidence_state: PARTIAL
+    non_claim: does_not_assign_SIL_MIS_MIT_or_HARD_TRIP
+  - from: D2_2
+    to: BD_005_WCS_LOOP
+    carrier_edge_type: interface
+    semantic_relation: constrains_room_geometry_site_utilities_and_loss_of_utility_test_intent
+    evidence_state: SOURCE_BOUND_PARTIAL_ENGINEERING
+  - from: D2_2
+    to: BD_006
+    carrier_edge_type: control
+    semantic_relation: supplies_project_requirement_and_test_constraints
+    evidence_state: PARTIAL
+    non_claim: requirement_cross_reference_does_not_define_trip_severity
+  - from: BD_005_WCS_LOOP
+    to: BD_008
+    carrier_edge_type: interface
+    semantic_relation: unresolved_engineering_edge_blocks_graph_closure
+    evidence_state: OPEN
+  - from: BD_005_LINES
+    to: BD_008
+    carrier_edge_type: interface
+    semantic_relation: source_behavior_can_be_bound_but_current_engineering_acceptance_remains_open
+    evidence_state: PARTIAL
+  - from: BD_006
+    to: BD_008
+    carrier_edge_type: control
+    semantic_relation: unresolved_controls_consequence_blocks_graph_closure
+    evidence_state: OPEN
+projection_rules:
+  - source/provenance edges may enter the graph before engineering closure when explicitly typed as SOURCE_BOUND or PARTIAL
+  - OPEN engineering edges remain visibly open and cannot be rendered as accepted state
+  - D2.1 and D2.2 retain separate authority roles
+  - Appendix 8.4 colour/state semantics require per-diagram legend and valve binding before canonical open/closed state is asserted
+  - graph PASS cannot grant engineering acceptance
+bd_008_reentry:
+  source_and_lineage_layer: READY
+  engineering_acceptance_layer: GATED_BY_BD_005_AND_BD_006
+  recommended_state: PREPARED_P0_GATED
+  close_predicate:
+    - BD_005 engineering edges dispositioned
+    - BD_006 consequence/cause-effect edges dispositioned
+    - per-mode valve-state extraction bound to Appendix 8.4 diagrams
+    - carrier validation passes with no schema fork
