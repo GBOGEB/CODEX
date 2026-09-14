@@ -62,11 +62,11 @@ jobs:
         working-directory: abacus_render_pipeline/A9_multiformat_publication
         run: python publication_promotion.py --allow-withhold
 
-      - name: Run A9.1 tamper parity hosted-Pages and promotion tests
+      - name: Run A9.3 tamper parity hosted-Pages and promotion tests
         working-directory: abacus_render_pipeline/A9_multiformat_publication
         run: python test_multiformat_execution.py
 
-      - name: Re-prove semantic closed loop at TUP-0012 hosted gate
+      - name: Re-prove semantic closed loop at TUP-0012 stability gate
         working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
         run: |
           python test_closed_loop.py
@@ -100,8 +100,11 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    # Share the repository-wide Pages deployment boundary used by the canonical
+    # Pages workflows. Hold it through deployment AND proof so another grouped
+    # deployment cannot overwrite the site between deploy-pages and validation.
     concurrency:
-      group: abacus-pages-production
+      group: pages
       cancel-in-progress: false
 
     steps:
@@ -127,14 +130,14 @@ jobs:
           name: abacus-multiformat-publication-${{ github.sha }}
           path: abacus_render_pipeline/A9_multiformat_publication
 
-      - name: Create hosted GitHub Pages execution receipt from network bytes
+      - name: Wait for hosted Pages to converge and create execution receipt
         working-directory: abacus_render_pipeline/A9_multiformat_publication
         env:
           ABACUS_SOURCE_SHA: ${{ github.sha }}
           ABACUS_PAGES_URL: ${{ steps.deployment.outputs.page_url }}
         run: python hosted_pages_receipt.py
 
-      - name: Independently refetch hosted Pages and issue one atomic promotion receipt
+      - name: Independently reconverge hosted Pages and issue one atomic promotion receipt
         working-directory: abacus_render_pipeline/A9_multiformat_publication
         env:
           ABACUS_SOURCE_SHA: ${{ github.sha }}
