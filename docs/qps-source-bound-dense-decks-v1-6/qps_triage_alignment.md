@@ -1,121 +1,59 @@
-# QPS Triage Alignment — v1.6 Source-Bound Dense Decks
+# QPS Triage Alignment — v1.6
 
-## Purpose
+## Authority lanes
 
-Keep the v1.6 source-bound Utilities/Controls work aligned with the active QPS TRIAGE model without transferring authority between lanes.
+- **QPS source-bound Utilities/Controls:** `ENGINEERING_CURATION_NOT_DESIGN_APPROVAL`.
+- **QSVG QCELL visual-control:** `VISUAL_SEMANTIC_ONLY`; hosted/static HTML and pressure overlay remain non-blocking; distinct-SHA repeat remains evidence-governed.
+- **Generic publication #690/#691:** `GENERIC_PUBLICATION_INFRASTRUCTURE`; reuse it rather than creating a QPS exporter. ODP and Microsoft PowerPoint/Office host reflow remain separate proof boundaries.
 
-## Parallel lanes
+## Source-proof state
 
-### Lane A — QPS Visual Knowledge System v1.6
+`source_proof_execution_v1_6.yaml` (`qps-source-proof-execution/1.1`) is the active BD-001/002 receipt.
 
-Purpose:
-- source-bind dense engineering deck content;
-- preserve source slide lineage;
-- expose explicit assumptions, candidates and open engineering reconciliations;
-- provide graph/navigation targets for Utilities and Controls.
+All four source decks resolve to persistent File Library objects. `SRC-CTRL-CORE` has a pre-existing governed W176 exact locator+SHA tuple. The two Utilities sources have W162 SHA candidates plus current locators but still require an independent raw-byte re-hash join. `SRC-NAMING-CONTROL` lacks a governed digest in searched evidence.
 
-Authority:
-`ENGINEERING_CURATION_NOT_DESIGN_APPROVAL`
+Historical slide-1 visual-census renders do not satisfy BD-002, and the two Utilities slide-1 renders were explicitly duplicate observations with zero credit.
 
-### Lane B — QSVG QCELL visual-control lane
-
-Purpose:
-- maintain one canonical QCELL thermal MAIN;
-- prove deterministic SSOT → SVG → HTML rendering;
-- enforce collision/layer/thermal-semantic invariants;
-- emit typed visual receipts.
-
-Authority:
-`VISUAL_SEMANTIC_ONLY`
-
-Merged progression observed in CODEX:
-- #683 triage integration
-- #684 canonical MAIN
-- #685 visual-control automation
-- #686 deterministic renderer / receipt path
-- #688 CONTROL qualification attempt
-- #689 post-review checker repair
-
-The #689 repair closes the two concrete checker defects raised after #688 by replacing raw-regex structural discovery with structure-aware live-SVG validation and element-bound 300 K / 50 K predicates. That QSVG lane should not be reimplemented inside v1.6.
-
-## Shared control philosophy
-
-Both lanes follow the same higher-order rules:
-
-1. **SSOT before render** — render surfaces cannot silently become source authority.
-2. **Exact source identity** — SHA / slide / object provenance is required for controlled promotion.
-3. **Typed receipts / dispositions** — PASS must state what it proves and what it does not prove.
-4. **No authority leakage** — visual quality cannot grant engineering/safety/acceptance authority.
-5. **First-red execution** — repair the first concrete failing predicate before adding another architecture layer.
-6. **Additive lineage** — preserve old versions and supersede explicitly.
-
-## v1.6 QPS TRIAGE pressure surface
-
-### P0 — source integrity
-
-- source-file SHA256;
-- exact source slide renders;
-- source-vs-curated comparison;
-- no fabricated slide identities;
-- no silent deletion of technical statements.
-
-### P0 — engineering reconciliation
-
-- cooling-load basis: 1199 / ~1200 / ~1256 kW surfaces;
-- HVAC 124 kW versus ~120 kW room-heat context;
-- Gaseous-N2 total versus listed subsystem allocations;
-- LOOP 17 kW / 350 kW / ~6 h / ~2 h evidence chain;
-- PGB20 role and diversity basis;
-- HV03/HV02/HV06 mode-specific consequence.
-
-### P0 — controls classification
-
-- candidate I/O → signal class;
-- monitor / warning / permissive / hard trip / mode inhibit / occupancy constraint;
-- MIT / MIS / MCS boundary;
-- MCS-loss autonomy;
-- QINFRA S/U/W control authority.
-
-### P1 — navigation / graph burn-in
-
-After P0 source and classification work:
-- refresh WCS/HCC/QINFRA/QPS:CIS node pages;
-- bind exact Utilities/Controls slide IDs;
-- expose lineage and open validation items from graph-node inspectors.
-
-### P1 — render hardening
-
-Defer to v1.7/v1.8 rather than mixing into this pulse:
-- true YAML → SVG/HTML generator;
-- receipt-governed PDF/PPTX/ODP publication.
-
-## Decision rule
+Current first red: `RAW_SOURCE_BYTE_MATERIALIZATION`.
 
 ```text
-SOURCE FACT
-   ↓
-CURATED ENGINEERING OBJECT
-   ↓
-REVIEW / CLASSIFICATION
-   ├── KEEP
-   ├── MERGE
-   ├── REFERENCE
-   ├── SUPERSEDE
-   └── DROP_WITH_RATIONALE
-   ↓
-PROMOTED NAVIGATION / DECK SURFACE
+raw PPTX bytes
+  ↓
+BD-001 independent SHA256 repeat / digest completion
+  ↓
+BD-002 stable render + SHA256 for every bound source slide
+  ↓
+BD-003 KEEP | MERGE | REFERENCE | SUPERSEDE | DROP_WITH_RATIONALE
+  ↓
+content-loss verdict
 ```
 
-No item skips the source-fact stage merely because it already appears in a polished slide or HTML view.
+## Engineering edges
 
-## Immediate next pulse after this PR
+`utilities_reconciliation_v1_6.yaml` narrows but does not close BD-004. The arithmetic candidate remains:
 
-If source binaries can be ingested into a controlled repository/source-vault path, execute:
+```text
+1199 kW WCS HP + 57 kW PVPS = 1256 kW WCS total candidate
+1256 kW + 44 kW QRB = 1300 kW facility PCW design capacity
+```
 
-`V16-P1 = SOURCE_DIGEST + SLIDE_RENDER + SOURCE_VS_CURATED`
+Exact semantic labels still require governing load/interface evidence. HVAC 124 kW remains distinct from ~120 kW room heat; the 275 LPM gaseous-N2 residual remains explicitly unallocated; PGB20 role remains open.
 
-In parallel, engineering review can execute:
+`control_signal_classification_v1_6.yaml` is tender-level only. MIT/MIS/MCS path does not by itself determine trip severity. Discipline cause/effect, fail-safe logic and exact L2 I/O remain separate gates.
 
-`V16-P2 = UTILITIES_RECONCILIATION + CONTROL_SIGNAL_CLASSIFICATION`
+## Promotion sequence
 
-These can proceed concurrently because they consume the same source-bound manifest but close different predicates.
+```text
+SOURCE PROOF: BD-001 → BD-002 → BD-003
+UTILITIES:    BD-004 → BD-005
+CONTROLS:     BD-006 → BD-007 when L2 evidence exists
+GRAPH:        BD-008 after promoted lineage exists
+RENDER:       BD-009 v1.7
+PUBLICATION:  BD-010 bind to #690/#691
+```
+
+## Non-compensating rules
+
+A visual/navigation/publication PASS cannot grant engineering acceptance. Source evidence gaps cannot be offset by polish. A prior SHA is not an independently repeated re-hash without the exact bytes. A slide-1 render is not per-slide proof. Duplicate renders do not gain independent credit.
+
+`GLOBAL_PROJECT_DOV = WITHHELD`.

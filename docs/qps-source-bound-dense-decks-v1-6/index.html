@@ -1,68 +1,9 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>QPS v1.6 — Source-Bound Dense Utilities + Controls</title>
-<style>
-:root{--p:#7b2c8f;--b:#0f78a8;--g:#0a9a55;--o:#d97922;--r:#b52828;--bg:#eef1f4;--paper:#fff;--ink:#1c2430;--line:#cad2da}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Aptos,"Segoe UI",Arial,sans-serif}.wrap{max-width:1440px;margin:auto;padding:28px}.hero{background:var(--paper);border-top:8px solid var(--p);padding:32px 38px;box-shadow:0 10px 30px #0002}.hero h1{margin:0;color:var(--p);font-size:38px}.hero .sub{color:var(--b);font-size:20px;margin-top:7px}.status{display:inline-block;margin-top:14px;padding:7px 11px;border:1px solid var(--o);background:#fff3dd;font-family:Consolas,monospace;font-size:13px}.nav{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0}.card{background:var(--paper);border:1px solid var(--line);padding:18px;text-decoration:none;color:inherit;min-height:130px}.card h2{font:700 18px Consolas,monospace;color:var(--b);margin:0 0 8px}.card:hover{outline:3px solid #0f78a833}.section{background:var(--paper);padding:24px 30px;margin-top:18px;border:1px solid var(--line)}h2{color:var(--p)}pre{background:#111923;color:#eaf6ff;padding:18px;overflow:auto;font:13px/1.25 Consolas,monospace}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.good{border-left:6px solid var(--g)}.open{border-left:6px solid var(--o)}.gate{border-left:6px solid var(--r)}table{width:100%;border-collapse:collapse}th,td{border:1px solid var(--line);padding:8px;text-align:left;vertical-align:top}th{background:#e6eef3;color:#24536a}.foot{color:#65707a;font-size:12px;padding:18px 4px}@media(max-width:900px){.nav,.grid{grid-template-columns:1fr}}
-</style>
-</head>
-<body><div class="wrap">
-<section class="hero">
-<h1>QPS Visual Knowledge System v1.6</h1>
-<div class="sub">Source-Bound Dense Utilities + Controls · additive engineering curation surface</div>
-<div class="status">SOURCE_BOUND_PARTIAL_CONTROL · source filename + slide binding complete · source SHA/render DoV pending</div>
-</section>
-<nav class="nav">
-<a class="card good" href="utilities_dense.md"><h2>UTILITIES</h2><p>Cooling, HVAC, PCW/RCW, auxiliary utilities, LOOP, validation register.</p></a>
-<a class="card good" href="controls_dense.md"><h2>CONTROLS</h2><p>QPS:CIS, MIT/MIS/MCS, HCC modules, I/O, readiness, FAT/SAT.</p></a>
-<a class="card open" href="source_lineage.yaml"><h2>SOURCE LINEAGE</h2><p>Actual source deck names + exact slide ranges. Digests deliberately pending.</p></a>
-<a class="card open" href="triage_v1_6.yaml"><h2>QPS TRIAGE</h2><p>First-red blockers, DoD, non-compensating gates and execution order.</p></a>
-</nav>
-<section class="section"><h2>Functional breakdown</h2><pre>QPS v1.6
-│
-├── SOURCE CONTROL
-│   ├── QPS_Suporting_Sytems.pptx
-│   ├── QPS_Supporting_Systems_FULL_SLINE_parallel_canonical_v3_appendix.pptx
-│   ├── QPS_Control_Core_TOPIC - Copy.pptx
-│   └── QPS_naming_control_0304.pptx
-│
-├── UTILITIES
-│   ├── support-system scope / ownership
-│   ├── facility utility capacity
-│   ├── HCC HX1/HX2/HX3/HX4/Q5 heat flow
-│   ├── HV03 / HV06 / PAB12 / PGB20 / ES02
-│   ├── LOOP degraded support mode
-│   ├── auxiliary utilities
-│   └── validation / reconciliation register
-│
-├── CONTROLS
-│   ├── QPS:CIS hierarchy
-│   ├── WCS.HCC HP1..HP4 modularity
-│   ├── MIT / MIS / MCS signal paths
-│   ├── WCS candidate I/O
-│   ├── QINFRA S/U/W candidate I/O
-│   ├── readiness / inhibition
-│   ├── signal classification
-│   └── L1 → L2 → FAT → SAT evidence chain
-│
-├── LINEAGE / REVIEW
-│   ├── exact deck + slide mapping               DONE
-│   ├── source SHA256                            OPEN P0
-│   ├── stable source slide render               OPEN P0
-│   ├── source-vs-curated comparison             OPEN P0
-│   └── KEEP/MERGE/DROP/REFERENCE dispositions   OPEN P0
-│
-└── NEXT RENDER CONTROL
-    ├── graph-node refresh                       P1
-    ├── YAML → SVG/HTML generator                v1.7
-    └── PDF/PPTX/ODP receipts                    v1.8</pre></section>
-<section class="grid">
-<div class="section good"><h2>What v1.6 has actually closed</h2><ul><li>Source placeholders replaced with real source filenames.</li><li>Core Utilities and Controls objects bound to exact source slide ranges.</li><li>Dense source-derived engineering content promoted into separate topic decks.</li><li>WIP/candidate/inconsistent source states preserved rather than silently reconciled.</li><li>Controls/Utilities ownership boundary made explicit.</li></ul></div>
-<div class="section gate"><h2>Non-compensating gates</h2><ul><li>No source digest → no lineage CONTROL claim.</li><li>No source render → no visual DoV claim.</li><li>No cause/effect classification → candidate I/O cannot become final control authority.</li><li>No transient/load evidence → LOOP timing/capacity stays a working scenario.</li><li>Polished HTML is not engineering acceptance evidence.</li></ul></div>
-</section>
-<section class="section"><h2>First-red queue</h2><table><tr><th>Priority</th><th>Blocker</th><th>Next proof</th></tr><tr><td>P0</td><td>Source bytes not yet controlled by digest</td><td>SHA256 + controlled source location</td></tr><tr><td>P0</td><td>Bound source slides lack stable source-image render</td><td>per-slide render + hash</td></tr><tr><td>P0</td><td>1199 / ~1200 / ~1256 kW cooling surfaces differ</td><td>load basis + interface list reconciliation</td></tr><tr><td>P0</td><td>LOOP 17 kW / 350 kW / 6 h / ~2 h chain is source-working material</td><td>transient analysis + electrical/cooling evidence</td></tr><tr><td>P0</td><td>Support-system statuses not fully classified</td><td>mode-conditioned cause/effect matrix</td></tr><tr><td>P1</td><td>Graph still points to prior binding targets</td><td>refresh WCS/HCC/QINFRA/QPS:CIS nodes to v1.6</td></tr></table></section>
-<section class="section"><h2>QSVG / QPS TRIAGE relation</h2><p>The QCELL QSVG lane and this deck lane share source/receipt/non-regression governance but retain separate authority. QSVG proves visual semantic control; v1.6 curates source-bound engineering content. See <a href="qps_triage_alignment.md">QPS triage alignment</a>.</p></section>
-<div class="foot">QPS v1.6 · additive/non-overwriting · source-bound navigation and curation · not engineering approval</div>
-</div></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QPS v1.6 source proof</title><style>body{font-family:Aptos,Segoe UI,Arial;background:#eef1f4;color:#1c2430;margin:0}.w{max-width:1200px;margin:auto;padding:28px}.p{background:#fff;padding:28px;margin-bottom:16px;border:1px solid #cad2da}h1,h2{color:#7b2c8f}.s{font:13px Consolas,monospace;background:#fff3dd;border:1px solid #d97922;padding:8px}.g{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}a{color:#0f78a8}.x{border-left:6px solid #b52828}.o{border-left:6px solid #d97922}.ok{border-left:6px solid #0a9a55}pre{background:#111923;color:#eaf6ff;padding:16px;overflow:auto}@media(max-width:800px){.g{grid-template-columns:1fr}}</style></head><body><div class="w"><section class="p"><h1>QPS v1.6 Source Proof</h1><div class="s">SOURCE_BOUND_PARTIAL_CONTROL · RAW_SOURCE_BYTE_MATERIALIZATION_FIRST_RED · GLOBAL_PROJECT_DOV=WITHHELD</div></section><section class="g"><div class="p ok"><h2>Curated</h2><p><a href="utilities_dense.md">Utilities</a> · <a href="controls_dense.md">Controls</a></p></div><div class="p o"><h2>Evidence</h2><p><a href="source_lineage.yaml">Lineage</a> · <a href="source_proof_execution_v1_6.yaml">Source proof</a> · <a href="triage_v1_6.yaml">Triage</a></p></div><div class="p o"><h2>Engineering</h2><p><a href="utilities_reconciliation_v1_6.yaml">Utilities reconciliation</a> · <a href="control_signal_classification_v1_6.yaml">Signal classification</a></p></div></section><section class="p x"><h2>First red</h2><pre>4/4 exact File Library source objects located
+  ↓
+RAW PPTX BYTE MATERIALIZATION
+  ↓
+BD-001 SHA256 repeat / naming digest
+  ↓
+BD-002 stable per-bound-slide renders + hashes
+  ↓
+BD-003 slide-complete disposition/content-loss ledger</pre><p>Historical slide-1 census renders do not satisfy BD-002. The two Utilities slide-1 renders were duplicate observations with zero credit.</p></section><section class="p"><h2>Current BD state</h2><p><b>BD-001</b> PARTIAL_IDENTITY_BINDING · <b>BD-002</b> BLOCKED_ON_RAW_BYTE_MATERIALIZATION · <b>BD-003</b> PREDICATE_BLOCKED_BD002_FALSE · <b>BD-004</b> PARTIAL_RECONCILIATION · <b>BD-005</b> OPEN · <b>BD-006</b> PARTIAL_SUBSTANTIVE_CLASSIFICATION · <b>BD-008</b> OPEN · <b>BD-010</b> REFRAME_BIND_EXISTING_CARRIER.</p></section><section class="p"><h2>Authority boundary</h2><p>QPS reuses #690/#691 for governed publication. ODP and Microsoft Office host reflow remain separate proof boundaries. No visual, document or publication success grants engineering/safety/acceptance credit.</p></section></div></body></html>

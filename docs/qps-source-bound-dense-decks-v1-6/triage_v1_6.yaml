@@ -1,164 +1,37 @@
-schema: qps-visual-system-triage/1.3
-version: '1.6'
-state: SOURCE_DOV_COMPLETE_LOOP_HVAC_BOUNDARY_PARTIAL_CONTROLS_PARTIAL
+schema: qps-visual-system-triage/1.2
+version: 1.6.2
+state: SOURCE_BOUND_PARTIAL_CONTROL
 authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
-
-completed:
-  - source deck filenames bound
-  - exact source slide ranges bound for core Utilities content
-  - exact source slide ranges bound for core Controls content
-  - dense Utilities canonical candidate written
-  - dense Controls canonical candidate written
-  - cross-domain ownership boundary established
-  - source inconsistencies preserved as review items
-  - V16-BD-001 exact source PPTX bytes bound to controlled Library file/version IDs and SHA256
-  - V16-BD-002 stable PNG render plus SHA256 recorded for every v1.6-bound source slide
-  - EXTRACTED-TEXT-BINDING native source text extracted for all 63 bound slides and bound by per-slide SHA256
-  - V16-BD-003 all 63 bound source slides reviewed against curated objects with explicit KEEP/MERGE/REFERENCE/SUPERSEDE disposition and no silent drop
-  - V16-BD-004 1199/~1200/~1256 kW PCW scopes reconciled without changing underlying source values
-  - V16-BD-005 pressure loading split WCS room LOOP from Line-S cryogenic return transient and bound the remaining first-reds
-  - V16-BD-005 HVAC pressure pulse bound historical FSD575 air-side heat paths and diagnostic CCB geometry while leaving LOOP airflow/thermal mass open
-
-closed_first_red:
-  - id: V16-BD-001
-    topic: source_digests
-    priority: P0
-    state: CLOSED
-    closure: exact source PPTX bytes bound to controlled ChatGPT Library file/version IDs and SHA256 recorded
-    evidence: source_proof_receipt.json
-  - id: V16-BD-002
-    topic: source_slide_renders
-    priority: P0
-    state: CLOSED
-    closure: stable PNG render and SHA256 recorded for all 63 bound source slides
-    evidence: source_render_manifest.yaml
-  - id: V16-BD-003
-    topic: source_vs_curated_visual_dov
-    priority: P0
-    state: CLOSED_CONTENT_TRACE_DOV
-    closure: all 63 bound source renders plus native extracted text were compared with their curated engineering object/reference target; all non-carried content has explicit disposition and silent_drop_count is zero
-    evidence: source_vs_curated_dov_v1_6.yaml
-    non_claim: this is curation/content-trace DoV, not pixel parity, Office host-render parity, engineering correctness, design approval or acceptance
-  - id: V16-BD-004
-    topic: utilities_value_reconciliation
-    priority: P0
-    state: CLOSED_SCOPE_RECONCILED
-    closure: 1199 kW = WCS HP only; ~1200 kW = rounded HP/HCC working representation; 1256 kW = 1199 HP + 57 PVPS; 1300 kW = 1256 WCS subtotal + 44 QRB
-    evidence: engineering_reconciliation_v1_6.yaml
-    non_claim: underlying NA.AA_BMA003 workbook was not independently ingested; coolant sizing and facility approval remain outside this closure
-
+global_project_dov: WITHHELD
+source_proof_receipt: source_proof_execution_v1_6.yaml
+source_proof_receipt_schema: qps-source-proof-execution/1.1
+first_red: RAW_SOURCE_BYTE_MATERIALIZATION
 open_first_red:
-  - id: V16-BD-006
-    topic: control_signal_classification
-    priority: P0
-    state: PARTIAL_EVIDENCE_BOUND
-    closure: map every tender candidate signal group to a controlled class and disposition conflicts with discipline evidence
-    progress: source-explicit monitoring, warning, permissive and hard-trip groups classified; HVAC and selected utility-loss consequences remain conflicted/open
-    evidence: engineering_reconciliation_v1_6.yaml
-  - id: V16-BD-005
-    topic: loop_evidence
-    priority: P0
-    state: HVAC_HEAT_PATH_AND_GEOMETRY_PARTIAL_BOUNDARY_AIRFLOW_OPEN
-    closure: validate the exact WCS one-HP LOOP state and derive the claimed temporal envelope with a traceable first-law transient
-    progress:
-      - exact source scenario/value binding completed
-      - WCS room LOOP separated from D2.1/Line-S cryogenic-return transient; cross-domain analogy explicitly forbidden
-      - bidder approximately 110 g/s emergency-power claim bound as bidder evidence only; exact OEM/VFD electrical point remains open
-      - 350 kW emergency PCW implies diagnostic approximately 23-31 m3/h evidence target; exact PAB12 emergency hydraulics remain open
-      - historical FSD575 SFC source gives 5000 m3/h package cooling air, 4200 m3/h VFD cooling air, 17.4 kW cooling-air heat, 14.2 kW ambient heat and 5.7 kW VFD heat
-      - approximately 17 kW LOOP value now has strong numerical lineage to the 17.4 kW package cooling-air path, but total room heat still depends on ducting and VFD/ambient path treatment
-      - CCB building navigation drawings give diagnostic main-room area approximately 222 m2 and approximately 8.5 m section-height reference; gross rectangular volume approximately 1887 m3 is diagnostic only
-      - air-only sanity screen shows approximately 17 kW would heat that gross air inventory by approximately 27 K/h with no ventilation or solid thermal mass, proving room-air inventory alone cannot explain 2 h / 6 h claims
-      - normal HV03 source capacity evolved from approximately 79-90 kW pre-study to 114/124 kW WCS interface surfaces; no quantitative LOOP airflow or degraded heat-removal capacity was found
-      - approximately 2 h onset remains physically undefined
-      - approximately 6 h stabilization remains unvalidated because effective room/equipment thermal inventory and stabilization criterion are missing
-    evidence:
-      - loop_evidence_v1_6.yaml
-      - loop_pressure_loading_v1_6.yaml
-      - loop_hvac_boundary_v1_6.yaml
-  - id: V16-BD-007
-    topic: detailed_io
-    priority: P1
-    state: OPEN
-    closure: exact point counts and marshalling frozen at L2
-  - id: V16-BD-008
-    topic: graph_binding_refresh
-    priority: P1
-    state: OPEN
-    closure: graph nodes link to promoted v1.6 objects and corrected lineage records
-  - id: V16-BD-009
-    topic: deterministic_render
-    priority: P1
-    state: DEFER_TO_V1_7
-    closure: YAML drives HTML/SVG without hand-maintained layout truth
-  - id: V16-BD-010
-    topic: governed_exports
-    priority: P1
-    state: DEFER_TO_V1_8
-    closure: bind source-controlled QPS semantic deck objects into existing receipt-governed publication carrier from #690/#691; ODP remains separately unproven
-
-lineage_repairs_from_bd003:
-  - SRC-UTIL-CORE slide 25 rebound from stale Controls grouping to NAMING_SBS reference
-  - SRC-CTRL-CORE slide 8 rebound from Controls hierarchy to Utilities cooling/HVAC reference
-  - SRC-CTRL-CORE slide 24 rebound from CTRL-04 tender I/O to CTRL-06/CTRL-07 readiness/inhibition
-  - SRC-CTRL-CORE slides 22-23 rebound from CTRL-05 interface architecture to CTRL-06/CTRL-07 readiness/inhibition
-  - SRC-NAMING-CONTROL slides 21-24 rebound from Controls coverage to NAMING_SBS documentation/tagging reference
-
-adjacent_utilities_open:
-  - HVAC 124 kW versus ~120 kW room heat and recovered 134 kW total-HVAC source drift; historical pre-study values approximately 79-90 kW
-  - gaseous-nitrogen 375 LPM total versus only 50 + 50 LPM listed allocations
-  - PGB20 7 C role/diversity/requirement status
-  - exact HX allocation, coolant state points and sizing basis
-
-bd005_pressure_first_red:
-  - obtain current OEM/VFD electrical input at bidder-claimed approximately 110 g/s LOOP state and bind ES02 auxiliary split
-  - bind emergency PAB12 flow / pressure / temperatures / pump-fan power / valve state against diagnostic approximately 23-31 m3/h target
-  - freeze LOOP package/VFD ducting state and treatment of 17.4 kW cooling-air, 14.2 kW ambient and 5.7 kW VFD heat paths
-  - acquire SCK CEN/54107968 NFS/CSS analysis for quantitative HV03 normal/LOOP airflow and degraded heat-removal state
-  - acquire SCK CEN/55426722 approved room details and SCK CEN/53746611 compressor-room layout to freeze geometry/duct routing
-  - bind effective building/equipment thermal mass, not just room-air volume
-  - define the physical meaning and limit behind OR LOSS onset approximately 2 h
-  - define measurable stabilization criterion behind approximately 6 h
-  - execute and independently review first-law WCS thermal transient
-
-non_compensating_rules:
-  - a visual or navigation PASS cannot grant engineering acceptance
-  - source evidence gaps cannot be offset by layout quality
-  - safety/interlock classification requires discipline evidence
-  - utilities arithmetic reconciliation cannot grant facility design approval
-  - candidate I/O remains candidate until L2/detail control design freezes it
-  - source/content DoV does not validate OPEN/WIP engineering statements
-  - PNG rendering does not prove Microsoft PowerPoint or Office365 host-render parity
-  - LOOP source repetition does not replace transient/load validation
-  - the D2.1/Line-S cryogenic transient cannot close the WCS-room LOOP transient by analogy
-  - historical FSD575 data identifies heat-path provenance but is not current accepted design
-  - package cooling-air flow is not HV03 room airflow
-  - normal 114/124 kW HV03 interface capacity is not LOOP/degraded heat-removal capacity
-  - diagnostic building geometry and air-only heat-up are not HVAC/safety acceptance calculations
-  - nominal interface capacities do not prove the exact degraded operating point has electrical or hydraulic margin
-  - Global/project DoV remains WITHHELD
-
+  - {id: V16-BD-001, topic: source_digests, priority: P0, state: PARTIAL_IDENTITY_BINDING, artifact: source_proof_execution_v1_6.yaml}
+  - {id: V16-BD-002, topic: source_slide_renders, priority: P0, state: BLOCKED_ON_RAW_BYTE_MATERIALIZATION, artifact: source_proof_execution_v1_6.yaml}
+  - {id: V16-BD-003, topic: source_vs_curated_visual_dov, priority: P0, state: PREDICATE_BLOCKED_BD002_FALSE}
+  - {id: V16-BD-004, topic: utilities_value_reconciliation, priority: P0, state: PARTIAL_RECONCILIATION, artifact: utilities_reconciliation_v1_6.yaml}
+  - {id: V16-BD-005, topic: loop_evidence, priority: P0, state: OPEN}
+  - {id: V16-BD-006, topic: control_signal_classification, priority: P0, state: PARTIAL_SUBSTANTIVE_CLASSIFICATION, artifact: control_signal_classification_v1_6.yaml}
+  - {id: V16-BD-007, topic: detailed_io, priority: P1, state: OPEN_L2_GATED}
+  - {id: V16-BD-008, topic: graph_binding_refresh, priority: P1, state: OPEN}
+  - {id: V16-BD-009, topic: deterministic_render, priority: P1, state: DEFER_TO_V1_7}
+  - {id: V16-BD-010, topic: governed_exports, priority: P1, state: REFRAME_BIND_EXISTING_CARRIER}
 next_execution_order:
-  - V16-BD-005 acquire/freeze HV03 degraded airflow + approved CCB geometry/ducting + exact one-HP electrical/PAB12 state, then execute WCS first-law transient
-  - V16-BD-006 close remaining signal-class conflicts only when discipline evidence supports it; do not infer consequence from BD-005 working assumptions
-  - V16-BD-008 refresh graph bindings to corrected v1.6 lineage after P0 engineering evidence is dispositioned
-
-source_proof_receipt:
-  path: source_proof_receipt.json
-  render_manifest: source_render_manifest.yaml
-  text_manifest: source_text_manifest.yaml
-  dov_ledger: source_vs_curated_dov_v1_6.yaml
-  render_bundle_sha256: f9a20d08d6c85c0bbcab58bfe57452957b5a5c1268eb30213c1fd92423a50132
-  text_bundle_sha256: 081353101bf82a060c6a5f5fab573a11b246d0228aa251cac2696f2defb7eb52
-  authority: SOURCE_AND_CURATION_TRACE_ONLY_NOT_ENGINEERING_ACCEPTANCE
-
-engineering_reconciliation:
-  path: engineering_reconciliation_v1_6.yaml
-  authority: ENGINEERING_CURATION_NOT_DESIGN_APPROVAL
-
-loop_evidence:
-  path: loop_evidence_v1_6.yaml
-  pressure_loading: loop_pressure_loading_v1_6.yaml
-  hvac_boundary: loop_hvac_boundary_v1_6.yaml
-  state: HVAC_HEAT_PATH_AND_GEOMETRY_PARTIAL_BOUNDARY_AIRFLOW_OPEN
-  authority: SOURCE_SCENARIO_BINDING_PLUS_PRESSURE_TEST_NOT_TRANSIENT_VALIDATION
+  - materialize exact four File Library PPTX objects as raw bytes without conversion
+  - independently SHA256 all four and establish missing SRC-NAMING-CONTROL digest
+  - render every bound source slide at fixed settings and hash each render
+  - execute BD-003 slide-complete disposition/content-loss ledger
+  - continue BD-004 and BD-006 in parallel only where evidence is independent
+  - bind BD-005 LOOP evidence
+  - refresh BD-008 graph bindings
+  - bind QPS objects into existing #690/#691 publication carrier
+non_compensating_rules:
+  - no source digest is invented
+  - a prior W162/W176 SHA is not an independently repeated rehash without materialized exact bytes
+  - a slide-1 census render cannot satisfy BD-002
+  - duplicate render evidence earns no independent proof credit
+  - visual/navigation/publication PASS cannot grant engineering acceptance
+  - safety/interlock classification requires discipline evidence
+  - candidate I/O remains candidate until L2/detail control design freezes it
+  - ODP and Microsoft Office host reflow remain separate proof boundaries
