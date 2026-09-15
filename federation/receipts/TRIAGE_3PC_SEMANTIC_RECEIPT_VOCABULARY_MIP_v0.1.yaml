@@ -1,9 +1,9 @@
 schema_version: "qps-triage-3pc-mip-receipt/1.0"
-as_of: "2026-09-15T08:57:00+02:00"
+as_of: "2026-09-15T09:07:00+02:00"
 repository: GBOGEB/CODEX
 method: 3PC_PLUS_MIP
 wave: DEVELOPMENT_TO_FEDERATION_TO_QPS_TRIAGE
-status: EXACT_HEAD_VALIDATION_PENDING
+status: EXACT_HEAD_REVALIDATION_PENDING
 formal_credit_delta: 0
 authority_transfer: false
 
@@ -54,6 +54,25 @@ mip:
     Preserve the exact failed run/job lineage, formal_credit_delta zero, and the
     existing Pages source-mode guard. Do not add another publication or temporal
     policy architecture.
+
+pr_745_validation:
+  first_candidate_head: 85ff1b3fb641b653d9533ef0bd093d666602d361
+  passes:
+    abacus_semantic_runtime_run: 34939696137
+    abacus_multiformat_publication_run: 34939696080
+    abacus_snapshot_publication_run: 34939695984
+    validate_federation_run: 34939696131
+  observed_first_red:
+    workflow: W003 Governance Gate
+    run: 34939695982
+    job: 104285299218
+    step: Run governance parser on PR metadata
+    error: "PR-ID: 'pending GitHub assignment' does not match '^PR-[0-9]{3}$'"
+  bounded_repair:
+    pr_id: PR-745
+    surface: pull_request_body
+    semantic_or_publication_logic_changed: false
+    receipt_updated_to_force_exact_head_revalidation: true
 
 non_compensating_boundaries:
   - DEBT-007 remains PARTIAL until the full hosted Pages closure predicate passes.
