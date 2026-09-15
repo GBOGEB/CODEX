@@ -9,6 +9,11 @@ on:
       - 'contract_governance/**'
       - 'PIPELINE/GLOSSARY_EXTENSIONS.yaml'
       - 'requirements/contract-governance.txt'
+      - 'scripts/check_pages_deploy_concurrency.py'
+      - 'tests/test_pages_deploy_concurrency.py'
+      - '.github/workflows/pages_deploy_runtime.yml'
+      - '.github/workflows/deploy_pipeline.yml'
+      - '.github/workflows/pages.yml'
       - '.github/workflows/abacus-multiformat-publication.yml'
   push:
     branches:
@@ -20,6 +25,11 @@ on:
       - 'contract_governance/**'
       - 'PIPELINE/GLOSSARY_EXTENSIONS.yaml'
       - 'requirements/contract-governance.txt'
+      - 'scripts/check_pages_deploy_concurrency.py'
+      - 'tests/test_pages_deploy_concurrency.py'
+      - '.github/workflows/pages_deploy_runtime.yml'
+      - '.github/workflows/deploy_pipeline.yml'
+      - '.github/workflows/pages.yml'
       - '.github/workflows/abacus-multiformat-publication.yml'
 
 jobs:
@@ -45,6 +55,11 @@ jobs:
 
       - name: Validate semantic vocabulary before rendering
         run: python semantic_substrate/validators/validate_semantic_substrate.py
+
+      - name: Validate repository-wide Pages deployment ownership
+        run: |
+          python scripts/check_pages_deploy_concurrency.py
+          pytest -q tests/test_pages_deploy_concurrency.py
 
       - name: Prove production PPTX and PDF builder regressions
         run: |

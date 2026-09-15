@@ -1,0 +1,103 @@
+schema: abacus-session-progress-ledger/1.0
+date: '2026-09-15'
+repository: GBOGEB/CODEX
+canonical_handover: abacus_render_pipeline/A10_snapshot_publication/handover/SESSION_HANDOVER_2026-09-15.md
+canonical_drop_in: abacus_render_pipeline/A10_snapshot_publication/handover/DROP_IN_CONTINUATION_2026-09-15.md
+mip_receipt: abacus_render_pipeline/A10_snapshot_publication/handover/MIP_RECEIPT_2026-09-15.yaml
+entries:
+  - tuple_id: SESSION-TUPLE-001
+    user_intent: >-
+      Perform or close the A10/A9.1 next frontier by executing a real snapshot renderer,
+      then perform a full 3PR + MIP and produce a lossless restart handover.
+    inherited_state:
+      - PR #698 merged A10 snapshot publication into main
+      - exact-main ABACUS Snapshot Publication run 34869064881 passed
+      - DEBT-008 snapshot_receipt was closed
+    later_state_refresh:
+      - PR #701 merged A9.3 hosted-Pages stability hardening
+      - DEBT-007 had been reopened to PARTIAL by a later exact-main burn-in regression
+      - TUP-0012 was active_stability_gate while A10 snapshot authority remained intact
+    3PR:
+      refresh:
+        - read current main at transaction start: 19c8d094587c89bd5a24d7f0b34a38da39bf46ee
+        - read current A10.1 governance and tuple ledgers
+        - preserved DEBT-008 CLOSED and identified DEBT-007 PARTIAL
+      probe:
+        - inspected A9.3 exact-main run 34870534075
+        - candidate generation/parity/replay passed
+        - deploy-pages reported success
+        - hosted proof failed after 24 attempts on stale SHA 39a754786ab9c2108d84d68fb29194901f5000032aea6d31f9326bf497acdefc
+        - expected governed SHA was 6737e566b54b907cf54d53dd91160ccb4d09aba3e34fba2035a1bae0eb90214c
+        - semantic coverage stayed 0.0
+        - censused four deploy-pages workflows and found pages_deploy_runtime.yml outside shared group pages
+      rank:
+        first_red: PAGES-OWNERSHIP-001
+        second_red: A9-HOSTED-DOV-001
+        excluded_red: A10 snapshot renderer
+    MIP:
+      modernize:
+        - add shared pages concurrency to pages_deploy_runtime.yml
+      innovate:
+        - add repository Pages deployment concurrency auditor
+        - add regression test
+        - execute audit in A9 candidate preflight
+      perpetuate:
+        - add INV-011
+        - append TUP-0014
+        - sharpen DEBT-007 without reopening DEBT-008
+        - create MIP receipt, full handover and drop-in continuation
+    transaction:
+      branch: handover/a10-a9-3pr-mip-20260915
+      pr: 729
+      status_at_entry: DRAFT_PR_HEAD_VALIDATION_PENDING
+    formal_credit:
+      A10_snapshot_dov_delta: 0
+      A9_hosted_dov_delta: 0
+      debt_007_state: PARTIAL
+      debt_008_state: CLOSED
+    next_gate: >-
+      Exact PR #729 head must pass the Pages ownership audit/test, A9 candidate lane,
+      semantic replay/closed-loop and governance admission. After merge, only an exact-main
+      A9.3 hosted run with two consecutive governed matches, independent repeated convergence
+      and atomic PROMOTE may re-close DEBT-007.
+
+  - tuple_id: SESSION-TUPLE-002
+    parent: SESSION-TUPLE-001
+    theme: PR729 exact-head admission refinement
+    status: CANDIDATE_HEAD_VALIDATION
+    evidence_driven_repairs:
+      - issue: governance metadata rejected TOPOLOGY IMPACT value CONTROLLED
+        disposition: changed PR metadata to schema-valid TOPOLOGY IMPACT YES
+        proof: W003 Governance Gate subsequently passed
+      - issue: repository semantic vocabulary gate found five inherited semantic_* terms already present on transaction-start base main
+        inherited_terms:
+          - semantic_assessment
+          - semantic_correction
+          - semantic_coverage
+          - semantic_overlay_relations
+          - semantic_relation
+        disposition: bound definitions in PIPELINE/GLOSSARY_EXTENSIONS.yaml; no child engineering authority granted
+        proof: semantic vocabulary validation subsequently passed
+      - issue: closed-loop regression test hard-coded TUP-0013 tuple_count 13
+        disposition: advanced test to TUP-0014 tuple_count 14, nodes 14, edges 13
+        proof: runtime reconstruction/replay had already reported latest_tuple TUP-0014, tuple_count 14, invariant_count 11, completeness 1.0
+      - issue: Pages ownership scanner used undeclared PyYAML dependency
+        disposition: switched to governed ruamel.yaml dependency already pinned in contract-governance requirements
+      - issue: scanner parsed every workflow and was blocked by unrelated malformed legacy non-Pages workflows
+        disposition: prefilter raw workflow text for actions/deploy-pages@v4, then parse only Pages candidates; Pages-deployer parse errors remain fail-closed
+        regression_tests:
+          - unrelated malformed non-Pages workflow is ignored by this specific audit
+          - malformed Pages deployer fails closed
+          - Pages deployer without shared pages boundary is rejected
+          - live repository Pages deployer census must pass
+    source_change_stop_rule: >-
+      Make no further source changes after this entry unless the exact candidate-head CI exposes
+      a new concrete red in a required gate. Do not scope-creep into unrelated malformed workflows.
+    required_pr_head_gates:
+      - W003 Governance Gate PASS
+      - ABACUS Semantic Runtime PASS through TUP-0014
+      - ABACUS Multi-Format Publication PASS including Pages ownership audit and PR-event WITHHOLD
+      - A10 snapshot lineage remains non-regressed
+    post_merge_gate: >-
+      Exact-main A9.3 must prove candidate PASS, deploy PASS, two consecutive exact governed
+      hosted matches, independent repeated convergence and atomic PROMOTE before DEBT-007 may close.
