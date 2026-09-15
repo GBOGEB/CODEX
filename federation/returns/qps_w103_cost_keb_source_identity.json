@@ -1,0 +1,32 @@
+{
+  "schema_version": "0.1",
+  "document_id": "QPS_W103_COST_KEB_SOURCE_IDENTITY",
+  "wave": "W103",
+  "role": "KEB_SOURCE_PROVENANCE",
+  "status": "WAITING_AUTHORITATIVE_BOM_REBIND",
+  "child_stack": [828, 829, 830],
+  "first_red": "C1_SOURCE_IDENTITY",
+  "intent": "Prove the authoritative current WHM+WPS BOM/MTO identity before any cost reconciliation or estimate promotion.",
+  "required_identity": [
+    "source_file_or_document_id",
+    "source_revision_or_version",
+    "source_sha256",
+    "source_scope_WHMincluding_replicates",
+    "source_scope_WPS_S_U_W",
+    "row_or_item_identity_rule",
+    "supersession_status"
+  ],
+  "evidence_classes": ["VERIFIED", "INHERITED", "STALE_CANDIDATE", "SUPERSEDED", "UNKNOWN"],
+  "guards": [
+    "new upload timestamp is not source freshness proof",
+    "historical BOM cannot silently become current BOM",
+    "cost estimate cannot promote before authoritative source identity PASS",
+    "same item represented in WHM and WPS requires explicit scope ownership",
+    "source identity PASS does not itself award engineering or negotiation credit"
+  ],
+  "PASS": "one authoritative current WHM+WPS BOM/MTO source set is uniquely identified and SHA-bound",
+  "DEFER": "authoritative source identity is missing, ambiguous, stale, or supersession unresolved",
+  "next_gate_on_pass": "C2_ROW_BY_ROW_RECONCILIATION",
+  "engineering_credit_delta": 0,
+  "negotiation_credit_delta": 0
+}

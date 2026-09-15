@@ -1,0 +1,30 @@
+name: CODEX Portability Probe
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    paths:
+      - 'scripts/release/codex_portability_probe.py'
+      - '.github/workflows/codex-portability-probe.yml'
+      - 'codex/**'
+      - 'tools/validators/**'
+      - 'requirements.txt'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+      - run: python scripts/release/codex_portability_probe.py
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-portability-receipt
+          path: release/CODEX_PORTABILITY_RECEIPT.json
+          if-no-files-found: error

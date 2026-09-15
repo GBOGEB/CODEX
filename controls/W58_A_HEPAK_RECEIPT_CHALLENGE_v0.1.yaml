@@ -1,0 +1,17 @@
+schema: codex-w58-a-hepak-challenge/v1
+child_repo: GBOGEB/cryoplant-project
+child_pr: 720
+child_head_sha: 8de4a3cde52968707a4112adca0e092d59ce9185
+review_scope:
+  - no_lowT_backend_substitution
+  - missing_numeric_receipt_remains_fail_closed
+  - B_line_LOW_HIGH_not_invented
+  - historic_DN150_not_promoted_to_current_geometry
+  - same_receipt_digest_required_across_consumers
+expected_child_state:
+  HEPAK_numeric_receipt: FAIL_BLOCKING_MUST_EXECUTE
+  B_line_three_case: FAIL_BLOCKED_SOURCE_AND_HEPAK_INPUTS
+  measured_PCA: FAIL_BLOCKED_NO_GOVERNED_SPATIAL_ROWS
+review_disposition: REVIEW_PENDING_CI
+formal_engineering_delta: 0
+strict_numerical_delta: 0

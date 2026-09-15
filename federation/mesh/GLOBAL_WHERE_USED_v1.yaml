@@ -1,0 +1,81 @@
+schema: gbogeb-global-where-used/1.0
+wave: W111
+status: CANDIDATE_GLOBAL_USAGE_CROSSWALK
+purpose: Map globally registered terms, nodes and SSOTs to consumers and at least one concrete use case.
+rules:
+  - every promoted record requires first_use_case
+  - local authority never transfers through indexing
+  - globally indexed does not mean receipt-bound or accepted
+node_usage:
+  repo.cryoplant:
+    ssot: [controls/QPS_GLOBAL_GLOSSARY_v1.yaml, controls/QPS_CANONICAL_LINEAGE_RESOLVER_v1.json, controls/QPS_TRIAGE_CHILD_CONTRACT_v1.json]
+    used_by: [repo.codex, repo.abacus, repo.docx_rtm, repo.cryo_workspace, repo.leak_dashboard, repo.document_org, repo.private_docs]
+    first_use_case: final child ACCEPT/REJECT/DEFER of source-bound QPS evidence
+  repo.codex:
+    ssot: [ssot/manifest.yaml, PIPELINE/GLOSSARY.yaml, federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml]
+    used_by: [repo.abacus, repo.cryoplant, repo.pipeline_hub]
+    first_use_case: validate and bind a semantic/provenance receipt before DOW consumption
+  repo.abacus:
+    ssot: [ssot_artifacts_catalog.md, DMAIC_V3/core/ssot_resolver.py]
+    used_by: [repo.cryoplant]
+    first_use_case: challenge/consume a KEB receipt and return scoped disposition
+  repo.pipeline_hub:
+    ssot: [level1/ssot.json]
+    used_by: [repo.docx_rtm, repo.codespaces_jyperter, repo.codespaces_jupyter, repo.cryo_workspace, repo.leak_dashboard, repo.document_org, repo.private_docs]
+    first_use_case: route a typed job to the correct worker and correlate its receipt
+  repo.docx_rtm:
+    ssot: [level1/ssot.json, docs/CANONICAL_SSOT.md]
+    used_by: [repo.codex, repo.cryoplant]
+    first_use_case: extract DOCX/PDF source into RTM mappings with source/output digests
+  repo.codespaces_jyperter:
+    ssot: [level1/ssot.json]
+    used_by: [repo.codex, repo.abacus, repo.cryoplant]
+    first_use_case: execute a deterministic notebook/CLI property probe with exact-SHA digest
+  repo.codespaces_jupyter:
+    ssot: [triage/W69_MIP_JUPYTER_RUNTIME.yaml]
+    used_by: [repo.codex, repo.abacus, repo.cryoplant]
+    first_use_case: execute >0 notebook cells twice and expose reproducible output receipt
+  repo.cryo_workspace:
+    ssot: [level1/ssot.json, config/engineering_data.yaml, config/knowledge_topology.json]
+    used_by: [repo.codex, repo.cryoplant]
+    first_use_case: independent cryogenic/accelerator physics validation linked to RTM evidence
+  repo.leak_dashboard:
+    ssot: [level1/ssot.json, data/config.yaml]
+    used_by: [repo.codex, repo.cryoplant]
+    first_use_case: independently reproduce helium leak-rate evidence
+  repo.document_org:
+    ssot: [level1/ssot.json]
+    used_by: [repo.codex, repo.cryoplant]
+    first_use_case: deterministic outward artifact/property build and index
+  repo.private_docs:
+    ssot: [level1/ssot.json]
+    used_by: [repo.codex, repo.cryoplant]
+    first_use_case: confirm private byte identity while federating metadata/hash/status only
+term_usage:
+  HIVE:
+    first_used_by: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml
+    consumers: [GLOBAL_YELLOWPAGES, repo.port]
+  MESH:
+    first_used_by: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml
+    consumers: [GLOBAL_YELLOWPAGES, routing, triage]
+  LOCAL_SSOT:
+    first_used_by: level1/ssot.json federation pattern
+    consumers: [GLOBAL_YELLOWPAGES, CODEX, ABACUS]
+  KEB:
+    first_used_by: GBOGEB/CODEX
+    consumers: [GBOGEB/ABACUS, GBOGEB/cryoplant-project]
+  DOW:
+    first_used_by: GBOGEB/ABACUS
+    consumers: [GBOGEB/cryoplant-project]
+  MIP:
+    first_used_by: cross-repo Level-1 modernization waves
+    consumers: [repo.pipeline_hub, repo.docx_rtm, repo.codespaces_jyperter, repo.cryo_workspace, repo.leak_dashboard, repo.document_org, repo.private_docs]
+  RECEIPT_BOUND:
+    first_used_by: exact-SHA runtime/evidence gates
+    consumers: [CODEX, ABACUS, cryoplant child re-entry]
+  FIRST_RED:
+    first_used_by: recursive repair workflows
+    consumers: [MIP, DMAIC, CI triage]
+  WHERE_USED:
+    first_used_by: federation/mesh/GLOBAL_WHERE_USED_v1.yaml
+    consumers: [GLOBAL_YELLOWPAGES, glossary QA]

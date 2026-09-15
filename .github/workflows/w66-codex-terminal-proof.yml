@@ -1,0 +1,77 @@
+name: W66 CODEX Terminal Proof
+
+on:
+  pull_request:
+    paths:
+      - 'triage/W66_CODEX_TERMINAL_EXECUTION_BURNDOWN.yaml'
+      - 'semantic_substrate/**'
+      - '07_ops/qps_roundtrip/**'
+      - '.github/workflows/w66-codex-terminal-proof.yml'
+      - '.github/workflows/codex_semantic_runtime_ci.yml'
+      - '.github/workflows/qps-roundtrip-zero-delta.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  terminal-proof-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify executable gate assets
+        run: |
+          test -f triage/W66_CODEX_TERMINAL_EXECUTION_BURNDOWN.yaml
+          test -f .github/workflows/codex_semantic_runtime_ci.yml
+          test -f .github/workflows/qps-roundtrip-zero-delta.yml
+          test -f semantic_substrate/validators/validate_semantic_substrate.py
+          test -f 07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1
+      - name: Verify gate classification is fail closed
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          text = Path('triage/W66_CODEX_TERMINAL_EXECUTION_BURNDOWN.yaml').read_text()
+          required = [
+              'pass_observed: 0',
+              'BLOCKED_EXTERNAL_SOURCE',
+              'ZERO_DELTA_RECEIPT status PASS',
+              'execution_receipt_required: true',
+              'child_authority_retained: true',
+          ]
+          missing = [item for item in required if item not in text]
+          if missing:
+              raise SystemExit(f'missing fail-closed controls: {missing}')
+          PY
+      - name: Emit exact-head terminal proof plan receipt
+        run: |
+          mkdir -p terminal-proof
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          receipt = {
+              'schema_version': '1.0',
+              'repository': os.environ['GITHUB_REPOSITORY'],
+              'commit_sha': os.environ['GITHUB_SHA'],
+              'run_id': os.environ['GITHUB_RUN_ID'],
+              'status': 'EXECUTION_PLAN_PASS',
+              'observed_gate_passes': 0,
+              'local_executable_gates': [
+                  'semantic_runtime_validation',
+                  'exact_SHA_release_zero_delta',
+              ],
+              'federated_gate': 'KEB_DOW_roundtrip_receipt',
+              'external_source_gate': 'R5_source_return',
+              'claim_guard': 'plan receipt is not terminal gate closure',
+          }
+          Path('terminal-proof/W66_CODEX_TERMINAL_PLAN_RECEIPT.json').write_text(
+              json.dumps(receipt, indent=2, sort_keys=True) + '\n'
+          )
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: w66-codex-terminal-proof-plan
+          path: terminal-proof/W66_CODEX_TERMINAL_PLAN_RECEIPT.json
+          if-no-files-found: error

@@ -1,0 +1,36 @@
+name: CODEX Clean Smoke
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    paths:
+      - '.github/workflows/codex-clean-smoke.yml'
+      - 'codex/**'
+      - 'tools/validators/**'
+      - 'requirements.txt'
+
+jobs:
+  clean-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          clean: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+      - env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          python -c "from codex.ssot_resolver import resolve_ssot; print('resolver import PASS')"
+          python tools/validators/ssot_validator.py
+          python tools/validators/master_input_validator.py
+          printf 'status: PASS\nqualification: CODEX_CLEAN_SMOKE\nsha: %s\n' "$GITHUB_SHA" > CODEX_CLEAN_SMOKE_RECEIPT.yaml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: codex-clean-smoke-receipt
+          path: CODEX_CLEAN_SMOKE_RECEIPT.yaml
+          if-no-files-found: error

@@ -1,0 +1,29 @@
+wave: W58
+pulse: 3PR_A_KEB
+role: semantic_challenge_and_route
+upstream: GBOGEB/cryoplant-project:controls/W58_3PR_A_CHILD_PLAYGROUND_CONTRACT_v0.1.yaml
+intent: route playground evidence without promoting engineering truth
+semantic_rules:
+  read_only_surface: required
+  owner_assumption_is_not_bidder_evidence: true
+  disputed_drive_type_must_remain_disputed: true
+  r5_must_remain_DEFER_until_source_return: true
+  render_or_playwright_pass_cannot_create_engineering_credit: true
+challenge_set:
+  - exact_article_number_missing
+  - literal_LKT_drive_type_missing
+  - same_point_2K_OP_running_state_missing
+  - helium_specific_power_capacity_basis_missing
+return_contract:
+  dispositions: [ACCEPT, REJECT, DEFER]
+  default_without_source_return: DEFER
+  parent_self_promotion_forbidden: true
+observed_metrics:
+  semantic_route_defined: true
+  engineering_credit_delta: 0
+  negotiation_credit_delta: 0
+DoD:
+  - preserve child authority
+  - fail closed on missing source fields
+  - return challenge record to child
+DoV: ROUTE_READY_PENDING_EXECUTION_RECEIPT

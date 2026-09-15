@@ -1,0 +1,176 @@
+name: W70 Dynamic CODEX Publish Burndown
+
+on:
+  pull_request: {}
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  dynamic-burndown:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install requirements
+        run: python -m pip install -r requirements.txt
+      - name: Execute terminal evidence probes
+        shell: bash
+        run: |
+          set +e
+          mkdir -p release/w70
+          python scripts/release/codex_portability_probe.py; echo $? > release/w70/portability.rc
+          python scripts/release/codex_repro_probe.py; echo $? > release/w70/repro.rc
+          python scripts/release/codex_rc_preflight.py; echo $? > release/w70/preflight.rc
+          python scripts/release/codex_determinism_exec.py; echo $? > release/w70/determinism.rc
+          python scripts/release/codex_rc_manifest_generate.py; echo $? > release/w70/manifest.rc
+
+          cat > /tmp/w71-valid.md <<'EOF'
+          ## PR CLASSIFICATION
+          - PR-ID: PR-999
+          - WAVE: W071
+          - SPRINT: S5-P9
+          - DOMAIN: EXECUTION_GOVERNANCE_INFRASTRUCTURE
+          - TYPE: CI_CD
+          - CRITICALITY: HIGH
+          - TOPOLOGY IMPACT: NO
+          - SCHEMA MUTATION: NO
+          ---
+          EOF
+          cat > /tmp/w71-invalid.md <<'EOF'
+          ## PR CLASSIFICATION
+          - PR-ID: PR-999
+          - WAVE: CODEX_2_0
+          - SPRINT: S5-P9
+          - DOMAIN: EXECUTION_GOVERNANCE_INFRASTRUCTURE
+          - TYPE: GOVERNANCE + CI
+          - CRITICALITY: HIGH
+          - TOPOLOGY IMPACT: NO
+          - SCHEMA MUTATION: NO
+          ---
+          EOF
+          python federation_runtime/engines/governance_parser.py --markdown /tmp/w71-valid.md --schema federation_runtime/schema/governance_header.schema.json --source w71-adversarial-valid
+          valid_rc=$?
+          python federation_runtime/engines/governance_parser.py --markdown /tmp/w71-invalid.md --schema federation_runtime/schema/governance_header.schema.json --source w71-adversarial-invalid
+          invalid_rc=$?
+          if [ "$valid_rc" -eq 0 ] && [ "$invalid_rc" -ne 0 ]; then
+            echo 0 > release/w70/adversarial.rc
+          else
+            echo 1 > release/w70/adversarial.rc
+          fi
+          exit 0
+      - name: Emit evidence-aware burndown
+        run: |
+          python - <<'PY'
+          import json
+          from collections import Counter
+          from pathlib import Path
+
+          def rc(name):
+              p=Path('release/w70')/f'{name}.rc'
+              return int(p.read_text().strip()) if p.exists() else 999
+
+          def zero_delta_state():
+              candidates=list(Path('release').rglob('ZERO_DELTA_RECEIPT.yaml'))
+              for p in candidates:
+                  text=p.read_text(encoding='utf-8', errors='ignore').lower()
+                  if 'status: "pass"' in text or 'status: pass' in text or 'result: "pass"' in text or 'result: pass' in text:
+                      return 'PASS', str(p)
+              return 'OPEN', None
+
+          portability=rc('portability')
+          repro=rc('repro')
+          preflight=rc('preflight')
+          determinism=rc('determinism')
+          manifest=rc('manifest')
+          adversarial=rc('adversarial')
+          zd_state, zd_path=zero_delta_state()
+
+          states={
+              'clean_execution': 'PASS' if portability==0 else 'OPEN',
+              'aggregate_release_smoke': 'PASS' if portability==0 and repro==0 and preflight==0 else 'OPEN',
+              'deterministic_repeat': 'PASS' if determinism==0 else 'OPEN',
+              'zero_delta_execution': zd_state,
+              'adversarial_release_qa': 'PASS' if adversarial==0 else 'OPEN',
+              'immutable_rc_manifest': 'PASS' if manifest==0 else 'PARTIAL',
+              'version_freeze': 'OPEN',
+              'main_protection': 'BLOCKED_EXTERNAL_ADMIN',
+              'formal_release': 'BLOCKED_TERMINAL',
+          }
+
+          passed=sum(v=='PASS' for v in states.values())
+          strict_outstanding=len(states)-passed
+          equivalent_outstanding=sum(0.0 if v=='PASS' else 0.5 if v=='PARTIAL' else 1.0 for v in states.values())
+          executable_attack_items=[
+              'clean_execution',
+              'aggregate_release_smoke',
+              'deterministic_repeat',
+              'zero_delta_execution',
+              'adversarial_release_qa',
+              'immutable_rc_manifest',
+          ]
+
+          tracked_exts={'.json','.yaml','.yml','.md','.txt','.zip','.gz','.xlsx','.pptx','.pdf','.docx','.rc'}
+          artifact_atoms=[]
+          type_counts=Counter()
+          total_bytes=0
+          for p in sorted(Path('release').rglob('*')):
+              if not p.is_file():
+                  continue
+              suffix=''.join(p.suffixes[-2:]) if p.name.endswith('.tar.gz') else p.suffix.lower()
+              if suffix not in tracked_exts and p.suffix.lower() not in tracked_exts:
+                  continue
+              size=p.stat().st_size
+              typ=(suffix or p.suffix or 'no_extension').lower()
+              artifact_atoms.append({'path':str(p),'folder':str(p.parent),'name':p.name,'type':typ,'bytes':size})
+              type_counts[typ]+=1
+              total_bytes+=size
+
+          payload={
+              'schema_version':'2.2',
+              'gate':'CODEX_PUBLISH_BURNDOWN_DYNAMIC',
+              'source_sha':'${{ github.event.pull_request.head.sha || github.sha }}',
+              'tracked_total':len(states),
+              'passed':passed,
+              'outstanding':strict_outstanding,
+              'strict_outstanding':strict_outstanding,
+              'equivalent_outstanding':equivalent_outstanding,
+              'items_under_executable_attack':len(executable_attack_items),
+              'executable_attack_items':executable_attack_items,
+              'states':states,
+              'probe_rc':{
+                  'portability':portability,
+                  'repro':repro,
+                  'preflight':preflight,
+                  'determinism':determinism,
+                  'manifest':manifest,
+                  'adversarial':adversarial,
+              },
+              'zero_delta_receipt_path':zd_path,
+              'artifact_census':{
+                  'artifact_count':len(artifact_atoms),
+                  'artifact_total_bytes':total_bytes,
+                  'artifact_type_counts':dict(sorted(type_counts.items())),
+                  'artifact_unknown_size_count':0,
+                  'atoms':artifact_atoms,
+              },
+              'unallocated_external':['main_protection'],
+              'post_terminal':['formal_release'],
+              'boundary':'Only exact-head observed PASS removes an item; W71 binds adversarial QA by executing the same valid/invalid fail-closed predicate inside this aggregate.'
+          }
+          p=Path('release/W70_CODEX_PUBLISH_BURNDOWN_RECEIPT.json')
+          p.write_text(json.dumps(payload,indent=2)+'\n',encoding='utf-8')
+          print(p.read_text())
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: w70-codex-dynamic-publish-burndown
+          path: |
+            release/W70_CODEX_PUBLISH_BURNDOWN_RECEIPT.json
+            release/w70/*.rc
+          if-no-files-found: error

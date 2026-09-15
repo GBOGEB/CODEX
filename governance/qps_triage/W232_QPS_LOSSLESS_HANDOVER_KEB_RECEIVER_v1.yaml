@@ -1,0 +1,87 @@
+schema: qps-lossless-handover-keb-receiver/1.1
+wave: W232
+created_local: '2026-09-15T05:46:00+02:00'
+refreshed_local: '2026-09-15T06:10:00+02:00'
+repo: GBOGEB/CODEX
+role: KEB_SEMANTIC_PROVENANCE_POINTER_RECEIVER
+authority_transfer: false
+source_child:
+  repo: GBOGEB/cryoplant-project
+  pr: 1300
+  head_sha: 02deeed770c26c5f0a24b5e8278c952e42223251
+  handover_path: handover/session/SC_2026-09-15_W232_FULL_3PR_MIP_LOSSLESS_HANDOVER_v1.yaml
+  handover_blob_sha: a4363f380f04dce02f2b486e94629ed0a065be40
+  dropin_path: handover/qps_recursive/W232_FULL_3PR_MIP_DROPIN.md
+  dropin_blob_sha: 313dfad84c9d4c7d3f1073b48f62a39714cc39f7
+consumer_basis:
+  codex_main_at_refresh: 19c8d094587c89bd5a24d7f0b34a38da39bf46ee
+classification: POINTER_ONLY_SEMANTIC_PROVENANCE_RECEIPT
+semantic_guards:
+  - cryoplant_project_is_child_engineering_and_disposition_authority
+  - ABACUS_is_DOW_and_CODEX_is_KEB_support_only
+  - UNKNOWN_DEFER_NE_zero
+  - W175_HOLD_NE_LN2_contract_requirement
+  - unique_N300_NE_N300_CONTROL
+  - diagnostic_PCA_NE_project_global_PCA
+  - no_Bradley_Terry_without_observed_pairwise_outcomes
+  - current_PVPS_VFD_source_NE_complete_architecture_acceptance
+  - RTM_source_authority_binding_NE_row_level_semantic_merge
+  - source_return_NE_child_acceptance_without_disposition
+  - repo_local_runtime_923_NE_federated_or_visual_progress
+preserved_semantics:
+  runtime_923: RED_OWNER_ACTION_NONCOMPENSATING
+  W175_W199:
+    integrated_disposition: HOLD
+    commercial_numerical_DoV_delta: 0
+    selected_architecture_delta: 0
+    bidder_penalty_for_no_LN2: false
+    preemption: FIRST_REAL_W199_RETURN_PREEMPTS_VISUAL_WORK
+  N300:
+    denominator: 300
+    format_counts: {HTML: 75, PDF: 75, PPTX: 75, XLSX: 75}
+    unique_keys: 300
+    duplicates: 0
+    first_red: table_readability_MSA_0_4466
+    PCA: DIAGNOSTIC_PC1_PC2_PC3_ONLY
+    Bradley_Terry: WITHHELD_NO_OBSERVED_PAIRS
+  PVPS:
+    drive: VFD_SOURCE_BOUND
+    nameplate_sum_kW: 74
+    source_78_kW: SOURCE_ARITHMETIC_DEFECT
+    package_2KOP_kWe: 83
+    CW_2KOP_kWth: 75
+    governing_issue: 553
+  BD02:
+    source_bound: BD02-C30-2KOP-LKT
+    first_red: BD02-C30-2KSB-LKT
+    interpolation_rule: FORBIDDEN_UNIFORM_C24_C30
+  RTM_merge:
+    source_population: {RTM: 722, OFFER: 50}
+    continuity_rows: 735
+    first_red: ROW_LEVEL_CURRENT_SOURCE_EXTRACTION_NOT_BOUND_IN_PRIVATE_LOCAL_EXECUTION_CONTEXT
+formal_guard:
+  engineering: '70/90'
+  negotiation: '0/20'
+  global_project_DoV: WITHHELD
+  receiver_credit_delta: 0
+may:
+  - preserve_child_identity_and_semantic_boundaries
+  - validate_restart_provenance
+  - expose_KEB_restart_pointer
+may_not:
+  - copy_private_raw_child_evidence
+  - change_child_disposition
+  - award_engineering_compliance_negotiation_acceptance_or_release_credit
+  - compensate_runtime_source_contract_or_safety_gates
+receipt:
+  disposition: ACCEPT_POINTER_ONLY
+  child_handover_visibility: PASS
+  semantic_boundary_preserved: PASS
+  exact_child_head_bound: true
+  exact_child_blob_bound: true
+  exact_dropin_blob_bound: true
+restart_rule: >-
+  Refresh child PR 1300 and current cryoplant main before use. This receiver is bound to final refreshed child head
+  02deeed770c26c5f0a24b5e8278c952e42223251 and handover blob a4363f380f04dce02f2b486e94629ed0a065be40.
+  Preserve this as the only W232 KEB handover pointer unless child identity changes or an observed reconstruction gap is found.
+stop_rule: NO_FURTHER_KEB_HANDOVER_LAYER_WITHOUT_CHILD_IDENTITY_CHANGE_OR_OBSERVED_GAP

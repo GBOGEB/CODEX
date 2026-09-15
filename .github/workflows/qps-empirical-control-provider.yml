@@ -1,0 +1,63 @@
+name: QPS Empirical Control Provider
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'pca_engine/**'
+      - '.github/workflows/qps-empirical-control-provider.yml'
+  push:
+    branches:
+      - feature/qps-empirical-control-provider-v1
+    paths:
+      - 'pca_engine/**'
+      - '.github/workflows/qps-empirical-control-provider.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  empirical-control-challenge:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pca_engine
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install editable provider
+        run: python -m pip install -e '.[dev]'
+      - name: Existing PCA engine regression
+        run: pytest tests/test_pca_core.py tests/test_preprocessing.py tests/test_metrics.py tests/test_loadings_reconstruction.py
+      - name: Empirical control challenge
+        run: pytest tests/test_control_analytics.py
+      - name: Public API smoke
+        run: |
+          python - <<'PY'
+          import json
+          import numpy as np
+          import pca_engine as pe
+
+          x = np.array([[1.,2.,4.],[2.,2.5,3.5],[3.,4.,2.],[4.,5.,1.]])
+          pca = pe.fit_pca(x, n_components=2, missing='error')
+          receipt = {
+              'schema': 'codex-empirical-control-provider/v1',
+              'authority': 'ANALYTICS_ONLY',
+              'eigenvalues': pca.eigenvalues_.tolist(),
+              'reverse_pressure': pe.reverse_pressure(pca),
+              'ci95': pe.confidence_interval([1., 1.2, 0.9, 1.1]),
+              'sigma': pe.sigma_crossings([0., 4.1, -5.2, 6.1], baseline_mean=0., baseline_std=1.),
+              'transfer': pe.transfer_function_diagnostics([1.], [1., 1.]),
+          }
+          json.dumps(receipt)
+          assert receipt['authority'] == 'ANALYTICS_ONLY'
+          assert receipt['sigma']['receipts'][-1]['highest_threshold_entered'] == 6.0
+          print(json.dumps(receipt, sort_keys=True))
+          PY

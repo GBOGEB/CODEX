@@ -1,0 +1,256 @@
+schema: qps-control-signal-classification/1.0
+version: 1.6.1
+authority: TENDER_LEVEL_CLASSIFICATION_NOT_L2_FREEZE
+bd: V16-BD-006
+state: PARTIAL_CLASSIFICATION
+
+classes:
+  - MONITOR
+  - WARNING
+  - PERMISSIVE
+  - SLOW_INTERLOCK
+  - HARD_TRIP
+  - MODE_INHIBIT
+  - OCCUPANCY_CONSTRAINT
+
+rules:
+  - source intent is preserved; classification does not invent a safety function
+  - MIS path does not by itself mean HARD_TRIP
+  - utility physical consequence remains owned by Utilities
+  - exact point counts, marshalling, PLC allocation and detailed cause/effect remain L2
+
+signals:
+  - logical_id: WCS.PCW_AVAILABLE
+    subsystem: WCS.HCC
+    source: QPS_Control_Core_TOPIC - Copy.pptx
+    source_slides: [13,14,15,16,24]
+    variable: cooling_water_available
+    path: [MIS, MIT]
+    signal_class: PERMISSIVE
+    secondary_class: MONITOR
+    fail_safe_state: REQUESTED_MODE_NOT_READY_IF_REQUIRED_COOLING_NOT_PROVEN
+    loss_of_signal: DEGRADE_TO_NOT_PROVEN_PENDING_L2_CAUSE_EFFECT
+    autonomy_requirement: LOCAL_QPS_LOGIC_MUST_NOT_REQUIRE_MCS_FOR_BASIC_PROTECTION
+    rationale: source explicitly states permissive + monitor; utilities marks PAB12 as operation-critical support
+    verification: [L2_CAUSE_EFFECT, FAT, SAT]
+    maturity: TENDER_CLASSIFIED
+
+  - logical_id: WCS.HVAC_HEALTHY
+    subsystem: WCS.HCC
+    source: QPS_Control_Core_TOPIC - Copy.pptx
+    source_slides: [13,14,15,16,24]
+    variable: HVAC_healthy_or_airflow_proven
+    path: [MIS]
+    signal_class: PERMISSIVE
+    secondary_class: OCCUPANCY_CONSTRAINT
+    fail_safe_state: MODE_OR_OCCUPANCY_RESTRICTION_PENDING_CAUSE_EFFECT
+    loss_of_signal: NOT_PROVEN
+    autonomy_requirement: LOCAL_CLASSIFICATION_AND_INDICATION
+    rationale: source says startup permissive while separate readiness slides say HV02/HV03 failure is slow and occupancy-specific, not a universal hard trip
+    verification: [ODH_BASIS, L2_CAUSE_EFFECT, FAT, SAT]
+    maturity: TENDER_CLASSIFIED_WITH_MODE_DEPENDENCE
+
+  - logical_id: WCS.INSTRUMENT_AIR_AVAILABLE
+    subsystem: WCS
+    source: QPS_Control_Core_TOPIC - Copy.pptx
+    source_slides: [13,14,15,16,24]
+    variable: instrument_air_available
+    path: [MIS, MIT]
+    signal_class: PERMISSIVE
+    secondary_class: MONITOR
+    fail_safe_state: NOT_READY_WHERE_AIR_DEPENDENT_ACTUATION_IS_REQUIRED
+    loss_of_signal: NOT_PROVEN
+    autonomy_requirement: LOCAL
+    rationale: candidate support-utility status; source readiness material groups instrument air among core support
+    verification: [L2_CAUSE_EFFECT, FAT, SAT]
+    maturity: TENDER_CLASSIFIED
+
+  - logical_id: WCS.COMPRESSOR_STATUS
+    subsystem: WCS.HCC.HP1_HP4
+    source: QPS_Control_Core_TOPIC - Copy.pptx
+    source_slides: [13,14,15,16,24]
+    variable: run_ready_fault
+    path: [MIT]
+    signal_class: MONITOR
+    fail_safe_state: STATUS_UNAVAILABLE
+    loss_of_signal: STALE_OR_INVALID_INDICATION
+    autonomy_requirement: LOCAL_PACKAGE_CONTROL_CONTINUES_PER_DESIGN
+    rationale: source explicitly maps run/ready/fault to HMI + sequence via MIT
+    verification: [L2_IO, FAT, SAT]
+    maturity: TENDER_CLASSIFIED
+
+  - logical_id: WCS.PROCESS_PTF
+    subsystem: WCS
+    source: QPS_Control_Core_TOPIC - Copy.pptx
+    source_slides: [13,14,15,16,24]
+    variable: pressure_temperature_flow
+    path: [MIT]
+    signal_class: MONITOR
+    fail_safe_state: MEASUREMENT_INVALID
+    loss_of_signal: ALARM_OR_INVALID_QUALITY_PENDING_L2
+    autonomy_requirement: LOCAL_PROTECTION_MUST_NOT_DEPEND_SOLELY_ON_MCS
+    rationale: source explicitly identifies P/T/F as process telemetry
+    verification: [L2_IO, FAT, SAT]
+    maturity: TENDER_CLASSIFIED
+
+  - logical_id: WCS.COMMON_TRIP_ESD
+    subsystem: WCS
+    source: QPS_Control_Core_TOPIC - Copy.pptx
+    source_slides: [13,14,15,16,24]
+    variable: common_trip_or_ESD_chain
+    path: [MIS]
+    signal_class: HARD_TRIP
+    fail_safe_state: SAFE_STATE
+    loss_of_signal: FAIL_SAFE_PER_DETAILED_DESIGN
+    autonomy_requirement: HARDWIRED_OR_GOVERNED_LOCAL_PATH
+    rationale: source explicitly calls this hard interlock / ESD chain
+    verification: [SAFETY_CAUSE_EFFECT, FAT, SAT]
+    maturity: TENDER_CLASSIFIED_FUNCTION_FINAL_LOGIC_OPEN
+
+  - logical_id: WCS.ALARM_SUMMARY_MCS
+    subsystem: WCS
+    source: QPS_Control_Core_TOPIC - Copy.pptx
+    source_slides: [13,14,15,16,24]
+    variable: alarm_summary
+    path: [MIT, MCS]
+    signal_class: WARNING
+    fail_safe_state: LOCAL_ALARMS_RETAINED
+    loss_of_signal: REMOTE_SUMMARY_UNAVAILABLE
+    autonomy_requirement: LOCAL_CONTROL_AUTONOMOUS_ON_MCS_LOSS
+    rationale: source maps alarm summary to remote operator view; no hard-trip semantics implied
+    verification: [FAT, SAT]
+    maturity: TENDER_CLASSIFIED
+
+  - logical_id: QINFRA.HEADER_PT
+    subsystem: QINFRA.S_U_W
+    source: QPS_Control_Core_TOPIC - Copy.pptx
+    source_slides: [13,14,15,16,24]
+    variable: header_pressure_temperature
+    path: [MIT]
+    signal_class: MONITOR
+    fail_safe_state: INVALID_MEASUREMENT
+    loss_of_signal: ALARM_OR_INVALID_QUALITY_PENDING_L2
+    autonomy_requirement: LOCAL
+    rationale: source explicitly says monitoring
+    verification: [L2_IO, FAT, SAT]
+    maturity: TENDER_CLASSIFIED
+
+  - logical_id: QINFRA.ISOLATION_VALVE
+    subsystem: QINFRA.S_U_W
+    source: QPS_Control_Core_TOPIC - Copy.pptx
+    source_slides: [13,14,15,16,24]
+    variable: command_feedback
+    path: [MCS_QINFRA_3lines]
+    signal_class: MONITOR
+    secondary_class: PERMISSIVE
+    fail_safe_state: TO_BE_DEFINED_FROM_P_AND_ID_AND_CAUSE_EFFECT
+    loss_of_signal: COMMAND_AUTHORITY_AND_SAFE_POSITION_OPEN
+    autonomy_requirement: LOCAL_SAFE_STATE_MUST_NOT_REQUIRE_REMOTE_BROKER
+    rationale: source says line control but does not prove every valve command is a safety interlock
+    verification: [ICD, P_AND_ID, L2_CAUSE_EFFECT, FAT, SAT]
+    maturity: CLASSIFICATION_PARTIAL
+
+  - logical_id: QINFRA.BRANCH_PRESSURE_ALARM
+    subsystem: QINFRA.S_U_W
+    source: QPS_Control_Core_TOPIC - Copy.pptx
+    source_slides: [13,14,15,16,24]
+    variable: branch_high_low_pressure_alarm
+    path: [MIT, MCS]
+    signal_class: WARNING
+    fail_safe_state: LOCAL_LIMIT_ACTION_SEPARATE_IF_REQUIRED
+    loss_of_signal: MONITORING_DEGRADED
+    autonomy_requirement: LOCAL
+    rationale: source explicitly calls this operations alarm
+    verification: [L2_CAUSE_EFFECT, FAT, SAT]
+    maturity: TENDER_CLASSIFIED
+
+  - logical_id: QINFRA.ODH_SUPPORT_NONTRIP
+    subsystem: QINFRA_OR_FACILITY_INTERFACE
+    source: QPS_Control_Core_TOPIC - Copy.pptx
+    source_slides: [13,14,15,16,24]
+    variable: ODH_or_support_nontrip_alarm
+    path: [MIS_SLOW]
+    signal_class: WARNING
+    secondary_class: OCCUPANCY_CONSTRAINT
+    fail_safe_state: ACCESS_OR_MODE_RESTRICTION_AS_REQUIRED
+    loss_of_signal: SAFETY_OWNERSHIP_AND_FAIL_STATE_TO_BE_CONFIRMED
+    autonomy_requirement: FACILITY_SAFETY_PATH_REMAINS_INDEPENDENT
+    rationale: source explicitly labels non-trip alarm / warning-permissive candidate and ties HVAC/ODH to occupancy rather than universal QPS trip
+    verification: [ODH_SAFETY_BASIS, ICD, L2_CAUSE_EFFECT, SAT]
+    maturity: TENDER_CLASSIFIED_WITH_SAFETY_OWNER_OPEN
+
+  - logical_id: QINFRA.HARD_TRIP_SAFE_ISOLATION
+    subsystem: QINFRA.S_U_W
+    source: QPS_Control_Core_TOPIC - Copy.pptx
+    source_slides: [13,14,15,16,24]
+    variable: hard_trip_safe_isolation
+    path: [MIS]
+    signal_class: HARD_TRIP
+    fail_safe_state: SAFE_ISOLATION
+    loss_of_signal: FAIL_SAFE_PER_DETAILED_DESIGN
+    autonomy_requirement: LOCAL_OR_HARDWIRED
+    rationale: source explicitly identifies hard trip / safe isolation as interlock
+    verification: [SAFETY_CAUSE_EFFECT, FAT, SAT]
+    maturity: TENDER_CLASSIFIED_FUNCTION_FINAL_LOGIC_OPEN
+
+  - logical_id: QINFRA.ACCESSORY_STATUS
+    subsystem: QINFRA.S_U_W
+    source: QPS_Control_Core_TOPIC - Copy.pptx
+    source_slides: [13,14,15,16,24]
+    variable: accessory_status
+    path: [MCS_QINFRA_3lines]
+    signal_class: MONITOR
+    fail_safe_state: STATUS_UNAVAILABLE
+    loss_of_signal: MONITORING_DEGRADED
+    autonomy_requirement: LOCAL
+    rationale: source says ancillary control/status; no safety classification proven
+    verification: [L2_IO, FAT, SAT]
+    maturity: TENDER_CLASSIFIED
+
+  - logical_id: QINFRA.OPERATOR_SUMMARY_MCS
+    subsystem: QINFRA
+    source: QPS_Control_Core_TOPIC - Copy.pptx
+    source_slides: [13,14,15,16,24]
+    variable: operator_summary
+    path: [MIT, MCS]
+    signal_class: MONITOR
+    secondary_class: WARNING
+    fail_safe_state: LOCAL_CONTROL_CONTINUES
+    loss_of_signal: REMOTE_OVERVIEW_UNAVAILABLE
+    autonomy_requirement: QPS_LOCAL_AUTONOMY_ON_MCS_LOSS
+    rationale: source maps this to remote overview
+    verification: [FAT, SAT]
+    maturity: TENDER_CLASSIFIED
+
+support_system_cross_classification:
+  HV06:
+    signal_class: MONITOR
+    secondary_class: WARNING
+    mode_inhibit: NOT_SUPPORTED_BY_CURRENT_WORKING_SOURCE
+    rationale: working source states no operational impact by design; keep non-blocking unless governing evidence changes it
+  QJB30_GN2:
+    signal_class: WARNING
+    mode_inhibit: NOT_2K_BLOCKING_CANDIDATE
+    rationale: source says failure is not a 2K operation blocker
+  HV02_HV03:
+    signal_class: OCCUPANCY_CONSTRAINT
+    secondary_class: SLOW_INTERLOCK
+    rationale: source says slow, not universal hard interlock, with fast personnel-access consequence
+  PAB12:
+    signal_class: PERMISSIVE
+    secondary_class: SLOW_INTERLOCK
+    rationale: core PCW support; exact trip timing and modes remain cause/effect work
+  ES02_LOOP:
+    signal_class: MODE_INHIBIT
+    secondary_class: WARNING
+    rationale: LOOP support availability determines degraded-mode capability; it is not itself a normal-operation hard trip signal
+
+bd_assessment:
+  V16-BD-006: PARTIAL_SUBSTANTIVE_CLASSIFICATION_COMPLETE
+  remaining_first_red:
+    - discipline-approved cause/effect for ambiguous utility statuses
+    - fail-safe/loss-of-signal detail
+    - exact MIT/MIS/MCS protocol and ownership freeze
+    - L2 I/O and marshalling
+  explicit_nonclosure:
+    - V16-BD-007 remains OPEN

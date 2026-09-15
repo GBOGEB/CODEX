@@ -1,0 +1,32 @@
+name: W86 Cryoplant Child Proof Bypass
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/w86-cryoplant-child-proof-bypass.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prove-child:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact cryoplant merge SHA
+        uses: actions/checkout@v4
+        with:
+          repository: GBOGEB/cryoplant-project
+          ref: 81b3f7d9f713ea447b4643f9920a7f70a2021a78
+      - name: Prove runner admission
+        run: |
+          echo "runner_os=$RUNNER_OS"
+          echo "runner_arch=$RUNNER_ARCH"
+          python --version
+      - name: Execute unchanged child re-entry validator
+        run: |
+          python scripts/validate_triage_w62_child_reentry.py | tee w86_child_reentry_proof.txt
+          grep -q '^digest_parity=PASS$' w86_child_reentry_proof.txt
+          grep -q '^child_disposition=ACCEPT$' w86_child_reentry_proof.txt
+          grep -q '^engineering_credit_delta=0$' w86_child_reentry_proof.txt

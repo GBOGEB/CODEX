@@ -1,0 +1,72 @@
+name: W69 QPS Zero-Delta Execution
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  zero-delta:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute two controlled synthetic regenerations
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $root = Join-Path $env:RUNNER_TEMP 'w69-qps-zero-delta'
+          $vault = Join-Path $root 'vault'
+          New-Item -ItemType Directory -Force (Join-Path $vault 'Offers') | Out-Null
+          New-Item -ItemType Directory -Force -Path release | Out-Null
+          $evidenceFile = Join-Path $vault 'Offers/example.txt'
+          Set-Content -LiteralPath $evidenceFile -Value 'verified-evidence' -NoNewline
+          $hash = (Get-FileHash -LiteralPath $evidenceFile -Algorithm SHA256).Hash.ToLowerInvariant()
+          $registry = Join-Path $root 'evidence_registry.yaml'
+          @"
+          schema_version: 1
+          control_id: GOV-001
+          registry_status: PARTIAL_VERIFIED
+          build_blocking: true
+          evidence:
+            - id: TEST_EVIDENCE
+              required: true
+              expected_filename: example.txt
+              relative_path: Offers/example.txt
+              sha256: $hash
+              size_bytes: null
+              verification_status: HASH_VERIFIED_SIZE_PENDING
+          "@ | Set-Content -LiteralPath $registry -Encoding utf8
+
+          # W69 is a deterministic synthetic-builder gate. Do not invoke the
+          # workstation/multi-repository bootstrap from a single-repo hosted
+          # checkout: that bootstrap intentionally requires ABACUS, CODEX,
+          # cryoplant-project and DOCX_RTM_Automation to exist locally.
+          $builder = Resolve-Path './07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1'
+          foreach ($label in @('first','second')) {
+            $dist = Join-Path "release/W69/$label" '10_RELEASES/latest'
+            New-Item -ItemType Directory -Force -Path $dist | Out-Null
+            & $builder -OutputDirectory $dist -EvidenceRoot $vault -RepoRoot $env:GITHUB_WORKSPACE -ReleaseId "W69-$($label.ToUpperInvariant())" -BuildLabel $label
+            if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) {
+              throw "Synthetic builder returned exit code $LASTEXITCODE for $label"
+            }
+          }
+      - name: Compare product family and emit receipt
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $products = @('QPS_COST_Master.xlsx','QPS_Cost_Engineering_Handover.docx','QPS_Cost_Management_Deck.pptx','QPS_Cost_Engineering_Handover.pdf','index.html')
+          $aRoot='release/W69/first/10_RELEASES/latest'; $bRoot='release/W69/second/10_RELEASES/latest'; $pass=$true; $rows=@()
+          foreach($p in $products){$a=Join-Path $aRoot $p;$b=Join-Path $bRoot $p;if(!(Test-Path $a)-or !(Test-Path $b)){$pass=$false;$rows+="MISSING  $p";continue};$ha=(Get-FileHash -Algorithm SHA256 $a).Hash.ToLowerInvariant();$hb=(Get-FileHash -Algorithm SHA256 $b).Hash.ToLowerInvariant();$rows+="$ha  first/$p";$rows+="$hb  second/$p";if($ha-ne$hb){$pass=$false}}
+          $rows | Set-Content release/SHA256SUMS -Encoding utf8
+          if($pass){$result='PASS'}else{$result='FAIL'}
+          "schema_version: '1.0'`nsource_commit_sha: '$env:GITHUB_SHA'`nstatus: '$result'`npass_claimed: $($pass.ToString().ToLowerInvariant())`ncomparison: 'w69_two_pass_synthetic_qps_roundtrip'" | Set-Content release/ZERO_DELTA_RECEIPT.yaml -Encoding utf8
+          if(-not $pass){throw 'W69 zero-delta comparison failed'}
+      - name: Upload W69 zero-delta receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: w69-qps-zero-delta
+          path: |
+            release/SHA256SUMS
+            release/ZERO_DELTA_RECEIPT.yaml
+          if-no-files-found: error

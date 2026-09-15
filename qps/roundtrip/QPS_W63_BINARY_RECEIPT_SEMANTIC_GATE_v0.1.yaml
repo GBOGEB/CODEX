@@ -1,0 +1,18 @@
+schema: qps.w63.binary-receipt-semantic-gate/v1
+status: PENDING_EXECUTION
+child_wave: W63
+purpose: >-
+  Validate semantic equivalence and authority preservation for each regenerated LKT, ALAT and comparison binary family,
+  then validate identical-source zero-delta repeat build semantics before child release-binary DoV promotion.
+checks:
+  - {id: S63_01, target: LKT_v1_1, assertion: six_group_navigation_and_taxonomy_are_present_without_losing_any_declared_view}
+  - {id: S63_02, target: ALAT_v1_1, assertion: six_group_navigation_and_taxonomy_are_present_without_cross_bidder_import}
+  - {id: S63_03, target: comparison_v1_1, assertion: comparison_preserves_bidder_partition_and_shared_authority_without_value_transfer}
+  - {id: S63_04, target: evidence_maturity, assertion: promised_submitted_reviewed_approved_verified_remain_distinct}
+  - {id: S63_05, target: fanout, assertion: shared_answer_or_evidence_pointer_does_not_collapse_member_predicates}
+  - {id: S63_06, target: zero_delta, assertion: repeated_identical_source_build_has_identical_normalized_semantic_payload}
+  - {id: S63_07, target: reentry, assertion: parent_PASS_cannot_self_promote_child_gate}
+return_contract:
+  result_enum: [PASS, FAIL, DEFER]
+  required_fields: [parent_head_sha, per_check_result, semantic_digest_set, mismatches, recommendation]
+formal_effect: {engineering_delta: 0, negotiation_delta: 0, compliance_credit_delta: 0}

@@ -1,0 +1,26 @@
+schema_version: '0.1'
+document_id: TRIAGE_3PR_DOV_CLOSURE_W62_B_CODEX
+snapshot_date: '2026-09-08'
+repository: GBOGEB/CODEX
+mode: 3PR
+reverse_loading_priority:
+  P1: exact-head governance + semantic validator PASS
+  P2: fresh-checkout install/import/self-smoke PASS
+  P3: same-boundary SHA/manifest parity receipt
+  P4: KEB semantic receipt returned to child
+  P5: repeated zero-delta semantic roundtrip
+metrics:
+  terminal_gates_total: 5
+  observed_complete: 1
+  partial: 3
+  open: 1
+  effective_score: '2.5/5 = 50%'
+  wave_a_cross_repo_target_pct: 88
+  wave_b_cross_repo_target_pct: 95
+victory_condition: >-
+  Exact same payload digest enters CODEX, passes governance/semantic validation from a
+  fresh checkout, returns a typed KEB receipt, and repeats with zero semantic delta.
+formal_effect:
+  engineering_delta: 0
+  compliance_delta: 0
+  terminal_dov: WITHHELD_UNTIL_OBSERVED_PASS

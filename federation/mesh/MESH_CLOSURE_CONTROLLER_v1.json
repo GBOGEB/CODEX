@@ -1,0 +1,116 @@
+{
+  "schema_version": "gbogeb-mesh-closure-controller/1.0",
+  "document_id": "GLOBAL_MESH_CLOSURE_CONTROLLER",
+  "status": "CANDIDATE_SHARED_CONTROL_CONTRACT",
+  "owner_repo": "GBOGEB/CODEX",
+  "purpose": "Select the minimum non-repeating path from current evidence to bounded DoV, recurse only on the first real blocker, and stop when further framework passes would add no new proof.",
+  "authority": {
+    "global_controller_semantics_owner": "GBOGEB/CODEX",
+    "runtime_orchestration_plane": "GBOGEB/ABACUS",
+    "qps_engineering_authority": "GBOGEB/cryoplant-project",
+    "rule": "The controller may classify, route, validate, and request re-entry; it may not promote QPS engineering truth outside the QPS child authority."
+  },
+  "human_invocation": {
+    "canonical_moniker": "mesh closure control",
+    "aliases": [
+      "mesh closure control this",
+      "closure-control this",
+      "minimum path to DoV",
+      "done, repair, or repeat?"
+    ]
+  },
+  "classifications": [
+    "DONE",
+    "REPAIR_REENTRY",
+    "HARDENING",
+    "NEW_CAPABILITY",
+    "PROPAGATION_PROOF",
+    "REPEAT"
+  ],
+  "method_catalog": {
+    "3PR": "Refresh and diagnose current content, runtime evidence, authority, and first blocker before choosing work.",
+    "MIP": "Modernize, Innovate, and Perpetuate only when an observed structural or recurrence gap warrants improvement.",
+    "3PC": "Prepare, Prove, and Commit a bounded publication, re-entry, acceptance, or exact-SHA transaction.",
+    "3P3": "Run one propagation/generalisation proof only when local DoV is satisfied but reusable cross-repo proof is still missing."
+  },
+  "selection_policy": {
+    "default_sequence": ["3PR", "MIP_IF_NEEDED", "3PC_IF_TRANSACTIONAL", "3P3_IF_GENERALISATION_MISSING"],
+    "minimum_work_rule": "Select only methods that can create new evidence or remove a current blocker.",
+    "first_blocker_rule": "When multiple reds exist, recurse on the earliest material observed blocker that gates the target transition.",
+    "repeat_rule": "If a proposed pass would only restate an already-proved result without changing evidence, state, or protection, classify it REPEAT and do not run it."
+  },
+  "scheduler_bindings": {
+    "CG": "target execution transition the controller is trying to admit",
+    "BG": "smallest material blocker preventing CG",
+    "EX": "whether the intended validator/runtime/check actually executed",
+    "QH": "whether that execution was acceptable",
+    "KR": "durable exact-SHA or equivalent receipt proving execution and result",
+    "DR": "whether required upstream/downstream dependencies are ready",
+    "SR": "whether semantics/contracts are aligned",
+    "WD": "bounded disposition: continue, defer, accept, reject, or stop",
+    "PB": "measured progress/burndown only; never authority by itself"
+  },
+  "execution_proof_rule": {
+    "pass_requires": ["EX_GT_0", "QH_PASS", "KR_BOUND_TO_EXACT_OBSERVED_SHA"],
+    "zero_step_rule": "A workflow badge or completed job with zero executed intended validation steps cannot satisfy PASS.",
+    "floating_ref_rule": "Branch names, floating main, or unbound PR state cannot substitute for exact observed commit or artifact identity."
+  },
+  "controller_states": [
+    "DIAGNOSE",
+    "RECURSE_FIRST_BG",
+    "PROVE",
+    "COMMIT_OR_REENTER",
+    "PROPAGATE_ONCE",
+    "STOP"
+  ],
+  "stop_rule": {
+    "when_dov_satisfied": "STOP",
+    "rerun_mip": "ONLY_IF_NEW_STRUCTURAL_GAP_OBSERVED",
+    "run_3p3": "ONLY_IF_GENERALISATION_PROOF_IS_MISSING",
+    "repeat_3pr": "ONLY_IF_REPO_PR_CHECK_OR_EVIDENCE_STATE_CHANGED_MATERIALLY",
+    "no_ceremonial_repetition": true
+  },
+  "required_output": [
+    "classification",
+    "goal",
+    "todo",
+    "dov",
+    "dod",
+    "CG",
+    "BG",
+    "EX",
+    "QH",
+    "KR",
+    "exact_sha_boundary",
+    "stop_condition",
+    "next_narrow_victory_condition"
+  ],
+  "atomic_action_monikers": [
+    "CLOSE",
+    "RED",
+    "RUNTIME",
+    "SEM",
+    "SSOT",
+    "RECEIPT",
+    "ENABLE",
+    "HARDEN",
+    "CLEAN",
+    "MAINT",
+    "READ",
+    "EXP",
+    "WATCH"
+  ],
+  "invariants": [
+    "CONTROLLER_NE_ENGINEERING_AUTHORITY",
+    "ACTION_MONIKERS_NE_STATUS_KEYS",
+    "DOD_NE_GLOBAL_DOV",
+    "RUNTIME_BADGE_NE_EXECUTION_PROOF",
+    "RECURSE_ONLY_ON_OBSERVED_FIRST_BG",
+    "NO_FRAMEWORK_PASS_WITHOUT_NEW_EVIDENCE_OR_PROTECTION",
+    "QPS_ENGINEERING_PROMOTION_REQUIRES_QPS_CHILD_REENTRY"
+  ],
+  "first_use_case": {
+    "prompt": "mesh closure control this",
+    "expected_decision": "Classify current wave, run or request only the minimum useful method sequence, expose first BG and exact-SHA boundary, and stop when DoV is satisfied or further work would be repetition."
+  }
+}

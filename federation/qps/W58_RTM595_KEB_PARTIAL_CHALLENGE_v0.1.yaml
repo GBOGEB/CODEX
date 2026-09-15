@@ -1,0 +1,40 @@
+schema_version: "0.1"
+document_id: W58_RTM595_KEB_PARTIAL_CHALLENGE
+child_pr: "GBOGEB/cryoplant-project#773"
+child_head_sha: 2a5724eca734f8c6b0f14ce0bd32af4a2b469119
+authority: KEB_SEMANTIC_PROVENANCE_CHALLENGE
+
+accepted_current_bidder_evidence:
+  non_turbine_mtbf_status: ASSUMPTION_BASED_OR_ESTIMATED
+  cc_mtbf_statistical_basis: INSUFFICIENT_OPERATING_EXPERIENCE
+  modelling_approach_disclosed: false
+  standard_machine_oem_mtbf_mttr_published: false
+  table10_reference_period_question: "8000 operating hours vs ~8760 calendar hours"
+
+challenge_findings:
+  - id: KEB-RTM595-01
+    result: CURRENT_SOURCE_PARTIAL
+    statement: >-
+      The bidder has provided current reliability limitations and a Table-10 reference-period clarification,
+      but not a source-bound common-cause treatment.
+  - id: KEB-RTM595-02
+    result: ZERO_RATE_PROHIBITED
+    statement: >-
+      Insufficient statistical MTBF data cannot be converted into a zero common-cause contribution.
+  - id: KEB-RTM595-03
+    result: NON_OVERLAP_UNPROVEN
+    statement: >-
+      Shared power, controls, cooling, instrumentation, headers and maintenance dependencies remain unbound,
+      so Table-10 allocation cannot be accepted without an explicit non-double-counting rule.
+
+required_dow_challenge:
+  - separate independent-stage reliability from shared/common-mode exposure
+  - test whether any current bidder statements constrain a lower/upper common-cause contribution
+  - preserve zero-rate prohibition where evidence is absent
+  - define the minimum non-overlap and preserved-state evidence needed for Table-10 handoff
+  - return ACCEPT, REJECT or DEFER recommendation without inventing a failure rate
+
+keb_preliminary_disposition: DEFER_TO_DOW_INDEPENDENT_CHALLENGE
+engineering_credit_delta: 0
+formal_engineering: "70/90"
+negotiation: "0/20"

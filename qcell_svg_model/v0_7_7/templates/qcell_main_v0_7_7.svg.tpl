@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 900" role="img" aria-labelledby="title desc">
+<title id="title">QCELL canonical MAIN v@@VERSION@@</title>
+<desc id="desc">Single layered QCELL thermal concept drawing. Temperature is the primary heat-map variable. Compact A/B/D/E flow legend is on the right; dotted guides connect to thermal endpoints. Large teaching arrows and pressure overlay are absent from the default MAIN view.</desc>
+<defs>
+  <style>
+    .txt{font-family:Arial,Helvetica,sans-serif;fill:#111827}.title{font-size:28px;font-weight:800}.stage{font-size:19px;font-weight:800}.small{font-size:14px}.micro{font-size:11px}.tag{font-size:18px;font-weight:900;fill:#fff}.white{fill:#fff!important}.card{fill:#fff;stroke:#cbd5e1;stroke-width:1.5}.guide{fill:none;stroke-width:4;stroke-dasharray:9 7}.heat{fill:none;stroke-width:6;stroke-dasharray:12 8}.muted{fill:#475569}
+  </style>
+  <linearGradient id="warm300" x1="0" x2="1"><stop offset="0%" stop-color="#ffcf00"/><stop offset="55%" stop-color="#ff5a00"/><stop offset="100%" stop-color="@@T300@@"/></linearGradient>
+  <radialGradient id="mass2k"><stop offset="0%" stop-color="#eefaff"/><stop offset="42%" stop-color="#75c6ff"/><stop offset="76%" stop-color="@@T4@@"/><stop offset="100%" stop-color="@@T2@@"/></radialGradient>
+  <linearGradient id="outerHeat" x1="0" x2="1"><stop offset="0%" stop-color="#d00000"/><stop offset="100%" stop-color="#ff8a00"/></linearGradient>
+  <linearGradient id="outerHeatRev" x1="0" x2="1"><stop offset="0%" stop-color="#ff8a00"/><stop offset="100%" stop-color="#d00000"/></linearGradient>
+  <linearGradient id="innerHeat" x1="0" x2="1"><stop offset="0%" stop-color="#ff8a00"/><stop offset="100%" stop-color="@@T2@@"/></linearGradient>
+  <linearGradient id="innerHeatRev" x1="0" x2="1"><stop offset="0%" stop-color="@@T2@@"/><stop offset="100%" stop-color="#ff8a00"/></linearGradient>
+  <linearGradient id="tempCryo" x1="0" x2="1"><stop offset="0%" stop-color="@@T2@@"/><stop offset="20%" stop-color="@@T4@@"/><stop offset="40%" stop-color="@@T30@@"/><stop offset="62%" stop-color="@@T50@@"/><stop offset="82%" stop-color="@@T60@@"/><stop offset="100%" stop-color="@@T77@@"/></linearGradient>
+  <marker id="heatArrowOuter" markerWidth="14" markerHeight="12" refX="13" refY="6" orient="auto"><path d="M0 0 L14 6 L0 12 Z" fill="#ff8a00"/></marker>
+  <marker id="heatArrowInner" markerWidth="14" markerHeight="12" refX="13" refY="6" orient="auto"><path d="M0 0 L14 6 L0 12 Z" fill="@@T2@@"/></marker>
+</defs>
+<rect x="18" y="18" width="1464" height="864" rx="28" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="55" y="60" class="txt title">QCELL v@@VERSION@@ — canonical MAIN</text>
+<text x="55" y="86" class="txt small muted">Single drawing · temperature heat-map authoritative · compact flow legend · dotted endpoint guides · big arrows OFF</text>
+<g id="thermal_body">
+  <path d="M155 185 H1085 L1145 245 V735 L1085 795 H155 L95 735 V245 Z" fill="#fff7ed" stroke="@@T300@@" stroke-width="12" stroke-linejoin="round"/>
+  <text x="125" y="225" class="txt stage" fill="#991b1b">300 K warm membrane</text>
+  <text x="125" y="248" class="txt micro" fill="#7f1d1d">293.15 K nominal ambient · 300 K design boundary</text>
+  <path d="M255 290 H985 L1025 330 V685 L985 725 H255 L215 685 V330 Z" fill="#ffffff" stroke="#e5e7eb" stroke-width="22" stroke-linejoin="round"/>
+  <text x="280" y="320" class="txt small" fill="#64748b">vacuum: 300 K → 50 K</text>
+  <path d="M380 370 H860 L900 410 V600 L860 640 H380 L340 600 V410 Z" fill="none" stroke="@@T50@@" stroke-width="28" stroke-linejoin="round"/>
+  <text x="405" y="410" class="txt stage" fill="#047857">50 K thermal shield</text>
+  <text x="405" y="432" class="txt micro" fill="#047857">D/E intercept and control this membrane</text>
+  <path d="M485 445 H755 L780 470 V545 L755 570 H485 L460 545 V470 Z" fill="#ffffff" stroke="#eef2ff" stroke-width="16" stroke-linejoin="round"/>
+  <text x="500" y="470" class="txt micro" fill="#64748b">vacuum: 50 K → 2 K</text>
+  <path d="M515 480 H725 L742 497 V520 L725 537 H515 L498 520 V497 Z" fill="none" stroke="#2563eb" stroke-width="7" stroke-dasharray="12 7"/>
+  <text x="500" y="560" class="txt micro" fill="#1d4ed8">MLI / radiation break</text>
+  <ellipse cx="620" cy="520" rx="67" ry="102" fill="url(#mass2k)" stroke="#071e9e" stroke-width="5"/>
+  <ellipse cx="620" cy="520" rx="88" ry="123" fill="none" stroke="#dbeafe" stroke-width="9"/>
+  <text x="620" y="507" text-anchor="middle" class="txt stage">2 K mass</text>
+  <text x="620" y="531" text-anchor="middle" class="txt small">liquid He / JT</text>
+  <text x="620" y="552" text-anchor="middle" class="txt micro">protected cold core</text>
+</g>
+<g id="parasitic_loads">
+  <path d="M160 310 C235 345 285 380 350 420" class="heat" stroke="url(#outerHeat)" marker-end="url(#heatArrowOuter)"/>
+  <path d="M1045 690 C965 655 920 620 870 585" class="heat" stroke="url(#outerHeatRev)" marker-end="url(#heatArrowOuter)"/>
+  <path d="M820 420 C760 460 718 485 682 500" class="heat" stroke="url(#innerHeatRev)" marker-end="url(#heatArrowInner)"/>
+  <path d="M415 625 C480 585 535 550 565 535" class="heat" stroke="url(#innerHeat)" marker-end="url(#heatArrowInner)"/>
+  <g id="parasitic_labels">
+    <rect x="112" y="340" width="225" height="55" rx="10" fill="#fff1f2" stroke="#fecaca"/><text x="130" y="365" class="txt small" font-weight="700">300→50 K radiation</text><text x="130" y="383" class="txt micro">red → orange</text>
+    <rect x="865" y="650" width="230" height="55" rx="10" fill="#fff7ed" stroke="#fed7aa"/><text x="883" y="675" class="txt small" font-weight="700">300→50 K conduction</text><text x="883" y="693" class="txt micro">support / tyrod path</text>
+    <rect x="770" y="455" width="195" height="55" rx="10" fill="#eff6ff" stroke="#bfdbfe"/><text x="788" y="480" class="txt small" font-weight="700">50→2 K radiation</text><text x="788" y="498" class="txt micro">orange → blue</text>
+    <rect x="360" y="650" width="210" height="55" rx="10" fill="#eff6ff" stroke="#bfdbfe"/><text x="378" y="675" class="txt small" font-weight="700">50→2 K conduction</text><text x="378" y="693" class="txt micro">reversible if T2K &gt; T50K</text>
+  </g>
+</g>
+<g id="compact_flow_legend">
+  <rect x="1175" y="190" width="255" height="420" rx="18" class="card"/>
+  <text x="1200" y="222" class="txt stage">Flow / stream legend</text>
+  <text x="1200" y="244" class="txt micro muted">compact explanatory layer; not dimensional piping</text>
+  <g id="stream_A"><rect x="1200" y="270" width="205" height="58" rx="13" fill="#0868ff"/><circle cx="1229" cy="299" r="19" fill="#0035b8"/><text x="1229" y="306" text-anchor="middle" class="tag">A</text><text x="1260" y="294" class="txt small white" font-weight="700">2 K supply</text><text x="1260" y="314" class="txt micro white">@@A_DISPLAY@@</text></g>
+  <g id="stream_B"><rect x="1200" y="344" width="205" height="58" rx="13" fill="#0048d8"/><circle cx="1229" cy="373" r="19" fill="#002579"/><text x="1229" y="380" text-anchor="middle" class="tag">B</text><text x="1260" y="368" class="txt small white" font-weight="700">2 K return</text><text x="1260" y="388" class="txt micro white">@@B_DISPLAY@@</text></g>
+  <g id="stream_D"><rect x="1200" y="418" width="205" height="58" rx="13" fill="@@T30@@"/><circle cx="1229" cy="447" r="19" fill="#0085a1"/><text x="1229" y="454" text-anchor="middle" class="tag">D</text><text x="1260" y="442" class="txt small" fill="#073642" font-weight="700">50 K supply</text><text x="1260" y="462" class="txt micro" fill="#073642">@@D_DISPLAY@@</text></g>
+  <g id="stream_E"><rect x="1200" y="492" width="205" height="58" rx="13" fill="#b7f500"/><circle cx="1229" cy="521" r="19" fill="#6c8200"/><text x="1229" y="528" text-anchor="middle" class="tag">E</text><text x="1260" y="516" class="txt small" fill="#243000" font-weight="700">50 K return</text><text x="1260" y="536" class="txt micro" fill="#243000">@@E_DISPLAY@@</text></g>
+  <text x="1200" y="582" class="txt micro muted">A/B terminate at 2 K interface.</text>
+  <text x="1200" y="598" class="txt micro muted">D/E terminate at 50 K membrane.</text>
+</g>
+<g id="endpoint_guides">
+  <path d="M1200 299 C1060 300 895 385 700 458" class="guide" stroke="#0868ff"/><circle cx="700" cy="458" r="7" fill="#0868ff"/>
+  <path d="M1200 373 C1060 390 900 520 695 575" class="guide" stroke="#0048d8"/><circle cx="695" cy="575" r="7" fill="#0048d8"/>
+  <path d="M1200 447 C1075 430 1010 405 900 410" class="guide" stroke="@@T30@@"/><circle cx="900" cy="410" r="7" fill="@@T30@@"/>
+  <path d="M1200 521 C1080 535 1005 585 860 600" class="guide" stroke="#8cad00"/><circle cx="860" cy="600" r="7" fill="#b7f500"/>
+  <rect x="1175" y="625" width="255" height="52" rx="10" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="1192" y="647" class="txt micro">Dotted guides preserve endpoint intent.</text>
+  <text x="1192" y="664" class="txt micro muted">Conceptual only — not piping geometry.</text>
+</g>
+<g id="temperature_legend">
+  <text x="95" y="832" class="txt small" font-weight="700">Temperature heat map</text>
+  <rect x="240" y="816" width="455" height="18" fill="url(#tempCryo)" stroke="#334155"/>
+  <text x="240" y="852" class="txt micro">2 K</text><text x="320" y="852" class="txt micro">4 K</text><text x="410" y="852" class="txt micro">30 K</text><text x="500" y="852" class="txt micro">50 K</text><text x="585" y="852" class="txt micro">60 K</text><text x="670" y="852" class="txt micro">77 K</text>
+  <rect x="750" y="816" width="280" height="18" fill="url(#warm300)" stroke="#334155"/>
+  <text x="750" y="852" class="txt micro">77 K</text><text x="1000" y="852" class="txt micro">300 K</text>
+  <text x="1060" y="830" class="txt micro muted">@@PRESSURE_STATUS@@</text>
+</g>
+<g id="big_teaching_arrows" style="display:none"><text x="80" y="120" class="txt small">Big teaching arrows are intentionally disabled in canonical MAIN.</text></g>
+</svg>

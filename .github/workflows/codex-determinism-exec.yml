@@ -1,0 +1,27 @@
+name: CODEX Determinism Execution
+
+on:
+  workflow_dispatch: {}
+  pull_request: {}
+
+jobs:
+  deterministic-repeat:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r requirements.txt
+      - run: python scripts/release/codex_determinism_exec.py
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-determinism-receipt
+          path: |
+            release/CODEX_DETERMINISM_RECEIPT.json
+            release/CODEX_RC_PREFLIGHT.json
+            release/CODEX_REPRO_RECEIPT.json
+          if-no-files-found: error

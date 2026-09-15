@@ -1,0 +1,123 @@
+name: W70 QPS Zero-Delta Diagnostic
+
+on:
+  pull_request: {}
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostic:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: First controlled regeneration
+        id: first
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force -Path release | Out-Null
+          ./07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1 `
+            -BuilderScript ./07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1 `
+            -ReleaseRoot release/W70_QPS_ZERO_DELTA/first `
+            -CreateOfficeReviewCopy:$false
+
+      - name: Second controlled regeneration
+        id: second
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          ./07_ops/qps_roundtrip/Invoke-QpsControlledRoundtrip.ps1 `
+            -BuilderScript ./07_ops/qps_roundtrip/tests/Synthetic-QpsBuilder.ps1 `
+            -ReleaseRoot release/W70_QPS_ZERO_DELTA/second `
+            -CreateOfficeReviewCopy:$false
+
+      - name: Emit failure-tolerant product diagnostic
+        id: diagnose
+        if: always()
+        shell: pwsh
+        env:
+          FIRST_OUTCOME: ${{ steps.first.outcome }}
+          SECOND_OUTCOME: ${{ steps.second.outcome }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force -Path release | Out-Null
+          $products = @(
+            'QPS_COST_Master.xlsx',
+            'QPS_Cost_Engineering_Handover.docx',
+            'QPS_Cost_Management_Deck.pptx',
+            'QPS_Cost_Engineering_Handover.pdf',
+            'index.html'
+          )
+          $firstRoot = 'release/W70_QPS_ZERO_DELTA/first/10_RELEASES/latest'
+          $secondRoot = 'release/W70_QPS_ZERO_DELTA/second/10_RELEASES/latest'
+          $missing = @()
+          $mismatch = @()
+          $rows = @()
+          foreach ($product in $products) {
+            $a = Join-Path $firstRoot $product
+            $b = Join-Path $secondRoot $product
+            if (-not (Test-Path $a)) { $missing += "first/$product" }
+            if (-not (Test-Path $b)) { $missing += "second/$product" }
+            if ((Test-Path $a) -and (Test-Path $b)) {
+              $ha = (Get-FileHash -Algorithm SHA256 $a).Hash.ToLowerInvariant()
+              $hb = (Get-FileHash -Algorithm SHA256 $b).Hash.ToLowerInvariant()
+              $rows += "$ha  first/$product"
+              $rows += "$hb  second/$product"
+              if ($ha -ne $hb) { $mismatch += $product }
+            }
+          }
+          $pass = ($env:FIRST_OUTCOME -eq 'success') -and ($env:SECOND_OUTCOME -eq 'success') -and ($missing.Count -eq 0) -and ($mismatch.Count -eq 0)
+          $status = if ($pass) { 'PASS' } else { 'FAIL' }
+          $rows | Set-Content release/W70_SHA256SUMS -Encoding utf8
+          $payload = [ordered]@{
+            schema_version = '1.0'
+            source_commit_sha = $env:GITHUB_SHA
+            status = $status
+            first_regeneration_outcome = $env:FIRST_OUTCOME
+            second_regeneration_outcome = $env:SECOND_OUTCOME
+            expected_product_count = $products.Count
+            missing_count = $missing.Count
+            missing_products = $missing
+            mismatch_count = $mismatch.Count
+            hash_mismatches = $mismatch
+            comparison = 'two_pass_synthetic_qps_roundtrip_hash_compare'
+            production_builder_parity_claimed = $false
+          }
+          $payload | ConvertTo-Json -Depth 5 | Set-Content release/W70_ZERO_DELTA_DIAGNOSTIC.json -Encoding utf8
+          @"
+schema_version: "1.0"
+source_commit_sha: "$env:GITHUB_SHA"
+status: "$status"
+first_regeneration_outcome: "$env:FIRST_OUTCOME"
+second_regeneration_outcome: "$env:SECOND_OUTCOME"
+expected_product_count: $($products.Count)
+missing_count: $($missing.Count)
+mismatch_count: $($mismatch.Count)
+production_builder_parity_claimed: false
+"@ | Set-Content release/W70_ZERO_DELTA_RECEIPT.yaml -Encoding utf8
+          Get-Content release/W70_ZERO_DELTA_DIAGNOSTIC.json
+
+      - name: Upload diagnostic even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: w70-qps-zero-delta-diagnostic
+          path: |
+            release/W70_ZERO_DELTA_DIAGNOSTIC.json
+            release/W70_ZERO_DELTA_RECEIPT.yaml
+            release/W70_SHA256SUMS
+            release/W70_QPS_ZERO_DELTA/**
+          if-no-files-found: warn
+
+      - name: Enforce zero-delta gate
+        if: always()
+        shell: pwsh
+        run: |
+          $d = Get-Content release/W70_ZERO_DELTA_DIAGNOSTIC.json | ConvertFrom-Json
+          if ($d.status -ne 'PASS') { throw "W70 zero-delta remains FAIL; inspect retained missing/mismatch diagnostics." }

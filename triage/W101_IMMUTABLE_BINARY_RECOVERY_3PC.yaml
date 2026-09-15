@@ -1,0 +1,67 @@
+schema: w101-immutable-binary-recovery-3pc/v1
+wave: W101
+intent: immutable_binary_recovery_transport_only
+source_child:
+  repository: GBOGEB/cryoplant-project
+  pr: 820
+  head_sha: a00785568f617db729a3968127d258027b5daa33
+predecessor:
+  repository: GBOGEB/CODEX
+  pr: 581
+  merge_sha: 3359a449418143b2cd47ed199895768090667f34
+  observed_status: DEFER_GOVERNED_INPUT_MISSING_OR_INVALID
+
+control_rule:
+  do_not_regenerate: true
+  do_not_transform: true
+  do_not_edit_workbooks: true
+  acceptance: exact bytes must recompute to the registered SHA256 before staging is accepted
+  release_credit_before_native_cryoplant_reentry: 0
+
+three_point_control:
+  PC1_identity_recovery:
+    status: PASS_IDENTITY_RECOVERED
+    meaning: Exact governed filenames and registered SHA256 identities were recovered from controlled handover/checksum evidence; this does not assert bytes are mounted.
+  PC2_transport_source_census:
+    status: BLOCKED_BYTES_NOT_MOUNTED
+    meaning: CODEX and cryoplant Git trees do not provide the four governed binaries to the runner; no cryoplant GitHub Release asset source is registered; File Library identity is visible but raw bytes are not exposed to this runtime transport path.
+  PC3_fail_closed_transport_validation:
+    status: READY
+    validator: triage/w101_validate_immutable_binary_stage.py
+    staging_directory: immutable-inputs
+    meaning: Validator accepts only the exact four filenames at exact SHA256 and emits no regenerated content.
+
+artifacts:
+  canonical:
+    filename: QPS_OFFER_Cluster_v3_4_BT_RTM_Standards_Evidence.xlsx
+    sha256: 00a5f0ed3ded00620a33edd045706ba5fb9a67b5fb7fe63c495305f911c43ccb
+    library_identity: FOUND
+    runner_bytes: NOT_MOUNTED
+  alat:
+    filename: QPS_ALAT_SSOT_CURRENT_2026-09-07.xlsx
+    sha256: 5c4c845f7e9d88c1bfe002817c98e5584135cc8bc85bf9ea6596c183318a1907
+    known_bytes: 465793
+    library_identity: FOUND
+    runner_bytes: NOT_MOUNTED
+  lkt_w42:
+    filename: QPS_LKT_NEG_RFI_REVIEW_MASTER_W21_2.xlsx
+    sha256: 6d763cce948a1ee14c30c42b0367226f97dc4712beb6ab4b6e641ad0e8b00f3f
+    known_bytes: 256572
+    library_identity: FOUND
+    runner_bytes: NOT_MOUNTED
+  w22l:
+    filename: QPS_LKT_ALAT_RTM_COMPLIANCE_W22L_RETURN_PACKAGES.xlsx
+    sha256: b745ef62417d921495bffdc3154e8fc0340216d4ba7ad85e847a0b468a5327e4
+    library_identity: FOUND
+    runner_bytes: NOT_MOUNTED
+
+transport_state: RECOVERED_IDENTITY_ONLY_BYTES_NOT_MOUNTED
+next_victory_condition: >-
+  Mount or upload the four immutable source binaries without modification; run the W101 validator;
+  require 4/4 exact SHA256 PASS; only then pass that exact staged set into the existing B1 materialisation path.
+  Any missing file or hash mismatch remains DEFER and must not trigger regeneration.
+
+credit:
+  engineering_delta: 0
+  negotiation_delta: 0
+  release_delta: 0

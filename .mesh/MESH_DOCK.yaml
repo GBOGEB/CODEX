@@ -1,0 +1,114 @@
+schema: gbogeb-mesh-dock/1.3
+repo: GBOGEB/CODEX
+node_id: repo.codex
+ring: R0_CORE_AUTHORITY
+role: KEB_SEMANTIC_PROVENANCE_RUNTIME
+local_ssot:
+  manifest: ssot/manifest.yaml
+  glossary: PIPELINE/GLOSSARY.yaml
+  global_census: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml
+  action_taxonomy: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
+  closure_controller: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
+  glob: GLOB.yaml
+  rex_taxonomy: federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml
+  rex_ledger: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
+  rex_lookup: federation/rex/GLOB_REX_LOOKUP_v1.yaml
+global_directory:
+  repo: GBOGEB/CODEX
+  glob: GLOB.yaml
+  census: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml
+  glossary: federation/mesh/GLOBAL_GLOSSARY_v1.yaml
+  action_monikers: federation/mesh/GLOBAL_GLOSSARY_ACTION_CODES_v1.yaml
+  where_used: federation/mesh/GLOBAL_WHERE_USED_v1.yaml
+  dock_protocol: federation/mesh/GLOBAL_MESH_DOCK_PROTOCOL_v1.yaml
+  status_contract: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+  closure_controller: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
+  rex:
+    taxonomy: federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml
+    ledger: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
+    resolver: federation/rex/GLOB_REX_LOOKUP_v1.yaml
+authority:
+  may:
+    - semantic_normalization
+    - provenance_validation
+    - exact_SHA_receipts
+    - mesh_routing_vocabulary
+    - closure_controller_semantics
+    - aggregate_evidence_bound_REX
+  must_not:
+    - promote_QPS_engineering_truth
+    - redefine_child_domain_terms
+    - treat_REX_frequency_as_authority
+inputs:
+  - child_evidence_tuples
+  - worker_receipts
+  - glossary_extensions
+  - runtime_results
+  - repo_REX_returns
+outputs:
+  - KEB_receipts
+  - semantic_findings
+  - global_mesh_index
+  - routing_contracts
+  - closure_control_decisions
+  - global_REX_lookup
+action_monikers:
+  - CLOSE
+  - RED
+  - RUNTIME
+  - SEM
+  - SSOT
+  - RECEIPT
+  - ENABLE
+  - HARDEN
+  - CLEAN
+  - MAINT
+  - READ
+  - EXP
+  - WATCH
+reserved_status_keys:
+  - CG
+  - WD
+  - RR
+  - DR
+  - SR
+  - HK
+  - EX
+  - FE
+  - QH
+  - KR
+  - CR
+  - PB
+  - BG
+composite_controller:
+  canonical_prompt: mesh closure control this
+  contract: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
+  rule: >-
+    Select the minimum evidence-producing method/action sequence and stop when bounded
+    DoV is satisfied; never redefine status keys or engineering authority.
+lookup_examples:
+  - what can CODEX do?
+  - show RED
+  - mesh closure control this
+  - minimum path to DoV
+  - done, repair, or repeat?
+  - what is blocking the current gate?
+  - show inbound evidence
+  - show outbound actions
+  - show REX for CODEX
+  - show REX for cryoplant-project
+  - show recurring failures
+  - show five-star REX
+  - what failed most often in W112?
+  - show open Control-phase blockers
+dmaic_control:
+  rex_role: return current repo/GitHub experience as reusable Control knowledge
+  resolver: federation/rex/GLOB_REX_LOOKUP_v1.yaml
+  executable: tools/rex_lookup.py
+  rule: >-
+    Repeated observations update stable REX signatures and recurrence state;
+    they do not create disconnected duplicate lessons.
+first_use_case: >-
+  Run mesh closure control to decide the minimum path to DoV, validate and bind a
+  child evidence/runtime tuple before DOW consumption, then preserve material
+  failure/repair experience as a queryable REX Control record.

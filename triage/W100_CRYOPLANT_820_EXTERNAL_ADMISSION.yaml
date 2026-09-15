@@ -1,0 +1,30 @@
+schema_version: '1.0'
+wave: W100
+role: external_runner_admission_diagnostic
+source_repository: GBOGEB/CODEX
+child_repository: GBOGEB/cryoplant-project
+child_pr: 820
+child_head_sha: a00785568f617db729a3968127d258027b5daa33
+child_gate: W99_ALAT_B1_MATERIALIZATION
+observed_child_state:
+  workflow_run: 34422744218
+  job: materialize
+  conclusion: failure
+  executed_steps: 0
+hypothesis: >-
+  If the CODEX hosted runner executes this exact-head diagnostic while the cryoplant job remains pre-step,
+  the dominant blocker is runner admission/allocation on the child repository rather than the B1 materialization logic.
+victory:
+  external_steps_min: 1
+  exact_child_sha_preserved: true
+  receipt_uploaded: true
+limits:
+  - diagnostic_only
+  - does_not_execute_or_validate_B1_materialization_logic
+  - does_not_create_engineering_compliance_negotiation_or_release_credit
+  - native_child_exact_SHA_execution_remains_required
+score_guard:
+  engineering_delta: 0
+  compliance_delta: 0
+  negotiation_delta: 0
+  publish_delta: 0

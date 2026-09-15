@@ -1,0 +1,91 @@
+schema_version: '1.0'
+document_id: TRIAGE_KEB_SSOT_ROLE_REGISTRY_W90
+status: CONTROLLED_CLASSIFICATION
+repo: GBOGEB/CODEX
+baseline:
+  census_pr: 562
+  census_merge_sha: d470356cddecd4aca9d80ed4dcc2cd9cb2f996b6
+  active_ssot_candidates: 59
+rules:
+  AUTHORITY: governed data or scoped SSOT content; authority is limited to declared scope
+  REGISTRY: index, manifest, registry, runtime control, or governance map
+  VIEW: dashboard, sample, projection, or style bridge consumed as a view
+  VALIDATOR: workflow, schema, script, resolver, or validator; never data authority
+  RECEIPT: release/federation/DoV evidence object; immutable evidence, not live authority
+classifications:
+  AUTHORITY:
+    - SSOT/g10_runtime_governance_ssot.yaml
+    - SSOT/github_mcp_agentic_orchestration_ssot.yaml
+    - semantic_substrate/overlay_ssot.yaml
+    - ssot/master_contract_ssot_v0_2.yaml
+    - ssot/runtime_metrics.yaml
+  REGISTRY:
+    - governance/policy/ssot_runtime_control.yml
+    - ssot/manifest.yaml
+    - ssot/registry/authority_registry.yaml
+    - ssot/registry/logical_id_registry.yaml
+    - ssot/registry/mcp_sweep_family.yaml
+    - ssot/registry/runtime_registry.yaml
+    - governance/ssot/.gitkeep
+  VIEW:
+    - qps_contract_canonicalization/ssot/federation_contract.json
+    - ssot/blocks/sample_blocks.yaml
+    - ssot/blocks/sample_headings.yaml
+    - ssot/domain/repo/release.yaml
+    - ssot/governance_dashboard.yaml
+    - ssot/schemas/block.schema.json
+    - ssot/schemas/heading.schema.json
+    - ssot/ssot_style_bridge.json
+    - ssot/traceability_dashboard.yaml
+  VALIDATOR:
+    - .github/workflows/master-contract-ssot-validation.yml
+    - schemas/master_contract_ssot.schema.yaml
+    - schemas/qps_ssot_view_build_receipt.schema.json
+    - scripts/bind_ssot_logical_ids.py
+    - scripts/census_ssot_candidates.py
+    - scripts/check_ssot_schemas.py
+    - scripts/validate_master_contract_ssot.py
+    - scripts/validate_ssot_style_bridge.py
+    - tools/ssot_resolver.py
+    - tools/validators/ssot_validator.py
+  RECEIPT:
+    - federation/qps/QPS_FED_W05_PARENT_SSOT_MANIFEST_v0.1.yaml
+    - ssot/qps/W57_3PR_A_KEB_SOURCE_RETURN_CHALLENGE_v0.1.yaml
+    - ssot/qps/W57_3PR_B_ZERO_LOSS_TERMINAL_RETURN_v0.1.yaml
+    - ssot/release/CODEX_2_0_RELEASE_SCORECARD.yaml
+    - ssot/release/TRIAGE_3PR_DOV_CLOSURE_W62_A_2026-09-08.yaml
+    - ssot/release/TRIAGE_3PR_DOV_CLOSURE_W62_B_2026-09-08.yaml
+    - ssot/release/W02_3P3_SELF_EVAL.yaml
+    - ssot/release/W03_CENSUS_EVIDENCE_AND_3P3.yaml
+    - ssot/release/W04_P10_AGENT_ENTRYPOINT_PROBE.yaml
+    - ssot/release/W04_P11_AGENT_CICD_SUBREPO_DEPTH_REPORT.yaml
+    - ssot/release/W04_P3_MCP_DOV.yaml
+    - ssot/release/W04_P5_RUNTIME_DISCRIMINATION.yaml
+    - ssot/release/W04_P7_RUNTIME_EDGE_CENSUS.yaml
+    - ssot/release/W04_P8_IMPORT_EDGE_PROBE.yaml
+    - ssot/release/W04_P9_PCA_BT_3P3.yaml
+    - ssot/release/W05_P10_QPS_WORKFLOW_RECREATE.yaml
+    - ssot/release/W05_P11_QPS_WORKFLOW_PARSER_REPAIR.yaml
+    - ssot/release/W05_P1_RELEASE_READINESS_CONSUMER_VALIDATION.yaml
+    - ssot/release/W05_P2_PRODUCT_ARTIFACT_CONSUMER_VALIDATION.yaml
+    - ssot/release/W05_P3_PRODUCT_CONSUMER_ZERO_DELTA_CONTRACTS.yaml
+    - ssot/release/W05_P4_PRODUCT_MAP_ZERO_DELTA_DEFINITION.yaml
+    - ssot/release/W05_P5_PRODUCT_ENUM_ZERO_DELTA_EXECUTION_HARNESS.yaml
+    - ssot/release/W05_P6_QPS_ROUNDTRIP_REGENERATION_JOB.yaml
+    - ssot/release/W05_P7_QPS_REGENERATION_TRIGGER_REPAIR.yaml
+    - ssot/release/W05_P8_QPS_REGENERATION_EXECUTION_TRIGGER.yaml
+    - ssot/release/W05_P9_QPS_WORKFLOW_VISIBILITY_REPAIR.yaml
+    - ssot/release/W68_3PR_B_ZERO_DELTA_PULSE.yaml
+    - ssot/triage/W63_P7_KEB_DISPOSITION_CLOSURE.yaml
+controls:
+  candidate_count: 59
+  classified_count: 59
+  unresolved_candidate_count: 0
+  authority_count: 5
+  competing_authority_claims: 0
+  note: role classification removes filename false positives; scoped authorities remain independently governed
+  engineering_credit_delta: 0
+next_reverse_load:
+  - duplicate_active_runtime_stems
+  - deployment_docker_state
+  - root_level_runtimes

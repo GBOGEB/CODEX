@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ABACUS Multi-Format Publication Receipt",
+  "type": "object",
+  "required": [
+    "receipt_version",
+    "publication_id",
+    "source_commit",
+    "ssot_relpath",
+    "ssot_sha256",
+    "canonical_content_sha256",
+    "tuple_ledger_sha256",
+    "theme",
+    "render_mode",
+    "formats",
+    "cross_format_parity",
+    "semantic_replay",
+    "decision"
+  ],
+  "properties": {
+    "receipt_version": {"const": "A9.0"},
+    "publication_id": {"type": "string", "minLength": 1},
+    "source_commit": {"type": "string", "minLength": 1},
+    "ssot_relpath": {"type": "string", "minLength": 1},
+    "ssot_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "canonical_content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "tuple_ledger_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "theme": {"type": "string", "minLength": 1},
+    "render_mode": {"type": "string", "minLength": 1},
+    "formats": {
+      "type": "object",
+      "required": ["html", "pptx", "pdf", "markdown", "github_pages"],
+      "additionalProperties": false,
+      "properties": {
+        "html": {"$ref": "#/$defs/formatReceipt"},
+        "pptx": {"$ref": "#/$defs/formatReceipt"},
+        "pdf": {"$ref": "#/$defs/formatReceipt"},
+        "markdown": {"$ref": "#/$defs/formatReceipt"},
+        "github_pages": {"$ref": "#/$defs/formatReceipt"}
+      }
+    },
+    "cross_format_parity": {
+      "type": "object",
+      "required": ["pass", "formats_checked", "canonical_content_sha256", "github_pages_matches_html_bytes", "semantic_token_count"],
+      "properties": {
+        "pass": {"type": "boolean"},
+        "formats_checked": {"type": "array", "minItems": 5, "items": {"type": "string"}},
+        "canonical_content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "github_pages_matches_html_bytes": {"type": "boolean"},
+        "semantic_token_count": {"type": "integer", "minimum": 1}
+      }
+    },
+    "semantic_replay": {
+      "type": "object",
+      "required": ["pass", "status"],
+      "properties": {
+        "pass": {"type": "boolean"},
+        "status": {"type": "string"},
+        "visited_count": {"type": ["integer", "null"]},
+        "last_tuple": {"type": ["string", "null"]}
+      }
+    },
+    "decision": {"enum": ["accept", "reject"]}
+  },
+  "$defs": {
+    "formatReceipt": {
+      "type": "object",
+      "required": [
+        "format",
+        "artifact_relpath",
+        "artifact_sha256",
+        "artifact_bytes",
+        "renderer_version",
+        "telemetry",
+        "semantic_parity",
+        "extracted_text_chars",
+        "decision"
+      ],
+      "properties": {
+        "format": {"type": "string", "minLength": 1},
+        "artifact_relpath": {"type": "string", "minLength": 1},
+        "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "artifact_bytes": {"type": "integer", "minimum": 1},
+        "renderer_version": {"type": "string", "minLength": 1},
+        "telemetry": {"type": "object"},
+        "semantic_parity": {
+          "type": "object",
+          "required": ["pass", "expected_token_count", "present_token_count", "coverage", "missing_tokens"],
+          "properties": {
+            "pass": {"type": "boolean"},
+            "expected_token_count": {"type": "integer", "minimum": 1},
+            "present_token_count": {"type": "integer", "minimum": 0},
+            "coverage": {"type": "number", "minimum": 0, "maximum": 1},
+            "missing_tokens": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "extracted_text_chars": {"type": "integer", "minimum": 1},
+        "decision": {"enum": ["accept", "reject"]}
+      }
+    }
+  }
+}

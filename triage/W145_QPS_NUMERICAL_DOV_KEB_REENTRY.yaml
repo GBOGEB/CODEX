@@ -1,0 +1,110 @@
+schema_version: codex-keb-qps-w145-numerical-dov/0.1
+wave: W145
+status: CONTROLLED_SEMANTIC_REENTRY_RUNTIME_REFERENCE_PASS_AUTHORITY_GATES_WITHHELD
+repo: GBOGEB/CODEX
+authority_scope: REPO_LOCAL_SEMANTIC_AND_PROVENANCE_ONLY
+engineering_promotion_forbidden: true
+
+qps_child_authority:
+  repo: GBOGEB/cryoplant-project
+  execution_PR: 1023
+  execution_merge_sha: bd9907a715e2bfb50b9d9b9cac09aa1628cb88bc
+  runtime_reentry_PR: 1025
+  runtime_reentry_merge_sha: 95847e489918c25a7c471404c425c130c9485aa3
+  ledger: triage/w145/QPS_W145_NUMERICAL_DOV_CLOSURE_v0.1.yaml
+  runtime_receipt: triage/w145/QPS_W145_COOLPROP_RUNTIME_REENTRY_v0.1.yaml
+  rule: QPS_child_retains_engineering_ACCEPT_REJECT_DEFER_authority
+
+controlled_source_state:
+  bidder_invCOP:
+    Qeq_kW_4p5K: 3.35
+    total_power_kW: 1038.0
+    invCOP_W_per_W: 310.0
+    direct_refrigerator_kW: 908.0
+    modeled_CWS_kW: 80.8
+    pre_uncertainty_kW: 988.8
+    reconstructed_with_5pct_uncertainty_kW: 1038.24
+  selected_LKT_c30_2K_OP_row:
+    state: SOURCE_RETURN_COMPLETE_5_OF_5
+    A: {mdot_g_s: 44.0, P_bara: 3.0, T_K: 4.5}
+    B: {mdot_g_s: 41.6, P_bara: 0.022, T_K: 3.6}
+    D: {mdot_g_s: 81.0, P_bara: 12.6, T_K: 40.0}
+    E: {mdot_g_s: 81.0, P_bara: 11.5, T_K: 60.0}
+    W: {mdot_g_s: 2.42, P_bara: 1.1, T_K: 300.0}
+
+coolprop_runtime_reference:
+  repo: GBOGEB/CoolProp
+  PR: 7
+  merge_sha: 9e5927ddae4678f1c38947b261bbb21e2425c7c2
+  exact_head_sha: 3f3b4b1e016a940b9b29102cf264bfac43d19e18
+  workflow_run_id: 34707993462
+  job_id: 103591440737
+  runner_id: 1000256609
+  conclusion: PASS_RUNTIME_COMPATIBILITY_REFERENCE
+  artifact_id: 10302452576
+  artifact_digest_sha256: af7e3b7625d45092e23430964e5526298b55dd2897bac243c6afc757da5e9f84
+  permitted_semantic_use:
+    - exact_source_runtime_identity_validation
+    - thermophysical_compatibility_reference
+    - returned_cold_duplicate_credit_guard_validation
+  forbidden_semantic_use:
+    - HEPAK_authority_substitution
+    - contractual_equal_exergy_formula_creation
+    - SAT_Qeq_promotion
+    - formal_engineering_acceptance
+
+open_noncompensating_gates:
+  HEPAK_LOW_T_AUTHORITY:
+    state: WITHHELD_EXTERNAL_LOCAL_LICENSED_RUNTIME
+    qps_issue: 663
+  SAT_E3_METER_AND_SYNCHRONIZED_QEQ:
+    state: WITHHELD_EXTERNAL_SOURCE_RETURN
+    qps_issue: 1021
+  HP_56HZ_E2_DECOMPOSITION:
+    state: WITHHELD_EXTERNAL_SOURCE_RETURN
+    qps_issue: 1022
+  PVPS_E2_DECOMPOSITION:
+    state: WITHHELD_EXTERNAL_SOURCE_RETURN
+    qps_issues: [553, 962]
+  NUMERICAL_BASELOAD:
+    state: WITHHELD
+    rule: direct_auxiliary_evidence_or_at_least_three_same_boundary_points_required
+  FORMAL_INVCOP_SAT:
+    state: WITHHELD
+  GLOBAL_PROJECT_DOV:
+    state: WITHHELD
+
+semantic_invariants:
+  - COOLPROP_PASS_NE_HEPAK_PASS
+  - COOLPROP_PASS_NE_SAT_QEQ_PASS
+  - COOLPROP_PASS_NE_ENGINEERING_ACCEPT
+  - SOURCE_RETURN_COMPLETE_NE_EXECUTED_SAT
+  - UNKNOWN_OR_DEFER_NE_ZERO
+  - SINGLE_POINT_RESIDUAL_NE_BASELOAD
+  - returned_cold_has_one_physical_refrigeration_credit_only
+  - retired_3p423_1061p13_153p13_interpretation_is_forbidden
+  - bidder_total_power_boundary_NE_owner_E3_NE_site_E4_without_explicit_mapping
+
+keb_disposition:
+  child_identity_and_lineage: PASS_SEMANTIC
+  CoolProp_runtime_reference_identity: PASS_SEMANTIC
+  source_boundary_5_of_5: PASS_SEMANTIC
+  HEPAK_authority: DEFER_SOURCE_GAP
+  SAT_E3_Qeq: DEFER_SOURCE_GAP
+  HP_decomposition: DEFER_SOURCE_GAP
+  PVPS_decomposition: DEFER_SOURCE_GAP
+  formal_SAT: DEFER_SOURCE_GAP
+
+output_contract:
+  downstream: GBOGEB/ABACUS
+  allowed: [typed_gate_matrix, evidence_priority, analytical_diagnostics, reverse_pressure_ranking]
+  forbidden: [numeric_truth_mutation, UNKNOWN_zero_fill, engineering_promotion, SAT_promotion, OPEX_credit]
+
+DoD:
+  exact_QPS_merge_identity_bound: true
+  exact_CoolProp_runtime_identity_bound: true
+  gate_matrix_typed: true
+  authority_boundaries_preserved: true
+DoV:
+  KEB_semantic_reentry: ACHIEVED
+  engineering_numerical_DOV: WITHHELD_CHILD_GATES

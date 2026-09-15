@@ -1,0 +1,35 @@
+schema: TRIAGE-OFFER-EVAL-DOV-1.0
+wave: B
+repo: GBOGEB/CODEX
+role: KEB_semantic_governance
+wave_a_pr: GBOGEB/CODEX#516
+child_wave_b_pr: GBOGEB/cryoplant-project#712
+terminal_semantic_gates:
+  - id: K1_JSON_SCHEMA_EXACT_HEAD
+    status: OPEN
+  - id: K2_ZOD_EXACT_HEAD
+    status: OPEN
+  - id: K3_LKT_ALAT_NAMESPACE_ISOLATION
+    status: PASS_DESIGN
+  - id: K4_COMPARATOR_REVIEWER_NO_CREDIT
+    status: PASS_DESIGN
+  - id: K5_CHILD_AUTHORITY_PRECEDENCE
+    status: PASS_DESIGN
+  - id: K6_RECEIPT_HASH_TUPLE
+    status: OPEN
+  - id: K7_ZERO_DELTA_SEMANTIC_REPLAY
+    status: OPEN
+  - id: K8_CHILD_REENTRY_DISPOSITION
+    status: OPEN
+score:
+  pass_design: 3
+  partial: 0
+  open: 5
+  effective_gate_fraction: 0.375
+current_repo_context:
+  release_control_pr_501: OPEN
+  cReq_federation_ci: PASS_MERGED_PR_498
+  approved_override_precedence: PASS_MERGED_PR_496
+semantic_dov: WITHHELD
+credit_delta: 0
+victory: exact-head schema plus Zod pass, stable hash tuple, zero-delta replay and child disposition without bidder or authority leakage

@@ -1,0 +1,28 @@
+{
+  "schema_version": "0.1",
+  "document_id": "QPS_W93_PVPS_R5_KEB_GATE",
+  "wave": "W93",
+  "receipt_type": "KEB_SEMANTIC_RETURN_GATE",
+  "status": "WAITING_SOURCE_BOUND_PAYLOAD",
+  "child_authority": "GBOGEB/cryoplant-project",
+  "child_prerequisite_pr": 807,
+  "residual": "R5_PVPS_POWER",
+  "target_kW": 83.0,
+  "acceptance_band_kW": [82.17, 83.83],
+  "required_atoms": ["PV-01", "PV-02", "PV-03", "PV-04", "PV-05", "PV-06", "PV-07", "PV-08", "PV-09", "PV-10"],
+  "eligibility_rules": [
+    "each atom has exact source revision and locator",
+    "each atom is bound to an immutable digest",
+    "installed count is not interpreted as running count",
+    "generic air or nitrogen curves are not helium evidence",
+    "cross-bidder substitution is prohibited",
+    "missing auxiliary power is not zero and is not back-solved",
+    "83 kW bidder package statement is target evidence, not independent reconstruction"
+  ],
+  "semantic_classes": ["SOURCE_BOUND", "PROVISIONAL", "INSUFFICIENT_SOURCE", "CONTRADICTORY", "NOT_RETURNED"],
+  "pass_condition": "PV-01..PV-10 are source-bound and semantically compatible at one 2K-OP package boundary",
+  "fail_closed_condition": "any required atom missing, provisional, contradictory, cross-bidder, or non-helium surrogate",
+  "child_disposition_required": true,
+  "engineering_credit_delta": 0,
+  "negotiation_credit_delta": 0
+}

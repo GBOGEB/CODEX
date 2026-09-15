@@ -1,0 +1,29 @@
+wave: W84
+plane: KEB
+intent: validate source-bearing engineering atoms before DOW execution
+input_contract:
+  required_atoms:
+    - LB-01-PLOC
+    - LB-02-BFLOW
+    - LB-03-GEO-A
+    - LB-04-GEO-B
+    - LB-05-THERM-A
+    - LB-06-THERM-B
+  per_atom_required:
+    - state == ACCEPTED_SOURCE_BOUND
+    - nonempty source_locator
+    - valid source_sha256
+fail_closed: true
+promotion:
+  formal_engineering_credit: forbidden
+  negotiation_credit: forbidden
+  child_disposition_authority: GBOGEB/cryoplant-project
+handoff:
+  pass: ABACUS_DOW_SPATIAL_AND_EFFECTIVENESS
+  fail: CHILD_SOURCE_RECOVERY
+p1_scheduler_gate:
+  adaptive_scheduling: disabled
+  enable_only_after: two_comparable_positive_effectiveness_cycles
+p2_debug_spine:
+  status: telemetry_only
+  authority: none

@@ -1,0 +1,51 @@
+schema_version: "w65-federated-discovery/1.0.0"
+contract_id: TRIAGE-W65-DISCOVERY
+state: CONTROLLED_DISCOVERY_ONLY
+role: semantic_bridge_router
+repository: GBOGEB/CODEX
+peers:
+  producer: GBOGEB/cryoplant-project
+  orchestrator: GBOGEB/ABACUS
+methods:
+  A_top_down_authority:
+    input: canonical_ids
+    output: authority_penetration
+  B_bottom_up_assets:
+    input: tracked_assets
+    output: canonical_association
+  C_graph_frontier:
+    input: known_nodes
+    output: frontier_coverage
+  D_orphan_drop:
+    input: graph
+    output: orphan_and_drop_metrics
+  E_convergence:
+    input: [A, B, C, D]
+    output: [feature_vector, reverse_loading_queue, pca_ready]
+bridge_semantics:
+  accepts_from_child:
+    - repository_sha
+    - method_receipts
+    - unresolved_ids
+    - orphan_nodes
+    - terminal_nodes
+    - drop_funnel
+    - reverse_loading_candidates
+  emits_to_abacus:
+    - semantic_normalization
+    - cross_repo_edges
+    - parent_child_disposition
+    - unresolved_bridge_ids
+    - federation_feature_row
+hard_rules:
+  - MERGED_NE_VICTORY
+  - DISCOVERY_NE_AUTHORITY
+  - GRAPH_EDGE_NE_ENGINEERING_CREDIT
+  - CHILD_RETAINS_DOMAIN_DISPOSITION
+  - ABACUS_RETAINS_ANALYTICS_ORCHESTRATION
+  - CODEX_MAY_ROUTE_BUT_NOT_SELF_PROMOTE
+continuous_analysis:
+  minimum_comparable_pulses_for_pca: 3
+  retain_per_sha_receipts: true
+  compare_repo_local_and_federated_dropoffs: true
+  reverse_load_highest_conversion_candidate_first: true

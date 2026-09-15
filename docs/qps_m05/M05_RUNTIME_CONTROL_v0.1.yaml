@@ -1,0 +1,34 @@
+schema: qps.m05.runtime_control.v1
+mission: M05_PROVENANCE_ATTESTATION
+state: ACTIVE
+
+first_red_routing:
+  zero_steps_or_runner_unassigned: Dockmaster
+  oidc_permissions_or_attestations_api: Engineer_plus_QA
+  attestation_created_but_receipt_invalid: Doctor_plus_Engineer
+  provenance_claim_misused_as_engineering_acceptance: TM_plus_Governor
+
+acceptance_predicate:
+  - runner_assigned
+  - executed_steps_gt_zero
+  - exact_actions_attest_sha_used
+  - subject_sha256_emitted
+  - attestation_id_emitted
+  - Sigstore_bundle_returned
+  - retained_artifact_digest_emitted
+  - authority_boundary_preserved
+
+control_rule:
+  DoV1: one exact-pinned GREEN vector
+  DoV2: independent consumer validates returned receipt and disposition
+  DoV3: fresh-head_or_scheduled_repeat plus automatic evidence return
+
+next_on_green:
+  - consume_exact_runtime_receipt
+  - bind_Keb_QA_acceptance
+  - route_DOW_closure
+  - prepare_independent_consumer_without_expanding_attestation_scope
+
+next_on_red:
+  - stop_on_first_actual_failed_step
+  - repair_only_observed_failure_class

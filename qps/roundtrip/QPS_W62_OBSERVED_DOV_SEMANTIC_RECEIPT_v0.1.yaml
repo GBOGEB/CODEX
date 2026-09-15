@@ -1,0 +1,15 @@
+schema: qps.w62.observed-dov-semantic-receipt/v1
+status: PENDING_PARENT_VALIDATION
+child_pr: GBOGEB/cryoplant-project#TBD_W62
+purpose: >-
+  Validate that the child W62 DoV ledger distinguishes observed PASS from unobserved binary claims and that
+  navigation taxonomy, fanout, propagation and re-entry semantics remain intact through binary regeneration.
+checks:
+  - {id: S01, assertion: merged_W60_taxonomy_and_parent_parity_can_score_preparation_only, expected: PASS}
+  - {id: S02, assertion: ungenerated_or_unhashed_binary_family_must_not_score_PASS, expected: PASS}
+  - {id: S03, assertion: render_navigation_receipt_is_distinct_from_binary_file_existence, expected: PASS}
+  - {id: S04, assertion: compliance_state_propagation_requires_exact_child_reentry, expected: PASS}
+  - {id: S05, assertion: zero_delta_rebuild_requires_identical_source_identity_and_semantic_payload, expected: PASS}
+  - {id: S06, assertion: bidder_partitions_remain_separate_in_comparison_outputs, expected: PASS}
+return_fields: [parent_head_sha, semantic_result, failed_check_ids, observations, recommendation]
+formal_effect: {engineering_delta: 0, negotiation_delta: 0, compliance_credit_delta: 0}

@@ -1,0 +1,46 @@
+name: W72 CODEX Atom Unknown Burndown
+
+on:
+  pull_request: {}
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  atom-census:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run recursive atom census
+        id: census
+        continue-on-error: true
+        run: python scripts/release/codex_atom_census.py
+      - name: Emit execution disposition
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p release
+          if [ "${{ steps.census.outcome }}" = "success" ]; then
+            printf '{"status":"PASS","source_sha":"%s"}\n' "${{ github.event.pull_request.head.sha || github.sha }}" > release/W72_EXECUTION_DISPOSITION.json
+          else
+            printf '{"status":"FAIL","source_sha":"%s","boundary":"Census failed; no unknown reduction may be promoted."}\n' "${{ github.event.pull_request.head.sha || github.sha }}" > release/W72_EXECUTION_DISPOSITION.json
+          fi
+      - name: Upload atom census and feature row
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: w72-codex-atom-unknown-burndown
+          path: |
+            release/W72_CODEX_ATOM_CENSUS.json
+            release/W72_FEATURE_ROW.json
+            release/W72_EXECUTION_DISPOSITION.json
+          if-no-files-found: warn
+      - name: Fail closed after evidence retention
+        if: steps.census.outcome != 'success'
+        run: exit 1

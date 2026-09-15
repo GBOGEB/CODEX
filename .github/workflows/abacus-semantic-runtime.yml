@@ -1,0 +1,88 @@
+name: ABACUS Semantic Runtime
+
+on:
+  pull_request:
+    paths:
+      - 'abacus_render_pipeline/**'
+      - 'PIPELINE/GLOSSARY_EXTENSIONS.yaml'
+      - '.github/workflows/abacus-semantic-runtime.yml'
+  push:
+    paths:
+      - 'abacus_render_pipeline/**'
+      - 'PIPELINE/GLOSSARY_EXTENSIONS.yaml'
+
+jobs:
+  semantic-runtime:
+    runs-on: ubuntu-latest
+    env:
+      ABACUS_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install receipt runtime dependencies
+        run: python -m pip install pyyaml jsonschema python-pptx reportlab pypdf
+
+      - name: Run repository semantic vocabulary validator
+        run: python semantic_substrate/validators/validate_semantic_substrate.py
+
+      - name: Execute governed reference HTML renderer and write receipt
+        working-directory: abacus_render_pipeline/A8_renderer_execution_receipt
+        run: python renderer_execution.py
+
+      - name: Revalidate reference receipt hashes and schema
+        working-directory: abacus_render_pipeline/A8_renderer_execution_receipt
+        run: python receipt_validation.py
+
+      - name: Execute governed production PPTX and PDF renderers
+        working-directory: abacus_render_pipeline/A8_renderer_execution_receipt
+        run: python multiformat_execution.py
+
+      - name: Revalidate production multi-format hashes telemetry and parity
+        working-directory: abacus_render_pipeline/A8_renderer_execution_receipt
+        run: python multiformat_validation.py
+
+      - name: Run first-red sequence
+        working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
+        run: python first_red_gate.py
+
+      - name: Prove semantic delta replay
+        working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
+        run: python semantic_delta_replay.py
+
+      - name: Enforce reference receipt-driven semantic acceptance
+        working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
+        run: python semantic_acceptance_gate.py
+
+      - name: Persist governed reference promotion receipt
+        working-directory: abacus_render_pipeline/A8_renderer_execution_receipt
+        run: python promotion_receipt.py
+
+      - name: Persist one production multi-format promotion receipt
+        working-directory: abacus_render_pipeline/A8_renderer_execution_receipt
+        run: python multiformat_promotion.py
+
+      - name: Run runtime and receipt tests
+        run: |
+          python abacus_render_pipeline/A7_executable_semantic_runtime/test_runtime.py
+          python abacus_render_pipeline/A7_executable_semantic_runtime/test_closed_loop.py
+          python abacus_render_pipeline/A7_executable_semantic_runtime/test_semantic_replay_and_acceptance.py
+          python abacus_render_pipeline/A8_renderer_execution_receipt/test_renderer_execution.py
+          python abacus_render_pipeline/A8_renderer_execution_receipt/test_multiformat_execution.py
+
+      - name: Upload rendered artifacts and governed receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: abacus-renderer-receipt-${{ env.ABACUS_SOURCE_SHA }}
+          if-no-files-found: warn
+          path: |
+            abacus_render_pipeline/A8_renderer_execution_receipt/outputs/reference_render.html
+            abacus_render_pipeline/A8_renderer_execution_receipt/outputs/production_render.pptx
+            abacus_render_pipeline/A8_renderer_execution_receipt/outputs/production_render.pdf
+            abacus_render_pipeline/A8_renderer_execution_receipt/receipts/renderer_execution_receipt.json
+            abacus_render_pipeline/A8_renderer_execution_receipt/receipts/promotion_receipt.json
+            abacus_render_pipeline/A8_renderer_execution_receipt/receipts/multiformat_execution_receipt.json
+            abacus_render_pipeline/A8_renderer_execution_receipt/receipts/multiformat_promotion_receipt.json

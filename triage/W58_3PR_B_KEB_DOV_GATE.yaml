@@ -1,0 +1,30 @@
+wave: W58
+pulse: 3PR_B_KEB
+role: semantic_dov_gate
+intent: prevent release/control progress from being misread as engineering closure
+rules:
+  merged_is_not_victory: true
+  release_readiness_is_not_engineering_credit: true
+  qa_pass_is_not_source_evidence: true
+  source_return_required_for_R5: true
+  child_accept_required_for_engineering_promotion: true
+observed_inputs:
+  formal_engineering_percent: 77.78
+  release_diagnostic_percent: 90.6
+  negotiation_closed: 0
+  real_source_return_packets_last_observed: 0
+gates:
+  playground_contract: PARTIAL
+  zod_runtime_validation: OPEN
+  playwright_observed_receipt: OPEN
+  KEB_DOW_roundtrip_receipt: OPEN
+  R5_source_return: OPEN
+  exact_SHA_release_zero_delta: OPEN
+burndown:
+  total_gates: 6
+  pass: 0
+  partial: 1
+  open: 5
+  effective_completion_percent: 8.33
+return_default: DEFER
+DoV: WITHHELD

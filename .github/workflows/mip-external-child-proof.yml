@@ -1,0 +1,59 @@
+name: MIP External Child Proof
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/mip-external-child-proof.yml'
+      - 'triage/MIP_W98_EXTERNAL_CHILD_EDGE_RECEIPT_TEMPLATE.yaml'
+      - 'triage/vendor/cryoplant-project/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  external-child-proof:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate exact child binding and diagnostic authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHILD_SHA='84cc7757a857ba6527381447946c75612d6719d9'
+          TEMPLATE='triage/MIP_W98_EXTERNAL_CHILD_EDGE_RECEIPT_TEMPLATE.yaml'
+          INPUT="triage/vendor/cryoplant-project/${CHILD_SHA}/MIP_W98_EXTERNAL_RUNNER_EDGE.yaml"
+          test -f "$TEMPLATE"
+          test -f "$INPUT"
+          grep -Fq "child_head_sha: ${CHILD_SHA}" "$TEMPLATE"
+          grep -Fq 'command_identity: controls/MIP_W98_EXTERNAL_RUNNER_EDGE.yaml' "$TEMPLATE"
+          grep -Fq 'authority: diagnostic_only' "$TEMPLATE"
+          grep -Fq 'promotion_authority: false' "$TEMPLATE"
+          grep -Fq 'repository: GBOGEB/cryoplant-project' "$INPUT"
+          grep -Fq 'observed_state: PRE_STEP_RUNNER_ADMISSION_FAILURE' "$INPUT"
+          grep -Fq 'execution: external_healthy_repo_runner_lane' "$INPUT"
+          grep -Fq 'engineering_delta: 0' "$INPUT"
+          grep -Fq 'release_delta: 0' "$INPUT"
+      - name: Emit external diagnostic receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p triage/out
+          cat > triage/out/MIP_EXTERNAL_CHILD_RECEIPT.yaml <<EOF
+          schema_version: '1.0'
+          source_commit_sha: '${GITHUB_SHA}'
+          child_repository: GBOGEB/cryoplant-project
+          child_head_sha: 84cc7757a857ba6527381447946c75612d6719d9
+          command_identity: controls/MIP_W98_EXTERNAL_RUNNER_EDGE.yaml
+          external_validator_result: PASS
+          executed_steps_min: 1
+          exact_child_sha_preserved: true
+          authority: diagnostic_only
+          promotion_authority: false
+          engineering_delta: 0
+          release_delta: 0
+          EOF
+          grep -Fq 'external_validator_result: PASS' triage/out/MIP_EXTERNAL_CHILD_RECEIPT.yaml
+      - name: Upload diagnostic receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: mip-external-child-proof
+          path: triage/out/MIP_EXTERNAL_CHILD_RECEIPT.yaml
+          if-no-files-found: error

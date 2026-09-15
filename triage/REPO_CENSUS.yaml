@@ -1,4 +1,4 @@
-schema_version: "1.0"
+schema_version: "1.1"
 repository: GBOGEB/CODEX
 role: SEMANTIC_PROVENANCE_GOVERNANCE
 purpose: KEB semantic normalization, provenance/hash governance, federation policy, CI truth verification and MCP governance
@@ -14,6 +14,13 @@ canonical_roots:
   - {path: schemas, state: CANONICAL_ACTIVE}
   - {path: qps_contract_canonicalization, state: CANONICAL_ACTIVE}
   - {path: .codex/tasks, state: CANONICAL_ACTIVE}
+  - {path: .github/workflows, state: CANONICAL_ACTIVE, evidence: current_main_GitHub_Actions_semantic_and_federation_control_plane}
+  - {path: tools, state: CANONICAL_ACTIVE, evidence: current_validators_and_MCP_sweep_tooling}
+  - {path: agents, state: CANONICAL_ACTIVE, evidence: governed_agent_and_federation_protocol_assets}
+  - {path: SSOT, state: CANONICAL_ACTIVE, evidence: governed_runtime_and_agentic_SSOT_surfaces}
+  - {path: ssot, state: CANONICAL_ACTIVE, evidence: master_contract_and_style_bridge_SSOT_surfaces}
+documentation_roots:
+  - {path: docs, state: DOCUMENTATION_ONLY}
 ssot_surfaces:
   - ssot/master_contract_ssot_v0_2.yaml
   - semantic_substrate/overlay_ssot.yaml
@@ -31,6 +38,11 @@ bridge:
   adapter: src/bridge_adapter.py
   orchestrator: scripts/bridge_orchestrator.py
   health: scripts/check_bridge_health.py
+census_controls:
+  unknown_is_debt_not_deletion_authority: true
+  documentation_only_bridge_proposals_are_not_live_edges: true
+  generated_artifacts_are_not_semantic_authority: true
+  next_reverse_loading: [ssot_scope_overlap, duplicate_runtime_stems, deployment, root_level_runtime]
 authority:
   may_mutate_child_payload: false
   may_award_child_engineering_credit: false

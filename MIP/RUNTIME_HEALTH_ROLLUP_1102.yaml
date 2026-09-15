@@ -1,0 +1,11 @@
+schema_version: "0.1"
+rollup_id: ABACUS-1102-RUNTIME-HEALTH
+seed: {repo: GBOGEB/ABACUS, pr: 1102, merge_sha: 8841dc701a1896233273413c81d7c88d268b9498}
+active_window: 24h
+role: KEB_RUNTIME_HEALTH_PRODUCER
+capabilities: [LLDB_DAP, SWIFT_DEBUG, DOCKER, RUNNERS, MCP]
+required_receipt: {exact_sha: true, probe_status: ACCEPT, dov_status: PASS, real_probe_steps_gt_zero: true}
+consumer: GBOGEB/ABACUS
+authority_transfer: false
+credit_delta: 0
+next_victory: emit workflow-generated exact-SHA KEB receipt satisfying all four predicates

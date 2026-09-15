@@ -1,0 +1,62 @@
+schema_version: "0.1"
+document_id: W103_WHM_COST_EVIDENCE_ELIGIBILITY
+role: KEB_ADVISORY_VALIDATION
+child_authority: "GBOGEB/cryoplant-project W103/P1"
+engineering_credit_delta: 0
+
+purpose: >-
+  Define what evidence may promote a warm-helium module cost row from allowance/heuristic to an observed procurement basis.
+  This validator contract does not set prices and cannot promote child engineering state.
+
+evidence_classes:
+  FIRM_VENDOR_QUOTE:
+    required: [vendor, quote_id, quote_date, model, configuration, quantity_basis, currency, commercial_boundary, source_locator]
+  BUDGETARY_VENDOR_QUOTE:
+    required: [vendor, date, model_or_family, configuration_summary, quantity_basis, currency, source_locator]
+  CURRENT_PUBLIC_NEW_PRODUCT_ANCHOR:
+    required: [seller_or_OEM, product_family, condition_new, price, currency, date_observed, URL_or_locator, comparability_notes]
+  HISTORICAL_PROJECT_PRICE:
+    required: [source_project, date, price, currency, configuration, escalation_basis, normalization_notes]
+  ANALOGY:
+    required: [reference_item, reference_cost, functional_similarity, explicit_differences, adjustment_logic]
+  PARAMETRIC:
+    required: [base_cost, base_definition, factor_list, factor_source_or_status, equation, scenario_output]
+  ENGINEERING_ALLOWANCE:
+    required: [value, rationale, uncertainty, owner, supersession_action]
+
+fail_closed_rules:
+  - used_or_surplus_listing_cannot_become_new_project_baseline_without_explicit_normalization_and_authority_downgrade
+  - public_product_feature_presence_does_not_prove_a_specific_price_surcharge
+  - vendor_tier_premium_cannot_be_asserted_as_a_percentage_without observed price evidence
+  - factor_percentages_without_source_are_HEURISTIC_not_VENDOR_FACT
+  - feature_adjustments_must_reference_one_common_base_and_must_not_compound
+  - hardware_BOM_total_must_not_be_labeled_installed_EPC_without_explicit_installation_controls_engineering_testing_logistics_and_overhead_scope
+  - quote_configuration_must_be_normalized_to_helium_flow_accuracy_connections_seals_comms_quantity_and_documentation_before direct comparison
+
+MFC_required_comparability_fields:
+  - gas
+  - flow_range
+  - accuracy
+  - repeatability_if_available
+  - controller_or_meter
+  - valve_type
+  - wetted_materials
+  - seal_type
+  - process_connections
+  - pressure_rating
+  - communications
+  - ingress_or_environment_rating
+  - calibration_certificate
+  - quantity
+  - warranty_support
+
+promotion:
+  allowance_to_parametric: "PASS when base and every factor are explicit and arithmetic is reproducible"
+  parametric_to_budgetary: "PASS only on source-bound vendor budgetary quote with normalized configuration"
+  budgetary_to_firm: "PASS only on current firm quote and common commercial boundary"
+
+victory:
+  - each of MFC BPR ESD spool has an evidence class and missing-field list
+  - MFC 4200 is classified as ENGINEERING_ALLOWANCE until stronger evidence arrives
+  - no unsourced percentage is represented as vendor fact
+  - eventual RFQ comparison is apples-to-apples on technical and commercial scope

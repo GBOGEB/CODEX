@@ -1,0 +1,177 @@
+schema: qps-d2-1-mode-state-matrix/1.0
+version: '1.6.7'
+state: SOURCE_BOUND_PARTIAL_PER_MODE_VISUAL_BINDING_OPEN
+authority: PROCESS_CONCEPTUAL_DESIGN_EVIDENCE_NOT_CAUSE_EFFECT_ACCEPTANCE
+source:
+  title: D2.1 Conceptual Design Report for MINERVA Cryogenic System
+  reference: DSBT-TN-24-37-3.0
+  role: PROCESS_CONCEPTUAL_DESIGN_ANCHOR
+  appendix_8_4_role: OPERATING_TRANSIENT_ABNORMAL_STATE_AND_VALVE_ALIGNMENT_EVIDENCE
+  dedicated_diagram_zip_statement: transient modes are implemented on the Process Flow Diagram and compiled in a dedicated diagrams zip
+
+mode_families:
+  - id: MODE_COOLDOWN
+    class: TRANSIENT
+    source_sections: [5.5.1, 8.4]
+    source_bound_behavior:
+      - cool-down proceeds in staged phases from 300 K toward 2 K
+      - thermal shields are cooled in parallel with QCELLs during the main cool-down
+      - cool-down to approximately 50 K precedes lower-temperature phases
+      - liquid-helium filling begins after cavities reach liquid-helium temperature
+      - VLP compressors start for the final cool-down to 2 K
+    named_valve_evidence:
+      - valve: CV503
+        function: bottom helium supply for cavity gas circulation during cool-down
+        state_semantics: CONTROLLED_FOR_COOLDOWN_FLOW
+        evidence_state: SOURCE_EXPLICIT
+    non_claims:
+      - exact Appendix 8.4 per-sheet colour legend remains to be bound
+      - no SIL/MIS/MIT class inferred
+
+  - id: MODE_WARMUP
+    class: TRANSIENT
+    source_sections: [5.5.2, 8.4]
+    source_bound_behavior:
+      - stop VLP compressors for warm-up to 4.5 K
+      - evaporate/empty liquid-helium baths using electrical heaters
+      - stop level controls and heaters after bath emptying step
+      - continue warm-up from 4.5 K to 300 K
+    evidence_state: SOURCE_EXPLICIT_SEQUENCE
+    non_claims:
+      - exact valve-by-valve alignment remains open
+
+  - id: MODE_PURGE_FILL
+    class: TRANSIENT_MAINTENANCE
+    source_sections: [5.7, cryogenic_users_distribution_description, 8.4]
+    source_bound_behavior:
+      - purge and filling are managed at the cryoplant-to-QLR interface with valves, pump and helium supply
+      - full-LINAC and local single-QCELL purge/fill are both described
+    named_valve_evidence:
+      - valves: [HV510, HV520]
+        function: local purge and filling
+        state_semantics: MANUAL_LOCAL_PURGE_FILL
+        evidence_state: SOURCE_EXPLICIT
+    non_claims:
+      - hand-valve use is not an automatic control sequence
+
+  - id: ABN_LOSS_VACUUM_DISTRIBUTION
+    class: ABNORMAL
+    source_sections: [5.6.1, 8.4]
+    source_bound_behavior:
+      - close cryoplant cold-box interface valves
+      - close all QVB interface valves for a large distribution-system vacuum loss
+      - WCS may continue transferring helium inventory to warm storage during warm-up
+    edge_semantics:
+      isolation: CLOSE_INTERFACE_PATHS
+      recovery: WCS_TRANSFER_TO_WARM_STORAGE_AVAILABLE_IN_SOURCE_CONCEPT
+    evidence_state: SOURCE_EXPLICIT_PROCESS_INTENT
+    non_claims:
+      - exact trip initiators and interlock implementation are not frozen
+
+  - id: ABN_LOSS_VACUUM_SINGLE_QM
+    class: ABNORMAL
+    source_sections: [5.6.1, 8.4]
+    source_bound_behavior:
+      - close all interface valves of the affected QVB
+      - other cryomodules may remain at operating temperature
+    edge_semantics:
+      affected_qcell: ISOLATED
+      unaffected_qcells: CONTINUE_OPERATION_CANDIDATE
+    evidence_state: SOURCE_EXPLICIT_PROCESS_INTENT
+
+  - id: ABN_MINOR_QCELL_FAULT
+    class: ABNORMAL
+    source_sections: [5.6.3, 8.4]
+    source_bound_behavior:
+      - supply valves close
+      - return valves open
+      - supply valves are Normally Closed
+      - return valves are Normally Open
+      - recovery intent is to retain/recover helium from the affected QCELL
+    edge_semantics:
+      supply_path: CLOSED_ON_FAULT_CONCEPT
+      return_path: OPEN_ON_FAULT_CONCEPT
+      fallback_supply: NORMALLY_CLOSED
+      fallback_return: NORMALLY_OPEN
+    evidence_state: SOURCE_EXPLICIT_PROCESS_FALLBACK
+    non_claims:
+      - not a frozen cause-effect matrix
+      - does not assign SIL/MIS/MIT/HARD_TRIP
+
+  - id: ABN_QUENCH
+    class: ABNORMAL
+    source_sections: [5.6.4, 8.4]
+    source_bound_behavior:
+      - maintain TS and coupler cooling as long as possible
+      - superfluid-bath supply valves could be closed
+      - VLP return valves could continue pressure control
+    evidence_state: SOURCE_CONCEPT_PROPOSAL
+    non_claims:
+      - proposal wording is not an accepted final sequence
+      - no automatic trip class inferred
+
+  - id: ABN_LOSS_UTILITY
+    class: ABNORMAL
+    source_sections: [5.6.5, 8.4]
+    source_bound_behavior:
+      - cryogenic system stops
+      - components move to fallback positions
+      - cryoplant interface valves close as Normally Closed valves
+      - QVB valves close except return valves which are Normally Open
+      - persistent event can progress to safety-valve helium release
+      - source conceptual restart window exists before major helium loss
+    edge_semantics:
+      cryoplant_interface: CLOSED_FALLBACK
+      qvb_supply_and_other_paths: CLOSED_FALLBACK
+      qvb_return: OPEN_FALLBACK
+      recovery_restart: COMPRESSOR_RESTART_OPTION
+    evidence_state: SOURCE_EXPLICIT_PROCESS_FALLBACK_AND_TRANSIENT
+    non_claims:
+      - D2.1 backup-power values are conceptual-design evidence, not current emergency design acceptance
+      - fallback semantics do not assign current control-system implementation
+
+  - id: ABN_CRYOPLANT_TRIP
+    class: ABNORMAL
+    source_sections: [5.6.6, 8.4]
+    source_bound_behavior:
+      - reaction is described as similar to loss of utilities
+      - Normally Open valves open and Normally Closed valves close
+      - prolonged stop may vent helium through safety devices
+      - restart of at least one compressor enables helium recovery to storage
+    edge_semantics:
+      fallback: APPLY_NO_NC_FALLBACK
+      recovery_restart: AT_LEAST_ONE_COMPRESSOR
+    evidence_state: SOURCE_EXPLICIT_PROCESS_FALLBACK
+    non_claims:
+      - exact compressor identity, electrical source and permissive chain require current-design evidence
+
+visual_binding:
+  appendix_8_4_pages_present: true
+  per_mode_diagram_binding: PARTIAL_OPEN
+  colour_legend_binding: OPEN
+  rule: colour shall not be promoted to canonical OPEN/CLOSED semantics until the corresponding diagram legend/state is bound
+  next_visual_pass:
+    - enumerate Appendix 8.4 diagram/page to mode-family mapping
+    - bind visible valve tags where resolution supports exact reading
+    - bind per-diagram colour legend or explicit state convention
+    - compare visual state against textual process behavior and flag contradictions
+
+graph_projection:
+  carrier: handoff/v0_6_2/qps_svg_graph_navigation_mvp_v1_5
+  allowed_edge_types: [tree, interface, control]
+  semantic_overlay_relations:
+    - mode_sequence
+    - fallback_state
+    - isolation_path
+    - recovery_path
+    - manual_purge_fill
+    - source_concept_proposal
+  rule: richer semantic relations remain overlay metadata projected onto the existing carrier schema
+
+bd_008_credit:
+  source_mode_family_extraction: PASS
+  named_valve_behavior_partial: PASS
+  per_mode_visual_valve_binding: PARTIAL
+  colour_legend_binding: OPEN
+  engineering_acceptance: ZERO_CREDIT
+  bd_008_close_allowed: false

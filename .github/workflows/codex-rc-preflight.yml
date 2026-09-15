@@ -1,0 +1,26 @@
+name: CODEX RC Preflight
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    paths:
+      - 'scripts/release/codex_rc_preflight.py'
+      - '.github/workflows/codex-rc-preflight.yml'
+      - 'VERSION.json'
+      - 'ssot/domain/repo/release.yaml'
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python scripts/release/codex_rc_preflight.py
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-rc-preflight
+          path: release/CODEX_RC_PREFLIGHT.json
+          if-no-files-found: error

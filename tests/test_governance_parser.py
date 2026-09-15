@@ -39,6 +39,13 @@ def test_extract_governance_block_returns_metadata() -> None:
     assert metadata["TYPE"] == "GOVERNANCE"
 
 
+def test_validate_governance_header_accepts_multi_digit_pulse() -> None:
+    schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+    metadata = validate_governance_header(_markdown({"SPRINT": "S5-P10"}), schema)
+
+    assert metadata["SPRINT"] == "S5-P10"
+
+
 def test_validate_governance_header_rejects_additional_properties() -> None:
     schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
     markdown = _markdown({"UNTRACKED": "VALUE"})

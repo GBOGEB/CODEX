@@ -1,0 +1,30 @@
+schema_version: triage-observed-completion/1.0.0
+repo: GBOGEB/CODEX
+role: KEB_SEMANTIC_CONTROL
+baseline:
+  w58_pr: 432
+  w58_merged: true
+  w59_pr: 433
+  w59_merged: true
+metrics:
+  census_contract_present: {earned: 10, possible: 10, status: PASS}
+  coded_ocd_adr_present: {earned: 10, possible: 10, status: PASS}
+  semantic_provenance_authority_declared: {earned: 10, possible: 10, status: PASS}
+  ssot_zod_schema_declared: {earned: 10, possible: 10, status: PASS}
+  keb_pipeline_p5_p7_declared: {earned: 10, possible: 10, status: PASS}
+  bridge_adaptor_inventory: {earned: 10, possible: 10, status: PASS}
+  agentic_mcp_orchestration_inventory: {earned: 10, possible: 10, status: PASS}
+  no_engineering_mutation_guard: {earned: 10, possible: 10, status: PASS}
+  fail_closed_census_validation: {earned: 10, possible: 10, status: PASS}
+  observed_zero_delta_cross_repo_receipt: {earned: 0, possible: 10, status: OPEN}
+summary:
+  earned: 90
+  possible: 100
+  observed_completion_pct: 90
+  structural_completion_pct: 100
+  terminal_proof_completion_pct: 50
+  dov_state: CONTROL_FRAMEWORK_ACHIEVED_TERMINAL_PROOF_OPEN
+remaining:
+  - bind identical census tuple from all three repos
+  - prove exact digest preservation child_to_KEB_to_DOW_to_KEB
+  - emit synchronized zero-delta normalization receipt

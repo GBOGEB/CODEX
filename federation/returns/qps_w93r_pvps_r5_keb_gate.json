@@ -1,0 +1,40 @@
+{
+  "schema_version": "0.2",
+  "document_id": "QPS_W93R_PVPS_R5_KEB_GATE",
+  "wave": "W93R",
+  "receipt_type": "KEB_SEMANTIC_RETURN_GATE",
+  "status": "WAITING_SOURCE_BOUND_PAYLOAD",
+  "child_authority": "GBOGEB/cryoplant-project",
+  "child_active_pr": 811,
+  "child_closed_unmerged_predecessor_pr": 808,
+  "child_score_prerequisite_pr": 807,
+  "residual": "R5_PVPS_POWER",
+  "target_kW": 83.0,
+  "acceptance_band_kW": [82.17, 83.83],
+  "required_atoms": ["PV-01", "PV-02", "PV-03", "PV-04", "PV-04T", "PV-05", "PV-06", "PV-07", "PV-08", "PV-10"],
+  "challenge_atom": "PV-09",
+  "conditional_atom": "PV-03A only if variable-speed evidence is source-proven",
+  "drive_semantics": {
+    "current_source_state": "DISPUTED_SOURCE_REQUIRED",
+    "owner_working_basis": "FIXED_SPEED",
+    "bidder_supported_vfd": false,
+    "bidder_supported_fixed_speed": false
+  },
+  "eligibility_rules": [
+    "each essential atom has exact source revision and locator",
+    "each essential atom is bound to an immutable digest",
+    "same-point suction temperature is mandatory",
+    "installed count is not interpreted as running count",
+    "generic air or nitrogen curves are not helium evidence",
+    "cross-bidder substitution is prohibited",
+    "missing auxiliary power is not zero and is not back-solved",
+    "owner fixed-speed working basis is not promoted to bidder fact",
+    "83 kW bidder package statement is target evidence, not independent reconstruction"
+  ],
+  "semantic_classes": ["SOURCE_BOUND", "PROVISIONAL", "INSUFFICIENT_SOURCE", "CONTRADICTORY", "NOT_RETURNED"],
+  "pass_condition": "all essential atoms are source-bound and semantically compatible at one 2K-OP package boundary",
+  "fail_closed_condition": "any essential atom missing, provisional, contradictory, cross-bidder, or surrogate",
+  "child_disposition_required": true,
+  "engineering_credit_delta": 0,
+  "negotiation_credit_delta": 0
+}

@@ -1,0 +1,48 @@
+schema: keb-qps-glossary-3pc-3pr/1.0.0
+wave: W98
+role: KEB_SEMANTIC_PROVENANCE_VALIDATOR
+child_origin:
+  repo: GBOGEB/cryoplant-project
+  baseline_pr: 810
+  baseline_merge_sha: 6b803f19fda68d07139ef5eb32d0bd283ca63845
+
+3pc_validation:
+  required_dimensions: [authority, scope, lexical_type, source_exactness, collision_type, contract_relevance, disposition]
+  rules:
+    - SCK_CEN_CONTRACTUAL outranks applicant and general layers
+    - applicant-specific terms remain partitioned by applicant
+    - same token with different meaning must be conflict-visible
+    - same meaning with spelling/case variation may map to canonical concept only with provenance retained
+    - QPLANT is a QPS subsystem view and not an independent contract authority
+    - TLA classification does not imply acronym pronunciation
+    - unresolved source or collision returns DEFER
+
+challenge_expectations:
+  QPS: {expected: FLAG_CONFLICT, reason: applicant_scope_delta}
+  PID: {expected: FLAG_CONFLICT, reason: homonym_context_collision}
+  SUPPLIER: {expected: ACCEPT_APPLICANT_LOCAL, reason: applicant_role_definition}
+  QPLANT: {expected: ACCEPT_CANONICAL, reason: aligned_scope_definition}
+  MTBF: {expected: ACCEPT_CANONICAL, reason: same_concept_source_variant}
+
+3pr_receipt:
+  must_bind:
+    - child_baseline_merge_sha
+    - classification_contract_version
+    - authority_precedence
+    - collision_count
+    - unresolved_count
+    - applicant_partition_integrity
+  forbidden:
+    - child_engineering_disposition_mutation
+    - compliance_promotion
+    - negotiation_promotion
+    - private_bidder_source_copy
+
+verdict_logic:
+  PASS: all_known_challenges_classified_and_authority_preserved
+  FAIL: authority_leak_or_collision_silently_normalised
+  DEFER: missing_source_or_unresolved_semantic_boundary
+
+credit:
+  engineering: 0
+  negotiation: 0

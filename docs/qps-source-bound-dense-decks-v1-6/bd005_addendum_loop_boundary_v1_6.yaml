@@ -1,0 +1,150 @@
+schema: qps-bd005-addendum-loop-boundary/1.0
+version: '1.6.9'
+state: CONTRACTUAL_LOOP_BOUNDARY_SHARPENED_TRANSIENT_STILL_OPEN
+authority: CONTRACTUAL_ADDENDUM_BOUNDARY_NOT_DESIGN_ACCEPTANCE
+global_project_dov: WITHHELD
+
+source:
+  title: 2024-106-IVE MYRRHA PHASE 1 Cryoplant & Storage (QPS) - Addendum II Technical Requirements
+  sck_cen_reference: SCK_CEN_90508872
+  source_role: CURRENT_CONTRACTUAL_REQUIREMENTS_SURFACE
+  relationship_to_D2_1: does_not_replace_process_conceptual_design_provenance
+  relationship_to_D2_2: refines_current_contractual_requirement_boundary_without_erasing_D2_2_provenance
+
+contractual_loop_boundaries:
+  electrical:
+    requirement: RTM-401
+    boundary: up_to_350_kW_backup_diesel_power
+    availability: after_an_interruption_of_a_few_minutes
+    non_claims:
+      - does_not_identify_single_HP_compressor_as_the_only_load
+      - does_not_prove_OEM_electrical_input_at_approximately_110_g_per_s
+      - does_not_prove_ES02_auxiliary_margin
+  cooling_water:
+    requirement: RTM-428
+    boundary: up_to_350_kW_backup_cooling_water
+    availability: after_an_interruption_of_a_few_minutes
+    hydraulic_topology: backup_header_hydraulically_common_with_normal_WCS_header
+    degraded_condition: may_operate_at_reduced_total_flow
+    non_claims:
+      - does_not_specify_actual_LOOP_flow
+      - does_not_specify_LOOP_pressure_or_pump_fan_power
+      - does_not_prove_PAB12_valve_alignment
+  instrument_air:
+    requirements: [RTM-432, RTM-433]
+    normal_header_during_LOOP: no_continuous_instrument_air
+    initial_actuation_air: header_contains_only_sufficient_air_for_initial_valve_actuations
+    backup_requirement: QPS_backup_system_supports_helium_recovery
+    autonomy: 6_h_under_full_helium_recovery_load
+    semantic_correction: >-
+      This 6 h requirement is pneumatic-backup autonomy. It shall not be used as proof of the separate
+      approximately-6-h WCS-room thermal stabilization/recovery statement carried in working slides.
+  HVAC:
+    normal_requirements:
+      RTM_434:
+        - ambient_heat_removal_in_compressor_and_coldbox_rooms
+        - dedicated_exhaust_air_ducts_connected_to_top_of_each_HP_compressor
+        - no_active_equipment_assumed_in_exhaust_ducts_for_heat_removal
+      RTM_435:
+        total_WCS_heat_to_room_air_max_kW: 120
+        minimum_fraction_direct_to_HP_exhaust_ducts: 0.50
+      OFFER_35_required_return:
+        - heat_dissipated_to_ambient_air
+        - duct_interface_size
+        - duct_flow_rate
+        - allowable_pressure_drop
+    LOOP_requirement:
+      requirement: RTM-436
+      HP_exhaust_ducts: remain_available_without_restriction
+      compressor_room_ambient_heat_max_kW: 15
+    engineering_effect: >-
+      RTM-436 supplies a contractual ambient room-heat source ceiling for LOOP and a duct-availability
+      assumption. It does not specify HV03 room airflow, room heat-removal capacity, or fan power.
+  helium_recovery:
+    requirements: [RTM-258, RTM-260, RTM-261, RTM-262]
+    limited_services_required: true
+    abnormal_QRB_S_return_min_g_per_s: 100
+    normal_QRB_S_return_min_g_per_s: 200
+    inventory_loss_limit_pct_for_internal_abnormal_events: 1
+    recovery_to_normal_procedure_required: true
+
+bidder_current_evidence:
+  source_family: LKT_current_negotiation_and_compliance_surfaces
+  claim:
+    abnormal_LOOP_recovery_approximately_g_per_s: 110
+    emergency_powered_compressors: 1
+    supporting_utilities: [limited_cooling_water, instrument_air, UPS_backed_controls_and_valves]
+  maturity: REVIEW_REQUIRED_OPEN
+  missing_quantitative_return_explicitly_requested:
+    - initial_plant_state
+    - helium_inventory_requiring_recovery
+    - expected_peak_recovery_flow
+    - recovery_duration
+    - required_cooling_water_flow
+    - instrument_air_requirement
+    - electrical_emergency_power_requirement
+    - storage_capacity
+    - consequence_if_required_utility_unavailable
+    - resulting_preserved_plant_state
+  non_claim: bidder_approximately_110_g_per_s_is_not_contractual_acceptance
+
+current_analytical_guard:
+  normal_2K_OP:
+    total_WCS_flow_g_per_s: 326
+    HP_electrical_kW: 814
+    HP_cooling_water_rejection_kWth: 733
+    implied_four_unit_flow_g_per_s: 81.5
+    implied_frequency_Hz: approximately_52_4
+  maximum_reference:
+    frequency_Hz: 72
+    flow_g_per_s: approximately_112
+    package_power_kW: approximately_357
+    evidence_class: EQUIPMENT_MAXIMUM_REFERENCE
+  rule: >-
+    Power and cooling-water fractions shall not be linearly scaled from frequency/flow. A current OEM
+    or contractor operating point is required for the approximately-110-g/s emergency recovery state.
+
+source_reconciliation:
+  derivative_surface: Support_System_ICD_and_Requirements_Update
+  disposition: USE_AS_NAVIGATION_CLUE_NOT_DIRECT_RTM_AUTHORITY
+  reason: >-
+    The derivative sheet exposed useful wording but its RTM labels do not match the authoritative
+    Addendum II numbering. Authoritative Addendum II RTM identifiers control this ledger.
+  corrected_crosswalk:
+    backup_diesel: RTM-401
+    backup_PCW: RTM-428
+    instrument_air_LOOP: [RTM-432, RTM-433]
+    HVAC_normal: [RTM-434, RTM-435]
+    HVAC_LOOP: RTM-436
+    helium_LOOP_strategy: [RTM-258, RTM-260, RTM-261, RTM-262]
+
+bd005_effect:
+  state: CONTRACTUAL_LOOP_BOUNDARY_SHARPENED_EXECUTABLE_TRANSIENT_NOT_YET_ALLOWED
+  close_allowed: false
+  newly_closed_subquestions:
+    - contractual_diesel_power_ceiling_and_delay
+    - contractual_backup_PCW_thermal_ceiling_and_common_header_degraded_flow_allowance
+    - contractual_pneumatic_backup_autonomy_semantic_scope
+    - contractual_LOOP_ambient_room_heat_ceiling
+    - contractual_HP_exhaust_duct_availability
+    - contractual_abnormal_QRB_S_minimum_flow
+  remaining_first_reds:
+    - exact_current_OEM_or_contractor_HP_operating_point_near_110_g_per_s_including_kW_Hz_and_CW_rejection
+    - ES02_auxiliary_load_split_and_margin_within_350_kW_boundary
+    - actual_PAB12_LOOP_flow_pressure_temperatures_pump_fan_power_and_valve_state
+    - OFFER_35_duct_flow_size_and_allowable_pressure_drop_for_selected_HP_package
+    - quantitative_HV03_degraded_room_airflow_and_heat_removal_state_if_any
+    - effective_room_free_volume_and_building_equipment_thermal_mass
+    - physical_variable_and_limit_behind_working_approximately_2_h_onset
+    - measurable_criterion_behind_working_approximately_6_h_stabilization_statement
+    - first_law_WCS_LOOP_transient_with_uncertainty_and_independent_review
+
+non_compensating_rules:
+  - contractual_350_kW_power_does_not_equal_single_HP_load_without_separate_allocation_evidence
+  - contractual_350_kW_PCW_does_not_equal_a_proven_flow_rate
+  - six_hour_instrument_air_autonomy_does_not_validate_six_hour_thermal_stabilization
+  - RTM_436_15_kW_is_a_LOOP_ambient_heat_ceiling_not_a_complete_room_thermal_model
+  - duct_availability_does_not_equal_room_HVAC_airflow
+  - bidder_110_g_per_s_does_not_replace_OEM_operating_point_evidence
+  - no_controls_trip_class_is_inferred_from_these_utility_requirements
+  - global_project_dov_remains_WITHHELD

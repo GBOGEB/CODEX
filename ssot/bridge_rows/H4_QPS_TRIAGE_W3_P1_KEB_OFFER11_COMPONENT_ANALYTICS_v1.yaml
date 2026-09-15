@@ -1,0 +1,89 @@
+# H4 QPS TRIAGE W3 P1 — KEB exact-source receipt
+# Scope: propagate the merged W2 component-analytics contract only.
+# Authority: semantic/provenance receipt; no QPS engineering promotion.
+
+qps_rows:
+  - qps_item_id: H4-W2-OFFER11-HP-COMPONENT-ANALYTICS
+    object_type: QPS_COMPONENT_ANALYTICS_RETURN
+    source_repo: GBOGEB/cryoplant-project
+    source_locator: controls/QPS_H4_W2_OFFER11_COMPONENT_ANALYTICS_RECEIPT_v0.1.yaml
+    requirement_id: GHP03_N_MINUS_1_CAPACITY
+    offer_ref: OFFER-11+OFFER-16
+    state: ACCEPT_COMPONENT_ANALYTICS_ONLY
+    confidence: source_bound_independent_runtime_proven
+    bt_driver: null
+    pca_feature: null
+    decision_effect: component_analytics_only
+    next_evidence_needed: selected ALAT FSD475SFC three-unit N-1 flow envelope and preserved-state/common-cause evidence
+    receipt_binding:
+      source_pr: 1221
+      source_sha: 8f12395aed0ef245e02db1336d4d9a4a88c3946f
+      file_digest: git_blob_sha1:add2f513a2ceb0a5324bd84ee80127578e90ac0a
+    lineage:
+      chat_session: 2026-09-14-h4-qps-triage-w3
+      originating_prompt: next_after_w2_durable_receipt
+      created_by: qps_triage_3p3_keb_bridge
+
+# DOW is deliberately empty at P1. ABACUS must independently consume the merged
+# KEB receipt before any DOW disposition exists.
+dow_rows: []
+
+keb_rows:
+  - keb_item_id: H4-W3-P1-KEB-OFFER11-HP-001
+    object_type: KEB_SOURCE_RECEIPT
+    source_repo: GBOGEB/cryoplant-project
+    source_pr: 1221
+    source_sha: 8f12395aed0ef245e02db1336d4d9a4a88c3946f
+    source_locator: controls/QPS_H4_W2_OFFER11_COMPONENT_ANALYTICS_RECEIPT_v0.1.yaml
+    source_digest: git_blob_sha1:add2f513a2ceb0a5324bd84ee80127578e90ac0a
+    replay_status: PASS
+    validation_result: PASS_COMPONENT_ANALYTICS_CONTRACT_SYSTEM_CONSEQUENCE_WITHHELD
+    downstream_consumer: GBOGEB/ABACUS
+    next_action: DOW independently validate this exact KEB producer tuple and retain GHP03/Table-10 as withheld
+    lineage:
+      chat_session: 2026-09-14-h4-qps-triage-w3
+      originating_prompt: next_after_w2_durable_receipt
+      created_by: qps_triage_3p3_keb_bridge
+
+semantic_assessment:
+  mission: H4_QPS_TRIAGE
+  wave: H4_QPS_TRIAGE:W3
+  pulse: H4-QPS-W3-P1
+  horizontal_lane: H2_KEB
+  method: 3P3_PLUS_MIP_P
+  result: PASS
+  authority_transfer: false
+  source_identity:
+    qps_merge_sha: 8f12395aed0ef245e02db1336d4d9a4a88c3946f
+    qps_receipt_blob_sha: add2f513a2ceb0a5324bd84ee80127578e90ac0a
+    alat_source_commit_sha: 63121ad911b65869783adfbd50e10b2703f6eb8e
+    alat_source_blob_sha: 1cd312315325991100d90d3f4b2ef51e6796bad6
+  crosswalk:
+    primary_reliability_offer: OFFER-11
+    dependent_n_minus_1_offer: OFFER-16
+    relation: DISTINCT_RELATED_DECISION_ATOMS_NOT_ALIASES
+  state_class_separation:
+    component_analytics: ACCEPT_COMPONENT_ANALYTICS_ONLY
+    model_scope: component_only
+    model_disposition: SCENARIO_ONLY
+    child_engineering_acceptance: WITHHELD
+    system_event_mtbf: WITHHELD
+    table10_allocation: 0.0
+  first_red_preserved:
+    gate: GHP03_N_MINUS_1_CAPACITY
+    issue: 79
+    state: OPEN
+  anti_overclaim:
+    - COMPONENT_MTBF_NE_SYSTEM_EVENT_MTBF
+    - OFFER_11_NE_OFFER_16_ALIAS
+    - KEB_PASS_NE_CHILD_ENGINEERING_ACCEPT
+    - AUTHORITY_TRANSFER_FALSE
+
+formal_credit_delta:
+  engineering: 0
+  compliance: 0
+  negotiation: 0
+  acceptance: 0
+  release: 0
+  award: 0
+  table10_rate_per_year: 0.0

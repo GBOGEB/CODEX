@@ -16,8 +16,10 @@ _TITLE_LAYOUT = 0
 _TITLE_ONLY_LAYOUT = 5
 
 
-def build_pptx(payload: dict[str, object], ssot: GovernanceSSOT, path: Path) -> None:
-    """Render a governance payload as a tiered PPTX deck."""
+def build_pptx(
+    payload: dict[str, object], ssot: GovernanceSSOT, path: Path
+) -> dict[str, object]:
+    """Render a governance payload as a tiered PPTX deck and return native telemetry."""
 
     prs = Presentation()
 
@@ -28,6 +30,10 @@ def build_pptx(payload: dict[str, object], ssot: GovernanceSSOT, path: Path) -> 
     subtitle = title_slide.placeholders[1]
     subtitle.text = f"Content hash (sha256): {content_hash(payload)}"
 
+    table_slides = 0
+    rows_rendered = 0
+    max_rows_rendered_per_table = 0
+
     for sheet_payload in payload["sheets"]:  # type: ignore[index]
         columns = sheet_payload["columns"]
         rows = sheet_payload["rows"]
@@ -36,6 +42,9 @@ def build_pptx(payload: dict[str, object], ssot: GovernanceSSOT, path: Path) -> 
             if chunk_index > 0:
                 heading = f"{heading} (cont.)"
             _add_table_slide(prs, heading, columns, chunk)
+            table_slides += 1
+            rows_rendered += len(chunk)
+            max_rows_rendered_per_table = max(max_rows_rendered_per_table, len(chunk))
 
     fixed = ssot.build.fixed_docprops_timestamp.replace(tzinfo=None)
     prs.core_properties.created = fixed
@@ -43,7 +52,47 @@ def build_pptx(payload: dict[str, object], ssot: GovernanceSSOT, path: Path) -> 
     prs.core_properties.author = GENERATOR
     prs.core_properties.last_modified_by = GENERATOR
 
+    geometry_violations: list[dict[str, int]] = []
+    slide_width = int(prs.slide_width)
+    slide_height = int(prs.slide_height)
+    shape_count = 0
+    for slide_index, slide in enumerate(prs.slides, start=1):
+        for shape_index, shape in enumerate(slide.shapes, start=1):
+            shape_count += 1
+            left = int(shape.left)
+            top = int(shape.top)
+            right = left + int(shape.width)
+            bottom = top + int(shape.height)
+            if left < 0 or top < 0 or right > slide_width or bottom > slide_height:
+                geometry_violations.append(
+                    {
+                        "slide": slide_index,
+                        "shape": shape_index,
+                        "left": left,
+                        "top": top,
+                        "right": right,
+                        "bottom": bottom,
+                    }
+                )
+
     prs.save(path)
+
+    overflow_pass = (
+        not geometry_violations and max_rows_rendered_per_table <= MAX_ROWS_PER_SLIDE
+    )
+    return {
+        "renderer": "python-pptx",
+        "slide_count": len(prs.slides),
+        "table_slide_count": table_slides,
+        "shape_count": shape_count,
+        "rows_rendered": rows_rendered,
+        "max_rows_per_slide": MAX_ROWS_PER_SLIDE,
+        "max_rows_rendered_per_table": max_rows_rendered_per_table,
+        "geometry_overflow_count": len(geometry_violations),
+        "geometry_violations": geometry_violations,
+        "layout_pass": overflow_pass,
+        "overflow_pass": overflow_pass,
+    }
 
 
 def _chunk_rows(

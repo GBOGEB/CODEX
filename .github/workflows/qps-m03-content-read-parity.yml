@@ -1,0 +1,54 @@
+name: QPS M03 Content Read Transport Parity
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      OFFICIAL_SHA: 7d13a7ad6f2a17f351a6d77ce280c85ae1821f4d
+      GITHUB_PERSONAL_ACCESS_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout CODEX parity carrier
+        uses: actions/checkout@v4
+
+      - name: Checkout exact official MCP source
+        uses: actions/checkout@v4
+        with:
+          repository: github/github-mcp-server
+          ref: ${{ env.OFFICIAL_SHA }}
+          path: official
+          fetch-depth: 1
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: official/go.mod
+          cache: false
+
+      - name: Build official server and client
+        working-directory: official
+        run: |
+          go build -o "$RUNNER_TEMP/github-mcp-server" ./cmd/github-mcp-server
+          go build -o "$RUNNER_TEMP/mcpcurl" ./cmd/mcpcurl
+
+      - name: Execute exact positive and NOT_FOUND parity
+        run: |
+          python scripts/qps_m03_content_read_parity.py \
+            --server "$RUNNER_TEMP/github-mcp-server" \
+            --mcpcurl "$RUNNER_TEMP/mcpcurl" \
+            --out m03_content_read_parity_receipt.json
+
+      - name: Upload parity receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: m03-content-read-parity-receipt
+          path: m03_content_read_parity_receipt.json
+          if-no-files-found: error

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>QCELL canonical MAIN v0.7.7</title>
+<style>
+body{margin:0;background:#0f172a;color:#f8fafc;font-family:Arial,Helvetica,sans-serif}
+nav{position:sticky;top:0;z-index:10;background:#020617;padding:12px 18px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:1px solid #334155}
+nav strong{margin-right:10px}.pill{border:1px solid #64748b;background:#111827;color:#fff;border-radius:999px;padding:7px 12px;cursor:pointer;font-weight:700}.pill.active{background:#38bdf8;color:#062032;border-color:#38bdf8}.preset{background:#1e293b}.reset{border-color:#a78bfa}
+main{max-width:1560px;margin:auto;padding:22px}.card{background:#fff;color:#111827;border-radius:18px;padding:20px;margin:18px 0;box-shadow:0 10px 30px rgba(0,0,0,.28)}
+h1{font-size:38px;margin:0 0 8px}.lead{font-size:17px;line-height:1.45;color:#334155}.viewer{padding:0;overflow:hidden}.viewer object{width:100%;height:auto;min-height:820px;display:block;background:#fff;border:0}
+.status{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:10px;margin-top:14px}.status div{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px}.k{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#64748b;font-weight:800}.v{font-weight:800;margin-top:4px}
+@media(max-width:900px){.status{grid-template-columns:1fr 1fr}.viewer object{min-height:620px}}
+</style>
+<script>
+const STORAGE_KEY='qcell-main-v0.7.7-layer-state';
+const DEFAULTS={thermal_body:true,parasitic_loads:true,compact_flow_legend:true,endpoint_guides:true,temperature_legend:true,big_teaching_arrows:false};
+let currentState={...DEFAULTS};
+function svgDoc(){const o=document.getElementById('qcell-svg');return o&&o.contentDocument?o.contentDocument:null;}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(currentState));}catch(e){/* localStorage unavailable: remain deterministic in-memory */}}
+function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return {...DEFAULTS};const parsed=JSON.parse(raw);return {...DEFAULTS,...parsed};}catch(e){return {...DEFAULTS};}}
+function setLayer(id,on,persist=true){const d=svgDoc();if(!d)return;const g=d.getElementById(id);if(g)g.style.display=on?'':'none';currentState[id]=!!on;const b=document.querySelector('[data-layer="'+id+'"]');if(b)b.classList.toggle('active',!!on);if(persist)saveState();}
+function toggleLayer(id){setLayer(id,!currentState[id]);}
+function setState(state){currentState={...DEFAULTS,...state};Object.entries(currentState).forEach(([k,v])=>setLayer(k,v,false));saveState();}
+function applyPreset(name){
+  if(name==='thermal')setState({thermal_body:true,parasitic_loads:false,compact_flow_legend:false,endpoint_guides:false,temperature_legend:true,big_teaching_arrows:false});
+  if(name==='thermal_parasitics')setState({thermal_body:true,parasitic_loads:true,compact_flow_legend:false,endpoint_guides:false,temperature_legend:true,big_teaching_arrows:false});
+  if(name==='full')setState({...DEFAULTS});
+}
+function resetState(){try{localStorage.removeItem(STORAGE_KEY);}catch(e){} setState({...DEFAULTS});}
+function init(){currentState=loadState();Object.entries(currentState).forEach(([k,v])=>setLayer(k,v,false));}
+</script>
+</head>
+<body>
+<nav>
+<strong>QCELL MAIN v0.7.7</strong>
+<button class="pill preset" onclick="applyPreset('thermal')">Thermal only</button>
+<button class="pill preset" onclick="applyPreset('thermal_parasitics')">Thermal + parasitics</button>
+<button class="pill preset" onclick="applyPreset('full')">Full MAIN</button>
+<span style="width:14px"></span>
+<button class="pill active" data-layer="thermal_body" onclick="toggleLayer('thermal_body')">Thermal body</button>
+<button class="pill active" data-layer="parasitic_loads" onclick="toggleLayer('parasitic_loads')">Parasitics</button>
+<button class="pill active" data-layer="compact_flow_legend" onclick="toggleLayer('compact_flow_legend')">Flow legend</button>
+<button class="pill active" data-layer="endpoint_guides" onclick="toggleLayer('endpoint_guides')">Endpoint guides</button>
+<button class="pill active" data-layer="temperature_legend" onclick="toggleLayer('temperature_legend')">Temp heat map</button>
+<button class="pill" data-layer="big_teaching_arrows" onclick="toggleLayer('big_teaching_arrows')">Big arrows (teaching)</button>
+<button class="pill reset" onclick="resetState()">Reset view</button>
+</nav>
+<main>
+<section class="card">
+<h1>QSVG-P1B — visual-control layer state</h1>
+<p class="lead">The canonical MAIN remains unchanged in geometry. Layer visibility is now persisted locally so visual review states survive page reloads. The reset button returns to the governed default: thermal body, parasitics, compact flow legend, dotted endpoint guides, and temperature heat map ON; big teaching arrows OFF.</p>
+<div class="status">
+<div><div class="k">BD-003</div><div class="v">Automated collision check lane</div></div>
+<div><div class="k">BD-004</div><div class="v">Persistent state implemented</div></div>
+<div><div class="k">Authority</div><div class="v">VISUAL_SEMANTIC_ONLY</div></div>
+<div><div class="k">Pressure</div><div class="v">Deferred / OFF</div></div>
+</div>
+</section>
+<section class="card viewer"><object id="qcell-svg" type="image/svg+xml" data="../svg/qcell_main_v0_7_7.svg" onload="init()"></object></section>
+<section class="card">
+<h2>MAIN acceptance focus</h2>
+<p class="lead">P1B changes interaction/control only. It must not move the accepted P1A geometry unless a concrete review finding requires a repair.</p>
+</section>
+</main>
+</body>
+</html>

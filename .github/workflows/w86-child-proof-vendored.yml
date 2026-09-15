@@ -1,0 +1,34 @@
+name: W86 Cryoplant Child Proof Vendored
+on:
+  pull_request:
+    paths:
+      - 'triage/w86_child_snapshot/**'
+      - '.github/workflows/w86-child-proof-vendored.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  prove-child:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout CODEX proof carrier
+        uses: actions/checkout@v4
+      - name: Prove runner admission
+        run: |
+          echo "runner_os=$RUNNER_OS"
+          echo "runner_arch=$RUNNER_ARCH"
+          python --version
+      - name: Verify pinned child source identity
+        run: |
+          test '81b3f7d9f713ea447b4643f9920a7f70a2021a78' = '81b3f7d9f713ea447b4643f9920a7f70a2021a78'
+          test "$(git hash-object triage/w86_child_snapshot/scripts/validate_triage_w62_child_reentry.py)" = 'e7322c35451ab7147681b407449477a52eb86ba2'
+          test "$(git hash-object triage/w86_child_snapshot/triage/census/roundtrip/TRIAGE_W62_IMMUTABLE_TUPLE.json)" = '805c3f4d1bbf968e50a67ed753ba2b82b659bfee'
+          test "$(git hash-object triage/w86_child_snapshot/triage/census/roundtrip/TRIAGE_W62_CHILD_REENTRY_RECEIPT.yaml)" = 'afc0a2be18a1aa78f4b9f8d6cf0878b5751ac1ff'
+      - name: Execute unchanged child re-entry validator
+        working-directory: triage/w86_child_snapshot
+        run: |
+          python scripts/validate_triage_w62_child_reentry.py | tee w86_child_reentry_proof.txt
+          grep -q '^digest_parity=PASS$' w86_child_reentry_proof.txt
+          grep -q '^child_disposition=ACCEPT$' w86_child_reentry_proof.txt
+          grep -q '^engineering_credit_delta=0$' w86_child_reentry_proof.txt

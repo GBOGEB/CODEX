@@ -1,0 +1,94 @@
+schema: qps-source-vs-curated-dov/1.2
+version: '1.6'
+authority: CURATION_CONTENT_TRACE_DOV_NOT_ENGINEERING_OR_DESIGN_ACCEPTANCE
+identity_manifests: {renders: source_render_manifest.yaml, text: source_text_manifest.yaml}
+method:
+  review_scope: all 63 v1.6-bound source slides
+  comparison: bound source render + native text versus curated Markdown object or explicit reference target
+  visual_review: performed for all bound source renders
+  pixel_parity_claimed: false
+  office_host_parity_claimed: false
+summary:
+  bound_source_slides: 63
+  reviewed_source_slides: 63
+  unreviewed_source_slides: 0
+  silent_drop_count: 0
+  disposition_counts: {KEEP: 10, MERGE: 38, REFERENCE: 12, SUPERSEDE: 3}
+  bd_003_disposition: CLOSED_CONTENT_TRACE_DOV
+  close_basis: all bound slides reviewed; each has explicit disposition; silent_drop_count = 0
+source_text_bundle: {library_path: /QPS/CODEX/source-proof/v1.6/QPS_v1.6_source_text_bundle_20260914.zip, file_id: file_00000000651081f4b394efba2f0ffeb3, library_file_id: libfile_6b16a4fe6a388191b3b610e143cdfcdc, sha256: 081353101bf82a060c6a5f5fab573a11b246d0228aa251cac2696f2defb7eb52}
+lineage_first_reds_repaired:
+  - SRC-UTIL-CORE slide 25 rebound from stale Controls grouping to NAMING-SBS reference.
+  - SRC-CTRL-CORE slide 8 rebound from Controls hierarchy to Utilities cooling/HVAC reference.
+  - SRC-CTRL-CORE slide 24 rebound from CTRL-04 tender I/O to CTRL-06/CTRL-07 readiness/inhibition.
+  - SRC-CTRL-CORE slides 22-23 rebound from CTRL-05 interface architecture to CTRL-06/CTRL-07 readiness/inhibition.
+  - SRC-NAMING-CONTROL slides 21-24 rebound from Controls coverage to NAMING-SBS documentation/tagging reference.
+entries:
+  - {source_id: "SRC-CTRL-CORE", slide: 2, targets: ["CTRL-00"], disposition: "KEEP", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-CTRL-CORE", slide: 3, targets: ["CTRL-00"], disposition: "MERGE", content_loss_status: "RETAINED_WITH_REFERENCE_NOTE", rationale: "Engineering ownership is retained; procurement/legal-process context is not promoted as a control-system requirement."}
+  - {source_id: "SRC-CTRL-CORE", slide: 4, targets: ["CTRL-01"], disposition: "KEEP", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-CTRL-CORE", slide: 5, targets: ["CTRL-01", "CTRL-06"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-CTRL-CORE", slide: 6, targets: ["CTRL-05", "CTRL-07"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-CTRL-CORE", slide: 7, targets: ["CTRL-02", "CTRL-03"], disposition: "MERGE", content_loss_status: "RETAINED_WITH_SOURCE_DEFECTS_TYPED", rationale: "Hierarchy/naming/support relations are retained; malformed/repeated PVPS instance labels remain source defects and are not silently treated as final tags."}
+  - {source_id: "SRC-CTRL-CORE", slide: 8, targets: ["UTIL-03"], disposition: "REFERENCE", content_loss_status: "LINEAGE_REBIND", rationale: "This slide is a cooling/HVAC architecture view, not a Controls hierarchy source. Rebound to Utilities to prevent false control-content coverage."}
+  - {source_id: "SRC-CTRL-CORE", slide: 9, targets: ["CTRL-02"], disposition: "KEEP", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-CTRL-CORE", slide: 10, targets: ["CTRL-02"], disposition: "MERGE", content_loss_status: "RETAINED_WITH_SOURCE_DEFECTS_TYPED", rationale: "Naming/location/interface-marker content is retained; OEM/black-box exceptions remain reference context rather than final naming authority."}
+  - {source_id: "SRC-CTRL-CORE", slide: 11, targets: ["CTRL-03"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-CTRL-CORE", slide: 12, targets: ["CTRL-03"], disposition: "KEEP", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-CTRL-CORE", slide: 13, targets: ["CTRL-04"], disposition: "MERGE", content_loss_status: "SUPERSEDED_BY_REFINED_CANDIDATE", rationale: "Earlier tender candidate matrix is retained as lineage but refined by source slide 14/16."}
+  - {source_id: "SRC-CTRL-CORE", slide: 14, targets: ["CTRL-04"], disposition: "KEEP", content_loss_status: "TENDER_CANDIDATE_TYPED", rationale: "Refined candidate I/O matrix is retained with tender-candidate authority only."}
+  - {source_id: "SRC-CTRL-CORE", slide: 15, targets: ["CTRL-04"], disposition: "SUPERSEDE", content_loss_status: "SUPERSEDED_DUPLICATE", rationale: "Duplicate/earlier candidate matrix is superseded by the refined source slide 14/16 while retained in lineage."}
+  - {source_id: "SRC-CTRL-CORE", slide: 16, targets: ["CTRL-04"], disposition: "SUPERSEDE", content_loss_status: "SUPERSEDED_DUPLICATE", rationale: "Near-duplicate refined candidate matrix is represented by the canonical CTRL-04 object; exact source render remains retained."}
+  - {source_id: "SRC-CTRL-CORE", slide: 17, targets: ["CTRL-01", "CTRL-05"], disposition: "MERGE", content_loss_status: "RETAINED_WITH_SOURCE_DEFECTS_TYPED", rationale: "Interface-development content is retained; repeated HP2-HP4 labels pointing to HP1:CIS are treated as source copy/paste defects, not silently authoritative tags."}
+  - {source_id: "SRC-CTRL-CORE", slide: 18, targets: ["CTRL-02"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-CTRL-CORE", slide: 19, targets: ["CTRL-02"], disposition: "KEEP", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-CTRL-CORE", slide: 20, targets: ["CTRL-05"], disposition: "KEEP", content_loss_status: "PROTOCOL_WORDING_TYPED", rationale: "MIT/MIS path semantics are retained; direct OPC UA/PROFINET preference remains source wording requiring protocol freeze."}
+  - {source_id: "SRC-CTRL-CORE", slide: 21, targets: ["CTRL-05"], disposition: "MERGE", content_loss_status: "PROTOCOL_WORDING_TYPED", rationale: "Signal-path semantics and last-active-value caveat are retained as control-philosophy/open-validation content, not availability proof."}
+  - {source_id: "SRC-CTRL-CORE", slide: 22, targets: ["CTRL-06", "CTRL-07"], disposition: "MERGE", content_loss_status: "MODE_DEPENDENT_READINESS_TYPED", rationale: "Bottom-up readiness and mode-conditioned inhibition are retained; turbine degraded-capacity statement remains TBD."}
+  - {source_id: "SRC-CTRL-CORE", slide: 23, targets: ["CTRL-06", "CTRL-07"], disposition: "MERGE", content_loss_status: "MODE_DEPENDENT_READINESS_TYPED", rationale: "Bottom-up readiness and mode-conditioned inhibition are retained; turbine degraded-capacity statement remains TBD."}
+  - {source_id: "SRC-CTRL-CORE", slide: 24, targets: ["CTRL-06", "CTRL-07"], disposition: "KEEP", content_loss_status: "CONTROL_CONSEQUENCE_CONFLICT_VISIBLE", rationale: "HV06 no-impact, HV02/HV03 occupancy-specific slow/non-interlock, QJB30 non-2K consequence and support inhibition are retained. This supports keeping BD-006 open rather than forcing one universal trip class."}
+  - {source_id: "SRC-NAMING-CONTROL", slide: 21, targets: ["NAMING-SBS"], disposition: "REFERENCE", content_loss_status: "LINEAGE_REBIND", rationale: "Documentation/ICD/P&ID material belongs to the separate Naming/SBS/documentation domain; it is not evidence for CTRL-02/CTRL-05 content coverage."}
+  - {source_id: "SRC-NAMING-CONTROL", slide: 22, targets: ["NAMING-SBS"], disposition: "REFERENCE", content_loss_status: "LINEAGE_REBIND", rationale: "Documentation/ICD/P&ID material belongs to the separate Naming/SBS/documentation domain; it is not evidence for CTRL-02/CTRL-05 content coverage."}
+  - {source_id: "SRC-NAMING-CONTROL", slide: 23, targets: ["NAMING-SBS"], disposition: "REFERENCE", content_loss_status: "LINEAGE_REBIND", rationale: "Documentation/ICD/P&ID material belongs to the separate Naming/SBS/documentation domain; it is not evidence for CTRL-02/CTRL-05 content coverage."}
+  - {source_id: "SRC-NAMING-CONTROL", slide: 24, targets: ["NAMING-SBS"], disposition: "REFERENCE", content_loss_status: "LINEAGE_REBIND", rationale: "Tagging/naming standards belong to the separate Naming/SBS domain; no control authority is inferred."}
+  - {source_id: "SRC-NAMING-CONTROL", slide: 34, targets: ["NAMING-SBS", "CTRL-02"], disposition: "REFERENCE", content_loss_status: "CROSS_DOMAIN_REFERENCE", rationale: "Expanded roots/line tags primarily belong to Naming/SBS and cross-check the Controls location/terminal-point grammar."}
+  - {source_id: "SRC-NAMING-CONTROL", slide: 35, targets: ["CTRL-02"], disposition: "MERGE", content_loss_status: "RETAINED_WITH_SOURCE_DEFECTS_TYPED", rationale: "Control hierarchy is retained; inconsistent QSN/QSB and PLC label wording remains source-level naming debt rather than silently normalized authority."}
+  - {source_id: "SRC-NAMING-CONTROL", slide: 36, targets: ["CTRL-05"], disposition: "MERGE", content_loss_status: "PROTOCOL_WORDING_TYPED", rationale: "MIT/MIS/MCS signal-path content cross-checks CTRL-05; protocol preference and last-value behavior remain open for contractual/control freeze."}
+  - {source_id: "SRC-UTIL-CANONICAL-APPENDIX", slide: 51, targets: ["UTIL-01"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-UTIL-CANONICAL-APPENDIX", slide: 52, targets: ["UTIL-01"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-UTIL-CANONICAL-APPENDIX", slide: 53, targets: ["UTIL-02", "UTIL-04"], disposition: "KEEP", content_loss_status: "RETAINED_WITH_OPEN_ENGINEERING_ITEMS", rationale: "Canonical-candidate interface table is retained. PCW scope is reconciled; HVAC/GN2/LOOP rows remain typed with their unresolved evidence status."}
+  - {source_id: "SRC-UTIL-CANONICAL-APPENDIX", slide: 54, targets: ["UTIL-02", "UTIL-05"], disposition: "KEEP", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "Support-system legend is retained across the capacity and interface-legend objects."}
+  - {source_id: "SRC-UTIL-CANONICAL-APPENDIX", slide: 55, targets: ["UTIL-03"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-UTIL-CANONICAL-APPENDIX", slide: 56, targets: ["UTIL-01", "UTIL-05"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-UTIL-CANONICAL-APPENDIX", slide: 57, targets: ["UTIL-03"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-UTIL-CANONICAL-APPENDIX", slide: 58, targets: ["UTIL-03"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-UTIL-CANONICAL-APPENDIX", slide: 59, targets: ["UTIL-03", "UTIL-07"], disposition: "MERGE", content_loss_status: "WIP_REFERENCE_EXPLICIT", rationale: "Core values are retained; detailed chilled-water return/diversity and typo-prone PAN20/PGB20 wording remain WIP and are not silently normalized."}
+  - {source_id: "SRC-UTIL-CANONICAL-APPENDIX", slide: 60, targets: ["UTIL-03", "UTIL-07"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "Interface values and open-focus items are carried into the curation/validation surface."}
+  - {source_id: "SRC-UTIL-CORE", slide: 1, targets: ["UTIL-00"], disposition: "REFERENCE", content_loss_status: "REFERENCE_ONLY", rationale: "Prototype/style placeholder content retained as visual-grammar reference; not engineering content."}
+  - {source_id: "SRC-UTIL-CORE", slide: 2, targets: ["UTIL-00"], disposition: "REFERENCE", content_loss_status: "REFERENCE_ONLY", rationale: "Prototype/style placeholder content retained as visual-grammar reference; not engineering content."}
+  - {source_id: "SRC-UTIL-CORE", slide: 3, targets: ["UTIL-00"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "Style/agenda/topic intent is consolidated into UTIL-00 without design authority."}
+  - {source_id: "SRC-UTIL-CORE", slide: 4, targets: ["UTIL-00"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "Style/agenda/topic intent is consolidated into UTIL-00 without design authority."}
+  - {source_id: "SRC-UTIL-CORE", slide: 7, targets: ["UTIL-01"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-UTIL-CORE", slide: 8, targets: ["UTIL-01"], disposition: "SUPERSEDE", content_loss_status: "SUPERSEDED_DUPLICATE", rationale: "Earlier hierarchy variant is superseded by the fuller hierarchy/context from source slide 7 and later appendix slide 51."}
+  - {source_id: "SRC-UTIL-CORE", slide: 9, targets: ["UTIL-01", "UTIL-06"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-UTIL-CORE", slide: 10, targets: ["UTIL-01"], disposition: "MERGE", content_loss_status: "RETAINED_WITH_REFERENCE_NOTE", rationale: "Engineering ownership is retained; the SCK CEN legal/procurement-process statement is not promoted into an engineering object because it is procurement context, not a technical requirement."}
+  - {source_id: "SRC-UTIL-CORE", slide: 11, targets: ["UTIL-03"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-UTIL-CORE", slide: 12, targets: ["UTIL-03", "UTIL-07"], disposition: "MERGE", content_loss_status: "WIP_REFERENCE_EXPLICIT", rationale: "Main HVAC/cooling values are retained. The 50% bypass/chilled-water provision and PAB11/PGB20 wording remain source-WIP/reference because the interface role is unresolved."}
+  - {source_id: "SRC-UTIL-CORE", slide: 13, targets: ["UTIL-01", "UTIL-06"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-UTIL-CORE", slide: 14, targets: ["UTIL-03"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "represented in curated target at v1.6 authority"}
+  - {source_id: "SRC-UTIL-CORE", slide: 15, targets: ["UTIL-03", "UTIL-07"], disposition: "MERGE", content_loss_status: "WIP_REFERENCE_EXPLICIT", rationale: "7 C chilled-water, 281-283 K sensible-cooling and detailed return/condensation wording remain explicit WIP; malformed source wording is not silently promoted."}
+  - {source_id: "SRC-UTIL-CORE", slide: 16, targets: ["UTIL-03", "UTIL-07"], disposition: "MERGE", content_loss_status: "WIP_REFERENCE_EXPLICIT", rationale: "Core HVAC/cooling statements are retained; 50% bypass/chilled-water and PAB11 wording remain review items rather than frozen requirements."}
+  - {source_id: "SRC-UTIL-CORE", slide: 17, targets: ["UTIL-03", "UTIL-07"], disposition: "MERGE", content_loss_status: "WIP_REFERENCE_EXPLICIT", rationale: "Core HVAC/cooling statements are retained; 50% bypass/chilled-water and PAB11 wording remain review items rather than frozen requirements."}
+  - {source_id: "SRC-UTIL-CORE", slide: 18, targets: ["UTIL-03", "UTIL-07"], disposition: "MERGE", content_loss_status: "RETAINED_OR_EXPLICITLY_TYPED", rationale: "Focus areas and interface summary are represented in the curation/validation register."}
+  - {source_id: "SRC-UTIL-CORE", slide: 19, targets: ["UTIL-04"], disposition: "MERGE", content_loss_status: "SOURCE_WORKING_SCENARIO_TYPED", rationale: "LOOP scenario chain is retained as source-working material and is not promoted to guarantee/acceptance criteria."}
+  - {source_id: "SRC-UTIL-CORE", slide: 20, targets: ["UTIL-04", "LOOP-EVIDENCE-v1.6"], disposition: "MERGE", content_loss_status: "SOURCE_WORKING_SCENARIO_TYPED", rationale: "17 kW, 350 kW, ~6 h, ~2 h, ODH and occupancy statements are bound to the LOOP evidence ledger; exact thermal/transient validation remains open."}
+  - {source_id: "SRC-UTIL-CORE", slide: 21, targets: ["UTIL-04"], disposition: "MERGE", content_loss_status: "SOURCE_WORKING_SCENARIO_TYPED", rationale: "LOOP scenario chain is retained as source-working material and is not promoted to guarantee/acceptance criteria."}
+  - {source_id: "SRC-UTIL-CORE", slide: 22, targets: ["CTRL-01"], disposition: "REFERENCE", content_loss_status: "CROSS_DOMAIN_REFERENCE", rationale: "Control overview is owned by Controls; Utilities source slide is retained as corroborating cross-domain lineage."}
+  - {source_id: "SRC-UTIL-CORE", slide: 23, targets: ["CTRL-01", "CTRL-06"], disposition: "REFERENCE", content_loss_status: "CROSS_DOMAIN_REFERENCE", rationale: "Modular hierarchy/readiness concept is owned by Controls and referenced rather than duplicated in Utilities."}
+  - {source_id: "SRC-UTIL-CORE", slide: 24, targets: ["CTRL-05", "CTRL-07"], disposition: "REFERENCE", content_loss_status: "CROSS_DOMAIN_REFERENCE", rationale: "Signal philosophy/inhibition content is owned by Controls and referenced rather than duplicated in Utilities."}
+  - {source_id: "SRC-UTIL-CORE", slide: 25, targets: ["NAMING-SBS"], disposition: "REFERENCE", content_loss_status: "LINEAGE_REBIND", rationale: "ATS-versus-Ultimo naming material does not belong to CTRL-00/CTRL-01. Rebound to the separate Naming/SBS domain; no technical statement is silently dropped."}
+non_compensating_rules:
+  - REFERENCE/SUPERSEDE/DROP_WITH_RATIONALE does not grant engineering correctness.
+  - OPEN/WIP engineering statements remain OPEN/WIP after content-trace DoV.
+  - BD-006 control classification is unchanged and remains open where discipline evidence conflicts.
+  - Global/project DoV remains WITHHELD.
