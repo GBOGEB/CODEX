@@ -1,0 +1,28 @@
+schema: federation.handover.pointer_receiver/v1
+receiver_repo: GBOGEB/CODEX
+receiver_role: KEB_SEMANTIC_PROVENANCE
+mode: ACCEPT_POINTER_ONLY
+authority_transfer: false
+child_authority:
+  repo: GBOGEB/cryoplant-project
+  pr: 1312
+  head_sha: 85f96cbf90385183f8d7af694854435576fa63c8
+  handover_path: handover/session/SC_2026-09-15_W105_3PR_MIP_LOSSLESS_HANDOVER_v1.yaml
+  restart_path: handover/session/SC_2026-09-15_W105_RESTART_CARD_v1.md
+bound_local_context:
+  active_mip_pr: 735
+  active_mip_head: 93b5890a7c1be40e9b4ca645fed757091a985629
+  observed_target_receipt:
+    workflow: W69 QPS Zero-Delta Execution
+    run_id: 34935281889
+    conclusion: success
+rules:
+  - this receiver does not duplicate or reinterpret child engineering truth
+  - CODEX may validate semantics/provenance but cannot promote child engineering or negotiation score
+  - preserve W69 target PASS unless the same target regresses
+  - unrelated broad CODEX reds recurse independently on their own first material red
+  - continuation must refresh live state before acting
+credit:
+  engineering_delta: 0
+  negotiation_delta: 0
+  publish_delta: 0
