@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import os
-import sys
 import urllib.error
 import urllib.request
 from typing import Any
@@ -37,14 +36,16 @@ def inspect_pages_site(payload: Any) -> list[str]:
 
 def fetch_pages_site(repository: str) -> dict[str, Any]:
     url = f"https://api.github.com/repos/{repository}/pages"
-    request = urllib.request.Request(
-        url,
-        headers={
-            "Accept": "application/vnd.github+json",
-            "X-GitHub-Api-Version": DEFAULT_API_VERSION,
-            "User-Agent": "CODEX-A9-Pages-Source-Mode-Audit/1.0",
-        },
-    )
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": DEFAULT_API_VERSION,
+        "User-Agent": "CODEX-A9-Pages-Source-Mode-Audit/1.0",
+    }
+    token = os.environ.get("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+
+    request = urllib.request.Request(url, headers=headers)
     try:
         with urllib.request.urlopen(request, timeout=20) as response:
             body = response.read().decode("utf-8")
