@@ -1,0 +1,57 @@
+schema_version: "keb-challenge/1.0"
+wave: TRIAGE_3PR_B
+role: CODEX_KEB
+status: FORWARD_TO_DOW_WITH_EXPLICIT_MISSING_FIELDS
+
+parent:
+  repository: GBOGEB/cryoplant-project
+  pr: 1307
+  head_sha: a6e0b7932e092f50c32316182d1591da422e5472
+  task: controls/TRIAGE_3PR_B_PVPS_83KW_PARENT_EXECUTION_v0.1.yaml
+
+semantic_provenance_result:
+  target: "LKT PVPS 2K-OP package electrical = 83 kW ±1%"
+  source_valid_facts:
+    pump_family: "Leybold SOGEVAC SV750 BF"
+    installed_count: 4
+    motor_nameplate_kW_each: 18.5
+    current_offer_drive_control: VFD
+    automatic_staging: true
+    stated_suction_envelope_mbar_a: [130, 450]
+    stated_discharge_bar_a: 1.05
+    aggregate_target_kW: 83.0
+    aggregate_cw_rejection_kWth: 75.0
+  superseded_interpretation:
+    value: FIXED_SPEED_OWNER_WORKING_BASIS
+    status: SUPERSEDED_FOR_CURRENT_OFFER_INTERPRETATION
+    reason: bidder process description explicitly states VFD on each pump
+
+mandatory_same_point_gaps:
+  - exact_selected_Leybold_variant_or_part_number
+  - actual_2KOP_running_pump_count
+  - per_running_pump_VFD_frequency_or_load
+  - aggregate_and_per_pump_helium_mass_flow
+  - 2KOP_suction_pressure_and_temperature
+  - helium_specific_selected_variant_power_curve
+  - package_auxiliary_and_VFD_loss_split
+
+discharge_pressure_note: "1.05 bar(a) is source-supported as controlled discharge target, but still needs explicit confirmation at the exact 2K-OP receipt boundary."
+
+KEB_disposition:
+  provenance: PASS_PARTIAL
+  engineering_disposition_authority: NONE
+  forward_to_DOW: true
+  reason: >-
+    Enough source-bound structure exists to execute a falsification/reconstructability challenge, but not enough same-point
+    evidence exists to manufacture an 83 kW prediction. DOW must quantify what is directly calculable and fail closed on
+    missing operating-point/OEM fields.
+
+observed_metrics:
+  input_parent_bound: true
+  source_valid_fact_count: 9
+  mandatory_gap_count: 7
+  semantic_checks_run: 8
+  semantic_checks_pass: 8
+  child_pipeline_steps_expected: 4
+  child_pipeline_steps_completed: 2
+  formal_credit_delta: 0
