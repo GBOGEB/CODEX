@@ -2,7 +2,7 @@ schema: codex.keb.temporal_h2_semantic_challenge.v1
 origin:
   repository: GBOGEB/pipeline-automation-hub
   pr: 133
-  head_sha: 40668d4d9b29ce2f90c186ff77793a2e59add4aa
+  head_sha: 95a393a558696249d4b94436970220e08067e9b1
 role: CHALLENGE_SIGNAL
 semantic_contract:
   VNV_SIGNAL:
@@ -18,6 +18,7 @@ semantic_contract:
   SURVEILLANCE_SIGNAL:
     payload: post_entry_genuine_persistence_observation
     may_redefine_control_entry_gate: false
+    temporal_span_must_be_recomputed_from_genuine_signals: true
 horizons:
   H1_24H: control_entry
   H2_72H: robustness_surveillance
@@ -30,6 +31,7 @@ propagation:
   propagate: accepted_fact_with_provenance_until_veto_or_incompatible_contract
 first_red_conditions:
   - synthetic_signal_counted_as_governed_time
+  - synthetic_timestamp_contaminates_surveillance_span
   - surveillance_horizon_relabelled_as_authority_promotion
   - challenge_receipt_grants_child_control_authority
   - provenance_or_exact_head_binding_missing
