@@ -35,21 +35,32 @@ def audit(workflows_dir: Path = WORKFLOWS) -> list[str]:
     errors: list[str] = []
     deployer_count = 0
     for path in sorted(list(workflows_dir.glob("*.yml")) + list(workflows_dir.glob("*.yaml"))):
+        raw = path.read_text(encoding="utf-8", errors="replace")
+        # This is a Pages-ownership audit, not a general workflow-YAML linter.
+        # Parse failures remain fail-closed only for files that can deploy the
+        # shared Pages endpoint; unrelated legacy workflow syntax is out of scope.
+        if DEPLOY_ACTION not in raw:
+            continue
         try:
-            doc = YAML_PARSER.load(path.read_text(encoding="utf-8")) or {}
+            doc = YAML_PARSER.load(raw) or {}
         except Exception as exc:  # pragma: no cover - surfaced as audit failure
-            errors.append(f"{path.relative_to(ROOT)}: YAML parse failed: {exc}")
+            errors.append(f"{path.relative_to(ROOT)}: Pages-deployer YAML parse failed: {exc}")
             continue
         if not isinstance(doc, dict):
+            errors.append(f"{path.relative_to(ROOT)}: Pages-deployer YAML root is not a mapping")
             continue
 
         top_group = _group(doc.get("concurrency"))
         jobs = doc.get("jobs", {}) or {}
         if not isinstance(jobs, dict):
+            errors.append(f"{path.relative_to(ROOT)}: Pages-deployer jobs block is not a mapping")
             continue
 
         deploy_jobs = [(name, job) for name, job in jobs.items() if _job_uses_deploy_pages(job)]
         if not deploy_jobs:
+            errors.append(
+                f"{path.relative_to(ROOT)}: contains {DEPLOY_ACTION} but no parseable deploy-pages job"
+            )
             continue
         deployer_count += len(deploy_jobs)
 
