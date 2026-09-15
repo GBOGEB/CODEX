@@ -1,0 +1,104 @@
+schema_version: "qps-triage-3pc-mip-receipt/1.0"
+as_of: "2026-09-15T09:09:00+02:00"
+repository: GBOGEB/CODEX
+method: 3PC_PLUS_MIP
+wave: DEVELOPMENT_TO_FEDERATION_TO_QPS_TRIAGE
+status: EXACT_HEAD_REVALIDATION_PENDING
+formal_credit_delta: 0
+authority_transfer: false
+
+refresh:
+  current_main_at_start: 8da88a82740764f52c57e7757f1d3436b2e19934
+  inherited_pages_guard_pr: 734
+  inherited_pages_guard_merge_sha: 3751fb00471ede2dcc1727366e6a028103ccb447
+  exact_main_a9_run: 34936922138
+  exact_main_a9_job: 104276750962
+  exact_main_a9_result: FAIL
+
+observed_first_red:
+  gate: Validate semantic vocabulary before rendering
+  class: SEMANTIC_VOCABULARY
+  terms:
+    - semantic_checks_pass
+    - semantic_checks_run
+    - semantic_provenance_result
+  source_objects:
+    - governance/qps_triage/KEB_CONTRACT_v1.json
+    - federation/receipts/TRIAGE_3PR_B_PVPS_83KW_KEB_CHALLENGE_v0.1.yaml
+  consequence: >-
+    A9 stopped before repository Pages ownership, live Pages source-mode audit,
+    rendering, deployment and hosted proof. The Pages closure predicate therefore
+    remains unchanged and unearned.
+
+three_pc:
+  challenge: >-
+    Determine whether the three rejected tokens are accidental metadata or stable
+    meaning-bearing receipt fields. They are stable contract/receipt concepts:
+    one source-bound provenance-result block and two executed-check counters.
+  control: >-
+    Register only those three exact terms in the existing controlled glossary
+    extension. Define them as semantic/provenance governance telemetry with zero
+    child engineering, compliance, negotiation, acceptance or release authority.
+  closure_test: >-
+    Re-run the unchanged semantic validator and exact-head CI. Advance only when
+    the same first-red is retired without weakening the no-new-vocabulary gate.
+
+mip:
+  modernize: >-
+    Bind the accepted TRIAGE receipt vocabulary to PIPELINE/GLOSSARY_EXTENSIONS.yaml
+    using the existing glossary mechanism already proven by prior vocabulary repairs.
+  innovate: >-
+    Add one bounded regression test asserting that the three source-bound receipt
+    terms remain declared through the validator's controlled glossary loader.
+  perpetuate: >-
+    Preserve the exact failed run/job lineage, formal_credit_delta zero, and the
+    existing Pages source-mode guard. Do not add another publication or temporal
+    policy architecture.
+
+pr_745_validation:
+  first_candidate_head: 85ff1b3fb641b653d9533ef0bd093d666602d361
+  passes:
+    abacus_semantic_runtime_run: 34939696137
+    abacus_multiformat_publication_run: 34939696080
+    abacus_snapshot_publication_run: 34939695984
+    validate_federation_run: 34939696131
+  observed_first_red:
+    workflow: W003 Governance Gate
+    run: 34939695982
+    job: 104285299218
+    step: Run governance parser on PR metadata
+    error: "PR-ID placeholder did not match the required PR-NNN pattern"
+  bounded_repair:
+    pr_id: PR-745
+    surface: pull_request_body
+    publication_logic_changed: false
+    receipt_updated_to_force_exact_head_revalidation: true
+  second_candidate:
+    head: c4767388e1776ff197f94a60d9c2d817091fbe79
+    w003_run: 34940150726
+    w003_result: PASS
+    a9_run: 34940150848
+    a9_result: FAIL
+    failure_class: SELF_INDUCED_PREFIXED_RECEIPT_KEY
+    bounded_repair: rename accidental receipt key rather than extend controlled vocabulary
+
+non_compensating_boundaries:
+  - DEBT-007 remains PARTIAL until the full hosted Pages closure predicate passes.
+  - DEBT-008 remains CLOSED and A10 is not reopened.
+  - GitHub Pages Source must still be GitHub Actions before exact-main publication can proceed.
+  - Candidate success, merge, HTTP 200, or deploy-pages success alone cannot close hosted DoV.
+  - QPS engineering truth remains with the child authority; this receipt creates no engineering credit.
+
+reentry:
+  pr_head_required:
+    - semantic vocabulary validator PASS
+    - ABACUS Semantic Runtime PASS
+    - ABACUS Multi-Format Publication PR candidate lane PASS
+    - W003 governance PASS
+    - federation validation PASS when triggered
+  after_merge: >-
+    Inspect the resulting exact-main A9 run. If Pages source mode is still legacy
+    main:/docs, the intended next first-red is the fail-closed source-mode guard and
+    execution stops for owner action. If build_type is workflow, permit exactly one
+    unchanged exact-main A9 proof and retain all hosted hash, semantic parity,
+    two-match, independent-repeat and atomic-PROMOTE predicates.

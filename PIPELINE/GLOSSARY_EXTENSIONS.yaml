@@ -123,3 +123,15 @@ glossary:
     definition: Pointer-receipt status indicating that a restart or provenance receiver preserved the source child's declared semantic boundaries while transferring no child engineering, disposition, compliance, negotiation, acceptance or release authority.
     introduced_by: governance/qps_triage/W232_QPS_LOSSLESS_HANDOVER_KEB_RECEIVER_v1.yaml
     first_use_case: record PASS when CODEX/KEB can validate and expose a child restart pointer without copying private raw evidence, changing child disposition, or awarding receiver credit.
+  semantic_provenance_result:
+    definition: Source-bound result block for a KEB or QPS TRIAGE semantic/provenance assessment; it records what the receipt can establish from declared inputs and never creates child engineering, compliance, negotiation, acceptance or release authority.
+    introduced_by: federation/receipts/TRIAGE_3PR_B_PVPS_83KW_KEB_CHALLENGE_v0.1.yaml
+    first_use_case: separate source-supported PVPS interpretation and explicit same-point evidence gaps from any child engineering disposition.
+  semantic_checks_run:
+    definition: Nonnegative count of declared semantic or provenance checks actually executed inside a bounded receipt evaluation; the count is execution telemetry and does not by itself prove quality, completeness or child engineering acceptance.
+    introduced_by: federation/receipts/TRIAGE_3PR_B_PVPS_83KW_KEB_CHALLENGE_v0.1.yaml
+    first_use_case: report the number of KEB semantic checks executed for the exact TRIAGE challenge receipt without converting test activity into engineering credit.
+  semantic_checks_pass:
+    definition: Nonnegative count of executed semantic or provenance checks that satisfied their declared predicates; it must be interpreted with semantic_checks_run, exact receipt lineage and the applicable gate, and does not promote child engineering authority.
+    introduced_by: federation/receipts/TRIAGE_3PR_B_PVPS_83KW_KEB_CHALLENGE_v0.1.yaml
+    first_use_case: report bounded KEB semantic check success while preserving formal_credit_delta zero and downstream engineering re-entry requirements.
