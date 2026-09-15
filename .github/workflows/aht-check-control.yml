@@ -1,0 +1,37 @@
+name: AHT check control
+on:
+  pull_request:
+    paths:
+      - 'qps_aht_control.py'
+      - 'aht_statistics_bridge.py'
+      - 'tests/test_qps_aht_control.py'
+      - 'tests/test_aht_control_integration.py'
+      - 'tests/test_aht_parent_intake.py'
+      - 'scripts/render_aht_pr_head.py'
+      - 'scripts/intake_aht_parent_checks.py'
+      - 'governance/aht_control/**'
+      - '.github/workflows/aht-check-control.yml'
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Adversarial check-control tests
+        run: |
+          python -m unittest discover -s tests -p 'test_qps_aht_control.py' -v
+      - name: Verify release hash bindings
+        run: |
+          python - <<'PYHASH'
+          import hashlib, json
+          from pathlib import Path
+          m = json.loads(Path('governance/aht_control/release.v1.json').read_text())
+          for name, expected in m['files'].items():
+              assert hashlib.sha256(Path(name).read_bytes()).hexdigest() == expected, name
+          PYHASH
