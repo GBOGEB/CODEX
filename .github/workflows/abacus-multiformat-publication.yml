@@ -10,7 +10,9 @@ on:
       - 'PIPELINE/GLOSSARY_EXTENSIONS.yaml'
       - 'requirements/contract-governance.txt'
       - 'scripts/check_pages_deploy_concurrency.py'
+      - 'scripts/check_pages_source_mode.py'
       - 'tests/test_pages_deploy_concurrency.py'
+      - 'tests/test_pages_source_mode.py'
       - '.github/workflows/pages_deploy_runtime.yml'
       - '.github/workflows/deploy_pipeline.yml'
       - '.github/workflows/pages.yml'
@@ -26,7 +28,9 @@ on:
       - 'PIPELINE/GLOSSARY_EXTENSIONS.yaml'
       - 'requirements/contract-governance.txt'
       - 'scripts/check_pages_deploy_concurrency.py'
+      - 'scripts/check_pages_source_mode.py'
       - 'tests/test_pages_deploy_concurrency.py'
+      - 'tests/test_pages_source_mode.py'
       - '.github/workflows/pages_deploy_runtime.yml'
       - '.github/workflows/deploy_pipeline.yml'
       - '.github/workflows/pages.yml'
@@ -37,6 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pages: read
     env:
       ABACUS_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
 
@@ -60,6 +65,13 @@ jobs:
         run: |
           python scripts/check_pages_deploy_concurrency.py
           pytest -q tests/test_pages_deploy_concurrency.py
+          pytest -q tests/test_pages_source_mode.py
+
+      - name: Validate GitHub Pages source mode before exact-main rendering
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/check_pages_source_mode.py
 
       - name: Prove production PPTX and PDF builder regressions
         run: |
