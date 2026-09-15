@@ -60,3 +60,44 @@ entries:
       semantic replay/closed-loop and governance admission. After merge, only an exact-main
       A9.3 hosted run with two consecutive governed matches, independent repeated convergence
       and atomic PROMOTE may re-close DEBT-007.
+
+  - tuple_id: SESSION-TUPLE-002
+    parent: SESSION-TUPLE-001
+    theme: PR729 exact-head admission refinement
+    status: CANDIDATE_HEAD_VALIDATION
+    evidence_driven_repairs:
+      - issue: governance metadata rejected TOPOLOGY IMPACT value CONTROLLED
+        disposition: changed PR metadata to schema-valid TOPOLOGY IMPACT YES
+        proof: W003 Governance Gate subsequently passed
+      - issue: repository semantic vocabulary gate found five inherited semantic_* terms already present on transaction-start base main
+        inherited_terms:
+          - semantic_assessment
+          - semantic_correction
+          - semantic_coverage
+          - semantic_overlay_relations
+          - semantic_relation
+        disposition: bound definitions in PIPELINE/GLOSSARY_EXTENSIONS.yaml; no child engineering authority granted
+        proof: semantic vocabulary validation subsequently passed
+      - issue: closed-loop regression test hard-coded TUP-0013 tuple_count 13
+        disposition: advanced test to TUP-0014 tuple_count 14, nodes 14, edges 13
+        proof: runtime reconstruction/replay had already reported latest_tuple TUP-0014, tuple_count 14, invariant_count 11, completeness 1.0
+      - issue: Pages ownership scanner used undeclared PyYAML dependency
+        disposition: switched to governed ruamel.yaml dependency already pinned in contract-governance requirements
+      - issue: scanner parsed every workflow and was blocked by unrelated malformed legacy non-Pages workflows
+        disposition: prefilter raw workflow text for actions/deploy-pages@v4, then parse only Pages candidates; Pages-deployer parse errors remain fail-closed
+        regression_tests:
+          - unrelated malformed non-Pages workflow is ignored by this specific audit
+          - malformed Pages deployer fails closed
+          - Pages deployer without shared pages boundary is rejected
+          - live repository Pages deployer census must pass
+    source_change_stop_rule: >-
+      Make no further source changes after this entry unless the exact candidate-head CI exposes
+      a new concrete red in a required gate. Do not scope-creep into unrelated malformed workflows.
+    required_pr_head_gates:
+      - W003 Governance Gate PASS
+      - ABACUS Semantic Runtime PASS through TUP-0014
+      - ABACUS Multi-Format Publication PASS including Pages ownership audit and PR-event WITHHOLD
+      - A10 snapshot lineage remains non-regressed
+    post_merge_gate: >-
+      Exact-main A9.3 must prove candidate PASS, deploy PASS, two consecutive exact governed
+      hosted matches, independent repeated convergence and atomic PROMOTE before DEBT-007 may close.
