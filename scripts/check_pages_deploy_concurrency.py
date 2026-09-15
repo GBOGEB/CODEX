@@ -4,12 +4,13 @@ import sys
 from pathlib import Path
 from typing import Any
 
-import yaml
+from ruamel.yaml import YAML
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOWS = ROOT / ".github" / "workflows"
 DEPLOY_ACTION = "actions/deploy-pages@v4"
 REQUIRED_GROUP = "pages"
+YAML_PARSER = YAML(typ="safe")
 
 
 def _group(value: Any) -> str | None:
@@ -35,7 +36,7 @@ def audit(workflows_dir: Path = WORKFLOWS) -> list[str]:
     deployer_count = 0
     for path in sorted(list(workflows_dir.glob("*.yml")) + list(workflows_dir.glob("*.yaml"))):
         try:
-            doc = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            doc = YAML_PARSER.load(path.read_text(encoding="utf-8")) or {}
         except Exception as exc:  # pragma: no cover - surfaced as audit failure
             errors.append(f"{path.relative_to(ROOT)}: YAML parse failed: {exc}")
             continue
