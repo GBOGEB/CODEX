@@ -13,6 +13,13 @@ REQUIRED_GROUP = "pages"
 YAML_PARSER = YAML(typ="safe")
 
 
+def _display_path(path: Path) -> str:
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
 def _group(value: Any) -> str | None:
     if isinstance(value, str):
         return value
@@ -41,26 +48,25 @@ def audit(workflows_dir: Path = WORKFLOWS) -> list[str]:
         # shared Pages endpoint; unrelated legacy workflow syntax is out of scope.
         if DEPLOY_ACTION not in raw:
             continue
+        label = _display_path(path)
         try:
             doc = YAML_PARSER.load(raw) or {}
         except Exception as exc:  # pragma: no cover - surfaced as audit failure
-            errors.append(f"{path.relative_to(ROOT)}: Pages-deployer YAML parse failed: {exc}")
+            errors.append(f"{label}: Pages-deployer YAML parse failed: {exc}")
             continue
         if not isinstance(doc, dict):
-            errors.append(f"{path.relative_to(ROOT)}: Pages-deployer YAML root is not a mapping")
+            errors.append(f"{label}: Pages-deployer YAML root is not a mapping")
             continue
 
         top_group = _group(doc.get("concurrency"))
         jobs = doc.get("jobs", {}) or {}
         if not isinstance(jobs, dict):
-            errors.append(f"{path.relative_to(ROOT)}: Pages-deployer jobs block is not a mapping")
+            errors.append(f"{label}: Pages-deployer jobs block is not a mapping")
             continue
 
         deploy_jobs = [(name, job) for name, job in jobs.items() if _job_uses_deploy_pages(job)]
         if not deploy_jobs:
-            errors.append(
-                f"{path.relative_to(ROOT)}: contains {DEPLOY_ACTION} but no parseable deploy-pages job"
-            )
+            errors.append(f"{label}: contains {DEPLOY_ACTION} but no parseable deploy-pages job")
             continue
         deployer_count += len(deploy_jobs)
 
@@ -68,7 +74,7 @@ def audit(workflows_dir: Path = WORKFLOWS) -> list[str]:
             job_group = _group(job.get("concurrency")) if isinstance(job, dict) else None
             if REQUIRED_GROUP not in {top_group, job_group}:
                 errors.append(
-                    f"{path.relative_to(ROOT)}::{job_name}: deploy-pages job is outside shared "
+                    f"{label}::{job_name}: deploy-pages job is outside shared "
                     f"concurrency group '{REQUIRED_GROUP}' (top={top_group!r}, job={job_group!r})"
                 )
 
