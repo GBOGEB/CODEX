@@ -64,7 +64,7 @@ entries:
   - tuple_id: SESSION-TUPLE-002
     parent: SESSION-TUPLE-001
     theme: PR729 exact-head admission refinement
-    status: CANDIDATE_HEAD_VALIDATION
+    status: PR_HEAD_PASS_MERGED
     evidence_driven_repairs:
       - issue: governance metadata rejected TOPOLOGY IMPACT value CONTROLLED
         disposition: changed PR metadata to schema-valid TOPOLOGY IMPACT YES
@@ -80,7 +80,7 @@ entries:
         proof: semantic vocabulary validation subsequently passed
       - issue: closed-loop regression test hard-coded TUP-0013 tuple_count 13
         disposition: advanced test to TUP-0014 tuple_count 14, nodes 14, edges 13
-        proof: runtime reconstruction/replay had already reported latest_tuple TUP-0014, tuple_count 14, invariant_count 11, completeness 1.0
+        proof: runtime reconstruction/replay reported latest_tuple TUP-0014, tuple_count 14, invariant_count 11, completeness 1.0
       - issue: Pages ownership scanner used undeclared PyYAML dependency
         disposition: switched to governed ruamel.yaml dependency already pinned in contract-governance requirements
       - issue: scanner parsed every workflow and was blocked by unrelated malformed legacy non-Pages workflows
@@ -90,14 +90,52 @@ entries:
           - malformed Pages deployer fails closed
           - Pages deployer without shared pages boundary is rejected
           - live repository Pages deployer census must pass
-    source_change_stop_rule: >-
-      Make no further source changes after this entry unless the exact candidate-head CI exposes
-      a new concrete red in a required gate. Do not scope-creep into unrelated malformed workflows.
-    required_pr_head_gates:
-      - W003 Governance Gate PASS
-      - ABACUS Semantic Runtime PASS through TUP-0014
-      - ABACUS Multi-Format Publication PASS including Pages ownership audit and PR-event WITHHOLD
-      - A10 snapshot lineage remains non-regressed
+    exact_pr_head: e0d9575ffb0fec09f7e0c067012c06c7f091784f
+    required_pr_head_proof:
+      W003_Governance_Gate: PASS
+      ABACUS_Semantic_Runtime: PASS
+      ABACUS_Multi_Format_Publication: PASS_WITH_PR_EVENT_DEPLOY_SKIPPED
+      A10_Snapshot_Publication: PASS
+    merge:
+      pr: 729
+      merge_sha: 6bb2f4c05468c9134bee1a7ae879d6c3977d7397
+      disposition: MERGED
     post_merge_gate: >-
       Exact-main A9.3 must prove candidate PASS, deploy PASS, two consecutive exact governed
       hosted matches, independent repeated convergence and atomic PROMOTE before DEBT-007 may close.
+
+  - tuple_id: SESSION-TUPLE-003
+    parent: SESSION-TUPLE-002
+    theme: exact-main semantic-boundary admission red after PR729 merge
+    status: ACTIVE_REPAIR
+    exact_main_trigger:
+      merge_sha: 6bb2f4c05468c9134bee1a7ae879d6c3977d7397
+      a9_run: 34927684226
+      candidate_job: FAIL_BEFORE_RENDER
+      deploy_job: SKIPPED
+      failing_step: Validate semantic vocabulary before rendering
+      error: "Undocumented semantic terms: ['semantic_boundary_preserved']"
+    refresh_finding:
+      current_main_when_repair_started: 0aadf377994dc90c098584a02408442a01d00c9a
+      cause_surface: governance/qps_triage/W232_QPS_LOSSLESS_HANDOVER_KEB_RECEIVER_v1.yaml
+      source_role: KEB_SEMANTIC_PROVENANCE_POINTER_RECEIVER
+      source_authority_transfer: false
+      receipt_field: semantic_boundary_preserved
+      receipt_value: PASS
+      receiver_credit_delta: 0
+      source_constraints:
+        - preserve child identity and semantic boundaries
+        - do not copy private raw child evidence
+        - do not change child disposition
+        - do not award engineering/compliance/negotiation/acceptance/release credit
+    repair:
+      branch: fix/a9-exact-main-semantic-boundary-20260915
+      glossary_term: semantic_boundary_preserved
+      definition_policy: pointer/provenance semantic-boundary preservation only; no child authority transfer
+    formal_credit:
+      A9_hosted_dov_delta: 0
+      debt_007_state: PARTIAL
+      debt_008_state: CLOSED
+    next_gate: >-
+      Validate the follow-up PR exact head. If green, merge and inspect only the resulting exact-main
+      A9.3 run. Re-close DEBT-007 only on the existing stable-hosted predicate and atomic PROMOTE.
