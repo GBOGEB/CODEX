@@ -4,7 +4,7 @@ repository: GBOGEB/CODEX
 transaction_pr: 729
 branch: handover/a10-a9-3pr-mip-20260915
 base_main_sha: 19c8d094587c89bd5a24d7f0b34a38da39bf46ee
-status: PR_HEAD_VALIDATION_PENDING
+status: FOLLOW_UP_SOURCE_MODE_OWNER_ACTION
 
 method:
   3PR:
@@ -19,7 +19,7 @@ refresh:
   current_authority:
     governance_ledger: abacus_render_pipeline/A7_executable_semantic_runtime/data/governance_ledger.json
     tuple_ledger: abacus_render_pipeline/A7_executable_semantic_runtime/data/semantic_tuple_ledger.json
-    ledger_version_before: A10.1
+    ledger_version: A10.2
   A10:
     pr: 698
     merge_sha: 7006236938ac3d7d7e8539e6b492ca532a41346b
@@ -31,10 +31,9 @@ refresh:
     state: PARTIAL
     tuple: TUP-0012
     tuple_state: active_stability_gate
-    repair_pr: 701
-    repair_merge_sha: 6a9cf37718c945dc132d4ce58bea999dc3aa6b01
+    ownership_tuple: TUP-0014
 
-probe:
+initial_probe:
   exact_main_a9_3_run:
     run_id: 34870534075
     candidate_job: PASS
@@ -47,59 +46,89 @@ probe:
     atomic_promotion: NOT_EXECUTED
   pages_deployer_census:
     - workflow: .github/workflows/deploy_pipeline.yml
-      deploys_root_pages: true
       shared_pages_concurrency: true
     - workflow: .github/workflows/pages.yml
-      deploys_root_pages: true
       shared_pages_concurrency: true
     - workflow: .github/workflows/abacus-multiformat-publication.yml
-      deploys_root_pages: true
       shared_pages_concurrency: true
     - workflow: .github/workflows/pages_deploy_runtime.yml
-      deploys_root_pages: true
       shared_pages_concurrency_before_mip: false
 
-rank:
-  first_red:
-    id: PAGES-OWNERSHIP-001
-    statement: at least one deploy-pages workflow can publish to the shared CODEX Pages endpoint outside the repository-wide pages concurrency boundary
-    class: STRUCTURAL_RECURRENCE_GAP
-    priority: P0
-  second_red:
-    id: A9-HOSTED-DOV-001
-    statement: exact-main A9.3 hosted convergence remains unproven after ownership repair
-    class: EXECUTION_PROOF
-    priority: P0
-  explicitly_not_first_red:
-    - A10 snapshot rendering
-    - PNG image-native telemetry
-    - local HTML/PPTX/PDF/Markdown candidate generation
-
-MIP:
+initial_MIP:
   modernize:
     - add concurrency group pages with cancel-in-progress false to pages_deploy_runtime.yml
-    - preserve A9.3 two-consecutive-match plus independent-repeat hosted predicate
+    - preserve A9 two-consecutive-match plus independent-repeat hosted predicate
   innovate:
     - add scripts/check_pages_deploy_concurrency.py
     - add tests/test_pages_deploy_concurrency.py
     - execute the ownership audit in the A9 candidate preflight
   perpetuate:
-    - add INV-011 requiring every deploy-pages workflow to participate in concurrency group pages
-    - append TUP-0014 for this control transaction
-    - sharpen DEBT-007 first-red and re-close predicate
+    - add INV-011 requiring every repository deploy-pages workflow to participate in concurrency group pages
+    - append TUP-0014
     - maintain DEBT-008 CLOSED
-    - persist full handover, drop-in continuation and session progress ledger
+
+follow_up_exact_main:
+  pr733_repair:
+    pr: 733
+    merge_sha: 396ad4b17c86568cf749507e2b5198bcfe098429
+    exact_head_semantic_runtime: PASS
+    exact_head_A9_candidate_parity_ownership_replay: PASS
+    exact_head_W003: PASS
+    exact_head_A10_non_regression: PASS
+  A9_run:
+    run_id: 34928083084
+    source_sha: 396ad4b17c86568cf749507e2b5198bcfe098429
+    candidate_job: PASS
+    deploy_pages_step: PASS
+    hosted_proof: FAIL_CLOSED
+    attempts: 24
+    governed_candidate_sha256: 6737e566b54b907cf54d53dd91160ccb4d09aba3e34fba2035a1bae0eb90214c
+    observed_hosted_sha256: 39a754786ab9c2108d84d68fb29194901f5000032aea6d31f9326bf497acdefc
+    semantic_coverage: 0.0
+    atomic_promotion: WITHHOLD
+  exact_first_red:
+    id: PAGES-SOURCE-MODE-001
+    evidence:
+      - observed hosted SHA exactly equals repository docs/index.html
+      - dynamic Pages run 34928079151 for 396ad4b was cancelled/superseded
+      - successor bot commit aebe86b4dc45376b1a8c3c438dbfee6f36d6d65d triggered dynamic run 34928104579
+      - dynamic run 34928104579 built source ./docs and deployed successfully to the same Pages root
+    interpretation: >-
+      The repository still has GitHub Pages configured for legacy branch/Jekyll publication from main:/docs.
+      That dynamic publisher is outside .github/workflows and therefore outside the repository concurrency census;
+      it can overwrite the governed A9 deploy-pages artifact.
+    owner_action: Settings -> Pages -> Build and deployment -> Source -> GitHub Actions
+  bounded_follow_up:
+    branch: fix/a9-pages-source-mode-guard-20260915
+    actions:
+      - add scripts/check_pages_source_mode.py
+      - add tests/test_pages_source_mode.py
+      - run classification tests on PR events
+      - fail exact-main A9 before rendering unless GitHub Pages build_type is workflow
+    guards:
+      - no_second_publication_architecture
+      - no_A10_reopen
+      - no_hash_or_semantic_predicate_weakening
+      - no_DEBT_007_closure_from_guard_merge
 
 post_merge_close_predicate:
   debt: DEBT-007
   required_sequence:
-    - exact-main A9.3 candidate execution PASS
+    - owner Pages source mode reports workflow
+    - exact-main A9 candidate execution PASS
     - deploy-pages SUCCESS
     - two consecutive hosted responses with HTTP 200, exact governed SHA256 and full semantic token parity
     - independent repeated convergence PASS
     - atomic publication decision PROMOTE
-  on_failure: keep DEBT-007 PARTIAL and inspect remaining endpoint ownership or external Pages propagation; do not weaken hosted proof semantics
+  on_failure: keep DEBT-007 PARTIAL and execute only the newly observed first-red
+
+formal_credit:
+  DEBT_007: PARTIAL
+  TUP_0012: active_stability_gate
+  DEBT_008: CLOSED
+  A9_hosted_DoV_delta: 0
+  A10_snapshot_DoV_delta: 0
 
 stop_rule:
-  current: STOP_AFTER_PR_HEAD_VALIDATION_UNLESS_RED
-  after_merge: WAIT_FOR_EXACT_MAIN_EXECUTION_RECEIPT
+  current: WAIT_OWNER_PAGES_SOURCE_MODE_CHANGE
+  after_owner_change: ONE_EXACT_MAIN_A9_PROOF_THEN_CLOSE_OR_RECURSE_ON_OBSERVED_RED

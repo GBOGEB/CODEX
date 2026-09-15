@@ -107,7 +107,7 @@ entries:
   - tuple_id: SESSION-TUPLE-003
     parent: SESSION-TUPLE-002
     theme: exact-main semantic-boundary admission red after PR729 merge
-    status: ACTIVE_REPAIR
+    status: REPAIRED_BY_PR733
     exact_main_trigger:
       merge_sha: 6bb2f4c05468c9134bee1a7ae879d6c3977d7397
       a9_run: 34927684226
@@ -116,26 +116,69 @@ entries:
       failing_step: Validate semantic vocabulary before rendering
       error: "Undocumented semantic terms: ['semantic_boundary_preserved']"
     refresh_finding:
-      current_main_when_repair_started: 0aadf377994dc90c098584a02408442a01d00c9a
       cause_surface: governance/qps_triage/W232_QPS_LOSSLESS_HANDOVER_KEB_RECEIVER_v1.yaml
       source_role: KEB_SEMANTIC_PROVENANCE_POINTER_RECEIVER
       source_authority_transfer: false
       receipt_field: semantic_boundary_preserved
       receipt_value: PASS
       receiver_credit_delta: 0
-      source_constraints:
-        - preserve child identity and semantic boundaries
-        - do not copy private raw child evidence
-        - do not change child disposition
-        - do not award engineering/compliance/negotiation/acceptance/release credit
     repair:
-      branch: fix/a9-exact-main-semantic-boundary-20260915
+      pr: 733
+      merge_sha: 396ad4b17c86568cf749507e2b5198bcfe098429
       glossary_term: semantic_boundary_preserved
-      definition_policy: pointer/provenance semantic-boundary preservation only; no child authority transfer
+      result: EXACT_HEAD_SEMANTIC_RUNTIME_A9_W003_A10_PASS
+    formal_credit:
+      A9_hosted_dov_delta: 0
+      debt_007_state: PARTIAL
+      debt_008_state: CLOSED
+
+  - tuple_id: SESSION-TUPLE-004
+    parent: SESSION-TUPLE-003
+    theme: exact-main A9 hosted failure resolved to dynamic Pages branch-source ownership
+    status: ACTIVE_OWNER_ACTION_AND_FAIL_CLOSED_GUARD
+    exact_main_trigger:
+      source_sha: 396ad4b17c86568cf749507e2b5198bcfe098429
+      a9_run: 34928083084
+      candidate_job: PASS
+      deploy_job: FAIL_HOSTED_PROOF
+      deploy_pages_step: PASS
+      hosted_attempts: 24
+      governed_candidate_sha256: 6737e566b54b907cf54d53dd91160ccb4d09aba3e34fba2035a1bae0eb90214c
+      hosted_sha256: 39a754786ab9c2108d84d68fb29194901f5000032aea6d31f9326bf497acdefc
+      semantic_coverage: 0.0
+      atomic_decision: WITHHOLD
+    source_resolution:
+      hosted_sha_matches_repository_file: docs/index.html
+      matched_bytes: 2899
+      target_dynamic_pages_run: 34928079151
+      target_dynamic_result: CANCELLED_SUPERSEDED
+      successor_bot_commit: aebe86b4dc45376b1a8c3c438dbfee6f36d6d65d
+      successor_dynamic_pages_run: 34928104579
+      successor_dynamic_result: SUCCESS
+      successor_build_source: ./docs
+      successor_environment_url: https://gbogeb.github.io/CODEX/
+      classification: PAGES-SOURCE-MODE-001
+      interpretation: >-
+        GitHub Pages still has a dynamic branch/Jekyll publisher for main:/docs. It is not a repository
+        workflow and therefore cannot participate in the repository shared concurrency group. The later
+        dynamic deployment republishes legacy docs/index.html over the governed A9 artifact.
+    bounded_repair:
+      branch: fix/a9-pages-source-mode-guard-20260915
+      files:
+        - scripts/check_pages_source_mode.py
+        - tests/test_pages_source_mode.py
+        - .github/workflows/abacus-multiformat-publication.yml
+      behavior:
+        - unit-test legacy/workflow source-mode classification on PRs
+        - exact-main A9 fails before rendering unless Pages build_type is workflow
+        - preserve all existing hosted hash, semantic, two-match, independent-repeat and PROMOTE predicates
+      owner_action: Settings -> Pages -> Build and deployment -> Source -> GitHub Actions
     formal_credit:
       A9_hosted_dov_delta: 0
       debt_007_state: PARTIAL
       debt_008_state: CLOSED
     next_gate: >-
-      Validate the follow-up PR exact head. If green, merge and inspect only the resulting exact-main
-      A9.3 run. Re-close DEBT-007 only on the existing stable-hosted predicate and atomic PROMOTE.
+      Owner changes Pages source mode to GitHub Actions. Only then admit one unchanged exact-main A9 run.
+      DEBT-007 closes only on candidate PASS -> deploy PASS -> two consecutive exact hosted hash+semantic
+      matches -> independent repeated convergence PASS -> atomic PROMOTE. Do not reopen A10 or create a
+      second publication architecture.
