@@ -1,0 +1,105 @@
+schema: abacus-3pr-mip-receipt/1.0
+date: '2026-09-15'
+repository: GBOGEB/CODEX
+transaction_pr: 729
+branch: handover/a10-a9-3pr-mip-20260915
+base_main_sha: 19c8d094587c89bd5a24d7f0b34a38da39bf46ee
+status: PR_HEAD_VALIDATION_PENDING
+
+method:
+  3PR:
+    meaning: [Refresh, Probe, Rank]
+    repeat_rule: repeat only on material state/evidence change
+  MIP:
+    meaning: [Modernize, Innovate, Perpetuate]
+    admission_rule: execute only for an observed structural or recurrence gap
+  non_compensating_rule: MIP repair cannot close DEBT-007 without exact-main hosted proof
+
+refresh:
+  current_authority:
+    governance_ledger: abacus_render_pipeline/A7_executable_semantic_runtime/data/governance_ledger.json
+    tuple_ledger: abacus_render_pipeline/A7_executable_semantic_runtime/data/semantic_tuple_ledger.json
+    ledger_version_before: A10.1
+  A10:
+    pr: 698
+    merge_sha: 7006236938ac3d7d7e8539e6b492ca532a41346b
+    exact_main_snapshot_run: 34869064881
+    state: DEBT-008_CLOSED
+    authority_note: snapshot proof remains independently valid
+  A9:
+    debt: DEBT-007
+    state: PARTIAL
+    tuple: TUP-0012
+    tuple_state: active_stability_gate
+    repair_pr: 701
+    repair_merge_sha: 6a9cf37718c945dc132d4ce58bea999dc3aa6b01
+
+probe:
+  exact_main_a9_3_run:
+    run_id: 34870534075
+    candidate_job: PASS
+    deploy_pages_signal: SUCCESS
+    hosted_proof: FAIL_CLOSED
+    attempts: 24
+    governed_candidate_sha256: 6737e566b54b907cf54d53dd91160ccb4d09aba3e34fba2035a1bae0eb90214c
+    observed_hosted_sha256: 39a754786ab9c2108d84d68fb29194901f5000032aea6d31f9326bf497acdefc
+    semantic_coverage: 0.0
+    atomic_promotion: NOT_EXECUTED
+  pages_deployer_census:
+    - workflow: .github/workflows/deploy_pipeline.yml
+      deploys_root_pages: true
+      shared_pages_concurrency: true
+    - workflow: .github/workflows/pages.yml
+      deploys_root_pages: true
+      shared_pages_concurrency: true
+    - workflow: .github/workflows/abacus-multiformat-publication.yml
+      deploys_root_pages: true
+      shared_pages_concurrency: true
+    - workflow: .github/workflows/pages_deploy_runtime.yml
+      deploys_root_pages: true
+      shared_pages_concurrency_before_mip: false
+
+rank:
+  first_red:
+    id: PAGES-OWNERSHIP-001
+    statement: at least one deploy-pages workflow can publish to the shared CODEX Pages endpoint outside the repository-wide pages concurrency boundary
+    class: STRUCTURAL_RECURRENCE_GAP
+    priority: P0
+  second_red:
+    id: A9-HOSTED-DOV-001
+    statement: exact-main A9.3 hosted convergence remains unproven after ownership repair
+    class: EXECUTION_PROOF
+    priority: P0
+  explicitly_not_first_red:
+    - A10 snapshot rendering
+    - PNG image-native telemetry
+    - local HTML/PPTX/PDF/Markdown candidate generation
+
+MIP:
+  modernize:
+    - add concurrency group pages with cancel-in-progress false to pages_deploy_runtime.yml
+    - preserve A9.3 two-consecutive-match plus independent-repeat hosted predicate
+  innovate:
+    - add scripts/check_pages_deploy_concurrency.py
+    - add tests/test_pages_deploy_concurrency.py
+    - execute the ownership audit in the A9 candidate preflight
+  perpetuate:
+    - add INV-011 requiring every deploy-pages workflow to participate in concurrency group pages
+    - append TUP-0014 for this control transaction
+    - sharpen DEBT-007 first-red and re-close predicate
+    - maintain DEBT-008 CLOSED
+    - persist full handover, drop-in continuation and session progress ledger
+
+post_merge_close_predicate:
+  debt: DEBT-007
+  required_sequence:
+    - exact-main A9.3 candidate execution PASS
+    - deploy-pages SUCCESS
+    - two consecutive hosted responses with HTTP 200, exact governed SHA256 and full semantic token parity
+    - independent repeated convergence PASS
+    - atomic publication decision PROMOTE
+  on_failure: keep DEBT-007 PARTIAL and inspect remaining endpoint ownership or external Pages propagation; do not weaken hosted proof semantics
+
+stop_rule:
+  current: STOP_AFTER_PR_HEAD_VALIDATION_UNLESS_RED
+  after_merge: WAIT_FOR_EXACT_MAIN_EXECUTION_RECEIPT
