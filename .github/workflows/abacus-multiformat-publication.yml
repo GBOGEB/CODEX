@@ -41,6 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pages: read
     env:
       ABACUS_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
 
