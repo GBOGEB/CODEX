@@ -1,23 +1,26 @@
-schema: qps-lossless-handover-keb-receiver/1.0
+schema: qps-lossless-handover-keb-receiver/1.1
 wave: W232
 created_local: '2026-09-15T05:46:00+02:00'
+refreshed_local: '2026-09-15T06:10:00+02:00'
 repo: GBOGEB/CODEX
 role: KEB_SEMANTIC_PROVENANCE_POINTER_RECEIVER
 authority_transfer: false
 source_child:
   repo: GBOGEB/cryoplant-project
   pr: 1300
-  head_sha: 911c21d4e5e47c9dded53fd5314e3a4be120b89b
+  head_sha: 02deeed770c26c5f0a24b5e8278c952e42223251
   handover_path: handover/session/SC_2026-09-15_W232_FULL_3PR_MIP_LOSSLESS_HANDOVER_v1.yaml
-  handover_blob_sha: 90657fdc4437ffc750abfd7c50680428fa789df7
+  handover_blob_sha: a4363f380f04dce02f2b486e94629ed0a065be40
   dropin_path: handover/qps_recursive/W232_FULL_3PR_MIP_DROPIN.md
+  dropin_blob_sha: 313dfad84c9d4c7d3f1073b48f62a39714cc39f7
 consumer_basis:
-  codex_main_at_prepare: 19c8d094587c89bd5a24d7f0b34a38da39bf46ee
+  codex_main_at_refresh: 19c8d094587c89bd5a24d7f0b34a38da39bf46ee
 classification: POINTER_ONLY_SEMANTIC_PROVENANCE_RECEIPT
 semantic_guards:
   - cryoplant_project_is_child_engineering_and_disposition_authority
   - ABACUS_is_DOW_and_CODEX_is_KEB_support_only
   - UNKNOWN_DEFER_NE_zero
+  - W175_HOLD_NE_LN2_contract_requirement
   - unique_N300_NE_N300_CONTROL
   - diagnostic_PCA_NE_project_global_PCA
   - no_Bradley_Terry_without_observed_pairwise_outcomes
@@ -27,6 +30,12 @@ semantic_guards:
   - repo_local_runtime_923_NE_federated_or_visual_progress
 preserved_semantics:
   runtime_923: RED_OWNER_ACTION_NONCOMPENSATING
+  W175_W199:
+    integrated_disposition: HOLD
+    commercial_numerical_DoV_delta: 0
+    selected_architecture_delta: 0
+    bidder_penalty_for_no_LN2: false
+    preemption: FIRST_REAL_W199_RETURN_PREEMPTS_VISUAL_WORK
   N300:
     denominator: 300
     format_counts: {HTML: 75, PDF: 75, PPTX: 75, XLSX: 75}
@@ -58,7 +67,7 @@ formal_guard:
 may:
   - preserve_child_identity_and_semantic_boundaries
   - validate_restart_provenance
-  - expose_Keb_restart_pointer
+  - expose_KEB_restart_pointer
 may_not:
   - copy_private_raw_child_evidence
   - change_child_disposition
@@ -70,7 +79,9 @@ receipt:
   semantic_boundary_preserved: PASS
   exact_child_head_bound: true
   exact_child_blob_bound: true
+  exact_dropin_blob_bound: true
 restart_rule: >-
-  Refresh child PR 1300 and current cryoplant main before use. If the child head changes before merge,
-  repair this receiver to the final child head/blob. Otherwise preserve this as the only W232 KEB handover pointer.
+  Refresh child PR 1300 and current cryoplant main before use. This receiver is bound to final refreshed child head
+  02deeed770c26c5f0a24b5e8278c952e42223251 and handover blob a4363f380f04dce02f2b486e94629ed0a065be40.
+  Preserve this as the only W232 KEB handover pointer unless child identity changes or an observed reconstruction gap is found.
 stop_rule: NO_FURTHER_KEB_HANDOVER_LAYER_WITHOUT_CHILD_IDENTITY_CHANGE_OR_OBSERVED_GAP
