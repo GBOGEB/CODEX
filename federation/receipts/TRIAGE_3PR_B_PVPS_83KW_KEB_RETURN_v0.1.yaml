@@ -1,0 +1,64 @@
+schema_version: "keb-return/1.0"
+wave: TRIAGE_3PR_B
+role: CODEX_KEB_RETURN
+status: RETURN_READY_FOR_QPS_REENTRY
+
+lineage:
+  qps_parent:
+    repository: GBOGEB/cryoplant-project
+    pr: 1307
+    head_sha: a6e0b7932e092f50c32316182d1591da422e5472
+  keb_challenge:
+    repository: GBOGEB/CODEX
+    pr: 737
+    challenge_head_sha: a3ed5f0dc8feab5780cdf5d444ad183420dce263
+  dow_execution:
+    repository: GBOGEB/ABACUS
+    pr: 1231
+    head_sha: f7ee45d5a0d588c763e9ead7dd1bc5f89a17e096
+
+return_payload:
+  semantic_provenance: PASS_PARTIAL
+  dow_execution: EXECUTED
+  dow_recommendation: DEFER
+  strict_score_before: "4/5"
+  strict_score_after_recommended: "4/5"
+  formal_engineering_before: "70/90"
+  formal_engineering_delta: 0
+  current_offer_control_correction:
+    from: FIXED_SPEED_OWNER_WORKING_BASIS
+    to: VFD_SOURCE_SUPPORTED
+    accepted_for_interpretation: true
+  reason: >-
+    The cross-repo execution completed and sharpened the evidence boundary, but no independent same-point package-power
+    prediction inside 82.17-83.83 kW can be generated. The missing selected variant, active count, VFD operating point,
+    helium flow/state and package decomposition are material, not cosmetic.
+
+observed_3pr_metrics:
+  topology_steps:
+    expected: 4
+    completed: 4
+    percent: 100.0
+  repositories_touched: 3
+  pull_requests: 3
+  source_valid_facts: 9
+  mandatory_gaps_at_KEB: 7
+  DOW_numeric_formulas: 8
+  DOW_prohibited_inferences_blocked: 3
+  terminal_engineering_claims: 0
+  terminal_disposition_recommendations: 1
+  evidence_closure_percent: 55.56
+  disposition_yield: "1/1 governed return = DEFER"
+  formal_credit_delta: 0
+
+qps_reentry_contract:
+  requested_child_disposition: DEFER
+  accepted_correction_candidate: "PVPS current-offer drive/control = VFD with automatic staging"
+  retained_open_RFI:
+    - selected Leybold SV750 BF variant/part number
+    - exact 2K-OP active pump count
+    - per-active-pump VFD Hz/load
+    - same-point helium flow split and suction P/T
+    - same-point discharge confirmation
+    - helium-specific OEM power/pumping map
+    - package auxiliary/VFD-loss split
