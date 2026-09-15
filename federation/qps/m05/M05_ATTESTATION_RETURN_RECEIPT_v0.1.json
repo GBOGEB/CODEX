@@ -1,0 +1,68 @@
+{
+  "schema": "qps.m05.attestation_return_receipt.v1",
+  "mission": "M05_PROVENANCE_ATTESTATION",
+  "authority": "PROVENANCE_ONLY_NOT_ENGINEERING_ACCEPTANCE",
+  "source_owner": "GBOGEB/CODEX",
+  "source_control_merge_sha": "077b7a39ef091eb47b30d6134d70d95bc945ad97",
+  "action": {
+    "repo": "actions/attest",
+    "sha": "1e69f48acb82d1966a394da916b4c1698aa569d6",
+    "version": "v4.2.2"
+  },
+  "automatic_control_vector": {
+    "event": "push",
+    "branch": "main",
+    "source_head_sha": "077b7a39ef091eb47b30d6134d70d95bc945ad97",
+    "carrier_sha": "077b7a39ef091eb47b30d6134d70d95bc945ad97",
+    "run_id": 34684810640,
+    "job_id": 103529841527,
+    "job_name": "attest-provenance",
+    "result": "PASS",
+    "executed_steps": "GT_ZERO",
+    "subject_sha256": "d9dc8945622cd0be5dca76e2f98ad66844ad6eaf755509500d8081c6fd03358c",
+    "attestation_id": 47037742,
+    "rekor_log_index": 2805404995,
+    "artifact": {
+      "id": 10295112538,
+      "size_bytes": 8422,
+      "digest": "sha256:e08a1ff6ff3040f27416efab50ae82f4f335eea7094f2ee11fc27769c3f73101"
+    }
+  },
+  "previous_exact_pinned_vector": {
+    "source_head_sha": "097cb1bf0bea3f1d64e86d7d6496d6dae56aacd6",
+    "carrier_sha": "7b305579dafc098c70e8a22cb3dda67664bf35bf",
+    "run_id": 34684775435,
+    "job_id": 103529746206,
+    "result": "PASS",
+    "subject_sha256": "7be220551a7b8096eaaa97836a8d31ce93bbb20393ade989aaeb226be0b39d92",
+    "attestation_id": 47037696,
+    "rekor_log_index": 2805399792,
+    "artifact_id": 10294739476,
+    "artifact_digest": "sha256:5a4bbc7b53094511b1bcb4a2d6efa9900a0e2c995065b5f9180fbadfa1e3bdcd"
+  },
+  "delegate_boundary": [
+    "OIDC_identity",
+    "Sigstore_signing",
+    "Rekor_submission",
+    "GitHub_attestation_upload",
+    "standard_build_provenance_bundle"
+  ],
+  "retain_boundary": [
+    "subject_selection",
+    "exact_SHA_and_digest_binding",
+    "evidence_class",
+    "FIRST_RED_BG_CG",
+    "PM_TM_QA_Governor_authority",
+    "engineering_semantic_physical_validity",
+    "child_ACCEPT_REJECT_DEFER",
+    "DoD_DoV_DMAIC_Control"
+  ],
+  "consumer_contract": {
+    "must_verify_live_run_metadata": true,
+    "must_verify_live_job_executed_steps": true,
+    "must_verify_live_artifact_identity_and_digest": true,
+    "must_preserve_authority_boundary": true,
+    "must_not_resign_or_mutate_claim": true
+  },
+  "status": "READY_FOR_INDEPENDENT_CONSUMER"
+}

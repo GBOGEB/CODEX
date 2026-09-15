@@ -1,0 +1,246 @@
+schema: qps-loop-contract-boundary/1.1
+version: '1.6'
+authority: CONTRACT_SOURCE_BINDING_AND_ENGINEERING_PRESSURE_TEST_NOT_DESIGN_ACCEPTANCE
+bd_id: V16-BD-005
+state: ANCHOR_SOURCES_BOUND_CONTRACT_ROOM_GEOMETRY_AND_SITE_UTILITIES_BOUND_LOOP_DEGRADED_BOUNDARY_OPEN
+created: '2026-09-14'
+
+source_anchor_policy:
+  principle: TEMPORAL_MATURITY_IS_SEPARATE_FROM_PROVENANCE_AUTHORITY
+  rules:
+    - D2.1 and D2.2 remain specific named anchor sources for evidence, provenance and design-history traceability
+    - an anchor may be temporally aged while remaining active evidence
+    - aged does not mean deprecated, withdrawn, invalid or silently superseded
+    - later interface lists, addenda, bidder data and analytical SSOTs may refine, challenge or document evolution from an anchor but shall preserve the anchor lineage
+    - current-design use requires revision/change-status checking against later governed evidence
+    - conflicting later values create a reconciliation edge; they do not erase the earlier source
+    - only explicit revision, withdrawal or approved change authority may mark an anchor requirement/value superseded
+  applicable_document_basis: >-
+    The Addendum applicable-documents section states that SCK CEN provides the information at the
+    maturity necessary for an Applicant to provide an offer and may provide updated versions during
+    Contract execution. This supports age/currentness tracking without deleting provenance authority.
+
+anchor_sources:
+  D2_1:
+    title: D2.1 Preliminary Design
+    reference: SCK_CEN_81777062
+    role: SPECIFIC_PRELIMINARY_DESIGN_ANCHOR_AND_PROVENANCE_SOURCE
+    temporal_status: AGED_ACTIVE_ANCHOR_CURRENTNESS_CHECK_REQUIRED
+    currentness_rule: use for source-specific facts and design intent; reconcile against later governed revisions before claiming current final design
+    current_BD005_lane: LINE_S_CRYOGENIC_RETURN_AND_RELEASE_ANCHOR
+    non_claim: D2.1 Line-S evidence does not by analogy validate the WCS compressor-room thermal transient
+  D2_2:
+    title: D2.2 Technical Specification for MINERVA Cryogenic System
+    document_ref: DSBT-TN-2024-19
+    issue_revision: '4-0'
+    date: '2024-06-13'
+    drive_file_id: 1xuh8P1V5MBHLAcvH_gXiG--cdyexiVY-
+    role: SPECIFIC_TECHNICAL_SPECIFICATION_ANCHOR_AND_PROVENANCE_SOURCE
+    temporal_status: AGED_ACTIVE_ANCHOR_CURRENTNESS_CHECK_REQUIRED
+    currentness_rule: retain requirements and interface values as anchored evidence while reconciling later governed project evolution
+    current_BD005_lane: WCS_ROOM_GEOMETRY_NORMAL_SITE_INTERFACE_AND_FUNCTIONAL_TEST_ANCHOR
+
+source:
+  title: D2.2 Technical Specification for MINERVA Cryogenic System
+  document_ref: DSBT-TN-2024-19
+  issue_revision: '4-0'
+  drive_file_id: 1xuh8P1V5MBHLAcvH_gXiG--cdyexiVY-
+  role: SPECIFIC_TECHNICAL_SPECIFICATION_ANCHOR_AND_PROVENANCE_SOURCE
+  temporal_status: AGED_ACTIVE_ANCHOR_CURRENTNESS_CHECK_REQUIRED
+  note: source requirements are bound as written; later interface/addendum surfaces are reconciled as design evolution and do not erase this provenance
+
+contract_requirements:
+  CRYO-REQ-336:
+    topic: compressor_room_geometry
+    statement_summary:
+      length_m: 16
+      width_m: 14
+      ground_area_m2_approx: 220
+      ceiling_height_m_approx: 6.5
+      room_uses: [Warm_Compressor_Station, LP_to_HP_compressors, VLP_to_LP_compressors, Oil_Removal_System, Warm_Panel, electrical_cabinets, spare_parts, potential_purification, unloading]
+    authority_effect: DIRECT_D2_2_ANCHOR_GEOMETRY_FOR_LOOP_TRANSIENT_DIAGNOSTIC_PENDING_CURRENTNESS_CHECK
+  CRYO-REQ-338:
+    topic: HVAC_heat_dissipation_input
+    contractor_obligation: provide dissipated heat power in Warm Compression Station building for HVAC sizing
+    current_preliminary_HVAC_capability_kW_approx: 100
+    status: ANCHOR_REQUIREMENT_WITH_EXPLICIT_PRELIMINARY_CAPACITY_VALUE
+    authority_effect: contractor_heat_dissipation_schedule_is_required_input; approximately_100_kW_is_not_final_HVAC_ACCEPTANCE_CAPACITY
+  CRYO-REQ-345:
+    topic: compressor_room_environment
+    compressor_room_temperature_C: [5, 40]
+    relative_humidity: NOT_CONTROLLED
+    authority_effect: equipment/room transient must remain within governing component and room operating limits; this range alone does not define a LOOP endpoint
+  SITE-ELECTRICAL-7.3:
+    topic: normal_electrical_interface
+    supply: 400_V_50_Hz_3PH_plus_N_TN_S
+    compressor_room_max_available_power_MW: 1.2
+    cold_box_room_max_available_power_kW: 100
+    related_requirements: [CRYO-REQ-346, CRYO-REQ-347]
+    boundary: D2_2_ANCHORED_NORMAL_SITE_INTERFACE_NOT_DIESEL_LOOP_RATING
+  SITE-PCW-7.4:
+    topic: process_cooling_water_interface
+    fluid: 40_percent_propylene_glycol_mixture
+    interface: one_supply_and_return_point_in_compressor_room
+    expected_deltaT_K_approx: 10
+    compressor_cooling_max_flow_m3_per_h: 100
+    cold_box_cooling_max_flow_m3_per_h: 10
+    nominal_supply_C: 27
+    nominal_supply_tolerance_K: 2
+    maximum_supply_C: 29
+    related_requirements: [CRYO-REQ-352, CRYO-REQ-353, CRYO-REQ-354, CRYO-REQ-355]
+    authority_effect: D2_2_ANCHORED_NORMAL_SITE_INTERFACE; emergency_LOOP_hydraulic_guarantee_not_defined
+  CRYO-REQ-409:
+    topic: functional_test_loss_of_utilities
+    source_test_intent: safe shutdown shall be checked for simulated loss of electrical power, cooling water, instrument air, vacuum and helium purity upset within cryoplant functional tests
+    authority_effect: ANCHORED_ACCEPTANCE_CROSS_REFERENCE_ONLY
+    controls_boundary: >-
+      Requires demonstrable safe shutdown for loss-of-utility cases but does not by itself define
+      hard-trip classification, trip timing, LOOP endurance or the one-HP degraded operating state.
+
+geometry_evidence_reconciliation:
+  drawing_diagnostic:
+    artifact: loop_hvac_boundary_v1_6.yaml
+    source: QPLANT Buildings.pdf visual section read
+    area_m2_approx: 222
+    section_height_reference_m_approx: 8.5
+    gross_rectangular_volume_m3: 1887
+    status: RETAINED_BUILDING_DRAWING_PROVENANCE_AND_DIAGNOSTIC
+  D2_2_anchor_boundary:
+    source: CRYO-REQ-336
+    nominal_dimension_volume_m3: 1456
+    equation: 16 m x 14 m x 6.5 m
+    approximate_area_volume_m3: 1430
+    equation_2: approximately 220 m2 x approximately 6.5 m
+    gross_rectangular_range_m3: [1430, 1456]
+    qualifier: GROSS_ANCHOR_GEOMETRY_NOT_FREE_AIR_VOLUME
+  disposition: >-
+    For the present LOOP diagnostic, CRYO-REQ-336 is the more specific direct room-boundary anchor
+    and therefore supplies the preferred 6.5 m ceiling input. The approximately 8.5 m drawing section
+    reference remains valid provenance for building form and is not deleted or globally declared
+    superseded. Any current final geometry claim still requires the governed current room/building revision.
+  remaining_geometry_gaps:
+    - exact current approved room geometry / revision status
+    - exact free air volume after equipment/cabinets/partitions
+    - roof/ceiling local geometry and effective stratification volume
+    - envelope construction and thermal capacitance
+    - equipment/skid effective thermal capacitance
+
+revised_air_only_sanity_screen:
+  authority: DIAGNOSTIC_PHYSICS_ONLY
+  assumptions:
+    gross_volume_m3_range: [1430, 1456]
+    air_density_kg_per_m3: 1.2
+    air_cp_kJ_per_kgK: 1.005
+    no_ventilation: true
+    no_solid_thermal_mass: true
+    no_envelope_heat_transfer: true
+  effective_air_heat_capacity_MJ_per_K_range: [1.72, 1.76]
+  temperature_rise_rate_K_per_h:
+    at_17_kW: [34.9, 35.5]
+    at_17_4_kW: [35.7, 36.3]
+    at_31_6_kW_if_17_4_plus_14_2_both_enter_room: [64.8, 66.0]
+    at_37_3_kW_if_VFD_5_7_is_additional_and_enters_room: [76.5, 77.9]
+  interpretation: >-
+    The D2.2-anchored geometry strengthens the earlier conclusion: room-air inventory alone cannot
+    explain a two-hour or six-hour LOOP temporal envelope. Ventilation/ducting, PCW heat rejection,
+    building/equipment thermal mass, envelope exchange and recovery sequencing govern.
+  acceptance_credit: NONE
+
+pcw_contract_pressure:
+  D2_2_anchor_boundary:
+    fluid: 40_percent_propylene_glycol
+    max_compressor_flow_m3_per_h: 100
+    expected_deltaT_K_approx: 10
+    supply_C: 27_plus_or_minus_2
+    max_supply_C: 29
+    temporal_status: AGED_ACTIVE_ANCHOR_CURRENTNESS_CHECK_REQUIRED
+  later_working_surfaces:
+    WCS_HP_duty_kW: 1199
+    PVPS_duty_kW: 57
+    WCS_total_duty_kW: 1256
+    working_WCS_flow_m3_per_h_approx: 106
+    working_QPS_total_flow_m3_per_h_approx: 115
+    working_deltaT_K_approx: 11
+  analytical_child_sensitivity:
+    source: QPS_WCS_QRB_Energy_Exergy_DMAIC_rev1_4
+    statement: 40_percent_propylene_glycol requires about 12_percent_more_volumetric_flow than water case before viscosity/friction penalties; 15 K rise cuts flow by one third relative to 10 K
+    class: ANALYTICAL_CHILD_NOT_CONTRACT_AUTHORITY
+  pressure_result:
+    state: ANCHOR_VS_LATER_INTERFACE_DESIGN_EVOLUTION_RECONCILIATION_OPEN
+    finding: >-
+      The later approximately 106 m3/h WCS working flow exceeds the D2.2 anchored 100 m3/h value
+      by about 6 percent, while D2.2 explicitly specifies 40% propylene glycol. This is recorded as
+      design-evolution/reconciliation evidence, not as proof that either source is invalid. The current
+      approved interface, delta-T basis and change lineage must be frozen before a final sizing claim.
+    LOOP_effect: >-
+      The D2.2 100 m3/h normal interface value is not an emergency-flow guarantee. The separate
+      approximately 23-31 m3/h emergency-PCW diagnostic target remains an evidence-acquisition
+      screen only until backup PAB12 pump/fan/valve/pressure/temperature states are proven.
+  closure_required:
+    - current approved interface revision and change lineage relative to D2.2
+    - current 40% PG density/cp/viscosity basis across allowed temperature range
+    - approved normal WCS flow and delta-T at 1199/1256 kW definitions
+    - approved emergency PAB12 flow/head/temperature envelope
+
+hvac_contract_pressure:
+  source_evolution:
+    historical_prestudy_WCS_HVAC_kW: approximately_79_to_90
+    D2_2_preliminary_HVAC_capability_kW: approximately_100
+    later_interface_WCS_HV03_kW: [114, 124]
+  D2_2_anchor_rule: CRYO-REQ-338 requires contractor dissipated-heat input for final HVAC sizing
+  pressure_result: >-
+    The approximately 100 kW D2.2 value is explicitly preliminary and remains an important dated
+    anchor in the HVAC design-evolution chain. Later 114/124 kW interface surfaces may represent
+    maturation, but do not erase the D2.2 provenance and still do not provide LOOP airflow or degraded
+    heat-removal performance. The current contractor/OEM heat-dissipation schedule and NFS degraded-mode
+    HVAC evidence remain required.
+
+electrical_contract_pressure:
+  D2_2_normal_site_anchor_MW: 1.2
+  later_WCS_electrical_allocation_kW: 1397
+  state: ANCHOR_VS_LATER_NORMAL_INTERFACE_DESIGN_EVOLUTION_OPEN
+  finding: >-
+    D2.2 normal compressor-room available power and the later WCS allocation are distinct dated
+    surfaces in the project evidence chain. Current approved ES02/load-list/change lineage is required;
+    neither value is discarded merely because the other is later. This does not prove or disprove the
+    separate 350 kW LOOP diesel allocation.
+  LOOP_rule: normal 1.2 MW site capacity earns zero emergency/diesel margin credit
+
+bd005_contract_predicate:
+  D2_1_anchor_identity: PASS_BOUND
+  D2_2_anchor_identity: PASS_BOUND
+  anchor_age_vs_authority_policy: PASS_EXPLICIT
+  D2_2_room_geometry: PASS_BOUND_ANCHOR_CURRENTNESS_CHECK_OPEN
+  compressor_room_temperature_range: PASS_BOUND_ANCHOR_CURRENTNESS_CHECK_OPEN
+  normal_site_electrical_interface: PASS_BOUND_CONTEXT_ONLY_CURRENTNESS_CHECK_OPEN
+  normal_site_PCW_interface: PASS_BOUND_CONTEXT_ONLY_CURRENTNESS_CHECK_OPEN
+  HVAC_preliminary_contract_input: PASS_BOUND_PRELIMINARY
+  loss_of_utilities_safe_shutdown_test_intent: PASS_BOUND_CROSS_REFERENCE_ONLY
+  exact_LOOP_HV03_airflow: FAIL_NOT_BOUND
+  exact_LOOP_PAB12_hydraulics: FAIL_NOT_BOUND
+  exact_LOOP_ES02_operating_point_and_auxiliaries: FAIL_NOT_BOUND
+  effective_room_and_equipment_thermal_mass: FAIL_MISSING
+  two_hour_physical_definition: FAIL_MISSING
+  six_hour_stabilization_validation: FAIL_MISSING
+  bd005_close_allowed: false
+
+next_attack_order:
+  - bind current approved revisions/change lineage while retaining D2.1 and D2.2 as provenance anchors
+  - acquire current contractor/OEM heat-dissipation schedule required by CRYO-REQ-338
+  - acquire quantitative HV03 degraded/LOOP airflow and fan/electrical state
+  - acquire emergency PAB12 pump/fan/head/flow/temperature/valve state
+  - freeze exact one-HP approximately 110 g/s LOOP electrical/VFD point and ES02 auxiliary split
+  - bind effective building/equipment thermal mass using approved room construction and equipment data
+  - define the physical limit behind approximately 2 h onset and stabilization criterion behind approximately 6 h
+  - execute and independently review first-law WCS LOOP transient
+
+non_compensating_rules:
+  - aged anchor source does not mean obsolete source
+  - later project data does not silently erase D2.1 or D2.2 provenance
+  - contractual/technical normal-mode interfaces do not become emergency-mode guarantees
+  - preliminary HVAC sizing does not become final HVAC capacity
+  - a later interface value requires change/revision reconciliation before being treated as replacement authority
+  - diagnostic air-only heating rates are not safety or acceptance calculations
+  - CRYO-REQ-409 safe-shutdown testing does not assign a HARD_TRIP classification by itself
+  - no engineering, functional-safety, design, acceptance, release or global/project DoV credit is granted
+  - Global/project DoV remains WITHHELD

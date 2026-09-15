@@ -1,0 +1,111 @@
+schema_version: 0.7.7
+package: qcell_canonical_main
+phase: QSVG-P1C
+state: DETERMINISTIC_RENDER_PROOF
+engineering_authority: false
+authority: VISUAL_SEMANTIC_ONLY
+source_lessons:
+  sheet_2:
+    source: Copy of BSLN_0
+    contributes: grouped_region_structure
+  sheet_3:
+    source: Copy of Copy of BSLN_0
+    contributes: compact_right_side_flow_legend
+  sheet_4:
+    source: Copy of Copy of Copy of BSLN_0
+    contributes: endpoint_placement_lessons
+main_policy:
+  single_drawing: true
+  big_teaching_arrows_default_visible: false
+  dotted_endpoint_guides_default_visible: true
+  pressure_overlay_default_visible: false
+  pressure_overlay_deferred: true
+  temperature_heatmap_authoritative: true
+regions:
+  thermal_body:
+    order: 1
+    includes: [warm_300K_membrane, vacuum_300_to_50, shield_50K_membrane, MLI_radiation_break, vacuum_50_to_2, mass_2K]
+  parasitic_loads:
+    order: 2
+    includes: [Q_300_to_50_rad, Q_300_to_50_cond, Q_50_to_2_rad, Q_50_to_2_cond]
+  flow_legend:
+    order: 3
+    placement: right_side
+    includes: [A, B, D, E]
+  endpoint_guides:
+    order: 4
+    style: dotted
+    default_visible: true
+streams:
+  A:
+    role: 2K_supply
+    T_K: 4.5
+    P: 3_bar
+    endpoint: 2K_interface
+    display: "4.5 K · 3 bar"
+  B:
+    role: 2K_return
+    T_K: 2_to_4
+    P: 26_to_31_mbar
+    endpoint: 2K_return_interface
+    display: "2–4 K · 26–31 mbar"
+  D:
+    role: 50K_shield_supply
+    T_K: 30_to_40
+    P: 12_to_13_bar_nominal
+    endpoint: 50K_membrane
+    display: "30–40 K · 12–13 bar"
+  E:
+    role: 50K_shield_return
+    T_K: 50_to_60
+    delta_T_K: 20
+    endpoint: 50K_membrane_return
+    display: "50–60 K · ΔT≈20 K"
+colour_policy:
+  temperature:
+    cryogenic_tags_K: [2, 4, 30, 50, 60, 77]
+    warm_range_K: [77, 300]
+    semantic_role: primary_heatmap
+    value_colours:
+      2: "#0618aa"
+      4: "#1268ff"
+      30: "#00c8ff"
+      50: "#00e7c0"
+      60: "#7aff00"
+      77: "#ffd400"
+      300: "#cc0000"
+  pressure:
+    palette: purple_grey
+    semantic_role: diagnostic_only
+    visible: false
+parasitics:
+  outer: {direction_nominal: 300K_to_50K, colour: red_to_orange}
+  inner: {direction_nominal: 50K_to_2K, colour: orange_to_blue, reversible_if: T_2K_mass_gt_T_50K_shield}
+layer_defaults:
+  thermal_body: true
+  parasitic_loads: true
+  compact_flow_legend: true
+  endpoint_guides: true
+  annotations: true
+  temperature_legend: true
+  pressure_overlay: false
+  big_teaching_arrows: false
+render_contract:
+  renderer_schema: qcell-renderer/0.1.0
+  svg_template: templates/qcell_main_v0_7_7.svg.tpl
+  html_template: templates/index.html.tpl
+  storage_key: qcell-main-v0.7.7-layer-state
+  pressure_status_label: Pressure palette intentionally deferred / OFF.
+  tracked_svg: svg/qcell_main_v0_7_7.svg
+  tracked_html: docs/index.html
+  normalize_newline: LF
+  encoding: UTF-8
+qps_bd_effect:
+  QSVG-BD-001: CLOSE_CANDIDATE
+  QSVG-BD-002: CLOSED_IMPLEMENTATION
+  QSVG-BD-003: CLOSED_P1B
+  QSVG-BD-004: CLOSED_P1B
+  QSVG-BD-005: ACTIVE_P1C
+  QSVG-BD-008: ACTIVE_P1C
+  QSVG-BD-009: CLOSED_STABLE_ARTIFACT_REPEAT
+  QSVG-BD-010: WITHHELD

@@ -1,0 +1,19 @@
+{
+  "schema": "qps.aht-control-release/1.0.0",
+  "release_version": "1.0.0",
+  "owner": "GBOGEB/CODEX",
+  "consumer": "GBOGEB/CODEX",
+  "role": "canonical contract and PR-head renderer",
+  "files": {
+    "qps_aht_control.py": "f9f3789b6a42a39a959480ce53d681d428b1b0e195e5bc95553df9aeb276ed7a",
+    "tests/test_qps_aht_control.py": "19c61362e29ef58fed6f8c847bb2e30c37072ac9e1f69d838d3e2468297750ab",
+    "scripts/render_aht_pr_head.py": "b6c50ff20a2d31fc8d0370639e30668ae4ed1e7328943d64282ee3662cf77693"
+  },
+  "engineering_credit_delta": 0,
+  "runtime_control": "WITHHELD",
+  "counting_policy": "success/all completed; decisive excludes skipped and neutral; unknown means unavailable, never zero",
+  "threshold_policy": {
+    "blocking_completed_count": 1,
+    "source": "existing ABACUS classify_failed_check_threshold default; now includes all terminal blockers"
+  }
+}

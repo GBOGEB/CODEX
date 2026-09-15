@@ -1,0 +1,125 @@
+version: 1.0
+purpose: Controlled semantic vocabulary extensions consumed by the semantic-substrate validator when a bounded governance surface introduces a new semantic_* token.
+authority: GBOGEB/CODEX semantic governance only; entries do not create QPS engineering or compliance authority.
+glossary:
+  semantic_readiness:
+    definition: Scheduler-facing readiness state indicating whether schemas, contracts, terminology, identifiers and expectations are aligned enough for a bounded execution attempt; semantic readiness does not prove execution, quality, receipt, or child engineering acceptance.
+    introduced_by: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
+    status_key: SR
+    first_use_case: distinguish meaning/schema compatibility from repository/dependency readiness before orchestration executes a mesh transition.
+  semantic_taxonomy:
+    definition: Source-bound classification of electrical and thermal boundaries used by the W111 power-utility bridge; labels identify scope and do not independently confirm numerical values.
+    introduced_by: triage/W111_QPS_POWER_UTILITY_KEB_BRIDGE.yaml
+    first_use_case: distinguish shaft, motor, skid, plant and facility power before comparing efficiency or invCOP.
+  semantic_and_governance:
+    definition: K4 release gate grouping the selected semantic runtime, governance and CI workflows under the release candidate's accepted blocking policy.
+    introduced_by: release/W126_POINT_RELEASE_CANDIDATE.yaml
+    first_use_case: require the selected release checks to pass or receive an explicit nonblocking classification from accepted release authority.
+  semantic_provenance_policy_governance:
+    definition: KEB authority over terminology, provenance policy and governance; child engineering authority remains with cryoplant-project and Zod validates executable contracts.
+    introduced_by: federation/qps/QPS_ZOD_SUPPLEMENTARY_ROLE_v1.yaml
+    first_use_case: separate KEB, child engineering and Zod responsibilities in the QPS federation.
+  semantic_runtime_run_id:
+    definition: GitHub Actions run identifier for semantic runtime verification, interpreted with the accompanying repository, head SHA and result.
+    introduced_by: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
+    first_use_case: locate the observed semantic verification run supporting a retained REX lesson; the identifier alone is not proof of success.
+  semantic_run_id:
+    definition: GitHub Actions run identifier for the semantic-runtime lane in an exact-head REX convergence receipt; it must be interpreted with repository, exact head SHA, job identifiers and result.
+    introduced_by: federation/rex/returns/CODEX_W113_PR621_REX_RETURN.yaml
+    first_use_case: bind the semantic-runtime run used in the PR650 Control proof without treating a run identifier alone as quality or acceptance evidence.
+  semantic_job_id:
+    definition: GitHub Actions job identifier for a semantic-runtime verification job recorded in a REX receipt; it is provenance metadata and does not by itself prove execution quality or engineering acceptance.
+    introduced_by: federation/rex/returns/CODEX_W113_PR621_REX_RETURN.yaml
+    first_use_case: locate the semantic-runtime job associated with an observed failed or passing exact-head convergence attempt.
+  semantic_validation_job_id:
+    definition: GitHub Actions job identifier specifically for the semantic-validation job within the semantic-runtime workflow, interpreted with run identifier, exact head SHA and result.
+    introduced_by: federation/rex/returns/CODEX_W113_PR621_REX_RETURN.yaml
+    first_use_case: bind the semantic-validation job that passed validator, orchestration and tests in the PR650 Control proof.
+  semantic_authority_transferred:
+    definition: Tuple-state flag indicating that semantic authority has moved from an earlier representation into a governed SSOT or runtime representation; it does not transfer child engineering or compliance authority.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/data/semantic_tuple_ledger.json
+    first_use_case: record the evolution from source/reference artifacts toward governed YAML and executable semantic runtime state.
+  semantic_delta_replay:
+    definition: Deterministic replay of ordered tuple deltas to reconstruct how semantic state evolved from root tuple to current state.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/semantic_delta_replay.py
+    first_use_case: prove the TUP-0001 through TUP-0008 evolution path rather than only inspecting the final reconstructed state.
+  semantic_lineage:
+    definition: Explicit parent-child provenance connecting semantic tuples, decisions, branches and derived runtime state.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/data/semantic_tuple_ledger.json
+    first_use_case: derive branch topology and reconstruct semantic ancestry without maintaining a separate hand-authored DAG.
+  semantic_metrics:
+    definition: Quantified runtime measures describing semantic completeness, debt, branch topology and reconstructability; metrics are governance indicators, not engineering acceptance evidence by themselves.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/closed_loop.py
+    first_use_case: expose completeness and open-debt measures used to drive the next governed execution action.
+  semantic_promotions_allowed:
+    definition: Acceptance-gate result indicating whether semantic validation, replay and traceability prerequisites permit promotion of a generated render or publication artifact.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/semantic_acceptance_gate.py
+    first_use_case: prevent renderer promotion when semantic state is not reconstructable even if visual rendering itself succeeds.
+  semantic_spacing:
+    definition: Governed spacing and whitespace semantics used by the renderer layout engine to preserve hierarchy, readability and overflow constraints across themes and outputs.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/data/governance_ledger.json
+    first_use_case: track renderer-governance debt for spacing and overflow validation.
+  semantic_tuple_ledger:
+    definition: Machine-readable ordered registry of semantic tuples containing stable identifiers, parentage, branch, intent, progress and next action used by the A7 reconstruction runtime.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/data/semantic_tuple_ledger.json
+    first_use_case: replace fixture-only reconstruction with the real CODEX conversation lineage ledger.
+  semantic_acceptance_gate:
+    definition: Executable promotion gate that combines renderer validation with reconstruction, replay, traceability and readiness checks before allowing publication promotion.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/semantic_acceptance_gate.py
+    first_use_case: couple A6 renderer governance to A7 reconstructability so visual success alone cannot promote an artifact.
+  semantic_delta_replay_passed:
+    definition: Boolean acceptance check indicating that deterministic tuple replay completed successfully for the governed ledger and expected tuple sequence.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/semantic_acceptance_gate.py
+    first_use_case: provide an explicit replay prerequisite within the A6-A7 renderer promotion contract.
+  semantic_replay:
+    definition: Governed semantic-runtime capability proving that ordered semantic tuple history can be replayed deterministically from source state to the current reconstructed state; it is replay evidence, not child engineering authority.
+    introduced_by: abacus_render_pipeline/A7_executable_semantic_runtime/test_semantic_replay_and_acceptance.py
+    first_use_case: name the bounded deterministic replay capability exercised by the A7 semantic replay and renderer-acceptance tests.
+  semantic_acceptance_status:
+    definition: Persisted promotion-receipt field recording the pass/fail outcome of the semantic acceptance gate for the exact renderer execution receipt being promoted.
+    introduced_by: abacus_render_pipeline/A8_renderer_execution_receipt/promotion_receipt.py
+    first_use_case: bind the final PROMOTE or REJECT decision to the same content-addressed artifact, SSOT, tuple ledger and semantic-runtime evidence.
+  semantic_card:
+    definition: SSOT publication component identifying a card whose styling and validation are selected by semantic role and theme rather than by fixed presentation colour values.
+    introduced_by: abacus_render_pipeline/A8_renderer_execution_receipt/ssot/reference_publication.yaml
+    first_use_case: drive the A8 reference renderer through the governed warning-card theme runtime while preserving semantic meaning across dark and light modes.
+  semantic_parity:
+    definition: Cross-format publication check proving that required canonical semantic tokens from one SSOT payload remain present in each governed rendered format; parity is evidence of content preservation, not engineering acceptance by itself.
+    introduced_by: abacus_render_pipeline/A9_multiformat_publication/multiformat_execution.py
+    first_use_case: require HTML, PPTX, PDF, Markdown and GitHub Pages artifacts to preserve the same package identity, canonical content hash, sheet identities and requirement identifiers before publication promotion.
+  semantic_tokens:
+    definition: Bounded canonical identifiers selected from the publication payload for deterministic cross-format content-preservation checks.
+    introduced_by: abacus_render_pipeline/A9_multiformat_publication/multiformat_execution.py
+    first_use_case: provide stable package, content-hash, sheet and requirement identifiers used by the A9 semantic parity gate.
+  semantic_token_count:
+    definition: Count of canonical semantic tokens required by a multi-format parity evaluation for one governed publication execution.
+    introduced_by: abacus_render_pipeline/A9_multiformat_publication/multiformat_execution.py
+    first_use_case: make parity coverage measurable and receipt-visible across all required A9 publication formats.
+  semantic_replay_summary:
+    definition: Promotion-receipt summary of the already-governed deterministic semantic replay state used when making a multi-format publication promotion decision.
+    introduced_by: abacus_render_pipeline/A9_multiformat_publication/publication_promotion.py
+    first_use_case: bind the final A9 PROMOTE or REJECT decision to reconstructable semantic lineage without creating a new engineering authority layer.
+  semantic_assessment:
+    definition: Governed assessment block that records a bounded interpretation of semantic state or evidence alignment; it is a review result and does not create child engineering acceptance.
+    introduced_by: federation/qps/H4_QPS_TRIAGE_W1_P2_KEB_CHALLENGE_v1.yaml
+    first_use_case: record source-bound semantic review findings while keeping engineering disposition with the declared child authority.
+  semantic_correction:
+    definition: Explicit clarification that prevents two similarly worded source statements from being treated as the same engineering claim; the correction preserves source authority and does not create new design evidence.
+    introduced_by: docs/qps-source-bound-dense-decks-v1-6/bd005_addendum_loop_boundary_v1_6.yaml
+    first_use_case: keep pneumatic-backup autonomy distinct from a separate thermal stabilization or recovery duration statement.
+  semantic_coverage:
+    definition: Measured fraction or completeness indicator for required meaning-bearing content within a declared comparison or publication boundary; the denominator and required tokens or objects must be defined by the governing check.
+    introduced_by: abacus_render_pipeline/A9_multiformat_publication/multiformat_execution.py
+    first_use_case: quantify whether a rendered or hosted publication preserves the required canonical content used by its parity check.
+  semantic_overlay_relations:
+    definition: Controlled list of additional meaning-bearing relationships projected over a base graph without changing the authority of the underlying source topology.
+    introduced_by: docs/qps-source-bound-dense-decks-v1-6/d2_1_mode_state_matrix_v1_6.yaml
+    first_use_case: add mode sequence, fallback state and isolation path relationships to a governed graph projection while retaining the base carrier edges.
+  semantic_relation:
+    definition: Typed meaning-bearing relationship attached to a governed graph edge or object association; the relation describes interpretation and does not independently promote source or engineering authority.
+    introduced_by: docs/qps-source-bound-dense-decks-v1-6/graph_binding_overlay_v1_6.yaml
+    first_use_case: distinguish relations such as topology decomposition from process-physics decomposition on source-bound graph overlays.
+  semantic_boundary_preserved:
+    definition: Pointer-receipt status indicating that a restart or provenance receiver preserved the source child's declared semantic boundaries while transferring no child engineering, disposition, compliance, negotiation, acceptance or release authority.
+    introduced_by: governance/qps_triage/W232_QPS_LOSSLESS_HANDOVER_KEB_RECEIVER_v1.yaml
+    first_use_case: record PASS when CODEX/KEB can validate and expose a child restart pointer without copying private raw evidence, changing child disposition, or awarding receiver credit.

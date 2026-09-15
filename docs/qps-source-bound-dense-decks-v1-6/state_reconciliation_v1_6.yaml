@@ -1,0 +1,109 @@
+schema: qps-v1-6-state-reconciliation/1.0
+version: '1.6'
+authority: GOVERNANCE_STATE_RECONCILIATION_NOT_ENGINEERING_APPROVAL
+created: '2026-09-14'
+global_project_dov: WITHHELD
+
+purpose: >-
+  Reconcile a stale-branch last-write collision on the v1.6 authority surfaces without deleting
+  useful child evidence. State is determined by retained evidence and explicit invalidation, not
+  by merge timestamp alone.
+
+collision:
+  later_merge:
+    pr: 700
+    merge_commit: 22cf9ff3096cadacfa9ba0700be371cb5f14c1c8
+    merged_at: '2026-09-14T17:09:04Z'
+    branch_intent: fresh-session partial source/engineering pulse
+    effect: >-
+      Replaced triage_v1_6.yaml, source_lineage.yaml, README.md and qps_triage_alignment.md with
+      a branch snapshot that still treated raw source-byte materialization as the first red.
+  stronger_evidence_already_on_main_before_collision:
+    - pr: 696
+      merge_commit: ae5eaa374b9137ecb1109471b673473f34d2c329
+      merged_at: '2026-09-14T16:23:55Z'
+      proves: [V16-BD-001_CLOSED, V16-BD-002_CLOSED]
+      retained_evidence: [source_proof_receipt.json, source_render_manifest.yaml]
+    - pr: 697
+      merge_commit: 86a59101903c9ab2c68d4d4f1fc2aca8af576805
+      merged_at: '2026-09-14T16:26:13Z'
+      proves: [V16-BD-004_SCOPE_RECONCILED, V16-BD-006_PARTIAL]
+      retained_evidence: [engineering_reconciliation_v1_6.yaml]
+    - pr: 702
+      merged_at: '2026-09-14T16:48:13Z'
+      proves: [EXTRACTED_TEXT_BINDING_CLOSED, V16-BD-003_CLOSED_CONTENT_TRACE_DOV]
+      retained_evidence: [source_text_manifest.yaml, source_vs_curated_dov_v1_6.yaml]
+    - pr: 703
+      merged_at: '2026-09-14T17:01:29Z'
+      proves: [V16-BD-005_PRESSURE_LOADED_OPEN]
+      retained_evidence: [loop_evidence_v1_6.yaml, loop_pressure_loading_v1_6.yaml]
+    - pr: 704
+      merged_at: '2026-09-14T17:07:34Z'
+      proves: [V16-BD-005_HVAC_BOUNDARY_PARTIAL]
+      retained_evidence: [loop_hvac_boundary_v1_6.yaml]
+
+precedence_rules:
+  - a retained content-addressed execution receipt is not invalidated by a later stale narrative snapshot unless explicit contradictory execution evidence is produced
+  - an artifact that states an action was not executable in its own pulse does not prove that the action was never executed by another independently retained pulse
+  - later merge time alone cannot reopen a closed predicate
+  - partial analytical child artifacts may remain useful even when their top-level closure state is superseded
+  - engineering/safety/acceptance authority never increases merely because a governance state is reconciled
+
+artifact_dispositions:
+  source_proof_execution_v1_6.yaml:
+    retain: true
+    role: HISTORICAL_PARALLEL_EXECUTION_SNAPSHOT
+    top_level_closure_authority: SUPERSEDED
+    reason: >-
+      It correctly records that raw-byte materialization was not available in that branch pulse,
+      but source_proof_receipt.json independently records exact-byte hashing and all 63 bound renders.
+  utilities_reconciliation_v1_6.yaml:
+    retain: true
+    role: ANALYTICAL_CHILD_AND_ADJACENT_OPEN_ITEM_REGISTER
+    top_level_BD004_state: SUPERSEDED_BY_ENGINEERING_RECONCILIATION_V1_6
+    useful_residuals: [HVAC_basis, GN2_residual, PGB20_role, support_consequence_semantics]
+  control_signal_classification_v1_6.yaml:
+    retain: true
+    role: ACTIVE_TENDER_LEVEL_CHILD_EVIDENCE
+    top_level_BD006_state: PARTIAL_ONLY
+    reason: detailed cause_effect, fail_safe, protocol ownership and L2 I/O remain open
+  source_proof_receipt.json:
+    role: AUTHORITATIVE_BD001_BD002_EXECUTION_RECEIPT
+  source_render_manifest.yaml:
+    role: AUTHORITATIVE_BOUND_RENDER_HASH_MANIFEST
+  source_text_manifest.yaml:
+    role: AUTHORITATIVE_NATIVE_TEXT_BINDING_MANIFEST
+  source_vs_curated_dov_v1_6.yaml:
+    role: AUTHORITATIVE_BD003_CONTENT_TRACE_DOV
+  engineering_reconciliation_v1_6.yaml:
+    role: AUTHORITATIVE_BD004_SCOPE_RECONCILIATION_AND_BD006_PARTIAL_BOUNDARY
+
+reconciled_BD_state:
+  V16-BD-001: CLOSED
+  V16-BD-002: CLOSED
+  EXTRACTED-TEXT-BINDING: CLOSED
+  V16-BD-003: CLOSED_CONTENT_TRACE_DOV
+  CONTENT-LOSS-REVIEW: CLOSED_NO_SILENT_DROP
+  V16-BD-004: CLOSED_SCOPE_RECONCILED
+  V16-BD-005: OPEN_PRESSURE_BOUND
+  V16-BD-006: PARTIAL_EVIDENCE_BOUND
+  V16-BD-007: OPEN_L2_GATED
+  V16-BD-008: OPEN
+  V16-BD-009: DEFER_TO_V1_7
+  V16-BD-010: REFRAME_BIND_EXISTING_CARRIER
+
+source_identity_truth:
+  SRC-UTIL-CORE: 6d694db8e7ad85193f73a61a1c7b06938e3724c34401435b38a0111e656c5507
+  SRC-UTIL-CANONICAL-APPENDIX: a629886b7af5d13e62b9b70cd10041e94dd6aa4f74234894d466843c5da87cba
+  SRC-CTRL-CORE: 8e15b95ad2a2fefc1548367352eda0df6e2eb60eee878264c5f1f7a80579479a
+  SRC-NAMING-CONTROL: 660ea8e3697ebafd8f73a1e4bb4bc7b2cb5f69ec645dc7b7905055e88f2e4684
+  bound_source_slides_rendered: 63
+  bound_source_slides_content_reviewed: 63
+  silent_drop_count: 0
+
+non_compensating_rules:
+  - restoring evidence-consistent state grants zero engineering, safety, acceptance or release credit
+  - BD-006 is not closed by the tender-level classification child
+  - BD-005 is not closed by source-value repetition or diagnostic calculations
+  - Office host reflow and ODP remain separate proof boundaries
+  - Global/project DoV remains WITHHELD

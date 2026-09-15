@@ -1,0 +1,35 @@
+schema: qps-governance-execution-receipt/1.0
+version: '1.6.10'
+pr: 717
+purpose: CONTROL_ONLY_RECEIPT_NO_ENGINEERING_STATE_CHANGE
+global_project_dov: WITHHELD
+parent_context:
+  pr_714_merge: 1bc865a07c1c57e951b2c1d2633c45ab419aafa4
+  pr_714_qps_canonicalization: PASS
+  pr_714_W003: FAIL_PR007_MISSING_CLASSIFICATION_DELIMITER
+  engineering_effect: NONE
+attempts:
+  - attempt: 1
+    head_sha: e0952285066413adb233d2a67e63042ee8e6d2c9
+    qps_canonicalization: PASS
+    W003: FAIL
+    parser_error: PR-ID_is_a_required_property
+    repair: add_PR_ID_PR_717
+  - attempt: 2
+    head_sha: 60cee38cf8088635171c2102f5bffc5575459e0c
+    qps_canonicalization: PASS
+    W003: FAIL
+    parser_error: SCHEMA_MUTATION_NONE_not_in_ALLOWED_ENUM_YES_NO_CONTROLLED
+    repair: set_SCHEMA_MUTATION_NO
+next_gate_predicate:
+  W003: MUST_PASS_ON_FRESH_HEAD
+  qps_canonicalization: MUST_PASS_ON_SAME_FRESH_HEAD
+engineering_state:
+  BD_005: OPEN
+  BD_006: PARTIAL_EVIDENCE_BOUND
+  BD_008: PREPARED_P0_GATED
+  engineering_credit_delta: 0
+non_claims:
+  - historical_PR714_W003_is_not_retroactively_green
+  - metadata_repairs_do_not_close_any_engineering_predicate
+  - this_receipt_does_not_change_triage_v1_6_yaml

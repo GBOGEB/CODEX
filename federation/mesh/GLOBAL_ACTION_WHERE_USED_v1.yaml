@@ -1,0 +1,30 @@
+schema: gbogeb-global-action-where-used/1.1
+wave: W112
+status: ACTIVE_AFTER_3PC_COLLISION_REPAIR
+rule: every action moniker has at least one concrete use case; W108 status keys are never action identifiers
+records:
+  CLOSE: {first_use_case: cryoplant child re-entry after KEB+DOW, typical_nodes: [repo.cryoplant, repo.codex, repo.abacus]}
+  RED: {first_use_case: first failing governance or semantic gate repair, typical_nodes: [repo.codex, repo.abacus, repo.cryoplant]}
+  RUNTIME: {first_use_case: hosted-runner allocation and workflow repair, typical_nodes: [repo.cryoplant, repo.codex, repo.codespaces_jyperter]}
+  SEM: {first_use_case: RFI-CIS-01 ranking contradiction and QPS terminology drift, typical_nodes: [repo.cryoplant, repo.codex]}
+  SSOT: {first_use_case: local-SSOT discovery/global-registration correction, typical_nodes: [repo.codex, repo.pipeline_hub]}
+  RECEIPT: {first_use_case: exact-head child/KEB/DOW and artifact receipt binding, typical_nodes: [repo.docx_rtm, repo.codex, repo.abacus]}
+  ENABLE: {first_use_case: standard .mesh/MESH_DOCK.yaml yellow-pages port, typical_nodes: [repo.pipeline_hub, repo.codex]}
+  HARDEN: {first_use_case: Level-1 PCA/BT/native-anchor hardening, typical_nodes: [repo.docx_rtm, repo.document_org, repo.codespaces_jyperter]}
+  CLEAN: {first_use_case: low-consequence lint/metadata cleanup, typical_nodes: [repo.codespaces_jyperter]}
+  MAINT: {first_use_case: periodic census/metrics/dependency refresh, typical_nodes: [repo.codex, repo.abacus]}
+  READ: {first_use_case: bounded reference-repo reading supporting an active implementation question, typical_nodes: [reference_knowledge_catalog]}
+  EXP: {first_use_case: orchestration and multi-agent DMAIC sandbox experiments, typical_nodes: [experiment_sandbox_catalog]}
+  WATCH: {first_use_case: wait for bidder/OEM return or missing owner MTO without repeated compute burn, typical_nodes: [repo.cryoplant]}
+current_operational_use:
+  object: QPS_W111_CIS_30_CELL_PENETRATION
+  sequence:
+    - {moniker: SSOT, action: source-bind and repair cell states}
+    - {moniker: SEM, action: supersede contradictory historical ranking projection}
+    - {moniker: CLOSE, action: obtain authoritative bidder residual return}
+    - {moniker: WATCH, action: wait after issue until response state changes}
+    - {moniker: RECEIPT, action: bind returned source identity and receipt}
+    - {moniker: CLOSE, action: child final disposition}
+legacy_w111_aliases:
+  status: historical_only
+  mapping: {CG: CLOSE, RR: RED, CR: RUNTIME, SR: SEM, DR: SSOT, PB: RECEIPT, FE: ENABLE, QH: HARDEN, HK: CLEAN, BG: MAINT, KR: READ, EX: EXP, WD: WATCH}

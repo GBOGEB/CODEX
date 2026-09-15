@@ -1,0 +1,44 @@
+schema_version: '0.1'
+document_id: QPLANT_SBS_CIS_KEB_RECEIPT_W105
+status: PARENT_SEMANTIC_RECEIPT_NO_CHILD_CREDIT
+wave: W105
+parent_repo: GBOGEB/CODEX
+parent_role: KEB
+source_child:
+  repo: GBOGEB/cryoplant-project
+  pr: 862
+  head_sha: ac94710352d93fe09c9c81c2a20d086f799abdcb
+  artifact: canonical/QPLANT_SBS_CIS_CONTRACT_CLARIFICATION_v0.1.md
+dow_consumer:
+  repo: GBOGEB/ABACUS
+  pr: 1111
+  head_sha: b8c3dcc0d8e7a1d03069ff9cf3c4aa5ea633c092
+semantic_receipt:
+  accepted_as_provisional_contract_semantics:
+    - 'QPLANT principal process SBS: WCS + QRB; QPLANT:CIS overarching layer'
+    - 'QINFRA = WSH + QSN + WPS + WPR'
+    - 'QDIST = QLM + QVE'
+    - 'QCELL = QVB + QM'
+    - 'QDB physical grouping may equal QLM + QVBs + QVE without changing functional SBS'
+    - 'WCS:CS and QRB:CS subordinate to QPLANT:CIS'
+    - 'WSH controls included when Contingent Part 2 is activated'
+    - 'QSN is Applicant design prerogative; complete responsibility follows inclusion in Applicant solution'
+    - 'U/W/S downstream line ownership is bounded at explicit QPLANT/QRB terminal points'
+  rejected_promotions:
+    - 'QVB -> QDIST functional membership'
+    - 'physical proximity/routing -> contractual scope ownership'
+    - 'QSN -> unconditional mandatory Contractor scope'
+    - 'provisional clarification -> accepted Addendum requirement'
+  nuance_preserved:
+    - 'local OEM equipment-protection logic may remain local but must be coordinated with and visible to QPLANT:CIS; overarching does not mean deleting necessary local protection'
+    - 'QPLANT contractual shorthand for Scope of Supply must not erase QSYS/QINFRA SBS identity'
+verification_request:
+  next_child_gate:
+    - merge cryoplant PR 862
+    - merge DOW consumer PR 1111
+    - incorporate SHALLs into controlled RTM/Addendum source
+    - scan controlled sources for stale `QDIST = QLM + QVB + QVE` semantics
+    - regenerate/compare derived interface and control artifacts
+    - emit exact-SHA child acceptance receipt ACCEPT/REJECT/DEFER
+credit: 0
+credit_reason: semantic/governance propagation only; controlled source not yet promoted

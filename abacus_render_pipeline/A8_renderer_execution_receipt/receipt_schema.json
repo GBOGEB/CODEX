@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ABACUS Renderer Execution Receipt",
+  "type": "object",
+  "required": [
+    "receipt_version",
+    "artifact_sha256",
+    "ssot_sha256",
+    "renderer_version",
+    "theme",
+    "render_mode",
+    "checks",
+    "tuple_ledger_sha256",
+    "decision"
+  ],
+  "properties": {
+    "receipt_version": {"type": "string"},
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "ssot_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "renderer_version": {"type": "string"},
+    "theme": {"enum": ["light", "dark"]},
+    "render_mode": {"type": "string"},
+    "checks": {
+      "type": "object",
+      "required": ["contrast", "layout", "overflow", "semantic_replay"],
+      "properties": {
+        "contrast": {"type": "object", "required": ["pass", "ratio"]},
+        "layout": {"type": "object", "required": ["pass", "decisions"]},
+        "overflow": {"type": "object", "required": ["pass", "body_line_count", "max_body_lines"]},
+        "semantic_replay": {"type": "object", "required": ["pass", "status"]}
+      }
+    },
+    "tuple_ledger_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "decision": {"enum": ["accept", "reject"]}
+  }
+}

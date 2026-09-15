@@ -1,0 +1,48 @@
+{
+  "schema": "codex.qps_federated_lldb_durable_receipt.v1",
+  "receipt_id": "CODEX-QPS-FEDERATED-LLDB-W1F-A-ACCEPT",
+  "classification": "MAINTENANCE_RUNTIME_ONLY",
+  "workflow": {
+    "name": "QPS Federated Native LLDB",
+    "run_id": 34706613170,
+    "job_id": 103587694273,
+    "artifact_id": 10302570243,
+    "artifact_name": "qps-federated-native-lldb-receipt",
+    "artifact_digest": "sha256:68a727b3c4f668a04ce8b1c8500efafecca61cb559dc90624646d2bbc852b9d9"
+  },
+  "source": {
+    "repository": "GBOGEB/cryoplant-project",
+    "exact_sha": "5ba7a25fa45f78b9336523f7311f5a58f36c6d89",
+    "path": "triage/runtime_health/lldb_probe/Probe.swift",
+    "git_blob_sha": "b1e30aa74912c1088c7d13fcca60013fd2618647",
+    "expected_sha256": "663a1dac2feb456b6f9678a0da51966615b80dbbb60b5a4a117b44a235eeac53",
+    "observed_sha256": "663a1dac2feb456b6f9678a0da51966615b80dbbb60b5a4a117b44a235eeac53",
+    "payload_hash_match": true
+  },
+  "execution": {
+    "executor_repository": "GBOGEB/CODEX",
+    "executor_workflow_sha": "9ef648ab3df34d8b9e033a90d92a4269a04ca49b",
+    "runner_name": "GitHub Actions 1000255515",
+    "runner_os": "macOS",
+    "runner_arch": "ARM64",
+    "swift_compile_returncode": 0,
+    "lldb_returncode": 0,
+    "real_probe_steps": 10,
+    "observed_value": 42,
+    "probe_status": "ACCEPT",
+    "dov_status": "PASS"
+  },
+  "adapter_observation": {
+    "canonical": "lldb-dap",
+    "w1f_a_path_resolution": "NOT_FOUND_ON_PATH",
+    "execution_driver": "lldb-cli-batch",
+    "follow_up": "W1F-B resolves adapter via PATH then xcrun"
+  },
+  "original_receipt_sha256": "3ea8c24ec94e0fd05c0c88bc24a9f0b91add5ac73c471b7cab5c7a20f5f8722d",
+  "authority_guards": {
+    "qps_repo_local_runner_gate": "WITHHELD_EXTERNAL",
+    "federated_execution_does_not_claim_repo_local_runner_recovery": true,
+    "formal_engineering_credit_delta": 0,
+    "negotiation_credit_delta": 0
+  }
+}

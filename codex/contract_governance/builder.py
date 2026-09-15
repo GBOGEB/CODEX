@@ -89,8 +89,8 @@ def workbook_payload(ssot: GovernanceSSOT, tier: Tier) -> dict[str, object]:
     return {"package_id": ssot.package_id, "tier": tier, "sheets": sheets}
 
 
-def build_artifacts(ssot: GovernanceSSOT, out_dir: Path, tier: Tier) -> dict[str, str]:
-    """Generate XLSX, HTML, RTM JSON, DOCX, PPTX, PDF, and a manifest for an output tier."""
+def build_artifacts(ssot: GovernanceSSOT, out_dir: Path, tier: Tier) -> dict[str, object]:
+    """Generate governed outputs plus native renderer telemetry for an output tier."""
 
     tier_dir = out_dir / tier
     tier_dir.mkdir(parents=True, exist_ok=True)
@@ -109,8 +109,12 @@ def build_artifacts(ssot: GovernanceSSOT, out_dir: Path, tier: Tier) -> dict[str
     _write_html(payload, ssot, html_path)
     _write_json(payload, rtm_path)
     build_docx(payload, ssot, docx_path)
-    build_pptx(payload, ssot, pptx_path)
-    build_pdf(payload, ssot, pdf_path)
+    pptx_telemetry = build_pptx(payload, ssot, pptx_path)
+    pdf_telemetry = build_pdf(payload, ssot, pdf_path)
+    renderer_telemetry = {
+        "pptx": pptx_telemetry,
+        "pdf": pdf_telemetry,
+    }
     _write_json(
         {
             "package_id": ssot.package_id,
@@ -126,6 +130,7 @@ def build_artifacts(ssot: GovernanceSSOT, out_dir: Path, tier: Tier) -> dict[str
                 "pptx": pptx_path.name,
                 "pdf": pdf_path.name,
             },
+            "renderer_telemetry": renderer_telemetry,
         },
         manifest_path,
     )
@@ -138,6 +143,7 @@ def build_artifacts(ssot: GovernanceSSOT, out_dir: Path, tier: Tier) -> dict[str
         "pdf": str(pdf_path),
         "manifest": str(manifest_path),
         "content_hash": digest,
+        "renderer_telemetry": renderer_telemetry,
     }
 
 

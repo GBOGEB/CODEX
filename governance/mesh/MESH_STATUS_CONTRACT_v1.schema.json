@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gbogeb.local/schema/mesh-status-contract-v1.json",
+  "title": "Global Mesh Scheduler Status Contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","repo","source_sha","freshness_timestamp","dimensions","next_action","blocking_atom"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "repo": {"type": "string", "minLength": 1},
+    "source_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "freshness_timestamp": {"type": "string", "format": "date-time"},
+    "producer": {"type": "string"},
+    "dimensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["CG","RR","CR","SR","DR","PB","FE","QH","HK","BG","KR","EX","WD"],
+      "properties": {
+        "CG": {"$ref": "#/$defs/dimension"},
+        "RR": {"$ref": "#/$defs/dimension"},
+        "CR": {"$ref": "#/$defs/dimension"},
+        "SR": {"$ref": "#/$defs/dimension"},
+        "DR": {"$ref": "#/$defs/dimension"},
+        "PB": {"$ref": "#/$defs/dimension"},
+        "FE": {"$ref": "#/$defs/dimension"},
+        "QH": {"$ref": "#/$defs/dimension"},
+        "HK": {"$ref": "#/$defs/dimension"},
+        "BG": {"$ref": "#/$defs/dimension"},
+        "KR": {"$ref": "#/$defs/dimension"},
+        "EX": {"$ref": "#/$defs/dimension"},
+        "WD": {"$ref": "#/$defs/dimension"}
+      }
+    },
+    "next_action": {"type": "string", "minLength": 1},
+    "blocking_atom": {"type": ["string","null"]},
+    "scheduler_priority": {"type": "integer", "minimum": 0, "maximum": 100},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "$defs": {
+    "dimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state","confidence","evidence_class","observed_at","source_ref"],
+      "properties": {
+        "state": {"enum": ["GREEN","AMBER","RED","BLOCKED","DEFER","UNKNOWN","NA"]},
+        "confidence": {"enum": ["HIGH","MEDIUM","LOW","UNKNOWN"]},
+        "evidence_class": {"enum": ["RUNTIME_RECEIPT","EXACT_SHA_ARTIFACT","CANONICAL_SOURCE","SOURCE_BOUND_INFERENCE","MANUAL_ASSERTION","UNKNOWN"]},
+        "observed_at": {"type": "string", "format": "date-time"},
+        "source_ref": {"type": "string", "minLength": 1},
+        "metric": {"type": ["number","integer","string","null"]},
+        "detail": {"type": ["string","null"]}
+      }
+    }
+  }
+}

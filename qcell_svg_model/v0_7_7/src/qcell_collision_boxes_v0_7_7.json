@@ -1,0 +1,23 @@
+{
+  "schema": "qsvg-collision-boxes/0.1.0",
+  "viewbox": [0, 0, 1500, 900],
+  "boxes": [
+    {"id": "outer_rad_card", "x": 112, "y": 340, "w": 225, "h": 55, "class": "exclusive"},
+    {"id": "outer_cond_card", "x": 865, "y": 650, "w": 230, "h": 55, "class": "exclusive"},
+    {"id": "inner_rad_card", "x": 770, "y": 455, "w": 195, "h": 55, "class": "exclusive"},
+    {"id": "inner_cond_card", "x": 360, "y": 650, "w": 210, "h": 55, "class": "exclusive"},
+    {"id": "flow_legend_region", "x": 1175, "y": 190, "w": 255, "h": 420, "class": "exclusive"},
+    {"id": "endpoint_guide_card", "x": 1175, "y": 625, "w": 255, "h": 52, "class": "exclusive"},
+    {"id": "temperature_legend_band", "x": 80, "y": 800, "w": 1080, "h": 65, "class": "exclusive"}
+  ],
+  "allowed_crossings": [
+    "endpoint_guide_with_thermal_geometry",
+    "heat_path_with_thermal_geometry"
+  ],
+  "forbidden": [
+    "exclusive_box_overlap",
+    "flow_legend_overlap_with_thermal_body",
+    "endpoint_card_overlap_with_parasitic_card",
+    "temperature_legend_overlap_with_annotation_card"
+  ]
+}

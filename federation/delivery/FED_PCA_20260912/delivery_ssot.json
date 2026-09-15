@@ -1,0 +1,227 @@
+{
+  "schema_version": "1.0.0",
+  "release": "FED-PCA-20260912-R1",
+  "document_reference": "SCKCEN/TBD (placeholder)",
+  "observed_at": "2026-09-12T16:47:18.389Z",
+  "scope": "Runtime federation delivery; no bidder engineering values changed",
+  "global_dov": "WITHHELD",
+  "ranking_basis": "Provisional expert sequencing informed by observed blockers and exploratory PCA; not fitted Bradley-Terry scores",
+  "actions": [
+    {
+      "id": "A01",
+      "repo": "mesh",
+      "title": "Merge three bounded repairs",
+      "status": "PASS",
+      "bt_rank": 1,
+      "depends_on": [],
+      "next_gate": "Retain merge lineage; no automatic runtime promotion",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/CODEX/pull/636",
+        "https://github.com/GBOGEB/ABACUS/pull/1132",
+        "https://github.com/GBOGEB/cryoplant-project/pull/931"
+      ],
+      "sha": null,
+      "evidence_class": "SOURCE-SUPPORTED"
+    },
+    {
+      "id": "A02",
+      "repo": "CODEX",
+      "title": "Execute repaired bridge validation",
+      "status": "PASS",
+      "bt_rank": 2,
+      "depends_on": [
+        "A01"
+      ],
+      "next_gate": "Repeat on a later accepted SHA",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/CODEX/actions/runs/34619046468"
+      ],
+      "sha": "c14a641efc051774061ef79c580f81a31587db67",
+      "evidence_class": "SOURCE-SUPPORTED"
+    },
+    {
+      "id": "A03",
+      "repo": "CODEX",
+      "title": "Close semantic-runtime test gate",
+      "status": "VERIFY",
+      "bt_rank": 3,
+      "depends_on": [
+        "A01"
+      ],
+      "next_gate": "Verify current accepted SHA after GLOB quoting repair",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/CODEX/actions/runs/34619046371",
+        "https://github.com/GBOGEB/CODEX/blob/main/GLOB.yaml"
+      ],
+      "sha": "c14a641efc051774061ef79c580f81a31587db67",
+      "evidence_class": "SOURCE-SUPPORTED"
+    },
+    {
+      "id": "A04",
+      "repo": "ABACUS",
+      "title": "Run governance suite with test manifest",
+      "status": "REPAIR",
+      "bt_rank": 4,
+      "depends_on": [
+        "A01"
+      ],
+      "next_gate": "Review #1148 then execute unchanged full test suite",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/ABACUS/pull/1148",
+        "https://github.com/GBOGEB/ABACUS/actions/runs/34618565241"
+      ],
+      "sha": "6f07e513f89f7250a1f569a4f994fcadc98419dd",
+      "evidence_class": "SOURCE-SUPPORTED"
+    },
+    {
+      "id": "A05",
+      "repo": "cryoplant-project",
+      "title": "Obtain runner and execute child proof",
+      "status": "BLOCKED",
+      "bt_rank": 1,
+      "depends_on": [
+        "A01"
+      ],
+      "next_gate": "Ordinary job receives runner_id > 0 and executes meaningful steps",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/cryoplant-project/actions/runs/34618433033"
+      ],
+      "sha": "a628cb81a142ee457e7b804f70ef03c3f9eb0770",
+      "evidence_class": "SOURCE-SUPPORTED"
+    },
+    {
+      "id": "A06",
+      "repo": "DOCX_RTM_Automation",
+      "title": "Recover orphan submodule targets",
+      "status": "BLOCKED",
+      "bt_rank": 6,
+      "depends_on": [],
+      "next_gate": "Recover authoritative URLs and target commits before modifying gitlinks",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/34614898776"
+      ],
+      "sha": "429a89fca2fe133844298799e6a4bd5a8d99ed32",
+      "evidence_class": "SOURCE-SUPPORTED"
+    },
+    {
+      "id": "A07",
+      "repo": "ABACUS",
+      "title": "Recover Session Tuple test mapping",
+      "status": "BLOCKED",
+      "bt_rank": 5,
+      "depends_on": [],
+      "next_gate": "Identify authoritative successor for absent requirements and test directories",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/ABACUS/actions/runs/34617523457"
+      ],
+      "sha": null,
+      "evidence_class": "SOURCE-SUPPORTED"
+    },
+    {
+      "id": "A08",
+      "repo": "mesh",
+      "title": "Freeze aligned census snapshots",
+      "status": "PASS",
+      "bt_rank": 7,
+      "depends_on": [],
+      "next_gate": "Expand beyond first ten workflow paths per repo",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/CODEX/tree/85624df47a467c73ed2b516d47e2b5a1b9be6c6e"
+      ],
+      "sha": null,
+      "evidence_class": "SOURCE-SUPPORTED"
+    },
+    {
+      "id": "A09",
+      "repo": "mesh",
+      "title": "Consume exact-SHA receipts and repeat",
+      "status": "PLANNED",
+      "bt_rank": 2,
+      "depends_on": [
+        "A02",
+        "A03",
+        "A04",
+        "A05"
+      ],
+      "next_gate": "KEB evidence -> DOW consumption -> child disposition -> independent repeat",
+      "evidence_urls": [],
+      "sha": null,
+      "evidence_class": "POSTULATED"
+    },
+    {
+      "id": "A10",
+      "repo": "mesh",
+      "title": "Expand temporal census and BT observations",
+      "status": "PLANNED",
+      "bt_rank": 8,
+      "depends_on": [
+        "A08"
+      ],
+      "next_gate": "Three comparable pulses; record queue and execution durations separately",
+      "evidence_urls": [],
+      "sha": null,
+      "evidence_class": "POSTULATED"
+    }
+  ],
+  "federation": [
+    {
+      "repo": "CODEX",
+      "role": "KEB terminology, contracts and provenance",
+      "consumes": "Runtime evidence",
+      "emits": "Versioned validation receipts"
+    },
+    {
+      "repo": "ABACUS",
+      "role": "DOW planning and evidence consumption",
+      "consumes": "KEB receipts",
+      "emits": "Consumer result and delivery views"
+    },
+    {
+      "repo": "cryoplant-project",
+      "role": "Child engineering/disposition authority",
+      "consumes": "Source-bound KEB/DOW returns",
+      "emits": "ACCEPT / REJECT / DEFER"
+    },
+    {
+      "repo": "DOCX_RTM_Automation",
+      "role": "Document conversion and lineage capability",
+      "consumes": "Controlled text and mapping inputs",
+      "emits": "Document outputs and lineage"
+    }
+  ],
+  "expansion": [
+    {
+      "horizon": "N+1",
+      "target": "Close current first-red gates",
+      "resources": "One CODEX worker, one ABACUS worker; runner-owner action for cryoplant",
+      "exit": "Relevant exact-SHA runtime receipts"
+    },
+    {
+      "horizon": "N+5",
+      "target": "Automate contract-validated output regeneration",
+      "resources": "One release worker; shared versioned input register",
+      "exit": "HTML/PDF/XLSX parity and regeneration receipt"
+    },
+    {
+      "horizon": "N+10",
+      "target": "Measure queue versus execution and repeated census",
+      "resources": "Telemetry worker; reuse artifacts instead of repeated installs",
+      "exit": "Three comparable pulses; record pairwise action outcomes"
+    },
+    {
+      "horizon": "N+50",
+      "target": "Move stable components to CONTROL and expand selectively",
+      "resources": "Allocate by measured residual blockers; no fixed runner increase",
+      "exit": "Repeated zero regression; residual PCs and BT rankings remain stable"
+    }
+  ],
+  "boundaries": [
+    "Merge success does not establish runtime success.",
+    "Zero-step jobs are not execution evidence.",
+    "The latest refresh rechecks historical merge SHAs, not every current branch.",
+    "DOCX and Session Tuple blockers are retained from the earlier diagnostic pulse.",
+    "Lexical content counts are semantic proxies; the earlier PCA is a four-repo exploratory snapshot.",
+    "Read-only HTML/PDF and Excel views derive from this versioned register. Excel owns its visible numerical summary formulas; this JSON owns action identities, states and lineage.",
+    "Zod validates the delivery contract, not engineering truth or child acceptance."
+  ]
+}

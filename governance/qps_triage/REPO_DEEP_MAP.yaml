@@ -1,0 +1,67 @@
+schema: qps-triage-repo-deep-map/1.0.0
+repo: GBOGEB/CODEX
+as_of: '2026-09-11T04:24:00+02:00'
+role: KEB_SEMANTIC_PROVENANCE_CONTRACT_AND_EXECUTION_AUTHORITY
+
+existing_content_surfaces:
+  requirements:
+    - path: 01_requirements/requirements.json
+      role: existing_structured_requirement_content
+    - path: 01_requirements/RTM.csv
+      role: existing_requirement_traceability_projection
+  adr:
+    - path: 06_arch/ADR/ADR.md
+      role: existing_architecture_design_report_surface
+    - path: ADR_OCD_Background.md
+      role: legacy_or_background_cross_document_content
+    - path: VCR_ADR_OCD_Partial.md
+      role: partial_cross_document_content
+  ocd:
+    - path: 07_ops/OCD/OCD.md
+      role: existing_operational_concept_surface
+  rfo_contract_source_family:
+    - path: book_md/
+      role: existing_contractual_markdown_family_not_automatically_canonical_for_qps
+  dmaic:
+    - path: docs/DMAIC/README.md
+      role: existing_dmaic_method_surface
+
+existing_governance_execution_surfaces:
+  semantic_vocabulary:
+    path: PIPELINE/GLOSSARY.yaml
+  governance_header_schema:
+    path: federation_runtime/schema/governance_header.schema.json
+  governance_parser_test:
+    path: tests/test_governance_parser.py
+  federation_activity:
+    path: governance/federation/FEDERATION_ACTIVITY.yaml
+  qps_triage_prompt_sequence:
+    path: docs/qps_triage_prompt_sequence.md
+
+qtg_added_surfaces:
+  contract: governance/qps_triage/KEB_CONTRACT_v1.json
+  handoff: docs/qps_triage/KEB_REPO_DEEP_HANDOFF.md
+  test: tests/test_qps_triage_keb_contract.py
+  map: governance/qps_triage/REPO_DEEP_MAP.yaml
+
+routing_rules:
+  - existing_RFO_ADR_OCD_or_RTM_content_is_input_or_reference_not_child_QPS_authority_by_presence
+  - semantic_terms_route_through_PIPELINE_GLOSSARY
+  - governance_metadata_routes_through_federation_runtime_governance_schema
+  - reusable_validator_or_runtime_code_belongs_in_CODEX
+  - private_bidder_or_commercial_evidence_must_not_be_copied_here
+  - exact_SHA_receipts_may_cross_to_DOW
+
+reuse_before_build:
+  - inspect 01_requirements before creating a second requirement model
+  - inspect 06_arch/ADR and 07_ops/OCD before creating duplicate document surfaces
+  - inspect book_md contractual family before adding RFO extraction logic
+  - inspect existing validators and runtime workflows before adding a new runner path
+
+known_current_gap:
+  description: >-
+    Existing content surfaces predate the QTG authority contract and must not be silently
+    promoted into the cryoplant child SSOT. QTG bridges identity and validation, not authority.
+  disposition: BRIDGE_NOT_MERGE
+
+current_pr: 605

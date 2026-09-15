@@ -1,0 +1,100 @@
+schema: qps-bd005-u15-negotiation-closure-route/1.0
+version: '1.6.11'
+status: FORMAL_WRITTEN_RETURN_ROUTE_BOUND_TECHNICAL_EVIDENCE_STILL_OPEN
+authority: NEGOTIATION_SSOT_ROUTE_NOT_BIDDER_RETURN
+bd: V16-BD-005
+global_project_dov: WITHHELD
+
+source:
+  name: QPS_LKT_NEGO_RFI_COMPLIANCE_SSOT_v1.4_W31_REENTRY.xlsx
+  file_id: file_000000007c44820aa8a627331cab7f51
+  version_id: '1'
+  role: CURRENT_NEGOTIATION_REENTRY_SSOT
+  reviewed_utc: '2026-09-03T08:00:00Z'
+
+canonical_item:
+  global_id: QPS-GLOBAL-AGENDA-U1-5
+  agenda_id: U1.5
+  topic: OFFER-21 — LOOP recovery concept
+  agenda_section: Updated Offer Return
+  action_route: RFI
+  priority: P1
+  evidence_class: SOURCE_AGENDA_REVIEW
+  evidence_maturity: REVIEWED
+  source_type: MISSING_DEFERRED_EVIDENCE
+  compliance_state: REVIEW_REQUIRED
+  disposition: OPEN
+  reentry_state: OPEN
+  closure_credit: 0
+  underlying_status: TBD
+  direct_status: No exception raised
+  source_file: QPS AGENDA_fuLL-COMMENT-REOSLUTION.docx
+  source_section: Agenda paragraph 1202
+  source_sha256: cd16f80619c00fe84616c648dbdaf44ca801f63e294fb7d9c1b60c0bfaaf4959
+  canonical_reentry_test: Source-bound return must be dispositioned and pass the exact obligation-specific re-entry test.
+
+current_missing_return_state:
+  bidder_return: EMPTY_IN_CURRENT_SSOT
+  bafo_evidence_location: EMPTY_IN_CURRENT_SSOT
+  return_source: EMPTY_IN_CURRENT_SSOT
+  bidder_position: EMPTY_IN_CURRENT_SSOT
+  meaning: no source-bound updated-offer return is presently bound in the current negotiation SSOT
+  non_claim: empty_fields_do_not_prove_supplier_never_sent_material_outside_indexed_sources
+
+requested_quantitative_return:
+  - initial_plant_state
+  - helium_inventory_requiring_recovery
+  - expected_peak_recovery_flow
+  - recovery_duration
+  - available_approximately_110_g_s_capacity
+  - required_cooling_water_flow
+  - instrument_air_requirement
+  - electrical_emergency_power_requirement
+  - storage_capacity
+  - consequence_if_required_utility_unavailable
+  - resulting_preserved_plant_state
+
+engineering_crosswalk:
+  exact_110gs_350kW_operating_point:
+    route: U1.5_written_updated_offer_return
+    current_state: OPEN
+    required_for_BD005: true
+  recovery_cooling_water_PAB12:
+    route: U1.5_written_updated_offer_return
+    current_state: OPEN
+    required_for_BD005: true
+  emergency_power_and_auxiliary_split:
+    route: U1.5_written_updated_offer_return_plus_selected_equipment_load_list
+    current_state: OPEN
+    required_for_BD005: true
+  recovery_duration_and_preserved_state:
+    route: U1.5_written_updated_offer_return
+    current_state: OPEN
+    required_for_BD005: true
+  complete_transient:
+    route: engineering_reentry_after_source_bound_U1_5_return
+    current_state: NOT_EXECUTABLE_FROM_CURRENT_EVIDENCE
+
+reconciliation:
+  - current_LKT_offer_proves_selected_FSD575_and_112g_s_357kW_maximum_point_but_not_exact_LOOP_point
+  - current_Basis_of_Process_Design_marks_Recovery_Cooling_Water_TO_BE_DEFINED
+  - negotiation_U1_5_requests_exact_quantitative_chain_needed_to_close_these_gaps
+  - therefore_next_action_is_obtain_and_bind_written_return_not_interpolate_or_invent_missing_values
+
+close_predicate:
+  source_bound_bidder_return_present: FAIL_MISSING
+  bidder_return_dispositioned: FAIL_NOT_AVAILABLE
+  exact_obligation_reentry_test: FAIL_NOT_RUN
+  exact_LOOP_power_point_bound: FAIL_MISSING
+  recovery_CW_hydraulics_bound: FAIL_MISSING
+  recovery_duration_and_preserved_state_bound: FAIL_MISSING
+  first_law_transient_executable: FAIL_NOT_YET
+  bd_close_allowed: false
+
+non_compensating_rules:
+  - RFI_route_bound_does_not_equal_bidder_return_received
+  - agenda_review_does_not_equal_offer_compliance
+  - no_exception_raised_does_not_equal_confirmed_compliance
+  - closure_credit_remains_zero_until_source_bound_return_and_reentry_predicate_pass
+  - historical_or_analytical_interpolation_cannot_substitute_for_requested_supplier_evidence
+  - global_project_dov_remains_WITHHELD

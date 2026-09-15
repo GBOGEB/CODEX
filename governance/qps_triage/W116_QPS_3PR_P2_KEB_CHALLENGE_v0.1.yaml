@@ -1,0 +1,70 @@
+schema_version: "0.1"
+document_id: W116_QPS_3PR_P2_KEB_CHALLENGE
+wave: W116
+method: 3PR
+phase: P2_CHALLENGE
+repository: GBOGEB/CODEX
+role: KEB_SEMANTIC_GOVERNANCE_CHALLENGE
+status: CHALLENGE_EMITTED_PENDING_CHILD_REENTRY
+
+input:
+  qps_repository: GBOGEB/cryoplant-project
+  qps_pr: 903
+  qps_head_sha: "f1170618331826b9b9281f09c4e67d0cb160260c"
+  qps_phase: P1_PRODUCE
+
+challenge_findings:
+  - id: KEB-1
+    result: PASS_WITH_GUARD
+    subject: 3PR_semantics
+    finding: P1_PRODUCE_P2_CHALLENGE_P3_REENTER_matches_existing_QPS_3PR_precedent
+  - id: KEB-2
+    result: PASS_WITH_GUARD
+    subject: horizon_state_semantics
+    finding: SEEDED_and_PREPARED_PARTIAL_must_not_be_rendered_as_PASS_LOCAL_or_ACCEPTED
+  - id: KEB-3
+    result: PASS
+    subject: authority
+    finding: open_QPS_PR_902_is_correctly_labelled_candidate_not_authority
+  - id: KEB-4
+    result: PASS
+    subject: score_control
+    finding: current_PCA_number_remains_withheld_until_measured_current_telemetry_exists
+  - id: KEB-5
+    result: PASS
+    subject: nomenclature
+    finding: VNV_machine_identifier_and_QRB_VV_vacuum_vessel_remain_disjoint
+  - id: KEB-6
+    result: CHALLENGE_ACTION
+    subject: horizon_metrics
+    finding: future_readiness_percentages_should_not_be_inferred_from_seed_count_alone
+    required_change: future_readiness_requires_denominator_and_evidence_weight_or_remains_qualitative
+  - id: KEB-7
+    result: CHALLENGE_ACTION
+    subject: capacity_percentages
+    finding: allocation_percentages_are_planning_controls_not_measured_resource_actuals
+    required_change: expose_PLANNED_vs_ACTUAL_capacity_separately_before PCA or productivity use
+  - id: KEB-8
+    result: CHALLENGE_ACTION
+    subject: first_red_priority
+    finding: first_red_should_block_promotion_but_not independent source population
+    required_change: retain_this_rule_explicitly_in_child_reentry
+
+semantic_disposition:
+  overall: ACCEPT_FOR_ROUTING_WITH_ACTIONS
+  engineering_authority_transfer: false
+  qps_engineering_promotion: forbidden
+  child_reentry_required: true
+
+durable_guards_for_reentry:
+  - do_not_convert_SEEDED_to_green
+  - do_not_compute_current_PCA_from_historical_W60_or_Wave_A_values
+  - distinguish_PLANNED_capacity_from_ACTUAL_capacity
+  - readiness_metrics_need_denominators
+  - child_C6_red_remains_red_until_observed_derivation_passes
+
+formal_effect:
+  engineering_credit_delta: 0
+  compliance_credit_delta: 0
+  negotiation_credit_delta: 0
+  release_credit_delta: 0

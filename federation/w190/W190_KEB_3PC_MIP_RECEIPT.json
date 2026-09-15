@@ -1,0 +1,61 @@
+{
+  "schema_version": "w190-keb-3pc-mip-receipt/1.1",
+  "wave": "W190",
+  "created_utc": "2026-09-14T17:14:00Z",
+  "reconciled_utc": "2026-09-14T17:22:00Z",
+  "repo": "GBOGEB/CODEX",
+  "role": "KEB_SEMANTIC_RUNTIME_RECEIPT",
+  "consumed_child": {
+    "pr": "https://github.com/GBOGEB/cryoplant-project/pull/1178",
+    "final_head_sha": "c283eb1f7d19eaa22b31a888a51c798c36107df5",
+    "merge_sha": "460979c48d0c15814ed14547116e99718c2cdcd1",
+    "execution_receipt_path": "federation/w190/W190_3PC_MIP_EXECUTION_RECEIPT.json",
+    "execution_receipt_declared_head_sha": "37623d581df7d91c6ad9ee4e732d3666b44c3569",
+    "execution_receipt_state": "WITHHELD_INFRA_PREEXECUTION",
+    "runner_evidence": "runner_id=0, steps=0, INFRA_PREEXECUTION",
+    "superseded_interim_head_sha": "bc93ce38e3266099470e49904749c5bd2d31d64d"
+  },
+  "consumed_dow": {
+    "original_pr": "https://github.com/GBOGEB/ABACUS/pull/1213",
+    "lineage_repair_pr": "https://github.com/GBOGEB/ABACUS/pull/1215",
+    "lineage_repair_head_sha": "b8e4b801d37ac9ee6e8958ba1b32579e50e1c29e",
+    "lineage_repair_merge_sha": "5cf2c0274da72b9f97a5dd68c065cf1595cd2ea1",
+    "execution_repair_pr": "https://github.com/GBOGEB/ABACUS/pull/1216",
+    "execution_repair_head_sha": "3abe48e318843c972c0e1e480ffb6c44889e10be",
+    "execution_repair_merge_sha": "158093da5234805f8bb3348b0de0c2ff0bfe60fd",
+    "execution_repair_path": "federation/w190/W190_DOW_FINAL_HEAD_REPAIR.json",
+    "superseded_interim_dow_head_sha": "857152cca43a1ac10a68f5db3e81153f70830a15"
+  },
+  "lineage_repair": "The first KEB receipt was merged while child and DOW identities still referenced interim PR heads. This revision preserves those historical receipts, binds the active W190 chain to the final child merge, and consumes the DOW execution-repair receipt that records the child execution receipt head and zero-step infra disposition.",
+  "three_pc_receipt": {
+    "PREPARE": "PASS_FINAL_EXACT_LINEAGE_AND_EXECUTION_RECEIPT_IDENTIFIED",
+    "PROVE": "PASS_HANDOVER_LINEAGE_CHAIN_BOUND_WITH_INFRA_PREEXECUTION_PROOF",
+    "COMMIT": "ACCEPT_HANDOVER_CHAIN_DEFER_GLOBAL_DOV"
+  },
+  "mip_receipt": {
+    "modernize": "Repair stale interim-head lineage and schema mismatch while preserving historical evidence.",
+    "innovate": "Use explicit supersession edges and execution-repair consumption rather than rewriting prior receipt history.",
+    "perpetuate": "The handover chain is durable at final merge identities; runtime/release perpetuation remains separately gated by child exact-SHA execution with runner_id != 0, steps > 0, and repeat."
+  },
+  "keb_disposition": "ACCEPT_FINAL_HANDOVER_CHAIN_DEFER_GLOBAL_DOV",
+  "reason": "Final child merge lineage, child execution-receipt identity, and repaired DOW execution lineage are now explicitly bound. KEB accepts the W190 handover chain while withholding global engineering/release DoV until non-compensating gates close and child runtime re-entry repeats.",
+  "disposition_records": [
+    {
+      "disposition": "ACCEPT",
+      "current": true,
+      "scope": "W190 final handover lineage chain and receipt visibility"
+    },
+    {
+      "disposition": "REJECT",
+      "current": false,
+      "scope": "schema/receipt mismatch, contradictory child authority, or invalid DOW/child payload"
+    },
+    {
+      "disposition": "DEFER",
+      "current": true,
+      "scope": "global engineering/release DoV and runtime promotion"
+    }
+  ],
+  "drop_in_text_pointer": "cryoplant-project:handover/qps_recursive/W190_3PC_MIP_DROPIN.md",
+  "credit_delta": 0
+}

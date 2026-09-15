@@ -1,0 +1,175 @@
+# MIP v2 W114/S2-P2 governed KEB envelope producer
+name: QPS M05 Official Attest Provenance Probe
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/qps_m05_attest_provenance_probe.yml"
+      - "docs/qps_m05/**"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/qps_m05_attest_provenance_probe.yml"
+      - "docs/qps_m05/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+  artifact-metadata: write
+
+env:
+  M05_ATTEST_ACTION_SHA: 1e69f48acb82d1966a394da916b4c1698aa569d6
+
+jobs:
+  attest-provenance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact CODEX head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Execute G5 KEB semantic challenge
+        run: python docs/qps_m05/qps_g5_keb_challenge.py
+
+      - name: Create deterministic subject and checksum
+        shell: bash
+        env:
+          SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/m05
+          G5_SHA="$(sha256sum artifacts/m05/g5_keb_challenge_receipt.json | cut -d' ' -f1)"
+          printf 'QPS-M05\nrepo=%s\ncarrier_sha=%s\nsource_head_sha=%s\ng5_keb_receipt_sha256=%s\n' \
+            "$GITHUB_REPOSITORY" "$GITHUB_SHA" "$SOURCE_HEAD_SHA" "$G5_SHA" \
+            > artifacts/m05/qps_m05_subject.txt
+          sha256sum artifacts/m05/qps_m05_subject.txt > artifacts/m05/qps_m05_subject.sha256
+
+      - name: Create official GitHub provenance attestation
+        id: attest
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: artifacts/m05/qps_m05_subject.txt
+
+      - name: Bind exact receipt
+        shell: bash
+        env:
+          SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          ATTESTATION_ID: ${{ steps.attest.outputs.attestation-id }}
+          ATTESTATION_URL: ${{ steps.attest.outputs.attestation-url }}
+          BUNDLE_PATH: ${{ steps.attest.outputs.bundle-path }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, json, os, pathlib
+          subject = pathlib.Path('artifacts/m05/qps_m05_subject.txt')
+          g5_receipt = pathlib.Path('artifacts/m05/g5_keb_challenge_receipt.json')
+          digest = hashlib.sha256(subject.read_bytes()).hexdigest()
+          g5_digest = hashlib.sha256(g5_receipt.read_bytes()).hexdigest()
+          bundle_src = pathlib.Path(os.environ['BUNDLE_PATH'])
+          bundle_dst = pathlib.Path('artifacts/m05/attestation.bundle.json')
+          bundle_dst.write_bytes(bundle_src.read_bytes())
+          receipt = {
+              'schema': 'qps.m05.attestation_receipt.v3',
+              'repo': os.environ['GITHUB_REPOSITORY'],
+              'source_head_sha': os.environ['SOURCE_HEAD_SHA'],
+              'carrier_sha': os.environ['GITHUB_SHA'],
+              'run_id': os.environ['GITHUB_RUN_ID'],
+              'run_attempt': os.environ['GITHUB_RUN_ATTEMPT'],
+              'action': 'actions/attest',
+              'action_sha': os.environ['M05_ATTEST_ACTION_SHA'],
+              'action_version': 'v4.2.2',
+              'subject': str(subject),
+              'subject_sha256': digest,
+              'g5_keb_challenge_receipt': str(g5_receipt),
+              'g5_keb_challenge_receipt_sha256': g5_digest,
+              'attestation_id': os.environ['ATTESTATION_ID'],
+              'attestation_url': os.environ['ATTESTATION_URL'],
+              'bundle_file': str(bundle_dst),
+              'authority': 'PROVENANCE_ONLY_NOT_ENGINEERING_ACCEPTANCE',
+              'status': 'PASS',
+          }
+          pathlib.Path('artifacts/m05/qps_m05_attestation_receipt.json').write_text(
+              json.dumps(receipt, indent=2, sort_keys=True) + '\n', encoding='utf-8'
+          )
+          PY
+          sha256sum artifacts/m05/qps_m05_attestation_receipt.json \
+            > artifacts/m05/qps_m05_attestation_receipt.sha256
+
+      - name: Emit canonical MIP v2 KEB envelope
+        if: github.event_name == 'pull_request'
+        shell: bash
+        env:
+          SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PRODUCER_PR: ${{ github.event.pull_request.number }}
+          ATTESTATION_ID: ${{ steps.attest.outputs.attestation-id }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, json, os, pathlib
+
+          source_path = pathlib.Path('docs/qps_m05/QPS_G5_KEB_CHALLENGE_v0.2.json')
+          attestation_path = pathlib.Path('artifacts/m05/qps_m05_attestation_receipt.json')
+          challenge = json.loads(source_path.read_text(encoding='utf-8'))
+          attestation = json.loads(attestation_path.read_text(encoding='utf-8'))
+
+          execution = challenge['execution']
+          predicate = challenge['challenge_predicate']
+          assert challenge['schema'] == 'qps.g5.keb_challenge.v2'
+          assert challenge['authority'] == 'SEMANTIC_PROVENANCE_CHALLENGE_ONLY_NOT_ENGINEERING_ACCEPTANCE'
+          assert execution['job_conclusion'] == 'success'
+          assert int(execution['runner_id']) != 0
+          assert int(execution['observed_completed_step_count']) > 0
+          assert all(
+              step['status'] == 'completed' and step['conclusion'] == 'success'
+              for step in execution['required_payload_steps']
+          )
+          assert predicate['promotion_authority'] is False
+          assert attestation['status'] == 'PASS'
+          assert attestation['source_head_sha'] == os.environ['SOURCE_HEAD_SHA']
+
+          receipt = {
+              'producer_repo': 'GBOGEB/CODEX',
+              'producer_pr': int(os.environ['PRODUCER_PR']),
+              'producer_head_sha': os.environ['SOURCE_HEAD_SHA'],
+              'source_object_ids': [
+                  'docs/qps_m05/QPS_G5_KEB_CHALLENGE_v0.2.json',
+                  f"cryoplant-project#1043@{challenge['source']['child_candidate_head']}",
+                  f"Q_engineering_tools#19/run/{execution['run']}/job/{execution['job']}",
+                  f"artifact:{execution['artifact_id']}:{execution['artifact_digest']}",
+                  f"attestation:{os.environ['ATTESTATION_ID']}",
+              ],
+              'contract_version': 'qps-triage-keb-contract/1.0.0',
+              'workflow_or_validator': 'QPS M05 Official Attest Provenance Probe / G5 KEB semantic challenge',
+              'executed_steps': 4,
+              'result': 'PASS',
+              'downstream_consumer': 'GBOGEB/ABACUS',
+              'child_reentry_target': 'GBOGEB/cryoplant-project',
+              'authority': 'SEMANTIC_PROVENANCE_ONLY_NOT_ENGINEERING_ACCEPTANCE',
+              'source_challenge_schema': challenge['schema'],
+              'underlying_execution': {
+                  'repo': execution['repo'],
+                  'run': execution['run'],
+                  'job': execution['job'],
+                  'runner_id': execution['runner_id'],
+                  'observed_completed_step_count': execution['observed_completed_step_count'],
+                  'artifact_digest': execution['artifact_digest'],
+              },
+              'digest_rule': 'sha256(canonical_json_without_receipt_sha256)',
+          }
+          payload = json.dumps(receipt, sort_keys=True, separators=(',', ':')).encode('utf-8')
+          receipt['receipt_sha256'] = hashlib.sha256(payload).hexdigest()
+
+          target = pathlib.Path('artifacts/m05/qps_triage_keb_receipt_v1.json')
+          target.write_text(json.dumps(receipt, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+          print('MIP_V2_KEB_RECEIPT_BEGIN')
+          print(json.dumps(receipt, sort_keys=True))
+          print('MIP_V2_KEB_RECEIPT_END')
+          PY
+
+      - name: Upload M05 retained evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: qps-m05-attest-provenance-${{ github.sha }}
+          path: artifacts/m05/
+          if-no-files-found: error

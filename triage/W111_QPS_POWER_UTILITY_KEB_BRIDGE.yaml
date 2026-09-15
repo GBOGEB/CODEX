@@ -1,0 +1,137 @@
+schema_version: codex-keb-qps-power-utility/0.1
+wave: W111
+status: CONTROL_CANDIDATE
+repo: GBOGEB/CODEX
+authority_scope: REPO_LOCAL_SEMANTIC_RUNTIME
+engineering_promotion_forbidden: true
+
+qps_child_authority:
+  repo: GBOGEB/cryoplant-project
+  source_ssot: ocd-adr/20_canonical/control/QPS_W111_POWER_UTILITY_SOURCE_SSOT_v1.json
+  source_ssot_git_blob_sha: d19975a150a3530cc4db3bd2fbbf4180f757c2a4
+  meta_ssot: ocd-adr/20_canonical/control/QPS_GLOBAL_ADR_OCD_SSOT_v1.json
+  child_manifest: triage/w111/QPS_W111_POWER_UTILITY_FEDERATION_MANIFEST_v0.1.yaml
+  rule: QPS engineering truth and acceptance remain child-owned
+
+purpose: >-
+  Provide the W111 KEB semantic/provenance bridge for QPS electrical, HP/PVPS/CC power, heat recovery,
+  HVAC and invCOP boundaries. CODEX validates typed identity, source precedence, evidence class and boundary
+  vocabulary before dispatch to ABACUS and normalizes the return without changing engineering values.
+
+ingress_contract:
+  required_identity: [child_repo, child_ref, source_ssot_path, source_ssot_git_blob_sha, payload_sha256]
+  required_evidence: [source_id, source_digest, locator, evidence_class, value, unit]
+  accepted_evidence_classes:
+    - CONTRACT_REQUIREMENT
+    - CURRENT_GRANULAR_BIDDER_EVIDENCE
+    - CURRENT_BIDDER_SOURCE_PDF
+    - CURRENT_WORKING_SSOT
+    - OWNER_CONFIRMED_IMMUTABLE_PROJECT_INPUT
+    - DERIVED_CHILD_ANALYSIS
+    - UNKNOWN
+  prohibited_payload:
+    - raw_confidential_bidder_pdf_bytes
+    - raw_proprietary_offer_text_without_explicit_release
+    - unrestricted_commercial_price_tables
+
+semantic_taxonomy:
+  electrical_boundary:
+    E0: SHAFT_MECHANICAL_POWER
+    E1: MOTOR_ELECTRICAL_INPUT
+    E2: SKID_PACKAGE_ELECTRICAL_INPUT
+    E3: QPLANT_PROCESS_ELECTRICAL_FEED
+    E4: FACILITY_ALL_IN_ELECTRICAL_FEED
+  thermal_boundary:
+    T0: COMPRESSOR_INTERNAL_HEAT_REJECTION
+    T1: USEFUL_HEAT_RECOVERY_PRIMARY
+    T2: HEAT_RECOVERY_BYPASS
+    T3: WCS_ROOM_AIR_HEAT
+    T4: ROOM_MAKEUP_OR_INTAKE_AIR
+    T5: EXHAUST_OR_BYPASS_AIR_PATH
+  power_semantics:
+    motor_rated_kW: nameplate_mechanical_output_rating_unless_source_says_otherwise
+    package_input_kW: electrical_power_at_declared_package_boundary
+    connected_load_kW: installed_or_available_electrical_capacity_not_operating_power
+    operating_load_kW: same_point_consumption_at_declared_operating_state
+    baseload_kW: fitted_or_measured_intercept_only_when_multiple_same_boundary_points_support_it
+  efficiency_semantics:
+    isothermal_shaft_efficiency: ideal_isothermal_power_divided_by_actual_shaft_power
+    isothermal_package_efficiency: ideal_isothermal_power_divided_by_E2_package_input
+    isentropic_efficiency: stage_or_control_volume_metric_requires_compatible_inlet_outlet_state_and_work_boundary
+    invCOP_E3: E3_QPLANT_process_electrical_feed_divided_by_net_useful_Q4p5K_equivalent
+    invCOP_E4: facility_all_in_sensitivity_not_default_contract_metric
+
+hard_invariants:
+  - current_bidder_source_PDF_or_granular_source_outranks_working_SSOT
+  - working_SSOT_does_not_replace_bidder_source_provenance
+  - owner_56Hz_is_immutable_child_input_not_bidder_fact_without_bidder_locator
+  - stale_52p4Hz_interpolation_is_rejected
+  - unknown_auxiliary_HVAC_UPS_fan_or_pump_load_is_not_zero
+  - 315kW_motor_rating_is_not_357kW_package_input
+  - heat_recovery_is_not_negative_electrical_input
+  - room_heat_water_heat_and_exhaust_heat_are_partitioned_not_blindly_added
+  - returned_cold_must_be_accounted_once_across_a_declared_control_volume
+  - derived_MC_PCA_BT_outputs_never_promote_QPS_state
+
+canonical_known_values_for_semantic_regression_only:
+  LKT_HP_normal:
+    frequency_Hz: 56.0
+    total_flow_g_s: 326.0
+    flow_each_g_s: 81.5
+    inlet_P_bara: 1.05
+    outlet_P_bara: 14.0
+    HP_electrical_kW: 814.0
+  LKT_HP_max_reference_each:
+    frequency_Hz: 72.0
+    flow_g_s: 112.0
+    motor_rating_kW: 315.0
+    package_input_kW: 357.0
+  LKT_PVPS_2KOP:
+    electrical_kW: 83.0
+    cooling_water_kWth: 75.0
+    installed_pumps: 4
+    motor_rating_kW_each: 18.5
+
+pipeline:
+  - receive_sanitized_child_payload
+  - verify_child_source_ssot_identity
+  - verify_payload_digest
+  - validate_evidence_class_and_locator
+  - normalize_E0_E4_and_T0_T5_semantics
+  - reject_stale_or_ambiguous_frequency_power_semantics
+  - dispatch_governed_payload_to_DOW
+  - receive_typed_DOW_findings
+  - verify_original_payload_digest_survived
+  - normalize_finding_types_without_numeric_mutation
+  - emit_KEB_receipt
+  - return_to_QPS_child
+
+output_contract:
+  receipt_id: KEB-W111-POWER-UTILITY
+  required: [input_payload_sha256, output_payload_sha256, child_source_ssot_git_blob_sha, semantic_checks, provenance_checks, dispatched_DOW_ref, returned_DOW_receipt_digest, engineering_promotion_forbidden]
+  allowed_dispositions: [PASS_SEMANTIC, REJECT_SEMANTIC, DEFER_SOURCE_GAP]
+  child_action: ACCEPT_REJECT_OR_DEFER_AFTER_ROUNDTRIP
+
+cross_pollination:
+  reuse:
+    - architecture/KEB_cADR_W57.yaml
+    - architecture/KEB_xOCD_W57.yaml
+    - src/bridge_adapter.py
+    - scripts/bridge_orchestrator.py
+    - scripts/check_bridge_health.py
+  satellite_edges:
+    - ABACUS_may_request_CoolProp_thermophysical_crosscheck
+    - child_accepted_projection_may_flow_to_DOCX_RTM
+    - child_accepted_projection_may_flow_to_Codespace_artifact_worker
+  no_short_circuit: satellite_result_must_return_through_DOW_KEB_child_when_it_changes_engineering_interpretation
+
+DoD:
+  manifest_present: true
+  registry_binding: PENDING
+  executable_validation: PENDING
+  PR_CI: PENDING
+  exact_head_receipt: PENDING
+
+victory: >-
+  A sanitized exact-digest QPS W111 payload is semantically validated, dispatched to DOW, returned without source/value mutation,
+  and emitted as a typed KEB receipt that the child can independently disposition.

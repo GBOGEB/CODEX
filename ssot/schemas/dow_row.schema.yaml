@@ -1,0 +1,72 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://github.com/GBOGEB/CODEX/ssot/schemas/dow_row.schema.yaml
+title: DOW disposition row
+type: object
+required:
+  - dow_item_id
+  - object_type
+  - source_repo
+  - source_pr
+  - source_sha
+  - receipt_id
+  - disposition
+  - predicate
+  - reason
+  - next_action
+  - lineage
+properties:
+  dow_item_id:
+    type: string
+    pattern: '^DOW-ITEM-[0-9]{4}$'
+  object_type:
+    type: string
+    enum:
+      - DOW_DECISION_OBJECT
+      - DOW_WORKFLOW_STATE
+      - DOW_DISPOSITION
+      - DOW_ACCEPT_RECEIPT
+      - DOW_REJECT_RECEIPT
+      - DOW_DEFER_RECEIPT
+      - DOW_CHILD_BINDING
+      - DOW_GOVERNANCE_GATE
+      - DOW_ACTION
+  source_repo:
+    anyOf:
+      - type: string
+      - type: 'null'
+  source_pr:
+    anyOf:
+      - type: integer
+      - type: 'null'
+  source_sha:
+    anyOf:
+      - type: string
+      - type: 'null'
+  receipt_id:
+    anyOf:
+      - type: string
+      - type: 'null'
+  child_repo:
+    anyOf:
+      - type: string
+      - type: 'null'
+  child_pr:
+    anyOf:
+      - type: integer
+      - type: 'null'
+  disposition:
+    type: string
+    enum: [ACCEPT, REJECT, DEFER]
+  predicate:
+    type: string
+  reason:
+    type: string
+  next_action:
+    type: string
+  file_digest:
+    anyOf:
+      - type: string
+      - type: 'null'
+  lineage:
+    type: object
+    required: [chat_session, originating_prompt, created_by]

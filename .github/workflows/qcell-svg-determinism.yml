@@ -1,0 +1,73 @@
+name: QCELL SVG Deterministic Render
+
+on:
+  pull_request:
+    paths:
+      - 'qcell_svg_model/**'
+      - '.github/workflows/qcell-svg-determinism.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'qcell_svg_model/**'
+      - '.github/workflows/qcell-svg-determinism.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  deterministic-render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact subject SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      - name: Record exact subject SHA
+        run: |
+          echo "checked_out_sha=$(git rev-parse HEAD)"
+          test "$(git rev-parse HEAD)" = "${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install renderer dependencies
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.2 defusedxml==0.7.1
+      - name: Run fail-closed visual-control predicates
+        run: python qcell_svg_model/v0_7_7/scripts/check_qcell_visual_control.py
+      - name: Render A from SSOT
+        run: |
+          mkdir -p "$RUNNER_TEMP/qsvg-a"
+          python qcell_svg_model/v0_7_7/scripts/generate_qcell_main.py \
+            --out-dir "$RUNNER_TEMP/qsvg-a" --verify-tracked \
+            | tee "$RUNNER_TEMP/qsvg-a/render_result.json"
+      - name: Render B from SSOT
+        run: |
+          mkdir -p "$RUNNER_TEMP/qsvg-b"
+          python qcell_svg_model/v0_7_7/scripts/generate_qcell_main.py \
+            --out-dir "$RUNNER_TEMP/qsvg-b" --verify-tracked \
+            | tee "$RUNNER_TEMP/qsvg-b/render_result.json"
+      - name: Require normalized equality
+        run: |
+          cmp "$RUNNER_TEMP/qsvg-a/qcell_main_v0_7_7.svg" "$RUNNER_TEMP/qsvg-b/qcell_main_v0_7_7.svg"
+          cmp "$RUNNER_TEMP/qsvg-a/index.html" "$RUNNER_TEMP/qsvg-b/index.html"
+          cmp "$RUNNER_TEMP/qsvg-a/render_result.json" "$RUNNER_TEMP/qsvg-b/render_result.json"
+          sha256sum "$RUNNER_TEMP/qsvg-a/qcell_main_v0_7_7.svg" "$RUNNER_TEMP/qsvg-a/index.html"
+      - name: Emit contracted typed visual receipt
+        run: |
+          python qcell_svg_model/v0_7_7/scripts/emit_qcell_visual_receipt.py \
+            --producer-sha "${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}" \
+            --render-a-dir "$RUNNER_TEMP/qsvg-a" \
+            --render-b-dir "$RUNNER_TEMP/qsvg-b" \
+            --out "$RUNNER_TEMP/qsvg-a/receipt.json"
+      - name: Require clean repository
+        run: test -z "$(git status --porcelain)"
+      - name: Retain deterministic render evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: qcell-svg-determinism-${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ runner.temp }}/qsvg-a/qcell_main_v0_7_7.svg
+            ${{ runner.temp }}/qsvg-a/index.html
+            ${{ runner.temp }}/qsvg-a/render_result.json
+            ${{ runner.temp }}/qsvg-a/receipt.json
+          if-no-files-found: error

@@ -1,0 +1,432 @@
+name: QPS Perpetual Debug Control
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/qps_debug_protocol_probe.py'
+      - 'scripts/qps_lldb_mcp_probe.py'
+      - 'scripts/qps_js_debug_probe.py'
+      - 'scripts/qps_docker_remote_lldb_probe.py'
+      - 'scripts/qps_perpetual_control.py'
+      - 'runtime/debug/federation/**'
+      - '.github/workflows/qps-perpetual-debug-control.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/qps_debug_protocol_probe.py'
+      - 'scripts/qps_lldb_mcp_probe.py'
+      - 'scripts/qps_js_debug_probe.py'
+      - 'scripts/qps_docker_remote_lldb_probe.py'
+      - 'scripts/qps_perpetual_control.py'
+      - 'runtime/debug/federation/**'
+      - '.github/workflows/qps-perpetual-debug-control.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qps-perpetual-debug-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  native-protocol:
+    name: live lldb-dap and MCP
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute live lldb-dap DAP session
+        id: lldb_dap
+        continue-on-error: true
+        run: python3 scripts/qps_debug_protocol_probe.py lldb-dap
+      - name: Materialise official LLVM lldb-mcp toolchain
+        id: mcp_toolchain
+        run: |
+          set -euo pipefail
+          if command -v lldb-mcp >/dev/null 2>&1; then
+            MCP_BIN="$(command -v lldb-mcp)"
+            MCP_SOURCE="preinstalled-path"
+            MCP_VERSION="UNCLAIMED_PREINSTALLED_PATH"
+            MCP_DIR="$(dirname "${MCP_BIN}")"
+            LLDB_DRIVER="${MCP_DIR}/lldb"
+            test -x "${LLDB_DRIVER}"
+          else
+            export HOMEBREW_NO_AUTO_UPDATE=1
+            brew install lldb
+            LLDB_PREFIX="$(brew --prefix lldb)"
+            MCP_BIN="${LLDB_PREFIX}/bin/lldb-mcp"
+            MCP_SOURCE="homebrew-lldb"
+            MCP_VERSION="$(brew list --versions lldb)"
+            LLDB_DRIVER="${LLDB_PREFIX}/bin/lldb"
+            test -x "${MCP_BIN}"
+            test -x "${LLDB_DRIVER}"
+            echo "${LLDB_PREFIX}/bin" >> "${GITHUB_PATH}"
+          fi
+          mkdir -p artifacts/qps_debug/perpetual
+          MCP_SHA256="$(shasum -a 256 "${MCP_BIN}" | awk '{print $1}')"
+          {
+            echo "MCP_BIN=${MCP_BIN}"
+            echo "MCP_SOURCE=${MCP_SOURCE}"
+            echo "MCP_VERSION=${MCP_VERSION}"
+            echo "LLDB_DRIVER=${LLDB_DRIVER}"
+          } >> "${GITHUB_ENV}"
+          export MCP_BIN MCP_SOURCE MCP_VERSION MCP_SHA256 LLDB_DRIVER
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          payload = {
+              'schema': 'qps.perpetual.lldb_mcp_toolchain.v2',
+              'binary': os.environ['MCP_BIN'],
+              'source': os.environ['MCP_SOURCE'],
+              'package_version': os.environ['MCP_VERSION'],
+              'lldb_driver': os.environ['LLDB_DRIVER'],
+              'sha256': os.environ['MCP_SHA256'],
+              'version_authority': (
+                  'homebrew-package'
+                  if os.environ['MCP_SOURCE'] == 'homebrew-lldb'
+                  else 'not-claimed-use-runtime-serverInfo'
+              ),
+              'authority_guards': {
+                  'formal_engineering_credit_delta': 0,
+                  'negotiation_credit_delta': 0,
+              },
+          }
+          path = Path('artifacts/qps_debug/perpetual/lldb_mcp_toolchain.json')
+          path.write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + '\n',
+              encoding='utf-8',
+          )
+          print(json.dumps(payload, indent=2, sort_keys=True))
+          PY
+      - name: Execute live LLDB MCP session with held backend
+        id: mcp
+        if: always() && steps.mcp_toolchain.outcome == 'success'
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/qps_debug/perpetual
+          BACKEND_STDOUT="artifacts/qps_debug/perpetual/lldb_mcp_backend.stdout"
+          BACKEND_STDERR="artifacts/qps_debug/perpetual/lldb_mcp_backend.stderr"
+          FIFO="${RUNNER_TEMP}/qps-lldb-mcp-stdin"
+          test -x "${LLDB_DRIVER}"
+          rm -f "${FIFO}"
+          mkfifo "${FIFO}"
+          exec 9<>"${FIFO}"
+          "${LLDB_DRIVER}" -O "protocol-server start MCP" \
+            <&9 >"${BACKEND_STDOUT}" 2>"${BACKEND_STDERR}" &
+          BACKEND_PID="$!"
+          cleanup() {
+            kill "${BACKEND_PID}" 2>/dev/null || true
+            wait "${BACKEND_PID}" 2>/dev/null || true
+            exec 9>&- || true
+            rm -f "${FIFO}"
+          }
+          trap cleanup EXIT
+
+          sleep 2
+          if ! kill -0 "${BACKEND_PID}" 2>/dev/null; then
+            cat "${BACKEND_STDOUT}" || true
+            cat "${BACKEND_STDERR}" || true
+            export BACKEND_PID LLDB_DRIVER
+            python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          payload = {
+              'schema': 'qps.perpetual.lldb_mcp_backend.v1',
+              'status': 'FAIL',
+              'driver': os.environ['LLDB_DRIVER'],
+              'pid': int(os.environ['BACKEND_PID']),
+              'held_input': True,
+              'reason': 'official LLDB MCP backend exited before probe',
+          }
+          Path('artifacts/qps_debug/perpetual/lldb_mcp_backend.json').write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + '\n',
+              encoding='utf-8',
+          )
+          Path('artifacts/qps_debug/perpetual/lldb_mcp_live.json').write_text(
+              json.dumps(
+                  {
+                      'schema': 'qps.perpetual.lldb_mcp.v2',
+                      'status': 'DEFER',
+                      'dov_status': 'WITHHELD',
+                      'reason': 'official LLDB MCP backend exited before probe',
+                      'bd_id': 'BD04-MCP-BACKEND',
+                  },
+                  indent=2,
+                  sort_keys=True,
+              )
+              + '\n',
+              encoding='utf-8',
+          )
+          PY
+            exit 2
+          fi
+
+          set +e
+          LLDB_MCP_LOG=1 python3 scripts/qps_lldb_mcp_probe.py
+          PROBE_RC="$?"
+          set -e
+          BACKEND_ALIVE=false
+          if kill -0 "${BACKEND_PID}" 2>/dev/null; then
+            BACKEND_ALIVE=true
+          fi
+          cat "${BACKEND_STDOUT}" || true
+          cat "${BACKEND_STDERR}" || true
+          export BACKEND_PID BACKEND_ALIVE LLDB_DRIVER PROBE_RC
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          payload = {
+              'schema': 'qps.perpetual.lldb_mcp_backend.v1',
+              'status': 'PASS' if os.environ['BACKEND_ALIVE'] == 'true' else 'FAIL',
+              'driver': os.environ['LLDB_DRIVER'],
+              'pid': int(os.environ['BACKEND_PID']),
+              'held_input': True,
+              'alive_after_probe': os.environ['BACKEND_ALIVE'] == 'true',
+              'probe_returncode': int(os.environ['PROBE_RC']),
+              'mode': 'official_lldb_protocol_server_held_open',
+              'authority_guards': {
+                  'formal_engineering_credit_delta': 0,
+                  'negotiation_credit_delta': 0,
+              },
+          }
+          Path('artifacts/qps_debug/perpetual/lldb_mcp_backend.json').write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + '\n',
+              encoding='utf-8',
+          )
+          print(json.dumps(payload, indent=2, sort_keys=True))
+          PY
+          exit "${PROBE_RC}"
+      - name: Emit bounded MCP BD if toolchain failed
+        if: always() && steps.mcp_toolchain.outcome != 'success'
+        run: |
+          mkdir -p artifacts/qps_debug/perpetual
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path('artifacts/qps_debug/perpetual/lldb_mcp_live.json')
+          path.write_text(
+              json.dumps(
+                  {
+                      'schema': 'qps.perpetual.lldb_mcp.v2',
+                      'status': 'DEFER',
+                      'dov_status': 'WITHHELD',
+                      'reason': 'official LLVM lldb-mcp toolchain materialisation failed',
+                      'bd_id': 'BD04-MCP-TOOLCHAIN',
+                  },
+                  indent=2,
+                  sort_keys=True,
+              )
+              + '\n',
+              encoding='utf-8',
+          )
+          PY
+      - name: Enforce lldb-dap runtime DoV
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = json.loads(Path('artifacts/qps_debug/perpetual/lldb_dap_live.json').read_text())
+          assert p['status'] == 'ACCEPT', p
+          assert p['session']['initialize_success'] is True, p
+          assert p['session']['stack_frames'] > 0, p
+          PY
+      - name: Enforce LLDB MCP runtime DoV
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = json.loads(Path('artifacts/qps_debug/perpetual/lldb_mcp_live.json').read_text())
+          assert p['status'] == 'ACCEPT', p
+          assert p['command_version_verified'] is True, p
+          assert p['session_uri'].startswith('lldb-mcp://'), p
+          profile = p['contract_profile']
+          tools = set(p['tool_names'])
+          if profile == 'llvm_release_23_1_registry_v1':
+              assert p['server_version'].startswith('23.1.'), p
+              assert {'command', 'sessions_list'}.issubset(tools), p
+              assert p['managed_session_closed'] is None, p
+          elif profile == 'llvm_managed_session_v1':
+              expected = {
+                  'session_create',
+                  'command',
+                  'sessions_list',
+                  'session_close',
+              }
+              assert expected.issubset(tools), p
+              assert p['managed_session_closed'] is True, p
+          else:
+              raise AssertionError(p)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qps-perpetual-native-protocol
+          path: artifacts/qps_debug/perpetual/
+          if-no-files-found: error
+
+  adapter-family:
+    name: live debugpy and js-debug
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install debugpy
+        run: python -m pip install --disable-pip-version-check 'debugpy>=1.8,<2'
+      - name: Execute debugpy DAP session
+        id: debugpy
+        continue-on-error: true
+        run: python scripts/qps_debug_protocol_probe.py debugpy
+      - name: Materialise pinned js-debug DAP server
+        id: js_build
+        continue-on-error: true
+        run: |
+          git clone --filter=blob:none https://github.com/microsoft/vscode-js-debug.git "${RUNNER_TEMP}/vscode-js-debug"
+          cd "${RUNNER_TEMP}/vscode-js-debug"
+          git checkout 41bd9bb831a46c2668cab14d8455e8e3bff58477
+          npm install --legacy-peer-deps --ignore-scripts
+          npm run compile -- dapDebugServer
+          test -f dist/src/dapDebugServer.js
+      - name: Execute js-debug DAP session
+        id: js_debug
+        if: always() && steps.js_build.outcome == 'success'
+        continue-on-error: true
+        run: |
+          python scripts/qps_js_debug_probe.py \
+            --server-path "${RUNNER_TEMP}/vscode-js-debug/dist/src/dapDebugServer.js"
+      - name: Emit js-debug BD if server build failed
+        if: always() && steps.js_build.outcome != 'success'
+        run: |
+          mkdir -p artifacts/qps_debug/perpetual
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('artifacts/qps_debug/perpetual/js_debug_live.json')
+          p.write_text(json.dumps({
+            'schema':'qps.perpetual.js_debug.v1',
+            'status':'DEFER',
+            'dov_status':'WITHHELD',
+            'reason':'pinned js-debug server build failed',
+            'bd_id':'BD-RUNTIME-JS-DEBUG-BUILD'
+          }, indent=2) + '\n')
+          PY
+      - name: Enforce adapter-family runtime DoV
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          for name in ('debugpy_live.json', 'js_debug_live.json'):
+              p = json.loads(Path('artifacts/qps_debug/perpetual', name).read_text())
+              assert p['status'] == 'ACCEPT', (name, p)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qps-perpetual-adapter-family
+          path: artifacts/qps_debug/perpetual/
+          if-no-files-found: error
+
+  docker-runtime:
+    name: Docker real runtime LLDB
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure host LLDB exists
+        run: |
+          if ! command -v lldb >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y lldb
+          fi
+          docker version
+          lldb --version
+      - name: Execute Docker dynamic-port remote LLDB proof
+        id: docker_probe
+        continue-on-error: true
+        run: python3 scripts/qps_docker_remote_lldb_probe.py
+      - name: Enforce Docker execution primitive DoV
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = json.loads(Path('artifacts/qps_debug/perpetual/docker_remote_lldb.json').read_text())
+          assert p['status'] == 'ACCEPT', p
+          assert p['real_probe_steps'] > 0, p
+          assert p['port_allocation'] == 'docker_dynamic_host_port', p
+          assert p['host_binding'].startswith('127.0.0.1:'), p
+          assert p['cleanup']['returncode'] == 0, p
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qps-perpetual-docker-runtime
+          path: artifacts/qps_debug/perpetual/
+          if-no-files-found: error
+
+  control:
+    name: heartbeat and terminal control gate
+    if: always()
+    needs: [native-protocol, adapter-family, docker-runtime]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: qps-perpetual-*
+          path: artifacts/qps_debug/evidence
+          merge-multiple: true
+      - name: Aggregate heartbeat and BD state
+        id: aggregate
+        continue-on-error: true
+        run: |
+          python3 scripts/qps_perpetual_control.py \
+            --evidence-root artifacts/qps_debug/evidence
+      - name: Publish control summary
+        if: always()
+        run: |
+          cat artifacts/qps_debug/perpetual/perpetual_control_status.json
+          {
+            echo '## QPS perpetual-debug control'
+            echo '```json'
+            cat artifacts/qps_debug/perpetual/perpetual_control_status.json
+            echo '```'
+          } >> "${GITHUB_STEP_SUMMARY}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qps-perpetual-control-status
+          path: artifacts/qps_debug/perpetual/perpetual_control_status.json
+          if-no-files-found: error
+      - name: Enforce federated perpetual CONTROL
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = json.loads(Path('artifacts/qps_debug/perpetual/perpetual_control_status.json').read_text())
+          assert p['federated_perpetual_control'] == 'CONTROL', p
+          assert p['heartbeat']['threshold_met'] is True, p
+          # Terminal global DoV is intentionally stricter and may remain WITHHELD
+          # while EXT-RUNNER-001 remains open.
+          PY

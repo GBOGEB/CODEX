@@ -1,0 +1,204 @@
+schema: gbogeb-global-rex-taxonomy/1.0
+wave: W113
+owner_repo: GBOGEB/CODEX
+lifecycle_phase: DMAIC_CONTROL
+name: Global Return of Experience taxonomy
+purpose: >-
+  Convert observed errors, failures, bugs, defects, blockers, review findings
+  and recurring problems into reusable Control-phase knowledge. REX records are
+  lookup and prevention assets: they do not transfer engineering authority and
+  they do not replace the source issue, test, receipt or child disposition.
+
+control_principle: >-
+  D/M/A/I may discover and repair a problem. C must preserve what happened,
+  how often it happened, how serious it was, how it was repaired, what proof
+  closed it, and what guard prevents recurrence.
+
+issue_kinds:
+  ERROR:
+    definition: A reported or emitted erroneous condition from a tool, parser,
+      validator, API, build, runtime or user-visible operation.
+  FAILURE:
+    definition: An attempted gate, workflow, test, build or operation that did
+      not reach its required successful outcome.
+  BUG:
+    definition: A reproducible implementation defect whose behavior differs
+      from the intended contract.
+  DEFECT:
+    definition: A bounded nonconformity in code, schema, configuration,
+      document, workflow or generated artifact.
+  PROBLEM:
+    definition: A broader undesirable condition that may not yet have a proven
+      root cause or code-level defect.
+  BLOCKER:
+    definition: A condition preventing the current gate or next valid state
+      transition.
+  GAP:
+    definition: Missing required content, evidence, capability, linkage,
+      registration or proof.
+  DEBT:
+    definition: Known weakness tolerated temporarily but requiring future
+      modernization or cleanup.
+  INCIDENT:
+    definition: Time-bounded operational disruption affecting one or more
+      execution or service surfaces.
+  REVIEW_FINDING:
+    definition: Defect or risk found by human/agent review before it becomes an
+      accepted control state.
+
+families:
+  SEMANTIC:
+    examples: [unregistered_term, contradictory_term, schema_meaning_drift]
+  NAMESPACE:
+    examples: [identifier_collision, alias_collision, duplicate_meaning]
+  LINEAGE:
+    examples: [stale_sha, missing_receipt, wrong_source_pointer]
+  AUTHORITY:
+    examples: [premature_promotion, owner_confusion, authority_transfer_risk]
+  RUNTIME:
+    examples: [zero_step, runner_allocation, dependency_failure, crash]
+  CI_CD:
+    examples: [workflow_syntax, job_failure, artifact_upload, branch_gate]
+  VALIDATION:
+    examples: [schema, lint, line_length, format, type, test_assertion]
+  DATA_SSOT:
+    examples: [stale_data, duplicate_ssot, missing_locator, inconsistent_value]
+  ARTIFACT:
+    examples: [render_mismatch, binary_stale, parity_failure, missing_output]
+  FEDERATION:
+    examples: [dock_drift, consumer_mismatch, propagation_break]
+  SECURITY:
+    examples: [vulnerability, permission, secret_exposure, policy_guard]
+  PERFORMANCE:
+    examples: [timeout, resource_pressure, excessive_runtime]
+  UX_LOOKUP:
+    examples: [unresolvable_moniker, missing_popup, navigation_ambiguity]
+
+severity_stars:
+  1:
+    glyph: "★☆☆☆☆"
+    label: NUISANCE
+    meaning: Cosmetic or low-cost local friction; no meaningful gate blocked.
+  2:
+    glyph: "★★☆☆☆"
+    label: BOUNDED_LOCAL
+    meaning: Local defect blocks or degrades one bounded task but has easy repair.
+  3:
+    glyph: "★★★☆☆"
+    label: GATE_IMPACT
+    meaning: Blocks a meaningful validation/runtime gate or risks bad local state.
+  4:
+    glyph: "★★★★☆"
+    label: CROSS_REPO_OR_AUTHORITY_RISK
+    meaning: Affects multiple consumers/repos or risks incorrect governance/promotion.
+  5:
+    glyph: "★★★★★"
+    label: TERMINAL_SYSTEMIC
+    meaning: Blocks terminal DoV/runtime, corrupts shared semantics, or creates systemic authority/provenance risk.
+
+frequency_model:
+  observed_count: count of directly observed occurrences or failing atoms
+  impacted_repo_count: number of repositories directly affected in the bound window
+  impacted_workflow_count: number of distinct workflow families affected
+  measurement_window: explicit time/wave/commit interval
+  rate: optional occurrences divided by declared time or execution opportunities
+  denominator_rule: never infer a rate without a declared denominator
+
+recurrence_classes:
+  UNIQUE:
+    definition: one observed occurrence with no repeat yet
+  CLUSTERED_LOCAL:
+    definition: multiple related atoms in one file/run/repo event
+  REPEATED_SAME_SIGNATURE:
+    definition: same signature reproduced more than once
+  CROSS_WORKFLOW_RECURRING:
+    definition: same failure family occurs in multiple workflow families
+  CROSS_REPO_RECURRING:
+    definition: same failure family appears in multiple repositories
+  INTERMITTENT:
+    definition: alternates between pass and fail under nominally similar conditions
+  CHRONIC:
+    definition: persists across multiple control windows despite attempted repairs
+  SYSTEMIC:
+    definition: shared contract/design defect affecting many consumers by construction
+  UNKNOWN:
+    definition: insufficient evidence to classify recurrence
+
+repair_methods:
+  action_moniker_source: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml
+  monikers:
+    RED: reproduce first material red, repair, rerun unchanged
+    RUNTIME: repair runner/build/workflow/infrastructure
+    SEM: repair terminology/schema/meaning drift
+    SSOT: repair canonical data/pointer/lineage
+    RECEIPT: bind durable proof/source/execution identity
+    HARDEN: add prevention/regression guard
+    CLEAN: bounded low-consequence cleanup
+    WATCH: hold deferred external dependency without repeated compute burn
+
+control_status:
+  OPEN: problem remains active
+  CONTAINED: immediate impact bounded but permanent guard not proven
+  REPAIRED: implementation changed but recurrence guard not yet proven
+  VERIFIED: repair passed the same or stronger gate
+  CONTROLLED: repair plus durable prevention/lookup/monitoring guard is active
+  DEFERRED: cannot progress until external/runtime condition changes
+  SUPERSEDED: replaced by a newer canonical REX record
+
+rex_record_required_fields:
+  - rex_id
+  - signature
+  - issue_kind
+  - family
+  - repo
+  - first_seen
+  - last_seen
+  - severity_stars
+  - frequency
+  - recurrence
+  - symptom
+  - action_moniker
+  - repair_method
+  - verification
+  - control_status
+  - lesson
+  - lookup_tags
+
+rex_record_recommended_fields:
+  - pr
+  - head_sha
+  - workflow_run_ids
+  - job_ids
+  - affected_paths
+  - root_cause
+  - control_guard
+  - propagated_to
+  - authority_boundary
+  - related_rex_ids
+  - reopened_count
+  - mean_time_to_repair
+
+control_loop:
+  observe: emit REX candidate when an ERROR/FAILURE/BUG/PROBLEM/BLOCKER is materially observed
+  classify: assign issue_kind, family, severity, signature and authority boundary
+  count: update observed_count and explicit denominator/window
+  recur: compare signature/family across repo/workflow/time windows
+  repair: bind action_moniker and actual repair method
+  verify: bind same-gate or stronger proof
+  prevent: add guard/test/dictionary/popup/monitor where worthwhile
+  lookup: expose through GLOB and repo-local REX pointers
+  reopen: increment recurrence/reopened_count rather than creating disconnected duplicates
+
+promotion_rules:
+  global_rex: promote when cross-repo, systemic, repeated, high-severity or broadly reusable
+  repo_rex: keep local when bounded and not useful outside the owning repo
+  control_guard_required:
+    - severity_stars >= 4
+    - recurrence in [CROSS_WORKFLOW_RECURRING, CROSS_REPO_RECURRING, CHRONIC, SYSTEMIC]
+  authority_rule: REX preserves experience; only entitled domain owners can convert it into engineering acceptance
+
+first_use_case: >-
+  W112 Global Hive convergence: capture semantic namespace collision, an
+  unregistered semantic term, ABACUS YAML line-length failure, stale active
+  mesh-dock consumers, proof-gating review findings and cryoplant zero-step
+  runner failures as measured reusable Control-phase experience.

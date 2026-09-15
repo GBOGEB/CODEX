@@ -1,0 +1,57 @@
+schema_version: "mip/1.0"
+repo: GBOGEB/CODEX
+wave: TRIAGE_3PR_A
+snapshot_date: 2026-09-10
+role: FEDERATION_BRIDGE_ORCHESTRATION
+
+observed_context:
+  federation_precedence: PASS
+  federation_ci_enforcement: MERGED
+  real_enqueue_age_measurement: MERGED
+  release_governance_portability: OPEN_AT_PRIOR_SNAPSHOT
+  engineering_authority: FORBIDDEN
+
+modernize:
+  - enforce exact global registry digest and scoped override precedence
+  - distinguish external runner admission from internal worker queue wait
+  - require exact-head governance and validator portability
+innovate:
+  - route QPS first-red targets into typed worker packets
+  - use observed queue/yield metrics to allocate parallel workers
+  - carry semantic challenge receipts bidirectionally between QPS and ABACUS
+perpetuate:
+  - append immutable task/receipt lineage by source SHA
+  - keep final registry mutation serialized
+  - require child acceptance before any authority-facing promotion
+  - retain zero engineering_compliance_disposition credit in federation layer
+
+orchestration_contract:
+  input:
+    - qps_target_id
+    - source_sha
+    - evidence_gap
+    - acceptance_gate
+  output:
+    - task_receipt
+    - worker_completion
+    - evidence_hashes
+    - ambiguity_delta
+    - reproducibility_status
+    - recommended_reentry
+
+observed_metrics:
+  require:
+    - logical_workers_started
+    - logical_workers_completed
+    - external_admission_wait_ms
+    - internal_queue_wait_p50_ms
+    - internal_queue_wait_p95_ms
+    - wall_ms
+    - evidence_yield
+    - source_sha
+  promotion_rule: "no observed receipt => no DoV/release promotion"
+
+victory:
+  current: PARTIAL
+  next: "one QPS target traverses CODEX -> ABACUS -> CODEX -> QPS with exact-SHA receipts and child ACCEPT/DEFER"
+  formal_engineering_credit_delta: 0

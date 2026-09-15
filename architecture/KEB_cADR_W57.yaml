@@ -1,9 +1,16 @@
 id: KEB-cADR-W57
-version: 0.1.0
+version: 0.2.0
 repo: GBOGEB/CODEX
 plane: governance
 role: semantic-governance-authority
 status: PROPOSED_CONTROL
+authority_scope: REPO_LOCAL_SEMANTIC_RUNTIME
+qps_authority_source:
+  repo: GBOGEB/cryoplant-project
+  artifact: ocd-adr/20_canonical/control/QPS_GLOBAL_ADR_OCD_SSOT_v1.json
+  projection_role: SEMANTIC_PROVENANCE_GOVERNANCE
+  engineering_promotion_forbidden: true
+  source_or_payload_digest_when_exchanged: REQUIRED
 owns:
   - semantic_contracts
   - provenance_rules
@@ -16,6 +23,8 @@ owns:
 does_not_own:
   - final_engineering_design
   - numerical_engineering_truth
+  - qps_canonical_ocd
+  - qps_engineering_adrs
   - runtime_execution
 interaction:
   input_from: GBOGEB/cryoplant-project
@@ -30,4 +39,4 @@ outward_binary_targets:
   - KEB_BRIDGE_REGISTER.xlsx
   - KEB_ADAPTOR_REGISTER.xlsx
   - KEB_FEDERATION_MAP.html
-release_rule: governance receipts must bind exact child payload digest and runtime receipt digest
+release_rule: governance receipts must bind exact child payload digest and runtime receipt digest; QPS engineering promotion requires child re-entry

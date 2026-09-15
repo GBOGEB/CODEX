@@ -1,0 +1,281 @@
+schema: gbogeb-global-hive-census/1.0
+wave: W111
+status: CANDIDATE_GLOBAL_MESH_INDEX
+owner_repo: GBOGEB/CODEX
+purpose: >-
+  Resolve the GBOGEB repo hive as a typed graph of authority, execution,
+  evidence, tooling, support and knowledge nodes while preserving every
+  repository's local SSOT authority boundary.
+
+principles:
+  - GLOBAL_INDEX_NE_GLOBAL_AUTHORITY
+  - LOCAL_SSOT_REMAINS_AUTHORITATIVE_WITHIN_DECLARED_DOMAIN
+  - GLOBAL_REGISTRY_POINTS_TO_LOCAL_SSOT_INSTEAD_OF_COPYING_IT
+  - DISCOVERED_NE_RECEIPT_BOUND
+  - RUNTIME_PASS_NE_ENGINEERING_ACCEPTANCE
+  - REFERENCE_SOURCE_NE_PROJECT_EVIDENCE
+  - PRIVATE_PAYLOADS_REMAIN_PRIVATE
+
+resolution_states:
+  DISCOVERED: repository or control surface observed
+  LOCAL_SSOT_FOUND: canonical or declared local SSOT locator observed
+  GLOBALLY_REGISTERED: local pointer appears in this global census
+  CONSUMER_RESOLVABLE: role, authority, input/output and graph edges are explicit
+  RECEIPT_BOUND: exact-head or immutable receipt binds execution/output identity
+  AUTHORITY_ACCEPTED: consuming authority explicitly accepts the result for its declared scope
+
+rings:
+  R0_CORE_AUTHORITY: child engineering truth plus KEB semantic/provenance and DOW consumption
+  R1_ACTIVE_EXECUTION: active worker/orchestration nodes with current or recent governed execution
+  R2_SUPPORT_VALIDATION: tooling, runtime, schemas, provenance, rendering and engineering support
+  R3_REFERENCE_KNOWLEDGE: reading, examples, catalogs and scientific/software reference sources
+  R4_EXPERIMENT_SANDBOX: exploratory or bootstrap repositories not treated as production authority
+
+nodes:
+  - id: repo.cryoplant
+    repo: GBOGEB/cryoplant-project
+    ring: R0_CORE_AUTHORITY
+    role: CHILD_ENGINEERING_AUTHORITY
+    observed_main_sha: 067e1ad9c6c461018ccb43bc2e50f6a5b2b89ee7
+    local_ssot_locators:
+      - controls/QPS_GLOBAL_GLOSSARY_v1.yaml
+      - controls/QPS_CANONICAL_LINEAGE_RESOLVER_v1.json
+      - controls/QPS_TRIAGE_CHILD_CONTRACT_v1.json
+    glossary_domains: [QPS_ENGINEERING, SBS, CIS, PROCUREMENT, EVIDENCE, COMPLIANCE]
+    global_state: CONSUMER_RESOLVABLE
+    authority: final QPS engineering and child disposition authority
+    first_mesh_use_case: accept/reject/defer KEB+DOW returns against source-bound QPS evidence
+
+  - id: repo.codex
+    repo: GBOGEB/CODEX
+    ring: R0_CORE_AUTHORITY
+    role: KEB_SEMANTIC_PROVENANCE_RUNTIME
+    observed_main_sha: 7deec6974cda8a8032a8331e177b0110e2a2f8fa
+    local_ssot_locators:
+      - ssot/manifest.yaml
+      - PIPELINE/GLOSSARY.yaml
+      - federation/mip/W110_CANONICAL_SSOT_REGISTRY.json
+    glossary_domains: [FEDERATION, SEMANTICS, KEB, RECEIPTS, RUNTIME, GOVERNANCE]
+    global_state: CONSUMER_RESOLVABLE
+    authority: semantic normalization, provenance and runtime receipt authority only
+    first_mesh_use_case: validate and bind a child evidence or runtime tuple before DOW consumption
+
+  - id: repo.abacus
+    repo: GBOGEB/ABACUS
+    ring: R0_CORE_AUTHORITY
+    role: DOW_DERIVED_ANALYSIS_CONSUMPTION
+    observed_main_sha: 1ffcb623efe97504fbb0911b0a01a9404360e574
+    local_ssot_locators:
+      - ssot_artifacts_catalog.md
+      - DMAIC_V3/core/ssot_resolver.py
+      - architecture/w98/W98_QPS_GLOSSARY_DOW_3PC_3PR.yaml
+    glossary_domains: [DOW, DMAIC, ANALYTICS, DISPOSITION, QPS_CONSUMPTION]
+    global_state: CONSUMER_RESOLVABLE
+    authority: derived analysis, challenge, ranking and disposition consumption; no child engineering authority
+    first_mesh_use_case: consume an exact CODEX receipt and return ACCEPT/REJECT/DEFER to the child
+
+  - id: repo.pipeline_hub
+    repo: GBOGEB/pipeline-automation-hub
+    ring: R1_ACTIVE_EXECUTION
+    role: FEDERATION_ROUTING_ORCHESTRATION_HUB
+    local_ssot: level1/ssot.json
+    local_ssot_blob_sha: f530bd663557bda960a4aa527a5f02605be44aa2
+    inputs: [worker execution requests, source/head/output digests, document-processing jobs]
+    outputs: [dispatch plans, correlated receipts, routing status, processing outputs]
+    federation_targets: [repo.docx_rtm, repo.codespaces_jyperter, repo.cryo_workspace, repo.leak_dashboard, repo.document_org, repo.private_docs, repo.codex, repo.abacus, repo.cryoplant]
+    global_state: CONSUMER_RESOLVABLE
+    receipt_state: HISTORICAL_OR_CURRENT_HEAD_REVALIDATION_REQUIRED
+    first_mesh_use_case: route a typed work request to the appropriate worker and correlate its receipt without promoting the result
+
+  - id: repo.docx_rtm
+    repo: GBOGEB/DOCX_RTM_Automation
+    ring: R1_ACTIVE_EXECUTION
+    role: SOURCE_EXTRACTION_RTM_WORKER
+    local_ssot: level1/ssot.json
+    local_ssot_blob_sha: 1ad49759a97f3bd1921152a100935751012764aa
+    additional_ssot: docs/CANONICAL_SSOT.md
+    inputs: [DOCX, DOC, PDF, TXT, RTM/OTC/DEL source material]
+    outputs: [extraction objects, RTM mappings, execution receipts, source/output digests]
+    global_state: RECEIPT_BOUND
+    receipt_basis: Wave-9 CI registry receipt on observed main 28cc8d97c751cff2bad44a5cbf83ebcf6379641d
+    first_mesh_use_case: extract source text into traceable RTM rows and emit a governed digest-bound receipt for QPS triage
+
+  - id: repo.codespaces_jyperter
+    repo: GBOGEB/CODESPACES_jyperter
+    ring: R1_ACTIVE_EXECUTION
+    role: RUNTIME_PROPERTY_NOTEBOOK_WORKER
+    local_ssot: level1/ssot.json
+    local_ssot_blob_sha: 19fde63278d5beffd5e3bb12c5269a34e8163052
+    inputs: [ZIP archives, notebooks, PPTX artifacts, measured property/runtime data]
+    outputs: [processed artifacts, runtime/property receipts, environment/output digests]
+    global_state: CONSUMER_RESOLVABLE
+    receipt_state: EXACT_HEAD_PROOF_REPORTED_REVALIDATE_ON_NEW_HEAD
+    first_mesh_use_case: execute a reproducible notebook or CLI property probe and return exact-SHA output digests
+
+  - id: repo.codespaces_jupyter
+    repo: GBOGEB/codespaces-jupyter
+    ring: R1_ACTIVE_EXECUTION
+    role: REPRODUCIBLE_NOTEBOOK_RUNTIME_PRODUCER
+    local_control_pointer: triage/W69_MIP_JUPYTER_RUNTIME.yaml
+    local_ssot: null
+    local_ssot_state: LEVEL1_SSOT_NOT_FOUND
+    inputs: [Python environment, notebooks, package state, measured calculation inputs]
+    outputs: [runtime_inventory, environment_fingerprint, notebook_probe_receipt, output_digest]
+    global_state: GLOBALLY_REGISTERED
+    receipt_state: NEEDS_LEVEL1_SSOT_AND_CURRENT_EXACT_HEAD_PROOF
+    first_mesh_use_case: execute more than zero notebook cells twice and provide a reproducible calculation receipt to CODEX
+
+  - id: repo.cryo_workspace
+    repo: GBOGEB/cryogenic-accelerator-workspace
+    ring: R1_ACTIVE_EXECUTION
+    role: BRIDGE_RTM_PHYSICS_WORKER
+    local_ssot: level1/ssot.json
+    local_ssot_blob_sha: adfb7ef358a8cf23f8e4dfe6c7c51370283775e7
+    domain_ssot: config/engineering_data.yaml
+    topology: config/knowledge_topology.json
+    inputs: [engineering configuration, RTM/bridge inputs, physics validation requests]
+    outputs: [physics validation results, regenerated workspace artifacts, exact-SHA/source/output receipts]
+    global_state: CONSUMER_RESOLVABLE
+    receipt_state: P6_BRIDGE_PROOF_REPORTED_REVALIDATE_ON_NEW_HEAD
+    first_mesh_use_case: independently validate a cryogenic/accelerator engineering property and bind its result to an RTM bridge receipt
+
+  - id: repo.leak_dashboard
+    repo: GBOGEB/cryo_leak_rate_dashboard
+    ring: R1_ACTIVE_EXECUTION
+    role: INDEPENDENT_LEAK_PHYSICS_EVIDENCE_WORKER
+    local_ssot: level1/ssot.json
+    local_ssot_blob_sha: 02d3c2a5f75f14ae97327d862981eace03c57f91
+    domain_ssot: data/config.yaml
+    inputs: [leak-rate engineering parameters, helium state assumptions, validation requests]
+    outputs: [independent leak-rate results, dashboard artifacts, build/validation receipts]
+    global_state: CONSUMER_RESOLVABLE
+    receipt_state: P5_LEAK_PROOF_REPORTED_REVALIDATE_ON_NEW_HEAD
+    first_mesh_use_case: calculate and independently reproduce leak-rate evidence before child-side acceptance
+
+  - id: repo.document_org
+    repo: GBOGEB/document-organization-system
+    ring: R1_ACTIVE_EXECUTION
+    role: OUTWARD_ARTIFACT_PROPERTY_WORKER
+    local_ssot: level1/ssot.json
+    local_ssot_blob_sha: 78ad7ff5104b2612b1f707c11857ff14643c3030
+    inputs: [material-property SSOT, calculation requests, outward artifact/index requests]
+    outputs: [validated material-property results, dashboard artifacts, indexes, exact-SHA/output receipts]
+    global_state: CONSUMER_RESOLVABLE
+    receipt_state: HISTORICAL_OR_CURRENT_HEAD_REVALIDATION_REQUIRED
+    first_mesh_use_case: build a deterministic outward artifact index and verify material-property regression without claiming bidder evidence
+
+  - id: repo.private_docs
+    repo: GBOGEB/github_Documents
+    ring: R1_ACTIVE_EXECUTION
+    role: PRIVATE_PROVENANCE_BYTE_VAULT
+    visibility: private
+    local_ssot: level1/ssot.json
+    local_ssot_blob_sha: 237ed529129cc9faa86d0afc7425cb9822f1f59a
+    public_federation_payload: metadata_hash_status_only
+    inputs: [private files, byte/provenance census requests, migration/control state]
+    outputs: [hashes, provenance receipts, ingress/retrieval status]
+    global_state: CONSUMER_RESOLVABLE
+    receipt_state: HISTORICAL_OR_CURRENT_HEAD_REVALIDATION_REQUIRED
+    first_mesh_use_case: prove byte identity and provenance while exposing only hashes/status to public parent nodes
+
+support_validation_catalog:
+  - {repo: GBOGEB/github-mcp-server, class: CONNECTOR_AND_MCP_INFRASTRUCTURE, consideration: SUPPORT_CANDIDATE}
+  - {repo: GBOGEB/skills, class: REUSABLE_SKILL_LIBRARY, consideration: SUPPORT_CANDIDATE}
+  - {repo: GBOGEB/scientific-agent-skills, class: SCIENTIFIC_AGENT_CAPABILITY_LIBRARY, consideration: SUPPORT_CANDIDATE}
+  - {repo: GBOGEB/Q_engineering_tools, class: ENGINEERING_TOOLBOX, consideration: DORMANT_SUPPORT_CANDIDATE}
+  - {repo: GBOGEB/CoolProp, class: THERMOPHYSICAL_REFERENCE_LIBRARY, consideration: REFERENCE_DEPENDENCY_CANDIDATE}
+  - {repo: GBOGEB/docker-stacks, class: CONTAINER_RUNTIME_REFERENCE, consideration: SUPPORT_CANDIDATE}
+  - {repo: GBOGEB/yaml-grammar, class: YAML_SCHEMA_LANGUAGE_SUPPORT, consideration: SUPPORT_CANDIDATE}
+  - {repo: GBOGEB/yaml-reference-parser, class: YAML_REFERENCE_PARSER_SUPPORT, consideration: SUPPORT_CANDIDATE}
+  - {repo: GBOGEB/attest-build-provenance, class: BUILD_PROVENANCE_SUPPORT, consideration: SUPPORT_CANDIDATE}
+  - {repo: GBOGEB/markdownlint, class: DOCUMENT_LINT_SUPPORT, consideration: SUPPORT_CANDIDATE}
+  - {repo: GBOGEB/prettier, class: FORMATTER_SUPPORT, consideration: SUPPORT_CANDIDATE}
+  - {repo: GBOGEB/prettier-vscode, class: EDITOR_FORMATTER_SUPPORT, consideration: SUPPORT_CANDIDATE}
+  - {repo: GBOGEB/eslint-config-prettier, class: JS_FORMAT_LINT_BRIDGE, consideration: SUPPORT_CANDIDATE}
+  - {repo: GBOGEB/tesseract, class: OCR_REFERENCE, consideration: SUPPORT_CANDIDATE}
+  - {repo: GBOGEB/plotly.py, class: VISUALIZATION_REFERENCE, consideration: SUPPORT_CANDIDATE}
+  - {repo: GBOGEB/notebook, class: JUPYTER_NOTEBOOK_REFERENCE, consideration: SUPPORT_CANDIDATE}
+  - {repo: GBOGEB/cli, class: CLI_REFERENCE, consideration: SUPPORT_CANDIDATE}
+  - {repo: GBOGEB/python, class: PYTHON_REFERENCE, consideration: SUPPORT_CANDIDATE}
+
+reference_knowledge_catalog:
+  - {repo: GBOGEB/openai-cookbook, class: AI_EXAMPLES_KNOWLEDGE, authority: REFERENCE_ONLY}
+  - {repo: GBOGEB/openai-node, class: SDK_REFERENCE, authority: REFERENCE_ONLY}
+  - {repo: GBOGEB/python-sdk, class: SDK_REFERENCE, authority: REFERENCE_ONLY}
+  - {repo: GBOGEB/RouteLLM, class: LLM_ROUTING_REFERENCE, authority: REFERENCE_ONLY}
+  - {repo: GBOGEB/awesome, class: CURATED_KNOWLEDGE_LIST, authority: REFERENCE_ONLY}
+  - {repo: GBOGEB/the-book-of-secret-knowledge, class: OPERATIONS_KNOWLEDGE_LIST, authority: REFERENCE_ONLY}
+  - {repo: GBOGEB/awesome-system-design-resources, class: SYSTEM_DESIGN_READING, authority: REFERENCE_ONLY}
+  - {repo: GBOGEB/awesome-sysadmin, class: SYSADMIN_READING, authority: REFERENCE_ONLY}
+  - {repo: GBOGEB/awesome-deep-learning, class: ML_READING, authority: REFERENCE_ONLY}
+  - {repo: GBOGEB/Awesome-Hacking, class: SECURITY_READING, authority: REFERENCE_ONLY}
+
+experiment_sandbox_catalog:
+  - {repo: GBOGEB/orchestration-sandbox, class: ORCHESTRATION_EXPERIMENT}
+  - {repo: GBOGEB/dmaic-recursive-pipeline, class: DMAIC_PIPELINE_EXPERIMENT}
+  - {repo: GBOGEB/dmaic-recursive-pipeline_ALL_agennts-CP-G5-GEM-ABAC-as-4-sources, class: MULTI_AGENT_DMAIC_EXPERIMENT}
+  - {repo: GBOGEB/qplant-system-v0-1-1-dmaic2-temp, class: QPLANT_DMAIC_TEMPORARY}
+  - {repo: GBOGEB/GEMINI, class: GOVERNANCE_BOOTSTRAP_CANDIDATE}
+  - {repo: GBOGEB/codex-universal, class: CODEX_GENERALIZATION_EXPERIMENT}
+  - {repo: GBOGEB/Edit_WORD_Roundtrip, class: DOCUMENT_ROUNDTRIP_EXPERIMENT}
+  - {repo: GBOGEB/grid-table-editor, class: GRID_EDITING_EXPERIMENT}
+
+edges:
+  - {id: edge.child_to_keb, from: repo.cryoplant, to: repo.codex, type: SEMANTIC_PROVENANCE_REQUEST, authority_transfer: false}
+  - {id: edge.keb_to_dow, from: repo.codex, to: repo.abacus, type: RECEIPT_AND_FINDING_CONSUMPTION, authority_transfer: false}
+  - {id: edge.dow_to_child, from: repo.abacus, to: repo.cryoplant, type: DERIVED_DISPOSITION_RETURN, authority_transfer: false}
+  - {id: edge.hub_to_docx, from: repo.pipeline_hub, to: repo.docx_rtm, type: WORKER_DISPATCH, authority_transfer: false}
+  - {id: edge.hub_to_codespaces, from: repo.pipeline_hub, to: repo.codespaces_jyperter, type: WORKER_DISPATCH, authority_transfer: false}
+  - {id: edge.hub_to_jupyter, from: repo.pipeline_hub, to: repo.codespaces_jupyter, type: NOTEBOOK_DISPATCH_CANDIDATE, authority_transfer: false}
+  - {id: edge.hub_to_workspace, from: repo.pipeline_hub, to: repo.cryo_workspace, type: PHYSICS_BRIDGE_DISPATCH, authority_transfer: false}
+  - {id: edge.hub_to_leak, from: repo.pipeline_hub, to: repo.leak_dashboard, type: LEAK_PHYSICS_DISPATCH, authority_transfer: false}
+  - {id: edge.hub_to_artifacts, from: repo.pipeline_hub, to: repo.document_org, type: OUTWARD_ARTIFACT_DISPATCH, authority_transfer: false}
+  - {id: edge.hub_to_vault, from: repo.pipeline_hub, to: repo.private_docs, type: PRIVATE_PROVENANCE_DISPATCH, authority_transfer: false}
+  - {id: edge.docx_to_keb, from: repo.docx_rtm, to: repo.codex, type: EXTRACTION_RECEIPT, authority_transfer: false}
+  - {id: edge.docx_to_child, from: repo.docx_rtm, to: repo.cryoplant, type: RTM_SOURCE_MAPPING, authority_transfer: false}
+  - {id: edge.codespaces_to_keb, from: repo.codespaces_jyperter, to: repo.codex, type: RUNTIME_PROPERTY_RECEIPT, authority_transfer: false}
+  - {id: edge.jupyter_to_keb, from: repo.codespaces_jupyter, to: repo.codex, type: NOTEBOOK_RUNTIME_RECEIPT, authority_transfer: false}
+  - {id: edge.workspace_to_child, from: repo.cryo_workspace, to: repo.cryoplant, type: INDEPENDENT_PHYSICS_EVIDENCE, authority_transfer: false}
+  - {id: edge.leak_to_child, from: repo.leak_dashboard, to: repo.cryoplant, type: INDEPENDENT_LEAK_EVIDENCE, authority_transfer: false}
+  - {id: edge.artifacts_to_child, from: repo.document_org, to: repo.cryoplant, type: OUTWARD_ARTIFACT_AND_PROPERTY_EVIDENCE, authority_transfer: false}
+  - {id: edge.vault_to_keb, from: repo.private_docs, to: repo.codex, type: METADATA_HASH_PROVENANCE_ONLY, authority_transfer: false}
+  - {id: edge.vault_to_child, from: repo.private_docs, to: repo.cryoplant, type: PRIVATE_SOURCE_IDENTITY_CONFIRMATION, authority_transfer: false}
+
+promotion_policy:
+  register_local_ssot_when:
+    - locator exists on declared default branch or immutable commit
+    - role and authority boundary are explicit
+  mark_consumer_resolvable_when:
+    - inputs and outputs are explicit
+    - at least one inbound or outbound graph edge is declared
+    - global glossary domains are assigned
+  mark_receipt_bound_when:
+    - exact source/head SHA is present
+    - immutable output/receipt digest is present
+    - execution contains greater_than_0 observed steps when executable
+  never_promote_from:
+    - repository name alone
+    - README claim alone
+    - copied glossary text without authority pointer
+    - reference or reading repository content alone
+    - runtime success alone
+
+measured_census:
+  detailed_nodes: 11
+  core_nodes: 3
+  active_worker_or_hub_nodes: 8
+  detailed_nodes_with_local_level1_ssot: 7
+  active_node_without_level1_ssot: GBOGEB/codespaces-jupyter
+  support_validation_catalog_nodes: 18
+  reference_knowledge_catalog_nodes: 10
+  experiment_sandbox_catalog_nodes: 8
+  known_correction_to_W110: >-
+    W110 treated five active satellites as if local SSOT pointers still needed to
+    be created. W111 distinguishes pointer existence from global registration
+    and receipt binding; four of those five already expose level1/ssot.json.
+
+next_gate:
+  - add a level1/ssot.json or explicit equivalent pointer to GBOGEB/codespaces-jupyter
+  - bind this global registry into ABACUS DOW consumption
+  - bind this global registry into cryoplant child consideration without authority transfer
+  - progressively promote support/reference nodes only when a concrete edge and first use case are observed

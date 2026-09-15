@@ -1,0 +1,53 @@
+schema_version: "1.0"
+document_id: SC_2026_09_12_SESSION_CLOSE_KEB_CHALLENGE
+role: CODEX_KEB
+status: CHALLENGE_COMPLETE_REPAIR_REQUIRED
+child_source:
+  repository: GBOGEB/cryoplant-project
+  branch: control/sc-20260912-3pr-mip-handover
+  reviewed_head: 514baa8a3ddb8c8715a6ca71bea04a07f079f63f
+review_scope:
+  - original_vs_derived_source_semantics
+  - common_cause_vs_independent_stage_semantics
+  - supersession_and_lineage
+  - child_parent_authority_boundary
+  - delete_safe_cold_start_contract
+checks:
+  child_authority_boundary: PASS
+  email_original_vs_refined: PASS
+  nfs_page_bound_vs_original_exact: PASS
+  model_edge_exactness: PASS
+  missing_data_not_zero: PASS
+findings:
+  - id: KEB-SC-001
+    severity: MATERIAL_SEMANTIC_GUARD
+    state: REPAIR_REQUIRED
+    finding: >-
+      `verified_table10_cc_allocation_per_year: 0.0` is correctly qualified in prose,
+      but a cold-start machine consumer can still misread the scalar as evidence of
+      physical zero common-cause frequency. Add an explicit machine-readable
+      evidence state such as `NO_ACCEPTED_NUMERIC_CC_RATE` and a prohibition that
+      the 0.0 allocation be used as a physical-rate inference.
+    required_repair: add explicit no-accepted-rate semantic field and zero-rate inference prohibition
+  - id: KEB-SC-002
+    severity: MEDIUM
+    state: REPAIR_REQUIRED
+    finding: >-
+      The handover states that W104 executed eight atoms while current issue-75
+      external pressure is seven because CC-R08 is now a controlled child method.
+      Add an explicit supersession mapping so a cold-start consumer does not reopen
+      CC-R08 as external evidence debt.
+    required_repair: bind W104_eight_atom_history -> W138_CC_R08_child_method -> current_external_CC_R01_R07
+  - id: KEB-SC-003
+    severity: LOW
+    state: PASS_WITH_GUARD
+    finding: >-
+      `EMAIL-REFINED -> DERIVED_FROM -> EMAIL-ORIG` is semantically sufficient only
+      after both raw objects are hash-bound; until then the edge is an intended
+      relation, not established provenance.
+recommended_child_disposition: REPAIR_THEN_ACCEPT_IF_DOW_CLEAR
+credit_guard:
+  engineering_delta: 0
+  negotiation_delta: 0
+  release_delta: 0
+  parent_has_no_child_authority: true

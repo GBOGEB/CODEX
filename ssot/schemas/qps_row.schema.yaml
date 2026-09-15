@@ -1,0 +1,79 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://github.com/GBOGEB/CODEX/ssot/schemas/qps_row.schema.yaml
+title: QPS bridge row
+type: object
+required:
+  - qps_item_id
+  - object_type
+  - source_repo
+  - source_locator
+  - requirement_id
+  - offer_ref
+  - state
+  - confidence
+  - next_evidence_needed
+  - lineage
+properties:
+  qps_item_id:
+    type: string
+    pattern: '^QPS-ITEM-[0-9]{4}$'
+  object_type:
+    type: string
+    enum:
+      - QPS_REQUIREMENT
+      - QPS_OFFER_EVIDENCE
+      - QPS_CLARIFICATION
+      - QPS_NEGOTIATION_TOPIC
+      - QPS_BT_DRIVER
+      - QPS_PCA_FEATURE
+      - QPS_DECISION_OBJECT
+      - QPS_DEFERRED_RETURN
+      - QPS_RISK
+      - QPS_ACTION
+  source_repo:
+    type: string
+  source_locator:
+    type: string
+  requirement_id:
+    type: string
+  offer_ref:
+    type: string
+  state:
+    type: string
+    enum: [PASS, FAIL, DEFER, REVIEW]
+  confidence:
+    type: string
+  bt_driver:
+    anyOf:
+      - type: string
+      - type: 'null'
+  pca_feature:
+    anyOf:
+      - type: string
+      - type: 'null'
+  decision_effect:
+    type: string
+  next_evidence_needed:
+    type: string
+  receipt_binding:
+    type: object
+    required:
+      - source_pr
+      - source_sha
+      - file_digest
+    properties:
+      source_pr:
+        anyOf:
+          - type: integer
+          - type: 'null'
+      source_sha:
+        anyOf:
+          - type: string
+          - type: 'null'
+      file_digest:
+        anyOf:
+          - type: string
+          - type: 'null'
+  lineage:
+    type: object
+    required: [chat_session, originating_prompt, created_by]
