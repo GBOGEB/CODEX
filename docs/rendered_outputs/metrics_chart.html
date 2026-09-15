@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
   <meta charset="utf-8"/>
-  <title>CODEX Metrics – 2026-09-14</title>
+  <title>CODEX Metrics – 2026-09-15</title>
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
   <style>body{font-family:system-ui,sans-serif;margin:0;background:#0d1117;color:#e6edf3}
   .header{padding:1.5rem 2rem;background:#161b22;border-bottom:1px solid #30363d}
@@ -15,8 +15,8 @@
   <h1>CODEX Repository Metrics
     <span class="qs">100/100</span>
   </h1>
-  <div class="sub">SHA: e48cfc7923be · Generated: 2026-09-14 22:51:23 UTC
-    · Commits (30d): 2059 / 3911 total
+  <div class="sub">SHA: 396ad4b17c86 · Generated: 2026-09-15 04:15:04 UTC
+    · Commits (30d): 2086 / 3938 total
   </div>
 </div>
 <div class="charts">
@@ -28,7 +28,7 @@
 <script>
 const phases   = ["Define", "Measure", "Analyze", "Improve", "Control"];
 const scores   = [100, 100, 100, 60, 100];
-const files    = [140, 139, 83, 12, 34];
+const files    = [140, 140, 84, 12, 34];
 const radarScores = [...scores, scores[0]];
 const radarLabels = [...phases, phases[0]];
 
@@ -63,14 +63,14 @@ Plotly.newPlot('coverage', [{
 }, {responsive:true});
 
 const meta = {
-  'Total commits':    3911,
-  'Recent (30d)':     2059,
-  'Python files':     619,
-  'Test files':       151,
+  'Total commits':    3938,
+  'Recent (30d)':     2086,
+  'Python files':     621,
+  'Test files':       152,
   'HTML docs':        64,
-  'Markdown docs':    449,
+  'Markdown docs':    451,
   'Workflows':        112,
-  'Total LOC':        65275,
+  'Total LOC':        65422,
 };
 Plotly.newPlot('activity', [{
   type:'bar', x:Object.keys(meta), y:Object.values(meta),
