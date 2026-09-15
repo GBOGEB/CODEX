@@ -1,0 +1,22 @@
+id: W105-PVPS-PLAYGROUND-KEB
+role: SEMANTIC_PROVENANCE_CHALLENGE
+child_authority: GBOGEB/cryoplant-project
+child_pr: pending
+required_child_evidence:
+  - exact_head_sha
+  - exact_workflow_run_id
+  - zod_terminal_result
+  - playwright_terminal_result
+predicates:
+  - READ_ONLY_is_authoritative_surface_mode
+  - owner_FIXED_SPEED_is_not_bidder_evidence
+  - bidder_VFD_is_false_until_literal_source
+  - bidder_FIXED_SPEED_is_false_until_literal_source
+  - R5_remains_DEFER
+  - visual_QA_cannot_create_engineering_or_numerical_credit
+disposition:
+  before_exact_terminal_receipt: DEFER
+  on_all_predicates_and_child_tests_pass: ACCEPT_CANDIDATE
+  on_semantic_drift: REJECT
+may_mutate_child_disposition: false
+mip_lane: INNOVATE
