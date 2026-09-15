@@ -1,5 +1,5 @@
 schema_version: "qps-triage-3pc-mip-receipt/1.0"
-as_of: "2026-09-15T09:07:00+02:00"
+as_of: "2026-09-15T09:09:00+02:00"
 repository: GBOGEB/CODEX
 method: 3PC_PLUS_MIP
 wave: DEVELOPMENT_TO_FEDERATION_TO_QPS_TRIAGE
@@ -67,12 +67,20 @@ pr_745_validation:
     run: 34939695982
     job: 104285299218
     step: Run governance parser on PR metadata
-    error: "PR-ID: 'pending GitHub assignment' does not match '^PR-[0-9]{3}$'"
+    error: "PR-ID placeholder did not match the required PR-NNN pattern"
   bounded_repair:
     pr_id: PR-745
     surface: pull_request_body
-    semantic_or_publication_logic_changed: false
+    publication_logic_changed: false
     receipt_updated_to_force_exact_head_revalidation: true
+  second_candidate:
+    head: c4767388e1776ff197f94a60d9c2d817091fbe79
+    w003_run: 34940150726
+    w003_result: PASS
+    a9_run: 34940150848
+    a9_result: FAIL
+    failure_class: SELF_INDUCED_PREFIXED_RECEIPT_KEY
+    bounded_repair: rename accidental receipt key rather than extend controlled vocabulary
 
 non_compensating_boundaries:
   - DEBT-007 remains PARTIAL until the full hosted Pages closure predicate passes.
