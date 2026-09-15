@@ -1,0 +1,41 @@
+schema: codex.keb.temporal_h2_semantic_challenge.v1
+origin:
+  repository: GBOGEB/pipeline-automation-hub
+  pr: 133
+  head_sha: 40668d4d9b29ce2f90c186ff77793a2e59add4aa
+role: CHALLENGE_SIGNAL
+semantic_contract:
+  VNV_SIGNAL:
+    payload: synthetic_mechanism_test
+    may_advance_governed_time: false
+  CONTROL_SIGNAL:
+    payload: genuine_scheduled_temporal_evidence
+    required_event: schedule
+    may_advance_governed_time: true
+  CHALLENGE_SIGNAL:
+    payload: independent_recomputation_or_semantic_validation
+    may_advance_governed_time: false
+  SURVEILLANCE_SIGNAL:
+    payload: post_entry_genuine_persistence_observation
+    may_redefine_control_entry_gate: false
+horizons:
+  H1_24H: control_entry
+  H2_72H: robustness_surveillance
+  H3_7D: persistence_surveillance
+  H4_30D: long_term_control_surveillance
+propagation:
+  roll_up: evidence_and_receipts
+  roll_out: governed_mechanism_not_conclusion
+  fan_out: independent_triggered_evaluation
+  propagate: accepted_fact_with_provenance_until_veto_or_incompatible_contract
+first_red_conditions:
+  - synthetic_signal_counted_as_governed_time
+  - surveillance_horizon_relabelled_as_authority_promotion
+  - challenge_receipt_grants_child_control_authority
+  - provenance_or_exact_head_binding_missing
+disposition: PASS_CONTRACT_PENDING_RUNTIME_RECEIPT
+governance:
+  engineering_credit_delta: 0
+  control_authority: false
+  competency_promotions: 0
+  authority_transfer: false
