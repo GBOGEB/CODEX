@@ -1,0 +1,44 @@
+schema: qps.chat-final-handover-keb-pointer/1.0
+as_of: '2026-09-15T08:12:00+02:00'
+mode: ACCEPT_POINTER_ONLY
+
+child:
+  repo: GBOGEB/cryoplant-project
+  closeout_pr: 1317
+  closeout_head: 8048967b40819b8c74755ee6e976e1b1b8c7c9f4
+  current_execution_manifest_commit: a469775133acdc343b75eea2aea408563578d597
+  current_execution_manifest_path: handover/session/SC_2026-09-15_EXECUTION_HANDOVER_MANIFEST_v1.yaml
+  execution_core_path: handover/session/SC_2026-09-15_EXECUTION_CORE_WAVES_DOV_DOD_BD_v1.yaml
+
+keb:
+  repo: GBOGEB/CODEX
+  observed_main_at_refresh: 8da88a82740764f52c57e7757f1d3436b2e19934
+  role: semantic_provenance_orchestration_receiver
+
+preserved_state:
+  session_DoD: ACHIEVED
+  session_control_DoV: ACHIEVED
+  global_project_DoV: WITHHELD
+  formal_engineering: '70/90 = 77.78%'
+  strict_numerical: '4/5 = 80%'
+  negotiation: '0/20'
+  runtime_GOLD: WITHHELD_ISSUE_923
+
+mip_conclusion:
+  Modernize: COMPLETE_FOR_W105_TARGET
+  Innovate: COMPLETE_FOR_W105_TARGET
+  Perpetuate: COMPLETE_FOR_SESSION_CONTROL
+  selector: PERPETUATE_THEN_STOP_SESSION
+
+guards:
+  authority_transfer: false
+  engineering_credit_delta: 0
+  negotiation_credit_delta: 0
+  publish_credit_delta: 0
+  child_disposition_mutation_allowed: false
+  private_evidence_copy_allowed: false
+  parent_pass_ne_child_accept: true
+
+restart_rule: >-
+  Fresh 3PR current heads first, then consume real source/runtime returns before internal work;
+  otherwise execute the highest runnable non-compensating first-red and bind an exact receipt.
