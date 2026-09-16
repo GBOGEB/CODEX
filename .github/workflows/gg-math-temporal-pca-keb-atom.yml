@@ -19,7 +19,9 @@ jobs:
       - name: Checkout exact PR head
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: >-
+            ${{ github.event.pull_request.head.sha || github.sha }}
+
       - name: Assert exact source head
         shell: bash
         run: |
@@ -27,15 +29,23 @@ jobs:
           expected='${{ github.event.pull_request.head.sha || github.sha }}'
           actual="$(git rev-parse HEAD)"
           test "$actual" = "$expected"
+
       - name: Validate real KEB knowledge atom
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/validate_gg_math_temporal_pca_knowledge_atom.py \
-            --source-sha '${{ github.event.pull_request.head.sha || github.sha }}' \
-            --out runtime/keb/gg_math_temporal_pca_knowledge_atom_validation.json \
+          mkdir -p runtime/keb
+          python3 \
+            scripts/validate_gg_math_temporal_pca_knowledge_atom.py \
+            --source-sha \
+            '${{ github.event.pull_request.head.sha || github.sha }}' \
+            --out \
+            runtime/keb/gg_math_temporal_pca_knowledge_atom_validation.json \
             | tee runtime-keb-atom.out
-          grep -q PASS_REAL_KEB_KNOWLEDGE_ATOM runtime-keb-atom.out
+          grep -q \
+            PASS_REAL_KEB_KNOWLEDGE_ATOM_WITH_INDEPENDENT_NUMERIC_DOW \
+            runtime-keb-atom.out
+
       - name: Reassert atom boundary
         shell: bash
         run: |
@@ -43,21 +53,69 @@ jobs:
           python3 - <<'PY'
           import json
           from pathlib import Path
-          atom = json.loads(Path('ssot/bridge_rows/gg_math_temporal_pca_w4_p31_knowledge_atom.json').read_text())
-          proof = json.loads(Path('runtime/keb/gg_math_temporal_pca_knowledge_atom_validation.json').read_text())
+
+          atom_path = Path(
+              'ssot/bridge_rows/'
+              'gg_math_temporal_pca_w4_p31_knowledge_atom.json'
+          )
+          proof_path = Path(
+              'runtime/keb/'
+              'gg_math_temporal_pca_knowledge_atom_validation.json'
+          )
+          atom = json.loads(atom_path.read_text())
+          proof = json.loads(proof_path.read_text())
+
+          expected_digest = (
+              'sha256:876c55c759de33392985f693f1735cdc'
+              '0d38dda7d7b7a6c80ee80aee33fd8405'
+          )
           assert atom['object_type'] == 'KEB_KNOWLEDGE_ATOM'
-          assert atom['source_digest'] == 'sha256:876c55c759de33392985f693f1735cdc0d38dda7d7b7a6c80ee80aee33fd8405'
+          assert atom['source_digest'] == expected_digest
           assert atom['replay_status'] == 'PASS'
-          assert proof['result'] == 'PASS_REAL_KEB_KNOWLEDGE_ATOM'
+
+          numeric = atom['independent_numeric_reproduction']
+          assert numeric['pr'] == 1253
+          assert numeric['exact_head_sha'] == (
+              '6996ba7d6bb6d4de78a8f92b57a2449e8a962600'
+          )
+          assert numeric['workflow_run_id'] == 35145310042
+          assert numeric['workflow_job_id'] == 104959692832
+          assert numeric['artifact_id'] == 10467346012
+          assert numeric['challenge_pass_count'] == 7
+          assert numeric['challenge_total'] == 7
+          assert numeric['independent_implementation'] is True
+          assert numeric['imports_gg_math'] is False
+          assert numeric['independent_reproduction_pass_ratio'] == 1.0
+          assert (
+              numeric['producer_consumer_numeric_delta_max']
+              <= numeric['producer_consumer_numeric_delta_tolerance']
+          )
+          assert numeric['schema_parity'] == 1.0
+          assert numeric['receipt_concordance'] == 1.0
+          assert numeric['authority_inversion_count'] == 0
+
+          assert proof['result'] == (
+              'PASS_REAL_KEB_KNOWLEDGE_ATOM_WITH_'
+              'INDEPENDENT_NUMERIC_DOW'
+          )
+          assert proof['independent_numeric_dow_run_id'] == 35145310042
+          assert proof['independent_reproduction_pass_ratio'] == 1.0
+          assert proof['producer_consumer_numeric_delta_max'] <= 1e-7
+          assert proof['schema_parity'] == 1.0
+          assert proof['receipt_concordance'] == 1.0
+          assert proof['authority_inversion_count'] == 0
           assert proof['authority_transfer'] is False
           assert proof['formal_credit_delta'] == 0
           assert proof['hard_gate_compensation_allowed'] is False
-          print('PASS_KEB_ATOM_BOUNDARY')
+          print('PASS_KEB_ATOM_BOUNDARY_WITH_INDEPENDENT_NUMERIC_DOW')
           PY
+
       - name: Upload KEB atom proof
         uses: actions/upload-artifact@v4
         with:
-          name: gg-math-temporal-pca-keb-atom-${{ github.event.pull_request.head.sha || github.sha }}
+          name: >-
+            gg-math-temporal-pca-keb-atom-${{
+            github.event.pull_request.head.sha || github.sha }}
           path: |
             runtime-keb-atom.out
             runtime/keb/gg_math_temporal_pca_knowledge_atom_validation.json
