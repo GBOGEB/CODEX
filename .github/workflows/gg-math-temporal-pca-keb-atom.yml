@@ -1,0 +1,65 @@
+name: gg_MATH Temporal PCA KEB Atom
+
+on:
+  pull_request:
+    paths:
+      - 'ssot/bridge_rows/gg_math_temporal_pca_w4_p31_knowledge_atom.json'
+      - 'ssot/bridge_rows/gg_math_temporal_pca_w4_p31.yaml'
+      - 'scripts/validate_gg_math_temporal_pca_knowledge_atom.py'
+      - '.github/workflows/gg-math-temporal-pca-keb-atom.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-atom:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+      - name: Validate real KEB knowledge atom
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/validate_gg_math_temporal_pca_knowledge_atom.py \
+            --source-sha '${{ github.event.pull_request.head.sha || github.sha }}' \
+            --out runtime/keb/gg_math_temporal_pca_knowledge_atom_validation.json \
+            | tee runtime-keb-atom.out
+          grep -q PASS_REAL_KEB_KNOWLEDGE_ATOM runtime-keb-atom.out
+      - name: Reassert atom boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          atom = json.loads(Path('ssot/bridge_rows/gg_math_temporal_pca_w4_p31_knowledge_atom.json').read_text())
+          proof = json.loads(Path('runtime/keb/gg_math_temporal_pca_knowledge_atom_validation.json').read_text())
+          assert atom['object_type'] == 'KEB_KNOWLEDGE_ATOM'
+          assert atom['source_digest'] == 'sha256:876c55c759de33392985f693f1735cdc0d38dda7d7b7a6c80ee80aee33fd8405'
+          assert atom['replay_status'] == 'PASS'
+          assert proof['result'] == 'PASS_REAL_KEB_KNOWLEDGE_ATOM'
+          assert proof['authority_transfer'] is False
+          assert proof['formal_credit_delta'] == 0
+          assert proof['hard_gate_compensation_allowed'] is False
+          print('PASS_KEB_ATOM_BOUNDARY')
+          PY
+      - name: Upload KEB atom proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: gg-math-temporal-pca-keb-atom-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            runtime-keb-atom.out
+            runtime/keb/gg_math_temporal_pca_knowledge_atom_validation.json
+            ssot/bridge_rows/gg_math_temporal_pca_w4_p31_knowledge_atom.json
+          if-no-files-found: error
