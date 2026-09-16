@@ -1,18 +1,23 @@
-schema: codex.keb.gg_math_temporal_pca_binding.v1
+schema: codex.keb.gg_math_temporal_pca_binding.v2
 binding_id: KEB-GG-MATH-LM10-W4-P31-001
-as_of: '2026-09-16T21:04:00+02:00'
-state: DEFER_PROVIDER_PR_OPEN
+as_of: '2026-09-16T22:10:00+02:00'
+state: ACCEPT_PROVIDER_BOUND_READY_DOW_CYCLE2
+status: ACCEPT
+semantic_owner: CODEX/KEB
 object_type: KEB_SOURCE_RECEIPT
 source_repo: GBOGEB/gg_MATH
-source_pr: 15
-source_sha: a99d7cacd03ed3a392c063a1b3f8dbffdba0d060
-source_locator: https://github.com/GBOGEB/gg_MATH/actions/runs/35138061040
-source_workflow_run_id: 35138061040
-source_artifact_id: 10463873089
-source_artifact_name: lm10-w4-temporal-pca-a99d7cacd03ed3a392c063a1b3f8dbffdba0d060
-source_artifact_digest: sha256:af9d6535128a969d249a910b70a23e1f809656b199fc02e40fca95db910ff0e6
-source_contract_merge_sha: 3317dd7ed5438ef327aae8b371b867fd2a9382e2
-provider_receipt_schema: gg-math-lm10-w4-temporal-pca-receipt/v1
+source_pr: 18
+source_sha: a5f32ef2b65caa9b49270d7fe8134acd6f1e71d8
+source_merge_sha: e9afd4131bde2071d184d0e3c5326b82f5756faa
+source_core_pr: 15
+source_core_exact_head: a99d7cacd03ed3a392c063a1b3f8dbffdba0d060
+source_core_merge_sha: 513e4f7e06d1316512c820715b6eb41f3f9a066f
+source_workflow_run_id: 35139956561
+source_workflow_job_id: 104941705809
+source_artifact_id: 10464776497
+source_artifact_name: grandmission-i-b-temporal-pca-federation
+source_artifact_digest: sha256:2c7cbcddffc6c3830ab02a212563ef390e7fe189ce24214f4313e6e5bccd2921
+provider_receipt_schema: gg-math-grandmission-i-b-temporal-pca-receipt/v1
 provider_runtime_result: PASS
 provider_challenges:
   - C01_SIGN_FLIP
@@ -34,28 +39,47 @@ provider_diagnostics:
   - GRASSMANN_GEODESIC_DISTANCE
   - EVENT_WALL_AGE_MULTICLOCK_RATES
   - SIGNED_EFFECT_ATTENUATION_VS_REVERSAL
+multi_clock_fields: [k, t, a, wave, pulse, pr, run, release]
 evidence_class: REFERENCE_PLUS_DETERMINISTIC_SYNTHETIC_CHALLENGE
 authority_cap: A3_SYNTHETIC_ONLY
 hard_gate_compensation_allowed: false
 authority_transfer: false
-replay_status: DEFER
-validation_result: DEFER_PROVIDER_PR_OPEN
+replay_status: READY_FOR_INDEPENDENT_DOW_CHALLENGE
+validation_result: ACCEPT_PROVIDER_BOUND
+cycle2_3p_ral:
+  cycle: 2
+  moniker: INDEPENDENT_CONSUMPTION
+  operator_stack: [3PR, MIP, 3PC]
+  dmaic_emphasis: [Measure, Analyse, Control]
+  kpi_targets:
+    independent_consumer_count: 1
+    independent_reproduction_pass_ratio_target: 1.0
+    producer_consumer_numeric_delta_target: 0_within_frozen_tolerance
+    schema_parity_target: 1.0
+    receipt_concordance_target: 1.0
+    authority_inversion_count_target: 0
+  formal_credit_delta: 0
 downstream_consumer: GBOGEB/ABACUS/DOW
 bounded_final_consumer: GBOGEB/cryoplant-project/QPS_TRIAGE
 promotion_guards:
-  - source_sha_must_equal_provider_merged_sha_or_be_rebound_after_merge
+  - source_sha_and_merge_sha_must_be_preserved_exactly
   - artifact_digest_must_be_preserved_exactly
-  - DOW_independent_challenge_required_before_QPS_consumption
+  - ABACUS_DOW_must_recompute_the_reference_geometry_independently
+  - independent_challenge_must_not_import_gg_MATH_kernels
+  - DOW_independent_challenge_required_before_cycle2_CONTROL
   - QPS_must_not_treat_PCA_loading_sign_as_policy_direction
   - signed_effect_attenuation_must_remain_distinct_from_direction_reversal
   - synthetic_reference_evidence_cannot_promote_engineering_acceptance_or_formal_credit
   - authority_transfer_must_remain_false
 next_action: >-
-  Merge or otherwise establish the controlled gg_MATH provider boundary for PR #15,
-  rebind this row if the merge SHA differs from the current exact head, then execute
-  an independent ABACUS/DOW consumer challenge before any bounded QPS consumption.
+  Pin this exact CODEX bridge revision from ABACUS/DOW, independently reproduce the C01-C07
+  temporal-PCA geometry and multi-clock semantics without importing gg_MATH kernels, emit a
+  typed DOW receipt, and compare the result against the provider envelope. Promote Cycle 2 only
+  if the independent consumer is green with zero authority inversion.
 lineage:
   provider_contract_pr: GBOGEB/gg_MATH#14
   provider_runtime_pr: GBOGEB/gg_MATH#15
-  qps_policy_pr: GBOGEB/pipeline-automation-hub#134
-  created_by: ChatGPT_federation_extension
+  provider_grandmission_pr: GBOGEB/gg_MATH#18
+  qps_w256_integration_pr: GBOGEB/cryoplant-project#1364
+  qps_w257_grandmission_binding_pr: GBOGEB/cryoplant-project#1366
+  qps_3p_ral_pr: GBOGEB/cryoplant-project#1368
