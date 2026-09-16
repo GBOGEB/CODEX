@@ -1,17 +1,24 @@
-schema: codex.keb.gg_math_temporal_pca_binding.v1
+schema: codex.keb.gg_math_temporal_pca_binding.v2
 binding_id: KEB-GG-MATH-LM10-W4-P31-001
-as_of: '2026-09-16T21:04:00+02:00'
-state: DEFER_PROVIDER_PR_OPEN
+keb_item_id: KEB-ITEM-0257
+as_of: '2026-09-16T22:10:00+02:00'
+state: ACCEPT_PROVIDER_RUNTIME_BOUND
+semantic_owner: CODEX/KEB
+status: ACCEPT
 object_type: KEB_SOURCE_RECEIPT
 source_repo: GBOGEB/gg_MATH
 source_pr: 15
-source_sha: a99d7cacd03ed3a392c063a1b3f8dbffdba0d060
-source_locator: https://github.com/GBOGEB/gg_MATH/actions/runs/35138061040
-source_workflow_run_id: 35138061040
-source_artifact_id: 10463873089
+source_sha: 513e4f7e06d1316512c820715b6eb41f3f9a066f
+provider_tested_head_sha: a99d7cacd03ed3a392c063a1b3f8dbffdba0d060
+provider_tree_sha: c011176164ea2d90e9aead9291946c96f3606fdf
+source_locator: https://github.com/GBOGEB/gg_MATH/actions/runs/35138067439
+source_workflow_run_id: 35138067439
+source_workflow_job_id: 104935342799
+source_artifact_id: 10463852915
 source_artifact_name: lm10-w4-temporal-pca-a99d7cacd03ed3a392c063a1b3f8dbffdba0d060
-source_artifact_digest: sha256:af9d6535128a969d249a910b70a23e1f809656b199fc02e40fca95db910ff0e6
-source_contract_merge_sha: 3317dd7ed5438ef327aae8b371b867fd2a9382e2
+source_artifact_digest: sha256:876c55c759de33392985f693f1735cdc0d38dda7d7b7a6c80ee80aee33fd8405
+source_digest: sha256:876c55c759de33392985f693f1735cdc0d38dda7d7b7a6c80ee80aee33fd8405
+source_contract_merge_sha: 513e4f7e06d1316512c820715b6eb41f3f9a066f
 provider_receipt_schema: gg-math-lm10-w4-temporal-pca-receipt/v1
 provider_runtime_result: PASS
 provider_challenges:
@@ -38,24 +45,33 @@ evidence_class: REFERENCE_PLUS_DETERMINISTIC_SYNTHETIC_CHALLENGE
 authority_cap: A3_SYNTHETIC_ONLY
 hard_gate_compensation_allowed: false
 authority_transfer: false
-replay_status: DEFER
-validation_result: DEFER_PROVIDER_PR_OPEN
+formal_credit_delta: 0
+replay_status: PASS
+validation_result: PASS_EXACT_MERGED_PROVIDER_AND_RUNTIME_ARTIFACT_BOUND
 downstream_consumer: GBOGEB/ABACUS/DOW
 bounded_final_consumer: GBOGEB/cryoplant-project/QPS_TRIAGE
 promotion_guards:
-  - source_sha_must_equal_provider_merged_sha_or_be_rebound_after_merge
-  - artifact_digest_must_be_preserved_exactly
-  - DOW_independent_challenge_required_before_QPS_consumption
+  - provider_merge_sha_is_exact_and_immutable_for_this_receipt
+  - provider_tested_head_and_tree_are_preserved_separately_from_merge_sha
+  - artifact_digest_must_remain_sha256_876c55c759de33392985f693f1735cdc0d38dda7d7b7a6c80ee80aee33fd8405
+  - DOW_independent_challenge_required_before_KNOWLEDGE_ATOM_promotion
   - QPS_must_not_treat_PCA_loading_sign_as_policy_direction
   - signed_effect_attenuation_must_remain_distinct_from_direction_reversal
   - synthetic_reference_evidence_cannot_promote_engineering_acceptance_or_formal_credit
   - authority_transfer_must_remain_false
 next_action: >-
-  Merge or otherwise establish the controlled gg_MATH provider boundary for PR #15,
-  rebind this row if the merge SHA differs from the current exact head, then execute
-  an independent ABACUS/DOW consumer challenge before any bounded QPS consumption.
+  ABACUS/DOW shall independently consume this exact CODEX/KEB binding, prove all
+  C01-C07 and diagnostic guards fail closed, and return an exact-SHA receipt.
+  Only then may CODEX promote KEB-ITEM-0257 from KEB_SOURCE_RECEIPT to
+  KEB_KNOWLEDGE_ATOM.
 lineage:
+  chat_session: 2026-09-16-grandmission-i-b-temporal-pca
+  originating_prompt: do_next_i_b_keb_closure
+  created_by: ChatGPT_federation_extension
   provider_contract_pr: GBOGEB/gg_MATH#14
   provider_runtime_pr: GBOGEB/gg_MATH#15
-  qps_policy_pr: GBOGEB/pipeline-automation-hub#134
-  created_by: ChatGPT_federation_extension
+  qps_consumer_pr: GBOGEB/cryoplant-project#1364
+  qps_mission_binding_pr: GBOGEB/cryoplant-project#1366
+  qps_lossless_closure_pr: GBOGEB/cryoplant-project#1367
+  grandmission: GRANDMISSION-I-B-TEMPORAL-PCA-FEDERATION
+  reserved_missions_untouched: [II, III, IV, V]
