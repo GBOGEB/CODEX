@@ -7,13 +7,15 @@
   "source_locator": "https://github.com/GBOGEB/gg_MATH/actions/runs/35138067439",
   "source_digest": "sha256:876c55c759de33392985f693f1735cdc0d38dda7d7b7a6c80ee80aee33fd8405",
   "replay_status": "PASS",
-  "validation_result": "PASS_INDEPENDENT_DOW_EXACT_LIVE_A3_SYNTHETIC_ONLY",
+  "validation_result": "PASS_INDEPENDENT_NUMERIC_DOW_CYCLE2_A3_SYNTHETIC_ONLY",
   "downstream_consumer": "GBOGEB/cryoplant-project/QPS_TRIAGE",
-  "next_action": "Reference this atom by keb_item_id plus source_digest for bounded diagnostic consumption; reopen only on provider, federation, DOW-proof, schema, or interpretation-guard regression. This atom grants no engineering, negotiation, acceptance, release, or runtime-GOLD credit.",
+  "next_action": "Reference this atom by keb_item_id plus source_digest for bounded diagnostic consumption; reopen only on provider, federation, source-bound DOW, independent-numeric DOW, schema, or interpretation-guard regression. This atom grants no engineering, negotiation, acceptance, release, or runtime-GOLD credit.",
   "lineage": {
     "chat_session": "2026-09-16-grandmission-i-b-keb-closure",
     "originating_prompt": "gg_MATH receipt SHA+digest -> KEB atom, not QPS-only consumer knowledge",
-    "created_by": "ChatGPT_federation_extension"
+    "created_by": "ChatGPT_federation_extension",
+    "grandmission": "GRANDMISSION-I-B-TEMPORAL-PCA-FEDERATION",
+    "reserved_missions_untouched": ["II", "III", "IV", "V"]
   },
   "atom_subject": "TEMPORAL_PCA_MULTICLOCK_ALIGNMENT_AND_ATTENUATION_SEMANTICS",
   "evidence_class": "REFERENCE_PLUS_DETERMINISTIC_SYNTHETIC_CHALLENGE",
@@ -48,7 +50,7 @@
     "federation_receipt_digest": "sha256:84a2869fca566eb14879e85b5777af8027c6aa096c3bcc746f8eb838b69ac053",
     "result": "PASS"
   },
-  "independent_dow_validation": {
+  "source_bound_dow_validation": {
     "repo": "GBOGEB/ABACUS",
     "pr": 1252,
     "exact_head_sha": "ff7f3b4b5c8c830a2b956c7f04462a9341559f35",
@@ -58,6 +60,31 @@
     "artifact_id": 10466506978,
     "artifact_digest": "sha256:3598d5b46baf614d0cef6f318b2fbb3160913c32d84920e0edf5a36f960d2cf9",
     "result": "PASS_EXACT_HEAD_FAIL_CLOSED_LINEAGE_VALIDATION",
+    "unrelated_broad_suite_reds_compensated": false
+  },
+  "independent_numeric_reproduction": {
+    "repo": "GBOGEB/ABACUS",
+    "pr": 1253,
+    "exact_head_sha": "6996ba7d6bb6d4de78a8f92b57a2449e8a962600",
+    "merge_sha": "a599fb84966540cb855100dd737d5192dcd106ca",
+    "merged_tree_sha": "6a3e32fbb9badb38590bb5f055ebb23744a94c73",
+    "workflow_run_id": 35145310042,
+    "workflow_job_id": 104959692832,
+    "artifact_id": 10467346012,
+    "artifact_digest": "sha256:e20b4899046361620569034370dca973b7addce34046cd55b95b18a2f3a0fc79",
+    "receipt_sha256": "4011256f1e3b17270924705b04d3a2c3d33336ac597b5d2c45243ae78bfea72f",
+    "result": "PASS_INDEPENDENT_C01_C07_7_OF_7",
+    "independent_implementation": true,
+    "imports_gg_math": false,
+    "challenge_pass_count": 7,
+    "challenge_total": 7,
+    "independent_consumer_count": 1,
+    "independent_reproduction_pass_ratio": 1.0,
+    "producer_consumer_numeric_delta_max": 5.551115123125783e-16,
+    "producer_consumer_numeric_delta_tolerance": 1e-7,
+    "schema_parity": 1.0,
+    "receipt_concordance": 1.0,
+    "authority_inversion_count": 0,
     "unrelated_broad_suite_reds_compensated": false
   },
   "authority_guards": {
