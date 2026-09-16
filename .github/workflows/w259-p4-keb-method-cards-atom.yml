@@ -1,0 +1,37 @@
+name: W259 P4 KEB Method Cards Atom
+
+on:
+  pull_request:
+    paths:
+      - 'ssot/bridge_rows/gg_math_method_cards_w259_p4_knowledge_atom.json'
+      - 'ssot/bridge_rows/gg_math_method_cards_w259_p4_source_receipt.json'
+      - 'scripts/validate_w259_p4_method_cards_knowledge_atom.py'
+      - '.github/workflows/w259-p4-keb-method-cards-atom.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'ssot/bridge_rows/gg_math_method_cards_w259_p4_knowledge_atom.json'
+      - 'ssot/bridge_rows/gg_math_method_cards_w259_p4_source_receipt.json'
+      - 'scripts/validate_w259_p4_method_cards_knowledge_atom.py'
+      - '.github/workflows/w259-p4-keb-method-cards-atom.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-knowledge-atom:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assert exact checkout head
+        run: test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+      - name: Validate promoted KEB atom
+        run: |
+          python scripts/validate_w259_p4_method_cards_knowledge_atom.py \
+            --out artifacts/w259-p4-keb-method-cards-atom-validation.json
+      - name: Upload validation receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: w259-p4-keb-method-cards-atom-validation
+          path: artifacts/w259-p4-keb-method-cards-atom-validation.json
+          if-no-files-found: error
