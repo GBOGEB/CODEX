@@ -1,0 +1,39 @@
+{
+  "schema": "leg5-726-tooling-disposition/1.0",
+  "issue": 726,
+  "items": {
+    "A_local_pre_push_validation_mission_control": {
+      "disposition": "ALREADY_COVERED",
+      "current_entrypoint": "scripts/validate_all.py",
+      "remote_binding": ".github/workflows/validate-federation.yml",
+      "design_candidate": "docs/reports/Local_PrePush_Validation_Mission_Control_Design_Candidate.md",
+      "decision": "Do not create a parallel validation authority or GUI in this slice. The repository-native validation runner remains the reusable gate entrypoint; any future UI must wrap it and preserve non-authority semantics."
+    },
+    "B_windows_scout_deep_paths_permissions": {
+      "disposition": "ACCEPT",
+      "historical_evidence": "docs/reports/Windows_Repository_Census_Path_Length_and_Permission_Failure_Tooling_Evidence.md",
+      "implementation": "scripts/bounded_filesystem_scout.py",
+      "tests": "tests/test_bounded_filesystem_scout.py",
+      "contract": {
+        "roots_are_explicit_and_bounded": true,
+        "permission_failures_are_recorded": true,
+        "path_too_long_failures_are_recorded": true,
+        "partial_scan_never_reports_complete": true,
+        "skip_plus_record_noncritical_failures": true,
+        "windows_long_path_native_prefix_supported": true,
+        "read_only": true,
+        "authority": "DISCOVERY_RECEIPT_ONLY"
+      }
+    },
+    "C_onedrive_vs_local_git_workspace": {
+      "disposition": "ALREADY_COVERED",
+      "governance": "07_ops/qps_roundtrip/README.md",
+      "initializer": "07_ops/qps_roundtrip/Initialize-QpsWorkspace.ps1",
+      "inventory": "07_ops/qps_roundtrip/Get-QpsLegacyBinaryInventory.ps1",
+      "decision": "Keep Git repositories/build workspaces outside OneDrive; configure evidence/release roots through environment variables or parameters; do not hard-code personal tenant paths in governed tooling."
+    }
+  },
+  "formal_credit_delta": 0,
+  "authority_transfer": false,
+  "runtime_gold_compensation": false
+}
