@@ -1,0 +1,93 @@
+{
+  "schema": "federation-metric-semantics/1.0",
+  "scope": "LEG5 currentness disposition for federation GETI, PCI, and expansion_factor",
+  "authority": {
+    "engineering_authority": false,
+    "control_authority": false,
+    "historical_txt_authority": false
+  },
+  "aggregation": {
+    "implementation": "src/qplant_presentation_engine/federation_rollup.py",
+    "members_symbol": "MEMBERS",
+    "weights_symbol": "DEFAULT_WEIGHTS",
+    "formula": "federation_metric = round(sum(DEFAULT_WEIGHTS[member] * repo_metric[member]), 6)",
+    "missing_member_behavior": "FAIL_CLOSED_FederationRollupError"
+  },
+  "metrics": {
+    "geti": {
+      "name": "Governance/Engineering Target Index",
+      "value_domain": [0.0, 1.0],
+      "current_semantic_status": "AGGREGATE_ONLY",
+      "per_repo_value_sources": "metrics/repo/*_metrics.json",
+      "primitive_formula": null,
+      "primitive_population_contract": null,
+      "promotion_to_semantically_bound_allowed": false,
+      "required_for_promotion": [
+        "primitive_definition",
+        "accepted_input_population",
+        "formula_and_version",
+        "source_provenance",
+        "range_and_missing_evidence_semantics",
+        "executable_regeneration_receipt"
+      ]
+    },
+    "pci": {
+      "name": "Project Completeness Index",
+      "value_domain": [0.0, 1.0],
+      "current_semantic_status": "AGGREGATE_ONLY",
+      "per_repo_value_sources": "metrics/repo/*_metrics.json",
+      "primitive_formula": null,
+      "primitive_population_contract": null,
+      "promotion_to_semantically_bound_allowed": false,
+      "required_for_promotion": [
+        "primitive_definition",
+        "accepted_input_population",
+        "formula_and_version",
+        "source_provenance",
+        "range_and_missing_evidence_semantics",
+        "executable_regeneration_receipt"
+      ]
+    },
+    "expansion_factor": {
+      "name": "Expansion Factor",
+      "value_domain": null,
+      "current_semantic_status": "AGGREGATE_ONLY",
+      "per_repo_value_sources": "metrics/repo/*_metrics.json",
+      "primitive_formula": null,
+      "primitive_population_contract": null,
+      "promotion_to_semantically_bound_allowed": false,
+      "required_for_promotion": [
+        "primitive_definition",
+        "accepted_input_population",
+        "formula_and_version",
+        "source_provenance",
+        "range_and_missing_evidence_semantics",
+        "executable_regeneration_receipt"
+      ]
+    }
+  },
+  "dashboard_status_bands": {
+    "implementation": "dashboards/w008_governance_dashboard.py::_federation_status",
+    "semantic_class": "PRESENTATION_ONLY",
+    "control_authority": false,
+    "rules": [
+      {
+        "label": "HEALTHY",
+        "condition": "geti >= 0.80 and pci >= 0.80"
+      },
+      {
+        "label": "DEGRADED",
+        "condition": "geti >= 0.70 and pci >= 0.70"
+      },
+      {
+        "label": "CRITICAL",
+        "condition": "otherwise"
+      }
+    ]
+  },
+  "disposition": {
+    "historical_claim": "federation arithmetic exists but primitive GETI/PCI semantic lineage is unbound",
+    "current_result": "CONFIRMED_AGGREGATE_ONLY",
+    "formal_credit_delta": 0
+  }
+}
