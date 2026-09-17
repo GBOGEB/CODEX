@@ -1,0 +1,91 @@
+schema: codex.qps_v6_publication_lane.v0.1
+as_of: '2026-09-17T03:20:00+02:00'
+state: AUTHORITY_CLASSIFIED_IMPLEMENTATION_PENDING
+mission: HM-01
+parent_qps_issue: GBOGEB/cryoplant-project#1379
+codex_issue: GBOGEB/CODEX#753
+authority_transfer: false
+formal_credit_delta: 0
+pins:
+  QPS_main: d631428507dd94154e8af58b60908c57e99d8a35
+  CODEX_main: 5a89655c6273e63f0828f36ca4b35b0e88b5701a
+  ABACUS_main: f869ab56f4898e54b9db8bb8d334a3133e5a3e4a
+canonical_publication_path:
+  workflow: .github/workflows/pages.yml
+  classification: CANONICAL_QPS_V6_PUBLICATION_GATE
+  trigger:
+    primary: workflow_run_Runtime_Release_Gate_success_on_main
+    manual: workflow_dispatch
+  exact_head_checkout: true
+  runtime_evidence_generation: true
+  manifest_check: true
+  glob_check: true
+  stale_check: true
+  link_check: true
+  pytest_gate: true
+  pages_artifact_stage: docs_plus_outputs
+  deploy_action: actions/deploy-pages@v4
+  rationale: >-
+    This workflow binds publication to a successful Runtime Release Gate head,
+    rebuilds/verifies runtime evidence and validates manifest/glob/stale/link/test
+    conditions before staging the GitHub Pages artifact.
+competing_deployers:
+  - workflow: .github/workflows/static.yml
+    classification: LEGACY_MANUAL_NONAUTHORITATIVE_FOR_QPS_V6
+    trigger: workflow_dispatch
+    risk: WHOLE_REPOSITORY_UPLOAD_TO_PAGES
+    qps_v6_disposition: DO_NOT_USE_FOR_QPS_V6_PUBLICATION
+  - workflow: .github/workflows/deploy_pipeline.yml
+    classification: LEGACY_G5_MANUAL_NONAUTHORITATIVE_FOR_QPS_V6
+    trigger: workflow_dispatch
+    risk: MANUAL_PARALLEL_DEPLOY_TO_SAME_GITHUB_PAGES_ENVIRONMENT
+    qps_v6_disposition: DO_NOT_USE_FOR_QPS_V6_PUBLICATION
+  - workflow: .github/workflows/jekyll-gh-pages.yml
+    classification: LEGACY_JEKYLL_MANUAL_NONAUTHORITATIVE_FOR_QPS_V6
+    trigger: workflow_dispatch
+    risk: MANUAL_PARALLEL_DEPLOY_TO_SAME_GITHUB_PAGES_ENVIRONMENT
+    qps_v6_disposition: DO_NOT_USE_FOR_QPS_V6_PUBLICATION
+publication_contract:
+  input_class: SANITIZED_PUBLISHABLE_QPS_PROJECTION_ONLY
+  private_qps_source_ingress: FORBIDDEN_WITHOUT_EXPLICIT_PUBLICATION_CLASSIFICATION
+  required_identity_fields:
+    - qps_release_id
+    - qps_sha
+    - codex_sha
+    - abacus_sha
+    - missioncontrol_attestation
+    - ssot_digest
+    - schema
+    - publication_class
+    - evidence_state
+  required_navigation:
+    - START_HERE
+    - CURRENT_RELEASE
+    - PROVENANCE
+    - QA_DOV
+    - DOWNLOADS_OR_LOCAL_BUILD
+    - FEDERATION
+    - CARRY_FORWARD_BD
+receipt_contract:
+  fields:
+    - release_id
+    - source_sha
+    - workflow
+    - run_id
+    - deployment_id
+    - pages_artifact_digest
+    - publication_class
+    - link_check_state
+    - stale_check_state
+    - downstream_disposition
+  return_to: [HM-01, GBOGEB/cryoplant-project#1379]
+noncompensation:
+  - PAGES_PASS_NE_QPS_RUNTIME_GOLD
+  - CODEX_CI_PASS_NE_QPS_ENGINEERING_CREDIT
+  - GENERATED_HTML_NE_QPS_SSOT
+  - QPS_923_REMAINS_INDEPENDENT
+next:
+  - ADD_QPS_V6_RELEASE_IDENTITY_TO_STAGED_SITE
+  - ENSURE_ONLY_CANONICAL_PATH_IS_USED_FOR_QPS_V6_DEPLOYMENT
+  - RUN_RELEASE_BOUND_PUBLICATION_PROOF
+  - RETURN_MACHINE_READABLE_PUBLICATION_RECEIPT
