@@ -1,0 +1,31 @@
+name: LEG5 Federation Metric Semantics
+
+on:
+  pull_request:
+    paths:
+      - "controls/FEDERATION_METRIC_SEMANTICS_v1.json"
+      - "scripts/validate_federation_metric_semantics.py"
+      - "src/qplant_presentation_engine/federation_rollup.py"
+      - "dashboards/w008_governance_dashboard.py"
+      - "metrics/repo/*_metrics.json"
+      - "metrics/federation/federation_rollup.json"
+      - ".github/workflows/leg5-federation-metric-semantics.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  semantic-lineage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Validate federation metric semantic contract
+        run: python scripts/validate_federation_metric_semantics.py
