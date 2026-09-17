@@ -1,0 +1,28 @@
+name: LEG5 Bounded Filesystem Scout Proof
+
+on:
+  pull_request:
+    paths:
+      - "scripts/bounded_filesystem_scout.py"
+      - "tests/test_bounded_filesystem_scout.py"
+      - "controls/LEG5_726_TOOLING_DISPOSITION_v1.json"
+      - ".github/workflows/leg5-bounded-filesystem-scout.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install pytest
+        run: python -m pip install pytest
+      - name: Run bounded scout tests
+        run: python -m pytest -q tests/test_bounded_filesystem_scout.py
