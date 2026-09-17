@@ -1,0 +1,26 @@
+name: W213 Federation Metric Lineage Proof
+
+on:
+  pull_request:
+    paths:
+      - 'metrics/federation/federation_metric_lineage_v1.json'
+      - 'tests/test_federation_metric_lineage_contract.py'
+      - '.github/workflows/w213-federation-metric-lineage.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  metric-lineage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install bounded test dependency
+        run: python -m pip install 'pytest==8.3.5'
+      - name: Prove aggregate lineage and fail-closed authority semantics
+        run: python -m pytest -q tests/test_federation_metric_lineage_contract.py
