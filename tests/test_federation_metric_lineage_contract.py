@@ -1,23 +1,37 @@
 """Currentness tests for the federation metric semantic-lineage contract.
 
 These tests deliberately distinguish arithmetic aggregation from primitive metric
-meaning.  A weighted rollup can be numerically reproducible while the upstream
+meaning. A weighted rollup can be numerically reproducible while the upstream
 semantic formula that produced each repository scalar remains unbound.
+
+The bounded proof loads ``federation_rollup.py`` directly from its repository
+path. This avoids importing the unrelated top-level ``src`` package and keeps
+this proof scoped to the metric implementation under test.
 """
 from __future__ import annotations
 
+import importlib.util
 import json
 from pathlib import Path
-
-from src.qplant_presentation_engine.federation_rollup import (
-    DEFAULT_WEIGHTS,
-    MEMBERS,
-    FederationRollup,
-)
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT_PATH = ROOT / "metrics" / "federation" / "federation_metric_lineage_v1.json"
 ROLLUP_PATH = ROOT / "metrics" / "federation" / "federation_rollup.json"
+ROLLUP_MODULE_PATH = ROOT / "src" / "qplant_presentation_engine" / "federation_rollup.py"
+
+
+def _load_rollup_module():
+    spec = importlib.util.spec_from_file_location("w213_federation_rollup", ROLLUP_MODULE_PATH)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+_ROLLUP = _load_rollup_module()
+DEFAULT_WEIGHTS = _ROLLUP.DEFAULT_WEIGHTS
+MEMBERS = _ROLLUP.MEMBERS
+FederationRollup = _ROLLUP.FederationRollup
 
 
 def _load(path: Path) -> dict:
