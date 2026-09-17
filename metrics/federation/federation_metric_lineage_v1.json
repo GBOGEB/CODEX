@@ -1,0 +1,79 @@
+{
+  "schema": "codex.federation.metric_lineage.v1",
+  "status": "CONTROLLED_CURRENTNESS_CONTRACT",
+  "source_issue": "GBOGEB/CODEX#727",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "population": {
+    "kind": "fixed_federation_member_set",
+    "members": [
+      "ABACUS",
+      "ARTSTYLE",
+      "QPLANT",
+      "CODEX",
+      "GEMINI",
+      "ANTHROPIC"
+    ],
+    "weights": {
+      "ABACUS": 0.28,
+      "ARTSTYLE": 0.16,
+      "QPLANT": 0.20,
+      "CODEX": 0.16,
+      "GEMINI": 0.10,
+      "ANTHROPIC": 0.10
+    },
+    "weight_sum_required": 1.0,
+    "missing_member_policy": "FAIL_CLOSED"
+  },
+  "metrics": {
+    "geti": {
+      "display_name": "Governance/Engineering Target Index",
+      "range": [0.0, 1.0],
+      "aggregate_formula": "sum(weight[member] * repo_value[member].geti)",
+      "aggregate_formula_version": "federation_rollup.py:v1",
+      "aggregate_implementation": "src/qplant_presentation_engine/federation_rollup.py::FederationRollup._weighted_scalar",
+      "primitive_semantic_formula": null,
+      "primitive_semantic_state": "UNBOUND_UPSTREAM",
+      "input_population_state": "BOUND_TO_CURRENT_FEDERATION_MEMBER_SET",
+      "current_disposition": "AGGREGATE_ONLY"
+    },
+    "pci": {
+      "display_name": "Project Completeness Index",
+      "range": [0.0, 1.0],
+      "aggregate_formula": "sum(weight[member] * repo_value[member].pci)",
+      "aggregate_formula_version": "federation_rollup.py:v1",
+      "aggregate_implementation": "src/qplant_presentation_engine/federation_rollup.py::FederationRollup._weighted_scalar",
+      "primitive_semantic_formula": null,
+      "primitive_semantic_state": "UNBOUND_UPSTREAM",
+      "input_population_state": "BOUND_TO_CURRENT_FEDERATION_MEMBER_SET",
+      "current_disposition": "AGGREGATE_ONLY"
+    },
+    "expansion_factor": {
+      "display_name": "Expansion Factor",
+      "range": null,
+      "aggregate_formula": "sum(weight[member] * repo_value[member].expansion_factor)",
+      "aggregate_formula_version": "federation_rollup.py:v1",
+      "aggregate_implementation": "src/qplant_presentation_engine/federation_rollup.py::FederationRollup._weighted_scalar",
+      "primitive_semantic_formula": null,
+      "primitive_semantic_state": "UNBOUND_UPSTREAM",
+      "input_population_state": "BOUND_TO_CURRENT_FEDERATION_MEMBER_SET",
+      "current_disposition": "AGGREGATE_ONLY"
+    }
+  },
+  "status_bands": {
+    "source": "dashboards/w008_governance_dashboard.py::_federation_status",
+    "healthy": "geti >= 0.80 and pci >= 0.80",
+    "degraded": "geti >= 0.70 and pci >= 0.70",
+    "critical": "otherwise",
+    "authority": "DISPLAY_DERIVED_ONLY",
+    "missing_or_unbound_semantics_policy": "WITHHOLD_STATUS",
+    "rule": "Dashboard health labels shall not be treated as governed control state while any required primitive metric semantics are UNBOUND_UPSTREAM."
+  },
+  "currentness": {
+    "aggregate_arithmetic": "BOUND_AND_TESTABLE",
+    "primitive_metric_semantics": "WITHHELD_UNBOUND_UPSTREAM",
+    "health_status_authority": "WITHHELD_UNTIL_PRIMITIVE_SEMANTICS_BOUND",
+    "canonical_gt_credit": "NONE",
+    "runtime_gold_compensation": false
+  }
+}
