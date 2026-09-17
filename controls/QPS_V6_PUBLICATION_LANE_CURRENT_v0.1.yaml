@@ -1,21 +1,22 @@
 schema: codex.qps_v6_publication_lane.v0.1
-as_of: '2026-09-17T03:20:00+02:00'
-state: AUTHORITY_CLASSIFIED_IMPLEMENTATION_PENDING
+as_of: '2026-09-17T06:07:00+02:00'
+state: AUTHORITY_REPAIRED_PUBLICATION_PROOF_WITHHELD_COMPETING_WRITERS
 mission: HM-01
 parent_qps_issue: GBOGEB/cryoplant-project#1379
 codex_issue: GBOGEB/CODEX#753
 authority_transfer: false
 formal_credit_delta: 0
 pins:
-  QPS_main: d631428507dd94154e8af58b60908c57e99d8a35
-  CODEX_main: 5a89655c6273e63f0828f36ca4b35b0e88b5701a
-  ABACUS_main: f869ab56f4898e54b9db8bb8d334a3133e5a3e4a
+  QPS_main_observed: e9f6c78e0627da5c0a74768aa17bfca59ac8c932
+  CODEX_source_base: 4a767ceb5da89a86aad6c502618e9c84fb675719
+  ABACUS_main_observed: 79f00e6ba5b33e6ed62a95061a141288a178041c
+  MissionControl_master_observed: 283cdd84828cc81c21ad12b27a52a944f832ecee
 canonical_publication_path:
   workflow: .github/workflows/pages.yml
   classification: CANONICAL_QPS_V6_PUBLICATION_GATE
   trigger:
     primary: workflow_run_Runtime_Release_Gate_success_on_main
-    manual: workflow_dispatch
+    manual: REMOVED_FOR_QPS_V6_AUTHORITY_REPAIR
   exact_head_checkout: true
   runtime_evidence_generation: true
   manifest_check: true
@@ -25,26 +26,46 @@ canonical_publication_path:
   pytest_gate: true
   pages_artifact_stage: docs_plus_outputs
   deploy_action: actions/deploy-pages@v4
-  rationale: >-
-    This workflow binds publication to a successful Runtime Release Gate head,
-    rebuilds/verifies runtime evidence and validates manifest/glob/stale/link/test
-    conditions before staging the GitHub Pages artifact.
+  authority_repair:
+    pr_review_finding: REMOVE_UNGATED_MANUAL_PATH
+    disposition: REPAIRED_ON_CANDIDATE_BRANCH
+    rule: >-
+      The canonical QPS v6 Pages workflow may deploy only a successful Runtime Release Gate
+      push on main and must checkout that workflow-run head SHA. Manual workflow_dispatch is
+      not an alternative release-authority path.
 competing_deployers:
   - workflow: .github/workflows/static.yml
     classification: LEGACY_MANUAL_NONAUTHORITATIVE_FOR_QPS_V6
     trigger: workflow_dispatch
-    risk: WHOLE_REPOSITORY_UPLOAD_TO_PAGES
+    risk: WHOLE_REPOSITORY_UPLOAD_TO_SHARED_PAGES_ROOT
     qps_v6_disposition: DO_NOT_USE_FOR_QPS_V6_PUBLICATION
   - workflow: .github/workflows/deploy_pipeline.yml
     classification: LEGACY_G5_MANUAL_NONAUTHORITATIVE_FOR_QPS_V6
     trigger: workflow_dispatch
-    risk: MANUAL_PARALLEL_DEPLOY_TO_SAME_GITHUB_PAGES_ENVIRONMENT
+    risk: MANUAL_PARALLEL_DEPLOY_TO_SHARED_PAGES_ROOT
     qps_v6_disposition: DO_NOT_USE_FOR_QPS_V6_PUBLICATION
   - workflow: .github/workflows/jekyll-gh-pages.yml
     classification: LEGACY_JEKYLL_MANUAL_NONAUTHORITATIVE_FOR_QPS_V6
     trigger: workflow_dispatch
-    risk: MANUAL_PARALLEL_DEPLOY_TO_SAME_GITHUB_PAGES_ENVIRONMENT
+    risk: MANUAL_PARALLEL_DEPLOY_TO_SHARED_PAGES_ROOT
     qps_v6_disposition: DO_NOT_USE_FOR_QPS_V6_PUBLICATION
+  - workflow: .github/workflows/pages_deploy_runtime.yml
+    classification: RUNTIME_MANUAL_NONAUTHORITATIVE_FOR_QPS_V6
+    trigger: workflow_dispatch
+    risk: MANUAL_RUNTIME_ARTIFACT_DEPLOY_TO_SHARED_PAGES_ROOT
+    qps_v6_disposition: DO_NOT_USE_FOR_QPS_V6_PUBLICATION
+  - workflow: .github/workflows/abacus-multiformat-publication.yml
+    classification: ABACUS_MULTIFORMAT_NONAUTHORITATIVE_FOR_QPS_V6
+    trigger: push_main_after_candidate_validation
+    risk: AUTOMATIC_PARALLEL_DEPLOY_TO_SHARED_PAGES_ROOT
+    qps_v6_disposition: MUST_BE_GUARDED_OR_SEPARATELY_NAMESPACED_BEFORE_QPS_V6_PUBLICATION_PROOF
+pages_root_census:
+  deploy_pages_workflows_observed: 6
+  canonical_count: 1
+  competing_count: 5
+  shared_concurrency_group: pages
+  concurrency_is_authority: false
+  publication_conflict_state: OPEN_UNTIL_COMPETING_WRITERS_CANNOT_OVERWRITE_QPS_V6_AUTHORITY
 publication_contract:
   input_class: SANITIZED_PUBLISHABLE_QPS_PROJECTION_ONLY
   private_qps_source_ingress: FORBIDDEN_WITHOUT_EXPLICIT_PUBLICATION_CLASSIFICATION
@@ -79,13 +100,20 @@ receipt_contract:
     - stale_check_state
     - downstream_disposition
   return_to: [HM-01, GBOGEB/cryoplant-project#1379]
+publication_proof:
+  state: WITHHELD
+  reason:
+    - QPS_V6_SANITIZED_PROJECTION_NOT_YET_RELEASE_BOUND
+    - COMPETING_SHARED_PAGES_WRITERS_NOT_YET_GUARDED
+    - NO_CANONICAL_RELEASE_BOUND_DEPLOYMENT_RECEIPT_RETURNED
 noncompensation:
   - PAGES_PASS_NE_QPS_RUNTIME_GOLD
   - CODEX_CI_PASS_NE_QPS_ENGINEERING_CREDIT
   - GENERATED_HTML_NE_QPS_SSOT
   - QPS_923_REMAINS_INDEPENDENT
+  - R3_NOT_EXECUTED_NE_PUBLICATION_READY
 next:
-  - ADD_QPS_V6_RELEASE_IDENTITY_TO_STAGED_SITE
-  - ENSURE_ONLY_CANONICAL_PATH_IS_USED_FOR_QPS_V6_DEPLOYMENT
-  - RUN_RELEASE_BOUND_PUBLICATION_PROOF
+  - GUARD_OR_NAMESPACE_NONAUTHORITATIVE_SHARED_PAGES_WRITERS
+  - ADD_QPS_V6_RELEASE_IDENTITY_TO_SANITIZED_STAGED_SITE
+  - RUN_RELEASE_BOUND_PUBLICATION_PROOF_ONLY_AFTER_R3_RELEASE_PRODUCT_IDENTITY_EXISTS
   - RETURN_MACHINE_READABLE_PUBLICATION_RECEIPT
