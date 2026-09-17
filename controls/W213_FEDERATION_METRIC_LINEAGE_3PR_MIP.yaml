@@ -1,97 +1,70 @@
-schema: codex.w213.3pr-mip/1.0
-status: ACTIVE_BOUNDED_PROOF
+schema: codex.w213.3pr-mip/1.1
+status: SUPERSEDED_EXECUTION_DETECTED_CLOSEOUT_REQUIRED
 repo: GBOGEB/CODEX
 issue: 727
-pull_request: 758
-base_main_sha: 9e96687a4c61bdc1a1df677f68d5091fe393e766
-current_branch: w213-federation-metric-semantic-lineage
-initial_target_head: 9fb5c7c8bfb778bb466a46cfb413e9a373375078
+working_pr: 758
+working_branch: w213-federation-metric-semantic-lineage
+working_head_before_closeout: 9bf0e137d0884277447437cc39ab53894d2c58b5
+canonical_implementation_pr: 757
+canonical_merge: 9d58ff03dc1e02a8ccf5407954b39a2e3370ce00
+post_merge_main_observed: 64a8f8b7cb721c7ebf8b35ad4c5e8ef7705df0e0
+canonical_hosted_proof:
+  run: 35240790647
+  job: 105268387238
+  result: PASS
 
 three_pr:
   REFRESH:
     state: PASS
-    observed:
-      - current CODEX main refreshed at 9e96687a4c61bdc1a1df677f68d5091fe393e766
-      - issue 727 remains open and explicitly requests semantic lineage rather than aggregate arithmetic alone
-      - PR 758 is the bounded implementation lane for the current first red
-      - current federation rollup fixes the member set and weights and computes weighted scalar aggregation
-      - current W008 dashboard derives HEALTHY/DEGRADED/CRITICAL bands from GETI and PCI thresholds
-    result: CURRENT_STATE_BOUND
+    result: >-
+      Concurrent canonical implementation was discovered after PR758 was opened: PR757 is already merged on main and binds the same semantic-lineage gap with a machine-readable contract, fail-closed validator, and hosted PASS.
   PROBE:
-    state: PASS_WITH_NAMED_FAILURE
-    evidence:
-      targeted_run: 35241084484
-      job: 105269392279
-      runner_id: 1000302316
+    state: PASS
+    canonical_truth:
+      aggregate_status: AGGREGATE_ONLY
+      primitive_semantics: UNBOUND
+      dashboard_status_bands: PRESENTATION_ONLY
+      formal_credit_delta: 0
+    working_lane_observation:
+      first_targeted_run: 35241084484
+      first_targeted_job: 105269392279
+      runner_admitted: true
       steps_gt_zero: true
-      application_step_executed: true
       result: FAIL_TEST_COLLECTION_UNRELATED_PACKAGE_DEPENDENCY
-      first_observed_failure: ModuleNotFoundError requests via src.__init__ -> github_interface
-    interpretation: >-
-      The first hosted run is valid execution evidence because the runner was admitted and the target step executed.
-      The failure is test-harness coupling to unrelated top-level package imports, not evidence against federation metric arithmetic or lineage semantics.
+      first_failure: ModuleNotFoundError requests via src.__init__ -> github_interface
+      bounded_harness_repair_commit: 64d819bbc28d3d43c731ea170876c8e77fce7dc0
+    conclusion: >-
+      The working lane is duplicate implementation scope. Its first hosted failure is real harness evidence but cannot displace the already-merged canonical PR757 PASS.
   RANK:
     state: PASS
     order:
-      - {rank: 0, item: repair_bounded_test_import_surface, state: EXECUTED_IN_BRANCH}
-      - {rank: 1, item: rerun_exact_W213_targeted_proof, state: WAIT_HOSTED_RESULT}
-      - {rank: 2, item: bind_exact_green_receipt_and_merge_PR758_if_clean, state: BLOCKED_ON_RANK_1}
-      - {rank: 3, item: close_or_disposition_CODEX_727, state: BLOCKED_ON_MERGE}
+      - {rank: 0, item: preserve_PR757_as_canonical_semantic_lineage_authority, state: DONE}
+      - {rank: 1, item: close_PR758_unmerged_as_superseded_duplicate, state: REQUIRED}
+      - {rank: 2, item: preserve_3PR_MIP_closeout_pointer_only, state: REQUIRED}
+      - {rank: 3, item: return_LEG5_burndown_to_next_unclosed_route, state: READY}
     guards:
-      - aggregate arithmetic PASS does not imply primitive semantic formula bound
-      - dashboard health labels are not control authority
-      - no runtime GOLD compensation
-      - no canonical Golden Thread credit
-      - authority_transfer false
-
-three_pc:
-  PREPARE:
-    state: PASS
-    actions:
-      - bind fixed federation population and weights
-      - bind current weighted-scalar implementation path
-      - bind current W008 status-band implementation path
-      - encode primitive semantics as explicitly UNBOUND_UPSTREAM
-  PROVE:
-    state: ACTIVE
-    target: tests/test_federation_metric_lineage_contract.py
-    workflow: .github/workflows/w213-federation-metric-lineage.yml
-    proof_scope:
-      - population matches runtime constants
-      - scalar rollup reproduces current governed aggregate values
-      - primitive semantic formulas remain explicitly unbound
-      - display status is fail-closed for control authority
-    prior_run: 35241084484
-    prior_failure_class: TEST_HARNESS_IMPORT_COUPLING
-  COMMIT:
-    state: WAIT_TARGETED_GREEN
-    rule: merge only after the bounded W213 workflow passes on the current PR head and no new material defect is observed
+      - no duplicate semantic contract merge
+      - no duplicate validator merge
+      - no aggregate arithmetic promoted to primitive semantic authority
+      - no runtime GOLD or canonical Golden Thread compensation
 
 mip:
   MODERNIZE:
-    state: PASS_BOUNDED
-    actions:
-      - replace implicit metric meaning with a machine-readable lineage contract
-      - separate aggregate arithmetic from primitive semantic meaning
-      - replace package-wide test import with direct module loading so the proof exercises only the implementation under test
+    state: PASS
+    result: >-
+      Repository-native machine-readable semantics and fail-closed validation now exist canonically in PR757; the duplicate PR758 lane is not needed for modernization.
   INNOVATE:
     state: PASS_BOUNDED
-    actions:
-      - make UNBOUND_UPSTREAM an explicit semantic state instead of silently inheriting dashboard labels
-      - define DISPLAY_DERIVED_ONLY status-band authority
-      - force WITHHELD health authority while any required primitive metric semantics remain unbound
-    guards:
-      - no invented GETI PCI or expansion-factor primitive formula
-      - no dashboard percentage promoted to governance truth
-      - no historical metric value promoted to current maturity credit
+    result: >-
+      Preserve the useful distinction discovered by both lanes: deterministic federation aggregation can be proven while primitive GETI/PCI/expansion-factor semantics remain explicitly unbound, and presentation health bands remain non-authoritative.
   PERPETUATE:
-    state: WAIT_TARGETED_GREEN
-    actions_after_green:
-      - bind run_id job_id exact_head and test count in PR 758 and issue 727
-      - merge PR 758 if mergeability remains clean
-      - disposition issue 727 as AGGREGATE_ONLY_CURRENT / PRIMITIVE_SEMANTICS_STILL_UNBOUND
-      - hand next LEG5 route back to QPS downstream-use ledger
-    stop_rule: STOP_AFTER_BOUND_GREEN_MERGE_AND_ISSUE_DISPOSITION_UNLESS_NEW_MATERIAL_STATE_CHANGE
+    state: READY
+    actions:
+      - close_PR758_without_merge
+      - retain_PR757_merge_and_hosted_proof_as_canonical_receipt
+      - bind_this_3PR_MIP_closeout_as_pointer_only_control
+      - return_to_next_LEG5_downstream_route
+    stop_rule: STOP_W213_IMPLEMENTATION_AFTER_DUPLICATE_CLOSEOUT
 
 noncompensation:
   authority_transfer: false
