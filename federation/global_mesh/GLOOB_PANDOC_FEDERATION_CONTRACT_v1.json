@@ -1,0 +1,67 @@
+{
+  "schema": "gbogeb-gloob-pandoc-federation/1.0",
+  "mission": "W286_GLOOB_PANDOC_P1_EXACT_HEAD_PARITY",
+  "producer": {
+    "repo": "GBOGEB/CODEX",
+    "role": "KEB_SEMANTIC_PROVENANCE_RUNTIME",
+    "head_sha": "8b1ad96d1110ede216ec788c822ced5833e287f8"
+  },
+  "consumers": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "role": "DOW_DERIVED_ANALYSIS_CONSUMPTION",
+      "head_sha": "ac8938907a367627014f61effe22c6bf880a7714"
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "role": "CHILD_ENGINEERING_AUTHORITY",
+      "head_sha": "35f53924e3a42e9d8a9df80b0f9dac6ac0f1f2af"
+    },
+    {
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "role": "SOURCE_EXTRACTION_RTM_WORKER",
+      "head_sha": "db8bf4902459d710702dd5debb725eee406a6224"
+    }
+  ],
+  "authority": {
+    "gloob_owns": [
+      "semantic_depth",
+      "lens",
+      "boundary",
+      "BOOK_FLOW_GRAPH_projection_identity"
+    ],
+    "pandoc_owns": [
+      "semantic_conversion",
+      "normalized_AST_fingerprint",
+      "semantic_roundtrip_receipt"
+    ],
+    "must_not": [
+      "transfer_QPS_engineering_authority",
+      "replace_original_source_with_derived_extraction",
+      "treat_PDF_to_editable_as_lossless",
+      "retire_unique_renderer_capability_before_parity"
+    ],
+    "authority_transfer": false
+  },
+  "fidelity_classes": [
+    "SEMANTIC_EXACT",
+    "SEMANTIC_NEAR",
+    "SEMANTIC_CHANGED",
+    "FROZEN_RENDER",
+    "RECONSTRUCTED_FROM_PDF",
+    "OCR_REQUIRED"
+  ],
+  "retirement_gate": {
+    "required": [
+      "capability_census_complete",
+      "adapter_parity_PASS",
+      "exact_head_receipt_PASS",
+      "authority_preserved",
+      "frozen_render_reproducibility_PASS"
+    ],
+    "default": "KEEP"
+  },
+  "p1_rule": "each consumer must independently bind the producer exact merge SHA and preserve its repo-local authority",
+  "compensation_rule": "later green lanes cannot compensate an earlier hard red",
+  "formal_credit_delta": 0
+}
