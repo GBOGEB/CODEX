@@ -1,0 +1,96 @@
+{
+  "schema": "gbogeb-3pstar-control/1.0",
+  "wave": "W286",
+  "mission": "GLOOB_PANDOC_P1_EXACT_HEAD_PARITY",
+  "three_pr": {
+    "refresh": {
+      "status": "PASS_R2",
+      "evidence": "fresh exact default-branch heads rebound after main drift"
+    },
+    "probe": {
+      "status": "PASS_RED_FOUND",
+      "red": "R1 producer branch stale against advancing main; repo-native GLOOB/Pandoc federation contract absent on fresh head"
+    },
+    "rank": {
+      "status": "PASS",
+      "selected_first_red": "stale producer base repaired; current hard red is producer 3PC Prove queued in GitHub Actions"
+    }
+  },
+  "three_pc": {
+    "prepare": {
+      "status": "PASS",
+      "artifact": "federation/global_mesh/GLOOB_PANDOC_FEDERATION_CONTRACT_v1.json"
+    },
+    "prove": {
+      "status": "BLOCKED_GITHUB_ACTIONS_QUEUED_AFTER_RETRIES",
+      "pr": 771,
+      "head_sha": "9223704e0931cb71ab059a8671eb71e03c84f0cb",
+      "observed_runs": [
+        {
+          "name": "W003 Governance Gate",
+          "run_id": 35359593237,
+          "state": "queued"
+        },
+        {
+          "name": "CI",
+          "run_id": 35359572502,
+          "state": "queued"
+        },
+        {
+          "name": "CODEX Semantic Runtime CI",
+          "run_id": 35359572466,
+          "state": "queued"
+        },
+        {
+          "name": "Validate Federation",
+          "run_id": 35359572544,
+          "state": "queued"
+        }
+      ],
+      "retry_attempts": 2,
+      "rule": "queued is not PASS or FAIL; do not merge or weaken tests"
+    },
+    "commit": {
+      "status": "HOLD_UNTIL_PROVE_PASS"
+    }
+  },
+  "three_p3": {
+    "status": "PREPARED_DRAFT_HOLD",
+    "producer_merge_required": true,
+    "targets": [
+      {
+        "repo": "GBOGEB/ABACUS",
+        "pr": 1283,
+        "status": "DRAFT_HOLD"
+      },
+      {
+        "repo": "GBOGEB/cryoplant-project",
+        "pr": 1504,
+        "status": "DRAFT_HOLD"
+      },
+      {
+        "repo": "GBOGEB/DOCX_RTM_Automation",
+        "pr": 60,
+        "status": "DRAFT_HOLD"
+      }
+    ]
+  },
+  "first_red_history": [
+    {
+      "red": "STALE_EXACT_HEAD_R1",
+      "action": "recreate producer from fresh CODEX main and rebind consumer heads",
+      "result": "REPAIRED"
+    },
+    {
+      "red": "CODEX_771_3PC_PROVE_QUEUED",
+      "action": "observe critical workflows twice; preserve tests; stage downstream draft holds only",
+      "result": "BLOCKED_EXTERNAL_EXECUTION"
+    }
+  ],
+  "mip": {
+    "status": "NOT_ADMITTED",
+    "reason": "3P* 3PC Prove not PASS; sequential rule forbids MIP execution"
+  },
+  "first_red_rule": "repair the first hard red only; do not weaken controls or grant compensating credit",
+  "formal_credit_delta": 0
+}
