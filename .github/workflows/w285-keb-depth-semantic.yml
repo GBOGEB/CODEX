@@ -1,0 +1,26 @@
+name: W285 KEB Federation Depth Semantic Review
+
+on:
+  pull_request:
+    paths:
+      - federation/w285/**
+      - scripts/validate_w285_federation_depth_semantics.py
+      - .github/workflows/w285-keb-depth-semantic.yml
+  push:
+    branches: [main]
+    paths:
+      - federation/w285/**
+      - scripts/validate_w285_federation_depth_semantics.py
+      - .github/workflows/w285-keb-depth-semantic.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  semantic-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute W285 semantic review validator
+        run: python scripts/validate_w285_federation_depth_semantics.py
