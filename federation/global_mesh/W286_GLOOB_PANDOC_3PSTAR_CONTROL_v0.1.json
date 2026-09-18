@@ -1,0 +1,46 @@
+{
+  "schema": "gbogeb-3pstar-control/1.0",
+  "wave": "W286",
+  "mission": "GLOOB_PANDOC_P1_EXACT_HEAD_PARITY",
+  "three_pr": {
+    "refresh": {
+      "status": "PASS",
+      "evidence": "fresh exact default-branch heads bound for CODEX, ABACUS, cryoplant-project and DOCX_RTM_Automation"
+    },
+    "probe": {
+      "status": "PASS_RED_FOUND",
+      "red": "repo-native GLOOB/Pandoc exact-head federation contract absent from current main surfaces"
+    },
+    "rank": {
+      "status": "PASS",
+      "selected_first_red": "missing exact-head producer contract and immutable P1 consumer bindings"
+    }
+  },
+  "three_pc": {
+    "prepare": {
+      "status": "PASS",
+      "artifact": "federation/global_mesh/GLOOB_PANDOC_FEDERATION_CONTRACT_v1.json"
+    },
+    "prove": {
+      "status": "PENDING_PR_CI",
+      "required": [
+        "validator exits 0",
+        "tests pass",
+        "PR head exact SHA observed"
+      ]
+    },
+    "commit": {
+      "status": "HOLD_UNTIL_PROVE_PASS"
+    }
+  },
+  "three_p3": {
+    "status": "HOLD_UNTIL_PRODUCER_MERGE",
+    "targets": [
+      "GBOGEB/ABACUS",
+      "GBOGEB/cryoplant-project",
+      "GBOGEB/DOCX_RTM_Automation"
+    ]
+  },
+  "first_red_rule": "repair the first hard red only; do not weaken controls or grant compensating credit",
+  "formal_credit_delta": 0
+}
