@@ -7,8 +7,8 @@ QPS role boundary: CODEX validates/governs/publishes sanitized projections; it d
 ## Exact pins after administrative merge refresh
 
 - CODEX: `23624e10478e115bcea2613bfcd41c24eb5dea24`
-- QPS: `eeac2b60fc16e5b2131d4054f95da0b0c663cc40`
-- ABACUS: `e7b2f11deac2dc9fe7b77f9622339f184a4234d2`
+- QPS: `bb6f09e90a6af86e2601d3bad706209fa429eadc`
+- ABACUS: `b4094dbabf1bc2d750fdc0803d4ccc25ca5cf524`
 
 ## Existing local preconfiguration
 
