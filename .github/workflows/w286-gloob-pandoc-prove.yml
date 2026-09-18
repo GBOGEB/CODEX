@@ -45,6 +45,6 @@ jobs:
       - name: Run targeted federation regression
         run: python -m pytest -q tests/test_gloob_pandoc_federation.py
       - name: Check semantic vocabulary
-        run: python semantic/validate_semantics.py
+        run: python semantic_substrate/validators/validate_semantic_substrate.py
       - name: Check published artifact registration
         run: python scripts/check_stale.py
