@@ -4,10 +4,19 @@ import json
 import os
 import urllib.error
 import urllib.request
+from pathlib import Path
 from typing import Any
 
 REQUIRED_BUILD_TYPE = "workflow"
 DEFAULT_API_VERSION = "2022-11-28"
+DEFAULT_RECEIPT_PATH = (
+    "abacus_render_pipeline/A9_multiformat_publication/receipts/"
+    "pages_source_mode_receipt.json"
+)
+OWNER_ACTION = "Settings -> Pages -> Build and deployment -> Source: GitHub Actions"
+REENTRY = (
+    "rerun unchanged A9 exact-main proof only after build_type reports 'workflow'"
+)
 
 
 def inspect_pages_site(payload: Any) -> list[str]:
@@ -34,12 +43,49 @@ def inspect_pages_site(payload: Any) -> list[str]:
     ]
 
 
+def build_receipt(
+    repository: str,
+    payload: Any,
+    errors: list[str],
+) -> dict[str, Any]:
+    """Build a lossless machine-readable receipt for federation/TRIAGE consumption."""
+    source = payload.get("source") if isinstance(payload, dict) else None
+    return {
+        "schema_version": "qps-pages-source-mode-receipt/1.0",
+        "repository": repository,
+        "source_sha": os.environ.get("GITHUB_SHA"),
+        "run_id": os.environ.get("GITHUB_RUN_ID"),
+        "run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT"),
+        "required_build_type": REQUIRED_BUILD_TYPE,
+        "observed_build_type": payload.get("build_type") if isinstance(payload, dict) else None,
+        "observed_source_branch": source.get("branch") if isinstance(source, dict) else None,
+        "observed_source_path": source.get("path") if isinstance(source, dict) else None,
+        "status": "PASS" if not errors else "FAIL",
+        "diagnostics": errors,
+        "owner_action_required": bool(errors),
+        "owner_action": OWNER_ACTION if errors else None,
+        "reentry": REENTRY if errors else None,
+        "formal_credit_delta": 0,
+        "authority_transfer": False,
+    }
+
+
+def write_receipt(receipt: dict[str, Any], path: str | Path) -> Path:
+    receipt_path = Path(path)
+    receipt_path.parent.mkdir(parents=True, exist_ok=True)
+    receipt_path.write_text(
+        json.dumps(receipt, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    return receipt_path
+
+
 def fetch_pages_site(repository: str) -> dict[str, Any]:
     url = f"https://api.github.com/repos/{repository}/pages"
     headers = {
         "Accept": "application/vnd.github+json",
         "X-GitHub-Api-Version": DEFAULT_API_VERSION,
-        "User-Agent": "CODEX-A9-Pages-Source-Mode-Audit/1.0",
+        "User-Agent": "CODEX-A9-Pages-Source-Mode-Audit/1.1",
     }
     token = os.environ.get("GITHUB_TOKEN")
     if token:
@@ -80,23 +126,36 @@ def audit(repository: str | None = None, payload: Any | None = None) -> list[str
 
 def main() -> int:
     repository = os.environ.get("GITHUB_REPOSITORY", "<unset>")
-    errors = audit(repository=repository if repository != "<unset>" else None)
+    payload: Any = None
+    if repository == "<unset>":
+        errors = ["GITHUB_REPOSITORY is missing; cannot prove GitHub Pages source mode"]
+    else:
+        try:
+            payload = fetch_pages_site(repository)
+            errors = inspect_pages_site(payload)
+        except RuntimeError as exc:
+            errors = [str(exc)]
+
+    receipt = build_receipt(repository, payload, errors)
+    receipt_path = write_receipt(
+        receipt,
+        os.environ.get("PAGES_SOURCE_MODE_RECEIPT", DEFAULT_RECEIPT_PATH),
+    )
+
     if errors:
         print("PAGES SOURCE MODE AUDIT FAILED")
         print(f"repository={repository}")
         for error in errors:
             print(f"- {error}")
-        print(
-            "owner_action=Settings -> Pages -> Build and deployment -> Source: GitHub Actions"
-        )
-        print(
-            "reentry=rerun unchanged A9 exact-main proof only after build_type reports 'workflow'"
-        )
+        print(f"receipt={receipt_path}")
+        print(f"owner_action={OWNER_ACTION}")
+        print(f"reentry={REENTRY}")
         return 1
 
     print("PAGES SOURCE MODE AUDIT PASSED")
     print(f"repository={repository}")
     print(f"required_build_type={REQUIRED_BUILD_TYPE}")
+    print(f"receipt={receipt_path}")
     return 0
 
 
