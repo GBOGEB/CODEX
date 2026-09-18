@@ -1,0 +1,53 @@
+{
+  "schema": "gbogeb-3pstar-control/1.0",
+  "wave": "W286",
+  "mission": "GLOOB_PANDOC_P1_EXACT_HEAD_PARITY",
+  "three_pr": {
+    "refresh": {
+      "status": "PASS_R2",
+      "evidence": "fresh exact default-branch heads rebound after main drift"
+    },
+    "probe": {
+      "status": "PASS_RED_FOUND",
+      "red": "R1 producer branch stale against advancing main; repo-native GLOOB/Pandoc federation contract absent on fresh head"
+    },
+    "rank": {
+      "status": "PASS",
+      "selected_first_red": "stale producer base repaired by exact-head R2 branch; next red is prove/merge"
+    }
+  },
+  "three_pc": {
+    "prepare": {
+      "status": "PASS",
+      "artifact": "federation/global_mesh/GLOOB_PANDOC_FEDERATION_CONTRACT_v1.json"
+    },
+    "prove": {
+      "status": "PENDING_PR_CI",
+      "required": [
+        "validator exits 0",
+        "tests pass",
+        "PR head exact SHA observed"
+      ]
+    },
+    "commit": {
+      "status": "HOLD_UNTIL_PROVE_PASS"
+    }
+  },
+  "three_p3": {
+    "status": "HOLD_UNTIL_PRODUCER_MERGE",
+    "targets": [
+      "GBOGEB/ABACUS",
+      "GBOGEB/cryoplant-project",
+      "GBOGEB/DOCX_RTM_Automation"
+    ]
+  },
+  "first_red_history": [
+    {
+      "red": "STALE_EXACT_HEAD_R1",
+      "action": "rebase by recreating producer from fresh CODEX main and rebinding consumer heads",
+      "result": "REPAIRED"
+    }
+  ],
+  "first_red_rule": "repair the first hard red only; do not weaken controls or grant compensating credit",
+  "formal_credit_delta": 0
+}
