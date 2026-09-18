@@ -1,0 +1,48 @@
+name: W286 GLOOB Pandoc 3PC Prove
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - "federation/global_mesh/**"
+      - "federation/mip/**"
+      - "tools/validate_gloob_pandoc_federation.py"
+      - "tests/test_gloob_pandoc_federation.py"
+      - "PIPELINE/GLOSSARY.yaml"
+      - "MANIFEST.json"
+      - ".github/workflows/w286-gloob-pandoc-prove.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prove:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact proof head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Bind exact head
+        shell: bash
+        run: |
+          set -euo pipefail
+          observed="$(git rev-parse HEAD)"
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          echo "observed_head=$observed"
+          echo "expected_head=$expected"
+          test "$observed" = "$expected"
+      - name: Validate GLOOB Pandoc federation contract
+        run: python tools/validate_gloob_pandoc_federation.py
+      - name: Run targeted federation regression
+        run: python -m pytest -q tests/test_gloob_pandoc_federation.py
+      - name: Check semantic vocabulary
+        run: python semantic/validate_semantics.py
+      - name: Check published artifact registration
+        run: python scripts/check_stale.py
