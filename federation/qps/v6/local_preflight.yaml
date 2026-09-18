@@ -1,0 +1,22 @@
+schema: codex-qps-v6-local-preflight/1.0
+base_sha: 76cfaf7be9776140ff8064f63b406d35b4fd3099
+qps_pin: 48454561de70a8873f8fe2f32e4c9cbf8e31e51b
+abacus_pin: 33de3878ab0e5af0f5061c03844187bfc54a89d9
+observed:
+  python_contract: pyproject.toml
+  python_min: "3.11"
+  lint: "ruff==0.16.6"
+  tests: [pytest, npm_test, validate_all]
+  dockerfile: Dockerfile
+  compose: compose.yaml
+  devcontainer: .devcontainer/devcontainer.json
+  lldb_dap_probe: scripts/lldb_dap_runtime_probe.py
+gaps:
+  - no_root_vscode_launch
+  - no_root_vscode_tasks
+  - no_root_vscode_settings
+  - no_root_cspell
+  - no_root_precommit
+publication_issue: GBOGEB/CODEX#753
+authority_transfer: false
+formal_credit_delta: 0
