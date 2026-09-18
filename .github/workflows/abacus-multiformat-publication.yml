@@ -109,6 +109,7 @@ jobs:
             abacus_render_pipeline/A9_multiformat_publication/outputs/**
             abacus_render_pipeline/A9_multiformat_publication/receipts/multiformat_execution_receipt.json
             abacus_render_pipeline/A9_multiformat_publication/receipts/publication_promotion_receipt.json
+            abacus_render_pipeline/A9_multiformat_publication/receipts/pages_source_mode_receipt.json
 
       - name: Package governed Pages candidate for real deployment
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
