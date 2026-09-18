@@ -4,11 +4,11 @@ Parent: `GBOGEB/cryoplant-project#1379`
 Publication issue: `GBOGEB/CODEX#753`  
 QPS role boundary: CODEX validates/governs/publishes sanitized projections; it does not own QPS engineering or bidder disposition.
 
-## Exact pins at creation
+## Exact pins after administrative merge refresh
 
-- CODEX: `76cfaf7be9776140ff8064f63b406d35b4fd3099`
-- QPS: `48454561de70a8873f8fe2f32e4c9cbf8e31e51b`
-- ABACUS: `33de3878ab0e5af0f5061c03844187bfc54a89d9`
+- CODEX: `23624e10478e115bcea2613bfcd41c24eb5dea24`
+- QPS: `eeac2b60fc16e5b2131d4054f95da0b0c663cc40`
+- ABACUS: `e7b2f11deac2dc9fe7b77f9622339f184a4234d2`
 
 ## Existing local preconfiguration
 
