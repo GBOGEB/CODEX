@@ -1,0 +1,78 @@
+schema_version: "qps-triage-3pstar-mip-receipt/1.0"
+as_of: "2026-09-18T16:52:00+02:00"
+repository: GBOGEB/CODEX
+method: 3PSTAR_THEN_MIP
+wave: DEVELOPMENT_TO_FEDERATION_TO_QPS_TRIAGE
+status: EXACT_HEAD_VALIDATION_PENDING
+formal_credit_delta: 0
+authority_transfer: false
+
+three_pr:
+  refresh:
+    branch_base_sha: 79182c85ee34738f73b1789a6762cfb01debcb2a
+    inherited_guard: scripts/check_pages_source_mode.py
+    inherited_stop_rule: WAIT_OWNER_PAGES_SOURCE_MODE_CHANGE
+  probe:
+    method: >-
+      Preserve the fail-closed live GitHub Pages API probe inside exact-main A9.
+      Do not infer owner administration state from historical receipts or HTTP 200.
+    historical_first_red:
+      run: 34940362309
+      job: 104287428761
+      observed_build_type: legacy
+      observed_source: main:/docs
+  rank:
+    p0_gate: PAGES_SOURCE_MODE_OWNERSHIP
+    reason: >-
+      It is the first non-compensating publication gate before rendering, deploy-pages,
+      hosted hash parity, repeated convergence, and atomic promotion.
+
+mip:
+  modernize: >-
+    Convert the existing console-only source-mode audit into a machine-readable
+    receipt while preserving the same required build_type=workflow predicate.
+  innovate: >-
+    Carry exact observed build type, branch/path, source SHA, run lineage, owner
+    action, re-entry rule, and zero-credit boundary in one runtime receipt.
+  perpetuate: >-
+    Upload the source-mode receipt from A9 even when the fail-closed guard stops
+    execution before rendering, and regression-test legacy and workflow modes.
+
+three_pc:
+  prepare:
+    branch: triage/3pstar-mip-pages-source-receipt-20260918
+    changed_surfaces:
+      - scripts/check_pages_source_mode.py
+      - tests/test_pages_source_mode.py
+      - .github/workflows/abacus-multiformat-publication.yml
+      - federation/receipts/TRIAGE_3PSTAR_MIP_PAGES_SOURCE_OBSERVABILITY_v0.1.yaml
+  prove:
+    required:
+      - ABACUS Multi-Format Publication PR lane PASS
+      - source-mode receipt regression tests PASS
+      - repository Pages concurrency audit PASS
+      - federation validation PASS when triggered
+      - governance and semantic gates remain unchanged
+  commit:
+    rule: >-
+      Merge only exact-head proof. Then inspect exactly one exact-main A9 execution.
+      If live build_type remains legacy, retry the failed exact-main job at most two
+      times to exclude a transient API/state race, then STOP on the owner-admin gate.
+      If build_type is workflow, continue through the unchanged hosted closure chain.
+
+non_compensating_boundaries:
+  - DEBT-007 remains PARTIAL until full hosted Pages closure passes.
+  - DEBT-008 remains CLOSED; A10 is not reopened.
+  - No new publication carrier or temporal-policy framework is introduced.
+  - Candidate or PR success cannot replace live exact-main source-mode proof.
+  - deploy-pages success or HTTP 200 cannot replace governed hash and content parity.
+  - formal_credit_delta remains zero until the existing closure predicate earns promotion.
+
+closure_chain:
+  - build_type workflow
+  - candidate PASS
+  - deploy-pages PASS
+  - hosted governed hash and content parity PASS
+  - second consecutive exact hosted match PASS
+  - independent repeated convergence PASS
+  - atomic PROMOTE
