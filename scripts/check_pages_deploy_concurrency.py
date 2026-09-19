@@ -44,23 +44,29 @@ def _deploy_steps(job: Any) -> list[str]:
 
 
 def _pages_write_enabled(value: Any) -> bool:
-    return isinstance(value, dict) and str(value.get("pages", "")).lower() == "write"
+    if isinstance(value, str):
+        return value.strip().lower() == "write-all"
+    if isinstance(value, dict):
+        return str(value.get("pages", "")).strip().lower() == "write"
+    return False
 
 
 def audit(workflows_dir: Path = WORKFLOWS) -> list[str]:
     errors: list[str] = []
     canonical_deployers = 0
 
+    canonical_path = (workflows_dir / "pages.yml").resolve()
+
     for path in sorted(list(workflows_dir.glob("*.yml")) + list(workflows_dir.glob("*.yaml"))):
         raw = path.read_text(encoding="utf-8", errors="replace")
-        if DEPLOY_ACTION_PREFIX not in raw and "pages: write" not in raw:
-            continue
-
         label = _display_path(path)
         try:
             doc = YAML_PARSER.load(raw) or {}
         except YAMLError as exc:
-            errors.append(f"{label}: Pages ownership YAML parse failed: {exc}")
+            # Fail closed only when the malformed file advertises a Pages-sensitive surface.
+            raw_lower = raw.lower()
+            if DEPLOY_ACTION_PREFIX in raw or "permissions:" in raw_lower or "pages:" in raw_lower:
+                errors.append(f"{label}: Pages ownership YAML parse failed: {exc}")
             continue
         if not isinstance(doc, dict):
             errors.append(f"{label}: Pages ownership YAML root is not a mapping")
@@ -84,7 +90,8 @@ def audit(workflows_dir: Path = WORKFLOWS) -> list[str]:
             if isinstance(job, dict)
         )
 
-        if label != CANONICAL_WORKFLOW:
+        is_canonical = path.resolve() == canonical_path
+        if not is_canonical:
             if deploy_jobs:
                 for job_name, _job, actions in deploy_jobs:
                     errors.append(
