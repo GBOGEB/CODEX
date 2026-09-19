@@ -5,10 +5,12 @@ from pathlib import Path
 from typing import Any
 
 from ruamel.yaml import YAML
+from ruamel.yaml.error import YAMLError
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOWS = ROOT / ".github" / "workflows"
-DEPLOY_ACTION = "actions/deploy-pages@v4"
+DEPLOY_ACTION_PREFIX = "actions/deploy-pages@"
+CANONICAL_WORKFLOW = ".github/workflows/pages.yml"
 REQUIRED_GROUP = "pages"
 YAML_PARSER = YAML(typ="safe")
 
@@ -29,68 +31,114 @@ def _group(value: Any) -> str | None:
     return None
 
 
-def _job_uses_deploy_pages(job: Any) -> bool:
+def _deploy_steps(job: Any) -> list[str]:
     if not isinstance(job, dict):
-        return False
+        return []
+    found: list[str] = []
     for step in job.get("steps", []) or []:
-        if isinstance(step, dict) and str(step.get("uses", "")).startswith(DEPLOY_ACTION):
-            return True
+        if isinstance(step, dict):
+            uses = str(step.get("uses", ""))
+            if uses.startswith(DEPLOY_ACTION_PREFIX):
+                found.append(uses)
+    return found
+
+
+def _pages_write_enabled(value: Any) -> bool:
+    if isinstance(value, str):
+        return value.strip().lower() == "write-all"
+    if isinstance(value, dict):
+        return str(value.get("pages", "")).strip().lower() == "write"
     return False
 
 
 def audit(workflows_dir: Path = WORKFLOWS) -> list[str]:
     errors: list[str] = []
-    deployer_count = 0
+    canonical_deployers = 0
+
+    canonical_path = (workflows_dir / "pages.yml").resolve()
+
     for path in sorted(list(workflows_dir.glob("*.yml")) + list(workflows_dir.glob("*.yaml"))):
         raw = path.read_text(encoding="utf-8", errors="replace")
-        # This is a Pages-ownership audit, not a general workflow-YAML linter.
-        # Parse failures remain fail-closed only for files that can deploy the
-        # shared Pages endpoint; unrelated legacy workflow syntax is out of scope.
-        if DEPLOY_ACTION not in raw:
-            continue
         label = _display_path(path)
         try:
             doc = YAML_PARSER.load(raw) or {}
-        except Exception as exc:  # pragma: no cover - surfaced as audit failure
-            errors.append(f"{label}: Pages-deployer YAML parse failed: {exc}")
+        except YAMLError as exc:
+            # Fail closed only when the malformed file advertises a Pages-sensitive surface.
+            raw_lower = raw.lower()
+            if DEPLOY_ACTION_PREFIX in raw or "permissions:" in raw_lower or "pages:" in raw_lower:
+                errors.append(f"{label}: Pages ownership YAML parse failed: {exc}")
             continue
         if not isinstance(doc, dict):
-            errors.append(f"{label}: Pages-deployer YAML root is not a mapping")
+            errors.append(f"{label}: Pages ownership YAML root is not a mapping")
             continue
 
-        top_group = _group(doc.get("concurrency"))
         jobs = doc.get("jobs", {}) or {}
         if not isinstance(jobs, dict):
-            errors.append(f"{label}: Pages-deployer jobs block is not a mapping")
+            errors.append(f"{label}: jobs block is not a mapping")
             continue
 
-        deploy_jobs = [(name, job) for name, job in jobs.items() if _job_uses_deploy_pages(job)]
-        if not deploy_jobs:
-            errors.append(f"{label}: contains {DEPLOY_ACTION} but no parseable deploy-pages job")
-            continue
-        deployer_count += len(deploy_jobs)
+        deploy_jobs = []
+        for job_name, job in jobs.items():
+            actions = _deploy_steps(job)
+            if actions:
+                deploy_jobs.append((job_name, job, actions))
 
-        for job_name, job in deploy_jobs:
+        top_pages_write = _pages_write_enabled(doc.get("permissions"))
+        job_pages_write = any(
+            _pages_write_enabled(job.get("permissions"))
+            for job in jobs.values()
+            if isinstance(job, dict)
+        )
+
+        is_canonical = path.resolve() == canonical_path
+        if not is_canonical:
+            if deploy_jobs:
+                for job_name, _job, actions in deploy_jobs:
+                    errors.append(
+                        f"{label}::{job_name}: non-canonical workflow may not deploy shared Pages "
+                        f"(actions={actions!r}); canonical={CANONICAL_WORKFLOW}"
+                    )
+            if top_pages_write or job_pages_write:
+                errors.append(
+                    f"{label}: non-canonical workflow may not hold pages:write permission; "
+                    f"canonical={CANONICAL_WORKFLOW}"
+                )
+            continue
+
+        canonical_deployers += len(deploy_jobs)
+        if len(deploy_jobs) != 1:
+            errors.append(
+                f"{label}: canonical workflow must contain exactly one deploy-pages job, "
+                f"observed={len(deploy_jobs)}"
+            )
+        if not (top_pages_write or job_pages_write):
+            errors.append(f"{label}: canonical workflow is missing pages:write permission")
+
+        top_group = _group(doc.get("concurrency"))
+        for job_name, job, _actions in deploy_jobs:
             job_group = _group(job.get("concurrency")) if isinstance(job, dict) else None
             if REQUIRED_GROUP not in {top_group, job_group}:
                 errors.append(
-                    f"{label}::{job_name}: deploy-pages job is outside shared "
-                    f"concurrency group '{REQUIRED_GROUP}' (top={top_group!r}, job={job_group!r})"
+                    f"{label}::{job_name}: canonical deploy-pages job is outside "
+                    f"concurrency group {REQUIRED_GROUP!r}"
                 )
 
-    if deployer_count == 0:
-        errors.append("no actions/deploy-pages@v4 jobs found; audit cannot prove Pages ownership topology")
+    if canonical_deployers != 1:
+        errors.append(
+            f"canonical Pages writer count must be exactly 1; observed={canonical_deployers}"
+        )
     return errors
 
 
 def main() -> int:
     errors = audit()
     if errors:
-        print("PAGES DEPLOYMENT CONCURRENCY AUDIT FAILED")
+        print("PAGES SINGLE-WRITER OWNERSHIP AUDIT FAILED")
         for error in errors:
             print(f"- {error}")
         return 1
-    print("PAGES DEPLOYMENT CONCURRENCY AUDIT PASSED")
+    print("PAGES SINGLE-WRITER OWNERSHIP AUDIT PASSED")
+    print(f"canonical_workflow={CANONICAL_WORKFLOW}")
     print(f"required_group={REQUIRED_GROUP}")
     return 0
 

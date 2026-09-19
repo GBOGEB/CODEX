@@ -9,7 +9,16 @@ from scripts.check_pages_deploy_concurrency import audit
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_all_pages_deployers_share_repository_concurrency_boundary() -> None:
+def _canonical(version: str = "v4") -> str:
+    return (
+        "permissions:\n  contents: read\n  pages: write\n  id-token: write\n"
+        "concurrency:\n  group: pages\n"
+        "jobs:\n  deploy:\n    steps:\n"
+        f"      - uses: actions/deploy-pages@{version}\n"
+    )
+
+
+def test_repository_has_exactly_one_canonical_pages_writer() -> None:
     result = subprocess.run(
         [sys.executable, "scripts/check_pages_deploy_concurrency.py"],
         cwd=ROOT,
@@ -20,29 +29,66 @@ def test_all_pages_deployers_share_repository_concurrency_boundary() -> None:
     assert result.returncode == 0, result.stdout + result.stderr
 
 
-def test_unrelated_malformed_workflow_is_out_of_scope(tmp_path: Path) -> None:
-    (tmp_path / "unrelated.yml").write_text("jobs:\n  broken: [\n", encoding="utf-8")
-    (tmp_path / "pages.yml").write_text(
-        "concurrency:\n  group: pages\njobs:\n  deploy:\n    steps:\n"
-        "      - uses: actions/deploy-pages@v4\n",
-        encoding="utf-8",
-    )
+def test_canonical_writer_is_accepted(tmp_path: Path) -> None:
+    (tmp_path / "pages.yml").write_text(_canonical(), encoding="utf-8")
     assert audit(tmp_path) == []
 
 
-def test_malformed_pages_deployer_fails_closed(tmp_path: Path) -> None:
+def test_deploy_pages_v5_is_detected_and_rejected_outside_canonical(tmp_path: Path) -> None:
+    (tmp_path / "pages.yml").write_text(_canonical(), encoding="utf-8")
+    (tmp_path / "legacy.yml").write_text(
+        "jobs:\n  deploy:\n    steps:\n      - uses: actions/deploy-pages@v5\n",
+        encoding="utf-8",
+    )
+    errors = audit(tmp_path)
+    assert any("non-canonical workflow may not deploy shared Pages" in error for error in errors)
+
+
+def test_noncanonical_pages_write_permission_is_rejected(tmp_path: Path) -> None:
+    (tmp_path / "pages.yml").write_text(_canonical(), encoding="utf-8")
+    (tmp_path / "legacy.yml").write_text(
+        "permissions:\n  contents: read\n  pages: write\njobs:\n  build:\n    steps: []\n",
+        encoding="utf-8",
+    )
+    errors = audit(tmp_path)
+    assert any("may not hold pages:write permission" in error for error in errors)
+
+
+def test_noncanonical_inline_pages_write_permission_is_rejected(tmp_path: Path) -> None:
+    (tmp_path / "pages.yml").write_text(_canonical(), encoding="utf-8")
+    (tmp_path / "legacy.yml").write_text(
+        'permissions: {contents: read, pages: "write"}\njobs:\n  build:\n    steps: []\n',
+        encoding="utf-8",
+    )
+    errors = audit(tmp_path)
+    assert any("may not hold pages:write permission" in error for error in errors)
+
+
+def test_noncanonical_write_all_permission_is_rejected(tmp_path: Path) -> None:
+    (tmp_path / "pages.yml").write_text(_canonical(), encoding="utf-8")
+    (tmp_path / "legacy.yml").write_text(
+        "permissions: write-all\njobs:\n  build:\n    steps: []\n",
+        encoding="utf-8",
+    )
+    errors = audit(tmp_path)
+    assert any("may not hold pages:write permission" in error for error in errors)
+
+
+def test_canonical_writer_without_shared_boundary_is_rejected(tmp_path: Path) -> None:
     (tmp_path / "pages.yml").write_text(
+        "permissions:\n  pages: write\njobs:\n  deploy:\n    steps:\n"
+        "      - uses: actions/deploy-pages@v4\n",
+        encoding="utf-8",
+    )
+    errors = audit(tmp_path)
+    assert any("outside concurrency group" in error for error in errors)
+
+
+def test_malformed_noncanonical_pages_writer_fails_closed(tmp_path: Path) -> None:
+    (tmp_path / "pages.yml").write_text(_canonical(), encoding="utf-8")
+    (tmp_path / "legacy.yml").write_text(
         "jobs:\n  deploy: [\n  # actions/deploy-pages@v4\n",
         encoding="utf-8",
     )
     errors = audit(tmp_path)
-    assert errors and "Pages-deployer YAML parse failed" in errors[0]
-
-
-def test_pages_deployer_without_shared_boundary_is_rejected(tmp_path: Path) -> None:
-    (tmp_path / "pages.yml").write_text(
-        "jobs:\n  deploy:\n    steps:\n      - uses: actions/deploy-pages@v4\n",
-        encoding="utf-8",
-    )
-    errors = audit(tmp_path)
-    assert errors and "outside shared concurrency group 'pages'" in errors[0]
+    assert any("YAML parse failed" in error for error in errors)

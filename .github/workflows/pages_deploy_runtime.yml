@@ -1,19 +1,13 @@
-name: Runtime Pages Deployment
+name: Runtime Pages Candidate
 
 on:
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
 
 jobs:
-  build-runtime-pages:
+  build-runtime-pages-candidate:
     runs-on: ubuntu-latest
 
     steps:
@@ -37,24 +31,14 @@ jobs:
         run: |
           python docs/wave_packages/runtime/runtime_diff_engine.py
 
-      - name: Prepare Pages artifact
+      - name: Prepare non-authoritative candidate
         run: |
           mkdir -p _site/pages _site/out
           cp -r docs/wave_packages/runtime/pages/* _site/pages/
           cp -r docs/wave_packages/runtime/out/* _site/out/
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Upload candidate artifact without Pages deployment authority
+        uses: actions/upload-artifact@v4
         with:
+          name: runtime-pages-candidate-${{ github.sha }}
           path: _site
-
-  deploy:
-    environment:
-      name: github-pages
-    runs-on: ubuntu-latest
-    needs: build-runtime-pages
-
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
