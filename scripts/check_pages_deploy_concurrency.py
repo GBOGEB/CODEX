@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -51,6 +52,18 @@ def _pages_write_enabled(value: Any) -> bool:
     return False
 
 
+def _raw_pages_sensitive(raw: str) -> bool:
+    if DEPLOY_ACTION_PREFIX in raw:
+        return True
+    if re.search(r"(?mi)^\s*permissions\s*:\s*write-all\s*(?:#.*)?$", raw):
+        return True
+    if re.search(r"(?mi)^\s*pages\s*:\s*['\"]?write['\"]?\s*(?:[,}}#].*)?$", raw):
+        return True
+    if re.search(r"(?mi)^\s*permissions\s*:\s*\{{[^\n}}]*\bpages\s*:\s*['\"]?write['\"]?[^\n}}]*\}}", raw):
+        return True
+    return False
+
+
 def audit(workflows_dir: Path = WORKFLOWS) -> list[str]:
     errors: list[str] = []
     canonical_deployers = 0
@@ -63,9 +76,9 @@ def audit(workflows_dir: Path = WORKFLOWS) -> list[str]:
         try:
             doc = YAML_PARSER.load(raw) or {}
         except YAMLError as exc:
-            # Fail closed only when the malformed file advertises a Pages-sensitive surface.
-            raw_lower = raw.lower()
-            if DEPLOY_ACTION_PREFIX in raw or "permissions:" in raw_lower or "pages:" in raw_lower:
+            # Unrelated malformed legacy workflows are outside this ownership audit.
+            # A malformed file that still advertises Pages write/deploy authority fails closed.
+            if _raw_pages_sensitive(raw):
                 errors.append(f"{label}: Pages ownership YAML parse failed: {exc}")
             continue
         if not isinstance(doc, dict):
