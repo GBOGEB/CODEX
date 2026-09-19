@@ -1,23 +1,14 @@
-name: G5 Unified Lifecycle Execution & Deployment Gateway
+name: G5 Unified Lifecycle Execution Candidate
 
 on:
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
 
 jobs:
-  g5-build-and-deploy:
+  g5-build-candidate:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
     - name: Checkout Code Architecture
       uses: actions/checkout@v4
@@ -36,10 +27,7 @@ jobs:
     - name: Execute G5 Master Orchestrator and Bake Artifacts
       run: python orchestrate_g5.py
 
-    - name: Setup Pages
-      uses: actions/configure-pages@v5
-
-    - name: Stage Pages artifact
+    - name: Stage non-authoritative publication candidate
       run: |
         rm -rf _site
         mkdir -p _site
@@ -49,11 +37,8 @@ jobs:
           cp -a outputs/. _site/outputs/
         fi
 
-    - name: Upload Pages artifact
-      uses: actions/upload-pages-artifact@v3
+    - name: Upload candidate artifact without Pages deployment authority
+      uses: actions/upload-artifact@v4
       with:
+        name: g5-publication-candidate-${{ github.sha }}
         path: _site
-
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
