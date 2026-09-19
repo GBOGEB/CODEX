@@ -1,0 +1,37 @@
+schema: codex.gm_i_a_coolprop_fast_heavy_keb_bridge.v1
+mission: GM-I-A
+provider:
+  repo: GBOGEB/CoolProp
+  attestation_commit: a71924147117c02ccc70c9b6436d89623897606c
+  attestation_path: qps/recon/federation/GM_I_A_FAST_HEAVY_FEDERATION_ATTESTATION_v1.json
+  attestation_sha256: 132ff84a3502f5ce39d4698fa772e98f7e8fba8e52587e698e8ea419197e1398
+  source_head_sha: 47cc8dced9278d50714ac39ef0a2edab7458c6a0
+  source_merge_sha: 9d10914924810c26a0d88f8aaea4db03b7a3d38e
+  runtime_run_id: 35424686224
+consumer:
+  repo: GBOGEB/CODEX
+  role: KEB_SEMANTIC_RUNTIME_ECONOMICS_CONSUMER
+  authority_transfer: false
+  formal_credit_delta: 0
+required_semantics:
+  provider_schema: qps.gm_i_a.fast_heavy.federation_attestation.v1
+  mission: GM-I-A
+  lane: L9_FEDERATION
+  workflow_conclusion: success
+  heavy_conclusion: success
+  fast_conclusion: success
+  fast_build_invoked: false
+  fast_source_checkout_performed: false
+  fast_calculations_passed_min: 1
+  authority_scope: COMPATIBILITY_RUNTIME_ONLY
+  engineering_promotion: WITHHELD
+knowledge_atom:
+  object_type: KEB_KNOWLEDGE_ATOM_CANDIDATE
+  topic: FAST_HEAVY_RUNTIME_ECONOMICS
+  claim: SOURCE_BUILD_COST_AND_RUNNER_QUEUE_ARE_DISTINCT_PRESSURES
+  promotion: NON_ENGINEERING_REFERENCE_ONLY
+guards:
+  - EXACT_PROVIDER_COMMIT_AND_DIGEST_REQUIRED
+  - NO_ENGINEERING_PROMOTION
+  - NO_HEPAK_OR_QEQ_AUTHORITY_TRANSFER
+  - ABACUS_BRIDGE_STATE_IS_INDEPENDENT_AND_NON_COMPENSATING
