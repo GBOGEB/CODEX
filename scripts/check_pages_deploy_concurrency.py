@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from ruamel.yaml import YAML
+from ruamel.yaml.error import YAMLError
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOWS = ROOT / ".github" / "workflows"
@@ -58,7 +59,7 @@ def audit(workflows_dir: Path = WORKFLOWS) -> list[str]:
         label = _display_path(path)
         try:
             doc = YAML_PARSER.load(raw) or {}
-        except Exception as exc:
+        except YAMLError as exc:
             errors.append(f"{label}: Pages ownership YAML parse failed: {exc}")
             continue
         if not isinstance(doc, dict):
