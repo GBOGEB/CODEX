@@ -92,3 +92,22 @@ def test_malformed_noncanonical_pages_writer_fails_closed(tmp_path: Path) -> Non
     )
     errors = audit(tmp_path)
     assert any("YAML parse failed" in error for error in errors)
+
+
+def test_unrelated_malformed_workflow_does_not_block_pages_ownership(tmp_path: Path) -> None:
+    (tmp_path / "pages.yml").write_text(_canonical(), encoding="utf-8")
+    (tmp_path / "legacy.yml").write_text(
+        "permissions:\n  contents: read\njobs:\n  build: [\n",
+        encoding="utf-8",
+    )
+    assert audit(tmp_path) == []
+
+
+def test_malformed_write_all_workflow_fails_closed(tmp_path: Path) -> None:
+    (tmp_path / "pages.yml").write_text(_canonical(), encoding="utf-8")
+    (tmp_path / "legacy.yml").write_text(
+        "permissions: write-all\njobs:\n  build: [\n",
+        encoding="utf-8",
+    )
+    errors = audit(tmp_path)
+    assert any("YAML parse failed" in error for error in errors)
