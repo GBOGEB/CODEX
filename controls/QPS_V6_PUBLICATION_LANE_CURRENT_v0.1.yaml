@@ -1,6 +1,6 @@
 schema: codex.qps_v6_publication_lane.v0.1
 as_of: '2026-09-17T06:07:00+02:00'
-state: AUTHORITY_REPAIRED_PUBLICATION_PROOF_WITHHELD_COMPETING_WRITERS
+state: SINGLE_WRITER_FIX_STAGED_PROOF_PENDING
 mission: HM-01
 parent_qps_issue: GBOGEB/cryoplant-project#1379
 codex_issue: GBOGEB/CODEX#753
@@ -60,12 +60,19 @@ competing_deployers:
     risk: AUTOMATIC_PARALLEL_DEPLOY_TO_SHARED_PAGES_ROOT
     qps_v6_disposition: MUST_BE_GUARDED_OR_SEPARATELY_NAMESPACED_BEFORE_QPS_V6_PUBLICATION_PROOF
 pages_root_census:
-  deploy_pages_workflows_observed: 6
-  canonical_count: 1
-  competing_count: 5
+  deploy_pages_workflows_observed_before_fix: 6
+  canonical_count_after_fix: 1
+  competing_count_after_fix: 0
+  canonical_writer: .github/workflows/pages.yml
   shared_concurrency_group: pages
   concurrency_is_authority: false
-  publication_conflict_state: OPEN_UNTIL_COMPETING_WRITERS_CANNOT_OVERWRITE_QPS_V6_AUTHORITY
+  publication_conflict_state: STAGED_SINGLE_WRITER_PROOF_PENDING
+  nonauthoritative_candidate_builders:
+    - .github/workflows/static.yml
+    - .github/workflows/deploy_pipeline.yml
+    - .github/workflows/jekyll-gh-pages.yml
+    - .github/workflows/pages_deploy_runtime.yml
+    - .github/workflows/abacus-multiformat-publication.yml
 publication_contract:
   input_class: SANITIZED_PUBLISHABLE_QPS_PROJECTION_ONLY
   private_qps_source_ingress: FORBIDDEN_WITHOUT_EXPLICIT_PUBLICATION_CLASSIFICATION
@@ -101,10 +108,10 @@ receipt_contract:
     - downstream_disposition
   return_to: [HM-01, GBOGEB/cryoplant-project#1379]
 publication_proof:
-  state: WITHHELD
+  state: WITHHELD_RELEASE_BOUND_DEPLOYMENT_NOT_YET_EXECUTED
+  single_writer_guard: STAGED_PENDING_EXACT_HEAD_CI
   reason:
     - QPS_V6_SANITIZED_PROJECTION_NOT_YET_RELEASE_BOUND
-    - COMPETING_SHARED_PAGES_WRITERS_NOT_YET_GUARDED
     - NO_CANONICAL_RELEASE_BOUND_DEPLOYMENT_RECEIPT_RETURNED
 noncompensation:
   - PAGES_PASS_NE_QPS_RUNTIME_GOLD
@@ -113,7 +120,7 @@ noncompensation:
   - QPS_923_REMAINS_INDEPENDENT
   - R3_NOT_EXECUTED_NE_PUBLICATION_READY
 next:
-  - GUARD_OR_NAMESPACE_NONAUTHORITATIVE_SHARED_PAGES_WRITERS
+  - PROVE_SINGLE_WRITER_GUARD_ON_EXACT_PR_HEAD
   - ADD_QPS_V6_RELEASE_IDENTITY_TO_SANITIZED_STAGED_SITE
   - RUN_RELEASE_BOUND_PUBLICATION_PROOF_ONLY_AFTER_R3_RELEASE_PRODUCT_IDENTITY_EXISTS
   - RETURN_MACHINE_READABLE_PUBLICATION_RECEIPT
