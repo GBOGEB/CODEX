@@ -54,6 +54,26 @@ def test_noncanonical_pages_write_permission_is_rejected(tmp_path: Path) -> None
     assert any("may not hold pages:write permission" in error for error in errors)
 
 
+def test_noncanonical_inline_pages_write_permission_is_rejected(tmp_path: Path) -> None:
+    (tmp_path / "pages.yml").write_text(_canonical(), encoding="utf-8")
+    (tmp_path / "legacy.yml").write_text(
+        'permissions: {contents: read, pages: "write"}\njobs:\n  build:\n    steps: []\n',
+        encoding="utf-8",
+    )
+    errors = audit(tmp_path)
+    assert any("may not hold pages:write permission" in error for error in errors)
+
+
+def test_noncanonical_write_all_permission_is_rejected(tmp_path: Path) -> None:
+    (tmp_path / "pages.yml").write_text(_canonical(), encoding="utf-8")
+    (tmp_path / "legacy.yml").write_text(
+        "permissions: write-all\njobs:\n  build:\n    steps: []\n",
+        encoding="utf-8",
+    )
+    errors = audit(tmp_path)
+    assert any("may not hold pages:write permission" in error for error in errors)
+
+
 def test_canonical_writer_without_shared_boundary_is_rejected(tmp_path: Path) -> None:
     (tmp_path / "pages.yml").write_text(
         "permissions:\n  pages: write\njobs:\n  deploy:\n    steps:\n"
