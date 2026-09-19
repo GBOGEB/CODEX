@@ -111,3 +111,23 @@ def test_malformed_write_all_workflow_fails_closed(tmp_path: Path) -> None:
     )
     errors = audit(tmp_path)
     assert any("YAML parse failed" in error for error in errors)
+
+
+def test_malformed_quoted_write_all_workflow_fails_closed(tmp_path: Path) -> None:
+    (tmp_path / "pages.yml").write_text(_canonical(), encoding="utf-8")
+    (tmp_path / "legacy.yml").write_text(
+        "permissions: 'write-all'\njobs:\n  build: [\n",
+        encoding="utf-8",
+    )
+    errors = audit(tmp_path)
+    assert any("YAML parse failed" in error for error in errors)
+
+
+def test_malformed_truncated_inline_pages_write_fails_closed(tmp_path: Path) -> None:
+    (tmp_path / "pages.yml").write_text(_canonical(), encoding="utf-8")
+    (tmp_path / "legacy.yml").write_text(
+        "permissions: {pages: write\njobs:\n  build: []\n",
+        encoding="utf-8",
+    )
+    errors = audit(tmp_path)
+    assert any("YAML parse failed" in error for error in errors)

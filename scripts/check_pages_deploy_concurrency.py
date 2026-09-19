@@ -53,15 +53,24 @@ def _pages_write_enabled(value: Any) -> bool:
 
 
 def _raw_pages_sensitive(raw: str) -> bool:
-    if DEPLOY_ACTION_PREFIX in raw:
-        return True
-    if re.search(r"(?mi)^\s*permissions\s*:\s*write-all\s*(?:#.*)?$", raw):
-        return True
-    if re.search(r"(?mi)^\s*pages\s*:\s*['\"]?write['\"]?\s*(?:[,}}#].*)?$", raw):
-        return True
-    if re.search(r"(?mi)^\s*permissions\s*:\s*\{{[^\n}}]*\bpages\s*:\s*['\"]?write['\"]?[^\n}}]*\}}", raw):
-        return True
-    return False
+    return (
+        DEPLOY_ACTION_PREFIX in raw
+        or re.search(
+            r"(?mi)^\s*permissions\s*:\s*['\"]?write-all['\"]?\s*(?:#.*)?$",
+            raw,
+        )
+        is not None
+        or re.search(
+            r"(?mi)^\s*pages\s*:\s*['\"]?write['\"]?\s*(?:[,}}#].*)?$",
+            raw,
+        )
+        is not None
+        or re.search(
+            r"(?mi)^\s*permissions\s*:\s*\{[^\n]*\bpages\s*:\s*['\"]?write['\"]?(?:\s*(?:[,}}#].*)?)?$",
+            raw,
+        )
+        is not None
+    )
 
 
 def audit(workflows_dir: Path = WORKFLOWS) -> list[str]:
