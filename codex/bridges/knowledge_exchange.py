@@ -67,6 +67,36 @@ def _require_record_array(request: dict[str, Any], key: str) -> list[dict[str, A
     return value
 
 
+def _validate_source_artifact(record: dict[str, Any], field: str) -> None:
+    if not isinstance(record.get("path"), str) or not record["path"]:
+        raise KnowledgeExchangeError(f"{field}.path must be a non-empty string")
+    if "name" in record and (not isinstance(record["name"], str) or not record["name"]):
+        raise KnowledgeExchangeError(f"{field}.name must be a non-empty string when provided")
+    digest = record.get("sha256")
+    if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
+        raise KnowledgeExchangeError(f"{field}.sha256 must be a lowercase 64-hex digest")
+    if not isinstance(record.get("authority_class"), str) or not record["authority_class"]:
+        raise KnowledgeExchangeError(f"{field}.authority_class must be a non-empty string")
+    if not isinstance(record.get("semantic_change"), bool):
+        raise KnowledgeExchangeError(f"{field}.semantic_change must be boolean")
+
+
+def _source_artifacts(request: dict[str, Any]) -> list[dict[str, Any]]:
+    if "source_artifact" in request and "source_artifacts" in request:
+        raise KnowledgeExchangeError("use source_artifact or source_artifacts, not both")
+    if "source_artifact" in request:
+        artifact = request["source_artifact"]
+        if not isinstance(artifact, dict):
+            raise KnowledgeExchangeError("source_artifact must be an object")
+        return [artifact]
+    if "source_artifacts" in request:
+        artifacts = request["source_artifacts"]
+        if not isinstance(artifacts, list) or not artifacts or not all(isinstance(x, dict) for x in artifacts):
+            raise KnowledgeExchangeError("source_artifacts must be a non-empty object array")
+        return artifacts
+    return []
+
+
 def validate_request(request: dict[str, Any]) -> None:
     required = {
         "payload_version", "exchange_type", "correlation_id", "source",
@@ -101,6 +131,9 @@ def validate_request(request: dict[str, Any]) -> None:
         if sha.startswith("UNKNOWN") or not re.fullmatch(r"[0-9a-f]{40}", sha):
             raise KnowledgeExchangeError("full exchange requires a concrete 40-character source.sha")
 
+    for index, artifact in enumerate(_source_artifacts(request)):
+        _validate_source_artifact(artifact, f"source_artifacts[{index}]")
+
     terms = request["terms"]
     if not isinstance(terms, list) or not terms or not all(isinstance(x, str) and x for x in terms):
         raise KnowledgeExchangeError("terms must be a non-empty string array")
@@ -134,6 +167,7 @@ def run_exchange(request_path: Path, glossary_path: Path, output_path: Path) -> 
     input_hash = _sha256_bytes(raw_request)
     findings: list[dict[str, Any]] = []
     exchanged: dict[str, Any] = {}
+    source_artifacts = _source_artifacts(request)
     stages: list[dict[str, Any]] = [{"stage": "request_validation", "operation": None, "status": "PASS"}]
 
     for operation in request["operations"]:
@@ -168,7 +202,15 @@ def run_exchange(request_path: Path, glossary_path: Path, output_path: Path) -> 
             exchanged["maturity_telemetry"] = request["maturity_telemetry"]
             stages.append({"stage": operation, "operation": operation, "status": "PASS", "metrics": len(request["maturity_telemetry"])})
         elif operation == "lineage_receipt":
-            stages.append({"stage": operation, "operation": operation, "status": "PASS", "source": glossary_ref, "source_sha256": glossary_hash, "child_source_sha": request["source"]["sha"]})
+            stages.append({
+                "stage": operation,
+                "operation": operation,
+                "status": "PASS",
+                "source": glossary_ref,
+                "source_sha256": glossary_hash,
+                "child_source_sha": request["source"]["sha"],
+                "source_artifacts": source_artifacts,
+            })
 
     receipt: dict[str, Any] = {
         "schema": "codex-keb-exchange-receipt/v1",
@@ -176,6 +218,7 @@ def run_exchange(request_path: Path, glossary_path: Path, output_path: Path) -> 
         "exchange_type": "knowledge_exchange",
         "correlation_id": request["correlation_id"],
         "source": request["source"],
+        "source_artifacts": source_artifacts,
         "requested_operations": request["operations"],
         "executed_operations": [stage["operation"] for stage in stages if stage.get("operation")],
         "stages": stages,
