@@ -2,7 +2,7 @@
 
 Status date: 2026-09-21  
 Repository: `GBOGEB/CODEX`  
-Queue baseline: `ab0508b05636c61a9ab8923f0b88df02e591bf17`
+Queue baseline: `ea5efcbbb77827929c055e63af966cd4305ff7f3`
 
 ## Queue rule
 
@@ -19,15 +19,15 @@ Closed/superseded defects are removed from this active queue rather than retaine
 
 | Rank | Issue | State | Current binding | Burn-down predicate |
 |---:|---|---|---|---|
-| 1 | #797 KEB child-disposition return + metrics | FIX_PR | PR #798 | exact-head CI green -> merge -> close child issue |
-| 2 | #500 TRIAGE conversion gate | EXTERNAL_GATE | real builder/evidence execution is local Windows/OneDrive under ABACUS #635 | run real local evidence verification + approved builder A/B through `Invoke-QpsControlledRoundtrip.ps1`; re-enter CODEX only with retained production receipts |
-| 3 | #753 QPS v6 publication lane | EXTERNAL_GATE | single-writer code proof passed; Pages source mode previously observed legacy | owner sets Pages source to GitHub Actions, rerun unchanged proof, then bind release/deployment receipt |
-| 4 | #255 typed KEB maturation | PARENT_CONTROL | #795/#796 burned; #797/#798 is current bounded child | complete return/disposition + metric child, then reassess parent closure against the eight original maturation atoms |
-| 5 | #324 QPS program-focus KEB coverage | PARENT_CONTROL | cross-domain semantic/evidence umbrella | consume child authority/evidence and issue bounded child defects only |
-| 6 | #319 DMAIC wave control | PARENT_CONTROL | live capacity/governance process-control umbrella | update measured wave checkpoints; do not turn metrics into duplicate code debt |
+| 1 | #500 TRIAGE conversion gate | EXTERNAL_GATE | real builder/evidence execution is local Windows/OneDrive under ABACUS #635 | run real local evidence verification + approved builder A/B through `Invoke-QpsControlledRoundtrip.ps1`; re-enter CODEX only with retained production receipts |
+| 2 | #753 QPS v6 publication lane | EXTERNAL_GATE | single-writer code proof passed; Pages source mode previously observed legacy | owner sets Pages source to GitHub Actions, rerun unchanged proof, then bind release/deployment receipt |
+| 3 | #324 QPS program-focus KEB coverage | PARENT_CONTROL | cross-domain semantic/evidence umbrella | consume child authority/evidence and issue bounded child defects only |
+| 4 | #319 DMAIC wave control | PARENT_CONTROL | live capacity/governance process-control umbrella | update measured wave checkpoints; do not turn metrics into duplicate code debt |
 
 ## Burned in this pass
 
+- #797 CLOSED — child disposition return + deterministic federation metrics merged in PR #798 at `04d4e4c...`.
+- #255 CLOSED — all eight original KEB maturation atoms PASS; durable closure receipt in `controls/KEB_MATURATION_255_CLOSURE_20260921.md`.
 - #254 CLOSED — current-source full KEB Wave-02 re-proof run `35582858595` SUCCESS; zero findings; QPS TODO-002 already DONE and dispositioned.
 - #675 CLOSED — Historian debugger/MCP census closed by merged PR #794 at `ab0508b0...`; `NO_ACTIVE_DEBUGGER_DEBT`.
 - #795 CLOSED — typed KEB candidate finding taxonomy + semantic dedup merged in PR #796.
@@ -40,11 +40,11 @@ Closed/superseded defects are removed from this active queue rather than retaine
 
 ## Execution order
 
-`#797 -> PR #798` is the only active repository-local implementation repair.
+There is no active repository-local `FIX_PR` item.
 
 `#500` and `#753` are explicit external gates. Do not substitute hosted synthetic proof for #500 and do not weaken the Pages source-mode validator for #753.
 
-Parent `#255` has one current bounded child (#797/#798). Parent controls `#324/#319` remain non-coding surfaces until a concrete current defect is split out.
+Parent controls `#324/#319` remain non-coding surfaces until a concrete current defect is split out.
 
 ## Stop condition
 
