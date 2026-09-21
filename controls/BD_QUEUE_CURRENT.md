@@ -2,7 +2,7 @@
 
 Status date: 2026-09-21  
 Repository: `GBOGEB/CODEX`  
-Queue baseline: `155e373a943141c6c376fa43d5af21825a6088eb`
+Queue baseline: `ab0508b05636c61a9ab8923f0b88df02e591bf17`
 
 ## Queue rule
 
@@ -19,37 +19,32 @@ Closed/superseded defects are removed from this active queue rather than retaine
 
 | Rank | Issue | State | Current binding | Burn-down predicate |
 |---:|---|---|---|---|
-| 1 | #500 TRIAGE conversion gate | EXTERNAL_GATE | hosted synthetic lane is green-capable, but production builder/evidence execution is local Windows/OneDrive under ABACUS #635 | run real local evidence verification + approved builder A/B through `Invoke-QpsControlledRoundtrip.ps1`; re-enter CODEX only with retained production receipts |
-| 2 | #254 full QPS KEB exchange | PROVE | PR #792 merged at `155e373a...`; exact main workflow run #35582858595 is queued | require Wave-02 run PASS + artifact receipt, then ingest/disposition in cryoplant-project and close |
+| 1 | #797 KEB child-disposition return + metrics | FIX_PR | PR #798 | exact-head CI green -> merge -> close child issue |
+| 2 | #500 TRIAGE conversion gate | EXTERNAL_GATE | real builder/evidence execution is local Windows/OneDrive under ABACUS #635 | run real local evidence verification + approved builder A/B through `Invoke-QpsControlledRoundtrip.ps1`; re-enter CODEX only with retained production receipts |
 | 3 | #753 QPS v6 publication lane | EXTERNAL_GATE | single-writer code proof passed; Pages source mode previously observed legacy | owner sets Pages source to GitHub Actions, rerun unchanged proof, then bind release/deployment receipt |
-| 4 | #675 Historian debugger/MCP CONTROL | PARENT_CONTROL | concrete HIST-BD-014 repaired by #676 | finish historical classification; create repair PR only for surviving current-code debt |
-| 5 | #255 typed KEB maturation | PARENT_CONTROL | executable warm-up mechanics landed #259/#262 | retain as reusable maturation parent; spawn only bounded concrete gaps |
-| 6 | #324 QPS program-focus KEB coverage | PARENT_CONTROL | cross-domain semantic/evidence umbrella | consume child authority/evidence and issue bounded child defects only |
-| 7 | #319 DMAIC wave control | PARENT_CONTROL | capacity/governance process-control umbrella | update measured wave checkpoints; do not turn metrics into duplicate code debt |
+| 4 | #255 typed KEB maturation | PARENT_CONTROL | #795/#796 burned; #797/#798 is current bounded child | complete return/disposition + metric child, then reassess parent closure against the eight original maturation atoms |
+| 5 | #324 QPS program-focus KEB coverage | PARENT_CONTROL | cross-domain semantic/evidence umbrella | consume child authority/evidence and issue bounded child defects only |
+| 6 | #319 DMAIC wave control | PARENT_CONTROL | live capacity/governance process-control umbrella | update measured wave checkpoints; do not turn metrics into duplicate code debt |
 
 ## Burned in this pass
 
-- #741 CLOSED — 2026-09-15 link incident cleared by six consecutive clean scheduled Dashboard Health runs through 2026-09-21.
+- #254 CLOSED — current-source full KEB Wave-02 re-proof run `35582858595` SUCCESS; zero findings; QPS TODO-002 already DONE and dispositioned.
+- #675 CLOSED — Historian debugger/MCP census closed by merged PR #794 at `ab0508b0...`; `NO_ACTIVE_DEBUGGER_DEBT`.
+- #795 CLOSED — typed KEB candidate finding taxonomy + semantic dedup merged in PR #796.
+- #741 CLOSED — dashboard incident cleared by six consecutive clean scheduled runs.
 - #237 CLOSED — reusable package pattern/index helper merged in PR #790.
-- #343 CLOSED — typed KEB child artifact SHA-256/authority/semantic-change lineage merged in PR #789.
-- #256 CLOSED — executable KEB warm-up run completed.
-- #257 CLOSED — warm-up acceptance checklist satisfied.
-- #258 CLOSED — QPS-FED-W01 lane reached CHILD_DISPOSITIONED/CLOSED.
-- #261 CLOSED — runtime-truth defects repaired by #262 and proven in default-branch execution.
-- #492 CLOSED — workflow registration/visibility blocker superseded by #494/#499; remaining zero-delta proof is #500.
-- #780 CLOSED — HIST-BD-022 candidate-only authority repair landed through #781/#785/#786.
+- #343 CLOSED — typed KEB child artifact lineage merged in PR #789.
+- #256/#257/#258/#261 CLOSED — executable KEB warm-up and runtime-truth chain completed.
+- #492 CLOSED — workflow visibility blocker superseded by #494/#499; production execution belongs to #500.
+- #780 CLOSED — HIST-BD-022 authority repair chain completed.
 
 ## Execution order
 
-There is currently no unbound repository-local `FIX_PR` item.
+`#797 -> PR #798` is the only active repository-local implementation repair.
 
-`#254` is the only active CODEX proof lane and is currently waiting on GitHub Actions runner admission for exact main run `35582858595`.
+`#500` and `#753` are explicit external gates. Do not substitute hosted synthetic proof for #500 and do not weaken the Pages source-mode validator for #753.
 
-`#500` is an explicit local Windows/OneDrive external gate, cross-bound to `GBOGEB/ABACUS#635`; do not substitute another hosted synthetic proof.
-
-`#753` is held at the explicit owner/admin gate; do not weaken the validator.
-
-Parent controls `#675/#255/#324/#319` do not consume coding capacity unless they expose a new concrete current-code defect.
+Parent `#255` has one current bounded child (#797/#798). Parent controls `#324/#319` remain non-coding surfaces until a concrete current defect is split out.
 
 ## Stop condition
 
