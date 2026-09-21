@@ -55,6 +55,8 @@ jobs:
           assert re.fullmatch(r'[0-9a-f]{40}', req['source']['sha'])
           assert not req['source']['sha'].startswith('UNKNOWN')
           assert rec['source'] == req['source']
+          assert rec['source_artifacts'] == [req['source_artifact']]
+          assert rec['source_artifacts'][0]['semantic_change'] is False
           assert rec['requested_operations'] == req['operations']
           assert rec['executed_operations'] == req['operations']
           assert rec['exchanged']['adr_index'] == req['adr_index']
