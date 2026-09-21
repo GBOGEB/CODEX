@@ -25,8 +25,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install governed YAML dependency
-        run: python -m pip install "ruamel.yaml==0.18.16" "ruamel.yaml.clib==0.2.15"
+      - name: Install validator runtime dependencies
+        run: python -m pip install --disable-pip-version-check --no-cache-dir 'ruamel.yaml>=0.18,<0.19'
       - name: Fetch immutable CoolProp provider attestation
         run: |
           curl --fail --location --silent --show-error             "https://raw.githubusercontent.com/GBOGEB/CoolProp/${PROVIDER_COMMIT}/${PROVIDER_PATH}"             --output /tmp/gm_i_a_provider.json
