@@ -54,7 +54,8 @@ def validate(data: dict | None = None) -> dict:
 
     consumers_list = data.get("consumers")
     require(isinstance(consumers_list, list), "consumers must be a list")
-    consumers = {x.get("repo"): x for x in consumers_list if isinstance(x, dict)}
+    require(all(isinstance(x, dict) for x in consumers_list), "consumer entries must be mappings")
+    consumers = {x.get("repo"): x for x in consumers_list}
     require(set(consumers) == set(REQUIRED_REPOS), "consumer repo set mismatch")
     for repo, role in REQUIRED_REPOS.items():
         require(consumers[repo].get("role") == role, f"consumer role mismatch: {repo}")
