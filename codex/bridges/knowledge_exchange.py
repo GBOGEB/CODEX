@@ -31,6 +31,16 @@ DISPOSITIONS = {
     "DEFER_PENDING_SOURCE",
     "DUPLICATE_EXISTING_WORK",
 }
+FINDING_TYPES = {
+    "GLOSSARY_DRIFT",
+    "SEMANTIC_DRIFT",
+    "MISSING_TRACE",
+    "CONFLICT",
+    "DUPLICATE",
+    "MISSING_EVIDENCE",
+    "PRIORITY_SIGNAL",
+    "GENERIC_IMPROVEMENT",
+}
 
 
 class KnowledgeExchangeError(ValueError):
@@ -97,6 +107,70 @@ def _source_artifacts(request: dict[str, Any]) -> list[dict[str, Any]]:
     return []
 
 
+def _candidate_findings(request: dict[str, Any]) -> list[dict[str, Any]]:
+    candidates = request.get("candidate_findings", [])
+    if not isinstance(candidates, list) or not all(isinstance(x, dict) for x in candidates):
+        raise KnowledgeExchangeError("candidate_findings must be an object array")
+    required = (
+        "finding_type",
+        "subject",
+        "source_reference",
+        "target_ocd_or_adr",
+        "proposed_action",
+        "authority_level",
+    )
+    for index, candidate in enumerate(candidates):
+        field = f"candidate_findings[{index}]"
+        finding_type = candidate.get("finding_type")
+        if finding_type not in FINDING_TYPES:
+            raise KnowledgeExchangeError(
+                f"{field}.finding_type must be one of {', '.join(sorted(FINDING_TYPES))}"
+            )
+        for key in required[1:]:
+            if not isinstance(candidate.get(key), str) or not candidate[key]:
+                raise KnowledgeExchangeError(f"{field}.{key} must be a non-empty string")
+        confidence = candidate.get("confidence", 1.0)
+        if isinstance(confidence, bool) or not isinstance(confidence, (int, float)) or not 0 <= confidence <= 1:
+            raise KnowledgeExchangeError(f"{field}.confidence must be a number from 0 to 1")
+        if candidate.get("disposition") is not None:
+            raise KnowledgeExchangeError(
+                f"{field}.disposition must be null; disposition remains child-owned"
+            )
+    return candidates
+
+
+def _materialize_candidate_findings(
+    request: dict[str, Any], input_hash: str
+) -> list[dict[str, Any]]:
+    findings: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for candidate in _candidate_findings(request):
+        finding_id = _stable_finding_id(
+            request["correlation_id"],
+            candidate["subject"],
+            candidate["finding_type"],
+        )
+        if finding_id in seen:
+            continue
+        seen.add(finding_id)
+        findings.append(
+            {
+                "finding_id": finding_id,
+                "subject": candidate["subject"],
+                "source_reference": candidate["source_reference"],
+                "target_ocd_or_adr": candidate["target_ocd_or_adr"],
+                "finding_type": candidate["finding_type"],
+                "confidence": float(candidate.get("confidence", 1.0)),
+                "proposed_action": candidate["proposed_action"],
+                "authority_level": candidate["authority_level"],
+                "input_hash": input_hash,
+                "output_hash": None,
+                "disposition": None,
+            }
+        )
+    return findings
+
+
 def validate_request(request: dict[str, Any]) -> None:
     required = {
         "payload_version", "exchange_type", "correlation_id", "source",
@@ -133,6 +207,7 @@ def validate_request(request: dict[str, Any]) -> None:
 
     for index, artifact in enumerate(_source_artifacts(request)):
         _validate_source_artifact(artifact, f"source_artifacts[{index}]")
+    _candidate_findings(request)
 
     terms = request["terms"]
     if not isinstance(terms, list) or not terms or not all(isinstance(x, str) and x for x in terms):
@@ -165,10 +240,21 @@ def run_exchange(request_path: Path, glossary_path: Path, output_path: Path) -> 
 
     governed_terms, glossary_hash, glossary_ref = _load_governed_terms(glossary_path)
     input_hash = _sha256_bytes(raw_request)
-    findings: list[dict[str, Any]] = []
+    findings = _materialize_candidate_findings(request, input_hash)
+    finding_ids = {finding["finding_id"] for finding in findings}
     exchanged: dict[str, Any] = {}
     source_artifacts = _source_artifacts(request)
     stages: list[dict[str, Any]] = [{"stage": "request_validation", "operation": None, "status": "PASS"}]
+    if "candidate_findings" in request:
+        stages.append(
+            {
+                "stage": "candidate_findings_validation",
+                "operation": None,
+                "status": "PASS",
+                "records": len(request["candidate_findings"]),
+                "unique_findings": len(findings),
+            }
+        )
 
     for operation in request["operations"]:
         if operation == "glossary_alignment":
@@ -176,18 +262,24 @@ def run_exchange(request_path: Path, glossary_path: Path, output_path: Path) -> 
             for term in request["terms"]:
                 if _normalize_term(term) not in governed_terms:
                     finding_type = "GLOSSARY_DRIFT"
-                    findings.append({
-                        "finding_id": _stable_finding_id(request["correlation_id"], term, finding_type),
-                        "source_reference": f"GBOGEB/CODEX/{glossary_ref}@sha256:{glossary_hash[:16]}",
-                        "target_ocd_or_adr": "QPS_DOW_KEB_EXECUTION_ARCHITECTURE_SSOT_v0.1",
-                        "finding_type": finding_type,
-                        "confidence": 1.0,
-                        "proposed_action": f"Define or cross-reference governed term '{term}' in the parent glossary if intended as reusable federation vocabulary.",
-                        "authority_level": "GOVERNANCE",
-                        "input_hash": input_hash,
-                        "output_hash": None,
-                        "disposition": None,
-                    })
+                    finding_id = _stable_finding_id(
+                        request["correlation_id"], term, finding_type
+                    )
+                    if finding_id not in finding_ids:
+                        findings.append({
+                            "finding_id": finding_id,
+                            "subject": term,
+                            "source_reference": f"GBOGEB/CODEX/{glossary_ref}@sha256:{glossary_hash[:16]}",
+                            "target_ocd_or_adr": "QPS_DOW_KEB_EXECUTION_ARCHITECTURE_SSOT_v0.1",
+                            "finding_type": finding_type,
+                            "confidence": 1.0,
+                            "proposed_action": f"Define or cross-reference governed term '{term}' in the parent glossary if intended as reusable federation vocabulary.",
+                            "authority_level": "GOVERNANCE",
+                            "input_hash": input_hash,
+                            "output_hash": None,
+                            "disposition": None,
+                        })
+                        finding_ids.add(finding_id)
             stages.append({"stage": operation, "operation": operation, "status": "PASS", "terms_checked": len(request["terms"]), "findings": len(findings) - before})
         elif operation == "semantic_drift_check":
             missing = [term for term in request["terms"] if _normalize_term(term) not in governed_terms]
