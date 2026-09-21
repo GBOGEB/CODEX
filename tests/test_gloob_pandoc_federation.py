@@ -1,6 +1,5 @@
-import copy
-import json
 import importlib.util
+import json
 from pathlib import Path
 
 import pytest
@@ -46,4 +45,11 @@ def test_changed_owner_set_fails_closed():
     data = load()
     data["authority"]["gloob_owns"] = ["semantic_depth"]
     with pytest.raises(ValueError, match="gloob ownership"):
+        MOD.validate(data)
+
+
+def test_non_object_consumer_entry_fails_closed():
+    data = load()
+    data["consumers"].append("malformed-consumer")
+    with pytest.raises(ValueError, match="consumer entries"):
         MOD.validate(data)
