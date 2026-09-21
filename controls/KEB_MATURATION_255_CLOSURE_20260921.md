@@ -4,7 +4,7 @@ Status date: 2026-09-21
 Repository: `GBOGEB/CODEX`  
 Reviewed main baseline: `ea5efcbbb77827929c055e63af966cd4305ff7f3`  
 Parent issue: #255  
-Disposition: `RETIRE_PARENT_COMPLETE`  
+Disposition: `RETIREMENT_HELD_REOPENED_PENDING_SEMANTIC_CI`  
 Authority transfer: `false`
 
 ## Original eight maturation atoms
@@ -50,14 +50,14 @@ Authority transfer: `false`
 
 ## CI / runner boundary
 
-PR #798 merged at `04d4e4c...`. Its W69 QPS Zero-Delta run `35584012115` completed SUCCESS before merge.
+PR #798 merged at `04d4e4c...`. Its W69 QPS Zero-Delta run `35584012115` completed SUCCESS before merge. Exact-head CI run `35584012204` and Validate Federation run `35584012013` subsequently completed SUCCESS on a real GitHub-hosted runner.
 
-Repository-wide push CI for the merge/current main is admitted to the Actions queue but some broad workflows remain queued under the existing #319 capacity-control surface. Four legacy workflow files also fail before job creation (zero jobs), so they are not runner-executed regressions from #798 and are not used as KEB maturation credit.
+CODEX Semantic Runtime CI run `35584012145` reached a real hosted runner but FAILED in job `106283037090` because `semantic_change` and `semantic_debt_delta` were intentional KEB vocabulary that had not yet been registered in the governed semantic glossary. Parent #255 was therefore reopened and bounded repair #801 / PR #802 created.
 
-If a later current-main CI execution exposes a KEB regression, reopen as a new bounded child defect rather than retaining #255 as an evergreen umbrella.
+The provisional retirement recorded by PR #800 is held until #802 proves the semantic validator, semantic runtime CI, CI and federation validation green.
 
 ## Closure rule
 
-The eight original maturation atoms are now implemented and regression-covered. No unresolved implementation atom remains under #255. Continued program-specific KEB semantic/evidence coverage belongs to #324; runner/capacity control belongs to #319.
+The eight original maturation atoms are implemented, but retirement requires the semantic-governance registration defect exposed by real CI to close first. Continued program-specific KEB semantic/evidence coverage belongs to #324; runner/capacity control belongs to #319.
 
-`#255 -> RETIRE_PARENT_COMPLETE`
+`#255 -> HOLD_REOPENED_UNTIL_#801_PASS`
