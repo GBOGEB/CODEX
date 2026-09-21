@@ -320,6 +320,7 @@ def run_exchange(request_path: Path, glossary_path: Path, output_path: Path) -> 
         "glossary_sha256": glossary_hash,
         "findings": findings,
         "child_disposition_required": True,
+        "disposition_owner": request["requested_return"].get("disposition_owner"),
         "allowed_child_dispositions": sorted(DISPOSITIONS),
         "authority_rule": request["authority_rule"],
     }
