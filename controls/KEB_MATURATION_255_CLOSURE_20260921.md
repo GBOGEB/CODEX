@@ -4,7 +4,7 @@ Status date: 2026-09-21
 Repository: `GBOGEB/CODEX`  
 Reviewed main baseline: `ea5efcbbb77827929c055e63af966cd4305ff7f3`  
 Parent issue: #255  
-Disposition: `RETIREMENT_HELD_REOPENED_PENDING_SEMANTIC_CI`  
+Disposition: `RETIRE_PARENT_COMPLETE`  
 Authority transfer: `false`
 
 ## Original eight maturation atoms
@@ -54,10 +54,10 @@ PR #798 merged at `04d4e4c...`. Its W69 QPS Zero-Delta run `35584012115` complet
 
 CODEX Semantic Runtime CI run `35584012145` reached a real hosted runner but FAILED in job `106283037090` because `semantic_change` and `semantic_debt_delta` were intentional KEB vocabulary that had not yet been registered in the governed semantic glossary. Parent #255 was therefore reopened and bounded repair #801 / PR #802 created.
 
-The provisional retirement recorded by PR #800 is held until #802 proves the semantic validator, semantic runtime CI, CI and federation validation green.
+Bounded repair #801 / PR #802 registered both terms in the governed semantic glossary. Exact PR head `1afb065d29816157313adb6559c14df79046ef93` then proved: CODEX Semantic Runtime CI run `35585032327` SUCCESS, CI run `35585032903` SUCCESS, Validate Federation run `35585032646` SUCCESS, W003 Governance Gate run `35585032614` SUCCESS and W69 run `35585032873` SUCCESS. After merge `538309d6c5f17e86fad4940c36e0ce53021f788d`, main push Semantic Runtime CI run `35585049821`, CI run `35585049935` and Validate Federation run `35585049922` all completed SUCCESS.
 
 ## Closure rule
 
-The eight original maturation atoms are implemented, but retirement requires the semantic-governance registration defect exposed by real CI to close first. Continued program-specific KEB semantic/evidence coverage belongs to #324; runner/capacity control belongs to #319.
+The eight original maturation atoms are implemented and regression-proven, including the semantic-governance vocabulary repair selected by real CI. No unresolved implementation atom remains under #255. Continued program-specific KEB semantic/evidence coverage belongs to #324; runner/capacity control belongs to #319.
 
-`#255 -> HOLD_REOPENED_UNTIL_#801_PASS`
+`#255 -> RETIRE_PARENT_COMPLETE`
