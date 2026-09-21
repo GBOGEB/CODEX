@@ -15,3 +15,9 @@ def test_find_undocumented_terms_ignores_non_semantic_tokens():
 
     result = v.find_undocumented_terms(declared, scanned)
     assert result == []
+
+
+def test_keb_semantic_vocabulary_terms_are_declared():
+    declared = v.load_declared_terms()
+    assert "semantic_change" in declared
+    assert "semantic_debt_delta" in declared
