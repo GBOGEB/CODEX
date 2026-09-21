@@ -2,7 +2,7 @@
 
 Status date: 2026-09-21  
 Repository: `GBOGEB/CODEX`  
-Queue baseline: `d0f4e83e66bedc512e077ac05ac2ba8f289a530f`
+Queue baseline: `155e373a943141c6c376fa43d5af21825a6088eb`
 
 ## Queue rule
 
@@ -19,8 +19,8 @@ Closed/superseded defects are removed from this active queue rather than retaine
 
 | Rank | Issue | State | Current binding | Burn-down predicate |
 |---:|---|---|---|---|
-| 1 | #500 TRIAGE conversion gate | PROVE | W69/zero-delta mechanics exist; #492 visibility blocker retired | obtain real production `ZERO_DELTA_RECEIPT: PASS` + cluster receipt; close only on proof |
-| 2 | #254 full QPS KEB exchange | PROVE | warm-up depth complete; #256/#257/#258/#261 closed | run source-SHA-bound full exchange and return child disposition |
+| 1 | #500 TRIAGE conversion gate | EXTERNAL_GATE | hosted synthetic lane is green-capable, but production builder/evidence execution is local Windows/OneDrive under ABACUS #635 | run real local evidence verification + approved builder A/B through `Invoke-QpsControlledRoundtrip.ps1`; re-enter CODEX only with retained production receipts |
+| 2 | #254 full QPS KEB exchange | PROVE | PR #792 merged at `155e373a...`; exact main workflow run #35582858595 is queued | require Wave-02 run PASS + artifact receipt, then ingest/disposition in cryoplant-project and close |
 | 3 | #753 QPS v6 publication lane | EXTERNAL_GATE | single-writer code proof passed; Pages source mode previously observed legacy | owner sets Pages source to GitHub Actions, rerun unchanged proof, then bind release/deployment receipt |
 | 4 | #675 Historian debugger/MCP CONTROL | PARENT_CONTROL | concrete HIST-BD-014 repaired by #676 | finish historical classification; create repair PR only for surviving current-code debt |
 | 5 | #255 typed KEB maturation | PARENT_CONTROL | executable warm-up mechanics landed #259/#262 | retain as reusable maturation parent; spawn only bounded concrete gaps |
@@ -43,7 +43,9 @@ Closed/superseded defects are removed from this active queue rather than retaine
 
 There is currently no unbound repository-local `FIX_PR` item.
 
-In parallel, `#500` and `#254` are proof lanes because their underlying mechanics already exist.
+`#254` is the only active CODEX proof lane and is currently waiting on GitHub Actions runner admission for exact main run `35582858595`.
+
+`#500` is an explicit local Windows/OneDrive external gate, cross-bound to `GBOGEB/ABACUS#635`; do not substitute another hosted synthetic proof.
 
 `#753` is held at the explicit owner/admin gate; do not weaken the validator.
 
