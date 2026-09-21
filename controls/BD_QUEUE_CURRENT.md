@@ -19,17 +19,17 @@ Closed/superseded defects are removed from this active queue rather than retaine
 
 | Rank | Issue | State | Current binding | Burn-down predicate |
 |---:|---|---|---|---|
-| 1 | #741 Dashboard health check | FIX_PR | run 34936796143 reported 2 broken internal links | reproduce current link check, repair only live broken links, rerun dashboard health, close |
-| 2 | #500 TRIAGE conversion gate | PROVE | W69/zero-delta mechanics exist; #492 visibility blocker retired | obtain real production `ZERO_DELTA_RECEIPT: PASS` + cluster receipt; close only on proof |
-| 3 | #254 full QPS KEB exchange | PROVE | warm-up depth complete; #256/#257/#258/#261 closed | run source-SHA-bound full exchange and return child disposition |
-| 4 | #753 QPS v6 publication lane | EXTERNAL_GATE | single-writer code proof passed; Pages source mode previously observed legacy | owner sets Pages source to GitHub Actions, rerun unchanged proof, then bind release/deployment receipt |
-| 5 | #675 Historian debugger/MCP CONTROL | PARENT_CONTROL | concrete HIST-BD-014 repaired by #676 | finish historical classification; create repair PR only for surviving current-code debt |
-| 6 | #255 typed KEB maturation | PARENT_CONTROL | executable warm-up mechanics landed #259/#262 | retain as reusable maturation parent; spawn only bounded concrete gaps |
-| 7 | #324 QPS program-focus KEB coverage | PARENT_CONTROL | cross-domain semantic/evidence umbrella | consume child authority/evidence and issue bounded child defects only |
-| 8 | #319 DMAIC wave control | PARENT_CONTROL | capacity/governance process-control umbrella | update measured wave checkpoints; do not turn metrics into duplicate code debt |
+| 1 | #500 TRIAGE conversion gate | PROVE | W69/zero-delta mechanics exist; #492 visibility blocker retired | obtain real production `ZERO_DELTA_RECEIPT: PASS` + cluster receipt; close only on proof |
+| 2 | #254 full QPS KEB exchange | PROVE | warm-up depth complete; #256/#257/#258/#261 closed | run source-SHA-bound full exchange and return child disposition |
+| 3 | #753 QPS v6 publication lane | EXTERNAL_GATE | single-writer code proof passed; Pages source mode previously observed legacy | owner sets Pages source to GitHub Actions, rerun unchanged proof, then bind release/deployment receipt |
+| 4 | #675 Historian debugger/MCP CONTROL | PARENT_CONTROL | concrete HIST-BD-014 repaired by #676 | finish historical classification; create repair PR only for surviving current-code debt |
+| 5 | #255 typed KEB maturation | PARENT_CONTROL | executable warm-up mechanics landed #259/#262 | retain as reusable maturation parent; spawn only bounded concrete gaps |
+| 6 | #324 QPS program-focus KEB coverage | PARENT_CONTROL | cross-domain semantic/evidence umbrella | consume child authority/evidence and issue bounded child defects only |
+| 7 | #319 DMAIC wave control | PARENT_CONTROL | capacity/governance process-control umbrella | update measured wave checkpoints; do not turn metrics into duplicate code debt |
 
 ## Burned in this pass
 
+- #741 CLOSED — 2026-09-15 link incident cleared by six consecutive clean scheduled Dashboard Health runs through 2026-09-21.
 - #237 CLOSED — reusable package pattern/index helper merged in PR #790.
 - #343 CLOSED — typed KEB child artifact SHA-256/authority/semantic-change lineage merged in PR #789.
 - #256 CLOSED — executable KEB warm-up run completed.
@@ -41,7 +41,7 @@ Closed/superseded defects are removed from this active queue rather than retaine
 
 ## Execution order
 
-`#741` is now the only unbound repository-local repair.
+There is currently no unbound repository-local `FIX_PR` item.
 
 In parallel, `#500` and `#254` are proof lanes because their underlying mechanics already exist.
 
