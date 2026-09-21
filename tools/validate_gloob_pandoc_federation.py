@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 import json
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "federation/global_mesh/GLOOB_PANDOC_FEDERATION_CONTRACT_v1.json"
+HEX40 = re.compile(r"^[0-9a-f]{40}$")
 
 REQUIRED_REPOS = {
     "GBOGEB/ABACUS": "DOW_DERIVED_ANALYSIS_CONSUMPTION",
@@ -18,22 +20,59 @@ REQUIRED_FIDELITY = {
     "RECONSTRUCTED_FROM_PDF",
     "OCR_REQUIRED",
 }
+REQUIRED_GLOOB_OWNS = {
+    "semantic_depth",
+    "lens",
+    "boundary",
+    "BOOK_FLOW_GRAPH_projection_identity",
+}
+REQUIRED_PANDOC_OWNS = {
+    "semantic_conversion",
+    "normalized_AST_fingerprint",
+    "semantic_roundtrip_receipt",
+}
+REQUIRED_MUST_NOT = {
+    "transfer_QPS_engineering_authority",
+    "replace_original_source_with_derived_extraction",
+    "treat_PDF_to_editable_as_lossless",
+    "retire_unique_renderer_capability_before_parity",
+}
 
-def validate():
-    data = json.loads(CONTRACT.read_text(encoding="utf-8"))
-    assert data["producer"]["repo"] == "GBOGEB/CODEX"
-    assert len(data["producer"]["head_sha"]) == 40
-    consumers = {x["repo"]: x for x in data["consumers"]}
-    assert set(consumers) == set(REQUIRED_REPOS)
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise ValueError(message)
+
+
+def validate(data: dict | None = None) -> dict:
+    if data is None:
+        data = json.loads(CONTRACT.read_text(encoding="utf-8"))
+
+    producer = data.get("producer") or {}
+    require(producer.get("repo") == "GBOGEB/CODEX", "producer repo mismatch")
+    require(bool(HEX40.fullmatch(str(producer.get("head_sha", "")))), "producer head is not lowercase 40-hex")
+
+    consumers_list = data.get("consumers")
+    require(isinstance(consumers_list, list), "consumers must be a list")
+    consumers = {x.get("repo"): x for x in consumers_list if isinstance(x, dict)}
+    require(set(consumers) == set(REQUIRED_REPOS), "consumer repo set mismatch")
     for repo, role in REQUIRED_REPOS.items():
-        assert consumers[repo]["role"] == role
-        assert len(consumers[repo]["head_sha"]) == 40
-    assert data["authority"]["authority_transfer"] is False
-    assert set(data["fidelity_classes"]) == REQUIRED_FIDELITY
-    assert "adapter_parity_PASS" in data["retirement_gate"]["required"]
-    assert data["retirement_gate"]["default"] == "KEEP"
-    assert data["formal_credit_delta"] == 0
+        require(consumers[repo].get("role") == role, f"consumer role mismatch: {repo}")
+        require(bool(HEX40.fullmatch(str(consumers[repo].get("head_sha", "")))), f"consumer head is not lowercase 40-hex: {repo}")
+
+    authority = data.get("authority") or {}
+    require(authority.get("authority_transfer") is False, "authority transfer must remain false")
+    require(set(authority.get("gloob_owns") or []) == REQUIRED_GLOOB_OWNS, "gloob ownership set mismatch")
+    require(set(authority.get("pandoc_owns") or []) == REQUIRED_PANDOC_OWNS, "pandoc ownership set mismatch")
+    require(set(authority.get("must_not") or []) == REQUIRED_MUST_NOT, "authority prohibition set mismatch")
+
+    require(set(data.get("fidelity_classes") or []) == REQUIRED_FIDELITY, "fidelity class set mismatch")
+    retirement = data.get("retirement_gate") or {}
+    require("adapter_parity_PASS" in (retirement.get("required") or []), "adapter parity retirement gate missing")
+    require(retirement.get("default") == "KEEP", "retirement default must remain KEEP")
+    require(data.get("formal_credit_delta") == 0, "formal credit delta must remain zero")
     return data
+
 
 if __name__ == "__main__":
     validate()
