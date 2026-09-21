@@ -135,3 +135,11 @@ glossary:
     definition: Nonnegative count of executed semantic or provenance checks that satisfied their declared predicates; it must be interpreted with semantic_checks_run, exact receipt lineage and the applicable gate, and does not promote child engineering authority.
     introduced_by: federation/receipts/TRIAGE_3PR_B_PVPS_83KW_KEB_CHALLENGE_v0.1.yaml
     first_use_case: report bounded KEB semantic check success while preserving formal_credit_delta zero and downstream engineering re-entry requirements.
+  semantic_change:
+    definition: Boolean governance flag on a source artifact or exchange lineage record stating whether the referenced artifact changes governed meaning relative to its declared baseline; false means lineage/provenance-only movement and true requires the applicable semantic-change controls. The flag does not transfer child engineering, compliance, negotiation, acceptance or release authority.
+    introduced_by: codex/bridges/knowledge_exchange.py
+    first_use_case: bind QPS source-artifact lineage in KEB receipts while distinguishing a semantic mutation from a provenance-only return.
+  semantic_debt_delta:
+    definition: Signed federation process metric reporting the child-declared change in unresolved semantic debt across a governed knowledge-exchange disposition cycle; negative values indicate reduced debt, positive values indicate increased debt and zero indicates no net change. The metric is telemetry only and creates no engineering, compliance or project-completion credit.
+    introduced_by: codex/bridges/knowledge_exchange_return.py
+    first_use_case: expose deterministic KEB closure telemetry alongside accepted, rejected, duplicate, deferred and obligation-closure counts.
