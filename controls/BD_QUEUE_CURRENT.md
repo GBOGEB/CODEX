@@ -2,7 +2,7 @@
 
 Status date: 2026-09-21  
 Repository: `GBOGEB/CODEX`  
-Queue baseline: `5f5533cea1ace7d5894f9d2a28c7247ee155f6f0`
+Queue baseline: `d0f4e83e66bedc512e077ac05ac2ba8f289a530f`
 
 ## Queue rule
 
@@ -20,18 +20,18 @@ Closed/superseded defects are removed from this active queue rather than retaine
 | Rank | Issue | State | Current binding | Burn-down predicate |
 |---:|---|---|---|---|
 | 1 | #741 Dashboard health check | FIX_PR | run 34936796143 reported 2 broken internal links | reproduce current link check, repair only live broken links, rerun dashboard health, close |
-| 2 | #343 KEB child artifact hash lineage | FIX_PR | no repair PR yet | add typed source artifact hash/authority/semantic-change lineage + regression coverage |
-| 3 | #237 reusable model-package index/glossary helper | FIX_PR | no repair PR yet | land generic scaffold/spec + index refresh helper, then close |
-| 4 | #500 TRIAGE conversion gate | PROVE | W69/zero-delta mechanics exist; #492 visibility blocker retired | obtain real production `ZERO_DELTA_RECEIPT: PASS` + cluster receipt; close only on proof |
-| 5 | #254 full QPS KEB exchange | PROVE | warm-up depth complete; #256/#257/#258/#261 closed | run source-SHA-bound full exchange and return child disposition |
-| 6 | #753 QPS v6 publication lane | EXTERNAL_GATE | single-writer code proof passed; Pages source mode previously observed legacy | owner sets Pages source to GitHub Actions, rerun unchanged proof, then bind release/deployment receipt |
-| 7 | #675 Historian debugger/MCP CONTROL | PARENT_CONTROL | concrete HIST-BD-014 repaired by #676 | finish historical classification; create repair PR only for surviving current-code debt |
-| 8 | #255 typed KEB maturation | PARENT_CONTROL | executable warm-up mechanics landed #259/#262 | retain as reusable maturation parent; spawn only bounded concrete gaps |
-| 9 | #324 QPS program-focus KEB coverage | PARENT_CONTROL | cross-domain semantic/evidence umbrella | consume child authority/evidence and issue bounded child defects only |
-| 10 | #319 DMAIC wave control | PARENT_CONTROL | capacity/governance process-control umbrella | update measured wave checkpoints; do not turn metrics into duplicate code debt |
+| 2 | #500 TRIAGE conversion gate | PROVE | W69/zero-delta mechanics exist; #492 visibility blocker retired | obtain real production `ZERO_DELTA_RECEIPT: PASS` + cluster receipt; close only on proof |
+| 3 | #254 full QPS KEB exchange | PROVE | warm-up depth complete; #256/#257/#258/#261 closed | run source-SHA-bound full exchange and return child disposition |
+| 4 | #753 QPS v6 publication lane | EXTERNAL_GATE | single-writer code proof passed; Pages source mode previously observed legacy | owner sets Pages source to GitHub Actions, rerun unchanged proof, then bind release/deployment receipt |
+| 5 | #675 Historian debugger/MCP CONTROL | PARENT_CONTROL | concrete HIST-BD-014 repaired by #676 | finish historical classification; create repair PR only for surviving current-code debt |
+| 6 | #255 typed KEB maturation | PARENT_CONTROL | executable warm-up mechanics landed #259/#262 | retain as reusable maturation parent; spawn only bounded concrete gaps |
+| 7 | #324 QPS program-focus KEB coverage | PARENT_CONTROL | cross-domain semantic/evidence umbrella | consume child authority/evidence and issue bounded child defects only |
+| 8 | #319 DMAIC wave control | PARENT_CONTROL | capacity/governance process-control umbrella | update measured wave checkpoints; do not turn metrics into duplicate code debt |
 
 ## Burned in this pass
 
+- #237 CLOSED — reusable package pattern/index helper merged in PR #790.
+- #343 CLOSED — typed KEB child artifact SHA-256/authority/semantic-change lineage merged in PR #789.
 - #256 CLOSED — executable KEB warm-up run completed.
 - #257 CLOSED — warm-up acceptance checklist satisfied.
 - #258 CLOSED — QPS-FED-W01 lane reached CHILD_DISPOSITIONED/CLOSED.
@@ -41,7 +41,7 @@ Closed/superseded defects are removed from this active queue rather than retaine
 
 ## Execution order
 
-`#741 -> #343 -> #237` are the repository-local repair front.
+`#741` is now the only unbound repository-local repair.
 
 In parallel, `#500` and `#254` are proof lanes because their underlying mechanics already exist.
 
