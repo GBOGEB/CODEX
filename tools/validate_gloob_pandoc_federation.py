@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# HIST-BD-023 closure: every declared consumer entry must be structurally valid.
 import json
 import re
 from pathlib import Path
