@@ -1,0 +1,35 @@
+schema: qps-w331r2-hist-bd034-keb-final/v1
+authority: DERIVED_PARENT_REVIEW
+child:
+  repository: GBOGEB/cryoplant-project
+  pr: 1651
+  exact_head: 082c50516713710b9fbaedc8398b295f164be1a8
+  issue: 1617
+semantic_root: SOURCE_RECEIPT_SUBSTANTIVE_VALIDATION_INCOMPLETE
+
+challenge:
+  - id: BT2_DECIMAL_NONZERO
+    predicate: lexical_nonzero_values_do_not_underflow_to_zero
+  - id: BT2_DECIMAL_BOUNDARY
+    predicate: residual_comparison_uses_exact_decimal_without_binary_rounding_grace
+  - id: BT2_LOCATOR_STATUS
+    predicate: qualified_placeholder_or_deferred_tokens_inside_locator_fail_closed
+  - id: PRESERVE_BT0
+    predicate: merged_PR1646_repo_candidate_ne_owner_physical_authority
+  - id: PRESERVE_BT1
+    predicate: merged_PR1632_semantic_key_binding
+  - id: PRESERVE_BT2_AUTHORITY
+    predicate: merged_PR1636_exact_source_bearing_allowlist
+  - id: PRESERVE_BT3_BT4
+    predicate: merged_PR1646_geometry_thermal_equality_and_PSV_specific_source
+  - id: PRESERVE_W328
+    predicate: governed_minimum_population_plus_explicit_future_rows
+
+disposition: PENDING_EXACT_HEAD_REVIEW
+physical_conversion_delta: 0
+formal_credit_delta: 0
+engineering_credit_delta: 0
+strict_numerical_delta: 0
+runtime_gold_delta: 0
+authority_transfer: false
+runtime_gate_923: INDEPENDENT_NON_COMPENSATING
