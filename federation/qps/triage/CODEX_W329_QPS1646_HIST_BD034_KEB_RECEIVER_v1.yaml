@@ -1,0 +1,38 @@
+schema: codex.qps.w329.hist_bd_034.keb_receiver/v1
+as_of: '2026-09-22'
+source_repo: GBOGEB/cryoplant-project
+source_pr: 1646
+source_head: eeed03ec4edb0fa8cb4969b2a6bd5f134133d433
+parent_issue: 1617
+child_issue: 1635
+state: EXACT_HEAD_SEMANTIC_CHALLENGE_BOUND
+
+challenge:
+  BT0_authority:
+    invariant: repo_local_candidate_integrity_ne_owner_authority_ne_physical_conversion
+    expected_state: EXTERNAL_OWNER_SOURCE_AUTHORITY_REQUIRED
+  BT1_geometry:
+    invariant: metadata_numeric_ne_engineering_numeric
+  BT2_bflow:
+    invariant:
+      - source_bearing_authority_required
+      - substantive_source_locator_required
+      - any_nonzero_residual_requires_source_defined_tolerance
+      - source_tolerance_has_no_software_epsilon_grace
+  BT3_thermal:
+    invariant: thermal_segment_population_equals_validated_selected_geometry_population
+  BT4_recovery:
+    invariant: PSV_tag_set_reseat_evidence_has_PSV_specific_source_locator
+
+acceptance:
+  parent_pass_ne_child_accept: true
+  qps_merge_ne_keb_accept: true
+  zero_step_ne_application_fail: true
+  issue_923_noncompensating: true
+  authority_transfer: false
+  formal_credit_delta: 0
+
+next:
+  - consume_QPS_1646_exact_head_review
+  - bind_public_exact_payload_execution_receipt
+  - record_ACCEPT_REJECT_DEFER_for_this_exact_head
