@@ -1,10 +1,10 @@
 name: Governance Validation
 
-on:
-  workflow_dispatch:
+"on":
+  workflow_dispatch: {}
   push:
     branches: [main]
-    paths: &governance_paths
+    paths:
       - 'MASTER_input/**'
       - 'docs/governance/**'
       - 'generated/**'
@@ -17,7 +17,18 @@ on:
       - 'requirements.txt'
       - '.github/workflows/validate.yml'
   pull_request:
-    paths: *governance_paths
+    paths:
+      - 'MASTER_input/**'
+      - 'docs/governance/**'
+      - 'generated/**'
+      - 'schemas/**'
+      - 'ssot/**'
+      - 'tools/validators/**'
+      - 'tools/traceability/**'
+      - 'tools/contracts/**'
+      - 'tools/export/**'
+      - 'requirements.txt'
+      - '.github/workflows/validate.yml'
 
 concurrency:
   group: governance-validation-${{ github.ref }}
