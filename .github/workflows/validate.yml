@@ -57,7 +57,8 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
       - name: Verify canonical CODEX package import
-        run: python -c "from codex.ssot_resolver import resolve_ssot; print('CODEX package import: PASS')"
+        run: |
+          python -c "from codex.ssot_resolver import resolve_ssot; print('CODEX package import: PASS')"
       - name: Run SSOT validator
         run: python tools/validators/ssot_validator.py
       - name: Run MASTER_input folder validator
