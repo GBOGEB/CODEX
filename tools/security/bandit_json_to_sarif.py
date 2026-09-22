@@ -1,7 +1,4 @@
-#!/usr/bin/env python3
 """Convert Bandit JSON output to a minimal deterministic SARIF 2.1.0 document."""
-
-from __future__ import annotations
 
 import argparse
 import json
