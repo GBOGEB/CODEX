@@ -1,0 +1,27 @@
+schema: qps-w329-codex-handover-pointer/1.0
+as_of: '2026-09-22T15:11:00+02:00'
+repo: GBOGEB/CODEX
+role: KEB_SEMANTIC_PROVENANCE_POINTER_RECEIVER
+status: BOUND_TO_CHILD_HANDOVER_PENDING_CHILD_MERGE
+authority_transfer: false
+formal_credit_delta: 0
+child:
+  repo: GBOGEB/cryoplant-project
+  pr: 1638
+  branch: qps/w329-loop-qcell-3pr-mip-handover
+  head_sha: 0cdfc07239cb79f388f662f8b50d50ac0b5fbcf6
+  control: controls/QPS_LOOP_QCELL_PEER_REVIEW_CURRENT_v0.1.yaml
+  handover: handover/session/SC_2026-09-22_W329_LOOP_QCELL_3PR_MIP_LOSSLESS_HANDOVER_v1.md
+  dropin: handover/qps_recursive/QPS_W329_LOOP_QCELL_3PR_MIP_DROPIN_20260922_v1.md
+semantic_invariants:
+  - D2_1_is_historic_QCELL_combined_user_behavioural_bound_not_current_design_authority
+  - current_Addendum_II_and_canonical_RTM_remain_acceptance_authority
+  - LOOP_email_is_source_supported_site_interface_not_contract_override
+  - OWNER_FROZEN_ne_PEER_CONFIRMED
+  - PEER_CONFIRMED_ne_BIDDER_COMPLIANT
+  - child_source_issues_retain_closure_authority
+  - no_cross_bidder_evidence_substitution
+  - no_runtime_GOLD_compensation
+next: >-
+  Preserve provenance and exact semantic distinctions. On a material source/peer return, bind identity
+  and provenance only; do not independently change child disposition or compliance credit.
