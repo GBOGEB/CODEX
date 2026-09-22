@@ -1,6 +1,6 @@
 name: W70 QPS Zero-Delta Diagnostic
 
-on:
+"on":
   pull_request: {}
   workflow_dispatch: {}
 
@@ -91,16 +91,16 @@ jobs:
           }
           $payload | ConvertTo-Json -Depth 5 | Set-Content release/W70_ZERO_DELTA_DIAGNOSTIC.json -Encoding utf8
           @"
-schema_version: "1.0"
-source_commit_sha: "$env:GITHUB_SHA"
-status: "$status"
-first_regeneration_outcome: "$env:FIRST_OUTCOME"
-second_regeneration_outcome: "$env:SECOND_OUTCOME"
-expected_product_count: $($products.Count)
-missing_count: $($missing.Count)
-mismatch_count: $($mismatch.Count)
-production_builder_parity_claimed: false
-"@ | Set-Content release/W70_ZERO_DELTA_RECEIPT.yaml -Encoding utf8
+          schema_version: "1.0"
+          source_commit_sha: "$env:GITHUB_SHA"
+          status: "$status"
+          first_regeneration_outcome: "$env:FIRST_OUTCOME"
+          second_regeneration_outcome: "$env:SECOND_OUTCOME"
+          expected_product_count: $($products.Count)
+          missing_count: $($missing.Count)
+          mismatch_count: $($mismatch.Count)
+          production_builder_parity_claimed: false
+          "@ | Set-Content release/W70_ZERO_DELTA_RECEIPT.yaml -Encoding utf8
           Get-Content release/W70_ZERO_DELTA_DIAGNOSTIC.json
 
       - name: Upload diagnostic even on failure
