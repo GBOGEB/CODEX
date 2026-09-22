@@ -1,14 +1,13 @@
+import json
 from pathlib import Path
-
-import yaml
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RECEIPT = ROOT / "federation/qps/W328_BT2_SOURCE_TOLERANCE_KEB_REVIEW.yaml"
+RECEIPT = ROOT / "federation/qps/W328_BT2_SOURCE_TOLERANCE_KEB_REVIEW.json"
 
 
 def load_receipt():
-    return yaml.safe_load(RECEIPT.read_text(encoding="utf-8"))
+    return json.loads(RECEIPT.read_text(encoding="utf-8"))
 
 
 def test_w328_binds_exact_merged_child():
@@ -20,7 +19,7 @@ def test_w328_binds_exact_merged_child():
 
 
 def test_w328_preserves_source_semantics():
-    data = load_receipt()["semantic_challenge"]
+    data = load_receipt()["semantic_contract"]
     assert data["population_rule"] == "minimum_not_exact"
     assert data["future_rows"]["allowed"] is True
     assert data["future_rows"]["require_installed_or_future"] == "future"
