@@ -1,0 +1,34 @@
+schema: qps-w331r4-hist-bd034-psv-final-keb/v1
+authority: DERIVED_PARENT_REVIEW
+child:
+  repository: GBOGEB/cryoplant-project
+  pr: 1658
+  exact_head: c2f843b04c125350ce18c30c2275815c1e2311c0
+  issue: 1617
+semantic_root: SOURCE_RECEIPT_SUBSTANTIVE_VALIDATION_INCOMPLETE
+
+challenge:
+  - id: PSV_TAG_EXACT_FIELD
+    predicate: source_locator_contains_exact_boundary_delimited_PSV_tag
+  - id: PSV_SET_LABELED_DECIMAL
+    predicate: labeled_set_pressure_equals_declared_set_pressure_exact_decimal
+  - id: PSV_RESEAT_LABELED_DECIMAL
+    predicate: labeled_reseat_pressure_equals_declared_reseat_pressure_exact_decimal
+  - id: PSV_LABEL_ASSOCIATION
+    predicate: swapped_set_and_reseat_values_reject
+  - id: PSV_NUMERIC_SUBSTRING
+    predicate: embedded_larger_numeric_substrings_reject
+  - id: PRESERVE_BT2
+    predicate: W331R2_exact_decimal_and_qualified_locator_guards_preserved
+  - id: PRESERVE_BT0_BT3
+    predicate: PR1646_external_authority_and_geometry_thermal_guards_preserved
+  - id: PRESERVE_PRIOR
+    predicate: PR1636_PR1632_W328_and_923_noncompensation_preserved
+
+disposition: PENDING_EXACT_HEAD_REVIEW
+physical_conversion_delta: 0
+formal_credit_delta: 0
+engineering_credit_delta: 0
+strict_numerical_delta: 0
+runtime_gold_delta: 0
+authority_transfer: false
