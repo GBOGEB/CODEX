@@ -1,0 +1,38 @@
+name: Workflow Registration Guard
+
+"on":
+  workflow_dispatch: {}
+  pull_request:
+    paths:
+      - '.github/workflows/validate.yml'
+      - '.github/workflows/w70-qps-zero-delta-diagnostic.yml'
+      - '.github/workflows/qps-roundtrip-zero-delta.yml'
+      - '.github/workflows/w05-qps-roundtrip-regeneration-zero-delta.yml'
+      - '.github/workflows/workflow-registration-guard.yml'
+      - 'tools/validators/workflow_registration_guard.py'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/validate.yml'
+      - '.github/workflows/w70-qps-zero-delta-diagnostic.yml'
+      - '.github/workflows/qps-roundtrip-zero-delta.yml'
+      - '.github/workflows/w05-qps-roundtrip-regeneration-zero-delta.yml'
+      - '.github/workflows/workflow-registration-guard.yml'
+      - 'tools/validators/workflow_registration_guard.py'
+
+permissions:
+  contents: read
+
+jobs:
+  registration-guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install parser dependency
+        run: python -m pip install 'PyYAML==6.0.2'
+      - name: Validate controlled workflow registration surface
+        run: python tools/validators/workflow_registration_guard.py
