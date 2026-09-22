@@ -27,8 +27,8 @@ jobs:
           python3 tools/bd_workflow_frequency.py \
             --repo "$GITHUB_REPOSITORY" \
             --limit 500 \
-          --family 'zero_delta_registration=.github/workflows/validate.yml,.github/workflows/w05-qps-roundtrip-regeneration-zero-delta.yml,.github/workflows/qps-roundtrip-zero-delta.yml,.github/workflows/w70-qps-zero-delta-diagnostic.yml' \\
-          --family 'canonical_federation=.github/workflows/qps-canonicalization.yml,.github/workflows/validate-federation.yml' \\
+            --family 'zero_delta_registration=.github/workflows/validate.yml,.github/workflows/w05-qps-roundtrip-regeneration-zero-delta.yml,.github/workflows/qps-roundtrip-zero-delta.yml,.github/workflows/w70-qps-zero-delta-diagnostic.yml' \
+            --family 'canonical_federation=.github/workflows/qps-canonicalization.yml,.github/workflows/validate-federation.yml' \
             --out-json .artifacts/bd-workflow-frequency/metrics.json \
             --out-md .artifacts/bd-workflow-frequency/summary.md
           cat .artifacts/bd-workflow-frequency/summary.md >> "$GITHUB_STEP_SUMMARY"
