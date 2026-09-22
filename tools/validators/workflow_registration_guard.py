@@ -1,8 +1,7 @@
-#!/usr/bin/env python3
 """Fail closed on registration hazards in the controlled legacy workflow set."""
 
 from pathlib import Path
-import sys
+
 import yaml
 
 TARGETS = [
