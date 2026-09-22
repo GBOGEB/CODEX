@@ -1,0 +1,102 @@
+{
+  "schema": "qps.w328.bt2.keb_review/v1",
+  "wave": "W328-R1",
+  "role": "SEMANTIC_PROVENANCE_CHALLENGE",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "child": {
+    "repository": "GBOGEB/cryoplant-project",
+    "issue": 1617,
+    "pr": 1630,
+    "exact_head": "ce179022b125b862ed5d144e72601c0236af7169",
+    "merge_sha": "f0882dec84b6ff8621f778e56f25086263fbd511"
+  },
+  "three_pr": {
+    "refresh": {
+      "result": "PASS",
+      "basis": "child W325-R2 reverse-cumulative validator already on main"
+    },
+    "probe": {
+      "result": "PASS",
+      "observed_gap": [
+        "exact population 24/30 over-hardened a minimum-population contract",
+        "machine-zero residual over-hardened source-defined tolerance semantics"
+      ]
+    },
+    "rank": {
+      "result": "PASS",
+      "selected_scope": "BT2_ONLY",
+      "no_other_blocker_semantics_move": true
+    }
+  },
+  "mip": {
+    "modernize": {
+      "result": "PASS",
+      "rule": "source semantics outrank invented exact-count or zero-residual assumptions"
+    },
+    "innovate": {
+      "result": "PASS",
+      "rule": "distinguish serialization epsilon from source-defined mass-balance tolerance"
+    },
+    "perpetuate": {
+      "result": "PROVE_ON_THIS_HEAD",
+      "requires": [
+        "semantic runtime accepts only governed vocabulary",
+        "receipt test passes without third-party import-order ambiguity",
+        "exact child merge identity remains bound"
+      ]
+    }
+  },
+  "semantic_contract": {
+    "governed_configurations": [
+      "config24",
+      "config30"
+    ],
+    "governed_modes": [
+      "2K_OP",
+      "2K_SB"
+    ],
+    "population_rule": "minimum_not_exact",
+    "future_rows": {
+      "allowed": true,
+      "require_installed_or_future": "future"
+    },
+    "reverse_cumulative": {
+      "required": true,
+      "direction": "farthest_user_to_QRB_QDB",
+      "recompute_from_per_qcell_rows": true
+    },
+    "flow": {
+      "source_bound_zero_allowed": true,
+      "positivity_threshold_invented": false
+    },
+    "mass_balance": {
+      "zero_residual_without_tolerance_allowed": true,
+      "nonzero_residual_requires_source_tolerance": true,
+      "tolerance_must_be_finite_nonnegative": true,
+      "residual_absolute_value_must_be_within_tolerance": true,
+      "machine_serialization_epsilon_is_not_source_tolerance": true
+    }
+  },
+  "non_compensation": {
+    "physical_conversion_delta": 0,
+    "engineering_credit_delta": 0,
+    "strict_numerical_delta": 0,
+    "runtime_gold_delta": 0,
+    "issue_923_remains_independent": true
+  },
+  "return_contract": {
+    "on_pass": "ACCEPT_SEMANTIC_PROVENANCE_CONTRACT",
+    "on_fail": "DEFER_WITH_EXACT_FIELD_FINDING",
+    "child_disposition_required_for_any_engineering_state_change": true
+  },
+  "repair_lineage": {
+    "predecessor_pr": 809,
+    "predecessor_merge": "a1db385f4070c53fb7dec24a8efdbfc45d5c1e30",
+    "first_reds": [
+      "undocumented semantic_challenge vocabulary",
+      "ruff import block in receipt test",
+      "W003 PR body missing governance separator"
+    ]
+  }
+}
