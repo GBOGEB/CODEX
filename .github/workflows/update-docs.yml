@@ -1,12 +1,18 @@
 name: Update Documentation on Code Changes
 
-on:
+"on":
   push:
     branches: [main]
     paths:
       - 'src/**/*.py'
       - 'scripts/**'
-  workflow_dispatch:
+      - '.github/workflows/update-docs.yml'
+  pull_request:
+    paths:
+      - 'src/**/*.py'
+      - 'scripts/**'
+      - '.github/workflows/update-docs.yml'
+  workflow_dispatch: {}
 
 permissions:
   contents: write
@@ -16,6 +22,7 @@ jobs:
   update-docs:
     name: Extract & Update Documentation
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
@@ -25,12 +32,18 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Resolve deterministic generation context
+        shell: bash
+        run: |
+          echo "DOC_SOURCE_SHA=$GITHUB_SHA" >> "$GITHUB_ENV"
+          echo "DOC_GENERATED_AT=$(git show -s --format=%cI "$GITHUB_SHA")" >> "$GITHUB_ENV"
+
       - name: Extract module docstrings
         run: |
           echo "=== Extracting docstrings from Python modules ==="
           mkdir -p docs/api
           python3 << 'PYEOF'
-          import ast, json, pathlib, datetime, traceback
+          import ast, json, os, pathlib
 
           modules = {}
           for pattern in ["src/**/*.py"]:
@@ -39,22 +52,29 @@ jobs:
                       source = p.read_text(encoding="utf-8", errors="replace")
                       tree = ast.parse(source)
                       doc = ast.get_docstring(tree) or ""
-                      classes = []
+                      members = []
                       for node in ast.walk(tree):
                           if isinstance(node, (ast.ClassDef, ast.FunctionDef)):
                               cdoc = ast.get_docstring(node) or ""
-                              classes.append({"name": node.name, "doc": cdoc[:200]})
-                      modules[str(p)] = {"docstring": doc[:300], "members": classes}
+                              members.append({"name": node.name, "doc": cdoc[:200]})
+                      modules[str(p)] = {"docstring": doc[:300], "members": members}
                   except Exception as exc:
                       print(f"Warning: failed to parse {p}: {type(exc).__name__}: {exc}")
-                      modules[str(p)] = {"docstring": f"Parse error: {type(exc).__name__}: {exc}", "members": []}
+                      modules[str(p)] = {
+                          "docstring": f"Parse error: {type(exc).__name__}: {exc}",
+                          "members": [],
+                      }
 
           out = {
-              "generated_at": datetime.datetime.now().isoformat(),
+              "generated_at": os.environ["DOC_GENERATED_AT"],
+              "source_sha": os.environ["DOC_SOURCE_SHA"],
               "module_count": len(modules),
               "modules": modules,
           }
-          pathlib.Path("docs/api/modules.json").write_text(json.dumps(out, indent=2), encoding="utf-8")
+          pathlib.Path("docs/api/modules.json").write_text(
+              json.dumps(out, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
           print(f"Extracted {len(modules)} modules")
           PYEOF
 
@@ -62,10 +82,10 @@ jobs:
         run: |
           echo "=== Generating deployment matrix ==="
           python3 << 'PYEOF'
-          import json, pathlib, datetime
+          import json, os, pathlib
 
           dashboards = []
-          for html in pathlib.Path("docs").rglob("*.html"):
+          for html in sorted(pathlib.Path("docs").rglob("*.html")):
               dashboards.append({
                   "path": str(html),
                   "size_bytes": html.stat().st_size,
@@ -73,31 +93,81 @@ jobs:
               })
 
           matrix = {
-              "generated_at": datetime.datetime.now().isoformat(),
+              "generated_at": os.environ["DOC_GENERATED_AT"],
+              "source_sha": os.environ["DOC_SOURCE_SHA"],
               "dashboard_count": len(dashboards),
               "dashboards": dashboards,
           }
-          pathlib.Path("docs/api/deployment_matrix.json").write_text(json.dumps(matrix, indent=2))
+          pathlib.Path("docs/api/deployment_matrix.json").write_text(
+              json.dumps(matrix, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
           print(f"Found {len(dashboards)} dashboards")
           PYEOF
 
-      - name: Create PR with updated docs
+      - name: Validate generated documentation
         run: |
+          git diff --check
+          python - <<'PY'
+          import json
+          for path in ("docs/api/modules.json", "docs/api/deployment_matrix.json"):
+              with open(path, encoding="utf-8") as handle:
+                  payload = json.load(handle)
+              assert payload["source_sha"]
+              assert payload["generated_at"]
+              print(f"PASS {path}")
+          PY
+
+      - name: Publish reusable docs update branch
+        if: github.event_name != 'pull_request'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/api/
+
           if git diff --cached --quiet; then
-            echo "No documentation changes detected — skipping PR creation."
+            echo "No documentation changes detected — nothing to publish."
             exit 0
           fi
-          BRANCH="auto/update-docs-$(date +%Y%m%d-%H%M%S)"
-          git checkout -b "$BRANCH"
+
+          BRANCH="automation/update-docs"
+          REMOTE_SHA="$(git ls-remote --heads origin "refs/heads/$BRANCH" | awk '{print $1}')"
+          git checkout -B "$BRANCH"
           git commit -m "docs: auto-update API docs and deployment matrix"
-          git push origin "$BRANCH"
+
+          if [ -n "$REMOTE_SHA" ]; then
+            git push --force-with-lease="refs/heads/$BRANCH:$REMOTE_SHA" origin "$BRANCH"
+          else
+            git push -u origin "$BRANCH"
+          fi
+
+          EXISTING_PR="$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // empty' || true)"
+          if [ -n "$EXISTING_PR" ]; then
+            echo "Reused existing docs PR #$EXISTING_PR."
+            exit 0
+          fi
+
+          set +e
           gh pr create \
             --title "docs: auto-update API documentation" \
-            --body "Automated documentation update triggered by code changes in \`src/\`." \
+            --body "Automated documentation update from source SHA `$DOC_SOURCE_SHA`." \
             --base main \
             --head "$BRANCH"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_RC=$?
+          set -e
+
+          if [ "$PR_RC" -ne 0 ]; then
+            {
+              echo "### Documentation branch retained"
+              echo
+              echo "Automatic PR creation is not permitted by the repository Actions policy."
+              echo "Branch: `$BRANCH`"
+              echo "Source SHA: `$DOC_SOURCE_SHA`"
+              echo "A human or connected GitHub client may open the PR without rerunning generation."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning::Docs generated and branch published; PR creation requires owner policy or external client."
+          fi
