@@ -154,7 +154,7 @@ jobs:
           set +e
           gh pr create \
             --title "docs: auto-update API documentation" \
-            --body "Automated documentation update from source SHA `$DOC_SOURCE_SHA`." \
+            --body "Automated documentation update from source SHA $DOC_SOURCE_SHA." \
             --base main \
             --head "$BRANCH"
           PR_RC=$?
@@ -165,8 +165,8 @@ jobs:
               echo "### Documentation branch retained"
               echo
               echo "Automatic PR creation is not permitted by the repository Actions policy."
-              echo "Branch: `$BRANCH`"
-              echo "Source SHA: `$DOC_SOURCE_SHA`"
+              echo "Branch: $BRANCH"
+              echo "Source SHA: $DOC_SOURCE_SHA"
               echo "A human or connected GitHub client may open the PR without rerunning generation."
             } >> "$GITHUB_STEP_SUMMARY"
             echo "::warning::Docs generated and branch published; PR creation requires owner policy or external client."
