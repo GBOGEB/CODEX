@@ -1,4 +1,4 @@
-"""Fail closed on registration hazards in the controlled legacy workflow set."""
+"""Fail closed on registration hazards in the controlled QPS workflow set."""
 
 from pathlib import Path
 
@@ -6,6 +6,7 @@ import yaml
 
 TARGETS = [
     Path(".github/workflows/validate.yml"),
+    Path(".github/workflows/w69-qps-zero-delta-execution.yml"),
     Path(".github/workflows/w70-qps-zero-delta-diagnostic.yml"),
     Path(".github/workflows/qps-roundtrip-zero-delta.yml"),
     Path(".github/workflows/w05-qps-roundtrip-regeneration-zero-delta.yml"),
@@ -16,7 +17,7 @@ def check(path: Path) -> list[str]:
     errors: list[str] = []
     text = path.read_text(encoding="utf-8")
     if text.startswith("on:") or "\non:" in text:
-        errors.append("top-level on key must be quoted as \"on\"")
+        errors.append('top-level on key must be quoted as "on"')
     if path.name == "validate.yml" and ("&governance_paths" in text or "*governance_paths" in text):
         errors.append("governance trigger paths must be explicit; YAML anchors are not admitted")
     try:
