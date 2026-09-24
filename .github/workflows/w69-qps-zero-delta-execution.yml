@@ -1,9 +1,13 @@
 name: W69 QPS Zero-Delta Execution
-on:
-  pull_request:
-  workflow_dispatch:
+
+"on":
+  pull_request: {}
+  workflow_dispatch: {}
+  workflow_call: {}
+
 permissions:
   contents: read
+
 jobs:
   zero-delta:
     runs-on: windows-latest
@@ -37,7 +41,7 @@ jobs:
               verification_status: HASH_VERIFIED_SIZE_PENDING
           "@ | Set-Content -LiteralPath $registry -Encoding utf8
 
-          # W69 is a deterministic synthetic-builder gate. Do not invoke the
+          # W69 is the canonical hosted synthetic-builder gate. Do not invoke the
           # workstation/multi-repository bootstrap from a single-repo hosted
           # checkout: that bootstrap intentionally requires ABACUS, CODEX,
           # cryoplant-project and DOCX_RTM_Automation to exist locally.
