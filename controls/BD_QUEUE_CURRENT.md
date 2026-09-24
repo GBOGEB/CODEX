@@ -2,10 +2,10 @@
 
 Status date: 2026-09-24  
 Repository: `GBOGEB/CODEX`  
-Current main at recensus: `15970251cf9a484dfbe56118bd730808bfe7bb27`  
-Open PRs at recensus: **1**  
-Open issues at recensus: **5**  
-State: **ONE BOUNDED FIX_PR + EXTERNAL/CONTROL FRONTIER**
+Current main at recensus: `21e31430b6b4b810276f513b1ffa6e6f388517ce`  
+Open PRs at recensus: **0**  
+Open issues at recensus: **4**  
+State: **CONTROL / EXTERNAL-GATE ONLY — NO REPO-LOCAL FIX/PROVE ITEM**
 
 ## Queue rule
 
@@ -22,26 +22,36 @@ Merge alone is not proof. Hosted/synthetic proof cannot compensate for physical 
 
 | Rank | Issue | State | Current binding | Re-entry predicate |
 |---:|---|---|---|---|
-| 1 | #830 legacy hosted QPS wrapper retirement | FIX_PR | PR #831; current wrappers contain stale controlled-roundtrip invocation while W69 is canonical hosted synthetic lane | exact-head W69 SUCCESS + registration/preflight/governance checks; merge; distinct main-bound W69/guard readback; then close #830 |
-| 2 | #500 TRIAGE conversion gate | EXTERNAL_GATE | real Windows/local governed evidence-vault production builder is the first red | verified evidence vault + approved builder A/B + retained `ROUNDTRIP_RECEIPT.json` / ZERO_DELTA proof, then CODEX cluster-facing binding |
-| 3 | #753 QPS v6 publication lane | EXTERNAL_GATE | repository single-writer code proof is established; owner setting remains outside repo code | owner sets Pages Source = GitHub Actions, unchanged source-mode/single-writer proof reruns, then bind release-specific deployment receipt |
-| 4 | #324 QPS program-focus KEB coverage | PARENT_CONTROL | cross-domain semantic/evidence umbrella | split only from a concrete current bounded semantic/schema defect returned by a child |
-| 5 | #319 DMAIC / capacity / queue control | PARENT_CONTROL | live process-control surface | maintain measured checkpoints; do not turn operational metrics into duplicate implementation debt |
+| 1 | #500 TRIAGE conversion gate | EXTERNAL_GATE | real Windows/local governed evidence-vault production builder is the first red | verified evidence vault + approved builder A/B + retained `ROUNDTRIP_RECEIPT.json` / ZERO_DELTA proof, then CODEX cluster-facing binding |
+| 2 | #753 QPS v6 publication lane | EXTERNAL_GATE | repository single-writer code proof is established; owner setting remains outside repo code | owner sets Pages Source = GitHub Actions, unchanged source-mode/single-writer proof reruns, then bind release-specific deployment receipt |
+| 3 | #324 QPS program-focus KEB coverage | PARENT_CONTROL | cross-domain semantic/evidence umbrella | split only from a concrete current bounded semantic/schema defect returned by a child |
+| 4 | #319 DMAIC / capacity / queue control | PARENT_CONTROL | live process-control surface | maintain measured checkpoints; do not turn operational metrics into duplicate implementation debt |
 
-## Current bounded repair
+## Closed local runtime-contract child
 
-### #830 / PR #831 — retire stale hosted wrappers behind W69
+### #830 / PR #831 — CONTROL
 
-The registration repair exposed runtime contract drift in:
-- `.github/workflows/qps-roundtrip-zero-delta.yml`
-- `.github/workflows/w05-qps-roundtrip-regeneration-zero-delta.yml`
-- `.github/workflows/w70-qps-zero-delta-diagnostic.yml`
+PR #831 merged at:
 
-Those historical wrappers still call the workstation-oriented `Invoke-QpsControlledRoundtrip.ps1` contract with removed `-CreateOfficeReviewCopy` and without mandatory `EvidenceRoot` / `ReleaseId`.
+`585ce63e8637477673680744139e76ee6d16965f`
 
-PR #831 keeps the historical paths but converts them to manual-only compatibility delegates to canonical hosted synthetic W69, makes W69 reusable via `workflow_call`, and extends the registration guard to W69.
+Exact PR head:
 
-Do not use this repair to claim #500 production parity.
+`b78181f77717d8970ba877a4eda4de6880c82bbd`
+
+Exact-head proof:
+- W69 run `36004487563` / job `107649015564` = SUCCESS.
+- Workflow Registration Guard `36004488011` = SUCCESS.
+- CODEX Zero Delta Preflight `36004486167` = SUCCESS.
+- W003 Governance Gate `36004485888` = SUCCESS.
+
+Distinct merged-main readback at the merge SHA confirmed:
+- canonical W69 exposes `workflow_call`, `pull_request`, and `workflow_dispatch`;
+- registration guard covers W69;
+- QPS/W05/W70 historical workflow paths remain but are manual-only delegates to W69;
+- no legacy wrapper retains `CreateOfficeReviewCopy` or `Invoke-QpsControlledRoundtrip.ps1` invocation.
+
+#830 is therefore closed CONTROL evidence, not an active queue item.
 
 ## Previous proof closure
 
@@ -52,17 +62,18 @@ Do not use this repair to claim #500 production parity.
 
 ## Current disposition
 
-- `FIX_PR = 1`
+- `FIX_PR = 0`
 - `PROVE = 0`
 - `EXTERNAL_GATE = 2`
 - `PARENT_CONTROL = 2`
-- current executable repo-local frontier = **#830 / PR #831 only**
+- current executable repo-local frontier = **0**
 
-Do not open a competing wrapper repair or duplicate W69.
+Do not create a replacement coding wave merely to occupy WIP.
 
 ## External gates
 
 ### #500 — production zero-delta
+
 Required path remains:
 
 `Windows/local governed evidence vault -> real builder A/B -> retained ROUNDTRIP_RECEIPT.json / ZERO_DELTA proof -> CODEX cluster-facing binding`.
@@ -70,6 +81,7 @@ Required path remains:
 The hosted QPS zero-delta workflows remain synthetic and non-compensating.
 
 ### #753 — Pages publication
+
 Required owner action remains:
 
 `Settings -> Pages -> Build and deployment -> Source: GitHub Actions`
@@ -79,20 +91,20 @@ Then rerun the unchanged repository ownership/source-mode proof and bind a relea
 ## Parent controls
 
 ### #324
+
 Keep KEB semantic/evidence coverage here. Parent findings stay candidate-only until child ACCEPT/REJECT/DEFER.
 
 ### #319
-Keep DMAIC/queue/process telemetry here. #830 is the single bounded child admitted from the runtime contract drift exposed after registration repair.
+
+Keep DMAIC/queue/process telemetry here. Historical #810/#811/#812/#830 repair results remain CONTROL evidence, not a reason to create another implementation wave.
 
 ## Next execution order
 
-1. Consume PR #831 exact-head W69, registration guard, preflight and governance checks.
-2. Repair only the first material #830 red if any.
-3. Merge only after the bounded exact-head predicates are green.
-4. Require distinct main-bound readback before closing #830.
-5. Re-enter #500 only on a real local Windows production receipt.
-6. Re-enter #753 only after the owner Pages source setting changes and unchanged proof can run.
-7. Preserve #324/#319 as controls.
+1. Re-enter #500 only on a real local Windows production receipt.
+2. Re-enter #753 only after the owner Pages source setting changes and unchanged proof can run.
+3. Re-enter #324 only from a concrete child semantic/schema finding.
+4. Use #319 only for real measured process/control drift.
+5. Otherwise STOP: no repo-local first red is currently present.
 
 ## Non-compensation
 
