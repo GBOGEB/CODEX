@@ -1,0 +1,44 @@
+name: GM-I-A P002 CoolProp FAST-HEAVY KEB Bridge
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'triage/GM_I_A_COOLPROP_FAST_HEAVY_KEB_BRIDGE_P002.yaml'
+      - 'scripts/validate_gm_i_a_coolprop_fast_heavy_keb_p002.py'
+      - '.github/workflows/gm-i-a-coolprop-fast-heavy-keb-p002.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  consume-provider-attestation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PROVIDER_COMMIT: 0873f07f9bc1e5eb9fdbdd3219c826d97eb148dc
+      PROVIDER_PATH: qps/recon/federation/GM_I_A_FAST_HEAVY_FEDERATION_ATTESTATION_P002_v1.json
+      EXPECTED_SHA256: af1115346ff212addbcaa855faa5f65e8989a0de01742decb6ba30e16a60affa
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install validator runtime dependencies
+        run: python -m pip install --disable-pip-version-check --no-cache-dir 'ruamel.yaml>=0.18,<0.19'
+      - name: Fetch immutable P002 CoolProp provider attestation
+        run: |
+          curl --fail --location --silent --show-error "https://raw.githubusercontent.com/GBOGEB/CoolProp/${PROVIDER_COMMIT}/${PROVIDER_PATH}" --output /tmp/gm_i_a_p002_provider.json
+          echo "${EXPECTED_SHA256}  /tmp/gm_i_a_p002_provider.json" | sha256sum -c -
+      - name: Consume P002 provider and emit KEB receipt
+        run: |
+          python scripts/validate_gm_i_a_coolprop_fast_heavy_keb_p002.py --provider /tmp/gm_i_a_p002_provider.json --receipt /tmp/gm_i_a_p002_keb_receipt.json
+          python -m json.tool /tmp/gm_i_a_p002_keb_receipt.json > /dev/null
+          sha256sum /tmp/gm_i_a_p002_keb_receipt.json | tee /tmp/GM_I_A_P002_KEB_SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gm-i-a-p002-keb-${{ github.event.pull_request.head.sha }}
+          path: |
+            /tmp/gm_i_a_p002_keb_receipt.json
+            /tmp/GM_I_A_P002_KEB_SHA256SUMS
+          if-no-files-found: error

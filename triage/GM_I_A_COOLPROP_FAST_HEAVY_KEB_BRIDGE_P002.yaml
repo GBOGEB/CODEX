@@ -1,0 +1,26 @@
+schema: codex.gm_i_a_coolprop_fast_heavy_keb_bridge.v1
+pulse_id: GM-I-A-MCLOCK-P002
+mission: GM-I-A
+provider:
+  repo: GBOGEB/CoolProp
+  attestation_commit: 0873f07f9bc1e5eb9fdbdd3219c826d97eb148dc
+  attestation_path: qps/recon/federation/GM_I_A_FAST_HEAVY_FEDERATION_ATTESTATION_P002_v1.json
+  attestation_sha256: af1115346ff212addbcaa855faa5f65e8989a0de01742decb6ba30e16a60affa
+  source_head_sha: a88d6e8cc24402868afab39a71fc49fcacec08c8
+  source_merge_sha: e31433c4427be2aaad064294e6c6cab1843537df
+  runtime_run_id: 36226071145
+consumer:
+  repo: GBOGEB/CODEX
+  role: KEB_SEMANTIC_RUNTIME_ECONOMICS_CONSUMER
+  authority_transfer: false
+  formal_credit_delta: 0
+knowledge_atom:
+  object_type: KEB_KNOWLEDGE_ATOM_CANDIDATE
+  topic: FAST_HEAVY_RUNTIME_ECONOMICS_P002
+  claim: REPEAT_PULSE_SEPARATES_RUNNER_QUEUE_VARIANCE_FROM_STABLE_EXECUTION
+  promotion: NON_ENGINEERING_REFERENCE_ONLY
+guards:
+  - EXACT_PROVIDER_COMMIT_AND_DIGEST_REQUIRED
+  - NO_ENGINEERING_PROMOTION
+  - NO_HEPAK_OR_QEQ_AUTHORITY_TRANSFER
+  - ABACUS_BRIDGE_STATE_IS_INDEPENDENT_AND_NON_COMPENSATING
