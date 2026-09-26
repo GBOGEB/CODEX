@@ -10,10 +10,10 @@ from ruamel.yaml import YAML
 
 ROOT = Path(__file__).resolve().parents[1]
 BRIDGE = ROOT / "triage/GM_I_A_COOLPROP_FAST_HEAVY_KEB_BRIDGE.yaml"
-EXPECTED_DIGEST = "132ff84a3502f5ce39d4698fa772e98f7e8fba8e52587e698e8ea419197e1398"
-EXPECTED_SOURCE = "47cc8dced9278d50714ac39ef0a2edab7458c6a0"
-EXPECTED_MERGE = "9d10914924810c26a0d88f8aaea4db03b7a3d38e"
-EXPECTED_RUN = 35424686224
+EXPECTED_DIGEST = "4c32dca1a3f60b3b587d159702880a3c5c5987e878ebc228063650533c084ea6"
+EXPECTED_SOURCE = "a88d6e8cc24402868afab39a71fc49fcacec08c8"
+EXPECTED_MERGE = "e31433c4427be2aaad064294e6c6cab1843537df"
+EXPECTED_RUN = 36226071145
 
 
 def require(condition: bool, message: str) -> None:
@@ -70,7 +70,7 @@ def build_receipt(d: dict, digest: str, bridge: dict) -> dict:
         "canonical_keb_atom": False,
         "promotion_evidence_present": False,
         "provider_repo": d["provider_repo"],
-        "provider_attestation_commit": "a71924147117c02ccc70c9b6436d89623897606c",
+        "provider_attestation_commit": "0b5147156e949a17ca1b4f01ea5cc5067c9628ed",
         "provider_attestation_sha256": digest,
         "provider_source_head_sha": d["source_head_sha"],
         "provider_runtime_run_id": d["workflow"]["run_id"],
