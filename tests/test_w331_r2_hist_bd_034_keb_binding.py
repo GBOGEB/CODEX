@@ -2,7 +2,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-REVIEW = ROOT / "federation/qps/W331_R2_HIST_BD_034_KEB_FINAL.md"
+REVIEW = ROOT / "federation/qps/W331_R2_HIST_BD_034_KEB_BINDING.md"
 
 
 def review_text() -> str:
@@ -17,7 +17,7 @@ def test_final_keb_binding_uses_canonical_child_merge():
 
 
 def test_final_keb_binding_preserves_semantic_guards():
-    body = review_text()
+    body = " ".join(review_text().split())
     assert "protected or signed owner provenance" in body
     assert "farthest user toward QRB/QDB" in body
     assert "Source-bound zero flow remains valid" in body
