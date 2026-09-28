@@ -17,7 +17,7 @@ def test_final_keb_binding_uses_canonical_child_merge():
 
 
 def test_final_keb_binding_preserves_semantic_guards():
-    body = review_text()
+    body = " ".join(review_text().split())
     assert "protected or signed owner provenance" in body
     assert "farthest user toward QRB/QDB" in body
     assert "Source-bound zero flow remains valid" in body
