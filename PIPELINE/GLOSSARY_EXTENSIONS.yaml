@@ -143,3 +143,7 @@ glossary:
     definition: Signed federation process metric reporting the child-declared change in unresolved semantic debt across a governed knowledge-exchange disposition cycle; negative values indicate reduced debt, positive values indicate increased debt and zero indicates no net change. The metric is telemetry only and creates no engineering, compliance or project-completion credit.
     introduced_by: codex/bridges/knowledge_exchange_return.py
     first_use_case: expose deterministic KEB closure telemetry alongside accepted, rejected, duplicate, deferred and obligation-closure counts.
+  semantic_root:
+    definition: Governed classification field naming the single semantic deficiency or review root challenged by a bounded KEB receipt; it groups semantic review evidence and does not transfer child engineering, compliance, acceptance, release, negotiation or formal authority.
+    introduced_by: federation/qps/W331R2_HIST_BD034_FINAL_KEB.yaml
+    first_use_case: identify SOURCE_RECEIPT_SUBSTANTIVE_VALIDATION_INCOMPLETE as the source-bound semantic root across the W331 HIST-BD-034 KEB challenge receipts while preserving zero receiver credit.
