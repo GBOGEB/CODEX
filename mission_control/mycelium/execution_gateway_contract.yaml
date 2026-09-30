@@ -1,6 +1,6 @@
 schema_version: "0.1"
 gateway_id: MISSIONCONTROL_AUTHENTICATED_EXECUTION_GATEWAY
-state: AUTHENTICATED_TRANSPORT_IMPLEMENTED_NO_MUTATION
+state: BOUNDED_APPLY_IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF
 owner: CODEX_EXECUTION_GOVERNANCE
 
 authority:
@@ -71,6 +71,25 @@ audit:
 
 request_schema: mission_control/mycelium/schemas/execution_request.schema.json
 
+bounded_apply_runtime:
+  policy: mission_control/mycelium/bounded_apply_policy.yaml
+  planner: scripts/missioncontrol_bounded_apply.py
+  test: tests/test_missioncontrol_bounded_apply.py
+  replay_ledger: mission_control/mycelium/gateway/bounded_apply_ledger.json
+  target_repository: GBOGEB/CODEX
+  target_ref: main
+  action_class: APPLY_BOUNDED_CODEX
+  implementation_state: IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF
+  mutation_enabled: false
+  execute_permitted: false
+  enabled_mutation_transports: []
+  success_decision_while_disabled: WITHHELD_MUTATION_DISABLED
+  exact_head_required: true
+  changed_path_allowlist_required: true
+  explicit_approval_ref_required: true
+  exact_head_dry_run_receipt_required: true
+  completed_replay_forbidden: true
+
 transport_runtime:
   workflow: .github/workflows/missioncontrol-authenticated-transport.yml
   executor: scripts/missioncontrol_authenticated_transport.py
@@ -90,3 +109,5 @@ promotion:
   authenticated_transport_proof_does_not_enable_apply: true
   apply_implementation_requires_separate_bounded_slice: true
   implementation_success_does_not_transfer_remote_authority: true
+  bounded_apply_exact_head_proof_does_not_enable_mutation: true
+  mutation_enablement_requires_separate_governance_promotion: true

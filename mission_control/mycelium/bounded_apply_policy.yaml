@@ -1,0 +1,57 @@
+schema_version: "0.1"
+policy_id: MISSIONCONTROL_CODEX_BOUNDED_APPLY_V0_1
+state: IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF
+
+mutation_enabled: false
+enabled_mutation_transports: []
+
+target:
+  repository: GBOGEB/CODEX
+  ref: main
+
+allowed_intents:
+  - CONTROLLED_CODEX_CONTROL_PLANE_UPDATE
+
+changed_path_allowlist:
+  - mission_control/mycelium/control_manifest.yaml
+  - mission_control/mycelium/control_plane_projection.json
+  - mission_control/mycelium/executable_projection.json
+  - mission_control/mycelium/control_events.json
+  - docs/data/missioncontrol_control_plane.json
+  - docs/data/missioncontrol_executable_projection.json
+  - docs/data/missioncontrol_control_events.json
+
+guards:
+  exact_head_required: true
+  changed_path_allowlist_required: true
+  explicit_approval_ref_required: true
+  dry_run_receipt_same_head_required: true
+  dry_run_receipt_must_be_no_mutation: true
+  idempotency_key_required: true
+  completed_replay_forbidden: true
+  remote_repository_mutation_forbidden: true
+  apply_execution_forbidden_while_disabled: true
+
+approval:
+  accepted_ref_prefix: https://github.com/GBOGEB/CODEX/issues/
+  authenticated_owner_verification_required_before_future_execution: true
+
+dry_run:
+  receipt_root: mission_control/mycelium/gateway/receipts
+  required_decision: EXECUTED
+  required_after_sha: null
+
+replay:
+  ledger: mission_control/mycelium/gateway/bounded_apply_ledger.json
+
+authority:
+  authority_transfer: false
+  formal_credit_delta: 0
+  engineering_credit_delta: 0
+  remote_execution_authority_mutation: false
+  remote_engineering_authority_mutation: false
+
+promotion:
+  implementation_does_not_enable_mutation: true
+  exact_head_proof_does_not_enable_mutation: true
+  separate_governance_promotion_required: true
