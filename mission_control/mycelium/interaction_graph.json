@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "snapshot_at": "2026-09-30T11:39:00+02:00",
+  "snapshot_at": "2026-09-30T11:35:30+02:00",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -20,7 +20,7 @@
       "state": "REMOTE_EXECUTION_CURRENT",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "3e56cee45badf25c58dd12483ef82174589609f1"
+        "sha": "713a152e99024165aea81bffbf530d2073e164bb"
       }
     },
     {
@@ -54,7 +54,7 @@
       "id": "dab_hard",
       "type": "queue",
       "label": "DAB-HARD",
-      "state": "ACTIVE"
+      "state": "SOURCE_BOUND_HOLD"
     },
     {
       "id": "slice4",
@@ -136,8 +136,20 @@
       "id": "hard_pr2",
       "type": "pull_request",
       "label": "ABACUS #1492 residual E999",
-      "state": "PROVING",
-      "url": "https://github.com/GBOGEB/ABACUS/pull/1492"
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1492",
+      "meta": {
+        "merge_sha": "d945388d020019e0be9d1683bfcda46ba2ac74f3"
+      }
+    },
+    {
+      "id": "qplant_e999_hold",
+      "type": "atom",
+      "label": "W52 qplant E999 source gap",
+      "state": "SOURCE_BOUND_HOLD",
+      "meta": {
+        "path": "qplant/w52_p2m_ts_pressure_sensitivity.py"
+      }
     }
   ],
   "edges": [
@@ -245,6 +257,11 @@
       "from": "hard_pr2",
       "to": "dab_hard",
       "type": "proves"
+    },
+    {
+      "from": "qplant_e999_hold",
+      "to": "dab_hard",
+      "type": "blocks"
     }
   ]
 }
