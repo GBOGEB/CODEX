@@ -5,6 +5,7 @@
   let control = null;
   let events = null;
   let graphModel = null;
+  let sourceStatus = null;
   let stagedEnvelope = null;
 
   function esc(v) {
@@ -12,7 +13,7 @@
   }
 
   async function loadControlPlane() {
-    [control, events] = await Promise.all([
+    [control, events, sourceStatus] = await Promise.all([
       fetch('data/missioncontrol_control_plane.json').then(r => {
         if (!r.ok) throw new Error('control-plane projection HTTP ' + r.status);
         return r.json();
@@ -20,7 +21,17 @@
       fetch('data/missioncontrol_control_events.json').then(r => {
         if (!r.ok) throw new Error('control-event projection HTTP ' + r.status);
         return r.json();
-      })
+      }),
+      fetch('data/missioncontrol_source_status.json').then(r => {
+        if (!r.ok) throw new Error('source-status projection HTTP ' + r.status);
+        return r.json();
+      }).catch(err => ({
+        schema_version:'0.2',
+        generated_at:null,
+        sources:[],
+        projection_error:String(err?.message || err),
+        authority_transfer:false
+      }))
     ]);
     renderAuthority();
     renderLanes();
@@ -152,13 +163,19 @@
     const box = $('#federationRows');
     if (!box || !control) return;
     const codex = control.repositories?.codex;
+    const liveByRepo = new Map((sourceStatus?.sources || []).map(s => [s.repository, s]));
     box.innerHTML = Object.values(control.repositories || {}).map(r => {
       const remote = r.role !== 'UI_ORCHESTRATION_GRAPH_AUTHORITY';
       const mechanism = r.repo.includes('cryoplant') ? 'PROJECTED_OR_BRIDGED' : (r.repo.includes('ABACUS') ? 'REFERENCE / TYPED RETURN' : 'LOCAL');
-      return '<tr><td><b>' + esc(r.repo) + '</b></td>' +
-        '<td><code>' + esc((r.refreshed_current_sha || '').slice(0,12)) + '</code></td>' +
+      const liveSource = liveByRepo.get(r.repo);
+      const head = liveSource?.head_sha || r.refreshed_current_sha || '';
+      const liveState = liveSource?.status || 'COMMITTED_FALLBACK';
+      const freshnessClass = liveState === 'FRESH' ? 'ok' : (liveState === 'STALE_CACHE' ? 'warn' : '');
+      return '<tr><td><b>' + esc(r.repo) + '</b><br><small>' + esc(liveState) + '</small></td>' +
+        '<td><code>' + esc(String(head).slice(0,12)) + '</code></td>' +
         '<td>' + esc(r.role) + '</td><td>' + esc(mechanism) + '</td>' +
-        '<td>' + (remote ? '<span class="pill">preserved remote</span>' : '<span class="pill ok">local authority</span>') + '</td></tr>';
+        '<td>' + (remote ? '<span class="pill">preserved remote</span>' : '<span class="pill ok">local authority</span>') +
+        ' <span class="pill ' + freshnessClass + '">' + esc(liveState) + '</span></td></tr>';
     }).join('');
     const qlm = $('#qlmContext');
     if (qlm) {
@@ -181,7 +198,8 @@
         '<span class="pill warn">conflict: ' + esc(fs.conflict_state || 'WITHHELD') + '</span>' +
         '<span class="pill ok">remote authority: ' + esc(fs.remote_authority_state || 'WITHHELD') + '</span>' +
         '<span class="pill ok">freshness: ' + esc(freshness.fresh_sources ?? '—') + '/' + esc(freshness.declared_sources ?? '—') + ' (' + esc(freshness.coverage_pct ?? '—') + '%)</span>' +
-        '<span class="pill">pulse: ' + esc(live.pulse_id || 'WITHHELD') + '</span>';
+        '<span class="pill">pulse: ' + esc(live.pulse_id || 'WITHHELD') + '</span>' +
+        '<span class="pill">live projection: ' + esc(sourceStatus?.generated_at || 'COMMITTED_FALLBACK') + '</span>';
     }
   }
 
