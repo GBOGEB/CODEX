@@ -33,6 +33,7 @@ def test_fixture_ingestion_reads_exact_head_and_declared_metadata(
     assert result["status"] == "FRESH"
     assert result["default_branch"] == "main"
     assert result["head_sha"] == "abc123"
+    assert result["telemetry_status"] == "COMPLETE"
 
 
 def test_stale_recovery_preserves_last_known_identity() -> None:
@@ -105,5 +106,28 @@ def test_temporal_events_append_only_on_source_change() -> None:
     event = updated["events"][-1]
     assert event["id"] == "EV-0012"
     assert event["type"] == "EXTERNAL_RETURN"
+    assert event["source_ref"] == "UNBOUND"
     assert event["source_sha"] == "new"
+    assert event["acceptance_decision"] == "PROJECTION_ONLY_NO_ACCEPTANCE"
     assert event["authority_transfer"] is False
+
+
+def test_optional_telemetry_failure_does_not_poison_exact_head(
+    tmp_path: Path,
+) -> None:
+    (tmp_path / "codex_repository.json").write_text(
+        json.dumps({"default_branch": "main", "open_issues_count": 4})
+    )
+    (tmp_path / "codex_head.json").write_text(json.dumps({"sha": "head-ok"}))
+    source = {
+        "id": "codex",
+        "repository": "GBOGEB/CODEX",
+        "authority_class": "LOCAL_AUTHORITATIVE",
+        "role": "ORCHESTRATION_UI_GOVERNANCE",
+        "ingest": ["repository", "issues"],
+    }
+    result = collect_source(source, token=None, fixture_dir=tmp_path)
+    assert result["status"] == "FRESH"
+    assert result["head_sha"] == "head-ok"
+    assert result["telemetry_status"] == "PARTIAL"
+    assert "issues" in result["telemetry_errors"]
