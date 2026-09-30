@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MissionControl Mycelium</title>
+<style>
+:root{
+  --bg:#07111f;--panel:#0d1b2a;--panel2:#12243a;--ink:#edf5ff;--muted:#9fb2c8;
+  --line:#29425f;--accent:#72a7ff;--ok:#4fd19b;--warn:#f4bf62;--bad:#ef7b7b;--phi:1.618;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#06101c,#0a1626 55%,#07111f);color:var(--ink);font:14px/1.45 Inter,Arial,sans-serif}
+a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+header{max-width:1500px;margin:auto;padding:18px 20px 8px}
+h1{font-size:28px;margin:0 0 4px}.sub{color:var(--muted)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+button,select,input{background:#0b1930;color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+main{max-width:1500px;margin:auto;padding:12px 20px 28px}
+.guard{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.pill{border:1px solid var(--line);border-radius:999px;padding:5px 9px;background:#0a1830;color:var(--muted)}
+.pill.ok{color:var(--ok)} .pill.warn{color:var(--warn)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.grid.layout-3x2{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid.golden-focus{grid-template-columns:minmax(0,1.618fr) minmax(280px,1fr)}
+.grid.golden-focus .card.focus{grid-row:span 2}
+.grid.single-focus .card{display:none}.grid.single-focus .card.focus{display:block}
+.card{min-height:320px;background:linear-gradient(180deg,var(--panel),#0a1727);border:1px solid var(--line);border-radius:15px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.18);overflow:auto}
+.card h2{font-size:17px;margin:0 0 8px}.card h3{font-size:14px;margin:14px 0 5px;color:#cfe0f4}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0}
+.kpi{padding:10px;border:1px solid var(--line);border-radius:10px;background:#0a1930}.kpi b{display:block;font-size:20px}.kpi span{color:var(--muted);font-size:11px}
+.queue{display:grid;gap:7px}.q{display:grid;grid-template-columns:38px 1fr auto;gap:8px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:9px;background:#0a1930}.rank{font-weight:700;color:var(--warn)}
+.edge{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#06101c;border:1px solid var(--line);padding:9px;border-radius:9px;white-space:pre-wrap}
+.row{display:flex;gap:8px;flex-wrap:wrap}.mini{font-size:12px;color:var(--muted)}
+svg{width:100%;min-width:640px;height:300px;background:#081525;border-radius:12px;border:1px solid var(--line)}
+.node{cursor:pointer}.node circle{fill:#17304d;stroke:#6f9ee8;stroke-width:1.4}.node text{fill:#edf5ff;font-size:11px}.edge-line{stroke:#395d82;stroke-width:1.2;marker-end:url(#arrow)}
+.node.active circle{fill:#245d46;stroke:#4fd19b}.node.blocked circle{fill:#59332f;stroke:#ef7b7b}
+.links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.links a{display:block;padding:8px;border:1px solid var(--line);border-radius:9px;background:#0a1930}
+.timeline{border-left:2px solid #315174;margin-left:8px;padding-left:12px}.event{margin:0 0 11px}.event b{display:block}
+table{width:100%;border-collapse:collapse}th,td{padding:7px;border-bottom:1px solid var(--line);text-align:left}th{color:#cfe0f4}
+.note{padding:8px;border-left:3px solid var(--accent);background:#0a1930;border-radius:6px}
+@media(max-width:980px){.grid,.grid.layout-3x2,.grid.golden-focus{grid-template-columns:1fr}.grid.golden-focus .card.focus{grid-row:auto}.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:580px){header,main{padding-left:10px;padding-right:10px}.kpis,.links{grid-template-columns:1fr}.card{min-height:260px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>MissionControl — Mycelium Interaction Graph</h1>
+  <div class="sub">A user-facing control surface for current → next edge → proof → outward artifact, without replaying cleared predecessors after stream interruption.</div>
+  <div class="toolbar">
+    <label>Layout <select id="layout"><option value="">2×3</option><option value="layout-3x2">3×2</option><option value="golden-focus">Golden focus</option><option value="single-focus">Single focus</option></select></label>
+    <label>Focus <select id="focus"></select></label>
+    <label>Graph filter <input id="filter" placeholder="node / edge / artifact"></label>
+    <button id="reset">Reset</button>
+  </div>
+</header>
+<main>
+  <div class="guard">
+    <span class="pill ok">authority_transfer=false</span>
+    <span class="pill ok">formal_credit_delta=0</span>
+    <span class="pill warn">analytics=DIAGNOSTIC_ONLY</span>
+    <span class="pill">stream timeout ≠ execution blocker</span>
+    <span class="pill">rebase only on material authority delta</span>
+  </div>
+
+  <section id="grid" class="grid">
+    <article class="card focus" data-panel="current">
+      <h2>1 · Current / Next Edge</h2>
+      <div class="kpis">
+        <div class="kpi"><b>0</b><span>repo-local first reds</span></div>
+        <div class="kpi"><b>4</b><span>open CODEX control issues</span></div>
+        <div class="kpi"><b>2</b><span>external gates</span></div>
+        <div class="kpi"><b>2</b><span>parent controls</span></div>
+      </div>
+      <h3>Current authority</h3>
+      <div class="edge">GBOGEB/CODEX main
+→ MissionControl flow manifest
+→ interaction graph / UI projection
+→ proof / PR / readback
+→ exact next edge</div>
+      <h3>Interruption recovery rule</h3>
+      <div class="note">Persist current node + exact next edge; continue the active executable step. Only stop when the required execution state is actually unavailable or authority becomes ambiguous.</div>
+      <h3>Existing CODEX queue</h3>
+      <div class="queue">
+        <div class="q"><span class="rank">1</span><span>#500 production zero-delta</span><span class="pill warn">EXTERNAL_GATE</span></div>
+        <div class="q"><span class="rank">2</span><span>#753 Pages source mode</span><span class="pill warn">EXTERNAL_GATE</span></div>
+        <div class="q"><span class="rank">3</span><span>#324 semantic/evidence umbrella</span><span class="pill">PARENT</span></div>
+        <div class="q"><span class="rank">4</span><span>#319 DMAIC/capacity control</span><span class="pill">PARENT</span></div>
+      </div>
+    </article>
+
+    <article class="card" data-panel="graph" id="graph">
+      <h2>2 · Interaction Graph — nodes / edges / precedents</h2>
+      <svg id="graphSvg" viewBox="0 0 760 300" role="img" aria-label="MissionControl interaction graph">
+        <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#395d82"/></marker></defs>
+      </svg>
+      <div class="mini">Click a node to open its governed source or outward projection. Density = visible edges / possible directed edges.</div>
+      <div id="graphMeta" class="row"></div>
+    </article>
+
+    <article class="card" data-panel="pressure">
+      <h2>3 · Reverse Pressure / BD Queue</h2>
+      <div class="kpis">
+        <div class="kpi"><b>100%</b><span>classified queue</span></div>
+        <div class="kpi"><b>0</b><span>FIX_PR</span></div>
+        <div class="kpi"><b>0</b><span>PROVE</span></div>
+        <div class="kpi"><b>2</b><span>EXTERNAL_GATE</span></div>
+      </div>
+      <h3>Pressure routing</h3>
+      <table>
+        <tr><th>Signal</th><th>Action</th></tr>
+        <tr><td>material repo-local red</td><td>admit first red only → bounded repair</td></tr>
+        <tr><td>external first red</td><td>WAIT_EXTERNAL; preserve predicate; continue independent work</td></tr>
+        <tr><td>PCA mode pressure</td><td>back-project to source feature pressure only</td></tr>
+        <tr><td>user steer</td><td>reprioritize active edge; do not replay cleared predecessors</td></tr>
+      </table>
+      <p class="mini">Source implementation: <a href="../pca_engine/src/pca_engine/control_analytics.py">control_analytics.py</a> → <code>reverse_pressure()</code>.</p>
+    </article>
+
+    <article class="card" data-panel="evidence" id="evidence">
+      <h2>4 · DoD / DoV / Evidence</h2>
+      <table>
+        <tr><th>Level</th><th>Required evidence</th><th>Authority</th></tr>
+        <tr><td>Local reproducibility</td><td>structural + visual/runtime QA</td><td>presentation/rebuild only</td></tr>
+        <tr><td>Exact-SHA receipt</td><td>committed SHA + executed proof + bound receipt</td><td>release/runtime evidence</td></tr>
+        <tr><td>External return</td><td>typed return + source identity + acceptance decision</td><td>domain-specific</td></tr>
+      </table>
+      <h3>DoD for this UI slice</h3>
+      <div class="row">
+        <span class="pill ok">flow manifest</span><span class="pill">responsive 6-panel UI</span><span class="pill">clickable graph</span>
+        <span class="pill">manifest registration</span><span class="pill">CI/readback</span>
+      </div>
+      <h3>Non-compensation</h3>
+      <div class="note">PCA, BT, plots, browser checks, and generated views cannot create engineering truth or replace missing physical/source evidence.</div>
+    </article>
+
+    <article class="card" data-panel="analytics" id="analytics">
+      <h2>5 · DMAIC / KPI / PCA / BT</h2>
+      <div class="edge">DEFINE → goal + authority + exact next edge
+MEASURE → KPI + queue + graph + temporal delta
+ANALYZE → PCA + reverse pressure + bottleneck class
+IMPROVE → bounded change
+CONTROL → proof + DoD + DoV + handover</div>
+      <h3>Bradley–Terry admission</h3>
+      <div class="note">BT is admitted only when governed observed pairwise outcomes exist. It is withheld for synthetic ordering, insufficient population/range coverage, or PCA-only ranking.</div>
+      <h3>Core KPIs</h3>
+      <div class="row">
+        <span class="pill">active edges</span><span class="pill">blocked edges</span><span class="pill">queue coverage</span>
+        <span class="pill">exact-SHA receipts</span><span class="pill">stale nodes</span><span class="pill">lineage depth</span>
+        <span class="pill">recovery replays avoided</span>
+      </div>
+      <p><a href="incubator-dmaic-dashboard.html">DMAIC dashboard</a> · <a href="../pca_engine/src/pca_engine/control_analytics.py">PCA/control analytics source</a></p>
+    </article>
+
+    <article class="card" data-panel="outward">
+      <h2>6 · Outward Products / Federation</h2>
+      <div class="links">
+        <a href="manifest.html">Manifest / published surfaces</a>
+        <a href="traceability.html">Traceability</a>
+        <a href="runtime_map.html">Runtime map</a>
+        <a href="handover.html">Lossless handover</a>
+        <a href="plots/index.html">Static / Matplotlib plots</a>
+        <a href="wave_packages/runtime/pages/plotly_runtime_dashboard.html">Plotly runtime</a>
+        <a href="federation_bridge_dashboard.html">Federation bridge</a>
+        <a href="../controls/BD_QUEUE_CURRENT.md">BD queue authority</a>
+      </div>
+      <h3>External split-repo integration router</h3>
+      <table>
+        <tr><th>Mode</th><th>Use when</th></tr>
+        <tr><td>Bridge</td><td>upstream authority stays independent; typed artifacts/receipts cross boundary</td></tr>
+        <tr><td>Cherry-pick</td><td>bounded compatible commit with exact provenance</td></tr>
+        <tr><td>Federation</td><td>independent repos share contract + freshness probes</td></tr>
+        <tr><td>Pin/submodule</td><td>external managed source stays upstream-owned</td></tr>
+        <tr><td>Full merge</td><td>authority is intentionally consolidated; not the default</td></tr>
+      </table>
+    </article>
+  </section>
+
+  <section class="card" style="margin-top:14px" id="timeline">
+    <h2>Temporal / Recursive Lineage</h2>
+    <div class="timeline">
+      <div class="event"><b>Authority freeze</b><span class="mini">CODEX main + source hashes + governing manifests</span></div>
+      <div class="event"><b>User steering event</b><span class="mini">priority input; does not erase completed proof or force rebase</span></div>
+      <div class="event"><b>Bounded execution</b><span class="mini">first material red / admitted capability only</span></div>
+      <div class="event"><b>Proof</b><span class="mini">local QA or exact-SHA depending on claimed evidence level</span></div>
+      <div class="event"><b>Outward projection</b><span class="mini">HTML / plot / PDF / DOCX / table / diagram linked back to source identity</span></div>
+      <div class="event"><b>Restart pointer</b><span class="mini">current node + next edge + blocked edges + last proof + steering events</span></div>
+    </div>
+  </section>
+</main>
+<script>
+const NODES=[
+{id:'A',label:'CODEX main',x:70,y:150,url:'https://github.com/GBOGEB/CODEX',kind:'active'},
+{id:'M',label:'Flow manifest',x:190,y:70,url:'../governance/mission_control/MISSION_CONTROL_FLOW_v1.yaml'},
+{id:'Q',label:'BD queue',x:190,y:230,url:'../controls/BD_QUEUE_CURRENT.md'},
+{id:'D',label:'DMAIC',x:330,y:70,url:'incubator-dmaic-dashboard.html'},
+{id:'P',label:'PCA / pressure',x:330,y:230,url:'../pca_engine/src/pca_engine/control_analytics.py'},
+{id:'E',label:'DoD / DoV',x:480,y:70,url:'#evidence'},
+{id:'O',label:'Outward products',x:480,y:230,url:'manifest.html'},
+{id:'F',label:'Federation',x:640,y:150,url:'federation_bridge_dashboard.html'}
+];
+const EDGES=[['A','M'],['A','Q'],['Q','D'],['D','P'],['P','E'],['E','O'],['O','F'],['M','D'],['M','E'],['M','O']];
+const svg=document.getElementById('graphSvg'), meta=document.getElementById('graphMeta');
+const byId=Object.fromEntries(NODES.map(n=>[n.id,n]));
+function renderGraph(q=''){
+  [...svg.querySelectorAll('.dynamic')].forEach(x=>x.remove());
+  const qq=q.trim().toLowerCase();
+  const visible=new Set(NODES.filter(n=>!qq||n.label.toLowerCase().includes(qq)).map(n=>n.id));
+  if(!qq) NODES.forEach(n=>visible.add(n.id));
+  EDGES.forEach(([a,b])=>{if(visible.has(a)&&visible.has(b)){const x=document.createElementNS('http://www.w3.org/2000/svg','line');x.setAttribute('x1',byId[a].x);x.setAttribute('y1',byId[a].y);x.setAttribute('x2',byId[b].x);x.setAttribute('y2',byId[b].y);x.setAttribute('class','dynamic edge-line');svg.appendChild(x);}});
+  NODES.filter(n=>visible.has(n.id)).forEach(n=>{const g=document.createElementNS('http://www.w3.org/2000/svg','g');g.setAttribute('class','dynamic node '+(n.kind||''));g.setAttribute('transform',`translate(${n.x},${n.y})`);g.innerHTML='<circle r="31"></circle><text text-anchor="middle" y="4">'+n.label.replaceAll('&','&amp;')+'</text>';g.addEventListener('click',()=>{location.href=n.url});svg.appendChild(g);});
+  const nv=visible.size, ev=EDGES.filter(([a,b])=>visible.has(a)&&visible.has(b)).length, possible=Math.max(1,nv*(nv-1));
+  meta.innerHTML='<span class="pill">nodes '+nv+'</span><span class="pill">edges '+ev+'</span><span class="pill">density '+(ev/possible).toFixed(3)+'</span>';
+}
+renderGraph();
+document.getElementById('filter').addEventListener('input',e=>renderGraph(e.target.value));
+const grid=document.getElementById('grid'), layout=document.getElementById('layout'), focus=document.getElementById('focus');
+const cards=[...document.querySelectorAll('.card[data-panel]')];
+cards.forEach(c=>{const o=document.createElement('option');o.value=c.dataset.panel;o.textContent=c.querySelector('h2').textContent;focus.appendChild(o);c.addEventListener('click',()=>{cards.forEach(x=>x.classList.remove('focus'));c.classList.add('focus');focus.value=c.dataset.panel;});});
+function apply(){grid.className='grid '+layout.value;cards.forEach(c=>c.classList.toggle('focus',c.dataset.panel===focus.value));}
+layout.addEventListener('change',apply);focus.addEventListener('change',apply);
+document.getElementById('reset').addEventListener('click',()=>{layout.value='';focus.value='current';document.getElementById('filter').value='';apply();renderGraph();});
+</script>
+</body>
+</html>
