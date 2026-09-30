@@ -1,0 +1,146 @@
+name: MissionControl Authenticated Command Gateway
+
+on:
+  workflow_dispatch:
+    inputs:
+      envelope:
+        description: 'MissionControl command envelope JSON downloaded/staged by the Pages control plane'
+        required: true
+        type: string
+      dry_run:
+        description: 'Validate only. Disable to execute the allow-listed action into an automation PR.'
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+concurrency:
+  group: missioncontrol-gateway-${{ github.actor }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  gateway:
+    name: authenticated-gateway
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout current main authority
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install governed dependencies
+        run: python -m pip install --upgrade pip pytest pyyaml numpy
+
+      - name: Materialize command envelope
+        env:
+          MISSIONCONTROL_ENVELOPE_JSON: ${{ inputs.envelope }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          raw = os.environ["MISSIONCONTROL_ENVELOPE_JSON"]
+          payload = json.loads(raw)
+          Path("missioncontrol-command-envelope.json").write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          print("Envelope materialized.")
+          PY
+
+      - name: Validate / execute authenticated command
+        id: gateway
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          EXPECTED_SHA="$(git rev-parse HEAD)"
+          ARGS=(
+            --envelope missioncontrol-command-envelope.json
+            --expected-sha "$EXPECTED_SHA"
+            --actor "$GITHUB_ACTOR"
+            --actor-id "$GITHUB_ACTOR_ID"
+            --run-id "$GITHUB_RUN_ID"
+            --run-attempt "$GITHUB_RUN_ATTEMPT"
+          )
+          if [ "${{ inputs.dry_run }}" = "false" ]; then
+            ARGS+=(--execute)
+          fi
+          python scripts/missioncontrol_command_gateway.py "${ARGS[@]}"
+
+      - name: Validate gateway and MissionControl contracts
+        run: |
+          python scripts/validate_missioncontrol_mycelium.py
+          pytest -q             tests/test_missioncontrol_command_gateway.py             tests/test_missioncontrol_source_ingestion.py             tests/test_missioncontrol_metrics.py
+          git diff --check
+
+      - name: Verify metrics repeat determinism
+        if: ${{ inputs.dry_run == false }}
+        run: |
+          set -euo pipefail
+          BEFORE="$(sha256sum mission_control/mycelium/metrics_snapshot.json docs/data/missioncontrol_metrics.json)"
+          python scripts/build_missioncontrol_metrics.py
+          AFTER="$(sha256sum mission_control/mycelium/metrics_snapshot.json docs/data/missioncontrol_metrics.json)"
+          test "$BEFORE" = "$AFTER"
+
+      - name: Upload gateway receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: missioncontrol-gateway-receipt-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ steps.gateway.outputs.receipt_path }}
+          if-no-files-found: error
+
+      - name: Publish authenticated mutation as reviewable PR
+        if: ${{ inputs.dry_run == false }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RECEIPT_PATH: ${{ steps.gateway.outputs.receipt_path }}
+          ACTION: ${{ steps.gateway.outputs.action }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add             mission_control/mycelium/source_status.json             docs/data/missioncontrol_source_status.json             mission_control/mycelium/metrics_snapshot.json             docs/data/missioncontrol_metrics.json             "$RECEIPT_PATH"
+
+          if git diff --cached --quiet; then
+            echo "::error::Authenticated gateway produced no reviewable mutation."
+            exit 1
+          fi
+
+          BRANCH="automation/missioncontrol-gateway-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          git checkout -b "$BRANCH"
+          git commit -m "MissionControl gateway: ${ACTION} [run ${GITHUB_RUN_ID}]"
+          git push -u origin "$BRANCH"
+
+          set +e
+          PR_URL="$(gh pr create             --base main             --head "$BRANCH"             --title "MissionControl gateway: ${ACTION}"             --body "Authenticated MissionControl gateway execution. Actor: \`$GITHUB_ACTOR\`. Run: \`$GITHUB_RUN_ID\`. Receipt: \`$RECEIPT_PATH\`. Direct-main mutation is disabled." 2>&1)"
+          RC=$?
+          set -e
+
+          if [ "$RC" -eq 0 ]; then
+            echo "Gateway PR: $PR_URL" >> "$GITHUB_STEP_SUMMARY"
+          else
+            {
+              echo "### Gateway branch retained"
+              echo
+              echo "PR creation was not permitted by repository policy."
+              echo "Branch: $BRANCH"
+              echo "Run: $GITHUB_RUN_ID"
+              echo "Receipt: $RECEIPT_PATH"
+              echo
+              echo "$PR_URL"
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning::Gateway execution succeeded and branch was published; PR creation requires owner policy or external client."
+          fi
