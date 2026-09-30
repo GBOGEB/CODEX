@@ -262,16 +262,24 @@ def temporal_refresh_events(
         before = old.get(source["id"], {})
         after_sha = source.get("head_sha")
         before_sha = before.get("head_sha")
+        before_identity = before.get("identity_status")
+        after_identity = source.get("identity_status")
+        if before_identity is None and before.get("status") == "MEASURED_CHAT_CONNECTOR" and before_sha:
+            before_identity = "MEASURED"
+        if after_identity is None and source.get("status") == "MEASURED_CHAT_CONNECTOR" and after_sha:
+            after_identity = "MEASURED"
         status_changed = source.get("status") != before.get("status")
-        head_changed = bool(after_sha and after_sha != before_sha)
-        if not (head_changed or status_changed):
+        head_changed = after_sha != before_sha
+        identity_changed = after_identity != before_identity
+        if not (head_changed or status_changed or identity_changed):
             continue
         event_id = f"EV-{next_number:04d}"
         next_number += 1
         summary = (
             f"Federation source {source['repository']} refreshed: "
             f"{before_sha or 'UNBOUND'} -> {after_sha or 'UNAVAILABLE'}; "
-            f"status {before.get('status', 'UNBOUND')} -> {source.get('status')}."
+            f"status {before.get('status', 'UNBOUND')} -> {source.get('status')}; "
+            f"identity {before_identity or 'UNBOUND'} -> {after_identity or 'WITHHELD'}."
         )
         event = {
             "id": event_id,
@@ -283,6 +291,8 @@ def temporal_refresh_events(
             "source_repo": source["repository"],
             "source_ref": source.get("default_branch") or "UNBOUND",
             "source_sha": after_sha,
+            "identity_status_before": before_identity,
+            "identity_status_after": after_identity,
             "parent_event": parent,
             "content_ref": "mission_control/mycelium/source_status.json",
             "summary": summary,
