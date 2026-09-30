@@ -13,11 +13,12 @@ permissions:
   actions: read
 
 concurrency:
-  group: missioncontrol-authenticated-transport-${{ github.actor }}-${{ github.ref }}
+  group: missioncontrol-authenticated-stage-only
   cancel-in-progress: false
 
 jobs:
   authenticated-transport:
+    name: authenticated-stage-only
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -52,16 +53,17 @@ jobs:
 
       - name: Validate authenticated transport request
         id: gateway
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          EXPECTED_SHA="$(git rev-parse HEAD)"
           python scripts/missioncontrol_authenticated_transport.py \
             --request missioncontrol-execution-request.json \
-            --expected-sha "$EXPECTED_SHA" \
             --actor "$GITHUB_ACTOR" \
             --actor-id "$GITHUB_ACTOR_ID" \
             --run-id "$GITHUB_RUN_ID" \
-            --run-attempt "$GITHUB_RUN_ATTEMPT"
+            --run-attempt "$GITHUB_RUN_ATTEMPT" \
+            --job-name "authenticated-stage-only"
 
       - name: Validate gateway design and MissionControl
         run: |
@@ -75,6 +77,6 @@ jobs:
       - name: Upload authenticated dry-run receipt
         uses: actions/upload-artifact@v4
         with:
-          name: missioncontrol-authenticated-transport-${{ github.run_id }}-${{ github.run_attempt }}
+          name: ${{ steps.gateway.outputs.artifact_name }}
           path: ${{ steps.gateway.outputs.receipt_path }}
           if-no-files-found: error
