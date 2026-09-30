@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "snapshot_at": "2026-09-30T12:32:00+02:00",
+  "snapshot_at": "2026-09-30T12:45:00+02:00",
   "evidence_policy": "MEASURED_OR_WITHHELD",
   "pressure_weights": {
     "urgency": 0.3,
@@ -73,8 +73,11 @@
         "slice": "#1490",
         "removed_w293": 887,
         "files": 21,
-        "residual_w293": null,
-        "residual_status": "WITHHELD"
+        "residual_w293": 3598,
+        "residual_status": "MEASURED",
+        "repository_total_flake8": 11484,
+        "evidence_job": "ABACUS job 109845151824",
+        "evidence_pr": "#1494"
       }
     },
     "dab_hard": {
@@ -82,11 +85,13 @@
         {
           "family": "E999",
           "baseline": 6,
-          "local_target": 1,
+          "target": 1,
           "measured_postmerge": 1,
           "status": "MEASURED",
-          "note": "sole reported fatal finding is W52/qplant source-bound E999",
-          "evidence_job": "ABACUS job 109832309064"
+          "delta_from_baseline": -5,
+          "state": "SOURCE_BOUND_HOLD",
+          "evidence_job": "ABACUS job 109845151824",
+          "note": "sole remaining E999 is W52/qplant source-bound"
         },
         {
           "family": "F821",
@@ -94,18 +99,66 @@
           "target": 0,
           "measured_postmerge": 0,
           "status": "MEASURED",
+          "delta_from_baseline": -15,
+          "state": "CLOSED",
           "evidence_pr": "#1491",
-          "evidence_job": "ABACUS job 109832309064",
-          "note": "fatal selector includes F82 and emitted no F821 findings"
+          "evidence_job": "ABACUS job 109845151824"
         },
         {
           "family": "F601",
           "baseline": 2,
           "target": 0,
-          "measured_postmerge": null,
-          "status": "WITHHELD",
+          "measured_postmerge": 0,
+          "status": "MEASURED",
+          "delta_from_baseline": -2,
+          "state": "CLOSED",
           "evidence_pr": "#1493",
-          "note": "current fatal selector does not include F60; full census required"
+          "evidence_job": "ABACUS job 109845151824"
+        },
+        {
+          "family": "F811",
+          "baseline": 15,
+          "measured_postmerge": 16,
+          "status": "MEASURED",
+          "delta_from_baseline": 1,
+          "state": "ACTIVE_NEXT",
+          "evidence_job": "ABACUS job 109845151824"
+        },
+        {
+          "family": "F841",
+          "baseline": 77,
+          "measured_postmerge": 77,
+          "status": "MEASURED",
+          "delta_from_baseline": 0,
+          "state": "QUEUED",
+          "evidence_job": "ABACUS job 109845151824"
+        },
+        {
+          "family": "E722",
+          "baseline": 34,
+          "measured_postmerge": 34,
+          "status": "MEASURED",
+          "delta_from_baseline": 0,
+          "state": "QUEUED",
+          "evidence_job": "ABACUS job 109845151824"
+        },
+        {
+          "family": "E731",
+          "baseline": 2,
+          "measured_postmerge": 2,
+          "status": "MEASURED",
+          "delta_from_baseline": 0,
+          "state": "QUEUED",
+          "evidence_job": "ABACUS job 109845151824"
+        },
+        {
+          "family": "E741",
+          "baseline": 38,
+          "measured_postmerge": 40,
+          "status": "MEASURED",
+          "delta_from_baseline": 2,
+          "state": "QUEUED",
+          "evidence_job": "ABACUS job 109845151824"
         }
       ]
     }
