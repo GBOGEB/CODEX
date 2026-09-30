@@ -303,7 +303,8 @@ def validate() -> list[str]:
     live_hosted = live_federation_proof.get("exact_head_proof", {})
     if live_hosted.get("conclusion") != "success" or int(live_hosted.get("executed_steps", 0)) <= 0:
         errors.append("PR #845 exact-head proof lacks >0-step success")
-    if live_federation_proof.get("pages_readback", {}).get("conclusion") != "success":
+    live_pages = live_federation_proof.get("pages", {})
+    if any(live_pages.get(key) != "PASS" for key in ("build", "report", "deploy")):
         errors.append("PR #845 Pages readback is not success")
     gateway_state = control.get("authenticated_execution_gateway", {})
     if gateway_state.get("runtime_proof") != "WITHHELD_OWNER_DISPATCH_REQUIRED":
