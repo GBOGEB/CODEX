@@ -47,7 +47,6 @@ def test_valid_authenticated_transport_request():
             request(),
             expected_sha=SHA,
             actor="GBOGEB",
-            check_replay=False,
         )
         == INTENT
     )
@@ -59,7 +58,6 @@ def test_stale_head_fails_closed():
             request(),
             expected_sha="b" * 40,
             actor="GBOGEB",
-            check_replay=False,
         )
 
 
@@ -67,7 +65,7 @@ def test_remote_repository_is_rejected():
     value = request()
     value["target"]["repo"] = "GBOGEB/ABACUS"
     with pytest.raises(GatewayError, match="CODEX-only"):
-        validate_request(value, expected_sha=SHA, actor="GBOGEB", check_replay=False)
+        validate_request(value, expected_sha=SHA, actor="GBOGEB")
 
 
 def test_mutation_action_class_is_not_enabled():
@@ -76,7 +74,6 @@ def test_mutation_action_class_is_not_enabled():
             request(action_class="APPLY_BOUNDED_CODEX"),
             expected_sha=SHA,
             actor="GBOGEB",
-            check_replay=False,
         )
 
 
@@ -86,7 +83,6 @@ def test_payload_digest_is_bound_to_intent():
             request(payload_sha256="b" * 64),
             expected_sha=SHA,
             actor="GBOGEB",
-            check_replay=False,
         )
 
 
@@ -96,7 +92,6 @@ def test_idempotency_key_binds_head_and_payload():
             request(idempotency_key="not-the-governed-key"),
             expected_sha=SHA,
             actor="GBOGEB",
-            check_replay=False,
         )
 
 
@@ -106,12 +101,15 @@ def test_receipt_conforms_to_design_schema():
         request=value,
         actor="GBOGEB",
         actor_id="202350393",
-        expected_sha=SHA,
+        observed_sha=SHA,
         run_id=12345,
+        job_id=67890,
     )
     assert receipt["decision"] == "AUTHORIZE"
     assert receipt["observed_head_sha"] == SHA
     assert receipt["after_sha"] is None
+    assert receipt["workflow_run"] == 12345
+    assert receipt["workflow_job"] == 67890
     assert receipt["authority_transfer"] is False
     assert receipt["formal_credit_delta"] == 0
     assert receipt["engineering_credit_delta"] == 0
