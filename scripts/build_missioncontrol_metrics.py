@@ -273,8 +273,6 @@ def apply_source_status_overlay(
             mechanical["artifact_id"] = abacus["census_artifact_id"]
         if abacus.get("census_artifact_sha256"):
             mechanical["artifact_sha256"] = abacus["census_artifact_sha256"]
-        if abacus.get("measurement_basis"):
-            mechanical["measurement_basis"] = abacus["measurement_basis"]
         dab_mech["mechanical_progress"] = mechanical
 
     family_names = (
@@ -312,8 +310,6 @@ def apply_source_status_overlay(
                 slice_baseline = slice_baselines[family]
                 if changed_measurement or "baseline" not in row:
                     row["baseline"] = slice_baseline
-                elif row.get("baseline") != slice_baseline:
-                    row["slice_baseline"] = slice_baseline
 
             row["measured_postmerge"] = value
             row["status"] = STATUS_MEASURED
