@@ -1,6 +1,6 @@
 schema_version: "0.1"
 gateway_id: MISSIONCONTROL_AUTHENTICATED_EXECUTION_GATEWAY
-state: DESIGN_ONLY_NO_MUTATION_BACKEND
+state: AUTHENTICATED_TRANSPORT_IMPLEMENTED_NO_MUTATION
 owner: CODEX_EXECUTION_GOVERNANCE
 
 authority:
@@ -24,6 +24,9 @@ authentication:
     - AUTHENTICATED_CONNECTOR
     - GITHUB_APP_BACKEND
     - MANUALLY_APPROVED_ACTION
+    - GITHUB_ACTIONS_WORKFLOW_DISPATCH
+  selected_transport: GITHUB_ACTIONS_WORKFLOW_DISPATCH
+  transport_state: AUTHENTICATED_STAGE_ONLY
   enabled_mutation_transports: []
 
 authorization:
@@ -68,7 +71,22 @@ audit:
 
 request_schema: mission_control/mycelium/schemas/execution_request.schema.json
 
+transport_runtime:
+  workflow: .github/workflows/missioncontrol-authenticated-transport.yml
+  executor: scripts/missioncontrol_authenticated_transport.py
+  target_repository: GBOGEB/CODEX
+  target_ref: main
+  enabled_action_class: STAGE_ONLY
+  mutation_enabled: false
+  receipt_storage: GITHUB_ACTION_ARTIFACT
+  replay_guard: RECEIPT_ARTIFACT_IDEMPOTENCY_DIGEST
+  concurrency: SERIAL_FAIL_CLOSED
+  exact_head_refresh_before_authorize: true
+  payload_digest_verified: true
+  workflow_run_job_bound_in_receipt: true
+
 promotion:
   design_completion_does_not_enable_apply: true
-  implementation_requires_separate_bounded_slice: true
+  authenticated_transport_proof_does_not_enable_apply: true
+  apply_implementation_requires_separate_bounded_slice: true
   implementation_success_does_not_transfer_remote_authority: true
