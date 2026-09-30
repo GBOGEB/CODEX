@@ -10,6 +10,9 @@ on:
 
 permissions:
   contents: read
+  actions: read
+  issues: read
+  pull-requests: read
   pages: write
   id-token: write
 
@@ -47,6 +50,27 @@ jobs:
           python docs/wave_packages/runtime/reality_tracker.py
           python scripts/emit_runtime_status.py --out reports/runtime_status.json
 
+      - name: Refresh MissionControl federation source projection
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/ingest_missioncontrol_sources.py
+          test -f docs/data/missioncontrol_source_status.json
+          test -f docs/data/missioncontrol_control_events.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          status = json.loads(
+              Path("docs/data/missioncontrol_source_status.json").read_text(encoding="utf-8")
+          )
+          assert status.get("authority_transfer") is False
+          assert status.get("engineering_state_promoted") is False
+          sources = status.get("sources", [])
+          assert sources, "MissionControl source projection is empty"
+          assert all(item.get("status") in {"FRESH", "STALE_CACHE"} for item in sources)
+          PY
+
       - name: Build verified Pages output
         run: |
           if [ -f tools/losses/src/build_all.py ]; then
@@ -57,12 +81,7 @@ jobs:
           python scripts/check_globs.py
           python scripts/check_stale.py
           python scripts/check_links.py
-          pytest -q \
-            --ignore=tests/gistau_ch15 \
-            --ignore=tests/test_coolprop_state_grid.py \
-            --ignore=tests/test_exergy_kernel.py \
-            --ignore=tests/test_nist_validation_points.py \
-            --ignore=tests/test_units_kernel.py
+          pytest -q             --ignore=tests/gistau_ch15             --ignore=tests/test_coolprop_state_grid.py             --ignore=tests/test_exergy_kernel.py             --ignore=tests/test_nist_validation_points.py             --ignore=tests/test_units_kernel.py
 
       - name: Verify release artifacts prior to staging
         run: |
@@ -70,6 +89,8 @@ jobs:
           test -f reports/rtm_summary.json
           test -f docs/wave_packages/runtime/out/federation_bridge_build_report.json
           test -f docs/wave_packages/runtime/pages/index.html
+          test -f docs/data/missioncontrol_source_status.json
+          test -f docs/data/missioncontrol_control_events.json
           python - <<'PY'
           import json
           from pathlib import Path
