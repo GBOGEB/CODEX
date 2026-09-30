@@ -2,14 +2,14 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-09-30T17:10:00Z"
+  generated_at: "2026-09-30T17:56:48Z"
 
   repositories:
     codex:
       repo: GBOGEB/CODEX
       branch: main
       handover_observed_sha: d77d44811fec4fada16988769614d6091df56133
-      refreshed_current_sha: 4261c883624a2a01f17e918445a643d048a1a79e
+      refreshed_current_sha: 86491df05050967dd8cc11ee3b3b0dbd114193b9
       role: UI_ORCHESTRATION_GRAPH_AUTHORITY
       mycelium_v0_1_merge:
         pr: 837
@@ -227,9 +227,9 @@ reentry:
     - id: CODEX_UI
       repository: GBOGEB/CODEX
       branch: main
-      head_sha: 4261c883624a2a01f17e918445a643d048a1a79e
-      state: OWNER_ACTION_GATE
-      current_atom: GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
+      head_sha: 86491df05050967dd8cc11ee3b3b0dbd114193b9
+      state: RUNTIME_PROOF_EXECUTED_MUTATION_DISABLED
+      current_atom: IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
       completed_atoms:
         - MYCELIUM_V0_1
         - MYCELIUM_V0_2_INTERACTION
@@ -253,8 +253,9 @@ reentry:
         - AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
         - SELECT_AUTHENTICATED_TRANSPORT
         - AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF
-      blocker: OWNER_AUTHENTICATED_WORKFLOW_DISPATCH_REQUIRED
-      queue_state: OWNER_ACTION
+        - GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
+      blocker: BOUNDED_MUTATION_AUTHORIZATION_NOT_YET_IMPLEMENTED
+      queue_state: EXECUTION
       evidence_refs:
         - PR_837
         - PR_839
@@ -270,8 +271,8 @@ reentry:
         - mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
         - docs/missioncontrol_mycelium.html
       next_legal_transitions:
-        - GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
         - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
+        - PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS
         - CONSUME_TYPED_REMOTE_RETURNS
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
@@ -536,11 +537,16 @@ reentry:
     merged_main_readback_sha: 954cde35a2ac101e687d71e28f973864118bb1f0
     pages_readback: WITHHELD_NO_RUN_OBSERVED
     proof_receipt: mission_control/mycelium/receipts/AUTHENTICATED_TRANSPORT_V01_PR850_PROOF.json
-    runtime_dry_run_proof: WITHHELD_OWNER_DISPATCH_REQUIRED
+    runtime_dry_run_proof: EXECUTED
+    runtime_run: 36754862285
+    runtime_job: 110022402610
+    runtime_receipt: mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json
+    runtime_artifact_id: 11116571326
+    runtime_artifact_sha256: 116c0861d54dfa9aeb4c1241b5a5e9948e9f245ef69abcf4801e3bb025d8dd83
+    runtime_observed_head_sha: 86491df05050967dd8cc11ee3b3b0dbd114193b9
     next_legal_transitions:
-      - AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF
-      - GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
       - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
+      - PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS
     authority_transfer: false
     formal_credit_delta: 0
     engineering_credit_delta: 0
