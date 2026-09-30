@@ -277,6 +277,15 @@
     renderGraphArtifacts();
     renderFederationEdges();
   });
+  try {
+    if (typeof model !== 'undefined' && model) {
+      graphModel = model;
+      renderGraphArtifacts();
+      renderFederationEdges();
+    }
+  } catch (_) {
+    /* core inline renderer may still be loading; model-ready event will bind later */
+  }
 
   loadControlPlane().catch(err => {
     const box = $('#controlPlaneStatus');
