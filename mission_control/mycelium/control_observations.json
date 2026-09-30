@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "snapshot_at": "2026-09-30T16:34:00Z",
+  "snapshot_at": "2026-09-30T17:10:00Z",
   "evidence_policy": "MEASURED_OR_WITHHELD",
   "pressure_weights": {
     "urgency": 0.3,
@@ -70,17 +70,21 @@
     "dab_mech": {
       "mechanical_progress": {
         "status": "MEASURED",
-        "slice": "#1519 exact-head combined census",
-        "removed_w293": 0,
-        "prior_measured_residual_w293": 453,
-        "residual_w293": 453,
-        "residual_status": "MEASURED_BY_PR1519_EXACT_HEAD_CENSUS",
-        "repository_total_flake8": 8282,
-        "evidence_job": "ABACUS job 109979358364",
-        "evidence_pr": "#1519",
-        "supporting_pr": "#1518",
-        "artifact_id": 11111551331,
-        "artifact_sha256": "a1542239c74383c0865e1de2534d2d91d6d08b3b689311f5f900c9339cee1251"
+        "slice": "post-#1527 combined main census",
+        "removed_w293": 5,
+        "prior_measured_residual_w293": 416,
+        "residual_w293": 411,
+        "residual_status": "MEASURED_COMBINED_MAIN",
+        "repository_total_flake8": 8225,
+        "evidence_job": "ABACUS job 109998603356",
+        "evidence_run": 36747879827,
+        "evidence_pr": "#1527 post-merge main",
+        "supporting_prs": [
+          "#1528",
+          "#1527"
+        ],
+        "artifact_id": 11114021331,
+        "artifact_sha256": "3b8bdb3c199d49504350b9e8efa42bc8c56db8dbe5db8ad269d7afceb051e1ea"
       }
     },
     "dab_hard": {
@@ -93,10 +97,10 @@
           "status": "MEASURED",
           "delta_from_baseline": -5,
           "state": "SOURCE_BOUND_HOLD",
-          "evidence_job": "ABACUS job 109979358364",
+          "evidence_job": "ABACUS job 109998603356",
           "note": "sole remaining E999 is W52/qplant source-bound",
-          "measurement_pr": "#1519",
-          "measurement_job": "ABACUS job 109979358364"
+          "measurement_pr": "#1527 post-merge main",
+          "measurement_job": "ABACUS job 109998603356"
         },
         {
           "family": "F821",
@@ -107,9 +111,9 @@
           "delta_from_baseline": -15,
           "state": "CLOSED",
           "evidence_pr": "#1491",
-          "evidence_job": "ABACUS job 109979358364",
-          "measurement_pr": "#1519",
-          "measurement_job": "ABACUS job 109979358364"
+          "evidence_job": "ABACUS job 109998603356",
+          "measurement_pr": "#1527 post-merge main",
+          "measurement_job": "ABACUS job 109998603356"
         },
         {
           "family": "F601",
@@ -120,9 +124,9 @@
           "delta_from_baseline": -2,
           "state": "CLOSED",
           "evidence_pr": "#1493",
-          "evidence_job": "ABACUS job 109979358364",
-          "measurement_pr": "#1519",
-          "measurement_job": "ABACUS job 109979358364"
+          "evidence_job": "ABACUS job 109998603356",
+          "measurement_pr": "#1527 post-merge main",
+          "measurement_job": "ABACUS job 109998603356"
         },
         {
           "family": "F811",
@@ -133,9 +137,9 @@
           "delta_from_baseline": -16,
           "state": "CLOSED",
           "evidence_pr": "#1496",
-          "evidence_job": "ABACUS job 109979358364",
-          "measurement_pr": "#1519",
-          "measurement_job": "ABACUS job 109979358364"
+          "evidence_job": "ABACUS job 109998603356",
+          "measurement_pr": "#1527 post-merge main",
+          "measurement_job": "ABACUS job 109998603356"
         },
         {
           "family": "E731",
@@ -146,9 +150,9 @@
           "delta_from_baseline": -2,
           "state": "CLOSED",
           "evidence_pr": "#1497",
-          "evidence_job": "ABACUS job 109979358364",
-          "measurement_pr": "#1519",
-          "measurement_job": "ABACUS job 109979358364"
+          "evidence_job": "ABACUS job 109998603356",
+          "measurement_pr": "#1527 post-merge main",
+          "measurement_job": "ABACUS job 109998603356"
         },
         {
           "family": "E722",
@@ -158,33 +162,35 @@
           "delta_from_baseline": -2,
           "state": "MEASURED_RESIDUAL",
           "evidence_pr": "#1519",
-          "evidence_job": "ABACUS job 109979358364",
-          "measurement_pr": "#1519",
-          "measurement_job": "ABACUS job 109979358364"
+          "evidence_job": "ABACUS job 109998603356",
+          "measurement_pr": "#1527 post-merge main",
+          "measurement_job": "ABACUS job 109998603356"
         },
         {
           "family": "E741",
           "baseline": 22,
           "target": 22,
-          "measured_postmerge": 21,
+          "measured_postmerge": 17,
           "status": "MEASURED",
-          "delta_from_baseline": -1,
+          "delta_from_baseline": -5,
           "state": "MEASURED_RESIDUAL",
           "evidence_pr": "#1519",
-          "evidence_job": "ABACUS job 109979358364",
-          "measurement_pr": "#1519",
-          "measurement_job": "ABACUS job 109979358364"
+          "evidence_job": "ABACUS job 109998603356",
+          "measurement_pr": "#1527 post-merge main",
+          "measurement_job": "ABACUS job 109998603356"
         },
         {
           "family": "F841",
           "baseline": 77,
-          "measured_postmerge": 77,
+          "measured_postmerge": 66,
           "status": "MEASURED",
-          "delta_from_baseline": 0,
-          "state": "MEASURED_RESIDUAL",
-          "evidence_job": "ABACUS job 109979358364",
-          "measurement_pr": "#1519",
-          "measurement_job": "ABACUS job 109979358364"
+          "delta_from_baseline": -11,
+          "state": "MEASURED_RESIDUAL_ACTIVE_PR1530",
+          "evidence_job": "ABACUS job 109998603356",
+          "measurement_pr": "#1527 post-merge main",
+          "measurement_job": "ABACUS job 109998603356",
+          "active_pr": 1530,
+          "expected_only": 63
         }
       ]
     }
