@@ -231,11 +231,9 @@ reentry:
         - mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
         - docs/missioncontrol_mycelium.html
       next_legal_transitions:
-        - INGEST_LIVE_TEMPORAL_EVENTS
-        - REFRESH_FEDERATION_HEADS
+        - LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF
         - CONSUME_TYPED_REMOTE_RETURNS
-        - BIND_FEDERATION_FRESHNESS
-        - DESIGN_AUTHENTICATED_EXECUTION_GATEWAY
+        - AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
@@ -367,7 +365,7 @@ reentry:
       percent: 100.0
     authority_transfer: false
     engineering_truth_promoted: false
-    next_edge: BIND_FEDERATION_FRESHNESS_TO_CONTROL_EVENT_AND_METRICS
+    next_edge: LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF
 
   qlm_context:
     repository: GBOGEB/cryoplant-project
