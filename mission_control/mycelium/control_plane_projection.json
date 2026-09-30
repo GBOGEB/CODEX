@@ -2,7 +2,7 @@
   "schema_version": "0.2",
   "generated_for": "CODEX_MISSIONCONTROL_MYCELIUM",
   "mode": "CONTINUE_FROM_DURABLE_STATE",
-  "generated_at": "2026-09-30T11:16:00Z",
+  "generated_at": "2026-09-30T11:26:00Z",
   "source_yaml": "mission_control/mycelium/reentry_v0_2.yaml",
   "invariants": {
     "authority_transfer": false,
@@ -20,7 +20,7 @@
       "repo": "GBOGEB/CODEX",
       "branch": "main",
       "handover_observed_sha": "d77d44811fec4fada16988769614d6091df56133",
-      "refreshed_current_sha": "cd45dc8f8934d554d824f0c22db619dfe6bb546d",
+      "refreshed_current_sha": "e7404bfb6df3289705286685500fd19c4ec6d991",
       "role": "UI_ORCHESTRATION_GRAPH_AUTHORITY",
       "merge_refs": [
         {
@@ -164,9 +164,9 @@
       "id": "CODEX_UI",
       "repository": "GBOGEB/CODEX",
       "branch": "main",
-      "head_sha": "cd45dc8f8934d554d824f0c22db619dfe6bb546d",
-      "state": "EXECUTING",
-      "current_atom": "LIVE_TEMPORAL_FEDERATION_INGESTION",
+      "head_sha": "e7404bfb6df3289705286685500fd19c4ec6d991",
+      "state": "READY",
+      "current_atom": "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
       "completed_atoms": [
         "MYCELIUM_V0_1",
         "MYCELIUM_V0_2_INTERACTION",
@@ -190,9 +190,9 @@
       "blocker": null,
       "queue_state": "EXECUTION",
       "next_legal_transitions": [
-        "LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF",
+        "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
         "CONSUME_TYPED_REMOTE_RETURNS",
-        "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN"
+        "SCHEDULE_NEXT_LIVE_FEDERATION_REFRESH"
       ]
     },
     {
@@ -306,7 +306,7 @@
   },
   "current_proof": "mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json",
   "current_capability_status": "MYCELIUM_V0_2_1_MERGED_PAGES_GREEN",
-  "next_edge": "LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF",
+  "next_edge": "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
   "pages_readback": {
     "run_id": 36706855094,
     "build": "PASS",
@@ -339,6 +339,12 @@
         "sha": "f03bfc61bcf85a2d91cd22d083ad0ef954387f0d",
         "authority": "REMOTE_ENGINEERING_AUTHORITY"
       }
-    ]
+    ],
+    "state": "CONTROLLED_GREEN",
+    "exact_head_sha": "c4cecdbe22a1228f32cb866ead26a19b187a0d6c",
+    "proof_run": 36708307718,
+    "merge_sha": "ed9bb877bc251d7aa06c0bf19515491028fcdeef",
+    "pages_run": 36708423542,
+    "pages_status": "GREEN"
   }
 }
