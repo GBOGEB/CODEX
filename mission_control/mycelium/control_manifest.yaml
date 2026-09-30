@@ -79,7 +79,7 @@ control_plane:
   predecessor_proof: mission_control/mycelium/receipts/MYCELIUM_V02_PR839_PROOF.json
   current_proof: mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
   current_capability_status: MYCELIUM_V0_2_1_MERGED_PAGES_GREEN
-  next_edge: LIVE_TEMPORAL_FEDERATION_INGESTION
+  next_edge: AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
   command_input:
     static_pages_mode: STAGE_OR_DRY_RUN_ONLY
     authenticated_apply_gateway_required: true
@@ -100,6 +100,25 @@ control_plane:
   federation:
     strategy_order: [REFERENCE, BRIDGE, GENERATED_PROJECTION, ITEM_IMPORT, CHERRY_PICK, BOUNDED_MERGE, FULL_MERGE]
     required_provenance: [source_repo, source_ref, source_sha, target_repo, target_ref, target_sha, mechanism, authority_before, authority_after, proof]
+
+authenticated_execution_gateway:
+  state: DESIGN_ONLY_NO_MUTATION_BACKEND
+  contract: mission_control/mycelium/execution_gateway_contract.yaml
+  request_schema: mission_control/mycelium/schemas/execution_request.schema.json
+  receipt_schema: mission_control/mycelium/schemas/execution_receipt.schema.json
+  validator: scripts/validate_missioncontrol_execution_gateway.py
+  static_pages_apply: STAGE_OR_DRY_RUN_ONLY
+  default_authorization: DENY
+  exact_head_required: true
+  idempotency_required: true
+  replay_completed_request_forbidden: true
+  enabled_mutation_transports: []
+  remote_authority_mutation: false
+  authority_transfer: false
+  next_atoms:
+    - SELECT_AUTHENTICATED_TRANSPORT
+    - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
+    - PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS
 
 graph_contract:
   universal_graph_may_contain_cycles: true

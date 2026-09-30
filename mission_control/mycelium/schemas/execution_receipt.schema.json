@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "missioncontrol/execution-receipt/0.1",
+  "title": "MissionControl authenticated execution receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_id",
+    "decision",
+    "authenticated_principal",
+    "authorization_policy",
+    "observed_head_sha",
+    "request_sha256",
+    "evidence_refs",
+    "authority_transfer",
+    "formal_credit_delta",
+    "engineering_credit_delta"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 8
+    },
+    "decision": {
+      "enum": [
+        "DENY",
+        "WITHHOLD",
+        "AUTHORIZE",
+        "EXECUTED",
+        "FAILED"
+      ]
+    },
+    "authenticated_principal": {
+      "type": "string",
+      "minLength": 1
+    },
+    "authorization_policy": {
+      "type": "string",
+      "minLength": 1
+    },
+    "observed_head_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "after_sha": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "request_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "workflow_run": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "workflow_job": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "result_summary": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "authority_transfer": {
+      "const": false
+    },
+    "formal_credit_delta": {
+      "const": 0
+    },
+    "engineering_credit_delta": {
+      "const": 0
+    }
+  }
+}

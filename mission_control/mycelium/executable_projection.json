@@ -120,6 +120,18 @@
     },
     {
       "id": "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
+      "state": "IN_PROGRESS"
+    },
+    {
+      "id": "SELECT_AUTHENTICATED_TRANSPORT",
+      "state": "PENDING"
+    },
+    {
+      "id": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
+      "state": "PENDING"
+    },
+    {
+      "id": "PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS",
       "state": "PENDING"
     }
   ],
@@ -247,6 +259,18 @@
     [
       "LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF",
       "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN"
+    ],
+    [
+      "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
+      "SELECT_AUTHENTICATED_TRANSPORT"
+    ],
+    [
+      "SELECT_AUTHENTICATED_TRANSPORT",
+      "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY"
+    ],
+    [
+      "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
+      "PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS"
     ]
   ],
   "first_incomplete_atoms": [
@@ -266,10 +290,13 @@
   },
   "active_slice": {
     "id": "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
-    "state": "PENDING",
-    "predecessor": "LIVE_TEMPORAL_FEDERATION_INGESTION_PULSE_20260930T111600Z",
-    "predecessor_proof": "mission_control/mycelium/receipts/LIVE_FEDERATION_INGESTION_20260930T111600Z_PROOF.json",
-    "static_pages_apply_remains": "STAGED_ONLY",
+    "state": "IMPLEMENTING_DESIGN_ONLY",
+    "predecessor": "LIVE_TEMPORAL_FEDERATION_INGESTION",
+    "contract": "mission_control/mycelium/execution_gateway_contract.yaml",
+    "request_schema": "mission_control/mycelium/schemas/execution_request.schema.json",
+    "receipt_schema": "mission_control/mycelium/schemas/execution_receipt.schema.json",
+    "mutation_backend_enabled": false,
+    "static_pages_apply_remains": "STAGE_OR_DRY_RUN_ONLY",
     "authority_transfer": false
   },
   "closed_live_federation_pulse": {

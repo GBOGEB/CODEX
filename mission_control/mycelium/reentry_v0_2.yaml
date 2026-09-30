@@ -2,14 +2,14 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-09-30T11:26:00Z"
+  generated_at: "2026-09-30T11:45:00Z"
 
   repositories:
     codex:
       repo: GBOGEB/CODEX
       branch: main
       handover_observed_sha: d77d44811fec4fada16988769614d6091df56133
-      refreshed_current_sha: e7404bfb6df3289705286685500fd19c4ec6d991
+      refreshed_current_sha: bc514318077c74a54508b5820d59026f66e9ae92
       role: UI_ORCHESTRATION_GRAPH_AUTHORITY
       mycelium_v0_1_merge:
         pr: 837
@@ -192,7 +192,7 @@ reentry:
     - id: CODEX_UI
       repository: GBOGEB/CODEX
       branch: main
-      head_sha: e7404bfb6df3289705286685500fd19c4ec6d991
+      head_sha: bc514318077c74a54508b5820d59026f66e9ae92
       state: READY
       current_atom: AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
       completed_atoms:
@@ -214,6 +214,7 @@ reentry:
         - MERGE_READBACK
         - PAGES_READBACK
         - REGENERATE_REENTRY_MANIFEST
+        - LIVE_TEMPORAL_FEDERATION_INGESTION
       blocker: null
       queue_state: EXECUTION
       evidence_refs:
@@ -232,8 +233,8 @@ reentry:
         - docs/missioncontrol_mycelium.html
       next_legal_transitions:
         - AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
+        - SELECT_AUTHENTICATED_TRANSPORT
         - CONSUME_TYPED_REMOTE_RETURNS
-        - SCHEDULE_NEXT_LIVE_FEDERATION_REFRESH
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
@@ -434,3 +435,24 @@ reentry:
     - exact_SHA_lineage_available
     - Pages_surface_validates
     - restart_manifest_is_self_sufficient
+
+  authenticated_execution_gateway_design:
+    state: IMPLEMENTING_DESIGN_ONLY
+    branch: missioncontrol/authenticated-execution-gateway-design-v01
+    base_sha: bc514318077c74a54508b5820d59026f66e9ae92
+    contract: mission_control/mycelium/execution_gateway_contract.yaml
+    request_schema: mission_control/mycelium/schemas/execution_request.schema.json
+    receipt_schema: mission_control/mycelium/schemas/execution_receipt.schema.json
+    mutation_backend_enabled: false
+    static_pages_apply: STAGE_OR_DRY_RUN_ONLY
+    default_authorization: DENY
+    remote_authority_mutation: false
+    authority_transfer: false
+    proof_required:
+      - gateway_design_validator_green
+      - gateway_design_tests_green
+      - missioncontrol_exact_head_green
+    next_atoms:
+      - SELECT_AUTHENTICATED_TRANSPORT
+      - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
+      - PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS
