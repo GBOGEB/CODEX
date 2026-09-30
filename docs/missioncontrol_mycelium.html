@@ -5,88 +5,193 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MissionControl Mycelium</title>
 <style>
-:root{--bg:#f5f7fb;--panel:#fff;--ink:#142033;--muted:#64748b;--line:#d8e0ed;--accent:#3157d5;--good:#0f7b45;--warn:#a86400;--bad:#b42318;--node:#e9efff}
+:root{--bg:#f5f7fb;--panel:#fff;--ink:#142033;--muted:#64748b;--line:#d8e0ed;--accent:#3157d5;--good:#0f7b45;--warn:#a86400;--bad:#b42318;--node:#e9efff;--panel-ratio:16/9}
 [data-theme="dark"]{--bg:#09111f;--panel:#111c30;--ink:#edf4ff;--muted:#9eb0cc;--line:#2d405f;--accent:#8aa4ff;--good:#63d297;--warn:#f3bd66;--bad:#ff8b81;--node:#1a2b4c}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.4 Inter,Arial,sans-serif}a{color:var(--accent)}
+*{box-sizing:border-box}html{color-scheme:light dark}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.4 Inter,Arial,sans-serif}a{color:var(--accent)}
 header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.wrap{max-width:1500px;margin:auto;padding:14px 18px}.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.bar h1{font-size:20px;margin:0 auto 0 0}
-button,select{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:7px 10px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.panel{aspect-ratio:16/9;min-height:260px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,.05)}
-.panel.focus{grid-column:1/-1;aspect-ratio:auto;min-height:72vh}.panel h2{font-size:16px;margin:0 0 8px}.muted{color:var(--muted)}.pill{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:2px 7px;margin:2px}
-.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kpi{border:1px solid var(--line);border-radius:12px;padding:10px}.kpi b{font-size:18px;display:block}
-svg{width:100%;height:calc(100% - 38px);min-height:210px}.node{cursor:pointer}.node circle{fill:var(--node);stroke:var(--accent);stroke-width:1.5}.node text{fill:var(--ink);font-size:11px}.edge{stroke:var(--line);stroke-width:1.3;marker-end:url(#arrow)}
-.timeline{display:grid;gap:7px}.step{display:grid;grid-template-columns:120px 1fr;gap:9px;border-bottom:1px solid var(--line);padding:6px 0}.ok{color:var(--good)}.warn{color:var(--warn)}.bad{color:var(--bad)}
-table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:7px;border-bottom:1px solid var(--line)}.artifact-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.artifact{border:1px solid var(--line);border-radius:10px;padding:9px}
-@media(max-width:900px){.grid{grid-template-columns:1fr}.panel{aspect-ratio:auto;min-height:300px}.panel.focus{min-height:70vh}.kpis{grid-template-columns:1fr 1fr}.artifact-grid{grid-template-columns:1fr}}
+.wrap{max-width:1540px;margin:auto;padding:14px 18px}.bar{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.bar h1{font-size:20px;margin:0 auto 0 0}
+button,select,input{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:7px 10px}
+.statusline{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.pill{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:2px 7px;margin:2px}.ok{color:var(--good)}.warn{color:var(--warn)}.bad{color:var(--bad)}.muted{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+.panel{aspect-ratio:var(--panel-ratio);min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,.05)}
+.panel.focus{grid-column:1/-1;aspect-ratio:auto;min-height:72vh}.panel h2{font-size:16px;margin:0 0 8px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.kpi{border:1px solid var(--line);border-radius:12px;padding:9px;min-width:0}.kpi b{font-size:17px;display:block;overflow-wrap:anywhere}
+.graph-tools{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}.graph-wrap{min-height:245px}.graph-wrap svg{width:100%;height:100%;min-height:245px}.node{cursor:pointer}.node circle{fill:var(--node);stroke:var(--accent);stroke-width:1.5}.node text{fill:var(--ink);font-size:10px}.edge{stroke:var(--line);stroke-width:1.2;marker-end:url(#arrow)}.edge.blocked{stroke:var(--bad)}.edge.proof{stroke:var(--good)}
+.inspector{border-top:1px solid var(--line);margin-top:6px;padding-top:6px;min-height:36px}
+.timeline{display:grid;gap:6px}.step{display:grid;grid-template-columns:118px 1fr;gap:8px;border-bottom:1px solid var(--line);padding:5px 0}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:6px;border-bottom:1px solid var(--line);vertical-align:top}th{position:sticky;top:0;background:var(--panel)}
+.artifact-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.artifact{border:1px solid var(--line);border-radius:10px;padding:9px;min-width:0}
+.ascii{font:12px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;background:color-mix(in srgb,var(--panel) 82%,var(--bg));border:1px solid var(--line);border-radius:10px;padding:9px;overflow:auto}
+.horizon{display:grid;grid-template-columns:72px 1fr;gap:8px;padding:5px 0;border-top:1px solid var(--line)}
+#degreePlot{width:100%;height:116px;min-height:116px;margin-top:6px}
+@media(max-width:1050px){.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.panel{aspect-ratio:auto;min-height:320px}.panel.focus{min-height:70vh}.artifact-grid{grid-template-columns:1fr}.bar h1{width:100%}}
 </style>
 </head>
 <body>
-<header><div class="wrap bar"><h1>MissionControl · Mycelium</h1>
-<span id="stamp" class="muted">loading graph…</span>
-<select id="layout"><option value="grid">2×3 grid</option><option value="focus">focus selected</option></select>
-<button id="theme">light / dark</button>
-<button id="reset">reset focus</button></div></header>
+<header><div class="wrap">
+<div class="bar"><h1>MissionControl · Mycelium</h1>
+<span id="stamp" class="muted">loading governed graph…</span>
+<select id="layout" aria-label="Layout mode"><option value="grid">2×3 grid</option><option value="focus">focus selected</option></select>
+<select id="lead" aria-label="Lead panel"><option value="1">lead 1 · topology</option><option value="2">lead 2 · graph</option><option value="3">lead 3 · recovery</option><option value="4">lead 4 · lineage</option><option value="5">lead 5 · analytics</option><option value="6">lead 6 · outward</option></select>
+<button id="theme">light / dark</button><button id="reset">reset focus</button></div>
+<div class="statusline"><span class="pill">authority_transfer=false</span><span class="pill">formal_credit_delta=0</span><span class="pill">engineering_credit_delta=0</span><span class="pill" id="freshness">source state loading</span></div>
+</div></header>
 <main class="wrap"><section class="grid" id="grid">
-<article class="panel" data-panel="repo_topology"><h2>1 · Repository topology</h2><div id="repos"></div></article>
-<article class="panel" data-panel="interaction_graph"><h2>2 · Interaction graph</h2><svg id="graph" viewBox="0 0 760 340" role="img" aria-label="MissionControl interaction graph"></svg></article>
-<article class="panel" data-panel="execution_flow"><h2>3 · Execution & recovery</h2><div class="timeline" id="flow"></div></article>
-<article class="panel" data-panel="evidence_lineage"><h2>4 · Evidence & lineage</h2><table><thead><tr><th>Node</th><th>State</th><th>Proof/link</th></tr></thead><tbody id="evidence"></tbody></table></article>
+<article class="panel" data-panel="repo_topology"><h2>1 · Repository topology</h2><div id="repos"></div><div id="asciiTopo" class="ascii"></div><div id="horizons"></div></article>
+<article class="panel" data-panel="interaction_graph"><h2>2 · Interaction graph</h2><div class="graph-tools"><select id="typeFilter"><option value="">all node types</option></select><input id="graphSearch" placeholder="filter nodes" aria-label="Filter graph nodes"><button id="clearFilter">clear</button></div><div class="graph-wrap"><svg id="graph" viewBox="0 0 900 430" role="img" aria-label="MissionControl interaction graph"></svg></div><div id="inspector" class="inspector muted">Select a node to inspect its state, lineage and source.</div></article>
+<article class="panel" data-panel="execution_flow"><h2>3 · Execution & recovery</h2><div id="checkpoint" class="statusline"></div><div class="timeline" id="flow"></div><div id="sourceResults"></div></article>
+<article class="panel" data-panel="evidence_lineage"><h2>4 · Evidence & lineage</h2><table><thead><tr><th>Node</th><th>State</th><th>Proof/source</th></tr></thead><tbody id="evidence"></tbody></table></article>
 <article class="panel" data-panel="analytics"><h2>5 · DMAIC / KPI / PCA / BT</h2><div class="kpis">
 <div class="kpi"><span class="muted">DMAIC</span><b>CONTROL</b><small>exact proof before promotion</small></div>
-<div class="kpi"><span class="muted">PCA</span><b>DIAGNOSTIC</b><small>governed population required</small></div>
-<div class="kpi"><span class="muted">BT</span><b>OUTCOMES ONLY</b><small>no synthetic ranking</small></div>
-</div>
-<div class="kpis" style="margin-top:8px">
+<div class="kpi"><span class="muted">PCA</span><b>WITHHELD</b><small>until governed population exists</small></div>
+<div class="kpi"><span class="muted">BT</span><b>OUTCOMES</b><small>observed pairwise outcomes only</small></div>
+<div class="kpi"><span class="muted">BD pressure</span><b id="blockedCount">—</b><small>blocked/hold nodes, no synthetic score</small></div>
+</div><div class="kpis" style="margin-top:8px">
 <div class="kpi"><span class="muted">Nodes</span><b id="nodeCount">—</b><small>loaded graph</small></div>
 <div class="kpi"><span class="muted">Edges</span><b id="edgeCount">—</b><small>loaded graph</small></div>
 <div class="kpi"><span class="muted">Density</span><b id="density">—</b><small>directed E/(N·(N−1))</small></div>
-</div>
-<svg id="degreePlot" viewBox="0 0 640 120" style="height:120px;min-height:120px;margin-top:8px" aria-label="Graph degree density plot"></svg>
-<p class="muted">Reverse-pressure BD ranking uses unblock value, fan-out, proof deficit, age and criticality. Numerical priority scores are withheld until governed inputs exist.</p></article>
+<div class="kpi"><span class="muted">Fresh sources</span><b id="freshCount">—</b><small>dynamic ingestion result</small></div>
+</div><svg id="degreePlot" viewBox="0 0 640 116" aria-label="Graph degree density plot"></svg>
+<p class="muted">Reverse pressure is structural: unresolved downstream value propagates to the nearest unresolved predecessor. Numeric ranking remains withheld unless its input population and outcome history are governed.</p></article>
 <article class="panel" data-panel="outward_artifacts"><h2>6 · Outward artifacts</h2><div class="artifact-grid" id="artifacts"></div></article>
 </section></main>
 <script>
-const $=s=>document.querySelector(s);
-let model;
-async function load(){model=await fetch('data/missioncontrol_interaction_graph.json').then(r=>r.json());$('#stamp').textContent='snapshot '+model.snapshot_at;render();}
-function render(){
- const repos=model.nodes.filter(n=>n.type==='repo'); $('#repos').innerHTML=repos.map(n=>'<p><a href="'+n.url+'"><b>'+n.label+'</b></a><br><span class="pill">'+n.state+'</span> '+(n.meta?.sha?'<code>'+n.meta.sha.slice(0,12)+'</code>':'')+'</p>').join('');
- const flow=['REFRESH','PROBE','RANK','EXECUTE','PROVE','COMMIT','PUBLISH','OBSERVE','LEARN','RECURSE']; $('#flow').innerHTML=flow.map((x,i)=>'<div class="step"><b>'+String(i+1).padStart(2,'0')+' '+x+'</b><span>'+(x==='EXECUTE'?'continue independent lanes; stop only material first-red lane':x==='PROVE'?'bind exact SHA / run / job / artifact evidence':'checkpointed and resumable')+'</span></div>').join('');
- $('#evidence').innerHTML=model.nodes.filter(n=>['pull_request','issue','artifact','output'].includes(n.type)).map(n=>'<tr><td>'+n.label+'</td><td>'+n.state+'</td><td>'+(n.url?'<a href="'+n.url+'">open</a>':'withheld')+'</td></tr>').join('');
- const outs=[
- ['GitHub Pages','HTML control/view layer','missioncontrol_mycelium.html'],
- ['Plotly','interactive density / PCA / wave analytics','https://github.com/GBOGEB/CODEX/blob/main/runtime_engine/plotly_wave_dashboard.py'],
- ['Matplotlib','static PCA / evidence plots / PNG / SVG','https://github.com/GBOGEB/CODEX/blob/main/pca_engine/src/pca_engine/visualization.py'],
- ['Documents','PDF / DOCX / PPTX / XLSX when governed',null],
- ['Diagrams','SVG / topology / interaction graph',null],
- ['Tables','filterable evidence and lineage tables',null]
- ];
- $('#artifacts').innerHTML=outs.map(x=>'<div class="artifact"><b>'+(x[2]?'<a href="'+x[2]+'">'+x[0]+'</a>':x[0])+'</b><div class="muted">'+x[1]+'</div></div>').join('');
- drawGraph(); drawDensity();
+const $=function(s){return document.querySelector(s);};
+const esc=function(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
+let model={nodes:[],edges:[]}, recovery={};
+const panelIds=['repo_topology','interaction_graph','execution_flow','evidence_lineage','analytics','outward_artifacts'];
+
+async function load(){
+  const pair=await Promise.all([
+    fetch('data/missioncontrol_interaction_graph.json').then(function(r){if(!r.ok)throw new Error('graph HTTP '+r.status);return r.json();}),
+    fetch('data/missioncontrol_recovery_checkpoint.json').then(function(r){return r.ok?r.json():{};}).catch(function(){return {};})
+  ]);
+  model=pair[0]; recovery=pair[1]||{};
+  $('#stamp').textContent='snapshot '+(model.snapshot_at||'unknown')+(recovery.head_sha?' · '+recovery.head_sha.slice(0,12):'');
+  render();
 }
-function drawDensity(){
- const n=model.nodes.length,e=model.edges.length,d=n>1?e/(n*(n-1)):0;
- $('#nodeCount').textContent=n; $('#edgeCount').textContent=e; $('#density').textContent=d.toFixed(3);
- const degree={}; model.nodes.forEach(x=>degree[x.id]=0); model.edges.forEach(x=>{degree[x.from]=(degree[x.from]||0)+1;degree[x.to]=(degree[x.to]||0)+1;});
- const vals=Object.values(degree), max=Math.max(1,...vals), bins={}; vals.forEach(v=>bins[v]=(bins[v]||0)+1);
- const entries=Object.entries(bins).sort((a,b)=>Number(a[0])-Number(b[0]));
- const svg=$('#degreePlot'), w=640,h=120,pad=22,bw=(w-pad*2)/Math.max(1,entries.length);
- svg.innerHTML=entries.map((x,i)=>{const bar=(h-38)*(x[1]/Math.max(1,...entries.map(z=>z[1])));return '<rect x="'+(pad+i*bw+4)+'" y="'+(h-22-bar)+'" width="'+Math.max(8,bw-8)+'" height="'+bar+'" fill="var(--accent)" opacity=".75"/><text x="'+(pad+i*bw+bw/2)+'" y="'+(h-6)+'" text-anchor="middle" fill="var(--muted)" font-size="10">d='+x[0]+'</text>';}).join('');
+function render(){
+  renderTopology(); renderFlow(); renderEvidence(); renderArtifacts(); populateFilters(); drawGraph(); drawDensity(); applyLead();
+  const results=(model.ingestion&&model.ingestion.source_results)||[];
+  const fresh=results.filter(function(x){return x.status==='FRESH';}).length;
+  $('#freshCount').textContent=String(fresh)+'/'+String(results.length||0);
+  $('#freshness').textContent=results.length?(fresh===results.length?'sources fresh':'stale source present'):'static snapshot';
+  $('#freshness').className='pill '+(results.length&&fresh===results.length?'ok':results.length?'warn':'');
+}
+function renderTopology(){
+  const repos=model.nodes.filter(function(n){return n.type==='repo';});
+  $('#repos').innerHTML=repos.map(function(n){return '<p><a href="'+esc(n.url)+'"><b>'+esc(n.label)+'</b></a><br><span class="pill">'+esc(n.state)+'</span> '+(n.meta&&n.meta.sha?'<code>'+esc(n.meta.sha.slice(0,12))+'</code>':'')+'</p>';}).join('');
+  const url=function(id){const n=model.nodes.find(function(x){return x.id===id;});return n&&n.url?n.url:'#';};
+  $('#asciiTopo').innerHTML=
+    '<a href="'+esc(url('repo_codex'))+'">GBOGEB/CODEX</a>  [UI · graph · orchestration]\n'+
+    '├─ <a href="'+esc(url('ssot_manifest'))+'">SSOT manifest</a>\n'+
+    '├─ <a href="'+esc(url('runtime_registry'))+'">runtime registry</a>\n'+
+    '├─ Mycelium → Pages / Plotly / Matplotlib\n'+
+    '└─ federation edge\n'+
+    '   ├─ <a href="'+esc(url('repo_abacus'))+'">GBOGEB/ABACUS</a>  [execution · DOW]\n'+
+    '   └─ <a href="https://github.com/GBOGEB/cryoplant-project">GBOGEB/cryoplant-project</a>  [engineering authority]';
+  const h=(model.control_horizons||{
+    now:'exact-head v0.2 first-red repair + dynamic ingestion proof',
+    next:'main readback + GitHub Pages render/runtime proof',
+    later:'federated item-level bridge/cherry-pick/merge chosen per authority and lineage'
+  });
+  $('#horizons').innerHTML=['now','next','later'].map(function(k){return '<div class="horizon"><b>'+k.toUpperCase()+'</b><span>'+esc(h[k]||'withheld')+'</span></div>';}).join('');
+}
+function renderFlow(){
+  const flow=['REFRESH','PROBE','RANK','EXECUTE','PROVE','COMMIT','PUBLISH','OBSERVE','LEARN','RECURSE'];
+  const completed=new Set(recovery.completed_steps||[]);
+  const current=recovery.current_step||'PROVE';
+  $('#flow').innerHTML=flow.map(function(x,i){
+    const cls=completed.has(x)?'ok':x===current?'warn':'muted';
+    let msg='checkpointed and resumable';
+    if(x==='EXECUTE')msg='continue independent lanes; stop only the material first-red lane';
+    if(x==='PROVE')msg='bind exact SHA / run / job / render evidence';
+    if(x==='RECURSE')msg='re-enter only changed nodes/edges; do not replay converged slices';
+    return '<div class="step"><b class="'+cls+'">'+String(i+1).padStart(2,'0')+' '+x+'</b><span>'+msg+'</span></div>';
+  }).join('');
+  const checkpointBits=[
+    recovery.branch?'branch '+recovery.branch:null,
+    recovery.current_step?'step '+recovery.current_step:null,
+    recovery.next_legal_transition?'next '+recovery.next_legal_transition:null
+  ].filter(Boolean);
+  $('#checkpoint').innerHTML=checkpointBits.map(function(x){return '<span class="pill">'+esc(x)+'</span>';}).join('');
+  const results=(model.ingestion&&model.ingestion.source_results)||[];
+  $('#sourceResults').innerHTML=results.length?'<h3>Dynamic sources</h3>'+results.map(function(x){return '<div class="step"><b class="'+(x.status==='FRESH'?'ok':'warn')+'">'+esc(x.repository)+'</b><span>'+esc(x.status)+(x.head_sha?' · <code>'+esc(x.head_sha.slice(0,12))+'</code>':'')+'</span></div>';}).join(''):'';
+}
+function renderEvidence(){
+  const types=['pull_request','issue','artifact','output','commit','workflow','test','decision','requirement'];
+  $('#evidence').innerHTML=model.nodes.filter(function(n){return types.indexOf(n.type)!==-1;}).map(function(n){
+    const link=n.url?'<a href="'+esc(n.url)+'" target="_blank" rel="noopener">open source</a>':'withheld';
+    return '<tr><td>'+esc(n.label)+'</td><td>'+esc(n.state)+'</td><td>'+link+'</td></tr>';
+  }).join('');
+}
+function renderArtifacts(){
+  const outs=[
+    ['MissionControl HTML','current user-facing graph/recovery surface','missioncontrol_mycelium.html'],
+    ['Graph JSON','published machine-readable interaction graph','data/missioncontrol_interaction_graph.json'],
+    ['Recovery JSON','published runtime checkpoint','data/missioncontrol_recovery_checkpoint.json'],
+    ['Repository portal','high-level CODEX outward navigation','index.html'],
+    ['Plotly source-original','interactive wave/density analytics maintained in CODEX','https://github.com/GBOGEB/CODEX/blob/main/runtime_engine/plotly_wave_dashboard.py'],
+    ['Matplotlib source-original','static PCA/evidence renderer maintained in CODEX','https://github.com/GBOGEB/CODEX/blob/main/pca_engine/src/pca_engine/visualization.py'],
+    ['Metrics render','existing Plotly repository metrics view','rendered_outputs/metrics_chart.html'],
+    ['Artifact manifest','published surface registry and promotion rules','https://github.com/GBOGEB/CODEX/blob/main/MANIFEST.json']
+  ];
+  $('#artifacts').innerHTML=outs.map(function(x){return '<div class="artifact"><b><a href="'+esc(x[2])+'">'+esc(x[0])+'</a></b><div class="muted">'+esc(x[1])+'</div></div>';}).join('');
+}
+function populateFilters(){
+  const values=Array.from(new Set(model.nodes.map(function(n){return n.type;}))).sort();
+  $('#typeFilter').innerHTML='<option value="">all node types</option>'+values.map(function(v){return '<option value="'+esc(v)+'">'+esc(v)+'</option>';}).join('');
+}
+function filteredNodes(){
+  const type=$('#typeFilter').value, term=$('#graphSearch').value.trim().toLowerCase();
+  return model.nodes.filter(function(n){
+    if(type&&n.type!==type)return false;
+    if(term&&!(String(n.label).toLowerCase().includes(term)||String(n.state).toLowerCase().includes(term)||String(n.id).toLowerCase().includes(term)))return false;
+    return true;
+  });
 }
 function drawGraph(){
- const svg=$('#graph'), nodes=model.nodes.slice(0,15), edges=model.edges;
- const pos={}; const cols=5, rows=Math.ceil(nodes.length/cols);
- nodes.forEach((n,i)=>{const c=i%cols,r=Math.floor(i/cols);pos[n.id]={x:85+c*145,y:55+r*(260/Math.max(1,rows-1))};});
- let s='<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="currentColor"/></marker></defs>';
- edges.forEach(e=>{if(pos[e.from]&&pos[e.to])s+='<line class="edge" x1="'+pos[e.from].x+'" y1="'+pos[e.from].y+'" x2="'+pos[e.to].x+'" y2="'+pos[e.to].y+'"><title>'+e.type+'</title></line>';});
- nodes.forEach(n=>{const p=pos[n.id];s+='<g class="node" tabindex="0" data-id="'+n.id+'" transform="translate('+p.x+','+p.y+')"><circle r="25"/><text y="40" text-anchor="middle">'+n.label.slice(0,20)+'</text><title>'+n.type+' · '+n.state+'</title></g>';});
- svg.innerHTML=s;
- svg.querySelectorAll('.node').forEach(el=>el.addEventListener('click',()=>{const n=model.nodes.find(x=>x.id===el.dataset.id); if(n.url) window.open(n.url,'_blank');}));
+  const svg=$('#graph'), nodes=filteredNodes(), idset=new Set(nodes.map(function(n){return n.id;}));
+  const edges=model.edges.filter(function(e){return idset.has(e.from)&&idset.has(e.to);});
+  const count=Math.max(1,nodes.length), cols=Math.max(3,Math.ceil(Math.sqrt(count*1.7))), rows=Math.ceil(count/cols);
+  const w=900, h=Math.max(360,90+rows*92), left=55, top=52, xgap=(w-left*2)/Math.max(1,cols-1), ygap=(h-top*2)/Math.max(1,rows-1);
+  svg.setAttribute('viewBox','0 0 '+w+' '+h);
+  const pos={}; nodes.forEach(function(n,i){const c=i%cols,r=Math.floor(i/cols);pos[n.id]={x:left+c*xgap,y:top+r*ygap};});
+  let s='<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="currentColor"/></marker></defs>';
+  edges.forEach(function(e){const cls=e.type==='blocks'?'blocked':(e.type==='proves'||e.type==='publishes')?'proof':'';s+='<line class="edge '+cls+'" x1="'+pos[e.from].x+'" y1="'+pos[e.from].y+'" x2="'+pos[e.to].x+'" y2="'+pos[e.to].y+'"><title>'+esc(e.type)+'</title></line>';});
+  nodes.forEach(function(n){const p=pos[n.id], label=String(n.label).slice(0,24);s+='<g class="node" tabindex="0" data-id="'+esc(n.id)+'" transform="translate('+p.x+','+p.y+')"><circle r="22"/><text y="36" text-anchor="middle">'+esc(label)+'</text><title>'+esc(n.type+' · '+n.state)+'</title></g>';});
+  svg.innerHTML=s;
+  svg.querySelectorAll('.node').forEach(function(el){el.addEventListener('click',function(){inspectNode(el.dataset.id);});el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();inspectNode(el.dataset.id);}});});
 }
-$('#theme').onclick=()=>document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';
-document.querySelectorAll('.panel').forEach(p=>p.onclick=e=>{if(e.target.closest('a,button,select,svg'))return;if($('#layout').value==='focus'){document.querySelectorAll('.panel').forEach(x=>x.classList.remove('focus'));p.classList.add('focus');}});
-$('#reset').onclick=()=>document.querySelectorAll('.panel').forEach(x=>x.classList.remove('focus'));
-load().catch(e=>$('#stamp').textContent='graph load failed: '+e.message);
+function inspectNode(id){
+  const n=model.nodes.find(function(x){return x.id===id;}); if(!n)return;
+  const incoming=model.edges.filter(function(e){return e.to===id;}).length, outgoing=model.edges.filter(function(e){return e.from===id;}).length;
+  $('#inspector').innerHTML='<b>'+esc(n.label)+'</b> · '+esc(n.type)+' · <span class="pill">'+esc(n.state)+'</span> · in '+incoming+' / out '+outgoing+(n.url?' · <a href="'+esc(n.url)+'" target="_blank" rel="noopener">open source</a>':'');
+}
+function drawDensity(){
+  const n=model.nodes.length,e=model.edges.length,d=n>1?e/(n*(n-1)):0;
+  $('#nodeCount').textContent=n; $('#edgeCount').textContent=e; $('#density').textContent=d.toFixed(3);
+  const blocked=model.nodes.filter(function(x){return /BLOCK|HOLD|GATED|STALE/.test(String(x.state));}).length; $('#blockedCount').textContent=blocked;
+  const degree={}; model.nodes.forEach(function(x){degree[x.id]=0;}); model.edges.forEach(function(x){degree[x.from]=(degree[x.from]||0)+1;degree[x.to]=(degree[x.to]||0)+1;});
+  const vals=Object.values(degree), bins={}; vals.forEach(function(v){bins[v]=(bins[v]||0)+1;});
+  const entries=Object.entries(bins).sort(function(a,b){return Number(a[0])-Number(b[0]);});
+  const svg=$('#degreePlot'), w=640,h=116,pad=22,bw=(w-pad*2)/Math.max(1,entries.length), maxBin=Math.max(1,...entries.map(function(z){return z[1];}));
+  svg.innerHTML=entries.map(function(x,i){const bar=(h-36)*(x[1]/maxBin);return '<rect x="'+(pad+i*bw+4)+'" y="'+(h-20-bar)+'" width="'+Math.max(8,bw-8)+'" height="'+bar+'" fill="var(--accent)" opacity=".75"/><text x="'+(pad+i*bw+bw/2)+'" y="'+(h-5)+'" text-anchor="middle" fill="var(--muted)" font-size="10">d='+x[0]+'</text>';}).join('');
+}
+function applyLead(){
+  const lead=Math.max(1,Math.min(6,Number($('#lead').value)||1))-1;
+  const order=panelIds.slice(lead).concat(panelIds.slice(0,lead));
+  order.forEach(function(id,i){const el=document.querySelector('[data-panel="'+id+'"]');if(el)el.style.order=i;});
+  try{localStorage.setItem('missioncontrol-lead',String(lead+1));}catch(e){}
+}
+$('#theme').onclick=function(){document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';};
+$('#lead').onchange=applyLead;
+$('#typeFilter').onchange=drawGraph; $('#graphSearch').oninput=drawGraph;
+$('#clearFilter').onclick=function(){$('#typeFilter').value='';$('#graphSearch').value='';drawGraph();};
+document.querySelectorAll('.panel').forEach(function(p){p.onclick=function(e){if(e.target.closest('a,button,select,input,svg'))return;if($('#layout').value==='focus'){document.querySelectorAll('.panel').forEach(function(x){x.classList.remove('focus');});p.classList.add('focus');}};});
+$('#reset').onclick=function(){document.querySelectorAll('.panel').forEach(function(x){x.classList.remove('focus');});};
+try{const saved=localStorage.getItem('missioncontrol-lead');if(saved)$('#lead').value=saved;}catch(e){}
+load().catch(function(e){$('#stamp').textContent='graph load failed: '+e.message;$('#freshness').textContent='runtime load failure';$('#freshness').className='pill bad';});
 </script>
 </body></html>
