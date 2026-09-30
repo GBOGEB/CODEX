@@ -210,7 +210,7 @@ def main() -> None:
     if SOURCE_STATUS.exists():
         source_status = json.loads(SOURCE_STATUS.read_text(encoding="utf-8"))
         sources = source_status.get("sources", [])
-        fresh = sum(1 for row in sources if str(row.get("status", "")).upper() in {"FRESH", "MEASURED_CHAT_CONNECTOR"})
+        fresh = sum(1 for row in sources if str(row.get("status", "")).upper() in {"FRESH", "MEASURED_CHAT_CONNECTOR", "AUTHENTICATED_GATEWAY"})
         if sources:
             snapshot.setdefault("nodes", {}).setdefault("repo_codex", {})["docking"] = {
                 "status": STATUS_DERIVED,
