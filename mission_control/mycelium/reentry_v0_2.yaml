@@ -228,10 +228,10 @@ reentry:
   lanes:
     - id: CODEX_UI
       repository: GBOGEB/CODEX
-      branch: main
-      head_sha: 86491df05050967dd8cc11ee3b3b0dbd114193b9
-      state: BOUNDED_APPLY_ADMITTED
-      current_atom: IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
+      branch: mission-control-bounded-apply-v01-20260930
+      head_sha: 9930ac78a9d4a6a0b5dcfe8e8a5e3775cf434c9c
+      state: BOUNDED_APPLY_IMPLEMENTED_PENDING_EXACT_HEAD_PROOF
+      current_atom: PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS
       completed_atoms:
         - MYCELIUM_V0_1
         - MYCELIUM_V0_2_INTERACTION
@@ -256,7 +256,8 @@ reentry:
         - SELECT_AUTHENTICATED_TRANSPORT
         - AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF
         - GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
-      blocker: MUTATION_DISABLED_PENDING_SEPARATE_EXACT_HEAD_PROOF
+        - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
+      blocker: null
       queue_state: EXECUTION
       evidence_refs:
         - PR_837
@@ -273,12 +274,14 @@ reentry:
         - mission_control/mycelium/control_plane_projection.json
         - mission_control/mycelium/control_events.json
         - mission_control/mycelium/executable_projection.json
-        - mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
-        - mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json
+        - mission_control/mycelium/execution_gateway_contract.yaml
+        - scripts/missioncontrol_owner_bounded_apply_request.py
+        - scripts/missioncontrol_bounded_apply.py
+        - .github/workflows/missioncontrol-owner-bounded-apply.yml
         - docs/missioncontrol_mycelium.html
       next_legal_transitions:
-        - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
         - PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS
+        - BOUNDED_APPLY_RUNTIME_OWNER_COMMAND
         - CONSUME_TYPED_REMOTE_RETURNS
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
@@ -556,6 +559,30 @@ reentry:
     next_legal_transitions:
       - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
       - PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS
+    authority_transfer: false
+    formal_credit_delta: 0
+    engineering_credit_delta: 0
+
+  bounded_apply_v0_1:
+    state: IMPLEMENTED_PENDING_EXACT_HEAD_PROOF
+    predecessor_runtime_proof: mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json
+    owner_command: /missioncontrol apply refresh-federation-heads <exact-main-sha>
+    approval_surface: issue #879 owner comment
+    workflow: .github/workflows/missioncontrol-owner-bounded-apply.yml
+    request_builder: scripts/missioncontrol_owner_bounded_apply_request.py
+    executor: scripts/missioncontrol_bounded_apply.py
+    target_repository: GBOGEB/CODEX
+    target_ref: main
+    allowed_intents:
+      - REFRESH_FEDERATION_HEADS
+    mutation_mode: AUTOMATION_BRANCH_PR_ONLY
+    direct_main_write: false
+    review_pr_required: true
+    remote_authority_mutation: false
+    runtime_proof: WITHHELD_OWNER_APPLY_COMMAND_REQUIRED
+    next_legal_transitions:
+      - PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS
+      - BOUNDED_APPLY_RUNTIME_OWNER_COMMAND
     authority_transfer: false
     formal_credit_delta: 0
     engineering_credit_delta: 0
