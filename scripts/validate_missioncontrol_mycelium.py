@@ -218,7 +218,7 @@ def validate() -> list[str]:
     if metrics.get("nodes", {}).get("repo_codex", {}).get("ports", {}).get("status") not in EVIDENCE_STATES:
         errors.append("port metric has invalid evidence state")
     source_rows = source_status.get("sources", [])
-    measured_sources = [row for row in source_rows if str(row.get("status", "")).upper() in {"FRESH", "MEASURED_CHAT_CONNECTOR"}]
+    measured_sources = [row for row in source_rows if str(row.get("status", "")).upper() in {"FRESH", "MEASURED_CHAT_CONNECTOR", "AUTHENTICATED_GATEWAY"}]
     if source_rows and len(measured_sources) != len(source_rows):
         errors.append("live federation source freshness is not complete")
     docking = metrics.get("nodes", {}).get("repo_codex", {}).get("docking", {})
