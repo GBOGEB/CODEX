@@ -6,6 +6,7 @@
   let events = null;
   let graphModel = null;
   let stagedEnvelope = null;
+  const GATEWAY_URL = 'https://github.com/GBOGEB/CODEX/actions/workflows/missioncontrol-command-gateway.yml';
 
   function esc(v) {
     return String(v ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -129,10 +130,22 @@
     const nodes = graphModel.nodes.filter(n => types.has(n.type) && n.url);
     box.innerHTML = nodes.map(n => {
       const sha = n.meta?.sha || n.meta?.merge_sha || n.meta?.head_sha || n.meta?.source_sha || '';
+      const related = graphModel.edges.filter(e => e.from === n.id || e.to === n.id);
+      const provenance = related.slice(0,8).map(e => {
+        const extras = [
+          e.mechanism ? 'mechanism=' + e.mechanism : '',
+          e.source_sha ? 'source=' + String(e.source_sha).slice(0,12) : '',
+          e.target_sha ? 'target=' + String(e.target_sha).slice(0,12) : '',
+          e.proof ? 'proof=' + e.proof : ''
+        ].filter(Boolean).join(' · ');
+        return '<li><code>' + esc(e.from) + '</code> —' + esc(e.type) + '→ <code>' + esc(e.to) + '</code>' +
+          (extras ? '<br><span class="muted">' + esc(extras) + '</span>' : '') + '</li>';
+      }).join('');
       return '<div class="artifact" data-artifact-node="' + esc(n.id) + '"><b><a href="' + esc(n.url) + '">' + esc(n.label) + '</a></b>' +
         '<div class="muted">' + esc(n.type) + ' · ' + esc(n.state) + '</div>' +
         (sha ? '<code>' + esc(String(sha).slice(0,16)) + '</code>' : '') +
-        '<div class="compact">node ' + esc(n.id) + '</div></div>';
+        '<div class="compact">node ' + esc(n.id) + ' · provenance edges ' + related.length + '</div>' +
+        '<details><summary>trace provenance</summary><ul class="compact">' + (provenance || '<li>no typed edges</li>') + '</ul></details></div>';
     }).join('') || '<div class="muted">No governed outward graph nodes with deeplinks.</div>';
   }
 
@@ -219,7 +232,7 @@
         engineering_credit_delta:0,
         replay_completed_atoms:false
       },
-      next_action: requestedMode === 'APPLY' ? 'SEND_TO_AUTHENTICATED_EXECUTION_GATEWAY_AND_BIND_PROOF' : 'REVIEW_STAGED_ENVELOPE'
+      next_action: requestedMode === 'APPLY' ? 'OPEN_GITHUB_AUTHENTICATED_GATEWAY_WORKFLOW' : 'REVIEW_STAGED_ENVELOPE'
     };
     return event;
   }
@@ -227,8 +240,15 @@
   function stage(mode) {
     stagedEnvelope = buildEnvelope(mode);
     const out = $('#commandReceipt');
-    const status = stagedEnvelope.parse_ok ? (mode === 'APPLY' ? 'WITHHELD / staged only' : 'DRY RUN READY') : 'INPUT ERROR';
+    const status = stagedEnvelope.parse_ok ? (mode === 'APPLY' ? 'STAGED / authenticated gateway required' : 'DRY RUN READY') : 'INPUT ERROR';
     if (out) out.innerHTML = '<b>' + esc(status) + '</b><pre>' + esc(JSON.stringify(stagedEnvelope,null,2)) + '</pre>';
+    const launch = $('#gatewayLaunch');
+    const guide = $('#gatewayGuide');
+    if (launch) {
+      launch.href = GATEWAY_URL;
+      launch.hidden = !(mode === 'APPLY' && stagedEnvelope.parse_ok);
+    }
+    if (guide) guide.hidden = !(mode === 'APPLY' && stagedEnvelope.parse_ok);
     const dl = $('#commandDownload');
     if (dl) {
       const blob = new Blob([JSON.stringify(stagedEnvelope,null,2) + '\n'], {type:'application/json'});
@@ -244,9 +264,19 @@
     if (auth) auth.innerHTML = Object.values(control.repositories || {}).map(r => '<option>' + esc(r.repo) + '</option>').join('');
     const lane = $('#commandLane');
     if (lane) lane.innerHTML = (control.lanes || []).map(x => '<option>' + esc(x.id) + '</option>').join('');
-    const dry = $('#dryRunCommand'), apply = $('#applyCommand');
+    const dry = $('#dryRunCommand'), apply = $('#applyCommand'), copy = $('#commandCopy');
     if (dry) dry.onclick = () => stage('DRY_RUN');
     if (apply) apply.onclick = () => stage('APPLY');
+    if (copy) copy.onclick = async () => {
+      if (!stagedEnvelope) {
+        const out = $('#commandReceipt');
+        if (out) out.innerHTML = '<span class="warn">Stage an envelope first.</span>';
+        return;
+      }
+      await navigator.clipboard.writeText(JSON.stringify(stagedEnvelope,null,2));
+      const out = $('#commandReceipt');
+      if (out) out.insertAdjacentHTML('afterbegin','<span class="ok">Envelope copied for authenticated gateway input.</span>');
+    };
     const upload = $('#configUpload');
     if (upload) upload.onchange = async () => {
       const file = upload.files?.[0];
