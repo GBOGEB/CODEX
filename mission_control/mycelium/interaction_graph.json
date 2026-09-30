@@ -1,6 +1,6 @@
 {
   "schema_version": "0.4",
-  "snapshot_at": "2026-09-30T16:34:00Z",
+  "snapshot_at": "2026-09-30T17:09:58Z",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -27,22 +27,22 @@
       "state": "REMOTE_EXECUTION_CURRENT",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "c72c06a75dc4c3909e66149b4d820381363679bf",
+        "sha": "3c0a57e1626e9c0361417ea21d78cceef4457f98",
         "views": [
           "control",
           "observability"
         ],
         "latest_census_pr_head": "4a094a4f46646214d63e6ac0ed910723acceec12",
-        "latest_census_merge_sha": "18a79236974498931f654939e8fec2535c499aec",
-        "observed_at": "2026-09-30T16:34:00Z",
-        "freshness_status": "CURRENT_HEAD_AHEAD_OF_MEASURED_RETURN",
-        "latest_census_pr": 1519,
-        "latest_census_job": 109979358364,
-        "latest_census_head": "971b781d641776fe1e34fe09591716f90548e83b",
-        "latest_measured_return_sha": "971b781d641776fe1e34fe09591716f90548e83b",
-        "pending_census_run": 36745077611,
+        "latest_census_merge_sha": "1830662b57ccaeb6b1c1553f2c584abe6a954f9f",
+        "observed_at": "2026-09-30T17:09:58Z",
+        "freshness_status": "CURRENT_HEAD_COMBINED_MAIN_MEASURED_1529_NONPYTHON",
+        "latest_census_pr": 1527,
+        "latest_census_job": 109998603356,
+        "latest_census_head": "1830662b57ccaeb6b1c1553f2c584abe6a954f9f",
+        "latest_measured_return_sha": "1830662b57ccaeb6b1c1553f2c584abe6a954f9f",
+        "pending_census_run": null,
         "completed_census_run": 36721260876,
-        "current_head_measurement_status": "MEASURED_1519_WITH_1523_PENDING"
+        "current_head_measurement_status": "MEASURED_COMBINED_1527_1528_1529_LINT_POPULATION_UNCHANGED"
       }
     },
     {
@@ -70,42 +70,41 @@
       "id": "dab_mech",
       "type": "queue",
       "label": "DAB-MECH",
-      "state": "MEASURED_W293_453_1523_PENDING",
+      "state": "MEASURED_W293_411",
       "meta": {
         "views": [
           "control",
           "observability"
         ],
-        "latest_measured_W293": 453,
-        "evidence_job": 109979358364,
-        "measurement_pr": 1519,
-        "pending_merged_pr": 1523,
-        "pending_expected_W293": 416,
-        "pending_census_run": 36745077611
+        "latest_measured_W293": 411,
+        "evidence_job": 109998603356,
+        "measurement_pr": "1527/#1528 combined main"
       }
     },
     {
       "id": "dab_hard",
       "type": "queue",
       "label": "DAB-HARD",
-      "state": "MEASURED_E722_16_E741_21",
+      "state": "MEASURED_E722_16_E741_17_F841_66",
       "meta": {
         "views": [
           "control",
           "observability"
         ],
-        "latest_measured_total": 8282,
+        "latest_measured_total": 8225,
         "E999": 1,
         "F821": 0,
         "F601": 0,
         "F811": 0,
-        "F841": 77,
+        "F841": 66,
         "E722": 16,
         "E731": 0,
-        "E741": 21,
-        "active_pr": null,
-        "evidence_job": 109979358364,
-        "measurement_pr": 1519
+        "E741": 17,
+        "active_pr": 1530,
+        "evidence_job": 109998603356,
+        "measurement_pr": "1527/#1528 combined main",
+        "pending_unmeasured_pr": 1530,
+        "pending_selected_findings": 3
       }
     },
     {
@@ -262,28 +261,34 @@
           "control",
           "observability"
         ],
-        "next_hard_family": "E722/E741",
-        "next_hard_count": 37,
+        "next_hard_family": "F841",
+        "next_hard_count": 66,
         "next_mech_family": "W293",
-        "next_mech_residual": 453,
-        "census_job": 109979358364,
-        "next_hard_pr": null,
-        "next_hard_target_residual": "TBD_FROM_NEXT_BOUNDED_SLICE",
-        "next_mech_last_measured_residual": 1399,
-        "next_mech_merged_slice": 1523,
-        "next_mech_removed": 37,
-        "next_mech_expected_residual": 416,
-        "next_mech_residual_status": "MEASURED",
-        "abacus_return_pr": 1519,
+        "next_mech_residual": 411,
+        "census_job": 109998603356,
+        "next_hard_pr": 1530,
+        "next_hard_target_residual": "WITHHELD_UNTIL_PR1530_EXACT_CENSUS",
+        "next_mech_last_measured_residual": 416,
+        "next_mech_merged_slice": 1528,
+        "next_mech_removed": 5,
+        "next_mech_expected_residual": 411,
+        "next_mech_residual_status": "MEASURED_BY_COMBINED_MAIN_CENSUS",
+        "abacus_return_pr": "1527/1528 combined",
         "cryoplant_return_pr": 1834,
         "codex_owner_gate": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
-        "pending_census_run": 36745077611,
-        "pending_census_head": "041c3367842423a336f4cd5a496863cb5000bae9",
-        "pending_census_status": "QUEUED",
-        "next_hard_expected_after_pending_census": 22,
-        "next_mech_expected_after_pending_census": 416,
-        "abacus_current_head": "c72c06a75dc4c3909e66149b4d820381363679bf",
-        "abacus_current_head_status": "CURRENT_MAIN_AFTER_1524_1523_CENSUS_PENDING"
+        "pending_census_run": null,
+        "pending_census_head": null,
+        "pending_census_status": "NONE_FOR_COMBINED_BASELINE",
+        "next_hard_expected_after_pending_census": "WITHHELD",
+        "next_mech_expected_after_pending_census": 411,
+        "abacus_current_head": "3c0a57e1626e9c0361417ea21d78cceef4457f98",
+        "abacus_current_head_status": "COMBINED_MAIN_MEASURED_1529_NONPYTHON",
+        "control_repair_pr": 1529,
+        "control_repair_status": "MERGED_PROOF_PENDING",
+        "control_repair_validate_docs_run": 36747972586,
+        "split_exact_head_proof_status": "SUPERSEDED_BY_COMBINED_MAIN_MEASUREMENT",
+        "combined_main_census_run": 36747879827,
+        "combined_main_artifact_id": 11114021331
       },
       "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/control_manifest.yaml"
     },
@@ -601,37 +606,41 @@
       "id": "hard_f841_residual",
       "type": "queue",
       "label": "F841 unused-local residual",
-      "state": "QUEUED_MEASURED_77",
+      "state": "MEASURED_RESIDUAL_66_PR1530_UNMEASURED",
       "meta": {
-        "baseline": 77,
-        "current": 77,
-        "delta": 0,
+        "baseline": 76,
+        "current": 66,
+        "delta": -10,
         "views": [
           "control",
           "observability"
         ],
-        "status": "MEASURED",
-        "evidence_job": 109906683250,
-        "measurement_pr": 1506
+        "status": "MEASURED_COMBINED_MAIN",
+        "evidence_job": 109998603356,
+        "measurement_pr": "1527/#1528 combined main",
+        "active_pr": 1530,
+        "pending_selected_findings": 3,
+        "promotion_rule": "NO_GLOBAL_F841_PROMOTION_UNTIL_EXACT_CENSUS"
       }
     },
     {
       "id": "hard_e722_residual",
       "type": "queue",
       "label": "E722 bare-except residual",
-      "state": "MEASURED_RESIDUAL_26",
+      "state": "MEASURED_RESIDUAL_16",
       "meta": {
-        "baseline": 34,
-        "current": 26,
-        "delta": -8,
+        "baseline": 16,
+        "current": 16,
+        "delta": 0,
         "views": [
           "control",
           "observability"
         ],
         "evidence_pr": 1499,
-        "evidence_job": 109906683250,
-        "measurement_pr": 1506,
-        "repair_evidence_pr": 1499
+        "evidence_job": 109998603356,
+        "measurement_pr": "1527/#1528 combined main",
+        "repair_evidence_pr": 1499,
+        "status": "MEASURED"
       }
     },
     {
@@ -653,43 +662,43 @@
       "id": "hard_e741_residual",
       "type": "queue",
       "label": "E741 ambiguous-name residual",
-      "state": "MEASURED_RESIDUAL_22",
+      "state": "MEASURED_RESIDUAL_17",
       "meta": {
-        "baseline": 28,
-        "current": 22,
-        "delta": -6,
+        "baseline": 17,
+        "current": 17,
+        "delta": 0,
         "views": [
           "control",
           "observability"
         ],
         "active_pr": null,
-        "target_residual": 22,
+        "target_residual": 17,
         "status": "MEASURED",
-        "repair_evidence_pr": 1505,
-        "measurement_pr": 1506,
-        "evidence_job": 109906683250
+        "repair_evidence_pr": 1525,
+        "measurement_pr": "1527/#1528 combined main",
+        "evidence_job": 109998603356
       }
     },
     {
       "id": "mech_w293_residual",
       "type": "queue",
       "label": "W293 mechanical residual",
-      "state": "MEASURED_RESIDUAL_1013",
+      "state": "MEASURED_RESIDUAL_411",
       "meta": {
-        "current": 1013,
-        "last_slice_removed": 386,
+        "current": 411,
+        "last_slice_removed": 5,
         "views": [
           "control",
           "observability"
         ],
-        "last_measured_residual": 1399,
-        "merged_slice": 1506,
-        "removed": 386,
-        "expected_postmerge_residual": 1013,
-        "residual_status": "MEASURED_BY_POSTMERGE_MAIN_CENSUS",
-        "census_run": 36721260876,
-        "evidence_job": 109906683250,
-        "measurement_pr": 1506
+        "last_measured_residual": 416,
+        "merged_slice": 1528,
+        "removed": 5,
+        "expected_postmerge_residual": 411,
+        "residual_status": "MEASURED_BY_COMBINED_MAIN_CENSUS",
+        "census_run": 36747879827,
+        "evidence_job": 109998603356,
+        "measurement_pr": "1527/#1528 combined main"
       }
     },
     {
@@ -1046,15 +1055,15 @@
       "mechanism": "REFERENCE",
       "source_repo": "GBOGEB/ABACUS",
       "source_ref": "main",
-      "source_sha": "c72c06a75dc4c3909e66149b4d820381363679bf",
+      "source_sha": "3c0a57e1626e9c0361417ea21d78cceef4457f98",
       "target_repo": "GBOGEB/CODEX",
       "target_ref": "main",
       "target_sha": "95a62a9c1714c0bba3df1d7885aab58264f48855",
       "authority_before": "REMOTE_EXECUTION_AUTHORITY",
       "authority_after": "REMOTE_EXECUTION_AUTHORITY",
-      "proof": "mission_control/mycelium/evidence/abacus_dab_return_1519_measured.json",
-      "observed_at": "2026-09-30T16:34:00Z",
-      "freshness_status": "CURRENT_HEAD_AHEAD_OF_MEASURED_RETURN"
+      "proof": "mission_control/mycelium/evidence/abacus_dab_return_1527_1528_main_measured.json",
+      "observed_at": "2026-09-30T17:09:58Z",
+      "freshness_status": "CURRENT_HEAD_COMBINED_MAIN_MEASURED_1529_NONPYTHON"
     },
     {
       "from": "slice5",
