@@ -1,0 +1,350 @@
+reentry:
+  schema_version: "0.2"
+  generated_for: CODEX_MISSIONCONTROL_MYCELIUM
+  mode: CONTINUE_FROM_DURABLE_STATE
+  generated_at: "2026-09-30T12:36:00+02:00"
+
+  repositories:
+    codex:
+      repo: GBOGEB/CODEX
+      branch: main
+      handover_observed_sha: d77d44811fec4fada16988769614d6091df56133
+      refreshed_current_sha: ad9df416db5786205f7ebeea18781a7a0b8337c2
+      role: UI_ORCHESTRATION_GRAPH_AUTHORITY
+      mycelium_v0_1_merge:
+        pr: 837
+        merge_sha: cb60cc2e89767920528dd0a7cf0ddf5ea3d25a53
+      mycelium_v0_2_interaction_merge:
+        pr: 839
+        merge_sha: 495da65d816e6a3123f6ed53221d0ab053342ada
+    abacus:
+      repo: GBOGEB/ABACUS
+      branch: main
+      handover_observed_sha: 713a152e99024165aea81bffbf530d2073e164bb
+      refreshed_current_sha: a2825418c0c92ecac127ff799bf0d87fc998c269
+      role: REMOTE_EXECUTION_AUTHORITY
+    cryoplant:
+      repo: GBOGEB/cryoplant-project
+      branch: main
+      handover_observed_sha: f03bfc61bcf85a2d91cd22d083ad0ef954387f0d
+      refreshed_current_sha: f03bfc61bcf85a2d91cd22d083ad0ef954387f0d
+      role: REMOTE_ENGINEERING_AUTHORITY
+
+  invariants:
+    authority_transfer: false
+    formal_credit_delta: 0
+    engineering_credit_delta: 0
+    ui_timeout_is_execution_failure: false
+    renderer_failure_is_global_failure: false
+    independent_lanes_continue: true
+    replay_completed_atoms_on_reentry: false
+    remote_truth_auto_promotable: false
+    static_pages_apply_mutates_repository: false
+
+  current_capability:
+    status: MYCELIUM_V0_2_INTERACTION_MERGED
+    existing:
+      - durable recovery manifest
+      - typed nodes_edges_atoms_queues_evidence graph
+      - responsive six-panel HTML surface
+      - focus mode
+      - light_dark theme
+      - execution_and_recovery view
+      - evidence_and_lineage view
+      - DMAIC_KPI_PCA_BT governance
+      - reverse_pressure_BD_queue contract
+      - outward_artifact links
+      - GitHub_Pages entrypoint
+      - graph_density telemetry
+      - federation representation
+      - one_graph_multiple_projections
+      - observability_metrics
+      - progress_history
+      - dynamic_source_and_port_controls
+
+  requested_delta:
+    id: MYCELIUM_V0_2_HTML_CONTROL_PLANE
+    implementation_version: "0.2.1"
+    intent:
+      - evolve_v0_1_without_replacement
+      - make_command_input_a_first_class_HTML_surface
+      - expose_lane_level_execution_and_recovery
+      - strengthen_interactive_graph
+      - consolidate_output_and_evidence_navigation
+      - strengthen_analytics_without_authority_promotion
+      - make_federation_control_a_first_class_surface
+
+    canonical_panels:
+      panel_1:
+        id: COMMAND_INPUT_ROOT
+        inherits: [repository_topology_context]
+        functions:
+          - text_input
+          - YAML_JSON_input
+          - config_upload
+          - dry_run_apply
+          - manual_steering
+          - source_authority_context
+      panel_2:
+        id: EXECUTION_RECOVERY
+        inherits: [execution_flow]
+        functions:
+          - active_lanes
+          - current_atom
+          - last_good_checkpoint
+          - blocker
+          - retry
+          - resume
+          - next_legal_transition
+      panel_3:
+        id: MYCELIUM_GRAPH
+        inherits: [interaction_graph]
+        functions:
+          - graph_navigation
+          - authority_overlay
+          - evidence_overlay
+          - critical_path_overlay
+          - BD_pressure_overlay
+          - source_deeplinks
+      panel_4:
+        id: OUTPUT_EVIDENCE
+        inherits: [evidence_lineage, outward_artifacts]
+        functions:
+          - artifacts
+          - manifests
+          - hashes
+          - evidence
+          - downloads
+          - provenance
+      panel_5:
+        id: ANALYTICS
+        inherits: [DMAIC, KPI, PCA, BT, graph_density]
+        rules:
+          PCA: DIAGNOSTIC_ONLY_UNLESS_SEPARATELY_GOVERNED
+          BT: OBSERVED_PAIRWISE_OUTCOMES_ONLY
+          KPI: SOURCE_AND_POPULATION_REQUIRED
+      panel_6:
+        id: FEDERATION_CONTROL
+        inherits: [repository_topology]
+        functions:
+          - repo_heads
+          - bridge_status
+          - source_target_lineage
+          - cherry_pick_state
+          - merge_state
+          - conflict_state
+          - remote_authority_state
+
+  execution_model:
+    durable_checkpoint:
+      fields:
+        - repository
+        - branch
+        - head_sha
+        - lane
+        - current_atom
+        - completed_atoms
+        - blocker
+        - evidence_refs
+        - artifact_refs
+        - queue_state
+        - next_legal_transitions
+    continuation:
+      sequence:
+        - REFRESH
+        - LOAD_MANIFEST
+        - VERIFY_HEADS
+        - RECONCILE_DELTAS
+        - RESUME_FIRST_LEGAL_INCOMPLETE_ATOM
+    first_red_policy:
+      scope: AFFECTED_LANE_ONLY
+      global_stop: false
+
+  lanes:
+    - id: CODEX_UI
+      repository: GBOGEB/CODEX
+      branch: mission-control-v021-control-plane-20260930
+      head_sha: ad9df416db5786205f7ebeea18781a7a0b8337c2
+      state: EXECUTING
+      current_atom: MYCELIUM_V0_2_HTML_CONTROL_PLANE
+      completed_atoms:
+        - MYCELIUM_V0_1
+        - MYCELIUM_V0_2_INTERACTION
+      blocker: null
+      queue_state: EXECUTION
+      evidence_refs:
+        - PR_837
+        - PR_839
+      artifact_refs:
+        - mission_control/mycelium/control_manifest.yaml
+        - mission_control/mycelium/interaction_graph.json
+        - docs/missioncontrol_mycelium.html
+      next_legal_transitions:
+        - CONTROL_PLANE_SCHEMA
+        - COMMAND_INPUT_ROOT
+        - LANE_RECOVERY_PROJECTION
+        - GRAPH_OVERLAYS
+        - OUTPUT_EVIDENCE
+        - FEDERATION_CONTROL
+        - EXACT_HEAD_PROOF
+    - id: ABACUS_REMOTE_EXECUTION
+      repository: GBOGEB/ABACUS
+      branch: main
+      head_sha: a2825418c0c92ecac127ff799bf0d87fc998c269
+      state: REMOTE_AUTHORITY
+      current_atom: REMOTE_EXECUTION_STATE
+      completed_atoms: []
+      blocker: REMOTE_ONLY_NO_CODEX_PROMOTION
+      queue_state: REVIEW
+      evidence_refs: []
+      artifact_refs: []
+      next_legal_transitions:
+        - INGEST_TYPED_RETURN
+        - REFRESH_REMOTE_HEAD
+    - id: QLM_ENGINEERING
+      repository: GBOGEB/cryoplant-project
+      branch: main
+      head_sha: f03bfc61bcf85a2d91cd22d083ad0ef954387f0d
+      state: REMOTE_ENGINEERING_AUTHORITY
+      current_atom: QLM_PROJECTED_OR_BRIDGED
+      completed_atoms: []
+      blocker: REMOTE_AUTHORITY_PRESERVED
+      queue_state: RETURN
+      evidence_refs:
+        - ADR-QPS-006
+      artifact_refs: []
+      next_legal_transitions:
+        - PROJECT_TYPED_ENGINEERING_RETURN
+        - BRIDGE_WITH_EXACT_SHA
+
+  graph:
+    universal_graph_may_contain_cycles: true
+    executable_projection_must_be_DAG: true
+    node_types:
+      - repository
+      - branch
+      - commit
+      - pull_request
+      - issue
+      - workflow
+      - job
+      - atom
+      - queue
+      - config
+      - requirement
+      - interface
+      - decision
+      - evidence
+      - artifact
+      - output
+      - human_action
+      - external_authority
+    edge_types:
+      - contains
+      - depends_on
+      - precedes
+      - blocks
+      - unblocks
+      - proves
+      - derives_from
+      - consumes
+      - produces
+      - publishes
+      - federates
+      - supersedes
+      - implements
+      - validates
+      - references
+      - requires_return_from
+
+  reverse_pressure:
+    principle: >-
+      Promote the predecessor atom capable of releasing blocked downstream
+      value without suspending unrelated executable work.
+    queues:
+      - EXECUTION
+      - BLOCKED
+      - RETURN
+      - REVIEW
+      - PUBLICATION
+      - OWNER_ACTION
+
+  rendering:
+    data_contract: GOVERNED_JSON_PROJECTION
+    consumers:
+      - HTML_SVG
+      - Plotly
+      - Matplotlib
+      - outward_document_generators
+    fallback_renderer: HTML_SVG
+    isolation:
+      plotly_failure_blocks_core: false
+      matplotlib_failure_blocks_core: false
+      pages_failure_blocks_core: false
+      browser_disconnect_blocks_core: false
+
+  federation:
+    strategy_order:
+      - REFERENCE
+      - BRIDGE
+      - GENERATED_PROJECTION
+      - ITEM_IMPORT
+      - CHERRY_PICK
+      - BOUNDED_MERGE
+      - FULL_MERGE
+    required_provenance:
+      - source_repo
+      - source_ref
+      - source_sha
+      - target_repo
+      - target_ref
+      - target_sha
+      - mechanism
+      - authority_before
+      - authority_after
+      - proof
+
+  qlm_context:
+    repository: GBOGEB/cryoplant-project
+    classification: REMOTE_ENGINEERING_TRUTH
+    functional_location: QDIST
+    physical_boundary: QDB_QLM
+    governing_decision_surface: ADR-QPS-006
+    integration_mode: PROJECTED_OR_BRIDGED
+    migrate_authority_into_CODEX: false
+
+  next_execution:
+    objective: >-
+      Implement Mycelium v0.2.1 as an incremental HTML control-plane evolution
+      of merged PRs #837 and #839 while preserving current authority and recovery contracts.
+    sequence:
+      - refresh_live_main_heads
+      - read_current_v0_2_manifest_and_HTML
+      - define_v0_2_1_schema_delta
+      - preserve_existing_tests_and_contracts
+      - modularize_HTML_JS_data_surfaces
+      - add_command_input_panel
+      - add_lane_recovery_projection
+      - extend_graph_overlays
+      - consolidate_output_evidence_panel
+      - add_federation_control_panel
+      - add_fallback_HTML_SVG_renderer
+      - validate_responsive_layouts
+      - validate_timeout_recovery
+      - validate_source_deeplinks
+      - exact_head_proof
+      - bounded_PR
+      - merge_readback
+      - regenerate_reentry_manifest
+
+  done_when:
+    - no_v0_1_capability_lost
+    - six_surfaces_function_at_desktop_tablet_mobile_widths
+    - interruption_recovers_without_replaying_completed_atoms
+    - one_blocked_lane_does_not_stop_independent_lanes
+    - graph_render_failure_does_not_stop_execution
+    - authority_is_visible_and_machine_readable
+    - federation_mechanism_is_visible_per_edge
+    - exact_SHA_lineage_available
+    - Pages_surface_validates
+    - restart_manifest_is_self_sufficient
