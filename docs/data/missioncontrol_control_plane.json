@@ -1,0 +1,291 @@
+{
+  "schema_version": "0.2",
+  "generated_for": "CODEX_MISSIONCONTROL_MYCELIUM",
+  "mode": "CONTINUE_FROM_DURABLE_STATE",
+  "generated_at": "2026-09-30T12:49:00+02:00",
+  "source_yaml": "mission_control/mycelium/reentry_v0_2.yaml",
+  "invariants": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "ui_timeout_is_execution_failure": false,
+    "renderer_failure_is_global_failure": false,
+    "independent_lanes_continue": true,
+    "replay_completed_atoms_on_reentry": false,
+    "remote_truth_auto_promotable": false,
+    "static_pages_apply_mutates_repository": false
+  },
+  "repositories": {
+    "codex": {
+      "repo": "GBOGEB/CODEX",
+      "branch": "main",
+      "handover_observed_sha": "d77d44811fec4fada16988769614d6091df56133",
+      "refreshed_current_sha": "b7d60371d9caae4d81949813779d24c9a38a9e09",
+      "role": "UI_ORCHESTRATION_GRAPH_AUTHORITY",
+      "merge_refs": [
+        {
+          "pr": 837,
+          "sha": "cb60cc2e89767920528dd0a7cf0ddf5ea3d25a53"
+        },
+        {
+          "pr": 839,
+          "sha": "495da65d816e6a3123f6ed53221d0ab053342ada"
+        }
+      ]
+    },
+    "abacus": {
+      "repo": "GBOGEB/ABACUS",
+      "branch": "main",
+      "handover_observed_sha": "713a152e99024165aea81bffbf530d2073e164bb",
+      "refreshed_current_sha": "d8e71dc73453e9e4ea10fa62afd0d9554d241297",
+      "role": "REMOTE_EXECUTION_AUTHORITY"
+    },
+    "cryoplant": {
+      "repo": "GBOGEB/cryoplant-project",
+      "branch": "main",
+      "handover_observed_sha": "f03bfc61bcf85a2d91cd22d083ad0ef954387f0d",
+      "refreshed_current_sha": "f03bfc61bcf85a2d91cd22d083ad0ef954387f0d",
+      "role": "REMOTE_ENGINEERING_AUTHORITY"
+    }
+  },
+  "panels": [
+    {
+      "id": "COMMAND_INPUT_ROOT",
+      "order": 1,
+      "inherits": [
+        "repository_topology_context"
+      ],
+      "functions": [
+        "text_input",
+        "YAML_JSON_input",
+        "config_upload",
+        "dry_run_apply",
+        "manual_steering",
+        "source_authority_context"
+      ]
+    },
+    {
+      "id": "EXECUTION_RECOVERY",
+      "order": 2,
+      "inherits": [
+        "execution_flow"
+      ],
+      "functions": [
+        "active_lanes",
+        "current_atom",
+        "last_good_checkpoint",
+        "blocker",
+        "retry",
+        "resume",
+        "next_legal_transition"
+      ]
+    },
+    {
+      "id": "MYCELIUM_GRAPH",
+      "order": 3,
+      "inherits": [
+        "interaction_graph"
+      ],
+      "functions": [
+        "graph_navigation",
+        "authority_overlay",
+        "evidence_overlay",
+        "critical_path_overlay",
+        "BD_pressure_overlay",
+        "source_deeplinks"
+      ]
+    },
+    {
+      "id": "OUTPUT_EVIDENCE",
+      "order": 4,
+      "inherits": [
+        "evidence_lineage",
+        "outward_artifacts"
+      ],
+      "functions": [
+        "artifacts",
+        "manifests",
+        "hashes",
+        "evidence",
+        "downloads",
+        "provenance"
+      ]
+    },
+    {
+      "id": "ANALYTICS",
+      "order": 5,
+      "inherits": [
+        "DMAIC",
+        "KPI",
+        "PCA",
+        "BT",
+        "graph_density"
+      ],
+      "rules": {
+        "PCA": "DIAGNOSTIC_ONLY_UNLESS_SEPARATELY_GOVERNED",
+        "BT": "OBSERVED_PAIRWISE_OUTCOMES_ONLY",
+        "KPI": "SOURCE_AND_POPULATION_REQUIRED"
+      }
+    },
+    {
+      "id": "FEDERATION_CONTROL",
+      "order": 6,
+      "inherits": [
+        "repository_topology"
+      ],
+      "functions": [
+        "repo_heads",
+        "bridge_status",
+        "source_target_lineage",
+        "cherry_pick_state",
+        "merge_state",
+        "conflict_state",
+        "remote_authority_state"
+      ]
+    }
+  ],
+  "continuation": [
+    "REFRESH",
+    "LOAD_MANIFEST",
+    "VERIFY_HEADS",
+    "RECONCILE_DELTAS",
+    "RESUME_FIRST_LEGAL_INCOMPLETE_ATOM"
+  ],
+  "first_red_policy": {
+    "scope": "AFFECTED_LANE_ONLY",
+    "global_stop": false
+  },
+  "lanes": [
+    {
+      "id": "CODEX_UI",
+      "repository": "GBOGEB/CODEX",
+      "branch": "mission-control-v021-control-plane-20260930",
+      "head_sha": "72a5a8247e4af1406d39ee359179a4c6d7163fd5",
+      "state": "EXECUTING",
+      "current_atom": "MYCELIUM_V0_2_HTML_CONTROL_PLANE",
+      "completed_atoms": [
+        "MYCELIUM_V0_1",
+        "MYCELIUM_V0_2_INTERACTION"
+      ],
+      "blocker": null,
+      "queue_state": "EXECUTION",
+      "next_legal_transitions": [
+        "CONTROL_PLANE_SCHEMA",
+        "COMMAND_INPUT_ROOT",
+        "LANE_RECOVERY_PROJECTION",
+        "GRAPH_OVERLAYS",
+        "OUTPUT_EVIDENCE",
+        "FEDERATION_CONTROL",
+        "EXACT_HEAD_PROOF"
+      ]
+    },
+    {
+      "id": "ABACUS_REMOTE_EXECUTION",
+      "repository": "GBOGEB/ABACUS",
+      "branch": "main",
+      "head_sha": "d8e71dc73453e9e4ea10fa62afd0d9554d241297",
+      "state": "REMOTE_AUTHORITY",
+      "current_atom": "REMOTE_EXECUTION_STATE",
+      "completed_atoms": [],
+      "blocker": "REMOTE_ONLY_NO_CODEX_PROMOTION",
+      "queue_state": "REVIEW",
+      "next_legal_transitions": [
+        "INGEST_TYPED_RETURN",
+        "REFRESH_REMOTE_HEAD"
+      ]
+    },
+    {
+      "id": "QLM_ENGINEERING",
+      "repository": "GBOGEB/cryoplant-project",
+      "branch": "main",
+      "head_sha": "f03bfc61bcf85a2d91cd22d083ad0ef954387f0d",
+      "state": "REMOTE_ENGINEERING_AUTHORITY",
+      "current_atom": "QLM_PROJECTED_OR_BRIDGED",
+      "completed_atoms": [],
+      "blocker": "REMOTE_AUTHORITY_PRESERVED",
+      "queue_state": "RETURN",
+      "next_legal_transitions": [
+        "PROJECT_TYPED_ENGINEERING_RETURN",
+        "BRIDGE_WITH_EXACT_SHA"
+      ]
+    }
+  ],
+  "reverse_pressure": {
+    "queues": [
+      "EXECUTION",
+      "BLOCKED",
+      "RETURN",
+      "REVIEW",
+      "PUBLICATION",
+      "OWNER_ACTION"
+    ]
+  },
+  "rendering": {
+    "data_contract": "GOVERNED_JSON_PROJECTION",
+    "fallback_renderer": "HTML_SVG",
+    "isolation": {
+      "plotly_failure_blocks_core": false,
+      "matplotlib_failure_blocks_core": false,
+      "pages_failure_blocks_core": false,
+      "browser_disconnect_blocks_core": false
+    }
+  },
+  "federation": {
+    "strategy_order": [
+      "REFERENCE",
+      "BRIDGE",
+      "GENERATED_PROJECTION",
+      "ITEM_IMPORT",
+      "CHERRY_PICK",
+      "BOUNDED_MERGE",
+      "FULL_MERGE"
+    ],
+    "required_provenance": [
+      "source_repo",
+      "source_ref",
+      "source_sha",
+      "target_repo",
+      "target_ref",
+      "target_sha",
+      "mechanism",
+      "authority_before",
+      "authority_after",
+      "proof"
+    ]
+  },
+  "qlm_context": {
+    "repository": "GBOGEB/cryoplant-project",
+    "classification": "REMOTE_ENGINEERING_TRUTH",
+    "functional_location": "QDIST",
+    "physical_boundary": "QDB_QLM",
+    "governing_decision_surface": "ADR-QPS-006",
+    "integration_mode": "PROJECTED_OR_BRIDGED",
+    "migrate_authority_into_CODEX": false
+  },
+  "graph": {
+    "universal_graph_may_contain_cycles": true,
+    "executable_projection_must_be_DAG": true
+  },
+  "control_plane_version": "0.2.1",
+  "predecessor_proof": "mission_control/mycelium/receipts/MYCELIUM_V02_PR839_PROOF.json",
+  "event_projection": "mission_control/mycelium/control_events.json",
+  "pages_event_projection": "docs/data/missioncontrol_control_events.json",
+  "executable_projection": "mission_control/mycelium/executable_projection.json",
+  "pages_executable_projection": "docs/data/missioncontrol_executable_projection.json",
+  "command_input_contract": {
+    "static_pages_mode": "STAGE_OR_DRY_RUN_ONLY",
+    "authenticated_apply_gateway_required": true,
+    "false_mutation_claim_forbidden": true
+  },
+  "federation_status": {
+    "bridge_status": {
+      "GBOGEB/ABACUS": "REFERENCE_TYPED_RETURN",
+      "GBOGEB/cryoplant-project": "PROJECTED_OR_BRIDGED"
+    },
+    "cherry_pick_state": "NO_ACTIVE_CHERRY_PICK",
+    "merge_state": "NO_ACTIVE_BOUNDED_OR_FULL_MERGE",
+    "conflict_state": "WITHHELD_UNTIL_GOVERNED_PER_EDGE_PROBE",
+    "remote_authority_state": "PRESERVED",
+    "authority_transfer": false
+  }
+}

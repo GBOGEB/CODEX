@@ -1,0 +1,144 @@
+{
+  "schema_version": "0.1",
+  "append_only": true,
+  "authority": "CONTROL_EVENT_PROJECTION_ONLY",
+  "source_of_truth": "repository commits, workflow receipts, typed remote returns and explicit human steering events",
+  "events": [
+    {
+      "id": "EV-0001",
+      "at": "2026-09-30T12:25:59+02:00",
+      "type": "PROOF_BOUND",
+      "node_id": "evidence_pr839",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "70518b64f3c170949544ae31d0b78f0edd746c61",
+      "parent_event": null,
+      "content_ref": "mission_control/mycelium/receipts/MYCELIUM_V02_PR839_PROOF.json",
+      "summary": "MissionControl validator and tests passed on exact PR #839 head."
+    },
+    {
+      "id": "EV-0002",
+      "at": "2026-09-30T12:27:45+02:00",
+      "type": "MERGE",
+      "node_id": "mycelium",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "495da65d816e6a3123f6ed53221d0ab053342ada",
+      "parent_event": "EV-0001",
+      "content_ref": "PR-839",
+      "summary": "Mycelium interaction v0.2 merged."
+    },
+    {
+      "id": "EV-0003",
+      "at": "2026-09-30T12:28:18+02:00",
+      "type": "OUTWARD_PROJECTION",
+      "node_id": "pages",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "ad9df416db5786205f7ebeea18781a7a0b8337c2",
+      "parent_event": "EV-0002",
+      "content_ref": "Actions run 36702627122",
+      "summary": "GitHub Pages build and deploy completed successfully."
+    },
+    {
+      "id": "EV-0004",
+      "at": "2026-09-30T12:36:00+02:00",
+      "type": "RECOVERY",
+      "node_id": "current_next",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "ad9df416db5786205f7ebeea18781a7a0b8337c2",
+      "parent_event": "EV-0003",
+      "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
+      "summary": "Conversation/reentry edge restored from durable state without replaying completed atoms."
+    },
+    {
+      "id": "EV-0005",
+      "at": "2026-09-30T12:42:00+02:00",
+      "type": "EXECUTION_START",
+      "node_id": "config_control_plane",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "ad9df416db5786205f7ebeea18781a7a0b8337c2",
+      "parent_event": "EV-0004",
+      "content_ref": "mission-control-v021-control-plane-20260930",
+      "summary": "Mycelium v0.2.1 HTML control-plane slice started from refreshed main."
+    },
+    {
+      "id": "EV-0006",
+      "at": "2026-09-30T12:50:00+02:00",
+      "type": "RECONCILE_DELTAS",
+      "node_id": "repo_abacus",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "6a9bfb71a811021d3f0fe19d962ed6d07f632eb5",
+      "parent_event": "EV-0005",
+      "content_ref": "PR-840 / ABACUS #1494 census",
+      "summary": "Measured ABACUS DAB census ingested on main and reconciled into v0.2.1 without replaying completed control-plane atoms."
+    }
+  ],
+  "horizons": {
+    "current": [
+      {
+        "rank": 1,
+        "id": "MYCELIUM_V0_2_1_HTML_CONTROL_PLANE",
+        "state": "EXECUTING",
+        "reason": "active bounded CODEX UI slice",
+        "lane": "CODEX_UI"
+      },
+      {
+        "rank": 2,
+        "id": "EXACT_HEAD_PROOF",
+        "state": "PENDING",
+        "reason": "required before merge/promotion",
+        "lane": "CODEX_UI"
+      }
+    ],
+    "mid": [
+      {
+        "rank": 1,
+        "id": "TEMPORAL_EVENT_INGESTION",
+        "state": "IMPLEMENTING",
+        "reason": "replace static-only snapshot with append-only control event projection",
+        "lane": "CODEX_UI"
+      },
+      {
+        "rank": 2,
+        "id": "GRAPH_DRIVEN_OUTWARD_NAVIGATOR",
+        "state": "IMPLEMENTING",
+        "reason": "outward products must derive from graph nodes/provenance",
+        "lane": "CODEX_UI"
+      },
+      {
+        "rank": 3,
+        "id": "QLM_TYPED_RETURN",
+        "state": "WAIT_REMOTE",
+        "reason": "QDIST/QDB_QLM engineering truth remains cryoplant authority",
+        "lane": "QLM_ENGINEERING"
+      }
+    ],
+    "long": [
+      {
+        "rank": 1,
+        "id": "AUTHENTICATED_EXECUTION_GATEWAY",
+        "state": "NOT_IN_STATIC_PAGES",
+        "reason": "required before Apply can mutate repository/runtime state",
+        "lane": "CODEX_UI"
+      },
+      {
+        "rank": 2,
+        "id": "LIVE_FEDERATION_FRESHNESS",
+        "state": "PLANNED",
+        "reason": "periodic typed repo-head/freshness projection without authority transfer",
+        "lane": "FEDERATION"
+      },
+      {
+        "rank": 3,
+        "id": "GLOBAL_DOV",
+        "state": "WITHHELD",
+        "reason": "visualization and analytics cannot grant engineering/formal credit",
+        "lane": "GLOBAL"
+      }
+    ]
+  },
+  "rules": {
+    "user_steer": "append event, recompute horizon rank, preserve completed proof",
+    "stream_timeout": "append RECOVERY only when state restoration is needed; do not replay completed atoms",
+    "remote_return": "append EXTERNAL_RETURN with exact source repo/ref/SHA and acceptance decision",
+    "history_mutation": "forbidden except correction by superseding event"
+  }
+}

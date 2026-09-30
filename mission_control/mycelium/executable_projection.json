@@ -1,0 +1,186 @@
+{
+  "schema_version": "0.1",
+  "id": "MYCELIUM_V021_EXECUTABLE_DAG",
+  "source_reentry": "mission_control/mycelium/reentry_v0_2.yaml",
+  "universal_graph_may_contain_cycles": true,
+  "executable_projection_must_be_DAG": true,
+  "lane": "CODEX_UI",
+  "nodes": [
+    {
+      "id": "REFRESH",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "LOAD_MANIFEST",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "VERIFY_HEADS",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "RECONCILE_DELTAS",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "RESUME_FIRST_LEGAL_INCOMPLETE_ATOM",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "CONTROL_PLANE_SCHEMA",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "COMMAND_INPUT_ROOT",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "LANE_RECOVERY_PROJECTION",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "GRAPH_OVERLAYS",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "OUTPUT_EVIDENCE",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "FEDERATION_CONTROL",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "TEMPORAL_EVENT_INGESTION",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "GRAPH_DRIVEN_OUTWARD_NAVIGATOR",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "VALIDATE_RESPONSIVE_LAYOUTS",
+      "state": "PENDING"
+    },
+    {
+      "id": "VALIDATE_TIMEOUT_RECOVERY",
+      "state": "PENDING"
+    },
+    {
+      "id": "VALIDATE_SOURCE_DEEPLINKS",
+      "state": "PENDING"
+    },
+    {
+      "id": "EXACT_HEAD_PROOF",
+      "state": "PENDING"
+    },
+    {
+      "id": "BOUNDED_PR",
+      "state": "PENDING"
+    },
+    {
+      "id": "MERGE_READBACK",
+      "state": "PENDING"
+    },
+    {
+      "id": "REGENERATE_REENTRY_MANIFEST",
+      "state": "PENDING"
+    }
+  ],
+  "edges": [
+    [
+      "REFRESH",
+      "LOAD_MANIFEST"
+    ],
+    [
+      "LOAD_MANIFEST",
+      "VERIFY_HEADS"
+    ],
+    [
+      "VERIFY_HEADS",
+      "RECONCILE_DELTAS"
+    ],
+    [
+      "RECONCILE_DELTAS",
+      "RESUME_FIRST_LEGAL_INCOMPLETE_ATOM"
+    ],
+    [
+      "RESUME_FIRST_LEGAL_INCOMPLETE_ATOM",
+      "CONTROL_PLANE_SCHEMA"
+    ],
+    [
+      "CONTROL_PLANE_SCHEMA",
+      "COMMAND_INPUT_ROOT"
+    ],
+    [
+      "COMMAND_INPUT_ROOT",
+      "LANE_RECOVERY_PROJECTION"
+    ],
+    [
+      "LANE_RECOVERY_PROJECTION",
+      "GRAPH_OVERLAYS"
+    ],
+    [
+      "GRAPH_OVERLAYS",
+      "OUTPUT_EVIDENCE"
+    ],
+    [
+      "OUTPUT_EVIDENCE",
+      "FEDERATION_CONTROL"
+    ],
+    [
+      "FEDERATION_CONTROL",
+      "TEMPORAL_EVENT_INGESTION"
+    ],
+    [
+      "TEMPORAL_EVENT_INGESTION",
+      "GRAPH_DRIVEN_OUTWARD_NAVIGATOR"
+    ],
+    [
+      "GRAPH_DRIVEN_OUTWARD_NAVIGATOR",
+      "VALIDATE_RESPONSIVE_LAYOUTS"
+    ],
+    [
+      "GRAPH_DRIVEN_OUTWARD_NAVIGATOR",
+      "VALIDATE_TIMEOUT_RECOVERY"
+    ],
+    [
+      "GRAPH_DRIVEN_OUTWARD_NAVIGATOR",
+      "VALIDATE_SOURCE_DEEPLINKS"
+    ],
+    [
+      "VALIDATE_RESPONSIVE_LAYOUTS",
+      "EXACT_HEAD_PROOF"
+    ],
+    [
+      "VALIDATE_TIMEOUT_RECOVERY",
+      "EXACT_HEAD_PROOF"
+    ],
+    [
+      "VALIDATE_SOURCE_DEEPLINKS",
+      "EXACT_HEAD_PROOF"
+    ],
+    [
+      "EXACT_HEAD_PROOF",
+      "BOUNDED_PR"
+    ],
+    [
+      "BOUNDED_PR",
+      "MERGE_READBACK"
+    ],
+    [
+      "MERGE_READBACK",
+      "REGENERATE_REENTRY_MANIFEST"
+    ]
+  ],
+  "first_incomplete_atoms": [
+    "VALIDATE_RESPONSIVE_LAYOUTS",
+    "VALIDATE_TIMEOUT_RECOVERY",
+    "VALIDATE_SOURCE_DEEPLINKS"
+  ],
+  "guards": {
+    "replay_completed_atoms": false,
+    "first_red_scope": "AFFECTED_LANE_ONLY",
+    "independent_lanes_continue": true
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "id": "MYCELIUM_V02_PR839_PROOF",
+  "subject": {
+    "repository": "GBOGEB/CODEX",
+    "pull_request": 839,
+    "exact_head_sha": "70518b64f3c170949544ae31d0b78f0edd746c61",
+    "merge_sha": "495da65d816e6a3123f6ed53221d0ab053342ada",
+    "current_main_readback_sha": "ad9df416db5786205f7ebeea18781a7a0b8337c2"
+  },
+  "hosted_proof": {
+    "workflow": "MissionControl Mycelium CI",
+    "run_id": 36702334404,
+    "job_id": 109844442100,
+    "job_name": "validate",
+    "status": "completed",
+    "conclusion": "success",
+    "executed_steps": 19,
+    "validator": "PASS",
+    "tests": "PASS",
+    "deterministic_materialization": "PASS"
+  },
+  "pages_readback": {
+    "workflow": "pages build and deployment",
+    "run_id": 36702627122,
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 109845424750,
+        "name": "build",
+        "conclusion": "success",
+        "executed_steps": 11
+      },
+      {
+        "id": 109845687070,
+        "name": "report-build-status",
+        "conclusion": "success",
+        "executed_steps": 3
+      },
+      {
+        "id": 109845687344,
+        "name": "deploy",
+        "conclusion": "success",
+        "executed_steps": 3
+      }
+    ]
+  },
+  "chain": [
+    "#839 exact head",
+    ">0-step hosted execution",
+    "MissionControl validator PASS",
+    "MissionControl tests PASS",
+    "deterministic materializations PASS",
+    "merge #839",
+    "merged-main readback",
+    "Pages build/deploy PASS"
+  ],
+  "disposition": "CONTROLLED_GREEN_PREDECESSOR",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "next_edge": "MYCELIUM_V0_2_1_HTML_CONTROL_PLANE"
+}
