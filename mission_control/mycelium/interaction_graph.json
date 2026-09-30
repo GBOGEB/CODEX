@@ -27,18 +27,22 @@
       "state": "REMOTE_EXECUTION_CURRENT",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "467453047d0ca4228d093d02f22c12437e17708f",
+        "sha": "38dfd5c46aa427ef0ec76185439e75fdeb18817f",
         "views": [
           "control",
           "observability"
         ],
         "latest_census_pr_head": "4a094a4f46646214d63e6ac0ed910723acceec12",
         "latest_census_merge_sha": "83b8a1a9e4b89457cf7f07fb447544fa13eb2b3b",
-        "observed_at": "2026-09-30T12:34:11Z",
-        "freshness_status": "MEASURED_TYPED_RETURN",
+        "observed_at": "2026-09-30T13:05:32Z",
+        "freshness_status": "MEASURED_HEAD_PENDING_CENSUS",
         "latest_census_pr": 1501,
         "latest_census_job": 109883686239,
-        "latest_census_head": "5f7720626a8f559747c03886c0ed087de52e4e44"
+        "latest_census_head": "5f7720626a8f559747c03886c0ed087de52e4e44",
+        "latest_measured_return_sha": "467453047d0ca4228d093d02f22c12437e17708f",
+        "pending_census_pr": 1504,
+        "pending_census_run": 36719173263,
+        "pending_census_status": "QUEUED"
       }
     },
     {
@@ -265,9 +269,14 @@
         "next_mech_removed": 745,
         "next_mech_expected_residual": 1912,
         "next_mech_residual_status": "WITHHELD_POSTMERGE_CENSUS",
-        "abacus_return_pr": 1501,
+        "abacus_return_pr": 1504,
         "cryoplant_return_pr": 1834,
-        "codex_owner_gate": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH"
+        "codex_owner_gate": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
+        "pending_census_run": 36719173263,
+        "pending_census_head": "38dfd5c46aa427ef0ec76185439e75fdeb18817f",
+        "pending_census_status": "QUEUED",
+        "next_hard_expected_after_pending_census": 28,
+        "next_mech_expected_after_pending_census": 1395
       },
       "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/control_manifest.yaml"
     },
@@ -965,7 +974,7 @@
       "mechanism": "REFERENCE",
       "source_repo": "GBOGEB/ABACUS",
       "source_ref": "main",
-      "source_sha": "467453047d0ca4228d093d02f22c12437e17708f",
+      "source_sha": "38dfd5c46aa427ef0ec76185439e75fdeb18817f",
       "target_repo": "GBOGEB/CODEX",
       "target_ref": "main",
       "target_sha": "884327802f57d40b84714def4b0b5b59b3f1a25a",
@@ -973,7 +982,7 @@
       "authority_after": "REMOTE_EXECUTION_AUTHORITY",
       "proof": "mission_control/mycelium/evidence/abacus_dab_return_1501_measured.json",
       "observed_at": "2026-09-30T12:36:00Z",
-      "freshness_status": "MEASURED_TYPED_RETURN"
+      "freshness_status": "CURRENT_HEAD_MEASURED_CENSUS_PENDING"
     },
     {
       "from": "slice5",
