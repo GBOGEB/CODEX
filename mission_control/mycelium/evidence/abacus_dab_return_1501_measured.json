@@ -1,0 +1,58 @@
+{
+  "schema_version": "0.1",
+  "return_id": "ABACUS_DAB_RETURN_20260930_1501_MEASURED",
+  "observed_at": "2026-09-30T12:31:44Z",
+  "source": {
+    "repository": "GBOGEB/ABACUS",
+    "ref": "main",
+    "current_sha": "467453047d0ca4228d093d02f22c12437e17708f",
+    "authority": "REMOTE_EXECUTION_DOW"
+  },
+  "bounded_slice": {
+    "pr": 1501,
+    "title": "GM14 DAB-HARD: clarify measured E741 names in DMAIC core",
+    "head_sha": "5f7720626a8f559747c03886c0ed087de52e4e44",
+    "merge_sha": "83b8a1a9e4b89457cf7f07fb447544fa13eb2b3b",
+    "family": "E741",
+    "changed_findings": 5,
+    "scope_files": [
+      "DMAIC_V3/full_pipeline_orchestrator.py",
+      "DMAIC_V3/generators/execution_tracker.py",
+      "DMAIC_V3/phases/phase2_measure.py"
+    ]
+  },
+  "exact_census": {
+    "workflow_run": 36714410799,
+    "job": 109883686239,
+    "status": "MEASURED",
+    "total": 9764,
+    "families": {
+      "E999": 1,
+      "F821": 0,
+      "F601": 0,
+      "F811": 0,
+      "F841": 77,
+      "E722": 26,
+      "E731": 0,
+      "E741": 35,
+      "W293": 1912
+    },
+    "artifact": {
+      "id": 11095916691,
+      "name": "dab-flake8-census",
+      "sha256": "49073f6738c0ffd6375a740d62bf242bfd248507db2721831a91ffabb9109520"
+    }
+  },
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+    "state": "SOURCE_BOUND_HOLD"
+  },
+  "acceptance": {
+    "engineering_truth_promoted": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "authority_transfer": false
+  }
+}
