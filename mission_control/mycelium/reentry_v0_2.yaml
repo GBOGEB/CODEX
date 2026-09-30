@@ -2,14 +2,14 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-09-30T13:11:00+02:00"
+  generated_at: "2026-09-30T11:16:00Z"
 
   repositories:
     codex:
       repo: GBOGEB/CODEX
       branch: main
       handover_observed_sha: d77d44811fec4fada16988769614d6091df56133
-      refreshed_current_sha: c8fc8f940cbc233e164705859efb850759f7aaac
+      refreshed_current_sha: cd45dc8f8934d554d824f0c22db619dfe6bb546d
       role: UI_ORCHESTRATION_GRAPH_AUTHORITY
       mycelium_v0_1_merge:
         pr: 837
@@ -192,8 +192,8 @@ reentry:
     - id: CODEX_UI
       repository: GBOGEB/CODEX
       branch: main
-      head_sha: c8fc8f940cbc233e164705859efb850759f7aaac
-      state: CONTROLLED_GREEN
+      head_sha: cd45dc8f8934d554d824f0c22db619dfe6bb546d
+      state: EXECUTING
       current_atom: LIVE_TEMPORAL_FEDERATION_INGESTION
       completed_atoms:
         - MYCELIUM_V0_1
@@ -231,11 +231,9 @@ reentry:
         - mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
         - docs/missioncontrol_mycelium.html
       next_legal_transitions:
-        - INGEST_LIVE_TEMPORAL_EVENTS
-        - REFRESH_FEDERATION_HEADS
+        - LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF
         - CONSUME_TYPED_REMOTE_RETURNS
-        - BIND_FEDERATION_FRESHNESS
-        - DESIGN_AUTHENTICATED_EXECUTION_GATEWAY
+        - AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
@@ -353,6 +351,21 @@ reentry:
       - authority_before
       - authority_after
       - proof
+
+  live_federation_ingestion:
+    pulse_id: LFI-20260930T111600Z
+    observed_at: "2026-09-30T11:16:00Z"
+    source_heads:
+      codex: cd45dc8f8934d554d824f0c22db619dfe6bb546d
+      abacus: d8e71dc73453e9e4ea10fa62afd0d9554d241297
+      cryoplant: f03bfc61bcf85a2d91cd22d083ad0ef954387f0d
+    freshness_coverage:
+      before: "2/3"
+      after: "3/3"
+      percent: 100.0
+    authority_transfer: false
+    engineering_truth_promoted: false
+    next_edge: LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF
 
   qlm_context:
     repository: GBOGEB/cryoplant-project

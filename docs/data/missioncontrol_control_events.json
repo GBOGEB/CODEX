@@ -124,30 +124,41 @@
       "parent_event": "EV-0010",
       "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
       "summary": "Post-merge reentry regenerated; v0.2.1 closed and next edge advanced to live temporal/federation ingestion."
+    },
+    {
+      "id": "EV-0012",
+      "at": "2026-09-30T11:16:00Z",
+      "type": "FEDERATION_REFRESH",
+      "node_id": "current_next",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "cd45dc8f8934d554d824f0c22db619dfe6bb546d",
+      "parent_event": "EV-0011",
+      "content_ref": "mission_control/mycelium/receipts/LIVE_FEDERATION_INGESTION_20260930T111600Z.json",
+      "summary": "Live source identity refresh measured CODEX, ABACUS and cryoplant heads; freshness coverage advanced from 2/3 to 3/3 without authority transfer."
     }
   ],
   "horizons": {
     "current": [
       {
         "rank": 1,
-        "id": "LIVE_TEMPORAL_FEDERATION_INGESTION",
-        "state": "READY",
-        "reason": "v0.2.1 is merged, exact-head proven and Pages deployed",
+        "id": "LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF",
+        "state": "PENDING",
+        "reason": "live freshness pulse is implemented; validator/tests/materialization must bind the exact head before promotion",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
-        "id": "REFRESH_FEDERATION_HEADS",
-        "state": "READY",
-        "reason": "remote execution/engineering authority remains external and freshness must stay explicit",
+        "id": "CONSUME_TYPED_REMOTE_RETURNS",
+        "state": "READY_WHEN_AVAILABLE",
+        "reason": "remote returns remain independent and must not be blocked by this proof lane",
         "lane": "FEDERATION"
       },
       {
         "rank": 3,
-        "id": "CONSUME_TYPED_REMOTE_RETURNS",
-        "state": "READY_WHEN_AVAILABLE",
-        "reason": "project/bridge returns may update projections without authority transfer",
-        "lane": "FEDERATION"
+        "id": "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
+        "state": "NEXT_AFTER_GREEN",
+        "reason": "static Pages Apply remains staged-only until a separately governed gateway exists",
+        "lane": "CODEX_UI"
       }
     ],
     "mid": [
