@@ -265,5 +265,16 @@
   "graph": {
     "universal_graph_may_contain_cycles": true,
     "executable_projection_must_be_DAG": true
+  },
+  "control_plane_version": "0.2.1",
+  "predecessor_proof": "mission_control/mycelium/receipts/MYCELIUM_V02_PR839_PROOF.json",
+  "event_projection": "mission_control/mycelium/control_events.json",
+  "pages_event_projection": "docs/data/missioncontrol_control_events.json",
+  "executable_projection": "mission_control/mycelium/executable_projection.json",
+  "pages_executable_projection": "docs/data/missioncontrol_executable_projection.json",
+  "command_input_contract": {
+    "static_pages_mode": "STAGE_OR_DRY_RUN_ONLY",
+    "authenticated_apply_gateway_required": true,
+    "false_mutation_claim_forbidden": true
   }
 }
