@@ -312,7 +312,7 @@ def validate() -> list[str]:
     if gateway_state.get("runtime_proof") != "WITHHELD_OWNER_DISPATCH_REQUIRED":
         errors.append("gateway runtime proof must remain withheld until owner dispatch")
 
-        rendering = cp.get("rendering", {})
+    rendering = cp.get("rendering", {})
     for isolation_key in (
         "plotly_failure_blocks_core",
         "matplotlib_failure_blocks_core",
