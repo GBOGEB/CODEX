@@ -57,8 +57,22 @@ def validate() -> list[str]:
     if "missioncontrol_mycelium.html" not in INDEX.read_text(encoding="utf-8"):
         errors.append("Pages index does not link MissionControl Mycelium")
 
+    for required_node in {"codex_bd_queue", "current_next", "user_steer"}:
+        if required_node not in node_ids:
+            errors.append(f"missing interaction-control node: {required_node}")
+
+    for layout_mode in {"2x3", "3x2", "golden_focus", "single_focus"}:
+        if layout_mode not in set(manifest.get("layout", {}).get("selectable_modes", [])):
+            errors.append(f"missing selectable layout mode: {layout_mode}")
+
+    for ui_token in {"golden-focus", "single-focus", 'id="focus"', "CODEX BD queue", "External split-repo router"}:
+        if ui_token not in html:
+            errors.append(f"missing enhanced UI contract token: {ui_token}")
+
     if manifest.get("authority_transfer") is not False:
         errors.append("authority_transfer must remain false")
+    if manifest.get("formal_credit_delta") != 0:
+        errors.append("formal_credit_delta must remain zero")
     if manifest.get("engineering_authority") is not False:
         errors.append("CODEX UI must not self-promote engineering authority")
 
