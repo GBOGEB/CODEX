@@ -121,3 +121,69 @@ def test_source_identity_measurement_requires_exact_head() -> None:
     assert not source_identity_is_measured(
         {"status": "FRESH", "identity_status": "MEASURED"}
     )
+
+
+def test_same_measured_abacus_overlay_preserves_richer_governed_provenance() -> None:
+    snapshot = {
+        "nodes": {
+            "dab_mech": {
+                "mechanical_progress": {
+                    "status": "MEASURED",
+                    "slice": "post-#1527 combined main census",
+                    "removed_w293": 5,
+                    "prior_measured_residual_w293": 416,
+                    "residual_w293": 411,
+                    "evidence_pr": "#1527 post-merge main",
+                    "evidence_run": 36747879827,
+                    "supporting_prs": ["#1528", "#1527"],
+                }
+            },
+            "dab_hard": {
+                "family_progress": [
+                    {
+                        "family": "E741",
+                        "baseline": 22,
+                        "measured_postmerge": 17,
+                        "measurement_pr": "#1527 post-merge main",
+                    }
+                ]
+            },
+        }
+    }
+    source_status = {
+        "sources": [
+            {
+                "id": "abacus",
+                "repository": "GBOGEB/ABACUS",
+                "head_sha": "current",
+                "measured_return_source_sha": "measured",
+                "census_pr": 1527,
+                "census_workflow_run": 36747879827,
+                "census_job": 109998603356,
+                "census_total": 8225,
+                "census_artifact_id": 11114021331,
+                "census_artifact_sha256": "digest",
+                "evidence_ref": "typed-return.json",
+                "w293_postmerge_status": "MEASURED_COMBINED_MAIN",
+                "measurement_basis": "post-#1527 combined main census",
+                "family_slice_baselines": {"E741": 21},
+                "E741": 17,
+                "W293": 411,
+            }
+        ]
+    }
+
+    apply_source_status_overlay(snapshot, source_status)
+
+    mech = snapshot["nodes"]["dab_mech"]["mechanical_progress"]
+    assert mech["slice"] == "post-#1527 combined main census"
+    assert mech["removed_w293"] == 5
+    assert mech["prior_measured_residual_w293"] == 416
+    assert mech["evidence_pr"] == "#1527 post-merge main"
+    assert mech["evidence_run"] == 36747879827
+    assert mech["supporting_prs"] == ["#1528", "#1527"]
+
+    hard = snapshot["nodes"]["dab_hard"]["family_progress"][0]
+    assert hard["baseline"] == 22
+    assert hard["measurement_pr"] == "#1527 post-merge main"
+    assert hard["delta_from_baseline"] == -5

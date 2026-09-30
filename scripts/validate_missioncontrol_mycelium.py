@@ -41,6 +41,8 @@ PAGES_EXECUTABLE = DOCS / "data" / "missioncontrol_executable_projection.json"
 PREDECESSOR_PROOF = MC / "receipts" / "MYCELIUM_V02_PR839_PROOF.json"
 TRANSPORT_RUNTIME = ROOT / "scripts" / "missioncontrol_authenticated_transport.py"
 TRANSPORT_WORKFLOW = ROOT / ".github" / "workflows" / "missioncontrol-authenticated-transport.yml"
+OWNER_COMMENT_WORKFLOW = ROOT / ".github" / "workflows" / "missioncontrol-owner-comment-transport.yml"
+OWNER_COMMENT_TEST = ROOT / "tests" / "test_missioncontrol_owner_comment_transport.py"
 TRANSPORT_TEST = ROOT / "tests" / "test_missioncontrol_authenticated_transport.py"
 
 EVIDENCE_STATES = {"MEASURED", "DERIVED_FROM_MEASURED", "WITHHELD"}
@@ -84,7 +86,8 @@ def validate() -> list[str]:
         PAGES_METRICS, HISTORY, LOG_ANALYSIS, SOURCE_REGISTRY, SOURCE_STATUS,
         PAGES_SOURCE_STATUS, PORT_REGISTRY, REENTRY, CONTROL_PLANE, PAGES_CONTROL_PLANE,
         CONTROL_EVENTS, PAGES_CONTROL_EVENTS, EXECUTABLE, PAGES_EXECUTABLE,
-        PREDECESSOR_PROOF, TRANSPORT_RUNTIME, TRANSPORT_WORKFLOW, TRANSPORT_TEST,
+        PREDECESSOR_PROOF, TRANSPORT_RUNTIME, TRANSPORT_WORKFLOW, OWNER_COMMENT_WORKFLOW,
+        OWNER_COMMENT_TEST, TRANSPORT_TEST,
     ]
     for path in required_paths:
         if not path.exists():
@@ -295,28 +298,60 @@ def validate() -> list[str]:
         errors.append("executable projection DAG guard missing")
 
     gateway = manifest.get("authenticated_execution_gateway", {})
-    if gateway.get("state") != "TRANSPORT_MERGED_EXACT_HEAD_GREEN":
-        errors.append("authenticated transport manifest state mismatch")
+    if gateway.get("state") != "RUNTIME_DRY_RUN_EXECUTED_NO_MUTATION":
+        errors.append("authenticated runtime dry-run manifest state mismatch")
     if gateway.get("selected_transport_class") != "MANUALLY_APPROVED_ACTION":
         errors.append("authenticated transport must use manually approved action class")
-    if gateway.get("selected_transport_implementation") != "GITHUB_WORKFLOW_DISPATCH_READ_ONLY":
-        errors.append("authenticated transport implementation mismatch")
+    if gateway.get("selected_transport_implementation") != "GITHUB_ISSUE_COMMENT_OWNER_STAGE_ONLY":
+        errors.append("authenticated owner-comment transport implementation mismatch")
     if gateway.get("enabled_mutation_transports") != [] or gateway.get("mutation_enabled") is not False:
-        errors.append("authenticated transport slice must not enable mutation")
+        errors.append("authenticated runtime proof may not enable mutation")
+    runtime_receipt_ref = gateway.get("runtime_receipt")
+    if not runtime_receipt_ref:
+        errors.append("authenticated runtime receipt reference missing")
+        runtime_receipt = {}
+    else:
+        runtime_receipt_path = ROOT / runtime_receipt_ref
+        if not runtime_receipt_path.exists():
+            errors.append("authenticated runtime receipt file missing")
+            runtime_receipt = {}
+        else:
+            runtime_receipt = _json(runtime_receipt_path)
+    if runtime_receipt:
+        if runtime_receipt.get("decision") != "EXECUTED":
+            errors.append("runtime dry-run receipt decision is not EXECUTED")
+        if runtime_receipt.get("observed_head_sha") != gateway.get("runtime_observed_head_sha"):
+            errors.append("runtime receipt head does not match manifest")
+        if runtime_receipt.get("workflow_run") != gateway.get("runtime_run"):
+            errors.append("runtime receipt run does not match manifest")
+        if runtime_receipt.get("workflow_job") != gateway.get("runtime_job"):
+            errors.append("runtime receipt job does not match manifest")
+        if runtime_receipt.get("after_sha") is not None:
+            errors.append("runtime STAGE_ONLY receipt must have after_sha=null")
+        if runtime_receipt.get("authority_transfer") is not False:
+            errors.append("runtime receipt must preserve authority_transfer=false")
+        if runtime_receipt.get("formal_credit_delta") != 0 or runtime_receipt.get("engineering_credit_delta") != 0:
+            errors.append("runtime receipt may not grant formal/engineering credit")
 
     control_gateway = control.get("authenticated_execution_gateway", {})
     if control_gateway.get("mutation_enabled") is not False:
         errors.append("control plane may not advertise mutation-enabled gateway")
-    if control_gateway.get("runtime_dry_run_proof") != "WITHHELD_OWNER_DISPATCH_REQUIRED":
-        errors.append("runtime dry-run proof must remain owner-dispatch withheld before execution")
+    if control_gateway.get("runtime_dry_run_proof") != "EXECUTED_EXACT_HEAD_NO_MUTATION":
+        errors.append("runtime dry-run proof must be exact-head executed/no-mutation")
 
     executable_states = {n.get("id"): n.get("state") for n in executable.get("nodes", [])}
     if executable_states.get("AUTHENTICATED_EXECUTION_GATEWAY_DESIGN") != "COMPLETED":
         errors.append("gateway design predecessor is not completed")
     if executable_states.get("SELECT_AUTHENTICATED_TRANSPORT") != "COMPLETED":
         errors.append("authenticated transport selection is not completed")
-    if executable_states.get("AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF") not in {"PENDING", "COMPLETED"}:
-        errors.append("authenticated transport exact-head proof atom missing")
+    if executable_states.get("AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF") != "COMPLETED":
+        errors.append("authenticated transport exact-head proof atom is not completed")
+    if executable_states.get("GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH") != "COMPLETED":
+        errors.append("owner runtime dry-run atom is not completed")
+    if executable_states.get("IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY") != "PENDING":
+        errors.append("bounded apply must be admitted as PENDING, not executed or enabled")
+    if executable.get("first_incomplete_atoms") != ["IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY"]:
+        errors.append("bounded apply is not the first incomplete atom after runtime proof")
 
     transport_workflow = TRANSPORT_WORKFLOW.read_text(encoding="utf-8")
     if "contents: write" in transport_workflow or "pull-requests: write" in transport_workflow:
@@ -326,6 +361,21 @@ def validate() -> list[str]:
     for token in ("workflow_dispatch:", "contents: read", "missioncontrol_authenticated_transport.py"):
         if token not in transport_workflow:
             errors.append(f"authenticated transport workflow missing: {token}")
+    owner_comment_workflow = OWNER_COMMENT_WORKFLOW.read_text(encoding="utf-8")
+    if "contents: write" in owner_comment_workflow or "pull-requests: write" in owner_comment_workflow:
+        errors.append("owner-comment stage transport may not gain repository write permission")
+    if "--execute" in owner_comment_workflow or "git push" in owner_comment_workflow:
+        errors.append("owner-comment stage transport contains mutation path")
+    for token in (
+        "issue_comment:",
+        "github.event.issue.number == 879",
+        "github.event.comment.author_association == 'OWNER'",
+        "contents: read",
+        "issues: write",
+        "missioncontrol_authenticated_transport.py",
+    ):
+        if token not in owner_comment_workflow:
+            errors.append(f"owner-comment transport missing: {token}")
     federation_status = control.get("federation_status", {})
     for key in ("bridge_status", "cherry_pick_state", "merge_state", "conflict_state", "remote_authority_state"):
         if not federation_status.get(key):

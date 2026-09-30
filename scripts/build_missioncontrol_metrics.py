@@ -213,10 +213,13 @@ def apply_source_status_overlay(
     snapshot: dict[str, Any],
     source_status: dict[str, Any],
 ) -> None:
-    """Overlay newer measured remote-source evidence onto stale observations.
+    """Overlay newer measured remote-source evidence without provenance loss.
 
-    Source-status rows may replace only values that are explicitly measured.
-    Missing family values remain absent rather than being synthesized.
+    When source-status reports a genuinely newer measured value, it supersedes
+    the stale observation. When the measured value is unchanged, the overlay is
+    monotonic: it may add exact source identity/current-head evidence, but it
+    must not erase richer governed provenance or reinterpret a slice baseline
+    as the historical baseline.
     """
     sources = {
         str(row.get("id")): row
@@ -237,27 +240,39 @@ def apply_source_status_overlay(
         if abacus.get("census_pr") is not None
         else None
     )
+    census_run = abacus.get("census_workflow_run")
+
     dab_mech = snapshot.setdefault("nodes", {}).setdefault("dab_mech", {})
     if abacus.get("W293") is not None:
-        mechanical = {
-            "status": STATUS_MEASURED,
-            "slice": f"{evidence_pr} census" if evidence_pr else "typed remote census",
-            "residual_w293": abacus["W293"],
-            "residual_status": abacus.get(
-                "w293_postmerge_status", STATUS_MEASURED
-            ),
-            "repository_total_flake8": abacus.get("census_total"),
-        }
-        if evidence_job:
+        previous_mechanical = dict(dab_mech.get("mechanical_progress", {}))
+        previous_residual = previous_mechanical.get("residual_w293")
+        changed_measurement = previous_residual != abacus["W293"]
+        if changed_measurement:
+            mechanical: dict[str, Any] = {
+                "status": STATUS_MEASURED,
+                "slice": f"{evidence_pr} census" if evidence_pr else "typed remote census",
+            }
+        else:
+            mechanical = previous_mechanical
+            mechanical["status"] = STATUS_MEASURED
+
+        mechanical["residual_w293"] = abacus["W293"]
+        mechanical["residual_status"] = abacus.get(
+            "w293_postmerge_status", STATUS_MEASURED
+        )
+        mechanical["repository_total_flake8"] = abacus.get("census_total")
+        if evidence_job and (changed_measurement or not mechanical.get("evidence_job")):
             mechanical["evidence_job"] = evidence_job
-        if evidence_pr:
+        if census_run is not None and (
+            changed_measurement or mechanical.get("evidence_run") is None
+        ):
+            mechanical["evidence_run"] = census_run
+        if evidence_pr and (changed_measurement or not mechanical.get("evidence_pr")):
             mechanical["evidence_pr"] = evidence_pr
         if abacus.get("census_artifact_id") is not None:
             mechanical["artifact_id"] = abacus["census_artifact_id"]
         if abacus.get("census_artifact_sha256"):
-            mechanical["artifact_sha256"] = abacus[
-                "census_artifact_sha256"
-            ]
+            mechanical["artifact_sha256"] = abacus["census_artifact_sha256"]
         dab_mech["mechanical_progress"] = mechanical
 
     family_names = (
@@ -278,49 +293,107 @@ def apply_source_status_overlay(
         }
         rows: list[dict[str, Any]] = []
         slice_baselines = abacus.get("family_slice_baselines", {})
-        for family in family_names:
-            if family not in measured:
-                continue
+        pending = {
+            str(row.get("family")): row
+            for row in abacus.get("pending_independent_lanes", [])
+            if isinstance(row, dict) and row.get("family")
+        }
+        existing_order = [
+            str(row.get("family"))
+            for row in dab_hard.get("family_progress", [])
+            if isinstance(row, dict) and row.get("family") in measured
+        ]
+        ordered_families = existing_order + [
+            family
+            for family in family_names
+            if family in measured and family not in existing_order
+        ]
+        for family in ordered_families:
             value = measured[family]
             row = previous.get(family, {"family": family})
+            prior_value = row.get("measured_postmerge")
+            changed_measurement = prior_value != value
+
             if isinstance(slice_baselines, dict) and family in slice_baselines:
-                row["baseline"] = slice_baselines[family]
+                slice_baseline = slice_baselines[family]
+                if changed_measurement or "baseline" not in row:
+                    row["baseline"] = slice_baseline
+
             row["measured_postmerge"] = value
             row["status"] = STATUS_MEASURED
             if family == "E999" and value > 0 and abacus.get("source_bound_hold"):
                 row["state"] = "SOURCE_BOUND_HOLD"
-                row["note"] = (
-                    "sole remaining E999 is source-bound: "
-                    + str(abacus["source_bound_hold"])
-                )
+                if changed_measurement or not row.get("note"):
+                    row["note"] = (
+                        "sole remaining E999 is source-bound: "
+                        + str(abacus["source_bound_hold"])
+                    )
             elif value == 0:
                 row["state"] = "CLOSED"
             else:
                 row["state"] = "MEASURED_RESIDUAL"
+
+            pending_row = pending.get(family)
+            if pending_row and value > 0:
+                row["state"] = f"MEASURED_RESIDUAL_ACTIVE_PR{pending_row.get('pr')}"
+                row["active_pr"] = pending_row.get("pr")
+                expected = pending_row.get("expected_only")
+                if isinstance(expected, dict) and family in expected:
+                    row["expected_only"] = expected[family]
+
             baseline = row.get("baseline")
             if isinstance(baseline, (int, float)):
                 row["delta_from_baseline"] = value - baseline
+
             if evidence_pr:
-                if row.get("evidence_pr"):
-                    row["repair_evidence_pr"] = row["evidence_pr"]
-                else:
-                    row["evidence_pr"] = evidence_pr
-                row["measurement_pr"] = evidence_pr
+                if changed_measurement:
+                    if row.get("evidence_pr") and row.get("evidence_pr") != evidence_pr:
+                        row["repair_evidence_pr"] = row["evidence_pr"]
+                    row["measurement_pr"] = evidence_pr
+                    if not row.get("evidence_pr"):
+                        row["evidence_pr"] = evidence_pr
+                elif not row.get("measurement_pr"):
+                    row["measurement_pr"] = evidence_pr
             if evidence_job:
-                row["measurement_job"] = evidence_job
-                row["evidence_job"] = evidence_job
+                if changed_measurement or not row.get("measurement_job"):
+                    row["measurement_job"] = evidence_job
+                if changed_measurement or not row.get("evidence_job"):
+                    row["evidence_job"] = evidence_job
             rows.append(row)
         dab_hard["family_progress"] = rows
 
-    snapshot["latest_remote_return"] = {
+    latest: dict[str, Any] = {
         "source": abacus.get("repository", "GBOGEB/ABACUS"),
         "source_sha": abacus.get("measured_return_source_sha") or abacus.get("head_sha"),
         "current_source_sha": abacus.get("head_sha"),
         "evidence": abacus.get("evidence_ref"),
-        "status": STATUS_MEASURED,
-        "census_pr": abacus.get("census_pr"),
+        "status": abacus.get("w293_postmerge_status", STATUS_MEASURED),
+        "census_run": abacus.get("census_workflow_run"),
         "census_job": abacus.get("census_job"),
+        "artifact_id": abacus.get("census_artifact_id"),
+        "total": abacus.get("census_total"),
     }
+    for family in family_names + ("W293",):
+        if isinstance(abacus.get(family), int):
+            latest[family] = abacus[family]
+    pending_lanes = [
+        row for row in abacus.get("pending_independent_lanes", [])
+        if isinstance(row, dict)
+    ]
+    if pending_lanes:
+        row = pending_lanes[0]
+        expected = row.get("expected_only")
+        latest["active_unmeasured"] = {
+            "pr": row.get("pr"),
+            "family": row.get("family"),
+            "expected_only": (
+                expected.get(row.get("family"))
+                if isinstance(expected, dict)
+                else expected
+            ),
+        }
+    snapshot["latest_remote_return"] = latest
+
 
 def main() -> None:
     graph = json.loads(GRAPH.read_text(encoding="utf-8"))
