@@ -11,6 +11,7 @@ GRAPH = ROOT / "mission_control" / "mycelium" / "interaction_graph.json"
 OBS = ROOT / "mission_control" / "mycelium" / "control_observations.json"
 OUT = ROOT / "mission_control" / "mycelium" / "metrics_snapshot.json"
 PAGES_OUT = ROOT / "docs" / "data" / "missioncontrol_metrics.json"
+LOG_ANALYSIS = ROOT / "mission_control" / "mycelium" / "log_analysis.json"
 
 STATUS_MEASURED = "MEASURED"
 STATUS_DERIVED = "DERIVED_FROM_MEASURED"
@@ -148,9 +149,16 @@ def build_snapshot(graph: dict[str, Any], obs: dict[str, Any]) -> dict[str, Any]
         metric["ports"] = record.get("ports", {"status": STATUS_WITHHELD})
 
         chi = record.get("code_health_inputs", {})
-        parts = [chi.get(k) for k in ("qa_gate_health", "test_health", "lint_health", "debug_health")]
-        if parts and all(isinstance(v, (int, float)) for v in parts):
-            metric["code_health"] = {"status": STATUS_DERIVED, "value": round(sum(parts) / len(parts), 2)}
+        keys = ("qa_gate_health", "test_health", "lint_health", "debug_health")
+        measured = {k: float(chi[k]) for k in keys if isinstance(chi.get(k), (int, float))}
+        if measured:
+            metric["code_health"] = {
+                "status": STATUS_DERIVED,
+                "value": round(sum(measured.values()) / len(measured), 2),
+                "coverage": round(len(measured) / len(keys), 3),
+                "used_inputs": sorted(measured),
+                "missing_inputs": sorted(set(keys) - set(measured)),
+            }
         else:
             metric["code_health"] = {"status": STATUS_WITHHELD, "value": None, "inputs": chi}
         node_metrics[node_id] = metric
@@ -182,6 +190,10 @@ def build_snapshot(graph: dict[str, Any], obs: dict[str, Any]) -> dict[str, Any]
 def main() -> None:
     graph = json.loads(GRAPH.read_text(encoding="utf-8"))
     obs = json.loads(OBS.read_text(encoding="utf-8"))
+    if LOG_ANALYSIS.exists():
+        log_analysis = json.loads(LOG_ANALYSIS.read_text(encoding="utf-8"))
+        for node_id, summary in log_analysis.get("nodes", {}).items():
+            obs.setdefault("nodes", {}).setdefault(node_id, {})["logs"] = summary
     snapshot = build_snapshot(graph, obs)
     payload = json.dumps(snapshot, indent=2, sort_keys=True) + "\n"
     OUT.write_text(payload, encoding="utf-8")
