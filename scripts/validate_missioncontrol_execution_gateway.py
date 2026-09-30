@@ -21,8 +21,13 @@ def validate() -> list[str]:
     receipt = json.loads(RECEIPT_SCHEMA.read_text(encoding="utf-8"))
     design = DESIGN.read_text(encoding="utf-8")
 
-    if contract.get("state") != "DESIGN_ONLY_NO_MUTATION_BACKEND":
-        errors.append("gateway design must not claim a mutation backend")
+    state = contract.get("state")
+    allowed_states = {
+        "DESIGN_ONLY_NO_MUTATION_BACKEND",
+        "AUTHENTICATED_TRANSPORT_IMPLEMENTED_NO_MUTATION",
+    }
+    if state not in allowed_states:
+        errors.append("gateway state is not a governed design/transport state")
     authority = contract.get("authority", {})
     if authority.get("authority_transfer") is not False:
         errors.append("gateway may not transfer authority")
@@ -45,7 +50,12 @@ def validate() -> list[str]:
     if authn.get("required") is not True or authn.get("principal_bound_server_side") is not True:
         errors.append("server-side authentication principal binding is required")
     if authn.get("enabled_mutation_transports") != []:
-        errors.append("design slice must not enable a mutation transport")
+        errors.append("gateway must not enable a mutation transport in v0.1")
+    if state == "AUTHENTICATED_TRANSPORT_IMPLEMENTED_NO_MUTATION":
+        if authn.get("selected_transport") != "GITHUB_ACTIONS_WORKFLOW_DISPATCH":
+            errors.append("transport implementation must select GitHub Actions workflow_dispatch")
+        if authn.get("transport_state") != "AUTHENTICATED_STAGE_ONLY":
+            errors.append("transport implementation must remain authenticated STAGE_ONLY")
 
     authz = contract.get("authorization", {})
     if authz.get("default") != "DENY":
@@ -57,6 +67,16 @@ def validate() -> list[str]:
         errors.append("Apply must remain disabled in design slice")
     if apply_rule.get("allowed_repositories") != ["GBOGEB/CODEX"]:
         errors.append("future bounded Apply may target CODEX only in this design")
+    if state == "AUTHENTICATED_TRANSPORT_IMPLEMENTED_NO_MUTATION":
+        runtime = contract.get("transport_runtime", {})
+        if runtime.get("enabled_action_class") != "STAGE_ONLY":
+            errors.append("transport runtime must enable STAGE_ONLY only")
+        if runtime.get("mutation_enabled") is not False:
+            errors.append("transport runtime must keep mutation disabled")
+        if runtime.get("receipt_storage") != "GITHUB_ACTION_ARTIFACT":
+            errors.append("transport receipt storage must be GitHub Actions artifact")
+        if runtime.get("workflow_run_job_bound_in_receipt") is not True:
+            errors.append("transport receipt must bind workflow run/job")
 
     guards = contract.get("execution_guards", {})
     for key in (
