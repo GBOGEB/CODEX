@@ -278,45 +278,56 @@
       "parent_event": "EV-0024",
       "content_ref": "mission_control/mycelium/evidence/abacus_dab_combined_1527_1528_measured.json",
       "summary": "Combined post-#1527/#1528 main census measured total 8225, F841=66, W293=411, E741=17, E722=16; #1530 remains unmeasured expected-only."
+    },
+    {
+      "id": "EV-0026",
+      "at": "2026-09-30T17:56:48Z",
+      "type": "RUNTIME_PROOF",
+      "node_id": "gateway_transport_receipt",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "86491df05050967dd8cc11ee3b3b0dbd114193b9",
+      "parent_event": "EV-0025",
+      "content_ref": "mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json",
+      "summary": "Owner-authenticated STAGE_ONLY runtime proof executed successfully on exact main via issue #879; mutation remains disabled and bounded CODEX-only apply becomes the next incomplete atom."
     }
   ],
   "horizons": {
     "current": [
       {
         "rank": 1,
-        "id": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
-        "state": "OWNER_COMMAND_IN_FLIGHT",
-        "reason": "exact-main owner command posted; runtime receipt not yet bound",
+        "id": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
+        "state": "READY_FOR_BOUNDED_DESIGN_IMPLEMENTATION",
+        "reason": "owner-authenticated stage-only runtime proof is executed; mutation remains disabled until separately authorized",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
         "id": "ABACUS_F841_PR1530",
-        "state": "PROOF_QUEUED",
-        "reason": "combined baseline F841=66 measured; three metrics-chart bindings selected, expected residual 63 only",
+        "state": "REMOTE_RETURN_AVAILABLE",
+        "reason": "post-merge exact census exists independently and may be consumed without blocking CODEX runtime closure",
         "lane": "ABACUS_REMOTE_EXECUTION"
       },
       {
         "rank": 3,
         "id": "ABACUS_W293_411",
         "state": "MEASURED_READY_FOR_NEXT_SLICE",
-        "reason": "combined main census measured W293=411; no next mechanical slice admitted yet",
+        "reason": "W293 remains measured at 411; no next mechanical slice admitted yet",
         "lane": "ABACUS_REMOTE_EXECUTION"
       }
     ],
     "mid": [
       {
         "rank": 1,
-        "id": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
-        "state": "WITHHELD_UNTIL_DRY_RUN_PROOF",
-        "reason": "owner-authenticated dry-run receipt is still missing",
+        "id": "PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS",
+        "state": "PENDING_AFTER_BOUNDED_APPLY_IMPLEMENTATION",
+        "reason": "bounded mutation must be proven on exact head with replay/idempotency guards before any promotion",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
         "id": "REMOTE_RETURN_INGESTION",
         "state": "CONTROLLED_ACTIVE",
-        "reason": "ABACUS and cryoplant returns continue independently of the owner gate",
+        "reason": "ABACUS and cryoplant returns continue independently",
         "lane": "FEDERATION"
       },
       {
