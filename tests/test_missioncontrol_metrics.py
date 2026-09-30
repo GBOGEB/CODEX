@@ -64,6 +64,7 @@ def test_latest_abacus_source_status_supersedes_stale_observation_metrics() -> N
                 "id": "abacus",
                 "repository": "GBOGEB/ABACUS",
                 "head_sha": "current",
+                "measured_return_source_sha": "measured",
                 "census_pr": 1501,
                 "census_job": 109883686239,
                 "census_total": 9764,
@@ -103,7 +104,8 @@ def test_latest_abacus_source_status_supersedes_stale_observation_metrics() -> N
     assert hard["F811"]["measured_postmerge"] == 0
     assert hard["F811"]["state"] == "CLOSED"
     assert hard["E999"]["state"] == "SOURCE_BOUND_HOLD"
-    assert snapshot["latest_remote_return"]["source_sha"] == "current"
+    assert snapshot["latest_remote_return"]["source_sha"] == "measured"
+    assert snapshot["latest_remote_return"]["current_source_sha"] == "current"
 
 
 def test_source_identity_measurement_requires_exact_head() -> None:
