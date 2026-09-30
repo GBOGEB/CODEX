@@ -2,7 +2,7 @@
   "schema_version": "0.2",
   "generated_for": "CODEX_MISSIONCONTROL_MYCELIUM",
   "mode": "CONTINUE_FROM_DURABLE_STATE",
-  "generated_at": "2026-09-30T13:11:00+02:00",
+  "generated_at": "2026-09-30T11:16:00Z",
   "source_yaml": "mission_control/mycelium/reentry_v0_2.yaml",
   "invariants": {
     "authority_transfer": false,
@@ -20,7 +20,7 @@
       "repo": "GBOGEB/CODEX",
       "branch": "main",
       "handover_observed_sha": "d77d44811fec4fada16988769614d6091df56133",
-      "refreshed_current_sha": "c8fc8f940cbc233e164705859efb850759f7aaac",
+      "refreshed_current_sha": "cd45dc8f8934d554d824f0c22db619dfe6bb546d",
       "role": "UI_ORCHESTRATION_GRAPH_AUTHORITY",
       "merge_refs": [
         {
@@ -164,8 +164,8 @@
       "id": "CODEX_UI",
       "repository": "GBOGEB/CODEX",
       "branch": "main",
-      "head_sha": "c8fc8f940cbc233e164705859efb850759f7aaac",
-      "state": "CONTROLLED_GREEN",
+      "head_sha": "cd45dc8f8934d554d824f0c22db619dfe6bb546d",
+      "state": "EXECUTING",
       "current_atom": "LIVE_TEMPORAL_FEDERATION_INGESTION",
       "completed_atoms": [
         "MYCELIUM_V0_1",
@@ -190,10 +190,9 @@
       "blocker": null,
       "queue_state": "EXECUTION",
       "next_legal_transitions": [
-        "INGEST_LIVE_TEMPORAL_EVENTS",
-        "REFRESH_FEDERATION_HEADS",
+        "BIND_FEDERATION_FRESHNESS_TO_CONTROL_EVENT_AND_UI",
         "CONSUME_TYPED_REMOTE_RETURNS",
-        "BIND_FEDERATION_FRESHNESS",
+        "UPDATE_GRAPH_DRIVEN_OUTWARD_NAVIGATOR",
         "DESIGN_AUTHENTICATED_EXECUTION_GATEWAY"
       ]
     },
@@ -308,11 +307,39 @@
   },
   "current_proof": "mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json",
   "current_capability_status": "MYCELIUM_V0_2_1_MERGED_PAGES_GREEN",
-  "next_edge": "LIVE_TEMPORAL_FEDERATION_INGESTION",
+  "next_edge": "BIND_FEDERATION_FRESHNESS_TO_CONTROL_EVENT_AND_UI",
   "pages_readback": {
     "run_id": 36706855094,
     "build": "PASS",
     "deploy": "PASS",
     "effective_main_sha": "c8fc8f940cbc233e164705859efb850759f7aaac"
+  },
+  "live_federation_ingestion": {
+    "pulse_id": "LFI-20260930T111600Z",
+    "receipt": "mission_control/mycelium/receipts/LIVE_FEDERATION_INGESTION_20260930T111600Z.json",
+    "freshness": {
+      "fresh_sources": 3,
+      "declared_sources": 3,
+      "coverage_pct": 100
+    },
+    "authority_transfer": false,
+    "engineering_truth_promoted": false,
+    "sources": [
+      {
+        "id": "codex",
+        "sha": "cd45dc8f8934d554d824f0c22db619dfe6bb546d",
+        "authority": "UI_ORCHESTRATION_GRAPH_AUTHORITY"
+      },
+      {
+        "id": "abacus",
+        "sha": "d8e71dc73453e9e4ea10fa62afd0d9554d241297",
+        "authority": "REMOTE_EXECUTION_AUTHORITY"
+      },
+      {
+        "id": "cryoplant",
+        "sha": "f03bfc61bcf85a2d91cd22d083ad0ef954387f0d",
+        "authority": "REMOTE_ENGINEERING_AUTHORITY"
+      }
+    ]
   }
 }
