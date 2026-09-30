@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
   "return_id": "ABACUS_DAB_RETURN_20260930_1500_PARTIAL",
-  "observed_at": "2026-09-30T12:24:00Z",
+  "observed_at": "2026-09-30T12:31:00Z",
   "source": {
     "repository": "GBOGEB/ABACUS",
     "ref": "main",
@@ -9,12 +9,15 @@
     "authority": "REMOTE_EXECUTION_DOW"
   },
   "latest_exact_census": {
-    "pr": 1499,
-    "head_sha": "dd6b88eb8515ea29038ee287eadfeaeba96de858",
-    "merge_sha": "b1763b9ac6a9d98150a85bc807531d2ef2af1301",
-    "workflow_run": 36714082229,
-    "job": 109882456512,
-    "total": 10512,
+    "pr": 1500,
+    "head_sha": "ff4f673fdd4e291b55f1cd492b153f6a89918346",
+    "merge_ref_sha": "acd17763f186d5b9a5ccb4c154c7554d33ce7bf1",
+    "merge_sha": "2d365a1a3b39395b165e2e9662967d434d302606",
+    "workflow_run": 36714315712,
+    "job": 109883373394,
+    "artifact_id": 11095614124,
+    "artifact_sha256": "40fc7fce6ca2b48a9962eb0467f72e7160d538cefee5c30d073daf41f3238ef6",
+    "total": 9767,
     "families": {
       "E999": 1,
       "F821": 0,
@@ -24,9 +27,9 @@
       "E722": 26,
       "E731": 0,
       "E741": 40,
-      "W293": 2657
+      "W293": 1912
     },
-    "status": "MEASURED"
+    "status": "MEASURED_POST_1500"
   },
   "subsequent_merged_delta": {
     "pr": 1500,
@@ -35,10 +38,13 @@
     "removed": 745,
     "files": 10,
     "prior_measured_residual": 2657,
-    "expected_postmerge_residual": 1912,
-    "residual_status": "WITHHELD_POSTMERGE_CENSUS",
-    "pending_census_run": 36714315712,
-    "pending_census_job": 109883373394
+    "measured_postmerge_residual": 1912,
+    "residual_status": "MEASURED",
+    "postmerge_census_run": 36714315712,
+    "postmerge_census_job": 109883373394,
+    "artifact_id": 11095614124,
+    "artifact_sha256": "40fc7fce6ca2b48a9962eb0467f72e7160d538cefee5c30d073daf41f3238ef6",
+    "merge_ref_sha": "acd17763f186d5b9a5ccb4c154c7554d33ce7bf1"
   },
   "active_hard_slice": {
     "pr": 1501,
@@ -62,5 +68,6 @@
     "formal_credit_delta": 0,
     "engineering_credit_delta": 0,
     "authority_transfer": false
-  }
+  },
+  "return_status": "MEASURED_THROUGH_PR1500_WITH_PR1501_ACTIVE"
 }
