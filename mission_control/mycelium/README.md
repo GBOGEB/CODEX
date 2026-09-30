@@ -147,3 +147,48 @@ bridge → cherry-pick → federation → exact pin → full merge
 ```
 
 Full merge is not a maturity level; it is only appropriate when authority and ownership intentionally converge.
+
+## THIS IS THE WAY — one graph, multiple projections
+
+**ENGINEERING VIEW and CONTROL VIEW are two projections of the same graph.**
+
+The canonical control example is deliberately preserved as a first-class invariant:
+
+```text
+ENGINEERING VIEW
+Cryoplant
+→ 2 K refrigeration
+→ B interface
+→ pressure drop
+→ calculation
+
+CONTROL VIEW
+P0
+→ CRYO-IF-B unresolved
+→ DOW calculation missing
+→ blocks ICD freeze
+→ blocks offer disposition
+```
+
+These are not duplicate records. The projection selector changes visibility and emphasis only. Node identity, evidence lineage, authority, maturity and history remain common.
+
+### Observability projection
+
+A third projection measures the same nodes:
+
+```text
+same node
+├─ maturity
+├─ QA
+├─ code health
+├─ debug / first-red recurrence
+├─ docking / federation health
+├─ ports / interface-probe health
+├─ logs / log-analysis health
+├─ reverse-pressure BD load
+├─ DMAIC phase
+├─ PCA diagnostic position
+└─ Bradley–Terry rank (only from observed pairwise outcomes)
+```
+
+Every score must be tagged `MEASURED`, `DERIVED_FROM_MEASURED`, or `WITHHELD`. Missing inputs are shown as missing; they are not imputed merely to make a dashboard complete.
