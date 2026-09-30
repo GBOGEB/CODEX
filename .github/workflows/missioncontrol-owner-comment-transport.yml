@@ -7,6 +7,7 @@ on:
 permissions:
   contents: read
   actions: read
+  issues: write
 
 concurrency:
   group: missioncontrol-owner-comment-stage-only
@@ -65,3 +66,51 @@ jobs:
           name: ${{ steps.gateway.outputs.artifact_name }}
           path: ${{ steps.gateway.outputs.receipt_path }}
           if-no-files-found: error
+
+      - name: Publish authenticated receipt pointer
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = [
+              'MISSIONCONTROL_RUNTIME_RECEIPT',
+              'status=EXECUTED',
+              'transport=OWNER_COMMENT_STAGE_ONLY',
+              'run_id=${{ github.run_id }}',
+              'run_attempt=${{ github.run_attempt }}',
+              'job_name=authenticated-owner-comment-stage-only',
+              'observed_head_sha=${{ steps.gateway.outputs.observed_head_sha }}',
+              'artifact_name=${{ steps.gateway.outputs.artifact_name }}',
+              'receipt_path=${{ steps.gateway.outputs.receipt_path }}',
+              'mutation_enabled=false',
+              'authority_transfer=false',
+              'formal_credit_delta=0',
+              'engineering_credit_delta=0'
+            ].join('\n');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: 879,
+              body
+            });
+
+      - name: Publish rejected/failed attempt pointer
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = [
+              'MISSIONCONTROL_RUNTIME_RECEIPT',
+              'status=REJECTED_OR_FAILED',
+              'transport=OWNER_COMMENT_STAGE_ONLY',
+              'run_id=${{ github.run_id }}',
+              'run_attempt=${{ github.run_attempt }}',
+              'source_comment_id=${{ github.event.comment.id }}',
+              'mutation_enabled=false'
+            ].join('\n');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: 879,
+              body
+            });
