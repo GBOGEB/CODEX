@@ -1,4 +1,4 @@
-# MissionControl Mycelium Control Surface v0.1
+# MissionControl Mycelium Control Surface v0.2
 
 ## Goal
 
@@ -79,3 +79,71 @@ The graph must record which mechanism was used and preserve source repo, source 
 ## Definition of Done
 
 See `mission_control/mycelium/control_manifest.yaml`. Visualization alone never creates engineering or formal credit.
+
+
+## User abstract task instruction — developed concept
+
+Treat MissionControl as a persistent **mycelium execution network**, not a chat transcript.
+
+A user instruction is converted into a governed graph mutation:
+
+```text
+intent
+  ↓
+authority freeze
+  ↓
+current node + exact next edge
+  ↓
+dependency / precedence graph
+  ↓
+reverse-pressure ranking
+  ↓
+bounded execution
+  ↓
+proof edge
+  ↓
+outward projection
+  ↓
+temporal lineage + restart pointer
+```
+
+The visual stream is an observation and steering surface. Losing that stream must not reset the execution graph. A user steer is appended as a priority event and may change the active edge, but it does not erase completed proof, silently rebase history, or reintroduce cleared work.
+
+### Layout contract
+
+The same six semantic panels support multiple presentation geometries:
+
+- **2 x 3** — canonical control-room layout;
+- **3 x 2** — wide-screen layout;
+- **golden focus** — one panel receives approximately 1.618× the adjacent width while the remaining panels stay available;
+- **single focus** — one panel fills the review surface for small screens or detailed inspection.
+
+The content model is independent of screen size. Unused space may remain as light/dark whitespace rather than stretching a panel until its information density becomes misleading.
+
+### Current / mid / long horizon
+
+Every active view should expose three horizons:
+
+- **current** — exact node, first red, active action, evidence state;
+- **mid** — admitted successors, dependency pressure, likely unblocks;
+- **long** — governed objectives, release/DoV conditions, external-return dependencies.
+
+Steering changes priority across these horizons while preserving lineage.
+
+### Atoms, nodes, edges and graphs
+
+Atoms are the smallest typed units that should be independently traceable. Nodes aggregate atoms into work, evidence, decisions, repositories or outward products. Edges carry semantics such as dependency, precedence, proof, block, publication, federation or supersession. Graphs are materialized views over those typed elements; they must never become a second source of truth.
+
+### Outward-first navigation
+
+MissionControl should continuously expose human-facing results: HTML, tables, plots, SVG/diagrams, PDF/DOCX/PPTX/XLSX when governed, and the source/original renderer or repository item that generated them. Plotly and Matplotlib may remain separate renderer families, but each visible result must retain the source path/revision that produced it.
+
+### Federation choice
+
+Prefer the least destructive integration mechanism that satisfies the work:
+
+```text
+bridge → cherry-pick → federation → exact pin → full merge
+```
+
+Full merge is not a maturity level; it is only appropriate when authority and ownership intentionally converge.
