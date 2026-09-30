@@ -221,8 +221,6 @@ class AppendOnlyLineageStore:
     output_path: Path
 
     def append_rows(self, rows: list[dict[str, str]]) -> None:
-        if not rows:
-            return
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
         if not self.output_path.exists():
             self.output_path.write_text(
@@ -231,6 +229,8 @@ class AppendOnlyLineageStore:
                 "| :--- | :--- | :--- | :--- | :--- | :--- |\n",
                 encoding="utf-8",
             )
+        if not rows:
+            return
         existing = self.output_path.read_text(encoding="utf-8")
         seen = {row["unique_id"] for row in rows if f"**{row['unique_id']}**" in existing}
         with self.output_path.open("a", encoding="utf-8") as handle:
