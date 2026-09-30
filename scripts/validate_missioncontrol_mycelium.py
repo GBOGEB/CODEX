@@ -32,6 +32,10 @@ PAGES_CONTROL_EVENTS = DOCS / "data" / "missioncontrol_control_events.json"
 EXECUTABLE = MC / "executable_projection.json"
 PAGES_EXECUTABLE = DOCS / "data" / "missioncontrol_executable_projection.json"
 PREDECESSOR_PROOF = MC / "receipts" / "MYCELIUM_V02_PR839_PROOF.json"
+LIVE_FEDERATION_PROOF = MC / "receipts" / "LIVE_FEDERATION_PULSE_PR845_PROOF.json"
+GATEWAY_CONTRACT = MC / "gateway_contract.yaml"
+GATEWAY_SCRIPT = ROOT / "scripts" / "missioncontrol_command_gateway.py"
+GATEWAY_WORKFLOW = ROOT / ".github" / "workflows" / "missioncontrol-command-gateway.yml"
 
 EVIDENCE_STATES = {"MEASURED", "DERIVED_FROM_MEASURED", "WITHHELD"}
 
@@ -72,7 +76,8 @@ def validate() -> list[str]:
         PAGES_METRICS, HISTORY, LOG_ANALYSIS, SOURCE_REGISTRY, SOURCE_STATUS,
         PAGES_SOURCE_STATUS, PORT_REGISTRY, REENTRY, CONTROL_PLANE, PAGES_CONTROL_PLANE,
         CONTROL_EVENTS, PAGES_CONTROL_EVENTS, EXECUTABLE, PAGES_EXECUTABLE,
-        PREDECESSOR_PROOF,
+        PREDECESSOR_PROOF, LIVE_FEDERATION_PROOF, GATEWAY_CONTRACT,
+        GATEWAY_SCRIPT, GATEWAY_WORKFLOW,
     ]
     for path in required_paths:
         if not path.exists():
@@ -95,6 +100,10 @@ def validate() -> list[str]:
     executable = _json(EXECUTABLE)
     pages_executable = _json(PAGES_EXECUTABLE)
     predecessor = _json(PREDECESSOR_PROOF)
+    live_federation_proof = _json(LIVE_FEDERATION_PROOF)
+    gateway_contract = yaml.safe_load(GATEWAY_CONTRACT.read_text(encoding="utf-8"))
+    gateway_script = GATEWAY_SCRIPT.read_text(encoding="utf-8")
+    gateway_workflow = GATEWAY_WORKFLOW.read_text(encoding="utf-8")
 
     for name, canonical, pages in [
         ("graph", graph, pages_graph),
@@ -137,7 +146,8 @@ def validate() -> list[str]:
         "topic_2k_refrigeration", "qps_triage_b", "dow_b_pressure_drop",
         "repo_cryoplant_project", "config_control_plane", "evidence_pr839",
         "human_command_input", "external_abacus_authority",
-        "external_cryoplant_authority", "out_control_plane",
+        "external_cryoplant_authority", "out_control_plane", "evidence_pr845",
+        "gateway_contract", "gateway_workflow", "gateway_receipts",
     }
     missing_nodes = sorted(required_nodes - node_ids)
     if missing_nodes:
@@ -184,7 +194,7 @@ def validate() -> list[str]:
         'id="applyCommand"', 'id="laneRows"', 'id="priorityHorizon"',
         'id="controlEventRows"', 'id="artifactFilter"', 'id="federationRows"',
         'id="federationState"', 'id="federationEdgeRows"', "THIS IS THE WAY", 'id="metricRows"',
-        'id="progressRows"',
+        'id="progressRows"', 'id="commandCopy"', 'id="gatewayLaunch"', 'id="gatewayGuide"',
     }
     for token in ui_tokens:
         if token not in html:
@@ -198,7 +208,8 @@ def validate() -> list[str]:
         "renderGraphArtifacts",
         "renderFederationEdges",
         "stagePrioritySteer",
-        "live_federation_ingestion",
+        "live_federation_ingestion", "GATEWAY_URL", "probeCurrentCodeXHead",
+        "trace provenance", "OPEN_GITHUB_AUTHENTICATED_GATEWAY_WORKFLOW",
     }
     for token in js_tokens:
         if token not in js:
@@ -238,6 +249,17 @@ def validate() -> list[str]:
         errors.append("static Pages command input must remain stage/dry-run only")
     if cp.get("command_input", {}).get("authenticated_apply_gateway_required") is not True:
         errors.append("authenticated Apply gateway guard missing")
+    command_input = cp.get("command_input", {})
+    if command_input.get("source_lock") != "EXACT_SHA":
+        errors.append("gateway command input must preserve exact-SHA source lock")
+    if command_input.get("mutation_mode") != "AUTOMATION_BRANCH_PR_ONLY":
+        errors.append("gateway mutation mode must remain automation branch/PR only")
+    if command_input.get("direct_main_write") is not False:
+        errors.append("gateway must not permit direct-main write")
+    if command_input.get("allowed_actions") != ["REFRESH_FEDERATION_HEADS"]:
+        errors.append("gateway v0.1 action allow-list drifted")
+    if "api.github.com/repos/GBOGEB/CODEX/commits/main" not in js:
+        errors.append("Pages gateway source lock is not live-probed from CODEX main")
     if cp.get("execution_model", {}).get("executable_projection_must_be_DAG") is not True:
         errors.append("executable projection DAG guard missing")
     federation_status = control.get("federation_status", {})
@@ -257,7 +279,37 @@ def validate() -> list[str]:
             errors.append("live federation ingestion must preserve authority_transfer=false")
         if live_federation.get("engineering_truth_promoted") is not False:
             errors.append("live federation ingestion must not promote engineering truth")
-    rendering = cp.get("rendering", {})
+    if gateway_contract.get("transport", {}).get("type") != "GITHUB_ACTIONS_WORKFLOW_DISPATCH":
+        errors.append("gateway transport must be GitHub Actions workflow_dispatch")
+    mutation = gateway_contract.get("mutation", {})
+    if mutation.get("mode") != "AUTOMATION_BRANCH_PR_ONLY" or mutation.get("direct_main_write") is not False:
+        errors.append("gateway contract mutation boundary is not PR-only")
+    actions = gateway_contract.get("actions", {})
+    if set(actions) != {"REFRESH_FEDERATION_HEADS"}:
+        errors.append("gateway contract contains unapproved v0.1 action")
+    if "workflow_dispatch:" not in gateway_workflow:
+        errors.append("gateway workflow lacks authenticated workflow_dispatch entrypoint")
+    if "contents: write" not in gateway_workflow or "pull-requests: write" not in gateway_workflow:
+        errors.append("gateway workflow lacks branch/PR publication permissions")
+    if "git push -u origin" not in gateway_workflow or "gh pr create" not in gateway_workflow:
+        errors.append("gateway workflow does not publish reviewable branch/PR output")
+    if "git push origin main" in gateway_workflow or "git push origin HEAD:main" in gateway_workflow:
+        errors.append("gateway workflow contains forbidden direct-main push")
+    for token in ("ALLOWED_ACTIONS", "stale source authority", "AUTOMATION_BRANCH_PR_ONLY"):
+        if token not in gateway_script:
+            errors.append(f"gateway fail-closed implementation token missing: {token}")
+    if live_federation_proof.get("disposition") != "CONTROLLED_GREEN_LIVE_FEDERATION_PULSE":
+        errors.append("PR #845 live federation predecessor proof is not controlled green")
+    live_hosted = live_federation_proof.get("exact_head_proof", {})
+    if live_hosted.get("conclusion") != "success" or int(live_hosted.get("executed_steps", 0)) <= 0:
+        errors.append("PR #845 exact-head proof lacks >0-step success")
+    if live_federation_proof.get("pages_readback", {}).get("conclusion") != "success":
+        errors.append("PR #845 Pages readback is not success")
+    gateway_state = control.get("authenticated_execution_gateway", {})
+    if gateway_state.get("runtime_proof") != "WITHHELD_OWNER_DISPATCH_REQUIRED":
+        errors.append("gateway runtime proof must remain withheld until owner dispatch")
+
+        rendering = cp.get("rendering", {})
     for isolation_key in (
         "plotly_failure_blocks_core",
         "matplotlib_failure_blocks_core",
