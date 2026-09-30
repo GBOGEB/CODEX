@@ -142,5 +142,6 @@ jobs:
               echo
               echo "$PR_URL"
             } >> "$GITHUB_STEP_SUMMARY"
-            echo "::warning::Gateway execution succeeded and branch was published; PR creation requires owner policy or external client."
+            echo "::error::Gateway branch was published but required PR creation failed; execution remains non-promoted."
+            exit "$RC"
           fi
