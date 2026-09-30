@@ -2,7 +2,7 @@
   "schema_version": "0.2",
   "generated_for": "CODEX_MISSIONCONTROL_MYCELIUM",
   "mode": "CONTINUE_FROM_DURABLE_STATE",
-  "generated_at": "2026-09-30T11:16:00Z",
+  "generated_at": "2026-09-30T11:26:00Z",
   "source_yaml": "mission_control/mycelium/reentry_v0_2.yaml",
   "invariants": {
     "authority_transfer": false,
@@ -20,7 +20,7 @@
       "repo": "GBOGEB/CODEX",
       "branch": "main",
       "handover_observed_sha": "d77d44811fec4fada16988769614d6091df56133",
-      "refreshed_current_sha": "cd45dc8f8934d554d824f0c22db619dfe6bb546d",
+      "refreshed_current_sha": "e7404bfb6df3289705286685500fd19c4ec6d991",
       "role": "UI_ORCHESTRATION_GRAPH_AUTHORITY",
       "merge_refs": [
         {
@@ -34,6 +34,10 @@
         {
           "pr": 841,
           "sha": "f9b106a8642198f98814809432a46c99fb041389"
+        },
+        {
+          "pr": 845,
+          "sha": "ed9bb877bc251d7aa06c0bf19515491028fcdeef"
         }
       ]
     },
@@ -163,10 +167,10 @@
     {
       "id": "CODEX_UI",
       "repository": "GBOGEB/CODEX",
-      "branch": "main",
-      "head_sha": "cd45dc8f8934d554d824f0c22db619dfe6bb546d",
+      "branch": "mission-control-authenticated-gateway-v01-20260930",
+      "head_sha": "e7404bfb6df3289705286685500fd19c4ec6d991",
       "state": "EXECUTING",
-      "current_atom": "LIVE_TEMPORAL_FEDERATION_INGESTION",
+      "current_atom": "AUTHENTICATED_EXECUTION_GATEWAY_V0_1_EXACT_HEAD_PROOF",
       "completed_atoms": [
         "MYCELIUM_V0_1",
         "MYCELIUM_V0_2_INTERACTION",
@@ -185,14 +189,28 @@
         "BOUNDED_PR",
         "MERGE_READBACK",
         "PAGES_READBACK",
-        "REGENERATE_REENTRY_MANIFEST"
+        "REGENERATE_REENTRY_MANIFEST",
+        "LIVE_TEMPORAL_FEDERATION_INGESTION",
+        "REFRESH_FEDERATION_HEADS_LIVE",
+        "BIND_SOURCE_STATUS_PARITY",
+        "BIND_FRESHNESS_METRIC",
+        "BIND_FRESHNESS_CONTROL_EVENT",
+        "BIND_FEDERATION_GRAPH_PROVENANCE",
+        "LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF",
+        "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
+        "GATEWAY_CONTRACT",
+        "GATEWAY_VALIDATOR",
+        "GATEWAY_WORKFLOW_ADAPTER",
+        "UI_GATEWAY_HANDOFF",
+        "RICH_ARTIFACT_PROVENANCE_NAV"
       ],
       "blocker": null,
       "queue_state": "EXECUTION",
       "next_legal_transitions": [
-        "LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF",
-        "CONSUME_TYPED_REMOTE_RETURNS",
-        "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN"
+        "AUTHENTICATED_EXECUTION_GATEWAY_V0_1_EXACT_HEAD_PROOF",
+        "MERGE_GATEWAY_V0_1",
+        "PAGES_READBACK",
+        "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH"
       ]
     },
     {
@@ -291,7 +309,17 @@
   "command_input_contract": {
     "static_pages_mode": "STAGE_OR_DRY_RUN_ONLY",
     "authenticated_apply_gateway_required": true,
-    "false_mutation_claim_forbidden": true
+    "false_mutation_claim_forbidden": true,
+    "live_source_probe": "https://api.github.com/repos/GBOGEB/CODEX/commits/main",
+    "gateway_contract": "mission_control/mycelium/gateway_contract.yaml",
+    "gateway_workflow": ".github/workflows/missioncontrol-command-gateway.yml",
+    "gateway_surface": "https://github.com/GBOGEB/CODEX/actions/workflows/missioncontrol-command-gateway.yml",
+    "source_lock": "EXACT_SHA",
+    "mutation_mode": "AUTOMATION_BRANCH_PR_ONLY",
+    "direct_main_write": false,
+    "allowed_actions": [
+      "REFRESH_FEDERATION_HEADS"
+    ]
   },
   "federation_status": {
     "bridge_status": {
@@ -304,14 +332,14 @@
     "remote_authority_state": "PRESERVED",
     "authority_transfer": false
   },
-  "current_proof": "mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json",
-  "current_capability_status": "MYCELIUM_V0_2_1_MERGED_PAGES_GREEN",
-  "next_edge": "LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF",
+  "current_proof": "mission_control/mycelium/receipts/LIVE_FEDERATION_PULSE_PR845_PROOF.json",
+  "current_capability_status": "AUTHENTICATED_EXECUTION_GATEWAY_V0_1_IMPLEMENTED_PENDING_PROOF",
+  "next_edge": "AUTHENTICATED_EXECUTION_GATEWAY_V0_1_EXACT_HEAD_PROOF",
   "pages_readback": {
-    "run_id": 36706855094,
+    "run_id": 36708423542,
     "build": "PASS",
     "deploy": "PASS",
-    "effective_main_sha": "c8fc8f940cbc233e164705859efb850759f7aaac"
+    "effective_main_sha": "e7404bfb6df3289705286685500fd19c4ec6d991"
   },
   "live_federation_ingestion": {
     "pulse_id": "LFI-20260930T111600Z",
@@ -340,5 +368,21 @@
         "authority": "REMOTE_ENGINEERING_AUTHORITY"
       }
     ]
+  },
+  "authenticated_execution_gateway": {
+    "version": "0.1.0",
+    "status": "IMPLEMENTED_PENDING_EXACT_HEAD_PROOF",
+    "runtime_proof": "WITHHELD_OWNER_DISPATCH_REQUIRED",
+    "receipt_directory": "mission_control/mycelium/gateway/receipts",
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  },
+  "artifact_navigation": {
+    "mode": "GRAPH_DRIVEN",
+    "provenance_edges_visible": true,
+    "source_sha_visible": true,
+    "proof_refs_visible": true,
+    "renderer_independent": true
   }
 }
