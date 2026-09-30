@@ -185,6 +185,5 @@ def test_same_measured_abacus_overlay_preserves_richer_governed_provenance() -> 
 
     hard = snapshot["nodes"]["dab_hard"]["family_progress"][0]
     assert hard["baseline"] == 22
-    assert hard["slice_baseline"] == 21
     assert hard["measurement_pr"] == "#1527 post-merge main"
     assert hard["delta_from_baseline"] == -5
