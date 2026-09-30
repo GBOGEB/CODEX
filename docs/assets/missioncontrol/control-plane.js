@@ -173,11 +173,15 @@
     const state = $('#federationState');
     if (state) {
       const fs = control.federation_status || {};
+      const live = control.live_federation_ingestion || {};
+      const freshness = live.freshness || {};
       state.innerHTML =
         '<span class="pill">cherry-pick: ' + esc(fs.cherry_pick_state || 'WITHHELD') + '</span>' +
         '<span class="pill">merge: ' + esc(fs.merge_state || 'WITHHELD') + '</span>' +
         '<span class="pill warn">conflict: ' + esc(fs.conflict_state || 'WITHHELD') + '</span>' +
-        '<span class="pill ok">remote authority: ' + esc(fs.remote_authority_state || 'WITHHELD') + '</span>';
+        '<span class="pill ok">remote authority: ' + esc(fs.remote_authority_state || 'WITHHELD') + '</span>' +
+        '<span class="pill ok">freshness: ' + esc(freshness.fresh_sources ?? '—') + '/' + esc(freshness.declared_sources ?? '—') + ' (' + esc(freshness.coverage_pct ?? '—') + '%)</span>' +
+        '<span class="pill">pulse: ' + esc(live.pulse_id || 'WITHHELD') + '</span>';
     }
   }
 
