@@ -1,0 +1,59 @@
+{
+  "schema_version": "0.1",
+  "return_id": "ABACUS_DAB_RETURN_20260930_1506_COMBINED_MAIN",
+  "observed_at": "2026-09-30T13:29:12Z",
+  "source": {
+    "repository": "GBOGEB/ABACUS",
+    "ref": "main",
+    "measured_sha": "d54d22a57a80bc462a051ee26e5a7d5489432237",
+    "current_sha": "fa482c009afd9bdab4062900514521e8339d35b8",
+    "authority": "REMOTE_EXECUTION_DOW"
+  },
+  "exact_census": {
+    "workflow_run": 36721260876,
+    "job": 109906683250,
+    "status": "MEASURED",
+    "total": 8853,
+    "families": {
+      "E999": 1,
+      "F821": 0,
+      "F601": 0,
+      "F811": 0,
+      "F841": 77,
+      "E722": 26,
+      "E731": 0,
+      "E741": 22,
+      "W293": 1013
+    },
+    "artifact": {
+      "id": 11100356126,
+      "name": "dab-flake8-census",
+      "sha256": "27af842e4d97ddc5722d7a07da9f5162491d629ddaf762e7715059bce3b1ad15"
+    }
+  },
+  "subsequent_repository_state": [
+    {
+      "pr": 1507,
+      "merge_sha": "5260b70814e8c39e805f658b878aeb8c4cfd6a42",
+      "role": "DOW_MAIN_CI_SELECTOR_RECOVERY",
+      "census_effect": "UNMEASURED_AFTER_THIS_CHANGE"
+    },
+    {
+      "sha": "fa482c009afd9bdab4062900514521e8339d35b8",
+      "role": "METRICS_FOLLOWUP",
+      "census_effect": "UNMEASURED_AFTER_THIS_CHANGE"
+    }
+  ],
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+    "state": "SOURCE_BOUND_HOLD"
+  },
+  "acceptance": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "engineering_truth_promoted": false
+  }
+}
