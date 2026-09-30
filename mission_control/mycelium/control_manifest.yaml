@@ -1,4 +1,4 @@
-schema_version: "0.4"
+schema_version: "0.5"
 surface_id: MISSIONCONTROL_MYCELIUM
 owner: CODEX_UI_GOVERNANCE
 repository: GBOGEB/CODEX
@@ -77,13 +77,21 @@ control_plane:
   governed_projection: mission_control/mycelium/control_plane_projection.json
   pages_projection: docs/data/missioncontrol_control_plane.json
   predecessor_proof: mission_control/mycelium/receipts/MYCELIUM_V02_PR839_PROOF.json
-  current_proof: mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
-  current_capability_status: MYCELIUM_V0_2_1_MERGED_PAGES_GREEN
-  next_edge: LIVE_TEMPORAL_FEDERATION_INGESTION
+  current_proof: mission_control/mycelium/receipts/LIVE_FEDERATION_INGESTION_20260930T111600Z_PROOF.json
+  current_capability_status: LIVE_FEDERATION_PULSE_CONTROLLED_GREEN
+  next_edge: AUTHENTICATED_EXECUTION_GATEWAY_V0_1_EXACT_HEAD_PROOF
   command_input:
     static_pages_mode: STAGE_OR_DRY_RUN_ONLY
     authenticated_apply_gateway_required: true
     false_mutation_claim_forbidden: true
+    live_source_probe: https://api.github.com/repos/GBOGEB/CODEX/commits/main
+    gateway_contract: mission_control/mycelium/gateway_contract.yaml
+    gateway_workflow: .github/workflows/missioncontrol-command-gateway.yml
+    gateway_surface: https://github.com/GBOGEB/CODEX/actions/workflows/missioncontrol-command-gateway.yml
+    source_lock: EXACT_SHA
+    mutation_mode: AUTOMATION_BRANCH_PR_ONLY
+    direct_main_write: false
+    allowed_actions: [REFRESH_FEDERATION_HEADS]
   execution_model:
     universal_graph_may_contain_cycles: true
     executable_projection_must_be_DAG: true
@@ -100,6 +108,12 @@ control_plane:
   federation:
     strategy_order: [REFERENCE, BRIDGE, GENERATED_PROJECTION, ITEM_IMPORT, CHERRY_PICK, BOUNDED_MERGE, FULL_MERGE]
     required_provenance: [source_repo, source_ref, source_sha, target_repo, target_ref, target_sha, mechanism, authority_before, authority_after, proof]
+  artifact_navigation:
+    mode: GRAPH_DRIVEN
+    provenance_edges_visible: true
+    source_sha_visible: true
+    proof_refs_visible: true
+    renderer_independent: true
 
 graph_contract:
   universal_graph_may_contain_cycles: true
