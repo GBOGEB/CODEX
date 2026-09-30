@@ -3,6 +3,8 @@
 
   const $ = (s) => document.querySelector(s);
   let control = null;
+  let events = null;
+  let graphModel = null;
   let stagedEnvelope = null;
 
   function esc(v) {
@@ -10,14 +12,22 @@
   }
 
   async function loadControlPlane() {
-    control = await fetch('data/missioncontrol_control_plane.json').then(r => {
-      if (!r.ok) throw new Error('control-plane projection HTTP ' + r.status);
-      return r.json();
-    });
+    [control, events] = await Promise.all([
+      fetch('data/missioncontrol_control_plane.json').then(r => {
+        if (!r.ok) throw new Error('control-plane projection HTTP ' + r.status);
+        return r.json();
+      }),
+      fetch('data/missioncontrol_control_events.json').then(r => {
+        if (!r.ok) throw new Error('control-event projection HTTP ' + r.status);
+        return r.json();
+      })
+    ]);
     renderAuthority();
     renderLanes();
     renderFederation();
     renderCheckpoint();
+    renderHorizons();
+    renderControlEvents();
     bindCommandSurface();
     bindRecoveryControls();
     bindArtifactNavigator();
@@ -65,6 +75,77 @@
       '<b>Current lane:</b> ' + esc(codex?.id || 'WITHHELD') + ' · <b>atom:</b> ' + esc(codex?.current_atom || 'WITHHELD') + '<br>' +
       '<b>Continuation:</b> ' + esc((control.continuation || []).join(' → ')) + '<br>' +
       '<b>Replay completed atoms:</b> <span class="ok">' + esc(control.invariants?.replay_completed_atoms_on_reentry === false ? 'false' : 'UNKNOWN') + '</span>';
+  }
+
+  function renderHorizons() {
+    const select = $('#priorityHorizon');
+    const body = $('#priorityRows');
+    if (!select || !body || !events) return;
+    const horizons = events.horizons || {};
+    if (!select.options.length) {
+      Object.keys(horizons).forEach(h => {
+        const o = document.createElement('option');
+        o.value = h; o.textContent = h.toUpperCase();
+        select.appendChild(o);
+      });
+    }
+    const h = select.value || 'current';
+    body.innerHTML = (horizons[h] || []).map(item =>
+      '<tr><td>' + esc(item.rank) + '</td><td><b>' + esc(item.id) + '</b><br><small>' + esc(item.lane) + '</small></td>' +
+      '<td>' + esc(item.state) + '</td><td>' + esc(item.reason) + '</td>' +
+      '<td><button class="priority-steer" data-id="' + esc(item.id) + '" data-horizon="' + esc(h) + '">steer</button></td></tr>'
+    ).join('');
+    document.querySelectorAll('.priority-steer').forEach(b => b.onclick = () => stagePrioritySteer(b.dataset.horizon, b.dataset.id));
+  }
+
+  function stagePrioritySteer(horizon, id) {
+    const input = $('#commandInput');
+    if (input) input.value = JSON.stringify({
+      event_type:'USER_STEER',
+      horizon,
+      target:id,
+      preserve_completed_proof:true,
+      replay_completed_atoms:false,
+      authority_transfer:false
+    }, null, 2);
+    const focus = $('#focus');
+    if (focus) { focus.value='COMMAND_INPUT_ROOT'; focus.dispatchEvent(new Event('change')); }
+    const receipt = $('#commandReceipt');
+    if (receipt) receipt.innerHTML = '<span class="ok">Priority steer staged from ' + esc(horizon) + ' horizon. Review then Dry run / Apply request.</span>';
+  }
+
+  function renderControlEvents() {
+    const body = $('#controlEventRows');
+    if (!body || !events) return;
+    body.innerHTML = (events.events || []).slice().sort((a,b)=>String(b.at).localeCompare(String(a.at))).slice(0,10).map(e =>
+      '<tr><td>' + esc(e.at) + '</td><td>' + esc(e.type) + '</td><td>' + esc(e.node_id) + '</td><td>' + esc(e.summary) + '</td></tr>'
+    ).join('');
+  }
+
+  function renderGraphArtifacts() {
+    const box = $('#artifacts');
+    if (!box || !graphModel) return;
+    const types = new Set(['artifact','output','evidence','projection','log']);
+    const nodes = graphModel.nodes.filter(n => types.has(n.type) && n.url);
+    box.innerHTML = nodes.map(n => {
+      const sha = n.meta?.sha || n.meta?.merge_sha || n.meta?.head_sha || n.meta?.source_sha || '';
+      return '<div class="artifact" data-artifact-node="' + esc(n.id) + '"><b><a href="' + esc(n.url) + '">' + esc(n.label) + '</a></b>' +
+        '<div class="muted">' + esc(n.type) + ' · ' + esc(n.state) + '</div>' +
+        (sha ? '<code>' + esc(String(sha).slice(0,16)) + '</code>' : '') +
+        '<div class="compact">node ' + esc(n.id) + '</div></div>';
+    }).join('') || '<div class="muted">No governed outward graph nodes with deeplinks.</div>';
+  }
+
+  function renderFederationEdges() {
+    const body = $('#federationEdgeRows');
+    if (!body || !graphModel) return;
+    body.innerHTML = graphModel.edges.filter(e => e.type === 'federates').map(e =>
+      '<tr><td>' + esc(e.source_repo || e.from) + '<br><code>' + esc(String(e.source_sha || '').slice(0,12)) + '</code></td>' +
+      '<td>' + esc(e.mechanism || 'WITHHELD') + '</td>' +
+      '<td>' + esc(e.target_repo || e.to) + '<br><code>' + esc(String(e.target_sha || '').slice(0,12)) + '</code></td>' +
+      '<td>' + esc(e.authority_before || 'WITHHELD') + ' → ' + esc(e.authority_after || 'WITHHELD') + '</td>' +
+      '<td>' + esc(e.proof || 'WITHHELD') + '</td></tr>'
+    ).join('');
   }
 
   function renderFederation() {
@@ -174,6 +255,8 @@
   }
 
   function bindRecoveryControls() {
+    const horizon = $('#priorityHorizon');
+    if (horizon) horizon.onchange = renderHorizons;
     const continueBtn = $('#continueFromCheckpoint');
     if (continueBtn) continueBtn.onclick = () => localRecoveryEvent('CONTINUE_FROM_DURABLE_STATE','CODEX_UI','RESUME_FIRST_LEGAL_INCOMPLETE_ATOM');
   }
@@ -188,6 +271,12 @@
       });
     };
   }
+
+  window.addEventListener('missioncontrol:model-ready', ev => {
+    graphModel = ev.detail?.model || null;
+    renderGraphArtifacts();
+    renderFederationEdges();
+  });
 
   loadControlPlane().catch(err => {
     const box = $('#controlPlaneStatus');
