@@ -1,27 +1,27 @@
 {
   "schema_version": "0.1",
-  "snapshot_at": "2026-09-30T12:24:00Z",
+  "snapshot_at": "2026-09-30T13:11:12Z",
   "evidence_policy": "MEASURED_OR_WITHHELD",
   "graph": {
-    "node_count": 61,
-    "edge_count": 77,
-    "density": 0.021038,
-    "link_coverage_pct": 50.82,
-    "proof_edge_count": 9,
+    "node_count": 64,
+    "edge_count": 85,
+    "density": 0.021081,
+    "link_coverage_pct": 53.13,
+    "proof_edge_count": 13,
     "block_edge_count": 3
   },
   "projections": {
     "engineering": {
-      "nodes": 18,
-      "edges": 15
+      "nodes": 19,
+      "edges": 17
     },
     "control": {
-      "nodes": 42,
-      "edges": 51
+      "nodes": 45,
+      "edges": 59
     },
     "observability": {
-      "nodes": 44,
-      "edges": 55
+      "nodes": 47,
+      "edges": 63
     }
   },
   "nodes": {
@@ -154,19 +154,15 @@
         "status": "WITHHELD"
       },
       "mechanical_progress": {
-        "status": "MEASURED_SLICE_WITH_RESIDUAL_WITHHELD",
-        "slice": "#1500",
-        "removed_w293": 745,
-        "files": 10,
-        "prior_measured_residual_w293": 2657,
-        "residual_w293": null,
-        "expected_postmerge_residual_w293": 1912,
-        "residual_status": "WITHHELD_POSTMERGE_CENSUS",
-        "latest_measured_repository_total_flake8": 10512,
-        "evidence_job": "ABACUS job 109882456512",
-        "evidence_pr": "#1500",
-        "pending_census_run": 36714315712,
-        "pending_census_job": 109883373394
+        "status": "MEASURED",
+        "slice": "#1504 census",
+        "residual_w293": 1399,
+        "residual_status": "MEASURED_BY_POSTMERGE_MAIN_CENSUS",
+        "repository_total_flake8": 9244,
+        "evidence_job": "ABACUS job 109899557428",
+        "evidence_pr": "#1504",
+        "artifact_id": 11098275735,
+        "artifact_sha256": "ac71907fb2c16f7c84b48e17c86368b84376765b7844464d2fd317981a50ed3a"
       },
       "code_health": {
         "status": "WITHHELD",
@@ -200,8 +196,10 @@
           "status": "MEASURED",
           "delta_from_baseline": -5,
           "state": "SOURCE_BOUND_HOLD",
-          "evidence_job": "ABACUS job 109882456512",
-          "note": "sole remaining E999 is W52/qplant source-bound"
+          "evidence_job": "ABACUS job 109899557428",
+          "note": "sole remaining E999 is source-bound: qplant/w52_p2m_ts_pressure_sensitivity.py",
+          "measurement_pr": "#1504",
+          "measurement_job": "ABACUS job 109899557428"
         },
         {
           "family": "F821",
@@ -212,7 +210,9 @@
           "delta_from_baseline": -15,
           "state": "CLOSED",
           "evidence_pr": "#1491",
-          "evidence_job": "ABACUS job 109882456512"
+          "evidence_job": "ABACUS job 109899557428",
+          "measurement_pr": "#1504",
+          "measurement_job": "ABACUS job 109899557428"
         },
         {
           "family": "F601",
@@ -223,49 +223,20 @@
           "delta_from_baseline": -2,
           "state": "CLOSED",
           "evidence_pr": "#1493",
-          "evidence_job": "ABACUS job 109882456512"
+          "evidence_job": "ABACUS job 109899557428",
+          "measurement_pr": "#1504",
+          "measurement_job": "ABACUS job 109899557428"
         },
         {
           "family": "F811",
-          "baseline": 16,
-          "target": 0,
+          "baseline": 15,
           "measured_postmerge": 0,
           "status": "MEASURED",
-          "delta_from_baseline": -16,
+          "delta_from_baseline": -15,
           "state": "CLOSED",
-          "evidence_pr": "#1496",
-          "evidence_job": "ABACUS job 109882456512"
-        },
-        {
-          "family": "E731",
-          "baseline": 2,
-          "target": 0,
-          "measured_postmerge": 0,
-          "status": "MEASURED",
-          "delta_from_baseline": -2,
-          "state": "CLOSED",
-          "evidence_pr": "#1497",
-          "evidence_job": "ABACUS job 109882456512"
-        },
-        {
-          "family": "E722",
-          "baseline": 34,
-          "measured_postmerge": 26,
-          "status": "MEASURED",
-          "delta_from_baseline": -8,
-          "state": "ACTIVE_RESIDUAL",
-          "evidence_pr": "#1499",
-          "evidence_job": "ABACUS job 109882456512"
-        },
-        {
-          "family": "E741",
-          "baseline": 40,
-          "measured_postmerge": 40,
-          "status": "MEASURED",
-          "delta_from_baseline": 0,
-          "state": "ACTIVE_PR1501",
-          "evidence_pr": "#1501 pending",
-          "evidence_job": "ABACUS job 109882456512"
+          "evidence_job": "ABACUS job 109899557428",
+          "measurement_pr": "#1504",
+          "measurement_job": "ABACUS job 109899557428"
         },
         {
           "family": "F841",
@@ -273,8 +244,44 @@
           "measured_postmerge": 77,
           "status": "MEASURED",
           "delta_from_baseline": 0,
-          "state": "QUEUED",
-          "evidence_job": "ABACUS job 109882456512"
+          "state": "MEASURED_RESIDUAL",
+          "evidence_job": "ABACUS job 109899557428",
+          "measurement_pr": "#1504",
+          "measurement_job": "ABACUS job 109899557428"
+        },
+        {
+          "family": "E722",
+          "baseline": 34,
+          "measured_postmerge": 26,
+          "status": "MEASURED",
+          "delta_from_baseline": -8,
+          "state": "MEASURED_RESIDUAL",
+          "evidence_job": "ABACUS job 109899557428",
+          "measurement_pr": "#1504",
+          "measurement_job": "ABACUS job 109899557428"
+        },
+        {
+          "family": "E731",
+          "baseline": 2,
+          "measured_postmerge": 0,
+          "status": "MEASURED",
+          "delta_from_baseline": -2,
+          "state": "CLOSED",
+          "evidence_job": "ABACUS job 109899557428",
+          "measurement_pr": "#1504",
+          "measurement_job": "ABACUS job 109899557428"
+        },
+        {
+          "family": "E741",
+          "baseline": 35,
+          "measured_postmerge": 28,
+          "status": "MEASURED",
+          "delta_from_baseline": -7,
+          "state": "MEASURED_RESIDUAL",
+          "evidence_job": "ABACUS job 109899557428",
+          "measurement_pr": "#1504",
+          "evidence_pr": "#1502",
+          "measurement_job": "ABACUS job 109899557428"
         }
       ],
       "code_health": {
@@ -300,8 +307,11 @@
   },
   "latest_remote_return": {
     "source": "GBOGEB/ABACUS",
-    "source_sha": "2d365a1a3b39395b165e2e9662967d434d302606",
-    "evidence": "mission_control/mycelium/evidence/abacus_dab_return_1500_partial.json",
-    "status": "PARTIAL_MEASURED_AND_WITHHELD"
+    "source_sha": "38dfd5c46aa427ef0ec76185439e75fdeb18817f",
+    "current_source_sha": "38dfd5c46aa427ef0ec76185439e75fdeb18817f",
+    "evidence": "mission_control/mycelium/evidence/abacus_dab_return_1504_measured.json",
+    "status": "MEASURED",
+    "census_pr": 1504,
+    "census_job": 109899557428
   }
 }
