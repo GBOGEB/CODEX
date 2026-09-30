@@ -16,6 +16,9 @@ METRICS = ROOT / "mission_control" / "mycelium" / "metrics_snapshot.json"
 PAGES_METRICS = ROOT / "docs" / "data" / "missioncontrol_metrics.json"
 HISTORY = ROOT / "mission_control" / "mycelium" / "progress_history.json"
 LOG_ANALYSIS = ROOT / "mission_control" / "mycelium" / "log_analysis.json"
+SOURCE_REGISTRY = ROOT / "mission_control" / "mycelium" / "source_registry.yaml"
+SOURCE_STATUS = ROOT / "mission_control" / "mycelium" / "source_status.json"
+PORT_REGISTRY = ROOT / "mission_control" / "mycelium" / "port_registry.json"
 
 
 def validate() -> list[str]:
@@ -81,6 +84,13 @@ def validate() -> list[str]:
         errors.append("metrics do not preserve same-graph projection guard")
     if not HISTORY.exists() or not LOG_ANALYSIS.exists():
         errors.append("progress/log control surfaces missing")
+    for required_path in (SOURCE_REGISTRY, SOURCE_STATUS, PORT_REGISTRY):
+        if not required_path.exists():
+            errors.append(f"missing dynamic-ingestion control surface: {required_path.relative_to(ROOT)}")
+    if metrics.get("nodes", {}).get("repo_codex", {}).get("docking", {}).get("status") not in {"MEASURED", "DERIVED_FROM_MEASURED", "WITHHELD"}:
+        errors.append("docking metric has invalid evidence state")
+    if metrics.get("nodes", {}).get("repo_codex", {}).get("ports", {}).get("status") not in {"MEASURED", "DERIVED_FROM_MEASURED", "WITHHELD"}:
+        errors.append("port metric has invalid evidence state")
 
     for layout_mode in {"2x3", "3x2", "golden_focus", "single_focus"}:
         if layout_mode not in set(manifest.get("layout", {}).get("selectable_modes", [])):
