@@ -1,0 +1,191 @@
+{
+  "schema_version": "0.1",
+  "snapshot_at": "2026-09-30T12:12:00+02:00",
+  "evidence_policy": "MEASURED_OR_WITHHELD",
+  "graph": {
+    "node_count": 41,
+    "edge_count": 46,
+    "density": 0.028049,
+    "link_coverage_pct": 43.9,
+    "proof_edge_count": 8,
+    "block_edge_count": 3
+  },
+  "projections": {
+    "engineering": {
+      "nodes": 12,
+      "edges": 12
+    },
+    "control": {
+      "nodes": 11,
+      "edges": 10
+    },
+    "observability": {
+      "nodes": 12,
+      "edges": 13
+    }
+  },
+  "nodes": {
+    "repo_codex": {
+      "qa": {
+        "status": "DERIVED_FROM_MEASURED",
+        "value": 100,
+        "evidence": [
+          "GBOGEB/CODEX#837",
+          "cb60cc2e89767920528dd0a7cf0ddf5ea3d25a53"
+        ]
+      },
+      "maturity": {
+        "status": "WITHHELD",
+        "value": null
+      },
+      "dmaic": {
+        "status": "WITHHELD"
+      },
+      "logs": {
+        "status": "WITHHELD",
+        "reason": "dynamic workflow-log ingestion is next slice"
+      },
+      "docking": {
+        "status": "WITHHELD",
+        "reason": "freshness probes not yet bound"
+      },
+      "ports": {
+        "status": "WITHHELD",
+        "reason": "declared interface probe census not yet bound"
+      },
+      "code_health": {
+        "status": "WITHHELD",
+        "value": null,
+        "inputs": {
+          "qa_gate_health": 100,
+          "test_health": null,
+          "lint_health": null,
+          "debug_health": null
+        }
+      }
+    },
+    "qps_triage_b": {
+      "pressure": {
+        "status": "DERIVED_FROM_MEASURED",
+        "value": 80,
+        "coverage": 0.5,
+        "used_inputs": [
+          "downstream_blocks",
+          "proof_deficit",
+          "urgency"
+        ],
+        "missing_inputs": [
+          "age",
+          "criticality",
+          "unblock_value"
+        ]
+      },
+      "maturity": {
+        "status": "WITHHELD",
+        "value": null
+      },
+      "dmaic": {
+        "status": "WITHHELD"
+      },
+      "logs": {
+        "status": "WITHHELD"
+      },
+      "docking": {
+        "status": "WITHHELD"
+      },
+      "ports": {
+        "status": "WITHHELD"
+      },
+      "code_health": {
+        "status": "WITHHELD",
+        "value": null,
+        "inputs": {}
+      }
+    },
+    "topic_2k_refrigeration": {
+      "maturity": {
+        "status": "WITHHELD",
+        "reason": "requirement/interface/evidence/validation coverage census not yet bound"
+      },
+      "dmaic": {
+        "status": "DERIVED_FROM_MEASURED",
+        "phase": "ANALYZE",
+        "basis": "DOW calculation/evidence gap remains on B-interface control example"
+      },
+      "logs": {
+        "status": "WITHHELD"
+      },
+      "docking": {
+        "status": "WITHHELD"
+      },
+      "ports": {
+        "status": "WITHHELD"
+      },
+      "code_health": {
+        "status": "WITHHELD",
+        "value": null,
+        "inputs": {}
+      }
+    },
+    "dab_mech": {
+      "maturity": {
+        "status": "WITHHELD",
+        "value": null
+      },
+      "dmaic": {
+        "status": "WITHHELD"
+      },
+      "logs": {
+        "status": "WITHHELD"
+      },
+      "docking": {
+        "status": "WITHHELD"
+      },
+      "ports": {
+        "status": "WITHHELD"
+      },
+      "code_health": {
+        "status": "WITHHELD",
+        "value": null,
+        "inputs": {}
+      }
+    },
+    "dab_hard": {
+      "maturity": {
+        "status": "WITHHELD",
+        "value": null
+      },
+      "dmaic": {
+        "status": "WITHHELD"
+      },
+      "logs": {
+        "status": "WITHHELD"
+      },
+      "docking": {
+        "status": "WITHHELD"
+      },
+      "ports": {
+        "status": "WITHHELD"
+      },
+      "code_health": {
+        "status": "WITHHELD",
+        "value": null,
+        "inputs": {}
+      }
+    }
+  },
+  "pca": {
+    "status": "WITHHELD",
+    "reason": "fewer than 3 complete observations"
+  },
+  "bradley_terry": {
+    "status": "WITHHELD",
+    "reason": "no observed pairwise outcomes",
+    "ranking": []
+  },
+  "guards": {
+    "same_graph_multiple_projections": true,
+    "no_synthetic_scores": true,
+    "analytics_create_no_formal_or_engineering_credit": true
+  }
+}
