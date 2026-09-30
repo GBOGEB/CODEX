@@ -12,6 +12,8 @@ OBS = ROOT / "mission_control" / "mycelium" / "control_observations.json"
 OUT = ROOT / "mission_control" / "mycelium" / "metrics_snapshot.json"
 PAGES_OUT = ROOT / "docs" / "data" / "missioncontrol_metrics.json"
 LOG_ANALYSIS = ROOT / "mission_control" / "mycelium" / "log_analysis.json"
+SOURCE_STATUS = ROOT / "mission_control" / "mycelium" / "source_status.json"
+PORT_REGISTRY = ROOT / "mission_control" / "mycelium" / "port_registry.json"
 
 STATUS_MEASURED = "MEASURED"
 STATUS_DERIVED = "DERIVED_FROM_MEASURED"
@@ -195,6 +197,38 @@ def main() -> None:
         for node_id, summary in log_analysis.get("nodes", {}).items():
             obs.setdefault("nodes", {}).setdefault(node_id, {})["logs"] = summary
     snapshot = build_snapshot(graph, obs)
+    if SOURCE_STATUS.exists():
+        source_status = json.loads(SOURCE_STATUS.read_text(encoding="utf-8"))
+        sources = source_status.get("sources", [])
+        fresh = sum(1 for row in sources if str(row.get("status", "")).upper() in {"FRESH", "MEASURED_CHAT_CONNECTOR"})
+        if sources:
+            snapshot.setdefault("nodes", {}).setdefault("repo_codex", {})["docking"] = {
+                "status": STATUS_DERIVED,
+                "value": round(100.0 * fresh / len(sources), 2),
+                "fresh_sources": fresh,
+                "declared_sources": len(sources),
+                "basis": "source registry freshness/identity observation",
+            }
+    if PORT_REGISTRY.exists():
+        port_registry = json.loads(PORT_REGISTRY.read_text(encoding="utf-8"))
+        ports = [p for p in port_registry.get("ports", []) if p.get("declared")]
+        probed = [p for p in ports if str(p.get("probe_status", "")).upper() in {"PASS", "SUCCESS", "GREEN"}]
+        snapshot.setdefault("nodes", {}).setdefault("repo_codex", {})["ports"] = (
+            {
+                "status": STATUS_DERIVED,
+                "value": round(100.0 * len(probed) / len(ports), 2),
+                "probed_ports": len(probed),
+                "declared_ports": len(ports),
+            }
+            if ports and probed
+            else {
+                "status": STATUS_WITHHELD,
+                "value": None,
+                "probed_ports": len(probed),
+                "declared_ports": len(ports),
+                "reason": "no governed port probe has passed yet",
+            }
+        )
     payload = json.dumps(snapshot, indent=2, sort_keys=True) + "\n"
     OUT.write_text(payload, encoding="utf-8")
     PAGES_OUT.parent.mkdir(parents=True, exist_ok=True)
