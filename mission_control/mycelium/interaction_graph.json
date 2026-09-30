@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "snapshot_at": "2026-09-30T11:34:00+02:00",
+  "snapshot_at": "2026-09-30T11:39:00+02:00",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -127,8 +127,17 @@
       "state": "MERGED",
       "url": "https://github.com/GBOGEB/ABACUS/pull/1490",
       "meta": {
-        "merge_sha": "66af75cbf4a9d69d45d823a2eeef1336300aefc6"
+        "merge_sha": "66af75cbf4a9d69d45d823a2eeef1336300aefc6",
+        "expected_w293_reduction": 887,
+        "files": 21
       }
+    },
+    {
+      "id": "hard_pr2",
+      "type": "pull_request",
+      "label": "ABACUS #1492 residual E999",
+      "state": "PROVING",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1492"
     }
   ],
   "edges": [
@@ -226,6 +235,16 @@
       "from": "slice4",
       "to": "slice5",
       "type": "precedes"
+    },
+    {
+      "from": "hard_pr",
+      "to": "hard_pr2",
+      "type": "precedes"
+    },
+    {
+      "from": "hard_pr2",
+      "to": "dab_hard",
+      "type": "proves"
     }
   ]
 }
