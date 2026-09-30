@@ -42,13 +42,16 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:7px;bord
 <label>Lane <select id="commandLane"></select></label>
 <input id="configUpload" type="file" accept=".json,.yaml,.yml,.txt">
 </div>
-<textarea id="commandInput" placeholder="Enter task/steering text, JSON, or YAML. Static Pages stages intent; authenticated execution is separate."></textarea>
+<textarea id="commandInput" placeholder='For authenticated transport v0.1 use JSON: {"action":"REFRESH_FEDERATION_HEADS"}. Other text/JSON/YAML can still be staged as a local dry run.'></textarea>
 <div class="controls">
 <button id="dryRunCommand">Dry run</button>
-<button id="applyCommand">Apply request</button>
-<a id="commandDownload" hidden>command envelope</a>
-<span class="pill">Pages Apply = staged only</span>
+<button id="applyCommand">Prepare authenticated request</button>
+<button id="commandCopy">Copy request</button>
+<a id="commandDownload" hidden>download request</a>
+<a id="gatewayLaunch" target="_blank" rel="noopener" hidden>Open authenticated dry-run</a>
+<span class="pill">mutation transport disabled</span>
 </div>
+<div id="gatewayGuide" class="compact muted" hidden>Transport v0.1: stage formal request → copy/download JSON → open GitHub-authenticated workflow_dispatch → paste request → run read-only dry-run. A successful receipt authorizes only the transport proof; repository mutation remains disabled.</div>
 <div id="commandReceipt" class="compact muted">No command staged.</div>
 </article>
 
