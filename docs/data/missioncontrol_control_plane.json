@@ -2,7 +2,7 @@
   "schema_version": "0.2",
   "generated_for": "CODEX_MISSIONCONTROL_MYCELIUM",
   "mode": "CONTINUE_FROM_DURABLE_STATE",
-  "generated_at": "2026-09-30T12:00:00Z",
+  "generated_at": "2026-09-30T12:12:00Z",
   "source_yaml": "mission_control/mycelium/reentry_v0_2.yaml",
   "invariants": {
     "authority_transfer": false,
@@ -20,7 +20,7 @@
       "repo": "GBOGEB/CODEX",
       "branch": "main",
       "handover_observed_sha": "d77d44811fec4fada16988769614d6091df56133",
-      "refreshed_current_sha": "27c27086fab898d8c5d5e3cc4e1b87fe18fcd321",
+      "refreshed_current_sha": "954cde35a2ac101e687d71e28f973864118bb1f0",
       "role": "UI_ORCHESTRATION_GRAPH_AUTHORITY",
       "merge_refs": [
         {
@@ -163,10 +163,10 @@
     {
       "id": "CODEX_UI",
       "repository": "GBOGEB/CODEX",
-      "branch": "mission-control-authenticated-transport-v01-20260930",
-      "head_sha": "27c27086fab898d8c5d5e3cc4e1b87fe18fcd321",
-      "state": "EXECUTING",
-      "current_atom": "AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF",
+      "branch": "main",
+      "head_sha": "954cde35a2ac101e687d71e28f973864118bb1f0",
+      "state": "OWNER_ACTION_GATE",
+      "current_atom": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
       "completed_atoms": [
         "MYCELIUM_V0_1",
         "MYCELIUM_V0_2_INTERACTION",
@@ -188,12 +188,12 @@
         "REGENERATE_REENTRY_MANIFEST",
         "LIVE_TEMPORAL_FEDERATION_INGESTION",
         "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
-        "SELECT_AUTHENTICATED_TRANSPORT"
+        "SELECT_AUTHENTICATED_TRANSPORT",
+        "AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF"
       ],
-      "blocker": null,
-      "queue_state": "EXECUTION",
+      "blocker": "OWNER_AUTHENTICATED_WORKFLOW_DISPATCH_REQUIRED",
+      "queue_state": "OWNER_ACTION",
       "next_legal_transitions": [
-        "AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF",
         "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
         "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
         "CONSUME_TYPED_REMOTE_RETURNS"
@@ -308,9 +308,9 @@
     "remote_authority_state": "PRESERVED",
     "authority_transfer": false
   },
-  "current_proof": "mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json",
-  "current_capability_status": "AUTHENTICATED_TRANSPORT_IMPLEMENTED_PENDING_PROOF",
-  "next_edge": "AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF",
+  "current_proof": "mission_control/mycelium/receipts/AUTHENTICATED_TRANSPORT_V01_PR850_PROOF.json",
+  "current_capability_status": "AUTHENTICATED_TRANSPORT_MERGED_EXACT_HEAD_GREEN",
+  "next_edge": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
   "pages_readback": {
     "run_id": 36706855094,
     "build": "PASS",
@@ -352,7 +352,7 @@
     "pages_status": "GREEN"
   },
   "authenticated_execution_gateway": {
-    "state": "TRANSPORT_IMPLEMENTED_PENDING_EXACT_HEAD_PROOF",
+    "state": "TRANSPORT_MERGED_EXACT_HEAD_GREEN",
     "design_contract": "mission_control/mycelium/execution_gateway_contract.yaml",
     "request_schema": "mission_control/mycelium/schemas/execution_request.schema.json",
     "receipt_schema": "mission_control/mycelium/schemas/execution_receipt.schema.json",
@@ -368,6 +368,12 @@
     "static_pages_mode": "STAGE_OR_DRY_RUN_ONLY",
     "authority_transfer": false,
     "formal_credit_delta": 0,
-    "engineering_credit_delta": 0
+    "engineering_credit_delta": 0,
+    "exact_head_proof": "mission_control/mycelium/receipts/AUTHENTICATED_TRANSPORT_V01_PR850_PROOF.json",
+    "exact_head_run": 36712962475,
+    "exact_head_job": 109878913705,
+    "merge_sha": "ea167f43732e838bc3fb5d5ad382fe0874b66fcb",
+    "merged_main_readback_sha": "954cde35a2ac101e687d71e28f973864118bb1f0",
+    "pages_readback": "WITHHELD_NO_RUN_OBSERVED"
   }
 }
