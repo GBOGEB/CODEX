@@ -77,7 +77,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:7px;bord
 
 <article class="panel" data-panel="OUTPUT_EVIDENCE"><h2>4 · Output / Evidence</h2>
 <div><span class="pill">DoD: graph + manifest + links + responsive UI + restartable checkpoint</span><span class="pill">DoV: executed proof required</span></div>
-<div class="controls"><input id="artifactFilter" placeholder="filter artifact / evidence / provenance"><a href="../mission_control/mycelium/receipts/MYCELIUM_V02_PR839_PROOF.json">#839 proof receipt</a></div>
+<div class="controls"><input id="artifactFilter" placeholder="filter artifact / evidence / provenance"><a href="https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/receipts/MYCELIUM_V02_PR839_PROOF.json">#839 proof receipt</a></div>
 <div class="artifact-grid" id="artifacts"></div>
 <table><thead><tr><th>Evidence node</th><th>State</th><th>Proof/source</th></tr></thead><tbody id="evidence"></tbody></table>
 <p class="muted">Local reproducibility ≠ exact-SHA receipt ≠ external authoritative return. Visualization or analytics alone create no formal or engineering credit.</p>
@@ -201,14 +201,14 @@ $('#theme').onclick=()=>document.documentElement.dataset.theme=document.document
 $('#graphFilter').oninput=drawGraph; $('#projection').onchange=drawGraph; $('#graphOverlay').onchange=drawGraph;
 const panels=[...document.querySelectorAll('.panel')], focusSel=$('#focus'), grid=$('#grid');
 panels.forEach((p,i)=>{const o=document.createElement('option');o.value=p.dataset.panel;o.textContent=(i+1)+' · '+p.querySelector('h2').textContent.replace(/^\d+ · /,'');focusSel.appendChild(o);});
-focusSel.value='repo_topology';
+focusSel.value='COMMAND_INPUT_ROOT';
 function applyLayout(){
   grid.className='grid '+($('#layout').value==='grid'?'':$('#layout').value);
   panels.forEach(p=>p.classList.toggle('focus',p.dataset.panel===focusSel.value));
 }
 $('#layout').onchange=applyLayout; focusSel.onchange=applyLayout;
 panels.forEach(p=>p.onclick=e=>{if(e.target.closest('a,button,select,svg'))return;focusSel.value=p.dataset.panel;applyLayout();});
-$('#reset').onclick=()=>{focusSel.value='repo_topology';$('#layout').value='grid';applyLayout();};
+$('#reset').onclick=()=>{focusSel.value='COMMAND_INPUT_ROOT';$('#layout').value='grid';applyLayout();};
 applyLayout();
 load().catch(e=>$('#stamp').textContent='graph load failed: '+e.message);
 </script>
