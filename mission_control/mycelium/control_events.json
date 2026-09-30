@@ -201,6 +201,17 @@
       "parent_event": "EV-0017",
       "content_ref": "mission_control/mycelium/receipts/AUTHENTICATED_TRANSPORT_V01_PR850_PROOF.json",
       "summary": "Transport merge read back on main; Pages proof remains withheld and first incomplete atom advances to owner-authenticated workflow_dispatch."
+    },
+    {
+      "id": "EV-0019",
+      "at": "2026-09-30T12:24:00Z",
+      "type": "EXTERNAL_RETURN",
+      "node_id": "repo_abacus",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "2d365a1a3b39395b165e2e9662967d434d302606",
+      "parent_event": "EV-0018",
+      "content_ref": "mission_control/mycelium/evidence/abacus_dab_return_1500_partial.json",
+      "summary": "Typed ABACUS DAB return consumed: E722=26 measured; F811/E731 closed; E741=40 with #1501 proving; #1500 W293 -745 merged while post-merge residual remains withheld."
     }
   ],
   "horizons": {
@@ -209,22 +220,22 @@
         "rank": 1,
         "id": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
         "state": "WAIT_OWNER_ACTION",
-        "reason": "transport implementation is merged/exact-head green; genuine authenticated runtime receipt requires owner workflow_dispatch",
+        "reason": "CODEX mutation remains gated on genuine authenticated runtime receipt",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
-        "id": "CONSUME_TYPED_REMOTE_RETURNS",
-        "state": "READY",
-        "reason": "ABACUS post-1497/1498 measured census is available independently",
-        "lane": "FEDERATION"
+        "id": "ABACUS_E741_PR1501",
+        "state": "PROOF_QUEUED",
+        "reason": "hard lane continues with five measured DMAIC-core E741 repairs",
+        "lane": "ABACUS_REMOTE_EXECUTION"
       },
       {
         "rank": 3,
-        "id": "PAGES_TRANSPORT_READBACK",
-        "state": "WITHHELD_NO_RUN_OBSERVED",
-        "reason": "no merged-main Pages run observed; does not compensate transport proof",
-        "lane": "CODEX_UI"
+        "id": "ABACUS_W293_POST1500_CENSUS",
+        "state": "PROOF_QUEUED",
+        "reason": "745 W293 removals merged; residual stays withheld until hosted census executes",
+        "lane": "ABACUS_REMOTE_EXECUTION"
       }
     ],
     "mid": [
