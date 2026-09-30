@@ -293,6 +293,8 @@ def validate() -> list[str]:
         errors.append("gateway workflow lacks branch/PR publication permissions")
     if "git push -u origin" not in gateway_workflow or "gh pr create" not in gateway_workflow:
         errors.append("gateway workflow does not publish reviewable branch/PR output")
+    if 'exit "$RC"' not in gateway_workflow or "required PR creation failed" not in gateway_workflow:
+        errors.append("gateway workflow does not fail closed when required PR creation fails")
     if "git push origin main" in gateway_workflow or "git push origin HEAD:main" in gateway_workflow:
         errors.append("gateway workflow contains forbidden direct-main push")
     for token in ("ALLOWED_ACTIONS", "stale source authority", "AUTOMATION_BRANCH_PR_ONLY"):
