@@ -2,14 +2,14 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-09-30T11:26:00Z"
+  generated_at: "2026-09-30T11:42:00Z"
 
   repositories:
     codex:
       repo: GBOGEB/CODEX
       branch: main
       handover_observed_sha: d77d44811fec4fada16988769614d6091df56133
-      refreshed_current_sha: e7404bfb6df3289705286685500fd19c4ec6d991
+      refreshed_current_sha: bc514318077c74a54508b5820d59026f66e9ae92
       role: UI_ORCHESTRATION_GRAPH_AUTHORITY
       mycelium_v0_1_merge:
         pr: 837
@@ -60,7 +60,7 @@ reentry:
     static_pages_apply_mutates_repository: false
 
   current_capability:
-    status: MYCELIUM_V0_2_1_MERGED_PAGES_GREEN
+    status: AUTHENTICATED_EXECUTION_GATEWAY_V0_1_IMPLEMENTED_PENDING_PROOF
     existing:
       - durable recovery manifest
       - typed nodes_edges_atoms_queues_evidence graph
@@ -89,6 +89,13 @@ reentry:
       - executable_DAG_projection
       - exact_head_proof_receipt
       - merged_main_Pages_green
+      - live_federation_3of3_freshness
+      - live_federation_exact_head_proof
+      - recurring_federation_freshness_v0_3
+      - authenticated_gateway_contract_v0_1
+      - authenticated_gateway_validator
+      - authenticated_gateway_workflow_adapter
+      - graph_provenance_trace_navigation
 
   requested_delta:
     id: MYCELIUM_V0_2_HTML_CONTROL_PLANE
@@ -191,10 +198,10 @@ reentry:
   lanes:
     - id: CODEX_UI
       repository: GBOGEB/CODEX
-      branch: main
-      head_sha: e7404bfb6df3289705286685500fd19c4ec6d991
-      state: READY
-      current_atom: AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
+      branch: mission-control-authenticated-gateway-v01-r2-20260930
+      head_sha: bc514318077c74a54508b5820d59026f66e9ae92
+      state: EXECUTING
+      current_atom: AUTHENTICATED_EXECUTION_GATEWAY_V0_1_EXACT_HEAD_PROOF
       completed_atoms:
         - MYCELIUM_V0_1
         - MYCELIUM_V0_2_INTERACTION
@@ -214,25 +221,44 @@ reentry:
         - MERGE_READBACK
         - PAGES_READBACK
         - REGENERATE_REENTRY_MANIFEST
+        - LIVE_TEMPORAL_FEDERATION_INGESTION
+        - REFRESH_FEDERATION_HEADS_LIVE
+        - BIND_SOURCE_STATUS_PARITY
+        - BIND_FRESHNESS_METRIC
+        - BIND_FRESHNESS_CONTROL_EVENT
+        - BIND_FEDERATION_GRAPH_PROVENANCE
+        - LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF
+        - AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
+        - GATEWAY_CONTRACT
+        - GATEWAY_VALIDATOR
+        - GATEWAY_WORKFLOW_ADAPTER
+        - UI_GATEWAY_HANDOFF
+        - RICH_ARTIFACT_PROVENANCE_NAV
       blocker: null
       queue_state: EXECUTION
       evidence_refs:
         - PR_837
         - PR_839
         - PR_841
+        - PR_845
         - MYCELIUM_V02_PR839_PROOF
         - MYCELIUM_V021_PR841_PROOF
+        - LIVE_FEDERATION_INGESTION_20260930T111600Z_PROOF
       artifact_refs:
         - mission_control/mycelium/control_manifest.yaml
         - mission_control/mycelium/interaction_graph.json
         - mission_control/mycelium/control_plane_projection.json
         - mission_control/mycelium/control_events.json
         - mission_control/mycelium/executable_projection.json
-        - mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
+        - mission_control/mycelium/gateway_contract.yaml
+        - scripts/missioncontrol_command_gateway.py
+        - .github/workflows/missioncontrol-command-gateway.yml
         - docs/missioncontrol_mycelium.html
       next_legal_transitions:
-        - AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
-        - CONSUME_TYPED_REMOTE_RETURNS
+        - AUTHENTICATED_EXECUTION_GATEWAY_V0_1_EXACT_HEAD_PROOF
+        - MERGE_GATEWAY_V0_1
+        - PAGES_READBACK
+        - GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
         - SCHEDULE_NEXT_LIVE_FEDERATION_REFRESH
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
@@ -381,6 +407,19 @@ reentry:
     proof_receipt: mission_control/mycelium/receipts/LIVE_FEDERATION_INGESTION_20260930T111600Z_PROOF.json
     next_edge: AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
 
+  authenticated_execution_gateway:
+    version: "0.1.0"
+    status: IMPLEMENTED_PENDING_EXACT_HEAD_PROOF
+    contract: mission_control/mycelium/gateway_contract.yaml
+    workflow: .github/workflows/missioncontrol-command-gateway.yml
+    authenticated_surface: https://github.com/GBOGEB/CODEX/actions/workflows/missioncontrol-command-gateway.yml
+    source_lock: EXACT_SHA
+    live_head_probe: https://api.github.com/repos/GBOGEB/CODEX/commits/main
+    mutation_mode: AUTOMATION_BRANCH_PR_ONLY
+    direct_main_write: false
+    allowed_actions: [REFRESH_FEDERATION_HEADS]
+    runtime_proof: WITHHELD_OWNER_DISPATCH_REQUIRED
+
   qlm_context:
     repository: GBOGEB/cryoplant-project
     classification: REMOTE_ENGINEERING_TRUTH
@@ -392,20 +431,21 @@ reentry:
 
   next_execution:
     objective: >-
-      Continue from the merged and Pages-proven Mycelium v0.2.1 control plane
-      into live temporal/federation ingestion without replaying completed atoms
-      or transferring remote execution/engineering authority into CODEX.
+      Prove and merge the authenticated MissionControl gateway v0.1 on top of
+      the recurring live-federation freshness authority without permitting
+      static Pages or remote repositories to mutate CODEX main directly.
     sequence:
-      - refresh_live_main_heads
-      - ingest_governed_temporal_events
-      - refresh_federation_source_identities
-      - consume_typed_remote_returns
-      - project_current_mid_long_priority
-      - bind_source_target_freshness
-      - update_graph_driven_outward_navigation
-      - preserve_PCA_BT_KPI_evidence_guards
-      - design_authenticated_execution_gateway_separately
-      - exact_head_proof_for_each_bounded_delta
+      - validate_gateway_contract
+      - validate_fail_closed_envelope_policy
+      - validate_live_exact_SHA_probe
+      - validate_GitHub_authenticated_workflow_adapter
+      - validate_PR_only_mutation_boundary
+      - validate_graph_provenance_navigation
+      - exact_head_MissionControl_proof
+      - merge_gateway_v0_1_if_green
+      - Pages_readback
+      - owner_dispatch_gateway_dry_run
+      - expand_allowlist_only_after_runtime_proof
 
   closure:
     v0_2_1:
