@@ -14,8 +14,20 @@ def test_gateway_design_contract_is_fail_closed() -> None:
         (ROOT / "mission_control/mycelium/execution_gateway_contract.yaml").read_text()
     )
     assert contract["authorization"]["default"] == "DENY"
-    assert contract["authentication"]["enabled_mutation_transports"] == []
-    assert contract["authorization"]["action_classes"]["APPLY_BOUNDED_CODEX"]["enabled"] is False
+    assert contract["state"] == "BOUNDED_CODEX_APPLY_IMPLEMENTED_PENDING_RUNTIME_PROOF"
+    assert contract["authentication"]["enabled_mutation_transports"] == [
+        "OWNER_COMMENT_AUTOMATION_PR"
+    ]
+    apply_rule = contract["authorization"]["action_classes"]["APPLY_BOUNDED_CODEX"]
+    assert apply_rule["enabled"] is True
+    assert apply_rule["allowed_repositories"] == ["GBOGEB/CODEX"]
+    assert apply_rule["allowed_intents"] == ["REFRESH_FEDERATION_HEADS"]
+    assert apply_rule["direct_main_write"] is False
+    assert apply_rule["review_pr_required"] is True
+    bounded = contract["bounded_apply_runtime"]
+    assert bounded["mutation_mode"] == "AUTOMATION_BRANCH_PR_ONLY"
+    assert bounded["runtime_proof"] == "WITHHELD_OWNER_APPLY_COMMAND_REQUIRED"
+    assert bounded["remote_authority_mutation"] is False
 
 
 def test_execution_request_requires_exact_head_and_no_credit() -> None:
