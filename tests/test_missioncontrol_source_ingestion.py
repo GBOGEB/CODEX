@@ -148,7 +148,42 @@ def test_fixture_ingestion_withholds_identity_when_head_fixture_missing(tmp_path
         "ingest": ["repository"],
     }
     result = collect_source(source, token=None, fixture_dir=tmp_path)
-    assert result["status"] == "ERROR"
+    assert result["status"] == "FRESH"
     assert result["head_ref"] == "main"
     assert "head_sha" not in result
-    assert result["identity_status"] == "WITHHELD"
+    assert result["identity_status"] == "WITHHELD_FIXTURE_HEAD_MISSING"
+
+
+def test_temporal_event_records_loss_of_exact_identity() -> None:
+    previous = {
+        "sources": [
+            {
+                "id": "abacus",
+                "repository": "GBOGEB/ABACUS",
+                "authority_class": "REMOTE_AUTHORITATIVE",
+                "status": "FRESH",
+                "identity_status": "MEASURED",
+                "head_sha": "old-head",
+            }
+        ]
+    }
+    current = {
+        "generated_at": "2026-09-30T12:58:00+00:00",
+        "sources": [
+            {
+                "id": "abacus",
+                "repository": "GBOGEB/ABACUS",
+                "authority_class": "REMOTE_AUTHORITATIVE",
+                "status": "FRESH",
+                "identity_status": "WITHHELD_HEAD_SHA_MISSING",
+                "default_branch": "main",
+            }
+        ],
+    }
+    updated = temporal_refresh_events(previous, current, {"events": []})
+    assert len(updated["events"]) == 1
+    event = updated["events"][0]
+    assert event["source_sha"] is None
+    assert event["identity_status_before"] == "MEASURED"
+    assert event["identity_status_after"] == "WITHHELD_HEAD_SHA_MISSING"
+    assert "old-head -> UNAVAILABLE" in event["summary"]
