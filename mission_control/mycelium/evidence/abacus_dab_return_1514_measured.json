@@ -1,0 +1,60 @@
+{
+  "schema_version": "0.1",
+  "return_id": "ABACUS_DAB_RETURN_20260930_1514_MEASURED",
+  "observed_at": "2026-09-30T15:55:58Z",
+  "source": {
+    "repository": "GBOGEB/ABACUS",
+    "ref": "gm14/dab-mech-w293-slice11-20260930",
+    "measured_sha": "725218d7e7dce208c7196654aade542cfe9ded27",
+    "current_main_sha": "877efed83bf6479232e0029fb430243f21e937a2",
+    "authority": "REMOTE_EXECUTION_DOW"
+  },
+  "bounded_slice": {
+    "pr": 1514,
+    "merge_sha": "877efed83bf6479232e0029fb430243f21e937a2",
+    "family": "W293",
+    "removed": 188
+  },
+  "exact_census": {
+    "workflow_run": 36740253334,
+    "job": 109972471534,
+    "status": "MEASURED",
+    "total": 8351,
+    "families": {
+      "E999": 1,
+      "F821": 0,
+      "F601": 0,
+      "F811": 0,
+      "F841": 77,
+      "E722": 20,
+      "E731": 0,
+      "E741": 22,
+      "W293": 517
+    },
+    "artifact": {
+      "id": 11110361727,
+      "name": "dab-flake8-census",
+      "sha256": "34596f396bce4d19c36b2816a8e23641b85f58dc602bdef282d614961ade7cb3"
+    }
+  },
+  "pending_independent_lane": {
+    "pr": 1516,
+    "family": "E722",
+    "status": "OPEN_UNMEASURED",
+    "expected_only": {
+      "E722": 18
+    }
+  },
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+    "state": "SOURCE_BOUND_HOLD"
+  },
+  "acceptance": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "engineering_truth_promoted": false
+  }
+}
