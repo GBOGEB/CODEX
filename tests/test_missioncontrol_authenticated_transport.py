@@ -123,8 +123,11 @@ def test_selected_transport_does_not_enable_apply():
     contract = yaml.safe_load(
         (root / "mission_control/mycelium/execution_gateway_contract.yaml").read_text()
     )
-    assert contract["state"] == "AUTHENTICATED_TRANSPORT_IMPLEMENTED_NO_MUTATION"
+    assert contract["state"] == "BOUNDED_APPLY_IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF"
     assert contract["authentication"]["selected_transport"] == "GITHUB_ACTIONS_WORKFLOW_DISPATCH"
     assert contract["authentication"]["enabled_mutation_transports"] == []
     assert contract["authorization"]["action_classes"]["APPLY_BOUNDED_CODEX"]["enabled"] is False
     assert contract["transport_runtime"]["mutation_enabled"] is False
+    assert contract["bounded_apply_runtime"]["mutation_enabled"] is False
+    assert contract["bounded_apply_runtime"]["execute_permitted"] is False
+    assert contract["bounded_apply_runtime"]["enabled_mutation_transports"] == []
