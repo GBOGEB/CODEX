@@ -1,0 +1,210 @@
+{
+  "schema_version": "0.1",
+  "snapshot_at": "2026-09-30T11:26:00+02:00",
+  "surface_id": "MISSIONCONTROL_MYCELIUM",
+  "nodes": [
+    {
+      "id": "repo_codex",
+      "type": "repo",
+      "label": "GBOGEB/CODEX",
+      "state": "LOCAL_AUTHORITY",
+      "url": "https://github.com/GBOGEB/CODEX",
+      "meta": {
+        "sha": "645f836eb8b49be746a154bfe4f0987be7e50b43"
+      }
+    },
+    {
+      "id": "repo_abacus",
+      "type": "repo",
+      "label": "GBOGEB/ABACUS",
+      "state": "REMOTE_EXECUTION",
+      "url": "https://github.com/GBOGEB/ABACUS",
+      "meta": {
+        "sha": "9bebb2e5173f43d77bf178833e1c2f1c827663cd"
+      }
+    },
+    {
+      "id": "ssot_manifest",
+      "type": "artifact",
+      "label": "CODEX authority manifest",
+      "state": "ACTIVE",
+      "url": "../ssot/manifest.yaml"
+    },
+    {
+      "id": "runtime_registry",
+      "type": "artifact",
+      "label": "CODEX runtime registry",
+      "state": "ACTIVE",
+      "url": "../ssot/registry/runtime_registry.yaml"
+    },
+    {
+      "id": "recursive_os",
+      "type": "artifact",
+      "label": "Recursive Engineering OS",
+      "state": "ACTIVE",
+      "url": "../recursive_engineering_os/RECURSIVE_ENGINEERING_OS.md"
+    },
+    {
+      "id": "dab_mech",
+      "type": "queue",
+      "label": "DAB-MECH",
+      "state": "EVIDENCE_GATED"
+    },
+    {
+      "id": "dab_hard",
+      "type": "queue",
+      "label": "DAB-HARD",
+      "state": "ACTIVE"
+    },
+    {
+      "id": "slice4",
+      "type": "pull_request",
+      "label": "ABACUS #1487 slice 4",
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1487",
+      "meta": {
+        "merge_sha": "f16b4d5936c735611df4084c9702c21330b27dea"
+      }
+    },
+    {
+      "id": "hard_issue",
+      "type": "issue",
+      "label": "ABACUS #1488 DAB-HARD",
+      "state": "ACTIVE",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1488"
+    },
+    {
+      "id": "hard_pr",
+      "type": "pull_request",
+      "label": "ABACUS #1489 E999 repairs",
+      "state": "PROVING",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1489",
+      "meta": {
+        "head_sha": "80c822aa701a6139885dd8de1cffb0b4a4e13c90"
+      }
+    },
+    {
+      "id": "atom_w293",
+      "type": "atom",
+      "label": "W293 whitespace atom",
+      "state": "MECHANICAL"
+    },
+    {
+      "id": "atom_e999",
+      "type": "atom",
+      "label": "E999 parse atom",
+      "state": "SEMANTIC"
+    },
+    {
+      "id": "pages",
+      "type": "output",
+      "label": "GitHub Pages",
+      "state": "TARGET"
+    },
+    {
+      "id": "plotly",
+      "type": "output",
+      "label": "Plotly interactive analytics",
+      "state": "SOURCE_LINKED"
+    },
+    {
+      "id": "matplotlib",
+      "type": "output",
+      "label": "Matplotlib static evidence",
+      "state": "SOURCE_LINKED"
+    },
+    {
+      "id": "mycelium",
+      "type": "artifact",
+      "label": "MissionControl Mycelium UI",
+      "state": "UNDER_CONSTRUCTION"
+    }
+  ],
+  "edges": [
+    {
+      "from": "repo_codex",
+      "to": "ssot_manifest",
+      "type": "contains"
+    },
+    {
+      "from": "repo_codex",
+      "to": "runtime_registry",
+      "type": "contains"
+    },
+    {
+      "from": "repo_codex",
+      "to": "recursive_os",
+      "type": "contains"
+    },
+    {
+      "from": "ssot_manifest",
+      "to": "mycelium",
+      "type": "proves"
+    },
+    {
+      "from": "runtime_registry",
+      "to": "mycelium",
+      "type": "consumes"
+    },
+    {
+      "from": "recursive_os",
+      "to": "mycelium",
+      "type": "derives_from"
+    },
+    {
+      "from": "repo_abacus",
+      "to": "dab_mech",
+      "type": "contains"
+    },
+    {
+      "from": "repo_abacus",
+      "to": "dab_hard",
+      "type": "contains"
+    },
+    {
+      "from": "dab_mech",
+      "to": "atom_w293",
+      "type": "contains"
+    },
+    {
+      "from": "dab_hard",
+      "to": "atom_e999",
+      "type": "contains"
+    },
+    {
+      "from": "slice4",
+      "to": "dab_mech",
+      "type": "proves"
+    },
+    {
+      "from": "hard_issue",
+      "to": "dab_hard",
+      "type": "contains"
+    },
+    {
+      "from": "hard_pr",
+      "to": "dab_hard",
+      "type": "proves"
+    },
+    {
+      "from": "mycelium",
+      "to": "pages",
+      "type": "publishes"
+    },
+    {
+      "from": "mycelium",
+      "to": "plotly",
+      "type": "publishes"
+    },
+    {
+      "from": "mycelium",
+      "to": "matplotlib",
+      "type": "publishes"
+    },
+    {
+      "from": "repo_abacus",
+      "to": "repo_codex",
+      "type": "federates"
+    }
+  ]
+}
