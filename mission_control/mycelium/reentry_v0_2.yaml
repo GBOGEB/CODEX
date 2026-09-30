@@ -29,7 +29,7 @@ reentry:
       repo: GBOGEB/ABACUS
       branch: main
       handover_observed_sha: 713a152e99024165aea81bffbf530d2073e164bb
-      refreshed_current_sha: 877efed83bf6479232e0029fb430243f21e937a2
+      refreshed_current_sha: 07dfdf08cc4252df6d3650b2c6b1b3623958bbd8
       role: REMOTE_EXECUTION_AUTHORITY
       latest_census:
         pr: 1499
@@ -72,15 +72,15 @@ reentry:
           E731: 0
       latest_measured_return:
         pr: 1514
-        head_sha: 725218d7e7dce208c7196654aade542cfe9ded27
-        merge_sha: 877efed83bf6479232e0029fb430243f21e937a2
-        current_main_sha: 877efed83bf6479232e0029fb430243f21e937a2
-        workflow_run: 36740253334
-        job: 109972471534
-        artifact_id: 11110361727
-        artifact_sha256: 34596f396bce4d19c36b2816a8e23641b85f58dc602bdef282d614961ade7cb3
-        total: 8351
-        E722: 20
+        head_sha: fa9f22ef330022ba4af31e619608b22bf8071d8f
+        merge_sha: fa9f22ef330022ba4af31e619608b22bf8071d8f
+        current_main_sha: 07dfdf08cc4252df6d3650b2c6b1b3623958bbd8
+        workflow_run: 36741063907
+        job: 109975274070
+        artifact_id: 11110213996
+        artifact_sha256: 40e991e1171f5be96531bd27ca089de7d7fd25e62409f076937ab790dbfc637c
+        total: 8349
+        E722: 18
         E741: 22
         W293: 517
         F841: 77
@@ -91,9 +91,9 @@ reentry:
         E731: 0
         state: MEASURED
         pending_independent_lane:
-          pr: 1516
-          family: E722
-          expected_only: 18
+          pr: 1519
+          families: [E722, E741]
+          expected_only: "E722=16,E741=21,W293=453"
           status: OPEN_UNMEASURED
     cryoplant:
       repo: GBOGEB/cryoplant-project
@@ -302,10 +302,10 @@ reentry:
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
-      head_sha: 877efed83bf6479232e0029fb430243f21e937a2
+      head_sha: 07dfdf08cc4252df6d3650b2c6b1b3623958bbd8
       state: REMOTE_AUTHORITY
       latest_census_merge_sha: 877efed83bf6479232e0029fb430243f21e937a2
-      current_atom: POST_1514_MEASURED_DAB_QUEUE_1516_PENDING
+      current_atom: POST_1516_MEASURED_DAB_QUEUE_1518_1519_PENDING
       completed_atoms:
         - POST_1506_COMBINED_CENSUS_MEASURED
       blocker: REMOTE_ONLY_NO_CODEX_PROMOTION
