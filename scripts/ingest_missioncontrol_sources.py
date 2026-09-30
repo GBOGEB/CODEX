@@ -104,6 +104,7 @@ def collect_source(
         result["data"]["repository"] = repo_meta
         default_branch = repo_meta.get("default_branch") or "main"
         result["default_branch"] = default_branch
+        result["head_ref"] = default_branch
         result["pushed_at"] = repo_meta.get("pushed_at")
         result["open_issue_count"] = repo_meta.get("open_issues_count")
 
@@ -115,6 +116,7 @@ def collect_source(
         if not head_sha:
             raise ValueError(f"{repo}: exact default-branch head SHA missing")
         result["head_sha"] = head_sha
+        result["identity_status"] = "MEASURED"
         result["head_url"] = head.get("html_url") or (
             f"https://github.com/{repo}/commit/{head_sha}"
         )
@@ -126,6 +128,7 @@ def collect_source(
         ValueError,
     ) as exc:
         result["status"] = "ERROR"
+        result["identity_status"] = "WITHHELD"
         result["error"] = f"{type(exc).__name__}: {exc}"
         return result
 
