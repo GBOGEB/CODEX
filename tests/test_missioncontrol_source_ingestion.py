@@ -148,7 +148,7 @@ def test_fixture_ingestion_withholds_identity_when_head_fixture_missing(tmp_path
         "ingest": ["repository"],
     }
     result = collect_source(source, token=None, fixture_dir=tmp_path)
-    assert result["status"] == "ERROR"
+    assert result["status"] == "FRESH"
     assert result["head_ref"] == "main"
     assert "head_sha" not in result
-    assert result["identity_status"] == "WITHHELD"
+    assert result["identity_status"] == "WITHHELD_FIXTURE_HEAD_MISSING"
