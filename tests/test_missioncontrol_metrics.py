@@ -8,6 +8,7 @@ from scripts.build_missioncontrol_metrics import (
     bt_rank,
     build_snapshot,
     pressure_metric,
+    source_identity_is_measured,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -103,3 +104,18 @@ def test_latest_abacus_source_status_supersedes_stale_observation_metrics() -> N
     assert hard["F811"]["state"] == "CLOSED"
     assert hard["E999"]["state"] == "SOURCE_BOUND_HOLD"
     assert snapshot["latest_remote_return"]["source_sha"] == "current"
+
+
+def test_source_identity_measurement_requires_exact_head() -> None:
+    assert source_identity_is_measured(
+        {"status": "FRESH", "identity_status": "MEASURED", "head_sha": "abc"}
+    )
+    assert source_identity_is_measured(
+        {"status": "MEASURED_CHAT_CONNECTOR", "head_sha": "abc"}
+    )
+    assert not source_identity_is_measured(
+        {"status": "FRESH", "identity_status": "WITHHELD_HEAD_PROBE_ERROR"}
+    )
+    assert not source_identity_is_measured(
+        {"status": "FRESH", "identity_status": "MEASURED"}
+    )
