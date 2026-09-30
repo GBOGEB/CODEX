@@ -168,7 +168,15 @@ function drawMetrics(){
  const hard=metrics?.nodes?.dab_hard?.family_progress||[];
  hard.forEach(x=>rows.push(['Hard · '+x.family,'ABACUS DAB-HARD',x.status||'WITHHELD',(x.measured_postmerge===null||x.measured_postmerge===undefined?'target '+(x.target??x.local_target??'—')+' · measured withheld':'baseline '+x.baseline+' → '+x.measured_postmerge)]));
  const mech=metrics?.nodes?.dab_mech?.mechanical_progress;
- if(mech)rows.push(['MECH · W293','ABACUS #1490',mech.status||'MEASURED','removed '+mech.removed_w293+' / '+mech.files+' files · residual '+(mech.residual_w293??'WITHHELD')]);
+ if(mech){
+   const mechDetails=[];
+   if(mech.removed_w293!==undefined&&mech.removed_w293!==null)mechDetails.push('removed '+mech.removed_w293);
+   if(mech.files!==undefined&&mech.files!==null)mechDetails.push(mech.files+' files');
+   mechDetails.push('residual '+(mech.residual_w293??'WITHHELD'));
+   if(mech.repository_total_flake8!==undefined&&mech.repository_total_flake8!==null)mechDetails.push('repo total '+mech.repository_total_flake8);
+   if(mech.evidence_pr)mechDetails.push('evidence '+mech.evidence_pr);
+   rows.push(['MECH · W293',mech.slice||'ABACUS DAB-MECH',mech.status||'MEASURED',mechDetails.join(' · ')]);
+ }
  $('#metricRows').innerHTML=rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td><span class="pill">'+r[2]+'</span></td><td>'+r[3]+'</td></tr>').join('');
 }
 function drawProgress(){
