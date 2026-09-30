@@ -92,7 +92,7 @@
     },
     {
       "id": "LIVE_TEMPORAL_FEDERATION_INGESTION",
-      "state": "ACTIVE"
+      "state": "COMPLETED"
     },
     {
       "id": "REFRESH_FEDERATION_HEADS_LIVE",
@@ -120,6 +120,38 @@
     },
     {
       "id": "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "RECURRING_FEDERATION_FRESHNESS_V0_3",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "GATEWAY_CONTRACT",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "GATEWAY_VALIDATOR",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "GATEWAY_WORKFLOW_ADAPTER",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "UI_GATEWAY_HANDOFF",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "RICH_ARTIFACT_PROVENANCE_NAV",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "AUTHENTICATED_EXECUTION_GATEWAY_V0_1_EXACT_HEAD_PROOF",
+      "state": "PENDING"
+    },
+    {
+      "id": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
       "state": "PENDING"
     }
   ],
@@ -247,10 +279,46 @@
     [
       "LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF",
       "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN"
+    ],
+    [
+      "LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF",
+      "RECURRING_FEDERATION_FRESHNESS_V0_3"
+    ],
+    [
+      "RECURRING_FEDERATION_FRESHNESS_V0_3",
+      "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN"
+    ],
+    [
+      "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
+      "GATEWAY_CONTRACT"
+    ],
+    [
+      "GATEWAY_CONTRACT",
+      "GATEWAY_VALIDATOR"
+    ],
+    [
+      "GATEWAY_VALIDATOR",
+      "GATEWAY_WORKFLOW_ADAPTER"
+    ],
+    [
+      "GATEWAY_WORKFLOW_ADAPTER",
+      "UI_GATEWAY_HANDOFF"
+    ],
+    [
+      "UI_GATEWAY_HANDOFF",
+      "RICH_ARTIFACT_PROVENANCE_NAV"
+    ],
+    [
+      "RICH_ARTIFACT_PROVENANCE_NAV",
+      "AUTHENTICATED_EXECUTION_GATEWAY_V0_1_EXACT_HEAD_PROOF"
+    ],
+    [
+      "AUTHENTICATED_EXECUTION_GATEWAY_V0_1_EXACT_HEAD_PROOF",
+      "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH"
     ]
   ],
   "first_incomplete_atoms": [
-    "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN"
+    "AUTHENTICATED_EXECUTION_GATEWAY_V0_1_EXACT_HEAD_PROOF"
   ],
   "guards": {
     "replay_completed_atoms": false,
@@ -265,11 +333,16 @@
     "pages_run": 36706855094
   },
   "active_slice": {
-    "id": "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
-    "state": "PENDING",
-    "predecessor": "LIVE_TEMPORAL_FEDERATION_INGESTION_PULSE_20260930T111600Z",
+    "id": "AUTHENTICATED_EXECUTION_GATEWAY_V0_1",
+    "state": "IMPLEMENTED_PENDING_EXACT_HEAD_PROOF",
+    "predecessor": "RECURRING_FEDERATION_FRESHNESS_V0_3",
     "predecessor_proof": "mission_control/mycelium/receipts/LIVE_FEDERATION_INGESTION_20260930T111600Z_PROOF.json",
-    "static_pages_apply_remains": "STAGED_ONLY",
+    "mutation_mode": "AUTOMATION_BRANCH_PR_ONLY",
+    "direct_main_write": false,
+    "allowed_actions": [
+      "REFRESH_FEDERATION_HEADS"
+    ],
+    "runtime_proof": "WITHHELD_OWNER_DISPATCH_REQUIRED",
     "authority_transfer": false
   },
   "closed_live_federation_pulse": {
