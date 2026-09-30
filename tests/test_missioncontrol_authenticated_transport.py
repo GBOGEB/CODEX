@@ -105,7 +105,7 @@ def test_receipt_conforms_to_design_schema():
         run_id=12345,
         job_id=67890,
     )
-    assert receipt["decision"] == "AUTHORIZE"
+    assert receipt["decision"] == "EXECUTED"
     assert receipt["observed_head_sha"] == SHA
     assert receipt["after_sha"] is None
     assert receipt["workflow_run"] == 12345
@@ -113,3 +113,18 @@ def test_receipt_conforms_to_design_schema():
     assert receipt["authority_transfer"] is False
     assert receipt["formal_credit_delta"] == 0
     assert receipt["engineering_credit_delta"] == 0
+
+
+def test_selected_transport_does_not_enable_apply():
+    import yaml
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    contract = yaml.safe_load(
+        (root / "mission_control/mycelium/execution_gateway_contract.yaml").read_text()
+    )
+    assert contract["state"] == "AUTHENTICATED_TRANSPORT_IMPLEMENTED_NO_MUTATION"
+    assert contract["authentication"]["selected_transport"] == "GITHUB_ACTIONS_WORKFLOW_DISPATCH"
+    assert contract["authentication"]["enabled_mutation_transports"] == []
+    assert contract["authorization"]["action_classes"]["APPLY_BOUNDED_CODEX"]["enabled"] is False
+    assert contract["transport_runtime"]["mutation_enabled"] is False
