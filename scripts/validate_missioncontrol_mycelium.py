@@ -226,6 +226,22 @@ def validate() -> list[str]:
         errors.append("authenticated Apply gateway guard missing")
     if cp.get("execution_model", {}).get("executable_projection_must_be_DAG") is not True:
         errors.append("executable projection DAG guard missing")
+    rendering = cp.get("rendering", {})
+    for isolation_key in (
+        "plotly_failure_blocks_core",
+        "matplotlib_failure_blocks_core",
+        "pages_failure_blocks_core",
+        "browser_disconnect_blocks_core",
+    ):
+        if rendering.get(isolation_key) is not False:
+            errors.append(f"renderer isolation guard must be false: {isolation_key}")
+    if "@media(max-width:900px)" not in html:
+        errors.append("responsive tablet/mobile fallback contract missing")
+    for layout_token in (".grid.layout-3x2", ".grid.golden-focus", ".grid.single-focus"):
+        if layout_token not in html:
+            errors.append(f"responsive layout CSS missing: {layout_token}")
+    if "loadControlPlane().catch" not in js or "Core graph renderer remains available by isolation contract." not in js:
+        errors.append("control-plane timeout/fallback isolation behavior missing")
 
     if not events.get("append_only"):
         errors.append("control event history must be append-only")
