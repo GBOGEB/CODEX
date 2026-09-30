@@ -97,6 +97,21 @@ control_plane:
     matplotlib_failure_blocks_core: false
     pages_failure_blocks_core: false
     browser_disconnect_blocks_core: false
+    outward_types:
+      - HTML_CONTENT_AS_SLIDE
+    html_content_as_slide:
+      state: MATERIALIZED_VIEW_ONLY
+      templates:
+        - STATUS_BD_SNAPSHOT
+      canonical_snapshot: mission_control/mycelium/snapshots/status_bd_snapshot_v01.json
+      pages_snapshot: docs/data/missioncontrol_status_snapshot_v01.json
+      pages_renderer: docs/missioncontrol_status_snapshot.html
+      canonical_viewport: 1600x900
+      aspect_ratio: "16:9"
+      responsive_mobile_fallback: true
+      authority_transfer: false
+      formal_credit_delta: 0
+      engineering_credit_delta: 0
   federation:
     strategy_order: [REFERENCE, BRIDGE, GENERATED_PROJECTION, ITEM_IMPORT, CHERRY_PICK, BOUNDED_MERGE, FULL_MERGE]
     required_provenance: [source_repo, source_ref, source_sha, target_repo, target_ref, target_sha, mechanism, authority_before, authority_after, proof]
