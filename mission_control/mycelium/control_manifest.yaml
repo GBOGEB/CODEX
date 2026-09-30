@@ -1,4 +1,4 @@
-schema_version: "0.4"
+schema_version: "0.5"
 surface_id: MISSIONCONTROL_MYCELIUM
 owner: CODEX_UI_GOVERNANCE
 repository: GBOGEB/CODEX
@@ -72,13 +72,13 @@ layout:
   themes: [light, dark]
 
 control_plane:
-  version: "0.2.1"
+  version: "0.2.2"
   reentry_manifest: mission_control/mycelium/reentry_v0_2.yaml
   governed_projection: mission_control/mycelium/control_plane_projection.json
   pages_projection: docs/data/missioncontrol_control_plane.json
   predecessor_proof: mission_control/mycelium/receipts/MYCELIUM_V02_PR839_PROOF.json
   current_proof: mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
-  current_capability_status: MYCELIUM_V0_2_1_MERGED_PAGES_GREEN
+  current_capability_status: MYCELIUM_V0_2_2_LIVE_INGESTION_IMPLEMENTING
   next_edge: LIVE_TEMPORAL_FEDERATION_INGESTION
   command_input:
     static_pages_mode: STAGE_OR_DRY_RUN_ONLY
@@ -100,6 +100,21 @@ control_plane:
   federation:
     strategy_order: [REFERENCE, BRIDGE, GENERATED_PROJECTION, ITEM_IMPORT, CHERRY_PICK, BOUNDED_MERGE, FULL_MERGE]
     required_provenance: [source_repo, source_ref, source_sha, target_repo, target_ref, target_sha, mechanism, authority_before, authority_after, proof]
+
+live_federation_ingestion:
+  mode: READ_ONLY_PUBLIC_METADATA
+  workflow: .github/workflows/missioncontrol-live-federation.yml
+  source_registry: mission_control/mycelium/source_registry.yaml
+  source_status: mission_control/mycelium/source_status.json
+  temporal_events: mission_control/mycelium/federation_events.json
+  pages_temporal_events: docs/data/missioncontrol_federation_events.json
+  hosted_artifact: missioncontrol-live-federation
+  schedule: "17 * * * *"
+  exact_head_required: true
+  stale_cache_allowed_if_labelled: true
+  repository_mutation: false
+  remote_authority_mutation: false
+  authority_transfer: false
 
 graph_contract:
   universal_graph_may_contain_cycles: true
@@ -267,6 +282,10 @@ temporal_lineage:
     - OUTWARD_PROJECTION
     - EXTERNAL_RETURN
     - RECOVERY
+    - FEDERATION_HEAD_BOUND
+    - FEDERATION_HEAD_ADVANCED
+    - FEDERATION_REFRESH_CONFIRMED
+    - FEDERATION_REFRESH_DEGRADED
   required_fields: [event_time, source_sha, parent_event, content_ref]
 
 federation_router:
@@ -367,3 +386,5 @@ observability_contract:
     append_only_history: mission_control/mycelium/progress_history.json
     metrics_snapshot: mission_control/mycelium/metrics_snapshot.json
     pages_metrics_view: docs/data/missioncontrol_metrics.json
+    federation_events: mission_control/mycelium/federation_events.json
+    pages_federation_events: docs/data/missioncontrol_federation_events.json
