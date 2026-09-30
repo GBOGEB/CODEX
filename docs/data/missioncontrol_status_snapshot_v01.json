@@ -1,0 +1,141 @@
+{
+  "schema_version": "0.1",
+  "renderer_type": "HTML_CONTENT_AS_SLIDE",
+  "template": "STATUS_BD_SNAPSHOT",
+  "snapshot_state": "MATERIALIZED_VIEW",
+  "snapshot_at": "2026-09-30T13:03:52Z",
+  "repository": "GBOGEB/CODEX",
+  "snapshot_sha": "77b5687f9713bbb40d219865b83dccff9c457477",
+  "title": "MissionControl · Status / BD Snapshot",
+  "overall_state": "OWNER_ACTION_GATE_WITH_INDEPENDENT_REMOTE_LANES",
+  "source_inputs": [
+    {
+      "path": "mission_control/mycelium/control_plane_projection.json",
+      "blob_sha": "2e8e0582edc7ed78621836c3c102ac8796c987f2",
+      "role": "CONTROL_PLANE"
+    },
+    {
+      "path": "mission_control/mycelium/metrics_snapshot.json",
+      "blob_sha": "2bdd71fea4ea6109bc0e6db508ccec6e17028810",
+      "role": "METRICS_MATERIALIZATION"
+    },
+    {
+      "path": "mission_control/mycelium/control_events.json",
+      "blob_sha": "42c4da31c13cdf00aa894af59d3daf7d3915ddbd",
+      "role": "TEMPORAL_CONTROL"
+    },
+    {
+      "path": "mission_control/mycelium/source_status.json",
+      "blob_sha": "7ab31999840d4603ce892e0ce364c0e7bfaa3538",
+      "role": "FEDERATION_SOURCE_STATUS"
+    }
+  ],
+  "lanes": [
+    {
+      "id": "CODEX_UI",
+      "label": "CODEX UI / control plane",
+      "repository": "GBOGEB/CODEX",
+      "declared_head_sha": "884327802f57d40b84714def4b0b5b59b3f1a25a",
+      "status": "OWNER_ACTION_GATE",
+      "gate": "OWNER_AUTHENTICATED_WORKFLOW_DISPATCH_REQUIRED",
+      "current_atom": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
+      "next": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
+      "href": "https://github.com/GBOGEB/CODEX/actions/workflows/missioncontrol-authenticated-transport.yml"
+    },
+    {
+      "id": "ABACUS_REMOTE_EXECUTION",
+      "label": "ABACUS / DOW",
+      "repository": "GBOGEB/ABACUS",
+      "declared_head_sha": "467453047d0ca4228d093d02f22c12437e17708f",
+      "status": "REMOTE_AUTHORITY",
+      "gate": "E999_SOURCE_BOUND_HOLD",
+      "current_atom": "POST_1501_MEASURED_DAB_QUEUE",
+      "next": "ADMIT_NEXT_MEASURED_HARD_OR_MECH_SLICE",
+      "href": "https://github.com/GBOGEB/ABACUS/pull/1501"
+    },
+    {
+      "id": "QLM_ENGINEERING",
+      "label": "Cryoplant / engineering",
+      "repository": "GBOGEB/cryoplant-project",
+      "declared_head_sha": "9f1ff9a9b48b40cf19555fdcd34a1cbc944eaa1a",
+      "status": "REMOTE_ENGINEERING_AUTHORITY",
+      "gate": "REMOTE_AUTHORITY_PRESERVED_AND_PRIVATE_CONTENT",
+      "current_atom": "MASTER_INPUT_CLEANUP_LEDGER_REMOTE_RETURN",
+      "next": "FOLLOW_REMOTE_ACTION_SSOT",
+      "href": "https://github.com/GBOGEB/cryoplant-project/pull/1834"
+    }
+  ],
+  "evidence_strip": [
+    {
+      "id": "AUTH_TRANSPORT",
+      "label": "Authenticated transport",
+      "state": "MERGED_EXACT_HEAD_GREEN",
+      "ref": "PR #850",
+      "href": "https://github.com/GBOGEB/CODEX/pull/850"
+    },
+    {
+      "id": "ABACUS_1501",
+      "label": "ABACUS DAB return",
+      "state": "MEASURED",
+      "ref": "run 36714410799 · job 109883686239",
+      "href": "https://github.com/GBOGEB/ABACUS/actions/runs/36714410799"
+    },
+    {
+      "id": "CRYO_1834",
+      "label": "Cryoplant Master_Input ledger",
+      "state": "REMOTE_METADATA_ONLY",
+      "ref": "PR #1834",
+      "href": "https://github.com/GBOGEB/cryoplant-project/pull/1834"
+    },
+    {
+      "id": "CODEX_856",
+      "label": "Source identity residual",
+      "state": "MERGED_PROOF_WITHHELD_AT_SNAPSHOT",
+      "ref": "PR #856 · merge 77b5687f",
+      "href": "https://github.com/GBOGEB/CODEX/pull/856"
+    }
+  ],
+  "interpretation": [
+    "The CODEX mutation lane is held at owner-authenticated workflow dispatch; mutation remains disabled.",
+    "ABACUS execution and cryoplant engineering remain independent remote-authority lanes and continue without authority transfer.",
+    "This slide is a frozen review projection only; engineering, formal and acceptance credit remain unchanged."
+  ],
+  "continuation": {
+    "now": {
+      "id": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
+      "state": "WAIT_OWNER_ACTION",
+      "lane": "CODEX_UI"
+    },
+    "next": [
+      {
+        "id": "ABACUS_POST_1501_DAB_QUEUE",
+        "state": "MEASURED",
+        "lane": "ABACUS_REMOTE_EXECUTION"
+      },
+      {
+        "id": "CRYOPLANT_MASTER_INPUT_ACTION_SSOT",
+        "state": "REMOTE_ACTIVE",
+        "lane": "QLM_ENGINEERING"
+      }
+    ],
+    "hold": [
+      {
+        "id": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
+        "state": "WITHHELD_UNTIL_DRY_RUN_PROOF"
+      },
+      {
+        "id": "GLOBAL_DOV",
+        "state": "WITHHELD"
+      }
+    ]
+  },
+  "footer": {
+    "repo": "GBOGEB/CODEX",
+    "snapshot_sha": "77b5687f9713bbb40d219865b83dccff9c457477",
+    "generated_from": "mission_control/mycelium graph + governed projections",
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "snapshot_state": "MATERIALIZED_VIEW"
+  }
+}
