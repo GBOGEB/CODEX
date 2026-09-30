@@ -215,3 +215,29 @@ PR #839 exact head
 The static Pages surface is a control and steering surface, not an authenticated mutation gateway. **Apply request** stages a typed envelope and remains withheld until an authenticated executor binds repository/runtime proof.
 
 Temporal continuation uses append-only `control_events.json` plus **current / mid / long** priority horizons. A user steer appends intent and changes priority; it never replays completed atoms solely to reconstruct conversation state.
+
+
+## Authenticated execution gateway v0.1
+
+Static GitHub Pages remains credential-free and cannot mutate repositories.
+An APPLY request now stages a typed envelope, live-probes the public CODEX
+`main` head for an exact source lock, and links to the GitHub-authenticated
+workflow surface:
+
+`MissionControl Authenticated Command Gateway`
+
+Gateway v0.1 is deliberately narrow:
+
+- authentication: GitHub authenticated actor with workflow-dispatch permission;
+- authorization: exact source SHA + fixed repository/lane + action allow-list;
+- enabled action: `REFRESH_FEDERATION_HEADS` only;
+- mutation: automation branch + pull request only;
+- direct write to `main`: forbidden;
+- remote engineering/execution authority: preserved;
+- receipt: actor, run, source SHA, envelope digest, action and changed paths;
+- runtime proof: withheld until a real owner-dispatched gateway dry run executes.
+
+Artifact cards also derive provenance from the same interaction graph, exposing
+typed incoming/outgoing edges plus available source/target SHA, mechanism and
+proof metadata. This is a view over the governed graph, not a second source of
+truth.
