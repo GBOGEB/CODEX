@@ -117,7 +117,7 @@ control_plane:
     required_provenance: [source_repo, source_ref, source_sha, target_repo, target_ref, target_sha, mechanism, authority_before, authority_after, proof]
 
 authenticated_execution_gateway:
-  state: RUNTIME_DRY_RUN_EXECUTED_NO_MUTATION
+  state: BOUNDED_CODEX_APPLY_IMPLEMENTED_PENDING_EXACT_HEAD_PROOF
   contract: mission_control/mycelium/execution_gateway_contract.yaml
   request_schema: mission_control/mycelium/schemas/execution_request.schema.json
   receipt_schema: mission_control/mycelium/schemas/execution_receipt.schema.json
@@ -131,8 +131,16 @@ authenticated_execution_gateway:
   exact_head_required: true
   idempotency_required: true
   replay_completed_request_forbidden: true
-  enabled_mutation_transports: []
-  mutation_enabled: false
+  enabled_mutation_transports:
+    - OWNER_COMMENT_AUTOMATION_PR
+  mutation_enabled: true
+  mutation_mode: AUTOMATION_BRANCH_PR_ONLY
+  direct_main_write: false
+  review_pr_required: true
+  bounded_apply_workflow: .github/workflows/missioncontrol-owner-bounded-apply.yml
+  bounded_apply_executor: scripts/missioncontrol_bounded_apply.py
+  bounded_apply_owner_command: /missioncontrol apply refresh-federation-heads <exact-main-sha>
+  bounded_apply_runtime_proof: WITHHELD_OWNER_APPLY_COMMAND_REQUIRED
   exact_head_proof: mission_control/mycelium/receipts/AUTHENTICATED_TRANSPORT_V01_PR850_PROOF.json
   exact_head_run: 36712962475
   exact_head_job: 109878913705
@@ -152,8 +160,8 @@ authenticated_execution_gateway:
   remote_authority_mutation: false
   authority_transfer: false
   next_atoms:
-    - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
     - PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS
+    - BOUNDED_APPLY_RUNTIME_OWNER_COMMAND
 
 graph_contract:
   universal_graph_may_contain_cycles: true
