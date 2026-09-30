@@ -1,0 +1,26 @@
+{
+  "schema_version": "0.1",
+  "sources": [
+    {
+      "repository": "GBOGEB/CODEX",
+      "node_id": "repo_codex",
+      "authority_class": "LOCAL_AUTHORITATIVE",
+      "role": "UI_GOVERNANCE",
+      "max_open_prs": 12
+    },
+    {
+      "repository": "GBOGEB/ABACUS",
+      "node_id": "repo_abacus",
+      "authority_class": "REMOTE_AUTHORITATIVE",
+      "role": "EXECUTION_AND_DOW",
+      "max_open_prs": 12
+    }
+  ],
+  "rules": {
+    "public_metadata_only": true,
+    "token_optional": true,
+    "remote_engineering_promotion": false,
+    "preserve_last_good_on_fetch_failure": true,
+    "source_sha_required": true
+  }
+}
