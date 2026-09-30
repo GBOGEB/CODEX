@@ -92,6 +92,34 @@
     },
     {
       "id": "LIVE_TEMPORAL_FEDERATION_INGESTION",
+      "state": "ACTIVE"
+    },
+    {
+      "id": "REFRESH_FEDERATION_HEADS_LIVE",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "BIND_SOURCE_STATUS_PARITY",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "BIND_FRESHNESS_METRIC",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "BIND_FRESHNESS_CONTROL_EVENT",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "BIND_FEDERATION_GRAPH_PROVENANCE",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF",
+      "state": "PENDING"
+    },
+    {
+      "id": "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
       "state": "PENDING"
     }
   ],
@@ -191,10 +219,38 @@
     [
       "REGENERATE_REENTRY_MANIFEST",
       "LIVE_TEMPORAL_FEDERATION_INGESTION"
+    ],
+    [
+      "LIVE_TEMPORAL_FEDERATION_INGESTION",
+      "REFRESH_FEDERATION_HEADS_LIVE"
+    ],
+    [
+      "REFRESH_FEDERATION_HEADS_LIVE",
+      "BIND_SOURCE_STATUS_PARITY"
+    ],
+    [
+      "BIND_SOURCE_STATUS_PARITY",
+      "BIND_FRESHNESS_METRIC"
+    ],
+    [
+      "BIND_FRESHNESS_METRIC",
+      "BIND_FRESHNESS_CONTROL_EVENT"
+    ],
+    [
+      "BIND_FRESHNESS_CONTROL_EVENT",
+      "BIND_FEDERATION_GRAPH_PROVENANCE"
+    ],
+    [
+      "BIND_FEDERATION_GRAPH_PROVENANCE",
+      "LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF"
+    ],
+    [
+      "LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF",
+      "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN"
     ]
   ],
   "first_incomplete_atoms": [
-    "LIVE_TEMPORAL_FEDERATION_INGESTION"
+    "LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF"
   ],
   "guards": {
     "replay_completed_atoms": false,
@@ -207,5 +263,13 @@
     "exact_head_sha": "4e51b7fabd7a3d5dc5bb6f8c31a55b549e11863d",
     "merge_sha": "f9b106a8642198f98814809432a46c99fb041389",
     "pages_run": 36706855094
+  },
+  "active_slice": {
+    "id": "LIVE_TEMPORAL_FEDERATION_INGESTION_PULSE_20260930T111600Z",
+    "state": "IMPLEMENTED_PENDING_EXACT_HEAD_PROOF",
+    "freshness_before_pct": 66.67,
+    "freshness_after_pct": 100,
+    "authority_transfer": false,
+    "engineering_truth_promoted": false
   }
 }
