@@ -413,3 +413,31 @@ observability_contract:
     append_only_history: mission_control/mycelium/progress_history.json
     metrics_snapshot: mission_control/mycelium/metrics_snapshot.json
     pages_metrics_view: docs/data/missioncontrol_metrics.json
+
+graph_publication:
+  source_graph: mission_control/mycelium/interaction_graph.json
+  source_authority: CANONICAL_GRAPH
+  analysis:
+    canonical: mission_control/mycelium/graph_analysis.json
+    pages: docs/data/missioncontrol_graph_analysis.json
+    builder: scripts/build_missioncontrol_graph_publication.py
+  interactive:
+    renderer: PLOTLY
+    page: docs/missioncontrol_graph_explorer.html
+    runtime: https://cdn.plot.ly/plotly-2.35.2.min.js
+    authority_class: DERIVED_PROJECTION_ONLY
+    failure_blocks_core: false
+  static:
+    renderer: MATPLOTLIB
+    source: scripts/render_missioncontrol_graph_matplotlib.py
+    pages_output: docs/assets/missioncontrol/missioncontrol_degree_distribution.png
+    committed_fallback: docs/assets/missioncontrol/missioncontrol_degree_distribution.svg
+    generated_during_pages_build: true
+    authority_class: DERIVED_PROJECTION_ONLY
+    failure_blocks_core: false
+  proof_workflow: .github/workflows/missioncontrol-graph-publication.yml
+  invariants:
+    one_graph_multiple_renderers: true
+    renderer_may_not_promote_authority: true
+    source_original_link_required: true
+    browser_core_survives_plotly_failure: true
