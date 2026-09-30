@@ -1,6 +1,3 @@
-import json
-from pathlib import Path
-
 import pytest
 
 from scripts.missioncontrol_command_gateway import GatewayError, validate_envelope
