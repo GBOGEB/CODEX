@@ -1,6 +1,6 @@
 {
-  "schema_version": "0.4",
-  "snapshot_at": "2026-09-30T11:16:00Z",
+  "schema_version": "0.5",
+  "snapshot_at": "2026-09-30T11:26:00Z",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -10,7 +10,7 @@
       "state": "LOCAL_AUTHORITY",
       "url": "https://github.com/GBOGEB/CODEX",
       "meta": {
-        "sha": "cd45dc8f8934d554d824f0c22db619dfe6bb546d",
+        "sha": "bc514318077c74a54508b5820d59026f66e9ae92",
         "views": [
           "engineering",
           "control",
@@ -752,6 +752,69 @@
           "observability"
         ]
       }
+    },
+    {
+      "id": "evidence_pr845",
+      "type": "evidence",
+      "label": "PR #845 live federation proof",
+      "state": "CONTROLLED_GREEN",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/receipts/LIVE_FEDERATION_INGESTION_20260930T111600Z_PROOF.json",
+      "meta": {
+        "head_sha": "c4cecdbe22a1228f32cb866ead26a19b187a0d6c",
+        "merge_sha": "ed9bb877bc251d7aa06c0bf19515491028fcdeef",
+        "pages_run": 36708423542,
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "gateway_contract",
+      "type": "config",
+      "label": "Authenticated gateway contract",
+      "state": "ACTIVE_V0_1",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/gateway_contract.yaml",
+      "meta": {
+        "transport": "GITHUB_ACTIONS_WORKFLOW_DISPATCH",
+        "mutation_mode": "AUTOMATION_BRANCH_PR_ONLY",
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "gateway_workflow",
+      "type": "workflow",
+      "label": "MissionControl authenticated command gateway",
+      "state": "IMPLEMENTED_PENDING_PROOF",
+      "url": "https://github.com/GBOGEB/CODEX/actions/workflows/missioncontrol-command-gateway.yml",
+      "meta": {
+        "authenticated_actor": true,
+        "direct_main_write": false,
+        "allowed_actions": [
+          "REFRESH_FEDERATION_HEADS"
+        ],
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "gateway_receipts",
+      "type": "artifact",
+      "label": "Gateway execution receipts",
+      "state": "GENERATED_ON_EXECUTION",
+      "url": "https://github.com/GBOGEB/CODEX/tree/main/mission_control/mycelium/gateway/receipts",
+      "meta": {
+        "proof_role": "AUTHENTICATED_COMMAND_EXECUTION_RECEIPT",
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
     }
   ],
   "edges": [
@@ -845,7 +908,7 @@
       "source_sha": "d8e71dc73453e9e4ea10fa62afd0d9554d241297",
       "target_repo": "GBOGEB/CODEX",
       "target_ref": "main",
-      "target_sha": "cd45dc8f8934d554d824f0c22db619dfe6bb546d",
+      "target_sha": "bc514318077c74a54508b5820d59026f66e9ae92",
       "authority_before": "REMOTE_EXECUTION_AUTHORITY",
       "authority_after": "REMOTE_EXECUTION_AUTHORITY",
       "proof": "TYPED_RETURN_REQUIRED",
@@ -1085,7 +1148,7 @@
       "source_sha": "f03bfc61bcf85a2d91cd22d083ad0ef954387f0d",
       "target_repo": "GBOGEB/CODEX",
       "target_ref": "main",
-      "target_sha": "cd45dc8f8934d554d824f0c22db619dfe6bb546d",
+      "target_sha": "bc514318077c74a54508b5820d59026f66e9ae92",
       "authority_before": "REMOTE_ENGINEERING_AUTHORITY",
       "authority_after": "REMOTE_ENGINEERING_AUTHORITY",
       "proof": "ADR-QPS-006",
@@ -1305,6 +1368,51 @@
       "from": "repo_cryoplant_project",
       "to": "current_next",
       "type": "requires_return_from",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "evidence_pr845",
+      "to": "current_next",
+      "type": "proves",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "gateway_contract",
+      "to": "human_command_input",
+      "type": "validates",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "human_command_input",
+      "to": "gateway_workflow",
+      "type": "consumes",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "gateway_contract",
+      "to": "gateway_workflow",
+      "type": "implements",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "gateway_workflow",
+      "to": "gateway_receipts",
+      "type": "produces",
       "views": [
         "control",
         "observability"
