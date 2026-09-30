@@ -36,7 +36,14 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:7px;bord
 <div class="kpi"><span class="muted">DMAIC</span><b>CONTROL</b><small>exact proof before promotion</small></div>
 <div class="kpi"><span class="muted">PCA</span><b>DIAGNOSTIC</b><small>governed population required</small></div>
 <div class="kpi"><span class="muted">BT</span><b>OUTCOMES ONLY</b><small>no synthetic ranking</small></div>
-</div><p class="muted">Reverse-pressure BD ranking uses unblock value, fan-out, proof deficit, age and criticality. Numerical scores are withheld until governed inputs exist.</p></article>
+</div>
+<div class="kpis" style="margin-top:8px">
+<div class="kpi"><span class="muted">Nodes</span><b id="nodeCount">—</b><small>loaded graph</small></div>
+<div class="kpi"><span class="muted">Edges</span><b id="edgeCount">—</b><small>loaded graph</small></div>
+<div class="kpi"><span class="muted">Density</span><b id="density">—</b><small>directed E/(N·(N−1))</small></div>
+</div>
+<svg id="degreePlot" viewBox="0 0 640 120" style="height:120px;min-height:120px;margin-top:8px" aria-label="Graph degree density plot"></svg>
+<p class="muted">Reverse-pressure BD ranking uses unblock value, fan-out, proof deficit, age and criticality. Numerical priority scores are withheld until governed inputs exist.</p></article>
 <article class="panel" data-panel="outward_artifacts"><h2>6 · Outward artifacts</h2><div class="artifact-grid" id="artifacts"></div></article>
 </section></main>
 <script>
@@ -47,9 +54,25 @@ function render(){
  const repos=model.nodes.filter(n=>n.type==='repo'); $('#repos').innerHTML=repos.map(n=>'<p><a href="'+n.url+'"><b>'+n.label+'</b></a><br><span class="pill">'+n.state+'</span> '+(n.meta?.sha?'<code>'+n.meta.sha.slice(0,12)+'</code>':'')+'</p>').join('');
  const flow=['REFRESH','PROBE','RANK','EXECUTE','PROVE','COMMIT','PUBLISH','OBSERVE','LEARN','RECURSE']; $('#flow').innerHTML=flow.map((x,i)=>'<div class="step"><b>'+String(i+1).padStart(2,'0')+' '+x+'</b><span>'+(x==='EXECUTE'?'continue independent lanes; stop only material first-red lane':x==='PROVE'?'bind exact SHA / run / job / artifact evidence':'checkpointed and resumable')+'</span></div>').join('');
  $('#evidence').innerHTML=model.nodes.filter(n=>['pull_request','issue','artifact','output'].includes(n.type)).map(n=>'<tr><td>'+n.label+'</td><td>'+n.state+'</td><td>'+(n.url?'<a href="'+n.url+'">open</a>':'withheld')+'</td></tr>').join('');
- const outs=[['GitHub Pages','HTML control/view layer'],['Plotly','interactive density / PCA / wave analytics'],['Matplotlib','static evidence plots / PNG / SVG'],['Documents','PDF / DOCX / PPTX / XLSX when governed'],['Diagrams','SVG / topology / interaction graph'],['Tables','filterable evidence and lineage tables']];
- $('#artifacts').innerHTML=outs.map(x=>'<div class="artifact"><b>'+x[0]+'</b><div class="muted">'+x[1]+'</div></div>').join('');
- drawGraph();
+ const outs=[
+ ['GitHub Pages','HTML control/view layer','missioncontrol_mycelium.html'],
+ ['Plotly','interactive density / PCA / wave analytics','https://github.com/GBOGEB/CODEX/blob/main/runtime_engine/plotly_wave_dashboard.py'],
+ ['Matplotlib','static PCA / evidence plots / PNG / SVG','https://github.com/GBOGEB/CODEX/blob/main/pca_engine/src/pca_engine/visualization.py'],
+ ['Documents','PDF / DOCX / PPTX / XLSX when governed',null],
+ ['Diagrams','SVG / topology / interaction graph',null],
+ ['Tables','filterable evidence and lineage tables',null]
+ ];
+ $('#artifacts').innerHTML=outs.map(x=>'<div class="artifact"><b>'+(x[2]?'<a href="'+x[2]+'">'+x[0]+'</a>':x[0])+'</b><div class="muted">'+x[1]+'</div></div>').join('');
+ drawGraph(); drawDensity();
+}
+function drawDensity(){
+ const n=model.nodes.length,e=model.edges.length,d=n>1?e/(n*(n-1)):0;
+ $('#nodeCount').textContent=n; $('#edgeCount').textContent=e; $('#density').textContent=d.toFixed(3);
+ const degree={}; model.nodes.forEach(x=>degree[x.id]=0); model.edges.forEach(x=>{degree[x.from]=(degree[x.from]||0)+1;degree[x.to]=(degree[x.to]||0)+1;});
+ const vals=Object.values(degree), max=Math.max(1,...vals), bins={}; vals.forEach(v=>bins[v]=(bins[v]||0)+1);
+ const entries=Object.entries(bins).sort((a,b)=>Number(a[0])-Number(b[0]));
+ const svg=$('#degreePlot'), w=640,h=120,pad=22,bw=(w-pad*2)/Math.max(1,entries.length);
+ svg.innerHTML=entries.map((x,i)=>{const bar=(h-38)*(x[1]/Math.max(1,...entries.map(z=>z[1])));return '<rect x="'+(pad+i*bw+4)+'" y="'+(h-22-bar)+'" width="'+Math.max(8,bw-8)+'" height="'+bar+'" fill="var(--accent)" opacity=".75"/><text x="'+(pad+i*bw+bw/2)+'" y="'+(h-6)+'" text-anchor="middle" fill="var(--muted)" font-size="10">d='+x[0]+'</text>';}).join('');
 }
 function drawGraph(){
  const svg=$('#graph'), nodes=model.nodes.slice(0,15), edges=model.edges;
