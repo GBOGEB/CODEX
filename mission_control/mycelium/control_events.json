@@ -245,6 +245,28 @@
       "parent_event": "EV-0021",
       "content_ref": "mission_control/mycelium/source_status.json",
       "summary": "Tri-repo source identities refreshed to CODEX 88432780, ABACUS 46745304 and cryoplant 9f1ff9a9 with authority classes preserved."
+    },
+    {
+      "id": "EV-0023",
+      "at": "2026-09-30T13:29:12Z",
+      "type": "EXTERNAL_RETURN",
+      "node_id": "repo_abacus",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "d54d22a57a80bc462a051ee26e5a7d5489432237",
+      "parent_event": "EV-0022",
+      "content_ref": "mission_control/mycelium/evidence/abacus_dab_return_1506_measured.json",
+      "summary": "Consumed measured ABACUS #1506 return: exact DAB census total 8853, E741=22, W293=1013, E722=26, F841=77; E999=1 remains source-bound."
+    },
+    {
+      "id": "EV-0024",
+      "at": "2026-09-30T15:10:57Z",
+      "type": "FEDERATION_REFRESH",
+      "node_id": "repo_abacus",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "fa482c009afd9bdab4062900514521e8339d35b8",
+      "parent_event": "EV-0023",
+      "content_ref": "mission_control/mycelium/source_status.json",
+      "summary": "ABACUS live head advanced through #1507 and metrics follow-up after the measured #1506 census; current identity updated without promoting unmeasured post-#1506 lint counts."
     }
   ],
   "horizons": {
@@ -258,16 +280,16 @@
       },
       {
         "rank": 2,
-        "id": "ABACUS_POST_1501_DAB_QUEUE",
+        "id": "ABACUS_POST_1506_DAB_QUEUE",
         "state": "MEASURED",
-        "reason": "E741=35 and W293=1912 are exact-census measured; next family admission must come from this residual",
+        "reason": "E741=22 and W293=1013 are exact-census measured on d54d22a; live head fa482c00 is newer and remains unmeasured for lint residuals",
         "lane": "ABACUS_REMOTE_EXECUTION"
       },
       {
         "rank": 3,
         "id": "CRYOPLANT_MASTER_INPUT_ACTION_SSOT",
         "state": "REMOTE_ACTIVE",
-        "reason": "private cleanup ledger/action SSOT merged in cryoplant; CODEX projects metadata only",
+        "reason": "private cleanup ledger/action SSOT remains remote engineering authority; CODEX projects metadata only",
         "lane": "QLM_ENGINEERING"
       }
     ],
