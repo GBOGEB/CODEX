@@ -1,6 +1,6 @@
 schema_version: "0.1"
 gateway_id: MISSIONCONTROL_AUTHENTICATED_EXECUTION_GATEWAY
-state: BOUNDED_APPLY_IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF
+state: BOUNDED_APPLY_IMPLEMENTED_DISABLED_EXACT_HEAD_GREEN
 owner: CODEX_EXECUTION_GOVERNANCE
 
 authority:
@@ -79,7 +79,7 @@ bounded_apply_runtime:
   target_repository: GBOGEB/CODEX
   target_ref: main
   action_class: APPLY_BOUNDED_CODEX
-  implementation_state: IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF
+  implementation_state: IMPLEMENTED_DISABLED_EXACT_HEAD_GREEN
   mutation_enabled: false
   execute_permitted: false
   enabled_mutation_transports: []
@@ -111,3 +111,5 @@ promotion:
   implementation_success_does_not_transfer_remote_authority: true
   bounded_apply_exact_head_proof_does_not_enable_mutation: true
   mutation_enablement_requires_separate_governance_promotion: true
+  bounded_apply_proof_receipt: mission_control/mycelium/receipts/BOUNDED_APPLY_DISABLED_V01_PR894_PROOF.json
+  mutation_promotion_state: WITHHELD_EXPLICIT_PROMOTION_REQUIRED
