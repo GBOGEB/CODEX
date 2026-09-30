@@ -29,7 +29,7 @@ reentry:
       repo: GBOGEB/ABACUS
       branch: main
       handover_observed_sha: 713a152e99024165aea81bffbf530d2073e164bb
-      refreshed_current_sha: fa482c009afd9bdab4062900514521e8339d35b8
+      refreshed_current_sha: 877efed83bf6479232e0029fb430243f21e937a2
       role: REMOTE_EXECUTION_AUTHORITY
       latest_census:
         pr: 1499
@@ -71,18 +71,18 @@ reentry:
           F811: 0
           E731: 0
       latest_measured_return:
-        pr: 1506
-        head_sha: d54d22a57a80bc462a051ee26e5a7d5489432237
-        merge_sha: d54d22a57a80bc462a051ee26e5a7d5489432237
-        current_main_sha: fa482c009afd9bdab4062900514521e8339d35b8
-        workflow_run: 36721260876
-        job: 109906683250
-        artifact_id: 11100356126
-        artifact_sha256: 27af842e4d97ddc5722d7a07da9f5162491d629ddaf762e7715059bce3b1ad15
-        total: 8853
+        pr: 1514
+        head_sha: 725218d7e7dce208c7196654aade542cfe9ded27
+        merge_sha: 877efed83bf6479232e0029fb430243f21e937a2
+        current_main_sha: 877efed83bf6479232e0029fb430243f21e937a2
+        workflow_run: 36740253334
+        job: 109972471534
+        artifact_id: 11110361727
+        artifact_sha256: 34596f396bce4d19c36b2816a8e23641b85f58dc602bdef282d614961ade7cb3
+        total: 8351
+        E722: 20
         E741: 22
-        W293: 1013
-        E722: 26
+        W293: 517
         F841: 77
         E999: 1
         F821: 0
@@ -90,7 +90,11 @@ reentry:
         F811: 0
         E731: 0
         state: MEASURED
-        current_head_status: UNMEASURED_AFTER_1507
+        pending_independent_lane:
+          pr: 1516
+          family: E722
+          expected_only: 18
+          status: OPEN_UNMEASURED
     cryoplant:
       repo: GBOGEB/cryoplant-project
       branch: main
@@ -298,10 +302,10 @@ reentry:
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
-      head_sha: fa482c009afd9bdab4062900514521e8339d35b8
+      head_sha: 877efed83bf6479232e0029fb430243f21e937a2
       state: REMOTE_AUTHORITY
-      latest_census_merge_sha: d54d22a57a80bc462a051ee26e5a7d5489432237
-      current_atom: POST_1506_MEASURED_DAB_QUEUE_CURRENT_HEAD_ADVANCED_1507
+      latest_census_merge_sha: 877efed83bf6479232e0029fb430243f21e937a2
+      current_atom: POST_1514_MEASURED_DAB_QUEUE_1516_PENDING
       completed_atoms:
         - POST_1506_COMBINED_CENSUS_MEASURED
       blocker: REMOTE_ONLY_NO_CODEX_PROMOTION
