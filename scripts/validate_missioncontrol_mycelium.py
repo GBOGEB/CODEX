@@ -307,8 +307,17 @@ def validate() -> list[str]:
     control_gateway = control.get("authenticated_execution_gateway", {})
     if control_gateway.get("mutation_enabled") is not False:
         errors.append("control plane may not advertise mutation-enabled gateway")
-    if control_gateway.get("runtime_dry_run_proof") != "WITHHELD_OWNER_DISPATCH_REQUIRED":
-        errors.append("runtime dry-run proof must remain owner-dispatch withheld before execution")
+    if control_gateway.get("runtime_dry_run_proof") != "EXECUTED":
+        errors.append("runtime dry-run proof must be bound as EXECUTED after owner dispatch")
+    if control_gateway.get("runtime_run") != 36754862285:
+        errors.append("runtime dry-run proof run mismatch")
+    if control_gateway.get("runtime_job") != 110022402610:
+        errors.append("runtime dry-run proof job mismatch")
+    expected_runtime_receipt = "mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json"
+    if control_gateway.get("runtime_receipt") != expected_runtime_receipt:
+        errors.append("runtime dry-run receipt path mismatch")
+    if not (ROOT / expected_runtime_receipt).exists():
+        errors.append("runtime dry-run receipt is not materialized in repository")
 
     executable_states = {n.get("id"): n.get("state") for n in executable.get("nodes", [])}
     if executable_states.get("AUTHENTICATED_EXECUTION_GATEWAY_DESIGN") != "COMPLETED":
