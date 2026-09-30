@@ -12,6 +12,10 @@ CONTRACT = MC / "execution_gateway_contract.yaml"
 REQUEST_SCHEMA = MC / "schemas" / "execution_request.schema.json"
 RECEIPT_SCHEMA = MC / "schemas" / "execution_receipt.schema.json"
 DESIGN = MC / "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN.md"
+BOUNDED_APPLY_POLICY = MC / "bounded_apply_policy.yaml"
+BOUNDED_APPLY_LEDGER = MC / "gateway" / "bounded_apply_ledger.json"
+BOUNDED_APPLY_PLANNER = ROOT / "scripts" / "missioncontrol_bounded_apply.py"
+BOUNDED_APPLY_TEST = ROOT / "tests" / "test_missioncontrol_bounded_apply.py"
 
 
 def validate() -> list[str]:
@@ -25,6 +29,7 @@ def validate() -> list[str]:
     allowed_states = {
         "DESIGN_ONLY_NO_MUTATION_BACKEND",
         "AUTHENTICATED_TRANSPORT_IMPLEMENTED_NO_MUTATION",
+        "BOUNDED_APPLY_IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF",
     }
     if state not in allowed_states:
         errors.append("gateway state is not a governed design/transport state")
@@ -51,7 +56,10 @@ def validate() -> list[str]:
         errors.append("server-side authentication principal binding is required")
     if authn.get("enabled_mutation_transports") != []:
         errors.append("gateway must not enable a mutation transport in v0.1")
-    if state == "AUTHENTICATED_TRANSPORT_IMPLEMENTED_NO_MUTATION":
+    if state in {
+        "AUTHENTICATED_TRANSPORT_IMPLEMENTED_NO_MUTATION",
+        "BOUNDED_APPLY_IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF",
+    }:
         if authn.get("selected_transport") != "GITHUB_ACTIONS_WORKFLOW_DISPATCH":
             errors.append("transport implementation must select GitHub Actions workflow_dispatch")
         if authn.get("transport_state") != "AUTHENTICATED_STAGE_ONLY":
@@ -67,7 +75,10 @@ def validate() -> list[str]:
         errors.append("Apply must remain disabled in design slice")
     if apply_rule.get("allowed_repositories") != ["GBOGEB/CODEX"]:
         errors.append("future bounded Apply may target CODEX only in this design")
-    if state == "AUTHENTICATED_TRANSPORT_IMPLEMENTED_NO_MUTATION":
+    if state in {
+        "AUTHENTICATED_TRANSPORT_IMPLEMENTED_NO_MUTATION",
+        "BOUNDED_APPLY_IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF",
+    }:
         runtime = contract.get("transport_runtime", {})
         if runtime.get("enabled_action_class") != "STAGE_ONLY":
             errors.append("transport runtime must enable STAGE_ONLY only")
@@ -94,6 +105,46 @@ def validate() -> list[str]:
         for field in ("authority_transfer", "formal_credit_delta", "engineering_credit_delta"):
             if field not in required:
                 errors.append(f"{name} schema does not require {field}")
+
+    if state == "BOUNDED_APPLY_IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF":
+        for path in (
+            BOUNDED_APPLY_POLICY,
+            BOUNDED_APPLY_LEDGER,
+            BOUNDED_APPLY_PLANNER,
+            BOUNDED_APPLY_TEST,
+        ):
+            if not path.exists():
+                errors.append(f"missing bounded-apply surface: {path.relative_to(ROOT)}")
+        policy = yaml.safe_load(BOUNDED_APPLY_POLICY.read_text(encoding="utf-8"))
+        if policy.get("state") != "IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF":
+            errors.append("bounded-apply policy state mismatch")
+        if policy.get("mutation_enabled") is not False:
+            errors.append("bounded-apply policy may not enable mutation")
+        if policy.get("enabled_mutation_transports") != []:
+            errors.append("bounded-apply mutation transports must remain empty")
+        target = policy.get("target", {})
+        if target.get("repository") != "GBOGEB/CODEX" or target.get("ref") != "main":
+            errors.append("bounded-apply policy must remain CODEX main only")
+        bounded = contract.get("bounded_apply_runtime", {})
+        if bounded.get("implementation_state") != "IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF":
+            errors.append("bounded-apply runtime implementation state mismatch")
+        if bounded.get("mutation_enabled") is not False or bounded.get("execute_permitted") is not False:
+            errors.append("bounded-apply implementation must remain non-executable")
+        if bounded.get("enabled_mutation_transports") != []:
+            errors.append("bounded-apply implementation may not enable a mutation transport")
+        for key in (
+            "exact_head_required",
+            "changed_path_allowlist_required",
+            "explicit_approval_ref_required",
+            "exact_head_dry_run_receipt_required",
+            "completed_replay_forbidden",
+        ):
+            if bounded.get(key) is not True:
+                errors.append(f"bounded-apply runtime guard missing: {key}")
+        props = request.get("properties", {})
+        for field in ("approval_ref", "dry_run_receipt_ref"):
+            if field not in props:
+                errors.append(f"bounded-apply request field missing: {field}")
 
     for token in ("Default authorization is DENY", "Browser secrets are forbidden", "CODEX-only bounded actions"):
         if token not in design:
