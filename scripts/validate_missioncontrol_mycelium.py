@@ -32,6 +32,9 @@ PAGES_CONTROL_EVENTS = DOCS / "data" / "missioncontrol_control_events.json"
 EXECUTABLE = MC / "executable_projection.json"
 PAGES_EXECUTABLE = DOCS / "data" / "missioncontrol_executable_projection.json"
 PREDECESSOR_PROOF = MC / "receipts" / "MYCELIUM_V02_PR839_PROOF.json"
+TRANSPORT_RUNTIME = ROOT / "scripts" / "missioncontrol_authenticated_transport.py"
+TRANSPORT_WORKFLOW = ROOT / ".github" / "workflows" / "missioncontrol-authenticated-transport.yml"
+TRANSPORT_TEST = ROOT / "tests" / "test_missioncontrol_authenticated_transport.py"
 
 EVIDENCE_STATES = {"MEASURED", "DERIVED_FROM_MEASURED", "WITHHELD"}
 
@@ -72,7 +75,7 @@ def validate() -> list[str]:
         PAGES_METRICS, HISTORY, LOG_ANALYSIS, SOURCE_REGISTRY, SOURCE_STATUS,
         PAGES_SOURCE_STATUS, PORT_REGISTRY, REENTRY, CONTROL_PLANE, PAGES_CONTROL_PLANE,
         CONTROL_EVENTS, PAGES_CONTROL_EVENTS, EXECUTABLE, PAGES_EXECUTABLE,
-        PREDECESSOR_PROOF,
+        PREDECESSOR_PROOF, TRANSPORT_RUNTIME, TRANSPORT_WORKFLOW, TRANSPORT_TEST,
     ]
     for path in required_paths:
         if not path.exists():
@@ -138,6 +141,7 @@ def validate() -> list[str]:
         "repo_cryoplant_project", "config_control_plane", "evidence_pr839",
         "human_command_input", "external_abacus_authority",
         "external_cryoplant_authority", "out_control_plane",
+        "gateway_design", "gateway_transport", "gateway_transport_receipt",
     }
     missing_nodes = sorted(required_nodes - node_ids)
     if missing_nodes:
@@ -184,14 +188,16 @@ def validate() -> list[str]:
         'id="applyCommand"', 'id="laneRows"', 'id="priorityHorizon"',
         'id="controlEventRows"', 'id="artifactFilter"', 'id="federationRows"',
         'id="federationState"', 'id="federationEdgeRows"', "THIS IS THE WAY", 'id="metricRows"',
-        'id="progressRows"',
+        'id="progressRows"', 'id="commandCopy"', 'id="gatewayLaunch"', 'id="gatewayGuide"',
     }
     for token in ui_tokens:
         if token not in html:
             errors.append(f"missing v0.2.1 UI contract token: {token}")
 
     js_tokens = {
-        "STAGED_APPLY_WITHHELD_NO_AUTHENTICATED_GATEWAY",
+        "MISSIONCONTROL_AUTHENTICATED_TRANSPORT_URL",
+        "buildAuthenticatedTransportRequest",
+        "action_class:'STAGE_ONLY'",
         "mutation_claim:false",
         "missioncontrol_control_plane.json",
         "missioncontrol_control_events.json",
@@ -240,6 +246,39 @@ def validate() -> list[str]:
         errors.append("authenticated Apply gateway guard missing")
     if cp.get("execution_model", {}).get("executable_projection_must_be_DAG") is not True:
         errors.append("executable projection DAG guard missing")
+
+    gateway = manifest.get("authenticated_execution_gateway", {})
+    if gateway.get("state") != "TRANSPORT_IMPLEMENTED_PENDING_PROOF":
+        errors.append("authenticated transport manifest state mismatch")
+    if gateway.get("selected_transport_class") != "MANUALLY_APPROVED_ACTION":
+        errors.append("authenticated transport must use manually approved action class")
+    if gateway.get("selected_transport_implementation") != "GITHUB_WORKFLOW_DISPATCH_READ_ONLY":
+        errors.append("authenticated transport implementation mismatch")
+    if gateway.get("enabled_mutation_transports") != [] or gateway.get("mutation_enabled") is not False:
+        errors.append("authenticated transport slice must not enable mutation")
+
+    control_gateway = control.get("authenticated_execution_gateway", {})
+    if control_gateway.get("mutation_enabled") is not False:
+        errors.append("control plane may not advertise mutation-enabled gateway")
+    if control_gateway.get("runtime_dry_run_proof") != "WITHHELD_OWNER_DISPATCH_REQUIRED":
+        errors.append("runtime dry-run proof must remain owner-dispatch withheld before execution")
+
+    executable_states = {n.get("id"): n.get("state") for n in executable.get("nodes", [])}
+    if executable_states.get("AUTHENTICATED_EXECUTION_GATEWAY_DESIGN") != "COMPLETED":
+        errors.append("gateway design predecessor is not completed")
+    if executable_states.get("SELECT_AUTHENTICATED_TRANSPORT") != "COMPLETED":
+        errors.append("authenticated transport selection is not completed")
+    if executable_states.get("AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF") not in {"PENDING", "COMPLETED"}:
+        errors.append("authenticated transport exact-head proof atom missing")
+
+    transport_workflow = TRANSPORT_WORKFLOW.read_text(encoding="utf-8")
+    if "contents: write" in transport_workflow or "pull-requests: write" in transport_workflow:
+        errors.append("authenticated transport workflow must remain read-only")
+    if "--execute" in transport_workflow or "git push" in transport_workflow:
+        errors.append("authenticated transport workflow contains mutation path")
+    for token in ("workflow_dispatch:", "contents: read", "missioncontrol_authenticated_transport.py"):
+        if token not in transport_workflow:
+            errors.append(f"authenticated transport workflow missing: {token}")
     federation_status = control.get("federation_status", {})
     for key in ("bridge_status", "cherry_pick_state", "merge_state", "conflict_state", "remote_authority_state"):
         if not federation_status.get(key):
