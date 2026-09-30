@@ -22,6 +22,7 @@ HISTORY = MC / "progress_history.json"
 LOG_ANALYSIS = MC / "log_analysis.json"
 SOURCE_REGISTRY = MC / "source_registry.yaml"
 SOURCE_STATUS = MC / "source_status.json"
+PAGES_SOURCE_STATUS = DOCS / "data" / "missioncontrol_source_status.json"
 PORT_REGISTRY = MC / "port_registry.json"
 REENTRY = MC / "reentry_v0_2.yaml"
 CONTROL_PLANE = MC / "control_plane_projection.json"
@@ -69,7 +70,7 @@ def validate() -> list[str]:
     required_paths = [
         MANIFEST, GRAPH, PAGES_GRAPH, HTML, CONTROL_JS, INDEX, METRICS,
         PAGES_METRICS, HISTORY, LOG_ANALYSIS, SOURCE_REGISTRY, SOURCE_STATUS,
-        PORT_REGISTRY, REENTRY, CONTROL_PLANE, PAGES_CONTROL_PLANE,
+        PAGES_SOURCE_STATUS, PORT_REGISTRY, REENTRY, CONTROL_PLANE, PAGES_CONTROL_PLANE,
         CONTROL_EVENTS, PAGES_CONTROL_EVENTS, EXECUTABLE, PAGES_EXECUTABLE,
         PREDECESSOR_PROOF,
     ]
@@ -85,6 +86,8 @@ def validate() -> list[str]:
     pages_graph = _json(PAGES_GRAPH)
     metrics = _json(METRICS)
     pages_metrics = _json(PAGES_METRICS)
+    source_status = _json(SOURCE_STATUS)
+    pages_source_status = _json(PAGES_SOURCE_STATUS)
     control = _json(CONTROL_PLANE)
     pages_control = _json(PAGES_CONTROL_PLANE)
     events = _json(CONTROL_EVENTS)
@@ -96,6 +99,7 @@ def validate() -> list[str]:
     for name, canonical, pages in [
         ("graph", graph, pages_graph),
         ("metrics", metrics, pages_metrics),
+        ("source-status", source_status, pages_source_status),
         ("control-plane", control, pages_control),
         ("control-events", events, pages_events),
         ("executable-projection", executable, pages_executable),
@@ -194,6 +198,7 @@ def validate() -> list[str]:
         "renderGraphArtifacts",
         "renderFederationEdges",
         "stagePrioritySteer",
+        "live_federation_ingestion",
     }
     for token in js_tokens:
         if token not in js:
@@ -212,6 +217,15 @@ def validate() -> list[str]:
         errors.append("docking metric has invalid evidence state")
     if metrics.get("nodes", {}).get("repo_codex", {}).get("ports", {}).get("status") not in EVIDENCE_STATES:
         errors.append("port metric has invalid evidence state")
+    source_rows = source_status.get("sources", [])
+    measured_sources = [row for row in source_rows if str(row.get("status", "")).upper() in {"FRESH", "MEASURED_CHAT_CONNECTOR"}]
+    if source_rows and len(measured_sources) != len(source_rows):
+        errors.append("live federation source freshness is not complete")
+    docking = metrics.get("nodes", {}).get("repo_codex", {}).get("docking", {})
+    if source_rows and docking.get("fresh_sources") != len(measured_sources):
+        errors.append("docking freshness metric does not match measured source count")
+    if source_rows and docking.get("declared_sources") != len(source_rows):
+        errors.append("docking declared-source count does not match source status")
 
     for layout_mode in {"2x3", "3x2", "golden_focus", "single_focus"}:
         if layout_mode not in set(manifest.get("layout", {}).get("selectable_modes", [])):
@@ -232,6 +246,17 @@ def validate() -> list[str]:
             errors.append(f"federation control state missing: {key}")
     if federation_status.get("authority_transfer") is not False:
         errors.append("federation status must preserve authority_transfer=false")
+    live_federation = control.get("live_federation_ingestion", {})
+    if live_federation:
+        freshness = live_federation.get("freshness", {})
+        if freshness.get("fresh_sources") != len(measured_sources):
+            errors.append("control-plane live freshness does not match source status")
+        if freshness.get("declared_sources") != len(source_rows):
+            errors.append("control-plane declared source count does not match source status")
+        if live_federation.get("authority_transfer") is not False:
+            errors.append("live federation ingestion must preserve authority_transfer=false")
+        if live_federation.get("engineering_truth_promoted") is not False:
+            errors.append("live federation ingestion must not promote engineering truth")
     rendering = cp.get("rendering", {})
     for isolation_key in (
         "plotly_failure_blocks_core",
