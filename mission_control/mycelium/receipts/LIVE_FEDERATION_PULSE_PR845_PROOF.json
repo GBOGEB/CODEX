@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "id": "LIVE_FEDERATION_PULSE_PR845_PROOF",
+  "subject": {
+    "repository": "GBOGEB/CODEX",
+    "pull_request": 845,
+    "exact_head_sha": "c4cecdbe22a1228f32cb866ead26a19b187a0d6c",
+    "merge_sha": "ed9bb877bc251d7aa06c0bf19515491028fcdeef",
+    "current_main_readback_sha": "e7404bfb6df3289705286685500fd19c4ec6d991"
+  },
+  "exact_head_proof": {
+    "workflow": "MissionControl Mycelium CI",
+    "run_id": 36708307718,
+    "job_id": 109863755786,
+    "conclusion": "success",
+    "executed_steps": 19,
+    "validator": "PASS",
+    "tests": "PASS",
+    "deterministic_materialization": "PASS"
+  },
+  "pages_readback": {
+    "effective_main_sha": "e7404bfb6df3289705286685500fd19c4ec6d991",
+    "workflow": "pages build and deployment",
+    "run_id": 36708423542,
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 109864230973,
+        "name": "build",
+        "conclusion": "success",
+        "executed_steps": 11
+      },
+      {
+        "id": 109864401427,
+        "name": "deploy",
+        "conclusion": "success",
+        "executed_steps": 3
+      },
+      {
+        "id": 109864401479,
+        "name": "report-build-status",
+        "conclusion": "success",
+        "executed_steps": 3
+      }
+    ]
+  },
+  "freshness": {
+    "before": "2/3",
+    "after": "3/3",
+    "coverage_pct": 100,
+    "authority_transfer": false,
+    "engineering_truth_promoted": false
+  },
+  "disposition": "CONTROLLED_GREEN_LIVE_FEDERATION_PULSE",
+  "next_edge": "AUTHENTICATED_EXECUTION_GATEWAY_V0_1"
+}
