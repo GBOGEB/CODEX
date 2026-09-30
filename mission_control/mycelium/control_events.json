@@ -157,45 +157,67 @@
       "parent_event": "EV-0013",
       "content_ref": "PR-845 / Actions run 36708423542",
       "summary": "Live federation pulse merged and current-main Pages build/status/deploy completed successfully."
+    },
+    {
+      "id": "EV-0015",
+      "at": "2026-09-30T11:41:38Z",
+      "type": "CONTROL_AUTOMATION",
+      "node_id": "current_next",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "bc514318077c74a54508b5820d59026f66e9ae92",
+      "parent_event": "EV-0014",
+      "content_ref": "PR-844 / MissionControl live federation v0.3",
+      "summary": "Recurring federation freshness automation became current-main authority; read-only Pages freshness and telemetry-gap isolation are preserved."
+    },
+    {
+      "id": "EV-0016",
+      "at": "2026-09-30T11:42:00Z",
+      "type": "EXECUTION_START",
+      "node_id": "gateway_contract",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "bc514318077c74a54508b5820d59026f66e9ae92",
+      "parent_event": "EV-0015",
+      "content_ref": "mission-control-authenticated-gateway-v01-r2-20260930",
+      "summary": "Authenticated execution gateway v0.1 implementation started on top of recurring freshness v0.3: exact-SHA GitHub actor transport, one-action allow-list, PR-only mutation and graph provenance navigation."
     }
   ],
   "horizons": {
     "current": [
       {
         "rank": 1,
-        "id": "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
-        "state": "READY",
-        "reason": "live freshness/provenance pulse is exact-head and Pages green; static Apply remains staged-only",
+        "id": "AUTHENTICATED_EXECUTION_GATEWAY_V0_1_EXACT_HEAD_PROOF",
+        "state": "PENDING",
+        "reason": "gateway implementation is complete on the bounded branch and requires exact-head MissionControl validation",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
-        "id": "CONSUME_TYPED_REMOTE_RETURNS",
-        "state": "READY_WHEN_AVAILABLE",
-        "reason": "remote authority returns remain independent and may proceed in parallel",
-        "lane": "FEDERATION"
+        "id": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
+        "state": "WAIT_OWNER_ACTION",
+        "reason": "real workflow_dispatch authentication/transport proof remains distinct from implementation CI",
+        "lane": "CODEX_UI"
       },
       {
         "rank": 3,
-        "id": "SCHEDULE_NEXT_LIVE_FEDERATION_REFRESH",
-        "state": "READY",
-        "reason": "freshness is a recurring control input rather than a one-time promotion",
+        "id": "CONSUME_TYPED_REMOTE_RETURNS",
+        "state": "READY_WHEN_AVAILABLE",
+        "reason": "remote returns remain independent and non-blocking",
         "lane": "FEDERATION"
       }
     ],
     "mid": [
       {
         "rank": 1,
-        "id": "BIND_FEDERATION_FRESHNESS",
-        "state": "READY",
-        "reason": "make source/ref/SHA freshness a live governed event rather than static snapshot metadata",
+        "id": "RECURRING_FEDERATION_FRESHNESS_V0_3",
+        "state": "CURRENT_MAIN_AUTHORITY",
+        "reason": "scheduled/read-only freshness automation from #844 remains intact under the gateway slice",
         "lane": "FEDERATION"
       },
       {
         "rank": 2,
-        "id": "GRAPH_DRIVEN_OUTWARD_NAVIGATOR",
-        "state": "CONTROLLED_GREEN",
-        "reason": "navigator exists; next step is live update from governed event/source projections",
+        "id": "RICH_ARTIFACT_PROVENANCE_NAV",
+        "state": "IMPLEMENTED_PENDING_PROOF",
+        "reason": "artifact cards expose typed graph provenance plus available SHA/mechanism/proof metadata",
         "lane": "CODEX_UI"
       },
       {
@@ -209,23 +231,23 @@
     "long": [
       {
         "rank": 1,
-        "id": "AUTHENTICATED_EXECUTION_GATEWAY",
-        "state": "SEPARATE_DESIGN_REQUIRED",
-        "reason": "required before Apply can mutate repository/runtime state; static Pages remains staged only",
+        "id": "GATEWAY_ACTION_ALLOWLIST_EXPANSION",
+        "state": "WITHHELD_UNTIL_V0_1_RUNTIME_PROOF",
+        "reason": "additional mutation actions require owner-dispatched v0.1 runtime proof and separate authorization",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
-        "id": "LIVE_FEDERATION_FRESHNESS",
-        "state": "READY_TO_IMPLEMENT",
-        "reason": "periodic typed repo-head/freshness projection without authority transfer",
+        "id": "AUTOMATED_FEDERATION_FRESHNESS",
+        "state": "CONTROLLED_BY_V0_3",
+        "reason": "recurring freshness remains a read-only governed projection independent of gateway runtime proof",
         "lane": "FEDERATION"
       },
       {
         "rank": 3,
         "id": "GLOBAL_DOV",
         "state": "WITHHELD",
-        "reason": "visualization and analytics cannot grant engineering/formal credit",
+        "reason": "control-plane execution evidence does not grant engineering/formal credit",
         "lane": "GLOBAL"
       }
     ]
