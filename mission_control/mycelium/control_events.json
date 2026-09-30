@@ -141,23 +141,23 @@
     "current": [
       {
         "rank": 1,
-        "id": "BIND_FEDERATION_FRESHNESS_TO_CONTROL_EVENT_AND_UI",
-        "state": "EXECUTING",
-        "reason": "3/3 source identities are measured and must be projected into the control surface",
+        "id": "LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF",
+        "state": "PENDING",
+        "reason": "live freshness pulse is implemented; validator/tests/materialization must bind the exact head before promotion",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
         "id": "CONSUME_TYPED_REMOTE_RETURNS",
         "state": "READY_WHEN_AVAILABLE",
-        "reason": "remote execution/engineering returns remain external authority inputs",
+        "reason": "remote returns remain independent and must not be blocked by this proof lane",
         "lane": "FEDERATION"
       },
       {
         "rank": 3,
-        "id": "LIVE_TEMPORAL_FEDERATION_INGESTION",
-        "state": "ACTIVE",
-        "reason": "first freshness pulse completed; continue event-driven ingestion without replay",
+        "id": "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
+        "state": "NEXT_AFTER_GREEN",
+        "reason": "static Pages Apply remains staged-only until a separately governed gateway exists",
         "lane": "CODEX_UI"
       }
     ],
