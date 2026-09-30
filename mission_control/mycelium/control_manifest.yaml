@@ -1,4 +1,4 @@
-schema_version: "0.3"
+schema_version: "0.4"
 surface_id: MISSIONCONTROL_MYCELIUM
 owner: CODEX_UI_GOVERNANCE
 repository: GBOGEB/CODEX
@@ -30,24 +30,42 @@ layout:
   golden_focus_ratio: "1.618:1"
   whitespace_policy: "preserve function and ratio; unused area may remain light/dark space rather than distort content"
   panels:
-    - id: repo_topology
+    - id: COMMAND_INPUT_ROOT
       order: 1
-      title: Repository topology
-    - id: interaction_graph
+      title: Command / Input Root
+      inherits: [repository_topology_context]
+      functions: [text_input, YAML_JSON_input, config_upload, dry_run_apply, manual_steering, source_authority_context]
+    - id: EXECUTION_RECOVERY
       order: 2
-      title: Interaction graph
-    - id: execution_flow
+      title: Execution / Recovery
+      inherits: [execution_flow]
+      functions: [active_lanes, current_atom, last_good_checkpoint, blocker, retry, resume, next_legal_transition]
+    - id: MYCELIUM_GRAPH
       order: 3
-      title: Execution and recovery
-    - id: evidence_lineage
+      title: Mycelium Graph
+      inherits: [interaction_graph]
+      functions: [graph_navigation, authority_overlay, evidence_overlay, critical_path_overlay, BD_pressure_overlay, source_deeplinks]
+    - id: OUTPUT_EVIDENCE
       order: 4
-      title: Evidence and lineage
-    - id: analytics
+      title: Output / Evidence
+      inherits: [evidence_lineage, outward_artifacts]
+      functions: [artifacts, manifests, hashes, evidence, downloads, provenance]
+    - id: ANALYTICS
       order: 5
-      title: DMAIC / KPI / PCA / BT
-    - id: outward_artifacts
+      title: Analytics
+      inherits: [DMAIC, KPI, PCA, BT, graph_density]
+        - implements
+    - references
+    - requires_return_from
+  rules:
+        PCA: DIAGNOSTIC_ONLY_UNLESS_SEPARATELY_GOVERNED
+        BT: OBSERVED_PAIRWISE_OUTCOMES_ONLY
+        KPI: SOURCE_AND_POPULATION_REQUIRED
+    - id: FEDERATION_CONTROL
       order: 6
-      title: Outward artifacts
+      title: Federation Control
+      inherits: [repository_topology]
+      functions: [repo_heads, bridge_status, source_target_lineage, cherry_pick_state, merge_state, conflict_state, remote_authority_state]
   responsive:
     desktop: "2 columns x 3 rows"
     tablet: "2 columns x 3 rows"
@@ -56,7 +74,36 @@ layout:
   user_selectable_focus: true
   themes: [light, dark]
 
+control_plane:
+  version: "0.2.1"
+  reentry_manifest: mission_control/mycelium/reentry_v0_2.yaml
+  governed_projection: mission_control/mycelium/control_plane_projection.json
+  pages_projection: docs/data/missioncontrol_control_plane.json
+  predecessor_proof: mission_control/mycelium/receipts/MYCELIUM_V02_PR839_PROOF.json
+  command_input:
+    static_pages_mode: STAGE_OR_DRY_RUN_ONLY
+    authenticated_apply_gateway_required: true
+    false_mutation_claim_forbidden: true
+  execution_model:
+    universal_graph_may_contain_cycles: true
+    executable_projection_must_be_DAG: true
+    first_red_scope: AFFECTED_LANE_ONLY
+    independent_lanes_continue: true
+  reverse_pressure_queues: [EXECUTION, BLOCKED, RETURN, REVIEW, PUBLICATION, OWNER_ACTION]
+  rendering:
+    data_contract: GOVERNED_JSON_PROJECTION
+    fallback_renderer: HTML_SVG
+    plotly_failure_blocks_core: false
+    matplotlib_failure_blocks_core: false
+    pages_failure_blocks_core: false
+    browser_disconnect_blocks_core: false
+  federation:
+    strategy_order: [REFERENCE, BRIDGE, GENERATED_PROJECTION, ITEM_IMPORT, CHERRY_PICK, BOUNDED_MERGE, FULL_MERGE]
+    required_provenance: [source_repo, source_ref, source_sha, target_repo, target_ref, target_sha, mechanism, authority_before, authority_after, proof]
+
 graph_contract:
+  universal_graph_may_contain_cycles: true
+  executable_projection_must_be_DAG: true
   node_types:
     - repo
     - branch
@@ -81,6 +128,13 @@ graph_contract:
     - log
     - port
     - dock
+    - repository
+    - job
+    - config
+    - interface
+    - evidence
+    - human_action
+    - external_authority
   edge_types:
     - contains
     - depends_on
