@@ -140,7 +140,7 @@
     },
     {
       "id": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
-      "state": "PENDING"
+      "state": "COMPLETED"
     }
   ],
   "edges": [
@@ -294,7 +294,7 @@
     ]
   ],
   "first_incomplete_atoms": [
-    "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH"
+    "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY"
   ],
   "guards": {
     "replay_completed_atoms": false,
@@ -310,18 +310,16 @@
   },
   "active_slice": {
     "id": "AUTHENTICATED_TRANSPORT_V0_1",
-    "state": "MERGED_EXACT_HEAD_GREEN_RUNTIME_PROOF_WITHHELD",
-    "exact_head_sha": "e77cf45e64b6c67859e468a66b6db1d553394ac8",
-    "exact_head_run": 36712962475,
-    "exact_head_job": 109878913705,
-    "merge_sha": "ea167f43732e838bc3fb5d5ad382fe0874b66fcb",
-    "merged_main_readback_sha": "954cde35a2ac101e687d71e28f973864118bb1f0",
-    "pages_readback": "WITHHELD_NO_RUN_OBSERVED",
-    "runtime_dry_run_proof": "WITHHELD_OWNER_DISPATCH_REQUIRED",
-    "transport_class": "MANUALLY_APPROVED_ACTION",
-    "implementation": "GITHUB_WORKFLOW_DISPATCH_READ_ONLY",
+    "state": "RUNTIME_DRY_RUN_EXECUTED_MUTATION_DISABLED",
+    "exact_head_sha": "86491df05050967dd8cc11ee3b3b0dbd114193b9",
+    "runtime_run": 36754862285,
+    "runtime_job": 110022402610,
+    "runtime_receipt": "mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json",
+    "runtime_artifact_id": 11116571326,
+    "runtime_artifact_sha256": "116c0861d54dfa9aeb4c1241b5a5e9948e9f245ef69abcf4801e3bb025d8dd83",
     "mutation_enabled": false,
-    "authority_transfer": false
+    "authority_transfer": false,
+    "next_edge": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY"
   },
   "closed_live_federation_pulse": {
     "exact_head_sha": "c4cecdbe22a1228f32cb866ead26a19b187a0d6c",
