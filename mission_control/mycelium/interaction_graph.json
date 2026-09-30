@@ -1,6 +1,6 @@
 {
   "schema_version": "0.4",
-  "snapshot_at": "2026-09-30T17:10:00Z",
+  "snapshot_at": "2026-09-30T17:56:48Z",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -276,14 +276,19 @@
         "next_mech_residual_status": "MEASURED",
         "abacus_return_pr": 1527,
         "cryoplant_return_pr": 1834,
-        "codex_owner_gate": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
+        "codex_owner_gate": "COMPLETED_RUNTIME_DRY_RUN",
         "pending_census_run": null,
         "pending_census_head": null,
         "pending_census_status": "NONE",
         "next_hard_expected_after_pending_census": 63,
         "next_mech_expected_after_pending_census": null,
         "abacus_current_head": "3c0a57e1626e9c0361417ea21d78cceef4457f98",
-        "abacus_current_head_status": "MEASURED_COMBINED_1527_1528_PLUS_1529_NON_PYTHON"
+        "abacus_current_head_status": "MEASURED_COMBINED_1527_1528_PLUS_1529_NON_PYTHON",
+        "codex_owner_run": 36754862285,
+        "codex_owner_job": 110022402610,
+        "codex_owner_receipt": "mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json",
+        "next_codex_atom": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
+        "mutation_enabled": false
       },
       "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/control_manifest.yaml"
     },
@@ -864,14 +869,21 @@
       "id": "gateway_transport_receipt",
       "type": "evidence",
       "label": "Authenticated transport dry-run receipt",
-      "state": "IMPLEMENTATION_PROOF_BOUND_RUNTIME_RECEIPT_WITHHELD",
+      "state": "RUNTIME_DRY_RUN_EXECUTED",
       "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/receipts/AUTHENTICATED_TRANSPORT_V01_PR850_PROOF.json",
       "meta": {
         "views": [
           "control",
           "observability"
         ],
-        "runtime_proof": "WITHHELD_OWNER_DISPATCH_REQUIRED"
+        "runtime_proof": "EXECUTED",
+        "workflow_run": 36754862285,
+        "workflow_job": 110022402610,
+        "observed_head_sha": "86491df05050967dd8cc11ee3b3b0dbd114193b9",
+        "receipt_path": "mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json",
+        "artifact_id": 11116571326,
+        "artifact_sha256": "116c0861d54dfa9aeb4c1241b5a5e9948e9f245ef69abcf4801e3bb025d8dd83",
+        "mutation_enabled": false
       }
     },
     {
