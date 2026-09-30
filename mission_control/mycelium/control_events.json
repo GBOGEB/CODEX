@@ -278,53 +278,57 @@
       "parent_event": "EV-0024",
       "content_ref": "mission_control/mycelium/evidence/abacus_dab_combined_1527_1528_measured.json",
       "summary": "Combined post-#1527/#1528 main census measured total 8225, F841=66, W293=411, E741=17, E722=16; #1530 remains unmeasured expected-only."
+    },
+    {
+      "id": "EV-0026",
+      "at": "2026-09-30T17:56:49Z",
+      "type": "PROOF_BOUND",
+      "node_id": "gateway_transport",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "86491df05050967dd8cc11ee3b3b0dbd114193b9",
+      "parent_event": "EV-0025",
+      "content_ref": "mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json",
+      "summary": "Owner-authenticated STAGE_ONLY runtime dry run executed successfully on exact main; after_sha=null, mutation remains disabled, and bounded CODEX-only apply is admitted for separate implementation/proof."
     }
   ],
   "horizons": {
     "current": [
       {
         "rank": 1,
-        "id": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
-        "state": "OWNER_COMMAND_IN_FLIGHT",
-        "reason": "exact-main owner command posted; runtime receipt not yet bound",
+        "id": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
+        "state": "ADMITTED_PENDING_IMPLEMENTATION",
+        "reason": "authenticated exact-head STAGE_ONLY runtime receipt is bound; mutation remains disabled pending separate implementation and proof",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
         "id": "ABACUS_F841_PR1530",
-        "state": "PROOF_QUEUED",
-        "reason": "combined baseline F841=66 measured; three metrics-chart bindings selected, expected residual 63 only",
+        "state": "REMOTE_ACTIVE",
+        "reason": "remote execution authority continues independently; CODEX does not auto-promote unmeasured remote state",
         "lane": "ABACUS_REMOTE_EXECUTION"
       },
       {
         "rank": 3,
-        "id": "ABACUS_W293_411",
-        "state": "MEASURED_READY_FOR_NEXT_SLICE",
-        "reason": "combined main census measured W293=411; no next mechanical slice admitted yet",
+        "id": "ABACUS_W293_MEASURED_QUEUE",
+        "state": "REMOTE_MEASURED_QUEUE",
+        "reason": "measured mechanical debt remains a separate remote-authority lane",
         "lane": "ABACUS_REMOTE_EXECUTION"
       }
     ],
     "mid": [
       {
         "rank": 1,
-        "id": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
-        "state": "WITHHELD_UNTIL_DRY_RUN_PROOF",
-        "reason": "owner-authenticated dry-run receipt is still missing",
+        "id": "PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS",
+        "state": "PENDING_AFTER_BOUNDED_APPLY_IMPLEMENTATION",
+        "reason": "bounded apply must remain disabled by default and prove exact-head, approval, path allowlist and replay guards before any promotion",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
         "id": "REMOTE_RETURN_INGESTION",
         "state": "CONTROLLED_ACTIVE",
-        "reason": "ABACUS and cryoplant returns continue independently of the owner gate",
+        "reason": "ABACUS and cryoplant returns continue independently without authority transfer",
         "lane": "FEDERATION"
-      },
-      {
-        "rank": 3,
-        "id": "QPS_DOW_BIDIRECTIONAL_SPINE",
-        "state": "ACTIVE_DOMAIN_SPINE",
-        "reason": "QPS requests analysis downward; DOW/engineering evidence returns upward without authority transfer",
-        "lane": "QLM_ENGINEERING"
       }
     ],
     "long": [
@@ -332,21 +336,14 @@
         "rank": 1,
         "id": "AUTHENTICATED_APPLY_ALLOWLIST",
         "state": "WITHHELD",
-        "reason": "requires owner dry-run proof and separate bounded authorization",
+        "reason": "requires separate bounded implementation proof and explicit governance promotion",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
-        "id": "HTML_CONTENT_AS_SLIDE",
-        "state": "READY_FOR_BOUNDED_RENDERER_SLICE",
-        "reason": "status snapshot renderer can consume governed graph without becoming authority",
-        "lane": "OUTWARD"
-      },
-      {
-        "rank": 3,
         "id": "GLOBAL_DOV",
         "state": "WITHHELD",
-        "reason": "control-plane and remote-return projections grant zero engineering/formal credit",
+        "reason": "runtime control proof grants zero engineering/formal/acceptance credit",
         "lane": "GLOBAL"
       }
     ]
