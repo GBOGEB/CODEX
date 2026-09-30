@@ -65,7 +65,7 @@ def analyze(events: list[dict[str, Any]]) -> dict[str, Any]:
 def main() -> None:
     payload = json.loads(INPUT.read_text(encoding="utf-8"))
     result = analyze(payload.get("events", []))
-    text = json.dumps(result, indent=2, sort_keys=True) + "\n"
+    text = json.dumps(result, indent=2, sort_keys=False) + "\n"
     OUTPUT.write_text(text, encoding="utf-8")
     PAGES_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     PAGES_OUTPUT.write_text(text, encoding="utf-8")
