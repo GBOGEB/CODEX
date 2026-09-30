@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-09-30T16:54:30Z",
+  "generated_at": "2026-09-30T17:01:46Z",
   "public_metadata_only": true,
   "authority_transfer": false,
   "sources": [
@@ -20,8 +20,8 @@
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "EXECUTION_DOW",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-09-30T16:54:30Z",
-      "head_sha": "f87d5ea61852f46a0ecdb478f5916f4d078326cc",
+      "observed_at": "2026-09-30T17:01:46Z",
+      "head_sha": "3c0a57e1626e9c0361417ea21d78cceef4457f98",
       "census_pr": 1525,
       "census_head_sha": "acc8faef0208d90c1a05c0bfe4f85e9292a8b7d8",
       "census_merge_sha": "f87d5ea61852f46a0ecdb478f5916f4d078326cc",
@@ -51,9 +51,9 @@
       },
       "measured_return_source_sha": "acc8faef0208d90c1a05c0bfe4f85e9292a8b7d8",
       "live_head_after_measurement": {
-        "sha": "f87d5ea61852f46a0ecdb478f5916f4d078326cc",
-        "status": "CURRENT_MAIN_AFTER_1525",
-        "latest_known_merge_pr": 1525
+        "sha": "3c0a57e1626e9c0361417ea21d78cceef4457f98",
+        "status": "AHEAD_OF_1525_WITH_SPLIT_1527_1528_MEASURED_COMBINED_PENDING",
+        "latest_known_merge_pr": 1529
       },
       "pending_independent_lanes": [
         {
@@ -88,13 +88,32 @@
         {
           "pr": 1528,
           "family": "W293",
-          "status": "MERGED_PENDING_MAIN_CENSUS",
+          "status": "MERGED_SLICE_MEASURED_PENDING_COMBINED_MAIN",
           "head_sha": "ddfebc8cc40883c4a7d32102173ed4bb5d242683",
           "expected_only": {
             "W293": 411
           },
           "merge_sha": "64d26b4a3c74fb58ae0b445c65bbdea95f73fa6e",
-          "main_census_run": 36747745812
+          "main_census_run": 36747745812,
+          "measured_slice": {
+            "head_sha": "ddfebc8cc40883c4a7d32102173ed4bb5d242683",
+            "workflow_run": 36747539533,
+            "job": 109997428019,
+            "artifact_id": 11113791168,
+            "artifact_sha256": "0cf4c20e12820f51f60e5488caed187047f580bdb7b29d5f4c66bd583cab6daa",
+            "total": 8235,
+            "families": {
+              "E999": 1,
+              "F821": 0,
+              "F601": 0,
+              "F811": 0,
+              "F841": 76,
+              "E722": 16,
+              "E731": 0,
+              "E741": 17,
+              "W293": 411
+            }
+          }
         }
       ],
       "combined_main_census_pending": {
@@ -108,7 +127,9 @@
         "non_python_followup": {
           "pr": 1529,
           "merge_sha": "3c0a57e1626e9c0361417ea21d78cceef4457f98",
-          "lint_population_changed": false
+          "lint_population_changed": false,
+          "validate_docs_run": 36747972586,
+          "proof_status": "QUEUED"
         },
         "promotion_rule": "WITHHOLD_COMBINED_COUNTS_UNTIL_MAIN_CENSUS_MEASURED"
       }
