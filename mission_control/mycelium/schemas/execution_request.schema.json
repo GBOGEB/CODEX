@@ -103,6 +103,16 @@
     },
     "engineering_credit_delta": {
       "const": 0
+    },
+    "approval_ref": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Explicit approval evidence reference. Required by bounded-apply policy; never a secret."
+    },
+    "dry_run_receipt_ref": {
+      "type": "string",
+      "pattern": "^mission_control/mycelium/gateway/receipts/[A-Za-z0-9_.-]+\\\\.json$",
+      "description": "Repository-relative exact-head STAGE_ONLY predecessor receipt."
     }
   }
 }
