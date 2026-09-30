@@ -1,0 +1,55 @@
+{
+  "schema_version": "0.1",
+  "return_id": "ABACUS_DAB_RETURN_20260930_1527_SLICE_MEASURED",
+  "observed_at": "2026-09-30T17:01:11Z",
+  "scope": "PR_HEAD_SLICE_MEASUREMENT",
+  "source": {
+    "repository": "GBOGEB/ABACUS",
+    "ref": "gm14/dab-hard-f841-week3-tests-r2-20260930",
+    "measured_sha": "8a846b0e7bb03f11f2cd66d66f2ff7f2767dff21",
+    "merge_sha": "1830662b57ccaeb6b1c1553f2c584abe6a954f9f",
+    "authority": "REMOTE_EXECUTION_DOW"
+  },
+  "exact_census": {
+    "workflow_run": 36747479638,
+    "job": 109997228198,
+    "status": "MEASURED",
+    "total": 8230,
+    "families": {
+      "E999": 1,
+      "F821": 0,
+      "F601": 0,
+      "F811": 0,
+      "F841": 66,
+      "E722": 16,
+      "E731": 0,
+      "E741": 17,
+      "W293": 416
+    },
+    "artifact": {
+      "id": 11113178054,
+      "name": "dab-flake8-census",
+      "sha256": "70b49f98b252982ec56e7a89d9e9cc2758aae71044024049808d76925bf76774"
+    }
+  },
+  "lineage": {
+    "pr": 1527,
+    "family": "F841",
+    "prior_measured_source": "ABACUS_DAB_RETURN_20260930_1525_COMBINED",
+    "prior_measured_F841": 76,
+    "measured_slice_F841": 66,
+    "delta": -10
+  },
+  "combined_main_promotion": {
+    "status": "WITHHELD_PENDING_MAIN_CENSUS",
+    "workflow_run": 36747879827,
+    "expected_head_sha": "1830662b57ccaeb6b1c1553f2c584abe6a954f9f",
+    "reason": "current main also contains merged #1528 W293 slice; no cross-branch composition is auto-promoted"
+  },
+  "acceptance": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "engineering_truth_promoted": false
+  }
+}
