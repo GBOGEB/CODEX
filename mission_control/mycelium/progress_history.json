@@ -113,6 +113,64 @@
         "F811": 16,
         "W293": 3598
       }
+    },
+    {
+      "at": "2026-09-30T12:20:48Z",
+      "node_id": "dab_hard",
+      "kind": "MEASURED_CENSUS",
+      "ref": "ABACUS #1499 job 109882456512",
+      "sha": "dd6b88eb8515ea29038ee287eadfeaeba96de858",
+      "delta": {
+        "total": 10512,
+        "E999": 1,
+        "F811": 0,
+        "E731": 0,
+        "E722": 26,
+        "E741": 40,
+        "F841": 77,
+        "W293": 2657
+      }
+    },
+    {
+      "at": "2026-09-30T12:21:44Z",
+      "node_id": "dab_hard",
+      "kind": "MERGE",
+      "ref": "GBOGEB/ABACUS#1499",
+      "sha": "b1763b9ac6a9d98150a85bc807531d2ef2af1301",
+      "delta": {
+        "family": "E722",
+        "measured_before": 34,
+        "measured_after": 26,
+        "removed": 8
+      }
+    },
+    {
+      "at": "2026-09-30T12:22:43Z",
+      "node_id": "dab_mech",
+      "kind": "MERGE_PENDING_CENSUS",
+      "ref": "GBOGEB/ABACUS#1500",
+      "sha": "2d365a1a3b39395b165e2e9662967d434d302606",
+      "delta": {
+        "family": "W293",
+        "prior_measured_residual": 2657,
+        "removed": 745,
+        "expected_postmerge_residual": 1912,
+        "residual_status": "WITHHELD_POSTMERGE_CENSUS"
+      }
+    },
+    {
+      "at": "2026-09-30T12:23:26Z",
+      "node_id": "dab_hard",
+      "kind": "EXECUTION_START",
+      "ref": "GBOGEB/ABACUS#1501",
+      "sha": "5f7720626a8f559747c03886c0ed087de52e4e44",
+      "delta": {
+        "family": "E741",
+        "measured_baseline": 40,
+        "target_reduction": 5,
+        "target_residual": 35,
+        "proof": "QUEUED"
+      }
     }
   ]
 }
