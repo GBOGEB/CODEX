@@ -1,0 +1,74 @@
+schema_version: "0.1"
+gateway_id: MISSIONCONTROL_AUTHENTICATED_EXECUTION_GATEWAY
+state: DESIGN_ONLY_NO_MUTATION_BACKEND
+owner: CODEX_EXECUTION_GOVERNANCE
+
+authority:
+  authority_transfer: false
+  formal_credit_delta: 0
+  engineering_credit_delta: 0
+  codex_execution_orchestration_only: true
+  remote_engineering_authority_mutation: false
+  remote_execution_authority_mutation: false
+
+client_boundary:
+  static_pages_mode: STAGE_OR_DRY_RUN_ONLY
+  secrets_in_browser_forbidden: true
+  client_asserted_identity_is_trusted: false
+  apply_without_gateway_forbidden: true
+
+authentication:
+  required: true
+  principal_bound_server_side: true
+  supported_future_transports:
+    - AUTHENTICATED_CONNECTOR
+    - GITHUB_APP_BACKEND
+    - MANUALLY_APPROVED_ACTION
+  enabled_mutation_transports: []
+
+authorization:
+  default: DENY
+  exact_target_repo_required: true
+  exact_target_ref_required: true
+  exact_head_sha_required: true
+  allowlisted_action_required: true
+  least_privilege_required: true
+  remote_mutation_default: DENY
+  action_classes:
+    STAGE_ONLY:
+      enabled: true
+      mutates_repository: false
+    APPLY_BOUNDED_CODEX:
+      enabled: false
+      mutates_repository: true
+      allowed_repositories: [GBOGEB/CODEX]
+    REQUEST_TYPED_REMOTE_RETURN:
+      enabled: true
+      mutates_repository: false
+      targets: [GBOGEB/ABACUS, GBOGEB/cryoplant-project]
+
+execution_guards:
+  optimistic_concurrency: EXPECTED_HEAD_SHA_MUST_MATCH
+  idempotency_key_required: true
+  replay_of_completed_request_forbidden: true
+  changed_path_allowlist_required_for_mutation: true
+  dry_run_before_apply_required: true
+  approval_before_mutation_required: true
+  first_red_scope: AFFECTED_LANE_ONLY
+  independent_lanes_continue: true
+
+audit:
+  append_only_receipt_required: true
+  request_digest_required: true
+  before_sha_required: true
+  after_sha_required_if_mutated: true
+  workflow_run_job_binding_required_if_action_runner_used: true
+  evidence_refs_required: true
+  receipt_schema: mission_control/mycelium/schemas/execution_receipt.schema.json
+
+request_schema: mission_control/mycelium/schemas/execution_request.schema.json
+
+promotion:
+  design_completion_does_not_enable_apply: true
+  implementation_requires_separate_bounded_slice: true
+  implementation_success_does_not_transfer_remote_authority: true
