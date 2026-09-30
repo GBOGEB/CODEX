@@ -57,6 +57,11 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:7px;bord
 <div class="controls"><button id="continueFromCheckpoint">continue from durable state</button><span class="pill">first red: affected lane only</span><span class="pill">independent lanes continue</span></div>
 <table><thead><tr><th>Lane</th><th>State</th><th>Current atom</th><th>Blocker</th><th>Next legal transition</th><th>UI intent</th></tr></thead><tbody id="laneRows"></tbody></table>
 <div id="recoveryReceipt" class="compact muted"></div>
+<h3>Current / mid / long priority</h3>
+<div class="controls"><label>Horizon <select id="priorityHorizon"></select></label><span class="muted">Steer stages a USER_STEER event; it does not replay completed proof.</span></div>
+<table><thead><tr><th>Rank</th><th>Priority</th><th>State</th><th>Reason</th><th>Action</th></tr></thead><tbody id="priorityRows"></tbody></table>
+<h3>Temporal control events</h3>
+<table><thead><tr><th>Time</th><th>Type</th><th>Node</th><th>Summary</th></tr></thead><tbody id="controlEventRows"></tbody></table>
 <div class="timeline" id="flow" hidden></div>
 </article>
 
@@ -100,6 +105,8 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:7px;bord
 <div id="qlmContext" class="compact"></div>
 <p class="muted"><b>Strategy order:</b> <span id="federationStrategy"></span></p>
 <table><thead><tr><th>Repository</th><th>Head</th><th>Authority</th><th>Mechanism</th><th>State</th></tr></thead><tbody id="federationRows"></tbody></table>
+<h3>Federation edges / provenance</h3>
+<table><thead><tr><th>Source</th><th>Mechanism</th><th>Target</th><th>Authority</th><th>Proof</th></tr></thead><tbody id="federationEdgeRows"></tbody></table>
 <h3>Required per-edge provenance</h3>
 <div class="compact">source repo/ref/SHA → mechanism → target repo/ref/SHA → authority before/after → proof</div>
 </article>
@@ -132,6 +139,7 @@ function render(){
  ];
  $('#artifacts').innerHTML=outs.map(x=>'<div class="artifact"><b>'+(x[2]?'<a href="'+x[2]+'">'+x[0]+'</a>':x[0])+'</b><div class="muted">'+x[1]+'</div></div>').join('');
  drawGraph(); drawDensity(); drawMetrics(); drawProgress();
+ window.dispatchEvent(new CustomEvent('missioncontrol:model-ready',{detail:{model}}));
 }
 function displayMetric(v){
  if(!v)return 'WITHHELD';
