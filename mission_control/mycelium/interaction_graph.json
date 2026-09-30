@@ -1,6 +1,6 @@
 {
-  "schema_version": "0.3",
-  "snapshot_at": "2026-09-30T12:32:00+02:00",
+  "schema_version": "0.4",
+  "snapshot_at": "2026-09-30T12:42:00+02:00",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -10,7 +10,7 @@
       "state": "LOCAL_AUTHORITY",
       "url": "https://github.com/GBOGEB/CODEX",
       "meta": {
-        "sha": "d77d44811fec4fada16988769614d6091df56133",
+        "sha": "ad9df416db5786205f7ebeea18781a7a0b8337c2",
         "views": [
           "engineering",
           "control",
@@ -500,7 +500,134 @@
           "control",
           "observability"
         ],
-        "role": "QPS_ENGINEERING_TRUTH"
+        "role": "QPS_ENGINEERING_TRUTH",
+        "sha": "f03bfc61bcf85a2d91cd22d083ad0ef954387f0d"
+      }
+    },
+    {
+      "id": "config_control_plane",
+      "type": "config",
+      "label": "Mycelium v0.2.1 control-plane config",
+      "state": "ACTIVE",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/control_plane_projection.json",
+      "meta": {
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "evidence_pr839",
+      "type": "evidence",
+      "label": "PR #839 exact-head + Pages proof",
+      "state": "CONTROLLED_GREEN",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/receipts/MYCELIUM_V02_PR839_PROOF.json",
+      "meta": {
+        "head_sha": "70518b64f3c170949544ae31d0b78f0edd746c61",
+        "merge_sha": "495da65d816e6a3123f6ed53221d0ab053342ada",
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "human_command_input",
+      "type": "human_action",
+      "label": "Command / steering input",
+      "state": "STAGEABLE",
+      "meta": {
+        "authenticated_apply_required": true,
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "external_abacus_authority",
+      "type": "external_authority",
+      "label": "ABACUS execution authority",
+      "state": "REMOTE_PRESERVED",
+      "url": "https://github.com/GBOGEB/ABACUS",
+      "meta": {
+        "sha": "a2825418c0c92ecac127ff799bf0d87fc998c269",
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "external_cryoplant_authority",
+      "type": "external_authority",
+      "label": "Cryoplant engineering authority",
+      "state": "REMOTE_PRESERVED",
+      "url": "https://github.com/GBOGEB/cryoplant-project",
+      "meta": {
+        "sha": "f03bfc61bcf85a2d91cd22d083ad0ef954387f0d",
+        "functional_location": "QDIST",
+        "physical_boundary": "QDB_QLM",
+        "decision_surface": "ADR-QPS-006",
+        "views": [
+          "engineering",
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "out_traceability",
+      "type": "output",
+      "label": "Traceability navigator",
+      "state": "PUBLISHED_SOURCE",
+      "url": "traceability.html",
+      "meta": {
+        "views": [
+          "engineering",
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "out_manifest",
+      "type": "output",
+      "label": "Published manifest",
+      "state": "PUBLISHED_SOURCE",
+      "url": "manifest.html",
+      "meta": {
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "out_plots",
+      "type": "output",
+      "label": "Static plot index",
+      "state": "PUBLISHED_SOURCE",
+      "url": "plots/index.html",
+      "meta": {
+        "views": [
+          "engineering",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "out_control_plane",
+      "type": "output",
+      "label": "Control-plane governed projection",
+      "state": "PUBLISHED_SOURCE",
+      "url": "data/missioncontrol_control_plane.json",
+      "meta": {
+        "views": [
+          "control",
+          "observability"
+        ]
       }
     }
   ],
@@ -588,7 +715,17 @@
     {
       "from": "repo_abacus",
       "to": "repo_codex",
-      "type": "federates"
+      "type": "federates",
+      "mechanism": "REFERENCE",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_ref": "main",
+      "source_sha": "a2825418c0c92ecac127ff799bf0d87fc998c269",
+      "target_repo": "GBOGEB/CODEX",
+      "target_ref": "main",
+      "target_sha": "ad9df416db5786205f7ebeea18781a7a0b8337c2",
+      "authority_before": "REMOTE_EXECUTION_AUTHORITY",
+      "authority_after": "REMOTE_EXECUTION_AUTHORITY",
+      "proof": "TYPED_RETURN_REQUIRED"
     },
     {
       "from": "slice5",
@@ -816,7 +953,17 @@
       "views": [
         "control",
         "observability"
-      ]
+      ],
+      "mechanism": "PROJECTED_OR_BRIDGED",
+      "source_repo": "GBOGEB/cryoplant-project",
+      "source_ref": "main",
+      "source_sha": "f03bfc61bcf85a2d91cd22d083ad0ef954387f0d",
+      "target_repo": "GBOGEB/CODEX",
+      "target_ref": "main",
+      "target_sha": "ad9df416db5786205f7ebeea18781a7a0b8337c2",
+      "authority_before": "REMOTE_ENGINEERING_AUTHORITY",
+      "authority_after": "REMOTE_ENGINEERING_AUTHORITY",
+      "proof": "ADR-QPS-006"
     },
     {
       "from": "qps_triage_b",
@@ -824,6 +971,81 @@
       "type": "updates_triage",
       "views": [
         "control"
+      ]
+    },
+    {
+      "from": "config_control_plane",
+      "to": "mycelium",
+      "type": "implements",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "evidence_pr839",
+      "to": "mycelium",
+      "type": "proves",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "human_command_input",
+      "to": "current_next",
+      "type": "implements",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "external_abacus_authority",
+      "to": "repo_abacus",
+      "type": "references",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "external_cryoplant_authority",
+      "to": "repo_cryoplant_project",
+      "type": "references",
+      "views": [
+        "engineering",
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "mycelium",
+      "to": "out_traceability",
+      "type": "publishes"
+    },
+    {
+      "from": "mycelium",
+      "to": "out_manifest",
+      "type": "publishes"
+    },
+    {
+      "from": "mycelium",
+      "to": "out_plots",
+      "type": "publishes"
+    },
+    {
+      "from": "mycelium",
+      "to": "out_control_plane",
+      "type": "publishes"
+    },
+    {
+      "from": "repo_cryoplant_project",
+      "to": "current_next",
+      "type": "requires_return_from",
+      "views": [
+        "control",
+        "observability"
       ]
     }
   ]
