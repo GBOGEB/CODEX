@@ -180,6 +180,11 @@ def validate() -> list[str]:
         errors.append("Pages HTML is not bound to modular control-plane JS")
     if "missioncontrol_mycelium.html" not in INDEX.read_text(encoding="utf-8"):
         errors.append("Pages index does not link MissionControl Mycelium")
+    if "'removed '+mech.removed_w293+' / '+mech.files+' files" in html:
+        errors.append("W293 renderer assumes optional removed/files fields and can emit undefined")
+    for required_mech_token in ("mechDetails", "repository_total_flake8", "mech.evidence_pr"):
+        if required_mech_token not in html:
+            errors.append(f"W293 renderer missing resilient metric token: {required_mech_token}")
 
     ui_tokens = {
         "golden-focus", "single-focus", 'id="focus"', 'id="projection"',
