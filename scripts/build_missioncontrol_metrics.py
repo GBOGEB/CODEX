@@ -305,7 +305,8 @@ def apply_source_status_overlay(
 
     snapshot["latest_remote_return"] = {
         "source": abacus.get("repository", "GBOGEB/ABACUS"),
-        "source_sha": abacus.get("head_sha"),
+        "source_sha": abacus.get("measured_return_source_sha") or abacus.get("head_sha"),
+        "current_source_sha": abacus.get("head_sha"),
         "evidence": abacus.get("evidence_ref"),
         "status": STATUS_MEASURED,
         "census_pr": abacus.get("census_pr"),
