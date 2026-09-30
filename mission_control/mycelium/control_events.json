@@ -135,30 +135,52 @@
       "parent_event": "EV-0011",
       "content_ref": "mission_control/mycelium/receipts/LIVE_FEDERATION_INGESTION_20260930T111600Z.json",
       "summary": "Live source identity refresh measured CODEX, ABACUS and cryoplant heads; freshness coverage advanced from 2/3 to 3/3 without authority transfer."
+    },
+    {
+      "id": "EV-0013",
+      "at": "2026-09-30T11:24:00Z",
+      "type": "PROOF_BOUND",
+      "node_id": "current_next",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "c4cecdbe22a1228f32cb866ead26a19b187a0d6c",
+      "parent_event": "EV-0012",
+      "content_ref": "mission_control/mycelium/receipts/LIVE_FEDERATION_INGESTION_20260930T111600Z_PROOF.json",
+      "summary": "Live federation freshness pulse passed exact-head validator, tests and deterministic materialization."
+    },
+    {
+      "id": "EV-0014",
+      "at": "2026-09-30T11:26:00Z",
+      "type": "OUTWARD_PROJECTION",
+      "node_id": "pages",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "e7404bfb6df3289705286685500fd19c4ec6d991",
+      "parent_event": "EV-0013",
+      "content_ref": "PR-845 / Actions run 36708423542",
+      "summary": "Live federation pulse merged and current-main Pages build/status/deploy completed successfully."
     }
   ],
   "horizons": {
     "current": [
       {
         "rank": 1,
-        "id": "LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF",
-        "state": "PENDING",
-        "reason": "live freshness pulse is implemented; validator/tests/materialization must bind the exact head before promotion",
+        "id": "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
+        "state": "READY",
+        "reason": "live freshness/provenance pulse is exact-head and Pages green; static Apply remains staged-only",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
         "id": "CONSUME_TYPED_REMOTE_RETURNS",
         "state": "READY_WHEN_AVAILABLE",
-        "reason": "remote returns remain independent and must not be blocked by this proof lane",
+        "reason": "remote authority returns remain independent and may proceed in parallel",
         "lane": "FEDERATION"
       },
       {
         "rank": 3,
-        "id": "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
-        "state": "NEXT_AFTER_GREEN",
-        "reason": "static Pages Apply remains staged-only until a separately governed gateway exists",
-        "lane": "CODEX_UI"
+        "id": "SCHEDULE_NEXT_LIVE_FEDERATION_REFRESH",
+        "state": "READY",
+        "reason": "freshness is a recurring control input rather than a one-time promotion",
+        "lane": "FEDERATION"
       }
     ],
     "mid": [
