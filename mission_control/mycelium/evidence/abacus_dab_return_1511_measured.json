@@ -1,0 +1,83 @@
+{
+  "schema_version": "0.1",
+  "return_id": "ABACUS_DAB_RETURN_20260930_1511_CURRENT_MAIN",
+  "observed_at": "2026-09-30T15:37:08Z",
+  "source": {
+    "repository": "GBOGEB/ABACUS",
+    "ref": "main",
+    "measured_sha": "17509f850e39ebc15f8106beea5b3bda49ce1468",
+    "current_sha": "882b3778dceed220cb1e3359a6b5ac19073e22c0",
+    "authority": "REMOTE_EXECUTION_DOW"
+  },
+  "exact_census": {
+    "workflow_run": 36737854956,
+    "job": 109964160751,
+    "status": "MEASURED",
+    "total": 8541,
+    "families": {
+      "E999": 1,
+      "F821": 0,
+      "F601": 0,
+      "F811": 0,
+      "F841": 77,
+      "E722": 22,
+      "E731": 0,
+      "E741": 22,
+      "W293": 705
+    },
+    "artifact": {
+      "id": 11107717513,
+      "name": "dab-flake8-census",
+      "sha256": "065ad56cc079929af5a8ed008dd3fb1cc38d1ce169462ef419ba523e8271e864"
+    }
+  },
+  "delta_from_previous_measured": {
+    "previous_source_sha": "d54d22a57a80bc462a051ee26e5a7d5489432237",
+    "previous_total": 8853,
+    "total_delta": -312,
+    "E722": {
+      "before": 26,
+      "after": 22,
+      "delta": -4
+    },
+    "E741": {
+      "before": 22,
+      "after": 22,
+      "delta": 0
+    },
+    "W293": {
+      "before": 1013,
+      "after": 705,
+      "delta": -308
+    }
+  },
+  "contributing_merges": [
+    {
+      "pr": 1510,
+      "merge_sha": "061e0877be57b3bd43f32c9351fe716964529a58",
+      "family": "E722"
+    },
+    {
+      "pr": 1511,
+      "merge_sha": "17509f850e39ebc15f8106beea5b3bda49ce1468",
+      "family": "W293"
+    }
+  ],
+  "live_head_after_measurement": {
+    "sha": "882b3778dceed220cb1e3359a6b5ac19073e22c0",
+    "role": "DMAIC_METRICS_FOLLOWUP",
+    "census_effect": "UNMEASURED_AFTER_THIS_CHANGE"
+  },
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+    "state": "SOURCE_BOUND_HOLD"
+  },
+  "acceptance": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "engineering_truth_promoted": false
+  }
+}
