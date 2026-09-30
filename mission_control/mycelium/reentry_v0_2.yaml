@@ -55,26 +55,27 @@ reentry:
         pr: 1504
         main_sha: 38dfd5c46aa427ef0ec76185439e75fdeb18817f
         workflow_run: 36719173263
-        status: QUEUED
-        result_status: WITHHELD_PENDING_EXECUTED_PROOF
-        expected_only:
-          E741: 28
-          W293: 1395
-          E722: 26
-          F841: 77
-          E999: 1
+        job: 109899557428
+        status: COMPLETED_SUCCESS
+        result_status: MEASURED
+        total: 9244
+        E741: 28
+        W293: 1399
+        E722: 26
+        F841: 77
+        E999: 1
       latest_measured_return:
-        pr: 1501
-        head_sha: 5f7720626a8f559747c03886c0ed087de52e4e44
-        merge_sha: 83b8a1a9e4b89457cf7f07fb447544fa13eb2b3b
-        current_main_sha: 467453047d0ca4228d093d02f22c12437e17708f
-        workflow_run: 36714410799
-        job: 109883686239
-        artifact_id: 11095916691
-        artifact_sha256: 49073f6738c0ffd6375a740d62bf242bfd248507db2721831a91ffabb9109520
-        total: 9764
-        E741: 35
-        W293: 1912
+        pr: 1504
+        head_sha: 38dfd5c46aa427ef0ec76185439e75fdeb18817f
+        merge_sha: 38dfd5c46aa427ef0ec76185439e75fdeb18817f
+        current_main_sha: 38dfd5c46aa427ef0ec76185439e75fdeb18817f
+        workflow_run: 36719173263
+        job: 109899557428
+        artifact_id: 11098275735
+        artifact_sha256: ac71907fb2c16f7c84b48e17c86368b84376765b7844464d2fd317981a50ed3a
+        total: 9244
+        E741: 28
+        W293: 1399
         E722: 26
         F841: 77
         E999: 1
@@ -289,14 +290,13 @@ reentry:
       head_sha: 38dfd5c46aa427ef0ec76185439e75fdeb18817f
       state: REMOTE_AUTHORITY
       latest_census_merge_sha: 83b8a1a9e4b89457cf7f07fb447544fa13eb2b3b
-      current_atom: POST_1504_COMBINED_CENSUS_PENDING
+      current_atom: POST_1504_MEASURED_DAB_QUEUE
       completed_atoms: []
       blocker: REMOTE_ONLY_NO_CODEX_PROMOTION
       queue_state: EXECUTION
       evidence_refs: []
       artifact_refs: []
       next_legal_transitions:
-        - CONSUME_POST_1504_COMBINED_CENSUS
         - ADMIT_NEXT_MEASURED_HARD_OR_MECH_SLICE
         - PRESERVE_E999_SOURCE_BOUND_HOLD
         - REFRESH_REMOTE_HEAD
