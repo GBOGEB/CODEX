@@ -1,6 +1,6 @@
 {
   "schema_version": "0.4",
-  "snapshot_at": "2026-09-30T12:12:00Z",
+  "snapshot_at": "2026-09-30T12:24:00Z",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -27,15 +27,17 @@
       "state": "REMOTE_EXECUTION_CURRENT",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "d8e71dc73453e9e4ea10fa62afd0d9554d241297",
+        "sha": "2d365a1a3b39395b165e2e9662967d434d302606",
         "views": [
           "control",
           "observability"
         ],
         "latest_census_pr_head": "4a094a4f46646214d63e6ac0ed910723acceec12",
         "latest_census_merge_sha": "b4da07f95801fe90771ce6651c39db2bcd823017",
-        "observed_at": "2026-09-30T11:16:00Z",
-        "freshness_status": "MEASURED_CHAT_CONNECTOR"
+        "observed_at": "2026-09-30T12:24:00Z",
+        "freshness_status": "MEASURED_TYPED_RETURN",
+        "latest_census_pr": 1499,
+        "latest_census_job": 109882456512
       }
     },
     {
@@ -75,12 +77,23 @@
       "id": "dab_hard",
       "type": "queue",
       "label": "DAB-HARD",
-      "state": "ACTIVE_F811_WITH_E999_SOURCE_HOLD",
+      "state": "ACTIVE_E741_AFTER_E722_REDUCTION",
       "meta": {
         "views": [
           "control",
           "observability"
-        ]
+        ],
+        "latest_measured_total": 10512,
+        "E999": 1,
+        "F821": 0,
+        "F601": 0,
+        "F811": 0,
+        "F841": 77,
+        "E722": 26,
+        "E731": 0,
+        "E741": 40,
+        "active_pr": 1501,
+        "evidence_job": 109882456512
       }
     },
     {
@@ -237,11 +250,18 @@
           "control",
           "observability"
         ],
-        "next_hard_family": "F811",
-        "next_hard_count": 16,
+        "next_hard_family": "E741",
+        "next_hard_count": 40,
         "next_mech_family": "W293",
         "next_mech_residual": 3598,
-        "census_job": 109847724265
+        "census_job": 109882456512,
+        "next_hard_pr": 1501,
+        "next_hard_target_residual": 35,
+        "next_mech_last_measured_residual": 2657,
+        "next_mech_merged_slice": 1500,
+        "next_mech_removed": 745,
+        "next_mech_expected_residual": 1912,
+        "next_mech_residual_status": "WITHHELD_POSTMERGE_CENSUS"
       },
       "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/control_manifest.yaml"
     },
@@ -557,7 +577,7 @@
       "id": "hard_f841_residual",
       "type": "queue",
       "label": "F841 unused-local residual",
-      "state": "QUEUED",
+      "state": "QUEUED_MEASURED_77",
       "meta": {
         "baseline": 77,
         "current": 77,
@@ -565,22 +585,25 @@
         "views": [
           "control",
           "observability"
-        ]
+        ],
+        "status": "MEASURED"
       }
     },
     {
       "id": "hard_e722_residual",
       "type": "queue",
       "label": "E722 bare-except residual",
-      "state": "QUEUED",
+      "state": "MEASURED_RESIDUAL_26",
       "meta": {
         "baseline": 34,
-        "current": 34,
-        "delta": 0,
+        "current": 26,
+        "delta": -8,
         "views": [
           "control",
           "observability"
-        ]
+        ],
+        "evidence_pr": 1499,
+        "evidence_job": 109882456512
       }
     },
     {
@@ -602,7 +625,7 @@
       "id": "hard_e741_residual",
       "type": "queue",
       "label": "E741 ambiguous-name residual",
-      "state": "QUEUED",
+      "state": "ACTIVE_PR1501",
       "meta": {
         "baseline": 38,
         "current": 40,
@@ -610,21 +633,30 @@
         "views": [
           "control",
           "observability"
-        ]
+        ],
+        "active_pr": 1501,
+        "target_residual": 35,
+        "status": "MEASURED_BASELINE_PROOF_PENDING"
       }
     },
     {
       "id": "mech_w293_residual",
       "type": "queue",
       "label": "W293 mechanical residual",
-      "state": "SCALE_CANDIDATE",
+      "state": "SLICE7_MERGED_POST_CENSUS_WITHHELD",
       "meta": {
         "current": 3598,
         "last_slice_removed": 887,
         "views": [
           "control",
           "observability"
-        ]
+        ],
+        "last_measured_residual": 2657,
+        "merged_slice": 1500,
+        "removed": 745,
+        "expected_postmerge_residual": 1912,
+        "residual_status": "WITHHELD_POSTMERGE_CENSUS",
+        "pending_census_run": 36714315712
       }
     },
     {
