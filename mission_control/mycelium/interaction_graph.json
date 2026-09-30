@@ -1,6 +1,6 @@
 {
   "schema_version": "0.3",
-  "snapshot_at": "2026-09-30T12:05:00+02:00",
+  "snapshot_at": "2026-09-30T12:18:00+02:00",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -10,7 +10,12 @@
       "state": "LOCAL_AUTHORITY",
       "url": "https://github.com/GBOGEB/CODEX",
       "meta": {
-        "sha": "d77d44811fec4fada16988769614d6091df56133"
+        "sha": "d77d44811fec4fada16988769614d6091df56133",
+        "views": [
+          "engineering",
+          "control",
+          "observability"
+        ]
       }
     },
     {
@@ -20,7 +25,11 @@
       "state": "REMOTE_EXECUTION_CURRENT",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "a2825418c0c92ecac127ff799bf0d87fc998c269"
+        "sha": "a2825418c0c92ecac127ff799bf0d87fc998c269",
+        "views": [
+          "control",
+          "observability"
+        ]
       }
     },
     {
@@ -48,13 +57,25 @@
       "id": "dab_mech",
       "type": "queue",
       "label": "DAB-MECH",
-      "state": "EVIDENCE_GATED"
+      "state": "EVIDENCE_GATED",
+      "meta": {
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
     },
     {
       "id": "dab_hard",
       "type": "queue",
       "label": "DAB-HARD",
-      "state": "SOURCE_BOUND_HOLD"
+      "state": "SOURCE_BOUND_HOLD",
+      "meta": {
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
     },
     {
       "id": "slice4",
@@ -71,7 +92,13 @@
       "type": "issue",
       "label": "ABACUS #1488 DAB-HARD",
       "state": "ACTIVE",
-      "url": "https://github.com/GBOGEB/ABACUS/issues/1488"
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1488",
+      "meta": {
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
     },
     {
       "id": "hard_pr",
@@ -122,7 +149,13 @@
       "type": "artifact",
       "label": "MissionControl Mycelium UI",
       "state": "UNDER_CONSTRUCTION",
-      "url": "https://github.com/GBOGEB/CODEX/tree/main/mission_control/mycelium"
+      "url": "https://github.com/GBOGEB/CODEX/tree/main/mission_control/mycelium",
+      "meta": {
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
     },
     {
       "id": "slice5",
@@ -133,7 +166,11 @@
       "meta": {
         "merge_sha": "66af75cbf4a9d69d45d823a2eeef1336300aefc6",
         "expected_w293_reduction": 887,
-        "files": 21
+        "files": 21,
+        "views": [
+          "control",
+          "observability"
+        ]
       }
     },
     {
@@ -143,7 +180,11 @@
       "state": "MERGED",
       "url": "https://github.com/GBOGEB/ABACUS/pull/1492",
       "meta": {
-        "merge_sha": "d945388d020019e0be9d1683bfcda46ba2ac74f3"
+        "merge_sha": "d945388d020019e0be9d1683bfcda46ba2ac74f3",
+        "views": [
+          "control",
+          "observability"
+        ]
       }
     },
     {
@@ -152,7 +193,12 @@
       "label": "W52 qplant E999 source gap",
       "state": "SOURCE_BOUND_HOLD",
       "meta": {
-        "path": "qplant/w52_p2m_ts_pressure_sensitivity.py"
+        "path": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+        "views": [
+          "engineering",
+          "control",
+          "observability"
+        ]
       }
     },
     {
@@ -165,7 +211,11 @@
         "fix_pr": 0,
         "prove": 0,
         "external_gate": 2,
-        "parent_control": 2
+        "parent_control": 2,
+        "views": [
+          "control",
+          "observability"
+        ]
       }
     },
     {
@@ -174,7 +224,11 @@
       "label": "Current / exact next edge",
       "state": "CHECKPOINTED",
       "meta": {
-        "replay_completed_slice": false
+        "replay_completed_slice": false,
+        "views": [
+          "control",
+          "observability"
+        ]
       },
       "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/control_manifest.yaml"
     },
@@ -185,7 +239,11 @@
       "state": "PRIORITY_INPUT",
       "meta": {
         "forces_rebase": false,
-        "preserves_completed_proof": true
+        "preserves_completed_proof": true,
+        "views": [
+          "control",
+          "observability"
+        ]
       }
     },
     {
@@ -425,6 +483,21 @@
         "views": [
           "observability"
         ]
+      }
+    },
+    {
+      "id": "repo_cryoplant_project",
+      "type": "repo",
+      "label": "GBOGEB/cryoplant-project",
+      "state": "REMOTE_ENGINEERING_AUTHORITY",
+      "url": "https://github.com/GBOGEB/cryoplant-project",
+      "meta": {
+        "views": [
+          "engineering",
+          "control",
+          "observability"
+        ],
+        "role": "QPS_ENGINEERING_TRUTH"
       }
     }
   ],
@@ -723,6 +796,31 @@
       "type": "observes",
       "views": [
         "observability"
+      ]
+    },
+    {
+      "from": "repo_cryoplant_project",
+      "to": "epic_cryoplant",
+      "type": "contains",
+      "views": [
+        "engineering"
+      ]
+    },
+    {
+      "from": "repo_cryoplant_project",
+      "to": "repo_codex",
+      "type": "federates",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "qps_triage_b",
+      "to": "repo_cryoplant_project",
+      "type": "updates_triage",
+      "views": [
+        "control"
       ]
     }
   ]
