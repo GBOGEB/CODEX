@@ -29,7 +29,7 @@ reentry:
       repo: GBOGEB/ABACUS
       branch: main
       handover_observed_sha: 713a152e99024165aea81bffbf530d2073e164bb
-      refreshed_current_sha: 07dfdf08cc4252df6d3650b2c6b1b3623958bbd8
+      refreshed_current_sha: c72c06a75dc4c3909e66149b4d820381363679bf
       role: REMOTE_EXECUTION_AUTHORITY
       latest_census:
         pr: 1499
@@ -71,18 +71,18 @@ reentry:
           F811: 0
           E731: 0
       latest_measured_return:
-        pr: 1514
-        head_sha: fa9f22ef330022ba4af31e619608b22bf8071d8f
-        merge_sha: fa9f22ef330022ba4af31e619608b22bf8071d8f
-        current_main_sha: 07dfdf08cc4252df6d3650b2c6b1b3623958bbd8
-        workflow_run: 36741063907
-        job: 109975274070
-        artifact_id: 11110213996
-        artifact_sha256: 40e991e1171f5be96531bd27ca089de7d7fd25e62409f076937ab790dbfc637c
-        total: 8349
-        E722: 18
-        E741: 22
-        W293: 517
+        pr: 1519
+        head_sha: 971b781d641776fe1e34fe09591716f90548e83b
+        merge_sha: 18a79236974498931f654939e8fec2535c499aec
+        current_main_sha: c72c06a75dc4c3909e66149b4d820381363679bf
+        workflow_run: 36742253906
+        job: 109979358364
+        artifact_id: 11111551331
+        artifact_sha256: a1542239c74383c0865e1de2534d2d91d6d08b3b689311f5f900c9339cee1251
+        total: 8282
+        E722: 16
+        E741: 21
+        W293: 453
         F841: 77
         E999: 1
         F821: 0
@@ -91,10 +91,16 @@ reentry:
         E731: 0
         state: MEASURED
         pending_independent_lane:
-          pr: 1519
-          families: [E722, E741]
-          expected_only: "E722=16,E741=21,W293=453"
-          status: OPEN_UNMEASURED
+          pr: 1523
+          family: W293
+          expected_only: 416
+          merge_sha: 041c3367842423a336f4cd5a496863cb5000bae9
+          census_run: 36745077611
+          status: MERGED_PENDING_CENSUS
+        workflow_control_after_measurement:
+          pr: 1524
+          merge_sha: c72c06a75dc4c3909e66149b4d820381363679bf
+          lint_population_changed: false
     cryoplant:
       repo: GBOGEB/cryoplant-project
       branch: main
@@ -302,10 +308,10 @@ reentry:
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
-      head_sha: 07dfdf08cc4252df6d3650b2c6b1b3623958bbd8
+      head_sha: c72c06a75dc4c3909e66149b4d820381363679bf
       state: REMOTE_AUTHORITY
-      latest_census_merge_sha: 877efed83bf6479232e0029fb430243f21e937a2
-      current_atom: POST_1518_MEASURED_DAB_QUEUE_1519_PENDING
+      latest_census_merge_sha: 18a79236974498931f654939e8fec2535c499aec
+      current_atom: POST_1519_MEASURED_DAB_QUEUE_1523_PENDING
       completed_atoms:
         - POST_1506_COMBINED_CENSUS_MEASURED
       blocker: REMOTE_ONLY_NO_CODEX_PROMOTION
