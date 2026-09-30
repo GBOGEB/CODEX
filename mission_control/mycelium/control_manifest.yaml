@@ -78,8 +78,8 @@ control_plane:
   pages_projection: docs/data/missioncontrol_control_plane.json
   predecessor_proof: mission_control/mycelium/receipts/MYCELIUM_V02_PR839_PROOF.json
   current_proof: mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
-  current_capability_status: MYCELIUM_V0_2_1_MERGED_PAGES_GREEN
-  next_edge: AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
+  current_capability_status: AUTHENTICATED_RUNTIME_DRY_RUN_GREEN_BOUNDED_APPLY_ADMITTED
+  next_edge: IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
   command_input:
     static_pages_mode: STAGE_OR_DRY_RUN_ONLY
     authenticated_apply_gateway_required: true
@@ -117,15 +117,15 @@ control_plane:
     required_provenance: [source_repo, source_ref, source_sha, target_repo, target_ref, target_sha, mechanism, authority_before, authority_after, proof]
 
 authenticated_execution_gateway:
-  state: TRANSPORT_MERGED_EXACT_HEAD_GREEN
+  state: RUNTIME_DRY_RUN_EXECUTED_NO_MUTATION
   contract: mission_control/mycelium/execution_gateway_contract.yaml
   request_schema: mission_control/mycelium/schemas/execution_request.schema.json
   receipt_schema: mission_control/mycelium/schemas/execution_receipt.schema.json
   validator: scripts/validate_missioncontrol_execution_gateway.py
   transport_implementation: scripts/missioncontrol_authenticated_transport.py
-  transport_workflow: .github/workflows/missioncontrol-authenticated-transport.yml
+  transport_workflow: .github/workflows/missioncontrol-owner-comment-transport.yml
   selected_transport_class: MANUALLY_APPROVED_ACTION
-  selected_transport_implementation: GITHUB_WORKFLOW_DISPATCH_READ_ONLY
+  selected_transport_implementation: GITHUB_ISSUE_COMMENT_OWNER_STAGE_ONLY
   static_pages_apply: STAGE_OR_DRY_RUN_ONLY
   default_authorization: DENY
   exact_head_required: true
@@ -139,11 +139,19 @@ authenticated_execution_gateway:
   merge_sha: ea167f43732e838bc3fb5d5ad382fe0874b66fcb
   merged_main_readback_sha: 954cde35a2ac101e687d71e28f973864118bb1f0
   pages_readback: WITHHELD_NO_RUN_OBSERVED
-  runtime_dry_run_proof: WITHHELD_OWNER_DISPATCH_REQUIRED
+  runtime_dry_run_proof: EXECUTED_EXACT_HEAD_NO_MUTATION
+  runtime_observed_head_sha: 86491df05050967dd8cc11ee3b3b0dbd114193b9
+  runtime_run: 36754862285
+  runtime_job: 110022402610
+  runtime_artifact_id: 11116571326
+  runtime_artifact_name: missioncontrol-stage-only-1e4df9cae241e539246c1338
+  runtime_artifact_zip_sha256: 116c0861d54dfa9aeb4c1241b5a5e9948e9f245ef69abcf4801e3bb025d8dd83
+  runtime_receipt: mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json
+  runtime_authenticated_principal: github:GBOGEB#202350393
+  runtime_after_sha: null
   remote_authority_mutation: false
   authority_transfer: false
   next_atoms:
-    - GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
     - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
     - PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS
 
