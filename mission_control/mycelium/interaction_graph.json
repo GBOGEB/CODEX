@@ -1,6 +1,6 @@
 {
   "schema_version": "0.4",
-  "snapshot_at": "2026-09-30T11:16:00Z",
+  "snapshot_at": "2026-09-30T12:00:00Z",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -752,6 +752,48 @@
           "observability"
         ]
       }
+    },
+    {
+      "id": "gateway_design",
+      "type": "config",
+      "label": "Authenticated execution gateway design",
+      "state": "MERGED_DESIGN_AUTHORITY",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/execution_gateway_contract.yaml",
+      "meta": {
+        "merge_sha": "27c27086fab898d8c5d5e3cc4e1b87fe18fcd321",
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "gateway_transport",
+      "type": "workflow",
+      "label": "Authenticated transport · workflow_dispatch",
+      "state": "IMPLEMENTED_PENDING_PROOF",
+      "url": "https://github.com/GBOGEB/CODEX/actions/workflows/missioncontrol-authenticated-transport.yml",
+      "meta": {
+        "transport_class": "MANUALLY_APPROVED_ACTION",
+        "mutation_enabled": false,
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "gateway_transport_receipt",
+      "type": "evidence",
+      "label": "Authenticated transport dry-run receipt",
+      "state": "WITHHELD_OWNER_DISPATCH_REQUIRED",
+      "url": "https://github.com/GBOGEB/CODEX/tree/main/mission_control/mycelium/gateway/receipts",
+      "meta": {
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
     }
   ],
   "edges": [
@@ -1305,6 +1347,33 @@
       "from": "repo_cryoplant_project",
       "to": "current_next",
       "type": "requires_return_from",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "gateway_transport",
+      "to": "gateway_design",
+      "type": "implements",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "human_command_input",
+      "to": "gateway_transport",
+      "type": "references",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "gateway_transport",
+      "to": "gateway_transport_receipt",
+      "type": "produces",
       "views": [
         "control",
         "observability"
