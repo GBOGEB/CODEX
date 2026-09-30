@@ -2,7 +2,7 @@
   "schema_version": "0.2",
   "generated_for": "CODEX_MISSIONCONTROL_MYCELIUM",
   "mode": "CONTINUE_FROM_DURABLE_STATE",
-  "generated_at": "2026-09-30T17:10:00Z",
+  "generated_at": "2026-09-30T17:56:48Z",
   "source_yaml": "mission_control/mycelium/reentry_v0_2.yaml",
   "invariants": {
     "authority_transfer": false,
@@ -20,7 +20,7 @@
       "repo": "GBOGEB/CODEX",
       "branch": "main",
       "handover_observed_sha": "d77d44811fec4fada16988769614d6091df56133",
-      "refreshed_current_sha": "4261c883624a2a01f17e918445a643d048a1a79e",
+      "refreshed_current_sha": "86491df05050967dd8cc11ee3b3b0dbd114193b9",
       "role": "UI_ORCHESTRATION_GRAPH_AUTHORITY",
       "merge_refs": [
         {
@@ -212,9 +212,9 @@
       "id": "CODEX_UI",
       "repository": "GBOGEB/CODEX",
       "branch": "main",
-      "head_sha": "4261c883624a2a01f17e918445a643d048a1a79e",
-      "state": "OWNER_ACTION_GATE",
-      "current_atom": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
+      "head_sha": "86491df05050967dd8cc11ee3b3b0dbd114193b9",
+      "state": "RUNTIME_PROOF_EXECUTED_MUTATION_DISABLED",
+      "current_atom": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
       "completed_atoms": [
         "MYCELIUM_V0_1",
         "MYCELIUM_V0_2_INTERACTION",
@@ -237,13 +237,14 @@
         "LIVE_TEMPORAL_FEDERATION_INGESTION",
         "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
         "SELECT_AUTHENTICATED_TRANSPORT",
-        "AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF"
+        "AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF",
+        "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH"
       ],
-      "blocker": "OWNER_AUTHENTICATED_WORKFLOW_DISPATCH_REQUIRED",
-      "queue_state": "OWNER_ACTION",
+      "blocker": "BOUNDED_MUTATION_AUTHORIZATION_NOT_YET_IMPLEMENTED",
+      "queue_state": "EXECUTION",
       "next_legal_transitions": [
-        "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
         "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
+        "PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS",
         "CONSUME_TYPED_REMOTE_RETURNS"
       ]
     },
@@ -371,8 +372,8 @@
     "authority_transfer": false
   },
   "current_proof": "mission_control/mycelium/receipts/AUTHENTICATED_TRANSPORT_V01_PR850_PROOF.json",
-  "current_capability_status": "AUTHENTICATED_TRANSPORT_MERGED_EXACT_HEAD_GREEN",
-  "next_edge": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
+  "current_capability_status": "AUTHENTICATED_TRANSPORT_RUNTIME_PROOF_EXECUTED_MUTATION_DISABLED",
+  "next_edge": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
   "pages_readback": {
     "run_id": 36706855094,
     "build": "PASS",
@@ -414,7 +415,7 @@
     "pages_status": "GREEN"
   },
   "authenticated_execution_gateway": {
-    "state": "TRANSPORT_MERGED_EXACT_HEAD_GREEN",
+    "state": "RUNTIME_DRY_RUN_EXECUTED_MUTATION_DISABLED",
     "design_contract": "mission_control/mycelium/execution_gateway_contract.yaml",
     "request_schema": "mission_control/mycelium/schemas/execution_request.schema.json",
     "receipt_schema": "mission_control/mycelium/schemas/execution_receipt.schema.json",
@@ -426,7 +427,7 @@
     "idempotency_bound": true,
     "mutation_enabled": false,
     "enabled_mutation_transports": [],
-    "runtime_dry_run_proof": "WITHHELD_OWNER_DISPATCH_REQUIRED",
+    "runtime_dry_run_proof": "EXECUTED",
     "static_pages_mode": "STAGE_OR_DRY_RUN_ONLY",
     "authority_transfer": false,
     "formal_credit_delta": 0,
@@ -436,7 +437,13 @@
     "exact_head_job": 109878913705,
     "merge_sha": "ea167f43732e838bc3fb5d5ad382fe0874b66fcb",
     "merged_main_readback_sha": "954cde35a2ac101e687d71e28f973864118bb1f0",
-    "pages_readback": "WITHHELD_NO_RUN_OBSERVED"
+    "pages_readback": "WITHHELD_NO_RUN_OBSERVED",
+    "runtime_run": 36754862285,
+    "runtime_job": 110022402610,
+    "runtime_receipt": "mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json",
+    "runtime_artifact_id": 11116571326,
+    "runtime_artifact_sha256": "116c0861d54dfa9aeb4c1241b5a5e9948e9f245ef69abcf4801e3bb025d8dd83",
+    "observed_head_sha": "86491df05050967dd8cc11ee3b3b0dbd114193b9"
   },
   "latest_typed_remote_return": {
     "source_repo": "GBOGEB/ABACUS",
