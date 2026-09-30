@@ -292,8 +292,13 @@ def apply_source_status_overlay(
             if isinstance(baseline, (int, float)):
                 row["delta_from_baseline"] = value - baseline
             if evidence_pr:
-                row["evidence_pr"] = evidence_pr
+                if row.get("evidence_pr"):
+                    row["repair_evidence_pr"] = row["evidence_pr"]
+                else:
+                    row["evidence_pr"] = evidence_pr
+                row["measurement_pr"] = evidence_pr
             if evidence_job:
+                row["measurement_job"] = evidence_job
                 row["evidence_job"] = evidence_job
             rows.append(row)
         dab_hard["family_progress"] = rows
