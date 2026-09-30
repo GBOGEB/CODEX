@@ -42,6 +42,7 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install -e .
+          pip install "matplotlib>=3.8"
 
       - name: Generate runtime evidence for hosted portal
         run: |
@@ -57,6 +58,9 @@ jobs:
           python scripts/ingest_missioncontrol_sources.py
           test -f docs/data/missioncontrol_source_status.json
           test -f docs/data/missioncontrol_control_events.json
+          test -f docs/data/missioncontrol_graph_analysis.json
+          test -f docs/missioncontrol_graph_explorer.html
+          test -s docs/assets/missioncontrol/missioncontrol_degree_distribution.png
           python - <<'PY'
           import json
           from pathlib import Path
@@ -80,6 +84,8 @@ jobs:
           python scripts/check_manifest.py
           python scripts/check_globs.py
           python scripts/check_stale.py
+          python scripts/build_missioncontrol_graph_publication.py
+          python scripts/render_missioncontrol_graph_matplotlib.py
           python scripts/check_links.py
           pytest -q             --ignore=tests/gistau_ch15             --ignore=tests/test_coolprop_state_grid.py             --ignore=tests/test_exergy_kernel.py             --ignore=tests/test_nist_validation_points.py             --ignore=tests/test_units_kernel.py
 

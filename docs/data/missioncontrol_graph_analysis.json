@@ -1,0 +1,304 @@
+{
+  "schema_version": "0.1",
+  "source_graph": "mission_control/mycelium/interaction_graph.json",
+  "pages_source_graph": "docs/data/missioncontrol_interaction_graph.json",
+  "authority_class": "DERIVED_PROJECTION_ONLY",
+  "authority_transfer": false,
+  "graph": {
+    "node_count": 63,
+    "edge_count": 82,
+    "density": 0.020993,
+    "directed": true
+  },
+  "node_type_counts": {
+    "analysis": 2,
+    "artifact": 6,
+    "atom": 4,
+    "config": 2,
+    "decision": 1,
+    "domain": 1,
+    "epic": 1,
+    "evidence": 4,
+    "external_authority": 2,
+    "human_action": 1,
+    "issue": 1,
+    "output": 7,
+    "projection": 3,
+    "property_source": 5,
+    "pull_request": 7,
+    "queue": 10,
+    "repo": 3,
+    "topic": 2,
+    "workflow": 1
+  },
+  "node_state_counts": {
+    "ACTIVE": 11,
+    "ACTIVE_NEXT": 1,
+    "ACTIVE_PR1501": 1,
+    "BLOCKED": 2,
+    "CHECKPOINTED": 1,
+    "CONTROL_EXTERNAL_GATE_ONLY": 1,
+    "CONTROLLED_GREEN": 1,
+    "IMPLEMENTATION_PROOF_BOUND_RUNTIME_RECEIPT_WITHHELD": 1,
+    "LOCAL_AUTHORITY": 1,
+    "MEASURED": 1,
+    "MEASURED_E741_35": 1,
+    "MEASURED_RESIDUAL_26": 1,
+    "MEASURED_W293_1912": 1,
+    "MECHANICAL": 1,
+    "MERGED": 7,
+    "MERGED_DESIGN_AUTHORITY": 1,
+    "MERGED_EXACT_HEAD_GREEN": 1,
+    "MISSING_EVIDENCE": 1,
+    "P0": 1,
+    "PRIORITY_INPUT": 1,
+    "PUBLISHED_SOURCE": 4,
+    "QUEUED": 1,
+    "QUEUED_MEASURED_77": 1,
+    "REMOTE_ENGINEERING_AUTHORITY": 1,
+    "REMOTE_EXECUTION_CURRENT": 1,
+    "REMOTE_METADATA_ONLY": 1,
+    "REMOTE_PRESERVED": 2,
+    "REQUIRED": 1,
+    "SEMANTIC": 1,
+    "SLICE7_MERGED_POST_CENSUS_WITHHELD": 1,
+    "SOURCE_BOUND_HOLD": 1,
+    "SOURCE_CANDIDATE": 5,
+    "SOURCE_LINKED": 2,
+    "STAGEABLE": 1,
+    "TARGET": 1,
+    "UNDER_CONSTRUCTION": 1,
+    "UNRESOLVED": 1
+  },
+  "degree_distribution": [
+    {
+      "degree": 1,
+      "count": 25
+    },
+    {
+      "degree": 2,
+      "count": 23
+    },
+    {
+      "degree": 3,
+      "count": 4
+    },
+    {
+      "degree": 4,
+      "count": 2
+    },
+    {
+      "degree": 5,
+      "count": 1
+    },
+    {
+      "degree": 6,
+      "count": 3
+    },
+    {
+      "degree": 7,
+      "count": 2
+    },
+    {
+      "degree": 9,
+      "count": 1
+    },
+    {
+      "degree": 13,
+      "count": 1
+    },
+    {
+      "degree": 14,
+      "count": 1
+    }
+  ],
+  "top_degree_nodes": [
+    {
+      "id": "dab_hard",
+      "label": "DAB-HARD",
+      "type": "queue",
+      "state": "MEASURED_E741_35",
+      "in_degree": 8,
+      "out_degree": 6,
+      "total_degree": 14
+    },
+    {
+      "id": "mycelium",
+      "label": "MissionControl Mycelium UI",
+      "type": "artifact",
+      "state": "UNDER_CONSTRUCTION",
+      "in_degree": 6,
+      "out_degree": 7,
+      "total_degree": 13
+    },
+    {
+      "id": "abacus_flake8_census_1494",
+      "label": "ABACUS #1494 full Flake8 census",
+      "type": "pull_request",
+      "state": "MERGED",
+      "in_degree": 0,
+      "out_degree": 9,
+      "total_degree": 9
+    },
+    {
+      "id": "calc_b_pressure_drop",
+      "label": "Pressure-drop calculation",
+      "type": "analysis",
+      "state": "REQUIRED",
+      "in_degree": 2,
+      "out_degree": 5,
+      "total_degree": 7
+    },
+    {
+      "id": "repo_codex",
+      "label": "GBOGEB/CODEX",
+      "type": "repo",
+      "state": "LOCAL_AUTHORITY",
+      "in_degree": 3,
+      "out_degree": 4,
+      "total_degree": 7
+    },
+    {
+      "id": "dab_mech",
+      "label": "DAB-MECH",
+      "type": "queue",
+      "state": "MEASURED_W293_1912",
+      "in_degree": 4,
+      "out_degree": 2,
+      "total_degree": 6
+    },
+    {
+      "id": "repo_abacus",
+      "label": "GBOGEB/ABACUS",
+      "type": "repo",
+      "state": "REMOTE_EXECUTION_CURRENT",
+      "in_degree": 2,
+      "out_degree": 4,
+      "total_degree": 6
+    },
+    {
+      "id": "repo_cryoplant_project",
+      "label": "GBOGEB/cryoplant-project",
+      "type": "repo",
+      "state": "REMOTE_ENGINEERING_AUTHORITY",
+      "in_degree": 2,
+      "out_degree": 4,
+      "total_degree": 6
+    },
+    {
+      "id": "current_next",
+      "label": "Current / exact next edge",
+      "type": "artifact",
+      "state": "CHECKPOINTED",
+      "in_degree": 4,
+      "out_degree": 1,
+      "total_degree": 5
+    },
+    {
+      "id": "epic_cryoplant",
+      "label": "EPIC · Cryoplant",
+      "type": "epic",
+      "state": "ACTIVE",
+      "in_degree": 3,
+      "out_degree": 1,
+      "total_degree": 4
+    },
+    {
+      "id": "qps_triage_b",
+      "label": "QPS · CRYO-IF-B unresolved",
+      "type": "queue",
+      "state": "P0",
+      "in_degree": 1,
+      "out_degree": 3,
+      "total_degree": 4
+    },
+    {
+      "id": "abacus_dab_return_1501",
+      "label": "ABACUS #1501 measured DAB return",
+      "type": "evidence",
+      "state": "MEASURED",
+      "in_degree": 1,
+      "out_degree": 2,
+      "total_degree": 3
+    },
+    {
+      "id": "dow_b_pressure_drop",
+      "label": "DOW · B-interface ΔP analysis",
+      "type": "analysis",
+      "state": "MISSING_EVIDENCE",
+      "in_degree": 1,
+      "out_degree": 2,
+      "total_degree": 3
+    },
+    {
+      "id": "gateway_transport",
+      "label": "Authenticated transport · workflow_dispatch",
+      "type": "workflow",
+      "state": "MERGED_EXACT_HEAD_GREEN",
+      "in_degree": 1,
+      "out_degree": 2,
+      "total_degree": 3
+    },
+    {
+      "id": "interface_b",
+      "label": "B interface",
+      "type": "topic",
+      "state": "UNRESOLVED",
+      "in_degree": 2,
+      "out_degree": 1,
+      "total_degree": 3
+    },
+    {
+      "id": "codex_bd_queue",
+      "label": "CODEX BD queue",
+      "type": "queue",
+      "state": "CONTROL_EXTERNAL_GATE_ONLY",
+      "in_degree": 1,
+      "out_degree": 1,
+      "total_degree": 2
+    },
+    {
+      "id": "cryoplant_master_input_ledger_1834",
+      "label": "Cryoplant #1834 Master_Input ledger return",
+      "type": "evidence",
+      "state": "REMOTE_METADATA_ONLY",
+      "in_degree": 1,
+      "out_degree": 1,
+      "total_degree": 2
+    },
+    {
+      "id": "domain_helium_refrigeration",
+      "label": "Domain · Helium refrigeration",
+      "type": "domain",
+      "state": "ACTIVE",
+      "in_degree": 1,
+      "out_degree": 1,
+      "total_degree": 2
+    },
+    {
+      "id": "hard_e722_residual",
+      "label": "E722 bare-except residual",
+      "type": "queue",
+      "state": "MEASURED_RESIDUAL_26",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2
+    },
+    {
+      "id": "hard_e731_residual",
+      "label": "E731 lambda-assignment residual",
+      "type": "queue",
+      "state": "QUEUED",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2
+    }
+  ],
+  "renderer_contract": {
+    "core": "HTML_SVG",
+    "plotly": "OPTIONAL_INTERACTIVE_PROJECTION",
+    "matplotlib": "OPTIONAL_STATIC_PROJECTION",
+    "plotly_failure_blocks_core": false,
+    "matplotlib_failure_blocks_core": false
+  }
+}

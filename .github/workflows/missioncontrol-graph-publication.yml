@@ -1,0 +1,51 @@
+name: MissionControl Graph Publication
+
+on:
+  pull_request:
+    paths:
+      - "mission_control/mycelium/interaction_graph.json"
+      - "mission_control/mycelium/graph_analysis.json"
+      - "docs/data/missioncontrol_graph_analysis.json"
+      - "docs/missioncontrol_graph_explorer.html"
+      - "docs/assets/missioncontrol/missioncontrol_degree_distribution.svg"
+      - "scripts/build_missioncontrol_graph_publication.py"
+      - "scripts/render_missioncontrol_graph_matplotlib.py"
+      - ".github/workflows/missioncontrol-graph-publication.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publication:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install static renderer
+        run: python -m pip install "matplotlib>=3.8"
+      - name: Rebuild graph analysis and SVG fallback
+        run: python scripts/build_missioncontrol_graph_publication.py
+      - name: Render Matplotlib static evidence
+        run: python scripts/render_missioncontrol_graph_matplotlib.py
+      - name: Verify deterministic committed projections
+        run: |
+          git diff --exit-code -- \
+            mission_control/mycelium/graph_analysis.json \
+            docs/data/missioncontrol_graph_analysis.json \
+            docs/assets/missioncontrol/missioncontrol_degree_distribution.svg
+          test -s docs/assets/missioncontrol/missioncontrol_degree_distribution.png
+          grep -q "Plotly interactive projection active" docs/missioncontrol_graph_explorer.html
+          grep -q "source/original" docs/missioncontrol_graph_explorer.html
+      - name: Upload publication evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: missioncontrol-graph-publication
+          path: |
+            mission_control/mycelium/graph_analysis.json
+            docs/data/missioncontrol_graph_analysis.json
+            docs/assets/missioncontrol/missioncontrol_degree_distribution.svg
+            docs/assets/missioncontrol/missioncontrol_degree_distribution.png
+            docs/missioncontrol_graph_explorer.html

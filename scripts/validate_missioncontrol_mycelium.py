@@ -13,6 +13,13 @@ DOCS = ROOT / "docs"
 MANIFEST = MC / "control_manifest.yaml"
 GRAPH = MC / "interaction_graph.json"
 PAGES_GRAPH = DOCS / "data" / "missioncontrol_interaction_graph.json"
+GRAPH_ANALYSIS = MC / "graph_analysis.json"
+PAGES_GRAPH_ANALYSIS = DOCS / "data" / "missioncontrol_graph_analysis.json"
+GRAPH_EXPLORER = DOCS / "missioncontrol_graph_explorer.html"
+GRAPH_SVG = DOCS / "assets" / "missioncontrol" / "missioncontrol_degree_distribution.svg"
+GRAPH_BUILDER = ROOT / "scripts" / "build_missioncontrol_graph_publication.py"
+GRAPH_MATPLOTLIB = ROOT / "scripts" / "render_missioncontrol_graph_matplotlib.py"
+GRAPH_WORKFLOW = ROOT / ".github" / "workflows" / "missioncontrol-graph-publication.yml"
 HTML = DOCS / "missioncontrol_mycelium.html"
 CONTROL_JS = DOCS / "assets" / "missioncontrol" / "control-plane.js"
 INDEX = DOCS / "index.html"
@@ -71,7 +78,9 @@ def validate() -> list[str]:
     errors: list[str] = []
 
     required_paths = [
-        MANIFEST, GRAPH, PAGES_GRAPH, HTML, CONTROL_JS, INDEX, METRICS,
+        MANIFEST, GRAPH, PAGES_GRAPH, GRAPH_ANALYSIS, PAGES_GRAPH_ANALYSIS,
+        GRAPH_EXPLORER, GRAPH_SVG, GRAPH_BUILDER, GRAPH_MATPLOTLIB, GRAPH_WORKFLOW,
+        HTML, CONTROL_JS, INDEX, METRICS,
         PAGES_METRICS, HISTORY, LOG_ANALYSIS, SOURCE_REGISTRY, SOURCE_STATUS,
         PAGES_SOURCE_STATUS, PORT_REGISTRY, REENTRY, CONTROL_PLANE, PAGES_CONTROL_PLANE,
         CONTROL_EVENTS, PAGES_CONTROL_EVENTS, EXECUTABLE, PAGES_EXECUTABLE,
@@ -87,6 +96,8 @@ def validate() -> list[str]:
     reentry = yaml.safe_load(REENTRY.read_text(encoding="utf-8"))
     graph = _json(GRAPH)
     pages_graph = _json(PAGES_GRAPH)
+    graph_analysis = _json(GRAPH_ANALYSIS)
+    pages_graph_analysis = _json(PAGES_GRAPH_ANALYSIS)
     metrics = _json(METRICS)
     pages_metrics = _json(PAGES_METRICS)
     source_status = _json(SOURCE_STATUS)
@@ -101,6 +112,7 @@ def validate() -> list[str]:
 
     for name, canonical, pages in [
         ("graph", graph, pages_graph),
+        ("graph-analysis", graph_analysis, pages_graph_analysis),
         ("metrics", metrics, pages_metrics),
         ("source-status", source_status, pages_source_status),
         ("control-plane", control, pages_control),
@@ -180,6 +192,36 @@ def validate() -> list[str]:
         errors.append("Pages HTML is not bound to modular control-plane JS")
     if "missioncontrol_mycelium.html" not in INDEX.read_text(encoding="utf-8"):
         errors.append("Pages index does not link MissionControl Mycelium")
+
+    if "missioncontrol_graph_explorer.html" not in html:
+        errors.append("Mycelium analytics panel does not link graph explorer")
+    explorer = GRAPH_EXPLORER.read_text(encoding="utf-8")
+    for token in (
+        "data/missioncontrol_interaction_graph.json",
+        "data/missioncontrol_graph_analysis.json",
+        "cdn.plot.ly/plotly-2.35.2.min.js",
+        "missioncontrol_degree_distribution.svg",
+        "missioncontrol_degree_distribution.png",
+        "source/original",
+        "Plotly unavailable; core SVG/table fallback preserved.",
+    ):
+        if token not in explorer:
+            errors.append(f"graph explorer missing publication token: {token}")
+    graph_pub = manifest.get("graph_publication", {})
+    if graph_pub.get("source_graph") != "mission_control/mycelium/interaction_graph.json":
+        errors.append("graph publication is not bound to canonical source graph")
+    if graph_pub.get("invariants", {}).get("one_graph_multiple_renderers") is not True:
+        errors.append("graph publication one-graph/multiple-renderers invariant missing")
+    if graph_pub.get("interactive", {}).get("failure_blocks_core") is not False:
+        errors.append("Plotly projection may not block core")
+    if graph_pub.get("static", {}).get("failure_blocks_core") is not False:
+        errors.append("Matplotlib projection may not block core")
+    if graph_analysis.get("authority_class") != "DERIVED_PROJECTION_ONLY":
+        errors.append("graph analysis must remain derived projection only")
+    if graph_analysis.get("graph", {}).get("node_count") != len(nodes):
+        errors.append("graph analysis node count does not match canonical graph")
+    if graph_analysis.get("graph", {}).get("edge_count") != len(edges):
+        errors.append("graph analysis edge count does not match canonical graph")
     if "'removed '+mech.removed_w293+' / '+mech.files+' files" in html:
         errors.append("W293 renderer assumes optional removed/files fields and can emit undefined")
     for required_mech_token in ("mechDetails", "repository_total_flake8", "mech.evidence_pr"):

@@ -9,6 +9,16 @@ on:
       - 'mission_control/mycelium/snapshots/status_bd_snapshot_v01.json'
       - 'scripts/qa_missioncontrol_status_snapshot.py'
       - '.github/workflows/missioncontrol-status-snapshot-browser-qa.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/missioncontrol_status_snapshot.html'
+      - 'docs/assets/missioncontrol/**'
+      - 'docs/data/missioncontrol_status_snapshot_v01.json'
+      - 'mission_control/mycelium/snapshots/status_bd_snapshot_v01.json'
+      - 'scripts/qa_missioncontrol_status_snapshot.py'
+      - '.github/workflows/missioncontrol-status-snapshot-browser-qa.yml'
   workflow_dispatch:
 
 permissions:
