@@ -1,4 +1,4 @@
-# MissionControl Mycelium Control Surface v0.2
+# MissionControl Mycelium Control Surface v0.2.1
 
 ## Goal
 
@@ -17,12 +17,12 @@ The metaphor is a **mycelium network**:
 
 The canonical UI is a responsive **2 x 3** grid. Every panel is 16:9 and can be focused independently.
 
-1. Repository topology
-2. Interaction graph
-3. Execution and recovery
-4. Evidence and lineage
-5. DMAIC / KPI / PCA / Bradley-Terry
-6. Outward artifacts
+1. **Command / Input Root** — text, JSON/YAML-like input, local config upload, Dry Run / staged Apply, manual steering and source-authority context.
+2. **Execution / Recovery** — active lanes, current atom, checkpoint, blocker, retry/resume intent and next legal transitions.
+3. **Mycelium Graph** — graph navigation plus authority, evidence, critical-path and reverse-pressure overlays.
+4. **Output / Evidence** — graph-driven artifacts, manifests, hashes/SHAs, evidence and provenance deeplinks.
+5. **Analytics** — DMAIC / KPI / PCA / Bradley-Terry / density with non-authoritative guards.
+6. **Federation Control** — repo heads, bridge/reference state, source→target lineage, cherry-pick/merge/conflict state and preserved remote authority.
 
 On narrow screens the same six panels stack vertically. The page must preserve function and traceability at any size; whitespace is allowed rather than distorting the panels.
 
@@ -192,3 +192,26 @@ same node
 ```
 
 Every score must be tagged `MEASURED`, `DERIVED_FROM_MEASURED`, or `WITHHELD`. Missing inputs are shown as missing; they are not imputed merely to make a dashboard complete.
+
+
+## v0.2.1 durable reentry
+
+The control-plane reentry authority is `mission_control/mycelium/reentry_v0_2.yaml`.
+Its browser-safe projection is `docs/data/missioncontrol_control_plane.json`.
+The universal graph may contain cycles, while `executable_projection.json` must remain a DAG.
+
+The preserved predecessor proof chain is repository-native:
+
+```text
+PR #839 exact head
+→ >0-step MissionControl hosted execution
+→ validator + tests + deterministic materialization GREEN
+→ merge/readback
+→ GitHub Pages build/deploy GREEN
+→ MYCELIUM_V02_PR839_PROOF.json
+→ v0.2.1 continuation
+```
+
+The static Pages surface is a control and steering surface, not an authenticated mutation gateway. **Apply request** stages a typed envelope and remains withheld until an authenticated executor binds repository/runtime proof.
+
+Temporal continuation uses append-only `control_events.json` plus **current / mid / long** priority horizons. A user steer appends intent and changes priority; it never replays completed atoms solely to reconstruct conversation state.
