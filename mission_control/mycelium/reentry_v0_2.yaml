@@ -2,14 +2,14 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-09-30T11:16:00Z"
+  generated_at: "2026-09-30T11:26:00Z"
 
   repositories:
     codex:
       repo: GBOGEB/CODEX
       branch: main
       handover_observed_sha: d77d44811fec4fada16988769614d6091df56133
-      refreshed_current_sha: cd45dc8f8934d554d824f0c22db619dfe6bb546d
+      refreshed_current_sha: e7404bfb6df3289705286685500fd19c4ec6d991
       role: UI_ORCHESTRATION_GRAPH_AUTHORITY
       mycelium_v0_1_merge:
         pr: 837
@@ -192,9 +192,9 @@ reentry:
     - id: CODEX_UI
       repository: GBOGEB/CODEX
       branch: main
-      head_sha: cd45dc8f8934d554d824f0c22db619dfe6bb546d
-      state: EXECUTING
-      current_atom: LIVE_TEMPORAL_FEDERATION_INGESTION
+      head_sha: e7404bfb6df3289705286685500fd19c4ec6d991
+      state: READY
+      current_atom: AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
       completed_atoms:
         - MYCELIUM_V0_1
         - MYCELIUM_V0_2_INTERACTION
@@ -231,9 +231,9 @@ reentry:
         - mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
         - docs/missioncontrol_mycelium.html
       next_legal_transitions:
-        - LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF
-        - CONSUME_TYPED_REMOTE_RETURNS
         - AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
+        - CONSUME_TYPED_REMOTE_RETURNS
+        - SCHEDULE_NEXT_LIVE_FEDERATION_REFRESH
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
@@ -365,7 +365,21 @@ reentry:
       percent: 100.0
     authority_transfer: false
     engineering_truth_promoted: false
-    next_edge: LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF
+    next_edge: AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
+
+  live_federation_pulse_closure:
+    pulse_id: LFI-20260930T111600Z
+    exact_head_sha: c4cecdbe22a1228f32cb866ead26a19b187a0d6c
+    exact_head_run: 36708307718
+    exact_head_job: 109863755786
+    exact_head_result: GREEN
+    merge_pr: 845
+    merge_sha: ed9bb877bc251d7aa06c0bf19515491028fcdeef
+    merged_main_readback_sha: e7404bfb6df3289705286685500fd19c4ec6d991
+    pages_run: 36708423542
+    pages_status: GREEN
+    proof_receipt: mission_control/mycelium/receipts/LIVE_FEDERATION_INGESTION_20260930T111600Z_PROOF.json
+    next_edge: AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
 
   qlm_context:
     repository: GBOGEB/cryoplant-project
