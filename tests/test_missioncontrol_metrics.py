@@ -7,6 +7,7 @@ from scripts.build_missioncontrol_metrics import (
     bt_rank,
     build_snapshot,
     pressure_metric,
+    source_identity_is_measured,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -35,3 +36,18 @@ def test_snapshot_uses_same_graph_for_all_projections() -> None:
     assert snapshot["projections"]["engineering"]["nodes"] > 0
     assert snapshot["projections"]["control"]["nodes"] > 0
     assert snapshot["projections"]["observability"]["nodes"] > 0
+
+
+def test_source_identity_measurement_requires_exact_head() -> None:
+    assert source_identity_is_measured(
+        {"status": "FRESH", "identity_status": "MEASURED", "head_sha": "abc"}
+    )
+    assert source_identity_is_measured(
+        {"status": "MEASURED_CHAT_CONNECTOR", "head_sha": "abc"}
+    )
+    assert not source_identity_is_measured(
+        {"status": "FRESH", "identity_status": "WITHHELD_HEAD_PROBE_ERROR"}
+    )
+    assert not source_identity_is_measured(
+        {"status": "FRESH", "identity_status": "MEASURED"}
+    )
