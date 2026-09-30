@@ -31,6 +31,9 @@ PAGES_CONTROL_EVENTS = DOCS / "data" / "missioncontrol_control_events.json"
 EXECUTABLE = MC / "executable_projection.json"
 PAGES_EXECUTABLE = DOCS / "data" / "missioncontrol_executable_projection.json"
 PREDECESSOR_PROOF = MC / "receipts" / "MYCELIUM_V02_PR839_PROOF.json"
+FEDERATION_EVENTS = MC / "federation_events.json"
+PAGES_FEDERATION_EVENTS = DOCS / "data" / "missioncontrol_federation_events.json"
+LIVE_INGEST_WORKFLOW = ROOT / ".github" / "workflows" / "missioncontrol-live-federation.yml"
 
 EVIDENCE_STATES = {"MEASURED", "DERIVED_FROM_MEASURED", "WITHHELD"}
 
@@ -71,7 +74,8 @@ def validate() -> list[str]:
         PAGES_METRICS, HISTORY, LOG_ANALYSIS, SOURCE_REGISTRY, SOURCE_STATUS,
         PORT_REGISTRY, REENTRY, CONTROL_PLANE, PAGES_CONTROL_PLANE,
         CONTROL_EVENTS, PAGES_CONTROL_EVENTS, EXECUTABLE, PAGES_EXECUTABLE,
-        PREDECESSOR_PROOF,
+        PREDECESSOR_PROOF, FEDERATION_EVENTS, PAGES_FEDERATION_EVENTS,
+        LIVE_INGEST_WORKFLOW,
     ]
     for path in required_paths:
         if not path.exists():
@@ -92,6 +96,10 @@ def validate() -> list[str]:
     executable = _json(EXECUTABLE)
     pages_executable = _json(PAGES_EXECUTABLE)
     predecessor = _json(PREDECESSOR_PROOF)
+    federation_events = _json(FEDERATION_EVENTS)
+    pages_federation_events = _json(PAGES_FEDERATION_EVENTS)
+    source_registry = yaml.safe_load(SOURCE_REGISTRY.read_text(encoding="utf-8"))
+    source_status = _json(SOURCE_STATUS)
 
     for name, canonical, pages in [
         ("graph", graph, pages_graph),
@@ -99,6 +107,7 @@ def validate() -> list[str]:
         ("control-plane", control, pages_control),
         ("control-events", events, pages_events),
         ("executable-projection", executable, pages_executable),
+        ("federation-events", federation_events, pages_federation_events),
     ]:
         if canonical != pages:
             errors.append(f"Pages {name} materialization differs from canonical")
@@ -208,6 +217,50 @@ def validate() -> list[str]:
     for required_path in (HISTORY, LOG_ANALYSIS, SOURCE_REGISTRY, SOURCE_STATUS, PORT_REGISTRY):
         if not required_path.exists():
             errors.append(f"missing dynamic-ingestion control surface: {required_path.relative_to(ROOT)}")
+
+    registry_sources = source_registry.get("sources", [])
+    status_sources = {row.get("id"): row for row in source_status.get("sources", [])}
+    if len(registry_sources) != 3:
+        errors.append(f"expected exactly 3 governed federation sources, found {len(registry_sources)}")
+    for source in registry_sources:
+        sid = source.get("id")
+        ingest = set(source.get("ingest", []))
+        if "head" not in ingest:
+            errors.append(f"source registry missing exact-head ingestion: {sid}")
+        if not source.get("branch"):
+            errors.append(f"source registry missing branch: {sid}")
+        if int(source.get("freshness_minutes", 0)) <= 0:
+            errors.append(f"source registry invalid freshness threshold: {sid}")
+        observed = status_sources.get(sid)
+        if not observed:
+            errors.append(f"source status missing governed source: {sid}")
+            continue
+        head_sha = observed.get("head_sha")
+        if not isinstance(head_sha, str) or len(head_sha) != 40:
+            errors.append(f"source status missing exact 40-char head SHA: {sid}")
+        if observed.get("freshness_status") not in {"FRESH", "STALE", "ERROR"}:
+            errors.append(f"source status invalid freshness state: {sid}")
+
+    if federation_events.get("append_only") is not True:
+        errors.append("federation event history must be append-only")
+    if federation_events.get("authority") != "PUBLIC_METADATA_OBSERVATION_ONLY":
+        errors.append("federation event authority must remain observation-only")
+    for event in federation_events.get("events", []):
+        if event.get("authority_transfer") is not False:
+            errors.append(f"federation event may transfer authority: {event.get('id')}")
+
+    live_workflow = LIVE_INGEST_WORKFLOW.read_text(encoding="utf-8")
+    for token in (
+        "MissionControl Live Federation Ingestion",
+        "schedule:",
+        "--output-dir",
+        "missioncontrol-live-federation",
+        "GITHUB_TOKEN",
+        "contents: read",
+        "pull-requests: read",
+    ):
+        if token not in live_workflow:
+            errors.append(f"live federation workflow contract missing: {token}")
     if metrics.get("nodes", {}).get("repo_codex", {}).get("docking", {}).get("status") not in EVIDENCE_STATES:
         errors.append("docking metric has invalid evidence state")
     if metrics.get("nodes", {}).get("repo_codex", {}).get("ports", {}).get("status") not in EVIDENCE_STATES:
@@ -218,8 +271,18 @@ def validate() -> list[str]:
             errors.append(f"missing selectable layout mode: {layout_mode}")
 
     cp = manifest.get("control_plane", {})
-    if cp.get("version") != "0.2.1":
-        errors.append("control_plane.version must be 0.2.1")
+    if cp.get("version") != "0.2.2":
+        errors.append("control_plane.version must be 0.2.2")
+    live_ingest = manifest.get("live_federation_ingestion", {})
+    if live_ingest.get("mode") != "READ_ONLY_PUBLIC_METADATA":
+        errors.append("live federation ingestion must remain read-only public metadata")
+    if live_ingest.get("exact_head_required") is not True:
+        errors.append("live federation ingestion must require exact heads")
+    if live_ingest.get("authority_transfer") is not False:
+        errors.append("live federation ingestion may not transfer authority")
+    if live_ingest.get("repository_mutation") is not False:
+        errors.append("live federation ingestion may not mutate repositories")
+
     if cp.get("command_input", {}).get("static_pages_mode") != "STAGE_OR_DRY_RUN_ONLY":
         errors.append("static Pages command input must remain stage/dry-run only")
     if cp.get("command_input", {}).get("authenticated_apply_gateway_required") is not True:
@@ -262,6 +325,12 @@ def validate() -> list[str]:
         errors.append("executable projection is cyclic or malformed")
     if executable.get("guards", {}).get("replay_completed_atoms") is not False:
         errors.append("executable projection may replay completed atoms")
+    executable_states = {n.get("id"): n.get("state") for n in executable.get("nodes", [])}
+    if executable_states.get("LIVE_TEMPORAL_FEDERATION_INGESTION") not in {"IN_PROGRESS", "COMPLETED"}:
+        errors.append("live temporal federation ingestion is not admitted in executable DAG")
+    for required_atom in ("HOSTED_LIVE_INGESTION_PROOF", "BIND_FEDERATION_FRESHNESS", "CONSUME_TYPED_REMOTE_RETURNS"):
+        if required_atom not in executable_states:
+            errors.append(f"missing live federation successor atom: {required_atom}")
 
     if predecessor.get("disposition") != "CONTROLLED_GREEN_PREDECESSOR":
         errors.append("PR #839 predecessor proof is not controlled green")
