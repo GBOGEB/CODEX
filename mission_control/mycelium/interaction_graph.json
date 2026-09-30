@@ -1,6 +1,6 @@
 {
   "schema_version": "0.4",
-  "snapshot_at": "2026-09-30T13:23:15Z",
+  "snapshot_at": "2026-09-30T15:10:57Z",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -27,20 +27,22 @@
       "state": "REMOTE_EXECUTION_CURRENT",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "d54d22a57a80bc462a051ee26e5a7d5489432237",
+        "sha": "fa482c009afd9bdab4062900514521e8339d35b8",
         "views": [
           "control",
           "observability"
         ],
         "latest_census_pr_head": "4a094a4f46646214d63e6ac0ed910723acceec12",
         "latest_census_merge_sha": "83b8a1a9e4b89457cf7f07fb447544fa13eb2b3b",
-        "observed_at": "2026-09-30T13:23:15Z",
-        "freshness_status": "CURRENT_HEAD_MEASURED_CENSUS_PENDING",
-        "latest_census_pr": 1504,
-        "latest_census_job": 109899557428,
-        "latest_census_head": "38dfd5c46aa427ef0ec76185439e75fdeb18817f",
-        "latest_measured_return_sha": "38dfd5c46aa427ef0ec76185439e75fdeb18817f",
-        "pending_census_run": 36721260876
+        "observed_at": "2026-09-30T15:10:57Z",
+        "freshness_status": "CURRENT_HEAD_NEWER_THAN_MEASURED_CENSUS",
+        "latest_census_pr": 1506,
+        "latest_census_job": 109906683250,
+        "latest_census_head": "d54d22a57a80bc462a051ee26e5a7d5489432237",
+        "latest_measured_return_sha": "d54d22a57a80bc462a051ee26e5a7d5489432237",
+        "pending_census_run": 36721260876,
+        "completed_census_run": 36721260876,
+        "current_head_measurement_status": "UNMEASURED_AFTER_1507"
       }
     },
     {
@@ -68,27 +70,28 @@
       "id": "dab_mech",
       "type": "queue",
       "label": "DAB-MECH",
-      "state": "MEASURED_W293_1399",
+      "state": "MEASURED_W293_1013",
       "meta": {
         "views": [
           "control",
           "observability"
         ],
-        "latest_measured_W293": 1399,
-        "evidence_job": 109899557428
+        "latest_measured_W293": 1013,
+        "evidence_job": 109906683250,
+        "measurement_pr": 1506
       }
     },
     {
       "id": "dab_hard",
       "type": "queue",
       "label": "DAB-HARD",
-      "state": "MEASURED_E741_28",
+      "state": "MEASURED_E741_22",
       "meta": {
         "views": [
           "control",
           "observability"
         ],
-        "latest_measured_total": 9244,
+        "latest_measured_total": 8853,
         "E999": 1,
         "F821": 0,
         "F601": 0,
@@ -96,9 +99,10 @@
         "F841": 77,
         "E722": 26,
         "E731": 0,
-        "E741": 28,
+        "E741": 22,
         "active_pr": null,
-        "evidence_job": 109899557428
+        "evidence_job": 109906683250,
+        "measurement_pr": 1506
       }
     },
     {
@@ -256,25 +260,27 @@
           "observability"
         ],
         "next_hard_family": "E741",
-        "next_hard_count": 28,
+        "next_hard_count": 22,
         "next_mech_family": "W293",
-        "next_mech_residual": 1399,
-        "census_job": 109899557428,
-        "next_hard_pr": 1501,
-        "next_hard_target_residual": 35,
-        "next_mech_last_measured_residual": 2657,
-        "next_mech_merged_slice": 1500,
-        "next_mech_removed": 745,
-        "next_mech_expected_residual": 1912,
-        "next_mech_residual_status": "WITHHELD_POSTMERGE_CENSUS",
-        "abacus_return_pr": 1504,
+        "next_mech_residual": 1013,
+        "census_job": 109906683250,
+        "next_hard_pr": 1505,
+        "next_hard_target_residual": 22,
+        "next_mech_last_measured_residual": 1399,
+        "next_mech_merged_slice": 1506,
+        "next_mech_removed": 386,
+        "next_mech_expected_residual": 1013,
+        "next_mech_residual_status": "MEASURED_BY_POSTMERGE_MAIN_CENSUS",
+        "abacus_return_pr": 1506,
         "cryoplant_return_pr": 1834,
         "codex_owner_gate": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
         "pending_census_run": 36721260876,
         "pending_census_head": "d54d22a57a80bc462a051ee26e5a7d5489432237",
-        "pending_census_status": "QUEUED",
+        "pending_census_status": "COMPLETED_MEASURED",
         "next_hard_expected_after_pending_census": 22,
-        "next_mech_expected_after_pending_census": 1013
+        "next_mech_expected_after_pending_census": 1013,
+        "abacus_current_head": "fa482c009afd9bdab4062900514521e8339d35b8",
+        "abacus_current_head_status": "UNMEASURED_AFTER_1507"
       },
       "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/control_manifest.yaml"
     },
@@ -601,7 +607,9 @@
           "control",
           "observability"
         ],
-        "status": "MEASURED"
+        "status": "MEASURED",
+        "evidence_job": 109906683250,
+        "measurement_pr": 1506
       }
     },
     {
@@ -618,7 +626,9 @@
           "observability"
         ],
         "evidence_pr": 1499,
-        "evidence_job": 109882456512
+        "evidence_job": 109906683250,
+        "measurement_pr": 1506,
+        "repair_evidence_pr": 1499
       }
     },
     {
@@ -640,38 +650,43 @@
       "id": "hard_e741_residual",
       "type": "queue",
       "label": "E741 ambiguous-name residual",
-      "state": "ACTIVE_PR1501",
+      "state": "MEASURED_RESIDUAL_22",
       "meta": {
-        "baseline": 38,
-        "current": 40,
-        "delta": 2,
+        "baseline": 28,
+        "current": 22,
+        "delta": -6,
         "views": [
           "control",
           "observability"
         ],
-        "active_pr": 1501,
-        "target_residual": 35,
-        "status": "MEASURED_BASELINE_PROOF_PENDING"
+        "active_pr": null,
+        "target_residual": 22,
+        "status": "MEASURED",
+        "repair_evidence_pr": 1505,
+        "measurement_pr": 1506,
+        "evidence_job": 109906683250
       }
     },
     {
       "id": "mech_w293_residual",
       "type": "queue",
       "label": "W293 mechanical residual",
-      "state": "SLICE7_MERGED_POST_CENSUS_WITHHELD",
+      "state": "MEASURED_RESIDUAL_1013",
       "meta": {
-        "current": 3598,
-        "last_slice_removed": 887,
+        "current": 1013,
+        "last_slice_removed": 386,
         "views": [
           "control",
           "observability"
         ],
-        "last_measured_residual": 2657,
-        "merged_slice": 1500,
-        "removed": 745,
-        "expected_postmerge_residual": 1912,
-        "residual_status": "WITHHELD_POSTMERGE_CENSUS",
-        "pending_census_run": 36714315712
+        "last_measured_residual": 1399,
+        "merged_slice": 1506,
+        "removed": 386,
+        "expected_postmerge_residual": 1013,
+        "residual_status": "MEASURED_BY_POSTMERGE_MAIN_CENSUS",
+        "census_run": 36721260876,
+        "evidence_job": 109906683250,
+        "measurement_pr": 1506
       }
     },
     {
@@ -900,6 +915,26 @@
           "observability"
         ]
       }
+    },
+    {
+      "id": "abacus_dab_return_1506",
+      "type": "evidence",
+      "label": "ABACUS #1506 combined-main census return",
+      "state": "MEASURED_TYPED_RETURN",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/evidence/abacus_dab_return_1506_measured.json",
+      "meta": {
+        "source_repo": "GBOGEB/ABACUS",
+        "source_sha": "d54d22a57a80bc462a051ee26e5a7d5489432237",
+        "current_source_sha": "fa482c009afd9bdab4062900514521e8339d35b8",
+        "workflow_run": 36721260876,
+        "job": 109906683250,
+        "artifact_id": 11100356126,
+        "artifact_sha256": "27af842e4d97ddc5722d7a07da9f5162491d629ddaf762e7715059bce3b1ad15",
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
     }
   ],
   "edges": [
@@ -990,15 +1025,15 @@
       "mechanism": "REFERENCE",
       "source_repo": "GBOGEB/ABACUS",
       "source_ref": "main",
-      "source_sha": "d54d22a57a80bc462a051ee26e5a7d5489432237",
+      "source_sha": "fa482c009afd9bdab4062900514521e8339d35b8",
       "target_repo": "GBOGEB/CODEX",
       "target_ref": "main",
-      "target_sha": "884327802f57d40b84714def4b0b5b59b3f1a25a",
+      "target_sha": "4261c883624a2a01f17e918445a643d048a1a79e",
       "authority_before": "REMOTE_EXECUTION_AUTHORITY",
       "authority_after": "REMOTE_EXECUTION_AUTHORITY",
-      "proof": "mission_control/mycelium/evidence/abacus_dab_return_1504_measured.json",
-      "observed_at": "2026-09-30T13:23:15Z",
-      "freshness_status": "CURRENT_HEAD_MEASURED_CENSUS_PENDING"
+      "proof": "mission_control/mycelium/evidence/abacus_dab_return_1506_measured.json",
+      "observed_at": "2026-09-30T15:10:57Z",
+      "freshness_status": "CURRENT_HEAD_NEWER_THAN_MEASURED_CENSUS"
     },
     {
       "from": "slice5",
@@ -1527,6 +1562,21 @@
     },
     {
       "from": "abacus_dab_return_1504",
+      "to": "dab_mech",
+      "type": "proves"
+    },
+    {
+      "from": "repo_abacus",
+      "to": "abacus_dab_return_1506",
+      "type": "contains"
+    },
+    {
+      "from": "abacus_dab_return_1506",
+      "to": "dab_hard",
+      "type": "proves"
+    },
+    {
+      "from": "abacus_dab_return_1506",
       "to": "dab_mech",
       "type": "proves"
     }
