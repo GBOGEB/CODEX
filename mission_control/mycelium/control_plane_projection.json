@@ -1,8 +1,8 @@
 {
-  "schema_version": "0.2",
+  "schema_version": "0.2.2",
   "generated_for": "CODEX_MISSIONCONTROL_MYCELIUM",
   "mode": "CONTINUE_FROM_DURABLE_STATE",
-  "generated_at": "2026-09-30T13:11:00+02:00",
+  "generated_at": "2026-09-30T13:18:00+02:00",
   "source_yaml": "mission_control/mycelium/reentry_v0_2.yaml",
   "invariants": {
     "authority_transfer": false,
@@ -20,7 +20,7 @@
       "repo": "GBOGEB/CODEX",
       "branch": "main",
       "handover_observed_sha": "d77d44811fec4fada16988769614d6091df56133",
-      "refreshed_current_sha": "c8fc8f940cbc233e164705859efb850759f7aaac",
+      "refreshed_current_sha": "cd45dc8f8934d554d824f0c22db619dfe6bb546d",
       "role": "UI_ORCHESTRATION_GRAPH_AUTHORITY",
       "merge_refs": [
         {
@@ -163,9 +163,9 @@
     {
       "id": "CODEX_UI",
       "repository": "GBOGEB/CODEX",
-      "branch": "main",
-      "head_sha": "c8fc8f940cbc233e164705859efb850759f7aaac",
-      "state": "CONTROLLED_GREEN",
+      "branch": "missioncontrol/live-temporal-federation-ingestion-v022",
+      "head_sha": "cd45dc8f8934d554d824f0c22db619dfe6bb546d",
+      "state": "EXECUTING",
       "current_atom": "LIVE_TEMPORAL_FEDERATION_INGESTION",
       "completed_atoms": [
         "MYCELIUM_V0_1",
@@ -190,11 +190,9 @@
       "blocker": null,
       "queue_state": "EXECUTION",
       "next_legal_transitions": [
-        "INGEST_LIVE_TEMPORAL_EVENTS",
-        "REFRESH_FEDERATION_HEADS",
-        "CONSUME_TYPED_REMOTE_RETURNS",
+        "HOSTED_LIVE_INGESTION_PROOF",
         "BIND_FEDERATION_FRESHNESS",
-        "DESIGN_AUTHENTICATED_EXECUTION_GATEWAY"
+        "CONSUME_TYPED_REMOTE_RETURNS"
       ]
     },
     {
@@ -284,7 +282,7 @@
     "universal_graph_may_contain_cycles": true,
     "executable_projection_must_be_DAG": true
   },
-  "control_plane_version": "0.2.1",
+  "control_plane_version": "0.2.2",
   "predecessor_proof": "mission_control/mycelium/receipts/MYCELIUM_V02_PR839_PROOF.json",
   "event_projection": "mission_control/mycelium/control_events.json",
   "pages_event_projection": "docs/data/missioncontrol_control_events.json",
@@ -314,5 +312,16 @@
     "build": "PASS",
     "deploy": "PASS",
     "effective_main_sha": "c8fc8f940cbc233e164705859efb850759f7aaac"
+  },
+  "live_federation_ingestion": {
+    "mode": "READ_ONLY_PUBLIC_METADATA",
+    "workflow": ".github/workflows/missioncontrol-live-federation.yml",
+    "source_registry": "mission_control/mycelium/source_registry.yaml",
+    "source_status": "mission_control/mycelium/source_status.json",
+    "temporal_events": "mission_control/mycelium/federation_events.json",
+    "hosted_artifact": "missioncontrol-live-federation",
+    "schedule": "hourly at minute 17",
+    "authority_transfer": false,
+    "repository_mutation": false
   }
 }
