@@ -1,0 +1,56 @@
+{
+  "schema_version": "0.1",
+  "return_id": "ABACUS_DAB_RETURN_20260930_1504_COMBINED_MAIN",
+  "observed_at": "2026-09-30T13:11:12Z",
+  "source": {
+    "repository": "GBOGEB/ABACUS",
+    "ref": "main",
+    "current_sha": "38dfd5c46aa427ef0ec76185439e75fdeb18817f",
+    "authority": "REMOTE_EXECUTION_DOW"
+  },
+  "bounded_control": {
+    "pr": 1504,
+    "merge_sha": "38dfd5c46aa427ef0ec76185439e75fdeb18817f",
+    "purpose": "post-merge combined-main census automation"
+  },
+  "exact_census": {
+    "workflow_run": 36719173263,
+    "job": 109899557428,
+    "status": "MEASURED",
+    "total": 9244,
+    "families": {
+      "E999": 1,
+      "F821": 0,
+      "F601": 0,
+      "F811": 0,
+      "F841": 77,
+      "E722": 26,
+      "E731": 0,
+      "E741": 28,
+      "W293": 1399
+    },
+    "artifact": {
+      "id": 11098275735,
+      "name": "dab-flake8-census",
+      "sha256": "ac71907fb2c16f7c84b48e17c86368b84376765b7844464d2fd317981a50ed3a"
+    }
+  },
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+    "state": "SOURCE_BOUND_HOLD"
+  },
+  "expectation_reconciliation": {
+    "expected_W293": 1395,
+    "measured_W293": 1399,
+    "delta": 4,
+    "status": "MEASURED_SUPERSEDES_EXPECTATION"
+  },
+  "acceptance": {
+    "engineering_truth_promoted": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "authority_transfer": false
+  }
+}
