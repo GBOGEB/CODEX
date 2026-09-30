@@ -1,0 +1,81 @@
+schema_version: "0.1"
+id: MISSIONCONTROL_AUTHENTICATED_GATEWAY
+version: "0.1.0"
+status: CONTROLLED_DRAFT
+repository: GBOGEB/CODEX
+transport:
+  type: GITHUB_ACTIONS_WORKFLOW_DISPATCH
+  workflow: .github/workflows/missioncontrol-command-gateway.yml
+  authenticated_surface: https://github.com/GBOGEB/CODEX/actions/workflows/missioncontrol-command-gateway.yml
+authentication:
+  identity: GITHUB_AUTHENTICATED_ACTOR
+  minimum_capability: WORKFLOW_DISPATCH_PERMISSION
+authorization:
+  policy: ALLOWLIST_AND_EXACT_SHA
+  source_lock: EXACT_SHA
+  target_repository: GBOGEB/CODEX
+  allowed_lanes: [CODEX_UI, FEDERATION]
+mutation:
+  mode: AUTOMATION_BRANCH_PR_ONLY
+  direct_main_write: false
+  pull_request_required: true
+  authority_transfer: false
+  formal_credit_delta: 0
+  engineering_credit_delta: 0
+envelope:
+  schema_version: "0.2.1"
+  required:
+    - event_type
+    - requested_mode
+    - repository
+    - lane
+    - source_authority_sha
+    - command
+    - invariants
+  event_type: USER_STEER
+  requested_mode: APPLY
+  accepted_effective_modes:
+    - STAGED_APPLY_WITHHELD_NO_AUTHENTICATED_GATEWAY
+    - AUTHENTICATED_APPLY_REQUEST
+  invariants:
+    authority_transfer: false
+    formal_credit_delta: 0
+    engineering_credit_delta: 0
+    replay_completed_atoms: false
+actions:
+  REFRESH_FEDERATION_HEADS:
+    status: ENABLED
+    lane: FEDERATION
+    purpose: Refresh public repository-head identity for declared MissionControl federation sources.
+    writes:
+      - mission_control/mycelium/source_status.json
+      - docs/data/missioncontrol_source_status.json
+      - mission_control/mycelium/metrics_snapshot.json
+      - docs/data/missioncontrol_metrics.json
+      - mission_control/mycelium/gateway/receipts/*.json
+    engineering_truth_promotion: false
+    remote_authority_preserved: true
+receipt:
+  directory: mission_control/mycelium/gateway/receipts
+  required_fields:
+    - gateway_version
+    - actor
+    - run_id
+    - run_attempt
+    - source_authority_sha
+    - envelope_sha256
+    - action
+    - status
+    - mutation_mode
+    - changed_paths
+    - authority_transfer
+    - formal_credit_delta
+    - engineering_credit_delta
+fail_closed:
+  stale_source_sha: REJECT
+  unknown_action: REJECT
+  remote_target_repository: REJECT
+  authority_transfer_request: REJECT
+  nonzero_credit_delta: REJECT
+  malformed_envelope: REJECT
+  missing_actor: REJECT
