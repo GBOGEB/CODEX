@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-09-30T16:16:09Z",
+  "generated_at": "2026-09-30T16:54:30Z",
   "public_metadata_only": true,
   "authority_transfer": false,
   "sources": [
@@ -20,54 +20,61 @@
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "EXECUTION_DOW",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-09-30T16:16:09Z",
-      "head_sha": "07dfdf08cc4252df6d3650b2c6b1b3623958bbd8",
-      "census_pr": 1518,
-      "census_head_sha": "07dfdf08cc4252df6d3650b2c6b1b3623958bbd8",
-      "census_merge_sha": "07dfdf08cc4252df6d3650b2c6b1b3623958bbd8",
-      "census_workflow_run": 36741890687,
-      "census_job": 109978090899,
-      "census_artifact_id": 11111465589,
-      "census_artifact_sha256": "56335a3369030008fe5a503a16557c27e35b0b0751a188af28ca9eda5b856bd0",
-      "measurement_basis": "exact merged-main DAB census after #1518",
-      "census_total": 8285,
-      "w293_postmerge_status": "MEASURED_BY_POST_1518_MAIN_CENSUS",
-      "E741": 22,
-      "W293": 453,
-      "E722": 18,
-      "F841": 77,
+      "observed_at": "2026-09-30T16:54:30Z",
+      "head_sha": "f87d5ea61852f46a0ecdb478f5916f4d078326cc",
+      "census_pr": 1525,
+      "census_head_sha": "acc8faef0208d90c1a05c0bfe4f85e9292a8b7d8",
+      "census_merge_sha": "f87d5ea61852f46a0ecdb478f5916f4d078326cc",
+      "census_workflow_run": 36745721133,
+      "census_job": 109991290893,
+      "census_artifact_id": 11112981814,
+      "census_artifact_sha256": "3126304d42561d775b19ec9d20a288f0cb48148fab7cc50e28909cb62718d772",
+      "measurement_basis": "exact #1525 DAB census on top of merged #1523/#1524; merged main tracked separately",
+      "census_total": 8240,
+      "w293_postmerge_status": "MEASURED_BY_PR1525_EXACT_HEAD_CENSUS",
+      "E741": 17,
+      "W293": 416,
+      "E722": 16,
+      "F841": 76,
       "E999": 1,
       "source_bound_hold": "qplant/w52_p2m_ts_pressure_sensitivity.py",
-      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_return_1518_measured.json",
+      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_return_1525_measured.json",
       "F821": 0,
       "F601": 0,
       "F811": 0,
       "E731": 0,
       "family_slice_baselines": {
-        "E722": 18,
-        "W293": 517
+        "E741": 21,
+        "F841": 77,
+        "W293": 453,
+        "E722": 16
       },
-      "measured_return_source_sha": "07dfdf08cc4252df6d3650b2c6b1b3623958bbd8",
+      "measured_return_source_sha": "acc8faef0208d90c1a05c0bfe4f85e9292a8b7d8",
       "live_head_after_measurement": {
-        "sha": "07dfdf08cc4252df6d3650b2c6b1b3623958bbd8",
-        "status": "CURRENT_MAIN_AFTER_1518",
-        "latest_known_merge_pr": 1518
+        "sha": "f87d5ea61852f46a0ecdb478f5916f4d078326cc",
+        "status": "CURRENT_MAIN_AFTER_1525",
+        "latest_known_merge_pr": 1525
       },
-      "pending_independent_lane": {
-        "pr": 1519,
-        "families": [
-          "E722",
-          "E741"
-        ],
-        "status": "OPEN_UNMEASURED",
-        "head_sha": "971b781d641776fe1e34fe09591716f90548e83b",
-        "expected_only": {
-          "E722": 16,
-          "E741": 21,
-          "W293": 453
+      "pending_independent_lanes": [
+        {
+          "pr": 1527,
+          "family": "F841",
+          "status": "OPEN_UNMEASURED",
+          "head_sha": "8a846b0e7bb03f11f2cd66d66f2ff7f2767dff21",
+          "expected_only": {
+            "F841": 66
+          }
         },
-        "census_run": 36742253906
-      }
+        {
+          "pr": 1528,
+          "family": "W293",
+          "status": "OPEN_UNMEASURED",
+          "head_sha": "ddfebc8cc40883c4a7d32102173ed4bb5d242683",
+          "expected_only": {
+            "W293": 411
+          }
+        }
+      ]
     },
     {
       "id": "cryoplant_project",
