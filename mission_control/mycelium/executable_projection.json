@@ -120,11 +120,11 @@
     },
     {
       "id": "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
-      "state": "IN_PROGRESS"
+      "state": "COMPLETED"
     },
     {
       "id": "SELECT_AUTHENTICATED_TRANSPORT",
-      "state": "PENDING"
+      "state": "COMPLETED"
     },
     {
       "id": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
@@ -132,6 +132,14 @@
     },
     {
       "id": "PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS",
+      "state": "PENDING"
+    },
+    {
+      "id": "AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF",
+      "state": "PENDING"
+    },
+    {
+      "id": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
       "state": "PENDING"
     }
   ],
@@ -271,10 +279,22 @@
     [
       "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
       "PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS"
+    ],
+    [
+      "SELECT_AUTHENTICATED_TRANSPORT",
+      "AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF"
+    ],
+    [
+      "AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF",
+      "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH"
+    ],
+    [
+      "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
+      "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY"
     ]
   ],
   "first_incomplete_atoms": [
-    "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN"
+    "AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF"
   ],
   "guards": {
     "replay_completed_atoms": false,
@@ -289,14 +309,14 @@
     "pages_run": 36706855094
   },
   "active_slice": {
-    "id": "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
-    "state": "IMPLEMENTING_DESIGN_ONLY",
-    "predecessor": "LIVE_TEMPORAL_FEDERATION_INGESTION",
-    "contract": "mission_control/mycelium/execution_gateway_contract.yaml",
-    "request_schema": "mission_control/mycelium/schemas/execution_request.schema.json",
-    "receipt_schema": "mission_control/mycelium/schemas/execution_receipt.schema.json",
-    "mutation_backend_enabled": false,
-    "static_pages_apply_remains": "STAGE_OR_DRY_RUN_ONLY",
+    "id": "AUTHENTICATED_TRANSPORT_V0_1",
+    "state": "IMPLEMENTED_PENDING_EXACT_HEAD_PROOF",
+    "transport_class": "MANUALLY_APPROVED_ACTION",
+    "implementation": "GITHUB_WORKFLOW_DISPATCH_READ_ONLY",
+    "workflow": ".github/workflows/missioncontrol-authenticated-transport.yml",
+    "mutation_enabled": false,
+    "runtime_dry_run_proof": "WITHHELD_OWNER_DISPATCH_REQUIRED",
+    "predecessor_design_merge_sha": "27c27086fab898d8c5d5e3cc4e1b87fe18fcd321",
     "authority_transfer": false
   },
   "closed_live_federation_pulse": {

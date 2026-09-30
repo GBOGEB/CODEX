@@ -2,14 +2,14 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-09-30T11:45:00Z"
+  generated_at: "2026-09-30T12:00:00Z"
 
   repositories:
     codex:
       repo: GBOGEB/CODEX
       branch: main
       handover_observed_sha: d77d44811fec4fada16988769614d6091df56133
-      refreshed_current_sha: bc514318077c74a54508b5820d59026f66e9ae92
+      refreshed_current_sha: 27c27086fab898d8c5d5e3cc4e1b87fe18fcd321
       role: UI_ORCHESTRATION_GRAPH_AUTHORITY
       mycelium_v0_1_merge:
         pr: 837
@@ -191,10 +191,10 @@ reentry:
   lanes:
     - id: CODEX_UI
       repository: GBOGEB/CODEX
-      branch: main
-      head_sha: bc514318077c74a54508b5820d59026f66e9ae92
-      state: READY
-      current_atom: AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
+      branch: mission-control-authenticated-transport-v01-20260930
+      head_sha: 27c27086fab898d8c5d5e3cc4e1b87fe18fcd321
+      state: EXECUTING
+      current_atom: AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF
       completed_atoms:
         - MYCELIUM_V0_1
         - MYCELIUM_V0_2_INTERACTION
@@ -215,6 +215,8 @@ reentry:
         - PAGES_READBACK
         - REGENERATE_REENTRY_MANIFEST
         - LIVE_TEMPORAL_FEDERATION_INGESTION
+        - AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
+        - SELECT_AUTHENTICATED_TRANSPORT
       blocker: null
       queue_state: EXECUTION
       evidence_refs:
@@ -232,8 +234,9 @@ reentry:
         - mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
         - docs/missioncontrol_mycelium.html
       next_legal_transitions:
-        - AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
-        - SELECT_AUTHENTICATED_TRANSPORT
+        - AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF
+        - GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
+        - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
         - CONSUME_TYPED_REMOTE_RETURNS
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
@@ -437,7 +440,7 @@ reentry:
     - restart_manifest_is_self_sufficient
 
   authenticated_execution_gateway_design:
-    state: IMPLEMENTING_DESIGN_ONLY
+    state: MERGED_DESIGN_AUTHORITY
     branch: missioncontrol/authenticated-execution-gateway-design-v01
     base_sha: bc514318077c74a54508b5820d59026f66e9ae92
     contract: mission_control/mycelium/execution_gateway_contract.yaml
@@ -456,3 +459,23 @@ reentry:
       - SELECT_AUTHENTICATED_TRANSPORT
       - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
       - PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS
+
+  authenticated_transport_v0_1:
+    state: IMPLEMENTED_PENDING_EXACT_HEAD_PROOF
+    design_merge_sha: 27c27086fab898d8c5d5e3cc4e1b87fe18fcd321
+    branch: mission-control-authenticated-transport-v01-20260930
+    transport_class: MANUALLY_APPROVED_ACTION
+    implementation: GITHUB_WORKFLOW_DISPATCH_READ_ONLY
+    workflow: .github/workflows/missioncontrol-authenticated-transport.yml
+    runtime: scripts/missioncontrol_authenticated_transport.py
+    request_schema: mission_control/mycelium/schemas/execution_request.schema.json
+    receipt_schema: mission_control/mycelium/schemas/execution_receipt.schema.json
+    mutation_enabled: false
+    runtime_dry_run_proof: WITHHELD_OWNER_DISPATCH_REQUIRED
+    next_legal_transitions:
+      - AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF
+      - GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
+      - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
+    authority_transfer: false
+    formal_credit_delta: 0
+    engineering_credit_delta: 0

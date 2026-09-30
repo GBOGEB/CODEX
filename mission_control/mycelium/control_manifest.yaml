@@ -102,21 +102,28 @@ control_plane:
     required_provenance: [source_repo, source_ref, source_sha, target_repo, target_ref, target_sha, mechanism, authority_before, authority_after, proof]
 
 authenticated_execution_gateway:
-  state: DESIGN_ONLY_NO_MUTATION_BACKEND
+  state: TRANSPORT_IMPLEMENTED_PENDING_PROOF
   contract: mission_control/mycelium/execution_gateway_contract.yaml
   request_schema: mission_control/mycelium/schemas/execution_request.schema.json
   receipt_schema: mission_control/mycelium/schemas/execution_receipt.schema.json
   validator: scripts/validate_missioncontrol_execution_gateway.py
+  transport_implementation: scripts/missioncontrol_authenticated_transport.py
+  transport_workflow: .github/workflows/missioncontrol-authenticated-transport.yml
+  selected_transport_class: MANUALLY_APPROVED_ACTION
+  selected_transport_implementation: GITHUB_WORKFLOW_DISPATCH_READ_ONLY
   static_pages_apply: STAGE_OR_DRY_RUN_ONLY
   default_authorization: DENY
   exact_head_required: true
   idempotency_required: true
   replay_completed_request_forbidden: true
   enabled_mutation_transports: []
+  mutation_enabled: false
+  runtime_dry_run_proof: WITHHELD_OWNER_DISPATCH_REQUIRED
   remote_authority_mutation: false
   authority_transfer: false
   next_atoms:
-    - SELECT_AUTHENTICATED_TRANSPORT
+    - AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF
+    - GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
     - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
     - PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS
 

@@ -1,0 +1,82 @@
+name: MissionControl Authenticated Transport Dry Run
+
+on:
+  workflow_dispatch:
+    inputs:
+      request:
+        description: "Execution request JSON staged by MissionControl Pages"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: missioncontrol-authenticated-stage-only
+  cancel-in-progress: false
+
+jobs:
+  authenticated-transport:
+    name: authenticated-stage-only
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout current main authority
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install bounded dependencies
+        run: python -m pip install --upgrade pip pytest pyyaml numpy jsonschema
+
+      - name: Materialize governed request
+        env:
+          MISSIONCONTROL_REQUEST_JSON: ${{ inputs.request }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          payload = json.loads(os.environ["MISSIONCONTROL_REQUEST_JSON"])
+          Path("missioncontrol-execution-request.json").write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Validate authenticated transport request
+        id: gateway
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python scripts/missioncontrol_authenticated_transport.py \
+            --request missioncontrol-execution-request.json \
+            --actor "$GITHUB_ACTOR" \
+            --actor-id "$GITHUB_ACTOR_ID" \
+            --run-id "$GITHUB_RUN_ID" \
+            --run-attempt "$GITHUB_RUN_ATTEMPT" \
+            --job-name "authenticated-stage-only"
+
+      - name: Validate gateway design and MissionControl
+        run: |
+          python scripts/validate_missioncontrol_execution_gateway.py
+          python scripts/validate_missioncontrol_mycelium.py
+          pytest -q \
+            tests/test_missioncontrol_execution_gateway.py \
+            tests/test_missioncontrol_authenticated_transport.py
+          git diff --check
+
+      - name: Upload authenticated dry-run receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.gateway.outputs.artifact_name }}
+          path: ${{ steps.gateway.outputs.receipt_path }}
+          if-no-files-found: error
