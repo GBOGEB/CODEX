@@ -27,7 +27,9 @@ jobs:
         run: python scripts/build_missioncontrol_metrics.py
       - name: Validate Mycelium contract
         run: python scripts/validate_missioncontrol_mycelium.py
+      - name: Validate authenticated execution gateway design
+        run: python scripts/validate_missioncontrol_execution_gateway.py
       - name: Run MissionControl tests
-        run: pytest -q tests/test_missioncontrol_mycelium.py tests/test_missioncontrol_metrics.py tests/test_missioncontrol_logs.py tests/test_missioncontrol_source_ingestion.py
+        run: pytest -q tests/test_missioncontrol_mycelium.py tests/test_missioncontrol_metrics.py tests/test_missioncontrol_logs.py tests/test_missioncontrol_source_ingestion.py tests/test_missioncontrol_execution_gateway.py
       - name: Verify deterministic materializations
         run: git diff --exit-code -- mission_control/mycelium/metrics_snapshot.json docs/data/missioncontrol_metrics.json mission_control/mycelium/log_analysis.json docs/data/missioncontrol_log_analysis.json
