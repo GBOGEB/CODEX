@@ -289,15 +289,26 @@
       "parent_event": "EV-0025",
       "content_ref": "mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json",
       "summary": "Owner-authenticated STAGE_ONLY runtime dry run executed successfully on exact main; after_sha=null, mutation remains disabled, and bounded CODEX-only apply is admitted for separate implementation/proof."
+    },
+    {
+      "id": "EV-0027",
+      "at": "2026-09-30T18:23:38Z",
+      "type": "PROOF_BOUND",
+      "node_id": "gateway_transport",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "99bf939a28c40bd8d7346799d9fa2fe22afd8534",
+      "parent_event": "EV-0026",
+      "content_ref": "mission_control/mycelium/receipts/BOUNDED_APPLY_DISABLED_V01_PR894_PROOF.json",
+      "summary": "CODEX-only bounded apply planning/authorization surface implemented and exact-head proven on PR #894; mutation_enabled=false, execute_permitted=false, enabled_mutation_transports=[], and any mutation enablement remains withheld pending separate explicit governance promotion."
     }
   ],
   "horizons": {
     "current": [
       {
         "rank": 1,
-        "id": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
-        "state": "ADMITTED_PENDING_IMPLEMENTATION",
-        "reason": "authenticated exact-head STAGE_ONLY runtime receipt is bound; mutation remains disabled pending separate implementation and proof",
+        "id": "MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION",
+        "state": "WITHHELD_EXPLICIT_PROMOTION_REQUIRED",
+        "reason": "bounded apply implementation and exact-head guards are green, but mutation enablement was not requested or promoted",
         "lane": "CODEX_UI"
       },
       {
@@ -318,9 +329,9 @@
     "mid": [
       {
         "rank": 1,
-        "id": "PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS",
-        "state": "PENDING_AFTER_BOUNDED_APPLY_IMPLEMENTATION",
-        "reason": "bounded apply must remain disabled by default and prove exact-head, approval, path allowlist and replay guards before any promotion",
+        "id": "BOUNDED_APPLY_CONTROL_WATCH",
+        "state": "CONTROLLED_GREEN_DISABLED",
+        "reason": "watch exact-head, approval, allowlist, dry-run and replay guards while mutation remains disabled",
         "lane": "CODEX_UI"
       },
       {
@@ -335,8 +346,8 @@
       {
         "rank": 1,
         "id": "AUTHENTICATED_APPLY_ALLOWLIST",
-        "state": "WITHHELD",
-        "reason": "requires separate bounded implementation proof and explicit governance promotion",
+        "state": "WITHHELD_EXPLICIT_PROMOTION_REQUIRED",
+        "reason": "no mutation transport may be enabled without a separate governance promotion and proof",
         "lane": "CODEX_UI"
       },
       {
