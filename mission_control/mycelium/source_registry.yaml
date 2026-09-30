@@ -7,19 +7,22 @@ sources:
     repository: GBOGEB/CODEX
     authority_class: LOCAL_AUTHORITATIVE
     role: ORCHESTRATION_UI_GOVERNANCE
-    ingest: [repository, pulls, issues, workflows]
+    branch: main
+    ingest: [repository, head, pulls, issues, workflows]
     freshness_minutes: 60
   - id: abacus
     repository: GBOGEB/ABACUS
     authority_class: REMOTE_AUTHORITATIVE
     role: EXECUTION_DOW
-    ingest: [repository, pulls, issues, workflows]
+    branch: main
+    ingest: [repository, head, pulls, issues, workflows]
     freshness_minutes: 60
   - id: cryoplant_project
     repository: GBOGEB/cryoplant-project
     authority_class: REMOTE_AUTHORITATIVE
     role: ENGINEERING_TRUTH_QPS
-    ingest: [repository, pulls, issues]
+    branch: main
+    ingest: [repository, head, pulls, issues]
     freshness_minutes: 60
 rules:
   metadata_cannot_promote_engineering_state: true
