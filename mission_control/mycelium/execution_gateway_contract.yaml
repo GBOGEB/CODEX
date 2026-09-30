@@ -1,6 +1,6 @@
 schema_version: "0.1"
 gateway_id: MISSIONCONTROL_AUTHENTICATED_EXECUTION_GATEWAY
-state: AUTHENTICATED_TRANSPORT_IMPLEMENTED_NO_MUTATION
+state: BOUNDED_CODEX_APPLY_IMPLEMENTED_PENDING_RUNTIME_PROOF
 owner: CODEX_EXECUTION_GOVERNANCE
 
 authority:
@@ -26,8 +26,9 @@ authentication:
     - MANUALLY_APPROVED_ACTION
     - GITHUB_ACTIONS_WORKFLOW_DISPATCH
   selected_transport: GITHUB_ACTIONS_WORKFLOW_DISPATCH
-  transport_state: AUTHENTICATED_STAGE_ONLY
-  enabled_mutation_transports: []
+  transport_state: AUTHENTICATED_STAGE_ONLY_PLUS_OWNER_BOUNDED_APPLY
+  enabled_mutation_transports:
+    - OWNER_COMMENT_AUTOMATION_PR
 
 authorization:
   default: DENY
@@ -42,9 +43,12 @@ authorization:
       enabled: true
       mutates_repository: false
     APPLY_BOUNDED_CODEX:
-      enabled: false
+      enabled: true
       mutates_repository: true
       allowed_repositories: [GBOGEB/CODEX]
+      allowed_intents: [REFRESH_FEDERATION_HEADS]
+      direct_main_write: false
+      review_pr_required: true
     REQUEST_TYPED_REMOTE_RETURN:
       enabled: true
       mutates_repository: false
@@ -84,6 +88,29 @@ transport_runtime:
   exact_head_refresh_before_authorize: true
   payload_digest_verified: true
   workflow_run_job_bound_in_receipt: true
+
+bounded_apply_runtime:
+  workflow: .github/workflows/missioncontrol-owner-bounded-apply.yml
+  request_builder: scripts/missioncontrol_owner_bounded_apply_request.py
+  executor: scripts/missioncontrol_bounded_apply.py
+  approval_surface: ISSUE_879_OWNER_COMMENT
+  required_author_association: OWNER
+  target_repository: GBOGEB/CODEX
+  target_ref: main
+  enabled_action_class: APPLY_BOUNDED_CODEX
+  enabled_intents: [REFRESH_FEDERATION_HEADS]
+  mutation_mode: AUTOMATION_BRANCH_PR_ONLY
+  direct_main_write: false
+  review_pr_required: true
+  runtime_proof: WITHHELD_OWNER_APPLY_COMMAND_REQUIRED
+  remote_authority_mutation: false
+  changed_path_allowlist:
+    - mission_control/mycelium/source_status.json
+    - docs/data/missioncontrol_source_status.json
+    - mission_control/mycelium/control_events.json
+    - docs/data/missioncontrol_control_events.json
+    - mission_control/mycelium/metrics_snapshot.json
+    - docs/data/missioncontrol_metrics.json
 
 promotion:
   design_completion_does_not_enable_apply: true
