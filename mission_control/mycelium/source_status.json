@@ -59,22 +59,59 @@
         {
           "pr": 1527,
           "family": "F841",
-          "status": "OPEN_UNMEASURED",
+          "status": "MERGED_SLICE_MEASURED_PENDING_COMBINED_MAIN",
           "head_sha": "8a846b0e7bb03f11f2cd66d66f2ff7f2767dff21",
           "expected_only": {
             "F841": 66
+          },
+          "merge_sha": "1830662b57ccaeb6b1c1553f2c584abe6a954f9f",
+          "measured_slice": {
+            "head_sha": "8a846b0e7bb03f11f2cd66d66f2ff7f2767dff21",
+            "workflow_run": 36747479638,
+            "job": 109997228198,
+            "artifact_id": 11113178054,
+            "artifact_sha256": "70b49f98b252982ec56e7a89d9e9cc2758aae71044024049808d76925bf76774",
+            "total": 8230,
+            "families": {
+              "E999": 1,
+              "F821": 0,
+              "F601": 0,
+              "F811": 0,
+              "F841": 66,
+              "E722": 16,
+              "E731": 0,
+              "E741": 17,
+              "W293": 416
+            }
           }
         },
         {
           "pr": 1528,
           "family": "W293",
-          "status": "OPEN_UNMEASURED",
+          "status": "MERGED_PENDING_MAIN_CENSUS",
           "head_sha": "ddfebc8cc40883c4a7d32102173ed4bb5d242683",
           "expected_only": {
             "W293": 411
-          }
+          },
+          "merge_sha": "64d26b4a3c74fb58ae0b445c65bbdea95f73fa6e",
+          "main_census_run": 36747745812
         }
-      ]
+      ],
+      "combined_main_census_pending": {
+        "head_sha": "1830662b57ccaeb6b1c1553f2c584abe6a954f9f",
+        "workflow_run": 36747879827,
+        "status": "QUEUED",
+        "covers_prs": [
+          1528,
+          1527
+        ],
+        "non_python_followup": {
+          "pr": 1529,
+          "merge_sha": "3c0a57e1626e9c0361417ea21d78cceef4457f98",
+          "lint_population_changed": false
+        },
+        "promotion_rule": "WITHHOLD_COMBINED_COUNTS_UNTIL_MAIN_CENSUS_MEASURED"
+      }
     },
     {
       "id": "cryoplant_project",
