@@ -92,14 +92,16 @@ def collect_source(
         "status": "FRESH",
         "observed_at": observed_at,
         "data": {},
+        "telemetry_errors": {},
     }
-    try:
-        for kind in source.get("ingest", []):
-            result["data"][kind] = _payload(
-                source, kind, token=token, fixture_dir=fixture_dir
-            )
 
-        repo_meta = result["data"].get("repository", {})
+    # Identity and exact head are the freshness predicate. Optional telemetry
+    # must never turn a readable exact head into a stale source.
+    try:
+        repo_meta = _payload(
+            source, "repository", token=token, fixture_dir=fixture_dir
+        )
+        result["data"]["repository"] = repo_meta
         default_branch = repo_meta.get("default_branch") or "main"
         result["default_branch"] = default_branch
         result["pushed_at"] = repo_meta.get("pushed_at")
@@ -116,42 +118,61 @@ def collect_source(
         result["head_url"] = head.get("html_url") or (
             f"https://github.com/{repo}/commit/{head_sha}"
         )
-
-        pulls = result["data"].get("pulls") or []
-        issues = result["data"].get("issues") or []
-        workflows = (result["data"].get("workflows") or {}).get("workflow_runs", [])
-        result["topology"] = {
-            "pulls_observed": len(pulls) if isinstance(pulls, list) else 0,
-            "open_pulls": sum(
-                1
-                for item in pulls
-                if isinstance(item, dict) and item.get("state") == "open"
-            )
-            if isinstance(pulls, list)
-            else 0,
-            "open_issues_observed": sum(
-                1
-                for item in issues
-                if isinstance(item, dict)
-                and "pull_request" not in item
-                and item.get("state") == "open"
-            )
-            if isinstance(issues, list)
-            else 0,
-            "workflow_runs_observed": len(workflows)
-            if isinstance(workflows, list)
-            else 0,
-        }
     except (
         OSError,
         urllib.error.URLError,
-        urllib.error.HTTPError,
         json.JSONDecodeError,
         FileNotFoundError,
         ValueError,
     ) as exc:
         result["status"] = "ERROR"
         result["error"] = f"{type(exc).__name__}: {exc}"
+        return result
+
+    for kind in source.get("ingest", []):
+        if kind == "repository":
+            continue
+        try:
+            result["data"][kind] = _payload(
+                source, kind, token=token, fixture_dir=fixture_dir
+            )
+        except (
+            OSError,
+            urllib.error.URLError,
+            json.JSONDecodeError,
+            FileNotFoundError,
+            ValueError,
+        ) as exc:
+            result["telemetry_errors"][kind] = f"{type(exc).__name__}: {exc}"
+
+    pulls = result["data"].get("pulls") or []
+    issues = result["data"].get("issues") or []
+    workflows = (result["data"].get("workflows") or {}).get("workflow_runs", [])
+    result["telemetry_status"] = (
+        "PARTIAL" if result["telemetry_errors"] else "COMPLETE"
+    )
+    result["topology"] = {
+        "pulls_observed": len(pulls) if isinstance(pulls, list) else 0,
+        "open_pulls": sum(
+            1
+            for item in pulls
+            if isinstance(item, dict) and item.get("state") == "open"
+        )
+        if isinstance(pulls, list)
+        else 0,
+        "open_issues_observed": sum(
+            1
+            for item in issues
+            if isinstance(item, dict)
+            and "pull_request" not in item
+            and item.get("state") == "open"
+        )
+        if isinstance(issues, list)
+        else 0,
+        "workflow_runs_observed": len(workflows)
+        if isinstance(workflows, list)
+        else 0,
+    }
     return result
 
 
@@ -238,10 +259,12 @@ def temporal_refresh_events(
             else "RECOVERY",
             "node_id": f"repo_{source['id']}",
             "source_repo": source["repository"],
+            "source_ref": source.get("default_branch") or "UNBOUND",
             "source_sha": after_sha,
             "parent_event": parent,
             "content_ref": "mission_control/mycelium/source_status.json",
             "summary": summary,
+            "acceptance_decision": "PROJECTION_ONLY_NO_ACCEPTANCE",
             "projection_only": True,
             "authority_transfer": False,
         }
