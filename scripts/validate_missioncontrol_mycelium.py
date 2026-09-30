@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import yaml
+
+ROOT = Path(__file__).resolve().parents[1]
+MANIFEST = ROOT / "mission_control" / "mycelium" / "control_manifest.yaml"
+GRAPH = ROOT / "mission_control" / "mycelium" / "interaction_graph.json"
+PAGES_GRAPH = ROOT / "docs" / "data" / "missioncontrol_interaction_graph.json"
+HTML = ROOT / "docs" / "missioncontrol_mycelium.html"
+INDEX = ROOT / "docs" / "index.html"
+
+
+def validate() -> list[str]:
+    errors: list[str] = []
+    manifest = yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
+    graph = json.loads(GRAPH.read_text(encoding="utf-8"))
+    pages_graph = json.loads(PAGES_GRAPH.read_text(encoding="utf-8"))
+
+    if graph != pages_graph:
+        errors.append("Pages graph materialization differs from canonical graph")
+
+    allowed_nodes = set(manifest["graph_contract"]["node_types"])
+    allowed_edges = set(manifest["graph_contract"]["edge_types"])
+    nodes = graph.get("nodes", [])
+    edges = graph.get("edges", [])
+    ids = [n.get("id") for n in nodes]
+
+    if len(ids) != len(set(ids)):
+        errors.append("duplicate graph node id")
+
+    node_ids = set(ids)
+    for node in nodes:
+        if node.get("type") not in allowed_nodes:
+            errors.append(f"unknown node type: {node.get('type')} for {node.get('id')}")
+        if not node.get("state"):
+            errors.append(f"node without state: {node.get('id')}")
+
+    for edge in edges:
+        if edge.get("type") not in allowed_edges:
+            errors.append(f"unknown edge type: {edge.get('type')}")
+        if edge.get("from") not in node_ids or edge.get("to") not in node_ids:
+            errors.append(f"orphan edge endpoint: {edge}")
+
+    html = HTML.read_text(encoding="utf-8")
+    for panel in manifest["layout"]["panels"]:
+        if f'data-panel="{panel["id"]}"' not in html:
+            errors.append(f"missing UI panel: {panel['id']}")
+
+    if "../mission_control/" in html:
+        errors.append("Pages HTML reaches outside docs tree")
+    if "data/missioncontrol_interaction_graph.json" not in html:
+        errors.append("Pages HTML is not bound to materialized graph")
+    if "missioncontrol_mycelium.html" not in INDEX.read_text(encoding="utf-8"):
+        errors.append("Pages index does not link MissionControl Mycelium")
+
+    if manifest.get("authority_transfer") is not False:
+        errors.append("authority_transfer must remain false")
+    if manifest.get("engineering_authority") is not False:
+        errors.append("CODEX UI must not self-promote engineering authority")
+
+    return errors
+
+
+if __name__ == "__main__":
+    found = validate()
+    if found:
+        for item in found:
+            print(f"ERROR: {item}")
+        raise SystemExit(1)
+    print("MissionControl Mycelium validation: PASS")
