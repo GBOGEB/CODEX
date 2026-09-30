@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-09-30T16:54:30Z",
+  "generated_at": "2026-09-30T17:09:58Z",
   "public_metadata_only": true,
   "authority_transfer": false,
   "sources": [
@@ -20,116 +20,66 @@
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "EXECUTION_DOW",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-09-30T16:54:30Z",
-      "head_sha": "f87d5ea61852f46a0ecdb478f5916f4d078326cc",
-      "census_pr": 1525,
-      "census_head_sha": "acc8faef0208d90c1a05c0bfe4f85e9292a8b7d8",
-      "census_merge_sha": "f87d5ea61852f46a0ecdb478f5916f4d078326cc",
-      "census_workflow_run": 36745721133,
-      "census_job": 109991290893,
-      "census_artifact_id": 11112981814,
-      "census_artifact_sha256": "3126304d42561d775b19ec9d20a288f0cb48148fab7cc50e28909cb62718d772",
-      "measurement_basis": "exact #1525 DAB census on top of merged #1523/#1524; merged main tracked separately",
-      "census_total": 8240,
-      "w293_postmerge_status": "MEASURED_BY_PR1525_EXACT_HEAD_CENSUS",
+      "observed_at": "2026-09-30T17:09:58Z",
+      "head_sha": "3c0a57e1626e9c0361417ea21d78cceef4457f98",
+      "census_pr": 1527,
+      "census_head_sha": "1830662b57ccaeb6b1c1553f2c584abe6a954f9f",
+      "census_merge_sha": "1830662b57ccaeb6b1c1553f2c584abe6a954f9f",
+      "census_workflow_run": 36747879827,
+      "census_job": 109998603356,
+      "census_artifact_id": 11114021331,
+      "census_artifact_sha256": "3b8bdb3c199d49504350b9e8efa42bc8c56db8dbe5db8ad269d7afceb051e1ea",
+      "measurement_basis": "exact merged-main DAB census after merged #1528 + #1527; live head advanced only by non-Python #1529 workflow repair",
+      "census_total": 8225,
+      "w293_postmerge_status": "MEASURED_BY_COMBINED_MAIN_CENSUS",
       "E741": 17,
-      "W293": 416,
+      "W293": 411,
       "E722": 16,
-      "F841": 76,
+      "F841": 66,
       "E999": 1,
       "source_bound_hold": "qplant/w52_p2m_ts_pressure_sensitivity.py",
-      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_return_1525_measured.json",
+      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_return_1527_1528_combined_main_measured.json",
       "F821": 0,
       "F601": 0,
       "F811": 0,
       "E731": 0,
       "family_slice_baselines": {
-        "E741": 21,
-        "F841": 77,
-        "W293": 453,
-        "E722": 16
+        "E722": 16,
+        "E741": 17,
+        "F841": 76,
+        "W293": 416
       },
-      "measured_return_source_sha": "acc8faef0208d90c1a05c0bfe4f85e9292a8b7d8",
+      "measured_return_source_sha": "1830662b57ccaeb6b1c1553f2c584abe6a954f9f",
       "live_head_after_measurement": {
-        "sha": "f87d5ea61852f46a0ecdb478f5916f4d078326cc",
-        "status": "CURRENT_MAIN_AFTER_1525",
-        "latest_known_merge_pr": 1525
+        "sha": "3c0a57e1626e9c0361417ea21d78cceef4457f98",
+        "status": "NONPYTHON_WORKFLOW_ONLY_AFTER_COMBINED_DAB",
+        "latest_known_merge_pr": 1529
       },
       "pending_independent_lanes": [
         {
-          "pr": 1527,
-          "family": "F841",
-          "status": "MERGED_SLICE_MEASURED_PENDING_COMBINED_MAIN",
-          "head_sha": "8a846b0e7bb03f11f2cd66d66f2ff7f2767dff21",
-          "expected_only": {
-            "F841": 66
-          },
-          "merge_sha": "1830662b57ccaeb6b1c1553f2c584abe6a954f9f",
-          "measured_slice": {
-            "head_sha": "8a846b0e7bb03f11f2cd66d66f2ff7f2767dff21",
-            "workflow_run": 36747479638,
-            "job": 109997228198,
-            "artifact_id": 11113178054,
-            "artifact_sha256": "70b49f98b252982ec56e7a89d9e9cc2758aae71044024049808d76925bf76774",
-            "total": 8230,
-            "families": {
-              "E999": 1,
-              "F821": 0,
-              "F601": 0,
-              "F811": 0,
-              "F841": 66,
-              "E722": 16,
-              "E731": 0,
-              "E741": 17,
-              "W293": 416
-            }
-          }
-        },
-        {
-          "pr": 1528,
-          "family": "W293",
-          "status": "MERGED_SLICE_MEASURED_PENDING_COMBINED_MAIN",
-          "head_sha": "ddfebc8cc40883c4a7d32102173ed4bb5d242683",
-          "expected_only": {
-            "W293": 411
-          },
-          "merge_sha": "64d26b4a3c74fb58ae0b445c65bbdea95f73fa6e",
-          "main_census_run": 36747745812,
-          "measured_slice": {
-            "head_sha": "ddfebc8cc40883c4a7d32102173ed4bb5d242683",
-            "workflow_run": 36747539533,
-            "job": 109997428019,
-            "artifact_id": 11113791168,
-            "artifact_sha256": "0cf4c20e12820f51f60e5488caed187047f580bdb7b29d5f4c66bd583cab6daa",
-            "total": 8235,
-            "families": {
-              "E999": 1,
-              "F821": 0,
-              "F601": 0,
-              "F811": 0,
-              "F841": 76,
-              "E722": 16,
-              "E731": 0,
-              "E741": 17,
-              "W293": 411
-            }
-          }
+          "pr": 1529,
+          "family": "WORKFLOW_GOVERNANCE",
+          "status": "MERGED_PROOF_PENDING",
+          "merge_sha": "3c0a57e1626e9c0361417ea21d78cceef4457f98",
+          "lint_population_changed": false,
+          "validate_docs_run": 36747972586
         }
       ],
-      "combined_main_census_pending": {
+      "census_covers_prs": [
+        1527,
+        1528
+      ],
+      "combined_main_census": {
         "head_sha": "1830662b57ccaeb6b1c1553f2c584abe6a954f9f",
         "workflow_run": 36747879827,
-        "status": "QUEUED",
+        "job": 109998603356,
+        "artifact_id": 11114021331,
+        "artifact_sha256": "3b8bdb3c199d49504350b9e8efa42bc8c56db8dbe5db8ad269d7afceb051e1ea",
+        "status": "MEASURED",
         "covers_prs": [
-          1528,
-          1527
-        ],
-        "non_python_followup": {
-          "pr": 1529,
-          "merge_sha": "3c0a57e1626e9c0361417ea21d78cceef4457f98",
-          "lint_population_changed": false
-        },
-        "promotion_rule": "WITHHOLD_COMBINED_COUNTS_UNTIL_MAIN_CENSUS_MEASURED"
+          1527,
+          1528
+        ]
       }
     },
     {
