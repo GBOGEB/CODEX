@@ -1,0 +1,82 @@
+name: MissionControl Live Federation Ingestion
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+  pull_request:
+    paths:
+      - "scripts/ingest_missioncontrol_sources.py"
+      - "mission_control/mycelium/source_registry.yaml"
+      - "tests/test_missioncontrol_live_ingestion.py"
+      - ".github/workflows/missioncontrol-live-federation.yml"
+
+permissions:
+  contents: read
+  actions: read
+  issues: read
+  pull-requests: read
+
+concurrency:
+  group: missioncontrol-live-federation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  live-federation-ingestion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install bounded dependencies
+        run: python -m pip install --disable-pip-version-check PyYAML pytest
+
+      - name: Run deterministic ingestion tests
+        run: python -m pytest -q tests/test_missioncontrol_live_ingestion.py
+
+      - name: Collect live public federation metadata
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/missioncontrol-live"
+          python scripts/ingest_missioncontrol_sources.py             --output-dir "$RUNNER_TEMP/missioncontrol-live"
+
+      - name: Validate exact heads and authority guards
+        env:
+          LIVE_DIR: ${{ runner.temp }}/missioncontrol-live
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          root = Path(os.environ["LIVE_DIR"])
+          status = json.loads((root / "source_status.json").read_text())
+          events = json.loads((root / "federation_events.json").read_text())
+
+          assert status["public_metadata_only"] is True
+          assert status["authority_transfer"] is False
+          assert len(status["sources"]) == 3
+          for source in status["sources"]:
+              assert source["status"] == "FRESH", source
+              assert source["freshness_status"] == "FRESH", source
+              assert isinstance(source.get("head_sha"), str) and len(source["head_sha"]) == 40, source
+
+          assert events["append_only"] is True
+          assert events["authority"] == "PUBLIC_METADATA_OBSERVATION_ONLY"
+          assert all(event["authority_transfer"] is False for event in events["events"][-3:])
+          print("MissionControl live federation proof: PASS")
+          PY
+
+      - name: Upload live federation receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: missioncontrol-live-federation
+          path: |
+            ${{ runner.temp }}/missioncontrol-live/source_status.json
+            ${{ runner.temp }}/missioncontrol-live/federation_events.json
+          if-no-files-found: error
