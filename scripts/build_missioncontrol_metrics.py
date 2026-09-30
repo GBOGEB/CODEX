@@ -149,6 +149,10 @@ def build_snapshot(graph: dict[str, Any], obs: dict[str, Any]) -> dict[str, Any]
         metric["logs"] = record.get("logs", {"status": STATUS_WITHHELD})
         metric["docking"] = record.get("docking", {"status": STATUS_WITHHELD})
         metric["ports"] = record.get("ports", {"status": STATUS_WITHHELD})
+        if "family_progress" in record:
+            metric["family_progress"] = record["family_progress"]
+        if "mechanical_progress" in record:
+            metric["mechanical_progress"] = record["mechanical_progress"]
 
         chi = record.get("code_health_inputs", {})
         keys = ("qa_gate_health", "test_health", "lint_health", "debug_health")
