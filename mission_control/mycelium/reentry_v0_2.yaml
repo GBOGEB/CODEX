@@ -71,46 +71,25 @@ reentry:
           F811: 0
           E731: 0
       latest_measured_return:
-        pr: 1525
-        head_sha: acc8faef0208d90c1a05c0bfe4f85e9292a8b7d8
-        merge_sha: f87d5ea61852f46a0ecdb478f5916f4d078326cc
+        prs: [1527, 1528]
+        head_sha: 1830662b57ccaeb6b1c1553f2c584abe6a954f9f
+        merge_sha: 1830662b57ccaeb6b1c1553f2c584abe6a954f9f
         current_main_sha: 3c0a57e1626e9c0361417ea21d78cceef4457f98
-        workflow_run: 36745721133
-        job: 109991290893
-        artifact_id: 11112981814
-        artifact_sha256: 3126304d42561d775b19ec9d20a288f0cb48148fab7cc50e28909cb62718d772
-        total: 8240
+        workflow_run: 36747879827
+        job: 109998603356
+        artifact_id: 11114021331
+        artifact_sha256: 3b8bdb3c199d49504350b9e8efa42bc8c56db8dbe5db8ad269d7afceb051e1ea
+        total: 8225
         E722: 16
         E741: 17
-        W293: 416
-        F841: 76
+        W293: 411
+        F841: 66
         E999: 1
         F821: 0
         F601: 0
         F811: 0
         E731: 0
-        state: MEASURED
-        pending_independent_lanes:
-          - pr: 1527
-            family: F841
-            expected_only: 66
-            merge_sha: 1830662b57ccaeb6b1c1553f2c584abe6a954f9f
-            census_run: 36747479638
-            census_job: 109997228198
-            artifact_id: 11113178054
-            artifact_sha256: 70b49f98b252982ec56e7a89d9e9cc2758aae71044024049808d76925bf76774
-            measured_exact_head: "F841=66,W293=416,total=8230"
-            status: MEASURED_INDEPENDENT_EXACT_HEAD_COMBINED_MAIN_PENDING
-          - pr: 1528
-            family: W293
-            expected_only: 411
-            merge_sha: 64d26b4a3c74fb58ae0b445c65bbdea95f73fa6e
-            census_run: 36747539533
-            census_job: 109997428019
-            artifact_id: 11113791168
-            artifact_sha256: 0cf4c20e12820f51f60e5488caed187047f580bdb7b29d5f4c66bd583cab6daa
-            measured_exact_head: "F841=76,W293=411,total=8235"
-            status: MEASURED_INDEPENDENT_EXACT_HEAD_COMBINED_MAIN_PENDING
+        state: MEASURED_COMBINED_MAIN
         workflow_control_after_measurement:
           pr: 1529
           merge_sha: 3c0a57e1626e9c0361417ea21d78cceef4457f98
@@ -304,19 +283,9 @@ reentry:
       blocker: OWNER_AUTHENTICATED_WORKFLOW_DISPATCH_REQUIRED
       queue_state: OWNER_ACTION
       evidence_refs:
-        - PR_837
-        - PR_839
-        - PR_841
-        - MYCELIUM_V02_PR839_PROOF
-        - MYCELIUM_V021_PR841_PROOF
+        - mission_control/mycelium/evidence/abacus_dab_return_1527_1528_combined_main_measured.json
       artifact_refs:
-        - mission_control/mycelium/control_manifest.yaml
-        - mission_control/mycelium/interaction_graph.json
-        - mission_control/mycelium/control_plane_projection.json
-        - mission_control/mycelium/control_events.json
-        - mission_control/mycelium/executable_projection.json
-        - mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
-        - docs/missioncontrol_mycelium.html
+        - ABACUS artifact 11114021331
       next_legal_transitions:
         - GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
         - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
@@ -326,8 +295,8 @@ reentry:
       branch: main
       head_sha: 3c0a57e1626e9c0361417ea21d78cceef4457f98
       state: REMOTE_AUTHORITY
-      latest_census_merge_sha: f87d5ea61852f46a0ecdb478f5916f4d078326cc
-      current_atom: POST_1525_MEASURED_SPLIT_1527_1528_PROVEN_COMBINED_MAIN_PENDING
+      latest_census_merge_sha: 1830662b57ccaeb6b1c1553f2c584abe6a954f9f
+      current_atom: POST_1527_1528_COMBINED_MAIN_MEASURED_1529_DOCS_PROOF_PENDING
       completed_atoms:
         - POST_1506_COMBINED_CENSUS_MEASURED
         - POST_1519_COMBINED_CENSUS_MEASURED
@@ -339,8 +308,8 @@ reentry:
       artifact_refs:
         - ABACUS artifact 11112981814
       next_legal_transitions:
-        - CONSUME_POST_1527_1528_COMBINED_CENSUS
         - VERIFY_1529_DOCS_LINT_RECOVERY
+        - ADMIT_PREPARED_INTEGRATION_BRIDGE_HARD_UNLOCK_AFTER_PROOF
         - PRESERVE_E999_SOURCE_BOUND_HOLD
         - REFRESH_REMOTE_HEAD
     - id: QLM_ENGINEERING
