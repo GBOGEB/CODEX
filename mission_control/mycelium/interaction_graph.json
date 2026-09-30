@@ -1,6 +1,6 @@
 {
   "schema_version": "0.4",
-  "snapshot_at": "2026-09-30T12:00:00Z",
+  "snapshot_at": "2026-09-30T12:12:00Z",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -771,7 +771,7 @@
       "id": "gateway_transport",
       "type": "workflow",
       "label": "Authenticated transport · workflow_dispatch",
-      "state": "IMPLEMENTED_PENDING_PROOF",
+      "state": "MERGED_EXACT_HEAD_GREEN",
       "url": "https://github.com/GBOGEB/CODEX/actions/workflows/missioncontrol-authenticated-transport.yml",
       "meta": {
         "transport_class": "MANUALLY_APPROVED_ACTION",
@@ -779,20 +779,23 @@
         "views": [
           "control",
           "observability"
-        ]
+        ],
+        "merge_sha": "ea167f43732e838bc3fb5d5ad382fe0874b66fcb",
+        "exact_head_run": 36712962475
       }
     },
     {
       "id": "gateway_transport_receipt",
       "type": "evidence",
       "label": "Authenticated transport dry-run receipt",
-      "state": "WITHHELD_OWNER_DISPATCH_REQUIRED",
-      "url": "https://github.com/GBOGEB/CODEX/tree/main/mission_control/mycelium/gateway/receipts",
+      "state": "IMPLEMENTATION_PROOF_BOUND_RUNTIME_RECEIPT_WITHHELD",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/receipts/AUTHENTICATED_TRANSPORT_V01_PR850_PROOF.json",
       "meta": {
         "views": [
           "control",
           "observability"
-        ]
+        ],
+        "runtime_proof": "WITHHELD_OWNER_DISPATCH_REQUIRED"
       }
     }
   ],

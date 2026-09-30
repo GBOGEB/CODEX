@@ -168,30 +168,63 @@
       "parent_event": "EV-0014",
       "content_ref": ".github/workflows/missioncontrol-authenticated-transport.yml",
       "summary": "Authenticated workflow_dispatch transport implementation started from merged gateway design; transport is read-only and mutation remains disabled."
+    },
+    {
+      "id": "EV-0016",
+      "at": "2026-09-30T12:10:00Z",
+      "type": "PROOF_BOUND",
+      "node_id": "gateway_transport",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "e77cf45e64b6c67859e468a66b6db1d553394ac8",
+      "parent_event": "EV-0015",
+      "content_ref": "PR850 / Actions run 36712962475 / job 109878913705",
+      "summary": "Authenticated read-only transport passed exact-head MissionControl validation, gateway design validation, tests and deterministic materialization."
+    },
+    {
+      "id": "EV-0017",
+      "at": "2026-09-30T12:11:00Z",
+      "type": "MERGE",
+      "node_id": "gateway_transport",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "ea167f43732e838bc3fb5d5ad382fe0874b66fcb",
+      "parent_event": "EV-0016",
+      "content_ref": "PR-850",
+      "summary": "Authenticated transport v0.1 merged; mutation remains disabled."
+    },
+    {
+      "id": "EV-0018",
+      "at": "2026-09-30T12:12:00Z",
+      "type": "RECOVERY",
+      "node_id": "current_next",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "954cde35a2ac101e687d71e28f973864118bb1f0",
+      "parent_event": "EV-0017",
+      "content_ref": "mission_control/mycelium/receipts/AUTHENTICATED_TRANSPORT_V01_PR850_PROOF.json",
+      "summary": "Transport merge read back on main; Pages proof remains withheld and first incomplete atom advances to owner-authenticated workflow_dispatch."
     }
   ],
   "horizons": {
     "current": [
       {
         "rank": 1,
-        "id": "AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF",
-        "state": "EXECUTING",
-        "reason": "read-only workflow_dispatch transport is implemented and requires exact-head MissionControl proof",
+        "id": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
+        "state": "WAIT_OWNER_ACTION",
+        "reason": "transport implementation is merged/exact-head green; genuine authenticated runtime receipt requires owner workflow_dispatch",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
-        "id": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
-        "state": "WAIT_OWNER_ACTION",
-        "reason": "real authenticated workflow_dispatch receipt cannot be synthesized by PR CI",
-        "lane": "CODEX_UI"
+        "id": "CONSUME_TYPED_REMOTE_RETURNS",
+        "state": "READY",
+        "reason": "ABACUS post-1497/1498 measured census is available independently",
+        "lane": "FEDERATION"
       },
       {
         "rank": 3,
-        "id": "CONSUME_TYPED_REMOTE_RETURNS",
-        "state": "READY_WHEN_AVAILABLE",
-        "reason": "ABACUS and cryoplant returns remain independent and non-blocking",
-        "lane": "FEDERATION"
+        "id": "PAGES_TRANSPORT_READBACK",
+        "state": "WITHHELD_NO_RUN_OBSERVED",
+        "reason": "no merged-main Pages run observed; does not compensate transport proof",
+        "lane": "CODEX_UI"
       }
     ],
     "mid": [

@@ -92,7 +92,7 @@
     },
     {
       "id": "LIVE_TEMPORAL_FEDERATION_INGESTION",
-      "state": "ACTIVE"
+      "state": "COMPLETED"
     },
     {
       "id": "REFRESH_FEDERATION_HEADS_LIVE",
@@ -136,7 +136,7 @@
     },
     {
       "id": "AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF",
-      "state": "PENDING"
+      "state": "COMPLETED"
     },
     {
       "id": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
@@ -294,7 +294,7 @@
     ]
   ],
   "first_incomplete_atoms": [
-    "AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF"
+    "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH"
   ],
   "guards": {
     "replay_completed_atoms": false,
@@ -310,13 +310,17 @@
   },
   "active_slice": {
     "id": "AUTHENTICATED_TRANSPORT_V0_1",
-    "state": "IMPLEMENTED_PENDING_EXACT_HEAD_PROOF",
+    "state": "MERGED_EXACT_HEAD_GREEN_RUNTIME_PROOF_WITHHELD",
+    "exact_head_sha": "e77cf45e64b6c67859e468a66b6db1d553394ac8",
+    "exact_head_run": 36712962475,
+    "exact_head_job": 109878913705,
+    "merge_sha": "ea167f43732e838bc3fb5d5ad382fe0874b66fcb",
+    "merged_main_readback_sha": "954cde35a2ac101e687d71e28f973864118bb1f0",
+    "pages_readback": "WITHHELD_NO_RUN_OBSERVED",
+    "runtime_dry_run_proof": "WITHHELD_OWNER_DISPATCH_REQUIRED",
     "transport_class": "MANUALLY_APPROVED_ACTION",
     "implementation": "GITHUB_WORKFLOW_DISPATCH_READ_ONLY",
-    "workflow": ".github/workflows/missioncontrol-authenticated-transport.yml",
     "mutation_enabled": false,
-    "runtime_dry_run_proof": "WITHHELD_OWNER_DISPATCH_REQUIRED",
-    "predecessor_design_merge_sha": "27c27086fab898d8c5d5e3cc4e1b87fe18fcd321",
     "authority_transfer": false
   },
   "closed_live_federation_pulse": {

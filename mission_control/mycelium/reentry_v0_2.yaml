@@ -2,14 +2,14 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-09-30T12:00:00Z"
+  generated_at: "2026-09-30T12:12:00Z"
 
   repositories:
     codex:
       repo: GBOGEB/CODEX
       branch: main
       handover_observed_sha: d77d44811fec4fada16988769614d6091df56133
-      refreshed_current_sha: 27c27086fab898d8c5d5e3cc4e1b87fe18fcd321
+      refreshed_current_sha: 954cde35a2ac101e687d71e28f973864118bb1f0
       role: UI_ORCHESTRATION_GRAPH_AUTHORITY
       mycelium_v0_1_merge:
         pr: 837
@@ -191,10 +191,10 @@ reentry:
   lanes:
     - id: CODEX_UI
       repository: GBOGEB/CODEX
-      branch: mission-control-authenticated-transport-v01-20260930
-      head_sha: 27c27086fab898d8c5d5e3cc4e1b87fe18fcd321
-      state: EXECUTING
-      current_atom: AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF
+      branch: main
+      head_sha: 954cde35a2ac101e687d71e28f973864118bb1f0
+      state: OWNER_ACTION_GATE
+      current_atom: GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
       completed_atoms:
         - MYCELIUM_V0_1
         - MYCELIUM_V0_2_INTERACTION
@@ -217,8 +217,9 @@ reentry:
         - LIVE_TEMPORAL_FEDERATION_INGESTION
         - AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
         - SELECT_AUTHENTICATED_TRANSPORT
-      blocker: null
-      queue_state: EXECUTION
+        - AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF
+      blocker: OWNER_AUTHENTICATED_WORKFLOW_DISPATCH_REQUIRED
+      queue_state: OWNER_ACTION
       evidence_refs:
         - PR_837
         - PR_839
@@ -234,7 +235,6 @@ reentry:
         - mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
         - docs/missioncontrol_mycelium.html
       next_legal_transitions:
-        - AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF
         - GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
         - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
         - CONSUME_TYPED_REMOTE_RETURNS
@@ -461,7 +461,7 @@ reentry:
       - PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS
 
   authenticated_transport_v0_1:
-    state: IMPLEMENTED_PENDING_EXACT_HEAD_PROOF
+    state: MERGED_EXACT_HEAD_GREEN_RUNTIME_PROOF_WITHHELD
     design_merge_sha: 27c27086fab898d8c5d5e3cc4e1b87fe18fcd321
     branch: mission-control-authenticated-transport-v01-20260930
     transport_class: MANUALLY_APPROVED_ACTION
@@ -471,6 +471,13 @@ reentry:
     request_schema: mission_control/mycelium/schemas/execution_request.schema.json
     receipt_schema: mission_control/mycelium/schemas/execution_receipt.schema.json
     mutation_enabled: false
+    exact_head_sha: e77cf45e64b6c67859e468a66b6db1d553394ac8
+    exact_head_run: 36712962475
+    exact_head_job: 109878913705
+    merge_sha: ea167f43732e838bc3fb5d5ad382fe0874b66fcb
+    merged_main_readback_sha: 954cde35a2ac101e687d71e28f973864118bb1f0
+    pages_readback: WITHHELD_NO_RUN_OBSERVED
+    proof_receipt: mission_control/mycelium/receipts/AUTHENTICATED_TRANSPORT_V01_PR850_PROOF.json
     runtime_dry_run_proof: WITHHELD_OWNER_DISPATCH_REQUIRED
     next_legal_transitions:
       - AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF
