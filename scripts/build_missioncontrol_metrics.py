@@ -199,6 +199,119 @@ def build_snapshot(graph: dict[str, Any], obs: dict[str, Any]) -> dict[str, Any]
     }
 
 
+
+def apply_source_status_overlay(
+    snapshot: dict[str, Any],
+    source_status: dict[str, Any],
+) -> None:
+    """Overlay newer measured remote-source evidence onto stale observations.
+
+    Source-status rows may replace only values that are explicitly measured.
+    Missing family values remain absent rather than being synthesized.
+    """
+    sources = {
+        str(row.get("id")): row
+        for row in source_status.get("sources", [])
+        if isinstance(row, dict) and row.get("id")
+    }
+    abacus = sources.get("abacus")
+    if not abacus:
+        return
+
+    evidence_job = (
+        f"ABACUS job {abacus['census_job']}"
+        if abacus.get("census_job") is not None
+        else None
+    )
+    evidence_pr = (
+        f"#{abacus['census_pr']}"
+        if abacus.get("census_pr") is not None
+        else None
+    )
+    dab_mech = snapshot.setdefault("nodes", {}).setdefault("dab_mech", {})
+    if abacus.get("W293") is not None:
+        mechanical = {
+            "status": STATUS_MEASURED,
+            "slice": f"{evidence_pr} census" if evidence_pr else "typed remote census",
+            "residual_w293": abacus["W293"],
+            "residual_status": abacus.get(
+                "w293_postmerge_status", STATUS_MEASURED
+            ),
+            "repository_total_flake8": abacus.get("census_total"),
+        }
+        if evidence_job:
+            mechanical["evidence_job"] = evidence_job
+        if evidence_pr:
+            mechanical["evidence_pr"] = evidence_pr
+        if abacus.get("census_artifact_id") is not None:
+            mechanical["artifact_id"] = abacus["census_artifact_id"]
+        if abacus.get("census_artifact_sha256"):
+            mechanical["artifact_sha256"] = abacus[
+                "census_artifact_sha256"
+            ]
+        dab_mech["mechanical_progress"] = mechanical
+
+    family_names = (
+        "E999", "F821", "F601", "F811",
+        "F841", "E722", "E731", "E741",
+    )
+    measured = {
+        family: abacus[family]
+        for family in family_names
+        if isinstance(abacus.get(family), int)
+    }
+    if measured:
+        dab_hard = snapshot.setdefault("nodes", {}).setdefault("dab_hard", {})
+        previous = {
+            str(row.get("family")): dict(row)
+            for row in dab_hard.get("family_progress", [])
+            if isinstance(row, dict) and row.get("family")
+        }
+        rows: list[dict[str, Any]] = []
+        slice_baselines = abacus.get("family_slice_baselines", {})
+        for family in family_names:
+            if family not in measured:
+                continue
+            value = measured[family]
+            row = previous.get(family, {"family": family})
+            if isinstance(slice_baselines, dict) and family in slice_baselines:
+                row["baseline"] = slice_baselines[family]
+            row["measured_postmerge"] = value
+            row["status"] = STATUS_MEASURED
+            if family == "E999" and value > 0 and abacus.get("source_bound_hold"):
+                row["state"] = "SOURCE_BOUND_HOLD"
+                row["note"] = (
+                    "sole remaining E999 is source-bound: "
+                    + str(abacus["source_bound_hold"])
+                )
+            elif value == 0:
+                row["state"] = "CLOSED"
+            else:
+                row["state"] = "MEASURED_RESIDUAL"
+            baseline = row.get("baseline")
+            if isinstance(baseline, (int, float)):
+                row["delta_from_baseline"] = value - baseline
+            if evidence_pr:
+                if row.get("evidence_pr"):
+                    row["repair_evidence_pr"] = row["evidence_pr"]
+                else:
+                    row["evidence_pr"] = evidence_pr
+                row["measurement_pr"] = evidence_pr
+            if evidence_job:
+                row["measurement_job"] = evidence_job
+                row["evidence_job"] = evidence_job
+            rows.append(row)
+        dab_hard["family_progress"] = rows
+
+    snapshot["latest_remote_return"] = {
+        "source": abacus.get("repository", "GBOGEB/ABACUS"),
+        "source_sha": abacus.get("head_sha"),
+        "evidence": abacus.get("evidence_ref"),
+        "status": STATUS_MEASURED,
+        "census_pr": abacus.get("census_pr"),
+        "census_job": abacus.get("census_job"),
+    }
+
 def main() -> None:
     graph = json.loads(GRAPH.read_text(encoding="utf-8"))
     obs = json.loads(OBS.read_text(encoding="utf-8"))
@@ -209,6 +322,7 @@ def main() -> None:
     snapshot = build_snapshot(graph, obs)
     if SOURCE_STATUS.exists():
         source_status = json.loads(SOURCE_STATUS.read_text(encoding="utf-8"))
+        apply_source_status_overlay(snapshot, source_status)
         sources = source_status.get("sources", [])
         fresh = sum(1 for row in sources if str(row.get("status", "")).upper() in {"FRESH", "MEASURED_CHAT_CONNECTOR"})
         if sources:
