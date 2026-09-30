@@ -1,0 +1,75 @@
+{
+  "schema_version": "0.1",
+  "return_id": "ABACUS_DAB_COMBINED_POST_1527_1528_MEASURED",
+  "observed_at": "2026-09-30T17:10:00Z",
+  "source": {
+    "repository": "GBOGEB/ABACUS",
+    "measurement_ref": "main",
+    "measurement_sha": "1830662b57ccaeb6b1c1553f2c584abe6a954f9f",
+    "current_head_sha": "3c0a57e1626e9c0361417ea21d78cceef4457f98",
+    "authority": "REMOTE_EXECUTION_DOW"
+  },
+  "combined_main_census": {
+    "workflow_run": 36747879827,
+    "job": 109998603356,
+    "artifact_id": 11114021331,
+    "artifact_sha256": "3b8bdb3c199d49504350b9e8efa42bc8c56db8dbe5db8ad269d7afceb051e1ea",
+    "total": 8225,
+    "families": {
+      "E999": 1,
+      "F821": 0,
+      "F601": 0,
+      "F811": 0,
+      "F841": 66,
+      "E722": 16,
+      "E731": 0,
+      "E741": 17,
+      "W293": 411
+    },
+    "status": "MEASURED",
+    "covers_prs": [
+      1528,
+      1527
+    ],
+    "sequence": [
+      {
+        "pr": 1528,
+        "merge_sha": "64d26b4a3c74fb58ae0b445c65bbdea95f73fa6e",
+        "family": "W293"
+      },
+      {
+        "pr": 1527,
+        "merge_sha": "1830662b57ccaeb6b1c1553f2c584abe6a954f9f",
+        "family": "F841"
+      }
+    ]
+  },
+  "non_python_followup": {
+    "pr": 1529,
+    "merge_sha": "3c0a57e1626e9c0361417ea21d78cceef4457f98",
+    "purpose": "update-docs workflow yamllint compliance",
+    "lint_population_changed": false
+  },
+  "active_next": {
+    "pr": 1530,
+    "head_sha": "e98fdedc51c818d0788cd42c6177748a8348fef9",
+    "family": "F841",
+    "measured_baseline": 66,
+    "selected_reduction": 3,
+    "expected_residual": 63,
+    "status": "OPEN_UNMEASURED",
+    "promotion_rule": "NO_PROMOTION_UNTIL_EXACT_HEAD_CENSUS"
+  },
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+    "state": "SOURCE_BOUND_HOLD"
+  },
+  "governance": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "remote_truth_auto_promotable": false
+  }
+}
