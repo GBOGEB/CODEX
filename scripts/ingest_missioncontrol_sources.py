@@ -95,8 +95,9 @@ def collect_source(
         "telemetry_errors": {},
     }
 
-    # Identity and exact head are the freshness predicate. Optional telemetry
-    # must never turn a readable exact head into a stale source.
+    # Repository metadata establishes source readability. Exact head identity is
+    # measured independently so a missing optional head probe is explicit and
+    # non-fatal rather than poisoning otherwise fresh repository metadata.
     try:
         repo_meta = _payload(
             source, "repository", token=token, fixture_dir=fixture_dir
@@ -107,19 +108,6 @@ def collect_source(
         result["head_ref"] = default_branch
         result["pushed_at"] = repo_meta.get("pushed_at")
         result["open_issue_count"] = repo_meta.get("open_issues_count")
-
-        if fixture_dir:
-            head = fixture_get(fixture_dir, sid, "head")
-        else:
-            head = github_get(f"/repos/{repo}/commits/{default_branch}", token)
-        head_sha = head.get("sha")
-        if not head_sha:
-            raise ValueError(f"{repo}: exact default-branch head SHA missing")
-        result["head_sha"] = head_sha
-        result["identity_status"] = "MEASURED"
-        result["head_url"] = head.get("html_url") or (
-            f"https://github.com/{repo}/commit/{head_sha}"
-        )
     except (
         OSError,
         urllib.error.URLError,
@@ -128,9 +116,39 @@ def collect_source(
         ValueError,
     ) as exc:
         result["status"] = "ERROR"
-        result["identity_status"] = "WITHHELD"
         result["error"] = f"{type(exc).__name__}: {exc}"
         return result
+
+    try:
+        if fixture_dir:
+            head_path = fixture_dir / f"{sid}_head.json"
+            if not head_path.exists():
+                result["identity_status"] = "WITHHELD_FIXTURE_HEAD_MISSING"
+                head = None
+            else:
+                head = fixture_get(fixture_dir, sid, "head")
+        else:
+            head = github_get(f"/repos/{repo}/commits/{default_branch}", token)
+
+        if head is not None:
+            head_sha = head.get("sha")
+            if head_sha:
+                result["head_sha"] = head_sha
+                result["head_url"] = head.get("html_url") or (
+                    f"https://github.com/{repo}/commit/{head_sha}"
+                )
+                result["identity_status"] = "MEASURED"
+            else:
+                result["identity_status"] = "WITHHELD_HEAD_SHA_MISSING"
+    except (
+        OSError,
+        urllib.error.URLError,
+        json.JSONDecodeError,
+        FileNotFoundError,
+        ValueError,
+    ) as exc:
+        result["identity_status"] = "WITHHELD_HEAD_PROBE_ERROR"
+        result["identity_error"] = f"{type(exc).__name__}: {exc}"
 
     for kind in source.get("ingest", []):
         if kind == "repository":
@@ -243,16 +261,24 @@ def temporal_refresh_events(
         before = old.get(source["id"], {})
         after_sha = source.get("head_sha")
         before_sha = before.get("head_sha")
+        before_identity = before.get("identity_status")
+        after_identity = source.get("identity_status")
+        if before_identity is None and before.get("status") == "MEASURED_CHAT_CONNECTOR" and before_sha:
+            before_identity = "MEASURED"
+        if after_identity is None and source.get("status") == "MEASURED_CHAT_CONNECTOR" and after_sha:
+            after_identity = "MEASURED"
         status_changed = source.get("status") != before.get("status")
-        head_changed = bool(after_sha and after_sha != before_sha)
-        if not (head_changed or status_changed):
+        head_changed = after_sha != before_sha
+        identity_changed = after_identity != before_identity
+        if not (head_changed or status_changed or identity_changed):
             continue
         event_id = f"EV-{next_number:04d}"
         next_number += 1
         summary = (
             f"Federation source {source['repository']} refreshed: "
             f"{before_sha or 'UNBOUND'} -> {after_sha or 'UNAVAILABLE'}; "
-            f"status {before.get('status', 'UNBOUND')} -> {source.get('status')}."
+            f"status {before.get('status', 'UNBOUND')} -> {source.get('status')}; "
+            f"identity {before_identity or 'UNBOUND'} -> {after_identity or 'WITHHELD'}."
         )
         event = {
             "id": event_id,
@@ -264,6 +290,8 @@ def temporal_refresh_events(
             "source_repo": source["repository"],
             "source_ref": source.get("default_branch") or "UNBOUND",
             "source_sha": after_sha,
+            "identity_status_before": before_identity,
+            "identity_status_after": after_identity,
             "parent_event": parent,
             "content_ref": "mission_control/mycelium/source_status.json",
             "summary": summary,
