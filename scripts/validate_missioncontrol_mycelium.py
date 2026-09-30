@@ -298,8 +298,8 @@ def validate() -> list[str]:
         errors.append("executable projection DAG guard missing")
 
     gateway = manifest.get("authenticated_execution_gateway", {})
-    if gateway.get("state") != "RUNTIME_DRY_RUN_EXECUTED_NO_MUTATION":
-        errors.append("authenticated runtime dry-run manifest state mismatch")
+    if gateway.get("state") != "BOUNDED_APPLY_IMPLEMENTED_DISABLED_EXACT_HEAD_GREEN":
+        errors.append("authenticated gateway manifest is not bounded-apply exact-head green/disabled")
     if gateway.get("selected_transport_class") != "MANUALLY_APPROVED_ACTION":
         errors.append("authenticated transport must use manually approved action class")
     if gateway.get("selected_transport_implementation") != "GITHUB_ISSUE_COMMENT_OWNER_STAGE_ONLY":
