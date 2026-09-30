@@ -133,6 +133,7 @@ function render(){
  $('#evidence').innerHTML=model.nodes.filter(n=>['pull_request','issue','artifact','output','evidence'].includes(n.type)).map(n=>'<tr data-evidence-row="1"><td>'+n.label+'</td><td>'+n.state+'</td><td>'+(n.url?'<a href="'+n.url+'">open</a>':'withheld')+'</td></tr>').join('');
  const outs=[
  ['GitHub Pages','HTML control/view layer','missioncontrol_mycelium.html'],
+ ['Status snapshot','frozen 16:9 HTML_CONTENT_AS_SLIDE projection','missioncontrol_status_snapshot.html'],
  ['Plotly','interactive density / PCA / wave analytics','https://github.com/GBOGEB/CODEX/blob/main/runtime_engine/plotly_wave_dashboard.py'],
  ['Matplotlib','static PCA / evidence plots / PNG / SVG','https://github.com/GBOGEB/CODEX/blob/main/pca_engine/src/pca_engine/visualization.py'],
  ['Traceability','requirements / evidence lineage','traceability.html'],

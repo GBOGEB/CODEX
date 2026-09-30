@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" data-theme="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MissionControl · Status / BD Snapshot</title>
+<style>
+:root{color-scheme:light dark;--bg:#f4f5f7;--panel:#fff;--ink:#17191d;--muted:#69707d;--line:#d9dde5;--soft:#eef1f5;--ok:#16784a;--warn:#9a6400;--hold:#666d78;--fail:#a53737;--accent:#315cc9;--code:#eef0f4}
+[data-theme="light"]{color-scheme:light}
+[data-theme="dark"]{color-scheme:dark;--bg:#0d1117;--panel:#161b22;--ink:#e6edf3;--muted:#9da7b3;--line:#30363d;--soft:#20262e;--ok:#4ecb8d;--warn:#e2ad45;--hold:#a7afb9;--fail:#ef7474;--accent:#7aa2ff;--code:#21262d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.35 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{padding:18px}.slide{width:min(1600px,calc(100vw - 36px));aspect-ratio:16/9;min-height:720px;margin:auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.12);padding:28px;display:grid;grid-template-rows:auto auto 1fr auto auto;gap:18px;overflow:hidden}
+header{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.eyebrow{font:700 11px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}h1{font-size:34px;line-height:1.05;margin:5px 0 6px}.sub{color:var(--muted)}.meta{display:grid;grid-template-columns:auto auto;gap:5px 12px;font:12px ui-monospace,SFMono-Regular,Consolas,monospace}.meta b{color:var(--muted);font-weight:600}.theme{border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:8px;padding:7px 10px;cursor:pointer}
+.state{display:flex;gap:8px;flex-wrap:wrap}.chip{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;padding:3px 9px;font:700 11px ui-monospace,SFMono-Regular,Consolas,monospace}.chip.ok{color:var(--ok)}.chip.warn{color:var(--warn)}.chip.hold{color:var(--hold)}.chip.fail{color:var(--fail)}
+.matrix{border:1px solid var(--line);border-radius:10px;overflow:hidden}table{width:100%;border-collapse:collapse}th,td{padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}th{background:var(--soft);font-size:12px;color:var(--muted)}tr:last-child td{border-bottom:0}.lane{font-weight:750}.mono,code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.small{font-size:12px;color:var(--muted)}.grid2{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}.panel{border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}.panel h2{font-size:15px;margin:0 0 10px}.evidence{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.ev{border:1px solid var(--line);border-radius:8px;padding:9px;min-width:0}.ev b{display:block;font-size:12px}.ev span{display:block;color:var(--muted);font-size:11px;overflow-wrap:anywhere}.interp{margin:0;padding-left:18px}.interp li{margin:6px 0}.flow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.flow div{border:1px solid var(--line);border-radius:8px;padding:10px}.flow strong{display:block;font:700 11px ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--muted);margin-bottom:5px}.footer{display:flex;gap:10px 18px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:10px;font:11px ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--muted)}.footer code{background:var(--code);color:var(--ink);padding:1px 4px;border-radius:4px}
+@media(max-width:1000px){.slide{aspect-ratio:auto;min-height:0}.grid2{grid-template-columns:1fr}.meta{grid-template-columns:1fr}.evidence{grid-template-columns:1fr 1fr}.flow{grid-template-columns:1fr}}
+@media(max-width:620px){.wrap{padding:0}.slide{width:100%;border-radius:0;border-left:0;border-right:0;padding:16px}header{display:block}h1{font-size:27px}.evidence{grid-template-columns:1fr}.matrix{overflow-x:auto}table{min-width:760px}.footer{display:grid;grid-template-columns:1fr}body{overflow-x:hidden}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<main class="slide" id="slide" aria-labelledby="title">
+<header>
+<div><div class="eyebrow">HTML_CONTENT_AS_SLIDE · STATUS_BD_SNAPSHOT</div><h1 id="title">MissionControl · Status / BD Snapshot</h1><div class="sub" id="subtitle">Loading frozen governed projection…</div></div>
+<div><button class="theme" id="theme" type="button">Theme: system</button><div class="meta" id="meta"></div></div>
+</header>
+<div class="state" id="state"></div>
+<section class="matrix" aria-label="Lane status matrix"><table><thead><tr><th>Lane</th><th>Current status</th><th>Current atom / gate</th><th>Next legal transition</th></tr></thead><tbody id="laneRows"></tbody></table></section>
+<section class="grid2">
+<div class="panel"><h2>Evidence strip</h2><div class="evidence" id="evidence"></div></div>
+<div class="panel"><h2>Executive interpretation</h2><ul class="interp" id="interpretation"></ul></div>
+</section>
+<section class="panel"><h2>Continuation edge</h2><div class="flow"><div><strong>NOW</strong><span id="now"></span></div><div><strong>NEXT</strong><span id="next"></span></div><div><strong>HOLD / BLOCKED</strong><span id="hold"></span></div></div></section>
+<footer class="footer" id="footer"></footer>
+</main>
+</div>
+<script src="assets/missioncontrol/status-snapshot.js"></script>
+</body>
+</html>
