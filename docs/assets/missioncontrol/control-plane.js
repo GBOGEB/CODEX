@@ -169,14 +169,21 @@
       const remote = r.role !== 'UI_ORCHESTRATION_GRAPH_AUTHORITY';
       const mechanism = r.repo.includes('cryoplant') ? 'PROJECTED_OR_BRIDGED' : (r.repo.includes('ABACUS') ? 'REFERENCE / TYPED RETURN' : 'LOCAL');
       const liveSource = liveByRepo.get(r.repo);
-      const head = liveSource?.head_sha || r.refreshed_current_sha || '';
       const liveState = liveSource?.status || 'COMMITTED_FALLBACK';
-      const freshnessClass = liveState === 'FRESH' ? 'ok' : (liveState === 'STALE_CACHE' ? 'warn' : '');
-      return '<tr><td><b>' + esc(r.repo) + '</b><br><small>' + esc(liveState) + '</small></td>' +
-        '<td><code>' + esc(String(head).slice(0,12)) + '</code></td>' +
+      const identityState = liveSource?.identity_status ||
+        ((liveState === 'MEASURED_CHAT_CONNECTOR' && liveSource?.head_sha) ? 'MEASURED' : 'WITHHELD');
+      const measuredHead = identityState === 'MEASURED' ? liveSource?.head_sha : null;
+      const head = measuredHead || r.refreshed_current_sha || '';
+      const headBasis = measuredHead ? 'LIVE_MEASURED' : 'COMMITTED_FALLBACK';
+      const metadataFresh = ['FRESH','MEASURED_CHAT_CONNECTOR'].includes(liveState);
+      const freshnessClass = liveState === 'STALE_CACHE'
+        ? 'warn'
+        : (metadataFresh && identityState === 'MEASURED' ? 'ok' : 'warn');
+      return '<tr><td><b>' + esc(r.repo) + '</b><br><small>' + esc(liveState) + ' · identity ' + esc(identityState) + '</small></td>' +
+        '<td><code>' + esc(String(head).slice(0,12)) + '</code><br><small>' + esc(headBasis) + '</small></td>' +
         '<td>' + esc(r.role) + '</td><td>' + esc(mechanism) + '</td>' +
         '<td>' + (remote ? '<span class="pill">preserved remote</span>' : '<span class="pill ok">local authority</span>') +
-        ' <span class="pill ' + freshnessClass + '">' + esc(liveState) + '</span></td></tr>';
+        ' <span class="pill ' + freshnessClass + '">' + esc(liveState) + ' / ' + esc(identityState) + '</span></td></tr>';
     }).join('');
     const qlm = $('#qlmContext');
     if (qlm) {
