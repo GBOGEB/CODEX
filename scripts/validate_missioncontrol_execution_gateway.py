@@ -16,6 +16,7 @@ BOUNDED_APPLY_POLICY = MC / "bounded_apply_policy.yaml"
 BOUNDED_APPLY_LEDGER = MC / "gateway" / "bounded_apply_ledger.json"
 BOUNDED_APPLY_PLANNER = ROOT / "scripts" / "missioncontrol_bounded_apply.py"
 BOUNDED_APPLY_TEST = ROOT / "tests" / "test_missioncontrol_bounded_apply.py"
+BOUNDED_APPLY_PROOF = MC / "receipts" / "BOUNDED_APPLY_DISABLED_V01_PR894_PROOF.json"
 
 
 def validate() -> list[str]:
@@ -30,6 +31,7 @@ def validate() -> list[str]:
         "DESIGN_ONLY_NO_MUTATION_BACKEND",
         "AUTHENTICATED_TRANSPORT_IMPLEMENTED_NO_MUTATION",
         "BOUNDED_APPLY_IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF",
+        "BOUNDED_APPLY_IMPLEMENTED_DISABLED_EXACT_HEAD_GREEN",
     }
     if state not in allowed_states:
         errors.append("gateway state is not a governed design/transport state")
@@ -59,6 +61,7 @@ def validate() -> list[str]:
     if state in {
         "AUTHENTICATED_TRANSPORT_IMPLEMENTED_NO_MUTATION",
         "BOUNDED_APPLY_IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF",
+        "BOUNDED_APPLY_IMPLEMENTED_DISABLED_EXACT_HEAD_GREEN",
     }:
         if authn.get("selected_transport") != "GITHUB_ACTIONS_WORKFLOW_DISPATCH":
             errors.append("transport implementation must select GitHub Actions workflow_dispatch")
@@ -78,6 +81,7 @@ def validate() -> list[str]:
     if state in {
         "AUTHENTICATED_TRANSPORT_IMPLEMENTED_NO_MUTATION",
         "BOUNDED_APPLY_IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF",
+        "BOUNDED_APPLY_IMPLEMENTED_DISABLED_EXACT_HEAD_GREEN",
     }:
         runtime = contract.get("transport_runtime", {})
         if runtime.get("enabled_action_class") != "STAGE_ONLY":
@@ -106,7 +110,10 @@ def validate() -> list[str]:
             if field not in required:
                 errors.append(f"{name} schema does not require {field}")
 
-    if state == "BOUNDED_APPLY_IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF":
+    if state in {
+        "BOUNDED_APPLY_IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF",
+        "BOUNDED_APPLY_IMPLEMENTED_DISABLED_EXACT_HEAD_GREEN",
+    }:
         for path in (
             BOUNDED_APPLY_POLICY,
             BOUNDED_APPLY_LEDGER,
@@ -116,7 +123,12 @@ def validate() -> list[str]:
             if not path.exists():
                 errors.append(f"missing bounded-apply surface: {path.relative_to(ROOT)}")
         policy = yaml.safe_load(BOUNDED_APPLY_POLICY.read_text(encoding="utf-8"))
-        if policy.get("state") != "IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF":
+        expected_policy_state = (
+            "IMPLEMENTED_DISABLED_EXACT_HEAD_GREEN"
+            if state == "BOUNDED_APPLY_IMPLEMENTED_DISABLED_EXACT_HEAD_GREEN"
+            else "IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF"
+        )
+        if policy.get("state") != expected_policy_state:
             errors.append("bounded-apply policy state mismatch")
         if policy.get("mutation_enabled") is not False:
             errors.append("bounded-apply policy may not enable mutation")
@@ -126,7 +138,7 @@ def validate() -> list[str]:
         if target.get("repository") != "GBOGEB/CODEX" or target.get("ref") != "main":
             errors.append("bounded-apply policy must remain CODEX main only")
         bounded = contract.get("bounded_apply_runtime", {})
-        if bounded.get("implementation_state") != "IMPLEMENTED_DISABLED_PENDING_EXACT_HEAD_PROOF":
+        if bounded.get("implementation_state") != expected_policy_state:
             errors.append("bounded-apply runtime implementation state mismatch")
         if bounded.get("mutation_enabled") is not False or bounded.get("execute_permitted") is not False:
             errors.append("bounded-apply implementation must remain non-executable")
@@ -145,6 +157,32 @@ def validate() -> list[str]:
         for field in ("approval_ref", "dry_run_receipt_ref"):
             if field not in props:
                 errors.append(f"bounded-apply request field missing: {field}")
+
+        if state == "BOUNDED_APPLY_IMPLEMENTED_DISABLED_EXACT_HEAD_GREEN":
+            if not BOUNDED_APPLY_PROOF.exists():
+                errors.append("bounded-apply exact-head proof receipt missing")
+            else:
+                proof = json.loads(BOUNDED_APPLY_PROOF.read_text(encoding="utf-8"))
+                if proof.get("decision") != "IMPLEMENTED_AND_PROVEN_DISABLED":
+                    errors.append("bounded-apply proof decision mismatch")
+                if proof.get("proof_conclusion") != "EXACT_HEAD_GREEN":
+                    errors.append("bounded-apply exact-head proof is not green")
+                if proof.get("mutation_enabled") is not False:
+                    errors.append("bounded-apply proof may not enable mutation")
+                if proof.get("execute_permitted") is not False:
+                    errors.append("bounded-apply proof may not permit execution")
+                if proof.get("enabled_mutation_transports") != []:
+                    errors.append("bounded-apply proof may not enable mutation transport")
+                if proof.get("authority_transfer") is not False:
+                    errors.append("bounded-apply proof may not transfer authority")
+                if proof.get("formal_credit_delta") != 0 or proof.get("engineering_credit_delta") != 0:
+                    errors.append("bounded-apply proof may not create formal/engineering credit")
+            promotion = contract.get("promotion", {})
+            if promotion.get("mutation_promotion_state") != "WITHHELD_EXPLICIT_PROMOTION_REQUIRED":
+                errors.append("mutation promotion must remain explicitly withheld")
+            policy_promotion = policy.get("promotion", {})
+            if policy_promotion.get("mutation_promotion_state") != "WITHHELD_EXPLICIT_PROMOTION_REQUIRED":
+                errors.append("bounded-apply policy mutation promotion must remain withheld")
 
     for token in ("Default authorization is DENY", "Browser secrets are forbidden", "CODEX-only bounded actions"):
         if token not in design:
