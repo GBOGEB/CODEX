@@ -28,7 +28,7 @@ def main() -> int:
 
     try:
         from playwright.sync_api import sync_playwright
-    except Exception as exc:
+    except ImportError as exc:
         raise SystemExit(f"BROWSER_GATE_BLOCKED: Playwright unavailable: {exc}")
 
     docs = Path(args.docs_dir).resolve()
