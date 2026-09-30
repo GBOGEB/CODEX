@@ -219,6 +219,30 @@ def main() -> None:
                 "declared_sources": len(sources),
                 "basis": "source registry freshness/identity observation",
             }
+    if SOURCE_STATUS.exists():
+        source_status = json.loads(SOURCE_STATUS.read_text(encoding="utf-8"))
+        remote_returns = [
+            {
+                "source": row.get("repository"),
+                "source_sha": row.get("head_sha"),
+                "observed_at": row.get("observed_at"),
+                "evidence": row.get("evidence_ref"),
+                "status": "MEASURED_TYPED_RETURN",
+                **(
+                    {"projection_policy": row.get("projection_policy")}
+                    if row.get("projection_policy")
+                    else {}
+                ),
+            }
+            for row in source_status.get("sources", [])
+            if row.get("authority_class") == "REMOTE_AUTHORITATIVE"
+            and row.get("evidence_ref")
+        ]
+        remote_returns.sort(key=lambda row: str(row.get("observed_at") or ""))
+        if remote_returns:
+            snapshot["remote_returns"] = remote_returns
+            snapshot["latest_remote_return"] = dict(remote_returns[-1])
+
     if PORT_REGISTRY.exists():
         port_registry = json.loads(PORT_REGISTRY.read_text(encoding="utf-8"))
         ports = [p for p in port_registry.get("ports", []) if p.get("declared")]
