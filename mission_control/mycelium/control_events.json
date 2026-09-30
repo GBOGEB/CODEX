@@ -212,6 +212,39 @@
       "parent_event": "EV-0018",
       "content_ref": "mission_control/mycelium/evidence/abacus_dab_return_1500_partial.json",
       "summary": "Typed ABACUS DAB return consumed: E722=26 measured; F811/E731 closed; E741=40 with #1501 proving; #1500 W293 -745 merged while post-merge residual remains withheld."
+    },
+    {
+      "id": "EV-0020",
+      "at": "2026-09-30T12:31:44Z",
+      "type": "EXTERNAL_RETURN",
+      "node_id": "repo_abacus",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "467453047d0ca4228d093d02f22c12437e17708f",
+      "parent_event": "EV-0019",
+      "content_ref": "mission_control/mycelium/evidence/abacus_dab_return_1501_measured.json",
+      "summary": "Consumed measured ABACUS #1501 return: exact DAB census total 9764, E741=35, W293=1912, E722=26, F841=77; E999=1 remains source-bound."
+    },
+    {
+      "id": "EV-0021",
+      "at": "2026-09-30T12:33:05Z",
+      "type": "EXTERNAL_RETURN",
+      "node_id": "repo_cryoplant_project",
+      "source_repo": "GBOGEB/cryoplant-project",
+      "source_sha": "9f1ff9a9b48b40cf19555fdcd34a1cbc944eaa1a",
+      "parent_event": "EV-0020",
+      "content_ref": "mission_control/mycelium/evidence/cryoplant_master_input_ledger_return_1834.json",
+      "summary": "Consumed cryoplant #1834 as metadata-only remote engineering/control return; restricted tender content remains private and unprojected."
+    },
+    {
+      "id": "EV-0022",
+      "at": "2026-09-30T12:36:00Z",
+      "type": "FEDERATION_REFRESH",
+      "node_id": "current_next",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "884327802f57d40b84714def4b0b5b59b3f1a25a",
+      "parent_event": "EV-0021",
+      "content_ref": "mission_control/mycelium/source_status.json",
+      "summary": "Tri-repo source identities refreshed to CODEX 88432780, ABACUS 46745304 and cryoplant 9f1ff9a9 with authority classes preserved."
     }
   ],
   "horizons": {
@@ -220,22 +253,22 @@
         "rank": 1,
         "id": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
         "state": "WAIT_OWNER_ACTION",
-        "reason": "CODEX mutation remains gated on genuine authenticated runtime receipt",
+        "reason": "authenticated workflow_dispatch requires owner action; mutation remains disabled",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
-        "id": "ABACUS_E741_PR1501",
-        "state": "PROOF_QUEUED",
-        "reason": "hard lane continues with five measured DMAIC-core E741 repairs",
+        "id": "ABACUS_POST_1501_DAB_QUEUE",
+        "state": "MEASURED",
+        "reason": "E741=35 and W293=1912 are exact-census measured; next family admission must come from this residual",
         "lane": "ABACUS_REMOTE_EXECUTION"
       },
       {
         "rank": 3,
-        "id": "ABACUS_W293_POST1500_CENSUS",
-        "state": "PROOF_QUEUED",
-        "reason": "745 W293 removals merged; residual stays withheld until hosted census executes",
-        "lane": "ABACUS_REMOTE_EXECUTION"
+        "id": "CRYOPLANT_MASTER_INPUT_ACTION_SSOT",
+        "state": "REMOTE_ACTIVE",
+        "reason": "private cleanup ledger/action SSOT merged in cryoplant; CODEX projects metadata only",
+        "lane": "QLM_ENGINEERING"
       }
     ],
     "mid": [
@@ -243,44 +276,44 @@
         "rank": 1,
         "id": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
         "state": "WITHHELD_UNTIL_DRY_RUN_PROOF",
-        "reason": "mutation remains disabled until authenticated transport dry-run is owner-proven",
+        "reason": "owner-authenticated dry-run receipt is still missing",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
-        "id": "RECURRING_FEDERATION_FRESHNESS_V0_3",
-        "state": "CONTROLLED_GREEN",
-        "reason": "read-only source freshness continues independently",
+        "id": "REMOTE_RETURN_INGESTION",
+        "state": "CONTROLLED_ACTIVE",
+        "reason": "ABACUS and cryoplant returns continue independently of the owner gate",
         "lane": "FEDERATION"
       },
       {
         "rank": 3,
-        "id": "ABACUS_DAB_RETURN",
-        "state": "READY",
-        "reason": "post-1497/1498 measured census can be consumed as typed remote execution evidence",
-        "lane": "FEDERATION"
+        "id": "QPS_DOW_BIDIRECTIONAL_SPINE",
+        "state": "ACTIVE_DOMAIN_SPINE",
+        "reason": "QPS requests analysis downward; DOW/engineering evidence returns upward without authority transfer",
+        "lane": "QLM_ENGINEERING"
       }
     ],
     "long": [
       {
         "rank": 1,
-        "id": "GATEWAY_ACTION_ALLOWLIST_EXPANSION",
+        "id": "AUTHENTICATED_APPLY_ALLOWLIST",
         "state": "WITHHELD",
-        "reason": "requires bounded-apply proof and separate authorization after transport runtime proof",
+        "reason": "requires owner dry-run proof and separate bounded authorization",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
-        "id": "QPS_DOW_ENGINEERING_RETURN_LOOP",
-        "state": "ACTIVE_DOMAIN_SPINE",
-        "reason": "engineering/control remain projections of the same graph; remote engineering authority stays remote",
-        "lane": "QLM_ENGINEERING"
+        "id": "HTML_CONTENT_AS_SLIDE",
+        "state": "READY_FOR_BOUNDED_RENDERER_SLICE",
+        "reason": "status snapshot renderer can consume governed graph without becoming authority",
+        "lane": "OUTWARD"
       },
       {
         "rank": 3,
         "id": "GLOBAL_DOV",
         "state": "WITHHELD",
-        "reason": "control-plane proof does not grant engineering or formal credit",
+        "reason": "control-plane and remote-return projections grant zero engineering/formal credit",
         "lane": "GLOBAL"
       }
     ]
