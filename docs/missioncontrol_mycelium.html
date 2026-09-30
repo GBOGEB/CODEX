@@ -46,9 +46,12 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:7px;bord
 <div class="controls">
 <button id="dryRunCommand">Dry run</button>
 <button id="applyCommand">Apply request</button>
-<a id="commandDownload" hidden>command envelope</a>
-<span class="pill">Pages Apply = staged only</span>
+<button id="commandCopy">Copy envelope</button>
+<a id="commandDownload" hidden>download envelope</a>
+<a id="gatewayLaunch" target="_blank" rel="noopener" hidden>Open authenticated gateway</a>
+<span class="pill">Pages never writes main</span>
 </div>
+<div id="gatewayGuide" class="compact muted" hidden>Gateway flow: stage APPLY → copy/download JSON → open GitHub-authenticated workflow → paste envelope → keep dry-run enabled for validation, or explicitly disable dry-run to execute the allow-listed action into an automation PR.</div>
 <div id="commandReceipt" class="compact muted">No command staged.</div>
 </article>
 
@@ -77,7 +80,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:7px;bord
 
 <article class="panel" data-panel="OUTPUT_EVIDENCE"><h2>4 · Output / Evidence</h2>
 <div><span class="pill">DoD: graph + manifest + links + responsive UI + restartable checkpoint</span><span class="pill">DoV: executed proof required</span></div>
-<div class="controls"><input id="artifactFilter" placeholder="filter artifact / evidence / provenance"><a href="https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/receipts/MYCELIUM_V02_PR839_PROOF.json">#839 proof receipt</a></div>
+<div class="controls"><input id="artifactFilter" placeholder="filter artifact / evidence / provenance"><a href="https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/receipts/MYCELIUM_V02_PR839_PROOF.json">#839 proof</a><a href="https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json">#841 proof</a><a href="https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/receipts/LIVE_FEDERATION_PULSE_PR845_PROOF.json">#845 freshness proof</a><a href="https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/gateway_contract.yaml">gateway contract</a></div>
 <div class="artifact-grid" id="artifacts"></div>
 <table><thead><tr><th>Evidence node</th><th>State</th><th>Proof/source</th></tr></thead><tbody id="evidence"></tbody></table>
 <p class="muted">Local reproducibility ≠ exact-SHA receipt ≠ external authoritative return. Visualization or analytics alone create no formal or engineering credit.</p>
