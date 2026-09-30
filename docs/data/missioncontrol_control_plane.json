@@ -2,7 +2,7 @@
   "schema_version": "0.2",
   "generated_for": "CODEX_MISSIONCONTROL_MYCELIUM",
   "mode": "CONTINUE_FROM_DURABLE_STATE",
-  "generated_at": "2026-09-30T17:56:49Z",
+  "generated_at": "2026-09-30T18:20:00Z",
   "source_yaml": "mission_control/mycelium/reentry_v0_2.yaml",
   "invariants": {
     "authority_transfer": false,
@@ -211,10 +211,10 @@
     {
       "id": "CODEX_UI",
       "repository": "GBOGEB/CODEX",
-      "branch": "main",
-      "head_sha": "86491df05050967dd8cc11ee3b3b0dbd114193b9",
-      "state": "BOUNDED_APPLY_ADMITTED",
-      "current_atom": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
+      "branch": "mission-control-bounded-apply-v01-20260930",
+      "head_sha": "9930ac78a9d4a6a0b5dcfe8e8a5e3775cf434c9c",
+      "state": "BOUNDED_APPLY_IMPLEMENTED_PENDING_EXACT_HEAD_PROOF",
+      "current_atom": "PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS",
       "completed_atoms": [
         "MYCELIUM_V0_1",
         "MYCELIUM_V0_2_INTERACTION",
@@ -238,13 +238,14 @@
         "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
         "SELECT_AUTHENTICATED_TRANSPORT",
         "AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF",
-        "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH"
+        "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
+        "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY"
       ],
-      "blocker": "MUTATION_DISABLED_PENDING_SEPARATE_EXACT_HEAD_PROOF",
+      "blocker": null,
       "queue_state": "EXECUTION",
       "next_legal_transitions": [
-        "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
         "PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS",
+        "BOUNDED_APPLY_RUNTIME_OWNER_COMMAND",
         "CONSUME_TYPED_REMOTE_RETURNS"
       ],
       "evidence_refs": [
@@ -377,8 +378,8 @@
     "authority_transfer": false
   },
   "current_proof": "mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json",
-  "current_capability_status": "AUTHENTICATED_RUNTIME_DRY_RUN_GREEN_BOUNDED_APPLY_ADMITTED",
-  "next_edge": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
+  "current_capability_status": "BOUNDED_CODEX_APPLY_IMPLEMENTED_PENDING_EXACT_HEAD_PROOF",
+  "next_edge": "PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS",
   "pages_readback": {
     "run_id": 36706855094,
     "build": "PASS",
@@ -420,7 +421,7 @@
     "pages_status": "GREEN"
   },
   "authenticated_execution_gateway": {
-    "state": "RUNTIME_DRY_RUN_EXECUTED_NO_MUTATION",
+    "state": "BOUNDED_CODEX_APPLY_IMPLEMENTED_PENDING_EXACT_HEAD_PROOF",
     "design_contract": "mission_control/mycelium/execution_gateway_contract.yaml",
     "request_schema": "mission_control/mycelium/schemas/execution_request.schema.json",
     "receipt_schema": "mission_control/mycelium/schemas/execution_receipt.schema.json",
@@ -430,8 +431,10 @@
     "transport_runtime": "scripts/missioncontrol_authenticated_transport.py",
     "exact_head_lock": true,
     "idempotency_bound": true,
-    "mutation_enabled": false,
-    "enabled_mutation_transports": [],
+    "mutation_enabled": true,
+    "enabled_mutation_transports": [
+      "OWNER_COMMENT_AUTOMATION_PR"
+    ],
     "runtime_dry_run_proof": "EXECUTED_EXACT_HEAD_NO_MUTATION",
     "static_pages_mode": "STAGE_OR_DRY_RUN_ONLY",
     "authority_transfer": false,
@@ -451,7 +454,21 @@
     "runtime_artifact_zip_sha256": "116c0861d54dfa9aeb4c1241b5a5e9948e9f245ef69abcf4801e3bb025d8dd83",
     "runtime_receipt": "mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json",
     "runtime_authenticated_principal": "github:GBOGEB#202350393",
-    "runtime_after_sha": null
+    "runtime_after_sha": null,
+    "mutation_mode": "AUTOMATION_BRANCH_PR_ONLY",
+    "direct_main_write": false,
+    "review_pr_required": true,
+    "bounded_apply_workflow": ".github/workflows/missioncontrol-owner-bounded-apply.yml",
+    "bounded_apply_executor": "scripts/missioncontrol_bounded_apply.py",
+    "bounded_apply_owner_command": "/missioncontrol apply refresh-federation-heads <exact-main-sha>",
+    "bounded_apply_runtime_proof": "WITHHELD_OWNER_APPLY_COMMAND_REQUIRED",
+    "allowed_mutation_repositories": [
+      "GBOGEB/CODEX"
+    ],
+    "allowed_mutation_intents": [
+      "REFRESH_FEDERATION_HEADS"
+    ],
+    "remote_authority_mutation": false
   },
   "latest_typed_remote_return": {
     "source_repo": "GBOGEB/ABACUS",
