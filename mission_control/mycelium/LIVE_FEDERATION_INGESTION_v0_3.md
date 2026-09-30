@@ -26,20 +26,23 @@ acceptance event and it cannot promote remote truth.
 
 ## Pages boundary
 
-GitHub Pages rebuild is the read-only refresh boundary:
+GitHub Pages rebuild is the read-only **source-freshness** refresh boundary. The first 3/3 live pulse is already repository-bound by merged PR #845; this successor does not replace it.
 
 ```text
 Runtime Release Gate / main
   -> Pages build
-  -> ingest_missioncontrol_sources.py --emit-events
-  -> source-status projection
-  -> temporal-event projection
+  -> ingest_missioncontrol_sources.py
+  -> live source-status projection
   -> HTML Federation Control panel
 ```
 
 A Pages/browser/stream failure does not block repository execution. The
 committed fallback projection remains available and is visibly distinguishable
 from `FRESH` or `STALE_CACHE`.
+
+Pages does **not** append durable temporal history. Append-only control events
+are emitted only by a controlled repository transaction and must then be
+committed with exact repo/ref/SHA provenance.
 
 ## Federation UI
 
@@ -57,8 +60,8 @@ Panel 6 consumes `docs/data/missioncontrol_source_status.json` and displays:
 ```text
 repo = GBOGEB/CODEX
 branch = mission-control/live-federation-ingestion-v0-3
-current_atom = LIVE_TEMPORAL_FEDERATION_INGESTION
-completed_predecessor = MYCELIUM_V0_2_1_MERGED_PAGES_GREEN
+current_atom = RECURRING_FEDERATION_FRESHNESS_AUTOMATION
+completed_predecessor = PR_845_LIVE_FEDERATION_PULSE_3_OF_3
 first_red_scope = affected lane only
 replay_completed_atoms = false
 next_legal_transition =
