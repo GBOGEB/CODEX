@@ -128,7 +128,7 @@
     },
     {
       "id": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
-      "state": "PENDING"
+      "state": "COMPLETED"
     },
     {
       "id": "PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS",
@@ -141,6 +141,10 @@
     {
       "id": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
       "state": "COMPLETED"
+    },
+    {
+      "id": "BOUNDED_APPLY_RUNTIME_OWNER_COMMAND",
+      "state": "PENDING"
     }
   ],
   "edges": [
@@ -291,10 +295,14 @@
     [
       "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
       "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY"
+    ],
+    [
+      "PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS",
+      "BOUNDED_APPLY_RUNTIME_OWNER_COMMAND"
     ]
   ],
   "first_incomplete_atoms": [
-    "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY"
+    "PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS"
   ],
   "guards": {
     "replay_completed_atoms": false,
@@ -309,19 +317,20 @@
     "pages_run": 36706855094
   },
   "active_slice": {
-    "id": "AUTHENTICATED_RUNTIME_DRY_RUN",
-    "state": "CONTROLLED_GREEN_BOUNDED_APPLY_ADMITTED",
-    "observed_head_sha": "86491df05050967dd8cc11ee3b3b0dbd114193b9",
-    "workflow_run": 36754862285,
-    "workflow_job": 110022402610,
-    "artifact_id": 11116571326,
-    "artifact_name": "missioncontrol-stage-only-1e4df9cae241e539246c1338",
-    "artifact_zip_sha256": "116c0861d54dfa9aeb4c1241b5a5e9948e9f245ef69abcf4801e3bb025d8dd83",
-    "receipt": "mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json",
-    "decision": "EXECUTED",
-    "after_sha": null,
-    "authenticated_principal": "github:GBOGEB#202350393",
-    "mutation_enabled": false,
+    "id": "BOUNDED_CODEX_APPLY_V0_1",
+    "state": "IMPLEMENTED_PENDING_EXACT_HEAD_PROOF",
+    "predecessor_runtime_proof": "mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json",
+    "owner_command": "/missioncontrol apply refresh-federation-heads <exact-main-sha>",
+    "workflow": ".github/workflows/missioncontrol-owner-bounded-apply.yml",
+    "executor": "scripts/missioncontrol_bounded_apply.py",
+    "mutation_mode": "AUTOMATION_BRANCH_PR_ONLY",
+    "direct_main_write": false,
+    "target_repository": "GBOGEB/CODEX",
+    "allowed_intents": [
+      "REFRESH_FEDERATION_HEADS"
+    ],
+    "remote_authority_mutation": false,
+    "runtime_proof": "WITHHELD_OWNER_APPLY_COMMAND_REQUIRED",
     "authority_transfer": false
   },
   "closed_live_federation_pulse": {
