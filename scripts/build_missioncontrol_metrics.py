@@ -298,9 +298,17 @@ def apply_source_status_overlay(
             for row in abacus.get("pending_independent_lanes", [])
             if isinstance(row, dict) and row.get("family")
         }
-        for family in family_names:
-            if family not in measured:
-                continue
+        existing_order = [
+            str(row.get("family"))
+            for row in dab_hard.get("family_progress", [])
+            if isinstance(row, dict) and row.get("family") in measured
+        ]
+        ordered_families = existing_order + [
+            family
+            for family in family_names
+            if family in measured and family not in existing_order
+        ]
+        for family in ordered_families:
             value = measured[family]
             row = previous.get(family, {"family": family})
             prior_value = row.get("measured_postmerge")
