@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from scripts.missioncontrol_owner_comment_request import (
     OwnerCommentError,
     build_request,
@@ -57,3 +59,22 @@ def test_rejects_stale_owner_command() -> None:
         assert "stale owner command" in str(exc)
     else:
         raise AssertionError("stale owner command was accepted")
+
+
+def test_owner_transport_concurrency_is_issue_scoped() -> None:
+    workflow = Path(".github/workflows/missioncontrol-owner-comment-transport.yml").read_text(
+        encoding="utf-8"
+    )
+    assert (
+        "group: missioncontrol-owner-comment-stage-only-${{ github.event.issue.number }}"
+        in workflow
+    )
+    assert "cancel-in-progress: false" in workflow
+    assert "issues: write" in workflow
+    assert "Publish authenticated receipt pointer" in workflow
+    assert "MISSIONCONTROL_RUNTIME_RECEIPT" in workflow
+
+
+def test_unrelated_issue_comments_use_different_concurrency_groups() -> None:
+    template = "missioncontrol-owner-comment-stage-only-{issue_number}"
+    assert template.format(issue_number=879) != template.format(issue_number=889)
