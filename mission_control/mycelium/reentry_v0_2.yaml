@@ -9,7 +9,7 @@ reentry:
       repo: GBOGEB/CODEX
       branch: main
       handover_observed_sha: d77d44811fec4fada16988769614d6091df56133
-      refreshed_current_sha: 4261c883624a2a01f17e918445a643d048a1a79e
+      refreshed_current_sha: 523ad2e1df362c7252f18fb6bfdb430daf73c517
       role: UI_ORCHESTRATION_GRAPH_AUTHORITY
       mycelium_v0_1_merge:
         pr: 837
@@ -29,7 +29,7 @@ reentry:
       repo: GBOGEB/ABACUS
       branch: main
       handover_observed_sha: 713a152e99024165aea81bffbf530d2073e164bb
-      refreshed_current_sha: f87d5ea61852f46a0ecdb478f5916f4d078326cc
+      refreshed_current_sha: 1830662b57ccaeb6b1c1553f2c584abe6a954f9f
       role: REMOTE_EXECUTION_AUTHORITY
       latest_census:
         pr: 1499
@@ -74,7 +74,7 @@ reentry:
         pr: 1525
         head_sha: acc8faef0208d90c1a05c0bfe4f85e9292a8b7d8
         merge_sha: f87d5ea61852f46a0ecdb478f5916f4d078326cc
-        current_main_sha: f87d5ea61852f46a0ecdb478f5916f4d078326cc
+        current_main_sha: 1830662b57ccaeb6b1c1553f2c584abe6a954f9f
         workflow_run: 36745721133
         job: 109991290893
         artifact_id: 11112981814
@@ -94,11 +94,15 @@ reentry:
           - pr: 1527
             family: F841
             expected_only: 66
-            status: OPEN_UNMEASURED
+            merge_sha: 1830662b57ccaeb6b1c1553f2c584abe6a954f9f
+            census_run: 36747879827
+            status: MERGED_CENSUS_QUEUED
           - pr: 1528
             family: W293
             expected_only: 411
-            status: OPEN_UNMEASURED
+            merge_sha: 64d26b4a3c74fb58ae0b445c65bbdea95f73fa6e
+            census_run: 36747745812
+            status: MERGED_CENSUS_QUEUED
     cryoplant:
       repo: GBOGEB/cryoplant-project
       branch: main
@@ -257,7 +261,7 @@ reentry:
     - id: CODEX_UI
       repository: GBOGEB/CODEX
       branch: main
-      head_sha: 4261c883624a2a01f17e918445a643d048a1a79e
+      head_sha: 523ad2e1df362c7252f18fb6bfdb430daf73c517
       state: OWNER_ACTION_GATE
       current_atom: GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
       completed_atoms:
@@ -306,10 +310,10 @@ reentry:
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
-      head_sha: f87d5ea61852f46a0ecdb478f5916f4d078326cc
+      head_sha: 1830662b57ccaeb6b1c1553f2c584abe6a954f9f
       state: REMOTE_AUTHORITY
       latest_census_merge_sha: f87d5ea61852f46a0ecdb478f5916f4d078326cc
-      current_atom: POST_1525_MEASURED_DAB_QUEUE_1527_1528_PENDING
+      current_atom: POST_1525_MEASURED_DAB_QUEUE_1527_1528_MERGED_CENSUS_PENDING
       completed_atoms:
         - POST_1506_COMBINED_CENSUS_MEASURED
         - POST_1519_COMBINED_CENSUS_MEASURED
