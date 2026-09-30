@@ -125,6 +125,10 @@ function drawMetrics(){
  rows.push(['Maturity','2 K refrigeration',t.maturity?.status||'WITHHELD',t.maturity?.reason||displayMetric(t.maturity)]);
  rows.push(['PCA','Graph population',metrics?.pca?.status||'WITHHELD',metrics?.pca?.reason||'ready']);
  rows.push(['Bradley–Terry','Observed pairwise outcomes',metrics?.bradley_terry?.status||'WITHHELD',metrics?.bradley_terry?.reason||'ranked']);
+ const hard=metrics?.nodes?.dab_hard?.family_progress||[];
+ hard.forEach(x=>rows.push(['Hard · '+x.family,'ABACUS DAB-HARD',x.status||'WITHHELD',(x.measured_postmerge===null||x.measured_postmerge===undefined?'target '+(x.target??x.local_target??'—')+' · measured withheld':'baseline '+x.baseline+' → '+x.measured_postmerge)]));
+ const mech=metrics?.nodes?.dab_mech?.mechanical_progress;
+ if(mech)rows.push(['MECH · W293','ABACUS #1490',mech.status||'MEASURED','removed '+mech.removed_w293+' / '+mech.files+' files · residual '+(mech.residual_w293??'WITHHELD')]);
  $('#metricRows').innerHTML=rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td><span class="pill">'+r[2]+'</span></td><td>'+r[3]+'</td></tr>').join('');
 }
 function drawProgress(){
