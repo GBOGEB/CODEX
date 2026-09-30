@@ -115,7 +115,7 @@ def test_receipt_conforms_to_design_schema():
     assert receipt["engineering_credit_delta"] == 0
 
 
-def test_selected_transport_does_not_enable_apply():
+def test_selected_stage_transport_remains_read_only_when_bounded_apply_exists():
     import yaml
     from pathlib import Path
 
@@ -123,8 +123,12 @@ def test_selected_transport_does_not_enable_apply():
     contract = yaml.safe_load(
         (root / "mission_control/mycelium/execution_gateway_contract.yaml").read_text()
     )
-    assert contract["state"] == "AUTHENTICATED_TRANSPORT_IMPLEMENTED_NO_MUTATION"
+    assert contract["state"] == "BOUNDED_CODEX_APPLY_IMPLEMENTED_PENDING_RUNTIME_PROOF"
     assert contract["authentication"]["selected_transport"] == "GITHUB_ACTIONS_WORKFLOW_DISPATCH"
-    assert contract["authentication"]["enabled_mutation_transports"] == []
-    assert contract["authorization"]["action_classes"]["APPLY_BOUNDED_CODEX"]["enabled"] is False
+    assert contract["authentication"]["enabled_mutation_transports"] == [
+        "OWNER_COMMENT_AUTOMATION_PR"
+    ]
+    assert contract["authorization"]["action_classes"]["APPLY_BOUNDED_CODEX"]["enabled"] is True
+    assert contract["transport_runtime"]["enabled_action_class"] == "STAGE_ONLY"
     assert contract["transport_runtime"]["mutation_enabled"] is False
+    assert contract["bounded_apply_runtime"]["direct_main_write"] is False
