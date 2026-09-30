@@ -1,0 +1,71 @@
+{
+  "schema_version": "0.1",
+  "return_id": "ABACUS_DAB_RETURN_20260930_1504_COMBINED_MAIN",
+  "observed_at": "2026-09-30T13:11:12Z",
+  "source": {
+    "repository": "GBOGEB/ABACUS",
+    "ref": "main",
+    "measured_sha": "38dfd5c46aa427ef0ec76185439e75fdeb18817f",
+    "current_sha": "d54d22a57a80bc462a051ee26e5a7d5489432237",
+    "authority": "REMOTE_EXECUTION_DOW"
+  },
+  "exact_census": {
+    "workflow_run": 36719173263,
+    "job": 109899557428,
+    "status": "MEASURED",
+    "total": 9244,
+    "families": {
+      "E999": 1,
+      "F821": 0,
+      "F601": 0,
+      "F811": 0,
+      "F841": 77,
+      "E722": 26,
+      "E731": 0,
+      "E741": 28,
+      "W293": 1399
+    },
+    "artifact": {
+      "id": 11098275735,
+      "name": "dab-flake8-census",
+      "sha256": "ac71907fb2c16f7c84b48e17c86368b84376765b7844464d2fd317981a50ed3a"
+    }
+  },
+  "subsequent_merges": [
+    {
+      "pr": 1505,
+      "merge_sha": "c217892f0df73a9e8cae30c4d33c93d0f2cc8b89",
+      "family": "E741"
+    },
+    {
+      "pr": 1506,
+      "merge_sha": "d54d22a57a80bc462a051ee26e5a7d5489432237",
+      "family": "W293"
+    }
+  ],
+  "pending_census": {
+    "workflow_run": 36721260876,
+    "head_sha": "d54d22a57a80bc462a051ee26e5a7d5489432237",
+    "status": "QUEUED",
+    "result_status": "WITHHELD_PENDING_EXECUTED_PROOF",
+    "expected_only": {
+      "E741": 22,
+      "W293": 1013,
+      "E722": 26,
+      "F841": 77,
+      "E999": 1
+    }
+  },
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+    "state": "SOURCE_BOUND_HOLD"
+  },
+  "acceptance": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "engineering_truth_promoted": false
+  }
+}
