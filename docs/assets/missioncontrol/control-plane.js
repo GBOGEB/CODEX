@@ -225,6 +225,7 @@
     const parsed = parseCommand(input);
     const repo = $('#commandAuthority')?.value || 'GBOGEB/CODEX';
     const lane = $('#commandLane')?.value || 'CODEX_UI';
+    const gatewayEligible = repo === 'GBOGEB/CODEX' && ['CODEX_UI','FEDERATION'].includes(lane);
     const event = {
       schema_version:'0.2.1',
       event_type:'USER_STEER',
@@ -237,20 +238,23 @@
       command:parsed.parsed,
       parse_ok:parsed.ok,
       parse_message:parsed.message,
+      gateway_eligible:gatewayEligible,
       invariants:{
         authority_transfer:false,
         formal_credit_delta:0,
         engineering_credit_delta:0,
         replay_completed_atoms:false
       },
-      next_action: requestedMode === 'APPLY' ? 'OPEN_GITHUB_AUTHENTICATED_GATEWAY_WORKFLOW' : 'REVIEW_STAGED_ENVELOPE'
+      next_action: requestedMode === 'APPLY'
+        ? (gatewayEligible ? 'OPEN_GITHUB_AUTHENTICATED_GATEWAY_WORKFLOW' : 'WITHHELD_REMOTE_OR_UNAUTHORIZED_LANE')
+        : 'REVIEW_STAGED_ENVELOPE'
     };
     return event;
   }
 
   async function stage(mode) {
     stagedEnvelope = buildEnvelope(mode);
-    if (mode === 'APPLY' && stagedEnvelope.parse_ok && stagedEnvelope.repository === 'GBOGEB/CODEX') {
+    if (mode === 'APPLY' && stagedEnvelope.parse_ok && stagedEnvelope.gateway_eligible) {
       try {
         stagedEnvelope.source_authority_sha = await probeCurrentCodeXHead();
         stagedEnvelope.source_authority_basis = 'LIVE_GITHUB_PUBLIC_MAIN_HEAD';
@@ -260,15 +264,19 @@
       }
     }
     const out = $('#commandReceipt');
-    const status = stagedEnvelope.parse_ok ? (mode === 'APPLY' ? 'STAGED / authenticated gateway required' : 'DRY RUN READY') : 'INPUT ERROR';
+    const status = stagedEnvelope.parse_ok
+      ? (mode === 'APPLY'
+          ? (stagedEnvelope.gateway_eligible ? 'STAGED / authenticated gateway required' : 'WITHHELD / remote or unauthorized lane')
+          : 'DRY RUN READY')
+      : 'INPUT ERROR';
     if (out) out.innerHTML = '<b>' + esc(status) + '</b><pre>' + esc(JSON.stringify(stagedEnvelope,null,2)) + '</pre>';
     const launch = $('#gatewayLaunch');
     const guide = $('#gatewayGuide');
     if (launch) {
       launch.href = GATEWAY_URL;
-      launch.hidden = !(mode === 'APPLY' && stagedEnvelope.parse_ok);
+      launch.hidden = !(mode === 'APPLY' && stagedEnvelope.parse_ok && stagedEnvelope.gateway_eligible);
     }
-    if (guide) guide.hidden = !(mode === 'APPLY' && stagedEnvelope.parse_ok);
+    if (guide) guide.hidden = !(mode === 'APPLY' && stagedEnvelope.parse_ok && stagedEnvelope.gateway_eligible);
     const dl = $('#commandDownload');
     if (dl) {
       const blob = new Blob([JSON.stringify(stagedEnvelope,null,2) + '\n'], {type:'application/json'});
