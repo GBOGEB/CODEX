@@ -1,0 +1,161 @@
+schema_version: "0.1"
+surface_id: MISSIONCONTROL_MYCELIUM
+owner: CODEX_UI_GOVERNANCE
+repository: GBOGEB/CODEX
+authority_transfer: false
+engineering_authority: false
+purpose: >-
+  User-facing control surface for federated execution, lineage, dependency,
+  evidence, recovery, reverse-pressure backlog and outward artifact navigation.
+
+source_authorities:
+  codex:
+    class: LOCAL_AUTHORITATIVE
+    manifest: ssot/manifest.yaml
+    runtime_registry: ssot/registry/runtime_registry.yaml
+  abacus:
+    class: REMOTE_AUTHORITATIVE
+    role: EXECUTION_AND_DOW
+    mutation_by_codex: false
+  cryoplant_project:
+    class: REMOTE_AUTHORITATIVE
+    role: ENGINEERING_TRUTH
+    mutation_by_codex: false
+
+layout:
+  canonical: "2x3"
+  panel_aspect_ratio: "16/9"
+  panels:
+    - id: repo_topology
+      order: 1
+      title: Repository topology
+    - id: interaction_graph
+      order: 2
+      title: Interaction graph
+    - id: execution_flow
+      order: 3
+      title: Execution and recovery
+    - id: evidence_lineage
+      order: 4
+      title: Evidence and lineage
+    - id: analytics
+      order: 5
+      title: DMAIC / KPI / PCA / BT
+    - id: outward_artifacts
+      order: 6
+      title: Outward artifacts
+  responsive:
+    desktop: "2 columns x 3 rows"
+    tablet: "2 columns x 3 rows"
+    mobile: "1 column x 6 rows"
+  focus_mode: true
+  themes: [light, dark]
+
+graph_contract:
+  node_types:
+    - repo
+    - branch
+    - commit
+    - issue
+    - pull_request
+    - workflow
+    - test
+    - requirement
+    - decision
+    - artifact
+    - output
+    - queue
+    - atom
+  edge_types:
+    - contains
+    - depends_on
+    - precedes
+    - consumes
+    - produces
+    - proves
+    - blocks
+    - unblocks
+    - federates
+    - publishes
+    - derives_from
+    - supersedes
+  rules:
+    directed: true
+    every_edge_has_source: true
+    every_promoted_state_has_proof_edge: true
+    remote_engineering_truth_cannot_be_promoted_by_codex: true
+    orphan_authoritative_nodes_forbidden: true
+
+execution_contract:
+  uninterrupted_goal: true
+  stream_disconnect_is_not_execution_failure: true
+  resume_from_checkpoint_without_replay: true
+  replay_completed_slice: false
+  checkpoint_fields:
+    - repo
+    - branch
+    - head_sha
+    - current_step
+    - completed_steps
+    - active_blockers
+    - evidence_refs
+    - next_legal_transition
+  auto_recovery:
+    transient_stream_timeout:
+      action: CONTINUE_FROM_LAST_DURABLE_CHECKPOINT
+      stop_execution: false
+    connector_timeout:
+      action: RETRY_IDEMPOTENT_READ_OR_CONTINUE_INDEPENDENT_LANES
+      max_retries: 2
+      stop_other_lanes: false
+    write_conflict:
+      action: REFRESH_EXACT_PATH_AND_RECONCILE
+      stop_conflicting_lane_only: true
+    failed_test:
+      action: CLASSIFY_FIRST_RED
+      stop_affected_lane_only: true
+    missing_external_authority:
+      action: HOLD_NODE_AND_CONTINUE_UNBLOCKED_GRAPH
+      stop_execution: false
+
+control_loop:
+  sequence:
+    - REFRESH
+    - PROBE
+    - RANK
+    - EXECUTE
+    - PROVE
+    - COMMIT
+    - PUBLISH
+    - OBSERVE
+    - LEARN
+    - RECURSE
+  dmaic:
+    define: problem_scope_and_authority
+    measure: census_kpi_and_evidence
+    analyze: dependency_pca_bt_and_root_cause
+    improve: bounded_change
+    control: exact_sha_proof_and_drift_watch
+  reverse_pressure:
+    enabled: true
+    method: >-
+      Blocked downstream nodes push urgency to their nearest unresolved
+      predecessor; rank the BD queue by dependency fan-out, proof deficit,
+      age, criticality and unblock value.
+  ranking:
+    pca: diagnostic_only_unless_governed_population_exists
+    bradley_terry: outcome_based_only
+    no_synthetic_scores: true
+
+definition_of_done:
+  - graph_and_manifest_validate
+  - all_active_nodes_have_owner_state_and_link
+  - all_completed_nodes_have_proof
+  - pages_surface_renders_without_external_js_dependency
+  - responsive_layout_works_at_multi_size
+  - outward_artifact_links_resolve_or_are_explicitly_withheld
+  - checkpoint_can_restart_without_chat_history
+
+definition_of_validation:
+  global: WITHHELD_UNTIL_EXECUTED_PROOF
+  no_credit_from_visualization_alone: true
