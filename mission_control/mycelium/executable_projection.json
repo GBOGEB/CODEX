@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "id": "MYCELIUM_V021_EXECUTABLE_DAG",
+  "id": "MYCELIUM_V022_EXECUTABLE_DAG",
   "source_reentry": "mission_control/mycelium/reentry_v0_2.yaml",
   "universal_graph_may_contain_cycles": true,
   "executable_projection_must_be_DAG": true,
@@ -92,6 +92,18 @@
     },
     {
       "id": "LIVE_TEMPORAL_FEDERATION_INGESTION",
+      "state": "IN_PROGRESS"
+    },
+    {
+      "id": "HOSTED_LIVE_INGESTION_PROOF",
+      "state": "PENDING"
+    },
+    {
+      "id": "BIND_FEDERATION_FRESHNESS",
+      "state": "PENDING"
+    },
+    {
+      "id": "CONSUME_TYPED_REMOTE_RETURNS",
       "state": "PENDING"
     }
   ],
@@ -191,6 +203,18 @@
     [
       "REGENERATE_REENTRY_MANIFEST",
       "LIVE_TEMPORAL_FEDERATION_INGESTION"
+    ],
+    [
+      "LIVE_TEMPORAL_FEDERATION_INGESTION",
+      "HOSTED_LIVE_INGESTION_PROOF"
+    ],
+    [
+      "HOSTED_LIVE_INGESTION_PROOF",
+      "BIND_FEDERATION_FRESHNESS"
+    ],
+    [
+      "BIND_FEDERATION_FRESHNESS",
+      "CONSUME_TYPED_REMOTE_RETURNS"
     ]
   ],
   "first_incomplete_atoms": [
@@ -207,5 +231,15 @@
     "exact_head_sha": "4e51b7fabd7a3d5dc5bb6f8c31a55b549e11863d",
     "merge_sha": "f9b106a8642198f98814809432a46c99fb041389",
     "pages_run": 36706855094
+  },
+  "active_slice": {
+    "id": "MYCELIUM_V0_2_2_LIVE_TEMPORAL_FEDERATION_INGESTION",
+    "state": "IMPLEMENTING",
+    "predecessor_merge_sha": "5e97cc0081f24354c929f23a14c825ad42c7c6fa",
+    "baseline_heads": {
+      "codex": "cd45dc8f8934d554d824f0c22db619dfe6bb546d",
+      "abacus": "d8e71dc73453e9e4ea10fa62afd0d9554d241297",
+      "cryoplant": "f03bfc61bcf85a2d91cd22d083ad0ef954387f0d"
+    }
   }
 }
