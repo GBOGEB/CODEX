@@ -1,0 +1,22 @@
+{
+  "schema_version": "0.1",
+  "ports": [
+    {
+      "id": "QPS_TRIAGE_RETURN",
+      "source": "repo_cryoplant_project",
+      "target": "repo_codex",
+      "purpose": "QPS priority/return metadata",
+      "declared": true,
+      "probe_status": "WITHHELD"
+    },
+    {
+      "id": "DOW_EVIDENCE_RETURN",
+      "source": "repo_abacus",
+      "target": "repo_cryoplant_project",
+      "purpose": "DOW calculation/evidence return",
+      "declared": true,
+      "probe_status": "WITHHELD"
+    }
+  ],
+  "rule": "declared port is not a healthy port until a governed probe executes"
+}

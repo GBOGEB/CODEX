@@ -1,6 +1,6 @@
 {
-  "schema_version": "0.1",
-  "snapshot_at": "2026-09-30T11:35:30+02:00",
+  "schema_version": "0.3",
+  "snapshot_at": "2026-09-30T12:32:00+02:00",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -10,7 +10,12 @@
       "state": "LOCAL_AUTHORITY",
       "url": "https://github.com/GBOGEB/CODEX",
       "meta": {
-        "sha": "645f836eb8b49be746a154bfe4f0987be7e50b43"
+        "sha": "d77d44811fec4fada16988769614d6091df56133",
+        "views": [
+          "engineering",
+          "control",
+          "observability"
+        ]
       }
     },
     {
@@ -20,7 +25,11 @@
       "state": "REMOTE_EXECUTION_CURRENT",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "713a152e99024165aea81bffbf530d2073e164bb"
+        "sha": "a2825418c0c92ecac127ff799bf0d87fc998c269",
+        "views": [
+          "control",
+          "observability"
+        ]
       }
     },
     {
@@ -28,33 +37,45 @@
       "type": "artifact",
       "label": "CODEX authority manifest",
       "state": "ACTIVE",
-      "url": "../ssot/manifest.yaml"
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/ssot/manifest.yaml"
     },
     {
       "id": "runtime_registry",
       "type": "artifact",
       "label": "CODEX runtime registry",
       "state": "ACTIVE",
-      "url": "../ssot/registry/runtime_registry.yaml"
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/ssot/registry/runtime_registry.yaml"
     },
     {
       "id": "recursive_os",
       "type": "artifact",
       "label": "Recursive Engineering OS",
       "state": "ACTIVE",
-      "url": "../recursive_engineering_os/RECURSIVE_ENGINEERING_OS.md"
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/recursive_engineering_os/RECURSIVE_ENGINEERING_OS.md"
     },
     {
       "id": "dab_mech",
       "type": "queue",
       "label": "DAB-MECH",
-      "state": "EVIDENCE_GATED"
+      "state": "EVIDENCE_GATED",
+      "meta": {
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
     },
     {
       "id": "dab_hard",
       "type": "queue",
       "label": "DAB-HARD",
-      "state": "SOURCE_BOUND_HOLD"
+      "state": "SOURCE_BOUND_HOLD",
+      "meta": {
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
     },
     {
       "id": "slice4",
@@ -71,7 +92,13 @@
       "type": "issue",
       "label": "ABACUS #1488 DAB-HARD",
       "state": "ACTIVE",
-      "url": "https://github.com/GBOGEB/ABACUS/issues/1488"
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1488",
+      "meta": {
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
     },
     {
       "id": "hard_pr",
@@ -100,25 +127,35 @@
       "id": "pages",
       "type": "output",
       "label": "GitHub Pages",
-      "state": "TARGET"
+      "state": "TARGET",
+      "url": "missioncontrol_mycelium.html"
     },
     {
       "id": "plotly",
       "type": "output",
       "label": "Plotly interactive analytics",
-      "state": "SOURCE_LINKED"
+      "state": "SOURCE_LINKED",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/runtime_engine/plotly_wave_dashboard.py"
     },
     {
       "id": "matplotlib",
       "type": "output",
       "label": "Matplotlib static evidence",
-      "state": "SOURCE_LINKED"
+      "state": "SOURCE_LINKED",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/pca_engine/src/pca_engine/visualization.py"
     },
     {
       "id": "mycelium",
       "type": "artifact",
       "label": "MissionControl Mycelium UI",
-      "state": "UNDER_CONSTRUCTION"
+      "state": "UNDER_CONSTRUCTION",
+      "url": "https://github.com/GBOGEB/CODEX/tree/main/mission_control/mycelium",
+      "meta": {
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
     },
     {
       "id": "slice5",
@@ -129,7 +166,11 @@
       "meta": {
         "merge_sha": "66af75cbf4a9d69d45d823a2eeef1336300aefc6",
         "expected_w293_reduction": 887,
-        "files": 21
+        "files": 21,
+        "views": [
+          "control",
+          "observability"
+        ]
       }
     },
     {
@@ -139,7 +180,11 @@
       "state": "MERGED",
       "url": "https://github.com/GBOGEB/ABACUS/pull/1492",
       "meta": {
-        "merge_sha": "d945388d020019e0be9d1683bfcda46ba2ac74f3"
+        "merge_sha": "d945388d020019e0be9d1683bfcda46ba2ac74f3",
+        "views": [
+          "control",
+          "observability"
+        ]
       }
     },
     {
@@ -148,7 +193,314 @@
       "label": "W52 qplant E999 source gap",
       "state": "SOURCE_BOUND_HOLD",
       "meta": {
-        "path": "qplant/w52_p2m_ts_pressure_sensitivity.py"
+        "path": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+        "views": [
+          "engineering",
+          "control",
+          "observability"
+        ],
+        "measured_family_count": 1,
+        "evidence_job": 109832309064
+      }
+    },
+    {
+      "id": "codex_bd_queue",
+      "type": "queue",
+      "label": "CODEX BD queue",
+      "state": "CONTROL_EXTERNAL_GATE_ONLY",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/controls/BD_QUEUE_CURRENT.md",
+      "meta": {
+        "fix_pr": 0,
+        "prove": 0,
+        "external_gate": 2,
+        "parent_control": 2,
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "current_next",
+      "type": "artifact",
+      "label": "Current / exact next edge",
+      "state": "CHECKPOINTED",
+      "meta": {
+        "replay_completed_slice": false,
+        "views": [
+          "control",
+          "observability"
+        ]
+      },
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/control_manifest.yaml"
+    },
+    {
+      "id": "user_steer",
+      "type": "atom",
+      "label": "User steering event",
+      "state": "PRIORITY_INPUT",
+      "meta": {
+        "forces_rebase": false,
+        "preserves_completed_proof": true,
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "epic_cryoplant",
+      "type": "epic",
+      "label": "EPIC · Cryoplant",
+      "state": "ACTIVE",
+      "meta": {
+        "views": [
+          "engineering",
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "domain_helium_refrigeration",
+      "type": "domain",
+      "label": "Domain · Helium refrigeration",
+      "state": "ACTIVE",
+      "meta": {
+        "views": [
+          "engineering",
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "topic_2k_refrigeration",
+      "type": "topic",
+      "label": "Topic · 2 K refrigeration",
+      "state": "ACTIVE",
+      "meta": {
+        "views": [
+          "engineering",
+          "control",
+          "observability"
+        ],
+        "dmaic_phase": "ANALYZE",
+        "dmaic_authority": "DERIVED_CONTROL_VIEW"
+      }
+    },
+    {
+      "id": "interface_b",
+      "type": "topic",
+      "label": "B interface",
+      "state": "UNRESOLVED",
+      "meta": {
+        "views": [
+          "engineering",
+          "control",
+          "observability"
+        ],
+        "priority": "P0"
+      }
+    },
+    {
+      "id": "calc_b_pressure_drop",
+      "type": "analysis",
+      "label": "Pressure-drop calculation",
+      "state": "REQUIRED",
+      "meta": {
+        "views": [
+          "engineering",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "qps_triage_b",
+      "type": "queue",
+      "label": "QPS · CRYO-IF-B unresolved",
+      "state": "P0",
+      "meta": {
+        "views": [
+          "control",
+          "observability"
+        ],
+        "urgency_weight": 1
+      }
+    },
+    {
+      "id": "dow_b_pressure_drop",
+      "type": "analysis",
+      "label": "DOW · B-interface ΔP analysis",
+      "state": "MISSING_EVIDENCE",
+      "meta": {
+        "views": [
+          "engineering",
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "icd_freeze",
+      "type": "artifact",
+      "label": "ICD freeze",
+      "state": "BLOCKED",
+      "meta": {
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "offer_disposition",
+      "type": "decision",
+      "label": "Offer disposition",
+      "state": "BLOCKED",
+      "meta": {
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "prop_hepak",
+      "type": "property_source",
+      "label": "HEPAK",
+      "state": "SOURCE_CANDIDATE",
+      "meta": {
+        "views": [
+          "engineering"
+        ]
+      }
+    },
+    {
+      "id": "prop_nist",
+      "type": "property_source",
+      "label": "NIST",
+      "state": "SOURCE_CANDIDATE",
+      "meta": {
+        "views": [
+          "engineering"
+        ]
+      }
+    },
+    {
+      "id": "prop_gasprotp",
+      "type": "property_source",
+      "label": "GASPROTP",
+      "state": "SOURCE_CANDIDATE",
+      "meta": {
+        "views": [
+          "engineering"
+        ]
+      }
+    },
+    {
+      "id": "prop_coolprop",
+      "type": "property_source",
+      "label": "CoolProp",
+      "state": "SOURCE_CANDIDATE",
+      "meta": {
+        "views": [
+          "engineering"
+        ]
+      }
+    },
+    {
+      "id": "prop_colio",
+      "type": "property_source",
+      "label": "COLIO",
+      "state": "SOURCE_CANDIDATE",
+      "meta": {
+        "views": [
+          "engineering"
+        ]
+      }
+    },
+    {
+      "id": "hard_f821_pr",
+      "type": "pull_request",
+      "label": "ABACUS #1491 F821",
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1491",
+      "meta": {
+        "merge_sha": "4153a87da03da25e1115134015ec579bf774b918",
+        "baseline": 15,
+        "target": 0,
+        "measured_postmerge": 0,
+        "views": [
+          "control",
+          "observability"
+        ],
+        "evidence_job": 109832309064
+      }
+    },
+    {
+      "id": "hard_f601_pr",
+      "type": "pull_request",
+      "label": "ABACUS #1493 F601",
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1493",
+      "meta": {
+        "merge_sha": "9a8e5ab145e916e849e1968c728b8dd78aa674c1",
+        "baseline": 2,
+        "target": 0,
+        "measured_postmerge": null,
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "projection_engineering",
+      "type": "projection",
+      "label": "ENGINEERING VIEW",
+      "state": "ACTIVE",
+      "meta": {
+        "views": [
+          "engineering"
+        ]
+      }
+    },
+    {
+      "id": "projection_control",
+      "type": "projection",
+      "label": "CONTROL VIEW",
+      "state": "ACTIVE",
+      "meta": {
+        "views": [
+          "control"
+        ]
+      }
+    },
+    {
+      "id": "projection_observability",
+      "type": "projection",
+      "label": "OBSERVABILITY VIEW",
+      "state": "ACTIVE",
+      "meta": {
+        "views": [
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "repo_cryoplant_project",
+      "type": "repo",
+      "label": "GBOGEB/cryoplant-project",
+      "state": "REMOTE_ENGINEERING_AUTHORITY",
+      "url": "https://github.com/GBOGEB/cryoplant-project",
+      "meta": {
+        "views": [
+          "engineering",
+          "control",
+          "observability"
+        ],
+        "role": "QPS_ENGINEERING_TRUTH"
       }
     }
   ],
@@ -262,6 +614,217 @@
       "from": "qplant_e999_hold",
       "to": "dab_hard",
       "type": "blocks"
+    },
+    {
+      "from": "repo_codex",
+      "to": "codex_bd_queue",
+      "type": "contains"
+    },
+    {
+      "from": "codex_bd_queue",
+      "to": "current_next",
+      "type": "precedes"
+    },
+    {
+      "from": "current_next",
+      "to": "mycelium",
+      "type": "proves"
+    },
+    {
+      "from": "user_steer",
+      "to": "current_next",
+      "type": "consumes"
+    },
+    {
+      "from": "epic_cryoplant",
+      "to": "domain_helium_refrigeration",
+      "type": "contains",
+      "views": [
+        "engineering",
+        "control"
+      ]
+    },
+    {
+      "from": "domain_helium_refrigeration",
+      "to": "topic_2k_refrigeration",
+      "type": "contains",
+      "views": [
+        "engineering",
+        "control"
+      ]
+    },
+    {
+      "from": "topic_2k_refrigeration",
+      "to": "interface_b",
+      "type": "contains",
+      "views": [
+        "engineering",
+        "control"
+      ]
+    },
+    {
+      "from": "interface_b",
+      "to": "calc_b_pressure_drop",
+      "type": "requires_property",
+      "views": [
+        "engineering"
+      ]
+    },
+    {
+      "from": "qps_triage_b",
+      "to": "interface_b",
+      "type": "updates_triage",
+      "views": [
+        "control"
+      ]
+    },
+    {
+      "from": "qps_triage_b",
+      "to": "dow_b_pressure_drop",
+      "type": "requests_analysis",
+      "views": [
+        "control",
+        "engineering"
+      ]
+    },
+    {
+      "from": "dow_b_pressure_drop",
+      "to": "calc_b_pressure_drop",
+      "type": "calculates",
+      "views": [
+        "engineering"
+      ]
+    },
+    {
+      "from": "dow_b_pressure_drop",
+      "to": "icd_freeze",
+      "type": "blocks",
+      "views": [
+        "control"
+      ]
+    },
+    {
+      "from": "icd_freeze",
+      "to": "offer_disposition",
+      "type": "blocks",
+      "views": [
+        "control"
+      ]
+    },
+    {
+      "from": "calc_b_pressure_drop",
+      "to": "prop_hepak",
+      "type": "uses_property_source",
+      "views": [
+        "engineering"
+      ]
+    },
+    {
+      "from": "calc_b_pressure_drop",
+      "to": "prop_nist",
+      "type": "uses_property_source",
+      "views": [
+        "engineering"
+      ]
+    },
+    {
+      "from": "calc_b_pressure_drop",
+      "to": "prop_gasprotp",
+      "type": "uses_property_source",
+      "views": [
+        "engineering"
+      ]
+    },
+    {
+      "from": "calc_b_pressure_drop",
+      "to": "prop_coolprop",
+      "type": "uses_property_source",
+      "views": [
+        "engineering"
+      ]
+    },
+    {
+      "from": "calc_b_pressure_drop",
+      "to": "prop_colio",
+      "type": "uses_property_source",
+      "views": [
+        "engineering"
+      ]
+    },
+    {
+      "from": "hard_f821_pr",
+      "to": "dab_hard",
+      "type": "proves",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "hard_f601_pr",
+      "to": "dab_hard",
+      "type": "proves",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "projection_engineering",
+      "to": "epic_cryoplant",
+      "type": "projects_as",
+      "views": [
+        "engineering"
+      ]
+    },
+    {
+      "from": "projection_control",
+      "to": "qps_triage_b",
+      "type": "projects_as",
+      "views": [
+        "control"
+      ]
+    },
+    {
+      "from": "projection_observability",
+      "to": "repo_codex",
+      "type": "observes",
+      "views": [
+        "observability"
+      ]
+    },
+    {
+      "from": "projection_observability",
+      "to": "repo_abacus",
+      "type": "observes",
+      "views": [
+        "observability"
+      ]
+    },
+    {
+      "from": "repo_cryoplant_project",
+      "to": "epic_cryoplant",
+      "type": "contains",
+      "views": [
+        "engineering"
+      ]
+    },
+    {
+      "from": "repo_cryoplant_project",
+      "to": "repo_codex",
+      "type": "federates",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "qps_triage_b",
+      "to": "repo_cryoplant_project",
+      "type": "updates_triage",
+      "views": [
+        "control"
+      ]
     }
   ]
 }

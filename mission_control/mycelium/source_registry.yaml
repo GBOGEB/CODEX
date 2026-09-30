@@ -1,0 +1,28 @@
+schema_version: "0.1"
+registry_id: MISSIONCONTROL_SOURCE_REGISTRY
+public_metadata_only: true
+authority_transfer: false
+sources:
+  - id: codex
+    repository: GBOGEB/CODEX
+    authority_class: LOCAL_AUTHORITATIVE
+    role: ORCHESTRATION_UI_GOVERNANCE
+    ingest: [repository, pulls, issues, workflows]
+    freshness_minutes: 60
+  - id: abacus
+    repository: GBOGEB/ABACUS
+    authority_class: REMOTE_AUTHORITATIVE
+    role: EXECUTION_DOW
+    ingest: [repository, pulls, issues, workflows]
+    freshness_minutes: 60
+  - id: cryoplant_project
+    repository: GBOGEB/cryoplant-project
+    authority_class: REMOTE_AUTHORITATIVE
+    role: ENGINEERING_TRUTH_QPS
+    ingest: [repository, pulls, issues]
+    freshness_minutes: 60
+rules:
+  metadata_cannot_promote_engineering_state: true
+  stale_cache_may_preserve_last_known_identity: true
+  stale_cache_must_be_labelled: true
+  fixture_mode_for_ci: true

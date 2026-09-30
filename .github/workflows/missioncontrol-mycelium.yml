@@ -1,0 +1,33 @@
+name: MissionControl Mycelium CI
+
+on:
+  pull_request:
+    paths:
+      - 'mission_control/mycelium/**'
+      - 'docs/missioncontrol_mycelium.html'
+      - 'docs/data/missioncontrol_*.json'
+      - 'scripts/*missioncontrol*'
+      - 'tests/test_missioncontrol_*'
+      - '.github/workflows/missioncontrol-mycelium.yml'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip pytest pyyaml numpy
+      - name: Analyze governed logs
+        run: python scripts/analyze_missioncontrol_logs.py
+      - name: Build metrics materialization
+        run: python scripts/build_missioncontrol_metrics.py
+      - name: Validate Mycelium contract
+        run: python scripts/validate_missioncontrol_mycelium.py
+      - name: Run MissionControl tests
+        run: pytest -q tests/test_missioncontrol_mycelium.py tests/test_missioncontrol_metrics.py tests/test_missioncontrol_logs.py tests/test_missioncontrol_source_ingestion.py
+      - name: Verify deterministic materializations
+        run: git diff --exit-code -- mission_control/mycelium/metrics_snapshot.json docs/data/missioncontrol_metrics.json mission_control/mycelium/log_analysis.json docs/data/missioncontrol_log_analysis.json

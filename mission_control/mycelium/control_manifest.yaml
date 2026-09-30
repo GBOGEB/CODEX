@@ -1,8 +1,9 @@
-schema_version: "0.1"
+schema_version: "0.3"
 surface_id: MISSIONCONTROL_MYCELIUM
 owner: CODEX_UI_GOVERNANCE
 repository: GBOGEB/CODEX
 authority_transfer: false
+formal_credit_delta: 0
 engineering_authority: false
 purpose: >-
   User-facing control surface for federated execution, lineage, dependency,
@@ -24,7 +25,10 @@ source_authorities:
 
 layout:
   canonical: "2x3"
+  selectable_modes: ["2x3", "3x2", "golden_focus", "single_focus"]
   panel_aspect_ratio: "16/9"
+  golden_focus_ratio: "1.618:1"
+  whitespace_policy: "preserve function and ratio; unused area may remain light/dark space rather than distort content"
   panels:
     - id: repo_topology
       order: 1
@@ -49,6 +53,7 @@ layout:
     tablet: "2 columns x 3 rows"
     mobile: "1 column x 6 rows"
   focus_mode: true
+  user_selectable_focus: true
   themes: [light, dark]
 
 graph_contract:
@@ -66,6 +71,16 @@ graph_contract:
     - output
     - queue
     - atom
+    - epic
+    - domain
+    - topic
+    - analysis
+    - property_source
+    - metric
+    - projection
+    - log
+    - port
+    - dock
   edge_types:
     - contains
     - depends_on
@@ -79,6 +94,22 @@ graph_contract:
     - publishes
     - derives_from
     - supersedes
+    - asks
+    - requests_analysis
+    - requires_property
+    - uses_model
+    - uses_property_source
+    - calculates
+    - validates
+    - challenges
+    - refutes
+    - constrains
+    - updates_triage
+    - raises_priority
+    - lowers_priority
+    - observes
+    - measures
+    - projects_as
   rules:
     directed: true
     every_edge_has_source: true
@@ -117,6 +148,13 @@ execution_contract:
     missing_external_authority:
       action: HOLD_NODE_AND_CONTINUE_UNBLOCKED_GRAPH
       stop_execution: false
+    user_steer:
+      action: REPRIORITIZE_ACTIVE_EDGE_WITHOUT_REPLAY
+      preserve_completed_proof: true
+      rebase_required: false
+    upstream_main_advanced:
+      action: COMPARE_TOUCHED_PATHS_THEN_REBASE_ONLY_IF_MATERIAL
+      replay_completed_slice: false
 
 control_loop:
   sequence:
@@ -138,6 +176,7 @@ control_loop:
     control: exact_sha_proof_and_drift_watch
   reverse_pressure:
     enabled: true
+    codex_queue_authority: controls/BD_QUEUE_CURRENT.md
     method: >-
       Blocked downstream nodes push urgency to their nearest unresolved
       predecessor; rank the BD queue by dependency fan-out, proof deficit,
@@ -146,6 +185,43 @@ control_loop:
     pca: diagnostic_only_unless_governed_population_exists
     bradley_terry: outcome_based_only
     no_synthetic_scores: true
+
+current_next_contract:
+  required_ui_fields:
+    - current_authority
+    - current_node
+    - exact_next_edge
+    - active_blockers
+    - admitted_parallel_edges
+    - last_completed_proof
+    - recovery_state
+    - user_steering_events
+  rule: >-
+    The UI may refresh presentation state without replaying completed execution.
+    A stream timeout alone never resets current_node or exact_next_edge.
+
+temporal_lineage:
+  enabled: true
+  event_types:
+    - AUTHORITY_FREEZE
+    - USER_STEER
+    - EXECUTION_START
+    - PROOF_BOUND
+    - OUTWARD_PROJECTION
+    - EXTERNAL_RETURN
+    - RECOVERY
+  required_fields: [event_time, source_sha, parent_event, content_ref]
+
+federation_router:
+  default_preference: [bridge, cherry_pick, federation, pin, full_merge]
+  full_merge_default: false
+  record_fields: [source_repo, source_sha, target_repo, target_sha, mechanism, proof]
+  mechanisms:
+    bridge: preserve independent upstream authority and exchange typed artifacts or receipts
+    cherry_pick: bounded compatible commit with exact provenance
+    federation: independent repos share contract, lineage and freshness probes
+    pin: external source remains upstream-owned at an exact revision
+    full_merge: only when ownership and authority intentionally converge
 
 definition_of_done:
   - graph_and_manifest_validate
@@ -158,4 +234,79 @@ definition_of_done:
 
 definition_of_validation:
   global: WITHHELD_UNTIL_EXECUTED_PROOF
+  levels:
+    LOCAL_REPRODUCIBILITY: [structural_qa, visual_or_runtime_qa]
+    EXACT_SHA_RECEIPT: [committed_sha, executed_proof, bound_receipt]
+    EXTERNAL_RETURN: [typed_return, source_identity, acceptance_decision]
   no_credit_from_visualization_alone: true
+  no_credit_from_analytics_alone: true
+
+projection_invariant:
+  id: THIS_IS_THE_WAY
+  statement: "ENGINEERING VIEW and CONTROL VIEW are two projections of the same graph"
+  one_graph_multiple_projections: true
+  duplicate_domain_state_forbidden: true
+  engineering_projection:
+    purpose: physical_system_knowledge_interfaces_calculations_and_evidence
+    canonical_example:
+      - Cryoplant
+      - 2_K_refrigeration
+      - B_interface
+      - pressure_drop
+      - calculation
+  control_projection:
+    purpose: priority_urgency_blockers_returns_and_next_legal_transition
+    canonical_example:
+      - P0
+      - CRYO_IF_B_unresolved
+      - DOW_calculation_missing
+      - blocks_ICD_freeze
+      - blocks_offer_disposition
+  rule: >-
+    Projection filters may hide or emphasize nodes and edges, but may not copy,
+    fork, silently reinterpret or promote the underlying engineering state.
+
+observability_contract:
+  common_node_identity_required: true
+  status_classes: [MEASURED, DERIVED_FROM_MEASURED, WITHHELD]
+  dimensions:
+    maturity:
+      intent: topic engineering maturity and closure
+      inputs: [requirement_coverage, interface_closure, evidence_coverage, validation_coverage]
+    qa:
+      intent: governed QA gate health
+      formula: passed_required_gates / executed_required_gates
+    code_health:
+      intent: executable/code control health
+      inputs: [qa, hard_debt, test_health, lint_health]
+    debug:
+      intent: first-red and recurrence control
+      inputs: [active_first_reds, recurrent_reds, mean_repair_iterations]
+    docking:
+      intent: federated repo/source attachment health
+      formula: healthy_declared_docks / declared_docks
+    ports:
+      intent: interface/probe transport health
+      formula: healthy_ports / declared_ports
+    logs:
+      intent: runtime and CI observability health
+      formula: parsed_required_logs / expected_required_logs
+    pressure:
+      intent: reverse-pressure backlog loading
+      inputs: [urgency, criticality, downstream_blocks, unblock_value, proof_deficit, age]
+    dmaic:
+      intent: main-topic lifecycle control
+      phases: [DEFINE, MEASURE, ANALYZE, IMPROVE, CONTROL]
+  analytics:
+    pca:
+      role: diagnostic_projection_only
+      minimum_complete_observations: 3
+      no_importance_claim_from_component_order: true
+    bradley_terry:
+      role: pairwise_outcome_ranking_only
+      minimum_pairwise_outcomes: 1
+      no_synthetic_pairwise_outcomes: true
+  progress_tracking:
+    append_only_history: mission_control/mycelium/progress_history.json
+    metrics_snapshot: mission_control/mycelium/metrics_snapshot.json
+    pages_metrics_view: docs/data/missioncontrol_metrics.json
