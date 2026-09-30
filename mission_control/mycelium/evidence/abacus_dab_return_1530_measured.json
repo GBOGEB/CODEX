@@ -1,0 +1,63 @@
+{
+  "schema_version": "0.1",
+  "return_id": "ABACUS_DAB_RETURN_20260930_1530_F841_MEASURED",
+  "observed_at": "2026-09-30T17:53:59Z",
+  "source": {
+    "repository": "GBOGEB/ABACUS",
+    "ref": "main",
+    "measured_sha": "14750ac24f6065aabb6ce92b1aedf7f42bf7248a",
+    "current_sha": "d3d13fbc5aacc4e060f7b20b602e7ccd422dff52",
+    "authority": "REMOTE_EXECUTION_DOW"
+  },
+  "exact_census": {
+    "workflow_run": 36751754800,
+    "job": 110011875112,
+    "status": "MEASURED",
+    "total": 8222,
+    "families": {
+      "E999": 1,
+      "F821": 0,
+      "F601": 0,
+      "F811": 0,
+      "F841": 62,
+      "E722": 16,
+      "E731": 0,
+      "E741": 17,
+      "W293": 411
+    },
+    "artifact": {
+      "id": 11116102318,
+      "name": "dab-flake8-census",
+      "sha256": "74a41bf50ae121ca24143d6f48ed260b83f7a0ae7446b41814a759b9a8bbc33a"
+    }
+  },
+  "measured_delta_from_prior_combined": {
+    "prior_source_sha": "1830662b57ccaeb6b1c1553f2c584abe6a954f9f",
+    "prior_total": 8225,
+    "prior_F841": 66,
+    "total_delta": -3,
+    "F841_delta": -4,
+    "note": "selected reduction expected 3 but exact post-merge census measured 4 fewer F841"
+  },
+  "subsequent_repository_state": {
+    "sha": "d3d13fbc5aacc4e060f7b20b602e7ccd422dff52",
+    "role": "DMAIC_METRICS_FOLLOWUP",
+    "lint_population_changed": false,
+    "changed_paths": [
+      "docs/api/dmaic_metrics.json",
+      "docs/api/dmaic_metrics_chart.html"
+    ]
+  },
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+    "state": "SOURCE_BOUND_HOLD"
+  },
+  "acceptance": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "engineering_truth_promoted": false
+  }
+}
