@@ -39,6 +39,11 @@ def validate() -> list[str]:
         if not node.get("state"):
             errors.append(f"node without state: {node.get('id')}")
 
+    for node in nodes:
+        url = node.get("url")
+        if isinstance(url, str) and url.startswith("../"):
+            errors.append(f"Pages-unsafe graph URL: {node.get('id')} -> {url}")
+
     for edge in edges:
         if edge.get("type") not in allowed_edges:
             errors.append(f"unknown edge type: {edge.get('type')}")
@@ -65,7 +70,7 @@ def validate() -> list[str]:
         if layout_mode not in set(manifest.get("layout", {}).get("selectable_modes", [])):
             errors.append(f"missing selectable layout mode: {layout_mode}")
 
-    for ui_token in {"golden-focus", "single-focus", 'id="focus"', "CODEX BD queue", "External split-repo router"}:
+    for ui_token in {"golden-focus", "single-focus", 'id="focus"', 'id="graphFilter"', 'id="edgeInspect"', "CODEX BD queue", "External split-repo router"}:
         if ui_token not in html:
             errors.append(f"missing enhanced UI contract token: {ui_token}")
 
