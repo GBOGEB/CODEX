@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "snapshot_at": "2026-09-30T11:26:00+02:00",
+  "snapshot_at": "2026-09-30T11:34:00+02:00",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -17,10 +17,10 @@
       "id": "repo_abacus",
       "type": "repo",
       "label": "GBOGEB/ABACUS",
-      "state": "REMOTE_EXECUTION",
+      "state": "REMOTE_EXECUTION_CURRENT",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "9bebb2e5173f43d77bf178833e1c2f1c827663cd"
+        "sha": "3e56cee45badf25c58dd12483ef82174589609f1"
       }
     },
     {
@@ -77,10 +77,11 @@
       "id": "hard_pr",
       "type": "pull_request",
       "label": "ABACUS #1489 E999 repairs",
-      "state": "PROVING",
+      "state": "MERGED",
       "url": "https://github.com/GBOGEB/ABACUS/pull/1489",
       "meta": {
-        "head_sha": "80c822aa701a6139885dd8de1cffb0b4a4e13c90"
+        "head_sha": "80c822aa701a6139885dd8de1cffb0b4a4e13c90",
+        "merge_sha": "900d61d5961d92f161480f311cc69051e475cbca"
       }
     },
     {
@@ -118,6 +119,16 @@
       "type": "artifact",
       "label": "MissionControl Mycelium UI",
       "state": "UNDER_CONSTRUCTION"
+    },
+    {
+      "id": "slice5",
+      "type": "pull_request",
+      "label": "ABACUS #1490 slice 5",
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1490",
+      "meta": {
+        "merge_sha": "66af75cbf4a9d69d45d823a2eeef1336300aefc6"
+      }
     }
   ],
   "edges": [
@@ -205,6 +216,16 @@
       "from": "repo_abacus",
       "to": "repo_codex",
       "type": "federates"
+    },
+    {
+      "from": "slice5",
+      "to": "dab_mech",
+      "type": "proves"
+    },
+    {
+      "from": "slice4",
+      "to": "slice5",
+      "type": "precedes"
     }
   ]
 }
