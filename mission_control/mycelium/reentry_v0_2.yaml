@@ -2,14 +2,14 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-09-30T13:11:00+02:00"
+  generated_at: "2026-09-30T13:18:00+02:00"
 
   repositories:
     codex:
       repo: GBOGEB/CODEX
       branch: main
       handover_observed_sha: d77d44811fec4fada16988769614d6091df56133
-      refreshed_current_sha: c8fc8f940cbc233e164705859efb850759f7aaac
+      refreshed_current_sha: cd45dc8f8934d554d824f0c22db619dfe6bb546d
       role: UI_ORCHESTRATION_GRAPH_AUTHORITY
       mycelium_v0_1_merge:
         pr: 837
@@ -89,6 +89,28 @@ reentry:
       - executable_DAG_projection
       - exact_head_proof_receipt
       - merged_main_Pages_green
+
+  active_delta:
+    id: MYCELIUM_V0_2_2_LIVE_TEMPORAL_FEDERATION_INGESTION
+    state: IMPLEMENTING
+    baseline:
+      codex_sha: cd45dc8f8934d554d824f0c22db619dfe6bb546d
+      abacus_sha: d8e71dc73453e9e4ea10fa62afd0d9554d241297
+      cryoplant_sha: f03bfc61bcf85a2d91cd22d083ad0ef954387f0d
+      docking_coverage_before: "2/3"
+      docking_coverage_now: "3/3"
+    contract:
+      workflow: .github/workflows/missioncontrol-live-federation.yml
+      mode: READ_ONLY_PUBLIC_METADATA
+      temporal_events: mission_control/mycelium/federation_events.json
+      authority_transfer: false
+      repository_mutation: false
+    proof_required:
+      - hosted_live_ingestion_success
+      - three_exact_head_shas
+      - append_only_event_output
+      - artifact_uploaded
+      - validator_green
 
   requested_delta:
     id: MYCELIUM_V0_2_HTML_CONTROL_PLANE
@@ -192,7 +214,7 @@ reentry:
     - id: CODEX_UI
       repository: GBOGEB/CODEX
       branch: main
-      head_sha: c8fc8f940cbc233e164705859efb850759f7aaac
+      head_sha: cd45dc8f8934d554d824f0c22db619dfe6bb546d
       state: CONTROLLED_GREEN
       current_atom: LIVE_TEMPORAL_FEDERATION_INGESTION
       completed_atoms:
@@ -231,10 +253,9 @@ reentry:
         - mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
         - docs/missioncontrol_mycelium.html
       next_legal_transitions:
-        - INGEST_LIVE_TEMPORAL_EVENTS
-        - REFRESH_FEDERATION_HEADS
-        - CONSUME_TYPED_REMOTE_RETURNS
+        - HOSTED_LIVE_INGESTION_PROOF
         - BIND_FEDERATION_FRESHNESS
+        - CONSUME_TYPED_REMOTE_RETURNS
         - DESIGN_AUTHENTICATED_EXECUTION_GATEWAY
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
@@ -372,9 +393,10 @@ reentry:
       - refresh_live_main_heads
       - ingest_governed_temporal_events
       - refresh_federation_source_identities
+      - hosted_live_ingestion_proof
+      - bind_source_target_freshness
       - consume_typed_remote_returns
       - project_current_mid_long_priority
-      - bind_source_target_freshness
       - update_graph_driven_outward_navigation
       - preserve_PCA_BT_KPI_evidence_guards
       - design_authenticated_execution_gateway_separately
