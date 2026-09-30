@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-09-30T15:55:58Z",
+  "generated_at": "2026-09-30T16:09:32Z",
   "public_metadata_only": true,
   "authority_transfer": false,
   "sources": [
@@ -20,48 +20,57 @@
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "EXECUTION_DOW",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-09-30T15:55:58Z",
-      "head_sha": "877efed83bf6479232e0029fb430243f21e937a2",
-      "census_pr": 1514,
-      "census_head_sha": "725218d7e7dce208c7196654aade542cfe9ded27",
-      "census_merge_sha": "877efed83bf6479232e0029fb430243f21e937a2",
-      "census_workflow_run": 36740253334,
-      "census_job": 109972471534,
-      "census_artifact_id": 11110361727,
-      "census_artifact_sha256": "34596f396bce4d19c36b2816a8e23641b85f58dc602bdef282d614961ade7cb3",
-      "measurement_basis": "exact PR-head DAB census on #1514; live main identity tracked separately",
-      "census_total": 8351,
-      "subsequent_merge_pr": 1500,
-      "subsequent_merge_sha": "2d365a1a3b39395b165e2e9662967d434d302606",
-      "w293_postmerge_status": "MEASURED_BY_PR1514_EXACT_HEAD_CENSUS",
+      "observed_at": "2026-09-30T16:09:32Z",
+      "head_sha": "07dfdf08cc4252df6d3650b2c6b1b3623958bbd8",
+      "census_pr": 1516,
+      "census_head_sha": "fa9f22ef330022ba4af31e619608b22bf8071d8f",
+      "census_merge_sha": "fa9f22ef330022ba4af31e619608b22bf8071d8f",
+      "census_workflow_run": 36741063907,
+      "census_job": 109975274070,
+      "census_artifact_id": 11110213996,
+      "census_artifact_sha256": "40e991e1171f5be96531bd27ca089de7d7fd25e62409f076937ab790dbfc637c",
+      "measurement_basis": "exact merged-main DAB census after #1514 + #1516; live repository head tracked separately",
+      "census_total": 8349,
+      "w293_postmerge_status": "MEASURED_BY_POST_1516_MAIN_CENSUS",
       "E741": 22,
       "W293": 517,
-      "E722": 20,
+      "E722": 18,
       "F841": 77,
       "E999": 1,
       "source_bound_hold": "qplant/w52_p2m_ts_pressure_sensitivity.py",
-      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_return_1514_measured.json",
+      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_return_1516_measured.json",
       "F821": 0,
       "F601": 0,
       "F811": 0,
       "E731": 0,
       "family_slice_baselines": {
-        "E722": 22,
+        "E722": 20,
         "W293": 705
       },
-      "measured_return_source_sha": "725218d7e7dce208c7196654aade542cfe9ded27",
+      "measured_return_source_sha": "fa9f22ef330022ba4af31e619608b22bf8071d8f",
       "live_head_after_measurement": {
-        "sha": "877efed83bf6479232e0029fb430243f21e937a2",
-        "status": "CURRENT_MAIN_AFTER_1514",
-        "latest_known_merge_pr": 1514
+        "sha": "07dfdf08cc4252df6d3650b2c6b1b3623958bbd8",
+        "status": "UNMEASURED_AFTER_1518",
+        "latest_known_merge_pr": 1518,
+        "expected_only": {
+          "W293": 453
+        },
+        "pending_census_run": 36741890687
       },
       "pending_independent_lane": {
-        "pr": 1516,
-        "family": "E722",
+        "pr": 1519,
+        "families": [
+          "E722",
+          "E741"
+        ],
         "status": "OPEN_UNMEASURED",
+        "head_sha": "971b781d641776fe1e34fe09591716f90548e83b",
         "expected_only": {
-          "E722": 18
-        }
+          "E722": 16,
+          "E741": 21,
+          "W293": 453
+        },
+        "census_run": 36742253906
       }
     },
     {
