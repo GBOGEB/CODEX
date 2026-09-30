@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "id": "MYCELIUM_V021_PR841_PROOF",
+  "subject": {
+    "repository": "GBOGEB/CODEX",
+    "pull_request": 841,
+    "exact_head_sha": "4e51b7fabd7a3d5dc5bb6f8c31a55b549e11863d",
+    "merge_sha": "f9b106a8642198f98814809432a46c99fb041389",
+    "merged_main_readback_sha": "c8fc8f940cbc233e164705859efb850759f7aaac"
+  },
+  "first_red_repair": {
+    "failed_run": 36705302651,
+    "failed_job": 109854026033,
+    "failure_step": "Verify deterministic materializations",
+    "classification": "REPO_LOCAL_STALE_GENERATED_METRICS",
+    "repair": "refresh canonical and Pages graph metrics materializations",
+    "repaired_metrics_blob": "06310b8dd0be47734af537c10d43f5541f5337e7"
+  },
+  "exact_head_proof": {
+    "workflow": "MissionControl Mycelium CI",
+    "run_id": 36706754707,
+    "job_id": 109858693406,
+    "conclusion": "success",
+    "executed_steps": 19,
+    "validator": "PASS",
+    "tests": "PASS",
+    "deterministic_materialization": "PASS"
+  },
+  "pages_readback": {
+    "effective_main_sha": "c8fc8f940cbc233e164705859efb850759f7aaac",
+    "workflow": "pages build and deployment",
+    "run_id": 36706855094,
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 109859031105,
+        "name": "build",
+        "conclusion": "success",
+        "executed_steps": 11
+      },
+      {
+        "id": 109859195552,
+        "name": "report-build-status",
+        "conclusion": "success",
+        "executed_steps": 3
+      },
+      {
+        "id": 109859195597,
+        "name": "deploy",
+        "conclusion": "success",
+        "executed_steps": 3
+      }
+    ]
+  },
+  "chain": [
+    "PR #841 exact head",
+    "first executed red classified",
+    "stale generated metrics repaired",
+    "exact-head validator PASS",
+    "exact-head tests PASS",
+    "exact-head deterministic materialization PASS",
+    "merge #841",
+    "merged-main readback",
+    "Pages build/deploy PASS"
+  ],
+  "disposition": "CONTROLLED_GREEN_V021",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "next_edge": "LIVE_TEMPORAL_FEDERATION_INGESTION"
+}
