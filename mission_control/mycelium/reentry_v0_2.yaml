@@ -2,14 +2,14 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-09-30T12:24:00Z"
+  generated_at: "2026-09-30T12:36:00Z"
 
   repositories:
     codex:
       repo: GBOGEB/CODEX
       branch: main
       handover_observed_sha: d77d44811fec4fada16988769614d6091df56133
-      refreshed_current_sha: 954cde35a2ac101e687d71e28f973864118bb1f0
+      refreshed_current_sha: 884327802f57d40b84714def4b0b5b59b3f1a25a
       role: UI_ORCHESTRATION_GRAPH_AUTHORITY
       mycelium_v0_1_merge:
         pr: 837
@@ -29,7 +29,7 @@ reentry:
       repo: GBOGEB/ABACUS
       branch: main
       handover_observed_sha: 713a152e99024165aea81bffbf530d2073e164bb
-      refreshed_current_sha: 2d365a1a3b39395b165e2e9662967d434d302606
+      refreshed_current_sha: 467453047d0ca4228d093d02f22c12437e17708f
       role: REMOTE_EXECUTION_AUTHORITY
       latest_census:
         pr: 1499
@@ -49,14 +49,37 @@ reentry:
         family: W293
         removed: 745
         expected_postmerge_residual: 1912
-        residual_status: WITHHELD_POSTMERGE_CENSUS
+        residual_status: MEASURED_BY_PR1501_CENSUS
         pending_census_run: 36714315712
+      latest_measured_return:
+        pr: 1501
+        head_sha: 5f7720626a8f559747c03886c0ed087de52e4e44
+        merge_sha: 83b8a1a9e4b89457cf7f07fb447544fa13eb2b3b
+        current_main_sha: 467453047d0ca4228d093d02f22c12437e17708f
+        workflow_run: 36714410799
+        job: 109883686239
+        artifact_id: 11095916691
+        artifact_sha256: 49073f6738c0ffd6375a740d62bf242bfd248507db2721831a91ffabb9109520
+        total: 9764
+        E741: 35
+        W293: 1912
+        E722: 26
+        F841: 77
+        E999: 1
+        state: MEASURED
     cryoplant:
       repo: GBOGEB/cryoplant-project
       branch: main
       handover_observed_sha: f03bfc61bcf85a2d91cd22d083ad0ef954387f0d
-      refreshed_current_sha: f03bfc61bcf85a2d91cd22d083ad0ef954387f0d
+      refreshed_current_sha: 9f1ff9a9b48b40cf19555fdcd34a1cbc944eaa1a
       role: REMOTE_ENGINEERING_AUTHORITY
+      latest_control_return:
+        pr: 1834
+        head_sha: 4287f4ad7e1f0353ad76d11057a85f5114f7b860
+        merge_sha: 9f1ff9a9b48b40cf19555fdcd34a1cbc944eaa1a
+        path: mission_control/master_input_cleanup/index.html
+        role: REMOTE_ENGINEERING_CONTROL_LEDGER
+        projection_policy: METADATA_ONLY_NO_RESTRICTED_CONTENT
 
   invariants:
     authority_transfer: false
@@ -202,7 +225,7 @@ reentry:
     - id: CODEX_UI
       repository: GBOGEB/CODEX
       branch: main
-      head_sha: 954cde35a2ac101e687d71e28f973864118bb1f0
+      head_sha: 884327802f57d40b84714def4b0b5b59b3f1a25a
       state: OWNER_ACTION_GATE
       current_atom: GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
       completed_atoms:
@@ -251,26 +274,27 @@ reentry:
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
-      head_sha: 2d365a1a3b39395b165e2e9662967d434d302606
+      head_sha: 467453047d0ca4228d093d02f22c12437e17708f
       state: REMOTE_AUTHORITY
-      latest_census_merge_sha: b1763b9ac6a9d98150a85bc807531d2ef2af1301
-      current_atom: E741_PR1501_PROOF_AND_W293_POST1500_CENSUS
+      latest_census_merge_sha: 83b8a1a9e4b89457cf7f07fb447544fa13eb2b3b
+      current_atom: POST_1501_MEASURED_DAB_QUEUE
       completed_atoms: []
       blocker: REMOTE_ONLY_NO_CODEX_PROMOTION
       queue_state: EXECUTION
       evidence_refs: []
       artifact_refs: []
       next_legal_transitions:
-        - INGEST_TYPED_RETURN
+        - ADMIT_NEXT_MEASURED_HARD_OR_MECH_SLICE
+        - PRESERVE_E999_SOURCE_BOUND_HOLD
         - REFRESH_REMOTE_HEAD
     - id: QLM_ENGINEERING
       repository: GBOGEB/cryoplant-project
       branch: main
-      head_sha: f03bfc61bcf85a2d91cd22d083ad0ef954387f0d
+      head_sha: 9f1ff9a9b48b40cf19555fdcd34a1cbc944eaa1a
       state: REMOTE_ENGINEERING_AUTHORITY
-      current_atom: QLM_PROJECTED_OR_BRIDGED
+      current_atom: MASTER_INPUT_CLEANUP_LEDGER_REMOTE_RETURN
       completed_atoms: []
-      blocker: REMOTE_AUTHORITY_PRESERVED
+      blocker: REMOTE_AUTHORITY_PRESERVED_AND_PRIVATE_CONTENT
       queue_state: RETURN
       evidence_refs:
         - ADR-QPS-006
@@ -394,6 +418,24 @@ reentry:
     pages_status: GREEN
     proof_receipt: mission_control/mycelium/receipts/LIVE_FEDERATION_INGESTION_20260930T111600Z_PROOF.json
     next_edge: AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
+
+  remote_return_pulse:
+    id: RRP-20260930T123600Z
+    observed_at: "2026-09-30T12:36:00Z"
+    codex_base_sha: 884327802f57d40b84714def4b0b5b59b3f1a25a
+    abacus:
+      source_sha: 467453047d0ca4228d093d02f22c12437e17708f
+      evidence: mission_control/mycelium/evidence/abacus_dab_return_1501_measured.json
+      state: MEASURED
+    cryoplant:
+      source_sha: 9f1ff9a9b48b40cf19555fdcd34a1cbc944eaa1a
+      evidence: mission_control/mycelium/evidence/cryoplant_master_input_ledger_return_1834.json
+      state: REMOTE_METADATA_ONLY
+      projection_policy: METADATA_ONLY_NO_RESTRICTED_CONTENT
+    gateway_owner_gate_unchanged: true
+    authority_transfer: false
+    formal_credit_delta: 0
+    engineering_credit_delta: 0
 
   qlm_context:
     repository: GBOGEB/cryoplant-project
