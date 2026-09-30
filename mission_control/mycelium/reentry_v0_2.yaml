@@ -2,7 +2,7 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-09-30T12:12:00Z"
+  generated_at: "2026-09-30T12:24:00Z"
 
   repositories:
     codex:
@@ -29,18 +29,28 @@ reentry:
       repo: GBOGEB/ABACUS
       branch: main
       handover_observed_sha: 713a152e99024165aea81bffbf530d2073e164bb
-      refreshed_current_sha: d8e71dc73453e9e4ea10fa62afd0d9554d241297
+      refreshed_current_sha: 2d365a1a3b39395b165e2e9662967d434d302606
       role: REMOTE_EXECUTION_AUTHORITY
       latest_census:
-        pr: 1494
-        state: MERGED
-        evidence_head_sha: 4a094a4f46646214d63e6ac0ed910723acceec12
-        merge_sha: b4da07f95801fe90771ce6651c39db2bcd823017
-        workflow_run: 36703352940
-        job: 109847724265
-        artifact_id: 11090647851
-        artifact_sha256: 09ab53f3c1642bd116893f8e83a02acd736dc015de535168460703aef51c2c78
-        counts_unchanged_from_prior_receipt: true
+        pr: 1499
+        state: MEASURED
+        evidence_head_sha: dd6b88eb8515ea29038ee287eadfeaeba96de858
+        merge_sha: b1763b9ac6a9d98150a85bc807531d2ef2af1301
+        workflow_run: 36714082229
+        job: 109882456512
+        total: 10512
+        E722: 26
+        E741: 40
+        F841: 77
+        W293: 2657
+      subsequent_merge:
+        pr: 1500
+        merge_sha: 2d365a1a3b39395b165e2e9662967d434d302606
+        family: W293
+        removed: 745
+        expected_postmerge_residual: 1912
+        residual_status: WITHHELD_POSTMERGE_CENSUS
+        pending_census_run: 36714315712
     cryoplant:
       repo: GBOGEB/cryoplant-project
       branch: main
@@ -241,13 +251,13 @@ reentry:
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
-      head_sha: d8e71dc73453e9e4ea10fa62afd0d9554d241297
+      head_sha: 2d365a1a3b39395b165e2e9662967d434d302606
       state: REMOTE_AUTHORITY
-      latest_census_merge_sha: b4da07f95801fe90771ce6651c39db2bcd823017
-      current_atom: REMOTE_EXECUTION_STATE
+      latest_census_merge_sha: b1763b9ac6a9d98150a85bc807531d2ef2af1301
+      current_atom: E741_PR1501_PROOF_AND_W293_POST1500_CENSUS
       completed_atoms: []
       blocker: REMOTE_ONLY_NO_CODEX_PROMOTION
-      queue_state: REVIEW
+      queue_state: EXECUTION
       evidence_refs: []
       artifact_refs: []
       next_legal_transitions:
