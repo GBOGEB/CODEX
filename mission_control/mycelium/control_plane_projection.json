@@ -2,7 +2,7 @@
   "schema_version": "0.2",
   "generated_for": "CODEX_MISSIONCONTROL_MYCELIUM",
   "mode": "CONTINUE_FROM_DURABLE_STATE",
-  "generated_at": "2026-09-30T12:49:00+02:00",
+  "generated_at": "2026-09-30T13:11:00+02:00",
   "source_yaml": "mission_control/mycelium/reentry_v0_2.yaml",
   "invariants": {
     "authority_transfer": false,
@@ -20,7 +20,7 @@
       "repo": "GBOGEB/CODEX",
       "branch": "main",
       "handover_observed_sha": "d77d44811fec4fada16988769614d6091df56133",
-      "refreshed_current_sha": "b7d60371d9caae4d81949813779d24c9a38a9e09",
+      "refreshed_current_sha": "c8fc8f940cbc233e164705859efb850759f7aaac",
       "role": "UI_ORCHESTRATION_GRAPH_AUTHORITY",
       "merge_refs": [
         {
@@ -30,6 +30,10 @@
         {
           "pr": 839,
           "sha": "495da65d816e6a3123f6ed53221d0ab053342ada"
+        },
+        {
+          "pr": 841,
+          "sha": "f9b106a8642198f98814809432a46c99fb041389"
         }
       ]
     },
@@ -159,24 +163,38 @@
     {
       "id": "CODEX_UI",
       "repository": "GBOGEB/CODEX",
-      "branch": "mission-control-v021-control-plane-20260930",
-      "head_sha": "72a5a8247e4af1406d39ee359179a4c6d7163fd5",
-      "state": "EXECUTING",
-      "current_atom": "MYCELIUM_V0_2_HTML_CONTROL_PLANE",
+      "branch": "main",
+      "head_sha": "c8fc8f940cbc233e164705859efb850759f7aaac",
+      "state": "CONTROLLED_GREEN",
+      "current_atom": "LIVE_TEMPORAL_FEDERATION_INGESTION",
       "completed_atoms": [
         "MYCELIUM_V0_1",
-        "MYCELIUM_V0_2_INTERACTION"
-      ],
-      "blocker": null,
-      "queue_state": "EXECUTION",
-      "next_legal_transitions": [
+        "MYCELIUM_V0_2_INTERACTION",
         "CONTROL_PLANE_SCHEMA",
         "COMMAND_INPUT_ROOT",
         "LANE_RECOVERY_PROJECTION",
         "GRAPH_OVERLAYS",
         "OUTPUT_EVIDENCE",
         "FEDERATION_CONTROL",
-        "EXACT_HEAD_PROOF"
+        "TEMPORAL_EVENT_INGESTION",
+        "GRAPH_DRIVEN_OUTWARD_NAVIGATOR",
+        "VALIDATE_RESPONSIVE_LAYOUTS",
+        "VALIDATE_TIMEOUT_RECOVERY",
+        "VALIDATE_SOURCE_DEEPLINKS",
+        "EXACT_HEAD_PROOF",
+        "BOUNDED_PR",
+        "MERGE_READBACK",
+        "PAGES_READBACK",
+        "REGENERATE_REENTRY_MANIFEST"
+      ],
+      "blocker": null,
+      "queue_state": "EXECUTION",
+      "next_legal_transitions": [
+        "INGEST_LIVE_TEMPORAL_EVENTS",
+        "REFRESH_FEDERATION_HEADS",
+        "CONSUME_TYPED_REMOTE_RETURNS",
+        "BIND_FEDERATION_FRESHNESS",
+        "DESIGN_AUTHENTICATED_EXECUTION_GATEWAY"
       ]
     },
     {
@@ -287,5 +305,14 @@
     "conflict_state": "WITHHELD_UNTIL_GOVERNED_PER_EDGE_PROBE",
     "remote_authority_state": "PRESERVED",
     "authority_transfer": false
+  },
+  "current_proof": "mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json",
+  "current_capability_status": "MYCELIUM_V0_2_1_MERGED_PAGES_GREEN",
+  "next_edge": "LIVE_TEMPORAL_FEDERATION_INGESTION",
+  "pages_readback": {
+    "run_id": 36706855094,
+    "build": "PASS",
+    "deploy": "PASS",
+    "effective_main_sha": "c8fc8f940cbc233e164705859efb850759f7aaac"
   }
 }

@@ -69,38 +69,100 @@
       "parent_event": "EV-0005",
       "content_ref": "PR-840 / ABACUS #1494 census",
       "summary": "Measured ABACUS DAB census ingested on main and reconciled into v0.2.1 without replaying completed control-plane atoms."
+    },
+    {
+      "id": "EV-0007",
+      "at": "2026-09-30T13:03:14+02:00",
+      "type": "FIRST_RED",
+      "node_id": "current_next",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "f8eb1cb8f50f716a1bab0893f105f2842aba323a",
+      "parent_event": "EV-0006",
+      "content_ref": "Actions run 36705302651 / job 109854026033",
+      "summary": "First executed v0.2.1 red classified as stale deterministic graph metrics materialization; validator/tests were green."
+    },
+    {
+      "id": "EV-0008",
+      "at": "2026-09-30T13:09:00+02:00",
+      "type": "PROOF_BOUND",
+      "node_id": "current_next",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "4e51b7fabd7a3d5dc5bb6f8c31a55b549e11863d",
+      "parent_event": "EV-0007",
+      "content_ref": "Actions run 36706754707 / job 109858693406",
+      "summary": "Exact-head v0.2.1 validator, tests and deterministic materializations passed after bounded metrics refresh."
+    },
+    {
+      "id": "EV-0009",
+      "at": "2026-09-30T13:09:37+02:00",
+      "type": "MERGE",
+      "node_id": "mycelium",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "f9b106a8642198f98814809432a46c99fb041389",
+      "parent_event": "EV-0008",
+      "content_ref": "PR-841",
+      "summary": "MissionControl v0.2.1 control plane merged."
+    },
+    {
+      "id": "EV-0010",
+      "at": "2026-09-30T13:10:00+02:00",
+      "type": "OUTWARD_PROJECTION",
+      "node_id": "pages",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "c8fc8f940cbc233e164705859efb850759f7aaac",
+      "parent_event": "EV-0009",
+      "content_ref": "Actions run 36706855094",
+      "summary": "Current-main GitHub Pages build, status report and deploy completed successfully."
+    },
+    {
+      "id": "EV-0011",
+      "at": "2026-09-30T13:11:00+02:00",
+      "type": "RECOVERY",
+      "node_id": "current_next",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "c8fc8f940cbc233e164705859efb850759f7aaac",
+      "parent_event": "EV-0010",
+      "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
+      "summary": "Post-merge reentry regenerated; v0.2.1 closed and next edge advanced to live temporal/federation ingestion."
     }
   ],
   "horizons": {
     "current": [
       {
         "rank": 1,
-        "id": "MYCELIUM_V0_2_1_HTML_CONTROL_PLANE",
-        "state": "EXECUTING",
-        "reason": "active bounded CODEX UI slice",
+        "id": "LIVE_TEMPORAL_FEDERATION_INGESTION",
+        "state": "READY",
+        "reason": "v0.2.1 is merged, exact-head proven and Pages deployed",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
-        "id": "EXACT_HEAD_PROOF",
-        "state": "PENDING",
-        "reason": "required before merge/promotion",
-        "lane": "CODEX_UI"
+        "id": "REFRESH_FEDERATION_HEADS",
+        "state": "READY",
+        "reason": "remote execution/engineering authority remains external and freshness must stay explicit",
+        "lane": "FEDERATION"
+      },
+      {
+        "rank": 3,
+        "id": "CONSUME_TYPED_REMOTE_RETURNS",
+        "state": "READY_WHEN_AVAILABLE",
+        "reason": "project/bridge returns may update projections without authority transfer",
+        "lane": "FEDERATION"
       }
     ],
     "mid": [
       {
         "rank": 1,
-        "id": "TEMPORAL_EVENT_INGESTION",
-        "state": "IMPLEMENTING",
-        "reason": "replace static-only snapshot with append-only control event projection",
-        "lane": "CODEX_UI"
+        "id": "BIND_FEDERATION_FRESHNESS",
+        "state": "READY",
+        "reason": "make source/ref/SHA freshness a live governed event rather than static snapshot metadata",
+        "lane": "FEDERATION"
       },
       {
         "rank": 2,
         "id": "GRAPH_DRIVEN_OUTWARD_NAVIGATOR",
-        "state": "IMPLEMENTING",
-        "reason": "outward products must derive from graph nodes/provenance",
+        "state": "CONTROLLED_GREEN",
+        "reason": "navigator exists; next step is live update from governed event/source projections",
         "lane": "CODEX_UI"
       },
       {
@@ -115,14 +177,14 @@
       {
         "rank": 1,
         "id": "AUTHENTICATED_EXECUTION_GATEWAY",
-        "state": "NOT_IN_STATIC_PAGES",
-        "reason": "required before Apply can mutate repository/runtime state",
+        "state": "SEPARATE_DESIGN_REQUIRED",
+        "reason": "required before Apply can mutate repository/runtime state; static Pages remains staged only",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
         "id": "LIVE_FEDERATION_FRESHNESS",
-        "state": "PLANNED",
+        "state": "READY_TO_IMPLEMENT",
         "reason": "periodic typed repo-head/freshness projection without authority transfer",
         "lane": "FEDERATION"
       },

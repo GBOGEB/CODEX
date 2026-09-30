@@ -60,30 +60,38 @@
     },
     {
       "id": "VALIDATE_RESPONSIVE_LAYOUTS",
-      "state": "PENDING"
+      "state": "COMPLETED"
     },
     {
       "id": "VALIDATE_TIMEOUT_RECOVERY",
-      "state": "PENDING"
+      "state": "COMPLETED"
     },
     {
       "id": "VALIDATE_SOURCE_DEEPLINKS",
-      "state": "PENDING"
+      "state": "COMPLETED"
     },
     {
       "id": "EXACT_HEAD_PROOF",
-      "state": "PENDING"
+      "state": "COMPLETED"
     },
     {
       "id": "BOUNDED_PR",
-      "state": "PENDING"
+      "state": "COMPLETED"
     },
     {
       "id": "MERGE_READBACK",
-      "state": "PENDING"
+      "state": "COMPLETED"
     },
     {
       "id": "REGENERATE_REENTRY_MANIFEST",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "PAGES_READBACK",
+      "state": "COMPLETED"
+    },
+    {
+      "id": "LIVE_TEMPORAL_FEDERATION_INGESTION",
       "state": "PENDING"
     }
   ],
@@ -171,16 +179,33 @@
     [
       "MERGE_READBACK",
       "REGENERATE_REENTRY_MANIFEST"
+    ],
+    [
+      "MERGE_READBACK",
+      "PAGES_READBACK"
+    ],
+    [
+      "PAGES_READBACK",
+      "REGENERATE_REENTRY_MANIFEST"
+    ],
+    [
+      "REGENERATE_REENTRY_MANIFEST",
+      "LIVE_TEMPORAL_FEDERATION_INGESTION"
     ]
   ],
   "first_incomplete_atoms": [
-    "VALIDATE_RESPONSIVE_LAYOUTS",
-    "VALIDATE_TIMEOUT_RECOVERY",
-    "VALIDATE_SOURCE_DEEPLINKS"
+    "LIVE_TEMPORAL_FEDERATION_INGESTION"
   ],
   "guards": {
     "replay_completed_atoms": false,
     "first_red_scope": "AFFECTED_LANE_ONLY",
     "independent_lanes_continue": true
+  },
+  "closed_slice": {
+    "id": "MYCELIUM_V0_2_1_HTML_CONTROL_PLANE",
+    "state": "CONTROLLED_GREEN",
+    "exact_head_sha": "4e51b7fabd7a3d5dc5bb6f8c31a55b549e11863d",
+    "merge_sha": "f9b106a8642198f98814809432a46c99fb041389",
+    "pages_run": 36706855094
   }
 }
