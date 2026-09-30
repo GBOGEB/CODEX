@@ -102,7 +102,7 @@ control_plane:
     required_provenance: [source_repo, source_ref, source_sha, target_repo, target_ref, target_sha, mechanism, authority_before, authority_after, proof]
 
 authenticated_execution_gateway:
-  state: TRANSPORT_IMPLEMENTED_PENDING_PROOF
+  state: TRANSPORT_MERGED_EXACT_HEAD_GREEN
   contract: mission_control/mycelium/execution_gateway_contract.yaml
   request_schema: mission_control/mycelium/schemas/execution_request.schema.json
   receipt_schema: mission_control/mycelium/schemas/execution_receipt.schema.json
@@ -118,11 +118,16 @@ authenticated_execution_gateway:
   replay_completed_request_forbidden: true
   enabled_mutation_transports: []
   mutation_enabled: false
+  exact_head_proof: mission_control/mycelium/receipts/AUTHENTICATED_TRANSPORT_V01_PR850_PROOF.json
+  exact_head_run: 36712962475
+  exact_head_job: 109878913705
+  merge_sha: ea167f43732e838bc3fb5d5ad382fe0874b66fcb
+  merged_main_readback_sha: 954cde35a2ac101e687d71e28f973864118bb1f0
+  pages_readback: WITHHELD_NO_RUN_OBSERVED
   runtime_dry_run_proof: WITHHELD_OWNER_DISPATCH_REQUIRED
   remote_authority_mutation: false
   authority_transfer: false
   next_atoms:
-    - AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF
     - GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
     - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
     - PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS
