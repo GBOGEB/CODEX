@@ -2,7 +2,7 @@
   "schema_version": "0.2",
   "generated_for": "CODEX_MISSIONCONTROL_MYCELIUM",
   "mode": "CONTINUE_FROM_DURABLE_STATE",
-  "generated_at": "2026-09-30T12:36:00Z",
+  "generated_at": "2026-09-30T15:10:57Z",
   "source_yaml": "mission_control/mycelium/reentry_v0_2.yaml",
   "invariants": {
     "authority_transfer": false,
@@ -20,7 +20,7 @@
       "repo": "GBOGEB/CODEX",
       "branch": "main",
       "handover_observed_sha": "d77d44811fec4fada16988769614d6091df56133",
-      "refreshed_current_sha": "884327802f57d40b84714def4b0b5b59b3f1a25a",
+      "refreshed_current_sha": "4261c883624a2a01f17e918445a643d048a1a79e",
       "role": "UI_ORCHESTRATION_GRAPH_AUTHORITY",
       "merge_refs": [
         {
@@ -41,15 +41,16 @@
       "repo": "GBOGEB/ABACUS",
       "branch": "main",
       "handover_observed_sha": "713a152e99024165aea81bffbf530d2073e164bb",
-      "refreshed_current_sha": "467453047d0ca4228d093d02f22c12437e17708f",
+      "refreshed_current_sha": "fa482c009afd9bdab4062900514521e8339d35b8",
       "role": "REMOTE_EXECUTION_AUTHORITY",
       "latest_census": {
-        "pr": 1501,
-        "head_sha": "5f7720626a8f559747c03886c0ed087de52e4e44",
-        "merge_sha": "83b8a1a9e4b89457cf7f07fb447544fa13eb2b3b",
-        "workflow_run": 36714410799,
-        "job": 109883686239,
-        "total": 9764,
+        "pr": 1506,
+        "head_sha": "d54d22a57a80bc462a051ee26e5a7d5489432237",
+        "merge_sha": "d54d22a57a80bc462a051ee26e5a7d5489432237",
+        "current_source_sha": "fa482c009afd9bdab4062900514521e8339d35b8",
+        "workflow_run": 36721260876,
+        "job": 109906683250,
+        "total": 8853,
         "status": "MEASURED",
         "families": {
           "E999": 1,
@@ -59,18 +60,17 @@
           "F841": 77,
           "E722": 26,
           "E731": 0,
-          "E741": 35,
-          "W293": 1912
+          "E741": 22,
+          "W293": 1013
         },
-        "artifact_id": 11095916691,
-        "artifact_sha256": "49073f6738c0ffd6375a740d62bf242bfd248507db2721831a91ffabb9109520"
+        "artifact_id": 11100356126,
+        "artifact_sha256": "27af842e4d97ddc5722d7a07da9f5162491d629ddaf762e7715059bce3b1ad15"
       },
       "subsequent_merge": {
-        "pr": 1501,
-        "merge_sha": "83b8a1a9e4b89457cf7f07fb447544fa13eb2b3b",
-        "family": "E741",
-        "measured_residual": 35,
-        "status": "MEASURED"
+        "pr": 1507,
+        "merge_sha": "5260b70814e8c39e805f658b878aeb8c4cfd6a42",
+        "family": "DOW_MAIN_CI_SELECTOR_RECOVERY",
+        "status": "CURRENT_HEAD_NEWER_THAN_MEASURED_CENSUS"
       }
     },
     "cryoplant": {
@@ -200,7 +200,7 @@
       "id": "CODEX_UI",
       "repository": "GBOGEB/CODEX",
       "branch": "main",
-      "head_sha": "884327802f57d40b84714def4b0b5b59b3f1a25a",
+      "head_sha": "4261c883624a2a01f17e918445a643d048a1a79e",
       "state": "OWNER_ACTION_GATE",
       "current_atom": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
       "completed_atoms": [
@@ -239,10 +239,12 @@
       "id": "ABACUS_REMOTE_EXECUTION",
       "repository": "GBOGEB/ABACUS",
       "branch": "main",
-      "head_sha": "467453047d0ca4228d093d02f22c12437e17708f",
+      "head_sha": "fa482c009afd9bdab4062900514521e8339d35b8",
       "state": "REMOTE_AUTHORITY",
-      "current_atom": "POST_1501_MEASURED_DAB_QUEUE",
-      "completed_atoms": [],
+      "current_atom": "POST_1506_MEASURED_DAB_QUEUE_CURRENT_HEAD_ADVANCED_1507",
+      "completed_atoms": [
+        "POST_1506_COMBINED_CENSUS_MEASURED"
+      ],
       "blocker": "REMOTE_ONLY_NO_CODEX_PROMOTION",
       "queue_state": "EXECUTION",
       "next_legal_transitions": [
@@ -250,11 +252,11 @@
         "PRESERVE_E999_SOURCE_BOUND_HOLD",
         "REFRESH_REMOTE_HEAD"
       ],
-      "latest_census_merge_sha": "83b8a1a9e4b89457cf7f07fb447544fa13eb2b3b",
+      "latest_census_merge_sha": "d54d22a57a80bc462a051ee26e5a7d5489432237",
       "evidence_refs": [
-        "mission_control/mycelium/evidence/abacus_dab_return_1501_measured.json",
-        "ABACUS #1501 run 36714410799 job 109883686239",
-        "ABACUS artifact 11095916691"
+        "mission_control/mycelium/evidence/abacus_dab_return_1506_measured.json",
+        "ABACUS run 36721260876 job 109906683250",
+        "ABACUS artifact 11100356126"
       ]
     },
     {
