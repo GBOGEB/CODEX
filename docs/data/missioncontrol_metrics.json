@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "snapshot_at": "2026-09-30T12:45:00+02:00",
+  "snapshot_at": "2026-09-30T13:18:00+02:00",
   "evidence_policy": "MEASURED_OR_WITHHELD",
   "graph": {
     "node_count": 58,
@@ -47,10 +47,15 @@
       },
       "docking": {
         "status": "DERIVED_FROM_MEASURED",
-        "value": 66.67,
-        "fresh_sources": 2,
+        "value": 100,
+        "fresh_sources": 3,
         "declared_sources": 3,
-        "basis": "source registry freshness/identity observation"
+        "basis": "source registry exact-head identity/freshness observation",
+        "evidence": [
+          "CODEX cd45dc8f8934",
+          "ABACUS d8e71dc73453",
+          "cryoplant f03bfc61bcf8"
+        ]
       },
       "ports": {
         "status": "WITHHELD",
