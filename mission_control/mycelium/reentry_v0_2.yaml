@@ -2,7 +2,7 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-09-30T15:10:57Z"
+  generated_at: "2026-09-30T16:31:44Z"
 
   repositories:
     codex:
@@ -29,7 +29,7 @@ reentry:
       repo: GBOGEB/ABACUS
       branch: main
       handover_observed_sha: 713a152e99024165aea81bffbf530d2073e164bb
-      refreshed_current_sha: 07dfdf08cc4252df6d3650b2c6b1b3623958bbd8
+      refreshed_current_sha: 65f789b1254fba30aa9afd332f32df00fcee8009
       role: REMOTE_EXECUTION_AUTHORITY
       latest_census:
         pr: 1499
@@ -71,18 +71,19 @@ reentry:
           F811: 0
           E731: 0
       latest_measured_return:
-        pr: 1514
-        head_sha: fa9f22ef330022ba4af31e619608b22bf8071d8f
-        merge_sha: fa9f22ef330022ba4af31e619608b22bf8071d8f
-        current_main_sha: 07dfdf08cc4252df6d3650b2c6b1b3623958bbd8
-        workflow_run: 36741063907
-        job: 109975274070
-        artifact_id: 11110213996
-        artifact_sha256: 40e991e1171f5be96531bd27ca089de7d7fd25e62409f076937ab790dbfc637c
-        total: 8349
-        E722: 18
-        E741: 22
-        W293: 517
+        pr: 1519
+        head_sha: 18a79236974498931f654939e8fec2535c499aec
+        merge_sha: 18a79236974498931f654939e8fec2535c499aec
+        current_main_sha: 65f789b1254fba30aa9afd332f32df00fcee8009
+        current_main_status: NONLINT_DOCS_ONLY_AFTER_1519
+        workflow_run: 36743869562
+        job: 109984963572
+        artifact_id: 11111922818
+        artifact_sha256: 442f3edbf0109820cf0f69487fa151f13c77fe28fc31634886a1fa1288cc846e
+        total: 8282
+        E722: 16
+        E741: 21
+        W293: 453
         F841: 77
         E999: 1
         F821: 0
@@ -90,11 +91,18 @@ reentry:
         F811: 0
         E731: 0
         state: MEASURED
-        pending_independent_lane:
-          pr: 1519
-          families: [E722, E741]
-          expected_only: "E722=16,E741=21,W293=453"
-          status: OPEN_UNMEASURED
+        subsequent_nonlint_merge:
+          pr: 1521
+          sha: 65f789b1254fba30aa9afd332f32df00fcee8009
+          paths: [docs/api/deployment_matrix.json, docs/api/modules.json]
+        pending_lanes:
+          - pr: 1523
+            family: W293
+            expected_only: 416
+            state: OPEN_UNMEASURED
+          - pr: 1524
+            family: WORKFLOW_GOVERNANCE
+            state: OWNER_ACTION_FALLBACK_REPAIR
     cryoplant:
       repo: GBOGEB/cryoplant-project
       branch: main
@@ -302,20 +310,24 @@ reentry:
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
-      head_sha: 07dfdf08cc4252df6d3650b2c6b1b3623958bbd8
+      head_sha: 65f789b1254fba30aa9afd332f32df00fcee8009
       state: REMOTE_AUTHORITY
-      latest_census_merge_sha: 877efed83bf6479232e0029fb430243f21e937a2
-      current_atom: POST_1518_MEASURED_DAB_QUEUE_1519_PENDING
+      latest_census_merge_sha: 18a79236974498931f654939e8fec2535c499aec
+      current_atom: POST_1519_MEASURED_DAB_QUEUE_1523_1524_PENDING
       completed_atoms:
         - POST_1506_COMBINED_CENSUS_MEASURED
+        - POST_1514_MEASURED_DAB_RETURN
+        - POST_1518_MEASURED_DAB_RETURN
+        - POST_1519_COMBINED_CENSUS_MEASURED
       blocker: REMOTE_ONLY_NO_CODEX_PROMOTION
       queue_state: EXECUTION
       evidence_refs:
-        - mission_control/mycelium/evidence/abacus_dab_return_1506_measured.json
+        - mission_control/mycelium/evidence/abacus_dab_return_1519_measured.json
       artifact_refs:
-        - ABACUS artifact 11100356126
+        - ABACUS artifact 11111922818
       next_legal_transitions:
-        - ADMIT_NEXT_MEASURED_HARD_OR_MECH_SLICE
+        - PROVE_PR_1523_W293_453_TO_416
+        - PROVE_PR_1524_UPDATE_DOCS_OWNER_ACTION_FALLBACK
         - PRESERVE_E999_SOURCE_BOUND_HOLD
         - REFRESH_REMOTE_HEAD
     - id: QLM_ENGINEERING
