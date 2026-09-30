@@ -5,7 +5,7 @@
   "repository_role": "engineering_source_of_truth",
   "pages_role": "curated_verified_user_portal",
   "status": "active",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "dashboard_lineage": {
     "canonical_dashboard": "losses",
     "current_generation": "v3",
@@ -26,6 +26,7 @@
     "docs/index.html",
     "docs/engineering_portal.html",
     "docs/dashboard.html",
+    "docs/mission-control.html",
     "docs/handover.html",
     "docs/verification.html",
     "docs/regression.html",
@@ -74,5 +75,18 @@
     "pages_must_be_verified": true,
     "experimental_outputs_must_not_replace_canonical_silently": true,
     "public_urls_should_remain_stable": true
+  },
+  "mission_control": {
+    "flow_contract": "governance/mission_control/MISSION_CONTROL_FLOW_v1.yaml",
+    "canonical_dashboard": "docs/mission-control.html",
+    "interruption_policy": "visual_stream_timeout_non_blocking_by_default",
+    "layout_modes": [
+      "grid-2x3",
+      "grid-3x2",
+      "golden-focus",
+      "single-focus"
+    ],
+    "authority_transfer": false,
+    "formal_credit_delta": 0
   }
 }
