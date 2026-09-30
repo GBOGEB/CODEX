@@ -1,0 +1,398 @@
+schema: mission-control-flow/v1
+id: MC-MY-001
+title: MissionControl Mycelium Interaction Graph
+version: 1.0.0
+status: CONTROLLED_DRAFT
+repository: GBOGEB/CODEX
+authority_transfer: false
+formal_credit_delta: 0
+intent:
+  goal: uninterrupted convergent execution with explicit graph, lineage, recovery, user steering, and outward artifact access
+  non_goal:
+    - analytics do not auto-promote engineering compliance
+    - visual success does not compensate failed or unexecuted proof
+    - stream/chat interruption does not itself invalidate active executable work
+principles:
+  - SOURCE_FIRST
+  - EXACT_SHA_WHEN_RELEASE_CREDIT_IS_CLAIMED
+  - ZERO_STEP_NE_APPLICATION_FAIL
+  - GENERATED_VIEW_NE_ENGINEERING_TRUTH
+  - USER_STEERING_IS_AN_INPUT_EVENT_NOT_A_REBASE
+  - RECOVER_FROM_MANIFEST_BEFORE_RECONSTRUCTING_CONTEXT
+  - REBASE_ONLY_ON_MATERIAL_AUTHORITY_OR_CONFLICT
+  - FIRST_MATERIAL_RED_ONLY
+  - AUTHORITY_TRANSFER_FALSE
+  - FORMAL_CREDIT_DELTA_ZERO
+
+execution_state_machine:
+  states:
+    - DISCOVER
+    - FREEZE_AUTHORITY
+    - PLAN
+    - EXECUTE
+    - PROVE
+    - CONTROL
+    - WAIT_EXTERNAL
+    - RECOVER
+    - CLOSED
+  normal_path:
+    - DISCOVER
+    - FREEZE_AUTHORITY
+    - PLAN
+    - EXECUTE
+    - PROVE
+    - CONTROL
+    - CLOSED
+  recovery_rules:
+    visual_stream_timeout:
+      class: NON_BLOCKING_BY_DEFAULT
+      action:
+        - persist current node and exact next edge
+        - continue active executable step
+        - re-render status on next visible update
+      stop_only_if:
+        - required tool/session state is actually unavailable
+        - exact authority cannot be reconstructed
+        - mutation would become unsafe or ambiguous
+    connector_timeout:
+      class: RETRYABLE
+      retry_budget: 2
+      on_exhaustion: move current edge to WAIT_EXTERNAL and continue independent admitted edges
+    current_sha_changed:
+      class: CONDITIONAL_REBASE
+      action:
+        - compare authority delta
+        - rebase only if touched paths or governing contract changed
+        - otherwise retain exact bounded branch and record divergence
+    user_steer:
+      class: PRIORITY_EVENT
+      action:
+        - append steering event to temporal lineage
+        - recompute active-edge priority
+        - do not discard completed proof
+        - do not replay unchanged predecessors
+    generated_artifact_failure:
+      class: REPAIRABLE_IF_REPO_LOCAL
+      action:
+        - repair first material repo-local red
+        - regenerate outward projection
+        - preserve source authority
+    external_gate:
+      class: NON_COMPENSATING
+      action:
+        - mark WAIT_EXTERNAL
+        - keep predicate and required return explicit
+        - continue unrelated admitted work
+
+iteration_contract:
+  method: DMAIC_PLUS_3PSTAR
+  sequence:
+    - DEFINE:
+        outputs: [goal, scope, authority, next_edge]
+    - MEASURE:
+        outputs: [kpis, queue_pressure, graph_metrics, temporal_delta]
+    - ANALYZE:
+        outputs: [pca_diagnostic, reverse_pressure, bottleneck_classification]
+    - IMPROVE:
+        outputs: [bounded_change, generated_views]
+    - CONTROL:
+        outputs: [tests, exact_receipt_when_applicable, dod, dov, handover]
+  three_p_star:
+    - Refresh
+    - Probe
+    - Rank
+    - Prepare
+    - Prove
+    - Commit
+  convergence:
+    require:
+      - active edge is explicit
+      - predecessor proof is preserved
+      - no hidden reintroduction of cleared work
+      - every unresolved item maps to FIX_PR, PROVE, EXTERNAL_GATE, PARENT_CONTROL, or CLOSED
+    stop_conditions:
+      - no admitted executable edge
+      - external predicate is first red
+      - requested goal is closed with durable restart pointer
+
+graph:
+  node_types:
+    - authority
+    - task
+    - proof
+    - artifact
+    - external_return
+    - decision
+    - control
+    - user_event
+    - repository
+    - analytic
+  edge_types:
+    - depends_on
+    - precedes
+    - proves
+    - generates
+    - projects
+    - blocks
+    - returns_to
+    - federates_with
+    - cherry_picks
+    - merges
+    - supersedes
+    - traces_to
+    - steers
+  nodes:
+    - id: N0
+      label: CODEX main
+      type: authority
+      href: https://github.com/GBOGEB/CODEX
+    - id: N1
+      label: MissionControl flow manifest
+      type: control
+      href: ../governance/mission_control/MISSION_CONTROL_FLOW_v1.yaml
+    - id: N2
+      label: Interaction graph
+      type: control
+      href: mission-control.html#graph
+    - id: N3
+      label: BD queue
+      type: control
+      href: ../controls/BD_QUEUE_CURRENT.md
+    - id: N4
+      label: DMAIC
+      type: analytic
+      href: incubator-dmaic-dashboard.html
+    - id: N5
+      label: PCA / reverse pressure
+      type: analytic
+      href: ../pca_engine/src/pca_engine/control_analytics.py
+    - id: N6
+      label: Bradley-Terry
+      type: analytic
+      href: mission-control.html#analytics
+    - id: N7
+      label: DoD
+      type: proof
+      href: mission-control.html#evidence
+    - id: N8
+      label: DoV
+      type: proof
+      href: mission-control.html#evidence
+    - id: N9
+      label: Outward artifacts
+      type: artifact
+      href: manifest.html
+    - id: N10
+      label: Plotly runtime
+      type: artifact
+      href: wave_packages/runtime/pages/plotly_runtime_dashboard.html
+    - id: N11
+      label: Matplotlib / plot index
+      type: artifact
+      href: plots/index.html
+    - id: N12
+      label: Federation bridge
+      type: repository
+      href: federation_bridge_dashboard.html
+    - id: N13
+      label: Runtime map
+      type: artifact
+      href: runtime_map.html
+    - id: N14
+      label: Lossless handover
+      type: control
+      href: handover.html
+    - id: N15
+      label: User steering event
+      type: user_event
+      href: mission-control.html#timeline
+  edges:
+    - [N0, N1, projects]
+    - [N1, N2, generates]
+    - [N3, N4, steers]
+    - [N4, N5, precedes]
+    - [N5, N6, precedes]
+    - [N6, N7, traces_to]
+    - [N7, N8, precedes]
+    - [N8, N9, generates]
+    - [N9, N10, projects]
+    - [N9, N11, projects]
+    - [N0, N12, federates_with]
+    - [N1, N13, generates]
+    - [N1, N14, generates]
+    - [N15, N1, steers]
+
+dashboard:
+  canonical_entry: docs/mission-control.html
+  responsive: true
+  target_ratio: 1.618
+  layouts:
+    - id: grid-2x3
+      description: default six-panel desktop control room
+    - id: grid-3x2
+      description: wide-screen alternate
+    - id: golden-focus
+      description: one golden-ratio focus panel plus five satellites
+    - id: single-focus
+      description: one selected panel, suitable for small screens
+  six_panels:
+    - id: current
+      title: Current / Next Edge
+      purpose: exact current node, next edge, blockers, recovery state
+    - id: graph
+      title: Interaction Graph
+      purpose: clickable nodes, edges, dependencies, precedence, density
+    - id: pressure
+      title: Reverse Pressure / BD Queue
+      purpose: queue lanes, bottleneck pressure, first-red admission
+    - id: evidence
+      title: DoD / DoV / Evidence
+      purpose: proof state, exact-SHA distinction, outward evidence links
+    - id: analytics
+      title: DMAIC / KPI / PCA / BT
+      purpose: diagnostics with non-authoritative guards
+    - id: outward
+      title: Outward Products / Federation
+      purpose: HTML, PDF, DOCX, plots, diagrams, tables and repository bridges
+
+analytics:
+  authority: DIAGNOSTIC_ONLY
+  kpi:
+    required:
+      - active_edges
+      - blocked_edges
+      - queue_coverage_pct
+      - repo_local_first_red_count
+      - exact_sha_receipts
+      - stale_nodes
+      - lineage_depth
+      - recovery_replays_avoided
+  pca:
+    implementation: pca_engine/src/pca_engine/control_analytics.py
+    use: diagnose correlated pressure modes
+    cannot:
+      - grant compliance
+      - grant release
+      - substitute missing evidence
+  reverse_pressure:
+    implementation: pca_engine/src/pca_engine/control_analytics.py::reverse_pressure
+    use: back-project unresolved mode pressure to source features
+  bradley_terry:
+    admission:
+      - observed pairwise outcomes exist
+      - population and event semantics are governed
+      - no ranking is inferred from PCA ordering alone
+    withheld_when:
+      - only synthetic ordering exists
+      - range coverage is insufficient
+      - no pairwise events exist
+
+federation_router:
+  strategies:
+    CHERRY_PICK:
+      choose_when:
+        - bounded commit
+        - compatible authority model
+        - low path collision
+        - exact provenance needed
+    BRIDGE:
+      choose_when:
+        - independent repository authority must remain intact
+        - only typed artifacts or receipts cross boundary
+        - update cadence differs
+    FEDERATION:
+      choose_when:
+        - two repositories remain independently governed
+        - shared contract and freshness probes are available
+    FULL_MERGE:
+      choose_when:
+        - authority is intentionally consolidated
+        - history and path conflicts are understood
+        - ownership transfer is explicit
+      default: false
+    SUBMODULE_OR_PIN:
+      choose_when:
+        - external managed source must remain upstream-owned
+        - exact commit pin is required
+  default_order:
+    - BRIDGE
+    - CHERRY_PICK
+    - FEDERATION
+    - SUBMODULE_OR_PIN
+    - FULL_MERGE
+
+lineage:
+  dimensions:
+    temporal:
+      retain:
+        - event_time
+        - observed_time
+        - source_sha
+        - parent_event
+    content:
+      retain:
+        - source_path
+        - source_hash
+        - generator
+        - derived_hash
+    recursive:
+      retain:
+        - predecessor_nodes
+        - proof_nodes
+        - outward_projections
+        - federation_returns
+  rule: every outward artifact must trace to a source node and every promoted state must trace to proof
+
+outward_surfaces:
+  - type: HTML
+    path: docs/mission-control.html
+  - type: PLOTLY
+    path: docs/wave_packages/runtime/pages/plotly_runtime_dashboard.html
+  - type: MATPLOTLIB_OR_STATIC_PLOTS
+    path: docs/plots/index.html
+  - type: TRACEABILITY
+    path: docs/traceability.html
+  - type: MANIFEST
+    path: docs/manifest.html
+  - type: HANDOVER
+    path: docs/handover.html
+  - type: FEDERATION
+    path: docs/federation_bridge_dashboard.html
+
+dod:
+  required:
+    - manifest parses
+    - dashboard loads without external runtime dependency
+    - six panels render responsively
+    - graph nodes are clickable
+    - layout switch works
+    - filters do not mutate source authority
+    - outward links resolve in repository context
+    - authority guards are visible
+dov:
+  levels:
+    LOCAL_REPRODUCIBILITY:
+      require: [structural_qa, visual_qa]
+    EXACT_SHA_RECEIPT:
+      require: [committed_sha, executed_proof, bound_receipt]
+    EXTERNAL_RETURN:
+      require: [typed_return, source_identity, acceptance_decision]
+  global_default: WITHHELD_UNTIL_APPLICABLE_PROOF
+
+restart_pointer:
+  on_any_interruption_record:
+    - repository
+    - base_sha
+    - branch
+    - current_node
+    - exact_next_edge
+    - admitted_parallel_edges
+    - blocked_edges
+    - last_completed_proof
+    - user_steering_events
+  recovery_sequence:
+    - read manifest
+    - refresh exact authority only
+    - compare touched paths
+    - resume exact_next_edge
+    - avoid replay of proven predecessors
