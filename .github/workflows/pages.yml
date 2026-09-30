@@ -10,6 +10,9 @@ on:
 
 permissions:
   contents: read
+  actions: read
+  issues: read
+  pull-requests: read
   pages: write
   id-token: write
 
@@ -47,11 +50,11 @@ jobs:
           python docs/wave_packages/runtime/reality_tracker.py
           python scripts/emit_runtime_status.py --out reports/runtime_status.json
 
-      - name: Refresh MissionControl federation projections
+      - name: Refresh MissionControl federation source projection
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          python scripts/ingest_missioncontrol_sources.py --emit-events
+          python scripts/ingest_missioncontrol_sources.py
           test -f docs/data/missioncontrol_source_status.json
           test -f docs/data/missioncontrol_control_events.json
           python - <<'PY'
