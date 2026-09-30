@@ -1,6 +1,6 @@
 {
-  "schema_version": "0.2",
-  "snapshot_at": "2026-09-30T11:50:00+02:00",
+  "schema_version": "0.3",
+  "snapshot_at": "2026-09-30T12:05:00+02:00",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -20,7 +20,7 @@
       "state": "REMOTE_EXECUTION_CURRENT",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "713a152e99024165aea81bffbf530d2073e164bb"
+        "sha": "a2825418c0c92ecac127ff799bf0d87fc998c269"
       }
     },
     {
@@ -187,6 +187,245 @@
         "forces_rebase": false,
         "preserves_completed_proof": true
       }
+    },
+    {
+      "id": "epic_cryoplant",
+      "type": "epic",
+      "label": "EPIC · Cryoplant",
+      "state": "ACTIVE",
+      "meta": {
+        "views": [
+          "engineering",
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "domain_helium_refrigeration",
+      "type": "domain",
+      "label": "Domain · Helium refrigeration",
+      "state": "ACTIVE",
+      "meta": {
+        "views": [
+          "engineering",
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "topic_2k_refrigeration",
+      "type": "topic",
+      "label": "Topic · 2 K refrigeration",
+      "state": "ACTIVE",
+      "meta": {
+        "views": [
+          "engineering",
+          "control",
+          "observability"
+        ],
+        "dmaic_phase": "ANALYZE",
+        "dmaic_authority": "DERIVED_CONTROL_VIEW"
+      }
+    },
+    {
+      "id": "interface_b",
+      "type": "topic",
+      "label": "B interface",
+      "state": "UNRESOLVED",
+      "meta": {
+        "views": [
+          "engineering",
+          "control",
+          "observability"
+        ],
+        "priority": "P0"
+      }
+    },
+    {
+      "id": "calc_b_pressure_drop",
+      "type": "analysis",
+      "label": "Pressure-drop calculation",
+      "state": "REQUIRED",
+      "meta": {
+        "views": [
+          "engineering",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "qps_triage_b",
+      "type": "queue",
+      "label": "QPS · CRYO-IF-B unresolved",
+      "state": "P0",
+      "meta": {
+        "views": [
+          "control",
+          "observability"
+        ],
+        "urgency_weight": 1
+      }
+    },
+    {
+      "id": "dow_b_pressure_drop",
+      "type": "analysis",
+      "label": "DOW · B-interface ΔP analysis",
+      "state": "MISSING_EVIDENCE",
+      "meta": {
+        "views": [
+          "engineering",
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "icd_freeze",
+      "type": "artifact",
+      "label": "ICD freeze",
+      "state": "BLOCKED",
+      "meta": {
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "offer_disposition",
+      "type": "decision",
+      "label": "Offer disposition",
+      "state": "BLOCKED",
+      "meta": {
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "prop_hepak",
+      "type": "property_source",
+      "label": "HEPAK",
+      "state": "SOURCE_CANDIDATE",
+      "meta": {
+        "views": [
+          "engineering"
+        ]
+      }
+    },
+    {
+      "id": "prop_nist",
+      "type": "property_source",
+      "label": "NIST",
+      "state": "SOURCE_CANDIDATE",
+      "meta": {
+        "views": [
+          "engineering"
+        ]
+      }
+    },
+    {
+      "id": "prop_gasprotp",
+      "type": "property_source",
+      "label": "GASPROTP",
+      "state": "SOURCE_CANDIDATE",
+      "meta": {
+        "views": [
+          "engineering"
+        ]
+      }
+    },
+    {
+      "id": "prop_coolprop",
+      "type": "property_source",
+      "label": "CoolProp",
+      "state": "SOURCE_CANDIDATE",
+      "meta": {
+        "views": [
+          "engineering"
+        ]
+      }
+    },
+    {
+      "id": "prop_colio",
+      "type": "property_source",
+      "label": "COLIO",
+      "state": "SOURCE_CANDIDATE",
+      "meta": {
+        "views": [
+          "engineering"
+        ]
+      }
+    },
+    {
+      "id": "hard_f821_pr",
+      "type": "pull_request",
+      "label": "ABACUS #1491 F821",
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1491",
+      "meta": {
+        "merge_sha": "4153a87da03da25e1115134015ec579bf774b918",
+        "baseline": 15,
+        "target": 0,
+        "measured_postmerge": null,
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "hard_f601_pr",
+      "type": "pull_request",
+      "label": "ABACUS #1493 F601",
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1493",
+      "meta": {
+        "merge_sha": "9a8e5ab145e916e849e1968c728b8dd78aa674c1",
+        "baseline": 2,
+        "target": 0,
+        "measured_postmerge": null,
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "projection_engineering",
+      "type": "projection",
+      "label": "ENGINEERING VIEW",
+      "state": "ACTIVE",
+      "meta": {
+        "views": [
+          "engineering"
+        ]
+      }
+    },
+    {
+      "id": "projection_control",
+      "type": "projection",
+      "label": "CONTROL VIEW",
+      "state": "ACTIVE",
+      "meta": {
+        "views": [
+          "control"
+        ]
+      }
+    },
+    {
+      "id": "projection_observability",
+      "type": "projection",
+      "label": "OBSERVABILITY VIEW",
+      "state": "ACTIVE",
+      "meta": {
+        "views": [
+          "observability"
+        ]
+      }
     }
   ],
   "edges": [
@@ -319,6 +558,172 @@
       "from": "user_steer",
       "to": "current_next",
       "type": "consumes"
+    },
+    {
+      "from": "epic_cryoplant",
+      "to": "domain_helium_refrigeration",
+      "type": "contains",
+      "views": [
+        "engineering",
+        "control"
+      ]
+    },
+    {
+      "from": "domain_helium_refrigeration",
+      "to": "topic_2k_refrigeration",
+      "type": "contains",
+      "views": [
+        "engineering",
+        "control"
+      ]
+    },
+    {
+      "from": "topic_2k_refrigeration",
+      "to": "interface_b",
+      "type": "contains",
+      "views": [
+        "engineering",
+        "control"
+      ]
+    },
+    {
+      "from": "interface_b",
+      "to": "calc_b_pressure_drop",
+      "type": "requires_property",
+      "views": [
+        "engineering"
+      ]
+    },
+    {
+      "from": "qps_triage_b",
+      "to": "interface_b",
+      "type": "updates_triage",
+      "views": [
+        "control"
+      ]
+    },
+    {
+      "from": "qps_triage_b",
+      "to": "dow_b_pressure_drop",
+      "type": "requests_analysis",
+      "views": [
+        "control",
+        "engineering"
+      ]
+    },
+    {
+      "from": "dow_b_pressure_drop",
+      "to": "calc_b_pressure_drop",
+      "type": "calculates",
+      "views": [
+        "engineering"
+      ]
+    },
+    {
+      "from": "dow_b_pressure_drop",
+      "to": "icd_freeze",
+      "type": "blocks",
+      "views": [
+        "control"
+      ]
+    },
+    {
+      "from": "icd_freeze",
+      "to": "offer_disposition",
+      "type": "blocks",
+      "views": [
+        "control"
+      ]
+    },
+    {
+      "from": "calc_b_pressure_drop",
+      "to": "prop_hepak",
+      "type": "uses_property_source",
+      "views": [
+        "engineering"
+      ]
+    },
+    {
+      "from": "calc_b_pressure_drop",
+      "to": "prop_nist",
+      "type": "uses_property_source",
+      "views": [
+        "engineering"
+      ]
+    },
+    {
+      "from": "calc_b_pressure_drop",
+      "to": "prop_gasprotp",
+      "type": "uses_property_source",
+      "views": [
+        "engineering"
+      ]
+    },
+    {
+      "from": "calc_b_pressure_drop",
+      "to": "prop_coolprop",
+      "type": "uses_property_source",
+      "views": [
+        "engineering"
+      ]
+    },
+    {
+      "from": "calc_b_pressure_drop",
+      "to": "prop_colio",
+      "type": "uses_property_source",
+      "views": [
+        "engineering"
+      ]
+    },
+    {
+      "from": "hard_f821_pr",
+      "to": "dab_hard",
+      "type": "proves",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "hard_f601_pr",
+      "to": "dab_hard",
+      "type": "proves",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "projection_engineering",
+      "to": "epic_cryoplant",
+      "type": "projects_as",
+      "views": [
+        "engineering"
+      ]
+    },
+    {
+      "from": "projection_control",
+      "to": "qps_triage_b",
+      "type": "projects_as",
+      "views": [
+        "control"
+      ]
+    },
+    {
+      "from": "projection_observability",
+      "to": "repo_codex",
+      "type": "observes",
+      "views": [
+        "observability"
+      ]
+    },
+    {
+      "from": "projection_observability",
+      "to": "repo_abacus",
+      "type": "observes",
+      "views": [
+        "observability"
+      ]
     }
   ]
 }
