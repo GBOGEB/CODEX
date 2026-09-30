@@ -2,14 +2,14 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-09-30T12:49:00+02:00"
+  generated_at: "2026-09-30T13:08:00+02:00"
 
   repositories:
     codex:
       repo: GBOGEB/CODEX
       branch: main
       handover_observed_sha: d77d44811fec4fada16988769614d6091df56133
-      refreshed_current_sha: b7d60371d9caae4d81949813779d24c9a38a9e09
+      refreshed_current_sha: c8fc8f940cbc233e164705859efb850759f7aaac
       role: UI_ORCHESTRATION_GRAPH_AUTHORITY
       mycelium_v0_1_merge:
         pr: 837
@@ -17,6 +17,14 @@ reentry:
       mycelium_v0_2_interaction_merge:
         pr: 839
         merge_sha: 495da65d816e6a3123f6ed53221d0ab053342ada
+      mycelium_v0_2_1_control_plane_merge:
+        pr: 841
+        exact_head_sha: 4e51b7fabd7a3d5dc5bb6f8c31a55b549e11863d
+        merge_sha: f9b106a8642198f98814809432a46c99fb041389
+        merged_main_readback_sha: c8fc8f940cbc233e164705859efb850759f7aaac
+        proof_receipt: mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
+        pages_run: 36706855094
+        pages_status: GREEN
     abacus:
       repo: GBOGEB/ABACUS
       branch: main
@@ -52,7 +60,7 @@ reentry:
     static_pages_apply_mutates_repository: false
 
   current_capability:
-    status: MYCELIUM_V0_2_INTERACTION_MERGED
+    status: MYCELIUM_V0_2_1_MERGED_PAGES_GREEN
     existing:
       - durable recovery manifest
       - typed nodes_edges_atoms_queues_evidence graph
@@ -71,6 +79,16 @@ reentry:
       - observability_metrics
       - progress_history
       - dynamic_source_and_port_controls
+      - command_input_root
+      - lane_level_recovery
+      - graph_overlays
+      - graph_driven_output_evidence
+      - temporal_control_events
+      - current_mid_long_priority_horizons
+      - federation_control_states
+      - executable_DAG_projection
+      - exact_head_proof_receipt
+      - merged_main_Pages_green
 
   requested_delta:
     id: MYCELIUM_V0_2_HTML_CONTROL_PLANE
@@ -173,30 +191,51 @@ reentry:
   lanes:
     - id: CODEX_UI
       repository: GBOGEB/CODEX
-      branch: mission-control-v021-control-plane-20260930
-      head_sha: 72a5a8247e4af1406d39ee359179a4c6d7163fd5
-      state: EXECUTING
-      current_atom: MYCELIUM_V0_2_HTML_CONTROL_PLANE
+      branch: main
+      head_sha: c8fc8f940cbc233e164705859efb850759f7aaac
+      state: CONTROLLED_GREEN
+      current_atom: LIVE_TEMPORAL_FEDERATION_INGESTION
       completed_atoms:
         - MYCELIUM_V0_1
         - MYCELIUM_V0_2_INTERACTION
-      blocker: null
-      queue_state: EXECUTION
-      evidence_refs:
-        - PR_837
-        - PR_839
-      artifact_refs:
-        - mission_control/mycelium/control_manifest.yaml
-        - mission_control/mycelium/interaction_graph.json
-        - docs/missioncontrol_mycelium.html
-      next_legal_transitions:
         - CONTROL_PLANE_SCHEMA
         - COMMAND_INPUT_ROOT
         - LANE_RECOVERY_PROJECTION
         - GRAPH_OVERLAYS
         - OUTPUT_EVIDENCE
         - FEDERATION_CONTROL
+        - TEMPORAL_EVENT_INGESTION
+        - GRAPH_DRIVEN_OUTWARD_NAVIGATOR
+        - VALIDATE_RESPONSIVE_LAYOUTS
+        - VALIDATE_TIMEOUT_RECOVERY
+        - VALIDATE_SOURCE_DEEPLINKS
         - EXACT_HEAD_PROOF
+        - BOUNDED_PR
+        - MERGE_READBACK
+        - PAGES_READBACK
+        - REGENERATE_REENTRY_MANIFEST
+      blocker: null
+      queue_state: EXECUTION
+      evidence_refs:
+        - PR_837
+        - PR_839
+        - PR_841
+        - MYCELIUM_V02_PR839_PROOF
+        - MYCELIUM_V021_PR841_PROOF
+      artifact_refs:
+        - mission_control/mycelium/control_manifest.yaml
+        - mission_control/mycelium/interaction_graph.json
+        - mission_control/mycelium/control_plane_projection.json
+        - mission_control/mycelium/control_events.json
+        - mission_control/mycelium/executable_projection.json
+        - mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
+        - docs/missioncontrol_mycelium.html
+      next_legal_transitions:
+        - INGEST_LIVE_TEMPORAL_EVENTS
+        - REFRESH_FEDERATION_HEADS
+        - CONSUME_TYPED_REMOTE_RETURNS
+        - BIND_FEDERATION_FRESHNESS
+        - DESIGN_AUTHENTICATED_EXECUTION_GATEWAY
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
@@ -326,27 +365,36 @@ reentry:
 
   next_execution:
     objective: >-
-      Implement Mycelium v0.2.1 as an incremental HTML control-plane evolution
-      of merged PRs #837 and #839 while preserving current authority and recovery contracts.
+      Continue from the merged and Pages-proven Mycelium v0.2.1 control plane
+      into live temporal/federation ingestion without replaying completed atoms
+      or transferring remote execution/engineering authority into CODEX.
     sequence:
       - refresh_live_main_heads
-      - read_current_v0_2_manifest_and_HTML
-      - define_v0_2_1_schema_delta
-      - preserve_existing_tests_and_contracts
-      - modularize_HTML_JS_data_surfaces
-      - add_command_input_panel
-      - add_lane_recovery_projection
-      - extend_graph_overlays
-      - consolidate_output_evidence_panel
-      - add_federation_control_panel
-      - add_fallback_HTML_SVG_renderer
-      - validate_responsive_layouts
-      - validate_timeout_recovery
-      - validate_source_deeplinks
-      - exact_head_proof
-      - bounded_PR
-      - merge_readback
-      - regenerate_reentry_manifest
+      - ingest_governed_temporal_events
+      - refresh_federation_source_identities
+      - consume_typed_remote_returns
+      - project_current_mid_long_priority
+      - bind_source_target_freshness
+      - update_graph_driven_outward_navigation
+      - preserve_PCA_BT_KPI_evidence_guards
+      - design_authenticated_execution_gateway_separately
+      - exact_head_proof_for_each_bounded_delta
+
+  closure:
+    v0_2_1:
+      status: CONTROLLED_GREEN
+      exact_head_sha: 4e51b7fabd7a3d5dc5bb6f8c31a55b549e11863d
+      exact_head_run: 36706754707
+      exact_head_job: 109858693406
+      exact_head_validator: PASS
+      exact_head_tests: PASS
+      exact_head_materialization: PASS
+      merge_sha: f9b106a8642198f98814809432a46c99fb041389
+      merged_main_readback_sha: c8fc8f940cbc233e164705859efb850759f7aaac
+      pages_run: 36706855094
+      pages_build: PASS
+      pages_deploy: PASS
+      next_edge: LIVE_TEMPORAL_FEDERATION_INGESTION
 
   done_when:
     - no_v0_1_capability_lost
