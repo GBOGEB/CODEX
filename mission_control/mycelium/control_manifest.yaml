@@ -54,10 +54,7 @@ layout:
       order: 5
       title: Analytics
       inherits: [DMAIC, KPI, PCA, BT, graph_density]
-        - implements
-    - references
-    - requires_return_from
-  rules:
+      rules:
         PCA: DIAGNOSTIC_ONLY_UNLESS_SEPARATELY_GOVERNED
         BT: OBSERVED_PAIRWISE_OUTCOMES_ONLY
         KPI: SOURCE_AND_POPULATION_REQUIRED
@@ -164,6 +161,9 @@ graph_contract:
     - observes
     - measures
     - projects_as
+    - implements
+    - references
+    - requires_return_from
   rules:
     directed: true
     every_edge_has_source: true
