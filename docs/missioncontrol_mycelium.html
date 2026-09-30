@@ -12,6 +12,11 @@ header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92
 .wrap{max-width:1500px;margin:auto;padding:14px 18px}.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.bar h1{font-size:20px;margin:0 auto 0 0}
 button,select{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:7px 10px}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.grid.layout-3x2{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid.golden-focus{grid-template-columns:minmax(0,1.618fr) minmax(280px,1fr)}
+.grid.golden-focus .panel.focus{grid-row:span 2;grid-column:auto;aspect-ratio:auto}
+.grid.single-focus .panel{display:none}
+.grid.single-focus .panel.focus{display:block;grid-column:1/-1;aspect-ratio:auto;min-height:72vh}
 .panel{aspect-ratio:16/9;min-height:260px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,.05)}
 .panel.focus{grid-column:1/-1;aspect-ratio:auto;min-height:72vh}.panel h2{font-size:16px;margin:0 0 8px}.muted{color:var(--muted)}.pill{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:2px 7px;margin:2px}
 .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kpi{border:1px solid var(--line);border-radius:12px;padding:10px}.kpi b{font-size:18px;display:block}
@@ -24,14 +29,24 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:7px;bord
 <body>
 <header><div class="wrap bar"><h1>MissionControl · Mycelium</h1>
 <span id="stamp" class="muted">loading graph…</span>
-<select id="layout"><option value="grid">2×3 grid</option><option value="focus">focus selected</option></select>
+<select id="layout"><option value="grid">2×3 grid</option><option value="layout-3x2">3×2 grid</option><option value="golden-focus">golden focus</option><option value="single-focus">single focus</option></select><select id="focus"></select>
 <button id="theme">light / dark</button>
 <button id="reset">reset focus</button></div></header>
 <main class="wrap"><section class="grid" id="grid">
 <article class="panel" data-panel="repo_topology"><h2>1 · Repository topology</h2><div id="repos"></div></article>
 <article class="panel" data-panel="interaction_graph"><h2>2 · Interaction graph</h2><svg id="graph" viewBox="0 0 760 340" role="img" aria-label="MissionControl interaction graph"></svg></article>
-<article class="panel" data-panel="execution_flow"><h2>3 · Execution & recovery</h2><div class="timeline" id="flow"></div></article>
-<article class="panel" data-panel="evidence_lineage"><h2>4 · Evidence & lineage</h2><table><thead><tr><th>Node</th><th>State</th><th>Proof/link</th></tr></thead><tbody id="evidence"></tbody></table></article>
+<article class="panel" data-panel="execution_flow"><h2>3 · Execution & recovery</h2>
+<div class="kpis">
+<div class="kpi"><span class="muted">Current</span><b>CODEX main</b><small>authority refresh</small></div>
+<div class="kpi"><span class="muted">Exact next</span><b>first admitted edge</b><small>no replay of cleared predecessors</small></div>
+<div class="kpi"><span class="muted">Recovery</span><b>CONTINUE</b><small>stream timeout is non-blocking</small></div>
+</div>
+<p><a href="https://github.com/GBOGEB/CODEX/blob/main/controls/BD_QUEUE_CURRENT.md">CODEX BD queue</a> · <span class="pill">FIX_PR 0</span><span class="pill">PROVE 0</span><span class="pill">EXTERNAL_GATE 2</span><span class="pill">PARENT 2</span></p>
+<div class="timeline" id="flow"></div></article>
+<article class="panel" data-panel="evidence_lineage"><h2>4 · Evidence & lineage</h2>
+<div><span class="pill">DoD: graph + manifest + links + responsive UI + restartable checkpoint</span><span class="pill">DoV: WITHHELD until executed proof</span></div>
+<table><thead><tr><th>Node</th><th>State</th><th>Proof/link</th></tr></thead><tbody id="evidence"></tbody></table>
+<p class="muted">Local reproducibility ≠ exact-SHA receipt ≠ external authoritative return. Visualization or analytics alone create no formal or engineering credit.</p></article>
 <article class="panel" data-panel="analytics"><h2>5 · DMAIC / KPI / PCA / BT</h2><div class="kpis">
 <div class="kpi"><span class="muted">DMAIC</span><b>CONTROL</b><small>exact proof before promotion</small></div>
 <div class="kpi"><span class="muted">PCA</span><b>DIAGNOSTIC</b><small>governed population required</small></div>
@@ -44,7 +59,15 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:7px;bord
 </div>
 <svg id="degreePlot" viewBox="0 0 640 120" style="height:120px;min-height:120px;margin-top:8px" aria-label="Graph degree density plot"></svg>
 <p class="muted">Reverse-pressure BD ranking uses unblock value, fan-out, proof deficit, age and criticality. Numerical priority scores are withheld until governed inputs exist.</p></article>
-<article class="panel" data-panel="outward_artifacts"><h2>6 · Outward artifacts</h2><div class="artifact-grid" id="artifacts"></div></article>
+<article class="panel" data-panel="outward_artifacts"><h2>6 · Outward artifacts</h2><div class="artifact-grid" id="artifacts"></div>
+<h3>External split-repo router</h3>
+<table><thead><tr><th>Mechanism</th><th>Best fit</th></tr></thead><tbody>
+<tr><td>Bridge</td><td>independent upstream authority; typed artifacts / receipts cross boundary</td></tr>
+<tr><td>Cherry-pick</td><td>bounded compatible commit with exact provenance</td></tr>
+<tr><td>Federation</td><td>independent repos share contract, lineage and freshness probes</td></tr>
+<tr><td>Pin</td><td>externally managed source remains upstream-owned at exact revision</td></tr>
+<tr><td>Full merge</td><td>only when ownership and authority intentionally converge</td></tr>
+</tbody></table></article>
 </section></main>
 <script>
 const $=s=>document.querySelector(s);
@@ -58,9 +81,11 @@ function render(){
  ['GitHub Pages','HTML control/view layer','missioncontrol_mycelium.html'],
  ['Plotly','interactive density / PCA / wave analytics','https://github.com/GBOGEB/CODEX/blob/main/runtime_engine/plotly_wave_dashboard.py'],
  ['Matplotlib','static PCA / evidence plots / PNG / SVG','https://github.com/GBOGEB/CODEX/blob/main/pca_engine/src/pca_engine/visualization.py'],
- ['Documents','PDF / DOCX / PPTX / XLSX when governed',null],
- ['Diagrams','SVG / topology / interaction graph',null],
- ['Tables','filterable evidence and lineage tables',null]
+ ['Traceability','requirements / evidence lineage','traceability.html'],
+ ['Manifest','published outward surfaces','manifest.html'],
+ ['Static plots','figures / images / generated evidence','plots/index.html'],
+ ['Documents','PDF / DOCX / PPTX / XLSX only when governed',null],
+ ['Tables / diagrams','filterable evidence, SVG topology and interaction graph',null]
  ];
  $('#artifacts').innerHTML=outs.map(x=>'<div class="artifact"><b>'+(x[2]?'<a href="'+x[2]+'">'+x[0]+'</a>':x[0])+'</b><div class="muted">'+x[1]+'</div></div>').join('');
  drawGraph(); drawDensity();
@@ -85,8 +110,17 @@ function drawGraph(){
  svg.querySelectorAll('.node').forEach(el=>el.addEventListener('click',()=>{const n=model.nodes.find(x=>x.id===el.dataset.id); if(n.url) window.open(n.url,'_blank');}));
 }
 $('#theme').onclick=()=>document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';
-document.querySelectorAll('.panel').forEach(p=>p.onclick=e=>{if(e.target.closest('a,button,select,svg'))return;if($('#layout').value==='focus'){document.querySelectorAll('.panel').forEach(x=>x.classList.remove('focus'));p.classList.add('focus');}});
-$('#reset').onclick=()=>document.querySelectorAll('.panel').forEach(x=>x.classList.remove('focus'));
+const panels=[...document.querySelectorAll('.panel')], focusSel=$('#focus'), grid=$('#grid');
+panels.forEach((p,i)=>{const o=document.createElement('option');o.value=p.dataset.panel;o.textContent=(i+1)+' · '+p.querySelector('h2').textContent.replace(/^\d+ · /,'');focusSel.appendChild(o);});
+focusSel.value='repo_topology';
+function applyLayout(){
+  grid.className='grid '+($('#layout').value==='grid'?'':$('#layout').value);
+  panels.forEach(p=>p.classList.toggle('focus',p.dataset.panel===focusSel.value));
+}
+$('#layout').onchange=applyLayout; focusSel.onchange=applyLayout;
+panels.forEach(p=>p.onclick=e=>{if(e.target.closest('a,button,select,svg'))return;focusSel.value=p.dataset.panel;applyLayout();});
+$('#reset').onclick=()=>{focusSel.value='repo_topology';$('#layout').value='grid';applyLayout();};
+applyLayout();
 load().catch(e=>$('#stamp').textContent='graph load failed: '+e.message);
 </script>
 </body></html>
