@@ -1,0 +1,84 @@
+{
+  "schema_version": "0.1",
+  "return_id": "ABACUS_DAB_RETURN_20260930_1527_1528_MAIN_COMBINED",
+  "observed_at": "2026-09-30T17:09:58Z",
+  "scope": "PUSH_MAIN_COMBINED_MEASUREMENT",
+  "source": {
+    "repository": "GBOGEB/ABACUS",
+    "ref": "main",
+    "measured_sha": "1830662b57ccaeb6b1c1553f2c584abe6a954f9f",
+    "current_sha": "3c0a57e1626e9c0361417ea21d78cceef4457f98",
+    "authority": "REMOTE_EXECUTION_DOW"
+  },
+  "exact_census": {
+    "workflow_run": 36747879827,
+    "job": 109998603356,
+    "status": "MEASURED",
+    "total": 8225,
+    "families": {
+      "E999": 1,
+      "F821": 0,
+      "F601": 0,
+      "F811": 0,
+      "F841": 66,
+      "E722": 16,
+      "E731": 0,
+      "E741": 17,
+      "W293": 411
+    },
+    "artifact": {
+      "id": 11114021331,
+      "name": "dab-flake8-census",
+      "sha256": "3b8bdb3c199d49504350b9e8efa42bc8c56db8dbe5db8ad269d7afceb051e1ea"
+    }
+  },
+  "measured_lineage": [
+    {
+      "pr": 1528,
+      "merge_sha": "64d26b4a3c74fb58ae0b445c65bbdea95f73fa6e",
+      "family": "W293"
+    },
+    {
+      "pr": 1527,
+      "merge_sha": "1830662b57ccaeb6b1c1553f2c584abe6a954f9f",
+      "family": "F841"
+    }
+  ],
+  "non_python_followup": {
+    "pr": 1529,
+    "merge_sha": "3c0a57e1626e9c0361417ea21d78cceef4457f98",
+    "lint_population_changed": false
+  },
+  "prior_combined": {
+    "evidence": "mission_control/mycelium/evidence/abacus_dab_return_1525_measured.json",
+    "total": 8240,
+    "F841": 76,
+    "W293": 416
+  },
+  "measured_delta": {
+    "total": -15,
+    "F841": -10,
+    "W293": -5
+  },
+  "pending_lanes": [
+    {
+      "pr": 1530,
+      "family": "F841",
+      "head_sha": "e98fdedc51c818d0788cd42c6177748a8348fef9",
+      "state": "OPEN_UNMEASURED",
+      "selected_findings": 3
+    }
+  ],
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+    "state": "SOURCE_BOUND_HOLD"
+  },
+  "acceptance": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "engineering_truth_promoted": false
+  }
+}
