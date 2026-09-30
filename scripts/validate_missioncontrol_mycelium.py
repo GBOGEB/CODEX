@@ -179,7 +179,7 @@ def validate() -> list[str]:
         'id="commandInput"', 'id="configUpload"', 'id="dryRunCommand"',
         'id="applyCommand"', 'id="laneRows"', 'id="priorityHorizon"',
         'id="controlEventRows"', 'id="artifactFilter"', 'id="federationRows"',
-        'id="federationEdgeRows"', "THIS IS THE WAY", 'id="metricRows"',
+        'id="federationState"', 'id="federationEdgeRows"', "THIS IS THE WAY", 'id="metricRows"',
         'id="progressRows"',
     }
     for token in ui_tokens:
@@ -226,6 +226,12 @@ def validate() -> list[str]:
         errors.append("authenticated Apply gateway guard missing")
     if cp.get("execution_model", {}).get("executable_projection_must_be_DAG") is not True:
         errors.append("executable projection DAG guard missing")
+    federation_status = control.get("federation_status", {})
+    for key in ("bridge_status", "cherry_pick_state", "merge_state", "conflict_state", "remote_authority_state"):
+        if not federation_status.get(key):
+            errors.append(f"federation control state missing: {key}")
+    if federation_status.get("authority_transfer") is not False:
+        errors.append("federation status must preserve authority_transfer=false")
     rendering = cp.get("rendering", {})
     for isolation_key in (
         "plotly_failure_blocks_core",
