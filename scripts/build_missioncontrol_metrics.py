@@ -20,10 +20,16 @@ STATUS_DERIVED = "DERIVED_FROM_MEASURED"
 STATUS_WITHHELD = "WITHHELD"
 
 
+def canonical_number(value: float, digits: int = 2) -> int | float:
+    """Round deterministically and collapse integral floats to integers."""
+    rounded = round(float(value), digits)
+    return int(rounded) if rounded.is_integer() else rounded
+
+
 def ratio_metric(num: float | None, den: float | None) -> dict[str, Any]:
     if num is None or den in (None, 0):
         return {"status": STATUS_WITHHELD, "value": None}
-    return {"status": STATUS_DERIVED, "value": round(100.0 * float(num) / float(den), 2)}
+    return {"status": STATUS_DERIVED, "value": canonical_number(100.0 * float(num) / float(den))}
 
 
 def pressure_metric(inputs: dict[str, Any], weights: dict[str, float]) -> dict[str, Any]:
@@ -42,7 +48,7 @@ def pressure_metric(inputs: dict[str, Any], weights: dict[str, float]) -> dict[s
     score = sum(present[k] * float(weights[k]) for k in present) / total_weight
     return {
         "status": STATUS_DERIVED,
-        "value": round(score * 100.0, 2),
+        "value": canonical_number(score * 100.0),
         "coverage": round(len(present) / len(weights), 3),
         "used_inputs": sorted(present),
         "missing_inputs": sorted(set(weights) - set(present)),
@@ -160,7 +166,7 @@ def build_snapshot(graph: dict[str, Any], obs: dict[str, Any]) -> dict[str, Any]
         if measured:
             metric["code_health"] = {
                 "status": STATUS_DERIVED,
-                "value": round(sum(measured.values()) / len(measured), 2),
+                "value": canonical_number(sum(measured.values()) / len(measured)),
                 "coverage": round(len(measured) / len(keys), 3),
                 "used_inputs": sorted(measured),
                 "missing_inputs": sorted(set(keys) - set(measured)),
@@ -208,7 +214,7 @@ def main() -> None:
         if sources:
             snapshot.setdefault("nodes", {}).setdefault("repo_codex", {})["docking"] = {
                 "status": STATUS_DERIVED,
-                "value": round(100.0 * fresh / len(sources), 2),
+                "value": canonical_number(100.0 * fresh / len(sources)),
                 "fresh_sources": fresh,
                 "declared_sources": len(sources),
                 "basis": "source registry freshness/identity observation",
@@ -220,7 +226,7 @@ def main() -> None:
         snapshot.setdefault("nodes", {}).setdefault("repo_codex", {})["ports"] = (
             {
                 "status": STATUS_DERIVED,
-                "value": round(100.0 * len(probed) / len(ports), 2),
+                "value": canonical_number(100.0 * len(probed) / len(ports)),
                 "probed_ports": len(probed),
                 "declared_ports": len(ports),
             }
@@ -233,7 +239,7 @@ def main() -> None:
                 "reason": "no governed port probe has passed yet",
             }
         )
-    payload = json.dumps(snapshot, indent=2, sort_keys=True) + "\n"
+    payload = json.dumps(snapshot, indent=2, sort_keys=False) + "\n"
     OUT.write_text(payload, encoding="utf-8")
     PAGES_OUT.parent.mkdir(parents=True, exist_ok=True)
     PAGES_OUT.write_text(payload, encoding="utf-8")
