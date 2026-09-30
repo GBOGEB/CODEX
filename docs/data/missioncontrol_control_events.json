@@ -278,6 +278,28 @@
       "parent_event": "EV-0024",
       "content_ref": "mission_control/mycelium/evidence/abacus_dab_combined_1527_1528_measured.json",
       "summary": "Combined post-#1527/#1528 main census measured total 8225, F841=66, W293=411, E741=17, E722=16; #1530 remains unmeasured expected-only."
+    },
+    {
+      "id": "EV-0026",
+      "at": "2026-09-30T17:53:59Z",
+      "type": "EXTERNAL_RETURN",
+      "node_id": "repo_abacus",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "14750ac24f6065aabb6ce92b1aedf7f42bf7248a",
+      "parent_event": "EV-0025",
+      "content_ref": "mission_control/mycelium/evidence/abacus_dab_return_1530_measured.json",
+      "summary": "Consumed measured ABACUS #1530 return: exact census total 8222, F841=62, W293=411, E741=17, E722=16; the prior expected F841=63 is superseded by measurement."
+    },
+    {
+      "id": "EV-0027",
+      "at": "2026-09-30T17:55:21Z",
+      "type": "USER_STEER",
+      "node_id": "current_next",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "86491df05050967dd8cc11ee3b3b0dbd114193b9",
+      "parent_event": "EV-0026",
+      "content_ref": "https://github.com/GBOGEB/CODEX/issues/879#issuecomment-5916752710",
+      "summary": "Owner-authenticated STAGE_ONLY refresh-federation-heads command posted on issue #879 against exact current main; runtime receipt remains pending."
     }
   ],
   "horizons": {
@@ -286,21 +308,21 @@
         "rank": 1,
         "id": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
         "state": "OWNER_COMMAND_IN_FLIGHT",
-        "reason": "exact-main owner command posted; runtime receipt not yet bound",
+        "reason": "exact-main owner command comment 5916752710 admitted; workflow run 36754862285 queued",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
-        "id": "ABACUS_F841_PR1530",
-        "state": "PROOF_QUEUED",
-        "reason": "combined baseline F841=66 measured; three metrics-chart bindings selected, expected residual 63 only",
+        "id": "ABACUS_F841_62",
+        "state": "MEASURED_READY_FOR_NEXT_SLICE",
+        "reason": "post-#1530 exact main census measured F841=62, improving the expected-only residual 63 by one additional finding",
         "lane": "ABACUS_REMOTE_EXECUTION"
       },
       {
         "rank": 3,
         "id": "ABACUS_W293_411",
         "state": "MEASURED_READY_FOR_NEXT_SLICE",
-        "reason": "combined main census measured W293=411; no next mechanical slice admitted yet",
+        "reason": "post-#1530 census reconfirms W293=411; no next mechanical slice admitted yet",
         "lane": "ABACUS_REMOTE_EXECUTION"
       }
     ],
