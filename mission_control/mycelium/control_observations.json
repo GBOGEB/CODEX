@@ -1,0 +1,111 @@
+{
+  "schema_version": "0.1",
+  "snapshot_at": "2026-09-30T12:12:00+02:00",
+  "evidence_policy": "MEASURED_OR_WITHHELD",
+  "pressure_weights": {
+    "urgency": 0.3,
+    "criticality": 0.2,
+    "downstream_blocks": 0.2,
+    "unblock_value": 0.15,
+    "proof_deficit": 0.1,
+    "age": 0.05
+  },
+  "nodes": {
+    "repo_codex": {
+      "qa": {
+        "status": "MEASURED",
+        "passed_required_gates": 9,
+        "executed_required_gates": 9,
+        "evidence": [
+          "GBOGEB/CODEX#837",
+          "cb60cc2e89767920528dd0a7cf0ddf5ea3d25a53"
+        ]
+      },
+      "code_health_inputs": {
+        "qa_gate_health": 100,
+        "test_health": null,
+        "lint_health": null,
+        "debug_health": null
+      },
+      "logs": {
+        "status": "WITHHELD",
+        "reason": "dynamic workflow-log ingestion is next slice"
+      },
+      "docking": {
+        "status": "WITHHELD",
+        "reason": "freshness probes not yet bound"
+      },
+      "ports": {
+        "status": "WITHHELD",
+        "reason": "declared interface probe census not yet bound"
+      }
+    },
+    "qps_triage_b": {
+      "pressure_inputs": {
+        "urgency": 1,
+        "downstream_blocks": 2,
+        "proof_deficit": 1
+      },
+      "pressure_missing": [
+        "criticality",
+        "unblock_value",
+        "age"
+      ],
+      "evidence": [
+        "user-governed P0 control example",
+        "graph:qps_triage_b→dow_b_pressure_drop→icd_freeze→offer_disposition"
+      ]
+    },
+    "topic_2k_refrigeration": {
+      "dmaic": {
+        "status": "DERIVED_FROM_MEASURED",
+        "phase": "ANALYZE",
+        "basis": "DOW calculation/evidence gap remains on B-interface control example"
+      },
+      "maturity": {
+        "status": "WITHHELD",
+        "reason": "requirement/interface/evidence/validation coverage census not yet bound"
+      }
+    },
+    "dab_mech": {
+      "mechanical_progress": {
+        "status": "MEASURED",
+        "slice": "#1490",
+        "removed_w293": 887,
+        "files": 21,
+        "residual_w293": null,
+        "residual_status": "WITHHELD"
+      }
+    },
+    "dab_hard": {
+      "family_progress": [
+        {
+          "family": "E999",
+          "baseline": 6,
+          "local_target": 1,
+          "measured_postmerge": null,
+          "status": "WITHHELD",
+          "note": "remaining W52/qplant source-bound hold expected but post-#1492 fatal census not bound here"
+        },
+        {
+          "family": "F821",
+          "baseline": 15,
+          "target": 0,
+          "measured_postmerge": null,
+          "status": "WITHHELD",
+          "evidence_pr": "#1491"
+        },
+        {
+          "family": "F601",
+          "baseline": 2,
+          "target": 0,
+          "measured_postmerge": null,
+          "status": "WITHHELD",
+          "evidence_pr": "#1493"
+        }
+      ]
+    }
+  },
+  "pca_rows": [],
+  "pairwise_outcomes": []
+}
