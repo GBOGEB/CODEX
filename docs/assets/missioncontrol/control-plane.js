@@ -209,6 +209,17 @@
     return {ok:true, kind:yamlLike ? 'YAML_TEXT' : 'TEXT', parsed:trimmed, message:yamlLike ? 'YAML-like text staged; canonical YAML parsing occurs in governed backend validation.' : 'Text command staged.'};
   }
 
+  async function probeCurrentCodeXHead() {
+    const response = await fetch('https://api.github.com/repos/GBOGEB/CODEX/commits/main', {
+      headers: {'Accept':'application/vnd.github+json'},
+      cache: 'no-store'
+    });
+    if (!response.ok) throw new Error('GitHub head probe HTTP ' + response.status);
+    const payload = await response.json();
+    if (!payload.sha || !/^[0-9a-f]{40}$/.test(payload.sha)) throw new Error('GitHub head probe returned invalid SHA');
+    return payload.sha;
+  }
+
   function buildEnvelope(requestedMode) {
     const input = $('#commandInput')?.value || '';
     const parsed = parseCommand(input);
@@ -237,8 +248,17 @@
     return event;
   }
 
-  function stage(mode) {
+  async function stage(mode) {
     stagedEnvelope = buildEnvelope(mode);
+    if (mode === 'APPLY' && stagedEnvelope.parse_ok && stagedEnvelope.repository === 'GBOGEB/CODEX') {
+      try {
+        stagedEnvelope.source_authority_sha = await probeCurrentCodeXHead();
+        stagedEnvelope.source_authority_basis = 'LIVE_GITHUB_PUBLIC_MAIN_HEAD';
+      } catch (error) {
+        stagedEnvelope.source_authority_basis = 'STATIC_PROJECTION_FALLBACK';
+        stagedEnvelope.source_authority_probe_error = String(error.message || error);
+      }
+    }
     const out = $('#commandReceipt');
     const status = stagedEnvelope.parse_ok ? (mode === 'APPLY' ? 'STAGED / authenticated gateway required' : 'DRY RUN READY') : 'INPUT ERROR';
     if (out) out.innerHTML = '<b>' + esc(status) + '</b><pre>' + esc(JSON.stringify(stagedEnvelope,null,2)) + '</pre>';
@@ -265,8 +285,8 @@
     const lane = $('#commandLane');
     if (lane) lane.innerHTML = (control.lanes || []).map(x => '<option>' + esc(x.id) + '</option>').join('');
     const dry = $('#dryRunCommand'), apply = $('#applyCommand'), copy = $('#commandCopy');
-    if (dry) dry.onclick = () => stage('DRY_RUN');
-    if (apply) apply.onclick = () => stage('APPLY');
+    if (dry) dry.onclick = () => void stage('DRY_RUN');
+    if (apply) apply.onclick = () => void stage('APPLY');
     if (copy) copy.onclick = async () => {
       if (!stagedEnvelope) {
         const out = $('#commandReceipt');
