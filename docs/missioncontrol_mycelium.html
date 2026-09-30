@@ -29,7 +29,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:7px;bord
 <body>
 <header><div class="wrap bar"><h1>MissionControl · Mycelium</h1>
 <span id="stamp" class="muted">loading graph…</span>
-<select id="layout"><option value="grid">2×3 grid</option><option value="layout-3x2">3×2 grid</option><option value="golden-focus">golden focus</option><option value="single-focus">single focus</option></select><select id="focus"></select>
+<select id="layout"><option value="grid">2×3 grid</option><option value="layout-3x2">3×2 grid</option><option value="golden-focus">golden focus</option><option value="single-focus">single focus</option></select><select id="focus"></select><select id="projection"><option value="all">All graph</option><option value="engineering">Engineering view</option><option value="control">Control view</option><option value="observability">Observability view</option></select>
 <button id="theme">light / dark</button>
 <button id="reset">reset focus</button></div></header>
 <main class="wrap"><section class="grid" id="grid">
@@ -50,7 +50,9 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:7px;bord
 <div><span class="pill">DoD: graph + manifest + links + responsive UI + restartable checkpoint</span><span class="pill">DoV: WITHHELD until executed proof</span></div>
 <table><thead><tr><th>Node</th><th>State</th><th>Proof/link</th></tr></thead><tbody id="evidence"></tbody></table>
 <p class="muted">Local reproducibility ≠ exact-SHA receipt ≠ external authoritative return. Visualization or analytics alone create no formal or engineering credit.</p></article>
-<article class="panel" data-panel="analytics"><h2>5 · DMAIC / KPI / PCA / BT</h2><div class="kpis">
+<article class="panel" data-panel="analytics"><h2>5 · DMAIC / KPI / PCA / BT</h2>
+<div style="border-left:4px solid var(--accent);padding:8px 10px;margin-bottom:8px;background:color-mix(in srgb,var(--panel) 85%,var(--accent) 15%)"><b>THIS IS THE WAY</b> — Engineering, Control and Observability are projections of the <b>same graph</b>; filters never create a second source of truth.</div>
+<div class="kpis">
 <div class="kpi"><span class="muted">DMAIC</span><b>CONTROL</b><small>exact proof before promotion</small></div>
 <div class="kpi"><span class="muted">PCA</span><b>DIAGNOSTIC</b><small>governed population required</small></div>
 <div class="kpi"><span class="muted">BT</span><b>OUTCOMES ONLY</b><small>no synthetic ranking</small></div>
@@ -61,7 +63,10 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:7px;bord
 <div class="kpi"><span class="muted">Density</span><b id="density">—</b><small>directed E/(N·(N−1))</small></div>
 </div>
 <svg id="degreePlot" viewBox="0 0 640 120" style="height:120px;min-height:120px;margin-top:8px" aria-label="Graph degree density plot"></svg>
-<p class="muted">Reverse-pressure BD ranking uses unblock value, fan-out, proof deficit, age and criticality. Numerical priority scores are withheld until governed inputs exist.</p></article>
+<p class="muted">Reverse-pressure BD ranking uses measured inputs only. Missing inputs reduce score coverage and stay visible; they are never silently imputed.</p>
+<table><thead><tr><th>Lens</th><th>Node/topic</th><th>State</th><th>Value / phase</th></tr></thead><tbody id="metricRows"></tbody></table>
+<h3>Progress history</h3><table><thead><tr><th>Event</th><th>Node</th><th>Change</th></tr></thead><tbody id="progressRows"></tbody></table>
+</article>
 <article class="panel" data-panel="outward_artifacts"><h2>6 · Outward artifacts</h2><div class="artifact-grid" id="artifacts"></div>
 <h3>External split-repo router</h3>
 <table><thead><tr><th>Mechanism</th><th>Best fit</th></tr></thead><tbody>
@@ -74,8 +79,16 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:7px;bord
 </section></main>
 <script>
 const $=s=>document.querySelector(s);
-let model;
-async function load(){model=await fetch('data/missioncontrol_interaction_graph.json').then(r=>r.json());$('#stamp').textContent='snapshot '+model.snapshot_at;render();}
+let model, metrics, history;
+async function load(){
+  [model,metrics,history]=await Promise.all([
+    fetch('data/missioncontrol_interaction_graph.json').then(r=>r.json()),
+    fetch('data/missioncontrol_metrics.json').then(r=>r.json()),
+    fetch('data/missioncontrol_progress_history.json').then(r=>r.json())
+  ]);
+  $('#stamp').textContent='snapshot '+model.snapshot_at;
+  render();
+}
 function render(){
  const repos=model.nodes.filter(n=>n.type==='repo'); $('#repos').innerHTML=repos.map(n=>'<p><a href="'+n.url+'"><b>'+n.label+'</b></a><br><span class="pill">'+n.state+'</span> '+(n.meta?.sha?'<code>'+n.meta.sha.slice(0,12)+'</code>':'')+'</p>').join('');
  const flow=['REFRESH','PROBE','RANK','EXECUTE','PROVE','COMMIT','PUBLISH','OBSERVE','LEARN','RECURSE']; $('#flow').innerHTML=flow.map((x,i)=>'<div class="step"><b>'+String(i+1).padStart(2,'0')+' '+x+'</b><span>'+(x==='EXECUTE'?'continue independent lanes; stop only material first-red lane':x==='PROVE'?'bind exact SHA / run / job / artifact evidence':'checkpointed and resumable')+'</span></div>').join('');
@@ -91,7 +104,32 @@ function render(){
  ['Tables / diagrams','filterable evidence, SVG topology and interaction graph',null]
  ];
  $('#artifacts').innerHTML=outs.map(x=>'<div class="artifact"><b>'+(x[2]?'<a href="'+x[2]+'">'+x[0]+'</a>':x[0])+'</b><div class="muted">'+x[1]+'</div></div>').join('');
- drawGraph(); drawDensity();
+ drawGraph(); drawDensity(); drawMetrics(); drawProgress();
+}
+function displayMetric(v){
+ if(!v)return 'WITHHELD';
+ if(v.phase)return v.phase;
+ if(v.value===null||v.value===undefined)return v.status||'WITHHELD';
+ return (typeof v.value==='number'?v.value.toFixed(1):v.value)+(v.coverage!==undefined?' · cov '+Math.round(v.coverage*100)+'%':'');
+}
+function drawMetrics(){
+ const rows=[];
+ const c=metrics?.nodes?.repo_codex||{}, q=metrics?.nodes?.qps_triage_b||{}, t=metrics?.nodes?.topic_2k_refrigeration||{};
+ rows.push(['QA','CODEX #837',c.qa?.status||'WITHHELD',displayMetric(c.qa)]);
+ rows.push(['Code health','CODEX',c.code_health?.status||'WITHHELD',displayMetric(c.code_health)]);
+ rows.push(['Logs','CODEX',c.logs?.status||'WITHHELD',c.logs?.reason||displayMetric(c.logs)]);
+ rows.push(['Docking','CODEX',c.docking?.status||'WITHHELD',c.docking?.reason||displayMetric(c.docking)]);
+ rows.push(['Ports','CODEX',c.ports?.status||'WITHHELD',c.ports?.reason||displayMetric(c.ports)]);
+ rows.push(['BD pressure','CRYO-IF-B',q.pressure?.status||'WITHHELD',displayMetric(q.pressure)]);
+ rows.push(['DMAIC','2 K refrigeration',t.dmaic?.status||'WITHHELD',displayMetric(t.dmaic)]);
+ rows.push(['Maturity','2 K refrigeration',t.maturity?.status||'WITHHELD',t.maturity?.reason||displayMetric(t.maturity)]);
+ rows.push(['PCA','Graph population',metrics?.pca?.status||'WITHHELD',metrics?.pca?.reason||'ready']);
+ rows.push(['Bradley–Terry','Observed pairwise outcomes',metrics?.bradley_terry?.status||'WITHHELD',metrics?.bradley_terry?.reason||'ranked']);
+ $('#metricRows').innerHTML=rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td><span class="pill">'+r[2]+'</span></td><td>'+r[3]+'</td></tr>').join('');
+}
+function drawProgress(){
+ const events=(history?.events||[]).slice().sort((a,b)=>String(b.at).localeCompare(String(a.at))).slice(0,8);
+ $('#progressRows').innerHTML=events.map(e=>'<tr><td>'+e.at.replace('T',' ').replace('Z','')+'<br><small>'+e.kind+' · '+e.ref+'</small></td><td>'+e.node_id+'</td><td><code>'+JSON.stringify(e.delta)+'</code></td></tr>').join('');
 }
 function drawDensity(){
  const n=model.nodes.length,e=model.edges.length,d=n>1?e/(n*(n-1)):0;
@@ -103,10 +141,10 @@ function drawDensity(){
  svg.innerHTML=entries.map((x,i)=>{const bar=(h-38)*(x[1]/Math.max(1,...entries.map(z=>z[1])));return '<rect x="'+(pad+i*bw+4)+'" y="'+(h-22-bar)+'" width="'+Math.max(8,bw-8)+'" height="'+bar+'" fill="var(--accent)" opacity=".75"/><text x="'+(pad+i*bw+bw/2)+'" y="'+(h-6)+'" text-anchor="middle" fill="var(--muted)" font-size="10">d='+x[0]+'</text>';}).join('');
 }
 function drawGraph(){
- const svg=$('#graph'), q=($('#graphFilter')?.value||'').trim().toLowerCase();
- const nodes=model.nodes.filter(n=>!q||[n.label,n.type,n.state,n.id].some(v=>String(v||'').toLowerCase().includes(q)));
+ const svg=$('#graph'), q=($('#graphFilter')?.value||'').trim().toLowerCase(), projection=$('#projection')?.value||'all';
+ const nodes=model.nodes.filter(n=>(projection==='all'||(n.meta?.views||[]).includes(projection))&&(!q||[n.label,n.type,n.state,n.id].some(v=>String(v||'').toLowerCase().includes(q))));
  const visibleIds=new Set(nodes.map(n=>n.id));
- const edges=model.edges.filter(e=>visibleIds.has(e.from)&&visibleIds.has(e.to));
+ const edges=model.edges.filter(e=>visibleIds.has(e.from)&&visibleIds.has(e.to)&&(projection==='all'||!(e.views?.length)||(e.views||[]).includes(projection)));
  $('#graphVisible').textContent=nodes.length+' nodes · '+edges.length+' visible edges';
  const pos={}; const cols=Math.max(3,Math.ceil(Math.sqrt(Math.max(1,nodes.length)*1.6))), rows=Math.ceil(nodes.length/cols);
  nodes.forEach((n,i)=>{const c=i%cols,r=Math.floor(i/cols);pos[n.id]={x:85+c*145,y:55+r*(260/Math.max(1,rows-1))};});
@@ -121,7 +159,7 @@ function drawGraph(){
  }));
 }
 $('#theme').onclick=()=>document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';
-$('#graphFilter').oninput=drawGraph;
+$('#graphFilter').oninput=drawGraph; $('#projection').onchange=drawGraph;
 const panels=[...document.querySelectorAll('.panel')], focusSel=$('#focus'), grid=$('#grid');
 panels.forEach((p,i)=>{const o=document.createElement('option');o.value=p.dataset.panel;o.textContent=(i+1)+' · '+p.querySelector('h2').textContent.replace(/^\d+ · /,'');focusSel.appendChild(o);});
 focusSel.value='repo_topology';
