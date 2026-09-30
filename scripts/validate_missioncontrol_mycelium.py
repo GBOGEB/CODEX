@@ -248,7 +248,7 @@ def validate() -> list[str]:
         errors.append("executable projection DAG guard missing")
 
     gateway = manifest.get("authenticated_execution_gateway", {})
-    if gateway.get("state") != "TRANSPORT_IMPLEMENTED_PENDING_PROOF":
+    if gateway.get("state") != "TRANSPORT_MERGED_EXACT_HEAD_GREEN":
         errors.append("authenticated transport manifest state mismatch")
     if gateway.get("selected_transport_class") != "MANUALLY_APPROVED_ACTION":
         errors.append("authenticated transport must use manually approved action class")

@@ -32,6 +32,9 @@ def test_fixture_ingestion_reads_exact_head_and_declared_metadata(
     result = collect_source(source, token=None, fixture_dir=tmp_path)
     assert result["status"] == "FRESH"
     assert result["default_branch"] == "main"
+    assert result["head_ref"] == "main"
+    assert result["head_sha"] == "abc123"
+    assert result["identity_status"] == "MEASURED"
     assert result["head_sha"] == "abc123"
     assert result["telemetry_status"] == "COMPLETE"
 
@@ -131,3 +134,19 @@ def test_optional_telemetry_failure_does_not_poison_exact_head(
     assert result["head_sha"] == "head-ok"
     assert result["telemetry_status"] == "PARTIAL"
     assert "issues" in result["telemetry_errors"]
+
+
+def test_fixture_ingestion_withholds_identity_when_head_fixture_missing(tmp_path: Path) -> None:
+    (tmp_path / "codex_repository.json").write_text(json.dumps({"default_branch": "main", "open_issues_count": 4}))
+    source = {
+        "id": "codex",
+        "repository": "GBOGEB/CODEX",
+        "authority_class": "LOCAL_AUTHORITATIVE",
+        "role": "ORCHESTRATION_UI_GOVERNANCE",
+        "ingest": ["repository"],
+    }
+    result = collect_source(source, token=None, fixture_dir=tmp_path)
+    assert result["status"] == "FRESH"
+    assert result["head_ref"] == "main"
+    assert "head_sha" not in result
+    assert result["identity_status"] == "WITHHELD_FIXTURE_HEAD_MISSING"

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-09-30T12:24:00Z",
+  "generated_at": "2026-09-30T12:36:00Z",
   "public_metadata_only": true,
   "authority_transfer": false,
   "sources": [
@@ -10,8 +10,8 @@
       "authority_class": "LOCAL_AUTHORITATIVE",
       "role": "ORCHESTRATION_UI_GOVERNANCE",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-09-30T11:16:00Z",
-      "head_sha": "cd45dc8f8934d554d824f0c22db619dfe6bb546d",
+      "observed_at": "2026-09-30T12:33:41Z",
+      "head_sha": "884327802f57d40b84714def4b0b5b59b3f1a25a",
       "measurement_basis": "GitHub connector repository-head refresh"
     },
     {
@@ -20,20 +20,27 @@
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "EXECUTION_DOW",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-09-30T12:24:00Z",
-      "head_sha": "2d365a1a3b39395b165e2e9662967d434d302606",
-      "census_pr": 1499,
-      "census_head_sha": "dd6b88eb8515ea29038ee287eadfeaeba96de858",
-      "census_merge_sha": "b1763b9ac6a9d98150a85bc807531d2ef2af1301",
-      "census_workflow_run": 36714082229,
-      "census_job": 109882456512,
-      "census_artifact_id": 11090647851,
-      "census_artifact_sha256": "09ab53f3c1642bd116893f8e83a02acd736dc015de535168460703aef51c2c78",
-      "measurement_basis": "typed ABACUS DAB return + exact GitHub census evidence",
-      "census_total": 10512,
+      "observed_at": "2026-09-30T12:34:11Z",
+      "head_sha": "467453047d0ca4228d093d02f22c12437e17708f",
+      "census_pr": 1501,
+      "census_head_sha": "5f7720626a8f559747c03886c0ed087de52e4e44",
+      "census_merge_sha": "83b8a1a9e4b89457cf7f07fb447544fa13eb2b3b",
+      "census_workflow_run": 36714410799,
+      "census_job": 109883686239,
+      "census_artifact_id": 11095916691,
+      "census_artifact_sha256": "49073f6738c0ffd6375a740d62bf242bfd248507db2721831a91ffabb9109520",
+      "measurement_basis": "typed ABACUS PR1501 return + exact DAB census evidence",
+      "census_total": 9764,
       "subsequent_merge_pr": 1500,
       "subsequent_merge_sha": "2d365a1a3b39395b165e2e9662967d434d302606",
-      "w293_postmerge_status": "WITHHELD_POSTMERGE_CENSUS"
+      "w293_postmerge_status": "WITHHELD_POSTMERGE_CENSUS",
+      "E741": 35,
+      "W293": 1912,
+      "E722": 26,
+      "F841": 77,
+      "E999": 1,
+      "source_bound_hold": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_return_1501_measured.json"
     },
     {
       "id": "cryoplant_project",
@@ -41,11 +48,16 @@
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "ENGINEERING_TRUTH_QPS",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-09-30T11:16:00Z",
-      "head_sha": "f03bfc61bcf85a2d91cd22d083ad0ef954387f0d",
-      "measurement_basis": "GitHub connector repository-head refresh",
+      "observed_at": "2026-09-30T12:33:05Z",
+      "head_sha": "9f1ff9a9b48b40cf19555fdcd34a1cbc944eaa1a",
+      "measurement_basis": "GitHub connector repository-head refresh + metadata-only typed return",
       "authority_preserved": true,
-      "engineering_truth_promoted": false
+      "engineering_truth_promoted": false,
+      "latest_return_pr": 1834,
+      "latest_return_merge_sha": "9f1ff9a9b48b40cf19555fdcd34a1cbc944eaa1a",
+      "latest_return_role": "REMOTE_ENGINEERING_CONTROL_LEDGER",
+      "projection_policy": "METADATA_ONLY_NO_RESTRICTED_CONTENT",
+      "evidence_ref": "mission_control/mycelium/evidence/cryoplant_master_input_ledger_return_1834.json"
     }
   ]
 }
