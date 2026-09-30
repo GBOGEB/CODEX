@@ -2,7 +2,7 @@
   "schema_version": "0.2",
   "generated_for": "CODEX_MISSIONCONTROL_MYCELIUM",
   "mode": "CONTINUE_FROM_DURABLE_STATE",
-  "generated_at": "2026-09-30T12:12:00Z",
+  "generated_at": "2026-09-30T12:24:00Z",
   "source_yaml": "mission_control/mycelium/reentry_v0_2.yaml",
   "invariants": {
     "authority_transfer": false,
@@ -41,8 +41,24 @@
       "repo": "GBOGEB/ABACUS",
       "branch": "main",
       "handover_observed_sha": "713a152e99024165aea81bffbf530d2073e164bb",
-      "refreshed_current_sha": "d8e71dc73453e9e4ea10fa62afd0d9554d241297",
-      "role": "REMOTE_EXECUTION_AUTHORITY"
+      "refreshed_current_sha": "2d365a1a3b39395b165e2e9662967d434d302606",
+      "role": "REMOTE_EXECUTION_AUTHORITY",
+      "latest_census": {
+        "pr": 1499,
+        "head_sha": "dd6b88eb8515ea29038ee287eadfeaeba96de858",
+        "merge_sha": "b1763b9ac6a9d98150a85bc807531d2ef2af1301",
+        "workflow_run": 36714082229,
+        "job": 109882456512,
+        "total": 10512,
+        "status": "MEASURED"
+      },
+      "subsequent_merge": {
+        "pr": 1500,
+        "merge_sha": "2d365a1a3b39395b165e2e9662967d434d302606",
+        "family": "W293",
+        "removed": 745,
+        "residual_status": "WITHHELD_POSTMERGE_CENSUS"
+      }
     },
     "cryoplant": {
       "repo": "GBOGEB/cryoplant-project",
@@ -203,15 +219,22 @@
       "id": "ABACUS_REMOTE_EXECUTION",
       "repository": "GBOGEB/ABACUS",
       "branch": "main",
-      "head_sha": "d8e71dc73453e9e4ea10fa62afd0d9554d241297",
+      "head_sha": "2d365a1a3b39395b165e2e9662967d434d302606",
       "state": "REMOTE_AUTHORITY",
-      "current_atom": "REMOTE_EXECUTION_STATE",
+      "current_atom": "E741_PR1501_PROOF_AND_W293_POST1500_CENSUS",
       "completed_atoms": [],
       "blocker": "REMOTE_ONLY_NO_CODEX_PROMOTION",
-      "queue_state": "REVIEW",
+      "queue_state": "EXECUTION",
       "next_legal_transitions": [
-        "INGEST_TYPED_RETURN",
-        "REFRESH_REMOTE_HEAD"
+        "CONSUME_E741_PR1501_PROOF",
+        "CONSUME_W293_POST1500_CENSUS",
+        "ADMIT_NEXT_MEASURED_HARD_OR_MECH_SLICE"
+      ],
+      "latest_census_merge_sha": "b1763b9ac6a9d98150a85bc807531d2ef2af1301",
+      "evidence_refs": [
+        "mission_control/mycelium/evidence/abacus_dab_return_1500_partial.json",
+        "ABACUS #1499 run 36714082229 job 109882456512",
+        "ABACUS #1500 merge 2d365a1a3b39395b165e2e9662967d434d302606"
       ]
     },
     {
@@ -375,5 +398,12 @@
     "merge_sha": "ea167f43732e838bc3fb5d5ad382fe0874b66fcb",
     "merged_main_readback_sha": "954cde35a2ac101e687d71e28f973864118bb1f0",
     "pages_readback": "WITHHELD_NO_RUN_OBSERVED"
+  },
+  "latest_typed_remote_return": {
+    "source_repo": "GBOGEB/ABACUS",
+    "source_sha": "2d365a1a3b39395b165e2e9662967d434d302606",
+    "evidence": "mission_control/mycelium/evidence/abacus_dab_return_1500_partial.json",
+    "disposition": "PARTIAL_MEASURED_AND_WITHHELD",
+    "authority_transfer": false
   }
 }
