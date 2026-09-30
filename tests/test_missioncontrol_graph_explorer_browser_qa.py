@@ -14,6 +14,8 @@ def test_graph_explorer_browser_qa_contract_is_governed() -> None:
     for token in (
         "plotly_active",
         "plotly_fallback",
+        "smart_label_density",
+        "smart_label_count",
         "engineering",
         "control",
         "observability",

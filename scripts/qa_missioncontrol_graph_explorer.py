@@ -76,6 +76,12 @@ def qa_explorer_active(page: Any, url: str, out: Path, viewport: str) -> dict[st
     )
 
     initial_nodes = page.locator("#network .node").count()
+    smart_label_count = int(
+        page.evaluate(
+            "[...document.querySelectorAll('#network .node text')].filter(x => getComputedStyle(x).display !== 'none').length"
+        )
+    )
+    label_status = page.locator("#labelStatus").text_content() or ""
     first = page.locator("#network .node").first
     selected_id = first.get_attribute("data-id") or ""
     before_inspect = page.locator("#inspect").text_content() or ""
@@ -115,6 +121,8 @@ def qa_explorer_active(page: Any, url: str, out: Path, viewport: str) -> dict[st
         [
             response is not None and response.ok,
             initial_nodes > 0,
+            0 < smart_label_count < initial_nodes,
+            "smart labels" in label_status.lower(),
             node_selection_pass,
             all(count > 0 for count in projection_counts.values()),
             plotly_active,
@@ -131,6 +139,8 @@ def qa_explorer_active(page: Any, url: str, out: Path, viewport: str) -> dict[st
         "viewport": viewport,
         "http_status": response.status if response else None,
         "initial_node_count": initial_nodes,
+        "smart_label_count": smart_label_count,
+        "label_status": label_status,
         "selected_node_id": selected_id,
         "node_selection_pass": node_selection_pass,
         "projection_node_counts": projection_counts,
@@ -302,6 +312,15 @@ def main() -> int:
                 rows.append(row)
                 events.extend(
                     [
+                        {
+                            "action": "smart_label_density",
+                            "viewport": name,
+                            "visible_labels": row["smart_label_count"],
+                            "visible_nodes": row["initial_node_count"],
+                            "result": "PASS"
+                            if 0 < row["smart_label_count"] < row["initial_node_count"]
+                            else "FAIL",
+                        },
                         {
                             "action": "select_node",
                             "viewport": name,
