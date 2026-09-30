@@ -69,3 +69,51 @@ def test_sweep_run_writes_outputs(tmp_path: Path):
     assert result["crawl_metrics"]["pages_scanned"] == 1
     assert telemetry.exists()
     assert rtm.exists()
+
+
+class EmptySweepEngine(MCPSweepEngine):
+    def fetch_closed_pull_requests(
+        self,
+        owner: str,
+        repo: str,
+        per_page: int = 30,
+        *,
+        since: str | None = None,
+        until: str | None = None,
+        branch_filters: tuple[str, ...] = (),
+        max_prs: int = 50,
+    ):
+        return [], {
+            "pages_scanned": 1,
+            "retries": 0,
+            "auth_failures": 0,
+            "errors": [],
+            "total_candidates": 0,
+        }
+
+
+def test_zero_delta_sweep_materializes_rtm_contract(tmp_path: Path):
+    telemetry = tmp_path / "outputs" / "sweep_telemetry.md"
+    rtm = tmp_path / "outputs" / "rtm_delta.md"
+
+    engine = EmptySweepEngine(
+        repo_path=tmp_path,
+        github_interface=GitHubInterface(),
+        github_token="token",
+    )
+    result = engine.run(
+        owner="GBOGEB",
+        repo="CODEX",
+        session_log_dir=tmp_path / "missing_sessions",
+        lineage_path=tmp_path / "missing_lineage.yaml",
+        telemetry_output_path=telemetry,
+        rtm_delta_output_path=rtm,
+    )
+
+    assert result["proposed_count"] == 0
+    assert result["active_count"] == 0
+    assert telemetry.exists() and telemetry.stat().st_size > 0
+    assert rtm.exists() and rtm.stat().st_size > 0
+    text = rtm.read_text(encoding="utf-8")
+    assert "# Local Requirements Traceability Matrix (RTM) Lineage Delta" in text
+    assert "| Unique ID | Parent Requirement |" in text
