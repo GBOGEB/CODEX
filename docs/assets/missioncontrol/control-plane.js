@@ -170,6 +170,15 @@
     }
     const strategy = $('#federationStrategy');
     if (strategy) strategy.textContent = (control.federation?.strategy_order || []).join(' → ');
+    const state = $('#federationState');
+    if (state) {
+      const fs = control.federation_status || {};
+      state.innerHTML =
+        '<span class="pill">cherry-pick: ' + esc(fs.cherry_pick_state || 'WITHHELD') + '</span>' +
+        '<span class="pill">merge: ' + esc(fs.merge_state || 'WITHHELD') + '</span>' +
+        '<span class="pill warn">conflict: ' + esc(fs.conflict_state || 'WITHHELD') + '</span>' +
+        '<span class="pill ok">remote authority: ' + esc(fs.remote_authority_state || 'WITHHELD') + '</span>';
+    }
   }
 
   function parseCommand(text) {
