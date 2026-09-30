@@ -213,8 +213,8 @@
       "repository": "GBOGEB/CODEX",
       "branch": "main",
       "head_sha": "86491df05050967dd8cc11ee3b3b0dbd114193b9",
-      "state": "BOUNDED_APPLY_ADMITTED",
-      "current_atom": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
+      "state": "CONTROLLED_HOLD",
+      "current_atom": "MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION",
       "completed_atoms": [
         "MYCELIUM_V0_1",
         "MYCELIUM_V0_2_INTERACTION",
@@ -238,19 +238,23 @@
         "AUTHENTICATED_EXECUTION_GATEWAY_DESIGN",
         "SELECT_AUTHENTICATED_TRANSPORT",
         "AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF",
-        "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH"
-      ],
-      "blocker": "MUTATION_DISABLED_PENDING_SEPARATE_EXACT_HEAD_PROOF",
-      "queue_state": "EXECUTION",
-      "next_legal_transitions": [
+        "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
         "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
-        "PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS",
+        "PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS"
+      ],
+      "blocker": "EXPLICIT_GOVERNANCE_PROMOTION_REQUIRED",
+      "queue_state": "HOLD",
+      "next_legal_transitions": [
+        "MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION",
         "CONSUME_TYPED_REMOTE_RETURNS"
       ],
       "evidence_refs": [
         "issue #879 runtime receipt comment 5916775661",
         "Actions run 36754862285 job 110022402610",
-        "Actions artifact 11116571326"
+        "Actions artifact 11116571326",
+        "PR #894 exact-head 99bf939a28c40bd8d7346799d9fa2fe22afd8534",
+        "merge 60b4df817105b01f9e1a46f31842a9dbf7b7764a",
+        "mission_control/mycelium/receipts/BOUNDED_APPLY_DISABLED_V01_PR894_PROOF.json"
       ]
     },
     {
@@ -376,9 +380,9 @@
     "remote_authority_state": "PRESERVED",
     "authority_transfer": false
   },
-  "current_proof": "mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json",
-  "current_capability_status": "AUTHENTICATED_RUNTIME_DRY_RUN_GREEN_BOUNDED_APPLY_ADMITTED",
-  "next_edge": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
+  "current_proof": "mission_control/mycelium/receipts/BOUNDED_APPLY_DISABLED_V01_PR894_PROOF.json",
+  "current_capability_status": "BOUNDED_APPLY_IMPLEMENTED_EXACT_HEAD_GREEN_MUTATION_WITHHELD",
+  "next_edge": "MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION_WITHHELD",
   "pages_readback": {
     "run_id": 36706855094,
     "build": "PASS",
@@ -451,7 +455,12 @@
     "runtime_artifact_zip_sha256": "116c0861d54dfa9aeb4c1241b5a5e9948e9f245ef69abcf4801e3bb025d8dd83",
     "runtime_receipt": "mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json",
     "runtime_authenticated_principal": "github:GBOGEB#202350393",
-    "runtime_after_sha": null
+    "runtime_after_sha": null,
+    "bounded_apply_state": "IMPLEMENTED_DISABLED_EXACT_HEAD_GREEN",
+    "bounded_apply_exact_head_sha": "99bf939a28c40bd8d7346799d9fa2fe22afd8534",
+    "bounded_apply_merge_sha": "60b4df817105b01f9e1a46f31842a9dbf7b7764a",
+    "bounded_apply_proof_receipt": "mission_control/mycelium/receipts/BOUNDED_APPLY_DISABLED_V01_PR894_PROOF.json",
+    "mutation_promotion_state": "WITHHELD_EXPLICIT_PROMOTION_REQUIRED"
   },
   "latest_typed_remote_return": {
     "source_repo": "GBOGEB/ABACUS",
