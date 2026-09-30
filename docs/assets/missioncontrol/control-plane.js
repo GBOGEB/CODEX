@@ -7,6 +7,7 @@
   let graphModel = null;
   let sourceStatus = null;
   let stagedEnvelope = null;
+  const MISSIONCONTROL_AUTHENTICATED_TRANSPORT_URL = 'https://github.com/GBOGEB/CODEX/actions/workflows/missioncontrol-authenticated-transport.yml';
 
   function esc(v) {
     return String(v ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -214,16 +215,33 @@
     return {ok:true, kind:yamlLike ? 'YAML_TEXT' : 'TEXT', parsed:trimmed, message:yamlLike ? 'YAML-like text staged; canonical YAML parsing occurs in governed backend validation.' : 'Text command staged.'};
   }
 
-  function buildEnvelope(requestedMode) {
+  async function sha256Hex(text) {
+    const bytes = new TextEncoder().encode(text);
+    const digest = await crypto.subtle.digest('SHA-256', bytes);
+    return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  async function probeCurrentCodeXHead() {
+    const response = await fetch('https://api.github.com/repos/GBOGEB/CODEX/commits/main', {
+      headers: {'Accept':'application/vnd.github+json'},
+      cache: 'no-store'
+    });
+    if (!response.ok) throw new Error('GitHub head probe HTTP ' + response.status);
+    const payload = await response.json();
+    if (!payload.sha || !/^[0-9a-f]{40}$/.test(payload.sha)) throw new Error('GitHub head probe returned invalid SHA');
+    return payload.sha;
+  }
+
+  function buildLocalEnvelope(requestedMode) {
     const input = $('#commandInput')?.value || '';
     const parsed = parseCommand(input);
     const repo = $('#commandAuthority')?.value || 'GBOGEB/CODEX';
     const lane = $('#commandLane')?.value || 'CODEX_UI';
-    const event = {
+    return {
       schema_version:'0.2.1',
       event_type:'USER_STEER',
       requested_mode:requestedMode,
-      effective_mode: requestedMode === 'APPLY' ? 'STAGED_APPLY_WITHHELD_NO_AUTHENTICATED_GATEWAY' : 'DRY_RUN',
+      effective_mode:'DRY_RUN',
       repository:repo,
       lane,
       source_authority_sha:(Object.values(control?.repositories || {}).find(x => x.repo === repo)?.refreshed_current_sha || null),
@@ -237,22 +255,83 @@
         engineering_credit_delta:0,
         replay_completed_atoms:false
       },
-      next_action: requestedMode === 'APPLY' ? 'SEND_TO_AUTHENTICATED_EXECUTION_GATEWAY_AND_BIND_PROOF' : 'REVIEW_STAGED_ENVELOPE'
+      next_action:'REVIEW_STAGED_ENVELOPE'
     };
-    return event;
   }
 
-  function stage(mode) {
-    stagedEnvelope = buildEnvelope(mode);
+  async function buildAuthenticatedTransportRequest() {
+    const input = $('#commandInput')?.value || '';
+    const parsed = parseCommand(input);
+    const repo = $('#commandAuthority')?.value || 'GBOGEB/CODEX';
+    const lane = $('#commandLane')?.value || 'CODEX_UI';
+    if (!parsed.ok) throw new Error(parsed.message);
+    if (repo !== 'GBOGEB/CODEX') throw new Error('Authenticated transport v0.1 is CODEX-only.');
+    if (!['CODEX_UI','FEDERATION'].includes(lane)) throw new Error('Selected lane is not transport-eligible.');
+    if (parsed.kind !== 'JSON' || !parsed.parsed || typeof parsed.parsed !== 'object') {
+      throw new Error('Authenticated transport requires JSON input such as {"action":"REFRESH_FEDERATION_HEADS"}.');
+    }
+    const intent = parsed.parsed.action;
+    if (intent !== 'REFRESH_FEDERATION_HEADS') {
+      throw new Error('Transport v0.1 allow-list contains only REFRESH_FEDERATION_HEADS.');
+    }
+    const head = await probeCurrentCodeXHead();
+    const payloadSha = await sha256Hex(intent);
+    const requestId = 'mc-' + (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36));
+    return {
+      schema_version:'0.1',
+      request_id:requestId,
+      created_at:new Date().toISOString(),
+      requested_by_hint:'MissionControl Pages browser session',
+      target:{
+        repo:'GBOGEB/CODEX',
+        ref:'main',
+        expected_head_sha:head
+      },
+      action_class:'STAGE_ONLY',
+      intent,
+      payload_sha256:payloadSha,
+      idempotency_key:'mc:' + head + ':' + payloadSha,
+      evidence_refs:[
+        'mission_control/mycelium/execution_gateway_contract.yaml',
+        'mission_control/mycelium/schemas/execution_request.schema.json'
+      ],
+      authority_transfer:false,
+      formal_credit_delta:0,
+      engineering_credit_delta:0
+    };
+  }
+
+  async function stage(mode) {
     const out = $('#commandReceipt');
-    const status = stagedEnvelope.parse_ok ? (mode === 'APPLY' ? 'WITHHELD / staged only' : 'DRY RUN READY') : 'INPUT ERROR';
-    if (out) out.innerHTML = '<b>' + esc(status) + '</b><pre>' + esc(JSON.stringify(stagedEnvelope,null,2)) + '</pre>';
-    const dl = $('#commandDownload');
-    if (dl) {
-      const blob = new Blob([JSON.stringify(stagedEnvelope,null,2) + '\n'], {type:'application/json'});
-      dl.href = URL.createObjectURL(blob);
-      dl.download = 'missioncontrol-command-envelope.json';
-      dl.hidden = false;
+    const launch = $('#gatewayLaunch');
+    const guide = $('#gatewayGuide');
+    try {
+      stagedEnvelope = mode === 'APPLY'
+        ? await buildAuthenticatedTransportRequest()
+        : buildLocalEnvelope(mode);
+      const status = mode === 'APPLY'
+        ? 'AUTHENTICATED DRY-RUN REQUEST READY · mutation disabled'
+        : (stagedEnvelope.parse_ok ? 'DRY RUN READY' : 'INPUT ERROR');
+      if (out) out.innerHTML = '<b>' + esc(status) + '</b><pre>' + esc(JSON.stringify(stagedEnvelope,null,2)) + '</pre>';
+      if (launch) {
+        launch.href = MISSIONCONTROL_AUTHENTICATED_TRANSPORT_URL;
+        launch.hidden = mode !== 'APPLY';
+      }
+      if (guide) guide.hidden = mode !== 'APPLY';
+      const dl = $('#commandDownload');
+      if (dl) {
+        const blob = new Blob([JSON.stringify(stagedEnvelope,null,2) + '\n'], {type:'application/json'});
+        dl.href = URL.createObjectURL(blob);
+        dl.download = mode === 'APPLY'
+          ? 'missioncontrol-execution-request.json'
+          : 'missioncontrol-command-envelope.json';
+        dl.hidden = false;
+      }
+    } catch (error) {
+      stagedEnvelope = null;
+      if (launch) launch.hidden = true;
+      if (guide) guide.hidden = true;
+      if (out) out.innerHTML = '<span class="bad">' + esc(error.message || error) + '</span>';
     }
   }
 
@@ -262,9 +341,17 @@
     if (auth) auth.innerHTML = Object.values(control.repositories || {}).map(r => '<option>' + esc(r.repo) + '</option>').join('');
     const lane = $('#commandLane');
     if (lane) lane.innerHTML = (control.lanes || []).map(x => '<option>' + esc(x.id) + '</option>').join('');
-    const dry = $('#dryRunCommand'), apply = $('#applyCommand');
-    if (dry) dry.onclick = () => stage('DRY_RUN');
-    if (apply) apply.onclick = () => stage('APPLY');
+    const dry = $('#dryRunCommand'), apply = $('#applyCommand'), copy = $('#commandCopy');
+    if (dry) dry.onclick = () => void stage('DRY_RUN');
+    if (apply) apply.onclick = () => void stage('APPLY');
+    if (copy) copy.onclick = async () => {
+      if (!stagedEnvelope) {
+        if ($('#commandReceipt')) $('#commandReceipt').innerHTML = '<span class="warn">Stage a request first.</span>';
+        return;
+      }
+      await navigator.clipboard.writeText(JSON.stringify(stagedEnvelope,null,2));
+      if ($('#commandReceipt')) $('#commandReceipt').insertAdjacentHTML('afterbegin','<span class="ok">Request copied for authenticated workflow_dispatch.</span>');
+    };
     const upload = $('#configUpload');
     if (upload) upload.onchange = async () => {
       const file = upload.files?.[0];
