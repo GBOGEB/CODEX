@@ -1,6 +1,6 @@
 {
-  "schema_version": "0.1",
-  "snapshot_at": "2026-09-30T11:35:30+02:00",
+  "schema_version": "0.2",
+  "snapshot_at": "2026-09-30T11:50:00+02:00",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -10,7 +10,7 @@
       "state": "LOCAL_AUTHORITY",
       "url": "https://github.com/GBOGEB/CODEX",
       "meta": {
-        "sha": "645f836eb8b49be746a154bfe4f0987be7e50b43"
+        "sha": "d77d44811fec4fada16988769614d6091df56133"
       }
     },
     {
@@ -150,6 +150,38 @@
       "meta": {
         "path": "qplant/w52_p2m_ts_pressure_sensitivity.py"
       }
+    },
+    {
+      "id": "codex_bd_queue",
+      "type": "queue",
+      "label": "CODEX BD queue",
+      "state": "CONTROL_EXTERNAL_GATE_ONLY",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/controls/BD_QUEUE_CURRENT.md",
+      "meta": {
+        "fix_pr": 0,
+        "prove": 0,
+        "external_gate": 2,
+        "parent_control": 2
+      }
+    },
+    {
+      "id": "current_next",
+      "type": "artifact",
+      "label": "Current / exact next edge",
+      "state": "CHECKPOINTED",
+      "meta": {
+        "replay_completed_slice": false
+      }
+    },
+    {
+      "id": "user_steer",
+      "type": "atom",
+      "label": "User steering event",
+      "state": "PRIORITY_INPUT",
+      "meta": {
+        "forces_rebase": false,
+        "preserves_completed_proof": true
+      }
     }
   ],
   "edges": [
@@ -262,6 +294,26 @@
       "from": "qplant_e999_hold",
       "to": "dab_hard",
       "type": "blocks"
+    },
+    {
+      "from": "repo_codex",
+      "to": "codex_bd_queue",
+      "type": "contains"
+    },
+    {
+      "from": "codex_bd_queue",
+      "to": "current_next",
+      "type": "precedes"
+    },
+    {
+      "from": "current_next",
+      "to": "mycelium",
+      "type": "proves"
+    },
+    {
+      "from": "user_steer",
+      "to": "current_next",
+      "type": "consumes"
     }
   ]
 }
