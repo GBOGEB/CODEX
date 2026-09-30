@@ -42,7 +42,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:7px;bord
 <script>
 const $=s=>document.querySelector(s);
 let model;
-async function load(){model=await fetch('../mission_control/mycelium/interaction_graph.json').then(r=>r.json());$('#stamp').textContent='snapshot '+model.snapshot_at;render();}
+async function load(){model=await fetch('data/missioncontrol_interaction_graph.json').then(r=>r.json());$('#stamp').textContent='snapshot '+model.snapshot_at;render();}
 function render(){
  const repos=model.nodes.filter(n=>n.type==='repo'); $('#repos').innerHTML=repos.map(n=>'<p><a href="'+n.url+'"><b>'+n.label+'</b></a><br><span class="pill">'+n.state+'</span> '+(n.meta?.sha?'<code>'+n.meta.sha.slice(0,12)+'</code>':'')+'</p>').join('');
  const flow=['REFRESH','PROBE','RANK','EXECUTE','PROVE','COMMIT','PUBLISH','OBSERVE','LEARN','RECURSE']; $('#flow').innerHTML=flow.map((x,i)=>'<div class="step"><b>'+String(i+1).padStart(2,'0')+' '+x+'</b><span>'+(x==='EXECUTE'?'continue independent lanes; stop only material first-red lane':x==='PROVE'?'bind exact SHA / run / job / artifact evidence':'checkpointed and resumable')+'</span></div>').join('');
