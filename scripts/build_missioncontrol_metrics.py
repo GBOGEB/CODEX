@@ -20,6 +20,15 @@ STATUS_DERIVED = "DERIVED_FROM_MEASURED"
 STATUS_WITHHELD = "WITHHELD"
 
 
+def source_identity_is_measured(row: dict[str, Any]) -> bool:
+    """Return True only when an exact source-head identity is actually measured."""
+    status = str(row.get("status", "")).upper()
+    identity = str(row.get("identity_status", "")).upper()
+    return bool(row.get("head_sha")) and (
+        identity == STATUS_MEASURED or status == "MEASURED_CHAT_CONNECTOR"
+    )
+
+
 def canonical_number(value: float, digits: int = 2) -> int | float:
     """Round deterministically and collapse integral floats to integers."""
     rounded = round(float(value), digits)
@@ -324,14 +333,22 @@ def main() -> None:
         source_status = json.loads(SOURCE_STATUS.read_text(encoding="utf-8"))
         apply_source_status_overlay(snapshot, source_status)
         sources = source_status.get("sources", [])
-        fresh = sum(1 for row in sources if str(row.get("status", "")).upper() in {"FRESH", "MEASURED_CHAT_CONNECTOR"})
+        fresh_metadata = sum(
+            1
+            for row in sources
+            if str(row.get("status", "")).upper()
+            in {"FRESH", "MEASURED_CHAT_CONNECTOR"}
+        )
+        measured_identity = sum(1 for row in sources if source_identity_is_measured(row))
         if sources:
             snapshot.setdefault("nodes", {}).setdefault("repo_codex", {})["docking"] = {
                 "status": STATUS_DERIVED,
-                "value": canonical_number(100.0 * fresh / len(sources)),
-                "fresh_sources": fresh,
+                "value": canonical_number(100.0 * measured_identity / len(sources)),
+                "fresh_sources": fresh_metadata,
+                "measured_identity_sources": measured_identity,
+                "identity_withheld_sources": len(sources) - measured_identity,
                 "declared_sources": len(sources),
-                "basis": "source registry freshness/identity observation",
+                "basis": "exact-head identity coverage; repository metadata freshness reported separately",
             }
     if PORT_REGISTRY.exists():
         port_registry = json.loads(PORT_REGISTRY.read_text(encoding="utf-8"))
