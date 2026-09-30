@@ -2,14 +2,14 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-09-30T12:36:00Z"
+  generated_at: "2026-09-30T15:10:57Z"
 
   repositories:
     codex:
       repo: GBOGEB/CODEX
       branch: main
       handover_observed_sha: d77d44811fec4fada16988769614d6091df56133
-      refreshed_current_sha: 884327802f57d40b84714def4b0b5b59b3f1a25a
+      refreshed_current_sha: 4261c883624a2a01f17e918445a643d048a1a79e
       role: UI_ORCHESTRATION_GRAPH_AUTHORITY
       mycelium_v0_1_merge:
         pr: 837
@@ -29,7 +29,7 @@ reentry:
       repo: GBOGEB/ABACUS
       branch: main
       handover_observed_sha: 713a152e99024165aea81bffbf530d2073e164bb
-      refreshed_current_sha: d54d22a57a80bc462a051ee26e5a7d5489432237
+      refreshed_current_sha: fa482c009afd9bdab4062900514521e8339d35b8
       role: REMOTE_EXECUTION_AUTHORITY
       latest_census:
         pr: 1499
@@ -54,30 +54,43 @@ reentry:
       pending_combined_census:
         head_sha: d54d22a57a80bc462a051ee26e5a7d5489432237
         workflow_run: 36721260876
-        status: QUEUED
-        result_status: WITHHELD_PENDING_EXECUTED_PROOF
-        expected_only:
+        job: 109906683250
+        artifact_id: 11100356126
+        artifact_sha256: 27af842e4d97ddc5722d7a07da9f5162491d629ddaf762e7715059bce3b1ad15
+        status: COMPLETED
+        result_status: MEASURED
+        measured:
+          total: 8853
           E741: 22
           W293: 1013
           E722: 26
           F841: 77
           E999: 1
+          F821: 0
+          F601: 0
+          F811: 0
+          E731: 0
       latest_measured_return:
-        pr: 1504
-        head_sha: 38dfd5c46aa427ef0ec76185439e75fdeb18817f
-        merge_sha: 38dfd5c46aa427ef0ec76185439e75fdeb18817f
-        current_main_sha: d54d22a57a80bc462a051ee26e5a7d5489432237
-        workflow_run: 36719173263
-        job: 109899557428
-        artifact_id: 11098275735
-        artifact_sha256: ac71907fb2c16f7c84b48e17c86368b84376765b7844464d2fd317981a50ed3a
-        total: 9244
-        E741: 28
-        W293: 1399
+        pr: 1506
+        head_sha: d54d22a57a80bc462a051ee26e5a7d5489432237
+        merge_sha: d54d22a57a80bc462a051ee26e5a7d5489432237
+        current_main_sha: fa482c009afd9bdab4062900514521e8339d35b8
+        workflow_run: 36721260876
+        job: 109906683250
+        artifact_id: 11100356126
+        artifact_sha256: 27af842e4d97ddc5722d7a07da9f5162491d629ddaf762e7715059bce3b1ad15
+        total: 8853
+        E741: 22
+        W293: 1013
         E722: 26
         F841: 77
         E999: 1
+        F821: 0
+        F601: 0
+        F811: 0
+        E731: 0
         state: MEASURED
+        current_head_status: UNMEASURED_AFTER_1507
     cryoplant:
       repo: GBOGEB/cryoplant-project
       branch: main
@@ -236,7 +249,7 @@ reentry:
     - id: CODEX_UI
       repository: GBOGEB/CODEX
       branch: main
-      head_sha: 884327802f57d40b84714def4b0b5b59b3f1a25a
+      head_sha: 4261c883624a2a01f17e918445a643d048a1a79e
       state: OWNER_ACTION_GATE
       current_atom: GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
       completed_atoms:
@@ -285,15 +298,18 @@ reentry:
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
-      head_sha: d54d22a57a80bc462a051ee26e5a7d5489432237
+      head_sha: fa482c009afd9bdab4062900514521e8339d35b8
       state: REMOTE_AUTHORITY
-      latest_census_merge_sha: 83b8a1a9e4b89457cf7f07fb447544fa13eb2b3b
-      current_atom: POST_1506_COMBINED_CENSUS_PENDING
-      completed_atoms: []
+      latest_census_merge_sha: d54d22a57a80bc462a051ee26e5a7d5489432237
+      current_atom: POST_1506_MEASURED_DAB_QUEUE_CURRENT_HEAD_ADVANCED_1507
+      completed_atoms:
+        - POST_1506_COMBINED_CENSUS_MEASURED
       blocker: REMOTE_ONLY_NO_CODEX_PROMOTION
       queue_state: EXECUTION
-      evidence_refs: []
-      artifact_refs: []
+      evidence_refs:
+        - mission_control/mycelium/evidence/abacus_dab_return_1506_measured.json
+      artifact_refs:
+        - ABACUS artifact 11100356126
       next_legal_transitions:
         - ADMIT_NEXT_MEASURED_HARD_OR_MECH_SLICE
         - PRESERVE_E999_SOURCE_BOUND_HOLD
