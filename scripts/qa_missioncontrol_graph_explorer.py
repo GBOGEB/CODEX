@@ -82,6 +82,37 @@ def qa_explorer_active(page: Any, url: str, out: Path, viewport: str) -> dict[st
         )
     )
     label_status = page.locator("#labelStatus").text_content() or ""
+    accessible_named_nodes = page.locator("#network .node[role='button'][aria-label]").count()
+    hidden_label_node_id = str(
+        page.evaluate(
+            """() => {
+              const node = [...document.querySelectorAll('#network .node')]
+                .find(n => {
+                  const text = n.querySelector('text');
+                  return text && getComputedStyle(text).display === 'none';
+                });
+              return node ? node.dataset.id : '';
+            }"""
+        )
+        or ""
+    )
+    keyboard_access_pass = False
+    if hidden_label_node_id:
+        hidden_node = page.locator(
+            f'#network .node[data-id="{hidden_label_node_id}"]'
+        )
+        hidden_aria = hidden_node.get_attribute("aria-label") or ""
+        before_keyboard = page.locator("#inspect").text_content() or ""
+        hidden_node.focus()
+        hidden_node.press("Enter")
+        after_keyboard = page.locator("#inspect").text_content() or ""
+        keyboard_access_pass = bool(
+            hidden_aria
+            and after_keyboard != before_keyboard
+            and "selected" in (page.locator(
+                f'#network .node[data-id="{hidden_label_node_id}"]'
+            ).get_attribute("class") or "")
+        )
     first = page.locator("#network .node").first
     selected_id = first.get_attribute("data-id") or ""
     before_inspect = page.locator("#inspect").text_content() or ""
@@ -123,6 +154,9 @@ def qa_explorer_active(page: Any, url: str, out: Path, viewport: str) -> dict[st
             initial_nodes > 0,
             0 < smart_label_count < initial_nodes,
             "smart labels" in label_status.lower(),
+            accessible_named_nodes == initial_nodes,
+            bool(hidden_label_node_id),
+            keyboard_access_pass,
             node_selection_pass,
             all(count > 0 for count in projection_counts.values()),
             plotly_active,
@@ -141,6 +175,9 @@ def qa_explorer_active(page: Any, url: str, out: Path, viewport: str) -> dict[st
         "initial_node_count": initial_nodes,
         "smart_label_count": smart_label_count,
         "label_status": label_status,
+        "accessible_named_nodes": accessible_named_nodes,
+        "hidden_label_node_id": hidden_label_node_id,
+        "keyboard_access_pass": keyboard_access_pass,
         "selected_node_id": selected_id,
         "node_selection_pass": node_selection_pass,
         "projection_node_counts": projection_counts,
@@ -320,6 +357,21 @@ def main() -> int:
                             "result": "PASS"
                             if 0 < row["smart_label_count"] < row["initial_node_count"]
                             else "FAIL",
+                        },
+                        {
+                            "action": "accessible_node_names",
+                            "viewport": name,
+                            "named_nodes": row["accessible_named_nodes"],
+                            "visible_nodes": row["initial_node_count"],
+                            "result": "PASS"
+                            if row["accessible_named_nodes"] == row["initial_node_count"]
+                            else "FAIL",
+                        },
+                        {
+                            "action": "keyboard_node_activation",
+                            "viewport": name,
+                            "node_id": row["hidden_label_node_id"],
+                            "result": "PASS" if row["keyboard_access_pass"] else "FAIL",
                         },
                         {
                             "action": "select_node",
