@@ -3,6 +3,7 @@ surface_id: MISSIONCONTROL_MYCELIUM
 owner: CODEX_UI_GOVERNANCE
 repository: GBOGEB/CODEX
 authority_transfer: false
+formal_credit_delta: 0
 engineering_authority: false
 purpose: >-
   User-facing control surface for federated execution, lineage, dependency,
@@ -24,7 +25,10 @@ source_authorities:
 
 layout:
   canonical: "2x3"
+  selectable_modes: ["2x3", "3x2", "golden_focus", "single_focus"]
   panel_aspect_ratio: "16/9"
+  golden_focus_ratio: "1.618:1"
+  whitespace_policy: "preserve function and ratio; unused area may remain light/dark space rather than distort content"
   panels:
     - id: repo_topology
       order: 1
@@ -49,6 +53,7 @@ layout:
     tablet: "2 columns x 3 rows"
     mobile: "1 column x 6 rows"
   focus_mode: true
+  user_selectable_focus: true
   themes: [light, dark]
 
 graph_contract:
@@ -117,6 +122,13 @@ execution_contract:
     missing_external_authority:
       action: HOLD_NODE_AND_CONTINUE_UNBLOCKED_GRAPH
       stop_execution: false
+    user_steer:
+      action: REPRIORITIZE_ACTIVE_EDGE_WITHOUT_REPLAY
+      preserve_completed_proof: true
+      rebase_required: false
+    upstream_main_advanced:
+      action: COMPARE_TOUCHED_PATHS_THEN_REBASE_ONLY_IF_MATERIAL
+      replay_completed_slice: false
 
 control_loop:
   sequence:
@@ -138,6 +150,7 @@ control_loop:
     control: exact_sha_proof_and_drift_watch
   reverse_pressure:
     enabled: true
+    codex_queue_authority: controls/BD_QUEUE_CURRENT.md
     method: >-
       Blocked downstream nodes push urgency to their nearest unresolved
       predecessor; rank the BD queue by dependency fan-out, proof deficit,
@@ -146,6 +159,43 @@ control_loop:
     pca: diagnostic_only_unless_governed_population_exists
     bradley_terry: outcome_based_only
     no_synthetic_scores: true
+
+current_next_contract:
+  required_ui_fields:
+    - current_authority
+    - current_node
+    - exact_next_edge
+    - active_blockers
+    - admitted_parallel_edges
+    - last_completed_proof
+    - recovery_state
+    - user_steering_events
+  rule: >-
+    The UI may refresh presentation state without replaying completed execution.
+    A stream timeout alone never resets current_node or exact_next_edge.
+
+temporal_lineage:
+  enabled: true
+  event_types:
+    - AUTHORITY_FREEZE
+    - USER_STEER
+    - EXECUTION_START
+    - PROOF_BOUND
+    - OUTWARD_PROJECTION
+    - EXTERNAL_RETURN
+    - RECOVERY
+  required_fields: [event_time, source_sha, parent_event, content_ref]
+
+federation_router:
+  default_preference: [bridge, cherry_pick, federation, pin, full_merge]
+  full_merge_default: false
+  record_fields: [source_repo, source_sha, target_repo, target_sha, mechanism, proof]
+  mechanisms:
+    bridge: preserve independent upstream authority and exchange typed artifacts or receipts
+    cherry_pick: bounded compatible commit with exact provenance
+    federation: independent repos share contract, lineage and freshness probes
+    pin: external source remains upstream-owned at an exact revision
+    full_merge: only when ownership and authority intentionally converge
 
 definition_of_done:
   - graph_and_manifest_validate
@@ -158,4 +208,9 @@ definition_of_done:
 
 definition_of_validation:
   global: WITHHELD_UNTIL_EXECUTED_PROOF
+  levels:
+    LOCAL_REPRODUCIBILITY: [structural_qa, visual_or_runtime_qa]
+    EXACT_SHA_RECEIPT: [committed_sha, executed_proof, bound_receipt]
+    EXTERNAL_RETURN: [typed_return, source_identity, acceptance_decision]
   no_credit_from_visualization_alone: true
+  no_credit_from_analytics_alone: true
