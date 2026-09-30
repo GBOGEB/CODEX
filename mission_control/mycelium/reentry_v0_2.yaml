@@ -2,14 +2,14 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-09-30T11:16:00Z"
+  generated_at: "2026-09-30T11:26:00Z"
 
   repositories:
     codex:
       repo: GBOGEB/CODEX
       branch: main
       handover_observed_sha: d77d44811fec4fada16988769614d6091df56133
-      refreshed_current_sha: cd45dc8f8934d554d824f0c22db619dfe6bb546d
+      refreshed_current_sha: e7404bfb6df3289705286685500fd19c4ec6d991
       role: UI_ORCHESTRATION_GRAPH_AUTHORITY
       mycelium_v0_1_merge:
         pr: 837
@@ -24,6 +24,14 @@ reentry:
         merged_main_readback_sha: c8fc8f940cbc233e164705859efb850759f7aaac
         proof_receipt: mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
         pages_run: 36706855094
+        pages_status: GREEN
+      live_federation_pulse_merge:
+        pr: 845
+        exact_head_sha: c4cecdbe22a1228f32cb866ead26a19b187a0d6c
+        merge_sha: ed9bb877bc251d7aa06c0bf19515491028fcdeef
+        merged_main_readback_sha: e7404bfb6df3289705286685500fd19c4ec6d991
+        proof_receipt: mission_control/mycelium/receipts/LIVE_FEDERATION_PULSE_PR845_PROOF.json
+        pages_run: 36708423542
         pages_status: GREEN
     abacus:
       repo: GBOGEB/ABACUS
@@ -60,7 +68,7 @@ reentry:
     static_pages_apply_mutates_repository: false
 
   current_capability:
-    status: MYCELIUM_V0_2_1_MERGED_PAGES_GREEN
+    status: AUTHENTICATED_EXECUTION_GATEWAY_V0_1_IMPLEMENTED_PENDING_PROOF
     existing:
       - durable recovery manifest
       - typed nodes_edges_atoms_queues_evidence graph
@@ -89,6 +97,12 @@ reentry:
       - executable_DAG_projection
       - exact_head_proof_receipt
       - merged_main_Pages_green
+      - live_federation_3of3_freshness
+      - live_federation_exact_head_proof
+      - authenticated_gateway_contract_v0_1
+      - authenticated_gateway_validator
+      - authenticated_gateway_workflow_adapter
+      - graph_provenance_trace_navigation
 
   requested_delta:
     id: MYCELIUM_V0_2_HTML_CONTROL_PLANE
@@ -191,10 +205,10 @@ reentry:
   lanes:
     - id: CODEX_UI
       repository: GBOGEB/CODEX
-      branch: main
-      head_sha: cd45dc8f8934d554d824f0c22db619dfe6bb546d
+      branch: mission-control-authenticated-gateway-v01-20260930
+      head_sha: e7404bfb6df3289705286685500fd19c4ec6d991
       state: EXECUTING
-      current_atom: LIVE_TEMPORAL_FEDERATION_INGESTION
+      current_atom: AUTHENTICATED_EXECUTION_GATEWAY_V0_1_EXACT_HEAD_PROOF
       completed_atoms:
         - MYCELIUM_V0_1
         - MYCELIUM_V0_2_INTERACTION
@@ -214,26 +228,44 @@ reentry:
         - MERGE_READBACK
         - PAGES_READBACK
         - REGENERATE_REENTRY_MANIFEST
+        - LIVE_TEMPORAL_FEDERATION_INGESTION
+        - REFRESH_FEDERATION_HEADS_LIVE
+        - BIND_SOURCE_STATUS_PARITY
+        - BIND_FRESHNESS_METRIC
+        - BIND_FRESHNESS_CONTROL_EVENT
+        - BIND_FEDERATION_GRAPH_PROVENANCE
+        - LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF
+        - AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
+        - GATEWAY_CONTRACT
+        - GATEWAY_VALIDATOR
+        - GATEWAY_WORKFLOW_ADAPTER
+        - UI_GATEWAY_HANDOFF
+        - RICH_ARTIFACT_PROVENANCE_NAV
       blocker: null
       queue_state: EXECUTION
       evidence_refs:
         - PR_837
         - PR_839
         - PR_841
+        - PR_845
         - MYCELIUM_V02_PR839_PROOF
         - MYCELIUM_V021_PR841_PROOF
+        - LIVE_FEDERATION_PULSE_PR845_PROOF
       artifact_refs:
         - mission_control/mycelium/control_manifest.yaml
         - mission_control/mycelium/interaction_graph.json
         - mission_control/mycelium/control_plane_projection.json
         - mission_control/mycelium/control_events.json
         - mission_control/mycelium/executable_projection.json
-        - mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
+        - mission_control/mycelium/gateway_contract.yaml
+        - scripts/missioncontrol_command_gateway.py
+        - .github/workflows/missioncontrol-command-gateway.yml
         - docs/missioncontrol_mycelium.html
       next_legal_transitions:
-        - LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF
-        - CONSUME_TYPED_REMOTE_RETURNS
-        - AUTHENTICATED_EXECUTION_GATEWAY_DESIGN
+        - AUTHENTICATED_EXECUTION_GATEWAY_V0_1_EXACT_HEAD_PROOF
+        - MERGE_GATEWAY_V0_1
+        - PAGES_READBACK
+        - GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
@@ -365,7 +397,20 @@ reentry:
       percent: 100.0
     authority_transfer: false
     engineering_truth_promoted: false
-    next_edge: LIVE_FEDERATION_PULSE_EXACT_HEAD_PROOF
+    next_edge: AUTHENTICATED_EXECUTION_GATEWAY_V0_1_EXACT_HEAD_PROOF
+
+  authenticated_execution_gateway:
+    version: "0.1.0"
+    status: IMPLEMENTED_PENDING_EXACT_HEAD_PROOF
+    contract: mission_control/mycelium/gateway_contract.yaml
+    workflow: .github/workflows/missioncontrol-command-gateway.yml
+    authenticated_surface: https://github.com/GBOGEB/CODEX/actions/workflows/missioncontrol-command-gateway.yml
+    source_lock: EXACT_SHA
+    live_head_probe: https://api.github.com/repos/GBOGEB/CODEX/commits/main
+    mutation_mode: AUTOMATION_BRANCH_PR_ONLY
+    direct_main_write: false
+    allowed_actions: [REFRESH_FEDERATION_HEADS]
+    runtime_proof: WITHHELD_OWNER_DISPATCH_REQUIRED
 
   qlm_context:
     repository: GBOGEB/cryoplant-project
@@ -390,10 +435,24 @@ reentry:
       - bind_source_target_freshness
       - update_graph_driven_outward_navigation
       - preserve_PCA_BT_KPI_evidence_guards
-      - design_authenticated_execution_gateway_separately
+      - prove_authenticated_execution_gateway_implementation
+      - merge_gateway_v0_1_if_exact_head_green
+      - obtain_owner_dispatched_gateway_dry_run
       - exact_head_proof_for_each_bounded_delta
 
   closure:
+    live_federation_pulse:
+      status: CONTROLLED_GREEN
+      exact_head_sha: c4cecdbe22a1228f32cb866ead26a19b187a0d6c
+      exact_head_run: 36708307718
+      exact_head_job: 109863755786
+      merge_sha: ed9bb877bc251d7aa06c0bf19515491028fcdeef
+      merged_main_readback_sha: e7404bfb6df3289705286685500fd19c4ec6d991
+      pages_run: 36708423542
+      pages_build: PASS
+      pages_deploy: PASS
+      next_edge: AUTHENTICATED_EXECUTION_GATEWAY_V0_1
+
     v0_2_1:
       status: CONTROLLED_GREEN
       exact_head_sha: 4e51b7fabd7a3d5dc5bb6f8c31a55b549e11863d
