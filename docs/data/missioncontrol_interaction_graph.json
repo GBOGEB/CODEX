@@ -1,6 +1,6 @@
 {
   "schema_version": "0.3",
-  "snapshot_at": "2026-09-30T12:32:00+02:00",
+  "snapshot_at": "2026-09-30T12:45:00+02:00",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -10,7 +10,7 @@
       "state": "LOCAL_AUTHORITY",
       "url": "https://github.com/GBOGEB/CODEX",
       "meta": {
-        "sha": "d77d44811fec4fada16988769614d6091df56133",
+        "sha": "ad9df416db5786205f7ebeea18781a7a0b8337c2",
         "views": [
           "engineering",
           "control",
@@ -29,7 +29,8 @@
         "views": [
           "control",
           "observability"
-        ]
+        ],
+        "latest_census_pr_head": "c8415e80ed38695b96076e54423db49ac38fd6d9"
       }
     },
     {
@@ -57,7 +58,7 @@
       "id": "dab_mech",
       "type": "queue",
       "label": "DAB-MECH",
-      "state": "EVIDENCE_GATED",
+      "state": "MEASURED_RESIDUAL_3598",
       "meta": {
         "views": [
           "control",
@@ -69,7 +70,7 @@
       "id": "dab_hard",
       "type": "queue",
       "label": "DAB-HARD",
-      "state": "SOURCE_BOUND_HOLD",
+      "state": "ACTIVE_F811_WITH_E999_SOURCE_HOLD",
       "meta": {
         "views": [
           "control",
@@ -200,7 +201,7 @@
           "observability"
         ],
         "measured_family_count": 1,
-        "evidence_job": 109832309064
+        "evidence_job": 109845151824
       }
     },
     {
@@ -230,7 +231,12 @@
         "views": [
           "control",
           "observability"
-        ]
+        ],
+        "next_hard_family": "F811",
+        "next_hard_count": 16,
+        "next_mech_family": "W293",
+        "next_mech_residual": 3598,
+        "census_job": 109845151824
       },
       "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/control_manifest.yaml"
     },
@@ -435,7 +441,7 @@
           "control",
           "observability"
         ],
-        "evidence_job": 109832309064
+        "evidence_job": 109845151824
       }
     },
     {
@@ -448,11 +454,12 @@
         "merge_sha": "9a8e5ab145e916e849e1968c728b8dd78aa674c1",
         "baseline": 2,
         "target": 0,
-        "measured_postmerge": null,
+        "measured_postmerge": 0,
         "views": [
           "control",
           "observability"
-        ]
+        ],
+        "evidence_job": 109845151824
       }
     },
     {
@@ -501,6 +508,112 @@
           "observability"
         ],
         "role": "QPS_ENGINEERING_TRUTH"
+      }
+    },
+    {
+      "id": "abacus_flake8_census_1494",
+      "type": "pull_request",
+      "label": "ABACUS #1494 full Flake8 census",
+      "state": "CENSUS_GREEN_PR_OPEN",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1494",
+      "meta": {
+        "head_sha": "c8415e80ed38695b96076e54423db49ac38fd6d9",
+        "workflow_run": 36702558681,
+        "job": 109845151824,
+        "total": 11484,
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "hard_f811_residual",
+      "type": "queue",
+      "label": "F811 redefinition residual",
+      "state": "ACTIVE_NEXT",
+      "meta": {
+        "baseline": 15,
+        "current": 16,
+        "delta": 1,
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "hard_f841_residual",
+      "type": "queue",
+      "label": "F841 unused-local residual",
+      "state": "QUEUED",
+      "meta": {
+        "baseline": 77,
+        "current": 77,
+        "delta": 0,
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "hard_e722_residual",
+      "type": "queue",
+      "label": "E722 bare-except residual",
+      "state": "QUEUED",
+      "meta": {
+        "baseline": 34,
+        "current": 34,
+        "delta": 0,
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "hard_e731_residual",
+      "type": "queue",
+      "label": "E731 lambda-assignment residual",
+      "state": "QUEUED",
+      "meta": {
+        "baseline": 2,
+        "current": 2,
+        "delta": 0,
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "hard_e741_residual",
+      "type": "queue",
+      "label": "E741 ambiguous-name residual",
+      "state": "QUEUED",
+      "meta": {
+        "baseline": 38,
+        "current": 40,
+        "delta": 2,
+        "views": [
+          "control",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "mech_w293_residual",
+      "type": "queue",
+      "label": "W293 mechanical residual",
+      "state": "SCALE_CANDIDATE",
+      "meta": {
+        "current": 3598,
+        "last_slice_removed": 887,
+        "views": [
+          "control",
+          "observability"
+        ]
       }
     }
   ],
@@ -824,6 +937,141 @@
       "type": "updates_triage",
       "views": [
         "control"
+      ]
+    },
+    {
+      "from": "dab_hard",
+      "to": "hard_f811_residual",
+      "type": "contains",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "dab_hard",
+      "to": "hard_f841_residual",
+      "type": "contains",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "dab_hard",
+      "to": "hard_e722_residual",
+      "type": "contains",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "dab_hard",
+      "to": "hard_e731_residual",
+      "type": "contains",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "dab_hard",
+      "to": "hard_e741_residual",
+      "type": "contains",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "dab_mech",
+      "to": "mech_w293_residual",
+      "type": "contains",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "abacus_flake8_census_1494",
+      "to": "qplant_e999_hold",
+      "type": "measures",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "abacus_flake8_census_1494",
+      "to": "hard_f821_pr",
+      "type": "measures",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "abacus_flake8_census_1494",
+      "to": "hard_f601_pr",
+      "type": "measures",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "abacus_flake8_census_1494",
+      "to": "hard_f811_residual",
+      "type": "measures",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "abacus_flake8_census_1494",
+      "to": "hard_f841_residual",
+      "type": "measures",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "abacus_flake8_census_1494",
+      "to": "hard_e722_residual",
+      "type": "measures",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "abacus_flake8_census_1494",
+      "to": "hard_e731_residual",
+      "type": "measures",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "abacus_flake8_census_1494",
+      "to": "hard_e741_residual",
+      "type": "measures",
+      "views": [
+        "control",
+        "observability"
+      ]
+    },
+    {
+      "from": "abacus_flake8_census_1494",
+      "to": "mech_w293_residual",
+      "type": "measures",
+      "views": [
+        "control",
+        "observability"
       ]
     }
   ]
