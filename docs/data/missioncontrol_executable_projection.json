@@ -128,11 +128,11 @@
     },
     {
       "id": "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY",
-      "state": "PENDING"
+      "state": "COMPLETED"
     },
     {
       "id": "PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS",
-      "state": "PENDING"
+      "state": "COMPLETED"
     },
     {
       "id": "AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF",
@@ -141,6 +141,10 @@
     {
       "id": "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
       "state": "COMPLETED"
+    },
+    {
+      "id": "MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION",
+      "state": "WITHHELD_EXPLICIT_PROMOTION_REQUIRED"
     }
   ],
   "edges": [
@@ -291,10 +295,14 @@
     [
       "GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH",
       "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY"
+    ],
+    [
+      "PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS",
+      "MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION"
     ]
   ],
   "first_incomplete_atoms": [
-    "IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY"
+    "MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION"
   ],
   "guards": {
     "replay_completed_atoms": false,
@@ -309,20 +317,19 @@
     "pages_run": 36706855094
   },
   "active_slice": {
-    "id": "AUTHENTICATED_RUNTIME_DRY_RUN",
-    "state": "CONTROLLED_GREEN_BOUNDED_APPLY_ADMITTED",
-    "observed_head_sha": "86491df05050967dd8cc11ee3b3b0dbd114193b9",
-    "workflow_run": 36754862285,
-    "workflow_job": 110022402610,
-    "artifact_id": 11116571326,
-    "artifact_name": "missioncontrol-stage-only-1e4df9cae241e539246c1338",
-    "artifact_zip_sha256": "116c0861d54dfa9aeb4c1241b5a5e9948e9f245ef69abcf4801e3bb025d8dd83",
-    "receipt": "mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json",
-    "decision": "EXECUTED",
-    "after_sha": null,
-    "authenticated_principal": "github:GBOGEB#202350393",
+    "id": "CODEX_BOUNDED_APPLY_V0_1",
+    "state": "EXACT_HEAD_GREEN_MUTATION_WITHHELD",
+    "exact_head_sha": "99bf939a28c40bd8d7346799d9fa2fe22afd8534",
+    "merge_sha": "60b4df817105b01f9e1a46f31842a9dbf7b7764a",
+    "proof_receipt": "mission_control/mycelium/receipts/BOUNDED_APPLY_DISABLED_V01_PR894_PROOF.json",
     "mutation_enabled": false,
-    "authority_transfer": false
+    "execute_permitted": false,
+    "enabled_mutation_transports": [],
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "next_gate": "MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION",
+    "next_gate_state": "WITHHELD_EXPLICIT_PROMOTION_REQUIRED"
   },
   "closed_live_federation_pulse": {
     "exact_head_sha": "c4cecdbe22a1228f32cb866ead26a19b187a0d6c",

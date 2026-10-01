@@ -108,7 +108,7 @@ def build_svg(analysis: dict[str, Any]) -> str:
 def main() -> None:
     graph = json.loads(GRAPH.read_text(encoding="utf-8"))
     analysis = build_analysis(graph)
-    payload = json.dumps(analysis, indent=2) + "\n"
+    payload = json.dumps(analysis, indent=2, ensure_ascii=False) + "\n"
     OUT.write_text(payload, encoding="utf-8")
     PAGES_OUT.parent.mkdir(parents=True, exist_ok=True)
     PAGES_OUT.write_text(payload, encoding="utf-8")

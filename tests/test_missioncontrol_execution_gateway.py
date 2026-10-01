@@ -36,3 +36,29 @@ def test_receipt_binds_authenticated_principal_and_observed_head() -> None:
     )
     required = set(schema["required"])
     assert {"authenticated_principal", "observed_head_sha", "request_sha256"} <= required
+
+
+def test_bounded_apply_is_proven_but_mutation_stays_withheld() -> None:
+    contract = yaml.safe_load(
+        (ROOT / "mission_control/mycelium/execution_gateway_contract.yaml").read_text()
+    )
+    policy = yaml.safe_load(
+        (ROOT / "mission_control/mycelium/bounded_apply_policy.yaml").read_text()
+    )
+    proof = json.loads(
+        (
+            ROOT
+            / "mission_control/mycelium/receipts/BOUNDED_APPLY_DISABLED_V01_PR894_PROOF.json"
+        ).read_text()
+    )
+    assert contract["state"] == "BOUNDED_APPLY_IMPLEMENTED_DISABLED_EXACT_HEAD_GREEN"
+    assert policy["state"] == "IMPLEMENTED_DISABLED_EXACT_HEAD_GREEN"
+    assert proof["proof_conclusion"] == "EXACT_HEAD_GREEN"
+    assert proof["mutation_enabled"] is False
+    assert proof["execute_permitted"] is False
+    assert contract["authentication"]["enabled_mutation_transports"] == []
+    assert contract["authorization"]["action_classes"]["APPLY_BOUNDED_CODEX"]["enabled"] is False
+    assert (
+        contract["promotion"]["mutation_promotion_state"]
+        == "WITHHELD_EXPLICIT_PROMOTION_REQUIRED"
+    )

@@ -78,8 +78,8 @@ control_plane:
   pages_projection: docs/data/missioncontrol_control_plane.json
   predecessor_proof: mission_control/mycelium/receipts/MYCELIUM_V02_PR839_PROOF.json
   current_proof: mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
-  current_capability_status: AUTHENTICATED_RUNTIME_DRY_RUN_GREEN_BOUNDED_APPLY_ADMITTED
-  next_edge: IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
+  current_capability_status: BOUNDED_APPLY_IMPLEMENTED_EXACT_HEAD_GREEN_MUTATION_WITHHELD
+  next_edge: MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION_WITHHELD
   command_input:
     static_pages_mode: STAGE_OR_DRY_RUN_ONLY
     authenticated_apply_gateway_required: true
@@ -117,7 +117,7 @@ control_plane:
     required_provenance: [source_repo, source_ref, source_sha, target_repo, target_ref, target_sha, mechanism, authority_before, authority_after, proof]
 
 authenticated_execution_gateway:
-  state: RUNTIME_DRY_RUN_EXECUTED_NO_MUTATION
+  state: BOUNDED_APPLY_IMPLEMENTED_DISABLED_EXACT_HEAD_GREEN
   contract: mission_control/mycelium/execution_gateway_contract.yaml
   request_schema: mission_control/mycelium/schemas/execution_request.schema.json
   receipt_schema: mission_control/mycelium/schemas/execution_receipt.schema.json
@@ -149,11 +149,18 @@ authenticated_execution_gateway:
   runtime_receipt: mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json
   runtime_authenticated_principal: github:GBOGEB#202350393
   runtime_after_sha: null
+  bounded_apply_policy: mission_control/mycelium/bounded_apply_policy.yaml
+  bounded_apply_planner: scripts/missioncontrol_bounded_apply.py
+  bounded_apply_exact_head_sha: 99bf939a28c40bd8d7346799d9fa2fe22afd8534
+  bounded_apply_merge_sha: 60b4df817105b01f9e1a46f31842a9dbf7b7764a
+  bounded_apply_proof_receipt: mission_control/mycelium/receipts/BOUNDED_APPLY_DISABLED_V01_PR894_PROOF.json
+  bounded_apply_mutation_enabled: false
+  bounded_apply_execute_permitted: false
+  mutation_promotion_state: WITHHELD_EXPLICIT_PROMOTION_REQUIRED
   remote_authority_mutation: false
   authority_transfer: false
   next_atoms:
-    - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
-    - PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS
+    - MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION
 
 graph_contract:
   universal_graph_may_contain_cycles: true

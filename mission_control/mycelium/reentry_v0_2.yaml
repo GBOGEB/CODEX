@@ -95,7 +95,7 @@ reentry:
     static_pages_apply_mutates_repository: false
 
   current_capability:
-    status: AUTHENTICATED_RUNTIME_DRY_RUN_GREEN_BOUNDED_APPLY_ADMITTED
+    status: BOUNDED_APPLY_IMPLEMENTED_EXACT_HEAD_GREEN_MUTATION_WITHHELD
     existing:
       - durable recovery manifest
       - typed nodes_edges_atoms_queues_evidence graph
@@ -229,9 +229,9 @@ reentry:
     - id: CODEX_UI
       repository: GBOGEB/CODEX
       branch: main
-      head_sha: 86491df05050967dd8cc11ee3b3b0dbd114193b9
-      state: BOUNDED_APPLY_ADMITTED
-      current_atom: IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
+      head_sha: 60b4df817105b01f9e1a46f31842a9dbf7b7764a
+      state: CONTROLLED_HOLD
+      current_atom: MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION
       completed_atoms:
         - MYCELIUM_V0_1
         - MYCELIUM_V0_2_INTERACTION
@@ -256,8 +256,10 @@ reentry:
         - SELECT_AUTHENTICATED_TRANSPORT
         - AUTHENTICATED_TRANSPORT_EXACT_HEAD_PROOF
         - GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH
-      blocker: MUTATION_DISABLED_PENDING_SEPARATE_EXACT_HEAD_PROOF
-      queue_state: EXECUTION
+        - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
+        - PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS
+      blocker: EXPLICIT_GOVERNANCE_PROMOTION_REQUIRED
+      queue_state: HOLD
       evidence_refs:
         - PR_837
         - PR_839
@@ -267,6 +269,8 @@ reentry:
         - issue #879 runtime receipt comment 5916775661
         - Actions run 36754862285 job 110022402610
         - Actions artifact 11116571326
+        - PR #894 exact-head 99bf939a28c40bd8d7346799d9fa2fe22afd8534
+        - PR #894 merge 60b4df817105b01f9e1a46f31842a9dbf7b7764a
       artifact_refs:
         - mission_control/mycelium/control_manifest.yaml
         - mission_control/mycelium/interaction_graph.json
@@ -275,10 +279,10 @@ reentry:
         - mission_control/mycelium/executable_projection.json
         - mission_control/mycelium/receipts/MYCELIUM_V021_PR841_PROOF.json
         - mission_control/mycelium/gateway/receipts/missioncontrol-stage-only-1e4df9cae241e539246c1338-36754862285-1.json
+        - mission_control/mycelium/receipts/BOUNDED_APPLY_DISABLED_V01_PR894_PROOF.json
         - docs/missioncontrol_mycelium.html
       next_legal_transitions:
-        - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
-        - PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS
+        - MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION
         - CONSUME_TYPED_REMOTE_RETURNS
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
@@ -554,8 +558,19 @@ reentry:
     runtime_authenticated_principal: github:GBOGEB#202350393
     runtime_after_sha: null
     next_legal_transitions:
-      - IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY
-      - PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS
+      - MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION
+    bounded_apply:
+      state: IMPLEMENTED_DISABLED_EXACT_HEAD_GREEN
+      policy: mission_control/mycelium/bounded_apply_policy.yaml
+      planner: scripts/missioncontrol_bounded_apply.py
+      exact_head_sha: 99bf939a28c40bd8d7346799d9fa2fe22afd8534
+      merge_sha: 60b4df817105b01f9e1a46f31842a9dbf7b7764a
+      proof_receipt: mission_control/mycelium/receipts/BOUNDED_APPLY_DISABLED_V01_PR894_PROOF.json
+      mutation_enabled: false
+      execute_permitted: false
+      enabled_mutation_transports: []
+      next_gate: MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION
+      next_gate_state: WITHHELD_EXPLICIT_PROMOTION_REQUIRED
     authority_transfer: false
     formal_credit_delta: 0
     engineering_credit_delta: 0

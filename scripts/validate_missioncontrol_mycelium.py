@@ -298,8 +298,8 @@ def validate() -> list[str]:
         errors.append("executable projection DAG guard missing")
 
     gateway = manifest.get("authenticated_execution_gateway", {})
-    if gateway.get("state") != "RUNTIME_DRY_RUN_EXECUTED_NO_MUTATION":
-        errors.append("authenticated runtime dry-run manifest state mismatch")
+    if gateway.get("state") != "BOUNDED_APPLY_IMPLEMENTED_DISABLED_EXACT_HEAD_GREEN":
+        errors.append("authenticated gateway manifest is not bounded-apply exact-head green/disabled")
     if gateway.get("selected_transport_class") != "MANUALLY_APPROVED_ACTION":
         errors.append("authenticated transport must use manually approved action class")
     if gateway.get("selected_transport_implementation") != "GITHUB_ISSUE_COMMENT_OWNER_STAGE_ONLY":
@@ -348,10 +348,20 @@ def validate() -> list[str]:
         errors.append("authenticated transport exact-head proof atom is not completed")
     if executable_states.get("GATEWAY_RUNTIME_DRY_RUN_OWNER_DISPATCH") != "COMPLETED":
         errors.append("owner runtime dry-run atom is not completed")
-    if executable_states.get("IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY") != "PENDING":
-        errors.append("bounded apply must be admitted as PENDING, not executed or enabled")
-    if executable.get("first_incomplete_atoms") != ["IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY"]:
-        errors.append("bounded apply is not the first incomplete atom after runtime proof")
+    if executable_states.get("IMPLEMENT_CODEX_ONLY_BOUNDED_APPLY") != "COMPLETED":
+        errors.append("bounded apply implementation atom is not completed")
+    if executable_states.get("PROVE_GATEWAY_EXACT_HEAD_AND_REPLAY_GUARDS") != "COMPLETED":
+        errors.append("bounded apply exact-head/replay proof atom is not completed")
+    if executable_states.get("MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION") != "WITHHELD_EXPLICIT_PROMOTION_REQUIRED":
+        errors.append("mutation enablement promotion must remain explicitly withheld")
+    if executable.get("first_incomplete_atoms") != ["MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION"]:
+        errors.append("mutation promotion hold is not the first incomplete atom after bounded-apply proof")
+    if control_gateway.get("bounded_apply_state") != "IMPLEMENTED_DISABLED_EXACT_HEAD_GREEN":
+        errors.append("control plane bounded-apply state is not exact-head green/disabled")
+    if control_gateway.get("mutation_promotion_state") != "WITHHELD_EXPLICIT_PROMOTION_REQUIRED":
+        errors.append("control plane mutation promotion is not explicitly withheld")
+    if control_gateway.get("enabled_mutation_transports") != []:
+        errors.append("control plane may not enable mutation transports after bounded-apply proof")
 
     transport_workflow = TRANSPORT_WORKFLOW.read_text(encoding="utf-8")
     if "contents: write" in transport_workflow or "pull-requests: write" in transport_workflow:
