@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-10-01T15:25:00Z",
+  "generated_at": "2026-10-01T18:45:00Z",
   "public_metadata_only": true,
   "authority_transfer": false,
   "sources": [
@@ -20,8 +20,8 @@
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "EXECUTION_DOW",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-01T15:25:00Z",
-      "head_sha": "f409c515072921f4c87a30bba92facc514d20d04",
+      "observed_at": "2026-10-01T18:45:00Z",
+      "head_sha": "b51e614520183758d109f761104decf3d959dd24",
       "census_pr": 1581,
       "census_head_sha": "9bc20bc9f0dcfbd5a12422572ea099ecd01ae337",
       "census_merge_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
@@ -51,13 +51,19 @@
       },
       "measured_return_source_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
       "live_head_after_measurement": {
-        "sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
-        "status": "CURRENT_HEAD_AFTER_1581_METRICS_ONLY",
-        "latest_known_merge_pr": 1581,
+        "sha": "b51e614520183758d109f761104decf3d959dd24",
+        "status": "CURRENT_HEAD_AFTER_FIRST_BD8K_WAVE_MERGED",
+        "latest_known_merge_pr": 1606,
         "lint_population_changed": false
       },
       "pending_independent_lanes": [],
-      "combined_main_census_pending": null,
+      "combined_main_census_pending": {
+        "run": 36908967216,
+        "job": 110526569316,
+        "head_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+        "status": "QUEUED",
+        "promotion_authority": true
+      },
       "completed_latest_lane": {
         "pr": 1581,
         "family": "F821_REPAIR",
@@ -80,42 +86,56 @@
         "merge_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52"
       },
       "reverse_pressure_next": {
-        "status": "DAB_BD8K_DISPATCHED",
+        "status": "DAB_BD8K_POSTMERGE_CENSUS_QUEUED",
         "campaign_id": "ABACUS-DAB-BD8K",
-        "previous_first_red": "SUPERSEDED_BY_#1583",
         "workers": [
           {
             "id": "bd8k_mech_a",
             "pr": 1596,
-            "head_sha": "6a886a680c3504d7d6a6ff54cde9cf709c492d27",
-            "state": "CI_QUEUED",
-            "targeted": 206
+            "merge_sha": "4fb9457e1dda9af32ea9024367b07bb7cb46e4ee",
+            "state": "MERGED",
+            "measured_delta": {
+              "E231": -206,
+              "total": -206
+            }
           },
           {
             "id": "bd8k_mech_b",
             "pr": 1597,
-            "head_sha": "94527ef94a4767f7cc1bcfbc92666da99a8bd6b4",
-            "state": "CI_QUEUED",
-            "targeted": 165
+            "merge_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+            "state": "MERGED",
+            "measured_delta": {
+              "E231": -165,
+              "total": -165
+            }
           },
           {
             "id": "bd8k_semantic_a",
             "pr": 1598,
-            "head_sha": "9f2b47d47e055841392300a50ecb059801530e64",
-            "state": "CI_QUEUED",
-            "targeted": 21
+            "merge_sha": "c28acb27291a7a0dc43ce90e9d095d93542ea9d9",
+            "state": "MERGED",
+            "measured_delta": {
+              "E402": -21,
+              "total": -21
+            }
           },
           {
             "id": "bd8k_semantic_b",
             "pr": 1599,
-            "head_sha": "37fa586a7e6b16e34cac55c6cb51bb7c1fa4b152",
-            "state": "CI_QUEUED",
-            "targeted": 12
+            "merge_sha": "f5b96dd86500e8c65741bb672cb9dfaf6ee95198",
+            "state": "MERGED",
+            "measured_delta": {
+              "F401": -12,
+              "E402": -1,
+              "total": -13
+            }
           }
         ],
-        "targeted_findings": 404,
-        "planning_projected_total": 5917,
-        "G1": "PLANNING_CROSSED_PROMOTION_WITHHELD",
+        "G1": "WITHHELD_POSTMERGE_DAB_QUEUED",
+        "authoritative_run": 36908967216,
+        "authoritative_job": 110526569316,
+        "successor_wave_findings": 910,
+        "successor_dispatch": "WITHHELD_UNTIL_G1_MEASURED",
         "promotion_rule": "POST_MERGE_MEASURED_MAIN_ONLY"
       },
       "planning_probe": {
