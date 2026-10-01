@@ -388,6 +388,30 @@
       "parent_event": "EV-0034",
       "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
       "summary": "Reverse-pressure queue regenerated from measured #1542 main: next HARD F841 residual 50 and MECH W293 residual 242; CODEX mutation-promotion gate remains withheld."
+    },
+    {
+      "id": "EV-0036",
+      "at": "2026-10-01T06:47:38Z",
+      "type": "EXTERNAL_RETURN",
+      "node_id": "repo_abacus",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "e7d6291ae376da2d0f1c4fa7b324c93bd45f2e75",
+      "parent_event": "EV-0035",
+      "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
+      "summary": "Lineage backfill for the already-measured ABACUS #1541 post-merge main census (historical measurement 2026-10-01T05:17:55Z): total 8058, F841=51, W293=264. This appends missing intermediate provenance only; no current-state or authority promotion.",
+      "authority_transfer": false
+    },
+    {
+      "id": "EV-0037",
+      "at": "2026-10-01T06:47:38Z",
+      "type": "RECOVERY",
+      "node_id": "repo_codex",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "dfdf266e5847aa1b115422181eecb08a45a189dd",
+      "parent_event": "EV-0036",
+      "content_ref": "mission_control/mycelium/source_status.json",
+      "summary": "Federation identity recensus bound CODEX dfdf266e5847 and ABACUS aefedcdacaf3; ABACUS #1542 remains the measured lint census because #1544 changed only test dependency policy and generated metrics. Mutation promotion remains withheld.",
+      "authority_transfer": false
     }
   ],
   "horizons": {
