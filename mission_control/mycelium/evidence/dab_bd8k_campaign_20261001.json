@@ -1,14 +1,14 @@
 {
   "schema_version": "0.1",
   "campaign_id": "ABACUS-DAB-BD8K",
-  "state": "HOLD_FIRST_RED_COVERAGE",
+  "state": "READY_DISPATCH",
   "baseline": {
-    "measured_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
-    "current_head_sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
-    "census_run": 36872346746,
-    "census_job": 110403022453,
-    "artifact_id": 11168375869,
-    "artifact_sha256": "c5a6169a70ba68ea605e48ee9a5a2e60e66d59e81b1f4b392df3aa4c05a6eb82",
+    "measured_sha": "b04c3caa0f9fd4a8f2cd8099b62b6f64ee2b6b95",
+    "current_head_sha": "2a3a46718dcf305f56aac5c238761f7846bf61e5",
+    "census_run": 36877866665,
+    "census_job": 110421836238,
+    "artifact_id": 11169768922,
+    "artifact_sha256": "1bd59ebfb9537a6d60606e549e62ab135f903bc533c67e01fe94ed22e8b8ef0d",
     "total": 7909,
     "families": {
       "E225": 635,
@@ -30,19 +30,24 @@
     }
   },
   "first_red": {
-    "state": "WORKFLOW_FAILING",
-    "workflow": "CI/CD Test Suite",
-    "run_id": 36871993435,
-    "job_id": 110403157659,
-    "job": "Code Coverage",
-    "failure": "coverage.exceptions.DataError: Can't combine statement coverage data with branch data",
-    "dispatch_effect": "HOLD_FIRST_RED"
+    "state": "RESOLVED_GREEN",
+    "original_workflow": "CI/CD Test Suite",
+    "original_run_id": 36871993435,
+    "original_job_id": 110403157659,
+    "original_failure": "coverage.exceptions.DataError: Can't combine statement coverage data with branch data",
+    "repair_pr": 1583,
+    "repair_head_sha": "cc17eef1a747d384b71f3f26eb11fd982c4f921c",
+    "proof_run_id": 36876407740,
+    "proof_job_id": 110418884697,
+    "proof_job": "Code Coverage",
+    "conclusion": "success",
+    "dispatch_effect": "RELEASE_READY"
   },
   "workers": [
     {
       "id": "bd8k_mech_a",
       "role": "MECH-A",
-      "state": "BLOCKED_FIRST_RED",
+      "state": "READY_DISPATCH",
       "target_files": [
         "triage/run_repo_census.py"
       ],
@@ -53,12 +58,14 @@
         "E302": 2
       },
       "expected_target_findings": 296,
-      "mutation_class": "MECHANICAL_SPACING_STRUCTURE"
+      "mutation_class": "MECHANICAL_SPACING_STRUCTURE",
+      "baseline_sha": "b04c3caa0f9fd4a8f2cd8099b62b6f64ee2b6b95",
+      "current_head_sha": "2a3a46718dcf305f56aac5c238761f7846bf61e5"
     },
     {
       "id": "bd8k_mech_b",
       "role": "MECH-B",
-      "state": "BLOCKED_FIRST_RED",
+      "state": "READY_DISPATCH",
       "target_files": [
         "tools/w65_parallel_discovery.py"
       ],
@@ -69,12 +76,14 @@
         "E302": 10
       },
       "expected_target_findings": 259,
-      "mutation_class": "MECHANICAL_SPACING_STRUCTURE"
+      "mutation_class": "MECHANICAL_SPACING_STRUCTURE",
+      "baseline_sha": "b04c3caa0f9fd4a8f2cd8099b62b6f64ee2b6b95",
+      "current_head_sha": "2a3a46718dcf305f56aac5c238761f7846bf61e5"
     },
     {
       "id": "bd8k_semantic_a",
       "role": "SEMANTIC-A",
-      "state": "BLOCKED_FIRST_RED",
+      "state": "READY_DISPATCH",
       "target_files": [
         "DMAIC_V3/full_pipeline_orchestrator.py"
       ],
@@ -82,12 +91,14 @@
         "E402": 21
       },
       "expected_target_findings": 21,
-      "mutation_class": "IMPORT_ORDER_CLASSIFY_THEN_REPAIR"
+      "mutation_class": "IMPORT_ORDER_CLASSIFY_THEN_REPAIR",
+      "baseline_sha": "b04c3caa0f9fd4a8f2cd8099b62b6f64ee2b6b95",
+      "current_head_sha": "2a3a46718dcf305f56aac5c238761f7846bf61e5"
     },
     {
       "id": "bd8k_semantic_b",
       "role": "SEMANTIC-B",
-      "state": "BLOCKED_FIRST_RED",
+      "state": "READY_DISPATCH",
       "target_files": [
         "qplant/handover_dashboard/api/main.py"
       ],
@@ -95,7 +106,9 @@
         "F401": 12
       },
       "expected_target_findings": 12,
-      "mutation_class": "UNUSED_IMPORT_CLASSIFY_SIDE_EFFECTS"
+      "mutation_class": "UNUSED_IMPORT_CLASSIFY_SIDE_EFFECTS",
+      "baseline_sha": "b04c3caa0f9fd4a8f2cd8099b62b6f64ee2b6b95",
+      "current_head_sha": "2a3a46718dcf305f56aac5c238761f7846bf61e5"
     }
   ],
   "execution_protocol": [
@@ -112,5 +125,13 @@
   },
   "authority_transfer": false,
   "formal_credit_delta": 0,
-  "engineering_credit_delta": 0
+  "engineering_credit_delta": 0,
+  "release": {
+    "at": "2026-10-01T14:38:24Z",
+    "post_merge_census_run": 36877866665,
+    "post_merge_census_job": 110421836238,
+    "post_merge_artifact_id": 11169768922,
+    "post_merge_artifact_sha256": "1bd59ebfb9537a6d60606e549e62ab135f903bc533c67e01fe94ed22e8b8ef0d",
+    "rule": "workers may branch only from current head after this measured baseline is bound"
+  }
 }
