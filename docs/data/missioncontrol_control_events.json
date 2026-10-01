@@ -322,6 +322,50 @@
       "parent_event": "EV-0028",
       "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
       "summary": "Reverse-pressure continuation preserved, but stale prepared HARD/MECH branches were withheld because the HARD payload removes a bridge binding still used by assertions; next slices must be regenerated from current main."
+    },
+    {
+      "id": "EV-0030",
+      "at": "2026-10-01T04:46:52Z",
+      "type": "EXTERNAL_RETURN",
+      "node_id": "repo_abacus",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "7e5d9069a27fdd2a30ce43558659a8fbc23add0b",
+      "parent_event": "EV-0029",
+      "content_ref": "mission_control/mycelium/evidence/abacus_dab_post_1538_main_measured.json",
+      "summary": "Consumed measured ABACUS #1538 post-merge main census: total 8124, F841=53, W293=322, E741=17, E722=16; E999=1 remains source-bound."
+    },
+    {
+      "id": "EV-0031",
+      "at": "2026-10-01T04:46:52Z",
+      "type": "RECOVERY",
+      "node_id": "current_next",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "7e5d9069a27fdd2a30ce43558659a8fbc23add0b",
+      "parent_event": "EV-0030",
+      "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
+      "summary": "Reverse-pressure queue regenerated from measured #1538 main: next HARD F841 residual 53 and MECH W293 residual 322; CODEX mutation-promotion gate remains withheld."
+    },
+    {
+      "id": "EV-0032",
+      "at": "2026-10-01T04:54:21Z",
+      "type": "EXTERNAL_RETURN",
+      "node_id": "repo_abacus",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "2b6226e992bd9e05506d4fe54b222375fd827c41",
+      "parent_event": "EV-0031",
+      "content_ref": "mission_control/mycelium/evidence/abacus_dab_post_1539_main_measured.json",
+      "summary": "Consumed measured ABACUS #1539 post-merge main census: total 8085, F841=52, W293=288, E741=17, E722=16; E999=1 remains source-bound."
+    },
+    {
+      "id": "EV-0033",
+      "at": "2026-10-01T04:54:21Z",
+      "type": "RECOVERY",
+      "node_id": "current_next",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "469527022055d4b4cc7a5c2cbbb1b683e8d18d6a",
+      "parent_event": "EV-0032",
+      "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
+      "summary": "Reverse-pressure queue regenerated from measured #1539 main: next HARD F841 residual 52 and MECH W293 residual 288; current ABACUS head differs only by generated metrics."
     }
   ],
   "horizons": {
@@ -335,16 +379,16 @@
       },
       {
         "rank": 2,
-        "id": "ABACUS_F841_PR1530",
-        "state": "REMOTE_ACTIVE",
-        "reason": "remote execution authority continues independently; CODEX does not auto-promote unmeasured remote state",
+        "id": "ABACUS_F841_MEASURED_QUEUE",
+        "state": "REMOTE_MEASURED_QUEUE",
+        "reason": "post-#1539 main measured F841 residual is 52; next hard slice must be regenerated from current remote main",
         "lane": "ABACUS_REMOTE_EXECUTION"
       },
       {
         "rank": 3,
         "id": "ABACUS_W293_MEASURED_QUEUE",
         "state": "REMOTE_MEASURED_QUEUE",
-        "reason": "measured mechanical debt remains a separate remote-authority lane",
+        "reason": "post-#1539 main measured W293 residual is 288; mechanical lane remains separate remote authority",
         "lane": "ABACUS_REMOTE_EXECUTION"
       }
     ],

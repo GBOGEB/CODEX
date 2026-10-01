@@ -1,0 +1,67 @@
+{
+  "schema_version": "0.1",
+  "return_id": "ABACUS_DAB_RETURN_20261001_1538_POSTMERGE_MAIN",
+  "observed_at": "2026-10-01T04:46:52Z",
+  "source": {
+    "repository": "GBOGEB/ABACUS",
+    "ref": "main",
+    "measured_sha": "7e5d9069a27fdd2a30ce43558659a8fbc23add0b",
+    "current_sha": "7e5d9069a27fdd2a30ce43558659a8fbc23add0b",
+    "authority": "REMOTE_EXECUTION_DOW"
+  },
+  "lineage": {
+    "baseline": {
+      "sha": "e5ae00f0b802374f2052d3a1000334641a26510c",
+      "workflow_run": 36816174452,
+      "job": 110221596202,
+      "total": 8140,
+      "F841": 55,
+      "W293": 336
+    },
+    "slice": {
+      "pr": 1538,
+      "exact_head_sha": "bc87fbee22f3171fcda406bb7a36f0d569a72230",
+      "merge_sha": "7e5d9069a27fdd2a30ce43558659a8fbc23add0b",
+      "file": "ABACUS_V21_DEPLOYMENT_PACKAGE/local_deployment_runner.py",
+      "measured_local_delta": {
+        "F841": -2,
+        "W293": -14
+      }
+    }
+  },
+  "exact_census": {
+    "workflow_run": 36816597217,
+    "job": 110222893606,
+    "status": "MEASURED",
+    "total": 8124,
+    "families": {
+      "E999": 1,
+      "F821": 0,
+      "F601": 0,
+      "F811": 0,
+      "F841": 53,
+      "E722": 16,
+      "E731": 0,
+      "E741": 17,
+      "W293": 322
+    },
+    "artifact": {
+      "id": 11141249000,
+      "name": "dab-flake8-census",
+      "sha256": "1c297eec8e88ca4ed91601399f590642489e9bd3c198fedab298a6306f5007fb"
+    }
+  },
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+    "state": "SOURCE_BOUND_HOLD"
+  },
+  "acceptance": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "engineering_truth_promoted": false,
+    "codex_mutation_promotion": "UNCHANGED_WITHHELD"
+  }
+}
