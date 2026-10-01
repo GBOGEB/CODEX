@@ -1,0 +1,47 @@
+{
+  "schema_version": "0.1",
+  "receipt_id": "MISSIONCONTROL_PORT_PROBES_20261001",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "ports": [
+    {
+      "id": "QPS_TRIAGE_RETURN",
+      "state": "PASS_EXACT_TYPED_RETURN",
+      "source": {
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1834,
+        "merge_sha": "9f1ff9a9b48b40cf19555fdcd34a1cbc944eaa1a"
+      },
+      "target": {
+        "repository": "GBOGEB/CODEX",
+        "commit": "438a5c64b6e5c59d39e2e48bcc8332130fbf1bf3",
+        "receipt": "mission_control/mycelium/evidence/cryoplant_master_input_ledger_return_1834.json"
+      },
+      "guard": "metadata-only projection; remote engineering truth not promoted"
+    },
+    {
+      "id": "DOW_EVIDENCE_RETURN",
+      "state": "PASS_EXACT_PINNED_RETURN",
+      "source": {
+        "repository": "GBOGEB/ABACUS",
+        "sha": "f55876e4d7985dd672304ff6e3945f24de9b9194",
+        "run": 35272680285,
+        "artifact": 10518602763,
+        "artifact_sha256": "2904d3cc2ef3f359b98db0b75bd2613436b94395b975ccf807c08a8c1d793b7f"
+      },
+      "target": {
+        "repository": "GBOGEB/cryoplant-project",
+        "bind_commit": "15c12bd869aef29c241f7cad774ef2fd5c26930b",
+        "consume_commit": "f5db104f3ab3b451df174e5c8f1fd06ee35191aa",
+        "receipt": "triage/hm01/QPS_HM01_ABACUS_V6_SUPPORT_RETURN_20260919_v0.1.yaml"
+      },
+      "guard": "exact support pin only; floating main not promoted"
+    }
+  ],
+  "result": {
+    "passed_ports": 2,
+    "declared_ports": 2,
+    "derived_health_pct": 100
+  }
+}
