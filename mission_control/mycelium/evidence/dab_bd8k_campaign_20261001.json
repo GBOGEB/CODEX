@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
   "campaign_id": "ABACUS-DAB-BD8K",
-  "state": "HOLD_FIRST_RED_COVERAGE",
+  "state": "HOLD_FIRST_RED_DASHBOARD_ARTIFACT",
   "baseline": {
     "measured_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
     "current_head_sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
@@ -32,11 +32,14 @@
   "first_red": {
     "state": "WORKFLOW_FAILING",
     "workflow": "CI/CD Test Suite",
-    "run_id": 36871993435,
-    "job_id": 110403157659,
-    "job": "Code Coverage",
-    "failure": "coverage.exceptions.DataError: Can't combine statement coverage data with branch data",
-    "dispatch_effect": "HOLD_FIRST_RED"
+    "run_id": 36877866913,
+    "job_id": 110425513456,
+    "job": "Deploy Test Dashboard",
+    "failure": "actions/download-artifact cannot find test-dashboard because comprehensive-test-suite never materialized/uploaded the dashboard artifact",
+    "owner_pr": 1588,
+    "repair_head_sha": "099d5ce6b4c17f6fa321a6606d837e094c62fe41",
+    "dispatch_effect": "HOLD_FIRST_RED",
+    "classification": "REPO_LOCAL_CI_ARTIFACT_CONTRACT"
   },
   "workers": [
     {
@@ -53,7 +56,9 @@
         "E302": 2
       },
       "expected_target_findings": 296,
-      "mutation_class": "MECHANICAL_SPACING_STRUCTURE"
+      "mutation_class": "MECHANICAL_SPACING_STRUCTURE",
+      "blocker": "CI_DASHBOARD_ARTIFACT_CONTRACT_PR1588",
+      "release_predicate": "PR1588_EXACT_HEAD_GREEN_AND_CURRENT_MAIN_FIRST_RED_RECENSUS"
     },
     {
       "id": "bd8k_mech_b",
@@ -69,7 +74,9 @@
         "E302": 10
       },
       "expected_target_findings": 259,
-      "mutation_class": "MECHANICAL_SPACING_STRUCTURE"
+      "mutation_class": "MECHANICAL_SPACING_STRUCTURE",
+      "blocker": "CI_DASHBOARD_ARTIFACT_CONTRACT_PR1588",
+      "release_predicate": "PR1588_EXACT_HEAD_GREEN_AND_CURRENT_MAIN_FIRST_RED_RECENSUS"
     },
     {
       "id": "bd8k_semantic_a",
@@ -82,7 +89,9 @@
         "E402": 21
       },
       "expected_target_findings": 21,
-      "mutation_class": "IMPORT_ORDER_CLASSIFY_THEN_REPAIR"
+      "mutation_class": "IMPORT_ORDER_CLASSIFY_THEN_REPAIR",
+      "blocker": "CI_DASHBOARD_ARTIFACT_CONTRACT_PR1588",
+      "release_predicate": "PR1588_EXACT_HEAD_GREEN_AND_CURRENT_MAIN_FIRST_RED_RECENSUS"
     },
     {
       "id": "bd8k_semantic_b",
@@ -95,7 +104,9 @@
         "F401": 12
       },
       "expected_target_findings": 12,
-      "mutation_class": "UNUSED_IMPORT_CLASSIFY_SIDE_EFFECTS"
+      "mutation_class": "UNUSED_IMPORT_CLASSIFY_SIDE_EFFECTS",
+      "blocker": "CI_DASHBOARD_ARTIFACT_CONTRACT_PR1588",
+      "release_predicate": "PR1588_EXACT_HEAD_GREEN_AND_CURRENT_MAIN_FIRST_RED_RECENSUS"
     }
   ],
   "execution_protocol": [
@@ -112,5 +123,40 @@
   },
   "authority_transfer": false,
   "formal_credit_delta": 0,
-  "engineering_credit_delta": 0
+  "engineering_credit_delta": 0,
+  "coverage_red_resolution": {
+    "predecessor_state": "HOLD_FIRST_RED_COVERAGE",
+    "repair_pr": 1583,
+    "repair_head_sha": "cc17eef1a747d384b71f3f26eb11fd982c4f921c",
+    "exact_head_workflow": "CI/CD Test Suite",
+    "exact_head_run": 36876425121,
+    "conclusion": "SUCCESS",
+    "disposition": "COVERAGE_DATAERROR_FIXED",
+    "previous_failure": "coverage.exceptions.DataError: Can't combine statement coverage data with branch data"
+  },
+  "parallel_control_repairs": [
+    {
+      "pr": 1588,
+      "lane": "FIRST_RED",
+      "scope": "comprehensive test dashboard artifact contract",
+      "state": "PROVING"
+    },
+    {
+      "pr": 1589,
+      "lane": "ADVISORY_TELEMETRY",
+      "scope": "ABACUS-v032 Flake8/Pylint advisory control semantics",
+      "state": "PROVING"
+    },
+    {
+      "pr": 1590,
+      "lane": "BOOTSTRAP_PORTABILITY",
+      "scope": "supported Python 3.11/3.12 cross-platform matrix",
+      "state": "PROVING"
+    }
+  ],
+  "current_remote_head": {
+    "sha": "ece02e798e996d01e3d2e68f25cf349c8147a4a1",
+    "relation_to_dab_baseline": "CI/test/workflow-only changes after measured census; lint population not promoted without recensus"
+  },
+  "updated_at": "2026-10-01T15:00:00Z"
 }
