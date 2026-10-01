@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-10-01T09:20:00Z",
+  "generated_at": "2026-10-01T13:55:57Z",
   "public_metadata_only": true,
   "authority_transfer": false,
   "sources": [
@@ -20,25 +20,25 @@
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "EXECUTION_DOW",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-01T09:20:00Z",
-      "head_sha": "010fb4269488c19cb9b6d54bbd35c0dee9516bd1",
-      "census_pr": 1548,
-      "census_head_sha": "ae35036fee38ddbd0df581ce36599a46f95080b1",
-      "census_merge_sha": "ae35036fee38ddbd0df581ce36599a46f95080b1",
-      "census_workflow_run": 36841306825,
-      "census_job": 110300810260,
-      "census_artifact_id": 11151257877,
-      "census_artifact_sha256": "021764009ff4154dfc10f7bb5200aabb84868bff038479c051ada3f9a1ce3f4d",
-      "measurement_basis": "post-#1548 main census; current head later #1549 non-Python workflow YAML plus DMAIC metrics only",
-      "census_total": 7976,
-      "w293_postmerge_status": "MEASURED_POST_1548_MAIN",
+      "observed_at": "2026-10-01T13:55:57Z",
+      "head_sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
+      "census_pr": 1581,
+      "census_head_sha": "9bc20bc9f0dcfbd5a12422572ea099ecd01ae337",
+      "census_merge_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
+      "census_workflow_run": 36872346746,
+      "census_job": 110403022453,
+      "census_artifact_id": 11168375869,
+      "census_artifact_sha256": "c5a6169a70ba68ea605e48ee9a5a2e60e66d59e81b1f4b392df3aa4c05a6eb82",
+      "measurement_basis": "post-#1581 main census; current head later metrics-only",
+      "census_total": 7909,
+      "w293_postmerge_status": "MEASURED_POST_1581_MAIN",
       "E741": 17,
-      "W293": 186,
+      "W293": 119,
       "E722": 16,
-      "F841": 47,
+      "F841": 41,
       "E999": 1,
       "source_bound_hold": "qplant/w52_p2m_ts_pressure_sensitivity.py",
-      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_post_1548_main_measured.json",
+      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_post_1581_main_measured.json",
       "F821": 0,
       "F601": 0,
       "F811": 0,
@@ -49,38 +49,44 @@
         "W293": 453,
         "E722": 16
       },
-      "measured_return_source_sha": "ae35036fee38ddbd0df581ce36599a46f95080b1",
+      "measured_return_source_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
       "live_head_after_measurement": {
-        "sha": "010fb4269488c19cb9b6d54bbd35c0dee9516bd1",
-        "status": "CURRENT_HEAD_AFTER_1548_NON_PYTHON_WORKFLOW_AND_METRICS",
-        "latest_known_merge_pr": 1549,
+        "sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
+        "status": "CURRENT_HEAD_AFTER_1581_METRICS_ONLY",
+        "latest_known_merge_pr": 1581,
         "lint_population_changed": false
       },
       "pending_independent_lanes": [],
       "combined_main_census_pending": null,
       "completed_latest_lane": {
-        "pr": 1548,
-        "family": "F841_W293",
+        "pr": 1581,
+        "family": "F821_REPAIR",
         "measured_baseline": {
-          "F841": 49,
-          "W293": 204
+          "F821": 4,
+          "F841": 41,
+          "W293": 119,
+          "total": 7913
         },
         "measured_residual": {
-          "F841": 47,
-          "W293": 186
+          "F821": 0,
+          "F841": 41,
+          "W293": 119,
+          "total": 7909
         },
         "measured_delta": {
-          "F841": -2,
-          "W293": -18
+          "F821": -4,
+          "total": -4
         },
-        "merge_sha": "ae35036fee38ddbd0df581ce36599a46f95080b1"
+        "merge_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52"
       },
       "reverse_pressure_next": {
-        "status": "REGENERATE_FROM_CURRENT_MAIN",
+        "status": "DAB_BD8K_HOLD_FIRST_RED",
         "hard_family": "F841",
-        "hard_measured_residual": 47,
+        "hard_measured_residual": 41,
         "mech_family": "W293",
-        "mech_measured_residual": 186,
+        "mech_measured_residual": 119,
+        "campaign_id": "ABACUS-DAB-BD8K",
+        "first_red_job": 110403157659,
         "stale_prepared_branches": true
       }
     },
