@@ -1,0 +1,50 @@
+{
+  "schema_version": "0.1",
+  "receipt_id": "CRYO_IF_B_PRESSURE_INPUT_CLOSURE_20261001",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "target_node": "qps_triage_b",
+  "source_evidence": [
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "issue": 540,
+      "state": "open",
+      "created_at": "2026-09-06T08:23:44Z",
+      "fact": "Line-B geometry is explicitly identified as the dominant blocker"
+    },
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "issue": 210,
+      "state": "open",
+      "created_at": "2026-08-31T09:43:27Z",
+      "fact": "QRB/TS A/B/D/W boundaries remain source-verification RFI"
+    },
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "issue": 481,
+      "state": "open",
+      "created_at": "2026-09-05T13:09:59Z",
+      "fact": "#210 classified ACTIVE/P0 for #480 and high cross-domain unlock for #480/#82/QRB"
+    }
+  ],
+  "normalization": {
+    "criticality": "P0 -> 1.0",
+    "unblock_value": "HIGH -> 1.0",
+    "age_days": "floor elapsed days at existing control snapshot; 24 days; cap 30"
+  },
+  "pressure_inputs": {
+    "urgency": 1,
+    "criticality": 1,
+    "downstream_blocks": 2,
+    "unblock_value": 1,
+    "proof_deficit": 1,
+    "age_days": 24
+  },
+  "derived_result": {
+    "score": 87,
+    "coverage": 1,
+    "missing_inputs": []
+  },
+  "guard": "reverse-pressure score is control/orchestration metadata only"
+}
