@@ -1,0 +1,72 @@
+{
+  "schema_version": "0.1",
+  "return_id": "ABACUS_DAB_POST_1583_MAIN_MEASURED",
+  "observed_at": "2026-10-01T14:38:24Z",
+  "source": {
+    "repository": "GBOGEB/ABACUS",
+    "measurement_ref": "main",
+    "measurement_sha": "b04c3caa0f9fd4a8f2cd8099b62b6f64ee2b6b95",
+    "current_head_sha": "2a3a46718dcf305f56aac5c238761f7846bf61e5",
+    "authority": "REMOTE_EXECUTION_DOW"
+  },
+  "first_red_repair": {
+    "original_failure": {
+      "workflow": "CI/CD Test Suite",
+      "run_id": 36871993435,
+      "job_id": 110403157659,
+      "job": "Code Coverage",
+      "failure": "coverage.exceptions.DataError: Can't combine statement coverage data with branch data"
+    },
+    "repair_pr": 1583,
+    "exact_head_sha": "cc17eef1a747d384b71f3f26eb11fd982c4f921c",
+    "proof_run": 36876407740,
+    "coverage_job": 110418884697,
+    "result": "GREEN",
+    "repair_scope": "nested pytest-cov environment isolation; threshold and branch coverage preserved"
+  },
+  "post_merge_main_census": {
+    "pr": 1583,
+    "merge_sha": "b04c3caa0f9fd4a8f2cd8099b62b6f64ee2b6b95",
+    "workflow_run": 36877866665,
+    "job": 110421836238,
+    "artifact_id": 11169768922,
+    "artifact_sha256": "1bd59ebfb9537a6d60606e549e62ab135f903bc533c67e01fe94ed22e8b8ef0d",
+    "total": 7909,
+    "families": {
+      "E999": 1,
+      "F821": 0,
+      "F601": 0,
+      "F811": 0,
+      "F841": 41,
+      "E722": 16,
+      "E731": 0,
+      "E741": 17,
+      "W293": 119
+    },
+    "status": "MEASURED"
+  },
+  "campaign_release": {
+    "campaign_id": "ABACUS-DAB-BD8K",
+    "state": "READY_DISPATCH",
+    "baseline_sha": "b04c3caa0f9fd4a8f2cd8099b62b6f64ee2b6b95",
+    "current_head_sha": "2a3a46718dcf305f56aac5c238761f7846bf61e5",
+    "workers": [
+      "bd8k_mech_a",
+      "bd8k_mech_b",
+      "bd8k_semantic_a",
+      "bd8k_semantic_b"
+    ],
+    "promotion_rule": "POST_MERGE_MEASURED_MAIN_ONLY"
+  },
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+    "state": "SOURCE_BOUND_HOLD"
+  },
+  "governance": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  }
+}
