@@ -366,6 +366,42 @@
       "parent_event": "EV-0032",
       "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
       "summary": "Reverse-pressure queue regenerated from measured #1539 main: next HARD F841 residual 52 and MECH W293 residual 288; current ABACUS head differs only by generated metrics."
+    },
+    {
+      "id": "EV-0034",
+      "at": "2026-10-01T05:17:55Z",
+      "type": "EXTERNAL_RETURN",
+      "node_id": "repo_abacus",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "e7d6291ae376da2d0f1c4fa7b324c93bd45f2e75",
+      "parent_event": "EV-0033",
+      "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
+      "summary": "Consumed measured ABACUS #1541 post-merge main census: total 8058, F841=51, W293=264, E741=17, E722=16; E999=1 remains source-bound.",
+      "authority_transfer": false
+    },
+    {
+      "id": "EV-0035",
+      "at": "2026-10-01T06:22:00Z",
+      "type": "EXTERNAL_RETURN",
+      "node_id": "repo_abacus",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "b97d08ea76ace14c8116b2e8772ea9f5b8994820",
+      "parent_event": "EV-0034",
+      "content_ref": "mission_control/mycelium/evidence/abacus_dab_post_1542_main_measured.json",
+      "summary": "Consumed measured ABACUS #1542 post-merge main census: total 8035, F841=50, W293=242, E741=17, E722=16; current ABACUS head b68edcb7 differs only by DMAIC metrics.",
+      "authority_transfer": false
+    },
+    {
+      "id": "EV-0036",
+      "at": "2026-10-01T06:22:00Z",
+      "type": "RECOVERY",
+      "node_id": "current_next",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "b68edcb74a7925b5131acdba1844abe741ff3e14",
+      "parent_event": "EV-0035",
+      "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
+      "summary": "Reverse-pressure queue regenerated from measured #1542 main: next HARD F841 residual 50 and MECH W293 residual 242; CODEX mutation-promotion gate remains explicitly withheld.",
+      "authority_transfer": false
     }
   ],
   "horizons": {
@@ -381,14 +417,14 @@
         "rank": 2,
         "id": "ABACUS_F841_MEASURED_QUEUE",
         "state": "REMOTE_MEASURED_QUEUE",
-        "reason": "post-#1539 main measured F841 residual is 52; next hard slice must be regenerated from current remote main",
+        "reason": "post-#1542 main measured F841 residual is 50; next hard slice must be regenerated from current remote main",
         "lane": "ABACUS_REMOTE_EXECUTION"
       },
       {
         "rank": 3,
         "id": "ABACUS_W293_MEASURED_QUEUE",
         "state": "REMOTE_MEASURED_QUEUE",
-        "reason": "post-#1539 main measured W293 residual is 288; mechanical lane remains separate remote authority",
+        "reason": "post-#1542 main measured W293 residual is 242; mechanical lane remains separate remote authority",
         "lane": "ABACUS_REMOTE_EXECUTION"
       }
     ],
