@@ -2,7 +2,7 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-10-01T04:46:52Z"
+  generated_at: "2026-10-01T04:54:21Z"
 
   repositories:
     codex:
@@ -29,48 +29,48 @@ reentry:
       repo: GBOGEB/ABACUS
       branch: main
       handover_observed_sha: 713a152e99024165aea81bffbf530d2073e164bb
-      refreshed_current_sha: 7e5d9069a27fdd2a30ce43558659a8fbc23add0b
+      refreshed_current_sha: 469527022055d4b4cc7a5c2cbbb1b683e8d18d6a
       role: REMOTE_EXECUTION_AUTHORITY
       latest_census:
-        pr: 1538
-        state: MEASURED_POST_1538_MAIN
-        evidence_head_sha: 7e5d9069a27fdd2a30ce43558659a8fbc23add0b
-        merge_sha: 7e5d9069a27fdd2a30ce43558659a8fbc23add0b
-        workflow_run: 36816597217
-        job: 110222893606
-        artifact_id: 11141249000
-        artifact_sha256: 1c297eec8e88ca4ed91601399f590642489e9bd3c198fedab298a6306f5007fb
-        total: 8124
+        pr: 1539
+        state: MEASURED_POST_1539_MAIN
+        evidence_head_sha: 2b6226e992bd9e05506d4fe54b222375fd827c41
+        merge_sha: 2b6226e992bd9e05506d4fe54b222375fd827c41
+        workflow_run: 36817064440
+        job: 110224330509
+        artifact_id: 11141941722
+        artifact_sha256: 2e39c297b336e85032f35e6c5cc02c56294ec811f2b64e3937ac71da85abe776
+        total: 8085
         E999: 1
         F821: 0
         F601: 0
         F811: 0
-        F841: 53
+        F841: 52
         E722: 16
         E731: 0
         E741: 17
-        W293: 322
-        measured_pre_slice_F841: 55
-        measured_pre_slice_W293: 336
-        measured_delta_F841: -2
-        measured_delta_W293: -14
+        W293: 288
+        measured_pre_slice_F841: 53
+        measured_pre_slice_W293: 322
+        measured_delta_F841: -1
+        measured_delta_W293: -34
       subsequent_non_python_metrics:
-        current_head_sha: 7e5d9069a27fdd2a30ce43558659a8fbc23add0b
+        current_head_sha: 469527022055d4b4cc7a5c2cbbb1b683e8d18d6a
         lint_population_changed: false
       active_slice:
         status: NONE
       reverse_pressure_next:
         status: REGENERATE_FROM_CURRENT_MAIN
         hard_family: F841
-        hard_measured_residual: 53
+        hard_measured_residual: 52
         mech_family: W293
-        mech_measured_residual: 322
+        mech_measured_residual: 288
         stale_prepared_branches: true
       source_bound_hold:
         family: E999
         count: 1
         path: qplant/w52_p2m_ts_pressure_sensitivity.py
-      evidence: mission_control/mycelium/evidence/abacus_dab_post_1538_main_measured.json
+      evidence: mission_control/mycelium/evidence/abacus_dab_post_1539_main_measured.json
     cryoplant:
       repo: GBOGEB/cryoplant-project
       branch: main
@@ -289,21 +289,22 @@ reentry:
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
-      head_sha: 7e5d9069a27fdd2a30ce43558659a8fbc23add0b
+      head_sha: 469527022055d4b4cc7a5c2cbbb1b683e8d18d6a
       state: REMOTE_AUTHORITY
-      latest_census_merge_sha: 7e5d9069a27fdd2a30ce43558659a8fbc23add0b
-      current_atom: POST_1538_MAIN_MEASURED_REGENERATE_HARD_MECH_QUEUE
+      latest_census_merge_sha: 2b6226e992bd9e05506d4fe54b222375fd827c41
+      current_atom: POST_1539_MAIN_MEASURED_REGENERATE_HARD_MECH_QUEUE
       completed_atoms:
         - POST_1527_1528_COMBINED_CENSUS_MEASURED
         - POST_1530_MAIN_CENSUS_MEASURED
         - POST_1538_MAIN_CENSUS_MEASURED
+        - POST_1539_MAIN_CENSUS_MEASURED
       blocker: REMOTE_ONLY_NO_CODEX_PROMOTION
       queue_state: EXECUTION
       evidence_refs:
-        - mission_control/mycelium/evidence/abacus_dab_post_1538_main_measured.json
-        - ABACUS run 36816597217 job 110222893606
+        - mission_control/mycelium/evidence/abacus_dab_post_1539_main_measured.json
+        - ABACUS run 36817064440 job 110224330509
       artifact_refs:
-        - ABACUS artifact 11141249000
+        - ABACUS artifact 11141941722
       next_legal_transitions:
         - REGENERATE_NEXT_HARD_SLICE_FROM_CURRENT_MAIN
         - REGENERATE_NEXT_MECH_SLICE_AFTER_HARD_ADMISSIBILITY
@@ -660,6 +661,37 @@ reentry:
     measured_delta:
       F841: -2
       W293: -14
+    reverse_pressure_next: REGENERATE_FROM_CURRENT_MAIN
+    authority_transfer: false
+    formal_credit_delta: 0
+    engineering_credit_delta: 0
+
+  abacus_return_1539:
+    state: MEASURED_POST_1539_MAIN
+    observed_at: "2026-10-01T04:54:21Z"
+    source_sha: 2b6226e992bd9e05506d4fe54b222375fd827c41
+    current_source_sha: 469527022055d4b4cc7a5c2cbbb1b683e8d18d6a
+    workflow_run: 36817064440
+    job: 110224330509
+    artifact_id: 11141941722
+    artifact_sha256: 2e39c297b336e85032f35e6c5cc02c56294ec811f2b64e3937ac71da85abe776
+    total: 8085
+    families:
+      E999: 1
+      F821: 0
+      F601: 0
+      F811: 0
+      F841: 52
+      E722: 16
+      E731: 0
+      E741: 17
+      W293: 288
+    measured_pre_slice:
+      F841: 53
+      W293: 322
+    measured_delta:
+      F841: -1
+      W293: -34
     reverse_pressure_next: REGENERATE_FROM_CURRENT_MAIN
     authority_transfer: false
     formal_credit_delta: 0
