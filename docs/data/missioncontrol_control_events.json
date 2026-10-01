@@ -450,29 +450,48 @@
       "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
       "summary": "Reverse-pressure queue regenerated from measured #1548 main: next HARD F841 residual 47 and MECH W293 residual 186; current ABACUS head differs only by non-Python CD workflow and generated metrics.",
       "authority_transfer": false
+    },
+    {
+      "id": "EV-0041",
+      "at": "2026-10-01T15:00:00Z",
+      "type": "RECOVERY",
+      "node_id": "dab_bd8k",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "ece02e798e996d01e3d2e68f25cf349c8147a4a1",
+      "parent_event": "EV-0040",
+      "content_ref": "mission_control/mycelium/evidence/dab_bd8k_campaign_20261001.json",
+      "summary": "BD8K first-red transitioned: #1583 exact-head CI/CD Test Suite proved nested coverage DataError fixed; current repo-local first red is Deploy Test Dashboard artifact contract owned by #1588. Four mutation workers remain blocked until #1588 exact-head green and current-main recensus.",
+      "authority_transfer": false
     }
   ],
   "horizons": {
     "current": [
       {
         "rank": 1,
-        "id": "MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION",
-        "state": "WITHHELD_EXPLICIT_PROMOTION_REQUIRED",
-        "reason": "bounded apply implementation and exact-head guards are green, but mutation enablement was not requested or promoted",
-        "lane": "CODEX_UI"
+        "id": "BD8K_FIRST_RED_DASHBOARD",
+        "state": "PROVING_PR1588",
+        "reason": "coverage DataError is fixed by #1583; current first red is missing dashboard artifact contract",
+        "lane": "ABACUS_REMOTE_EXECUTION"
       },
       {
         "rank": 2,
-        "id": "ABACUS_F841_MEASURED_QUEUE",
-        "state": "REMOTE_MEASURED_QUEUE",
-        "reason": "post-#1548 main measured F841 residual is 47; next hard slice must be regenerated from current remote main",
+        "id": "ABACUS_V032_ADVISORY_CONTROL",
+        "state": "PROVING_PR1589",
+        "reason": "advisory Flake8/Pylint telemetry control semantics are independent of first-red dashboard repair",
         "lane": "ABACUS_REMOTE_EXECUTION"
       },
       {
         "rank": 3,
-        "id": "ABACUS_W293_MEASURED_QUEUE",
-        "state": "REMOTE_MEASURED_QUEUE",
-        "reason": "post-#1548 main measured W293 residual is 186; mechanical lane remains separate remote authority",
+        "id": "BOOTSTRAP_SUPPORTED_PYTHON",
+        "state": "PROVING_PR1590",
+        "reason": "supported Python 3.11/3.12 portability repair proceeds independently",
+        "lane": "ABACUS_REMOTE_EXECUTION"
+      },
+      {
+        "rank": 4,
+        "id": "BD8K_WORKER_DISPATCH",
+        "state": "HOLD_FIRST_RED",
+        "reason": "2 MECH + 2 SEMANTIC workers release only after #1588 exact-head green and first-red recensus",
         "lane": "ABACUS_REMOTE_EXECUTION"
       }
     ],
