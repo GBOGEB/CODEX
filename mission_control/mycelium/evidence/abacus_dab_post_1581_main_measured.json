@@ -1,0 +1,62 @@
+{
+  "schema_version": "0.1",
+  "return_id": "ABACUS_DAB_RETURN_20261001_1581_POSTMERGE_MAIN",
+  "observed_at": "2026-10-01T13:55:57Z",
+  "source": {
+    "repository": "GBOGEB/ABACUS",
+    "ref": "main",
+    "measured_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
+    "current_sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
+    "authority": "REMOTE_EXECUTION_DOW"
+  },
+  "exact_census": {
+    "workflow_run": 36872346746,
+    "job": 110403022453,
+    "status": "MEASURED",
+    "total": 7909,
+    "families": {
+      "E225": 635,
+      "E231": 1960,
+      "E302": 420,
+      "E402": 811,
+      "E501": 1330,
+      "E702": 741,
+      "E722": 16,
+      "E741": 17,
+      "E999": 1,
+      "F401": 367,
+      "F541": 318,
+      "F601": 0,
+      "F811": 0,
+      "F821": 0,
+      "F841": 41,
+      "W293": 119
+    },
+    "artifact": {
+      "id": 11168375869,
+      "name": "dab-flake8-census",
+      "sha256": "c5a6169a70ba68ea605e48ee9a5a2e60e66d59e81b1f4b392df3aa4c05a6eb82"
+    }
+  },
+  "first_red": {
+    "state": "WORKFLOW_FAILING",
+    "workflow": "CI/CD Test Suite",
+    "run_id": 36871993435,
+    "job_id": 110403157659,
+    "job": "Code Coverage",
+    "failure": "coverage.exceptions.DataError: Can't combine statement coverage data with branch data",
+    "dispatch_effect": "HOLD_FIRST_RED"
+  },
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+    "state": "SOURCE_BOUND_HOLD"
+  },
+  "acceptance": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "engineering_truth_promoted": false
+  }
+}
