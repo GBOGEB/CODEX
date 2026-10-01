@@ -1,0 +1,116 @@
+{
+  "schema_version": "0.1",
+  "campaign_id": "ABACUS-DAB-BD8K",
+  "state": "HOLD_FIRST_RED_COVERAGE",
+  "baseline": {
+    "measured_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
+    "current_head_sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
+    "census_run": 36872346746,
+    "census_job": 110403022453,
+    "artifact_id": 11168375869,
+    "artifact_sha256": "c5a6169a70ba68ea605e48ee9a5a2e60e66d59e81b1f4b392df3aa4c05a6eb82",
+    "total": 7909,
+    "families": {
+      "E225": 635,
+      "E231": 1960,
+      "E302": 420,
+      "E402": 811,
+      "E501": 1330,
+      "E702": 741,
+      "E722": 16,
+      "E741": 17,
+      "E999": 1,
+      "F401": 367,
+      "F541": 318,
+      "F601": 0,
+      "F811": 0,
+      "F821": 0,
+      "F841": 41,
+      "W293": 119
+    }
+  },
+  "first_red": {
+    "state": "WORKFLOW_FAILING",
+    "workflow": "CI/CD Test Suite",
+    "run_id": 36871993435,
+    "job_id": 110403157659,
+    "job": "Code Coverage",
+    "failure": "coverage.exceptions.DataError: Can't combine statement coverage data with branch data",
+    "dispatch_effect": "HOLD_FIRST_RED"
+  },
+  "workers": [
+    {
+      "id": "bd8k_mech_a",
+      "role": "MECH-A",
+      "state": "BLOCKED_FIRST_RED",
+      "target_files": [
+        "triage/run_repo_census.py"
+      ],
+      "target_families": {
+        "E231": 232,
+        "E225": 36,
+        "E702": 26,
+        "E302": 2
+      },
+      "expected_target_findings": 296,
+      "mutation_class": "MECHANICAL_SPACING_STRUCTURE"
+    },
+    {
+      "id": "bd8k_mech_b",
+      "role": "MECH-B",
+      "state": "BLOCKED_FIRST_RED",
+      "target_files": [
+        "tools/w65_parallel_discovery.py"
+      ],
+      "target_families": {
+        "E231": 165,
+        "E225": 56,
+        "E702": 28,
+        "E302": 10
+      },
+      "expected_target_findings": 259,
+      "mutation_class": "MECHANICAL_SPACING_STRUCTURE"
+    },
+    {
+      "id": "bd8k_semantic_a",
+      "role": "SEMANTIC-A",
+      "state": "BLOCKED_FIRST_RED",
+      "target_files": [
+        "DMAIC_V3/full_pipeline_orchestrator.py"
+      ],
+      "target_families": {
+        "E402": 21
+      },
+      "expected_target_findings": 21,
+      "mutation_class": "IMPORT_ORDER_CLASSIFY_THEN_REPAIR"
+    },
+    {
+      "id": "bd8k_semantic_b",
+      "role": "SEMANTIC-B",
+      "state": "BLOCKED_FIRST_RED",
+      "target_files": [
+        "qplant/handover_dashboard/api/main.py"
+      ],
+      "target_families": {
+        "F401": 12
+      },
+      "expected_target_findings": 12,
+      "mutation_class": "UNUSED_IMPORT_CLASSIFY_SIDE_EFFECTS"
+    }
+  ],
+  "execution_protocol": [
+    "FAST_DAB_PREFLIGHT",
+    "FULL_CI_IF_ADMITTED",
+    "MERGE_TRAIN",
+    "POST_MERGE_DAB",
+    "REGENERATE_QUEUE"
+  ],
+  "crew_model": {
+    "sentinel": 1,
+    "mutation_workers": 4,
+    "verifier": "logical independent census"
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0
+}

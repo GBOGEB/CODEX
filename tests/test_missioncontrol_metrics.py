@@ -187,3 +187,24 @@ def test_same_measured_abacus_overlay_preserves_richer_governed_provenance() -> 
     assert hard["baseline"] == 22
     assert hard["measurement_pr"] == "#1527 post-merge main"
     assert hard["delta_from_baseline"] == -5
+
+
+def test_campaign_and_worker_state_are_projected_without_scoring() -> None:
+    graph = {"nodes": [{"id": "dab_bd8k", "type": "queue", "label": "DAB-BD8K", "state": "HOLD"}], "edges": []}
+    obs = {
+        "snapshot_at": "2026-10-01T13:55:57Z",
+        "evidence_policy": "MEASURED_OR_WITHHELD",
+        "pressure_weights": {},
+        "nodes": {
+            "dab_bd8k": {
+                "campaign": {"status": "MEASURED_HOLD_FIRST_RED", "baseline": {"total": 7909}},
+                "workers": [{"id": "bd8k_mech_a", "state": "BLOCKED_FIRST_RED"}],
+            }
+        },
+        "pca_rows": [],
+        "pairwise_outcomes": [],
+    }
+    snapshot = build_snapshot(graph, obs)
+    assert snapshot["nodes"]["dab_bd8k"]["campaign"]["baseline"]["total"] == 7909
+    assert snapshot["nodes"]["dab_bd8k"]["workers"][0]["state"] == "BLOCKED_FIRST_RED"
+    assert snapshot["nodes"]["dab_bd8k"]["code_health"]["status"] == STATUS_WITHHELD
