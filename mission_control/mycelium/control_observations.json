@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "snapshot_at": "2026-10-01T15:25:00Z",
+  "snapshot_at": "2026-10-01T18:45:00Z",
   "evidence_policy": "MEASURED_OR_WITHHELD",
   "pressure_weights": {
     "urgency": 0.3,
@@ -220,81 +220,22 @@
     },
     "dab_bd8k": {
       "campaign": {
-        "status": "DISPATCHED_PLANNING_G1_CROSSED_PROMOTION_WITHHELD",
+        "status": "FOUR_WORKERS_MERGED_POSTMERGE_DAB_QUEUED",
         "campaign_id": "ABACUS-DAB-BD8K",
-        "dispatch_status": "FOUR_WORKERS_DISPATCHED",
-        "planning_probe": {
-          "source_pr": 1592,
-          "source_head_sha": "7ad0614dd65f6ab9ef94b92105e9c940bee1b24f",
-          "current_main_sha": "f409c515072921f4c87a30bba92facc514d20d04",
-          "census_run": 36882852501,
-          "census_job": 110438706121,
-          "artifact_id": 11172240917,
-          "artifact_zip_sha256": "1fb3dd9daa76ef045daa7c2e35e91bec397a3ff373f5121032a89148af867edd",
-          "total": 6321,
-          "families": {
-            "E225": 628,
-            "E231": 1823,
-            "E302": 332,
-            "E402": 644,
-            "E501": 949,
-            "E702": 294,
-            "E722": 16,
-            "E741": 9,
-            "E999": 1,
-            "F401": 348,
-            "F541": 315,
-            "F841": 40,
-            "W293": 119
-          },
-          "status": "MEASURED_PR_HEAD_PLANNING_ONLY",
-          "promotion_authority": false
+        "worker_merge_head": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+        "effective_current_main": "b51e614520183758d109f761104decf3d959dd24",
+        "current_main_lint_population_changed": false,
+        "authoritative_census": {
+          "run": 36908967216,
+          "job": 110526569316,
+          "status": "QUEUED",
+          "head_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9"
         },
-        "first_red": {
-          "state": "SUPERSEDED_BY_MERGED_REPAIR",
-          "repair_pr": 1583,
-          "repair_merge_sha": "b04c3caa0f9fd4a8f2cd8099b62b6f64ee2b6b95"
+        "G1": "WITHHELD_POSTMERGE_DAB_QUEUED",
+        "successor_wave": {
+          "measured_planning_pressure": 910,
+          "dispatch": "WITHHELD_UNTIL_G1_MEASURED"
         },
-        "targeted_findings": 404,
-        "planning_projected_total": 5917,
-        "gates": [
-          {
-            "id": "G0",
-            "condition": "protected families restored",
-            "state": "PASS"
-          },
-          {
-            "id": "G1",
-            "condition": "total < 6000",
-            "state": "PLANNING_CROSSED_PROMOTION_WITHHELD"
-          },
-          {
-            "id": "G2",
-            "condition": "total < 4000",
-            "state": "PENDING"
-          },
-          {
-            "id": "G3",
-            "condition": "total < 2000",
-            "state": "PENDING"
-          },
-          {
-            "id": "G4",
-            "condition": "total < 1000",
-            "state": "PENDING"
-          },
-          {
-            "id": "G5",
-            "condition": "semantic residual only",
-            "state": "PENDING"
-          },
-          {
-            "id": "G6",
-            "condition": "zero or explicit holds",
-            "state": "PENDING"
-          }
-        ],
-        "admission_protocol": "WORKER_PATCH -> FAST_DAB -> FULL_CI -> MERGE -> POST_MERGE_DAB -> REGENERATE_QUEUE",
         "promotion_rule": "POST_MERGE_MEASURED_MAIN_ONLY"
       },
       "workers": [
@@ -302,67 +243,52 @@
           "id": "bd8k_mech_a",
           "role": "MECH-A",
           "pr": 1596,
-          "head_sha": "6a886a680c3504d7d6a6ff54cde9cf709c492d27",
-          "state": "CI_QUEUED",
-          "target_files": [
-            "triage/run_repo_census.py"
-          ],
-          "target_families": {
-            "E231": 206
-          },
-          "expected_target_findings": 206,
-          "mutation_class": "CENSUS_BOUND_E231_SPACING"
+          "merge_sha": "4fb9457e1dda9af32ea9024367b07bb7cb46e4ee",
+          "state": "MERGED",
+          "measured_delta": {
+            "E231": -206,
+            "total": -206
+          }
         },
         {
           "id": "bd8k_mech_b",
           "role": "MECH-B",
           "pr": 1597,
-          "head_sha": "94527ef94a4767f7cc1bcfbc92666da99a8bd6b4",
-          "state": "CI_QUEUED",
-          "target_files": [
-            "tools/w65_parallel_discovery.py"
-          ],
-          "target_families": {
-            "E231": 165
-          },
-          "expected_target_findings": 165,
-          "mutation_class": "CENSUS_BOUND_E231_SPACING"
+          "merge_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+          "state": "MERGED",
+          "measured_delta": {
+            "E231": -165,
+            "total": -165
+          }
         },
         {
           "id": "bd8k_semantic_a",
           "role": "SEMANTIC-A",
           "pr": 1598,
-          "head_sha": "9f2b47d47e055841392300a50ecb059801530e64",
-          "state": "CI_QUEUED",
-          "target_files": [
-            "DMAIC_V3/full_pipeline_orchestrator.py"
-          ],
-          "target_families": {
-            "E402": 21
-          },
-          "expected_target_findings": 21,
-          "mutation_class": "IMPORT_BOOTSTRAP_CLASSIFY_AND_REPAIR"
+          "merge_sha": "c28acb27291a7a0dc43ce90e9d095d93542ea9d9",
+          "state": "MERGED",
+          "measured_delta": {
+            "E402": -21,
+            "total": -21
+          }
         },
         {
           "id": "bd8k_semantic_b",
           "role": "SEMANTIC-B",
           "pr": 1599,
-          "head_sha": "37fa586a7e6b16e34cac55c6cb51bb7c1fa4b152",
-          "state": "CI_QUEUED",
-          "target_files": [
-            "qplant/handover_dashboard/api/main.py"
-          ],
-          "target_families": {
-            "F401": 12
-          },
-          "expected_target_findings": 12,
-          "mutation_class": "UNUSED_IMPORT_REVIEWED_REMOVAL"
+          "merge_sha": "f5b96dd86500e8c65741bb672cb9dfaf6ee95198",
+          "state": "MERGED",
+          "measured_delta": {
+            "F401": -12,
+            "E402": -1,
+            "total": -13
+          }
         }
       ],
       "dmaic": {
         "status": "DERIVED_FROM_MEASURED",
-        "phase": "IMPROVE",
-        "basis": "fresh 6321-item planning census with four dispatched workers; promotion withheld pending post-merge main census"
+        "phase": "CONTROL",
+        "basis": "first four-worker wave merged; authoritative post-merge main DAB queued"
       },
       "maturity": {
         "status": "WITHHELD",
