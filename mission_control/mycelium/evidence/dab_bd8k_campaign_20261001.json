@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
   "campaign_id": "ABACUS-DAB-BD8K",
-  "state": "DISPATCHED_PLANNING_G1_CROSSED_PROMOTION_WITHHELD",
+  "state": "WAVE1_COMPLETE_G1_MEASURED_PASS_WAVE2_WITHHELD_CI",
   "baseline": {
     "measured_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
     "current_head_sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
@@ -178,11 +178,13 @@
     "promotion_authority": false
   },
   "dispatch": {
-    "status": "FOUR_WORKERS_DISPATCHED",
-    "targeted_findings": 404,
-    "planning_projected_total": 5917,
-    "planning_gate_crossed": "G1_LT6000",
-    "promotion_state": "WITHHELD_POST_MERGE_MAIN_CENSUS_REQUIRED"
+    "status": "WAVE1_COMPLETE_WAVE2_WITHHELD",
+    "measured_total": 5916,
+    "measured_reduction": 1993,
+    "measured_reduction_pct": 25.2,
+    "gate_crossed": "G1_LT6000",
+    "promotion_state": "MEASURED_POST_MERGE_MAIN",
+    "wave2_state": "WITHHELD_CURRENT_CANONICAL_CI_RED"
   },
   "gates": [
     {
@@ -193,8 +195,10 @@
     {
       "id": "G1",
       "condition": "total < 6000",
-      "state": "PLANNING_CROSSED_PROMOTION_WITHHELD",
-      "planning_projected_total": 5917
+      "state": "PASS_MEASURED",
+      "planning_projected_total": 5917,
+      "measured_total": 5916,
+      "measured_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9"
     },
     {
       "id": "G2",
@@ -221,5 +225,69 @@
       "condition": "zero or explicit holds",
       "state": "PENDING"
     }
-  ]
+  ],
+  "wave1": {
+    "status": "COMPLETE_MEASURED",
+    "post_merge_main": {
+      "measured_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+      "current_abacus_head": "aa6028278cb71cdadc9df1dfc97f3c2eee173f58",
+      "census_run": 36908967216,
+      "census_job": 110526569316,
+      "artifact_id": 11185734037,
+      "artifact_sha256": "b48a068fa140bc74f0a36578e7790c83ec6462321713386a62969f1762f34cb1",
+      "total": 5916,
+      "baseline_total": 7909,
+      "reduction": 1993,
+      "reduction_pct": 25.2,
+      "families": {
+        "E225": 628,
+        "E231": 1452,
+        "E302": 332,
+        "E402": 622,
+        "E501": 949,
+        "E702": 294,
+        "E722": 16,
+        "E741": 9,
+        "E999": 1,
+        "F401": 336,
+        "F541": 315,
+        "F601": 0,
+        "F811": 0,
+        "F821": 0,
+        "F841": 40,
+        "W293": 119
+      }
+    },
+    "workers": [
+      {
+        "id": "bd8k_mech_a",
+        "role": "MECH-A",
+        "pr": 1596,
+        "state": "MERGED_CONSUMED"
+      },
+      {
+        "id": "bd8k_mech_b",
+        "role": "MECH-B",
+        "pr": 1597,
+        "state": "MERGED_CONSUMED"
+      },
+      {
+        "id": "bd8k_semantic_a",
+        "role": "SEMANTIC-A",
+        "pr": 1598,
+        "state": "MERGED_CONSUMED"
+      },
+      {
+        "id": "bd8k_semantic_b",
+        "role": "SEMANTIC-B",
+        "pr": 1599,
+        "state": "MERGED_CONSUMED"
+      }
+    ]
+  },
+  "current_control_hold": {
+    "state": "WITHHELD_CURRENT_CANONICAL_CI_RED",
+    "cause": "dependency compatibility drift after ABACUS #1606/#1610; Python 3.10 Markdown floor under repair in #1615",
+    "unblock_rule": "canonical merged-main CI green, then freeze fresh DAB main census before Wave 2 dispatch"
+  }
 }
