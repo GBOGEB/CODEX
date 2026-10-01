@@ -1,6 +1,6 @@
 {
   "schema_version": "0.4",
-  "snapshot_at": "2026-10-01T15:25:00Z",
+  "snapshot_at": "2026-10-01T18:45:00Z",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -1075,7 +1075,7 @@
       "id": "dab_bd8k",
       "type": "queue",
       "label": "DAB-BD8K",
-      "state": "DISPATCHED_PLANNING_G1_CROSSED_PROMOTION_WITHHELD",
+      "state": "FOUR_WORKERS_MERGED_POSTMERGE_DAB_QUEUED",
       "meta": {
         "views": [
           "control",
@@ -1157,14 +1157,28 @@
         },
         "targeted_findings": 404,
         "planning_projected_total": 5917,
-        "G1": "PLANNING_CROSSED_PROMOTION_WITHHELD"
+        "G1": "WITHHELD_POSTMERGE_DAB_QUEUED",
+        "status": "FOUR_WORKERS_MERGED_POSTMERGE_DAB_QUEUED",
+        "worker_merge_head": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+        "effective_current_main": "b51e614520183758d109f761104decf3d959dd24",
+        "current_main_lint_population_changed": false,
+        "authoritative_census": {
+          "run": 36908967216,
+          "job": 110526569316,
+          "status": "QUEUED",
+          "head_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9"
+        },
+        "successor_wave": {
+          "measured_planning_pressure": 910,
+          "dispatch": "WITHHELD_UNTIL_G1_MEASURED"
+        }
       }
     },
     {
       "id": "bd8k_mech_a",
       "type": "job",
       "label": "MECH-A",
-      "state": "CI_QUEUED",
+      "state": "MERGED",
       "meta": {
         "views": [
           "control",
@@ -1184,7 +1198,12 @@
         "promotion": "POST_MERGE_RECENSUS_ONLY",
         "planning_census_head": "7ad0614dd65f6ab9ef94b92105e9c940bee1b24f",
         "pr": 1596,
-        "head_sha": "6a886a680c3504d7d6a6ff54cde9cf709c492d27"
+        "head_sha": "6a886a680c3504d7d6a6ff54cde9cf709c492d27",
+        "merge_sha": "4fb9457e1dda9af32ea9024367b07bb7cb46e4ee",
+        "measured_delta": {
+          "E231": -206,
+          "total": -206
+        }
       },
       "url": "https://github.com/GBOGEB/ABACUS/pull/1596"
     },
@@ -1192,7 +1211,7 @@
       "id": "bd8k_mech_b",
       "type": "job",
       "label": "MECH-B",
-      "state": "CI_QUEUED",
+      "state": "MERGED",
       "meta": {
         "views": [
           "control",
@@ -1212,7 +1231,12 @@
         "promotion": "POST_MERGE_RECENSUS_ONLY",
         "planning_census_head": "7ad0614dd65f6ab9ef94b92105e9c940bee1b24f",
         "pr": 1597,
-        "head_sha": "94527ef94a4767f7cc1bcfbc92666da99a8bd6b4"
+        "head_sha": "94527ef94a4767f7cc1bcfbc92666da99a8bd6b4",
+        "merge_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+        "measured_delta": {
+          "E231": -165,
+          "total": -165
+        }
       },
       "url": "https://github.com/GBOGEB/ABACUS/pull/1597"
     },
@@ -1220,7 +1244,7 @@
       "id": "bd8k_semantic_a",
       "type": "job",
       "label": "SEMANTIC-A",
-      "state": "CI_QUEUED",
+      "state": "MERGED",
       "meta": {
         "views": [
           "control",
@@ -1240,7 +1264,12 @@
         "promotion": "POST_MERGE_RECENSUS_ONLY",
         "planning_census_head": "7ad0614dd65f6ab9ef94b92105e9c940bee1b24f",
         "pr": 1598,
-        "head_sha": "9f2b47d47e055841392300a50ecb059801530e64"
+        "head_sha": "9f2b47d47e055841392300a50ecb059801530e64",
+        "merge_sha": "c28acb27291a7a0dc43ce90e9d095d93542ea9d9",
+        "measured_delta": {
+          "E402": -21,
+          "total": -21
+        }
       },
       "url": "https://github.com/GBOGEB/ABACUS/pull/1598"
     },
@@ -1248,7 +1277,7 @@
       "id": "bd8k_semantic_b",
       "type": "job",
       "label": "SEMANTIC-B",
-      "state": "CI_QUEUED",
+      "state": "MERGED",
       "meta": {
         "views": [
           "control",
@@ -1268,7 +1297,13 @@
         "promotion": "POST_MERGE_RECENSUS_ONLY",
         "planning_census_head": "7ad0614dd65f6ab9ef94b92105e9c940bee1b24f",
         "pr": 1599,
-        "head_sha": "37fa586a7e6b16e34cac55c6cb51bb7c1fa4b152"
+        "head_sha": "37fa586a7e6b16e34cac55c6cb51bb7c1fa4b152",
+        "merge_sha": "f5b96dd86500e8c65741bb672cb9dfaf6ee95198",
+        "measured_delta": {
+          "F401": -12,
+          "E402": -1,
+          "total": -13
+        }
       },
       "url": "https://github.com/GBOGEB/ABACUS/pull/1599"
     }
