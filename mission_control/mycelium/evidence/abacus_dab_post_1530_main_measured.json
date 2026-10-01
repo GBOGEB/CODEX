@@ -1,0 +1,104 @@
+{
+  "schema_version": "0.1",
+  "return_id": "ABACUS_DAB_POST_1530_MAIN_MEASURED",
+  "observed_at": "2026-09-30T17:53:59Z",
+  "source": {
+    "repository": "GBOGEB/ABACUS",
+    "measurement_ref": "main",
+    "measurement_sha": "14750ac24f6065aabb6ce92b1aedf7f42bf7248a",
+    "current_head_sha": "1aa4edee11db09052117f3f802c35d089bb9bca2",
+    "authority": "REMOTE_EXECUTION_DOW"
+  },
+  "pre_slice_main_census": {
+    "sha": "235701e5b00fe7473f50684fec565b4174dd556d",
+    "workflow_run": 36751706222,
+    "job": 110011705735,
+    "artifact_id": 11115692254,
+    "artifact_sha256": "ca32929707640903419a15b86bdc1f0395d4600f875ff6629a959a54620836d5",
+    "total": 8223,
+    "F841": 65,
+    "note": "measured rebased main immediately before #1530; isolates one prior F841 reduction from #1530"
+  },
+  "pr_head_census": {
+    "pr": 1530,
+    "head_sha": "a3a25c303947ac387c2e4cde0c064a24b0a6f2d8",
+    "workflow_run": 36751741317,
+    "job": 110011826897,
+    "artifact_id": 11115627435,
+    "artifact_sha256": "e8145485e3d5c0110b05691aa4c6f068b81082b2c21a3912587fe0ba23f34c94",
+    "total": 8222,
+    "families": {
+      "E999": 1,
+      "F821": 0,
+      "F601": 0,
+      "F811": 0,
+      "F841": 62,
+      "E722": 16,
+      "E731": 0,
+      "E741": 17,
+      "W293": 411
+    }
+  },
+  "post_merge_main_census": {
+    "pr": 1530,
+    "merge_sha": "14750ac24f6065aabb6ce92b1aedf7f42bf7248a",
+    "workflow_run": 36751754800,
+    "job": 110011875112,
+    "artifact_id": 11116102318,
+    "artifact_sha256": "74a41bf50ae121ca24143d6f48ed260b83f7a0ae7446b41814a759b9a8bbc33a",
+    "total": 8222,
+    "families": {
+      "E999": 1,
+      "F821": 0,
+      "F601": 0,
+      "F811": 0,
+      "F841": 62,
+      "E722": 16,
+      "E731": 0,
+      "E741": 17,
+      "W293": 411
+    },
+    "status": "MEASURED"
+  },
+  "causal_delta": {
+    "prior_codex_combined_F841": 66,
+    "intervening_measured_main_F841": 65,
+    "pr1530_measured_baseline_F841": 65,
+    "pr1530_measured_postmerge_F841": 62,
+    "pr1530_delta": -3,
+    "aggregate_delta_since_prior_codex_projection": -4,
+    "W293_delta": 0
+  },
+  "subsequent_non_python_commits": [
+    {
+      "sha": "d3d13fbc5aacc4e060f7b20b602e7ccd422dff52",
+      "lint_population_changed": false
+    },
+    {
+      "sha": "1aa4edee11db09052117f3f802c35d089bb9bca2",
+      "lint_population_changed": false
+    }
+  ],
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+    "state": "SOURCE_BOUND_HOLD"
+  },
+  "reverse_pressure": {
+    "stale_prepared_branches": [
+      "gm14/prep-hard-integration-bridge-f841-20260930",
+      "gm14/prep-hard-integration-bridge-f841-r2-20260930",
+      "gm14/prep-mech-integration-bridge-w293-20260930",
+      "gm14/prep-mech-integration-bridge-w293-r2-20260930"
+    ],
+    "status": "REGENERATE_FROM_CURRENT_MAIN",
+    "reason": "prepared HARD branch removes a bridge binding still used by assertions; MECH branch inherits that semantic defect"
+  },
+  "governance": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "remote_truth_auto_promotable": false
+  }
+}
