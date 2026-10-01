@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-10-01T13:55:57Z",
+  "generated_at": "2026-10-01T14:38:24Z",
   "public_metadata_only": true,
   "authority_transfer": false,
   "sources": [
@@ -20,25 +20,25 @@
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "EXECUTION_DOW",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-01T13:55:57Z",
-      "head_sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
-      "census_pr": 1581,
-      "census_head_sha": "9bc20bc9f0dcfbd5a12422572ea099ecd01ae337",
-      "census_merge_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
-      "census_workflow_run": 36872346746,
-      "census_job": 110403022453,
-      "census_artifact_id": 11168375869,
-      "census_artifact_sha256": "c5a6169a70ba68ea605e48ee9a5a2e60e66d59e81b1f4b392df3aa4c05a6eb82",
-      "measurement_basis": "post-#1581 main census; current head later metrics-only",
+      "observed_at": "2026-10-01T14:38:24Z",
+      "head_sha": "2a3a46718dcf305f56aac5c238761f7846bf61e5",
+      "census_pr": 1583,
+      "census_head_sha": "b04c3caa0f9fd4a8f2cd8099b62b6f64ee2b6b95",
+      "census_merge_sha": "b04c3caa0f9fd4a8f2cd8099b62b6f64ee2b6b95",
+      "census_workflow_run": 36877866665,
+      "census_job": 110421836238,
+      "census_artifact_id": 11169768922,
+      "census_artifact_sha256": "1bd59ebfb9537a6d60606e549e62ab135f903bc533c67e01fe94ed22e8b8ef0d",
+      "measurement_basis": "post-#1583 main census after first-red coverage repair; current head later metrics-only",
       "census_total": 7909,
-      "w293_postmerge_status": "MEASURED_POST_1581_MAIN",
+      "w293_postmerge_status": "MEASURED_POST_1583_MAIN",
       "E741": 17,
       "W293": 119,
       "E722": 16,
       "F841": 41,
       "E999": 1,
       "source_bound_hold": "qplant/w52_p2m_ts_pressure_sensitivity.py",
-      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_post_1581_main_measured.json",
+      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_post_1583_main_measured.json",
       "F821": 0,
       "F601": 0,
       "F811": 0,
@@ -49,45 +49,50 @@
         "W293": 453,
         "E722": 16
       },
-      "measured_return_source_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
+      "measured_return_source_sha": "b04c3caa0f9fd4a8f2cd8099b62b6f64ee2b6b95",
       "live_head_after_measurement": {
-        "sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
-        "status": "CURRENT_HEAD_AFTER_1581_METRICS_ONLY",
-        "latest_known_merge_pr": 1581,
+        "sha": "2a3a46718dcf305f56aac5c238761f7846bf61e5",
+        "status": "CURRENT_HEAD_AFTER_1583_METRICS_ONLY",
+        "latest_known_merge_pr": 1583,
         "lint_population_changed": false
       },
       "pending_independent_lanes": [],
       "combined_main_census_pending": null,
       "completed_latest_lane": {
-        "pr": 1581,
-        "family": "F821_REPAIR",
+        "pr": 1583,
+        "family": "CI_FIRST_RED_REPAIR",
         "measured_baseline": {
-          "F821": 4,
           "F841": 41,
           "W293": 119,
-          "total": 7913
+          "total": 7909
         },
         "measured_residual": {
-          "F821": 0,
           "F841": 41,
           "W293": 119,
           "total": 7909
         },
         "measured_delta": {
-          "F821": -4,
-          "total": -4
+          "F841": 0,
+          "W293": 0,
+          "total": 0
         },
-        "merge_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52"
+        "merge_sha": "b04c3caa0f9fd4a8f2cd8099b62b6f64ee2b6b95"
       },
       "reverse_pressure_next": {
-        "status": "DAB_BD8K_HOLD_FIRST_RED",
+        "status": "DAB_BD8K_READY_DISPATCH",
         "hard_family": "F841",
         "hard_measured_residual": 41,
         "mech_family": "W293",
         "mech_measured_residual": 119,
         "campaign_id": "ABACUS-DAB-BD8K",
-        "first_red_job": 110403157659,
-        "stale_prepared_branches": true
+        "first_red_repair_pr": 1583,
+        "first_red_proof_job": 110418884697,
+        "worker_ids": [
+          "bd8k_mech_a",
+          "bd8k_mech_b",
+          "bd8k_semantic_a",
+          "bd8k_semantic_b"
+        ]
       }
     },
     {
