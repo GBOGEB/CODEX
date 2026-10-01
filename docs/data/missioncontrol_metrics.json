@@ -42,8 +42,12 @@
         "status": "WITHHELD"
       },
       "logs": {
-        "status": "WITHHELD",
-        "reason": "dynamic workflow-log ingestion is next slice"
+        "status": "MEASURED",
+        "expected_required_logs": 1,
+        "parsed_required_logs": 1,
+        "passed": 1,
+        "failed": 0,
+        "health_pct": 100
       },
       "docking": {
         "status": "DERIVED_FROM_MEASURED",
@@ -77,18 +81,17 @@
     "qps_triage_b": {
       "pressure": {
         "status": "DERIVED_FROM_MEASURED",
-        "value": 80,
-        "coverage": 0.5,
+        "value": 87,
+        "coverage": 1,
         "used_inputs": [
-          "downstream_blocks",
-          "proof_deficit",
-          "urgency"
-        ],
-        "missing_inputs": [
           "age",
           "criticality",
-          "unblock_value"
-        ]
+          "downstream_blocks",
+          "proof_deficit",
+          "unblock_value",
+          "urgency"
+        ],
+        "missing_inputs": []
       },
       "maturity": {
         "status": "WITHHELD",
@@ -146,7 +149,12 @@
         "status": "WITHHELD"
       },
       "logs": {
-        "status": "WITHHELD"
+        "status": "MEASURED",
+        "expected_required_logs": 1,
+        "parsed_required_logs": 1,
+        "passed": 1,
+        "failed": 0,
+        "health_pct": 100
       },
       "docking": {
         "status": "WITHHELD"
@@ -186,7 +194,12 @@
         "status": "WITHHELD"
       },
       "logs": {
-        "status": "WITHHELD"
+        "status": "MEASURED",
+        "expected_required_logs": 1,
+        "parsed_required_logs": 1,
+        "passed": 1,
+        "failed": 0,
+        "health_pct": 100
       },
       "docking": {
         "status": "WITHHELD"

@@ -1,8 +1,37 @@
 {
   "schema_version": "0.1",
-  "status": "WITHHELD",
-  "reason": "no governed log events ingested",
-  "nodes": {},
+  "status": "MEASURED",
+  "nodes": {
+    "repo_codex": {
+      "status": "MEASURED",
+      "expected_required_logs": 1,
+      "parsed_required_logs": 1,
+      "passed": 1,
+      "failed": 0,
+      "health_pct": 100
+    },
+    "dab_hard": {
+      "status": "MEASURED",
+      "expected_required_logs": 1,
+      "parsed_required_logs": 1,
+      "passed": 1,
+      "failed": 0,
+      "health_pct": 100
+    },
+    "dab_mech": {
+      "status": "MEASURED",
+      "expected_required_logs": 1,
+      "parsed_required_logs": 1,
+      "passed": 1,
+      "failed": 0,
+      "health_pct": 100
+    }
+  },
   "first_red": null,
-  "recurrences": []
+  "recurrences": [
+    {
+      "fingerprint": "ABACUS_POST_1530_DAB_CENSUS_PASS",
+      "count": 2
+    }
+  ]
 }

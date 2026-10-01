@@ -43,18 +43,41 @@
     "qps_triage_b": {
       "pressure_inputs": {
         "urgency": 1,
+        "criticality": 1,
         "downstream_blocks": 2,
-        "proof_deficit": 1
+        "unblock_value": 1,
+        "proof_deficit": 1,
+        "age_days": 24
       },
-      "pressure_missing": [
-        "criticality",
-        "unblock_value",
-        "age"
-      ],
+      "pressure_missing": [],
       "evidence": [
-        "user-governed P0 control example",
-        "graph:qps_triage_b→dow_b_pressure_drop→icd_freeze→offer_disposition"
-      ]
+        "GBOGEB/cryoplant-project#540 dominant Line-B blocker",
+        "GBOGEB/cryoplant-project#210 QRB/TS source-bound boundary RFI",
+        "GBOGEB/cryoplant-project#481 P0 + high cross-domain unlock control"
+      ],
+      "input_provenance": {
+        "criticality": {
+          "source_repo": "GBOGEB/cryoplant-project",
+          "source_issue": 481,
+          "evidence": "#210 QRB/TS boundary classified ACTIVE / P0 for #480",
+          "source_issue_210_created_at": "2026-08-31T09:43:27Z",
+          "normalization": "P0 -> 1.0"
+        },
+        "unblock_value": {
+          "source_repo": "GBOGEB/cryoplant-project",
+          "source_issue": 481,
+          "evidence": "#210 described as high cross-domain unlock for #480/#82/QRB internals",
+          "normalization": "HIGH -> 1.0"
+        },
+        "age_days": {
+          "source_repo": "GBOGEB/cryoplant-project",
+          "source_issue": 540,
+          "created_at": "2026-09-06T08:23:44Z",
+          "snapshot_at": "2026-09-30T17:53:59Z",
+          "floor_elapsed_days": 24,
+          "evidence": "Line-B geometry issue explicitly states dominant blocker"
+        }
+      }
     },
     "topic_2k_refrigeration": {
       "dmaic": {
@@ -193,5 +216,30 @@
     }
   },
   "pca_rows": [],
-  "pairwise_outcomes": []
+  "pairwise_outcomes": [],
+  "pressure_normalization_policy": {
+    "schema_version": "0.1",
+    "criticality": {
+      "source_field": "authoritative child priority class",
+      "mapping": {
+        "P0": 1,
+        "P1": 0.67,
+        "P2": 0.33
+      },
+      "guard": "control-priority normalization only; no engineering/compliance credit"
+    },
+    "unblock_value": {
+      "source_field": "authoritative child cross-domain unlock class",
+      "mapping": {
+        "HIGH": 1,
+        "MEDIUM": 0.5,
+        "LOW": 0
+      },
+      "guard": "derived orchestration value only"
+    },
+    "age": {
+      "method": "floor elapsed days from direct blocker issue creation to control snapshot",
+      "cap_days": 30
+    }
+  }
 }

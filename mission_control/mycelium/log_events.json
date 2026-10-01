@@ -1,5 +1,73 @@
 {
   "schema_version": "0.1",
-  "snapshot_at": "2026-09-30T12:25:00+02:00",
-  "events": []
+  "snapshot_at": "2026-10-01T04:55:00Z",
+  "evidence_policy": "EXACT_WORKFLOW_JOB_ONLY",
+  "events": [
+    {
+      "event_id": "CODEX_MYCELIUM_36702334404_109844442100",
+      "node_id": "repo_codex",
+      "at": "2026-09-30T10:26:01Z",
+      "status": "PASS",
+      "parsed": true,
+      "fingerprint": "MISSIONCONTROL_MYCELIUM_CI_PASS",
+      "source": {
+        "repository": "GBOGEB/CODEX",
+        "sha": "70518b64f3c170949544ae31d0b78f0edd746c61",
+        "workflow": "MissionControl Mycelium CI",
+        "run_id": 36702334404,
+        "job_id": 109844442100,
+        "job": "validate"
+      },
+      "proof": {
+        "validate_contract": "success",
+        "missioncontrol_tests": "success",
+        "deterministic_materializations": "success"
+      }
+    },
+    {
+      "event_id": "ABACUS_DAB_36751754800_110011875112_HARD",
+      "node_id": "dab_hard",
+      "at": "2026-09-30T17:53:59Z",
+      "status": "PASS",
+      "parsed": true,
+      "fingerprint": "ABACUS_POST_1530_DAB_CENSUS_PASS",
+      "source": {
+        "repository": "GBOGEB/ABACUS",
+        "sha": "14750ac24f6065aabb6ce92b1aedf7f42bf7248a",
+        "workflow_run_id": 36751754800,
+        "job_id": 110011875112,
+        "job": "Full Repository Census"
+      },
+      "proof": {
+        "F601": 0,
+        "F821": 0,
+        "F811": 0,
+        "E731": 0,
+        "E999": 1,
+        "F841": 62,
+        "E722": 16,
+        "E741": 17,
+        "total": 8222
+      }
+    },
+    {
+      "event_id": "ABACUS_DAB_36751754800_110011875112_MECH",
+      "node_id": "dab_mech",
+      "at": "2026-09-30T17:53:59Z",
+      "status": "PASS",
+      "parsed": true,
+      "fingerprint": "ABACUS_POST_1530_DAB_CENSUS_PASS",
+      "source": {
+        "repository": "GBOGEB/ABACUS",
+        "sha": "14750ac24f6065aabb6ce92b1aedf7f42bf7248a",
+        "workflow_run_id": 36751754800,
+        "job_id": 110011875112,
+        "job": "Full Repository Census"
+      },
+      "proof": {
+        "W293": 411,
+        "total": 8222
+      }
+    }
+  ]
 }
