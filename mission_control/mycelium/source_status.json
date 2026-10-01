@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-10-01T04:54:21Z",
+  "generated_at": "2026-10-01T05:24:37Z",
   "public_metadata_only": true,
   "authority_transfer": false,
   "sources": [
@@ -20,25 +20,25 @@
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "EXECUTION_DOW",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-01T04:54:21Z",
-      "head_sha": "469527022055d4b4cc7a5c2cbbb1b683e8d18d6a",
-      "census_pr": 1539,
-      "census_head_sha": "2b6226e992bd9e05506d4fe54b222375fd827c41",
-      "census_merge_sha": "2b6226e992bd9e05506d4fe54b222375fd827c41",
-      "census_workflow_run": 36817064440,
-      "census_job": 110224330509,
-      "census_artifact_id": 11141941722,
-      "census_artifact_sha256": "2e39c297b336e85032f35e6c5cc02c56294ec811f2b64e3937ac71da85abe776",
-      "measurement_basis": "post-#1539 main census; #1539 knowledge_integration F841/W293 slice; current head later metrics-only",
-      "census_total": 8085,
-      "w293_postmerge_status": "MEASURED_POST_1539_MAIN",
+      "observed_at": "2026-10-01T05:24:37Z",
+      "head_sha": "b68edcb74a7925b5131acdba1844abe741ff3e14",
+      "census_pr": 1542,
+      "census_head_sha": "b97d08ea76ace14c8116b2e8772ea9f5b8994820",
+      "census_merge_sha": "b97d08ea76ace14c8116b2e8772ea9f5b8994820",
+      "census_workflow_run": 36819544784,
+      "census_job": 110231927555,
+      "census_artifact_id": 11142084340,
+      "census_artifact_sha256": "d46db75a9d55ea19037dd612e4946f84f27f1a86b1a4b496a7a5fac0734e2560",
+      "measurement_basis": "post-#1542 main census; #1541 and #1542 bounded mixed F841/W293 slices; current head later metrics-only",
+      "census_total": 8035,
+      "w293_postmerge_status": "MEASURED_POST_1542_MAIN",
       "E741": 17,
-      "W293": 288,
+      "W293": 242,
       "E722": 16,
-      "F841": 52,
+      "F841": 50,
       "E999": 1,
       "source_bound_hold": "qplant/w52_p2m_ts_pressure_sensitivity.py",
-      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_post_1539_main_measured.json",
+      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_post_1542_main_measured.json",
       "F821": 0,
       "F601": 0,
       "F811": 0,
@@ -49,39 +49,52 @@
         "W293": 453,
         "E722": 16
       },
-      "measured_return_source_sha": "2b6226e992bd9e05506d4fe54b222375fd827c41",
+      "measured_return_source_sha": "b97d08ea76ace14c8116b2e8772ea9f5b8994820",
       "live_head_after_measurement": {
-        "sha": "469527022055d4b4cc7a5c2cbbb1b683e8d18d6a",
-        "status": "CURRENT_HEAD_AFTER_1539_METRICS_ONLY",
-        "latest_known_merge_pr": 1539,
+        "sha": "b68edcb74a7925b5131acdba1844abe741ff3e14",
+        "status": "CURRENT_HEAD_AFTER_1542_METRICS_ONLY",
+        "latest_known_merge_pr": 1542,
         "lint_population_changed": false
       },
       "pending_independent_lanes": [],
       "combined_main_census_pending": null,
       "completed_latest_lane": {
-        "pr": 1539,
+        "pr": 1542,
         "family": "F841_W293",
         "measured_baseline": {
-          "F841": 53,
-          "W293": 322
+          "F841": 51,
+          "W293": 264
         },
         "measured_residual": {
-          "F841": 52,
-          "W293": 288
+          "F841": 50,
+          "W293": 242
         },
         "measured_delta": {
           "F841": -1,
-          "W293": -34
+          "W293": -22
         },
-        "merge_sha": "2b6226e992bd9e05506d4fe54b222375fd827c41"
+        "merge_sha": "b97d08ea76ace14c8116b2e8772ea9f5b8994820"
       },
       "reverse_pressure_next": {
         "status": "REGENERATE_FROM_CURRENT_MAIN",
         "hard_family": "F841",
-        "hard_measured_residual": 52,
+        "hard_measured_residual": 50,
         "mech_family": "W293",
-        "mech_measured_residual": 288,
+        "mech_measured_residual": 242,
         "stale_prepared_branches": true
+      },
+      "predecessor_measured_lane": {
+        "pr": 1541,
+        "family": "F841_W293",
+        "measured_residual": {
+          "F841": 51,
+          "W293": 264
+        },
+        "measured_delta": {
+          "F841": -1,
+          "W293": -24
+        },
+        "merge_sha": "e7d6291ae376da2d0f1c4fa7b324c93bd45f2e75"
       }
     },
     {
