@@ -5,9 +5,9 @@
   "authority_class": "DERIVED_PROJECTION_ONLY",
   "authority_transfer": false,
   "graph": {
-    "node_count": 69,
-    "edge_count": 101,
-    "density": 0.021526,
+    "node_count": 70,
+    "edge_count": 105,
+    "density": 0.021739,
     "directed": true
   },
   "node_type_counts": {
@@ -18,7 +18,7 @@
     "decision": 1,
     "domain": 1,
     "epic": 1,
-    "evidence": 10,
+    "evidence": 11,
     "external_authority": 2,
     "human_action": 1,
     "issue": 1,
@@ -41,13 +41,13 @@
     "IMPLEMENTATION_PROOF_BOUND_RUNTIME_RECEIPT_WITHHELD": 1,
     "LOCAL_AUTHORITY": 1,
     "MEASURED": 1,
-    "MEASURED_E722_16_E741_17_F841_50": 1,
+    "MEASURED_E722_16_E741_17_F841_49": 1,
     "MEASURED_RESIDUAL_16": 1,
     "MEASURED_RESIDUAL_17": 1,
     "MEASURED_RESIDUAL_242": 1,
-    "MEASURED_RESIDUAL_50": 1,
-    "MEASURED_TYPED_RETURN": 6,
-    "MEASURED_W293_242": 1,
+    "MEASURED_RESIDUAL_49": 1,
+    "MEASURED_TYPED_RETURN": 7,
+    "MEASURED_W293_204": 1,
     "MECHANICAL": 1,
     "MERGED": 7,
     "MERGED_DESIGN_AUTHORITY": 1,
@@ -89,7 +89,7 @@
     },
     {
       "degree": 5,
-      "count": 1
+      "count": 2
     },
     {
       "degree": 6,
@@ -104,15 +104,11 @@
       "count": 1
     },
     {
-      "degree": 12,
-      "count": 2
-    },
-    {
       "degree": 13,
-      "count": 1
+      "count": 3
     },
     {
-      "degree": 20,
+      "degree": 21,
       "count": 1
     }
   ],
@@ -121,10 +117,19 @@
       "id": "dab_hard",
       "label": "DAB-HARD",
       "type": "queue",
-      "state": "MEASURED_E722_16_E741_17_F841_50",
-      "in_degree": 14,
+      "state": "MEASURED_E722_16_E741_17_F841_49",
+      "in_degree": 15,
       "out_degree": 6,
-      "total_degree": 20
+      "total_degree": 21
+    },
+    {
+      "id": "dab_mech",
+      "label": "DAB-MECH",
+      "type": "queue",
+      "state": "MEASURED_W293_204",
+      "in_degree": 11,
+      "out_degree": 2,
+      "total_degree": 13
     },
     {
       "id": "mycelium",
@@ -136,22 +141,13 @@
       "total_degree": 13
     },
     {
-      "id": "dab_mech",
-      "label": "DAB-MECH",
-      "type": "queue",
-      "state": "MEASURED_W293_242",
-      "in_degree": 10,
-      "out_degree": 2,
-      "total_degree": 12
-    },
-    {
       "id": "repo_abacus",
       "label": "GBOGEB/ABACUS",
       "type": "repo",
       "state": "REMOTE_EXECUTION_CURRENT",
       "in_degree": 2,
-      "out_degree": 10,
-      "total_degree": 12
+      "out_degree": 11,
+      "total_degree": 13
     },
     {
       "id": "abacus_flake8_census_1494",
@@ -190,6 +186,15 @@
       "total_degree": 6
     },
     {
+      "id": "abacus_dab_return_1542",
+      "label": "ABACUS #1542 post-merge main census return",
+      "type": "evidence",
+      "state": "MEASURED_TYPED_RETURN",
+      "in_degree": 2,
+      "out_degree": 3,
+      "total_degree": 5
+    },
+    {
       "id": "current_next",
       "label": "Current / exact next edge",
       "type": "artifact",
@@ -208,8 +213,8 @@
       "total_degree": 4
     },
     {
-      "id": "abacus_dab_return_1542",
-      "label": "ABACUS #1542 post-merge main census return",
+      "id": "abacus_dab_return_1545",
+      "label": "ABACUS #1545 post-merge main census return",
       "type": "evidence",
       "state": "MEASURED_TYPED_RETURN",
       "in_degree": 2,
@@ -284,15 +289,6 @@
       "label": "DOW · B-interface ΔP analysis",
       "type": "analysis",
       "state": "MISSING_EVIDENCE",
-      "in_degree": 1,
-      "out_degree": 2,
-      "total_degree": 3
-    },
-    {
-      "id": "gateway_transport",
-      "label": "Authenticated transport · workflow_dispatch",
-      "type": "workflow",
-      "state": "MERGED_EXACT_HEAD_GREEN",
       "in_degree": 1,
       "out_degree": 2,
       "total_degree": 3
