@@ -7,7 +7,18 @@
       "target": "repo_codex",
       "purpose": "QPS priority/return metadata",
       "declared": true,
-      "probe_status": "WITHHELD"
+      "probe_status": "PASS",
+      "probe_kind": "EXACT_TYPED_RETURN_RECEIPT",
+      "observed_at": "2026-09-30T12:37:37Z",
+      "evidence": {
+        "source_repo": "GBOGEB/cryoplant-project",
+        "source_pr": 1834,
+        "source_merge_sha": "9f1ff9a9b48b40cf19555fdcd34a1cbc944eaa1a",
+        "target_repo": "GBOGEB/CODEX",
+        "target_commit": "438a5c64b6e5c59d39e2e48bcc8332130fbf1bf3",
+        "target_receipt": "mission_control/mycelium/evidence/cryoplant_master_input_ledger_return_1834.json"
+      },
+      "guard": "metadata-only; no engineering authority or credit promotion"
     },
     {
       "id": "DOW_EVIDENCE_RETURN",
@@ -15,8 +26,22 @@
       "target": "repo_cryoplant_project",
       "purpose": "DOW calculation/evidence return",
       "declared": true,
-      "probe_status": "WITHHELD"
+      "probe_status": "PASS",
+      "probe_kind": "EXACT_PINNED_DOW_RETURN_RECEIPT",
+      "observed_at": "2026-09-19T06:30:11Z",
+      "evidence": {
+        "source_repo": "GBOGEB/ABACUS",
+        "source_sha": "f55876e4d7985dd672304ff6e3945f24de9b9194",
+        "source_run": 35272680285,
+        "source_artifact": 10518602763,
+        "source_artifact_sha256": "2904d3cc2ef3f359b98db0b75bd2613436b94395b975ccf807c08a8c1d793b7f",
+        "target_repo": "GBOGEB/cryoplant-project",
+        "target_bind_commit": "15c12bd869aef29c241f7cad774ef2fd5c26930b",
+        "target_consume_commit": "f5db104f3ab3b451df174e5c8f1fd06ee35191aa",
+        "target_receipt": "triage/hm01/QPS_HM01_ABACUS_V6_SUPPORT_RETURN_20260919_v0.1.yaml"
+      },
+      "guard": "exact pin only; floating ABACUS main does not inherit PASS"
     }
   ],
-  "rule": "declared port is not a healthy port until a governed probe executes"
+  "rule": "declared port is healthy only when an exact governed source-to-target receipt is bound; floating-source promotion is forbidden"
 }
