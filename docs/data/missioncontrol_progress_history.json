@@ -208,6 +208,41 @@
         "expected_residual": 63,
         "status": "OPEN_UNMEASURED"
       }
+    },
+    {
+      "at": "2026-09-30T17:53:59Z",
+      "node_id": "dab_hard",
+      "kind": "COMBINED_MAIN_CENSUS",
+      "ref": "ABACUS #1530 post-merge main census run 36751754800",
+      "sha": "14750ac24f6065aabb6ce92b1aedf7f42bf7248a",
+      "delta": {
+        "total": 8222,
+        "E999": 1,
+        "F821": 0,
+        "F601": 0,
+        "F811": 0,
+        "F841": 62,
+        "E722": 16,
+        "E731": 0,
+        "E741": 17,
+        "W293": 411,
+        "pr1530_measured_baseline_F841": 65,
+        "pr1530_delta": -3
+      }
+    },
+    {
+      "at": "2026-09-30T17:53:59Z",
+      "node_id": "current_next",
+      "kind": "REVERSE_PRESSURE_REGEN_REQUIRED",
+      "ref": "ABACUS prepared HARD/MECH branches",
+      "sha": "1aa4edee11db09052117f3f802c35d089bb9bca2",
+      "delta": {
+        "hard_family": "F841",
+        "hard_residual": 62,
+        "mech_family": "W293",
+        "mech_residual": 411,
+        "status": "STALE_PREPARED_BRANCHES_NOT_ADMITTED"
+      }
     }
   ]
 }
