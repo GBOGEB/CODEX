@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "snapshot_at": "2026-10-01T13:55:57Z",
+  "snapshot_at": "2026-10-01T15:25:00Z",
   "evidence_policy": "MEASURED_OR_WITHHELD",
   "pressure_weights": {
     "urgency": 0.3,
@@ -220,47 +220,43 @@
     },
     "dab_bd8k": {
       "campaign": {
-        "status": "MEASURED_HOLD_FIRST_RED",
+        "status": "DISPATCHED_PLANNING_G1_CROSSED_PROMOTION_WITHHELD",
         "campaign_id": "ABACUS-DAB-BD8K",
-        "dispatch_status": "BLOCKED_FIRST_RED",
-        "baseline": {
-          "measured_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
-          "current_head_sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
-          "census_run": 36872346746,
-          "census_job": 110403022453,
-          "artifact_id": 11168375869,
-          "artifact_sha256": "c5a6169a70ba68ea605e48ee9a5a2e60e66d59e81b1f4b392df3aa4c05a6eb82",
-          "total": 7909,
+        "dispatch_status": "FOUR_WORKERS_DISPATCHED",
+        "planning_probe": {
+          "source_pr": 1592,
+          "source_head_sha": "7ad0614dd65f6ab9ef94b92105e9c940bee1b24f",
+          "current_main_sha": "f409c515072921f4c87a30bba92facc514d20d04",
+          "census_run": 36882852501,
+          "census_job": 110438706121,
+          "artifact_id": 11172240917,
+          "artifact_zip_sha256": "1fb3dd9daa76ef045daa7c2e35e91bec397a3ff373f5121032a89148af867edd",
+          "total": 6321,
           "families": {
-            "E225": 635,
-            "E231": 1960,
-            "E302": 420,
-            "E402": 811,
-            "E501": 1330,
-            "E702": 741,
+            "E225": 628,
+            "E231": 1823,
+            "E302": 332,
+            "E402": 644,
+            "E501": 949,
+            "E702": 294,
             "E722": 16,
-            "E741": 17,
+            "E741": 9,
             "E999": 1,
-            "F401": 367,
-            "F541": 318,
-            "F601": 0,
-            "F811": 0,
-            "F821": 0,
-            "F841": 41,
+            "F401": 348,
+            "F541": 315,
+            "F841": 40,
             "W293": 119
-          }
+          },
+          "status": "MEASURED_PR_HEAD_PLANNING_ONLY",
+          "promotion_authority": false
         },
         "first_red": {
-          "state": "WORKFLOW_FAILING",
-          "workflow": "CI/CD Test Suite",
-          "run_id": 36871993435,
-          "job_id": 110403157659,
-          "job": "Code Coverage",
-          "failure": "coverage.exceptions.DataError: Can't combine statement coverage data with branch data",
-          "dispatch_effect": "HOLD_FIRST_RED"
+          "state": "SUPERSEDED_BY_MERGED_REPAIR",
+          "repair_pr": 1583,
+          "repair_merge_sha": "b04c3caa0f9fd4a8f2cd8099b62b6f64ee2b6b95"
         },
-        "top_eight_findings": 6582,
-        "top_eight_share_pct": 83.22,
+        "targeted_findings": 404,
+        "planning_projected_total": 5917,
         "gates": [
           {
             "id": "G0",
@@ -270,7 +266,7 @@
           {
             "id": "G1",
             "condition": "total < 6000",
-            "state": "PENDING"
+            "state": "PLANNING_CROSSED_PROMOTION_WITHHELD"
           },
           {
             "id": "G2",
@@ -305,39 +301,39 @@
         {
           "id": "bd8k_mech_a",
           "role": "MECH-A",
-          "state": "BLOCKED_FIRST_RED",
+          "pr": 1596,
+          "head_sha": "6a886a680c3504d7d6a6ff54cde9cf709c492d27",
+          "state": "CI_QUEUED",
           "target_files": [
             "triage/run_repo_census.py"
           ],
           "target_families": {
-            "E231": 232,
-            "E225": 36,
-            "E702": 26,
-            "E302": 2
+            "E231": 206
           },
-          "expected_target_findings": 296,
-          "mutation_class": "MECHANICAL_SPACING_STRUCTURE"
+          "expected_target_findings": 206,
+          "mutation_class": "CENSUS_BOUND_E231_SPACING"
         },
         {
           "id": "bd8k_mech_b",
           "role": "MECH-B",
-          "state": "BLOCKED_FIRST_RED",
+          "pr": 1597,
+          "head_sha": "94527ef94a4767f7cc1bcfbc92666da99a8bd6b4",
+          "state": "CI_QUEUED",
           "target_files": [
             "tools/w65_parallel_discovery.py"
           ],
           "target_families": {
-            "E231": 165,
-            "E225": 56,
-            "E702": 28,
-            "E302": 10
+            "E231": 165
           },
-          "expected_target_findings": 259,
-          "mutation_class": "MECHANICAL_SPACING_STRUCTURE"
+          "expected_target_findings": 165,
+          "mutation_class": "CENSUS_BOUND_E231_SPACING"
         },
         {
           "id": "bd8k_semantic_a",
           "role": "SEMANTIC-A",
-          "state": "BLOCKED_FIRST_RED",
+          "pr": 1598,
+          "head_sha": "9f2b47d47e055841392300a50ecb059801530e64",
+          "state": "CI_QUEUED",
           "target_files": [
             "DMAIC_V3/full_pipeline_orchestrator.py"
           ],
@@ -345,12 +341,14 @@
             "E402": 21
           },
           "expected_target_findings": 21,
-          "mutation_class": "IMPORT_ORDER_CLASSIFY_THEN_REPAIR"
+          "mutation_class": "IMPORT_BOOTSTRAP_CLASSIFY_AND_REPAIR"
         },
         {
           "id": "bd8k_semantic_b",
           "role": "SEMANTIC-B",
-          "state": "BLOCKED_FIRST_RED",
+          "pr": 1599,
+          "head_sha": "37fa586a7e6b16e34cac55c6cb51bb7c1fa4b152",
+          "state": "CI_QUEUED",
           "target_files": [
             "qplant/handover_dashboard/api/main.py"
           ],
@@ -358,13 +356,13 @@
             "F401": 12
           },
           "expected_target_findings": 12,
-          "mutation_class": "UNUSED_IMPORT_CLASSIFY_SIDE_EFFECTS"
+          "mutation_class": "UNUSED_IMPORT_REVIEWED_REMOVAL"
         }
       ],
       "dmaic": {
         "status": "DERIVED_FROM_MEASURED",
         "phase": "IMPROVE",
-        "basis": "measured 7909-item DAB backlog campaign"
+        "basis": "fresh 6321-item planning census with four dispatched workers; promotion withheld pending post-merge main census"
       },
       "maturity": {
         "status": "WITHHELD",
