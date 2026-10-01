@@ -168,6 +168,10 @@ def build_snapshot(graph: dict[str, Any], obs: dict[str, Any]) -> dict[str, Any]
             metric["family_progress"] = record["family_progress"]
         if "mechanical_progress" in record:
             metric["mechanical_progress"] = record["mechanical_progress"]
+        if "campaign" in record:
+            metric["campaign"] = record["campaign"]
+        if "workers" in record:
+            metric["workers"] = record["workers"]
 
         chi = record.get("code_health_inputs", {})
         keys = ("qa_gate_health", "test_health", "lint_health", "debug_health")
