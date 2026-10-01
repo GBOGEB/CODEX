@@ -300,6 +300,28 @@
       "parent_event": "EV-0026",
       "content_ref": "mission_control/mycelium/receipts/BOUNDED_APPLY_DISABLED_V01_PR894_PROOF.json",
       "summary": "CODEX-only bounded apply planning/authorization surface implemented and exact-head proven on PR #894; mutation_enabled=false, execute_permitted=false, enabled_mutation_transports=[], and any mutation enablement remains withheld pending separate explicit governance promotion."
+    },
+    {
+      "id": "EV-0028",
+      "at": "2026-09-30T17:53:59Z",
+      "type": "EXTERNAL_RETURN",
+      "node_id": "repo_abacus",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "14750ac24f6065aabb6ce92b1aedf7f42bf7248a",
+      "parent_event": "EV-0027",
+      "content_ref": "mission_control/mycelium/evidence/abacus_dab_post_1530_main_measured.json",
+      "summary": "Consumed measured ABACUS #1530 post-merge main census: total 8222, F841=62, W293=411, E741=17, E722=16; #1530 itself measured 65→62 while one prior F841 reduction was already present on rebased main."
+    },
+    {
+      "id": "EV-0029",
+      "at": "2026-09-30T17:53:59Z",
+      "type": "RECOVERY",
+      "node_id": "current_next",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "1aa4edee11db09052117f3f802c35d089bb9bca2",
+      "parent_event": "EV-0028",
+      "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
+      "summary": "Reverse-pressure continuation preserved, but stale prepared HARD/MECH branches were withheld because the HARD payload removes a bridge binding still used by assertions; next slices must be regenerated from current main."
     }
   ],
   "horizons": {
