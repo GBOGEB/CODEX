@@ -1,0 +1,31 @@
+{
+  "schema_version": "0.1",
+  "receipt_id": "MISSIONCONTROL_GOVERNED_LOG_INGESTION_20261001",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "source_events": [
+    {
+      "repository": "GBOGEB/CODEX",
+      "sha": "70518b64f3c170949544ae31d0b78f0edd746c61",
+      "run_id": 36702334404,
+      "job_id": 109844442100,
+      "status": "PASS"
+    },
+    {
+      "repository": "GBOGEB/ABACUS",
+      "sha": "14750ac24f6065aabb6ce92b1aedf7f42bf7248a",
+      "run_id": 36751754800,
+      "job_id": 110011875112,
+      "status": "PASS"
+    }
+  ],
+  "materialized_nodes": [
+    "repo_codex",
+    "dab_hard",
+    "dab_mech"
+  ],
+  "derived_log_health_pct": 100,
+  "first_red": null,
+  "guard": "log health describes only ingested governed events; it does not imply global workflow health"
+}
