@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
   "campaign_id": "ABACUS-DAB-BD8K",
-  "state": "HOLD_FIRST_RED_COVERAGE",
+  "state": "DISPATCHED_PLANNING_G1_CROSSED_PROMOTION_WITHHELD",
   "baseline": {
     "measured_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
     "current_head_sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
@@ -30,51 +30,52 @@
     }
   },
   "first_red": {
-    "state": "WORKFLOW_FAILING",
-    "workflow": "CI/CD Test Suite",
-    "run_id": 36871993435,
-    "job_id": 110403157659,
-    "job": "Code Coverage",
-    "failure": "coverage.exceptions.DataError: Can't combine statement coverage data with branch data",
-    "dispatch_effect": "HOLD_FIRST_RED"
+    "previous_state": "WORKFLOW_FAILING",
+    "previous_run_id": 36871993435,
+    "previous_job_id": 110403157659,
+    "previous_failure": "coverage.exceptions.DataError: Can't combine statement coverage data with branch data",
+    "state": "SUPERSEDED_BY_MERGED_REPAIR",
+    "repair_pr": 1583,
+    "repair_merge_sha": "b04c3caa0f9fd4a8f2cd8099b62b6f64ee2b6b95",
+    "dispatch_effect": "RELEASED_FOR_CURRENT_PLANNING_CENSUS"
   },
   "workers": [
     {
       "id": "bd8k_mech_a",
       "role": "MECH-A",
-      "state": "BLOCKED_FIRST_RED",
+      "pr": 1596,
+      "head_sha": "6a886a680c3504d7d6a6ff54cde9cf709c492d27",
+      "state": "CI_QUEUED",
       "target_files": [
         "triage/run_repo_census.py"
       ],
       "target_families": {
-        "E231": 232,
-        "E225": 36,
-        "E702": 26,
-        "E302": 2
+        "E231": 206
       },
-      "expected_target_findings": 296,
-      "mutation_class": "MECHANICAL_SPACING_STRUCTURE"
+      "expected_target_findings": 206,
+      "mutation_class": "CENSUS_BOUND_E231_SPACING"
     },
     {
       "id": "bd8k_mech_b",
       "role": "MECH-B",
-      "state": "BLOCKED_FIRST_RED",
+      "pr": 1597,
+      "head_sha": "94527ef94a4767f7cc1bcfbc92666da99a8bd6b4",
+      "state": "CI_QUEUED",
       "target_files": [
         "tools/w65_parallel_discovery.py"
       ],
       "target_families": {
-        "E231": 165,
-        "E225": 56,
-        "E702": 28,
-        "E302": 10
+        "E231": 165
       },
-      "expected_target_findings": 259,
-      "mutation_class": "MECHANICAL_SPACING_STRUCTURE"
+      "expected_target_findings": 165,
+      "mutation_class": "CENSUS_BOUND_E231_SPACING"
     },
     {
       "id": "bd8k_semantic_a",
       "role": "SEMANTIC-A",
-      "state": "BLOCKED_FIRST_RED",
+      "pr": 1598,
+      "head_sha": "9f2b47d47e055841392300a50ecb059801530e64",
+      "state": "CI_QUEUED",
       "target_files": [
         "DMAIC_V3/full_pipeline_orchestrator.py"
       ],
@@ -82,12 +83,14 @@
         "E402": 21
       },
       "expected_target_findings": 21,
-      "mutation_class": "IMPORT_ORDER_CLASSIFY_THEN_REPAIR"
+      "mutation_class": "IMPORT_BOOTSTRAP_CLASSIFY_AND_REPAIR"
     },
     {
       "id": "bd8k_semantic_b",
       "role": "SEMANTIC-B",
-      "state": "BLOCKED_FIRST_RED",
+      "pr": 1599,
+      "head_sha": "37fa586a7e6b16e34cac55c6cb51bb7c1fa4b152",
+      "state": "CI_QUEUED",
       "target_files": [
         "qplant/handover_dashboard/api/main.py"
       ],
@@ -95,7 +98,7 @@
         "F401": 12
       },
       "expected_target_findings": 12,
-      "mutation_class": "UNUSED_IMPORT_CLASSIFY_SIDE_EFFECTS"
+      "mutation_class": "UNUSED_IMPORT_REVIEWED_REMOVAL"
     }
   ],
   "execution_protocol": [
@@ -112,5 +115,111 @@
   },
   "authority_transfer": false,
   "formal_credit_delta": 0,
-  "engineering_credit_delta": 0
+  "engineering_credit_delta": 0,
+  "observed_at": "2026-10-01T15:25:00Z",
+  "previous_baseline": {
+    "measured_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
+    "current_head_sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
+    "census_run": 36872346746,
+    "census_job": 110403022453,
+    "artifact_id": 11168375869,
+    "artifact_sha256": "c5a6169a70ba68ea605e48ee9a5a2e60e66d59e81b1f4b392df3aa4c05a6eb82",
+    "total": 7909,
+    "families": {
+      "E225": 635,
+      "E231": 1960,
+      "E302": 420,
+      "E402": 811,
+      "E501": 1330,
+      "E702": 741,
+      "E722": 16,
+      "E741": 17,
+      "E999": 1,
+      "F401": 367,
+      "F541": 318,
+      "F601": 0,
+      "F811": 0,
+      "F821": 0,
+      "F841": 41,
+      "W293": 119
+    }
+  },
+  "planning_probe": {
+    "source_pr": 1592,
+    "source_head_sha": "7ad0614dd65f6ab9ef94b92105e9c940bee1b24f",
+    "current_main_sha": "f409c515072921f4c87a30bba92facc514d20d04",
+    "census_run": 36882852501,
+    "census_job": 110438706121,
+    "artifact_id": 11172240917,
+    "artifact_zip_sha256": "1fb3dd9daa76ef045daa7c2e35e91bec397a3ff373f5121032a89148af867edd",
+    "census_json_sha256": "d63250805af5c0e81e26e6780ed05bd90a97fe78458f3a275446bf043c08ea7d",
+    "total": 6321,
+    "families": {
+      "E225": 628,
+      "E231": 1823,
+      "E302": 332,
+      "E402": 644,
+      "E501": 949,
+      "E702": 294,
+      "E722": 16,
+      "E741": 9,
+      "E999": 1,
+      "F401": 348,
+      "F541": 315,
+      "F841": 40,
+      "W293": 119
+    },
+    "status": "MEASURED_PR_HEAD_PLANNING_ONLY",
+    "target_files_disjoint_from_probe_pr_changes": true,
+    "source_pr_changed_paths": [
+      "contracts/QPS_BINARY_BRIDGE_CONTRACT_v1.json",
+      "tests/test_qps_binary_bridge.py"
+    ],
+    "promotion_authority": false
+  },
+  "dispatch": {
+    "status": "FOUR_WORKERS_DISPATCHED",
+    "targeted_findings": 404,
+    "planning_projected_total": 5917,
+    "planning_gate_crossed": "G1_LT6000",
+    "promotion_state": "WITHHELD_POST_MERGE_MAIN_CENSUS_REQUIRED"
+  },
+  "gates": [
+    {
+      "id": "G0",
+      "condition": "protected families restored",
+      "state": "PASS"
+    },
+    {
+      "id": "G1",
+      "condition": "total < 6000",
+      "state": "PLANNING_CROSSED_PROMOTION_WITHHELD",
+      "planning_projected_total": 5917
+    },
+    {
+      "id": "G2",
+      "condition": "total < 4000",
+      "state": "PENDING"
+    },
+    {
+      "id": "G3",
+      "condition": "total < 2000",
+      "state": "PENDING"
+    },
+    {
+      "id": "G4",
+      "condition": "total < 1000",
+      "state": "PENDING"
+    },
+    {
+      "id": "G5",
+      "condition": "semantic residual only",
+      "state": "PENDING"
+    },
+    {
+      "id": "G6",
+      "condition": "zero or explicit holds",
+      "state": "PENDING"
+    }
+  ]
 }

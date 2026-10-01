@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-10-01T13:55:57Z",
+  "generated_at": "2026-10-01T15:25:00Z",
   "public_metadata_only": true,
   "authority_transfer": false,
   "sources": [
@@ -20,8 +20,8 @@
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "EXECUTION_DOW",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-01T13:55:57Z",
-      "head_sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
+      "observed_at": "2026-10-01T15:25:00Z",
+      "head_sha": "f409c515072921f4c87a30bba92facc514d20d04",
       "census_pr": 1581,
       "census_head_sha": "9bc20bc9f0dcfbd5a12422572ea099ecd01ae337",
       "census_merge_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
@@ -29,7 +29,7 @@
       "census_job": 110403022453,
       "census_artifact_id": 11168375869,
       "census_artifact_sha256": "c5a6169a70ba68ea605e48ee9a5a2e60e66d59e81b1f4b392df3aa4c05a6eb82",
-      "measurement_basis": "post-#1581 main census; current head later metrics-only",
+      "measurement_basis": "current main identity + #1592 exact-head planning census; promotion remains post-merge main only",
       "census_total": 7909,
       "w293_postmerge_status": "MEASURED_POST_1581_MAIN",
       "E741": 17,
@@ -80,14 +80,70 @@
         "merge_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52"
       },
       "reverse_pressure_next": {
-        "status": "DAB_BD8K_HOLD_FIRST_RED",
-        "hard_family": "F841",
-        "hard_measured_residual": 41,
-        "mech_family": "W293",
-        "mech_measured_residual": 119,
+        "status": "DAB_BD8K_DISPATCHED",
         "campaign_id": "ABACUS-DAB-BD8K",
-        "first_red_job": 110403157659,
-        "stale_prepared_branches": true
+        "previous_first_red": "SUPERSEDED_BY_#1583",
+        "workers": [
+          {
+            "id": "bd8k_mech_a",
+            "pr": 1596,
+            "head_sha": "6a886a680c3504d7d6a6ff54cde9cf709c492d27",
+            "state": "CI_QUEUED",
+            "targeted": 206
+          },
+          {
+            "id": "bd8k_mech_b",
+            "pr": 1597,
+            "head_sha": "94527ef94a4767f7cc1bcfbc92666da99a8bd6b4",
+            "state": "CI_QUEUED",
+            "targeted": 165
+          },
+          {
+            "id": "bd8k_semantic_a",
+            "pr": 1598,
+            "head_sha": "9f2b47d47e055841392300a50ecb059801530e64",
+            "state": "CI_QUEUED",
+            "targeted": 21
+          },
+          {
+            "id": "bd8k_semantic_b",
+            "pr": 1599,
+            "head_sha": "37fa586a7e6b16e34cac55c6cb51bb7c1fa4b152",
+            "state": "CI_QUEUED",
+            "targeted": 12
+          }
+        ],
+        "targeted_findings": 404,
+        "planning_projected_total": 5917,
+        "G1": "PLANNING_CROSSED_PROMOTION_WITHHELD",
+        "promotion_rule": "POST_MERGE_MEASURED_MAIN_ONLY"
+      },
+      "planning_probe": {
+        "source_pr": 1592,
+        "source_head_sha": "7ad0614dd65f6ab9ef94b92105e9c940bee1b24f",
+        "current_main_sha": "f409c515072921f4c87a30bba92facc514d20d04",
+        "census_run": 36882852501,
+        "census_job": 110438706121,
+        "artifact_id": 11172240917,
+        "artifact_zip_sha256": "1fb3dd9daa76ef045daa7c2e35e91bec397a3ff373f5121032a89148af867edd",
+        "total": 6321,
+        "families": {
+          "E225": 628,
+          "E231": 1823,
+          "E302": 332,
+          "E402": 644,
+          "E501": 949,
+          "E702": 294,
+          "E722": 16,
+          "E741": 9,
+          "E999": 1,
+          "F401": 348,
+          "F541": 315,
+          "F841": 40,
+          "W293": 119
+        },
+        "status": "MEASURED_PR_HEAD_PLANNING_ONLY",
+        "promotion_authority": false
       }
     },
     {
