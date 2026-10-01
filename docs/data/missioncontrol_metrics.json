@@ -319,8 +319,8 @@
       },
       "dmaic": {
         "status": "DERIVED_FROM_MEASURED",
-        "phase": "IMPROVE",
-        "basis": "fresh 6321-item planning census with four dispatched workers; promotion withheld pending post-merge main census"
+        "phase": "CONTROL",
+        "basis": "Wave 1 post-merge census measured 5916; G1 passed; Wave 2 dispatch gated on current canonical CI"
       },
       "logs": {
         "status": "WITHHELD"
@@ -332,9 +332,9 @@
         "status": "WITHHELD"
       },
       "campaign": {
-        "status": "DISPATCHED_PLANNING_G1_CROSSED_PROMOTION_WITHHELD",
+        "status": "WAVE1_COMPLETE_G1_MEASURED_PASS_WAVE2_WITHHELD_CI",
         "campaign_id": "ABACUS-DAB-BD8K",
-        "dispatch_status": "FOUR_WORKERS_DISPATCHED",
+        "dispatch_status": "WAVE1_COMPLETE",
         "planning_probe": {
           "source_pr": 1592,
           "source_head_sha": "7ad0614dd65f6ab9ef94b92105e9c940bee1b24f",
@@ -363,12 +363,12 @@
           "promotion_authority": false
         },
         "first_red": {
-          "state": "SUPERSEDED_BY_MERGED_REPAIR",
-          "repair_pr": 1583,
-          "repair_merge_sha": "b04c3caa0f9fd4a8f2cd8099b62b6f64ee2b6b95"
+          "state": "CURRENT_CANONICAL_CI_RED",
+          "repair_pr": 1615,
+          "reason": "Python 3.10 Markdown compatibility floor after dependency updates"
         },
-        "targeted_findings": 404,
-        "planning_projected_total": 5917,
+        "targeted_findings": 1993,
+        "planning_projected_total": null,
         "gates": [
           {
             "id": "G0",
@@ -378,7 +378,10 @@
           {
             "id": "G1",
             "condition": "total < 6000",
-            "state": "PLANNING_CROSSED_PROMOTION_WITHHELD"
+            "state": "PASS_MEASURED",
+            "planning_projected_total": 5917,
+            "measured_total": 5916,
+            "measured_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9"
           },
           {
             "id": "G2",
@@ -407,68 +410,65 @@
           }
         ],
         "admission_protocol": "WORKER_PATCH -> FAST_DAB -> FULL_CI -> MERGE -> POST_MERGE_DAB -> REGENERATE_QUEUE",
-        "promotion_rule": "POST_MERGE_MEASURED_MAIN_ONLY"
+        "promotion_rule": "POST_MERGE_MEASURED_MAIN_ONLY",
+        "measured_post_merge": {
+          "measured_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+          "current_abacus_head": "aa6028278cb71cdadc9df1dfc97f3c2eee173f58",
+          "census_run": 36908967216,
+          "census_job": 110526569316,
+          "artifact_id": 11185734037,
+          "artifact_sha256": "b48a068fa140bc74f0a36578e7790c83ec6462321713386a62969f1762f34cb1",
+          "total": 5916,
+          "baseline_total": 7909,
+          "reduction": 1993,
+          "reduction_pct": 25.2,
+          "families": {
+            "E225": 628,
+            "E231": 1452,
+            "E302": 332,
+            "E402": 622,
+            "E501": 949,
+            "E702": 294,
+            "E722": 16,
+            "E741": 9,
+            "E999": 1,
+            "F401": 336,
+            "F541": 315,
+            "F601": 0,
+            "F811": 0,
+            "F821": 0,
+            "F841": 40,
+            "W293": 119
+          }
+        },
+        "measured_reduction": 1993,
+        "measured_reduction_pct": 25.2,
+        "dmaic_note": "Wave 1 measured complete; Wave 2 held until control-plane CI is green"
       },
       "workers": [
         {
           "id": "bd8k_mech_a",
           "role": "MECH-A",
           "pr": 1596,
-          "head_sha": "6a886a680c3504d7d6a6ff54cde9cf709c492d27",
-          "state": "CI_QUEUED",
-          "target_files": [
-            "triage/run_repo_census.py"
-          ],
-          "target_families": {
-            "E231": 206
-          },
-          "expected_target_findings": 206,
-          "mutation_class": "CENSUS_BOUND_E231_SPACING"
+          "state": "MERGED_CONSUMED"
         },
         {
           "id": "bd8k_mech_b",
           "role": "MECH-B",
           "pr": 1597,
-          "head_sha": "94527ef94a4767f7cc1bcfbc92666da99a8bd6b4",
-          "state": "CI_QUEUED",
-          "target_files": [
-            "tools/w65_parallel_discovery.py"
-          ],
-          "target_families": {
-            "E231": 165
-          },
-          "expected_target_findings": 165,
-          "mutation_class": "CENSUS_BOUND_E231_SPACING"
+          "state": "MERGED_CONSUMED"
         },
         {
           "id": "bd8k_semantic_a",
           "role": "SEMANTIC-A",
           "pr": 1598,
-          "head_sha": "9f2b47d47e055841392300a50ecb059801530e64",
-          "state": "CI_QUEUED",
-          "target_files": [
-            "DMAIC_V3/full_pipeline_orchestrator.py"
-          ],
-          "target_families": {
-            "E402": 21
-          },
-          "expected_target_findings": 21,
-          "mutation_class": "IMPORT_BOOTSTRAP_CLASSIFY_AND_REPAIR"
+          "state": "MERGED_CONSUMED"
         },
         {
           "id": "bd8k_semantic_b",
           "role": "SEMANTIC-B",
           "pr": 1599,
-          "head_sha": "37fa586a7e6b16e34cac55c6cb51bb7c1fa4b152",
-          "state": "CI_QUEUED",
-          "target_files": [
-            "qplant/handover_dashboard/api/main.py"
-          ],
-          "target_families": {
-            "F401": 12
-          },
-          "expected_target_findings": 12,
-          "mutation_class": "UNUSED_IMPORT_REVIEWED_REMOVAL"
+          "state": "MERGED_CONSUMED"
         }
       ],
       "code_health": {
