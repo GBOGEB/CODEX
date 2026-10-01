@@ -426,6 +426,30 @@
       "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
       "summary": "Reverse-pressure queue regenerated from measured #1545 main: next HARD F841 residual 49 and MECH W293 residual 204; current ABACUS head differs only by generated metrics.",
       "authority_transfer": false
+    },
+    {
+      "id": "EV-0039",
+      "at": "2026-10-01T09:20:00Z",
+      "type": "EXTERNAL_RETURN",
+      "node_id": "repo_abacus",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "ae35036fee38ddbd0df581ce36599a46f95080b1",
+      "parent_event": "EV-0038",
+      "content_ref": "mission_control/mycelium/evidence/abacus_dab_post_1548_main_measured.json",
+      "summary": "Consumed measured ABACUS #1548 post-merge main census: total 7976, F841=47, W293=186, E741=17, E722=16; E999=1 remains source-bound.",
+      "authority_transfer": false
+    },
+    {
+      "id": "EV-0040",
+      "at": "2026-10-01T09:20:00Z",
+      "type": "RECOVERY",
+      "node_id": "current_next",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "010fb4269488c19cb9b6d54bbd35c0dee9516bd1",
+      "parent_event": "EV-0039",
+      "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
+      "summary": "Reverse-pressure queue regenerated from measured #1548 main: next HARD F841 residual 47 and MECH W293 residual 186; current ABACUS head differs only by non-Python CD workflow and generated metrics.",
+      "authority_transfer": false
     }
   ],
   "horizons": {
@@ -434,21 +458,21 @@
         "rank": 1,
         "id": "MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION",
         "state": "WITHHELD_EXPLICIT_PROMOTION_REQUIRED",
-        "reason": "bounded apply is implemented/proven but mutation remains disabled pending explicit governance promotion",
+        "reason": "bounded apply implementation and exact-head guards are green, but mutation enablement was not requested or promoted",
         "lane": "CODEX_UI"
       },
       {
         "rank": 2,
         "id": "ABACUS_F841_MEASURED_QUEUE",
         "state": "REMOTE_MEASURED_QUEUE",
-        "reason": "post-#1542 main measured F841 residual is 50; next hard slice must be regenerated from current remote main",
+        "reason": "post-#1548 main measured F841 residual is 47; next hard slice must be regenerated from current remote main",
         "lane": "ABACUS_REMOTE_EXECUTION"
       },
       {
         "rank": 3,
         "id": "ABACUS_W293_MEASURED_QUEUE",
         "state": "REMOTE_MEASURED_QUEUE",
-        "reason": "post-#1542 main measured W293 residual is 242; mechanical lane remains separate remote authority",
+        "reason": "post-#1548 main measured W293 residual is 186; mechanical lane remains separate remote authority",
         "lane": "ABACUS_REMOTE_EXECUTION"
       }
     ],

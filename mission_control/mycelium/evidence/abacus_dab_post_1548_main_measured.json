@@ -1,0 +1,87 @@
+{
+  "schema_version": "0.1",
+  "return_id": "ABACUS_DAB_POST_1548_MAIN_MEASURED",
+  "observed_at": "2026-10-01T09:20:00Z",
+  "source": {
+    "repository": "GBOGEB/ABACUS",
+    "measurement_ref": "main",
+    "exact_head_sha": "bd18e53befbf0cf163931fd162fd40c6ebff587a",
+    "measurement_sha": "ae35036fee38ddbd0df581ce36599a46f95080b1",
+    "current_head_sha": "010fb4269488c19cb9b6d54bbd35c0dee9516bd1",
+    "authority": "REMOTE_EXECUTION_DOW"
+  },
+  "prior_combined": {
+    "pr": 1545,
+    "sha": "755dfc2b76a5e8eaecc0f6b52c01697216e8b1d6",
+    "total": 7996,
+    "F841": 49,
+    "W293": 204
+  },
+  "post_merge_main_census": {
+    "pr": 1548,
+    "merge_sha": "ae35036fee38ddbd0df581ce36599a46f95080b1",
+    "workflow_run": 36841306825,
+    "job": 110300810260,
+    "artifact_id": 11151257877,
+    "artifact_sha256": "021764009ff4154dfc10f7bb5200aabb84868bff038479c051ada3f9a1ce3f4d",
+    "total": 7976,
+    "families": {
+      "E999": 1,
+      "F821": 0,
+      "F601": 0,
+      "F811": 0,
+      "F841": 47,
+      "E722": 16,
+      "E731": 0,
+      "E741": 17,
+      "W293": 186
+    },
+    "status": "MEASURED"
+  },
+  "measured_delta": {
+    "total": -20,
+    "F841": -2,
+    "W293": -18,
+    "E741": 0,
+    "E722": 0,
+    "E999": 0
+  },
+  "slice_scope": {
+    "path": "ABACUS-v032/fix_v033_alignment.py",
+    "F841_selected": 2,
+    "W293_selected": 18,
+    "semantic_contract": "unused pure bindings removed; blank-line whitespace only; no qplant/source-bound/engineering mutation"
+  },
+  "subsequent_non_python_commits": [
+    {
+      "sha": "7a893e39efb5b038fe2e76789eb26399f1a79092",
+      "type": "CD_WORKFLOW_YAML_ONLY",
+      "lint_population_changed": false
+    },
+    {
+      "sha": "010fb4269488c19cb9b6d54bbd35c0dee9516bd1",
+      "type": "DMAIC_METRICS_ONLY",
+      "lint_population_changed": false
+    }
+  ],
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+    "state": "SOURCE_BOUND_HOLD"
+  },
+  "reverse_pressure": {
+    "status": "REGENERATE_FROM_CURRENT_MAIN",
+    "hard_family": "F841",
+    "hard_measured_residual": 47,
+    "mech_family": "W293",
+    "mech_measured_residual": 186
+  },
+  "governance": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "remote_truth_auto_promotable": false,
+    "codex_mutation_promotion": "UNCHANGED_WITHHELD"
+  }
+}
