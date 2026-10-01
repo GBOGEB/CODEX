@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
   "return_id": "ABACUS_DAB_RETURN_20261001_1542_POSTMERGE_MAIN",
-  "observed_at": "2026-10-01T05:24:37Z",
+  "observed_at": "2026-10-01T06:22:00Z",
   "source": {
     "repository": "GBOGEB/ABACUS",
     "ref": "main",
@@ -9,7 +9,50 @@
     "current_sha": "b68edcb74a7925b5131acdba1844abe741ff3e14",
     "authority": "REMOTE_EXECUTION_DOW"
   },
-  "exact_census": {
+  "lineage": {
+    "baseline": {
+      "sha": "e7d6291ae376da2d0f1c4fa7b324c93bd45f2e75",
+      "workflow_run": 36818187992,
+      "job": 110227763529,
+      "total": 8058,
+      "F841": 51,
+      "W293": 264
+    },
+    "slice": {
+      "pr": 1542,
+      "exact_head_sha": "46fc203c88c914108ad3c2ed1ee703be3b45699a",
+      "merge_sha": "b97d08ea76ace14c8116b2e8772ea9f5b8994820",
+      "family": "F841_W293",
+      "file_family": "fast_metrics_collector",
+      "measured_delta": {
+        "F841": -1,
+        "W293": -22,
+        "total": -23
+      }
+    }
+  },
+  "exact_head_census": {
+    "workflow_run": 36818375831,
+    "job": 110228345557,
+    "status": "MEASURED",
+    "total": 8035,
+    "families": {
+      "E999": 1,
+      "F821": 0,
+      "F601": 0,
+      "F811": 0,
+      "F841": 50,
+      "E722": 16,
+      "E731": 0,
+      "E741": 17,
+      "W293": 242
+    },
+    "artifact": {
+      "id": 11142418236,
+      "name": "dab-flake8-census"
+    }
+  },
+  "postmerge_main_census": {
     "workflow_run": 36819544784,
     "job": 110231927555,
     "status": "MEASURED",
@@ -31,23 +74,9 @@
       "sha256": "d46db75a9d55ea19037dd612e4946f84f27f1a86b1a4b496a7a5fac0734e2560"
     }
   },
-  "measured_lineage": {
-    "prior_post_1541_main": {
-      "source_sha": "e7d6291ae376da2d0f1c4fa7b324c93bd45f2e75",
-      "workflow_run": 36818187992,
-      "total": 8058,
-      "F841": 51,
-      "W293": 264
-    },
-    "slice_1542": {
-      "measured_delta_F841": -1,
-      "measured_delta_W293": -22,
-      "touched_file": "fast_metrics_collector.py"
-    }
-  },
-  "current_head_after_measurement": {
-    "sha": "b68edcb74a7925b5131acdba1844abe741ff3e14",
-    "change_class": "GENERATED_DMAIC_METRICS_ONLY",
+  "subsequent_repository_state": {
+    "current_sha": "b68edcb74a7925b5131acdba1844abe741ff3e14",
+    "role": "DMAIC_METRICS_FOLLOWUP",
     "lint_population_changed": false
   },
   "source_bound_hold": {
@@ -56,10 +85,18 @@
     "path": "qplant/w52_p2m_ts_pressure_sensitivity.py",
     "state": "SOURCE_BOUND_HOLD"
   },
+  "reverse_pressure_next": {
+    "status": "REGENERATE_FROM_CURRENT_MAIN",
+    "hard_family": "F841",
+    "hard_measured_residual": 50,
+    "mech_family": "W293",
+    "mech_measured_residual": 242
+  },
   "acceptance": {
     "authority_transfer": false,
     "formal_credit_delta": 0,
     "engineering_credit_delta": 0,
-    "remote_truth_auto_promotable": false
+    "engineering_truth_promoted": false,
+    "codex_mutation_promotion": "UNCHANGED_WITHHELD"
   }
 }

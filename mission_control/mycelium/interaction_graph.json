@@ -10,13 +10,13 @@
       "state": "LOCAL_AUTHORITY",
       "url": "https://github.com/GBOGEB/CODEX",
       "meta": {
-        "sha": "dfdf266e5847aa1b115422181eecb08a45a189dd",
+        "sha": "c61fbca1b6fc7fad1d422e92750d0ef351c8bf5a",
         "views": [
           "engineering",
           "control",
           "observability"
         ],
-        "observed_at": "2026-10-01T06:47:38Z",
+        "observed_at": "2026-10-01T06:22:00Z",
         "freshness_status": "MEASURED_CHAT_CONNECTOR_CURRENT"
       }
     },
@@ -27,22 +27,22 @@
       "state": "REMOTE_EXECUTION_CURRENT",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "aefedcdacaf32928084603665287d3f1b8d641be",
+        "sha": "b68edcb74a7925b5131acdba1844abe741ff3e14",
         "views": [
           "control",
           "observability"
         ],
         "latest_census_pr_head": "46fc203c88c914108ad3c2ed1ee703be3b45699a",
         "latest_census_merge_sha": "b97d08ea76ace14c8116b2e8772ea9f5b8994820",
-        "observed_at": "2026-10-01T06:47:38Z",
-        "freshness_status": "CURRENT_HEAD_AFTER_1544_NON_PYTHON_POLICY_PLUS_METRICS",
+        "observed_at": "2026-10-01T06:22:00Z",
+        "freshness_status": "CURRENT_HEAD_MEASURED_1542_PLUS_METRICS",
         "latest_census_pr": 1542,
         "latest_census_job": 110231927555,
         "latest_census_head": "b97d08ea76ace14c8116b2e8772ea9f5b8994820",
         "latest_measured_return_sha": "b97d08ea76ace14c8116b2e8772ea9f5b8994820",
         "pending_census_run": null,
         "completed_census_run": 36819544784,
-        "current_head_measurement_status": "MEASURED_1542_PLUS_NON_PYTHON_CI_POLICY_AND_METRICS"
+        "current_head_measurement_status": "MEASURED_1542_PLUS_NON_PYTHON_METRICS"
       }
     },
     {
@@ -1120,15 +1120,15 @@
       "mechanism": "REFERENCE",
       "source_repo": "GBOGEB/ABACUS",
       "source_ref": "main",
-      "source_sha": "aefedcdacaf32928084603665287d3f1b8d641be",
+      "source_sha": "b68edcb74a7925b5131acdba1844abe741ff3e14",
       "target_repo": "GBOGEB/CODEX",
       "target_ref": "main",
-      "target_sha": "dfdf266e5847aa1b115422181eecb08a45a189dd",
+      "target_sha": "c61fbca1b6fc7fad1d422e92750d0ef351c8bf5a",
       "authority_before": "REMOTE_EXECUTION_AUTHORITY",
       "authority_after": "REMOTE_EXECUTION_AUTHORITY",
       "proof": "mission_control/mycelium/evidence/abacus_dab_post_1542_main_measured.json",
-      "observed_at": "2026-10-01T06:47:38Z",
-      "freshness_status": "CURRENT_HEAD_AFTER_1544_NON_PYTHON_POLICY_PLUS_METRICS"
+      "observed_at": "2026-10-01T06:22:00Z",
+      "freshness_status": "CURRENT_HEAD_MEASURED_1542_PLUS_METRICS"
     },
     {
       "from": "slice5",
@@ -1726,6 +1726,11 @@
       "type": "contains"
     },
     {
+      "from": "abacus_dab_return_1539",
+      "to": "abacus_dab_return_1542",
+      "type": "precedes"
+    },
+    {
       "from": "abacus_dab_return_1542",
       "to": "dab_hard",
       "type": "proves"
@@ -1734,11 +1739,6 @@
       "from": "abacus_dab_return_1542",
       "to": "dab_mech",
       "type": "proves"
-    },
-    {
-      "from": "abacus_dab_return_1539",
-      "to": "abacus_dab_return_1542",
-      "type": "precedes"
     }
   ]
 }
