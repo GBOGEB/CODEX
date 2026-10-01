@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
   "campaign_id": "ABACUS-DAB-BD8K",
-  "state": "DISPATCHED_PLANNING_G1_CROSSED_PROMOTION_WITHHELD",
+  "state": "FOUR_WORKERS_MERGED_POSTMERGE_DAB_QUEUED",
   "baseline": {
     "measured_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
     "current_head_sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
@@ -45,60 +45,57 @@
       "role": "MECH-A",
       "pr": 1596,
       "head_sha": "6a886a680c3504d7d6a6ff54cde9cf709c492d27",
-      "state": "CI_QUEUED",
-      "target_files": [
-        "triage/run_repo_census.py"
-      ],
-      "target_families": {
-        "E231": 206
+      "merge_sha": "4fb9457e1dda9af32ea9024367b07bb7cb46e4ee",
+      "state": "MERGED",
+      "measured_delta": {
+        "E231": -206,
+        "total": -206
       },
-      "expected_target_findings": 206,
-      "mutation_class": "CENSUS_BOUND_E231_SPACING"
+      "dab_run": 36884624744,
+      "dab_job": 110444653512
     },
     {
       "id": "bd8k_mech_b",
       "role": "MECH-B",
       "pr": 1597,
-      "head_sha": "94527ef94a4767f7cc1bcfbc92666da99a8bd6b4",
-      "state": "CI_QUEUED",
-      "target_files": [
-        "tools/w65_parallel_discovery.py"
-      ],
-      "target_families": {
-        "E231": 165
+      "head_sha": "b4cf6269a72802a86acbcf50297143a6fe96dadc",
+      "merge_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+      "state": "MERGED",
+      "measured_delta": {
+        "E231": -165,
+        "total": -165
       },
-      "expected_target_findings": 165,
-      "mutation_class": "CENSUS_BOUND_E231_SPACING"
+      "dab_run": 36908578301,
+      "dab_job": 110525242275
     },
     {
       "id": "bd8k_semantic_a",
       "role": "SEMANTIC-A",
       "pr": 1598,
-      "head_sha": "9f2b47d47e055841392300a50ecb059801530e64",
-      "state": "CI_QUEUED",
-      "target_files": [
-        "DMAIC_V3/full_pipeline_orchestrator.py"
-      ],
-      "target_families": {
-        "E402": 21
+      "head_sha": "2e4a5dca901510804dfd3dd5d729d0dfbc7270b3",
+      "merge_sha": "c28acb27291a7a0dc43ce90e9d095d93542ea9d9",
+      "state": "MERGED",
+      "measured_delta": {
+        "E402": -21,
+        "total": -21
       },
-      "expected_target_findings": 21,
-      "mutation_class": "IMPORT_BOOTSTRAP_CLASSIFY_AND_REPAIR"
+      "dab_run": 36908587521,
+      "dab_job": 110525271964
     },
     {
       "id": "bd8k_semantic_b",
       "role": "SEMANTIC-B",
       "pr": 1599,
       "head_sha": "37fa586a7e6b16e34cac55c6cb51bb7c1fa4b152",
-      "state": "CI_QUEUED",
-      "target_files": [
-        "qplant/handover_dashboard/api/main.py"
-      ],
-      "target_families": {
-        "F401": 12
+      "merge_sha": "f5b96dd86500e8c65741bb672cb9dfaf6ee95198",
+      "state": "MERGED",
+      "measured_delta": {
+        "F401": -12,
+        "E402": -1,
+        "total": -13
       },
-      "expected_target_findings": 12,
-      "mutation_class": "UNUSED_IMPORT_REVIEWED_REMOVAL"
+      "dab_run": 36884650939,
+      "dab_job": 110444741367
     }
   ],
   "execution_protocol": [
@@ -116,7 +113,7 @@
   "authority_transfer": false,
   "formal_credit_delta": 0,
   "engineering_credit_delta": 0,
-  "observed_at": "2026-10-01T15:25:00Z",
+  "observed_at": "2026-10-01T18:45:00Z",
   "previous_baseline": {
     "measured_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
     "current_head_sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
@@ -178,11 +175,19 @@
     "promotion_authority": false
   },
   "dispatch": {
-    "status": "FOUR_WORKERS_DISPATCHED",
+    "status": "FOUR_WORKERS_MERGED",
     "targeted_findings": 404,
     "planning_projected_total": 5917,
-    "planning_gate_crossed": "G1_LT6000",
-    "promotion_state": "WITHHELD_POST_MERGE_MAIN_CENSUS_REQUIRED"
+    "actual_worker_exact_head_delta": -405,
+    "note": "SEM-B also removed one E402 incidentally; post-merge main census remains promotion authority.",
+    "postmerge_census": {
+      "head_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+      "run": 36908967216,
+      "job": 110526569316,
+      "status": "QUEUED",
+      "promotion_authority": true
+    },
+    "promotion_state": "WITHHELD_POST_MERGE_MAIN_CENSUS_QUEUED"
   },
   "gates": [
     {
@@ -193,8 +198,9 @@
     {
       "id": "G1",
       "condition": "total < 6000",
-      "state": "PLANNING_CROSSED_PROMOTION_WITHHELD",
-      "planning_projected_total": 5917
+      "state": "WITHHELD_POSTMERGE_DAB_QUEUED",
+      "planning_projected_total": 5917,
+      "authoritative_run": 36908967216
     },
     {
       "id": "G2",
@@ -221,5 +227,17 @@
       "condition": "zero or explicit holds",
       "state": "PENDING"
     }
-  ]
+  ],
+  "postmerge_main": {
+    "worker_merge_head": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+    "current_main_sha": "b51e614520183758d109f761104decf3d959dd24",
+    "later_main_changes": "dependency-only; Python lint population unchanged",
+    "census": {
+      "head_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+      "run": 36908967216,
+      "job": 110526569316,
+      "status": "QUEUED",
+      "promotion_authority": true
+    }
+  }
 }
