@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-10-02T12:42:49Z",
+  "generated_at": "2026-10-02T13:30:00Z",
   "public_metadata_only": true,
   "authority_transfer": false,
   "sources": [
@@ -10,9 +10,9 @@
       "authority_class": "LOCAL_AUTHORITATIVE",
       "role": "ORCHESTRATION_UI_GOVERNANCE",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-02T12:42:49Z",
+      "observed_at": "2026-10-02T13:30:00Z",
       "head_sha": "7bc4f65e99f4b513231f173c473607f0b21d2e6f",
-      "measurement_basis": "exact CODEX main before bounded #1687 reconciliation PR"
+      "measurement_basis": "exact CODEX base main@7bc4f65e before bounded live-ABACUS reconciliation"
     },
     {
       "id": "abacus",
@@ -20,8 +20,8 @@
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "EXECUTION_DOW",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-02T12:42:49Z",
-      "head_sha": "41df051e14b7cadc230c08e22c46798ec5447613",
+      "observed_at": "2026-10-02T13:30:00Z",
+      "head_sha": "f42f161a08c29d324ca0a72a43999011721c7b4f",
       "census_pr": 1666,
       "census_head_sha": "090f2a2b90794b6fdcee64affa3ca39a53d0061a",
       "census_merge_sha": "090f2a2b90794b6fdcee64affa3ca39a53d0061a",
@@ -29,7 +29,7 @@
       "census_job": 110789899967,
       "census_artifact_id": 11220348843,
       "census_artifact_sha256": "8e25570f8f25513b163042c198388333f48b3ab8e709199e61c80c683b74e4e1",
-      "measurement_basis": "latest executed lint-bearing main DAB census; current main advanced only through subsequent control/metrics commits before active bounded PR #1687",
+      "measurement_basis": "latest completed authoritative DAB baseline is 3145 at 090f2a2b; #1687 exact-head DAB returned 3143 and merged; #1692 merged the tests-only coverage recovery; live main is newer and requires fresh current-main DAB before any new lint-family promotion",
       "census_total": 3145,
       "w293_postmerge_status": "MEASURED_POST_1666_LINT_BEARING_MAIN",
       "E741": 0,
@@ -38,7 +38,7 @@
       "F841": 0,
       "E999": 1,
       "source_bound_hold": "qplant/w52_p2m_ts_pressure_sensitivity.py",
-      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_1666_main_measured_1687_active.json",
+      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_1666_to_1693_control_return.json",
       "F821": 0,
       "F601": 0,
       "F811": 0,
@@ -51,38 +51,24 @@
       },
       "measured_return_source_sha": "090f2a2b90794b6fdcee64affa3ca39a53d0061a",
       "live_head_after_measurement": {
-        "sha": "41df051e14b7cadc230c08e22c46798ec5447613",
-        "status": "CURRENT_MAIN_NON_LINT_ADVANCE_AFTER_MEASURED_LINT_HEAD",
-        "latest_known_merge_pr": 1686,
-        "lint_population_changed": false,
-        "fresh_main_census_required": false
+        "sha": "f42f161a08c29d324ca0a72a43999011721c7b4f",
+        "status": "LIVE_MAIN_NEWER_THAN_MEASURED_1666_AFTER_1687_1688_1689_1692",
+        "latest_known_merge_pr": 1692,
+        "lint_population_changed": true,
+        "fresh_main_census_required": true
       },
       "pending_independent_lanes": [
         {
-          "pr": 1687,
-          "family": "E302",
-          "secondary_family": "E303",
-          "state": "REMOTE_ACTIVE_EXACT_HEAD_DAB_GREEN_BROADER_ADMISSION_IN_PROGRESS",
-          "expected_only": {
-            "E302": 159,
-            "E303": 16
-          },
-          "exact_head_sha": "8e443a4451ec7679112046764121dafe91d9dcda",
-          "exact_head_dab_run": 37008307388,
-          "exact_head_dab_job": 110841713817,
-          "exact_head_artifact_id": 11227170432,
-          "exact_head_artifact_sha256": "705cacf89703c298d5bde53e8dcc51b93a9fdf796dd9ede7d8e18292ec3938c0",
-          "exact_head_total": 3143,
+          "pr": 1693,
+          "family": "CI_GOVERNANCE_GENERATED_DRIFT",
+          "state": "FIRST_COMPLETED_POST_1689_RED_REMOTE_ACTIVE",
+          "exact_head_sha": "5193dd46bc4e1a0d25c8d213e0bc497bed43a9de",
+          "source_main_sha": "00c0ac3d352cf8d0b0ac2f3bcc2c72264606bcb8",
+          "source_run": 37012236463,
+          "expected_only": "one generated Markdown command-rendering backslash correction",
           "missioncontrol_promotion": "WITHHELD_PENDING_CODEX_EXACT_HEAD_PROOF"
         }
       ],
-      "combined_main_census_pending": {
-        "run": 36983104307,
-        "head_sha": "391d23f2442b5fbc0a6dd369166464147e213acb",
-        "state": "QUEUED",
-        "ci_matrix_run": 36983104069,
-        "ci_matrix_state": "GREEN"
-      },
       "completed_latest_lane": {
         "pr": 1647,
         "family": "DAB_G3_CURRENT_MAIN",
@@ -112,12 +98,10 @@
         "merge_sha": "930916b18647c78d1e143038202f37a6df3e1a04"
       },
       "reverse_pressure_next": {
-        "status": "ONE_BOUNDED_REMOTE_REPAIR_ACTIVE_CODEX_PROMOTION_WITHHELD",
+        "status": "ONE_BOUNDED_REMOTE_REPAIR_CANDIDATE",
         "campaign_id": "ABACUS-DAB-BD8K",
-        "family": "E302",
-        "secondary_family": "E303",
-        "measured_delta": 2,
-        "active_pr": 1687,
+        "family": "CI_GOVERNANCE_GENERATED_DRIFT",
+        "active_pr": 1693,
         "promotion_rule": "CODEX_EXACT_HEAD_PROOF_BEFORE_MISSIONCONTROL_PROMOTION"
       },
       "planning_probe": {
@@ -208,6 +192,41 @@
         "E302_delta": 1,
         "E303_delta": 1,
         "total_delta": 2
+      },
+      "subsequent_execution_chain": {
+        "pr1687": {
+          "state": "MERGED",
+          "exact_head_dab_run": 37008307388,
+          "exact_head_total": 3143,
+          "delta_from_3145": -2,
+          "families": {
+            "E302": -1,
+            "E303": -1
+          }
+        },
+        "pr1688": {
+          "state": "MERGED",
+          "scope": "four E302 blank-line findings in scripts/fetch_workflow_errors.py"
+        },
+        "pr1689": {
+          "state": "MERGED",
+          "scope": "workflow YAML docs-lint formatting repair"
+        },
+        "coverage_recovery": {
+          "source_pr": 1690,
+          "source_exact_head": "c5589b97bc2730624676cbae595d17d05e395c4e",
+          "proved_coverage_pct": 75.26,
+          "threshold_pct": 75,
+          "final_merged_pr": 1692,
+          "final_merge_sha": "f42f161a08c29d324ca0a72a43999011721c7b4f",
+          "production_files_changed": 0
+        },
+        "current_first_red": {
+          "pr": 1693,
+          "class": "CI_WORKFLOW_GOVERNANCE_GENERATED_DRIFT",
+          "scope": "one generated Markdown line",
+          "promotion": "WITHHELD_PENDING_CODEX_EXACT_HEAD_PROOF"
+        }
       }
     },
     {
