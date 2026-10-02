@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-10-02T07:56:36Z",
+  "generated_at": "2026-10-02T08:26:00Z",
   "public_metadata_only": true,
   "authority_transfer": false,
   "sources": [
@@ -10,9 +10,9 @@
       "authority_class": "LOCAL_AUTHORITATIVE",
       "role": "ORCHESTRATION_UI_GOVERNANCE",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-02T07:56:36Z",
-      "head_sha": "7016c361406826cb6e9fde4ebc855fb3bf38bf4b",
-      "measurement_basis": "merged-main readback after CODEX #918; live repository authority"
+      "observed_at": "2026-10-02T08:26:00Z",
+      "head_sha": "c137a6b828422be06651ae60bb2569771b88f498",
+      "measurement_basis": "live CODEX main readback before bounded ABACUS #1655 pending-parity repair"
     },
     {
       "id": "abacus",
@@ -20,8 +20,8 @@
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "EXECUTION_DOW",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-02T07:44:20Z",
-      "head_sha": "7c218e9d356bfbaf2e8c067e1e53136530323a2f",
+      "observed_at": "2026-10-02T08:26:00Z",
+      "head_sha": "391d23f2442b5fbc0a6dd369166464147e213acb",
       "census_pr": 1647,
       "census_head_sha": "930916b18647c78d1e143038202f37a6df3e1a04",
       "census_merge_sha": "930916b18647c78d1e143038202f37a6df3e1a04",
@@ -29,7 +29,7 @@
       "census_job": 110751227472,
       "census_artifact_id": 11215450664,
       "census_artifact_sha256": "a2bb5b64c30227d7d84143451b58e31b774ff33c296e340956bdae331ae665c1",
-      "measurement_basis": "exact push-main DAB census after #1647; current head differs only by generated metrics",
+      "measurement_basis": "latest completed push-main DAB census remains #1647; live main advanced through #1650/#1651/#1652/#1653/#1654/#1655 and current-main DAB run is queued",
       "census_total": 3279,
       "w293_postmerge_status": "MEASURED_POST_1645_MAIN",
       "E741": 9,
@@ -51,14 +51,62 @@
       },
       "measured_return_source_sha": "930916b18647c78d1e143038202f37a6df3e1a04",
       "live_head_after_measurement": {
-        "sha": "7c218e9d356bfbaf2e8c067e1e53136530323a2f",
-        "status": "CURRENT_HEAD_AFTER_1647_METRICS_ONLY",
-        "latest_known_merge_pr": 1647,
-        "lint_population_changed": false,
-        "fresh_main_census_required": false
+        "sha": "391d23f2442b5fbc0a6dd369166464147e213acb",
+        "status": "CURRENT_MAIN_AFTER_1650_1651_1652_1653_1654_1655",
+        "latest_known_merge_pr": 1655,
+        "lint_population_changed": true,
+        "fresh_main_census_required": true,
+        "pending_census_run": 36983104307
       },
-      "pending_independent_lanes": [],
-      "combined_main_census_pending": null,
+      "pending_independent_lanes": [
+        {
+          "pr": 1650,
+          "family": "E722",
+          "state": "MERGED_UNMEASURED",
+          "expected_only": {
+            "E722": 0
+          }
+        },
+        {
+          "pr": 1653,
+          "family": "E741",
+          "state": "MERGED_UNMEASURED",
+          "expected_only": {
+            "E741": 0
+          }
+        },
+        {
+          "pr": 1652,
+          "family": "F541",
+          "state": "MERGED_UNMEASURED",
+          "expected_only": null
+        },
+        {
+          "pr": 1651,
+          "family": "CI_GOVERNANCE",
+          "state": "MERGED_UNMEASURED",
+          "expected_only": null
+        },
+        {
+          "pr": 1654,
+          "family": "E302",
+          "state": "MERGED_ZERO_DELTA_PR",
+          "expected_only": null
+        },
+        {
+          "pr": 1655,
+          "family": "F541",
+          "state": "MERGED_UNMEASURED",
+          "expected_only": null
+        }
+      ],
+      "combined_main_census_pending": {
+        "run": 36983104307,
+        "head_sha": "391d23f2442b5fbc0a6dd369166464147e213acb",
+        "state": "QUEUED",
+        "ci_matrix_run": 36983104069,
+        "ci_matrix_state": "GREEN"
+      },
       "completed_latest_lane": {
         "pr": 1647,
         "family": "DAB_G3_CURRENT_MAIN",
@@ -88,7 +136,7 @@
         "merge_sha": "930916b18647c78d1e143038202f37a6df3e1a04"
       },
       "reverse_pressure_next": {
-        "status": "CURRENT_MAIN_MEASURED_3279_G2_PASS_REGENERATE_G3_QUEUE",
+        "status": "LIVE_MAIN_1655_CENSUS_QUEUED_KEEP_1647_AS_LATEST_MEASURED",
         "campaign_id": "ABACUS-DAB-BD8K",
         "hard_family": "E722",
         "hard_measured_residual": 12,
@@ -98,6 +146,7 @@
         "mech_measured_residual": 38,
         "semantic_family": "E501",
         "semantic_measured_residual": 937,
+        "current_main_census_run": 36983104307,
         "promotion_rule": "POST_MERGE_MEASURED_MAIN_ONLY"
       },
       "planning_probe": {
