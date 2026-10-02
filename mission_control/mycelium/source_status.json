@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-10-02T13:57:32Z",
+  "generated_at": "2026-10-02T13:57:52Z",
   "public_metadata_only": true,
   "authority_transfer": false,
   "sources": [
@@ -20,25 +20,25 @@
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "EXECUTION_DOW",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-02T13:57:32Z",
+      "observed_at": "2026-10-02T13:57:52Z",
       "head_sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
-      "census_pr": 1694,
-      "census_head_sha": "7db0f4662833647d0bead4faac1f31a4bfb1b9d2",
-      "census_merge_sha": "7db0f4662833647d0bead4faac1f31a4bfb1b9d2",
-      "census_workflow_run": 37013787888,
-      "census_job": 110859584236,
-      "census_artifact_id": 11229336343,
-      "census_artifact_sha256": "1d78ad49b1f9079e6f55b34880507b0bbabb6af32a1695f799dcfb35d6375f49",
-      "measurement_basis": "post-#1694 measured E302 residual consumed by merged #1696 and #1697; current-main DAB 37016094260 is executing on exact main 02c21964; no second residual is promoted before this recensus completes",
-      "census_total": 3135,
-      "w293_postmerge_status": "MEASURED_POST_1694_MAIN",
+      "census_pr": 1697,
+      "census_head_sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
+      "census_merge_sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
+      "census_workflow_run": 37016094260,
+      "census_job": 110867203583,
+      "census_artifact_id": 11230281685,
+      "census_artifact_sha256": "6f742d011f42c02774b3607af7fe5d516b902e42d31200a877dbe3a803cbc0a4",
+      "measurement_basis": "completed exact current-main DAB after merged #1696 and #1697 E302 slices; total 3129 at exact main 02c21964",
+      "census_total": 3129,
+      "w293_postmerge_status": "MEASURED_POST_1697_MAIN",
       "E741": 0,
       "W293": 0,
       "E722": 0,
       "F841": 0,
       "E999": 1,
       "source_bound_hold": "qplant/w52_p2m_ts_pressure_sensitivity.py",
-      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_post_1694_measured_e302_promoted.json",
+      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_post_1697_measured_e302_promoted.json",
       "F821": 0,
       "F601": 0,
       "F811": 0,
@@ -49,16 +49,26 @@
         "W293": 453,
         "E722": 16
       },
-      "measured_return_source_sha": "7db0f4662833647d0bead4faac1f31a4bfb1b9d2",
+      "measured_return_source_sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
       "live_head_after_measurement": {
         "sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
-        "status": "CURRENT_MAIN_DAB_IN_PROGRESS_AFTER_E302_CONSUMPTION",
+        "status": "CURRENT_MAIN_MEASURED_POST_1697",
         "latest_known_merge_pr": 1697,
-        "fresh_main_census_required": true,
-        "pending_dab_run": 37016094260,
-        "pending_dab_state": "IN_PROGRESS"
+        "lint_population_changed_since_census": false,
+        "fresh_main_census_required": false
       },
-      "pending_independent_lanes": [],
+      "pending_independent_lanes": [
+        {
+          "pr": null,
+          "family": "E302",
+          "expected_only": 145,
+          "measured_count": 145,
+          "state": "PROMOTED_SINGLE_MEASURED_RESIDUAL",
+          "source_run": 37016094260,
+          "source_sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
+          "promotion_authority": true
+        }
+      ],
       "completed_latest_lane": {
         "pr": 1647,
         "family": "DAB_G3_CURRENT_MAIN",
@@ -88,10 +98,12 @@
         "merge_sha": "930916b18647c78d1e143038202f37a6df3e1a04"
       },
       "reverse_pressure_next": {
-        "status": "HOLD_PENDING_POST_1697_CURRENT_MAIN_DAB",
+        "status": "ONE_MEASURED_RESIDUAL_PROMOTED",
         "campaign_id": "ABACUS-DAB-BD8K",
-        "pending_run": 37016094260,
-        "promotion_rule": "NO_SECOND_RESIDUAL_UNTIL_COMPLETED_CURRENT_MAIN_CENSUS"
+        "family": "E302",
+        "measured_count": 145,
+        "source_run": 37016094260,
+        "promotion_rule": "NO_SECOND_RESIDUAL_UNTIL_THIS_PROMOTION_IS_CONSUMED_AND_RECENSUSED"
       },
       "planning_probe": {
         "source_pr": 1592,
@@ -156,7 +168,7 @@
         "E261": 2,
         "E265": 1,
         "E301": 13,
-        "E302": 151,
+        "E302": 145,
         "E303": 16,
         "E305": 113,
         "E306": 5,
@@ -241,8 +253,14 @@
         },
         "current_main_recensus": {
           "run": 37016094260,
-          "state": "IN_PROGRESS",
-          "head_sha": "02c21964012a3d13ad2c639f5143f4cee48f518a"
+          "state": "GREEN",
+          "head_sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
+          "job": 110867203583,
+          "artifact_id": 11230281685,
+          "artifact_sha256": "6f742d011f42c02774b3607af7fe5d516b902e42d31200a877dbe3a803cbc0a4",
+          "total": 3129,
+          "E302": 145,
+          "E303": 16
         }
       }
     },
