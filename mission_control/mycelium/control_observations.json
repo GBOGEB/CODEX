@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "snapshot_at": "2026-10-01T15:25:00Z",
+  "snapshot_at": "2026-10-01T18:56:00Z",
   "evidence_policy": "MEASURED_OR_WITHHELD",
   "pressure_weights": {
     "urgency": 0.3,
@@ -220,9 +220,9 @@
     },
     "dab_bd8k": {
       "campaign": {
-        "status": "DISPATCHED_PLANNING_G1_CROSSED_PROMOTION_WITHHELD",
+        "status": "MEASURED_G1_PASS_QUEUE_REGENERATED",
         "campaign_id": "ABACUS-DAB-BD8K",
-        "dispatch_status": "FOUR_WORKERS_DISPATCHED",
+        "dispatch_status": "FOUR_WORKERS_MERGED_MEASURED",
         "planning_probe": {
           "source_pr": 1592,
           "source_head_sha": "7ad0614dd65f6ab9ef94b92105e9c940bee1b24f",
@@ -266,7 +266,7 @@
           {
             "id": "G1",
             "condition": "total < 6000",
-            "state": "PLANNING_CROSSED_PROMOTION_WITHHELD"
+            "state": "PASS_MEASURED_CURRENT_MAIN"
           },
           {
             "id": "G2",
@@ -295,7 +295,17 @@
           }
         ],
         "admission_protocol": "WORKER_PATCH -> FAST_DAB -> FULL_CI -> MERGE -> POST_MERGE_DAB -> REGENERATE_QUEUE",
-        "promotion_rule": "POST_MERGE_MEASURED_MAIN_ONLY"
+        "promotion_rule": "POST_MERGE_MEASURED_MAIN_ONLY",
+        "measured_post_worker": {
+          "source_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+          "current_source_sha": "5bac9f70cf6114dbde6e9f6f8317eb71425b88b4",
+          "census_run": 36908967216,
+          "census_job": 110526569316,
+          "artifact_id": 11185734037,
+          "artifact_sha256": "b48a068fa140bc74f0a36578e7790c83ec6462321713386a62969f1762f34cb1",
+          "total": 5916,
+          "status": "MEASURED_POST_MERGE_MAIN"
+        }
       },
       "workers": [
         {
@@ -303,7 +313,7 @@
           "role": "MECH-A",
           "pr": 1596,
           "head_sha": "6a886a680c3504d7d6a6ff54cde9cf709c492d27",
-          "state": "CI_QUEUED",
+          "state": "MERGED_MEASURED",
           "target_files": [
             "triage/run_repo_census.py"
           ],
@@ -311,14 +321,15 @@
             "E231": 206
           },
           "expected_target_findings": 206,
-          "mutation_class": "CENSUS_BOUND_E231_SPACING"
+          "mutation_class": "CENSUS_BOUND_E231_SPACING",
+          "merge_sha": "4fb9457e1dda9af32ea9024367b07bb7cb46e4ee"
         },
         {
           "id": "bd8k_mech_b",
           "role": "MECH-B",
           "pr": 1597,
-          "head_sha": "94527ef94a4767f7cc1bcfbc92666da99a8bd6b4",
-          "state": "CI_QUEUED",
+          "head_sha": "b4cf6269a72802a86acbcf50297143a6fe96dadc",
+          "state": "MERGED_MEASURED",
           "target_files": [
             "tools/w65_parallel_discovery.py"
           ],
@@ -326,14 +337,15 @@
             "E231": 165
           },
           "expected_target_findings": 165,
-          "mutation_class": "CENSUS_BOUND_E231_SPACING"
+          "mutation_class": "CENSUS_BOUND_E231_SPACING",
+          "merge_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9"
         },
         {
           "id": "bd8k_semantic_a",
           "role": "SEMANTIC-A",
           "pr": 1598,
-          "head_sha": "9f2b47d47e055841392300a50ecb059801530e64",
-          "state": "CI_QUEUED",
+          "head_sha": "2e4a5dca901510804dfd3dd5d729d0dfbc7270b3",
+          "state": "MERGED_MEASURED",
           "target_files": [
             "DMAIC_V3/full_pipeline_orchestrator.py"
           ],
@@ -341,14 +353,15 @@
             "E402": 21
           },
           "expected_target_findings": 21,
-          "mutation_class": "IMPORT_BOOTSTRAP_CLASSIFY_AND_REPAIR"
+          "mutation_class": "IMPORT_BOOTSTRAP_CLASSIFY_AND_REPAIR",
+          "merge_sha": "c28acb27291a7a0dc43ce90e9d095d93542ea9d9"
         },
         {
           "id": "bd8k_semantic_b",
           "role": "SEMANTIC-B",
           "pr": 1599,
           "head_sha": "37fa586a7e6b16e34cac55c6cb51bb7c1fa4b152",
-          "state": "CI_QUEUED",
+          "state": "MERGED_MEASURED",
           "target_files": [
             "qplant/handover_dashboard/api/main.py"
           ],
@@ -356,7 +369,8 @@
             "F401": 12
           },
           "expected_target_findings": 12,
-          "mutation_class": "UNUSED_IMPORT_REVIEWED_REMOVAL"
+          "mutation_class": "UNUSED_IMPORT_REVIEWED_REMOVAL",
+          "merge_sha": "f5b96dd86500e8c65741bb672cb9dfaf6ee95198"
         }
       ],
       "dmaic": {
