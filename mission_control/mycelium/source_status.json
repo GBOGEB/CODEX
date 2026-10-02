@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-10-02T07:44:20Z",
+  "generated_at": "2026-10-02T07:56:36Z",
   "public_metadata_only": true,
   "authority_transfer": false,
   "sources": [
@@ -10,9 +10,9 @@
       "authority_class": "LOCAL_AUTHORITATIVE",
       "role": "ORCHESTRATION_UI_GOVERNANCE",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-02T06:39:27Z",
-      "head_sha": "d42b898b2d52e3a666a11bf0a25248d35bf604ab",
-      "measurement_basis": "GitHub connector repository-head recensus after #906/#907/#908"
+      "observed_at": "2026-10-02T07:56:36Z",
+      "head_sha": "7016c361406826cb6e9fde4ebc855fb3bf38bf4b",
+      "measurement_basis": "merged-main readback after CODEX #918; live repository authority"
     },
     {
       "id": "abacus",
@@ -60,33 +60,32 @@
       "pending_independent_lanes": [],
       "combined_main_census_pending": null,
       "completed_latest_lane": {
-        "pr": 1635,
-        "family": "DAB_G2_COMBINED_MAIN",
+        "pr": 1647,
+        "family": "DAB_G3_CURRENT_MAIN",
         "supporting_prs": [
-          1629,
-          1630,
-          1631,
-          1632,
-          1633,
-          1634,
-          1635
+          1640,
+          1644,
+          1645,
+          1647
         ],
         "measured_baseline": {
-          "F841": 19,
-          "W293": 0,
-          "total": 3400
-        },
-        "measured_residual": {
+          "E722": 16,
           "F841": 11,
           "W293": 0,
           "total": 3363
         },
-        "measured_delta": {
-          "F841": -8,
+        "measured_residual": {
+          "E722": 12,
+          "F841": 0,
           "W293": 0,
-          "total": -37
+          "total": 3279
         },
-        "merge_sha": "f72184c933076431d49347cfcd2c4a3f8f661e05"
+        "measured_delta": {
+          "E722": -4,
+          "F841": -11,
+          "total": -84
+        },
+        "merge_sha": "930916b18647c78d1e143038202f37a6df3e1a04"
       },
       "reverse_pressure_next": {
         "status": "CURRENT_MAIN_MEASURED_3279_G2_PASS_REGENERATE_G3_QUEUE",
@@ -132,24 +131,20 @@
         "merged_pr": 1636,
         "merge_sha": "82648e6c394c545eaf90e13dc908f9040f7ca863",
         "exact_head_enterprise_ci": "GREEN",
-        "merged_main_enterprise_ci": "RED",
+        "merged_main_enterprise_ci": "RED_HISTORICAL_REPAIRED",
         "failed_run": 36971306565,
         "failed_job": 110725663291,
         "failure": "Windows Python 3.11 concurrent cache writer test raised threading.BrokenBarrierError",
         "repair_pr": 1640,
-        "repair_head_sha": "867116818f60eb24ef074adce67cb77553fc74e5",
         "repair_merge_sha": "f172d38079aa45dc669f6ce78258b1ad073f03ec",
-        "repair_merged_main_enterprise_ci": "PENDING",
+        "repair_merged_main_enterprise_ci": "GREEN",
         "repair_merged_main_enterprise_run": 36972967515,
-        "fresh_main_census_required": true,
-        "repair_exact_head_dab": {
-          "run": 36972271164,
-          "job": 110728546186,
-          "artifact_id": 11211814115,
-          "artifact_sha256": "21dec30ee15a354e36f6c85de8295989c87c7a30f9411561d7bff2128282a33c",
-          "total": 3363,
-          "F841": 11,
-          "W293": 0
+        "fresh_main_census_required": false,
+        "post_repair_measured_census": {
+          "pr": 1647,
+          "run": 36979711277,
+          "job": 110751227472,
+          "total": 3279
         }
       }
     },
