@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-10-02T13:30:00Z",
+  "generated_at": "2026-10-02T13:39:00Z",
   "public_metadata_only": true,
   "authority_transfer": false,
   "sources": [
@@ -20,25 +20,25 @@
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "EXECUTION_DOW",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-02T13:30:00Z",
-      "head_sha": "f42f161a08c29d324ca0a72a43999011721c7b4f",
-      "census_pr": 1666,
-      "census_head_sha": "090f2a2b90794b6fdcee64affa3ca39a53d0061a",
-      "census_merge_sha": "090f2a2b90794b6fdcee64affa3ca39a53d0061a",
-      "census_workflow_run": 36991932972,
-      "census_job": 110789899967,
-      "census_artifact_id": 11220348843,
-      "census_artifact_sha256": "8e25570f8f25513b163042c198388333f48b3ab8e709199e61c80c683b74e4e1",
-      "measurement_basis": "latest completed authoritative DAB baseline is 3145 at 090f2a2b; #1687 exact-head DAB returned 3143 and merged; #1692 merged the tests-only coverage recovery; live main is newer and requires fresh current-main DAB before any new lint-family promotion",
-      "census_total": 3145,
-      "w293_postmerge_status": "MEASURED_POST_1666_LINT_BEARING_MAIN",
+      "observed_at": "2026-10-02T13:39:00Z",
+      "head_sha": "9e7363a68c2b507158dfbd32cf211c08b749da02",
+      "census_pr": 1692,
+      "census_head_sha": "f42f161a08c29d324ca0a72a43999011721c7b4f",
+      "census_merge_sha": "f42f161a08c29d324ca0a72a43999011721c7b4f",
+      "census_workflow_run": 37012517139,
+      "census_job": 110855413761,
+      "census_artifact_id": 11229005522,
+      "census_artifact_sha256": "bded48957c664593950c9ce0731c488a78f195128545a1bcb2594169855b8b63",
+      "measurement_basis": "latest completed current-main DAB is 3139 on #1692 merge f42f161a; #1694 exact-head DAB is 3135 and #1694 merged; post-#1694 main DAB run 37013787888 is in progress; #1695 is workflow-only and does not substitute for the pending post-merge lint census",
+      "census_total": 3139,
+      "w293_postmerge_status": "MEASURED_POST_1692_MAIN",
       "E741": 0,
       "W293": 0,
       "E722": 0,
       "F841": 0,
       "E999": 1,
       "source_bound_hold": "qplant/w52_p2m_ts_pressure_sensitivity.py",
-      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_1666_to_1693_control_return.json",
+      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_1692_to_1695_pending_main.json",
       "F821": 0,
       "F601": 0,
       "F811": 0,
@@ -49,26 +49,18 @@
         "W293": 453,
         "E722": 16
       },
-      "measured_return_source_sha": "090f2a2b90794b6fdcee64affa3ca39a53d0061a",
+      "measured_return_source_sha": "f42f161a08c29d324ca0a72a43999011721c7b4f",
       "live_head_after_measurement": {
-        "sha": "f42f161a08c29d324ca0a72a43999011721c7b4f",
-        "status": "LIVE_MAIN_NEWER_THAN_MEASURED_1666_AFTER_1687_1688_1689_1692",
-        "latest_known_merge_pr": 1692,
-        "lint_population_changed": true,
-        "fresh_main_census_required": true
+        "sha": "9e7363a68c2b507158dfbd32cf211c08b749da02",
+        "latest_lint_bearing_merge_sha": "7db0f4662833647d0bead4faac1f31a4bfb1b9d2",
+        "status": "POST_1694_DAB_IN_PROGRESS_WITH_1695_WORKFLOW_ONLY_ADVANCE",
+        "latest_known_merge_pr": 1695,
+        "lint_population_changed_since_1694_merge": false,
+        "fresh_main_census_required": true,
+        "pending_dab_run": 37013787888,
+        "pending_dab_state": "IN_PROGRESS"
       },
-      "pending_independent_lanes": [
-        {
-          "pr": 1693,
-          "family": "CI_GOVERNANCE_GENERATED_DRIFT",
-          "state": "FIRST_COMPLETED_POST_1689_RED_REMOTE_ACTIVE",
-          "exact_head_sha": "5193dd46bc4e1a0d25c8d213e0bc497bed43a9de",
-          "source_main_sha": "00c0ac3d352cf8d0b0ac2f3bcc2c72264606bcb8",
-          "source_run": 37012236463,
-          "expected_only": "one generated Markdown command-rendering backslash correction",
-          "missioncontrol_promotion": "WITHHELD_PENDING_CODEX_EXACT_HEAD_PROOF"
-        }
-      ],
+      "pending_independent_lanes": [],
       "completed_latest_lane": {
         "pr": 1647,
         "family": "DAB_G3_CURRENT_MAIN",
@@ -98,11 +90,10 @@
         "merge_sha": "930916b18647c78d1e143038202f37a6df3e1a04"
       },
       "reverse_pressure_next": {
-        "status": "ONE_BOUNDED_REMOTE_REPAIR_CANDIDATE",
+        "status": "HOLD_PENDING_POST_1694_CURRENT_MAIN_DAB",
         "campaign_id": "ABACUS-DAB-BD8K",
-        "family": "CI_GOVERNANCE_GENERATED_DRIFT",
-        "active_pr": 1693,
-        "promotion_rule": "CODEX_EXACT_HEAD_PROOF_BEFORE_MISSIONCONTROL_PROMOTION"
+        "pending_run": 37013787888,
+        "promotion_rule": "PROMOTE_ONE_RESIDUAL_ONLY_AFTER_COMPLETED_CURRENT_MAIN_CENSUS"
       },
       "planning_probe": {
         "source_pr": 1592,
@@ -167,8 +158,8 @@
         "E261": 2,
         "E265": 1,
         "E301": 13,
-        "E302": 160,
-        "E303": 17,
+        "E302": 155,
+        "E303": 16,
         "E305": 113,
         "E306": 5,
         "E401": 37,
@@ -194,38 +185,35 @@
         "total_delta": 2
       },
       "subsequent_execution_chain": {
-        "pr1687": {
+        "pr1694": {
           "state": "MERGED",
-          "exact_head_dab_run": 37008307388,
-          "exact_head_total": 3143,
-          "delta_from_3145": -2,
-          "families": {
-            "E302": -1,
-            "E303": -1
+          "merge_sha": "7db0f4662833647d0bead4faac1f31a4bfb1b9d2",
+          "source_baseline": {
+            "run": 37012517139,
+            "total": 3139,
+            "E302": 155,
+            "E303": 16
+          },
+          "exact_head": {
+            "sha": "27a8a17c9e1554932b6116220fc7abc92b412459",
+            "run": 37013769498,
+            "job": 110859525458,
+            "artifact_id": 11229365191,
+            "artifact_sha256": "2a2e0b0e9e09b7fb62c8f83d01987128156b1c29eb8be9d4fc3d15ed1cbd6486",
+            "total": 3135,
+            "E302": 151,
+            "E303": 16
+          },
+          "post_merge_dab": {
+            "run": 37013787888,
+            "state": "IN_PROGRESS"
           }
         },
-        "pr1688": {
+        "pr1695": {
           "state": "MERGED",
-          "scope": "four E302 blank-line findings in scripts/fetch_workflow_errors.py"
-        },
-        "pr1689": {
-          "state": "MERGED",
-          "scope": "workflow YAML docs-lint formatting repair"
-        },
-        "coverage_recovery": {
-          "source_pr": 1690,
-          "source_exact_head": "c5589b97bc2730624676cbae595d17d05e395c4e",
-          "proved_coverage_pct": 75.26,
-          "threshold_pct": 75,
-          "final_merged_pr": 1692,
-          "final_merge_sha": "f42f161a08c29d324ca0a72a43999011721c7b4f",
-          "production_files_changed": 0
-        },
-        "current_first_red": {
-          "pr": 1693,
-          "class": "CI_WORKFLOW_GOVERNANCE_GENERATED_DRIFT",
-          "scope": "one generated Markdown line",
-          "promotion": "WITHHELD_PENDING_CODEX_EXACT_HEAD_PROOF"
+          "merge_sha": "9e7363a68c2b507158dfbd32cf211c08b749da02",
+          "scope": "workflow fail-closed hardening",
+          "lint_population_changed": false
         }
       }
     },
