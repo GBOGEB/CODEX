@@ -1,6 +1,6 @@
 {
   "schema_version": "0.4",
-  "snapshot_at": "2026-10-02T06:23:22Z",
+  "snapshot_at": "2026-10-02T07:46:45Z",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -27,22 +27,23 @@
       "state": "REMOTE_EXECUTION_CURRENT",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "f172d38079aa45dc669f6ce78258b1ad073f03ec",
+        "sha": "7c218e9d356bfbaf2e8c067e1e53136530323a2f",
         "views": [
           "control",
           "observability"
         ],
         "latest_census_pr_head": "f72184c933076431d49347cfcd2c4a3f8f661e05",
         "latest_census_merge_sha": "f72184c933076431d49347cfcd2c4a3f8f661e05",
-        "observed_at": "2026-10-02T06:23:22Z",
+        "observed_at": "2026-10-02T07:46:45Z",
         "freshness_status": "CURRENT_MAIN_1640_UNMEASURED; FRESH_CENSUS_REQUIRED",
-        "latest_census_pr": 1635,
-        "latest_census_job": 110723207482,
+        "latest_census_pr": 1647,
+        "latest_census_job": 110751194382,
         "latest_census_head": "f72184c933076431d49347cfcd2c4a3f8f661e05",
         "latest_measured_return_sha": "f72184c933076431d49347cfcd2c4a3f8f661e05",
         "pending_census_run": null,
         "completed_census_run": 36970478170,
-        "current_head_measurement_status": "UNMEASURED_AFTER_1637_1638_1639_1640"
+        "current_head_measurement_status": "UNMEASURED_AFTER_1637_1638_1639_1640",
+        "latest_census_total": 3279
       }
     },
     {
@@ -88,24 +89,24 @@
       "id": "dab_hard",
       "type": "queue",
       "label": "DAB-HARD",
-      "state": "MEASURED_E722_16_E741_9_F841_11",
+      "state": "MEASURED_E722_12_E741_9_F841_0",
       "meta": {
         "views": [
           "control",
           "observability"
         ],
-        "latest_measured_total": 3363,
+        "latest_measured_total": 3279,
         "E999": 1,
         "F821": 0,
         "F601": 0,
         "F811": 0,
-        "F841": 11,
-        "E722": 16,
+        "F841": 0,
+        "E722": 12,
         "E731": 0,
         "E741": 9,
-        "active_pr": null,
-        "evidence_job": 110723207482,
-        "measurement_pr": 1635,
+        "active_pr": 1650,
+        "evidence_job": 110751194382,
+        "measurement_pr": 1647,
         "W293": 0
       }
     },
@@ -263,13 +264,13 @@
           "control",
           "observability"
         ],
-        "next_hard_family": "F841",
-        "next_hard_count": 47,
-        "next_mech_family": "W293",
-        "next_mech_residual": 186,
-        "census_job": 110300810260,
-        "next_hard_pr": null,
-        "next_hard_target_residual": null,
+        "next_hard_family": "E722",
+        "next_hard_count": 12,
+        "next_mech_family": null,
+        "next_mech_residual": 0,
+        "census_job": 110751194382,
+        "next_hard_pr": 1650,
+        "next_hard_target_residual": 0,
         "next_mech_last_measured_residual": 186,
         "next_mech_merged_slice": 1548,
         "next_mech_removed": 18,
@@ -283,9 +284,9 @@
         "pending_census_status": "NONE",
         "next_hard_expected_after_pending_census": null,
         "next_mech_expected_after_pending_census": null,
-        "abacus_current_head": "f172d38079aa45dc669f6ce78258b1ad073f03ec",
-        "abacus_current_head_status": "UNMEASURED_AFTER_1637_1638_1639_1640",
-        "reverse_pressure_status": "FRESH_DAB_MAIN_CENSUS_REQUIRED_AFTER_1640_MAIN_CI_GREEN"
+        "abacus_current_head": "7c218e9d356bfbaf2e8c067e1e53136530323a2f",
+        "abacus_current_head_status": "MEASURED_LINT_EQUIVALENT_AFTER_1647_METRICS_ONLY",
+        "reverse_pressure_status": "PR1650_EXACT_HEAD_DAB_QUEUED"
       },
       "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/control_manifest.yaml"
     },
@@ -606,18 +607,18 @@
       "id": "hard_f841_residual",
       "type": "queue",
       "label": "F841 unused-local residual",
-      "state": "MEASURED_RESIDUAL_47",
+      "state": "CLOSED_MEASURED_0",
       "meta": {
         "baseline": 77,
-        "current": 47,
+        "current": 0,
         "delta": -30,
         "views": [
           "control",
           "observability"
         ],
-        "status": "MEASURED_POST_1548_MAIN",
-        "evidence_job": 110300810260,
-        "measurement_pr": 1548,
+        "status": "CLOSED",
+        "evidence_job": 110751194382,
+        "measurement_pr": 1647,
         "active_pr": null,
         "target_residual": null,
         "target_status": null,
@@ -629,20 +630,22 @@
       "id": "hard_e722_residual",
       "type": "queue",
       "label": "E722 bare-except residual",
-      "state": "MEASURED_RESIDUAL_16",
+      "state": "MEASURED_RESIDUAL_12_ACTIVE_PR1650",
       "meta": {
         "baseline": 34,
-        "current": 16,
+        "current": 12,
         "delta": -8,
         "views": [
           "control",
           "observability"
         ],
         "evidence_pr": 1499,
-        "evidence_job": 110231927555,
-        "measurement_pr": 1542,
+        "evidence_job": 110751194382,
+        "measurement_pr": 1647,
         "repair_evidence_pr": 1499,
-        "status": "MEASURED"
+        "status": "MEASURED_ACTIVE_CLOSURE",
+        "active_pr": 1650,
+        "target_residual": 0
       }
     },
     {
@@ -667,10 +670,10 @@
       "id": "hard_e741_residual",
       "type": "queue",
       "label": "E741 ambiguous-name residual",
-      "state": "MEASURED_RESIDUAL_17",
+      "state": "MEASURED_RESIDUAL_9",
       "meta": {
         "baseline": 28,
-        "current": 17,
+        "current": 9,
         "delta": -6,
         "views": [
           "control",
@@ -678,10 +681,10 @@
         ],
         "active_pr": null,
         "target_residual": 22,
-        "status": "MEASURED",
+        "status": "MEASURED_QUEUED_AFTER_E722",
         "repair_evidence_pr": 1505,
-        "measurement_pr": 1542,
-        "evidence_job": 110231927555
+        "measurement_pr": 1647,
+        "evidence_job": 110751194382
       }
     },
     {
@@ -1075,7 +1078,7 @@
       "id": "dab_bd8k",
       "type": "queue",
       "label": "DAB-BD8K",
-      "state": "G2_MEASURED_AT_1635_CURRENT_MAIN_UNMEASURED_1640_CI_PENDING",
+      "state": "G2_PASS_MEASURED_G3_PENDING_E722_CLOSURE",
       "meta": {
         "views": [
           "control",
@@ -1219,7 +1222,30 @@
             "W293": 0,
             "W391": 8
           }
-        }
+        },
+        "G3": "PENDING",
+        "measured_current": {
+          "sha": "930916b18647c78d1e143038202f37a6df3e1a04",
+          "total": 3279,
+          "run": 36979701439,
+          "job": 110751194382,
+          "families": {
+            "E225": 21,
+            "E231": 38,
+            "E302": 255,
+            "E402": 623,
+            "E501": 937,
+            "E702": 99,
+            "E722": 12,
+            "E741": 9,
+            "E999": 1,
+            "F401": 336,
+            "F541": 315,
+            "F841": 0,
+            "W293": 0
+          }
+        },
+        "active_pr": 1650
       }
     },
     {

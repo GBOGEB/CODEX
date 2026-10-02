@@ -2,7 +2,7 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-10-02T06:23:22Z"
+  generated_at: "2026-10-02T07:46:45Z"
 
   repositories:
     codex:
@@ -833,6 +833,35 @@ reentry:
     fresh_main_census_required: true
     repair_dab_run: 36972271164
     repair_dab_total: 3363
+    authority_transfer: false
+    formal_credit_delta: 0
+    engineering_credit_delta: 0
+
+  abacus_return_1647_g2:
+    state: MEASURED_POST_1647_MAIN
+    observed_at: "2026-10-02T07:46:45Z"
+    source_sha: 930916b18647c78d1e143038202f37a6df3e1a04
+    current_source_sha: 7c218e9d356bfbaf2e8c067e1e53136530323a2f
+    workflow_run: 36979701439
+    job: 110751194382
+    total: 3279
+    families:
+      E722: 12
+      E741: 9
+      E999: 1
+      F841: 0
+      W293: 0
+    gates:
+      G1: PASS_MEASURED
+      G2: PASS_MEASURED
+      G3: PENDING
+    active_next:
+      pr: 1650
+      family: E722
+      measured_baseline: 12
+      target_residual: 0
+      state: EXACT_HEAD_DAB_QUEUED
+    reverse_pressure_next: PR1650_EXACT_HEAD_DAB_THEN_POST_MERGE_MAIN_CENSUS
     authority_transfer: false
     formal_credit_delta: 0
     engineering_credit_delta: 0
