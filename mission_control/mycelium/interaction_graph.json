@@ -1,6 +1,6 @@
 {
   "schema_version": "0.4",
-  "snapshot_at": "2026-10-02T07:44:20Z",
+  "snapshot_at": "2026-10-02T08:26:00Z",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -27,22 +27,22 @@
       "state": "REMOTE_EXECUTION_CURRENT",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "7c218e9d356bfbaf2e8c067e1e53136530323a2f",
+        "sha": "391d23f2442b5fbc0a6dd369166464147e213acb",
         "views": [
           "control",
           "observability"
         ],
         "latest_census_pr_head": "930916b18647c78d1e143038202f37a6df3e1a04",
         "latest_census_merge_sha": "930916b18647c78d1e143038202f37a6df3e1a04",
-        "observed_at": "2026-10-02T07:44:20Z",
-        "freshness_status": "CURRENT_HEAD_MEASURED_POST_1647_PLUS_METRICS",
+        "observed_at": "2026-10-02T08:26:00Z",
+        "freshness_status": "LIVE_MAIN_1655_NEWER_THAN_MEASURED_1647",
         "latest_census_pr": 1647,
         "latest_census_job": 110751227472,
         "latest_census_head": "930916b18647c78d1e143038202f37a6df3e1a04",
         "latest_measured_return_sha": "930916b18647c78d1e143038202f37a6df3e1a04",
-        "pending_census_run": null,
+        "pending_census_run": 36983104307,
         "completed_census_run": 36979711277,
-        "current_head_measurement_status": "MEASURED_POST_1647_PLUS_METRICS"
+        "current_head_measurement_status": "UNMEASURED_AFTER_1647"
       }
     },
     {
@@ -103,10 +103,16 @@
         "E722": 12,
         "E731": 0,
         "E741": 9,
-        "active_pr": 1650,
+        "active_pr": null,
         "evidence_job": 110751194382,
         "measurement_pr": 1647,
-        "W293": 0
+        "W293": 0,
+        "live_head": "391d23f2442b5fbc0a6dd369166464147e213acb",
+        "newer_unmeasured_prs": [
+          1650,
+          1653
+        ],
+        "pending_census_run": 36983104307
       }
     },
     {
@@ -763,7 +769,7 @@
       "state": "REMOTE_PRESERVED",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "7c218e9d356bfbaf2e8c067e1e53136530323a2f",
+        "sha": "391d23f2442b5fbc0a6dd369166464147e213acb",
         "views": [
           "control",
           "observability"
@@ -1083,7 +1089,7 @@
       "id": "dab_bd8k",
       "type": "queue",
       "label": "DAB-BD8K",
-      "state": "G2_MEASURED_CURRENT_MAIN_3279_G3_PENDING",
+      "state": "G2_MEASURED_3279_LIVE_1655_CENSUS_QUEUED",
       "meta": {
         "views": [
           "control",
@@ -1179,7 +1185,26 @@
           "artifact_sha256": "a2bb5b64c30227d7d84143451b58e31b774ff33c296e340956bdae331ae665c1",
           "total": 3279
         },
-        "G3": "PENDING"
+        "G3": "PENDING",
+        "pending_live_main": {
+          "head_sha": "391d23f2442b5fbc0a6dd369166464147e213acb",
+          "newer_merged_prs": [
+            1650,
+            1653,
+            1652,
+            1657,
+            1658,
+            1654,
+            1651,
+            1656,
+            1655
+          ],
+          "census_run": 36983104307,
+          "census_state": "QUEUED",
+          "ci_matrix_run": 36983104069,
+          "ci_matrix_state": "GREEN",
+          "promotion_authority": false
+        }
       }
     },
     {
@@ -1383,15 +1408,15 @@
       "mechanism": "REFERENCE",
       "source_repo": "GBOGEB/ABACUS",
       "source_ref": "main",
-      "source_sha": "f172d38079aa45dc669f6ce78258b1ad073f03ec",
+      "source_sha": "391d23f2442b5fbc0a6dd369166464147e213acb",
       "target_repo": "GBOGEB/CODEX",
       "target_ref": "main",
       "target_sha": "d62e3867ffd3431ba1344f34a20ab0fab680639a",
       "authority_before": "REMOTE_EXECUTION_AUTHORITY",
       "authority_after": "REMOTE_EXECUTION_AUTHORITY",
-      "proof": "mission_control/mycelium/evidence/abacus_dab_bd8k_g2_post_1635_main_measured.json",
-      "observed_at": "2026-10-02T06:23:22Z",
-      "freshness_status": "CURRENT_MAIN_1640_UNMEASURED; FRESH_CENSUS_REQUIRED"
+      "proof": "mission_control/mycelium/evidence/abacus_post_1647_live_1655_pending.json",
+      "observed_at": "2026-10-02T08:26:00Z",
+      "freshness_status": "LIVE_MAIN_1655_NEWER_THAN_MEASURED_1647"
     },
     {
       "from": "slice5",
