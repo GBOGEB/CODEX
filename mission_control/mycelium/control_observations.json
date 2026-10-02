@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "snapshot_at": "2026-10-02T05:50:00Z",
+  "snapshot_at": "2026-10-02T06:12:30Z",
   "evidence_policy": "MEASURED_OR_WITHHELD",
   "pressure_weights": {
     "urgency": 0.3,
@@ -222,7 +222,7 @@
     },
     "dab_bd8k": {
       "campaign": {
-        "status": "WAVE2_COMPLETE_G2_MEASURED_PASS_CI_REPAIR_OPEN",
+        "status": "WAVE2_COMPLETE_G2_MEASURED_PASS_POST_1636_MAIN_RED_REPAIR_1640_OPEN",
         "campaign_id": "ABACUS-DAB-BD8K",
         "dispatch_status": "WAVE2_COMPLETE",
         "planning_probe": {
@@ -253,9 +253,12 @@
           "promotion_authority": false
         },
         "first_red": {
-          "state": "CURRENT_CANONICAL_CI_RED",
-          "repair_pr": 1636,
-          "reason": "Enterprise coverage finalization DataError on worker-local xdist coverage SQLite; serialization repair open"
+          "state": "POST_MERGE_MAIN_RED_REPAIR_OPEN",
+          "merged_pr": 1636,
+          "merged_main_run": 36971306565,
+          "failed_job": 110725663291,
+          "repair_pr": 1640,
+          "reason": "Windows Python 3.11 concurrent cache writer test synthetic barrier is not retry-safe"
         },
         "targeted_findings": 4546,
         "planning_projected_total": null,
@@ -359,7 +362,7 @@
         },
         "measured_reduction": 4546,
         "measured_reduction_pct": 57.5,
-        "dmaic_note": "Wave 2 measured complete; G2 <4000 passed at 3363; next DAB promotion held behind current CI repair #1636",
+        "dmaic_note": "G2 remains measured at 3363; #1636 exact-head repair merged, but merged-main exposed Windows concurrency-test red; #1640 is the active first-red repair",
         "wave1_measured": {
           "measured_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
           "current_abacus_head": "aa6028278cb71cdadc9df1dfc97f3c2eee173f58",
@@ -456,7 +459,7 @@
       "dmaic": {
         "status": "DERIVED_FROM_MEASURED",
         "phase": "CONTROL",
-        "basis": "Wave 2 post-merge census measured 3363; G2 passed; next mutation held behind current CI repair #1636"
+        "basis": "Wave 2 G2 remains measured; post-#1636 merged-main red blocks further DAB promotion pending #1640"
       },
       "maturity": {
         "status": "WITHHELD",
