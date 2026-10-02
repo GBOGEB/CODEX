@@ -450,6 +450,42 @@
       "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
       "summary": "Reverse-pressure queue regenerated from measured #1548 main: next HARD F841 residual 47 and MECH W293 residual 186; current ABACUS head differs only by non-Python CD workflow and generated metrics.",
       "authority_transfer": false
+    },
+    {
+      "id": "EV-0041",
+      "at": "2026-10-02T06:28:23Z",
+      "type": "PROOF_BOUND",
+      "node_id": "repo_abacus",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "f172d38079aa45dc669f6ce78258b1ad073f03ec",
+      "parent_event": "EV-0040",
+      "content_ref": "mission_control/mycelium/evidence/abacus_post_1636_ci_first_red_1640.json",
+      "summary": "#1640 merged-main DMAIC V3 Enterprise CI completed GREEN, closing the historical Windows 3.11 concurrency-test red.",
+      "authority_transfer": false
+    },
+    {
+      "id": "EV-0042",
+      "at": "2026-10-02T07:35:04Z",
+      "type": "EXTERNAL_RETURN",
+      "node_id": "repo_abacus",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "c95570b9d5a8254682ab0d5f6e841e8516ace55a",
+      "parent_event": "EV-0041",
+      "content_ref": "mission_control/mycelium/evidence/abacus_dab_post_1645_main_measured.json",
+      "summary": "Consumed fresh post-#1645 current-main DAB census: total 3283, F841=0, W293=0, protected families remain zero, E999=1 source-bound; G2 remains measured PASS and G3 is pending.",
+      "authority_transfer": false
+    },
+    {
+      "id": "EV-0043",
+      "at": "2026-10-02T07:35:04Z",
+      "type": "RECOVERY",
+      "node_id": "current_next",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "67f43a89ff0edff240a2aee7673dbbf62e5102fe",
+      "parent_event": "EV-0042",
+      "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
+      "summary": "Reverse-pressure queue regenerated from measured 3283: HARD E722=16/E741=9, MECH E231=38, SEMANTIC E501=937/E402=623; G3 next.",
+      "authority_transfer": false
     }
   ],
   "horizons": {
@@ -514,5 +550,6 @@
     "stream_timeout": "append RECOVERY only when state restoration is needed; do not replay completed atoms",
     "remote_return": "append EXTERNAL_RETURN with exact source repo/ref/SHA and acceptance decision",
     "history_mutation": "forbidden except correction by superseding event"
-  }
+  },
+  "snapshot_at": "2026-10-02T07:35:04Z"
 }
