@@ -1,6 +1,6 @@
 {
   "schema_version": "0.4",
-  "snapshot_at": "2026-10-01T15:25:00Z",
+  "snapshot_at": "2026-10-01T18:56:00Z",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -27,22 +27,22 @@
       "state": "REMOTE_EXECUTION_CURRENT",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "010fb4269488c19cb9b6d54bbd35c0dee9516bd1",
+        "sha": "5bac9f70cf6114dbde6e9f6f8317eb71425b88b4",
         "views": [
           "control",
           "observability"
         ],
-        "latest_census_pr_head": "bd18e53befbf0cf163931fd162fd40c6ebff587a",
-        "latest_census_merge_sha": "ae35036fee38ddbd0df581ce36599a46f95080b1",
-        "observed_at": "2026-10-01T09:20:00Z",
-        "freshness_status": "CURRENT_HEAD_MEASURED_1548_PLUS_NON_PYTHON",
-        "latest_census_pr": 1548,
-        "latest_census_job": 110300810260,
-        "latest_census_head": "ae35036fee38ddbd0df581ce36599a46f95080b1",
-        "latest_measured_return_sha": "ae35036fee38ddbd0df581ce36599a46f95080b1",
+        "latest_census_pr_head": "b4cf6269a72802a86acbcf50297143a6fe96dadc",
+        "latest_census_merge_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+        "observed_at": "2026-10-01T18:55:05Z",
+        "freshness_status": "CURRENT_HEAD_MEASURED_POST_BD8K_PLUS_NON_PYTHON",
+        "latest_census_pr": 1597,
+        "latest_census_job": 110526569316,
+        "latest_census_head": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+        "latest_measured_return_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
         "pending_census_run": null,
-        "completed_census_run": 36841306825,
-        "current_head_measurement_status": "MEASURED_1548_PLUS_NON_PYTHON_WORKFLOW_AND_METRICS"
+        "completed_census_run": 36908967216,
+        "current_head_measurement_status": "MEASURED_POST_BD8K_PLUS_NON_PYTHON"
       }
     },
     {
@@ -264,10 +264,10 @@
           "observability"
         ],
         "next_hard_family": "F841",
-        "next_hard_count": 47,
-        "next_mech_family": "W293",
-        "next_mech_residual": 186,
-        "census_job": 110300810260,
+        "next_hard_count": 40,
+        "next_mech_family": "E231",
+        "next_mech_residual": 1452,
+        "census_job": 110526569316,
         "next_hard_pr": null,
         "next_hard_target_residual": null,
         "next_mech_last_measured_residual": 186,
@@ -275,7 +275,7 @@
         "next_mech_removed": 18,
         "next_mech_expected_residual": null,
         "next_mech_residual_status": "MEASURED_POST_1548_MAIN",
-        "abacus_return_pr": 1548,
+        "abacus_return_pr": 1597,
         "cryoplant_return_pr": 1834,
         "codex_owner_gate": "MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION",
         "pending_census_run": null,
@@ -283,9 +283,12 @@
         "pending_census_status": "NONE",
         "next_hard_expected_after_pending_census": null,
         "next_mech_expected_after_pending_census": null,
-        "abacus_current_head": "010fb4269488c19cb9b6d54bbd35c0dee9516bd1",
-        "abacus_current_head_status": "MEASURED_1548_PLUS_NON_PYTHON_WORKFLOW_AND_METRICS",
-        "reverse_pressure_status": "REGENERATE_FROM_CURRENT_MAIN"
+        "abacus_current_head": "5bac9f70cf6114dbde6e9f6f8317eb71425b88b4",
+        "abacus_current_head_status": "MEASURED_POST_BD8K_PLUS_NON_PYTHON",
+        "reverse_pressure_status": "REGENERATED_FROM_MEASURED_5916",
+        "next_semantic_family": "E402",
+        "next_semantic_residual": 622,
+        "G1": "PASS_MEASURED_CURRENT_MAIN"
       },
       "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/control_manifest.yaml"
     },
@@ -755,7 +758,7 @@
       "state": "REMOTE_PRESERVED",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "b68edcb74a7925b5131acdba1844abe741ff3e14",
+        "sha": "5bac9f70cf6114dbde6e9f6f8317eb71425b88b4",
         "views": [
           "control",
           "observability"
@@ -1075,7 +1078,7 @@
       "id": "dab_bd8k",
       "type": "queue",
       "label": "DAB-BD8K",
-      "state": "DISPATCHED_PLANNING_G1_CROSSED_PROMOTION_WITHHELD",
+      "state": "MEASURED_G1_PASS_QUEUE_REGENERATED",
       "meta": {
         "views": [
           "control",
@@ -1113,7 +1116,7 @@
           "state": "SUPERSEDED_BY_#1583",
           "repair_merge_sha": "b04c3caa0f9fd4a8f2cd8099b62b6f64ee2b6b95"
         },
-        "dispatch_status": "FOUR_WORKERS_DISPATCHED",
+        "dispatch_status": "FOUR_WORKERS_MERGED_MEASURED",
         "worker_ids": [
           "bd8k_mech_a",
           "bd8k_mech_b",
@@ -1157,14 +1160,23 @@
         },
         "targeted_findings": 404,
         "planning_projected_total": 5917,
-        "G1": "PLANNING_CROSSED_PROMOTION_WITHHELD"
+        "G1": "PASS_MEASURED_CURRENT_MAIN",
+        "measured_post_worker": {
+          "source_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+          "current_head_sha": "5bac9f70cf6114dbde6e9f6f8317eb71425b88b4",
+          "census_run": 36908967216,
+          "census_job": 110526569316,
+          "artifact_id": 11185734037,
+          "artifact_sha256": "b48a068fa140bc74f0a36578e7790c83ec6462321713386a62969f1762f34cb1",
+          "total": 5916
+        }
       }
     },
     {
       "id": "bd8k_mech_a",
       "type": "job",
       "label": "MECH-A",
-      "state": "CI_QUEUED",
+      "state": "MERGED_MEASURED",
       "meta": {
         "views": [
           "control",
@@ -1184,7 +1196,9 @@
         "promotion": "POST_MERGE_RECENSUS_ONLY",
         "planning_census_head": "7ad0614dd65f6ab9ef94b92105e9c940bee1b24f",
         "pr": 1596,
-        "head_sha": "6a886a680c3504d7d6a6ff54cde9cf709c492d27"
+        "head_sha": "6a886a680c3504d7d6a6ff54cde9cf709c492d27",
+        "merge_sha": "4fb9457e1dda9af32ea9024367b07bb7cb46e4ee",
+        "measured_by_run": 36908967216
       },
       "url": "https://github.com/GBOGEB/ABACUS/pull/1596"
     },
@@ -1192,7 +1206,7 @@
       "id": "bd8k_mech_b",
       "type": "job",
       "label": "MECH-B",
-      "state": "CI_QUEUED",
+      "state": "MERGED_MEASURED",
       "meta": {
         "views": [
           "control",
@@ -1212,7 +1226,9 @@
         "promotion": "POST_MERGE_RECENSUS_ONLY",
         "planning_census_head": "7ad0614dd65f6ab9ef94b92105e9c940bee1b24f",
         "pr": 1597,
-        "head_sha": "94527ef94a4767f7cc1bcfbc92666da99a8bd6b4"
+        "head_sha": "b4cf6269a72802a86acbcf50297143a6fe96dadc",
+        "merge_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+        "measured_by_run": 36908967216
       },
       "url": "https://github.com/GBOGEB/ABACUS/pull/1597"
     },
@@ -1220,7 +1236,7 @@
       "id": "bd8k_semantic_a",
       "type": "job",
       "label": "SEMANTIC-A",
-      "state": "CI_QUEUED",
+      "state": "MERGED_MEASURED",
       "meta": {
         "views": [
           "control",
@@ -1240,7 +1256,9 @@
         "promotion": "POST_MERGE_RECENSUS_ONLY",
         "planning_census_head": "7ad0614dd65f6ab9ef94b92105e9c940bee1b24f",
         "pr": 1598,
-        "head_sha": "9f2b47d47e055841392300a50ecb059801530e64"
+        "head_sha": "2e4a5dca901510804dfd3dd5d729d0dfbc7270b3",
+        "merge_sha": "c28acb27291a7a0dc43ce90e9d095d93542ea9d9",
+        "measured_by_run": 36908967216
       },
       "url": "https://github.com/GBOGEB/ABACUS/pull/1598"
     },
@@ -1248,7 +1266,7 @@
       "id": "bd8k_semantic_b",
       "type": "job",
       "label": "SEMANTIC-B",
-      "state": "CI_QUEUED",
+      "state": "MERGED_MEASURED",
       "meta": {
         "views": [
           "control",
@@ -1268,7 +1286,9 @@
         "promotion": "POST_MERGE_RECENSUS_ONLY",
         "planning_census_head": "7ad0614dd65f6ab9ef94b92105e9c940bee1b24f",
         "pr": 1599,
-        "head_sha": "37fa586a7e6b16e34cac55c6cb51bb7c1fa4b152"
+        "head_sha": "37fa586a7e6b16e34cac55c6cb51bb7c1fa4b152",
+        "merge_sha": "f5b96dd86500e8c65741bb672cb9dfaf6ee95198",
+        "measured_by_run": 36908967216
       },
       "url": "https://github.com/GBOGEB/ABACUS/pull/1599"
     }
@@ -1361,15 +1381,15 @@
       "mechanism": "REFERENCE",
       "source_repo": "GBOGEB/ABACUS",
       "source_ref": "main",
-      "source_sha": "010fb4269488c19cb9b6d54bbd35c0dee9516bd1",
+      "source_sha": "5bac9f70cf6114dbde6e9f6f8317eb71425b88b4",
       "target_repo": "GBOGEB/CODEX",
       "target_ref": "main",
-      "target_sha": "28dc786a4f2f12d594247ebb96df21fb5b816238",
+      "target_sha": "34f4fb34a3da916975048247726b9b11c52e691c",
       "authority_before": "REMOTE_EXECUTION_AUTHORITY",
       "authority_after": "REMOTE_EXECUTION_AUTHORITY",
-      "proof": "mission_control/mycelium/evidence/abacus_dab_post_1548_main_measured.json",
-      "observed_at": "2026-10-01T09:20:00Z",
-      "freshness_status": "CURRENT_HEAD_MEASURED_1548_PLUS_NON_PYTHON"
+      "proof": "mission_control/mycelium/evidence/abacus_dab_post_bd8k_1596_1599_main_measured.json",
+      "observed_at": "2026-10-01T18:56:00Z",
+      "freshness_status": "CURRENT_HEAD_MEASURED_POST_BD8K_PLUS_NON_PYTHON"
     },
     {
       "from": "slice5",
