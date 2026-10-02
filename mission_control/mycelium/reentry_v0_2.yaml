@@ -2,7 +2,7 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-10-01T09:20:00Z"
+  generated_at: "2026-10-02T06:23:22Z"
 
   repositories:
     codex:
@@ -29,7 +29,7 @@ reentry:
       repo: GBOGEB/ABACUS
       branch: main
       handover_observed_sha: 713a152e99024165aea81bffbf530d2073e164bb
-      refreshed_current_sha: fb43c435d1372d32a92289b867bac5a11f8cf4f4
+      refreshed_current_sha: f172d38079aa45dc669f6ce78258b1ad073f03ec
       role: REMOTE_EXECUTION_AUTHORITY
       latest_census:
         pr: 1635
@@ -50,17 +50,26 @@ reentry:
         E731: 0
         E741: 9
         W293: 0
-      subsequent_non_python_control:
-        current_head_sha: fb43c435d1372d32a92289b867bac5a11f8cf4f4
-        merged_pr: 1636
-        lint_population_changed: false
-        merged_main_state: RED_FIRST_REPAIR_1640_OPEN
+      post_measurement_main_control:
+        current_head_sha: f172d38079aa45dc669f6ce78258b1ad073f03ec
+        merged_prs:
+          - 1637
+          - 1638
+          - 1639
+          - 1640
+        lint_population_changed: true
+        merged_main_state: REPAIR_1640_MERGED_MAIN_CI_PENDING
+        merged_main_enterprise_run: 36972967515
+        fresh_main_census_required: true
       active_slice:
-        status: POST_1636_MERGED_MAIN_RED_REPAIR_1640_OPEN
+        status: REPAIR_1640_MERGED_MAIN_CI_PENDING_FRESH_CENSUS_REQUIRED
         pr: 1640
         head_sha: 867116818f60eb24ef074adce67cb77553fc74e5
+        merge_sha: f172d38079aa45dc669f6ce78258b1ad073f03ec
+        merged_main_enterprise_run: 36972967515
+        merged_main_enterprise_ci: PENDING
       reverse_pressure_next:
-        status: HOLD_UNTIL_1640_MERGED_MAIN_GREEN
+        status: HOLD_UNTIL_1640_MERGED_MAIN_CI_GREEN_THEN_FRESH_DAB_MAIN_CENSUS
         hard_family: F841
         hard_measured_residual: 11
         mech_family: W293
@@ -289,10 +298,10 @@ reentry:
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
-      head_sha: fb43c435d1372d32a92289b867bac5a11f8cf4f4
+      head_sha: f172d38079aa45dc669f6ce78258b1ad073f03ec
       state: REMOTE_AUTHORITY
       latest_census_merge_sha: f72184c933076431d49347cfcd2c4a3f8f661e05
-      current_atom: POST_1636_MERGED_MAIN_RED_REPAIR_1640_ADMISSION
+      current_atom: WAIT_FOR_1640_MERGED_MAIN_CI_THEN_FRESH_DAB_CENSUS
       completed_atoms:
         - POST_1527_1528_COMBINED_CENSUS_MEASURED
         - POST_1530_MAIN_CENSUS_MEASURED
@@ -304,19 +313,20 @@ reentry:
         - POST_1548_MAIN_CENSUS_MEASURED
         - BD8K_WAVE1_G1_MEASURED_PASS
         - BD8K_WAVE2_G2_MEASURED_PASS
+        - POST_1635_MAIN_G2_MEASURED
         - CI_1636_EXACT_HEAD_GREEN_MERGED
-      blocker: CI_REPAIR_1640_OPEN
-      queue_state: EXECUTION
+        - CI_1640_EXACT_HEAD_REPAIR_MERGED
+      blocker: MERGED_MAIN_CI_PENDING_AND_FRESH_CENSUS_REQUIRED
+      queue_state: HOLD
       evidence_refs:
         - mission_control/mycelium/evidence/abacus_dab_bd8k_g2_post_1635_main_measured.json
         - mission_control/mycelium/evidence/abacus_post_1636_ci_first_red_1640.json
         - ABACUS run 36971306565 job 110725663291
-        - ABACUS PR 1640 exact-head DAB run 36972271164
+        - ABACUS PR 1640 merge f172d38079aa45dc669f6ce78258b1ad073f03ec
+        - ABACUS Enterprise CI run 36972967515 (pending)
       next_legal_transitions:
-        - PROVE_CI_1640_EXACT_HEAD
-        - MERGE_1640_IFF_ALL_ADMITTED
-        - POST_MERGE_MAIN_CI_READBACK
-        - FRESH_DAB_MAIN_CENSUS_BEFORE_RESIDUAL_PROMOTION
+        - WAIT_FOR_1640_MERGED_MAIN_CI_GREEN
+        - FRESH_DAB_MAIN_CENSUS_ON_CURRENT_MAIN
         - PRESERVE_E999_SOURCE_BOUND_HOLD
     - id: QLM_ENGINEERING
       repository: GBOGEB/cryoplant-project
@@ -775,7 +785,7 @@ reentry:
     state: MEASURED_POST_1635_MAIN_G2_PASS
     observed_at: "2026-10-02T05:50:00Z"
     source_sha: f72184c933076431d49347cfcd2c4a3f8f661e05
-    current_source_sha: cb8b34428b6920ec1955eb4f909a2bb0441ea88b
+    current_source_sha: f172d38079aa45dc669f6ce78258b1ad073f03ec
     workflow_run: 36970478170
     job: 110723207482
     artifact_id: 11211441398
@@ -796,16 +806,20 @@ reentry:
       G2: PASS_MEASURED
     current_control_red:
       pr: 1636
-      state: OPEN_REPAIR
-    reverse_pressure_next: HOLD_UNTIL_CI_1636_GREEN_THEN_REGENERATE
+      state: HISTORICAL_MAIN_RED_REPAIRED_BY_1640
+      repair_pr: 1640
+      repair_merge_sha: f172d38079aa45dc669f6ce78258b1ad073f03ec
+      merged_main_ci: PENDING
+      merged_main_enterprise_run: 36972967515
+    reverse_pressure_next: HOLD_UNTIL_1640_MERGED_MAIN_CI_GREEN_THEN_FRESH_DAB_MAIN_CENSUS
     authority_transfer: false
     formal_credit_delta: 0
     engineering_credit_delta: 0
 
   abacus_post_1636_control_red:
-    state: POST_MERGE_MAIN_RED_REPAIR_1640_OPEN
+    state: HISTORICAL_POST_MERGE_MAIN_RED_REPAIRED_BY_1640_MAIN_CI_PENDING
     observed_at: "2026-10-02T06:12:30Z"
-    current_source_sha: fb43c435d1372d32a92289b867bac5a11f8cf4f4
+    current_source_sha: f172d38079aa45dc669f6ce78258b1ad073f03ec
     measured_dab_source_sha: f72184c933076431d49347cfcd2c4a3f8f661e05
     merged_pr: 1636
     merged_main_run: 36971306565
@@ -813,6 +827,10 @@ reentry:
     failure: WINDOWS_PY311_CONCURRENT_CACHE_BARRIER_RETRY
     repair_pr: 1640
     repair_head_sha: 867116818f60eb24ef074adce67cb77553fc74e5
+    repair_merge_sha: f172d38079aa45dc669f6ce78258b1ad073f03ec
+    repair_merged_main_enterprise_ci: PENDING
+    repair_merged_main_enterprise_run: 36972967515
+    fresh_main_census_required: true
     repair_dab_run: 36972271164
     repair_dab_total: 3363
     authority_transfer: false

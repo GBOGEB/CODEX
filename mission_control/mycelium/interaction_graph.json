@@ -1,6 +1,6 @@
 {
   "schema_version": "0.4",
-  "snapshot_at": "2026-10-02T06:12:30Z",
+  "snapshot_at": "2026-10-02T06:23:22Z",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -27,22 +27,22 @@
       "state": "REMOTE_EXECUTION_CURRENT",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "fb43c435d1372d32a92289b867bac5a11f8cf4f4",
+        "sha": "f172d38079aa45dc669f6ce78258b1ad073f03ec",
         "views": [
           "control",
           "observability"
         ],
         "latest_census_pr_head": "f72184c933076431d49347cfcd2c4a3f8f661e05",
         "latest_census_merge_sha": "f72184c933076431d49347cfcd2c4a3f8f661e05",
-        "observed_at": "2026-10-02T06:12:30Z",
-        "freshness_status": "CURRENT_HEAD_MEASURED_1635_PLUS_NON_PYTHON_1636_WORKFLOW_AND_METRICS",
+        "observed_at": "2026-10-02T06:23:22Z",
+        "freshness_status": "CURRENT_MAIN_1640_UNMEASURED; FRESH_CENSUS_REQUIRED",
         "latest_census_pr": 1635,
         "latest_census_job": 110723207482,
         "latest_census_head": "f72184c933076431d49347cfcd2c4a3f8f661e05",
         "latest_measured_return_sha": "f72184c933076431d49347cfcd2c4a3f8f661e05",
         "pending_census_run": null,
         "completed_census_run": 36970478170,
-        "current_head_measurement_status": "MEASURED_1635_PLUS_NON_PYTHON_1636_WORKFLOW_AND_METRICS"
+        "current_head_measurement_status": "UNMEASURED_AFTER_1637_1638_1639_1640"
       }
     },
     {
@@ -283,9 +283,9 @@
         "pending_census_status": "NONE",
         "next_hard_expected_after_pending_census": null,
         "next_mech_expected_after_pending_census": null,
-        "abacus_current_head": "010fb4269488c19cb9b6d54bbd35c0dee9516bd1",
-        "abacus_current_head_status": "MEASURED_1548_PLUS_NON_PYTHON_WORKFLOW_AND_METRICS",
-        "reverse_pressure_status": "REGENERATE_FROM_CURRENT_MAIN"
+        "abacus_current_head": "f172d38079aa45dc669f6ce78258b1ad073f03ec",
+        "abacus_current_head_status": "UNMEASURED_AFTER_1637_1638_1639_1640",
+        "reverse_pressure_status": "FRESH_DAB_MAIN_CENSUS_REQUIRED_AFTER_1640_MAIN_CI_GREEN"
       },
       "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/control_manifest.yaml"
     },
@@ -755,7 +755,7 @@
       "state": "REMOTE_PRESERVED",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "fb43c435d1372d32a92289b867bac5a11f8cf4f4",
+        "sha": "f172d38079aa45dc669f6ce78258b1ad073f03ec",
         "views": [
           "control",
           "observability"
@@ -1075,7 +1075,7 @@
       "id": "dab_bd8k",
       "type": "queue",
       "label": "DAB-BD8K",
-      "state": "G2_MEASURED_PASS_POST_1636_MAIN_RED_REPAIR_1640_OPEN",
+      "state": "G2_MEASURED_AT_1635_CURRENT_MAIN_UNMEASURED_1640_CI_PENDING",
       "meta": {
         "views": [
           "control",
@@ -1110,11 +1110,15 @@
           }
         },
         "first_red": {
-          "state": "POST_MERGE_MAIN_RED_REPAIR_OPEN",
+          "state": "HISTORICAL_1636_MAIN_RED_REPAIRED_1640_MAIN_CI_PENDING",
           "merged_pr": 1636,
           "run": 36971306565,
           "job": 110725663291,
-          "repair_pr": 1640
+          "repair_pr": 1640,
+          "repair_merge_sha": "f172d38079aa45dc669f6ce78258b1ad073f03ec",
+          "merged_main_enterprise_ci": "PENDING",
+          "merged_main_enterprise_run": 36972967515,
+          "fresh_main_census_required": true
         },
         "dispatch_status": "WAVE2_COMPLETE",
         "worker_ids": [
@@ -1419,15 +1423,15 @@
       "mechanism": "REFERENCE",
       "source_repo": "GBOGEB/ABACUS",
       "source_ref": "main",
-      "source_sha": "fb43c435d1372d32a92289b867bac5a11f8cf4f4",
+      "source_sha": "f172d38079aa45dc669f6ce78258b1ad073f03ec",
       "target_repo": "GBOGEB/CODEX",
       "target_ref": "main",
       "target_sha": "d62e3867ffd3431ba1344f34a20ab0fab680639a",
       "authority_before": "REMOTE_EXECUTION_AUTHORITY",
       "authority_after": "REMOTE_EXECUTION_AUTHORITY",
       "proof": "mission_control/mycelium/evidence/abacus_dab_bd8k_g2_post_1635_main_measured.json",
-      "observed_at": "2026-10-02T06:12:30Z",
-      "freshness_status": "CURRENT_HEAD_MEASURED_1635_PLUS_NON_PYTHON_1636_WORKFLOW_AND_METRICS"
+      "observed_at": "2026-10-02T06:23:22Z",
+      "freshness_status": "CURRENT_MAIN_1640_UNMEASURED; FRESH_CENSUS_REQUIRED"
     },
     {
       "from": "slice5",

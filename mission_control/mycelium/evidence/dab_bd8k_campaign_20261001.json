@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
   "campaign_id": "ABACUS-DAB-BD8K",
-  "state": "WAVE2_COMPLETE_G2_MEASURED_PASS_POST_1636_MAIN_RED_REPAIR_1640_OPEN",
+  "state": "G2_MEASURED_AT_1635_CURRENT_MAIN_UNMEASURED_AFTER_1637_1640_MAIN_CI_PENDING",
   "baseline": {
     "measured_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
     "current_head_sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
@@ -34,9 +34,13 @@
     "previous_repair_state": "MERGED_EXACT_HEAD_GREEN",
     "merged_main_run": 36971306565,
     "merged_main_job": 110725663291,
-    "state": "POST_MERGE_MAIN_RED_REPAIR_OPEN",
+    "state": "HISTORICAL_1636_MAIN_RED_REPAIRED_1640_MAIN_CI_PENDING",
     "repair_pr": 1640,
     "repair_head_sha": "867116818f60eb24ef074adce67cb77553fc74e5",
+    "repair_merge_sha": "f172d38079aa45dc669f6ce78258b1ad073f03ec",
+    "merged_main_enterprise_ci": "PENDING",
+    "merged_main_enterprise_run": 36972967515,
+    "fresh_main_census_required": true,
     "failure": "threading.BrokenBarrierError in Windows Python 3.11 concurrent cache-writer test",
     "repair": "synchronize each unique temp source only on its first synthetic Path.replace attempt"
   },
@@ -289,13 +293,16 @@
     ]
   },
   "current_control_hold": {
-    "state": "WITHHELD_POST_MERGE_MAIN_RED",
+    "state": "WITHHELD_PENDING_1640_MERGED_MAIN_CI_AND_FRESH_CENSUS",
     "merged_pr": 1636,
     "merged_main_run": 36971306565,
     "failed_job": 110725663291,
     "repair_pr": 1640,
     "repair_exact_head_dab_run": 36972271164,
-    "unblock_rule": "exact-head #1640 Windows 3.11 + Enterprise/full CI GREEN, merge, merged-main CI GREEN, then fresh DAB main census before residual promotion"
+    "repair_merge_sha": "f172d38079aa45dc669f6ce78258b1ad073f03ec",
+    "merged_main_enterprise_ci": "PENDING",
+    "merged_main_enterprise_run": 36972967515,
+    "unblock_rule": "wait for #1640 merged-main CI GREEN, then run a fresh DAB main census before residual promotion"
   },
   "wave2": {
     "status": "COMPLETE_MEASURED",
