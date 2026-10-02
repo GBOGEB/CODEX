@@ -1,49 +1,78 @@
 {
-  "schema_version": "0.1",
-  "return_id": "ABACUS_DAB_RETURN_1647_MEASURED",
-  "observed_at": "2026-10-02T07:46:45Z",
-  "source": {
-    "repository": "GBOGEB/ABACUS",
-    "ref": "main",
-    "sha": "930916b18647c78d1e143038202f37a6df3e1a04",
-    "authority": "REMOTE_EXECUTION_DOW"
+  "schema_version": "1.0",
+  "observed_at": "2026-10-02T07:44:20Z",
+  "source_repo": "GBOGEB/ABACUS",
+  "authority_class": "REMOTE_EXECUTION_AUTHORITY",
+  "measured_source_sha": "930916b18647c78d1e143038202f37a6df3e1a04",
+  "current_source_sha": "7c218e9d356bfbaf2e8c067e1e53136530323a2f",
+  "current_source_relation": "NON_PYTHON_GENERATED_METRICS_SUCCESSOR",
+  "trigger_pr": 1647,
+  "workflow_run": 36979711277,
+  "job": 110751227472,
+  "artifact_id": 11215450664,
+  "artifact_sha256": "a2bb5b64c30227d7d84143451b58e31b774ff33c296e340956bdae331ae665c1",
+  "total": 3279,
+  "families": {
+    "E999": 1,
+    "F821": 0,
+    "F601": 0,
+    "F811": 0,
+    "F841": 0,
+    "E722": 12,
+    "E731": 0,
+    "E741": 9,
+    "W293": 0
   },
-  "census": {
-    "pr": 1647,
-    "source_sha": "930916b18647c78d1e143038202f37a6df3e1a04",
-    "current_source_sha": "7c218e9d356bfbaf2e8c067e1e53136530323a2f",
-    "workflow_run": 36979701439,
-    "job": 110751194382,
-    "total": 3279,
-    "families": {
-      "E225": 21,
-      "E231": 38,
-      "E302": 255,
-      "E402": 623,
-      "E501": 937,
-      "E702": 99,
-      "E722": 12,
-      "E741": 9,
-      "E999": 1,
-      "F401": 336,
-      "F541": 315,
-      "F841": 0,
-      "W293": 0
-    }
-  },
-  "active_next": {
-    "pr": 1650,
-    "family": "E722",
-    "measured_baseline": 12,
-    "target_residual": 0,
-    "state": "EXACT_HEAD_DAB_QUEUED"
+  "all_families": {
+    "E225": 21,
+    "E231": 38,
+    "E302": 255,
+    "E402": 623,
+    "E501": 937,
+    "E702": 99,
+    "E722": 12,
+    "E731": 0,
+    "E741": 9,
+    "E999": 1,
+    "F401": 336,
+    "F541": 315,
+    "F601": 0,
+    "F811": 0,
+    "F821": 0,
+    "F841": 0,
+    "W292": 11,
+    "W293": 0,
+    "W391": 8
   },
   "gates": {
-    "G1": "PASS_MEASURED",
-    "G2": "PASS_MEASURED",
-    "G3": "PENDING"
+    "G1": {
+      "state": "PASS_MEASURED",
+      "threshold": "<6000"
+    },
+    "G2": {
+      "state": "PASS_MEASURED",
+      "threshold": "<4000"
+    },
+    "G3": {
+      "state": "PENDING",
+      "threshold": "<2000"
+    }
   },
-  "authority_transfer": false,
-  "formal_credit_delta": 0,
-  "engineering_credit_delta": 0
+  "latest_delta": {
+    "from_total": 3283,
+    "to_total": 3279,
+    "E722_from": 16,
+    "E722_to": 12,
+    "total_delta": -4
+  },
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py"
+  },
+  "governance": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  }
 }

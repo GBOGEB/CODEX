@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.0",
+  "observed_at": "2026-10-02T07:35:04Z",
+  "source_repo": "GBOGEB/ABACUS",
+  "authority_class": "REMOTE_EXECUTION_AUTHORITY",
+  "measured_source_sha": "c95570b9d5a8254682ab0d5f6e841e8516ace55a",
+  "current_source_sha": "67f43a89ff0edff240a2aee7673dbbf62e5102fe",
+  "current_source_relation": "NON_PYTHON_GENERATED_METRICS_SUCCESSOR",
+  "workflow_run": 36979298435,
+  "job": 110749934130,
+  "artifact_id": 11214254235,
+  "artifact_sha256": "4e15353eaf54ca67837388ad7e23a7ff7ce6ba6ad0a1951a84c698850c69a5d3",
+  "total": 3283,
+  "families": {
+    "E999": 1,
+    "F821": 0,
+    "F601": 0,
+    "F811": 0,
+    "F841": 0,
+    "E722": 16,
+    "E731": 0,
+    "E741": 9,
+    "W293": 0
+  },
+  "all_families": {
+    "E111": 3,
+    "E125": 1,
+    "E127": 51,
+    "E128": 137,
+    "E129": 1,
+    "E131": 5,
+    "E203": 4,
+    "E221": 71,
+    "E225": 21,
+    "E227": 3,
+    "E228": 1,
+    "E231": 38,
+    "E261": 2,
+    "E265": 1,
+    "E301": 13,
+    "E302": 255,
+    "E303": 16,
+    "E305": 114,
+    "E306": 5,
+    "E401": 37,
+    "E402": 623,
+    "E501": 937,
+    "E701": 138,
+    "E702": 99,
+    "E703": 1,
+    "E712": 10,
+    "E722": 16,
+    "E731": 0,
+    "E741": 9,
+    "E999": 1,
+    "F401": 336,
+    "F541": 315,
+    "F601": 0,
+    "F811": 0,
+    "F821": 0,
+    "F841": 0,
+    "W292": 11,
+    "W293": 0,
+    "W391": 8
+  },
+  "gates": {
+    "G1": {
+      "state": "PASS_MEASURED",
+      "threshold": "<6000"
+    },
+    "G2": {
+      "state": "PASS_MEASURED",
+      "threshold": "<4000"
+    },
+    "G3": {
+      "state": "PENDING",
+      "threshold": "<2000"
+    }
+  },
+  "control_recovery": {
+    "repair_pr": 1640,
+    "merge_sha": "f172d38079aa45dc669f6ce78258b1ad073f03ec",
+    "merged_main_enterprise_run": 36972967515,
+    "merged_main_enterprise_state": "GREEN"
+  },
+  "post_1640_dab_merges": [
+    1644,
+    1645
+  ],
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py"
+  },
+  "next_queue": {
+    "protected_families_zero": [
+      "F821",
+      "F601",
+      "F811",
+      "F841",
+      "E731",
+      "W293"
+    ],
+    "hard_residuals": {
+      "E722": 16,
+      "E741": 9,
+      "E999": 1
+    },
+    "mechanical_residuals": {
+      "E225": 21,
+      "E231": 38,
+      "E302": 255,
+      "E702": 99,
+      "W292": 11,
+      "W391": 8
+    },
+    "semantic_residuals": {
+      "E402": 623,
+      "E501": 937,
+      "F401": 336,
+      "F541": 315
+    },
+    "candidate_wave": [
+      {
+        "id": "SEM-E",
+        "family": "E501",
+        "path": "qplant/handover_dashboard/src/build_dense_slides.py",
+        "family_count": 128,
+        "file_total": 135
+      },
+      {
+        "id": "SEM-F",
+        "family": "E402",
+        "path": "DMAIC_V3/temporal_phase_runner.py",
+        "family_count": 19,
+        "file_total": 23
+      },
+      {
+        "id": "MECH-K",
+        "family": "E702",
+        "path": "MINERVA_PID/generator/build_pid_v2.py",
+        "family_count": 16,
+        "file_total": 21
+      },
+      {
+        "id": "MECH-L",
+        "family": "E231",
+        "path": "MINERVA_PID/generator/line_spec_data.py",
+        "family_count": 12,
+        "file_total": 26
+      }
+    ],
+    "admission": "FRESH_CURRENT_MAIN_BRANCH -> TARGETED_FILE_REMEASURE -> FAST_DAB -> FULL_CI -> MERGE -> POST_MERGE_MAIN_DAB"
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "remote_truth_auto_promotable": false
+}

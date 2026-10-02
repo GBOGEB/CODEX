@@ -2,14 +2,14 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-10-02T07:46:45Z"
+  generated_at: "2026-10-02T07:44:20Z"
 
   repositories:
     codex:
       repo: GBOGEB/CODEX
       branch: main
       handover_observed_sha: d77d44811fec4fada16988769614d6091df56133
-      refreshed_current_sha: 28dc786a4f2f12d594247ebb96df21fb5b816238
+      refreshed_current_sha: d42b898b2d52e3a666a11bf0a25248d35bf604ab
       role: UI_ORCHESTRATION_GRAPH_AUTHORITY
       mycelium_v0_1_merge:
         pr: 837
@@ -29,62 +29,61 @@ reentry:
       repo: GBOGEB/ABACUS
       branch: main
       handover_observed_sha: 713a152e99024165aea81bffbf530d2073e164bb
-      refreshed_current_sha: f172d38079aa45dc669f6ce78258b1ad073f03ec
+      refreshed_current_sha: 7c218e9d356bfbaf2e8c067e1e53136530323a2f
       role: REMOTE_EXECUTION_AUTHORITY
       latest_census:
-        pr: 1635
-        state: MEASURED_POST_1635_MAIN_G2_PASS
-        evidence_head_sha: f72184c933076431d49347cfcd2c4a3f8f661e05
-        merge_sha: f72184c933076431d49347cfcd2c4a3f8f661e05
-        workflow_run: 36970478170
-        job: 110723207482
-        artifact_id: 11211441398
-        artifact_sha256: 9ffc4debcecc19b1b2e0bd806c935419b4009a6bd002eb34ebff124cd5c2588e
-        total: 3363
+        pr: 1647
+        state: MEASURED_POST_1647_MAIN_G2_PASS
+        evidence_head_sha: 930916b18647c78d1e143038202f37a6df3e1a04
+        merge_sha: 930916b18647c78d1e143038202f37a6df3e1a04
+        workflow_run: 36979711277
+        job: 110751227472
+        artifact_id: 11215450664
+        artifact_sha256: a2bb5b64c30227d7d84143451b58e31b774ff33c296e340956bdae331ae665c1
+        total: 3279
         E999: 1
         F821: 0
         F601: 0
         F811: 0
-        F841: 11
-        E722: 16
+        F841: 0
+        E722: 12
         E731: 0
         E741: 9
         W293: 0
       post_measurement_main_control:
-        current_head_sha: f172d38079aa45dc669f6ce78258b1ad073f03ec
+        current_head_sha: 7c218e9d356bfbaf2e8c067e1e53136530323a2f
         merged_prs:
-          - 1637
-          - 1638
-          - 1639
           - 1640
-        lint_population_changed: true
-        merged_main_state: REPAIR_1640_MERGED_MAIN_CI_PENDING
+          - 1644
+          - 1645
+          - 1647
+        lint_population_changed: false
+        merged_main_state: CURRENT_MAIN_MEASURED
         merged_main_enterprise_run: 36972967515
-        fresh_main_census_required: true
+        merged_main_enterprise_ci: GREEN
+        fresh_main_census_required: false
       active_slice:
-        status: REPAIR_1640_MERGED_MAIN_CI_PENDING_FRESH_CENSUS_REQUIRED
-        pr: 1640
-        head_sha: 867116818f60eb24ef074adce67cb77553fc74e5
-        merge_sha: f172d38079aa45dc669f6ce78258b1ad073f03ec
-        merged_main_enterprise_run: 36972967515
-        merged_main_enterprise_ci: PENDING
+        status: NONE
       reverse_pressure_next:
-        status: HOLD_UNTIL_1640_MERGED_MAIN_CI_GREEN_THEN_FRESH_DAB_MAIN_CENSUS
-        hard_family: F841
-        hard_measured_residual: 11
-        mech_family: W293
-        mech_measured_residual: 0
-        stale_prepared_branches: true
+        status: G3_QUEUE_REGENERATE_FROM_MEASURED_3279
+        hard_family: E722
+        hard_measured_residual: 12
+        secondary_hard_family: E741
+        secondary_hard_measured_residual: 9
+        mech_family: E231
+        mech_measured_residual: 38
+        semantic_family: E501
+        semantic_measured_residual: 937
       source_bound_hold:
         family: E999
         count: 1
         path: qplant/w52_p2m_ts_pressure_sensitivity.py
-      evidence: mission_control/mycelium/evidence/abacus_post_1636_ci_first_red_1640.json
+      evidence: mission_control/mycelium/evidence/abacus_dab_post_1647_main_measured.json
     cryoplant:
       repo: GBOGEB/cryoplant-project
       branch: main
       handover_observed_sha: f03bfc61bcf85a2d91cd22d083ad0ef954387f0d
-      refreshed_current_sha: 9f1ff9a9b48b40cf19555fdcd34a1cbc944eaa1a
+      refreshed_current_sha: 85a4bfdbde9e40e8eb6333ea4e54e6096dffa3a4
       role: REMOTE_ENGINEERING_AUTHORITY
       latest_control_return:
         pr: 1834
@@ -298,36 +297,31 @@ reentry:
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
-      head_sha: f172d38079aa45dc669f6ce78258b1ad073f03ec
+      head_sha: 7c218e9d356bfbaf2e8c067e1e53136530323a2f
       state: REMOTE_AUTHORITY
-      latest_census_merge_sha: f72184c933076431d49347cfcd2c4a3f8f661e05
-      current_atom: WAIT_FOR_1640_MERGED_MAIN_CI_THEN_FRESH_DAB_CENSUS
+      latest_census_merge_sha: 930916b18647c78d1e143038202f37a6df3e1a04
+      current_atom: REGENERATE_G3_QUEUE_FROM_MEASURED_3279
       completed_atoms:
-        - POST_1527_1528_COMBINED_CENSUS_MEASURED
-        - POST_1530_MAIN_CENSUS_MEASURED
-        - POST_1538_MAIN_CENSUS_MEASURED
-        - POST_1539_MAIN_CENSUS_MEASURED
-        - POST_1541_MAIN_CENSUS_MEASURED
-        - POST_1542_MAIN_CENSUS_MEASURED
-        - POST_1545_MAIN_CENSUS_MEASURED
-        - POST_1548_MAIN_CENSUS_MEASURED
         - BD8K_WAVE1_G1_MEASURED_PASS
         - BD8K_WAVE2_G2_MEASURED_PASS
-        - POST_1635_MAIN_G2_MEASURED
-        - CI_1636_EXACT_HEAD_GREEN_MERGED
-        - CI_1640_EXACT_HEAD_REPAIR_MERGED
-      blocker: MERGED_MAIN_CI_PENDING_AND_FRESH_CENSUS_REQUIRED
-      queue_state: HOLD
+        - CI_1640_MERGED_MAIN_GREEN
+        - POST_1645_MAIN_CENSUS_MEASURED
+        - POST_1647_MAIN_CENSUS_MEASURED
+        - F841_ZERO_MEASURED
+        - W291_ZERO_MEASURED
+        - W293_ZERO_MEASURED
+      blocker: REMOTE_ONLY_NO_CODEX_PROMOTION
+      queue_state: EXECUTABLE
       evidence_refs:
         - mission_control/mycelium/evidence/abacus_dab_bd8k_g2_post_1635_main_measured.json
         - mission_control/mycelium/evidence/abacus_post_1636_ci_first_red_1640.json
-        - ABACUS run 36971306565 job 110725663291
-        - ABACUS PR 1640 merge f172d38079aa45dc669f6ce78258b1ad073f03ec
-        - ABACUS Enterprise CI run 36972967515 (pending)
+        - mission_control/mycelium/evidence/abacus_dab_post_1645_main_measured.json
+        - mission_control/mycelium/evidence/abacus_dab_post_1647_main_measured.json
+        - ABACUS DAB run 36979711277 job 110751227472
       next_legal_transitions:
-        - WAIT_FOR_1640_MERGED_MAIN_CI_GREEN
-        - FRESH_DAB_MAIN_CENSUS_ON_CURRENT_MAIN
+        - ADMIT_DISJOINT_G3_WORKERS_FROM_CURRENT_CENSUS
         - PRESERVE_E999_SOURCE_BOUND_HOLD
+        - POST_MERGE_CURRENT_MAIN_DAB_RECENSUS
     - id: QLM_ENGINEERING
       repository: GBOGEB/cryoplant-project
       branch: main
@@ -837,31 +831,56 @@ reentry:
     formal_credit_delta: 0
     engineering_credit_delta: 0
 
-  abacus_return_1647_g2:
-    state: MEASURED_POST_1647_MAIN
-    observed_at: "2026-10-02T07:46:45Z"
+  abacus_return_1645:
+    state: MEASURED_POST_1645_MAIN_G2_PASS
+    observed_at: "2026-10-02T07:35:04Z"
+    source_sha: c95570b9d5a8254682ab0d5f6e841e8516ace55a
+    current_source_sha: 67f43a89ff0edff240a2aee7673dbbf62e5102fe
+    workflow_run: 36979298435
+    job: 110749934130
+    artifact_id: 11214254235
+    artifact_sha256: 4e15353eaf54ca67837388ad7e23a7ff7ce6ba6ad0a1951a84c698850c69a5d3
+    total: 3283
+    families:
+      E999: 1
+      F821: 0
+      F601: 0
+      F811: 0
+      F841: 0
+      E722: 16
+      E731: 0
+      E741: 9
+      W293: 0
+    G2: PASS_MEASURED
+    G3: PENDING
+    source_bound_hold: qplant/w52_p2m_ts_pressure_sensitivity.py
+    authority_transfer: false
+    formal_credit_delta: 0
+    engineering_credit_delta: 0
+
+  abacus_return_1647:
+    state: MEASURED_POST_1647_MAIN_G2_PASS
+    observed_at: "2026-10-02T07:44:20Z"
     source_sha: 930916b18647c78d1e143038202f37a6df3e1a04
     current_source_sha: 7c218e9d356bfbaf2e8c067e1e53136530323a2f
-    workflow_run: 36979701439
-    job: 110751194382
+    workflow_run: 36979711277
+    job: 110751227472
+    artifact_id: 11215450664
+    artifact_sha256: a2bb5b64c30227d7d84143451b58e31b774ff33c296e340956bdae331ae665c1
     total: 3279
     families:
-      E722: 12
-      E741: 9
       E999: 1
+      F821: 0
+      F601: 0
+      F811: 0
       F841: 0
+      E722: 12
+      E731: 0
+      E741: 9
       W293: 0
-    gates:
-      G1: PASS_MEASURED
-      G2: PASS_MEASURED
-      G3: PENDING
-    active_next:
-      pr: 1650
-      family: E722
-      measured_baseline: 12
-      target_residual: 0
-      state: EXACT_HEAD_DAB_QUEUED
-    reverse_pressure_next: PR1650_EXACT_HEAD_DAB_THEN_POST_MERGE_MAIN_CENSUS
+    G2: PASS_MEASURED
+    G3: PENDING
+    source_bound_hold: qplant/w52_p2m_ts_pressure_sensitivity.py
     authority_transfer: false
     formal_credit_delta: 0
     engineering_credit_delta: 0
