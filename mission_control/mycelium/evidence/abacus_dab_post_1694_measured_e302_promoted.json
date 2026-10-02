@@ -1,0 +1,84 @@
+{
+  "schema_version": "0.1",
+  "evidence_type": "ABACUS_POST_1694_MEASURED_RETURN_WITH_SINGLE_PROMOTION",
+  "observed_at": "2026-10-02T13:39:16Z",
+  "source_repository": "GBOGEB/ABACUS",
+  "current_main_sha": "9e7363a68c2b507158dfbd32cf211c08b749da02",
+  "lint_authority": {
+    "sha": "7db0f4662833647d0bead4faac1f31a4bfb1b9d2",
+    "workflow_run": 37013787888,
+    "job": 110859584236,
+    "artifact_id": 11229336343,
+    "artifact_sha256": "1d78ad49b1f9079e6f55b34880507b0bbabb6af32a1695f799dcfb35d6375f49",
+    "total": 3135,
+    "protected_families": {
+      "E722": 0,
+      "E731": 0,
+      "E741": 0,
+      "E999": 1,
+      "F601": 0,
+      "F811": 0,
+      "F821": 0,
+      "F841": 0,
+      "W293": 0
+    },
+    "all_families": {
+      "E111": 3,
+      "E125": 1,
+      "E127": 51,
+      "E128": 137,
+      "E129": 1,
+      "E131": 5,
+      "E203": 5,
+      "E221": 71,
+      "E225": 21,
+      "E227": 3,
+      "E228": 1,
+      "E231": 38,
+      "E261": 2,
+      "E265": 1,
+      "E301": 13,
+      "E302": 151,
+      "E303": 16,
+      "E305": 113,
+      "E306": 5,
+      "E401": 37,
+      "E402": 623,
+      "E501": 938,
+      "E701": 138,
+      "E702": 99,
+      "E703": 1,
+      "E712": 10,
+      "E999": 1,
+      "F401": 336,
+      "F541": 295,
+      "W292": 11,
+      "W391": 8
+    }
+  },
+  "later_main_delta": {
+    "pr": 1695,
+    "sha": "9e7363a68c2b507158dfbd32cf211c08b749da02",
+    "class": "WORKFLOW_ONLY",
+    "lint_population_changed": false
+  },
+  "promotion": {
+    "count": 1,
+    "family": "E302",
+    "measured_count": 151,
+    "state": "PROMOTED_SINGLE_MEASURED_RESIDUAL",
+    "next_rule": "consume one bounded E302 slice, exact-head prove it, merge/readback, then fresh current-main DAB before any second residual promotion"
+  },
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py"
+  },
+  "guards": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "remote_truth_auto_promotable": false,
+    "no_second_residual_promotion": true
+  }
+}
