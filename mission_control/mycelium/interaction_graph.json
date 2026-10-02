@@ -88,24 +88,24 @@
       "id": "dab_hard",
       "type": "queue",
       "label": "DAB-HARD",
-      "state": "MEASURED_E722_16_E741_9_F841_11",
+      "state": "MEASURED_E722_12_E741_9_F841_0",
       "meta": {
         "views": [
           "control",
           "observability"
         ],
-        "latest_measured_total": 3363,
+        "latest_measured_total": 3279,
         "E999": 1,
         "F821": 0,
         "F601": 0,
         "F811": 0,
-        "F841": 11,
-        "E722": 16,
+        "F841": 0,
+        "E722": 12,
         "E731": 0,
         "E741": 9,
-        "active_pr": null,
-        "evidence_job": 110723207482,
-        "measurement_pr": 1635,
+        "active_pr": 1650,
+        "evidence_job": 110751194382,
+        "measurement_pr": 1647,
         "W293": 0
       }
     },
@@ -612,18 +612,18 @@
       "id": "hard_f841_residual",
       "type": "queue",
       "label": "F841 unused-local residual",
-      "state": "MEASURED_RESIDUAL_47",
+      "state": "CLOSED_MEASURED_0",
       "meta": {
         "baseline": 77,
-        "current": 47,
+        "current": 0,
         "delta": -30,
         "views": [
           "control",
           "observability"
         ],
-        "status": "MEASURED_POST_1548_MAIN",
-        "evidence_job": 110300810260,
-        "measurement_pr": 1548,
+        "status": "CLOSED",
+        "evidence_job": 110751194382,
+        "measurement_pr": 1647,
         "active_pr": null,
         "target_residual": null,
         "target_status": null,
@@ -635,20 +635,22 @@
       "id": "hard_e722_residual",
       "type": "queue",
       "label": "E722 bare-except residual",
-      "state": "MEASURED_RESIDUAL_16",
+      "state": "MEASURED_RESIDUAL_12_ACTIVE_PR1650",
       "meta": {
         "baseline": 34,
-        "current": 16,
+        "current": 12,
         "delta": -8,
         "views": [
           "control",
           "observability"
         ],
         "evidence_pr": 1499,
-        "evidence_job": 110231927555,
-        "measurement_pr": 1542,
+        "evidence_job": 110751194382,
+        "measurement_pr": 1647,
         "repair_evidence_pr": 1499,
-        "status": "MEASURED"
+        "status": "MEASURED_ACTIVE_CLOSURE",
+        "active_pr": 1650,
+        "target_residual": 0
       }
     },
     {
@@ -673,10 +675,10 @@
       "id": "hard_e741_residual",
       "type": "queue",
       "label": "E741 ambiguous-name residual",
-      "state": "MEASURED_RESIDUAL_17",
+      "state": "MEASURED_RESIDUAL_9",
       "meta": {
         "baseline": 28,
-        "current": 17,
+        "current": 9,
         "delta": -6,
         "views": [
           "control",
@@ -684,10 +686,10 @@
         ],
         "active_pr": null,
         "target_residual": 22,
-        "status": "MEASURED",
+        "status": "MEASURED_QUEUED_AFTER_E722",
         "repair_evidence_pr": 1505,
-        "measurement_pr": 1542,
-        "evidence_job": 110231927555
+        "measurement_pr": 1647,
+        "evidence_job": 110751194382
       }
     },
     {
