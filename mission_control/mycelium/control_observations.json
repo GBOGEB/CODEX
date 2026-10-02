@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "snapshot_at": "2026-10-02T07:44:20Z",
+  "snapshot_at": "2026-10-02T08:26:00Z",
   "evidence_policy": "MEASURED_OR_WITHHELD",
   "pressure_weights": {
     "urgency": 0.3,
@@ -222,7 +222,7 @@
     },
     "dab_bd8k": {
       "campaign": {
-        "status": "G2_MEASURED_CURRENT_MAIN_3279_REGENERATE_G3_QUEUE",
+        "status": "G2_MEASURED_3279_LIVE_1655_UNMEASURED_CENSUS_QUEUED",
         "campaign_id": "ABACUS-DAB-BD8K",
         "dispatch_status": "WAVE2_COMPLETE",
         "planning_probe": {
@@ -253,15 +253,12 @@
           "promotion_authority": false
         },
         "first_red": {
-          "state": "CLOSED_REPAIRED_BY_1640_MERGED_MAIN_CI_GREEN",
-          "merged_pr": 1636,
-          "merged_main_run": 36971306565,
-          "failed_job": 110725663291,
-          "repair_pr": 1640,
-          "repair_merge_sha": "f172d38079aa45dc669f6ce78258b1ad073f03ec",
-          "merged_main_enterprise_ci": "GREEN",
-          "merged_main_enterprise_run": 36972967515,
-          "fresh_main_census_required": false
+          "state": "NO_COMPLETED_MATERIAL_RED_ON_LIVE_1655_YET",
+          "current_head": "391d23f2442b5fbc0a6dd369166464147e213acb",
+          "ci_matrix_run": 36983104069,
+          "ci_matrix_state": "GREEN",
+          "dab_run": 36983104307,
+          "dab_state": "QUEUED"
         },
         "targeted_findings": 4546,
         "planning_projected_total": null,
@@ -344,7 +341,7 @@
         },
         "measured_reduction": 4630,
         "measured_reduction_pct": 58.54,
-        "dmaic_note": "Fresh post-#1647 DAB main census measures 3279; E722 reduced 16→12 while F841/W291/W293 remain zero; regenerate G3 queue from current measured residuals.",
+        "dmaic_note": "Latest measured DAB remains #1647 at 3279. Later merged #1650/#1651/#1652/#1653/#1654/#1655 are live but unmeasured; current-main DAB run 36983104307 is queued.",
         "wave1_measured": {
           "measured_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
           "current_abacus_head": "aa6028278cb71cdadc9df1dfc97f3c2eee173f58",
@@ -374,6 +371,20 @@
             "F841": 40,
             "W293": 119
           }
+        },
+        "pending_live_main": {
+          "head_sha": "391d23f2442b5fbc0a6dd369166464147e213acb",
+          "merged_prs": [
+            1650,
+            1653,
+            1652,
+            1651,
+            1654,
+            1655
+          ],
+          "census_run": 36983104307,
+          "state": "QUEUED",
+          "promotion_authority": false
         }
       },
       "workers": [
@@ -459,7 +470,7 @@
       "dmaic": {
         "status": "DERIVED_FROM_MEASURED",
         "phase": "CONTROL",
-        "basis": "current-main DAB census 3279 after #1647; G2 remains PASS and G3 is pending"
+        "basis": "#1647 remains latest measured main census; live #1655 head has GREEN matrix but queued DAB census"
       },
       "maturity": {
         "status": "WITHHELD",
