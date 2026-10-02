@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
   "campaign_id": "ABACUS-DAB-BD8K",
-  "state": "WAVE2_COMPLETE_G2_MEASURED_PASS_CI_REPAIR_OPEN",
+  "state": "WAVE2_COMPLETE_G2_MEASURED_PASS_POST_1636_MAIN_RED_REPAIR_1640_OPEN",
   "baseline": {
     "measured_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
     "current_head_sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
@@ -30,13 +30,15 @@
     }
   },
   "first_red": {
-    "previous_state": "SUPERSEDED_BY_MERGED_REPAIR",
-    "state": "CURRENT_CANONICAL_CI_RED",
-    "repair_pr": 1636,
-    "failure_run": 36969789531,
-    "failure_job": 110721165184,
-    "failure": "coverage.exceptions.DataError: worker-local .coverage.* SQLite data missing file table",
-    "repair": "serialize Enterprise coverage collection with pytest -n 0"
+    "previous_repair_pr": 1636,
+    "previous_repair_state": "MERGED_EXACT_HEAD_GREEN",
+    "merged_main_run": 36971306565,
+    "merged_main_job": 110725663291,
+    "state": "POST_MERGE_MAIN_RED_REPAIR_OPEN",
+    "repair_pr": 1640,
+    "repair_head_sha": "867116818f60eb24ef074adce67cb77553fc74e5",
+    "failure": "threading.BrokenBarrierError in Windows Python 3.11 concurrent cache-writer test",
+    "repair": "synchronize each unique temp source only on its first synthetic Path.replace attempt"
   },
   "workers": [
     {
@@ -115,7 +117,7 @@
   "authority_transfer": false,
   "formal_credit_delta": 0,
   "engineering_credit_delta": 0,
-  "observed_at": "2026-10-02T05:50:00Z",
+  "observed_at": "2026-10-02T06:12:30Z",
   "previous_baseline": {
     "measured_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
     "current_head_sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
@@ -287,10 +289,13 @@
     ]
   },
   "current_control_hold": {
-    "state": "WITHHELD_CURRENT_CANONICAL_CI_RED",
-    "repair_pr": 1636,
-    "cause": "Enterprise CI coverage finalization concurrency failure",
-    "unblock_rule": "exact-head #1636 Enterprise CI + matrix/full CI GREEN, merge/readback, then regenerate only measured residual"
+    "state": "WITHHELD_POST_MERGE_MAIN_RED",
+    "merged_pr": 1636,
+    "merged_main_run": 36971306565,
+    "failed_job": 110725663291,
+    "repair_pr": 1640,
+    "repair_exact_head_dab_run": 36972271164,
+    "unblock_rule": "exact-head #1640 Windows 3.11 + Enterprise/full CI GREEN, merge, merged-main CI GREEN, then fresh DAB main census before residual promotion"
   },
   "wave2": {
     "status": "COMPLETE_MEASURED",
