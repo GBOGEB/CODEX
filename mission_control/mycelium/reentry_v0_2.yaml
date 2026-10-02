@@ -2,14 +2,14 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-10-02T13:39:16Z"
+  generated_at: "2026-10-02T13:57:52Z"
 
   repositories:
     codex:
       repo: GBOGEB/CODEX
       branch: main
       handover_observed_sha: d77d44811fec4fada16988769614d6091df56133
-      refreshed_current_sha: fc59e6e3f53d1c6d8beba0d854acd4526af763b7
+      refreshed_current_sha: cc9391fa0b9a904c2a329c5dfda0035ec2344bec
       role: UI_ORCHESTRATION_GRAPH_AUTHORITY
       mycelium_v0_1_merge:
         pr: 837
@@ -28,17 +28,17 @@ reentry:
     abacus:
       repo: GBOGEB/ABACUS
       branch: main
-      refreshed_current_sha: 9e7363a68c2b507158dfbd32cf211c08b749da02
+      refreshed_current_sha: 02c21964012a3d13ad2c639f5143f4cee48f518a
       role: REMOTE_EXECUTION_AUTHORITY
       latest_census:
-        state: MEASURED_POST_1694_MAIN
-        source_sha: 7db0f4662833647d0bead4faac1f31a4bfb1b9d2
-        workflow_run: 37013787888
-        job: 110859584236
-        artifact_id: 11229336343
-        artifact_sha256: 1d78ad49b1f9079e6f55b34880507b0bbabb6af32a1695f799dcfb35d6375f49
-        total: 3135
-        E302: 151
+        state: MEASURED_POST_1697_MAIN
+        source_sha: 02c21964012a3d13ad2c639f5143f4cee48f518a
+        workflow_run: 37016094260
+        job: 110867203583
+        artifact_id: 11230281685
+        artifact_sha256: 6f742d011f42c02774b3607af7fe5d516b902e42d31200a877dbe3a803cbc0a4
+        total: 3129
+        E302: 145
         E303: 16
         E999: 1
         F821: 0
@@ -49,25 +49,31 @@ reentry:
         E731: 0
         E741: 0
         W293: 0
-      live_main:
-        sha: 9e7363a68c2b507158dfbd32cf211c08b749da02
-        latest_lint_bearing_sha: 7db0f4662833647d0bead4faac1f31a4bfb1b9d2
-        later_change_class: WORKFLOW_ONLY
-        lint_population_changed: false
+      consumed_slices:
+        pr_1696:
+          state: MERGED
+          family: E302
+          findings: 3
+          merge_sha: 805506c7edc2178c83c76f7e682de9533ff58783
+        pr_1697:
+          state: MERGED
+          family: E302
+          findings: 3
+          merge_sha: 02c21964012a3d13ad2c639f5143f4cee48f518a
       promoted_residual:
         family: E302
-        measured_count: 151
-        source_run: 37013787888
+        measured_count: 145
+        source_run: 37016094260
         state: PROMOTED_SINGLE_MEASURED_RESIDUAL
         no_second_residual: true
       reverse_pressure_next:
         state: E302_SINGLE_PROMOTION
-        action: CONSUME_BOUNDED_E302_SLICE_THEN_RECENSUS
+        action: CONSUME_ONE_BOUNDED_E302_SLICE_THEN_RECENSUS
       source_bound_hold:
         family: E999
         count: 1
         path: qplant/w52_p2m_ts_pressure_sensitivity.py
-      evidence: mission_control/mycelium/evidence/abacus_dab_post_1694_measured_e302_promoted.json
+      evidence: mission_control/mycelium/evidence/abacus_dab_post_1697_measured_e302_promoted.json
     cryoplant:
       repo: GBOGEB/cryoplant-project
       branch: main
@@ -286,19 +292,19 @@ reentry:
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
-      head_sha: 9e7363a68c2b507158dfbd32cf211c08b749da02
+      head_sha: 02c21964012a3d13ad2c639f5143f4cee48f518a
       state: REMOTE_AUTHORITY
-      current_atom: E302_SINGLE_MEASURED_RESIDUAL
+      current_atom: E302_SINGLE_MEASURED_RESIDUAL_145
       completed_atoms:
-        - PR1692_COVERAGE_RECOVERY_MERGED
-        - PR1694_E302_MECHANICAL_MERGED
-        - POST_1694_MAIN_DAB_3135_GREEN
+        - PR1696_E302_SLICE_MERGED
+        - PR1697_E302_SLICE_MERGED
+        - POST_1697_MAIN_DAB_3129_GREEN
       blocker: NONE_FOR_SINGLE_E302_PROMOTION
       queue_state: EXECUTION
       evidence_refs:
-        - mission_control/mycelium/evidence/abacus_dab_post_1694_measured_e302_promoted.json
-        - ABACUS DAB run 37013787888 job 110859584236
-        - ABACUS artifact 11229336343
+        - mission_control/mycelium/evidence/abacus_dab_post_1697_measured_e302_promoted.json
+        - ABACUS DAB run 37016094260 job 110867203583
+        - ABACUS artifact 11230281685
       next_legal_transitions:
         - CONSUME_ONE_BOUNDED_E302_SLICE
         - EXACT_HEAD_PROOF
@@ -916,6 +922,19 @@ reentry:
     measured_total: 3135
     promoted_family: E302
     promoted_count: 151
+    promotion_count: 1
+    no_second_residual: true
+    authority_transfer: false
+    formal_credit_delta: 0
+    engineering_credit_delta: 0
+
+  abacus_post_1697_single_promotion:
+    observed_at: "2026-10-02T13:57:52Z"
+    live_main: 02c21964012a3d13ad2c639f5143f4cee48f518a
+    measured_run: 37016094260
+    measured_total: 3129
+    promoted_family: E302
+    promoted_count: 145
     promotion_count: 1
     no_second_residual: true
     authority_transfer: false
