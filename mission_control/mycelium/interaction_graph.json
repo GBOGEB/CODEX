@@ -1,6 +1,6 @@
 {
   "schema_version": "0.4",
-  "snapshot_at": "2026-10-02T05:50:00Z",
+  "snapshot_at": "2026-10-02T06:12:30Z",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -27,22 +27,22 @@
       "state": "REMOTE_EXECUTION_CURRENT",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "cb8b34428b6920ec1955eb4f909a2bb0441ea88b",
+        "sha": "fb43c435d1372d32a92289b867bac5a11f8cf4f4",
         "views": [
           "control",
           "observability"
         ],
         "latest_census_pr_head": "f72184c933076431d49347cfcd2c4a3f8f661e05",
         "latest_census_merge_sha": "f72184c933076431d49347cfcd2c4a3f8f661e05",
-        "observed_at": "2026-10-02T05:50:00Z",
-        "freshness_status": "CURRENT_HEAD_MEASURED_1635_PLUS_NON_PYTHON_METRICS",
+        "observed_at": "2026-10-02T06:12:30Z",
+        "freshness_status": "CURRENT_HEAD_MEASURED_1635_PLUS_NON_PYTHON_1636_WORKFLOW_AND_METRICS",
         "latest_census_pr": 1635,
         "latest_census_job": 110723207482,
         "latest_census_head": "f72184c933076431d49347cfcd2c4a3f8f661e05",
         "latest_measured_return_sha": "f72184c933076431d49347cfcd2c4a3f8f661e05",
         "pending_census_run": null,
         "completed_census_run": 36970478170,
-        "current_head_measurement_status": "MEASURED_1635_PLUS_NON_PYTHON_METRICS"
+        "current_head_measurement_status": "MEASURED_1635_PLUS_NON_PYTHON_1636_WORKFLOW_AND_METRICS"
       }
     },
     {
@@ -755,7 +755,7 @@
       "state": "REMOTE_PRESERVED",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
-        "sha": "cb8b34428b6920ec1955eb4f909a2bb0441ea88b",
+        "sha": "fb43c435d1372d32a92289b867bac5a11f8cf4f4",
         "views": [
           "control",
           "observability"
@@ -1075,7 +1075,7 @@
       "id": "dab_bd8k",
       "type": "queue",
       "label": "DAB-BD8K",
-      "state": "WAVE2_COMPLETE_G2_MEASURED_PASS_CI_REPAIR_OPEN",
+      "state": "G2_MEASURED_PASS_POST_1636_MAIN_RED_REPAIR_1640_OPEN",
       "meta": {
         "views": [
           "control",
@@ -1110,9 +1110,11 @@
           }
         },
         "first_red": {
-          "state": "CURRENT_CANONICAL_CI_RED",
-          "repair_pr": 1636,
-          "reason": "Enterprise coverage serialization repair"
+          "state": "POST_MERGE_MAIN_RED_REPAIR_OPEN",
+          "merged_pr": 1636,
+          "run": 36971306565,
+          "job": 110725663291,
+          "repair_pr": 1640
         },
         "dispatch_status": "WAVE2_COMPLETE",
         "worker_ids": [
@@ -1417,15 +1419,15 @@
       "mechanism": "REFERENCE",
       "source_repo": "GBOGEB/ABACUS",
       "source_ref": "main",
-      "source_sha": "cb8b34428b6920ec1955eb4f909a2bb0441ea88b",
+      "source_sha": "fb43c435d1372d32a92289b867bac5a11f8cf4f4",
       "target_repo": "GBOGEB/CODEX",
       "target_ref": "main",
       "target_sha": "d62e3867ffd3431ba1344f34a20ab0fab680639a",
       "authority_before": "REMOTE_EXECUTION_AUTHORITY",
       "authority_after": "REMOTE_EXECUTION_AUTHORITY",
       "proof": "mission_control/mycelium/evidence/abacus_dab_bd8k_g2_post_1635_main_measured.json",
-      "observed_at": "2026-10-02T05:50:00Z",
-      "freshness_status": "CURRENT_HEAD_MEASURED_1635_PLUS_NON_PYTHON_METRICS"
+      "observed_at": "2026-10-02T06:12:30Z",
+      "freshness_status": "CURRENT_HEAD_MEASURED_1635_PLUS_NON_PYTHON_1636_WORKFLOW_AND_METRICS"
     },
     {
       "from": "slice5",
