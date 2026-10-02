@@ -2,14 +2,14 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-10-02T07:44:20Z"
+  generated_at: "2026-10-02T13:30:00Z"
 
   repositories:
     codex:
       repo: GBOGEB/CODEX
       branch: main
       handover_observed_sha: d77d44811fec4fada16988769614d6091df56133
-      refreshed_current_sha: cb97a4c0a74b15eff35d2aa08d41743d7e452042
+      refreshed_current_sha: 7bc4f65e99f4b513231f173c473607f0b21d2e6f
       role: UI_ORCHESTRATION_GRAPH_AUTHORITY
       mycelium_v0_1_merge:
         pr: 837
@@ -28,63 +28,57 @@ reentry:
     abacus:
       repo: GBOGEB/ABACUS
       branch: main
-      handover_observed_sha: 713a152e99024165aea81bffbf530d2073e164bb
-      refreshed_current_sha: 391d23f2442b5fbc0a6dd369166464147e213acb
+      refreshed_current_sha: f42f161a08c29d324ca0a72a43999011721c7b4f
       role: REMOTE_EXECUTION_AUTHORITY
       latest_census:
-        pr: 1647
-        state: MEASURED_POST_1647_MAIN_G2_PASS
-        evidence_head_sha: 930916b18647c78d1e143038202f37a6df3e1a04
-        merge_sha: 930916b18647d1e143038202f37a6df3e1a04
-        workflow_run: 36979711277
-        job: 110751227472
-        artifact_id: 11215450664
-        artifact_sha256: a2bb5b64c30227d7d84143451b58e31b774ff33c296e340956bdae331ae665c1
-        total: 3279
+        state: MEASURED_LINT_BEARING_MAIN
+        source_sha: 090f2a2b90794b6fdcee64affa3ca39a53d0061a
+        workflow_run: 36991932972
+        job: 110789899967
+        artifact_id: 11220348843
+        artifact_sha256: 8e25570f8f25513b163042c198388333f48b3ab8e709199e61c80c683b74e4e1
+        total: 3145
         E999: 1
         F821: 0
         F601: 0
         F811: 0
         F841: 0
-        E722: 12
+        E722: 0
         E731: 0
-        E741: 9
+        E741: 0
         W293: 0
-      post_measurement_main_control:
-        current_head_sha: 391d23f2442b5fbc0a6dd369166464147e213acb
-        merged_prs_after_measurement:
-          - 1650
-          - 1653
-          - 1652
-          - 1651
-          - 1654
-          - 1655
-        lint_population_changed: true
-        current_main_state: LIVE_UNMEASURED_AFTER_1647
-        ci_matrix_run: 36983104069
-        ci_matrix_state: GREEN
-        fresh_main_census_required: true
-        pending_dab_run: 36983104307
-        pending_dab_state: QUEUED
-      active_slice:
-        status: CURRENT_MAIN_DAB_CENSUS_QUEUED
-        run: 36983104307
-        head_sha: 391d23f2442b5fbc0a6dd369166464147e213acb
+      subsequent_execution:
+        pr_1687:
+          state: MERGED
+          exact_head_dab_run: 37008307388
+          exact_head_total: 3143
+        pr_1688:
+          state: MERGED
+          scope: E302_MECHANICAL
+        pr_1689:
+          state: MERGED
+          scope: YAML_DOCS_LINT
+        pr_1692:
+          state: MERGED
+          merge_sha: f42f161a08c29d324ca0a72a43999011721c7b4f
+          scope: TESTS_ONLY_COVERAGE_RECOVERY
+          proved_coverage_pct: 75.26
+      current_state:
+        fresh_main_dab_required: true
+        reason: PYTHON_LINT_POPULATION_CHANGED_AFTER_MEASURED_1666_HEAD
+        first_material_red_pr: 1693
+        first_material_red_class: CI_GOVERNANCE_GENERATED_DRIFT
+        first_material_red_scope: ONE_GENERATED_MARKDOWN_LINE
+        missioncontrol_promotion: WITHHELD_PENDING_CODEX_EXACT_HEAD_PROOF
       reverse_pressure_next:
-        status: HOLD_PROMOTION_UNTIL_1655_MAIN_DAB_MEASURED
-        hard_family: E722
-        hard_measured_residual: 12
-        secondary_hard_family: E741
-        secondary_hard_measured_residual: 9
-        mech_family: E231
-        mech_measured_residual: 38
-        semantic_family: E501
-        semantic_measured_residual: 937
+        state: ONE_BOUNDED_REMOTE_REPAIR_CANDIDATE
+        pr: 1693
+        action: PROVE_CODEX_RECONCILIATION_THEN_PROMOTE_ONLY_1693
       source_bound_hold:
         family: E999
         count: 1
         path: qplant/w52_p2m_ts_pressure_sensitivity.py
-      evidence: mission_control/mycelium/evidence/abacus_post_1647_live_1655_pending.json
+      evidence: mission_control/mycelium/evidence/abacus_dab_1666_to_1693_control_return.json
     cryoplant:
       repo: GBOGEB/cryoplant-project
       branch: main
@@ -303,33 +297,27 @@ reentry:
     - id: ABACUS_REMOTE_EXECUTION
       repository: GBOGEB/ABACUS
       branch: main
-      head_sha: 391d23f2442b5fbc0a6dd369166464147e213acb
+      head_sha: f42f161a08c29d324ca0a72a43999011721c7b4f
       state: REMOTE_AUTHORITY
-      latest_census_merge_sha: 930916b18647d1e143038202f37a6df3e1a04
-      current_atom: WAIT_FOR_1655_CURRENT_MAIN_DAB_CENSUS
+      current_atom: PR1693_CI_GOVERNANCE_GENERATED_DRIFT
       completed_atoms:
-        - BD8K_WAVE1_G1_MEASURED_PASS
-        - BD8K_WAVE2_G2_MEASURED_PASS
-        - CI_1640_MERGED_MAIN_GREEN
-        - POST_1645_MAIN_CENSUS_MEASURED
-        - POST_1647_MAIN_CENSUS_MEASURED
-        - F841_ZERO_MEASURED
-        - W291_ZERO_MEASURED
-        - W293_ZERO_MEASURED
-      blocker: CURRENT_MAIN_DAB_CENSUS_36983104307_QUEUED
-      queue_state: HOLD_MEASURED_PROMOTION
+        - DAB_1666_LINT_BEARING_MAIN_3145_MEASURED
+        - PR1687_E302_E303_REPAIR_MERGED
+        - PR1688_E302_MECHANICAL_MERGED
+        - PR1689_YAML_DOCS_LINT_MERGED
+        - PR1692_COVERAGE_RECOVERY_MERGED
+      blocker: CODEX_EXACT_HEAD_PROOF_BEFORE_SINGLE_RESIDUAL_PROMOTION
+      queue_state: HOLD_PROMOTION
       evidence_refs:
-        - mission_control/mycelium/evidence/abacus_dab_bd8k_g2_post_1635_main_measured.json
-        - mission_control/mycelium/evidence/abacus_post_1636_ci_first_red_1640.json
-        - mission_control/mycelium/evidence/abacus_dab_post_1645_main_measured.json
-        - mission_control/mycelium/evidence/abacus_dab_post_1647_main_measured.json
-        - mission_control/mycelium/evidence/abacus_post_1647_live_1655_pending.json
-        - ABACUS DAB run 36979711277 job 110751227472
-        - ABACUS current-main DAB run 36983104307 QUEUED
+        - mission_control/mycelium/evidence/abacus_dab_1666_to_1693_control_return.json
+        - ABACUS DAB run 36991932972 job 110789899967
+        - ABACUS PR #1687 exact-head DAB run 37008307388 GREEN
+        - ABACUS PR #1692 merge f42f161a08c29d324ca0a72a43999011721c7b4f
+        - ABACUS PR #1693 remote first-red candidate
       next_legal_transitions:
-        - CONSUME_1655_MAIN_DAB_IFF_COMPLETED
-        - CLASSIFY_FIRST_COMPLETED_CURRENT_HEAD_RED
-        - REGENERATE_G3_QUEUE_FROM_MEASURED_MAIN_ONLY
+        - PROVE_CODEX_RECONCILIATION_EXACT_HEAD
+        - PROMOTE_ONLY_PR1693_AS_SINGLE_RESIDUAL
+        - PRESERVE_FRESH_CURRENT_MAIN_DAB_REQUIREMENT
         - PRESERVE_E999_SOURCE_BOUND_HOLD
     - id: QLM_ENGINEERING
       repository: GBOGEB/cryoplant-project
@@ -912,6 +900,24 @@ reentry:
     current_main_dab_run: 36983104307
     current_main_dab_state: QUEUED
     promotion_authority: false
+    authority_transfer: false
+    formal_credit_delta: 0
+    engineering_credit_delta: 0
+
+  abacus_1666_to_1693_reconciliation:
+    observed_at: "2026-10-02T13:30:00Z"
+    live_main: f42f161a08c29d324ca0a72a43999011721c7b4f
+    latest_measured_dab_sha: 090f2a2b90794b6fdcee64affa3ca39a53d0061a
+    latest_measured_dab_run: 36991932972
+    latest_measured_total: 3145
+    fresh_current_main_dab_required: true
+    consumed_prs:
+      - 1687
+      - 1688
+      - 1689
+      - 1692
+    active_first_red_pr: 1693
+    promotion_state: WITHHELD_PENDING_CODEX_EXACT_HEAD_PROOF
     authority_transfer: false
     formal_credit_delta: 0
     engineering_credit_delta: 0
