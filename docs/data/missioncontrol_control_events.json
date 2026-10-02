@@ -450,6 +450,42 @@
       "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
       "summary": "Reverse-pressure queue regenerated from measured #1548 main: next HARD F841 residual 47 and MECH W293 residual 186; current ABACUS head differs only by non-Python CD workflow and generated metrics.",
       "authority_transfer": false
+    },
+    {
+      "id": "EV-0041",
+      "at": "2026-10-01T18:53:26Z",
+      "type": "EXTERNAL_RETURN",
+      "node_id": "repo_abacus",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+      "parent_event": "EV-0040",
+      "content_ref": "mission_control/mycelium/evidence/abacus_dab_post_bd8k_1596_1599_main_measured.json",
+      "summary": "Consumed authoritative post-BD8K four-worker merged-main DAB census: total 5916; G1 <6000 measured PASS; protected families remain zero and E999 remains one source-bound hold.",
+      "authority_transfer": false
+    },
+    {
+      "id": "EV-0042",
+      "at": "2026-10-01T18:56:00Z",
+      "type": "FEDERATION_REFRESH",
+      "node_id": "current_next",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "34f4fb34a3da916975048247726b9b11c52e691c",
+      "parent_event": "EV-0041",
+      "content_ref": "mission_control/mycelium/source_status.json",
+      "summary": "Live identities refreshed to CODEX 34f4fb34, ABACUS 5bac9f70 and cryoplant 85a4bfdb while remote execution and engineering authority remain preserved.",
+      "authority_transfer": false
+    },
+    {
+      "id": "EV-0043",
+      "at": "2026-10-01T18:56:00Z",
+      "type": "RECOVERY",
+      "node_id": "current_next",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "5bac9f70cf6114dbde6e9f6f8317eb71425b88b4",
+      "parent_event": "EV-0042",
+      "content_ref": "mission_control/mycelium/reentry_v0_2.yaml",
+      "summary": "Reverse-pressure BD8K queue regenerated from measured 5916: HARD F841=40, MECH E231=1452 and SEMANTIC E402=622; next wave remains subject to fresh admission.",
+      "authority_transfer": false
     }
   ],
   "horizons": {
@@ -514,5 +550,6 @@
     "stream_timeout": "append RECOVERY only when state restoration is needed; do not replay completed atoms",
     "remote_return": "append EXTERNAL_RETURN with exact source repo/ref/SHA and acceptance decision",
     "history_mutation": "forbidden except correction by superseding event"
-  }
+  },
+  "snapshot_at": "2026-10-01T18:56:00Z"
 }
