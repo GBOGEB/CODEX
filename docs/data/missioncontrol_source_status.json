@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-10-01T15:25:00Z",
+  "generated_at": "2026-10-01T18:56:00Z",
   "public_metadata_only": true,
   "authority_transfer": false,
   "sources": [
@@ -10,9 +10,9 @@
       "authority_class": "LOCAL_AUTHORITATIVE",
       "role": "ORCHESTRATION_UI_GOVERNANCE",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-01T09:20:00Z",
-      "head_sha": "28dc786a4f2f12d594247ebb96df21fb5b816238",
-      "measurement_basis": "GitHub connector repository-head recensus after #906/#907/#908"
+      "observed_at": "2026-10-01T18:48:57Z",
+      "head_sha": "34f4fb34a3da916975048247726b9b11c52e691c",
+      "measurement_basis": "live GitHub main refresh after merged CODEX #913 and metrics follow-up"
     },
     {
       "id": "abacus",
@@ -20,25 +20,25 @@
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "EXECUTION_DOW",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-01T15:25:00Z",
-      "head_sha": "f409c515072921f4c87a30bba92facc514d20d04",
-      "census_pr": 1581,
-      "census_head_sha": "9bc20bc9f0dcfbd5a12422572ea099ecd01ae337",
-      "census_merge_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
-      "census_workflow_run": 36872346746,
-      "census_job": 110403022453,
-      "census_artifact_id": 11168375869,
-      "census_artifact_sha256": "c5a6169a70ba68ea605e48ee9a5a2e60e66d59e81b1f4b392df3aa4c05a6eb82",
-      "measurement_basis": "current main identity + #1592 exact-head planning census; promotion remains post-merge main only",
-      "census_total": 7909,
-      "w293_postmerge_status": "MEASURED_POST_1581_MAIN",
-      "E741": 17,
+      "observed_at": "2026-10-01T18:55:05Z",
+      "head_sha": "5bac9f70cf6114dbde6e9f6f8317eb71425b88b4",
+      "census_pr": 1597,
+      "census_head_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+      "census_merge_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+      "census_workflow_run": 36908967216,
+      "census_job": 110526569316,
+      "census_artifact_id": 11185734037,
+      "census_artifact_sha256": "b48a068fa140bc74f0a36578e7790c83ec6462321713386a62969f1762f34cb1",
+      "measurement_basis": "successful post-worker merged-main DAB push census at last Python-changing main; later dependency/metrics commits do not alter the Python lint population",
+      "census_total": 5916,
+      "w293_postmerge_status": "MEASURED_POST_BD8K_WORKERS_MAIN",
+      "E741": 9,
       "W293": 119,
       "E722": 16,
-      "F841": 41,
+      "F841": 40,
       "E999": 1,
       "source_bound_hold": "qplant/w52_p2m_ts_pressure_sensitivity.py",
-      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_post_1581_main_measured.json",
+      "evidence_ref": "mission_control/mycelium/evidence/abacus_dab_post_bd8k_1596_1599_main_measured.json",
       "F821": 0,
       "F601": 0,
       "F811": 0,
@@ -49,74 +49,70 @@
         "W293": 453,
         "E722": 16
       },
-      "measured_return_source_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
+      "measured_return_source_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
       "live_head_after_measurement": {
-        "sha": "718da4aa312fa409f0bebb33ce0f296bf893739d",
-        "status": "CURRENT_HEAD_AFTER_1581_METRICS_ONLY",
-        "latest_known_merge_pr": 1581,
+        "sha": "5bac9f70cf6114dbde6e9f6f8317eb71425b88b4",
+        "status": "CURRENT_HEAD_AFTER_POST_WORKER_CENSUS_NON_PYTHON_ONLY",
+        "latest_known_merge_pr": 1606,
         "lint_population_changed": false
       },
       "pending_independent_lanes": [],
       "combined_main_census_pending": null,
       "completed_latest_lane": {
-        "pr": 1581,
-        "family": "F821_REPAIR",
+        "campaign_id": "ABACUS-DAB-BD8K",
+        "wave": "1596-1599",
         "measured_baseline": {
-          "F821": 4,
-          "F841": 41,
-          "W293": 119,
-          "total": 7913
+          "total": 6321,
+          "E231": 1823,
+          "E402": 644,
+          "F401": 348
         },
         "measured_residual": {
-          "F821": 0,
-          "F841": 41,
-          "W293": 119,
-          "total": 7909
+          "total": 5916,
+          "E231": 1452,
+          "E402": 622,
+          "F401": 336
         },
         "measured_delta": {
-          "F821": -4,
-          "total": -4
+          "total": -405,
+          "E231": -371,
+          "E402": -22,
+          "F401": -12
         },
-        "merge_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52"
+        "source_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9"
       },
       "reverse_pressure_next": {
-        "status": "DAB_BD8K_DISPATCHED",
+        "status": "POST_WORKER_CENSUS_MEASURED_QUEUE_REGENERATED",
         "campaign_id": "ABACUS-DAB-BD8K",
-        "previous_first_red": "SUPERSEDED_BY_#1583",
-        "workers": [
+        "measured_total": 5916,
+        "G1": "PASS_MEASURED_CURRENT_MAIN",
+        "promotion_rule": "POST_MERGE_MEASURED_MAIN_ONLY",
+        "next_wave_candidates": [
           {
-            "id": "bd8k_mech_a",
-            "pr": 1596,
-            "head_sha": "6a886a680c3504d7d6a6ff54cde9cf709c492d27",
-            "state": "CI_QUEUED",
-            "targeted": 206
+            "id": "MECH-C",
+            "family": "E231",
+            "path": "MINERVA_PID/generator/build_dissection_pptx.py",
+            "measured_count": 211
           },
           {
-            "id": "bd8k_mech_b",
-            "pr": 1597,
-            "head_sha": "94527ef94a4767f7cc1bcfbc92666da99a8bd6b4",
-            "state": "CI_QUEUED",
-            "targeted": 165
+            "id": "MECH-D",
+            "family": "E231",
+            "path": "tools/w66_id_burndown_measure.py",
+            "measured_count": 148
           },
           {
-            "id": "bd8k_semantic_a",
-            "pr": 1598,
-            "head_sha": "9f2b47d47e055841392300a50ecb059801530e64",
-            "state": "CI_QUEUED",
-            "targeted": 21
+            "id": "SEM-C",
+            "family": "E501",
+            "path": "qplant/handover_dashboard/src/build_dense_slides.py",
+            "measured_count": 128
           },
           {
-            "id": "bd8k_semantic_b",
-            "pr": 1599,
-            "head_sha": "37fa586a7e6b16e34cac55c6cb51bb7c1fa4b152",
-            "state": "CI_QUEUED",
-            "targeted": 12
+            "id": "SEM-D",
+            "family": "E402",
+            "path": "DMAIC_V3/temporal_phase_runner.py",
+            "measured_count": 19
           }
-        ],
-        "targeted_findings": 404,
-        "planning_projected_total": 5917,
-        "G1": "PLANNING_CROSSED_PROMOTION_WITHHELD",
-        "promotion_rule": "POST_MERGE_MEASURED_MAIN_ONLY"
+        ]
       },
       "planning_probe": {
         "source_pr": 1592,
@@ -144,7 +140,15 @@
         },
         "status": "MEASURED_PR_HEAD_PLANNING_ONLY",
         "promotion_authority": false
-      }
+      },
+      "E225": 628,
+      "E231": 1452,
+      "E302": 332,
+      "E402": 622,
+      "E501": 949,
+      "E702": 294,
+      "F401": 336,
+      "F541": 315
     },
     {
       "id": "cryoplant_project",
@@ -152,16 +156,21 @@
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "ENGINEERING_TRUTH_QPS",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-09-30T12:33:05Z",
-      "head_sha": "9f1ff9a9b48b40cf19555fdcd34a1cbc944eaa1a",
-      "measurement_basis": "GitHub connector repository-head refresh + metadata-only typed return",
+      "observed_at": "2026-10-01T18:56:00Z",
+      "head_sha": "85a4bfdbde9e40e8eb6333ea4e54e6096dffa3a4",
+      "measurement_basis": "live GitHub identity refresh only; latest promoted MissionControl engineering return remains #1834",
       "authority_preserved": true,
       "engineering_truth_promoted": false,
       "latest_return_pr": 1834,
       "latest_return_merge_sha": "9f1ff9a9b48b40cf19555fdcd34a1cbc944eaa1a",
       "latest_return_role": "REMOTE_ENGINEERING_CONTROL_LEDGER",
       "projection_policy": "METADATA_ONLY_NO_RESTRICTED_CONTENT",
-      "evidence_ref": "mission_control/mycelium/evidence/cryoplant_master_input_ledger_return_1834.json"
+      "evidence_ref": "mission_control/mycelium/evidence/cryoplant_master_input_ledger_return_1834.json",
+      "head_after_latest_return": {
+        "sha": "85a4bfdbde9e40e8eb6333ea4e54e6096dffa3a4",
+        "latest_known_merge_pr": 1836,
+        "return_promotion": "WITHHELD_NOT_CONSUMED_AS_ENGINEERING_TRUTH"
+      }
     }
   ]
 }
