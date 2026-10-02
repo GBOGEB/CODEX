@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "snapshot_at": "2026-10-02T12:42:49Z",
+  "snapshot_at": "2026-10-02T13:30:00Z",
   "evidence_policy": "MEASURED_OR_WITHHELD",
   "pressure_weights": {
     "urgency": 0.3,
@@ -231,17 +231,6 @@
           "measurement_job": "ABACUS job 110789899967"
         }
       ],
-      "active_residual": {
-        "status": "REMOTE_ACTIVE_CODEX_PROMOTION_WITHHELD",
-        "pr": 1687,
-        "family": "E302",
-        "secondary_family": "E303",
-        "measured_delta": 2,
-        "source_total": 3145,
-        "exact_head_total": 3143,
-        "exact_head_dab_run": 37008307388,
-        "exact_head_dab_result": "GREEN"
-      },
       "logs": {
         "status": "MEASURED",
         "expected_required_logs": 1,
@@ -249,11 +238,24 @@
         "passed": 1,
         "failed": 0,
         "health_pct": 100
+      },
+      "live_main_state": {
+        "head_sha": "f42f161a08c29d324ca0a72a43999011721c7b4f",
+        "fresh_current_main_dab_required": true,
+        "subsequent_merged_prs": [
+          1687,
+          1688,
+          1689,
+          1692
+        ],
+        "current_first_red_pr": 1693,
+        "current_first_red_class": "CI_GOVERNANCE_GENERATED_DRIFT",
+        "missioncontrol_promotion": "WITHHELD_PENDING_CODEX_EXACT_HEAD_PROOF"
       }
     },
     "dab_bd8k": {
       "campaign": {
-        "status": "G2_MEASURED_3145_G3_PENDING_REMOTE_PR1687_ACTIVE",
+        "status": "G2_MEASURED_3145_LIVE_1692_FRESH_DAB_REQUIRED",
         "campaign_id": "ABACUS-DAB-BD8K",
         "dispatch_status": "WAVE2_COMPLETE",
         "planning_probe": {
@@ -284,18 +286,12 @@
           "promotion_authority": false
         },
         "first_red": {
-          "state": "BOUNDED_REMOTE_REPAIR_PR1687_ACTIVE",
-          "current_head": "41df051e14b7cadc230c08e22c46798ec5447613",
-          "source_dab_run": 36991932972,
-          "source_dab_state": "GREEN",
-          "attributable_delta": {
-            "E302": 1,
-            "E303": 1,
-            "total": 2
-          },
-          "repair_exact_head_dab_run": 37008307388,
-          "repair_exact_head_dab_state": "GREEN",
-          "broader_admission": "IN_PROGRESS",
+          "state": "CURRENT_REMOTE_FIRST_RED_PR1693_ACTIVE",
+          "current_head": "f42f161a08c29d324ca0a72a43999011721c7b4f",
+          "pr": 1693,
+          "class": "CI_GOVERNANCE_GENERATED_DRIFT",
+          "source_run": 37012236463,
+          "scope": "one generated Markdown command-rendering backslash correction",
           "missioncontrol_promotion": "WITHHELD_PENDING_CODEX_EXACT_HEAD_PROOF"
         },
         "targeted_findings": 4546,
@@ -346,7 +342,7 @@
         "promotion_rule": "POST_MERGE_MEASURED_MAIN_ONLY",
         "measured_post_merge": {
           "measured_sha": "090f2a2b90794b6fdcee64affa3ca39a53d0061a",
-          "current_abacus_head": "41df051e14b7cadc230c08e22c46798ec5447613",
+          "current_abacus_head": "f42f161a08c29d324ca0a72a43999011721c7b4f",
           "census_run": 36991932972,
           "census_job": 110789899967,
           "artifact_id": 11220348843,
@@ -356,40 +352,10 @@
           "reduction": 4764,
           "reduction_pct": 60.24,
           "families": {
-            "E111": 3,
-            "E125": 1,
-            "E127": 51,
-            "E128": 137,
-            "E129": 1,
-            "E131": 5,
-            "E203": 5,
-            "E221": 71,
-            "E225": 21,
-            "E227": 3,
-            "E228": 1,
-            "E231": 38,
-            "E261": 2,
-            "E265": 1,
-            "E301": 13,
-            "E302": 160,
-            "E303": 17,
-            "E305": 113,
-            "E306": 5,
-            "E401": 37,
-            "E402": 623,
-            "E501": 938,
-            "E701": 138,
-            "E702": 99,
-            "E703": 1,
-            "E712": 10,
-            "E999": 1,
-            "F401": 336,
-            "F541": 295,
-            "W292": 11,
-            "W391": 8,
             "E722": 0,
             "E731": 0,
             "E741": 0,
+            "E999": 1,
             "F601": 0,
             "F811": 0,
             "F821": 0,
@@ -399,7 +365,7 @@
         },
         "measured_reduction": 4764,
         "measured_reduction_pct": 60.24,
-        "dmaic_note": "Latest executed lint-bearing main DAB is 3,145 at 090f2a2b; protected families are zero except E999=1 source hold. Remote PR #1687 alone consumes the measured +2 E302/E303 spacing delta and has exact-head DAB 3,143 GREEN; broader admission remains in progress.",
+        "dmaic_note": "Latest completed authoritative DAB baseline is 3,145 at 090f2a2b. #1687 exact-head DAB proved 3,143 and merged; #1688/#1689 and tests-only coverage recovery #1692 then advanced main. Fresh current-main DAB is required before another lint-family promotion. Current first material remote red is #1693 generated governance-doc drift.",
         "wave1_measured": {
           "measured_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
           "current_abacus_head": "aa6028278cb71cdadc9df1dfc97f3c2eee173f58",
@@ -431,13 +397,16 @@
           }
         },
         "pending_live_main": {
-          "head_sha": "41df051e14b7cadc230c08e22c46798ec5447613",
-          "active_pr": 1687,
-          "exact_head_sha": "8e443a4451ec7679112046764121dafe91d9dcda",
-          "exact_head_dab_run": 37008307388,
-          "exact_head_dab_state": "GREEN",
-          "exact_head_total": 3143,
-          "broader_admission": "IN_PROGRESS",
+          "head_sha": "f42f161a08c29d324ca0a72a43999011721c7b4f",
+          "subsequent_merged_prs": [
+            1687,
+            1688,
+            1689,
+            1692
+          ],
+          "fresh_main_dab_required": true,
+          "current_first_red_pr": 1693,
+          "current_first_red_class": "CI_GOVERNANCE_GENERATED_DRIFT",
           "missioncontrol_promotion": "WITHHELD_PENDING_CODEX_EXACT_HEAD_PROOF",
           "promotion_authority": false
         }
@@ -525,7 +494,7 @@
       "dmaic": {
         "status": "DERIVED_FROM_MEASURED",
         "phase": "CONTROL",
-        "basis": "3,145 exact measured lint-bearing census; one bounded E302/E303 repair active remotely; CODEX promotion withheld pending exact-head proof"
+        "basis": "3,145 measured DAB baseline; live main advanced through #1692; fresh DAB required; one bounded remote first-red candidate #1693"
       },
       "maturity": {
         "status": "WITHHELD",
