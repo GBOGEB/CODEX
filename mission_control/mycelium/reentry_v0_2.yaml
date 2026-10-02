@@ -2,14 +2,14 @@ reentry:
   schema_version: "0.2"
   generated_for: CODEX_MISSIONCONTROL_MYCELIUM
   mode: CONTINUE_FROM_DURABLE_STATE
-  generated_at: "2026-10-01T09:20:00Z"
+  generated_at: "2026-10-01T18:56:00Z"
 
   repositories:
     codex:
       repo: GBOGEB/CODEX
       branch: main
       handover_observed_sha: d77d44811fec4fada16988769614d6091df56133
-      refreshed_current_sha: 28dc786a4f2f12d594247ebb96df21fb5b816238
+      refreshed_current_sha: 34f4fb34a3da916975048247726b9b11c52e691c
       role: UI_ORCHESTRATION_GRAPH_AUTHORITY
       mycelium_v0_1_merge:
         pr: 837
@@ -29,7 +29,7 @@ reentry:
       repo: GBOGEB/ABACUS
       branch: main
       handover_observed_sha: 713a152e99024165aea81bffbf530d2073e164bb
-      refreshed_current_sha: 010fb4269488c19cb9b6d54bbd35c0dee9516bd1
+      refreshed_current_sha: 5bac9f70cf6114dbde6e9f6f8317eb71425b88b4
       role: REMOTE_EXECUTION_AUTHORITY
       latest_census:
         pr: 1548
@@ -75,7 +75,7 @@ reentry:
       repo: GBOGEB/cryoplant-project
       branch: main
       handover_observed_sha: f03bfc61bcf85a2d91cd22d083ad0ef954387f0d
-      refreshed_current_sha: 9f1ff9a9b48b40cf19555fdcd34a1cbc944eaa1a
+      refreshed_current_sha: 85a4bfdbde9e40e8eb6333ea4e54e6096dffa3a4
       role: REMOTE_ENGINEERING_AUTHORITY
       latest_control_return:
         pr: 1834
@@ -761,6 +761,43 @@ reentry:
       F841: -2
       W293: -18
     reverse_pressure_next: REGENERATE_FROM_CURRENT_MAIN
+    authority_transfer: false
+    formal_credit_delta: 0
+    engineering_credit_delta: 0
+
+  abacus_return_bd8k_1596_1599:
+    state: MEASURED_POST_BD8K_WORKERS_MAIN
+    observed_at: "2026-10-01T18:56:00Z"
+    source_sha: 348a90fcaa62985cf21b4465858e6700c475d7b9
+    current_source_sha: 5bac9f70cf6114dbde6e9f6f8317eb71425b88b4
+    workflow_run: 36908967216
+    job: 110526569316
+    artifact_id: 11185734037
+    artifact_sha256: b48a068fa140bc74f0a36578e7790c83ec6462321713386a62969f1762f34cb1
+    total: 5916
+    families:
+      E225: 628
+      E231: 1452
+      E302: 332
+      E402: 622
+      E501: 949
+      E702: 294
+      E722: 16
+      E731: 0
+      E741: 9
+      E999: 1
+      F401: 336
+      F541: 315
+      F601: 0
+      F811: 0
+      F821: 0
+      F841: 40
+      W293: 119
+    worker_prs: [1596, 1597, 1598, 1599]
+    worker_state: ALL_MERGED_MEASURED
+    G0: PASS
+    G1: PASS_MEASURED_CURRENT_MAIN
+    source_bound_hold: qplant/w52_p2m_ts_pressure_sensitivity.py
     authority_transfer: false
     formal_credit_delta: 0
     engineering_credit_delta: 0
