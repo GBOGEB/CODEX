@@ -1,0 +1,86 @@
+{
+  "schema_version": "0.1",
+  "evidence_type": "ABACUS_TYPED_CONTROL_RETURN",
+  "observed_at": "2026-10-02T13:30:00Z",
+  "source_repository": "GBOGEB/ABACUS",
+  "current_main_sha": "f42f161a08c29d324ca0a72a43999011721c7b4f",
+  "latest_completed_dab": {
+    "source_sha": "090f2a2b90794b6fdcee64affa3ca39a53d0061a",
+    "workflow_run": 36991932972,
+    "job": 110789899967,
+    "artifact_id": 11220348843,
+    "artifact_sha256": "8e25570f8f25513b163042c198388333f48b3ab8e709199e61c80c683b74e4e1",
+    "total": 3145,
+    "protected_families": {
+      "E722": 0,
+      "E731": 0,
+      "E741": 0,
+      "E999": 1,
+      "F601": 0,
+      "F811": 0,
+      "F821": 0,
+      "F841": 0,
+      "W293": 0
+    }
+  },
+  "subsequent_deltas": [
+    {
+      "pr": 1687,
+      "state": "MERGED",
+      "scope": "E302/E303 test spacing delta",
+      "exact_head_dab_run": 37008307388,
+      "exact_head_dab_job": 110841713817,
+      "exact_head_artifact_id": 11227170432,
+      "exact_head_artifact_sha256": "705cacf89703c298d5bde53e8dcc51b93a9fdf796dd9ede7d8e18292ec3938c0",
+      "exact_head_total": 3143
+    },
+    {
+      "pr": 1688,
+      "state": "MERGED",
+      "scope": "four E302 blank-line findings in scripts/fetch_workflow_errors.py"
+    },
+    {
+      "pr": 1689,
+      "state": "MERGED",
+      "scope": "workflow YAML docs-lint formatting repair"
+    },
+    {
+      "pr": 1692,
+      "state": "MERGED",
+      "merge_sha": "f42f161a08c29d324ca0a72a43999011721c7b4f",
+      "scope": "tests-only coverage recovery",
+      "coverage_proof": {
+        "source_pr": 1690,
+        "source_head": "c5589b97bc2730624676cbae595d17d05e395c4e",
+        "measured_pct": 75.26,
+        "required_pct": 75
+      },
+      "production_files_changed": 0
+    }
+  ],
+  "current_control_edge": {
+    "fresh_current_main_dab_required": true,
+    "reason": "Python/lint population changed after the latest completed main DAB baseline",
+    "chronological_first_material_red": {
+      "pr": 1693,
+      "head_sha": "5193dd46bc4e1a0d25c8d213e0bc497bed43a9de",
+      "source_main_sha": "00c0ac3d352cf8d0b0ac2f3bcc2c72264606bcb8",
+      "class": "CI_GOVERNANCE_GENERATED_DRIFT",
+      "source_run": 37012236463,
+      "scope": "one generated Markdown command-rendering backslash correction",
+      "promotion_state": "WITHHELD_PENDING_CODEX_EXACT_HEAD_PROOF"
+    }
+  },
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py"
+  },
+  "guards": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "remote_truth_auto_promotable": false,
+    "no_second_residual_promotion": true
+  }
+}

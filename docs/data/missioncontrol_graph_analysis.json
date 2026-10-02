@@ -5,9 +5,9 @@
   "authority_class": "DERIVED_PROJECTION_ONLY",
   "authority_transfer": false,
   "graph": {
-    "node_count": 76,
-    "edge_count": 116,
-    "density": 0.020351,
+    "node_count": 77,
+    "edge_count": 120,
+    "density": 0.020506,
     "directed": true
   },
   "node_type_counts": {
@@ -18,7 +18,7 @@
     "decision": 1,
     "domain": 1,
     "epic": 1,
-    "evidence": 12,
+    "evidence": 13,
     "external_authority": 2,
     "human_action": 1,
     "issue": 1,
@@ -39,15 +39,15 @@
     "CLOSED_MEASURED_0": 3,
     "CONTROLLED_GREEN": 1,
     "CONTROL_EXTERNAL_GATE_ONLY": 1,
-    "G2_MEASURED_3279_LIVE_1655_CENSUS_QUEUED": 1,
+    "G2_MEASURED_3145_LIVE_1692_FRESH_DAB_REQUIRED": 1,
     "IMPLEMENTATION_PROOF_BOUND_RUNTIME_RECEIPT_WITHHELD": 1,
     "LOCAL_AUTHORITY": 1,
     "MEASURED": 1,
-    "MEASURED_E722_12_E741_9_F841_0": 1,
+    "MEASURED_PROTECTED_ZERO_E999_1_LIVE_NEWER_UNMEASURED": 1,
     "MEASURED_RESIDUAL_12_ACTIVE_PR1650": 1,
     "MEASURED_RESIDUAL_186": 1,
     "MEASURED_RESIDUAL_9": 1,
-    "MEASURED_TYPED_RETURN": 8,
+    "MEASURED_TYPED_RETURN": 9,
     "MEASURED_W293_0": 1,
     "MECHANICAL": 1,
     "MERGED": 7,
@@ -59,7 +59,7 @@
     "PRIORITY_INPUT": 1,
     "PUBLISHED_SOURCE": 4,
     "REMOTE_ENGINEERING_AUTHORITY": 1,
-    "REMOTE_EXECUTION_CURRENT": 1,
+    "REMOTE_EXECUTION_CURRENT_NEWER_THAN_MEASURED_DAB": 1,
     "REMOTE_METADATA_ONLY": 1,
     "REMOTE_PRESERVED": 2,
     "REQUIRED": 1,
@@ -91,7 +91,7 @@
     },
     {
       "degree": 5,
-      "count": 3
+      "count": 4
     },
     {
       "degree": 6,
@@ -110,11 +110,11 @@
       "count": 1
     },
     {
-      "degree": 15,
+      "degree": 16,
       "count": 2
     },
     {
-      "degree": 23,
+      "degree": 24,
       "count": 1
     }
   ],
@@ -123,28 +123,28 @@
       "id": "dab_hard",
       "label": "DAB-HARD",
       "type": "queue",
-      "state": "MEASURED_E722_12_E741_9_F841_0",
-      "in_degree": 17,
+      "state": "MEASURED_PROTECTED_ZERO_E999_1_LIVE_NEWER_UNMEASURED",
+      "in_degree": 18,
       "out_degree": 6,
-      "total_degree": 23
+      "total_degree": 24
     },
     {
       "id": "dab_mech",
       "label": "DAB-MECH",
       "type": "queue",
       "state": "MEASURED_W293_0",
-      "in_degree": 13,
+      "in_degree": 14,
       "out_degree": 2,
-      "total_degree": 15
+      "total_degree": 16
     },
     {
       "id": "repo_abacus",
       "label": "GBOGEB/ABACUS",
       "type": "repo",
-      "state": "REMOTE_EXECUTION_CURRENT",
+      "state": "REMOTE_EXECUTION_CURRENT_NEWER_THAN_MEASURED_DAB",
       "in_degree": 2,
-      "out_degree": 13,
-      "total_degree": 15
+      "out_degree": 14,
+      "total_degree": 16
     },
     {
       "id": "mycelium",
@@ -177,7 +177,7 @@
       "id": "dab_bd8k",
       "label": "DAB-BD8K",
       "type": "queue",
-      "state": "G2_MEASURED_3279_LIVE_1655_CENSUS_QUEUED",
+      "state": "G2_MEASURED_3145_LIVE_1692_FRESH_DAB_REQUIRED",
       "in_degree": 1,
       "out_degree": 6,
       "total_degree": 7
@@ -219,6 +219,15 @@
       "total_degree": 5
     },
     {
+      "id": "abacus_dab_return_1548",
+      "label": "ABACUS #1548 post-merge main census return",
+      "type": "evidence",
+      "state": "MEASURED_TYPED_RETURN",
+      "in_degree": 2,
+      "out_degree": 3,
+      "total_degree": 5
+    },
+    {
       "id": "current_next",
       "label": "Current / exact next edge",
       "type": "artifact",
@@ -237,8 +246,8 @@
       "total_degree": 4
     },
     {
-      "id": "abacus_dab_return_1548",
-      "label": "ABACUS #1548 post-merge main census return",
+      "id": "abacus_dab_return_1666",
+      "label": "ABACUS #1666 lint-bearing main census return",
       "type": "evidence",
       "state": "MEASURED_TYPED_RETURN",
       "in_degree": 2,
@@ -284,15 +293,6 @@
     {
       "id": "abacus_dab_return_1506",
       "label": "ABACUS #1506 combined-main census return",
-      "type": "evidence",
-      "state": "MEASURED_TYPED_RETURN",
-      "in_degree": 1,
-      "out_degree": 2,
-      "total_degree": 3
-    },
-    {
-      "id": "abacus_dab_return_1514",
-      "label": "ABACUS #1514 exact-head census return",
       "type": "evidence",
       "state": "MEASURED_TYPED_RETURN",
       "in_degree": 1,

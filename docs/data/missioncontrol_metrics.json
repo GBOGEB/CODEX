@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1",
-  "snapshot_at": "2026-10-02T08:26:00Z",
+  "snapshot_at": "2026-10-02T13:30:00Z",
   "evidence_policy": "MEASURED_OR_WITHHELD",
   "graph": {
-    "node_count": 76,
-    "edge_count": 116,
-    "density": 0.020351,
-    "link_coverage_pct": 59.21,
-    "proof_edge_count": 27,
+    "node_count": 77,
+    "edge_count": 120,
+    "density": 0.020506,
+    "link_coverage_pct": 59.74,
+    "proof_edge_count": 29,
     "block_edge_count": 3
   },
   "projections": {
@@ -16,12 +16,12 @@
       "edges": 17
     },
     "control": {
-      "nodes": 57,
-      "edges": 90
+      "nodes": 58,
+      "edges": 94
     },
     "observability": {
-      "nodes": 59,
-      "edges": 94
+      "nodes": 60,
+      "edges": 98
     }
   },
   "nodes": {
@@ -42,8 +42,12 @@
         "status": "WITHHELD"
       },
       "logs": {
-        "status": "WITHHELD",
-        "reason": "dynamic workflow-log ingestion is next slice"
+        "status": "MEASURED",
+        "expected_required_logs": 1,
+        "parsed_required_logs": 1,
+        "passed": 1,
+        "failed": 0,
+        "health_pct": 100
       },
       "docking": {
         "status": "DERIVED_FROM_MEASURED",
@@ -145,7 +149,12 @@
         "status": "WITHHELD"
       },
       "logs": {
-        "status": "WITHHELD"
+        "status": "MEASURED",
+        "expected_required_logs": 1,
+        "parsed_required_logs": 1,
+        "passed": 1,
+        "failed": 0,
+        "health_pct": 100
       },
       "docking": {
         "status": "WITHHELD"
@@ -155,15 +164,15 @@
       },
       "mechanical_progress": {
         "status": "MEASURED",
-        "slice": "post-#1647 current-main census",
+        "slice": "post-#1666 lint-bearing main census",
         "removed_w293": 119,
         "prior_measured_residual_w293": 119,
         "residual_w293": 0,
-        "residual_status": "MEASURED_POST_1645_MAIN",
-        "repository_total_flake8": 3279,
-        "evidence_job": "ABACUS job 110751227472",
-        "evidence_run": 36979711277,
-        "evidence_pr": "#1647",
+        "residual_status": "MEASURED_POST_1666_LINT_BEARING_MAIN",
+        "repository_total_flake8": 3145,
+        "evidence_job": "ABACUS job 110789899967",
+        "evidence_run": 36991932972,
+        "evidence_pr": "#1666 post-merge lint-bearing main",
         "supporting_prs": [
           "#1629",
           "#1630",
@@ -173,8 +182,8 @@
           "#1634",
           "#1635"
         ],
-        "artifact_id": 11215450664,
-        "artifact_sha256": "a2bb5b64c30227d7d84143451b58e31b774ff33c296e340956bdae331ae665c1"
+        "artifact_id": 11220348843,
+        "artifact_sha256": "8e25570f8f25513b163042c198388333f48b3ab8e709199e61c80c683b74e4e1"
       },
       "code_health": {
         "status": "WITHHELD",
@@ -191,7 +200,12 @@
         "status": "WITHHELD"
       },
       "logs": {
-        "status": "WITHHELD"
+        "status": "MEASURED",
+        "expected_required_logs": 1,
+        "parsed_required_logs": 1,
+        "passed": 1,
+        "failed": 0,
+        "health_pct": 100
       },
       "docking": {
         "status": "WITHHELD"
@@ -208,10 +222,10 @@
           "status": "MEASURED",
           "delta_from_baseline": -5,
           "state": "SOURCE_BOUND_HOLD",
-          "evidence_job": "ABACUS job 110751227472",
+          "evidence_job": "ABACUS job 110789899967",
           "note": "sole remaining E999 is source-bound: qplant/w52_p2m_ts_pressure_sensitivity.py",
-          "measurement_pr": "#1647",
-          "measurement_job": "ABACUS job 110751227472"
+          "measurement_pr": "#1666 post-merge lint-bearing main",
+          "measurement_job": "ABACUS job 110789899967"
         },
         {
           "family": "F821",
@@ -222,9 +236,9 @@
           "delta_from_baseline": -15,
           "state": "CLOSED",
           "evidence_pr": "#1491",
-          "evidence_job": "ABACUS job 110751227472",
-          "measurement_pr": "#1647",
-          "measurement_job": "ABACUS job 110751227472"
+          "evidence_job": "ABACUS job 110789899967",
+          "measurement_pr": "#1666 post-merge lint-bearing main",
+          "measurement_job": "ABACUS job 110789899967"
         },
         {
           "family": "F601",
@@ -235,9 +249,9 @@
           "delta_from_baseline": -2,
           "state": "CLOSED",
           "evidence_pr": "#1493",
-          "evidence_job": "ABACUS job 110751227472",
-          "measurement_pr": "#1647",
-          "measurement_job": "ABACUS job 110751227472"
+          "evidence_job": "ABACUS job 110789899967",
+          "measurement_pr": "#1666 post-merge lint-bearing main",
+          "measurement_job": "ABACUS job 110789899967"
         },
         {
           "family": "F811",
@@ -248,9 +262,9 @@
           "delta_from_baseline": -16,
           "state": "CLOSED",
           "evidence_pr": "#1496",
-          "evidence_job": "ABACUS job 110751227472",
-          "measurement_pr": "#1647",
-          "measurement_job": "ABACUS job 110751227472"
+          "evidence_job": "ABACUS job 110789899967",
+          "measurement_pr": "#1666 post-merge lint-bearing main",
+          "measurement_job": "ABACUS job 110789899967"
         },
         {
           "family": "E731",
@@ -261,34 +275,34 @@
           "delta_from_baseline": -2,
           "state": "CLOSED",
           "evidence_pr": "#1497",
-          "evidence_job": "ABACUS job 110751227472",
-          "measurement_pr": "#1647",
-          "measurement_job": "ABACUS job 110751227472"
+          "evidence_job": "ABACUS job 110789899967",
+          "measurement_pr": "#1666 post-merge lint-bearing main",
+          "measurement_job": "ABACUS job 110789899967"
         },
         {
           "family": "E722",
           "baseline": 18,
-          "measured_postmerge": 12,
+          "measured_postmerge": 0,
           "status": "MEASURED",
-          "delta_from_baseline": -6,
-          "state": "MEASURED_RESIDUAL",
+          "delta_from_baseline": -18,
+          "state": "CLOSED",
           "evidence_pr": "#1519",
-          "evidence_job": "ABACUS job 110751227472",
-          "measurement_pr": "#1647",
-          "measurement_job": "ABACUS job 110751227472"
+          "evidence_job": "ABACUS job 110789899967",
+          "measurement_pr": "#1666 post-merge lint-bearing main",
+          "measurement_job": "ABACUS job 110789899967"
         },
         {
           "family": "E741",
           "baseline": 22,
           "target": 22,
-          "measured_postmerge": 9,
+          "measured_postmerge": 0,
           "status": "MEASURED",
-          "delta_from_baseline": -13,
-          "state": "MEASURED_RESIDUAL",
+          "delta_from_baseline": -22,
+          "state": "CLOSED",
           "evidence_pr": "#1519",
-          "evidence_job": "ABACUS job 110751227472",
-          "measurement_pr": "#1647",
-          "measurement_job": "ABACUS job 110751227472"
+          "evidence_job": "ABACUS job 110789899967",
+          "measurement_pr": "#1666 post-merge lint-bearing main",
+          "measurement_job": "ABACUS job 110789899967"
         },
         {
           "family": "F841",
@@ -297,9 +311,9 @@
           "status": "MEASURED",
           "delta_from_baseline": -77,
           "state": "CLOSED",
-          "evidence_job": "ABACUS job 110751227472",
-          "measurement_pr": "#1647",
-          "measurement_job": "ABACUS job 110751227472"
+          "evidence_job": "ABACUS job 110789899967",
+          "measurement_pr": "#1666 post-merge lint-bearing main",
+          "measurement_job": "ABACUS job 110789899967"
         }
       ],
       "code_health": {
@@ -316,7 +330,7 @@
       "dmaic": {
         "status": "DERIVED_FROM_MEASURED",
         "phase": "CONTROL",
-        "basis": "#1647 remains latest measured main census; live #1655 head has GREEN matrix but queued DAB census"
+        "basis": "3,145 measured DAB baseline; live main advanced through #1692; fresh DAB required; one bounded remote first-red candidate #1693"
       },
       "logs": {
         "status": "WITHHELD"
@@ -328,7 +342,7 @@
         "status": "WITHHELD"
       },
       "campaign": {
-        "status": "G2_MEASURED_3279_LIVE_1655_UNMEASURED_CENSUS_QUEUED",
+        "status": "G2_MEASURED_3145_LIVE_1692_FRESH_DAB_REQUIRED",
         "campaign_id": "ABACUS-DAB-BD8K",
         "dispatch_status": "WAVE2_COMPLETE",
         "planning_probe": {
@@ -359,12 +373,13 @@
           "promotion_authority": false
         },
         "first_red": {
-          "state": "NO_COMPLETED_MATERIAL_RED_ON_LIVE_1655_YET",
-          "current_head": "391d23f2442b5fbc0a6dd369166464147e213acb",
-          "ci_matrix_run": 36983104069,
-          "ci_matrix_state": "GREEN",
-          "dab_run": 36983104307,
-          "dab_state": "QUEUED"
+          "state": "CURRENT_REMOTE_FIRST_RED_PR1693_ACTIVE",
+          "current_head": "f42f161a08c29d324ca0a72a43999011721c7b4f",
+          "pr": 1693,
+          "class": "CI_GOVERNANCE_GENERATED_DRIFT",
+          "source_run": 37012236463,
+          "scope": "one generated Markdown command-rendering backslash correction",
+          "missioncontrol_promotion": "WITHHELD_PENDING_CODEX_EXACT_HEAD_PROOF"
         },
         "targeted_findings": 4546,
         "planning_projected_total": null,
@@ -413,41 +428,31 @@
         "admission_protocol": "WORKER_PATCH -> FAST_DAB -> FULL_CI -> MERGE -> POST_MERGE_DAB -> REGENERATE_QUEUE",
         "promotion_rule": "POST_MERGE_MEASURED_MAIN_ONLY",
         "measured_post_merge": {
-          "measured_sha": "930916b18647c78d1e143038202f37a6df3e1a04",
-          "current_abacus_head": "7c218e9d356bfbaf2e8c067e1e53136530323a2f",
-          "census_run": 36979711277,
-          "census_job": 110751227472,
-          "artifact_id": 11215450664,
-          "artifact_sha256": "a2bb5b64c30227d7d84143451b58e31b774ff33c296e340956bdae331ae665c1",
-          "total": 3279,
+          "measured_sha": "090f2a2b90794b6fdcee64affa3ca39a53d0061a",
+          "current_abacus_head": "f42f161a08c29d324ca0a72a43999011721c7b4f",
+          "census_run": 36991932972,
+          "census_job": 110789899967,
+          "artifact_id": 11220348843,
+          "artifact_sha256": "8e25570f8f25513b163042c198388333f48b3ab8e709199e61c80c683b74e4e1",
+          "total": 3145,
           "baseline_total": 7909,
-          "reduction": 4630,
-          "reduction_pct": 58.54,
+          "reduction": 4764,
+          "reduction_pct": 60.24,
           "families": {
-            "E225": 21,
-            "E231": 38,
-            "E302": 255,
-            "E402": 623,
-            "E501": 937,
-            "E702": 99,
-            "E722": 12,
+            "E722": 0,
             "E731": 0,
-            "E741": 9,
+            "E741": 0,
             "E999": 1,
-            "F401": 336,
-            "F541": 315,
             "F601": 0,
             "F811": 0,
             "F821": 0,
             "F841": 0,
-            "W292": 11,
-            "W293": 0,
-            "W391": 8
+            "W293": 0
           }
         },
-        "measured_reduction": 4630,
-        "measured_reduction_pct": 58.54,
-        "dmaic_note": "Latest measured DAB remains #1647 at 3279. Later merged #1650/#1651/#1652/#1653/#1654/#1655 are live but unmeasured; current-main DAB run 36983104307 is queued.",
+        "measured_reduction": 4764,
+        "measured_reduction_pct": 60.24,
+        "dmaic_note": "Latest completed authoritative DAB baseline is 3,145 at 090f2a2b. #1687 exact-head DAB proved 3,143 and merged; #1688/#1689 and tests-only coverage recovery #1692 then advanced main. Fresh current-main DAB is required before another lint-family promotion. Current first material remote red is #1693 generated governance-doc drift.",
         "wave1_measured": {
           "measured_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
           "current_abacus_head": "aa6028278cb71cdadc9df1dfc97f3c2eee173f58",
@@ -479,17 +484,17 @@
           }
         },
         "pending_live_main": {
-          "head_sha": "391d23f2442b5fbc0a6dd369166464147e213acb",
-          "merged_prs": [
-            1650,
-            1653,
-            1652,
-            1651,
-            1654,
-            1655
+          "head_sha": "f42f161a08c29d324ca0a72a43999011721c7b4f",
+          "subsequent_merged_prs": [
+            1687,
+            1688,
+            1689,
+            1692
           ],
-          "census_run": 36983104307,
-          "state": "QUEUED",
+          "fresh_main_dab_required": true,
+          "current_first_red_pr": 1693,
+          "current_first_red_class": "CI_GOVERNANCE_GENERATED_DRIFT",
+          "missioncontrol_promotion": "WITHHELD_PENDING_CODEX_EXACT_HEAD_PROOF",
           "promotion_authority": false
         }
       },
@@ -596,32 +601,27 @@
   },
   "latest_remote_return": {
     "source": "GBOGEB/ABACUS",
-    "source_sha": "930916b18647c78d1e143038202f37a6df3e1a04",
-    "current_source_sha": "391d23f2442b5fbc0a6dd369166464147e213acb",
-    "evidence": "mission_control/mycelium/evidence/abacus_dab_post_1647_main_measured.json",
-    "status": "MEASURED_POST_1645_MAIN",
-    "census_run": 36979711277,
-    "census_job": 110751227472,
-    "artifact_id": 11215450664,
-    "total": 3279,
+    "source_sha": "090f2a2b90794b6fdcee64affa3ca39a53d0061a",
+    "current_source_sha": "f42f161a08c29d324ca0a72a43999011721c7b4f",
+    "evidence": "mission_control/mycelium/evidence/abacus_dab_1666_to_1693_control_return.json",
+    "status": "MEASURED_POST_1666_LINT_BEARING_MAIN",
+    "census_run": 36991932972,
+    "census_job": 110789899967,
+    "artifact_id": 11220348843,
+    "total": 3145,
     "E999": 1,
     "F821": 0,
     "F601": 0,
     "F811": 0,
     "F841": 0,
-    "E722": 12,
+    "E722": 0,
     "E731": 0,
-    "E741": 9,
+    "E741": 0,
     "W293": 0,
     "active_unmeasured": {
-      "pr": 1650,
-      "family": "E722",
-      "expected_only": 0
-    },
-    "pending_main_census": {
-      "run": 36983104307,
-      "head_sha": "391d23f2442b5fbc0a6dd369166464147e213acb",
-      "state": "QUEUED"
+      "pr": 1693,
+      "family": "CI_GOVERNANCE_GENERATED_DRIFT",
+      "expected_only": "one generated Markdown command-rendering backslash correction"
     }
   }
 }
