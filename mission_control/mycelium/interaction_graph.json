@@ -1,6 +1,6 @@
 {
   "schema_version": "0.4",
-  "snapshot_at": "2026-10-02T13:39:00Z",
+  "snapshot_at": "2026-10-02T13:39:16Z",
   "surface_id": "MISSIONCONTROL_MYCELIUM",
   "nodes": [
     {
@@ -24,7 +24,7 @@
       "id": "repo_abacus",
       "type": "repo",
       "label": "GBOGEB/ABACUS",
-      "state": "REMOTE_EXECUTION_CURRENT_POST_1694_CENSUS_RUNNING",
+      "state": "REMOTE_EXECUTION_CURRENT_MEASURED_POST_1694",
       "url": "https://github.com/GBOGEB/ABACUS",
       "meta": {
         "sha": "9e7363a68c2b507158dfbd32cf211c08b749da02",
@@ -34,15 +34,15 @@
         ],
         "latest_census_pr_head": "930916b18647c78d1e143038202f37a6df3e1a04",
         "latest_census_merge_sha": "930916b18647c78d1e143038202f37a6df3e1a04",
-        "observed_at": "2026-10-02T13:39:00Z",
-        "freshness_status": "POST_1694_DAB_IN_PROGRESS_1695_WORKFLOW_ONLY",
-        "latest_census_pr": 1692,
-        "latest_census_job": 110855413761,
-        "latest_census_head": "f42f161a08c29d324ca0a72a43999011721c7b4f",
-        "latest_measured_return_sha": "f42f161a08c29d324ca0a72a43999011721c7b4f",
-        "pending_census_run": 37013787888,
-        "completed_census_run": 37012517139,
-        "current_head_measurement_status": "POST_1694_CURRENT_MAIN_DAB_IN_PROGRESS"
+        "observed_at": "2026-10-02T13:39:16Z",
+        "freshness_status": "CURRENT_LINT_AUTHORITY_MEASURED_POST_1694_1695_WORKFLOW_ONLY",
+        "latest_census_pr": 1694,
+        "latest_census_job": 110859584236,
+        "latest_census_head": "7db0f4662833647d0bead4faac1f31a4bfb1b9d2",
+        "latest_measured_return_sha": "7db0f4662833647d0bead4faac1f31a4bfb1b9d2",
+        "pending_census_run": null,
+        "completed_census_run": 37013787888,
+        "current_head_measurement_status": "MEASURED_LINT_AUTHORITY"
       }
     },
     {
@@ -77,24 +77,24 @@
           "observability"
         ],
         "latest_measured_W293": 0,
-        "evidence_job": 110855413761,
-        "measurement_pr": 1692,
+        "evidence_job": 110859584236,
+        "measurement_pr": 1694,
         "pending_merged_pr": null,
         "pending_expected_W293": null,
-        "pending_census_run": 37013787888
+        "pending_census_run": null
       }
     },
     {
       "id": "dab_hard",
       "type": "queue",
       "label": "DAB-HARD",
-      "state": "MEASURED_PROTECTED_ZERO_E999_1_POST1694_CENSUS_RUNNING",
+      "state": "MEASURED_PROTECTED_ZERO_E999_1_E302_PROMOTED",
       "meta": {
         "views": [
           "control",
           "observability"
         ],
-        "latest_measured_total": 3139,
+        "latest_measured_total": 3135,
         "E999": 1,
         "F821": 0,
         "F601": 0,
@@ -104,12 +104,12 @@
         "E731": 0,
         "E741": 0,
         "active_pr": null,
-        "evidence_job": 110855413761,
-        "measurement_pr": 1692,
+        "evidence_job": 110859584236,
+        "measurement_pr": 1694,
         "W293": 0,
         "live_head": "9e7363a68c2b507158dfbd32cf211c08b749da02",
         "newer_unmeasured_prs": [],
-        "pending_census_run": 37013787888,
+        "pending_census_run": null,
         "measured_delta": {
           "E302": 1,
           "E303": 1,
@@ -122,12 +122,16 @@
           "total": 3143,
           "result": "GREEN"
         },
-        "missioncontrol_promotion": "WITHHELD_PENDING_COMPLETED_POST_1694_DAB",
+        "missioncontrol_promotion": "PROMOTED_SINGLE_MEASURED_RESIDUAL",
         "subsequent_merged_prs": [
           1694,
           1695
         ],
-        "current_first_red": null
+        "current_first_red": {
+          "family": "E302",
+          "measured_count": 151,
+          "state": "PROMOTED_SINGLE_MEASURED_RESIDUAL"
+        }
       }
     },
     {
@@ -1104,7 +1108,7 @@
       "id": "dab_bd8k",
       "type": "queue",
       "label": "DAB-BD8K",
-      "state": "G2_MEASURED_3139_POST1694_CENSUS_RUNNING",
+      "state": "G2_MEASURED_3135_E302_SINGLE_PROMOTION",
       "meta": {
         "views": [
           "control",
@@ -1192,21 +1196,22 @@
         "G1": "PASS_MEASURED",
         "G2": "PASS_MEASURED",
         "measured_post_merge": {
-          "measured_sha": "f42f161a08c29d324ca0a72a43999011721c7b4f",
+          "measured_sha": "7db0f4662833647d0bead4faac1f31a4bfb1b9d2",
           "current_abacus_head": "9e7363a68c2b507158dfbd32cf211c08b749da02",
-          "census_run": 37012517139,
-          "census_job": 110855413761,
-          "artifact_id": 11229005522,
-          "artifact_sha256": "bded48957c664593950c9ce0731c488a78f195128545a1bcb2594169855b8b63",
-          "total": 3139
+          "census_run": 37013787888,
+          "census_job": 110859584236,
+          "artifact_id": 11229336343,
+          "artifact_sha256": "1d78ad49b1f9079e6f55b34880507b0bbabb6af32a1695f799dcfb35d6375f49",
+          "total": 3135
         },
         "G3": "PENDING",
         "pending_live_main": {
           "head_sha": "9e7363a68c2b507158dfbd32cf211c08b749da02",
-          "latest_lint_bearing_merge_sha": "7db0f4662833647d0bead4faac1f31a4bfb1b9d2",
-          "post_merge_dab_run": 37013787888,
-          "post_merge_dab_state": "IN_PROGRESS",
-          "promotion_authority": false
+          "lint_population_changed_since_census": false,
+          "promotion_authority": true,
+          "promoted_family": "E302",
+          "promoted_count": 151,
+          "no_second_residual": true
         }
       }
     },
@@ -1325,18 +1330,18 @@
     {
       "id": "abacus_dab_return_1666",
       "type": "evidence",
-      "label": "ABACUS latest measured DAB return with post-1694 hold",
-      "state": "MEASURED_TYPED_RETURN_WITH_LIVE_HOLD",
-      "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/evidence/abacus_dab_1692_to_1695_pending_main.json",
+      "label": "ABACUS post-#1694 measured DAB return",
+      "state": "MEASURED_TYPED_RETURN",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/evidence/abacus_dab_post_1694_measured_e302_promoted.json",
       "meta": {
         "source_repo": "GBOGEB/ABACUS",
-        "source_sha": "f42f161a08c29d324ca0a72a43999011721c7b4f",
+        "source_sha": "7db0f4662833647d0bead4faac1f31a4bfb1b9d2",
         "current_source_sha": "9e7363a68c2b507158dfbd32cf211c08b749da02",
-        "workflow_run": 37012517139,
-        "job": 110855413761,
-        "artifact_id": 11229005522,
-        "artifact_sha256": "bded48957c664593950c9ce0731c488a78f195128545a1bcb2594169855b8b63",
-        "total": 3139,
+        "workflow_run": 37013787888,
+        "job": 110859584236,
+        "artifact_id": 11229336343,
+        "artifact_sha256": "1d78ad49b1f9079e6f55b34880507b0bbabb6af32a1695f799dcfb35d6375f49",
+        "total": 3135,
         "views": [
           "control",
           "observability"
@@ -1347,7 +1352,9 @@
         ],
         "current_first_red_pr": 1693,
         "fresh_current_main_dab_required": true,
-        "pending_current_main_dab": 37013787888
+        "pending_current_main_dab": 37013787888,
+        "promoted_family": "E302",
+        "promoted_count": 151
       }
     }
   ],
