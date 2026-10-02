@@ -1,0 +1,124 @@
+{
+  "schema_version": "0.1",
+  "evidence_type": "ABACUS_DAB_POST_BD8K_WORKER_WAVE_MEASURED",
+  "observed_at": "2026-10-01T18:56:00Z",
+  "source_repo": "GBOGEB/ABACUS",
+  "source_ref": "main",
+  "source_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+  "current_source_sha": "5bac9f70cf6114dbde6e9f6f8317eb71425b88b4",
+  "measurement_scope": "POST_1596_1599_MERGED_MAIN_LAST_PYTHON_CHANGING_HEAD",
+  "workflow": {
+    "name": "DAB Flake8 Census",
+    "run": 36908967216,
+    "job": 110526569316,
+    "conclusion": "success",
+    "executed_steps_gt_zero": true,
+    "receipt_verification": "PASS",
+    "artifact_id": 11185734037,
+    "artifact_name": "dab-flake8-census",
+    "artifact_sha256": "b48a068fa140bc74f0a36578e7790c83ec6462321713386a62969f1762f34cb1"
+  },
+  "census": {
+    "total": 5916,
+    "families": {
+      "E225": 628,
+      "E231": 1452,
+      "E302": 332,
+      "E402": 622,
+      "E501": 949,
+      "E702": 294,
+      "E722": 16,
+      "E731": 0,
+      "E741": 9,
+      "E999": 1,
+      "F401": 336,
+      "F541": 315,
+      "F601": 0,
+      "F811": 0,
+      "F821": 0,
+      "F841": 40,
+      "W293": 119
+    }
+  },
+  "worker_wave": {
+    "campaign_id": "ABACUS-DAB-BD8K",
+    "all_merged": true,
+    "targeted_findings": 404,
+    "workers": [
+      {
+        "role": "MECH-A",
+        "pr": 1596,
+        "merge_sha": "4fb9457e1dda9af32ea9024367b07bb7cb46e4ee"
+      },
+      {
+        "role": "MECH-B",
+        "pr": 1597,
+        "merge_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9"
+      },
+      {
+        "role": "SEMANTIC-A",
+        "pr": 1598,
+        "merge_sha": "c28acb27291a7a0dc43ce90e9d095d93542ea9d9"
+      },
+      {
+        "role": "SEMANTIC-B",
+        "pr": 1599,
+        "merge_sha": "f5b96dd86500e8c65741bb672cb9dfaf6ee95198"
+      }
+    ]
+  },
+  "gates": {
+    "G0": "PASS",
+    "G1": "PASS_MEASURED_CURRENT_MAIN",
+    "G2": "PENDING",
+    "G3": "PENDING",
+    "G4": "PENDING",
+    "G5": "PENDING",
+    "G6": "PENDING"
+  },
+  "protected_families": {
+    "F821": 0,
+    "F601": 0,
+    "F811": 0,
+    "E731": 0,
+    "regression": false
+  },
+  "source_bound_hold": {
+    "family": "E999",
+    "count": 1,
+    "path": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+    "state": "SOURCE_BOUND_HOLD"
+  },
+  "next_wave_candidates": [
+    {
+      "id": "MECH-C",
+      "family": "E231",
+      "path": "MINERVA_PID/generator/build_dissection_pptx.py",
+      "measured_count": 211
+    },
+    {
+      "id": "MECH-D",
+      "family": "E231",
+      "path": "tools/w66_id_burndown_measure.py",
+      "measured_count": 148
+    },
+    {
+      "id": "SEM-C",
+      "family": "E501",
+      "path": "qplant/handover_dashboard/src/build_dense_slides.py",
+      "measured_count": 128
+    },
+    {
+      "id": "SEM-D",
+      "family": "E402",
+      "path": "DMAIC_V3/temporal_phase_runner.py",
+      "measured_count": 19
+    }
+  ],
+  "governance": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "mutation_enabled": false
+  }
+}
