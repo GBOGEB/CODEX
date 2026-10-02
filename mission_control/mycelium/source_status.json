@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-10-02T13:54:00Z",
+  "generated_at": "2026-10-02T13:57:32Z",
   "public_metadata_only": true,
   "authority_transfer": false,
   "sources": [
@@ -10,7 +10,7 @@
       "authority_class": "LOCAL_AUTHORITATIVE",
       "role": "ORCHESTRATION_UI_GOVERNANCE",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-02T13:54:00Z",
+      "observed_at": "2026-10-02T13:57:32Z",
       "head_sha": "cc9391fa0b9a904c2a329c5dfda0035ec2344bec",
       "measurement_basis": "exact live CODEX main after #925 merge plus metrics-only bot update"
     },
@@ -20,8 +20,8 @@
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "EXECUTION_DOW",
       "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-02T13:39:16Z",
-      "head_sha": "9e7363a68c2b507158dfbd32cf211c08b749da02",
+      "observed_at": "2026-10-02T13:57:32Z",
+      "head_sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
       "census_pr": 1694,
       "census_head_sha": "7db0f4662833647d0bead4faac1f31a4bfb1b9d2",
       "census_merge_sha": "7db0f4662833647d0bead4faac1f31a4bfb1b9d2",
@@ -29,7 +29,7 @@
       "census_job": 110859584236,
       "census_artifact_id": 11229336343,
       "census_artifact_sha256": "1d78ad49b1f9079e6f55b34880507b0bbabb6af32a1695f799dcfb35d6375f49",
-      "measurement_basis": "completed post-#1694 current-main DAB: total 3135 at merge 7db0f466; current main 9e7363a is #1695 workflow-only and does not change the Flake8 population",
+      "measurement_basis": "post-#1694 measured E302 residual consumed by merged #1696 and #1697; current-main DAB 37016094260 is executing on exact main 02c21964; no second residual is promoted before this recensus completes",
       "census_total": 3135,
       "w293_postmerge_status": "MEASURED_POST_1694_MAIN",
       "E741": 0,
@@ -51,25 +51,14 @@
       },
       "measured_return_source_sha": "7db0f4662833647d0bead4faac1f31a4bfb1b9d2",
       "live_head_after_measurement": {
-        "sha": "9e7363a68c2b507158dfbd32cf211c08b749da02",
-        "latest_lint_bearing_merge_sha": "7db0f4662833647d0bead4faac1f31a4bfb1b9d2",
-        "status": "CURRENT_LINT_AUTHORITY_MEASURED_POST_1694_1695_WORKFLOW_ONLY",
-        "latest_known_merge_pr": 1695,
-        "lint_population_changed_since_census": false,
-        "fresh_main_census_required": false
+        "sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
+        "status": "CURRENT_MAIN_DAB_IN_PROGRESS_AFTER_E302_CONSUMPTION",
+        "latest_known_merge_pr": 1697,
+        "fresh_main_census_required": true,
+        "pending_dab_run": 37016094260,
+        "pending_dab_state": "IN_PROGRESS"
       },
-      "pending_independent_lanes": [
-        {
-          "family": "E302",
-          "measured_count": 151,
-          "state": "PROMOTED_SINGLE_MEASURED_RESIDUAL",
-          "source_run": 37013787888,
-          "source_sha": "7db0f4662833647d0bead4faac1f31a4bfb1b9d2",
-          "promotion_authority": true,
-          "pr": null,
-          "expected_only": 151
-        }
-      ],
+      "pending_independent_lanes": [],
       "completed_latest_lane": {
         "pr": 1647,
         "family": "DAB_G3_CURRENT_MAIN",
@@ -99,12 +88,10 @@
         "merge_sha": "930916b18647c78d1e143038202f37a6df3e1a04"
       },
       "reverse_pressure_next": {
-        "status": "ONE_MEASURED_RESIDUAL_PROMOTED",
+        "status": "HOLD_PENDING_POST_1697_CURRENT_MAIN_DAB",
         "campaign_id": "ABACUS-DAB-BD8K",
-        "family": "E302",
-        "measured_count": 151,
-        "source_run": 37013787888,
-        "promotion_rule": "NO_SECOND_RESIDUAL_UNTIL_THIS_PROMOTION_IS_CONSUMED_AND_RECENSUSED"
+        "pending_run": 37016094260,
+        "promotion_rule": "NO_SECOND_RESIDUAL_UNTIL_COMPLETED_CURRENT_MAIN_CENSUS"
       },
       "planning_probe": {
         "source_pr": 1592,
@@ -231,6 +218,31 @@
           "merge_sha": "9e7363a68c2b507158dfbd32cf211c08b749da02",
           "scope": "workflow fail-closed hardening",
           "lint_population_changed": false
+        },
+        "pr1696": {
+          "state": "MERGED",
+          "merge_sha": "805506c7edc2178c83c76f7e682de9533ff58783",
+          "family": "E302",
+          "file": "tests/test_integration_patch.py",
+          "findings": 3,
+          "post_merge_dab_run": 37016049190,
+          "post_merge_artifact_id": 11230306318,
+          "post_merge_artifact_sha256": "0e1c169ee311c54d505104b646eafeb408ba17125b27e2fc39a6b34bc01bf68d"
+        },
+        "pr1697": {
+          "state": "MERGED",
+          "merge_sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
+          "family": "E302",
+          "file": "tests/test_w81_repair_outcome_block.py",
+          "findings": 3,
+          "exact_head_dab_run": 37016084631,
+          "exact_head_artifact_id": 11230207193,
+          "exact_head_artifact_sha256": "2a05244a66936d89f2db263dc723932d9b8aa18adb8fd5e8da1dac4adbb10995"
+        },
+        "current_main_recensus": {
+          "run": 37016094260,
+          "state": "IN_PROGRESS",
+          "head_sha": "02c21964012a3d13ad2c639f5143f4cee48f518a"
         }
       }
     },
