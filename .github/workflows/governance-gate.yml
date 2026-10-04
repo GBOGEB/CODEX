@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@v4
         with:
@@ -24,11 +25,26 @@ jobs:
       - name: Run governance parser on PR metadata
         if: github.event_name == 'pull_request'
         env:
-          PR_BODY: ${{ github.event.pull_request.body }}
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          EVENT_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          EVENT_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
+          set -euo pipefail
           follow_up_path="federation_runtime/.github/W003_PR_FOLLOW_UP.md"
+          PR_JSON="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}")"
+          PR_BODY="$(printf '%s' "$PR_JSON" | jq -r '.body // ""')"
+          BASE_SHA="$(printf '%s' "$PR_JSON" | jq -r '.base.sha')"
+          HEAD_SHA="$(printf '%s' "$PR_JSON" | jq -r '.head.sha')"
+          test "$HEAD_SHA" = "$EVENT_HEAD_SHA" || {
+            echo "[PR-007][ERROR] Stale workflow event head: event=${EVENT_HEAD_SHA} live=${HEAD_SHA}" >&2
+            exit 1
+          }
+          test "$BASE_SHA" = "$EVENT_BASE_SHA" || {
+            echo "[PR-007][ERROR] Stale workflow event base: event=${EVENT_BASE_SHA} live=${BASE_SHA}" >&2
+            exit 1
+          }
+          export PR_BODY BASE_SHA HEAD_SHA
           if python - <<'PY'
           import os
           import re
