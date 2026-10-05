@@ -973,6 +973,174 @@ nodes:
     project_outcome: false
     recursive_control_effect: false
 
+  - id: ssot_authority_registry_source
+    type: YAML_CONFIG
+    repository: GBOGEB/CODEX
+    path: ssot/registry/authority_registry.yaml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: cec5d1127ccb54d4c9169fe549585f287d1ec461
+    purpose: Provide declared local and remote logical authority bindings without promoting inferred census classifications.
+    inputs: [governed_ssot_manifest]
+    outputs: [declared_logical_id_bindings]
+    execution_surface: CI
+    test_proof_evidence: [run_37308033972_job_111756355470]
+    value_evidence: [artifact_11345045172]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_AUTHORITATIVE
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: ssot_candidate_census_runtime
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/census_ssot_candidates.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: cec5d1127ccb54d4c9169fe549585f287d1ec461
+    purpose: Inventory and classify SSOT candidates as evidence while preserving the rule that classification does not establish authority.
+    inputs: [declared_logical_id_bindings, repository_files]
+    outputs: [ssot_candidate_census]
+    execution_surface: CI Census and bind SSOT candidates
+    test_proof_evidence: [run_37308033972_job_111756355470]
+    value_evidence: [artifact_11345045172]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: ci_ssot_census_execution
+    type: WORKFLOW_JOB
+    repository: GBOGEB/CODEX
+    path: .github/workflows/ci.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: cec5d1127ccb54d4c9169fe549585f287d1ec461
+    purpose: Execute the census, binding, runtime-consumer mapping, and JSON validation sequence inside hosted CI.
+    inputs: [ssot_candidate_census]
+    outputs: [hosted_ssot_census_execution]
+    execution_surface: CI step Census and bind SSOT candidates
+    test_proof_evidence: [run_37308033972_job_111756355470]
+    value_evidence: [artifact_11345045172]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: ssot_candidate_census_outcome
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: reports/codex_2_0_ssot_candidate_census.json
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: cec5d1127ccb54d4c9169fe549585f287d1ec461
+    purpose: Persist the SSOT candidate census consumed by the declared logical-ID binder.
+    inputs: [hosted_ssot_census_execution]
+    outputs: [ssot_candidate_census]
+    execution_surface: CI governance artifacts
+    test_proof_evidence: [run_37308033972_job_111756355470]
+    value_evidence: [artifact_11345045172]
+    outcome_scope: REPOSITORY
+    current_state: CONSUMED_EVIDENCE
+    authority_class: DERIVED_PROJECTION_ONLY
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: ssot_logical_id_binder
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/bind_ssot_logical_ids.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: cec5d1127ccb54d4c9169fe549585f287d1ec461
+    purpose: Consume the candidate census and bind only declared authority-registry logical IDs without promoting inferred authority.
+    inputs: [ssot_candidate_census, declared_logical_id_bindings]
+    outputs: [ssot_bound_census]
+    execution_surface: CI Census and bind SSOT candidates
+    test_proof_evidence: [run_37308033972_job_111756355470]
+    value_evidence: [artifact_11345045172]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: ssot_bound_census_outcome
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: reports/codex_2_0_ssot_bound_census.json
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: cec5d1127ccb54d4c9169fe549585f287d1ec461
+    purpose: Persist declared logical-ID bindings for downstream runtime-consumer analysis.
+    inputs: [ssot_bound_census]
+    outputs: [bound_ssot_consumer_input]
+    execution_surface: CI governance artifacts
+    test_proof_evidence: [run_37308033972_job_111756355470]
+    value_evidence: [artifact_11345045172]
+    outcome_scope: REPOSITORY
+    current_state: CONSUMED_EVIDENCE
+    authority_class: DERIVED_PROJECTION_ONLY
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: ssot_runtime_consumer_mapper
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/map_runtime_consumers.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: cec5d1127ccb54d4c9169fe549585f287d1ec461
+    purpose: Consume the bound census and map runtime-family consumers as diagnostic evidence without establishing new authority.
+    inputs: [bound_ssot_consumer_input]
+    outputs: [runtime_consumer_map]
+    execution_surface: CI Census and bind SSOT candidates
+    test_proof_evidence: [run_37308033972_job_111756355470]
+    value_evidence: [artifact_11345045172]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: ssot_runtime_consumer_map_outcome
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: reports/codex_2_0_runtime_consumer_map.json
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: cec5d1127ccb54d4c9169fe549585f287d1ec461
+    purpose: Persist the runtime-consumer mapping consumed by the durable CI governance artifact publisher.
+    inputs: [runtime_consumer_map]
+    outputs: [runtime_consumer_control_evidence]
+    execution_surface: CI governance artifacts
+    test_proof_evidence: [run_37308033972_job_111756355470]
+    value_evidence: [artifact_11345045172]
+    outcome_scope: REPOSITORY
+    current_state: CONSUMED_EVIDENCE
+    authority_class: DERIVED_PROJECTION_ONLY
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
 edges:
   - {from: mc_control_manifest, to: mc_mycelium_workflow, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
   - {from: mc_mycelium_workflow, to: mc_integration_validator, type: TRIGGERED_BY, evidence: run_37281376763_job_111670015753}
@@ -1026,7 +1194,40 @@ edges:
   - {from: full_stack_lineage_gate_outcome, to: full_stack_bridge_audit_consumer, type: CONSUMES, evidence: needs_lineage_governance}
   - {from: full_stack_bridge_audit_consumer, to: full_stack_release_readiness_consumer, type: UPDATES, evidence: run_37307215598_job_111753902504}
 
+  - {from: ssot_authority_registry_source, to: ssot_candidate_census_runtime, type: CONFIGURES, evidence: run_37308033972_job_111756355470}
+  - {from: ssot_candidate_census_runtime, to: ci_ssot_census_execution, type: ROUTES, evidence: run_37308033972_job_111756355470}
+  - {from: ci_ssot_census_execution, to: ssot_candidate_census_outcome, type: PRODUCES, evidence: artifact_11345045172}
+  - {from: ssot_candidate_census_outcome, to: ssot_logical_id_binder, type: CONSUMES, evidence: reports/codex_2_0_ssot_candidate_census.json}
+  - {from: ssot_logical_id_binder, to: ssot_bound_census_outcome, type: PRODUCES, evidence: reports/codex_2_0_ssot_bound_census.json}
+  - {from: ssot_bound_census_outcome, to: ssot_runtime_consumer_mapper, type: CONSUMES, evidence: reports/codex_2_0_ssot_bound_census.json}
+  - {from: ssot_runtime_consumer_mapper, to: ssot_runtime_consumer_map_outcome, type: PRODUCES, evidence: reports/codex_2_0_runtime_consumer_map.json}
+  - {from: ssot_runtime_consumer_map_outcome, to: ci_governance_artifact_consumer, type: PUBLISHES, evidence: artifact_11345045172}
+
 integration_paths:
+  - id: ci_ssot_census_binding_repository_value
+    nodes:
+      - ssot_authority_registry_source
+      - ssot_candidate_census_runtime
+      - ci_ssot_census_execution
+      - ssot_candidate_census_outcome
+      - ssot_logical_id_binder
+      - ssot_bound_census_outcome
+      - ssot_runtime_consumer_mapper
+      - ssot_runtime_consumer_map_outcome
+      - ci_governance_artifact_consumer
+    roles:
+      - UPSTREAM_SOURCE
+      - EXECUTABLE_OR_CONFIG
+      - EXECUTION
+      - OUTPUT_OR_EVIDENCE
+      - DOWNSTREAM_CONSUMER
+      - DOWNSTREAM_CONSUMER
+      - DOWNSTREAM_CONSUMER
+      - DOWNSTREAM_CONSUMER
+      - DOWNSTREAM_CONSUMER
+    executed: true
+    evidence: [run_37308033972_job_111756355470, artifact_11345045172]
+
   - id: full_stack_abacus_export_repository_value
     nodes:
       - full_stack_governance_workflow
