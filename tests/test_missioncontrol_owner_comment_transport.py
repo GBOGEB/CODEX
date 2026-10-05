@@ -73,6 +73,8 @@ def test_owner_transport_concurrency_is_issue_scoped() -> None:
     assert "issues: write" in workflow
     assert "Publish authenticated receipt pointer" in workflow
     assert "MISSIONCONTROL_RUNTIME_RECEIPT" in workflow
+    assert "steps.gateway.outputs.artifact_paths" in workflow
+    assert "rex_event_path=${{ steps.gateway.outputs.rex_event_path }}" in workflow
 
 
 def test_unrelated_issue_comments_use_different_concurrency_groups() -> None:
