@@ -300,3 +300,23 @@ def test_hbhs_tuplebridge_bundle_repository_value_path_is_registered():
     assert workflow["value_scope"] == "V2_REPOSITORY_VALUE"
     assert "hbhs_tuplebridge_workflow" not in report["tested_orphans"]
     assert report["executed_integration_path_count"] >= 12
+
+
+def test_commit_metrics_repository_value_path_is_registered():
+    contract, registry, schema = loaded()
+    errors, report = validate_registry(contract, registry, schema)
+    assert errors == []
+    path = next(
+        p for p in registry["integration_paths"]
+        if p["id"] == "commit_metrics_repository_value"
+    )
+    assert path["executed"] is True
+    assert path["nodes"][-1] == "commit_metrics_repository_consumer"
+    workflow = next(
+        n for n in registry["nodes"]
+        if n["id"] == "commit_metrics_workflow"
+    )
+    assert workflow["current_state"] == "PIPELINE_INTEGRATED"
+    assert workflow["value_scope"] == "V2_REPOSITORY_VALUE"
+    assert "commit_metrics_workflow" not in report["tested_orphans"]
+    assert report["executed_integration_path_count"] >= 13
