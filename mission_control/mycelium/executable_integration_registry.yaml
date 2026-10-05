@@ -1246,6 +1246,111 @@ nodes:
     project_outcome: false
     recursive_control_effect: false
 
+  - id: hbhs_tuplebridge_docs_source
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: docs/hbhs-ep-v8.3-tuplebridge/index.html
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 3909ca698b70a178cac0ced4839803de7acfdc41
+    purpose: Provide the committed HBHS-EP TupleBridge docs subtree validated by the hosted publication workflow.
+    inputs: [repository_docs]
+    outputs: [hbhs_tuplebridge_docs]
+    execution_surface: HBHS-EP TupleBridge Pages
+    test_proof_evidence: [run_37311694847_job_111768401419]
+    value_evidence: [artifact_11346685630]
+    outcome_scope: REPOSITORY
+    current_state: SOURCE_BOUND
+    authority_class: LOCAL_AUTHORITATIVE
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: hbhs_tuplebridge_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/hbhs_ep_tuplebridge_pages.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 3909ca698b70a178cac0ced4839803de7acfdc41
+    purpose: Validate the HBHS workspace/docs subtree and publish a bounded topology bundle artifact.
+    inputs: [hbhs_tuplebridge_docs]
+    outputs: [hbhs_bundle_execution]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [run_37311694847_job_111768401419]
+    value_evidence: [artifact_11346685630]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: hbhs_tuplebridge_bundle_execution
+    type: WORKFLOW_JOB
+    repository: GBOGEB/CODEX
+    path: .github/workflows/hbhs_ep_tuplebridge_pages.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 3909ca698b70a178cac0ced4839803de7acfdc41
+    purpose: Execute workspace validation, docs checks, topology archive creation, and artifact upload.
+    inputs: [hbhs_bundle_execution]
+    outputs: [hbhs_bundle_artifact]
+    execution_surface: GitHub Actions job validate-and-publish
+    test_proof_evidence: [run_37311694847_job_111768401419]
+    value_evidence: [artifact_11346685630]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: hbhs_tuplebridge_bundle_proof
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/receipts/HBHS_EP_TUPLEBRIDGE_BUNDLE_MAIN_3909CA69_PROOF.json
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: b106569768ae4ebe4d4eac58eb129fc8c10e869b
+    purpose: Bind the exact-main HBHS workflow execution to the durable topology bundle artifact without claiming Pages deployment.
+    inputs: [hbhs_bundle_artifact]
+    outputs: [hbhs_repository_bundle_value]
+    execution_surface: MissionControl control plane
+    test_proof_evidence: [artifact_11346685630]
+    value_evidence: [run_37311694847_job_111768401419, artifact_11346685630]
+    outcome_scope: REPOSITORY
+    current_state: CONSUMED_EVIDENCE
+    authority_class: DERIVED_PROJECTION_ONLY
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: hbhs_tuplebridge_artifact_publisher
+    type: CONSUMER
+    repository: GBOGEB/CODEX
+    path: .github/workflows/hbhs_ep_tuplebridge_pages.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 3909ca698b70a178cac0ced4839803de7acfdc41
+    purpose: Publish the validated HBHS topology bundle as a durable repository workflow artifact.
+    inputs: [hbhs_repository_bundle_value]
+    outputs: [durable_hbhs_bundle]
+    execution_surface: GitHub Actions artifact publisher
+    test_proof_evidence: [run_37311694847_job_111768401419]
+    value_evidence: [artifact_11346685630]
+    outcome_scope: REPOSITORY
+    current_state: DOWNSTREAM_CONSUMER
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
 edges:
   - {from: mc_control_manifest, to: mc_mycelium_workflow, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
   - {from: mc_mycelium_workflow, to: mc_integration_validator, type: TRIGGERED_BY, evidence: run_37281376763_job_111670015753}
@@ -1313,7 +1418,28 @@ edges:
   - {from: qps_m03_official_mcp_execution, to: qps_m03_consumer_proof, type: PRODUCES, evidence: artifact_11344841972}
   - {from: qps_m03_consumer_proof, to: qps_m03_independent_consumer, type: CONSUMES, evidence: QPS_M03_OFFICIAL_MCP_CONSUMER_MAIN_06C9E563_PROOF}
 
+  - {from: hbhs_tuplebridge_docs_source, to: hbhs_tuplebridge_workflow, type: CONFIGURES, evidence: run_37311694847_job_111768401419}
+  - {from: hbhs_tuplebridge_workflow, to: hbhs_tuplebridge_bundle_execution, type: TRIGGERED_BY, evidence: run_37311694847_job_111768401419}
+  - {from: hbhs_tuplebridge_bundle_execution, to: hbhs_tuplebridge_bundle_proof, type: PRODUCES, evidence: artifact_11346685630}
+  - {from: hbhs_tuplebridge_bundle_proof, to: hbhs_tuplebridge_artifact_publisher, type: PUBLISHES, evidence: artifact_11346685630}
+
 integration_paths:
+  - id: hbhs_tuplebridge_bundle_repository_value
+    nodes:
+      - hbhs_tuplebridge_docs_source
+      - hbhs_tuplebridge_workflow
+      - hbhs_tuplebridge_bundle_execution
+      - hbhs_tuplebridge_bundle_proof
+      - hbhs_tuplebridge_artifact_publisher
+    roles:
+      - UPSTREAM_SOURCE
+      - EXECUTABLE_OR_CONFIG
+      - EXECUTION
+      - OUTPUT_OR_EVIDENCE
+      - DOWNSTREAM_CONSUMER
+    executed: true
+    evidence: [run_37311694847_job_111768401419, artifact_11346685630]
+
   - id: qps_m03_official_mcp_repository_value
     nodes:
       - qps_m03_policy_source
