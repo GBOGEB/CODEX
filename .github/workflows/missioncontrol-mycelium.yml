@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - 'mission_control/mycelium/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - '.github/workflows/**'
       - 'docs/missioncontrol_mycelium.html'
       - 'docs/missioncontrol_status_snapshot.html'
       - 'docs/assets/missioncontrol/**'
@@ -30,9 +33,17 @@ jobs:
         run: python scripts/build_missioncontrol_metrics.py
       - name: Validate Mycelium contract
         run: python scripts/validate_missioncontrol_mycelium.py
+      - name: Validate executable integration and value
+        run: python scripts/validate_executable_integration_value.py
+      - name: Consume executable integration value report
+        run: python scripts/consume_executable_value_report.py
       - name: Validate authenticated execution gateway design
         run: python scripts/validate_missioncontrol_execution_gateway.py
       - name: Run MissionControl tests
-        run: pytest -q tests/test_missioncontrol_mycelium.py tests/test_missioncontrol_metrics.py tests/test_missioncontrol_logs.py tests/test_missioncontrol_source_ingestion.py tests/test_missioncontrol_execution_gateway.py tests/test_missioncontrol_authenticated_transport.py tests/test_missioncontrol_status_snapshot.py
+        run: pytest -q tests/test_missioncontrol_mycelium.py tests/test_missioncontrol_metrics.py tests/test_missioncontrol_logs.py tests/test_missioncontrol_source_ingestion.py tests/test_missioncontrol_execution_gateway.py tests/test_missioncontrol_authenticated_transport.py tests/test_missioncontrol_status_snapshot.py tests/test_executable_integration_value.py tests/test_missioncontrol_value_rex_contract.py
       - name: Verify deterministic materializations
-        run: git diff --exit-code -- mission_control/mycelium/metrics_snapshot.json docs/data/missioncontrol_metrics.json mission_control/mycelium/log_analysis.json docs/data/missioncontrol_log_analysis.json
+        run: |
+          git ls-files --error-unmatch mission_control/mycelium/executable_value_report.json
+          git ls-files --error-unmatch docs/data/missioncontrol_executable_value_report.json
+          git ls-files --error-unmatch mission_control/mycelium/executable_value_control_observation.json
+          git diff --exit-code -- mission_control/mycelium/metrics_snapshot.json docs/data/missioncontrol_metrics.json mission_control/mycelium/log_analysis.json docs/data/missioncontrol_log_analysis.json mission_control/mycelium/executable_value_report.json docs/data/missioncontrol_executable_value_report.json mission_control/mycelium/executable_value_control_observation.json
