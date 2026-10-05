@@ -343,6 +343,111 @@ nodes:
     project_outcome: true
     recursive_control_effect: false
 
+  - id: semantic_w08_candidate_contract
+    type: YAML_CONFIG
+    repository: GBOGEB/CODEX
+    path: feedback/qps_w08_keb_candidate_return_receipt.yaml
+    owner: CODEX_SEMANTIC_RUNTIME
+    exact_revision: e7528949c7149c09f9560fada264d7ed617ec42f
+    purpose: Define the non-compensating candidate-return and post-upload binding contract for QPS W08.
+    inputs: [semantic_runtime_state]
+    outputs: [candidate_return_contract]
+    execution_surface: CODEX Semantic Runtime CI
+    test_proof_evidence: [run_37298827557_job_111726412287]
+    value_evidence: [SEMANTIC_RUNTIME_MAIN_E7528949_PROOF]
+    outcome_scope: REPOSITORY
+    current_state: CANDIDATE_CONTRACT
+    authority_class: LOCAL_GOVERNANCE
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: semantic_runtime_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/codex_semantic_runtime_ci.yml
+    owner: CODEX_SEMANTIC_RUNTIME
+    exact_revision: e7528949c7149c09f9560fada264d7ed617ec42f
+    purpose: Execute semantic validation, orchestration, tests, and QPS W08 candidate artifact publication.
+    inputs: [repository_change, candidate_return_contract]
+    outputs: [semantic_runtime_checks, qps_w08_payload, qps_w08_binding]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [run_37298827557_job_111726412287]
+    value_evidence: [SEMANTIC_RUNTIME_MAIN_E7528949_PROOF, artifact_11339349661, artifact_11339274593]
+    outcome_scope: REPOSITORY
+    current_state: REPOSITORY_ARTIFACT_VALUE
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: semantic_runtime_execution
+    type: PIPELINE_STAGE
+    repository: GBOGEB/CODEX
+    path: semantic_substrate/validators/validate_semantic_substrate.py
+    owner: CODEX_SEMANTIC_RUNTIME
+    exact_revision: e7528949c7149c09f9560fada264d7ed617ec42f
+    purpose: Execute the semantic runtime validation/orchestration test surface before candidate artifact publication.
+    inputs: [candidate_return_contract]
+    outputs: [semantic_runtime_checks]
+    execution_surface: CODEX Semantic Runtime CI
+    test_proof_evidence: [run_37298827557_job_111726412287]
+    value_evidence: [SEMANTIC_RUNTIME_MAIN_E7528949_PROOF]
+    outcome_scope: REPOSITORY
+    current_state: EXECUTED
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: semantic_runtime_main_proof
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/receipts/SEMANTIC_RUNTIME_MAIN_E7528949_PROOF.json
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 97bc16b1527acd219fedf9bdd7a9f1a2348f41b7
+    purpose: Bind exact-main semantic runtime execution to paired payload and post-upload binding artifact identities.
+    inputs: [semantic_runtime_checks, qps_w08_payload, qps_w08_binding]
+    outputs: [semantic_repository_value_observation]
+    execution_surface: MissionControl control plane
+    test_proof_evidence: [run_37298827557_job_111726412287]
+    value_evidence: [artifact_11339349661, artifact_11339274593]
+    outcome_scope: REPOSITORY
+    current_state: REPOSITORY_ARTIFACT_PROOF
+    authority_class: DERIVED_PROJECTION_ONLY
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: semantic_artifact_publisher
+    type: CONSUMER
+    repository: GBOGEB/CODEX
+    path: .github/workflows/codex_semantic_runtime_ci.yml
+    owner: CODEX_SEMANTIC_RUNTIME
+    exact_revision: e7528949c7149c09f9560fada264d7ed617ec42f
+    purpose: Consume the semantic runtime payload and publish the paired GitHub artifact plus post-upload binding.
+    inputs: [semantic_repository_value_observation]
+    outputs: [artifact_11339349661, artifact_11339274593]
+    execution_surface: GitHub Actions artifact store
+    test_proof_evidence: [run_37298827557_job_111726412287]
+    value_evidence: [SEMANTIC_RUNTIME_MAIN_E7528949_PROOF]
+    outcome_scope: REPOSITORY
+    current_state: DOWNSTREAM_CONSUMER_CHILD_ACCEPTANCE_WITHHELD
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
 edges:
   - {from: mc_control_manifest, to: mc_mycelium_workflow, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
   - {from: mc_mycelium_workflow, to: mc_integration_validator, type: TRIGGERED_BY, evidence: run_37281376763_job_111670015753}
@@ -364,7 +469,28 @@ edges:
   - {from: gmi_guard_hosted_proof, to: gmi_qps_w275_consumer, type: FEDERATES, evidence: qps_pr_1621_merge_7b3224ff, cross_repository: true}
   - {from: gmi_guard_runtime, to: gmi_qps_w275_consumer, type: FEDERATES, evidence: qps_pr_1621_merge_7b3224ff, cross_repository: true}
 
+  - {from: semantic_w08_candidate_contract, to: semantic_runtime_workflow, type: CONFIGURES, evidence: run_37298827557_job_111726412287}
+  - {from: semantic_runtime_workflow, to: semantic_runtime_execution, type: TRIGGERED_BY, evidence: run_37298827557_job_111726412287}
+  - {from: semantic_runtime_execution, to: semantic_runtime_main_proof, type: PRODUCES, evidence: SEMANTIC_RUNTIME_MAIN_E7528949_PROOF}
+  - {from: semantic_runtime_main_proof, to: semantic_artifact_publisher, type: PUBLISHES, evidence: artifact_11339349661}
+
 integration_paths:
+  - id: semantic_runtime_repository_artifact_value
+    nodes:
+      - semantic_w08_candidate_contract
+      - semantic_runtime_workflow
+      - semantic_runtime_execution
+      - semantic_runtime_main_proof
+      - semantic_artifact_publisher
+    roles:
+      - UPSTREAM_SOURCE
+      - EXECUTABLE_OR_CONFIG
+      - EXECUTION
+      - OUTPUT_OR_EVIDENCE
+      - DOWNSTREAM_CONSUMER
+    executed: true
+    evidence: [run_37298827557_job_111726412287, artifact_11339349661, artifact_11339274593]
+
   - id: gmi_doceng_hosted_federation
     nodes:
       - gmi_hosted_mirror
