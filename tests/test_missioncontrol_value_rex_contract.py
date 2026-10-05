@@ -73,3 +73,12 @@ def test_rendered_control_loop_matches_governed_sequence():
     sequence = manifest["control_loop"]["sequence"]
     rendered = "const flow=[" + ",".join(f"'{step}'" for step in sequence) + "];"
     assert rendered in html
+
+
+def test_missioncontrol_ci_consumes_gmi_hosted_materialization():
+    workflow = (ROOT / ".github" / "workflows" / "missioncontrol-mycelium.yml").read_text(
+        encoding="utf-8"
+    )
+    assert "scripts/gmi_doceng_bridge_guard.py" in workflow
+    assert "evidence/gmi_doceng_001/GMI-DOCENG-001" in workflow
+    assert "ACCEPT_DOCUMENT_CORE_PROVIDER_PROOF_BOUND" in workflow
