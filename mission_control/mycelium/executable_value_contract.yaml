@@ -1,0 +1,117 @@
+schema: missioncontrol-executable-value/1.0
+owner_repo: GBOGEB/CODEX
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+purpose: >-
+  Govern Python, YAML, workflows, validators, schemas and automation as tested,
+  integrated, consumed and value-bearing graph capabilities, linked upward to
+  GM missions and laterally to horizontal missions.
+
+hierarchy:
+  - GM
+  - MISSION_OBJECTIVE
+  - HORIZONTAL_MISSIONS
+  - REPO_PROJECT_LANE
+  - PIPELINE_WORKFLOW
+  - PYTHON_YAML_EXECUTABLE_NODE
+  - TEST_PROOF
+  - CONSUMER
+  - OUTCOME
+  - VALUE
+
+dimensions:
+  vertical:
+    meaning: GM mission outcome
+    edge: contributes_to_gm
+  horizontal:
+    meaning: shared capability crossing repos/projects
+    edge: serves_horizontal_mission
+  execution:
+    meaning: actual executable path from code/config through proof to consumer and result
+
+required_promoted_node_fields:
+  GM_ID: GM-#
+  HORIZONTAL_MISSIONS: []
+  LOCAL_REPO_ROLE: null
+  PIPELINE_PATH: []
+  DOWNSTREAM_CONSUMER: []
+  VALUE_SCOPE: V0
+  PROOF: null
+
+example:
+  GM_ID: GM-12
+  objective: reliable_federated_execution
+  HORIZONTAL_MISSIONS:
+    - TEST_ADMISSION
+    - RECOVERY
+    - EVIDENCE_LINEAGE
+  repos:
+    - GBOGEB/ABACUS
+    - GBOGEB/CODEX
+  path:
+    - workflow_yaml
+    - proof_planner_python
+    - selected_matrix
+    - compatibility_gate
+    - MissionControl_evidence
+
+lifecycle:
+  - IMPLEMENT
+  - TEST
+  - PROVE
+  - REGISTER
+  - CONNECT
+  - CONSUME
+  - OBSERVE_VALUE
+  - CONTROL
+
+value_levels:
+  V0_TESTED_ONLY: behavior proved but no operational consumer demonstrated
+  V1_LOCAL_OPERATIONAL: consumed inside its own local tool or module
+  V2_REPOSITORY_VALUE: contributes to repository CI, validation, runtime, release, queue or artifact production
+  V3_PROJECT_VALUE: supports a project requirement, decision, engineering process, QPS lane, artifact or user outcome
+  V4_FEDERATION_VALUE: output or proof consumed across repository boundaries through a governed interface
+  V5_RECURSIVE_CONTROL_VALUE: influences federation prioritization, admission, recovery, learning or next legal execution
+
+classification_flags:
+  - tested
+  - pipeline_integrated
+  - repo_value
+  - project_value
+  - federation_value
+  - GM_linked
+  - horizontal_linked
+
+integration_rule: >-
+  PIPELINE_INTEGRATED requires an observed traversal from an upstream source
+  through the executable/config node and execution to output/evidence and at
+  least one downstream consumer.
+
+tested_orphan:
+  predicate:
+    tested: true
+    pipeline_integrated: false
+    GM_linked: false
+    horizontal_linked: false
+    downstream_consumer_count: 0
+  state: TESTED_ORPHAN
+  dispositions:
+    - INTEGRATE
+    - CLASSIFY_REUSABLE_LIBRARY_REFERENCE
+    - ARCHIVE_OR_REMOVE
+
+metrics:
+  - TEST_PROOF_COVERAGE
+  - PIPELINE_INTEGRATION_COVERAGE
+  - VALUE_EDGE_COVERAGE
+  - TESTED_ORPHAN_COUNT
+  - GM_LINK_COVERAGE
+  - HORIZONTAL_MISSION_LINK_COVERAGE
+
+guards:
+  test_pass_ne_integration: true
+  integration_ne_value_without_consumer: true
+  federation_value_requires_real_cross_repo_edge: true
+  same_graph_multiple_projections: true
+  authority_transfer: false

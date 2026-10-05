@@ -228,6 +228,14 @@ graph_contract:
     - implements
     - references
     - requires_return_from
+    - contributes_to_gm
+    - serves_horizontal_mission
+    - learned_from
+    - similar_to
+    - recurs_as
+    - fixed_by
+    - prevented_by
+    - reuses
   rules:
     directed: true
     every_edge_has_source: true
@@ -274,16 +282,81 @@ execution_contract:
       action: COMPARE_TOUCHED_PATHS_THEN_REBASE_ONLY_IF_MATERIAL
       replay_completed_slice: false
 
+executable_value_control:
+  contract: mission_control/mycelium/executable_value_contract.yaml
+  census_dimensions:
+    - TEST_PROOF_COVERAGE
+    - PIPELINE_INTEGRATION_COVERAGE
+    - VALUE_EDGE_COVERAGE
+    - TESTED_ORPHAN_COUNT
+    - GM_LINK_COVERAGE
+    - HORIZONTAL_MISSION_LINK_COVERAGE
+  promoted_node_requires:
+    - GM_ID
+    - HORIZONTAL_MISSIONS
+    - LOCAL_REPO_ROLE
+    - PIPELINE_PATH
+    - DOWNSTREAM_CONSUMER
+    - VALUE_SCOPE
+    - PROOF
+  value_scope: [V0, V1, V2, V3, V4, V5]
+  tested_orphan_state: TESTED_ORPHAN
+
+rex_control:
+  contract: mission_control/mycelium/rex_observability_contract.yaml
+  mode: AMBIENT_PRE_AND_POST_EXECUTION
+  pre_execution: LOOKUP_EXACT_SIMILAR_FAMILY_GM_HORIZONTAL
+  post_execution: UPDATE_FREQUENCY_RECURRENCE_REUSE_AND_CONTROL
+  update_mode: EVENT_DRIVEN_WITH_PERIODIC_ROLLUP
+  immediate_capture:
+    - TASK_EXECUTED
+    - FIRST_RED_OBSERVED
+    - FAILURE_CLASSIFIED
+    - DEFECT_OR_GAP_DISCOVERED
+    - ROOT_CAUSE_IDENTIFIED
+    - REPAIR_APPLIED
+    - REPAIR_VERIFIED
+    - REVIEW_FINDING
+    - REUSE_CANDIDATE_FOUND
+    - PRIOR_METHOD_REUSED
+    - RECURRENCE_OBSERVED
+    - CONTROL_ESCAPE_OBSERVED
+    - NEW_GM_OR_HORIZONTAL_LINK
+  freshness:
+    stale_if_material_events_unabsorbed: true
+    stale_state: REX_REFRESH_REQUIRED
+  improvement_preference:
+    - REUSE
+    - ADAPT
+    - 3P_STAR
+    - MIP
+    - DMAIC
+    - NEW_ONLY_IF_REQUIRED
+  metrics:
+    - recurrence_rate_by_signature
+    - recurrence_rate_by_family
+    - rex_hit_count
+    - prior_method_reuse_count
+    - reuse_success_rate
+    - mean_time_to_repair
+    - avoided_reanalysis_count
+    - recurrence_after_control_count
+
 control_loop:
   sequence:
     - REFRESH
+    - REX_LOOKUP
     - PROBE
     - RANK
     - EXECUTE
     - PROVE
+    - INTEGRATE
+    - CONSUME
     - COMMIT
     - PUBLISH
     - OBSERVE
+    - OBSERVE_VALUE
+    - REX_UPDATE
     - LEARN
     - RECURSE
   dmaic:
@@ -400,6 +473,12 @@ observability_contract:
     debug:
       intent: first-red and recurrence control
       inputs: [active_first_reds, recurrent_reds, mean_repair_iterations]
+    executable_value:
+      intent: distinguish tested code from integrated and value-bearing capability
+      inputs: [test_proof_coverage, pipeline_integration_coverage, value_edge_coverage, tested_orphan_count, gm_link_coverage, horizontal_mission_link_coverage]
+    rex:
+      intent: ambient reuse, recurrence and control learning
+      inputs: [rex_hit_count, recurrence_rate_by_signature, prior_method_reuse_count, reuse_success_rate, mean_time_to_repair, recurrence_after_control_count]
     docking:
       intent: federated repo/source attachment health
       formula: healthy_declared_docks / declared_docks

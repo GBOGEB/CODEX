@@ -1,0 +1,164 @@
+schema: missioncontrol-rex-observability/1.0
+owner_repo: GBOGEB/CODEX
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+purpose: >-
+  Make Return of Experience omnipresent in MissionControl: consult prior
+  observed experience before execution, surface fixed-before/similar-before
+  patterns, reuse applicable methods, and update recurrence/log metrics after
+  execution.
+
+sources:
+  taxonomy: federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml
+  ledger: federation/rex/GLOBAL_REX_LEDGER_v1.yaml
+  lookup: federation/rex/GLOB_REX_LOOKUP_v1.yaml
+
+pre_execution_rex:
+  enabled: true
+  sequence:
+    - CLASSIFY_CURRENT_ATOM
+    - LOOKUP_EXACT_SIGNATURE
+    - LOOKUP_SIMILAR_SIGNATURE
+    - LOOKUP_SAME_FAMILY
+    - LOOKUP_SAME_GM
+    - LOOKUP_SAME_HORIZONTAL_MISSION
+    - SURFACE_PRIOR_REPAIR_AND_GUARD
+    - DECIDE_REUSE_ADAPT_OR_NEW_ANALYSIS
+  outputs:
+    - seen_before
+    - similar_before
+    - prior_rex_ids
+    - prior_repair_method
+    - prior_control_guard
+    - reuse_candidate
+    - confidence_basis
+
+improvement_strategy:
+  principle: REUSE_THEN_ADAPT_THEN_IMPROVE
+  preferred_order:
+    - REUSE_EXISTING_CODE_METHOD_PROCESS
+    - ADAPT_EXISTING_PATTERN
+    - APPLY_3P_STAR_IF_PRIORITY_OR_PROOF_PATH_NEEDS_REFINEMENT
+    - APPLY_MIP_IF_MODERNIZE_INNOVATE_PERPETUATE_VALUE_NEEDS_REFINEMENT
+    - APPLY_DMAIC_IF_MEASURED_PROCESS_GAP_OR_RECURRENCE_REQUIRES_IMPROVEMENT
+    - CREATE_NEW_ONLY_IF_NO_CONTROLLED_REUSABLE_PATTERN_EXISTS
+  rule: >-
+    Iteration may refine, combine or simplify existing code/method/processes.
+    New implementation is not preferred when a proven reusable approach can be
+    safely adapted and re-proved.
+
+post_execution_rex:
+  enabled: true
+  sequence:
+    - RECORD_OBSERVED_OUTCOME
+    - UPDATE_SIGNATURE_COUNT
+    - UPDATE_FIRST_LAST_SEEN
+    - UPDATE_RECURRENCE_CLASS
+    - UPDATE_REOPENED_COUNT
+    - UPDATE_REPAIR_METHOD
+    - BIND_VERIFICATION
+    - UPDATE_CONTROL_GUARD
+    - PROPAGATE_GLOBAL_REX_IF_ADMITTED
+
+graph_edges:
+  - learned_from
+  - similar_to
+  - recurs_as
+  - fixed_by
+  - prevented_by
+  - reuses
+  - contributes_to_gm
+  - serves_horizontal_mission
+
+rex_log_event:
+  required_fields:
+    - event_time
+    - repo
+    - gm_ids
+    - horizontal_missions
+    - signature
+    - family
+    - issue_kind
+    - action
+    - outcome
+    - rex_ids_consulted
+    - reused_prior_method
+    - proof_ref
+
+metrics:
+  population:
+    - total_rex_records
+    - total_observed_occurrences
+    - unique_signatures
+    - recurring_signatures
+  recurrence:
+    - recurrence_rate_by_signature
+    - recurrence_rate_by_family
+    - reopened_count
+    - cross_workflow_recurrence_count
+    - cross_repo_recurrence_count
+    - chronic_count
+  reuse:
+    - rex_lookup_count
+    - rex_hit_count
+    - exact_signature_hit_count
+    - similar_signature_hit_count
+    - prior_method_reuse_count
+    - reuse_success_count
+    - reuse_success_rate
+  efficiency:
+    - mean_time_to_repair
+    - median_time_to_repair
+    - repair_time_saved_vs_first_occurrence
+    - mean_repair_iterations
+    - avoided_reanalysis_count
+  control:
+    - verified_repair_count
+    - controlled_guard_count
+    - recurrence_after_control_count
+    - guard_escape_rate
+  topology:
+    - rex_by_gm
+    - rex_by_horizontal_mission
+    - rex_by_repo
+    - rex_by_workflow
+    - top_failure_families
+    - top_repair_monikers
+
+frequency_rules:
+  counts_are_observed_minimums: true
+  denominator_required_for_rates: true
+  no_lifetime_frequency_inference_without_window: true
+  zero_step_ne_application_failure: true
+
+decision_hint:
+  states:
+    NEVER_SEEN: no relevant REX found
+    SEEN_SIMILAR: family or semantic similarity found
+    SEEN_EXACT: exact signature found
+    REUSED_SUCCESSFULLY: prior approach reused and verified
+    RECURRED_AFTER_CONTROL: controlled issue escaped its guard
+  principle: >-
+    Prefer a proven prior repair/control pattern when authority, context and
+    applicability match; otherwise use REX as evidence, not as an automatic fix.
+
+ui:
+  omnipresent_badge: true
+  show_on:
+    - active_atom
+    - blocker
+    - first_red
+    - bd_queue_item
+    - workflow_failure
+    - qps_triage_item
+    - gm_view
+    - horizontal_mission_view
+  compact_fields:
+    - seen_before
+    - recurrence_count
+    - recurrence_class
+    - last_seen
+    - prior_fix
+    - control_guard
+    - rex_link
