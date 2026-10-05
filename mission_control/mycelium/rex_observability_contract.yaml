@@ -126,6 +126,51 @@ metrics:
     - top_failure_families
     - top_repair_monikers
 
+update_policy:
+  mode: EVENT_DRIVEN_WITH_PERIODIC_ROLLUP
+  immediate_event_triggers:
+    - TASK_EXECUTED
+    - FIRST_RED_OBSERVED
+    - FAILURE_CLASSIFIED
+    - DEFECT_OR_GAP_DISCOVERED
+    - ROOT_CAUSE_IDENTIFIED
+    - REPAIR_APPLIED
+    - REPAIR_VERIFIED
+    - CONTROL_GUARD_ADDED
+    - REVIEW_FINDING
+    - BLOCKER_CREATED
+    - BLOCKER_CLEARED
+    - REUSE_CANDIDATE_FOUND
+    - PRIOR_METHOD_REUSED
+    - REUSE_SUCCEEDED
+    - REUSE_FAILED
+    - RECURRENCE_OBSERVED
+    - CONTROL_ESCAPE_OBSERVED
+    - NEW_CROSS_REPO_PATTERN
+    - NEW_GM_OR_HORIZONTAL_LINK
+  freshness:
+    fields: [last_event_at, last_verified_at, last_rollup_at]
+    stale_if_material_events_unabsorbed: true
+    stale_state: REX_REFRESH_REQUIRED
+  provisional_state:
+    state: OBSERVED_PENDING_VERIFICATION
+    promotion_sequence: [OBSERVED_PENDING_VERIFICATION, VERIFIED, CONTROLLED]
+  periodic_rollup:
+    triggers:
+      - PR_MERGE
+      - MAIN_READBACK
+      - DMAIC_CONTROL_CLOSE
+      - MIP_ITERATION_CLOSE
+      - THREE_P_STAR_ITERATION_CLOSE
+      - RELEASE_OR_WAVE_CLOSE
+    outputs:
+      - recurrence_summary
+      - reuse_summary
+      - top_failure_families
+      - top_repair_methods
+      - gm_rex_distribution
+      - horizontal_mission_rex_distribution
+
 frequency_rules:
   counts_are_observed_minimums: true
   denominator_required_for_rates: true
