@@ -1,0 +1,51 @@
+{
+  "schema_version": "0.1",
+  "receipt_id": "EXECUTABLE_VALUE_MAIN_8D0D710A_PROOF",
+  "claim": "MissionControl executable integration/value exact-main proof and corrected registration-debt classification",
+  "subject_repository": "GBOGEB/CODEX",
+  "subject_main_sha": "8d0d710a92a173a80efc25361e8a674b765ca7b2",
+  "hosted_proof": {
+    "workflow": "MissionControl Mycelium CI",
+    "run_id": 37291970064,
+    "job_id": 111704232660,
+    "conclusion": "success",
+    "required_steps": {
+      "validate_mycelium_contract": "PASS",
+      "validate_executable_integration_and_value": "PASS",
+      "consume_executable_value_report": "PASS",
+      "classify_executable_registration_debt": "PASS",
+      "missioncontrol_tests": "PASS",
+      "deterministic_materializations": "PASS",
+      "upload_registration_debt_classification": "PASS"
+    }
+  },
+  "classification_artifact": {
+    "artifact_id": 11336854931,
+    "name": "missioncontrol-registration-debt-classification",
+    "digest": "sha256:f4d530741bd732422f54ebd726f459154645b4a132bb2d19f8497b1b5f531383",
+    "candidate_count": 416,
+    "counts": {
+      "LIBRARY_REFERENCE_ONLY": 171,
+      "PIPELINE_INTEGRATION_CANDIDATE": 203,
+      "TESTED_ORPHAN": 10,
+      "UNRESOLVED_REGISTRATION_DEBT": 32,
+      "ARCHIVE_REMOVE_CANDIDATE": 0
+    }
+  },
+  "w05_value": {
+    "status": "WITHHELD_PENDING_ALL_DOWNSTREAM_CONSUMERS",
+    "plan_proved": true,
+    "artifact_produced": true,
+    "emitted_consumer_count": 4,
+    "completed_consumer_count_observed_at_receipt": 1,
+    "value_scope_credit": "WITHHELD"
+  },
+  "preserved_blocks": {
+    "gmi_doceng_bridge_guard": "BLOCKED_TESTED_ORPHAN_GMI_DOCENG_001_REQUIRED",
+    "gateway_transport": "OWNER_DISPATCH_BLOCKED_TESTED_ORPHAN"
+  },
+  "non_self_referential": true,
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0
+}
