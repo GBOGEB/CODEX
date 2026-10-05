@@ -161,3 +161,22 @@ def test_leg5_bounded_scout_repository_value_path_is_registered():
     assert runtime["value_scope"] == "V2_REPOSITORY_VALUE"
     assert "leg5_scout_runtime" not in report["tested_orphans"]
     assert report["executed_integration_path_count"] >= 5
+
+
+def test_missioncontrol_log_metrics_repository_value_path_is_registered():
+    contract, registry, schema = loaded()
+    errors, report = validate_registry(contract, registry, schema)
+    assert errors == []
+    path = next(
+        p for p in registry["integration_paths"]
+        if p["id"] == "missioncontrol_log_metrics_repository_value"
+    )
+    assert path["executed"] is True
+    assert path["nodes"][-1] == "mc_metrics_validation_consumer"
+    builder = next(n for n in registry["nodes"] if n["id"] == "mc_metrics_builder")
+    assert builder["current_state"] == "PIPELINE_INTEGRATED"
+    assert builder["value_scope"] == "V2_REPOSITORY_VALUE"
+    assert "mc_log_analyzer" not in report["tested_orphans"]
+    assert "mc_metrics_builder" not in report["tested_orphans"]
+    assert "mc_metrics_validation_consumer" not in report["tested_orphans"]
+    assert report["executed_integration_path_count"] >= 6
