@@ -48,3 +48,19 @@ def test_rex_graph_edges_cover_reuse_and_missions():
         "contributes_to_gm","serves_horizontal_mission"
     }
     assert required <= edges
+
+
+def test_rex_updates_on_material_execution_and_findings():
+    data = load(REX)
+    policy = data["update_policy"]
+    assert policy["mode"] == "EVENT_DRIVEN_WITH_PERIODIC_ROLLUP"
+    triggers = set(policy["immediate_event_triggers"])
+    required = {
+        "TASK_EXECUTED", "FIRST_RED_OBSERVED", "DEFECT_OR_GAP_DISCOVERED",
+        "REPAIR_VERIFIED", "REVIEW_FINDING", "PRIOR_METHOD_REUSED",
+        "RECURRENCE_OBSERVED", "CONTROL_ESCAPE_OBSERVED"
+    }
+    assert required <= triggers
+    assert policy["freshness"]["stale_if_material_events_unabsorbed"] is True
+    assert policy["provisional_state"]["state"] == "OBSERVED_PENDING_VERIFICATION"
+    assert "PR_MERGE" in policy["periodic_rollup"]["triggers"]
