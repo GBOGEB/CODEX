@@ -8,6 +8,9 @@ on:
       - '.github/workflows/w05-worker-plan-consumer.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   plan:
     runs-on: ubuntu-latest
