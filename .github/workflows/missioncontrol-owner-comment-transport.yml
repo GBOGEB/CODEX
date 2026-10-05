@@ -64,7 +64,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.gateway.outputs.artifact_name }}
-          path: ${{ steps.gateway.outputs.receipt_path }}
+          path: ${{ steps.gateway.outputs.artifact_paths }}
           if-no-files-found: error
 
       - name: Publish authenticated receipt pointer
@@ -82,6 +82,7 @@ jobs:
               'observed_head_sha=${{ steps.gateway.outputs.observed_head_sha }}',
               'artifact_name=${{ steps.gateway.outputs.artifact_name }}',
               'receipt_path=${{ steps.gateway.outputs.receipt_path }}',
+              'rex_event_path=${{ steps.gateway.outputs.rex_event_path }}',
               'mutation_enabled=false',
               'authority_transfer=false',
               'formal_credit_delta=0',
