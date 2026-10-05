@@ -1,0 +1,45 @@
+{
+  "schema_version": "0.1",
+  "receipt_id": "QPS_M03_OFFICIAL_MCP_CONSUMER_MAIN_06C9E563_PROOF",
+  "claim": "Exact-main hosted QPS M03 independent consumer read succeeded through the official GitHub MCP server and emitted a durable response/receipt artifact.",
+  "subject_repository": "GBOGEB/CODEX",
+  "subject_main_sha": "06c9e563b927aaeff84d2990aeb0a9f2700b0f17",
+  "workflow": {
+    "path": ".github/workflows/qps-m03-official-mcp-consumer.yml",
+    "run_id": 37309356187,
+    "job_id": 111760683007,
+    "conclusion": "success",
+    "executed_steps_claim": ">0"
+  },
+  "independent_consumer": {
+    "mission_id": "M03_GITHUB_MCP_SERVER",
+    "pulse_id": "P_M03_KEB_INDEPENDENT_CONSUMER_01",
+    "official_repo": "github/github-mcp-server",
+    "official_source_sha": "7d13a7ad6f2a17f351a6d77ce280c85ae1821f4d",
+    "toolset": "repos",
+    "tool": "get_file_contents",
+    "target_path": "docs/qps_dow_keb_receipt_binding_policy.md",
+    "target_sha": "1a80176358ffde62459cd257455a51402c847302",
+    "response_sha256": "2e35cb5cac9cba5681f6f6be5d460fd3791fc6e630fb2a671342f16188b40b83",
+    "result": "PASS",
+    "authority": "INDEPENDENT_CONSUMER_READ_PROOF_NOT_TERMINAL_DOV"
+  },
+  "artifact": {
+    "artifact_id": 11344841972,
+    "name": "m03-keb-independent-consumer-proof",
+    "digest": "sha256:d9649c23e0b5a8aa146ffcce636ef6794c242ea67c22192378e3c60020024934",
+    "files": [
+      "m03_keb_consumer_response.json",
+      "m03_keb_independent_consumer_receipt.json"
+    ]
+  },
+  "value": {
+    "scope": "V2_REPOSITORY_VALUE",
+    "terminal_dov": false,
+    "federation_value": false,
+    "global_control": false
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0
+}
