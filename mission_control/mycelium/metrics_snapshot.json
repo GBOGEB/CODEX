@@ -47,7 +47,7 @@
         "parsed_required_logs": 1,
         "passed": 1,
         "failed": 0,
-        "health_pct": 100
+        "health_pct": 100.0
       },
       "docking": {
         "status": "DERIVED_FROM_MEASURED",
@@ -82,7 +82,7 @@
       "pressure": {
         "status": "DERIVED_FROM_MEASURED",
         "value": 87,
-        "coverage": 1,
+        "coverage": 1.0,
         "used_inputs": [
           "age",
           "criticality",
@@ -154,7 +154,7 @@
         "parsed_required_logs": 1,
         "passed": 1,
         "failed": 0,
-        "health_pct": 100
+        "health_pct": 100.0
       },
       "docking": {
         "status": "WITHHELD"
@@ -205,7 +205,7 @@
         "parsed_required_logs": 1,
         "passed": 1,
         "failed": 0,
-        "health_pct": 100
+        "health_pct": 100.0
       },
       "docking": {
         "status": "WITHHELD"
@@ -590,36 +590,6 @@
     "reason": "no observed pairwise outcomes",
     "ranking": []
   },
-  "guards": {
-    "same_graph_multiple_projections": true,
-    "no_synthetic_scores": true,
-    "analytics_create_no_formal_or_engineering_credit": true
-  },
-  "latest_remote_return": {
-    "source": "GBOGEB/ABACUS",
-    "source_sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
-    "current_source_sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
-    "evidence": "mission_control/mycelium/evidence/abacus_dab_post_1697_measured_e302_promoted.json",
-    "status": "MEASURED_POST_1697_MAIN",
-    "census_run": 37016094260,
-    "census_job": 110867203583,
-    "artifact_id": 11230281685,
-    "total": 3129,
-    "E999": 1,
-    "F821": 0,
-    "F601": 0,
-    "F811": 0,
-    "F841": 0,
-    "E722": 0,
-    "E731": 0,
-    "E741": 0,
-    "W293": 0,
-    "active_unmeasured": {
-      "pr": null,
-      "family": "E302",
-      "expected_only": 145
-    }
-  },
   "executable_value": {
     "status": "DERIVED_FROM_MEASURED",
     "population": 3,
@@ -685,5 +655,35 @@
         "state": "TESTED_ORPHAN"
       }
     ]
+  },
+  "guards": {
+    "same_graph_multiple_projections": true,
+    "no_synthetic_scores": true,
+    "analytics_create_no_formal_or_engineering_credit": true
+  },
+  "latest_remote_return": {
+    "source": "GBOGEB/ABACUS",
+    "source_sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
+    "current_source_sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
+    "evidence": "mission_control/mycelium/evidence/abacus_dab_post_1697_measured_e302_promoted.json",
+    "status": "MEASURED_POST_1697_MAIN",
+    "census_run": 37016094260,
+    "census_job": 110867203583,
+    "artifact_id": 11230281685,
+    "total": 3129,
+    "E999": 1,
+    "F821": 0,
+    "F601": 0,
+    "F811": 0,
+    "F841": 0,
+    "E722": 0,
+    "E731": 0,
+    "E741": 0,
+    "W293": 0,
+    "active_unmeasured": {
+      "pr": null,
+      "family": "E302",
+      "expected_only": 145
+    }
   }
 }
