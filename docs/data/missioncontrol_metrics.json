@@ -47,7 +47,7 @@
         "parsed_required_logs": 1,
         "passed": 1,
         "failed": 0,
-        "health_pct": 100.0
+        "health_pct": 100
       },
       "docking": {
         "status": "DERIVED_FROM_MEASURED",
@@ -82,7 +82,7 @@
       "pressure": {
         "status": "DERIVED_FROM_MEASURED",
         "value": 87,
-        "coverage": 1.0,
+        "coverage": 1,
         "used_inputs": [
           "age",
           "criticality",
@@ -154,7 +154,7 @@
         "parsed_required_logs": 1,
         "passed": 1,
         "failed": 0,
-        "health_pct": 100.0
+        "health_pct": 100
       },
       "docking": {
         "status": "WITHHELD"
@@ -205,7 +205,7 @@
         "parsed_required_logs": 1,
         "passed": 1,
         "failed": 0,
-        "health_pct": 100.0
+        "health_pct": 100
       },
       "docking": {
         "status": "WITHHELD"
@@ -619,5 +619,71 @@
       "family": "E302",
       "expected_only": 145
     }
+  },
+  "executable_value": {
+    "status": "DERIVED_FROM_MEASURED",
+    "population": 3,
+    "classification_basis": "explicit graph edges and exact runtime/proof metadata only; filenames and labels do not imply consumers or value",
+    "metrics": {
+      "TEST_PROOF_COVERAGE": {
+        "status": "DERIVED_FROM_MEASURED",
+        "value": 33.33
+      },
+      "PIPELINE_INTEGRATION_COVERAGE": {
+        "status": "DERIVED_FROM_MEASURED",
+        "value": 0
+      },
+      "VALUE_EDGE_COVERAGE": {
+        "status": "DERIVED_FROM_MEASURED",
+        "value": 0
+      },
+      "TESTED_ORPHAN_COUNT": {
+        "status": "DERIVED_FROM_MEASURED",
+        "value": 1
+      },
+      "GM_LINK_COVERAGE": {
+        "status": "DERIVED_FROM_MEASURED",
+        "value": 0
+      },
+      "HORIZONTAL_MISSION_LINK_COVERAGE": {
+        "status": "DERIVED_FROM_MEASURED",
+        "value": 0
+      }
+    },
+    "nodes": [
+      {
+        "id": "config_control_plane",
+        "type": "config",
+        "tested": false,
+        "pipeline_integrated": false,
+        "gm_linked": false,
+        "horizontal_linked": false,
+        "downstream_consumer_count": 0,
+        "value_edge_count": 0,
+        "state": "WITHHELD"
+      },
+      {
+        "id": "gateway_design",
+        "type": "config",
+        "tested": false,
+        "pipeline_integrated": false,
+        "gm_linked": false,
+        "horizontal_linked": false,
+        "downstream_consumer_count": 0,
+        "value_edge_count": 0,
+        "state": "WITHHELD"
+      },
+      {
+        "id": "gateway_transport",
+        "type": "workflow",
+        "tested": true,
+        "pipeline_integrated": false,
+        "gm_linked": false,
+        "horizontal_linked": false,
+        "downstream_consumer_count": 0,
+        "value_edge_count": 0,
+        "state": "TESTED_ORPHAN"
+      }
+    ]
   }
 }

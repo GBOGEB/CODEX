@@ -7,6 +7,7 @@ from scripts.build_missioncontrol_metrics import (
     apply_source_status_overlay,
     bt_rank,
     build_snapshot,
+    executable_value_census,
     pressure_metric,
     source_identity_is_measured,
 )
@@ -208,3 +209,46 @@ def test_campaign_and_worker_state_are_projected_without_scoring() -> None:
     assert snapshot["nodes"]["dab_bd8k"]["campaign"]["baseline"]["total"] == 7909
     assert snapshot["nodes"]["dab_bd8k"]["workers"][0]["state"] == "BLOCKED_FIRST_RED"
     assert snapshot["nodes"]["dab_bd8k"]["code_health"]["status"] == STATUS_WITHHELD
+
+
+def test_executable_value_census_uses_explicit_evidence_only() -> None:
+    graph = {
+        "nodes": [
+            {"id": "proved_orphan", "type": "workflow", "meta": {"exact_head_run": 123}},
+            {"id": "integrated", "type": "script", "meta": {"proof_ref": "run:456"}},
+            {"id": "source", "type": "artifact"},
+            {"id": "consumer", "type": "consumer"},
+            {"id": "gm", "type": "mission"},
+        ],
+        "edges": [
+            {"from": "source", "to": "integrated", "type": "feeds"},
+            {"from": "integrated", "to": "consumer", "type": "produces_for"},
+            {"from": "integrated", "to": "gm", "type": "contributes_to_gm"},
+        ],
+    }
+    census = executable_value_census(graph)
+    rows = {row["id"]: row for row in census["nodes"]}
+    assert rows["proved_orphan"]["state"] == "TESTED_ORPHAN"
+    assert rows["integrated"]["state"] == "PIPELINE_INTEGRATED"
+    assert rows["integrated"]["gm_linked"] is True
+    assert census["metrics"]["TESTED_ORPHAN_COUNT"]["value"] == 1
+    assert census["metrics"]["TEST_PROOF_COVERAGE"]["value"] == 100
+    assert census["metrics"]["PIPELINE_INTEGRATION_COVERAGE"]["value"] == 50
+
+
+def test_executable_value_census_does_not_infer_from_names() -> None:
+    graph = {
+        "nodes": [
+            {
+                "id": "looks_integrated",
+                "type": "workflow",
+                "label": "tested pipeline consumer value GM-12",
+            }
+        ],
+        "edges": [],
+    }
+    row = executable_value_census(graph)["nodes"][0]
+    assert row["tested"] is False
+    assert row["pipeline_integrated"] is False
+    assert row["downstream_consumer_count"] == 0
+    assert row["state"] == "WITHHELD"
