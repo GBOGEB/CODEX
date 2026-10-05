@@ -1141,6 +1141,111 @@ nodes:
     project_outcome: false
     recursive_control_effect: false
 
+  - id: qps_m03_policy_source
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: docs/qps_dow_keb_receipt_binding_policy.md
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 1a80176358ffde62459cd257455a51402c847302
+    purpose: Provide the exact-SHA receipt-binding policy independently read by the official MCP consumer.
+    inputs: [repository_policy]
+    outputs: [m03_exact_sha_read_target]
+    execution_surface: QPS M03 Official MCP Independent Consumer
+    test_proof_evidence: [run_37309356187_job_111760683007]
+    value_evidence: [artifact_11344841972]
+    outcome_scope: REPOSITORY
+    current_state: SOURCE_BOUND
+    authority_class: LOCAL_AUTHORITATIVE
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: qps_m03_consumer_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/qps-m03-official-mcp-consumer.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 06c9e563b927aaeff84d2990aeb0a9f2700b0f17
+    purpose: Build the exact official GitHub MCP source and execute an independent exact-SHA repository read.
+    inputs: [m03_exact_sha_read_target]
+    outputs: [official_mcp_consumer_execution]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [run_37309356187_job_111760683007]
+    value_evidence: [artifact_11344841972]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: qps_m03_official_mcp_execution
+    type: WORKFLOW_JOB
+    repository: GBOGEB/CODEX
+    path: .github/workflows/qps-m03-official-mcp-consumer.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 06c9e563b927aaeff84d2990aeb0a9f2700b0f17
+    purpose: Execute the exact official GitHub MCP server/client pair and recover the target policy from the requested CODEX SHA.
+    inputs: [official_mcp_consumer_execution]
+    outputs: [m03_consumer_response]
+    execution_surface: GitHub Actions job independent-consumer
+    test_proof_evidence: [run_37309356187_job_111760683007]
+    value_evidence: [artifact_11344841972]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: qps_m03_consumer_proof
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/receipts/QPS_M03_OFFICIAL_MCP_CONSUMER_MAIN_06C9E563_PROOF.json
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 322722ca72590b629e9b3f5b4a87abfba823ef9f
+    purpose: Bind the hosted independent consumer execution, exact official source SHA, response digest, and durable artifact.
+    inputs: [m03_consumer_response]
+    outputs: [m03_repository_read_proof]
+    execution_surface: MissionControl control plane
+    test_proof_evidence: [artifact_11344841972]
+    value_evidence: [run_37309356187_job_111760683007, artifact_11344841972]
+    outcome_scope: REPOSITORY
+    current_state: CONSUMED_EVIDENCE
+    authority_class: DERIVED_PROJECTION_ONLY
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: qps_m03_independent_consumer
+    type: CONSUMER
+    repository: GBOGEB/CODEX
+    path: .github/workflows/qps-m03-official-mcp-consumer.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 06c9e563b927aaeff84d2990aeb0a9f2700b0f17
+    purpose: Consume the exact-SHA policy through the official MCP transport and publish a non-terminal DoV repository-read proof.
+    inputs: [m03_repository_read_proof]
+    outputs: [independent_consumer_repository_value]
+    execution_surface: QPS M03 Official MCP Independent Consumer
+    test_proof_evidence: [run_37309356187_job_111760683007]
+    value_evidence: [artifact_11344841972]
+    outcome_scope: REPOSITORY
+    current_state: DOWNSTREAM_CONSUMER
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
 edges:
   - {from: mc_control_manifest, to: mc_mycelium_workflow, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
   - {from: mc_mycelium_workflow, to: mc_integration_validator, type: TRIGGERED_BY, evidence: run_37281376763_job_111670015753}
@@ -1203,7 +1308,28 @@ edges:
   - {from: ssot_runtime_consumer_mapper, to: ssot_runtime_consumer_map_outcome, type: PRODUCES, evidence: reports/codex_2_0_runtime_consumer_map.json}
   - {from: ssot_runtime_consumer_map_outcome, to: ci_governance_artifact_consumer, type: PUBLISHES, evidence: artifact_11345045172}
 
+  - {from: qps_m03_policy_source, to: qps_m03_consumer_workflow, type: CONFIGURES, evidence: target_sha_1a80176358ffde62459cd257455a51402c847302}
+  - {from: qps_m03_consumer_workflow, to: qps_m03_official_mcp_execution, type: TRIGGERED_BY, evidence: run_37309356187_job_111760683007}
+  - {from: qps_m03_official_mcp_execution, to: qps_m03_consumer_proof, type: PRODUCES, evidence: artifact_11344841972}
+  - {from: qps_m03_consumer_proof, to: qps_m03_independent_consumer, type: CONSUMES, evidence: QPS_M03_OFFICIAL_MCP_CONSUMER_MAIN_06C9E563_PROOF}
+
 integration_paths:
+  - id: qps_m03_official_mcp_repository_value
+    nodes:
+      - qps_m03_policy_source
+      - qps_m03_consumer_workflow
+      - qps_m03_official_mcp_execution
+      - qps_m03_consumer_proof
+      - qps_m03_independent_consumer
+    roles:
+      - UPSTREAM_SOURCE
+      - EXECUTABLE_OR_CONFIG
+      - EXECUTION
+      - OUTPUT_OR_EVIDENCE
+      - DOWNSTREAM_CONSUMER
+    executed: true
+    evidence: [run_37309356187_job_111760683007, artifact_11344841972]
+
   - id: ci_ssot_census_binding_repository_value
     nodes:
       - ssot_authority_registry_source
