@@ -1,0 +1,205 @@
+schema_version: "0.1"
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+registration_revision_basis: bb171b534943cd76fe761b988c936fbd09cf96ca
+registration_note: >-
+  Initial bounded registration for the executable-integration/value control
+  path. The repository-wide census remains explicit migration debt until every
+  material Python/YAML asset is classified.
+
+nodes:
+  - id: mc_control_manifest
+    type: YAML_CONFIG
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/control_manifest.yaml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: bb171b534943cd76fe761b988c936fbd09cf96ca
+    purpose: Configure the MissionControl Mycelium governance surface.
+    inputs: [repository_governance]
+    outputs: [missioncontrol_contract]
+    execution_surface: missioncontrol-mycelium-ci
+    test_proof_evidence: [tests/test_missioncontrol_mycelium.py]
+    value_evidence: [missioncontrol_contract_validation]
+    outcome_scope: REPOSITORY
+    current_state: CONNECTED
+    authority_class: LOCAL_AUTHORITATIVE
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: mc_mycelium_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/missioncontrol-mycelium.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: bb171b534943cd76fe761b988c936fbd09cf96ca
+    purpose: Execute MissionControl validation and test surfaces on governed changes.
+    inputs: [repository_change, missioncontrol_contract]
+    outputs: [ci_execution_evidence]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [workflow_run_required]
+    value_evidence: [run_37281376763_job_111670015753]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED_PENDING_EXACT_HEAD_PROOF
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: mc_integration_validator
+    type: VALIDATOR
+    repository: GBOGEB/CODEX
+    path: scripts/validate_executable_integration_value.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 64e401e6f1e1b2f510dd35ea78b662b9ca0c8238
+    purpose: Validate executable nodes, edges, traversal, value scope, and orphan state.
+    inputs: [executable_integration_contract, executable_integration_registry]
+    outputs: [executable_value_report]
+    execution_surface: missioncontrol-mycelium-ci
+    test_proof_evidence: [tests/test_executable_integration_value.py, workflow_run_required]
+    value_evidence: [run_37281376763_job_111670015753]
+    outcome_scope: PROJECT
+    current_state: PIPELINE_INTEGRATED_PENDING_EXACT_HEAD_PROOF
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V3_PROJECT_VALUE
+    repository_outcome: true
+    project_outcome: true
+    recursive_control_effect: false
+
+  - id: mc_integration_contract
+    type: YAML_CONFIG
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/executable_integration_value_contract.yaml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 64e401e6f1e1b2f510dd35ea78b662b9ca0c8238
+    purpose: Define lifecycle, node/edge semantics, value scopes, orphan rules, and DoD.
+    inputs: [governing_method]
+    outputs: [validation_rules]
+    execution_surface: missioncontrol-mycelium-ci
+    test_proof_evidence: [tests/test_executable_integration_value.py]
+    value_evidence: [run_37281376763_job_111670015753]
+    outcome_scope: PROJECT
+    current_state: CONNECTED_PENDING_EXACT_HEAD_PROOF
+    authority_class: LOCAL_GOVERNANCE
+    tested: true
+    value_scope: V3_PROJECT_VALUE
+    repository_outcome: true
+    project_outcome: true
+    recursive_control_effect: false
+
+  - id: mc_integration_registry
+    type: YAML_CONFIG
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/executable_integration_registry.yaml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 64e401e6f1e1b2f510dd35ea78b662b9ca0c8238
+    purpose: Register executable nodes, operational edges, integration paths, and value claims.
+    inputs: [registered_assets]
+    outputs: [typed_execution_graph]
+    execution_surface: missioncontrol-mycelium-ci
+    test_proof_evidence: [tests/test_executable_integration_value.py]
+    value_evidence: [run_37281376763_job_111670015753]
+    outcome_scope: PROJECT
+    current_state: CONNECTED_PENDING_EXACT_HEAD_PROOF
+    authority_class: LOCAL_GOVERNANCE
+    tested: true
+    value_scope: V3_PROJECT_VALUE
+    repository_outcome: true
+    project_outcome: true
+    recursive_control_effect: true
+
+  - id: mc_value_report
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/executable_value_report.json
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 64e401e6f1e1b2f510dd35ea78b662b9ca0c8238
+    purpose: Materialize integration/value status, orphan census, and registration debt.
+    inputs: [typed_execution_graph, repository_census]
+    outputs: [value_observation, tested_orphan_queue]
+    execution_surface: missioncontrol-mycelium-ci
+    test_proof_evidence: [deterministic_materialization_check]
+    value_evidence: [run_37281376763_job_111670015753]
+    outcome_scope: PROJECT
+    current_state: CONSUMER_PENDING_EXACT_HEAD_PROOF
+    authority_class: DERIVED_PROJECTION_ONLY
+    tested: true
+    value_scope: V3_PROJECT_VALUE
+    repository_outcome: true
+    project_outcome: true
+    recursive_control_effect: true
+
+  - id: mc_value_consumer
+    type: CONSUMER
+    repository: GBOGEB/CODEX
+    path: scripts/consume_executable_value_report.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 593970454d02b10a0d58fbd9f691c459e9a90420
+    purpose: Consume the executable value report into a deterministic control observation.
+    inputs: [executable_value_report]
+    outputs: [executable_value_control_observation]
+    execution_surface: missioncontrol-mycelium-ci
+    test_proof_evidence: [workflow_run_required]
+    value_evidence: [control_observation_materialization]
+    outcome_scope: RECURSIVE_CONTROL
+    current_state: CONNECTED_PENDING_EXACT_HEAD_PROOF
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V3_PROJECT_VALUE
+    recursive_control_effect: true
+
+  - id: mc_control_loop
+    type: CONTROL_STATE
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/control_manifest.yaml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 64e401e6f1e1b2f510dd35ea78b662b9ca0c8238
+    purpose: Consume integration/value findings in the recursive MissionControl control loop.
+    inputs: [value_observation, tested_orphan_queue]
+    outputs: [ranked_next_legal_transition]
+    execution_surface: MissionControl control plane
+    test_proof_evidence: [missioncontrol_contract_validation]
+    value_evidence: [run_37281376763_job_111670015753]
+    outcome_scope: RECURSIVE_CONTROL
+    current_state: DOWNSTREAM_CONSUMER
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V3_PROJECT_VALUE
+    repository_outcome: true
+    project_outcome: true
+    recursive_control_effect: true
+
+edges:
+  - {from: mc_control_manifest, to: mc_mycelium_workflow, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
+  - {from: mc_mycelium_workflow, to: mc_integration_validator, type: TRIGGERED_BY, evidence: run_37281376763_job_111670015753}
+  - {from: mc_integration_contract, to: mc_integration_validator, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
+  - {from: mc_integration_registry, to: mc_integration_validator, type: READS, evidence: run_37281376763_job_111670015753}
+  - {from: mc_integration_validator, to: mc_value_report, type: PRODUCES, evidence: run_37281376763_job_111670015753}
+  - {from: mc_value_report, to: mc_value_consumer, type: CONSUMES, evidence: control_observation_materialization}
+  - {from: mc_value_consumer, to: mc_control_loop, type: UPDATES, evidence: control_observation_materialization}
+  - {from: mc_control_loop, to: mc_integration_registry, type: CONSUMES, evidence: missioncontrol_control_contract}
+
+integration_paths:
+  - id: missioncontrol_executable_value_control
+    nodes:
+      - mc_control_manifest
+      - mc_mycelium_workflow
+      - mc_integration_validator
+      - mc_value_report
+      - mc_value_consumer
+      - mc_control_loop
+    roles:
+      - UPSTREAM_SOURCE
+      - EXECUTABLE_OR_CONFIG
+      - EXECUTION
+      - OUTPUT_OR_EVIDENCE
+      - EXECUTION
+      - DOWNSTREAM_CONSUMER
+    executed: true
+    evidence: [run_37281376763_job_111670015753]
