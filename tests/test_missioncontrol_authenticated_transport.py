@@ -4,7 +4,9 @@ import pytest
 
 from scripts.missioncontrol_authenticated_transport import (
     GatewayError,
+    ambient_rex_lookup,
     build_receipt,
+    write_rex_event,
     expected_idempotency_key,
     validate_request,
 )
@@ -132,3 +134,40 @@ def test_selected_transport_does_not_enable_apply():
     assert contract["bounded_apply_runtime"]["execute_permitted"] is False
     assert contract["bounded_apply_runtime"]["enabled_mutation_transports"] == []
     assert contract["promotion"]["mutation_promotion_state"] == "WITHHELD_EXPLICIT_PROMOTION_REQUIRED"
+
+
+def test_ambient_rex_lookup_is_evidence_only() -> None:
+    lookup = ambient_rex_lookup(intent=INTENT)
+    assert lookup["mode"] == "AMBIENT_PRE_EXECUTION"
+    assert lookup["authority"] == "EVIDENCE_ONLY"
+    assert isinstance(lookup["exact_signature_hits"], list)
+    assert isinstance(lookup["similar_signature_hits"], list)
+
+
+def test_post_execution_rex_event_is_provisional(tmp_path, monkeypatch) -> None:
+    import scripts.missioncontrol_authenticated_transport as transport
+
+    monkeypatch.setattr(transport, "RECEIPT_DIR", tmp_path)
+    lookup = {
+        "mode": "AMBIENT_PRE_EXECUTION",
+        "exact_signature_hits": [],
+        "similar_signature_hits": [],
+        "same_repo_family_hits": [],
+        "authority": "EVIDENCE_ONLY",
+    }
+    path = write_rex_event(
+        artifact="mc-test",
+        run_id=123,
+        run_attempt=1,
+        request=request(),
+        lookup=lookup,
+        outcome="EXECUTED",
+        proof_ref="receipt.json",
+    )
+    import json
+
+    event = json.loads(path.read_text())
+    assert event["state"] == "OBSERVED_PENDING_VERIFICATION"
+    assert event["event"] == "TASK_EXECUTED"
+    assert event["lookup"]["authority"] == "EVIDENCE_ONLY"
+    assert event["authority_transfer"] is False

@@ -133,6 +133,101 @@ def pca_projection(rows: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+
+def executable_value_census(graph: dict[str, Any]) -> dict[str, Any]:
+    """Classify executable graph nodes from explicit graph/runtime evidence only."""
+    nodes = graph.get("nodes", [])
+    edges = graph.get("edges", [])
+    candidates = [
+        node for node in nodes
+        if node.get("type") in {"workflow", "script", "executable", "config"}
+    ]
+    rows: list[dict[str, Any]] = []
+    for node in candidates:
+        node_id = node.get("id")
+        meta = node.get("meta", {})
+        incoming = [edge for edge in edges if edge.get("to") == node_id]
+        outgoing = [edge for edge in edges if edge.get("from") == node_id]
+        tested = bool(
+            meta.get("exact_head_run")
+            or meta.get("proof_ref")
+            or any(edge.get("type") in {"proves", "validates"} for edge in incoming)
+        )
+        gm_linked = any(
+            edge.get("type") == "contributes_to_gm"
+            for edge in incoming + outgoing
+        )
+        horizontal_linked = any(
+            edge.get("type") == "serves_horizontal_mission"
+            for edge in incoming + outgoing
+        )
+        downstream = [
+            edge for edge in outgoing
+            if edge.get("type") in {"consumes", "feeds", "produces_for"}
+        ]
+        upstream = [
+            edge for edge in incoming
+            if edge.get("type") in {"consumes", "feeds", "produces_for"}
+        ]
+        pipeline_integrated = bool(tested and upstream and downstream)
+        value_edges = [
+            edge for edge in incoming + outgoing
+            if edge.get("type") in {
+                "contributes_to_gm", "serves_horizontal_mission",
+                "consumes", "feeds", "produces_for",
+            }
+        ]
+        tested_orphan = bool(
+            tested
+            and not pipeline_integrated
+            and not gm_linked
+            and not horizontal_linked
+            and not downstream
+        )
+        rows.append({
+            "id": node_id,
+            "type": node.get("type"),
+            "tested": tested,
+            "pipeline_integrated": pipeline_integrated,
+            "gm_linked": gm_linked,
+            "horizontal_linked": horizontal_linked,
+            "downstream_consumer_count": len(downstream),
+            "value_edge_count": len(value_edges),
+            "state": "TESTED_ORPHAN" if tested_orphan else (
+                "PIPELINE_INTEGRATED" if pipeline_integrated else
+                "TESTED_ONLY" if tested else "WITHHELD"
+            ),
+        })
+
+    total = len(rows)
+    tested_count = sum(row["tested"] for row in rows)
+    integrated_count = sum(row["pipeline_integrated"] for row in rows)
+    value_linked_count = sum(row["value_edge_count"] > 0 for row in rows)
+    gm_count = sum(row["gm_linked"] for row in rows)
+    horizontal_count = sum(row["horizontal_linked"] for row in rows)
+    orphan_count = sum(row["state"] == "TESTED_ORPHAN" for row in rows)
+    return {
+        "status": STATUS_DERIVED if total else STATUS_WITHHELD,
+        "population": total,
+        "classification_basis": (
+            "explicit graph edges and exact runtime/proof metadata only; "
+            "filenames and labels do not imply consumers or value"
+        ),
+        "metrics": {
+            "TEST_PROOF_COVERAGE": ratio_metric(tested_count, total),
+            "PIPELINE_INTEGRATION_COVERAGE": ratio_metric(integrated_count, total),
+            "VALUE_EDGE_COVERAGE": ratio_metric(value_linked_count, total),
+            "TESTED_ORPHAN_COUNT": {
+                "status": STATUS_DERIVED if total else STATUS_WITHHELD,
+                "value": orphan_count if total else None,
+            },
+            "GM_LINK_COVERAGE": ratio_metric(gm_count, total),
+            "HORIZONTAL_MISSION_LINK_COVERAGE": ratio_metric(horizontal_count, total),
+        },
+        "nodes": rows,
+    }
+
+
 def build_snapshot(graph: dict[str, Any], obs: dict[str, Any]) -> dict[str, Any]:
     nodes = graph.get("nodes", [])
     edges = graph.get("edges", [])
@@ -204,6 +299,7 @@ def build_snapshot(graph: dict[str, Any], obs: dict[str, Any]) -> dict[str, Any]
         "nodes": node_metrics,
         "pca": pca_projection(obs.get("pca_rows", [])),
         "bradley_terry": bt_rank(obs.get("pairwise_outcomes", [])),
+        "executable_value": executable_value_census(graph),
         "guards": {
             "same_graph_multiple_projections": True,
             "no_synthetic_scores": True,
