@@ -180,3 +180,24 @@ def test_missioncontrol_log_metrics_repository_value_path_is_registered():
     assert "mc_metrics_builder" not in report["tested_orphans"]
     assert "mc_metrics_validation_consumer" not in report["tested_orphans"]
     assert report["executed_integration_path_count"] >= 6
+
+
+def test_ci_bridge_alignment_repository_value_preserves_soft_ruff_debt():
+    contract, registry, schema = loaded()
+    errors, report = validate_registry(contract, registry, schema)
+    assert errors == []
+    path = next(
+        p for p in registry["integration_paths"]
+        if p["id"] == "ci_bridge_alignment_repository_value"
+    )
+    assert path["executed"] is True
+    assert path["nodes"][-1] == "ci_governance_artifact_consumer"
+    runtime = next(n for n in registry["nodes"] if n["id"] == "ci_bridge_alignment_runtime")
+    snapshot = next(
+        n for n in registry["nodes"]
+        if n["id"] == "ci_governance_snapshot_bridge_alignment"
+    )
+    assert runtime["value_scope"] == "V2_REPOSITORY_VALUE"
+    assert snapshot["current_state"] == "BRIDGE_ALIGNMENT_PASS_GLOBAL_SNAPSHOT_RUFF_FAILED"
+    assert "ci_bridge_alignment_runtime" not in report["tested_orphans"]
+    assert report["executed_integration_path_count"] >= 7
