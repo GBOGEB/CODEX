@@ -201,3 +201,23 @@ def test_ci_bridge_alignment_repository_value_preserves_soft_ruff_debt():
     assert snapshot["current_state"] == "BRIDGE_ALIGNMENT_PASS_GLOBAL_SNAPSHOT_RUFF_FAILED"
     assert "ci_bridge_alignment_runtime" not in report["tested_orphans"]
     assert report["executed_integration_path_count"] >= 7
+
+
+def test_registration_debt_classifier_repository_value_path_is_registered():
+    contract, registry, schema = loaded()
+    errors, report = validate_registry(contract, registry, schema)
+    assert errors == []
+    path = next(
+        p for p in registry["integration_paths"]
+        if p["id"] == "missioncontrol_registration_debt_repository_value"
+    )
+    assert path["executed"] is True
+    assert path["nodes"][-1] == "mc_registration_debt_artifact_publisher"
+    runtime = next(
+        n for n in registry["nodes"]
+        if n["id"] == "mc_registration_debt_classifier"
+    )
+    assert runtime["current_state"] == "PIPELINE_INTEGRATED"
+    assert runtime["value_scope"] == "V2_REPOSITORY_VALUE"
+    assert "mc_registration_debt_classifier" not in report["tested_orphans"]
+    assert report["executed_integration_path_count"] >= 8
