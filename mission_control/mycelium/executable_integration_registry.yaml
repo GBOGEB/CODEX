@@ -742,6 +742,90 @@ nodes:
     project_outcome: false
     recursive_control_effect: false
 
+  - id: mc_registration_debt_classifier
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/classify_executable_registration_debt.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: fbe2b5511f05b3945919e84b4d8a1ae9a8941c80
+    purpose: Consume the governed executable-value report and classify remaining registration debt from explicit workflow/test evidence.
+    inputs: [executable_value_report]
+    outputs: [registration_debt_classification]
+    execution_surface: MissionControl Mycelium CI
+    test_proof_evidence: [run_37304801812_job_111745797805, tests/test_classify_executable_registration_debt.py]
+    value_evidence: [artifact_11342464146]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: true
+
+  - id: mc_registration_debt_classification
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/registration_debt_classification.json
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: fbe2b5511f05b3945919e84b4d8a1ae9a8941c80
+    purpose: Persist the deterministic executable registration-debt census used to rank the next value edge.
+    inputs: [registration_debt_classification]
+    outputs: [registration_debt_control_input]
+    execution_surface: MissionControl Mycelium CI
+    test_proof_evidence: [run_37304801812_job_111745797805]
+    value_evidence: [artifact_11342464146]
+    outcome_scope: REPOSITORY
+    current_state: CONSUMED_EVIDENCE
+    authority_class: DERIVED_PROJECTION_ONLY
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: true
+
+  - id: mc_registration_debt_determinism_consumer
+    type: CONSUMER
+    repository: GBOGEB/CODEX
+    path: .github/workflows/missioncontrol-mycelium.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: fbe2b5511f05b3945919e84b4d8a1ae9a8941c80
+    purpose: Rerun the debt classifier and byte-compare the second materialization before publication.
+    inputs: [registration_debt_control_input]
+    outputs: [verified_registration_debt_classification]
+    execution_surface: MissionControl Mycelium CI deterministic materialization step
+    test_proof_evidence: [run_37304801812_job_111745797805]
+    value_evidence: [deterministic_materialization_green]
+    outcome_scope: REPOSITORY
+    current_state: DOWNSTREAM_CONSUMER
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: true
+
+  - id: mc_registration_debt_artifact_publisher
+    type: CONSUMER
+    repository: GBOGEB/CODEX
+    path: .github/workflows/missioncontrol-mycelium.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: fbe2b5511f05b3945919e84b4d8a1ae9a8941c80
+    purpose: Publish the deterministically verified registration-debt census as the durable MissionControl ranking artifact.
+    inputs: [verified_registration_debt_classification]
+    outputs: [registration_debt_artifact]
+    execution_surface: MissionControl Mycelium CI artifact upload
+    test_proof_evidence: [run_37304801812_job_111745797805]
+    value_evidence: [artifact_11342464146]
+    outcome_scope: REPOSITORY
+    current_state: DOWNSTREAM_CONSUMER
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: true
+
 edges:
   - {from: mc_control_manifest, to: mc_mycelium_workflow, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
   - {from: mc_mycelium_workflow, to: mc_integration_validator, type: TRIGGERED_BY, evidence: run_37281376763_job_111670015753}
@@ -783,7 +867,28 @@ edges:
   - {from: ci_bridge_alignment_job, to: ci_governance_snapshot_bridge_alignment, type: PRODUCES, evidence: artifact_11343326490}
   - {from: ci_governance_snapshot_bridge_alignment, to: ci_governance_artifact_consumer, type: CONSUMES, evidence: artifact_11343326490}
 
+  - {from: mc_value_report, to: mc_registration_debt_classifier, type: CONSUMES, evidence: run_37304801812_job_111745797805}
+  - {from: mc_registration_debt_classifier, to: mc_registration_debt_classification, type: PRODUCES, evidence: artifact_11342464146}
+  - {from: mc_registration_debt_classification, to: mc_registration_debt_determinism_consumer, type: CONSUMES, evidence: run_37304801812_job_111745797805}
+  - {from: mc_registration_debt_determinism_consumer, to: mc_registration_debt_artifact_publisher, type: PUBLISHES, evidence: artifact_11342464146}
+
 integration_paths:
+  - id: missioncontrol_registration_debt_repository_value
+    nodes:
+      - mc_value_report
+      - mc_registration_debt_classifier
+      - mc_registration_debt_classification
+      - mc_registration_debt_determinism_consumer
+      - mc_registration_debt_artifact_publisher
+    roles:
+      - UPSTREAM_SOURCE
+      - EXECUTABLE_OR_CONFIG
+      - OUTPUT_OR_EVIDENCE
+      - DOWNSTREAM_CONSUMER
+      - DOWNSTREAM_CONSUMER
+    executed: true
+    evidence: [run_37304801812_job_111745797805, artifact_11342464146]
+
   - id: ci_bridge_alignment_repository_value
     nodes:
       - ci_bridge_map_source
