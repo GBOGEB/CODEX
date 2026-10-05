@@ -126,3 +126,21 @@ def test_gmi_hosted_federation_path_is_registered_and_executed():
     assert guard["value_scope"] == "V4_FEDERATION_VALUE"
     assert "gmi_guard_runtime" not in report["tested_orphans"]
     assert report["value_scope_counts"]["V4_FEDERATION_VALUE"] >= 3
+
+
+def test_semantic_runtime_repository_value_is_registered_without_child_credit():
+    contract, registry, schema = loaded()
+    errors, report = validate_registry(contract, registry, schema)
+    assert errors == []
+    path = next(
+        p for p in registry["integration_paths"]
+        if p["id"] == "semantic_runtime_repository_artifact_value"
+    )
+    assert path["executed"] is True
+    assert path["nodes"][-1] == "semantic_artifact_publisher"
+    workflow = next(n for n in registry["nodes"] if n["id"] == "semantic_runtime_workflow")
+    assert workflow["value_scope"] == "V2_REPOSITORY_VALUE"
+    publisher = next(n for n in registry["nodes"] if n["id"] == "semantic_artifact_publisher")
+    assert publisher["current_state"] == "DOWNSTREAM_CONSUMER_CHILD_ACCEPTANCE_WITHHELD"
+    assert "semantic_runtime_workflow" not in report["tested_orphans"]
+    assert report["executed_integration_path_count"] >= 4
