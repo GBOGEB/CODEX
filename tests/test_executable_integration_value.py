@@ -221,3 +221,20 @@ def test_registration_debt_classifier_repository_value_path_is_registered():
     assert runtime["value_scope"] == "V2_REPOSITORY_VALUE"
     assert "mc_registration_debt_classifier" not in report["tested_orphans"]
     assert report["executed_integration_path_count"] >= 8
+
+
+def test_full_stack_abacus_export_repository_value_path_is_registered():
+    contract, registry, schema = loaded()
+    errors, report = validate_registry(contract, registry, schema)
+    assert errors == []
+    path = next(
+        p for p in registry["integration_paths"]
+        if p["id"] == "full_stack_abacus_export_repository_value"
+    )
+    assert path["executed"] is True
+    assert path["nodes"][-1] == "full_stack_release_readiness_consumer"
+    exporter = next(n for n in registry["nodes"] if n["id"] == "abacus_runtime_exporter")
+    assert exporter["current_state"] == "PIPELINE_INTEGRATED"
+    assert exporter["value_scope"] == "V2_REPOSITORY_VALUE"
+    assert "abacus_runtime_exporter" not in report["tested_orphans"]
+    assert report["executed_integration_path_count"] >= 9

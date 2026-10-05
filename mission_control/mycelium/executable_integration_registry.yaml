@@ -847,6 +847,132 @@ nodes:
     project_outcome: false
     recursive_control_effect: true
 
+  - id: full_stack_governance_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/full-stack-governance.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: e180066062b32c0e97c2643ceaa3e46331175340
+    purpose: Orchestrate lineage-governance, bridge audit, federation bridge build, and release-readiness control stages.
+    inputs: [repository_lineage_state]
+    outputs: [lineage_governance_execution]
+    execution_surface: Full Stack Governance CI
+    test_proof_evidence: [run_37307215598]
+    value_evidence: [artifact_11344047994, release_readiness_job_111753902504]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: abacus_runtime_exporter
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/export_abacus_runtime.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: e180066062b32c0e97c2643ceaa3e46331175340
+    purpose: Materialize the bounded ABACUS runtime export and machine-readable bridge report inside the mcp-bridge governance lane.
+    inputs: [abacus_runtime_manifest]
+    outputs: [abacus_runtime_export_report]
+    execution_surface: Full Stack Governance CI lineage-governance mcp-bridge
+    test_proof_evidence: [run_37307215598_job_111753686180, tests/test_export_abacus_runtime.py]
+    value_evidence: [artifact_11344047994, bridge_report_copied_file_count_14]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: full_stack_mcp_bridge_execution
+    type: WORKFLOW_JOB
+    repository: GBOGEB/CODEX
+    path: .github/workflows/full-stack-governance.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: e180066062b32c0e97c2643ceaa3e46331175340
+    purpose: Execute the mcp-bridge governance matrix lane, including drift, version, tests, and runtime export.
+    inputs: [abacus_runtime_export_report]
+    outputs: [lineage_governance_mcp_bridge_result]
+    execution_surface: lineage-governance (mcp-bridge)
+    test_proof_evidence: [run_37307215598_job_111753686180]
+    value_evidence: [artifact_11344047994]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: full_stack_lineage_gate_outcome
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: .github/workflows/full-stack-governance.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: e180066062b32c0e97c2643ceaa3e46331175340
+    purpose: Persist the successful lineage-governance prerequisite consumed by downstream bridge jobs.
+    inputs: [lineage_governance_mcp_bridge_result]
+    outputs: [lineage_governance_success]
+    execution_surface: Full Stack Governance CI lineage-governance matrix
+    test_proof_evidence: [run_37307215598_job_111753686180]
+    value_evidence: [artifact_11344047994, lineage_status_passed]
+    outcome_scope: REPOSITORY
+    current_state: CONSUMED_EVIDENCE
+    authority_class: DERIVED_PROJECTION_ONLY
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: full_stack_bridge_audit_consumer
+    type: CONSUMER
+    repository: GBOGEB/CODEX
+    path: .github/workflows/full-stack-governance.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: e180066062b32c0e97c2643ceaa3e46331175340
+    purpose: Consume successful lineage-governance as an explicit prerequisite for the federation governance bridge audit.
+    inputs: [lineage_governance_success]
+    outputs: [bridge_audit_success]
+    execution_surface: Full Stack Governance CI bridge-audit
+    test_proof_evidence: [run_37307215598_job_111753815380]
+    value_evidence: [bridge_audit_green]
+    outcome_scope: REPOSITORY
+    current_state: DOWNSTREAM_CONSUMER
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: full_stack_release_readiness_consumer
+    type: CONSUMER
+    repository: GBOGEB/CODEX
+    path: .github/workflows/full-stack-governance.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: e180066062b32c0e97c2643ceaa3e46331175340
+    purpose: Consume bridge-audit and federation-build success as the final release-lineage gate.
+    inputs: [bridge_audit_success, federation_bridge_build_success]
+    outputs: [release_lineage_gate_success]
+    execution_surface: Full Stack Governance CI release-readiness
+    test_proof_evidence: [run_37307215598_job_111753902504]
+    value_evidence: [release_readiness_green]
+    outcome_scope: REPOSITORY
+    current_state: DOWNSTREAM_CONSUMER
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
 edges:
   - {from: mc_control_manifest, to: mc_mycelium_workflow, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
   - {from: mc_mycelium_workflow, to: mc_integration_validator, type: TRIGGERED_BY, evidence: run_37281376763_job_111670015753}
@@ -894,7 +1020,31 @@ edges:
   - {from: mc_registration_debt_classification, to: mc_registration_debt_determinism_consumer, type: CONSUMES, evidence: run_37304801812_job_111745797805}
   - {from: mc_registration_debt_determinism_consumer, to: mc_registration_debt_artifact_publisher, type: PUBLISHES, evidence: artifact_11342464146}
 
+  - {from: full_stack_governance_workflow, to: abacus_runtime_exporter, type: TRIGGERED_BY, evidence: run_37307215598_job_111753686180}
+  - {from: abacus_runtime_exporter, to: full_stack_mcp_bridge_execution, type: ROUTES, evidence: run_37307215598_job_111753686180}
+  - {from: full_stack_mcp_bridge_execution, to: full_stack_lineage_gate_outcome, type: PRODUCES, evidence: artifact_11344047994}
+  - {from: full_stack_lineage_gate_outcome, to: full_stack_bridge_audit_consumer, type: CONSUMES, evidence: needs_lineage_governance}
+  - {from: full_stack_bridge_audit_consumer, to: full_stack_release_readiness_consumer, type: UPDATES, evidence: run_37307215598_job_111753902504}
+
 integration_paths:
+  - id: full_stack_abacus_export_repository_value
+    nodes:
+      - full_stack_governance_workflow
+      - abacus_runtime_exporter
+      - full_stack_mcp_bridge_execution
+      - full_stack_lineage_gate_outcome
+      - full_stack_bridge_audit_consumer
+      - full_stack_release_readiness_consumer
+    roles:
+      - UPSTREAM_SOURCE
+      - EXECUTABLE_OR_CONFIG
+      - EXECUTION
+      - OUTPUT_OR_EVIDENCE
+      - DOWNSTREAM_CONSUMER
+      - DOWNSTREAM_CONSUMER
+    executed: true
+    evidence: [run_37307215598_job_111753686180, artifact_11344047994, run_37307215598_job_111753815380, run_37307215598_job_111753902504]
+
   - id: missioncontrol_registration_debt_repository_value
     nodes:
       - mc_value_report
