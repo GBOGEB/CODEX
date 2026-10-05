@@ -1456,6 +1456,111 @@ nodes:
     project_outcome: false
     recursive_control_effect: false
 
+  - id: render_parity_source
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: src/abacus_render_pipeline/orchestrate.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 1ab537ed2e0b75a4a0a5c5d1165d42cbca7df9c2
+    purpose: Provide the governed ABACUS render generator consumed by the exact-main parity workflow.
+    inputs: [renderer_sources]
+    outputs: [render_regeneration_input]
+    execution_surface: Render Parity Synchronization
+    test_proof_evidence: [run_37313504773_job_111774421224]
+    value_evidence: [RENDER_PARITY_MAIN_1AB537ED_PROOF]
+    outcome_scope: REPOSITORY
+    current_state: SOURCE_BOUND
+    authority_class: LOCAL_AUTHORITATIVE
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: render_parity_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/render-parity.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 1ab537ed2e0b75a4a0a5c5d1165d42cbca7df9c2
+    purpose: Regenerate ABACUS render projections and fail if committed HTML/Markdown outputs drift from the generator.
+    inputs: [render_regeneration_input]
+    outputs: [render_parity_execution]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [run_37313504773_job_111774421224]
+    value_evidence: [RENDER_PARITY_MAIN_1AB537ED_PROOF]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: render_parity_execution
+    type: WORKFLOW_JOB
+    repository: GBOGEB/CODEX
+    path: .github/workflows/render-parity.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 1ab537ed2e0b75a4a0a5c5d1165d42cbca7df9c2
+    purpose: Execute regeneration and git-diff structural parity verification on hosted main.
+    inputs: [render_parity_execution]
+    outputs: [render_parity_result]
+    execution_surface: GitHub Actions job parity
+    test_proof_evidence: [run_37313504773_job_111774421224]
+    value_evidence: [RENDER_PARITY_MAIN_1AB537ED_PROOF]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: render_parity_proof
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/receipts/RENDER_PARITY_MAIN_1AB537ED_PROOF.json
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 4957fab8a62f866f345c03e44771d0c185e6c9d3
+    purpose: Bind exact-main regeneration and zero-diff parity to durable repository evidence.
+    inputs: [render_parity_result]
+    outputs: [render_projection_current]
+    execution_surface: MissionControl control plane
+    test_proof_evidence: [run_37313504773_job_111774421224]
+    value_evidence: [RENDER_PARITY_MAIN_1AB537ED_PROOF]
+    outcome_scope: REPOSITORY
+    current_state: CONSUMED_EVIDENCE
+    authority_class: DERIVED_PROJECTION_ONLY
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: render_parity_repository_consumer
+    type: CONSUMER
+    repository: GBOGEB/CODEX
+    path: docs/deck-systems/abacus-render-pipeline/runtime_dashboard.html
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 1ab537ed2e0b75a4a0a5c5d1165d42cbca7df9c2
+    purpose: Persist the parity-verified committed renderer projection as a downstream repository surface.
+    inputs: [render_projection_current]
+    outputs: [current_render_projection]
+    execution_surface: repository main
+    test_proof_evidence: [run_37313504773_job_111774421224]
+    value_evidence: [docs/deck-systems/abacus-render-pipeline/runtime_dashboard.html, docs/deck-systems/abacus-render-pipeline/runtime_summary.md]
+    outcome_scope: REPOSITORY
+    current_state: DOWNSTREAM_CONSUMER
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
 edges:
   - {from: mc_control_manifest, to: mc_mycelium_workflow, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
   - {from: mc_mycelium_workflow, to: mc_integration_validator, type: TRIGGERED_BY, evidence: run_37281376763_job_111670015753}
@@ -1533,7 +1638,28 @@ edges:
   - {from: commit_metrics_collection_job, to: commit_metrics_successor_proof, type: PRODUCES, evidence: successor_69ebadeda7491cf48b84068a39780432898d623f}
   - {from: commit_metrics_successor_proof, to: commit_metrics_repository_consumer, type: UPDATES, evidence: successor_69ebadeda7491cf48b84068a39780432898d623f}
 
+  - {from: render_parity_source, to: render_parity_workflow, type: CONFIGURES, evidence: run_37313504773_job_111774421224}
+  - {from: render_parity_workflow, to: render_parity_execution, type: TRIGGERED_BY, evidence: run_37313504773_job_111774421224}
+  - {from: render_parity_execution, to: render_parity_proof, type: PROVES, evidence: RENDER_PARITY_MAIN_1AB537ED_PROOF}
+  - {from: render_parity_proof, to: render_parity_repository_consumer, type: UPDATES, evidence: zero_diff_runtime_dashboard_runtime_summary}
+
 integration_paths:
+  - id: render_parity_repository_value
+    nodes:
+      - render_parity_source
+      - render_parity_workflow
+      - render_parity_execution
+      - render_parity_proof
+      - render_parity_repository_consumer
+    roles:
+      - UPSTREAM_SOURCE
+      - EXECUTABLE_OR_CONFIG
+      - EXECUTION
+      - OUTPUT_OR_EVIDENCE
+      - DOWNSTREAM_CONSUMER
+    executed: true
+    evidence: [run_37313504773_job_111774421224, RENDER_PARITY_MAIN_1AB537ED_PROOF]
+
   - id: commit_metrics_repository_value
     nodes:
       - commit_metrics_source_main
