@@ -85,3 +85,23 @@ def test_executed_path_requires_roles_and_terminal_consumer():
     candidate["integration_paths"][0]["roles"][-1] = "EXECUTION"
     errors, _ = validate_registry(contract, candidate, schema)
     assert any("required roles/edges/terminal consumer" in e for e in errors)
+
+
+def test_gateway_runtime_rex_path_is_registered_and_executed():
+    contract, registry, schema = loaded()
+    errors, report = validate_registry(contract, registry, schema)
+    assert errors == []
+    path = next(
+        p for p in registry["integration_paths"]
+        if p["id"] == "missioncontrol_gateway_runtime_rex"
+    )
+    assert path["executed"] is True
+    assert path["nodes"][-1] == "mc_control_loop"
+    runtime = next(
+        n for n in registry["nodes"]
+        if n["id"] == "gateway_transport_runtime"
+    )
+    assert runtime["current_state"] == "REX_OBSERVABLE"
+    assert runtime["value_scope"] == "V3_PROJECT_VALUE"
+    assert "gateway_transport_runtime" not in report["tested_orphans"]
+    assert report["executed_integration_path_count"] >= 2
