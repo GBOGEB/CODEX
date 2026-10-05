@@ -1,0 +1,56 @@
+name: W05 Governed Worker Plan Consumer
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/w05_worker_multiplier_plan.py'
+      - 'tests/test_w05_worker_multiplier_plan.py'
+      - '.github/workflows/w05-worker-plan-consumer.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test planner
+        run: |
+          python -m pip install pytest
+          python -m pytest -q tests/test_w05_worker_multiplier_plan.py
+      - name: Materialize governed plan
+        id: plan
+        run: |
+          python scripts/w05_worker_multiplier_plan.py --discovery 8 --mutation 4 --out outputs/w05/worker_plan.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path("outputs/w05/worker_plan.json").read_text())
+          lanes=[{"worker_id":w["worker_id"],"partition":w["partition"],"mode":w["mode"]} for w in p["workers"] if w["mode"]=="mutation_candidate"]
+          print("matrix="+json.dumps({"include":lanes},separators=(",",":")))
+          with open(__import__("os").environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write("matrix="+json.dumps({"include":lanes},separators=(",",":"))+"\n")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: w05-worker-plan
+          path: outputs/w05/worker_plan.json
+
+  consume:
+    needs: plan
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - name: Consume governed lane
+        run: |
+          echo "worker=${{ matrix.worker_id }}"
+          echo "partition=${{ matrix.partition }}"
+          echo "mode=${{ matrix.mode }}"
