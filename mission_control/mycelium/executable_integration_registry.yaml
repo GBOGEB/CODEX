@@ -553,6 +553,90 @@ nodes:
     project_outcome: false
     recursive_control_effect: false
 
+  - id: mc_log_analyzer
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/analyze_missioncontrol_logs.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: af420ab456a772433f0f767094af334766d6d6de
+    purpose: Materialize governed log health, first-red and recurrence observations from MissionControl log events.
+    inputs: [mission_control_log_events]
+    outputs: [mission_control_log_analysis]
+    execution_surface: MissionControl Mycelium CI
+    test_proof_evidence: [run_37301292677_job_111734369774, tests/test_missioncontrol_logs.py]
+    value_evidence: [mission_control/mycelium/log_analysis.json, docs/data/missioncontrol_log_analysis.json]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: mc_metrics_builder
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/build_missioncontrol_metrics.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: af420ab456a772433f0f767094af334766d6d6de
+    purpose: Consume governed log analysis plus graph/control observations and materialize deterministic MissionControl metrics.
+    inputs: [mission_control_log_analysis, interaction_graph, control_observations]
+    outputs: [mission_control_metrics_snapshot]
+    execution_surface: MissionControl Mycelium CI
+    test_proof_evidence: [run_37301292677_job_111734369774, tests/test_missioncontrol_metrics.py]
+    value_evidence: [mission_control/mycelium/metrics_snapshot.json, docs/data/missioncontrol_metrics.json]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: mc_metrics_snapshot
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/metrics_snapshot.json
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: af420ab456a772433f0f767094af334766d6d6de
+    purpose: Persist the deterministic metrics projection consumed by MissionControl validation and Pages parity checks.
+    inputs: [mission_control_metrics_snapshot]
+    outputs: [validated_metrics_surface]
+    execution_surface: MissionControl Mycelium CI
+    test_proof_evidence: [run_37301292677_job_111734369774]
+    value_evidence: [deterministic_materialization_step_14]
+    outcome_scope: REPOSITORY
+    current_state: CONSUMED_EVIDENCE
+    authority_class: DERIVED_PROJECTION_ONLY
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: mc_metrics_validation_consumer
+    type: CONSUMER
+    repository: GBOGEB/CODEX
+    path: scripts/validate_missioncontrol_mycelium.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: af420ab456a772433f0f767094af334766d6d6de
+    purpose: Consume canonical and Pages metrics/log materializations and fail closed on divergence or invalid evidence states.
+    inputs: [validated_metrics_surface, mission_control_log_analysis]
+    outputs: [missioncontrol_validation_result]
+    execution_surface: MissionControl Mycelium CI
+    test_proof_evidence: [run_37301292677_job_111734369774, tests/test_missioncontrol_mycelium.py]
+    value_evidence: [missioncontrol_mycelium_validation_green]
+    outcome_scope: REPOSITORY
+    current_state: DOWNSTREAM_CONSUMER
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
 edges:
   - {from: mc_control_manifest, to: mc_mycelium_workflow, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
   - {from: mc_mycelium_workflow, to: mc_integration_validator, type: TRIGGERED_BY, evidence: run_37281376763_job_111670015753}
@@ -584,7 +668,28 @@ edges:
   - {from: leg5_scout_scan_job, to: leg5_scout_receipt, type: PRODUCES, evidence: artifact_11339320685}
   - {from: leg5_scout_receipt, to: leg5_scout_consumer, type: CONSUMES, evidence: run_37296190056_job_111717923980}
 
+  - {from: mc_mycelium_workflow, to: mc_log_analyzer, type: TRIGGERED_BY, evidence: run_37301292677_job_111734369774}
+  - {from: mc_log_analyzer, to: mc_metrics_builder, type: CONSUMES, evidence: mission_control/mycelium/log_analysis.json}
+  - {from: mc_metrics_builder, to: mc_metrics_snapshot, type: PRODUCES, evidence: mission_control/mycelium/metrics_snapshot.json}
+  - {from: mc_metrics_snapshot, to: mc_metrics_validation_consumer, type: CONSUMES, evidence: run_37301292677_job_111734369774}
+
 integration_paths:
+  - id: missioncontrol_log_metrics_repository_value
+    nodes:
+      - mc_mycelium_workflow
+      - mc_log_analyzer
+      - mc_metrics_builder
+      - mc_metrics_snapshot
+      - mc_metrics_validation_consumer
+    roles:
+      - UPSTREAM_SOURCE
+      - EXECUTABLE_OR_CONFIG
+      - EXECUTION
+      - OUTPUT_OR_EVIDENCE
+      - DOWNSTREAM_CONSUMER
+    executed: true
+    evidence: [run_37301292677_job_111734369774, mission_control/mycelium/log_analysis.json, mission_control/mycelium/metrics_snapshot.json]
+
   - id: leg5_bounded_filesystem_scout_value
     nodes:
       - leg5_scout_workflow
