@@ -50,11 +50,18 @@ jobs:
       - name: Validate authenticated execution gateway design
         run: python scripts/validate_missioncontrol_execution_gateway.py
       - name: Run MissionControl tests
-        run: pytest -q tests/test_missioncontrol_mycelium.py tests/test_missioncontrol_metrics.py tests/test_missioncontrol_logs.py tests/test_missioncontrol_source_ingestion.py tests/test_missioncontrol_execution_gateway.py tests/test_missioncontrol_authenticated_transport.py tests/test_missioncontrol_status_snapshot.py tests/test_executable_integration_value.py tests/test_missioncontrol_value_rex_contract.py
+        run: pytest -q tests/test_missioncontrol_mycelium.py tests/test_missioncontrol_metrics.py tests/test_missioncontrol_logs.py tests/test_missioncontrol_source_ingestion.py tests/test_missioncontrol_execution_gateway.py tests/test_missioncontrol_authenticated_transport.py tests/test_missioncontrol_status_snapshot.py tests/test_executable_integration_value.py tests/test_missioncontrol_value_rex_contract.py tests/test_classify_executable_registration_debt.py
       - name: Verify deterministic materializations
         run: |
           git ls-files --error-unmatch mission_control/mycelium/executable_value_report.json
           git ls-files --error-unmatch docs/data/missioncontrol_executable_value_report.json
           git ls-files --error-unmatch mission_control/mycelium/executable_value_control_observation.json
-          git ls-files --error-unmatch mission_control/mycelium/registration_debt_classification.json
-          git diff --exit-code -- mission_control/mycelium/metrics_snapshot.json docs/data/missioncontrol_metrics.json mission_control/mycelium/log_analysis.json docs/data/missioncontrol_log_analysis.json mission_control/mycelium/executable_value_report.json docs/data/missioncontrol_executable_value_report.json mission_control/mycelium/executable_value_control_observation.json mission_control/mycelium/registration_debt_classification.json
+          cp mission_control/mycelium/registration_debt_classification.json /tmp/registration_debt_classification.first.json
+          python scripts/classify_executable_registration_debt.py
+          cmp /tmp/registration_debt_classification.first.json mission_control/mycelium/registration_debt_classification.json
+          git diff --exit-code -- mission_control/mycelium/metrics_snapshot.json docs/data/missioncontrol_metrics.json mission_control/mycelium/log_analysis.json docs/data/missioncontrol_log_analysis.json mission_control/mycelium/executable_value_report.json docs/data/missioncontrol_executable_value_report.json mission_control/mycelium/executable_value_control_observation.json
+      - name: Upload registration debt classification
+        uses: actions/upload-artifact@v4
+        with:
+          name: missioncontrol-registration-debt-classification
+          path: mission_control/mycelium/registration_debt_classification.json
