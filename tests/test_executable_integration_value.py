@@ -31,7 +31,11 @@ def test_pipeline_integrated_claim_requires_executed_traversal():
     contract, registry, schema = loaded()
     candidate = deepcopy(registry)
     candidate["nodes"][0]["current_state"] = "PIPELINE_INTEGRATED"
-    candidate["integration_paths"][0]["executed"] = False
+    path = next(
+        p for p in candidate["integration_paths"]
+        if p["id"] == "missioncontrol_executable_value_control"
+    )
+    path["executed"] = False
     errors, _ = validate_registry(contract, candidate, schema)
     assert any("PIPELINE_INTEGRATED claim lacks executed traversal" in e for e in errors)
 
