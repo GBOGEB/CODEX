@@ -13,6 +13,8 @@ permissions:
 
 jobs:
   plan:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.plan.outputs.matrix }}
@@ -44,6 +46,7 @@ jobs:
           path: outputs/w05/worker_plan.json
 
   consume:
+    permissions: {}
     needs: plan
     runs-on: ubuntu-latest
     strategy:
