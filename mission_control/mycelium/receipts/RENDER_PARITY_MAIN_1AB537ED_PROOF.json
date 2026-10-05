@@ -1,0 +1,32 @@
+{
+  "schema_version": "0.1",
+  "receipt_id": "RENDER_PARITY_MAIN_1AB537ED_PROOF",
+  "claim": "Exact-main render parity workflow regenerated the ABACUS render outputs and proved committed HTML/Markdown projections are current with the generator.",
+  "subject_repository": "GBOGEB/CODEX",
+  "subject_main_sha": "1ab537ed2e0b75a4a0a5c5d1165d42cbca7df9c2",
+  "workflow": {
+    "path": ".github/workflows/render-parity.yml",
+    "run_id": 37313504773,
+    "job_id": 111774421224,
+    "conclusion": "success"
+  },
+  "execution": {
+    "generator": "src/abacus_render_pipeline/orchestrate.py",
+    "verified_outputs": [
+      "docs/deck-systems/abacus-render-pipeline/runtime_dashboard.html",
+      "docs/deck-systems/abacus-render-pipeline/runtime_summary.md"
+    ],
+    "parity_check": "git diff --exit-code",
+    "parity_result": "PASS"
+  },
+  "value": {
+    "scope": "V2_REPOSITORY_VALUE",
+    "downstream_effect": "COMMITTED_RENDER_PROJECTIONS_VERIFIED_CURRENT",
+    "artifact_upload": false,
+    "federation_value": false,
+    "global_control": false
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0
+}
