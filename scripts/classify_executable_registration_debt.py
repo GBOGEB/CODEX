@@ -66,7 +66,7 @@ def classify(report_path: Path = REPORT) -> dict[str, object]:
         "schema_version": "0.1",
         "authority_class": "DERIVED_CENSUS",
         "authority_transfer": False,
-        "source_report": str(REPORT.relative_to(ROOT)),
+        "source_report": str(report_path.relative_to(ROOT)),
         "candidate_count": len(rows),
         "classification_counts": counts,
         "candidates": rows,
