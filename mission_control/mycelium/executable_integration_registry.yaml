@@ -259,6 +259,90 @@ nodes:
     project_outcome: true
     recursive_control_effect: true
 
+  - id: gmi_hosted_mirror
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: evidence/gmi_doceng_001/MIRROR_RECEIPT.json
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 2da29d3cbc374dd9b21a02374d2578cbb6ab045b
+    purpose: Bind the non-authoritative Drive-origin GMI-DOCENG evidence subset used for hosted validation.
+    inputs: [drive_package_GMI_DOCENG_001, qps_w274_source_proof, w275_provider_receipt]
+    outputs: [hosted_gmi_materialization]
+    execution_surface: MissionControl Mycelium CI
+    test_proof_evidence: [run_37298109674_job_111724092756]
+    value_evidence: [GMI_DOCENG_HOSTED_MATERIALIZATION_C64310F6_PROOF]
+    outcome_scope: PROJECT
+    current_state: HOSTED_MATERIALIZATION_EVIDENCE
+    authority_class: EXTERNAL_EVIDENCE_MIRROR_NON_AUTHORITATIVE
+    tested: true
+    value_scope: V3_PROJECT_VALUE
+    repository_outcome: true
+    project_outcome: true
+    recursive_control_effect: false
+
+  - id: gmi_guard_runtime
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/gmi_doceng_bridge_guard.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: c64310f6b7bbfd59e401d5dc9aefc33b69d79af4
+    purpose: Fail closed on GMI-DOCENG materialization, source-binding and W275 provider-proof predicates.
+    inputs: [hosted_gmi_materialization]
+    outputs: [gmi_guard_receipt]
+    execution_surface: MissionControl Mycelium CI
+    test_proof_evidence: [run_37298109674_job_111724092756]
+    value_evidence: [GMI_DOCENG_HOSTED_MATERIALIZATION_C64310F6_PROOF, qps_pr_1621_merge_7b3224ff]
+    outcome_scope: FEDERATION
+    current_state: FEDERATION_HOSTED_MATERIALIZATION
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V4_FEDERATION_VALUE
+    repository_outcome: true
+    project_outcome: true
+    recursive_control_effect: false
+
+  - id: gmi_guard_hosted_proof
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/receipts/GMI_DOCENG_HOSTED_MATERIALIZATION_C64310F6_PROOF.json
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 4c33bd6d73e8857362ec06fee2063559b289b382
+    purpose: Bind the hosted GMI guard execution to Drive/provider/QPS lineage and preserved withholds.
+    inputs: [gmi_guard_receipt]
+    outputs: [gmi_federation_value_observation]
+    execution_surface: MissionControl control plane
+    test_proof_evidence: [run_37298109674_job_111724092756]
+    value_evidence: [GMI_DOCENG_HOSTED_MATERIALIZATION_C64310F6_PROOF]
+    outcome_scope: FEDERATION
+    current_state: FEDERATION_HOSTED_PROOF
+    authority_class: DERIVED_PROJECTION_ONLY
+    tested: true
+    value_scope: V4_FEDERATION_VALUE
+    repository_outcome: true
+    project_outcome: true
+    recursive_control_effect: false
+
+  - id: gmi_qps_w275_consumer
+    type: CONSUMER
+    repository: GBOGEB/cryoplant-project
+    path: controls/GMI_W275_DOCUMENT_CORE_3PSTAR_MIP_v1.yaml
+    owner: QPS_CHILD_ACCEPTANCE_AUTHORITY
+    exact_revision: 7b3224ff56235d1f425ecf5e340abf0a2519df2d
+    purpose: Preserve the QPS child-authority disposition for W275 document-core ingress and federation persistence.
+    inputs: [gmi_federation_value_observation]
+    outputs: [qps_w275_child_disposition]
+    execution_surface: GBOGEB/cryoplant-project
+    test_proof_evidence: [qps_pr_1621_merge_7b3224ff]
+    value_evidence: [qps_pr_1621_merge_7b3224ff, drive_w275_closeout]
+    outcome_scope: FEDERATION
+    current_state: DOWNSTREAM_CONSUMER_GLOBAL_CONTROL_WITHHELD
+    authority_class: REMOTE_AUTHORITATIVE
+    tested: true
+    value_scope: V4_FEDERATION_VALUE
+    repository_outcome: true
+    project_outcome: true
+    recursive_control_effect: false
+
 edges:
   - {from: mc_control_manifest, to: mc_mycelium_workflow, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
   - {from: mc_mycelium_workflow, to: mc_integration_validator, type: TRIGGERED_BY, evidence: run_37281376763_job_111670015753}
@@ -274,7 +358,29 @@ edges:
   - {from: gateway_transport_runtime, to: gateway_runtime_rex_proof, type: PRODUCES, evidence: artifact_11338039617}
   - {from: gateway_runtime_rex_proof, to: mc_control_loop, type: UPDATES, evidence: GATEWAY_RUNTIME_REX_MAIN_BEB823B5_PROOF}
 
+  - {from: gmi_hosted_mirror, to: mc_mycelium_workflow, type: CONFIGURES, evidence: GMI_DOCENG_001_CODEX_HOSTED_SUBSET}
+  - {from: mc_mycelium_workflow, to: gmi_guard_runtime, type: TRIGGERED_BY, evidence: run_37298109674_job_111724092756}
+  - {from: gmi_guard_runtime, to: gmi_guard_hosted_proof, type: PRODUCES, evidence: GMI_DOCENG_HOSTED_MATERIALIZATION_C64310F6_PROOF}
+  - {from: gmi_guard_hosted_proof, to: gmi_qps_w275_consumer, type: FEDERATES, evidence: qps_pr_1621_merge_7b3224ff, cross_repository: true}
+  - {from: gmi_guard_runtime, to: gmi_qps_w275_consumer, type: FEDERATES, evidence: qps_pr_1621_merge_7b3224ff, cross_repository: true}
+
 integration_paths:
+  - id: gmi_doceng_hosted_federation
+    nodes:
+      - gmi_hosted_mirror
+      - mc_mycelium_workflow
+      - gmi_guard_runtime
+      - gmi_guard_hosted_proof
+      - gmi_qps_w275_consumer
+    roles:
+      - UPSTREAM_SOURCE
+      - EXECUTABLE_OR_CONFIG
+      - EXECUTION
+      - OUTPUT_OR_EVIDENCE
+      - DOWNSTREAM_CONSUMER
+    executed: true
+    evidence: [run_37298109674_job_111724092756, qps_pr_1621_merge_7b3224ff]
+
   - id: missioncontrol_gateway_runtime_rex
     nodes:
       - gateway_owner_workflow

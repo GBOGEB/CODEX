@@ -1,0 +1,182 @@
+manifest_version: 1.0.4
+schema_type: cross_agent_lossless_handover
+source_agent: Gemini
+session_title: Technical Document Governance & DMAIC Editing Pipeline (Schrijfeditor)
+generated_at: '2026-09-17T06:25:00Z'
+scope:
+  primary_domain: Technical Document Engineering & Governance
+  framework: Six Sigma DMAIC
+  target_file: Master.docx (150-page Technical Addendum) / Master.md
+  runtime_environment: Python >= 3.8 / Git / Local Filesystem / OneDrive Cloud Mirror
+current_gate: 'GATE 0D: W274 source bytes and unlocked canonical extraction accepted by QPS and fully merged; canonical lock,
+  post-source pipeline, replay/round-trip and Alexandria remain withheld'
+status: W274_FEDERATION_MERGED_SOURCE_BYTES_ACCEPTED_CANONICAL_UNLATCHED
+source_refs:
+- id: REF-001
+  type: infrastructure_spec
+  description: Microsoft 365 OneDrive for Business & Microsoft Graph REST API
+  auth: OAuth 2.0 PKCE + Mobile 2FA Authenticator
+- id: REF-002
+  type: governance_spec
+  description: Alexandria Document Management System (VPN Protected)
+- id: REF-003
+  type: expected_source_slot
+  path: input/Master.md
+  description: Legacy expected Technical Addendum source slot; bytes not materialized
+- id: REF-004
+  type: schema
+  path: input/requirements.json
+  description: Structured requirement verification definitions
+- id: REF-005
+  type: source_pointer
+  path: input/source_binding.json
+  status: POINTER_CONTRACT_ALIGNED
+  drive_file_id: 1Ad4T-fv5nX8PAxPxIpNQ3b3VMls-MuVs
+  receipt_sha256: f254c86f65bcd753a76590feb6e18e5b3ad899411b306733e5a8c97c082947f9
+  repository: GBOGEB/DOCX_RTM_Automation
+  indexed_source_commit: 193cafd25ea343c01036342400dca4eaa0252536
+  path_in_repository: addenda/QPS_Addendum_II_Master.docx
+  git_blob: d95e6a15e28e0bf9e810e434b79b62e396511aaf
+  size_bytes: 5063178
+  indexed_sha256: ac6627f0a6cbe8c020941686cad249619184d8071a9efca721d0c960d41d63c9
+- id: REF-006
+  type: hosted_source_byte_and_canonical_proof
+  path: PROOFS/W274_SOURCE_BYTE_PROOF/w274_gmi_source_byte_proof.json
+  status: PASS_UNLATCHED
+  provider_repo: GBOGEB/DOCX_RTM_Automation
+  provider_pr: 59
+  provider_pr_head: 12d9e7933298d53fb35a32e8879cdf1ea09ca6d7
+  provider_test_merge_sha: 2817e4c0f5873530e5872b19b41721a6cee9b455
+  provider_run_id: 35272686738
+  github_artifact_id: 10519642921
+  github_artifact_digest: sha256:96d9a3f54f646a64a6b57e9e9b073490932aa763dc0b058799bd6f473584e1b9
+  receipt_sha256: ceba69eefccf1123d08f862a0a692e9800d80498a94f59159c4095ac1c40af4b
+  observed_source_sha256: ac6627f0a6cbe8c020941686cad249619184d8071a9efca721d0c960d41d63c9
+  observed_git_blob: d95e6a15e28e0bf9e810e434b79b62e396511aaf
+  observed_size_bytes: 5063178
+  canonical_record_count: 2692
+  canonical_output_sha256: 5bed44a7ae2c0bcbd875e1162cdde292a7d9c8dc717e7328cf4a6d6f0cc13051
+  canonical_lock: NOT_PERFORMED
+artifact_refs:
+- path: cli.py
+  type: executable_script
+  version: 1.0.0-PROD
+  runtime: python3
+  sha256: 07ee6369982bcb473b293782fa0e76f56cae3dfc8eb45d41323f694fbe138893
+  status: MATERIALIZED_FROM_PROVENANCE_DOC
+  drive_file_id: 1PHlKDC6x3-9G2VfJGoPWoEI4-4y2LwCQ
+- path: config.json
+  type: configuration
+  format: json_schema_draft_07_reference_only
+- path: output/Master_Final.md
+  type: deliverable_document
+  status: PENDING_POST_SOURCE_PIPELINE_RUN
+- path: output/Audit_Report.md
+  type: audit_ledger
+  status: PENDING_POST_SOURCE_PIPELINE_RUN
+predecessors:
+- 'W274 fully merged: CODEX#761 / ABACUS#1262 / DOCX_RTM_Automation#59 / QPS#1445'
+- 'W273 3PR merged: CODEX#760 / ABACUS#1261 / QPS#1442'
+- 'Query: Alexandria VPN M365 doc repo interaction'
+- 'Query: Microsoft Graph API versioning and restoreVersion POST mechanics'
+- 'Prompt: DMAIC Schrijfeditor multi-agent technical addendum pipeline'
+successors:
+- 'Next governed successor: canonical lock/tag decision or post-source document-core adapter execution'
+- 'W274 3PR: CODEX#761 / ABACUS#1262 / QPS#1445'
+- 'Target: External Client (ChatGPT / Claude / Human Lead Engineer)'
+- 'Platform: Authenticated Google Drive Persistent Storage Bridge'
+next_action:
+  objective: 'Start successor from merged W274: decide canonical lock/tag as a separate governed provider mutation OR implement
+    the document-core adapter that consumes the verified canonical requirements for the first post-source Schrijfeditor run.'
+  closed_predicates:
+  - source discovery
+  - source pointer identity
+  - source byte equivalence
+  - unlocked canonical extraction
+  - W274 3PR persistence
+  - provider proof persistence
+  remaining_predicates:
+  - canonical lock/tag or explicit continued defer
+  - post-source Schrijfeditor document-core execution
+  - replay/round-trip equivalence
+  - Alexandria Graph runtime
+  - global CONTROL
+open_items:
+- id: OPEN-01
+  item: Clarify Master.mp file schema.
+  severity: MEDIUM
+- id: OPEN-02
+  item: Implement python-docx parser for direct .docx binary ingestion.
+  severity: LOW
+- id: OPEN-03
+  item: Implement Pandoc/docx compilation with input/templates/normal.dotm.
+  severity: MEDIUM
+- id: OPEN-04
+  item: W274 source-byte and unlocked canonical extraction proof are accepted and merged; next decision is canonical lock/tag
+    versus direct document-core adapter re-entry.
+  severity: MEDIUM
+- id: OPEN-05
+  item: Materialize RAW/conversation_export.json and RAW/original_prompts.txt if preserved source exports exist.
+  severity: MEDIUM
+- id: OPEN-06
+  item: Supply real templates/normal.dotm if template round-trip is required.
+  severity: MEDIUM
+bridge_receipt:
+  drive_root_id: 1bIPFEEe9XtmOB56B_4LIcX1FdSIxY4mZ
+  cli_py:
+    drive_file_id: 1PHlKDC6x3-9G2VfJGoPWoEI4-4y2LwCQ
+    sha256: 07ee6369982bcb473b293782fa0e76f56cae3dfc8eb45d41323f694fbe138893
+    syntax_check: PASS
+    lines: 506
+    source: Google Docs provenance ledger embedded cli.py block
+  source_binding:
+    drive_file_id: 1Ad4T-fv5nX8PAxPxIpNQ3b3VMls-MuVs
+    receipt_sha256: f254c86f65bcd753a76590feb6e18e5b3ad899411b306733e5a8c97c082947f9
+    disposition: ACCEPT_POINTER_BOUND
+    contract_shape: PASS
+  provider_source_proof:
+    provider_pr: 59
+    provider_run_id: 35272686738
+    github_artifact_id: 10519642921
+    receipt_drive_file_id: 1C88w2KpF0v0o3D5REYWn8-jbGbuUFSFv
+    receipt_sha256: ceba69eefccf1123d08f862a0a692e9800d80498a94f59159c4095ac1c40af4b
+    source_byte_equivalence: PASS
+    canonical_extraction: PASS_UNLATCHED
+    canonical_lock: DEFER
+canonical_unlocked_receipts:
+  proof_folder_id: 1ZqINmYM2bg2zvJm34h5k3CT2JaMhIAH3
+  proof_receipt_file_id: 1C88w2KpF0v0o3D5REYWn8-jbGbuUFSFv
+  proof_receipt_sha256: ceba69eefccf1123d08f862a0a692e9800d80498a94f59159c4095ac1c40af4b
+  extraction_manifest_file_id: 1PCxrxgSGSDZnwkqVh-Qq_ON6A9029s-Z
+  extraction_manifest_sha256: 9d4c24d4332716045ef270519aa18f010b197a9e1c7ad0e32c0c35f4b275af9d
+  master_requirements_file_id: 1kbtgTEX25l18HSYcmBZ2ax88WVI3O2Ok
+  master_requirements_sha256: 5bed44a7ae2c0bcbd875e1162cdde292a7d9c8dc717e7328cf4a6d6f0cc13051
+  record_count: 2692
+  lock_state: NOT_LOCKED
+w274_merge_tuple:
+  codex:
+    pr: 761
+    head_sha: 3816ae22b160ff8aa691d1eb15a8da11efb505e9
+    merge_sha: ea17b87311db4bf283d08f9e86124de47961b37a
+  abacus:
+    pr: 1262
+    head_sha: 9be648c6a2370bac6397156d1a0cb776233c504c
+    merge_sha: f55876e4d7985dd672304ff6e3945f24de9b9194
+    receiver_credit_delta: 0
+  provider:
+    repo: GBOGEB/DOCX_RTM_Automation
+    pr: 59
+    head_sha: 12d9e7933298d53fb35a32e8879cdf1ea09ca6d7
+    merge_sha: db8bf4902459d710702dd5debb725eee406a6224
+  qps:
+    pr: 1445
+    head_sha: 995829739edf0b7aa911bfa833c6254df19e2c36
+    merge_sha: 34f04bf08dc2f957f196f33ea1d73ae1a5b07070
+qps_child_disposition:
+  source_pointer_contract: ACCEPT
+  source_identity: ACCEPT_BYTE_VERIFIED
+  source_bytes: ACCEPT
+  canonical_extraction: ACCEPT_UNLATCHED
+  canonical_lock: DEFER
+  post_source_schrijfeditor_pipeline: DEFER
+  global_control: WITHHELD

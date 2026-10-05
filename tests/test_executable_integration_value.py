@@ -109,3 +109,20 @@ def test_gateway_runtime_rex_path_is_registered_and_executed():
     assert runtime["value_scope"] == "V3_PROJECT_VALUE"
     assert "gateway_transport_runtime" not in report["tested_orphans"]
     assert report["executed_integration_path_count"] >= 2
+
+
+def test_gmi_hosted_federation_path_is_registered_and_executed():
+    contract, registry, schema = loaded()
+    errors, report = validate_registry(contract, registry, schema)
+    assert errors == []
+    path = next(
+        p for p in registry["integration_paths"]
+        if p["id"] == "gmi_doceng_hosted_federation"
+    )
+    assert path["executed"] is True
+    assert path["nodes"][-1] == "gmi_qps_w275_consumer"
+    guard = next(n for n in registry["nodes"] if n["id"] == "gmi_guard_runtime")
+    assert guard["current_state"] == "FEDERATION_HOSTED_MATERIALIZATION"
+    assert guard["value_scope"] == "V4_FEDERATION_VALUE"
+    assert "gmi_guard_runtime" not in report["tested_orphans"]
+    assert report["value_scope_counts"]["V4_FEDERATION_VALUE"] >= 3

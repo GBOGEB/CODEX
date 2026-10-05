@@ -49,6 +49,18 @@ jobs:
         run: python scripts/classify_executable_registration_debt.py
       - name: Validate authenticated execution gateway design
         run: python scripts/validate_missioncontrol_execution_gateway.py
+      - name: Validate GMI-DOCENG hosted materialization
+        run: |
+          python scripts/gmi_doceng_bridge_guard.py             evidence/gmi_doceng_001/GMI-DOCENG-001             --receipt /tmp/gmi_doceng_bridge_guard_receipt.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          receipt = json.loads(Path("/tmp/gmi_doceng_bridge_guard_receipt.json").read_text())
+          assert receipt["disposition"] == "ACCEPT_DOCUMENT_CORE_PROVIDER_PROOF_BOUND"
+          assert receipt["cli_hash_match"] is True
+          assert receipt["source_binding_valid"] is True
+          assert receipt["document_core_receipt_valid"] is True
+          PY
       - name: Run MissionControl tests
         run: pytest -q tests/test_missioncontrol_mycelium.py tests/test_missioncontrol_metrics.py tests/test_missioncontrol_logs.py tests/test_missioncontrol_source_ingestion.py tests/test_missioncontrol_execution_gateway.py tests/test_missioncontrol_authenticated_transport.py tests/test_missioncontrol_status_snapshot.py tests/test_executable_integration_value.py tests/test_missioncontrol_value_rex_contract.py tests/test_classify_executable_registration_debt.py
       - name: Verify deterministic materializations
