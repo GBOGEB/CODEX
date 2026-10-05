@@ -70,6 +70,6 @@ def test_rex_updates_on_material_execution_and_findings():
 def test_rendered_control_loop_matches_governed_sequence():
     manifest = load(ROOT / "mission_control" / "mycelium" / "control_manifest.yaml")
     html = (ROOT / "docs" / "missioncontrol_mycelium.html").read_text(encoding="utf-8")
-    sequence = manifest["control_loop"]
+    sequence = manifest["control_loop"]["sequence"]
     rendered = "const flow=[" + ",".join(f"'{step}'" for step in sequence) + "];"
     assert rendered in html
