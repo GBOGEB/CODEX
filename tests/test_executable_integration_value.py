@@ -144,3 +144,20 @@ def test_semantic_runtime_repository_value_is_registered_without_child_credit():
     assert publisher["current_state"] == "DOWNSTREAM_CONSUMER_CHILD_ACCEPTANCE_WITHHELD"
     assert "semantic_runtime_workflow" not in report["tested_orphans"]
     assert report["executed_integration_path_count"] >= 4
+
+
+def test_leg5_bounded_scout_repository_value_path_is_registered():
+    contract, registry, schema = loaded()
+    errors, report = validate_registry(contract, registry, schema)
+    assert errors == []
+    path = next(
+        p for p in registry["integration_paths"]
+        if p["id"] == "leg5_bounded_filesystem_scout_value"
+    )
+    assert path["executed"] is True
+    assert path["nodes"][-1] == "leg5_scout_consumer"
+    runtime = next(n for n in registry["nodes"] if n["id"] == "leg5_scout_runtime")
+    assert runtime["current_state"] == "PIPELINE_INTEGRATED"
+    assert runtime["value_scope"] == "V2_REPOSITORY_VALUE"
+    assert "leg5_scout_runtime" not in report["tested_orphans"]
+    assert report["executed_integration_path_count"] >= 5
