@@ -637,6 +637,111 @@ nodes:
     project_outcome: false
     recursive_control_effect: false
 
+  - id: ci_bridge_map_source
+    type: YAML_CONFIG
+    repository: GBOGEB/CODEX
+    path: federation/orchestration/codex_abacus_bridge_map.yaml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: bb095dda5abc03b55e9049da611f5bf33ec9d113
+    purpose: Provide the canonical CODEX-to-ABACUS module alignment consumed by the bridge checker.
+    inputs: [codex_abacus_federation_contract]
+    outputs: [bridge_alignment_input]
+    execution_surface: CI
+    test_proof_evidence: [run_37303948628_job_111742992958]
+    value_evidence: [governance_snapshot_bridge_alignment_pass]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_AUTHORITATIVE
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: ci_bridge_alignment_runtime
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/check_bridge_alignment.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: bb095dda5abc03b55e9049da611f5bf33ec9d113
+    purpose: Validate CODEX-to-ABACUS mapping, required federation files, workflow references, statuses and module coverage.
+    inputs: [bridge_alignment_input]
+    outputs: [bridge_alignment_result]
+    execution_surface: CI
+    test_proof_evidence: [run_37303948628_job_111742992958, tests/test_check_bridge_alignment.py]
+    value_evidence: [governance_snapshot_bridge_alignment_pass]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: ci_bridge_alignment_job
+    type: WORKFLOW_JOB
+    repository: GBOGEB/CODEX
+    path: .github/workflows/ci.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: bb095dda5abc03b55e9049da611f5bf33ec9d113
+    purpose: Execute bridge alignment and pass its exact outcome into the governance snapshot emitter.
+    inputs: [bridge_alignment_result]
+    outputs: [governance_snapshot_input]
+    execution_surface: CI job test
+    test_proof_evidence: [run_37303948628_job_111742992958]
+    value_evidence: [artifact_11343326490]
+    outcome_scope: REPOSITORY
+    current_state: PIPELINE_INTEGRATED_SOFT_RUFF_DEBT_PRESERVED
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: ci_governance_snapshot_bridge_alignment
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: reports/governance_snapshot.json
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: bb095dda5abc03b55e9049da611f5bf33ec9d113
+    purpose: Persist bridge_alignment=passed while independently preserving ruff=failed and global snapshot status=failed.
+    inputs: [governance_snapshot_input]
+    outputs: [bridge_alignment_control_evidence]
+    execution_surface: CI governance snapshot
+    test_proof_evidence: [artifact_11343326490]
+    value_evidence: [bridge_alignment_pass_ruff_soft_debt_preserved]
+    outcome_scope: REPOSITORY
+    current_state: BRIDGE_ALIGNMENT_PASS_GLOBAL_SNAPSHOT_RUFF_FAILED
+    authority_class: DERIVED_PROJECTION_ONLY
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
+  - id: ci_governance_artifact_consumer
+    type: CONSUMER
+    repository: GBOGEB/CODEX
+    path: .github/workflows/ci.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: bb095dda5abc03b55e9049da611f5bf33ec9d113
+    purpose: Upload the governance snapshot and associated CI governance artifacts without converting soft Ruff debt into GREEN.
+    inputs: [bridge_alignment_control_evidence]
+    outputs: [ci_governance_artifact]
+    execution_surface: CI Upload CI governance artifacts
+    test_proof_evidence: [run_37303948628_job_111742992958]
+    value_evidence: [artifact_11343326490]
+    outcome_scope: REPOSITORY
+    current_state: DOWNSTREAM_CONSUMER_SOFT_RUFF_DEBT_PRESERVED
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    project_outcome: false
+    recursive_control_effect: false
+
 edges:
   - {from: mc_control_manifest, to: mc_mycelium_workflow, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
   - {from: mc_mycelium_workflow, to: mc_integration_validator, type: TRIGGERED_BY, evidence: run_37281376763_job_111670015753}
@@ -673,7 +778,28 @@ edges:
   - {from: mc_metrics_builder, to: mc_metrics_snapshot, type: PRODUCES, evidence: mission_control/mycelium/metrics_snapshot.json}
   - {from: mc_metrics_snapshot, to: mc_metrics_validation_consumer, type: CONSUMES, evidence: run_37301292677_job_111734369774}
 
+  - {from: ci_bridge_map_source, to: ci_bridge_alignment_runtime, type: CONFIGURES, evidence: run_37303948628_job_111742992958}
+  - {from: ci_bridge_alignment_runtime, to: ci_bridge_alignment_job, type: ROUTES, evidence: run_37303948628_job_111742992958}
+  - {from: ci_bridge_alignment_job, to: ci_governance_snapshot_bridge_alignment, type: PRODUCES, evidence: artifact_11343326490}
+  - {from: ci_governance_snapshot_bridge_alignment, to: ci_governance_artifact_consumer, type: CONSUMES, evidence: artifact_11343326490}
+
 integration_paths:
+  - id: ci_bridge_alignment_repository_value
+    nodes:
+      - ci_bridge_map_source
+      - ci_bridge_alignment_runtime
+      - ci_bridge_alignment_job
+      - ci_governance_snapshot_bridge_alignment
+      - ci_governance_artifact_consumer
+    roles:
+      - UPSTREAM_SOURCE
+      - EXECUTABLE_OR_CONFIG
+      - EXECUTION
+      - OUTPUT_OR_EVIDENCE
+      - DOWNSTREAM_CONSUMER
+    executed: true
+    evidence: [run_37303948628_job_111742992958, artifact_11343326490, bridge_alignment_pass_ruff_soft_debt_preserved]
+
   - id: missioncontrol_log_metrics_repository_value
     nodes:
       - mc_mycelium_workflow
