@@ -260,3 +260,23 @@ def test_ci_ssot_census_binding_repository_value_path_is_registered():
         assert node["value_scope"] == "V2_REPOSITORY_VALUE"
         assert node_id not in report["tested_orphans"]
     assert report["executed_integration_path_count"] >= 10
+
+
+def test_qps_m03_official_mcp_repository_value_path_is_registered():
+    contract, registry, schema = loaded()
+    errors, report = validate_registry(contract, registry, schema)
+    assert errors == []
+    path = next(
+        p for p in registry["integration_paths"]
+        if p["id"] == "qps_m03_official_mcp_repository_value"
+    )
+    assert path["executed"] is True
+    assert path["nodes"][-1] == "qps_m03_independent_consumer"
+    workflow = next(
+        n for n in registry["nodes"]
+        if n["id"] == "qps_m03_consumer_workflow"
+    )
+    assert workflow["current_state"] == "PIPELINE_INTEGRATED"
+    assert workflow["value_scope"] == "V2_REPOSITORY_VALUE"
+    assert "qps_m03_consumer_workflow" not in report["tested_orphans"]
+    assert report["executed_integration_path_count"] >= 11
