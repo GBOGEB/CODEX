@@ -13,6 +13,8 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
+import yaml
+
 from jsonschema import Draft202012Validator, FormatChecker
 from jsonschema.exceptions import ValidationError
 
@@ -21,6 +23,7 @@ MC = ROOT / "mission_control" / "mycelium"
 REQUEST_SCHEMA = MC / "schemas" / "execution_request.schema.json"
 RECEIPT_SCHEMA = MC / "schemas" / "execution_receipt.schema.json"
 RECEIPT_DIR = MC / "gateway" / "receipts"
+REX_LEDGER = ROOT / "federation" / "rex" / "GLOBAL_REX_LEDGER_v1.yaml"
 
 TARGET_REPOSITORY = "GBOGEB/CODEX"
 TARGET_REF = "main"
@@ -159,6 +162,66 @@ def resolve_job_id(*, run_id: int, job_name: str, token: str) -> int:
     return int(matches[0]["id"])
 
 
+
+def ambient_rex_lookup(*, intent: str, repository: str = TARGET_REPOSITORY) -> dict[str, Any]:
+    """Return bounded pre-execution REX context without granting repair authority."""
+    ledger = yaml.safe_load(REX_LEDGER.read_text(encoding="utf-8")) or {}
+    records = [row for row in ledger.get("records", []) if isinstance(row, dict)]
+    intent_tokens = {token.lower() for token in re.split(r"[^A-Za-z0-9]+", intent) if len(token) >= 4}
+    exact: list[str] = []
+    similar: list[str] = []
+    family_hits: list[str] = []
+    for row in records:
+        rex_id = str(row.get("rex_id") or "")
+        signature = str(row.get("signature") or "").lower()
+        text = canonical_json(row).lower()
+        repos = canonical_json(row.get("repo", {})).lower()
+        if intent.lower() == signature:
+            exact.append(rex_id)
+        elif intent_tokens and any(token in text for token in intent_tokens):
+            similar.append(rex_id)
+        if repository.lower() in repos:
+            family_hits.append(rex_id)
+    return {
+        "mode": "AMBIENT_PRE_EXECUTION",
+        "intent": intent,
+        "exact_signature_hits": sorted(set(filter(None, exact))),
+        "similar_signature_hits": sorted(set(filter(None, similar))),
+        "same_repo_family_hits": sorted(set(filter(None, family_hits))),
+        "authority": "EVIDENCE_ONLY",
+    }
+
+
+def write_rex_event(
+    *,
+    artifact: str,
+    run_id: int,
+    run_attempt: int,
+    request: dict[str, Any],
+    lookup: dict[str, Any],
+    outcome: str,
+    proof_ref: str,
+) -> Path:
+    """Persist an event-scoped REX observation beside the execution receipt."""
+    event = {
+        "state": "OBSERVED_PENDING_VERIFICATION",
+        "event": "TASK_EXECUTED",
+        "repo": TARGET_REPOSITORY,
+        "intent": request["intent"],
+        "signature": f"MISSIONCONTROL.TRANSPORT.{request['intent']}",
+        "lookup": lookup,
+        "outcome": outcome,
+        "proof_ref": proof_ref,
+        "authority_transfer": False,
+        "formal_credit_delta": 0,
+        "engineering_credit_delta": 0,
+    }
+    RECEIPT_DIR.mkdir(parents=True, exist_ok=True)
+    path = RECEIPT_DIR / f"{artifact}-{run_id}-{run_attempt}-rex.json"
+    path.write_text(json.dumps(event, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return path
+
+
 def build_receipt(
     *,
     request: dict[str, Any],
@@ -235,6 +298,7 @@ def main() -> None:
         expected_sha=observed_sha,
         actor=args.actor,
     )
+    rex_lookup = ambient_rex_lookup(intent=intent)
     artifact = assert_not_replayed(request["idempotency_key"], token)
     job_id = resolve_job_id(
         run_id=args.run_id,
@@ -256,6 +320,16 @@ def main() -> None:
         run_attempt=args.run_attempt,
     )
     rel = path.relative_to(ROOT).as_posix()
+    rex_path = write_rex_event(
+        artifact=artifact,
+        run_id=args.run_id,
+        run_attempt=args.run_attempt,
+        request=request,
+        lookup=rex_lookup,
+        outcome=receipt["decision"],
+        proof_ref=rel,
+    )
+    rex_rel = rex_path.relative_to(ROOT).as_posix()
 
     print(
         json.dumps(
@@ -268,6 +342,8 @@ def main() -> None:
                 "receipt": rel,
                 "observed_head_sha": observed_sha,
                 "workflow_job": job_id,
+                "rex_lookup_hits": len(rex_lookup["exact_signature_hits"]) + len(rex_lookup["similar_signature_hits"]),
+                "rex_event": rex_rel,
             },
             sort_keys=True,
         )
@@ -277,6 +353,9 @@ def main() -> None:
     if output:
         with open(output, "a", encoding="utf-8") as handle:
             handle.write(f"receipt_path={rel}\n")
+            handle.write(f"rex_event_path={rex_rel}\n")
+            handle.write("artifact_paths<<EOF\n")
+            handle.write(f"{rel}\n{rex_rel}\nEOF\n")
             handle.write(f"intent={intent}\n")
             handle.write(f"artifact_name={artifact}\n")
             handle.write(f"observed_head_sha={observed_sha}\n")
