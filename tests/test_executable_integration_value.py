@@ -340,3 +340,20 @@ def test_render_parity_repository_value_path_is_registered():
     assert workflow["value_scope"] == "V2_REPOSITORY_VALUE"
     assert "render_parity_workflow" not in report["tested_orphans"]
     assert report["executed_integration_path_count"] >= 14
+
+
+def test_mcp_sweep_repository_value_path_is_registered():
+    contract, registry, schema = loaded()
+    errors, report = validate_registry(contract, registry, schema)
+    assert errors == []
+    path = next(
+        p for p in registry["integration_paths"]
+        if p["id"] == "mcp_sweep_repository_value"
+    )
+    assert path["executed"] is True
+    assert path["nodes"][-1] == "mcp_sweep_snapshot_consumer"
+    runtime = next(n for n in registry["nodes"] if n["id"] == "mcp_sweep_runtime")
+    assert runtime["current_state"] == "PIPELINE_INTEGRATED"
+    assert runtime["value_scope"] == "V2_REPOSITORY_VALUE"
+    assert "mcp_sweep_runtime" not in report["tested_orphans"]
+    assert report["executed_integration_path_count"] >= 15
