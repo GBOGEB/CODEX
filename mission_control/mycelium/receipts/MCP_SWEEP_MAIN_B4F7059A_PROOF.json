@@ -1,0 +1,54 @@
+{
+  "schema_version": "0.1",
+  "receipt_id": "MCP_SWEEP_MAIN_B4F7059A_PROOF",
+  "claim": "Exact-main MCP federation sweep executed successfully and produced durable repository-governance outputs.",
+  "subject_repository": "GBOGEB/CODEX",
+  "subject_main_sha": "b4f7059a4489fa8e5268bebaa369389bcae62c19",
+  "workflow": {
+    "name": "CI",
+    "run_id": 37333735431,
+    "job_id": 111843095343,
+    "step": "Run MCP federation sweep",
+    "conclusion": "success"
+  },
+  "artifact": {
+    "artifact_id": 11355801565,
+    "name": "ci-governance-artifacts",
+    "digest": "sha256:17b8c95db99273f61c9fc3d7086b93ca20c8fa6bfbfa08358faf116c8319b6c5"
+  },
+  "sweep": {
+    "execution": "MCP_FEDERATION_SWEEP",
+    "repository": "GBOGEB/CODEX",
+    "public_metadata_only": true,
+    "proposed_count": 0,
+    "pruned_count": 2,
+    "active_count": 4,
+    "crawl_metrics": {
+      "pages_scanned": 2,
+      "retries": 0,
+      "auth_failures": 0,
+      "errors": [],
+      "total_candidates": 50
+    },
+    "outputs": [
+      "outputs/federation/sweep_summary.json",
+      "outputs/federation/sweep_telemetry.md",
+      "outputs/federation/rtm_delta.md"
+    ]
+  },
+  "downstream": {
+    "consumer": "scripts/emit_governance_snapshot.py",
+    "mcp_sweep_status": "passed",
+    "aggregate_snapshot_status": "failed",
+    "aggregate_failure_reason": "ruff soft-gate only; outside this value claim"
+  },
+  "value_scope": "V2_REPOSITORY_VALUE",
+  "exclusions": [
+    "CI workflow as a whole is not promoted",
+    "Ruff/static-analysis debt is preserved separately",
+    "No federation authority or formal credit is transferred"
+  ],
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0
+}
