@@ -1,6 +1,14 @@
 name: MissionControl Mycelium CI
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'mission_control/mycelium/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - '.github/workflows/**'
+      - 'docs/data/missioncontrol_*.json'
   pull_request:
     paths:
       - 'mission_control/mycelium/**'
