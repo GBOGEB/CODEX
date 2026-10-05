@@ -260,3 +260,22 @@ def test_ci_ssot_census_binding_repository_value_path_is_registered():
         assert node["value_scope"] == "V2_REPOSITORY_VALUE"
         assert node_id not in report["tested_orphans"]
     assert report["executed_integration_path_count"] >= 10
+
+
+def test_ci_governance_snapshot_repository_value_preserves_ruff_failure():
+    contract, registry, schema = loaded()
+    errors, report = validate_registry(contract, registry, schema)
+    assert errors == []
+    path = next(
+        p for p in registry["integration_paths"]
+        if p["id"] == "ci_governance_snapshot_repository_value"
+    )
+    assert path["executed"] is True
+    assert path["nodes"][-1] == "ci_governance_artifact_consumer"
+    emitter = next(n for n in registry["nodes"] if n["id"] == "governance_snapshot_emitter")
+    snapshot = next(n for n in registry["nodes"] if n["id"] == "governance_snapshot_outcome")
+    assert emitter["current_state"] == "PIPELINE_INTEGRATED"
+    assert emitter["value_scope"] == "V2_REPOSITORY_VALUE"
+    assert snapshot["current_state"] == "MIXED_CONTROL_EVIDENCE_RUFF_FAILED"
+    assert "governance_snapshot_emitter" not in report["tested_orphans"]
+    assert report["executed_integration_path_count"] >= 11
