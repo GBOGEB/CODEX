@@ -78,5 +78,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.gateway.outputs.artifact_name }}
-          path: ${{ steps.gateway.outputs.receipt_path }}
+          path: ${{ steps.gateway.outputs.artifact_paths }}
           if-no-files-found: error
