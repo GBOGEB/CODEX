@@ -13,16 +13,110 @@ permissions:
   contents: read
 
 jobs:
-  proof:
+  scan:
+    name: bounded-scan
     runs-on: ubuntu-latest
+    outputs:
+      receipt_artifact: bounded-filesystem-scout-receipt
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+
       - name: Install pytest
         run: python -m pip install pytest
+
       - name: Run bounded scout tests
         run: python -m pytest -q tests/test_bounded_filesystem_scout.py
+
+      - name: Execute bounded repository scan
+        run: |
+          mkdir -p outputs/leg5
+          python scripts/bounded_filesystem_scout.py \
+            scripts \
+            mission_control/mycelium \
+            --output outputs/leg5/bounded_filesystem_scout.json
+
+      - name: Validate discovery receipt
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("outputs/leg5/bounded_filesystem_scout.json")
+          receipt = json.loads(path.read_text(encoding="utf-8"))
+          assert receipt["status"] == "COMPLETE", receipt
+          assert receipt["complete"] is True, receipt
+          assert receipt["skipped_count"] == 0, receipt
+          assert receipt["file_count"] > 0, receipt
+          assert receipt["directory_count"] > 0, receipt
+          assert receipt["authority"] == "DISCOVERY_RECEIPT_ONLY", receipt
+          assert receipt["formal_credit_delta"] == 0, receipt
+          print(
+              "SCOUT_RECEIPT_GREEN "
+              f"files={receipt['file_count']} "
+              f"directories={receipt['directory_count']}"
+          )
+          PY
+
+      - name: Upload bounded scan receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: bounded-filesystem-scout-receipt
+          path: outputs/leg5/bounded_filesystem_scout.json
+          if-no-files-found: error
+
+  consume:
+    name: downstream-census-consumer
+    needs: scan
+    permissions: {}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download bounded scan receipt
+        uses: actions/download-artifact@v4
+        with:
+          name: bounded-filesystem-scout-receipt
+          path: inputs/leg5
+
+      - name: Consume bounded scan receipt
+        run: |
+          mkdir -p outputs/leg5
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          source = Path("inputs/leg5/bounded_filesystem_scout.json")
+          receipt = json.loads(source.read_text(encoding="utf-8"))
+          if receipt.get("status") != "COMPLETE" or not receipt.get("complete"):
+              raise SystemExit("bounded filesystem census is not complete")
+          if receipt.get("skipped_count") != 0:
+              raise SystemExit("bounded filesystem census contains skipped paths")
+
+          observation = {
+              "schema_version": "0.1",
+              "state": "CONSUMED",
+              "consumer": "LEG5_DOWNSTREAM_CENSUS_CONTROL",
+              "input_authority": receipt["authority"],
+              "file_count": receipt["file_count"],
+              "directory_count": receipt["directory_count"],
+              "root_count": len(receipt["roots"]),
+              "value_observation": "REPOSITORY_DISCOVERY_INPUT_AVAILABLE",
+              "authority_transfer": False,
+              "formal_credit_delta": 0,
+              "engineering_credit_delta": 0,
+          }
+          out = Path("outputs/leg5/bounded_filesystem_scout_control.json")
+          out.write_text(json.dumps(observation, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          print(json.dumps(observation, sort_keys=True))
+          PY
+
+      - name: Upload downstream control observation
+        uses: actions/upload-artifact@v4
+        with:
+          name: bounded-filesystem-scout-control
+          path: outputs/leg5/bounded_filesystem_scout_control.json
+          if-no-files-found: error
