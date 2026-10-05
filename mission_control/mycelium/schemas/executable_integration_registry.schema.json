@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GBOGEB/CODEX/mission_control/mycelium/schemas/executable_integration_registry.schema.json",
+  "title": "MissionControl executable integration registry",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "authority_transfer",
+    "nodes",
+    "edges",
+    "integration_paths"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "authority_transfer": {
+      "const": false
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/edge"
+      }
+    },
+    "integration_paths": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/path"
+      }
+    }
+  },
+  "$defs": {
+    "node": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "repository",
+        "path",
+        "owner",
+        "exact_revision",
+        "purpose",
+        "inputs",
+        "outputs",
+        "execution_surface",
+        "test_proof_evidence",
+        "current_state",
+        "authority_class",
+        "tested",
+        "value_scope",
+        "value_evidence"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "repository": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "exact_revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "execution_surface": {
+          "type": "string",
+          "minLength": 1
+        },
+        "test_proof_evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "current_state": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authority_class": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tested": {
+          "type": "boolean"
+        },
+        "value_scope": {
+          "type": "string"
+        },
+        "value_evidence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "outcome_scope": {
+          "enum": [
+            "REPOSITORY",
+            "PROJECT",
+            "FEDERATION",
+            "RECURSIVE_CONTROL"
+          ]
+        },
+        "recursive_control_effect": {
+          "type": "boolean"
+        },
+        "intentional_no_consumer": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "edge": {
+      "type": "object",
+      "required": [
+        "from",
+        "to",
+        "type"
+      ],
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cross_repository": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "path": {
+      "type": "object",
+      "required": [
+        "id",
+        "nodes",
+        "roles",
+        "executed",
+        "evidence"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "nodes": {
+          "type": "array",
+          "minItems": 5,
+          "items": {
+            "type": "string"
+          }
+        },
+        "roles": {
+          "type": "array",
+          "minItems": 5,
+          "items": {
+            "enum": [
+              "UPSTREAM_SOURCE",
+              "EXECUTABLE_OR_CONFIG",
+              "EXECUTION",
+              "OUTPUT_OR_EVIDENCE",
+              "DOWNSTREAM_CONSUMER"
+            ]
+          }
+        },
+        "executed": {
+          "type": "boolean"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

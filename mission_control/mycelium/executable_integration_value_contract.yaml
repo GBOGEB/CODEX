@@ -1,0 +1,196 @@
+schema_version: "0.1"
+contract_id: MISSIONCONTROL_EXECUTABLE_INTEGRATION_VALUE
+owner: CODEX_UI_GOVERNANCE
+repository: GBOGEB/CODEX
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+purpose: >-
+  Govern Python/YAML executable assets beyond test pass by requiring typed
+  registration, operational graph edges, executed integration paths,
+  downstream consumption, explicit value scope, and persistent control.
+
+lifecycle:
+  implementation:
+    - IMPLEMENT
+    - TEST
+    - PROVE
+    - REGISTER
+    - CONNECT
+    - CONSUME
+    - OBSERVE_VALUE
+    - CONTROL
+  recursive_execution:
+    - REFRESH
+    - PROBE
+    - RANK
+    - EXECUTE
+    - PROVE
+    - INTEGRATE
+    - CONSUME
+    - COMMIT
+    - PUBLISH
+    - OBSERVE_VALUE
+    - LEARN
+    - RECURSE
+
+node_types:
+  - PYTHON_MODULE
+  - PYTHON_SCRIPT
+  - VALIDATOR
+  - CALCULATOR
+  - TEST
+  - WORKFLOW
+  - WORKFLOW_JOB
+  - YAML_CONFIG
+  - SCHEMA
+  - QUEUE_DEFINITION
+  - RELEASE_RULE
+  - PIPELINE_STAGE
+  - ADAPTER
+  - BRIDGE
+  - CONSUMER
+  - OUTCOME
+  - CONTROL_STATE
+
+edge_types:
+  - TRIGGERED_BY
+  - READS
+  - VALIDATES
+  - TRANSFORMS
+  - CALCULATES
+  - CONSUMES
+  - PRODUCES
+  - CONFIGURES
+  - ROUTES
+  - SCHEDULES
+  - GATES
+  - PROVES
+  - BLOCKS
+  - UNBLOCKS
+  - PUBLISHES
+  - UPDATES
+  - FEDERATES
+
+required_node_fields:
+  - id
+  - type
+  - repository
+  - path
+  - owner
+  - exact_revision
+  - purpose
+  - inputs
+  - outputs
+  - execution_surface
+  - test_proof_evidence
+  - current_state
+  - authority_class
+
+value_scopes:
+  V0_TESTED_ONLY:
+    rank: 0
+    requires: [tested]
+  V1_LOCAL_OPERATIONAL:
+    rank: 1
+    requires: [tested, downstream_consumer]
+  V2_REPOSITORY_VALUE:
+    rank: 2
+    requires: [tested, downstream_consumer, repository_outcome]
+  V3_PROJECT_VALUE:
+    rank: 3
+    requires: [tested, downstream_consumer, repository_outcome, project_outcome]
+  V4_FEDERATION_VALUE:
+    rank: 4
+    requires: [tested, downstream_consumer, repository_outcome, project_outcome, federation_edge]
+  V5_RECURSIVE_CONTROL_VALUE:
+    rank: 5
+    requires: [tested, downstream_consumer, repository_outcome, project_outcome, federation_edge, recursive_control_effect]
+
+orphan_policy:
+  orphan_state: TESTED_ORPHAN
+  intentional_no_consumer_state: LIBRARY_REFERENCE_ONLY
+  dead_state: ARCHIVE_REMOVE_CANDIDATE
+  rule: >-
+    tested=true with zero operational edges and zero downstream consumers is
+    TESTED_ORPHAN unless explicitly classified LIBRARY_REFERENCE_ONLY.
+
+pipeline_integration:
+  state: PIPELINE_INTEGRATED
+  traversal_required: true
+  minimum_path_shape:
+    - upstream_source
+    - executable_or_config
+    - execution
+    - output_or_evidence
+    - downstream_consumer
+  rule: >-
+    A node may claim PIPELINE_INTEGRATED only when at least one declared path
+    traverses real registered edges and ends in a downstream consumer.
+
+definition_of_done:
+  required:
+    - IMPLEMENTATION_EXISTS
+    - SYNTAX_SCHEMA_VALID
+    - INTENDED_TEST_SURFACE_EXECUTED
+    - EXACT_RESULT_BOUND_TO_EVIDENCE
+    - NODE_REGISTERED
+    - EXPECTED_EDGES_REGISTERED
+    - REAL_PIPELINE_PATH_EXECUTED
+    - DOWNSTREAM_CONSUMER_PROVED
+    - VALUE_SCOPE_CLASSIFIED
+    - NO_MATERIAL_FIRST_RED_REMAINS
+    - CHECKPOINT_LINEAGE_UPDATED
+  reusable_library_exception: >-
+    A reusable library with no current pipeline consumer shall be explicitly
+    LIBRARY_REFERENCE_ONLY and shall not claim PIPELINE_INTEGRATED.
+
+evidence_separation:
+  quality_proof:
+    - coverage
+    - lint
+    - unit_tests
+    - ci_pass
+  value_proof:
+    - blockers_removed
+    - decision_enabled
+    - artifact_produced
+    - pipeline_consumed
+    - federation_node_updated
+    - manual_step_eliminated
+    - failure_detected
+    - false_green_prevented
+    - recovery_time_reduced
+  non_equivalence:
+    - CODE_EXISTS_NE_CODE_PARSES
+    - CODE_PARSES_NE_UNIT_TEST_PASS
+    - UNIT_TEST_PASS_NE_CI_PASS
+    - CI_PASS_NE_PIPELINE_INTEGRATION
+    - PIPELINE_INTEGRATION_NE_DOWNSTREAM_CONSUMPTION
+    - DOWNSTREAM_CONSUMPTION_NE_PROJECT_VALUE
+    - PROJECT_VALUE_NE_FEDERATION_VALUE
+
+migration:
+  census_roots:
+    - mission_control/mycelium
+    - scripts
+    - .github/workflows
+    - tests
+  extensions: [".py", ".yml", ".yaml"]
+  enforcement: REPORT_UNREGISTERED_NO_FALSE_GREEN
+  rule: >-
+    Legacy unregistered executable assets are measured as inventory debt.
+    Their existence prevents a claim of GLOBAL_EXECUTABLE_INTEGRATION_COMPLETE
+    but does not retroactively break unrelated validated lanes.
+
+dmaic:
+  DEFINE: purpose_owner_intended_consumer
+  MEASURE: execution_integration_downstream_use
+  ANALYZE: orphan_nodes_weak_edges_blockers_duplicate_capability
+  IMPROVE: connect_replace_consolidate_remove
+  CONTROL: exact_sha_edge_regression_consumer_health_lineage_value_persistence
+
+governing_principle: >-
+  Optimize for which tested executable capabilities are connected to real work,
+  what they enable, who consumes them, and what governed downstream value would
+  disappear if they were removed.
