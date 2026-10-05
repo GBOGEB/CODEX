@@ -238,3 +238,25 @@ def test_full_stack_abacus_export_repository_value_path_is_registered():
     assert exporter["value_scope"] == "V2_REPOSITORY_VALUE"
     assert "abacus_runtime_exporter" not in report["tested_orphans"]
     assert report["executed_integration_path_count"] >= 9
+
+
+def test_ci_ssot_census_binding_repository_value_path_is_registered():
+    contract, registry, schema = loaded()
+    errors, report = validate_registry(contract, registry, schema)
+    assert errors == []
+    path = next(
+        p for p in registry["integration_paths"]
+        if p["id"] == "ci_ssot_census_binding_repository_value"
+    )
+    assert path["executed"] is True
+    assert path["nodes"][-1] == "ci_governance_artifact_consumer"
+    for node_id in (
+        "ssot_candidate_census_runtime",
+        "ssot_logical_id_binder",
+        "ssot_runtime_consumer_mapper",
+    ):
+        node = next(n for n in registry["nodes"] if n["id"] == node_id)
+        assert node["current_state"] == "PIPELINE_INTEGRATED"
+        assert node["value_scope"] == "V2_REPOSITORY_VALUE"
+        assert node_id not in report["tested_orphans"]
+    assert report["executed_integration_path_count"] >= 10
