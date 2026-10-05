@@ -65,3 +65,11 @@ def test_rex_updates_on_material_execution_and_findings():
     assert policy["freshness"]["stale_if_material_events_unabsorbed"] is True
     assert policy["provisional_state"]["state"] == "OBSERVED_PENDING_VERIFICATION"
     assert "PR_MERGE" in policy["periodic_rollup"]["triggers"]
+
+
+def test_rendered_control_loop_matches_governed_sequence():
+    manifest = load(ROOT / "mission_control" / "mycelium" / "control_manifest.yaml")
+    html = (ROOT / "docs" / "missioncontrol_mycelium.html").read_text(encoding="utf-8")
+    sequence = manifest["control_loop"]
+    rendered = "const flow=[" + ",".join(f"'{step}'" for step in sequence) + "];"
+    assert rendered in html
