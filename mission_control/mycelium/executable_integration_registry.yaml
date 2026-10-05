@@ -175,6 +175,90 @@ nodes:
     project_outcome: true
     recursive_control_effect: true
 
+  - id: gateway_owner_request_builder
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/missioncontrol_owner_comment_request.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: beb823b5eb90263b854863fbfc05f445a3da8fa5
+    purpose: Materialize an owner-authenticated exact-main stage-only request from the governed control issue.
+    inputs: [owner_comment, exact_main_sha]
+    outputs: [execution_request]
+    execution_surface: MissionControl Owner Comment Transport
+    test_proof_evidence: [run_37296398513_job_111718527308]
+    value_evidence: [artifact_11338039617, GATEWAY_RUNTIME_REX_MAIN_BEB823B5_PROOF]
+    outcome_scope: PROJECT
+    current_state: EXECUTED_DOWNSTREAM_PATH
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V3_PROJECT_VALUE
+    repository_outcome: true
+    project_outcome: true
+    recursive_control_effect: false
+
+  - id: gateway_owner_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/missioncontrol-owner-comment-transport.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: beb823b5eb90263b854863fbfc05f445a3da8fa5
+    purpose: Execute the authenticated stage-only owner transport and persist its execution and REX artifacts.
+    inputs: [execution_request]
+    outputs: [runtime_receipt, rex_event]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [run_37296398513_job_111718527308]
+    value_evidence: [artifact_11338039617, GATEWAY_RUNTIME_REX_MAIN_BEB823B5_PROOF]
+    outcome_scope: PROJECT
+    current_state: EXECUTED_DOWNSTREAM_PATH
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V3_PROJECT_VALUE
+    repository_outcome: true
+    project_outcome: true
+    recursive_control_effect: false
+
+  - id: gateway_transport_runtime
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/missioncontrol_authenticated_transport.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: beb823b5eb90263b854863fbfc05f445a3da8fa5
+    purpose: Validate exact-head owner requests, execute the bounded stage-only transport, consult REX, and emit durable evidence.
+    inputs: [execution_request, github_authenticated_context, rex_ledger]
+    outputs: [runtime_receipt, rex_event]
+    execution_surface: MissionControl Owner Comment Transport
+    test_proof_evidence: [run_37296398513_job_111718527308]
+    value_evidence: [artifact_11338039617, GATEWAY_RUNTIME_REX_MAIN_BEB823B5_PROOF]
+    outcome_scope: PROJECT
+    current_state: REX_OBSERVABLE
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V3_PROJECT_VALUE
+    repository_outcome: true
+    project_outcome: true
+    recursive_control_effect: true
+
+  - id: gateway_runtime_rex_proof
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/receipts/GATEWAY_RUNTIME_REX_MAIN_BEB823B5_PROOF.json
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 52a4963f947de145e1ee149ccb6c79538b40385d
+    purpose: Bind the successful exact-main gateway run to a durable artifact containing both execution receipt and REX event.
+    inputs: [runtime_receipt, rex_event]
+    outputs: [gateway_runtime_value_observation]
+    execution_surface: MissionControl control plane
+    test_proof_evidence: [artifact_11338039617]
+    value_evidence: [run_37296398513_job_111718527308, artifact_11338039617]
+    outcome_scope: PROJECT
+    current_state: REX_OBSERVABLE_EVIDENCE
+    authority_class: DERIVED_PROJECTION_ONLY
+    tested: true
+    value_scope: V3_PROJECT_VALUE
+    repository_outcome: true
+    project_outcome: true
+    recursive_control_effect: true
+
 edges:
   - {from: mc_control_manifest, to: mc_mycelium_workflow, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
   - {from: mc_mycelium_workflow, to: mc_integration_validator, type: TRIGGERED_BY, evidence: run_37281376763_job_111670015753}
@@ -185,7 +269,28 @@ edges:
   - {from: mc_value_consumer, to: mc_control_loop, type: UPDATES, evidence: control_observation_materialization}
   - {from: mc_control_loop, to: mc_integration_registry, type: CONSUMES, evidence: missioncontrol_control_contract}
 
+  - {from: gateway_owner_workflow, to: gateway_owner_request_builder, type: TRIGGERED_BY, evidence: run_37296398513_job_111718527308}
+  - {from: gateway_owner_request_builder, to: gateway_transport_runtime, type: ROUTES, evidence: run_37296398513_job_111718527308}
+  - {from: gateway_transport_runtime, to: gateway_runtime_rex_proof, type: PRODUCES, evidence: artifact_11338039617}
+  - {from: gateway_runtime_rex_proof, to: mc_control_loop, type: UPDATES, evidence: GATEWAY_RUNTIME_REX_MAIN_BEB823B5_PROOF}
+
 integration_paths:
+  - id: missioncontrol_gateway_runtime_rex
+    nodes:
+      - gateway_owner_workflow
+      - gateway_owner_request_builder
+      - gateway_transport_runtime
+      - gateway_runtime_rex_proof
+      - mc_control_loop
+    roles:
+      - UPSTREAM_SOURCE
+      - EXECUTABLE_OR_CONFIG
+      - EXECUTION
+      - OUTPUT_OR_EVIDENCE
+      - DOWNSTREAM_CONSUMER
+    executed: true
+    evidence: [run_37296398513_job_111718527308, artifact_11338039617]
+
   - id: missioncontrol_executable_value_control
     nodes:
       - mc_control_manifest
