@@ -19,7 +19,9 @@ jobs:
         with:
           python-version: '3.11'
       - name: Test planner
-        run: python -m pytest -q tests/test_w05_worker_multiplier_plan.py
+        run: |
+          python -m pip install pytest
+          python -m pytest -q tests/test_w05_worker_multiplier_plan.py
       - name: Materialize governed plan
         id: plan
         run: |
