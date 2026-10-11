@@ -12,6 +12,7 @@ class State:
     entropy_j_kgk: float
     density_kg_m3: float
     quality: Optional[float] = None
+    validity: str | None = None
 
 
 @dataclass
