@@ -1,0 +1,114 @@
+# COV-01 — reusable Coverity Scan workflow for the GBOGEB federation.
+#
+# Root cause this fixes: vapier/coverity-scan-action fails with
+#   curl: (22) The requested URL returned error: 401   (exit 22)
+# at its first step ("Lookup Coverity Build Tool hash") whenever the token
+# input is empty — e.g. COVERITY_SCAN_TOKEN not set on the calling repo, or a
+# fork/Dependabot run where secrets are withheld. That is a credential
+# pre-analysis failure, not a static-analysis finding.
+#
+# Contract:
+#   * token present  -> scan runs; result is PASS/FAIL of the real upload.
+#   * token absent   -> job emits COVERITY_WITHHELD (CONFIG_SECRET_ABSENT) as a
+#                       warning + receipt. WITHHELD is NOT a PASS and must never
+#                       be reported as one (non-compensating, see triage/COV-01.yaml).
+#
+# Callers (any public GBOGEB repo):
+#   jobs:
+#     coverity:
+#       uses: GBOGEB/codex/.github/workflows/coverity-scan-reusable.yml@main
+#       secrets: inherit
+#       with:
+#         project: GBOGEB/<repo>      # must match the scan.coverity.com project name exactly
+#
+# Coverity Scan is free for public open-source projects only; private repos
+# are recorded as COVERITY_NOT_APPLICABLE (license scope), not scanned.
+
+name: Coverity Scan (reusable)
+
+"on":
+  workflow_call:
+    inputs:
+      project:
+        description: Coverity Scan project name (case-sensitive), defaults to the calling repository.
+        type: string
+        default: ''
+      build_language:
+        description: Coverity language pack — cxx | java | csharp | javascript | other. Python/TS use "other".
+        type: string
+        default: other
+      command:
+        description: cov-build command for compiled code. Empty for buildless capture.
+        type: string
+        default: ''
+      capture_command:
+        description: Arguments to `coverity capture` (interpreted languages).
+        type: string
+        default: --project-dir .
+      dry_run:
+        description: Do everything except the final upload.
+        type: boolean
+        default: false
+    secrets:
+      COVERITY_SCAN_TOKEN:
+        required: false
+      COVERITY_SCAN_EMAIL:
+        required: false
+    outputs:
+      disposition:
+        description: PASS | WITHHELD
+        value: ${{ jobs.coverity.outputs.disposition }}
+
+permissions:
+  contents: read
+
+jobs:
+  coverity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      disposition: ${{ steps.preflight.outputs.disposition }}
+    env:
+      HAS_TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN != '' }}
+      PROJECT: ${{ inputs.project != '' && inputs.project || github.repository }}
+    steps:
+      - name: Token preflight (COV-01)
+        id: preflight
+        shell: bash
+        run: |
+          mkdir -p receipts/coverity
+          if [ "${HAS_TOKEN}" = "true" ]; then
+            disposition=PASS_PENDING_UPLOAD
+          else
+            disposition=WITHHELD
+            echo "::warning title=COVERITY WITHHELD::CONFIG_SECRET_ABSENT — COVERITY_SCAN_TOKEN is not available to this run (${GITHUB_EVENT_NAME}). Scan skipped; this is not a PASS."
+          fi
+          echo "disposition=${disposition}" >> "$GITHUB_OUTPUT"
+          cat > receipts/coverity/preflight.json <<EOF
+          {"ticket":"COV-01","project":"${PROJECT}","sha":"${GITHUB_SHA}","run_id":"${GITHUB_RUN_ID}","event":"${GITHUB_EVENT_NAME}","token_present":${HAS_TOKEN},"disposition":"${disposition}"}
+          EOF
+          cat receipts/coverity/preflight.json
+
+      - uses: actions/checkout@v7.0.1
+        if: env.HAS_TOKEN == 'true'
+
+      # Pinned to a commit SHA (v1 tag floats). Bump deliberately.
+      - name: Coverity Scan
+        if: env.HAS_TOKEN == 'true'
+        uses: vapier/coverity-scan-action@5f73f06d66be9c9bbacdc93fa802c2b42b7f6f1a
+        with:
+          project: ${{ env.PROJECT }}
+          token: ${{ secrets.COVERITY_SCAN_TOKEN }}
+          email: ${{ secrets.COVERITY_SCAN_EMAIL }}
+          build_language: ${{ inputs.build_language }}
+          command: ${{ inputs.command }}
+          capture_command: ${{ inputs.capture_command }}
+          dry_run: ${{ inputs.dry_run }}
+
+      - name: Upload receipt
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: coverity-receipt
+          path: receipts/coverity/
+          if-no-files-found: error
