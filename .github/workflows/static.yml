@@ -16,7 +16,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Package static candidate without Pages deployment authority
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: legacy-static-candidate-${{ github.sha }}
           path: |

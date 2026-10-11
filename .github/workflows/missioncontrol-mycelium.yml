@@ -73,7 +73,7 @@ jobs:
           cmp /tmp/registration_debt_classification.first.json mission_control/mycelium/registration_debt_classification.json
           git diff --exit-code -- mission_control/mycelium/metrics_snapshot.json docs/data/missioncontrol_metrics.json mission_control/mycelium/log_analysis.json docs/data/missioncontrol_log_analysis.json mission_control/mycelium/executable_value_report.json docs/data/missioncontrol_executable_value_report.json mission_control/mycelium/executable_value_control_observation.json
       - name: Upload registration debt classification
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: missioncontrol-registration-debt-classification
           path: mission_control/mycelium/registration_debt_classification.json

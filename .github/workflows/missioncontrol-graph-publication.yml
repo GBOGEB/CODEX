@@ -40,7 +40,7 @@ jobs:
           grep -q "Plotly interactive projection active" docs/missioncontrol_graph_explorer.html
           grep -q "source/original" docs/missioncontrol_graph_explorer.html
       - name: Upload publication evidence
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: missioncontrol-graph-publication
           path: |

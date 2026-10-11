@@ -19,7 +19,7 @@ jobs:
           python-version: '3.11'
       - run: python scripts/release/codex_rc_preflight.py
       - if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: codex-rc-preflight
           path: release/CODEX_RC_PREFLIGHT.json

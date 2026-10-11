@@ -20,7 +20,7 @@ jobs:
           python-version: '3.11'
       - run: python scripts/release/codex_repro_probe.py
       - if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: codex-repro-receipt
           path: release/CODEX_REPRO_RECEIPT.json

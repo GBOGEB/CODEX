@@ -36,7 +36,7 @@ jobs:
             "$(git rev-parse HEAD)" > release/W73_EXECUTION_DISPOSITION.json
       - name: Upload retained evidence
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: w73-codex-unknown-disposition
           path: |

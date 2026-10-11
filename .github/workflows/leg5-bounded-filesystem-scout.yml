@@ -64,7 +64,7 @@ jobs:
           PY
 
       - name: Upload bounded scan receipt
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: bounded-filesystem-scout-receipt
           path: outputs/leg5/bounded_filesystem_scout.json
@@ -115,7 +115,7 @@ jobs:
           PY
 
       - name: Upload downstream control observation
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: bounded-filesystem-scout-control
           path: outputs/leg5/bounded_filesystem_scout_control.json

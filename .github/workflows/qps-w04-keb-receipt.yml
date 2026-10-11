@@ -45,7 +45,7 @@ jobs:
         working-directory: parent
         run: python tools/validate_qps_w04_keb_receipt.py federation/qps/runtime/QPS_FED_W04_KEB_RUNTIME_RECEIPT.yaml
       - name: Upload W04 KEB runtime receipt
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: qps-w04-keb-runtime-receipt-${{ github.run_id }}
           path: parent/federation/qps/runtime/QPS_FED_W04_KEB_RUNTIME_RECEIPT.yaml
@@ -72,7 +72,7 @@ jobs:
         working-directory: parent
         run: python tools/validate_qps_w04_keb_receipt.py federation/qps/runtime/QPS_FED_W04_KEB_RUNTIME_RECEIPT.yaml
       - name: Upload W04 KEB runtime receipt
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: qps-w04-keb-runtime-receipt-${{ github.run_id }}
           path: parent/federation/qps/runtime/QPS_FED_W04_KEB_RUNTIME_RECEIPT.yaml

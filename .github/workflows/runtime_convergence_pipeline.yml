@@ -41,7 +41,7 @@ jobs:
           test -f runtime_outputs/wave40/certification_summary.json
 
       - name: Upload runtime artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: runtime-convergence-artifacts
           path: runtime_outputs/wave40/

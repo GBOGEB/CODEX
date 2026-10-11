@@ -50,7 +50,7 @@ jobs:
             python3 runtime/debug/qps_debug_federation_consumer.py
           grep -q '"status": "DEFER"' \
             runtime/debug/generated/qps_debug_keb_binding.json
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: qps-debug-keb-binding
           path: runtime/debug/generated/qps_debug_keb_binding.json

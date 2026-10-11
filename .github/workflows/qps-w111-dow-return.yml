@@ -24,7 +24,7 @@ jobs:
           python scripts/normalize_qps_w111_dow_return.py
           --input triage/returns/DOW_W111_POWER_UTILITY_RECEIPT.json
           --output /tmp/keb_w111_dow_return.json
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: keb-w111-dow-return-${{ github.sha }}
           path: /tmp/keb_w111_dow_return.json
