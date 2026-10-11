@@ -23,7 +23,7 @@ jobs:
   validate-source-receipt:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Assert exact checkout head
         run: |
           test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
@@ -31,7 +31,7 @@ jobs:
         run: |
           python scripts/validate_w259_p4_method_cards_source_receipt.py --out artifacts/w259-p4-keb-source-validation.json
       - name: Upload validation receipt
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: w259-p4-keb-source-validation
           path: artifacts/w259-p4-keb-source-validation.json

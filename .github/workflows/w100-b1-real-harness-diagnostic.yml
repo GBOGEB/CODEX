@@ -11,14 +11,14 @@ jobs:
   b1-diagnostic:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Execute cryoplant 820 governed-input gate unchanged in semantics
         id: diag
         continue-on-error: true
         run: python triage/w100_b1_real_harness_diagnostic.py
       - name: Upload diagnostic receipt
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: w100-b1-real-harness-${{ github.sha }}
           path: out/W100_B1_DIAGNOSTIC_RECEIPT.json

@@ -22,8 +22,8 @@ jobs:
       PROVIDER_PATH: qps/recon/federation/GM_I_A_FAST_HEAVY_FEDERATION_ATTESTATION_v1.json
       EXPECTED_SHA256: 132ff84a3502f5ce39d4698fa772e98f7e8fba8e52587e698e8ea419197e1398
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - name: Install validator runtime dependencies
@@ -37,7 +37,7 @@ jobs:
           python scripts/validate_gm_i_a_coolprop_fast_heavy_keb.py             --provider /tmp/gm_i_a_provider.json             --receipt /tmp/gm_i_a_keb_receipt.json
           python -m json.tool /tmp/gm_i_a_keb_receipt.json > /dev/null
           sha256sum /tmp/gm_i_a_keb_receipt.json | tee /tmp/GM_I_A_KEB_SHA256SUMS
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: gm-i-a-coolprop-keb-${{ github.event.pull_request.head.sha || github.sha }}
           path: |

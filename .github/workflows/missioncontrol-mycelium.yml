@@ -29,8 +29,8 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.11'
       - name: Install dependencies
@@ -73,7 +73,7 @@ jobs:
           cmp /tmp/registration_debt_classification.first.json mission_control/mycelium/registration_debt_classification.json
           git diff --exit-code -- mission_control/mycelium/metrics_snapshot.json docs/data/missioncontrol_metrics.json mission_control/mycelium/log_analysis.json docs/data/missioncontrol_log_analysis.json mission_control/mycelium/executable_value_report.json docs/data/missioncontrol_executable_value_report.json mission_control/mycelium/executable_value_control_observation.json
       - name: Upload registration debt classification
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: missioncontrol-registration-debt-classification
           path: mission_control/mycelium/registration_debt_classification.json

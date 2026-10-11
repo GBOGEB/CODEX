@@ -37,7 +37,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Execute live lldb-dap DAP session
         id: lldb_dap
         continue-on-error: true
@@ -270,7 +270,7 @@ jobs:
           else:
               raise AssertionError(p)
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: qps-perpetual-native-protocol
@@ -282,11 +282,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '20'
       - name: Install debugpy
@@ -338,7 +338,7 @@ jobs:
               p = json.loads(Path('artifacts/qps_debug/perpetual', name).read_text())
               assert p['status'] == 'ACCEPT', (name, p)
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: qps-perpetual-adapter-family
@@ -350,7 +350,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Ensure host LLDB exists
         run: |
           if ! command -v lldb >/dev/null 2>&1; then
@@ -376,7 +376,7 @@ jobs:
           assert p['host_binding'].startswith('127.0.0.1:'), p
           assert p['cleanup']['returncode'] == 0, p
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: qps-perpetual-docker-runtime
@@ -390,8 +390,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
         with:
           pattern: qps-perpetual-*
           path: artifacts/qps_debug/evidence
@@ -412,7 +412,7 @@ jobs:
             cat artifacts/qps_debug/perpetual/perpetual_control_status.json
             echo '```'
           } >> "${GITHUB_STEP_SUMMARY}"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: qps-perpetual-control-status

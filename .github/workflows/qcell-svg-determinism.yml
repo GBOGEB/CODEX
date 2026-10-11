@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact subject SHA
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
       - name: Record exact subject SHA
@@ -27,7 +27,7 @@ jobs:
           echo "checked_out_sha=$(git rev-parse HEAD)"
           test "$(git rev-parse HEAD)" = "${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - name: Install renderer dependencies
@@ -62,7 +62,7 @@ jobs:
       - name: Require clean repository
         run: test -z "$(git status --porcelain)"
       - name: Retain deterministic render evidence
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: qcell-svg-determinism-${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
           path: |

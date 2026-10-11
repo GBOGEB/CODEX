@@ -14,8 +14,8 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.11'
       - run: |
@@ -23,7 +23,7 @@ jobs:
           python -m pip install -r requirements.txt
       - run: python scripts/release/codex_portability_probe.py
       - if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: codex-portability-receipt
           path: release/CODEX_PORTABILITY_RECEIPT.json

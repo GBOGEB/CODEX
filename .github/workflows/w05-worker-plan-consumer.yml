@@ -19,8 +19,8 @@ jobs:
     outputs:
       matrix: ${{ steps.plan.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.11'
       - name: Test planner
@@ -40,7 +40,7 @@ jobs:
           with open(__import__("os").environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
               f.write("matrix="+json.dumps({"include":lanes},separators=(",",":"))+"\n")
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: w05-worker-plan
           path: outputs/w05/worker_plan.json

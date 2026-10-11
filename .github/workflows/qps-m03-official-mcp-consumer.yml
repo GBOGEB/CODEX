@@ -34,7 +34,7 @@ jobs:
           echo "RUNNER_NAME=${RUNNER_NAME}"
 
       - name: Checkout exact official MCP source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: github/github-mcp-server
           ref: ${{ env.OFFICIAL_SHA }}
@@ -145,7 +145,7 @@ jobs:
           PY
 
       - name: Upload consumer response and receipt
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: m03-keb-independent-consumer-proof
           path: |

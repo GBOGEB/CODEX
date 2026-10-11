@@ -28,11 +28,11 @@ jobs:
   immutable-stage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Recover immutable bytes from existing GitHub artifact
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.source_run_id != '' && inputs.source_artifact_name != '' }}
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ inputs.source_artifact_name }}
           path: immutable-inputs
@@ -47,7 +47,7 @@ jobs:
 
       - name: Upload immutable-stage receipt
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: w101-immutable-stage-${{ github.sha }}
           path: out/W101_IMMUTABLE_STAGE_RECEIPT.json
@@ -75,7 +75,7 @@ jobs:
 
       - name: Upload B1 diagnostic receipt
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: w101-b1-after-immutable-pass-${{ github.sha }}
           path: out/W100_B1_DIAGNOSTIC_RECEIPT.json

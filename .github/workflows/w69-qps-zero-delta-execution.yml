@@ -13,7 +13,7 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Execute two controlled synthetic regenerations
         shell: pwsh
         run: |
@@ -68,7 +68,7 @@ jobs:
           if(-not $pass){throw 'W69 zero-delta comparison failed'}
       - name: Upload W69 zero-delta receipt
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: w69-qps-zero-delta
           path: |

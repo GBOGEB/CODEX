@@ -22,7 +22,7 @@ jobs:
   validate-knowledge-atom:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Assert exact checkout head
         run: test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
       - name: Validate promoted KEB atom
@@ -30,7 +30,7 @@ jobs:
           python scripts/validate_w259_p4_method_cards_knowledge_atom.py \
             --out artifacts/w259-p4-keb-method-cards-atom-validation.json
       - name: Upload validation receipt
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: w259-p4-keb-method-cards-atom-validation
           path: artifacts/w259-p4-keb-method-cards-atom-validation.json

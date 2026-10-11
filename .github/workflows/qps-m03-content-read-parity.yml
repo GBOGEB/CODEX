@@ -17,10 +17,10 @@ jobs:
       GITHUB_PERSONAL_ACCESS_TOKEN: ${{ github.token }}
     steps:
       - name: Checkout CODEX parity carrier
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Checkout exact official MCP source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: github/github-mcp-server
           ref: ${{ env.OFFICIAL_SHA }}
@@ -47,7 +47,7 @@ jobs:
             --out m03_content_read_parity_receipt.json
 
       - name: Upload parity receipt
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: m03-content-read-parity-receipt
           path: m03_content_read_parity_receipt.json
