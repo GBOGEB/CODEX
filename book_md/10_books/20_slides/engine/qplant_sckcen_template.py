@@ -25,9 +25,13 @@ LAYOUT_ALIASES: Mapping[str, str] = {
     "appendix": "Appendix",
     "comparison": "ComparisonGrid",
 }
+# Brand roles follow the "SCK•CEN 2020" theme of the corporate slide master
+# (accent1 purple, accent2 pink, accent3 cyan); see tools/house_style/README.md.
+# success/warning are status colours outside the brand palette.
 THEME_COLORS: Mapping[str, str] = {
-    "primary": "#003865",
-    "accent": "#5CBFEB",
+    "primary": "#562873",
+    "accent": "#984A9C",
+    "secondary": "#8ED8F8",
     "success": "#2D936C",
     "warning": "#FF8C42",
 }
