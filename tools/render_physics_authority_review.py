@@ -33,7 +33,9 @@ def _codex_router():
     src = str(REPO_ROOT / "src")
     if src not in sys.path:
         sys.path.append(src)
-    from gistau_ch15.properties.qplant_hepak_policy import governing_provider_for_temperature
+    from gistau_ch15.properties.qplant_hepak_policy import (
+        governing_provider_for_temperature,
+    )
 
     return governing_provider_for_temperature
 
@@ -133,47 +135,47 @@ def _parts(pin: dict[str, Any] | None = None) -> tuple[str, str]:
         for i, item in enumerate(checklist, 1)
     )
 
-    head = f"""<title>Physics Authority Review</title>
+    head = """<title>Physics Authority Review</title>
 <style>
 /* Layout: GISTAU portal cards (black rule header, bordered cards, green/red status) on a two-column grid that stacks on phones. */
-:root {{
+:root {
   --bg: #ffffff; --panel: #ffffff; --fg: #111111; --muted: #5a5a5a; --line: #111111;
   --ok: #007a33; --bad: #b00020; --warn-bg: #fff4e5; --warn-line: #b00020;
   --hp: #2e9d55; --cp: #9fbfe3; --font: Arial, "Helvetica Neue", Helvetica, sans-serif; --mono: Consolas, "Liberation Mono", monospace;
-}}
-@media (prefers-color-scheme: dark) {{ :root:not([data-theme="light"]) {{
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #181421; --panel: #241d33; --fg: #f5f2ff; --muted: #cfc2ef; --line: #8f7abd;
   --ok: #9cf2be; --bad: #ffb3b3; --warn-bg: #3b2a00; --warn-line: #c89b00; --hp: #5fd08d; --cp: #3d5f8a; color-scheme: dark;
-}} }}
-:root[data-theme="dark"] {{
+} }
+:root[data-theme="dark"] {
   --bg: #181421; --panel: #241d33; --fg: #f5f2ff; --muted: #cfc2ef; --line: #8f7abd;
   --ok: #9cf2be; --bad: #ffb3b3; --warn-bg: #3b2a00; --warn-line: #c89b00; --hp: #5fd08d; --cp: #3d5f8a; color-scheme: dark;
-}}
-body {{ background: var(--bg); color: var(--fg); font-family: var(--font); margin: 0; line-height: 1.45; }}
-.page {{ padding-inline: 16px; padding-block: 0 24px; max-width: 1100px; margin-inline: auto; }}
-.topbar {{ padding-block: 16px; border-bottom: 4px solid var(--line); }}
-.topbar h1 {{ margin: 0 0 6px; font-size: 1.5rem; text-wrap: balance; }}
-.topbar p {{ margin: 0; color: var(--muted); max-width: 65ch; }}
-.strip {{ display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }}
-.pill {{ border: 2px solid var(--line); border-radius: 999px; padding: 3px 10px; font-weight: bold; font-size: .85rem; }}
-.pill.ok {{ border-color: var(--ok); color: var(--ok); }} .pill.warn {{ border-color: var(--warn-line); color: var(--bad); }}
-.layout {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; padding-block: 16px; }}
-.card {{ border: 3px solid var(--line); border-radius: 12px; padding: 16px; background: var(--panel); min-width: 0; }}
-.card h2 {{ margin: 0 0 8px; font-size: 1.1rem; }} .card p {{ margin: 0 0 10px; max-width: 70ch; }}
-.card.active {{ border-color: var(--ok); }} .card.warning {{ border-color: var(--warn-line); background: var(--warn-bg); }}
-.full {{ grid-column: 1 / -1; }}
-.wrap {{ overflow-x: auto; }}
-table {{ width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: .9rem; }}
-th, td {{ border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }}
-th {{ background: var(--fg); color: var(--bg); }}
-td a {{ color: var(--fg); word-break: break-all; }} a:focus-visible, input:focus-visible {{ outline: 3px solid var(--ok); outline-offset: 2px; }}
-code {{ font-family: var(--mono); font-size: .9em; }}
-.green-text {{ color: var(--ok); font-weight: bold; }} .red-text {{ color: var(--bad); font-weight: bold; }}
-.checklist {{ list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }}
-.checklist li {{ padding-block: 6px; border-bottom: 1px solid var(--muted); }}
-.checklist label {{ display: flex; gap: 8px; align-items: flex-start; }}
-.checklist input {{ margin-top: 3px; flex: none; }}
-small {{ color: var(--muted); }}
+}
+body { background: var(--bg); color: var(--fg); font-family: var(--font); margin: 0; line-height: 1.45; }
+.page { padding-inline: 16px; padding-block: 0 24px; max-width: 1100px; margin-inline: auto; }
+.topbar { padding-block: 16px; border-bottom: 4px solid var(--line); }
+.topbar h1 { margin: 0 0 6px; font-size: 1.5rem; text-wrap: balance; }
+.topbar p { margin: 0; color: var(--muted); max-width: 65ch; }
+.strip { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.pill { border: 2px solid var(--line); border-radius: 999px; padding: 3px 10px; font-weight: bold; font-size: .85rem; }
+.pill.ok { border-color: var(--ok); color: var(--ok); } .pill.warn { border-color: var(--warn-line); color: var(--bad); }
+.layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; padding-block: 16px; }
+.card { border: 3px solid var(--line); border-radius: 12px; padding: 16px; background: var(--panel); min-width: 0; }
+.card h2 { margin: 0 0 8px; font-size: 1.1rem; } .card p { margin: 0 0 10px; max-width: 70ch; }
+.card.active { border-color: var(--ok); } .card.warning { border-color: var(--warn-line); background: var(--warn-bg); }
+.full { grid-column: 1 / -1; }
+.wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: .9rem; }
+th, td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+th { background: var(--fg); color: var(--bg); }
+td a { color: var(--fg); word-break: break-all; } a:focus-visible, input:focus-visible { outline: 3px solid var(--ok); outline-offset: 2px; }
+code { font-family: var(--mono); font-size: .9em; }
+.green-text { color: var(--ok); font-weight: bold; } .red-text { color: var(--bad); font-weight: bold; }
+.checklist { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.checklist li { padding-block: 6px; border-bottom: 1px solid var(--muted); }
+.checklist label { display: flex; gap: 8px; align-items: flex-start; }
+.checklist input { margin-top: 3px; flex: none; }
+small { color: var(--muted); }
 </style>"""
     body = f"""<div class="page">
 <header class="topbar">
