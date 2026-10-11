@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 
-from .base import State, SaturationState
+from .base import SaturationState, State
 
 IDEAL_GAS_DOMAIN = "IDEAL_GAS_DOMAIN"
 OUTSIDE_IDEAL_GAS_DOMAIN = "OUTSIDE_IDEAL_GAS_DOMAIN"
