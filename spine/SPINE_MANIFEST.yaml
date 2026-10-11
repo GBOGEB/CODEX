@@ -80,6 +80,7 @@ overlay:
 # Execution proof in the STAGED tree (tools/spine/spine_stage.py --smoke).
 # "Known working" means these pass with nothing but the admitted files present.
 smoke:
+  - {name: pca_engine_installs, cwd: pca_engine, cmd: "python -m pip install -q -e .[dev]", expect: pass}
   - {name: pca_engine_tests, cwd: pca_engine, cmd: "python -m pytest -q -p no:cacheprovider", expect: pass}
   - {name: fed_parse, cwd: federation_runtime, cmd: "python engines/parser.py", expect: pass}
   - {name: fed_normalize, cwd: federation_runtime, cmd: "python engines/normalize.py", expect: pass}

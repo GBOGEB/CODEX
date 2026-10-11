@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import shlex
 import shutil
 import subprocess
@@ -70,6 +71,9 @@ def smoke(root: Path, out: Path, python: str) -> int:
                         "returncode": proc.returncode, "verdict": "PASS" if ok else "FAIL",
                         "tail": (proc.stdout + proc.stderr).strip().splitlines()[-3:]})
         print(f"  {'PASS' if ok else 'FAIL'}  {case['name']}  (rc={proc.returncode}, expect={case.get('expect', 'pass')})")
+        if not ok and os.environ.get("GITHUB_ACTIONS") == "true":
+            tail = " | ".join((proc.stdout + proc.stderr).strip().splitlines()[-8:])[:900]
+            print(f"::error title=spine smoke {case['name']}::rc={proc.returncode} expect={case.get('expect', 'pass')} :: {tail}")
     if not results:
         print("FAIL: manifest declares no smoke cases (zero tests is a failure, not a pass)")
         failed = 1
