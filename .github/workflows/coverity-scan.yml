@@ -1,0 +1,26 @@
+# COV-01 — CODEX's own Coverity Scan, via the federation reusable workflow.
+# Weekly + manual only: Coverity Scan limits build submissions per week, so
+# this deliberately does not run on every push/PR.
+name: Coverity Scan
+
+"on":
+  schedule:
+    - cron: '17 3 * * 0'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Skip the final upload
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  coverity:
+    uses: ./.github/workflows/coverity-scan-reusable.yml
+    secrets: inherit
+    with:
+      build_language: other
+      capture_command: --project-dir .
+      dry_run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
