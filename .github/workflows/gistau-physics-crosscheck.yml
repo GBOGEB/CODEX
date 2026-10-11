@@ -5,6 +5,10 @@ name: GISTAU Physics Crosscheck
 # and compares its outputs with the pinned output checksum and with the GISTAU
 # basic incarnation inside its validity domain. See tools/physics_crosscheck.py.
 
+# pull_request only: the job checks out and runs ABACUS code, which must not
+# happen in the default-branch context (CodeQL cache-poisoning rule). The
+# pinned ABACUS SHA and CoolProp version can only change through a PR that
+# edits the pin, so PR-time checking covers every change.
 on:
   pull_request:
     branches: [main]
@@ -15,22 +19,12 @@ on:
       - 'tools/physics_crosscheck.py'
       - 'tools/verify_physics_authority_pin.py'
       - '.github/workflows/gistau-physics-crosscheck.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'governance/physics/**'
-      - 'src/gistau_ch15/properties/fallback_helium.py'
-      - 'src/gistau_ch15/properties/base.py'
-      - 'tools/physics_crosscheck.py'
-      - 'tools/verify_physics_authority_pin.py'
-      - '.github/workflows/gistau-physics-crosscheck.yml'
-  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: gistau-physics-crosscheck-${{ github.ref }}
+  group: gistau-physics-crosscheck-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
