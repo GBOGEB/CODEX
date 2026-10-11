@@ -1,0 +1,99 @@
+# ADR-0002 — SPINE-core extraction gate.
+# Proves on every relevant change that the admitted backbone is
+#   (1) free of private terms/secrets, (2) import-closed, (3) executable in
+#   isolation, and (4) matches the committed receipt (no silent drift).
+name: SPINE Gate
+
+"on":
+  workflow_dispatch: {}
+  pull_request:
+    paths:
+      - 'spine/**'
+      - 'tools/spine/**'
+      - 'tests/spine/**'
+      - 'receipts/spine/**'
+      - 'pca_engine/**'
+      - 'federation_runtime/**'
+      - 'orchestration_ts/**'
+      - 'telemetry/**'
+      - 'schemas/**'
+      - '.github/workflows/spine-gate.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'spine/**'
+      - 'tools/spine/**'
+      - 'pca_engine/**'
+      - 'federation_runtime/**'
+      - 'orchestration_ts/**'
+      - 'telemetry/**'
+      - 'schemas/**'
+
+permissions:
+  contents: read
+
+jobs:
+  spine-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.11'
+      - name: Install gate + smoke dependencies
+        run: python -m pip install 'PyYAML==6.0.2' jsonschema pytest numpy pandas
+
+      - name: Gate unit tests
+        run: |
+          set +e
+          python -m pytest -q tests/spine -p no:cacheprovider --junitxml=spine-junit.xml > spine-pytest.txt 2>&1
+          rc=$?
+          cat spine-pytest.txt
+          # Surface failures as annotations (readable without log access).
+          python - <<'PY'
+          import xml.etree.ElementTree as ET, pathlib
+          p = pathlib.Path("spine-junit.xml")
+          if p.exists():
+              for case in ET.parse(p).getroot().iter("testcase"):
+                  for bad in list(case.iter("failure")) + list(case.iter("error")):
+                      msg = (bad.get("message") or bad.text or "").strip().replace("\n", " | ")[:900]
+                      print(f"::error title=spine test {case.get('name')}::{msg}")
+          else:
+              tail = pathlib.Path("spine-pytest.txt").read_text()[-900:].replace("\n", " | ")
+              print(f"::error title=spine tests did not produce junit::{tail}")
+          PY
+          exit $rc
+
+      - name: Committed receipt digest (before regeneration)
+        id: committed
+        run: |
+          echo "tree=$(python -c "import json;print(json.load(open('receipts/spine/SPINE_GATE_RECEIPT.json'))['admitted_tree_sha256'])")" >> "$GITHUB_OUTPUT"
+
+      - name: Run SPINE gate (terms, secrets, import closure)
+        run: python tools/spine/spine_gate.py
+
+      - name: Receipt must be regenerated in the same PR
+        run: |
+          fresh=$(python -c "import json;print(json.load(open('receipts/spine/SPINE_GATE_RECEIPT.json'))['admitted_tree_sha256'])")
+          if [ "$fresh" != "${{ steps.committed.outputs.tree }}" ]; then
+            echo "::error::admitted tree changed (${{ steps.committed.outputs.tree }} -> $fresh). Run tools/spine/spine_gate.py and commit receipts/spine/SPINE_GATE_RECEIPT.json."
+            exit 1
+          fi
+
+      - name: Stage isolated tree and execute smoke cases
+        run: python tools/spine/spine_stage.py --out "$RUNNER_TEMP/spine-stage" --smoke
+
+      - name: Collect receipts
+        if: always()
+        run: |
+          mkdir -p spine-receipts
+          cp receipts/spine/SPINE_GATE_RECEIPT.json spine-receipts/ || true
+          cp "$RUNNER_TEMP/spine-stage/STAGE_RECEIPT.json" spine-receipts/ || true
+
+      - uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: spine-gate-receipts
+          path: spine-receipts/
+          if-no-files-found: error
