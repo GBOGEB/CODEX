@@ -64,7 +64,7 @@ def run_seed_calculations() -> list[CalculationRow]:
     # T00 property H/S/D at 1 bar and 300 K.
     st = backend.state_pt("helium", 100.0, 300.0)
     rows.append(_row("WE-T00-REFPROP-H-PT-001", "T00", "state_pt", "enthalpy", st.enthalpy_j_kg / 1000.0, 1563.3194, "J/g", "outside_tolerance", "fallback ideal-gas cp estimate; REFPROP expected"))
-    rows.append(_row("WE-T00-REFPROP-HSD-PT-002", "T00", "state_pt", "entropy", st.entropy_j_kgk / 1000.0, 28.0075, "J/g-K", "outside_tolerance", "fallback entropy placeholder is not thermodynamic entropy"))
+    rows.append(_row("WE-T00-REFPROP-HSD-PT-002", "T00", "state_pt", "entropy", st.entropy_j_kgk / 1000.0, 28.0075, "J/g-K", "outside_tolerance", "ideal-gas entropy, own reference state (s=0 at 300 K, 101.325 kPa); absolute value not comparable to REFPROP reference, compare differences"))
     rows.append(_row("WE-T00-REFPROP-HSD-PT-002", "T00", "state_pt", "density", st.density_kg_m3, 0.1604, "kg/m3", "outside_tolerance", "fallback ideal-gas density estimate"))
 
     # T02 JT/free expansion example.
