@@ -40,3 +40,15 @@ def test_heat_exchanger_bounds():
     assert hx.hot_outlet_k < hx.hot_inlet_k
     assert hx.cold_outlet_k > hx.cold_inlet_k
     assert hx.q_transfer_w > 0.0
+
+
+def test_committed_seed_calculation_report_matches_generator():
+    # The committed report drifted once (4 rows committed vs 10 generated).
+    # Regenerate with: PYTHONPATH=src python -m gistau_ch15.validation.calculation_runner
+    from gistau_ch15.validation.calculation_runner import (
+        SEED_REPORT_PATH,
+        render_seed_calculation_report,
+    )
+
+    assert SEED_REPORT_PATH.read_text(encoding="utf-8") == render_seed_calculation_report()
+    assert render_seed_calculation_report() == render_seed_calculation_report()
