@@ -8,12 +8,23 @@ from gistau_ch15.properties.fallback_helium import FallbackHeliumBackend
 from gistau_ch15.properties.errors import PropertyBackendUnavailable
 
 
+# Helium-4 physics is governed by GBOGEB/ABACUS at the commit pinned in
+# governance/physics/HE4_PROPERTY_AUTHORITY_PIN.yaml. Every backend selected
+# here is a local cross-check incarnation: it may compare against the governing
+# provider but never governs, and disagreement is a validation signal, never
+# averaged away.
+GOVERNING_AUTHORITY = "GBOGEB/ABACUS CRYO_HE4_PROPERTY_SURFACE (governance/physics/HE4_PROPERTY_AUTHORITY_PIN.yaml)"
+CROSSCHECK_ONLY = "CROSSCHECK_ONLY"
+VALIDATION_REFERENCE_ONLY = "VALIDATION_REFERENCE_ONLY"
+
+
 @dataclass(frozen=True)
 class BackendAvailability:
     name: str
     tier: BackendTier
     available: bool
     reason: str
+    authority_role: str = CROSSCHECK_ONLY
 
 
 def _try_backend(name: str, tier: BackendTier, factory: Any) -> tuple[Any | None, BackendAvailability]:
@@ -72,6 +83,7 @@ def select_available_backends() -> tuple[dict[str, Any], list[BackendAvailabilit
             tier=BackendTier.NIST_REFERENCE,
             available=True,
             reason="fixture/reference data from worked_examples.json",
+            authority_role=VALIDATION_REFERENCE_ONLY,
         )
     )
 
@@ -86,5 +98,6 @@ def availability_report_rows() -> list[dict[str, Any]]:
     for item in availability:
         row = asdict(item)
         row["tier"] = item.tier.value
+        row["governing_authority"] = GOVERNING_AUTHORITY
         rows.append(row)
     return rows

@@ -3,30 +3,40 @@
     "name": "fallback",
     "tier": "tier0_fallback",
     "available": true,
-    "reason": "deterministic built-in backend"
+    "reason": "deterministic built-in backend",
+    "authority_role": "CROSSCHECK_ONLY",
+    "governing_authority": "GBOGEB/ABACUS CRYO_HE4_PROPERTY_SURFACE (governance/physics/HE4_PROPERTY_AUTHORITY_PIN.yaml)"
   },
   {
     "name": "coolprop",
     "tier": "tier1_coolprop",
     "available": false,
-    "reason": "CoolProp is not installed or not importable. Use FallbackHeliumBackend or install/integrate GBOGEB/CoolProp."
+    "reason": "CoolProp is not installed or not importable. Use FallbackHeliumBackend or install/integrate GBOGEB/CoolProp.",
+    "authority_role": "CROSSCHECK_ONLY",
+    "governing_authority": "GBOGEB/ABACUS CRYO_HE4_PROPERTY_SURFACE (governance/physics/HE4_PROPERTY_AUTHORITY_PIN.yaml)"
   },
   {
     "name": "refprop",
     "tier": "tier2_refprop",
     "available": false,
-    "reason": "ctREFPROP is not importable"
+    "reason": "ctREFPROP is not importable",
+    "authority_role": "CROSSCHECK_ONLY",
+    "governing_authority": "GBOGEB/ABACUS CRYO_HE4_PROPERTY_SURFACE (governance/physics/HE4_PROPERTY_AUTHORITY_PIN.yaml)"
   },
   {
     "name": "hepak",
     "tier": "tier3_hepak",
     "available": false,
-    "reason": "HEPAK bindings are not importable. Install/configure HEPAK runtime to enable low-temperature execution."
+    "reason": "HEPAK bindings are not importable. Install/configure HEPAK runtime to enable low-temperature execution.",
+    "authority_role": "CROSSCHECK_ONLY",
+    "governing_authority": "GBOGEB/ABACUS CRYO_HE4_PROPERTY_SURFACE (governance/physics/HE4_PROPERTY_AUTHORITY_PIN.yaml)"
   },
   {
     "name": "nist_gistau_reference",
     "tier": "tier4_nist_reference",
     "available": true,
-    "reason": "fixture/reference data from worked_examples.json"
+    "reason": "fixture/reference data from worked_examples.json",
+    "authority_role": "VALIDATION_REFERENCE_ONLY",
+    "governing_authority": "GBOGEB/ABACUS CRYO_HE4_PROPERTY_SURFACE (governance/physics/HE4_PROPERTY_AUTHORITY_PIN.yaml)"
   }
 ]
