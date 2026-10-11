@@ -65,7 +65,7 @@ def render(receipt: dict, manifest: dict) -> str:
     )
     file_rows = "".join(
         f"<tr><td><code>{esc(f['path'])}</code>"
-        + (f" <span class=\"label\">overlay</span>" if f.get("overlay_source") else "")
+        + (" <span class=\"label\">overlay</span>" if f.get("overlay_source") else "")
         + f"</td><td><code>{esc(f['sha256'][:16])}</code></td>"
         f"<td><span class=\"status {'ready' if f['status'] == 'CLEAN' else 'blocked'}\">{esc(f['status'])}</span></td></tr>"
         for f in receipt["files"]
