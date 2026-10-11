@@ -18,7 +18,7 @@
 ## KEB challenge
 Validate the W322 MIP controller as a diagnostic/control surface only:
 1. BT0 converts only from a validated HEPAK CSV + manifest with exact SHA binding.
-2. Missing/non-HEPAK evidence remains blocked; NIST/CoolProp cannot silently close 2.0-4.5 K.
+2. Missing/non-HEPAK evidence remains blocked; NIST/CoolProp cannot silently close T <= 4.5 K (incl. He-II below 2.177 K; lower bound removed in QPLANT policy).
 3. BT1 cannot convert from historic DN150 conceptual geometry.
 4. BT4 cannot convert from historic 3x120 m3 storage.
 5. Control-topology completion cannot become formal engineering/compliance credit.
