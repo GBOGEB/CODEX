@@ -1,0 +1,93 @@
+# SPINE-core — public backbone extraction manifest (ADR-0002)
+#
+# SSOT for which CODEX paths may leave the private federation context and be
+# published as the public GBOGEB/SPINE-core repository (Coverity Scan +
+# CodeQL eligible). tools/spine/spine_gate.py enforces it and emits a
+# hashed receipt; nothing is extracted without a PASS receipt.
+#
+# Selection rule: domain-neutral mechanism only (control spine, schemas,
+# orchestration skeleton, generic numerics). Contract data, plant parameters,
+# QPS authority, corporate integrations and handover state stay private.
+
+manifest_version: 1
+target_repo: GBOGEB/SPINE-core
+source_repo: GBOGEB/CODEX
+consumption_mechanism: DEP        # ADR-0001 mechanism ladder: consumers pin a released package
+
+include:
+  # Generic PCA/NLPCA numerics — already governed domain-neutral by AGENTS.md
+  - pca_engine/**
+  # Federation runtime mechanism: parse -> normalize -> validate -> render
+  - federation_runtime/engines/build_manifest.py
+  - federation_runtime/engines/governance_parser.py
+  - federation_runtime/engines/html_renderer.py
+  - federation_runtime/engines/normalize.py
+  - federation_runtime/engines/parser.py
+  - federation_runtime/engines/validator.py
+  - federation_runtime/schema/**
+  - federation_runtime/telemetry/**                              # data read by build_manifest/validator
+  # TypeScript orchestration layer (Express + routes + tests)
+  - orchestration_ts/**
+  # Drift telemetry
+  - telemetry/**
+  # Generic governance schemas
+  - schemas/dependency_trace.schema.yaml
+  - schemas/federation.schema.json
+  - schemas/governance_runtime.schema.yaml
+  - schemas/handover.schema.json
+  - schemas/lineage.schema.yaml
+  - schemas/pr_lifecycle_checklist.schema.yaml
+  - schemas/universal_work_report.schema.yaml
+
+exclude:
+  - "**/.env"
+  - "**/node_modules/**"
+  - "**/__pycache__/**"
+  - federation_runtime/engines/qplant_contractual_ingestion.py   # contract data
+  - federation_runtime/engines/confluence_artifact_pipeline.py   # corporate Confluence integration
+  - federation_runtime/contracts/**
+  - federation_runtime/governance/**
+  - federation_runtime/docs/**
+  - federation_runtime/.github/**
+  - schemas/qps_*                                                  # QPS authority schemas
+  - schemas/master_contract_ssot.schema.yaml
+  # Blocked by the gate on first run (2026-10-11); redact, then re-admit in a later wave:
+  - federation_runtime/engines/phase0_orchestration.py           # Confluence-bound (corporate_systems)
+  - pca_engine/README.md                                         # names QPS in its scope disclaimer
+  - pca_engine/docs/EMPIRICAL_CONTROL_PROVIDER.md                # QPS authority boundary doc
+
+# Case-insensitive regexes. A hit in an included file BLOCKS it until the
+# file is redacted (or the hit is a documented false positive in allowlist).
+deny_terms:
+  organisation: ['\bsck\b', '\bsck[ -]?cen\b', '\bmyrrha\b']
+  private_project: ['\bcryoplant\b', '\bqplant\b', '\bqps\b', '\bkeb\b', '\bbidder', '\bline[- ]s\b', '\bs[- ]line\b']
+  corporate_systems: ['\bconfluence\b', 'atlassian\.net', '\bsharepoint\b']
+  private_refs: ['GBOGEB/cryoplant-project']
+secret_patterns:
+  github_token: 'gh[pousr]_[A-Za-z0-9]{36,}'
+  aws_key: 'AKIA[0-9A-Z]{16}'
+  private_key: '-----BEGIN [A-Z ]*PRIVATE KEY-----'
+  generic_secret_assignment: '(?i)(password|secret|api[_-]?key|token)\s*[:=]\s*[''"][^''"\s]{12,}[''"]'
+  email: '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.(?:be|com|org|eu|net)\b'
+
+# Sanitized replacements, scanned by the gate exactly like admitted files.
+# destination path in SPINE-core : source path in CODEX
+overlay:
+  pca_engine/README.md: spine/overlay/pca_engine/README.md   # required by pca_engine/pyproject.toml (readme)
+  federation_runtime/fixtures/governance_header_valid.md: spine/overlay/federation_runtime/fixtures/governance_header_valid.md
+  federation_runtime/fixtures/governance_header_invalid.md: spine/overlay/federation_runtime/fixtures/governance_header_invalid.md
+
+# Execution proof in the STAGED tree (tools/spine/spine_stage.py --smoke).
+# "Known working" means these pass with nothing but the admitted files present.
+smoke:
+  - {name: pca_engine_tests, cwd: pca_engine, cmd: "python -m pytest -q -p no:cacheprovider", expect: pass}
+  - {name: fed_parse, cwd: federation_runtime, cmd: "python engines/parser.py", expect: pass}
+  - {name: fed_normalize, cwd: federation_runtime, cmd: "python engines/normalize.py", expect: pass}
+  - {name: fed_render_html, cwd: federation_runtime, cmd: "python engines/html_renderer.py", expect: pass}
+  - {name: fed_build_manifest, cwd: federation_runtime, cmd: "python engines/build_manifest.py", expect: pass}
+  - {name: fed_validate, cwd: federation_runtime, cmd: "python engines/validator.py", expect: pass}
+  - {name: governance_header_valid, cwd: federation_runtime, cmd: "python engines/governance_parser.py --markdown fixtures/governance_header_valid.md --schema schema/governance_header.schema.json --source spine-smoke-valid", expect: pass}
+  - {name: governance_header_invalid_fails_closed, cwd: federation_runtime, cmd: "python engines/governance_parser.py --markdown fixtures/governance_header_invalid.md --schema schema/governance_header.schema.json --source spine-smoke-invalid", expect: fail}
+  - {name: telemetry_compiles, cwd: telemetry, cmd: "python -m py_compile pca/drift_monitor.py", expect: pass}
+
+allowlist: []   # entries: {path: ..., pattern: ..., reason: ...}
