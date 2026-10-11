@@ -73,6 +73,30 @@ policy_parity:
   status: DIVERGED_PENDING_ABACUS_ADOPTION
   resolution: ABACUS adopts HEPAK_T_MIN_K removal; then re-pin and set status PARITY
 
+# Output cross-check (tools/physics_crosscheck.py, CI workflow
+# gistau-physics-crosscheck.yml). Runs the pinned ABACUS provider over this
+# grid with the pinned CoolProp, hashes its rounded outputs, and compares the
+# GISTAU basic incarnation (ideal gas) inside its declared validity domain.
+# Outside the domain deviations are reported only. Not part of the meta
+# checksum above, which covers source identity; this covers physics outputs.
+output_crosscheck:
+  coolprop_version: "7.2.0"
+  round_significant_digits: 8
+  reference_T_K_p_kPa: [300.0, 101.325]
+  grid_T_K: [20.0, 30.0, 50.0, 80.0, 150.0, 300.0]
+  grid_p_kPa: [50.0, 101.325, 500.0, 1000.0]
+  probes_T_K_p_kPa:          # outside the ideal-gas domain: measured, never judged
+    - [4.5, 120.0]
+    - [6.0, 300.0]
+    - [10.0, 100.0]
+    - [15.0, 1000.0]
+    - [300.0, 2000.0]
+  tolerances_in_domain:      # provisional until the first CI record
+    density_rel: 0.01
+    delta_h_rel: 0.01
+    delta_s_abs_J_kgK: 10.0
+  output_checksum_sha256: PENDING_FIRST_CI_RECORD
+
 # sha256 over the canonical JSON of {authority.commit_sha, pinned_files
 # (path, sha256) sorted by path, pinned_constants}. Recomputed by the test and
 # by tools/verify_physics_authority_pin.py; any edit to the pin changes it.
