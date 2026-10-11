@@ -15,7 +15,7 @@ jobs:
   validate-runtime-manifest:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
       - name: Validate dashboard and SSOT manifest completeness
         run: |
           python - <<'PY'

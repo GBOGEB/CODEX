@@ -22,7 +22,7 @@ jobs:
   validate-knowledge-atom:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
       - name: Assert exact checkout head
         run: test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
       - name: Validate promoted KEB atom

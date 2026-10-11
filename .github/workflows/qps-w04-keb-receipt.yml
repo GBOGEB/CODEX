@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
       - uses: actions/setup-python@v7.0.0
         with: {python-version: '3.12'}
       - run: python -m pip install --disable-pip-version-check PyYAML
@@ -33,7 +33,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout CODEX parent
-        uses: actions/checkout@v7
+        uses: actions/checkout@v7.0.1
         with: {path: parent}
       - uses: actions/setup-python@v7.0.0
         with: {python-version: '3.12'}
@@ -57,7 +57,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout CODEX parent
-        uses: actions/checkout@v7
+        uses: actions/checkout@v7.0.1
         with: {path: parent}
       - uses: actions/setup-python@v7.0.0
         with: {python-version: '3.12'}

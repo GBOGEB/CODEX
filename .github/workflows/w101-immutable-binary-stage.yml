@@ -28,7 +28,7 @@ jobs:
   immutable-stage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
 
       - name: Recover immutable bytes from existing GitHub artifact
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.source_run_id != '' && inputs.source_artifact_name != '' }}

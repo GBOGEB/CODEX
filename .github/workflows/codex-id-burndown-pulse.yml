@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs: {workers: '${{ steps.plan.outputs.workers }}', transport: '${{ steps.plan.outputs.transport }}', queue: '${{ steps.balance.outputs.queue }}'}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
       - uses: actions/setup-python@v7.0.0
         with: {python-version: '3.12'}
       - run: pip install 'PyYAML>=6,<7'
@@ -49,7 +49,7 @@ jobs:
     if: needs.producer.outputs.transport == 'local_pool'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
       - uses: actions/download-artifact@v8
         with: {name: id-burndown-work-packet, path: reports}
       - run: python scripts/id_pulse_local_pool.py --plan reports/id_burndown/work_plan.json --out-dir reports/id_burndown/local-receipts
@@ -60,7 +60,7 @@ jobs:
     if: always() && needs.local-pool.result == 'success'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
       - uses: actions/download-artifact@v8
         with: {name: id-burndown-work-packet, path: reports}
       - uses: actions/download-artifact@v8

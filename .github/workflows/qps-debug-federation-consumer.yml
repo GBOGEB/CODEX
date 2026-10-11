@@ -20,7 +20,7 @@ jobs:
     env:
       QPS_DEBUG_ENVELOPE_JSON: ${{ toJson(github.event.client_payload.envelope) }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
       - name: Validate retained federated exact-payload receipt
         run: |
           python3 runtime/debug/qps_debug_federation_consumer.py \
