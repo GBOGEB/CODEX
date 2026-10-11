@@ -1,6 +1,6 @@
 # CODEX — KEB semantic-provenance and governance plane
 
-[![DMAIC quality](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FGBOGEB%2FCODEX%2Fmain%2Fdocs%2Fapi%2Fmetrics.json&query=%24.quality_score&label=DMAIC%20quality&color=brightgreen&style=flat-square)](docs/api/metrics.json)
+[![DMAIC quality](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FGBOGEB%2FCODEX%2Fmain%2Fdocs%2Fapi%2Fmetrics.json&query=%24.quality_score&label=DMAIC%20quality&color=blue&style=flat-square)](docs/api/metrics.json)
 [![commits](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FGBOGEB%2FCODEX%2Fmain%2Fdocs%2Fapi%2Fmetrics.json&query=%24.total_commits&label=commits&color=blue&style=flat-square)](docs/api/metrics.json)
 [![Python files](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FGBOGEB%2FCODEX%2Fmain%2Fdocs%2Fapi%2Fmetrics.json&query=%24.python_files&label=Python%20files&color=blue&style=flat-square)](docs/api/metrics.json)
 [![test files](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FGBOGEB%2FCODEX%2Fmain%2Fdocs%2Fapi%2Fmetrics.json&query=%24.test_files&label=test%20files&color=blue&style=flat-square)](docs/api/metrics.json)
