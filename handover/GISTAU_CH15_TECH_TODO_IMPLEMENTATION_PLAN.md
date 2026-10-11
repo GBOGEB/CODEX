@@ -8,6 +8,55 @@ The goal is to move from a static/reconstructive portal toward an engineering-gr
 
 ---
 
+# Status and Backend Authority (2026-10-11)
+
+> This section supersedes the original phase ordering and the "Immediate Next
+> Engineering Action" below. The phase bodies are kept as design reference.
+
+## Backend authority (settled)
+
+| Role | Backend | Range |
+|---|---|---|
+| Governing runtime spine | CoolProp (Ortiz-Vega helium EOS) | T > 4.5 K |
+| Governing oracle | HEPAK | 0 < T <= 4.5 K, incl. He-II below lambda (2.177 K) |
+| Validation/reference only | NIST fixtures (`nist_gistau_reference`) | never governing |
+| Optional, not a checker | REFPROP | uses the same EOS coefficients as CoolProp, so agreement is tautological |
+| Deterministic CI fallback | `FallbackHeliumBackend` | preview only, never governing |
+
+Enforced in `src/gistau_ch15/properties/qplant_hepak_policy.py` (PR #969
+removes the former 2.0 K lower bound). Consequences for the phases below:
+
+- **Phase 1 (REFPROP)** is demoted to optional. `backend_selector` already
+  treats it as non-blocking; no further REFPROP work is planned.
+- **Phase 2 (HEPAK)** is the governing adapter for the cold end and is now
+  the priority backend integration.
+- **Phase 4/6 (1.8 K boundary, dome)** is He-II territory and is HEPAK-governed;
+  CoolProp must not close these points.
+
+## Twin maturity ladder
+
+- **L0 Parse/trace**: source PDF -> tuples -> source snippets.
+- **L1 Validated model**: engine reproduces the Ch15 worked examples within tolerance. **Current target.**
+- **L2 Digital shadow**: QPS Line-S triage scenarios from design data and evidence registers.
+- **L3 Twin**: live PLC/historian feed (later).
+
+## Done
+
+- [x] PR-A portal scaffold: `docs/gistau-ch15`, live on GitHub Pages
+- [x] PR-B modular engine: `src/gistau_ch15`, `tests/gistau_ch15`
+- [x] Tests gated in CI (PR #967; previously `--ignore`d due to import path)
+- [x] Operating-point register salvaged from stale branch (PR #968)
+
+## Queue (priority order)
+
+1. **P2 / Phase 3+7**: canonical worked examples transcribed with tolerances; hard CI gate (L1 exit criterion).
+2. **Phase 2**: HEPAK adapter binding with receipts; regenerate `backend_availability.json` and delta JSON in CI.
+3. **P3**: QPS Line-S triage view bound to L1 outputs, with provenance badges per number.
+4. **P4 / Phase 4+6**: HEPAK-backed He-II boundary and dome near 1.8 K.
+5. **Source traceability**: commit `checksums.sha256` for the local-first source binaries (owner action) so CI can verify provenance.
+
+---
+
 # Implementation Philosophy
 
 ## Do not dilute the framework
@@ -505,7 +554,9 @@ Includes:
 
 # Immediate Next Engineering Action
 
-Start with PR-B because it enables every later technical TODO.
+> Superseded 2026-10-11: PR-B is done. Next is P2 (canonical validation); see *Status and Backend Authority* at the top.
+
+Original text: start with PR-B because it enables every later technical TODO.
 
 ## PR-B checklist
 
