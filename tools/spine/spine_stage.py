@@ -63,7 +63,7 @@ def smoke(root: Path, out: Path, python: str) -> int:
         argv = shlex.split(case["cmd"])
         if argv and argv[0] == "python":
             argv[0] = python
-        proc = subprocess.run(argv, cwd=out / case["cwd"], capture_output=True, text=True, timeout=600)
+        proc = subprocess.run(argv, cwd=out / case["cwd"], capture_output=True, text=True, timeout=600, check=False)
         passed = proc.returncode == 0
         ok = passed if case.get("expect", "pass") == "pass" else not passed
         failed += not ok

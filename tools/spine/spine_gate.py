@@ -22,7 +22,7 @@ import hashlib
 import json
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
@@ -157,7 +157,7 @@ def run(root: Path, manifest_path: Path, receipt_path: Path) -> int:
     closure = import_closure(root, admitted)
 
     overlay = manifest.get("overlay") or {}
-    for dest, src in overlay.items():
+    for src in overlay.values():
         if not (root / src).is_file():
             missing.append(f"overlay source {src}")
     sources = [(rel, rel) for rel in admitted]
@@ -189,7 +189,7 @@ def run(root: Path, manifest_path: Path, receipt_path: Path) -> int:
     receipt = {
         "gate": "SPINE_GATE",
         "adr": "ADR-0002",
-        "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "generated_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
         "verdict": verdict,
         "counts": {"admitted": len(files), "clean": len(files) - blocked, "blocked": blocked},

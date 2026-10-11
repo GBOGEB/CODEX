@@ -12,8 +12,8 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools" / "spine"))
 
-import spine_gate  # noqa: E402
-import spine_stage  # noqa: E402
+import spine_gate
+import spine_stage
 
 
 def _tree(files: dict[str, str], manifest: dict) -> Path:
