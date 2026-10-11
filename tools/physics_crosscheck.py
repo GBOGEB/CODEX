@@ -123,9 +123,10 @@ def run(
         if dom:
             if abs(d_rho) > tol["density_rel"]:
                 failures.append("density")
-            # Isothermal points have |dh| ~ 0, where a purely relative test is
-            # ill-conditioned: allow rel * |dh_governing| plus an absolute floor.
-            if abs(abs_dh) > tol["delta_h_rel"] * abs(dh_g) + tol["delta_h_abs_floor_J_kg"]:
+            # Ideal-gas h has no pressure dependence, so isothermal points have
+            # dh_basic = 0 and a relative test is ill-conditioned. Judge the
+            # absolute deviation against the sensible enthalpy h_basic = cp*T.
+            if abs(abs_dh) > tol["delta_h_frac_of_cpT"] * b["enthalpy_J_kg"]:
                 failures.append("delta_h")
             if abs(abs_ds) > tol["delta_s_abs_J_kgK"]:
                 failures.append("delta_s")

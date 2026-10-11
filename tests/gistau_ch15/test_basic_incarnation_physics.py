@@ -62,7 +62,14 @@ def test_state_ph_and_state_ps_round_trip():
 
 @pytest.mark.parametrize(
     "p_kpa,t_k,expected",
-    [(100.0, 300.0, IDEAL_GAS_DOMAIN), (1000.0, 20.0, IDEAL_GAS_DOMAIN), (120.0, 4.5, OUTSIDE_IDEAL_GAS_DOMAIN), (1400.0, 300.0, OUTSIDE_IDEAL_GAS_DOMAIN)],
+    [
+        (100.0, 300.0, IDEAL_GAS_DOMAIN),
+        (1000.0, 300.0, IDEAL_GAS_DOMAIN),     # rho 1.6 kg/m3
+        (101.325, 50.0, IDEAL_GAS_DOMAIN),     # rho 0.98 kg/m3
+        (1000.0, 150.0, OUTSIDE_IDEAL_GAS_DOMAIN),  # rho 3.2 kg/m3
+        (50.0, 30.0, OUTSIDE_IDEAL_GAS_DOMAIN),     # below 50 K
+        (120.0, 4.5, OUTSIDE_IDEAL_GAS_DOMAIN),
+    ],
 )
 def test_states_are_tagged_with_validity(p_kpa, t_k, expected):
     assert B.state_pt("helium", p_kpa, t_k).validity == expected
