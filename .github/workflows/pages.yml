@@ -63,7 +63,7 @@ jobs:
           python scripts/build_missioncontrol_graph_publication.py
           python scripts/render_missioncontrol_graph_matplotlib.py
           python scripts/check_links.py
-          pytest -q             --ignore=tests/gistau_ch15             --ignore=tests/test_coolprop_state_grid.py             --ignore=tests/test_exergy_kernel.py             --ignore=tests/test_nist_validation_points.py             --ignore=tests/test_units_kernel.py
+          pytest -q
 
       - name: Refresh MissionControl federation source projection
         env:
