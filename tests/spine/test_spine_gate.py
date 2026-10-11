@@ -119,3 +119,18 @@ def test_recursive_include_matches_nested_files_on_every_python():
     root = _tree({"core/a.py": "", "core/deep/er/b.py": ""}, BASE)
     admitted, missing = spine_gate.resolve(root, BASE)
     assert admitted == ["core/a.py", "core/deep/er/b.py"] and missing == []
+
+
+def test_status_page_is_deterministic_and_escapes_paths():
+    import render_spine_page
+
+    receipt = {
+        "verdict": "PASS", "generated_utc": "2026-10-11T00:00:00Z",
+        "counts": {"admitted": 1, "clean": 1, "blocked": 0},
+        "admitted_tree_sha256": "0" * 64, "missing_include_patterns": [],
+        "files": [{"path": "core/<x>.py", "sha256": "a" * 64, "bytes": 3, "status": "CLEAN"}],
+    }
+    manifest = {"smoke": [{"name": "s", "cwd": "core", "cmd": "python -V", "expect": "pass"}], "exclude": []}
+    first = render_spine_page.render(receipt, manifest)
+    assert first == render_spine_page.render(receipt, manifest)
+    assert "core/&lt;x&gt;.py" in first and "core/<x>.py" not in first

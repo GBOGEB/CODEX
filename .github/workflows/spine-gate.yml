@@ -12,6 +12,7 @@ name: SPINE Gate
       - 'tools/spine/**'
       - 'tests/spine/**'
       - 'receipts/spine/**'
+      - 'docs/spine/**'
       - 'pca_engine/**'
       - 'federation_runtime/**'
       - 'orchestration_ts/**'
@@ -64,6 +65,14 @@ jobs:
               print(f"::error title=spine tests did not produce junit::{tail}")
           PY
           exit $rc
+
+      - name: Public status page matches the committed receipt
+        run: |
+          python tools/spine/render_spine_page.py
+          git diff --exit-code -- docs/spine/index.html || {
+            echo "::error::docs/spine/index.html is stale. Run tools/spine/render_spine_page.py and commit it."
+            exit 1
+          }
 
       - name: Committed receipt digest (before regeneration)
         id: committed
