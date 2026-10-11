@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict
+import json
+from dataclasses import asdict, dataclass
+from pathlib import Path
 from typing import Any
 
 from gistau_ch15.calculations.compressor import calculate_compressor
@@ -121,3 +123,22 @@ def run_seed_calculations() -> list[CalculationRow]:
 
 def run_seed_calculation_report() -> list[dict[str, Any]]:
     return [asdict(row) for row in run_seed_calculations()]
+
+
+SEED_REPORT_PATH = (
+    Path(__file__).resolve().parents[3] / "docs" / "gistau-ch15" / "data" / "seed_calculation_report.json"
+)
+
+
+def render_seed_calculation_report() -> str:
+    return json.dumps(run_seed_calculation_report(), indent=2) + "\n"
+
+
+def write_seed_calculation_report(path: Path = SEED_REPORT_PATH) -> Path:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(render_seed_calculation_report(), encoding="utf-8")
+    return path
+
+
+if __name__ == "__main__":
+    print(write_seed_calculation_report())
