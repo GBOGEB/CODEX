@@ -54,7 +54,7 @@ slides/
 ## Template customization
 
 1. **Update the base template**: Replace `assets/base_template.pptx` with an approved master slide. Maintain placeholder names (`BODY`, `TITLE`, `FOOTER`, `LOGO`) so automated layout binding stays intact.
-2. **Override theme colors**: Edit the `THEME_COLORS` dictionary in `qplant_sckcen_template.py` to map semantic roles (primary, accent, warning) to RGB hex values. The defaults follow the corporate "SCK•CEN 2020" theme (purple `#562873`, pink `#984A9C`, cyan `#8ED8F8`); run `tools/house_style/qps_qa.py check` on the built deck to confirm it is publishable.
+2. **Override theme colors**: Edit the `THEME_COLORS` dictionary in `qplant_sckcen_template.py` to map semantic roles (primary, accent, warning) to RGB hex values. The defaults follow the corporate "SCK•CEN 2020" theme (purple `#562873`, pink `#984A9C`, cyan `#8ED8F8`); run `python3 tools/house_style/qps_qa.py check output/slides/<deck>.pptx` on the built deck to confirm it conforms to the corporate house style. That is a style check only: the deck still goes through the applicable engineering and compliance review.
 3. **Inject partner branding**: Supply `--partner-logo` on the CLI to overlay a partner logo onto the title and section slides.
 4. **Per-slide overrides**: Use fenced code blocks in Markdown with `slide-type: statement` or `layout: appendix` metadata to select specialized layouts.
 
