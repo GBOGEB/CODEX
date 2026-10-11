@@ -1,0 +1,79 @@
+schema: codex-physics-authority-pin/v1
+pin_id: HE4_PROPERTY_AUTHORITY_PIN
+as_of: "2026-10-11"
+formal_credit_delta: 0
+
+# Single source of truth for helium-4 physics is ABACUS. CODEX consumes it by
+# exact commit and never governs physics locally (governance/qps/
+# keb_cryo_property_capability_graph.yaml rule
+# CODEX_MUST_NOT_DUPLICATE_OR_SELF_PROMOTE_PHYSICS_PROVIDER; router contract
+# governance/W45_HELIUM_PROPERTY_ROUTER.yaml rule
+# validate_units_provenance_provider_commit_and_regime).
+authority:
+  repository: GBOGEB/ABACUS
+  capability: CRYO_HE4_PROPERTY_SURFACE
+  commit_sha: 53688f26d5b9c4cd074ef905e426849e85324383
+  commit_date: "2026-10-06"
+  runtime_dependency: CoolProp==7.2.0
+  rule: CODEX_MUST_NOT_DUPLICATE_OR_SELF_PROMOTE_PHYSICS_PROVIDER
+
+# Each file is pinned by git blob SHA and content sha256 at commit_sha.
+# tools/verify_physics_authority_pin.py rejects a checkout whose HEAD or file
+# content differs (stale-SHA rejection).
+pinned_files:
+  - path: models/helium_properties/provider.py
+    role: governed CoolProp runtime provider
+    git_blob_sha: a9ca5ffac0c3389e452345f331c5a9a7ceb28f70
+    sha256: d1c6229317a3d8da958cbd82785473b981494fbda8ff56ad94c2cc7706834460
+  - path: models/helium_properties/qplant_provider.py
+    role: QPLANT HEPAK/CoolProp routing
+    git_blob_sha: 01cf413ab800cdcbd508a80cb75f61842ac0776c
+    sha256: b9c0293f701a43cb704f5ad7a29ae5b5c31cd6341c8562b53428a795fc6e5c32
+  - path: models/helium_properties/hepak_reference.py
+    role: frozen HEPAK reference-table loader
+    git_blob_sha: 46a678e8305d8b7fe6d02b1d5395b932df69d2eb
+    sha256: a4aaa2d5a4ed361ff4c75babb6931ef9a12b6acad7f89be39893f33e069b49bd
+  - path: models/helium_properties/qplant_hepak_runtime_export.py
+    role: HEPAK runtime receipt export
+    git_blob_sha: 8e6d7d52bf78354059a0ff69620dd4dfd8fc8e68
+    sha256: 7d99c717cbc326561cce0767787de8bdaab1790f27465d3fc21e494ee8705569
+  - path: cryo_dashboard_v0_3_0/property_surface_manifest.json
+    role: property surface manifest and golden reference cases (cryo property calculator v0.3.0)
+    git_blob_sha: ff8c9701d6f5e8cb11f24e3148165c538c8161f3
+    sha256: 8910e8e236629856c721201a6bb20a0a9357cdf3e261745753d5becd5890cda6
+  - path: docs/qps_line_s_recovery/he_reference_nist_tn1334_bracket.csv
+    role: NIST TN1334 reference rows
+    git_blob_sha: 6b7fdac70ece6c52507d90b1a7273d115b2c5d0b
+    sha256: 06e9c51943b5894c02c0032e745df00bfff53d9cca6715a541def8360f269e75
+  - path: pyproject.toml
+    role: runtime dependency pin (CoolProp==7.2.0)
+    git_blob_sha: 70f57f03a6746ce935974a9e99f457dae92f6555
+    sha256: f7a16e18281705339a228269142c487636330e92df12874040337ec39306b84c
+
+# Constants read from the pinned files. They are the physics SSOT values that
+# CODEX policy and the GISTAU cross-check incarnation are compared against.
+pinned_constants:
+  lambda_point_K: 2.1768            # provider.py LAMBDA_K
+  governed_envelope_K: [1.8, 300.0] # provider.py state_tp guard
+  qplant_hepak_band_K: [2.0, 4.5]   # qplant_provider.py HEPAK_T_MIN_K, HEPAK_T_MAX_K
+
+# CODEX local roles under this pin.
+local_roles:
+  src/gistau_ch15/properties: CROSSCHECK_ONLY   # basic incarnation; never governing
+  src/gistau_ch15/properties/qplant_hepak_policy.py: GOVERNANCE_GUARD_MIRROR
+
+# Parity of CODEX's QPLANT policy with the pinned ABACUS routing. Divergence
+# is recorded explicitly, never silently: the test recomputes it and fails if
+# either side moves without this block being updated.
+policy_parity:
+  codex_rule: HEPAK governs 0 < T <= 4.5 K (owner decision 2026-10-11, CODEX #969)
+  abacus_rule: HEPAK governs 2.0 <= T <= 4.5 K (qplant_provider.py at commit_sha)
+  probes_K: [1.8, 1.99, 2.0, 2.1768, 3.0, 4.5, 4.6, 300.0]
+  diverging_probes_K: [1.8, 1.99]
+  status: DIVERGED_PENDING_ABACUS_ADOPTION
+  resolution: ABACUS adopts HEPAK_T_MIN_K removal; then re-pin and set status PARITY
+
+# sha256 over the canonical JSON of {authority.commit_sha, pinned_files
+# (path, sha256) sorted by path, pinned_constants}. Recomputed by the test and
+# by tools/verify_physics_authority_pin.py; any edit to the pin changes it.
+meta_checksum_sha256: 20a7c901dd28fc595a817318f54998cedff2c62d65a80ef7d8af34b334ee7b2c

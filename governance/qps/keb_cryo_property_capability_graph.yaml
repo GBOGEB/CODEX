@@ -64,6 +64,13 @@ nodes:
     repository: GBOGEB/ABACUS
     capability: CRYO_HE4_PROPERTY_SURFACE
     lifecycle: ACTIVE_EXTERNAL
+    pin: governance/physics/HE4_PROPERTY_AUTHORITY_PIN.yaml
+
+  - id: KEB-NODE-GISTAU-CROSSCHECK
+    kind: LOCAL_CROSSCHECK_INCARNATION
+    path: src/gistau_ch15/properties
+    lifecycle: ACTIVE
+    authority_role: CROSSCHECK_ONLY
 
 atoms:
   - id: KEB-ATOM-PARENT-NO-AUTHORITY
@@ -142,20 +149,27 @@ edges:
     type: RETURNS_TYPED_PROPERTY_RECEIPT_TO
     status: READY_FOR_CONTRACT_BINDING
 
+  - id: KEB-EDGE-010
+    source: KEB-NODE-GISTAU-CROSSCHECK
+    target: EXT-NODE-ABACUS-HE4-PROPERTY
+    type: CROSSCHECKS_PINNED_PROVIDER
+    status: ACTIVE
+    guard: NON_GOVERNING_DISAGREEMENT_IS_SIGNAL_NOT_AVERAGE
+
 activation_metrics:
-  discovered_nodes: 10
-  active_or_external: 6
+  discovered_nodes: 11
+  active_or_external: 7
   dormant_available: 3
   planned: 1
-  penetration_fraction: 0.6
+  penetration_fraction: 0.6364
   note: descriptive capability penetration only; not formal QPS closure
 
 promotion_gates:
   ROUTER_PLANNED_TO_BOUND:
-    - exact_abacus_source_sha
+    - exact_abacus_source_sha        # evidence: governance/physics/HE4_PROPERTY_AUTHORITY_PIN.yaml
     - normalized_property_schema
     - capability_registry_entry
-    - stale_sha_rejection
+    - stale_sha_rejection            # evidence: tools/verify_physics_authority_pin.py --abacus
   BOUND_TO_TESTED:
     - positive_route_case
     - unsupported_property_fail_closed
