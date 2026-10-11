@@ -19,7 +19,7 @@ jobs:
           test -f ssot/release/W05_P10_QPS_WORKFLOW_RECREATE.yaml
           test -f ssot/release/W05_P6_QPS_ROUNDTRIP_REGENERATION_JOB.yaml
           printf 'status: PASS\nqualification: CODEX_ZERO_DELTA_PREFLIGHT\nsha: %s\n' "$GITHUB_SHA" > CODEX_ZERO_DELTA_PREFLIGHT.yaml
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: codex-zero-delta-preflight
           path: CODEX_ZERO_DELTA_PREFLIGHT.yaml

@@ -24,7 +24,7 @@ jobs:
             --overlay triage/requirements/CODEX_CREQ_OVERLAY.json \
             --resolver triage/requirements/creq_resolver.py \
             --out triage/requirements/receipts/CODEX_CREQ_CI_RESOLUTION.json
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: creq-codex-receipt
           path: triage/requirements/receipts/CODEX_CREQ_CI_*.json

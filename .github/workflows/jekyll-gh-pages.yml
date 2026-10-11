@@ -19,7 +19,7 @@ jobs:
           source: ./docs
           destination: ./_site
       - name: Upload candidate artifact without Pages deployment authority
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: legacy-jekyll-candidate-${{ github.sha }}
           path: _site

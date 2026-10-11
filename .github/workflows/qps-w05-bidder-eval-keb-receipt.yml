@@ -73,7 +73,7 @@ jobs:
               assert all(re.fullmatch(r'[0-9a-f]{64}', value) for value in hashes.values())
           print('W05 KEB executed-mechanics receipt PASS', len(data['typed_semantic_findings']))
           PY
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: qps-w05-bidder-eval-keb-${{ github.run_id }}
           path: federation/qps/runtime/QPS_FED_W05_BIDDER_EVAL_KEB_RUNTIME_RECEIPT.yaml

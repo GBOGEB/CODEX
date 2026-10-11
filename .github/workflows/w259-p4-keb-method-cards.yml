@@ -31,7 +31,7 @@ jobs:
         run: |
           python scripts/validate_w259_p4_method_cards_source_receipt.py --out artifacts/w259-p4-keb-source-validation.json
       - name: Upload validation receipt
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: w259-p4-keb-source-validation
           path: artifacts/w259-p4-keb-source-validation.json

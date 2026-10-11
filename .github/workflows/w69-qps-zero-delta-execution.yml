@@ -68,7 +68,7 @@ jobs:
           if(-not $pass){throw 'W69 zero-delta comparison failed'}
       - name: Upload W69 zero-delta receipt
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: w69-qps-zero-delta
           path: |

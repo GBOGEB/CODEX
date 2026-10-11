@@ -52,7 +52,7 @@ jobs:
           EOF
           grep -Fq 'external_validator_result: PASS' triage/out/MIP_EXTERNAL_CHILD_RECEIPT.yaml
       - name: Upload diagnostic receipt
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: mip-external-child-proof
           path: triage/out/MIP_EXTERNAL_CHILD_RECEIPT.yaml

@@ -26,7 +26,7 @@ jobs:
         run: >-
           python scripts/validate_qps_w111_power_utility_bridge.py
           --receipt /tmp/keb_w111_power_utility_receipt.json
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: keb-w111-power-utility-${{ github.sha }}
           path: /tmp/keb_w111_power_utility_receipt.json

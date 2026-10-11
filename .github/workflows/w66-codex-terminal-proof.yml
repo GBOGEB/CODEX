@@ -70,7 +70,7 @@ jobs:
               json.dumps(receipt, indent=2, sort_keys=True) + '\n'
           )
           PY
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: w66-codex-terminal-proof-plan
           path: terminal-proof/W66_CODEX_TERMINAL_PLAN_RECEIPT.json

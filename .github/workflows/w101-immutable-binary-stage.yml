@@ -47,7 +47,7 @@ jobs:
 
       - name: Upload immutable-stage receipt
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: w101-immutable-stage-${{ github.sha }}
           path: out/W101_IMMUTABLE_STAGE_RECEIPT.json
@@ -75,7 +75,7 @@ jobs:
 
       - name: Upload B1 diagnostic receipt
         if: success()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: w101-b1-after-immutable-pass-${{ github.sha }}
           path: out/W100_B1_DIAGNOSTIC_RECEIPT.json

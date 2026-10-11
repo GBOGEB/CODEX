@@ -30,7 +30,7 @@ jobs:
           python scripts/validate_w259_p4_method_cards_knowledge_atom.py \
             --out artifacts/w259-p4-keb-method-cards-atom-validation.json
       - name: Upload validation receipt
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: w259-p4-keb-method-cards-atom-validation
           path: artifacts/w259-p4-keb-method-cards-atom-validation.json

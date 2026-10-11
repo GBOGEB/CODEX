@@ -50,7 +50,7 @@ jobs:
             --output-dir artifacts/missioncontrol-graph-explorer-qa
       - name: Upload screenshots and interaction receipts
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: missioncontrol-graph-explorer-browser-qa
           path: artifacts/missioncontrol-graph-explorer-qa/
