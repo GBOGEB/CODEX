@@ -45,7 +45,25 @@ jobs:
         run: python -m pip install 'PyYAML==6.0.2' jsonschema pytest numpy pandas
 
       - name: Gate unit tests
-        run: python -m pytest -q tests/spine
+        run: |
+          set +e
+          python -m pytest -q tests/spine -p no:cacheprovider --junitxml=spine-junit.xml > spine-pytest.txt 2>&1
+          rc=$?
+          cat spine-pytest.txt
+          # Surface failures as annotations (readable without log access).
+          python - <<'PY'
+          import xml.etree.ElementTree as ET, pathlib
+          p = pathlib.Path("spine-junit.xml")
+          if p.exists():
+              for case in ET.parse(p).getroot().iter("testcase"):
+                  for bad in list(case.iter("failure")) + list(case.iter("error")):
+                      msg = (bad.get("message") or bad.text or "").strip().replace("\n", " | ")[:900]
+                      print(f"::error title=spine test {case.get('name')}::{msg}")
+          else:
+              tail = pathlib.Path("spine-pytest.txt").read_text()[-900:].replace("\n", " | ")
+              print(f"::error title=spine tests did not produce junit::{tail}")
+          PY
+          exit $rc
 
       - name: Committed receipt digest (before regeneration)
         id: committed
