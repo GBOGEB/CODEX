@@ -55,10 +55,13 @@ def test_deny_term_blocks_file():
     assert rc == 1 and r["files"][0]["findings"][0]["rule"] == "private_project"
 
 
-def test_secret_blocks_file():
-    root = _tree({"core/a.py": "T='ghp_" + "a" * 36 + "'\n"}, BASE)
+def test_secret_blocks_file_without_republishing_it():
+    token = "ghp_" + "a" * 36
+    root = _tree({"core/a.py": f"T='{token}'\n"}, BASE)
     rc, r = _run(root)
-    assert rc == 1 and r["files"][0]["findings"][0]["rule"] == "github_token"
+    finding = r["files"][0]["findings"][0]
+    assert rc == 1 and finding["rule"] == "github_token"
+    assert token not in json.dumps(r) and finding["match"].startswith("<redacted len=40 ")
 
 
 def test_excluded_file_is_not_admitted_and_import_of_it_breaks_closure():

@@ -95,13 +95,24 @@ def _allowed(rel: str, label: str, allowlist: list[dict]) -> bool:
     )
 
 
-def scan_text(rel: str, text: str, rules, allowlist) -> list[dict]:
+def scan_text(rel: str, text: str, rules, allowlist, *, redact: bool = False) -> list[dict]:
+    """Return findings; with redact=True the matched text never leaves this function.
+
+    Secret findings are recorded only as a short digest and length, so the
+    receipt (an uploaded CI artifact) and the log cannot republish a leaked
+    credential that the gate has just caught.
+    """
     findings = []
     for lineno, line in enumerate(text.splitlines(), 1):
         for label, rx in rules:
             m = rx.search(line)
             if m and not _allowed(rel, label, allowlist):
-                findings.append({"line": lineno, "rule": label, "match": m.group(0)[:60]})
+                if redact:
+                    digest = hashlib.sha256(m.group(0).encode()).hexdigest()[:12]
+                    evidence = f"<redacted len={len(m.group(0))} sha256:{digest}>"
+                else:
+                    evidence = m.group(0)[:60]
+                findings.append({"line": lineno, "rule": label, "match": evidence})
     return findings
 
 
@@ -153,7 +164,7 @@ def run(root: Path, manifest_path: Path, receipt_path: Path) -> int:
     admitted, missing = resolve(root, manifest)
     allowlist = manifest.get("allowlist") or []
     deny = _compile(manifest.get("deny_terms"))
-    secrets = _compile(manifest.get("secret_patterns"))
+    credential_rules = _compile(manifest.get("secret_patterns"))
     closure = import_closure(root, admitted)
 
     overlay = manifest.get("overlay") or {}
@@ -173,7 +184,8 @@ def run(root: Path, manifest_path: Path, receipt_path: Path) -> int:
         findings = []
         if Path(rel).suffix in TEXT_SUFFIXES or Path(rel).name.startswith("."):
             text = data.decode("utf-8", errors="replace")
-            findings = scan_text(rel, text, deny + secrets, allowlist)
+            findings = scan_text(rel, text, deny, allowlist)
+            findings += scan_text(rel, text, credential_rules, allowlist, redact=True)
         if rel in closure:
             findings += [{"rule": "import_closure", "match": m} for m in closure[rel]]
         entry["status"] = "BLOCKED" if findings else "CLEAN"
