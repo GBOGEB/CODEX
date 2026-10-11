@@ -115,14 +115,17 @@ def run(
         dh_g, dh_b = g["enthalpy_J_kg"] - g_ref["enthalpy_J_kg"], b["enthalpy_J_kg"] - b_ref["enthalpy_J_kg"]
         ds_g, ds_b = g["entropy_J_kgK"] - g_ref["entropy_J_kgK"], b["entropy_J_kgK"] - b_ref["entropy_J_kgK"]
         is_ref = (t, p) == (float(ref_t), float(ref_p))
-        rel_dh = 0.0 if is_ref else (dh_b - dh_g) / max(abs(dh_g), 1e-12)
+        abs_dh = dh_b - dh_g
+        rel_dh = 0.0 if is_ref else abs_dh / max(abs(dh_g), 1e-12)
         abs_ds = ds_b - ds_g
         dom = in_domain(t, p)
         failures = []
         if dom:
             if abs(d_rho) > tol["density_rel"]:
                 failures.append("density")
-            if not is_ref and abs(rel_dh) > tol["delta_h_rel"]:
+            # Isothermal points have |dh| ~ 0, where a purely relative test is
+            # ill-conditioned: allow rel * |dh_governing| plus an absolute floor.
+            if abs(abs_dh) > tol["delta_h_rel"] * abs(dh_g) + tol["delta_h_abs_floor_J_kg"]:
                 failures.append("delta_h")
             if abs(abs_ds) > tol["delta_s_abs_J_kgK"]:
                 failures.append("delta_s")
@@ -135,6 +138,7 @@ def run(
                 "basic": b,
                 "density_rel_dev": d_rho,
                 "delta_h_rel_dev": rel_dh,
+                "delta_h_abs_dev_J_kg": abs_dh,
                 "delta_s_abs_dev_J_kgK": abs_ds,
                 "verdict": ("FAIL:" + ",".join(failures)) if failures else ("PASS" if dom else "NOT_APPLICABLE"),
             }
@@ -150,10 +154,10 @@ def run(
         "points": len(rows),
         "in_domain_points": len(in_rows),
         "in_domain_failures": sum(1 for r in in_rows if r["verdict"].startswith("FAIL")),
-        "worst_in_domain": {k: worst(k, in_rows) for k in ("density_rel_dev", "delta_h_rel_dev", "delta_s_abs_dev_J_kgK")},
+        "worst_in_domain": {k: worst(k, in_rows) for k in ("density_rel_dev", "delta_h_abs_dev_J_kg", "delta_s_abs_dev_J_kgK")},
         "worst_out_of_domain": {
             k: worst(k, [r for r in rows if not r["in_domain"]])
-            for k in ("density_rel_dev", "delta_h_rel_dev", "delta_s_abs_dev_J_kgK")
+            for k in ("density_rel_dev", "delta_h_abs_dev_J_kg", "delta_s_abs_dev_J_kgK")
         },
         "rows": rows,
     }
@@ -201,14 +205,20 @@ def main(argv: list[str] | None = None) -> int:
         f"::notice title=Physics crosscheck::CoolProp {report['coolprop_version']} | output checksum "
         f"{report['output_checksum_sha256']} | in-domain {report['in_domain_points']}/{report['points']} points, "
         f"{report['in_domain_failures']} fail | worst in-domain rho {_fmt(wi['density_rel_dev'])}, "
-        f"dh {_fmt(wi['delta_h_rel_dev'])}, ds {_fmt(wi['delta_s_abs_dev_J_kgK'])} J/kgK | worst outside rho "
-        f"{_fmt(wo['density_rel_dev'])}, dh {_fmt(wo['delta_h_rel_dev'])}, ds {_fmt(wo['delta_s_abs_dev_J_kgK'])} J/kgK"
+        f"dh {_fmt(wi['delta_h_abs_dev_J_kg'])} J/kg, ds {_fmt(wi['delta_s_abs_dev_J_kgK'])} J/kgK | worst outside rho "
+        f"{_fmt(wo['density_rel_dev'])}, dh {_fmt(wo['delta_h_abs_dev_J_kg'])} J/kg, ds {_fmt(wo['delta_s_abs_dev_J_kgK'])} J/kgK"
     )
-    for r in report["rows"]:
-        print(
-            f"{r['T_K']:>7g} K {r['p_kPa']:>9g} kPa  {r['verdict']:<16} rho {r['density_rel_dev']:+.4%}  "
-            f"dh {r['delta_h_rel_dev']:+.4%}  ds {r['delta_s_abs_dev_J_kgK']:+.2f} J/kgK"
-        )
+    lines = [
+        f"{r['T_K']:g}K/{r['p_kPa']:g}kPa {r['verdict']} rho {r['density_rel_dev']:+.3%} "
+        f"dh {r['delta_h_abs_dev_J_kg']:+.0f}J/kg ds {r['delta_s_abs_dev_J_kgK']:+.1f}J/kgK"
+        for r in report["rows"]
+    ]
+    for line in lines:
+        print(line)
+    # Per-row table as annotations (job logs are not always reachable): 3 chunks.
+    chunk = math.ceil(len(lines) / 3)
+    for i in range(0, len(lines), chunk):
+        print(f"::notice title=Crosscheck rows {i + 1}-{min(i + chunk, len(lines))}::" + " | ".join(lines[i : i + chunk]))
     if args.check:
         problems = gate(report, spec)
         for p in problems:
