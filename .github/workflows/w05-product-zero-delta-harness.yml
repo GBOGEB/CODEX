@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Prepare release artifact directories
         run: |
@@ -69,7 +69,7 @@ jobs:
           EOF
 
       - name: Upload release readiness artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: w05-product-zero-delta-harness
           path: |

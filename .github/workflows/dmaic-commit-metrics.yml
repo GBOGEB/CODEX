@@ -30,11 +30,11 @@ jobs:
       escalate:      ${{ steps.metrics.outputs.escalate }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0   # full history for commit-level metrics
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.11'
 
@@ -260,10 +260,10 @@ jobs:
     if: needs.collect-metrics.outputs.escalate == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Open escalation issue
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const qs      = '${{ needs.collect-metrics.outputs.quality_score }}';

@@ -15,8 +15,8 @@ jobs:
   normalize-dow-return:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - name: Normalize exact DOW receipt for child re-entry
@@ -24,7 +24,7 @@ jobs:
           python scripts/normalize_qps_w111_dow_return.py
           --input triage/returns/DOW_W111_POWER_UTILITY_RECEIPT.json
           --output /tmp/keb_w111_dow_return.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: keb-w111-dow-return-${{ github.sha }}
           path: /tmp/keb_w111_dow_return.json

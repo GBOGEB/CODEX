@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Checkout CODEX probe revision
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Prove hosted runner admission and bind child exact head
         shell: bash
@@ -45,7 +45,7 @@ jobs:
           echo "PASS external_runner_admitted exact_child_sha=a00785568f617db729a3968127d258027b5daa33"
 
       - name: Upload diagnostic receipt
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: w100-cryoplant-820-external-admission
           path: |

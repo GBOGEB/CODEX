@@ -13,8 +13,8 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - name: Resolve and enforce CODEX CReq
@@ -24,7 +24,7 @@ jobs:
             --overlay triage/requirements/CODEX_CREQ_OVERLAY.json \
             --resolver triage/requirements/creq_resolver.py \
             --out triage/requirements/receipts/CODEX_CREQ_CI_RESOLUTION.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: creq-codex-receipt
           path: triage/requirements/receipts/CODEX_CREQ_CI_*.json

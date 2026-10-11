@@ -16,10 +16,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.12'
 
@@ -108,7 +108,7 @@ jobs:
 
       - name: Upload QPS W08 KEB runtime return
         id: upload_keb_payload
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: qps-w08-keb-runtime-return-${{ github.run_id }}
           path: qps_w08_keb_return/
@@ -169,7 +169,7 @@ jobs:
           cat qps_w08_keb_binding/SHA256SUMS
 
       - name: Upload post-upload KEB binding
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: qps-w08-keb-runtime-binding-${{ github.run_id }}
           path: qps_w08_keb_binding/
@@ -181,7 +181,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Validate manifest structure
         run: |

@@ -20,7 +20,7 @@ jobs:
     env:
       QPS_DEBUG_ENVELOPE_JSON: ${{ toJson(github.event.client_payload.envelope) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Validate retained federated exact-payload receipt
         run: |
           python3 runtime/debug/qps_debug_federation_consumer.py \
@@ -50,7 +50,7 @@ jobs:
             python3 runtime/debug/qps_debug_federation_consumer.py
           grep -q '"status": "DEFER"' \
             runtime/debug/generated/qps_debug_keb_binding.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: qps-debug-keb-binding
           path: runtime/debug/generated/qps_debug_keb_binding.json

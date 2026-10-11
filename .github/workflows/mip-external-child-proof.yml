@@ -12,7 +12,7 @@ jobs:
   external-child-proof:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Validate exact child binding and diagnostic authority
         shell: bash
         run: |
@@ -52,7 +52,7 @@ jobs:
           EOF
           grep -Fq 'external_validator_result: PASS' triage/out/MIP_EXTERNAL_CHILD_RECEIPT.yaml
       - name: Upload diagnostic receipt
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mip-external-child-proof
           path: triage/out/MIP_EXTERNAL_CHILD_RECEIPT.yaml

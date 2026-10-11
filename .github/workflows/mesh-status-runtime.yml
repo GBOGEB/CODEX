@@ -12,7 +12,7 @@ jobs:
   emit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Run emitter
         run: python3 governance/mesh/emit_mesh_status.py
       - name: Verify vector
@@ -25,7 +25,7 @@ jobs:
           assert len(x['source_sha']) == 40
           print('PASS 13 dimensions', x['source_sha'])
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: mesh-status-codex
           path: mesh-status.json
