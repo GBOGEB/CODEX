@@ -44,18 +44,39 @@ def _match(rel: str, patterns: list[str]) -> bool:
     return False
 
 
+SKIP_DIRS = {".git", "node_modules", "__pycache__"}
+
+
+def _all_files(root: Path) -> list[str]:
+    """Every file under root as a posix relative path.
+
+    Matching is done with fnmatch on this list rather than Path.glob, because
+    Path.glob("dir/**") returns only directories before Python 3.13 and files
+    as well from 3.13 on; the gate must resolve identically on every runner.
+    """
+    out = []
+    stack = [root]
+    while stack:
+        d = stack.pop()
+        for p in d.iterdir():
+            if p.is_dir():
+                if p.name not in SKIP_DIRS:
+                    stack.append(p)
+            elif p.is_file():
+                out.append(p.relative_to(root).as_posix())
+    return out
+
+
 def resolve(root: Path, manifest: dict) -> tuple[list[str], list[str]]:
     include = manifest.get("include", [])
     exclude = manifest.get("exclude", [])
+    files = _all_files(root)
     admitted, missing = set(), []
     for pat in include:
-        hits = [p for p in root.glob(pat) if p.is_file()]
+        hits = [rel for rel in files if _match(rel, [pat])]
         if not hits:
             missing.append(pat)
-        for p in hits:
-            rel = p.relative_to(root).as_posix()
-            if not _match(rel, exclude):
-                admitted.add(rel)
+        admitted.update(rel for rel in hits if not _match(rel, exclude))
     return sorted(admitted), missing
 
 

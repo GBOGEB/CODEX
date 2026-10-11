@@ -108,3 +108,11 @@ def test_stage_copies_exact_tree():
     assert spine_stage.stage(root, root / "r.json", out) == 0
     assert (out / "core" / "sub" / "b.py").read_text() == "y=2\n"
     assert json.loads((out / "STAGE_RECEIPT.json").read_text())["files"] == 2
+
+
+def test_recursive_include_matches_nested_files_on_every_python():
+    # Regression: Path.glob("dir/**") yields only directories before Python 3.13,
+    # which made every "dir/**" include match nothing on 3.11 CI runners.
+    root = _tree({"core/a.py": "", "core/deep/er/b.py": ""}, BASE)
+    admitted, missing = spine_gate.resolve(root, BASE)
+    assert admitted == ["core/a.py", "core/deep/er/b.py"] and missing == []
