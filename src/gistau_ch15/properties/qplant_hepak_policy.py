@@ -1,7 +1,9 @@
 """QPLANT-specific helium property governance for CODEX/KEB.
 
 This policy is deliberately narrower than the generic HEPAK adapter:
-- 2.0 K <= T <= 4.5 K inclusive: HEPAK is mandatory and governing.
+- T <= 4.5 K inclusive: HEPAK is mandatory and governing. This includes the
+  He-II region below the lambda point (2.177 K, e.g. 1.8 K), where CoolProp
+  is not rigorous and must never govern.
 - outside that band: CoolProp may govern unless a narrower child rule applies.
 - NIST is validation/reference only.
 - missing in-band HEPAK evidence is BLOCKING_MUST_EXECUTE; no fallback promotion.
@@ -11,7 +13,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import PurePosixPath
 
-HEPAK_MIN_K = 2.0
 HEPAK_MAX_K = 4.5
 
 
@@ -21,7 +22,9 @@ class QplantHepakPolicyError(ValueError):
 
 def governing_provider_for_temperature(temperature_K: float) -> str:
     t = float(temperature_K)
-    return "HEPAK" if HEPAK_MIN_K <= t <= HEPAK_MAX_K else "COOLPROP"
+    if not t > 0.0:
+        raise QplantHepakPolicyError(f"QPLANT_INVALID_TEMPERATURE: T={temperature_K} K must be positive")
+    return "HEPAK" if t <= HEPAK_MAX_K else "COOLPROP"
 
 
 def validate_governing_source(*, temperature_K: float, provider: str, authority_role: str) -> None:
@@ -32,7 +35,7 @@ def validate_governing_source(*, temperature_K: float, provider: str, authority_
         return
     if expected == "HEPAK" and p != "HEPAK":
         raise QplantHepakPolicyError(
-            f"QPLANT_HEPAK_REQUIRED: T={temperature_K} K is inside 2.0-4.5 K inclusive; got governing provider={provider}"
+            f"QPLANT_HEPAK_REQUIRED: T={temperature_K} K is at or below 4.5 K (HEPAK-governed, incl. He-II); got governing provider={provider}"
         )
     if p == "NIST":
         raise QplantHepakPolicyError("QPLANT_NIST_REFERENCE_ONLY: NIST cannot be governing runtime provider")
