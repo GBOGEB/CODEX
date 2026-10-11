@@ -14,6 +14,9 @@ from dataclasses import dataclass
 from pathlib import PurePosixPath
 
 HEPAK_MAX_K = 4.5
+# Lower validity limit of the Ortiz-Vega helium-4 EOS used by CoolProp: the
+# lower lambda point, which CoolProp reports as the "triple point" of He-4.
+COOLPROP_HE_MIN_K = 2.1768
 
 
 class QplantHepakPolicyError(ValueError):
@@ -31,6 +34,12 @@ def validate_governing_source(*, temperature_K: float, provider: str, authority_
     expected = governing_provider_for_temperature(temperature_K)
     p = provider.upper()
     role = authority_role.upper()
+    t = float(temperature_K)
+    if p == "COOLPROP" and t < COOLPROP_HE_MIN_K:
+        # Out of EOS range: not usable in any role (governing, advisory or comparison).
+        raise QplantHepakPolicyError(
+            f"COOLPROP_OUT_OF_RANGE: T={temperature_K} K is below the CoolProp helium EOS limit {COOLPROP_HE_MIN_K} K (He-II); role={authority_role}"
+        )
     if role != "GOVERNING":
         return
     if expected == "HEPAK" and p != "HEPAK":
