@@ -1,0 +1,51 @@
+name: CODE PURPLE Live Observation
+on:
+  pull_request:
+    paths:
+      - scripts/code_purple_live_observation.py
+      - tests/test_code_purple_live_observation.py
+      - .github/workflows/code-purple-live-observation.yml
+  workflow_dispatch:
+    inputs:
+      abacus_head_sha:
+        description: Full observed ABACUS PR head SHA
+        required: true
+        type: string
+      abacus_main_sha:
+        description: Full observed ABACUS main SHA
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  read-only-proof:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Unit tests - no live write access
+        run: python -m unittest discover -s tests -p test_code_purple_live_observation.py -v
+      - name: Live observation only on explicit dispatch
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          ABACUS_HEAD_SHA: ${{ inputs.abacus_head_sha }}
+          ABACUS_MAIN_SHA: ${{ inputs.abacus_main_sha }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/code_purple_live_observation.py \
+            --head-sha "$ABACUS_HEAD_SHA" \
+            --main-sha "$ABACUS_MAIN_SHA"
+      - name: Upload generated evidence only
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: abacus-observation-${{ inputs.abacus_head_sha }}
+          path: docs/data/code_purple_live_observation.json
+          if-no-files-found: error
+          retention-days: 14
