@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 FULL_SHA = re.compile(r"[0-9a-f]{40}\Z")
-FULL_DIGEST = re.compile(r"[0-9a-f]{64}\\Z")
+FULL_DIGEST = re.compile(r"[0-9a-f]{64}\Z")
 RED_CONCLUSIONS = {"failure", "timed_out", "cancelled", "action_required"}
 ALLOWED_CONCLUSIONS = RED_CONCLUSIONS | {"success", "neutral", "skipped"}
 
@@ -98,7 +98,8 @@ def project(record: dict[str, Any]) -> dict[str, Any]:
     consumer_receipt = record.get("consumer_receipt_sha256")
     consumer_sha = record.get("consumer_head_sha")
     consumer_proof = (
-        same_head
+        forward_requested
+        and same_head
         and proofs_ok
         and isinstance(source_receipt, str) and bool(FULL_DIGEST.fullmatch(source_receipt))
         and isinstance(consumer_receipt, str) and bool(FULL_DIGEST.fullmatch(consumer_receipt))
