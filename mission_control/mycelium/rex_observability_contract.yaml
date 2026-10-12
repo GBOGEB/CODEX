@@ -207,3 +207,42 @@ ui:
     - prior_fix
     - control_guard
     - rex_link
+
+# Additive, read-only candidate source. It is NOT the global REX ledger.
+# CODEX global intake and QPS consumer acceptance are separate future gates.
+code_purple_abacus_candidate:
+  schema: code-purple.rex-control-metrics/1.0
+  source_return: federation/rex/returns/ABACUS_CODE_PURPLE_20261012_REX_RETURN.yaml
+  producer: scripts/code_purple_rex_rollup.py
+  consumer_json: docs/data/code_purple_rex_rollup.json
+  viewer: docs/code_purple_rex_control.html
+  proof_workflow: .github/workflows/code-purple-rex-control.yml
+  promotion_status: CANDIDATE_NOT_ADMITTED
+  source_repo: GBOGEB/ABACUS
+  source_authority_retained: true
+  qps_consumer_requires_independent_review: true
+  required_evidence:
+    - source_exact_head_sha
+    - source_receipt_digest
+    - terminal_workflow_run_id
+    - named_reviewer_when_security_relevant
+    - control_guard_or_deferred_next_action
+  ranking_policy: SEVERITY_THEN_ACTIVE_STATE_WITHOUT_CROSS_UNIT_FREQUENCY_TOTAL
+  missing_metrics: UNKNOWN_NOT_ZERO
+  metrics_hooks:
+    - candidate_rex_signatures
+    - open_or_deferred_candidate_signatures
+    - repaired_not_yet_verified
+    - verified_or_controlled_candidate_signatures
+    - top7_14_21
+    - current_main_coverage_pct
+    - current_diff_coverage_pct
+    - bd_queue_open
+    - bd_queue_closed
+    - authenticated_crew_launches
+    - measured_pca_score
+  guardrails:
+    - NO_AUTOMATIC_GLOBAL_LEDGER_PROMOTION
+    - NO_CROSS_REPO_AUTHORITY_TRANSFER
+    - NO_SECURITY_REVIEW_WAIVER
+    - NO_MERGE_CREDIT_FROM_CANDIDATE_DASHBOARD
