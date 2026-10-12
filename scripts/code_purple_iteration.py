@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any
 
 FULL_SHA = re.compile(r"[0-9a-f]{40}\Z")
+FULL_DIGEST = re.compile(r"[0-9a-f]{64}\\Z")
 RED_CONCLUSIONS = {"failure", "timed_out", "cancelled", "action_required"}
 ALLOWED_CONCLUSIONS = RED_CONCLUSIONS | {"success", "neutral", "skipped"}
 
@@ -93,8 +94,16 @@ def project(record: dict[str, Any]) -> dict[str, Any]:
         state, action = "ADMISSION_CANDIDATE", "VERIFY_REPOSITORY_NATIVE_GATE"
     # 'ADMISSION_CANDIDATE' deliberately never equals an authoritative PASS/merge.
     forward_requested = record.get("pay_it_forward_requested") is True
+    source_receipt = record.get("source_receipt_sha256")
+    consumer_receipt = record.get("consumer_receipt_sha256")
+    consumer_sha = record.get("consumer_head_sha")
     consumer_proof = (
-        record.get("local_dov_proven") is True
+        same_head
+        and proofs_ok
+        and isinstance(source_receipt, str) and bool(FULL_DIGEST.fullmatch(source_receipt))
+        and isinstance(consumer_receipt, str) and bool(FULL_DIGEST.fullmatch(consumer_receipt))
+        and isinstance(consumer_sha, str) and bool(FULL_SHA.fullmatch(consumer_sha))
+        and record.get("local_dov_proven") is True
         and record.get("generalisation_gap_observed") is True
         and record.get("sanitized") is True
         and record.get("consumer_independent_proof") is True
