@@ -9,8 +9,9 @@ import re
 import urllib.error
 import urllib.request
 from collections import Counter
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 REPO = "GBOGEB/ABACUS"
 BASE = "https://api.github.com"
@@ -22,7 +23,7 @@ SCHEMA = "code-purple.current-observation/1.0"
 
 
 def utc_now() -> str:
-    return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+    return dt.datetime.now(dt.UTC).isoformat(timespec="seconds").replace("+00:00", "Z")
 
 
 def github_get(path: str) -> Any:
@@ -72,7 +73,7 @@ def checks(get: Callable[[str], Any], sha: str) -> dict:
     for page in range(1, 21):
         payload = get(f"/repos/{REPO}/commits/{sha}/check-runs?per_page=100&page={page}")
         if not isinstance(payload, dict) or not isinstance(payload.get("check_runs"), list):
-            raise ValueError("invalid GitHub check response")
+            raise TypeError("invalid GitHub check response")
         total = payload.get("total_count") if total is None else total
         batch = payload["check_runs"]
         if any(x.get("head_sha") != sha for x in batch):
