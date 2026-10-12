@@ -32,8 +32,8 @@ COMPLETE = {"VERIFIED", "CONTROLLED"}
 SEVERITY_WEIGHT = 10
 STATUS_WEIGHT = {
     "OPEN": 5, "DEFERRED": 5, "CONTAINED": 4,
-    "REPAIRED": 3, "VERIFIED": 1,
-    "CONTROLLED": 1, "SUPERSEDED": 0,
+    "REPAIRED": 3, "VERIFICATION_PENDING": 4,
+    "VERIFIED": 1, "CONTROLLED": 1, "SUPERSEDED": 0,
 }
 
 
@@ -132,16 +132,42 @@ def validate(data: Any) -> list[dict[str, Any]]:
     return rows
 
 
+def effective_control_status(record: dict[str, Any]) -> str:
+    """Source-declared PASS is never an independently authenticated completion.
+
+    No GitHub API-backed, exact-head review/run attestation is provided by this
+    offline candidate projector. Fail closed even for source statuses marked
+    VERIFIED/CONTROLLED. The producer must not grant global acceptance credit.
+    """
+    if record["control_status"] in COMPLETE:
+        return "VERIFICATION_PENDING"
+    return str(record["control_status"])
+
+
+def load_canonical_source(selected_path: Path) -> tuple[dict[str, Any], bytes]:
+    """Reject alternate source paths: published attribution is canonical only."""
+    if selected_path.resolve(strict=True) != SOURCE.resolve(strict=True):
+        raise ValueError("noncanonical --source is forbidden for provenance output")
+    source_bytes = SOURCE.read_bytes()
+    return yaml.safe_load(source_bytes), source_bytes
+
+
 def make_rollup(data: dict[str, Any], source_bytes: bytes) -> dict[str, Any]:
     """Project source-bound REX records, never assert runtime/main freshness."""
     rows = validate(data)
+    # Callers cannot supply altered in-memory bytes while attributing the report
+    # to the governed canonical path. Validate before this check so malformed
+    # candidate records still produce precise schema diagnostics in tests.
+    if source_bytes != SOURCE.read_bytes() or yaml.safe_load(source_bytes) != data:
+        raise ValueError("projection data/bytes do not match canonical governed source")
     normalized = []
     frequency_units: Counter[str] = Counter()
     status_count: Counter[str] = Counter()
     for record in rows:
         unit = str(record["frequency"]["unit"])
         frequency_units[unit] += record["frequency"]["observed_count"]
-        state = record["control_status"]
+        claimed_state = record["control_status"]
+        state = effective_control_status(record)
         status_count[state] += 1
         proof = record["verification"]
         normalized.append({
@@ -152,6 +178,11 @@ def make_rollup(data: dict[str, Any], source_bytes: bytes) -> dict[str, Any]:
                 + STATUS_WEIGHT[state],
             "priority_basis": "severity_plus_active_status_not_empirical_risk",
             "control_status": state,
+            "source_claimed_control_status": claimed_state,
+            "proof_authentication": (
+                "WITHHELD_NO_INDEPENDENT_CURRENT_HEAD_RUN_OR_REVIEW_RECEIPT"
+                if claimed_state in COMPLETE else "SOURCE_OBSERVATION_NOT_ADMISSION"
+            ),
             "family": record["family"],
             "recurrence": record["recurrence"],
             "issue_kind": record["issue_kind"],
@@ -163,12 +194,18 @@ def make_rollup(data: dict[str, Any], source_bytes: bytes) -> dict[str, Any]:
             "lesson": record["lesson"],
             "repair_method": record["repair_method"],
             "evidence_url": proof["source_url"],
-            "verification_result": proof["result"],
+            "verification_result": (
+                "WITHHELD_SOURCE_DECLARED_PASS_NOT_AUTHENTICATED"
+                if claimed_state in COMPLETE else proof["result"]
+            ),
+            "source_claimed_result": proof["result"],
             "next_action": (
                 "Revalidate/repair active root using source evidence"
                 if state in ACTIVE else
                 "Independently prove repair and consumer acceptance"
                 if state == "REPAIRED" else
+                "Authenticate terminal exact-head run and independent review before credit"
+                if state == "VERIFICATION_PENDING" else
                 "Retain guard and reopen only on measured regression"
             ),
         })
@@ -212,8 +249,15 @@ def make_rollup(data: dict[str, Any], source_bytes: bytes) -> dict[str, Any]:
             ),
             "repaired_not_yet_verified": status_count["REPAIRED"],
             "verified_or_controlled_candidate_signatures": sum(
+                r["control_status"] in COMPLETE for r in normalized
+            ),
+            "source_declared_verified_or_controlled_signatures": sum(
                 r["control_status"] in COMPLETE for r in rows
             ),
+            "verification_pending_candidate_signatures": status_count[
+                "VERIFICATION_PENDING"
+            ],
+            "verification_credit_state": "WITHHELD_EXTERNAL_AUTHENTICATION_REQUIRED",
             "frequency_by_incompatible_unit": dict(sorted(frequency_units.items())),
             "frequency_total": None,
             "frequency_total_state": "WITHHELD_HETEROGENEOUS_UNITS",
@@ -268,8 +312,7 @@ def main() -> None:
     parser.add_argument("--out", type=Path, default=OUTPUT)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    source_bytes = args.source.read_bytes()
-    data = yaml.safe_load(source_bytes)
+    data, source_bytes = load_canonical_source(args.source)
     result = make_rollup(data, source_bytes)
     text = json.dumps(result, sort_keys=True, indent=2, ensure_ascii=False) + "\n"
     if args.check:
