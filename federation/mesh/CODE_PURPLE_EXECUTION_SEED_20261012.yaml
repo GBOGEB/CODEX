@@ -1,0 +1,119 @@
+# Code Purple is an execution seed, not a second global SSOT or scheduler.
+schema: gbogeb.code-purple.execution-seed/0.1
+id: CP-20261012-GLOBAL-SELF
+as_of: "2026-10-12"
+classification: EXECUTION_SEED_CANDIDATE
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+source_of_control:
+  index: GBOGEB/CODEX/GLOB.yaml
+  dock_protocol: GBOGEB/CODEX/federation/mesh/GLOBAL_MESH_DOCK_PROTOCOL_v1.yaml
+  closure: GBOGEB/CODEX/federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
+  rex: GBOGEB/CODEX/federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml
+  runtime_preflight: GBOGEB/ABACUS/scripts/testpilot_preflight.py
+  qps_queue: GBOGEB/cryoplant-project/triage/release/v6/QPS_V6_NEXT_EXECUTION_CURRENT.yaml
+  abacus_hold: GBOGEB/ABACUS/issues/1860
+global_input:
+  tuple_input:
+    fields: [request, mission, authority, constraints, baseline_ref, baseline_sha, current_output, todo, action_burndown, priority, evidence, next_admissible_action]
+    empty_field_rule: UNKNOWN_NOT_INFERRED
+  seed_sources:
+    - "GitHub PR inbox screenshot supplied 2026-10-12; visual snapshot, not a CI receipt"
+    - "CODEX current main 4da26fdf7dce7d3500b773981c157df4cf265938"
+    - "ABACUS current main 53688f26d5b9c4cd074ef905e426849e85324383"
+    - "QPS release queue sampled from main 2026-10-12; source records as_of 2026-10-02"
+  stale_rule: ALWAYS_REFRESH_BEFORE_ACTION
+mission:
+  outcome: CLOSE_FIRST_MATERIAL_BLOCKER_WITH_NONCOMPENSATING_EXACT_HEAD_EVIDENCE
+  resource_guidance:
+    target_iterative_dmaic_pct: 95
+    remainder: coordination_and_admission
+    metric: measured productive iteration, not count of launched agents
+    override_gate_policy: false
+  phases: [DEFINE, MEASURE, ANALYZE, IMPROVE, CONTROL]
+  minimal_methods: [3PR, MIP_IF_STRUCTURAL_GAP, 3PC_IF_TRANSACTIONAL, 3P3_IF_GENERALISATION_MISSING]
+  execution_rule: MINIMUM_PATH_TO_DOV
+topology:
+  nodes:
+    - {id: codex, repo: GBOGEB/CODEX, role: GLOBAL_LOOKUP_GOVERNANCE_KEB}
+    - {id: abacus, repo: GBOGEB/ABACUS, role: DOW_RUNTIME_ANALYSIS}
+    - {id: qps, repo: GBOGEB/cryoplant-project, role: QPS_ENGINEERING_SSOT}
+  edges:
+    - {from: qps, to: codex, type: EVIDENCE_UP, authority_transfer: false}
+    - {from: codex, to: abacus, type: CONTRACT_PORT, authority_transfer: false}
+    - {from: abacus, to: qps, type: DERIVED_RECEIPT_RETURN, authority_transfer: false}
+    - {from: qps, to: qps, type: SELF_REENTRY_ON_FIRST_RED, authority_transfer: false}
+self:
+  concept: ".self = same node reused as both supplier and customer, with a bounded verification loop"
+  recursive_depth_max: 1
+  terminate_on: [DOV_SATISFIED, FIRST_EXTERNAL_HOLD, NO_NEW_EVIDENCE]
+  sipoc:
+    suppliers: [repo_local_ssot, github_head, dependency_lock, known_REx, prior_exact_sha_receipts]
+    inputs: [changed_files, config_toml_yaml_json, code, docker_compose, devcontainer, PR_diff, CI_checks]
+    process: [PREFLIGHT, PRECONFIG, SMOKE, TESTFLIGHT, EXACT_HEAD_CI, REVIEW_AND_SECURITY, RECEIPT, CONTROL_REENTRY]
+    outputs: [typed_findings, first_red, preflight_receipt, exact_head_gate_receipt, REX_record, action_burndown]
+    customers: [same_repo_self, CODEX_KEB, ABACUS_DOW, QPS_child_owner, next_admissible_agent]
+  docker_docking:
+    namespace: "docker/container/service/port/protocol/producer/consumer"
+    definitions:
+      - {repo: GBOGEB/CODEX, source: compose.yaml, service: validator, published_ports: [], verification: CONFIG_DECLARED_NOT_LIVE_PROOF}
+      - {repo: GBOGEB/ABACUS, source: .devcontainer/devcontainer.json, forwarded_dev_ports: [8000, 8080, 5000], verification: CONFIG_DECLARED_NOT_LISTENER_PROOF}
+    port_rules:
+      - DISTINGUISH_DECLARED_EXPOSED_PUBLISHED_FORWARDED_LISTENING_REACHABLE
+      - NEVER_TREAT_FORWARDED_PORT_AS_RUNNING_SERVICE
+      - RECORD_HOST_CONTAINER_PROTOCOL_OWNER_AND_HEALTH_CHECK
+      - NO_UNAUTHENTICATED_EXTERNAL_BIND_WITHOUT_SECURITY_REVIEW
+preflight:
+  stages:
+    - {id: parse, checks: [YAML_JSON_TOML_PARSE, MERGE_MARKERS, PY_COMPILE], admission: LOCAL_ONLY}
+    - {id: style, checks: [RUFF, FORMAT, PRECOMMIT], admission: LOCAL_ONLY}
+    - {id: security, checks: [BANDIT, SEMGREP, SARIF_VALIDITY], admission: TOOL_OUTPUT_NOT_APPROVAL}
+    - {id: smoke, checks: [TARGETED_PYTEST, DOCKER_CONFIG, INTERFACE_HANDSHAKE], admission: MEASURED_EXECUTION_REQUIRED}
+    - {id: testflight, checks: [AFFECTED_DEPENDENCY_TESTS, COVERAGE_DELTA, CI_PARITY], admission: MEASURED_EXECUTION_REQUIRED}
+    - {id: github, checks: [CURRENT_HEAD_CI, CURRENT_HEAD_REVIEW, SECURITY_REVIEW, ZERO_UNRESOLVED_THREADS], admission: REPOSITORY_NATIVE}
+  reusable_implementations:
+    - "ABACUS scripts/testpilot_preflight.py --mode fast/full/gate; .testpilot/last_receipt.json"
+    - "ABACUS .pre-commit-config.yaml and .github/workflows/testpilot-preflight.yml"
+    - "CODEX .github/workflows/ci.yml, .github/workflows/bandit.yml, .github/workflows/semgrep.yml"
+    - "CODEX tools/security/bandit_json_to_sarif.py"
+  semantics:
+    SKIP: NOT_TESTED_NOT_PASS
+    ZERO_STEP: NOT_EXECUTION_PROOF
+    CONFIGURED: NOT_EXECUTED
+    LOCAL_PASS: NOT_CI_PASS
+    OWNER_ATTESTATION: HUMAN_ONLY_NEVER_AUTOMATED
+  confidence:
+    source: measured_reproducibility_and_exact_SHA_only
+    subjective_agent_confidence_is_not_admission: true
+  coverage:
+    authoritative_gate_reduction_forbidden: true
+    inherited_debt_separate_from_new_debt: true
+  security:
+    S0_S1_critical_obligations_not_self_waivable: true
+    break_glass_requires_owner_and_independent_review: true
+queue:
+  - {rank: 0, repo: GBOGEB/ABACUS, ref: 1860, type: GOVERNED_LOCK, action: REFRESH_CURRENT_HEAD_AND_GATE}
+  - {rank: 1, repo: GBOGEB/ABACUS, ref: 1858, type: P0_REVIEW_ADMISSION, action: HUMAN_SECURITY_ASSESSMENT_THEN_OWNER_DECISION}
+  - {rank: 2, repo: GBOGEB/ABACUS, ref: 1857, type: P1_SYNTAX, action: PROVE_EXACT_HEAD_TOOLING_CI}
+  - {rank: 3, repo: GBOGEB/ABACUS, ref: 1847, type: P1_POLICY_CONFLICT, action: RECONCILE_WITH_1858_FAIL_CLOSED}
+  - {rank: 4, repo: GBOGEB/ABACUS, ref: 1859, type: P2_CI_DEBT_RATCHET, action: VALIDATE_NO_NEW_DEBT_AND_FULL_MAIN_RED}
+  - {rank: 5, repo: GBOGEB/ABACUS, ref: 1855, type: P2_FEDERATION, action: REQUIRE_PAIRED_CHILD_EVIDENCE}
+  - {rank: 6, repo: GBOGEB/ABACUS, ref: 1856, type: P3_HYGIENE, action: DRY_RUN_NO_DELETION_WITHOUT_OWNER}
+  - {rank: 7, repo: GBOGEB/cryoplant-project, ref: 1379, type: RELEASE_HOLD, action: CODEX_PAGES_OWNER_SETTING_AND_PHYSICAL_BINARY_INGRESS}
+parallelism:
+  allowed: [READ_ONLY_CENSUS, DISJOINT_LOCAL_PREFLIGHT, INDEPENDENT_TEST_EVIDENCE, INDEPENDENT_REVIEW]
+  forbidden: [CONCURRENT_SAME_BRANCH_WRITES, UNCOORDINATED_PR_MERGES, ATTESTATION_BY_AGENT, CI_BYPASS_AS_PASS]
+  partition_key: repo_branch_head_sha_action
+  integration: SEQUENTIAL_EXACT_HEAD_REBASE_RECHECK_MERGE
+closure:
+  valid_pass_requires: [EXECUTED_GT_ZERO_STEPS, REQUIRED_CHECKS_TERMINAL_GREEN, HEAD_SHA_MATCH, POLICY_ADMISSION, DURABLE_RECEIPT]
+  return_states: [ACCEPT, REJECT, DEFER, HOLD]
+  first_red_rule: FIX_CHRONOLOGICAL_FIRST_COMPLETED_MATERIAL_RED_OR_HOLD
+  failure_census: BATCH_OBSERVATIONS_THEN_REPAIR_EARLIEST_COMMON_ROOT
+  reenter_on: [HEAD_CHANGE, CONTROLLED_SOURCE_CHANGE, STATUS_CHANGE, MEASURED_REGRESSION, NEW_EXTERNAL_CAPACITY]
+  no_reopen_closed_lanes_without_regression: true
+  no_authority_promotion_by_dashboard: true
+handover:
+  output_tuple: [input_ref, observed_sha, discovered_gates, changed_paths, checks_executed, first_red, disposition, REX_signature, next_action, owner, exact_receipt]
+  next_chat_seed: READ_CANONICAL_DOCK_QUEUE_AND_REFRESH_LIVE_STATE_BEFORE_EXECUTION
