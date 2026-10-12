@@ -61,6 +61,56 @@ class LiveObservationTests(unittest.TestCase):
         self.assertEqual(result["feedback_gate_observation"], "BLOCKED_OR_PENDING")
         self.assertEqual(result["check_status_counts"]["pending"], 1)
 
+    def test_newer_success_supersedes_old_cancelled(self):
+        old = check(conclusion="cancelled", number=5)
+        old["started_at"] = "2026-10-12T10:00:00Z"
+        new = check(conclusion="success", number=6)
+        new["started_at"] = "2026-10-12T11:00:00Z"
+        result = mod.collect(
+            lambda _: {"total_count": 2, "check_runs": [old, new]},
+            HEAD, MAIN, "now",
+        )
+        self.assertEqual(result["current_feedback_gate_check_id"], 6)
+        self.assertEqual(result["feedback_gate_observation"],
+                         "SUCCESS_OBSERVED_UNVERIFIED")
+
+    def test_newer_pending_blocks_stale_green(self):
+        old = check(conclusion="success", number=5)
+        old["started_at"] = "2026-10-12T10:00:00Z"
+        new = check(conclusion=None, number=6)
+        new["started_at"] = "2026-10-12T11:00:00Z"
+        new["status"] = "in_progress"
+        result = mod.collect(
+            lambda _: {"total_count": 2, "check_runs": [old, new]},
+            HEAD, MAIN, "now",
+        )
+        self.assertEqual(result["feedback_gate_observation"], "BLOCKED_OR_PENDING")
+        self.assertEqual(result["current_feedback_gate_check_id"], 6)
+
+    def test_same_timestamp_ambiguous_gate_fails_closed(self):
+        a, b = check(number=5), check(number=6)
+        a["started_at"] = b["started_at"] = "2026-10-12T10:00:00Z"
+        result = mod.collect(
+            lambda _: {"total_count": 2, "check_runs": [a, b]},
+            HEAD, MAIN, "now",
+        )
+        self.assertEqual(result["feedback_gate_observation"], "UNKNOWN_UNORDERED_GATE")
+        self.assertIsNone(result["current_feedback_gate_check_id"])
+
+    def test_every_terminal_conclusion_in_denominator(self):
+        endings = ["success", "failure", "cancelled", "skipped", "timed_out",
+                   "neutral", "action_required", "stale", "startup_failure",
+                   "unexpected_new_conclusion"]
+        checks = [check(number=i, conclusion=value)
+                  for i, value in enumerate(endings, start=1)]
+        result = mod.collect(
+            lambda _: {"total_count": len(checks), "check_runs": checks},
+            HEAD, MAIN, "now",
+        )
+        self.assertEqual(sum(result["check_status_counts"].values()), len(checks))
+        self.assertEqual(result["check_status_counts"]["timed_out"], 1)
+        self.assertEqual(result["check_status_counts"]["other"], 1)
+
     def test_wrong_head_rejected(self):
         with self.assertRaisesRegex(ValueError, "different head"):
             mod.collect(lambda _: {"total_count": 1, "check_runs": [check(MAIN)]},
