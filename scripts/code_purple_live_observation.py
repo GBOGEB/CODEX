@@ -28,7 +28,7 @@ def require_sha(value: str) -> str:
 
 
 def get_json(path: str, token: str | None = None) -> Any:
-    if not path.startswith("/") or ".." in path or "?" in path:
+    if not path.startswith("/") or ".." in path or ("?" in path and not path.endswith("?per_page=100")):
         raise ValueError("untrusted API path")
     headers = {
         "Accept": "application/vnd.github+json",
@@ -63,7 +63,7 @@ def normalize_check(item: dict[str, Any], sha: str) -> dict[str, Any]:
 
 def collect(fetch: Any, head: str, main: str, now: str) -> dict[str, Any]:
     head, main = require_sha(head), require_sha(main)
-    checks = fetch(f"/commits/{head}/check-runs")
+    checks = fetch(f"/commits/{head}/check-runs?per_page=100")
     if not isinstance(checks, dict) or not isinstance(checks.get("check_runs"), list):
         raise ValueError("missing checks response")
     # The source API is paginated. Fail closed on truncation rather than
