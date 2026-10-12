@@ -29,7 +29,10 @@ footer{padding:28px 20px;text-align:center;color:var(--muted)}@media(max-width:8
 <a href="https://github.com/GBOGEB/cryoplant-project/blob/main/triage/code_purple/README.md">QPS CODE PURPLE</a></nav></header>
 <main>
 <div id="message" class="muted" aria-live="polite">Loading locally produced, source-bound telemetry…</div>
-<section class="grid" id="kpis" aria-label="Measured KPI cards"></section>
+<section class="panel" style="margin:12px 0 16px"><h2>ABACUS current GitHub census · separate from historical REX</h2>
+<div id="currentState" class="muted" aria-live="polite">Current state UNKNOWN</div><section id="currentNumbers" class="grid" style="margin-top:10px"></section>
+<p class="muted">PR burndown is not BD closure, independent review, coverage or PCA. <a href="data/code_purple_current_observation.json">Current source JSON</a></p></section>
+<section class="grid" id="kpis" aria-label="Historical candidate KPI cards"></section>
 <section class="panel" style="margin-top:15px"><h2>Provenance and cross-repository acceptance</h2>
 <div class="flow"><article><strong>ABACUS · REX source</strong><small>Named exact-head findings and test evidence, source authority retained</small></article>
 <article><strong>CODEX · Global REX candidate</strong><small>Independent review and merge required; no automatic ledger promotion</small></article>
@@ -94,6 +97,18 @@ name.append(button,elem("span",r.control_status,"badge "+statusClass));
 tr.append(name,elem("td",r.priority_score+" (heuristic)"));return tr}));
 $("ranknote").textContent="Population: "+model.top7_14_21[n].populated+" candidate signatures; "+model.top7_14_21[n].unfilled_slots+" unfilled capacity slots (not zero other-repo defects)."}
 $("theme").onclick=()=>document.body.classList.toggle("light");$("top").onchange=drawRows;$("state").onchange=drawRows;
+fetch("data/code_purple_current_observation.json",{cache:"no-store"}).then(r=>{
+if(!r.ok)throw Error("HTTP "+r.status);return r.json()}).then(d=>{
+if(d.schema!=="code-purple.current-observation/1.0"||d.repo!=="GBOGEB/ABACUS"||d.admission?.authority_transfer!==false)throw Error("unsupported observation");
+const age=(Date.now()-Date.parse(d.observed_at))/3600000;
+const fresh=Number.isFinite(age)&&age>=0&&age<=d.freshness_ttl_hours;
+$("currentState").textContent=(fresh?"CURRENT SOURCE":"STALE · NOT LIVE")+" · "+d.observed_at+" · main "+d.source.main_sha+" · independent admission NOT PROVEN";
+const values=[["Open PRs · repository",d.current_prs.open_count],
+["Merged · pinned 20 PR cohort",d.historical_cohort_current_disposition.merged_count],
+["Main required rules",d.main_ruleset.rule_count],["Actual BD queue",d.unmeasured.bd_queue_open],
+["Current main coverage",d.unmeasured.current_main_coverage]];
+$("currentNumbers").replaceChildren(...values.map(([name,x])=>{const e=elem("article",undefined,"card");e.append(elem("strong",value(x)),elem("span",name));return e}));
+}).catch(e=>{$("currentState").textContent="CURRENT SOURCE UNKNOWN: "+e.message;});
 fetch("data/code_purple_rex_rollup.json",{cache:"no-store"}).then(response=>{if(!response.ok)throw Error("producer file unavailable: HTTP "+response.status);return response.json()}).then(data=>{
 if(data.schema!=="code-purple.rex-control-metrics/1.0"||data.evidence_state!=="CANDIDATE_NOT_ADMITTED"||!Array.isArray(data.ranked_rex_candidates))throw Error("invalid/unsupported candidate evidence");
 model=data;$("message").textContent="Candidate REX observation · "+data.measurement_window.start+" · not a current live GitHub census";

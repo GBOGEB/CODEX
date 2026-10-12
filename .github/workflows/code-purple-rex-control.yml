@@ -5,6 +5,9 @@ on:
     paths:
       - federation/rex/returns/ABACUS_CODE_PURPLE_20261012_REX_RETURN.yaml
       - scripts/code_purple_rex_rollup.py
+      - scripts/code_purple_current_observation.py
+      - tests/test_code_purple_current_observation.py
+      - .github/workflows/pages.yml
       - tests/test_code_purple_rex_rollup.py
       - docs/code_purple_rex_control.html
       - mission_control/mycelium/rex_observability_contract.yaml
@@ -14,6 +17,9 @@ on:
     paths:
       - federation/rex/returns/ABACUS_CODE_PURPLE_20261012_REX_RETURN.yaml
       - scripts/code_purple_rex_rollup.py
+      - scripts/code_purple_current_observation.py
+      - tests/test_code_purple_current_observation.py
+      - .github/workflows/pages.yml
       - tests/test_code_purple_rex_rollup.py
       - .github/workflows/code-purple-rex-control.yml
   workflow_dispatch:
@@ -53,10 +59,12 @@ jobs:
         run: python -m pip install "PyYAML>=6,<7" "ruff==0.16.6"
 
       - name: Check changed Python without suppressing new Ruff debt
-        run: ruff check scripts/code_purple_rex_rollup.py tests/test_code_purple_rex_rollup.py
+        run: ruff check scripts/code_purple_rex_rollup.py tests/test_code_purple_rex_rollup.py scripts/code_purple_current_observation.py tests/test_code_purple_current_observation.py
 
       - name: Test candidate admission guards and metric semantics
-        run: python -m unittest discover -s tests -p test_code_purple_rex_rollup.py -v
+        run: |
+          python -m unittest discover -s tests -p test_code_purple_rex_rollup.py -v
+          python -m unittest discover -s tests -p test_code_purple_current_observation.py -v
 
       - name: Generate and verify deterministic TOP7/14/21 evidence
         run: |

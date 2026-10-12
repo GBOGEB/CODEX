@@ -87,3 +87,21 @@ Historical coverage is explicitly separated from current measurements.
 Accept this candidate only after independent CODEX review and terminal
 exact-head CI. Then return a bound global REX acceptance/merge receipt,
 not merely a link. Obtain QPS consumer QA in a separate follow-on.
+
+## Current live observation and Pages source
+
+Issue #989 adds a **separate** read-only census of ABACUS GitHub main,
+open PRs, pinned original 20-PR merge receipts, exact-main check-run states
+and required-ruleset count. A repeated main SHA read blocks drift during
+census. Secrets, logs, comments and scan bodies are not exported.
+
+This current observation never edits the historical eight-signature REX.
+BD/LDAB/root-cause counts, current coverage, crew launches and PCA remain null
+until separately measured. Neither a merge nor an Actions artifact constitutes
+security admission. The one existing governed Pages writer shall generate both
+JSON files, record their build-side SHA-256 hashes and check the public URLs'
+returned bytes. Publication remains UNVERIFIED until post-deploy matching
+readback; no extra Pages deployer or ABACUS write token is authorized.
+
+Both CODE PURPLE REX Control and MissionControl Mycelium show current vs stale
+and UNKNOWN vs zero explicitly. QPS #1904 remains an advisory review gate.
