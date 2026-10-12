@@ -74,10 +74,21 @@ def collect(fetch: Any, head: str, main: str, now: str) -> dict[str, Any]:
     if len({x["check_id"] for x in records}) != len(records):
         raise ValueError("duplicate check id")
     gate = [x for x in records if x["name"] == "PR Feedback Gate"]
+    # A historical successful check does not override a later pending or
+    # failing check with the same context. Do not infer merge admission.
     status = "UNKNOWN" if not gate else (
-        "SUCCESS" if any(x["conclusion"] == "success" for x in gate)
-        else "BLOCKED_OR_PENDING"
+        "SUCCESS_OBSERVED_UNVERIFIED" if all(
+            x["conclusion"] == "success" for x in gate
+        ) else "BLOCKED_OR_PENDING"
     )
+    counts = {
+        "success": sum(x["conclusion"] == "success" for x in records),
+        "failure": sum(x["conclusion"] == "failure" for x in records),
+        "cancelled": sum(x["conclusion"] == "cancelled" for x in records),
+        "skipped": sum(x["conclusion"] == "skipped" for x in records),
+        "pending": sum(x["conclusion"] is None for x in records),
+    }
+    failed = [x for x in records if x["conclusion"] == "failure"]
     return {
         "schema": "code-purple.live-observation/1.0",
         "source_repo": "GBOGEB/ABACUS",
@@ -88,6 +99,10 @@ def collect(fetch: Any, head: str, main: str, now: str) -> dict[str, Any]:
         "check_census_complete": True,
         "observed_checks": len(records),
         "check_runs": records,
+        "check_status_counts": counts,
+        "observed_failed_check_ids": [x["check_id"] for x in failed],
+        "first_red_step": None,
+        "first_red_step_state": "UNKNOWN_NO_JOB_STEP_LOGS",
         "feedback_gate_observation": status,
         "independent_security_review": None,
         "authenticated_worker_rex": None,
