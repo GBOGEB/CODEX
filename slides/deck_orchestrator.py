@@ -13,6 +13,7 @@ import html
 import json
 import os
 import re
+import subprocess
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -52,6 +53,32 @@ class DeckBuildResult:
     output_dir: Path
     artifacts: tuple[DeckArtifact, ...]
     manifest_path: Path
+
+
+def _vcs_commit_time(path: Path) -> str | None:
+    """Return the UTC committer time of the last commit touching ``path``.
+
+    Returns ``None`` when git is unavailable, ``path`` is outside a work tree,
+    or the file has no commit yet, so callers can fall back deterministically.
+    """
+
+    try:
+        output = subprocess.check_output(
+            ["git", "log", "-1", "--format=%cI", "--", path.name],
+            cwd=path.resolve().parent,
+            text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    if not output:
+        return None
+    return (
+        datetime.fromisoformat(output)
+        .astimezone(timezone.utc)
+        .replace(microsecond=0)
+        .isoformat()
+    )
 
 
 def _slugify(value: str) -> str:
@@ -282,7 +309,10 @@ def build_deck_assets(
     """Run the content→presentation→artifact pipeline for one deck.
 
     Timestamp precedence for manifest reproducibility:
-    explicit ``generated_at`` value, then ``SOURCE_DATE_EPOCH``, then current UTC time.
+    explicit ``generated_at`` value, then ``SOURCE_DATE_EPOCH``, then the git
+    commit time of ``content_path``, then the literal ``"unknown"``. Wall-clock
+    time is never used, so rebuilding unchanged content yields an identical
+    manifest.
     """
 
     data = load_deck_content(content_path)
@@ -318,8 +348,10 @@ def build_deck_assets(
         except ValueError as exc:
             raise ValueError("SOURCE_DATE_EPOCH must be an integer Unix timestamp") from exc
         generated_at_value = datetime.fromtimestamp(generated_at_epoch, timezone.utc).isoformat()
+    elif vcs_time := _vcs_commit_time(Path(content_path)):
+        generated_at_value = vcs_time
     else:
-        generated_at_value = datetime.now(timezone.utc).isoformat()
+        generated_at_value = "unknown"
 
     manifest = {
         "deck_id": deck["deck_id"],
