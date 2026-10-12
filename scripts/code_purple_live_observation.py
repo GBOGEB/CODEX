@@ -74,20 +74,35 @@ def collect(fetch: Any, head: str, main: str, now: str) -> dict[str, Any]:
     if len({x["check_id"] for x in records}) != len(records):
         raise ValueError("duplicate check id")
     gate = [x for x in records if x["name"] == "PR Feedback Gate"]
-    # A historical successful check does not override a later pending or
-    # failing check with the same context. Do not infer merge admission.
-    status = "UNKNOWN" if not gate else (
-        "SUCCESS_OBSERVED_UNVERIFIED" if all(
-            x["conclusion"] == "success" for x in gate
-        ) else "BLOCKED_OR_PENDING"
+    # Order by GitHub's temporal check identity; a new rerun supersedes
+    # historical cancelled/pending/successful instances. Without a complete
+    # started_at and distinct timestamp, the current gate remains UNKNOWN.
+    chosen = None
+    if gate and all(isinstance(x["started_at"], str) and x["started_at"]
+                    for x in gate):
+        latest = max(x["started_at"] for x in gate)
+        leaders = [x for x in gate if x["started_at"] == latest]
+        if len(leaders) == 1:
+            chosen = leaders[0]
+    status = (
+        "UNKNOWN_UNORDERED_GATE" if gate and chosen is None
+        else "UNKNOWN" if chosen is None
+        else "SUCCESS_OBSERVED_UNVERIFIED"
+        if chosen["conclusion"] == "success" else "BLOCKED_OR_PENDING"
     )
-    counts = {
-        "success": sum(x["conclusion"] == "success" for x in records),
-        "failure": sum(x["conclusion"] == "failure" for x in records),
-        "cancelled": sum(x["conclusion"] == "cancelled" for x in records),
-        "skipped": sum(x["conclusion"] == "skipped" for x in records),
-        "pending": sum(x["conclusion"] is None for x in records),
-    }
+    conclusions = ["success", "failure", "cancelled", "skipped", "pending",
+                   "timed_out", "neutral", "action_required", "stale",
+                   "startup_failure"]
+    counts = {key: 0 for key in conclusions}
+    counts["other"] = 0
+    for record in records:
+        key = record["conclusion"]
+        if key is None:
+            key = "pending" if record["status"] != "completed" else "other"
+        if key not in counts:
+            key = "other"
+        counts[key] += 1
+    assert sum(counts.values()) == len(records)
     failed = [x for x in records if x["conclusion"] == "failure"]
     return {
         "schema": "code-purple.live-observation/1.0",
@@ -104,6 +119,7 @@ def collect(fetch: Any, head: str, main: str, now: str) -> dict[str, Any]:
         "first_red_step": None,
         "first_red_step_state": "UNKNOWN_NO_JOB_STEP_LOGS",
         "feedback_gate_observation": status,
+        "current_feedback_gate_check_id": chosen["check_id"] if chosen else None,
         "independent_security_review": None,
         "authenticated_worker_rex": None,
         "main_coverage_pct": None,
