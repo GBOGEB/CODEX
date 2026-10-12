@@ -1,0 +1,80 @@
+name: GISTAU Physics Crosscheck
+
+# Runs the governing helium-4 provider (GBOGEB/ABACUS at the commit pinned in
+# governance/physics/HE4_PROPERTY_AUTHORITY_PIN.yaml, with the pinned CoolProp)
+# and compares its outputs with the pinned output checksum and with the GISTAU
+# basic incarnation inside its validity domain. See tools/physics_crosscheck.py.
+
+# pull_request only: the job checks out and runs ABACUS code, which must not
+# happen in the default-branch context (CodeQL cache-poisoning rule). The
+# pinned ABACUS SHA and CoolProp version can only change through a PR that
+# edits the pin, so PR-time checking covers every change.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'governance/physics/**'
+      - 'src/gistau_ch15/properties/fallback_helium.py'
+      - 'src/gistau_ch15/properties/base.py'
+      - 'tools/physics_crosscheck.py'
+      - 'tools/verify_physics_authority_pin.py'
+      - '.github/workflows/gistau-physics-crosscheck.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gistau-physics-crosscheck-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  crosscheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout CODEX
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup Python
+        uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Install pinned physics runtime
+        run: python -m pip install "CoolProp==7.2.0" "PyYAML>=6.0,<7.0"
+
+      - name: Read pinned ABACUS commit
+        id: pin
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import yaml
+          pin = yaml.safe_load(open("governance/physics/HE4_PROPERTY_AUTHORITY_PIN.yaml", encoding="utf-8"))
+          print(f"repository={pin['authority']['repository']}")
+          print(f"sha={pin['authority']['commit_sha']}")
+          PY
+
+      - name: Checkout ABACUS at the pinned commit
+        uses: actions/checkout@v7.0.1
+        with:
+          repository: ${{ steps.pin.outputs.repository }}
+          ref: ${{ steps.pin.outputs.sha }}
+          path: _abacus
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify pin against the ABACUS checkout (stale-SHA rejection)
+        run: python tools/verify_physics_authority_pin.py --abacus _abacus
+
+      - name: Record provider outputs and basic-incarnation deviations
+        run: python tools/physics_crosscheck.py --abacus _abacus --report reports/physics_crosscheck.json
+
+      - name: Gate on output checksum and in-domain tolerances
+        run: python tools/physics_crosscheck.py --abacus _abacus --check
+
+      - name: Upload crosscheck report
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: gistau-physics-crosscheck
+          path: reports/physics_crosscheck.json
+          if-no-files-found: ignore
