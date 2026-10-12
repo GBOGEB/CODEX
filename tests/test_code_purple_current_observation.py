@@ -98,7 +98,25 @@ class ObservationTests(unittest.TestCase):
         checks = result["current_main_checks"]
         self.assertIsNone(checks["denominator"])
         self.assertIsNone(checks["status_counts"])
-        self.assertEqual(checks["census_state"], "UNKNOWN_UNSTABLE_DENOMINATOR")
+        self.assertEqual(checks["census_state"], "UNKNOWN_UNSTABLE_OR_BOUNDED_CENSUS")
+
+    def test_large_check_census_is_unknown_not_false_failure(self):
+        class Oversized(FakeGitHub):
+            def __call__(self, path):
+                result = super().__call__(path)
+                if "/check-runs?" in path:
+                    return {"total_count": 3000, "check_runs":
+                            [{"head_sha": A, "id": n, "conclusion": "success"}
+                             for n in range(100)]}
+                return result
+
+        item = self.at(Oversized())
+        checks = item["current_main_checks"]
+        self.assertIsNone(checks["denominator"])
+        self.assertIsNone(checks["status_counts"])
+        self.assertEqual(checks["census_state"],
+                         "UNKNOWN_UNSTABLE_OR_BOUNDED_CENSUS")
+        self.assertFalse(item["admission"]["authority_transfer"])
 
     def test_disallow_noncanonical_api_target(self):
         for p in ("/repos/GBOGEB/CODEX/issues/1", "/repos/GBOGEB/ABACUS/../user",
