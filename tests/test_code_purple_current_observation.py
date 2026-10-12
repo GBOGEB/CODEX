@@ -87,6 +87,19 @@ class ObservationTests(unittest.TestCase):
         self.assertTrue(all(v is None for k, v in item["unmeasured"].items()
                             if k != "state"))
 
+    def test_unstable_check_total_is_unknown_not_zero(self):
+        class Moving(FakeGitHub):
+            def __call__(self, path):
+                value = super().__call__(path)
+                if "/check-runs?" in path:
+                    return {"total_count": 1, "check_runs": []}
+                return value
+        result = self.at(Moving())
+        checks = result["current_main_checks"]
+        self.assertIsNone(checks["denominator"])
+        self.assertIsNone(checks["status_counts"])
+        self.assertEqual(checks["census_state"], "UNKNOWN_UNSTABLE_DENOMINATOR")
+
     def test_disallow_noncanonical_api_target(self):
         for p in ("/repos/GBOGEB/CODEX/issues/1", "/repos/GBOGEB/ABACUS/../user",
                   "/repos/GBOGEB/ABACUS/pulls/1\nAuthorization:bad"):

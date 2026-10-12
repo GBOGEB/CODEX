@@ -67,7 +67,7 @@ def main_ref(get: Callable[[str], Any]) -> str:
     return sha
 
 
-def checks(get: Callable[[str], Any], sha: str) -> dict:
+def _checks_once(get: Callable[[str], Any], sha: str) -> dict:
     rows = []
     total = None
     for page in range(1, 21):
@@ -130,6 +130,33 @@ def checks(get: Callable[[str], Any], sha: str) -> dict:
         "failed_checks": failures[:50],
         "failure_list_truncated": len(failures) > 50,
         "verified_root_cause_count": None,
+    }
+
+
+
+def checks(get: Callable[[str], Any], sha: str) -> dict:
+    """A moving check-run list cannot certify a complete denominator.
+
+    Retry a bounded full exact-head enumeration; if new CI jobs keep
+    entering, report UNKNOWN rather than a partial count or zero.
+    This does not reduce any other security or governance requirement.
+    """
+    for _ in range(2):
+        try:
+            result = _checks_once(get, sha)
+            result["census_state"] = "COMPLETE_AT_READBACK"
+            return result
+        except ValueError as error:
+            if str(error) != "check denominator mismatch":
+                raise
+    return {
+        "population": "exact_main_check_runs",
+        "denominator": None,
+        "status_counts": None,
+        "failed_checks": [],
+        "failure_list_truncated": None,
+        "verified_root_cause_count": None,
+        "census_state": "UNKNOWN_UNSTABLE_DENOMINATOR",
     }
 
 
