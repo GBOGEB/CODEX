@@ -117,15 +117,26 @@ class ObservationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "SHA not bound"):
             self.at(Wrong())
 
-    def test_partial_check_count_rejected(self):
-        class Missing(FakeGitHub):
+    def test_check_denominator_recovers_on_second_full_read(self):
+        class Recover(FakeGitHub):
+            def __init__(self):
+                super().__init__()
+                self.check_calls = 0
+
             def __call__(self, path):
                 data = super().__call__(path)
                 if "/check-runs?" in path:
-                    return {"total_count": 1, "check_runs": []}
+                    self.check_calls += 1
+                    if self.check_calls == 1:
+                        return {"total_count": 1, "check_runs": []}
                 return data
-        with self.assertRaisesRegex(ValueError, "denominator"):
-            self.at(Missing())
+
+        api = Recover()
+        result = self.at(api)
+        self.assertEqual(api.check_calls, 2)
+        self.assertEqual(result["current_main_checks"]["denominator"], 0)
+        self.assertEqual(result["current_main_checks"]["census_state"],
+                         "COMPLETE_AT_READBACK")
 
 
 if __name__ == "__main__":
