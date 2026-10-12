@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Read-only candidate REX roll-up for CODE PURPLE and MissionControl.
 
 Input is the governed repository-return schema, not scrape results or assumed
@@ -57,7 +56,7 @@ def validate(data: Any) -> list[dict[str, Any]]:
         raise ValueError("REX return must retain originating repo authority")
     state = data.get("repo_state")
     if not isinstance(state, dict):
-        raise ValueError("repo_state missing")
+        raise TypeError("repo_state missing")
     for key in ("main_sha", "head_sha", "companion_p0_head_sha"):
         if not FULL_SHA.fullmatch(str(state.get(key) or "")):
             raise ValueError(f"{key} must contain a full source SHA")
@@ -78,7 +77,7 @@ def validate(data: Any) -> list[dict[str, Any]]:
     signatures: set[str] = set()
     for record in rows:
         if not isinstance(record, dict):
-            raise ValueError("invalid REX record")
+            raise TypeError("invalid REX record")
         ident = record.get("rex_id")
         signature = record.get("signature")
         if not isinstance(ident, str) or not ident.startswith("REX-ABACUS-"):
