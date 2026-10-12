@@ -115,6 +115,9 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:7px;bord
 <h3>Required per-edge provenance</h3>
 <div class="compact">source repo/ref/SHA → mechanism → target repo/ref/SHA → authority before/after → proof</div>
 </article>
+</section><section class="panel" style="aspect-ratio:auto;min-height:100px;margin-top:15px">
+<h2>CODE PURPLE · ABACUS current census</h2><div id="codePurpleLive" class="muted" aria-live="polite">UNKNOWN (not zero)</div>
+<div class="controls"><a href="code_purple_rex_control.html">REX Control</a> · <a href="data/code_purple_current_observation.json">Source observation</a></div>
 </section></main>
 <script>
 const $=s=>document.querySelector(s);
@@ -224,6 +227,17 @@ $('#layout').onchange=applyLayout; focusSel.onchange=applyLayout;
 panels.forEach(p=>p.onclick=e=>{if(e.target.closest('a,button,select,svg'))return;focusSel.value=p.dataset.panel;applyLayout();});
 $('#reset').onclick=()=>{focusSel.value='COMMAND_INPUT_ROOT';$('#layout').value='grid';applyLayout();};
 applyLayout();
+fetch("data/code_purple_current_observation.json",{cache:"no-store"}).then(r=>{
+if(!r.ok)throw Error("HTTP "+r.status);return r.json()}).then(d=>{
+if(d.schema!=="code-purple.current-observation/1.0"||d.admission?.authority_transfer!==false)throw Error("unsupported observation");
+const age=(Date.now()-Date.parse(d.observed_at))/3600000;
+const current=Number.isFinite(age)&&age>=0&&age<=d.freshness_ttl_hours;
+$("#codePurpleLive").textContent=(current?"CURRENT SOURCE":"STALE · NOT LIVE")+" · "+d.observed_at+
+" · main "+d.source.main_sha+" · open PRs "+d.current_prs.open_count+
+" · pinned cohort "+d.historical_cohort_current_disposition.merged_count+
+"/"+d.historical_cohort_current_disposition.denominator+
+" merged · admission not proven · BD, coverage, PCA UNKNOWN";
+}).catch(e=>{$("#codePurpleLive").textContent="CURRENT SOURCE UNKNOWN: "+e.message});
 load().catch(e=>$('#stamp').textContent='graph load failed: '+e.message);
 </script>
 <script src="assets/missioncontrol/control-plane.js"></script>
