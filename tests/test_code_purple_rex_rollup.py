@@ -29,7 +29,14 @@ class CandidateREXRollupTests(unittest.TestCase):
         self.assertEqual(report["metrics"]["candidate_rex_signatures"], 8)
         self.assertEqual(report["metrics"]["open_or_deferred_candidate_signatures"], 4)
         self.assertEqual(report["metrics"]["repaired_not_yet_verified"], 3)
-        self.assertEqual(report["metrics"]["verified_or_controlled_candidate_signatures"], 1)
+        self.assertEqual(report["metrics"]["verified_or_controlled_candidate_signatures"], 0)
+        self.assertEqual(report["metrics"]["source_declared_verified_or_controlled_signatures"], 1)
+        self.assertEqual(report["metrics"]["verification_pending_candidate_signatures"], 1)
+        self.assertEqual(report["metrics"]["candidate_rex_control_status"]["VERIFICATION_PENDING"], 1)
+        claimed = next(r for r in report["ranked_rex_candidates"]
+                       if r["source_claimed_control_status"] == "VERIFIED")
+        self.assertEqual(claimed["control_status"], "VERIFICATION_PENDING")
+        self.assertIn("WITHHELD", claimed["verification_result"])
         self.assertEqual(report["admission"]["glob_rex_promotion"], "PENDING_INDEPENDENT_REVIEW")
         self.assertFalse(report["admission"]["authority_transfer"])
 
@@ -108,13 +115,45 @@ class CandidateREXRollupTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             rex.make_rollup(d, self.raw)
 
-    def test_determinism_and_source_hash_change(self):
+    def test_determinism_and_canonical_bytes_required(self):
         a = rex.make_rollup(self.data, self.raw)
         b = rex.make_rollup(self.data, self.raw)
         self.assertEqual(json.dumps(a, sort_keys=True), json.dumps(b, sort_keys=True))
         changed_bytes = self.raw + b"\n# provenance-comment\n"
-        c = rex.make_rollup(self.data, changed_bytes)
-        self.assertNotEqual(a["source"]["sha256"], c["source"]["sha256"])
+        with self.assertRaisesRegex(ValueError, "canonical"):
+            rex.make_rollup(self.data, changed_bytes)
+
+    def test_alternative_source_even_identical_bytes_is_rejected(self):
+        data, raw = rex.load_canonical_source(rex.SOURCE)
+        self.assertEqual(data, self.data)
+        self.assertEqual(raw, self.raw)
+        with tempfile.TemporaryDirectory() as folder:
+            alternative = Path(folder) / "forged_return.yaml"
+            alternative.write_bytes(self.raw)
+            with self.assertRaisesRegex(ValueError, "noncanonical"):
+                rex.load_canonical_source(alternative)
+
+    def test_unreviewed_security_pass_cannot_upgrade_to_verified(self):
+        forged = deepcopy(self.data)
+        first = forged["records"][0]
+        first["control_status"] = "VERIFIED"
+        first["verification"]["result"] = "PASS_I_SAY_SO"
+        first["verification"]["green_head_sha"] = "a" * 40
+        first["verification"]["green_run_id"] = 1
+        forged["summary"]["open_or_deferred"] -= 1
+        forged["summary"]["five_star_open"] -= 1
+        forged["summary"]["verified_or_controlled"] += 1
+        self.assertEqual(rex.effective_control_status(first), "VERIFICATION_PENDING")
+        with self.assertRaisesRegex(ValueError, "canonical"):
+            rex.make_rollup(forged, self.raw)
+
+    def test_artifact_name_is_exact_checked_out_head_not_merge_ref(self):
+        workflow = (ROOT / ".github/workflows/code-purple-rex-control.yml").read_text(
+            encoding="utf-8"
+        )
+        head_expr = "github.event.pull_request.head.sha || github.sha"
+        self.assertIn("name: code-purple-rex-candidate-${{ " + head_expr + " }}", workflow)
+        self.assertNotIn("name: code-purple-rex-candidate-${{ github.sha }}", workflow)
 
     def test_read_only_cli_materialize_then_check_without_repo_writes(self):
         with tempfile.TemporaryDirectory() as folder:
