@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CODE PURPLE · REX Control and TOP7/14/21</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#161f36;--ink:#edf2ff;--muted:#aab9d0;--stroke:#40516f;--violet:#bdabff;--amber:#f9c56b;--red:#fd8998;--green:#7adbb0}
+body.light{color-scheme:light;--bg:#f4f6fb;--panel:#fff;--ink:#15223d;--muted:#526580;--stroke:#a8b4cd;--violet:#663ec9;--amber:#a35a05;--red:#bd2e50;--green:#126e4b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,Segoe UI,sans-serif}
+header{padding:24px max(20px,calc((100vw - 1500px)/2));border-bottom:1px solid var(--stroke)}
+h1{font-size:clamp(20px,3vw,30px);margin:0 0 7px}h2{font-size:17px;margin:0 0 15px}h3{font-size:14px}
+a{color:var(--violet);overflow-wrap:anywhere}button,select{cursor:pointer;border:1px solid var(--stroke);border-radius:9px;padding:9px 13px;background:var(--panel);color:var(--ink)}:focus-visible{outline:3px solid var(--violet)}
+main{max-width:1500px;margin:auto;padding:22px}.muted{color:var(--muted)}
+.links{display:flex;flex-wrap:wrap;gap:14px;margin-top:11px}.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}.card,.panel{background:var(--panel);border:1px solid var(--stroke);border-radius:13px;padding:17px}
+.card strong{display:block;font-size:27px;line-height:1.2}.card span{color:var(--muted)}
+.cols{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(290px,1fr);gap:15px;margin-top:15px}
+.rows{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid var(--stroke);padding:10px 8px;text-align:left;vertical-align:top}
+tr:focus-within{outline:2px solid var(--violet)}.rows button{text-align:left;width:100%;border:none;padding:2px}
+.badge{display:inline-block;border:1px solid var(--stroke);border-radius:40px;padding:2px 9px;font-size:12px}
+.open{color:var(--red)}.repaired{color:var(--amber)}.verified{color:var(--green)}
+.flow{display:flex;gap:10px;flex-wrap:wrap}.flow article{flex:1;min-width:185px;border:1px solid var(--stroke);border-radius:11px;padding:12px}
+.flow strong,.flow small{display:block}small{color:var(--muted)}
+#message{min-height:20px}#detail{min-height:250px}#detail p{overflow-wrap:anywhere}#detail ul{padding-left:18px}
+footer{padding:28px 20px;text-align:center;color:var(--muted)}@media(max-width:850px){.cols{grid-template-columns:1fr}}
+</style></head><body><header><h1>CODE PURPLE · REX Control</h1>
+<div class="muted">ABACUS → CODEX MissionControl → QPS TRIAGE · governed candidate, not admission</div>
+<nav class="links"><a href="https://github.com/GBOGEB/ABACUS/issues/1860">ABACUS recovery #1860</a>
+<a href="https://github.com/GBOGEB/ABACUS/issues/1877">Evidence reuse #1877</a>
+<a href="https://github.com/GBOGEB/CODEX/issues/977">MissionControl dispatch #977</a>
+<a href="https://github.com/GBOGEB/cryoplant-project/blob/main/triage/code_purple/README.md">QPS CODE PURPLE</a></nav></header>
+<main>
+<div id="message" class="muted" aria-live="polite">Loading locally produced, source-bound telemetry…</div>
+<section class="grid" id="kpis" aria-label="Measured KPI cards"></section>
+<section class="panel" style="margin-top:15px"><h2>Provenance and cross-repository acceptance</h2>
+<div class="flow"><article><strong>ABACUS · REX source</strong><small>Named exact-head findings and test evidence, source authority retained</small></article>
+<article><strong>CODEX · Global REX candidate</strong><small>Independent review and merge required; no automatic ledger promotion</small></article>
+<article><strong>QPS · Consumer pending</strong><small>Read-only advisory receipt; engineering SSOT/ranks unchanged</small></article></div>
+<p class="muted" id="source"></p></section>
+<div class="cols"><section class="panel"><h2>First-red / hardening priorities</h2>
+<div class="toolbar"><label for="top">Rank window</label><select id="top"><option value="7">TOP7</option><option value="14">TOP14</option><option value="21">TOP21</option></select>
+<label for="state">Status</label><select id="state"><option value="ALL">All</option><option value="OPEN">Open</option><option value="REPAIRED">Repaired</option><option value="VERIFIED">Verified / Controlled</option></select><button id="theme">Light / dark</button></div>
+<table class="rows"><thead><tr><th>#</th><th>Signature / state</th><th>Priority</th></tr></thead><tbody id="rows"></tbody></table>
+<p class="muted" id="ranknote"></p></section>
+<aside class="panel" id="detail" aria-live="polite"><h2>Evidence inspector</h2><p>Select a signature for original evidence and the next governed action.</p></aside></div>
+<section class="panel" style="margin-top:15px"><h2>DMAIC / LDAB / PCA data hooks</h2>
+<table class="rows"><thead><tr><th>Metric</th><th>Value</th><th>Evidence state</th></tr></thead><tbody id="metricrows"></tbody></table>
+<p class="muted">Historical coverage reference is NOT a fresh reading. Counts of lint violations, review threads and PRs are incompatible populations; do not aggregate them into one frequency.</p></section>
+</main><footer>Read-only output of <code>scripts/code_purple_rex_rollup.py</code>. Missing producer data remains UNKNOWN; no GitHub token or write access is used.</footer>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+let model=null;
+function elem(tag,text,className){const e=document.createElement(tag);if(text!==undefined)e.textContent=String(text);if(className)e.className=className;return e}
+function value(x){return x===null||x===undefined?"UNKNOWN":String(x)}
+function putKpis(){const m=model.metrics;const data=[
+["Candidate REX signatures",m.candidate_rex_signatures],
+["Open/deferred candidates",m.open_or_deferred_candidate_signatures],
+["Repaired, unverified",m.repaired_not_yet_verified],
+["Verified guards",m.verified_or_controlled_candidate_signatures],
+["Main coverage (current)",m.current_main_coverage_pct],
+["BD queue open",m.bd_queue_open]];
+$("kpis").replaceChildren(...data.map(([title,val])=>{const a=elem("article",undefined,"card");a.append(elem("strong",value(val)),elem("span",title));return a}))}
+function drawMetrics(){const m=model.metrics, b=model.historical_coverage_baselines;const rows=[
+["Main coverage, current",m.current_main_coverage_pct,"UNKNOWN"],
+["Historical main baseline",b.main_2026_10_11.value_pct+"%","2026-10-11 historical"],
+["PR broad, current",m.current_pr_broad_coverage_pct,"UNKNOWN"],
+["Diff coverage, current",m.current_diff_coverage_pct,"UNKNOWN"],
+["Historical PR diff",b.pr_diff_2026_10_12.value_pct+"%","2026-10-12 historical"],
+["BD queue closed",m.bd_queue_closed,"UNKNOWN"],
+["Actual root causes open",m.actual_root_cause_queue_open,"UNKNOWN"],
+["Authenticated crew launches",m.authenticated_crew_launches,"UNKNOWN"],
+["PCA score",m.measured_pca_score,model.telemetry_hooks.pca_state],
+["Observed lint violations, one failed job",m.frequency_by_incompatible_unit.lint_violations_in_one_failed_job,"Source-bound one-run count"]];
+$("metricrows").replaceChildren(...rows.map(parts=>{const tr=elem("tr");parts.forEach(s=>tr.append(elem("td",value(s))));return tr}))}
+function detail(record){const el=$("detail");el.replaceChildren(elem("h2",record.signature),elem("p","REX: "+record.rex_id),
+elem("p","Control state: "+record.control_status),elem("p","Family: "+record.family+" · severity "+record.severity_stars+"/5"),
+elem("p","Observed: "+record.frequency.count+" "+record.frequency.unit+" in "+record.frequency.window),
+elem("h3","Lesson"),elem("p",record.lesson),elem("h3","Repair method"),elem("p",record.repair_method),
+elem("h3","Next admissible action"),elem("p",record.next_action),
+elem("p","Verification: "+record.verification_result));
+const a=elem("a","Open original GitHub evidence");a.href=record.evidence_url;a.rel="noopener noreferrer";a.target="_blank";el.append(a)}
+function drawRows(){const n=$("top").value, state=$("state").value, ids=model.top7_14_21[n].records;
+const known=new Map(model.ranked_rex_candidates.map(r=>[r.rex_id,r]));let records=ids.map(id=>known.get(id)).filter(Boolean);
+if(state!=="ALL")records=records.filter(r=>state==="VERIFIED"?["VERIFIED","CONTROLLED"].includes(r.control_status):r.control_status===state);
+$("rows").replaceChildren(...records.map(r=>{const tr=elem("tr");tr.append(elem("td",r.rank));const name=elem("td");
+const button=elem("button",r.signature);button.onclick=()=>detail(r);name.append(button,elem("span",r.control_status,"badge "+(r.control_status==="OPEN"?"open":r.control_status==="REPAIRED"?"repaired":"verified")));tr.append(name,elem("td",r.priority_score+" (heuristic)"));return tr}));
+$("ranknote").textContent="Population: "+model.top7_14_21[n].populated+" candidate signatures; "+model.top7_14_21[n].unfilled_slots+" unfilled capacity slots (not zero other-repo defects)."}
+$("theme").onclick=()=>document.body.classList.toggle("light");$("top").onchange=drawRows;$("state").onchange=drawRows;
+fetch("data/code_purple_rex_rollup.json",{cache:"no-store"}).then(response=>{if(!response.ok)throw Error("producer file unavailable: HTTP "+response.status);return response.json()}).then(data=>{
+if(data.schema!=="code-purple.rex-control-metrics/1.0"||data.evidence_state!=="CANDIDATE_NOT_ADMITTED"||!Array.isArray(data.ranked_rex_candidates))throw Error("invalid/unsupported candidate evidence");
+model=data;$("message").textContent="Candidate REX observation · "+data.measurement_window.start+" · not a current live GitHub census";
+$("source").textContent="ABACUS main@"+data.source.main_sha+" · PR #1876 "+data.source.pr1876_head_sha+" · PR #1858 "+data.source.pr1858_head_sha+" · SHA-256 source "+data.source.sha256;
+putKpis();drawMetrics();drawRows();
+}).catch(error=>{$("message").textContent="Telemetry UNKNOWN: "+error.message+". Generate the JSON from the governed return before viewing; do not substitute zero.";});
+</script></body></html>
