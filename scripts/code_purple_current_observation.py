@@ -86,15 +86,41 @@ def checks(get: Callable[[str], Any], sha: str) -> dict:
         raise ValueError("check denominator mismatch")
     failures = []
     for check in rows:
-        if check.get("conclusion") == "failure":
-            url = check.get("html_url") or ""
-            failures.append({
-                "check_name": str(check.get("name") or "UNKNOWN")[:120],
-                "check_id": check.get("id") if isinstance(check.get("id"), int) else None,
-                "source_url": url if url.startswith(f"https://github.com/{REPO}/") else None,
-                "first_red_step": None,
-                "root_cause_class": "UNKNOWN_JOB_LEVEL_ONLY",
-            })
+        if check.get("conclusion") != "failure":
+            continue
+        url = check.get("html_url") or ""
+        check_id = check.get("id") if isinstance(check.get("id"), int) else None
+        first_red = None
+        run_id = None
+        step_state = "UNKNOWN_NO_AUTHENTICATED_JOB_STEP"
+        # Bounded to 50 failures; never ingest logs or secrets. An Actions
+        # job's failed step is an observation, not verified root cause.
+        if check_id is not None and len(failures) < 50:
+            try:
+                job = get(f"/repos/{REPO}/actions/jobs/{check_id}")
+                if job.get("id") != check_id:
+                    raise ValueError("mismatched GitHub job identity")
+                run_id = job.get("run_id") if isinstance(job.get("run_id"), int) else None
+                steps = job.get("steps") or []
+                first = next((x for x in sorted(
+                    steps, key=lambda y: y.get("number") or 0
+                ) if x.get("conclusion") == "failure"), None)
+                if first is not None:
+                    first_red = {
+                        "step_number": first.get("number"),
+                        "step_name": str(first.get("name") or "UNKNOWN")[:120],
+                        "source_job_id": check_id,
+                    }
+                    step_state = "OBSERVED_FAILED_STEP_NOT_ROOT_CAUSE"
+            except (RuntimeError, ValueError, AttributeError):
+                step_state = "UNKNOWN_JOB_DETAIL_UNAVAILABLE"
+        failures.append({
+            "check_name": str(check.get("name") or "UNKNOWN")[:120],
+            "check_id": check_id, "workflow_run_id": run_id,
+            "source_url": url if url.startswith(f"https://github.com/{REPO}/") else None,
+            "first_red_step": first_red, "step_evidence_state": step_state,
+            "root_cause_class": "UNKNOWN_NO_CAUSAL_PROOF",
+        })
     return {
         "population": "exact_main_check_runs", "denominator": total,
         "status_counts": dict(sorted(Counter(

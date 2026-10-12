@@ -34,6 +34,12 @@ class FakeGitHub:
                         "https://github.com/GBOGEB/ABACUS/actions/runs/13",
                         "output": {"text": "PRIVATE"}}] if self.failure else [])
             return {"total_count": len(checks), "check_runs": checks}
+        if path.endswith("/actions/jobs/15"):
+            return {"id": 15, "run_id": 13, "steps": [
+                {"number": 3, "name": "Enforce security roots",
+                 "conclusion": "failure"},
+                {"number": 4, "name": "Summarize red", "conclusion": "failure"},
+            ]}
         if path.endswith("/rulesets/24494381"):
             if self.hidden_rule:
                 raise RuntimeError("not authorized")
@@ -68,7 +74,12 @@ class ObservationTests(unittest.TestCase):
         checks = item["current_main_checks"]
         self.assertEqual(checks["status_counts"]["failure"], 1)
         self.assertIsNone(checks["verified_root_cause_count"])
-        self.assertIsNone(checks["failed_checks"][0]["first_red_step"])
+        self.assertEqual(checks["failed_checks"][0]["first_red_step"]["step_number"], 3)
+        self.assertEqual(checks["failed_checks"][0]["first_red_step"]["step_name"],
+                         "Enforce security roots")
+        self.assertEqual(checks["failed_checks"][0]["workflow_run_id"], 13)
+        self.assertEqual(checks["failed_checks"][0]["root_cause_class"],
+                         "UNKNOWN_NO_CAUSAL_PROOF")
         self.assertNotIn("PRIVATE", str(item))
 
     def test_bd_coverage_pca_nullable(self):
