@@ -1,10 +1,14 @@
+import json
 from pathlib import Path
 
-import json
 import pytest
 
-from slides.deck_orchestrator import build_deck_assets, load_deck_content, normalize_deck
-
+from slides.deck_orchestrator import (
+    _vcs_commit_time,
+    build_deck_assets,
+    load_deck_content,
+    normalize_deck,
+)
 
 FIXTURE_DIR = Path("slides/src/qps_cybersecurity")
 
@@ -97,3 +101,43 @@ def test_build_deck_assets_preserves_acronym_casing_in_rendered_headings(tmp_pat
     markdown_text = (tmp_path / "qps-cybersecurity-ad07-slide-deck-2.md").read_text(encoding="utf-8")
     assert "<h3>RTM Map</h3>" in html_text
     assert "### RTM Map" in markdown_text
+
+
+def test_build_deck_assets_falls_back_to_content_commit_time(tmp_path, monkeypatch):
+    monkeypatch.delenv("SOURCE_DATE_EPOCH", raising=False)
+    content_path = FIXTURE_DIR / "deck_content.yaml"
+    first = build_deck_assets(
+        content_path=content_path,
+        css_path=FIXTURE_DIR / "deck_style.css",
+        output_dir=tmp_path / "first",
+    )
+    second = build_deck_assets(
+        content_path=content_path,
+        css_path=FIXTURE_DIR / "deck_style.css",
+        output_dir=tmp_path / "second",
+    )
+
+    first_manifest = json.loads(first.manifest_path.read_text(encoding="utf-8"))
+    second_manifest = json.loads(second.manifest_path.read_text(encoding="utf-8"))
+    expected = _vcs_commit_time(content_path)
+    assert expected is not None
+    assert first_manifest["generated_at"] == expected
+    assert second_manifest["generated_at"] == expected
+
+
+def test_build_deck_assets_uses_unknown_timestamp_outside_git(tmp_path, monkeypatch):
+    monkeypatch.delenv("SOURCE_DATE_EPOCH", raising=False)
+    untracked = tmp_path / "src"
+    untracked.mkdir()
+    content_path = untracked / "deck_content.yaml"
+    content_path.write_bytes((FIXTURE_DIR / "deck_content.yaml").read_bytes())
+    monkeypatch.setenv("GIT_CEILING_DIRECTORIES", str(tmp_path))
+
+    result = build_deck_assets(
+        content_path=content_path,
+        css_path=FIXTURE_DIR / "deck_style.css",
+        output_dir=tmp_path / "out",
+    )
+
+    manifest = json.loads(result.manifest_path.read_text(encoding="utf-8"))
+    assert manifest["generated_at"] == "unknown"
