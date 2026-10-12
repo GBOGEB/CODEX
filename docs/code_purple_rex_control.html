@@ -37,13 +37,13 @@ footer{padding:28px 20px;text-align:center;color:var(--muted)}@media(max-width:8
 <p class="muted" id="source"></p></section>
 <div class="cols"><section class="panel"><h2>First-red / hardening priorities</h2>
 <div class="toolbar"><label for="top">Rank window</label><select id="top"><option value="7">TOP7</option><option value="14">TOP14</option><option value="21">TOP21</option></select>
-<label for="state">Status</label><select id="state"><option value="ALL">All</option><option value="OPEN">Open</option><option value="REPAIRED">Repaired</option><option value="VERIFIED">Verified / Controlled</option></select><button id="theme">Light / dark</button></div>
+<label for="state">Status</label><select id="state"><option value="ALL">All</option><option value="OPEN">Open</option><option value="REPAIRED">Repaired</option><option value="VERIFICATION_PENDING">Source claim pending proof</option><option value="VERIFIED">Authenticated / Controlled</option></select><button id="theme">Light / dark</button></div>
 <table class="rows"><thead><tr><th>#</th><th>Signature / state</th><th>Priority</th></tr></thead><tbody id="rows"></tbody></table>
 <p class="muted" id="ranknote"></p></section>
 <aside class="panel" id="detail" aria-live="polite"><h2>Evidence inspector</h2><p>Select a signature for original evidence and the next governed action.</p></aside></div>
 <section class="panel" style="margin-top:15px"><h2>DMAIC / LDAB / PCA data hooks</h2>
 <table class="rows"><thead><tr><th>Metric</th><th>Value</th><th>Evidence state</th></tr></thead><tbody id="metricrows"></tbody></table>
-<p class="muted">Historical coverage reference is NOT a fresh reading. Counts of lint violations, review threads and PRs are incompatible populations; do not aggregate them into one frequency.</p></section>
+<p class="muted">Historical coverage reference is NOT a fresh reading. Source-reported PASS is not authenticated review or terminal-run proof. Counts of lint violations, review threads and PRs are incompatible populations; do not aggregate them into one frequency.</p></section>
 </main><footer>Read-only output of <code>scripts/code_purple_rex_rollup.py</code>. Missing producer data remains UNKNOWN; no GitHub token or write access is used.</footer>
 <script>
 "use strict";
@@ -55,7 +55,8 @@ function putKpis(){const m=model.metrics;const data=[
 ["Candidate REX signatures",m.candidate_rex_signatures],
 ["Open/deferred candidates",m.open_or_deferred_candidate_signatures],
 ["Repaired, unverified",m.repaired_not_yet_verified],
-["Verified guards",m.verified_or_controlled_candidate_signatures],
+["Verified guards (authenticated)",m.verified_or_controlled_candidate_signatures],
+["Source PASS claims awaiting proof",m.verification_pending_candidate_signatures],
 ["Main coverage (current)",m.current_main_coverage_pct],
 ["BD queue open",m.bd_queue_open]];
 $("kpis").replaceChildren(...data.map(([title,val])=>{const a=elem("article",undefined,"card");a.append(elem("strong",value(val)),elem("span",title));return a}))}
@@ -69,20 +70,28 @@ function drawMetrics(){const m=model.metrics, b=model.historical_coverage_baseli
 ["Actual root causes open",m.actual_root_cause_queue_open,"UNKNOWN"],
 ["Authenticated crew launches",m.authenticated_crew_launches,"UNKNOWN"],
 ["PCA score",m.measured_pca_score,model.telemetry_hooks.pca_state],
+["Source-declared verified",m.source_declared_verified_or_controlled_signatures,"NOT AUTHENTICATED"],
+["Independently verified",m.verified_or_controlled_candidate_signatures,m.verification_credit_state],
 ["Observed lint violations, one failed job",m.frequency_by_incompatible_unit.lint_violations_in_one_failed_job,"Source-bound one-run count"]];
 $("metricrows").replaceChildren(...rows.map(parts=>{const tr=elem("tr");parts.forEach(s=>tr.append(elem("td",value(s))));return tr}))}
 function detail(record){const el=$("detail");el.replaceChildren(elem("h2",record.signature),elem("p","REX: "+record.rex_id),
-elem("p","Control state: "+record.control_status),elem("p","Family: "+record.family+" · severity "+record.severity_stars+"/5"),
+elem("p","Effective control state: "+record.control_status),elem("p","Source-declared state: "+record.source_claimed_control_status),
+elem("p","Proof authentication: "+record.proof_authentication),elem("p","Family: "+record.family+" · severity "+record.severity_stars+"/5"),
 elem("p","Observed: "+record.frequency.count+" "+record.frequency.unit+" in "+record.frequency.window),
 elem("h3","Lesson"),elem("p",record.lesson),elem("h3","Repair method"),elem("p",record.repair_method),
 elem("h3","Next admissible action"),elem("p",record.next_action),
-elem("p","Verification: "+record.verification_result));
+elem("p","Effective verification: "+record.verification_result),
+elem("p","Original source assertion (not admission): "+record.source_claimed_result));
 const a=elem("a","Open original GitHub evidence");a.href=record.evidence_url;a.rel="noopener noreferrer";a.target="_blank";el.append(a)}
 function drawRows(){const n=$("top").value, state=$("state").value, ids=model.top7_14_21[n].records;
 const known=new Map(model.ranked_rex_candidates.map(r=>[r.rex_id,r]));let records=ids.map(id=>known.get(id)).filter(Boolean);
 if(state!=="ALL")records=records.filter(r=>state==="VERIFIED"?["VERIFIED","CONTROLLED"].includes(r.control_status):r.control_status===state);
 $("rows").replaceChildren(...records.map(r=>{const tr=elem("tr");tr.append(elem("td",r.rank));const name=elem("td");
-const button=elem("button",r.signature);button.onclick=()=>detail(r);name.append(button,elem("span",r.control_status,"badge "+(r.control_status==="OPEN"?"open":r.control_status==="REPAIRED"?"repaired":"verified")));tr.append(name,elem("td",r.priority_score+" (heuristic)"));return tr}));
+const button=elem("button",r.signature);button.onclick=()=>detail(r);
+const statusClass=["VERIFIED","CONTROLLED"].includes(r.control_status)?"verified":
+(r.control_status==="REPAIRED"||r.control_status==="VERIFICATION_PENDING")?"repaired":"open";
+name.append(button,elem("span",r.control_status,"badge "+statusClass));
+tr.append(name,elem("td",r.priority_score+" (heuristic)"));return tr}));
 $("ranknote").textContent="Population: "+model.top7_14_21[n].populated+" candidate signatures; "+model.top7_14_21[n].unfilled_slots+" unfilled capacity slots (not zero other-repo defects)."}
 $("theme").onclick=()=>document.body.classList.toggle("light");$("top").onchange=drawRows;$("state").onchange=drawRows;
 fetch("data/code_purple_rex_rollup.json",{cache:"no-store"}).then(response=>{if(!response.ok)throw Error("producer file unavailable: HTTP "+response.status);return response.json()}).then(data=>{
