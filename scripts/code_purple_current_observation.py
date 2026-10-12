@@ -1,0 +1,190 @@
+"""Source-bound read-only current ABACUS observation, never a REX approval."""
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import json
+import os
+import re
+import urllib.error
+import urllib.request
+from collections import Counter
+from pathlib import Path
+from typing import Any, Callable
+
+REPO = "GBOGEB/ABACUS"
+BASE = "https://api.github.com"
+OUTPUT = Path(__file__).resolve().parents[1] / "docs/data/code_purple_current_observation.json"
+COHORT = (1876, 1875, 1873, 1872, 1871, 1869, 1859, 1858, 1857, 1856,
+          1855, 1854, 1847, 1844, 1843, 1842, 1841, 1840, 1839, 1834)
+SHA = re.compile(r"[0-9a-f]{40}\Z")
+SCHEMA = "code-purple.current-observation/1.0"
+
+
+def utc_now() -> str:
+    return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
+def github_get(path: str) -> Any:
+    if not path.startswith(f"/repos/{REPO}/") or not re.fullmatch(
+        r"/[A-Za-z0-9_./?=&%-]+", path
+    ) or ".." in path:
+        raise ValueError("GitHub API source must be ABACUS allowlisted")
+    headers = {"Accept": "application/vnd.github+json",
+               "X-GitHub-Api-Version": "2022-11-28",
+               "User-Agent": "CODE-PURPLE-READONLY"}
+    token = os.environ.get("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = "Bearer " + token
+    request = urllib.request.Request(BASE + path, headers=headers, method="GET")
+    try:
+        with urllib.request.urlopen(request, timeout=20) as response:
+            if response.geturl() != BASE + path:
+                raise ValueError("unexpected redirect from GitHub API")
+            return json.load(response)
+    except (urllib.error.HTTPError, urllib.error.URLError) as error:
+        raise RuntimeError("GitHub read-only observation unavailable") from error
+
+
+def paged(get: Callable[[str], Any], route: str) -> list[dict]:
+    rows: list[dict] = []
+    for page in range(1, 21):
+        batch = get(f"{route}&page={page}")
+        if not isinstance(batch, list) or any(not isinstance(x, dict) for x in batch):
+            raise ValueError("invalid GitHub paged list")
+        rows.extend(batch)
+        if len(batch) < 100:
+            return rows
+    raise ValueError("incomplete GitHub pagination")
+
+
+def main_ref(get: Callable[[str], Any]) -> str:
+    result = get(f"/repos/{REPO}/git/ref/heads/main")
+    sha = (result.get("object") or {}).get("sha")
+    if not isinstance(sha, str) or not SHA.fullmatch(sha):
+        raise ValueError("invalid exact ABACUS main SHA")
+    return sha
+
+
+def checks(get: Callable[[str], Any], sha: str) -> dict:
+    rows = []
+    total = None
+    for page in range(1, 21):
+        payload = get(f"/repos/{REPO}/commits/{sha}/check-runs?per_page=100&page={page}")
+        if not isinstance(payload, dict) or not isinstance(payload.get("check_runs"), list):
+            raise ValueError("invalid GitHub check response")
+        total = payload.get("total_count") if total is None else total
+        batch = payload["check_runs"]
+        if any(x.get("head_sha") != sha for x in batch):
+            raise ValueError("check SHA not bound to current main")
+        rows.extend(batch)
+        if len(batch) < 100:
+            break
+    else:
+        raise ValueError("incomplete GitHub check census")
+    if not isinstance(total, int) or total != len(rows):
+        raise ValueError("check denominator mismatch")
+    failures = []
+    for check in rows:
+        if check.get("conclusion") == "failure":
+            url = check.get("html_url") or ""
+            failures.append({
+                "check_name": str(check.get("name") or "UNKNOWN")[:120],
+                "check_id": check.get("id") if isinstance(check.get("id"), int) else None,
+                "source_url": url if url.startswith(f"https://github.com/{REPO}/") else None,
+                "first_red_step": None,
+                "root_cause_class": "UNKNOWN_JOB_LEVEL_ONLY",
+            })
+    return {
+        "population": "exact_main_check_runs", "denominator": total,
+        "status_counts": dict(sorted(Counter(
+            x.get("conclusion") or x.get("status") or "UNKNOWN" for x in rows
+        ).items())),
+        "failed_checks": failures[:50],
+        "failure_list_truncated": len(failures) > 50,
+        "verified_root_cause_count": None,
+    }
+
+
+def observe(get: Callable[[str], Any] = github_get,
+            clock: Callable[[], str] = utc_now) -> dict:
+    start = clock()
+    sha = main_ref(get)
+    opened = paged(get, f"/repos/{REPO}/pulls?state=open&per_page=100")
+    ids = [x.get("number") for x in opened]
+    if any(not isinstance(n, int) for n in ids) or len(ids) != len(set(ids)):
+        raise ValueError("invalid open PR population")
+    merge_receipts = []
+    for number in COHORT:
+        pr = get(f"/repos/{REPO}/pulls/{number}")
+        if pr.get("number") != number:
+            raise ValueError("PR evidence identity mismatch")
+        when = pr.get("merged_at")
+        commit = pr.get("merge_commit_sha") if when else None
+        if when and (not isinstance(commit, str) or not SHA.fullmatch(commit)):
+            raise ValueError("unbound merged PR SHA")
+        merge_receipts.append({
+            "pr": number, "merged": when is not None,
+            "merge_commit_sha": commit, "merged_at": when,
+            "source_url": f"https://github.com/{REPO}/pull/{number}",
+        })
+    check_data = checks(get, sha)
+    try:
+        rule = get(f"/repos/{REPO}/rulesets/24494381")
+        if rule.get("id") != 24494381 or not isinstance(rule.get("rules"), list):
+            raise ValueError("ruleset identity/count unavailable")
+        protection = {"id": 24494381, "enforcement": rule.get("enforcement"),
+                      "rule_count": len(rule["rules"]), "state": "MEASURED"}
+    except (RuntimeError, ValueError, AttributeError):
+        protection = {"id": 24494381, "enforcement": None,
+                      "rule_count": None, "state": "UNKNOWN_UNAVAILABLE"}
+    if main_ref(get) != sha:
+        raise ValueError("ABACUS main changed during observation")
+    return {
+        "schema": "code-purple.current-observation/1.0", "repo": REPO,
+        "observed_started_at": start, "observed_at": clock(),
+        "freshness_ttl_hours": 24, "observation_state": "READ_ONLY_NOT_ADMISSION",
+        "source": {"main_sha": sha, "main_url": f"https://github.com/{REPO}/commit/{sha}",
+                   "transport": "GITHUB_REST_READ_ONLY"},
+        "current_prs": {
+            "population": "repository_open_pull_requests", "open_count": len(ids),
+            "open_numbers": sorted(ids),
+            "source_url": f"https://github.com/{REPO}/pulls?q=is%3Apr+is%3Aopen",
+        },
+        "historical_cohort_current_disposition": {
+            "population": "2026-10-12_original_20_pr_cohort",
+            "denominator": len(COHORT),
+            "merged_count": sum(p["merged"] for p in merge_receipts),
+            "receipts": merge_receipts, "governed_merge_count": None,
+            "governance_state": "POSTMERGE_REVIEW_NOT_AUDITED",
+        },
+        "current_main_checks": check_data, "main_ruleset": protection,
+        "unmeasured": {
+            "bd_queue_open": None, "bd_queue_closed": None,
+            "root_cause_queue_open": None, "root_cause_queue_closed": None,
+            "current_main_coverage": None, "current_diff_coverage": None,
+            "authenticated_crew_runs": None, "measured_pca_score": None,
+            "state": "UNKNOWN_NOT_ZERO",
+        },
+        "admission": {
+            "independent_code_security_review": "NOT_PROVEN",
+            "qps_consumer": "NOT_ADMITTED", "pages_byte_identity": "UNVERIFIED",
+            "authority_transfer": False, "security_waiver": False,
+            "formal_credit_delta": 0, "engineering_credit_delta": 0,
+        },
+    }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", type=Path, default=OUTPUT)
+    args = parser.parse_args()
+    result = observe()
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    args.out.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n",
+                        encoding="utf-8")
+    print("Captured ABACUS read-only current observation at " + result["source"]["main_sha"])
+
+
+if __name__ == "__main__":
+    main()
