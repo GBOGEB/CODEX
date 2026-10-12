@@ -1,12 +1,12 @@
 """Fail-closed evidence, ranking and telemetry tests for CODE PURPLE REX."""
 from __future__ import annotations
 
-from copy import deepcopy
-from pathlib import Path
 import importlib.util
 import json
 import tempfile
 import unittest
+from copy import deepcopy
+from pathlib import Path
 
 import yaml
 
