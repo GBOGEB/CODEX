@@ -29,12 +29,35 @@ class LiveObservationTests(unittest.TestCase):
             lambda path: {"total_count": 1, "check_runs": [check()]},
             HEAD, MAIN, "2026-10-12T10:00:00+00:00",
         )
-        self.assertEqual(result["feedback_gate_observation"], "SUCCESS")
+        self.assertEqual(result["feedback_gate_observation"], "SUCCESS_OBSERVED_UNVERIFIED")
+        self.assertEqual(result["check_status_counts"]["success"], 1)
+        self.assertEqual(result["check_status_counts"]["failure"], 0)
+        self.assertIsNone(result["first_red_step"])
         self.assertEqual(result["merge_admission"], "NOT_ASSERTED")
         for key in ("independent_security_review", "authenticated_worker_rex",
                     "main_coverage_pct", "pr_diff_coverage_pct",
                     "bd_queue_open", "root_causes_closed"):
             self.assertIsNone(result[key])
+
+    def test_failed_check_counts_without_inferred_root_step(self):
+        failure = check(conclusion="failure")
+        result = mod.collect(
+            lambda _: {"total_count": 1, "check_runs": [failure]},
+            HEAD, MAIN, "now",
+        )
+        self.assertEqual(result["check_status_counts"]["failure"], 1)
+        self.assertEqual(result["observed_failed_check_ids"], [5])
+        self.assertIsNone(result["first_red_step"])
+
+    def test_stale_green_does_not_override_pending_gate(self):
+        pending = check(conclusion=None, number=6)
+        pending["status"] = "in_progress"
+        result = mod.collect(
+            lambda _: {"total_count": 2, "check_runs": [check(), pending]},
+            HEAD, MAIN, "now",
+        )
+        self.assertEqual(result["feedback_gate_observation"], "BLOCKED_OR_PENDING")
+        self.assertEqual(result["check_status_counts"]["pending"], 1)
 
     def test_wrong_head_rejected(self):
         with self.assertRaisesRegex(ValueError, "different head"):
