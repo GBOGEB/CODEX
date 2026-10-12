@@ -117,3 +117,58 @@ closure:
 handover:
   output_tuple: [input_ref, observed_sha, discovered_gates, changed_paths, checks_executed, first_red, disposition, REX_signature, next_action, owner, exact_receipt]
   next_chat_seed: READ_CANONICAL_DOCK_QUEUE_AND_REFRESH_LIVE_STATE_BEFORE_EXECUTION
+
+
+process_adapters:
+  contract: federation/mesh/MESH_CLOSURE_CONTROLLER_v1.json
+  is_process_agnostic: true
+  mandatory_interface: [supplier, input, selected_process, output, customer, exact_evidence, disposition]
+  registered:
+    DMAIC: [DEFINE, MEASURE, ANALYZE, IMPROVE, CONTROL]
+    3PR: [REFRESH, PROBE, RANK]
+    MIP: [MODERNIZE, INNOVATE, PERPETUATE]
+    3PC: [PREPARE, PROVE, COMMIT]
+    3P3: [PRESERVE_PIN, PROPAGATE_PENETRATE, PROVE_PROMOTE]
+    DOW_12_CLUSTER: [SELECT_AVAILABLE_WORKERS, ORCHESTRATE, VALIDATE, RETURN_RECEIPTS]
+  selection: MINIMUM_EVIDENCE_PRODUCING_METHOD
+  three_p_star_is_selector_not_executable: true
+self_pay_it_forward:
+  documentation: federation/mesh/CODE_PURPLE_SELF_PAY_IT_FORWARD_v0.1.md
+  interactive_viewer: federation/mesh/CODE_PURPLE_ITERATION_VIEWER.html
+  sipoc_standard_roles: [SUPPLIER, INPUT, PROCESS, OUTPUT, CUSTOMER]
+  sipic_overlay_proposed: SIPOC_PLUS_ITERATION_REENTRY_NOT_AN_EXTERNAL_STANDARD
+  temporal_slots: [N_MINUS_2_REFERENCE, N_MINUS_1_BASELINE, N_OBSERVED, N_PLUS_1_CANDIDATE]
+  state_transition: INPUT_NEXT_FROM_VERIFIED_OUTPUT_PLUS_ACCEPTED_DELTA_PLUS_CONSTRAINTS
+  self_reentry:
+    edge_type: SELF_REENTRY
+    direction: UP_OR_BACK
+    colour: VIOLET_DOTTED
+    condition: MATERIAL_DELTA_OR_MEASURED_FIRST_RED
+  pay_it_forward:
+    edge_type: PAY_IT_FORWARD
+    direction: LATERAL_OUT
+    colour: TEAL_DASHED
+    entry_requires: [SOURCE_LOCAL_DOV, REUSABLE_GAP_OBSERVED, SANITIZED_RECEIPT, CONSUMER_INDEPENDENT_PROOF]
+    transfer_scope: PROPOSED_PORTABLE_RECIPE_OR_GUARD_ONLY
+    consumer_acceptance_default: PENDING
+    consumer_authority_remains_local: true
+  ordinary_forward: {edge_type: CONTINUE_NEXT, direction: DOWN_OR_RIGHT, colour: BLUE_SOLID}
+  repair: {edge_type: FIRST_RED_REPAIR, direction: BACK_TO_IMPACTED_TEST, colour: ROSE_SOLID}
+  hold: {edge_type: HOLD_WATCH, direction: NO_TRANSITION, colour: AMBER}
+  evidence_ladder:
+    - DECLARED
+    - PREFLIGHT_EXECUTED
+    - LOCAL_TESTED
+    - EXACT_HEAD_ADMITTED
+    - EXACT_MAIN_READBACK
+    - FORWARD_PROVEN
+  falsifiability:
+    - CONFIGURED_NE_EXECUTED
+    - LOCAL_GREEN_NE_GITHUB_GREEN
+    - REPEATED_ANALYSIS_NE_NEW_EVIDENCE
+    - OUTPUT_NE_NEXT_INPUT_UNTIL_VERIFIED
+    - LLM_WEIGHT_CHANGE_NOT_CLAIMED
+iteration_examples:
+  - {slot: N_MINUS_1, kind: OBSERVED_BASELINE, repo: GBOGEB/CODEX, commit_sha: 4da26fdf7dce7d3500b773981c157df4cf265938}
+  - {slot: N, kind: OBSERVED_COMMIT, repo: GBOGEB/CODEX, commit_sha: ea37fa15ca1a9ccd504ca164204b8adabaf08837, pr: 984, ci_admission: NOT_CLAIMED}
+  - {slot: N_PLUS_1, kind: CANDIDATE_FOLLOW_ON, repo: GBOGEB/CODEX, pr: 984, rule: REFRESH_CURRENT_HEAD_AND_NEW_CI_BEFORE_ACCEPT}
