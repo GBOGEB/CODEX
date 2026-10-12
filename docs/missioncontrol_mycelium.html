@@ -216,7 +216,7 @@ function drawGraph(){
 }
 $('#theme').onclick=()=>document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';
 $('#graphFilter').oninput=drawGraph; $('#projection').onchange=drawGraph; $('#graphOverlay').onchange=drawGraph;
-const panels=[...document.querySelectorAll('.panel')], focusSel=$('#focus'), grid=$('#grid');
+const grid=$('#grid'), panels=[...grid.querySelectorAll(':scope > .panel')], focusSel=$('#focus');
 panels.forEach((p,i)=>{const o=document.createElement('option');o.value=p.dataset.panel;o.textContent=(i+1)+' · '+p.querySelector('h2').textContent.replace(/^\d+ · /,'');focusSel.appendChild(o);});
 focusSel.value='COMMAND_INPUT_ROOT';
 function applyLayout(){
