@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>CODE PURPLE | .self to pay_it_forward | Iteration Explorer</title>
+<style>
+:root{--purple:#562873;--violet:#8b49c5;--navy:#21143b;--blue:#186ec7;--rose:#cf335c;--teal:#137f6e;--green:#167251;--amber:#a9660b;--bg:#f7f5fb;--border:#cbbada;--muted:#605776;--shadow:0 12px 32px #35144e13}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--navy);font:14px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}a{color:#663b99}a:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid #00a6c4;outline-offset:3px}main{max-width:1390px;margin:auto;padding:24px 18px 56px}header{display:flex;gap:20px;align-items:end;justify-content:space-between;flex-wrap:wrap;border-bottom:3px solid var(--purple);padding-bottom:16px}h1{font-weight:850;letter-spacing:.015em;color:var(--purple);font-size:clamp(29px,4vw,55px);margin:0;line-height:1.04}h2{font-size:20px;color:#412162;margin:0 0 13px}h3{font-size:14px;margin:0 0 8px}p{margin:5px 0 13px}.muted,small{color:var(--muted)}.eyebrow{font-weight:750;letter-spacing:.17em;font-size:11px;color:#8952b2;text-transform:uppercase}.intro{font-size:15px;max-width:720px;color:#554768}.panel{border:2px solid #cdbde0;background:white;border-radius:15px;padding:17px;box-shadow:var(--shadow);margin-top:18px}.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.tabs{display:flex;border:1.5px solid var(--border);padding:4px;border-radius:12px;background:#f2eafa;gap:3px}.tabs button{font:inherit;font-weight:750;background:none;border:2px solid transparent;border-radius:9px;padding:8px 13px;cursor:pointer;color:#5c3b78}.tabs button[aria-pressed=true]{background:var(--purple);color:#fff;border-color:#3d175a}select{border:2px solid #a17cbf;border-radius:9px;padding:9px 12px;background:white;color:var(--navy);font-weight:700}.button{border:2px solid #6d4796;background:white;color:#553174;border-radius:10px;padding:9px 13px;font-weight:750;cursor:pointer}.button:hover{background:#ede1fb}.topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin:15px 0}.tag{font-size:11px;padding:3px 9px;border:1px solid #d6bfd8;border-radius:30px;background:#f7f0fb;color:#5a3274;font-weight:750}.tag.red{background:#fff0f1;border-color:#e7a2b5;color:#b6284d}.tag.green{background:#e9f9f0;border-color:#9ed6b7;color:#135b43}.tag.amber{background:#fff4df;border-color:#e8c68c;color:#83520b}.global-track{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:20px;margin:22px 2px 10px}.node{position:relative;min-height:126px;border:3px solid #734397;border-left-width:7px;border-radius:12px;padding:15px 11px;background:#fbf8ff;cursor:pointer;text-align:left;display:block;width:100%;font:inherit;box-shadow:0 6px 13px #43245a10;transition:transform .15s,box-shadow .15s}.node:hover{transform:translateY(-3px);box-shadow:0 12px 20px #43245a24}.node .number{display:inline-grid;place-items:center;border-radius:50%;width:29px;height:29px;background:var(--purple);color:#fff;font-weight:800;margin-bottom:8px}.node strong{display:block;font-size:15px;color:var(--navy)}.node span.sub{display:block;font-size:12px;color:#675b79;margin-top:5px}.node:not(:last-child):after{position:absolute;right:-24px;top:43%;content:"➜";color:var(--blue);font-size:25px;font-weight:850;pointer-events:none}.node:nth-child(3){border-color:#3486d6;background:#eef7ff}.node:nth-child(4){border-color:var(--rose);background:#fff0f3}.node:nth-child(5){border-color:#8542ba;background:#f1e9ff}.node:nth-child(6){border-color:var(--green);background:#effbf6}.node:nth-child(6) .number{background:var(--green)}.return-flow{position:relative;display:flex;align-items:center;gap:8px;color:#6f2b9d;font-weight:800;margin:12px 0;padding:9px 14px;border:2px dashed var(--violet);border-radius:10px;background:#f9f3ff}.return-flow:before{content:"↶";font-size:24px;color:var(--violet)}.zoom-outline{border:2.5px dashed #a168d1;background:#f9f6fe;border-radius:15px;padding:9px;margin-top:17px}.zoom-label{display:inline-block;font-weight:850;letter-spacing:.04em;color:white;background:#7835b2;border-radius:8px;padding:5px 12px;font-size:12px}.lane-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin-top:10px}.lane{border-radius:11px;border:2.5px solid var(--accent,#8542ba);background:var(--tint,#f8f1fe);min-height:180px;padding:10px 12px}.lane h3{color:var(--accent,#71329a);font-size:12px;line-height:1.3;padding-bottom:9px;border-bottom:1px solid #a693b488}.lane p{font-size:12px;line-height:1.6;margin:5px 0}.lane .arrow{font-size:18px;color:var(--accent,#8542ba);font-weight:900}.lane[data-type=blue]{--accent:var(--blue);--tint:#f0f8ff}.lane[data-type=rose]{--accent:var(--rose);--tint:#fff1f5}.lane[data-type=green]{--accent:var(--green);--tint:#edf9f2}.lane[data-type=amber]{--accent:var(--amber);--tint:#fff7e9}.lane[data-type=violet]{--accent:var(--violet);--tint:#f8f0ff}.details{display:grid;grid-template-columns:1fr 1fr;gap:17px}.details>section{border:2px solid #e0d5e7;border-radius:12px;padding:15px;background:#fff}.iteration{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.iteration button{font:inherit;cursor:pointer;text-align:left;border:3px solid #b3a3c5;border-radius:12px;background:#faf8fc;padding:12px;color:var(--navy)}.iteration button[aria-pressed=true]{border-color:#7935af;background:#f1e5ff;box-shadow:inset 4px 0 0 var(--purple)}.iteration button .state{display:block;font-size:12px;color:#6b5885;margin-top:4px}.step-note{border-left:5px solid var(--violet);padding:10px 14px;background:#f6effc;border-radius:7px;margin-top:12px;min-height:68px}.flow-list{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}.pill{border:2px solid #9d6dc0;background:#f7effc;color:#4f266c;border-radius:10px;padding:7px 9px;font-size:12px;font-weight:700}.pill:after{content:"  →";color:var(--blue)}.pill:last-child:after{content:""}.legend{position:sticky;bottom:8px;z-index:3;background:#ffffffec;border:2px solid #b4a4ce;border-radius:12px;display:flex;gap:14px;align-items:center;padding:10px 13px;margin-top:19px;box-shadow:0 4px 18px #140a3125;flex-wrap:wrap}.key{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:#50445b}.stroke{width:34px;height:0;border-top:4px solid var(--blue)}.stroke.return{border-color:var(--violet);border-top-style:dotted}.stroke.repair{border-color:var(--rose)}.stroke.forward{border-color:var(--teal);border-top-style:dashed}.stroke.hold{border-color:var(--amber)}pre{background:#21142f;color:#e9ddff;white-space:pre-wrap;overflow-wrap:anywhere;border-radius:10px;padding:14px;font-size:11.5px;margin:9px 0}footer{margin:25px 0;color:#655576;font-size:12px;border-top:1px solid #d8cfe1;padding-top:15px}.hidden{display:none!important}.notice{background:#fff5df;padding:11px 14px;border-left:5px solid #d29b40;border-radius:8px}
+@media(max-width:980px){.global-track{grid-template-columns:repeat(3,minmax(0,1fr))}.node:nth-child(3):after{content:"";}.lane-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.details{grid-template-columns:1fr}}
+@media(max-width:600px){main{padding:13px 10px}.global-track{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.node{min-height:114px}.node:after{display:none!important}.lane-grid{grid-template-columns:1fr}.iteration{grid-template-columns:1fr}.panel{padding:11px}.legend{position:static}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div><div class="eyebrow">GBOGEB / CODEX / ABACUS / QPS TRIAGE</div><h1>GLOBAL CODE PURPLE</h1><p class="intro">Step-change iteration — SIPOC ⇄ .self ⇢ pay_it_forward. The same control graph works with many process adapters.</p></div>
+  <div><span class="tag">Candidate execution viewer</span><p class="muted"><a href="../../GLOB.yaml">GLOB</a> · <a href="MESH_CLOSURE_CONTROLLER_v1.json">Closure controller</a> · <a href="CODE_PURPLE_SELF_PAY_IT_FORWARD_v0.1.md">Contract</a> · <a href="https://github.com/GBOGEB/CODEX/pull/984">PR #984</a></p></div>
+</header>
+<div class="panel" aria-label="Global process">
+  <div class="topbar"><h2>Global map</h2><div class="tabs" role="group" aria-label="Diagram detail"><button id="global" aria-pressed="true" type="button">Global only</button><button id="zoom" aria-pressed="false" type="button">Zoom into process</button><button id="both" aria-pressed="false" type="button">Global + zoom</button></div></div>
+  <p class="muted">Select a stage to open its detailed execution lane. Top-to-bottom / left-to-right means forward progress; return and lateral arrows are distinguished.</p>
+  <div class="global-track" id="globalTrack">
+    <button class="node" data-lane="lookup" type="button"><span class="number">1</span><strong>Global input</strong><span class="sub">Source, PR, issues, prior state</span></button>
+    <button class="node" data-lane="lookup" type="button"><span class="number">2</span><strong>Discover + select</strong><span class="sub">GLOB, dock, authority, method</span></button>
+    <button class="node" data-lane="preflight" type="button"><span class="number">3</span><strong>Run + preflight</strong><span class="sub">Process adapter, smoke, lint</span></button>
+    <button class="node" data-lane="repair" type="button"><span class="number">4</span><strong>First real red</strong><span class="sub">Isolate, repair, retest</span></button>
+    <button class="node" data-lane="admission" type="button"><span class="number">5</span><strong>Admit + prove</strong><span class="sub">Exact-head CI + reviews</span></button>
+    <button class="node" data-lane="control" type="button"><span class="number">6</span><strong>Control + forward</strong><span class="sub">Exact-main, REX, next consumer</span></button>
+  </div>
+  <div class="return-flow"><strong>SELF_REENTRY</strong> · Output N becomes an *eligible input candidate* for N+1 after a material delta and bounded verification. Not an unconditional loop.</div>
+  <div class="zoom-outline" id="detailFrame">
+    <span class="zoom-label">DETAIL VIEWFINDER · a partial crop of the global mission</span>
+    <div class="topbar">
+      <label for="adapter"><strong>Process adapter</strong></label>
+      <select id="adapter" aria-label="Choose process">
+        <option value="mip">MIP — Modernize / Innovate / Perpetuate</option>
+        <option value="dmaic">DMAIC — Define / Measure / Analyze / Improve / Control</option>
+        <option value="threep">3P* — 3PR / 3PC / 3P3 (conditional)</option>
+        <option value="dow">DOW — select 12-cluster workers</option>
+        <option value="custom">Other registered process</option>
+      </select>
+      <span class="tag" id="methodStatus">MIP only if structural gap is observed</span>
+    </div>
+    <div class="flow-list" id="adapterSteps" aria-live="polite"></div>
+    <div class="lane-grid" aria-label="Zoomed operational lanes">
+      <div class="lane" id="lookup" data-type="violet"><h3>1 · Lookup / KEB</h3><p>Source → GLOB → mesh dock → scope, owner, SHA, prior REX.</p><p class="arrow">↓ forward</p><p>No authority transfer.</p></div>
+      <div class="lane" id="preflight" data-type="blue"><h3>2 · Execute / .self</h3><p>Run the chosen adapter. Parse, Ruff, SARIF, smoke, Docker config, targeted tests.</p><p class="arrow">↓ forward</p><p>Skipped check ≠ PASS.</p></div>
+      <div class="lane" id="repair" data-type="rose"><h3>3 · First material red</h3><p>Repair only earliest attributable completed blocker. Re-enter with changed receipt.</p><p class="arrow">↶ rose repair</p><p>Do not burn unrelated debt.</p></div>
+      <div class="lane" id="admission" data-type="violet"><h3>4 · Exact-head admission</h3><p>Head SHA + required reviews + security + CI + zero unresolved material threads.</p><p class="arrow">↓ green if admitted</p><p>Owner attestations are human-only.</p></div>
+      <div class="lane" id="control" data-type="green"><h3>5 · Control / pay_it_forward</h3><p>Single-flight merge, exact-main readback; package reusable guard for independent consumer proof.</p><p class="arrow">⇢ teal forward</p><p>No automatic consumer acceptance.</p></div>
+    </div>
+  </div>
+</div>
+<div class="panel">
+  <div class="topbar"><h2>What actually changes between iterations?</h2><span class="tag">Snapshot-based evidence, not live CI</span></div>
+  <div class="iteration" role="group" aria-label="Iteration state">
+    <button type="button" aria-pressed="false" data-index="0"><strong>N−1 · Baseline</strong><span class="state">CODEX main 4da26fdf…</span></button>
+    <button type="button" aria-pressed="true" data-index="1"><strong>N · Executed seed</strong><span class="state">Commit ea37fa15… / PR #984</span></button>
+    <button type="button" aria-pressed="false" data-index="2"><strong>N+1 · Candidate</strong><span class="state">Process-neutral .self extension</span></button>
+  </div>
+  <div class="step-note" id="iterationText" aria-live="polite">Actual: Code Purple seed was committed and PR #984 was opened. At first readback 49 check records existed; two checks were SUCCESS, Ruff NEUTRAL and others pending. Merge admission withheld.</div>
+  <div class="details" style="margin-top:16px">
+    <section><h3>What can learn?</h3><p>Observed failures, elapsed time, root cause, reusable regression guards, stale/pending evidence and the lowest-cost safe next method. <strong>Not</strong> new LLM weights, a self-approved policy, or inferred green CI.</p></section>
+    <section><h3>What gets forwarded?</h3><p>Sanitized, exact-proven fixtures, methods, receipts or guard candidates. A different repo must independently validate and accept its own consumer proof. No permission, security or QPS authority carries over.</p></section>
+  </div>
+  <div class="notice" style="margin-top:14px"><strong>Gate:</strong> The documented candidate is not equivalent to executed/admitted improvement. New commits invalidate previous exact-head checks. Re-read the current PR, security review and CI before any merge or propagation.</div>
+</div>
+<div class="legend" aria-label="Pinned edge and color legend">
+  <strong style="font-size:12px">Edge taxonomy</strong>
+  <span class="key"><i class="stroke"></i> Blue solid · forward/down</span>
+  <span class="key"><i class="stroke repair"></i> Rose solid · repair/return</span>
+  <span class="key"><i class="stroke return"></i> Violet dotted · .self/up/back</span>
+  <span class="key"><i class="stroke forward"></i> Teal dashed · pay_it_forward/out</span>
+  <span class="key"><i class="stroke hold"></i> Amber · HOLD/watch</span>
+</div>
+<footer>Derived visualization only · Does not publish engineering truth or change CODEX/ABACUS/QPS authority. Evidence anchors: CODEX PR #984, CODEX GLOB and closure controller, ABACUS TestPilot, QPS release queue. Rendered static HTML with no external scripts, dependencies, credential access or live GitHub queries.</footer>
+</main>
+<script>
+(function(){
+"use strict";
+var mode="both";
+var frame=document.getElementById("detailFrame");
+var buttons={global:document.getElementById("global"),zoom:document.getElementById("zoom"),both:document.getElementById("both")};
+function setMode(next){
+ mode=next;
+ Object.keys(buttons).forEach(function(k){buttons[k].setAttribute("aria-pressed",String(k===mode));});
+ frame.classList.toggle("hidden",mode==="global");
+ document.getElementById("globalTrack").classList.toggle("hidden",mode==="zoom");
+ document.querySelector(".return-flow").classList.toggle("hidden",mode==="zoom");
+}
+Object.keys(buttons).forEach(function(k){buttons[k].addEventListener("click",function(){setMode(k);});});
+document.querySelectorAll(".node").forEach(function(b){b.addEventListener("click",function(){setMode("both");var target=document.getElementById(b.getAttribute("data-lane"));target.scrollIntoView({behavior:"smooth",block:"center"});target.style.boxShadow="0 0 0 4px #d9a3f5";setTimeout(function(){target.style.boxShadow="";},1200);});});
+var adapters={
+mip:{steps:["Modernize","Innovate","Perpetuate"],tip:"MIP only if structural gap is observed"},
+dmaic:{steps:["Define","Measure","Analyze","Improve","Control"],tip:"Measured lifecycle; no instant global DoV"},
+threep:{steps:["3PR · Refresh/Probe/Rank","Conditional MIP","3PC · Prepare/Prove/Commit","Conditional 3P3 · single propagation","STOP"],tip:"3P* is a selector, not executable itself"},
+dow:{steps:["Select relevant C1–C12","Orchestrate available workers","Validate derived evidence","Return scoped receipt"],tip:"Cluster availability needs live runtime evidence"},
+custom:{steps:["Define input/output/authority","Register phase graph","Bind executable probes","Return typed evidence","Request acceptance"],tip:"Other process must obey the same exact-evidence interface"}
+};
+function adapt(){var o=adapters[document.getElementById("adapter").value];document.getElementById("methodStatus").textContent=o.tip;var root=document.getElementById("adapterSteps");root.replaceChildren();o.steps.forEach(function(t){var sp=document.createElement("span");sp.className="pill";sp.textContent=t;root.appendChild(sp);});}
+document.getElementById("adapter").addEventListener("change",adapt);adapt();
+var iterations=[
+"Baseline: CODEX main 4da26fdf7dce7d3500b773981c157df4cf265938 already had GLOB, mesh dock, MIP and closure policy. The Code Purple execution seed had not yet been added.",
+"Actual: Code Purple seed was committed and PR #984 was opened. At first readback 49 check records existed; two checks were SUCCESS, Ruff NEUTRAL and others pending. Merge admission withheld.",
+"Candidate: .self and pay_it_forward contract plus visual viewer are proposed as the next iteration on PR #984. They must undergo new exact-head CI and review. No external consumer propagation proof exists."
+];
+document.querySelectorAll("[data-index]").forEach(function(b){b.addEventListener("click",function(){document.querySelectorAll("[data-index]").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});document.getElementById("iterationText").textContent=iterations[Number(b.getAttribute("data-index"))];});});
+setMode("both");
+})();
+</script>
+</body>
+</html>

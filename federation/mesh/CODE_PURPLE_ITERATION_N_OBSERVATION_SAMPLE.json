@@ -1,0 +1,54 @@
+{
+  "schema": "code-purple.observation-sample/0.1",
+  "snapshot_type": "HISTORICAL_PARTIAL_READBACK",
+  "snapshot_date": "2026-10-12",
+  "description": "Snapshot of first CODEX PR #984 implementation head; deliberately incomplete CI and not an admission receipt",
+  "repo": "GBOGEB/CODEX",
+  "observed_head_sha": "ea37fa15ca1a9ccd504ca164204b8adabaf08837",
+  "current_head_sha": "ea37fa15ca1a9ccd504ca164204b8adabaf08837",
+  "baseline_sha": "4da26fdf7dce7d3500b773981c157df4cf265938",
+  "checks": [
+    {
+      "name": "governance-adversary",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_order": 1
+    },
+    {
+      "name": "render-regression",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_order": 2
+    },
+    {
+      "name": "ruff",
+      "status": "completed",
+      "conclusion": "neutral",
+      "completed_order": 3
+    },
+    {
+      "name": "security-scan (macos-latest / py3.11)",
+      "status": "queued",
+      "conclusion": null
+    }
+  ],
+  "required_checks": [
+    "governance-adversary",
+    "render-regression",
+    "security-scan (macos-latest / py3.11)"
+  ],
+  "executed_steps": 0,
+  "code_review_complete": false,
+  "security_review_complete": false,
+  "unresolved_threads": null,
+  "structural_gap_observed": true,
+  "recurrence_gap_observed": false,
+  "transaction_required": false,
+  "local_dov_proven": false,
+  "generalisation_gap_observed": false,
+  "pay_it_forward_requested": true,
+  "sanitized": false,
+  "consumer_independent_proof": false,
+  "consumer_accepted": false,
+  "authority_transfer": false
+}
