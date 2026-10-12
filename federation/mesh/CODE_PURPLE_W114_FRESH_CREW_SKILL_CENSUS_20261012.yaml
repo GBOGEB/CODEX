@@ -1,0 +1,126 @@
+schema: code-purple.fresh-execution-census/0.1
+as_of: "2026-10-12"
+status: CANDIDATE_ON_REPAIR_PR
+mission: GLOBAL_CODE_PURPLE
+local_goal: REPAIR_MYCE_GENERATED_INVENTORY_AND_EARLY_DETECT_RECURRENCE
+global_dov: WITHHELD
+local_dov: WAIT_EXACT_HEAD_CI_AND_REVIEW
+global_mission_success: NOT_ESTABLISHED
+authority_transfer: false
+engineering_credit_delta: 0
+formal_credit_delta: 0
+scope:
+  governing_repo: GBOGEB/CODEX
+  runtime_consumer: GBOGEB/ABACUS
+  engineering_authority: GBOGEB/cryoplant-project
+  origin_pr: GBOGEB/CODEX#984
+  next_pr: GBOGEB/CODEX#985
+  observed_codex_main: 4820429a4d2efed3129df02cb76e6a213e24a1e4
+  observed_abacus_main: 53688f26d5b9c4cd074ef905e426849e85324383
+merge_readback:
+  CODEX_982:
+    state: MERGED
+    head: f053d3ec29ffa826e7c9e245c5baa16d1727ccac
+    check_entries: {success: 54, neutral: 2, skipped: 1, cancelled: 1, failure: 0}
+  CODEX_984:
+    state: MERGED
+    head: 90e3396abfb8a61ed9ca9b8a188a5fdfa169970a
+    check_entries: {success: 55, failure: 4, skipped: 5, cancelled: 1}
+    material_roots: [PR007_GOVERNANCE_HEADER, MYCELIUM_GENERATED_DRIFT, RUFF_ATTRIBUTION_UNVERIFIED]
+  CODEX_985:
+    state: MERGED
+    head: b2b1f6f0c320891670d4b93f731d92056aeef5c9
+    check_entries: {success: 57, failure: 2, skipped: 5}
+    material_roots: [MYCELIUM_GENERATED_DRIFT, RUFF_CODE_SCANNING_CONFIGURATION_UNKNOWN]
+    observation: CHECK_ENTRIES_ARE_NOT_DISTINCT_TEST_CASES
+  ABACUS_1858:
+    state: OPEN
+    review_security_admission: UNPROVEN
+    bypass: NOT_ACTIVATED
+method_revision:
+  name: MIP_MODERNIZE_FIRST_RED
+  repeated_failure_signature: MYCELIUM_EXECUTABLE_VALUE_STALE_GENERATED_CENSUS
+  prior: {executable_assets: 437, unregistered: 407, registered: 30}
+  measured_rebuild_target: {executable_assets: 441, unregistered: 411, registered: 30}
+  delta_source:
+    - scripts/code_purple_iteration.py
+    - scripts/code_purple_census_delta.py
+    - tests/test_code_purple_iteration.py
+    - tests/test_code_purple_census_delta.py
+  repair_scope:
+    - mission_control/mycelium/executable_value_report.json
+    - docs/data/missioncontrol_executable_value_report.json
+    - mission_control/mycelium/executable_value_control_observation.json
+  new_preflight: .github/workflows/missioncontrol-mycelium.yml
+  preflight_reason: CHECK_TRACKED_GENERATED_OUTPUT_BEFORE_FULL_MISSIONCONTROL_TESTS
+  retain_full_final_parity_gate: true
+  status: PENDING_EXACT_HEAD_EXECUTION
+  confidence: LOG_BOUND_TARGET_NO_PASS_CLAIM
+governed_glass_ceiling:
+  rule_url: https://github.com/GBOGEB/ABACUS/rules/24494381
+  id: 24494381
+  name: ABACUS_Main_Hard_Gate
+  enforcement: active
+  strict_required_status_check: PR_Feedback_Gate
+  bypass_actors: []
+  connected_user_can_bypass: never
+  decision: HOLD_P0_UNTIL_INDEPENDENT_HUMAN_SECURITY_AND_OWNER_SCOPE
+  do_not_do: [FAKE_CODEX_ATTESTATION, DISABLE_S0_S1, AUTOMERGE_REDS, SILENT_RULESET_MODIFICATION]
+resource_lanes:
+  - id: CODEX_CONTROL
+    role: governance_policy_provenance_merges
+    current_state: GOVERNED_EXISTING
+    parallel_write: SINGLE_FLIGHT
+  - id: ABACUS_DOW
+    role: evidence_consumption_runtime_analysis
+    current_state: WORKER_LAUNCH_NOT_PROVEN
+    remote_mutation_permission: false
+  - id: LOCAL_PREFLIGHT
+    role: python_compile_ruff_tests_docker_config
+    current_state: CONTRACT_AVAILABLE_EXECUTION_NOT_OBSERVED
+    reference: GBOGEB/ABACUS/scripts/testpilot_preflight.py
+  - id: SCOUTS
+    role: repository_discovery_public_code_license_validation
+    current_state: READ_ONLY_POSSIBLE_NOT_DISPATCHED
+    allowed: [GLOB_LOOKUP, REPO_SEARCH, PRIOR_REX, COMMIT_IDENTITY, PUBLIC_LICENSE_REVIEW]
+    forbidden: [BLIND_CHERRY_PICK, EXECUTE_UNVERIFIED_REMOTE_CODE, MERGE_AS_REVIEW]
+  - id: RUNNERS
+    role: github_actions_matrix_checks
+    current_state: OBSERVED_CHECK_RUNS_NOT_DEDICATED_CREW
+    units: [run_id, attempt, job_id, head_sha, result]
+  - id: SECURITY_REVIEW
+    role: independent_human_code_and_security
+    current_state: ABACUS_REVIEW_PENDING
+  - id: QPS_DOMAIN
+    role: source_bound_engineering_acceptance
+    current_state: NOT_PROMOTED_BY_CODE_PURPLE
+skills_freshness:
+  policy: RECORDED_BLOB_IDENTITY_NOT_AUTOMATIC_SKILL_UPGRADE
+  inspected:
+    - repo: GBOGEB/CODEX
+      path: .claude/skills/qps-house-style/SKILL.md
+      blob_sha: 6abb647dae7c38cd6779a77d55ebeaf0e1991aa3
+      applicability: DOCUMENT_PPTX_PDF_CORPORATE_QA
+      reuse: REFER_ONLY_NO_SOURCE_MUTATION
+    - repo: GBOGEB/CODEX
+      path: skills/helium-evidence-triage/SKILL.md
+      blob_sha: 9f94d4304bd6e779056c9bb779410eba00cea15d
+      applicability: HELIUM_ENGINEERING_EVIDENCE_NOT_GENERIC_CODE_REPAIR
+      reuse: NOT_APPLICABLE_TO_THIS_RED
+    - repo: GBOGEB/ABACUS
+      path: scripts/testpilot_preflight.py
+      blob_sha: 450403d2d57e36b8e75f67a706d6e4d28c9ef833
+      applicability: PYTHON_PARSE_RUFF_CONFIG_SMOKE
+      reuse: CROSS_REPO_CANDIDATE_REQUIRES_TEST_AND_LOCAL_AUTHORITY
+  freshness_rule:
+    - BIND_REPO_AND_EXACT_BLOB
+    - COMPARE_LAST_OBSERVED_BLOB_ON_NEXT_CENSUS
+    - DO_NOT_INFER_STALENESS_FROM_AGE_ALONE
+    - METHOD_ADAPT_IF_MATERIAL_GAP_AND_TESTED
+    - PUBLIC_CHERRY_PICK_REQUIRES_LICENSE_ORIGIN_SECURITY_REVIEW_AND_TEST_PROOF
+    - NO_AUTOMATIC_SKILL_INSTALL_OR_EXECUTION
+communications:
+  CODEX: GLOBAL_CENSUS_AND_METHOD_LOG
+  ABACUS: DERIVED_REX_AND_RUN_RECEIPTS_ONLY
+  QPS: CHILD_ACCEPT_REJECT_DEFER_WITH_EXACT_BOUNDARY
+  next_action: RUN_BRANCH_EXACT_HEAD_TESTS_THEN_CURRENT_MAIN_READBACK
