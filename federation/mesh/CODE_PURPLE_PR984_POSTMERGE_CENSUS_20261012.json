@@ -1,0 +1,168 @@
+{
+  "schema": "code-purple.postmerge.observation/1",
+  "observed_date": "2026-10-12",
+  "classification": "POSTMERGE_TEMPORAL_CENSUS",
+  "repo": "GBOGEB/CODEX",
+  "pr": 984,
+  "pr_url": "https://github.com/GBOGEB/CODEX/pull/984",
+  "baseline_main_sha": "4da26fdf7dce7d3500b773981c157df4cf265938",
+  "first_seed_sha": "ea37fa15ca1a9ccd504ca164204b8adabaf08837",
+  "merged_pr_head_sha": "90e3396abfb8a61ed9ca9b8a188a5fdfa169970a",
+  "merge_commit_sha": "768c9e351ef9bd59d966de9456570b528378a035",
+  "subsequent_main_sha": "0239f24cc1d531df8519f57eaa978b00edbb39b0",
+  "pr_merged_at_utc": "2026-10-12T10:16:56Z",
+  "pr_commits": 12,
+  "snapshots": [
+    {
+      "id": "first_seed_partial",
+      "source": "prior exact-head REST readback",
+      "commit": "ea37fa15ca1a9ccd504ca164204b8adabaf08837",
+      "total_check_entries": 49,
+      "success_observed": 2,
+      "status": "NON_TERMINAL_PARTIAL",
+      "unknown_status_remaining": true
+    },
+    {
+      "id": "ui_merge_dialog",
+      "source": "user_supplied_UI_screenshot",
+      "commit": null,
+      "total_check_entries": null,
+      "success_observed": 54,
+      "failed_displayed": 3,
+      "cancelled_displayed": 1,
+      "skipped_displayed": 1,
+      "explanation": "UI summary shows 4 not-successful checks including cancellation; no exact API identity bound"
+    },
+    {
+      "id": "pr_head_api_final",
+      "source": "https://api.github.com/repos/GBOGEB/CODEX/commits/90e3396abfb8a61ed9ca9b8a188a5fdfa169970a/check-runs?per_page=100",
+      "commit": "90e3396abfb8a61ed9ca9b8a188a5fdfa169970a",
+      "total_check_entries": 65,
+      "success": 55,
+      "failure": 4,
+      "cancelled": 1,
+      "skipped": 5,
+      "independent_test_case_count": null
+    },
+    {
+      "id": "merge_sha_api",
+      "source": "https://api.github.com/repos/GBOGEB/CODEX/commits/768c9e351ef9bd59d966de9456570b528378a035/check-runs?per_page=100",
+      "commit": "768c9e351ef9bd59d966de9456570b528378a035",
+      "total_check_entries": 47,
+      "success": 38,
+      "failure": 2,
+      "cancelled": 3,
+      "skipped": 4
+    },
+    {
+      "id": "subsequent_main_api_partial",
+      "source": "https://api.github.com/repos/GBOGEB/CODEX/commits/0239f24cc1d531df8519f57eaa978b00edbb39b0/check-runs?per_page=100",
+      "commit": "0239f24cc1d531df8519f57eaa978b00edbb39b0",
+      "total_check_entries": 3,
+      "success": 3,
+      "scope": "PAGES_ONLY_NOT_GLOBAL_CI"
+    }
+  ],
+  "first_red_families": [
+    {
+      "signature": "W003_PR007_HEADER",
+      "scope": "PR_HEAD",
+      "check_entries": 2,
+      "run_ids": [
+        38234088146,
+        38234121242
+      ],
+      "run_attempts": [
+        1,
+        1
+      ],
+      "status": "FAILED",
+      "diagnostic": "PR body missing required classification block; follow-up file unchanged",
+      "evidence_url": "https://github.com/GBOGEB/CODEX/actions/runs/38234121242"
+    },
+    {
+      "signature": "MISSIONCONTROL_MYCE_PARITY",
+      "scope": "PR_HEAD",
+      "check_entries": 1,
+      "run_id": 38234088139,
+      "run_attempt": 1,
+      "status": "FAILED",
+      "diagnostic": "Deterministic materializations changed executable-value report files during verification",
+      "evidence_url": "https://github.com/GBOGEB/CODEX/actions/runs/38234088139"
+    },
+    {
+      "signature": "RUFF_CODE_SCANNING",
+      "scope": "PR_HEAD",
+      "check_entries": 1,
+      "status": "FAILED",
+      "diagnostic": "Advanced Security Ruff check failed; exact finding attribution and scanned baseline not yet established",
+      "evidence_url": "https://github.com/GBOGEB/CODEX/runs/114760824734"
+    },
+    {
+      "signature": "AGENTIC_SCAN_CANCELLED_THEN_SUCCESS",
+      "scope": "PR_HEAD",
+      "status": "SUPERSEDED_OBSERVATION",
+      "diagnostic": "Separate scan workflow execution was cancelled; later pull-request scan finished successfully",
+      "evidence_url": "https://github.com/GBOGEB/CODEX/actions/runs/38235323542"
+    },
+    {
+      "signature": "OSV_REPORTER_POSTMERGE",
+      "scope": "MERGE_SHA",
+      "status": "FAILED",
+      "diagnostic": "Scanner step passed, reporter step failed; security findings not inferred",
+      "evidence_url": "https://github.com/GBOGEB/CODEX/actions/runs/38235335830"
+    }
+  ],
+  "mission": {
+    "pr984": "MERGED",
+    "code_purple_global_dov": "WITHHELD",
+    "forward_consumer_proof": "NOT_OBSERVED",
+    "total_distinct_control_iterations": null,
+    "iteration_record_count": "NOT_BOUND",
+    "pca_statistical_claim": "WITHHELD",
+    "bt_pairwise_ranking": "WITHHELD",
+    "engineering_credit_delta": 0,
+    "authority_transfer": false
+  },
+  "todo": [
+    {
+      "priority": "P0",
+      "item": "Classify exact-head governance and security findings before claiming global admission"
+    },
+    {
+      "priority": "P1",
+      "item": "Reconcile MissionControl deterministic generated output parity as a distinct existing lane"
+    },
+    {
+      "priority": "P1",
+      "item": "Resolve W003 header policy in future PRs; avoid recurring meta-gate red"
+    },
+    {
+      "priority": "P2",
+      "item": "Differentiate Advanced Security findings from inherited debt using exact rules and source"
+    },
+    {
+      "priority": "P2",
+      "item": "Reproduce OSV reporter failure separately from vulnerabilities"
+    },
+    {
+      "priority": "P2",
+      "item": "Admit single-writer sparse-delta generator and only then integrate into Pages runtime"
+    },
+    {
+      "priority": "P3",
+      "item": "Prove one consumer repo independently applies sanitized delta receipt"
+    }
+  ],
+  "statistics_policy": {
+    "unit": "CHECK_RUN_ENTRY_NOT_TEST_CASE",
+    "retries": "COUNT_WORKFLOW_RUN_AND_RUN_ATTEMPT_SEPARATELY",
+    "from_54_to_55": "OBSERVATION_COMPLETION_NOT_QUALITY_GAIN",
+    "head_changed": "REBASELINE_NOT_IMPROVEMENT",
+    "independent_sample_size": null,
+    "pca": "EXPLORATORY_ONLY_UNTIL_SUFFICIENT_INDEPENDENT_ROWS",
+    "bt": "REQUIRE_REAL_PAIRWISE_OUTCOMES_AND_COMPARISON_CONNECTIVITY",
+    "denominator_fingerprint_required": true,
+    "zero_step_not_pass": true
+  }
+}
