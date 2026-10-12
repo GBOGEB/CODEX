@@ -147,7 +147,10 @@ def checks(get: Callable[[str], Any], sha: str) -> dict:
             result["census_state"] = "COMPLETE_AT_READBACK"
             return result
         except ValueError as error:
-            if str(error) != "check denominator mismatch":
+            if str(error) not in {
+                "check denominator mismatch",
+                "incomplete GitHub check census",
+            }:
                 raise
     return {
         "population": "exact_main_check_runs",
@@ -156,7 +159,7 @@ def checks(get: Callable[[str], Any], sha: str) -> dict:
         "failed_checks": [],
         "failure_list_truncated": None,
         "verified_root_cause_count": None,
-        "census_state": "UNKNOWN_UNSTABLE_DENOMINATOR",
+        "census_state": "UNKNOWN_UNSTABLE_OR_BOUNDED_CENSUS",
     }
 
 
