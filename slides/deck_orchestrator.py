@@ -14,10 +14,11 @@ import json
 import os
 import re
 import subprocess
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any
 
 import yaml
 
@@ -75,7 +76,7 @@ def _vcs_commit_time(path: Path) -> str | None:
         return None
     return (
         datetime.fromisoformat(output)
-        .astimezone(timezone.utc)
+        .astimezone(UTC)
         .replace(microsecond=0)
         .isoformat()
     )
@@ -347,7 +348,7 @@ def build_deck_assets(
             generated_at_epoch = int(source_date_epoch)
         except ValueError as exc:
             raise ValueError("SOURCE_DATE_EPOCH must be an integer Unix timestamp") from exc
-        generated_at_value = datetime.fromtimestamp(generated_at_epoch, timezone.utc).isoformat()
+        generated_at_value = datetime.fromtimestamp(generated_at_epoch, UTC).isoformat()
     elif vcs_time := _vcs_commit_time(Path(content_path)):
         generated_at_value = vcs_time
     else:

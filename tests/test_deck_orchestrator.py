@@ -1,6 +1,6 @@
+import json
 from pathlib import Path
 
-import json
 import pytest
 
 from slides.deck_orchestrator import (
@@ -9,7 +9,6 @@ from slides.deck_orchestrator import (
     load_deck_content,
     normalize_deck,
 )
-
 
 FIXTURE_DIR = Path("slides/src/qps_cybersecurity")
 
