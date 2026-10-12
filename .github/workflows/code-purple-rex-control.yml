@@ -66,7 +66,7 @@ jobs:
       - name: Publish read-only proof artifact
         uses: actions/upload-artifact@v4
         with:
-          name: code-purple-rex-candidate-${{ github.sha }}
+          name: code-purple-rex-candidate-${{ github.event.pull_request.head.sha || github.sha }}
           path: docs/data/code_purple_rex_rollup.json
           if-no-files-found: error
           retention-days: 30
