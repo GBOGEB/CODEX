@@ -3,10 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from math import log
 
+from gistau_ch15.calculations.expander import isentropic_temperature_exponent
 from gistau_ch15.properties.base import PropertyBackend
 
 KPA_TO_PA = 1000.0
-ISENTROPIC_TEMPERATURE_EXPONENT = 0.28
 
 
 @dataclass
@@ -53,7 +53,9 @@ def calculate_compressor(
     st1 = backend.state_pt(fluid, p1_kpa, t1_k)
 
     pressure_ratio = p2_kpa / p1_kpa
-    t2_k = t1_k * pressure_ratio**ISENTROPIC_TEMPERATURE_EXPONENT
+    # Ideal-gas isentropic outlet: (gamma - 1) / gamma depends on the fluid
+    # (0.4 for monatomic helium; was hard-coded to the diatomic 0.28).
+    t2_k = t1_k * pressure_ratio ** isentropic_temperature_exponent(fluid)
 
     st2 = backend.state_pt(fluid, p2_kpa, t2_k)
 
