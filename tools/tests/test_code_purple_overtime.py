@@ -123,6 +123,17 @@ def test_no_mutation_if_payload_exceeds_safe_budget():
         plan(sample)
 
 
+def test_duplicate_workers_cannot_double_count_capacity():
+    worker = {"id": "duplicate", "free": True, "observed": True, "skills": ["github_read"]}
+    with pytest.raises(ValueError):
+        plan(snapshot(items=[task("one"), task("two")], workers=[worker, deepcopy(worker)]))
+
+
+def test_bad_tags_or_nan_gain_do_not_grant_work():
+    assert plan(snapshot(items=[task(tags=None)]))["dispatch_plan_only"] == []
+    assert plan(snapshot(items=[task(convergence_gain=float("nan"))]))["dispatch_plan_only"] == []
+
+
 def test_no_policy_approval_field_in_result():
     result = plan(snapshot())
     assert "owner_attestation" not in result
