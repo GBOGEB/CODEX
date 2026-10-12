@@ -23,20 +23,23 @@ class FallbackHeliumBackend:
     differences (Delta h, Delta s, isentropic paths) with other backends, not
     absolute values.
 
-    Validity: states are tagged IDEAL_GAS_DOMAIN only inside the declared
-    domain (T >= DOMAIN_T_MIN_K and p <= DOMAIN_P_MAX_KPA). The bounds are
-    provisional until the CI cross-check against the pinned ABACUS provider
-    measures the deviation over a grid. Saturation methods are placeholders
-    and are outside the cross-check scope.
+    Validity: states are tagged IDEAL_GAS_DOMAIN only at low density well
+    above the critical point: T >= DOMAIN_T_MIN_K and ideal-gas density
+    <= DOMAIN_RHO_MAX_KG_M3. Measured against the pinned ABACUS provider
+    (tools/physics_crosscheck.py, CoolProp 7.2.0): inside it density is within
+    1 %, Delta h within 0.2 % of cp*T and Delta s within 10 J/kg/K. Deviation
+    scales with density (second virial), hence a density bound rather than a
+    pressure bound. Saturation methods are placeholders and are outside the
+    cross-check scope.
     """
 
     R = 2077.1
     CP = 5193.0
     T_REF_K = 300.0
     P_REF_KPA = 101.325
-    DOMAIN_T_MIN_K = 20.0
-    DOMAIN_P_MAX_KPA = 1000.0
-    DOMAIN_STATUS = "PROVISIONAL_PENDING_ABACUS_CROSSCHECK"
+    DOMAIN_T_MIN_K = 50.0
+    DOMAIN_RHO_MAX_KG_M3 = 2.5
+    DOMAIN_STATUS = "MEASURED_VS_ABACUS_53688f2_COOLPROP_7.2.0"
 
     @staticmethod
     def _require_positive(p_kpa: float, t_k: float) -> None:
@@ -46,7 +49,9 @@ class FallbackHeliumBackend:
             raise ValueError(f"temperature must be positive, got {t_k} K")
 
     def in_validity_domain(self, p_kpa: float, t_k: float) -> bool:
-        return t_k >= self.DOMAIN_T_MIN_K and p_kpa <= self.DOMAIN_P_MAX_KPA
+        if not (p_kpa > 0.0 and t_k > 0.0):
+            return False
+        return t_k >= self.DOMAIN_T_MIN_K and (p_kpa * 1000.0) / (self.R * t_k) <= self.DOMAIN_RHO_MAX_KG_M3
 
     def entropy_pt(self, p_kpa: float, t_k: float) -> float:
         self._require_positive(p_kpa, t_k)
