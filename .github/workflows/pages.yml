@@ -89,6 +89,44 @@ jobs:
           assert all(item.get("status") in {"FRESH", "STALE_CACHE"} for item in sources)
           PY
 
+      - name: Materialize historical REX plus current ABACUS read-only observation
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CODEX_EXACT_SOURCE: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          python -m pip install "PyYAML>=6,<7"
+          python -m unittest discover -s tests -p test_code_purple_current_observation.py -v
+          python scripts/code_purple_rex_rollup.py
+          python scripts/code_purple_current_observation.py
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          names = ["code_purple_rex_rollup.json", "code_purple_current_observation.json"]
+          manifest = {"schema": "code-purple.pages-byte-identity/1.0",
+                      "codex_source_sha": os.environ["CODEX_EXACT_SOURCE"],
+                      "state": "STAGED_UNVERIFIED", "files": []}
+          live = json.loads(Path("docs/data/code_purple_current_observation.json").read_text())
+          manifest["abacus_observed_main_sha"] = live["source"]["main_sha"]
+          for name in names:
+              payload = (Path("docs/data") / name).read_bytes()
+              manifest["files"].append({
+                  "name": name, "sha256": hashlib.sha256(payload).hexdigest(),
+                  "bytes": len(payload)})
+          Path("reports/code_purple_expected_pages_bytes.json").write_text(
+              json.dumps(manifest, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+          PY
+
+      - name: Upload build-side independent byte receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-purple-pages-identity-${{ github.event.workflow_run.head_sha }}
+          path: reports/code_purple_expected_pages_bytes.json
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Verify release artifacts prior to staging
         run: |
           test -f reports/runtime_status.json
@@ -147,3 +185,71 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+
+      - name: Download independent Pages build receipt
+        uses: actions/download-artifact@v4
+        with:
+          name: code-purple-pages-identity-${{ github.event.workflow_run.head_sha }}
+          path: reports
+
+      - name: Verify public CODE PURPLE Pages byte identity
+        env:
+          CODE_PURPLE_PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          import time
+          import urllib.parse
+          import urllib.request
+          from pathlib import Path
+
+          expected = json.loads(Path("reports/code_purple_expected_pages_bytes.json").read_text())
+          base = os.environ["CODE_PURPLE_PAGES_URL"].rstrip("/")
+          parsed = urllib.parse.urlparse(base)
+          if parsed.scheme != "https" or not parsed.netloc:
+              raise SystemExit("Pages URL must be HTTPS")
+          receipts = []
+          for item in expected["files"]:
+              name = item["name"]
+              if name not in ("code_purple_rex_rollup.json", "code_purple_current_observation.json"):
+                  raise SystemExit("unexpected readback file")
+              url = base + "/data/" + name
+              matched = False
+              for i in range(10):
+                  try:
+                      with urllib.request.urlopen(url, timeout=20) as response:
+                          if response.geturl() != url:
+                              raise ValueError("unexpected Pages redirect")
+                          data = response.read()
+                      matched = (len(data) == item["bytes"] and
+                                 hashlib.sha256(data).hexdigest() == item["sha256"])
+                  except (OSError, ValueError):
+                      matched = False
+                  if matched:
+                      break
+                  if i < 9:
+                      time.sleep(6)
+              if not matched:
+                  raise SystemExit("PAGES PUBLIC BYTE IDENTITY HOLD: " + name)
+              receipts.append({"public_url": url, "sha256": item["sha256"],
+                               "bytes": item["bytes"], "result": "MATCH"})
+          result = dict(expected)
+          result["state"] = "PUBLISHED_PUBLIC_BYTES_MATCH"
+          result["public_readback"] = receipts
+          Path("reports/code_purple_pages_verified.json").write_text(
+              json.dumps(result, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as summary:
+              for receipt in receipts:
+                  summary.write("- Verified " + receipt["public_url"] +
+                                " sha256:" + receipt["sha256"] + "\n")
+          PY
+
+      - name: Publish immutable Pages readback receipt artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-purple-pages-verified-${{ github.event.workflow_run.head_sha }}
+          path: reports/code_purple_pages_verified.json
+          if-no-files-found: error
+          retention-days: 30
