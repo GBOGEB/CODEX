@@ -71,10 +71,30 @@ jobs:
           python scripts/code_purple_rex_rollup.py
           python scripts/code_purple_rex_rollup.py --check
 
+      - name: Execute live ABACUS read-only source census
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/code_purple_current_observation.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path = Path("docs/data/code_purple_current_observation.json")
+          snapshot = json.loads(path.read_text(encoding="utf-8"))
+          assert snapshot["schema"] == "code-purple.current-observation/1.0"
+          assert snapshot["source"]["main_sha"]
+          assert snapshot["historical_cohort_current_disposition"]["denominator"] == 20
+          assert snapshot["admission"]["authority_transfer"] is False
+          assert snapshot["unmeasured"]["bd_queue_open"] is None
+          print("ABACUS live read-only snapshot:", snapshot["source"]["main_sha"])
+          PY
+
       - name: Publish read-only proof artifact
         uses: actions/upload-artifact@v4
         with:
           name: code-purple-rex-candidate-${{ github.event.pull_request.head.sha || github.sha }}
-          path: docs/data/code_purple_rex_rollup.json
+          path: |
+            docs/data/code_purple_rex_rollup.json
+            docs/data/code_purple_current_observation.json
           if-no-files-found: error
           retention-days: 30
