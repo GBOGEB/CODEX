@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -66,7 +67,11 @@ def plan(snapshot: dict[str, Any]) -> dict[str, Any]:
         if raw.get("state") != "QUEUED":
             rejected.append(Rejection(tid, "NOT_QUEUED"))
             continue
-        if raw.get("kind") not in SAFE_KINDS or FORBIDDEN_TAGS.intersection(raw.get("tags", [])):
+        tags = raw.get("tags", [])
+        if not isinstance(tags, list) or not all(isinstance(x, str) for x in tags):
+            rejected.append(Rejection(tid, "INVALID_TAGS"))
+            continue
+        if raw.get("kind") not in SAFE_KINDS or FORBIDDEN_TAGS.intersection(tags):
             rejected.append(Rejection(tid, "NOT_LOW_RISK_INDEPENDENT"))
             continue
         if raw.get("read_only") is not True or raw.get("dependencies_complete") is not True:
@@ -92,7 +97,8 @@ def plan(snapshot: dict[str, Any]) -> dict[str, Any]:
         if type(seconds) not in (float, int) or not 0 < float(seconds) <= window:
             rejected.append(Rejection(tid, "WONT_FIT_MEASURED_WINDOW"))
             continue
-        if any(type(raw.get(k, 0)) not in (int, float) or raw.get(k, 0) < 0 for k in ("convergence_gain", "stability_gain", "unblock_gain", "age_s")):
+        score_keys = ("convergence_gain", "stability_gain", "unblock_gain", "age_s", "checkpoint_cost_s", "max_queue_s")
+        if any(type(raw.get(k, 0)) not in (int, float) or not math.isfinite(float(raw.get(k, 0))) or raw.get(k, 0) < 0 for k in score_keys):
             rejected.append(Rejection(tid, "INVALID_GAIN_OR_AGE"))
             continue
         candidates.append((raw, Item(
@@ -113,9 +119,13 @@ def plan(snapshot: dict[str, Any]) -> dict[str, Any]:
     raw_by_id = {raw["id"]: raw for raw, _ in candidates}
     assigned: list[dict[str, Any]] = []
     used_tasks: set[str] = set()
+    seen_workers: set[str] = set()
     for worker in workers:
         if not isinstance(worker, dict) or not isinstance(worker.get("id"), str):
             raise ValueError("worker identifiers required")
+        if worker["id"] in seen_workers:
+            raise ValueError("duplicate worker would imply double capacity")
+        seen_workers.add(worker["id"])
         if worker.get("free") is not True or worker.get("observed") is not True:
             continue
         skills = worker.get("skills")
