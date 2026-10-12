@@ -98,7 +98,30 @@ class ObservationTests(unittest.TestCase):
         checks = result["current_main_checks"]
         self.assertIsNone(checks["denominator"])
         self.assertIsNone(checks["status_counts"])
-        self.assertEqual(checks["census_state"], "UNKNOWN_UNSTABLE_OR_BOUNDED_CENSUS")
+        self.assertEqual(checks["census_state"], "UNKNOWN_UNSTABLE_DENOMINATOR")
+
+    def test_large_check_population_is_withheld_not_zero(self):
+        class Oversized(FakeGitHub):
+            def __init__(self):
+                super().__init__()
+                self.pages = []
+
+            def __call__(self, path):
+                if "/check-runs?" in path:
+                    self.pages.append(path)
+                    return {"total_count": 2200, "check_runs": [
+                        {"head_sha": A, "conclusion": "success"} for _ in range(100)
+                    ]}
+                return super().__call__(path)
+
+        api = Oversized()
+        result = self.at(api)
+        checked = result["current_main_checks"]
+        self.assertEqual(len(api.pages), 40)
+        self.assertIsNone(checked["denominator"])
+        self.assertIsNone(checked["status_counts"])
+        self.assertEqual(checked["census_state"], "UNKNOWN_UNSTABLE_DENOMINATOR")
+        self.assertIsNone(checked["verified_root_cause_count"])
 
     def test_large_check_census_is_unknown_not_false_failure(self):
         class Oversized(FakeGitHub):
@@ -115,7 +138,7 @@ class ObservationTests(unittest.TestCase):
         self.assertIsNone(checks["denominator"])
         self.assertIsNone(checks["status_counts"])
         self.assertEqual(checks["census_state"],
-                         "UNKNOWN_UNSTABLE_OR_BOUNDED_CENSUS")
+                         "UNKNOWN_UNSTABLE_DENOMINATOR")
         self.assertFalse(item["admission"]["authority_transfer"])
 
     def test_disallow_noncanonical_api_target(self):
