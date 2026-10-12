@@ -1,0 +1,140 @@
+schema_version: global-mesh-view/1.0.0
+contract_id: GBOGEB_GLOBAL_MESH_VIEW
+owner_plane: GBOGEB/CODEX
+purpose: >-
+  Define one mesh-wide projection contract for semantic book/HTML/Markdown views,
+  reversible expansion/contraction, and deterministic frozen renders without
+  transferring child engineering authority.
+
+authority:
+  child_engineering_truth: GBOGEB/cryoplant-project
+  runtime_analysis: GBOGEB/ABACUS
+  semantic_governance_and_receipts: GBOGEB/CODEX
+  projection_rule: VIEW_NEVER_CHANGES_SOURCE_AUTHORITY
+
+status_contract:
+  required_fields:
+    - status
+    - freshness_timestamp
+    - source_sha
+    - confidence
+    - evidence_class
+    - next_action
+    - blocking_atom
+  status_enum: [PASS, HOLD, DEFER, REJECT, ACCEPT, UNKNOWN]
+  evidence_class_enum: [CONTROLLED, SOURCE_SUPPORTED, DERIVED, POSTULATED, UNKNOWN]
+  confidence:
+    minimum: 0.0
+    maximum: 1.0
+
+semantic_zoom:
+  depths:
+    0: ATOM
+    1: EXECUTIVE
+    2: SUMMARY
+    3: ENGINEERING
+    4: EVIDENCE
+    5: TRACE
+  expansion: parent_to_child
+  contraction: child_to_parent
+  reversible: true
+  rule: >-
+    Expansion exposes supporting child nodes; contraction rolls them into the
+    nearest visible parent assertion without rewriting source truth.
+
+lenses:
+  - NARRATIVE
+  - REQUIREMENTS
+  - EVIDENCE
+  - COST
+  - RELIABILITY
+  - ARCHITECTURE
+  - DMAIC
+  - PROVENANCE
+  - RUNTIME
+
+boundaries:
+  ordered:
+    - GLOBAL_HIVE
+    - DOMAIN
+    - PROJECT
+    - REPO
+    - ARTEFACT
+    - SECTION
+    - ATOM
+  roll_out: GLOBAL_HIVE_TO_ATOM
+  roll_up: ATOM_TO_GLOBAL_HIVE
+
+node_contract:
+  required:
+    - id
+    - title
+    - depth
+    - boundary
+    - lens
+    - content
+  optional:
+    - parent_id
+    - source_path
+    - source_sha
+    - status
+    - freshness_timestamp
+    - confidence
+    - evidence_class
+    - next_action
+    - blocking_atom
+    - tags
+
+view_manifest:
+  required:
+    - mode
+    - boundary
+    - lens
+    - depth
+  mode_enum: [BOOK, FLOW, GRAPH]
+  render_defaults:
+    page_size: A4
+    toc_depth: 3
+    provenance_footer: true
+    interactive: true
+
+projections:
+  canonical_live: HTML
+  canonical_source: MARKDOWN_OR_MESH_JSON
+  machine_contract: JSON_YAML_ZOD
+  frozen: PDF_OR_STATIC_HTML
+  print_rule: HTML_PRINT_CSS_MAY_PRODUCE_PDF
+
+artifact_identity:
+  deterministic: true
+  formula: SHA256_SOURCE_PLUS_VIEW_MANIFEST_PLUS_RENDERER_VERSION
+  required_receipt_fields:
+    - source_sha256
+    - manifest_sha256
+    - renderer_version
+    - artifact_identity_sha256
+
+codex_adapters:
+  semantic_governance_mesh:
+    path: src/governance/semantic_governance_mesh_runtime_v1.py
+    role: POLICY_AND_TRUST_INPUT
+  semantic_runtime_pipeline_bridge:
+    path: src/orchestration/semantic_runtime_pipeline_bridge_v1.py
+    role: RUNTIME_TELEMETRY_INPUT
+  mip_canonical_ssot_registry:
+    path: federation/mip/W110_CANONICAL_SSOT_REGISTRY.json
+    role: REPO_AUTHORITY_AND_EXACT_HEAD_INPUT
+  qps_global_glossary_bridge:
+    path: governance/qps_triage/QPS_GLOBAL_GLOSSARY_BRIDGE_v1.yaml
+    role: VOCABULARY_INPUT
+  federation_bridge_manifest:
+    path: federation_bridge/bridge_manifest.yaml
+    role: MESH_ROUTING_INPUT
+
+uniformity_rules:
+  - no repo-local synonym may override the canonical mesh enums
+  - adapters translate existing surfaces into this contract rather than duplicating them
+  - view depth and lens are projection parameters, never evidence grades
+  - child authority and evidence lineage survive every expansion/contraction operation
+  - rendered HTML, Markdown, graph, and frozen PDF views must share one view manifest
+  - exact-SHA receipts remain separate from presentation state
