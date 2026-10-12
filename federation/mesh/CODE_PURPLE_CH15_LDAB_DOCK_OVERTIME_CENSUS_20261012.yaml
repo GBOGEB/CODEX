@@ -1,0 +1,203 @@
+schema: code-purple.ch15-debug-dock-overtime-census/0.1
+as_of: "2026-10-12"
+status: SNAPSHOT_CANDIDATE_NON_AUTHORITATIVE
+mission: GLOBAL_CODE_PURPLE
+observer_repo: GBOGEB/CODEX
+observed_main_sha: 4820429a4d2efed3129df02cb76e6a213e24a1e4
+source_of_truth:
+  domain_physics: GBOGEB/ABACUS
+  semantics_provenance_publication: GBOGEB/CODEX
+  child_engineering: GBOGEB/cryoplant-project
+authority_transfer: false
+engineering_credit_delta: 0
+formal_credit_delta: 0
+
+chapter15:
+  product: GISTAU_CHAPTER_15
+  sources:
+    engine: src/gistau_ch15/
+    python_tests: tests/gistau_ch15/
+    governing_helium_pin: governance/physics/HE4_PROPERTY_AUTHORITY_PIN.yaml
+    provider: GBOGEB/ABACUS@53688f26d5b9c4cd074ef905e426849e85324383
+    calculation_tuples: [T00, T01, T02, T03, T04, T05, T06]
+    html_portal: docs/gistau-ch15/index.html
+    interactive_toolbox: docs/gistau-ch15/toolbox.html
+    js_basic_incarnation: docs/gistau-ch15/assets/gistau_basic.js
+    backend_report: docs/gistau-ch15/data/backend_comparison_report.json
+    json_worked_examples: docs/gistau-ch15/data/worked_examples.json
+    seed_report: docs/gistau-ch15/data/seed_calculation_report.json
+    plotly_trace_seed: docs/gistau-ch15/data/plotly_trace_export.json
+    matplotlib_svg: docs/gistau-ch15/assets/ideal_gas_domain_map.svg
+    low_temp_html: docs/gistau-ch15/plots/low_temp_helium_surfaces.html
+    state_grid_html: docs/gistau-ch15/plots/coolprop_state_grid_view.html
+  claims:
+    checked_in_portal: FILE_VERIFIED
+    interactive_plotly: HTML_REFERENCES_PINNED_CDN_NO_BROWSER_SMOKE_THIS_CENSUS
+    matplotlib_svg: FILE_VERIFIED
+    property_engine: SOURCE_PRESENT_NOT_ALL_PROVIDERS_AVAILABLE_IN_EVERY_RUNTIME
+    comparison: BASIC_INCARNATION_CROSSCHECK_NOT_GOVERNING
+    hepak_lt_2K: POLICY_DIVERGENCE_NOT_ACCEPTED
+    worked_examples_L1: WITHHELD
+    live_ch15_site_http_readback: WITHHELD
+  availability_snapshot_file: docs/gistau-ch15/data/backend_availability.json
+  availability_snapshot:
+    fallback: true
+    nist_reference_fixture: true
+    coolprop_local: false
+    refprop_local: false
+    hepak_local: false
+    note: EXECUTION_ENVIRONMENT_SPECIFIC_DO_NOT_GENERALISE_FROM_STATIC_SNAPSHOT
+  exact_pin_caveat:
+    codex_hepak_range_K: "0 < T <= 4.5"
+    abacus_governing_hepak_range_K: "2.0 <= T <= 4.5"
+    divergence_range_K: [1.8, 1.99]
+    status: DIVERGED_PENDING_ABACUS_ADOPTION
+  artifacts:
+    verified_source_artifacts:
+      - docs/gistau-ch15/toolbox.html
+      - docs/gistau-ch15/data/backend_comparison_report.json
+      - docs/gistau-ch15/data/seed_calculation_report.json
+      - docs/gistau-ch15/assets/ideal_gas_domain_map.svg
+    output_workbook: NOT_FOUND_IN_DOCS_GISTAU_CH15
+    output_pdf: NOT_FOUND_IN_DOCS_GISTAU_CH15
+    output_zip: NOT_FOUND_IN_DOCS_GISTAU_CH15
+    github_releases: ZERO_REPORTED
+    source_binary_pack: HISTORICAL_LOCAL_HANDOVER_NOT_VERIFIED_CURRENT_DOWNLOAD
+    independent_binary_sha256: WITHHELD
+  publication:
+    github_pages_was_deployed:
+      workflow_run_id: 38238242566
+      conclusion: success
+      url: https://github.com/GBOGEB/CODEX/actions/runs/38238242566
+      head_sha: 4820429a4d2efed3129df02cb76e6a213e24a1e4
+    portal_candidate: https://gbogeb.github.io/CODEX/gistau-ch15/
+    independent_http_content_identity: NOT_OBSERVED
+    one_canonical_pages_writer: true
+    no_competing_cd_writer: true
+  structured_data:
+    json_reports: PRESENT
+    github_pages_static: SOURCE_VERIFIED
+    sql_database: NOT_FOUND_IN_CH15_IMPLEMENTATION
+    server_side_property_api: NOT_PROVEN
+    plotly_interaction: CDN_DEPENDENT
+    matplotlib_export: SVG_PRESENT
+  next_binary_generation:
+    - PIN_CURRENT_SOURCE_AND_ENGINE_BACKEND_ENVIRONMENT
+    - VALIDATE_CANONICAL_TUPLES_WITH_SOURCE_PROVENANCE_AND_TOLERANCES
+    - PRODUCE_WORKBOOK_PDF_AND_ZIP_WITH_HASH_MANIFEST_OUTSIDE_GIT
+    - REVIEW_VISUAL_PLOT_AND_TABLE_PARITY
+    - VERIFY_READBACK_FROM_GOVERNED_PUBLICATION_OR_RELEASE_LOCATION
+    - KEEP_SENSITIVE_OR_LICENSED_BACKEND_BINARIES_OUT_OF_PUBLIC_BUNDLE
+
+debug_docking:
+  requested_name: LDAB
+  mip_lane: repo_self_assess_debug_ldab
+  mip_lane_declared_status: seeded
+  physical_protocols: [LLDB, DAP, Swift, Docker, MCP]
+  code_x:
+    lldb_census: scripts/lldb_dap_runtime_probe.py
+    probe: scripts/qps_docker_remote_lldb_probe.py
+    pipeline: .github/workflows/lldb-dap-swift-docker-runner-mcp.yml
+    perpetual: .github/workflows/qps-perpetual-debug-control.yml
+    metadata: runtime/debug/LLDB_DAP_SWIFT_DOCKER_RUNNER_MCP.md
+    semantics: runtime/debug/QPS_DEBUG_GLOBAL_FEDERATION.md
+  docker_runtime_contract:
+    declared_service: compose.yaml
+    validator_published_ports: []
+    runtime_probed_in_this_census: false
+    proof_requires: [container_id, image_digest, observed_port, lldb_session, steps_gt_zero, exact_sha, receipt]
+    reject_confusions: [DECLARED_NE_LIVE, FORWARDED_NE_LISTENING, DOCKER_AVAILABLE_NE_DOCKING_PROVEN]
+  live_runner_proof_rechecked_in_this_census: false
+  strict_live_dov: WITHHELD_UNTIL_CURRENT_EXACT_HEAD_RECEIPT
+  return_chain:
+    - GBOGEB/cryoplant-project:DEBUG_RECEIPT
+    - GBOGEB/CODEX:KEB_PROVENANCE_BINDING
+    - GBOGEB/ABACUS:DOW_DIAGNOSTIC_RECEIPT
+    - GBOGEB/cryoplant-project:CHILD_ACCEPT_REJECT_DEFER
+
+overtime:
+  purpose: USE_VERIFIED_IDLE_CAPACITY_FOR_SMALL_INDEPENDENT_NON_BLOCKING_TASKS
+  basis:
+    existing_scheduler: scripts/id_work_conserving_scheduler.py
+    existing_pool_policy: release/W05_P12_WORK_CONSERVING_POOL.yaml
+  dispatch_authority: NOT_GRANTED_BY_THIS_CENSUS
+  crew_required: [CANONICAL_OWNER, AVAILABLE_RUNNER, MATCHING_CAPABILITIES]
+  eligibility:
+    - OBSERVED_AVAILABLE_SLOT_AND_ESTIMATED_IDLE_WINDOW
+    - COMPLETED_DEPENDENCIES_ONLY
+    - NON_SECURITY_NON_ENGINEERING_ACCEPTANCE_NON_RULESET
+    - READ_ONLY_OR_APPROVED_DISJOINT_BRANCH
+    - NO_SHARED_FILES_WITH_ACTIVE_PR
+    - REPLAYABLE_AND_IDEMPOTENT_WITH_STOP_CHECKPOINT
+    - EXACT_INPUT_SHA_AND_OUTPUT_RECEIPT
+    - NO_OWNER_ONLY_APPROVAL_OR_EXTERNAL_SECRET
+    - CAN_PREEMPT_AT_CHECKPOINT_WHEN_CRITICAL_LANE_RESTARTS
+  task_bands:
+    P0: WAITING_SECURITY_OR_ADMISSION_DO_NOT_OVERTIME_BYPASS
+    P1: PHYSICS_AND_BINARY_RELEASE_PROOF_REQUIRED_BY_OWNER
+    P2: DISJOINT_LOW_RISK_EVIDENCE_PREPARATION
+    P3: OPTIONAL_PLOT_DOC_NAVIGATION_AND_CENSUS_HYGIENE
+  observed_candidates:
+    - id: OVT-01
+      title: CH15_VIEW_AND_LINK_SCOUT
+      priority: P2
+      role: READ_ONLY_SCOUT
+      cost_hint: SHORT
+      status: EXECUTED_DISCOVERY_RECEIPT_THIS_CENSUS
+      effect: FILES_FOUND_DOWNLOAD_GAPS_IDENTIFIED
+      merge_authority: NONE
+    - id: OVT-02
+      title: CH15_BINARY_MANIFEST_PREPARATION
+      priority: P2
+      role: ANALYST
+      cost_hint: MEDIUM
+      status: READY_FOR_OWNER_SOURCE_BINARY_INPUT
+      effect: PREPARE_HASHES_AND_LINKS_NOT_VALIDATE_MISSING_BINARY
+    - id: OVT-03
+      title: LDAB_DOCK_PORT_READ_ONLY_RECON
+      priority: P2
+      role: DEBUG_SCOUT
+      cost_hint: SHORT
+      status: SOURCE_DISCOVERY_COMPLETE_LIVE_RUNTIME_UNPROVEN
+      effect: CLASSIFY_PORT_AND_RECEIPT_GAP
+    - id: OVT-04
+      title: PLOTLY_MATPLOTLIB_PARITY_QA
+      priority: P3
+      role: VISUAL_QA
+      cost_hint: MEDIUM
+      status: CANDIDATE_NOT_EXECUTED
+      effect: CAPTURE_SCREENSHOTS_AND_SOURCE_DATA_DIFFERENCES
+    - id: OVT-05
+      title: SQL_DATA_SUITABILITY_SCOUT
+      priority: P3
+      role: DATA_ARCHITECT
+      cost_hint: SHORT
+      status: SOURCE_SEARCH_ONLY_NO_DB_CONTRACT
+      effect: RECOMMEND_TABLES_ONLY_IF_QUERY_NEED_MEASURED
+    - id: OVT-06
+      title: PUBLIC_CODE_CHERRY_PICK_REVIEW
+      priority: P3
+      role: SOURCE_SCOUT
+      cost_hint: SHORT
+      status: NOT_DISPATCHED
+      effect: LICENSE_AND_PROVENANCE_REVIEW_BEFORE_ANY_IMPORT
+  anti_priority_inversion:
+    main_queue_remains_governing: true
+    do_not_assume_runner_capacity: true
+    bounded_timebox_and_critical_preemption: true
+    only_recompute_on_material_change: true
+    no_cross_repo_parallel_mutation_without_OWNER: true
+  progress_metrics:
+    queue_depth: UNKNOWN_NOT_MEASURED
+    runner_free_slots: UNKNOWN_NOT_MEASURED
+    crew_started: 0
+    actual_task_runtime: NOT_OBSERVED
+    expected_gain: WITHHELD
+  next_action: SOURCE_BOUND_CATALOG_AND_VERIFY_CURRENT_PR_HEAD_BEFORE_OVERLOOKING_PRIORITY
+
+references:
+  - https://github.com/GBOGEB/CODEX/pull/980
+  - https://github.com/GBOGEB/CODEX/pull/978
+  - https://github.com/GBOGEB/CODEX/pull/972
+  - https://github.com/GBOGEB/CODEX/pull/986
+  - https://github.com/GBOGEB/ABACUS/pull/1842
