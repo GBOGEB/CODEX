@@ -50,7 +50,10 @@ jobs:
           python-version: "3.12"
 
       - name: Install parser
-        run: python -m pip install "PyYAML>=6,<7" "ruff==0.16.6"\n\n      - name: Check changed Python without suppressing new Ruff debt\n        run: ruff check scripts/code_purple_rex_rollup.py tests/test_code_purple_rex_rollup.py
+        run: python -m pip install "PyYAML>=6,<7" "ruff==0.16.6"
+
+      - name: Check changed Python without suppressing new Ruff debt
+        run: ruff check scripts/code_purple_rex_rollup.py tests/test_code_purple_rex_rollup.py
 
       - name: Test candidate admission guards and metric semantics
         run: python -m unittest discover -s tests -p test_code_purple_rex_rollup.py -v
