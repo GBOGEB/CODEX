@@ -19,6 +19,7 @@ def check(sha=HEAD, conclusion="success", number=5):
     return {
         "head_sha": sha, "id": number, "name": "PR Feedback Gate",
         "status": "completed", "conclusion": conclusion,
+        "started_at": "2026-10-12T10:00:00Z",
         "details_url": "https://github.com/GBOGEB/ABACUS/runs/1",
     }
 
@@ -52,6 +53,7 @@ class LiveObservationTests(unittest.TestCase):
     def test_stale_green_does_not_override_pending_gate(self):
         pending = check(conclusion=None, number=6)
         pending["status"] = "in_progress"
+        pending["started_at"] = "2026-10-12T11:00:00Z"
         result = mod.collect(
             lambda _: {"total_count": 2, "check_runs": [check(), pending]},
             HEAD, MAIN, "now",
@@ -80,6 +82,48 @@ class LiveObservationTests(unittest.TestCase):
         result = mod.collect(lambda _: {"total_count": 1, "check_runs": [entry]},
                              HEAD, MAIN, "now")
         self.assertEqual(result["feedback_gate_observation"], "UNKNOWN")
+
+    def test_latest_success_overrides_older_cancelled_gate(self):
+        older = check(conclusion="cancelled")
+        newer = check(number=6)
+        newer["started_at"] = "2026-10-12T11:00:00Z"
+        result = mod.collect(
+            lambda _: {"total_count": 2, "check_runs": [older, newer]},
+            HEAD, MAIN, "now",
+        )
+        self.assertEqual(result["feedback_gate_observation"],
+                         "SUCCESS_OBSERVED_UNVERIFIED")
+        self.assertEqual(result["current_feedback_gate_check_id"], 6)
+        self.assertEqual(result["check_status_counts"]["cancelled"], 1)
+
+    def test_unordered_gate_timestamps_fail_closed(self):
+        other = check(number=6)
+        result = mod.collect(
+            lambda _: {"total_count": 2, "check_runs": [check(), other]},
+            HEAD, MAIN, "now",
+        )
+        self.assertEqual(result["feedback_gate_observation"],
+                         "UNKNOWN_UNORDERED_GATE")
+        self.assertIsNone(result["current_feedback_gate_check_id"])
+
+    def test_all_terminal_conclusions_preserve_denominator(self):
+        kinds = ["success", "failure", "cancelled", "skipped",
+                 "timed_out", "neutral", "action_required",
+                 "stale", "startup_failure", "unexpected_terminal", None]
+        items = []
+        for index, kind in enumerate(kinds):
+            row = check(conclusion=kind, number=index + 1)
+            row["name"] = "Unrelated"
+            items.append(row)
+        result = mod.collect(
+            lambda _: {"total_count": len(items), "check_runs": items},
+            HEAD, MAIN, "now",
+        )
+        counts = result["check_status_counts"]
+        self.assertEqual(sum(counts.values()), len(kinds))
+        self.assertEqual(counts["timed_out"], 1)
+        self.assertEqual(counts["other"], 1)
+        self.assertEqual(counts["pending"], 1)
 
     def test_invalid_sha_rejected_before_request(self):
         with self.assertRaises(ValueError):
