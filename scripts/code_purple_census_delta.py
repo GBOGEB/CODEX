@@ -50,6 +50,15 @@ def validate(raw: dict[str, Any]) -> dict[str, Any]:
     mission = raw.get("mission", {})
     if not isinstance(mission, dict) or set(mission) - ALLOWED_MISSION:
         raise ValueError("mission must contain only allowed public projection fields")
+    for key, value in mission.items():
+        if key in {"todo_open", "todo_closed", "blocked", "progress_numerator", "progress_denominator"}:
+            if type(value) is not int or value < 0:
+                raise ValueError("mission counters must be nonnegative integers")
+        elif not isinstance(value, str) or len(value) > 240:
+            raise ValueError("mission labels must be bounded strings")
+    if {"progress_numerator", "progress_denominator"} <= set(mission):
+        if mission["progress_denominator"] < 1 or mission["progress_numerator"] > mission["progress_denominator"]:
+            raise ValueError("invalid measured mission denominator")
     records = raw.get("records")
     if not isinstance(records, list):
         raise ValueError("records must be a list; absent census is not an empty census")
@@ -62,6 +71,19 @@ def validate(raw: dict[str, Any]) -> dict[str, Any]:
             raise ValueError("record identifiers must be nonempty and unique")
         if row.get("run_attempt") is not None and (type(row["run_attempt"]) is not int or row["run_attempt"] < 1):
             raise ValueError("run_attempt must be a positive integer")
+        for field, value in row.items():
+            if field in {"run_id", "job_id"}:
+                if type(value) is not int or value < 0:
+                    raise ValueError("run/job identifiers must be nonnegative integers")
+            elif field == "run_attempt":
+                continue
+            elif field == "duration_seconds":
+                if type(value) not in (int, float) or value < 0 or value != value:
+                    raise ValueError("duration must be finite nonnegative numeric data")
+            elif not isinstance(value, str) or len(value) > 240:
+                raise ValueError("record string values must be bounded")
+        if row.get("evidence_url") and not row["evidence_url"].startswith("https://github.com/GBOGEB/"):
+            raise ValueError("only public GitHub repository evidence URLs may be projected")
         indexed[key] = dict(row)
     return {
         "repo": raw["repo"], "scope": raw["scope"],
