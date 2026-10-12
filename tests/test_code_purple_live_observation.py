@@ -164,6 +164,8 @@ class LiveObservationTests(unittest.TestCase):
         for index, kind in enumerate(kinds):
             row = check(conclusion=kind, number=index + 1)
             row["name"] = "Unrelated"
+            if kind is None:
+                row["status"] = "in_progress"
             items.append(row)
         result = mod.collect(
             lambda _: {"total_count": len(items), "check_runs": items},
