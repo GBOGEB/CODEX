@@ -250,6 +250,12 @@ def qa_explorer_fallback(page: Any, url: str, out: Path) -> dict[str, Any]:
 
 def qa_mycelium_layouts(page: Any, url: str, out: Path, viewport: str) -> dict[str, Any]:
     console_errors, page_errors = attach_error_capture(page)
+    # QA-only fixture. Do not publish or treat a missing live observation as zero.
+    # Only intercept this one optional data URL; unrelated HTTP 404s still fail QA.
+    page.route("**/data/code_purple_current_observation.json", lambda route: route.fulfill(
+        status=200, content_type="application/json",
+        body='{"schema":"code-purple.qa-only-unverified/1.0","observation_state":"UNKNOWN_NOT_PRODUCTION"}',
+    ))
     response = page.goto(url, wait_until="networkidle")
     page.wait_for_function("document.querySelector('#stamp').textContent.includes('snapshot')")
 
@@ -259,10 +265,10 @@ def qa_mycelium_layouts(page: Any, url: str, out: Path, viewport: str) -> dict[s
         page.locator("#focus").select_option("MYCELIUM_GRAPH")
         page.wait_for_timeout(50)
         grid_class = page.locator("#grid").get_attribute("class") or ""
-        focused = page.locator(".panel.focus").count()
+        focused = page.locator("#grid > .panel.focus").count()
         visible_panels = int(
             page.evaluate(
-                "[...document.querySelectorAll('.panel')].filter(x => getComputedStyle(x).display !== 'none').length"
+                "[...document.querySelectorAll('#grid > .panel')].filter(x => getComputedStyle(x).display !== 'none').length"
             )
         )
         overflow = horizontal_overflow(page)
