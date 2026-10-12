@@ -141,11 +141,11 @@ Keep a *pinned* legend, a high-level viewport and a process-specific zoom view. 
 
 Example historical snapshot (first PR head, **not current-head evidence**):
 
-\`\`\`sh
+```sh
 python scripts/code_purple_iteration.py federation/mesh/CODE_PURPLE_ITERATION_N_OBSERVATION_SAMPLE.json
 python -m unittest discover -s tests -p 'test_code_purple_iteration.py'
-\`\`\`
+```
 
-The projector returns typed \`HOLD\`, \`REPAIR_REENTRY\` or \`ADMISSION_CANDIDATE\` with exact observed SHA, required-check holes, chosen method path and forward-consumer state. \`ADMISSION_CANDIDATE\` **never** means GitHub has admitted a merge; the native PR gate decides. It reads one bounded JSON snapshot and does **not** merge, publish, modify source/weights, create an owner attestation, or trigger downstream workers. The historical sample intentionally supplies \`executed_steps=0\` and incomplete reviews because those facts were not independently proved at its sampling boundary.
+The projector returns typed `HOLD`, `REPAIR_REENTRY` or `ADMISSION_CANDIDATE` with exact observed SHA, required-check holes, chosen method path and forward-consumer state. `ADMISSION_CANDIDATE` **never** means GitHub has admitted a merge; the native PR gate decides. It reads one bounded JSON snapshot and does **not** merge, publish, modify source/weights, create an owner attestation, or trigger downstream workers. The historical sample intentionally supplies `executed_steps=0` and incomplete reviews because those facts were not independently proved at its sampling boundary.
 
 To demonstrate a genuinely forward-proven consumer, a separate source receipt SHA-256, consumer repo full SHA, consumer receipt SHA-256, explicit forward request, exact-head parity and independent accepted proof are required. These fields are **untrusted input assertions** in this advisory projector until checked against actual repository-native evidence. Use the output only as triage/decision support and never as approval.
