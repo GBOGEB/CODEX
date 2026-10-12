@@ -99,6 +99,23 @@ class CodePurpleIterationTest(unittest.TestCase):
         )
         self.assertEqual(mod.project(data)["pay_it_forward"], "CONSUMER_PENDING")
 
+    def test_forward_requires_both_exact_receipts_and_explicit_request(self):
+        data = sample()
+        data.update(
+            pay_it_forward_requested=True, local_dov_proven=True,
+            generalisation_gap_observed=True, sanitized=True,
+            consumer_independent_proof=True, consumer_accepted=True,
+            source_receipt_sha256="1" * 64,
+            consumer_receipt_sha256="2" * 64,
+            consumer_head_sha=SHA_B,
+        )
+        self.assertEqual(mod.project(data)["pay_it_forward"], "CONSUMER_PROVEN_CANDIDATE")
+        data["current_head_sha"] = SHA_B
+        self.assertEqual(mod.project(data)["pay_it_forward"], "CONSUMER_PENDING")
+        data["current_head_sha"] = SHA_A
+        data["pay_it_forward_requested"] = False
+        self.assertEqual(mod.project(data)["pay_it_forward"], "NOT_REQUESTED")
+
     def test_invalid_sha_or_duplicate_check_rejected(self):
         data = sample()
         data["observed_head_sha"] = "main"
