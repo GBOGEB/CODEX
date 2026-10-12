@@ -80,3 +80,12 @@ def test_expander_replay_now_uses_a_real_isentropic_path():
     )
     t2s = 25.0 * (120.0 / 1400.0) ** (B.R / B.CP)
     assert r.outlet_temperature_k == pytest.approx(25.0 - 0.75 * (25.0 - t2s), rel=1e-9)
+
+
+@pytest.mark.parametrize("p1,t1,p2", [(100.0, 300.0, 1200.0), (101.325, 80.0, 300.0)])
+def test_compressor_isentropic_outlet_is_consistent_with_basic_incarnation_entropy(p1, t1, p2):
+    from gistau_ch15.calculations.compressor import calculate_compressor
+
+    r = calculate_compressor(backend=B, fluid="helium", p1_kpa=p1, t1_k=t1, p2_kpa=p2, mdot_kg_s=0.1)
+    t2s = B.state_ps("helium", p2, B.state_pt("helium", p1, t1).entropy_j_kgk).temperature_k
+    assert r.outlet_temperature_k == pytest.approx(t2s, rel=2e-3)  # 0.4 vs R/cp = 0.39998

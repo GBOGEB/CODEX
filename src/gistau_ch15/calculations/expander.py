@@ -19,7 +19,8 @@ class ExpanderResult:
     isentropic_efficiency: float
 
 
-def _isentropic_temperature_exponent(fluid: str) -> float:
+def isentropic_temperature_exponent(fluid: str) -> float:
+    """Ideal-gas (gamma - 1) / gamma: 0.4 for monatomic helium, 0.28 for diatomics."""
     normalized_fluid = fluid.strip().lower()
     if normalized_fluid in DIATOMIC_FLUID_NAMES:
         return DIATOMIC_ISENTROPIC_TEMPERATURE_EXPONENT
@@ -54,7 +55,7 @@ def calculate_expander(
 
     inlet = backend.state_pt(working_fluid, p1_kpa, t1_k)
     pressure_ratio = max(p2_kpa / max(p1_kpa, 1e-9), 1e-9)
-    ideal_t2 = t1_k * pressure_ratio ** _isentropic_temperature_exponent(working_fluid)
+    ideal_t2 = t1_k * pressure_ratio ** isentropic_temperature_exponent(working_fluid)
     actual_t2 = t1_k - eta_isentropic * max(t1_k - ideal_t2, 0.0)
     outlet = backend.state_pt(working_fluid, p2_kpa, actual_t2)
 
@@ -68,3 +69,7 @@ def calculate_expander(
         power_output_w=power,
         isentropic_efficiency=eta_isentropic,
     )
+
+
+# Backwards-compatible private name.
+_isentropic_temperature_exponent = isentropic_temperature_exponent
