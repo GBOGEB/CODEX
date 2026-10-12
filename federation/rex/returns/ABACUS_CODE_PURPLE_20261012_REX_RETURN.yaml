@@ -1,0 +1,234 @@
+schema: gbogeb-repo-rex-return/1.0
+repo: GBOGEB/ABACUS
+measurement_window:
+  start: "2026-10-12"
+  end: "2026-10-12"
+  basis: observed exact-head GitHub check runs, review threads, repairs and BD issue
+  denominator_notes: >-
+    Eight distinct bounded REX signatures are classified. The 25 documentation
+    lint violations occurred in one failing job, not 25 independent roots.
+    A source comment or committed fix is not proof of security admission.
+repo_state:
+  main_sha: 53688f26d5b9c4cd074ef905e426849e85324383
+  head_sha: ff1dbad388d81e1abea422dfdf74ba0d0e5d208c
+  branch_or_pr: "ABACUS #1876; P0 companion #1858"
+  companion_p0_head_sha: 10fdaaa53afc5b96bb8cc783b3c74a7006f6b887
+  dmaic_phase: CONTROL
+  rex_status: OBSERVED_PENDING_VERIFICATION
+  current_merge: NOT_PROVEN
+  security_review_admission: NOT_PROVEN
+  code_purple_governance_issue: "https://github.com/GBOGEB/ABACUS/issues/1860"
+  local_incremental_ci_issue: "https://github.com/GBOGEB/ABACUS/issues/1877"
+records:
+  - rex_id: REX-ABACUS-20261012-001
+    signature: SECURITY.REVIEW_FALLBACK.OUTAGE_REQUEST_NOT_BOUND_TO_HEAD
+    issue_kind: REVIEW_FINDING
+    family: SECURITY
+    repo:
+      primary: GBOGEB/ABACUS
+      impacted: [GBOGEB/ABACUS]
+    first_seen: "ABACUS #1858 P1 review thread"
+    last_seen: "ABACUS #1858 head 10fdaaa5"
+    severity_stars: 5
+    frequency: {observed_count: 1, unit: unresolved_review_finding, impacted_repo_count: 1, impacted_workflow_count: 1, measurement_window: ABACUS_OCT12_P0}
+    recurrence: UNKNOWN
+    symptom: Delayed Codex outage response can be accepted for a later PR head whose review was never requested.
+    root_cause: Outage evidence not correlated to a request issued after the latest head transition.
+    action_moniker: HARDEN
+    repair_method: Require authenticated request ID and head/current-transition correlation before accepting any outage fallback.
+    verification:
+      exact_head_sha: 10fdaaa53afc5b96bb8cc783b3c74a7006f6b887
+      result: FAIL_OPEN_P1
+      source_url: "https://github.com/GBOGEB/ABACUS/pull/1858#discussion_r4243308864"
+    control_guard: [fail_closed_without_current_head_request, no_unattributed_owner_attestation]
+    control_status: OPEN
+    lesson: Review-provider availability must be bound to the triggering request and exact current PR head.
+    lookup_tags: [security, gate, codex, first-red, stale-request, p0]
+  - rex_id: REX-ABACUS-20261012-002
+    signature: SECURITY.REVIEW_FALLBACK.OLD_SHA_SUCCESS_REUSABLE
+    issue_kind: REVIEW_FINDING
+    family: SECURITY
+    repo:
+      primary: GBOGEB/ABACUS
+      impacted: [GBOGEB/ABACUS]
+    first_seen: "ABACUS #1858 P1 review thread"
+    last_seen: "ABACUS #1858 head 10fdaaa5"
+    severity_stars: 5
+    frequency: {observed_count: 1, unit: unresolved_review_finding, impacted_repo_count: 1, impacted_workflow_count: 1, measurement_window: ABACUS_OCT12_P0}
+    recurrence: UNKNOWN
+    symptom: A to B to A head transitions may expose a previously green fallback check before fresh admission runs.
+    root_cause: Required check identity is SHA-bound, while mutable fallback validity depends on latest PR-head transition.
+    action_moniker: HARDEN
+    repair_method: Invalidate earlier fallback success synchronously with re-entry; prove stale-return-to-old-SHA rejection.
+    verification:
+      exact_head_sha: 10fdaaa53afc5b96bb8cc783b3c74a7006f6b887
+      result: FAIL_OPEN_P1
+      source_url: "https://github.com/GBOGEB/ABACUS/pull/1858"
+    control_guard: [no_stale_success_reuse, synthetic_a_b_a_transition_regression]
+    control_status: OPEN
+    lesson: An exact SHA alone cannot certify mutable review evidence after a branch moves away and back.
+    lookup_tags: [security, fallback, stale-check, replay, p0]
+  - rex_id: REX-ABACUS-20261012-003
+    signature: SECURITY.REVIEW_FALLBACK.SAME_SECOND_ORDERING
+    issue_kind: REVIEW_FINDING
+    family: SECURITY
+    repo: {primary: GBOGEB/ABACUS, impacted: [GBOGEB/ABACUS]}
+    first_seen: "ABACUS #1858 review thread"
+    last_seen: "ABACUS #1858 fix commit 10fdaaa5"
+    severity_stars: 4
+    frequency: {observed_count: 1, unit: resolved_review_thread, impacted_repo_count: 1, impacted_workflow_count: 1, measurement_window: ABACUS_OCT12_P0}
+    recurrence: UNIQUE
+    symptom: Owner attestation and outage notices with identical second-resolution timestamps could be misordered.
+    root_cause: Non-strict timestamp ordering was used as evidence of a causally later event.
+    action_moniker: HARDEN
+    repair_method: Reject ties with strict ordering and add equal-second regression tests.
+    verification:
+      exact_head_sha: 10fdaaa53afc5b96bb8cc783b3c74a7006f6b887
+      repair_commits: [cd14064da6e9709238a728033c089d5f864d0999, 10fdaaa53afc5b96bb8cc783b3c74a7006f6b887]
+      result: REPAIR_COMMITTED_THREAD_RESOLVED_NOT_MERGED
+      source_url: "https://github.com/GBOGEB/ABACUS/pull/1858"
+    control_guard: [timestamp_ties_fail_closed, targeted_regression_present]
+    control_status: REPAIRED
+    lesson: Temporal ordering must be strict or based on authenticated monotonic identifiers.
+    lookup_tags: [security, timestamp, test, tie, hardening]
+  - rex_id: REX-ABACUS-20261012-004
+    signature: SECURITY.REVIEW_FALLBACK.DELETED_EVIDENCE_NOT_REEVALUATED
+    issue_kind: REVIEW_FINDING
+    family: SECURITY
+    repo: {primary: GBOGEB/ABACUS, impacted: [GBOGEB/ABACUS]}
+    first_seen: "ABACUS #1858 review thread"
+    last_seen: "ABACUS #1858 fix commit b42212bf"
+    severity_stars: 4
+    frequency: {observed_count: 1, unit: resolved_review_thread, impacted_repo_count: 1, impacted_workflow_count: 1, measurement_window: ABACUS_OCT12_P0}
+    recurrence: UNIQUE
+    symptom: Deleting outage or owner evidence could leave a previously successful admission check temporarily reusable.
+    root_cause: Gate evaluator subscribed to issue_comment created/edited but not deleted.
+    action_moniker: HARDEN
+    repair_method: Trigger evaluator also on issue_comment.deleted and require independent end-to-end revocation proof.
+    verification:
+      exact_head_sha: 10fdaaa53afc5b96bb8cc783b3c74a7006f6b887
+      repair_commits: [b42212bf952638e557fd3715d08a67e9f13c8b15]
+      result: REPAIR_COMMITTED_THREAD_RESOLVED_NOT_MERGED
+      source_url: "https://github.com/GBOGEB/ABACUS/pull/1858"
+    control_guard: [mutable_comment_deletion_triggers_gate, revocation_regression_pending]
+    control_status: REPAIRED
+    lesson: Security decisions backed by mutable evidence require synchronous revocation semantics.
+    lookup_tags: [security, mutation, deletion, revocation, workflow]
+  - rex_id: REX-ABACUS-20261012-005
+    signature: CI_CD.ADMISSION.GREEN_MATRIX_PENDING_CODEX_REVIEW
+    issue_kind: BLOCKER
+    family: CI_CD
+    repo: {primary: GBOGEB/ABACUS, impacted: [GBOGEB/ABACUS]}
+    first_seen: "ABACUS #1876 run 38254422393"
+    last_seen: "ABACUS #1876 head ff1dbad3"
+    severity_stars: 4
+    frequency: {observed_count: 1, unit: pending_required_gate_check, impacted_repo_count: 1, impacted_workflow_count: 1, measurement_window: ABACUS_OCT12_PR1876}
+    recurrence: UNKNOWN
+    symptom: All 14 returned workflow runs green but required PR Feedback Gate pending with code/security review false.
+    root_cause: Exact-current-head review/security evidence missing; Codex environment or allowance is an external dependency, not proven code failure.
+    action_moniker: WATCH
+    repair_method: Obtain genuine exact-head Code and Security review or independently governed named human security assessment with narrowly scoped owner exception.
+    verification:
+      exact_head_sha: ff1dbad388d81e1abea422dfdf74ba0d0e5d208c
+      matrix_run_id: 38254422393
+      required_gate_check_id: 114829697076
+      result: HOLD_REQUIRED_GATE_PENDING
+      source_url: "https://github.com/GBOGEB/ABACUS/runs/114829697076"
+    control_guard: [matrix_pass_ne_merge_admission, no_agent_owner_attestation, no_unreviewed_bypass]
+    control_status: OPEN
+    lesson: All-green GitHub Actions workflows do not imply current-head code/security review admission.
+    lookup_tags: [gate, review, codex, capacity, missioncontrol, first-red]
+  - rex_id: REX-ABACUS-20261012-006
+    signature: VALIDATION.MARKDOWN.ARCHITECTURE_DOCUMENT_LINT
+    issue_kind: DEFECT
+    family: VALIDATION
+    repo: {primary: GBOGEB/ABACUS, impacted: [GBOGEB/ABACUS]}
+    first_seen: "ABACUS run 38253244397"
+    last_seen: "ABACUS run 38254422522"
+    severity_stars: 2
+    frequency: {observed_count: 25, unit: lint_violations_in_one_failed_job, impacted_repo_count: 1, impacted_workflow_count: 1, measurement_window: ABACUS_OCT12_PR1876}
+    recurrence: CLUSTERED_LOCAL
+    symptom: A single changed-docs job failed with 25 markdownlint MD013/MD022/MD032 reports.
+    root_cause: Long architecture-document lines and missing blank-line delimiters.
+    action_moniker: CLEAN
+    repair_method: Correct Markdown layout on the PR branch and rerun exact-head changed-docs validation.
+    verification:
+      failed_head_sha: 6a24ad04c28222d1348b86a95dde9496fed105c8
+      failed_run_id: 38253244397
+      failed_job_id: 114824613751
+      green_head_sha: ff1dbad388d81e1abea422dfdf74ba0d0e5d208c
+      green_run_id: 38254422522
+      result: PASS_CHANGED_DOCS_GATE
+      source_url: "https://github.com/GBOGEB/ABACUS/actions/runs/38254422522"
+    control_guard: [changed_docs_lint_unchanged, no_skip_or_waiver]
+    control_status: VERIFIED
+    lesson: Resolve a known lint first red through a bounded source repair, not a general CI rerun or waiver.
+    lookup_tags: [lint, markdown, validation, first-red, red-to-green]
+  - rex_id: REX-ABACUS-20261012-007
+    signature: LINEAGE.MIP.PROPOSAL_MATRIX_FALSE_ADMISSION_DEPENDENCY
+    issue_kind: REVIEW_FINDING
+    family: LINEAGE
+    repo: {primary: GBOGEB/ABACUS, impacted: [GBOGEB/ABACUS]}
+    first_seen: "ABACUS #1876 P2 review"
+    last_seen: "ABACUS #1876 head ff1dbad3"
+    severity_stars: 3
+    frequency: {observed_count: 1, unit: resolved_review_thread, impacted_repo_count: 1, impacted_workflow_count: 1, measurement_window: ABACUS_OCT12_PR1876}
+    recurrence: UNIQUE
+    symptom: The viewer incorrectly drew proposal-workers as a parent of report-only admission.
+    root_cause: Graph sequential rendering treated sibling workflow jobs as strict dependencies.
+    action_moniker: HARDEN
+    repair_method: Read workflow needs graph; render independent producer fan-out, verify with reviewer and functional browser QA.
+    verification:
+      exact_head_sha: ff1dbad388d81e1abea422dfdf74ba0d0e5d208c
+      repair_commit_sha: 2740a78a3528e604c1a1766f0f91cf13350c791e
+      result: FIX_COMMITTED_REVIEW_THREAD_RESOLVED_VISUAL_QA_UNVERIFIED
+      source_url: "https://github.com/GBOGEB/ABACUS/pull/1876"
+    control_guard: [no_inferred_needs_edges, downstream_qa_pending]
+    control_status: REPAIRED
+    lesson: Workflow hierarchy must reflect declared needs edges rather than graphical adjacency.
+    lookup_tags: [mip, graph, dependency, provenance, qps-triage]
+  - rex_id: REX-ABACUS-20261012-008
+    signature: CI_CD.PROOF_REUSE.NO_GOVERNED_CARRY_FORWARD_LEDGER
+    issue_kind: GAP
+    family: CI_CD
+    repo: {primary: GBOGEB/ABACUS, impacted: [GBOGEB/ABACUS]}
+    first_seen: "ABACUS #1877 issue creation"
+    last_seen: "ABACUS #1877 issue open"
+    severity_stars: 3
+    frequency: {observed_count: 1, unit: registered_improvement_issue, impacted_repo_count: 1, impacted_workflow_count: 0, measurement_window: ABACUS_OCT12_PROCESS_REVIEW}
+    recurrence: UNKNOWN
+    symptom: Risk-based sentinel/sampled/full matrix exists but cross-iteration green reuse and known-yellow carry-forward lack a verified durable ledger.
+    root_cause: Missing governed proof-reuse manifest and input-to-next-iteration producer.
+    action_moniker: RECEIPT
+    repair_method: Implement issue 1877 ledger with exact code/tool/dependency identity and explicit invalidation; preserve full-main recertification.
+    verification:
+      exact_head_sha: ff1dbad388d81e1abea422dfdf74ba0d0e5d208c
+      result: TRACKED_GAP_NOT_IMPLEMENTED
+      source_url: "https://github.com/GBOGEB/ABACUS/issues/1877"
+    control_guard: [missing_is_unknown, green_reuse_requires_nonimpact_proof, security_reviews_never_skipped]
+    control_status: OPEN
+    lesson: Reuse previous green evidence only with scope-bound provenance; carry known yellow explicitly into N+1.
+    lookup_tags: [ci, proof-reuse, bd-queue, coverage, top7, top14, top21]
+summary:
+  total_records: 8
+  open_or_deferred: 4
+  five_star_open: 2
+  recurring_records: 0
+  cross_repo_records: 0
+  verified_or_controlled: 1
+  repaired_pending_acceptance: 3
+return_contract:
+  consumer: GBOGEB/CODEX
+  global_taxonomy: federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml
+  merge_key: signature_plus_authority_relevant_scope
+  promotion_state: CANDIDATE_GLOBAL_REX_NOT_ACCEPTED
+  pay_it_forward:
+    - repo: GBOGEB/CODEX
+      scope: MissionControl REX/Control KPI advisory ingestion
+      acceptance: PENDING_INDEPENDENT_TESTS_AND_MERGE
+    - repo: GBOGEB/cryoplant-project
+      scope: QPS TRIAGE read-only CODE PURPLE intake; no QPS rank reopening
+      acceptance: PENDING_CONSUMER_REVIEW
+  authority_transfer: false
+  formal_credit_delta: 0
+  engineering_credit_delta: 0
