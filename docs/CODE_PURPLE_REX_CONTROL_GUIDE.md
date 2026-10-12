@@ -30,6 +30,23 @@ python -m http.server 8000 --directory docs
 Open `http://localhost:8000/code_purple_rex_control.html` for
 TOP7/14/21, source-specific REX details, provenance and KPI unknown states.
 The targeted CI also publishes the generated JSON as a 30-day artifact.
+The `pull_request` artifact name uses the **checked-out PR head SHA**, not the
+synthetic `github.sha` merge-ref SHA. Consumers shall verify the artifact
+content digest independently; an artifact name alone is not attestation.
+The exporter accepts only the canonical governed return as `--source`.
+Alternate-path and altered-in-memory records are refused rather than
+misattributed to the canonical SHA-256 path.
+
+**Post-merge follow-up:** CODEX #988 merged as
+`cce9ce20c8ca8d3ea5d11ec077567c24e97e379e`. Three P2
+findings arose in post-merge review. The required follow-up withholds
+all independent verification credit when a REX source merely declares
+`PASS` or `VERIFIED`: the projected effective state becomes
+`VERIFICATION_PENDING` with source-declared evidence retained separately.
+A source PASS string, GitHub-looking URL, syntactically valid SHA or
+run ID is not authenticated terminal-job or named-security-reviewer proof.
+Do not treat this candidate as admitted to the global REX ledger.
+
 GitHub Pages requires a separate governed publication/content readback.
 
 ## DMAIC Control
