@@ -59,6 +59,7 @@ def main():
     ap.add_argument("--ruff-scanned-files", type=Path)
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--source-sha", default="unknown")
+    ap.add_argument("--requested-head-sha")
     ap.add_argument("--repo-root", type=Path, default=Path.cwd())
     args = ap.parse_args()
     if not args.ruff and not args.pyright:
@@ -100,6 +101,17 @@ def main():
             },
             "pyright": None,
             "note": "Ruff denominator only; Pyright file coverage remains UNKNOWN",
+        }
+    if args.requested_head_sha is not None:
+        import re
+
+        both = (args.source_sha, args.requested_head_sha)
+        if any(re.fullmatch(r"[a-f0-9]{40}", sha) is None for sha in both):
+            raise ValueError("Evaluated and requested SHAs must be 40-char lowercase hex")
+        receipt["checkout_identity"] = {
+            "evaluated_sha": args.source_sha,
+            "requested_head_sha": args.requested_head_sha,
+            "exact_head": args.source_sha == args.requested_head_sha,
         }
     if args.baseline:
         base = json.loads(args.baseline.read_text(encoding="utf-8"))
