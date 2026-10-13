@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Compare Ruff/Pyright diagnostics without silently transferring quality credit."""
 import argparse
 import collections
