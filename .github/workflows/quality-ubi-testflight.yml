@@ -108,3 +108,54 @@ jobs:
             outputs/ubi9/
             image-ref.txt
           if-no-files-found: warn
+
+  evidence-join:
+    needs: [quality-census, ubi9-runtime]
+    if: always() && needs.quality-census.result == 'success' && needs.ubi9-runtime.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v7.0.0
+        with:
+          name: codex-quality-census
+          path: outputs/quality/
+      - uses: actions/download-artifact@v7.0.0
+        with:
+          name: codex-ubi9-runtime
+          path: outputs/ubi9/
+      - name: Validate input source binding and join receipts
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          sha = os.environ["GITHUB_SHA"]
+          quality = json.loads(Path("outputs/quality/burndown.json").read_text())
+          runtime = json.loads(Path("outputs/ubi9/receipt.json").read_text())
+          if quality.get("source_sha") != sha or runtime.get("source_sha") != sha:
+              raise SystemExit("Refusing mismatched exact-head evidence")
+          if not quality.get("input_sha256") or not runtime.get("sha256"):
+              raise SystemExit("Refusing unbound quality or runtime evidence")
+          PY
+          python scripts/diagnostic_coverage_rollup.py \
+            --source-sha "$GITHUB_SHA" \
+            --quality outputs/quality/burndown.json \
+            --runtime outputs/ubi9/receipt.json \
+            --out outputs/diagnostic_coverage/receipt.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d = json.loads(Path("outputs/diagnostic_coverage/receipt.json").read_text())
+          assert d["coverage"]["quality"]["status"] == "MEASURED"
+          assert d["coverage"]["runtime"]["status"] == "MEASURED"
+          assert d["coverage"]["ldab"]["status"] == "UNKNOWN"
+          assert d["coverage"]["crew"]["status"] == "UNKNOWN"
+          PY
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: codex-joined-diagnostic-coverage
+          path: outputs/diagnostic_coverage/receipt.json
+          if-no-files-found: error
