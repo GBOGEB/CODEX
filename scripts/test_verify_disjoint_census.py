@@ -49,6 +49,21 @@ class CensusTests(unittest.TestCase):
     def test_withheld_nonzero_rejected(self):
         self.assertFalse(verify(self.base({"ruff_files": {"status": "WITHHELD", "numerator": 0, "denominator": 7}}))["valid"])
 
+    def test_boolean_run_id_rejected(self):
+        item = row()
+        item["run_id"] = True
+        self.assertFalse(verify(self.base({"statement": item}))["valid"])
+
+    def test_malformed_receipt_digest_rejected(self):
+        item = row(kind="ldab_live_sessions")
+        item["receipt_sha256"] = "not-a-digest"
+        self.assertFalse(verify(self.base({"ldab_live_sessions": item}))["valid"])
+
+    def test_wrong_length_receipt_digest_rejected(self):
+        item = row(kind="dov")
+        item["receipt_sha256"] = "b" * 63
+        self.assertFalse(verify(self.base({"dov": item}))["valid"])
+
     def test_all_population_keys(self):
         self.assertEqual(len(verify(self.base())["populations"]), 9)
 
