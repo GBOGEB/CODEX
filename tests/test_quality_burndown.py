@@ -66,7 +66,7 @@ def test_ruff_scope_denominator_and_empty_scope_rejected(tmp_path):
     ruff = tmp_path / "ruff.json"
     ruff.write_text("[]")
     scope = tmp_path / "scope.txt"
-    scope.write_text("scripts/a.py\\nscripts/b.py\\nscripts/a.py\\n")
+    scope.write_text("scripts/a.py\nscripts/b.py\nscripts/a.py\n")
     out = tmp_path / "receipt.json"
     command = [
         sys.executable, "scripts/quality_burndown.py",
