@@ -28,12 +28,12 @@
   var DIATOMIC = ["nitrogen", "n2", "ln2", "liquid nitrogen", "hydrogen", "h2"];
 
   function requirePositive(p, t) {
-    if (!(p > 0)) throw new RangeError("pressure must be positive, got " + p + " kPa");
-    if (!(t > 0)) throw new RangeError("temperature must be positive, got " + t + " K");
+    if (!(isFinite(p) && p > 0)) throw new RangeError("pressure must be finite and positive, got " + p + " kPa");
+    if (!(isFinite(t) && t > 0)) throw new RangeError("temperature must be finite and positive, got " + t + " K");
   }
 
   function inValidityDomain(p, t) {
-    if (!(p > 0 && t > 0)) return false;
+    if (!(isFinite(p) && isFinite(t) && p > 0 && t > 0)) return false;
     return t >= DOMAIN_T_MIN_K && (p * 1000.0) / (R * t) <= DOMAIN_RHO_MAX_KG_M3;
   }
 
@@ -59,7 +59,8 @@
   }
 
   function statePS(p, s) {
-    if (!(p > 0)) throw new RangeError("pressure must be positive, got " + p + " kPa");
+    if (!(isFinite(p) && p > 0)) throw new RangeError("pressure must be finite and positive, got " + p + " kPa");
+    if (!isFinite(s)) throw new RangeError("entropy must be finite, got " + s + " J/kg/K");
     return statePT(p, T_REF_K * Math.exp((s + R * Math.log(p / P_REF_KPA)) / CP));
   }
 

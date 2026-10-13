@@ -40,16 +40,14 @@ def load_pin(path: Path = PIN_PATH) -> dict[str, Any]:
 
 
 def meta_checksum(pin: dict[str, Any]) -> str:
-    """sha256 over the canonical JSON of commit, pinned file hashes and constants."""
-    payload = {
-        "commit_sha": pin["authority"]["commit_sha"],
-        "pinned_files": sorted(
-            ({"path": f["path"], "sha256": f["sha256"]} for f in pin["pinned_files"]),
-            key=lambda f: f["path"],
-        ),
-        "pinned_constants": pin["pinned_constants"],
-    }
-    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+    """sha256 over the canonical JSON of the whole pin except the checksum itself.
+
+    Every authority-bearing field (repository, runtime dependency, file roles
+    and git blob ids, local roles, policy parity, output cross-check block)
+    is covered, so any edit to the pin changes the checksum.
+    """
+    payload = {k: v for k, v in pin.items() if k != "meta_checksum_sha256"}
+    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str)
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
@@ -95,6 +93,11 @@ def verify_checkout(pin: dict[str, Any], abacus: Path) -> list[str]:
         digest = hashlib.sha256(target.read_bytes()).hexdigest()
         if digest != f["sha256"]:
             problems.append(f"CONTENT_DRIFT: {f['path']} sha256 {digest} != pinned {f['sha256']}")
+        blob = subprocess.run(
+            ["git", "-C", str(abacus), "hash-object", "--", f["path"]], capture_output=True, text=True, check=False
+        ).stdout.strip()
+        if blob != f["git_blob_sha"]:
+            problems.append(f"BLOB_DRIFT: {f['path']} git blob {blob or '(none)'} != pinned {f['git_blob_sha']}")
     return problems
 
 
