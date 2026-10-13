@@ -6,6 +6,8 @@ from subprocess import run
 
 from .pipeline_config import PIPELINE_STEPS
 
+ROOT = Path(__file__).resolve().parents[1]
+
 PIPELINE = [
     'telemetry_pipeline.py',
     'plotly_wave_dashboard.py',

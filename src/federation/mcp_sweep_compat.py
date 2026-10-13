@@ -165,7 +165,9 @@ class MCPSweepEngine:
         suggestion=str(signal.get("suggestion") or signal.get("title") or signal.get("origin") or "").strip()
         if not suggestion: return None
         parts=[suggestion,*[str(x) for x in signal.get("commits",[])],*[str(x) for x in signal.get("reviews",[])],*[str(x) for x in signal.get("labels",[])]]
-        body=" ".join(parts).lower(); match=PARENT_REQUIREMENT_PATTERN.search(" ".join(parts)); parent=match.group(1) if match else None
+        body = " ".join(parts).lower()
+        match = PARENT_REQUIREMENT_PATTERN.search(" ".join(parts))
+        parent = match.group(1) if match else None
         obsolete=bool(signal.get("is_obsolete")) or any(m in body for m in DEFAULT_OBSOLETE_MARKERS)
         status="obsolete" if obsolete else "near_miss"; confidence=0.92 if obsolete else (0.84 if any(m in body for m in DEFAULT_NEAR_MISS_MARKERS) else 0.68)
         provenance=[source_ref,*[f"file:{p}" for p in signal.get("files",[])[:5] if p]]
