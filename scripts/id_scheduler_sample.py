@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Derive a 5-slot work-conserving scheduler sample from the current ID work plan."""
 from __future__ import annotations
 import argparse, json
