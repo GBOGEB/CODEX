@@ -209,3 +209,13 @@ glossary:
     definition: Adapter key naming the existing CODEX semantic runtime pipeline bridge as a runtime-telemetry input to GLOOB projections.
     introduced_by: federation/global_mesh/GLOBAL_MESH_VIEW_CONTRACT_v1.yaml
     first_use_case: bind src/orchestration/semantic_runtime_pipeline_bridge_v1.py as an adapter instead of duplicating it.
+
+  semantic_signature:
+    definition: Deterministic summary of one HTML document produced by renderers/regression/html_baseline_compare.py (tag counts, fragment-stripped links, heading text, visible word count, inline colour tokens); it describes rendered structure only and confers no engineering or compliance authority.
+    introduced_by: renderers/regression/html_baseline_compare.py
+    first_use_case: compare a candidate render against its golden HTML baseline without failing on whitespace-only reformatting.
+
+  semantic_identical:
+    definition: Boolean on the HTML baseline comparator's RegressionResult that is true when the baseline and candidate semantic signatures have no deltas, independent of byte equality.
+    introduced_by: renderers/regression/html_baseline_compare.py
+    first_use_case: distinguish a real render regression from a formatting-only change in render QA receipts.
