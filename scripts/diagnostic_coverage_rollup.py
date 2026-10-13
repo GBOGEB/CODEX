@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import datetime
 import hashlib
 import json
 import re
@@ -97,13 +98,12 @@ def main():
     if isinstance(queue_input, dict) and queue_input.get("source_sha") == args.source_sha:
         rows = queue_input.get("jobs")
         if isinstance(rows, list):
-            import datetime
             def seconds(start, end):
                 if not isinstance(start, str) or not isinstance(end, str):
                     return None
                 try:
-                    x = datetime.datetime.fromisoformat(start.replace("Z", "+00:00"))
-                    y = datetime.datetime.fromisoformat(end.replace("Z", "+00:00"))
+                    x = datetime.datetime.fromisoformat(start)
+                    y = datetime.datetime.fromisoformat(end)
                     result = (y - x).total_seconds()
                     return result if result >= 0 else None
                 except ValueError:
