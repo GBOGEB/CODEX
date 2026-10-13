@@ -263,6 +263,11 @@ def qa_mycelium_layouts(page: Any, url: str, out: Path, viewport: str) -> dict[s
         status=200, content_type="application/json",
         body='{"schema":"code-purple.qa-only-unverified/1.0","observation_state":"UNKNOWN_NOT_PRODUCTION"}',
     ))
+    # Optional coverage receipt is not published on this source. A QA-only 204
+    # exercises the viewer UNKNOWN fallback without inventing evidence.
+    page.route("**/data/diagnostic_coverage_receipt.json", lambda route: route.fulfill(
+        status=204,
+    ))
     response = page.goto(url, wait_until="networkidle")
     page.wait_for_function("document.querySelector('#stamp').textContent.includes('snapshot')")
 
