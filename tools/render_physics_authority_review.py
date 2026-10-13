@@ -102,18 +102,31 @@ def _parts(pin: dict[str, Any] | None = None) -> tuple[str, str]:
     lo, hi = consts["qplant_hepak_band_K"]
     parity = pin["policy_parity"]
     status_cls = "ok" if parity["status"] == "PARITY" else "warn"
+    probes = ", ".join(f"{x:g}" for x in parity["diverging_probes_K"])
     if parity["status"] == "PARITY":
-        decision_cls, decision_title = "active", "Routing in parity"
+        # Probe agreement is technical parity, not approval of the pin: the
+        # reviewer still accepts the authority commit explicitly.
+        decision_cls, decision_title = "active", "Routing in parity; pin awaits your acceptance"
         decision_text = (
-            "CODEX and the pinned ABACUS routing agree at every probe: HEPAK governs "
+            "CODEX and the pinned ABACUS routing agree at every recorded probe: HEPAK governs "
             f"0 &lt; T &le; {hi:g} K, including He-II below the lambda point, and CoolProp governs above. "
-            "Nothing needs a decision."
+            f"Agreement at the probes is not approval: confirm with the checklist that ABACUS "
+            f"{_e(sha[:12])} is the provider version CODEX should consume."
         )
     else:
-        decision_cls, decision_title = "warning", "What needs your decision"
+        # Authority-neutral: the remediation comes from the pin, never from a
+        # default that tells the governing repository to follow the consumer.
+        decision_cls, decision_title = "warning", "Routing diverges; decision needed"
+        resolution = parity.get("resolution")
         decision_text = (
-            f"CODEX and the pinned ABACUS routing disagree at {', '.join(f'{x:g}' for x in parity['diverging_probes_K'])} K. "
-            "Physics belongs to ABACUS, so ABACUS has to adopt the rule, after which CODEX re-pins and parity returns."
+            f"CODEX and the pinned ABACUS routing disagree at {probes} K. "
+            + (
+                f"Recorded resolution: {_e(resolution)}"
+                if resolution
+                else "No resolution is recorded in the pin. ABACUS governs helium physics, so first decide "
+                "whether the CODEX mirror is stale or ABACUS should change, then record that as "
+                "policy_parity.resolution."
+            )
         )
 
     file_rows = "".join(
