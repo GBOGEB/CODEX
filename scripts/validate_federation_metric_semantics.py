@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Validate the governed semantic status of federation metrics.
 
 This validator deliberately does not invent primitive GETI/PCI formulas. It proves
