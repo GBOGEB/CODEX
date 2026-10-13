@@ -11,12 +11,12 @@ def _join_workflow() -> str:
     return content.split("\n  evidence-join:\n", 1)[1]
 
 
-def test_quality_artifact_download_restores_flat_archive_under_quality():
+def test_quality_artifact_download_preserves_nested_quality_archive():
     join = _join_workflow()
     assert (
         "name: codex-quality-census\n"
-        "          # The producer archive stores burndown.json at ZIP root.\n"
-        "          path: outputs/quality"
+        "          # The producer archive preserves outputs/quality/ within its root.\n"
+        "          path: ."
     ) in join
     assert 'Path("outputs/quality/burndown.json").read_text()' in join
 
