@@ -97,3 +97,16 @@ def test_committed_review_page_is_current():
     spec.loader.exec_module(module)
     committed = (REPO_ROOT / "docs" / "gistau-ch15" / "physics_authority.html").read_text(encoding="utf-8")
     assert committed == module.render(), "regenerate: PYTHONPATH=src python tools/render_physics_authority_review.py"
+
+
+def test_crosscheck_edge_is_scoped_to_its_real_invocation():
+    graph = yaml.safe_load(GRAPH.read_text(encoding="utf-8"))
+    edge = {e["id"]: e for e in graph["edges"]}["KEB-EDGE-010"]
+    # Only the PR-time CI job invokes ABACUS; the edge must not claim runtime activity.
+    assert edge["status"] == "ACTIVE_CI_PR_TIME"
+    assert edge["runtime_invocation"] == "NONE"
+    for key in ("invoker", "workflow"):
+        assert (REPO_ROOT / edge["evidence"][key]).is_file()
+    pin_path, _, anchor = edge["evidence"]["recorded_comparison"].partition("#")
+    pin = yaml.safe_load((REPO_ROOT / pin_path).read_text(encoding="utf-8"))
+    assert len(pin[anchor]["output_checksum_sha256"]) == 64
