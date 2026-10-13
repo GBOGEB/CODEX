@@ -39,6 +39,7 @@ jobs:
         run: |
           mkdir -p outputs/quality
           set +e
+          ruff check scripts --show-files > outputs/quality/ruff-scanned-files.txt
           ruff check scripts --output-format json > outputs/quality/ruff.json
           ruff_rc=$?
           pyright scripts/quality_burndown.py scripts/check_bridge_alignment.py scripts/check_svg_links.py --outputjson > outputs/quality/pyright.json
@@ -48,7 +49,7 @@ jobs:
           pyright_expanded_rc=$?
           set -e
           python -m pytest -q tests/test_quality_burndown.py
-          python scripts/quality_burndown.py --ruff outputs/quality/ruff.json --pyright outputs/quality/pyright.json --source-sha "$GITHUB_SHA" --out outputs/quality/burndown.json
+          python scripts/quality_burndown.py --ruff outputs/quality/ruff.json --pyright outputs/quality/pyright.json --source-sha "$GITHUB_SHA" --ruff-scanned-files outputs/quality/ruff-scanned-files.txt --out outputs/quality/burndown.json
           echo "Ruff exit: $ruff_rc; baseline Pyright exit: $pyright_rc; expanded Pyright exit: $pyright_expanded_rc"
       - uses: actions/upload-artifact@v7.0.2
         if: always()

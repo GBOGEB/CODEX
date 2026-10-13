@@ -56,6 +56,7 @@ def main():
     ap.add_argument("--ruff", type=Path)
     ap.add_argument("--pyright", type=Path)
     ap.add_argument("--baseline", type=Path)
+    ap.add_argument("--ruff-scanned-files", type=Path)
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--source-sha", default="unknown")
     ap.add_argument("--repo-root", type=Path, default=Path.cwd())
@@ -81,6 +82,25 @@ def main():
         "diagnostics": sorted(records, key=lambda r: (r["tool"], r["path"], r["line"], r["rule"])),
         "admission": "advisory",
     }
+    if args.ruff_scanned_files is not None:
+        if args.ruff is None:
+            ap.error("--ruff-scanned-files requires --ruff")
+        raw = args.ruff_scanned_files.read_bytes()
+        paths = [
+            canonical_path(line.strip(), args.repo_root)
+            for line in raw.decode("utf-8").splitlines() if line.strip()
+        ]
+        if not paths:
+            raise ValueError("Ruff scan scope is empty; refusing zero coverage")
+        receipt["scan_scope"] = {
+            "ruff": {
+                "scanned_files": len(set(paths)),
+                "scope_sha256": hashlib.sha256(raw).hexdigest(),
+                "duplicate_entries": len(paths) - len(set(paths)),
+            },
+            "pyright": None,
+            "note": "Ruff denominator only; Pyright file coverage remains UNKNOWN",
+        }
     if args.baseline:
         base = json.loads(args.baseline.read_text(encoding="utf-8"))
         baseline_records = base["diagnostics"]
