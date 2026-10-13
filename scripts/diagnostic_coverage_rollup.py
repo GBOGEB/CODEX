@@ -43,6 +43,8 @@ def main():
     parser.add_argument("--runtime", type=Path)
     parser.add_argument("--ldab", type=Path)
     parser.add_argument("--crew", type=Path)
+    parser.add_argument("--coverage", type=Path)
+    parser.add_argument("--queue", type=Path)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
     if not SHA.fullmatch(args.source_sha):
@@ -78,6 +80,50 @@ def main():
                 checks[key]["reason"] = "missing_valid_status"
             else:
                 checks[key]["status"] = value["status"]
+    coverage_input = read(args.coverage)
+    if isinstance(coverage_input, dict):
+        scanned = coverage_input.get("scanned_files")
+        eligible = coverage_input.get("eligible_files")
+        if (isinstance(scanned, int) and not isinstance(scanned, bool)
+                and isinstance(eligible, int) and not isinstance(eligible, bool)
+                and 0 <= scanned <= eligible and eligible > 0
+                and coverage_input.get("source_sha") == args.source_sha):
+            checks["quality"]["scanned_files"] = scanned
+            checks["quality"]["eligible_files"] = eligible
+            checks["quality"]["scan_coverage_pct"] = round(100 * scanned / eligible, 2)
+    queue_input = read(args.queue)
+    queue_metrics = {"observed_jobs": 0, "queue_depth": None,
+                     "mean_queue_wait_seconds": None,
+                     "mean_worker_handling_seconds": None}
+    if isinstance(queue_input, dict) and queue_input.get("source_sha") == args.source_sha:
+        rows = queue_input.get("jobs")
+        if isinstance(rows, list):
+            import datetime
+            def seconds(start, end):
+                if not isinstance(start, str) or not isinstance(end, str):
+                    return None
+                try:
+                    x = datetime.datetime.fromisoformat(start.replace("Z", "+00:00"))
+                    y = datetime.datetime.fromisoformat(end.replace("Z", "+00:00"))
+                    result = (y - x).total_seconds()
+                    return result if result >= 0 else None
+                except ValueError:
+                    return None
+            waits = [seconds(j.get("queued_at"), j.get("started_at"))
+                     for j in rows if isinstance(j, dict)]
+            durations = [seconds(j.get("started_at"), j.get("completed_at"))
+                         for j in rows if isinstance(j, dict)]
+            waits = [v for v in waits if v is not None]
+            durations = [v for v in durations if v is not None]
+            queue_metrics = {
+                "observed_jobs": len(rows),
+                "queue_depth": sum(j.get("status") == "queued" for j in rows
+                                   if isinstance(j, dict)),
+                "mean_queue_wait_seconds": round(sum(waits) / len(waits), 2) if waits else None,
+                "mean_worker_handling_seconds": round(sum(durations) / len(durations), 2)
+                                                if durations else None,
+                "wait_samples": len(waits), "handling_samples": len(durations),
+            }
     receipt = {
         "schema": "codex-diagnostic-coverage-rollup/v1",
         "source_sha": args.source_sha,
@@ -86,8 +132,7 @@ def main():
         "metrics": {
             "verified_surfaces": sum(c["status"] == "MEASURED" for c in checks.values()),
             "eligible_surfaces": len(checks),
-            "mean_queue_wait_seconds": None,
-            "mean_worker_handling_seconds": None,
+            **queue_metrics,
             "gm_authenticated_workers": None,
         },
         "authority_transfer": False,
