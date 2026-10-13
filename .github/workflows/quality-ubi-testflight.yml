@@ -9,6 +9,8 @@ on:
       - 'scripts/check_release_identity.py'
       - '.github/workflows/quality-ubi-testflight.yml'
       - 'pyproject.toml'
+      - 'tests/test_quality_burndown.py'
+      - 'tests/test_quality_burndown.py'
   push:
     branches: [main]
     paths:
@@ -30,7 +32,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install pinned scanners
-        run: python -m pip install ruff==0.16.6 pyright==1.1.407
+        run: python -m pip install pytest>=7.0 ruff==0.16.6 pyright==1.1.407
       - name: Measure Ruff and Pyright independently
         shell: bash
         run: |
@@ -41,6 +43,7 @@ jobs:
           pyright scripts/quality_burndown.py --outputjson > outputs/quality/pyright.json
           pyright_rc=$?
           set -e
+          python -m pytest -q tests/test_quality_burndown.py
           python scripts/quality_burndown.py --ruff outputs/quality/ruff.json --pyright outputs/quality/pyright.json --source-sha "$GITHUB_SHA" --out outputs/quality/burndown.json
           echo "Ruff exit: $ruff_rc; Pyright exit: $pyright_rc"
       - uses: actions/upload-artifact@v7.0.2
@@ -52,30 +55,40 @@ jobs:
 
   ubi9-runtime:
     runs-on: ubuntu-latest
-    container:
-      image: registry.access.redhat.com/ubi9/python-312:latest
     steps:
       - uses: actions/checkout@v7.0.1
-      - name: Real CODEX runtime testflight and receipt
+      - name: Resolve and pin UBI image digest for this run
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker pull registry.access.redhat.com/ubi9/python-312:latest
+          image_ref="$(docker image inspect registry.access.redhat.com/ubi9/python-312:latest --format '{{index .RepoDigests 0}}')"
+          case "$image_ref" in *@sha256:*) ;; *) echo "No digest" >&2; exit 1;; esac
+          echo "IMAGE_REF=$image_ref" >> "$GITHUB_ENV"
+          echo "$image_ref" > image-ref.txt
+      - name: Execute real Python entrypoints inside UBI 9
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p outputs/ubi9
-          python --version | tee outputs/ubi9/python-version.txt
-          python -m pip install --disable-pip-version-check -e .
-          python -m pip freeze > outputs/ubi9/dependencies.txt
-          python scripts/check_authority_integrity.py > outputs/ubi9/authority.log 2>&1
-          python scripts/check_release_identity.py > outputs/ubi9/release_identity.log 2>&1
-          python - <<'PY'
-          import hashlib, json, os, pathlib, platform, subprocess
+          docker run --rm \
+            -e GITHUB_SHA="$GITHUB_SHA" -e IMAGE_REF="$IMAGE_REF" \
+            -v "$PWD:/workspace" -w /workspace "$IMAGE_REF" /bin/bash -c '
+              set -euo pipefail
+              python --version > outputs/ubi9/python-version.txt 2>&1
+              python -m pip install --disable-pip-version-check -e . > outputs/ubi9/install.log 2>&1
+              python -m pip freeze > outputs/ubi9/dependencies.txt
+              python scripts/check_authority_integrity.py > outputs/ubi9/authority.log 2>&1
+              python scripts/check_release_identity.py > outputs/ubi9/release_identity.log 2>&1
+              python - <<\x27PY\x27
+          import hashlib, json, os, pathlib, platform
           root = pathlib.Path("outputs/ubi9")
-          image = os.environ.get("UBI_IMAGE_DIGEST", "UNVERIFIED_DIGEST")
           hashes = {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
                     for p in sorted(root.iterdir()) if p.is_file()}
           receipt = {"schema": "codex-ubi-testflight/v1",
-                     "source_sha": os.environ.get("GITHUB_SHA"),
-                     "container_image": "registry.access.redhat.com/ubi9/python-312:latest",
-                     "image_digest": image,
+                     "source_sha": os.environ["GITHUB_SHA"],
+                     "container_image": os.environ["IMAGE_REF"],
+                     "image_digest": os.environ["IMAGE_REF"].rsplit("@", 1)[1],
                      "python": platform.python_version(),
                      "system": platform.platform(),
                      "executed_entrypoints": [
@@ -83,11 +96,15 @@ jobs:
                        "scripts/check_release_identity.py"],
                      "outcomes": {"authority_integrity": "PASS", "release_identity": "PASS"},
                      "sha256": hashes}
-          (root / "receipt.json").write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
+          (root / "receipt.json").write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\\n")
           PY
-      - uses: actions/upload-artifact@v7.0.2
+            '
+      - name: Publish runtime receipts and logs
         if: always()
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: codex-ubi9-runtime
-          path: outputs/ubi9/
+          path: |
+            outputs/ubi9/
+            image-ref.txt
           if-no-files-found: warn
