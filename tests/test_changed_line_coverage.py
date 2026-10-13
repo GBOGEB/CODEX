@@ -130,3 +130,24 @@ def test_coverage_xml_malformed_is_not_treated_as_clean(tmp_path, monkeypatch):
     )
     with pytest.raises(ET.ParseError):
         diffcov.measure(xml, "b" * 40, tmp_path)
+
+
+def test_duplicate_xml_classes_do_not_inflate_changed_line_denominator(tmp_path, monkeypatch):
+    xml = tmp_path / "coverage.xml"
+    xml.write_text(
+        '<coverage><packages><package><classes>'
+        '<class filename="scripts/sample.py"><lines><line number="10" hits="0"/></lines></class>'
+        '<class filename="scripts/sample.py"><lines><line number="10" hits="1"/></lines></class>'
+        '</classes></package></packages></coverage>',
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        diffcov.subprocess, "check_output",
+        lambda args, **kwargs: "a" * 40 if args[1] == "rev-parse"
+        else "+++ b/scripts/sample.py\n@@ -0,0 +10 @@\n+line\n",
+    )
+    result = diffcov.measure(xml, "b" * 40, tmp_path)
+    assert result["status"] == "MEASURED"
+    assert result["eligible_lines"] == 1
+    assert result["covered_lines"] == 1
+    assert result["percent"] == 100.0
