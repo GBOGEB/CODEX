@@ -25,6 +25,7 @@ class BackendAvailability:
     available: bool
     reason: str
     authority_role: str = CROSSCHECK_ONLY
+    governing_authority: str = GOVERNING_AUTHORITY
 
 
 def _try_backend(name: str, tier: BackendTier, factory: Any) -> tuple[Any | None, BackendAvailability]:
@@ -98,6 +99,5 @@ def availability_report_rows() -> list[dict[str, Any]]:
     for item in availability:
         row = asdict(item)
         row["tier"] = item.tier.value
-        row["governing_authority"] = GOVERNING_AUTHORITY
         rows.append(row)
     return rows
