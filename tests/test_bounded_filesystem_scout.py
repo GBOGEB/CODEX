@@ -104,3 +104,52 @@ def test_root_acceptance_metadata_uses_booleans(tmp_path: Path) -> None:
     assert receipt["roots"][1]["resolved"] == str(tmp_path.resolve())
     assert receipt["skipped_count"] == 1
     assert receipt["authority"] == "DISCOVERY_RECEIPT_ONLY"
+
+
+def test_unfollowed_ancestor_symlink_is_inventory_entry(tmp_path: Path) -> None:
+    (tmp_path / "visible.txt").write_text("visible", encoding="utf-8")
+    link = tmp_path / "parent-link"
+    try:
+        link.symlink_to(tmp_path, target_is_directory=True)
+    except (OSError, NotImplementedError):
+        pytest.skip("directory symlinks are not supported by this runner")
+    receipt = scan_roots([tmp_path])
+    assert receipt["complete"] is True
+    assert receipt["skipped_count"] == 0
+    assert receipt["file_count"] == 2
+    assert str(link) in receipt["files"]
+
+
+def test_followed_ancestor_cycle_is_partial_not_unbounded(tmp_path: Path) -> None:
+    (tmp_path / "visible.txt").write_text("visible", encoding="utf-8")
+    link = tmp_path / "parent-link"
+    try:
+        link.symlink_to(tmp_path, target_is_directory=True)
+    except (OSError, NotImplementedError):
+        pytest.skip("directory symlinks are not supported by this runner")
+    receipt = scan_roots([tmp_path], follow_symlinks=True)
+    assert receipt["status"] == "PARTIAL"
+    assert receipt["complete"] is False
+    assert receipt["skipped_count"] == 1
+    assert receipt["skipped"][0]["error_type"] == "SYMLINK_CYCLE"
+    assert receipt["skipped"][0]["operation"] == "walk"
+    assert receipt["skipped"][0]["path"] == str(link)
+    assert receipt["file_count"] == 1
+    assert receipt["formal_credit_delta"] == 0
+
+
+def test_followed_nonancestor_symlink_is_not_a_false_cycle(tmp_path: Path) -> None:
+    nested = tmp_path / "nested"
+    nested.mkdir()
+    (nested / "visible.txt").write_text("visible", encoding="utf-8")
+    link = tmp_path / "alias"
+    try:
+        link.symlink_to(nested, target_is_directory=True)
+    except (OSError, NotImplementedError):
+        pytest.skip("directory symlinks are not supported by this runner")
+    receipt = scan_roots([tmp_path], follow_symlinks=True)
+    assert receipt["complete"] is True
+    assert receipt["skipped_count"] == 0
+    assert receipt["file_count"] == 2
+    assert str(nested / "visible.txt") in receipt["files"]
+    assert str(link / "visible.txt") in receipt["files"]
