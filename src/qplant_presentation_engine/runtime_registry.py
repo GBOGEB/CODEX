@@ -385,7 +385,7 @@ def main(argv: list[str] | None = None) -> int:
                 "status": "generated",
                 "registry_output": str(args.registry_output),
                 "report_output": str(args.report_output),
-                "repo_count": len(registry_record["truth_matrix"]),
+                "repo_count": len(registry_record["runtime_registry"]),
                 "runtime_status": "generated",
             }
         )
