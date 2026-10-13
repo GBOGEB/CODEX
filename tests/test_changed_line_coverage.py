@@ -67,3 +67,39 @@ def test_uninstrumented_changed_source_blocks_measured_percentage(tmp_path, monk
     assert result["missing_source_files"] == ["scripts/unseen.py"]
     assert result["percent"] is None
     assert result["covered_lines"] == 1
+
+
+def test_basename_from_coverage_xml_matches_scripts_directory(tmp_path, monkeypatch):
+    xml = tmp_path / "coverage.xml"
+    xml.write_text(
+        '<coverage><packages><package><classes><class filename="sample.py">'
+        '<lines><line number="10" hits="1"/></lines></class></classes>'
+        '</package></packages></coverage>', encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        diffcov.subprocess, "check_output",
+        lambda args, **kwargs: "a" * 40 if args[1] == "rev-parse"
+        else "+++ b/scripts/sample.py\n@@ -0,0 +10 @@\n+hit\n",
+    )
+    result = diffcov.measure(xml, "b" * 40, tmp_path)
+    assert result["status"] == "MEASURED"
+    assert (result["covered_lines"], result["eligible_lines"]) == (1, 1)
+
+
+def test_ambiguous_basename_fails_closed(tmp_path, monkeypatch):
+    import pytest
+
+    xml = tmp_path / "coverage.xml"
+    xml.write_text(
+        '<coverage><packages><package><classes><class filename="sample.py">'
+        '<lines><line number="10" hits="1"/></lines></class></classes>'
+        '</package></packages></coverage>', encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        diffcov.subprocess, "check_output",
+        lambda args, **kwargs: "a" * 40 if args[1] == "rev-parse"
+        else "+++ b/scripts/sample.py\n@@ -0,0 +10 @@\n+hit\n"
+        "+++ b/tests/sample.py\n@@ -0,0 +10 @@\n+hit\n",
+    )
+    with pytest.raises(ValueError, match="Ambiguous coverage source path"):
+        diffcov.measure(xml, "b" * 40, tmp_path)
