@@ -77,3 +77,30 @@ def test_missing_root_is_explicit_partial(tmp_path: Path) -> None:
     assert receipt["status"] == "PARTIAL"
     assert receipt["complete"] is False
     assert receipt["skipped"][0]["error_type"] == "ROOT_NOT_FOUND"
+
+
+def test_file_root_rejection_is_explicit_and_uncredited(tmp_path: Path) -> None:
+    file_path = tmp_path / "not-a-directory.txt"
+    file_path.write_text("existing file", encoding="utf-8")
+    receipt = scan_roots([file_path])
+    assert receipt["status"] == "PARTIAL"
+    assert receipt["complete"] is False
+    assert receipt["roots"] == [{
+        "requested": str(file_path),
+        "resolved": str(file_path.resolve()),
+        "accepted": False,
+    }]
+    assert receipt["skipped"][0]["error_type"] == "ROOT_NOT_DIRECTORY"
+    assert receipt["formal_credit_delta"] == 0
+
+
+def test_root_acceptance_metadata_uses_booleans(tmp_path: Path) -> None:
+    missing = tmp_path / "missing"
+    receipt = scan_roots([missing, tmp_path])
+    assert receipt["complete"] is False
+    assert receipt["roots"][0]["accepted"] is False
+    assert receipt["roots"][1]["accepted"] is True
+    assert receipt["roots"][0]["resolved"] == str(missing.resolve())
+    assert receipt["roots"][1]["resolved"] == str(tmp_path.resolve())
+    assert receipt["skipped_count"] == 1
+    assert receipt["authority"] == "DISCOVERY_RECEIPT_ONLY"
