@@ -37,3 +37,36 @@ def test_join_remains_fail_closed_on_source_identity_and_evidence_hashes():
     assert 'runtime.get("sha256")' in join
     assert 'raise SystemExit("Refusing mismatched exact-head evidence")' in join
     assert 'raise SystemExit("Refusing unbound quality or runtime evidence")' in join
+
+
+def test_producer_zip_layout_materializes_expected_receipt_paths(tmp_path):
+    """Exercise the two producer archive layouts rather than only workflow text."""
+    import io
+    import zipfile
+
+    for name, content in (
+        ("outputs/quality/burndown.json", b'{"source_sha":"a"}'),
+        ("outputs/ubi9/receipt.json", b'{"source_sha":"a"}'),
+    ):
+        archive = io.BytesIO()
+        with zipfile.ZipFile(archive, "w") as writer:
+            writer.writestr(name, content)
+        archive.seek(0)
+        with zipfile.ZipFile(archive) as reader:
+            reader.extractall(tmp_path)
+        assert (tmp_path / name).read_bytes() == content
+
+
+def test_double_nested_quality_artifact_fails_contract(tmp_path):
+    """Regression: extracting under outputs/quality would duplicate the prefix."""
+    import io
+    import zipfile
+
+    archive = io.BytesIO()
+    with zipfile.ZipFile(archive, "w") as writer:
+        writer.writestr("outputs/quality/burndown.json", "{}")
+    archive.seek(0)
+    with zipfile.ZipFile(archive) as reader:
+        reader.extractall(tmp_path / "outputs/quality")
+    assert not (tmp_path / "outputs/quality/burndown.json").exists()
+    assert (tmp_path / "outputs/quality/outputs/quality/burndown.json").exists()
