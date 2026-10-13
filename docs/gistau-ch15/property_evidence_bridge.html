@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chapter 15 | Property Evidence Bridge</title>
+<link rel="stylesheet" href="visual_cards.css">
+<style>body{line-height:1.5}main{max-width:1150px;margin:auto;padding:1.2rem}.notice{border:2px solid #9b5c00;padding:1rem;border-radius:.6rem;background:#fff8e8;color:#352400}.meta{border:1px solid #888;padding:1rem;border-radius:.6rem;margin-top:1rem}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #aaa;padding:.55rem;text-align:left}th{background:#eaf1f6}code{overflow-wrap:anywhere}a{overflow-wrap:anywhere}.scroll{overflow-x:auto}</style></head>
+<body><header class="topbar"><h1>Chapter 15: Helium property evidence</h1><p>Review-only, fail-closed backend and provenance display</p></header>
+<main><p><a href="index.html">Return to Chapter 15 portal</a></p>
+<section class="notice"><strong>Engineering acceptance: HOLD.</strong> Published values below come only from the committed CODEX state-grid JSON. Independent QPS tunnel success does not populate this dataset. HEPAK validation and 2 K acceptance remain UNKNOWN until a licensed numerical return is separately verified.</section>
+<section class="meta"><h2>Independent CoolProp proof (different execution)</h2>
+<p>QPS source-bound run: <a href="https://github.com/GBOGEB/cryoplant-project/actions/runs/37185757928">37185757928 (success)</a>. QPS head <code>1bb8033a2bfd579a1b2a81d463d14aa53ca18ee9</code>; CoolProp source <code>a3c743026521ff557f8c2e85701c726898b00e0b</code>.</p>
+<p>Artifact 11296349272, SHA-256 <code>801009c8855d9597b04918334a66750f4f2f1aae467368781c4ab5febab5f306</code>. Required A/B/D/W points passed in the QPS run; B2K requires HEPAK. This receipt is <strong>not</strong> a published CODEX grid measurement or an authorization to transfer engineering credit.</p></section>
+<section class="meta"><h2>Published CODEX state-grid dataset</h2><p>Input: <a href="data/coolprop_state_grid_report.json"><code>data/coolprop_state_grid_report.json</code></a>. A value displays only where a record is explicitly available and finite. Missing means UNKNOWN, never zero.</p>
+<p id="status" role="status">Loading committed dataset…</p><div class="scroll"><table><thead><tr><th>Point</th><th>T [K]</th><th>P [mbar]</th><th>Backend</th><th>Density [kg/m³]</th><th>h [J/kg]</th><th>s [J/(kg·K)]</th><th>Evidence state</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+<section class="meta"><h2>Backend validity</h2><p>CoolProp: independently exercised in QPS at four specified input states; current CODEX grid availability is evaluated per row, not inferred. HEPAK: source/licence/version receipt UNKNOWN. Helium-II, lambda transition, two-phase quality and the 2 K pressure boundary: VALIDATION REQUIRED.</p><p>Source-return authority: <a href="https://github.com/GBOGEB/cryoplant-project/issues/663">QPS #663</a>. <strong>authority_transfer=false · formal_credit_delta=0 · engineering_credit_delta=0</strong></p></section></main>
+<script>
+"use strict";
+const status=document.getElementById("status"),body=document.getElementById("rows");
+const number=(value,usable)=>usable&&typeof value==="number"&&Number.isFinite(value)?String(value):"UNKNOWN";
+fetch("data/coolprop_state_grid_report.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json();}).then(records=>{
+if(!Array.isArray(records))throw Error("expected array");
+for(const row of records){const tr=document.createElement("tr");const usable=row.available===true&&row.status!=="backend_unavailable";const fields=[row.point_id,number(row.temperature_k,true),number(row.pressure_mbar,true),row.backend||"UNKNOWN",number(row.density_kg_m3,usable),number(row.enthalpy_j_kg,usable),number(row.entropy_j_kgk,usable),usable?"UNVERIFIED (no acceptance receipt)":row.status||"UNKNOWN"];for(const value of fields){const td=document.createElement("td");td.textContent=String(value??"UNKNOWN");tr.append(td);}body.append(tr);}
+const available=records.filter(x=>x.available===true&&x.status!=="backend_unavailable").length;
+status.textContent=records.length+" published records; "+available+" backend-available rows (not automatically engineering-accepted), "+(records.length-available)+" unavailable rows.";
+}).catch(err=>{status.textContent="DATASET UNKNOWN — unable to load or parse committed JSON: "+err.message;});
+</script></body></html>
