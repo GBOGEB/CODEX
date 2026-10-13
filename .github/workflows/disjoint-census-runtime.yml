@@ -1,0 +1,74 @@
+name: Disjoint census runtime and UBI9 proof
+on:
+  push:
+    branches: [work/disjoint-census-verification-20261013]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  census-python:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile and exercise census
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/disjoint
+          python -m py_compile scripts/verify_disjoint_census.py scripts/collect_disjoint_evidence.py
+          python -m unittest discover -s scripts -p 'test_verify_disjoint_census.py' -v 2>&1 | tee artifacts/disjoint/pytest.log
+          printf '{"repository":"GBOGEB/CODEX","head_sha":"%s","populations":{}}\n' "$GITHUB_SHA" > artifacts/disjoint/input.json
+          python scripts/verify_disjoint_census.py artifacts/disjoint/input.json --output artifacts/disjoint/verified.json
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib,platform
+          p=Path('artifacts/disjoint/verified.json')
+          d={'schema':'code-purple.disjoint.runtime.v1','head_sha':__import__('os').environ['GITHUB_SHA'],
+             'platform':platform.platform(),'python':platform.python_version(),
+             'validation_output_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
+             'validation_output_bytes':p.stat().st_size,
+             'coverage_status':'WITHHELD_NO_ARTIFACTS',
+             'live_docker_status':'WITHHELD_NOT_PROBED'}
+          Path('artifacts/disjoint/runtime.json').write_text(json.dumps(d,indent=2)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: disjoint-census-python-${{ github.sha }}
+          path: artifacts/disjoint/
+  ubi9:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Actual Docker and RHEL UBI 9 execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/ubi9
+          docker version > artifacts/ubi9/docker-version.txt
+          docker run --rm --network none -v "$PWD:/workspace:ro" -v "$PWD/artifacts/ubi9:/output" registry.access.redhat.com/ubi9/python-311:latest /bin/bash -lc '
+            set -euo pipefail
+            cd /workspace
+            python -m py_compile scripts/verify_disjoint_census.py
+            python -m unittest discover -s scripts -p "test_verify_disjoint_census.py" -v > /output/tests.log 2>&1
+            python - <<PY
+          import os,json,hashlib,platform,pathlib
+          output=pathlib.Path("/output")
+          d={"schema":"code-purple.ubi9.runtime.v1","head_sha":os.environ.get("GITHUB_SHA"),
+             "python":platform.python_version(),"platform":platform.platform(),
+             "tests_log_sha256":hashlib.sha256((output/"tests.log").read_bytes()).hexdigest(),
+             "container_runtime":"ubi9/python-311"}
+          (output/"receipt.json").write_text(json.dumps(d,indent=2)+"\\n")
+          PY
+          '
+          sha256sum artifacts/ubi9/* > artifacts/ubi9/SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: disjoint-ubi9-${{ github.sha }}
+          path: artifacts/ubi9/
