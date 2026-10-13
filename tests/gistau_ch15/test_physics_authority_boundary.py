@@ -97,3 +97,13 @@ def test_committed_review_page_is_current():
     spec.loader.exec_module(module)
     committed = (REPO_ROOT / "docs" / "gistau-ch15" / "physics_authority.html").read_text(encoding="utf-8")
     assert committed == module.render(), "regenerate: PYTHONPATH=src python tools/render_physics_authority_review.py"
+
+
+def test_runner_report_carries_governing_authority():
+    from dataclasses import asdict
+
+    from gistau_ch15.properties.backend_selector import GOVERNING_AUTHORITY, select_available_backends
+
+    _, availability = select_available_backends()
+    rows = [asdict(item) for item in availability]  # the FrontierEngineeringRunner serializer
+    assert rows and all(r["governing_authority"] == GOVERNING_AUTHORITY for r in rows)
