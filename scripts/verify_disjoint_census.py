@@ -7,6 +7,7 @@ import re
 from pathlib import Path
 
 SHA = re.compile(r"^[0-9a-f]{40}$")
+DIGEST = re.compile(r"^[0-9a-f]{64}$")
 ALLOWED = {"MEASURED", "DERIVED_FROM_MEASURED", "WITHHELD"}
 POPULATIONS = ("statement", "branch", "diff", "ruff_files", "pyright_files", "pipeline_outputs", "ldab_live_sessions", "dod", "dov")
 
@@ -49,11 +50,11 @@ def verify(data: dict) -> dict:
         if not isinstance(source_sha, str) or source_sha != head:
             errors.append(f"{name}: stale/mismatched exact-head source")
             continue
-        if not isinstance(run, int) or run <= 0:
+        if type(run) is not int or run <= 0:
             errors.append(f"{name}: observed run_id required")
             continue
-        if name in ("pipeline_outputs", "ldab_live_sessions", "dov") and not row.get("receipt_sha256"):
-            errors.append(f"{name}: independently verifiable receipt hash required")
+        if name in ("pipeline_outputs", "ldab_live_sessions", "dov") and not DIGEST.fullmatch(str(row.get("receipt_sha256") or "")):
+            errors.append(f"{name}: valid 64-digit receipt SHA-256 required")
             continue
         result[name] = {"status": status, "numerator": num, "denominator": den, "percent": round(num / den * 100, 2), "run_id": run, "source_sha": source_sha}
     return {"schema": "code-purple.disjoint-census-validation.v1", "repository": repo, "head_sha": head, "valid": not errors, "errors": errors, "populations": result}
