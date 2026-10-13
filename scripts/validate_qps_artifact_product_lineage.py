@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Fail-closed validator for the QPS multi-format artifact lineage contract."""
 
 from __future__ import annotations
