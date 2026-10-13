@@ -61,6 +61,16 @@ jobs:
           assert receipt["source_binding_valid"] is True
           assert receipt["document_core_receipt_valid"] is True
           PY
+      - name: Upload generated executable-value receipts for exact-head reconciliation
+        uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: missioncontrol-generated-value-receipts
+          path: |
+            mission_control/mycelium/executable_value_report.json
+            docs/data/missioncontrol_executable_value_report.json
+            mission_control/mycelium/executable_value_control_observation.json
+          if-no-files-found: error
       - name: Preflight generated-value parity before expensive tests
         run: |
           git diff --exit-code -- \
