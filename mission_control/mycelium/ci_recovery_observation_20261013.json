@@ -1,0 +1,113 @@
+{
+  "schema": "missioncontrol-ci-observation/1.0",
+  "captured_date": "2026-10-13",
+  "source_class": "verified_github_actions_observation",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "engineering_acceptance": "WITHHELD",
+  "security_waiver": false,
+  "observations": {
+    "QPS": {
+      "repository": "GBOGEB/cryoplant-project",
+      "source_sha": "564308bc1638e1439f2ae48a6bac4a8e2b9d6ebf",
+      "workflow_job_id": 115416600733,
+      "conclusion": "success",
+      "junit": {
+        "passed": 2,
+        "failed": 0,
+        "errors": 0
+      },
+      "coverage": {
+        "scope": "two selected lineage modules",
+        "statements": 156,
+        "not_covered": 64,
+        "percent_reported": 59
+      },
+      "lineage_census": "PASS",
+      "artifact": {
+        "id": 11830603821,
+        "sha256": "1a92ecda1f5e05a57a18e89d4f282507cd6b310a7ccc20dded1f7be34481abb9"
+      },
+      "full_repository_coverage": null,
+      "changed_line_coverage": null
+    },
+    "ABACUS": {
+      "repository": "GBOGEB/ABACUS",
+      "source_sha": "fe419c184c577b52ff5b912a3da014be16992eb0",
+      "workflow_job_id": 115418566191,
+      "conclusion": "success",
+      "junit": {
+        "passed": 19,
+        "failed": 0,
+        "errors": 0
+      },
+      "coverage": {
+        "scope": "bounded modules phase4 and test evidence census",
+        "percent_reported": 41.91,
+        "statements": 415,
+        "missing_statements": 234,
+        "branches": 172,
+        "missing_branches": 15
+      },
+      "security": {
+        "scope": "two touched test files Bandit bounded census only",
+        "findings": {
+          "B101": 46,
+          "B105": 1,
+          "B404": 1,
+          "B603": 1
+        },
+        "full_security_clearance": false,
+        "safety_clearance": null
+      },
+      "artifact": {
+        "id": 11831193195,
+        "sha256": "ff655f545e393b9becc6357efac094bf428f51d719431913804043f67ab470d5"
+      },
+      "full_repository_coverage": null,
+      "changed_line_coverage": null
+    },
+    "CODEX": {
+      "repository": "GBOGEB/CODEX",
+      "source_sha": "74a340378b5da183fa6efa136375aff58c65b64e",
+      "producer_jobs": {
+        "quality": {
+          "id": 115418730716,
+          "conclusion": "success",
+          "artifact_id": 11831487678,
+          "sha256": "7921ddfc13ed51e2b7d194902bc2e95c5581d0495598a7d873de68abde9dda63",
+          "ruff_exit": 1,
+          "baseline_pyright_exit": 0,
+          "expanded_pyright_exit": 1
+        },
+        "ubi9": {
+          "id": 115418730890,
+          "conclusion": "success",
+          "artifact_id": 11831957252,
+          "sha256": "63d12f25f1004f14fb53a69ef9ecc364fb8b8d6197059eb8379c847100964b94"
+        }
+      },
+      "evidence_join": {
+        "job_id": 115420149591,
+        "status": "queued",
+        "conclusion": null
+      },
+      "junit": null,
+      "changed_line_coverage": null,
+      "full_repository_coverage": null,
+      "security_clearance": null
+    }
+  },
+  "live_runtime": {
+    "active_crew_workers": null,
+    "registered_runner_capacity": null,
+    "runner_free_slots": null,
+    "ldab_active_sessions": null,
+    "ldab_observed_ports": null,
+    "debug_steps": null,
+    "rhel_8_9_exact_head": null,
+    "reason": "No authenticated runner/crew/LDAB session inventory or native RHEL receipt supplied"
+  },
+  "publication_policy": "Read-only provenance; do not infer promotion from historical green jobs, missing data, or synthetic merge checkouts."
+}
