@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Validate CODEX reusable block YAML SSOT records.
 
 This is intentionally small and dependency-light for the first runtime proof.
