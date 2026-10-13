@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Validate CODEX SSOT-style bridge controls and score awake/penetration depth."""
 
 from __future__ import annotations
