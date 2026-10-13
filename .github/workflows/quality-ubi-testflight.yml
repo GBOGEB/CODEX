@@ -168,7 +168,8 @@ jobs:
       - uses: actions/download-artifact@v7.0.0
         with:
           name: codex-quality-census
-          path: .
+          # The producer archive stores burndown.json at ZIP root.
+          path: outputs/quality
       - uses: actions/download-artifact@v7.0.0
         with:
           name: codex-ubi9-runtime
