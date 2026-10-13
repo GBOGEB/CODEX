@@ -241,6 +241,28 @@ $("#codePurpleLive").textContent=(current?"CURRENT SOURCE":"STALE · NOT LIVE")+
 load().catch(e=>$('#stamp').textContent='graph load failed: '+e.message);
 </script>
 <script src="assets/missioncontrol/control-plane.js"></script>
-<section class="panel" id="diagnosticCoveragePanel" aria-label="Diagnostic coverage"><h2>Diagnostic coverage · advisory</h2><p id="diagnosticCoverageState">UNKNOWN — receipt not published</p><pre id="diagnosticCoverageValues">Quality / UBI / LDAB / crew: UNKNOWN</pre></section>
+<section class="panel" id="diagnosticCoveragePanel" aria-label="Diagnostic coverage">
+<h2>Diagnostic coverage · advisory</h2>
+<p id="diagnosticCoverageState" role="status">UNKNOWN — receipt not published</p>
+<pre id="diagnosticCoverageValues">Quality / UBI / LDAB / crew: UNKNOWN</pre>
+<div id="diagnosticCoverageCards" class="cards" aria-label="Quality and crew evidence leaves"></div>
+<details><summary>Disjoint repair lanes and acceptance gates</summary>
+<table><thead><tr><th>Lane</th><th>Target</th><th>Acceptance requirement</th></tr></thead>
+<tbody>
+<tr><td>T1 · F401</td><td>Historical B1→B2</td><td>7 resolved, 0 new; current-main retest required</td></tr>
+<tr><td>T2 · Pyright</td><td>120 historical files</td><td>Fixed denominator, exclusive file owners</td></tr>
+<tr><td>T3 · Import ordering</td><td>38 historical owner slots</td><td>Import-safe B3 and regression proof</td></tr>
+<tr><td>T4 · Mechanical lint</td><td>38 historical owner slots</td><td>Disjoint EXE001/F541 repair and B3</td></tr>
+<tr><td>T5 · Browser QA</td><td>Specific 404 fixture</td><td>Exact-head browser QA and independent review</td></tr>
+<tr><td>T6 · LDAB/BD</td><td>Source-bound signatures</td><td>Measured join, not inferred task count</td></tr>
+<tr><td>R1 · Review</td><td>Independent disposition</td><td>Security + exact-head approval</td></tr>
+</tbody></table>
+</details>
+<p class="muted">Historical milestones are not current-main coverage. Authenticated active workers, queue p50/p95, RHEL 8/9 native acceptance, Docker listeners and production coverage remain UNKNOWN without receipts.</p>
+<p><a href="https://github.com/GBOGEB/CODEX/issues/989">CODEX #989 · execution lineage</a> ·
+<a href="https://github.com/GBOGEB/CODEX/pull/1024">#1024 · browser QA</a> ·
+<a href="https://github.com/GBOGEB/CODEX/pull/1025">#1025 · receipt identity</a> ·
+<a href="https://github.com/GBOGEB/CODEX/pull/1026">#1026 · evidence producer</a></p>
+</section>
 <script src="assets/missioncontrol/diagnostic-coverage.js"></script>
 </body></html>
