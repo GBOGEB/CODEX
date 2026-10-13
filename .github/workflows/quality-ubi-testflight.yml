@@ -41,10 +41,13 @@ jobs:
           ruff_rc=$?
           pyright scripts/quality_burndown.py --outputjson > outputs/quality/pyright.json
           pyright_rc=$?
+          # Expanded T2 census is advisory and NOT comparable with the frozen single-file Pyright B1.
+          pyright scripts --outputjson > outputs/quality/pyright-expanded.json
+          pyright_expanded_rc=$?
           set -e
           python -m pytest -q tests/test_quality_burndown.py
           python scripts/quality_burndown.py --ruff outputs/quality/ruff.json --pyright outputs/quality/pyright.json --source-sha "$GITHUB_SHA" --out outputs/quality/burndown.json
-          echo "Ruff exit: $ruff_rc; Pyright exit: $pyright_rc"
+          echo "Ruff exit: $ruff_rc; baseline Pyright exit: $pyright_rc; expanded Pyright exit: $pyright_expanded_rc"
       - uses: actions/upload-artifact@v7.0.2
         if: always()
         with:
