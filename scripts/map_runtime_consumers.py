@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Map executable census consumers to declared logical IDs and runtime families.
 
 This is diagnostic only: it identifies hard-coded authority paths and potential
