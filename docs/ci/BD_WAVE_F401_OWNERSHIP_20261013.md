@@ -25,3 +25,10 @@ R1: independent review of all changes, run receipts, failure cases, and no autho
 Six files changed on an isolated branch, targeting seven F401 diagnostics. These are code changes by a repository-authorized operator, **not** an authenticated GM crew spawn. No accepted burndown or CI PASS is claimed before exact-head jobs and B2 JSON receipts.
 
 No QPS engineering authority transfer; no automatic acceptance, merge, or controlled-crew eligibility bypass.
+
+## B2 collection and Pyright scope control
+- CI at original PR #1015 head completed successfully, but the quality workflow was omitted by its too-narrow path trigger; missing B2 is NOT zero diagnostics.
+- Workflow now triggers on `scripts/**` and retains `workflow_dispatch`; regenerate B2 from a terminal quality-census artifact at an explicitly recorded SHA.
+- Advisory Pyright scope expanded from one file to three: `scripts/quality_burndown.py`, `scripts/check_bridge_alignment.py`, `scripts/check_svg_links.py`. Compare only against a same-scope Pyright baseline; old one-file 0 is not comparable.
+- GitHub security review flagged I001 in `scripts/validate_census_dov_tuple.py`; the import block was reformatted within the existing T1 ownership, without allocating that file to T3.
+- Separate T3/I001 and T4/EXE001 ownership requires actual path-level census before any source edits. No overlaps permitted.
