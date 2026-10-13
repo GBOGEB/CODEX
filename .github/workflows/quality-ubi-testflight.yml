@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - 'scripts/quality_burndown.py'
+      - 'scripts/**'
       - 'scripts/check_authority_integrity.py'
       - 'scripts/check_release_identity.py'
       - '.github/workflows/quality-ubi-testflight.yml'
@@ -13,7 +13,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'scripts/quality_burndown.py'
+      - 'scripts/**'
       - 'scripts/check_authority_integrity.py'
       - 'scripts/check_release_identity.py'
       - '.github/workflows/quality-ubi-testflight.yml'
