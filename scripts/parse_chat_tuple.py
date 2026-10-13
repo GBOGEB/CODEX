@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Parse incubator tuple YAML files."""
 
 from __future__ import annotations
