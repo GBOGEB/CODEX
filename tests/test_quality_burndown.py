@@ -13,7 +13,7 @@ def test_burndown_comparison(tmp_path):
     result = subprocess.run(
         [sys.executable, "scripts/quality_burndown.py", "--ruff", str(current),
          "--baseline", str(baseline), "--out", str(output), "--source-sha", "new"],
-        capture_output=True, text=True)
+        capture_output=True, text=True, check=False)
     assert result.returncode == 0, result.stderr
     receipt = json.loads(output.read_text())
     assert receipt["comparison"]["resolved"] == 1
@@ -32,7 +32,7 @@ def test_pyright_rule_and_line(tmp_path):
     output = tmp_path / "receipt.json"
     result = subprocess.run(
         [sys.executable, "scripts/quality_burndown.py", "--pyright", str(report),
-         "--out", str(output)], capture_output=True, text=True)
+         "--out", str(output)], capture_output=True, text=True, check=False)
     assert result.returncode == 0, result.stderr
     receipt = json.loads(output.read_text())
     assert receipt["current"]["by_rule"]["pyright:reportUndefinedVariable"] == 1
