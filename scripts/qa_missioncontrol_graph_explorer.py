@@ -54,6 +54,13 @@ def attach_error_capture(page: Any) -> tuple[list[str], list[str]]:
         else None,
     )
     page.on("pageerror", lambda exc, dst=page_errors: dst.append(str(exc)))
+    # Preserve failing resource URLs instead of an unidentifiable browser 404.
+    page.on(
+        "response",
+        lambda response, dst=console_errors: dst.append(
+            f"HTTP {response.status}: {response.url}"
+        ) if response.status >= 400 else None,
+    )
     return console_errors, page_errors
 
 
