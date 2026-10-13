@@ -1,3 +1,17 @@
+## PR CLASSIFICATION
+- PR-ID: PR-000
+- WAVE: W003
+- SPRINT: S1-P1
+- DOMAIN: EXECUTION_GOVERNANCE_INFRASTRUCTURE
+- TYPE: CI_CD
+- CRITICALITY: HIGH
+- TOPOLOGY IMPACT: NO
+- SCHEMA MUTATION: NO
+
+---
+
+<!-- REQUIRED: replace PR-000 with this PR's number (PR-1023 for PR #1023), choose correct TYPE/CRITICALITY/impact values, and preserve this block. W003 validates against federation_runtime/schema/governance_header.schema.json. GitHub's automatic PR number is available after creation; edit the PR body before admission. This template is a preflight aid, not an approval or protection bypass. -->
+
 # [WAVE]
 
 ## Semantic Scope
