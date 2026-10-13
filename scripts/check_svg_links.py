@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Check that local SVG assets referenced in docs exist."""
 import re
-import sys
 from pathlib import Path
 
 DOCS_ROOT = Path("docs")
