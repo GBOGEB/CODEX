@@ -54,6 +54,13 @@ def attach_error_capture(page: Any) -> tuple[list[str], list[str]]:
         else None,
     )
     page.on("pageerror", lambda exc, dst=page_errors: dst.append(str(exc)))
+    # Preserve failing resource URLs instead of an unidentifiable browser 404.
+    page.on(
+        "response",
+        lambda response, dst=console_errors: dst.append(
+            f"HTTP {response.status}: {response.url}"
+        ) if response.status >= 400 else None,
+    )
     return console_errors, page_errors
 
 
@@ -255,6 +262,11 @@ def qa_mycelium_layouts(page: Any, url: str, out: Path, viewport: str) -> dict[s
     page.route("**/data/code_purple_current_observation.json", lambda route: route.fulfill(
         status=200, content_type="application/json",
         body='{"schema":"code-purple.qa-only-unverified/1.0","observation_state":"UNKNOWN_NOT_PRODUCTION"}',
+    ))
+    # Optional coverage receipt is not published on this source. A QA-only 204
+    # exercises the viewer UNKNOWN fallback without inventing evidence.
+    page.route("**/data/diagnostic_coverage_receipt.json", lambda route: route.fulfill(
+        status=204,
     ))
     response = page.goto(url, wait_until="networkidle")
     page.wait_for_function("document.querySelector('#stamp').textContent.includes('snapshot')")
