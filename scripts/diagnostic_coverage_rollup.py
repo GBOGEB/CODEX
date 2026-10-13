@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Advisory exact-SHA diagnostic coverage collector; no network or authority writes."""
 from __future__ import annotations
 
