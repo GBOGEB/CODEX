@@ -103,3 +103,30 @@ def test_ambiguous_basename_fails_closed(tmp_path, monkeypatch):
     )
     with pytest.raises(ValueError, match="Ambiguous coverage source path"):
         diffcov.measure(xml, "b" * 40, tmp_path)
+
+
+def test_coverage_xml_with_zero_hits_reports_zero_percent(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        diffcov.subprocess, "check_output",
+        lambda args, **kwargs: "a" * 40 if args[1] == "rev-parse"
+        else "+++ b/scripts/sample.py\n@@ -0,0 +10,2 @@\n+x\n+y\n",
+    )
+    result = diffcov.measure(_fixture(tmp_path, (0, 0)), "b" * 40, tmp_path)
+    assert result["status"] == "MEASURED"
+    assert result["eligible_lines"] == 2
+    assert result["covered_lines"] == 0
+    assert result["percent"] == 0.0
+
+
+def test_coverage_xml_malformed_is_not_treated_as_clean(tmp_path, monkeypatch):
+    import xml.etree.ElementTree as ET
+    import pytest
+
+    xml = tmp_path / "broken.xml"
+    xml.write_text("<coverage><packages>", encoding="utf-8")
+    monkeypatch.setattr(
+        diffcov.subprocess, "check_output",
+        lambda args, **kwargs: "a" * 40 if args[1] == "rev-parse" else "",
+    )
+    with pytest.raises(ET.ParseError):
+        diffcov.measure(xml, "b" * 40, tmp_path)
