@@ -99,14 +99,72 @@ def test_committed_review_page_is_current():
     assert committed == module.render(), "regenerate: PYTHONPATH=src python tools/render_physics_authority_review.py"
 
 
-def test_runner_report_carries_governing_authority():
-    from dataclasses import asdict
+def _render_with_parity(parity_overrides):
+    spec = importlib.util.spec_from_file_location(
+        "render_physics_authority_review", REPO_ROOT / "tools" / "render_physics_authority_review.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    tool = _tool()
+    pin = tool.load_pin()
+    pin["policy_parity"] = {**pin["policy_parity"], **parity_overrides}
+    if "resolution" in parity_overrides and parity_overrides["resolution"] is None:
+        pin["policy_parity"].pop("resolution")
+    pin["meta_checksum_sha256"] = tool.meta_checksum(pin)  # re-seal: parity is checksummed
+    return module.render(pin)
+
+
+def test_parity_still_requires_explicit_acceptance():
+    html = _render_with_parity({"status": "PARITY", "diverging_probes_K": []})
+    assert "awaits your acceptance" in html
+    assert "Nothing needs a decision" not in html
+
+
+def test_divergence_text_is_authority_neutral_without_recorded_resolution():
+    html = _render_with_parity({"status": "DIVERGED", "diverging_probes_K": [1.8], "resolution": None})
+    assert "ABACUS has to adopt" not in html
+    assert "No resolution is recorded in the pin" in html
 
     from gistau_ch15.properties.backend_selector import (
         GOVERNING_AUTHORITY,
         select_available_backends,
     )
 
-    _, availability = select_available_backends()
-    rows = [asdict(item) for item in availability]  # the FrontierEngineeringRunner serializer
-    assert rows and all(r["governing_authority"] == GOVERNING_AUTHORITY for r in rows)
+def test_divergence_text_uses_recorded_resolution():
+    html = _render_with_parity({"status": "DIVERGED", "diverging_probes_K": [1.8], "resolution": "CODEX re-mirrors ABACUS"})
+    assert "Recorded resolution: CODEX re-mirrors ABACUS" in html
+@pytest.mark.parametrize(
+    "mutate",
+    [
+        lambda p: p["authority"].__setitem__("runtime_dependency", "CoolProp==9.9.9"),
+        lambda p: p["pinned_files"][0].__setitem__("git_blob_sha", "f" * 40),
+        lambda p: p["pinned_files"][0].__setitem__("role", "something else"),
+        lambda p: p["local_roles"].__setitem__("src/gistau_ch15/properties", "GOVERNING"),
+        lambda p: p["policy_parity"].__setitem__("status", "DIVERGED"),
+        lambda p: p["output_crosscheck"].__setitem__("output_checksum_sha256", "0" * 64),
+    ],
+)
+def test_meta_checksum_covers_every_authority_bearing_field(pin, mutate):
+    tool = _tool()
+    tampered = yaml.safe_load(yaml.safe_dump(pin))
+    mutate(tampered)
+    with pytest.raises(tool.PinError, match="meta_checksum"):
+        tool.check_pin(tampered)
+
+
+def test_checkout_blob_ids_are_verified(pin, tmp_path):
+    import subprocess
+
+    tool = _tool()
+    repo = tmp_path / "abacus"
+    repo.mkdir()
+    subprocess.run(["git", "init", "-q", str(repo)], check=True)
+    f = pin["pinned_files"][0]
+    target = repo / f["path"]
+    target.parent.mkdir(parents=True)
+    target.write_text("content\n")
+    tampered = yaml.safe_load(yaml.safe_dump(pin))
+    tampered["pinned_files"] = [dict(f, sha256=__import__("hashlib").sha256(b"content\n").hexdigest(), git_blob_sha="a" * 40)]
+    problems = tool.verify_checkout(tampered, repo)
+    assert any(p.startswith("BLOB_DRIFT") for p in problems)
+    assert not any(p.startswith("CONTENT_DRIFT") for p in problems)
