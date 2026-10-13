@@ -1,0 +1,92 @@
+name: Quality burndown and UBI 9 testflight
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/quality_burndown.py'
+      - 'scripts/check_authority_integrity.py'
+      - 'scripts/check_release_identity.py'
+      - '.github/workflows/quality-ubi-testflight.yml'
+      - 'pyproject.toml'
+      - 'tests/test_quality_burndown.py'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/quality_burndown.py'
+      - 'scripts/check_authority_integrity.py'
+      - 'scripts/check_release_identity.py'
+      - '.github/workflows/quality-ubi-testflight.yml'
+      - 'pyproject.toml'
+
+permissions:
+  contents: read
+
+jobs:
+  quality-census:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Install pinned scanners
+        run: python -m pip install 'pytest>=7.0' ruff==0.16.6 pyright==1.1.407
+      - name: Measure Ruff and Pyright independently
+        shell: bash
+        run: |
+          mkdir -p outputs/quality
+          set +e
+          ruff check scripts --output-format json > outputs/quality/ruff.json
+          ruff_rc=$?
+          pyright scripts/quality_burndown.py --outputjson > outputs/quality/pyright.json
+          pyright_rc=$?
+          set -e
+          python -m pytest -q tests/test_quality_burndown.py
+          python scripts/quality_burndown.py --ruff outputs/quality/ruff.json --pyright outputs/quality/pyright.json --source-sha "$GITHUB_SHA" --out outputs/quality/burndown.json
+          echo "Ruff exit: $ruff_rc; Pyright exit: $pyright_rc"
+      - uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: codex-quality-census
+          path: outputs/quality/
+          if-no-files-found: error
+
+  ubi9-runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Resolve and pin UBI image digest for this run
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker pull registry.access.redhat.com/ubi9/python-312:latest
+          image_ref="$(docker image inspect registry.access.redhat.com/ubi9/python-312:latest --format '{{index .RepoDigests 0}}')"
+          case "$image_ref" in *@sha256:*) ;; *) echo "No digest" >&2; exit 1;; esac
+          echo "IMAGE_REF=$image_ref" >> "$GITHUB_ENV"
+          echo "$image_ref" > image-ref.txt
+      - name: Execute real Python entrypoints inside UBI 9
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p outputs/ubi9
+          docker run --rm --user "$(id -u):$(id -g)" \
+            -e GITHUB_SHA="$GITHUB_SHA" -e IMAGE_REF="$IMAGE_REF" \
+            -v "$PWD:/workspace" -w /workspace "$IMAGE_REF" /bin/bash -c '
+              set -euo pipefail
+              python --version > outputs/ubi9/python-version.txt 2>&1
+              python -m pip install --disable-pip-version-check --user -e . > outputs/ubi9/install.log 2>&1
+              python -m pip freeze > outputs/ubi9/dependencies.txt
+              python scripts/check_authority_integrity.py > outputs/ubi9/authority.log 2>&1
+              python scripts/check_release_identity.py > outputs/ubi9/release_identity.log 2>&1
+              python scripts/ubi_runtime_receipt.py
+            '
+      - name: Publish runtime receipts and logs
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: codex-ubi9-runtime
+          path: |
+            outputs/ubi9/
+            image-ref.txt
+          if-no-files-found: warn
