@@ -119,7 +119,18 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:7px;bord
 </section><section class="panel" style="aspect-ratio:auto;min-height:100px;margin-top:15px">
 <h2>CODE PURPLE · ABACUS current census</h2><div id="codePurpleLive" class="muted" aria-live="polite">UNKNOWN (not zero)</div>
 <div class="controls"><a href="code_purple_rex_control.html">REX Control</a> · <a href="https://github.com/GBOGEB/CODEX/blob/main/scripts/code_purple_current_observation.py">Source observation</a></div>
+</section>
+<section class="panel" id="disjointOverview" style="aspect-ratio:auto;min-height:0;margin-top:15px" aria-labelledby="disjointTitle">
+<h2 id="disjointTitle">Disjoint crew · pulse N → N+1</h2>
+<p class="muted compact">Advisory operational review. A lane is an ownership slice, not a verified active worker. Missing evidence remains UNKNOWN.</p>
+<div class="kpis" id="disjointPulseCards" aria-live="polite"></div>
+<div class="controls"><a href="missioncontrol_disjoint_evidence.html">Detailed 9-population census</a> · <a href="https://github.com/GBOGEB/CODEX/issues/989">CODEX #989</a> · <a href="https://github.com/GBOGEB/CODEX/issues/977">Crew #977</a> · <a href="https://github.com/GBOGEB/ABACUS/issues/1860">ABACUS #1860</a></div>
+<div class="artifact-grid" id="disjointLaneCards"></div>
+<details><summary>Measurement definitions, DOD/DOV, provenance and unknowns</summary>
+<p class="compact">Registration coverage is not Python test coverage. N → N+1 percentage-point change equals 100 × (covered N+1 / eligible N+1 − covered N / eligible N); display denominator changes. BD net closure = closed − opened − reopened within the same named period. Real LDAB requires a container/session/port/log/step receipt; UBI test success is a different population. DOD is implementation completion; DOV requires independent exact-head proof. PCA requires a measured feature matrix, Bradley–Terry requires observed pairwise results, and reverse-pressure requires scored-input completeness.</p>
+</details>
 </section></main>
+<script src="assets/missioncontrol/disjoint-lanes.js" defer></script>
 <script>
 const $=s=>document.querySelector(s);
 let model, metrics, history;
