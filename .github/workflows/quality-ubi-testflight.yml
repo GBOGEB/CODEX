@@ -10,7 +10,6 @@ on:
       - '.github/workflows/quality-ubi-testflight.yml'
       - 'pyproject.toml'
       - 'tests/test_quality_burndown.py'
-      - 'tests/test_quality_burndown.py'
   push:
     branches: [main]
     paths:
@@ -80,24 +79,7 @@ jobs:
               python -m pip freeze > outputs/ubi9/dependencies.txt
               python scripts/check_authority_integrity.py > outputs/ubi9/authority.log 2>&1
               python scripts/check_release_identity.py > outputs/ubi9/release_identity.log 2>&1
-              python - <<\x27PY\x27
-          import hashlib, json, os, pathlib, platform
-          root = pathlib.Path("outputs/ubi9")
-          hashes = {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
-                    for p in sorted(root.iterdir()) if p.is_file()}
-          receipt = {"schema": "codex-ubi-testflight/v1",
-                     "source_sha": os.environ["GITHUB_SHA"],
-                     "container_image": os.environ["IMAGE_REF"],
-                     "image_digest": os.environ["IMAGE_REF"].rsplit("@", 1)[1],
-                     "python": platform.python_version(),
-                     "system": platform.platform(),
-                     "executed_entrypoints": [
-                       "scripts/check_authority_integrity.py",
-                       "scripts/check_release_identity.py"],
-                     "outcomes": {"authority_integrity": "PASS", "release_identity": "PASS"},
-                     "sha256": hashes}
-          (root / "receipt.json").write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\\n")
-          PY
+              python scripts/ubi_runtime_receipt.py
             '
       - name: Publish runtime receipts and logs
         if: always()
