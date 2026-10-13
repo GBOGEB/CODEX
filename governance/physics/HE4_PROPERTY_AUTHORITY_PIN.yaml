@@ -12,8 +12,8 @@ formal_credit_delta: 0
 authority:
   repository: GBOGEB/ABACUS
   capability: CRYO_HE4_PROPERTY_SURFACE
-  commit_sha: 53688f26d5b9c4cd074ef905e426849e85324383
-  commit_date: "2026-10-06"
+  commit_sha: 4c2f6695b177975c8983aff74e00ea37905835e3
+  commit_date: "2026-10-12"   # merge of GBOGEB/ABACUS#1881 (HEPAK governs T <= 4.5 K)
   runtime_dependency: CoolProp==7.2.0
   rule: CODEX_MUST_NOT_DUPLICATE_OR_SELF_PROMOTE_PHYSICS_PROVIDER
 
@@ -27,16 +27,16 @@ pinned_files:
     sha256: d1c6229317a3d8da958cbd82785473b981494fbda8ff56ad94c2cc7706834460
   - path: models/helium_properties/qplant_provider.py
     role: QPLANT HEPAK/CoolProp routing
-    git_blob_sha: 01cf413ab800cdcbd508a80cb75f61842ac0776c
-    sha256: b9c0293f701a43cb704f5ad7a29ae5b5c31cd6341c8562b53428a795fc6e5c32
+    git_blob_sha: 3a66aef1242ed43d9afa09b59c0c839adb73f18c
+    sha256: 7e04662fc9074e71086d6010b491691012c6f9b58fc652f230b2ac80d346fd20
   - path: models/helium_properties/hepak_reference.py
     role: frozen HEPAK reference-table loader
     git_blob_sha: 46a678e8305d8b7fe6d02b1d5395b932df69d2eb
     sha256: a4aaa2d5a4ed361ff4c75babb6931ef9a12b6acad7f89be39893f33e069b49bd
   - path: models/helium_properties/qplant_hepak_runtime_export.py
     role: HEPAK runtime receipt export
-    git_blob_sha: 8e6d7d52bf78354059a0ff69620dd4dfd8fc8e68
-    sha256: 7d99c717cbc326561cce0767787de8bdaab1790f27465d3fc21e494ee8705569
+    git_blob_sha: 052bd65d29fb76e96f1e21a9b2ede7375616a5a4
+    sha256: 454716db2c50ad618219a6d8ad57a15839fd099c51ef61bd15dab6185dfc522a
   - path: cryo_dashboard_v0_3_0/property_surface_manifest.json
     role: property surface manifest and golden reference cases (cryo property calculator v0.3.0)
     git_blob_sha: ff8c9701d6f5e8cb11f24e3148165c538c8161f3
@@ -55,7 +55,7 @@ pinned_files:
 pinned_constants:
   lambda_point_K: 2.1768            # provider.py LAMBDA_K
   governed_envelope_K: [1.8, 300.0] # provider.py state_tp guard
-  qplant_hepak_band_K: [2.0, 4.5]   # qplant_provider.py HEPAK_T_MIN_K, HEPAK_T_MAX_K
+  qplant_hepak_band_K: [0.0, 4.5]   # qplant_provider.py: 0 < T <= HEPAK_T_MAX_K (ABACUS#1881)
 
 # CODEX local roles under this pin.
 local_roles:
@@ -67,11 +67,10 @@ local_roles:
 # either side moves without this block being updated.
 policy_parity:
   codex_rule: HEPAK governs 0 < T <= 4.5 K (owner decision 2026-10-11, CODEX #969)
-  abacus_rule: HEPAK governs 2.0 <= T <= 4.5 K (qplant_provider.py at commit_sha)
+  abacus_rule: HEPAK governs 0 < T <= 4.5 K (qplant_provider.py, ABACUS#1881)
   probes_K: [1.8, 1.99, 2.0, 2.1768, 3.0, 4.5, 4.6, 300.0]
-  diverging_probes_K: [1.8, 1.99]
-  status: DIVERGED_PENDING_ABACUS_ADOPTION
-  resolution: ABACUS adopts HEPAK_T_MIN_K removal; then re-pin and set status PARITY
+  diverging_probes_K: []
+  status: PARITY
 
 # Output cross-check (tools/physics_crosscheck.py, CI workflow
 # gistau-physics-crosscheck.yml). Runs the pinned ABACUS provider over this
@@ -96,13 +95,41 @@ output_crosscheck:
     delta_h_frac_of_cpT: 0.002     # |dh_basic - dh_governing| <= 0.2 % of cp*T
     delta_s_abs_J_kgK: 10.0
   # Recorded from CI run on PR #978 (ABACUS 53688f2, CoolProp 7.2.0, ubuntu,
-  # Python 3.12); identical on two runs. Worst measured deviations inside the
+  # Python 3.12); identical on two runs. provider.py is byte-identical at
+  # 4c2f669, so the re-pin keeps this value; the crosscheck CI re-verifies it. Worst measured deviations inside the
   # basic-incarnation domain (T >= 50 K, ideal-gas rho <= 2.5 kg/m3):
   # density 0.48 %, dh 2935 J/kg at 300 K/1000 kPa (94 % of the 0.2 % cp*T
   # allowance), ds 3.9 J/kg/K.
   output_checksum_sha256: 3586bca7fa976f421d578f03117482113f31209de7bc47493e01cfe3e679ba2e
+  # Advisory reference check of the GOVERNING provider against NIST TN 1334
+  # (Arp & McCarty 1989). All rows are <= 4.5 K: HEPAK governs there, so this
+  # validates the CoolProp-based provider; it never decides governance.
+  # Enthalpy is compared as differences from the reference row (NIST and
+  # CoolProp use different h reference states).
+  nist_reference:
+    source: NIST Technical Note 1334, Thermophysical Properties of Helium-4 from 0.8 to 1500 K (Arp & McCarty, 1989)
+    provenance:
+      - repository: GBOGEB/ABACUS
+        path: docs/qps_line_s_recovery/he_reference_nist_tn1334_bracket.csv
+        pinned: see pinned_files (same commit and sha256)
+        rows_used: [A, B_10kPa]
+      - repository: GBOGEB/cryoplant-project
+        commit_sha: 666d77668db22601e9154e99b2f168288b76ff5d
+        path: controls/W53_P05M_NIST_LOWT_BOUNDED_REFERENCE_v0.1.yaml
+        git_blob_sha: 4902727a9980db09c98d0cbb98eb000a8af4956c
+        sha256: 33d4c87ca8358c174b63088d7a1602b5a126590f262efc87bd40aff64500bbcb
+        rows_used: [B_10kPa, B_20kPa, B_40kPa]
+    reference_state: A
+    states:
+      - {id: A, T_K: 4.5, p_Pa: 300000.0, density_kg_m3: 129.6, enthalpy_J_kg: 11780.0}    # TN1334 p.61, 0.300 MPa isobar, exact row
+      - {id: B_10kPa, T_K: 3.6, p_Pa: 10000.0, density_kg_m3: 1.386, enthalpy_J_kg: 33340.0}  # TN1334 p.29, 0.010 MPa isobar
+      - {id: B_20kPa, T_K: 3.6, p_Pa: 20000.0, enthalpy_J_kg: 32690.0}                        # 0.020 MPa isobar
+      - {id: B_40kPa, T_K: 3.6, p_Pa: 40000.0, enthalpy_J_kg: 31240.0}                        # 0.040 MPa isobar
+    tolerances:                 # engineering default 1 % (W53_P05M); first CI run records the measurement
+      density_rel: 0.01
+      delta_h_rel: 0.01
 
 # sha256 over the canonical JSON of {authority.commit_sha, pinned_files
 # (path, sha256) sorted by path, pinned_constants}. Recomputed by the test and
 # by tools/verify_physics_authority_pin.py; any edit to the pin changes it.
-meta_checksum_sha256: 20a7c901dd28fc595a817318f54998cedff2c62d65a80ef7d8af34b334ee7b2c
+meta_checksum_sha256: 0c6ab298386179d7e5c19b68b896517982a1959b5fdba7d5426a848d76cf9ff7

@@ -67,3 +67,20 @@ def test_run_header_compliance_audit_succeeds_with_valid_header(tmp_path: Path) 
     markdown_path.write_text(_markdown(), encoding="utf-8")
 
     run_header_compliance_audit(markdown_path=markdown_path, schema_path=SCHEMA_PATH, source="tmp governance file")
+
+
+@pytest.mark.parametrize("pr_id", ["PR-007", "PR-999", "PR-1000", "PR-12345"])
+def test_validate_governance_header_accepts_three_or_more_digit_pr_ids(pr_id: str) -> None:
+    """PR numbers passed 999 at CODEX #1000; the header must keep validating."""
+    schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+    metadata = validate_governance_header(_markdown({"PR-ID": pr_id}), schema)
+
+    assert metadata["PR-ID"] == pr_id
+
+
+@pytest.mark.parametrize("pr_id", ["PR-07", "PR-1", "PR-", "PR-1000a", "PR 1000", "pr-1000"])
+def test_validate_governance_header_rejects_malformed_pr_ids(pr_id: str) -> None:
+    schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+
+    with pytest.raises(ValueError, match="PR-ID"):
+        validate_governance_header(_markdown({"PR-ID": pr_id}), schema)
