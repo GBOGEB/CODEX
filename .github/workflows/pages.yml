@@ -127,6 +127,46 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
+      - name: Bind optional current-main diagnostic receipt from existing Actions producer
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CODEX_SOURCE_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          # The checked-in JSON is an explicit UNKNOWN sentinel, never live evidence.
+          run_id="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$CODEX_SOURCE_SHA&per_page=100" \
+            --jq '[.workflow_runs[] | select(.name == "Quality burndown and UBI 9 testflight" and .event == "push" and .conclusion == "success")] | sort_by(.run_number) | last | .id // empty')"
+          if [ -z "$run_id" ]; then
+            echo "No successful exact-main quality producer; retain UNKNOWN receipt"
+          else
+            mkdir -p /tmp/codex-diagnostic-join
+            if gh run download "$run_id" --repo "$GITHUB_REPOSITORY" \
+                 --name codex-joined-diagnostic-coverage --dir /tmp/codex-diagnostic-join; then
+              python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          source = os.environ["CODEX_SOURCE_SHA"]
+          src = Path("/tmp/codex-diagnostic-join/receipt.json")
+          doc = Path("docs/data/diagnostic_coverage_receipt.json")
+          payload = json.loads(src.read_text(encoding="utf-8"))
+          assert payload["schema"] == "codex-diagnostic-coverage-rollup/v1"
+          assert payload["source_sha"] == source
+          assert payload["authority_transfer"] is False
+          assert payload["formal_credit_delta"] == 0
+          assert payload["engineering_credit_delta"] == 0
+          assert payload["coverage"]["quality"]["status"] == "MEASURED"
+          assert payload["coverage"]["runtime"]["status"] == "MEASURED"
+          assert payload["coverage"]["ldab"]["status"] == "UNKNOWN"
+          assert payload["coverage"]["crew"]["status"] == "UNKNOWN"
+          doc.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\\n", encoding="utf-8")
+          print("Bound current-main diagnostic receipt:", source)
+          PY
+            else
+              echo "Exact-main joined artifact missing; retain UNKNOWN receipt"
+            fi
+          fi
+
       - name: Verify release artifacts prior to staging
         run: |
           test -f reports/runtime_status.json
