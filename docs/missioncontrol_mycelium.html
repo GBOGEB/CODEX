@@ -243,4 +243,17 @@ load().catch(e=>$('#stamp').textContent='graph load failed: '+e.message);
 <script src="assets/missioncontrol/control-plane.js"></script>
 <section class="panel" id="diagnosticCoveragePanel" aria-label="Diagnostic coverage"><h2>Diagnostic coverage · advisory</h2><p id="diagnosticCoverageState">UNKNOWN — receipt not published</p><pre id="diagnosticCoverageValues">Quality / UBI / LDAB / crew: UNKNOWN</pre></section>
 <script src="assets/missioncontrol/diagnostic-coverage.js"></script>
+<section id="missionEvidenceLeaves" aria-label="Evidence lanes" style="margin:14px 18px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)">
+<h2>Mission evidence leaves · CODEX / ABACUS / QPS</h2>
+<p class="muted">Advisory status only. A missing exact-source receipt is UNKNOWN, never PASS.</p>
+<div class="kpis">
+<div class="kpi"><b id="leafSecurity">UNKNOWN</b><span>Server-side protection · 3 repositories</span><p><a href="https://github.com/GBOGEB/ABACUS/issues/1860">Owner gate</a></p></div>
+<div class="kpi"><b id="leafQuality">UNKNOWN</b><span>Ruff · source-bound finding count</span><p><a href="https://github.com/GBOGEB/CODEX/issues/989">Burndown</a></p></div>
+<div class="kpi"><b id="leafRuntime">UNKNOWN</b><span>UBI 9 · verified entrypoints</span><p>Output-hash DoV required</p></div>
+<div class="kpi"><b id="leafLdab">UNKNOWN</b><span>LDAB · actual DAP handshake</span><p>Declared port is not a live session</p></div>
+<div class="kpi"><b id="leafCrew">UNKNOWN</b><span>GM worker queue · verified mean wait</span><p>Authenticated dispatch evidence required</p></div>
+<div class="kpi"><b id="leafCrossRepo">UNKNOWN</b><span>ABACUS and QPS local baselines</span><p><a href="https://github.com/GBOGEB/cryoplant-project/issues/1904">REX intake</a></p></div>
+</div><p id="leafEvidenceSource" class="muted">Current-source publication UNKNOWN</p>
+</section>
+<script src="assets/missioncontrol/evidence-leaves.js"></script>
 </body></html>
