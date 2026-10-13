@@ -102,6 +102,19 @@ def _parts(pin: dict[str, Any] | None = None) -> tuple[str, str]:
     lo, hi = consts["qplant_hepak_band_K"]
     parity = pin["policy_parity"]
     status_cls = "ok" if parity["status"] == "PARITY" else "warn"
+    if parity["status"] == "PARITY":
+        decision_cls, decision_title = "active", "Routing in parity"
+        decision_text = (
+            "CODEX and the pinned ABACUS routing agree at every probe: HEPAK governs "
+            f"0 &lt; T &le; {hi:g} K, including He-II below the lambda point, and CoolProp governs above. "
+            "Nothing needs a decision."
+        )
+    else:
+        decision_cls, decision_title = "warning", "What needs your decision"
+        decision_text = (
+            f"CODEX and the pinned ABACUS routing disagree at {', '.join(f'{x:g}' for x in parity['diverging_probes_K'])} K. "
+            "Physics belongs to ABACUS, so ABACUS has to adopt the rule, after which CODEX re-pins and parity returns."
+        )
 
     file_rows = "".join(
         "<tr>"
@@ -189,9 +202,9 @@ small { color: var(--muted); }
 </div>
 </header>
 <main class="layout">
-<section class="card warning full" id="decision">
-<h2>What needs your decision</h2>
-<p>CODEX now routes helium below 2.0 K to HEPAK; the pinned ABACUS routing still hands it to CoolProp. Physics belongs to ABACUS, so ABACUS has to adopt the rule, after which CODEX re-pins and parity returns.</p>
+<section class="card {decision_cls} full" id="decision">
+<h2>{decision_title}</h2>
+<p>{decision_text}</p>
 <div class="wrap">{_band_svg(lo, hi, consts['lambda_point_K'])}</div>
 </section>
 <section class="card active" id="checklist">
