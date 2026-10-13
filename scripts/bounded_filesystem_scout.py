@@ -53,7 +53,23 @@ def scan_roots(roots: Iterable[Path], *, follow_symlinks: bool = False) -> dict:
     skips: list[SkipRecord] = []
     root_rows: list[dict] = []
 
-    def walk(display_path: Path) -> None:
+    def walk(display_path: Path, ancestors: frozenset[str] = frozenset()) -> None:
+        # Followed directory links can point at an ancestor. Report that gap
+        # rather than recursing forever or claiming a complete inventory.
+        if follow_symlinks:
+            resolved_dir = os.path.normcase(os.path.realpath(display_path))
+            if resolved_dir in ancestors:
+                skips.append(
+                    SkipRecord(
+                        path=str(display_path),
+                        operation="walk",
+                        error_type="SYMLINK_CYCLE",
+                        errno=None,
+                        message="directory resolves to an ancestor",
+                    )
+                )
+                return
+            ancestors = ancestors | {resolved_dir}
         directories.append(str(display_path))
         native = _windows_native_path(display_path)
         try:
@@ -92,7 +108,7 @@ def scan_roots(roots: Iterable[Path], *, follow_symlinks: bool = False) -> dict:
             if is_link and not follow_symlinks:
                 files.append(str(child))
             elif is_dir:
-                walk(child)
+                walk(child, ancestors)
             elif is_file:
                 files.append(str(child))
             else:
@@ -100,7 +116,10 @@ def scan_roots(roots: Iterable[Path], *, follow_symlinks: bool = False) -> dict:
 
     for root in roots:
         resolved = root.expanduser().resolve()
-        row = {"requested": str(root), "resolved": str(resolved)}
+        row: dict[str, str | bool] = {
+            "requested": str(root),
+            "resolved": str(resolved),
+        }
         if not resolved.exists():
             skips.append(
                 SkipRecord(
