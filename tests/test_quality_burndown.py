@@ -43,18 +43,18 @@ def test_line_shift_does_not_claim_resolution(tmp_path):
     baseline = tmp_path / "baseline.json"
     baseline.write_text(json.dumps({"source_sha": "sha0", "diagnostics": [
         {"tool": "ruff", "path": "scripts/example.py",
-         "rule": "F821", "message": "Undefined name \`foo\`", "line": 5}
+         "rule": "F821", "message": "Undefined name `foo`", "line": 5}
     ]}))
     ruff = tmp_path / "ruff.json"
     ruff.write_text(json.dumps([{"filename": str(tmp_path / "scripts/example.py"),
-        "code": "F821", "message": "Undefined name \`foo\`",
+        "code": "F821", "message": "Undefined name `foo`",
         "location": {"row": 10}}]))
     output = tmp_path / "out.json"
     result = subprocess.run([
         sys.executable, "scripts/quality_burndown.py",
         "--ruff", str(ruff), "--repo-root", str(tmp_path),
         "--baseline", str(baseline), "--out", str(output),
-    ], capture_output=True, text=True)
+    ], capture_output=True, text=True, check=False)
     assert result.returncode == 0, result.stderr
     delta = json.loads(output.read_text())["comparison"]
     assert delta["resolved"] == 0
