@@ -11,7 +11,7 @@ OTHER = "b" * 40
 def run(tmp_path, *args):
     out = tmp_path / "out.json"
     result = subprocess.run([sys.executable, SCRIPT, "--source-sha", SHA,
-                             "--out", str(out), *args], capture_output=True, text=True)
+                             "--out", str(out), *args], capture_output=True, text=True, check=False)
     assert result.returncode == 0, result.stderr
     return json.loads(out.read_text())
 
