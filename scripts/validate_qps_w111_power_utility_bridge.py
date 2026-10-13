@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Fail-closed validator and receipt emitter for the W111 QPS KEB bridge."""
 from __future__ import annotations
 

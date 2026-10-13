@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Build markdown index for incubator tuple files."""
 
 from __future__ import annotations

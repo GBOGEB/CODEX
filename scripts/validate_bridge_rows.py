@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Validate QPS/DOW/KEB bridge row completeness.
 
 This is deliberately small: it checks required fields and receipt binding

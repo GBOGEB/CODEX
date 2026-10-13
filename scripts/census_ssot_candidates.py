@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Inventory, classify and bind governed CODEX 2.0 SSOT candidates.
 
 Classification is evidence, not authority. Authority is established only by the

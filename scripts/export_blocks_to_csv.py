@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Export CODEX reusable block YAML records to a sortable CSV register."""
 
 from __future__ import annotations

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Refresh a deterministic index.json for a reusable engineering model package."""
 
 from __future__ import annotations

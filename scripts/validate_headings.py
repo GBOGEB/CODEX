@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Validate CODEX reusable block heading registry records."""
 
 from __future__ import annotations

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Validate the KEB-side CTaxonomy support contract without owning child definitions."""
 from pathlib import Path
 import sys
