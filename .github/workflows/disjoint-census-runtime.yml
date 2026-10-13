@@ -51,9 +51,10 @@ jobs:
           set -euo pipefail
           mkdir -p artifacts/ubi9
           docker version > artifacts/ubi9/docker-version.txt
-          docker run --rm --network none -v "$PWD:/workspace:ro" -v "$PWD/artifacts/ubi9:/output" registry.access.redhat.com/ubi9/python-311:latest /bin/bash -lc '
+          docker run --rm --network none -e GITHUB_SHA="$GITHUB_SHA" -v "$PWD:/workspace:ro" -v "$PWD/artifacts/ubi9:/output" registry.access.redhat.com/ubi9/python-311:latest /bin/bash -lc '
             set -euo pipefail
             cd /workspace
+            export PYTHONPYCACHEPREFIX=/tmp/pycache
             python -m py_compile scripts/verify_disjoint_census.py
             python -m unittest discover -s scripts -p "test_verify_disjoint_census.py" -v > /output/tests.log 2>&1
             python - <<PY
