@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Validate federation bootstrap artifacts and current compatibility state."""
 
 from __future__ import annotations
