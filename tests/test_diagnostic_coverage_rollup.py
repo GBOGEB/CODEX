@@ -48,3 +48,27 @@ def test_runtime_failure_not_pass(tmp_path):
                                 "image_digest": "sha256:abc"}))
     receipt = run(tmp_path, "--runtime", str(path))
     assert receipt["coverage"]["runtime"]["status"] == "FAILED"
+
+
+def test_queue_and_coverage_require_matching_source(tmp_path):
+    coverage = tmp_path / "coverage.json"
+    coverage.write_text(json.dumps({"source_sha": SHA, "scanned_files": 3,
+                                    "eligible_files": 6}))
+    queue = tmp_path / "queue.json"
+    queue.write_text(json.dumps({"source_sha": SHA, "jobs": [{
+        "status": "completed", "queued_at": "2026-10-13T12:00:00Z",
+        "started_at": "2026-10-13T12:00:10Z",
+        "completed_at": "2026-10-13T12:00:40Z"}]}))
+    quality = tmp_path / "quality.json"
+    quality.write_text(json.dumps({"source_sha": SHA, "current": {"total": 0},
+                                   "diagnostics": []}))
+    receipt = run(tmp_path, "--quality", str(quality), "--coverage", str(coverage),
+                  "--queue", str(queue))
+    assert receipt["coverage"]["quality"]["scan_coverage_pct"] == 50.0
+    assert receipt["metrics"]["mean_queue_wait_seconds"] == 10.0
+    assert receipt["metrics"]["mean_worker_handling_seconds"] == 30.0
+    assert receipt["metrics"]["queue_depth"] == 0
+    coverage.write_text(json.dumps({"source_sha": OTHER, "scanned_files": 3,
+                                    "eligible_files": 6}))
+    stale = run(tmp_path, "--quality", str(quality), "--coverage", str(coverage))
+    assert stale["coverage"]["quality"]["eligible_files"] is None
