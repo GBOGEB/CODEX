@@ -104,3 +104,46 @@ def test_zero_in_domain_points_is_a_failure(tool, spec, basic):
     report = tool.run(spec, fn, fn, lambda t, p: False, "test")
     assert report["in_domain_points"] == 0
     assert any(p.startswith("ZERO_IN_DOMAIN_POINTS") for p in tool.gate(report, spec))
+
+
+def _nist_stub(nist, rho_scale=1.0, h_offset=0.0, h_scale=1.0):
+    table = {(s["T_K"], s["p_Pa"] / 1000.0): s for s in nist["states"]}
+
+    def fn(t, p):
+        s = table[(t, p)]
+        return {
+            "density_kg_m3": s.get("density_kg_m3", 1.0) * rho_scale,
+            "enthalpy_J_kg": s["enthalpy_J_kg"] * h_scale + h_offset,
+            "entropy_J_kgK": 0.0,
+        }
+
+    return fn
+
+
+def test_nist_reference_ignores_enthalpy_reference_offset(tool, spec):
+    nist = spec["nist_reference"]
+    report = tool.nist_check(nist, _nist_stub(nist, h_offset=-12345.0))
+    assert report["failures"] == 0
+    assert report["checks"] == len(nist["states"])
+
+
+def test_nist_reference_flags_density_and_delta_h_deviation(tool, spec):
+    nist = spec["nist_reference"]
+    assert tool.nist_check(nist, _nist_stub(nist, rho_scale=1.05))["failures"] >= 1
+    assert tool.nist_check(nist, _nist_stub(nist, h_scale=1.05))["failures"] >= 1
+
+
+def test_nist_failures_fail_the_gate(tool, spec, basic):
+    fn, in_domain = basic
+    report = tool.run(spec, fn, fn, in_domain, spec["coolprop_version"])
+    report["nist_reference"] = {"rows": [], "failures": 1, "checks": 4}
+    assert any(p.startswith("NIST_REFERENCE_TOLERANCE") for p in tool.gate(report, spec))
+
+
+def test_nist_rows_are_all_hepak_governed_temperatures(spec):
+    # Advisory only: every NIST row sits where HEPAK governs (T <= 4.5 K).
+    from gistau_ch15.properties.qplant_hepak_policy import (
+        governing_provider_for_temperature,
+    )
+
+    assert all(governing_provider_for_temperature(s["T_K"]) == "HEPAK" for s in spec["nist_reference"]["states"])

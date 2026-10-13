@@ -101,6 +101,33 @@ output_crosscheck:
   # density 0.48 %, dh 2935 J/kg at 300 K/1000 kPa (94 % of the 0.2 % cp*T
   # allowance), ds 3.9 J/kg/K.
   output_checksum_sha256: 3586bca7fa976f421d578f03117482113f31209de7bc47493e01cfe3e679ba2e
+  # Advisory reference check of the GOVERNING provider against NIST TN 1334
+  # (Arp & McCarty 1989). All rows are <= 4.5 K: HEPAK governs there, so this
+  # validates the CoolProp-based provider; it never decides governance.
+  # Enthalpy is compared as differences from the reference row (NIST and
+  # CoolProp use different h reference states).
+  nist_reference:
+    source: NIST Technical Note 1334, Thermophysical Properties of Helium-4 from 0.8 to 1500 K (Arp & McCarty, 1989)
+    provenance:
+      - repository: GBOGEB/ABACUS
+        path: docs/qps_line_s_recovery/he_reference_nist_tn1334_bracket.csv
+        pinned: see pinned_files (same commit and sha256)
+        rows_used: [A, B_10kPa]
+      - repository: GBOGEB/cryoplant-project
+        commit_sha: 666d77668db22601e9154e99b2f168288b76ff5d
+        path: controls/W53_P05M_NIST_LOWT_BOUNDED_REFERENCE_v0.1.yaml
+        git_blob_sha: 4902727a9980db09c98d0cbb98eb000a8af4956c
+        sha256: 33d4c87ca8358c174b63088d7a1602b5a126590f262efc87bd40aff64500bbcb
+        rows_used: [B_10kPa, B_20kPa, B_40kPa]
+    reference_state: A
+    states:
+      - {id: A, T_K: 4.5, p_Pa: 300000.0, density_kg_m3: 129.6, enthalpy_J_kg: 11780.0}    # TN1334 p.61, 0.300 MPa isobar, exact row
+      - {id: B_10kPa, T_K: 3.6, p_Pa: 10000.0, density_kg_m3: 1.386, enthalpy_J_kg: 33340.0}  # TN1334 p.29, 0.010 MPa isobar
+      - {id: B_20kPa, T_K: 3.6, p_Pa: 20000.0, enthalpy_J_kg: 32690.0}                        # 0.020 MPa isobar
+      - {id: B_40kPa, T_K: 3.6, p_Pa: 40000.0, enthalpy_J_kg: 31240.0}                        # 0.040 MPa isobar
+    tolerances:                 # engineering default 1 % (W53_P05M); first CI run records the measurement
+      density_rel: 0.01
+      delta_h_rel: 0.01
 
 # sha256 over the canonical JSON of {authority.commit_sha, pinned_files
 # (path, sha256) sorted by path, pinned_constants}. Recomputed by the test and
