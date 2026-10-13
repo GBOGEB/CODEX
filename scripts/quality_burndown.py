@@ -22,9 +22,24 @@ def normalise(report, engine):
             for x in entries]
 
 
+def canonical_path(raw, root):
+    """Normalize absolute checkout paths, preserving repo-relative paths."""
+    path = Path(raw)
+    if path.is_absolute():
+        try:
+            return path.resolve().relative_to(root.resolve()).as_posix()
+        except ValueError:
+            return path.as_posix()
+    return path.as_posix()
+
+
 def fingerprints(records):
-    # A multiset preserves distinct occurrences without losing duplicate diagnostics.
-    return collections.Counter(json.dumps(r, sort_keys=True) for r in records)
+    # Keep multiplicity but do not treat shifted line positions as fixed defects.
+    # Rule and message remain diagnostic-specific; no cross-tool coalescing.
+    return collections.Counter(
+        json.dumps({k: r.get(k) for k in ("tool", "path", "rule", "message")}, sort_keys=True)
+        for r in records
+    )
 
 
 def summarise(records):
@@ -43,6 +58,7 @@ def main():
     ap.add_argument("--baseline", type=Path)
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--source-sha", default="unknown")
+    ap.add_argument("--repo-root", type=Path, default=Path.cwd())
     args = ap.parse_args()
     if not args.ruff and not args.pyright:
         ap.error("at least one diagnostics input required")
@@ -52,7 +68,10 @@ def main():
         if path is not None:
             data = path.read_bytes()
             source_hashes[tool] = hashlib.sha256(data).hexdigest()
-            records.extend(normalise(json.loads(data), tool))
+            scanned = normalise(json.loads(data), tool)
+            for diagnostic in scanned:
+                diagnostic["path"] = canonical_path(diagnostic["path"], args.repo_root)
+            records.extend(scanned)
     counter = fingerprints(records)
     receipt = {
         "schema": "codex-quality-burndown/v1",
@@ -64,7 +83,10 @@ def main():
     }
     if args.baseline:
         base = json.loads(args.baseline.read_text(encoding="utf-8"))
-        previous = fingerprints(base["diagnostics"])
+        baseline_records = base["diagnostics"]
+        for diagnostic in baseline_records:
+            diagnostic["path"] = canonical_path(diagnostic["path"], args.repo_root)
+        previous = fingerprints(baseline_records)
         receipt["comparison"] = {
             "baseline_source_sha": base.get("source_sha", "unknown"),
             "new": sum((counter - previous).values()),

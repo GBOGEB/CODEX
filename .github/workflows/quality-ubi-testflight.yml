@@ -75,11 +75,12 @@ jobs:
             -v "$PWD:/workspace" -w /workspace "$IMAGE_REF" /bin/bash -c '
               set -euo pipefail
               python --version > outputs/ubi9/python-version.txt 2>&1
-              python -m pip install --disable-pip-version-check --user -e . > outputs/ubi9/install.log 2>&1
-              python -m pip freeze > outputs/ubi9/dependencies.txt
-              python scripts/check_authority_integrity.py > outputs/ubi9/authority.log 2>&1
-              python scripts/check_release_identity.py > outputs/ubi9/release_identity.log 2>&1
-              python scripts/ubi_runtime_receipt.py
+              python -m venv /tmp/codex-testflight-venv
+              /tmp/codex-testflight-venv/bin/python -m pip install --disable-pip-version-check -e . > outputs/ubi9/install.log 2>&1
+              /tmp/codex-testflight-venv/bin/python -m pip freeze > outputs/ubi9/dependencies.txt
+              /tmp/codex-testflight-venv/bin/python scripts/check_authority_integrity.py > outputs/ubi9/authority.log 2>&1
+              /tmp/codex-testflight-venv/bin/python scripts/check_release_identity.py > outputs/ubi9/release_identity.log 2>&1
+              /tmp/codex-testflight-venv/bin/python scripts/ubi_runtime_receipt.py
             '
       - name: Publish runtime receipts and logs
         if: always()
