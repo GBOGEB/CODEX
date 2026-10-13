@@ -125,6 +125,10 @@ def test_divergence_text_is_authority_neutral_without_recorded_resolution():
     assert "ABACUS has to adopt" not in html
     assert "No resolution is recorded in the pin" in html
 
+    from gistau_ch15.properties.backend_selector import (
+        GOVERNING_AUTHORITY,
+        select_available_backends,
+    )
 
 def test_divergence_text_uses_recorded_resolution():
     html = _render_with_parity({"status": "DIVERGED", "diverging_probes_K": [1.8], "resolution": "CODEX re-mirrors ABACUS"})

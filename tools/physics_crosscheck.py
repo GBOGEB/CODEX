@@ -164,6 +164,39 @@ def run(
     }
 
 
+def nist_check(nist: dict[str, Any], governing: ProviderFn) -> dict[str, Any]:
+    """Advisory validation of the governing provider against NIST TN 1334 rows.
+
+    Density is compared directly; enthalpy only as differences from the
+    reference row, because NIST and CoolProp use different h reference states.
+    All rows are <= 4.5 K (HEPAK-governed under QPLANT policy), so this is a
+    reference check of the provider, never a governance decision.
+    """
+    tol = nist["tolerances"]
+    ref_id = nist["reference_state"]
+    states = {s["id"]: s for s in nist["states"]}
+    g = {sid: governing(s["T_K"], s["p_Pa"] / 1000.0) for sid, s in states.items()}
+    ref, g_ref = states[ref_id], g[ref_id]
+    rows = []
+    for sid, s in states.items():
+        row: dict[str, Any] = {"id": sid, "T_K": s["T_K"], "p_Pa": s["p_Pa"], "failures": []}
+        if "density_kg_m3" in s:
+            dev = (g[sid]["density_kg_m3"] - s["density_kg_m3"]) / s["density_kg_m3"]
+            row["density_rel_dev"] = dev
+            if abs(dev) > tol["density_rel"]:
+                row["failures"].append("density")
+        if sid != ref_id:
+            dh_nist = s["enthalpy_J_kg"] - ref["enthalpy_J_kg"]
+            dh_gov = g[sid]["enthalpy_J_kg"] - g_ref["enthalpy_J_kg"]
+            dev = (dh_gov - dh_nist) / dh_nist
+            row["delta_h_from_ref_rel_dev"] = dev
+            if abs(dev) > tol["delta_h_rel"]:
+                row["failures"].append("delta_h")
+        row["verdict"] = ("FAIL:" + ",".join(row["failures"])) if row["failures"] else "PASS"
+        rows.append(row)
+    return {"rows": rows, "failures": sum(1 for r in rows if r["failures"]), "checks": len(rows)}
+
+
 def gate(report: dict[str, Any], spec: dict[str, Any]) -> list[str]:
     """Problems that fail the --check gate."""
     problems = []
@@ -176,6 +209,9 @@ def gate(report: dict[str, Any], spec: dict[str, Any]) -> list[str]:
         problems.append("OUTPUT_CHECKSUM_NOT_RECORDED: record it in the pin first")
     elif expected != report["output_checksum_sha256"]:
         problems.append(f"OUTPUT_DRIFT: provider outputs {report['output_checksum_sha256']} != pinned {expected}")
+    nist = report.get("nist_reference")
+    if nist is not None and nist["failures"]:
+        problems.append(f"NIST_REFERENCE_TOLERANCE: {nist['failures']} of {nist['checks']} NIST TN 1334 checks outside tolerance")
     if spec.get("coolprop_version") and spec["coolprop_version"] != report["coolprop_version"]:
         problems.append(f"COOLPROP_VERSION: {report['coolprop_version']} != pinned {spec['coolprop_version']}")
     return problems
@@ -197,6 +233,8 @@ def main(argv: list[str] | None = None) -> int:
     governing, cp_version = abacus_provider(args.abacus)
     basic, in_domain = basic_incarnation()
     report = run(spec, governing, basic, in_domain, cp_version)
+    if "nist_reference" in spec:
+        report["nist_reference"] = nist_check(spec["nist_reference"], governing)
     if args.report:
         args.report.parent.mkdir(parents=True, exist_ok=True)
         args.report.write_text(json.dumps(report, indent=1) + "\n", encoding="utf-8")
@@ -216,6 +254,17 @@ def main(argv: list[str] | None = None) -> int:
     ]
     for line in lines:
         print(line)
+    if "nist_reference" in report:
+        nr = report["nist_reference"]
+        cells = []
+        for r in nr["rows"]:
+            parts = [f"{r['id']} {r['T_K']:g}K/{r['p_Pa'] / 1000:g}kPa {r['verdict']}"]
+            if "density_rel_dev" in r:
+                parts.append(f"rho {r['density_rel_dev']:+.3%}")
+            if "delta_h_from_ref_rel_dev" in r:
+                parts.append(f"dh-from-ref {r['delta_h_from_ref_rel_dev']:+.3%}")
+            cells.append(" ".join(parts))
+        print(f"::notice title=NIST TN 1334 reference ({nr['checks'] - nr['failures']}/{nr['checks']} pass)::" + " | ".join(cells))
     # Per-row table as annotations (job logs are not always reachable): 3 chunks.
     chunk = math.ceil(len(lines) / 3)
     for i in range(0, len(lines), chunk):
