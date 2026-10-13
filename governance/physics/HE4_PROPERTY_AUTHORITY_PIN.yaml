@@ -102,7 +102,8 @@ output_crosscheck:
   # allowance), ds 3.9 J/kg/K.
   output_checksum_sha256: 3586bca7fa976f421d578f03117482113f31209de7bc47493e01cfe3e679ba2e
 
-# sha256 over the canonical JSON of {authority.commit_sha, pinned_files
-# (path, sha256) sorted by path, pinned_constants}. Recomputed by the test and
-# by tools/verify_physics_authority_pin.py; any edit to the pin changes it.
-meta_checksum_sha256: 0c6ab298386179d7e5c19b68b896517982a1959b5fdba7d5426a848d76cf9ff7
+# sha256 over the canonical JSON of every field of this pin except this one
+# (authority, files incl. git blob ids and roles, constants, local roles,
+# policy parity, output cross-check). Recomputed by the test and by
+# tools/verify_physics_authority_pin.py; any edit to the pin changes it.
+meta_checksum_sha256: 33d9aa3324d2635ce9d9707531dc6a134ee74975ec23376cf1d40b71feec81cf
