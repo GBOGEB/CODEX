@@ -24,6 +24,8 @@ function New-MinimalZipPackage {
         try {
             foreach ($name in ($Entries.Keys | Sort-Object)) {
                 $entry = $zip.CreateEntry($name)
+                # ZIP archives default to wall-clock entry timestamps; freeze DOS-safe UTC.
+                $entry.LastWriteTime = [System.DateTimeOffset]::new(2026, 1, 1, 0, 0, 0, [System.TimeSpan]::Zero)
                 $writer = [System.IO.StreamWriter]::new($entry.Open(), [System.Text.UTF8Encoding]::new($false))
                 try { $writer.Write([string]$Entries[$name]) } finally { $writer.Dispose() }
             }
