@@ -57,11 +57,9 @@ def collect(repo, sha, run_id, ruff=None, pyright=None, cov=None, eligible=None)
         artifacts[name + "_findings"] = len(findings)
         artifacts[name + "_affected_files"] = len(affected - {""})
         # Diagnostics do not reveal all scanned files; require independent manifest.
-        if eligible_set:
-            populations[key] = {"status": "MEASURED", "numerator": len(eligible_set),
-                "denominator": len(eligible_set), "source_sha": sha, "run_id": run_id}
-        else:
-            artifacts[name + "_coverage_status"] = "WITHHELD_NO_ELIGIBLE_MANIFEST"
+        # A declared eligible population alone is not proof that the scanner scanned it.
+        artifacts[name + "_eligible_files"] = len(eligible_set) if eligible_set is not None else None
+        artifacts[name + "_coverage_status"] = "WITHHELD_NO_SCAN_COMPLETION_PROOF"
     return {"repository": repo, "head_sha": sha, "populations": populations,
             "artifact_evidence": artifacts, "scope_warning": (
               "Eligible-file manifests must represent actual scanner inclusion; "
