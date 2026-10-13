@@ -60,3 +60,26 @@ def test_line_shift_does_not_claim_resolution(tmp_path):
     assert delta["resolved"] == 0
     assert delta["new"] == 0
     assert delta["net_reduction"] == 0
+
+
+def test_ruff_scope_denominator_and_empty_scope_rejected(tmp_path):
+    ruff = tmp_path / "ruff.json"
+    ruff.write_text("[]")
+    scope = tmp_path / "scope.txt"
+    scope.write_text("scripts/a.py\\nscripts/b.py\\nscripts/a.py\\n")
+    out = tmp_path / "receipt.json"
+    command = [
+        sys.executable, "scripts/quality_burndown.py",
+        "--ruff", str(ruff), "--ruff-scanned-files", str(scope),
+        "--out", str(out),
+    ]
+    result = subprocess.run(command, capture_output=True, text=True, check=False)
+    assert result.returncode == 0, result.stderr
+    receipt = json.loads(out.read_text())
+    assert receipt["scan_scope"]["ruff"]["scanned_files"] == 2
+    assert receipt["scan_scope"]["ruff"]["duplicate_entries"] == 1
+    assert receipt["scan_scope"]["pyright"] is None
+    scope.write_text("")
+    rejected = subprocess.run(command, capture_output=True, text=True, check=False)
+    assert rejected.returncode != 0
+    assert "Ruff scan scope is empty" in rejected.stderr
