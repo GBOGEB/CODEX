@@ -75,7 +75,10 @@ def test_states_are_tagged_with_validity(p_kpa, t_k, expected):
     assert B.state_pt("helium", p_kpa, t_k).validity == expected
 
 
-@pytest.mark.parametrize("p_kpa,t_k", [(0.0, 300.0), (100.0, 0.0), (-1.0, 10.0)])
+@pytest.mark.parametrize(
+    "p_kpa,t_k",
+    [(0.0, 300.0), (100.0, 0.0), (-1.0, 10.0), (100.0, float("inf")), (float("inf"), 300.0), (float("nan"), 300.0)],
+)
 def test_non_physical_inputs_are_rejected(p_kpa, t_k):
     with pytest.raises(ValueError):
         B.state_pt("helium", p_kpa, t_k)
@@ -96,3 +99,14 @@ def test_compressor_isentropic_outlet_is_consistent_with_basic_incarnation_entro
     r = calculate_compressor(backend=B, fluid="helium", p1_kpa=p1, t1_k=t1, p2_kpa=p2, mdot_kg_s=0.1)
     t2s = B.state_ps("helium", p2, B.state_pt("helium", p1, t1).entropy_j_kgk).temperature_k
     assert r.outlet_temperature_k == pytest.approx(t2s, rel=2e-3)  # 0.4 vs R/cp = 0.39998
+
+
+@pytest.mark.parametrize("s", [float("inf"), float("-inf"), float("nan")])
+def test_state_ps_rejects_non_finite_entropy(s):
+    with pytest.raises(ValueError):
+        B.state_ps("helium", 100.0, s)
+
+
+def test_non_finite_states_are_never_in_domain():
+    assert not B.in_validity_domain(100.0, float("inf"))
+    assert not B.in_validity_domain(float("nan"), 300.0)

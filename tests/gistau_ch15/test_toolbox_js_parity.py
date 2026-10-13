@@ -118,3 +118,22 @@ def test_committed_toolbox_page_is_current():
     spec.loader.exec_module(module)
     committed = (REPO_ROOT / "docs" / "gistau-ch15" / "toolbox.html").read_text(encoding="utf-8")
     assert committed == module.render(), "regenerate: python tools/render_gistau_toolbox.py"
+
+
+def test_non_finite_inputs_rejected_in_js_and_python():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("node is not installed")
+    script = (
+        "const g=require(process.argv[1]);const out=[];"
+        "for (const f of [()=>g.statePT(100,Infinity),()=>g.statePT(Infinity,300),()=>g.statePT(NaN,300),()=>g.statePS(100,Infinity)])"
+        "{try{f();out.push('accepted')}catch(e){out.push('rejected')}}"
+        "out.push(g.inValidityDomain(100,Infinity)?'in':'out');console.log(JSON.stringify(out));"
+    )
+    res = json.loads(subprocess.run([node, "-e", script, str(JS)], capture_output=True, text=True, check=True).stdout)
+    assert res == ["rejected"] * 4 + ["out"]
+    for p, t in [(100.0, float("inf")), (float("inf"), 300.0), (float("nan"), 300.0)]:
+        with pytest.raises(ValueError):
+            B.state_pt("helium", p, t)
+    with pytest.raises(ValueError):
+        B.state_ps("helium", 100.0, float("inf"))

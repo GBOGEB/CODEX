@@ -43,13 +43,13 @@ class FallbackHeliumBackend:
 
     @staticmethod
     def _require_positive(p_kpa: float, t_k: float) -> None:
-        if not p_kpa > 0.0:
-            raise ValueError(f"pressure must be positive, got {p_kpa} kPa")
-        if not t_k > 0.0:
-            raise ValueError(f"temperature must be positive, got {t_k} K")
+        if not (math.isfinite(p_kpa) and p_kpa > 0.0):
+            raise ValueError(f"pressure must be finite and positive, got {p_kpa} kPa")
+        if not (math.isfinite(t_k) and t_k > 0.0):
+            raise ValueError(f"temperature must be finite and positive, got {t_k} K")
 
     def in_validity_domain(self, p_kpa: float, t_k: float) -> bool:
-        if not (p_kpa > 0.0 and t_k > 0.0):
+        if not (math.isfinite(p_kpa) and math.isfinite(t_k) and p_kpa > 0.0 and t_k > 0.0):
             return False
         return t_k >= self.DOMAIN_T_MIN_K and (p_kpa * 1000.0) / (self.R * t_k) <= self.DOMAIN_RHO_MAX_KG_M3
 
@@ -73,8 +73,10 @@ class FallbackHeliumBackend:
         return self.state_pt(fluid, p_kpa, h_j_kg / self.CP)
 
     def state_ps(self, fluid: str, p_kpa: float, s_j_kgk: float) -> State:
-        if not p_kpa > 0.0:
-            raise ValueError(f"pressure must be positive, got {p_kpa} kPa")
+        if not (math.isfinite(p_kpa) and p_kpa > 0.0):
+            raise ValueError(f"pressure must be finite and positive, got {p_kpa} kPa")
+        if not math.isfinite(s_j_kgk):
+            raise ValueError(f"entropy must be finite, got {s_j_kgk} J/kg/K")
         t_k = self.T_REF_K * math.exp((s_j_kgk + self.R * math.log(p_kpa / self.P_REF_KPA)) / self.CP)
         return self.state_pt(fluid, p_kpa, t_k)
 
