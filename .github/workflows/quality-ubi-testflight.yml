@@ -92,8 +92,8 @@ jobs:
               pipeline_rc=$?
               set -e
               end_ns="$(date +%s%N)"
-              printf "%s\\n" "$pipeline_rc" > outputs/ubi9/rex-rollup.exitcode
-              printf "%s\\n" "$(( (end_ns - start_ns) / 1000000 ))" > outputs/ubi9/rex-rollup.duration_ms
+              printf "%s\n" "$pipeline_rc" > outputs/ubi9/rex-rollup.exitcode
+              printf "%s\n" "$(( (end_ns - start_ns) / 1000000 ))" > outputs/ubi9/rex-rollup.duration_ms
               test "$pipeline_rc" -eq 0
               test -s outputs/ubi9/rex-rollup.json
               /tmp/codex-testflight-venv/bin/python scripts/ubi_runtime_receipt.py
