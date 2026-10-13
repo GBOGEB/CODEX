@@ -6,6 +6,59 @@ from pathlib import Path
 from typing import Any
 
 IGNORED_TEXT_TAGS = {"script", "style", "noscript"}
+HEADING_TAGS = {"h1", "h2", "h3", "h4", "h5", "h6"}
+# Void elements never get an end tag, so they are not pushed onto the stack.
+VOID_TAGS = {
+    "area",
+    "base",
+    "br",
+    "col",
+    "embed",
+    "hr",
+    "img",
+    "input",
+    "link",
+    "meta",
+    "source",
+    "track",
+    "wbr",
+}
+# Inline elements do not separate words; any other tag boundary does.
+INLINE_TAGS = {
+    "a",
+    "abbr",
+    "b",
+    "bdi",
+    "bdo",
+    "cite",
+    "code",
+    "data",
+    "dfn",
+    "em",
+    "i",
+    "kbd",
+    "mark",
+    "q",
+    "s",
+    "samp",
+    "small",
+    "span",
+    "strong",
+    "sub",
+    "sup",
+    "time",
+    "u",
+    "var",
+}
+COLOR_PROPERTIES = {"background", "fill", "stroke"}
+
+
+def _is_color_declaration(declaration: str) -> bool:
+    name, sep, value = declaration.partition(":")
+    if not sep or not value.strip():
+        return False
+    name = name.strip().lower()
+    return name.endswith("color") or name in COLOR_PROPERTIES or "#" in value
 
 
 @dataclass
@@ -31,9 +84,18 @@ class _SemanticHtmlParser(HTMLParser):
         self._tag_stack: list[str] = []
         self._current_heading: str | None = None
 
+    def _break_words(self, tag: str) -> None:
+        if tag in INLINE_TAGS:
+            return
+        self.text_chunks.append(" ")
+        if self._current_heading is not None:
+            self._current_heading += " "
+
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         tag = tag.lower()
-        self._tag_stack.append(tag)
+        self._break_words(tag)
+        if tag not in VOID_TAGS:
+            self._tag_stack.append(tag)
         self.tag_counts[tag] = self.tag_counts.get(tag, 0) + 1
         attr_map = {name.lower(): value or "" for name, value in attrs}
 
@@ -43,44 +105,39 @@ class _SemanticHtmlParser(HTMLParser):
 
         style = attr_map.get("style", "")
         for part in style.split(";"):
-            if "#" in part:
+            if _is_color_declaration(part):
                 self.color_tokens.append(part.strip())
 
-        if tag in {"h1", "h2", "h3", "h4", "h5", "h6"}:
+        if tag in HEADING_TAGS:
             self._current_heading = ""
 
     def handle_endtag(self, tag: str) -> None:
         tag = tag.lower()
-        if self._current_heading is not None and tag in {
-            "h1",
-            "h2",
-            "h3",
-            "h4",
-            "h5",
-            "h6",
-        }:
+        if self._current_heading is not None and tag in HEADING_TAGS:
             heading = " ".join(self._current_heading.split())
             if heading:
                 self.headings.append(heading)
             self._current_heading = None
-        if self._tag_stack:
-            self._tag_stack.pop()
+        self._break_words(tag)
+        # Pop back to the matching open tag; ignore stray end tags.
+        if tag in self._tag_stack:
+            while self._tag_stack.pop() != tag:
+                pass
 
     def handle_data(self, data: str) -> None:
-        if self._tag_stack and self._tag_stack[-1] in IGNORED_TEXT_TAGS:
+        if IGNORED_TEXT_TAGS.intersection(self._tag_stack):
             return
-        cleaned = " ".join(data.split())
-        if not cleaned:
-            return
+        # Keep raw data so whitespace at text-node boundaries is preserved;
+        # normalisation happens once the text is joined.
         if self._current_heading is not None:
-            self._current_heading += " " + cleaned
-        self.text_chunks.append(cleaned)
+            self._current_heading += data
+        self.text_chunks.append(data)
 
 
 def semantic_signature(html: str) -> dict[str, Any]:
     parser = _SemanticHtmlParser()
     parser.feed(html)
-    visible_text = " ".join(parser.text_chunks)
+    visible_text = "".join(parser.text_chunks)
     return {
         "tag_counts": dict(sorted(parser.tag_counts.items())),
         "link_count": len([link for link in parser.links if link]),
@@ -102,6 +159,7 @@ def compare_signatures(
         "links",
         "headings",
         "visible_text_word_count",
+        "color_token_count",
         "color_tokens",
     ):
         if baseline.get(key) != candidate.get(key):

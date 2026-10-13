@@ -89,3 +89,49 @@ def test_compare_signatures_only_reports_changed_keys() -> None:
 
     assert compare_signatures(sig, sig) == {}
     assert set(compare_signatures(sig, other)) == {"color_tokens"}
+
+
+def test_nested_markup_inside_hidden_tags_is_not_visible_text() -> None:
+    sig = semantic_signature(
+        "<p>shown</p><noscript><p>fallback text</p><br></noscript><p>also</p>"
+    )
+
+    assert sig["visible_text_word_count"] == 2
+
+
+def test_void_elements_do_not_misalign_hidden_text_tracking() -> None:
+    sig = semantic_signature("<p>a<br>b<img src='x.png'></p><style>p{}</style><p>c</p>")
+
+    assert sig["visible_text_word_count"] == 3
+
+
+def test_whitespace_at_inline_boundaries_is_preserved() -> None:
+    joined = semantic_signature("<h1>foo<span>bar</span></h1>")
+    spaced = semantic_signature("<h1>foo <span>bar</span></h1>")
+
+    assert joined["headings"] == ["foobar"]
+    assert spaced["headings"] == ["foo bar"]
+    assert compare_signatures(joined, spaced).keys() >= {"headings"}
+
+
+def test_block_boundaries_separate_words() -> None:
+    sig = semantic_signature("<div><p>one</p><p>two</p></div>")
+
+    assert sig["visible_text_word_count"] == 2
+
+
+def test_named_and_functional_inline_colors_are_tracked() -> None:
+    red = semantic_signature('<p style="color: red; margin: 0">x</p>')
+    blue = semantic_signature('<p style="color: blue; margin: 0">x</p>')
+    rgb = semantic_signature('<p style="background-color: rgb(1, 2, 3)">x</p>')
+
+    assert red["color_tokens"] == ["color: red"]
+    assert rgb["color_tokens"] == ["background-color: rgb(1, 2, 3)"]
+    assert set(compare_signatures(red, blue)) == {"color_tokens"}
+
+
+def test_color_token_count_change_is_a_delta() -> None:
+    one = semantic_signature('<p style="color:#fff">a</p><p>b</p>')
+    both = semantic_signature('<p style="color:#fff">a</p><p style="color:#fff">b</p>')
+
+    assert set(compare_signatures(one, both)) == {"color_token_count"}
