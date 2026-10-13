@@ -102,7 +102,10 @@ def test_committed_review_page_is_current():
 def test_runner_report_carries_governing_authority():
     from dataclasses import asdict
 
-    from gistau_ch15.properties.backend_selector import GOVERNING_AUTHORITY, select_available_backends
+    from gistau_ch15.properties.backend_selector import (
+        GOVERNING_AUTHORITY,
+        select_available_backends,
+    )
 
     _, availability = select_available_backends()
     rows = [asdict(item) for item in availability]  # the FrontierEngineeringRunner serializer
