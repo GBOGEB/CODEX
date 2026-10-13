@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-import hashlib,json,pathlib
+import hashlib
+import json
+import pathlib
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 TUPLE=ROOT/'triage/census/roundtrip/TRIAGE_W62_IMMUTABLE_TUPLE.json'
 REG=ROOT/'triage/census/CENSUS_DOV_PROOF_OPERATION.yaml'
