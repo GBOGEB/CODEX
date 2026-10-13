@@ -10,6 +10,7 @@ on:
       - '.github/workflows/quality-ubi-testflight.yml'
       - 'pyproject.toml'
       - 'tests/test_quality_burndown.py'
+      - 'tests/test_ubi_runtime_receipt.py'
   push:
     branches: [main]
     paths:
@@ -70,7 +71,7 @@ jobs:
           pyright scripts --outputjson > outputs/quality/pyright-expanded.json
           pyright_expanded_rc=$?
           set -e
-          python -m pytest -q tests/test_quality_burndown.py tests/test_ubi_runtime_receipt.py
+          python -m pytest -q tests/test_quality_burndown.py tests/test_ubi_runtime_receipt.py --junitxml=outputs/quality/pytest-quality.xml
           python scripts/quality_burndown.py --ruff outputs/quality/ruff.json --pyright outputs/quality/pyright.json --source-sha "$EVALUATED_SHA" --requested-head-sha "$REQUESTED_HEAD_SHA" --ruff-scanned-files outputs/quality/ruff-scanned-files.txt --out outputs/quality/burndown.json
           echo "Ruff exit: $ruff_rc; baseline Pyright exit: $pyright_rc; expanded Pyright exit: $pyright_expanded_rc"
       - uses: actions/upload-artifact@v7.0.2
@@ -167,7 +168,7 @@ jobs:
       - uses: actions/download-artifact@v7.0.0
         with:
           name: codex-quality-census
-          path: outputs/quality/
+          path: .
       - uses: actions/download-artifact@v7.0.0
         with:
           name: codex-ubi9-runtime

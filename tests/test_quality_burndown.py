@@ -110,3 +110,55 @@ def test_quality_receipt_does_not_claim_synthetic_merge_is_pr_head(tmp_path):
     invalid = subprocess.run(command, capture_output=True, text=True, check=False)
     assert invalid.returncode != 0
     assert "40-char lowercase hex" in invalid.stderr
+
+
+def test_duplicate_finding_fingerprints_preserve_multiplicity(tmp_path):
+    baseline = tmp_path / "baseline.json"
+    one = {"tool": "ruff", "path": "scripts/a.py", "rule": "F401",
+           "message": "unused import", "line": 2}
+    baseline.write_text(json.dumps({"source_sha": "old", "diagnostics": [one]}))
+    current = tmp_path / "ruff.json"
+    current.write_text(json.dumps([
+        {"filename": "scripts/a.py", "code": "F401",
+         "message": "unused import", "location": {"row": 2}},
+        {"filename": "scripts/a.py", "code": "F401",
+         "message": "unused import", "location": {"row": 4}},
+    ]))
+    output = tmp_path / "receipt.json"
+    result = subprocess.run([
+        sys.executable, "scripts/quality_burndown.py",
+        "--ruff", str(current), "--baseline", str(baseline), "--out", str(output),
+    ], capture_output=True, text=True, check=False)
+    assert result.returncode == 0, result.stderr
+    delta = json.loads(output.read_text())["comparison"]
+    assert delta["new"] == 1
+    assert delta["resolved"] == 0
+    assert delta["net_reduction"] == -1
+
+
+def test_zero_findings_do_not_mean_zero_scanned_files(tmp_path):
+    current = tmp_path / "ruff.json"
+    current.write_text("[]")
+    scope = tmp_path / "scope.txt"
+    scope.write_text("scripts/a.py\nscripts/b.py\nscripts/c.py\n")
+    out = tmp_path / "receipt.json"
+    result = subprocess.run([
+        sys.executable, "scripts/quality_burndown.py",
+        "--ruff", str(current), "--ruff-scanned-files", str(scope),
+        "--out", str(out),
+    ], capture_output=True, text=True, check=False)
+    assert result.returncode == 0, result.stderr
+    receipt = json.loads(out.read_text())
+    assert receipt["current"]["total"] == 0
+    assert receipt["scan_scope"]["ruff"]["scanned_files"] == 3
+    assert receipt["scan_scope"]["pyright"] is None
+
+
+def test_missing_scanner_input_fails_closed(tmp_path):
+    out = tmp_path / "receipt.json"
+    result = subprocess.run([
+        sys.executable, "scripts/quality_burndown.py",
+        "--ruff", str(tmp_path / "missing-ruff.json"), "--out", str(out),
+    ], capture_output=True, text=True, check=False)
+    assert result.returncode != 0
+    assert not out.exists()
