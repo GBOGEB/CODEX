@@ -1,0 +1,41 @@
+name: Diagnostic coverage receipt testflight
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/diagnostic_coverage_rollup.py'
+      - 'tests/test_diagnostic_coverage_rollup.py'
+      - '.github/workflows/diagnostic-coverage-receipt.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/diagnostic_coverage_rollup.py'
+      - 'tests/test_diagnostic_coverage_rollup.py'
+      - '.github/workflows/diagnostic-coverage-receipt.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostic-receipt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Execute evidence boundary tests
+        run: |
+          python -m pip install 'pytest>=7.0'
+          python -m pytest -q tests/test_diagnostic_coverage_rollup.py
+      - name: Produce bounded UNKNOWN-state receipt
+        run: |
+          python scripts/diagnostic_coverage_rollup.py --source-sha "$GITHUB_SHA" --out outputs/diagnostic_coverage/receipt.json
+          python -m json.tool outputs/diagnostic_coverage/receipt.json >/dev/null
+      - uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: diagnostic-coverage-receipt
+          path: outputs/diagnostic_coverage/
+          if-no-files-found: warn
