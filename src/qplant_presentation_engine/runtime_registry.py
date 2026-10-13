@@ -373,7 +373,7 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("Legacy rollup/scree input overrides are unsupported by the active registry generator")
 
     root = Path(__file__).resolve().parents[2]
-    registry_record, report = RuntimeRegistry().write_outputs(
+    registry_record, _report = RuntimeRegistry().write_outputs(
         runtime_dir=args.runtime_dir,
         metrics_dir=root / "metrics" / "repo",
         registry_output=args.registry_output,
