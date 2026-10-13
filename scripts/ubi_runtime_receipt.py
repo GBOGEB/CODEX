@@ -5,6 +5,19 @@ import json
 import os
 import pathlib
 import platform
+import re
+
+evaluated_sha = os.environ["EVALUATED_SHA"]
+requested_head_sha = os.environ["REQUESTED_HEAD_SHA"]
+identity = os.environ["CHECKOUT_IDENTITY"]
+if evaluated_sha != os.environ["GITHUB_SHA"]:
+    raise RuntimeError("Evaluated checkout and GitHub SHA mismatch")
+if not all(re.fullmatch(r"[a-f0-9]{40}", sha) for sha in (evaluated_sha, requested_head_sha)):
+    raise RuntimeError("Invalid 40-character checkout SHA")
+exact_head = evaluated_sha == requested_head_sha
+expected_identity = "EXACT_HEAD" if exact_head else "PR_MERGE_TEST"
+if identity != expected_identity:
+    raise RuntimeError("Inconsistent checkout identity classification")
 
 root = pathlib.Path("outputs/ubi9")
 image = os.environ["IMAGE_REF"]
@@ -14,7 +27,13 @@ files = {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
          for p in sorted(root.iterdir()) if p.is_file()}
 receipt = {
     "schema": "codex-ubi-testflight/v1",
-    "source_sha": os.environ["GITHUB_SHA"],
+    "source_sha": evaluated_sha,
+    "checkout_identity": {
+        "evaluated_sha": evaluated_sha,
+        "requested_head_sha": requested_head_sha,
+        "exact_head": exact_head,
+        "mode": identity,
+    },
     "container_image": image,
     "image_digest": image.rsplit("@", 1)[1],
     "python": platform.python_version(),
@@ -45,7 +64,7 @@ if any(p.exists() for p in (pipeline_path, exit_path, duration_path)):
         "duration_ms": duration_ms,
         "size_bytes": pipeline_path.stat().st_size,
         "sha256": hashlib.sha256(pipeline_path.read_bytes()).hexdigest(),
-        "source_sha": os.environ["GITHUB_SHA"],
+        "source_sha": evaluated_sha,
         "image_digest": image.rsplit("@", 1)[1],
     }
 

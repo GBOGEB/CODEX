@@ -27,6 +27,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
+      - name: Classify actual checkout SHA
+        shell: bash
+        env:
+          REQUESTED_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          evaluated_sha="$(git rev-parse HEAD)"
+          if [[ "$evaluated_sha" != "$GITHUB_SHA" ]]; then
+            echo "::error::Checkout mismatch with evaluated GitHub SHA" >&2
+            exit 1
+          fi
+          if [[ "$evaluated_sha" == "$REQUESTED_HEAD_SHA" ]]; then
+            checkout_identity=EXACT_HEAD
+          elif [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            checkout_identity=PR_MERGE_TEST
+          else
+            echo "::error::Unexpected checkout outside PR merge test" >&2
+            exit 1
+          fi
+          echo "EVALUATED_SHA=$evaluated_sha" >> "$GITHUB_ENV"
+          echo "REQUESTED_HEAD_SHA=$REQUESTED_HEAD_SHA" >> "$GITHUB_ENV"
+          echo "CHECKOUT_IDENTITY=$checkout_identity" >> "$GITHUB_ENV"
       - uses: actions/setup-python@v7.0.0
         with:
           python-version: '3.12'
@@ -48,8 +70,8 @@ jobs:
           pyright scripts --outputjson > outputs/quality/pyright-expanded.json
           pyright_expanded_rc=$?
           set -e
-          python -m pytest -q tests/test_quality_burndown.py
-          python scripts/quality_burndown.py --ruff outputs/quality/ruff.json --pyright outputs/quality/pyright.json --source-sha "$GITHUB_SHA" --ruff-scanned-files outputs/quality/ruff-scanned-files.txt --out outputs/quality/burndown.json
+          python -m pytest -q tests/test_quality_burndown.py tests/test_ubi_runtime_receipt.py
+          python scripts/quality_burndown.py --ruff outputs/quality/ruff.json --pyright outputs/quality/pyright.json --source-sha "$EVALUATED_SHA" --requested-head-sha "$REQUESTED_HEAD_SHA" --ruff-scanned-files outputs/quality/ruff-scanned-files.txt --out outputs/quality/burndown.json
           echo "Ruff exit: $ruff_rc; baseline Pyright exit: $pyright_rc; expanded Pyright exit: $pyright_expanded_rc"
       - uses: actions/upload-artifact@v7.0.2
         if: always()
@@ -62,6 +84,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
+      - name: Classify actual checkout SHA
+        shell: bash
+        env:
+          REQUESTED_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          evaluated_sha="$(git rev-parse HEAD)"
+          if [[ "$evaluated_sha" != "$GITHUB_SHA" ]]; then
+            echo "::error::Checkout mismatch with evaluated GitHub SHA" >&2
+            exit 1
+          fi
+          if [[ "$evaluated_sha" == "$REQUESTED_HEAD_SHA" ]]; then
+            checkout_identity=EXACT_HEAD
+          elif [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            checkout_identity=PR_MERGE_TEST
+          else
+            echo "::error::Unexpected checkout outside PR merge test" >&2
+            exit 1
+          fi
+          echo "EVALUATED_SHA=$evaluated_sha" >> "$GITHUB_ENV"
+          echo "REQUESTED_HEAD_SHA=$REQUESTED_HEAD_SHA" >> "$GITHUB_ENV"
+          echo "CHECKOUT_IDENTITY=$checkout_identity" >> "$GITHUB_ENV"
       - name: Resolve and pin UBI image digest for this run
         shell: bash
         run: |
@@ -78,6 +122,8 @@ jobs:
           mkdir -p outputs/ubi9
           docker run --rm --user "$(id -u):$(id -g)" \
             -e GITHUB_SHA="$GITHUB_SHA" -e IMAGE_REF="$IMAGE_REF" \
+            -e EVALUATED_SHA="$EVALUATED_SHA" -e REQUESTED_HEAD_SHA="$REQUESTED_HEAD_SHA" \
+            -e CHECKOUT_IDENTITY="$CHECKOUT_IDENTITY" \
             -v "$PWD:/workspace" -w /workspace "$IMAGE_REF" /bin/bash -c '
               set -euo pipefail
               python --version > outputs/ubi9/python-version.txt 2>&1

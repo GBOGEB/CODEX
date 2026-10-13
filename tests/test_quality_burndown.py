@@ -83,3 +83,30 @@ def test_ruff_scope_denominator_and_empty_scope_rejected(tmp_path):
     rejected = subprocess.run(command, capture_output=True, text=True, check=False)
     assert rejected.returncode != 0
     assert "Ruff scan scope is empty" in rejected.stderr
+
+
+def test_quality_receipt_does_not_claim_synthetic_merge_is_pr_head(tmp_path):
+    ruff = tmp_path / "ruff.json"
+    ruff.write_text("[]")
+    output = tmp_path / "quality.json"
+    evaluated = "a" * 40
+    reviewed = "b" * 40
+    command = [
+        sys.executable, "scripts/quality_burndown.py",
+        "--ruff", str(ruff), "--source-sha", evaluated,
+        "--requested-head-sha", reviewed, "--out", str(output),
+    ]
+    result = subprocess.run(command, capture_output=True, text=True, check=False)
+    assert result.returncode == 0, result.stderr
+    identity = json.loads(output.read_text())["checkout_identity"]
+    assert identity["evaluated_sha"] == evaluated
+    assert identity["requested_head_sha"] == reviewed
+    assert identity["exact_head"] is False
+    command[command.index(reviewed)] = evaluated
+    exact = subprocess.run(command, capture_output=True, text=True, check=False)
+    assert exact.returncode == 0, exact.stderr
+    assert json.loads(output.read_text())["checkout_identity"]["exact_head"] is True
+    command[command.index(evaluated)] = "not-a-sha"
+    invalid = subprocess.run(command, capture_output=True, text=True, check=False)
+    assert invalid.returncode != 0
+    assert "40-char lowercase hex" in invalid.stderr
