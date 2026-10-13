@@ -17,7 +17,9 @@ permissions:
 
 concurrency:
   group: agentic-pr-scan-${{ github.event.pull_request.number || github.event.issue.number || github.ref }}
-  cancel-in-progress: true
+  # Serialize repeated PR events without cancelling exact-head scan evidence.
+  # Duplicate events may queue; scanner remains read-only.
+  cancel-in-progress: false
 
 jobs:
   scan:
