@@ -52,3 +52,18 @@ def test_changed_line_coverage_accepts_src_prefix(tmp_path, monkeypatch):
     assert result["covered_lines"] == 1
     assert result["eligible_lines"] == 1
     assert result["percent"] == 100.0
+
+
+def test_uninstrumented_changed_source_blocks_measured_percentage(tmp_path, monkeypatch):
+    """Missing XML source must not silently disappear from denominator."""
+    monkeypatch.setattr(
+        diffcov.subprocess, "check_output",
+        lambda args, **kwargs: "a" * 40 if args[1] == "rev-parse"
+        else "+++ b/scripts/sample.py\n@@ -9,0 +10 @@\n+covered\n"
+        "+++ b/scripts/unseen.py\n@@ -0,0 +1 @@\n+untested\n",
+    )
+    result = diffcov.measure(_fixture(tmp_path, (1, 1)), "b" * 40, tmp_path)
+    assert result["status"] == "INCOMPLETE_INSTRUMENTATION"
+    assert result["missing_source_files"] == ["scripts/unseen.py"]
+    assert result["percent"] is None
+    assert result["covered_lines"] == 1
