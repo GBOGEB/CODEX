@@ -153,8 +153,15 @@ edges:
     source: KEB-NODE-GISTAU-CROSSCHECK
     target: EXT-NODE-ABACUS-HE4-PROPERTY
     type: CROSSCHECKS_PINNED_PROVIDER
-    status: ACTIVE
+    status: ACTIVE_CI_PR_TIME
     guard: NON_GOVERNING_DISAGREEMENT_IS_SIGNAL_NOT_AVERAGE
+    # The pinned provider is invoked only by the PR-time CI crosscheck; no
+    # GISTAU runtime path (e.g. FrontierEngineeringRunner) calls ABACUS.
+    evidence:
+      invoker: tools/physics_crosscheck.py
+      workflow: .github/workflows/gistau-physics-crosscheck.yml
+      recorded_comparison: governance/physics/HE4_PROPERTY_AUTHORITY_PIN.yaml#output_crosscheck
+    runtime_invocation: NONE
 
 activation_metrics:
   discovered_nodes: 11
