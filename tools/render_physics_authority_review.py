@@ -114,7 +114,7 @@ def _parts(pin: dict[str, Any] | None = None) -> tuple[str, str]:
     probe_rows = []
     for t in parity["probes_K"]:
         codex = route(t)
-        abacus = "HEPAK" if lo <= t <= hi else "COOLPROP"
+        abacus = "HEPAK" if lo < t <= hi else "COOLPROP"  # band is (lo, hi]
         same = codex == abacus
         probe_rows.append(
             f"<tr><td>{t:g}</td><td>{_e(codex)}</td><td>{_e(abacus)}</td>"
@@ -127,9 +127,25 @@ def _parts(pin: dict[str, Any] | None = None) -> tuple[str, str]:
         f"ABACUS commit <code>{_e(sha[:12])}</code> ({_e(auth['commit_date'])}) is the provider version you intend CODEX to consume.",
         f"Pinned constants match ABACUS: λ = {consts['lambda_point_K']:g} K, governed envelope {consts['governed_envelope_K'][0]:g}–{consts['governed_envelope_K'][1]:g} K, QPLANT HEPAK band {lo:g}–{hi:g} K.",
         "Every GISTAU backend is CROSSCHECK_ONLY and the NIST fixture is VALIDATION_REFERENCE_ONLY: nothing in CODEX governs helium physics.",
-        f"Policy divergence is acceptable as recorded ({_e(parity['status'])}) until ABACUS adopts the CODEX rule.",
+        (
+            "CODEX and pinned ABACUS route every probe temperature to the same provider (PARITY)."
+            if parity["status"] == "PARITY"
+            else f"Policy divergence is acceptable as recorded ({_e(parity['status'])}) until ABACUS adopts the CODEX rule."
+        ),
         f"Runtime dependency is <code>{_e(auth['runtime_dependency'])}</code>.",
     ]
+    if parity["status"] == "PARITY":
+        decision = (
+            '<section class="card active full" id="decision">\n<h2>Routing parity</h2>\n'
+            f"<p>CODEX and the pinned ABACUS routing agree: HEPAK governs 0 &lt; T ≤ {hi:g} K, including He-II, "
+            f"and CoolProp governs above. {_e(parity['resolution'])}</p>\n"
+        )
+    else:
+        decision = (
+            '<section class="card warning full" id="decision">\n<h2>What needs your decision</h2>\n'
+            f"<p>CODEX routes helium below {lo:g} K to HEPAK; the pinned ABACUS routing still hands it to CoolProp. "
+            "Physics belongs to ABACUS, so ABACUS has to adopt the rule, after which CODEX re-pins and parity returns.</p>\n"
+        )
     checklist_html = "".join(
         f'<li><label for="chk-{i}"><input type="checkbox" id="chk-{i}"> <span>{item}</span></label></li>'
         for i, item in enumerate(checklist, 1)
@@ -189,10 +205,7 @@ small { color: var(--muted); }
 </div>
 </header>
 <main class="layout">
-<section class="card warning full" id="decision">
-<h2>What needs your decision</h2>
-<p>CODEX now routes helium below 2.0 K to HEPAK; the pinned ABACUS routing still hands it to CoolProp. Physics belongs to ABACUS, so ABACUS has to adopt the rule, after which CODEX re-pins and parity returns.</p>
-<div class="wrap">{_band_svg(lo, hi, consts['lambda_point_K'])}</div>
+{decision}<div class="wrap">{_band_svg(lo, hi, consts['lambda_point_K'])}</div>
 </section>
 <section class="card active" id="checklist">
 <h2>Reviewer checklist</h2>

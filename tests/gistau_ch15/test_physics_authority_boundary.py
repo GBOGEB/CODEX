@@ -69,11 +69,18 @@ def test_policy_parity_is_recorded_not_silent(pin):
     parity = pin["policy_parity"]
     diverging = []
     for t in parity["probes_K"]:
-        abacus = "HEPAK" if lo <= t <= hi else "COOLPROP"
+        abacus = "HEPAK" if lo < t <= hi else "COOLPROP"  # lower bound exclusive
         if policy.governing_provider_for_temperature(t) != abacus:
             diverging.append(t)
     assert diverging == parity["diverging_probes_K"]
     assert (parity["status"] == "PARITY") == (not diverging)
+
+
+def test_pinned_band_matches_abacus_routing_semantics(pin):
+    """Band is (lo, hi]: ABACUS raises for T <= 0 and has no HEPAK_T_MIN_K since #1881."""
+    lo, hi = pin["pinned_constants"]["qplant_hepak_band_K"]
+    assert lo == 0.0
+    assert hi == policy.HEPAK_MAX_K
 
 
 def test_capability_graph_declares_crosscheck_node_and_router_stays_planned():

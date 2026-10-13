@@ -1,6 +1,6 @@
 schema: codex-physics-authority-pin/v1
 pin_id: HE4_PROPERTY_AUTHORITY_PIN
-as_of: "2026-10-11"
+as_of: "2026-10-13"
 formal_credit_delta: 0
 
 # Single source of truth for helium-4 physics is ABACUS. CODEX consumes it by
@@ -12,8 +12,8 @@ formal_credit_delta: 0
 authority:
   repository: GBOGEB/ABACUS
   capability: CRYO_HE4_PROPERTY_SURFACE
-  commit_sha: 53688f26d5b9c4cd074ef905e426849e85324383
-  commit_date: "2026-10-06"
+  commit_sha: 4c2f6695b177975c8983aff74e00ea37905835e3
+  commit_date: "2026-10-12"   # merge of ABACUS #1881 (HEPAK governs all T <= 4.5 K)
   runtime_dependency: CoolProp==7.2.0
   rule: CODEX_MUST_NOT_DUPLICATE_OR_SELF_PROMOTE_PHYSICS_PROVIDER
 
@@ -27,16 +27,16 @@ pinned_files:
     sha256: d1c6229317a3d8da958cbd82785473b981494fbda8ff56ad94c2cc7706834460
   - path: models/helium_properties/qplant_provider.py
     role: QPLANT HEPAK/CoolProp routing
-    git_blob_sha: 01cf413ab800cdcbd508a80cb75f61842ac0776c
-    sha256: b9c0293f701a43cb704f5ad7a29ae5b5c31cd6341c8562b53428a795fc6e5c32
+    git_blob_sha: 3a66aef1242ed43d9afa09b59c0c839adb73f18c
+    sha256: 7e04662fc9074e71086d6010b491691012c6f9b58fc652f230b2ac80d346fd20
   - path: models/helium_properties/hepak_reference.py
     role: frozen HEPAK reference-table loader
     git_blob_sha: 46a678e8305d8b7fe6d02b1d5395b932df69d2eb
     sha256: a4aaa2d5a4ed361ff4c75babb6931ef9a12b6acad7f89be39893f33e069b49bd
   - path: models/helium_properties/qplant_hepak_runtime_export.py
     role: HEPAK runtime receipt export
-    git_blob_sha: 8e6d7d52bf78354059a0ff69620dd4dfd8fc8e68
-    sha256: 7d99c717cbc326561cce0767787de8bdaab1790f27465d3fc21e494ee8705569
+    git_blob_sha: 052bd65d29fb76e96f1e21a9b2ede7375616a5a4
+    sha256: 454716db2c50ad618219a6d8ad57a15839fd099c51ef61bd15dab6185dfc522a
   - path: cryo_dashboard_v0_3_0/property_surface_manifest.json
     role: property surface manifest and golden reference cases (cryo property calculator v0.3.0)
     git_blob_sha: ff8c9701d6f5e8cb11f24e3148165c538c8161f3
@@ -55,7 +55,9 @@ pinned_files:
 pinned_constants:
   lambda_point_K: 2.1768            # provider.py LAMBDA_K
   governed_envelope_K: [1.8, 300.0] # provider.py state_tp guard
-  qplant_hepak_band_K: [2.0, 4.5]   # qplant_provider.py HEPAK_T_MIN_K, HEPAK_T_MAX_K
+  # Lower bound is exclusive (0 < T): ABACUS #1881 removed HEPAK_T_MIN_K, so
+  # HEPAK governs every positive T up to and including HEPAK_T_MAX_K.
+  qplant_hepak_band_K: [0.0, 4.5]   # qplant_provider.py (0, HEPAK_T_MAX_K]
 
 # CODEX local roles under this pin.
 local_roles:
@@ -67,11 +69,11 @@ local_roles:
 # either side moves without this block being updated.
 policy_parity:
   codex_rule: HEPAK governs 0 < T <= 4.5 K (owner decision 2026-10-11, CODEX #969)
-  abacus_rule: HEPAK governs 2.0 <= T <= 4.5 K (qplant_provider.py at commit_sha)
+  abacus_rule: HEPAK governs 0 < T <= 4.5 K (qplant_provider.py at commit_sha, ABACUS #1881)
   probes_K: [1.8, 1.99, 2.0, 2.1768, 3.0, 4.5, 4.6, 300.0]
-  diverging_probes_K: [1.8, 1.99]
-  status: DIVERGED_PENDING_ABACUS_ADOPTION
-  resolution: ABACUS adopts HEPAK_T_MIN_K removal; then re-pin and set status PARITY
+  diverging_probes_K: []
+  status: PARITY
+  resolution: ABACUS adopted the rule in #1881 (merge 4c2f669); re-pinned 2026-10-13. Was DIVERGED_PENDING_ABACUS_ADOPTION at 53688f2 (1.8, 1.99 K).
 
 # Output cross-check (tools/physics_crosscheck.py, CI workflow
 # gistau-physics-crosscheck.yml). Runs the pinned ABACUS provider over this
@@ -95,6 +97,8 @@ output_crosscheck:
     density_rel: 0.01
     delta_h_frac_of_cpT: 0.002     # |dh_basic - dh_governing| <= 0.2 % of cp*T
     delta_s_abs_J_kgK: 10.0
+  # provider.py is byte-identical at 53688f2 and 4c2f669, so the checksum carries
+  # over; the CI crosscheck job re-executes it at the new commit.
   # Recorded from CI run on PR #978 (ABACUS 53688f2, CoolProp 7.2.0, ubuntu,
   # Python 3.12); identical on two runs. Worst measured deviations inside the
   # basic-incarnation domain (T >= 50 K, ideal-gas rho <= 2.5 kg/m3):
@@ -105,4 +109,4 @@ output_crosscheck:
 # sha256 over the canonical JSON of {authority.commit_sha, pinned_files
 # (path, sha256) sorted by path, pinned_constants}. Recomputed by the test and
 # by tools/verify_physics_authority_pin.py; any edit to the pin changes it.
-meta_checksum_sha256: 20a7c901dd28fc595a817318f54998cedff2c62d65a80ef7d8af34b334ee7b2c
+meta_checksum_sha256: 0c6ab298386179d7e5c19b68b896517982a1959b5fdba7d5426a848d76cf9ff7
