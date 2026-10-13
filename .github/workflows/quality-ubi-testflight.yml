@@ -78,7 +78,7 @@ jobs:
         if: always()
         with:
           name: codex-quality-census
-          path: outputs/quality/
+          path: .
           if-no-files-found: error
 
   ubi9-runtime:
@@ -168,11 +168,11 @@ jobs:
       - uses: actions/download-artifact@v7.0.0
         with:
           name: codex-quality-census
-          path: outputs/quality/
+          path: .
       - uses: actions/download-artifact@v7.0.0
         with:
           name: codex-ubi9-runtime
-          path: outputs/ubi9/
+          path: .
       - name: Validate input source binding and join receipts
         run: |
           python - <<'PY'
