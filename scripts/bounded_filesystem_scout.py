@@ -100,7 +100,10 @@ def scan_roots(roots: Iterable[Path], *, follow_symlinks: bool = False) -> dict:
 
     for root in roots:
         resolved = root.expanduser().resolve()
-        row = {"requested": str(root), "resolved": str(resolved)}
+        row: dict[str, str | bool] = {
+            "requested": str(root),
+            "resolved": str(resolved),
+        }
         if not resolved.exists():
             skips.append(
                 SkipRecord(
