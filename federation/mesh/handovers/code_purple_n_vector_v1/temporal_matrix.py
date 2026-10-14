@@ -102,10 +102,9 @@ def masked_first_difference(
             if not flag or old is None or new is None:
                 values.append(None)
                 continue
-            if (
-                type(old) not in (int, float) or type(new) not in (int, float)
-                or not isfinite(old) or not isfinite(new)
-            ):
+            if type(old) not in (int, float) or type(new) not in (int, float):
+                raise ValueError("invalid measurement type")
+            if not isfinite(old) or not isfinite(new):
                 values.append(None)
                 continue
             values.append(float(new - old))
