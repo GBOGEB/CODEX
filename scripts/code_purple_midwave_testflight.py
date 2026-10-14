@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """CODE PURPLE mid-wave census: evidence-only, resumable, never merge authority."""
 from __future__ import annotations
 
@@ -21,7 +20,7 @@ PREFERRED = (
     "cryogenic-accelerator-workspace", "gg_MATH", "GEMINI",
     "GBOGEB-PROGRAM-COOL", "pipeline-automation-hub",
 )
-BOT_LOGINS = {"chatgpt-codex-connector", "github-actions", "dependabot"}
+BOT_LOGINS = {"chatgpt-codex-connector", "github-actions", "dependabot", "github-advanced-security"}
 ISSUE_MARKER = "<!-- code-purple-midwave-receipt-v1 "
 KEYWORD_GROUPS = {
     "security": ("security", "vulnerab", "cve-", "ghsa-", "secret", "injection", "osv"),
@@ -76,7 +75,8 @@ def compact_prior(comments: list[dict], prior: dict | None, head_sha: str, root_
     if last_sha and last_sha != head_sha:
         history.append({
             "source_sha": last_sha, "gates": prior.get("gates", {}),
-            "comment_fingerprints": prior.get("comment_fingerprints", []),
+            "comment_fingerprint_digest": stable_hash(prior.get("comment_fingerprints", [])),
+            "bot_comment_count": len(prior.get("comment_fingerprints", [])),
         })
     seen = set(prior.get("comment_fingerprints", []))
     latest = {x["id"]: x for x in comments}
@@ -297,7 +297,7 @@ def main() -> int:
             "open_findings_require_review": True,
         },
         "continuation": state,
-        "progress": latest_checkpoint({}),
+        "progress": latest_checkpoint((previous or {}).get("gates", {}) if state["same_head"] else {}),
         "unknowns": ["actual_local_runner_inventory", "active_lldb_sessions",
                      "accepted_security_review", "comparable_broad_coverage"],
     }
