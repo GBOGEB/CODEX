@@ -1,0 +1,81 @@
+flowchart TD
+  subgraph CP["CODE PURPLE - CODEX GLOB / Mesh Closure Control"]
+    I["SIPOC: exact source, authority, constraints, prior receipts"]
+    R["3PR: Refresh / Probe / Rank"]
+    C{"Smallest evidence-producing method?"}
+    I --> R --> C
+    C -->|"Repeated CI/root"| ER["EVERRED: persistent root recovery"]
+    C -->|"Observed structural gap"| M["MIP: Modernize / Innovate / Perpetuate"]
+    C -->|"Bounded transaction"| T["3PC: Prepare / Prove / Commit"]
+    C -->|"Consumer generalisation gap after local DoV"| P["3P3: Pin / Propagate / Prove"]
+    C -->|"No new evidence / local DoV sufficient"| STOP["STOP; retain last valid evidence"]
+  end
+  subgraph E["Independent evidence - candidate NEVERGREEN falsification"]
+    CI["CI jobs, attempts, first-reds"]
+    SC["Bandit, Flake8, Safety, coverage scopes"]
+    LD["MIP LDAB file count + executed contract"]
+    DB["Real LLDB/DAP Docker, RHEL, port and teardown"]
+    WK["Authenticated worker dispatch and accepted repair"]
+    PIN["Repository, exact SHA, run, attempt, job, config + digest"]
+    N["Negative controls: missing, stale, skipped, zero-step, synthetic"]
+    VAL{"Authentic and repeatable?"}
+    CI --> PIN
+    SC --> PIN
+    LD --> PIN
+    DB --> PIN
+    WK --> PIN
+    PIN --> N --> VAL
+  end
+  subgraph ROOT["EVERRED canonical root process"]
+    OCC["Occurrence -> signature -> persistent root identity"]
+    CAUSE{"Causal counterfactual confirms root?"}
+    DIAG["Main / PR / environment diagnosis"]
+    OWNER["Single owner + bounded path lease"]
+    FIX["Canonical repair, preserve intent"]
+    PRE["Preflight, focused tests + negative regressions"]
+    PLAY["Consumer replay + native exact-head CI"]
+    TECH{"Technical proof verified?"}
+    OCC --> CAUSE
+    CAUSE -->|"No"| DIAG --> OWNER
+    CAUSE -->|"Yes"| OWNER
+    OWNER --> FIX --> PRE --> PLAY --> TECH
+    TECH -->|"No"| ATT["New attempt, same persistent root"]
+    ATT --> OCC
+  end
+  subgraph MET["DMAIC control / N-10 / W84 effectiveness"]
+    HIST["N-10 observations, matching denominator and configuration"]
+    KPI["Separate files, checks, sessions, repairs, coverage, findings"]
+    COMP{"Before and after actually comparable?"}
+    OBS["W84: 2 observed cycles; yield, effort, retry, pressure"]
+    PRO["Bounded 3P3 recommendation, no engineering credit"]
+    HIST --> KPI --> COMP
+    COMP -->|"Yes"| OBS --> PRO
+    COMP -->|"No"| UNKNOWN["Delta UNKNOWN, no false uplift"]
+  end
+  subgraph GOV["Independent P5-P7 admission"]
+    REV["Security + eligible independent review + protected branch"]
+    ALLOW{"Mandatory exact-head checks all terminal, enforced?"}
+    MAIN["Authorized merge; exact-main readback"]
+    REC["Recurrence sentinel; control and root closure"]
+    REV --> ALLOW
+    ALLOW -->|"Yes"| MAIN --> REC
+  end
+  VAL -->|"No"| HOLD["HOLD: missing evidence is never PASS"]
+  VAL -->|"Yes"| R
+  ER --> OCC
+  TECH -->|"Yes"| HIST
+  TECH -->|"Yes"| REV
+  UNKNOWN --> REV
+  PRO --> REV
+  M -->|"Local DoV"| REV
+  M -.->|"Only if transaction is needed"| T
+  T -->|"Transaction proof"| REV
+  P -->|"Independent consumer receipt"| REV
+  ALLOW -->|"No"| HOLD
+  REC -.->|"SELF_REENTRY on material new evidence"| I
+  REC -.->|"PAY_IT_FORWARD, independent consumer acceptance"| P
+  HOLD -.->|"WATCH for evidence/policy change"| I
+  P0["CODE PURPLE P0 containment on security/admission breach"] --> HOLD
+  P0 --> REV
+  OCC --> REX["CODEX MissionControl / REX: read-only roll-up"]
+  REC --> REX
