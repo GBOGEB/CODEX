@@ -23,6 +23,8 @@ Required publication contract:
 
 CODE PURPLE / CODEX global controller -> 3PR refresh/probe/rank -> EVERRED root recovery when repeated CI failure -> MIP only if structural gap -> 3PC only if bounded transaction -> 3P3 only if independent consumer propagation gap -> STOP when no material evidence change. \`3P*\` is selector, not executable gate. Proposed NEVERGREEN is an adversarial false-green guard only.
 
+QPS is a downstream engineering and quality consumer of CODE PURPLE / EVERRED evidence, not a separate orchestration or merge authority. QPS requirement semantics, independent verification and engineering acceptance remain subject to their own non-compensating gates; a reader or census receipt cannot confer QPS approval.
+
 The PDF's pages 1–4 map to (1) evidence verification / crew, (2) CODE PURPLE / DMAIC / MIP, (3) EVERRED / recursive SIPOC and (4) overview-to-collapsed lane/agent montage respectively.
 
 ## Source references
