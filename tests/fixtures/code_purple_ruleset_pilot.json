@@ -1,0 +1,87 @@
+{
+  "schema": "code-purple.protection-mip-pilot.v1",
+  "scope": "SYNTHETIC_CI_NEGATIVE_FIXTURE",
+  "observed_at": "2026-10-14T15:30:00Z",
+  "repositories": [
+    {
+      "repo": "GBOGEB/CODEX",
+      "default_branch": "main",
+      "head_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "protected": false,
+      "size": 20,
+      "rulesets": []
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "default_branch": "main",
+      "head_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "protected": false,
+      "size": 20,
+      "rulesets": [
+        {
+          "id": 24494381,
+          "target": "branch",
+          "enforcement": "active",
+          "conditions": {
+            "ref_name": {
+              "include": [
+                "~DEFAULT_BRANCH"
+              ],
+              "exclude": []
+            }
+          },
+          "bypass_actors": [],
+          "rules": []
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/Example",
+      "default_branch": "master",
+      "head_sha": "cccccccccccccccccccccccccccccccccccccccc",
+      "protected": true,
+      "size": 20,
+      "rulesets": [
+        {
+          "id": 999,
+          "target": "branch",
+          "enforcement": "active",
+          "conditions": {
+            "ref_name": {
+              "include": [
+                "~DEFAULT_BRANCH"
+              ],
+              "exclude": []
+            }
+          },
+          "bypass_actors": [],
+          "rules": [
+            {
+              "type": "deletion"
+            },
+            {
+              "type": "non_fast_forward"
+            },
+            {
+              "type": "pull_request",
+              "parameters": {
+                "required_approving_review_count": 1,
+                "require_last_push_approval": true,
+                "dismiss_stale_reviews_on_push": true,
+                "required_review_thread_resolution": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/EmptyExample",
+      "default_branch": "dev",
+      "head_sha": null,
+      "protected": null,
+      "size": 0,
+      "rulesets": null
+    }
+  ]
+}
