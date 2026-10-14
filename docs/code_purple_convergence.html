@@ -82,9 +82,6 @@ footer{color:var(--muted);padding:26px;border-top:1px solid var(--border);text-a
 <a href="#overview">01 · Flow</a><a href="#lanes">02 · Disjoint lanes</a><a href="#verification">03 · Proof</a><a href="#top21">04 · TOP21</a><a href="#boundaries">05 · Authority</a><a href="#sources">06 · Sources</a>
 </div></nav>
 <main id="main" class="main">
-<section id="overview" class="section" aria-labelledby="overview-title">
-<div class="section-heading"><h2 id="overview-title">01 · Governing convergence DAG</h2><span class="state">HOLD ≠ PASS</span></div>
-<p class="small">Directional chain: independent repair lanes feed source-matched verification; failed gates return only affected roots to the queue.</p>
 <div class="key" role="group" aria-label="Persistent color legend"><strong>KEY</strong>
 <span><i class="swatch s-evidence" aria-hidden="true"></i>Evidence</span>
 <span><i class="swatch s-repair" aria-hidden="true"></i>Repair</span>
@@ -92,6 +89,10 @@ footer{color:var(--muted);padding:26px;border-top:1px solid var(--border);text-a
 <span><i class="swatch s-blocked" aria-hidden="true"></i>Blocked</span>
 <span><i class="swatch s-authority" aria-hidden="true"></i>Owner authority</span>
 </div>
+<section id="overview" class="section" aria-labelledby="overview-title">
+<div class="section-heading"><h2 id="overview-title">01 · Governing convergence DAG</h2><span class="state">HOLD ≠ PASS</span></div>
+<p class="small">Directional chain: independent repair lanes feed source-matched verification; failed gates return only affected roots to the queue.</p>
+
 <div class="track" aria-label="Five-stage convergence pipeline">
 <article class="node evidence"><span class="tag">01 · OBSERVE</span><h3>Exact-SHA intake</h3><p>GitHub run + job, JUnit, coverage XML, scanner digest, BD/LDAB, REX candidate.</p><a href="#sources">Evidence sources ↓</a></article>
 <article class="node evidence"><span class="tag">02 · CLASSIFY</span><h3>Canonical root ledger</h3><p>Normalize signatures without inventing a confirmed cause or conflating unlike denominators.</p><a href="#lanes">Inspect lanes ↓</a></article>
