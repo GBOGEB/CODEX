@@ -1,0 +1,36 @@
+{
+  "schema": "codepurple.github_native_manifest.v1",
+  "repository": "GBOGEB/CODEX",
+  "root": "federation/mesh/handovers/code_purple_n_vector_v1",
+  "files": [
+    "README.md",
+    "HANDOVER.md",
+    "MODEL.md",
+    "STATE.json",
+    "DROPIN.md",
+    "temporal_matrix.py",
+    "test_temporal_matrix.py",
+    "VALIDATION.md",
+    "MANIFEST.json"
+  ],
+  "source_type": "git_tree",
+  "purpose": "Immutable Git source for human handover and offline reference; refresh telemetry at each continuation",
+  "source_recovery_zip_sha256": "998737b3c433b63a2918cb71b6d853a3030421b7366f23e8a8c07403d89c9c47",
+  "source_delta_zip_sha256": "e5b32be35405159ed5dce3adb9da55325dd5f49796ba9e232a95a5606e8eda4a",
+  "source_zip_mismatch": "The recovery ZIP contained seven files; its embedded legacy manifest describes a missing DROPIN_DELTA.md and omits LIVE_RECOVERY_RECEIPT_20261014.md",
+  "links": {
+    "codex_control": "https://github.com/GBOGEB/CODEX/issues/1037",
+    "abacus_evidence": "https://github.com/GBOGEB/ABACUS/issues/1929",
+    "admission": "https://github.com/GBOGEB/ABACUS/issues/1860",
+    "ruff_run": "https://github.com/GBOGEB/ABACUS/actions/runs/38590675476"
+  },
+  "provenance": {
+    "ruff_artifact_id": 11906997311,
+    "ruff_artifact_sha256": "fe241c5534a441e907d78c762a4a5758b4cf6a6fb3f8d68bac58ed5f910e6118"
+  },
+  "exclusions": [
+    "full HANDOVER_V2.zip unverified because raw file unavailable",
+    "native gg_MATH provider attestation not supplied",
+    "no independent merge admission claimed"
+  ]
+}
