@@ -2,9 +2,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from math import isfinite
-from typing import Optional
 
 _HEX = frozenset("0123456789abcdef")
 _REQUIRED = (
@@ -18,17 +17,17 @@ def _utc(value: str) -> datetime:
     if not isinstance(value, str) or not value.endswith("Z"):
         raise ValueError("UTC timestamp ending Z required")
     try:
-        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        parsed = datetime.fromisoformat(value)
     except ValueError as exc:
         raise ValueError("invalid UTC timestamp") from exc
-    if parsed.tzinfo is None or parsed.utcoffset() != timezone.utc.utcoffset(None):
+    if parsed.tzinfo != UTC:
         raise ValueError("UTC timestamp required")
     return parsed
 
 
 @dataclass(frozen=True)
 class Metric:
-    value: Optional[float]
+    value: float | None
     unit: str
     repository: str
     source_sha: str
@@ -36,7 +35,7 @@ class Metric:
     config_digest: str
     scope_digest: str
     observed_at_utc: str
-    denominator: Optional[float] = None
+    denominator: float | None = None
 
     def __post_init__(self) -> None:
         if self.value is not None and (
@@ -67,7 +66,7 @@ def rebase_index(index: int, origin: int) -> int:
     return index - origin
 
 
-def comparable_delta(before: Metric, after: Metric) -> Optional[float]:
+def comparable_delta(before: Metric, after: Metric) -> float | None:
     """Only same-scope, chronologically ordered exact-source observations compare."""
     identity = (
         "repository", "unit", "producer", "config_digest",
@@ -85,17 +84,17 @@ def comparable_delta(before: Metric, after: Metric) -> Optional[float]:
 
 
 def masked_first_difference(
-    rows: list[list[Optional[float]]], comparable: list[list[bool]]
-) -> list[list[Optional[float]]]:
+    rows: list[list[float | None]], comparable: list[list[bool]]
+) -> list[list[float | None]]:
     """Adjacent first differences D X, masked; nulls remain null."""
     if len(rows) < 2 or len(comparable) != len(rows) - 1:
         raise ValueError("invalid revision dimension")
     width = len(rows[0])
     if width == 0 or any(len(x) != width for x in rows + comparable):
         raise ValueError("invalid metric dimension")
-    output: list[list[Optional[float]]] = []
+    output: list[list[float | None]] = []
     for i, flags in enumerate(comparable):
-        values: list[Optional[float]] = []
+        values: list[float | None] = []
         for j, flag in enumerate(flags):
             if type(flag) is not bool:
                 raise ValueError("mask must contain booleans")
@@ -107,7 +106,8 @@ def masked_first_difference(
                 type(old) not in (int, float) or type(new) not in (int, float)
                 or not isfinite(old) or not isfinite(new)
             ):
-                raise ValueError("non-finite measurement")
+                values.append(None)
+                continue
             values.append(float(new - old))
         output.append(values)
     return output
