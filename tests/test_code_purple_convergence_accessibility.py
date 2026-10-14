@@ -60,7 +60,9 @@ class ConvergenceMapContract(unittest.TestCase):
         self.assertIn("prefers-reduced-motion", self.html)
 
     def test_six_navigation_targets_really_exist(self):
-        for fragment in ("overview", "lanes", "verification", "top21", "boundaries", "sources"):
+        for fragment in (
+            "overview", "lanes", "verification", "top21", "boundaries", "sources"
+        ):
             with self.subTest(fragment=fragment):
                 self.assertIn("#" + fragment, self.dom.links)
                 self.assertIn(fragment, self.dom.ids)
@@ -77,7 +79,8 @@ class ConvergenceMapContract(unittest.TestCase):
 
     def test_mermaid_uses_distinct_class_fill_and_readable_text(self):
         classes = re.findall(
-            r"classDef (\w+) fill:(#[0-9a-fA-F]{6}),stroke:(#[0-9a-fA-F]{6}),color:(#[0-9a-fA-F]{6})",
+            r"classDef (\w+) fill:(#[0-9a-fA-F]{6}),"
+            r"stroke:(#[0-9a-fA-F]{6}),color:(#[0-9a-fA-F]{6})",
             self.mermaid,
         )
         self.assertEqual(5, len(classes))
