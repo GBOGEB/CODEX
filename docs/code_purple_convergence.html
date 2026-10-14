@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>CODE PURPLE · Convergence Map</title>
+<style>
+:root{
+ color-scheme:dark;--bg:#0b1020;--surface:#151f35;--raised:#1d2943;--ink:#f4f7ff;
+ --muted:#c5d0e5;--border:#596b87;--evidence:#74dcff;--repair:#83ebca;
+ --proof:#ffe097;--blocked:#ff97ab;--authority:#dcc5ff;--line:#a9b9d6
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:132px}
+body{margin:0;color:var(--ink);background:var(--bg);font:16px/1.6 system-ui,Segoe UI,sans-serif}
+a{color:var(--evidence);overflow-wrap:anywhere}
+a:focus-visible,button:focus-visible{outline:3px solid #ffe097;outline-offset:4px}
+.skip{position:absolute;top:-90px;background:#fff;color:#111;padding:12px}
+.skip:focus{top:8px;z-index:50}
+.hero{max-width:1500px;margin:auto;padding:26px 24px 18px}
+h1{font-size:clamp(1.65rem,3.4vw,2.8rem);line-height:1.16;margin:.15em 0 .3em}
+h2{font-size:clamp(1.2rem,2vw,1.55rem);margin:0 0 13px}
+h3{font-size:1.08rem;margin:0 0 6px}
+p{margin:.35rem 0 .85rem}
+.eyebrow{letter-spacing:.14em;text-transform:uppercase;color:var(--evidence);font-size:.82rem;font-weight:800}
+.subhead{color:var(--muted);max-width:85ch}
+.topnav{position:sticky;top:0;z-index:30;background:#101b32f5;border-block:1px solid var(--border);backdrop-filter:blur(12px);box-shadow:0 5px 25px #050a1660}
+.topnav>div{max-width:1500px;margin:auto;display:flex;align-items:center;gap:7px;overflow-x:auto;padding:8px 18px;scrollbar-width:thin}
+.topnav a{white-space:nowrap;padding:7px 12px;border-radius:8px;text-decoration:none;border:1px solid transparent;font-size:.87rem;font-weight:700}
+.topnav a:hover,.topnav a:focus-visible{background:var(--raised);border-color:var(--border)}
+.main{max-width:1500px;margin:auto;padding:22px 24px 80px}
+.section{margin:0 0 24px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px}
+.section-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.state{border:1px solid var(--blocked);color:var(--blocked);border-radius:20px;padding:3px 12px;font-size:.83rem;font-weight:800}
+.key{position:sticky;top:59px;z-index:20;background:#111d36f7;border:1px solid var(--border);border-radius:11px;padding:9px 12px;display:flex;align-items:center;gap:9px 14px;flex-wrap:wrap;margin:12px 0 24px;box-shadow:0 8px 16px #050a1650;font-size:.84rem}
+.key strong{margin-right:5px}
+.key span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;color:var(--ink)}
+.swatch{width:11px;height:11px;display:inline-block;border-radius:3px}
+.s-evidence{background:var(--evidence)}.s-repair{background:var(--repair)}.s-proof{background:var(--proof)}.s-blocked{background:var(--blocked)}.s-authority{background:var(--authority)}
+.track{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;align-items:stretch}
+.node{border:2px solid var(--edge);border-radius:12px;background:#121b2b;min-width:0;padding:17px;position:relative}
+.node h3{color:var(--tone);font-size:1.06rem;font-weight:800}
+.node p{color:var(--ink);font-size:.93rem}
+.node .tag{display:inline-block;font-size:.75rem;font-weight:800;letter-spacing:.07em;color:var(--tone);text-transform:uppercase;margin-bottom:8px}
+.node:not(:last-child)::after{content:"→";position:absolute;right:-21px;top:42%;font-weight:900;font-size:19px;color:var(--line);z-index:2}
+.node.evidence{--edge:#367e9a;--tone:var(--evidence)}.node.repair{--edge:#347d68;--tone:var(--repair)}
+.node.proof{--edge:#a78341;--tone:var(--proof)}.node.blocked{--edge:#a94a62;--tone:var(--blocked)}
+.node.authority{--edge:#8060b4;--tone:var(--authority)}
+.node a{font-weight:700}
+.lanes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.lane{background:#101a2d;border:1px solid var(--border);border-left:5px solid var(--accent);border-radius:11px;padding:14px 16px;min-width:0}
+.lane.evidence{--accent:var(--evidence)}.lane.repair{--accent:var(--repair)}.lane.proof{--accent:var(--proof)}
+.lane.blocked{--accent:var(--blocked)}.lane.authority{--accent:var(--authority)}
+.lane h3{color:var(--accent)}
+.small{font-size:.87rem;color:var(--muted)}
+.caps{font-size:.77rem;text-transform:uppercase;letter-spacing:.09em;font-weight:800}
+.gate{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.gate article{background:#121c31;border:1px solid var(--border);border-radius:12px;padding:16px}
+.gate .blocked-text{color:var(--blocked);font-weight:800}
+.gate .good-text{color:var(--repair);font-weight:800}
+.datalist{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.datalist article{padding:14px;background:#101a2d;border:1px solid var(--border);border-radius:11px}
+.datalist strong{display:block;color:var(--evidence)}
+table{border-collapse:collapse;width:100%;font-size:.91rem}td,th{padding:9px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}th{color:var(--proof)}
+.scroll-table{overflow-x:auto}
+footer{color:var(--muted);padding:26px;border-top:1px solid var(--border);text-align:center}
+@media(max-width:1050px){.track{grid-template-columns:1fr 1fr}.node:not(:last-child)::after{content:none}.lanes{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.main{padding:12px}.section{padding:16px}.track,.lanes,.gate,.datalist{grid-template-columns:1fr}.key{top:53px;gap:6px 10px;font-size:.76rem}.key span{white-space:normal}.hero{padding:20px 16px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<a href="#main" class="skip">Skip to convergence map</a>
+<header class="hero">
+<div class="eyebrow">CODE PURPLE · Control plane / visual reference</div>
+<h1>Evidence → Roots → Disjoint repair → Proof → Admission</h1>
+<p class="subhead">High-contrast, accessible overview inspired by the existing CODE PURPLE REX Control interface. A diagram is not a live runner, security disposition, REX acceptance or merger authorization.</p>
+<p class="small"><a href="code_purple_rex_control.html">REX Control</a> · <a href="https://github.com/GBOGEB/ABACUS/issues/1860">ABACUS #1860</a> · <a href="https://github.com/GBOGEB/CODEX/issues/977">Mission Control #977</a> · <a href="https://github.com/GBOGEB/ABACUS/pull/1950">Source-bound bridge candidate #1950</a></p>
+</header>
+<nav class="topnav" aria-label="Persistent convergence navigation"><div>
+<a href="#overview">01 · Flow</a><a href="#lanes">02 · Disjoint lanes</a><a href="#verification">03 · Proof</a><a href="#top21">04 · TOP21</a><a href="#boundaries">05 · Authority</a><a href="#sources">06 · Sources</a>
+</div></nav>
+<main id="main" class="main">
+<div class="key" role="group" aria-label="Persistent color legend"><strong>KEY</strong>
+<span><i class="swatch s-evidence" aria-hidden="true"></i>Evidence</span>
+<span><i class="swatch s-repair" aria-hidden="true"></i>Repair</span>
+<span><i class="swatch s-proof" aria-hidden="true"></i>Verification</span>
+<span><i class="swatch s-blocked" aria-hidden="true"></i>Blocked</span>
+<span><i class="swatch s-authority" aria-hidden="true"></i>Owner authority</span>
+</div>
+<section id="overview" class="section" aria-labelledby="overview-title">
+<div class="section-heading"><h2 id="overview-title">01 · Governing convergence DAG</h2><span class="state">HOLD ≠ PASS</span></div>
+<p class="small">Directional chain: independent repair lanes feed source-matched verification; failed gates return only affected roots to the queue.</p>
+
+<div class="track" aria-label="Five-stage convergence pipeline">
+<article class="node evidence"><span class="tag">01 · OBSERVE</span><h3>Exact-SHA intake</h3><p>GitHub run + job, JUnit, coverage XML, scanner digest, BD/LDAB, REX candidate.</p><a href="#sources">Evidence sources ↓</a></article>
+<article class="node evidence"><span class="tag">02 · CLASSIFY</span><h3>Canonical root ledger</h3><p>Normalize signatures without inventing a confirmed cause or conflating unlike denominators.</p><a href="#lanes">Inspect lanes ↓</a></article>
+<article class="node repair"><span class="tag">03 · ACT</span><h3>Disjoint bounded fixes</h3><p>One path-owner per repair, explicit leases and narrow behavioral tests.</p><a href="#lanes">Six lanes ↓</a></article>
+<article class="node proof"><span class="tag">04 · VERIFY</span><h3>Terminal DoV</h3><p>Focused regression → B0 / matrix → full CI → comparable main/PR/diff measurement.</p><a href="#verification">Gates ↓</a></article>
+<article class="node blocked"><span class="tag">05 · HOLD / ADMIT</span><h3>Protected-main gate</h3><p>No admission without all required checks, security and independent reviewer disposition.</p><a href="#boundaries">Authority ↓</a></article>
+</div>
+</section>
+<section id="lanes" class="section" aria-labelledby="lanes-title">
+<h2 id="lanes-title">02 · Parallel repair lanes, one authoritative source per finding</h2>
+<div class="lanes">
+<article class="lane repair"><h3>A · Coverage</h3><p>#1938 / #1942 · nested reports, setup fixtures, comparable line/branch/diff denominators.</p><span class="small">No denominator substitution</span></article>
+<article class="lane evidence"><h3>B · BD/LDAB</h3><p>#1947 / #1950 · fingerprint ownership, same-SHA run/job association, read-only receipts.</p><span class="small">Candidate aliases are not root proof</span></article>
+<article class="lane evidence"><h3>C · EVERRED</h3><p>#1933 · event-chain ledger, causal candidates, runtime/provenance interface.</p><span class="small">Merged source is not admission</span></article>
+<article class="lane blocked"><h3>D · Security</h3><p>#1943 · Bandit ownership and security review. Safety and full scans remain independent.</p><span class="small">No finding suppressions</span></article>
+<article class="lane repair"><h3>E · DOW / RHEL</h3><p>#1941 · authentic executable contract, Phase 2/3 and actual runner outcome.</p><span class="small">Skipped != passed</span></article>
+<article class="lane proof"><h3>F · TestPilot / 3P*</h3><p>#1939 / #1940 · no false green, performance and rework evidence parity.</p><span class="small">Telemetry missing = UNKNOWN</span></article>
+</div>
+</section>
+<section id="verification" class="section" aria-labelledby="verify-title">
+<h2 id="verify-title">03 · Convergence proof, not workflow decoration</h2>
+<div class="gate">
+<article><span class="caps good-text">Accepted for root-level DoV</span><h3>Matching instrumented evidence</h3><p>Exact repo + SHA + run + job + scanner/config identity. Disjoint repairs keep isolated coverage reports until integration.</p></article>
+<article><span class="caps blocked-text">Do not promote</span><h3>Staged, cancelled, sampled, inferred</h3><p>Queued CI, raw Bandit count differences, local proposal-worker success or GitHub-looking REX URLs cannot confer security clearance or verified Crew launch.</p></article>
+</div>
+<p class="small">Use a single bounded integration candidate only after disjoint focused tests converge; preserve full security, coverage and governance verdicts.</p>
+</section>
+<section id="top21" class="section" aria-labelledby="top-title">
+<h2 id="top-title">04 · TOP21 is a ranking capacity, not 21 deployed workers</h2>
+<div class="datalist">
+<article><strong>TOP7 / 14 / 21</strong>Ranked REX/root-cause candidates; unfilled rank slots remain unfilled, not zero defects.</article>
+<article><strong>Repository rollout</strong>Owner-approved inventory and independent per-repo evidence required before a deployment count is claimed.</article>
+<article><strong>Coverage</strong>Main, PR and diff require distinct exact-source coverage percentages and comparable denominators.</article>
+</div>
+</section>
+<section id="boundaries" class="section" aria-labelledby="boundary-title">
+<h2 id="boundary-title">05 · Authority and return path</h2>
+<div class="gate">
+<article><span class="caps" style="color:var(--authority)">Independent authority</span><h3>Owner/admin + security reviewer</h3><p>Restore effective protected-main rules, required checks and non-author review. No automated merge and no remote CODEX mutation promotion.</p></article>
+<article><span class="caps" style="color:var(--evidence)">Read-only federation</span><h3>ABACUS → CODEX → QPS</h3><p>ABACUS supplies evidence, CODEX may rank advisory REX, QPS retains separate engineering acceptance. Every source-specific rejection loops back without rewriting the upstream root.</p></article>
+</div>
+</section>
+<section id="sources" class="section" aria-labelledby="sources-title">
+<h2 id="sources-title">06 · Evidence and design contract</h2>
+<div class="scroll-table"><table><thead><tr><th>Surface</th><th>Source</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>Historical REX UI</td><td><a href="code_purple_rex_control.html">CODE PURPLE REX Control</a></td><td>Color palette and source/UNKNOWN conventions</td></tr>
+<tr><td>BD/LDAB</td><td><a href="https://github.com/GBOGEB/ABACUS/blob/main/scripts/bd_ldab_join_census.py">Canonical join</a></td><td>Fingerprint/path owner and same-SHA evidence</td></tr>
+<tr><td>EVERRED V3</td><td><a href="https://github.com/GBOGEB/ABACUS/tree/main/tools/everred_v3">Ledger and native evidence</a></td><td>Candidate causality, not source authority transfer</td></tr>
+<tr><td>Mission Control</td><td><a href="https://github.com/GBOGEB/CODEX/issues/977">Dispatch #977</a></td><td>Stage-only until authenticated promotion</td></tr>
+</tbody></table></div>
+<p class="small">Static architecture reference · NOT a live GitHub status panel. Use the official native workflow runs and their terminal artifacts for operational acceptance.</p>
+</section>
+</main>
+<footer>CODE PURPLE · Read-only architecture guide · No telemetry fabricated · No security waiver · No authority transfer</footer>
+</body>
+</html>
