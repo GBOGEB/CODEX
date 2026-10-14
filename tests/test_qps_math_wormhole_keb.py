@@ -107,3 +107,16 @@ class KEBQPSWormholeTests(TestCase):
         self.assertFalse(one["authority_transfer"])
         self.assertEqual(0, one["formal_credit_delta"])
         self.assertFalse(one["engineering_acceptance"])
+
+
+    def test_native_gg_math_proposal_is_knowledge_candidate_only(self):
+        native = ROOT / "tests/fixtures/qps_math_wormhole_provider_v1.json"
+        import json
+        payload = json.loads(native.read_text(encoding="utf-8"))
+        sha = "2f84623180bafbd582f90febb542381ed9ce679e"
+        artifact = "114e9fa0ded6adc8d1020bef1826c45bb63417a851efac9f2ed35aef7e501759"
+        result = keb.challenge(payload, source_sha=sha,
+                               artifact_sha256=artifact)
+        self.assertEqual("SEMANTIC_CANDIDATE_ONLY", result["status"])
+        self.assertFalse(result["native_provider_run_authenticated"])
+        self.assertEqual("DEFER", result["qps_child_disposition"])
