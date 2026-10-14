@@ -1,0 +1,29 @@
+%%{init: {"theme":"base","themeVariables":{"background":"#0b1020","fontFamily":"Segoe UI,Arial,sans-serif","fontSize":"19px","lineColor":"#bac9e1","primaryTextColor":"#f4f7ff","edgeLabelBackground":"#121b2b"}}}%%
+flowchart LR
+    SRC["01 · EXACT-SHA EVIDENCE<br/>CI · JUnit · coverage · Bandit · REX"] --> ROOT["02 · ROOT CENSUS<br/>BD/LDAB + EVERRED candidates"]
+    ROOT --> FAN["03 · DISJOINT OWNERSHIP"]
+    FAN --> CV["A · Coverage / fixtures"]
+    FAN --> SEC["B · Security / scan"]
+    FAN --> RT["C · DOW / RHEL runtime"]
+    FAN --> CTRL["D · REX / TestPilot"]
+    CV --> PROOF["04 · EXACT-HEAD DoV"]
+    SEC --> PROOF
+    RT --> PROOF
+    CTRL --> PROOF
+    PROOF --> CHECK{"05 · All independent<br/>admission gates verified?"}
+    CHECK -->|"No: only affected root"| ROOT
+    CHECK -->|"Yes: owner action"| MERGE["Governed merge candidate"]
+    MERGE --> MAIN["06 · Main readback + REX return"]
+    MAIN --> SRC
+
+    classDef evidence fill:#123950,stroke:#74dcff,color:#f4f7ff,stroke-width:3px;
+    classDef repair fill:#123d31,stroke:#83ebca,color:#f4f7ff,stroke-width:3px;
+    classDef verify fill:#473519,stroke:#ffe097,color:#fff5df,stroke-width:3px;
+    classDef blocked fill:#4e1c30,stroke:#ff97ab,color:#fff0f3,stroke-width:3px;
+    classDef authority fill:#35264f,stroke:#dcc5ff,color:#fff5ff,stroke-width:3px;
+    class SRC,ROOT,MAIN evidence;
+    class FAN,CV,SEC,RT,CTRL repair;
+    class PROOF verify;
+    class CHECK blocked;
+    class MERGE authority;
+    linkStyle default stroke:#bac9e1,stroke-width:2.5px;
