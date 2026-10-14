@@ -1,0 +1,77 @@
+name: CODE PURPLE Branch Protection MIP Testflight
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/code_purple_ruleset_contract.py'
+      - 'tests/test_code_purple_ruleset_contract.py'
+      - 'tests/fixtures/code_purple_ruleset_pilot.json'
+      - '.github/workflows/code-purple-branch-protection-mip.yml'
+      - 'docs/ci/CODE_PURPLE_BRANCH_PROTECTION_MIP.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: code-purple-ruleset-mip-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  ruleset-falsification:
+    name: Exact-head ruleset regression and branch coverage
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify evaluated exact SHA
+        shell: bash
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install bounded static and test tools
+        run: python -m pip install 'coverage==7.10.7' 'ruff==0.16.6'
+      - name: Lint only new source and regressions
+        run: ruff check scripts/code_purple_ruleset_contract.py tests/test_code_purple_ruleset_contract.py --select E4,E7,E9,F
+      - name: Execute adversarial tests and branch-aware coverage
+        run: |
+          set -euo pipefail
+          mkdir -p outputs/protection-mip
+          python -m coverage run --branch -m unittest discover -s tests -p test_code_purple_ruleset_contract.py -v
+          python -m coverage json -o outputs/protection-mip/coverage.json
+          python -m coverage report --include='scripts/code_purple_ruleset_contract.py' --fail-under=85
+      - name: Verify deterministic two-pass evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/code_purple_ruleset_contract.py --snapshot tests/fixtures/code_purple_ruleset_pilot.json --out outputs/protection-mip/first.json
+          python scripts/code_purple_ruleset_contract.py --snapshot tests/fixtures/code_purple_ruleset_pilot.json --out outputs/protection-mip/second.json
+          cmp outputs/protection-mip/first.json outputs/protection-mip/second.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d = json.loads(Path('outputs/protection-mip/first.json').read_text())
+          assert d['mutation'] is False and d['authority_transfer'] is False
+          assert d['metrics']['admission_verified'] is None
+          kinds = {item['repo']: item['status'] for item in d['rows']}
+          assert kinds['GBOGEB/CODEX'] == 'NO_RULESET'
+          assert kinds['GBOGEB/ABACUS'] == 'ACTIVE_EMPTY_RULESET'
+          assert kinds['GBOGEB/Example'] == 'CONFIGURED_NOT_ADMITTED'
+          assert kinds['GBOGEB/EmptyExample'] == 'EXCEPTION_REVIEW'
+          PY
+      - name: Upload testflight and coverage evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-purple-protection-${{ github.event.pull_request.head.sha || github.sha }}
+          path: outputs/protection-mip/
+          if-no-files-found: warn
+          retention-days: 30
