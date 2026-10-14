@@ -1,0 +1,102 @@
+name: CODE PURPLE Mid-Wave MIP Testflight
+
+on:
+  pull_request:
+    paths:
+      - "scripts/code_purple_midwave_testflight.py"
+      - "tests/test_code_purple_midwave_testflight.py"
+      - ".github/workflows/code-purple-midwave-testflight.yml"
+      - "docs/ci/CODE_PURPLE_MIDWAVE_MIP_TESTFLIGHT.md"
+  workflow_dispatch:
+    inputs:
+      deep_sample:
+        description: "Number of priority repositories to probe (1-25)"
+        required: false
+        default: "12"
+        type: string
+  schedule:
+    - cron: "17 */6 * * *"
+
+# Never cancel a nearly complete pulse when a newer schedule/dispatch arrives.
+concurrency:
+  group: code-purple-midwave-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  local-contract:
+    name: Unit + branch-aware focused coverage
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify source identity
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install focused QA dependencies
+        run: python -m pip install "coverage==7.10.7" "ruff==0.13.3"
+      - name: Focused source lint
+        run: ruff check scripts/code_purple_midwave_testflight.py tests/test_code_purple_midwave_testflight.py --select E4,E7,E9,F
+      - name: Negative tests and branch-aware coverage
+        run: |
+          mkdir -p outputs/midwave
+          python -m coverage run --branch -m unittest discover -s tests -p test_code_purple_midwave_testflight.py -v
+          python -m coverage json -o outputs/midwave/coverage.json
+          python -m coverage report --include="scripts/code_purple_midwave_testflight.py" --fail-under=80
+      - name: Publish bounded testflight evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: midwave-focused-${{ github.event.pull_request.head.sha || github.sha }}
+          path: outputs/midwave/
+          if-no-files-found: warn
+          retention-days: 30
+
+  six-hour-census:
+    name: Read-only org census and bot comment intake
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: local-contract
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: read
+      actions: read
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Probe bounded priority cohort and preserve mid-wave evidence
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          DEEP_SAMPLE: ${{ inputs.deep_sample || '12' }}
+        run: |
+          set -euo pipefail
+          python scripts/code_purple_midwave_testflight.py \
+            --owner GBOGEB \
+            --limit "$DEEP_SAMPLE" \
+            --out outputs/midwave/testflight.json \
+            --post-on-new-bot-findings
+      - name: Upload exact-observation census (no merge authority)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: midwave-org-census-${{ github.sha }}
+          path: outputs/midwave/testflight.json
+          if-no-files-found: warn
+          retention-days: 30
