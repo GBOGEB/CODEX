@@ -1,0 +1,178 @@
+{
+  "schema": "codepurple.github_handover.v1",
+  "status": "FROZEN_OBSERVATION_NOT_LIVE",
+  "observed_date_utc": "2026-10-14",
+  "merge_admission": "HOLD",
+  "authority_transfer": false,
+  "sources": {
+    "recovery_zip": {
+      "sha256": "998737b3c433b63a2918cb71b6d853a3030421b7366f23e8a8c07403d89c9c47",
+      "files": 7,
+      "legacy_manifest_valid": false
+    },
+    "earlier_delta_zip": {
+      "sha256": "e5b32be35405159ed5dce3adb9da55325dd5f49796ba9e232a95a5606e8eda4a"
+    },
+    "full_handover_v2": {
+      "sha256": "cca82ce8a97d6f7d6f02c185549461deef581b4cde38838bc0c55fbb2285c222",
+      "raw_file_available_in_session": false,
+      "original_file_count_reported": 29,
+      "source_attachment_count_reported": 18,
+      "verification": "NOT_REVALIDATED"
+    }
+  },
+  "repository_checkpoints": {
+    "CODEX": {
+      "main_sha": "0569df2e4cb88c5802e11359d241167db97c3ca3",
+      "main_protected_reported": false,
+      "effective_admission": false,
+      "source": "https://api.github.com/repos/GBOGEB/CODEX/branches/main"
+    },
+    "ABACUS": {
+      "main_sha": "85dad8fbdab530d40e6ccf2f664c455f89454aad",
+      "main_protected_reported": true,
+      "legacy_protection_enabled": false,
+      "active_ruleset_id": 24494381,
+      "effective_admission": null,
+      "source": "https://api.github.com/repos/GBOGEB/ABACUS/branches/main"
+    }
+  },
+  "revision_observations": [
+    {
+      "id": "HIST-CODEX-1041-HEAD",
+      "repo": "GBOGEB/CODEX",
+      "source_sha": "05f741e899dafbab44a40288c3863574c21d8f76",
+      "pr": 1041,
+      "at_utc": null,
+      "workflow_counts": {
+        "success": 34,
+        "failure": 3
+      },
+      "mycelium_inventory_before": 461,
+      "mycelium_inventory_regenerated": 470,
+      "registered_assets": 30,
+      "root_closure": null,
+      "evidence_run_id": 38586679697,
+      "evidence_job_id": 115930409880,
+      "disposition": "HISTORICAL_HEAD_MERGED_WITH_FAILED_CHECKS"
+    },
+    {
+      "id": "ABACUS-RUFF-PREVIOUS",
+      "repo": "GBOGEB/ABACUS",
+      "source_sha": "1662d52f379f31bb65d2578799a79c8725507e6a",
+      "pr": 1965,
+      "at_utc": null,
+      "metric_scope": "four identical files/ruff==0.17.0",
+      "finding_before": 11,
+      "finding_after": 2,
+      "opened": 1,
+      "resolved": 10,
+      "disposition": "HISTORICAL_PREVIOUS_REVISION"
+    },
+    {
+      "id": "ABACUS-RUFF-TERMINAL",
+      "repo": "GBOGEB/ABACUS",
+      "source_sha": "c3f7d2f852139ea54c64b325cea44d1e5706f26e",
+      "baseline_sha": "5ede8c97db4aba99fdcc44109e7230db69a3fd6b",
+      "pr": 1965,
+      "at_utc": "2026-10-14T15:35:59Z",
+      "metric_scope": "four identical files/ruff==0.17.0",
+      "finding_before": 11,
+      "finding_after": 0,
+      "opened": 0,
+      "resolved": 11,
+      "net_change": -11,
+      "run_id": 38590675476,
+      "job_id": 115944391508,
+      "artifact_id": 11906997311,
+      "artifact_sha256": "fe241c5534a441e907d78c762a4a5758b4cf6a6fb3f8d68bac58ed5f910e6118",
+      "local_test_count": 6,
+      "full_ci_admission": null,
+      "root_closure": null,
+      "disposition": "TECHNICAL_PRODUCER_PASS_ADMISSION_HOLD"
+    }
+  ],
+  "logical_cycles": [
+    {
+      "id": "C-RUFF-SCOPE-1965",
+      "persistent_root_id": null,
+      "existing_owner": "GBOGEB/ABACUS#1965",
+      "unit": "finding_occurrence",
+      "changed_finding_count": -11,
+      "verified_repair_scope": true,
+      "integrated_main": false,
+      "global_root_closure": false
+    },
+    {
+      "id": "C-MYCELIUM-CODEX",
+      "persistent_root_id": null,
+      "existing_owner": "GBOGEB/CODEX#1041",
+      "status": "RECONCILE_POST_MERGE",
+      "candidate_git_commit": "777987869ded843261e3257fe57543083d94f15d",
+      "main_producer_dov": null
+    },
+    {
+      "id": "C-TEMPORAL-MATRIX",
+      "existing_owner": "GBOGEB/ABACUS#1962",
+      "math_provider": "GBOGEB/gg_MATH",
+      "status": "OFFLINE_REFERENCE_ONLY",
+      "native_provider_dov": null
+    }
+  ],
+  "wbs": [
+    {
+      "id": "C02",
+      "owner": "GBOGEB/CODEX#1041",
+      "state": "MERGED_HISTORICAL_RED",
+      "next_dov": "verify current-main generator parity and retained review/CI roots"
+    },
+    {
+      "id": "A02",
+      "owner": "GBOGEB/ABACUS#1965",
+      "state": "SCOPED_PRODUCER_PASS",
+      "next_dov": "native broad CI/security, RHEL and independent admission"
+    },
+    {
+      "id": "A01",
+      "owner": "GBOGEB/ABACUS#1964",
+      "state": "NATIVE_CENSUS_PARTIAL_RED",
+      "next_dov": "terminal first-red/security/quality evidence"
+    },
+    {
+      "id": "A03",
+      "owner": "GBOGEB/ABACUS#1963",
+      "state": "NATIVE_WBS_AWAITING_DOV",
+      "next_dov": "typed worker artifact receipts and independent disposition"
+    },
+    {
+      "id": "A05",
+      "owner": "GBOGEB/ABACUS#1962",
+      "state": "MERGED_NATIVE_DOV_NOT_ESTABLISHED",
+      "next_dov": "N rebase, null mask, exact SHA and gg_MATH provider"
+    },
+    {
+      "id": "G01",
+      "owner": "GBOGEB/CODEX#1037",
+      "state": "ADMISSION_HOLD",
+      "next_dov": "operative protection readback, exact-main CI and reviewer"
+    },
+    {
+      "id": "E01",
+      "owner": "GBOGEB/ABACUS#1929",
+      "state": "GITHUB_REFERENCE_NOT_NATIVE",
+      "next_dov": "source-bound telemetry producer and negative native tests"
+    }
+  ],
+  "measurements": {
+    "full_main_coverage": null,
+    "bd_root_closures": null,
+    "real_crew_launches": null,
+    "native_gg_math_attestation": null,
+    "independent_review": null
+  },
+  "policy": {
+    "unknown_never_zero": true,
+    "merge_never_implies_admission": true,
+    "logical_cycles_distinct_from_revisions": true
+  }
+}
