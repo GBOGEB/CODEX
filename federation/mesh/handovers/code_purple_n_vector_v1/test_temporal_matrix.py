@@ -3,7 +3,11 @@ import unittest
 from dataclasses import replace
 
 from temporal_matrix import (
-    Metric, admission_gate, comparable_delta, masked_first_difference, rebase_index
+    Metric,
+    admission_gate,
+    comparable_delta,
+    masked_first_difference,
+    rebase_index,
 )
 
 SHA0 = "a" * 40
@@ -76,6 +80,23 @@ class TemporalContractTests(unittest.TestCase):
                 [[11, None, 50], [0, None, 51]], [[True, False, False]]
             ), [[-11.0, None, None]]
         )
+
+    def test_true_mask_nonfinite_is_null_without_losing_valid_cells(self):
+        self.assertEqual(
+            masked_first_difference(
+                [[float("nan"), 2.0, float("inf")], [1.0, 5.0, 3.0]],
+                [[True, True, True]],
+            ),
+            [[None, 3.0, None]],
+        )
+
+    def test_invalid_enabled_measurement_still_rejected(self):
+        with self.assertRaises(ValueError):
+            masked_first_difference([[1.0], ["not-numeric"]], [[True]])
+
+    def test_invalid_utc_offset_in_zulu_timestamp_rejected(self):
+        with self.assertRaises(ValueError):
+            metric(11, utc="2026-10-14T15:00:00+01:00Z")
 
     def test_bad_mask_shape_fails_closed(self):
         with self.assertRaises(ValueError):
