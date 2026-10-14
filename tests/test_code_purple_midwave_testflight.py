@@ -45,7 +45,7 @@ class MidwaveTests(unittest.TestCase):
         self.assertEqual(midwave.classify_comment("Looks good"), "review_other")
 
     def test_bot_recognition_not_human_or_prefix(self):
-        for author in ("dependabot[bot]", "github-actions[bot]", "chatgpt-codex-connector"):
+        for author in ("dependabot[bot]", "github-actions[bot]", "chatgpt-codex-connector", "github-advanced-security"):
             self.assertTrue(midwave.is_bot(author))
         self.assertFalse(midwave.is_bot("engineer"))
         self.assertFalse(midwave.is_bot("codex-connector-impostor"))
@@ -74,6 +74,8 @@ class MidwaveTests(unittest.TestCase):
                  "comment_fingerprints": ["history:1"], "history": []}
         state = midwave.compact_prior([], prior, "b" * 40, "root-1")
         self.assertEqual(state["history"][0]["source_sha"], "a" * 40)
+        self.assertEqual(state["history"][0]["bot_comment_count"], 1)
+        self.assertNotIn("comment_fingerprints", state["history"][0])
         self.assertFalse(state["same_head"])
         self.assertFalse(state["authority_transfer"])
         self.assertEqual(state["new_bot_comments"], [])
@@ -182,9 +184,9 @@ class MidwaveTests(unittest.TestCase):
             midwave.GitHubRead("").post_issue_comment("GBOGEB/CODEX", 1037, "x")
 
     def test_main_requires_safe_limit(self):
-        with patch.object(sys, "argv", ["testflight", "--limit", "50"]):
-            with self.assertRaises(SystemExit):
-                midwave.main()
+        with patch.object(sys, "argv", ["testflight", "--limit", "50"]), \
+                self.assertRaises(SystemExit):
+            midwave.main()
 
     def test_main_offline_resumes_and_writes_receipt(self):
         codex = repo("CODEX")
