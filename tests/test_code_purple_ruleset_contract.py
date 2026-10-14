@@ -50,6 +50,11 @@ class BranchPolicyContract(unittest.TestCase):
         self.assertEqual({x["type"] for x in p["rules"]}, m.REQUIRED)
         self.assertTrue(all(x["type"] != "required_status_checks" for x in p["rules"]))
 
+    def test_import_recipe_matches_producer(self):
+        root = Path(__file__).resolve().parents[1]
+        path = root / "governance" / "code_purple" / "BRANCH_RULESET_G1_V1.json"
+        self.assertEqual(json.loads(path.read_text(encoding="utf-8")), m.proposed_ruleset())
+
     def test_no_ruleset_is_create_and_hold(self):
         v = m.assess(base())
         self.assertEqual((v["status"], v["action"]), ("NO_RULESET", "CREATE_ONE"))
