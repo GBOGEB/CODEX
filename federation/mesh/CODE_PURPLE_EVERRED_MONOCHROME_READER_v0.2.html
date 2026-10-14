@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>CODE PURPLE — Monochrome canonical graph reader v0.2</title>
+<style>
+:root{--ink:#111;--line:#444;--muted:#555;--soft:#eee;--bg:#fafafa}
+*{box-sizing:border-box}body{font:15px/1.55 system-ui,Arial,sans-serif;color:var(--ink);background:var(--bg);margin:0}
+main{max-width:1350px;margin:auto;padding:22px}header{border-bottom:3px solid #222;padding-bottom:15px}
+h1{font-size:clamp(27px,3vw,42px);line-height:1.15;margin:5px 0}h2{font-size:20px;margin:0 0 10px}
+p{margin:5px 0 13px}small,.sub{color:var(--muted)}
+a{color:#222}a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid #111;outline-offset:2px}
+.panel{border:1.5px solid #aaa;border-radius:10px;background:#fff;padding:17px;margin-top:16px}
+.notice{background:#eee;border-left:5px solid #333;padding:11px 14px;margin:11px 0;font-size:13px}
+.meta{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}
+.meta span{padding:6px 10px;border:1px solid #777;border-radius:5px;background:#fff;font-size:12px}
+.legend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;background:#f1f1f1;border:1px solid #888;padding:13px;border-radius:7px;margin:12px 0}
+.legend>strong{grid-column:1/-1}.key{display:flex;gap:10px;align-items:center;font-size:12px}
+.stroke{height:0;width:42px;flex:none;border-top:3px solid #222;position:relative}
+.stroke:after{content:"›";position:absolute;right:0;top:-18px;font-size:20px}
+.stroke.repair{border-top:4px double #222}.stroke.repair:after{content:"↶"}
+.stroke.self{border-top-style:dotted}.stroke.forward{border-top-style:dashed}
+.stroke.hold:after{content:"■";top:-11px;font-size:12px}
+.shape{display:inline-block;width:30px;height:23px;border:2px solid #222;flex:none}
+.shape.decision{height:19px;width:19px;transform:rotate(45deg);margin:0 6px}
+.shape.gate{border:4px double #222}.unknown{border:1.5px dashed #222;padding:2px 7px;font-size:12px;font-weight:bold}
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin:14px 0}
+.stage{min-height:120px;border:2px solid #444;background:white;text-align:left;border-radius:7px;padding:12px;cursor:pointer}
+.stage:hover,.stage[aria-pressed=true]{background:#eee}.stage[aria-pressed=true]{border:3px double #111;padding:11px}
+.stage b{display:block;font-size:15px}.stage small{display:block;margin-top:7px}
+button,input{font:inherit}.buttons{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
+.action{padding:7px 11px;border:1.5px solid #333;border-radius:6px;background:#fff;cursor:pointer}.action:hover{background:#eee}
+.details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.details details{border:1px solid #aaa;border-radius:7px;min-width:0}
+.details summary{background:#eee;padding:10px 12px;cursor:pointer;font-weight:750}
+.detail{padding:8px 13px 13px}.detail dt{font-weight:700}.detail dd{margin:1px 0 9px;font-size:13px}
+.detail dl{margin:6px 0}.detail ul{margin:6px 0;padding-left:20px}
+.table{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:12px}
+th,td{border-bottom:1px solid #bbb;padding:8px 9px;text-align:left;vertical-align:top}
+th{background:#eee}tbody tr:nth-child(even){background:#fafafa}
+.mono{font-family:ui-monospace,Consolas,monospace}
+#feedback{font-size:12px;font-weight:650}input[type=file]{max-width:100%;border:1px solid #888;padding:7px}
+pre{white-space:pre-wrap;background:#eee;padding:12px;overflow-wrap:anywhere}
+footer{padding:20px 0;color:#555;font-size:12px}
+@media(max-width:900px){.flow,.legend{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){main{padding:12px}.flow,.legend,.details{grid-template-columns:1fr}.stage{min-height:auto}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<small>GBOGEB · CODEX global mesh · ABACUS evidence consumer</small>
+<h1>CODE PURPLE — Monochrome graph reader</h1>
+<p>Canonical controller → selected method → source-bound evidence → bounded EVERRED recovery → independent admission → DMAIC control.</p>
+<div class="meta"><span>Reader v0.2 · historical snapshot</span><span>UTC: 2026-10-14 09:18:01</span><span>ABACUS PR #1932 · N−10 through N</span><span><strong>MERGE ADMISSION: UNKNOWN / HOLD</strong></span></div>
+</header>
+<section class="panel" id="map">
+<h2>1 · How to read this process</h2>
+<p>Solid flow advances only when its gate is met. The visual design is monochrome: words, shapes and line patterns carry meaning, not colour.</p>
+<div class="legend" aria-label="Reading legend">
+<strong>Basic reading legend</strong>
+<div class="key"><i class="stroke"></i> Solid: ordinary advancement</div>
+<div class="key"><i class="stroke repair"></i> Heavy return: first-red repair</div>
+<div class="key"><i class="stroke self"></i> Dotted: .self re-entry</div>
+<div class="key"><i class="stroke forward"></i> Dashed: pay_it_forward proposal</div>
+<div class="key"><i class="stroke hold"></i> Stop: HOLD / watch</div>
+<div class="key"><i class="shape"></i> Rectangle: stage</div>
+<div class="key"><i class="shape decision"></i> Diamond: decision</div>
+<div class="key"><i class="shape gate"></i> Double border: admission gate</div>
+<div class="key"><span class="unknown">UNKNOWN</span> No observation, not zero</div>
+</div>
+<h2>2 · Eight-stage mission overview</h2>
+<p class="sub">Top row then bottom row. Click any stage to expand its native SIPOC and proof contract.</p>
+<div id="flow" class="flow"></div>
+<p class="sub">The complete Mermaid source is in <a href="CODE_PURPLE_EVERRED_MONOCHROME_FLOW_v0.2.mmd">CODE_PURPLE_EVERRED_MONOCHROME_FLOW_v0.2.mmd</a>. The collapsed overview deliberately prevents unreadable full-canvas scaling.</p>
+</section>
+<section class="panel" id="lanes">
+<h2>3 · Expandable lane, agent and task evidence</h2>
+<div class="buttons"><button id="expand" class="action">Expand all</button><button id="collapse" class="action">Collapse all</button></div>
+<div id="details" class="details"></div>
+</section>
+<section class="panel" id="census">
+<h2>4 · Timestamped N−10 / re-census</h2>
+<div class="notice">Historical rows are source-bound checkpoints, not eleven comparable full tests. A missing workflow is <strong>NOT_TRIGGERED</strong>, never green. Uploading a JSON file does not authenticate its producer.</div>
+<div class="table"><table aria-label="Historical exact-head MIP evidence"><thead><tr><th>Slot</th><th>SHA</th><th>MIP N2</th><th>Observation</th></tr></thead><tbody id="n10"></tbody></table></div>
+<h3>Manual local JSON re-census</h3>
+<p class="sub">Required: schema, repository, full SHA, observed_at UTC, producer, run_id, attempt, job_id and disposition. Read-only local import, no network or worker dispatch.</p>
+<div class="buttons"><input id="receiptFiles" type="file" accept=".json,application/json" multiple><button class="action" id="load">Load observations</button><button class="action" id="reset">Reset local observations</button></div>
+<p id="feedback" role="status" aria-live="polite">No new receipts. All active runtime statistics remain UNKNOWN unless independently proven.</p>
+<div class="table"><table><thead><tr><th>UTC</th><th>Repository / SHA</th><th>Producer</th><th>Run / attempt / job</th><th>State</th></tr></thead><tbody id="loaded"><tr><td colspan="5">No imported observations</td></tr></tbody></table></div>
+</section>
+<section class="panel" id="crew"><h2>5 · Mission Control roles, not claimed deployed workers</h2>
+<div class="table"><table aria-label="Crew role catalog"><thead><tr><th>Role</th><th>Purpose</th><th>Authenticated availability</th></tr></thead><tbody id="crewBody"></tbody></table></div>
+</section>
+<section class="panel"><h2>6 · Governance and evidence boundaries</h2>
+<p><strong>CODE PURPLE</strong> is the CODEX global process context. <strong>EVERRED</strong> is the ABACUS repeated-root specialist. <strong>NEVERGREEN</strong> is only a provisional name for negative-evidence tests. <strong>3P*</strong> is a selector: 3PR → conditional MIP → conditional 3PC → conditional 3P3 → STOP.</p>
+<p>Source files, test counts, debugger sessions, port leases, scanner findings and accepted remediations have independent numerators, denominators and provenance. W84 requires comparable observed cycles for effectiveness claims. None of this replaces independent security review, effective protected main or exact-head/current-main CI.</p>
+<p><a href="CODE_PURPLE_EVERRED_GRAPH_REVIEW_v0.2.md">Review acceptance contract</a> · <a href="MESH_CLOSURE_CONTROLLER_v1.json">Canonical mesh controller</a> · <a href="../../GLOB.yaml">GLOB</a></p></section>
+<footer>Static standalone reader · no external libraries, network activity, credential use or automatic acceptance. Status labels reflect historical source only; refresh the actual GitHub evidence before an engineering decision.</footer>
+</main>
+<script>
+'use strict';
+const stages=[
+['S01','SIPOC / authority','CODEX GLOB and owning repository','Source request, prior accepted evidence and head SHA','SIPOC: supplier, input, process, output, customer','Bound exact source, owner and constraints','Reader; Scout'],
+['S02','Census / re-census','ABACUS telemetry and CODEX observer','Same-head scanner, CI, LDAB and runtime observations','Enumerate source paths, checks, findings and receipts','Immutable event ledger and N−10','Reader; Deep Reader'],
+['S03','Negative evidence','Repository-native quality and security','Stale, skipped, synthetic or zero-step claims','Fail-closed falsification (NEVERGREEN candidate)','Typed PASS, FAIL or UNKNOWN per evidence class','Deep Reader; CI Proof'],
+['S04','3PR method select','CODEX Mesh Closure Controller','First material red and accepted constraints','Refresh, Probe, Rank; conditional method selection','One bounded next action / STOP','Scout; Dispatcher'],
+['S05','EVERRED root repair','ABACUS canonical owner','Verified root signature and source diff','Counterfactual, owner lease, canonical fix; MIP if structural','Scoped repaired source and negative regression','Ambulance; Repair Worker'],
+['S06','Runtime testflight','ABACUS or actual consumer runner','Bounded fix and test plan','MIP repeatability, optional 3PC, native CI / LLDB / Docker','Exact-head producer and consumer receipts','CI Proof; Runtime/LDAB'],
+['S07','Independent admission','Repo admin and eligible reviewer','Current-head checks and qualified security disposition','Review, protected-main, authorized merge','ADMIT or HOLD; exact-main readback','Owner/Admin; Reviewer'],
+['S08','DMAIC Control / REX','ABACUS control, CODEX REX; QPS local consumer','Accepted local output and comparable N−10','W84, recurrence, conditional 3P3 propagation','Closed root or bounded .self / consumer candidate','REX Historian; QPS Reviewer']
+];
+const q=s=>document.querySelector(s);
+const encode=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+stages.forEach((s,i)=>{
+ const b=document.createElement('button');b.type='button';b.className='stage';b.setAttribute('aria-pressed','false');
+ b.innerHTML='<small>'+encode(s[0])+'</small><b>'+encode(s[1])+'</b><small>'+encode(s[2])+'</small>';
+ b.onclick=()=>{document.querySelectorAll('.stage').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');document.querySelectorAll('#details details').forEach(x=>x.open=false);const d=q('#lane-'+s[0]);d.open=true;d.scrollIntoView({block:'start'})};
+ q('#flow').append(b);
+ const d=document.createElement('details');d.id='lane-'+s[0];
+ d.innerHTML='<summary>'+encode(s[0]+' · '+s[1])+'</summary><div class="detail"><dl>'+
+ '<dt>Supplier / owner</dt><dd>'+encode(s[2])+'</dd>'+
+ '<dt>Input</dt><dd>'+encode(s[3])+'</dd>'+
+ '<dt>Process / method</dt><dd>'+encode(s[4])+'</dd>'+
+ '<dt>Output</dt><dd>'+encode(s[5])+'</dd>'+
+ '<dt>Customer</dt><dd>'+encode(i<stages.length-1?stages[i+1][2]:'Same owner (.self); independent reuse candidate')+'</dd>'+
+ '<dt>Role types (capacity not proven)</dt><dd>'+encode(s[6])+'</dd></dl>'+
+ '<p class="notice">Output N is eligible as input N+1 only with verified material change, exact provenance and source-owner acceptance.</p></div>';
+ q('#details').append(d);
+});
+q('#expand').onclick=()=>document.querySelectorAll('#details details').forEach(d=>d.open=true);
+q('#collapse').onclick=()=>document.querySelectorAll('#details details').forEach(d=>d.open=false);
+const runs=[
+['N−10','eb2d7d4','NOT_TRIGGERED','Source labels'],['N−9','2c3809a','NOT_TRIGGERED','Mermaid'],
+['N−8','a3ccc0b','PASS','Native MIP 27/27 negative tests'],
+['N−7','6312321','NOT_TRIGGERED','Full inventory'],
+['N−6','5f0b480','PASS','Nested inventory'],
+['N−5','7099956','PASS','Lexical classification'],
+['N−4','870e817','PASS','Consumer inventory validation'],
+['N−3','294c899','FAIL','Nested inventory fixture'],
+['N−2','1d82d90','FAIL','Same first-red'],
+['N−1','7f2e597','FAIL','Same first-red'],
+['N','e1286e3','QUEUED AT SNAPSHOT','Fixture corrected']
+];
+runs.forEach(row=>{const tr=document.createElement('tr');tr.innerHTML=row.map(x=>'<td>'+encode(x)+'</td>').join('');q('#n10').append(tr)});
+[
+['Reader','Fast source and receipt enumeration'],['Deep Reader','Root correlation and causal analysis'],
+['Scout','Detect new SHA, CI, policy and evidence changes'],['Ambulance','Bounded disjoint first-red intervention'],
+['Dispatcher','Queue ownership and worker leases'],['Repair Worker','Source fix and negative regression'],
+['CI Proof Worker','Exact-head tests and coverage'],['Runtime/LDAB Worker','Real debugger steps, port lease, teardown'],
+['Independent Reviewer','Code/security admission review'],['REX Historian','N−10 and recurrence analysis']
+].forEach(row=>{const tr=document.createElement('tr');tr.innerHTML='<td>'+encode(row[0])+'</td><td>'+encode(row[1])+'</td><td><span class="unknown">UNKNOWN</span></td>';q('#crewBody').append(tr)});
+const loaded=new Map();const SHA=/^[a-f0-9]{40}$/;const UTC=/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$/;
+function validate(v){
+ if(!v||v.schema!=='code-purple.observation.v1'||!SHA.test(v.source_sha)||!/^[\w.-]+\/[\w.-]+$/.test(v.repository)||!UTC.test(v.observed_at)||!Number.isFinite(Date.parse(v.observed_at)))throw Error('Invalid schema, repository, head or UTC');
+ if(typeof v.producer!=='string'||!v.producer.trim()||!['PASS','FAIL','HOLD','UNKNOWN'].includes(v.disposition))throw Error('Invalid producer or disposition');
+ for(const k of ['run_id','run_attempt','job_id'])if(!Number.isSafeInteger(v[k])||v[k]<1)throw Error('Invalid '+k);
+ return v;
+}
+function draw(){
+ const t=q('#loaded');t.textContent='';const arr=Array.from(loaded.values()).sort((a,b)=>a.observed_at.localeCompare(b.observed_at));
+ if(!arr.length){t.innerHTML='<tr><td colspan="5">No imported observations</td></tr>';return}
+ arr.forEach(v=>{const row=document.createElement('tr');row.innerHTML='<td>'+encode(v.observed_at)+'</td><td class="mono">'+encode(v.repository+'@'+v.source_sha.slice(0,10))+'</td><td>'+encode(v.producer)+'</td><td>'+encode(v.run_id+'/'+v.run_attempt+'/'+v.job_id)+'</td><td>'+encode(v.disposition)+'</td>';t.append(row)});
+}
+q('#load').onclick=async()=>{
+ let accepted=0,duplicate=0,bad=[];
+ for(const file of Array.from(q('#receiptFiles').files||[]))try{
+ if(file.size>1000000)throw Error('Exceeds 1MB');const arr=JSON.parse(await file.text());const items=Array.isArray(arr)?arr:[arr];if(items.length>500)throw Error('Too many receipts');
+ const staged=new Map(loaded);let fresh=0,repeated=0;
+ for(const raw of items){const v=validate(raw),key=[v.repository,v.source_sha,v.producer,v.run_id,v.run_attempt,v.job_id].join(':');if(staged.has(key)){if(JSON.stringify(staged.get(key))!==JSON.stringify(v))throw Error('Contradictory same-identity receipt');repeated++}else{staged.set(key,v);fresh++}}
+ loaded.clear();staged.forEach((v,k)=>loaded.set(k,v));accepted+=fresh;duplicate+=repeated;
+ }catch(e){bad.push(file.name+': '+e.message)}
+ draw();q('#feedback').textContent=accepted+' new, '+duplicate+' duplicates, '+bad.length+' rejected. '+(bad.length?bad.join(' | '):'Local data remains UNVERIFIED until producer authenticity is checked.');
+};
+q('#reset').onclick=()=>{loaded.clear();q('#receiptFiles').value='';draw();q('#feedback').textContent='Reset. The historical N−10 remains pinned; active worker/session fields are UNKNOWN.'};
+</script>
+</body></html>

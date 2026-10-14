@@ -1,0 +1,34 @@
+flowchart LR
+  %% Monochrome semantics: never encode gate state with colour alone.
+  %% Reading order: S01 -> S08; open lane detail for proof and SIPOC.
+  S01["S01 SIPOC / authority"]
+  S02["S02 Census and re-census"]
+  S03["S03 Negative proof guard"]
+  S04{"S04 3PR: minimum method?"}
+  S05["S05 EVERRED causal root / conditional MIP"]
+  S06["S06 Testflight, native runtime / 3PC if needed"]
+  S07{"S07 Independent security, review, protected main?"}
+  S08["S08 DMAIC Control, N-10 / W84, 3P3 if needed"]
+  HOLD["HOLD / WATCH - no false green"]
+  REX["CODEX REX / read-only Mission Control"]
+
+  S01 -->|"forward"| S02
+  S02 -->|"forward"| S03
+  S03 -->|"verified observations"| S04
+  S04 -->|"repeated failure"| S05
+  S04 -->|"structural gap: MIP"| S05
+  S04 -->|"transaction: 3PC"| S06
+  S04 -->|"local DoV already satisfied"| S07
+  S05 -->|"focused proof"| S06
+  S06 -->|"native exact-head"| S07
+  S07 -->|"authorized admission"| S08
+  S03 -->|"invalid / stale / zero-step"| HOLD
+  S07 -->|"missing mandatory gate"| HOLD
+  S06 ==>|"first-red: same persistent root"| S05
+  S08 -.->|"SELF_REENTRY only on material evidence"| S01
+  S08 -.->|"PAY_IT_FORWARD independent consumer"| S04
+  S08 -->|"sanitized read-only"| REX
+
+  classDef default fill:#ffffff,color:#111111,stroke:#333333,stroke-width:1.5px;
+  classDef gate fill:#eeeeee,color:#111111,stroke:#111111,stroke-width:3px;
+  class S04,S07,HOLD gate;
