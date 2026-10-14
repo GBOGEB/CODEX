@@ -1,0 +1,64 @@
+name: CODE PURPLE N-Vector Native DoV
+
+on:
+  pull_request:
+    paths:
+      - 'federation/mesh/handovers/code_purple_n_vector_v1/**'
+      - '.github/workflows/code-purple-nvector-handover.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'federation/mesh/handovers/code_purple_n_vector_v1/**'
+      - '.github/workflows/code-purple-nvector-handover.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  n-vector-contract:
+    name: Exact-source temporal reference regressions
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout immutable source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert source SHA and runtime
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          python3 -V
+          python3 -c 'import sys; assert sys.version_info >= (3, 11)'
+      - name: Validate JSON and compile reference
+        run: |
+          set -euo pipefail
+          ROOT=federation/mesh/handovers/code_purple_n_vector_v1
+          python3 -m json.tool "$ROOT/STATE.json" > /dev/null
+          python3 -m json.tool "$ROOT/MANIFEST.json" > /dev/null
+          python3 -m py_compile "$ROOT/temporal_matrix.py" "$ROOT/test_temporal_matrix.py"
+      - name: Execute all 21 temporal source-contract regressions
+        run: |
+          set -euo pipefail
+          ROOT=federation/mesh/handovers/code_purple_n_vector_v1
+          python3 -m unittest discover -s "$ROOT" -p test_temporal_matrix.py -v 2>&1 | tee /tmp/nvector-unittest.txt
+          grep -Eq '^Ran 21 tests in ' /tmp/nvector-unittest.txt
+          grep -Eq '^OK$' /tmp/nvector-unittest.txt
+      - name: Verify same-source handover manifest
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          root = Path("federation/mesh/handovers/code_purple_n_vector_v1")
+          manifest = json.loads((root / "MANIFEST.json").read_text())
+          assert len(manifest["files"]) == 9
+          assert all((root / name).is_file() for name in manifest["files"])
+          state = json.loads((root / "STATE.json").read_text())
+          assert state["merge_admission"] == "HOLD"
+          assert state["policy"]["unknown_never_zero"] is True
+          PY
