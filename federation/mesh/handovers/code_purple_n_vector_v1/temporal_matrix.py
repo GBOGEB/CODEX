@@ -112,7 +112,7 @@ def masked_first_difference(
     return output
 
 
-def admission_gate(states: dict[str, Optional[bool]]) -> str:
+def admission_gate(states: dict[str, bool | None]) -> str:
     """No inference or automatic merging from a complete gate set."""
     if any(states.get(k) is not True for k in _REQUIRED):
         return "HOLD"
