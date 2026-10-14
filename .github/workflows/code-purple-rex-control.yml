@@ -10,6 +10,9 @@ on:
       - .github/workflows/pages.yml
       - tests/test_code_purple_rex_rollup.py
       - docs/code_purple_rex_control.html
+      - docs/code_purple_convergence.html
+      - docs/diagrams/code_purple_convergence.mmd
+      - tests/test_code_purple_convergence_accessibility.py
       - mission_control/mycelium/rex_observability_contract.yaml
       - .github/workflows/code-purple-rex-control.yml
   push:
@@ -21,6 +24,10 @@ on:
       - tests/test_code_purple_current_observation.py
       - .github/workflows/pages.yml
       - tests/test_code_purple_rex_rollup.py
+      - docs/code_purple_rex_control.html
+      - docs/code_purple_convergence.html
+      - docs/diagrams/code_purple_convergence.mmd
+      - tests/test_code_purple_convergence_accessibility.py
       - .github/workflows/code-purple-rex-control.yml
   workflow_dispatch:
 
@@ -59,12 +66,15 @@ jobs:
         run: python -m pip install "PyYAML>=6,<7" "ruff==0.16.6"
 
       - name: Check changed Python without suppressing new Ruff debt
-        run: ruff check scripts/code_purple_rex_rollup.py tests/test_code_purple_rex_rollup.py scripts/code_purple_current_observation.py tests/test_code_purple_current_observation.py
+        run: ruff check scripts/code_purple_rex_rollup.py tests/test_code_purple_rex_rollup.py scripts/code_purple_current_observation.py tests/test_code_purple_current_observation.py tests/test_code_purple_convergence_accessibility.py
 
       - name: Test candidate admission guards and metric semantics
         run: |
           python -m unittest discover -s tests -p test_code_purple_rex_rollup.py -v
           python -m unittest discover -s tests -p test_code_purple_current_observation.py -v
+
+      - name: Verify convergence map AA contrast, sticky navigation and source linkage
+        run: python -m unittest discover -s tests -p test_code_purple_convergence_accessibility.py -v
 
       - name: Generate and verify deterministic TOP7/14/21 evidence
         run: |
