@@ -17,7 +17,7 @@ SCHEMA = "code-purple.midwave-testflight.v1"
 STAGES = ("preflight", "focused_tests", "integrated_ci", "security", "review")
 PREFERRED = (
     "CODEX", "ABACUS", "cryogenic-compliance", "DOCX_RTM_Automation",
-    "cryoplant-project", "Q_engineering_tools", "cryo_leak_rate_dashboard",
+    "Q_engineering_tools", "cryo_leak_rate_dashboard",
     "cryogenic-accelerator-workspace", "gg_MATH", "GEMINI",
     "GBOGEB-PROGRAM-COOL", "pipeline-automation-hub",
 )
