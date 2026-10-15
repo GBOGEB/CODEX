@@ -1,0 +1,62 @@
+{
+  "schema": "codex.keb.global_dov.semantic_ownership.v1",
+  "version": "1.0.0",
+  "owner_repository": "GBOGEB/CODEX",
+  "source_code": "scripts/qps_math_wormhole_keb.py",
+  "source_tests": "tests/test_qps_math_wormhole_keb.py",
+  "orchestration_parent": {
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "pr": 539,
+    "scope": "OBSERVABILITY_ONLY"
+  },
+  "provider": "GBOGEB/gg_MATH",
+  "observer": "GBOGEB/ABACUS",
+  "acceptance_owner": "GBOGEB/cryoplant-project",
+  "canonical_input": "gg-math-qps-wormhole/v1",
+  "canonical_output": "codex.keb.qps_math_wormhole_candidate/v1",
+  "semantic_checks": [
+    "method_identifier",
+    "public_synthetic_population",
+    "exact_provider_sha_and_uploaded_bytes",
+    "model_assumptions",
+    "typed_units_if_declared",
+    "no_fabricated_Bradley_Terry_observations",
+    "no_QPS_private_threshold_transfer",
+    "consistent_provenance_for_DOW"
+  ],
+  "evidence_gates": {
+    "fixture": "SEMANTIC_CANDIDATE_ONLY",
+    "native_peer_receipt": "UNKNOWN",
+    "validated_provider_bytes": false,
+    "cross_repository_replay_verified": false,
+    "qps_owner_accepted": false,
+    "engineering_credit_delta": 0
+  },
+  "native_acceptance_requires": [
+    "terminal_run_and_job_attempt_at_exact_sha",
+    "independently_downloaded_provider_artifact_bytes",
+    "matching_provider_checkout_and_digest",
+    "negative_semantic_controls",
+    "ABACUS_independently_replays_matching_artifact",
+    "QPS_owner_private_disposition"
+  ],
+  "handover": {
+    "move_scope": "semantic challenge and provenance validation only",
+    "mission_control_keep": "read-only fleet census and rollout",
+    "purge_prior_to_native_cutover": false
+  },
+  "bd": [
+    {
+      "id": "KEB-DOV-P1",
+      "status": "OPEN",
+      "cause": "provider source SHA differs from historical synthetic fixture",
+      "action": "resolve source identity by independent artifact acquisition; do not rewrite source declarations"
+    },
+    {
+      "id": "KEB-DOV-P2",
+      "status": "OPEN",
+      "cause": "native provider-to-KEB receipt bytes not attested",
+      "action": "publish and independently verify signed/hashed internal manifest and run/job/attempt identity"
+    }
+  ]
+}
