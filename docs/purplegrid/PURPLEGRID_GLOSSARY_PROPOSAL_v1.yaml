@@ -1,0 +1,55 @@
+schema: code_purple.purplegrid.glossary_proposal.v1
+status: DRAFT_NON_AUTHORITATIVE
+authority_target: GBOGEB/CODEX/PIPELINE/GLOSSARY.yaml
+umbrella:
+  display: PurpleGrid
+  namespace: purplegrid
+  operator_alias: "GRID!"
+  executable: false
+preserved_terms:
+  - CODE_PURPLE
+  - QPS
+  - KEB
+  - DOW
+  - QPS_TRIAGE
+  - Mission_Control
+  - CENSUS
+  - REX
+  - Char_BD
+definitions:
+  purplegrid: "Proposed cross-repository operator vocabulary; creates no new authority."
+  grid_census: "Bounded enumeration of repositories, clusters, assets and missing evidence."
+  grid_bridge: "Typed provenance-checked interface between independent authorities."
+  grid_control: "Dependency planning and eligibility representation, not new dispatch authority."
+  grid_cluster: "Declared set of repositories retaining separate source and approval ownership."
+  grid_char_bd: "Reference to ABACUS Char_BD recovery charter without implied execution."
+verbs:
+  STATUS: status
+  START: init
+  RESUME: resume
+  SEED: seed
+  FEED: ingest
+  REFRESH: refresh
+  CENSUS: census
+  ALIGN: reconcile
+  PLAN: plan
+  RUN: execute
+  CHECK: verify
+  MEASURE: measure
+  REPORT: publish_report
+  CONTROL: control
+ambiguous:
+  UPDATE: [refresh, ingest, reconcile, sync]
+  RESTART: [resume, reinit, rerun, replay, reset]
+  FULL: [plan, eligible_authorized_execution]
+defaults:
+  missing: UNKNOWN
+  mutation: DENY
+  mode: read_only
+  unknown_as_zero: false
+governance:
+  authority_transfer: false
+  security_waiver: false
+  remote_mutation_enabled: false
+  auto_merge: false
+  independent_review_required: true
