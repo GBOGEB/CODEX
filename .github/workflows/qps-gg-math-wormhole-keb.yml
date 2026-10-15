@@ -4,6 +4,8 @@ on:
     paths:
       - 'scripts/qps_math_wormhole_keb.py'
       - 'tests/test_qps_math_wormhole_keb.py'
+      - 'tests/test_global_dov_keb_owner.py'
+      - 'docs/ci/GLOBAL_DOV_KEB_OWNER_V1.json'
       - 'docs/ci/QPS_GG_MATH_WORMHOLE_KEB_V1.md'
       - '.github/workflows/qps-gg-math-wormhole-keb.yml'
   workflow_dispatch:
@@ -26,6 +28,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Independent semantic and identity regressions
         run: python -m unittest discover -s tests -p test_qps_math_wormhole_keb.py -v
+
+      - name: Fail-closed CODEX KEB Global DoV owner guards
+        run: python -m unittest discover -s tests -p test_global_dov_keb_owner.py -v
 
       - name: Run fixture-based KEB candidate flight (not native federation)
         shell: bash
