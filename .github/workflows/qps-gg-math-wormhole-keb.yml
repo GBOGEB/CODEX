@@ -26,3 +26,56 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Independent semantic and identity regressions
         run: python -m unittest discover -s tests -p test_qps_math_wormhole_keb.py -v
+
+      - name: Run fixture-based KEB candidate flight (not native federation)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib
+          import json
+          import subprocess
+          import sys
+          from pathlib import Path
+
+          fixture = Path("tests/fixtures/qps_math_wormhole_provider_v1.json")
+          provider = json.loads(fixture.read_text(encoding="utf-8"))["producer"]
+          out = Path("artifacts/qps_math_keb")
+          out.mkdir(parents=True, exist_ok=True)
+          cmd = [
+              sys.executable, "scripts/qps_math_wormhole_keb.py",
+              "--provider-receipt", str(fixture),
+              "--provider-sha", provider["source_sha"],
+              "--artifact-sha256", provider["artifact_sha256"],
+              "--out", str(out / "candidate.json"),
+          ]
+          subprocess.run(cmd, check=True)
+          candidate = json.loads((out / "candidate.json").read_text())
+          assert candidate["status"] == "SEMANTIC_CANDIDATE_ONLY"
+          assert candidate["keb_native_run_authenticated"] is False
+          manifest = {
+              "schema": "qps-wormhole-fixture-flight/v1",
+              "repo": "GBOGEB/CODEX",
+              "checked_out_sha": subprocess.check_output(
+                  ["git", "rev-parse", "HEAD"], text=True
+              ).strip(),
+              "provider_sha": provider["source_sha"],
+              "provider_artifact_sha256": provider["artifact_sha256"],
+              "candidate_file_sha256": hashlib.sha256(
+                  (out / "candidate.json").read_bytes()
+              ).hexdigest(),
+              "flight_type": "SYNTHETIC_FIXTURE_ONLY",
+              "native_cross_repository_attested": False,
+              "qps_disposition": "DEFER",
+              "authority_transfer": False,
+          }
+          (out / "manifest.json").write_text(
+              json.dumps(manifest, indent=2, sort_keys=True) + "\\n", encoding="utf-8"
+          )
+          PY
+      - name: Upload read-only KEB fixture candidate evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: qps-keb-fixture-${{ matrix.python-version }}-${{ github.run_id }}
+          path: artifacts/qps_math_keb/
+          if-no-files-found: error
