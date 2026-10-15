@@ -2,6 +2,7 @@
 import copy
 import json
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -38,17 +39,23 @@ class DOWW169ReplayTests(unittest.TestCase):
         for key, value in (("native_run", 99), ("k8s_api_verified", True), ("artifact_bytes_verified", True), ("admission", "ACCEPT")):
             forged = copy.deepcopy(original)
             forged[key] = value
-            with patch.object(r.PIN.__class__, "read_text", return_value=json.dumps(forged)):
-                with self.assertRaisesRegex(ValueError, "proof|elevation"):
-                    r.replay()
+            with tempfile.TemporaryDirectory() as temp:
+                pin = Path(temp) / "pin.json"
+                pin.write_text(json.dumps(forged), encoding="utf-8")
+                with patch.object(r, "PIN", pin):
+                    with self.assertRaisesRegex(ValueError, "proof|elevation"):
+                        r.replay()
 
     def test_source_scope_cannot_be_rewritten(self):
         original = json.loads(r.PIN.read_text())
         forged = copy.deepcopy(original)
         forged["producer"] = "GBOGEB/CODEX"
-        with patch.object(r.PIN.__class__, "read_text", return_value=json.dumps(forged)):
-            with self.assertRaisesRegex(ValueError, "owner changed"):
-                r.replay()
+        with tempfile.TemporaryDirectory() as temp:
+            pin = Path(temp) / "pin.json"
+            pin.write_text(json.dumps(forged), encoding="utf-8")
+            with patch.object(r, "PIN", pin):
+                with self.assertRaisesRegex(ValueError, "owner changed"):
+                    r.replay()
 
 
 if __name__ == "__main__":
