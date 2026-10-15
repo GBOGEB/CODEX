@@ -1,0 +1,84 @@
+{
+  "schema": "codex.keb.sideload.contract.v1",
+  "envelope_schema": "qps.federation.sideload.envelope.v1",
+  "version": "1.0.0",
+  "status": "CANDIDATE",
+  "owner": "GBOGEB/CODEX",
+  "authority": "SEMANTIC_TRANSPORT_ONLY",
+  "repositories": [
+    "GBOGEB/ABACUS",
+    "GBOGEB/CODEX",
+    "GBOGEB/cryoplant-project"
+  ],
+  "kinds": [
+    "GITHUB_RUN",
+    "K8S_STATIC",
+    "K8S_API",
+    "K8S_WORKLOAD",
+    "EDGE_CANDIDATE",
+    "DOCKER_COMPOSE",
+    "SECURITY_SCAN",
+    "SANITIZED_LOG",
+    "LOCAL_EVIDENCE"
+  ],
+  "fields": [
+    "schema",
+    "id",
+    "producer",
+    "consumer",
+    "kind",
+    "scope",
+    "source",
+    "native",
+    "claims",
+    "observed_at_utc"
+  ],
+  "producer_fields": [
+    "repo",
+    "sha"
+  ],
+  "scope_fields": [
+    "surface",
+    "namespace"
+  ],
+  "source_fields": [
+    "path",
+    "sha256",
+    "size_bytes"
+  ],
+  "native_fields": [
+    "run_id",
+    "job_id",
+    "attempt",
+    "executed_steps"
+  ],
+  "claim_fields": [
+    "authority_transfer",
+    "engineering_credit_delta",
+    "release_admitted"
+  ],
+  "blocked_fields": [
+    "raw_log",
+    "raw_payload",
+    "raw_binary",
+    "secret",
+    "secrets",
+    "token",
+    "password",
+    "private_key",
+    "access_key",
+    "credential"
+  ],
+  "trust_levels": [
+    "DECLARED",
+    "LOCAL_HASH_MATCH_ONLY",
+    "NATIVE_METADATA_UNAUTHENTICATED",
+    "K8S_API_UNVERIFIED",
+    "WORKLOAD_UNVERIFIED"
+  ],
+  "noncompensating": {
+    "qps_child_disposition": "DEFER",
+    "admission": "HOLD",
+    "formal_credit_delta": 0
+  }
+}
