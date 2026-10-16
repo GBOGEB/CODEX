@@ -1,5 +1,8 @@
 # CODEX — KEB semantic-provenance and governance plane
 
+
+> **CODE PURPLE P4 federation navigation (dated 16 Oct 2026):** This repository owns **semantic provenance, federation exchange and governed automation**. [Mission Control](https://github.com/GBOGEB/pipeline-automation-hub) · [Local recursive SIPOC pilot](https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/federation-atlas/flightdeck/pulses/federation_landing_p4.html) · [Current repository Actions](https://github.com/GBOGEB/CODEX/actions) · [Open PRs](https://github.com/GBOGEB/CODEX/pulls) · [Current source history](https://github.com/GBOGEB/CODEX/commits). **Snapshot caution:** CI readiness, semantic provenance, engineering acceptance and deployment must be shown separately. This navigation link is not an assertion that the P4 pilot is merged or hosted; preserve UNKNOWN and independent owner gates.
+
 [![DMAIC quality](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FGBOGEB%2FCODEX%2Fmain%2Fdocs%2Fapi%2Fmetrics.json&query=%24.quality_score&label=DMAIC%20quality&color=blue&style=flat-square)](docs/api/metrics.json)
 [![commits](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FGBOGEB%2FCODEX%2Fmain%2Fdocs%2Fapi%2Fmetrics.json&query=%24.total_commits&label=commits&color=blue&style=flat-square)](docs/api/metrics.json)
 [![Python files](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FGBOGEB%2FCODEX%2Fmain%2Fdocs%2Fapi%2Fmetrics.json&query=%24.python_files&label=Python%20files&color=blue&style=flat-square)](docs/api/metrics.json)
