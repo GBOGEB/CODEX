@@ -70,6 +70,46 @@ jobs:
           Path('/tmp/mycelium-n7-receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
           print(json.dumps(receipt,sort_keys=True))
           PY
+      - name: "MYCELIUM N8: typed native debugger bridge negative-test gate"
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          export PYTHONPATH=mission_control/mycelium/continuity
+          python -m coverage run --branch --source=mycelium_continuity.native_bridge \
+            -m unittest discover -s mission_control/mycelium/continuity/tests \
+            -p "test_native_bridge_public.py" -v
+          python -m coverage json -q -o /tmp/mycelium-n8-coverage.json
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          c=json.loads(Path('/tmp/mycelium-n8-coverage.json').read_text())['totals']
+          assert c['num_statements']>0 and c['num_branches']>0
+          assert c['percent_statements_covered']>=95
+          assert c['percent_branches_covered']>=90
+          v=json.loads(Path('mission_control/mycelium/continuity/N8_NATIVE_OBSERVATIONS_20261017.json').read_text())
+          assert len(v['artifacts'])==2 and v['root_closures'] is None
+          assert v['authority_transfer'] is False and v['admission']=='HOLD'
+          assert v['code_pr']['native_outcome_at_readback']=='QUEUED'
+          o={'schema':'code-purple.mycelium.n8-local-contract-ci.v1',
+             'checkout_sha':os.environ['EXPECTED_SHA'],'source_scope':'native_bridge.py',
+             'synthetic_test_evidence_only':True,'native_zip_bytes_in_repository':False,
+             'statements':c['covered_lines'],'eligible_statements':c['num_statements'],
+             'branches':c['covered_branches'],'eligible_branches':c['num_branches'],
+             'joined_root_acceptance':None,'admission':'HOLD'}
+          Path('/tmp/mycelium-n8-contract-receipt.json').write_text(json.dumps(o,indent=2)+'\n')
+          PY
+      - name: "MYCELIUM N8: publish source-bound contract evidence"
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: mycelium-n8-contract-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/mycelium-n8-coverage.json
+            /tmp/mycelium-n8-contract-receipt.json
+          if-no-files-found: warn
       - name: "Mycelium N7: upload source-bound scoped coverage"
         uses: actions/upload-artifact@v7.0.2
         if: always()
