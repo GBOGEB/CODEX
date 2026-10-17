@@ -74,6 +74,28 @@ This reference provides a canonical quick-reference terminology layer for:
 
 ---
 
+# CODE PURPLE Governed Execution Units (G3A taxonomy)
+
+The machine-readable entries are maintained in `docs/reference/glossary.yaml#/glossary/execution_units`. This table is a human-readable projection; it is **not** a second SSOT.
+
+| Moniker | Term | Unit | Acceptance boundary |
+| --- | --- | --- | --- |
+| `W` | Wave | Outcome-based delivery campaign; may include many pulses and parallel disjoint slices | Objective accepted, or explicit HOLD/DEFER with receipts |
+| `P` | Pulse | One DMAIC/MIP observe, diagnose, act, verify and disposition loop | Source-bound result classified; no automatic merge credit |
+| `S` | Slice | Independently owned path/task subset | Noncolliding evidence-backed change or diagnostic |
+| `I` | Iteration | Generic repetition | Prefer **pulse** for metric-led work |
+| `G3A` | Governed Three-Step Advancement | **3 sequential pulses** in a bounded wave, from evidence baseline N toward N+3 | Final evaluated/verified/accepted counts reported separately |
+| `G3W` | Governed Three-Wave Delivery | **3 delivery waves** with wave-specific outcomes | Each wave accepted/dispositioned independently |
+| `N` | Evidence baseline | Exact repo/head SHA, timestamp, policy/config identity, observed metrics and outstanding gates | A new verified snapshot is required after source drift |
+
+**Rule:** A commit, drafted PR, green focused test, CI run or pulse ledger entry is neither a wave nor an independently admitted outcome. Three planned pulses do not constitute three successful advancements. When an exact-head check is pending, record `HOLD / NOT_YET_VERIFIED`.
+
+**Command convention:** `G3A <mission> --from <pinned N> --goal <measurable DoV> --scope <owners/paths> --budget 3 --stop-on major-blocker --output receipts+metrics+first-red+next`. An operator supplies the starting goal and risk boundaries once; the executor selects each next *admissible* action using the previous pulse's actual evidence. Stop early on head/policy drift, P0/P1 security, missing permissions, owner collision, untrusted evidence or other material blockers. Never auto-approve, merge, waive or change rulesets.
+
+Hierarchy: federation mission `M` → outcome wave `W` → sequential pulse `P` → optional parallel disjoint slice `S` → action `A` → immutable observation/receipt `R`. The receipt must preserve lineage of inputs, steps, SHAs, checks, outcomes and blockers. Canonical process and example are in `docs/automation/G3A_EXECUTION_CONTRACT.md`.
+
+---
+
 # BASIC Operational Verbs
 
 | Verb | Meaning |

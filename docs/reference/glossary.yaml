@@ -9,6 +9,7 @@ glossary:
       - HBHS-EP
       - MCP
       - BASIC operational language
+      - CODE PURPLE G3A wave/pulse taxonomy
     governance:
       canonical_source: SSOT
       format: YAML
@@ -103,6 +104,53 @@ glossary:
     agent:
       type: noun
       definition: Structured autonomous or semi-autonomous orchestration component operating under governance constraints.
+
+  execution_units:
+    wave:
+      type: noun
+      moniker: W
+      definition: Bounded outcome-delivery campaign with declared scope, owner, budget, inputs, dependencies and acceptance/disposition gates.
+      composition: One or more pulses and zero or more disjoint implementation slices; may span repositories.
+      not_equivalent_to: [single_commit, single_ci_run, pulse]
+      done_when: Wave objective accepted against independently verified evidence, or explicitly held/deferred with reason.
+    pulse:
+      type: noun
+      moniker: P
+      definition: One bounded DMAIC/MIP observation-diagnosis-action-verification-and-disposition cycle against a pinned evidence state.
+      composition: A pulse can contain read-only scouts, disjoint slices and a source-owning repair; all actions have receipts.
+      done_when: Pulse outcome and evidence are recorded as PASS, FAIL, HOLD or BLOCKED; this does not imply merge admission.
+      not_equivalent_to: [commit, workflow_run, wave]
+    slice:
+      type: noun
+      moniker: S
+      definition: Small owned task or change with disjoint file/write scope and a separately attributable proof.
+    iteration:
+      type: noun
+      definition: Generic repeat; use pulse when metric conversion or DMAIC verification is required.
+      preferred_term: pulse
+    G3A:
+      type: execution_command
+      expands_to: Governed Three-Step Advancement
+      definition: Sequentially evaluate up to three source-bound advancement pulses from baseline N to planned N+3, adapting actions after each observed outcome.
+      granularity: three_bounded_pulses
+      default_wave_count: 1
+      semantics: N+3 is an intended three-evaluation horizon, never proof of three accepted outcomes.
+      stop_conditions: [head_drift, P0_P1_security, authority_gap, owner_collision, missing_proof, material_blocker, exhausted_budget]
+      authority: No autonomous merge, security waiver, branch-rule modification, fabricated review or false admission credit.
+    G3W:
+      type: execution_command
+      expands_to: Governed Three-Wave Delivery
+      definition: Execute three bounded outcome-delivery campaigns, each with its own number of pulses and separate wave acceptance.
+      not_equivalent_to: G3A
+    state_N:
+      type: noun
+      definition: Immutable and time-stamped evidence snapshot including repository, source SHA, policy fingerprint, baseline metrics and open gates.
+    progress_receipt:
+      type: noun
+      definition: Append-only per-pulse summary of planned versus actual actions, source SHA, diagnostics, validated evidence, coverage denominators, elapsed time, blockers and next selection.
+    major_blocker:
+      type: noun
+      definition: Evidence or authority condition that forbids safe autonomous continuation; stop, preserve receipts and request operator decision.
 
   BASIC_verbs:
     initialize: Establish initial runtime, telemetry, or operational state.
