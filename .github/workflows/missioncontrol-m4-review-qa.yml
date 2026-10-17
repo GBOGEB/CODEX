@@ -1,0 +1,96 @@
+name: Mission Control M4 Read-Only Launch QA
+on:
+  pull_request:
+    paths:
+      - 'docs/missioncontrol_operations_atlas_m4.html'
+      - 'docs/missioncontrol_m4_*.mmd'
+      - 'docs/missioncontrol_m4_*.md'
+      - 'docs/data/missioncontrol_m4_status.json'
+      - 'docs/index.html'
+      - 'scripts/missioncontrol_m4_*.js'
+      - 'scripts/missioncontrol_m4_*.css'
+      - 'scripts/rebuild_missioncontrol_m4.py'
+      - 'scripts/build_m4_crosswalk.py'
+      - 'tests/test_missioncontrol_m4.py'
+      - '.github/workflows/missioncontrol-m4-review-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  governed-static-and-browser:
+    name: M4 source parity and 4-viewport review only
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Fail closed on exact checkout mismatch
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install test dependencies for read-only presentation QA
+        run: |
+          python -m pip install --disable-pip-version-check 'pytest>=8,<9' 'playwright==1.55.0'
+          python -m playwright install --with-deps chromium
+      - name: Rebuild must be deterministic; tests keep HOLD
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/rebuild_missioncontrol_m4.py --check
+          python scripts/build_m4_crosswalk.py
+          git diff --exit-code -- docs/missioncontrol_m4_owner_dependency.mmd docs/missioncontrol_m4_SIPOC_AND_OWNER_CONTROL.md
+          python -m pytest -q tests/test_missioncontrol_m4.py
+      - name: Browser QA of the source-bound generated page
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p qa/m4
+          python - <<'PY'
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          html=Path('docs/missioncontrol_operations_atlas_m4.html').read_text()
+          with sync_playwright() as p:
+              browser=p.chromium.launch(args=['--no-sandbox'])
+              for label,w,h in [('wide',1920,1080),('desktop',1440,1000),('laptop',1280,800),('mobile',390,844)]:
+                  page=browser.new_page(viewport={'width':w,'height':h})
+                  errs=[]
+                  page.on('pageerror',lambda exc:errs.append(str(exc)))
+                  page.set_content(html,wait_until='load')
+                  page.wait_for_timeout(200)
+                  assert page.locator('#m4-prBody tr').count()==21
+                  assert page.locator('#m4-issue-list .m4-issue').count()==6
+                  assert page.locator('#m4-test-chart svg').count()==1
+                  assert page.locator('#m4-denom-chart svg').count()==1
+                  assert not page.evaluate('document.documentElement.scrollWidth>document.documentElement.clientWidth+1')
+                  assert not errs
+                  page.locator('#m4-filter').fill('2133')
+                  assert page.locator('#m4-prBody tr').count()==1
+                  page.locator('#m4-filter').fill('')
+                  page.locator('#m4-prBody [data-m4-note]').first.click()
+                  assert page.locator('#m4-notePane').is_visible()
+                  page.locator('#m4-noteText').fill('native UI QA only')
+                  page.locator('#m4-noteSave').click()
+                  assert 'native UI QA only' in str(page.evaluate('window.MissionControlReview.read()'))
+                  page.locator('#m4-noteClose').click()
+                  page.locator('button[data-view="workers"]').click()
+                  page.locator('#evaluate').click()
+                  assert 'QUALIFICATION: DENY' in page.locator('#qualification').inner_text()
+                  page.screenshot(path=f'qa/m4/{label}.png',full_page=True)
+                  print('M4_PRESENTATION_QA=PASS',label,w,h)
+                  page.close()
+              browser.close()
+          PY
+      - name: Keep presentation screenshots even when a later gate fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: missioncontrol-m4-visual-qa
+          path: qa/m4/
+          if-no-files-found: warn
