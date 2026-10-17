@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MISSION CONTROL | Federated Launchpad</title>
+<style>
+:root{--bg:#0b1323;--panel:#132038;--panel2:#1c2d49;--ink:#eaf1ff;--muted:#a7b9d1;--line:#354b69;--accent:#80b7ff;--hold:#f4c56c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,sans-serif}a{color:var(--accent)}
+main{max-width:1600px;margin:auto;padding:20px}header{display:flex;gap:16px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}h1{font-size:clamp(24px,3vw,39px);margin:0}h2{font-size:17px;margin:0 0 12px}.kicker{letter-spacing:.12em;font-size:11px;font-weight:700;color:var(--accent)}
+.sub,.muted{color:var(--muted)}.summary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:18px 0}.tile,.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}.tile strong{display:block;font-size:23px}.tile small{color:var(--muted)}.grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:14px}.stack{display:grid;gap:14px}.tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}button,input,select{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px}button{cursor:pointer}button:focus-visible,a:focus-visible{outline:2px solid var(--accent)}.canvas{overflow:auto;min-height:440px;border:1px solid var(--line);border-radius:10px;background:#0d192d}.canvas svg{min-width:940px;width:100%;height:auto;display:block}.node rect{fill:#213b5e;stroke:#7ba8de;stroke-width:1.2}.node{cursor:pointer}.node text{fill:#f2f7ff;font-size:12px}.node.selected rect{stroke:#f4c56c;stroke-width:3}.edge{stroke:#6486af;stroke-width:1.5;fill:none;marker-end:url(#tip)}.edge.reference{stroke-dasharray:5 5;opacity:.7}.edge.evidence{stroke:#74d7ba}.edge.feedback{stroke-dasharray:3 6;stroke:#e2a967}.links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.link{display:block;padding:10px;border:1px solid var(--line);border-radius:9px;text-decoration:none;overflow-wrap:anywhere}.link:hover{background:var(--panel2)}table{border-collapse:collapse;width:100%}td,th{padding:8px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted)}.scroller{overflow:auto}code{overflow-wrap:anywhere;color:#a8d3fa}.status{font-size:12px;color:var(--hold)}.wide{margin-top:14px}.tag{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:3px 7px}.mono{font-family:ui-monospace,monospace;font-size:12px;overflow-wrap:anywhere}
+@media(max-width:1000px){.summary{grid-template-columns:repeat(3,1fr)}.grid{grid-template-columns:1fr}}@media(max-width:580px){main{padding:10px}.summary{grid-template-columns:repeat(2,1fr)}.links{grid-template-columns:1fr}.panel{padding:12px}}
+</style></head><body><main>
+<header><div><div class="kicker">CODE PURPLE · G3P · SOURCE-BOUND CANDIDATE</div><h1>MISSION CONTROL <span class="muted">/ Federated Launchpad</span></h1>
+<p class="sub">Pipeline · orchestration · bridges · federations · DAG · scheduler · workers · receipts</p></div>
+<div><span class="tag" id="source">Source loading</span> <a href="missioncontrol_operations_atlas.html">Operations Atlas V2 ↗</a> · <a href="missioncontrol_mycelium.html">Existing six-panel control room ↗</a></div></header>
+<p class="status" role="status">Read-only publication. Links are navigation, not worker dispatch. No live refresh or current-head equivalence is claimed. No security waiver, authority transfer, or inferred approval.</p>
+<section class="summary" id="metrics" aria-label="Evidence metrics"></section>
+<section class="grid"><div class="stack">
+<div class="panel"><h2>Dependency hierarchy / DAG</h2><div class="tools"><input id="filter" aria-label="Filter graph nodes" placeholder="Search nodes, repos, states">
+<select id="repo" aria-label="Repository filter"><option value="ALL">All repositories</option></select>
+<select id="edges" aria-label="Edge filter"><option value="all">All edges</option><option value="dependency">Executable dependency model</option><option value="evidence">Evidence links</option><option value="reference">Federation references</option></select>
+<button id="clear">Reset filters</button></div>
+<div class="canvas"><svg id="dag" viewBox="0 0 1200 700" role="img" aria-label="Federated graph"></svg></div>
+<p class="muted" id="graphstats"></p><div id="inspect" aria-live="polite">Choose a node to inspect its owner, evidence state and GitHub source.</div></div>
+<div class="panel"><h2>Scheduler and worker/dispatch qualification</h2><div class="scroller"><table><thead><tr><th>Guard</th><th>Required state</th></tr></thead><tbody id="guards"></tbody></table></div>
+<p class="status" id="dispatch"></p></div>
+</div><div class="stack">
+<div class="panel"><h2>Repository launch / discovery</h2><div id="links" class="links"></div></div>
+<div class="panel"><h2>N → N+3 pulse ledger</h2><div id="pulses"></div></div>
+<div class="panel"><h2>Coverage and root observations</h2><div id="coverage"></div></div>
+</div></section>
+<section class="panel wide"><h2>SIPOC / process federation</h2><div class="scroller"><table><thead><tr><th>Supplier</th><th>Input</th><th>Process</th><th>Output</th><th>Customer</th></tr></thead><tbody id="sipoc"></tbody></table></div></section>
+<section class="panel wide"><h2>Graph semantics / evidence</h2><p>Atoms are typed work and evidence units; nodes aggregate atoms, edges encode typed relations, and this graph is a source projection. Dashed federation edges are nonmutating references. Dependencies alone form the acyclic scheduler projection; feedback is excluded. HTML cannot authenticate new runs or mutate remote authorities.</p>
+<p>Source: <a href="data/missioncontrol_federated_dag_v1.json">versioned DAG JSON</a> · <a href="https://github.com/GBOGEB/CODEX/issues/977">dispatch decision</a> · <a href="https://github.com/GBOGEB/ABACUS/issues/1860">admission register</a></p></section></main>
+<script>
+'use strict';
+const $=s=>document.querySelector(s);let state=null,selected=null;
+const esc=s=>String(s??'UNKNOWN').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\u0027':'&#39;'}[c]));
+const val=x=>x===null||x===undefined?'UNKNOWN':String(x);
+function metric(name,value,sub){return '<div class="tile"><small>'+esc(name)+'</small><strong>'+esc(val(value))+'</strong><small>'+esc(sub)+'</small></div>'}
+function render(){
+ const s=state.snapshot;
+ $('#source').textContent='Source snapshot '+s.as_of+' · NOT LIVE';
+ $('#metrics').innerHTML=metric('P0 admission',s.P0_admission,'governed gate')+metric('ABACUS TODO',s.todo.abacus_1860.done+'/'+s.todo.abacus_1860.total,'#1860')+metric('CODEX dispatch TODO',s.todo.codex_977.done+'/'+s.todo.codex_977.total,'#977')+metric('Worker launch',s.authenticated_abacus_worker_run_id,'authenticated ID')+metric('REX accepted',s.accepted_rex_receipt,'receipt');
+ $('#links').innerHTML=state.links.map(l=>'<a class="link" href="'+esc(l.href)+'"><span class="tag">'+esc(l.group)+'</span><br>'+esc(l.label)+' ↗</a>').join('');
+ $('#pulses').innerHTML=state.pulses.map(p=>'<p><b>'+esc(p.id)+' · '+esc(p.name)+'</b><br><span class="status">'+esc(p.state)+'</span><br>'+esc(p.result)+'</p>').join('');
+ const c=s.coverage;$('#coverage').innerHTML='<table><thead><tr><th>Scope</th><th>Baseline</th><th>Current</th><th>Δ pp</th></tr></thead><tbody>'+
+ Object.entries(c).map(([k,v])=>'<tr><td>'+esc(k)+'</td><td>'+esc(v.baseline_pct)+'% '+esc(v.baseline_date)+'</td><td>'+esc(val(v.current_pct))+'</td><td>'+esc(val(v.delta_pp))+'</td></tr>').join('')+
+ '</tbody></table><p class="muted">Deduplicated BD roots open: '+esc(val(s.bd_causal_roots_open))+'; closed: '+esc(val(s.bd_causal_roots_closed))+'. UNKNOWN is never zero.</p>';
+ $('#sipoc').innerHTML=state.sipoc.map(x=>'<tr>'+['supplier','input','process','output','customer'].map(k=>'<td>'+esc(x[k])+'</td>').join('')+'</tr>').join('');
+ const p=state.scheduler.worker_policy;$('#guards').innerHTML=Object.entries(p).map(([k,v])=>'<tr><td>'+esc(k.replaceAll('_',' '))+'</td><td>'+esc(v)+'</td></tr>').join('');
+ $('#dispatch').textContent='Dispatch: '+state.scheduler.dispatch_state+' · remote mutation disabled · acknowledged native launch IDs: '+state.scheduler.acknowledged_launch_ids.length;
+ const repos=[...new Set(state.nodes.map(n=>n.repo))].sort();repos.forEach(r=>$('#repo').add(new Option(r,r)));
+ draw();
+}
+function visible(){const q=$('#filter').value.toLowerCase(),repo=$('#repo').value;return state.nodes.filter(n=>(repo==='ALL'||n.repo===repo)&&(!q||[n.id,n.label,n.repo,n.type,n.state].join(' ').toLowerCase().includes(q)))}
+function draw(){
+ const nodes=visible(),ids=new Set(nodes.map(n=>n.id)),kind=$('#edges').value;
+ const edges=state.edges.filter(e=>ids.has(e.from)&&ids.has(e.to)&&(kind==='all'||e.kind===kind));
+ const lanes=new Map();nodes.forEach(n=>{if(!lanes.has(n.layer))lanes.set(n.layer,[]);lanes.get(n.layer).push(n)});
+ const pos={};for(const [layer,list] of lanes){list.forEach((n,i)=>{pos[n.id]={x:85+layer*126,y:65+(i+1)*565/(list.length+1)}})}
+ let svg='<defs><marker id="tip" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6" fill="none" stroke="#89a9cf"/></marker></defs>';
+ for(const e of edges){const a=pos[e.from],b=pos[e.to];svg+='<path class="edge '+esc(e.kind)+'" d="M'+(a.x+54)+' '+a.y+' L'+(b.x-54)+' '+b.y+'"><title>'+esc(e.kind)+'</title></path>'}
+ for(const n of nodes){const p=pos[n.id];svg+='<g class="node '+(n.id===selected?'selected':'')+'" role="button" tabindex="0" data-id="'+esc(n.id)+'" aria-label="Inspect '+esc(n.label)+'" transform="translate('+p.x+','+p.y+')"><rect x="-54" y="-22" width="108" height="44" rx="8"/><text text-anchor="middle" y="-4">'+esc(n.id.slice(0,16))+'</text><text text-anchor="middle" y="12" style="font-size:9px">'+esc(n.repo)+'</text></g>'}
+ $('#dag').innerHTML=svg;$('#graphstats').textContent=nodes.length+' nodes shown / '+edges.length+' edges · source: '+state.nodes.length+' nodes / '+state.edges.length+' edges · cross-repo reference edges do not dispatch work';
+ $('#dag').querySelectorAll('.node').forEach(el=>{const choose=()=>select(el.dataset.id);el.addEventListener('click',choose);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose()}})});
+}
+function select(id){selected=id;let n=state.nodes.find(x=>x.id===id);$('#inspect').innerHTML='<b>'+esc(n.label)+'</b> · '+esc(n.type)+' · '+esc(n.repo)+'<br>Evidence state: '+esc(n.state)+'<br><a href="'+esc(n.url)+'">Inspect source / GitHub ↗</a>';draw()}
+['filter','repo','edges'].forEach(x=>$('#'+x).addEventListener(x==='filter'?'input':'change',draw));
+$('#clear').onclick=()=>{$('#filter').value='';$('#repo').value='ALL';$('#edges').value='all';selected=null;$('#inspect').textContent='Choose a node to inspect its source.';draw()};
+fetch('data/missioncontrol_federated_dag_v1.json').then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json()}).then(v=>{state=v;render()}).catch(err=>{$('#source').textContent='DATA UNAVAILABLE';$('#graphstats').textContent='Cannot load source-bound graph: '+String(err);$('#dispatch').textContent='No execution evidence can be inferred.'});
+</script></body></html>

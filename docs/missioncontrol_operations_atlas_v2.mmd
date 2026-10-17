@@ -1,0 +1,81 @@
+flowchart LR
+%% Read-only. Source registries and federation candidates are not worker receipts.
+  repo_CODEX["Control and Mycelium"]
+  repo_ABACUS["Engineering source/CI"]
+  repo_HUB["MissionControl federation"]
+  repo_QPS["Engineering acceptance"]
+  repo_MATH["Statistical bridge candidate"]
+  reg_DMAIC_WORK_GRAPH["Dmaic Work Graph"]
+  reg_DOW_ANALYSIS_GRAPH["Dow Analysis Graph"]
+  reg_AGENT_EXECUTION_GRAPH["Agent Execution Graph"]
+  reg_SEMANTIC_GOVERNANCE_GRAPH["Semantic Governance Graph"]
+  reg_FEDERATION_BRIDGE_GRAPH["Federation Bridge Graph"]
+  reg_AGENT_RUNTIME_GRAPH["Agent Runtime Graph"]
+  reg_CODE_PURPLE_BEAMS_DAG["Code Purple Beams Dag"]
+  reg_QPS_ACCEPTANCE_DAG["Qps Acceptance Dag"]
+  mycelium["Mycelium executable DAG"]
+  scheduler["Dependency scheduler"]
+  policy["Gateway and admission guards"]
+  hub_bridge["MASTER_DAGS compatibility adapter"]
+  qps_gate["QPS acceptance DAG"]
+  stage["Authenticated CODEX stage-only"]
+  owner_worker["ABACUS owner runner contract"]
+  hub_worker["Hub read-only census"]
+  qps_worker["QPS acceptance consumer"]
+  math_worker["gg_MATH statistics input"]
+  ci["Exact-head CI proof"]
+  first_red["First-red/root classification"]
+  receipts["Typed native REX receipts"]
+  coverage["Matched coverage census"]
+  reviews["Independent human review"]
+  security["Security and A10"]
+  admission["Main merge admission"]
+  atlas["Federated operations atlas"]
+  portal["Multi-repo launches"]
+  repo_ABACUS -->|owns| reg_DMAIC_WORK_GRAPH
+  repo_ABACUS -->|owns| reg_DOW_ANALYSIS_GRAPH
+  repo_ABACUS -->|owns| reg_AGENT_EXECUTION_GRAPH
+  repo_CODEX -->|owns| reg_SEMANTIC_GOVERNANCE_GRAPH
+  repo_CODEX -->|owns| reg_FEDERATION_BRIDGE_GRAPH
+  repo_CODEX -->|owns| reg_AGENT_RUNTIME_GRAPH
+  repo_HUB -->|owns| reg_CODE_PURPLE_BEAMS_DAG
+  repo_QPS -->|owns| reg_QPS_ACCEPTANCE_DAG
+  repo_MATH -.->|candidate| math_worker
+  reg_SEMANTIC_GOVERNANCE_GRAPH -->|maps_to| policy
+  reg_FEDERATION_BRIDGE_GRAPH -->|maps_to| hub_bridge
+  reg_AGENT_RUNTIME_GRAPH -->|maps_to| mycelium
+  reg_DMAIC_WORK_GRAPH -->|maps_to| first_red
+  reg_DOW_ANALYSIS_GRAPH -->|maps_to| coverage
+  reg_AGENT_EXECUTION_GRAPH -->|maps_to| owner_worker
+  reg_CODE_PURPLE_BEAMS_DAG -->|maps_to| hub_bridge
+  reg_QPS_ACCEPTANCE_DAG -->|maps_to| qps_gate
+  mycelium -->|dependency| scheduler
+  policy -->|dependency| scheduler
+  scheduler -->|dependency| stage
+  stage -->|dependency| receipts
+  owner_worker -->|dependency| ci
+  ci -->|dependency| first_red
+  ci -->|dependency| receipts
+  first_red -->|dependency| coverage
+  ci -->|dependency| security
+  security -->|dependency| admission
+  reviews -->|dependency| admission
+  receipts -->|dependency| atlas
+  coverage -->|dependency| atlas
+  hub_bridge -->|dependency| portal
+  atlas -->|dependency| portal
+  reg_DMAIC_WORK_GRAPH -.->|federation| reg_CODE_PURPLE_BEAMS_DAG
+  reg_FEDERATION_BRIDGE_GRAPH -.->|federation| reg_CODE_PURPLE_BEAMS_DAG
+  reg_QPS_ACCEPTANCE_DAG -.->|federation| reg_CODE_PURPLE_BEAMS_DAG
+  hub_bridge -.->|reference| hub_worker
+  qps_gate -.->|reference| qps_worker
+  hub_worker -.->|reference| coverage
+  math_worker -.->|reference| coverage
+  owner_worker -.->|reference| receipts
+  admission -.->|reference| portal
+  repo_CODEX -.->|reference| atlas
+  atlas -.->|feedback_next_pulse| mycelium
+  classDef owner fill:#0d3552,stroke:#45ccbd,color:#e8f6ff
+  classDef withheld fill:#502b35,stroke:#f2bd70,color:#fff
+  class admission,owner_worker withheld
+  class repo_ABACUS,repo_CODEX,repo_HUB,repo_QPS,repo_MATH owner
