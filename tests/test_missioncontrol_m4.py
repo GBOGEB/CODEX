@@ -76,3 +76,16 @@ def test_source_authority_digest_is_pinned():
  raw=(ROOT/'docs/missioncontrol_operations_atlas.html').read_bytes()
  blob=hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
  assert blob=='9b2a09eb7c4b4c718e9cd4924020121bc197f931'
+
+
+def test_codex_portal_source_contains_additive_m4_link():
+    """Canonical CODEX docs/index.html is updated independently on GitHub PR.
+
+    The standalone test package omits the full host portal; when the portal is
+    present (repo CI) require M4 link without removing the existing V2 link.
+    """
+    portal=ROOT/'docs/index.html'
+    if portal.is_file():
+        content=portal.read_text(encoding='utf-8')
+        assert 'href="missioncontrol_operations_atlas.html"' in content
+        assert 'href="missioncontrol_operations_atlas_m4.html"' in content
