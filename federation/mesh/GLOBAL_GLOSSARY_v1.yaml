@@ -146,6 +146,41 @@ sections:
       expansion: Definition of Done
       definition: completion condition for the current bounded task/session/deliverable, distinct from global project victory
 
+    EXECUTION_WAVE:
+      display: WAVE
+      definition: bounded engineering delivery tranche with source ownership, disjoint implementation, integration fan-in and exact-head proof; execution does not itself imply accepted progress
+      namespace: execution_granularity
+    THREE_WAVE_DELIVERY:
+      display: 3W
+      definition: three ordered implementation waves, each with scope, source owner, output, testflight and disposition; no automatic N increment
+      namespace: execution_granularity
+    MEASUREMENT_IMPROVEMENT_PULSE:
+      display: PULSE
+      definition: one bounded observe-analyze-act-or-defer-measure-control feedback cycle bound to an exact observed source and evidence scope
+      namespace: execution_granularity
+    THREE_MIP_PULSES:
+      display: 3MP
+      definition: three measurement/improvement pulse events; three attempts or observations are not three accepted advances
+      namespace: execution_granularity
+    G3A:
+      expansion: Governed Three-Advance Mission
+      definition: one kickoff authorizes up to three distinct evidence-qualified engineering checkpoint evaluations N to N+1 to N+2 to N+3, with an immediate first-material-blocker stop and a source-bound return receipt
+      namespace: execution_granularity
+      authority: existing_repo_runtime_orchestrator_not_merge_owner
+      where_used: GBOGEB/ABACUS:docs/ci/G3A_GOVERNED_THREE_ADVANCE.md
+    G3A_CHECKPOINT:
+      definition: accepted scope-limited engineering verification step with immutable source identity and distinct acceptance claim; unproved, skipped or failed steps do not increment the G3A checkpoint ordinal
+      namespace: execution_granularity
+    G3A_N:
+      definition: index of accepted checkpoints inside one named G3A mission, not a PR count, wave number, pulse count, run attempt, elapsed time or GitHub main merge
+      namespace: execution_granularity
+    G3A_EARLY_STOP:
+      definition: return before target N+3 on a material stale-head, ownership, safety, governance, reviewer, reproducibility or evidence blocker, preserving achieved N and remaining steps
+      namespace: execution_granularity
+    BOUNDED_UNSUPERVISED_CONTINUATION:
+      definition: execution of a preauthorized finite work plan without intervening prompts while a session or explicitly dispatched runner exists; never grants background ChatGPT work or additional merge, review or security authority
+      namespace: execution_granularity
+
   RUNTIME_AND_TOOLING:
     LEVEL_1:
       definition: repo maturity/control convention using canonical SSOT, manifest, skill, executable runtime, MIP/DMAIC/PCA/BT and exact-head proof gates
