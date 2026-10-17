@@ -1,0 +1,1038 @@
+{
+  "authority": {
+    "canonical_control": "mission_control/mycelium/execution_gateway_contract.yaml",
+    "compatibility_blob_sha": "84f0fdf2260d8230b7dafd23f4f462cdd5270acb",
+    "compatibility_owner": "GBOGEB/pipeline-automation-hub",
+    "compatibility_pr": "https://github.com/GBOGEB/pipeline-automation-hub/pull/631",
+    "control_blob_sha": "252cfd0c4e761249fb92f7a9c5d4e8367bc25456",
+    "controller_blob_sha": "29c6abe45ba6cf5421fe4e3c3286508e31ac4e88",
+    "controller_source": "mission_control/mycelium/executable_projection.json",
+    "orchestrator": "GBOGEB/CODEX mission_control/mycelium",
+    "remote_owner_contract": "https://github.com/GBOGEB/ABACUS/pull/2172"
+  },
+  "edges": [
+    {
+      "binding": "GIT_BLOB_VERIFIED",
+      "executable": false,
+      "kind": "owns",
+      "source": "repo_ABACUS",
+      "target": "reg_DMAIC_WORK_GRAPH"
+    },
+    {
+      "binding": "GIT_BLOB_VERIFIED",
+      "executable": false,
+      "kind": "owns",
+      "source": "repo_ABACUS",
+      "target": "reg_DOW_ANALYSIS_GRAPH"
+    },
+    {
+      "binding": "GIT_BLOB_VERIFIED",
+      "executable": false,
+      "kind": "owns",
+      "source": "repo_ABACUS",
+      "target": "reg_AGENT_EXECUTION_GRAPH"
+    },
+    {
+      "binding": "GIT_BLOB_VERIFIED",
+      "executable": false,
+      "kind": "owns",
+      "source": "repo_CODEX",
+      "target": "reg_SEMANTIC_GOVERNANCE_GRAPH"
+    },
+    {
+      "binding": "GIT_BLOB_VERIFIED",
+      "executable": false,
+      "kind": "owns",
+      "source": "repo_CODEX",
+      "target": "reg_FEDERATION_BRIDGE_GRAPH"
+    },
+    {
+      "binding": "GIT_BLOB_VERIFIED",
+      "executable": false,
+      "kind": "owns",
+      "source": "repo_CODEX",
+      "target": "reg_AGENT_RUNTIME_GRAPH"
+    },
+    {
+      "binding": "GIT_BLOB_VERIFIED",
+      "executable": false,
+      "kind": "owns",
+      "source": "repo_HUB",
+      "target": "reg_CODE_PURPLE_BEAMS_DAG"
+    },
+    {
+      "binding": "GIT_BLOB_VERIFIED",
+      "executable": false,
+      "kind": "owns",
+      "source": "repo_QPS",
+      "target": "reg_QPS_ACCEPTANCE_DAG"
+    },
+    {
+      "binding": "UNVERIFIED_REGISTRY",
+      "executable": false,
+      "kind": "candidate",
+      "source": "repo_MATH",
+      "target": "math_worker"
+    },
+    {
+      "binding": "SOURCE_REFERENCE",
+      "executable": false,
+      "kind": "maps_to",
+      "source": "reg_SEMANTIC_GOVERNANCE_GRAPH",
+      "target": "policy"
+    },
+    {
+      "binding": "SOURCE_REFERENCE",
+      "executable": false,
+      "kind": "maps_to",
+      "source": "reg_FEDERATION_BRIDGE_GRAPH",
+      "target": "hub_bridge"
+    },
+    {
+      "binding": "SOURCE_REFERENCE",
+      "executable": false,
+      "kind": "maps_to",
+      "source": "reg_AGENT_RUNTIME_GRAPH",
+      "target": "mycelium"
+    },
+    {
+      "binding": "SOURCE_REFERENCE",
+      "executable": false,
+      "kind": "maps_to",
+      "source": "reg_DMAIC_WORK_GRAPH",
+      "target": "first_red"
+    },
+    {
+      "binding": "SOURCE_REFERENCE",
+      "executable": false,
+      "kind": "maps_to",
+      "source": "reg_DOW_ANALYSIS_GRAPH",
+      "target": "coverage"
+    },
+    {
+      "binding": "SOURCE_REFERENCE",
+      "executable": false,
+      "kind": "maps_to",
+      "source": "reg_AGENT_EXECUTION_GRAPH",
+      "target": "owner_worker"
+    },
+    {
+      "binding": "SOURCE_REFERENCE",
+      "executable": false,
+      "kind": "maps_to",
+      "source": "reg_CODE_PURPLE_BEAMS_DAG",
+      "target": "hub_bridge"
+    },
+    {
+      "binding": "SOURCE_REFERENCE",
+      "executable": false,
+      "kind": "maps_to",
+      "source": "reg_QPS_ACCEPTANCE_DAG",
+      "target": "qps_gate"
+    },
+    {
+      "binding": "MODEL_ONLY",
+      "executable": false,
+      "kind": "dependency",
+      "source": "mycelium",
+      "target": "scheduler"
+    },
+    {
+      "binding": "MODEL_ONLY",
+      "executable": false,
+      "kind": "dependency",
+      "source": "policy",
+      "target": "scheduler"
+    },
+    {
+      "binding": "MODEL_ONLY",
+      "executable": false,
+      "kind": "dependency",
+      "source": "scheduler",
+      "target": "stage"
+    },
+    {
+      "binding": "MODEL_ONLY",
+      "executable": false,
+      "kind": "dependency",
+      "source": "stage",
+      "target": "receipts"
+    },
+    {
+      "binding": "MODEL_ONLY",
+      "executable": false,
+      "kind": "dependency",
+      "source": "owner_worker",
+      "target": "ci"
+    },
+    {
+      "binding": "MODEL_ONLY",
+      "executable": false,
+      "kind": "dependency",
+      "source": "ci",
+      "target": "first_red"
+    },
+    {
+      "binding": "MODEL_ONLY",
+      "executable": false,
+      "kind": "dependency",
+      "source": "ci",
+      "target": "receipts"
+    },
+    {
+      "binding": "MODEL_ONLY",
+      "executable": false,
+      "kind": "dependency",
+      "source": "first_red",
+      "target": "coverage"
+    },
+    {
+      "binding": "MODEL_ONLY",
+      "executable": false,
+      "kind": "dependency",
+      "source": "ci",
+      "target": "security"
+    },
+    {
+      "binding": "MODEL_ONLY",
+      "executable": false,
+      "kind": "dependency",
+      "source": "security",
+      "target": "admission"
+    },
+    {
+      "binding": "MODEL_ONLY",
+      "executable": false,
+      "kind": "dependency",
+      "source": "reviews",
+      "target": "admission"
+    },
+    {
+      "binding": "MODEL_ONLY",
+      "executable": false,
+      "kind": "dependency",
+      "source": "receipts",
+      "target": "atlas"
+    },
+    {
+      "binding": "MODEL_ONLY",
+      "executable": false,
+      "kind": "dependency",
+      "source": "coverage",
+      "target": "atlas"
+    },
+    {
+      "binding": "MODEL_ONLY",
+      "executable": false,
+      "kind": "dependency",
+      "source": "hub_bridge",
+      "target": "portal"
+    },
+    {
+      "binding": "MODEL_ONLY",
+      "executable": false,
+      "kind": "dependency",
+      "source": "atlas",
+      "target": "portal"
+    },
+    {
+      "binding": "DECLARED_EDGE_NO_RECEIPT",
+      "executable": false,
+      "kind": "federation",
+      "source": "reg_DMAIC_WORK_GRAPH",
+      "target": "reg_CODE_PURPLE_BEAMS_DAG"
+    },
+    {
+      "binding": "DECLARED_EDGE_NO_RECEIPT",
+      "executable": false,
+      "kind": "federation",
+      "source": "reg_FEDERATION_BRIDGE_GRAPH",
+      "target": "reg_CODE_PURPLE_BEAMS_DAG"
+    },
+    {
+      "binding": "DECLARED_EDGE_NO_RECEIPT",
+      "executable": false,
+      "kind": "federation",
+      "source": "reg_QPS_ACCEPTANCE_DAG",
+      "target": "reg_CODE_PURPLE_BEAMS_DAG"
+    },
+    {
+      "binding": "VIEW_ONLY",
+      "executable": false,
+      "kind": "reference",
+      "source": "hub_bridge",
+      "target": "hub_worker"
+    },
+    {
+      "binding": "VIEW_ONLY",
+      "executable": false,
+      "kind": "reference",
+      "source": "qps_gate",
+      "target": "qps_worker"
+    },
+    {
+      "binding": "VIEW_ONLY",
+      "executable": false,
+      "kind": "reference",
+      "source": "hub_worker",
+      "target": "coverage"
+    },
+    {
+      "binding": "VIEW_ONLY",
+      "executable": false,
+      "kind": "reference",
+      "source": "math_worker",
+      "target": "coverage"
+    },
+    {
+      "binding": "VIEW_ONLY",
+      "executable": false,
+      "kind": "reference",
+      "source": "owner_worker",
+      "target": "receipts"
+    },
+    {
+      "binding": "VIEW_ONLY",
+      "executable": false,
+      "kind": "reference",
+      "source": "admission",
+      "target": "portal"
+    },
+    {
+      "binding": "VIEW_ONLY",
+      "executable": false,
+      "kind": "reference",
+      "source": "repo_CODEX",
+      "target": "atlas"
+    },
+    {
+      "binding": "NEXT_PULSE_ONLY",
+      "executable": false,
+      "kind": "feedback_next_pulse",
+      "source": "atlas",
+      "target": "mycelium"
+    }
+  ],
+  "launches": [
+    {
+      "group": "Registries",
+      "ref": "54da377cf82a",
+      "repo": "ABACUS",
+      "state": "GIT_BLOB_VERIFIED_HISTORICAL",
+      "title": "ABACUS source registry",
+      "url": "https://github.com/GBOGEB/ABACUS/blob/54da377cf82a358ac97903ecde0270c975b8fcc1/triage/GRAPH_REGISTRY.yaml"
+    },
+    {
+      "group": "Registries",
+      "ref": "3a9fceda8708",
+      "repo": "CODEX",
+      "state": "GIT_BLOB_VERIFIED_HISTORICAL",
+      "title": "CODEX source registry",
+      "url": "https://github.com/GBOGEB/CODEX/blob/3a9fceda87087bc1f501f359fe2754e24c119575/triage/GRAPH_REGISTRY.yaml"
+    },
+    {
+      "group": "Registries",
+      "ref": "766fa6ad7b10",
+      "repo": "HUB",
+      "state": "GIT_BLOB_VERIFIED_HISTORICAL",
+      "title": "HUB source registry",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/766fa6ad7b10d7545c0e48c22bb787718f7bb700/mission-control/federation-atlas/CODE_PURPLE_BEAMS_DAG_v1.json"
+    },
+    {
+      "group": "Registries",
+      "ref": "999148f5dd4c",
+      "repo": "QPS",
+      "state": "GIT_BLOB_VERIFIED_HISTORICAL",
+      "title": "QPS source registry",
+      "url": "https://github.com/GBOGEB/cryoplant-project/blob/999148f5dd4cfe4c73fa5164e132e4994bcefead/federation/acceptance_dashboard/dag.json"
+    },
+    {
+      "group": "Active review",
+      "ref": "candidate",
+      "repo": "CODEX",
+      "state": "SOURCE_REFERENCE",
+      "title": "CODEX federated launchpad #1068",
+      "url": "https://github.com/GBOGEB/CODEX/pull/1068"
+    },
+    {
+      "group": "Active review",
+      "ref": "candidate",
+      "repo": "HUB",
+      "state": "SOURCE_REFERENCE",
+      "title": "Mission Control bridge #631",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/631"
+    },
+    {
+      "group": "Active review",
+      "ref": "design",
+      "repo": "ABACUS",
+      "state": "SOURCE_REFERENCE",
+      "title": "ABACUS runner contract #2172",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2172"
+    },
+    {
+      "group": "Orchestration",
+      "ref": "read-only",
+      "repo": "CODEX",
+      "state": "SOURCE_REFERENCE",
+      "title": "Mycelium runtime authority",
+      "url": "https://github.com/GBOGEB/CODEX/tree/main/mission_control/mycelium"
+    },
+    {
+      "group": "Orchestration",
+      "ref": "P0",
+      "repo": "CODEX",
+      "state": "SOURCE_REFERENCE",
+      "title": "CODEX #977 dispatch governance",
+      "url": "https://github.com/GBOGEB/CODEX/issues/977"
+    },
+    {
+      "group": "Orchestration",
+      "ref": "P0",
+      "repo": "ABACUS",
+      "state": "SOURCE_REFERENCE",
+      "title": "ABACUS #1860 admission",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "group": "Orchestration",
+      "ref": "PR",
+      "repo": "HUB",
+      "state": "SOURCE_REFERENCE",
+      "title": "Mission Control hub #620",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/620"
+    },
+    {
+      "group": "Orchestration",
+      "ref": "PR",
+      "repo": "HUB",
+      "state": "SOURCE_REFERENCE",
+      "title": "Mission Control hub #621",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/621"
+    },
+    {
+      "group": "Orchestration",
+      "ref": "PR",
+      "repo": "HUB",
+      "state": "SOURCE_REFERENCE",
+      "title": "Mission Control hub #631",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/631"
+    },
+    {
+      "group": "Workers and receipts",
+      "ref": "stage",
+      "repo": "CODEX",
+      "state": "SOURCE_REFERENCE",
+      "title": "CODEX authenticated stage transport",
+      "url": "https://github.com/GBOGEB/CODEX/actions/workflows/missioncontrol-authenticated-transport.yml"
+    },
+    {
+      "group": "Workers and receipts",
+      "ref": "native",
+      "repo": "ABACUS",
+      "state": "SOURCE_REFERENCE",
+      "title": "ABACUS native CI",
+      "url": "https://github.com/GBOGEB/ABACUS/actions"
+    },
+    {
+      "group": "Workers and receipts",
+      "ref": "design",
+      "repo": "ABACUS",
+      "state": "SOURCE_REFERENCE",
+      "title": "ABACUS #2172 proposed runner interface",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2172"
+    },
+    {
+      "group": "Federation",
+      "ref": "HOLD",
+      "repo": "QPS",
+      "state": "SOURCE_REFERENCE",
+      "title": "Cryoplant QPS acceptance",
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1920"
+    },
+    {
+      "group": "Federation",
+      "ref": "candidate",
+      "repo": "MATH",
+      "state": "SOURCE_REFERENCE",
+      "title": "gg_MATH runtime promotion",
+      "url": "https://github.com/GBOGEB/gg_MATH/issues/27"
+    },
+    {
+      "group": "Dashboards",
+      "ref": "existing",
+      "repo": "CODEX",
+      "state": "SOURCE_REFERENCE",
+      "title": "Existing CODEX Mycelium",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/docs/missioncontrol_mycelium.html"
+    },
+    {
+      "group": "Dashboards",
+      "ref": "existing",
+      "repo": "CODEX",
+      "state": "SOURCE_REFERENCE",
+      "title": "CODEX graph explorer",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/docs/missioncontrol_graph_explorer.html"
+    },
+    {
+      "group": "Dashboards",
+      "ref": "existing",
+      "repo": "CODEX",
+      "state": "SOURCE_REFERENCE",
+      "title": "CODEX v1 launchpad",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/docs/missioncontrol_federated_launchpad.html"
+    },
+    {
+      "group": "Dashboards",
+      "ref": "existing",
+      "repo": "CODEX",
+      "state": "SOURCE_REFERENCE",
+      "title": "CODEX main portal",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/docs/index.html"
+    }
+  ],
+  "nodes": [
+    {
+      "description": "Control and Mycelium",
+      "id": "repo_CODEX",
+      "label": "Control and Mycelium",
+      "layer": 0,
+      "repo": "CODEX",
+      "state": "REGISTERED",
+      "type": "repository",
+      "url": "https://github.com/GBOGEB/CODEX"
+    },
+    {
+      "description": "Engineering source/CI",
+      "id": "repo_ABACUS",
+      "label": "Engineering source/CI",
+      "layer": 0,
+      "repo": "ABACUS",
+      "state": "REGISTERED",
+      "type": "repository",
+      "url": "https://github.com/GBOGEB/ABACUS"
+    },
+    {
+      "description": "MissionControl federation",
+      "id": "repo_HUB",
+      "label": "MissionControl federation",
+      "layer": 0,
+      "repo": "HUB",
+      "state": "REGISTERED",
+      "type": "repository",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "description": "Engineering acceptance",
+      "id": "repo_QPS",
+      "label": "Engineering acceptance",
+      "layer": 0,
+      "repo": "QPS",
+      "state": "REGISTERED",
+      "type": "repository",
+      "url": "https://github.com/GBOGEB/cryoplant-project"
+    },
+    {
+      "description": "Statistical bridge candidate",
+      "id": "repo_MATH",
+      "label": "Statistical bridge candidate",
+      "layer": 0,
+      "repo": "MATH",
+      "state": "CANDIDATE_NO_REGISTRY",
+      "type": "repository",
+      "url": "https://github.com/GBOGEB/gg_MATH"
+    },
+    {
+      "description": "Exact source blob eb6c2a691032 at 54da377cf82a",
+      "id": "reg_DMAIC_WORK_GRAPH",
+      "label": "Dmaic Work Graph",
+      "layer": 1,
+      "repo": "ABACUS",
+      "state": "SOURCE_VERIFIED_HISTORICAL",
+      "type": "registry",
+      "url": "https://github.com/GBOGEB/ABACUS/blob/54da377cf82a358ac97903ecde0270c975b8fcc1/triage/GRAPH_REGISTRY.yaml"
+    },
+    {
+      "description": "Exact source blob eb6c2a691032 at 54da377cf82a",
+      "id": "reg_DOW_ANALYSIS_GRAPH",
+      "label": "Dow Analysis Graph",
+      "layer": 1,
+      "repo": "ABACUS",
+      "state": "SOURCE_VERIFIED_HISTORICAL",
+      "type": "registry",
+      "url": "https://github.com/GBOGEB/ABACUS/blob/54da377cf82a358ac97903ecde0270c975b8fcc1/triage/GRAPH_REGISTRY.yaml"
+    },
+    {
+      "description": "Exact source blob eb6c2a691032 at 54da377cf82a",
+      "id": "reg_AGENT_EXECUTION_GRAPH",
+      "label": "Agent Execution Graph",
+      "layer": 1,
+      "repo": "ABACUS",
+      "state": "SOURCE_VERIFIED_HISTORICAL",
+      "type": "registry",
+      "url": "https://github.com/GBOGEB/ABACUS/blob/54da377cf82a358ac97903ecde0270c975b8fcc1/triage/GRAPH_REGISTRY.yaml"
+    },
+    {
+      "description": "Exact source blob a3dab35f8865 at 3a9fceda8708",
+      "id": "reg_SEMANTIC_GOVERNANCE_GRAPH",
+      "label": "Semantic Governance Graph",
+      "layer": 1,
+      "repo": "CODEX",
+      "state": "SOURCE_VERIFIED_HISTORICAL",
+      "type": "registry",
+      "url": "https://github.com/GBOGEB/CODEX/blob/3a9fceda87087bc1f501f359fe2754e24c119575/triage/GRAPH_REGISTRY.yaml"
+    },
+    {
+      "description": "Exact source blob a3dab35f8865 at 3a9fceda8708",
+      "id": "reg_FEDERATION_BRIDGE_GRAPH",
+      "label": "Federation Bridge Graph",
+      "layer": 1,
+      "repo": "CODEX",
+      "state": "SOURCE_VERIFIED_HISTORICAL",
+      "type": "registry",
+      "url": "https://github.com/GBOGEB/CODEX/blob/3a9fceda87087bc1f501f359fe2754e24c119575/triage/GRAPH_REGISTRY.yaml"
+    },
+    {
+      "description": "Exact source blob a3dab35f8865 at 3a9fceda8708",
+      "id": "reg_AGENT_RUNTIME_GRAPH",
+      "label": "Agent Runtime Graph",
+      "layer": 1,
+      "repo": "CODEX",
+      "state": "SOURCE_VERIFIED_HISTORICAL",
+      "type": "registry",
+      "url": "https://github.com/GBOGEB/CODEX/blob/3a9fceda87087bc1f501f359fe2754e24c119575/triage/GRAPH_REGISTRY.yaml"
+    },
+    {
+      "description": "Exact source blob e591765b4c42 at 766fa6ad7b10",
+      "id": "reg_CODE_PURPLE_BEAMS_DAG",
+      "label": "Code Purple Beams Dag",
+      "layer": 1,
+      "repo": "HUB",
+      "state": "SOURCE_VERIFIED_HISTORICAL",
+      "type": "registry",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/766fa6ad7b10d7545c0e48c22bb787718f7bb700/mission-control/federation-atlas/CODE_PURPLE_BEAMS_DAG_v1.json"
+    },
+    {
+      "description": "Exact source blob 6460d587892f at 999148f5dd4c",
+      "id": "reg_QPS_ACCEPTANCE_DAG",
+      "label": "Qps Acceptance Dag",
+      "layer": 1,
+      "repo": "QPS",
+      "state": "SOURCE_VERIFIED_HISTORICAL",
+      "type": "registry",
+      "url": "https://github.com/GBOGEB/cryoplant-project/blob/999148f5dd4cfe4c73fa5164e132e4994bcefead/federation/acceptance_dashboard/dag.json"
+    },
+    {
+      "description": "Cycles permitted in universal graph; scheduler projection must be a DAG",
+      "id": "mycelium",
+      "label": "Mycelium executable DAG",
+      "layer": 2,
+      "repo": "CODEX",
+      "state": "MODEL_SOURCE_VERIFIED",
+      "type": "orchestration",
+      "url": "https://github.com/GBOGEB/CODEX/tree/main/mission_control/mycelium"
+    },
+    {
+      "description": "Topological planning only; no runtime worker lease",
+      "id": "scheduler",
+      "label": "Dependency scheduler",
+      "layer": 2,
+      "repo": "CODEX",
+      "state": "OBSERVATION_ONLY",
+      "type": "scheduler",
+      "url": "https://github.com/GBOGEB/CODEX/issues/977"
+    },
+    {
+      "description": "Policy, principal, allowlist, idempotency and source SHA",
+      "id": "policy",
+      "label": "Gateway and admission guards",
+      "layer": 2,
+      "repo": "CODEX",
+      "state": "DEFAULT_DENY",
+      "type": "governance",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/execution_gateway_contract.yaml"
+    },
+    {
+      "description": "Four registries, eight graph families, three proposed cross links; canonical MASTER_DAGS path unknown",
+      "id": "hub_bridge",
+      "label": "MASTER_DAGS compatibility adapter",
+      "layer": 2,
+      "repo": "HUB",
+      "state": "DECLARED_ONLY",
+      "type": "bridge",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/631"
+    },
+    {
+      "description": "QPS scope independent of CODE PURPLE merge admission",
+      "id": "qps_gate",
+      "label": "QPS acceptance DAG",
+      "layer": 2,
+      "repo": "QPS",
+      "state": "REMOTE_OWNER",
+      "type": "federation",
+      "url": "https://github.com/GBOGEB/cryoplant-project"
+    },
+    {
+      "description": "Stage/dry-run without remote mutation",
+      "id": "stage",
+      "label": "Authenticated CODEX stage-only",
+      "layer": 3,
+      "repo": "CODEX",
+      "state": "STAGE_ONLY",
+      "type": "worker",
+      "url": "https://github.com/GBOGEB/CODEX/actions/workflows/missioncontrol-authenticated-transport.yml"
+    },
+    {
+      "description": "Exact-head owner-runner auth and approval not implemented",
+      "id": "owner_worker",
+      "label": "ABACUS owner runner contract",
+      "layer": 3,
+      "repo": "ABACUS",
+      "state": "DESIGN_NOT_ENABLED",
+      "type": "worker",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2172"
+    },
+    {
+      "description": "No accepted native edge promotion",
+      "id": "hub_worker",
+      "label": "Hub read-only census",
+      "layer": 3,
+      "repo": "HUB",
+      "state": "DECLARED_ONLY",
+      "type": "worker",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/631"
+    },
+    {
+      "description": "No remote mutation from this page",
+      "id": "qps_worker",
+      "label": "QPS acceptance consumer",
+      "layer": 3,
+      "repo": "QPS",
+      "state": "REMOTE_OWNER",
+      "type": "worker",
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1920"
+    },
+    {
+      "description": "No source-verified graph registry",
+      "id": "math_worker",
+      "label": "gg_MATH statistics input",
+      "layer": 3,
+      "repo": "MATH",
+      "state": "CANDIDATE",
+      "type": "worker",
+      "url": "https://github.com/GBOGEB/gg_MATH/issues/27"
+    },
+    {
+      "description": "Run ID, attempt, job, SHA, artifact",
+      "id": "ci",
+      "label": "Exact-head CI proof",
+      "layer": 4,
+      "repo": "ABACUS",
+      "state": "PER_HEAD_REQUIRED",
+      "type": "evidence",
+      "url": "https://github.com/GBOGEB/ABACUS/actions"
+    },
+    {
+      "description": "Symptoms are not accepted causal roots",
+      "id": "first_red",
+      "label": "First-red/root classification",
+      "layer": 4,
+      "repo": "ABACUS",
+      "state": "OWNER_DISPOSITION_REQUIRED",
+      "type": "process",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1929"
+    },
+    {
+      "description": "Authenticate source/job/attempt/artifact before graph promotion",
+      "id": "receipts",
+      "label": "Typed native REX receipts",
+      "layer": 4,
+      "repo": "CODEX",
+      "state": "AUTH_UNKNOWN",
+      "type": "bridge",
+      "url": "https://github.com/GBOGEB/CODEX/issues/977"
+    },
+    {
+      "description": "Line/branch denominators require exact scope and instrument digest",
+      "id": "coverage",
+      "label": "Matched coverage census",
+      "layer": 4,
+      "repo": "HUB",
+      "state": "COMPARABILITY_UNKNOWN",
+      "type": "measurement",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/631"
+    },
+    {
+      "description": "No reviewer inferred from a passing job",
+      "id": "reviews",
+      "label": "Independent human review",
+      "layer": 5,
+      "repo": "CODEX",
+      "state": "REQUIRED",
+      "type": "governance",
+      "url": "https://github.com/GBOGEB/CODEX/issues/991"
+    },
+    {
+      "description": "Security findings and confidentiality gate independently assessed",
+      "id": "security",
+      "label": "Security and A10",
+      "layer": 5,
+      "repo": "ABACUS",
+      "state": "HOLD",
+      "type": "governance",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1996"
+    },
+    {
+      "description": "Unverified approval blocks admission",
+      "id": "admission",
+      "label": "Main merge admission",
+      "layer": 5,
+      "repo": "ABACUS",
+      "state": "HOLD",
+      "type": "outcome",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "description": "Read-only visualization; never execution authority",
+      "id": "atlas",
+      "label": "Federated operations atlas",
+      "layer": 6,
+      "repo": "CODEX",
+      "state": "REVIEW_ONLY",
+      "type": "presentation",
+      "url": "https://github.com/GBOGEB/CODEX/pull/1068"
+    },
+    {
+      "description": "Official source/PR launch and discovery links",
+      "id": "portal",
+      "label": "Multi-repo launches",
+      "layer": 6,
+      "repo": "HUB",
+      "state": "REVIEW_ONLY",
+      "type": "presentation",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/631"
+    }
+  ],
+  "pulses": [
+    {
+      "accepted": false,
+      "evidence": "4 historical source blobs verified",
+      "id": "M0",
+      "meaning": "Code/repository locators; no worker proof",
+      "scope": "Source registry freeze"
+    },
+    {
+      "accepted": false,
+      "evidence": "8 families and 3 declared federation mappings",
+      "id": "M+1",
+      "meaning": "Static projection",
+      "scope": "Typed graph + route planner"
+    },
+    {
+      "accepted": false,
+      "evidence": "Local QA required, not remote dispatch",
+      "id": "M+2",
+      "meaning": "UX and functional proof only",
+      "scope": "Interactive atlas + worker guard simulation"
+    },
+    {
+      "accepted": false,
+      "evidence": null,
+      "id": "M+3",
+      "meaning": "Needs native runs, approvals, current-head proof",
+      "scope": "Authenticated receipts and admission"
+    }
+  ],
+  "schema": "missioncontrol.federated.operations_atlas.v2",
+  "sipoc": [
+    {
+      "customer": "CODEX scheduler",
+      "input": "Intent, source SHA, bounded authority",
+      "output": "Pinned eight-family source graph",
+      "process": "Freeze source + registry identity",
+      "supplier": "GBOGEB owner + GitHub"
+    },
+    {
+      "customer": "CODEX stage-only transport",
+      "input": "Dependency DAG + default DENY policy",
+      "output": "Read-only dispatch proposal",
+      "process": "Topological qualification and staging",
+      "supplier": "CODEX Mycelium"
+    },
+    {
+      "customer": "Remote source owner",
+      "input": "Principal, source, approval, idempotency",
+      "output": "Nonmutating receipt",
+      "process": "Fail-closed stage/receipt only",
+      "supplier": "CODEX gateway"
+    },
+    {
+      "customer": "Admission and REX reviewers",
+      "input": "Exact-head request + independent authorization",
+      "output": "Run/job/attempt + evidence artifact",
+      "process": "Local worker + first-red + native CI (future)",
+      "supplier": "ABACUS owner"
+    },
+    {
+      "customer": "MissionControl UI",
+      "input": "Four source registries + candidate links",
+      "output": "DAG hierarchy / Mermaid / comparison",
+      "process": "Validate and project; never promote declared links",
+      "supplier": "Hub graph registry"
+    },
+    {
+      "customer": "QPS programme / analytics",
+      "input": "Independent consumer and metric receipts",
+      "output": "Accepted or deferred typed evidence",
+      "process": "Classify confidentiality, scope and admissibility",
+      "supplier": "QPS + gg_MATH owners"
+    },
+    {
+      "customer": "Golden Thread / reuse consumers",
+      "input": "CI, security, coverage, branch rule checks",
+      "output": "Verified merge SHA or HOLD",
+      "process": "Independent controlled main admission",
+      "supplier": "Eligible human reviewers"
+    }
+  ],
+  "snapshot": {
+    "authenticated_worker_launches": null,
+    "authority_transfer": false,
+    "canonical_master_dags_path": null,
+    "classification": "PUBLIC_SAFE_SOURCE_REFERENCE_CANDIDATE",
+    "date": "2026-10-17",
+    "declared_federation_edges": 3,
+    "formal_root_closures": null,
+    "live_refresh": false,
+    "matched_coverage_delta": null,
+    "merge_admission": "HOLD",
+    "mutation_enabled": false,
+    "repo_count": 5,
+    "security_waiver": false,
+    "source_heads_current": null,
+    "source_mode": "EXACT_HISTORICAL_REGISTRY_BLOBS",
+    "verified_graph_families": 8,
+    "verified_registry_repos": 4
+  },
+  "sources": [
+    {
+      "authority": "EXECUTION_OWNER",
+      "blob": "eb6c2a69103272b18ea3b858f4c54c09603de19a",
+      "families": [
+        "DMAIC_WORK_GRAPH",
+        "DOW_ANALYSIS_GRAPH",
+        "AGENT_EXECUTION_GRAPH"
+      ],
+      "id": "ABACUS",
+      "path": "triage/GRAPH_REGISTRY.yaml",
+      "repo": "GBOGEB/ABACUS",
+      "sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "url": "https://github.com/GBOGEB/ABACUS/blob/54da377cf82a358ac97903ecde0270c975b8fcc1/triage/GRAPH_REGISTRY.yaml"
+    },
+    {
+      "authority": "CONTROL_UI_OWNER",
+      "blob": "a3dab35f88655e401a22395c073c76e2baf52381",
+      "families": [
+        "SEMANTIC_GOVERNANCE_GRAPH",
+        "FEDERATION_BRIDGE_GRAPH",
+        "AGENT_RUNTIME_GRAPH"
+      ],
+      "id": "CODEX",
+      "path": "triage/GRAPH_REGISTRY.yaml",
+      "repo": "GBOGEB/CODEX",
+      "sha": "3a9fceda87087bc1f501f359fe2754e24c119575",
+      "url": "https://github.com/GBOGEB/CODEX/blob/3a9fceda87087bc1f501f359fe2754e24c119575/triage/GRAPH_REGISTRY.yaml"
+    },
+    {
+      "authority": "FEDERATED_METRICS_OWNER",
+      "blob": "e591765b4c423d94253f09da486d2ff24bfd2f60",
+      "families": [
+        "CODE_PURPLE_BEAMS_DAG"
+      ],
+      "id": "HUB",
+      "path": "mission-control/federation-atlas/CODE_PURPLE_BEAMS_DAG_v1.json",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "sha": "766fa6ad7b10d7545c0e48c22bb787718f7bb700",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/766fa6ad7b10d7545c0e48c22bb787718f7bb700/mission-control/federation-atlas/CODE_PURPLE_BEAMS_DAG_v1.json"
+    },
+    {
+      "authority": "ENGINEERING_ACCEPTANCE_OWNER",
+      "blob": "6460d587892f582b04551c20eabc6f580f2c9371",
+      "families": [
+        "QPS_ACCEPTANCE_DAG"
+      ],
+      "id": "QPS",
+      "path": "federation/acceptance_dashboard/dag.json",
+      "repo": "GBOGEB/cryoplant-project",
+      "sha": "999148f5dd4cfe4c73fa5164e132e4994bcefead",
+      "url": "https://github.com/GBOGEB/cryoplant-project/blob/999148f5dd4cfe4c73fa5164e132e4994bcefead/federation/acceptance_dashboard/dag.json"
+    }
+  ],
+  "workers": [
+    {
+      "action": "STAGE_ONLY",
+      "approved": false,
+      "attempt": null,
+      "job_id": null,
+      "name": "CODEX stage gateway",
+      "path_lock": false,
+      "principal": null,
+      "ready": "DESIGN_PROOF_ONLY",
+      "repo": "CODEX",
+      "run_id": null,
+      "source_verified": true
+    },
+    {
+      "action": "REMOTE_EXECUTION",
+      "approved": false,
+      "attempt": null,
+      "job_id": null,
+      "name": "ABACUS owner-dispatch",
+      "path_lock": false,
+      "principal": null,
+      "ready": "DESIGN_NOT_ENABLED",
+      "repo": "ABACUS",
+      "run_id": null,
+      "source_verified": false
+    },
+    {
+      "action": "READ_ONLY_CONSUMER",
+      "approved": false,
+      "attempt": null,
+      "job_id": null,
+      "name": "Hub native census",
+      "path_lock": false,
+      "principal": null,
+      "ready": "SOURCE_REFERENCE_ONLY",
+      "repo": "HUB",
+      "run_id": null,
+      "source_verified": false
+    },
+    {
+      "action": "INDEPENDENT_ACCEPTANCE",
+      "approved": false,
+      "attempt": null,
+      "job_id": null,
+      "name": "QPS acceptance",
+      "path_lock": false,
+      "principal": null,
+      "ready": "OWNER_APPROVAL_REQUIRED",
+      "repo": "QPS",
+      "run_id": null,
+      "source_verified": false
+    },
+    {
+      "action": "CONSUMER",
+      "approved": false,
+      "attempt": null,
+      "job_id": null,
+      "name": "gg_MATH stats bridge",
+      "path_lock": false,
+      "principal": null,
+      "ready": "REGISTRY_UNVERIFIED",
+      "repo": "MATH",
+      "run_id": null,
+      "source_verified": false
+    }
+  ]
+}
