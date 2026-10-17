@@ -48,6 +48,46 @@ invariants:
   - RECURSE_ONLY_ON_OBSERVED_FIRST_RED
   - ACTION_MAY_INSPECT_STATUS_BUT_MUST_NOT_REDEFINE_STATUS
 
+execution_granularity:
+  namespace: CONTROL_METHOD_NOT_ACTION_MONIKER
+  vocabulary_owner: federation/mesh/GLOBAL_GLOSSARY_v1.yaml
+  runtime_owner: GBOGEB/ABACUS
+  rule: G3A_3W_3MP_are_execution_units_not_new_status_keys_or_task_actions
+  forms:
+    WAVE:
+      short: WAVE
+      triple: 3W
+      meaning: bounded engineering tranche with disjoint source owners, code/tests, one controlled fan-in and exact-head proof
+      advancement_credit: only_when_distinct_evidence_and_declared_checkpoint_gate_pass
+    PULSE:
+      short: PULSE
+      triple: 3MP
+      meaning: one measured DMAIC/MIP feedback cycle with input scope, first red, action-or-defer, measurement and Control receipt
+      advancement_credit: none_without_separate_checkpoint_acceptance
+    CHECKPOINT:
+      short: ADVANCE
+      meaning: source-bound accepted scoped engineering state transition
+      advancement_credit: one_per_distinct_verified_acceptance_claim
+    MISSION:
+      short: G3A
+      long: Governed Three-Advance Mission
+      meaning: one instruction, at most three accepted checkpoints N_to_Nplus3, early stop on material blocker, return achieved state
+      checkpoint_sequence: [A1, A2, A3]
+      required_kickoff: [mission_id, start_n, expected_exact_head, bounded_objectives, authority_scope, victory_conditions, stop_conditions, receipt_target]
+      default_worker_budget: [two_disjoint_execution_owners, one_independent_verifier]
+      hard_stop: [stale_exact_head, security_or_A10_red, approval_missing_for_admission, owner_lease_conflict, deterministic_unchanged_red, missing_mandatory_evidence]
+      output: [attempted, accepted, actual_n, target_n, source_shas, run_job_attempt, measured_denominators, first_red, next_action, authority_hold]
+      authority_rule: engineering_checkpoints_are_not_main_merges_or_child_engineering_acceptance
+  examples:
+    three_waves: three_source_tranches_with_independent_code_test_fan_in
+    three_pulses: three_observe_measure_improve_control_receipts_with_zero_to_three_accepted_advances
+    g3a: advance_from_accepted_N_to_Nplus3_or_return_first_early_blocker
+  ambiguity:
+    legacy_3P_star: distinct_existing_method_do_not_alias_to_3MP
+    three_pc: existing_3PC_classification_not_three_pulses
+    three_pr: existing_3PR_governance_method_not_three_waves
+    historical_mip_horizons: preserve_pulse_based_Nplus5_Nplus10_without_retroactive_relabeling
+
 importance_features:
   closure_leverage: {range: 0..5, meaning: direct leverage on a declared gate or DoV}
   blocker_fanout: {range: 0..5, meaning: downstream nodes/gates/artifacts blocked}
