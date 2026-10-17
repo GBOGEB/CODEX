@@ -101,6 +101,52 @@ jobs:
              'joined_root_acceptance':None,'admission':'HOLD'}
           Path('/tmp/mycelium-n8-contract-receipt.json').write_text(json.dumps(o,indent=2)+'\n')
           PY
+      - name: "MYCELIUM N9: admission chronology and branch-depth proof"
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          export PYTHONPATH=mission_control/mycelium/continuity
+          python -m coverage run --branch --source=mycelium_continuity.admission_timeline \
+            -m unittest discover -s mission_control/mycelium/continuity/tests \
+            -p "test_admission_timeline_public.py" -v
+          python -m coverage json -q -o /tmp/mycelium-n9-coverage.json
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          from mycelium_continuity.admission_timeline import project
+          root=Path('mission_control/mycelium/continuity')
+          source=json.loads((root/'N9_ADMISSION_READBACK_20261017.json').read_text())
+          result=project(source)
+          cov=json.loads(Path('/tmp/mycelium-n9-coverage.json').read_text())['totals']
+          assert result['metrics']['merges_sampled']==4
+          assert result['metrics']['nonterminal_at_readback']==2
+          assert result['metrics']['observed_failed']==1
+          assert result['admission']=='HOLD' and result['metrics']['accepted_root_closures'] is None
+          assert cov['num_statements']>0 and cov['num_branches']>0
+          assert cov['percent_statements_covered']>=95
+          assert cov['percent_branches_covered']>=90
+          out={'schema':'code-purple.mycelium.n9-ci-receipt.v1',
+               'checkout_sha':os.environ['EXPECTED_SHA'],
+               'run_id':os.environ.get('GITHUB_RUN_ID'),
+               'attempt':os.environ.get('GITHUB_RUN_ATTEMPT'),
+               'scope':'admission_timeline.py synthetic-contract tests',
+               'source_snapshot_sha256':result['source']['snapshot_sha256'],
+               'tests_expected':29,'native_artifact_bytes_in_repo':False,
+               'admission':'HOLD','effective_required_status':None,'accepted_roots':None}
+          Path('/tmp/mycelium-n9-receipt.json').write_text(json.dumps(out,indent=2)+'\n')
+          PY
+      - name: "MYCELIUM N9: upload read-only admission proof"
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: mycelium-n9-admission-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/mycelium-n9-coverage.json
+            /tmp/mycelium-n9-receipt.json
+          if-no-files-found: warn
       - name: "MYCELIUM N8: publish source-bound contract evidence"
         if: always()
         uses: actions/upload-artifact@v7.0.2
