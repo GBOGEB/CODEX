@@ -26,7 +26,7 @@ jobs:
       - name: Run source-contract tests
         run: python -m pytest tests/test_missioncontrol_federated_launchpad.py tests/test_missioncontrol_federated_crosswalk.py -q
       - name: Crosswalk into existing Mycelium validator
-        run: python scripts/missioncontrol_federated_crosswalk.py
+        run: python -m scripts.missioncontrol_federated_crosswalk
       - name: Run responsive browser QA
         run: python scripts/qa_missioncontrol_federated_launchpad.py --docs-dir docs --output-dir artifacts/mc-federated-qa
       - name: Upload screenshots and source digests
