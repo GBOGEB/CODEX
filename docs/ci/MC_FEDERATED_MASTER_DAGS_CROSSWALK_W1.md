@@ -22,7 +22,7 @@ The universal graph may include reference/feedback cycles. Only `dependency` edg
 
 ```bash
 python -m pytest tests/test_missioncontrol_federated_crosswalk.py -q
-python scripts/missioncontrol_federated_crosswalk.py
+python -m scripts.missioncontrol_federated_crosswalk
 ```
 
 Expected review-only structural counts at W1: 18 nodes, 20 typed edges, 12 declared SIPOC dependencies; an existing Mycelium graph validator must accept the crosswalk. This is not the total all-repo census.
