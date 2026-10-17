@@ -30,11 +30,55 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-python@v7.0.0
         with:
           python-version: '3.11'
       - name: Install dependencies
         run: python -m pip install --upgrade pip pytest pyyaml numpy jsonschema
+      - name: "Mycelium N7: standalone continuity testflight"
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          export PYTHONPATH=mission_control/mycelium/continuity
+          python -m coverage run --branch --source=mycelium_continuity -m unittest discover \
+            -s mission_control/mycelium/continuity/tests -p "test_portable.py" -v
+          python -m coverage json -q -o /tmp/mycelium-n7-coverage.json
+          python - <<'PY'
+          import json,os,subprocess
+          from pathlib import Path
+          c=json.loads(Path('/tmp/mycelium-n7-coverage.json').read_text())['totals']
+          sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert sha==os.environ['EXPECTED_SHA'] and len(sha)==40
+          assert c['num_statements']>0 and c['num_branches']>0
+          assert c['percent_statements_covered']>=90
+          assert c['percent_branches_covered']>=80
+          receipt={'schema':'code-purple.mycelium.native-coverage-receipt.v2',
+                   'checkout_sha':sha,'event_sha':os.environ.get('GITHUB_SHA'),
+                   'run_id':os.environ.get('GITHUB_RUN_ID'),
+                   'attempt':os.environ.get('GITHUB_RUN_ATTEMPT'),
+                   'scope':'MYCELIUM_CONTINUITY_MODULE_ONLY',
+                   'statements':c['num_statements'],'covered_statements':c['covered_lines'],
+                   'branches':c['num_branches'],'covered_branches':c['covered_branches'],
+                   'root_closures':None,'dispatch_authorized':False,
+                   'admission':'HOLD','authority_transfer':False}
+          Path('/tmp/mycelium-n7-receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          print(json.dumps(receipt,sort_keys=True))
+          PY
+      - name: "Mycelium N7: upload source-bound scoped coverage"
+        uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: mycelium-continuity-n7-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/mycelium-n7-coverage.json
+            /tmp/mycelium-n7-receipt.json
+          if-no-files-found: warn
       - name: Analyze governed logs
         run: python scripts/analyze_missioncontrol_logs.py
       - name: Build metrics materialization
