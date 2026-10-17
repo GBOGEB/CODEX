@@ -1,0 +1,136 @@
+flowchart LR
+  %% CODE PURPLE G4P M4 source-bound status overlay; worker authority DENY.
+  repo_CODEX["CODEX · repository owner"]
+  repo_ABACUS["ABACUS · repository owner"]
+  repo_HUB["HUB · repository owner"]
+  repo_QPS["QPS · repository owner"]
+  repo_MATH["MATH · repository owner"]
+  pr_ABACUS_2178["ABACUS #2178 · Three-pulse source population "]
+  pr_ABACUS_2161["ABACUS #2161 · Interpreter requirement regres"]
+  pr_ABACUS_2175["ABACUS #2175 · defusedxml B0 collection depen"]
+  pr_CODEX_1068["CODEX #1068 · Federated operations launchpad"]
+  pr_ABACUS_2168["ABACUS #2168 · Ariana source-pinned testfligh"]
+  pr_HUB_671["HUB #671 · Top-21 typed fleet census"]
+  pr_HUB_667["HUB #667 · M3 flightdeck and typed DAG"]
+  pr_HUB_663["HUB #663 · Issue and BD hot/cold census"]
+  pr_HUB_662["HUB #662 · Trusted TTL freshness"]
+  pr_HUB_661["HUB #661 · CP.LIVE alias first-red"]
+  pr_HUB_670["HUB #670 · W18 fleet briefing surfaces"]
+  pr_HUB_669["HUB #669 · W1 multi-repo mission launch"]
+  pr_HUB_664["HUB #664 · N10 launch DAG projection"]
+  pr_HUB_666["HUB #666 · Accessible six-panel launcher"]
+  pr_HUB_665["HUB #665 · Source-owned scheduler + SIPOC"]
+  pr_ABACUS_2167["ABACUS #2167 · Secure JUnit dependency"]
+  pr_ABACUS_2133["ABACUS #2133 · G3A native 446-arc canary"]
+  pr_HUB_659["HUB #659 · Top-21 merged PR proof census"]
+  pr_ABACUS_2155["ABACUS #2155 · Phase4 conftest isolation"]
+  pr_ABACUS_2147["ABACUS #2147 · Phase4 no-op / coverage TOML"]
+  pr_HUB_660["HUB #660 · Ariana bounded crew staging"]
+  issue_ABACUS_2136{"ABACUS #2136 · OPEN"}
+  issue_ABACUS_2087{"ABACUS #2087 · OPEN"}
+  issue_CODEX_1067{"CODEX #1067 · OPEN"}
+  issue_CODEX_977{"CODEX #977 · OPEN"}
+  issue_HUB_638{"HUB #638 · OPEN"}
+  issue_HUB_604{"HUB #604 · OPEN"}
+  scheduler["Read-only scheduler projection"]
+  gateway["CODEX Mycelium gateway"]
+  stage["Stage-only / proposal"]
+  owner["Owner-runner authorization"]
+  receipt["Run / job / attempt / SHA"]
+  admit["Admission HOLD"]
+  review["User review / local notes"]
+  repo_ABACUS -->|owns| pr_ABACUS_2178
+  pr_ABACUS_2178 -.->|main merge, independent proof| review
+  repo_ABACUS -->|owns| pr_ABACUS_2161
+  pr_ABACUS_2161 -.->|main merge, independent proof| review
+  repo_ABACUS -->|owns| pr_ABACUS_2175
+  pr_ABACUS_2175 -.->|main merge, independent proof| review
+  repo_CODEX -->|owns| pr_CODEX_1068
+  pr_CODEX_1068 -.->|main merge, independent proof| review
+  repo_ABACUS -->|owns| pr_ABACUS_2168
+  pr_ABACUS_2168 -.->|main merge, independent proof| review
+  repo_HUB -->|owns| pr_HUB_671
+  pr_HUB_671 -.->|main merge, independent proof| review
+  repo_HUB -->|owns| pr_HUB_667
+  pr_HUB_667 -.->|main merge, independent proof| review
+  repo_HUB -->|owns| pr_HUB_663
+  pr_HUB_663 -.->|main merge, independent proof| review
+  repo_HUB -->|owns| pr_HUB_662
+  pr_HUB_662 -.->|main merge, independent proof| review
+  repo_HUB -->|owns| pr_HUB_661
+  pr_HUB_661 -.->|main merge, independent proof| review
+  repo_HUB -->|owns| pr_HUB_670
+  pr_HUB_670 -.->|main merge, independent proof| review
+  repo_HUB -->|owns| pr_HUB_669
+  pr_HUB_669 -.->|main merge, independent proof| review
+  repo_HUB -->|owns| pr_HUB_664
+  pr_HUB_664 -.->|main merge, independent proof| review
+  repo_HUB -->|owns| pr_HUB_666
+  pr_HUB_666 -.->|main merge, independent proof| review
+  repo_HUB -->|owns| pr_HUB_665
+  pr_HUB_665 -.->|main merge, independent proof| review
+  repo_ABACUS -->|owns| pr_ABACUS_2167
+  pr_ABACUS_2167 -.->|main merge, independent proof| review
+  repo_ABACUS -->|owns| pr_ABACUS_2133
+  pr_ABACUS_2133 -.->|feature merge, independent proof| review
+  repo_HUB -->|owns| pr_HUB_659
+  pr_HUB_659 -.->|main merge, independent proof| review
+  repo_ABACUS -->|owns| pr_ABACUS_2155
+  pr_ABACUS_2155 -.->|feature merge, independent proof| review
+  repo_ABACUS -->|owns| pr_ABACUS_2147
+  pr_ABACUS_2147 -.->|feature merge, independent proof| review
+  repo_HUB -->|owns| pr_HUB_660
+  pr_HUB_660 -.->|main merge, independent proof| review
+  repo_ABACUS -->|unresolved| issue_ABACUS_2136
+  repo_ABACUS -->|unresolved| issue_ABACUS_2087
+  repo_CODEX -->|unresolved| issue_CODEX_1067
+  repo_CODEX -->|unresolved| issue_CODEX_977
+  repo_HUB -->|unresolved| issue_HUB_638
+  repo_HUB -->|unresolved| issue_HUB_604
+  repo_CODEX --> gateway
+  gateway -->|model only| scheduler
+  scheduler -->|proposal only| stage
+  stage -.->|no remote authority| owner
+  repo_ABACUS --> owner
+  owner -.->|requires owner lease| receipt
+  receipt -->|exact-head evidence only| admit
+  repo_HUB -->|source census / Top-21| review
+  admit -.->|HOLD independent governance & security| review
+  pr_ABACUS_2147 -->|merged to feature| pr_ABACUS_2133
+  pr_ABACUS_2155 -->|merged to feature| pr_ABACUS_2133
+  pr_CODEX_1068 -.->|review UI, not closure| issue_CODEX_1067
+  pr_HUB_669 -.->|QA follow-up| issue_HUB_638
+  pr_HUB_671 -.->|orchestration scope| issue_HUB_604
+  pr_ABACUS_2133 -.->|governance remains independent| issue_ABACUS_2087
+  classDef mergedMain fill:#123d34,stroke:#4cc9a4,color:#effffb
+  classDef mergedFeature fill:#1c2c4a,stroke:#769be6,color:#eff4ff
+  classDef pending fill:#473122,stroke:#e6b46e,color:#fff6e9
+  classDef barrier fill:#502830,stroke:#e18e9c,color:#fff3f5
+  class pr_ABACUS_2178 mergedMain
+  class pr_ABACUS_2161 mergedMain
+  class pr_ABACUS_2175 mergedMain
+  class pr_CODEX_1068 mergedMain
+  class pr_ABACUS_2168 mergedMain
+  class pr_HUB_671 mergedMain
+  class pr_HUB_667 mergedMain
+  class pr_HUB_663 mergedMain
+  class pr_HUB_662 mergedMain
+  class pr_HUB_661 mergedMain
+  class pr_HUB_670 mergedMain
+  class pr_HUB_669 mergedMain
+  class pr_HUB_664 mergedMain
+  class pr_HUB_666 mergedMain
+  class pr_HUB_665 mergedMain
+  class pr_ABACUS_2167 mergedMain
+  class pr_ABACUS_2133 mergedFeature
+  class pr_HUB_659 mergedMain
+  class pr_ABACUS_2155 mergedFeature
+  class pr_ABACUS_2147 mergedFeature
+  class pr_HUB_660 mergedMain
+  class issue_ABACUS_2136 pending
+  class issue_ABACUS_2087 pending
+  class issue_CODEX_1067 pending
+  class issue_CODEX_977 pending
+  class issue_HUB_638 pending
+  class issue_HUB_604 pending
+  class admit,gateway barrier
