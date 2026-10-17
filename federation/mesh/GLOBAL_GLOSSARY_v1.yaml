@@ -146,6 +146,31 @@ sections:
       expansion: Definition of Done
       definition: completion condition for the current bounded task/session/deliverable, distinct from global project victory
 
+    G3P:
+      expansion: Governed Three-Pulse Wave
+      definition: one bounded execution wave with three sequential, measured feedback pulses, advancing the ordinal horizon N to N+3 only when each pulse receives a source-bound disposition
+      type: EXECUTION_ENVELOPE_NOT_METHOD_PROFILE
+      authority: GBOGEB/pipeline-automation-hub:mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json
+      method_selector: 3PR_or_3PC_under_DMAIC_with_conditional_MIP
+      where_used:
+        - GBOGEB/pipeline-automation-hub:mission-control/v2/MC_METHOD_PROFILE_REGISTRY_v1.json
+        - GBOGEB/pipeline-automation-hub:mission-control/v2/G3P_EXECUTION_OPERATOR.md
+      distinctions:
+        - three waves are three separate work packages, not three pulse ordinals
+        - 3PR and 3PC are three-phase method profiles, not three cycles
+        - three commits or three runners do not imply three measured pulses
+        - N+3 is an observed receipt horizon, not proof of engineering acceptance or merging
+      no_authority_transfer: true
+    THREE_WAVES:
+      definition: three distinct WAVE work packages, each independently scoped and potentially containing zero or many feedback pulses
+      authority: GBOGEB/pipeline-automation-hub:mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json
+    THREE_PULSES:
+      definition: three sequential bounded feedback receipts inside one WAVE, with the next input derived from the prior observed outcome
+      authority: GBOGEB/pipeline-automation-hub:mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json
+    HANDS_OFF_BOUNDED:
+      definition: delegated discretionary action within one bounded live invocation without unnecessary clarification, respecting stop gates, source-owner leases and permission; not asynchronous future execution
+      authority: GBOGEB/pipeline-automation-hub:mission-control/v2/G3P_EXECUTION_OPERATOR.md
+
   RUNTIME_AND_TOOLING:
     LEVEL_1:
       definition: repo maturity/control convention using canonical SSOT, manifest, skill, executable runtime, MIP/DMAIC/PCA/BT and exact-head proof gates
@@ -240,6 +265,12 @@ sections:
       authority: QPS domain glossary
 
 namespace_rules:
+  G3P:
+    rule: Governed Three-Pulse Wave denotes one wave containing PULSE-1, PULSE-2 and PULSE-3, never a new 3P method profile or authority.
+  P1_P2_P3:
+    rule: Unqualified bare P1/P2/P3 represent priorities where the field is priority; pulse identities require a fully qualified PULSE-<id> namespace.
+  3PR_3PC:
+    rule: Reserved Mission Control method phase profiles; do not use these to mean a count of feedback iterations.
   VV:
     rule: prohibited as unqualified global machine token because QPS reserves QRB.VV for Vacuum Vessel
   WPS:
