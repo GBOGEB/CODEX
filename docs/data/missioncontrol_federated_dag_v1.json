@@ -1,0 +1,491 @@
+{
+  "schema_version": "missioncontrol.federated_dag.v1",
+  "snapshot": {
+    "as_of": "2026-10-17",
+    "evidence_class": "GITHUB_SOURCE_OBSERVATION",
+    "candidate": true,
+    "base_heads": {
+      "CODEX": "f8a179f8bf67bba4264364b5742c7c271f4041a6",
+      "ABACUS": "8d0c6ca568d6ea0b5e658198d0046283c049e557"
+    },
+    "P0_admission": "HOLD",
+    "mutation_enabled": false,
+    "authority_transfer": false,
+    "security_waiver": false,
+    "independent_approval_inferred": false,
+    "todo": {
+      "abacus_1860": {
+        "done": 1,
+        "total": 12
+      },
+      "codex_977": {
+        "done": 0,
+        "total": 7
+      }
+    },
+    "authenticated_abacus_worker_run_id": null,
+    "authenticated_abacus_worker_job_id": null,
+    "accepted_rex_receipt": null,
+    "first_correctly_admitted_main_merge": null,
+    "bd_causal_roots_open": null,
+    "bd_causal_roots_closed": null,
+    "coverage": {
+      "main": {
+        "baseline_pct": 36.85,
+        "baseline_date": "2026-10-11",
+        "current_pct": null,
+        "current_sha": null,
+        "delta_pp": null
+      },
+      "pr_broad": {
+        "baseline_pct": 36.92,
+        "baseline_date": "2026-10-12",
+        "current_pct": null,
+        "current_sha": null,
+        "delta_pp": null
+      },
+      "pr_diff": {
+        "baseline_pct": 51,
+        "baseline_date": "2026-10-12",
+        "current_pct": null,
+        "current_sha": null,
+        "delta_pp": null
+      }
+    }
+  },
+  "scheduler": {
+    "mode": "OBSERVATION_ONLY",
+    "dispatch_state": "STAGED_NOT_LAUNCHED",
+    "polling": "STATIC_PAGES_PROJECTION_ONLY",
+    "acknowledged_launch_ids": [],
+    "queue_classes": [
+      "EXECUTION",
+      "BLOCKED",
+      "RETURN",
+      "REVIEW",
+      "PUBLICATION",
+      "OWNER_ACTION"
+    ],
+    "worker_policy": {
+      "default": "DENY",
+      "owner_repo_execution_only": true,
+      "exact_head_required": true,
+      "allowlisted_action_and_paths": true,
+      "dry_run_required": true,
+      "owner_approval_required": true,
+      "independent_security_review_required": true,
+      "path_lock_required": true,
+      "replay_guard_required": true,
+      "native_run_job_attempt_and_artifact_required": true,
+      "stale_head_reject": true,
+      "disjoint_lanes_may_continue": true,
+      "overlapping_paths_must_serialize": true
+    }
+  },
+  "nodes": [
+    {
+      "id": "intent",
+      "label": "Mission / owner intent",
+      "layer": 0,
+      "type": "orchestration",
+      "repo": "CODEX",
+      "state": "DECLARED",
+      "url": "https://github.com/GBOGEB/CODEX/issues/977"
+    },
+    {
+      "id": "source",
+      "label": "Exact source heads",
+      "layer": 0,
+      "type": "evidence",
+      "repo": "FEDERATION",
+      "state": "BASELINE_OBSERVED",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/source_status.json"
+    },
+    {
+      "id": "scheduler",
+      "label": "Dependency DAG scheduler",
+      "layer": 1,
+      "type": "scheduler",
+      "repo": "CODEX",
+      "state": "MODEL_ONLY",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/executable_projection.json"
+    },
+    {
+      "id": "policy",
+      "label": "Admission and security guards",
+      "layer": 1,
+      "type": "governance",
+      "repo": "CODEX",
+      "state": "DEFAULT_DENY",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/execution_gateway_contract.yaml"
+    },
+    {
+      "id": "codex_stage",
+      "label": "Authenticated stage-only transport",
+      "layer": 2,
+      "type": "transport",
+      "repo": "CODEX",
+      "state": "STAGE_ONLY",
+      "url": "https://github.com/GBOGEB/CODEX/actions/workflows/missioncontrol-authenticated-transport.yml"
+    },
+    {
+      "id": "bridge",
+      "label": "Typed federation / REX bridge",
+      "layer": 2,
+      "type": "bridge",
+      "repo": "CODEX",
+      "state": "RECEIPT_REQUIRED",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/federation/rex/REPO_REX_RETURN_TEMPLATE_v1.yaml"
+    },
+    {
+      "id": "abacus_owner",
+      "label": "ABACUS native execution authority",
+      "layer": 3,
+      "type": "authority",
+      "repo": "ABACUS",
+      "state": "REMOTE_OWNER",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "id": "lock",
+      "label": "Exact SHA / path lock / replay guard",
+      "layer": 3,
+      "type": "governance",
+      "repo": "ABACUS",
+      "state": "REQUIRED_NOT_PROMOTED",
+      "url": "https://github.com/GBOGEB/CODEX/issues/977"
+    },
+    {
+      "id": "dispatch",
+      "label": "Native disjoint runner dispatch",
+      "layer": 4,
+      "type": "worker",
+      "repo": "ABACUS",
+      "state": "LAUNCH_UNKNOWN",
+      "url": "https://github.com/GBOGEB/CODEX/issues/977"
+    },
+    {
+      "id": "first_red",
+      "label": "First-red root triage",
+      "layer": 5,
+      "type": "process",
+      "repo": "ABACUS",
+      "state": "REPAIR_REQUIRED",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "id": "native_ci",
+      "label": "Native exact-head CI",
+      "layer": 5,
+      "type": "evidence",
+      "repo": "ABACUS",
+      "state": "PER_PR_REQUIRED",
+      "url": "https://github.com/GBOGEB/ABACUS/actions"
+    },
+    {
+      "id": "security",
+      "label": "Human / security review",
+      "layer": 5,
+      "type": "governance",
+      "repo": "ABACUS",
+      "state": "HOLD",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "id": "merge",
+      "label": "Correctly admitted main merge",
+      "layer": 6,
+      "type": "outcome",
+      "repo": "ABACUS",
+      "state": "NOT_PROVEN",
+      "url": "https://github.com/GBOGEB/ABACUS/pulls?q=is%3Apr+is%3Amerged"
+    },
+    {
+      "id": "rex",
+      "label": "Authenticated run/job/REX return",
+      "layer": 6,
+      "type": "evidence",
+      "repo": "FEDERATION",
+      "state": "UNKNOWN",
+      "url": "https://github.com/GBOGEB/CODEX/issues/977"
+    },
+    {
+      "id": "coverage",
+      "label": "Matched coverage and BD census",
+      "layer": 7,
+      "type": "measurement",
+      "repo": "ABACUS",
+      "state": "CURRENT_UNKNOWN",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "id": "projection",
+      "label": "Mission Control evidence projections",
+      "layer": 8,
+      "type": "presentation",
+      "repo": "CODEX",
+      "state": "CANDIDATE",
+      "url": "missioncontrol_federated_launchpad.html"
+    },
+    {
+      "id": "qps",
+      "label": "QPS / KEB downstream federation",
+      "layer": 3,
+      "type": "federation",
+      "repo": "QPS",
+      "state": "REMOTE_AUTHORITY",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "id": "cryo",
+      "label": "Cryoplant engineering federation",
+      "layer": 3,
+      "type": "federation",
+      "repo": "CRYO",
+      "state": "REMOTE_AUTHORITY",
+      "url": "https://github.com/GBOGEB/cryoplant-project"
+    }
+  ],
+  "edges": [
+    {
+      "from": "intent",
+      "to": "scheduler",
+      "kind": "dependency",
+      "executable": true
+    },
+    {
+      "from": "source",
+      "to": "scheduler",
+      "kind": "dependency",
+      "executable": true
+    },
+    {
+      "from": "policy",
+      "to": "codex_stage",
+      "kind": "dependency",
+      "executable": true
+    },
+    {
+      "from": "scheduler",
+      "to": "codex_stage",
+      "kind": "dependency",
+      "executable": true
+    },
+    {
+      "from": "codex_stage",
+      "to": "bridge",
+      "kind": "reference",
+      "executable": false
+    },
+    {
+      "from": "bridge",
+      "to": "abacus_owner",
+      "kind": "reference",
+      "executable": false
+    },
+    {
+      "from": "abacus_owner",
+      "to": "lock",
+      "kind": "dependency",
+      "executable": true
+    },
+    {
+      "from": "lock",
+      "to": "dispatch",
+      "kind": "dependency",
+      "executable": true
+    },
+    {
+      "from": "dispatch",
+      "to": "first_red",
+      "kind": "dependency",
+      "executable": true
+    },
+    {
+      "from": "dispatch",
+      "to": "native_ci",
+      "kind": "dependency",
+      "executable": true
+    },
+    {
+      "from": "first_red",
+      "to": "native_ci",
+      "kind": "dependency",
+      "executable": true
+    },
+    {
+      "from": "native_ci",
+      "to": "security",
+      "kind": "dependency",
+      "executable": true
+    },
+    {
+      "from": "security",
+      "to": "merge",
+      "kind": "dependency",
+      "executable": true
+    },
+    {
+      "from": "native_ci",
+      "to": "rex",
+      "kind": "evidence",
+      "executable": false
+    },
+    {
+      "from": "merge",
+      "to": "coverage",
+      "kind": "dependency",
+      "executable": true
+    },
+    {
+      "from": "rex",
+      "to": "projection",
+      "kind": "evidence",
+      "executable": false
+    },
+    {
+      "from": "coverage",
+      "to": "projection",
+      "kind": "evidence",
+      "executable": false
+    },
+    {
+      "from": "qps",
+      "to": "bridge",
+      "kind": "reference",
+      "executable": false
+    },
+    {
+      "from": "cryo",
+      "to": "bridge",
+      "kind": "reference",
+      "executable": false
+    },
+    {
+      "from": "projection",
+      "to": "intent",
+      "kind": "feedback",
+      "executable": false
+    }
+  ],
+  "pulses": [
+    {
+      "id": "N",
+      "name": "Freeze evidence + controls",
+      "state": "SOURCE_OBSERVED",
+      "result": "HOLD; 1/12 ABACUS TODO; 0/7 CODEX TODO"
+    },
+    {
+      "id": "N+1",
+      "name": "Graph + SIPOC candidate",
+      "state": "REVIEW_CANDIDATE",
+      "result": "Source-bound graph projection only"
+    },
+    {
+      "id": "N+2",
+      "name": "Federated HTML launchpad",
+      "state": "REVIEW_CANDIDATE",
+      "result": "Navigation and filtering; no remote mutation"
+    },
+    {
+      "id": "N+3",
+      "name": "Disjoint bridge + native QA",
+      "state": "PENDING_NATIVE_RECEIPTS",
+      "result": "Review-first PRs, no merge credit"
+    }
+  ],
+  "links": [
+    {
+      "label": "CODEX portal",
+      "href": "index.html",
+      "group": "presentation"
+    },
+    {
+      "label": "MissionControl six-panel surface",
+      "href": "missioncontrol_mycelium.html",
+      "group": "presentation"
+    },
+    {
+      "label": "Existing graph explorer",
+      "href": "missioncontrol_graph_explorer.html",
+      "group": "presentation"
+    },
+    {
+      "label": "MissionControl BD snapshot",
+      "href": "missioncontrol_status_snapshot.html",
+      "group": "presentation"
+    },
+    {
+      "label": "CODEX authenticated transport",
+      "href": "https://github.com/GBOGEB/CODEX/actions/workflows/missioncontrol-authenticated-transport.yml",
+      "group": "workflow"
+    },
+    {
+      "label": "CODEX #977 executor promotion",
+      "href": "https://github.com/GBOGEB/CODEX/issues/977",
+      "group": "governance"
+    },
+    {
+      "label": "CODEX #975 materialization repair",
+      "href": "https://github.com/GBOGEB/CODEX/pull/975",
+      "group": "history"
+    },
+    {
+      "label": "ABACUS #1860 admission",
+      "href": "https://github.com/GBOGEB/ABACUS/issues/1860",
+      "group": "governance"
+    },
+    {
+      "label": "ABACUS native workflows",
+      "href": "https://github.com/GBOGEB/ABACUS/actions",
+      "group": "workflow"
+    },
+    {
+      "label": "QPS pipeline hub",
+      "href": "https://github.com/GBOGEB/pipeline-automation-hub",
+      "group": "federation"
+    },
+    {
+      "label": "Cryoplant source repo",
+      "href": "https://github.com/GBOGEB/cryoplant-project",
+      "group": "federation"
+    }
+  ],
+  "sipoc": [
+    {
+      "supplier": "Owner + GitHub source",
+      "input": "Intent, base SHA, bounded authority",
+      "process": "Freeze → qualify → dependency DAG",
+      "output": "Staged request (no launch)",
+      "customer": "CODEX scheduler"
+    },
+    {
+      "supplier": "CODEX gateway",
+      "input": "Policy / source head",
+      "process": "Fail-closed stage-only transport",
+      "output": "Nonmutating staged receipt",
+      "customer": "ABACUS owner"
+    },
+    {
+      "supplier": "ABACUS executor",
+      "input": "Authorized exact-head local runner and path lock",
+      "process": "Disjoint execution → first-red → CI",
+      "output": "Native run/job/attempt receipt",
+      "customer": "ABACUS admission"
+    },
+    {
+      "supplier": "CI + eligible humans",
+      "input": "Exact SHA + security + approvals",
+      "process": "Independent gate evaluation / serial merge",
+      "output": "Verified main SHA or HOLD",
+      "customer": "CODEX REX receiver"
+    },
+    {
+      "supplier": "REX and census",
+      "input": "Run artifacts, matched coverage population",
+      "process": "Authenticate → diff → publish",
+      "output": "Coverage and root delta or UNKNOWN",
+      "customer": "Mission Control viewers"
+    }
+  ]
+}
