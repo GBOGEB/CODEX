@@ -24,7 +24,9 @@ jobs:
           python -m pip install playwright pytest
           python -m playwright install --with-deps chromium
       - name: Run source-contract tests
-        run: python -m pytest tests/test_missioncontrol_federated_launchpad.py -q
+        run: python -m pytest tests/test_missioncontrol_federated_launchpad.py tests/test_missioncontrol_federated_crosswalk.py -q
+      - name: Crosswalk into existing Mycelium validator
+        run: python scripts/missioncontrol_federated_crosswalk.py
       - name: Run responsive browser QA
         run: python scripts/qa_missioncontrol_federated_launchpad.py --docs-dir docs --output-dir artifacts/mc-federated-qa
       - name: Upload screenshots and source digests
