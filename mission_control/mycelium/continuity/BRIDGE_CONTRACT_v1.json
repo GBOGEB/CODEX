@@ -1,0 +1,25 @@
+{
+  "schema":"code-purple.mycelium.bridge-contract.v1",
+  "adapter":"CODEX_MYCELIUM_CONTINUITY_READONLY",
+  "owner":"GBOGEB/CODEX:mission_control/mycelium/control_manifest.yaml",
+  "authority_transfer":false,
+  "formal_credit_delta":0,
+  "engineering_credit_delta":0,
+  "mutation_enabled":false,
+  "execution_contract":"GBOGEB/CODEX:mission_control/mycelium/execution_gateway_contract.yaml",
+  "dependencies":[
+    {"authority":"GBOGEB/CODEX","role":"UI_GOVERNANCE","bridge":"READ_ONLY_REFERENCE"},
+    {"authority":"GBOGEB/pipeline-automation-hub","role":"SIPOC_PLANNER_AND_GOLDEN_THREAD","bridge":"TYPED_READ_ONLY_ADAPTER"},
+    {"authority":"GBOGEB/ABACUS","role":"BD_LDAB_ROOT_AND_NATIVE_CI","bridge":"EXTERNAL_OWNER_RECEIPT_REQUIRED"},
+    {"authority":"GBOGEB/cryoplant-project","role":"CHILD_ENGINEERING_AUTHORITY","bridge":"DEFER_UNTIL_QPS_ACCEPTANCE"},
+    {"authority":"GBOGEB/gg_MATH","role":"STATISTICS_DIAGNOSTICS","bridge":"MATCHED_TRIALS_REQUIRED"}
+  ],
+  "graph_semantics":{
+    "universal_reference_cycles":"PERMITTED",
+    "executable_sipoc_cycles":"REJECTED",
+    "receipt_promotions":"EXACT_ARTIFACT_BYTES_SHA256_REQUIRED",
+    "root_closure":"OWNER_AND_INDEPENDENT_REVIEW_REQUIRED"
+  },
+  "admission":"HOLD",
+  "dispatch":"STAGED_NOT_LAUNCHED"
+}
