@@ -1,0 +1,62 @@
+name: CODE PURPLE Swift roof MIP native TestFlight
+on:
+  pull_request:
+    paths:
+      - 'scripts/swift_roof_mip.py'
+      - 'scripts/lldb_dap_runtime_probe.py'
+      - 'tests/runtime/test_swift_roof_mip.py'
+      - 'runtime/debug/swift_roof/**'
+      - '.github/workflows/swift-roof-mip-testflight.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  census-contract:
+    name: P1 native inventory and adversarial contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Exact-HEAD testflight and fail-closed census
+        shell: bash
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          python -m unittest discover -s tests/runtime -p test_swift_roof_mip.py -v
+          python scripts/swift_roof_mip.py --mode census --expected-head "$EXPECTED_HEAD" --out /tmp/swift-roof-census
+      - name: Publish P1 receipt
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: swift-roof-p1-${{ github.event.pull_request.head.sha || github.sha }}
+          path: /tmp/swift-roof-census
+          if-no-files-found: warn
+  native-macos:
+    name: P2 macOS Swift compile plus real LLDB stop proof
+    needs: census-contract
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Build probe and strictly verify native evidence
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          GITHUB_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXACT_HEAD"
+          mkdir -p /tmp/swift-roof-native
+          python scripts/lldb_dap_runtime_probe.py --mode probe --receipt /tmp/swift-roof-native/native.json
+          python scripts/swift_roof_mip.py --mode verify --expected-head "$EXACT_HEAD" --receipt /tmp/swift-roof-native/native.json --out /tmp/swift-roof-native/roof
+      - name: Publish native receipt even when red
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: swift-roof-p2-${{ github.event.pull_request.head.sha || github.sha }}
+          path: /tmp/swift-roof-native
+          if-no-files-found: warn
