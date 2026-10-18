@@ -50,7 +50,7 @@ jobs:
           ATTEMPT: ${{ github.run_attempt }}
         run: |
           set -euo pipefail
-          python mission_control/mycelium/ops_dag/ops_dag.py --input mission_control/mycelium/ops_dag/W33_SELECTED_OBSERVATIONS.json --out w33_task_receipts --head "$HEAD_SHA" --run-id "$RUN_ID" --attempt "$ATTEMPT"
+          python mission_control/mycelium/ops_dag/ops_dag.py --input mission_control/mycelium/ops_dag/W33_SELECTED_OBSERVATIONS.json --out w33_task_receipts --head "$HEAD_SHA" --run-id "$RUN_ID" --attempt "$ATTEMPT" --previous mission_control/mycelium/ops_dag/W33_PRE_TERMINAL_OBSERVATIONS.json
           python mission_control/mycelium/ops_dag/ops_dag.py --input mission_control/mycelium/ops_dag/W33_SELECTED_OBSERVATIONS.json --out w33_task_receipts --head "$HEAD_SHA" --verify-only
       - name: Retain hash-bound read-only native projection
         if: always()
