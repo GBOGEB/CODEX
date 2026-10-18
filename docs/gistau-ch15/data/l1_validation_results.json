@@ -5,18 +5,16 @@
   "gate": "governance/physics/CH15_CANONICAL_VALIDATION.yaml",
   "note": "recorded from the 'L1 record' annotation of the PR-time CI crosscheck; CI fails if it drifts",
   "recorded_from": {
-   "codex_head": "43a58d68e63e9fb6061d70365232caafb6fd2eea",
-   "run_id": 39116863100,
+   "codex_head": "571d9cdff16b31b85d410c5fe3bbe8c68c8e790f",
+   "run_id": 39170176913,
    "workflow": "GISTAU Physics Crosscheck"
   }
  },
  "record": {
   "coolprop_version": "7.2.0",
-  "examples_checked": 4,
+  "examples_checked": 5,
   "examples_excluded": 7,
-  "examples_source_check_required": [
-   "WE-T05-CRYOGENIC-COMPRESSOR-001"
-  ],
+  "examples_source_check_required": [],
   "rows": [
    {
     "computed": 1563.3194,
@@ -139,34 +137,54 @@
     "verdict": "PASS"
    },
    {
-    "computed": 9.1051942,
-    "deviation": 1.385,
+    "computed": 29.024205,
+    "deviation": 0.004205,
+    "deviation_kind": "abs",
+    "example_id": "WE-T05-CRYOGENIC-COMPRESSOR-001",
+    "expected": 29.02,
+    "quantity": "inlet_enthalpy_j_g",
+    "tolerance": 0.05,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 7.7217975,
+    "deviation": 0.001798,
     "deviation_kind": "abs",
     "example_id": "WE-T05-CRYOGENIC-COMPRESSOR-001",
     "expected": 7.72,
     "quantity": "outlet_temperature_k",
     "tolerance": 0.05,
-    "verdict": "OPEN_MISMATCH"
+    "verdict": "PASS"
    },
    {
-    "computed": 49.148796,
-    "deviation": 6.779,
+    "computed": 42.365367,
+    "deviation": -0.004633,
     "deviation_kind": "abs",
     "example_id": "WE-T05-CRYOGENIC-COMPRESSOR-001",
     "expected": 42.37,
     "quantity": "outlet_enthalpy_j_g",
     "tolerance": 0.05,
-    "verdict": "OPEN_MISMATCH"
+    "verdict": "PASS"
    },
    {
-    "computed": 8049.8364,
-    "deviation": 0.5086,
+    "computed": 5336.4646,
+    "deviation": 8.707e-05,
     "deviation_kind": "rel",
     "example_id": "WE-T05-CRYOGENIC-COMPRESSOR-001",
     "expected": 5336.0,
     "quantity": "power_w",
     "tolerance": 0.01,
-    "verdict": "OPEN_MISMATCH"
+    "verdict": "PASS"
+   },
+   {
+    "computed": 13.341161,
+    "deviation": 8.707e-05,
+    "deviation_kind": "rel",
+    "example_id": "WE-T05-CRYOGENIC-COMPRESSOR-001",
+    "expected": 13.34,
+    "quantity": "real_enthalpy_change_j_g",
+    "tolerance": 0.01,
+    "verdict": "PASS"
    }
   ],
   "status": "PASS"

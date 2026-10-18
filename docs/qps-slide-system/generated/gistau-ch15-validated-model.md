@@ -9,7 +9,7 @@ _OVERVIEW · Slide 1_
 
 - Chapter 15 thermodynamic tools rebuilt as code, a CI-gated validation and an online engineering portal.
 - Helium-4 physics is governed by GBOGEB/ABACUS at 4c2f669 (CoolProp==7.2.0); CODEX consumes it and never governs it.
-- L1 validated model: 4 of 4 checked worked examples reproduce the book (12 of 12 quantities); 1 open pending a source check.
+- L1 validated model: 5 of 5 checked worked examples reproduce the book (17 of 17 quantities); no open items; 1 printed book cell recorded as an erratum.
 
 ### Objectives
 
@@ -46,25 +46,25 @@ _VALIDATION · Slide 3_
 - **T02 free expansion, 14 to 1 bar + 100 W**: result: pass; book vs provider: T out 19.16 vs 19.1586 K · h in 101.92 vs 101.922 J/g · h out 103.92 vs 103.922 J/g
 - **T02 mass flow from heat input**: result: pass; book vs provider: ṁ 7.39 vs 7.38449 g/s · h in 106.67 vs 106.674 J/g · h out 120.21 vs 120.216 J/g
 - **T04 expander, 14 to 1.2 bar**: result: pass; book vs provider: T out 12.93 vs 12.9344 K · h out 70.85 vs 70.8532 J/g · P -2981.6 vs -2981.63 W
-- **T05 cold compressor, 0.5 to 1.7 bar**: result: open (source check); book vs provider: T out 7.72 vs 9.10519 K · h out 42.37 vs 49.1488 J/g · P 5336 vs 8049.84 W
+- **T05 cold compressor, 0.5 to 1.2 bar**: result: pass; book vs provider: h in 29.02 vs 29.0242 J/g · T out 7.72 vs 7.7218 K · h out 42.37 vs 42.3654 J/g · P 5336 vs 5336.46 W · Δh real 13.34 vs 13.3412 J/g
 
 ### Notes
 
 - Tolerances: 0.05 K, 0.05 J/g, 0.005 J/g·K, 0.5 % density, 1 % derived.
 - 7 examples excluded with a stated reason (HEPAK two-phase, ambiguous transcription); never counted as passing.
-- Recorded from CI run 39116863100; CI fails if the record drifts.
+- Recorded from CI run 39170176913; CI fails if the record drifts.
 
 ---
 
-# Open item: T05 cryogenic compressor
+# Source check: T05 cryogenic compressor
 
 _VALIDATION · Slide 4_
 
-- First CI run (ABACUS 4c2f669, CoolProp 7.2.0): inlet state agrees with the book (h1 29.03 J/g both), but the book's implied work 5336 W / 400 g/s = 13.34 J/g is below the isentropic work for 0.5 -> 1.7 bar from 5 K (15.09 J/g), which is impossible for eta_s = 0.75. Verify outlet pressure, efficiency and inlet temperature in Fig. 15.31, p. 638.
+- Book erratum, cell K7 (dH isent, J/g): printed 17.79. Printed K7 equals L7 / eta (13.34 / 0.75). The governing provider gives an isentropic rise of 10.01 J/g for 0.5 -> 1.2 bar from 5 K (CI run 39169436822); 10.01 / 0.75 = 13.34 J/g reproduces the printed L7, and the printed h1, T2, h2 and power all agree within tolerance. Transcription corrected 2026-10-18 from the printed book (outlet 1.20 bar, was 1.70).
 
 ### Changes
 
-- Verify Fig. 15.31 (p. 638) against the printed book: inlet temperature, outlet pressure, efficiency.
+- Resolved: transcription checked against the printed book; the erratum cell is recorded, never compared.
 
 ---
 
@@ -132,7 +132,7 @@ _PLAN · Slide 9_
 
 ### Checklist
 
-- **T05**: next: Correct the Fig. 15.31 transcription from the printed book, re-record L1; state: open
+- **T05**: next: Fig. 15.31 checked against the printed book; L1 re-recorded with T05 checked; state: done
 - **Ch.3**: next: Add the GISTAU Chapter 3 source and build the book navigator; state: open
 - **HEPAK**: next: Bind HEPAK receipts to validate the two-phase examples (T ≤ 4.5 K); state: open
 - **L2**: next: QPS Line-S triage scenarios on the validated provider; state: planned
