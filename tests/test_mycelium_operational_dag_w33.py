@@ -274,6 +274,43 @@ class W33OperationalDagTests(unittest.TestCase):
         self.assertFalse(r["stability"]["six_sigma_qualified"])
         self.assertTrue(all(p["capacity_state"]=="UNKNOWN" for p in r["pools"]))
 
+    def test_lossless_prior_exact_identity_transition(self):
+        prior=json.loads((HOME/"W33_PRE_TERMINAL_OBSERVATIONS.json").read_text())
+        d=m.compare(prior,self.d)
+        self.assertTrue(d["comparable_state_snapshot"])
+        self.assertTrue(d["same_native_run_job_attempt_heads"])
+        self.assertEqual(d["new_terminal_native_successes"],3)
+        self.assertEqual(d["new_ready_proposals"],1)
+        self.assertEqual(d["native_failed_delta"],0)
+        self.assertEqual(d["queue_sample_before"],0)
+        self.assertEqual(d["queue_sample_after"],13)
+        self.assertEqual(d["queue_p95_current_s"],2910.0)
+        self.assertIsNone(d["queue_p95_matched_delta_s"])
+        self.assertEqual(len(d["state_transitions"]),4)
+        self.assertIsNone(d["formal_causal_root_closures"])
+
+    def test_mixed_native_job_attempts_disallow_temporal_credit(self):
+        prior=json.loads((HOME/"W33_PRE_TERMINAL_OBSERVATIONS.json").read_text())
+        new=self.mutate()
+        new["tasks"][0]["native"]["attempt"]=2
+        delta=m.compare(prior,new)
+        self.assertFalse(delta["comparable_state_snapshot"])
+        self.assertFalse(delta["same_native_run_job_attempt_heads"])
+        self.assertIsNone(delta["new_terminal_native_successes"])
+
+    def test_temporal_bundle_is_separately_sha256_verified(self):
+        prior=json.loads((HOME/"W33_PRE_TERMINAL_OBSERVATIONS.json").read_text())
+        with tempfile.TemporaryDirectory() as root:
+            out=Path(root)
+            receipt=m.build(self.d,out,SHA,run_id=123,attempt=1,previous=prior)
+            self.assertIn("W33_TEMPORAL_DELTA.json",receipt["files"])
+            self.assertEqual(m.verify(out,SHA),receipt)
+            delta=json.loads((out/"W33_TEMPORAL_DELTA.json").read_text())
+            self.assertEqual(delta["new_terminal_native_successes"],3)
+            (out/"W33_TEMPORAL_DELTA.json").write_text("{}")
+            with self.assertRaisesRegex(ValueError,"RECEIPT_HASH_DRIFT"):
+                m.verify(out,SHA)
+
     def test_no_false_stability_or_six_sigma(self):
         report=self.report()
         self.assertFalse(report["stability"]["stable"])
