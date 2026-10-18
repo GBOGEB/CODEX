@@ -114,12 +114,17 @@ def validate(data: object) -> dict:
             and data["phase_gates"].get("perpetuate", "").startswith("WITHHELD"),
             "MIP_GLOBAL_PROMOTION")
 
+    require(data.get("parallel_path_epoch") == "SOURCE_DIFF_READBACK_FROZEN_AS_OF_2026_10_19",
+            "UNPINNED_PATH_CENSUS")
     lanes = data.get("parallel_lanes")
     require(type(lanes) is list and len(lanes) >= 4
             and len({l["id"] for l in lanes}) == len(lanes)
             and len({(l["repo"], l["pr"]) for l in lanes}) == len(lanes),
             "INVALID_DISJOINT_LANES")
     for lane in lanes:
+        require(lane.get("path_evidence_class") ==
+                "FROZEN_GITHUB_PR_CHANGED_FILENAMES_NOT_ACTIVE_LEASE",
+                "PATH_SNAPSHOT_NOT_RUNNER_LOCK")
         require(lane.get("repo") in {"GBOGEB/ABACUS", "GBOGEB/CODEX"}
                 and type(lane.get("pr")) is int and lane["pr"] > 0,
                 "INVALID_LANE_OWNER")
@@ -186,6 +191,8 @@ def evaluate(data: dict, *, candidate_head: str, raw_sha256: str) -> dict:
             "eligible_causal_root_closure_count": None,
         },
         "source_path_disjoint": True,
+        "path_disjoint_evidence_class": "FROZEN_PR_DIFF_NOT_A_LEASE",
+        "live_current_pr_diff_verified": False,
         "parallel_lanes_declared": len(data["parallel_lanes"]),
         "actual_free_worker_capacity": None,
         "dispatch_permitted": False,
