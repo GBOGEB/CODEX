@@ -93,6 +93,9 @@ class W33OperationalDagTests(unittest.TestCase):
     def test_queued_false_green_rejected(self):
         d=self.mutate()
         target=next(t for t in d["tasks"] if t["id"]=="w29.new.ub310")
+        # The authentic N+1 observation is now green. Force an impossible
+        # queued+success combination rather than assuming the old queue state.
+        target["status"]="queued"
         target["conclusion"]="success"
         with self.assertRaisesRegex(ValueError,"UNTRUSTWORTHY_OUTCOME"):
             m.validate(d)
