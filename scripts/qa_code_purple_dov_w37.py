@@ -107,6 +107,8 @@ def new_page(browser, scenario, viewport=(1280,800)):
 def run(out, head):
     assert len(head)==40 and set(head)<=set("0123456789abcdef"), "INVALID_HEAD"
     out.mkdir(parents=True,exist_ok=True)
+    published=json.loads((ROOT/"MANIFEST.json").read_text())["published_pages"]
+    assert published.count("docs/code-purple-dov.html")==1, "UNREGISTERED_DOV_PUBLIC_ENTRYPOINT"
     server=ThreadingHTTPServer(("127.0.0.1",0), QuietHandler)
     thread=threading.Thread(target=server.serve_forever,daemon=True)
     thread.start()
