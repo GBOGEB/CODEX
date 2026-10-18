@@ -1,0 +1,64 @@
+name: CODE PURPLE W30 Parallel SPINE Native Qualification
+on:
+  pull_request:
+    paths:
+      - 'mission_control/mycelium/five_axis/spine_w30.py'
+      - 'mission_control/mycelium/five_axis/W30_SELECTED_NATIVE.json'
+      - 'mission_control/mycelium/five_axis/W30_PARALLEL_SPINE.md'
+      - 'tests/test_five_axis_spine_w30.py'
+      - '.github/workflows/five-axis-spine-w30.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: w30-spine-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  spine:
+    name: W30 SPINE ${{ matrix.os }} / Python ${{ matrix.py }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-24.04, py: '3.10'}
+          - {os: ubuntu-24.04, py: '3.11'}
+          - {os: ubuntu-24.04, py: '3.12'}
+          - {os: windows-2022, py: '3.11'}
+    steps:
+      - name: Checkout exact candidate with no persisted credentials
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Set up explicit interpreter
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.py }}
+      - name: Exact SHA and adversarial contract
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          python -m unittest discover -s tests -p 'test_five_axis_spine_w30.py' -v
+      - name: Generate deterministic DAG SIPOC SPINE and browser-safe HTML
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          python mission_control/mycelium/five_axis/spine_w30.py --input mission_control/mycelium/five_axis/W30_SELECTED_NATIVE.json --out w30_receipts --head "$SOURCE_SHA" --run-id "$RUN_ID" --attempt "$RUN_ATTEMPT"
+          python mission_control/mycelium/five_axis/spine_w30.py --input mission_control/mycelium/five_axis/W30_SELECTED_NATIVE.json --out w30_receipts --head "$SOURCE_SHA" --verify-only
+      - name: Preserve SHA256 receipts and HTML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: w30-spine-${{ matrix.os }}-py${{ matrix.py }}-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: w30_receipts/
+          if-no-files-found: error
+          retention-days: 30
