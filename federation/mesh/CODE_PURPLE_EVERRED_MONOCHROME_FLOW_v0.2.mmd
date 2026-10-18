@@ -29,6 +29,13 @@ flowchart LR
   S08 -.->|"PAY_IT_FORWARD independent consumer"| S04
   S08 -->|"sanitized read-only"| REX
 
+  %% Contract legend: dotted = .self re-entry; dashed = pay_it_forward lateral.
+  %% Mermaid draws every -.-> identically, so the two are separated by explicit
+  %% stroke patterns. Indices are 0-based link order: 13 = SELF_REENTRY,
+  %% 14 = PAY_IT_FORWARD (tests/test_code_purple_mono_reader.py guards this).
+  linkStyle 13 stroke-dasharray:2 4;
+  linkStyle 14 stroke-dasharray:10 5;
+
   classDef default fill:#ffffff,color:#111111,stroke:#333333,stroke-width:1.5px;
   classDef gate fill:#eeeeee,color:#111111,stroke:#111111,stroke-width:3px;
   class S04,S07,HOLD gate;
