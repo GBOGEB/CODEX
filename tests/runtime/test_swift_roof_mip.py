@@ -187,13 +187,13 @@ class ProducerHeadContract(unittest.TestCase):
     def test_exact_checkout_sha_wins_over_synthetic_pr_event_sha(self):
         p = self.producer
         with self.mock.patch.dict(p.os.environ, {'GITHUB_SHA': 'b'*40, 'EXACT_HEAD': SHA}):
-            with self.mock.patch.object(p, 'run', return_value={'returncode':0,'stdout':SHA+'\\n'}):
+            with self.mock.patch.object(p, 'run', return_value={'returncode':0,'stdout':SHA+'\n'}):
                 self.assertEqual(p.git_sha(), SHA)
 
     def test_mismatched_checkout_head_fails_closed(self):
         p = self.producer
         with self.mock.patch.dict(p.os.environ, {'GITHUB_SHA': SHA, 'EXACT_HEAD': 'b'*40}):
-            with self.mock.patch.object(p, 'run', return_value={'returncode':0,'stdout':SHA+'\\n'}):
+            with self.mock.patch.object(p, 'run', return_value={'returncode':0,'stdout':SHA+'\n'}):
                 with self.assertRaisesRegex(RuntimeError, 'expected PR head'):
                     p.git_sha()
 
@@ -216,7 +216,7 @@ class ProducerHeadContract(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             with self.mock.patch.dict(p.os.environ, {'GITHUB_SHA':'b'*40,'EXACT_HEAD':SHA,
                                                      'GITHUB_REPOSITORY':roof.CODEX}):
-                with self.mock.patch.object(p,'run',return_value={'returncode':0,'stdout':SHA+'\\n'}):
+                with self.mock.patch.object(p,'run',return_value={'returncode':0,'stdout':SHA+'\n'}):
                     with self.mock.patch.object(p,'classify_surfaces',return_value={}):
                         r=p.emit_receipt(Path(tmp)/'native.json',{'status':'ACCEPT','steps':2})
             self.assertEqual(r['exact_head_sha'],SHA)
