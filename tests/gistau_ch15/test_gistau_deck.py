@@ -45,6 +45,12 @@ def test_every_deck_slide_is_registered():
 
 
 def test_deck_carries_no_open_item_as_passing():
+    deck = yaml.safe_load(CONTENT.read_text(encoding="utf-8"))
+    gate = yaml.safe_load((REPO_ROOT / "governance/physics/CH15_CANONICAL_VALIDATION.yaml").read_text(encoding="utf-8"))
+    checklist = {row["id"]: row["result"] for s in deck["slides"] if s["section"] == "VALIDATION" for row in s.get("checklist", []) if "result" in row}
+    builder = _builder()
+    for eid in gate.get("source_check_required", {}) or {}:
+        assert checklist[builder.EXAMPLE_NAMES.get(eid, eid)] == "open (source check)"
     text = CONTENT.read_text(encoding="utf-8")
-    assert "open (source check)" in text
-    assert "T05 cold compressor, 0.5 to 1.7 bar" in text
+    for e in (gate.get("book_errata", {}) or {}).values():
+        assert f"cell {e['cell']}" in text  # an erratum is shown, never silently dropped

@@ -79,6 +79,7 @@ def render() -> str:
     pending = rec in (None, "PENDING_FIRST_CI_RECORD")
     rows = [] if pending else rec["rows"]
     open_items = gate.get("source_check_required", {}) or {}
+    errata = gate.get("book_errata", {}) or {}
 
     def status_of(eid: str) -> tuple[str, str]:
         if eid in gate["checked"]:
@@ -129,6 +130,10 @@ def render() -> str:
             )
         if eid in open_items:
             body += f'<p class="why open-why"><strong>Why open:</strong> {_e(open_items[eid])}</p>'
+        if eid in errata:
+            e = errata[eid]
+            body += (f'<p class="why"><strong>Book erratum, cell {_e(e["cell"])}</strong> '
+                     f'(printed {_e(_fmt(e["printed"]))}, not compared): {_e(e["finding"])}</p>')
         if eid in gate["excluded"]:
             body += f'<p class="why"><strong>Why excluded:</strong> {_e(gate["excluded"][eid])}</p>'
         cards.append(f'<article class="ex {cls}" id="{_e(eid)}">{head}{body}</article>')
@@ -139,8 +144,9 @@ def render() -> str:
         "The CI record has not been committed yet."
         if pending
         else f"{n_pass} of {len(gate['checked'])} checked examples reproduce the book within its printed precision "
-        f"({n_q_pass} of {n_q} quantities). {len(open_items)} example is open pending a source check; "
-        f"{len(gate['excluded'])} are excluded with a stated reason."
+        f"({n_q_pass} of {n_q} quantities). "
+        + (f"{len(open_items)} example is open pending a source check; " if open_items else "No example is open; ")
+        + f"{len(gate['excluded'])} are excluded with a stated reason."
     )
     tol = gate["tolerances"]
     return f"""<!doctype html>

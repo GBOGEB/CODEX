@@ -33,7 +33,7 @@ EXAMPLE_NAMES = {
     "WE-T02-FREE-EXPANSION-HEAT-001": "T02 free expansion, 14 to 1 bar + 100 W",
     "WE-T02-MASS-FLOW-004": "T02 mass flow from heat input",
     "WE-T04-CRYOGENIC-EXPANDER-001": "T04 expander, 14 to 1.2 bar",
-    "WE-T05-CRYOGENIC-COMPRESSOR-001": "T05 cold compressor, 0.5 to 1.7 bar",
+    "WE-T05-CRYOGENIC-COMPRESSOR-001": "T05 cold compressor, 0.5 to 1.2 bar",
 }
 QUANTITIES = {
     "enthalpy_j_g": ("h", "J/g"), "entropy_j_gk": ("s", "J/g·K"), "density_kg_m3": ("ρ", "kg/m³"),
@@ -66,6 +66,7 @@ def build() -> dict[str, Any]:
     nist = xc["nist_reference"]
     b = _backend()
     open_items = gate.get("source_check_required", {}) or {}
+    errata = gate.get("book_errata", {}) or {}
 
     checked_rows = [r for r in rec["rows"] if r["example_id"] in gate["checked"]]
     n_pass_q = sum(1 for r in checked_rows if r["verdict"] == "PASS")
@@ -99,7 +100,8 @@ def build() -> dict[str, Any]:
             "body": [
                 "Chapter 15 thermodynamic tools rebuilt as code, a CI-gated validation and an online engineering portal.",
                 f"Helium-4 physics is governed by {auth['repository']} at {auth['commit_sha'][:7]} ({auth['runtime_dependency']}); CODEX consumes it and never governs it.",
-                f"L1 validated model: {n_pass_ex} of {len(gate['checked'])} checked worked examples reproduce the book ({n_pass_q} of {len(checked_rows)} quantities); {len(open_items)} open pending a source check.",
+                f"L1 validated model: {n_pass_ex} of {len(gate['checked'])} checked worked examples reproduce the book ({n_pass_q} of {len(checked_rows)} quantities); "
+                + (f"{len(open_items)} open pending a source check." if open_items else f"no open items; {len(errata)} printed book cell recorded as an erratum."),
             ],
             "objectives": [
                 "L0 parse and trace: book source to tuples to source snippets",
@@ -137,10 +139,14 @@ def build() -> dict[str, Any]:
             ],
         },
         {
-            "title": "Open item: T05 cryogenic compressor",
+            "title": "Source check: T05 cryogenic compressor",
             "section": "VALIDATION",
-            "body": [open_items[eid] for eid in open_items] or ["No open items."],
-            "changes": ["Verify Fig. 15.31 (p. 638) against the printed book: inlet temperature, outlet pressure, efficiency."],
+            "body": [open_items[eid] for eid in open_items] + [
+                f"Book erratum, cell {e['cell']}: printed {e['printed']:g}. {e['finding']}" for e in errata.values()
+            ] or ["No open items."],
+            "changes": ["Open: verify Fig. 15.31 (p. 638) against the printed book."] if open_items else [
+                "Resolved: transcription checked against the printed book; the erratum cell is recorded, never compared."
+            ],
         },
         {
             "title": "Independent reference: NIST TN 1334",
@@ -194,7 +200,7 @@ def build() -> dict[str, Any]:
             "title": "Next steps",
             "section": "PLAN",
             "checklist": [
-                {"id": "T05", "next": "Correct the Fig. 15.31 transcription from the printed book, re-record L1", "state": "open"},
+                {"id": "T05", "next": "Fig. 15.31 checked against the printed book; L1 re-recorded with T05 checked", "state": "open" if open_items else "done"},
                 {"id": "Ch.3", "next": "Add the GISTAU Chapter 3 source and build the book navigator", "state": "open"},
                 {"id": "HEPAK", "next": "Bind HEPAK receipts to validate the two-phase examples (T ≤ 4.5 K)", "state": "open"},
                 {"id": "L2", "next": "QPS Line-S triage scenarios on the validated provider", "state": "planned"},
