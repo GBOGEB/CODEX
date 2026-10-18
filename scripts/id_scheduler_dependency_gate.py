@@ -91,11 +91,14 @@ def validate(metrics, tasks, *, max_proposals=4):
     need(type(max_proposals) is int and 0<=max_proposals<=4, "UNBOUNDED_PROPOSAL_SIZE")
     need(type(tasks) is list and 0<len(tasks)<=100, "INVALID_REQUEST_POPULATION")
     ids=set()
+    task_ids=set()
     for request in tasks:
         identity=request.get("id")
         need(type(identity) is str and identity and identity not in ids,
              "DUPLICATE_PROPOSAL")
         ids.add(identity)
+        need(request.get("task_id") not in task_ids, "DUPLICATE_LOGICAL_WORK")
+        task_ids.add(request.get("task_id"))
         need(request.get("task_id") in states and
              request.get("repo") in sources and
              request.get("pool") in pools, "UNKNOWN_NATIVE_OR_POOL_OWNER")
