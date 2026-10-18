@@ -1,0 +1,54 @@
+name: CODE PURPLE W31 Read-only Census
+'on':
+  pull_request:
+    paths:
+      - 'mission_control/mycelium/five_axis/census_w31.py'
+      - 'mission_control/mycelium/five_axis/W31_FRESH_READBACK.json'
+      - 'tests/test_five_axis_census_w31.py'
+      - '.github/workflows/five-axis-census-w31.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: w31-census-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  census:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Exact immutable checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Exact SHA and regression tests
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$HEAD_SHA"
+          python -m unittest discover -s tests -p 'test_five_axis_census_w31.py' -v
+      - name: Derive verified read-only census
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          python mission_control/mycelium/five_axis/census_w31.py --input mission_control/mycelium/five_axis/W31_FRESH_READBACK.json --out w31_receipts --head "$HEAD_SHA" --run-id "$RUN_ID" --attempt "$RUN_ATTEMPT"
+          python mission_control/mycelium/five_axis/census_w31.py --input mission_control/mycelium/five_axis/W31_FRESH_READBACK.json --out w31_receipts --head "$HEAD_SHA" --verify-only
+      - name: Preserve SHA256 receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: w31-readonly-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: w31_receipts/
+          if-no-files-found: error
+          retention-days: 30
