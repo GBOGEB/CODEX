@@ -33,7 +33,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout CODEX
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@v7
 
       - name: Setup Python
         uses: actions/setup-python@v7.0.0
@@ -54,7 +54,7 @@ jobs:
           PY
 
       - name: Checkout ABACUS at the pinned commit
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@v7
         with:
           repository: ${{ steps.pin.outputs.repository }}
           ref: ${{ steps.pin.outputs.sha }}

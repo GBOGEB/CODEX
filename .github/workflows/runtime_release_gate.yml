@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v7.0.0
         with: {python-version: '3.12'}
       - run: |
@@ -57,7 +57,7 @@ jobs:
     timeout-minutes: 20
     needs: rtm-generation
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v7.0.0
         with: {python-version: '3.12'}
       - run: |
@@ -89,7 +89,7 @@ jobs:
     timeout-minutes: 20
     needs: runtime-evidence
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v7.0.0
         with: {python-version: '3.12'}
       - run: |
@@ -136,7 +136,7 @@ jobs:
     timeout-minutes: 10
     needs: governance-checks
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7
       - uses: actions/download-artifact@v8
         with: {name: runtime-evidence-artifacts}
       - uses: actions/download-artifact@v8

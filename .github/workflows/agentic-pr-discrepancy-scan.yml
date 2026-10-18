@@ -37,7 +37,7 @@ jobs:
        github.event.issue.pull_request != null &&
        github.event.comment.user.type != 'Bot')
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7
       - name: Scan PR context
         run: |
           mkdir -p AGENTIC METRICS

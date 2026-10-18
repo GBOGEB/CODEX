@@ -27,7 +27,7 @@ jobs:
   quality-census:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7
       - name: Classify actual checkout SHA
         shell: bash
         env:
@@ -84,7 +84,7 @@ jobs:
   ubi9-runtime:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7
       - name: Classify actual checkout SHA
         shell: bash
         env:
@@ -161,7 +161,7 @@ jobs:
     if: always() && needs.quality-census.result == 'success' && needs.ubi9-runtime.result == 'success'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v7.0.0
         with:
           python-version: '3.12'

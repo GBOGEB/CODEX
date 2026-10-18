@@ -30,7 +30,7 @@ jobs:
       escalate:      ${{ steps.metrics.outputs.escalate }}
 
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0   # full history for commit-level metrics
 
@@ -260,7 +260,7 @@ jobs:
     if: needs.collect-metrics.outputs.escalate == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7
 
       - name: Open escalation issue
         uses: actions/github-script@v9

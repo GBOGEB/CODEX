@@ -13,7 +13,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Checkout CODEX proof carrier
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@v7
       - name: Prove runner admission
         run: |
           echo "runner_os=$RUNNER_OS"
