@@ -110,6 +110,21 @@ class ConvergenceControlContract(unittest.TestCase):
         self.assertIsNone(s["bd_open"])
         self.assertIsNone(s["bd_closed"])
 
+    def test_six_ordinary_merges_are_not_six_admissions(self):
+        rows = self.ledger["disjoint_lanes"]
+        summary = self.ledger["lane_rollup"]
+        self.assertEqual((summary["observed_ordinary_merged"],
+                          summary["selected_pr_population"]), (6, 6))
+        self.assertIsNone(summary["governed_accepted"])
+        self.assertIsNone(summary["formally_closed_causal_roots"])
+        self.assertEqual(len({r["observed_merge_sha"] for r in rows}), 6)
+        for row in rows:
+            self.assertEqual(row["status"], "MERGED_ORDINARY_ADMISSION_UNVERIFIED")
+            self.assertRegex(row["observed_pr_head"], r"^[0-9a-f]{40}$")
+            self.assertRegex(row["observed_merge_sha"], r"^[0-9a-f]{40}$")
+            self.assertIsNone(row["governed_admission"])
+            self.assertIsNone(row["accepted_root_closure"])
+
     def test_live_metrics_are_fail_closed(self):
         self.assertIn('id="ordinaryIssues"', self.html)
         self.assertIn('id="w32NativeCases"', self.html)
