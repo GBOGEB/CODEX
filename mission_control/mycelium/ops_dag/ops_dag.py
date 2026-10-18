@@ -341,72 +341,206 @@ def compare(previous,current):
 
 
 def viewer(report, layers, data):
-    # All displayed values enter via textContent. Payload is JSON in a non-executing element.
+    """Create a real edge-connected, local-only task-instance DAG review surface.
+
+    Node/link identity is immutable source data; no in-browser scheduler,
+    network fetch, token, gateway, or status/authority changes are implemented.
+    """
     payload=json.dumps({"report":report,"layers":layers,"edges":data["edges"]},
                        separators=(",",":"),ensure_ascii=True).replace("<","\\u003c")
     return """<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CODE PURPLE · W33 Operational Mycelium DAG</title>
 <style>
-:root{color-scheme:dark;font:14px/1.48 system-ui,sans-serif;background:#0e1625;color:#eaf3fd}
-*{box-sizing:border-box}body{margin:0}header{padding:16px 22px;background:#15223a;border-bottom:1px solid #354962}
-h1{font-size:22px;margin:0}small,.dim{color:#b6c5d8}.bar{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}
-.tile{flex:1 1 135px;background:#1b2b43;border:1px solid #354c68;border-radius:8px;padding:10px}
-.tile b{display:block;font-size:22px}main{display:grid;grid-template-columns:minmax(320px,1.2fr) minmax(315px,1fr);gap:14px;padding:14px}
-.panel{border:1px solid #354962;border-radius:10px;min-width:0;background:#152239;padding:12px}
-h2{font-size:16px;margin:3px 0 12px}.graph{display:flex;gap:26px;overflow:auto;min-height:300px;padding:10px}
-.layer{display:flex;flex:1 0 155px;flex-direction:column;gap:8px}.node{display:block;padding:9px;
-border:1px solid #6683a4;border-left:5px solid #8898af;border-radius:7px;background:#22334d;
-font:inherit;color:inherit;text-align:left;cursor:pointer;overflow-wrap:anywhere}
-.node:focus-visible,button:focus-visible{outline:2px solid white}.node[aria-pressed=true]{outline:2px solid #f7c966}
-.SUCCESS_NATIVE{border-left-color:#48bd80}.FAILED_NATIVE{border-left-color:#f06d6d}
-.UPSTREAM_FAILED_DERIVED{border-left-color:#efa955}.READY_PROPOSED{border-left-color:#51c7ce}
-.OWNER_HOLD{border-left-color:#c7a3e8}.RUNNING_NATIVE{border-left-color:#75b7fd}
-label{display:block;color:#bbcad9;margin-bottom:4px}select,input{width:100%;background:#0d1b2c;color:#fff;padding:8px;border:1px solid #526b86;border-radius:5px}
-table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:7px;text-align:left;border-bottom:1px solid #3b516d}
-tr{cursor:pointer}tr:hover{background:#263957}th{color:#c1d8ec}.scroll{overflow:auto;max-height:480px}
-a{color:#92d8ff}#detail{margin-top:12px;white-space:pre-wrap;overflow-wrap:anywhere}
-footer{padding:16px 22px;color:#b6c5d8}button{cursor:pointer}
-@media(max-width:820px){main{grid-template-columns:1fr}.graph{min-height:225px}}
-</style></head><body><header><h1>CODE PURPLE · Operational Mycelium</h1>
-<small>W33 | SOURCE-BOUND SELECTED SNAPSHOT | MERGE ADMISSION HOLD | NO DISPATCH</small>
-<section class="bar" id="cards"></section></header><main><section class="panel">
-<h2>Execution DAG · clickable task instances</h2><div class="graph" id="graph"></div>
-<p class="dim">Left to right: dependency layers. Orange = derived upstream blocking, not a second root failure. Edges are in the machine-readable DAG receipt.</p>
-</section><section class="panel"><h2>Task instances and pool filter</h2>
-<div class="bar"><div style="flex:1"><label for="state">State</label><select id="state"><option value="">All states</option></select></div>
-<div style="flex:1"><label for="pool">Pool</label><select id="pool"><option value="">All pools</option></select></div></div>
-<div class="scroll"><table><thead><tr><th>Task</th><th>State</th><th>Pool</th><th>Proof</th></tr></thead><tbody id="tasks"></tbody></table></div>
-<h2>Selected task</h2><div id="detail" aria-live="polite">Select a task to inspect its native identity and causal ancestors.</div></section></main>
-<footer>Pool capacity, source coverage and owner acceptance remain UNKNOWN unless supported by separately bound native receipts. No browser trigger.</footer>
-<script type="application/json" id="snapshot">"""+payload+"""</script>
+:root{color-scheme:dark;font:14px/1.45 system-ui,sans-serif;background:#0d1625;color:#eef5ff}
+*{box-sizing:border-box}body{margin:0}header{padding:16px 22px;background:#152239;
+border-bottom:1px solid #344b68}h1{font-size:22px;margin:0}
+small,.dim{color:#b8c8da}.bar{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.tile{flex:1 1 140px;background:#1c2d46;border:1px solid #3b526d;
+border-radius:9px;padding:11px}.tile b{font-size:23px;display:block}
+main{display:grid;grid-template-columns:minmax(320px,1.25fr) minmax(290px,1fr);
+gap:12px;padding:12px}.panel{border:1px solid #344b68;border-radius:10px;
+min-width:0;background:#15243b;padding:12px}
+h2{font-size:16px;margin:2px 0 8px}
+.note{font-size:12px;color:#b8c8da;margin:8px 0 10px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11px;color:#b8c8da}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px}
+.viewport{height:505px;max-height:58vh;min-height:330px;overflow:auto;
+border:1px solid #344b68;border-radius:8px;position:relative;
+background-color:#101c2e;
+background-image:radial-gradient(#37516e 0.65px,transparent 0.65px);
+background-size:13px 13px}
+.canvas{position:relative;width:max-content;min-width:100%;min-height:100%}
+.layer-grid{display:grid;grid-auto-flow:column;grid-auto-columns:191px;gap:66px;
+position:relative;z-index:2;padding:18px 42px 38px}
+.layer{display:flex;flex-direction:column;gap:10px}
+.svg-edges{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:visible}
+.node{width:191px;min-height:53px;padding:7px 9px;display:flex;
+flex-direction:column;align-items:flex-start;gap:2px;text-align:left;
+border:1px solid #66829e;border-left:5px solid #8297ac;border-radius:6px;
+background:#213451;color:#f0f6ff;cursor:pointer;font:inherit;overflow-wrap:anywhere}
+.node strong{font-weight:650;font-size:12px}
+.node small{font-size:10px;letter-spacing:.02em}
+.node:focus-visible{outline:2px solid white}
+.node[aria-pressed=true]{outline:2px solid #ffdc83;box-shadow:0 0 0 4px #f8d07130}
+.node.dimmed{opacity:.42}
+.SUCCESS_NATIVE{border-left-color:#47c986}.FAILED_NATIVE{border-left-color:#ff6d73}
+.UPSTREAM_FAILED_DERIVED{border-left-color:#f4ab55}.READY_PROPOSED{border-left-color:#5dd6e0}
+.OWNER_HOLD{border-left-color:#c8a0fd}.RUNNING_NATIVE{border-left-color:#7cb8ff}
+p{margin:8px 0 10px}label{display:block;color:#c4d2e0;margin-bottom:5px}
+select{width:100%;background:#0c1b2e;border:1px solid #58738f;color:#fff;
+padding:8px;border-radius:6px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{border-bottom:1px solid #354c67;text-align:left;padding:8px 6px}
+th{color:#cce0f7}td{overflow-wrap:anywhere}tr{cursor:pointer}
+tbody tr:hover{background:#273d58}.scroll{overflow:auto;max-height:460px}
+a{color:#93d6ff}#detail{font-size:12px;overflow-wrap:anywhere;
+min-height:95px;display:grid;gap:5px}
+footer{padding:12px 22px;color:#bdccdf}
+@media(max-width:860px){main{grid-template-columns:1fr}.viewport{height:380px;max-height:none}}
+</style></head><body>
+<header><h1>CODE PURPLE · Operational Mycelium</h1>
+<small>W33 | EXACT-HEAD SELECTED SNAPSHOT | MERGE ADMISSION HOLD | NO DISPATCH</small>
+<section class="bar" id="cards"></section></header>
+<main><section class="panel"><h2>Operational DAG · state and evidence ancestry</h2>
+<div class="legend">
+<span><i class="dot" style="background:#47c986"></i>Executed success</span>
+<span><i class="dot" style="background:#ff6d73"></i>Primary failure</span>
+<span><i class="dot" style="background:#f4ab55"></i>Upstream blocked (derived)</span>
+<span><i class="dot" style="background:#5dd6e0"></i>Ready proposal</span>
+<span><i class="dot" style="background:#c8a0fd"></i>Owner hold</span>
+</div><p class="note">Solid lines require predecessor success; dashed lines are lineage references. Scroll to inspect independent branches.</p>
+<div id="graph" class="viewport" aria-label="Scrollable, connected operational DAG">
+<div id="canvas" class="canvas"><svg id="edgePaths" class="svg-edges" aria-hidden="true"></svg>
+<div id="layerGrid" class="layer-grid"></div></div></div>
+<p class="dim note">Select a node to illuminate its incoming/outgoing edges. Orange descendants do not count as additional causal roots.</p>
+</section><section class="panel"><h2>Task instances · source-bound readback</h2>
+<div class="bar">
+<div style="flex:1 1 140px"><label for="state">State</label><select id="state"><option value="">All states</option></select></div>
+<div style="flex:1 1 130px"><label for="pool">Pool</label><select id="pool"><option value="">All pools</option></select></div>
+</div>
+<div class="scroll"><table><thead><tr><th>Task</th><th>State</th><th>Pool</th><th>Provenance</th></tr></thead>
+<tbody id="tasks"></tbody></table></div>
+<h2>Selected task · first-red lineage</h2><div id="detail" aria-live="polite">Select a graph node or table row to inspect native identity, blocked roots and source URL.</div>
+</section></main>
+<footer>Read-only source evidence. Queue P95, runner slots, acceptance and coverage remain UNKNOWN until measured by independently bound native receipts.</footer>
+<script id="snapshot" type="application/json">"""+payload+"""</script>
 <script>
 "use strict";
 const D=JSON.parse(document.getElementById("snapshot").textContent);
 const rows=D.report.task_instances;
-function el(tag,klass,text){const x=document.createElement(tag);if(klass)x.className=klass;if(text!==undefined)x.textContent=String(text);return x}
-const cards=[["Nodes",D.report.graph.nodes],["Edges",D.report.graph.edges],
-["Native failures",D.report.native_failed_instances],["Downstream blocked",D.report.downstream_unique_blocked],
-["Queue P95 (s)",D.report.queue_p95_s??"UNKNOWN"],["Runtime P95 (s)",D.report.execution_p95_s??"UNKNOWN"]];
-for(const [label,val] of cards){const c=el("div","tile"), b=el("b","",val);c.append(b,el("small","",label));document.getElementById("cards").append(c)}
-function choose(row){for(const n of document.querySelectorAll(".node"))n.setAttribute("aria-pressed",String(n.dataset.id===row.id));
-const detail=document.getElementById("detail");detail.replaceChildren(
-el("b","",row.id),el("div","",row.state+" · "+row.evidence_level),
-el("div","",row.native?"GitHub run "+row.native.run_id+" / attempt "+row.native.attempt+" / job "+row.native.job_id:"Derived dependency only"),
-el("div","",row.blocked_by.length?"Original native failures: "+row.blocked_by.join(", "):"No proven upstream native failure"),
-el("div","",row.is_current_owner_head===null?"No native source head":("Current owner head: "+row.is_current_owner_head)));
-const link=el("a","", "Open source evidence");link.href=row.source_ref;link.rel="noopener noreferrer";link.target="_blank";detail.append(link)}
-const byId=new Map(rows.map(x=>[x.id,x]));
-for(const layer of D.layers){const c=el("div","layer");for(const id of layer){const r=byId.get(id);const btn=el("button","node "+r.state,r.id+" · "+r.state);btn.type="button";btn.dataset.id=id;btn.setAttribute("aria-pressed","false");btn.addEventListener("click",()=>choose(r));c.append(btn)}document.getElementById("graph").append(c)}
+const byId=new Map(rows.map(t=>[t.id,t]));
+const byElement=new Map();
+const edgeElements=[];
+const ns="http://www.w3.org/2000/svg";
+function el(tag,classname,text){
+ const n=document.createElement(tag);
+ if(classname)n.className=classname;
+ if(text!==undefined)n.textContent=String(text);
+ return n;
+}
+const kpis=[["Task nodes",D.report.graph.nodes],["Typed edges",D.report.graph.edges],
+ ["Primary failures",D.report.native_failed_instances],
+ ["Downstream blocked",D.report.downstream_unique_blocked],
+ ["Queue P95 (s)",D.report.queue_p95_s??"UNKNOWN"],
+ ["Runtime P95 (s)",D.report.execution_p95_s??"UNKNOWN"]];
+for(const [name,value] of kpis){
+ const tile=el("div","tile"),number=el("b","",value);
+ tile.append(number,el("small","",name));document.getElementById("cards").append(tile);
+}
+const grid=document.getElementById("layerGrid");
+for(let i=0;i<D.layers.length;i++){
+ const col=el("div","layer");
+ for(const id of D.layers[i]){
+  const item=byId.get(id);
+  const btn=el("button","node "+item.state);
+  btn.type="button";btn.dataset.id=id;btn.setAttribute("aria-pressed","false");
+  btn.title=id+" — "+item.state;
+  btn.append(el("strong","",id),el("small","",item.state.replaceAll("_"," ")));
+  btn.addEventListener("click",()=>select(item));
+  byElement.set(id,btn);col.append(btn);
+ }
+ grid.append(col);
+}
+const canvas=document.getElementById("canvas"),svg=document.getElementById("edgePaths");
+function drawEdges(){
+ const frame=canvas.getBoundingClientRect();
+ const width=canvas.scrollWidth,height=canvas.scrollHeight;
+ svg.setAttribute("width",width);svg.setAttribute("height",height);
+ svg.setAttribute("viewBox","0 0 "+width+" "+height);
+ svg.replaceChildren();edgeElements.length=0;
+ for(const link of D.edges){
+  const a=byElement.get(link.from),b=byElement.get(link.to);
+  if(!a||!b)continue;
+  const ra=a.getBoundingClientRect(),rb=b.getBoundingClientRect();
+  const right=ra.right-frame.left,left=rb.left-frame.left;
+  const y1=ra.top-frame.top+ra.height/2,y2=rb.top-frame.top+rb.height/2;
+  const bend=Math.max(30,Math.abs(left-right)*.43);
+  const p=document.createElementNS(ns,"path");
+  p.setAttribute("d","M"+right+" "+y1+" C"+(right+bend)+" "+y1+" "+(left-bend)+" "+y2+" "+left+" "+y2);
+  p.setAttribute("fill","none");p.setAttribute("stroke-width","1.7");
+  p.setAttribute("stroke-linecap","round");
+  p.setAttribute("stroke",link.kind==="REFERENCES"?"#7d92b2":
+    byId.get(link.from).state==="FAILED_NATIVE"?"#ff747a":"#69accd");
+  if(link.kind==="REFERENCES")p.setAttribute("stroke-dasharray","5 5");
+  p.setAttribute("opacity",".7");
+  svg.append(p);edgeElements.push({link,path:p});
+ }
+}
+function select(row){
+ const near=new Set([row.id]);
+ for(const e of D.edges){
+  if(e.from===row.id)near.add(e.to);
+  if(e.to===row.id)near.add(e.from);
+ }
+ for(const [id,n] of byElement){
+  n.setAttribute("aria-pressed",String(id===row.id));
+  n.classList.toggle("dimmed",!near.has(id));
+ }
+ for(const e of edgeElements){
+  const connected=e.link.from===row.id||e.link.to===row.id;
+  e.path.setAttribute("opacity",connected?"1":".12");
+  e.path.setAttribute("stroke-width",connected?"3.1":"1.2");
+ }
+ const box=document.getElementById("detail");box.replaceChildren();
+ box.append(el("strong","",row.id),el("div","",row.state+" · "+row.evidence_level),
+            el("div","",row.native?
+              "GitHub run "+row.native.run_id+" / attempt "+row.native.attempt+" / job "+row.native.job_id:
+              "Declared dependency / owner action only"),
+            el("div","",row.blocked_by.length?
+              "Blocked by native first-red task(s): "+row.blocked_by.join(", "):
+              "No verified upstream failure for this task"),
+            el("div","",row.is_current_owner_head===null?
+              "No native source head":("Matches selected owner main: "+row.is_current_owner_head)));
+ const url=el("a","","Open native/source evidence");
+ url.href=row.source_ref;url.rel="noopener noreferrer";url.target="_blank";
+ box.append(url);
+}
 const state=document.getElementById("state"),pool=document.getElementById("pool");
-for(const s of [...new Set(rows.map(x=>x.state))].sort()){const op=el("option","",s);op.value=s;state.append(op)}
-for(const p of [...new Set(rows.map(x=>x.pool))].sort()){const op=el("option","",p);op.value=p;pool.append(op)}
-function refresh(){const body=document.getElementById("tasks");body.replaceChildren();for(const r of rows){if(state.value&&r.state!==state.value||pool.value&&r.pool!==pool.value)continue;
-const tr=el("tr");for(const v of [r.id,r.state,r.pool,r.evidence_level])tr.append(el("td","",v));
-tr.tabIndex=0;tr.addEventListener("click",()=>choose(r));tr.addEventListener("keydown",e=>{if(e.key==="Enter")choose(r)});body.append(tr)}}
-state.addEventListener("change",refresh);pool.addEventListener("change",refresh);refresh();
+for(const value of [...new Set(rows.map(r=>r.state))].sort()){
+ const op=el("option","",value);op.value=value;state.append(op);
+}
+for(const value of [...new Set(rows.map(r=>r.pool))].sort()){
+ const op=el("option","",value);op.value=value;pool.append(op);
+}
+function refresh(){
+ const body=document.getElementById("tasks");body.replaceChildren();
+ for(const row of rows){
+  if((state.value&&row.state!==state.value)||(pool.value&&row.pool!==pool.value))continue;
+  const tr=el("tr");
+  for(const v of [row.id,row.state,row.pool,row.evidence_level])tr.append(el("td","",v));
+  tr.tabIndex=0;tr.addEventListener("click",()=>select(row));
+  tr.addEventListener("keydown",e=>{if(e.key==="Enter")select(row)});
+  body.append(tr);
+ }
+}
+state.addEventListener("change",refresh);pool.addEventListener("change",refresh);
+refresh();
+requestAnimationFrame(drawEdges);
+window.addEventListener("resize",drawEdges);
 </script></body></html>
 """
+
 
 
 def sipoc(data):
