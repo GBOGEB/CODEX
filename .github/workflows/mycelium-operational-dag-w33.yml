@@ -1,0 +1,62 @@
+name: CODE PURPLE W33 Operational DAG Native Qualification
+on:
+  pull_request:
+    paths:
+      - 'mission_control/mycelium/ops_dag/**'
+      - 'tests/test_mycelium_operational_dag_w33.py'
+      - '.github/workflows/mycelium-operational-dag-w33.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: w33-task-instances-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  operational-dag:
+    name: W33 task instances ${{ matrix.os }} / Python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-24.04, python: '3.10'}
+          - {os: ubuntu-24.04, python: '3.11'}
+          - {os: ubuntu-24.04, python: '3.12'}
+          - {os: windows-2022, python: '3.11'}
+    steps:
+      - name: Checkout exact source SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Assert exact head and run state/causality regression suite
+        shell: bash
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          python -m unittest discover -s tests -p 'test_mycelium_operational_dag_w33.py' -v
+      - name: Generate operational DAG metrics SIPOC HTML and SHA256 receipts
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          python mission_control/mycelium/ops_dag/ops_dag.py --input mission_control/mycelium/ops_dag/W33_SELECTED_OBSERVATIONS.json --out w33_task_receipts --head "$HEAD_SHA" --run-id "$RUN_ID" --attempt "$ATTEMPT"
+          python mission_control/mycelium/ops_dag/ops_dag.py --input mission_control/mycelium/ops_dag/W33_SELECTED_OBSERVATIONS.json --out w33_task_receipts --head "$HEAD_SHA" --verify-only
+      - name: Retain hash-bound read-only native projection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: w33-task-dag-${{ matrix.os }}-py${{ matrix.python }}-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: w33_task_receipts/
+          if-no-files-found: error
+          retention-days: 30
