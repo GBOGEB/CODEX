@@ -73,13 +73,17 @@ def read_public(repo, fetch=request_json, pages=MAX_PAGES):
     require(type(head) is str and SHA.fullmatch(head), "CURRENT_MAIN_UNPINNED")
     items = {}
     total = None
+    population_shift = False
     for page in range(1, pages+1):
         result = fetch(endpoint+"/actions/runs?head_sha="+head+
                        "&per_page=100&page="+str(page))
         n = result.get("total_count")
         require(type(n) is int and n >= 0, "MISSING_RUN_POPULATION")
-        if total is not None:
-            require(total == n, "UNSTABLE_PAGINATION_POPULATION")
+        if total is not None and total != n:
+            # A moving GitHub run queue invalidates a full-fleet claim, not
+            # the independently observed first page. Keep its denominator.
+            population_shift = True
+            break
         total = n
         rows = result.get("workflow_runs")
         require(type(rows) is list and len(rows) <= 100, "INVALID_RUN_PAGE")
@@ -108,8 +112,9 @@ def read_public(repo, fetch=request_json, pages=MAX_PAGES):
     queued = sum(r["status"] == "queued" for r in items.values())
     not_terminal = sum(r["status"] in ACTIVE for r in items.values())
     return {"repo": repo, "source_sha": head, "reported_total": total,
+            "pagination_population_changed": population_shift,
             "returned_distinct_runs": observed, "unknown_tail": total-observed,
-            "complete": observed == total,
+            "complete": observed == total and not population_shift,
             "queued_observed": queued, "nonterminal_observed": not_terminal,
             "nonterminal_fraction_observed":
                 round(not_terminal/observed, 6) if observed else None,
