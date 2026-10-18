@@ -125,6 +125,37 @@ class ConvergenceControlContract(unittest.TestCase):
             self.assertIsNone(row["governed_admission"])
             self.assertIsNone(row["accepted_root_closure"])
 
+    def test_new_green_main_is_source_bound_not_fixed_cohort(self):
+        coverage = self.ledger["historical_coverage"]
+        native = coverage["latest_verified_green_main"]
+        self.assertEqual(native["source_sha"],
+                         "2246c7bd3a9bda6a3d43b9a9116cb7088cfbcc88")
+        self.assertEqual((native["run_id"], native["job_id"], native["attempt"]),
+                         (39164360709, 117784234292, 1))
+        self.assertEqual((native["covered_statements"], native["eligible_statements"]),
+                         (30064, 43003))
+        self.assertEqual((native["covered_branches"], native["eligible_branches"]),
+                         (8744, 12816))
+        self.assertEqual((native["covered_combined"], native["eligible_combined"]),
+                         (38808, 55819))
+        self.assertAlmostEqual(native["percent_combined"], 69.5247138071266)
+        self.assertAlmostEqual(native["raw_delta_pp"], 1.7665561981203726)
+        self.assertIsNone(native["fixed_population_cohort_accepted"])
+        self.assertIsNone(coverage["current_main_same_head_coverage"])
+        self.assertIsNone(native["pr_diff"])
+        self.assertIsNone(native["pr_broad"])
+        self.assertIn("latest_verified_green_main", self.html)
+        self.assertIn("sha===latest.source_sha", self.html)
+
+    def test_w40_first_red_is_not_42_native_passes(self):
+        cand = self.ledger["candidate_w40"]
+        self.assertEqual(cand["new_designed_cases"], 42)
+        self.assertEqual(cand["first_native_cells_failed"], 4)
+        self.assertEqual(cand["first_native_result"], "FAILURE")
+        self.assertIsNone(cand["native_case_pass"])
+        self.assertIsNone(cand["measured_module_coverage"])
+        self.assertEqual(cand["repair_head"], "d7bfacc98dcbcd1848dd6ea0be694ca4d74c0fcf")
+
     def test_live_metrics_are_fail_closed(self):
         self.assertIn('id="ordinaryIssues"', self.html)
         self.assertIn('id="w32NativeCases"', self.html)
