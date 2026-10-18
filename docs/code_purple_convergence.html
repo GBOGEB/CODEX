@@ -116,6 +116,8 @@ footer{color:var(--muted);padding:26px;border-top:1px solid var(--border);text-a
 <section id="control-tower" class="section" aria-labelledby="control-title">
  <div class="section-heading"><h2 id="control-title">00 · Federated DOV / live read-only control tower</h2><span class="state">Admission HOLD</span></div>
  <p class="small">A concentrated entry to existing ABACUS evidence, CODEX dispatch and QPS domain dashboards. The frozen ledger records measured epochs separately; GitHub reload reads public metadata only. Neither a green badge nor a merged PR grants protected-main admission.</p>
+ <p class="small"><b>QPS PIPELINE execution entry:</b> the <a href="https://github.com/GBOGEB/cryoplant-project/pull/1962" target="_blank" rel="noopener noreferrer">QPS W01 owned 16-node action DAG / PR #1962</a> connects SSOT, KEB, DOW B0/CI/A10/Semgrep and approved cryoplant binary/REX stages. <a href="https://github.com/GBOGEB/cryoplant-project/actions/workflows/qps-missioncontrol-pipeline-actions-w01.yml" target="_blank" rel="noopener noreferrer">Native QPS dashboard testflight</a>. These are source-candidate navigation links: no CODEX dispatch permission or acceptance transfer.</p>
+
  <div class="control-tools"><button type="button" id="githubReload">Reload GitHub metadata</button><label><input type="checkbox" id="githubAuto" checked> Auto-check every 15 minutes while visible</label><span id="githubState" role="status" aria-live="polite">Reading versioned ledger…</span></div>
  <div class="control-grid" aria-label="Separate evidence clocks">
   <div class="control-tile"><small>ABACUS current main / source SHA</small><strong class="control-mono" id="abacusHead">UNKNOWN</strong><small id="abacusHeadSource">Live readback pending</small></div>
