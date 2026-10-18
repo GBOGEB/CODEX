@@ -1,0 +1,61 @@
+name: MYCELIUM P-process consumer reference (read-only)
+on:
+  pull_request:
+    paths:
+      - 'mission_control/mycelium/p_process_reference.py'
+      - 'tests/test_p_process_reference.py'
+      - '.github/workflows/mycelium-p-process-reference.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'mission_control/mycelium/p_process_reference.py'
+      - 'tests/test_p_process_reference.py'
+      - '.github/workflows/mycelium-p-process-reference.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  consumer-contract:
+    name: MYCELIUM typed consumer Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11','3.12']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Exact head and source-only tests
+        env:
+          EXPECT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECT_SHA"
+          python -m unittest discover -s tests -p 'test_p_process_reference.py' -v 2>&1 | tee mycelium-p-process-tests.log
+          grep -Eq '^Ran [1-9][0-9]* tests?' mycelium-p-process-tests.log
+          python - <<'PY'
+          import json,os
+          payload={"schema":"mycelium.p_process.consumer_ci_observation/1.0",
+                   "consumer_head_sha":os.environ["EXPECT_SHA"],
+                   "evidence":"EXACT_CHECKOUT_TESTS_ONLY",
+                   "producer_artifact_consumed":False,
+                   "producer_acceptance":"WITHHELD",
+                   "merge_admission":"HOLD","authority_transfer":False,
+                   "mutation_enabled":False}
+          with open("mycelium-p-process-ci.json","w") as f:
+              json.dump(payload,f,indent=2)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mycelium-p-process-py${{ matrix.python-version }}-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            mycelium-p-process-tests.log
+            mycelium-p-process-ci.json
+          if-no-files-found: warn
