@@ -86,7 +86,7 @@ footer{padding:20px 0;color:#555;font-size:12px}
 <div class="notice">Historical rows are source-bound checkpoints, not eleven comparable full tests. A missing workflow is <strong>NOT_TRIGGERED</strong>, never green. Uploading a JSON file does not authenticate its producer.</div>
 <div class="table"><table aria-label="Historical exact-head MIP evidence"><thead><tr><th>Slot</th><th>SHA</th><th>MIP N2</th><th>Observation</th></tr></thead><tbody id="n10"></tbody></table></div>
 <h3>Manual local JSON re-census</h3>
-<p class="sub">Required: schema, repository, full SHA, observed_at UTC, producer, run_id, attempt, job_id and disposition. Read-only local import, no network or worker dispatch.</p>
+<p class="sub">Required: schema, repository, full SHA, observed_at UTC, producer, run_id, attempt, job_id, disposition, receipt_digest (sha256:…), scanner_identity and config_identity. Read-only local import, no network or worker dispatch.</p>
 <div class="buttons"><input id="receiptFiles" type="file" accept=".json,application/json" multiple><button class="action" id="load">Load observations</button><button class="action" id="reset">Reset local observations</button></div>
 <p id="feedback" role="status" aria-live="polite">No new receipts. All active runtime statistics remain UNKNOWN unless independently proven.</p>
 <div class="table"><table><thead><tr><th>UTC</th><th>Repository / SHA</th><th>Producer</th><th>Run / attempt / job</th><th>State</th></tr></thead><tbody id="loaded"><tr><td colspan="5">No imported observations</td></tr></tbody></table></div>
@@ -132,19 +132,21 @@ stages.forEach((s,i)=>{
 });
 q('#expand').onclick=()=>document.querySelectorAll('#details details').forEach(d=>d.open=true);
 q('#collapse').onclick=()=>document.querySelectorAll('#details details').forEach(d=>d.open=false);
+// Full 40-hex GBOGEB/ABACUS commit SHAs (PR #1932 head chain); abbreviated only when rendered.
 const runs=[
-['N−10','eb2d7d4','NOT_TRIGGERED','Source labels'],['N−9','2c3809a','NOT_TRIGGERED','Mermaid'],
-['N−8','a3ccc0b','PASS','Native MIP 27/27 negative tests'],
-['N−7','6312321','NOT_TRIGGERED','Full inventory'],
-['N−6','5f0b480','PASS','Nested inventory'],
-['N−5','7099956','PASS','Lexical classification'],
-['N−4','870e817','PASS','Consumer inventory validation'],
-['N−3','294c899','FAIL','Nested inventory fixture'],
-['N−2','1d82d90','FAIL','Same first-red'],
-['N−1','7f2e597','FAIL','Same first-red'],
-['N','e1286e3','QUEUED AT SNAPSHOT','Fixture corrected']
+['N−10','eb2d7d44566ab7728f5a66a52f53e849f17882ee','NOT_TRIGGERED','Source labels'],
+['N−9','2c3809a4392c833308c79ccb1f01a9cb87b0b869','NOT_TRIGGERED','Mermaid'],
+['N−8','a3ccc0bc5ceebe3806f393d507ef3de2e4271408','PASS','Native MIP 27/27 negative tests'],
+['N−7','6312321236ed337ab315cbb2709d1bcd8039af93','NOT_TRIGGERED','Full inventory'],
+['N−6','5f0b48069b5255db24c17daf73d244ad20260687','PASS','Nested inventory'],
+['N−5','70999565ba65e952fe8f0e85a8b754b726797ae3','PASS','Lexical classification'],
+['N−4','870e8171da831c8507c715af15fe3dcb281c0f5a','PASS','Consumer inventory validation'],
+['N−3','294c89939c7b225b76d27142c326610165470b7f','FAIL','Nested inventory fixture'],
+['N−2','1d82d90f1ba48e4be81acf084f58952ac6a67c1e','FAIL','Same first-red'],
+['N−1','7f2e5973407c95dc78567bfec7f0749193807f2c','FAIL','Same first-red'],
+['N','e1286e38a8a69770bbe9674201243881a95f9d75','QUEUED AT SNAPSHOT','Fixture corrected']
 ];
-runs.forEach(row=>{const tr=document.createElement('tr');tr.innerHTML=row.map(x=>'<td>'+encode(x)+'</td>').join('');q('#n10').append(tr)});
+runs.forEach(row=>{const tr=document.createElement('tr');tr.innerHTML='<td>'+encode(row[0])+'</td><td class="mono" title="'+encode(row[1])+'">'+encode(row[1].slice(0,10))+'</td><td>'+encode(row[2])+'</td><td>'+encode(row[3])+'</td>';q('#n10').append(tr)});
 [
 ['Reader','Fast source and receipt enumeration'],['Deep Reader','Root correlation and causal analysis'],
 ['Scout','Detect new SHA, CI, policy and evidence changes'],['Ambulance','Bounded disjoint first-red intervention'],
@@ -152,13 +154,26 @@ runs.forEach(row=>{const tr=document.createElement('tr');tr.innerHTML=row.map(x=
 ['CI Proof Worker','Exact-head tests and coverage'],['Runtime/LDAB Worker','Real debugger steps, port lease, teardown'],
 ['Independent Reviewer','Code/security admission review'],['REX Historian','N−10 and recurrence analysis']
 ].forEach(row=>{const tr=document.createElement('tr');tr.innerHTML='<td>'+encode(row[0])+'</td><td>'+encode(row[1])+'</td><td><span class="unknown">UNKNOWN</span></td>';q('#crewBody').append(tr)});
-const loaded=new Map();const SHA=/^[a-f0-9]{40}$/;const UTC=/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$/;
+const loaded=new Map();
+/* receipt-core:begin (DOM-free; executed by tests/test_code_purple_mono_reader.py) */
+const SHA=/^[a-f0-9]{40}$/;const UTC=/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$/;const DIGEST=/^sha256:[a-f0-9]{64}$/;
 function validate(v){
  if(!v||v.schema!=='code-purple.observation.v1'||!SHA.test(v.source_sha)||!/^[\w.-]+\/[\w.-]+$/.test(v.repository)||!UTC.test(v.observed_at)||!Number.isFinite(Date.parse(v.observed_at)))throw Error('Invalid schema, repository, head or UTC');
  if(typeof v.producer!=='string'||!v.producer.trim()||!['PASS','FAIL','HOLD','UNKNOWN'].includes(v.disposition))throw Error('Invalid producer or disposition');
  for(const k of ['run_id','run_attempt','job_id'])if(!Number.isSafeInteger(v[k])||v[k]<1)throw Error('Invalid '+k);
+ // Publication contract item 5: receipt digest and scanner/config identity are mandatory provenance.
+ if(typeof v.receipt_digest!=='string'||!DIGEST.test(v.receipt_digest))throw Error('Missing or invalid receipt_digest provenance');
+ for(const k of ['scanner_identity','config_identity'])if(typeof v[k]!=='string'||!v[k].trim())throw Error('Missing '+k+' provenance');
  return v;
 }
+// Key-order-independent canonical form, so semantically identical receipts compare equal.
+function canonical(x){
+ if(Array.isArray(x))return '['+x.map(canonical).join(',')+']';
+ if(x&&typeof x==='object')return '{'+Object.keys(x).sort().map(k=>JSON.stringify(k)+':'+canonical(x[k])).join(',')+'}';
+ return JSON.stringify(x);
+}
+function sameReceipt(a,b){return canonical(a)===canonical(b)}
+/* receipt-core:end */
 function draw(){
  const t=q('#loaded');t.textContent='';const arr=Array.from(loaded.values()).sort((a,b)=>a.observed_at.localeCompare(b.observed_at));
  if(!arr.length){t.innerHTML='<tr><td colspan="5">No imported observations</td></tr>';return}
@@ -169,7 +184,7 @@ q('#load').onclick=async()=>{
  for(const file of Array.from(q('#receiptFiles').files||[]))try{
  if(file.size>1000000)throw Error('Exceeds 1MB');const arr=JSON.parse(await file.text());const items=Array.isArray(arr)?arr:[arr];if(items.length>500)throw Error('Too many receipts');
  const staged=new Map(loaded);let fresh=0,repeated=0;
- for(const raw of items){const v=validate(raw),key=[v.repository,v.source_sha,v.producer,v.run_id,v.run_attempt,v.job_id].join(':');if(staged.has(key)){if(JSON.stringify(staged.get(key))!==JSON.stringify(v))throw Error('Contradictory same-identity receipt');repeated++}else{staged.set(key,v);fresh++}}
+ for(const raw of items){const v=validate(raw),key=[v.repository,v.source_sha,v.producer,v.run_id,v.run_attempt,v.job_id].join(':');if(staged.has(key)){if(!sameReceipt(staged.get(key),v))throw Error('Contradictory same-identity receipt');repeated++}else{staged.set(key,v);fresh++}}
  loaded.clear();staged.forEach((v,k)=>loaded.set(k,v));accepted+=fresh;duplicate+=repeated;
  }catch(e){bad.push(file.name+': '+e.message)}
  draw();q('#feedback').textContent=accepted+' new, '+duplicate+' duplicates, '+bad.length+' rejected. '+(bad.length?bad.join(' | '):'Local data remains UNVERIFIED until producer authenticity is checked.');
