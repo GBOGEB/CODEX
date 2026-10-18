@@ -91,6 +91,12 @@ def main():
                 assert page.locator("#controlLanes tr").count() == 6
                 assert "MERGED ORDINARY" in page.locator("#lane-2274").inner_text()
                 assert page.locator("#controlLinks a").count() >= 11
+                page.wait_for_function("document.querySelectorAll('#mipEightItems details').length===8", timeout=12000)
+                assert page.locator("#mipEightStatus").inner_text().startswith("8/8")
+                page.locator("#mipEightItems details summary").first.click()
+                assert page.locator("#mipEightItems details").first.get_attribute("open") is not None
+                assert "Modernize:" in page.locator("#mipEightItems details").first.inner_text()
+                assert "Perpetuate:" in page.locator("#mipEightItems details").first.inner_text()
                 page.locator("#githubReload").click()
                 page.wait_for_function("document.getElementById('githubState').textContent.includes('9/9 metadata sources loaded')", timeout=12000)
                 values = page.evaluate("""() => ({
