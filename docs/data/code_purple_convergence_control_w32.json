@@ -39,7 +39,43 @@
     "current_main_same_head_coverage": null,
     "current_pr_broad": null,
     "current_pr_diff": null,
-    "accepted_fixed_population_delta_pp": null
+    "accepted_fixed_population_delta_pp": null,
+    "latest_verified_green_main": {
+      "repo": "GBOGEB/ABACUS",
+      "source_sha": "2246c7bd3a9bda6a3d43b9a9116cb7088cfbcc88",
+      "run_id": 39164360709,
+      "job_id": 117784234292,
+      "attempt": 1,
+      "artifact_id": 12150461899,
+      "artifact_digest": "sha256:7b8f19ec1777f375ce9d43690ec0631d778549b92229a708cc65de0461ea6e3c",
+      "producer_result": "SUCCESS",
+      "full_workflow_result": "SUCCESS",
+      "test_pass": 5079,
+      "test_skip": 3,
+      "test_fail": 0,
+      "covered_statements": 30064,
+      "eligible_statements": 43003,
+      "covered_branches": 8744,
+      "eligible_branches": 12816,
+      "covered_combined": 38808,
+      "eligible_combined": 55819,
+      "percent_combined": 69.5247138071266,
+      "percent_statements": 69.9114015301258,
+      "percent_branches": 68.22721598002497,
+      "previous_sha": "9e0200190555736c74295ee74881e3c003e8a35c",
+      "previous_combined_covered": 35571,
+      "previous_combined_eligible": 52497,
+      "raw_delta_pp": 1.7665561981203726,
+      "delta_eligible": 3322,
+      "delta_covered": 3237,
+      "delta_uncovered": 85,
+      "fixed_population_cohort_accepted": null,
+      "pr_broad": null,
+      "pr_diff": null,
+      "epistemic_state": "VERIFIED_MAIN_EPOCH_RAW_NOT_FIXED_POPULATION",
+      "run_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39164360709",
+      "artifact_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39164360709/artifacts/12150461899"
+    }
   },
   "status_snapshots": {
     "ABACUS_1860": {
@@ -115,7 +151,7 @@
       "id": "SOURCE",
       "title": "Source coverage",
       "denominator": "eligible statements + branches, matched producer SHA/config",
-      "observed": "35,571/52,497 historical green main",
+      "observed": "Latest verified main B0 38,808/55,819 = 69.525%, +1.767 raw pp versus prior green epoch; fixed-cohort delta UNKNOWN",
       "accepted_current": null,
       "owner": "ABACUS"
     },
@@ -306,7 +342,7 @@
       "governed_admission": null
     }
   ],
-  "acceptance": "Read-only GitHub metadata cannot establish accepted native coverage, worker launch or governed merge. Gate requires terminal exact-head CI, security, real eligible review, enforced ruleset and blocked RED canary. Historical N-1 and N counts with different population must remain separate. Native W32 per-case 15/15 PASS inside a terminal RED full B0 does not establish global suite PASS or coverage increase. Ordinary issue counts 106/373 are GitHub is:issue searches across three repositories, not deduplicated roots/BD. Ordinary merges confer no admission credit.",
+  "acceptance": "Read-only GitHub metadata cannot establish accepted native coverage, worker launch or governed merge. Gate requires terminal exact-head CI, security, real eligible review, enforced ruleset and blocked RED canary. Historical N-1 and N counts with different population must remain separate. Native W32 per-case 15/15 PASS inside a terminal RED full B0 does not establish global suite PASS or coverage increase. Ordinary issue counts 106/373 are GitHub is:issue searches across three repositories, not deduplicated roots/BD. Ordinary merges confer no admission credit. Updated last verified main epoch 2246c7bd... measured directly from B0 canonical-contexts.json in artifact 12150461899; +1.7666pp raw but changed denominator. The current_main_same_head_coverage marker remains NULL until fresh, stable readback equates live main SHA with this exact artifact SHA. No matched cohort or PR diff uplift is inferred.",
   "federated_dashboard_observed": {
     "pr": 1109,
     "head": "579aee472ace4c5a8b1b21243ad4bac342573ed0",
@@ -322,5 +358,21 @@
     "governed_accepted": null,
     "formally_closed_causal_roots": null,
     "qualifier": "six GitHub ordinary merges, no inferred security or effective ruleset"
+  },
+  "candidate_w40": {
+    "pr": 2286,
+    "repo": "GBOGEB/ABACUS",
+    "initial_head": "1ad45857612a00e18370c49b6b4aaaa7012aae2b",
+    "repair_head": "d7bfacc98dcbcd1848dd6ea0be694ca4d74c0fcf",
+    "first_native_run": 39165313089,
+    "first_native_result": "FAILURE",
+    "first_native_cells_failed": 4,
+    "first_red": "numpy missing in global tests/conftest.py before collection",
+    "repair": "workflow-only install NumPy 2.2.6",
+    "new_designed_cases": 42,
+    "native_case_pass": null,
+    "measured_module_coverage": null,
+    "formal_main_uplift": null,
+    "url": "https://github.com/GBOGEB/ABACUS/pull/2286"
   }
 }
