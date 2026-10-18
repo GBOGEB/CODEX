@@ -46,7 +46,10 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
-          python -m unittest discover -s tests/runtime -p 'test_swift_roof_*.py' -v
+          python -m pip install --disable-pip-version-check 'coverage>=7.10,<8'
+          python -m coverage run --branch --include='*/scripts/swift_roof_mip.py,*/scripts/swift_roof_p3.py' -m unittest discover -s tests/runtime -p 'test_swift_roof_*.py' -v
+          python -m coverage report --include='*/scripts/swift_roof_mip.py,*/scripts/swift_roof_p3.py' --fail-under=80 -m
+          python -m coverage json --include='*/scripts/swift_roof_mip.py,*/scripts/swift_roof_p3.py' -o /tmp/swift-roof-census/native-coverage.json
           python scripts/swift_roof_mip.py --mode census --expected-head "$EXPECTED_HEAD" --out /tmp/swift-roof-census
       - name: Publish P1 receipt even on failure
         if: always()
