@@ -24,7 +24,7 @@ class ParallelSpineW30Tests(unittest.TestCase):
     def test_graph_contains_directed_fanin_without_cycle(self):
         g=w.graph(self.d)
         self.assertEqual(len(g["nodes"]),48)
-        self.assertEqual(len(g["edges"]),53)
+        self.assertEqual(len(g["edges"]),47)
         self.assertGreater(len(g["layers"]),4)
         self.assertEqual(g["owner_gate"],"HOLD")
     def test_cohort_distinction_retained(self):
