@@ -112,6 +112,12 @@ class NativeWorkflowContract(unittest.TestCase):
         for n in ('swift-roof-p1-', 'swift-roof-p2-', 'swift-roof-p3-'):
             self.assertIn(n, self.raw)
 
+
+    def test_reserved_event_sha_never_overrides_source(self):
+        self.assertNotIn('          GITHUB_SHA: ${{', self.raw)
+        self.assertIn('          EVENT_MERGE_SHA: ${{ github.sha }}', self.raw)
+        self.assertIn('CHECKOUT_SOURCE_SHA=', self.raw)
+
 class CliReceiptFlight(unittest.TestCase):
     def setUp(self):
         from unittest import mock
