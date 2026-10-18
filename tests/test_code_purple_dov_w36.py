@@ -62,6 +62,16 @@ class FederatedDovW36(unittest.TestCase):
         d=copy.deepcopy(self.seed)
         next(x for x in d["repos"] if x["visibility"]=="private")["visibility"]="public"
         with self.assertRaisesRegex(ValueError,"PRIVATE_QPS_BOUNDARY"):w.validate_source(d)
+    def test_public_snapshot_rejects_private_owner_metadata(self):
+        d=copy.deepcopy(self.seed)
+        private=next(x for x in d["repos"] if x["visibility"]=="private")
+        private["sha"]="f"*40
+        with self.assertRaisesRegex(ValueError,"PRIVATE_QPS_METADATA_FORBIDDEN"):
+            w.validate_source(d)
+        private["sha"]=None
+        private["open_issue_and_pr_count"]=42
+        with self.assertRaisesRegex(ValueError,"PRIVATE_QPS_METADATA_FORBIDDEN"):
+            w.validate_source(d)
     def test_cannot_drop_axis(self):
         d=copy.deepcopy(self.seed);d["axes"].pop()
         with self.assertRaisesRegex(ValueError,"NONCOMPENSATING_FIVE_AXES"):w.validate_source(d)
