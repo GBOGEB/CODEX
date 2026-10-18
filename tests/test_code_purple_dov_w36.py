@@ -97,9 +97,9 @@ class FederatedDovW36(unittest.TestCase):
         def fetch(url):
             if url.endswith("/branches/main"):
                 return {"commit":{"sha":"a"*40}}
-            if "page=1" in url:
+            if url.endswith("&page=1"):
                 return {"total_count":101,"workflow_runs":[row(i=i) for i in range(1,101)]}
-            if "page=2" in url:
+            if url.endswith("&page=2"):
                 return {"total_count":101,"workflow_runs":[row(i=1,attempt=2)]}
             raise AssertionError(url)
         x=w.read_public("GBOGEB/ABACUS",fetch)
@@ -109,9 +109,9 @@ class FederatedDovW36(unittest.TestCase):
         def fetch(url):
             if url.endswith("/branches/main"):
                 return {"commit":{"sha":"a"*40}}
-            if "page=1" in url:
+            if url.endswith("&page=1"):
                 return {"total_count":101, "workflow_runs":[row(i=i) for i in range(1,101)]}
-            if "page=2" in url:
+            if url.endswith("&page=2"):
                 return {"total_count":102, "workflow_runs":[row(i=101)]}
             raise AssertionError(url)
         out=w.read_public("GBOGEB/ABACUS",fetch)
