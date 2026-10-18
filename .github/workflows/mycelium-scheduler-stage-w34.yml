@@ -1,0 +1,75 @@
+name: CODE PURPLE W34 Read-Only Dependency Scheduler Gate
+on:
+  pull_request:
+    paths:
+      - 'scripts/id_scheduler_dependency_gate.py'
+      - 'tests/test_id_scheduler_dependency_gate_w34.py'
+      - 'docs/missioncontrol_w34_scheduler_mip.md'
+      - '.github/workflows/mycelium-scheduler-stage-w34.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: w34-scheduler-stage-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  stage-gate:
+    name: W34 scheduler ${{ matrix.os }} / Python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-24.04, python: '3.10'}
+          - {os: ubuntu-24.04, python: '3.11'}
+          - {os: ubuntu-24.04, python: '3.12'}
+          - {os: windows-2022, python: '3.11'}
+    steps:
+      - name: Checkout exact W34 source without stored credentials
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Negative, reverse and source-bound dependency selection proof
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          python -m unittest discover -s tests -p 'test_id_scheduler_dependency_gate_w34.py' -v
+      - name: Produce SIMULATED stage-only sample receipt, never native-pool proof
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import importlib.util, os, pathlib
+          home=pathlib.Path('tests/test_id_scheduler_dependency_gate_w34.py')
+          spec=importlib.util.spec_from_file_location('fixture',home)
+          sample=importlib.util.module_from_spec(spec);spec.loader.exec_module(sample)
+          data=sample.metric()
+          req=[sample.request('a'),sample.request('b',tid='ready-b')]
+          report=sample.w.stage(data,req)
+          report['evidence_class']='SIMULATED_TEST_FIXTURE_NOT_NATIVE_POOL_CAPACITY'
+          out=pathlib.Path('w34_stage_receipts')
+          sample.w.receipt(report,out,candidate_head=os.environ['SOURCE_SHA'],run_id=int(os.environ['RUN_ID']),attempt=int(os.environ['ATTEMPT']))
+          sample.w.verify(out,os.environ['SOURCE_SHA'])
+          assert report['dispatch_enabled'] is False and report['staged_proposals']==2
+          PY
+      - name: Archive read-only simulation proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-w34-stage-${{ matrix.os }}-py${{ matrix.python }}-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: w34_stage_receipts/
+          if-no-files-found: error
+          retention-days: 30
