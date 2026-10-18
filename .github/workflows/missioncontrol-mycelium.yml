@@ -59,10 +59,24 @@ jobs:
           from pathlib import Path
           c=json.loads(Path('/tmp/mycelium-n7-coverage.json').read_text())['totals']
           sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
-          assert sha==os.environ['EXPECTED_SHA'] and len(sha)==40
-          assert c['num_statements']>0 and c['num_branches']>0
-          assert c['percent_statements_covered']>=90
-          assert c['percent_branches_covered']>=80
+          if sha != os.environ['EXPECTED_SHA'] or len(sha) != 40:
+              raise SystemExit('MYCELIUM_N7_FIRST_RED: exact checkout SHA mismatch')
+          statements,branches=int(c['num_statements']),int(c['num_branches'])
+          covered_statements,covered_branches=int(c['covered_lines']),int(c['covered_branches'])
+          if statements <= 0 or branches <= 0:
+              raise SystemExit('MYCELIUM_N7_FIRST_RED: missing statement/branch denominator')
+          first_red=[]
+          if 100*covered_statements < 90*statements:
+              first_red.append('STATEMENTS_BELOW_90_PERCENT')
+          if 100*covered_branches < 80*branches:
+              first_red.append('BRANCHES_BELOW_80_PERCENT')
+          # Compute from counts to avoid rounding a just-below-threshold score green.
+          coverage_detail={'statements':[covered_statements,statements],
+                           'branches':[covered_branches,branches],
+                           'statement_floor_percent':90,
+                           'branch_floor_percent':80,
+                           'statement_percent':round(100*covered_statements/statements,4),
+                           'branch_percent':round(100*covered_branches/branches,4)}
           receipt={'schema':'code-purple.mycelium.native-coverage-receipt.v2',
                    'checkout_sha':sha,'event_sha':os.environ.get('GITHUB_SHA'),
                    'run_id':os.environ.get('GITHUB_RUN_ID'),
@@ -72,8 +86,14 @@ jobs:
                    'branches':c['num_branches'],'covered_branches':c['covered_branches'],
                    'root_closures':None,'dispatch_authorized':False,
                    'admission':'HOLD','authority_transfer':False}
+          receipt['coverage_check']=coverage_detail
+          receipt['coverage_gate']='FAIL' if first_red else 'PASS'
+          receipt['first_red_class']=first_red
           Path('/tmp/mycelium-n7-receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
-          print(json.dumps(receipt,sort_keys=True))
+          print('MYCELIUM_N7_COVERAGE_RECEIPT='+json.dumps(receipt,sort_keys=True),flush=True)
+          if first_red:
+              print('::error title=MYCELIUM N7 coverage::'+','.join(first_red),flush=True)
+              raise SystemExit('MYCELIUM_N7_FIRST_RED: '+','.join(first_red))
           PY
       - name: "MYCELIUM N8: typed native debugger bridge negative-test gate"
         shell: bash
