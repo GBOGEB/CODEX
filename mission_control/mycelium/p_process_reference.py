@@ -22,6 +22,8 @@ PATHS = {
     "everred": "p-process/everred/data/everred.json",
     "drift": "p-process/rulesets/drift.json",
 }
+MODES = frozenset({"CODE_PURPLE", "EVERRED"})
+RULESETS = frozenset({"RED", "GREEN", "UNKNOWN"})
 SHA = re.compile(r"[0-9a-f]{40}\Z")
 DIGEST = re.compile(r"[0-9a-f]{64}\Z")
 ROOT = re.compile(r"root:([A-Z]+-RC-\d{4}-\d{4})\Z")
@@ -76,8 +78,10 @@ def validate(candidate: dict, blobs: dict[str, bytes], expected_sha: str) -> dic
          inc.get("criteria_total") == len(c["lift"]) and
          inc.get("criteria_met") == sum(x.get("ok") is True for x in c["lift"]),
          "lift denominator")
-    need(set(evidence["state"].get("repos", {})) == REPOS and
-         set(evidence["drift"].get("repos", {})) == REPOS, "repo population")
+    states = evidence["state"].get("repos")
+    probes = evidence["drift"].get("repos")
+    need(isinstance(states, dict) and isinstance(probes, dict) and
+         set(states) == REPOS and set(probes) == REPOS, "repo population")
     roots = evidence["everred"].get("roots")
     need(isinstance(roots, list) and bool(roots), "root source absent")
     ids = ["root:" + r["id"] for r in roots]
@@ -98,7 +102,14 @@ def validate(candidate: dict, blobs: dict[str, bytes], expected_sha: str) -> dic
          "node population mismatch")
     for repo in REPOS:
         node = index["repo:"+repo]
-        state = evidence["state"]["repos"][repo]
+        state = states[repo]
+        probe = probes[repo]
+        need(isinstance(state, dict) and isinstance(probe, dict),
+             "malformed repository source")
+        need(state.get("mode") in MODES and state.get("ruleset") in RULESETS,
+             "invalid repository mode/ruleset")
+        need(state["ruleset"] != "GREEN" or probe.get("red") is False,
+             "false-green source drift")
         need(node.get("kind") == "repository" and node.get("owner") == repo and
              node.get("mode") == state["mode"] and
              node.get("ruleset") == state["ruleset"], "repo state drift")
@@ -165,9 +176,11 @@ def from_archives(path: Path, expected_sha: str) -> dict:
         candidate = json.loads(outer.read("mycelium-p-process-candidate.json"))
         zips = [name for name in names if name.startswith("p-process-site-") and name.endswith(".zip")]
         need(len(zips) == 1, "ambiguous nested site archive")
+        need(names == {"mycelium-p-process-candidate.json", zips[0],
+                       zips[0]+".sha256"}, "unexpected native artifact member")
         nested = outer.read(zips[0])
-        need(zips[0]+".sha256" in names and
-             outer.read(zips[0]+".sha256").decode().split()[0] == sha256(nested),
+        need(outer.read(zips[0]+".sha256").decode("utf-8") ==
+             sha256(nested) + "  " + zips[0] + "\n",
              "nested ZIP SHA mismatch")
     with zipfile.ZipFile(io.BytesIO(nested)) as site:
         names = members(site)

@@ -263,5 +263,90 @@ class PProcessFleetPenetration(unittest.TestCase):
                 from_archives(path, SHA)
 
 
+
+class PProcessSemanticParity(unittest.TestCase):
+    """Negative producer/consumer parity and archive population controls."""
+
+    def test_valid_green_requires_explicit_nonred_drift(self):
+        c, b = fixture()
+        state = json.loads(b["state"])
+        drift = json.loads(b["drift"])
+        repo = "GBOGEB/CODEX"
+        state["repos"][repo]["ruleset"] = "GREEN"
+        drift["repos"][repo]["red"] = False
+        b["state"] = json.dumps(state).encode()
+        b["drift"] = json.dumps(drift).encode()
+        for key in ("state", "drift"):
+            c["source"]["data_digests_sha256"][key] = sha256(b[key])
+        next(n for n in c["nodes"] if n["id"] == "repo:" + repo)["ruleset"] = "GREEN"
+        self.assertEqual(validate(c, b, SHA)["decision"], "DEFER")
+
+    def test_green_claim_with_red_or_unknown_probe_rejected(self):
+        for probe in (True, None, "false"):
+            with self.subTest(probe=probe):
+                c, b = fixture()
+                state = json.loads(b["state"])
+                drift = json.loads(b["drift"])
+                repo = "GBOGEB/CODEX"
+                state["repos"][repo]["ruleset"] = "GREEN"
+                drift["repos"][repo]["red"] = probe
+                for key, value in (("state", state), ("drift", drift)):
+                    b[key] = json.dumps(value).encode()
+                    c["source"]["data_digests_sha256"][key] = sha256(b[key])
+                next(n for n in c["nodes"] if n["id"] == "repo:" + repo)["ruleset"] = "GREEN"
+                with self.assertRaisesRegex(ValueError, "false-green source drift"):
+                    validate(c, b, SHA)
+
+    def test_unknown_modes_rulesets_and_malformed_state_rejected(self):
+        for field, value in (("mode", "PROMOTED"), ("ruleset", "PASS"),
+                             ("mode", None), ("ruleset", 1)):
+            with self.subTest(field=field, value=value):
+                c, b = fixture()
+                state = json.loads(b["state"])
+                state["repos"]["GBOGEB/CODEX"][field] = value
+                b["state"] = json.dumps(state).encode()
+                c["source"]["data_digests_sha256"]["state"] = sha256(b["state"])
+                with self.assertRaisesRegex(ValueError, "invalid repository mode/ruleset"):
+                    validate(c, b, SHA)
+
+    def test_malformed_drift_repo_is_rejected(self):
+        c, b = fixture()
+        drift = json.loads(b["drift"])
+        drift["repos"]["GBOGEB/CODEX"] = None
+        b["drift"] = json.dumps(drift).encode()
+        c["source"]["data_digests_sha256"]["drift"] = sha256(b["drift"])
+        with self.assertRaisesRegex(ValueError, "malformed repository source"):
+            validate(c, b, SHA)
+
+    def test_unlisted_outer_member_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            c, b = fixture()
+            p = Path(d) / "native.zip"
+            make_zip(p, c, b)
+            with zipfile.ZipFile(p, "a") as archive:
+                archive.writestr("shadow-attestation.json", "{}")
+            with self.assertRaisesRegex(ValueError, "unexpected native artifact member"):
+                from_archives(p, SHA)
+
+    def test_sidecar_filename_and_trailing_text_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            c, b = fixture()
+            p = Path(d) / "native.zip"
+            for sidecar in (
+                sha256(b"incorrect") + "  p-process-site-test.zip\\n",
+                "0" * 64 + "  p-process-site-test.zip\\n",
+            ):
+                with self.subTest(sidecar=sidecar[:16]):
+                    make_zip(p, c, b)
+                    with zipfile.ZipFile(p) as archive:
+                        entries = {name: archive.read(name) for name in archive.namelist()}
+                    entries["p-process-site-test.zip.sha256"] = sidecar.encode()
+                    with zipfile.ZipFile(p, "w", zipfile.ZIP_DEFLATED) as archive:
+                        for name, raw in entries.items():
+                            archive.writestr(name, raw)
+                    with self.assertRaisesRegex(ValueError, "nested ZIP SHA mismatch"):
+                        from_archives(p, SHA)
+
+
 if __name__=="__main__":
     unittest.main()
