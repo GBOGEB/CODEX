@@ -19,7 +19,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7
       - name: Execute federated exact-payload LLDB proof
         run: python3 scripts/qps_federated_lldb_exec.py
       - name: Enforce federated runtime victory

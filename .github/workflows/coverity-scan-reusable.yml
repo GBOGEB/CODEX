@@ -89,7 +89,7 @@ jobs:
           EOF
           cat receipts/coverity/preflight.json
 
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7
         if: env.HAS_TOKEN == 'true'
 
       # Pinned to a commit SHA (v1 tag floats). Bump deliberately.
