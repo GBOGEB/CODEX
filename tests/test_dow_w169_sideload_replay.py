@@ -5,7 +5,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/"scripts"))
@@ -68,10 +68,13 @@ class DOWW169ReplayTests(unittest.TestCase):
         self.assertEqual(rcv["qps_child_disposition"], "DEFER")
 
     def test_runtime_byte_forgery_rejected(self):
-        with patch.object(r.hashlib, "sha256", wraps=r.hashlib.sha256) as spied:
-            spied.return_value.hexdigest.return_value = "0"*64
-            with self.assertRaisesRegex(ValueError, "SHA256/size mismatch"):
-                r.replay_runtime()
+        # A mock built with wraps= delegates calls to the real sha256, so its
+        # return_value is the DEFAULT sentinel and cannot be configured; use a
+        # plain mock whose digest is forged.
+        forged = MagicMock()
+        forged.return_value.hexdigest.return_value = "0"*64
+        with patch.object(r.hashlib, "sha256", forged), self.assertRaisesRegex(ValueError, "SHA256/size mismatch"):
+            r.replay_runtime()
 
     def test_runtime_attempt_forgery_rejected(self):
         pth = r.ROOT / "federation/sideload/W169_NATIVE_PROVENANCE_v1.json"
