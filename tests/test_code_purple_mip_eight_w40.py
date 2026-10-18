@@ -115,6 +115,17 @@ class EightSectionMIP(unittest.TestCase):
         x=seed();x["sections"][2]["next"]=""
         with self.assertRaisesRegex(ValueError,"MIP_SECTION_INCOMPLETE"):mip.validate(x)
 
+    def test_frozen_path_sets_are_not_active_runner_leases(self):
+        receipt=mip.evaluate(seed(),candidate_head=HEAD,raw_sha256="a"*64)
+        self.assertTrue(receipt["source_path_disjoint"])
+        self.assertEqual(receipt["path_disjoint_evidence_class"],
+                         "FROZEN_PR_DIFF_NOT_A_LEASE")
+        self.assertFalse(receipt["live_current_pr_diff_verified"])
+        self.assertIsNone(receipt["actual_free_worker_capacity"])
+        modified=seed()
+        modified["parallel_lanes"][0]["path_evidence_class"]="VERIFIED_LEASE"
+        with self.assertRaisesRegex(ValueError,"PATH_SNAPSHOT_NOT_RUNNER_LOCK"):
+            mip.validate(modified)
     def test_untrusted_candidate_head_rejected(self):
         with self.assertRaisesRegex(ValueError,"UNPINNED_CANDIDATE_HEAD"):
             mip.evaluate(seed(),candidate_head="short",raw_sha256="a"*64)
