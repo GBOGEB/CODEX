@@ -96,8 +96,12 @@ def validate(data):
         cap = pool.get("observed_slots")
         need(cap is None or (type(cap) is int and cap >= 0), "INVALID_CAPACITY")
         if cap is not None:
-            need(pool.get("capacity_evidence") in LEVELS - {"DECLARED_ONLY"}
-                 and str(pool.get("source_ref", "")).startswith("https://github.com/"),
+            # Native task/run metadata does NOT prove runner pool slot inventory.
+            # Require a separate bound pool inventory receipt, never a guess.
+            need(pool.get("capacity_evidence") == "NATIVE_POOL_INVENTORY_VERIFIED"
+                 and str(pool.get("source_ref", "")).startswith("https://github.com/")
+                 and type(pool.get("receipt_sha256")) is str
+                 and re.fullmatch(r"[0-9a-f]{64}", pool["receipt_sha256"]),
                  "UNVERIFIED_CAPACITY")
         else:
             need(pool.get("capacity_evidence") is None, "FAKE_CAPACITY_SOURCE")
