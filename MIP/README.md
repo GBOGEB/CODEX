@@ -24,3 +24,25 @@ This repo uses MIP as a repeatable self-improvement loop:
 MIP DoV is withheld until at least three distinct repo SHAs have receipts and one self-heal or produce candidate is proven by an executable check.
 
 
+
+## Shareable kit (canonical in CODEX)
+
+CODEX hosts the canonical MIP kit. ABACUS, cryoplant-project and other consumers copy it unchanged.
+
+| Part | Path | Shared? |
+| --- | --- | --- |
+| Skill package | `.codex/skills/mip-repo-self-index/` | yes |
+| Self-index emitter and verifier | `scripts/mip_repo_self_index.py`, `scripts/mip_verify_self_index.py` | yes |
+| Manifest writer and drift check | `scripts/mip_kit_manifest.py` | yes |
+| Kit manifest (file list and sha256) | `MIP/kit/KIT_MANIFEST.json` | copied from CODEX |
+| Surface config | `MIP/mip_surface.json` | no, one per repo |
+
+`MIP/mip_surface.json` holds the only repo-specific settings:
+
+- `health_probe`: repo-relative path of the health/self-heal probe. `null` means no probe. If the key is absent, the default is `scripts/mip_health_selfheal_probe.py`.
+- `nested_surfaces`: list of `{path, emitter, diagnostic?}` nested self-index surfaces. Use an empty list when there are none.
+- `shareable_skill`: skill package the verifier validates.
+- `required_green`: lanes that must be GREEN, or the verifier fails.
+- `repository`, `role`, `next_victory_condition`: labels copied into the receipt and summary.
+
+After you change a kit file in CODEX, run `python scripts/mip_kit_manifest.py write` and commit the refreshed manifest in the same PR. A consumer checks its copy with `python scripts/mip_kit_manifest.py check --canonical <copy of CODEX's KIT_MANIFEST.json>`.

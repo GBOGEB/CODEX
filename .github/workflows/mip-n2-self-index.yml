@@ -5,6 +5,8 @@ on:
     paths:
       - "MIP/**"
       - "scripts/mip_*.py"
+      - ".codex/skills/mip-repo-self-index/**"
+      - "tests/test_mip_*.py"
       - ".github/workflows/mip-n2-self-index.yml"
   workflow_dispatch:
 
@@ -28,6 +30,11 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Check MIP kit files match the kit manifest
+        run: |
+          python scripts/mip_kit_manifest.py check \
+            --summary "${RUNNER_TEMP}/mip-kit-drift-summary.json"
+
       - name: Verify exact-SHA binding and repeatability
         run: |
           python scripts/mip_verify_self_index.py \
@@ -35,6 +42,13 @@ jobs:
 
       - name: Confirm verifier left source checkout clean
         run: test -z "$(git status --porcelain)"
+
+      - name: Run MIP kit tests
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          python -m pip install --disable-pip-version-check pytest
+          python -m pytest -p no:cacheprovider tests/test_mip_kit.py
 
       - name: Publish sanitized summary to job log
         run: |
@@ -50,6 +64,8 @@ jobs:
         uses: actions/upload-artifact@v7.0.2
         with:
           name: mip-n2-self-index-sanitized-${{ env.EXPECTED_SHA }}
-          path: ${{ runner.temp }}/mip-n2-self-index-summary.json
+          path: |
+            ${{ runner.temp }}/mip-n2-self-index-summary.json
+            ${{ runner.temp }}/mip-kit-drift-summary.json
           if-no-files-found: error
           retention-days: 14
