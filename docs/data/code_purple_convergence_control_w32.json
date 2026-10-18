@@ -1,0 +1,248 @@
+{
+  "schema": "codepurple.convergence.control-index.v1",
+  "version": "W32",
+  "scope": "CODEX_READ_ONLY_FEDERATED_ENTRY",
+  "observed_date": "2026-10-18",
+  "authority_transfer": false,
+  "security_waiver": false,
+  "merge_admission": "HOLD",
+  "mutation_enabled": false,
+  "source_heads_observed": {
+    "CODEX": "dfcd6c0ebc4dc902c6bb71e0a739e4d68ac114ed",
+    "ABACUS": "994ad6e73c748923841d92b12651e92d41b2d4ff",
+    "QPS": null
+  },
+  "historical_coverage": {
+    "historical_main_baseline_20261011": {
+      "percent": 36.85,
+      "comparison": "UNMATCHED",
+      "denominator": null
+    },
+    "historical_pr_broad_20261012": {
+      "percent": 36.92,
+      "comparison": "UNMATCHED",
+      "denominator": null
+    },
+    "historical_pr_diff_20261012": {
+      "percent": 51,
+      "comparison": "UNMATCHED",
+      "denominator": null
+    },
+    "canonical_main_verified_previous": {
+      "sha": "9e0200190555736c74295ee74881e3c003e8a35c",
+      "covered": 35571,
+      "eligible": 52497,
+      "percent": 67.758,
+      "run_id": 39148074250,
+      "url": "https://github.com/GBOGEB/ABACUS/actions/runs/39148074250"
+    },
+    "current_main_same_head_coverage": null,
+    "current_pr_broad": null,
+    "current_pr_diff": null,
+    "accepted_fixed_population_delta_pp": null
+  },
+  "status_snapshots": {
+    "ABACUS_1860": {
+      "done": 1,
+      "total": 12,
+      "evidence": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    "CODEX_977": {
+      "done": 0,
+      "total": 7,
+      "evidence": "https://github.com/GBOGEB/CODEX/issues/977"
+    },
+    "authenticated_crew_launch_ids": null,
+    "accepted_rex_receipts": null,
+    "root_open": null,
+    "root_closed": null,
+    "bd_open": null,
+    "bd_closed": null,
+    "first_correctly_admitted_pr": null,
+    "negative_red_canary_proven": null
+  },
+  "candidate": {
+    "repo": "GBOGEB/ABACUS",
+    "pr": 2274,
+    "head": "513e713eef581c55b6645291699404de43fb03d7",
+    "designed_cases": 15,
+    "source_families": 6,
+    "changed_files": 2,
+    "terminal_native_cases": null,
+    "measured_coverage_uplift": null,
+    "url": "https://github.com/GBOGEB/ABACUS/pull/2274"
+  },
+  "axes": [
+    {
+      "id": "SOURCE",
+      "title": "Source coverage",
+      "denominator": "eligible statements + branches, matched producer SHA/config",
+      "observed": "35,571/52,497 historical green main",
+      "accepted_current": null,
+      "owner": "ABACUS"
+    },
+    {
+      "id": "PENETRATION",
+      "title": "Adversarial penetration",
+      "denominator": "eligible fault/oracle cases",
+      "observed": "W32 15 designed new test cases",
+      "accepted_current": null,
+      "owner": "ABACUS"
+    },
+    {
+      "id": "FEDERATION",
+      "title": "Integration reach",
+      "denominator": "pinned producer/receiver receipt pairs",
+      "observed": null,
+      "accepted_current": null,
+      "owner": "ABACUS/CODEX/QPS separate"
+    },
+    {
+      "id": "RUNNER",
+      "title": "Platform/runner reach",
+      "denominator": "fixed OS/Python/dependency cells with terminal receipts",
+      "observed": "W32 20 queued at historical readback, distinct workflows",
+      "accepted_current": null,
+      "owner": "ABACUS"
+    },
+    {
+      "id": "ROOT",
+      "title": "Causal root closure",
+      "denominator": "deduplicated root IDs and owner disposition",
+      "observed": "2 B0 first-red manifestations in run 39156907500",
+      "accepted_current": null,
+      "owner": "ABACUS + human"
+    }
+  ],
+  "links": [
+    {
+      "group": "COMMAND",
+      "title": "CODEX Convergence Map",
+      "href": "code_purple_convergence.html",
+      "authority": "CODEX",
+      "detail": "entry point; live public GitHub metadata"
+    },
+    {
+      "group": "COMMAND",
+      "title": "MYCELIUM Operations Atlas",
+      "href": "missioncontrol_operations_atlas.html",
+      "authority": "CODEX",
+      "detail": "typed DAG, operations and dispatch"
+    },
+    {
+      "group": "COMMAND",
+      "title": "Federated Launchpad",
+      "href": "missioncontrol_federated_launchpad.html",
+      "authority": "CODEX",
+      "detail": "source-bound graph, scheduler guard"
+    },
+    {
+      "group": "COMMAND",
+      "title": "Graph Explorer",
+      "href": "missioncontrol_graph_explorer.html",
+      "authority": "CODEX",
+      "detail": "interaction graph"
+    },
+    {
+      "group": "EVIDENCE",
+      "title": "ABACUS Evidence Observatory",
+      "href": "https://github.com/GBOGEB/ABACUS/tree/main/MIP/EVIDENCE_TO_ADMISSION_OBSERVATORY",
+      "authority": "ABACUS",
+      "detail": "canonical B0, admission proofs"
+    },
+    {
+      "group": "EVIDENCE",
+      "title": "ABACUS Weighted SPINE",
+      "href": "https://github.com/GBOGEB/ABACUS/blob/main/MIP/G3CS_CONVERGENCE_V2/observatory/w10/W13_NEURAL_SPINE_INTERACTIVE.html",
+      "authority": "ABACUS",
+      "detail": "weighted genealogy"
+    },
+    {
+      "group": "EVIDENCE",
+      "title": "ABACUS EVERRED V3",
+      "href": "https://github.com/GBOGEB/ABACUS/tree/main/tools/everred_v3/acceptance/dashboard",
+      "authority": "ABACUS",
+      "detail": "BD and first-red telemetry"
+    },
+    {
+      "group": "COVERAGE",
+      "title": "Five-axis W31 census candidate",
+      "href": "https://github.com/GBOGEB/CODEX/pull/1106",
+      "authority": "CODEX",
+      "detail": "source-owned exact-head telemetry"
+    },
+    {
+      "group": "COVERAGE",
+      "title": "ABACUS W32 bridge integrity",
+      "href": "https://github.com/GBOGEB/ABACUS/pull/2274",
+      "authority": "ABACUS",
+      "detail": "15 engineered cases; qualification pending"
+    },
+    {
+      "group": "CONTROL",
+      "title": "Recovery register #1860",
+      "href": "https://github.com/GBOGEB/ABACUS/issues/1860",
+      "authority": "ABACUS",
+      "detail": "P0 owner review TODO"
+    },
+    {
+      "group": "CONTROL",
+      "title": "Dispatch #977",
+      "href": "https://github.com/GBOGEB/CODEX/issues/977",
+      "authority": "CODEX",
+      "detail": "stage-only: crew launch unknown"
+    },
+    {
+      "group": "CONTROL",
+      "title": "QPS dashboard launcher",
+      "href": "https://github.com/GBOGEB/cryoplant-project/blob/main/docs/QPS_DASHBOARD_LAUNCHER_CURRENT.html",
+      "authority": "QPS",
+      "detail": "engineering authority retained"
+    }
+  ],
+  "disjoint_lanes": [
+    {
+      "id": "A",
+      "pr": 2263,
+      "reason": "NumPy contract",
+      "domain": "B0",
+      "status": "PR_HEAD_READBACK_REQUIRED"
+    },
+    {
+      "id": "B",
+      "pr": 2264,
+      "reason": "G3CS skip provenance",
+      "domain": "B0",
+      "status": "PR_HEAD_READBACK_REQUIRED"
+    },
+    {
+      "id": "C",
+      "pr": 2265,
+      "reason": "W29 import path",
+      "domain": "RUNNER",
+      "status": "PR_HEAD_READBACK_REQUIRED"
+    },
+    {
+      "id": "D",
+      "pr": 2266,
+      "reason": "Safety scanner provenance",
+      "domain": "SECURITY",
+      "status": "PR_HEAD_READBACK_REQUIRED"
+    },
+    {
+      "id": "E",
+      "pr": 2267,
+      "reason": "Admission proof",
+      "domain": "GOVERNANCE",
+      "status": "PR_HEAD_READBACK_REQUIRED"
+    },
+    {
+      "id": "F",
+      "pr": 2274,
+      "reason": "Binary integrity/family reach",
+      "domain": "PENETRATION",
+      "status": "PR_HEAD_READBACK_REQUIRED"
+    }
+  ],
+  "acceptance": "Read-only GitHub metadata cannot establish accepted native coverage, worker launch or governed merge. Gate requires terminal exact-head CI, security, real eligible review, enforced ruleset and blocked RED canary. Historical N-1 and N counts with different population must remain separate."
+}
