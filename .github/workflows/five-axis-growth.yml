@@ -1,0 +1,53 @@
+name: CODE PURPLE five-axis qualification
+on:
+  pull_request:
+    paths:
+      - 'mission_control/mycelium/five_axis/**'
+      - 'tests/test_five_axis_growth.py'
+      - '.github/workflows/five-axis-growth.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  five-axis:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-24.04, python: '3.10'}
+          - {os: ubuntu-24.04, python: '3.11'}
+          - {os: ubuntu-24.04, python: '3.12'}
+          - {os: windows-2022, python: '3.11'}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Check exact head and execute adversarial tests
+        shell: bash
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          python -m unittest discover -s tests -p test_five_axis_growth.py -v
+      - name: Generate and verify source-bound receipts
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          python mission_control/mycelium/five_axis/five_axis.py --input mission_control/mycelium/five_axis/W0_FIELD_OBSERVATIONS.json --out five_axis_receipts --candidate-head "$HEAD_SHA" --run-id "$RUN_ID" --attempt "$RUN_ATTEMPT"
+          python mission_control/mycelium/five_axis/five_axis.py --input mission_control/mycelium/five_axis/W0_FIELD_OBSERVATIONS.json --out five_axis_receipts --candidate-head "$HEAD_SHA" --verify-only
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: five-axis-${{ matrix.os }}-${{ matrix.python }}-${{ github.run_id }}
+          path: five_axis_receipts/
+          if-no-files-found: warn
