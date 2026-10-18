@@ -127,5 +127,141 @@ class PProcessConsumer(unittest.TestCase):
         c,b=fixture();c["nodes"][-1]["owner"]="GBOGEB/CODEX"
         with self.assertRaisesRegex(ValueError,"root state drift"):validate(c,b,SHA)
 
+
+def fleet_fixture(count=16):
+    """Six-source-authority, 16-root candidate with digest-reconciled inputs."""
+    candidate, blobs = fixture()
+    families = (
+        ("ABACUS", "ABACUS"),
+        ("CODEX", "CODEX"),
+        ("CRYO", "cryoplant-project"),
+        ("GGMATH", "gg_MATH"),
+        ("QET", "Q_engineering_tools"),
+        ("PAH", "pipeline-automation-hub"),
+    )
+    roots = []
+    nodes = [n for n in candidate["nodes"] if n["kind"] == "repository"]
+    edges = []
+    for i in range(count):
+        family, owner = families[i % len(families)]
+        rid = f"{family}-RC-2026-{i + 1:04d}"
+        roots.append({"id": rid, "state": "BLOCKED_AUTHORITY", "severity": "P0"})
+        nodes.append({
+            "id": "root:" + rid, "kind": "issue",
+            "owner": "GBOGEB/" + owner,
+            "state": "BLOCKED_AUTHORITY", "severity": "P0",
+            "evidence": "PRODUCER_SNAPSHOT",
+        })
+        edges.append({
+            "from": "root:" + rid, "to": "repo:GBOGEB/" + owner,
+            "kind": "references", "evidence": "DECLARED_SOURCE_LINK",
+        })
+    blobs["everred"] = (
+        json.dumps({"roots": roots}, sort_keys=True) + "\n"
+    ).encode("utf-8")
+    candidate["source"]["data_digests_sha256"]["everred"] = sha256(
+        blobs["everred"]
+    )
+    candidate["nodes"] = nodes
+    candidate["edges"] = edges
+    return candidate, blobs
+
+
+class PProcessFleetPenetration(unittest.TestCase):
+    def test_six_repos_sixteen_roots_and_sixteen_edges_remain_withheld(self):
+        candidate, blobs = fleet_fixture()
+        result = validate(candidate, blobs, SHA)
+        self.assertEqual(
+            (result["checked_repos"], result["checked_roots"],
+             result["checked_edges"]), (6, 16, 16)
+        )
+        self.assertEqual(result["decision"], "DEFER")
+        self.assertEqual(result["consumer_acceptance"], "WITHHELD")
+        self.assertEqual(result["merge_admission"], "HOLD")
+        self.assertEqual(result["engineering_credit_delta"], 0)
+
+    def test_sixteen_root_evidence_survives_nested_archive(self):
+        with tempfile.TemporaryDirectory() as d:
+            candidate, blobs = fleet_fixture()
+            path = Path(d) / "native.zip"
+            make_zip(path, candidate, blobs)
+            result = from_archives(path, SHA)
+            self.assertEqual(
+                (result["checked_roots"], result["checked_edges"]), (16, 16)
+            )
+            self.assertEqual(result["manifest_verified_files"], 4)
+            self.assertEqual(result["decision"], "DEFER")
+
+    def test_duplicate_and_missing_root_edges_fail_closed(self):
+        for mutation in ("duplicate", "missing"):
+            with self.subTest(mutation=mutation):
+                candidate, blobs = fleet_fixture()
+                if mutation == "duplicate":
+                    candidate["edges"][1] = copy.deepcopy(candidate["edges"][0])
+                else:
+                    candidate["edges"].pop()
+                with self.assertRaises(ValueError):
+                    validate(candidate, blobs, SHA)
+
+    def test_cross_repo_root_authority_forgery_rejected(self):
+        candidate, blobs = fleet_fixture()
+        candidate["edges"][0]["to"] = "repo:GBOGEB/CODEX"
+        with self.assertRaisesRegex(ValueError, "cross-authority edge"):
+            validate(candidate, blobs, SHA)
+
+    def test_source_root_duplication_rejected_after_rehash(self):
+        candidate, blobs = fleet_fixture()
+        roots = json.loads(blobs["everred"])["roots"]
+        roots.append(copy.deepcopy(roots[0]))
+        blobs["everred"] = json.dumps({"roots": roots}).encode("utf-8")
+        candidate["source"]["data_digests_sha256"]["everred"] = sha256(
+            blobs["everred"]
+        )
+        with self.assertRaisesRegex(ValueError, "duplicate source roots"):
+            validate(candidate, blobs, SHA)
+
+    def test_six_repo_population_forgery_rejected_after_rehash(self):
+        candidate, blobs = fleet_fixture()
+        state = json.loads(blobs["state"])
+        state["repos"].pop("GBOGEB/CODEX")
+        blobs["state"] = json.dumps(state).encode("utf-8")
+        candidate["source"]["data_digests_sha256"]["state"] = sha256(
+            blobs["state"]
+        )
+        with self.assertRaisesRegex(ValueError, "repo population"):
+            validate(candidate, blobs, SHA)
+
+    def test_boolean_credit_and_stale_producer_denied(self):
+        for key in ("formal_credit_delta", "engineering_credit_delta"):
+            with self.subTest(key=key):
+                candidate, blobs = fleet_fixture()
+                candidate[key] = False
+                with self.assertRaisesRegex(ValueError, "forbidden promotion"):
+                    validate(candidate, blobs, SHA)
+        candidate, blobs = fleet_fixture()
+        candidate["source"]["commit_sha"] = "f" * 40
+        with self.assertRaisesRegex(ValueError, "stale producer head"):
+            validate(candidate, blobs, SHA)
+
+    def test_nested_zip_checksum_forgery_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            candidate, blobs = fleet_fixture()
+            path = Path(d) / "nested.zip"
+            make_zip(path, candidate, blobs)
+            with zipfile.ZipFile(path, "r") as archive:
+                entries = {
+                    info.filename: archive.read(info)
+                    for info in archive.infolist()
+                }
+            entries["p-process-site-test.zip.sha256"] = (
+                b"0" * 64 + b"  p-process-site-test.zip\n"
+            )
+            with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as archive:
+                for name, raw in entries.items():
+                    archive.writestr(name, raw)
+            with self.assertRaisesRegex(ValueError, "nested ZIP SHA mismatch"):
+                from_archives(path, SHA)
+
+
 if __name__=="__main__":
     unittest.main()
