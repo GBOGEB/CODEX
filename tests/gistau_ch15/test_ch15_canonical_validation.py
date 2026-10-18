@@ -44,8 +44,10 @@ def examples(gate):
 
 def test_every_worked_example_is_checked_or_excluded_with_a_reason(gate, examples):
     ids = {e["example_id"] for e in examples}
-    assert set(gate["checked"]) | set(gate["excluded"]) == ids
+    open_items = set(gate.get("source_check_required", {}))
+    assert set(gate["checked"]) | set(gate["excluded"]) | open_items == ids
     assert not set(gate["checked"]) & set(gate["excluded"])
+    assert not open_items & (set(gate["checked"]) | set(gate["excluded"]))
     assert all(isinstance(r, str) and r.strip() for r in gate["excluded"].values())
 
 
@@ -88,3 +90,14 @@ def test_gate_passes_when_provider_reproduces_the_book(tool, gate, examples):
     real = {eid: tool.compute(by_id[eid], ideal) for eid in gate["checked"]}
     fake = [dict(e, expected_outputs={**e["expected_outputs"], **{k: v for k, v in real.get(e["example_id"], {}).items() if k in e["expected_outputs"]}}) for e in examples]
     assert tool.validate(gate, fake, ideal)["status"] == "PASS"
+
+
+def test_source_check_items_are_reported_but_never_counted_as_passing(tool, gate, examples):
+    by_id = {e["example_id"]: e for e in examples}
+    real = {eid: tool.compute(by_id[eid], ideal) for eid in gate["checked"]}
+    fake = [dict(e, expected_outputs={**e["expected_outputs"], **{k: v for k, v in real.get(e["example_id"], {}).items() if k in e["expected_outputs"]}}) for e in examples]
+    report = tool.validate(gate, fake, ideal)
+    assert report["status"] == "PASS"
+    open_rows = [r for r in report["rows"] if r["example_id"] in gate["source_check_required"]]
+    assert open_rows and all(r["verdict"].startswith("OPEN_") for r in open_rows)
+    assert report["examples_checked"] == len(gate["checked"])
