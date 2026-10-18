@@ -6,7 +6,7 @@
 
 - CODEX source base: `8361e6922f0768c66abcdd05c8ef865715cf048f` (already includes merged W31 #1106).
 - ABACUS main observed at snapshot: `994ad6e73c748923841d92b12651e92d41b2d4ff`; current comparable global statement/branch coverage **UNKNOWN**.
-- QPS private owner main metadata was observed as `fc07545c3986181a1b837c0eb7ff9a8393fd4058`, but no private QPS Actions/jobs or engineering contents are fetched into the public CODEX viewer.
+- QPS private owner SHA, open issue counts, Actions/jobs and engineering contents are not emitted into the public CODEX viewer; exact source proof remains UNKNOWN until owner-authorized release.
 - Published static source: `docs/data/code-purple-dov-w36.json` (frozen source receipt); responsive concentrated landing `docs/code-purple-dov.html`; added portal link `docs/index.html`. Source report is versioned and non-authoritative.
 - Read-only GitHub refresh: HTML button calls only public GitHub API branches/main and first page of same-head runs for ABACUS/CODEX. It never inserts browser secrets, infers completed outcomes from queued records, or rewrites a frozen source ledger. New heads are new incomparable epochs.
 - Automated emission: `.github/workflows/code-purple-dov-w36.yml` runs a **single** source-owned Ubuntu job on PR/dispatch and **daily** on main, with `actions:read`, `contents:read` and no write permissions, publishing `W36_LIVE_READBACK.json` plus `W36_SHA256.json` as one GitHub artifact. Collector limits **three API pages per public repo**, deduplicates workflow-run IDs and tracks observed/unknown tail; private QPS explicitly DEFER.
