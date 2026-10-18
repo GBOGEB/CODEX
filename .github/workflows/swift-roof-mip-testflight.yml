@@ -3,8 +3,9 @@ on:
   pull_request:
     paths:
       - 'scripts/swift_roof_mip.py'
+      - 'scripts/swift_roof_p3.py'
       - 'scripts/lldb_dap_runtime_probe.py'
-      - 'tests/runtime/test_swift_roof_mip.py'
+      - 'tests/runtime/test_swift_roof_*.py'
       - 'runtime/debug/swift_roof/**'
       - '.github/workflows/swift-roof-mip-testflight.yml'
   workflow_dispatch:
@@ -17,23 +18,46 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
-      - name: Exact-HEAD testflight and fail-closed census
+      - name: Preflight source identity and initialize non-proof receipt
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/swift-roof-census
+          python - <<'PY'
+          import json,os,pathlib,subprocess
+          current=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          expected=os.environ['EXPECTED_HEAD']
+          pathlib.Path('/tmp/swift-roof-census/preflight.json').write_text(json.dumps({
+            'schema':'codepurple.swift.roof.preflight.v1',
+            'observed_checkout_sha':current,'expected_pr_head_sha':expected,
+            'matching_source':current==expected,'qualification':'ATTEMPT_NOT_PROOF',
+            'run_id':os.environ.get('GITHUB_RUN_ID'),
+            'run_attempt':os.environ.get('GITHUB_RUN_ATTEMPT')},sort_keys=True,indent=2)+'\n')
+          assert current==expected,'checkout must use exact PR source head, never synthetic merge'
+          PY
+      - name: Execute positive and adversarial P1 plus P3 tests
         shell: bash
         env:
           EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
-          python -m unittest discover -s tests/runtime -p test_swift_roof_mip.py -v
+          python -m pip install --disable-pip-version-check 'coverage>=7.10,<8'
+          python -m coverage run --branch --include='*/scripts/swift_roof_mip.py,*/scripts/swift_roof_p3.py' -m unittest discover -s tests/runtime -p 'test_swift_roof_*.py' -v
+          python -m coverage report --include='*/scripts/swift_roof_mip.py,*/scripts/swift_roof_p3.py' --fail-under=80 -m
+          python -m coverage json --include='*/scripts/swift_roof_mip.py,*/scripts/swift_roof_p3.py' -o /tmp/swift-roof-census/native-coverage.json
           python scripts/swift_roof_mip.py --mode census --expected-head "$EXPECTED_HEAD" --out /tmp/swift-roof-census
-      - name: Publish P1 receipt
+      - name: Publish P1 receipt even on failure
         if: always()
         uses: actions/upload-artifact@v7.0.2
         with:
           name: swift-roof-p1-${{ github.event.pull_request.head.sha || github.sha }}
           path: /tmp/swift-roof-census
-          if-no-files-found: warn
+          if-no-files-found: error
   native-macos:
     name: P2 macOS Swift compile plus real LLDB stop proof
     needs: census-contract
@@ -41,22 +65,62 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Build probe and strictly verify native evidence
         env:
           EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
-          GITHUB_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          EVENT_MERGE_SHA: ${{ github.sha }}
         shell: bash
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXACT_HEAD"
+          printf 'CHECKOUT_SOURCE_SHA=%s\\nEVENT_MERGE_SHA=%s\\n' "$(git rev-parse HEAD)" "$EVENT_MERGE_SHA"
           mkdir -p /tmp/swift-roof-native
           python scripts/lldb_dap_runtime_probe.py --mode probe --receipt /tmp/swift-roof-native/native.json
           python scripts/swift_roof_mip.py --mode verify --expected-head "$EXACT_HEAD" --receipt /tmp/swift-roof-native/native.json --out /tmp/swift-roof-native/roof
-      - name: Publish native receipt even when red
+      - name: Publish P2 native receipt even on failure
         if: always()
         uses: actions/upload-artifact@v7.0.2
         with:
           name: swift-roof-p2-${{ github.event.pull_request.head.sha || github.sha }}
           path: /tmp/swift-roof-native
+          if-no-files-found: warn
+  owner-triad:
+    name: P3 read-only KEB DOW QPS and three-pulse burndown
+    needs: [census-contract, native-macos]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Download exact-run P2 native receipt when available
+        if: needs.native-macos.result == 'success'
+        uses: actions/download-artifact@v8.0.2
+        with:
+          name: swift-roof-p2-${{ github.event.pull_request.head.sha || github.sha }}
+          path: /tmp/swift-roof-p2
+      - name: Build non-promoting N-minus-1 N N-plus-1 pulse evidence
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          P1_STATUS: ${{ needs.census-contract.result }}
+          P2_STATUS: ${{ needs.native-macos.result }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          python scripts/swift_roof_p3.py \
+            --expected-head "$EXPECTED_HEAD" \
+            --history runtime/debug/swift_roof/historical-owner-crosswalk.json \
+            --p1 "$P1_STATUS" --p2 "$P2_STATUS" \
+            --native-receipt /tmp/swift-roof-p2/native.json \
+            --out /tmp/swift-roof-p3
+      - name: Upload P3 status and hash (not owner acceptance)
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: swift-roof-p3-${{ github.event.pull_request.head.sha || github.sha }}
+          path: /tmp/swift-roof-p3
           if-no-files-found: warn
