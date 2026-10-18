@@ -166,6 +166,16 @@ footer{color:var(--muted);padding:26px;border-top:1px solid var(--border);text-a
 <article><span class="caps good-text">Accepted for root-level DoV</span><h3>Matching instrumented evidence</h3><p>Exact repo + SHA + run + job + scanner/config identity. Disjoint repairs keep isolated coverage reports until integration.</p></article>
 <article><span class="caps blocked-text">Do not promote</span><h3>Staged, cancelled, sampled, inferred</h3><p>Queued CI, raw Bandit count differences, local proposal-worker success or GitHub-looking REX URLs cannot confer security clearance or verified Crew launch.</p></article>
 </div>
+<div class="gate" id="cbdW38Rollup" aria-label="CBD W38 source-bound coverage detail">
+<article><span class="caps good-text">CBD! W38 · unchanged production module</span>
+<h3 id="w39Branch">UNKNOWN</h3><p id="w39Statements">UNKNOWN</p>
+<p class="small">Paired existing-source coverage only. Global current-main coverage remains UNKNOWN.</p>
+<a href="https://github.com/GBOGEB/ABACUS/pull/2289">ABACUS #2289 · native receipts</a></article>
+<article><span class="caps blocked-text">Independent admission obligations</span>
+<h3 id="w39Route">UNKNOWN</h3><p id="w39Proof">UNKNOWN</p>
+<p class="small">Event routing telemetry is a measured observation, not permission to suppress required reviews. Native run success is not security or human admission.</p>
+<a href="https://github.com/GBOGEB/ABACUS/pull/2288">ABACUS #2288 · routing observer</a></article>
+</div>
 <p class="small">Use a single bounded integration candidate only after disjoint focused tests converge; preserve full security, coverage and governance verdicts.</p>
 </section>
 <section id="top21" class="section" aria-labelledby="top-title">
@@ -216,6 +226,21 @@ function drawLedger(d) {
  set("priorCoverage", latest ? latest.covered_combined.toLocaleString()+"/"+latest.eligible_combined.toLocaleString()+" = "+latest.percent_combined.toFixed(3)+"% · fixed-cohort UNKNOWN" : cov.covered.toLocaleString()+"/"+cov.eligible.toLocaleString()+" = "+cov.percent.toFixed(3)+"%");
  const ns=d.candidate.native_selected_case_receipt;
  set("w32NativeCases",ns ? ns.passed_cases+"/"+ns.designed_cases+" · B0 "+ns.full_canonical_B0 : UNKNOWN);
+ const w=d.cbd_w38_native, br=w?.source_branch, st=w?.source_statements;
+ const matched= w?.schema==="codepurple.cbd.w38.native-local-matched.v1"
+     && w.terminal_status==="COMPLETED_SUCCESS"
+     && w.source_unchanged===true && validSha(w.source_pr_head)
+     && /^[a-f0-9]{64}$/.test(w.source_sha256||"")
+     && br && st && Number.isSafeInteger(br.eligible) && br.eligible>0
+     && Number.isSafeInteger(st.eligible) && st.eligible>0
+     && br.eligible===36 && st.eligible===97
+     && br.baseline_covered+br.delta===br.expanded_covered
+     && st.baseline_covered+st.delta===st.expanded_covered
+     && br.expanded_covered<=br.eligible && st.expanded_covered<=st.eligible;
+ set("w39Branch", matched ? "Branches "+br.baseline_covered+"/"+br.eligible+" → "+br.expanded_covered+"/"+br.eligible+" · +"+br.delta : UNKNOWN);
+ set("w39Statements",matched ? "Statements "+st.baseline_covered+"/"+st.eligible+" → "+st.expanded_covered+"/"+st.eligible+" · +"+st.delta+" · same source" : UNKNOWN);
+ set("w39Route",w?.next_public_receipt?.local_new_source_branches || UNKNOWN);
+ set("w39Proof",matched ? "Native #"+w.terminal_run+" · selected source only · main uplift UNKNOWN" : UNKNOWN);
  const oi=d.status_snapshots.ordinary_issues_3repo_observed;
  set("ordinaryIssues",oi ? oi.open+" / "+oi.closed+" (frozen)" : UNKNOWN);
  set("abacusTodo", d.status_snapshots.ABACUS_1860.done+"/"+d.status_snapshots.ABACUS_1860.total+" (snapshot)");
