@@ -4,6 +4,7 @@ on:
     paths:
       - 'mission_control/mycelium/live_ops/**'
       - 'tests/test_live_ops_dag.py'
+      - 'tests/test_live_ops_events.py'
       - '.github/workflows/mycelium-live-ops-w1.yml'
   workflow_dispatch:
 permissions:
@@ -35,6 +36,7 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           python -m unittest discover -s tests -p test_live_ops_dag.py -v
+          python -m unittest discover -s tests -p test_live_ops_events.py -v
           python mission_control/mycelium/live_ops/dag_observer.py --input mission_control/mycelium/live_ops/W1_FIXTURE.json --output live_ops/W1_METRICS.json
       - uses: actions/upload-artifact@v4
         if: always()
