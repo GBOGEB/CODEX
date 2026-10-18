@@ -319,25 +319,75 @@ def project(data):
 
 
 def compare(previous,current):
+    """Like-for-like instance transitions, never a derived engineering credit."""
     validate(previous)
     validate(current)
     a={x["logical_key"]:x for x in previous["tasks"]}
     b={x["logical_key"]:x for x in current["tasks"]}
-    aligned=set(a)==set(b) and previous["population"]==current["population"]
+    population_equal=(set(a)==set(b) and
+                      previous["population"]==current["population"])
+    head_equal=previous["sources"]==current["sources"]
+    native_equal=(population_equal and all(
+        (a[k].get("native")==b[k].get("native"))
+        for k in a if a[k]["kind"]=="NATIVE"))
+    compatible=bool(population_equal and head_equal and native_equal)
     before=project(previous)[0]
     after=project(current)[0]
-    return {"schema":"missioncontrol.mycelium.operational_dag.delta.v1",
-            "same_logical_population":aligned,
-            "exact_source_heads_equal":previous["sources"]==current["sources"],
-            "prior_capture":previous["capture_utc"],
-            "current_capture":current["capture_utc"],
-            "native_failed_delta":after["native_failed_instances"]-before["native_failed_instances"]
-                                  if aligned else None,
-            "downstream_blocked_delta":after["downstream_unique_blocked"]-before["downstream_unique_blocked"]
-                                        if aligned else None,
-            "coverage_gain_eligible":None,
-            "owner_admission": "HOLD",
-            "evidence_note":"STATUS_TREND_ONLY_NOT_MATCHED_COVERAGE_OR_ROOT_CLOSURE"}
+    old={x["logical_key"]:x for x in before["task_instances"]}
+    new={x["logical_key"]:x for x in after["task_instances"]}
+    transitions=[]
+    if compatible:
+        for key in sorted(old):
+            if old[key]["state"]!=new[key]["state"]:
+                transitions.append({
+                    "logical_key":key,
+                    "observed_state_before":old[key]["observed_state"],
+                    "observed_state_after":new[key]["observed_state"],
+                    "state_before":old[key]["state"],
+                    "state_after":new[key]["state"],
+                    "native":old[key]["kind"]=="NATIVE",
+                    "native_identity_unchanged":True,
+                    "source_ref":new[key]["source_ref"]
+                })
+    return {
+        "schema":"missioncontrol.mycelium.operational_dag.delta.v2",
+        "same_logical_population":population_equal,
+        "exact_source_heads_equal":head_equal,
+        "same_native_run_job_attempt_heads":native_equal,
+        "comparable_state_snapshot":compatible,
+        "prior_capture":previous["capture_utc"],
+        "current_capture":current["capture_utc"],
+        "state_transitions":transitions,
+        "new_terminal_native_successes":(sum(
+            t["native"] and t["state_before"]!="SUCCESS_NATIVE"
+            and t["state_after"]=="SUCCESS_NATIVE" for t in transitions)
+            if compatible else None),
+        "new_ready_proposals":(sum(
+            not t["native"] and t["state_before"]!="READY_PROPOSED"
+            and t["state_after"]=="READY_PROPOSED" for t in transitions)
+            if compatible else None),
+        "native_failed_delta":(after["native_failed_instances"]-
+            before["native_failed_instances"] if compatible else None),
+        "downstream_blocked_delta":(after["downstream_unique_blocked"]-
+            before["downstream_unique_blocked"] if compatible else None),
+        "queue_sample_before":before["queue_sample_n"] if compatible else None,
+        "queue_sample_after":after["queue_sample_n"] if compatible else None,
+        "runtime_sample_before":before["runtime_sample_n"] if compatible else None,
+        "runtime_sample_after":after["runtime_sample_n"] if compatible else None,
+        "queue_p95_before_s":before["queue_p95_s"] if compatible else None,
+        "queue_p95_current_s":after["queue_p95_s"] if compatible else None,
+        "queue_p95_matched_delta_s":(after["queue_p95_s"]-
+            before["queue_p95_s"] if compatible and
+            before["queue_p95_s"] is not None and
+            after["queue_p95_s"] is not None and
+            before["queue_sample_n"]==after["queue_sample_n"]
+            else None),
+        "coverage_gain_eligible":None,
+        "formal_causal_root_closures":None,
+        "owner_admission":"HOLD",
+        "evidence_note":"EXACT_INSTANCE_STATUS_TRANSITION_NOT_MATCHED_COVERAGE_OR_FORMAL_ROOT_CLOSURE"
+    }
+
 
 
 def viewer(report, layers, data):
