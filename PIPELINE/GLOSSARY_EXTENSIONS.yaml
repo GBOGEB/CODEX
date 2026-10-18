@@ -219,3 +219,13 @@ glossary:
     definition: Boolean on the HTML baseline comparator's RegressionResult that is true when the baseline and candidate semantic signatures have no deltas, independent of byte equality.
     introduced_by: renderers/regression/html_baseline_compare.py
     first_use_case: distinguish a real render regression from a formatting-only change in render QA receipts.
+
+  semantic_digest:
+    definition: SHA-256 of the canonical JSON form (sorted keys, compact separators, ASCII) of the MissionControl operations-atlas data object, embedded in the generated page so the page can be checked against its source data.
+    introduced_by: scripts/rebuild_missioncontrol_operations_atlas_v2.py
+    first_use_case: bind docs/missioncontrol_operations_atlas.html to docs/data/missioncontrol_operations_atlas_v2.json without depending on JSON formatting.
+
+  semantic_snapshot:
+    definition: UTC timestamp, reported in the M4 rebuild receipt, of the source snapshot the MissionControl M4 merge-topology page was generated from; it dates the inputs and does not grant merge admission.
+    introduced_by: scripts/rebuild_missioncontrol_m4.py
+    first_use_case: tell reviewers which snapshot a regenerated M4 page reflects while merge_admission stays HOLD.
