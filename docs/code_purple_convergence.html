@@ -68,6 +68,29 @@ footer{color:var(--muted);padding:26px;border-top:1px solid var(--border);text-a
 @media(max-width:1050px){.track{grid-template-columns:1fr 1fr}.node:not(:last-child)::after{content:none}.lanes{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.main{padding:12px}.section{padding:16px}.track,.lanes,.gate,.datalist{grid-template-columns:1fr}.key{top:53px;gap:6px 10px;font-size:.76rem}.key span{white-space:normal}.hero{padding:20px 16px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* W32 read-only federation control strip; no host write or action dispatch. */
+.control-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.control-tile{background:#101a2d;border:1px solid var(--border);border-radius:12px;padding:14px;min-width:0}
+.control-tile strong{display:block;color:var(--evidence);font-size:1.3rem;overflow-wrap:anywhere}
+.control-tile small{color:var(--muted)}
+.control-tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0}
+.control-tools button{border:1px solid var(--border);border-radius:8px;background:#23375a;color:var(--ink);padding:10px 14px;cursor:pointer}
+.control-tools button:disabled{opacity:.65;cursor:wait}
+.control-tools label{font-size:.87rem}
+.control-grid .warn{color:var(--proof)}.control-grid .unknown{color:var(--blocked)}
+.control-panels{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.control-panel{min-width:0;border:1px solid var(--border);background:#101a2d;padding:14px;border-radius:12px}
+.control-panel h3{margin:0 0 8px}.control-panel table{font-size:.83rem}
+.control-panel td,.control-panel th{padding:5px 7px;overflow-wrap:anywhere}
+.control-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.control-links a{display:block;border:1px solid var(--border);padding:10px;border-radius:10px;text-decoration:none;background:#111d31}
+.control-links a:hover{background:#263954}
+.control-links small{display:block;color:var(--muted)}
+.control-mono{font:12px/1.5 ui-monospace,Consolas,monospace;overflow-wrap:anywhere}
+@media(max-width:900px){.control-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.control-panels{grid-template-columns:1fr}.control-links{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:550px){.control-grid,.control-links{grid-template-columns:1fr}.control-grid strong{font-size:1.05rem}}
+
 </style>
 </head>
 <body>
@@ -79,7 +102,7 @@ footer{color:var(--muted);padding:26px;border-top:1px solid var(--border);text-a
 <p class="small"><a href="code_purple_rex_control.html">REX Control</a> · <a href="https://github.com/GBOGEB/ABACUS/issues/1860">ABACUS #1860</a> · <a href="https://github.com/GBOGEB/CODEX/issues/977">Mission Control #977</a> · <a href="https://github.com/GBOGEB/ABACUS/pull/1950">Source-bound bridge candidate #1950</a></p>
 </header>
 <nav class="topnav" aria-label="Persistent convergence navigation"><div>
-<a href="#overview">01 · Flow</a><a href="#lanes">02 · Disjoint lanes</a><a href="#verification">03 · Proof</a><a href="#top21">04 · TOP21</a><a href="#boundaries">05 · Authority</a><a href="#sources">06 · Sources</a>
+<a href="#control-tower">00 · Control tower</a><a href="#overview">01 · Flow</a><a href="#lanes">02 · Disjoint lanes</a><a href="#verification">03 · Proof</a><a href="#top21">04 · TOP21</a><a href="#boundaries">05 · Authority</a><a href="#sources">06 · Sources</a>
 </div></nav>
 <main id="main" class="main">
 <div class="key" role="group" aria-label="Persistent color legend"><strong>KEY</strong>
@@ -89,6 +112,29 @@ footer{color:var(--muted);padding:26px;border-top:1px solid var(--border);text-a
 <span><i class="swatch s-blocked" aria-hidden="true"></i>Blocked</span>
 <span><i class="swatch s-authority" aria-hidden="true"></i>Owner authority</span>
 </div>
+
+<section id="control-tower" class="section" aria-labelledby="control-title">
+ <div class="section-heading"><h2 id="control-title">00 · Federated DOV / live read-only control tower</h2><span class="state">Admission HOLD</span></div>
+ <p class="small">A concentrated entry to existing ABACUS evidence, CODEX dispatch and QPS domain dashboards. The frozen ledger records measured epochs separately; GitHub reload reads public metadata only. Neither a green badge nor a merged PR grants protected-main admission.</p>
+ <div class="control-tools"><button type="button" id="githubReload">Reload GitHub metadata</button><label><input type="checkbox" id="githubAuto" checked> Auto-check every 15 minutes while visible</label><span id="githubState" role="status" aria-live="polite">Reading versioned ledger…</span></div>
+ <div class="control-grid" aria-label="Separate evidence clocks">
+  <div class="control-tile"><small>ABACUS current main / source SHA</small><strong class="control-mono" id="abacusHead">UNKNOWN</strong><small id="abacusHeadSource">Live readback pending</small></div>
+  <div class="control-tile"><small>ABACUS #1860 / TODO</small><strong id="abacusTodo">UNKNOWN</strong><small>Technical + human gates, never inferred</small></div>
+  <div class="control-tile"><small>CODEX #977 / dispatch TODO</small><strong id="codexTodo">UNKNOWN</strong><small>Actual crew/REX IDs: UNKNOWN</small></div>
+  <div class="control-tile"><small>Canonical B0 latest main run</small><strong id="b0Status">UNKNOWN</strong><small id="b0RunInfo">Run/head/terminal proof required</small></div>
+  <div class="control-tile"><small>Verified prior green main coverage</small><strong id="priorCoverage">UNKNOWN</strong><small>Historical source-bound; not latest main</small></div>
+  <div class="control-tile"><small>Current main coverage</small><strong class="unknown" id="currentCoverage">UNKNOWN</strong><small>Only exact-main artifact can update this</small></div>
+  <div class="control-tile"><small>Current broad PR / changed-line coverage</small><strong class="unknown">UNKNOWN / UNKNOWN</strong><small>Never substitute local module percentages</small></div>
+  <div class="control-tile"><small>Formal root / BD accepted closures</small><strong class="unknown">UNKNOWN / UNKNOWN</strong><small>Requires deduplicated owner receipts</small></div>
+ </div>
+ <div class="control-panels">
+  <div class="control-panel"><h3>Five-axis penetration and convergence</h3><div class="scroll-table"><table><thead><tr><th>Frontier / owner</th><th>Observed or designed</th><th>Accepted now</th></tr></thead><tbody id="controlAxes"></tbody></table></div><p class="small">No single blended progress percentage: separate statement/branch scope, adversarial oracles, paired integration edges, runner cells and causal-root denominators.</p></div>
+  <div class="control-panel"><h3>Disjoint BD → native acceptance lanes</h3><div class="scroll-table"><table><thead><tr><th>Lane</th><th>Source owner</th><th>Live PR metadata</th></tr></thead><tbody id="controlLanes"></tbody></table></div><p class="small">Queue pressure and disjoint file ownership determine the next wave; proposed workers are not launched workers.</p></div>
+ </div>
+ <h3>Concentrated dashboard and ledger entry points</h3><div id="controlLinks" class="control-links" aria-label="Federated dashboard links"></div>
+ <p class="small">Versioned <a href="data/code_purple_convergence_control_w32.json">source-bound W32 DOV ledger</a> · <a href="https://github.com/GBOGEB/CODEX/pull/1106">CODEX W31 native census owner</a> · <a href="https://github.com/GBOGEB/ABACUS/pull/2274">ABACUS W32 source-integrity tests</a>. GitHub reload is not a server-side launch, accepted REX or covered-line measurement.</p>
+</section>
+
 <section id="overview" class="section" aria-labelledby="overview-title">
 <div class="section-heading"><h2 id="overview-title">01 · Governing convergence DAG</h2><span class="state">HOLD ≠ PASS</span></div>
 <p class="small">Directional chain: independent repair lanes feed source-matched verification; failed gates return only affected roots to the queue.</p>
@@ -147,5 +193,100 @@ footer{color:var(--muted);padding:26px;border-top:1px solid var(--border);text-a
 </section>
 </main>
 <footer>CODE PURPLE · Read-only architecture guide · No telemetry fabricated · No security waiver · No authority transfer</footer>
+
+<script>
+/* Read-only public metadata. No credentials, mutation calls, inference of admission or test coverage. */
+(() => {
+"use strict";
+const $ = id => document.getElementById(id);
+const API = "https://api.github.com/repos/";
+const UNKNOWN = "UNKNOWN";
+let frozen = null, live = {}, running = false;
+const set = (id, value) => { $(id).textContent = value === null || value === undefined ? UNKNOWN : String(value); };
+const td = (tr, value) => { const c = document.createElement("td"); c.textContent = value === null || value === undefined ? UNKNOWN : String(value); tr.append(c); return c; };
+const textRow = (host, values) => { const tr = document.createElement("tr"); values.forEach(v=>td(tr,v)); host.append(tr); return tr; };
+const link = (href, label) => { const a = document.createElement("a"); a.href=href; a.textContent=label; a.rel="noopener noreferrer"; return a; };
+const validSha = s => typeof s === "string" && /^[0-9a-f]{40}$/.test(s);
+function drawLedger(d) {
+ frozen=d;
+ const cov=d.historical_coverage.canonical_main_verified_previous;
+ set("priorCoverage", cov.covered.toLocaleString()+"/"+cov.eligible.toLocaleString()+" = "+cov.percent.toFixed(3)+"%");
+ set("abacusTodo", d.status_snapshots.ABACUS_1860.done+"/"+d.status_snapshots.ABACUS_1860.total+" (snapshot)");
+ set("codexTodo", d.status_snapshots.CODEX_977.done+"/"+d.status_snapshots.CODEX_977.total+" (snapshot)");
+ set("abacusHead",d.source_heads_observed.ABACUS);
+ set("abacusHeadSource","Frozen GitHub source readback; current unknown until reload");
+ $("controlAxes").replaceChildren();
+ d.axes.forEach(a=>textRow($("controlAxes"),[a.title+" / "+a.owner,a.observed,a.accepted_current]));
+ $("controlLanes").replaceChildren();
+ d.disjoint_lanes.forEach(a=>{
+  const tr=textRow($("controlLanes"),[a.id+" · "+a.reason,"ABACUS PR #"+a.pr,"CHECK PENDING"]);
+  const cell=tr.children[1];cell.replaceChildren(link("https://github.com/GBOGEB/ABACUS/pull/"+a.pr,"ABACUS #"+a.pr));
+ });
+ $("controlLinks").replaceChildren();
+ d.links.forEach(v=>{
+  const a=link(v.href,v.title);const small=document.createElement("small");
+  small.textContent=v.group+" · "+v.authority+" · "+v.detail;a.append(small);$("controlLinks").append(a);
+ });
+}
+function issueTodos(body,expected) {
+ if (typeof body!=="string") return null;
+ const found=[...body.matchAll(/^\s*- \[([xX ])\] /gm)];
+ if(found.length!==expected) return null;
+ return {done:found.filter(m=>m[1].toLowerCase()==="x").length,total:found.length};
+}
+async function github(path) {
+ const response=await fetch(API+path,{headers:{"Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"},cache:"no-store"});
+ if (!response.ok) throw new Error("GitHub HTTP "+response.status);
+ return response.json();
+}
+async function refresh() {
+ if(running || !frozen)return;
+ running=true;$("githubReload").disabled=true;set("githubState","Reading seven public GitHub endpoints…");
+ const tasks=[
+  ["abacus",github("GBOGEB/ABACUS/commits/main")],
+  ["codex",github("GBOGEB/CODEX/commits/main")],
+  ["qps",github("GBOGEB/cryoplant-project/commits/main")],
+  ["abacusIssue",github("GBOGEB/ABACUS/issues/1860")],
+  ["codexIssue",github("GBOGEB/CODEX/issues/977")],
+  ["pr",github("GBOGEB/ABACUS/pulls/2274")],
+  ["b0",github("GBOGEB/ABACUS/actions/workflows/mip-coverage-evidence.yml/runs?branch=main&per_page=5")]
+ ];
+ const outputs=await Promise.allSettled(tasks.map(x=>x[1]));let ok=0;
+ outputs.forEach((result,i)=>{const name=tasks[i][0];live[name]=result.status==="fulfilled" ? result.value : null;if(live[name])ok++;});
+ if(validSha(live.abacus?.sha)){
+  const sha=live.abacus.sha;set("abacusHead",sha);set("abacusHeadSource",sha===frozen.source_heads_observed.ABACUS ? "Current head = ledger observed head" : "Main advanced since frozen ledger");
+  const old=frozen.historical_coverage.canonical_main_verified_previous;
+  set("currentCoverage",sha===old.sha ? old.percent.toFixed(3)+"% (same verified source)" : UNKNOWN);
+ } else {set("abacusHead",UNKNOWN);set("currentCoverage",UNKNOWN);set("abacusHeadSource","Public GitHub readback unavailable");}
+ [["abacusIssue","abacusTodo","ABACUS_1860"],["codexIssue","codexTodo","CODEX_977"]].forEach(([key,element,ref])=>{
+  const v=issueTodos(live[key]?.body,frozen.status_snapshots[ref].total);
+  set(element,v ? v.done+"/"+v.total+" (live issue body)" : UNKNOWN+" (unreconciled/read unavailable)");
+ });
+ const runs=live.b0?.workflow_runs;
+ const run=Array.isArray(runs)&&runs.length>0?runs[0]:null;
+ if(run && validSha(run.head_sha)){
+  const terminal=run.status==="completed" && ["success","failure","cancelled","timed_out","action_required","neutral","skipped"].includes(run.conclusion);
+  const same=validSha(live.abacus?.sha)&&run.head_sha===live.abacus.sha;
+  set("b0Status",(terminal?run.conclusion.toUpperCase():"NONTERMINAL")+(same?" · CURRENT":" · DIFFERENT SHA"));
+  $("b0RunInfo").replaceChildren(link(run.html_url || "https://github.com/GBOGEB/ABACUS/actions/runs/"+run.id,"Run #"+run.id+" · attempt "+run.run_attempt));
+  // Status alone is never accepted coverage: only artifact/JUnit digest attestation can supply it.
+ } else {set("b0Status",UNKNOWN);set("b0RunInfo","Native run unavailable");}
+ if(live.pr && validSha(live.pr.head?.sha)){
+  const pr=live.pr;
+  const row=[...$("controlLanes").rows].find(r=>r.textContent.includes("ABACUS #2274"));
+  if(row)row.cells[2].textContent=(pr.merged_at?"MERGED ORDINARY":pr.state.toUpperCase()+(pr.draft?" DRAFT":""))+" · "+pr.head.sha.slice(0,12);
+ }
+ set("githubState",ok+"/"+tasks.length+" metadata sources loaded · "+new Date().toISOString()+" · no acceptance inferred");
+ running=false;$("githubReload").disabled=false;
+}
+$("githubReload").addEventListener("click",refresh);
+setInterval(()=>{if($("githubAuto").checked && !document.hidden)refresh();},900000);
+fetch("data/code_purple_convergence_control_w32.json",{cache:"no-store"})
+ .then(r=>{if(!r.ok)throw new Error("ledger HTTP "+r.status);return r.json();})
+ .then(d=>{if(d.schema!=="codepurple.convergence.control-index.v1" || d.merge_admission!=="HOLD" || d.authority_transfer!==false || d.security_waiver!==false)throw Error("ledger control mismatch");drawLedger(d);refresh();})
+ .catch(err=>set("githubState","Ledger unavailable: "+err.message+"; metrics UNKNOWN. Open source ledger link."));
+})();
+</script>
+
 </body>
 </html>
