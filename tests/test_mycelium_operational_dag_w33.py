@@ -54,7 +54,7 @@ class W33OperationalDagTests(unittest.TestCase):
         self.assertEqual(r["w29.new.win311"]["state"],"SUCCESS_NATIVE")
         self.assertEqual(r["codex.w30.receipt"]["state"],"READY_PROPOSED")
         self.assertEqual(r["qps.owner.decision"]["state"],"OWNER_HOLD")
-        self.assertEqual(r["w29.new.matched"]["state"],"WAITING_UPSTREAM_DERIVED")
+        self.assertEqual(r["w29.new.matched"]["state"],"READY_PROPOSED")
         self.assertEqual(r["w29.old.admission"]["state"],"UPSTREAM_FAILED_DERIVED")
 
     def test_old_results_not_misreported_current_main(self):
@@ -64,9 +64,10 @@ class W33OperationalDagTests(unittest.TestCase):
 
     def test_capacity_stays_unknown_not_fabricated_zero(self):
         r=self.report()
-        self.assertEqual(r["queue_sample_n"],0)
-        self.assertIsNone(r["queue_p95_s"])
-        self.assertIsNone(r["execution_p95_s"])
+        self.assertEqual(r["queue_sample_n"],13)
+        self.assertEqual(r["runtime_sample_n"],13)
+        self.assertGreater(r["queue_p95_s"],0)
+        self.assertGreater(r["execution_p95_s"],0)
         self.assertEqual({p["capacity_state"] for p in r["pools"]},{"UNKNOWN"})
         self.assertTrue(all(p["utilization_pct"] is None for p in r["pools"]))
 
@@ -166,6 +167,10 @@ class W33OperationalDagTests(unittest.TestCase):
 
     def test_actual_queue_and_runtime_percentiles_with_denominators(self):
         d=self.mutate()
+        for task in d["tasks"]:
+            task["created_at"]=None
+            task["started_at"]=None
+            task["completed_at"]=None
         for i,task in enumerate(d["tasks"][:2]):
             task["created_at"]="2026-10-18T20:00:00Z"
             task["started_at"]="2026-10-18T20:00:0"+str(i+1)+"Z"
@@ -183,10 +188,10 @@ class W33OperationalDagTests(unittest.TestCase):
     def test_temporal_matched_status_not_coverage(self):
         d=self.mutate()
         t=next(x for x in d["tasks"] if x["id"]=="w29.new.ub310")
-        t["status"]="completed";t["conclusion"]="success"
+        t["status"]="completed";t["conclusion"]="failure"
         delta=m.compare(self.d,d)
         self.assertTrue(delta["same_logical_population"])
-        self.assertEqual(delta["native_failed_delta"],0)
+        self.assertEqual(delta["native_failed_delta"],1)
         self.assertIsNone(delta["coverage_gain_eligible"])
         self.assertEqual(delta["owner_admission"],"HOLD")
 
@@ -243,6 +248,28 @@ class W33OperationalDagTests(unittest.TestCase):
         self.assertIn('link.kind==="REFERENCES"',page)
         self.assertNotIn('workflow_dispatch',page)
         self.assertNotIn('GenUI.',page)
+
+    def test_native_temporal_source_reconciliation_is_fully_measured(self):
+        rows={x["id"]:x for x in self.d["tasks"]}
+        self.assertEqual(sum(x["kind"]=="NATIVE" for x in rows.values()),13)
+        self.assertTrue(all(x["status"]=="completed" and x["started_at"]
+                            and x["created_at"] and x["completed_at"]
+                            for x in rows.values() if x["kind"]=="NATIVE"))
+        self.assertTrue(all(rows["w29.new."+p]["conclusion"]=="success"
+                            for p in ("ub310","ub311","ub312","win311")))
+        r=self.report()
+        self.assertEqual(r["counts"]["SUCCESS_NATIVE"],8)
+        self.assertEqual(r["counts"]["FAILED_NATIVE"],5)
+        self.assertGreater(r["queue_p95_s"],2000)
+        self.assertIsNone(r["pools"][0]["observed_slots"])
+
+    def test_measured_timing_does_not_prove_capacity_or_root_closure(self):
+        r=self.report()
+        self.assertEqual(r["queue_sample_n"],13)
+        self.assertEqual(r["runtime_sample_n"],13)
+        self.assertIsNone(r["metric_targets"]["source_coverage"])
+        self.assertFalse(r["stability"]["six_sigma_qualified"])
+        self.assertTrue(all(p["capacity_state"]=="UNKNOWN" for p in r["pools"]))
 
     def test_no_false_stability_or_six_sigma(self):
         report=self.report()
