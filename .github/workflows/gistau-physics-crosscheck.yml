@@ -21,6 +21,7 @@ on:
       - '.github/workflows/gistau-physics-crosscheck.yml'
       - 'tools/ch15_canonical_validation.py'
       - 'docs/gistau-ch15/data/worked_examples.json'
+      - 'docs/gistau-ch15/data/l1_validation_results.json'
 
 permissions:
   contents: read
@@ -74,10 +75,10 @@ jobs:
         run: python tools/physics_crosscheck.py --abacus _abacus --check
 
       - name: Record Ch15 worked-example reproduction (L1)
-        run: python tools/ch15_canonical_validation.py --abacus _abacus --report reports/ch15_canonical_validation.json
+        run: python tools/ch15_canonical_validation.py --abacus _abacus --report reports/ch15_canonical_validation.json --emit-record
 
       - name: Gate on Ch15 canonical validation (L1)
-        run: python tools/ch15_canonical_validation.py --abacus _abacus --check
+        run: python tools/ch15_canonical_validation.py --abacus _abacus --check --expect-record docs/gistau-ch15/data/l1_validation_results.json
 
       - name: Upload crosscheck report
         if: always()

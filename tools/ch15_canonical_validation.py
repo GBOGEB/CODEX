@@ -142,6 +142,54 @@ def validate(gate: dict[str, Any], examples: list[dict[str, Any]], provider: Pro
     }
 
 
+def _sig(x: float, digits: int = 8) -> float:
+    return float(f"{x:.{digits}g}")
+
+
+def record_view(report: dict[str, Any]) -> dict[str, Any]:
+    """Canonical, comparable view of a run (rounded) for the committed record."""
+    return {
+        "coolprop_version": report.get("coolprop_version"),
+        "status": report["status"],
+        "examples_checked": report["examples_checked"],
+        "examples_source_check_required": report["examples_source_check_required"],
+        "examples_excluded": report["examples_excluded"],
+        "rows": [
+            {
+                "example_id": r["example_id"],
+                "quantity": r["quantity"],
+                "expected": r["expected"],
+                "computed": _sig(r["computed"]),
+                "deviation": _sig(r["deviation"], 4),
+                "deviation_kind": r["deviation_kind"],
+                "tolerance": r["tolerance"],
+                "verdict": r["verdict"],
+            }
+            for r in report["rows"]
+        ],
+    }
+
+
+def compare_record(fresh: dict[str, Any], recorded: dict[str, Any]) -> list[str]:
+    """Differences between a fresh run and the committed record (record = fresh, rounded)."""
+    problems = []
+    if recorded.get("record") in (None, "PENDING_FIRST_CI_RECORD"):
+        return ["RECORD_PENDING: copy the 'L1 record' annotation into the record file"]
+    rec = recorded["record"]
+    for key in ("coolprop_version", "status", "examples_checked", "examples_source_check_required", "examples_excluded"):
+        if fresh[key] != rec.get(key):
+            problems.append(f"RECORD_DRIFT {key}: fresh {fresh[key]!r} != recorded {rec.get(key)!r}")
+    f_rows = {(r["example_id"], r["quantity"]): r for r in fresh["rows"]}
+    r_rows = {(r["example_id"], r["quantity"]): r for r in rec.get("rows", [])}
+    if set(f_rows) != set(r_rows):
+        problems.append(f"RECORD_DRIFT rows: fresh-only {sorted(set(f_rows) - set(r_rows))}, recorded-only {sorted(set(r_rows) - set(f_rows))}")
+    for k in sorted(set(f_rows) & set(r_rows)):
+        a, b = f_rows[k], r_rows[k]
+        if a["verdict"] != b["verdict"] or a["expected"] != b["expected"] or abs(a["computed"] - b["computed"]) > 1e-6 * max(1.0, abs(b["computed"])):
+            problems.append(f"RECORD_DRIFT {k[0]}:{k[1]}: fresh {a['computed']} {a['verdict']} != recorded {b['computed']} {b['verdict']}")
+    return problems
+
+
 def _load_examples(path: Path) -> list[dict[str, Any]]:
     data = json.loads(path.read_text(encoding="utf-8"))
     return data if isinstance(data, list) else data["examples"]
@@ -160,6 +208,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--gate", type=Path, default=GATE_PATH)
     ap.add_argument("--report", type=Path)
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--emit-record", action="store_true", help="print the canonical record as an annotation")
+    ap.add_argument("--expect-record", type=Path, help="fail unless the committed record matches this run")
     args = ap.parse_args(argv)
 
     gate = yaml.safe_load(args.gate.read_text(encoding="utf-8"))
@@ -185,6 +235,15 @@ def main(argv: list[str] | None = None) -> int:
     half = (len(cells) + 1) // 2
     for i in range(0, len(cells), half):
         print("::notice title=Ch15 worked examples::" + " | ".join(cells[i : i + half]))
+    view = record_view(report)
+    if args.emit_record:
+        print("::notice title=L1 record::" + json.dumps(view, sort_keys=True, separators=(",", ":")))
+    if args.expect_record:
+        problems = compare_record(view, json.loads(args.expect_record.read_text(encoding="utf-8")))
+        for prob in problems:
+            print(f"::error title=L1 record::{prob}")
+        if problems:
+            return 1
     if args.check and report["status"] != "PASS":
         print(f"::error title=Ch15 canonical validation::status {report['status']} (failures {report['failures']}, "
               f"unaccounted {report['unaccounted_examples']}, unknown {report['unknown_gate_entries']})")
