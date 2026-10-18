@@ -49,8 +49,10 @@ def validate_source(snapshot):
     require(len(repos) == 3 and
             {r["repo"] for r in repos} == set(REPOS)|{"GBOGEB/cryoplant-project"},
             "THREE_OWNER_REPOS")
-    require(next(r for r in repos if r["repo"] == "GBOGEB/cryoplant-project")
-            ["visibility"] == "private", "PRIVATE_QPS_BOUNDARY")
+    qps = next(r for r in repos if r["repo"] == "GBOGEB/cryoplant-project")
+    require(qps["visibility"] == "private", "PRIVATE_QPS_BOUNDARY")
+    require(qps.get("sha") is None and qps.get("open_issue_and_pr_count") is None,
+            "PRIVATE_QPS_METADATA_FORBIDDEN")
     require(len(snapshot.get("axes", [])) == 5, "NONCOMPENSATING_FIVE_AXES")
     return True
 
