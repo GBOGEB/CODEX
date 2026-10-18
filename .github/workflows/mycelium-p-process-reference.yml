@@ -37,19 +37,46 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECT_SHA"
-          python -m unittest discover -s tests -p 'test_p_process_reference.py' -v 2>&1 | tee mycelium-p-process-tests.log
+          python -m pip install --disable-pip-version-check coverage==7.10.7
+          python -m coverage run --branch --source=mission_control.mycelium.p_process_reference \
+            -m unittest discover -s tests -p 'test_p_process_reference.py' -v \
+            2>&1 | tee mycelium-p-process-tests.log
           grep -Eq '^Ran [1-9][0-9]* tests?' mycelium-p-process-tests.log
+          python -m coverage json -o mycelium-p-process-coverage.json
+          python -m coverage report --show-missing --fail-under=75
           python - <<'PY'
-          import json,os
-          payload={"schema":"mycelium.p_process.consumer_ci_observation/1.0",
-                   "consumer_head_sha":os.environ["EXPECT_SHA"],
-                   "evidence":"EXACT_CHECKOUT_TESTS_ONLY",
-                   "producer_artifact_consumed":False,
-                   "producer_acceptance":"WITHHELD",
-                   "merge_admission":"HOLD","authority_transfer":False,
-                   "mutation_enabled":False}
-          with open("mycelium-p-process-ci.json","w") as f:
-              json.dump(payload,f,indent=2)
+          import json, os, re
+          with open("mycelium-p-process-tests.log", encoding="utf-8") as f:
+              log = f.read()
+          match = re.search(r"^Ran (\d+) tests? in", log, re.MULTILINE)
+          if not match or int(match.group(1)) < 17:
+              raise SystemExit("native MYCELIUM test denominator incomplete")
+          with open("mycelium-p-process-coverage.json", encoding="utf-8") as f:
+              coverage = json.load(f)["totals"]
+          if coverage["num_statements"] == 0 or coverage["num_branches"] == 0:
+              raise SystemExit("native MYCELIUM coverage population missing")
+          payload = {
+              "schema": "mycelium.p_process.consumer_ci_observation/1.0",
+              "consumer_head_sha": os.environ["EXPECT_SHA"],
+              "evidence": "EXACT_CHECKOUT_TESTS_ONLY",
+              "observed_native_tests": int(match.group(1)),
+              "source_module_coverage": {
+                  "scope": "mission_control.mycelium.p_process_reference",
+                  "statement_covered": coverage["covered_lines"],
+                  "statement_total": coverage["num_statements"],
+                  "branch_covered": coverage["covered_branches"],
+                  "branch_total": coverage["num_branches"],
+                  "changed_line_proof": False,
+                  "external_producer_run_consumed": False,
+              },
+              "producer_artifact_consumed": False,
+              "producer_acceptance": "WITHHELD",
+              "merge_admission": "HOLD",
+              "authority_transfer": False,
+              "mutation_enabled": False,
+          }
+          with open("mycelium-p-process-ci.json", "w", encoding="utf-8") as f:
+              json.dump(payload, f, indent=2, sort_keys=True)
           PY
       - uses: actions/upload-artifact@v4
         if: always()
@@ -58,4 +85,5 @@ jobs:
           path: |
             mycelium-p-process-tests.log
             mycelium-p-process-ci.json
+            mycelium-p-process-coverage.json
           if-no-files-found: warn
