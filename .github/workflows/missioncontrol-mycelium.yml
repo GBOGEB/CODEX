@@ -46,7 +46,12 @@ jobs:
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           python -m pip install --disable-pip-version-check coverage==7.13.3
           export PYTHONPATH=mission_control/mycelium/continuity
-          python -m coverage run --branch --source=mycelium_continuity -m unittest discover \
+          # N7 scopes the portable continuity modules only. native_bridge.py (N8) and
+          # admission_timeline.py (N9) are exercised by their own suites below, with
+          # their own stricter coverage gates, and are never imported by test_portable.py.
+          python -m coverage run --branch --source=mycelium_continuity \
+            --omit='*/mycelium_continuity/native_bridge.py,*/mycelium_continuity/admission_timeline.py' \
+            -m unittest discover \
             -s mission_control/mycelium/continuity/tests -p "test_portable.py" -v
           python -m coverage json -q -o /tmp/mycelium-n7-coverage.json
           python - <<'PY'
