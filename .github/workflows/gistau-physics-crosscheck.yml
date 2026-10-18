@@ -19,6 +19,8 @@ on:
       - 'tools/physics_crosscheck.py'
       - 'tools/verify_physics_authority_pin.py'
       - '.github/workflows/gistau-physics-crosscheck.yml'
+      - 'tools/ch15_canonical_validation.py'
+      - 'docs/gistau-ch15/data/worked_examples.json'
 
 permissions:
   contents: read
@@ -71,10 +73,18 @@ jobs:
       - name: Gate on output checksum and in-domain tolerances
         run: python tools/physics_crosscheck.py --abacus _abacus --check
 
+      - name: Record Ch15 worked-example reproduction (L1)
+        run: python tools/ch15_canonical_validation.py --abacus _abacus --report reports/ch15_canonical_validation.json
+
+      - name: Gate on Ch15 canonical validation (L1)
+        run: python tools/ch15_canonical_validation.py --abacus _abacus --check
+
       - name: Upload crosscheck report
         if: always()
         uses: actions/upload-artifact@v7.0.2
         with:
           name: gistau-physics-crosscheck
-          path: reports/physics_crosscheck.json
+          path: |
+            reports/physics_crosscheck.json
+            reports/ch15_canonical_validation.json
           if-no-files-found: ignore

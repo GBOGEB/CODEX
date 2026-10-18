@@ -1,0 +1,37 @@
+schema: codex-ch15-canonical-validation/v1
+gate_id: CH15_CANONICAL_VALIDATION
+maturity_target: L1_VALIDATED_MODEL
+formal_credit_delta: 0
+
+# L1 exit criterion: the governing helium-4 provider (GBOGEB/ABACUS at the
+# commit in HE4_PROPERTY_AUTHORITY_PIN.yaml) reproduces the Ch15 worked
+# examples within tolerance. Values come from the transcription in
+# docs/gistau-ch15/data/worked_examples.json (book Ch15 figures).
+#
+# Coverage is explicit: every worked example is either CHECKED or EXCLUDED
+# with a reason. An excluded example is never counted as passing.
+source: docs/gistau-ch15/data/worked_examples.json
+tools: tools/ch15_canonical_validation.py
+
+tolerances:
+  temperature_abs_K: 0.05        # book figures quote 0.01 K; allows table rounding
+  density_rel: 0.005
+  enthalpy_abs_J_g: 0.05         # book figures quote 0.01 J/g
+  entropy_abs_J_gK: 0.005
+  derived_rel: 0.01              # mass flow, power: products of rounded values
+
+checked:
+  - WE-T00-REFPROP-HSD-PT-002    # state point 1 bar / 300 K: h, s, rho (absolute)
+  - WE-T02-FREE-EXPANSION-HEAT-001   # isenthalpic + 100 W, 14 -> 1 bar from 20 K
+  - WE-T02-MASS-FLOW-004         # mdot = Q / (h_out - h_in), 20 K / 4 bar -> 22.5 K / 3.75 bar
+  - WE-T04-CRYOGENIC-EXPANDER-001    # 14 -> 1.2 bar from 25 K, eta_s 0.75
+  - WE-T05-CRYOGENIC-COMPRESSOR-001  # 0.5 -> 1.7 bar from 5 K, eta_s 0.75 (T > 4.5 K: CoolProp governs)
+
+excluded:
+  WE-T00-REFPROP-H-PT-001: duplicate of WE-T00-REFPROP-HSD-PT-002 (same state, h only)
+  WE-T00-SATURATION-QUALITY-003: two-phase at 4.21 K; HEPAK-governed (T <= 4.5 K), no HEPAK receipt in CI
+  WE-T02-SAT-LIQUID-HELIUM-003: two-phase at 4.41 -> 3.55 K; HEPAK-governed, no HEPAK receipt in CI
+  WE-T02-INVERSION-HELIUM-002: inversion-temperature search; transcription records a single value without the scan definition
+  WE-T01-ROOM-TEMP-COMPRESSOR-001: fluid recorded as helium_or_nitrogen_context and values marked visible-only
+  WE-T03-HEAT-EXCHANGER-001: two alternative hot-outlet values recorded; transcription ambiguous
+  WE-T06-EQUIVALENT-POWER-001: multi-domain roll-up without per-domain inputs in the transcription
