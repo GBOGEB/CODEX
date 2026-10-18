@@ -154,10 +154,20 @@ def run(out, head):
                     assert "No native-run census" in page.locator("#observed").inner_text()
                     assert "UNKNOWN" in page.locator("#repos").inner_text()
                     assert all("cryoplant" not in c["url"] for c in calls)
-                    assert not errors,errors
+                    expected_fault_console=[e for e in errors if
+                        scenario=="offline_AB" and
+                        "Failed to load resource" in e and
+                        "503" in e]
+                    unexpected=[e for e in errors if e not in expected_fault_console]
+                    assert not unexpected,unexpected
+                    # An intentionally injected HTTP 503 may generate a
+                    # Chromium console resource error. Record it as expected
+                    # fault evidence, never as an unexplained QA error.
                     shot=out/("w37-negative-"+scenario+".png")
                     page.screenshot(path=str(shot),full_page=True)
                     checks.append({"negative_scenario":scenario,"status":"PASS",
+                                   "expected_fault_console_count":len(expected_fault_console),
+                                   "unexpected_console_errors":len(unexpected),
                                    "screenshot":shot.name,
                                    "sha256":hashlib.sha256(shot.read_bytes()).hexdigest()})
                 finally:
