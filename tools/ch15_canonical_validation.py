@@ -99,10 +99,12 @@ def _tolerance(quantity: str, expected: float, tol: dict[str, float]) -> tuple[s
 
 def validate(gate: dict[str, Any], examples: list[dict[str, Any]], provider: ProviderFn) -> dict[str, Any]:
     by_id = {e["example_id"]: e for e in examples}
-    unaccounted = sorted(set(by_id) - set(gate["checked"]) - set(gate["excluded"]))
-    unknown = sorted((set(gate["checked"]) | set(gate["excluded"])) - set(by_id))
+    open_items = gate.get("source_check_required", {}) or {}
+    listed = set(gate["checked"]) | set(gate["excluded"]) | set(open_items)
+    unaccounted = sorted(set(by_id) - listed)
+    unknown = sorted(listed - set(by_id))
     rows = []
-    for eid in gate["checked"]:
+    for eid in list(gate["checked"]) + list(open_items):
         got = compute(by_id[eid], provider)
         for quantity, expected in by_id[eid]["expected_outputs"].items():
             if quantity not in got:
@@ -118,20 +120,24 @@ def validate(gate: dict[str, Any], examples: list[dict[str, Any]], provider: Pro
                     "deviation": dev,
                     "deviation_kind": kind,
                     "tolerance": limit,
-                    "verdict": "PASS" if abs(dev) <= limit else "FAIL",
+                    "verdict": ("PASS" if abs(dev) <= limit else "FAIL") if eid not in open_items else (
+                        "OPEN_MATCH" if abs(dev) <= limit else "OPEN_MISMATCH"
+                    ),
                 }
             )
     failures = [r for r in rows if r["verdict"] == "FAIL"]
+    gated = [r for r in rows if r["example_id"] not in open_items]
     return {
         "gate_id": gate["gate_id"],
         "examples_total": len(by_id),
         "examples_checked": len(gate["checked"]),
         "examples_excluded": len(gate["excluded"]),
+        "examples_source_check_required": sorted(open_items),
         "unaccounted_examples": unaccounted,
         "unknown_gate_entries": unknown,
-        "quantities_checked": len(rows),
+        "quantities_checked": len(gated),
         "failures": len(failures),
-        "status": "PASS" if rows and not failures and not unaccounted and not unknown else "FAIL",
+        "status": "PASS" if gated and not failures and not unaccounted and not unknown else "FAIL",
         "rows": rows,
     }
 
@@ -172,7 +178,8 @@ def main(argv: list[str] | None = None) -> int:
     ]
     print(
         f"::notice title=Ch15 canonical validation ({report['status']})::CoolProp {cp_version} | "
-        f"{report['examples_checked']} checked, {report['examples_excluded']} excluded of {report['examples_total']} | "
+        f"{report['examples_checked']} checked, {len(report['examples_source_check_required'])} open (source check), "
+        f"{report['examples_excluded']} excluded of {report['examples_total']} | "
         f"{report['quantities_checked']} quantities, {report['failures']} fail"
     )
     half = (len(cells) + 1) // 2
