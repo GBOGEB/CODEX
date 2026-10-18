@@ -66,9 +66,12 @@ def test_expander_and_compressor_follow_isentropic_efficiency(tool, examples):
     assert exp["outlet_temperature_k"] == pytest.approx(25.0 - 0.75 * (25.0 - t2s), rel=1e-7)
     assert exp["power_w_visible"] < 0  # book sign convention: work extracted
     comp = tool.compute(by_id["WE-T05-CRYOGENIC-COMPRESSOR-001"], ideal)
-    t2s_c = 5.0 * (1.7 / 0.5) ** (B.R / B.CP)
+    t2s_c = 5.0 * (1.2 / 0.5) ** (B.R / B.CP)
     assert comp["outlet_temperature_k"] == pytest.approx(5.0 + (t2s_c - 5.0) / 0.75, rel=1e-7)
     assert comp["power_w"] > 0
+    # Sect. 15.8.5: real rise = isentropic rise / eta (the printed Fig. 15.31 multiplies instead).
+    assert comp["real_enthalpy_change_j_g"] == pytest.approx(comp["isentropic_enthalpy_change_j_g"] / 0.75, rel=1e-12)
+    assert comp["power_w"] == pytest.approx(400.0 * comp["real_enthalpy_change_j_g"], rel=1e-12)
 
 
 def test_free_expansion_adds_the_heat_input(tool, examples):

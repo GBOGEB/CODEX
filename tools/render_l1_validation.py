@@ -33,6 +33,8 @@ QUANTITY_LABELS = {
     "mass_flow_g_s": ("Mass flow", "g/s"),
     "power_w_visible": ("Power", "W"),
     "power_w": ("Power", "W"),
+    "isentropic_enthalpy_change_j_g": ("Isentropic enthalpy rise", "J/g"),
+    "real_enthalpy_change_j_g": ("Real enthalpy rise", "J/g"),
 }
 TUPLE_LABELS = {
     "T00": "State point",

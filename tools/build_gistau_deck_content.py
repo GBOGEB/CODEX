@@ -39,6 +39,7 @@ QUANTITIES = {
     "enthalpy_j_g": ("h", "J/g"), "entropy_j_gk": ("s", "J/g·K"), "density_kg_m3": ("ρ", "kg/m³"),
     "outlet_temperature_k": ("T out", "K"), "inlet_enthalpy_j_g": ("h in", "J/g"), "outlet_enthalpy_j_g": ("h out", "J/g"),
     "mass_flow_g_s": ("ṁ", "g/s"), "power_w_visible": ("P", "W"), "power_w": ("P", "W"),
+    "isentropic_enthalpy_change_j_g": ("Δh isent", "J/g"), "real_enthalpy_change_j_g": ("Δh real", "J/g"),
 }
 
 

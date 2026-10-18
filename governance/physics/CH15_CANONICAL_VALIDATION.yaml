@@ -30,12 +30,14 @@ checked:
 # until the transcription is verified against the source figure.
 source_check_required:
   WE-T05-CRYOGENIC-COMPRESSOR-001: >-
-    First CI run (ABACUS 4c2f669, CoolProp 7.2.0): inlet state agrees with the
-    book (h1 29.03 J/g both), but the book's implied work 5336 W / 400 g/s =
-    13.34 J/g is below the isentropic work for 0.5 -> 1.7 bar from 5 K
-    (15.09 J/g), which is impossible for eta_s = 0.75. Verify outlet
-    pressure, efficiency and inlet temperature in Fig. 15.31, p. 638.
-
+    Transcription corrected against the printed book (Fig. 15.31, p. 638,
+    checked 2026-10-18): outlet pressure is 1.20 bar, not 1.70 bar. The
+    printed sheet is internally inconsistent with its own text: L7 dH real
+    13.34 J/g = K7 dH isent 17.79 J/g x eta 0.75, and h2 and power follow
+    from that, whereas Sect. 15.8.5 says the real rise is the isentropic
+    rise divided by eta (23.72 J/g). Stays open until the governing
+    provider's isentropic rise for 0.5 -> 1.2 bar from 5 K is compared with
+    the printed 17.79 J/g.
 excluded:
   WE-T00-REFPROP-H-PT-001: duplicate of WE-T00-REFPROP-HSD-PT-002 (same state, h only)
   WE-T00-SATURATION-QUALITY-003: two-phase at 4.21 K; HEPAK-governed (T <= 4.5 K), no HEPAK receipt in CI

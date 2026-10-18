@@ -81,6 +81,10 @@ def compute(example: dict[str, Any], provider: ProviderFn) -> dict[str, float]:
         mdot = i["mass_flow_g_s"] / 1000.0
         out = {"outlet_temperature_k": t2, "outlet_enthalpy_j_g": h2 / 1000}
         out["power_w_visible" if expander else "power_w"] = (-mdot * dh) if expander else (mdot * dh)
+        if not expander:
+            out["inlet_enthalpy_j_g"] = inlet["enthalpy_J_kg"] / 1000
+            out["isentropic_enthalpy_change_j_g"] = (h2s - inlet["enthalpy_J_kg"]) / 1000
+            out["real_enthalpy_change_j_g"] = dh / 1000
         return out
     raise KeyError(f"no computation defined for {eid}")
 
