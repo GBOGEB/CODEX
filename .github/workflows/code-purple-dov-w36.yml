@@ -1,0 +1,76 @@
+name: CODE PURPLE W36 Federated DoV Read-only Pulse
+'on':
+  pull_request:
+    paths:
+      - 'docs/code-purple-dov.html'
+      - 'docs/data/code-purple-dov-w36.json'
+      - 'docs/index.html'
+      - 'scripts/code_purple_dov_census_w36.py'
+      - 'tests/test_code_purple_dov_w36.py'
+      - '.github/workflows/code-purple-dov-w36.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '25 7 * * *'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: codepurple-w36-dov-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  read-only-federated-pulse:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Checkout exact owner head without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Source SHA, source-owned regression and HTML contract
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$HEAD_SHA"
+          python -m unittest discover -s tests -p 'test_code_purple_dov_w36.py' -v
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          class JS(HTMLParser):
+              def __init__(self): super().__init__(); self.in_script=False; self.parts=[]
+              def handle_starttag(self, tag, attrs):
+                  if tag=="script": self.in_script=True
+              def handle_endtag(self, tag):
+                  if tag=="script": self.in_script=False
+              def handle_data(self, value):
+                  if self.in_script:self.parts.append(value)
+          p=JS()
+          p.feed(Path("docs/code-purple-dov.html").read_text(encoding="utf-8"))
+          assert p.parts, "No inline JavaScript"
+          Path("/tmp/w36-inline.js").write_text("\n".join(p.parts), encoding="utf-8")
+          PY
+          node --check /tmp/w36-inline.js
+      - name: Pull public owner metadata, write immutable snapshot and verify SHA256
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          python scripts/code_purple_dov_census_w36.py --snapshot docs/data/code-purple-dov-w36.json --out w36_readonly --head "$HEAD_SHA" --run-id "$RUN_ID" --attempt "$RUN_ATTEMPT"
+          python scripts/code_purple_dov_census_w36.py --snapshot docs/data/code-purple-dov-w36.json --out w36_readonly --head "$HEAD_SHA" --verify-only
+      - name: Preserve public readback and hashes without repo mutation
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-purple-w36-dov-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: w36_readonly/
+          if-no-files-found: error
+          retention-days: 30

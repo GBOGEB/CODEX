@@ -1,0 +1,282 @@
+{
+  "schema": "codepurple.federated.dov.v1",
+  "epoch": "W36-20261018",
+  "kind": "FROZEN_VERIFIED_READBACK",
+  "refreshed_at": null,
+  "governance": {
+    "merge_admission": "HOLD",
+    "independent_review": null,
+    "security_acceptance": null,
+    "root_closures": null,
+    "remote_dispatch": false,
+    "security_waiver": false
+  },
+  "repos": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "role": "Source/B0 authority",
+      "sha": "994ad6e73c748923841d92b12651e92d41b2d4ff",
+      "visibility": "public",
+      "open_issue_and_pr_count": 54,
+      "coverage_current": null,
+      "runs": {
+        "total": 612,
+        "observed": 100,
+        "queued_observed": 100,
+        "unknown_tail": 512,
+        "complete": false
+      }
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "role": "MYCELIUM integration and projections",
+      "sha": "8361e6922f0768c66abcdd05c8ef865715cf048f",
+      "visibility": "public",
+      "open_issue_and_pr_count": 11,
+      "coverage_current": null,
+      "runs": {
+        "total": null,
+        "observed": null,
+        "queued_observed": null,
+        "unknown_tail": null,
+        "complete": false
+      }
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "role": "QPS domain owner",
+      "sha": null,
+      "visibility": "private",
+      "open_issue_and_pr_count": null,
+      "coverage_current": null,
+      "runs": null,
+      "native_coverage_current": null,
+      "private_owner_metadata": "DEFER_NOT_PUBLISHED"
+    }
+  ],
+  "axes": [
+    {
+      "id": "source",
+      "label": "Statement + branch source coverage",
+      "numerator": null,
+      "denominator": null,
+      "unit": "eligible statements + branches",
+      "acceptance": "Matched same-head source/config/selection/denominator coverage receipts"
+    },
+    {
+      "id": "adversarial",
+      "label": "Adversarial penetration",
+      "numerator": null,
+      "denominator": null,
+      "unit": "distinct fault-oracle pairs",
+      "acceptance": "Measured effective negative/reverse/fault-injection trips"
+    },
+    {
+      "id": "integration",
+      "label": "Cross-module / repository integration",
+      "numerator": null,
+      "denominator": null,
+      "unit": "reciprocally verified producer-consumer pairs",
+      "acceptance": "Paired exact run/job/attempt and hash receipts"
+    },
+    {
+      "id": "runner",
+      "label": "Platform / runner reach",
+      "numerator": 4,
+      "denominator": 4,
+      "unit": "selected CODEX W30 OS/Python jobs",
+      "acceptance": "Native per-cell JUnit/coverage/hash, broader fleet still unknown"
+    },
+    {
+      "id": "causal",
+      "label": "Causal defect closures",
+      "numerator": null,
+      "denominator": null,
+      "unit": "independently accepted distinct root dispositions",
+      "acceptance": "Reproduce, verify repair, owner acceptance and no recurrence"
+    }
+  ],
+  "historical": {
+    "abacus_b0_covered": 35571,
+    "abacus_b0_eligible": 52497,
+    "abacus_b0_source_sha": "9e0200190555736c74295ee74881e3c003e8a35c",
+    "abacus_b0_current": false,
+    "graph_scopes": [
+      {
+        "label": "ABACUS W12",
+        "nodes": 37,
+        "edges": 46
+      },
+      {
+        "label": "CODEX W30",
+        "nodes": 48,
+        "edges": 47
+      },
+      {
+        "label": "CODEX W33",
+        "nodes": 20,
+        "edges": 17
+      }
+    ],
+    "abacus_same_head_run_records": [
+      86,
+      103,
+      133,
+      172,
+      196,
+      612
+    ],
+    "earlier_pr_feedback": {
+      "count": 157,
+      "denominator": 196,
+      "same_head": true
+    }
+  },
+  "native": [
+    {
+      "key": "W30 CODEX",
+      "repo": "GBOGEB/CODEX",
+      "run": 39158510448,
+      "state": "success",
+      "jobs": {
+        "passed": 4,
+        "eligible": 4
+      },
+      "scope": "selected DAG matrix"
+    },
+    {
+      "key": "W31 CODEX",
+      "repo": "GBOGEB/CODEX",
+      "run": 39161146097,
+      "state": "success",
+      "jobs": {
+        "passed": 1,
+        "eligible": 1
+      },
+      "scope": "read-only census"
+    },
+    {
+      "key": "W33 CODEX",
+      "repo": "GBOGEB/CODEX",
+      "run": 39163261305,
+      "state": "success",
+      "jobs": null,
+      "scope": "operational DAG selected"
+    },
+    {
+      "key": "W35 ABACUS B0",
+      "repo": "GBOGEB/ABACUS",
+      "run": 39161525658,
+      "state": "success",
+      "jobs": {
+        "passed": 1,
+        "eligible": 1
+      },
+      "scope": "canonical B0; 5006 pass / 3 skip; matched current-main coverage unknown"
+    },
+    {
+      "key": "W35 ABACUS matrix",
+      "repo": "GBOGEB/ABACUS",
+      "run": 39161525547,
+      "state": "success",
+      "jobs": null,
+      "scope": "selected functional compatibility matrix"
+    }
+  ],
+  "clusters": [
+    {
+      "key": "B0+coverage",
+      "owner": "ABACUS",
+      "state": "PARTIAL_PASS",
+      "blocked_by": "current-main matched coverage and owner acceptance"
+    },
+    {
+      "key": "Security+A10+governance",
+      "owner": "ABACUS/CODEX/QPS",
+      "state": "HOLD",
+      "blocked_by": "required checks, independent review, red canary"
+    },
+    {
+      "key": "DAG+pool",
+      "owner": "CODEX W33/W34",
+      "state": "QUALIFICATION_PARTIAL",
+      "blocked_by": "real capacity, exact source-bound receiver evidence"
+    },
+    {
+      "key": "Federation+REX",
+      "owner": "CODEX/ABACUS/QPS",
+      "state": "UNVERIFIED",
+      "blocked_by": "authenticated paired producer/consumer receipts"
+    },
+    {
+      "key": "Causal+BD",
+      "owner": "ABACUS #1860",
+      "state": "PARTIAL",
+      "blocked_by": "owner-accepted root closures"
+    }
+  ],
+  "links": [
+    {
+      "label": "PRIMARY · W32 Convergence Control Tower",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/docs/code_purple_convergence.html"
+    },
+    {
+      "label": "ABACUS CBD! authoritative issue ledger",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "label": "ABACUS W35 source",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2276"
+    },
+    {
+      "label": "ABACUS W36 overlapping source (reconcile)",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2277"
+    },
+    {
+      "label": "ABACUS W12 source dashboard",
+      "url": "https://github.com/GBOGEB/ABACUS/blob/main/MIP/G3CS_CONVERGENCE_V2/observatory/w10/index.html"
+    },
+    {
+      "label": "CODEX W31 census / now merged",
+      "url": "https://github.com/GBOGEB/CODEX/pull/1106"
+    },
+    {
+      "label": "CODEX W33 operational DAG",
+      "url": "https://github.com/GBOGEB/CODEX/pull/1107"
+    },
+    {
+      "label": "CODEX W34 scheduler",
+      "url": "https://github.com/GBOGEB/CODEX/pull/1108"
+    },
+    {
+      "label": "CODEX MYCELIUM existing dashboard",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/docs/missioncontrol_mycelium.html"
+    },
+    {
+      "label": "QPS domain owner (requires authorized access)",
+      "url": "https://github.com/GBOGEB/cryoplant-project"
+    }
+  ],
+  "disjoint_next": [
+    {
+      "owner": "ABACUS coverage",
+      "goal": "Same-SHA original/expanded fault-oracle+branch delta; don't duplicate W35/W36",
+      "accepted": "new touched branches / eligible branches"
+    },
+    {
+      "owner": "CODEX projection",
+      "goal": "Concentrated entrypoints and read-only census; don't replace W33/W34",
+      "accepted": "native test + HTML QA + source hash"
+    },
+    {
+      "owner": "ABACUS trigger",
+      "goal": "Diagnose PR Feedback gate repeated fan-out preserving review control",
+      "accepted": "unique event→run amplification and queue time"
+    },
+    {
+      "owner": "QPS authority",
+      "goal": "Optional authenticated paired return; no public confidential census",
+      "accepted": "source + consumer hash/readback or DEFER"
+    }
+  ]
+}
