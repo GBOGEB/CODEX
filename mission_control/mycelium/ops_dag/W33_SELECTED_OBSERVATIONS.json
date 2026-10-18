@@ -1,0 +1,544 @@
+{
+  "schema": "missioncontrol.mycelium.operational_dag.snapshot.v1",
+  "capture_utc": "2026-10-18T19:45:00Z",
+  "population": "SELECTED_OBSERVATIONS_NOT_FLEET",
+  "scope_note": "13 native exact-run job observations from ABACUS and CODEX, selected historical/then-current; status frozen, never an automatic live refresh. No private QPS job/source data. SOURCE_REFS are provenance not transport grants.",
+  "sources": {
+    "GBOGEB/CODEX": "774d51eb4a58fa259f059764e586d12a7935b2e1",
+    "GBOGEB/ABACUS": "994ad6e73c748923841d92b12651e92d41b2d4ff"
+  },
+  "governance": {
+    "merge_admission": "HOLD",
+    "dispatch_enabled": false,
+    "authority_transfer": false,
+    "root_closure_credit": 0
+  },
+  "pools": [
+    {
+      "id": "linux",
+      "observed_slots": null,
+      "capacity_evidence": null
+    },
+    {
+      "id": "windows",
+      "observed_slots": null,
+      "capacity_evidence": null
+    },
+    {
+      "id": "owner-review",
+      "observed_slots": null,
+      "capacity_evidence": null
+    }
+  ],
+  "tasks": [
+    {
+      "id": "w29.old.ub310",
+      "logical_key": "w29.old.ub310",
+      "kind": "NATIVE",
+      "owner": "GBOGEB/ABACUS",
+      "pool": "linux",
+      "axis": "causal_defect_detection",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39154971255/job/117756202822",
+      "evidence_level": "NATIVE_LOG_VERIFIED",
+      "status": "completed",
+      "conclusion": "failure",
+      "first_red_signature": "W29_COMPARATOR_IMPORT_MODULE_NOT_FOUND_SCRIPTS",
+      "native": {
+        "run_id": 39154971255,
+        "attempt": 1,
+        "job_id": 117756202822,
+        "head_sha": "912702a2560fe94ad9675d48678cd2638b893b95"
+      },
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "w29.old.ub311",
+      "logical_key": "w29.old.ub311",
+      "kind": "NATIVE",
+      "owner": "GBOGEB/ABACUS",
+      "pool": "linux",
+      "axis": "causal_defect_detection",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39154971255/job/117756202684",
+      "evidence_level": "NATIVE_LOG_VERIFIED",
+      "status": "completed",
+      "conclusion": "failure",
+      "first_red_signature": "W29_COMPARATOR_IMPORT_MODULE_NOT_FOUND_SCRIPTS",
+      "native": {
+        "run_id": 39154971255,
+        "attempt": 1,
+        "job_id": 117756202684,
+        "head_sha": "912702a2560fe94ad9675d48678cd2638b893b95"
+      },
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "w29.old.ub312",
+      "logical_key": "w29.old.ub312",
+      "kind": "NATIVE",
+      "owner": "GBOGEB/ABACUS",
+      "pool": "linux",
+      "axis": "causal_defect_detection",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39154971255/job/117756202802",
+      "evidence_level": "NATIVE_LOG_VERIFIED",
+      "status": "completed",
+      "conclusion": "failure",
+      "first_red_signature": "W29_COMPARATOR_IMPORT_MODULE_NOT_FOUND_SCRIPTS",
+      "native": {
+        "run_id": 39154971255,
+        "attempt": 1,
+        "job_id": 117756202802,
+        "head_sha": "912702a2560fe94ad9675d48678cd2638b893b95"
+      },
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "w29.old.win311",
+      "logical_key": "w29.old.win311",
+      "kind": "NATIVE",
+      "owner": "GBOGEB/ABACUS",
+      "pool": "windows",
+      "axis": "causal_defect_detection",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39154971255/job/117756202953",
+      "evidence_level": "NATIVE_LOG_VERIFIED",
+      "status": "completed",
+      "conclusion": "failure",
+      "first_red_signature": "W29_COMPARATOR_IMPORT_MODULE_NOT_FOUND_SCRIPTS",
+      "native": {
+        "run_id": 39154971255,
+        "attempt": 1,
+        "job_id": 117756202953,
+        "head_sha": "912702a2560fe94ad9675d48678cd2638b893b95"
+      },
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "w29.new.ub310",
+      "logical_key": "w29.new.ub310",
+      "kind": "NATIVE",
+      "owner": "GBOGEB/ABACUS",
+      "pool": "linux",
+      "axis": "platform_runner_reach",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39158107870/job/117765445240",
+      "evidence_level": "NATIVE_JOB_METADATA",
+      "status": "queued",
+      "conclusion": null,
+      "first_red_signature": null,
+      "native": {
+        "run_id": 39158107870,
+        "attempt": 1,
+        "job_id": 117765445240,
+        "head_sha": "e95bcf076f0a06ad464208dcefaac29e3e692efc"
+      },
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "w29.new.ub311",
+      "logical_key": "w29.new.ub311",
+      "kind": "NATIVE",
+      "owner": "GBOGEB/ABACUS",
+      "pool": "linux",
+      "axis": "platform_runner_reach",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39158107870/job/117765444974",
+      "evidence_level": "NATIVE_JOB_METADATA",
+      "status": "queued",
+      "conclusion": null,
+      "first_red_signature": null,
+      "native": {
+        "run_id": 39158107870,
+        "attempt": 1,
+        "job_id": 117765444974,
+        "head_sha": "e95bcf076f0a06ad464208dcefaac29e3e692efc"
+      },
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "w29.new.ub312",
+      "logical_key": "w29.new.ub312",
+      "kind": "NATIVE",
+      "owner": "GBOGEB/ABACUS",
+      "pool": "linux",
+      "axis": "platform_runner_reach",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39158107870/job/117765445359",
+      "evidence_level": "NATIVE_JOB_METADATA",
+      "status": "queued",
+      "conclusion": null,
+      "first_red_signature": null,
+      "native": {
+        "run_id": 39158107870,
+        "attempt": 1,
+        "job_id": 117765445359,
+        "head_sha": "e95bcf076f0a06ad464208dcefaac29e3e692efc"
+      },
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "w29.new.win311",
+      "logical_key": "w29.new.win311",
+      "kind": "NATIVE",
+      "owner": "GBOGEB/ABACUS",
+      "pool": "windows",
+      "axis": "platform_runner_reach",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39158107870/job/117765445174",
+      "evidence_level": "NATIVE_JOB_METADATA",
+      "status": "completed",
+      "conclusion": "success",
+      "first_red_signature": null,
+      "native": {
+        "run_id": 39158107870,
+        "attempt": 1,
+        "job_id": 117765445174,
+        "head_sha": "e95bcf076f0a06ad464208dcefaac29e3e692efc"
+      },
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "b0.w32.canonical",
+      "logical_key": "b0.w32.canonical",
+      "kind": "NATIVE",
+      "owner": "GBOGEB/ABACUS",
+      "pool": "linux",
+      "axis": "source_coverage",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39159796230/job/117770503043",
+      "evidence_level": "NATIVE_JOB_METADATA",
+      "status": "completed",
+      "conclusion": "failure",
+      "first_red_signature": null,
+      "native": {
+        "run_id": 39159796230,
+        "attempt": 1,
+        "job_id": 117770503043,
+        "head_sha": "fe6abd4ffae29767e48ceedc28d9f21c2b050b67"
+      },
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "codex.w30.ub310",
+      "logical_key": "codex.w30.ub310",
+      "kind": "NATIVE",
+      "owner": "GBOGEB/CODEX",
+      "pool": "linux",
+      "axis": "cross_module_integration",
+      "source_ref": "https://github.com/GBOGEB/CODEX/actions/runs/39158510448/job/117766654699",
+      "evidence_level": "NATIVE_JOB_METADATA",
+      "status": "completed",
+      "conclusion": "success",
+      "first_red_signature": null,
+      "native": {
+        "run_id": 39158510448,
+        "attempt": 1,
+        "job_id": 117766654699,
+        "head_sha": "c816186d84c3aba371305b3f2b7d8e42e2eb3069"
+      },
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "codex.w30.ub311",
+      "logical_key": "codex.w30.ub311",
+      "kind": "NATIVE",
+      "owner": "GBOGEB/CODEX",
+      "pool": "linux",
+      "axis": "cross_module_integration",
+      "source_ref": "https://github.com/GBOGEB/CODEX/actions/runs/39158510448/job/117766654879",
+      "evidence_level": "NATIVE_JOB_METADATA",
+      "status": "completed",
+      "conclusion": "success",
+      "first_red_signature": null,
+      "native": {
+        "run_id": 39158510448,
+        "attempt": 1,
+        "job_id": 117766654879,
+        "head_sha": "c816186d84c3aba371305b3f2b7d8e42e2eb3069"
+      },
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "codex.w30.ub312",
+      "logical_key": "codex.w30.ub312",
+      "kind": "NATIVE",
+      "owner": "GBOGEB/CODEX",
+      "pool": "linux",
+      "axis": "cross_module_integration",
+      "source_ref": "https://github.com/GBOGEB/CODEX/actions/runs/39158510448/job/117766654887",
+      "evidence_level": "NATIVE_JOB_METADATA",
+      "status": "completed",
+      "conclusion": "success",
+      "first_red_signature": null,
+      "native": {
+        "run_id": 39158510448,
+        "attempt": 1,
+        "job_id": 117766654887,
+        "head_sha": "c816186d84c3aba371305b3f2b7d8e42e2eb3069"
+      },
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "codex.w30.win311",
+      "logical_key": "codex.w30.win311",
+      "kind": "NATIVE",
+      "owner": "GBOGEB/CODEX",
+      "pool": "windows",
+      "axis": "cross_module_integration",
+      "source_ref": "https://github.com/GBOGEB/CODEX/actions/runs/39158510448/job/117766654991",
+      "evidence_level": "NATIVE_JOB_METADATA",
+      "status": "completed",
+      "conclusion": "success",
+      "first_red_signature": null,
+      "native": {
+        "run_id": 39158510448,
+        "attempt": 1,
+        "job_id": 117766654991,
+        "head_sha": "c816186d84c3aba371305b3f2b7d8e42e2eb3069"
+      },
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "w29.old.comparator",
+      "logical_key": "w29.old.comparator",
+      "kind": "DERIVED",
+      "owner": "GBOGEB/ABACUS",
+      "pool": "linux",
+      "axis": "causal_defect_detection",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/pull/2256",
+      "evidence_level": "DECLARED_ONLY",
+      "status": "pending",
+      "conclusion": null,
+      "first_red_signature": null,
+      "native": null,
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "w29.old.receipt",
+      "logical_key": "w29.old.receipt",
+      "kind": "DERIVED",
+      "owner": "GBOGEB/ABACUS",
+      "pool": "linux",
+      "axis": "adversarial_penetration",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/pull/2256",
+      "evidence_level": "DECLARED_ONLY",
+      "status": "pending",
+      "conclusion": null,
+      "first_red_signature": null,
+      "native": null,
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "w29.old.admission",
+      "logical_key": "w29.old.admission",
+      "kind": "DERIVED",
+      "owner": "GBOGEB/ABACUS",
+      "pool": "owner-review",
+      "axis": "causal_defect_detection",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/issues/1860",
+      "evidence_level": "DECLARED_ONLY",
+      "status": "pending",
+      "conclusion": null,
+      "first_red_signature": null,
+      "native": null,
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "w29.new.matched",
+      "logical_key": "w29.new.matched",
+      "kind": "DERIVED",
+      "owner": "GBOGEB/ABACUS",
+      "pool": "linux",
+      "axis": "platform_runner_reach",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/pull/2261",
+      "evidence_level": "DECLARED_ONLY",
+      "status": "pending",
+      "conclusion": null,
+      "first_red_signature": null,
+      "native": null,
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "b0.w32.receipt",
+      "logical_key": "b0.w32.receipt",
+      "kind": "DERIVED",
+      "owner": "GBOGEB/ABACUS",
+      "pool": "linux",
+      "axis": "source_coverage",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/pull/2272",
+      "evidence_level": "DECLARED_ONLY",
+      "status": "pending",
+      "conclusion": null,
+      "first_red_signature": null,
+      "native": null,
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "codex.w30.receipt",
+      "logical_key": "codex.w30.receipt",
+      "kind": "DERIVED",
+      "owner": "GBOGEB/CODEX",
+      "pool": "linux",
+      "axis": "cross_module_integration",
+      "source_ref": "https://github.com/GBOGEB/CODEX/pull/1105",
+      "evidence_level": "DECLARED_ONLY",
+      "status": "pending",
+      "conclusion": null,
+      "first_red_signature": null,
+      "native": null,
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "id": "qps.owner.decision",
+      "logical_key": "qps.owner.decision",
+      "kind": "DERIVED",
+      "owner": "GBOGEB/CODEX",
+      "pool": "owner-review",
+      "axis": "cross_module_integration",
+      "source_ref": "https://github.com/GBOGEB/cryoplant-project/issues/1959",
+      "evidence_level": "DECLARED_ONLY",
+      "status": "owner_hold",
+      "conclusion": null,
+      "first_red_signature": null,
+      "native": null,
+      "created_at": null,
+      "started_at": null,
+      "completed_at": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "w29.old.ub310",
+      "to": "w29.old.comparator",
+      "kind": "REQUIRES_SUCCESS",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39154971255"
+    },
+    {
+      "from": "w29.old.ub311",
+      "to": "w29.old.comparator",
+      "kind": "REQUIRES_SUCCESS",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39154971255"
+    },
+    {
+      "from": "w29.old.ub312",
+      "to": "w29.old.comparator",
+      "kind": "REQUIRES_SUCCESS",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39154971255"
+    },
+    {
+      "from": "w29.old.win311",
+      "to": "w29.old.comparator",
+      "kind": "REQUIRES_SUCCESS",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39154971255"
+    },
+    {
+      "from": "w29.old.comparator",
+      "to": "w29.old.receipt",
+      "kind": "REQUIRES_SUCCESS",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/pull/2256"
+    },
+    {
+      "from": "w29.old.receipt",
+      "to": "w29.old.admission",
+      "kind": "REQUIRES_SUCCESS",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "from": "w29.new.ub310",
+      "to": "w29.new.matched",
+      "kind": "REQUIRES_SUCCESS",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39158107870"
+    },
+    {
+      "from": "w29.new.ub311",
+      "to": "w29.new.matched",
+      "kind": "REQUIRES_SUCCESS",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39158107870"
+    },
+    {
+      "from": "w29.new.ub312",
+      "to": "w29.new.matched",
+      "kind": "REQUIRES_SUCCESS",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39158107870"
+    },
+    {
+      "from": "w29.new.win311",
+      "to": "w29.new.matched",
+      "kind": "REQUIRES_SUCCESS",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39158107870"
+    },
+    {
+      "from": "b0.w32.canonical",
+      "to": "b0.w32.receipt",
+      "kind": "REQUIRES_SUCCESS",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39159796230"
+    },
+    {
+      "from": "codex.w30.ub310",
+      "to": "codex.w30.receipt",
+      "kind": "REQUIRES_SUCCESS",
+      "source_ref": "https://github.com/GBOGEB/CODEX/actions/runs/39158510448"
+    },
+    {
+      "from": "codex.w30.ub311",
+      "to": "codex.w30.receipt",
+      "kind": "REQUIRES_SUCCESS",
+      "source_ref": "https://github.com/GBOGEB/CODEX/actions/runs/39158510448"
+    },
+    {
+      "from": "codex.w30.ub312",
+      "to": "codex.w30.receipt",
+      "kind": "REQUIRES_SUCCESS",
+      "source_ref": "https://github.com/GBOGEB/CODEX/actions/runs/39158510448"
+    },
+    {
+      "from": "codex.w30.win311",
+      "to": "codex.w30.receipt",
+      "kind": "REQUIRES_SUCCESS",
+      "source_ref": "https://github.com/GBOGEB/CODEX/actions/runs/39158510448"
+    },
+    {
+      "from": "codex.w30.receipt",
+      "to": "qps.owner.decision",
+      "kind": "REFERENCES",
+      "source_ref": "https://github.com/GBOGEB/CODEX/issues/977"
+    },
+    {
+      "from": "w29.old.admission",
+      "to": "w29.new.matched",
+      "kind": "REFERENCES",
+      "source_ref": "https://github.com/GBOGEB/ABACUS/pull/2261"
+    }
+  ]
+}
