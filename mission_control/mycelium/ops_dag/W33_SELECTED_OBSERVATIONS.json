@@ -1,8 +1,8 @@
 {
   "schema": "missioncontrol.mycelium.operational_dag.snapshot.v1",
-  "capture_utc": "2026-10-18T19:45:00Z",
+  "capture_utc": "2026-10-18T20:18:30.162Z",
   "population": "SELECTED_OBSERVATIONS_NOT_FLEET",
-  "scope_note": "13 native exact-run job observations from ABACUS and CODEX, selected historical/then-current; status frozen, never an automatic live refresh. No private QPS job/source data. SOURCE_REFS are provenance not transport grants.",
+  "scope_note": "Second exact-job REST readback for 13 frozen selected task identities. Four formerly QUEUED W29 N+1 jobs are terminal SUCCESS. Job created/started/completed times are native GitHub REST job timestamps, not extrapolated. Observed pool slot inventory remains UNKNOWN. Historical source-head statuses do not prove current-main engineering acceptance.",
   "sources": {
     "GBOGEB/CODEX": "774d51eb4a58fa259f059764e586d12a7935b2e1",
     "GBOGEB/ABACUS": "994ad6e73c748923841d92b12651e92d41b2d4ff"
@@ -49,9 +49,9 @@
         "job_id": 117756202822,
         "head_sha": "912702a2560fe94ad9675d48678cd2638b893b95"
       },
-      "created_at": null,
-      "started_at": null,
-      "completed_at": null
+      "created_at": "2026-10-18T18:37:05Z",
+      "started_at": "2026-10-18T19:12:41Z",
+      "completed_at": "2026-10-18T19:13:02Z"
     },
     {
       "id": "w29.old.ub311",
@@ -71,9 +71,9 @@
         "job_id": 117756202684,
         "head_sha": "912702a2560fe94ad9675d48678cd2638b893b95"
       },
-      "created_at": null,
-      "started_at": null,
-      "completed_at": null
+      "created_at": "2026-10-18T18:37:05Z",
+      "started_at": "2026-10-18T19:12:35Z",
+      "completed_at": "2026-10-18T19:12:55Z"
     },
     {
       "id": "w29.old.ub312",
@@ -93,9 +93,9 @@
         "job_id": 117756202802,
         "head_sha": "912702a2560fe94ad9675d48678cd2638b893b95"
       },
-      "created_at": null,
-      "started_at": null,
-      "completed_at": null
+      "created_at": "2026-10-18T18:37:05Z",
+      "started_at": "2026-10-18T19:12:38Z",
+      "completed_at": "2026-10-18T19:12:57Z"
     },
     {
       "id": "w29.old.win311",
@@ -115,9 +115,9 @@
         "job_id": 117756202953,
         "head_sha": "912702a2560fe94ad9675d48678cd2638b893b95"
       },
-      "created_at": null,
-      "started_at": null,
-      "completed_at": null
+      "created_at": "2026-10-18T18:37:05Z",
+      "started_at": "2026-10-18T18:37:21Z",
+      "completed_at": "2026-10-18T18:38:06Z"
     },
     {
       "id": "w29.new.ub310",
@@ -128,8 +128,8 @@
       "axis": "platform_runner_reach",
       "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39158107870/job/117765445240",
       "evidence_level": "NATIVE_JOB_METADATA",
-      "status": "queued",
-      "conclusion": null,
+      "status": "completed",
+      "conclusion": "success",
       "first_red_signature": null,
       "native": {
         "run_id": 39158107870,
@@ -137,9 +137,9 @@
         "job_id": 117765445240,
         "head_sha": "e95bcf076f0a06ad464208dcefaac29e3e692efc"
       },
-      "created_at": null,
-      "started_at": null,
-      "completed_at": null
+      "created_at": "2026-10-18T19:17:44Z",
+      "started_at": "2026-10-18T20:06:00Z",
+      "completed_at": "2026-10-18T20:06:19Z"
     },
     {
       "id": "w29.new.ub311",
@@ -150,8 +150,8 @@
       "axis": "platform_runner_reach",
       "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39158107870/job/117765444974",
       "evidence_level": "NATIVE_JOB_METADATA",
-      "status": "queued",
-      "conclusion": null,
+      "status": "completed",
+      "conclusion": "success",
       "first_red_signature": null,
       "native": {
         "run_id": 39158107870,
@@ -159,9 +159,9 @@
         "job_id": 117765444974,
         "head_sha": "e95bcf076f0a06ad464208dcefaac29e3e692efc"
       },
-      "created_at": null,
-      "started_at": null,
-      "completed_at": null
+      "created_at": "2026-10-18T19:17:44Z",
+      "started_at": "2026-10-18T20:05:59Z",
+      "completed_at": "2026-10-18T20:06:14Z"
     },
     {
       "id": "w29.new.ub312",
@@ -172,8 +172,8 @@
       "axis": "platform_runner_reach",
       "source_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/39158107870/job/117765445359",
       "evidence_level": "NATIVE_JOB_METADATA",
-      "status": "queued",
-      "conclusion": null,
+      "status": "completed",
+      "conclusion": "success",
       "first_red_signature": null,
       "native": {
         "run_id": 39158107870,
@@ -181,9 +181,9 @@
         "job_id": 117765445359,
         "head_sha": "e95bcf076f0a06ad464208dcefaac29e3e692efc"
       },
-      "created_at": null,
-      "started_at": null,
-      "completed_at": null
+      "created_at": "2026-10-18T19:17:44Z",
+      "started_at": "2026-10-18T20:06:14Z",
+      "completed_at": "2026-10-18T20:06:28Z"
     },
     {
       "id": "w29.new.win311",
@@ -203,9 +203,9 @@
         "job_id": 117765445174,
         "head_sha": "e95bcf076f0a06ad464208dcefaac29e3e692efc"
       },
-      "created_at": null,
-      "started_at": null,
-      "completed_at": null
+      "created_at": "2026-10-18T19:17:44Z",
+      "started_at": "2026-10-18T19:17:49Z",
+      "completed_at": "2026-10-18T19:18:32Z"
     },
     {
       "id": "b0.w32.canonical",
@@ -225,9 +225,9 @@
         "job_id": 117770503043,
         "head_sha": "fe6abd4ffae29767e48ceedc28d9f21c2b050b67"
       },
-      "created_at": null,
-      "started_at": null,
-      "completed_at": null
+      "created_at": "2026-10-18T19:39:54Z",
+      "started_at": "2026-10-18T19:43:21Z",
+      "completed_at": "2026-10-18T19:49:46Z"
     },
     {
       "id": "codex.w30.ub310",
@@ -247,9 +247,9 @@
         "job_id": 117766654699,
         "head_sha": "c816186d84c3aba371305b3f2b7d8e42e2eb3069"
       },
-      "created_at": null,
-      "started_at": null,
-      "completed_at": null
+      "created_at": "2026-10-18T19:23:01Z",
+      "started_at": "2026-10-18T19:28:05Z",
+      "completed_at": "2026-10-18T19:28:12Z"
     },
     {
       "id": "codex.w30.ub311",
@@ -269,9 +269,9 @@
         "job_id": 117766654879,
         "head_sha": "c816186d84c3aba371305b3f2b7d8e42e2eb3069"
       },
-      "created_at": null,
-      "started_at": null,
-      "completed_at": null
+      "created_at": "2026-10-18T19:23:01Z",
+      "started_at": "2026-10-18T19:28:14Z",
+      "completed_at": "2026-10-18T19:28:20Z"
     },
     {
       "id": "codex.w30.ub312",
@@ -291,9 +291,9 @@
         "job_id": 117766654887,
         "head_sha": "c816186d84c3aba371305b3f2b7d8e42e2eb3069"
       },
-      "created_at": null,
-      "started_at": null,
-      "completed_at": null
+      "created_at": "2026-10-18T19:23:01Z",
+      "started_at": "2026-10-18T19:28:05Z",
+      "completed_at": "2026-10-18T19:28:13Z"
     },
     {
       "id": "codex.w30.win311",
@@ -313,9 +313,9 @@
         "job_id": 117766654991,
         "head_sha": "c816186d84c3aba371305b3f2b7d8e42e2eb3069"
       },
-      "created_at": null,
-      "started_at": null,
-      "completed_at": null
+      "created_at": "2026-10-18T19:23:01Z",
+      "started_at": "2026-10-18T19:24:47Z",
+      "completed_at": "2026-10-18T19:25:03Z"
     },
     {
       "id": "w29.old.comparator",
