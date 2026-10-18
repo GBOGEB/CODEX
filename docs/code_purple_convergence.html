@@ -193,6 +193,13 @@ footer{color:var(--muted);padding:26px;border-top:1px solid var(--border);text-a
 <article><span class="caps" style="color:var(--evidence)">Read-only federation</span><h3>ABACUS → CODEX → QPS</h3><p>ABACUS supplies evidence, CODEX may rank advisory REX, QPS retains separate engineering acceptance. Every source-specific rejection loops back without rewriting the upstream root.</p></article>
 </div>
 </section>
+<section id="mipEight" class="section" aria-labelledby="mipEightTitle">
+<h2 id="mipEightTitle">CBD! · Eight-section MIP improvement audit</h2>
+<p class="small">Modernize → Innovate → Perpetuate · Eight independent reviews; measured local source gains do not establish global admission or fleet throughput.</p>
+<p id="mipEightStatus" role="status" aria-live="polite">MIP ledger loading · no admission inferred</p>
+<div id="mipEightItems" class="datalist" aria-label="Eight expandable MIP sections"></div>
+<p class="small">Explicit dependency owners and changed-path locks are source-bound proposals. Actual pool capacity, eligible review and QPS-private receiver results remain UNKNOWN.</p>
+</section>
 <section id="sources" class="section" aria-labelledby="sources-title">
 <h2 id="sources-title">06 · Evidence and design contract</h2>
 <div class="scroll-table"><table><thead><tr><th>Surface</th><th>Source</th><th>Meaning</th></tr></thead><tbody>
@@ -324,10 +331,44 @@ async function refresh() {
 }
 $("githubReload").addEventListener("click",refresh);
 setInterval(()=>{if($("githubAuto").checked && !document.hidden)refresh();},900000);
+function drawMipEight(m){
+ if(m?.schema!=="codepurple.mip.eight-section-assessment.v1"
+    || m?.governance?.merge_admission!=="HOLD"
+    || m?.method?.qualified_global_dov!=="WITHHELD"
+    || m?.sources?.QPS?.main_sha!==null
+    || !Array.isArray(m?.sections) || m.sections.length!==8
+    || m.sections.some((x,i)=>x.id!==i+1)) throw Error("MIP_SNAPSHOT_AUTHORITY_OR_POPULATION");
+ const host=$("mipEightItems");host.replaceChildren();
+ for(const x of m.sections){
+   const article=document.createElement("article");
+   const detail=document.createElement("details");
+   const summary=document.createElement("summary");
+   const strong=document.createElement("strong");
+   strong.textContent=String(x.id).padStart(2,"0")+" · "+x.title;
+   const meta=document.createElement("small");
+   meta.textContent=" · "+x.priority+" · "+x.decision+" · "+x.family;
+   summary.append(strong,meta); detail.appendChild(summary);
+   for(const [name,value] of [["Modernize",x.modernize],["Innovate",x.innovate],
+                              ["Perpetuate",x.perpetuate],["Alternative",x.alternate],
+                              ["Next action",x.next],["Acceptance",x.acceptance]]){
+     const paragraph=document.createElement("p");
+     const label=document.createElement("strong");
+     label.textContent=name+": ";
+     paragraph.append(label,document.createTextNode(value));
+     detail.appendChild(paragraph);
+   }
+   article.appendChild(detail);host.appendChild(article);
+ }
+ set("mipEightStatus","8/8 source-bound MIP sections · Perpetuate DoV WITHHELD · Merge HOLD");
+}
 fetch("data/code_purple_convergence_control_w32.json",{cache:"no-store"})
  .then(r=>{if(!r.ok)throw new Error("ledger HTTP "+r.status);return r.json();})
  .then(d=>{if(d.schema!=="codepurple.convergence.control-index.v1" || d.merge_admission!=="HOLD" || d.authority_transfer!==false || d.security_waiver!==false)throw Error("ledger control mismatch");drawLedger(d);refresh();})
  .catch(err=>set("githubState","Ledger unavailable: "+err.message+"; metrics UNKNOWN. Open source ledger link."));
+fetch("data/code_purple_cbd_mip_w40.json",{cache:"no-store"})
+ .then(r=>{if(!r.ok)throw Error("MIP static ledger unavailable");return r.json();})
+ .then(drawMipEight)
+ .catch(err=>{set("mipEightStatus","MIP ledger UNKNOWN / deferred · "+err.message);$("mipEightItems").replaceChildren();});
 })();
 </script>
 
