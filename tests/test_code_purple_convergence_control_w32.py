@@ -88,6 +88,36 @@ class ConvergenceControlContract(unittest.TestCase):
         self.assertIn('set("currentCoverage",UNKNOWN)', self.html)
         self.assertNotRegex(self.html, r"fetch\([^)]*method\s*:\s*['\"](?:POST|PUT|PATCH|DELETE)")
 
+
+    def test_native_selection_never_promotes_red_b0(self):
+        receipt = self.ledger["candidate"]["native_selected_case_receipt"]
+        self.assertEqual((receipt["designed_cases"], receipt["passed_cases"],
+                          receipt["failed_cases"]), (15, 15, 0))
+        self.assertEqual(receipt["full_canonical_B0"], "FAILURE")
+        self.assertEqual(receipt["full_suite"], {"passed": 4796, "failed": 2, "skipped": 2})
+        self.assertIsNone(receipt["coverage_delta"])
+        self.assertRegex(receipt["source_head"], r"^[0-9a-f]{40}$")
+        self.assertIsNone(self.ledger["candidate"]["ordinary_merge_observed"]["formal_admission"])
+
+    def test_ordinary_issue_counts_never_substitute_bd_roots(self):
+        s = self.ledger["status_snapshots"]
+        issues = s["ordinary_issues_3repo_observed"]
+        self.assertEqual((issues["open"], issues["closed"], issues["total"]), (106, 373, 479))
+        self.assertFalse(issues["search_incomplete"])
+        self.assertIn("NOT_CAUSAL_ROOTS", issues["kind"])
+        self.assertIsNone(s["root_open"])
+        self.assertIsNone(s["root_closed"])
+        self.assertIsNone(s["bd_open"])
+        self.assertIsNone(s["bd_closed"])
+
+    def test_live_metrics_are_fail_closed(self):
+        self.assertIn('id="ordinaryIssues"', self.html)
+        self.assertIn('id="w32NativeCases"', self.html)
+        self.assertIn("incomplete_results===false", self.html)
+        self.assertIn("Number.isSafeInteger", self.html)
+        self.assertIn("Array.isArray(pulls)", self.html)
+        self.assertIn("metadata sources loaded", self.html)
+
     def test_federated_portal_links_this_entry(self):
         self.assertIn("code_purple_convergence.html", (DOCS / "index.html").read_text())
         self.assertIn("code_purple_convergence.html",
