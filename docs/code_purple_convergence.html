@@ -122,7 +122,7 @@ footer{color:var(--muted);padding:26px;border-top:1px solid var(--border);text-a
   <div class="control-tile"><small>ABACUS #1860 / TODO</small><strong id="abacusTodo">UNKNOWN</strong><small>Technical + human gates, never inferred</small></div>
   <div class="control-tile"><small>CODEX #977 / dispatch TODO</small><strong id="codexTodo">UNKNOWN</strong><small>Actual crew/REX IDs: UNKNOWN</small></div>
   <div class="control-tile"><small>Canonical B0 latest main run</small><strong id="b0Status">UNKNOWN</strong><small id="b0RunInfo">Run/head/terminal proof required</small></div>
-  <div class="control-tile"><small>Verified prior green main coverage</small><strong id="priorCoverage">UNKNOWN</strong><small>Historical source-bound; not latest main</small></div>
+  <div class="control-tile"><small>Latest artifact-verified green main epoch</small><strong id="priorCoverage">UNKNOWN</strong><small>Historical source-bound; not latest main</small></div>
   <div class="control-tile"><small>Current main coverage</small><strong class="unknown" id="currentCoverage">UNKNOWN</strong><small>Only exact-main artifact can update this</small></div>
   <div class="control-tile"><small>Current broad PR / changed-line coverage</small><strong class="unknown">UNKNOWN / UNKNOWN</strong><small>Never substitute local module percentages</small></div>
   <div class="control-tile"><small>Formal root / BD accepted closures</small><strong class="unknown">UNKNOWN / UNKNOWN</strong><small>Requires deduplicated owner receipts</small></div>
@@ -211,8 +211,9 @@ const link = (href, label) => { const a = document.createElement("a"); a.href=hr
 const validSha = s => typeof s === "string" && /^[0-9a-f]{40}$/.test(s);
 function drawLedger(d) {
  frozen=d;
+ const latest=d.historical_coverage.latest_verified_green_main;
  const cov=d.historical_coverage.canonical_main_verified_previous;
- set("priorCoverage", cov.covered.toLocaleString()+"/"+cov.eligible.toLocaleString()+" = "+cov.percent.toFixed(3)+"%");
+ set("priorCoverage", latest ? latest.covered_combined.toLocaleString()+"/"+latest.eligible_combined.toLocaleString()+" = "+latest.percent_combined.toFixed(3)+"% · fixed-cohort UNKNOWN" : cov.covered.toLocaleString()+"/"+cov.eligible.toLocaleString()+" = "+cov.percent.toFixed(3)+"%");
  const ns=d.candidate.native_selected_case_receipt;
  set("w32NativeCases",ns ? ns.passed_cases+"/"+ns.designed_cases+" · B0 "+ns.full_canonical_B0 : UNKNOWN);
  const oi=d.status_snapshots.ordinary_issues_3repo_observed;
@@ -268,8 +269,9 @@ async function refresh() {
  outputs.forEach((result,i)=>{const name=tasks[i][0];live[name]=result.status==="fulfilled" ? result.value : null;if(live[name])ok++;});
  if(validSha(live.abacus?.sha)){
   const sha=live.abacus.sha;set("abacusHead",sha);set("abacusHeadSource",sha===frozen.source_heads_observed.ABACUS ? "Current head = ledger observed head" : "Main advanced since frozen ledger");
+  const latest=frozen.historical_coverage.latest_verified_green_main;
   const old=frozen.historical_coverage.canonical_main_verified_previous;
-  set("currentCoverage",sha===old.sha ? old.percent.toFixed(3)+"% (same verified source)" : UNKNOWN);
+  set("currentCoverage",latest && sha===latest.source_sha ? latest.percent_combined.toFixed(3)+"% · artifact verified" : (!latest && sha===old.sha ? old.percent.toFixed(3)+"% (same verified source)" : UNKNOWN));
  } else {set("abacusHead",UNKNOWN);set("currentCoverage",UNKNOWN);set("abacusHeadSource","Public GitHub readback unavailable");}
  [["abacusIssue","abacusTodo","ABACUS_1860"],["codexIssue","codexTodo","CODEX_977"]].forEach(([key,element,ref])=>{
   const v=issueTodos(live[key]?.body,frozen.status_snapshots[ref].total);
