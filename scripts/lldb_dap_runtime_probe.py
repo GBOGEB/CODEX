@@ -41,10 +41,20 @@ def run(cmd: list[str], *, cwd: Path = ROOT, timeout: int = 120) -> dict[str, An
 
 
 def git_sha() -> str:
-    if os.environ.get("GITHUB_SHA"):
-        return os.environ["GITHUB_SHA"]
-    result = run(["git", "rev-parse", "HEAD"])
-    return result["stdout"].strip() if result["returncode"] == 0 else "UNKNOWN"
+    """Bind the receipt to checked-out source bytes, never the PR merge-event SHA.
+
+    GitHub reserves GITHUB_SHA for the event and may keep the synthetic PR
+    merge commit there even when actions/checkout pins the actual source HEAD.
+    """
+    result = run(["git", "rev-parse", "HEAD"], timeout=20)
+    sha = str(result.get("stdout", "")).strip()
+    import re
+    if result.get("returncode") != 0 or re.fullmatch(r"[0-9a-f]{40}", sha) is None:
+        raise RuntimeError("SWIFT_PRODUCER_FIRST_RED: checked-out source HEAD unavailable")
+    expected = os.environ.get("EXACT_HEAD") or os.environ.get("EXACT_HEAD_SHA")
+    if expected and sha != expected:
+        raise RuntimeError("SWIFT_PRODUCER_FIRST_RED: checked-out source != expected PR head")
+    return sha
 
 
 def list_paths(patterns: tuple[str, ...]) -> list[str]:
@@ -125,6 +135,8 @@ def emit_receipt(path: Path, probe_result: dict[str, Any]) -> dict[str, Any]:
         "created_utc": utc_now(),
         "repo": os.environ.get("GITHUB_REPOSITORY", "GBOGEB/CODEX"),
         "exact_head_sha": git_sha(),
+        "github_event_sha": os.environ.get("GITHUB_SHA"),
+        "source_sha_basis": "GIT_CHECKOUT_HEAD",
         "surface_scope": ["lldb-dap", "swift-debug", "docker", "runner", "mcp"],
         "census_status": "PASS",
         "probe_status": probe_result["status"],
