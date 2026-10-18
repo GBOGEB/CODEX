@@ -8,6 +8,10 @@ on:
       - 'docs/missioncontrol_federated_launchpad.html'
       - 'tests/test_code_purple_convergence_control_w32.py'
       - 'tests/test_code_purple_w39_coverage_rollup.py'
+      - 'tests/test_code_purple_mip_eight_w40.py'
+      - 'scripts/code_purple_mip_eight_w40.py'
+      - 'mission_control/mycelium/five_axis/CBD_MIP_W40_EIGHT_SECTION_REGISTER.json'
+      - 'docs/data/code_purple_cbd_mip_w40.json'
       - 'scripts/qa_code_purple_convergence_w32.py'
       - '.github/workflows/code-purple-convergence-control-w32.yml'
   workflow_dispatch:
@@ -40,6 +44,7 @@ jobs:
           python -m py_compile tests/test_code_purple_convergence_control_w32.py scripts/qa_code_purple_convergence_w32.py
           python -m unittest discover -s tests -p 'test_code_purple_convergence_control_w32.py' -v
           python -m unittest discover -s tests -p 'test_code_purple_w39_coverage_rollup.py' -v
+          python -m unittest discover -s tests -p 'test_code_purple_mip_eight_w40.py' -v
       - name: Install deterministic browser runtime
         run: |
           python -m pip install playwright==1.56.0
@@ -51,6 +56,16 @@ jobs:
         run: |
           set -euo pipefail
           python scripts/qa_code_purple_convergence_w32.py --out artifacts/w32-control-tower --head "$EXPECTED_HEAD"
+      - name: Evaluate source-bound MIP eight-section decisions without dispatch
+        shell: bash
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python scripts/code_purple_mip_eight_w40.py \
+            --register mission_control/mycelium/five_axis/CBD_MIP_W40_EIGHT_SECTION_REGISTER.json \
+            --candidate-head "$EXPECTED_HEAD" \
+            --out artifacts/w32-control-tower/MIP_W40_EIGHT_SECTION_RECEIPT.json
       - name: Upload exact-head browser receipts
         if: always()
         uses: actions/upload-artifact@v7.0.2
