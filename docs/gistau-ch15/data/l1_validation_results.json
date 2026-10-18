@@ -1,7 +1,174 @@
 {
  "provenance": {
+  "abacus_commit": "4c2f6695b177975c8983aff74e00ea37905835e3",
+  "coolprop_version": "7.2.0",
   "gate": "governance/physics/CH15_CANONICAL_VALIDATION.yaml",
-  "note": "recorded from the 'L1 record' annotation of the PR-time CI crosscheck; CI fails if it drifts"
+  "note": "recorded from the 'L1 record' annotation of the PR-time CI crosscheck; CI fails if it drifts",
+  "recorded_from": {
+   "codex_head": "43a58d68e63e9fb6061d70365232caafb6fd2eea",
+   "run_id": 39116863100,
+   "workflow": "GISTAU Physics Crosscheck"
+  }
  },
- "record": "PENDING_FIRST_CI_RECORD"
+ "record": {
+  "coolprop_version": "7.2.0",
+  "examples_checked": 4,
+  "examples_excluded": 7,
+  "examples_source_check_required": [
+   "WE-T05-CRYOGENIC-COMPRESSOR-001"
+  ],
+  "rows": [
+   {
+    "computed": 1563.3194,
+    "deviation": -5.288e-06,
+    "deviation_kind": "abs",
+    "example_id": "WE-T00-REFPROP-HSD-PT-002",
+    "expected": 1563.3194,
+    "quantity": "enthalpy_j_g",
+    "tolerance": 0.05,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 28.007715,
+    "deviation": 0.0002147,
+    "deviation_kind": "abs",
+    "example_id": "WE-T00-REFPROP-HSD-PT-002",
+    "expected": 28.0075,
+    "quantity": "entropy_j_gk",
+    "tolerance": 0.005,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 0.16039141,
+    "deviation": -5.358e-05,
+    "deviation_kind": "rel",
+    "example_id": "WE-T00-REFPROP-HSD-PT-002",
+    "expected": 0.1604,
+    "quantity": "density_kg_m3",
+    "tolerance": 0.005,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 19.158614,
+    "deviation": -0.001386,
+    "deviation_kind": "abs",
+    "example_id": "WE-T02-FREE-EXPANSION-HEAT-001",
+    "expected": 19.16,
+    "quantity": "outlet_temperature_k",
+    "tolerance": 0.05,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 101.92194,
+    "deviation": 0.001943,
+    "deviation_kind": "abs",
+    "example_id": "WE-T02-FREE-EXPANSION-HEAT-001",
+    "expected": 101.92,
+    "quantity": "inlet_enthalpy_j_g",
+    "tolerance": 0.05,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 103.92194,
+    "deviation": 0.001943,
+    "deviation_kind": "abs",
+    "example_id": "WE-T02-FREE-EXPANSION-HEAT-001",
+    "expected": 103.92,
+    "quantity": "outlet_enthalpy_j_g",
+    "tolerance": 0.05,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 7.3844855,
+    "deviation": -0.0007462,
+    "deviation_kind": "rel",
+    "example_id": "WE-T02-MASS-FLOW-004",
+    "expected": 7.39,
+    "quantity": "mass_flow_g_s",
+    "tolerance": 0.01,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 106.67431,
+    "deviation": 0.004312,
+    "deviation_kind": "abs",
+    "example_id": "WE-T02-MASS-FLOW-004",
+    "expected": 106.67,
+    "quantity": "inlet_enthalpy_j_g",
+    "tolerance": 0.05,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 120.21622,
+    "deviation": 0.006217,
+    "deviation_kind": "abs",
+    "example_id": "WE-T02-MASS-FLOW-004",
+    "expected": 120.21,
+    "quantity": "outlet_enthalpy_j_g",
+    "tolerance": 0.05,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 12.934404,
+    "deviation": 0.004404,
+    "deviation_kind": "abs",
+    "example_id": "WE-T04-CRYOGENIC-EXPANDER-001",
+    "expected": 12.93,
+    "quantity": "outlet_temperature_k",
+    "tolerance": 0.05,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 70.853238,
+    "deviation": 0.003238,
+    "deviation_kind": "abs",
+    "example_id": "WE-T04-CRYOGENIC-EXPANDER-001",
+    "expected": 70.85,
+    "quantity": "outlet_enthalpy_j_g",
+    "tolerance": 0.05,
+    "verdict": "PASS"
+   },
+   {
+    "computed": -2981.6323,
+    "deviation": 1.085e-05,
+    "deviation_kind": "rel",
+    "example_id": "WE-T04-CRYOGENIC-EXPANDER-001",
+    "expected": -2981.6,
+    "quantity": "power_w_visible",
+    "tolerance": 0.01,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 9.1051942,
+    "deviation": 1.385,
+    "deviation_kind": "abs",
+    "example_id": "WE-T05-CRYOGENIC-COMPRESSOR-001",
+    "expected": 7.72,
+    "quantity": "outlet_temperature_k",
+    "tolerance": 0.05,
+    "verdict": "OPEN_MISMATCH"
+   },
+   {
+    "computed": 49.148796,
+    "deviation": 6.779,
+    "deviation_kind": "abs",
+    "example_id": "WE-T05-CRYOGENIC-COMPRESSOR-001",
+    "expected": 42.37,
+    "quantity": "outlet_enthalpy_j_g",
+    "tolerance": 0.05,
+    "verdict": "OPEN_MISMATCH"
+   },
+   {
+    "computed": 8049.8364,
+    "deviation": 0.5086,
+    "deviation_kind": "rel",
+    "example_id": "WE-T05-CRYOGENIC-COMPRESSOR-001",
+    "expected": 5336.0,
+    "quantity": "power_w",
+    "tolerance": 0.01,
+    "verdict": "OPEN_MISMATCH"
+   }
+  ],
+  "status": "PASS"
+ }
 }
