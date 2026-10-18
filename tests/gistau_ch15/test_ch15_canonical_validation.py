@@ -66,9 +66,12 @@ def test_expander_and_compressor_follow_isentropic_efficiency(tool, examples):
     assert exp["outlet_temperature_k"] == pytest.approx(25.0 - 0.75 * (25.0 - t2s), rel=1e-7)
     assert exp["power_w_visible"] < 0  # book sign convention: work extracted
     comp = tool.compute(by_id["WE-T05-CRYOGENIC-COMPRESSOR-001"], ideal)
-    t2s_c = 5.0 * (1.7 / 0.5) ** (B.R / B.CP)
+    t2s_c = 5.0 * (1.2 / 0.5) ** (B.R / B.CP)
     assert comp["outlet_temperature_k"] == pytest.approx(5.0 + (t2s_c - 5.0) / 0.75, rel=1e-7)
     assert comp["power_w"] > 0
+    # Sect. 15.8.5: real rise = isentropic rise / eta (the printed Fig. 15.31 multiplies instead).
+    assert comp["real_enthalpy_change_j_g"] == pytest.approx(comp["isentropic_enthalpy_change_j_g"] / 0.75, rel=1e-12)
+    assert comp["power_w"] == pytest.approx(400.0 * comp["real_enthalpy_change_j_g"], rel=1e-12)
 
 
 def test_free_expansion_adds_the_heat_input(tool, examples):
@@ -93,6 +96,10 @@ def test_gate_passes_when_provider_reproduces_the_book(tool, gate, examples):
 
 
 def test_source_check_items_are_reported_but_never_counted_as_passing(tool, gate, examples):
+    # Synthetic open item: move one checked example to source_check_required.
+    moved = "WE-T05-CRYOGENIC-COMPRESSOR-001"
+    gate = dict(gate, checked=[e for e in gate["checked"] if e != moved],
+                source_check_required={**(gate.get("source_check_required") or {}), moved: "synthetic"})
     by_id = {e["example_id"]: e for e in examples}
     real = {eid: tool.compute(by_id[eid], ideal) for eid in gate["checked"]}
     fake = [dict(e, expected_outputs={**e["expected_outputs"], **{k: v for k, v in real.get(e["example_id"], {}).items() if k in e["expected_outputs"]}}) for e in examples]
@@ -101,3 +108,22 @@ def test_source_check_items_are_reported_but_never_counted_as_passing(tool, gate
     open_rows = [r for r in report["rows"] if r["example_id"] in gate["source_check_required"]]
     assert open_rows and all(r["verdict"].startswith("OPEN_") for r in open_rows)
     assert report["examples_checked"] == len(gate["checked"])
+
+
+def test_book_errata_are_never_compared(gate, examples):
+    """An erratum cell stays recorded in the transcription but is not an expected output."""
+    by_id = {e["example_id"]: e for e in examples}
+    for eid, erratum in (gate.get("book_errata") or {}).items():
+        ex = by_id[eid]
+        assert any(b["cell"] == erratum["cell"].split()[0] and b["printed"] == erratum["printed"] for b in ex["source_verification"]["book_errata"])
+        assert erratum["printed"] not in ex["expected_outputs"].values()
+        assert erratum["finding"].strip()
+
+
+def test_t05_printed_cells_are_internally_consistent(examples):
+    """Fig. 15.31: h2 = h1 + dH real and power = mdot x dH real, as printed."""
+    ex = {e["example_id"]: e for e in examples}["WE-T05-CRYOGENIC-COMPRESSOR-001"]
+    o, i = ex["expected_outputs"], ex["inputs"]
+    assert i["outlet_pressure_bar"] == 1.20
+    assert o["outlet_enthalpy_j_g"] == pytest.approx(o["inlet_enthalpy_j_g"] + o["real_enthalpy_change_j_g"], abs=0.011)
+    assert o["power_w"] == pytest.approx(i["mass_flow_g_s"] * o["real_enthalpy_change_j_g"], rel=1e-3)
