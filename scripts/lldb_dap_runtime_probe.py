@@ -108,8 +108,13 @@ def execute_swift_lldb_probe() -> dict[str, Any]:
         "-o", "thread backtrace",
     ], timeout=180)
     combined = f"{lldb_result.get('stdout', '')}\n{lldb_result.get('stderr', '')}"
-    steps = combined.count("thread step-over") + combined.count("stop reason") + combined.count("frame #")
-    status = "ACCEPT" if lldb_result["returncode"] == 0 and steps > 0 else "REJECT"
+    # Count completed LLDB stepping outcomes, not echoed commands/backtrace frames.
+    from swift_roof_mip import native_stops
+    native = native_stops(combined)
+    steps = native["step_stops"]
+    status = "ACCEPT" if (lldb_result["returncode"] == 0 and
+                           native["breakpoint_stops"] >= 1 and steps >= 2 and
+                           native["backtrace_present"]) else "REJECT"
     return {"status": status, "reason": "lldb_executed_steps" if status == "ACCEPT" else "lldb_step_proof_failed", "steps": steps, "compile": compile_result, "lldb": lldb_result}
 
 
