@@ -70,11 +70,12 @@ jobs:
       - name: Build probe and strictly verify native evidence
         env:
           EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
-          GITHUB_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          EVENT_MERGE_SHA: ${{ github.sha }}
         shell: bash
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXACT_HEAD"
+          printf 'CHECKOUT_SOURCE_SHA=%s\\nEVENT_MERGE_SHA=%s\\n' "$(git rev-parse HEAD)" "$EVENT_MERGE_SHA"
           mkdir -p /tmp/swift-roof-native
           python scripts/lldb_dap_runtime_probe.py --mode probe --receipt /tmp/swift-roof-native/native.json
           python scripts/swift_roof_mip.py --mode verify --expected-head "$EXACT_HEAD" --receipt /tmp/swift-roof-native/native.json --out /tmp/swift-roof-native/roof
