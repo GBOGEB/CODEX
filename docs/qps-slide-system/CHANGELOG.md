@@ -1,5 +1,13 @@
 # CHANGELOG — QPS Master Slide System
 
+## v0.7.0
+
+### Changed
+
+- Chapter 15 content replaced by a generated deck (`gistau-ch15-validated-model`, 9 slides): validated-model overview, helium-4 physics authority (ABACUS pin, HEPAK/CoolProp routing), L1 worked-example results, T05 open item, NIST TN 1334 reference, ideal-gas cross-check domain, engineering toolbox, CI gates, next steps.
+- Every figure is generated from committed sources by `tools/build_gistau_deck_content.py`; a test fails when the deck is stale.
+- New CSS contract with the SCK CEN 2020 palette (light and dark viewing).
+
 ## v0.4.0
 
 ### Added
