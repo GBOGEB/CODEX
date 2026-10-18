@@ -122,10 +122,12 @@ footer{color:var(--muted);padding:26px;border-top:1px solid var(--border);text-a
   <div class="control-tile"><small>ABACUS #1860 / TODO</small><strong id="abacusTodo">UNKNOWN</strong><small>Technical + human gates, never inferred</small></div>
   <div class="control-tile"><small>CODEX #977 / dispatch TODO</small><strong id="codexTodo">UNKNOWN</strong><small>Actual crew/REX IDs: UNKNOWN</small></div>
   <div class="control-tile"><small>Canonical B0 latest main run</small><strong id="b0Status">UNKNOWN</strong><small id="b0RunInfo">Run/head/terminal proof required</small></div>
-  <div class="control-tile"><small>Verified prior green main coverage</small><strong id="priorCoverage">UNKNOWN</strong><small>Historical source-bound; not latest main</small></div>
+  <div class="control-tile"><small>Latest artifact-verified green main epoch</small><strong id="priorCoverage">UNKNOWN</strong><small>Historical source-bound; not latest main</small></div>
   <div class="control-tile"><small>Current main coverage</small><strong class="unknown" id="currentCoverage">UNKNOWN</strong><small>Only exact-main artifact can update this</small></div>
   <div class="control-tile"><small>Current broad PR / changed-line coverage</small><strong class="unknown">UNKNOWN / UNKNOWN</strong><small>Never substitute local module percentages</small></div>
   <div class="control-tile"><small>Formal root / BD accepted closures</small><strong class="unknown">UNKNOWN / UNKNOWN</strong><small>Requires deduplicated owner receipts</small></div>
+  <div class="control-tile"><small>Ordinary issues · ABACUS / CODEX / QPS</small><strong id="ordinaryIssues">UNKNOWN</strong><small>GitHub is:issue only; not BD causal-root count</small></div>
+  <div class="control-tile"><small>W32 format-integrity native cases</small><strong id="w32NativeCases">UNKNOWN</strong><small>Full B0 remains independently gated</small></div>
  </div>
  <div class="control-panels">
   <div class="control-panel"><h3>Five-axis penetration and convergence</h3><div class="scroll-table"><table><thead><tr><th>Frontier / owner</th><th>Observed or designed</th><th>Accepted now</th></tr></thead><tbody id="controlAxes"></tbody></table></div><p class="small">No single blended progress percentage: separate statement/branch scope, adversarial oracles, paired integration edges, runner cells and causal-root denominators.</p></div>
@@ -209,8 +211,13 @@ const link = (href, label) => { const a = document.createElement("a"); a.href=hr
 const validSha = s => typeof s === "string" && /^[0-9a-f]{40}$/.test(s);
 function drawLedger(d) {
  frozen=d;
+ const latest=d.historical_coverage.latest_verified_green_main;
  const cov=d.historical_coverage.canonical_main_verified_previous;
- set("priorCoverage", cov.covered.toLocaleString()+"/"+cov.eligible.toLocaleString()+" = "+cov.percent.toFixed(3)+"%");
+ set("priorCoverage", latest ? latest.covered_combined.toLocaleString()+"/"+latest.eligible_combined.toLocaleString()+" = "+latest.percent_combined.toFixed(3)+"% · fixed-cohort UNKNOWN" : cov.covered.toLocaleString()+"/"+cov.eligible.toLocaleString()+" = "+cov.percent.toFixed(3)+"%");
+ const ns=d.candidate.native_selected_case_receipt;
+ set("w32NativeCases",ns ? ns.passed_cases+"/"+ns.designed_cases+" · B0 "+ns.full_canonical_B0 : UNKNOWN);
+ const oi=d.status_snapshots.ordinary_issues_3repo_observed;
+ set("ordinaryIssues",oi ? oi.open+" / "+oi.closed+" (frozen)" : UNKNOWN);
  set("abacusTodo", d.status_snapshots.ABACUS_1860.done+"/"+d.status_snapshots.ABACUS_1860.total+" (snapshot)");
  set("codexTodo", d.status_snapshots.CODEX_977.done+"/"+d.status_snapshots.CODEX_977.total+" (snapshot)");
  set("abacusHead",d.source_heads_observed.ABACUS);
@@ -220,7 +227,7 @@ function drawLedger(d) {
  $("controlLanes").replaceChildren();
  d.disjoint_lanes.forEach(a=>{
   const tr=textRow($("controlLanes"),[a.id+" · "+a.reason,"ABACUS PR #"+a.pr,"CHECK PENDING"]);
-  const cell=tr.children[1];cell.replaceChildren(link("https://github.com/GBOGEB/ABACUS/pull/"+a.pr,"ABACUS #"+a.pr));
+  const cell=tr.children[1];cell.replaceChildren(link("https://github.com/GBOGEB/ABACUS/pull/"+a.pr,"ABACUS #"+a.pr));tr.cells[2].id="lane-"+a.pr;
  });
  $("controlLinks").replaceChildren();
  d.links.forEach(v=>{
@@ -239,24 +246,32 @@ async function github(path) {
  if (!response.ok) throw new Error("GitHub HTTP "+response.status);
  return response.json();
 }
+async function githubSearch(query) {
+ const response=await fetch("https://api.github.com/search/issues?q="+encodeURIComponent(query)+"&per_page=1",{headers:{"Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"},cache:"no-store"});
+ if(!response.ok)throw new Error("GitHub search HTTP "+response.status);
+ return response.json();
+}
 async function refresh() {
  if(running || !frozen)return;
- running=true;$("githubReload").disabled=true;set("githubState","Reading seven public GitHub endpoints…");
+ running=true;$("githubReload").disabled=true;set("githubState","Reading nine public GitHub endpoints…");
  const tasks=[
   ["abacus",github("GBOGEB/ABACUS/commits/main")],
   ["codex",github("GBOGEB/CODEX/commits/main")],
   ["qps",github("GBOGEB/cryoplant-project/commits/main")],
   ["abacusIssue",github("GBOGEB/ABACUS/issues/1860")],
   ["codexIssue",github("GBOGEB/CODEX/issues/977")],
-  ["pr",github("GBOGEB/ABACUS/pulls/2274")],
+  ["prList",github("GBOGEB/ABACUS/pulls?state=all&sort=updated&direction=desc&per_page=100")],
+  ["ordinaryOpen",githubSearch(frozen.status_snapshots.ordinary_issues_3repo_observed.search_open)],
+  ["ordinaryClosed",githubSearch(frozen.status_snapshots.ordinary_issues_3repo_observed.search_closed)],
   ["b0",github("GBOGEB/ABACUS/actions/workflows/mip-coverage-evidence.yml/runs?branch=main&per_page=5")]
  ];
  const outputs=await Promise.allSettled(tasks.map(x=>x[1]));let ok=0;
  outputs.forEach((result,i)=>{const name=tasks[i][0];live[name]=result.status==="fulfilled" ? result.value : null;if(live[name])ok++;});
  if(validSha(live.abacus?.sha)){
   const sha=live.abacus.sha;set("abacusHead",sha);set("abacusHeadSource",sha===frozen.source_heads_observed.ABACUS ? "Current head = ledger observed head" : "Main advanced since frozen ledger");
+  const latest=frozen.historical_coverage.latest_verified_green_main;
   const old=frozen.historical_coverage.canonical_main_verified_previous;
-  set("currentCoverage",sha===old.sha ? old.percent.toFixed(3)+"% (same verified source)" : UNKNOWN);
+  set("currentCoverage",latest && sha===latest.source_sha ? latest.percent_combined.toFixed(3)+"% · artifact verified" : (!latest && sha===old.sha ? old.percent.toFixed(3)+"% (same verified source)" : UNKNOWN));
  } else {set("abacusHead",UNKNOWN);set("currentCoverage",UNKNOWN);set("abacusHeadSource","Public GitHub readback unavailable");}
  [["abacusIssue","abacusTodo","ABACUS_1860"],["codexIssue","codexTodo","CODEX_977"]].forEach(([key,element,ref])=>{
   const v=issueTodos(live[key]?.body,frozen.status_snapshots[ref].total);
@@ -271,11 +286,14 @@ async function refresh() {
   $("b0RunInfo").replaceChildren(link(run.html_url || "https://github.com/GBOGEB/ABACUS/actions/runs/"+run.id,"Run #"+run.id+" · attempt "+run.run_attempt));
   // Status alone is never accepted coverage: only artifact/JUnit digest attestation can supply it.
  } else {set("b0Status",UNKNOWN);set("b0RunInfo","Native run unavailable");}
- if(live.pr && validSha(live.pr.head?.sha)){
-  const pr=live.pr;
-  const row=[...$("controlLanes").rows].find(r=>r.textContent.includes("ABACUS #2274"));
-  if(row)row.cells[2].textContent=(pr.merged_at?"MERGED ORDINARY":pr.state.toUpperCase()+(pr.draft?" DRAFT":""))+" · "+pr.head.sha.slice(0,12);
- }
+ const pulls=live.prList;
+ frozen.disjoint_lanes.forEach(l=>{
+  const cell=$("lane-"+l.pr);
+  const pr=Array.isArray(pulls) ? pulls.find(x=>x.number===l.pr) : null;
+  cell.textContent=pr && validSha(pr.head?.sha) ? (pr.merged_at?"MERGED ORDINARY":pr.state.toUpperCase()+(pr.draft?" DRAFT":""))+" · "+pr.head.sha.slice(0,12) : UNKNOWN+" (page/read unavailable)";
+ });
+ const o=live.ordinaryOpen,c=live.ordinaryClosed;
+ set("ordinaryIssues",o?.incomplete_results===false && c?.incomplete_results===false && Number.isSafeInteger(o.total_count) && Number.isSafeInteger(c.total_count) && o.total_count>=0 && c.total_count>=0 ? o.total_count+" / "+c.total_count+" (live ordinary)" : UNKNOWN);
  set("githubState",ok+"/"+tasks.length+" metadata sources loaded · "+new Date().toISOString()+" · no acceptance inferred");
  running=false;$("githubReload").disabled=false;
 }
