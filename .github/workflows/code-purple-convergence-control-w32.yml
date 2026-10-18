@@ -1,0 +1,59 @@
+name: CODE PURPLE W32 Convergence Control QA
+on:
+  pull_request:
+    paths:
+      - 'docs/code_purple_convergence.html'
+      - 'docs/data/code_purple_convergence_control_w32.json'
+      - 'docs/index.html'
+      - 'docs/missioncontrol_federated_launchpad.html'
+      - 'tests/test_code_purple_convergence_control_w32.py'
+      - 'scripts/qa_code_purple_convergence_w32.py'
+      - '.github/workflows/code-purple-convergence-control-w32.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: code-purple-w32-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  w32-contract-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Immutable exact-source checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Python 3.11
+        uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.11'
+      - name: Exact head, structural contracts and Python compile
+        shell: bash
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          python -m py_compile tests/test_code_purple_convergence_control_w32.py scripts/qa_code_purple_convergence_w32.py
+          python -m unittest discover -s tests -p 'test_code_purple_convergence_control_w32.py' -v
+      - name: Install deterministic browser runtime
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Three-viewport and public GET degradation QA
+        shell: bash
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python scripts/qa_code_purple_convergence_w32.py --out artifacts/w32-control-tower --head "$EXPECTED_HEAD"
+      - name: Upload exact-head browser receipts
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: w32-dov-control-${{ github.run_id }}-a${{ github.run_attempt }}-${{ github.event.pull_request.head.sha || github.sha }}
+          path: artifacts/w32-control-tower/
+          if-no-files-found: error
+          retention-days: 30
