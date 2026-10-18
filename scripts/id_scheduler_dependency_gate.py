@@ -245,9 +245,36 @@ def verify(out,head):
     return m
 
 
+def source_bound_metrics(metrics_file, receipt_file, producer_head):
+    """Reject fabricated W33 populations before generating any stage proposal."""
+    need(type(producer_head) is str and SHA40.fullmatch(producer_head),
+         "UNPINNED_PRODUCER_HEAD")
+    need(metrics_file.is_file() and receipt_file.is_file()
+         and not metrics_file.is_symlink() and not receipt_file.is_symlink(),
+         "MISSING_OR_UNSAFE_UPSTREAM_RECEIPT")
+    raw=metrics_file.read_bytes()
+    met=json.loads(raw)
+    meta=json.loads(receipt_file.read_bytes())
+    need(meta.get("schema")=="missioncontrol.mycelium.operational_dag.receipt.v1"
+         and meta.get("candidate_head")==producer_head
+         and meta.get("admission")=="HOLD" and
+         meta.get("dispatch_enabled") is False and
+         meta.get("authority_transfer") is False,
+         "FORGED_UPSTREAM_RECEIPT")
+    need(type(meta.get("files")) is dict and
+         meta["files"].get("W33_TASK_METRICS.json")==digest(raw)
+         and meta.get("source_digest")==met.get("source_digest"),
+         "UPSTREAM_BYTES_OR_SOURCE_MISMATCH")
+    need(met.get("schema")==W33 and met.get("admission")=="HOLD",
+         "UPSTREAM_METRICS_SCHEMA_OR_AUTHORITY")
+    return met
+
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--metrics",type=Path,required=True)
+    p.add_argument("--producer-receipt",type=Path,required=True)
+    p.add_argument("--producer-head",required=True)
     p.add_argument("--requests",type=Path,required=True)
     p.add_argument("--out",type=Path,required=True)
     p.add_argument("--head",required=True)
@@ -256,7 +283,7 @@ def main():
     p.add_argument("--verify-only",action="store_true")
     a=p.parse_args()
     if not a.verify_only:
-        met=json.loads(a.metrics.read_text(encoding="utf-8"))
+        met=source_bound_metrics(a.metrics,a.producer_receipt,a.producer_head)
         req=json.loads(a.requests.read_text(encoding="utf-8"))
         receipt(stage(met,req),a.out,candidate_head=a.head,
                 run_id=a.run_id,attempt=a.attempt)
