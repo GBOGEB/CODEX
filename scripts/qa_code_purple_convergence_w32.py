@@ -73,7 +73,7 @@ def main():
                         route.fulfill(status=200, body=json.dumps(body), content_type="application/json")
                 page.route("https://api.github.com/repos/**", intercept)
                 page.goto(page_url, wait_until="domcontentloaded")
-                page.locator("#githubState").get_by_text("7/7 metadata sources loaded", exact=False).wait_for(timeout=12000)
+                page.wait_for_function("document.getElementById('githubState').textContent.includes('7/7 metadata sources loaded')", timeout=12000)
                 assert page.locator("#abacusTodo").inner_text().startswith("1/12")
                 assert page.locator("#codexTodo").inner_text().startswith("0/7")
                 assert page.locator("#currentCoverage").inner_text() == "UNKNOWN"
@@ -81,7 +81,7 @@ def main():
                 assert page.locator("#controlLanes tr").count() == 6
                 assert page.locator("#controlLinks a").count() >= 11
                 page.locator("#githubReload").click()
-                page.locator("#githubState").get_by_text("7/7 metadata sources loaded", exact=False).wait_for(timeout=12000)
+                page.wait_for_function("document.getElementById('githubState').textContent.includes('7/7 metadata sources loaded')", timeout=12000)
                 values = page.evaluate("""() => ({
                   scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth,
                   broken:[...document.images].filter(i=>!i.complete || i.naturalWidth===0).length})""")
@@ -102,7 +102,7 @@ def main():
                        else route.fulfill(status=200,body=json.dumps(fixture(route.request.url) or {}),
                                          content_type="application/json"))
             page.goto(page_url, wait_until="domcontentloaded")
-            page.locator("#githubState").get_by_text("6/7 metadata sources loaded", exact=False).wait_for(timeout=12000)
+            page.wait_for_function("document.getElementById('githubState').textContent.includes('6/7 metadata sources loaded')", timeout=12000)
             assert page.locator("#abacusTodo").inner_text().startswith("UNKNOWN")
             assert page.locator("#currentCoverage").inner_text() == "UNKNOWN"
             page.close()
