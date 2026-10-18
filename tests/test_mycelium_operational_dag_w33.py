@@ -228,6 +228,22 @@ class W33OperationalDagTests(unittest.TestCase):
         self.assertNotIn("fetch(",page)
         self.assertNotIn("innerHTML",page)
 
+    def test_real_svg_edge_overlay_is_in_native_viewer(self):
+        report,layers=m.project(self.d)
+        page=m.viewer(report,layers,self.d)
+        for token in ('id="edgePaths"', 'id="layerGrid"',
+                      'createElementNS(ns,"path")', 'requestAnimationFrame(drawEdges)',
+                      'REQUIRES_SUCCESS', 'aria-pressed'):
+            self.assertIn(token,page)
+
+    def test_connected_graph_preserves_17_edges_and_no_browser_dispatch(self):
+        report,layers=m.project(self.d)
+        page=m.viewer(report,layers,self.d)
+        self.assertEqual(report["graph"]["edges"],17)
+        self.assertIn('link.kind==="REFERENCES"',page)
+        self.assertNotIn('workflow_dispatch',page)
+        self.assertNotIn('GenUI.',page)
+
     def test_no_false_stability_or_six_sigma(self):
         report=self.report()
         self.assertFalse(report["stability"]["stable"])
