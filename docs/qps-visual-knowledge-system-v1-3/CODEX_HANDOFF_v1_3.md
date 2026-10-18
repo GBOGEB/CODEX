@@ -1,5 +1,13 @@
 # CODEX HANDOFF — v1.3
 
+> **Status: superseded, kept for lineage (2026-10-18).** This v1.3 stream is
+> no longer the active slide system. Current: [`docs/qps-slide-system/`](../qps-slide-system/README.md)
+> (YAML → `slides/deck_orchestrator.py` → HTML/Markdown, then
+> `tools/house_style/qps_post.py` for the corporate PPTX). The HTML, PDF and
+> PPTX outputs listed in this directory's manifest are not present in this
+> repository; only these three Markdown files are. Per this stream's own
+> non-overwrite policy, nothing here is deleted.
+
 ## Intent
 
 Additive-only visual knowledge system evolution.
