@@ -39,7 +39,43 @@
     "current_main_same_head_coverage": null,
     "current_pr_broad": null,
     "current_pr_diff": null,
-    "accepted_fixed_population_delta_pp": null
+    "accepted_fixed_population_delta_pp": null,
+    "latest_verified_green_main": {
+      "repo": "GBOGEB/ABACUS",
+      "source_sha": "2246c7bd3a9bda6a3d43b9a9116cb7088cfbcc88",
+      "run_id": 39164360709,
+      "job_id": 117784234292,
+      "attempt": 1,
+      "artifact_id": 12150461899,
+      "artifact_digest": "sha256:7b8f19ec1777f375ce9d43690ec0631d778549b92229a708cc65de0461ea6e3c",
+      "producer_result": "SUCCESS",
+      "full_workflow_result": "SUCCESS",
+      "test_pass": 5079,
+      "test_skip": 3,
+      "test_fail": 0,
+      "covered_statements": 30064,
+      "eligible_statements": 43003,
+      "covered_branches": 8744,
+      "eligible_branches": 12816,
+      "covered_combined": 38808,
+      "eligible_combined": 55819,
+      "percent_combined": 69.5247138071266,
+      "percent_statements": 69.9114015301258,
+      "percent_branches": 68.22721598002497,
+      "previous_sha": "9e0200190555736c74295ee74881e3c003e8a35c",
+      "previous_combined_covered": 35571,
+      "previous_combined_eligible": 52497,
+      "raw_delta_pp": 1.7665561981203726,
+      "delta_eligible": 3322,
+      "delta_covered": 3237,
+      "delta_uncovered": 85,
+      "fixed_population_cohort_accepted": null,
+      "pr_broad": null,
+      "pr_diff": null,
+      "epistemic_state": "VERIFIED_MAIN_EPOCH_RAW_NOT_FIXED_POPULATION",
+      "run_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39164360709",
+      "artifact_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39164360709/artifacts/12150461899"
+    }
   },
   "status_snapshots": {
     "ABACUS_1860": {
@@ -59,7 +95,21 @@
     "bd_open": null,
     "bd_closed": null,
     "first_correctly_admitted_pr": null,
-    "negative_red_canary_proven": null
+    "negative_red_canary_proven": null,
+    "ordinary_issues_3repo_observed": {
+      "open": 106,
+      "closed": 373,
+      "total": 479,
+      "search_incomplete": false,
+      "kind": "GITHUB_ORDINARY_ISSUES_NOT_PR_NOT_CAUSAL_ROOTS",
+      "search_scope": [
+        "GBOGEB/ABACUS",
+        "GBOGEB/CODEX",
+        "GBOGEB/cryoplant-project"
+      ],
+      "search_open": "repo:GBOGEB/ABACUS repo:GBOGEB/CODEX repo:GBOGEB/cryoplant-project is:issue is:open",
+      "search_closed": "repo:GBOGEB/ABACUS repo:GBOGEB/CODEX repo:GBOGEB/cryoplant-project is:issue is:closed"
+    }
   },
   "candidate": {
     "repo": "GBOGEB/ABACUS",
@@ -70,14 +120,38 @@
     "changed_files": 2,
     "terminal_native_cases": null,
     "measured_coverage_uplift": null,
-    "url": "https://github.com/GBOGEB/ABACUS/pull/2274"
+    "url": "https://github.com/GBOGEB/ABACUS/pull/2274",
+    "native_selected_case_receipt": {
+      "source_head": "513e713eef581c55b6645291699404de43fb03d7",
+      "run_id": 39161409879,
+      "job_id": 117775315592,
+      "run_attempt": 1,
+      "designed_cases": 15,
+      "passed_cases": 15,
+      "failed_cases": 0,
+      "full_canonical_B0": "FAILURE",
+      "full_suite": {
+        "passed": 4796,
+        "failed": 2,
+        "skipped": 2
+      },
+      "coverage_delta": null,
+      "url": "https://github.com/GBOGEB/ABACUS/actions/runs/39161409879/job/117775315592"
+    },
+    "ordinary_merge_observed": {
+      "merged": true,
+      "merge_sha": "e47e178e47947bc4ea95470ff92d5df38c32a7bd",
+      "pr_head": "513e713eef581c55b6645291699404de43fb03d7",
+      "formal_admission": null,
+      "merge_source": "https://github.com/GBOGEB/ABACUS/pull/2274"
+    }
   },
   "axes": [
     {
       "id": "SOURCE",
       "title": "Source coverage",
       "denominator": "eligible statements + branches, matched producer SHA/config",
-      "observed": "35,571/52,497 historical green main",
+      "observed": "Latest verified main B0 38,808/55,819 = 69.525%, +1.767 raw pp versus prior green epoch; fixed-cohort delta UNKNOWN",
       "accepted_current": null,
       "owner": "ABACUS"
     },
@@ -206,43 +280,146 @@
       "pr": 2263,
       "reason": "NumPy contract",
       "domain": "B0",
-      "status": "PR_HEAD_READBACK_REQUIRED"
+      "status": "MERGED_ORDINARY_ADMISSION_UNVERIFIED",
+      "observed_pr_head": "0415542eb17efc4fbc184ece60400c7148a36651",
+      "observed_merge_sha": "1b0fadcd2051f8cf0e71ed2188e67cf25dca9269",
+      "accepted_root_closure": null,
+      "governed_admission": null
     },
     {
       "id": "B",
       "pr": 2264,
       "reason": "G3CS skip provenance",
       "domain": "B0",
-      "status": "PR_HEAD_READBACK_REQUIRED"
+      "status": "MERGED_ORDINARY_ADMISSION_UNVERIFIED",
+      "observed_pr_head": "d45476fc7260c5bb5625f04ef4578baca700da73",
+      "observed_merge_sha": "98798a076bed07fdf46d8544fc9c5893676ec119",
+      "accepted_root_closure": null,
+      "governed_admission": null
     },
     {
       "id": "C",
       "pr": 2265,
       "reason": "W29 import path",
       "domain": "RUNNER",
-      "status": "PR_HEAD_READBACK_REQUIRED"
+      "status": "MERGED_ORDINARY_ADMISSION_UNVERIFIED",
+      "observed_pr_head": "4c528b6361ab7b5a8e4a28665f21c02ca68a1be3",
+      "observed_merge_sha": "a88a4bb8f6ac2d106727c41f792b50cc01aa02c7",
+      "accepted_root_closure": null,
+      "governed_admission": null
     },
     {
       "id": "D",
       "pr": 2266,
       "reason": "Safety scanner provenance",
       "domain": "SECURITY",
-      "status": "PR_HEAD_READBACK_REQUIRED"
+      "status": "MERGED_ORDINARY_ADMISSION_UNVERIFIED",
+      "observed_pr_head": "96f65e91995b1fc26079cbb823a80b4ea6e62b53",
+      "observed_merge_sha": "0384a75e5476eb5d5381d8c0adfa4a2a947c1c16",
+      "accepted_root_closure": null,
+      "governed_admission": null
     },
     {
       "id": "E",
       "pr": 2267,
       "reason": "Admission proof",
       "domain": "GOVERNANCE",
-      "status": "PR_HEAD_READBACK_REQUIRED"
+      "status": "MERGED_ORDINARY_ADMISSION_UNVERIFIED",
+      "observed_pr_head": "b0fbbf55e2f0f491730970e8662ae47d2ab26639",
+      "observed_merge_sha": "38d622f80bed1534a926a45d46c6e20713c313f8",
+      "accepted_root_closure": null,
+      "governed_admission": null
     },
     {
       "id": "F",
       "pr": 2274,
       "reason": "Binary integrity/family reach",
       "domain": "PENETRATION",
-      "status": "PR_HEAD_READBACK_REQUIRED"
+      "status": "MERGED_ORDINARY_ADMISSION_UNVERIFIED",
+      "observed_pr_head": "513e713eef581c55b6645291699404de43fb03d7",
+      "observed_merge_sha": "e47e178e47947bc4ea95470ff92d5df38c32a7bd",
+      "accepted_root_closure": null,
+      "governed_admission": null
     }
   ],
-  "acceptance": "Read-only GitHub metadata cannot establish accepted native coverage, worker launch or governed merge. Gate requires terminal exact-head CI, security, real eligible review, enforced ruleset and blocked RED canary. Historical N-1 and N counts with different population must remain separate."
+  "acceptance": "Read-only GitHub metadata cannot establish accepted native coverage, worker launch or governed merge. Gate requires terminal exact-head CI, security, real eligible review, enforced ruleset and blocked RED canary. Historical N-1 and N counts with different population must remain separate. Native W32 per-case 15/15 PASS inside a terminal RED full B0 does not establish global suite PASS or coverage increase. Ordinary issue counts 106/373 are GitHub is:issue searches across three repositories, not deduplicated roots/BD. Ordinary merges confer no admission credit. Updated last verified main epoch 2246c7bd... measured directly from B0 canonical-contexts.json in artifact 12150461899; +1.7666pp raw but changed denominator. The current_main_same_head_coverage marker remains NULL until fresh, stable readback equates live main SHA with this exact artifact SHA. No matched cohort or PR diff uplift is inferred.",
+  "federated_dashboard_observed": {
+    "pr": 1109,
+    "head": "579aee472ace4c5a8b1b21243ad4bac342573ed0",
+    "ordinary_merge_sha": "0653007cf68fe20824beb937329f8b567ff27f35",
+    "browser_qa_run": 39164366118,
+    "browser_qa_terminal_success": null,
+    "governed_admission": null
+  },
+  "lane_rollup": {
+    "scope": "SIX_SELECTED_ABACUS_W31_W32_PRS",
+    "observed_ordinary_merged": 6,
+    "selected_pr_population": 6,
+    "governed_accepted": null,
+    "formally_closed_causal_roots": null,
+    "qualifier": "six GitHub ordinary merges, no inferred security or effective ruleset"
+  },
+  "candidate_w40": {
+    "pr": 2286,
+    "repo": "GBOGEB/ABACUS",
+    "initial_head": "1ad45857612a00e18370c49b6b4aaaa7012aae2b",
+    "repair_head": "d7bfacc98dcbcd1848dd6ea0be694ca4d74c0fcf",
+    "first_native_run": 39165313089,
+    "first_native_result": "FAILURE",
+    "first_native_cells_failed": 4,
+    "first_red": "numpy missing in global tests/conftest.py before collection",
+    "repair": "workflow-only install NumPy 2.2.6",
+    "new_designed_cases": 42,
+    "native_case_pass": null,
+    "measured_module_coverage": null,
+    "formal_main_uplift": null,
+    "url": "https://github.com/GBOGEB/ABACUS/pull/2286"
+  },
+  "cbd_w38_native": {
+    "schema": "codepurple.cbd.w38.native-local-matched.v1",
+    "source_owner": "GBOGEB/ABACUS",
+    "scope": "ci/governance/feedback_queue_pressure.py",
+    "source_sha256": "8e2464a1f897b5e5e8284b0cf188cacc2260f02fa6c4cddbd25a1cebe9933230",
+    "native_pr": 2289,
+    "source_pr_head": "dba66c97735acf5a58937a9e830146fb928b13af",
+    "terminal_run": 39171719898,
+    "terminal_job": 117805992686,
+    "run_attempt": 1,
+    "terminal_status": "COMPLETED_SUCCESS",
+    "native_test_cases_pass": 41,
+    "source_unchanged": true,
+    "matched_instrumenter": "coverage.py==7.10.7",
+    "source_branch": {
+      "baseline_covered": 21,
+      "expanded_covered": 36,
+      "eligible": 36,
+      "delta": 15
+    },
+    "source_statements": {
+      "baseline_covered": 63,
+      "expanded_covered": 97,
+      "eligible": 97,
+      "delta": 34
+    },
+    "native_artifact_id": 12152921923,
+    "global_main_coverage_delta": null,
+    "governed_admission": false,
+    "formal_root_closure": null,
+    "next_public_receipt": {
+      "owner": "GBOGEB/ABACUS",
+      "pr": 2288,
+      "head": "b5b3cc0e3667b39d4ac4a497738dddce277e10be",
+      "native_run": 39171565898,
+      "local_new_source_branches": "6/6",
+      "native_tests_pass": 29,
+      "real_event_to_route_yield": null
+    },
+    "independent_governance": {
+      "CODEX_effective_branch_protection": null,
+      "ABACUS_required_approvals": null,
+      "eligible_reviewer_accepted": false,
+      "blocked_red_canary": null
+    },
+    "evidence_uri": "https://github.com/GBOGEB/ABACUS/actions/runs/39171719898"
+  }
 }

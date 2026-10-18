@@ -88,6 +88,82 @@ class ConvergenceControlContract(unittest.TestCase):
         self.assertIn('set("currentCoverage",UNKNOWN)', self.html)
         self.assertNotRegex(self.html, r"fetch\([^)]*method\s*:\s*['\"](?:POST|PUT|PATCH|DELETE)")
 
+
+    def test_native_selection_never_promotes_red_b0(self):
+        receipt = self.ledger["candidate"]["native_selected_case_receipt"]
+        self.assertEqual((receipt["designed_cases"], receipt["passed_cases"],
+                          receipt["failed_cases"]), (15, 15, 0))
+        self.assertEqual(receipt["full_canonical_B0"], "FAILURE")
+        self.assertEqual(receipt["full_suite"], {"passed": 4796, "failed": 2, "skipped": 2})
+        self.assertIsNone(receipt["coverage_delta"])
+        self.assertRegex(receipt["source_head"], r"^[0-9a-f]{40}$")
+        self.assertIsNone(self.ledger["candidate"]["ordinary_merge_observed"]["formal_admission"])
+
+    def test_ordinary_issue_counts_never_substitute_bd_roots(self):
+        s = self.ledger["status_snapshots"]
+        issues = s["ordinary_issues_3repo_observed"]
+        self.assertEqual((issues["open"], issues["closed"], issues["total"]), (106, 373, 479))
+        self.assertFalse(issues["search_incomplete"])
+        self.assertIn("NOT_CAUSAL_ROOTS", issues["kind"])
+        self.assertIsNone(s["root_open"])
+        self.assertIsNone(s["root_closed"])
+        self.assertIsNone(s["bd_open"])
+        self.assertIsNone(s["bd_closed"])
+
+    def test_six_ordinary_merges_are_not_six_admissions(self):
+        rows = self.ledger["disjoint_lanes"]
+        summary = self.ledger["lane_rollup"]
+        self.assertEqual((summary["observed_ordinary_merged"],
+                          summary["selected_pr_population"]), (6, 6))
+        self.assertIsNone(summary["governed_accepted"])
+        self.assertIsNone(summary["formally_closed_causal_roots"])
+        self.assertEqual(len({r["observed_merge_sha"] for r in rows}), 6)
+        for row in rows:
+            self.assertEqual(row["status"], "MERGED_ORDINARY_ADMISSION_UNVERIFIED")
+            self.assertRegex(row["observed_pr_head"], r"^[0-9a-f]{40}$")
+            self.assertRegex(row["observed_merge_sha"], r"^[0-9a-f]{40}$")
+            self.assertIsNone(row["governed_admission"])
+            self.assertIsNone(row["accepted_root_closure"])
+
+    def test_new_green_main_is_source_bound_not_fixed_cohort(self):
+        coverage = self.ledger["historical_coverage"]
+        native = coverage["latest_verified_green_main"]
+        self.assertEqual(native["source_sha"],
+                         "2246c7bd3a9bda6a3d43b9a9116cb7088cfbcc88")
+        self.assertEqual((native["run_id"], native["job_id"], native["attempt"]),
+                         (39164360709, 117784234292, 1))
+        self.assertEqual((native["covered_statements"], native["eligible_statements"]),
+                         (30064, 43003))
+        self.assertEqual((native["covered_branches"], native["eligible_branches"]),
+                         (8744, 12816))
+        self.assertEqual((native["covered_combined"], native["eligible_combined"]),
+                         (38808, 55819))
+        self.assertAlmostEqual(native["percent_combined"], 69.5247138071266)
+        self.assertAlmostEqual(native["raw_delta_pp"], 1.7665561981203726)
+        self.assertIsNone(native["fixed_population_cohort_accepted"])
+        self.assertIsNone(coverage["current_main_same_head_coverage"])
+        self.assertIsNone(native["pr_diff"])
+        self.assertIsNone(native["pr_broad"])
+        self.assertIn("latest_verified_green_main", self.html)
+        self.assertIn("sha===latest.source_sha", self.html)
+
+    def test_w40_first_red_is_not_42_native_passes(self):
+        cand = self.ledger["candidate_w40"]
+        self.assertEqual(cand["new_designed_cases"], 42)
+        self.assertEqual(cand["first_native_cells_failed"], 4)
+        self.assertEqual(cand["first_native_result"], "FAILURE")
+        self.assertIsNone(cand["native_case_pass"])
+        self.assertIsNone(cand["measured_module_coverage"])
+        self.assertEqual(cand["repair_head"], "d7bfacc98dcbcd1848dd6ea0be694ca4d74c0fcf")
+
+    def test_live_metrics_are_fail_closed(self):
+        self.assertIn('id="ordinaryIssues"', self.html)
+        self.assertIn('id="w32NativeCases"', self.html)
+        self.assertIn("incomplete_results===false", self.html)
+        self.assertIn("Number.isSafeInteger", self.html)
+        self.assertIn("Array.isArray(pulls)", self.html)
+        self.assertIn("metadata sources loaded", self.html)
+
     def test_federated_portal_links_this_entry(self):
         self.assertIn("code_purple_convergence.html", (DOCS / "index.html").read_text())
         self.assertIn("code_purple_convergence.html",

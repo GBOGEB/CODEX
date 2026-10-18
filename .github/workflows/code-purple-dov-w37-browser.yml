@@ -1,0 +1,59 @@
+name: CODE PURPLE W37 Federated DoV Browser Qualification
+'on':
+  pull_request:
+    paths:
+      - 'docs/code-purple-dov.html'
+      - 'docs/data/code-purple-dov-w36.json'
+      - 'scripts/qa_code_purple_dov_w37.py'
+      - '.github/workflows/code-purple-dov-w37-browser.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: codepurple-w37-browser-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  w37-three-viewport-qa:
+    name: W37 DoV Playwright proof (3 viewports, 3 negative)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 22
+    steps:
+      - name: Immutable source checkout, no stored credentials
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify exact candidate head
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$HEAD_SHA"
+          python -m py_compile scripts/qa_code_purple_dov_w37.py
+          python -m unittest discover -s tests -p 'test_code_purple_dov_w36.py' -v
+      - name: Install browser runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Native browser QA, source and visual receipts
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python scripts/qa_code_purple_dov_w37.py --head "$HEAD_SHA" --out artifacts/w37-dov-browser
+      - name: Preserve screenshots and receipt even on first-red
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codepurple-w37-browser-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: artifacts/w37-dov-browser/
+          if-no-files-found: warn
+          retention-days: 30

@@ -1,0 +1,147 @@
+{
+  "schema": "codepurple.mycelium.operational-dag.v1",
+  "population": "ILLUSTRATIVE_BOUND_CONTRACT_FIXTURE_NOT_LIVE",
+  "mutation_enabled": false,
+  "dispatch_authorized": false,
+  "admission": "HOLD",
+  "pools": [
+    {
+      "name": "linux",
+      "slots": 2
+    },
+    {
+      "name": "windows",
+      "slots": 1
+    },
+    {
+      "name": "owner",
+      "slots": 0
+    }
+  ],
+  "tasks": [
+    {
+      "id": "origin",
+      "owner": "GBOGEB/CODEX",
+      "repo": "GBOGEB/CODEX",
+      "head_sha": "843020d9e85b404ac10a94bbc1a1283865d1d57e",
+      "depends_on": [],
+      "pool": "linux",
+      "state": "completed",
+      "conclusion": "success",
+      "evidence_verified": false,
+      "source_ref": "https://github.com/GBOGEB/CODEX/pull/1105",
+      "created_at": "2026-10-18T19:20:00Z",
+      "started_at": null,
+      "completed_at": null,
+      "defer_reason": null
+    },
+    {
+      "id": "linux-pass",
+      "owner": "GBOGEB/CODEX",
+      "repo": "GBOGEB/CODEX",
+      "head_sha": "843020d9e85b404ac10a94bbc1a1283865d1d57e",
+      "depends_on": [
+        "origin"
+      ],
+      "pool": "linux",
+      "state": "completed",
+      "conclusion": "success",
+      "evidence_verified": false,
+      "source_ref": "https://github.com/GBOGEB/CODEX/pull/1105",
+      "created_at": "2026-10-18T19:20:00Z",
+      "started_at": null,
+      "completed_at": null,
+      "defer_reason": null
+    },
+    {
+      "id": "linux-first-red",
+      "owner": "GBOGEB/CODEX",
+      "repo": "GBOGEB/CODEX",
+      "head_sha": "843020d9e85b404ac10a94bbc1a1283865d1d57e",
+      "depends_on": [
+        "origin"
+      ],
+      "pool": "linux",
+      "state": "completed",
+      "conclusion": "failure",
+      "evidence_verified": false,
+      "source_ref": "https://github.com/GBOGEB/CODEX/pull/1105",
+      "created_at": "2026-10-18T19:20:00Z",
+      "started_at": null,
+      "completed_at": null,
+      "defer_reason": null
+    },
+    {
+      "id": "downstream-1",
+      "owner": "GBOGEB/CODEX",
+      "repo": "GBOGEB/CODEX",
+      "head_sha": "843020d9e85b404ac10a94bbc1a1283865d1d57e",
+      "depends_on": [
+        "linux-first-red"
+      ],
+      "pool": "linux",
+      "state": "queued",
+      "conclusion": null,
+      "evidence_verified": null,
+      "source_ref": "https://github.com/GBOGEB/CODEX/pull/1105",
+      "created_at": "2026-10-18T19:20:00Z",
+      "started_at": null,
+      "completed_at": null,
+      "defer_reason": null
+    },
+    {
+      "id": "downstream-2",
+      "owner": "GBOGEB/CODEX",
+      "repo": "GBOGEB/CODEX",
+      "head_sha": "843020d9e85b404ac10a94bbc1a1283865d1d57e",
+      "depends_on": [
+        "downstream-1"
+      ],
+      "pool": "linux",
+      "state": "queued",
+      "conclusion": null,
+      "evidence_verified": null,
+      "source_ref": "https://github.com/GBOGEB/CODEX/pull/1105",
+      "created_at": "2026-10-18T19:20:00Z",
+      "started_at": null,
+      "completed_at": null,
+      "defer_reason": null
+    },
+    {
+      "id": "independent",
+      "owner": "GBOGEB/CODEX",
+      "repo": "GBOGEB/CODEX",
+      "head_sha": "843020d9e85b404ac10a94bbc1a1283865d1d57e",
+      "depends_on": [
+        "linux-pass"
+      ],
+      "pool": "windows",
+      "state": "in_progress",
+      "conclusion": null,
+      "evidence_verified": null,
+      "source_ref": "https://github.com/GBOGEB/CODEX/pull/1105",
+      "created_at": "2026-10-18T19:20:00Z",
+      "started_at": "2026-10-18T19:21:00Z",
+      "completed_at": null,
+      "defer_reason": null
+    },
+    {
+      "id": "approval",
+      "owner": "GBOGEB/CODEX",
+      "repo": "GBOGEB/CODEX",
+      "head_sha": "843020d9e85b404ac10a94bbc1a1283865d1d57e",
+      "depends_on": [
+        "independent"
+      ],
+      "pool": "owner",
+      "state": "deferred",
+      "conclusion": null,
+      "evidence_verified": null,
+      "source_ref": "https://github.com/GBOGEB/CODEX/pull/1105",
+      "created_at": "2026-10-18T19:20:00Z",
+      "started_at": null,
+      "completed_at": null,
+      "defer_reason": "AWAITING_APPROVAL"
+    }
+  ]
+}

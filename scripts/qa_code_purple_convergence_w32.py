@@ -11,6 +11,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import json
 from pathlib import Path
 import threading
+from urllib.parse import parse_qs, urlparse
 
 from playwright.sync_api import sync_playwright
 
@@ -32,9 +33,16 @@ def fixture(url):
         return {"body": "- [x] milestone one\n" + "- [ ] outstanding\n" * 11}
     if url.endswith("/GBOGEB/CODEX/issues/977"):
         return {"body": "- [ ] outstanding\n" * 7}
-    if url.endswith("/GBOGEB/ABACUS/pulls/2274"):
-        return {"state": "open", "draft": True, "merged_at": None,
-                "head": {"sha": LEDGER["candidate"]["head"]}}
+    if "/search/issues?" in url:
+        query = parse_qs(urlparse(url).query).get("q", [""])[0]
+        return {"incomplete_results": False, "total_count":
+                106 if "is:open" in query else 373 if "is:closed" in query else -1}
+    if "/GBOGEB/ABACUS/pulls?" in url:
+        return [{"number": lane["pr"], "state": "closed" if lane["pr"] == 2274 else "open",
+                 "draft": lane["pr"] != 2274,
+                 "merged_at": "2026-10-18T20:37:48Z" if lane["pr"] == 2274 else None,
+                 "head": {"sha": LEDGER["candidate"]["head"] if lane["pr"] == 2274 else "a" * 40}}
+                for lane in LEDGER["disjoint_lanes"]]
     if "/actions/workflows/mip-coverage-evidence.yml/runs?" in url:
         return {"workflow_runs": [{"id": 39156907500, "status": "completed",
                 "conclusion": "failure", "run_attempt": 1,
@@ -71,17 +79,26 @@ def main():
                         route.fulfill(status=404, body="{}", content_type="application/json")
                     else:
                         route.fulfill(status=200, body=json.dumps(body), content_type="application/json")
-                page.route("https://api.github.com/repos/**", intercept)
+                page.route("https://api.github.com/**", intercept)
                 page.goto(page_url, wait_until="domcontentloaded")
-                page.wait_for_function("document.getElementById('githubState').textContent.includes('7/7 metadata sources loaded')", timeout=12000)
+                page.wait_for_function("document.getElementById('githubState').textContent.includes('9/9 metadata sources loaded')", timeout=12000)
                 assert page.locator("#abacusTodo").inner_text().startswith("1/12")
                 assert page.locator("#codexTodo").inner_text().startswith("0/7")
                 assert page.locator("#currentCoverage").inner_text() == "UNKNOWN"
+                assert page.locator("#ordinaryIssues").inner_text() == "106 / 373 (live ordinary)"
+                assert page.locator("#w32NativeCases").inner_text().startswith("15/15")
                 assert "DIFFERENT SHA" in page.locator("#b0Status").inner_text()
                 assert page.locator("#controlLanes tr").count() == 6
+                assert "MERGED ORDINARY" in page.locator("#lane-2274").inner_text()
                 assert page.locator("#controlLinks a").count() >= 11
+                page.wait_for_function("document.querySelectorAll('#mipEightItems details').length===8", timeout=12000)
+                assert page.locator("#mipEightStatus").inner_text().startswith("8/8")
+                page.locator("#mipEightItems details summary").first.click()
+                assert page.locator("#mipEightItems details").first.get_attribute("open") is not None
+                assert "Modernize:" in page.locator("#mipEightItems details").first.inner_text()
+                assert "Perpetuate:" in page.locator("#mipEightItems details").first.inner_text()
                 page.locator("#githubReload").click()
-                page.wait_for_function("document.getElementById('githubState').textContent.includes('7/7 metadata sources loaded')", timeout=12000)
+                page.wait_for_function("document.getElementById('githubState').textContent.includes('9/9 metadata sources loaded')", timeout=12000)
                 values = page.evaluate("""() => ({
                   scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth,
                   broken:[...document.images].filter(i=>!i.complete || i.naturalWidth===0).length})""")
@@ -96,13 +113,13 @@ def main():
                 page.close()
             # A failed public issue read must yield UNKNOWN, never a false zero.
             page=browser.new_page()
-            page.route("https://api.github.com/repos/**", lambda route:
+            page.route("https://api.github.com/**", lambda route:
                        route.fulfill(status=503,body="{}",content_type="application/json")
                        if route.request.url.endswith("/GBOGEB/ABACUS/issues/1860")
                        else route.fulfill(status=200,body=json.dumps(fixture(route.request.url) or {}),
                                          content_type="application/json"))
             page.goto(page_url, wait_until="domcontentloaded")
-            page.wait_for_function("document.getElementById('githubState').textContent.includes('6/7 metadata sources loaded')", timeout=12000)
+            page.wait_for_function("document.getElementById('githubState').textContent.includes('8/9 metadata sources loaded')", timeout=12000)
             assert page.locator("#abacusTodo").inner_text().startswith("UNKNOWN")
             assert page.locator("#currentCoverage").inner_text() == "UNKNOWN"
             page.close()
