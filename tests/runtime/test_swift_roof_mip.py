@@ -171,3 +171,57 @@ class CensusGraph(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+class ProducerHeadContract(unittest.TestCase):
+    """Test the real receipt producer against GitHub's reserved PR event SHA."""
+
+    @classmethod
+    def setUpClass(cls):
+        from unittest import mock
+        cls.mock = mock
+        producer = PATH.with_name('lldb_dap_runtime_probe.py')
+        spec = importlib.util.spec_from_file_location('lldb_dap_runtime_probe', producer)
+        cls.producer = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cls.producer)
+
+    def test_exact_checkout_sha_wins_over_synthetic_pr_event_sha(self):
+        p = self.producer
+        with self.mock.patch.dict(p.os.environ, {'GITHUB_SHA': 'b'*40, 'EXACT_HEAD': SHA}):
+            with self.mock.patch.object(p, 'run', return_value={'returncode':0,'stdout':SHA+'\\n'}):
+                self.assertEqual(p.git_sha(), SHA)
+
+    def test_mismatched_checkout_head_fails_closed(self):
+        p = self.producer
+        with self.mock.patch.dict(p.os.environ, {'GITHUB_SHA': SHA, 'EXACT_HEAD': 'b'*40}):
+            with self.mock.patch.object(p, 'run', return_value={'returncode':0,'stdout':SHA+'\\n'}):
+                with self.assertRaisesRegex(RuntimeError, 'expected PR head'):
+                    p.git_sha()
+
+    def test_checkout_failure_cannot_fallback_to_event_sha(self):
+        p = self.producer
+        with self.mock.patch.dict(p.os.environ, {'GITHUB_SHA': SHA, 'EXACT_HEAD': SHA}):
+            with self.mock.patch.object(p, 'run', return_value={'returncode':128,'stdout':''}):
+                with self.assertRaisesRegex(RuntimeError, 'source HEAD unavailable'):
+                    p.git_sha()
+
+    def test_malformed_head_never_promoted(self):
+        p = self.producer
+        with self.mock.patch.dict(p.os.environ, {'GITHUB_SHA':SHA,'EXACT_HEAD':SHA}):
+            with self.mock.patch.object(p, 'run', return_value={'returncode':0,'stdout':'main\\n'}):
+                with self.assertRaisesRegex(RuntimeError, 'source HEAD unavailable'):
+                    p.git_sha()
+
+    def test_receipt_separates_checked_source_and_event_sha(self):
+        p=self.producer
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.mock.patch.dict(p.os.environ, {'GITHUB_SHA':'b'*40,'EXACT_HEAD':SHA,
+                                                     'GITHUB_REPOSITORY':roof.CODEX}):
+                with self.mock.patch.object(p,'run',return_value={'returncode':0,'stdout':SHA+'\\n'}):
+                    with self.mock.patch.object(p,'classify_surfaces',return_value={}):
+                        r=p.emit_receipt(Path(tmp)/'native.json',{'status':'ACCEPT','steps':2})
+            self.assertEqual(r['exact_head_sha'],SHA)
+            self.assertEqual(r['github_event_sha'],'b'*40)
+            self.assertEqual(r['source_sha_basis'],'GIT_CHECKOUT_HEAD')
+            proof=dict(r);proof.pop('receipt_sha256')
+            self.assertEqual(r['receipt_sha256'],
+                hashlib.sha256(json.dumps(proof,sort_keys=True).encode()).hexdigest())
