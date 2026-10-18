@@ -95,6 +95,19 @@ class FederatedDovW36(unittest.TestCase):
         x=w.read_public("GBOGEB/ABACUS",fetch)
         self.assertEqual((x["returned_distinct_runs"],x["unknown_tail"]),(100,1))
         self.assertEqual(x["runs"][-1]["attempt"],2)
+    def test_concurrent_run_inflow_retains_bounded_evidence(self):
+        def fetch(url):
+            if url.endswith("/branches/main"):
+                return {"commit":{"sha":"a"*40}}
+            if "page=1" in url:
+                return {"total_count":101, "workflow_runs":[row(i=i) for i in range(1,101)]}
+            if "page=2" in url:
+                return {"total_count":102, "workflow_runs":[row(i=101)]}
+            raise AssertionError(url)
+        out=w.read_public("GBOGEB/ABACUS",fetch)
+        self.assertEqual((out["reported_total"],out["returned_distinct_runs"],out["unknown_tail"]),(101,100,1))
+        self.assertTrue(out["pagination_population_changed"])
+        self.assertFalse(out["complete"])
     def test_false_duplicate_replay_rejected(self):
         rows=[row(i=1),row(i=1,conclusion="failure")]
         with self.assertRaisesRegex(ValueError,"DUPLICATE_ID_CONFLICT"):
