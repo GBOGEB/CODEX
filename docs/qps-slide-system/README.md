@@ -4,7 +4,9 @@ HTML-first dense engineering knowledge-transfer system for QPS slide decks.
 
 ## Version
 
-`v0.6.0` — adds Chapter 15 calculator tooling + versioning governance seed.
+`v0.7.0` — Chapter 15 refreshed as a generated, source-bound deck (validated model, physics authority, L1 results, toolbox).
+
+Previous: `v0.6.0` — Chapter 15 calculator tooling + versioning governance seed (superseded by the v0.7.0 deck below).
 
 ## Purpose
 
@@ -83,3 +85,19 @@ python -m slides.deck_orchestrator \
 ```
 
 Use the emitted Markdown as the handoff to `slides.qplant_sckcen_template` when a local Pandoc/PPTX toolchain is available. ABACUS can consume the manifest fields `fixed_and_locked_status`, `rtm_appendix_present`, artifact checksums, and `slide_count` for governance scoring.
+
+
+## v0.7.0 GISTAU Chapter 15 deck (generated from committed sources)
+
+Every number in the Chapter 15 deck is generated from the repository's own records, so the deck cannot drift from the data:
+
+```text
+physics pin + L1 record + gate + basic-incarnation domain
+  -> tools/build_gistau_deck_content.py -> slides/src/gistau_ch15/deck_content.yaml
+  -> slides/deck_orchestrator.py (+ slides/src/gistau_ch15/deck_style.css, SCK CEN 2020 palette)
+  -> generated/gistau-ch15-validated-model.{html,md,manifest.json}
+  -> tools/house_style/qps_post.py pptx generated/gistau-ch15-validated-model.md  (corporate PPTX; local master)
+```
+
+- Review deck: `generated/gistau-ch15-validated-model.html`. Slides are registered as `GISTAU-0001..0009` in `MANIFEST/MASTER_SLIDE_REGISTRY.yaml`.
+- Corporate PPTX: run `qps_post.py pptx` on the generated Markdown, then `qps_qa.py check`. The SCK CEN slide master is built locally and is not committed.
