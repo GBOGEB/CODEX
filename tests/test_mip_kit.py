@@ -245,3 +245,170 @@ def test_skill_validator_accepts_minimal_producer_summary(tmp_path: Path):
     assert validator.validate_producer(producer, "a" * 40) == "a" * 40
     with pytest.raises(SystemExit, match="expected_sha"):
         validator.validate_producer(producer, "b" * 40)
+
+
+# --- debug/LDAB lane: GREEN needs an executed diagnostic --------------------
+
+diagnostic = _load("mip_debug_diagnostic", "scripts/mip_debug_diagnostic.py")
+HEAD = emitter.run_git(["rev-parse", "HEAD"])
+DEBUG_PATHS = [Path("tools/debug_helper.py")]
+
+
+def _passing_diagnostic(**overrides):
+    value = {
+        "diagnostic": "mip-debug-diagnostic",
+        "verification": "PASS",
+        "exact_sha": HEAD,
+        "checks": {"traceback_localizes": True, "validator_fails_closed": True},
+        "failed_checks": [],
+        "raw_receipt_retention": "transient_runner_only",
+    }
+    value.update(overrides)
+    return value
+
+
+def test_debug_file_names_alone_are_amber_not_green():
+    lane = emitter.debug_assessment(DEBUG_PATHS, None)
+    assert lane["status"] == "amber"
+    assert lane["evidence"] is None
+
+
+def test_no_debug_signal_and_no_diagnostic_is_red():
+    assert emitter.debug_assessment([], None)["status"] == "red"
+
+
+def test_passing_diagnostic_on_exact_sha_is_green():
+    lane = emitter.debug_assessment([], _passing_diagnostic())
+    assert lane["status"] == "green"
+    assert lane["evidence"]["exact_sha"] == HEAD
+
+
+@pytest.mark.parametrize(
+    "overrides",
+    [
+        {"verification": "FAIL"},
+        {"exact_sha": "0" * 40},
+        {"checks": {}},
+        {"checks": {"traceback_localizes": True, "validator_fails_closed": False}},
+    ],
+)
+def test_failing_stale_or_empty_diagnostic_is_not_green(overrides):
+    lane = emitter.debug_assessment(DEBUG_PATHS, _passing_diagnostic(**overrides))
+    assert lane["status"] == "amber"
+
+
+def test_diagnostic_outside_a_git_checkout_is_not_green(monkeypatch):
+    monkeypatch.setattr(emitter, "run_git", lambda args: None)
+    lane = emitter.debug_assessment([], _passing_diagnostic(exact_sha=None))
+    assert lane["status"] == "amber"
+
+
+def test_debug_diagnostic_absent_key_uses_kit_default(tmp_path: Path):
+    assert (
+        emitter.resolve_debug_diagnostic({}, tmp_path)
+        == tmp_path / emitter.DEFAULT_DEBUG_DIAGNOSTIC
+    )
+    assert emitter.resolve_debug_diagnostic({"debug_diagnostic": None}) is None
+    with pytest.raises(SystemExit, match="debug_diagnostic"):
+        emitter.resolve_debug_diagnostic({"debug_diagnostic": "../x.py"}, tmp_path)
+
+
+def test_kit_diagnostic_passes_on_this_checkout():
+    receipt = diagnostic.build_receipt()
+    assert receipt["verification"] == "PASS", receipt["failed_checks"]
+    assert diagnostic.build_receipt() == receipt
+
+
+def test_emitter_binds_executed_diagnostic_to_head():
+    result = emitter.run_debug_diagnostic(ROOT / emitter.DEFAULT_DEBUG_DIAGNOSTIC)
+    assert result["verification"] == "PASS"
+    assert result["exact_sha"] == HEAD
+    assert emitter.debug_assessment([], result)["status"] == "green"
+
+
+def test_kit_diagnostic_traceback_check_detects_wrong_line(monkeypatch):
+    monkeypatch.setattr(diagnostic, "TARGET_LINE", diagnostic.TARGET_LINE + 1)
+    assert diagnostic.traceback_localizes() is False
+
+
+def test_kit_diagnostic_fails_closed_without_validator(monkeypatch, tmp_path: Path):
+    monkeypatch.setattr(diagnostic, "VALIDATOR", tmp_path / "missing.py")
+    receipt = diagnostic.build_receipt()
+    assert receipt["verification"] == "FAIL"
+    assert receipt["failed_checks"] == ["validator_fails_closed"]
+
+
+def test_unparseable_diagnostic_output_is_a_failure(tmp_path: Path):
+    broken = tmp_path / "broken_diagnostic.py"
+    broken.write_text("raise SystemExit(3)\n", encoding="utf-8")
+    result = emitter.run_debug_diagnostic(broken)
+    assert result["verification"] == "FAIL"
+    assert result["failed_checks"] == ["diagnostic_execution"]
+    assert emitter.run_debug_diagnostic(None) is None
+
+
+def _receipt_with_debug(evidence, status):
+    return {
+        "assessments": {
+            verifier.DEBUG_LANE: {"status": status, "evidence": evidence},
+        }
+    }
+
+
+def test_verifier_requires_passing_debug_diagnostic_when_lane_required():
+    receipt = _receipt_with_debug(None, "amber")
+    with pytest.raises(SystemExit, match="debug/LDAB diagnostic validation failed"):
+        verifier.summarize_debug_diagnostic(
+            receipt, {verifier.DEBUG_LANE: "AMBER"}, HEAD, required=True
+        )
+
+
+def test_verifier_records_failing_debug_diagnostic_when_not_required():
+    evidence = _passing_diagnostic(verification="FAIL")
+    summary = verifier.summarize_debug_diagnostic(
+        _receipt_with_debug(evidence, "amber"),
+        {verifier.DEBUG_LANE: "AMBER"},
+        HEAD,
+        required=False,
+    )
+    assert summary["verification"] == "FAIL"
+    assert "verification" in summary["failed_checks"]
+
+
+def test_verifier_accepts_passing_debug_diagnostic():
+    summary = verifier.summarize_debug_diagnostic(
+        _receipt_with_debug(_passing_diagnostic(), "green"),
+        {verifier.DEBUG_LANE: "GREEN"},
+        HEAD,
+        required=True,
+    )
+    assert summary["verification"] == "PASS"
+    assert summary["passed_checks"] == [
+        "traceback_localizes",
+        "validator_fails_closed",
+    ]
+
+
+def test_skill_validator_rejects_debug_diagnostic_on_other_sha():
+    validator = _load(
+        "mip_validate_receipt",
+        ".codex/skills/mip-repo-self-index/scripts/validate_receipt.py",
+    )
+    producer = {
+        "schema_version": "0.1",
+        "program": "MIP",
+        "verification": "PASS",
+        "repository": "GBOGEB/CODEX",
+        "head_sha": "a" * 40,
+        "raw_receipt_retention": "transient_runner_only",
+        "root_self_index": {"runs": 2, "normalized_equal": True},
+        "debug_diagnostic": {
+            "verification": "PASS",
+            "exact_sha": "b" * 40,
+            "raw_receipt_retention": "transient_runner_only",
+        },
+    }
+    with pytest.raises(SystemExit, match="debug_sha"):
+        validator.validate_producer(producer, None)
+    producer["debug_diagnostic"]["exact_sha"] = "a" * 40
+    assert validator.validate_producer(producer, None) == "a" * 40
