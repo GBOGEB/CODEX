@@ -310,8 +310,19 @@ def test_debug_diagnostic_absent_key_uses_kit_default(tmp_path: Path):
 def test_kit_diagnostic_passes_on_this_checkout():
     receipt = diagnostic.build_receipt()
     assert receipt["verification"] == "PASS", receipt["failed_checks"]
-    assert receipt["exact_sha"] == HEAD
     assert diagnostic.build_receipt() == receipt
+
+
+def test_emitter_binds_executed_diagnostic_to_head():
+    result = emitter.run_debug_diagnostic(ROOT / emitter.DEFAULT_DEBUG_DIAGNOSTIC)
+    assert result["verification"] == "PASS"
+    assert result["exact_sha"] == HEAD
+    assert emitter.debug_assessment([], result)["status"] == "green"
+
+
+def test_kit_diagnostic_traceback_check_detects_wrong_line(monkeypatch):
+    monkeypatch.setattr(diagnostic, "TARGET_LINE", diagnostic.TARGET_LINE + 1)
+    assert diagnostic.traceback_localizes() is False
 
 
 def test_kit_diagnostic_fails_closed_without_validator(monkeypatch, tmp_path: Path):
