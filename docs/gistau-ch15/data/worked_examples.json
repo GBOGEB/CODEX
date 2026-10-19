@@ -2,7 +2,19 @@
   "source": {
     "title": "GISTAU Chapter 15 Cryo Tool Box worked examples",
     "source_file": "Chapter15_Gitua_tools.pdf",
-    "notes": "Values captured from visible chapter figures. Status values distinguish captured, partial, and pending exact transcription. These records are intended as validation fixtures for backend tier comparison."
+    "notes": "Values captured from visible chapter figures. Status values distinguish captured, partial, and pending exact transcription. These records are intended as validation fixtures for backend tier comparison.",
+    "original_book": {
+      "title": "Cryogenic Helium Refrigeration for Middle and Large Powers",
+      "author": "Guy Gistau Baguer",
+      "publisher": "Springer",
+      "year": 2020,
+      "pages_pdf": 725,
+      "sha256": "1b2843cf89c85e5415e89107a7fb5fdfb9673986a71dd669abe33ae0d4ff1b41",
+      "chapter15_book_pages": "613-640",
+      "chapter15_pdf_pages": "648-675",
+      "pdf_page_offset_ch15": 35,
+      "page_field_convention": "example 'page' values are printed book page numbers; PDF page = book page + 35 in Chapter 15 (Chapter 3 uses + 38)"
+    }
   },
   "backend_tiers": [
     "tier0_fallback",
@@ -55,14 +67,45 @@
       "example_id": "WE-T01-ROOM-TEMP-COMPRESSOR-001",
       "tuple_id": "T01",
       "domain": "Room-temperature Compressor",
-      "figure": "Fig. 15.10 / Fig. 15.12",
-      "page": 624,
-      "description": "Room-temperature compressor sketch and finalised spreadsheet example.",
-      "inputs": {"fluid": "helium_or_nitrogen_context", "suction_pressure_bar": 1.05, "suction_temperature_c": 25.0, "discharge_pressure_bar": 14.0, "mass_flow_g_s": 50.0},
-      "expected_outputs": {"absolute_power_kw_visible": 160.0, "isothermal_power_kw_visible": 11.48, "isothermal_efficiency_visible": 0.458},
+      "figure": "Fig. 15.13",
+      "page": 626,
+      "description": "Room-temperature nitrogen compressor, finalised spreadsheet (Fig. 15.13). Helium inputs (Fig. 15.11: 1210 m3/h, 160 kW) have no printed outputs.",
+      "inputs": {
+        "fluid": "nitrogen",
+        "suction_pressure_bar": 1.05,
+        "suction_temperature_c": 25.0,
+        "discharge_pressure_bar": 14.0,
+        "mass_flow_g_s": 50.0,
+        "shaft_power_kw": 25.0,
+        "displacement_m3_h": 200.0
+      },
+      "expected_outputs": {
+        "isothermal_power_kw": 11.46,
+        "isothermal_efficiency": 0.458,
+        "volumetric_efficiency": 0.758
+      },
       "primary_reference_tier": "tier2_refprop",
-      "secondary_reference_tiers": ["tier1_coolprop"],
-      "status": "partial_capture_requires_fluid_disambiguation"
+      "secondary_reference_tiers": [
+        "tier1_coolprop"
+      ],
+      "status": "captured_nitrogen_outside_he4_provider",
+      "source_verification": {
+        "method": "original Springer PDF (sha256 1b2843cf...1b41), figure rasterised and read cell by cell",
+        "verified_on": "2026-10-19",
+        "corrections": [
+          "fluid helium_or_nitrogen_context -> nitrogen (Fig. 15.13)",
+          "absolute_power 160 kW was the helium Fig. 15.11 input; nitrogen sheet shaft power is 25.00 kW",
+          "isothermal power 11.48 -> 11.46 kW (cell K5 / B11)"
+        ],
+        "book_errata": [
+          {
+            "cell": "Fig. 15.12 caption",
+            "printed": "Finalised calculation of a room temperature helium compressor",
+            "note": "Fig. 15.12 shows the nitrogen sheet (A1 'nitrogen', 200 m3/h, 25 kW), identical to Fig. 15.13. No finalised helium outputs are printed."
+          }
+        ],
+        "provider_check": "CoolProp 7.2.0 (local, not governing): W_iso 11.461 kW, eta_iso 0.4584, eta_vol 0.7583"
+      }
     },
     {
       "example_id": "WE-T02-FREE-EXPANSION-HEAT-001",
@@ -84,11 +127,35 @@
       "figure": "Fig. 15.19",
       "page": 629,
       "description": "Helium inversion temperature example with zero thermal power.",
-      "inputs": {"fluid": "helium", "inlet_pressure_bar": 14.0, "outlet_pressure_bar": 1.0, "mass_flow_g_s": 50.0, "thermal_power_w": 0.0},
-      "expected_outputs": {"inversion_temperature_k": 43.21, "enthalpy_j_g": 229.41},
+      "inputs": {
+        "fluid": "helium",
+        "inlet_pressure_bar": 14.0,
+        "outlet_pressure_bar": 1.0,
+        "mass_flow_g_s": 50.0,
+        "thermal_power_w": 0.0
+      },
+      "expected_outputs": {
+        "inversion_temperature_k": 43.21,
+        "enthalpy_j_g": 229.41
+      },
       "primary_reference_tier": "tier2_refprop",
-      "secondary_reference_tiers": ["tier1_coolprop"],
-      "status": "captured"
+      "secondary_reference_tiers": [
+        "tier1_coolprop"
+      ],
+      "status": "captured",
+      "scan_definition": "Find T_in such that isenthalpic (0 W) expansion 14.00 -> 1.00 bar gives T_out == T_in (zero integral Joule-Thomson effect). Book: Goal Seek on A4 until H4 == H3.",
+      "source_verification": {
+        "method": "original Springer PDF (sha256 1b2843cf...1b41), figure rasterised and read cell by cell",
+        "verified_on": "2026-10-19",
+        "cells": [
+          "H3 43.21 K",
+          "H4 43.21 K",
+          "I3 229.41 J/g",
+          "I4 229.41 J/g",
+          "H5 0.00"
+        ],
+        "provider_check": "CoolProp 7.2.0 (local, not governing): h(43.21 K,14 bar) 229.420 J/g, T_out 43.2104 K"
+      }
     },
     {
       "example_id": "WE-T02-SAT-LIQUID-HELIUM-003",
@@ -123,11 +190,76 @@
       "figure": "Fig. 15.25",
       "page": 632,
       "description": "Simple helium heat exchanger with balance check.",
-      "inputs": {"fluid": "helium", "hot_inlet_pressure_bar": 14.0, "hot_inlet_temperature_k": 300.0, "cold_inlet_pressure_bar": 1.20, "cold_inlet_temperature_k": 200.0, "hot_mass_flow_g_s": 50.0, "cold_mass_flow_g_s": 45.0},
-      "expected_outputs": {"hot_outlet_temperature_k_visible": 212.72, "alternative_hot_outlet_temperature_k_visible": 196.97, "lmtd_k_visible": 6.73},
+      "inputs": {
+        "fluid": "helium",
+        "hot_inlet_pressure_bar": 14.0,
+        "hot_inlet_temperature_k": 300.0,
+        "cold_inlet_pressure_bar": 1.2,
+        "cold_inlet_temperature_k": 200.0,
+        "hot_mass_flow_g_s": 50.0,
+        "cold_mass_flow_g_s": 45.0,
+        "cold_outlet_temperature_k": 297.0,
+        "warm_end_delta_t_k": 3.0
+      },
+      "expected_outputs": {
+        "hot_outlet_temperature_k": 212.72,
+        "heat_load_w": 22669.0,
+        "lmtd_k": 6.73,
+        "ua_w_k": 3368.0
+      },
       "primary_reference_tier": "tier2_refprop",
-      "secondary_reference_tiers": ["tier1_coolprop", "tier3_hepak"],
-      "status": "partial_capture_multiple_scenarios"
+      "secondary_reference_tiers": [
+        "tier1_coolprop",
+        "tier3_hepak"
+      ],
+      "status": "captured_two_scenarios_disambiguated",
+      "scenarios": [
+        {
+          "id": "A_rating",
+          "figure": "Fig. 15.25 top",
+          "inputs": "as above",
+          "outputs": {
+            "T2_K": 212.72,
+            "Q_W": 22669,
+            "LMTD_K": 6.73,
+            "UA_W_K": 3368,
+            "dTc_K": 12.72,
+            "h_J_g": [
+              1567.56,
+              1114.19,
+              1044.05,
+              1547.81
+            ]
+          }
+        },
+        {
+          "id": "B_goal_seek",
+          "figure": "Fig. 15.25 bottom",
+          "inputs": "T2 fixed 210.00 K, solve cold inlet D7",
+          "outputs": {
+            "cold_inlet_temperature_K": 196.97,
+            "Q_W": 23376,
+            "LMTD_K": 6.83,
+            "UA_W_K": 3423,
+            "dTc_K": 13.03,
+            "h_J_g": [
+              1567.56,
+              1100.04,
+              1028.33,
+              1547.81
+            ]
+          }
+        }
+      ],
+      "source_verification": {
+        "method": "original Springer PDF (sha256 1b2843cf...1b41), figure rasterised and read cell by cell",
+        "verified_on": "2026-10-19",
+        "corrections": [
+          "196.97 K is not an alternative hot outlet: it is the cold inlet temperature returned by Goal Seek for T2 = 210 K (scenario B)",
+          "cold outlet 297.00 K (dTw 3.00 K) is an input"
+        ],
+        "provider_check": "CoolProp 7.2.0 (local, not governing): A Q 22668.8 W, T2 212.723 K; B cold inlet 196.973 K, Q 23376.3 W"
+      }
     },
     {
       "example_id": "WE-T04-CRYOGENIC-EXPANDER-001",
@@ -149,11 +281,50 @@
       "figure": "Fig. 15.31",
       "page": 638,
       "description": "Cryogenic compressor / circulator finalised spreadsheet.",
-      "inputs": {"fluid": "helium", "inlet_pressure_bar": 0.50, "inlet_temperature_k": 5.0, "outlet_pressure_bar": 1.20, "mass_flow_g_s": 400.0, "isentropic_efficiency": 0.75},
-      "expected_outputs": {"inlet_enthalpy_j_g": 29.02, "outlet_temperature_k": 7.72, "outlet_enthalpy_j_g": 42.37, "power_w": 5336.0, "real_enthalpy_change_j_g": 13.34},
-      "source_verification": {"method": "printed book, Fig. 15.31 p. 638, photographed by the author", "verified_on": "2026-10-18", "corrections": ["outlet_pressure_bar 1.70 -> 1.20 (cell F6 / B6 read 1.20 bar)"], "added_cells": ["H3 h1 29.02 J/g", "L7 dH real 13.34 J/g"], "book_errata": [{"cell": "K7", "label": "dH isent (J/g)", "printed": 17.79, "note": "Printed K7 equals L7 / eta (13.34 / 0.75 = 17.79). The isentropic rise for 0.5 -> 1.2 bar from 5 K is 10.01 J/g (ABACUS 4c2f669, CoolProp 7.2.0, CI run 39169436822); L7 = 10.01 / 0.75 = 13.34 J/g, H6 and J7 follow from L7 and agree with the governing provider. K7 is therefore not a reproducible output and is not compared."}]},
+      "inputs": {
+        "fluid": "helium",
+        "inlet_pressure_bar": 0.5,
+        "inlet_temperature_k": 5.0,
+        "outlet_pressure_bar": 1.2,
+        "mass_flow_g_s": 400.0,
+        "isentropic_efficiency": 0.75
+      },
+      "expected_outputs": {
+        "inlet_enthalpy_j_g": 29.02,
+        "outlet_temperature_k": 7.72,
+        "outlet_enthalpy_j_g": 42.37,
+        "power_w": 5336.0,
+        "real_enthalpy_change_j_g": 13.34
+      },
+      "source_verification": {
+        "method": "printed book, Fig. 15.31 p. 638, photographed by the author",
+        "verified_on": "2026-10-18",
+        "corrections": [
+          "outlet_pressure_bar 1.70 -> 1.20 (cell F6 / B6 read 1.20 bar)"
+        ],
+        "added_cells": [
+          "H3 h1 29.02 J/g",
+          "L7 dH real 13.34 J/g"
+        ],
+        "book_errata": [
+          {
+            "cell": "K7",
+            "label": "dH isent (J/g)",
+            "printed": 17.79,
+            "note": "Printed K7 equals L7 / eta (13.34 / 0.75 = 17.79). The isentropic rise for 0.5 -> 1.2 bar from 5 K is 10.01 J/g (ABACUS 4c2f669, CoolProp 7.2.0, CI run 39169436822); L7 = 10.01 / 0.75 = 13.34 J/g, H6 and J7 follow from L7 and agree with the governing provider. K7 is therefore not a reproducible output and is not compared."
+          }
+        ],
+        "original_pdf_check": {
+          "verified_on": "2026-10-19",
+          "result": "1.20 bar outlet and K 17.79 confirmed in the original PDF (p. 638 / PDF 673)",
+          "cell_reference_note": "In the printed sheet the outlet row is row 5 (G5 7.72, H5 42.37, J5 5336, K5 17.79, L5 13.34) and the inlet row is row 3 (H3 29.02). Labels K7/L7/H6/J7 used in #1112 refer to the same cells."
+        }
+      },
       "primary_reference_tier": "tier3_hepak",
-      "secondary_reference_tiers": ["tier2_refprop", "tier1_coolprop"],
+      "secondary_reference_tiers": [
+        "tier2_refprop",
+        "tier1_coolprop"
+      ],
       "status": "captured_low_temperature_priority"
     },
     {
@@ -163,11 +334,79 @@
       "figure": "Fig. 15.33",
       "page": 639,
       "description": "Equivalent power mixed duty refrigerator spreadsheet.",
-      "inputs": {"fluid": "helium", "room_temperature_k": 300.0, "domains": ["shields", "supercritical", "isothermal", "liquid"]},
-      "expected_outputs": {"equivalent_power_w_visible": 906643.0, "absorbed_power_kw_visible": 3150.0, "carnot_power_w_visible": 90679.0},
+      "inputs": {
+        "fluid": "helium",
+        "room_temperature_k": 300.0,
+        "reference_temperature_k": 4.5,
+        "absorbed_power_kw": 3150.0,
+        "domains": {
+          "shields": {
+            "power_w": 3000,
+            "p_in_bar": 18.0,
+            "t_in_k": 70.0,
+            "p_out_bar": 17.5,
+            "t_out_k": 80.0
+          },
+          "supercritical": {
+            "power_w": 2000,
+            "p_in_bar": 3.0,
+            "t_in_k": 4.5,
+            "p_out_bar": 2.7,
+            "t_out_k": 4.9
+          },
+          "isothermal": {
+            "power_w": 10000,
+            "p_out_bar": 1.2,
+            "t_out_k_saturation": 4.4087
+          },
+          "liquid": {
+            "mass_flow_g_s": 13.0,
+            "p_in_bar": 1.2,
+            "t_in_k": 300.0,
+            "p_out_bar": 1.2,
+            "t_out_k_saturation": 4.4087
+          }
+        }
+      },
+      "expected_outputs": {
+        "shields_mass_flow_g_s": 57.25,
+        "supercritical_mass_flow_g_s": 925.92,
+        "carnot_power_shields_w": 10055.0,
+        "carnot_power_supercritical_w": 139615.0,
+        "carnot_power_isothermal_w": 670479.0,
+        "carnot_power_liquid_w": 86643.0,
+        "carnot_power_total_w": 906792.0,
+        "carnot_factor_at_4p5k_w_w": 65.67,
+        "equivalent_power_at_4p5k_w": 13809.0,
+        "specific_power_w_w": 228.0,
+        "carnot_yield": 0.288
+      },
       "primary_reference_tier": "tier4_nist_reference",
-      "secondary_reference_tiers": ["tier2_refprop", "tier3_hepak", "tier1_coolprop"],
-      "status": "partial_capture_requires_column_mapping"
+      "secondary_reference_tiers": [
+        "tier2_refprop",
+        "tier3_hepak",
+        "tier1_coolprop"
+      ],
+      "status": "captured_column_mapped",
+      "source_verification": {
+        "method": "original Springer PDF (sha256 1b2843cf...1b41), figure rasterised and read cell by cell",
+        "verified_on": "2026-10-19",
+        "corrections": [
+          "equivalent_power 906643 -> carnot_power_total 906792 W (H9 = sum D9:G9)",
+          "carnot_power 90679 removed: not a printed cell",
+          "equivalent power at 4.5 K is 13809 W (H11)",
+          "per-domain inputs D3:G7 transcribed"
+        ],
+        "arithmetic_check": "10055+139615+670479+86643 = 906792; 300/4.5-1 = 65.67; 906792/65.67 = 13809; 3150000/13809 = 228; 65.67/228 = 0.288",
+        "unexplained_cells": [
+          {
+            "cell": "H15",
+            "label": "Absorbed power (kW)",
+            "printed": 3130,
+            "note": "Differs from H12 3150 kW; the text does not define H15. Recorded, not compared."
+          }
+        ]
+      }
     }
   ]
 }
