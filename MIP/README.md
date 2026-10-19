@@ -33,6 +33,7 @@ CODEX hosts the canonical MIP kit. ABACUS, cryoplant-project and other consumers
 | --- | --- | --- |
 | Skill package | `.codex/skills/mip-repo-self-index/` | yes |
 | Self-index emitter and verifier | `scripts/mip_repo_self_index.py`, `scripts/mip_verify_self_index.py` | yes |
+| Debug/LDAB diagnostic | `scripts/mip_debug_diagnostic.py` | yes |
 | Manifest writer and drift check | `scripts/mip_kit_manifest.py` | yes |
 | Kit manifest (file list and sha256) | `MIP/kit/KIT_MANIFEST.json` | copied from CODEX |
 | Surface config | `MIP/mip_surface.json` | no, one per repo |
@@ -40,6 +41,7 @@ CODEX hosts the canonical MIP kit. ABACUS, cryoplant-project and other consumers
 `MIP/mip_surface.json` holds the only repo-specific settings:
 
 - `health_probe`: repo-relative path of the health/self-heal probe. `null` means no probe. If the key is absent, the default is `scripts/mip_health_selfheal_probe.py`.
+- `debug_diagnostic`: repo-relative path of the debug/LDAB diagnostic. `null` means none. If the key is absent, the default is the kit's `scripts/mip_debug_diagnostic.py`. The debug lane is GREEN only when this diagnostic runs on the exact SHA and every check passes; debug-like file names alone give AMBER.
 - `nested_surfaces`: list of `{path, emitter, diagnostic?}` nested self-index surfaces. Use an empty list when there are none.
 - `shareable_skill`: skill package the verifier validates.
 - `required_green`: lanes that must be GREEN, or the verifier fails.
