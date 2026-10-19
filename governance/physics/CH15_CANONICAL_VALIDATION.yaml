@@ -43,11 +43,14 @@ book_errata:
       39169436822); 10.01 / 0.75 = 13.34 J/g reproduces the printed L7, and the
       printed h1, T2, h2 and power all agree within tolerance. Transcription
       corrected 2026-10-18 from the printed book (outlet 1.20 bar, was 1.70).
+      Re-confirmed 2026-10-19 against the original Springer PDF (p. 638): in
+      the printed sheet this cell is K5 (outlet row 5); "K7" is the label
+      used since #1112 and denotes the same cell.
 excluded:
   WE-T00-REFPROP-H-PT-001: duplicate of WE-T00-REFPROP-HSD-PT-002 (same state, h only)
   WE-T00-SATURATION-QUALITY-003: two-phase at 4.21 K; HEPAK-governed (T <= 4.5 K), no HEPAK receipt in CI
   WE-T02-SAT-LIQUID-HELIUM-003: two-phase at 4.41 -> 3.55 K; HEPAK-governed, no HEPAK receipt in CI
-  WE-T02-INVERSION-HELIUM-002: inversion-temperature search; transcription records a single value without the scan definition
-  WE-T01-ROOM-TEMP-COMPRESSOR-001: fluid recorded as helium_or_nitrogen_context and values marked visible-only
-  WE-T03-HEAT-EXCHANGER-001: two alternative hot-outlet values recorded; transcription ambiguous
-  WE-T06-EQUIVALENT-POWER-001: multi-domain roll-up without per-domain inputs in the transcription
+  WE-T02-INVERSION-HELIUM-002: transcription verified 2026-10-19 against the original PDF and scan_definition recorded (T_out == T_in, 14 -> 1 bar isenthalpic); excluded only until compute() gains a fixed-point solver and CI re-records L1
+  WE-T01-ROOM-TEMP-COMPRESSOR-001: fluid verified as nitrogen (Fig. 15.13; Fig. 15.12 caption says helium but shows the nitrogen sheet, recorded as book erratum); outside the governing helium-4 provider
+  WE-T03-HEAT-EXCHANGER-001: transcription verified 2026-10-19 (196.97 K is scenario B's goal-seek cold inlet, not a second hot outlet); excluded only until compute() gains the HX balance and CI re-records L1
+  WE-T06-EQUIVALENT-POWER-001: per-domain inputs transcribed 2026-10-19 (Carnot total 906792 W, was mis-read 906643); two-phase isothermal/liquid domains at 4.4087 K are HEPAK-governed, no HEPAK receipt in CI

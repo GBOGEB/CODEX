@@ -9,6 +9,29 @@ source_pair:
   pdf: GISTAU/sources/master/master.pdf
 references:
   - GISTAU/sources/master/Chapter15_Gitua_tools.pdf
+# Original book the Chapter 15 extract (and the Chapter 3 Claude-cycle
+# extract under docs/gistau-ch3/) were taken from. Binary is NOT committed
+# (big_binary_policy: local_first); identity is pinned by sha256.
+original_book:
+  title: "Cryogenic Helium Refrigeration for Middle and Large Powers"
+  author: "Guy Gistau Baguer"
+  publisher: Springer
+  year: 2020
+  original_name: "Cryogenic_helium_refrigeration_for_middle_and_large_powers.pdf"
+  size_bytes: 41110703
+  pdf_pages: 725
+  sha256: 1b2843cf89c85e5415e89107a7fb5fdfb9673986a71dd669abe33ae0d4ff1b41
+  pdf_page_offset:      # PDF page = printed book page + offset (offset differs by chapter; checked on figure pages)
+    ch3: 38
+    ch15: 35
+  chapters:
+    ch3_basic_thermodynamic_cycles: {book_pages: "77-150", pdf_pages: "115-188"}
+    ch3_5_claude_cycle: {book_pages: "120-135", pdf_pages: "158-173"}
+    ch15_cryo_tool_box: {book_pages: "613-640", pdf_pages: "648-675"}
+  not_the_same_source:
+    - name: "Chapter 3 Final.pdf"
+      identity: "X. L. Wang and J. Q. Zhang, 'The Accelerator Cryoplant' (ESS implementation literature)"
+      note: "Separate supporting reference; not Chapter 3 of Gistau. Do not merge source identities."
 role:
   docx: editable canonical source
   pdf: rendered mirror for parsing validation

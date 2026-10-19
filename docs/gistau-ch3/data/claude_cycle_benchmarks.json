@@ -1,0 +1,202 @@
+{
+  "source": {
+    "title": "Cryogenic Helium Refrigeration for Middle and Large Powers",
+    "author": "Guy Gistau Baguer",
+    "publisher": "Springer",
+    "year": 2020,
+    "sha256": "1b2843cf89c85e5415e89107a7fb5fdfb9673986a71dd669abe33ae0d4ff1b41",
+    "pdf_page_offset": 38,
+    "chapter": "3 Basic Thermodynamic Cycles (book pp. 77-150, PDF 115-188)",
+    "extracted_on": "2026-10-19",
+    "method": "text extraction plus rasterised figure read of the original PDF",
+    "scope_note": "Textbook reference cases for generating and testing Claude-cycle alternatives. Not QPS design targets and not evidence of QPS contract compliance."
+  },
+  "benchmarks": [
+    {
+      "benchmark_id": "G3-3.5.3.1-ONE-TURBINE-INITIAL",
+      "section": "3.5.3.1.1",
+      "figure": "Fig. 3.46",
+      "page": 123,
+      "problem": "Absorb 50 W at 4.41 K and simultaneously liquefy 0.5 g/s at constant level",
+      "inputs": {
+        "refrigeration_w": 50.0,
+        "liquefaction_g_s": 0.5,
+        "p_high_bar": 14.0,
+        "p_low_bar": 1.2,
+        "t_warm_k": 300.0,
+        "warm_end_dt_k": 3.0,
+        "jt_hx_warm_end_dt_k": 0.2,
+        "turbine_isentropic_efficiency": 0.75,
+        "turbine_discharge_t_k": 20.0,
+        "assumption": "turbine discharge temperature equals LP warm-end temperature of HX3"
+      },
+      "expected_outputs": {
+        "jt_mass_flow_g_s": 19.63,
+        "brayton_mass_flow_g_s": 16.77,
+        "cycle_lp_return_mass_flow_g_s": 35.9,
+        "cycle_hp_mass_flow_g_s": 36.4,
+        "isothermal_compressor_power_kw": 55.76,
+        "turbine_inlet_t_k": 37.56,
+        "turbine_power_w": -1543,
+        "jt_valve_inlet_t_k": 7.11,
+        "liquid_fraction_after_jt": 0.16,
+        "hx1": {
+          "q_w": 49809,
+          "lmtd_k": 4.95,
+          "ua_w_k": 10065
+        },
+        "hx2": {
+          "q_w": 1909,
+          "lmtd_k": 2.03,
+          "ua_w_k": 939
+        },
+        "hx3": {
+          "q_w": 1661,
+          "lmtd_k": 0.96,
+          "ua_w_k": 1734
+        }
+      },
+      "note": "Text quotes 35.90 g/s as the cycle compressor total; the figure shows 36.40 g/s HP and 35.90 g/s LP return, the difference being the 0.50 g/s withdrawn as liquid."
+    },
+    {
+      "benchmark_id": "G3-3.5.3.1-ONE-TURBINE-OPTIMISED",
+      "section": "3.5.3.1.2",
+      "figure": "Fig. 3.48",
+      "page": 125,
+      "inputs": "as G3-3.5.3.1-ONE-TURBINE-INITIAL, turbine discharge temperature solved for minimum total cycle flow",
+      "expected_outputs": {
+        "turbine_discharge_t_k": 14.93,
+        "turbine_inlet_t_k": 28.63,
+        "jt_mass_flow_g_s": 10.01,
+        "brayton_mass_flow_g_s": 20.68,
+        "cycle_lp_return_mass_flow_g_s": 30.19,
+        "cycle_hp_mass_flow_g_s": 30.69,
+        "isothermal_compressor_power_kw": 47.01,
+        "turbine_power_w": -1430,
+        "jt_valve_inlet_t_k": 6.53,
+        "liquid_fraction_after_jt": 0.31,
+        "hx1": {
+          "q_w": 43482,
+          "lmtd_k": 5.38,
+          "ua_w_k": 8077
+        },
+        "hx2": {
+          "q_w": 782,
+          "lmtd_k": 2.27,
+          "ua_w_k": 345
+        },
+        "hx3": {
+          "q_w": 581,
+          "lmtd_k": 0.98,
+          "ua_w_k": 595
+        }
+      },
+      "headline": "Total cycle flow 35.90 -> 30.19 g/s (-15.9 %); isothermal power 55.76 -> 47.01 kW"
+    },
+    {
+      "benchmark_id": "G3-3.5.3.2-TWO-TURBINES-PARALLEL",
+      "section": "3.5.3.2",
+      "figures": [
+        "Fig. 3.49",
+        "Fig. 3.51"
+      ],
+      "pages": "125-128",
+      "inputs": {
+        "refrigeration_w": 50.0,
+        "liquefaction_g_s": 0.5,
+        "t_warm_k": 300.0,
+        "warm_end_dt_k": 3.0,
+        "hx3_warm_end_dt_k": 1.0,
+        "jt_hx_warm_end_dt_k": 0.2,
+        "initial_t11_k": 80.0,
+        "initial_t9_k": 30.0
+      },
+      "expected_outputs": {
+        "initial_jt_mass_flow_g_s": 16.22,
+        "initial_cycle_mass_flow_g_s": 23.02,
+        "optimised_cycle_mass_flow_g_s": 12.6
+      },
+      "note": "Inversion-temperature caution (~40 K) on the break between Brayton stages, Fig. 3.50."
+    },
+    {
+      "benchmark_id": "G3-3.5.3.3-PARALLEL-VS-SERIES",
+      "section": "3.5.3.3",
+      "figures": [
+        "Fig. 3.52",
+        "Fig. 3.53"
+      ],
+      "pages": "128-130",
+      "expected_outputs": {
+        "parallel": {
+          "hx3_warm_end_load_jt_w": 14.12,
+          "hx3_warm_end_load_brayton_w": 17.77,
+          "hx3_warm_end_total_w": 31.89,
+          "cold_turbine_power_w": 220,
+          "hx1_warm_end_load_jt_w": 78.69,
+          "hx1_warm_end_load_brayton_w": 170.21,
+          "hx1_warm_end_total_w": 248.9,
+          "warm_turbine_power_w": 862,
+          "jt_mass_flow_g_s": 4.48,
+          "total_turbine_power_w": 1082,
+          "turbine_mass_flow_g_s": 8.61,
+          "compressor_mass_flow_g_s": 12.6
+        },
+        "series": {
+          "hx3_warm_end_load_jt_w": 34.95,
+          "hx3_warm_end_load_brayton_w": 39.03,
+          "hx3_warm_end_total_w": 73.98,
+          "cold_turbine_power_w": 308,
+          "hx1_warm_end_load_jt_w": 114.39,
+          "hx1_warm_end_load_brayton_w": 164.19,
+          "hx1_warm_end_total_w": 278.58,
+          "warm_turbine_power_w": 795,
+          "jt_mass_flow_g_s": 5.66,
+          "total_turbine_power_w": 1102,
+          "turbine_mass_flow_g_s": 8.12,
+          "compressor_mass_flow_g_s": 13.28
+        }
+      }
+    },
+    {
+      "benchmark_id": "G3-3.5.5-EFFICIENCY-CORRELATIONS",
+      "section": "3.5.5",
+      "page": 133,
+      "expected_outputs": {
+        "carnot_efficiency_pct": "eta(%) = 16.7 * R^0.2 (refrigerators built after 1997, > 100 W; R = equivalent cryogenic power, units per book Fig. 3.56)",
+        "absorbed_power_eq_3_18": "W(kW) = 393 * Q^0.8, Q(kW) equivalent load at 4.5 K",
+        "brayton_realistic_vs_ideal": {
+          "realistic_compressor_kw": 80.35,
+          "realistic_pct_carnot": 21.6,
+          "ideal_compressor_kw": 21.71,
+          "ideal_pct_carnot": 93.7
+        }
+      }
+    },
+    {
+      "benchmark_id": "G3-3.5.6-JT-EXPANDER",
+      "section": "3.5.6",
+      "page": 135,
+      "expected_outputs": {
+        "liquid_output_increase_pct_approx": 25
+      },
+      "note": "Refers to Sect. 4.2.2 / Fig. 4.8 for large machines."
+    }
+  ],
+  "open_items": [
+    {
+      "id": "G3-OPEN-001",
+      "item": "Sect. 3.6.4 LN2-precooled Claude cycle (pp. 137-139, Figs. 3.60-3.61): numerical states not yet transcribed",
+      "due": "2026-10-26"
+    },
+    {
+      "id": "G3-OPEN-002",
+      "item": "Fig. 3.51 / 3.53 per-state temperatures for parallel and series optimised cases not yet transcribed",
+      "due": "2026-10-26"
+    },
+    {
+      "id": "G3-OPEN-003",
+      "item": "No compute() reproduction yet: one-turbine initial/optimised cases are the first candidates for a provider-backed L1 check",
+      "due": "2026-11-02"
+    }
+  ]
+}
