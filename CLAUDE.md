@@ -67,6 +67,12 @@ not patch a downstream gate while an upstream stage is red.
   own reviewed commit with a one-line justification, never a side effect.
 - Maintain the **secret-scan allowlist** — add documented false positives to
   it rather than restructuring code to dodge the scanner.
+- **Adding or removing a test, workflow, script or module?** Run
+  `python scripts/regen_missioncontrol_inventory.py` and commit the refreshed
+  MissionControl receipts in the same PR; otherwise Mycelium CI's
+  generated-value parity preflight fails. Main is also reconciled after merge
+  by `missioncontrol-inventory-reconcile.yml`, but that is a safety net, not
+  a substitute.
 
 ## PR discipline
 
