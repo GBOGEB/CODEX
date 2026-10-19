@@ -297,6 +297,12 @@ def test_failing_stale_or_empty_diagnostic_is_not_green(overrides):
     assert lane["status"] == "amber"
 
 
+def test_diagnostic_outside_a_git_checkout_is_not_green(monkeypatch):
+    monkeypatch.setattr(emitter, "run_git", lambda args: None)
+    lane = emitter.debug_assessment([], _passing_diagnostic(exact_sha=None))
+    assert lane["status"] == "amber"
+
+
 def test_debug_diagnostic_absent_key_uses_kit_default(tmp_path: Path):
     assert (
         emitter.resolve_debug_diagnostic({}, tmp_path)

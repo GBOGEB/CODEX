@@ -168,12 +168,12 @@ def complete_skill_packages(files: list[Path]) -> list[Path]:
     return sorted(packages, key=lambda path: path.as_posix())
 
 
-def run_repo_script(script: Path, output: Path) -> int:
+def run_repo_script(probe: Path, output: Path) -> int:
     """Run a repo-local probe or diagnostic with ``--output``; return its exit code."""
     completed = subprocess.run(
         [
             sys.executable,
-            str(script),
+            str(probe),
             "--output",
             str(output),
         ],
@@ -244,6 +244,7 @@ def debug_assessment(debug: list[Path], diagnostic: dict | None) -> dict:
     checks = (diagnostic or {}).get("checks")
     proven = bool(
         diagnostic
+        and exact_sha
         and diagnostic.get("verification") == "PASS"
         and diagnostic.get("exact_sha") == exact_sha
         and isinstance(checks, dict)
