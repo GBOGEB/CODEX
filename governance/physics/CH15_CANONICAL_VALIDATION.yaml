@@ -25,7 +25,7 @@ checked:
   - WE-T02-FREE-EXPANSION-HEAT-001   # isenthalpic + 100 W, 14 -> 1 bar from 20 K
   - WE-T02-MASS-FLOW-004         # mdot = Q / (h_out - h_in), 20 K / 4 bar -> 22.5 K / 3.75 bar
   - WE-T04-CRYOGENIC-EXPANDER-001    # 14 -> 1.2 bar from 25 K, eta_s 0.75
-  - WE-T05-CRYOGENIC-COMPRESSOR-001  # 0.5 -> 1.2 bar from 5 K, eta_s 0.75 (book cell K7 is an erratum, below)
+  - WE-T05-CRYOGENIC-COMPRESSOR-001  # 0.5 -> 1.2 bar from 5 K, eta_s 0.75 (book cell K5 is an erratum, below)
 
 # Computed and reported every run, never counted as passing, listed as open
 # until the transcription is verified against the source figure.
@@ -35,17 +35,15 @@ source_check_required: {}
 # compared, never counted as passing. Evidence: printed hard copy and CI run.
 book_errata:
   WE-T05-CRYOGENIC-COMPRESSOR-001:
-    cell: K7 (dH isent, J/g)
+    cell: K5 (dH isent, J/g)
     printed: 17.79
     finding: >-
-      Printed K7 equals L7 / eta (13.34 / 0.75). The governing provider gives
+      Printed K5 equals L5 / eta (13.34 / 0.75). The governing provider gives
       an isentropic rise of 10.01 J/g for 0.5 -> 1.2 bar from 5 K (CI run
-      39169436822); 10.01 / 0.75 = 13.34 J/g reproduces the printed L7, and the
+      39169436822); 10.01 / 0.75 = 13.34 J/g reproduces the printed L5, and the
       printed h1, T2, h2 and power all agree within tolerance. Transcription
-      corrected 2026-10-18 from the printed book (outlet 1.20 bar, was 1.70).
-      Re-confirmed 2026-10-19 against the original Springer PDF (p. 638): in
-      the printed sheet this cell is K5 (outlet row 5); "K7" is the label
-      used since #1112 and denotes the same cell.
+      corrected 2026-10-18 from the printed book (outlet 1.20 bar, was 1.70)
+      and re-confirmed 2026-10-19 against the original Springer PDF (p. 638).
 excluded:
   WE-T00-REFPROP-H-PT-001: duplicate of WE-T00-REFPROP-HSD-PT-002 (same state, h only)
   WE-T00-SATURATION-QUALITY-003: two-phase at 4.21 K; HEPAK-governed (T <= 4.5 K), no HEPAK receipt in CI

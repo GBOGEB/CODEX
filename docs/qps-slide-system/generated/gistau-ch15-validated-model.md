@@ -60,7 +60,7 @@ _VALIDATION · Slide 3_
 
 _VALIDATION · Slide 4_
 
-- Book erratum, cell K7 (dH isent, J/g): printed 17.79. Printed K7 equals L7 / eta (13.34 / 0.75). The governing provider gives an isentropic rise of 10.01 J/g for 0.5 -> 1.2 bar from 5 K (CI run 39169436822); 10.01 / 0.75 = 13.34 J/g reproduces the printed L7, and the printed h1, T2, h2 and power all agree within tolerance. Transcription corrected 2026-10-18 from the printed book (outlet 1.20 bar, was 1.70). Re-confirmed 2026-10-19 against the original Springer PDF (p. 638): in the printed sheet this cell is K5 (outlet row 5); "K7" is the label used since #1112 and denotes the same cell.
+- Book erratum, cell K5 (dH isent, J/g): printed 17.79. Printed K5 equals L5 / eta (13.34 / 0.75). The governing provider gives an isentropic rise of 10.01 J/g for 0.5 -> 1.2 bar from 5 K (CI run 39169436822); 10.01 / 0.75 = 13.34 J/g reproduces the printed L5, and the printed h1, T2, h2 and power all agree within tolerance. Transcription corrected 2026-10-18 from the printed book (outlet 1.20 bar, was 1.70) and re-confirmed 2026-10-19 against the original Springer PDF (p. 638).
 
 ### Changes
 
