@@ -28,7 +28,9 @@ nav .tabs button[aria-selected="true"]{color:var(--ink);background:var(--panel);
 .lanebar button[aria-pressed="true"]{color:var(--ink);font-weight:600;box-shadow:inset 0 0 0 1px var(--c,var(--accent))}
 main{max-width:1280px;margin:0 auto;padding:8px 16px 40px}
 section[hidden]{display:none}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(220px,100%),1fr));gap:10px}
+.grid>*{min-width:0}
+.card code,.card .mono,p.mono,td .mono{overflow-wrap:anywhere;word-break:break-word}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}
 .card h3{margin:0 0 6px;font-size:14px}
 .kpi{font-size:26px;font-weight:600;font-variant-numeric:tabular-nums}
@@ -69,6 +71,13 @@ input[type=search]{width:100%;max-width:360px;padding:7px 10px;border:1px solid 
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 .note{color:var(--muted);font-size:12px;margin:6px 0}
 details{margin:4px 0}summary{cursor:pointer}
+.hm td{text-align:center;vertical-align:middle}.hm td:first-child{text-align:left}
+.hm button.cell{width:100%;min-width:74px;border:1px solid var(--line);border-radius:7px;padding:5px 4px;background:var(--panel);color:var(--ink);cursor:pointer;font:inherit}
+.hm button.cell .sc{display:block;font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+.hm button.cell[aria-pressed="true"]{outline:2px solid var(--accent);outline-offset:1px}
+.st-GREEN{color:var(--ok)}.st-AMBER{color:var(--warn)}.st-RED{color:var(--bad)}.st-NA{color:var(--muted)}
+.hm button.cell.st-GREEN{border-left:4px solid var(--ok)}.hm button.cell.st-AMBER{border-left:4px solid var(--warn)}.hm button.cell.st-RED{border-left:4px solid var(--bad)}
+.meter{height:8px;background:var(--chip);border-radius:4px;overflow:hidden;min-width:90px}.meter i{display:block;height:100%;background:var(--accent)}
 .theme-toggle,.copy-link{float:right;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;padding:4px 10px;cursor:pointer;font:inherit;margin-left:6px}
 @media (max-width:600px){.kpi{font-size:22px}h1{font-size:19px}}
 </style>
@@ -87,6 +96,7 @@ details{margin:4px 0}summary{cursor:pointer}
 </nav>
 <main>
 <section id="overview" role="tabpanel"></section>
+<section id="health" role="tabpanel" hidden></section>
 <section id="taxonomy" role="tabpanel" hidden></section>
 <section id="blocks" role="tabpanel" hidden></section>
 <section id="dag" role="tabpanel" hidden>
@@ -115,15 +125,15 @@ const rowLanes=l=>`data-lanes="${esc((l||[]).join(' '))}"`;
 const table=(head,rows,id)=>`<div class="tablewrap"><table ${id?`id="${id}"`:''}><thead><tr>${head.map(h=>`<th class="${h.n?'n':''}">${esc(h.t||h)}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
 
 // ---------- state + deep links: #tab=..&lanes=A,B&q=..&hour=..
-const TABS=[['overview','Overview'],['taxonomy','Lanes & taxonomy'],['blocks','Blocks & I/O'],['dag','DAG / SPINE / SPLINE'],['sipoc','SIPOC'],['orchestration','Orchestration & broker'],['ledger','Burndown ledger']];
+const TABS=[['overview','Overview'],['health','Repo health'],['taxonomy','Lanes & taxonomy'],['blocks','Blocks & I/O'],['dag','DAG / SPINE / SPLINE'],['sipoc','SIPOC'],['orchestration','Orchestration & broker'],['ledger','Burndown ledger']];
 const SEARCH={taxonomy:'monQ',blocks:'blkQ',orchestration:'wfQ',ledger:'ldQ'};
-const state={tab:'overview',lanes:new Set(),q:'',hour:null};
+const state={tab:'overview',lanes:new Set(),q:'',hour:null,repo:null,dim:null};
 function readHash(){const p=new URLSearchParams(location.hash.slice(1));
   if(p.get('tab')&&TABS.some(t=>t[0]===p.get('tab')))state.tab=p.get('tab');
   state.lanes=new Set((p.get('lanes')||'').split(',').filter(x=>laneById[x]));
-  state.q=p.get('q')||'';const h=p.get('hour');state.hour=h!==null&&h!==''&&!isNaN(+h)?+h:null;}
+  state.q=p.get('q')||'';state.repo=p.get('repo');state.dim=p.get('dim');const h=p.get('hour');state.hour=h!==null&&h!==''&&!isNaN(+h)?+h:null;}
 function writeHash(){const p=new URLSearchParams();p.set('tab',state.tab);
-  if(state.lanes.size)p.set('lanes',[...state.lanes].join(','));if(state.q)p.set('q',state.q);if(state.hour!==null)p.set('hour',state.hour);
+  if(state.lanes.size)p.set('lanes',[...state.lanes].join(','));if(state.q)p.set('q',state.q);if(state.hour!==null)p.set('hour',state.hour);if(state.repo)p.set('repo',state.repo);if(state.dim)p.set('dim',state.dim);
   history.replaceState(null,'','#'+p.toString());try{localStorage.setItem('ma3-hash',p.toString())}catch(e){}}
 const laneOk=l=>!state.lanes.size||(l||[]).some(x=>state.lanes.has(x));
 
@@ -137,6 +147,11 @@ lanebar.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)re
   if(!id)state.lanes.clear();else state.lanes.has(id)?state.lanes.delete(id):state.lanes.add(id);apply()});
 document.getElementById('themeToggle').addEventListener('click',()=>{const r=document.documentElement;const cur=r.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');r.dataset.theme=cur==='dark'?'light':'dark'});
 document.getElementById('copyLink').addEventListener('click',async e=>{writeHash();try{await navigator.clipboard.writeText(location.href);e.target.textContent='Copied'}catch(_){e.target.textContent='Copy failed'}setTimeout(()=>e.target.textContent='Copy link',1500)});
+
+// ---------- health helpers
+const HL=A.health||{repos:{},dimensions:[],thresholds:{green:80,amber:50}};
+const stBadge=(st,score)=>`<span class="badge st-${st}">${st==='NA'?'N/A':esc(st)}${score!=null?' '+score:''}</span>`;
+const healthLine=rid=>{const h=HL.repos[rid];if(!h)return'';return`<div class="sub">Health ${stBadge(h.status,h.overall)} <a href="#tab=health&repo=${encodeURIComponent(rid)}">details</a></div>`};
 
 // ---------- overview
 const O=A.orchestration, D=A.dag, C=O.cron;
@@ -153,7 +168,7 @@ document.getElementById('overview').innerHTML=`
 <div class="sub">${esc(r.remote)}</div><div class="sub">${esc(r.role)}</div>
 <div class="mono">${r.present?(r.host?'this repository':`${esc(r.branch||'detached')} @ ${esc((r.head||'').slice(0,10))}`):'<span class="bad">checkout absent</span>'}</div>
 ${r.tree?`<div class="sub">tree OID ${short(r.tree)}</div>`:''}
-<div class="sub">${r.tracked_files??0} tracked files${r.dirty_tracked?` · <span class="warn">${r.dirty_tracked} modified</span>`:''}</div></div>`).join('')}${(A.mirrors||[]).map(mirrorCard).join('')}</div>
+<div class="sub">${r.tracked_files??0} tracked files${r.dirty_tracked?` · <span class="warn">${r.dirty_tracked} modified</span>`:''}</div>${healthLine(r.id)}</div>`).join('')}${(A.mirrors||[]).map(mirrorCard).join('')}</div>
 <p class="note">Commit SHA answers "which commit"; tree and blob OIDs answer "which content". Two checkouts with different SHAs but the same tree OID hold identical files.</p>
 <h2>At a glance</h2>
 <div class="grid">
@@ -166,6 +181,38 @@ ${r.tree?`<div class="sub">tree OID ${short(r.tree)}</div>`:''}
 <h2>Lanes</h2>
 <div class="grid">${lanes.map(l=>`<div class="card lane" style="--c:${laneColor(l.id)}"><h3>${esc(l.display)}</h3><div class="tag">${esc(l.tag)} · ${esc(l.id)}</div>
 <div class="kpi">${l.files_total}</div><div class="sub">files · ${l.variant_count} spellings · ${l.nonstandard_mentions} non-standard mentions</div></div>`).join('')}</div>`;
+
+// ---------- health
+const dimLabel=Object.fromEntries(HL.dimensions.map(d=>[d.id,d]));
+const repoIds=Object.keys(HL.repos);
+const pct=c=>c.completion==null?'n/a':Math.round(c.completion*100)+'%';
+const fmtNum=x=>typeof x==='number'&&!Number.isInteger(x)?x.toFixed(2):x;
+const metricVal=v=>Array.isArray(v)?(v.length?`<details><summary>${v.length}</summary>${v.map(x=>`<span class="chip">${esc(x)}</span>`).join('')}</details>`:'0'):esc(v);
+const worklist=[];repoIds.forEach(r=>Object.entries(HL.repos[r].dimensions).forEach(([d,x])=>x.checks.forEach(c=>{if(c.den&&c.completion<1)worklist.push({r,d,c})})));
+worklist.sort((a,b)=>a.c.completion-b.c.completion||b.c.weight-a.c.weight);
+document.getElementById('health').innerHTML=`<h2>Repository health by dimension</h2>
+<p class="note">Each score (0–100) is the weighted completion of the dimension's sub-checks, read from tracked files. GREEN ≥ ${HL.thresholds.green}, AMBER ≥ ${HL.thresholds.amber}, RED below; N/A means the repo has no artefacts for that dimension. Click a cell for its sub-checks and evidence. The lane filter does not apply here.</p>
+<div class="tablewrap"><table class="hm" id="healthMatrix"><thead><tr><th>Repository</th>${HL.dimensions.map(d=>`<th title="${esc(d.description)}">${esc(d.label)}</th>`).join('')}<th>Overall</th></tr></thead><tbody>
+${repoIds.map(r=>{const h=HL.repos[r];return`<tr><td><b>${esc(r)}</b></td>${HL.dimensions.map(d=>{const x=h.dimensions[d.id];return`<td><button type="button" class="cell st-${x.status}" data-repo="${esc(r)}" data-dim="${d.id}" aria-label="${esc(r)} ${esc(d.label)}: ${x.status==='NA'?'not applicable':x.score+' '+x.status}"><span class="sc">${x.score??'–'}</span><span class="st-${x.status}" style="font-size:11px">${x.status==='NA'?'N/A':x.status}</span></button></td>`}).join('')}<td>${stBadge(h.status,h.overall)}</td></tr>`}).join('')}
+</tbody></table></div>
+<div id="healthDetail"></div>
+<h2>Lowest-completion sub-checks (worklist)</h2>
+${table(['Repo','Dimension','Sub-check',{t:'Done',n:1},'Completion','Evidence'],worklist.slice(0,15).map(w=>`<tr><td>${esc(w.r)}</td><td>${esc(dimLabel[w.d]?.label||w.d)}</td><td>${esc(w.c.label)}${w.c.note?`<div class="sub">${esc(w.c.note)}</div>`:''}</td><td class="n">${fmtNum(w.c.num)}/${w.c.den}</td><td><div class="meter"><i style="width:${Math.round(w.c.completion*100)}%"></i></div><span class="sub">${pct(w.c)}</span></td><td>${w.c.evidence.slice(0,3).map(e=>`<div class="mono">${esc(e)}</div>`).join('')}</td></tr>`))}`;
+document.getElementById('healthMatrix').addEventListener('click',e=>{const b=e.target.closest('button.cell');if(!b)return;
+  const same=state.repo===b.dataset.repo&&state.dim===b.dataset.dim;state.repo=same?null:b.dataset.repo;state.dim=same?null:b.dataset.dim;apply()});
+function renderHealth(){
+  document.querySelectorAll('#healthMatrix button.cell').forEach(b=>b.setAttribute('aria-pressed',b.dataset.repo===state.repo&&b.dataset.dim===state.dim));
+  const el=document.getElementById('healthDetail');const h=HL.repos[state.repo];
+  if(!h){el.innerHTML='<p class="note">Select a cell to see its sub-checks.</p>';return}
+  const dims=state.dim&&h.dimensions[state.dim]?[state.dim]:HL.dimensions.map(d=>d.id);
+  el.innerHTML=dims.map(d=>{const x=h.dimensions[d];const meta=dimLabel[d]||{label:d,description:''};
+    return`<h2>${esc(state.repo)} · ${esc(meta.label)} ${stBadge(x.status,x.score)}</h2><p class="note">${esc(meta.description)}</p>
+    ${x.applicable?table(['Sub-check',{t:'Done',n:1},'Completion',{t:'Weight',n:1},'Evidence (sample)'],x.checks.map(c=>`<tr><td>${esc(c.label)}${c.note?`<div class="sub">${esc(c.note)}</div>`:''}</td><td class="n">${c.den?fmtNum(c.num)+'/'+c.den:'n/a'}</td><td>${c.den?`<div class="meter"><i style="width:${Math.round(c.completion*100)}%"></i></div><span class="sub">${pct(c)}</span>`:'<span class="sub">not applicable</span>'}</td><td class="n">${c.weight}</td><td>${c.evidence.map(e=>`<div class="mono">${esc(e)}</div>`).join('')||'<span class="sub">–</span>'}</td></tr>`))
+      +`<div class="grid" style="margin-top:8px">${Object.entries(x.metrics).map(([k,v])=>`<div class="card"><h3>${esc(k.replace(/_/g,' '))}</h3><div>${metricVal(v)}</div></div>`).join('')}</div>`
+      :'<p class="note">No artefacts for this dimension in this repository.</p>'}`}).join('')
+    +`<p><button type="button" class="copy-link" id="clearHealth" style="float:none">Clear selection</button></p>`;
+  document.getElementById('clearHealth').addEventListener('click',()=>{state.repo=null;state.dim=null;apply()});
+}
 
 // ---------- taxonomy
 document.getElementById('taxonomy').innerHTML=`<h2>Canonical lanes</h2><p class="note">ID is identity, display is projection, tag is the label form. Spellings outside the canonical set are variants to normalise.</p>
@@ -272,7 +319,7 @@ function apply(){
   Object.entries(TABLE_SEARCH).forEach(([id,tab])=>filterTable(id,tab===state.tab?state.q:''));
   document.querySelectorAll('#taxonomy [data-card]').forEach(c=>c.hidden=!laneOk(c.dataset.lanes.split(' ')));
   document.querySelectorAll('.dag g[data-block]').forEach(g=>g.classList.toggle('dim',!!state.lanes.size&&!laneOk(g.dataset.lanes.split(' ').filter(Boolean))));
-  renderCron();renderLedgerCards();writeHash();
+  renderCron();renderLedgerCards();renderHealth();writeHash();
 }
 Object.entries(SEARCH).forEach(([tab,id])=>{const i=document.getElementById(id);i&&i.addEventListener('input',()=>{state.q=i.value;apply()})});
 window.addEventListener('hashchange',()=>{readHash();apply()});

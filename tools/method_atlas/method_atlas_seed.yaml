@@ -331,3 +331,18 @@ burndown:
     - {id: QUALITY, label: Quality and stability, keywords: [quality, stability, 3p, 3pm, outcome, validation, semantic, capability]}
     - {id: ENGINEERING, label: Engineering and physics, keywords: [qplant, qps, physics, p2j, gistau, cryo, ch15]}
     - {id: CENSUS, label: Census and inventory, keywords: [census, recensus, inventory, hive, crew, pulses, snapshot]}
+
+# Per-repository health: each dimension is scored from sub-checks (completion = num/den),
+# weighted into 0-100. A dimension with no artefacts in a repo is N/A, never RED.
+# The checks themselves live in build_method_atlas.py (HEALTH_CHECKS); this lists order and meaning.
+health:
+  thresholds: {green: 80, amber: 50}
+  dimensions:
+    - {id: code, label: Code, description: 'Python parses, file size, lint configuration, TODO/FIXME debt'}
+    - {id: testing, label: Testing, description: 'Test-to-module ratio, non-empty tests, CI runs tests, pytest configuration'}
+    - {id: dmaic, label: DMAIC, description: 'Define/Measure/Analyze/Improve/Control coverage, machine-readable control artefacts, tested DMAIC code'}
+    - {id: mip, label: MIP, description: 'Modernize/Innovate/Perpetuate coverage, parseable MIP receipts, tested MIP code, MIP CI'}
+    - {id: bridge, label: Bridge, description: 'Bridge modules tested, parseable bridge data, bridge CI'}
+    - {id: federation, label: Federation, description: 'Parseable federation data, tested federation code, federation CI; peers outside the atlas'}
+    - {id: docker, label: Docker, description: 'Pinned base images, non-root USER, HEALTHCHECK, .dockerignore, CI image build, compose parses'}
+    - {id: sql, label: SQL, description: 'No tracked database binaries, guarded destructive DDL, parameterised queries, schema referenced'}

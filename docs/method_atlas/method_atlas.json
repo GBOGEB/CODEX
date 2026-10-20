@@ -675,12 +675,12 @@
     "customer": "Owner, reviewers, next-chat handover",
     "entry": "tools/method_atlas/build_method_atlas.py",
     "entry_exists": true,
-    "entry_oid": "4039e88bf23eaa13bfab464d79813337d31c83cc",
+    "entry_oid": "ac69a0747d5000820b85fc1b78c59e0ef66f6fd5",
     "id": "METHOD.ATLAS",
     "inputs": [
      {
       "kind": "file",
-      "oid": "595c7080ff1d6a7798bf12fa14366faa00e1294f",
+      "oid": "65dd6716eb26d082be4ff3c0c8bd56c3b6dede75",
       "parse": "OK",
       "path": "tools/method_atlas/method_atlas_seed.yaml",
       "referenced_by_entry": true,
@@ -824,7 +824,1842 @@
    "RUNTIME_ONLY": 4
   }
  },
- "digest": "12e3ebf517758a5b654253e7f8d89ff36b3787febe968387e411eaf1cec7ba00",
+ "digest": "5d4b6b8ff3ca850552a454a1ebea50cb5544ffa0ee6b338221e70a5ee2028fd0",
+ "health": {
+  "dimensions": [
+   {
+    "description": "Python parses, file size, lint configuration, TODO/FIXME debt",
+    "id": "code",
+    "label": "Code"
+   },
+   {
+    "description": "Test-to-module ratio, non-empty tests, CI runs tests, pytest configuration",
+    "id": "testing",
+    "label": "Testing"
+   },
+   {
+    "description": "Define/Measure/Analyze/Improve/Control coverage, machine-readable control artefacts, tested DMAIC code",
+    "id": "dmaic",
+    "label": "DMAIC"
+   },
+   {
+    "description": "Modernize/Innovate/Perpetuate coverage, parseable MIP receipts, tested MIP code, MIP CI",
+    "id": "mip",
+    "label": "MIP"
+   },
+   {
+    "description": "Bridge modules tested, parseable bridge data, bridge CI",
+    "id": "bridge",
+    "label": "Bridge"
+   },
+   {
+    "description": "Parseable federation data, tested federation code, federation CI; peers outside the atlas",
+    "id": "federation",
+    "label": "Federation"
+   },
+   {
+    "description": "Pinned base images, non-root USER, HEALTHCHECK, .dockerignore, CI image build, compose parses",
+    "id": "docker",
+    "label": "Docker"
+   },
+   {
+    "description": "No tracked database binaries, guarded destructive DDL, parameterised queries, schema referenced",
+    "id": "sql",
+    "label": "SQL"
+   }
+  ],
+  "repos": {
+   "ABACUS": {
+    "dimensions": {
+     "bridge": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 0.7,
+        "den": 10,
+        "evidence": [
+         "abacus_v21_bridge_validation_tests.py",
+         "scripts/validate_gm_i_a_coolprop_runtime_bridge.py",
+         "scripts/validate_gm_i_a_coolprop_runtime_bridge_p002.py"
+        ],
+        "id": "tested",
+        "label": "Bridge modules referenced by tests",
+        "note": null,
+        "num": 7,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 14,
+        "evidence": [],
+        "id": "data",
+        "label": "Bridge data files parse",
+        "note": null,
+        "num": 14,
+        "weight": 1
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         ".github/workflows/ariana-cicd.yml",
+         ".github/workflows/bd-w1-three-pulse-regression.yml",
+         ".github/workflows/bootstrap-integration.yml",
+         ".github/workflows/bridge-ci.yml",
+         ".github/workflows/cd-pipeline.yml",
+         ".github/workflows/ci-cd.yml",
+         ".github/workflows/ci-failure-debug-rerun.yml",
+         ".github/workflows/ci-pipeline.yml"
+        ],
+        "id": "ci",
+        "label": "A workflow covers bridges",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "files": 54,
+       "modules": 10,
+       "peers_referenced": [
+        "ABACUS",
+        "CODEX",
+        "CoolProp",
+        "cryoplant-project",
+        "pipeline-automation-hub"
+       ]
+      },
+      "score": 85.0,
+      "status": "GREEN"
+     },
+     "code": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 1276,
+        "evidence": [],
+        "id": "syntax",
+        "label": "Python files parse (ast)",
+        "note": null,
+        "num": 1276,
+        "weight": 3
+       },
+       {
+        "completion": 0.9835,
+        "den": 1276,
+        "evidence": [
+         "ABACUS-v032/execute_full_dmaic_phases_0_to_9_v033.py",
+         "MINERVA_PID/generator/build_pid_v2.py",
+         "MINERVA_PID/generator/build_pid_v3.py",
+         "MINERVA_PID/generator/build_pid_v4.py",
+         "MINERVA_PID/generator/build_pid_v5.py",
+         "MINERVA_PID/src/abacus_svg_pid/build_viewer.py",
+         "MINERVA_PID/src/abacus_svg_pid/build_w005.py",
+         "MINERVA_PID/standards/build_legend_library.py"
+        ],
+        "id": "size",
+        "label": "Files at most 800 lines",
+        "note": null,
+        "num": 1255,
+        "weight": 1
+       },
+       {
+        "completion": 0.9992,
+        "den": 1276,
+        "evidence": [
+         "ci/governance/tests/test_pr_feedback_gate.py"
+        ],
+        "id": "warnings",
+        "label": "No SyntaxWarnings (e.g. invalid escape sequences)",
+        "note": null,
+        "num": 1275,
+        "weight": 1
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         "CI: .github/workflows/README.md",
+         "CI: .github/workflows/abacus-cicd.yml",
+         "CI: .github/workflows/background_orchestrator.yml",
+         "CI: .github/workflows/bridge-ci.yml",
+         "CI: .github/workflows/cd-pipeline.yml",
+         "CI: .github/workflows/cd-unified.yml",
+         "CI: .github/workflows/ci-cd-tests.yml",
+         "CI: .github/workflows/ci-cd.yml"
+        ],
+        "id": "lint",
+        "label": "Lint configured or run in CI (ruff/flake8/pylint)",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       },
+       {
+        "completion": 0.9961,
+        "den": 1,
+        "evidence": [],
+        "id": "markers",
+        "label": "TODO/FIXME debt under 5 per kLOC",
+        "note": "5 markers, 0.02 per kLOC",
+        "num": 0.9961248871373378,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "large_files": 21,
+       "loc": 258057,
+       "markers": 5,
+       "parse_failures": 0,
+       "python_files": 1276,
+       "syntax_warnings": 1
+      },
+      "score": 99.7,
+      "status": "GREEN"
+     },
+     "dmaic": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 5,
+        "evidence": [],
+        "id": "phases",
+        "label": "DMAIC phases referenced (D, M, A, I, C)",
+        "note": null,
+        "num": 5,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         "analytics/qps_cost_estimate_roundtrip/control/qps_dmaic_kpi_pca_bt_control.yaml",
+         "architecture/w64/GENERIC_3P_ANCHOR_CONTROL.yaml",
+         "feedback/qps_w08_pr_head_aht_control_snapshot.yaml"
+        ],
+        "id": "control_artefacts",
+        "label": "Machine-readable Control artefacts exist",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       },
+       {
+        "completion": 0.5661,
+        "den": 189,
+        "evidence": [
+         ".dmaic/scripts/marker_usage_report.py",
+         "ABACUS-v032/execute_full_dmaic_phases_0_to_8.py",
+         "ABACUS-v032/execute_full_dmaic_phases_0_to_9_v033.py",
+         "ABACUS-v032/fix_v033_alignment.py",
+         "DMAIC_V3/analyze_recent_files.py",
+         "DMAIC_V3/canonical_refactoring.py",
+         "DMAIC_V3/dmaic_v3_engine.py",
+         "DMAIC_V3/dow_integration_executor.py"
+        ],
+        "id": "tested",
+        "label": "DMAIC modules referenced by tests",
+        "note": null,
+        "num": 107,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 197,
+        "evidence": [],
+        "id": "data",
+        "label": "DMAIC data files parse",
+        "note": null,
+        "num": 197,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "files": 841,
+       "modules": 189,
+       "phases": [
+        "define",
+        "measure",
+        "analyze",
+        "improve",
+        "control"
+       ]
+      },
+      "score": 85.5,
+      "status": "GREEN"
+     },
+     "docker": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 5,
+        "evidence": [],
+        "id": "pinned",
+        "label": "Base images pinned (tag or digest, not latest)",
+        "note": null,
+        "num": 5,
+        "weight": 2
+       },
+       {
+        "completion": 0.75,
+        "den": 4,
+        "evidence": [
+         "ABACUS-v032/Dockerfile"
+        ],
+        "id": "user",
+        "label": "Runs as a non-root USER",
+        "note": null,
+        "num": 3,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 4,
+        "evidence": [],
+        "id": "healthcheck",
+        "label": "HEALTHCHECK declared",
+        "note": null,
+        "num": 4,
+        "weight": 1
+       },
+       {
+        "completion": 1.0,
+        "den": 4,
+        "evidence": [],
+        "id": "dockerignore",
+        "label": ".dockerignore present",
+        "note": null,
+        "num": 4,
+        "weight": 1
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         ".github/workflows/cd-pipeline.yml",
+         ".github/workflows/ci-cd-tests.yml",
+         ".github/workflows/ci-pipeline.yml",
+         ".github/workflows/dow-sprint6-cicd.yml",
+         ".github/workflows/w169-qplant-k8s-runtime.yml",
+         ".github/workflows/w93-docker-deployment-proof.yml"
+        ],
+        "id": "ci_build",
+        "label": "A workflow builds an image",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       },
+       {
+        "completion": 1.0,
+        "den": 6,
+        "evidence": [],
+        "id": "compose",
+        "label": "Compose files parse",
+        "note": null,
+        "num": 6,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "base_images": 5,
+       "compose_files": 6,
+       "dockerfiles": 4
+      },
+      "score": 93.8,
+      "status": "GREEN"
+     },
+     "federation": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 106,
+        "evidence": [],
+        "id": "data",
+        "label": "Federation data files parse",
+        "note": null,
+        "num": 106,
+        "weight": 2
+       },
+       {
+        "completion": 0.75,
+        "den": 20,
+        "evidence": [
+         "runtime/federation/gg_math_temporal_pca_independent_challenge.py",
+         "runtime/federation/qps_debug_dow_consumer.py",
+         "runtime/federation/w259_method_cards_independent_dow.py",
+         "scripts/w285_recompute_federation_depth.py",
+         "scripts/w84_validate_lldb_dap_federation.py"
+        ],
+        "id": "tested",
+        "label": "Federation modules referenced by tests",
+        "note": null,
+        "num": 15,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         ".github/workflows/ariana-cicd.yml",
+         ".github/workflows/codespace-federation.yml",
+         ".github/workflows/creq-federation-ci.yml",
+         ".github/workflows/cryoplant-federation.yml",
+         ".github/workflows/cycle2-temporal-pca-independent-consumer.yml",
+         ".github/workflows/federation-delivery-consumer.yml",
+         ".github/workflows/federation-notebook.yml",
+         ".github/workflows/gg-math-temporal-pca-exact-live-dow.yml"
+        ],
+        "id": "ci",
+        "label": "A workflow covers federation",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "files": 156,
+       "modules": 20,
+       "peers_outside_atlas": [
+        "awesome",
+        "codespace_jyperter",
+        "codespaces-jupyter",
+        "CODESPACES_jyperter",
+        "CoolProp",
+        "cryo_leak_rate_dashboard",
+        "cryogenic-accelerator-workspace",
+        "cryoplant-project",
+        "document-organization-system",
+        "DOCX_RTM_Automation",
+        "GBOGEB-profile",
+        "GBOGEB-PROGRAM-COOL",
+        "GEMINI",
+        "gg_MATH",
+        "github_Documents",
+        "morris.js",
+        "OMI_PTIT",
+        "openai-cookbook",
+        "orchestration-sandbox",
+        "other",
+        "plotly.py",
+        "prettier",
+        "Q_engineering_tools",
+        "skills-introduction-to-github",
+        "stale",
+        "tesseract",
+        "the-book-of-secret-knowledge",
+        "vscode",
+        "welcome-_-test",
+        "WRONG"
+       ],
+       "peers_referenced": 33
+      },
+      "score": 90.0,
+      "status": "GREEN"
+     },
+     "mip": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 3,
+        "evidence": [],
+        "id": "stages",
+        "label": "MIP stages referenced (Modernize, Innovate, Perpetuate)",
+        "note": null,
+        "num": 3,
+        "weight": 2
+       },
+       {
+        "completion": 0.9919,
+        "den": 124,
+        "evidence": [
+         "architecture/w109/W109_MESH_EXECUTION_TAXONOMY_3PC_MIP.yaml"
+        ],
+        "id": "receipts",
+        "label": "MIP data/receipts parse",
+        "note": null,
+        "num": 123,
+        "weight": 1
+       },
+       {
+        "completion": 0.9014,
+        "den": 71,
+        "evidence": [
+         "MIP/EVIDENCE_TO_ADMISSION_OBSERVATORY/global/qa_playwright.py",
+         "MIP/G3CS_CONVERGENCE_V2/source/build_snapshot.py",
+         "MIP/G3CS_CONVERGENCE_V2/tools/qa_html.py",
+         "integration/codespace_jyperter/scripts/mip_surface_self_index.py",
+         "runtime/federation/w259_method_cards_independent_dow.py",
+         "scripts/mip_health_selfheal_probe.py",
+         "scripts/mip_verify_self_index.py"
+        ],
+        "id": "tested",
+        "label": "MIP modules referenced by tests",
+        "note": null,
+        "num": 64,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         ".github/workflows/bootstrap-integration.yml",
+         ".github/workflows/ci-governance.yml",
+         ".github/workflows/code-purple-dashboard-v31.yml",
+         ".github/workflows/code-purple-evidence-observatory.yml",
+         ".github/workflows/mip-bminus1-worker-contract.yml",
+         ".github/workflows/mip-coverage-evidence.yml",
+         ".github/workflows/mip-n2-self-index.yml",
+         ".github/workflows/mip-py310-combined-head-probe.yml"
+        ],
+        "id": "ci",
+        "label": "A workflow covers MIP",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "ci_workflows": 24,
+       "files": 331,
+       "modules": 71,
+       "stages": [
+        "modernize",
+        "innovate",
+        "perpetuate"
+       ]
+      },
+      "score": 96.6,
+      "status": "GREEN"
+     },
+     "sql": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [],
+        "id": "no_db_binaries",
+        "label": "No database binaries tracked",
+        "note": null,
+        "num": 1,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [],
+        "id": "guarded_ddl",
+        "label": "DROP TABLE guarded with IF EXISTS",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       },
+       {
+        "completion": 1.0,
+        "den": 58,
+        "evidence": [],
+        "id": "parameterised",
+        "label": "Queries parameterised (no f-string/format/concat)",
+        "note": null,
+        "num": 58,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [],
+        "id": "referenced",
+        "label": "SQL files referenced by code",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "db_binaries": 0,
+       "execute_calls": 58,
+       "modules_using_sql": 11,
+       "sql_files": 1
+      },
+      "score": 100.0,
+      "status": "GREEN"
+     },
+     "testing": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [],
+        "id": "ratio",
+        "label": "Test files per module (target 0.5)",
+        "note": "550 test files / 686 modules = 0.80",
+        "num": 1,
+        "weight": 2
+       },
+       {
+        "completion": 0.9869,
+        "den": 533,
+        "evidence": [
+         "DMAIC_V3/generators/test_real_execution.py",
+         "mission_control_lite/test_family_telemetry.py",
+         "scripts/test_admission_census.py",
+         "scripts/test_evidence_census.py",
+         "tests/test_g3cs_spine_w11_bridge.py",
+         "tests/test_handover_v2_native_bridge.py",
+         "tools/everred_v3/sut_gui/test_observability.py"
+        ],
+        "id": "non_empty",
+        "label": "Test files define tests",
+        "note": null,
+        "num": 526,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         ".github/workflows/abacus-cicd.yml",
+         ".github/workflows/abacus-missioncontrol-stage-contract-qa.yml",
+         ".github/workflows/ariana-cicd.yml",
+         ".github/workflows/background_orchestrator.yml",
+         ".github/workflows/bandit-disjoint-census.yml",
+         ".github/workflows/bd-w1-three-pulse-regression.yml",
+         ".github/workflows/book-build.yml",
+         ".github/workflows/bootstrap-integration.yml"
+        ],
+        "id": "ci",
+        "label": "A workflow runs pytest/unittest",
+        "note": null,
+        "num": 1,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         "pytest.ini"
+        ],
+        "id": "config",
+        "label": "pytest configuration present",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "ci_workflows_running_tests": 112,
+       "modules": 686,
+       "test_files": 550,
+       "test_functions": 5626
+      },
+      "score": 99.6,
+      "status": "GREEN"
+     }
+    },
+    "overall": 93.8,
+    "status": "GREEN"
+   },
+   "CODEX": {
+    "dimensions": {
+     "bridge": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 0.6818,
+        "den": 22,
+        "evidence": [
+         "core_bridge/absorb.py",
+         "runtime_engine/orchestration_bridge.py",
+         "scripts/bridge_orchestrator.py",
+         "scripts/bridge_rtm_ingress.py",
+         "scripts/validate_bridge_rows.py",
+         "scripts/validate_qps_w111_power_utility_bridge.py",
+         "src/orchestration/semantic_runtime_pipeline_bridge_v1.py"
+        ],
+        "id": "tested",
+        "label": "Bridge modules referenced by tests",
+        "note": null,
+        "num": 15,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 40,
+        "evidence": [],
+        "id": "data",
+        "label": "Bridge data files parse",
+        "note": null,
+        "num": 40,
+        "weight": 1
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         ".github/workflows/aht-check-control.yml",
+         ".github/workflows/build-clarification-bridge.yml",
+         ".github/workflows/ci.yml",
+         ".github/workflows/confluence-github-bridge-phase0.yml",
+         ".github/workflows/dashboard-health.yml",
+         ".github/workflows/full-stack-governance.yml",
+         ".github/workflows/gg-math-temporal-pca-keb-atom.yml",
+         ".github/workflows/gm-i-a-coolprop-fast-heavy-keb-p002.yml"
+        ],
+        "id": "ci",
+        "label": "A workflow covers bridges",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "files": 114,
+       "modules": 22,
+       "peers_referenced": [
+        "ABACUS",
+        "ANTHROPIC",
+        "ARTSTYLE",
+        "CODEX",
+        "CoolProp",
+        "cryoplant-project",
+        "DOCX_RTM_Automation",
+        "GEMINI",
+        "gg_MATH",
+        "inkscape",
+        "not-owner",
+        "pipeline-automation-hub",
+        "QPLANT",
+        "SUPERPIPELINE"
+       ]
+      },
+      "score": 84.1,
+      "status": "GREEN"
+     },
+     "code": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 830,
+        "evidence": [],
+        "id": "syntax",
+        "label": "Python files parse (ast)",
+        "note": null,
+        "num": 830,
+        "weight": 3
+       },
+       {
+        "completion": 0.9976,
+        "den": 830,
+        "evidence": [
+         "tools/method_atlas/build_method_atlas.py",
+         "tools/pid_semantic_parser.py"
+        ],
+        "id": "size",
+        "label": "Files at most 800 lines",
+        "note": null,
+        "num": 828,
+        "weight": 1
+       },
+       {
+        "completion": 0.9988,
+        "den": 830,
+        "evidence": [
+         "analytics/qps_thermo_dashboard/build_qps_thermo_dashboard.py"
+        ],
+        "id": "warnings",
+        "label": "No SyntaxWarnings (e.g. invalid escape sequences)",
+        "note": null,
+        "num": 829,
+        "weight": 1
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         "CI: .github/workflows/ci.yml",
+         "CI: .github/workflows/code-purple-branch-protection-mip-v2.yml",
+         "CI: .github/workflows/code-purple-branch-protection-mip.yml",
+         "CI: .github/workflows/code-purple-midwave-testflight.yml",
+         "CI: .github/workflows/code-purple-rex-control.yml",
+         "CI: .github/workflows/quality-ubi-testflight.yml",
+         "CI: .github/workflows/renderer-lint.yml",
+         "CI: .github/workflows/runtime-governance-gate.yml"
+        ],
+        "id": "lint",
+        "label": "Lint configured or run in CI (ruff/flake8/pylint)",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       },
+       {
+        "completion": 0.996,
+        "den": 1,
+        "evidence": [],
+        "id": "markers",
+        "label": "TODO/FIXME debt under 5 per kLOC",
+        "note": "2 markers, 0.02 per kLOC",
+        "num": 0.9960457506648082,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "large_files": 2,
+       "loc": 101157,
+       "markers": 2,
+       "parse_failures": 0,
+       "python_files": 830,
+       "syntax_warnings": 1
+      },
+      "score": 99.9,
+      "status": "GREEN"
+     },
+     "dmaic": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 5,
+        "evidence": [],
+        "id": "phases",
+        "label": "DMAIC phases referenced (D, M, A, I, C)",
+        "note": null,
+        "num": 5,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         "docs/data/missioncontrol_control_events.json",
+         "docs/data/missioncontrol_control_plane.json",
+         "mission_control/mycelium/control_events.json",
+         "mission_control/mycelium/control_manifest.yaml",
+         "mission_control/mycelium/control_plane_projection.json",
+         "mission_control/mycelium/evidence/abacus_dab_return_1501_measured.json",
+         "mission_control/mycelium/evidence/abacus_post_1636_ci_first_red_1640.json",
+         "mission_control/mycelium/reentry_v0_2.yaml"
+        ],
+        "id": "control_artefacts",
+        "label": "Machine-readable Control artefacts exist",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       },
+       {
+        "completion": 0.55,
+        "den": 20,
+        "evidence": [
+         "core_bridge/absorb.py",
+         "docs/wave_packages/runtime/dmaic_telemetry_stats.py",
+         "docs/wave_packages/runtime/metrics_maturity.py",
+         "orchestrate.py",
+         "runtime_engine/dmaic_runtime_tracker.py",
+         "scripts/bridge_rtm_ingress.py",
+         "scripts/orchestrate.py",
+         "scripts/validate_dmaic_phase_map.py"
+        ],
+        "id": "tested",
+        "label": "DMAIC modules referenced by tests",
+        "note": null,
+        "num": 11,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 40,
+        "evidence": [],
+        "id": "data",
+        "label": "DMAIC data files parse",
+        "note": null,
+        "num": 40,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "files": 74,
+       "modules": 20,
+       "phases": [
+        "define",
+        "measure",
+        "analyze",
+        "improve",
+        "control"
+       ]
+      },
+      "score": 85.0,
+      "status": "GREEN"
+     },
+     "docker": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 2,
+        "evidence": [],
+        "id": "pinned",
+        "label": "Base images pinned (tag or digest, not latest)",
+        "note": null,
+        "num": 2,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [],
+        "id": "user",
+        "label": "Runs as a non-root USER",
+        "note": null,
+        "num": 1,
+        "weight": 2
+       },
+       {
+        "completion": 0.0,
+        "den": 1,
+        "evidence": [
+         "Dockerfile"
+        ],
+        "id": "healthcheck",
+        "label": "HEALTHCHECK declared",
+        "note": null,
+        "num": 0,
+        "weight": 1
+       },
+       {
+        "completion": 0.0,
+        "den": 1,
+        "evidence": [
+         "Dockerfile"
+        ],
+        "id": "dockerignore",
+        "label": ".dockerignore present",
+        "note": null,
+        "num": 0,
+        "weight": 1
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         ".github/workflows/w93-docker-deployment-proof.yml"
+        ],
+        "id": "ci_build",
+        "label": "A workflow builds an image",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [],
+        "id": "compose",
+        "label": "Compose files parse",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "base_images": 2,
+       "compose_files": 1,
+       "dockerfiles": 1
+      },
+      "score": 75.0,
+      "status": "AMBER"
+     },
+     "federation": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 174,
+        "evidence": [],
+        "id": "data",
+        "label": "Federation data files parse",
+        "note": null,
+        "num": 174,
+        "weight": 2
+       },
+       {
+        "completion": 0.7097,
+        "den": 31,
+        "evidence": [
+         "docs/wave_packages/runtime/federation_repo_coverage.py",
+         "federation_runtime/engines/html_renderer.py",
+         "runtime/debug/qps_debug_federation_consumer.py",
+         "scripts/check_federation_governance.py",
+         "scripts/qa_missioncontrol_federated_launchpad.py",
+         "scripts/qps_federated_lldb_exec.py",
+         "scripts/validate_federation_metric_semantics.py",
+         "scripts/validate_w285_federation_depth_semantics.py"
+        ],
+        "id": "tested",
+        "label": "Federation modules referenced by tests",
+        "note": null,
+        "num": 22,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         ".github/workflows/bd-workflow-frequency-telemetry.yml",
+         ".github/workflows/ci.yml",
+         ".github/workflows/code-purple-convergence-control-w32.yml",
+         ".github/workflows/code-purple-dov-w36.yml",
+         ".github/workflows/code-purple-dov-w37-browser.yml",
+         ".github/workflows/code-purple-nvector-handover.yml",
+         ".github/workflows/code-purple-rex-control.yml",
+         ".github/workflows/codex-adversarial-governance-replay.yml"
+        ],
+        "id": "ci",
+        "label": "A workflow covers federation",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "files": 301,
+       "modules": 31,
+       "peers_outside_atlas": [
+        "ANTHROPIC",
+        "ARTSTYLE",
+        "attest-build-provenance",
+        "awesome",
+        "awesome-deep-learning",
+        "Awesome-Hacking",
+        "awesome-sysadmin",
+        "awesome-system-design-resources",
+        "cli",
+        "codespaces-jupyter",
+        "CODESPACES_jyperter",
+        "codex-universal",
+        "CoolProp",
+        "cryo_leak_rate_dashboard",
+        "cryogenic-accelerator-workspace",
+        "cryoplant-project",
+        "dmaic-recursive-pipeline",
+        "dmaic-recursive-pipeline_ALL_agennts-CP-G5-GEM-ABAC-as-4-sources",
+        "docker-stacks",
+        "document-organization-system",
+        "DOCX_RTM_Automation",
+        "Edit_WORD_Roundtrip",
+        "eslint-config-prettier",
+        "example",
+        "GEMINI",
+        "gg_MATH",
+        "github-mcp-server",
+        "github_Documents",
+        "grid-table-editor",
+        "markdownlint",
+        "notebook",
+        "openai-cookbook",
+        "openai-node",
+        "orchestration-sandbox",
+        "plotly.py",
+        "prettier",
+        "prettier-vscode",
+        "python",
+        "python-sdk",
+        "Q_engineering_tools",
+        "QPLANT",
+        "qplant-system-v0-1-1-dmaic2-temp",
+        "RouteLLM",
+        "scientific-agent-skills",
+        "skills",
+        "SUPERPIPELINE",
+        "tesseract",
+        "the-book-of-secret-knowledge",
+        "yaml-grammar",
+        "yaml-reference-parser"
+       ],
+       "peers_referenced": 53
+      },
+      "score": 88.4,
+      "status": "GREEN"
+     },
+     "mip": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 3,
+        "evidence": [],
+        "id": "stages",
+        "label": "MIP stages referenced (Modernize, Innovate, Perpetuate)",
+        "note": null,
+        "num": 3,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 60,
+        "evidence": [],
+        "id": "receipts",
+        "label": "MIP data/receipts parse",
+        "note": null,
+        "num": 60,
+        "weight": 1
+       },
+       {
+        "completion": 0.8235,
+        "den": 17,
+        "evidence": [
+         "scripts/build_m4_crosswalk.py",
+         "scripts/validate_w259_p4_method_cards_knowledge_atom.py",
+         "scripts/validate_w259_p4_method_cards_source_receipt.py"
+        ],
+        "id": "tested",
+        "label": "MIP modules referenced by tests",
+        "note": null,
+        "num": 14,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         ".github/workflows/code-purple-branch-protection-mip-v2.yml",
+         ".github/workflows/code-purple-branch-protection-mip.yml",
+         ".github/workflows/code-purple-convergence-control-w32.yml",
+         ".github/workflows/code-purple-midwave-testflight.yml",
+         ".github/workflows/lldb-dap-swift-docker-runner-mcp.yml",
+         ".github/workflows/mip-external-child-proof.yml",
+         ".github/workflows/mip-n2-self-index.yml",
+         ".github/workflows/mip-qps-external-probe.yml"
+        ],
+        "id": "ci",
+        "label": "A workflow covers MIP",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "ci_workflows": 14,
+       "files": 102,
+       "modules": 17,
+       "stages": [
+        "modernize",
+        "innovate",
+        "perpetuate"
+       ]
+      },
+      "score": 94.1,
+      "status": "GREEN"
+     },
+     "sql": {
+      "applicable": false,
+      "checks": [],
+      "metrics": {},
+      "score": null,
+      "status": "NA"
+     },
+     "testing": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 0.9301,
+        "den": 1,
+        "evidence": [],
+        "id": "ratio",
+        "label": "Test files per module (target 0.5)",
+        "note": "253 test files / 544 modules = 0.47",
+        "num": 0.9301470588235294,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 248,
+        "evidence": [],
+        "id": "non_empty",
+        "label": "Test files define tests",
+        "note": null,
+        "num": 248,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         ".github/workflows/abacus-multiformat-publication.yml",
+         ".github/workflows/aht-check-control.yml",
+         ".github/workflows/branch-hygiene.yml",
+         ".github/workflows/build-clarification-bridge.yml",
+         ".github/workflows/ci.yml",
+         ".github/workflows/code-purple-branch-protection-mip-v2.yml",
+         ".github/workflows/code-purple-branch-protection-mip.yml",
+         ".github/workflows/code-purple-convergence-control-w32.yml"
+        ],
+        "id": "ci",
+        "label": "A workflow runs pytest/unittest",
+        "note": null,
+        "num": 1,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         "conftest.py",
+         "pyproject.toml [tool.pytest]"
+        ],
+        "id": "config",
+        "label": "pytest configuration present",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "ci_workflows_running_tests": 56,
+       "modules": 544,
+       "test_files": 253,
+       "test_functions": 1943
+      },
+      "score": 98.0,
+      "status": "GREEN"
+     }
+    },
+    "overall": 89.2,
+    "status": "GREEN"
+   },
+   "HUB": {
+    "dimensions": {
+     "bridge": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 9,
+        "evidence": [],
+        "id": "tested",
+        "label": "Bridge modules referenced by tests",
+        "note": null,
+        "num": 9,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 7,
+        "evidence": [],
+        "id": "data",
+        "label": "Bridge data files parse",
+        "note": null,
+        "num": 7,
+        "weight": 1
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         ".github/workflows/code-purple-abacus-mip-readonly.yml",
+         ".github/workflows/code-purple-method-atlas.yml",
+         ".github/workflows/g3a-metric-consumer.yml",
+         ".github/workflows/g3p-live-ledger-qa.yml",
+         ".github/workflows/gg-math-convergence-bridge.yml",
+         ".github/workflows/gm-fleet-02b.yml",
+         ".github/workflows/gm-fleet-03-f01-pilot.yml",
+         ".github/workflows/gm-i-b-cycle3-propagation-contract.yml"
+        ],
+        "id": "ci",
+        "label": "A workflow covers bridges",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "files": 28,
+       "modules": 9,
+       "peers_referenced": [
+        "ABACUS",
+        "CODEX",
+        "cryoplant-project",
+        "gg_MATH",
+        "other",
+        "pipeline-automation-hub",
+        "Q_engineering_tools"
+       ]
+      },
+      "score": 100.0,
+      "status": "GREEN"
+     },
+     "code": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 530,
+        "evidence": [],
+        "id": "syntax",
+        "label": "Python files parse (ast)",
+        "note": null,
+        "num": 530,
+        "weight": 3
+       },
+       {
+        "completion": 0.9962,
+        "den": 530,
+        "evidence": [
+         "excel_schedule_engine/src/schedule_projection.py",
+         "mission-control/gogreen/mycelium_history/history.py"
+        ],
+        "id": "size",
+        "label": "Files at most 800 lines",
+        "note": null,
+        "num": 528,
+        "weight": 1
+       },
+       {
+        "completion": 0.9981,
+        "den": 530,
+        "evidence": [
+         "mission-control/federation-atlas/test_federation_latest_overlay.py"
+        ],
+        "id": "warnings",
+        "label": "No SyntaxWarnings (e.g. invalid escape sequences)",
+        "note": null,
+        "num": 529,
+        "weight": 1
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         "CI: .github/workflows/gm-dab-flake8-propagation.yml"
+        ],
+        "id": "lint",
+        "label": "Lint configured or run in CI (ruff/flake8/pylint)",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [],
+        "id": "markers",
+        "label": "TODO/FIXME debt under 5 per kLOC",
+        "note": "0 markers, 0.00 per kLOC",
+        "num": 1.0,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "large_files": 2,
+       "loc": 86758,
+       "markers": 0,
+       "parse_failures": 0,
+       "python_files": 530,
+       "syntax_warnings": 1
+      },
+      "score": 99.9,
+      "status": "GREEN"
+     },
+     "dmaic": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 5,
+        "evidence": [],
+        "id": "phases",
+        "label": "DMAIC phases referenced (D, M, A, I, C)",
+        "note": null,
+        "num": 5,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         ".github/workflows/hm01-r3-dmaic-control.yml",
+         "docs/mission-control/m3/state.json",
+         "mission-control/federation-atlas/CI_FAILURE_TRIAGE_20261013_v1.json",
+         "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
+         "mission-control/federation-atlas/CODE_PURPLE_BEAMS_DAG_v1.json",
+         "mission-control/federation-atlas/CODE_PURPLE_ITERATION_SERIES_v1.json",
+         "mission-control/federation-atlas/CPQ_I2_NATIVE_READBACK_20261017.json",
+         "mission-control/federation-atlas/METHOD_OBSERVABILITY_v1.json"
+        ],
+        "id": "control_artefacts",
+        "label": "Machine-readable Control artefacts exist",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       },
+       {
+        "completion": 0.8519,
+        "den": 27,
+        "evidence": [
+         "mission-control/federation-atlas/flightdeck/office_export.py",
+         "mission-control/grand-missions/validate_r3_dmaic_control.py",
+         "mission-control/grand-missions/validate_r3_dmaic_w285_3pr.py",
+         "mission-control/v2/validate_mission_control_v2.py"
+        ],
+        "id": "tested",
+        "label": "DMAIC modules referenced by tests",
+        "note": null,
+        "num": 23,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 84,
+        "evidence": [],
+        "id": "data",
+        "label": "DMAIC data files parse",
+        "note": null,
+        "num": 84,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "files": 125,
+       "modules": 27,
+       "phases": [
+        "define",
+        "measure",
+        "analyze",
+        "improve",
+        "control"
+       ]
+      },
+      "score": 95.1,
+      "status": "GREEN"
+     },
+     "docker": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [],
+        "id": "pinned",
+        "label": "Base images pinned (tag or digest, not latest)",
+        "note": null,
+        "num": 1,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [],
+        "id": "user",
+        "label": "Runs as a non-root USER",
+        "note": null,
+        "num": 1,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [],
+        "id": "healthcheck",
+        "label": "HEALTHCHECK declared",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       },
+       {
+        "completion": 0.0,
+        "den": 1,
+        "evidence": [
+         "mission-control/federation-atlas/live-census/Dockerfile"
+        ],
+        "id": "dockerignore",
+        "label": ".dockerignore present",
+        "note": null,
+        "num": 0,
+        "weight": 1
+       },
+       {
+        "completion": 0.0,
+        "den": 1,
+        "evidence": [],
+        "id": "ci_build",
+        "label": "A workflow builds an image",
+        "note": null,
+        "num": 0,
+        "weight": 1
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [],
+        "id": "compose",
+        "label": "Compose files parse",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "base_images": 1,
+       "compose_files": 1,
+       "dockerfiles": 1
+      },
+      "score": 75.0,
+      "status": "AMBER"
+     },
+     "federation": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 0.9929,
+        "den": 141,
+        "evidence": [
+         "mission-control/qps-triage-ultra/missions/receipts/LM11_QPS_WAVE_FEDERATION_20260917_v1.yaml"
+        ],
+        "id": "data",
+        "label": "Federation data files parse",
+        "note": null,
+        "num": 140,
+        "weight": 2
+       },
+       {
+        "completion": 0.8608,
+        "den": 79,
+        "evidence": [
+         "mission-control/federation-atlas/convergence_browser_qa.py",
+         "mission-control/federation-atlas/flightdeck/office_export.py",
+         "mission-control/federation-atlas/flightdeck/qa_browser.py",
+         "mission-control/federation-atlas/m3_session/m3_browser_qa.py",
+         "mission-control/federation-atlas/m3_session/m3_offline_browser_qa.py",
+         "mission-control/federation-atlas/mission_rebuild/n3_browser_qa.py",
+         "mission-control/federation-atlas/mission_rebuild/w2_browser_qa.py",
+         "mission-control/federation-atlas/superstitch/visual_pattern_scanner.py"
+        ],
+        "id": "tested",
+        "label": "Federation modules referenced by tests",
+        "note": null,
+        "num": 68,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         ".github/workflows/bd-workflow-frequency-telemetry.yml",
+         ".github/workflows/code-purple-abacus-mip-readonly.yml",
+         ".github/workflows/code-purple-cbq-ch-bd-pulse.yml",
+         ".github/workflows/code-purple-live-census.yml",
+         ".github/workflows/code-purple-m3-lossless.yml",
+         ".github/workflows/code-purple-method-atlas.yml",
+         ".github/workflows/cp-close-github-qa.yml",
+         ".github/workflows/cp-fed-census-w4-qa.yml"
+        ],
+        "id": "ci",
+        "label": "A workflow covers federation",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "files": 405,
+       "modules": 79,
+       "peers_outside_atlas": [
+        "anthropic",
+        "ariana",
+        "ARTSTYLE-WIP",
+        "attest-build-provenance",
+        "awesome",
+        "awesome-deep-learning",
+        "Awesome-Hacking",
+        "awesome-sysadmin",
+        "awesome-system-design-resources",
+        "camelot",
+        "cli",
+        "code-prettify",
+        "codespaces-jupyter",
+        "CODESPACES_jyperter",
+        "codex-universal",
+        "CoolProp",
+        "cryo_leak_rate_dashboard",
+        "cryogenic-accelerator-workspace",
+        "cryogenic-compliance",
+        "cryoplant-project",
+        "css-protips",
+        "dmaic-recursive-pipeline",
+        "dmaic-recursive-pipeline_ALL_agennts-CP-G5-GEM-ABAC-as-4-sources",
+        "docker-stacks",
+        "document-organization-system",
+        "document-organization-system_GBOGEB",
+        "DOCX_RTM_Automation",
+        "downloads-organization",
+        "Edit_WORD_Roundtrip",
+        "Encode-Sans",
+        "eslint-config-prettier",
+        "ExcelAddinInstaller",
+        "ExplorerPatcher",
+        "GBOGEB-profile",
+        "GBOGEB-PROGRAM-COOL",
+        "GEMINI",
+        "gg_MATH",
+        "github-mcp-server",
+        "github_documentorganisatiesysteem_GBOGEB",
+        "github_Documents",
+        "gk-cli",
+        "gpt_session_toolkit",
+        "grid-table-editor",
+        "haikus-for-codespaces",
+        "inkscape",
+        "markdownlint",
+        "morris.js",
+        "node-glob",
+        "notebook",
+        "omi",
+        "OMI_PTIT",
+        "openai-cookbook",
+        "openai-node",
+        "orchestration-sandbox",
+        "other",
+        "plotly.py",
+        "prettier",
+        "prettier-eslint",
+        "prettier-vscode",
+        "python",
+        "python-proofreader",
+        "python-sdk",
+        "Q_engineering_tools",
+        "qplant-system-v0-1-1-dmaic2-temp",
+        "RouteLLM",
+        "scientific-agent-skills",
+        "segment-anything",
+        "skills",
+        "skills-introduction-to-github",
+        "stale",
+        "telegraf",
+        "tesseract",
+        "the-book-of-secret-knowledge",
+        "unknown",
+        "vscode",
+        "vscode-drawio",
+        "vscode-emacs-mcx",
+        "vscode-powershell",
+        "welcome-_-test",
+        "x",
+        "yaml-grammar",
+        "yaml-reference-parser"
+       ],
+       "peers_referenced": 86
+      },
+      "score": 94.1,
+      "status": "GREEN"
+     },
+     "mip": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 3,
+        "evidence": [],
+        "id": "stages",
+        "label": "MIP stages referenced (Modernize, Innovate, Perpetuate)",
+        "note": null,
+        "num": 3,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 160,
+        "evidence": [],
+        "id": "receipts",
+        "label": "MIP data/receipts parse",
+        "note": null,
+        "num": 160,
+        "weight": 1
+       },
+       {
+        "completion": 0.8,
+        "den": 35,
+        "evidence": [
+         "mission-control/grand-missions/analytics/validate_gm_i_a_multiclock_3pstar_mip.py",
+         "mission-control/grand-missions/validate_gm_fleet_3pstar_mip_v4.py",
+         "mission-control/grand-missions/validate_gm_i_c_3pr_mip.py",
+         "mission-control/grand-missions/validate_gm_v_3pstar_mip_control.py",
+         "mission-control/jade_temple/tools/run_eight_browser_qa.py",
+         "mission-control/runner-economics/validate_runner_fanout_mip.py",
+         "mission-control/v2/validate_mission_control_v2.py"
+        ],
+        "id": "tested",
+        "label": "MIP modules referenced by tests",
+        "note": null,
+        "num": 28,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         ".github/workflows/code-purple-abacus-mip-readonly.yml",
+         ".github/workflows/code-purple-method-atlas.yml",
+         ".github/workflows/crew-temporal-3pr-mip-control-surface.yml",
+         ".github/workflows/crew-temporal-3pstar-mip-burndown.yml",
+         ".github/workflows/gm-fleet-03-ring1-recon.yml",
+         ".github/workflows/gm-fleet-3pstar-mip-v4.yml",
+         ".github/workflows/gm-i-a-multiclock-3pstar-mip.yml",
+         ".github/workflows/gm-i-c-3pr-mip.yml"
+        ],
+        "id": "ci",
+        "label": "A workflow covers MIP",
+        "note": null,
+        "num": 1,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "ci_workflows": 21,
+       "files": 249,
+       "modules": 35,
+       "stages": [
+        "modernize",
+        "innovate",
+        "perpetuate"
+       ]
+      },
+      "score": 93.3,
+      "status": "GREEN"
+     },
+     "sql": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [],
+        "id": "no_db_binaries",
+        "label": "No database binaries tracked",
+        "note": null,
+        "num": 1,
+        "weight": 2
+       },
+       {
+        "completion": null,
+        "den": 0,
+        "evidence": [],
+        "id": "guarded_ddl",
+        "label": "DROP TABLE guarded with IF EXISTS",
+        "note": null,
+        "num": 0,
+        "weight": 1
+       },
+       {
+        "completion": 1.0,
+        "den": 28,
+        "evidence": [],
+        "id": "parameterised",
+        "label": "Queries parameterised (no f-string/format/concat)",
+        "note": null,
+        "num": 28,
+        "weight": 2
+       },
+       {
+        "completion": null,
+        "den": 0,
+        "evidence": [],
+        "id": "referenced",
+        "label": "SQL files referenced by code",
+        "note": null,
+        "num": 0,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "db_binaries": 0,
+       "execute_calls": 28,
+       "modules_using_sql": 2,
+       "sql_files": 0
+      },
+      "score": 100.0,
+      "status": "GREEN"
+     },
+     "testing": {
+      "applicable": true,
+      "checks": [
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [],
+        "id": "ratio",
+        "label": "Test files per module (target 0.5)",
+        "note": "220 test files / 307 modules = 0.72",
+        "num": 1,
+        "weight": 2
+       },
+       {
+        "completion": 0.9771,
+        "den": 218,
+        "evidence": [
+         "mission-control/grand-missions/test_crew_rex_bridge_semantics.py",
+         "mission-control/grand-missions/test_gm_iv_forward_gate_safety.py",
+         "mission-control/qps-triage-ultra/crew/measured/test_negative_evidence_retention.py",
+         "mission-control/qps-triage-ultra/crew/measured/test_rex_runtime_control.py",
+         "mission-control/v2/test_n3_handoff_github_first.py"
+        ],
+        "id": "non_empty",
+        "label": "Test files define tests",
+        "note": null,
+        "num": 213,
+        "weight": 2
+       },
+       {
+        "completion": 1.0,
+        "den": 1,
+        "evidence": [
+         ".github/workflows/branch-hygiene.yml",
+         ".github/workflows/code-purple-abacus-mip-readonly.yml",
+         ".github/workflows/code-purple-cbq-ch-bd-pulse.yml",
+         ".github/workflows/code-purple-live-census.yml",
+         ".github/workflows/code-purple-m3-lossless.yml",
+         ".github/workflows/code-purple-method-atlas.yml",
+         ".github/workflows/code-purple-mycelium-history.yml",
+         ".github/workflows/code-purple-session-hook.yml"
+        ],
+        "id": "ci",
+        "label": "A workflow runs pytest/unittest",
+        "note": null,
+        "num": 1,
+        "weight": 2
+       },
+       {
+        "completion": 0.0,
+        "den": 1,
+        "evidence": [],
+        "id": "config",
+        "label": "pytest configuration present",
+        "note": null,
+        "num": 0,
+        "weight": 1
+       }
+      ],
+      "metrics": {
+       "ci_workflows_running_tests": 72,
+       "modules": 307,
+       "test_files": 220,
+       "test_functions": 2823
+      },
+      "score": 85.1,
+      "status": "GREEN"
+     }
+    },
+    "overall": 92.8,
+    "status": "GREEN"
+   }
+  },
+  "thresholds": {
+   "amber": 50,
+   "green": 80
+  }
+ },
  "ledger": {
   "entries": [
    {
@@ -19292,7 +21127,7 @@
    "present": true,
    "remote": "GBOGEB/CODEX",
    "role": "Control plane, Mycelium, Mission Control atlas host",
-   "tracked_files": 2717
+   "tracked_files": 2718
   },
   {
    "branch": "main",
@@ -20266,7 +22101,7 @@
     "use": "Distinguish coordinated tranche / source receipt / independently owned edit"
    },
    {
-    "files": 679,
+    "files": 680,
     "id": "MIP",
     "label": "Modernize Innovate Perpetuate",
     "not": "A native CI pass by itself",
@@ -20274,7 +22109,7 @@
     "use": "Recursive improvement with measurable controls"
    },
    {
-    "files": 1234,
+    "files": 1236,
     "id": "DMAIC",
     "label": "Define Measure Analyze Improve Control",
     "not": "Evidence of merger",

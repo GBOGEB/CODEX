@@ -40,6 +40,9 @@ from pathlib import Path
 
 import yaml
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from health import build_health  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[2]
 SEED = ROOT / "tools/method_atlas/method_atlas_seed.yaml"
 OUT_DIR = ROOT / "docs/method_atlas"
@@ -961,6 +964,7 @@ def build(seed_path: Path = SEED, overrides: dict | None = None) -> tuple[dict, 
         "spline": build_spline(seed, dag["blocks"]),
         "orchestration": build_orchestration(seed, files, roots, file_lanes),
         "ledger": build_ledger(seed, files, roots, file_lanes, oids),
+        "health": build_health(seed, files, roots),
     }
     atlas["digest"] = hashlib.sha256(json.dumps(atlas, sort_keys=True, separators=(",", ":"),
                                                 ensure_ascii=True).encode()).hexdigest()

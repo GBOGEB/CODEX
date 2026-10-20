@@ -265,3 +265,47 @@ def test_committed_projection_matches_committed_json():
     assert mmd.startswith("flowchart LR\n")
     for e in data["dag"]["edges"]:
         assert atlas.mid(e["source"]) in mmd and atlas.mid(e["target"]) in mmd
+
+
+def test_health_dimensions_on_synthetic_repo(tmp_path):
+    from health import build_health, score, status
+    files = {
+        "pkg/a.py": "def f():\n    return 1\n",
+        "pkg/b.py": "X = '\\d'\n",  # invalid escape sequence -> SyntaxWarning
+        "tests/test_a.py": "from pkg import a\n\ndef test_f():\n    assert a.f() == 1\n",
+        "tests/test_empty.py": "# nothing here\n",
+        "Dockerfile": "FROM python:latest\nRUN true\n",
+        "docker-compose.yml": "services:\n  app: {image: x}\n",
+        "data/app.sqlite": "",
+        "db/schema.sql": "DROP TABLE users;\nCREATE TABLE users(id int);\n",
+        "pkg/store.py": "import sqlite3\ncur.execute(f'SELECT * FROM t WHERE id={x}')\ncur.execute('SELECT 1 WHERE a=?', (a,))\n",
+        "dmaic/control_plan.json": '{"phase": "Control"}',
+        "dmaic/README.md": "DMAIC: Define, Measure, Analyze.\n",
+        ".github/workflows/ci.yml": "jobs:\n  t:\n    steps:\n      - run: ruff check . && pytest -q\n",
+    }
+    for rel, text in files.items():
+        (tmp_path / rel).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / rel).write_text(text, encoding="utf-8")
+    s = seed()
+    s["repos"] = [{"id": "R", "path": ".", "remote": "x/R"}]
+    h = build_health(s, {"R": sorted(files)}, {"R": tmp_path})["repos"]["R"]
+    d = h["dimensions"]
+    checks = {dim: {c["id"]: c for c in d[dim]["checks"]} for dim in d}
+
+    assert checks["code"]["syntax"]["completion"] == 1.0
+    assert checks["code"]["warnings"]["evidence"] == ["pkg/b.py"]
+    assert checks["code"]["lint"]["num"] == 1  # ruff runs in CI
+    assert checks["testing"]["non_empty"]["evidence"] == ["tests/test_empty.py"]
+    assert checks["testing"]["ci"]["num"] == 1 and checks["testing"]["config"]["num"] == 0
+    assert checks["dmaic"]["phases"]["num"] == 4 and checks["dmaic"]["control_artefacts"]["num"] == 1
+    assert checks["docker"]["pinned"]["completion"] == 0 and checks["docker"]["user"]["completion"] == 0
+    assert checks["docker"]["ci_build"]["num"] == 0
+    assert checks["sql"]["no_db_binaries"]["evidence"] == ["data/app.sqlite"]
+    assert checks["sql"]["guarded_ddl"]["completion"] == 0
+    assert (checks["sql"]["parameterised"]["num"], checks["sql"]["parameterised"]["den"]) == (1, 2)
+    for dim in ("mip", "bridge", "federation"):
+        assert d[dim]["status"] == "NA" and d[dim]["score"] is None
+    assert h["overall"] == round(sum(x["score"] for x in d.values() if x["score"] is not None)
+                                 / len([x for x in d.values() if x["score"] is not None]), 1)
+    assert score([]) is None and status(None, {"green": 80, "amber": 50}) == "NA"
+    assert status(80, {"green": 80, "amber": 50}) == "GREEN" and status(49.9, {"green": 80, "amber": 50}) == "RED"
