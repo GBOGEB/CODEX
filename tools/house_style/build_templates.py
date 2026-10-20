@@ -34,8 +34,7 @@ REFERENCE_DECK = ("QPS_MTBF_WCS_DMAIC_v7.pptx", "c31553f29d7c590c748165cd3d5b882
 
 
 def swap_content_type(src, dst, old, new):
-    zin = zipfile.ZipFile(src)
-    with zipfile.ZipFile(dst, "w", zipfile.ZIP_DEFLATED) as zout:
+    with zipfile.ZipFile(src) as zin, zipfile.ZipFile(dst, "w", zipfile.ZIP_DEFLATED) as zout:
         for it in zin.infolist():
             data = zin.read(it.filename)
             if it.filename == "[Content_Types].xml":
