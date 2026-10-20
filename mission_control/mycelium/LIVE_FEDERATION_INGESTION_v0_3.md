@@ -88,26 +88,43 @@ authority remain remote. CODEX owns only the UI/orchestration/projection
 contract for this slice.
 
 
-## Hosted proof lane
+## Scheduled refresh
 
-The Pages refresh is complemented by a separate read-only GitHub Actions probe:
+The hourly `missioncontrol-live-federation.yml` probe described in earlier
+drafts of this note was never committed. The refresh that exists is the Pages
+rebuild itself:
 
 ```text
-workflow_dispatch / hourly schedule / relevant PR
-  -> deterministic source-ingestion tests
-  -> live public metadata collection
-  -> exact 40-character head SHA for CODEX / ABACUS / cryoplant-project
-  -> authority/non-promotion assertions
-  -> missioncontrol-live-federation artifact
+pages.yml: workflow_run (Runtime Release Gate success on a main push)
+         | schedule (daily, 05:23 UTC) | workflow_dispatch on main
+  -> resolve: the newest main push that passed Runtime Release Gate
+  -> build that exact commit, run ingest_missioncontrol_sources.py live
+  -> deploy Pages
 ```
 
-The hosted probe does not commit generated state and does not mutate any remote
-authority. Its purpose is independent proof that the live ingestion contract can
-execute against all three repositories even when no Pages rebuild is occurring.
+The schedule and manual runs publish the same release-gated commit the last
+qualifying push would have published; only the live source projection is
+newer. They commit nothing, so they cannot re-trigger any workflow.
 
-Workflow: `.github/workflows/missioncontrol-live-federation.yml`
+`github.token` cannot read the private cryoplant-project repository, so on
+Pages that source stays `STALE_CACHE` from the committed fallback unless the
+owner provides a read-only token.
 
-Schedule: minute 17 of every hour.
+## Committed fallback refresh
 
-The artifact is evidence for the control plane; it is not engineering acceptance
-and it does not grant formal or engineering credit.
+`mission_control/mycelium/source_status.json` is the committed fallback that
+Pages recovers to when a source cannot be read. Refresh it in a reviewed PR
+with:
+
+```bash
+python scripts/ingest_missioncontrol_sources.py --identity-only --emit-events
+python scripts/analyze_missioncontrol_logs.py
+python scripts/build_missioncontrol_metrics.py
+```
+
+`--identity-only` updates only head identity (`status`, `observed_at`,
+`head_sha`, `head_url`, `identity_status`, branch). Curated census and return
+fields stay as they were and keep their own `census_*` SHAs; the previous
+basis is kept as `curated_measurement_basis`. No repository, pull, issue or
+workflow payload is written, so the file stays public metadata only.
+`--emit-events` appends one projection-only event per changed source.
