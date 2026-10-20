@@ -183,5 +183,35 @@ class G3AProtocolTests(unittest.TestCase):
             mod.validate_plan(p)
 
 
+    def test_mixed_terminal_and_pending_checks_cannot_claim_measured(self):
+        for bad_status in ("FAIL", "HOLD", "NOT_RUN"):
+            with self.subTest(status=bad_status):
+                row = receipt("P1", SHA_A, SHA_B)
+                row["checks"].append({
+                    "name": "independent security",
+                    "status": bad_status,
+                    "evidence_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/2",
+                })
+                with self.assertRaisesRegex(ValueError, "all checks PASS"):
+                    mod.reconcile(plan(), [row])
+
+    def test_zero_checks_cannot_claim_measured(self):
+        row = receipt("P1", SHA_A, SHA_B)
+        row["checks"] = []
+        with self.assertRaisesRegex(ValueError, "all checks PASS"):
+            mod.reconcile(plan(), [row])
+
+    def test_homogeneous_two_pass_checks_still_measure_without_admission(self):
+        row = receipt("P1", SHA_A, SHA_B)
+        row["checks"].append({
+            "name": "second native check",
+            "status": "PASS",
+            "evidence_ref": "https://github.com/GBOGEB/ABACUS/actions/runs/3",
+        })
+        report = mod.reconcile(plan(), [row])
+        self.assertEqual(report["source_linked_measured_pulses"], 1)
+        self.assertEqual(report["merge_admission"], "HOLD")
+
+
 if __name__ == "__main__":
     unittest.main()
