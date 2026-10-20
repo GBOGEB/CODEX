@@ -1,0 +1,318 @@
+# Method Atlas v3 seed: hosted in CODEX, consumed by tools/method_atlas/build_method_atlas.py.
+# The seed declares intent (lanes, functional blocks, stages, broker policy).
+# Everything measurable (files, workflows, cron load, queue files, ledgers) is
+# derived from the checkouts at build time; nothing here is a measurement.
+schema: codex.method_atlas.seed.v3
+host_repo: CODEX
+
+# Paths are relative to the CODEX root; override with --repo ID=PATH.
+repos:
+  - id: CODEX
+    path: .
+    remote: GBOGEB/CODEX
+    role: Control plane, Mycelium, Mission Control atlas host
+  - id: ABACUS
+    path: ../ABACUS
+    remote: GBOGEB/ABACUS
+    role: Execution owner, DMAIC/MIP, EVERRED, CODE PURPLE, CODE MAROON
+  - id: HUB
+    path: ../mc-integration
+    remote: GBOGEB/pipeline-automation-hub
+    role: Mission Control portal, GoGREEN cohort, JADE_TEMPLE pilot
+
+# SPINE: the canonical stage order every functional block maps onto.
+spine:
+  - {id: S1_INTAKE, label: Intake, need: 'Accept intent and pin source identity (repo, SHA)'}
+  - {id: S2_CENSUS, label: Census, need: 'Enumerate native populations (files, workflows, runs, findings)'}
+  - {id: S3_CLASSIFY, label: Classify, need: 'Resolve lane, moniker and taxonomy IDs; dedupe manifestations into roots'}
+  - {id: S4_SCHEDULE, label: Schedule, need: 'Order work by dependency and priority; size against runner slots'}
+  - {id: S5_EXECUTE, label: Execute, need: 'Run bounded workers and record receipts'}
+  - {id: S6_VERIFY, label: Verify, need: 'Check inputs exist and outputs are regenerated and in parity'}
+  - {id: S7_PUBLISH, label: Publish, need: 'Render HTML, cards and Mermaid from source JSON'}
+  - {id: S8_CONTROL, label: Control, need: 'Burndown ledger, stop rules, feedback to the next pulse'}
+
+# Canonical lanes. id is identity; display is projection; tag is the label/tag form.
+# canonical_spellings are accepted as-is; any other match of `pattern` is a variant
+# to normalise to `display`.
+lanes:
+  - id: GOGREEN
+    display: GoGREEN
+    tag: lane:gogreen
+    color: '#1f8a4c'
+    meaning: Per-PR GO policy (GO_EXECUTE, GO_PROVE, GO_MERGE, DEFER_NONCRITICAL, SPLIT_CORE, HOLD_REQUIRED, CONTROL_POSTMERGE)
+    not: Federation-wide green or a bypass of required checks
+    source: {repo: ABACUS, path: docs/governance/GOGREEN_CORE_INTENT_ADOPTION.md}
+    pattern: '\bgo[\s_-]?green\b'
+    canonical_spellings: [GoGREEN, GOGREEN, gogreen]
+  - id: MAROON
+    display: CODE MAROON
+    tag: lane:maroon
+    color: '#7a1f35'
+    meaning: Repository review and security debt control plane (manifestation vs root accounting)
+    not: A replacement for CodeQL, Semgrep, Bandit, OSV, review or branch protection
+    source: {repo: ABACUS, path: CODE_MAROON/README.md}
+    pattern: '\b(?:code[\s_-]?)?maroon\b'
+    canonical_spellings: [CODE_MAROON, CODE MAROON, code_maroon, code-maroon]
+  - id: JADE
+    display: JADE
+    tag: lane:jade
+    color: '#0e8f6e'
+    meaning: JADE_TEMPLE / JADE_CASTE Top21 GoGREEN launch-readiness pilot in Mission Control
+    not: A cohort source, CI scheduler, BD root ledger, QPS SSOT or Pages publisher
+    source: {repo: HUB, path: mission-control/jade_temple/README.md}
+    pattern: '\bjade(?:[\s_-]?(?:temple|caste))?\b'
+    canonical_spellings: [JADE, JADE_TEMPLE, JADE_CASTE, jade_temple, jade]
+  - id: EVERRED
+    display: EVERRED
+    tag: lane:everred
+    color: '#b8322a'
+    meaning: Live workflow queue and first-red recovery (queued + in-progress runs, partial-page honesty)
+    not: Runner-slot utilisation, or a sum with BD roots, issues or scanner findings
+    source: {repo: ABACUS, path: docs/ci/EVERRED_QUEUE_VIEW_README.md}
+    pattern: '\bever[\s_-]?red(?:[\s_-]?v\d+)?\b'
+    canonical_spellings: [EVERRED, everred, everred_v3, EVERRED V3, everred-v3]
+  - id: CPURPLE
+    display: CODE PURPLE
+    tag: lane:cpurple
+    color: '#6a35a8'
+    meaning: Execution graph, global DOV live bridge and lossless handover (MERGE_ADMISSION=HOLD)
+    not: Replay-sealed V2 handover or independent security/approval proof
+    source: {repo: ABACUS, path: handover/code_purple_w35_20261018/README.md}
+    pattern: '\b(?:c(?:ode)?[\s_-]?purple|purple[\s_-]?grid)\b'
+    canonical_spellings: [CODE PURPLE, CODE_PURPLE, code_purple, code-purple, C-PURPLE, PURPLEGRID]
+
+# Moniker glossary source (ids, labels, use / not-use); usage is counted at build time.
+monikers:
+  source: {repo: ABACUS, path: handover/code_purple_20261017/MONIKERS.json}
+
+# Functional blocks: what the code must do (need) and what it must produce (outputs).
+# kind: file (tracked path), glob (pattern), runtime (supplied at run time, not in tree),
+# external (remote API).
+blocks:
+  - id: MC.SPINE
+    name: Spine gate
+    repo: CODEX
+    stage: S6_VERIFY
+    lanes: []
+    entry: tools/spine/spine_gate.py
+    need: Gate the public backbone against the spine manifest
+    inputs: [{path: spine/SPINE_MANIFEST.yaml}]
+    outputs: [{path: receipts/spine/SPINE_GATE_RECEIPT.json}]
+    supplier: CODEX maintainers
+    customer: spine-gate workflow
+  - id: MC.INVENTORY
+    name: Mycelium executable inventory
+    repo: CODEX
+    stage: S2_CENSUS
+    lanes: []
+    entry: scripts/regen_missioncontrol_inventory.py
+    need: Register every workflow, script, module and test as an executable asset
+    inputs:
+      - {path: '.github/workflows/*.yml', kind: glob}
+      - {path: 'scripts/*.py', kind: glob}
+      - {path: 'tests/**/*.py', kind: glob}
+    outputs:
+      - {path: mission_control/mycelium/executable_value_report.json}
+      - {path: docs/data/missioncontrol_executable_value_report.json}
+    supplier: Every PR adding a workflow, script or test
+    customer: MissionControl Mycelium preflight parity
+  - id: MC.ATLAS_V2
+    name: Operations Atlas v2 (pinned)
+    repo: CODEX
+    stage: S7_PUBLISH
+    lanes: []
+    entry: scripts/rebuild_missioncontrol_operations_atlas_v2.py
+    need: Project the SHA-pinned eight-family registry graph to HTML and Mermaid
+    inputs: [{path: docs/data/missioncontrol_operations_atlas_v2.json}]
+    outputs:
+      - {path: docs/missioncontrol_operations_atlas.html}
+      - {path: docs/missioncontrol_operations_atlas_v2.mmd}
+    supplier: Source registries (ABACUS, CODEX, HUB, QPS)
+    customer: Mission Control readers
+  - id: ID.SCHEDULER
+    name: ID work-conserving scheduler + dependency gate
+    repo: CODEX
+    stage: S4_SCHEDULE
+    lanes: []
+    entry: scripts/id_scheduler_dependency_gate.py
+    need: Order ID/release microtasks by convergence gain per remaining time, with aging and checkpoint preemption
+    inputs: [{path: W33_TASK_METRICS.json, kind: runtime}]
+    outputs: [{path: W34_READY_PLAN.json, kind: runtime}]
+    supplier: W33 task metrics
+    customer: mycelium-scheduler-stage-w34 workflow
+  - id: GISTAU.L1
+    name: GISTAU Ch.15 L1 physics validation
+    repo: CODEX
+    stage: S6_VERIFY
+    lanes: []
+    entry: tools/ch15_canonical_validation.py
+    need: Reproduce the book's checked worked examples with ABACUS/CoolProp; record errata, never compare them
+    inputs: [{path: governance/physics/CH15_CANONICAL_VALIDATION.yaml}]
+    outputs: [{path: docs/gistau-ch15/data/l1_validation_results.json}]
+    supplier: GISTAU book transcription + ABACUS provider
+    customer: L1 validation page, deck slide 4
+  - id: CP.GLOBAL_DOV
+    name: CODE PURPLE global DOV
+    repo: ABACUS
+    stage: S7_PUBLISH
+    lanes: [CPURPLE]
+    entry: MIP/EVIDENCE_TO_ADMISSION_OBSERVATORY/global/render_global.py
+    need: Render the canonical global DOV from its ledger (no parallel SSOT)
+    inputs:
+      - {path: MIP/EVIDENCE_TO_ADMISSION_OBSERVATORY/global/ledger.json}
+      - {path: MIP/EVIDENCE_TO_ADMISSION_OBSERVATORY/global/index.template.html}
+    outputs: [{path: MIP/EVIDENCE_TO_ADMISSION_OBSERVATORY/global/index.html}]
+    supplier: Family DOV receipts
+    customer: W35 Mission Control, handover readers
+  - id: ER.QUEUE
+    name: EVERRED queue snapshot
+    repo: ABACUS
+    stage: S2_CENSUS
+    lanes: [EVERRED]
+    entry: scripts/everred_queue_snapshot.py
+    need: Deterministic offline snapshot of queued and in-progress workflow runs
+    inputs:
+      - {path: 'GitHub REST /actions/runs?status=queued', kind: external}
+      - {path: 'GitHub REST /actions/runs?status=in_progress', kind: external}
+    outputs: [{path: queue-snapshot.json, kind: runtime}]
+    supplier: GitHub Actions REST
+    customer: code_purple_execution_graph.html live queue panel
+  - id: MAROON.RECONCILE
+    name: CODE MAROON reconcile
+    repo: ABACUS
+    stage: S3_CLASSIFY
+    lanes: [MAROON]
+    entry: tools/code_maroon/reconcile.py
+    need: Reconcile review and security findings into manifestations and roots
+    inputs: [{path: 'GitHub review threads + code-scanning alerts', kind: external}]
+    outputs: [{path: CODE_MAROON/snapshot_20261016.json}]
+    supplier: CodeQL, Semgrep, Bandit, OSV, reviewers
+    customer: Merge gate owners
+  - id: MC.ISSUE_BD
+    name: Mission Control issue burndown
+    repo: ABACUS
+    stage: S8_CONTROL
+    lanes: []
+    entry: scripts/missioncontrol_issue_burndown.py
+    need: Census Mission Control issues into work packets and a burndown CSV
+    inputs: [{path: 'GitHub issues', kind: external}]
+    outputs:
+      - {path: issue_census.json, kind: runtime}
+      - {path: burndown.csv, kind: runtime}
+    supplier: GitHub issues
+    customer: missioncontrol-issue-burndown workflow
+  - id: CTAX.GLOSSARY
+    name: CTAXONOMY glossary render
+    repo: ABACUS
+    stage: S3_CLASSIFY
+    lanes: []
+    entry: tools/ctaxonomy/render_ctaxonomy_glossary.py
+    need: Render canonical taxonomy IDs with friendly labels; unknown term fails closed
+    inputs: [{path: architecture/ctaxonomy/CTAXONOMY_DISPLAY_PROFILE_v1.yaml}]
+    outputs: []
+    supplier: cryoplant-project CTAXONOMY SSOT
+    customer: HTML tooltips, reports
+  - id: JADE.GREEN
+    name: JADE GoGREEN 21-repo dashboard
+    repo: HUB
+    stage: S7_PUBLISH
+    lanes: [JADE, GOGREEN]
+    entry: mission-control/jade_temple/site/build_green.py
+    need: Build the Top21 GoGREEN readiness dashboard and BD queue
+    inputs:
+      - {path: mission-control/jade_temple/data/REPO_READINESS_NPLUS1.json}
+      - {path: mission-control/jade_temple/data/COHORT_CROSSWALK_NPLUS1.json}
+      - {path: mission-control/jade_temple/data/GLOBAL_METRICS_NPLUS1.json}
+    outputs:
+      - {path: mission-control/jade_temple/site/green.html}
+      - {path: mission-control/jade_temple/site/top21_bd_queue.csv}
+    supplier: 21 repository readbacks
+    customer: GoGREEN reviewers
+  - id: JADE.BURNDOWN
+    name: JADE measured burndown + stop rules
+    repo: HUB
+    stage: S8_CONTROL
+    lanes: [JADE, GOGREEN]
+    entry: mission-control/jade_temple/site/build_burndown.py
+    need: Measure burndown against the source-bound stop model
+    inputs:
+      - {path: mission-control/jade_temple/data/READBACK_NPLUS2.json}
+      - {path: mission-control/jade_temple/data/EVIDENCE_EVENTS_NPLUS2.json}
+      - {path: mission-control/jade_temple/data/STOP_MODEL_NPLUS2.json}
+      - {path: mission-control/jade_temple/data/REPO_READINESS_NPLUS1.json}
+    outputs:
+      - {path: mission-control/jade_temple/site/burndown.html}
+      - {path: mission-control/jade_temple/site/burndown.json}
+      - {path: mission-control/jade_temple/site/burndown.csv}
+    supplier: JADE readbacks
+    customer: Stop-rule owners
+  - id: GOGREEN.BDQUEUE
+    name: GoGREEN BD queue wave
+    repo: HUB
+    stage: S4_SCHEDULE
+    lanes: [GOGREEN]
+    entry: mission-control/gogreen/bd_queue_wave.py
+    need: Rank BD manifestations into a PR queue wave
+    inputs: [{path: bd_manifestations.json, kind: runtime}]
+    outputs:
+      - {path: bd_pr_queue.json, kind: runtime}
+      - {path: bd_summary.json, kind: runtime}
+    supplier: GoGREEN census
+    customer: Wave owners
+  - id: METHOD.ATLAS
+    name: Method Atlas v3 (this)
+    repo: CODEX
+    stage: S7_PUBLISH
+    lanes: [GOGREEN, MAROON, JADE, EVERRED, CPURPLE]
+    entry: tools/method_atlas/build_method_atlas.py
+    need: One source-derived atlas of lanes, blocks, I/O, DAG, SIPOC, orchestration and burndown
+    inputs: [{path: tools/method_atlas/method_atlas_seed.yaml}]
+    outputs:
+      - {path: docs/method_atlas/method_atlas.json}
+      - {path: docs/method_atlas/index.html}
+      - {path: docs/method_atlas/method_atlas.mmd}
+    consumes_all_outputs: true
+    supplier: All declared blocks and checkouts
+    customer: Owner, reviewers, next-chat handover
+
+# Other schedulers / dispatchers / brokers to surface (existence + file-queue depth).
+orchestrators:
+  - {id: ID_WCS, repo: CODEX, path: scripts/id_work_conserving_scheduler.py, type: scheduler,
+     policy: 'Work-conserving; priority = convergence gain / remaining time; age/deadline escalation; preempt only at resumable checkpoints'}
+  - {id: SUPERPIPELINE_RX, repo: CODEX, path: .github/workflows/receive_superpipeline_dispatch.yml, type: dispatch-receiver,
+     policy: 'repository_dispatch receiver for the superpipeline'}
+  - {id: DELTA1_SCHED, repo: ABACUS, path: runtime/execution/federated-execution-scheduler.yaml, type: declarative,
+     policy: 'DELTA_1 scheduler domains (governance, deployment, runtime, remediation, reconciliation); declaration only, no executor'}
+  - {id: DELTA1_DAG, repo: ABACUS, path: runtime/manifests/recursive-orchestration-dag.yaml, type: declarative,
+     policy: 'Recursive orchestration flow governance -> CI/CD -> security -> provenance -> release -> deploy -> runtime -> reconcile'}
+  - {id: GLOOB, repo: ABACUS, path: tools/gloob_dispatch_responder.py, type: file-queue,
+     queue_dirs: {inbox: gloob_dispatch/inbox, accepted: gloob_dispatch/accepted, outbox: gloob_dispatch/outbox},
+     policy: 'File-queue dispatcher: inbox -> accepted -> outbox'}
+  - {id: RUNNER_FANOUT, repo: HUB, path: mission-control/runner-economics/RUNNER_FANOUT_MIP_CONTROL_v1.json, type: measured-baseline,
+     policy: 'Measured PR fan-out queue exposure and path-filter remediation'}
+
+# Broker: static capacity model. Values marked ASSUMED must be replaced by measured ones.
+broker:
+  runner_slots: {value: 20, status: ASSUMED, note: GitHub-hosted concurrent job limit for the account plan; replace with the plan's actual limit}
+  burst_prs: {value: 5, status: ASSUMED, note: Simultaneous PR pushes across the federation in a busy window}
+  default_job_minutes: {value: 6, status: ASSUMED, note: Typical job duration used for drain-time estimates (timeouts are only upper bounds)}
+  modes:
+    - {id: NORMAL, max_ratio: 1.0, action: Run as scheduled}
+    - {id: PEAK, max_ratio: 3.0, action: 'Defer non-critical schedules; cancel superseded runs (concurrency cancel-in-progress)'}
+    - {id: SURGE, max_ratio: null, action: 'Pause cron fan-out, admit only required checks on exact heads, drain before new dispatch'}
+
+# Burndown ledger: theme keywords. Keywords are whole path tokens (split on any
+# non-alphanumeric character, case-insensitive); themes are tried in order, first match wins.
+burndown:
+  path_pattern: '(burn[-_]?down|ledger|bd_queue|census)'
+  themes:
+    - {id: SECURITY, label: Security and review debt, keywords: [maroon, security, osv, bandit, codeql, semgrep, flake8, review]}
+    - {id: IDENTITY, label: Identity and registry, keywords: [id, registry, logical, bound, atom]}
+    - {id: RELEASE, label: Release and publish, keywords: [release, publish, publication, pages]}
+    - {id: ISSUES, label: Issues and BD roots, keywords: [bd, cbd, root, roots, issue, issues, todo]}
+    - {id: CI, label: 'CI, workflows and queue', keywords: [workflow, ci, first, dov, dow, queue, runner, everred, run, fingerprint, triage]}
+    - {id: LINEAGE, label: Lineage and provenance, keywords: [lineage, provenance, golden, rex, admission, merge]}
+    - {id: HANDOVER, label: Handover and sessions, keywords: [handover, handoff, chat, session, tuple, closeout, intent, wave, growth]}
+    - {id: QUALITY, label: Quality and stability, keywords: [quality, stability, 3p, 3pm, outcome, validation, semantic, capability]}
+    - {id: ENGINEERING, label: Engineering and physics, keywords: [qplant, qps, physics, p2j, gistau, cryo, ch15]}
+    - {id: CENSUS, label: Census and inventory, keywords: [census, recensus, inventory, hive, crew, pulses, snapshot]}

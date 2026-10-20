@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Method Atlas v3</title>
+<style>
+:root{--bg:#f6f7f9;--panel:#fff;--ink:#17202a;--muted:#5d6b7a;--line:#d9dee5;--accent:#1d5fa7;--ok:#1f8a4c;--warn:#a86b00;--bad:#b8322a;--chip:#eef1f5;
+--gogreen:#1f8a4c;--maroon:#7a1f35;--jade:#0e8f6e;--everred:#b8322a;--cpurple:#6a35a8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f141a;--panel:#161d25;--ink:#e6edf3;--muted:#94a3b3;--line:#2a3542;--accent:#6aa8ec;--ok:#4cc38a;--warn:#e0a63a;--bad:#f0756a;--chip:#1f2833;
+--gogreen:#4cc38a;--maroon:#d0697f;--jade:#3ccfa5;--everred:#f0756a;--cpurple:#b48af0}}
+:root[data-theme="dark"]{--bg:#0f141a;--panel:#161d25;--ink:#e6edf3;--muted:#94a3b3;--line:#2a3542;--accent:#6aa8ec;--ok:#4cc38a;--warn:#e0a63a;--bad:#f0756a;--chip:#1f2833;
+--gogreen:#4cc38a;--maroon:#d0697f;--jade:#3ccfa5;--everred:#f0756a;--cpurple:#b48af0}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:18px 16px 8px;max-width:1280px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}
+h2{font-size:16px;margin:18px 0 8px}
+.sub{color:var(--muted);font-size:13px}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}
+nav{position:sticky;top:0;z-index:2;background:var(--bg);border-bottom:1px solid var(--line)}
+nav .tabs{display:flex;gap:4px;overflow-x:auto;max-width:1280px;margin:0 auto;padding:6px 16px}
+nav button{border:1px solid transparent;background:none;color:var(--muted);padding:6px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;font:inherit}
+nav button[aria-selected="true"]{color:var(--ink);background:var(--panel);border-color:var(--line)}
+main{max-width:1280px;margin:0 auto;padding:8px 16px 40px}
+section[hidden]{display:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}
+.card h3{margin:0 0 6px;font-size:14px}
+.kpi{font-size:26px;font-weight:600;font-variant-numeric:tabular-nums}
+.lane{border-left:5px solid var(--c,var(--line))}
+.chip{display:inline-block;background:var(--chip);border-radius:999px;padding:1px 8px;margin:1px 2px 1px 0;font-size:12px}
+.tag{font-family:ui-monospace,Consolas,monospace;font-size:11px;color:var(--muted)}
+.ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+.tablewrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{position:sticky;top:0;background:var(--panel);font-weight:600}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+input[type=search]{width:100%;max-width:360px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);font:inherit;margin:4px 0 10px}
+.badge{display:inline-block;padding:1px 7px;border-radius:5px;font-size:11px;font-weight:600;border:1px solid currentColor}
+.dag{width:100%;min-width:900px;height:auto}
+.dag .stage{fill:var(--muted);font-size:12px;font-weight:600}
+.dag rect{fill:var(--panel);stroke-width:2.5}
+.dag .nid{fill:var(--ink);font-size:11px;font-weight:600;font-family:ui-monospace,Consolas,monospace}
+.dag .nv{fill:var(--muted);font-size:10px}
+.dag .edge{fill:none;stroke:var(--muted);stroke-width:1.3}
+.dag .dashed{stroke-dasharray:4 4;opacity:.45}
+.dag .arrowhead{fill:var(--muted)}
+.dag g:focus rect,.dag g:hover rect{stroke-width:4}
+.bars{display:flex;align-items:flex-end;gap:3px;height:120px;padding:6px 0;border-bottom:1px solid var(--line)}
+.bars div{flex:1;background:var(--accent);border-radius:3px 3px 0 0;min-height:1px;position:relative}
+.bars div.peak{background:var(--warn)}
+.bars div.over{background:var(--bad)}
+.axis{display:flex;gap:3px;font-size:10px;color:var(--muted)}.axis span{flex:1;text-align:center}
+.note{color:var(--muted);font-size:12px;margin:6px 0}
+details{margin:4px 0}summary{cursor:pointer}
+.theme-toggle{float:right;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;padding:4px 10px;cursor:pointer;font:inherit}
+@media (max-width:600px){.kpi{font-size:22px}h1{font-size:19px}}
+</style>
+</head>
+<body>
+<header>
+  <button class="theme-toggle" id="themeToggle" type="button">Theme</button>
+  <h1>Method Atlas v3</h1>
+  <div class="sub">Source-derived from the seed and the tracked files of each checkout. Read-only: no network, no dispatch, merge admission HOLD.
+  Digest <code id="digest">{{DIGEST}}</code></div>
+</header>
+<nav><div class="tabs" role="tablist" id="tabs"></div></nav>
+<main>
+<section id="overview" role="tabpanel"></section>
+<section id="taxonomy" role="tabpanel" hidden></section>
+<section id="blocks" role="tabpanel" hidden></section>
+<section id="dag" role="tabpanel" hidden>
+  <h2>Functional block DAG (SPINE stages left to right)</h2>
+  <p class="note">Solid edges: an output path of one block is a declared input of another. Dashed: the atlas census reads that block's outputs. Stroke colour is the block's primary lane.</p>
+  <div class="tablewrap" style="padding:8px">{{DAG_SVG}}</div>
+  <div id="dagExtra"></div>
+</section>
+<section id="sipoc" role="tabpanel" hidden></section>
+<section id="orchestration" role="tabpanel" hidden></section>
+<section id="ledger" role="tabpanel" hidden></section>
+</main>
+<script id="atlas-data" type="application/json">{{ATLAS_JSON}}</script>
+<script>
+(function(){
+const A=JSON.parse(document.getElementById('atlas-data').textContent);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const laneColor=id=>`var(--${String(id).toLowerCase()})`;
+const lanes=A.taxonomy.lanes, laneById=Object.fromEntries(lanes.map(l=>[l.id,l]));
+const chipLane=id=>`<span class="chip" style="border-left:4px solid ${laneColor(id)}">${esc(laneById[id]?laneById[id].display:id)}</span>`;
+const verdictClass=v=>({IO_OK:'ok',RUNTIME_ONLY:'ok',NO_DECLARED_OUTPUT:'warn',INPUT_MISSING:'bad',OUTPUT_MISSING:'bad',ENTRY_MISSING:'bad',REPO_ABSENT:'warn'}[v]||'');
+const statusClass=s=>({OK:'ok',RUNTIME:'',EXTERNAL:'',UNTRACKED:'warn',MISSING:'bad'}[s]||'');
+const table=(head,rows,id)=>`<div class="tablewrap"><table ${id?`id="${id}"`:''}><thead><tr>${head.map(h=>`<th class="${h.n?'n':''}">${esc(h.t||h)}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+const filterable=(inputId,tableId)=>{const i=document.getElementById(inputId);i&&i.addEventListener('input',()=>{const q=i.value.toLowerCase();document.querySelectorAll(`#${tableId} tbody tr`).forEach(r=>{r.hidden=q&&!r.textContent.toLowerCase().includes(q)})})};
+
+const TABS=[['overview','Overview'],['taxonomy','Lanes & taxonomy'],['blocks','Blocks & I/O'],['dag','DAG / SPINE / SPLINE'],['sipoc','SIPOC'],['orchestration','Orchestration & broker'],['ledger','Burndown ledger']];
+const tabs=document.getElementById('tabs');
+tabs.innerHTML=TABS.map(([id,t],i)=>`<button role="tab" data-tab="${id}" aria-selected="${i===0}">${t}</button>`).join('');
+function show(id){tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===id));TABS.forEach(([t])=>document.getElementById(t).hidden=t!==id);try{localStorage.setItem('ma3-tab',id)}catch(e){}}
+tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.tab)});
+let saved=null;try{saved=localStorage.getItem('ma3-tab')}catch(e){}
+const themeBtn=document.getElementById('themeToggle');
+themeBtn.addEventListener('click',()=>{const r=document.documentElement;const cur=r.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');r.dataset.theme=cur==='dark'?'light':'dark'});
+
+// Overview
+const O=A.orchestration, D=A.dag;
+const totalWf=O.workflows.length, peak=O.peak_hour_utc;
+const worst=O.broker.scenarios.reduce((a,s)=>s.ratio>a.ratio?s:a,O.broker.scenarios[0]||{ratio:0});
+document.getElementById('overview').innerHTML=`
+<h2>Federation</h2>
+<div class="grid">${A.repos.map(r=>`<div class="card"><h3>${esc(r.id)} ${r.host?'<span class="chip">host</span>':''}</h3>
+<div class="sub">${esc(r.remote)}</div><div class="sub">${esc(r.role)}</div>
+<div class="mono">${r.present?(r.host?'this repository':`${esc(r.branch||'detached')} @ ${esc((r.head||'').slice(0,10))}`):'<span class="bad">checkout absent</span>'}</div>
+<div class="sub">${r.tracked_files??0} tracked files${r.dirty_tracked?` · <span class="warn">${r.dirty_tracked} modified</span>`:''}</div></div>`).join('')}</div>
+<h2>At a glance</h2>
+<div class="grid">
+<div class="card"><h3>Functional blocks</h3><div class="kpi">${D.blocks.length}</div><div class="sub">${Object.entries(D.verdicts).map(([k,v])=>`<span class="${verdictClass(k)}">${esc(k)} ${v}</span>`).join(' · ')}</div></div>
+<div class="card"><h3>Workflows parsed</h3><div class="kpi">${totalWf}</div><div class="sub">${O.workflow_run_chains.length} workflow_run links · cron peak ${String(peak).padStart(2,'0')}:00 UTC</div></div>
+<div class="card"><h3>Worst broker scenario</h3><div class="kpi ${worst.mode==='SURGE'?'bad':worst.mode==='PEAK'?'warn':'ok'}">${esc(worst.mode)}</div><div class="sub">${esc(worst.label)}: ${worst.jobs} jobs / ${worst.runner_slots} slots (×${worst.ratio})</div></div>
+<div class="card"><h3>Burndown ledgers</h3><div class="kpi">${A.ledger.entries.length}</div><div class="sub">${A.ledger.themes.filter(t=>t.files).length} themes</div></div>
+</div>
+<h2>Lanes</h2>
+<div class="grid">${lanes.map(l=>`<div class="card lane" style="--c:${laneColor(l.id)}"><h3>${esc(l.display)}</h3><div class="tag">${esc(l.tag)} · ${esc(l.id)}</div>
+<div class="kpi">${l.files_total}</div><div class="sub">files · ${l.variant_count} spellings · ${l.nonstandard_mentions} non-standard mentions</div></div>`).join('')}</div>`;
+
+// Taxonomy
+const tx=document.getElementById('taxonomy');
+tx.innerHTML=`<h2>Canonical lanes</h2><p class="note">ID is identity, display is projection, tag is the label form. Spellings outside the canonical set are variants to normalise.</p>
+<div class="grid">${lanes.map(l=>`<div class="card lane" style="--c:${laneColor(l.id)}"><h3>${esc(l.display)} <span class="tag">${esc(l.tag)}</span></h3>
+<div>${esc(l.meaning)}</div><div class="sub"><b>Not:</b> ${esc(l.not)}</div>
+<div class="sub">Source: <code>${esc(l.source.repo)}:${esc(l.source.path)}</code> <span class="${l.source.exists?'ok':'bad'}">${l.source.exists?'present':'missing'}</span></div>
+<div class="sub">${Object.entries(l.files_by_repo).map(([r,n])=>`${esc(r)} ${n}`).join(' · ')}</div>
+<details><summary>${l.variant_count} spellings</summary>${l.variants.map(v=>`<span class="chip ${v.canonical?'':'warn'}" title="${v.canonical?'canonical':'normalise to '+esc(v.normalize_to)}">${esc(v.spelling)} ${v.count}</span>`).join('')}</details></div>`).join('')}</div>
+<h2>Lane combinations (files mentioning both)</h2>
+${table(['Pair',{t:'Files',n:1}],A.taxonomy.combinations.map(c=>`<tr><td>${c.pair.split('+').map(chipLane).join(' + ')}</td><td class="n">${c.files}</td></tr>`))}
+<h2>Monikers</h2><input type="search" id="monQ" placeholder="Filter monikers">
+${table(['Moniker','Label','Type','Use','Not',{t:'Files',n:1}],A.taxonomy.monikers.map(m=>`<tr><td class="mono">${esc(m.id)}</td><td>${esc(m.label)}</td><td>${esc(m.type)}</td><td>${esc(m.use)}</td><td class="sub">${esc(m.not)}</td><td class="n">${m.files}</td></tr>`),'monT')}`;
+filterable('monQ','monT');
+
+// Blocks
+const io=list=>list.map(i=>`<div><span class="badge ${statusClass(i.status)}">${esc(i.status)}</span> <code>${esc(i.path)}</code>${i.matches!=null?` <span class="sub">(${i.matches})</span>`:''}${i.referenced_by_entry?'':' <span class="sub" title="name not found in entry script">· unreferenced</span>'}</div>`).join('')||'<span class="sub">none declared</span>';
+document.getElementById('blocks').innerHTML=`<h2>Functional blocks: need, input and output checks</h2>
+<p class="note">Each block states what the code must do and what it must produce. Inputs and outputs are checked against the tracked tree; runtime and external items are reported, not checked.</p>
+<input type="search" id="blkQ" placeholder="Filter blocks">
+${table(['Block','Stage','Lanes','Need','Inputs','Outputs','Verdict'],D.blocks.map(b=>`<tr><td><b>${esc(b.id)}</b><div class="sub">${esc(b.name)}</div><div class="mono ${b.entry_exists?'':'bad'}">${esc(b.repo)}:${esc(b.entry)}</div></td><td>${esc(b.stage)}</td><td>${(b.lanes||[]).map(chipLane).join('')||'<span class="sub">core</span>'}</td><td>${esc(b.need)}</td><td>${io(b.inputs)}</td><td>${io(b.outputs)}</td><td><span class="badge ${verdictClass(b.verdict)}">${esc(b.verdict)}</span></td></tr>`),'blkT')}`;
+filterable('blkQ','blkT');
+
+// DAG extra: topo order, spine, spline
+const stages=A.spine;
+document.getElementById('dagExtra').innerHTML=`<h2>Execution order (topological)</h2><p class="mono">${D.topological_order.map(esc).join(' → ')}</p>
+<h2>SPINE: canonical stages</h2>${table(['#','Stage','Need','Blocks'],stages.map((s,i)=>`<tr><td>${i+1}</td><td><b>${esc(s.label)}</b> <span class="tag">${esc(s.id)}</span></td><td>${esc(s.need)}</td><td>${D.blocks.filter(b=>b.stage===s.id).map(b=>`<span class="chip">${esc(b.id)}</span>`).join('')}</td></tr>`))}
+<h2>SPLINE: lane × stage</h2><p class="note">Where each lane has a functional block on the spine. Empty cells are stages the lane relies on core blocks for.</p>
+${table(['Lane'].concat(stages.map(s=>s.label)),A.spline.map(r=>`<tr><td>${r.lane==='CORE'?'<b>core</b>':chipLane(r.lane)}</td>${stages.map(s=>`<td>${r.cells[s.id].map(x=>`<span class="chip">${esc(x)}</span>`).join('')}</td>`).join('')}</tr>`))}
+<h2>Edges</h2>${table(['From','To','Via','Kind'],D.edges.map(e=>`<tr><td>${esc(e.source)}</td><td>${esc(e.target)}</td><td class="mono">${esc(e.via)}</td><td>${esc(e.derived)}</td></tr>`))}`;
+document.querySelectorAll('.dag g[data-block]').forEach(g=>{const go=()=>{show('blocks');const q=document.getElementById('blkQ');q.value=g.dataset.block;q.dispatchEvent(new Event('input'))};g.addEventListener('click',go);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})});
+
+// SIPOC
+document.getElementById('sipoc').innerHTML=`<h2>SIPOC per functional block (in SPINE order)</h2>
+${table(['Stage','Supplier','Input','Process','Output','Customer'],A.sipoc.map(r=>`<tr><td><b>${esc(r.block)}</b><div class="tag">${esc(r.stage)}</div></td><td>${esc(r.supplier)}</td><td>${r.input.map(p=>`<div class="mono">${esc(p)}</div>`).join('')}</td><td>${esc(r.process)}</td><td>${r.output.map(p=>`<div class="mono">${esc(p)}</div>`).join('')||'<span class="warn">none declared</span>'}</td><td>${esc(r.customer)}</td></tr>`))}`;
+
+// Orchestration
+const B=O.broker, slots=B.parameters.runner_slots.value;
+const hours=[...Array(24).keys()], hv=hours.map(h=>O.cron_job_slots_by_hour_all[h]||0), hmax=Math.max(1,...hv);
+const param=(k,p)=>`<div class="card"><h3>${esc(k.replace(/_/g,' '))}</h3><div class="kpi">${esc(p.value)}</div><div class="sub"><span class="badge ${p.status==='ASSUMED'?'warn':'ok'}">${esc(p.status)}</span> ${esc(p.note)}</div></div>`;
+document.getElementById('orchestration').innerHTML=`<h2>Broker model</h2>
+<p class="note">Static upper bound: job slots a trigger can enqueue (from workflow YAML) divided by runner slots. Not an observed queue: use the EVERRED live panel for that.</p>
+<div class="grid">${Object.entries(B.parameters).map(([k,p])=>param(k,p)).join('')}</div>
+<h2>Modes</h2>${table(['Mode','Queue ratio','Action'],B.modes.map((m,i)=>`<tr><td><b>${esc(m.id)}</b></td><td>${i?`≥ ${B.modes[i-1].max_ratio}`:''}${m.max_ratio!=null?` &lt; ${m.max_ratio}`:''}</td><td>${esc(m.action)}</td></tr>`))}
+<h2>Scenarios</h2><p class="note">Jobs = workflows that always trigger (no paths filter); upper bound = every workflow's path filter matches. Ratio, depth, drain and mode use the lower figure.</p>${table(['Scenario',{t:'Jobs',n:1},{t:'Upper bound',n:1},{t:'Slots',n:1},{t:'Ratio',n:1},{t:'Queue depth',n:1},{t:'Drain waves',n:1},{t:'Drain min (est.)',n:1},'Mode'],B.scenarios.map(s=>`<tr><td>${esc(s.label)}</td><td class="n">${s.jobs}</td><td class="n">${s.jobs_max}</td><td class="n">${s.runner_slots}</td><td class="n">${s.ratio}</td><td class="n">${s.queue_depth}</td><td class="n">${s.drain_waves}</td><td class="n">${s.drain_minutes_est}</td><td><span class="badge ${s.mode==='SURGE'?'bad':s.mode==='PEAK'?'warn':'ok'}">${esc(s.mode)}</span></td></tr>`))}
+<h2>Cron load by UTC hour (job slots, all repos)</h2>
+<div class="bars" role="img" aria-label="Cron job slots per UTC hour">${hv.map((v,h)=>`<div class="${v>slots?'over':h===O.peak_hour_utc?'peak':''}" style="height:${Math.round(v/hmax*100)}%" title="${String(h).padStart(2,'0')}:00 UTC: ${v} job slots"></div>`).join('')}</div>
+<div class="axis">${hours.map(h=>`<span>${h%3===0?h:''}</span>`).join('')}</div>
+<h2>Recommendations</h2><ul>${B.recommendations.map(r=>`<li>${esc(r)}</li>`).join('')||'<li class="sub">none</li>'}</ul>
+<h2>Per repository</h2>${table(['Repo',{t:'Workflows',n:1},{t:'Scheduled',n:1},{t:'Concurrency',n:1},{t:'Cancel-in-progress',n:1},{t:'Dispatch senders',n:1},{t:'PR jobs min–max',n:1},{t:'Push jobs min–max',n:1},{t:'Flood risk',n:1}],Object.entries(O.per_repo).map(([r,x])=>`<tr><td><b>${esc(r)}</b></td><td class="n">${x.workflows}${x.parse_errors?` <span class="bad">(${x.parse_errors} err)</span>`:''}</td><td class="n">${x.scheduled}</td><td class="n">${x.with_concurrency}</td><td class="n">${x.cancel_in_progress}</td><td class="n">${x.dispatch_senders}</td><td class="n">${x.pr_jobs_min}–${x.pr_jobs_max}</td><td class="n">${x.push_jobs_min}–${x.push_jobs_max}</td><td class="n">${x.flood_risk_workflows.length}</td></tr>`))}
+<h2>Schedulers, dispatchers and queues</h2>${table(['ID','Type','Location','Policy','Queue / baseline'],O.orchestrators.map(o=>`<tr><td><b>${esc(o.id)}</b></td><td>${esc(o.type)}</td><td class="mono ${o.exists?'':'bad'}">${esc(o.repo)}:${esc(o.path)}</td><td>${esc(o.policy)}</td><td>${o.queue_depth?Object.entries(o.queue_depth).map(([k,v])=>`${esc(k)} ${v}`).join(' · '):''}${o.baseline?`queue exposure ${o.baseline.measured_queue_exposure_seconds}s of ${o.baseline.measured_total_selected_clock_seconds}s (ratio ${o.baseline.queue_exposure_ratio}) · ${o.baseline.registered_workflow_count} workflows`:''}</td></tr>`))}
+<h2>workflow_run chains</h2>${table(['Repo','Upstream','Downstream'],O.workflow_run_chains.map(c=>`<tr><td>${esc(c.repo)}</td><td>${esc(c.upstream)}${c.upstream_file?'':' <span class="warn">(not found)</span>'}</td><td>${esc(c.downstream)}</td></tr>`))}
+<h2>All workflows</h2><input type="search" id="wfQ" placeholder="Filter workflows (name, file, trigger)">
+${table(['Repo','Workflow','Triggers','Cron',{t:'Jobs',n:1},{t:'Slots',n:1},{t:'Needs depth',n:1},'Concurrency',{t:'Max timeout',n:1}],O.workflows.map(w=>w.error?`<tr><td>${esc(w.repo)}</td><td class="mono">${esc(w.file)}</td><td colspan="7" class="bad">${esc(w.error)}</td></tr>`:`<tr><td>${esc(w.repo)}</td><td>${esc(w.name)}<div class="mono sub">${esc(w.file)}</div></td><td>${w.triggers.map(t=>`<span class="chip">${esc(t)}${w.path_filtered[t]?' ·paths':''}</span>`).join('')}</td><td class="mono">${w.crons.map(esc).join('<br>')}</td><td class="n">${w.jobs}</td><td class="n">${w.job_slots}${w.dynamic_matrix?'+':''}</td><td class="n">${w.needs_depth}</td><td>${w.concurrency_group?(w.cancel_in_progress?'group · cancel':'group'):'<span class="warn">none</span>'}</td><td class="n">${w.max_timeout_min}</td></tr>`),'wfT')}`;
+filterable('wfQ','wfT');
+
+// Ledger
+const L=A.ledger;
+const fmtCounts=e=>Object.entries(e.counts||{}).map(([k,v])=>`${esc(k)} ${esc(v)}`).join(' · ')+(e.rows!=null?`${Object.keys(e.counts||{}).length?' · ':''}${e.rows} rows`:'');
+document.getElementById('ledger').innerHTML=`<h2>Burndown ledger by theme</h2>
+<p class="note">Every tracked burndown, ledger, census or BD-queue file, grouped by theme and tagged by lane. Counts are read from top-level summary keys where present; files are never summed across themes.</p>
+<div class="grid">${L.themes.filter(t=>t.files).map(t=>`<div class="card"><h3>${esc(t.label)}</h3><div class="kpi">${t.files}</div><div class="sub">${t.with_counts} with counts</div><div>${Object.entries(t.by_lane).map(([l,n])=>l==='CORE'?`<span class="chip">core ${n}</span>`:`${chipLane(l).replace('</span>',` ${n}</span>`)}`).join('')}</div></div>`).join('')}</div>
+<h2>Entries</h2><input type="search" id="ldQ" placeholder="Filter ledger (theme, repo, path, lane)">
+${table(['Theme','Repo','Path','Lanes','Counts'],L.entries.map(e=>`<tr><td>${esc(e.theme)}</td><td>${esc(e.repo)}</td><td class="mono">${esc(e.path)}</td><td>${(e.lanes||[]).map(chipLane).join('')}</td><td class="sub">${fmtCounts(e)}</td></tr>`),'ldT')}`;
+filterable('ldQ','ldT');
+
+show(saved&&TABS.some(t=>t[0]===saved)?saved:'overview');
+})();
+</script>
+</body>
+</html>
