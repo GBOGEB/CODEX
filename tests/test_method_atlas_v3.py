@@ -101,41 +101,107 @@ def _repo(path: Path, files: dict[str, str]) -> None:
         (path / rel).write_text(text, encoding="utf-8")
 
 
+def test_cron_day_fraction_minutes_and_movability():
+    assert atlas.cron_day_fraction("0 2 * * *") == 1.0
+    assert atlas.cron_day_fraction("0 2 * * 1") == round(1 / 7, 4)
+    assert atlas.cron_day_fraction("0 2 * * 1-5") == round(5 / 7, 4)
+    assert atlas.cron_day_fraction("0 0 1 * *") == round(1 / 30.44, 4)
+    assert atlas.cron_day_fraction("0 0 * * 0,7") == round(1 / 7, 4)  # 0 and 7 are both Sunday
+    assert atlas.cron_minutes("15 3,9 * * *") == [(3, 15), (9, 15)]
+    assert atlas.movable_cron("0 2 * * *") and atlas.movable_cron("30 1,13 * * 1")
+    assert not atlas.movable_cron("*/5 * * * *") and not atlas.movable_cron("0 */6 * * *")
+
+
+def test_stagger_moves_biggest_movable_first_and_respects_fixed_crons():
+    entries = [
+        {"repo": "R", "file": "a.yml", "name": "a", "cron": "0 2 * * *", "job_slots": 20},
+        {"repo": "R", "file": "b.yml", "name": "b", "cron": "0 2 * * *", "job_slots": 13},
+        {"repo": "R", "file": "c.yml", "name": "c", "cron": "*/5 * * * *", "job_slots": 3},
+    ]
+    plan = atlas.stagger_plan(entries, slots=20)
+    assert plan["peak_minute_slots_before"] == 36
+    assert [m["file"] for m in plan["moves"]][:1] == ["a.yml"]  # a fixed */5 cron anchors 02:00
+    assert plan["peak_minute_slots_after"] < 36
+    assert all(atlas.movable_cron(m["to"]) and m["to"].split()[1:] == m["from"].split()[1:] for m in plan["moves"])
+
+
+def test_parse_check_and_stale_verdict(tmp_path):
+    (tmp_path / "ok.json").write_text('{"a": 1}', encoding="utf-8")
+    (tmp_path / "bad.json").write_text("{nope", encoding="utf-8")
+    (tmp_path / "x.md").write_text("# x", encoding="utf-8")
+    assert atlas.parse_check(tmp_path / "ok.json") == "OK"
+    assert atlas.parse_check(tmp_path / "bad.json") == "FAIL"
+    assert atlas.parse_check(tmp_path / "x.md") == "NA"
+    ins = [{"status": "OK", "changed_ts": 200}]
+    outs = [{"status": "OK", "changed_ts": 100}]
+    assert atlas.block_verdict(True, True, ins, outs, freshness=True) == "STALE_OUTPUT"
+    assert atlas.block_verdict(True, True, ins, outs, freshness=False) == "IO_OK"
+    assert atlas.block_verdict(True, True, ins, [{"status": "OK", "parse": "FAIL"}], True) == "OUTPUT_UNPARSEABLE"
+
+
+def test_git_blob_oid_matches_git():
+    assert atlas.git_blob_oid(b"") == "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+
+
 def test_build_on_synthetic_federation(tmp_path, monkeypatch):
     host = tmp_path / "HOST"
-    tracked = {
-        "make.py": "OUT='out/report.json'\n",
-        "use.py": "IN='out/report.json'\n",
-        "out/report.json": json.dumps({"summary": {"open": 3, "closed": 7}}),
-        "ops/bd_queue_burndown.json": json.dumps({"total": 4}),
-        "notes.md": "GoGREEN and go_green and Code Purple and EVERRED together.\n",
-        ".github/workflows/ci.yml": "name: CI\non: [push, pull_request]\njobs:\n  t: {runs-on: ubuntu-latest}\n",
+    trees = {
+        "HOST": {
+            "notes.md": "GoGREEN and go_green and Code Purple and EVERRED together.\n",
+            "ops/bd_queue_burndown.json": json.dumps({"total": 4}),
+            ".github/workflows/ci.yml": "name: CI\non: [push, pull_request]\njobs:\n  t: {runs-on: ubuntu-latest}\n",
+            ".github/workflows/nightly.yml": ("name: Nightly GoGREEN\non:\n  schedule: [{cron: '0 2 * * *'}, {cron: '0 2 * * 1'}]\n"
+                                              "jobs:\n  a: {runs-on: ubuntu-latest}\n  b: {runs-on: ubuntu-latest}\n"),
+        },
+        "SIB": {
+            "make.py": "OUT='out/report.json'\n",
+            "use.py": "IN='out/report.json'\n",
+            "stale.py": "src.json out/stale.json\n",
+            "src.json": "{}",
+            "out/report.json": json.dumps({"summary": {"open": 3, "closed": 7}}),
+            "out/stale.json": "{}",
+        },
     }
-    _repo(host, tracked)
-    # Stand-ins for git: the tracked set is exactly `tracked`; the seed written below stays untracked.
-    monkeypatch.setattr(atlas, "tracked_files", lambda path: sorted(tracked))
+    trees["MIRROR"] = {**trees["SIB"], "use.py": "changed\n"}
+    for name, files in trees.items():
+        _repo(tmp_path / name, files)
+
+    def oid(name, rel):
+        return atlas.git_blob_oid(trees[name][rel].encode())
+
+    times = {"src.json": 200, "out/stale.json": 100, "out/report.json": 150}
+    # Stand-ins for git: each tracked set is exactly its tree; the seed written below stays untracked.
+    monkeypatch.setattr(atlas, "blob_index", lambda path: {rel: oid(path.name, rel) for rel in trees[path.name]})
+    monkeypatch.setattr(atlas, "worktree_modified", lambda path: {"out/report.json"} if path.name == "SIB" else set())
+    monkeypatch.setattr(atlas, "last_change", lambda path, rel: {"commit": "c" * 40, "ts": times.get(rel, 50)})
     monkeypatch.setattr(atlas, "repo_identity", lambda spec, path: {
-        "id": spec["id"], "remote": spec["remote"], "role": spec["role"], "path": spec["path"],
-        "present": True, "head": "0" * 40, "branch": "main", "dirty_tracked": 0})
+        "id": spec["id"], "remote": spec.get("remote"), "role": spec.get("role"), "path": spec["path"],
+        "present": True, "head": path.name.lower() * 4, "tree": "t" * 40, "branch": "main", "dirty_tracked": 0})
     s = seed()
-    s["repos"] = [{"id": "HOST", "path": ".", "remote": "x/host", "role": "test"}]
+    s["repos"] = [{"id": "HOST", "path": ".", "remote": "x/host", "role": "test"},
+                  {"id": "SIB", "path": "../SIB", "remote": "x/sib", "role": "test"}]
     s["host_repo"] = "HOST"
+    s["mirrors"] = [{"id": "SIB_MIRROR", "of": "SIB", "path": "../MIRROR"}]
     for lane in s["lanes"]:
         lane["source"] = {"repo": "HOST", "path": "notes.md"}
     s["monikers"] = {}
     s["orchestrators"] = []
+
+    def blk(i, entry, ins, outs, lanes=()):
+        return {"id": i, "name": i, "repo": "SIB", "stage": "S5_EXECUTE", "lanes": list(lanes), "entry": entry,
+                "need": "n", "inputs": ins, "outputs": outs, "supplier": "s", "customer": "c"}
+
     s["blocks"] = [
-        {"id": "MAKE", "name": "make", "repo": "HOST", "stage": "S5_EXECUTE", "lanes": [], "entry": "make.py",
-         "need": "n", "inputs": [], "outputs": [{"path": "out/report.json"}], "supplier": "s", "customer": "c"},
-        {"id": "USE", "name": "use", "repo": "HOST", "stage": "S7_PUBLISH", "lanes": ["GOGREEN"], "entry": "use.py",
-         "need": "n", "inputs": [{"path": "out/report.json"}, {"path": "missing.json"}],
-         "outputs": [{"path": "x.json", "kind": "runtime"}], "supplier": "s", "customer": "c"},
+        blk("MAKE", "make.py", [], [{"path": "out/report.json"}]),
+        blk("USE", "use.py", [{"path": "out/report.json"}, {"path": "missing.json"}],
+            [{"path": "x.json", "kind": "runtime"}], ["GOGREEN"]),
+        blk("STALE", "stale.py", [{"path": "src.json"}], [{"path": "out/stale.json"}]),
     ]
-    seed_path = host / "tools/method_atlas/method_atlas_seed.yaml"  # untracked, so not scanned
+    seed_path = host / "tools/method_atlas/method_atlas_seed.yaml"
     seed_path.parent.mkdir(parents=True)
     seed_path.write_text(yaml.safe_dump(s, sort_keys=False), encoding="utf-8")
 
-    a, _ = atlas.build(seed_path)
+    a, _, _ = atlas.build(seed_path)
     lanes = {l["id"]: l for l in a["taxonomy"]["lanes"]}
     gg = {v["spelling"]: v for v in lanes["GOGREEN"]["variants"]}
     assert gg["GoGREEN"]["canonical"] and gg["go_green"]["normalize_to"] == "GoGREEN"
@@ -145,22 +211,46 @@ def test_build_on_synthetic_federation(tmp_path, monkeypatch):
     blocks = {b["id"]: b for b in a["dag"]["blocks"]}
     assert blocks["MAKE"]["verdict"] == "IO_OK"
     assert blocks["USE"]["verdict"] == "INPUT_MISSING"
-    assert blocks["MAKE"]["outputs"][0]["referenced_by_entry"] is True
+    assert blocks["STALE"]["verdict"] == "STALE_OUTPUT"
+    out = blocks["MAKE"]["outputs"][0]
+    assert out["referenced_by_entry"] is True and out["parse"] == "OK"
+    assert out["oid"] == oid("SIB", "out/report.json") and out["worktree"] == "MODIFIED"
+    assert blocks["MAKE"]["worktree_modified"] == ["out/report.json"] and out["changed_ts"] == 150
     assert {"source": "MAKE", "target": "USE", "via": "out/report.json", "derived": "io_match"} in a["dag"]["edges"]
     assert a["dag"]["topological_order"].index("MAKE") < a["dag"]["topological_order"].index("USE")
 
-    repo = a["orchestration"]["per_repo"]["HOST"]
-    assert repo["workflows"] == 1 and repo["pr_jobs_min"] == 1 and repo["flood_risk_workflows"] == [".github/workflows/ci.yml"]
+    host_repo, sib_repo = a["repos"]
+    assert "head" not in host_repo and "tree" not in host_repo and sib_repo["tree"] == "t" * 40
+    (mirror,) = a["mirrors"]
+    assert mirror["files_differing"] == 1 and mirror["differing_sample"] == ["use.py"] and not mirror["same_commit"]
+
+    o = a["orchestration"]
+    assert o["per_repo"]["HOST"]["flood_risk_workflows"] == [".github/workflows/ci.yml"]
+    assert [w["lanes"] for w in o["workflows"] if w["file"].endswith("nightly.yml")] == [["GOGREEN"]]
+    c = o["cron"]
+    assert c["slots_by_hour_worst_day"]["2"] == 4 and c["slots_by_hour_every_day"]["2"] == 2
+    assert (c["peak_minutes"][0]["time"], c["peak_minutes"][0]["job_slots"]) == ("02:00", 4)
+    assert {e["cron"] for e in c["contributors_by_hour"]["2"]} == {"0 2 * * *", "0 2 * * 1"}
     ledger = {e["path"]: e for e in a["ledger"]["entries"]}
     assert ledger["ops/bd_queue_burndown.json"]["theme"] == "ISSUES"
     assert ledger["ops/bd_queue_burndown.json"]["counts"] == {"total": 4}
-    assert "head" not in a["repos"][0]
+    assert ledger["ops/bd_queue_burndown.json"]["oid"] == oid("HOST", "ops/bd_queue_burndown.json")
 
     files = atlas.outputs(a, s, tmp_path / "out")
     page = files[tmp_path / "out" / "index.html"]
     m = re.search(r'<script id="atlas-data" type="application/json">([\s\S]*?)</script>', page)
     assert json.loads(m.group(1)) == a and a["digest"] in page
     assert "fetch(" not in page
+
+
+def test_run_checks_records_status_per_block(tmp_path):
+    fake = {"digest": "d", "dag": {"blocks": [
+        {"id": "P", "repo": "R", "verdict": "IO_OK", "check": "python -c \"print('ok')\""},
+        {"id": "F", "repo": "R", "verdict": "IO_OK", "check": "python -c \"raise SystemExit(3)\""},
+        {"id": "N", "repo": "R", "verdict": "IO_OK", "check": None}]}}
+    receipt = atlas.run_checks(fake, {"R": tmp_path})
+    got = {r["block"]: (r["status"], r["exit_code"]) for r in receipt["results"]}
+    assert got == {"P": ("PASS", 0), "F": ("FAIL", 3)} and receipt["summary"] == {"FAIL": 1, "PASS": 1}
 
 
 @pytest.mark.skipif(not (OUT / "method_atlas.json").exists(), reason="atlas not generated")
