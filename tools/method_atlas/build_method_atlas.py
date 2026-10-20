@@ -965,6 +965,7 @@ def build(seed_path: Path = SEED, overrides: dict | None = None) -> tuple[dict, 
         "orchestration": build_orchestration(seed, files, roots, file_lanes),
         "ledger": build_ledger(seed, files, roots, file_lanes, oids),
         "health": build_health(seed, files, roots),
+        "conflict_playbook": seed.get("conflicts", {}),
     }
     atlas["digest"] = hashlib.sha256(json.dumps(atlas, sort_keys=True, separators=(",", ":"),
                                                 ensure_ascii=True).encode()).hexdigest()

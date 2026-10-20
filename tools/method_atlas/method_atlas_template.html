@@ -78,6 +78,11 @@ details{margin:4px 0}summary{cursor:pointer}
 .st-GREEN{color:var(--ok)}.st-AMBER{color:var(--warn)}.st-RED{color:var(--bad)}.st-NA{color:var(--muted)}
 .hm button.cell.st-GREEN{border-left:4px solid var(--ok)}.hm button.cell.st-AMBER{border-left:4px solid var(--warn)}.hm button.cell.st-RED{border-left:4px solid var(--bad)}
 .meter{height:8px;background:var(--chip);border-radius:4px;overflow:hidden;min-width:90px}.meter i{display:block;height:100%;background:var(--accent)}
+.merge-inputs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:8px;margin:8px 0}
+.merge-inputs label{font-size:12px;color:var(--muted);display:block}
+.merge-inputs input{width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);font:12px ui-monospace,Consolas,monospace}
+pre.cmd{position:relative;background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;font:12px/1.5 ui-monospace,Consolas,monospace;margin:6px 0;white-space:pre}
+pre.cmd button{position:absolute;top:6px;right:6px;font:11px system-ui;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:5px;padding:2px 7px;cursor:pointer}
 .theme-toggle,.copy-link{float:right;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;padding:4px 10px;cursor:pointer;font:inherit;margin-left:6px}
 @media (max-width:600px){.kpi{font-size:22px}h1{font-size:19px}}
 </style>
@@ -108,6 +113,7 @@ details{margin:4px 0}summary{cursor:pointer}
 <section id="sipoc" role="tabpanel" hidden></section>
 <section id="orchestration" role="tabpanel" hidden></section>
 <section id="ledger" role="tabpanel" hidden></section>
+<section id="merge" role="tabpanel" hidden></section>
 </main>
 <script id="atlas-data" type="application/json">{{ATLAS_JSON}}</script>
 <script>
@@ -125,7 +131,7 @@ const rowLanes=l=>`data-lanes="${esc((l||[]).join(' '))}"`;
 const table=(head,rows,id)=>`<div class="tablewrap"><table ${id?`id="${id}"`:''}><thead><tr>${head.map(h=>`<th class="${h.n?'n':''}">${esc(h.t||h)}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
 
 // ---------- state + deep links: #tab=..&lanes=A,B&q=..&hour=..
-const TABS=[['overview','Overview'],['health','Repo health'],['taxonomy','Lanes & taxonomy'],['blocks','Blocks & I/O'],['dag','DAG / SPINE / SPLINE'],['sipoc','SIPOC'],['orchestration','Orchestration & broker'],['ledger','Burndown ledger']];
+const TABS=[['overview','Overview'],['health','Repo health'],['taxonomy','Lanes & taxonomy'],['blocks','Blocks & I/O'],['dag','DAG / SPINE / SPLINE'],['sipoc','SIPOC'],['orchestration','Orchestration & broker'],['ledger','Burndown ledger'],['merge','Merge & conflicts']];
 const SEARCH={taxonomy:'monQ',blocks:'blkQ',orchestration:'wfQ',ledger:'ldQ'};
 const state={tab:'overview',lanes:new Set(),q:'',hour:null,repo:null,dim:null};
 function readHash(){const p=new URLSearchParams(location.hash.slice(1));
@@ -305,6 +311,33 @@ function renderLedgerCards(){
     const byLane={};es.forEach(e=>(e.lanes.length?e.lanes:['CORE']).forEach(l=>byLane[l]=(byLane[l]||0)+1));
     return`<div class="card"><h3>${esc(t.label)}</h3><div class="kpi">${es.length}</div><div class="sub">${es.filter(e=>Object.keys(e.counts||{}).length||e.rows).length} with counts</div><div>${Object.entries(byLane).sort().map(([l,n])=>l==='CORE'?`<span class="chip">core ${n}</span>`:chipLane(l).replace('</span>',` ${n}</span>`)).join('')}</div></div>`}).join('')||'<p class="note">No ledgers for the selected lanes.</p>';
 }
+
+// ---------- merge & conflicts playbook
+const PB=A.conflict_playbook||{classes:[],recipes:[]};
+const mergeVals={repo:'',branch:'',base:'origin/main',file:'<file>'};
+try{Object.assign(mergeVals,JSON.parse(localStorage.getItem('ma3-merge')||'{}'))}catch(e){}
+const fillCmd=c=>c.replace(/\{(repo|branch|base|file|stem|atlas)\}/g,(m,k)=>{const v={repo:mergeVals.repo||'<repo path>',branch:mergeVals.branch||'<branch>',base:mergeVals.base||'origin/main',file:mergeVals.file||'<file>',stem:(mergeVals.file||'<file>').split('/').pop().replace(/\.[^.]+$/,''),atlas:'.'}[k];return v});
+const cmdBlock=lines=>`<pre class="cmd" data-tpl="${esc(JSON.stringify(lines))}"><code>${esc(lines.map(fillCmd).join('\n'))}</code><button type="button">Copy</button></pre>`;
+document.getElementById('merge').innerHTML=`<h2>Merge-conflict helpers</h2>
+<p class="note">PowerShell commands for the conflict patterns seen across the federation. Fill in the boxes once and every command below updates; nothing runs from this page. For a scan of real branches, run the branch radar and open its report.</p>
+<div class="card"><b>ours / theirs:</b> ${esc(PB.ours_theirs_note||'')}</div>
+<div class="merge-inputs">
+<div><label for="mRepo">Repository path</label><input id="mRepo" placeholder="C:\\Users\\you\\source\\repos\\ABACUS" value="${esc(mergeVals.repo)}"></div>
+<div><label for="mBranch">Branch</label><input id="mBranch" placeholder="feat/my-branch" value="${esc(mergeVals.branch)}"></div>
+<div><label for="mBase">Base</label><input id="mBase" value="${esc(mergeVals.base)}"></div>
+<div><label for="mFile">Conflicted file (repo-relative)</label><input id="mFile" placeholder="docs/ci/WORKFLOW_RATIONALIZATION.md" value="${esc(mergeVals.file==='<file>'?'':mergeVals.file)}"></div>
+</div>
+<h2>Branch radar</h2>
+<p class="note">Scans local branches: merges cleanly with the base or not, rebase in progress, conflicting files classified below, a nothing-lost audit for rebased-but-unpushed branches, and tailored commands. Run these from the CODEX checkout (the atlas tools live there), then open <code>artifacts/method_atlas/branches.html</code> (<a href="../../artifacts/method_atlas/branches.html">open if generated</a>).</p>
+${cmdBlock(["python tools\\method_atlas\\branch_conflicts.py radar --path '{repo}' --fetch","python tools\\method_atlas\\branch_conflicts.py audit --path '{repo}' --branch {branch}","Invoke-Item artifacts\\method_atlas\\branches.html"])}
+<h2>Situations</h2>
+${PB.recipes.map(r=>`<div class="card"><h3>${esc(r.label)}</h3><div class="sub">${esc(r.when)}</div>${cmdBlock(r.commands)}</div>`).join('')}
+<h2>Conflicted file classes</h2>
+<p class="note">The radar puts each conflicting file in the first class whose pattern matches.</p>
+${PB.classes.map(c=>`<div class="card"><h3>${esc(c.label)} <span class="badge">${esc(c.resolution)}</span></h3><div class="sub">${esc(c.why)}</div><div class="sub">Matches: ${c.match.map(m=>`<code>${esc(m)}</code>`).join(' ')}</div>${cmdBlock(c.commands)}</div>`).join('')}`;
+function refreshCmds(){document.querySelectorAll('#merge pre.cmd').forEach(p=>{p.querySelector('code').textContent=JSON.parse(p.dataset.tpl).map(fillCmd).join('\n')})}
+[['mRepo','repo'],['mBranch','branch'],['mBase','base'],['mFile','file']].forEach(([id,k])=>document.getElementById(id).addEventListener('input',e=>{mergeVals[k]=e.target.value.trim();try{localStorage.setItem('ma3-merge',JSON.stringify(mergeVals))}catch(_){}refreshCmds()}));
+document.getElementById('merge').addEventListener('click',async e=>{const b=e.target.closest('pre.cmd button');if(!b)return;try{await navigator.clipboard.writeText(b.parentElement.querySelector('code').textContent);b.textContent='Copied'}catch(_){b.textContent='Select + Ctrl+C'}setTimeout(()=>b.textContent='Copy',1500)});
 
 // ---------- apply state to every view
 function filterTable(id,q){const t=document.getElementById(id);if(!t)return;const ql=(q||'').toLowerCase();

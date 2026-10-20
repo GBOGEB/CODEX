@@ -309,3 +309,65 @@ def test_health_dimensions_on_synthetic_repo(tmp_path):
                                  / len([x for x in d.values() if x["score"] is not None]), 1)
     assert score([]) is None and status(None, {"green": 80, "amber": 50}) == "NA"
     assert status(80, {"green": 80, "amber": 50}) == "GREEN" and status(49.9, {"green": 80, "amber": 50}) == "RED"
+
+
+def test_conflict_playbook_classifies_and_fills():
+    import branch_conflicts as bc
+    pb = bc.load_playbook()
+    assert [c["id"] for c in pb["classes"]][-1] == "code"  # catch-all last
+    cases = {
+        "mission_control/mycelium/executable_value_report.json": "generated_receipt",
+        "docs/method_atlas/index.html": "atlas_output",
+        "docs/ci/WORKFLOW_RATIONALIZATION.md": "inventory_doc",
+        ".github/workflows/g3a-n15-python-matrix.yml": "workflow_add_add",
+        "ci/governance/workflow_policy.json": "policy_json",
+        "scripts/cbd_workflow_failure_waves.py": "code",
+    }
+    assert {f: bc.classify(f, pb)["id"] for f in cases} == cases
+    # Only known placeholders are replaced; PowerShell's @{1} survives.
+    assert bc.fill("git -C '{repo}' branch -f {branch} '{branch}@{1}'", repo="C:\\r", branch="b") == \
+        "git -C 'C:\\r' branch -f b 'b@{1}'"
+    for c in pb["classes"] + pb["recipes"]:
+        assert c["commands"] and all(isinstance(x, str) for x in c["commands"])
+
+
+def test_radar_audit_categories(monkeypatch):
+    import branch_conflicts as bc
+    blobs = {  # (ref, file) -> blob id
+        ("origin/b", "same.py"): "s", ("b", "same.py"): "s",
+        ("origin/b", "newer.py"): "r1", ("b", "newer.py"): "m2", ("origin/main", "newer.py"): "m2",
+        ("origin/b", "lost.py"): "r1", ("b", "lost.py"): "mb", ("MB", "lost.py"): "mb", ("origin/main", "lost.py"): "mb",
+        ("origin/b", "combo.json"): "r1", ("b", "combo.json"): "c9", ("origin/main", "combo.json"): "m1", ("MB", "combo.json"): "x",
+    }
+
+    def fake_git(repo, *args, check=True):
+        if args[0] == "merge-base":
+            return "MB\n"
+        if args[0] == "diff":
+            return "same.py\nnewer.py\nlost.py\ncombo.json\n"
+        if args[0] == "log":  # base changed the file since the merge base only for newer.py
+            return "abc\n" if args[-1] == "newer.py" else ""
+        raise AssertionError(args)
+
+    monkeypatch.setattr(bc, "git", fake_git)
+    monkeypatch.setattr(bc, "rev", lambda repo, ref: "x")
+    monkeypatch.setattr(bc, "blob", lambda repo, ref, f: blobs.get((ref, f)))
+    a = bc.audit(Path("."), "b", "origin/main")
+    got = {x["file"]: x["result"] for x in a["files"]}
+    assert got == {"same.py": "SAME", "newer.py": "BASE_NEWER", "lost.py": "LOST", "combo.json": "COMBINED"}
+    assert a["status"] == "LOSS" and a["lost"] == ["lost.py"] and a["combined"] == ["combo.json"]
+
+
+def test_radar_commands_per_state():
+    import branch_conflicts as bc
+    pb = bc.load_playbook()
+    repo = {"path": "C:\\r", "base": "origin/main", "rebase": {"conflicts": [{"file": "docs/ci/WORKFLOW_RATIONALIZATION.md", "class": "inventory_doc"}]}}
+    blocks = bc.commands_for(repo, None, pb)  # in-progress rebase: one block per conflicted file
+    assert len(blocks) == 1 and "checkout --ours" in blocks[0]["lines"][0] and "C:\\r" in blocks[0]["lines"][0]
+    conflict = {"name": "feat/x", "state": "CONFLICT", "conflicts": [{"file": "a.py", "class": "code"}]}
+    titles = [b["title"] for b in bc.commands_for(repo, conflict, pb)]
+    assert titles[0].startswith("Rebase onto") and titles[1].startswith("a.py")
+    pushed = bc.commands_for(repo, {"name": "feat/x", "state": "DIVERGED_NOT_PUSHED", "conflicts": []}, pb)
+    assert any("--force-with-lease origin feat/x" in l for b in pushed for l in b["lines"])
+    stray = bc.commands_for(repo, {"name": "main", "state": "BASE_LOCAL_AHEAD", "conflicts": []}, pb)
+    assert "branch -f main origin/main" in stray[0]["lines"][1]
