@@ -147,7 +147,17 @@ def test_inversion_fixed_point_matches_the_analytic_vdw_inversion(tool, examples
     by_id = {e["example_id"]: e for e in examples}
     out = tool.compute(by_id["WE-T02-INVERSION-HELIUM-002"], vdw)
     assert out["inversion_temperature_k"] == pytest.approx(VDW_T_INV, abs=1e-4)
-    assert out["enthalpy_j_g"] == pytest.approx(vdw(out["inversion_temperature_k"], 1400.0)["enthalpy_J_kg"] / 1000)
+    t_in = by_id["WE-T02-INVERSION-HELIUM-002"]["inputs"]["inlet_temperature_k"]
+    assert out["enthalpy_j_g"] == pytest.approx(vdw(t_in, 1400.0)["enthalpy_J_kg"] / 1000)
+    # T_out - T_in has the sign of T_in - T_inv for the stand-in: warming above inversion.
+    assert (out["outlet_temperature_k"] - t_in) * (t_in - VDW_T_INV) > 0
+
+
+def test_record_chunks_reassemble_and_respect_the_annotation_limit(tool):
+    view = {"rows": [{"example_id": f"WE-{k}", "computed": k * 1.5} for k in range(400)]}
+    chunks = tool.record_chunks(view)
+    assert len(chunks) > 1 and all(len(c) <= tool.ANNOTATION_CHUNK for c in chunks)
+    assert json.loads("".join(chunks)) == view
 
 
 def test_inversion_fails_closed_without_a_joule_thomson_effect(tool, examples):

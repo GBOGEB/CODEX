@@ -89,12 +89,15 @@ def compute(example: dict[str, Any], provider: ProviderFn) -> dict[str, float]:
         return out
     if eid == "WE-T02-INVERSION-HELIUM-002":
         # Fig. 15.19: T_in such that the isenthalpic expansion p_in -> p_out leaves T unchanged.
-        t_inv = _isenthalpic_fixed_point(provider, i["inlet_pressure_bar"] * 100.0, i["outlet_pressure_bar"] * 100.0)
-        if math.isnan(t_inv):  # no inversion inside the scan range: fails closed
-            return {"inversion_temperature_k": t_inv, "enthalpy_j_g": t_inv}
+        # The book's Goal Seek writes its result into the inlet cell; the printed state is checked
+        # at that inlet, and the provider's own fixed point separately (it is ill-conditioned).
+        p_in, p_out = i["inlet_pressure_bar"] * 100.0, i["outlet_pressure_bar"] * 100.0
+        t_inv = _isenthalpic_fixed_point(provider, p_in, p_out)  # NaN (fails closed) if not bracketed
+        h_in = provider(i["inlet_temperature_k"], p_in)["enthalpy_J_kg"]
         return {
             "inversion_temperature_k": t_inv,
-            "enthalpy_j_g": provider(t_inv, i["inlet_pressure_bar"] * 100.0)["enthalpy_J_kg"] / 1000,
+            "outlet_temperature_k": _solve_t(provider, p_out, "enthalpy_J_kg", h_in),
+            "enthalpy_j_g": h_in / 1000,
         }
     if eid == "WE-T03-HEAT-EXCHANGER-001":
         # Fig. 15.25 scenario A (rating): cold side fixes Q, hot outlet from the energy balance.
@@ -218,11 +221,23 @@ def record_view(report: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+ANNOTATION_CHUNK = 3500  # GitHub truncates annotation messages at 4096 bytes
+
+
+def record_chunks(view: dict[str, Any], size: int = ANNOTATION_CHUNK) -> list[str]:
+    """Compact JSON of the record, split so each annotation stays under GitHub's limit.
+
+    Concatenate the 'L1 record k/n' annotations in order to get the record back.
+    """
+    payload = json.dumps(view, sort_keys=True, separators=(",", ":"))
+    return [payload[i : i + size] for i in range(0, len(payload), size)] or [payload]
+
+
 def compare_record(fresh: dict[str, Any], recorded: dict[str, Any]) -> list[str]:
     """Differences between a fresh run and the committed record (record = fresh, rounded)."""
     problems = []
     if recorded.get("record") in (None, "PENDING_FIRST_CI_RECORD"):
-        return ["RECORD_PENDING: copy the 'L1 record' annotation into the record file"]
+        return ["RECORD_PENDING: concatenate the 'L1 record k/n' annotations into the record file"]
     rec = recorded["record"]
     for key in ("coolprop_version", "status", "examples_checked", "examples_source_check_required", "examples_excluded"):
         if fresh[key] != rec.get(key):
@@ -285,7 +300,9 @@ def main(argv: list[str] | None = None) -> int:
         print("::notice title=Ch15 worked examples::" + " | ".join(cells[i : i + half]))
     view = record_view(report)
     if args.emit_record:
-        print("::notice title=L1 record::" + json.dumps(view, sort_keys=True, separators=(",", ":")))
+        chunks = record_chunks(view)
+        for k, chunk in enumerate(chunks, 1):
+            print(f"::notice title=L1 record {k}/{len(chunks)}::{chunk}")
     if args.expect_record:
         problems = compare_record(view, json.loads(args.expect_record.read_text(encoding="utf-8")))
         for prob in problems:
