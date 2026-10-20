@@ -46,3 +46,23 @@ jobs:
       scan-args: |-
         -r
         ./
+
+  # Report-only: the reusable scan publishes findings to the Security tab and a
+  # SARIF artifact only. Re-emit them as annotations and a job summary so the
+  # run itself says which advisories and files are affected.
+  scan-findings:
+    needs: scan-scheduled
+    if: ${{ always() && needs.scan-scheduled.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: scripts/osv_sarif_summary.py
+          sparse-checkout-cone-mode: false
+      - uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: OSV Scanner SARIF file
+          path: osv-sarif
+      - name: Summarise OSV findings
+        run: python3 scripts/osv_sarif_summary.py osv-sarif

@@ -1,0 +1,19 @@
+# OSV-Scanner configuration (read for manifests in this directory).
+#
+# Documented false positives: the scanner does not apply the version floors
+# in requirements.txt (Pygments>=2.20.0, idna>=3.15, added 2026-10-18 in
+# c7cb2aa/c4a53b7) and keeps reporting advisories that those floors exclude.
+# pip cannot install an affected version under these constraints.
+# Each entry expires so the decision is re-checked; tests/test_osv_ignores.py
+# verifies every ignore names its fixed version and that the floor in this
+# directory's requirements.txt is at or above it.
+
+[[IgnoredVulns]]
+id = "CVE-2026-4539"
+ignoreUntil = 2027-01-20
+reason = "Pygments: ReDoS (GUID regex); fixed in 2.20.0 per GitLab advisory; requirements.txt floor Pygments>=2.20.0."
+
+[[IgnoredVulns]]
+id = "CVE-2022-40896"
+ignoreUntil = 2027-01-20
+reason = "Pygments: ReDoS; fixed in 2.15.0; requirements.txt floor Pygments>=2.20.0."

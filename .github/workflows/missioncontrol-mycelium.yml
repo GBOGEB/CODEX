@@ -194,6 +194,13 @@ jobs:
         run: python scripts/analyze_missioncontrol_logs.py
       - name: Build metrics materialization
         run: python scripts/build_missioncontrol_metrics.py
+      - name: Build REX badge projection
+        run: |
+          python scripts/build_missioncontrol_rex_badges.py
+          git diff --exit-code -- mission_control/mycelium/rex_badges.json docs/data/missioncontrol_rex_badges.json || {
+            echo "::error::REX badge projection drift. Run \`python scripts/build_missioncontrol_rex_badges.py\` and commit both JSON files."
+            exit 1
+          }
       - name: Validate Mycelium contract
         run: python scripts/validate_missioncontrol_mycelium.py
       - name: Validate executable integration and value
@@ -236,7 +243,7 @@ jobs:
               exit 1
             }
       - name: Run MissionControl tests
-        run: pytest -q tests/test_missioncontrol_mycelium.py tests/test_missioncontrol_metrics.py tests/test_missioncontrol_logs.py tests/test_missioncontrol_source_ingestion.py tests/test_missioncontrol_execution_gateway.py tests/test_missioncontrol_authenticated_transport.py tests/test_missioncontrol_status_snapshot.py tests/test_executable_integration_value.py tests/test_missioncontrol_value_rex_contract.py tests/test_classify_executable_registration_debt.py
+        run: pytest -q tests/test_missioncontrol_mycelium.py tests/test_missioncontrol_metrics.py tests/test_missioncontrol_logs.py tests/test_missioncontrol_source_ingestion.py tests/test_missioncontrol_execution_gateway.py tests/test_missioncontrol_authenticated_transport.py tests/test_missioncontrol_status_snapshot.py tests/test_executable_integration_value.py tests/test_missioncontrol_value_rex_contract.py tests/test_missioncontrol_rex_badges.py tests/test_classify_executable_registration_debt.py
       - name: Verify deterministic materializations
         run: |
           git ls-files --error-unmatch mission_control/mycelium/executable_value_report.json

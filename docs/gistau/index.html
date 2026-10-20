@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>GISTAU Book</title>
+<style>
+:root {
+  --bg: #ffffff; --panel: #ffffff; --fg: #111111; --muted: #5a5a5a; --line: #562873; --soft: #d9d9d9;
+  --accent: #984A9C; --ok: #007a33; --open: #8a5a00; --open-bg: #fff4e5; --th-fg: #ffffff;
+  --font: Arial, "Helvetica Neue", Helvetica, sans-serif; --mono: Consolas, "Liberation Mono", monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #181421; --panel: #241d33; --fg: #f5f2ff; --muted: #cfc2ef; --line: #b79ae0; --soft: #3a3150;
+  --accent: #e0a6e4; --ok: #9cf2be; --open: #ffd27a; --open-bg: #3b2a00; --th-fg: #181421; color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #181421; --panel: #241d33; --fg: #f5f2ff; --muted: #cfc2ef; --line: #b79ae0; --soft: #3a3150;
+  --accent: #e0a6e4; --ok: #9cf2be; --open: #ffd27a; --open-bg: #3b2a00; --th-fg: #181421; color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font-family: var(--font); margin: 0; line-height: 1.45; }
+.page { padding-inline: 16px; padding-block: 0 24px; max-width: 1100px; margin-inline: auto; }
+.topbar { padding-block: 16px; border-bottom: 4px solid var(--line); }
+.crumbs { font-size: .85rem; color: var(--muted); margin: 0 0 6px; }
+.topbar h1 { margin: 0 0 6px; font-size: 1.5rem; text-wrap: balance; }
+.topbar p { margin: 0; color: var(--muted); max-width: 75ch; }
+h2 { font-size: 1.15rem; margin: 22px 0 8px; }
+.grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
+.card { border: 3px solid var(--line); border-radius: 12px; padding: 14px 16px; background: var(--panel); min-width: 0; }
+.card h3 { margin: 0 0 4px; font-size: 1.05rem; }
+.card.open { border-color: var(--open); background: var(--open-bg); }
+.ref { color: var(--muted); font-size: .85rem; margin: 0 0 6px; }
+.pill { display: inline-block; border: 2px solid var(--accent); border-radius: 999px; padding: 1px 9px; font-size: .8rem; font-weight: bold; margin: 2px 4px 2px 0; }
+.pill.ok { border-color: var(--ok); color: var(--ok); }
+ul.links { margin: 8px 0 0; padding-left: 18px; } ul.links li { margin: 3px 0; }
+.wrap { overflow-x: auto; margin-top: 10px; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: .88rem; }
+th, td { border: 1px solid var(--soft); padding: 5px 8px; text-align: left; }
+th { background: var(--line); color: var(--th-fg); border-color: var(--line); white-space: nowrap; } td.num { text-align: right; white-space: nowrap; }
+.note { margin: 8px 0 0; max-width: 80ch; }
+.conv { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-top: 8px; }
+.conv input { font: inherit; width: 7em; padding: 4px 6px; border: 2px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); }
+.conv output { font-weight: bold; }
+.foot { margin-top: 22px; color: var(--muted); font-size: .88rem; max-width: 80ch; }
+code { font-family: var(--mono); font-size: .9em; overflow-wrap: anywhere; } a { color: var(--fg); }
+a:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+</style></head>
+<body><main class="page">
+<header class="topbar"><p class="crumbs"><a href='../index.html'>CODEX portal</a> › GISTAU book</p><h1>GISTAU · Cryogenic Helium Refrigeration</h1><p>Guy Gistau Baguer, <em>Cryogenic Helium Refrigeration for Middle and Large Powers</em>, Springer 2020, 725 pages. The canonical entry point for the chapters worked on in CODEX.</p></header>
+<h2>Chapters</h2><section class='grid'><article class='card'><h3><a href='../gistau-ch3/index.html'>Chapter 3 · Basic Thermodynamic Cycles</a></h3><p class='ref'>book pp. 77-150 · PDF offset +38</p><span class='pill'>6 Claude-cycle benchmarks</span><span class='pill'>3 open items</span><p class='note'>Textbook reference cases (§3.5 Claude cycle): one turbine, two turbines, parallel vs series, efficiency correlations.</p><ul class='links'><li><a href='../gistau-ch3/index.html'>Chapter 3 benchmarks</a></li></ul></article><article class='card'><h3><a href='../gistau-ch15/index.html'>Chapter 15 · The Cryo Tool Box</a></h3><p class='ref'>book pp. 613-640 · PDF offset +35</p><span class='pill ok'>L1: 5/5 examples · 17/17 values</span><span class='pill'>0 open</span><span class='pill'>1 book erratum</span><span class='pill'>7 excluded</span><p class='note'>Worked examples reproduced by the governing helium-4 provider in CI; engineering toolbox in the browser.</p><ul class='links'><li><a href='../gistau-ch15/index.html'>Chapter 15 portal</a></li><li><a href='../gistau-ch15/artifact_readiness.html'>Artifacts / Downloads / LDAB / Overtime</a></li><li><a href='../gistau-ch15/backend_delta_heatmap.html'>Backend Delta Heatmap</a></li><li><a href='../gistau-ch15/coolprop_binding_status.html'>CoolProp Binding Status</a></li><li><a href='../gistau-ch15/property_evidence_bridge.html'>Property Evidence Bridge (source-bound / HOLD)</a></li><li><a href='../gistau-ch15/source_snippets.html'>Source Snippets</a></li><li><a href='../gistau-ch15/plots/coolprop_state_grid_view.html'>CoolProp State Grid Review</a></li><li><a href='../gistau-ch15/plots/low_temp_helium_surfaces.html'>Low-Temperature Surfaces</a></li><li><a href='../gistau-ch15/plots/thermo_visual_overlays.html'>PR-H Thermodynamic Visual Overlays</a></li><li><a href='../gistau-ch15/nist_validation_review.html'>NIST Validation Review</a></li><li><a href='../gistau-ch15/tool_values.html'>Tool Values &amp; Operating Points</a></li><li><a href='../gistau-ch15/l1_validation.html'>L1 Validation — Worked Examples</a></li><li><a href='../gistau-ch15/toolbox.html'>Engineering Toolbox</a></li><li><a href='../gistau-ch15/physics_authority.html'>Physics Authority Review</a></li></ul></article></section><h2>Page finder</h2><p class='note'>Printed book page → page in the original PDF. Offsets are verified per chapter; other chapters are not mapped yet.</p><div class='conv'><label for='bp'>Book page</label><input id='bp' type='number' inputmode='numeric' min='1' max='725' placeholder='e.g. 638'/><output id='pdfp' for='bp' aria-live='polite'>—</output></div><h2>Where each chapter sits</h2><div class='wrap'><table><thead><tr><th>Part</th><th>Book pages</th><th>PDF pages</th></tr></thead><tbody><tr><td>Chapter 3 · Basic Thermodynamic Cycles</td><td class='num'>77-150</td><td class='num'>115-188</td></tr><tr><td>§3.5 · The Claude cycle</td><td class='num'>120-135</td><td class='num'>158-173</td></tr><tr><td>Chapter 15 · The Cryo Tool Box</td><td class='num'>613-640</td><td class='num'>648-675</td></tr></tbody></table></div><h2>Keep apart</h2><section class='grid'><article class='card open'><h3>Not this book: Chapter 3 Final.pdf</h3><p class='note'>X. L. Wang and J. Q. Zhang, &#x27;The Accelerator Cryoplant&#x27; (ESS implementation literature). Separate supporting reference; not Chapter 3 of Gistau. Do not merge source identities.</p></article></section>
+<p class="foot">Original PDF <code>Cryogenic_helium_refrigeration_for_middle_and_large_powers.pdf</code>, sha256 <code>1b2843cf89c85e5415e89107a7fb5fdfb9673986a71dd669abe33ae0d4ff1b41</code>, 41110703 bytes; not committed, identity pinned in <code>GISTAU/sources/master/source_manifest.yaml</code>. Generated by <code>tools/render_gistau_book.py</code>. <a href='../index.html'>CODEX portal</a></p>
+</main><script>(function(){var R=[[77, 150, 38, "Chapter 3 \u00b7 Basic Thermodynamic Cycles"], [613, 640, 35, "Chapter 15 \u00b7 The Cryo Tool Box"]];var i=document.getElementById('bp'),o=document.getElementById('pdfp');i.addEventListener('input',function(){var p=parseInt(i.value,10);if(!p){o.textContent='—';return;}for(var k=0;k<R.length;k++){if(p>=R[k][0]&&p<=R[k][1]){o.textContent='PDF page '+(p+R[k][2])+' ('+R[k][3]+')';return;}}o.textContent='Offset not verified for this page';});})();</script></body></html>

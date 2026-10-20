@@ -1,27 +1,33 @@
 {
-  "schema_version": "0.1",
-  "generated_at": "2026-10-02T13:57:52Z",
+  "schema_version": "0.2",
+  "generated_at": "2026-10-20T05:51:56.933582+00:00",
   "public_metadata_only": true,
   "authority_transfer": false,
+  "engineering_state_promoted": false,
   "sources": [
     {
       "id": "codex",
       "repository": "GBOGEB/CODEX",
       "authority_class": "LOCAL_AUTHORITATIVE",
       "role": "ORCHESTRATION_UI_GOVERNANCE",
-      "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-02T13:57:32Z",
-      "head_sha": "cc9391fa0b9a904c2a329c5dfda0035ec2344bec",
-      "measurement_basis": "exact live CODEX main after #925 merge plus metrics-only bot update"
+      "status": "FRESH",
+      "observed_at": "2026-10-20T05:51:54.229801+00:00",
+      "head_sha": "41e790fc0764860be70af67c2a3c5660fd371f03",
+      "measurement_basis": "default-branch head identity read from the GitHub REST API by scripts/ingest_missioncontrol_sources.py --identity-only; curated census fields keep their own census_* provenance",
+      "default_branch": "main",
+      "head_ref": "main",
+      "head_url": "https://github.com/GBOGEB/CODEX/commit/41e790fc0764860be70af67c2a3c5660fd371f03",
+      "identity_status": "MEASURED",
+      "curated_measurement_basis": "exact live CODEX main after #925 merge plus metrics-only bot update"
     },
     {
       "id": "abacus",
       "repository": "GBOGEB/ABACUS",
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "EXECUTION_DOW",
-      "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-02T13:57:52Z",
-      "head_sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
+      "status": "FRESH",
+      "observed_at": "2026-10-20T05:51:55.225428+00:00",
+      "head_sha": "63370c4f8860234b32de18abcbe2938926de033d",
       "census_pr": 1697,
       "census_head_sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
       "census_merge_sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
@@ -29,7 +35,7 @@
       "census_job": 110867203583,
       "census_artifact_id": 11230281685,
       "census_artifact_sha256": "6f742d011f42c02774b3607af7fe5d516b902e42d31200a877dbe3a803cbc0a4",
-      "measurement_basis": "completed exact current-main DAB after merged #1696 and #1697 E302 slices; total 3129 at exact main 02c21964",
+      "measurement_basis": "default-branch head identity read from the GitHub REST API by scripts/ingest_missioncontrol_sources.py --identity-only; curated census fields keep their own census_* provenance",
       "census_total": 3129,
       "w293_postmerge_status": "MEASURED_POST_1697_MAIN",
       "E741": 0,
@@ -262,24 +268,34 @@
           "E302": 145,
           "E303": 16
         }
-      }
+      },
+      "default_branch": "main",
+      "head_ref": "main",
+      "head_url": "https://github.com/GBOGEB/ABACUS/commit/63370c4f8860234b32de18abcbe2938926de033d",
+      "identity_status": "MEASURED",
+      "curated_measurement_basis": "completed exact current-main DAB after merged #1696 and #1697 E302 slices; total 3129 at exact main 02c21964"
     },
     {
       "id": "cryoplant_project",
       "repository": "GBOGEB/cryoplant-project",
       "authority_class": "REMOTE_AUTHORITATIVE",
       "role": "ENGINEERING_TRUTH_QPS",
-      "status": "MEASURED_CHAT_CONNECTOR",
-      "observed_at": "2026-10-02T07:35:04Z",
-      "head_sha": "85a4bfdbde9e40e8eb6333ea4e54e6096dffa3a4",
-      "measurement_basis": "GitHub connector repository-head refresh + metadata-only typed return",
+      "status": "FRESH",
+      "observed_at": "2026-10-20T05:51:56.064895+00:00",
+      "head_sha": "0164271ca37d6c84497980370bcb0a7505f3be62",
+      "measurement_basis": "default-branch head identity read from the GitHub REST API by scripts/ingest_missioncontrol_sources.py --identity-only; curated census fields keep their own census_* provenance",
       "authority_preserved": true,
       "engineering_truth_promoted": false,
       "latest_return_pr": 1834,
       "latest_return_merge_sha": "9f1ff9a9b48b40cf19555fdcd34a1cbc944eaa1a",
       "latest_return_role": "REMOTE_ENGINEERING_CONTROL_LEDGER",
       "projection_policy": "METADATA_ONLY_NO_RESTRICTED_CONTENT",
-      "evidence_ref": "mission_control/mycelium/evidence/cryoplant_master_input_ledger_return_1834.json"
+      "evidence_ref": "mission_control/mycelium/evidence/cryoplant_master_input_ledger_return_1834.json",
+      "default_branch": "main",
+      "head_ref": "main",
+      "head_url": "https://github.com/GBOGEB/cryoplant-project/commit/0164271ca37d6c84497980370bcb0a7505f3be62",
+      "identity_status": "MEASURED",
+      "curated_measurement_basis": "GitHub connector repository-head refresh + metadata-only typed return"
     }
   ]
 }
