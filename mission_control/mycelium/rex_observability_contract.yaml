@@ -207,6 +207,9 @@ ui:
     - prior_fix
     - control_guard
     - rex_link
+  producer: scripts/build_missioncontrol_rex_badges.py
+  projection: docs/data/missioncontrol_rex_badges.json
+  matching: EXACT_REX_ID_OR_SIGNATURE_ONLY
 
 # Additive, read-only candidate source. It is NOT the global REX ledger.
 # CODEX global intake and QPS consumer acceptance are separate future gates.
