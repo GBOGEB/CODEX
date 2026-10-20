@@ -6,6 +6,7 @@
   let events = null;
   let graphModel = null;
   let sourceStatus = null;
+  let rexBadges = null;
   let stagedEnvelope = null;
   const MISSIONCONTROL_AUTHENTICATED_TRANSPORT_URL = 'https://github.com/GBOGEB/CODEX/actions/workflows/missioncontrol-authenticated-transport.yml';
 
@@ -14,7 +15,7 @@
   }
 
   async function loadControlPlane() {
-    [control, events, sourceStatus] = await Promise.all([
+    [control, events, sourceStatus, rexBadges] = await Promise.all([
       fetch('data/missioncontrol_control_plane.json').then(r => {
         if (!r.ok) throw new Error('control-plane projection HTTP ' + r.status);
         return r.json();
@@ -32,7 +33,11 @@
         sources:[],
         projection_error:String(err?.message || err),
         authority_transfer:false
-      }))
+      })),
+      fetch('data/missioncontrol_rex_badges.json').then(r => {
+        if (!r.ok) throw new Error('REX badge projection HTTP ' + r.status);
+        return r.json();
+      }).catch(() => null)
     ]);
     renderAuthority();
     renderLanes();
@@ -57,6 +62,21 @@
     box.innerHTML = '<table><thead><tr><th>Authority</th><th>Current SHA</th><th>Since handover</th></tr></thead><tbody>' + rows + '</tbody></table>';
   }
 
+  function rexBadge(surface, itemId) {
+    if (!rexBadges || rexBadges.omnipresent_badge !== true) return '<span class="pill rex-badge" data-rex-state="UNKNOWN">REX UNKNOWN</span>';
+    const hit = (rexBadges.badges || []).find(b => b.surface === surface && b.item_id === itemId);
+    if (!hit) return '<span class="pill rex-badge" data-rex-state="UNKNOWN" title="no REX lookup recorded for this item">REX UNKNOWN</span>';
+    if (!hit.rex_ids.length) return '<span class="pill rex-badge" data-rex-state="' + esc(hit.decision_hint) + '" title="' + esc(hit.basis) + '">REX ' + esc(hit.decision_hint) + '</span>';
+    return hit.rex_ids.map(id => {
+      const r = (rexBadges.records || {})[id] || {};
+      const guard = Array.isArray(r.control_guard) ? r.control_guard.join('; ') : (r.control_guard ?? 'UNKNOWN');
+      const title = 'seen before · ' + (r.recurrence_count ?? 'UNKNOWN') + ' ' + (r.recurrence_unit ?? '') +
+        ' · ' + (r.recurrence_class ?? 'UNKNOWN') + ' · last ' + (r.last_seen ?? 'UNKNOWN') +
+        ' · prior fix: ' + (r.prior_fix ?? 'UNKNOWN') + ' · guard: ' + guard;
+      return '<a class="pill rex-badge warn" data-rex-state="' + esc(hit.decision_hint) + '" href="' + esc(r.rex_link || '#') + '" title="' + esc(title) + '">REX ' + esc(id) + ' ×' + esc(r.recurrence_count ?? 'UNKNOWN') + ' · ' + esc(r.recurrence_class ?? 'UNKNOWN') + '</a>';
+    }).join('');
+  }
+
   function laneActions(lane) {
     const next = (lane.next_legal_transitions || [])[0] || 'WITHHELD';
     return '<button class="lane-resume" data-lane="' + esc(lane.id) + '" data-next="' + esc(next) + '">resume</button> ' +
@@ -69,8 +89,8 @@
     box.innerHTML = (control.lanes || []).map(lane =>
       '<tr><td><b>' + esc(lane.id) + '</b><br><small>' + esc(lane.repository) + '</small></td>' +
       '<td>' + esc(lane.state) + '<br><span class="pill">' + esc(lane.queue_state) + '</span></td>' +
-      '<td>' + esc(lane.current_atom) + '</td>' +
-      '<td>' + (lane.blocker ? '<span class="warn">' + esc(lane.blocker) + '</span>' : '<span class="ok">none</span>') + '</td>' +
+      '<td>' + esc(lane.current_atom) + (lane.current_atom ? '<br>' + rexBadge('active_atom', lane.id) : '') + '</td>' +
+      '<td>' + (lane.blocker ? '<span class="warn">' + esc(lane.blocker) + '</span><br>' + rexBadge('blocker', lane.id) : '<span class="ok">none</span>') + '</td>' +
       '<td>' + esc((lane.next_legal_transitions || []).join(' → ')) + '</td>' +
       '<td>' + laneActions(lane) + '</td></tr>'
     ).join('');
@@ -130,7 +150,7 @@
     const body = $('#controlEventRows');
     if (!body || !events) return;
     body.innerHTML = (events.events || []).slice().sort((a,b)=>String(b.at).localeCompare(String(a.at))).slice(0,10).map(e =>
-      '<tr><td>' + esc(e.at) + '</td><td>' + esc(e.type) + '</td><td>' + esc(e.node_id) + '</td><td>' + esc(e.summary) + '</td></tr>'
+      '<tr><td>' + esc(e.at) + '</td><td>' + esc(e.type) + (e.type === 'FIRST_RED' ? '<br>' + rexBadge('first_red', e.id) : '') + '</td><td>' + esc(e.node_id) + '</td><td>' + esc(e.summary) + '</td></tr>'
     ).join('');
   }
 
