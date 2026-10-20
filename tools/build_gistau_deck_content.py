@@ -32,6 +32,8 @@ EXAMPLE_NAMES = {
     "WE-T00-REFPROP-HSD-PT-002": "T00 state point, 1 bar / 300 K",
     "WE-T02-FREE-EXPANSION-HEAT-001": "T02 free expansion, 14 to 1 bar + 100 W",
     "WE-T02-MASS-FLOW-004": "T02 mass flow from heat input",
+    "WE-T02-INVERSION-HELIUM-002": "T02 JT inversion, 14 to 1 bar",
+    "WE-T03-HEAT-EXCHANGER-001": "T03 heat exchanger, 300/200 K",
     "WE-T04-CRYOGENIC-EXPANDER-001": "T04 expander, 14 to 1.2 bar",
     "WE-T05-CRYOGENIC-COMPRESSOR-001": "T05 cold compressor, 0.5 to 1.2 bar",
 }
@@ -40,6 +42,8 @@ QUANTITIES = {
     "outlet_temperature_k": ("T out", "K"), "inlet_enthalpy_j_g": ("h in", "J/g"), "outlet_enthalpy_j_g": ("h out", "J/g"),
     "mass_flow_g_s": ("ṁ", "g/s"), "power_w_visible": ("P", "W"), "power_w": ("P", "W"),
     "isentropic_enthalpy_change_j_g": ("Δh isent", "J/g"), "real_enthalpy_change_j_g": ("Δh real", "J/g"),
+    "inversion_temperature_k": ("T inv", "K"), "hot_outlet_temperature_k": ("T hot out", "K"), "heat_load_w": ("Q", "W"),
+    "lmtd_k": ("LMTD", "K"), "ua_w_k": ("UA", "W/K"),
 }
 
 
@@ -134,7 +138,7 @@ def build() -> dict[str, Any]:
                     f"{gate['tolerances']['entropy_abs_J_gK']:g} J/g·K, {gate['tolerances']['density_rel'] * 100:g} % density, "
                     f"{gate['tolerances']['derived_rel'] * 100:g} % derived."
                 ),
-                f"{len(gate['excluded'])} examples excluded with a stated reason (HEPAK two-phase, ambiguous transcription); never counted as passing.",
+                f"{len(gate['excluded'])} examples excluded with a stated reason (duplicate, nitrogen, HEPAK-governed two-phase); never counted as passing.",
                 f"Recorded from CI run {record['provenance']['recorded_from']['run_id']}; CI fails if the record drifts.",
             ],
         },
