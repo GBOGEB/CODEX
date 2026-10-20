@@ -544,9 +544,9 @@ def main() -> None:
             }
         )
     payload = json.dumps(snapshot, indent=2, sort_keys=False) + "\n"
-    OUT.write_text(payload, encoding="utf-8")
+    OUT.write_text(payload, encoding="utf-8", newline="\n")
     PAGES_OUT.parent.mkdir(parents=True, exist_ok=True)
-    PAGES_OUT.write_text(payload, encoding="utf-8")
+    PAGES_OUT.write_text(payload, encoding="utf-8", newline="\n")
     print(f"MissionControl metrics snapshot: {snapshot['graph']['node_count']} nodes / {snapshot['graph']['edge_count']} edges")
 
 
