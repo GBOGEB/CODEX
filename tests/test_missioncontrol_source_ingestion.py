@@ -243,8 +243,14 @@ def test_identity_refresh_keeps_curated_census_and_embeds_no_payload() -> None:
     assert record["W293"] == 0
     assert record["measurement_basis"] == IDENTITY_BASIS
     assert record["curated_measurement_basis"] == "curated census at census-head"
-    for key in ("data", "telemetry_errors", "telemetry_status", "topology",
-                "pushed_at", "open_issue_count"):
+    for key in (
+        "data",
+        "telemetry_errors",
+        "telemetry_status",
+        "topology",
+        "pushed_at",
+        "open_issue_count",
+    ):
         assert key not in record
 
     # A second refresh keeps the original curated basis, not the identity one.
@@ -307,7 +313,8 @@ def test_pages_rebuilds_on_schedule_from_release_gated_main() -> None:
     assert "refs/heads/main" in resolve["if"]
     assert "github.event.workflow_run.conclusion == 'success'" in resolve["if"]
     script = resolve["steps"][0]["run"]
-    assert "runtime_release_gate.yml/runs?branch=main&event=push&status=success" in script
+    gate_query = "runtime_release_gate.yml/runs?branch=main&event=push&status=success"
+    assert gate_query in script
     assert jobs["build"]["needs"] == "resolve"
     assert jobs["build"]["steps"][0]["with"]["ref"] == (
         "${{ needs.resolve.outputs.source_sha }}"
