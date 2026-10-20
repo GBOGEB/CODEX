@@ -171,3 +171,21 @@ def test_post_execution_rex_event_is_provisional(tmp_path, monkeypatch) -> None:
     assert event["event"] == "TASK_EXECUTED"
     assert event["lookup"]["authority"] == "EVIDENCE_ONLY"
     assert event["authority_transfer"] is False
+
+
+@pytest.mark.parametrize("actor", ["external-contributor", "other-org-bot", "GBOGEB ", "gbogeb"])
+def test_external_actor_rejected_from_stage_only_transport(actor):
+    with pytest.raises(GatewayError, match="actor is not authorized"):
+        validate_request(request(), expected_sha=SHA, actor=actor)
+
+
+def test_actor_hint_cannot_override_external_authentication():
+    value = request(requested_by_hint="GBOGEB")
+    with pytest.raises(GatewayError, match="actor is not authorized"):
+        validate_request(value, expected_sha=SHA, actor="external-contributor")
+
+
+def test_unauthorized_actor_rejected_before_mutation_request():
+    value = request(action_class="APPLY_BOUNDED_CODEX")
+    with pytest.raises(GatewayError, match="actor is not authorized"):
+        validate_request(value, expected_sha=SHA, actor="external-contributor")

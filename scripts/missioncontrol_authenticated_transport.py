@@ -108,6 +108,12 @@ def validate_request(
 
     if not actor.strip():
         raise GatewayError("authenticated actor is required")
+    # This transport is owner-scoped while broader authorization and
+    # independent ABACUS execution promotion remain deliberately disabled.
+    # Caller-supplied actor strings are not authentication credentials:
+    # the GitHub Actions transport must bind this to GITHUB_ACTOR.
+    if actor != "GBOGEB":
+        raise GatewayError("actor is not authorized for owner stage-only transport")
     if not SHA_RE.fullmatch(expected_sha):
         raise GatewayError("expected SHA must be a 40-character lowercase SHA")
 
