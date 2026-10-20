@@ -1666,6 +1666,240 @@ nodes:
     project_outcome: false
     recursive_control_effect: false
 
+  - id: reg1_pages_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/pages.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: fec011198d8044da17758248a5c39d8a8ed2778b
+    purpose: Build and deploy GitHub Pages, including the live MissionControl source ingestion and REX projections.
+    inputs: [runtime_release_gate_completion]
+    outputs: [pages_artifact]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [run_39202115325_job_117897100420]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MIP_CI_BATCH_1
+
+  - id: reg1_code_purple_rex_control_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/code-purple-rex-control.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 2bdca63d325c0906e328212f17d365e487aae007
+    purpose: Validate the CODE PURPLE candidate REX return and KPI projection.
+    inputs: [repository_change]
+    outputs: [ci_execution_evidence]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [run_39174251212_job_117813532095]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MIP_CI_BATCH_1
+
+  - id: reg1_mip_n2_self_index_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/mip-n2-self-index.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 1aa40cdb081ada67b213f8e4a3d849d57c56fd0f
+    purpose: Check MIP kit drift and verify the exact-SHA self-index receipt.
+    inputs: [repository_change]
+    outputs: [ci_execution_evidence]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [run_39311270270_job_118261165258]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MIP_CI_BATCH_1
+
+  - id: reg1_inventory_reconcile_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/missioncontrol-inventory-reconcile.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 28177c2d9215b640e5d916ce1e4838034457f07c
+    purpose: Regenerate MissionControl executable-value receipts on main after merge.
+    inputs: [main_push]
+    outputs: [reconciled_receipts]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [run_39376960782_job_118477154724]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MIP_CI_BATCH_1
+
+  - id: reg1_source_ingestion
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/ingest_missioncontrol_sources.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 28177c2d9215b640e5d916ce1e4838034457f07c
+    purpose: Ingest federation source heads and metadata into the MissionControl source-status projection.
+    inputs: [source_registry, github_repository_metadata]
+    outputs: [source_status_projection, control_events]
+    execution_surface: GitHub Actions job build
+    test_proof_evidence: [tests/test_missioncontrol_source_ingestion.py, run_39376960811_job_118477154546]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: DERIVED_PROJECTION_ONLY
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MIP_CI_BATCH_1
+
+  - id: reg1_code_purple_rex_rollup
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/code_purple_rex_rollup.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 28177c2d9215b640e5d916ce1e4838034457f07c
+    purpose: Roll up the read-only CODE PURPLE candidate REX return for MissionControl.
+    inputs: [abacus_code_purple_rex_return]
+    outputs: [code_purple_rex_rollup_json]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [tests/test_code_purple_rex_rollup.py, run_39376960811_job_118477154546]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: DERIVED_PROJECTION_ONLY
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MIP_CI_BATCH_1
+
+  - id: reg1_code_purple_current_observation
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/code_purple_current_observation.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 28177c2d9215b640e5d916ce1e4838034457f07c
+    purpose: Emit the source-bound read-only current ABACUS observation (never a REX approval).
+    inputs: [abacus_public_metadata]
+    outputs: [code_purple_current_observation_json]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [tests/test_code_purple_current_observation.py, run_39376960811_job_118477154546]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: DERIVED_PROJECTION_ONLY
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MIP_CI_BATCH_1
+
+  - id: reg1_mip_kit_manifest
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/mip_kit_manifest.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 28177c2d9215b640e5d916ce1e4838034457f07c
+    purpose: Write or check the canonical MIP kit manifest.
+    inputs: [mip_kit_files]
+    outputs: [kit_manifest, drift_check_result]
+    execution_surface: GitHub Actions job self-index-proof
+    test_proof_evidence: [tests/test_mip_kit.py, run_39376960811_job_118477154546]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MIP_CI_BATCH_1
+
+  - id: reg1_mip_verify_self_index
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/mip_verify_self_index.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 28177c2d9215b640e5d916ce1e4838034457f07c
+    purpose: Verify MIP self-index exact-SHA binding, repeatability and lane maturity.
+    inputs: [mip_surface, self_index_receipt]
+    outputs: [verification_summary]
+    execution_surface: GitHub Actions job self-index-proof
+    test_proof_evidence: [tests/test_mip_kit.py, run_39376960811_job_118477154546]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MIP_CI_BATCH_1
+
+  - id: reg1_mip_repo_self_index
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/mip_repo_self_index.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 28177c2d9215b640e5d916ce1e4838034457f07c
+    purpose: Generate the MIP repo self-index receipt.
+    inputs: [repository_tree, mip_surface]
+    outputs: [self_index_receipt]
+    execution_surface: GitHub Actions job self-index-proof
+    test_proof_evidence: [tests/test_mip_kit.py, run_39376960811_job_118477154546]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MIP_CI_BATCH_1
+
+  - id: reg1_mip_debug_diagnostic
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/mip_debug_diagnostic.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 28177c2d9215b640e5d916ce1e4838034457f07c
+    purpose: Run the executable debug/LDAB diagnostic for the MIP self-index.
+    inputs: [receipt_validator]
+    outputs: [debug_diagnostic_receipt]
+    execution_surface: GitHub Actions job self-index-proof
+    test_proof_evidence: [tests/test_mip_kit.py, run_39376960811_job_118477154546]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MIP_CI_BATCH_1
+
+  - id: reg1_regen_inventory
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/regen_missioncontrol_inventory.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 28177c2d9215b640e5d916ce1e4838034457f07c
+    purpose: Regenerate the MissionControl executable-value receipts in Mycelium CI order.
+    inputs: [executable_integration_registry]
+    outputs: [executable_value_receipts]
+    execution_surface: GitHub Actions job reconcile
+    test_proof_evidence: [tests/test_regen_missioncontrol_inventory.py, run_39376960811_job_118477154546]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MIP_CI_BATCH_1
+
+  - id: reg1_execution_gateway_validator
+    type: VALIDATOR
+    repository: GBOGEB/CODEX
+    path: scripts/validate_missioncontrol_execution_gateway.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 28177c2d9215b640e5d916ce1e4838034457f07c
+    purpose: Validate the authenticated execution gateway contract, schemas and bounded-apply ledger.
+    inputs: [execution_gateway_contract, bounded_apply_policy]
+    outputs: [gateway_validation_result]
+    execution_surface: MissionControl Mycelium CI
+    test_proof_evidence: [tests/test_missioncontrol_execution_gateway.py, run_39376960811_job_118477154546]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MIP_CI_BATCH_1
+
 edges:
   - {from: mc_control_manifest, to: mc_mycelium_workflow, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
   - {from: mc_mycelium_workflow, to: mc_integration_validator, type: TRIGGERED_BY, evidence: run_37281376763_job_111670015753}
@@ -1752,6 +1986,19 @@ edges:
   - {from: mcp_sweep_runtime, to: mcp_sweep_ci_execution, type: PRODUCES, evidence: artifact_11355801565}
   - {from: mcp_sweep_ci_execution, to: mcp_sweep_proof, type: PROVES, evidence: MCP_SWEEP_MAIN_B4F7059A_PROOF}
   - {from: mcp_sweep_proof, to: mcp_sweep_snapshot_consumer, type: UPDATES, evidence: artifact_11355801565}
+
+  # Registration batch 1 (MYCELIUM_MIP_CI_BATCH_1): CI invocation edges only.
+  - {from: reg1_pages_workflow, to: reg1_source_ingestion, type: TRIGGERED_BY, evidence: run_39202115325_job_117897100420}
+  - {from: reg1_pages_workflow, to: reg1_code_purple_rex_rollup, type: TRIGGERED_BY, evidence: run_39202115325_job_117897100420}
+  - {from: reg1_pages_workflow, to: reg1_code_purple_current_observation, type: TRIGGERED_BY, evidence: run_39202115325_job_117897100420}
+  - {from: reg1_code_purple_rex_control_workflow, to: reg1_code_purple_rex_rollup, type: TRIGGERED_BY, evidence: run_39174251212_job_117813532095}
+  - {from: reg1_code_purple_rex_control_workflow, to: reg1_code_purple_current_observation, type: TRIGGERED_BY, evidence: run_39174251212_job_117813532095}
+  - {from: reg1_mip_n2_self_index_workflow, to: reg1_mip_kit_manifest, type: TRIGGERED_BY, evidence: run_39311270270_job_118261165258}
+  - {from: reg1_mip_n2_self_index_workflow, to: reg1_mip_verify_self_index, type: TRIGGERED_BY, evidence: run_39311270270_job_118261165258}
+  - {from: reg1_mip_verify_self_index, to: reg1_mip_repo_self_index, type: TRIGGERED_BY, evidence: run_39311270270_job_118261165258}
+  - {from: reg1_mip_repo_self_index, to: reg1_mip_debug_diagnostic, type: TRIGGERED_BY, evidence: run_39311270270_job_118261165258}
+  - {from: reg1_inventory_reconcile_workflow, to: reg1_regen_inventory, type: TRIGGERED_BY, evidence: run_39376960782_job_118477154724}
+  - {from: mc_mycelium_workflow, to: reg1_execution_gateway_validator, type: TRIGGERED_BY, evidence: run_39376960861_job_118477154909}
 
 integration_paths:
   - id: mcp_sweep_repository_value

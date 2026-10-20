@@ -357,3 +357,32 @@ def test_mcp_sweep_repository_value_path_is_registered():
     assert runtime["value_scope"] == "V2_REPOSITORY_VALUE"
     assert "mcp_sweep_runtime" not in report["tested_orphans"]
     assert report["executed_integration_path_count"] >= 15
+
+
+def test_registration_batch_1_claims_no_value_beyond_its_evidence():
+    _, registry, _ = loaded()
+    root = REGISTRY.parents[2]
+    batch = [
+        n for n in registry["nodes"]
+        if n.get("registration_batch") == "MYCELIUM_MIP_CI_BATCH_1"
+    ]
+    assert len(batch) == 13
+    edges = registry["edges"]
+    for node in batch:
+        assert (root / node["path"]).is_file(), node["path"]
+        assert node["value_scope"] == "V0_TESTED_ONLY", node["id"]
+        assert node["value_evidence"] == [], node["id"]
+        assert node["current_state"] == "REGISTERED_CONNECTED_VALUE_WITHHELD"
+        assert any(e["from"] == node["id"] or e["to"] == node["id"] for e in edges), node["id"]
+        assert all(
+            e.get("evidence", "").startswith("run_")
+            for e in edges
+            if node["id"] in (e["from"], e["to"])
+        ), node["id"]
+        test_files = [t for t in node["test_proof_evidence"] if t.startswith("tests/")]
+        if node["type"] == "WORKFLOW":
+            assert node["test_proof_evidence"][0].startswith("run_"), node["id"]
+            continue
+        assert test_files, node["id"]
+        stem = node["path"].rsplit("/", 1)[-1].removesuffix(".py")
+        assert any(stem in (root / t).read_text(encoding="utf-8") for t in test_files), node["id"]
