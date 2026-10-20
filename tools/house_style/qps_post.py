@@ -299,9 +299,10 @@ def post_docx(src, out, meta, keep=False):
         props = {"Name": meta.title,
                  "Common Attributes_Short Reference": meta.ref or "",
                  "Common Attributes_Information Security Classification": meta.classification}
-        zin = zipfile.ZipFile(staged)
-        names = zin.namelist()
-        with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as zout:
+        # Close the staged archive before the temp dir is removed: Windows
+        # cannot delete a file that is still open (WinError 32).
+        with zipfile.ZipFile(staged) as zin, zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as zout:
+            names = zin.namelist()
             for it in zin.infolist():
                 data = zin.read(it.filename)
                 if it.filename.startswith(("word/header", "word/footer")) and it.filename.endswith(".xml"):

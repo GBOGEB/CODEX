@@ -23,8 +23,7 @@ sys.path.insert(0, str(HERE))
 
 
 def swap_content_type(src, dst, old, new):
-    zin = zipfile.ZipFile(src)
-    with zipfile.ZipFile(dst, "w", zipfile.ZIP_DEFLATED) as zout:
+    with zipfile.ZipFile(src) as zin, zipfile.ZipFile(dst, "w", zipfile.ZIP_DEFLATED) as zout:
         for it in zin.infolist():
             data = zin.read(it.filename)
             if it.filename == "[Content_Types].xml":
