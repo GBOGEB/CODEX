@@ -217,18 +217,77 @@ def recover_stale(
     return recovered
 
 
+IDENTITY_FIELDS = (
+    "status",
+    "observed_at",
+    "default_branch",
+    "head_ref",
+    "head_sha",
+    "head_url",
+    "identity_status",
+    "identity_error",
+)
+IDENTITY_BASIS = (
+    "default-branch head identity read from the GitHub REST API by "
+    "scripts/ingest_missioncontrol_sources.py --identity-only; curated census "
+    "fields keep their own census_* provenance"
+)
+
+
+def refresh_identity(
+    current: list[dict[str, Any]], previous: dict[str, Any] | None
+) -> list[dict[str, Any]]:
+    """Refresh head identity on top of the committed curated records.
+
+    Only identity fields change. Curated census and return fields are kept
+    as they are, and no repository, pull, issue or workflow payload is
+    embedded, so the committed fallback stays public metadata only.
+    """
+    old = {x["id"]: x for x in (previous or {}).get("sources", [])}
+    refreshed = []
+    for item in current:
+        if item.get("status") == "ERROR":
+            refreshed.append(item)
+            continue
+        record = dict(old.get(item["id"], {}))
+        for key in ("data", "telemetry_errors", "telemetry_status", "topology"):
+            record.pop(key, None)
+        for key in ("id", "repository", "authority_class", "role"):
+            record[key] = item[key]
+        for key in IDENTITY_FIELDS:
+            if key in item:
+                record[key] = item[key]
+            else:
+                record.pop(key, None)
+        prior_basis = record.get("measurement_basis")
+        if prior_basis and prior_basis != IDENTITY_BASIS:
+            record.setdefault("curated_measurement_basis", prior_basis)
+        record["measurement_basis"] = IDENTITY_BASIS
+        refreshed.append(record)
+    return recover_stale(refreshed, previous)
+
+
 def build(
-    *, fixture_dir: Path | None = None, token: str | None = None
+    *,
+    fixture_dir: Path | None = None,
+    token: str | None = None,
+    identity_only: bool = False,
 ) -> dict[str, Any]:
     registry = yaml.safe_load(REGISTRY.read_text(encoding="utf-8"))
     previous = (
         json.loads(CACHE.read_text(encoding="utf-8")) if CACHE.exists() else None
     )
+    declared = registry.get("sources", [])
+    if identity_only:
+        declared = [{**source, "ingest": ["repository"]} for source in declared]
     collected = [
         collect_source(source, token=token, fixture_dir=fixture_dir)
-        for source in registry.get("sources", [])
+        for source in declared
     ]
-    sources = recover_stale(collected, previous)
+    if identity_only:
+        sources = refresh_identity(collected, previous)
+    else:
+        sources = recover_stale(collected, previous)
     return {
         "schema_version": "0.2",
         "generated_at": now_iso(),
@@ -312,7 +371,7 @@ def write_payload(
     emit_events: bool,
     previous: dict[str, Any] | None,
 ) -> None:
-    text = json.dumps(payload, indent=2, sort_keys=True) + "\n"
+    text = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
     CACHE.write_text(text, encoding="utf-8")
     PAGES.parent.mkdir(parents=True, exist_ok=True)
     PAGES.write_text(text, encoding="utf-8")
@@ -320,7 +379,8 @@ def write_payload(
     if emit_events:
         events = json.loads(EVENTS.read_text(encoding="utf-8"))
         updated = temporal_refresh_events(previous, payload, events)
-        event_text = json.dumps(updated, indent=2) + "\n"
+        # Keep the committed one-line form so an append is a one-line diff.
+        event_text = json.dumps(updated, separators=(",", ":"), ensure_ascii=False)
         EVENTS.write_text(event_text, encoding="utf-8")
         PAGES_EVENTS.write_text(event_text, encoding="utf-8")
 
@@ -333,6 +393,14 @@ def main() -> None:
         action="store_true",
         help="Append projection-only source head/status changes to control_events.json.",
     )
+    parser.add_argument(
+        "--identity-only",
+        action="store_true",
+        help=(
+            "Refresh only head identity on top of the committed curated records "
+            "(for the committed fallback); embed no repository payloads."
+        ),
+    )
     args = parser.parse_args()
     previous = (
         json.loads(CACHE.read_text(encoding="utf-8")) if CACHE.exists() else None
@@ -340,6 +408,7 @@ def main() -> None:
     payload = build(
         fixture_dir=args.fixture_dir,
         token=os.environ.get("GITHUB_TOKEN"),
+        identity_only=args.identity_only,
     )
     write_payload(payload, emit_events=args.emit_events, previous=previous)
     states = ", ".join(
