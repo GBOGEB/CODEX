@@ -11,7 +11,7 @@ slides:
   body:
   - Chapter 15 thermodynamic tools rebuilt as code, a CI-gated validation and an online engineering portal.
   - Helium-4 physics is governed by GBOGEB/ABACUS at 4c2f669 (CoolProp==7.2.0); CODEX consumes it and never governs it.
-  - 'L1 validated model: 5 of 5 checked worked examples reproduce the book (17 of 17 quantities); no open items; 1 printed book cell recorded as an erratum.'
+  - 'L1 validated model: 7 of 7 checked worked examples reproduce the book (24 of 24 quantities); no open items; 1 printed book cell recorded as an erratum.'
   objectives:
   - 'L0 parse and trace: book source to tuples to source snippets'
   - 'L1 validated model: reproduce the Ch15 worked examples within the book''s printed precision (current)'
@@ -43,6 +43,12 @@ slides:
   - id: T02 mass flow from heat input
     result: pass
     book vs provider: ṁ 7.39 vs 7.38449 g/s · h in 106.67 vs 106.674 J/g · h out 120.21 vs 120.216 J/g
+  - id: T02 JT inversion, 14 to 1 bar
+    result: pass
+    book vs provider: T inv 43.21 vs 43.1919 K · T out 43.21 vs 43.2104 K · h 229.41 vs 229.42 J/g
+  - id: T03 heat exchanger, 300/200 K
+    result: pass
+    book vs provider: T hot out 212.72 vs 212.723 K · Q 22669 vs 22668.8 W · LMTD 6.73 vs 6.72969 K · UA 3368 vs 3368.48 W/K
   - id: T04 expander, 14 to 1.2 bar
     result: pass
     book vs provider: T out 12.93 vs 12.9344 K · h out 70.85 vs 70.8532 J/g · P -2981.6 vs -2981.63 W
@@ -51,8 +57,8 @@ slides:
     book vs provider: h in 29.02 vs 29.0242 J/g · T out 7.72 vs 7.7218 K · h out 42.37 vs 42.3654 J/g · P 5336 vs 5336.46 W · Δh real 13.34 vs 13.3412 J/g
   notes:
   - 'Tolerances: 0.05 K, 0.05 J/g, 0.005 J/g·K, 0.5 % density, 1 % derived.'
-  - 7 examples excluded with a stated reason (HEPAK two-phase, ambiguous transcription); never counted as passing.
-  - Recorded from CI run 39170176913; CI fails if the record drifts.
+  - 5 examples excluded with a stated reason (duplicate, nitrogen, HEPAK-governed two-phase); never counted as passing.
+  - Recorded from CI run 39473767749; CI fails if the record drifts.
 - title: 'Source check: T05 cryogenic compressor'
   section: VALIDATION
   body:

@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
+import math
 import sys
 from collections.abc import Callable
 from pathlib import Path
@@ -86,7 +87,53 @@ def compute(example: dict[str, Any], provider: ProviderFn) -> dict[str, float]:
             out["isentropic_enthalpy_change_j_g"] = (h2s - inlet["enthalpy_J_kg"]) / 1000
             out["real_enthalpy_change_j_g"] = dh / 1000
         return out
+    if eid == "WE-T02-INVERSION-HELIUM-002":
+        # Fig. 15.19: T_in such that the isenthalpic expansion p_in -> p_out leaves T unchanged.
+        # The book's Goal Seek writes its result into the inlet cell; the printed state is checked
+        # at that inlet, and the provider's own fixed point separately (it is ill-conditioned).
+        p_in, p_out = i["inlet_pressure_bar"] * 100.0, i["outlet_pressure_bar"] * 100.0
+        t_inv = _isenthalpic_fixed_point(provider, p_in, p_out)  # NaN (fails closed) if not bracketed
+        h_in = provider(i["inlet_temperature_k"], p_in)["enthalpy_J_kg"]
+        return {
+            "inversion_temperature_k": t_inv,
+            "outlet_temperature_k": _solve_t(provider, p_out, "enthalpy_J_kg", h_in),
+            "enthalpy_j_g": h_in / 1000,
+        }
+    if eid == "WE-T03-HEAT-EXCHANGER-001":
+        # Fig. 15.25 scenario A (rating): cold side fixes Q, hot outlet from the energy balance.
+        p_h, p_c = i["hot_inlet_pressure_bar"] * 100.0, i["cold_inlet_pressure_bar"] * 100.0
+        m_h, m_c = i["hot_mass_flow_g_s"] / 1000.0, i["cold_mass_flow_g_s"] / 1000.0
+        q = m_c * (provider(i["cold_outlet_temperature_k"], p_c)["enthalpy_J_kg"] - provider(i["cold_inlet_temperature_k"], p_c)["enthalpy_J_kg"])
+        h_h_out = provider(i["hot_inlet_temperature_k"], p_h)["enthalpy_J_kg"] - q / m_h
+        t_h_out = _solve_t(provider, p_h, "enthalpy_J_kg", h_h_out)
+        dt_warm = i["hot_inlet_temperature_k"] - i["cold_outlet_temperature_k"]
+        dt_cold = t_h_out - i["cold_inlet_temperature_k"]
+        lmtd = (dt_cold - dt_warm) / math.log(dt_cold / dt_warm) if abs(dt_cold - dt_warm) > 1e-12 else dt_warm
+        return {"hot_outlet_temperature_k": t_h_out, "heat_load_w": q, "lmtd_k": lmtd, "ua_w_k": q / lmtd}
     raise KeyError(f"no computation defined for {eid}")
+
+
+def _isenthalpic_fixed_point(provider: ProviderFn, p_in_kpa: float, p_out_kpa: float, lo: float = 10.0, hi: float = 120.0) -> float:
+    """T such that T_out(h(T, p_in), p_out) == T (integral Joule-Thomson inversion); NaN if not bracketed."""
+
+    def gap(t: float) -> float:
+        return _solve_t(provider, p_out_kpa, "enthalpy_J_kg", provider(t, p_in_kpa)["enthalpy_J_kg"]) - t
+
+    grid = [lo + k * (hi - lo) / 110 for k in range(111)]
+    values = [gap(t) for t in grid]
+    for (a, fa), (b, fb) in zip(zip(grid, values), zip(grid[1:], values[1:])):
+        if fa * fb < 0 and max(abs(fa), abs(fb)) > 1e-6:  # ignore solver noise (no JT effect)
+            for _ in range(60):
+                mid = 0.5 * (a + b)
+                fm = gap(mid)
+                if (fm > 0) == (fb > 0):
+                    b, fb = mid, fm
+                else:
+                    a, fa = mid, fm
+                if b - a < 1e-7:
+                    break
+            return 0.5 * (a + b)
+    return float("nan")
 
 
 def _tolerance(quantity: str, expected: float, tol: dict[str, float]) -> tuple[str, float]:
@@ -174,11 +221,23 @@ def record_view(report: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+ANNOTATION_CHUNK = 3500  # GitHub truncates annotation messages at 4096 bytes
+
+
+def record_chunks(view: dict[str, Any], size: int = ANNOTATION_CHUNK) -> list[str]:
+    """Compact JSON of the record, split so each annotation stays under GitHub's limit.
+
+    Concatenate the 'L1 record k/n' annotations in order to get the record back.
+    """
+    payload = json.dumps(view, sort_keys=True, separators=(",", ":"))
+    return [payload[i : i + size] for i in range(0, len(payload), size)] or [payload]
+
+
 def compare_record(fresh: dict[str, Any], recorded: dict[str, Any]) -> list[str]:
     """Differences between a fresh run and the committed record (record = fresh, rounded)."""
     problems = []
     if recorded.get("record") in (None, "PENDING_FIRST_CI_RECORD"):
-        return ["RECORD_PENDING: copy the 'L1 record' annotation into the record file"]
+        return ["RECORD_PENDING: concatenate the 'L1 record k/n' annotations into the record file"]
     rec = recorded["record"]
     for key in ("coolprop_version", "status", "examples_checked", "examples_source_check_required", "examples_excluded"):
         if fresh[key] != rec.get(key):
@@ -241,7 +300,9 @@ def main(argv: list[str] | None = None) -> int:
         print("::notice title=Ch15 worked examples::" + " | ".join(cells[i : i + half]))
     view = record_view(report)
     if args.emit_record:
-        print("::notice title=L1 record::" + json.dumps(view, sort_keys=True, separators=(",", ":")))
+        chunks = record_chunks(view)
+        for k, chunk in enumerate(chunks, 1):
+            print(f"::notice title=L1 record {k}/{len(chunks)}::{chunk}")
     if args.expect_record:
         problems = compare_record(view, json.loads(args.expect_record.read_text(encoding="utf-8")))
         for prob in problems:

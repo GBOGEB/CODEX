@@ -3,17 +3,17 @@
   "abacus_commit": "4c2f6695b177975c8983aff74e00ea37905835e3",
   "coolprop_version": "7.2.0",
   "gate": "governance/physics/CH15_CANONICAL_VALIDATION.yaml",
-  "note": "recorded from the 'L1 record' annotation of the PR-time CI crosscheck; CI fails if it drifts",
+  "note": "recorded from the 'L1 record k/n' annotations (concatenated) of the PR-time CI crosscheck; CI fails if it drifts",
   "recorded_from": {
-   "codex_head": "571d9cdff16b31b85d410c5fe3bbe8c68c8e790f",
-   "run_id": 39170176913,
+   "codex_head": "a5d113ed15d8b1f9a6cd92104a175a68fbb14ac3",
+   "run_id": 39473767749,
    "workflow": "GISTAU Physics Crosscheck"
   }
  },
  "record": {
   "coolprop_version": "7.2.0",
-  "examples_checked": 5,
-  "examples_excluded": 7,
+  "examples_checked": 7,
+  "examples_excluded": 5,
   "examples_source_check_required": [],
   "rows": [
    {
@@ -104,6 +104,76 @@
     "expected": 120.21,
     "quantity": "outlet_enthalpy_j_g",
     "tolerance": 0.05,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 43.191894,
+    "deviation": -0.01811,
+    "deviation_kind": "abs",
+    "example_id": "WE-T02-INVERSION-HELIUM-002",
+    "expected": 43.21,
+    "quantity": "inversion_temperature_k",
+    "tolerance": 0.05,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 43.210446,
+    "deviation": 0.0004465,
+    "deviation_kind": "abs",
+    "example_id": "WE-T02-INVERSION-HELIUM-002",
+    "expected": 43.21,
+    "quantity": "outlet_temperature_k",
+    "tolerance": 0.05,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 229.41993,
+    "deviation": 0.009933,
+    "deviation_kind": "abs",
+    "example_id": "WE-T02-INVERSION-HELIUM-002",
+    "expected": 229.41,
+    "quantity": "enthalpy_j_g",
+    "tolerance": 0.05,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 212.72311,
+    "deviation": 0.003111,
+    "deviation_kind": "abs",
+    "example_id": "WE-T03-HEAT-EXCHANGER-001",
+    "expected": 212.72,
+    "quantity": "hot_outlet_temperature_k",
+    "tolerance": 0.05,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 22668.835,
+    "deviation": -7.284e-06,
+    "deviation_kind": "rel",
+    "example_id": "WE-T03-HEAT-EXCHANGER-001",
+    "expected": 22669.0,
+    "quantity": "heat_load_w",
+    "tolerance": 0.01,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 6.7296915,
+    "deviation": -4.585e-05,
+    "deviation_kind": "rel",
+    "example_id": "WE-T03-HEAT-EXCHANGER-001",
+    "expected": 6.73,
+    "quantity": "lmtd_k",
+    "tolerance": 0.01,
+    "verdict": "PASS"
+   },
+   {
+    "computed": 3368.4806,
+    "deviation": 0.0001427,
+    "deviation_kind": "rel",
+    "example_id": "WE-T03-HEAT-EXCHANGER-001",
+    "expected": 3368.0,
+    "quantity": "ua_w_k",
+    "tolerance": 0.01,
     "verdict": "PASS"
    },
    {
