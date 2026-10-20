@@ -5,8 +5,10 @@
         table of contents, abbreviations) in its own section -> corporate
         header/footer fields filled (name, reference, classification, date).
   pptx: Markdown -> pandoc, or a PPTX from any tool -> re-hosted onto the
-        SCK CEN 2020 master from QPS_MTBF_WCS_DMAIC_v10 (Text Slide / BLANK
-        layouts, logo, reference, ISC, slide numbers) -> cover on "Titel Slide 1".
+        SCK CEN 2020 master from QPS_MTBF_WCS_DMAIC_v7 (Text Slide / Blank
+        layouts, logo, reference, ISC, slide numbers) -> cover on "Titel Slide 1"
+        -> reference, ISC and footer filled on every master; the source deck's
+        ECM identity and slide inventory dropped from the document properties.
 
 Usage
   python3 qps_post.py docx IN OUT --title T [--subtitle S] [--project P] [--author A]
@@ -14,15 +16,19 @@ Usage
                       [--classification C] [--date YYYY-MM-DD] [--short] [--keep] [--pdf]
   python3 qps_post.py pptx IN OUT --title T [same options] [--pdf]
 
---short  title block only, no configuration-control pages (informal notes)
---keep   (docx) skip the pandoc pass for a .docx already built on the starter
---pdf    also export a PDF beside OUT
+--short       title block only, no configuration-control pages (informal notes)
+--keep        (docx) skip the pandoc pass for a .docx already built on the starter
+--pdf         also export a PDF beside OUT
+--pdf-engine  auto (default: LibreOffice when soffice is on PATH, else Microsoft Office on Windows),
+              soffice or office
 """
 import argparse
 import copy
 import datetime as dt
 import io
 import os
+import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -35,17 +41,33 @@ from lxml import etree
 from pptx import Presentation
 from pptx.opc.constants import RELATIONSHIP_TYPE as RT
 
-TEMPLATES = Path(__file__).resolve().parent / "templates"
+HERE = Path(__file__).resolve().parent
+TEMPLATES = HERE / "templates"
 DOCX_REF = str(TEMPLATES / "QPS_House_starter.docx")
 PPTX_REF = str(TEMPLATES / "QPS_House.pptx")  # built locally by build_templates.py; not committed
+OFFICE_PDF = HERE / "office_pdf.ps1"
 W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 A = "http://schemas.openxmlformats.org/drawingml/2006/main"
 PNS = "http://schemas.openxmlformats.org/presentationml/2006/main"
 R = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+CP = "http://schemas.openxmlformats.org/officeDocument/2006/custom-properties"
+EP = "http://schemas.openxmlformats.org/officeDocument/2006/extended-properties"
+VT = "http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes"
+CORE = "http://schemas.openxmlformats.org/package/2006/metadata/core-properties"
 
 CORPORATE_SCHEME = "SCK•CEN 2020"
 STANDARD_FONTS = {"Arial", "Segoe UI", "Segoe UI Semibold", "Segoe UI Light", "Symbol", "Wingdings", "Cambria Math"}
-COVER, CONTENT, BLANK = "Titel Slide 1", "Text Slide", "BLANK"
+COVER, CONTENT, BLANK = "Titel Slide 1", "Text Slide", "Blank"
+# Tried in order when a layout name is missing (after an exact, then a case-insensitive match).
+LAYOUT_FALLBACKS = {"blank": ("Blank", "Blank 1", "Blank 2", "Blank footer")}
+# ECM (Alexandria) identity of the deck a template was cut from: blanked so no deck inherits it.
+ECM_IDENTITY = re.compile(r"^(ID|Name|HyperLink|AlexandriaPath|Common Attributes_(Reference Number|Short Reference|"
+                          r"Alternative Reference|Document Type|Author_Author Name|Author_Author Affiliation|"
+                          r"ISC Motivation))$")
+# Master furniture, recognised by name (build_templates.py) or by its text on masters it did not name.
+FURNITURE = {"QPS Ref": "ref", "QPS ISC": "isc", "QPS Footer": "footer"}
+REF_TEXT = re.compile(r"^SCK CEN/\d*$")
+ISC_TEXT = re.compile(r"^ISC:\s*[A-Za-z]*$")
 # Content area of the "Text Slide" layout body and the full usable area above the footer (EMU).
 CONTENT_BOX = (766763, 1486463, 10658474, 4860000)
 BLANK_BOX = (766763, 760000, 10658474, 5590000)
@@ -324,11 +346,18 @@ def is_corporate(prs):
 
 
 def _layout(prs, name):
-    for m in prs.slide_masters:
-        for l in m.slide_layouts:
-            if l.name == name:
-                return l
-    raise KeyError(name)
+    """Layout by name: exact, then case-insensitive, then LAYOUT_FALLBACKS; the first master wins a tie."""
+    layouts = [l for m in prs.slide_masters for l in m.slide_layouts]
+    for want in (name,) + LAYOUT_FALLBACKS.get(name.casefold(), ()):
+        match = next((l for l in layouts if l.name == want), None) or next(
+            (l for l in layouts if l.name.casefold() == want.casefold()), None)
+        if match is not None:
+            return match
+    raise KeyError(f"no layout {name!r}; the master has: {', '.join(sorted({l.name for l in layouts}))}")
+
+
+def is_blank_layout(name):
+    return re.match(r"^(\d+_)?blank\b", name, re.IGNORECASE) is not None
 
 
 def _copy_rels(src_slide, dst_slide, el):
@@ -512,14 +541,140 @@ def finish_deck(dst, meta):
         _ensure_slide_number(sl)
     for sl in dst.slides:
         normalise_fonts(sl.shapes._spTree)
-    m = dst.slide_masters[0]
-    for shp in m.shapes:
-        if shp.name == "QPS Ref" and meta.ref:
-            _set_text(shp, meta.ref)
-        elif shp.name == "QPS ISC":
-            _set_text(shp, f"ISC: {meta.classification}")
-        elif shp.name == "QPS Footer":
-            _set_text(shp, meta.title)
+    fill_furniture(dst, ref=meta.ref or "SCK CEN/", isc=f"ISC: {meta.classification}", footer=meta.title)
+    scrub_identity(dst, meta)
+
+
+def furniture_role(shp, known=None):
+    """'ref', 'isc' or 'footer' for corporate furniture text boxes on a master or layout, else None.
+
+    Recognised by name, by its text (SCK CEN/<digits>, ISC: <level>), or by showing the same text as a
+    named furniture box (`known`: {text: role}), as when another tool rewrote the reference on every master.
+    ECM field boxes ("[Common Attributes_Short Reference]", Alexandria master) never match.
+    """
+    if shp.name in FURNITURE:
+        return FURNITURE[shp.name]
+    if shp.is_placeholder or not shp.has_text_frame:
+        return None
+    text = shp.text_frame.text.strip()
+    if REF_TEXT.match(text):
+        return "ref"
+    if ISC_TEXT.match(text):
+        return "isc"
+    return (known or {}).get(text) if text else None
+
+
+def furniture(prs):
+    """(part name, role, shape) for the furniture on every slide master and layout."""
+    parts = [part for m in prs.slide_masters for part in [m] + list(m.slide_layouts)]
+    known = {shp.text_frame.text.strip(): FURNITURE[shp.name]
+             for part in parts for shp in part.shapes if shp.name in FURNITURE and shp.has_text_frame}
+    known.pop("", None)
+    for part in parts:
+        for shp in part.shapes:
+            role = furniture_role(shp, known)
+            if role:
+                yield part.part.partname, role, shp
+
+
+def fill_furniture(prs, ref, isc, footer):
+    """Write reference, ISC and footer text on every master, so no layout of a secondary master shows stale values."""
+    text = {"ref": ref, "isc": isc, "footer": footer}
+    names = {role: name for name, role in FURNITURE.items()}
+    for _, role, shp in list(furniture(prs)):
+        _set_text(shp, text[role])
+        shp.name = names[role]  # found again by name once the text no longer looks like furniture
+
+
+def _docprops(prs, name):
+    for part in prs.part.package.iter_parts():
+        if part.partname == f"/docProps/{name}":
+            return part
+    return None
+
+
+def scrub_custom_props(blob, values, keep=()):
+    """custom.xml with the ECM identity blanked (except names in `keep`) and `values` set (added when missing)."""
+    root = etree.fromstring(blob)
+    pids = [int(p.get("pid", "1")) for p in root]
+    for prop in list(root):
+        name = prop.get("name", "")
+        if name in keep:
+            continue
+        if name == "CreateDate":  # a vt:filetime cannot be blank; the ECM stamps it again on check-in
+            root.remove(prop)
+            continue
+        if name not in values and not ECM_IDENTITY.match(name):
+            continue
+        for old in list(prop):
+            prop.remove(old)
+        etree.SubElement(prop, f"{{{VT}}}lpwstr").text = values.get(name, "")
+    present = {p.get("name") for p in root}
+    for name, value in values.items():
+        if name not in present:
+            pids.append(max(pids + [1]) + 1)
+            prop = etree.SubElement(root, f"{{{CP}}}property", fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}",
+                                    pid=str(pids[-1]), name=name)
+            etree.SubElement(prop, f"{{{VT}}}lpwstr").text = value
+    return etree.tostring(root, xml_declaration=True, encoding="UTF-8", standalone=True)
+
+
+def app_props(prs, blob=b""):
+    """app.xml describing this deck: its own slide counts, no titles or statistics of the source deck."""
+    keep = {}
+    try:
+        old = etree.fromstring(blob)
+        for tag in ("Application", "PresentationFormat", "Company", "AppVersion"):
+            el = old.find(f"{{{EP}}}{tag}")
+            if el is not None and el.text:
+                keep[tag] = el.text
+    except (etree.XMLSyntaxError, ValueError):
+        pass
+    slides = list(prs.slides)
+    root = etree.Element(f"{{{EP}}}Properties", nsmap={None: EP, "vt": VT})
+    for tag, value in (("Application", keep.get("Application", "Microsoft Office PowerPoint")),
+                       ("PresentationFormat", keep.get("PresentationFormat")),
+                       ("Slides", str(len(slides))),
+                       ("Notes", str(sum(1 for s in slides if s.has_notes_slide))),
+                       ("HiddenSlides", str(sum(1 for s in slides if s._element.get("show") in ("0", "false")))),
+                       ("Company", keep.get("Company")),
+                       ("AppVersion", keep.get("AppVersion"))):
+        if value is not None:
+            etree.SubElement(root, f"{{{EP}}}{tag}").text = value
+    return etree.tostring(root, xml_declaration=True, encoding="UTF-8", standalone=True)
+
+
+def scrub_identity(prs, meta=None):
+    """Drop the identity a template inherits from the deck it was cut from (port of qpsdeck.hygiene.scrub_pptx).
+
+    custom.xml: ECM ID, name, hyperlink, path, reference numbers and author blanked; with `meta`, name,
+    reference, author and classification set to this deck's values. app.xml: rewritten for this deck (slide
+    and notes counts, no titles of parts). core.xml: title and author set, revision reset, last-printed dropped.
+    """
+    values = {}
+    if meta is not None:
+        values = {"Name": meta.title,
+                  "Common Attributes_Reference Number": meta.ref or "",
+                  "Common Attributes_Short Reference": meta.ref or "",
+                  "Common Attributes_Author_Author Name": meta.author or "",
+                  "Common Attributes_Information Security Classification": meta.classification}
+    custom = _docprops(prs, "custom.xml")
+    if custom is not None:  # plain Part: python-pptx keeps its bytes in _blob
+        keep = ()
+        ecm_id = next((p.findtext(f"{{{VT}}}lpwstr") or "" for p in etree.fromstring(custom.blob)
+                       if p.get("name") == "ID"), "").strip()
+        if meta is not None and ecm_id and re.search(rf"(?<!\d){re.escape(ecm_id)}$", meta.ref or ""):
+            keep = ("ID", "HyperLink", "AlexandriaPath", "CreateDate")  # --ref names this very ECM document
+        custom._blob = scrub_custom_props(custom.blob, values, keep)
+    app = _docprops(prs, "app.xml")
+    if app is not None:
+        app._blob = app_props(prs, app.blob)
+    core = prs.core_properties
+    core.title = meta.title if meta is not None else ""
+    core.author = core.last_modified_by = (meta.author or "") if meta is not None else ""
+    core.revision = 1
+    for el in core._element.findall(f"{{{CORE}}}lastPrinted"):
+        core._element.remove(el)
 
 
 def post_pptx(src, out, meta):
@@ -552,9 +707,33 @@ def add_meta_args(ap):
     ap.add_argument("--short", action="store_true")
 
 
-def export_pdf(path):
-    subprocess.run(["soffice", "--headless", "--convert-to", "pdf", "--outdir",
-                    os.path.dirname(os.path.abspath(path)), path], check=True, capture_output=True)
+def add_pdf_args(ap):
+    ap.add_argument("--pdf", action="store_true")
+    ap.add_argument("--pdf-engine", choices=["auto", "soffice", "office"], default="auto")
+
+
+def pdf_engine(engine="auto"):
+    if engine != "auto":
+        return engine
+    return "office" if sys.platform == "win32" and not shutil.which("soffice") else "soffice"
+
+
+def export_pdf(path, engine="auto"):
+    """Write a PDF beside `path` with LibreOffice, or with Microsoft Office over COM (Windows); returns its path."""
+    src = os.path.abspath(path)
+    pdf = os.path.splitext(src)[0] + ".pdf"
+    engine = pdf_engine(engine)
+    if engine == "soffice":
+        args = ["soffice", "--headless", "--convert-to", "pdf", "--outdir", os.path.dirname(src), src]
+    elif engine == "office":
+        args = ["powershell.exe", "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass",
+                "-File", str(OFFICE_PDF), "-In", src, "-Out", pdf]
+    else:
+        raise ValueError(f"unknown PDF engine {engine!r}")
+    r = subprocess.run(args, capture_output=True, text=True, check=False)
+    if r.returncode != 0 or not os.path.exists(pdf):
+        raise RuntimeError(f"PDF export with {engine} failed: {(r.stderr or r.stdout).strip()}")
+    return pdf
 
 
 def main(argv=None):
@@ -564,14 +743,14 @@ def main(argv=None):
     ap.add_argument("out")
     add_meta_args(ap)
     ap.add_argument("--keep", action="store_true")
-    ap.add_argument("--pdf", action="store_true")
+    add_pdf_args(ap)
     a = ap.parse_args(argv)
     if a.kind == "docx":
         post_docx(a.src, a.out, a, keep=a.keep)
     else:
         post_pptx(a.src, a.out, a)
     if a.pdf:
-        export_pdf(a.out)
+        export_pdf(a.out, a.pdf_engine)
 
 
 if __name__ == "__main__":
