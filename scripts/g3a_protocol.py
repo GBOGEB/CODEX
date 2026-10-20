@@ -157,10 +157,11 @@ def _check_receipt(receipt: Any, plan: dict[str, Any],
         _require_string(check.get("name"), "check name")
         if check["status"] in {"PASS", "FAIL"}:
             _require_string(check.get("evidence_ref"), "check evidence_ref")
-    if receipt["result"] == "MEASURED" and not any(
-        c.get("status") == "PASS" for c in checks
+    if receipt["result"] == "MEASURED" and (
+        not checks or any(c.get("status") != "PASS" for c in checks)
     ):
-        raise ValueError("MEASURED requires a source-linked passing check")
+        # A PASS alongside a FAIL/HOLD/NOT_RUN must not promote the pulse.
+        raise ValueError("MEASURED requires all checks PASS with evidence")
     return receipt
 
 
