@@ -13,14 +13,14 @@
       "alias": "report",
       "path": "mission_control/mycelium/executable_value_report.json",
       "origin": "file",
-      "sha256": "75866f20d26251a56bea861c73feb60d8df36e68a4212346e2d2c96165669bb1",
+      "sha256": "85048f8965f27750eb3eca0a25827bbe4e43f553e40c6580e328852c6e39b34b",
       "stamp": null
     },
     {
       "alias": "observation",
       "path": "mission_control/mycelium/executable_value_control_observation.json",
       "origin": "file",
-      "sha256": "8174022314e03eff6fd71ddfdd2dfd387f198f9d6c8e10123a7c196d05cd1507",
+      "sha256": "b57dd67181f9ccc57eda6ac56a07bac5c45a3a8bca3266fa3d879ec4d8f664ae",
       "stamp": null
     },
     {
@@ -48,7 +48,7 @@
       "alias": "registry",
       "path": "mission_control/mycelium/executable_integration_registry.yaml",
       "origin": "file",
-      "sha256": "7783c62450f2e0322a8f8fc431fdfc23cb605a96078cb67d9026d66e9df44e7c",
+      "sha256": "fdab33c9fd1c60872558d62ee50ee5d83fc9ea7b42822d9747fb71052baf2046",
       "stamp": "bb171b534943cd76fe761b988c936fbd09cf96ca"
     },
     {
@@ -89,8 +89,8 @@
       "measurement_coverage_pct": 100.0,
       "bands": {
         "GREEN": 5,
-        "AMBER": 9,
-        "RED": 14,
+        "AMBER": 7,
+        "RED": 16,
         "INFO": 10
       }
     },
@@ -116,8 +116,8 @@
         "measurement_coverage_pct": 100.0,
         "bands": {
           "GREEN": 0,
-          "AMBER": 3,
-          "RED": 1,
+          "AMBER": 1,
+          "RED": 3,
           "INFO": 1
         }
       },
@@ -220,11 +220,11 @@
       "target": 100,
       "dmaic_phase": "MEASURE",
       "status": "MEASURED",
-      "value": 7.48,
+      "value": 10.38,
       "band": "RED",
       "inputs": {
-        "numerator": 43,
-        "denominator": 575
+        "numerator": 60,
+        "denominator": 578
       },
       "unlock": "Register justified batches of census assets in executable_integration_registry.yaml."
     },
@@ -237,10 +237,10 @@
       "target": 0,
       "dmaic_phase": "IMPROVE",
       "status": "MEASURED",
-      "value": 532,
+      "value": 518,
       "band": "RED",
       "inputs": {
-        "numerator": 532
+        "numerator": 518
       },
       "unlock": "Work the registration debt queue (next_control_action CLASSIFY_EXECUTABLE_REGISTRATION_DEBT)."
     },
@@ -268,10 +268,10 @@
       "target": 0,
       "dmaic_phase": "IMPROVE",
       "status": "MEASURED",
-      "value": 15,
+      "value": 14,
       "band": "RED",
       "inputs": {
-        "numerator": 15
+        "numerator": 14
       },
       "unlock": "Bind each unregistered tested orphan to an executable workflow step, or register it as library-only."
     },
@@ -284,11 +284,11 @@
       "target": null,
       "dmaic_phase": "ANALYZE",
       "status": "MEASURED",
-      "value": 44.17,
+      "value": 42.66,
       "band": "INFO",
       "inputs": {
-        "numerator": 235,
-        "denominator": 532
+        "numerator": 221,
+        "denominator": 518
       }
     },
     {
@@ -300,10 +300,10 @@
       "target": 0,
       "dmaic_phase": "ANALYZE",
       "status": "MEASURED",
-      "value": 47,
+      "value": 48,
       "band": "RED",
       "inputs": {
-        "numerator": 47
+        "numerator": 48
       },
       "unlock": "Classify each unresolved asset as register, library-only or archive/remove."
     },
@@ -316,11 +316,11 @@
       "target": 0,
       "dmaic_phase": "CONTROL",
       "status": "MEASURED",
-      "value": 6.52,
+      "value": 5.5,
       "band": "AMBER",
       "inputs": {
         "numerator": 6,
-        "denominator": 92
+        "denominator": 109
       }
     },
     {
@@ -332,11 +332,11 @@
       "target": null,
       "dmaic_phase": "CONTROL",
       "status": "MEASURED",
-      "value": 30.43,
+      "value": 25.69,
       "band": "INFO",
       "inputs": {
         "numerator": 28,
-        "denominator": 92
+        "denominator": 109
       }
     },
     {
@@ -367,7 +367,7 @@
         "PIPELINE_INTEGRATED": 28,
         "PIPELINE_INTEGRATED_PENDING_EXACT_HEAD_PROOF": 2,
         "PIPELINE_INTEGRATED_SOFT_RUFF_DEBT_PRESERVED": 1,
-        "REGISTERED_CONNECTED_VALUE_WITHHELD": 13,
+        "REGISTERED_CONNECTED_VALUE_WITHHELD": 30,
         "REPOSITORY_ARTIFACT_PROOF": 1,
         "REPOSITORY_ARTIFACT_VALUE": 1,
         "REX_OBSERVABLE": 1,
@@ -395,7 +395,7 @@
           "PIPELINE_INTEGRATED": 28,
           "PIPELINE_INTEGRATED_PENDING_EXACT_HEAD_PROOF": 2,
           "PIPELINE_INTEGRATED_SOFT_RUFF_DEBT_PRESERVED": 1,
-          "REGISTERED_CONNECTED_VALUE_WITHHELD": 13,
+          "REGISTERED_CONNECTED_VALUE_WITHHELD": 30,
           "REPOSITORY_ARTIFACT_PROOF": 1,
           "REPOSITORY_ARTIFACT_VALUE": 1,
           "REX_OBSERVABLE": 1,
@@ -413,11 +413,11 @@
       "target": 50,
       "dmaic_phase": "IMPROVE",
       "status": "MEASURED",
-      "value": 15.22,
-      "band": "AMBER",
+      "value": 12.84,
+      "band": "RED",
       "inputs": {
         "numerator": 14,
-        "denominator": 92
+        "denominator": 109
       }
     },
     {
@@ -429,11 +429,11 @@
       "target": 0,
       "dmaic_phase": "IMPROVE",
       "status": "MEASURED",
-      "value": 14.13,
-      "band": "AMBER",
+      "value": 27.52,
+      "band": "RED",
       "inputs": {
-        "numerator": 13,
-        "denominator": 92
+        "numerator": 30,
+        "denominator": 109
       }
     },
     {
@@ -477,7 +477,7 @@
       "dmaic_phase": "MEASURE",
       "status": "MEASURED",
       "value": {
-        "V0_TESTED_ONLY": 13,
+        "V0_TESTED_ONLY": 30,
         "V1_LOCAL_OPERATIONAL": 0,
         "V2_REPOSITORY_VALUE": 65,
         "V3_PROJECT_VALUE": 11,
@@ -487,7 +487,7 @@
       "band": "INFO",
       "inputs": {
         "numerator": {
-          "V0_TESTED_ONLY": 13,
+          "V0_TESTED_ONLY": 30,
           "V1_LOCAL_OPERATIONAL": 0,
           "V2_REPOSITORY_VALUE": 65,
           "V3_PROJECT_VALUE": 11,
@@ -566,11 +566,11 @@
       "target": 1.5,
       "dmaic_phase": "MEASURE",
       "status": "MEASURED",
-      "value": 0.89,
+      "value": 0.83,
       "band": "AMBER",
       "inputs": {
-        "numerator": 82,
-        "denominator": 92
+        "numerator": 91,
+        "denominator": 109
       }
     },
     {
@@ -881,21 +881,21 @@
       "name": "Snapshot executable-value population matches registry",
       "status": "FAIL",
       "left": 3,
-      "right": 92
+      "right": 109
     },
     {
       "id": "CHK-03",
       "name": "Debt classifier candidates match unregistered count",
       "status": "PASS",
-      "left": 532,
-      "right": 532
+      "left": 518,
+      "right": 518
     },
     {
       "id": "CHK-04",
       "name": "Control observation unregistered count matches report",
       "status": "PASS",
-      "left": 532,
-      "right": 532
+      "left": 518,
+      "right": 518
     },
     {
       "id": "CHK-05",
@@ -909,7 +909,7 @@
       "name": "Registered tested-orphan count matches debt classifier tested orphans",
       "status": "FAIL",
       "left": 0,
-      "right": 15,
+      "right": 14,
       "note": "The report counts registered orphans and the classifier counts unregistered ones; a mismatch is expected until both use one definition."
     }
   ],
@@ -917,30 +917,44 @@
     {
       "id": "EXE-02",
       "name": "Asset registration coverage",
-      "value": 7.48,
+      "value": 10.38,
       "target": 100,
       "unlock": "Register justified batches of census assets in executable_integration_registry.yaml."
     },
     {
       "id": "EXE-03",
       "name": "Unregistered asset count",
-      "value": 532,
+      "value": 518,
       "target": 0,
       "unlock": "Work the registration debt queue (next_control_action CLASSIFY_EXECUTABLE_REGISTRATION_DEBT)."
     },
     {
       "id": "EXE-05",
       "name": "Unregistered tested orphans",
-      "value": 15,
+      "value": 14,
       "target": 0,
       "unlock": "Bind each unregistered tested orphan to an executable workflow step, or register it as library-only."
     },
     {
       "id": "EXE-07",
       "name": "Unresolved registration debt",
-      "value": 47,
+      "value": 48,
       "target": 0,
       "unlock": "Classify each unresolved asset as register, library-only or archive/remove."
+    },
+    {
+      "id": "RCH-01",
+      "name": "Value beyond repository",
+      "value": 12.84,
+      "target": 50,
+      "unlock": null
+    },
+    {
+      "id": "RCH-02",
+      "name": "Tested-only share",
+      "value": 27.52,
+      "target": 0,
+      "unlock": null
     },
     {
       "id": "RCH-04",
