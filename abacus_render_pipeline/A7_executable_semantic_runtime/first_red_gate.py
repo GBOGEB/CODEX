@@ -8,12 +8,16 @@ from closed_loop import (
     REQUIRED_DEBT_FIELDS,
     REQUIRED_INVARIANT_FIELDS,
     REQUIRED_TUPLE_FIELDS,
+    check_branch_dag,
     completeness,
     derive_branch_dag,
     load_json,
     validate_parentage,
     validate_records,
 )
+from branch_evolution import evaluate as evaluate_branch_evolution
+from handover_seed import run as run_handover_seed
+from lineage_lock import check_append_only, load_lock
 from runtime import reconstruct, validate
 from semantic_acceptance_gate import evaluate
 from semantic_delta_replay import replay
@@ -37,13 +41,18 @@ def run_first_red() -> Dict[str, Any]:
     parent_errors = validate_parentage(tuples)
     stages.append(("parentage", not parent_errors, parent_errors))
 
+    lineage = check_append_only(tuples, load_lock())
+    stages.append(("lineage_append_only", lineage["status"] == "PASS" and lineage["locked_count"] > 0, lineage))
+
     runtime_result = validate(reconstruct(tuples, invariants, debt))
     stages.append(("reconstruction", runtime_result["status"] == "PASS", runtime_result))
 
     dag = derive_branch_dag(tuples)
-    expected_edges = max(len(tuples) - 1, 0)
-    dag_ok = len(dag["nodes"]) == len(tuples) and len(dag["edges"]) == expected_edges
-    stages.append(("DAG", dag_ok, {"nodes": len(dag["nodes"]), "edges": len(dag["edges"]), "expected_edges": expected_edges}))
+    dag_result = check_branch_dag(tuples, dag)
+    stages.append(("DAG", dag_result["pass"], dag_result))
+
+    evolution = evaluate_branch_evolution(tuples, governance.get("branch_competition", []))
+    stages.append(("branch_evolution", evolution["status"] == "PASS", evolution))
 
     completeness_result = completeness(tuples, invariants, debt)
     completeness_ok = completeness_result["score"] == 1.0
@@ -51,6 +60,9 @@ def run_first_red() -> Dict[str, Any]:
 
     replay_result = replay(tuples)
     stages.append(("semantic_delta_replay", replay_result["status"] == "PASS", replay_result.get("final_state", replay_result)))
+
+    seed_result = run_handover_seed()
+    stages.append(("handover_seed", seed_result["status"] == "PASS", seed_result))
 
     acceptance = evaluate()
     stages.append(("renderer_execution_receipt_acceptance", acceptance["status"] == "PASS", acceptance))

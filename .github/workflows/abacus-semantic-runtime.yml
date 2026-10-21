@@ -48,9 +48,21 @@ jobs:
         working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
         run: python first_red_gate.py
 
+      - name: Enforce append-only tuple lineage
+        working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
+        run: python lineage_lock.py
+
+      - name: Enforce evolutionary branch competition and convergence
+        working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
+        run: python branch_evolution.py
+
       - name: Prove semantic delta replay
         working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
         run: python semantic_delta_replay.py
+
+      - name: Verify recursive handover seed is current
+        working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
+        run: python handover_seed.py
 
       - name: Enforce reference receipt-driven semantic acceptance
         working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
@@ -68,6 +80,9 @@ jobs:
         run: |
           python abacus_render_pipeline/A7_executable_semantic_runtime/test_runtime.py
           python abacus_render_pipeline/A7_executable_semantic_runtime/test_closed_loop.py
+          python abacus_render_pipeline/A7_executable_semantic_runtime/test_branch_evolution.py
+          python abacus_render_pipeline/A7_executable_semantic_runtime/test_lineage_lock.py
+          python abacus_render_pipeline/A7_executable_semantic_runtime/test_handover_seed.py
           python abacus_render_pipeline/A7_executable_semantic_runtime/test_semantic_replay_and_acceptance.py
           python abacus_render_pipeline/A8_renderer_execution_receipt/test_renderer_execution.py
           python abacus_render_pipeline/A8_renderer_execution_receipt/test_multiformat_execution.py
