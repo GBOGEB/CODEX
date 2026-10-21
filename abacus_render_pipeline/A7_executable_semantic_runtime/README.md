@@ -34,6 +34,25 @@ Output:
 - recursive: each runtime state can seed the next handover;
 - evolutionary: competing branches remain explicit until evidence supports convergence.
 
+## A7.1 — Evolutionary Branch Competition
+
+`branch_evolution.py` enforces the evolutionary pillar (INV-005). The
+governance ledger now holds a `branch_competition` list. Each record names a
+`fork` tuple, two or more `alternatives` that are direct children of that
+fork, a `status` (`open` or `converged`), a `winner` and `evidence`:
+
+- an open competition names no winner;
+- a converged competition names one winner from its alternatives and cites
+  evidence tuples that descend from the fork;
+- losing alternatives stay in the tuple ledger, so convergence never deletes
+  lineage.
+
+The runtime also reports fork points, the frontier (leaf tuples) and the
+branches still competing. `first_red_gate.py` runs it as the
+`branch_evolution` stage after the DAG stage. `COMP-001` records the open
+competition between TUP-0002 (canonical convergence) and TUP-0003 (Option B
+overlay-first).
+
 ## Immediate Next After This Slice
 
 - tuple schema validation;

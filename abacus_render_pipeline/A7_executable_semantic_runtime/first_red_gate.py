@@ -14,6 +14,7 @@ from closed_loop import (
     validate_parentage,
     validate_records,
 )
+from branch_evolution import evaluate as evaluate_branch_evolution
 from runtime import reconstruct, validate
 from semantic_acceptance_gate import evaluate
 from semantic_delta_replay import replay
@@ -44,6 +45,9 @@ def run_first_red() -> Dict[str, Any]:
     expected_edges = max(len(tuples) - 1, 0)
     dag_ok = len(dag["nodes"]) == len(tuples) and len(dag["edges"]) == expected_edges
     stages.append(("DAG", dag_ok, {"nodes": len(dag["nodes"]), "edges": len(dag["edges"]), "expected_edges": expected_edges}))
+
+    evolution = evaluate_branch_evolution(tuples, governance.get("branch_competition", []))
+    stages.append(("branch_evolution", evolution["status"] == "PASS", evolution))
 
     completeness_result = completeness(tuples, invariants, debt)
     completeness_ok = completeness_result["score"] == 1.0

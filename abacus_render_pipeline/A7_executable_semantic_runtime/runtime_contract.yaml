@@ -1,10 +1,11 @@
-version: A7.0
+version: A7.1
 runtime: executable_semantic_reconstruction
 
 inputs:
   - semantic_tuple_ledger
   - active_invariants
   - semantic_debt
+  - branch_competition
   - reconstruction_manifest
 
 outputs:
@@ -15,6 +16,10 @@ outputs:
   - open_debt_count
   - replay_ready
   - validation_status
+  - fork_points
+  - frontier
+  - open_competitions
+  - competing_branches
 
 pillars:
   idempotent:
@@ -25,11 +30,19 @@ pillars:
     requirement: reconstructed state can seed the next handover and execution pulse
   evolutionary:
     requirement: competing branches remain explicit until evidence supports convergence
+    enforced_by: branch_evolution.py
+    rule: >-
+      Every branch_competition record names a fork tuple and at least two
+      alternative child tuples of that fork. An open competition names no
+      winner. A converged competition names one winner from its alternatives
+      and cites evidence tuples that descend from the fork. Losing
+      alternatives stay in the tuple ledger.
 
 gates:
   tuple_count_min: 1
   invariant_count_min: 1
   replay_ready_required: true
+  branch_competition_valid_required: true
 
 next_extensions:
   - tuple_schema_validation
