@@ -1,0 +1,144 @@
+name: MissionControl Inventory Autoregen
+
+# PR-time counterpart of missioncontrol-inventory-reconcile.yml. When a pull
+# request changes anything under the executable census roots, rerun the
+# canonical regeneration (scripts/regen_missioncontrol_inventory.py) on the PR
+# head. If a tracked receipt drifted:
+#   - same-repo PR branch: commit the refreshed receipts to the PR branch and
+#     dispatch MissionControl Mycelium CI on it, so the preflight passes on
+#     the new head before merge;
+#   - fork PR (no write token): fail with the exact command to run.
+#
+# Loop analysis: this workflow reacts only to `pull_request` events (opened,
+# synchronize, reopened, ready_for_review). The receipt commit is pushed with
+# GITHUB_TOKEN, and GitHub does not create workflow runs for GITHUB_TOKEN
+# pushes, so the push raises no `synchronize` run of this or any other
+# workflow. Mycelium CI is started explicitly with `gh workflow run`
+# (workflow_dispatch), which is not a trigger of this workflow. Even if the
+# token were swapped for a PAT, a run on the bot commit regenerates the same
+# bytes, finds no drift and pushes nothing, so it converges after one extra
+# run; the "Skip bot receipt commits" guard stops it before that.
+#
+# Mycelium CI still runs its own "Preflight generated-value parity" step and
+# stays red on any head whose receipts are stale (fork PRs, failed push).
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      # Same census roots as migration.census_roots in
+      # mission_control/mycelium/executable_integration_value_contract.yaml.
+      - 'mission_control/mycelium/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - '.github/workflows/**'
+      - 'docs/data/missioncontrol_*.json'
+      - 'MANIFEST/MYCELIUM_KPI_MANIFEST.yaml'
+      - 'MIP/mip_lanes.json'
+      - 'MIP/mip_surface.json'
+      - 'MIP/RUNTIME_HEALTH_ROLLUP_1102.yaml'
+      - 'docs/data/mycelium_kpi_measurement.json'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: missioncontrol-inventory-autoregen-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  autoregen:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    env:
+      SAME_REPO: ${{ github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
+      HEAD_REF: ${{ github.event.pull_request.head.ref }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          # Only same-repo branches get a token that can push back.
+          persist-credentials: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+      - name: Skip bot receipt commits
+        id: guard
+        run: |
+          if [ "$(git log -1 --format=%an)" = "github-actions[bot]" ] && \
+             git log -1 --format=%s | grep -q '^missioncontrol: autoregen executable-value receipts'; then
+            echo "Head is already an autoregen receipt commit; nothing to do."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-python@v7.0.0
+        if: steps.guard.outputs.skip != 'true'
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        if: steps.guard.outputs.skip != 'true'
+        run: python -m pip install --upgrade pip pytest pyyaml numpy jsonschema
+      - name: Regenerate executable-value receipts
+        id: regen
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          python scripts/regen_missioncontrol_inventory.py | tee /tmp/inventory_autoregen.json
+          # Same list as TRACKED_OUTPUTS in scripts/regen_missioncontrol_inventory.py.
+          outputs=(
+            mission_control/mycelium/executable_value_report.json
+            docs/data/missioncontrol_executable_value_report.json
+            mission_control/mycelium/executable_value_control_observation.json
+            mission_control/mycelium/metrics_snapshot.json
+            docs/data/missioncontrol_metrics.json
+            mission_control/mycelium/log_analysis.json
+            docs/data/missioncontrol_log_analysis.json
+            docs/data/mycelium_kpi_measurement.json
+          )
+          if git diff --quiet -- "${outputs[@]}"; then
+            echo "drift=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "drift=true" >> "$GITHUB_OUTPUT"
+            git diff --stat -- "${outputs[@]}"
+          fi
+      - name: Fail with instructions (fork PR)
+        if: steps.regen.outputs.drift == 'true' && env.SAME_REPO != 'true'
+        run: |
+          echo "::error::MissionControl executable-value receipts are stale for this PR. Run \`python scripts/regen_missioncontrol_inventory.py\` on your branch and commit the changed files under mission_control/mycelium/ and docs/data/."
+          exit 1
+      - name: Commit refreshed receipts to the PR branch
+        id: push
+        if: steps.regen.outputs.drift == 'true' && env.SAME_REPO == 'true'
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Same list as TRACKED_OUTPUTS in scripts/regen_missioncontrol_inventory.py.
+          outputs=(
+            mission_control/mycelium/executable_value_report.json
+            docs/data/missioncontrol_executable_value_report.json
+            mission_control/mycelium/executable_value_control_observation.json
+            mission_control/mycelium/metrics_snapshot.json
+            docs/data/missioncontrol_metrics.json
+            mission_control/mycelium/log_analysis.json
+            docs/data/missioncontrol_log_analysis.json
+            docs/data/mycelium_kpi_measurement.json
+          )
+          git add -- "${outputs[@]}"
+          git commit -m "missioncontrol: autoregen executable-value receipts for ${HEAD_SHA}" \
+                     -m "$(cat /tmp/inventory_autoregen.json)"
+          # Fast-forward only: if the author pushed meanwhile, the newer run
+          # (this concurrency group) regenerates on that head instead.
+          if git push origin "HEAD:refs/heads/${HEAD_REF}"; then
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::Could not push refreshed receipts to ${HEAD_REF} (branch moved or protected). Run \`python scripts/regen_missioncontrol_inventory.py\` and commit the changed receipts."
+            exit 1
+          fi
+      - name: Run MissionControl Mycelium CI on the refreshed head
+        if: steps.push.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run missioncontrol-mycelium.yml --ref "${HEAD_REF}"
+          echo "::notice::Committed refreshed receipts to ${HEAD_REF} and dispatched MissionControl Mycelium CI. Pull before your next push. GITHUB_TOKEN pushes do not start other pull_request checks; your next push (or close/reopen) reruns them."

@@ -9,6 +9,11 @@ on:
       - 'tests/**'
       - '.github/workflows/**'
       - 'docs/data/missioncontrol_*.json'
+      - 'MANIFEST/MYCELIUM_KPI_MANIFEST.yaml'
+      - 'MIP/mip_lanes.json'
+      - 'MIP/mip_surface.json'
+      - 'MIP/RUNTIME_HEALTH_ROLLUP_1102.yaml'
+      - 'docs/data/mycelium_kpi_measurement.json'
   pull_request:
     paths:
       - 'mission_control/mycelium/**'
@@ -19,6 +24,11 @@ on:
       - 'docs/missioncontrol_status_snapshot.html'
       - 'docs/assets/missioncontrol/**'
       - 'docs/data/missioncontrol_*.json'
+      - 'MANIFEST/MYCELIUM_KPI_MANIFEST.yaml'
+      - 'MIP/mip_lanes.json'
+      - 'MIP/mip_surface.json'
+      - 'MIP/RUNTIME_HEALTH_ROLLUP_1102.yaml'
+      - 'docs/data/mycelium_kpi_measurement.json'
       - 'scripts/*missioncontrol*'
       - 'tests/test_missioncontrol_*'
       - '.github/workflows/missioncontrol-mycelium.yml'
@@ -209,6 +219,8 @@ jobs:
         run: python scripts/consume_executable_value_report.py
       - name: Classify executable registration debt
         run: python scripts/classify_executable_registration_debt.py
+      - name: Measure Mycelium/MIP KPIs
+        run: python scripts/measure_mycelium_kpis.py
       - name: Validate authenticated execution gateway design
         run: python scripts/validate_missioncontrol_execution_gateway.py
       - name: Validate GMI-DOCENG hosted materialization
@@ -239,11 +251,11 @@ jobs:
             mission_control/mycelium/executable_value_report.json \
             docs/data/missioncontrol_executable_value_report.json \
             mission_control/mycelium/executable_value_control_observation.json || {
-              echo "::error::First red: generated executable inventory drift. Run \`python scripts/regen_missioncontrol_inventory.py\` and commit the refreshed receipts (main is also reconciled automatically after merge by missioncontrol-inventory-reconcile.yml)."
+              echo "::error::First red: generated executable inventory drift. Run \`python scripts/regen_missioncontrol_inventory.py\` and commit the refreshed receipts (same-repo PR branches are refreshed automatically by missioncontrol-inventory-autoregen.yml, main after merge by missioncontrol-inventory-reconcile.yml)."
               exit 1
             }
       - name: Run MissionControl tests
-        run: pytest -q tests/test_missioncontrol_mycelium.py tests/test_missioncontrol_metrics.py tests/test_missioncontrol_logs.py tests/test_missioncontrol_source_ingestion.py tests/test_missioncontrol_execution_gateway.py tests/test_missioncontrol_authenticated_transport.py tests/test_missioncontrol_status_snapshot.py tests/test_executable_integration_value.py tests/test_missioncontrol_value_rex_contract.py tests/test_missioncontrol_rex_badges.py tests/test_classify_executable_registration_debt.py
+        run: pytest -q tests/test_missioncontrol_mycelium.py tests/test_missioncontrol_metrics.py tests/test_missioncontrol_logs.py tests/test_missioncontrol_source_ingestion.py tests/test_missioncontrol_execution_gateway.py tests/test_missioncontrol_authenticated_transport.py tests/test_missioncontrol_status_snapshot.py tests/test_executable_integration_value.py tests/test_missioncontrol_value_rex_contract.py tests/test_missioncontrol_rex_badges.py tests/test_classify_executable_registration_debt.py tests/test_mycelium_kpi_manifest.py tests/test_regen_missioncontrol_inventory.py
       - name: Verify deterministic materializations
         run: |
           git ls-files --error-unmatch mission_control/mycelium/executable_value_report.json
@@ -252,7 +264,8 @@ jobs:
           cp mission_control/mycelium/registration_debt_classification.json /tmp/registration_debt_classification.first.json
           python scripts/classify_executable_registration_debt.py
           cmp /tmp/registration_debt_classification.first.json mission_control/mycelium/registration_debt_classification.json
-          git diff --exit-code -- mission_control/mycelium/metrics_snapshot.json docs/data/missioncontrol_metrics.json mission_control/mycelium/log_analysis.json docs/data/missioncontrol_log_analysis.json mission_control/mycelium/executable_value_report.json docs/data/missioncontrol_executable_value_report.json mission_control/mycelium/executable_value_control_observation.json
+          python scripts/measure_mycelium_kpis.py --check
+          git diff --exit-code -- mission_control/mycelium/metrics_snapshot.json docs/data/missioncontrol_metrics.json mission_control/mycelium/log_analysis.json docs/data/missioncontrol_log_analysis.json mission_control/mycelium/executable_value_report.json docs/data/missioncontrol_executable_value_report.json mission_control/mycelium/executable_value_control_observation.json docs/data/mycelium_kpi_measurement.json
       - name: Upload registration debt classification
         uses: actions/upload-artifact@v7.0.2
         with:
