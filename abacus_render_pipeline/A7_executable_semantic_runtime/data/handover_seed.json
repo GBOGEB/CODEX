@@ -1,0 +1,103 @@
+{
+  "seed_version": "A7.4",
+  "ledger_sha256": "da91d37430472881e957806c287a37e78cc85577cbaf48c9735ff276b66c5431",
+  "parent_seed_sha256": null,
+  "state": {
+    "latest_tuple": "TUP-0014",
+    "active_branches": [
+      "abacus_pipeline_integration",
+      "canonical_convergence",
+      "master_registry_governance",
+      "multiformat_publication_receipt",
+      "option_b_overlay_first",
+      "pages_ownership_stabilization",
+      "qcell_lineage",
+      "recursive_reconstruction",
+      "renderer_acceptance_binding",
+      "renderer_execution_receipt",
+      "renderer_governance",
+      "semantic_replay",
+      "snapshot_publication_receipt",
+      "theme_governance"
+    ],
+    "tuple_count": 14,
+    "invariant_count": 11,
+    "open_debt_count": 6,
+    "replay_ready": true
+  },
+  "resume_from": [
+    {
+      "id": "TUP-0002",
+      "branch": "canonical_convergence",
+      "todo": "Compare against Option B"
+    },
+    {
+      "id": "TUP-0006",
+      "branch": "theme_governance",
+      "todo": "Add automated WCAG gates"
+    },
+    {
+      "id": "TUP-0007",
+      "branch": "master_registry_governance",
+      "todo": "Build registry browser"
+    },
+    {
+      "id": "TUP-0014",
+      "branch": "pages_ownership_stabilization",
+      "todo": "Merge the fail-closed Pages source-mode guard, perform the owner-side Pages Source -> GitHub Actions change, then use the first resulting exact-main A9 run as the only admissible re-close evidence. Keep DEBT-007 PARTIAL until the existing two-match, independent-repeat and atomic PROMOTE predicate passes."
+    }
+  ],
+  "open_competitions": [
+    "COMP-001"
+  ],
+  "competing_branches": [
+    "canonical_convergence",
+    "option_b_overlay_first"
+  ],
+  "open_debt": [
+    {
+      "id": "DEBT-001",
+      "topic": "renderer_linting",
+      "next_action": "Wire remaining production renderer linter signals into per-format execution telemetry"
+    },
+    {
+      "id": "DEBT-002",
+      "topic": "wcag_gate",
+      "next_action": "Unify repository WCAG gate result with per-artifact receipt evidence"
+    },
+    {
+      "id": "DEBT-003",
+      "topic": "semantic_spacing",
+      "next_action": "Implement spacing and richer renderer-native overflow governance beyond PPTX geometry and PDF flowable placement"
+    },
+    {
+      "id": "DEBT-004",
+      "topic": "figure_registry_browser",
+      "next_action": "Build MASTER figure browser"
+    },
+    {
+      "id": "DEBT-005",
+      "topic": "semantic_metrics",
+      "next_action": "Expose completeness, debt and branch metrics"
+    },
+    {
+      "id": "DEBT-007",
+      "topic": "multi_format_receipts",
+      "next_action": "Exact-main A9 run 34928083084 on 396ad4b17c86568cf749507e2b5198bcfe098429 passed candidate generation and deploy-pages but failed hosted proof after 24 probes: expected governed SHA 6737e566b54b907cf54d53dd91160ccb4d09aba3e34fba2035a1bae0eb90214c, observed SHA 39a754786ab9c2108d84d68fb29194901f5000032aea6d31f9326bf497acdefc, semantic coverage 0.0, atomic decision WITHHOLD. The observed hosted SHA is exactly repository docs/index.html. GitHub's dynamic Pages publisher then proved the remaining ownership red: target dynamic run 34928079151 was superseded, and successor run 34928104579 built source ./docs from bot commit aebe86b4dc45376b1a8c3c438dbfee6f36d6d65d and deployed it successfully to the same Pages root. This publisher is outside repository workflow concurrency because it is dynamic/pages/pages-build-deployment. Owner must set Settings -> Pages -> Build and deployment -> Source to GitHub Actions. The A9 exact-main lane now fails closed unless Pages build_type is workflow. Re-close only after the unchanged hosted predicate reaches two consecutive exact hash+semantic matches, independent repeated convergence PASS and atomic PROMOTE; do not weaken the proof predicate or reopen A10."
+    }
+  ],
+  "invariant_ids": [
+    "INV-001",
+    "INV-002",
+    "INV-003",
+    "INV-004",
+    "INV-005",
+    "INV-006",
+    "INV-007",
+    "INV-008",
+    "INV-009",
+    "INV-010",
+    "INV-011"
+  ],
+  "seed_sha256": "9f6723f263ca60fa5f58260ea3a04d176ce1d04729161885810a1457fbf22659"
+}

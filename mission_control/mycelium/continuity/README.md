@@ -39,6 +39,14 @@ python -m unittest discover -s mission_control/mycelium/continuity/tests -p 'tes
 
 Public-safe **synthetic** tests probe 8+10+22 lineage retention, 85/115 typed graph invariants, cycles, false proof, missing owners, bitemporal hash replay, malicious script content, and bundle hash parity. They cannot claim native ABACUS root closure, coverage on a different repository or independent statistical inference. Do not commit the user's original N1 ZIP or downloaded native artifact to the public CODEX repository; the portable continuation ZIP is distributed separately by the owner.
 
+### N10 terminal reconciliation
+
+`N10_TERMINAL_RECONCILIATION_20261021.json` re-reads the four N9 PR-head runs and both owner branches. `mycelium_continuity.terminal_reconciliation` binds it to the N9 snapshot by SHA-256 (N9 is never rewritten), requires the same case and owner population, only allows non-terminal → terminal moves, and only lets a terminal outcome change through a recorded re-run (`run_attempt>1`). Observed: the two CODEX runs that were `queued` at N9 resolved to `failure` after their PRs merged. Admission stays HOLD; effective required status and CPQ-016 remain owner/admin evidence.
+
+```sh
+python -m unittest discover -s mission_control/mycelium/continuity/tests -p 'test_terminal_reconciliation_public.py' -v
+```
+
 ## Three recursive pulses
 
 1. **P1 — Intent and original-lineage freeze:** confirm N1 input 8 SIPOC/10 dependency/22 historical PR records, owner crosswalk, 20 feature decisions (GROW, HOLD, PRESERVE, PRUNE_CANDIDATE_ONLY).
