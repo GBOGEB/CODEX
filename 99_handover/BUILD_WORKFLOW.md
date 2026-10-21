@@ -61,6 +61,21 @@ Assign each change an impact score (0–5) considering safety, compliance, opera
 - Document versions inside requirements.json meta block.
 
 
+## 8. Build-control gate (Measure / Control)
+`scripts/validate_build_control.py` measures the handover pack on every CI run (`ci.yml` step `build_control`) and writes `reports/build_control_report.json`:
+
+| Check | KPI | Mode |
+|---|---|---|
+| `diff_decisions` | Every MASTER_DIFF change has ✅/❌/⏳; `approved_pct` | Blocking |
+| `rtm_consistency` | RTM.csv ↔ requirements.json ids and shall text; `coverage_pct` | Blocking |
+| `trace_references` | ITP references and requirement sources resolve; `resolved_pct` | Blocking |
+| `glob_manifest` | Every file in `handover_master_applied.glob.yaml` exists | Blocking |
+| `baseline_meta` | requirements.json meta baseline = manifest version | Blocking |
+| `rename_pack` | No legacy RENAME_SBS names in the pack (ledger files exempt) | Blocking |
+| `rename_downstream` | Legacy names in `Book_Master.md` / `book_md/` ≤ ratchet in `build_control_baseline.json` | Report-only until step 2 is applied |
+
+Lower `rename_downstream_max` in the same PR that applies renames downstream; never raise it.
+
 ## Lifecycle and governance
 
 - Apply Chapter 15 feature lifecycle rule: `99_handover/CH15_FEATURE_TREATMENT_RULE.md`.
