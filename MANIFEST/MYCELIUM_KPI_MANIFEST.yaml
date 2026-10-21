@@ -1,0 +1,638 @@
+# Mycelium / MIP KPI measurement manifest.
+#
+# Every KPI here is bound to a committed (or deterministically regenerated)
+# receipt: a source file, a path into it, an aggregate and a formula. Nothing
+# is typed in by hand. `scripts/measure_mycelium_kpis.py` evaluates this
+# manifest and writes `docs/data/mycelium_kpi_measurement.json`.
+#
+# Path grammar: segments separated by "/"; "*" expands every list item or
+# mapping value at that level. Aggregates: value, len, sum, count_where,
+# distribution. A KPI whose source is missing, whose upstream status is
+# WITHHELD, or whose denominator is zero is reported WITHHELD with a reason;
+# it never falls back to a default number.
+schema_version: "0.1"
+manifest_id: MYCELIUM_KPI_MANIFEST
+owner: CODEX_UI_GOVERNANCE
+repository: GBOGEB/CODEX
+authority_class: DERIVED_MEASUREMENT
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+
+purpose: >-
+  Make Mycelium and MIP execution, reach, signals, health, DMAIC, maturity and
+  scoring explicit: for each KPI, state the question it answers, the decision
+  it supports, its exact source and formula, its unit, direction, target and
+  bands, and what is needed to measure it while it is withheld.
+
+principles:
+  evidence_policy: MEASURED_OR_WITHHELD
+  no_composite_score: true
+  no_synthetic_scores: true
+  bands_are_control_signals_not_credit: true
+  withheld_is_not_zero: true
+
+status_vocabulary:
+  MEASURED: Computed from bound sources with no WITHHELD input.
+  WITHHELD: Not computable yet; `reason` and `unlock` say why and what is needed.
+  BINDING_ERROR: A present source lacks the bound path; the manifest or the producer is wrong.
+
+band_vocabulary:
+  GREEN: At or beyond the green threshold in the KPI's direction.
+  AMBER: Between the amber and green thresholds.
+  RED: Short of the amber threshold.
+  INFO: Descriptive KPI with no target; never banded.
+
+sources:
+  report:
+    path: mission_control/mycelium/executable_value_report.json
+    producer: scripts/validate_executable_integration_value.py
+  observation:
+    path: mission_control/mycelium/executable_value_control_observation.json
+    producer: scripts/consume_executable_value_report.py
+  snapshot:
+    path: mission_control/mycelium/metrics_snapshot.json
+    producer: scripts/build_missioncontrol_metrics.py
+    stamp: snapshot_at
+  control_observations:
+    path: mission_control/mycelium/control_observations.json
+    producer: manual governed observation input
+    stamp: snapshot_at
+  logs:
+    path: mission_control/mycelium/log_analysis.json
+    producer: scripts/analyze_missioncontrol_logs.py
+  registry:
+    path: mission_control/mycelium/executable_integration_registry.yaml
+    producer: governed registration
+    stamp: registration_revision_basis
+  debt:
+    path: mission_control/mycelium/registration_debt_classification.json
+    producer: scripts/classify_executable_registration_debt.py
+    # Untracked byproduct of the regen routine; recomputed in memory when absent.
+    generator: scripts/classify_executable_registration_debt.py:classify
+  mip_lanes:
+    path: MIP/mip_lanes.json
+    producer: governed MIP lane register
+  mip_surface:
+    path: MIP/mip_surface.json
+    producer: governed MIP surface declaration
+  mip_health_rollup:
+    path: MIP/RUNTIME_HEALTH_ROLLUP_1102.yaml
+    producer: governed KEB runtime-health rollup
+
+dimensions:
+  execution:
+    question: Are registered executable assets actually run, proven and integrated?
+    decision: Which registration or proof debt to work next.
+  reach:
+    question: How far does proven value travel (repository, project, federation, recursive control)?
+    decision: Whether to invest in downstream consumers or in more local assets.
+  signals:
+    question: How connected is the Mycelium graph, and how much of it carries proof?
+    decision: Which links or proof edges to add before trusting projections.
+  health:
+    question: Do the measured nodes run green, and how much of the graph is observed at all?
+    decision: Whether a red or unobserved node blocks promotion.
+  dmaic:
+    question: How many nodes have an evidenced DMAIC phase, and where are they?
+    decision: Which nodes need a measured phase before improvement work is credited.
+  mip:
+    question: Is the MIP kit progressing toward its DoV (required lanes GREEN, health probe bound)?
+    decision: Which MIP lane to advance next.
+  maturity_scoring:
+    question: Are maturity and ranking scores computable from real observations?
+    decision: Which observations to collect so PCA, ranking and maturity stop being withheld.
+
+kpis:
+  # ---------------------------------------------------------------- execution
+  - id: EXE-01
+    dimension: execution
+    name: Integration path execution rate
+    purpose: Share of declared integration paths that have an executed traversal.
+    formula: {kind: ratio_pct}
+    numerator: {source: report, path: executed_integration_path_count}
+    denominator: {source: report, path: declared_integration_path_count}
+    unit: pct
+    direction: higher_is_better
+    target: 100
+    bands: {green: 100, amber: 80}
+    dmaic_phase: CONTROL
+  - id: EXE-02
+    dimension: execution
+    name: Asset registration coverage
+    purpose: Share of census assets (Python/YAML in census roots) that are registered.
+    formula: {kind: ratio_pct}
+    numerator: {source: report, path: inventory/registered_asset_count}
+    denominator: {source: report, path: inventory/asset_count}
+    unit: pct
+    direction: higher_is_better
+    target: 100
+    bands: {green: 80, amber: 25}
+    dmaic_phase: MEASURE
+  - id: EXE-03
+    dimension: execution
+    name: Unregistered asset count
+    purpose: Absolute registration debt; the next control action works this down.
+    formula: {kind: value}
+    numerator: {source: report, path: inventory/unregistered_asset_count}
+    unit: count
+    direction: lower_is_better
+    target: 0
+    bands: {green: 0, amber: 100}
+    dmaic_phase: IMPROVE
+  - id: EXE-04
+    dimension: execution
+    name: Registered tested orphans
+    purpose: Registered tested assets with no executed integration path.
+    formula: {kind: value}
+    numerator: {source: report, path: tested_orphans, agg: len}
+    unit: count
+    direction: lower_is_better
+    target: 0
+    bands: {green: 0, amber: 3}
+    dmaic_phase: CONTROL
+  - id: EXE-05
+    dimension: execution
+    name: Unregistered tested orphans
+    purpose: Unregistered assets that have tests but no executable pipeline reference.
+    formula: {kind: value}
+    numerator: {source: debt, path: classification_counts/TESTED_ORPHAN}
+    unit: count
+    direction: lower_is_better
+    target: 0
+    bands: {green: 0, amber: 10}
+    dmaic_phase: IMPROVE
+  - id: EXE-06
+    dimension: execution
+    name: Registration debt ready for pipeline integration
+    purpose: Unregistered assets already referenced by an executable workflow step.
+    formula: {kind: ratio_pct}
+    numerator: {source: debt, path: classification_counts/PIPELINE_INTEGRATION_CANDIDATE}
+    denominator: {source: debt, path: candidate_count}
+    unit: pct
+    direction: info
+    dmaic_phase: ANALYZE
+  - id: EXE-07
+    dimension: execution
+    name: Unresolved registration debt
+    purpose: Unregistered assets with neither a test nor a pipeline reference.
+    formula: {kind: value}
+    numerator: {source: debt, path: classification_counts/UNRESOLVED_REGISTRATION_DEBT}
+    unit: count
+    direction: lower_is_better
+    target: 0
+    bands: {green: 0, amber: 25}
+    dmaic_phase: ANALYZE
+  - id: EXE-08
+    dimension: execution
+    name: Registered nodes pending exact-head proof
+    purpose: Registered nodes whose state still waits for an exact-SHA proof.
+    formula: {kind: ratio_pct}
+    numerator:
+      source: registry
+      path: nodes/*/current_state
+      agg: count_where
+      where: {op: contains, value: PENDING_EXACT_HEAD_PROOF}
+    denominator: {source: registry, path: nodes, agg: len}
+    unit: pct
+    direction: lower_is_better
+    target: 0
+    bands: {green: 0, amber: 10}
+    dmaic_phase: CONTROL
+  - id: EXE-09
+    dimension: execution
+    name: Registered nodes at pipeline-integrated state
+    purpose: Registered nodes whose state is exactly PIPELINE_INTEGRATED.
+    formula: {kind: ratio_pct}
+    numerator:
+      source: registry
+      path: nodes/*/current_state
+      agg: count_where
+      where: {op: eq, value: PIPELINE_INTEGRATED}
+    denominator: {source: registry, path: nodes, agg: len}
+    unit: pct
+    direction: info
+    dmaic_phase: CONTROL
+  - id: EXE-10
+    dimension: execution
+    name: Registered state distribution
+    purpose: Lifecycle state of every registered node.
+    formula: {kind: value}
+    numerator: {source: registry, path: nodes/*/current_state, agg: distribution}
+    unit: distribution
+    direction: info
+    dmaic_phase: MEASURE
+
+  # -------------------------------------------------------------------- reach
+  - id: RCH-01
+    dimension: reach
+    name: Value beyond repository
+    purpose: Share of value-scoped registered nodes with project, federation or recursive-control value.
+    formula: {kind: ratio_pct}
+    numerator:
+      source: report
+      path: value_scope_counts
+      agg: sum_keys
+      keys: [V3_PROJECT_VALUE, V4_FEDERATION_VALUE, V5_RECURSIVE_CONTROL_VALUE]
+    denominator: {source: report, path: value_scope_counts/*, agg: sum}
+    unit: pct
+    direction: higher_is_better
+    target: 50
+    bands: {green: 50, amber: 15}
+    dmaic_phase: IMPROVE
+  - id: RCH-02
+    dimension: reach
+    name: Tested-only share
+    purpose: Share of value-scoped nodes whose only evidence is a passing test.
+    formula: {kind: ratio_pct}
+    numerator: {source: report, path: value_scope_counts/V0_TESTED_ONLY}
+    denominator: {source: report, path: value_scope_counts/*, agg: sum}
+    unit: pct
+    direction: lower_is_better
+    target: 0
+    bands: {green: 5, amber: 20}
+    dmaic_phase: IMPROVE
+  - id: RCH-03
+    dimension: reach
+    name: Federation value nodes
+    purpose: Nodes whose value is evidenced in a federated repository.
+    formula: {kind: value}
+    numerator: {source: report, path: value_scope_counts/V4_FEDERATION_VALUE}
+    unit: count
+    direction: higher_is_better
+    target: 5
+    bands: {green: 5, amber: 1}
+    dmaic_phase: IMPROVE
+  - id: RCH-04
+    dimension: reach
+    name: Recursive control value nodes
+    purpose: Nodes whose output feeds back into Mycelium control (the recursive loop closes).
+    formula: {kind: value}
+    numerator: {source: report, path: value_scope_counts/V5_RECURSIVE_CONTROL_VALUE}
+    unit: count
+    direction: higher_is_better
+    target: 1
+    bands: {green: 1, amber: 1}
+    dmaic_phase: CONTROL
+  - id: RCH-05
+    dimension: reach
+    name: Value scope distribution
+    purpose: Registered node count per value scope.
+    formula: {kind: value}
+    numerator: {source: report, path: value_scope_counts}
+    unit: distribution
+    direction: info
+    dmaic_phase: MEASURE
+
+  # ------------------------------------------------------------------ signals
+  - id: SIG-01
+    dimension: signals
+    name: Graph link coverage
+    purpose: Share of graph nodes with at least one governed link, as computed by the metrics builder.
+    formula: {kind: value}
+    numerator: {source: snapshot, path: graph/link_coverage_pct}
+    unit: pct
+    direction: higher_is_better
+    target: 80
+    bands: {green: 80, amber: 50}
+    dmaic_phase: MEASURE
+  - id: SIG-02
+    dimension: signals
+    name: Proof edge share
+    purpose: Share of graph edges that carry proof.
+    formula: {kind: ratio_pct}
+    numerator: {source: snapshot, path: graph/proof_edge_count}
+    denominator: {source: snapshot, path: graph/edge_count}
+    unit: pct
+    direction: higher_is_better
+    target: 50
+    bands: {green: 50, amber: 20}
+    dmaic_phase: MEASURE
+  - id: SIG-03
+    dimension: signals
+    name: Blocking edges
+    purpose: Graph edges that record an active block.
+    formula: {kind: value}
+    numerator: {source: snapshot, path: graph/block_edge_count}
+    unit: count
+    direction: lower_is_better
+    target: 0
+    bands: {green: 0, amber: 3}
+    dmaic_phase: CONTROL
+  - id: SIG-04
+    dimension: signals
+    name: Graph density
+    purpose: Edges over possible edges in the Mycelium graph.
+    formula: {kind: value}
+    numerator: {source: snapshot, path: graph/density}
+    unit: ratio
+    direction: info
+    dmaic_phase: MEASURE
+  - id: SIG-05
+    dimension: signals
+    name: Registry edges per registered node
+    purpose: Average operational connections per registered executable node.
+    formula: {kind: ratio}
+    numerator: {source: report, path: registered_edge_count}
+    denominator: {source: report, path: registered_node_count}
+    unit: ratio
+    direction: higher_is_better
+    target: 1.5
+    bands: {green: 1.5, amber: 0.8}
+    dmaic_phase: MEASURE
+
+  # ------------------------------------------------------------------- health
+  - id: HLT-01
+    dimension: health
+    name: Required log pass rate
+    purpose: Passed required logs over expected required logs across measured nodes.
+    formula: {kind: ratio_pct}
+    numerator: {source: logs, path: nodes/*/passed, agg: sum}
+    denominator: {source: logs, path: nodes/*/expected_required_logs, agg: sum}
+    unit: pct
+    direction: higher_is_better
+    target: 100
+    bands: {green: 100, amber: 90}
+    dmaic_phase: CONTROL
+  - id: HLT-02
+    dimension: health
+    name: Log observation coverage
+    purpose: Share of Mycelium nodes whose logs are measured at all.
+    formula: {kind: ratio_pct}
+    numerator:
+      source: snapshot
+      path: nodes/*/logs/status
+      agg: count_where
+      where: {op: eq, value: MEASURED}
+    denominator: {source: snapshot, path: nodes, agg: len}
+    unit: pct
+    direction: higher_is_better
+    target: 100
+    bands: {green: 80, amber: 50}
+    dmaic_phase: MEASURE
+  - id: HLT-03
+    dimension: health
+    name: Open first-red
+    purpose: Whether log analysis currently records a first failing event (1) or not (0).
+    formula: {kind: value}
+    numerator: {source: logs, path: first_red, agg: not_null}
+    unit: flag
+    direction: lower_is_better
+    target: 0
+    bands: {green: 0, amber: 0}
+    dmaic_phase: CONTROL
+  - id: HLT-04
+    dimension: health
+    name: Code health observation coverage
+    purpose: Share of Mycelium nodes with a measured code-health value.
+    formula: {kind: ratio_pct}
+    numerator:
+      source: snapshot
+      path: nodes/*/code_health/status
+      agg: count_where
+      where: {op: ne, value: WITHHELD}
+    denominator: {source: snapshot, path: nodes, agg: len}
+    unit: pct
+    direction: higher_is_better
+    target: 100
+    bands: {green: 80, amber: 50}
+    dmaic_phase: MEASURE
+  - id: HLT-05
+    dimension: health
+    name: Port probe coverage
+    purpose: Share of Mycelium nodes with a measured port probe.
+    formula: {kind: ratio_pct}
+    numerator:
+      source: snapshot
+      path: nodes/*/ports/status
+      agg: count_where
+      where: {op: ne, value: WITHHELD}
+    denominator: {source: snapshot, path: nodes, agg: len}
+    unit: pct
+    direction: higher_is_better
+    target: 100
+    bands: {green: 80, amber: 50}
+    dmaic_phase: MEASURE
+  - id: HLT-06
+    dimension: health
+    name: Log failure recurrences
+    purpose: Distinct recurring log fingerprints recorded by log analysis.
+    formula: {kind: value}
+    numerator: {source: logs, path: recurrences, agg: len}
+    unit: count
+    direction: info
+    dmaic_phase: ANALYZE
+
+  # -------------------------------------------------------------------- dmaic
+  - id: DMC-01
+    dimension: dmaic
+    name: DMAIC phase coverage
+    purpose: Share of Mycelium nodes with an evidenced DMAIC phase.
+    formula: {kind: ratio_pct}
+    numerator:
+      source: snapshot
+      path: nodes/*/dmaic/status
+      agg: count_where
+      where: {op: ne, value: WITHHELD}
+    denominator: {source: snapshot, path: nodes, agg: len}
+    unit: pct
+    direction: higher_is_better
+    target: 100
+    bands: {green: 80, amber: 40}
+    dmaic_phase: DEFINE
+  - id: DMC-02
+    dimension: dmaic
+    name: Nodes in CONTROL phase
+    purpose: Nodes whose evidenced DMAIC phase is CONTROL.
+    formula: {kind: value}
+    numerator:
+      source: snapshot
+      path: nodes/*/dmaic/phase
+      agg: count_where
+      where: {op: eq, value: CONTROL}
+    unit: count
+    direction: info
+    dmaic_phase: CONTROL
+  - id: DMC-03
+    dimension: dmaic
+    name: DMAIC phase distribution
+    purpose: Evidenced DMAIC phase per node.
+    formula: {kind: value}
+    numerator: {source: snapshot, path: nodes/*/dmaic/phase, agg: distribution}
+    unit: distribution
+    direction: info
+    dmaic_phase: MEASURE
+
+  # ---------------------------------------------------------------------- mip
+  - id: MIP-01
+    dimension: mip
+    name: Active MIP lanes
+    purpose: Share of MIP lanes past the seeded state.
+    formula: {kind: ratio_pct}
+    numerator:
+      source: mip_lanes
+      path: lanes/*/status
+      agg: count_where
+      where: {op: ne, value: seeded}
+    denominator: {source: mip_lanes, path: lanes, agg: len}
+    unit: pct
+    direction: higher_is_better
+    target: 100
+    bands: {green: 80, amber: 40}
+    dmaic_phase: IMPROVE
+  - id: MIP-02
+    dimension: mip
+    name: Required-green lanes declared GREEN
+    purpose: Required lanes whose register status is GREEN (the verifier fails otherwise).
+    formula: {kind: ratio_pct}
+    numerator:
+      source: mip_lanes
+      path: lanes/*/status
+      agg: count_where
+      where: {op: in, value: [green, GREEN]}
+    denominator: {source: mip_surface, path: required_green, agg: len}
+    unit: pct
+    direction: higher_is_better
+    target: 100
+    bands: {green: 100, amber: 34}
+    dmaic_phase: CONTROL
+  - id: MIP-03
+    dimension: mip
+    name: MIP health probe bound
+    purpose: Whether the MIP surface declares a health probe (1) or not (0).
+    formula: {kind: value}
+    numerator: {source: mip_surface, path: health_probe, agg: not_null}
+    unit: flag
+    direction: higher_is_better
+    target: 1
+    bands: {green: 1, amber: 1}
+    dmaic_phase: CONTROL
+  - id: MIP-04
+    dimension: mip
+    name: Published lane receipts
+    purpose: Lanes whose evidence receipt file is present in the tree.
+    note: MIP/RECEIPT_POLICY.md keeps receipts unpublished by default, so 0 is expected and not a defect.
+    formula: {kind: value}
+    numerator:
+      source: mip_lanes
+      path: lanes/*/evidence
+      agg: count_where
+      where: {op: file_exists}
+    unit: count
+    direction: info
+    dmaic_phase: MEASURE
+
+  # --------------------------------------------------------- maturity/scoring
+  - id: SCR-01
+    dimension: maturity_scoring
+    name: Maturity observation coverage
+    purpose: Share of Mycelium nodes with a measured maturity value.
+    formula: {kind: ratio_pct}
+    numerator:
+      source: snapshot
+      path: nodes/*/maturity/status
+      agg: count_where
+      where: {op: ne, value: WITHHELD}
+    denominator: {source: snapshot, path: nodes, agg: len}
+    unit: pct
+    direction: higher_is_better
+    target: 100
+    bands: {green: 80, amber: 30}
+    dmaic_phase: MEASURE
+  - id: SCR-02
+    dimension: maturity_scoring
+    name: PCA observation rows
+    purpose: Complete observation rows available to the PCA projection (needs at least 3).
+    formula: {kind: value}
+    numerator: {source: control_observations, path: pca_rows, agg: len}
+    unit: count
+    direction: higher_is_better
+    target: 3
+    bands: {green: 3, amber: 1}
+    dmaic_phase: MEASURE
+  - id: SCR-03
+    dimension: maturity_scoring
+    name: Pairwise ranking outcomes
+    purpose: Observed pairwise outcomes available to the Bradley-Terry ranking.
+    formula: {kind: value}
+    numerator: {source: control_observations, path: pairwise_outcomes, agg: len}
+    unit: count
+    direction: higher_is_better
+    target: 1
+    bands: {green: 1, amber: 1}
+    dmaic_phase: MEASURE
+  - id: SCR-04
+    dimension: maturity_scoring
+    name: QPS triage pressure
+    purpose: Weighted triage pressure of qps_triage_b, as derived by the metrics builder.
+    formula: {kind: value}
+    numerator: {source: snapshot, path: nodes/qps_triage_b/pressure/value}
+    status_from: {source: snapshot, path: nodes/qps_triage_b/pressure/status}
+    unit: score_0_100
+    direction: info
+    dmaic_phase: ANALYZE
+  - id: SCR-05
+    dimension: maturity_scoring
+    name: CODEX QA score
+    purpose: QA score of the CODEX repository node, as derived by the metrics builder.
+    formula: {kind: value}
+    numerator: {source: snapshot, path: nodes/repo_codex/qa/value}
+    status_from: {source: snapshot, path: nodes/repo_codex/qa/status}
+    unit: score_0_100
+    direction: higher_is_better
+    target: 100
+    bands: {green: 90, amber: 70}
+    dmaic_phase: CONTROL
+
+# Cross-receipt consistency checks. A FAIL means two producers disagree about
+# the same fact; it is reported, never silently reconciled.
+checks:
+  - id: CHK-01
+    name: Snapshot tested-orphan count matches value report
+    left: {source: snapshot, path: executable_value/metrics/TESTED_ORPHAN_COUNT/value}
+    right: {source: report, path: tested_orphans, agg: len}
+    note: The snapshot evaluates its own 3-node population; a mismatch means the two are not the same measure.
+  - id: CHK-02
+    name: Snapshot executable-value population matches registry
+    left: {source: snapshot, path: executable_value/population}
+    right: {source: report, path: registered_node_count}
+  - id: CHK-03
+    name: Debt classifier candidates match unregistered count
+    left: {source: debt, path: candidate_count}
+    right: {source: report, path: inventory/unregistered_asset_count}
+  - id: CHK-04
+    name: Control observation unregistered count matches report
+    left: {source: observation, path: unregistered_asset_count}
+    right: {source: report, path: inventory/unregistered_asset_count}
+  - id: CHK-05
+    name: Snapshot stamp matches control observation stamp
+    left: {source: snapshot, path: snapshot_at}
+    right: {source: control_observations, path: snapshot_at}
+  - id: CHK-06
+    name: Registered tested-orphan count matches debt classifier tested orphans
+    left: {source: report, path: tested_orphans, agg: len}
+    right: {source: debt, path: classification_counts/TESTED_ORPHAN}
+    note: The report counts registered orphans and the classifier counts unregistered ones; a mismatch is expected until both use one definition.
+
+# What is needed to move each KPI toward target (shown on its report row).
+unlock:
+  EXE-02: Register justified batches of census assets in executable_integration_registry.yaml.
+  EXE-03: Work the registration debt queue (next_control_action CLASSIFY_EXECUTABLE_REGISTRATION_DEBT).
+  EXE-05: Bind each unregistered tested orphan to an executable workflow step, or register it as library-only.
+  EXE-07: Classify each unresolved asset as register, library-only or archive/remove.
+  RCH-04: Evidence one node whose output feeds back into Mycelium control (V5_RECURSIVE_CONTROL_VALUE).
+  HLT-04: Bind a code-health measurement for each Mycelium node in control_observations.json.
+  HLT-05: Bind a governed port probe for each Mycelium node.
+  DMC-01: Record an evidenced DMAIC phase per node in control_observations.json.
+  MIP-01: Advance seeded MIP lanes with exact-SHA receipts.
+  MIP-02: Make the required lanes GREEN per MIP/README.md (exact-SHA diagnostic passes).
+  MIP-03: Declare a health_probe in MIP/mip_surface.json.
+  SCR-01: Bind the requirement/interface/evidence/validation coverage census per node.
+  SCR-02: Record at least 3 complete PCA observation rows in control_observations.json.
+  SCR-03: Record observed pairwise outcomes in control_observations.json.
+
+# Metric files in the repository that declare numbers without a bound source
+# or formula. Listed so they are not mistaken for measurements.
+unbound_declared_metrics:
+  - path: MANIFEST/PROGRAM_METRICS.yaml
+    issue: Hand-entered scores and KPIs (last edited 2026-05-28); no source, formula or stamp.

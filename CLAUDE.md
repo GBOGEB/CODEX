@@ -70,9 +70,12 @@ not patch a downstream gate while an upstream stage is red.
 - **Adding or removing a test, workflow, script or module?** Run
   `python scripts/regen_missioncontrol_inventory.py` and commit the refreshed
   MissionControl receipts in the same PR; otherwise Mycelium CI's
-  generated-value parity preflight fails. Main is also reconciled after merge
-  by `missioncontrol-inventory-reconcile.yml`, but that is a safety net, not
-  a substitute.
+  generated-value parity preflight fails. For same-repo PR branches,
+  `missioncontrol-inventory-autoregen.yml` commits the refreshed receipts for
+  you (pull before your next push); fork PRs fail with the command to run.
+  Main is also reconciled after merge by
+  `missioncontrol-inventory-reconcile.yml`, but that is a safety net, not a
+  substitute.
 
 ## PR discipline
 
