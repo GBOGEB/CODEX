@@ -239,7 +239,7 @@ jobs:
             mission_control/mycelium/executable_value_report.json \
             docs/data/missioncontrol_executable_value_report.json \
             mission_control/mycelium/executable_value_control_observation.json || {
-              echo "::error::First red: generated executable inventory drift. Run \`python scripts/regen_missioncontrol_inventory.py\` and commit the refreshed receipts (main is also reconciled automatically after merge by missioncontrol-inventory-reconcile.yml)."
+              echo "::error::First red: generated executable inventory drift. Run \`python scripts/regen_missioncontrol_inventory.py\` and commit the refreshed receipts (same-repo PR branches are refreshed automatically by missioncontrol-inventory-autoregen.yml, main after merge by missioncontrol-inventory-reconcile.yml)."
               exit 1
             }
       - name: Run MissionControl tests

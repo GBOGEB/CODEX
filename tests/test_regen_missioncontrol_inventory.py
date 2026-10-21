@@ -50,3 +50,53 @@ def test_reconcile_workflow_cannot_retrigger_itself():
     assert set(triggers) == {"push", "workflow_dispatch"}
     assert triggers["push"]["branches"] == ["main"]
     assert "pull_request_target" not in triggers and "workflow_run" not in triggers
+
+
+AUTOREGEN = ".github/workflows/missioncontrol-inventory-autoregen.yml"
+
+
+def _autoregen() -> dict:
+    return yaml.safe_load((REPO_ROOT / AUTOREGEN).read_text(encoding="utf-8"))
+
+
+def test_autoregen_workflow_diffs_and_commits_exactly_the_tracked_outputs():
+    blocks = [r.split("outputs=(", 1)[1].split(")", 1)[0] for r in _runs(Path(AUTOREGEN).name) if "outputs=(" in r]
+    assert len(blocks) == 2
+    for block in blocks:
+        assert set(block.split()) == set(_script().TRACKED_OUTPUTS)
+
+
+def test_autoregen_paths_cover_the_census_roots():
+    contract = yaml.safe_load((REPO_ROOT / "mission_control/mycelium/executable_integration_value_contract.yaml").read_text(encoding="utf-8"))
+    paths = _autoregen().get("on", _autoregen().get(True))["pull_request"]["paths"]
+    for root in contract["migration"]["census_roots"]:
+        assert f"{root}/**" in paths
+
+
+def test_autoregen_workflow_cannot_retrigger_itself():
+    wf = _autoregen()
+    triggers = wf.get("on", wf.get(True))
+    # Only pull_request: a GITHUB_TOKEN push to the PR branch creates no new
+    # run, and the workflow_dispatch it sends targets Mycelium CI, not this file.
+    assert set(triggers) == {"pull_request"}
+    assert wf["permissions"] == {"contents": "read"}
+    assert wf["concurrency"]["group"].endswith("${{ github.event.pull_request.number }}")
+    steps = wf["jobs"]["autoregen"]["steps"]
+    commit = next(s for s in steps if s.get("id") == "push")
+    guard = next(s for s in steps if s.get("id") == "guard")
+    subject = re.search(r'git commit -m "([^$"]+)', commit["run"]).group(1)
+    pattern = re.search(r"grep -q '\^([^']+)'", guard["run"]).group(1)
+    assert subject.startswith(pattern)
+    dispatch = next(s for s in steps if "gh workflow run" in s.get("run", ""))
+    assert "missioncontrol-mycelium.yml" in dispatch["run"]
+    assert "--force" not in commit["run"]
+
+
+def test_autoregen_pushes_only_for_same_repo_branches():
+    job = _autoregen()["jobs"]["autoregen"]
+    assert "head.repo.full_name == github.repository" in job["env"]["SAME_REPO"]
+    by_name = {s.get("name"): s for s in job["steps"]}
+    assert "env.SAME_REPO == 'true'" in by_name["Commit refreshed receipts to the PR branch"]["if"]
+    fork = by_name["Fail with instructions (fork PR)"]
+    assert "env.SAME_REPO != 'true'" in fork["if"]
+    assert "python scripts/regen_missioncontrol_inventory.py" in fork["run"] and "exit 1" in fork["run"]
