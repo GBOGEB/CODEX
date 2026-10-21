@@ -8,6 +8,7 @@ from closed_loop import (
     REQUIRED_DEBT_FIELDS,
     REQUIRED_INVARIANT_FIELDS,
     REQUIRED_TUPLE_FIELDS,
+    check_branch_dag,
     completeness,
     derive_branch_dag,
     load_json,
@@ -42,9 +43,8 @@ def run_first_red() -> Dict[str, Any]:
     stages.append(("reconstruction", runtime_result["status"] == "PASS", runtime_result))
 
     dag = derive_branch_dag(tuples)
-    expected_edges = max(len(tuples) - 1, 0)
-    dag_ok = len(dag["nodes"]) == len(tuples) and len(dag["edges"]) == expected_edges
-    stages.append(("DAG", dag_ok, {"nodes": len(dag["nodes"]), "edges": len(dag["edges"]), "expected_edges": expected_edges}))
+    dag_result = check_branch_dag(tuples, dag)
+    stages.append(("DAG", dag_result["pass"], dag_result))
 
     evolution = evaluate_branch_evolution(tuples, governance.get("branch_competition", []))
     stages.append(("branch_evolution", evolution["status"] == "PASS", evolution))
