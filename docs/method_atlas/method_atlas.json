@@ -230,7 +230,7 @@
     "outputs": [
      {
       "kind": "file",
-      "oid": "391ec0c8fe1128b5f6596b552753ac2b7c5ecb28",
+      "oid": "1e2ce1b6455c23f208351cd87cb84c404244617f",
       "parse": "OK",
       "path": "mission_control/mycelium/executable_value_report.json",
       "referenced_by_entry": true,
@@ -239,7 +239,7 @@
      },
      {
       "kind": "file",
-      "oid": "391ec0c8fe1128b5f6596b552753ac2b7c5ecb28",
+      "oid": "1e2ce1b6455c23f208351cd87cb84c404244617f",
       "parse": "OK",
       "path": "docs/data/missioncontrol_executable_value_report.json",
       "referenced_by_entry": true,
@@ -342,12 +342,12 @@
     "customer": "L1 validation page, deck slide 4",
     "entry": "tools/ch15_canonical_validation.py",
     "entry_exists": true,
-    "entry_oid": "57f42ae78e59c71ce6be194b3159fd0f825ee1b2",
+    "entry_oid": "123d0a4718698b01588c86d6d2cbaab2cc739ba1",
     "id": "GISTAU.L1",
     "inputs": [
      {
       "kind": "file",
-      "oid": "460c1925b40de11597135a48472b1f6c5eea3523",
+      "oid": "15f10559b400bcc1a0c575cb9a8ebc0c1107d2f4",
       "parse": "OK",
       "path": "governance/physics/CH15_CANONICAL_VALIDATION.yaml",
       "referenced_by_entry": true,
@@ -362,7 +362,7 @@
     "outputs": [
      {
       "kind": "file",
-      "oid": "2ad6d302587293a39afb02946720477414bf2e34",
+      "oid": "a47690cb8cfa599b036566569eea489a428989a8",
       "parse": "OK",
       "path": "docs/gistau-ch15/data/l1_validation_results.json",
       "referenced_by_entry": false,
@@ -967,7 +967,7 @@
    "RUNTIME_ONLY": 4
   }
  },
- "digest": "2e5197e4198d97ed586bb86493cfcba74189c6d4b449c3b46677e6e00a5bb353",
+ "digest": "ebc98cf16667890eedfc658feeed13b49ed15790b09c013858191b935bb78f74",
  "health": {
   "dimensions": [
    {
@@ -1687,17 +1687,17 @@
       "checks": [
        {
         "completion": 1.0,
-        "den": 832,
+        "den": 833,
         "evidence": [],
         "id": "syntax",
         "label": "Python files parse (ast)",
         "note": null,
-        "num": 832,
+        "num": 833,
         "weight": 3
        },
        {
         "completion": 0.9976,
-        "den": 832,
+        "den": 833,
         "evidence": [
          "tools/method_atlas/build_method_atlas.py",
          "tools/pid_semantic_parser.py"
@@ -1705,19 +1705,19 @@
         "id": "size",
         "label": "Files at most 800 lines",
         "note": null,
-        "num": 830,
+        "num": 831,
         "weight": 1
        },
        {
         "completion": 0.9988,
-        "den": 832,
+        "den": 833,
         "evidence": [
          "analytics/qps_thermo_dashboard/build_qps_thermo_dashboard.py"
         ],
         "id": "warnings",
         "label": "No SyntaxWarnings (e.g. invalid escape sequences)",
         "note": null,
-        "num": 831,
+        "num": 832,
         "weight": 1
        },
        {
@@ -1746,16 +1746,16 @@
         "id": "markers",
         "label": "TODO/FIXME debt under 5 per kLOC",
         "note": "2 markers, 0.02 per kLOC",
-        "num": 0.9960630696246137,
+        "num": 0.9960922235248144,
         "weight": 1
        }
       ],
       "metrics": {
        "large_files": 2,
-       "loc": 101602,
+       "loc": 102360,
        "markers": 2,
        "parse_failures": 0,
-       "python_files": 832,
+       "python_files": 833,
        "syntax_warnings": 1
       },
       "score": 99.9,
@@ -2108,23 +2108,23 @@
       "applicable": true,
       "checks": [
        {
-        "completion": 0.9321,
+        "completion": 0.9358,
         "den": 1,
         "evidence": [],
         "id": "ratio",
         "label": "Test files per module (target 0.5)",
-        "note": "254 test files / 545 modules = 0.47",
-        "num": 0.9321100917431193,
+        "note": "255 test files / 545 modules = 0.47",
+        "num": 0.9357798165137615,
         "weight": 2
        },
        {
         "completion": 1.0,
-        "den": 249,
+        "den": 250,
         "evidence": [],
         "id": "non_empty",
         "label": "Test files define tests",
         "note": null,
-        "num": 249,
+        "num": 250,
         "weight": 2
        },
        {
@@ -2163,10 +2163,10 @@
       "metrics": {
        "ci_workflows_running_tests": 56,
        "modules": 545,
-       "test_files": 254,
-       "test_functions": 1949
+       "test_files": 255,
+       "test_functions": 1972
       },
-      "score": 98.1,
+      "score": 98.2,
       "status": "GREEN"
      }
     },
@@ -21270,7 +21270,7 @@
    "present": true,
    "remote": "GBOGEB/CODEX",
    "role": "Control plane, Mycelium, Mission Control atlas host",
-   "tracked_files": 2720
+   "tracked_files": 2722
   },
   {
    "branch": "main",

@@ -63,7 +63,8 @@ jobs:
               ;;
             abacus)
               python scripts/check_globs.py | tee "${component_dir}/globs.txt"
-              python scripts/check_stale.py | tee "${component_dir}/stale.txt"
+              python -m unittest discover -s tests -p "test_stale_artifact_capture.py" -v 2>&1 | tee "${component_dir}/stale_capture_tests.txt"
+              python scripts/check_stale.py 2>&1 | tee "${component_dir}/stale.txt"
               python governance/RENDER_LINTER.py | tee "${component_dir}/render_linter.txt"
               checks="globs,stale,render_linter"
               ;;

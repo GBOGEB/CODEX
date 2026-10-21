@@ -10,7 +10,7 @@ This skill sits on top of the standard docx, pptx and Claude Docs skills. Load t
 ## Kit
 `tools/house_style/` in GBOGEB/CODEX (see its README):
 - `templates/QPS_House_starter.docx` / `.dotx`: Word reference doc and template from `Full_VCR_Handover_master.docx`.
-- `templates/QPS_House.pptx` / `.potx`: the SCK•CEN 2020 slide master from `QPS_MTBF_WCS_DMAIC_v10.pptx`. Not committed; build it with `build_templates.py` when missing.
+- `templates/QPS_House.pptx` / `.potx`: the SCK•CEN 2020 slide master from `QPS_MTBF_WCS_DMAIC_v7.pptx` (SHA-256 in the kit README). Not committed; build it with `build_templates.py` when missing.
 - `qps_post.py`: the post-processing layer. `qps_qa.py`: the publish-to-corporate QA gate (check, fix).
 - Front-matter structure comes from `MINERVA_Template_Enhanced.docx`.
 
@@ -36,15 +36,15 @@ Deliver only files that report PUBLISHABLE, and attach the QA report. Anything m
 
 ## Slides
 - Markdown route: `qps_post.py pptx deck.md` (pandoc, then re-hosted onto the corporate master).
-- python-pptx / pptx-skill route: build on `templates/QPS_House.pptx` using its "Text Slide" and "BLANK" layouts and theme colours only, no cover slide; or build in any tool and let `qps_post.py pptx` re-host the slides.
+- python-pptx / pptx-skill route: build on `templates/QPS_House.pptx` using its "Text Slide" and "Blank" layouts and theme colours only, no cover slide; or build in any tool and let `qps_post.py pptx` re-host the slides.
 - Governed decks: reference or add the slide in GBOGEB/CODEX `MANIFEST/MASTER_SLIDE_REGISTRY.yaml` via a draft PR only.
-- Render to images (`--pdf`, then pdftoppm) and look at every slide or page before delivering.
+- Render to images (`--pdf`, then pdftoppm) and look at every slide or page before delivering. On Windows without LibreOffice, `--pdf` exports through PowerPoint/Word (COM).
 
 ## Claude Docs
 Claude Docs stay the editable source. Mirror the structure (title, date/author byline, VCR section order: Requirements (RTM); Quality & Test Planning; BOM snapshot; Vendor landscape; ADR/OCD tie-ins; captions above tables). When a Word or PDF deliverable is needed, export the doc to .docx or Markdown and run `qps_post.py docx` on it.
 
 ## Theme
-SCK•CEN 2020: purple #562873 and pink #984A9C, with cyan #8ED8F8, navy #034694, greys #CACCD0 / #DFE0E2, text #515151, hyperlink #BC58AE. Word: Segoe UI body, Segoe UI Semibold headings. Slides: Arial (theme). Tints of palette colours are fine.
+SCK•CEN 2020: purple #562873 and pink #984A9C, with cyan #8ED8F8, navy #034694, greys #CACCD0 / #DFE0E2, text #515151, hyperlink #BC58AE. Word: Segoe UI body, Segoe UI Semibold headings. Slides: Segoe UI (theme heading and body font). Tints of palette colours are fine.
 
 ## Do not
 - Modify the CODEX master files or golden_thread receipts.

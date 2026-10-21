@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import math
 from pathlib import Path
 
 import pytest
@@ -24,6 +25,19 @@ def _tool():
 def ideal(t_k, p_kpa):
     s = B.state_pt("helium", p_kpa, t_k)
     return {"density_kg_m3": s.density_kg_m3, "enthalpy_J_kg": s.enthalpy_j_kg, "entropy_J_kgK": s.entropy_j_kgk}
+
+
+# Low-density van der Waals correction on top of the ideal gas: h = cp*T + p*(b - 2a/(R*T)).
+# Its integral Joule-Thomson inversion temperature is exactly 2a/(R*b) = VDW_T_INV.
+VDW_B = 0.006  # m3/kg
+VDW_T_INV = 40.0
+VDW_A = VDW_T_INV * B.R * VDW_B / 2  # J*m3/kg2 (B.R in J/kg/K)
+
+
+def vdw(t_k, p_kpa):
+    s = ideal(t_k, p_kpa)
+    s["enthalpy_J_kg"] += p_kpa * 1000 * (VDW_B - 2 * VDW_A / (B.R * t_k))
+    return s
 
 
 @pytest.fixture(scope="module")
@@ -90,9 +104,9 @@ def test_gate_fails_on_any_tolerance_breach_and_on_unaccounted_examples(tool, ga
 
 def test_gate_passes_when_provider_reproduces_the_book(tool, gate, examples):
     by_id = {e["example_id"]: e for e in examples}
-    real = {eid: tool.compute(by_id[eid], ideal) for eid in gate["checked"]}
+    real = {eid: tool.compute(by_id[eid], vdw) for eid in gate["checked"]}
     fake = [dict(e, expected_outputs={**e["expected_outputs"], **{k: v for k, v in real.get(e["example_id"], {}).items() if k in e["expected_outputs"]}}) for e in examples]
-    assert tool.validate(gate, fake, ideal)["status"] == "PASS"
+    assert tool.validate(gate, fake, vdw)["status"] == "PASS"
 
 
 def test_source_check_items_are_reported_but_never_counted_as_passing(tool, gate, examples):
@@ -101,9 +115,9 @@ def test_source_check_items_are_reported_but_never_counted_as_passing(tool, gate
     gate = dict(gate, checked=[e for e in gate["checked"] if e != moved],
                 source_check_required={**(gate.get("source_check_required") or {}), moved: "synthetic"})
     by_id = {e["example_id"]: e for e in examples}
-    real = {eid: tool.compute(by_id[eid], ideal) for eid in gate["checked"]}
+    real = {eid: tool.compute(by_id[eid], vdw) for eid in gate["checked"]}
     fake = [dict(e, expected_outputs={**e["expected_outputs"], **{k: v for k, v in real.get(e["example_id"], {}).items() if k in e["expected_outputs"]}}) for e in examples]
-    report = tool.validate(gate, fake, ideal)
+    report = tool.validate(gate, fake, vdw)
     assert report["status"] == "PASS"
     open_rows = [r for r in report["rows"] if r["example_id"] in gate["source_check_required"]]
     assert open_rows and all(r["verdict"].startswith("OPEN_") for r in open_rows)
@@ -127,3 +141,38 @@ def test_t05_printed_cells_are_internally_consistent(examples):
     assert i["outlet_pressure_bar"] == 1.20
     assert o["outlet_enthalpy_j_g"] == pytest.approx(o["inlet_enthalpy_j_g"] + o["real_enthalpy_change_j_g"], abs=0.011)
     assert o["power_w"] == pytest.approx(i["mass_flow_g_s"] * o["real_enthalpy_change_j_g"], rel=1e-3)
+
+
+def test_inversion_fixed_point_matches_the_analytic_vdw_inversion(tool, examples):
+    by_id = {e["example_id"]: e for e in examples}
+    out = tool.compute(by_id["WE-T02-INVERSION-HELIUM-002"], vdw)
+    assert out["inversion_temperature_k"] == pytest.approx(VDW_T_INV, abs=1e-4)
+    t_in = by_id["WE-T02-INVERSION-HELIUM-002"]["inputs"]["inlet_temperature_k"]
+    assert out["enthalpy_j_g"] == pytest.approx(vdw(t_in, 1400.0)["enthalpy_J_kg"] / 1000)
+    # T_out - T_in has the sign of T_in - T_inv for the stand-in: warming above inversion.
+    assert (out["outlet_temperature_k"] - t_in) * (t_in - VDW_T_INV) > 0
+
+
+def test_record_chunks_reassemble_and_respect_the_annotation_limit(tool):
+    view = {"rows": [{"example_id": f"WE-{k}", "computed": k * 1.5} for k in range(400)]}
+    chunks = tool.record_chunks(view)
+    assert len(chunks) > 1 and all(len(c) <= tool.ANNOTATION_CHUNK for c in chunks)
+    assert json.loads("".join(chunks)) == view
+
+
+def test_inversion_fails_closed_without_a_joule_thomson_effect(tool, examples):
+    by_id = {e["example_id"]: e for e in examples}
+    out = tool.compute(by_id["WE-T02-INVERSION-HELIUM-002"], ideal)  # ideal gas: no inversion
+    assert math.isnan(out["inversion_temperature_k"])
+
+
+def test_heat_exchanger_balance_and_lmtd(tool, examples):
+    by_id = {e["example_id"]: e for e in examples}
+    out = tool.compute(by_id["WE-T03-HEAT-EXCHANGER-001"], ideal)
+    q = 0.045 * B.CP * (297.0 - 200.0)
+    t2 = 300.0 - q / (0.050 * B.CP)
+    lmtd = ((t2 - 200.0) - 3.0) / math.log((t2 - 200.0) / 3.0)
+    assert out["heat_load_w"] == pytest.approx(q, rel=1e-9)
+    assert out["hot_outlet_temperature_k"] == pytest.approx(t2, abs=1e-6)
+    assert out["lmtd_k"] == pytest.approx(lmtd, rel=1e-6)
+    assert out["ua_w_k"] == pytest.approx(q / lmtd, rel=1e-6)

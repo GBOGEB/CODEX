@@ -1,12 +1,12 @@
 """QPS publish-to-corporate QA: check a Word file or deck against the house standard, report, fix.
 
 The standard is set by the authoritative references:
-  slides  QPS_MTBF_WCS_DMAIC_v10.pptx (SCK CEN 2020 master, layouts, palette) -> templates/QPS_House.pptx
+  slides  QPS_MTBF_WCS_DMAIC_v7.pptx (SCK CEN 2020 master, layouts, palette) -> templates/QPS_House.pptx
   Word    Full_VCR_Handover_master.docx (styles, header/footer) + MINERVA_Template_Enhanced.docx (front matter)
 
 Usage
   python3 qps_qa.py check FILE [--json REPORT.json] [--md REPORT.md]
-  python3 qps_qa.py fix FILE OUT --title T [qps_post options]   # fix, then re-check OUT
+  python3 qps_qa.py fix FILE OUT --title T [qps_post options] [--pdf [--pdf-engine E]]   # fix, then re-check OUT
 
 Exit code of `check`: 0 = publishable (no FAIL), 1 = at least one FAIL.
 """
@@ -22,6 +22,7 @@ import zipfile
 from pathlib import Path
 
 import docx
+from lxml import etree
 from pptx import Presentation
 
 try:
@@ -43,8 +44,25 @@ WORD_STYLES = None        # filled from QPS_House_starter.docx
 FRONT_MATTER = ["Copyright Rules", "Configuration Control", "Document History", "Document Approval",
                 "Distribution List", "Table of Contents"]
 MANUAL_NUMBER = re.compile(r"^\s*(§+\s*\d|\d+(\.\d+)*\.?\s+\S|[IVX]+\.\s)")
-PLACEHOLDER_TEXT = re.compile(r"\[(ref|type of document|cluster|project|sections)\]|#{4,}|lorem ipsum|TODO|TBD|XXX",
-                              re.IGNORECASE)
+# Template text that is never legitimate content.
+PLACEHOLDER_TEXT = re.compile(r"\[(ref|type of document|cluster|project|sections)\]|#{4,}|lorem ipsum", re.IGNORECASE)
+# Author markers. Engineering content quotes them as data (W363 burndown `status: TODO`, "TBD mm2"), so they
+# count only outside quotes and status fields, and on slides only in placeholders (title, body).
+AUTHOR_MARKER = re.compile(r"\b(TODO|TBD|XXX)\b")
+QUOTED_OR_STATUS = re.compile(r"\"[^\"\n]*\"|“[^”\n]*”|‘[^’\n]*’|«[^»\n]*»|`[^`\n]*`|(?<!\w)'[^'\n]*'(?!\w)"
+                              r"|\bstatus\s*[:=]\s*\w+", re.IGNORECASE)
+
+
+def placeholder_text(text, author_markers=True):
+    """The template text or author marker left in `text`, or None."""
+    m = PLACEHOLDER_TEXT.search(text)
+    if m:
+        return m.group(0)
+    if author_markers:
+        m = AUTHOR_MARKER.search(QUOTED_OR_STATUS.sub(" ", text))
+        if m:
+            return m.group(0)
+    return None
 
 
 def _neutral(hexv):
@@ -116,6 +134,32 @@ def _load_standard():
 
 # ----------------------------------------------------------------- pptx ----
 
+def custom_props(prs):
+    """docProps/custom.xml as {name: text}."""
+    part = qps_post._docprops(prs, "custom.xml")
+    if part is None:
+        return {}
+    return {p.get("name"): "".join(p.itertext()).strip() for p in etree.fromstring(part.blob)}
+
+
+def _check_identity(prs, rep):
+    """One footer reference on every master, and no ECM identity of another document in the properties."""
+    refs = {}
+    for partname, role, shp in qps_post.furniture(prs):
+        if role == "ref":
+            refs.setdefault(shp.text_frame.text.strip(), []).append(str(partname))
+    if refs and not any(re.search(r"\d", r) for r in refs):
+        rep.add("WARN", "reference", "master", "document reference in the footer is empty", False)
+    if len(refs) > 1:
+        rep.add("FAIL", "reference", "masters", "masters show different references: " + "; ".join(
+            f"'{r}' on {len(parts)} part(s)" for r, parts in sorted(refs.items())))
+    ecm_id = custom_props(prs).get("ID", "")
+    if ecm_id and refs and not all(re.search(rf"(?<!\d){re.escape(ecm_id)}$", r) for r in refs):
+        rep.add("FAIL", "identity", "document properties",
+                f"ECM document ID {ecm_id} in docProps/custom.xml belongs to another document "
+                f"(footer reference: {', '.join(sorted(refs))})")
+
+
 def check_pptx(path):
     _load_standard()  # needs the locally built slide master
     rep = Report(path)
@@ -130,9 +174,7 @@ def check_pptx(path):
         return rep
     if not slides[0].slide_layout.name.startswith("Titel Slide"):
         rep.add("FAIL", "title slide", "slide 1", "first slide is not a corporate title slide (Titel Slide 1-6)")
-    for shp in prs.slide_masters[0].shapes:
-        if shp.name == "QPS Ref" and not re.search(r"\d", shp.text_frame.text):
-            rep.add("WARN", "reference", "master", "document reference in the footer is empty", False)
+    _check_identity(prs, rep)
     for n, sl in enumerate(slides, start=1):
         where = f"slide {n}"
         if sl.slide_layout.name not in CORPORATE_LAYOUTS:
@@ -140,7 +182,7 @@ def check_pptx(path):
         if n > 1:
             if not any(s.is_placeholder and s.placeholder_format.type == 13 for s in sl.shapes):
                 rep.add("FAIL", "pagination", where, "no slide number")
-            if qps_post._title_of(sl) is None and sl.slide_layout.name not in ("BLANK", "Blank footer", "Blank 1", "Blank 2", "1_Blank 3"):
+            if qps_post._title_of(sl) is None and not qps_post.is_blank_layout(sl.slide_layout.name):
                 rep.add("WARN", "content", where, "slide has no title")
         fonts, colours = set(), set()
         for el in sl.shapes._spTree.iter(f"{{{A}}}latin"):
@@ -157,8 +199,9 @@ def check_pptx(path):
                 f"#{c}→#{nearest(c)}" for c in sorted(colours)))
         for shp in sl.shapes:
             if shp.has_text_frame and shp.text_frame.text.strip():
-                if PLACEHOLDER_TEXT.search(shp.text_frame.text):
-                    rep.add("FAIL", "content", where, f"template placeholder text left in '{shp.name}'", False)
+                found = placeholder_text(shp.text_frame.text, author_markers=shp.is_placeholder)
+                if found:
+                    rep.add("FAIL", "content", where, f"template placeholder text '{found}' left in '{shp.name}'", False)
                 if qps_post.text_fit_scale(shp) < 0.7:
                     body = shp.text_frame._txBody.find(f"{{{A}}}bodyPr")
                     fit = body.find(f"{{{A}}}normAutofit") if body is not None else None
@@ -233,7 +276,7 @@ def check_docx(path):
             off_styles.add(p.style.name)
         if p.style.name.startswith("Heading") and MANUAL_NUMBER.match(p.text):
             manual.append(p.text[:40])
-        if PLACEHOLDER_TEXT.search(p.text):
+        if placeholder_text(p.text):
             rep.add("FAIL", "content", f"paragraph {i + 1}", f"template placeholder text: '{p.text[:50]}'", False)
     body = d.element.body
     for rf in body.iter(f"{{{W}}}rFonts"):
@@ -294,14 +337,14 @@ def main(argv=None):
     sub = ap.add_subparsers(dest="cmd", required=True)
     c = sub.add_parser("check"); c.add_argument("file"); c.add_argument("--json"); c.add_argument("--md")
     f = sub.add_parser("fix"); f.add_argument("file"); f.add_argument("out"); qps_post.add_meta_args(f)
-    f.add_argument("--pdf", action="store_true")
+    qps_post.add_pdf_args(f)
     a = ap.parse_args(argv)
     if a.cmd == "check":
         rep = check(a.file)
     else:
         (fix_pptx if a.file.lower().endswith(".pptx") else fix_docx)(a.file, a.out, a)
         if a.pdf:
-            qps_post.export_pdf(a.out)
+            qps_post.export_pdf(a.out, a.pdf_engine)
         rep = check(a.out)
         a.json = a.md = None
     print(rep.markdown())

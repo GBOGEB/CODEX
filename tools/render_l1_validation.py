@@ -35,6 +35,11 @@ QUANTITY_LABELS = {
     "power_w": ("Power", "W"),
     "isentropic_enthalpy_change_j_g": ("Isentropic enthalpy rise", "J/g"),
     "real_enthalpy_change_j_g": ("Real enthalpy rise", "J/g"),
+    "inversion_temperature_k": ("Inversion temperature", "K"),
+    "hot_outlet_temperature_k": ("Hot outlet temperature", "K"),
+    "heat_load_w": ("Heat load", "W"),
+    "lmtd_k": ("LMTD", "K"),
+    "ua_w_k": ("UA", "W/K"),
 }
 TUPLE_LABELS = {
     "T00": "State point",

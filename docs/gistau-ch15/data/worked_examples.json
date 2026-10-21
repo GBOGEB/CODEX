@@ -132,10 +132,12 @@
         "inlet_pressure_bar": 14.0,
         "outlet_pressure_bar": 1.0,
         "mass_flow_g_s": 50.0,
-        "thermal_power_w": 0.0
+        "thermal_power_w": 0.0,
+        "inlet_temperature_k": 43.21
       },
       "expected_outputs": {
         "inversion_temperature_k": 43.21,
+        "outlet_temperature_k": 43.21,
         "enthalpy_j_g": 229.41
       },
       "primary_reference_tier": "tier2_refprop",
@@ -144,6 +146,7 @@
       ],
       "status": "captured",
       "scan_definition": "Find T_in such that isenthalpic (0 W) expansion 14.00 -> 1.00 bar gives T_out == T_in (zero integral Joule-Thomson effect). Book: Goal Seek on A4 until H4 == H3.",
+      "inlet_temperature_note": "inlet_temperature_k is the Goal Seek result the book writes into the inlet cell (H3 43.21 K); the printed state (I3/I4 229.41 J/g, H4 43.21 K) is checked at that inlet, and the provider's own fixed point is checked separately as inversion_temperature_k. The fixed point is ill-conditioned (T_out - T_in changes by only ~0.02 K per K), so a 0.02 K shift in it moves h by ~0.09 J/g.",
       "source_verification": {
         "method": "original Springer PDF (sha256 1b2843cf...1b41), figure rasterised and read cell by cell",
         "verified_on": "2026-10-19",
