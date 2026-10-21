@@ -1,6 +1,7 @@
 """scripts/regen_missioncontrol_inventory.py must mirror what Mycelium CI checks."""
 from __future__ import annotations
 
+import fnmatch
 import importlib.util
 import re
 from pathlib import Path
@@ -36,6 +37,40 @@ def test_preflight_and_verify_lists_match():
     verify = next(r for r in runs if "cmp /tmp/registration_debt_classification.first.json" in r)
     last_diff = verify.strip().splitlines()[-1]
     assert set(re.findall(r"[\w./-]+\.json", last_diff)) == set(script.TRACKED_OUTPUTS)
+
+
+KPI_SCRIPT = "scripts/measure_mycelium_kpis.py"
+KPI_MANIFEST = "MANIFEST/MYCELIUM_KPI_MANIFEST.yaml"
+INVENTORY_WORKFLOWS = ("missioncontrol-mycelium.yml", "missioncontrol-inventory-reconcile.yml", "missioncontrol-inventory-autoregen.yml")
+
+
+def test_kpi_measurement_is_the_last_step_and_a_tracked_output():
+    script = _script()
+    assert script.STEPS[-1] == KPI_SCRIPT
+    spec = importlib.util.spec_from_file_location("measure_mycelium_kpis", REPO_ROOT / KPI_SCRIPT)
+    kpi = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(kpi)
+    assert kpi.OUTPUT.relative_to(REPO_ROOT).as_posix() in script.TRACKED_OUTPUTS
+
+
+def test_mycelium_ci_rechecks_kpi_report_determinism():
+    verify = next(r for r in _runs("missioncontrol-mycelium.yml") if "cmp /tmp/registration_debt_classification.first.json" in r)
+    assert f"python {KPI_SCRIPT} --check" in verify
+
+
+def test_inventory_workflows_trigger_on_every_kpi_input():
+    manifest = yaml.safe_load((REPO_ROOT / KPI_MANIFEST).read_text(encoding="utf-8"))
+    watched = [KPI_MANIFEST, KPI_SCRIPT, "docs/data/mycelium_kpi_measurement.json"]
+    watched += [s["path"] for s in manifest["sources"].values()]
+    for workflow in INVENTORY_WORKFLOWS:
+        wf = yaml.safe_load((REPO_ROOT / ".github/workflows" / workflow).read_text(encoding="utf-8"))
+        triggers = wf.get("on", wf.get(True))
+        for event in ("push", "pull_request"):
+            if event not in triggers:
+                continue
+            filters = triggers[event]["paths"]
+            missing = [p for p in watched if not any(fnmatch.fnmatch(p, f) for f in filters)]
+            assert not missing, (workflow, event, missing)
 
 
 def test_reconcile_workflow_commits_exactly_the_tracked_outputs():

@@ -33,6 +33,11 @@ on:
       - 'tests/**'
       - '.github/workflows/**'
       - 'docs/data/missioncontrol_*.json'
+      - 'MANIFEST/MYCELIUM_KPI_MANIFEST.yaml'
+      - 'MIP/mip_lanes.json'
+      - 'MIP/mip_surface.json'
+      - 'MIP/RUNTIME_HEALTH_ROLLUP_1102.yaml'
+      - 'docs/data/mycelium_kpi_measurement.json'
 
 permissions:
   contents: read
@@ -88,6 +93,7 @@ jobs:
             docs/data/missioncontrol_metrics.json
             mission_control/mycelium/log_analysis.json
             docs/data/missioncontrol_log_analysis.json
+            docs/data/mycelium_kpi_measurement.json
           )
           if git diff --quiet -- "${outputs[@]}"; then
             echo "drift=false" >> "$GITHUB_OUTPUT"
@@ -116,6 +122,7 @@ jobs:
             docs/data/missioncontrol_metrics.json
             mission_control/mycelium/log_analysis.json
             docs/data/missioncontrol_log_analysis.json
+            docs/data/mycelium_kpi_measurement.json
           )
           git add -- "${outputs[@]}"
           git commit -m "missioncontrol: autoregen executable-value receipts for ${HEAD_SHA}" \
