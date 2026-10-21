@@ -56,11 +56,12 @@ jobs:
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           python -m pip install --disable-pip-version-check coverage==7.13.3
           export PYTHONPATH=mission_control/mycelium/continuity
-          # N7 scopes the portable continuity modules only. native_bridge.py (N8) and
-          # admission_timeline.py (N9) are exercised by their own suites below, with
-          # their own stricter coverage gates, and are never imported by test_portable.py.
+          # N7 scopes the portable continuity modules only. native_bridge.py (N8),
+          # admission_timeline.py (N9) and terminal_reconciliation.py (N10) are exercised
+          # by their own suites below, with their own stricter coverage gates, and are
+          # never imported by test_portable.py.
           python -m coverage run --branch --source=mycelium_continuity \
-            --omit='*/mycelium_continuity/native_bridge.py,*/mycelium_continuity/admission_timeline.py' \
+            --omit='*/mycelium_continuity/native_bridge.py,*/mycelium_continuity/admission_timeline.py,*/mycelium_continuity/terminal_reconciliation.py' \
             -m unittest discover \
             -s mission_control/mycelium/continuity/tests -p "test_portable.py" -v
           python -m coverage json -q -o /tmp/mycelium-n7-coverage.json
@@ -173,6 +174,67 @@ jobs:
                'admission':'HOLD','effective_required_status':None,'accepted_roots':None}
           Path('/tmp/mycelium-n9-receipt.json').write_text(json.dumps(out,indent=2)+'\n')
           PY
+      - name: "MYCELIUM N10: terminal reconciliation of the N9 chronology"
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          export PYTHONPATH=mission_control/mycelium/continuity
+          python -m coverage run --branch --source=mycelium_continuity.terminal_reconciliation \
+            -m unittest discover -s mission_control/mycelium/continuity/tests \
+            -p "test_terminal_reconciliation_public.py" -v 2>&1 | tee /tmp/mycelium-n10-unittest.log
+          python -m coverage json -q -o /tmp/mycelium-n10-coverage.json
+          python - <<'PY'
+          import json,os,re
+          from pathlib import Path
+          from mycelium_continuity.graph import sha256
+          from mycelium_continuity.terminal_reconciliation import project
+          root=Path('mission_control/mycelium/continuity')
+          parent=json.loads((root/'N9_ADMISSION_READBACK_20261017.json').read_text())
+          source=json.loads((root/'N10_TERMINAL_RECONCILIATION_20261021.json').read_text())
+          result=project(source,parent)
+          log=Path('/tmp/mycelium-n10-unittest.log').read_text()
+          ran=re.search(r'^Ran (\d+) tests? in ',log,re.M)
+          # Zero or fewer tests than the contract is a failure, never a pass.
+          if not ran or int(ran.group(1))<35 or not re.search(r'^OK$',log,re.M):
+              raise SystemExit('MYCELIUM_N10_FIRST_RED: test count or OK status missing')
+          cov=json.loads(Path('/tmp/mycelium-n10-coverage.json').read_text())['totals']
+          m=result['metrics']
+          assert result['source']['parent_snapshot_sha256']==sha256(parent)
+          assert m['cases']==4 and m['resolved_since_parent']==2 and m['still_nonterminal']==0
+          assert m['red_terminal_resolved_after_merge']==2 and m['terminal_rerun_changed']==0
+          assert result['admission']=='HOLD' and m['accepted_root_closures'] is None
+          assert cov['num_statements']>0 and cov['num_branches']>0
+          # Compare counts, not rounded percentages, so a near-miss cannot round green.
+          assert 100*cov['covered_lines']>=95*cov['num_statements']
+          assert 100*cov['covered_branches']>=90*cov['num_branches']
+          out={'schema':'code-purple.mycelium.n10-ci-receipt.v1',
+               'checkout_sha':os.environ['EXPECTED_SHA'],
+               'run_id':os.environ.get('GITHUB_RUN_ID'),
+               'attempt':os.environ.get('GITHUB_RUN_ATTEMPT'),
+               'scope':'terminal_reconciliation.py synthetic-contract tests',
+               'tests_ran':int(ran.group(1)),
+               'source_snapshot_sha256':result['source']['snapshot_sha256'],
+               'parent_snapshot_sha256':result['source']['parent_snapshot_sha256'],
+               'transitions':result['transitions'],
+               'statements':[cov['covered_lines'],cov['num_statements']],
+               'branches':[cov['covered_branches'],cov['num_branches']],
+               'native_artifact_bytes_in_repo':False,
+               'admission':'HOLD','effective_required_status':None,'accepted_roots':None}
+          Path('/tmp/mycelium-n10-receipt.json').write_text(json.dumps(out,indent=2)+'\n')
+          print('MYCELIUM_N10_RECEIPT='+json.dumps(out,sort_keys=True),flush=True)
+          PY
+      - name: "MYCELIUM N10: upload terminal reconciliation proof"
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: mycelium-n10-reconciliation-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/mycelium-n10-coverage.json
+            /tmp/mycelium-n10-receipt.json
+          if-no-files-found: warn
       - name: "MYCELIUM N9: upload read-only admission proof"
         if: always()
         uses: actions/upload-artifact@v7.0.2
