@@ -1,4 +1,4 @@
-version: A7.3
+version: A7.4
 runtime: executable_semantic_reconstruction
 
 inputs:
@@ -21,6 +21,7 @@ outputs:
   - frontier
   - open_competitions
   - competing_branches
+  - handover_seed
 
 pillars:
   idempotent:
@@ -36,6 +37,14 @@ pillars:
       python lineage_lock.py --extend, which refuses to rewrite the lock.
   recursive:
     requirement: reconstructed state can seed the next handover and execution pulse
+    enforced_by: handover_seed.py
+    rule: >-
+      data/handover_seed.json packages the reconstructed state, the frontier
+      tuples to resume from with their todo, open competitions, open debt and
+      invariant ids, bound to a digest of the parsed ledgers. Unchanged
+      ledgers keep the same seed; changed ledgers chain a new seed whose
+      parent_seed_sha256 is the previous seed. The committed seed must match
+      the current ledgers.
   evolutionary:
     requirement: competing branches remain explicit until evidence supports convergence
     enforced_by: branch_evolution.py
@@ -52,6 +61,7 @@ gates:
   replay_ready_required: true
   branch_competition_valid_required: true
   lineage_append_only_required: true
+  handover_seed_current_required: true
 
 next_extensions:
   - tuple_schema_validation

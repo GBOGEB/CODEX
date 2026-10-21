@@ -16,6 +16,7 @@ from closed_loop import (
     validate_records,
 )
 from branch_evolution import evaluate as evaluate_branch_evolution
+from handover_seed import run as run_handover_seed
 from lineage_lock import check_append_only, load_lock
 from runtime import reconstruct, validate
 from semantic_acceptance_gate import evaluate
@@ -59,6 +60,9 @@ def run_first_red() -> Dict[str, Any]:
 
     replay_result = replay(tuples)
     stages.append(("semantic_delta_replay", replay_result["status"] == "PASS", replay_result.get("final_state", replay_result)))
+
+    seed_result = run_handover_seed()
+    stages.append(("handover_seed", seed_result["status"] == "PASS", seed_result))
 
     acceptance = evaluate()
     stages.append(("renderer_execution_receipt_acceptance", acceptance["status"] == "PASS", acceptance))

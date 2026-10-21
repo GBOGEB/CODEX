@@ -71,6 +71,28 @@ python lineage_lock.py --extend
 rewritten. `first_red_gate.py` runs the check as the `lineage_append_only`
 stage after `parentage`.
 
+## A7.4 — Recursive Handover Seed
+
+`handover_seed.py` enforces the recursive pillar. `data/handover_seed.json`
+is the reconstructed state packaged to start the next handover: runtime
+state, the frontier tuples to resume from (with their `todo`), open
+competitions, open debt and invariant ids. It is bound to a SHA-256 digest of
+the parsed ledgers, so checkout line endings do not change it.
+
+Seeds form a chain. When the ledgers are unchanged, `--write` keeps the same
+seed. When they change, it writes a new seed whose `parent_seed_sha256` is
+the previous seed's hash.
+
+Any PR that edits `semantic_tuple_ledger.json` or `governance_ledger.json`
+must refresh the seed in the same PR:
+
+```
+python handover_seed.py --write
+```
+
+`first_red_gate.py` runs the check as the `handover_seed` stage after
+`semantic_delta_replay`; a stale or edited seed turns it red.
+
 ## Immediate Next After This Slice
 
 - tuple schema validation;
