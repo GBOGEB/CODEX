@@ -53,6 +53,24 @@ branches still competing. `first_red_gate.py` runs it as the
 competition between TUP-0002 (canonical convergence) and TUP-0003 (Option B
 overlay-first).
 
+## A7.3 — Append-Only Lineage Lock
+
+`lineage_lock.py` enforces the iterative pillar. `data/lineage_lock.json`
+holds an identity hash over `id`, `parent`, `branch`, `theme` and `intent`
+for every locked tuple, in ledger order. The check fails when a locked tuple
+is deleted, reordered or has an identity field rewritten. `progress`, `todo`
+and `delta` may still change as work moves on.
+
+After appending tuples to the ledger, lock them in the same PR:
+
+```
+python lineage_lock.py --extend
+```
+
+`--extend` only appends to the lock; it refuses to run if locked history was
+rewritten. `first_red_gate.py` runs the check as the `lineage_append_only`
+stage after `parentage`.
+
 ## Immediate Next After This Slice
 
 - tuple schema validation;

@@ -16,6 +16,7 @@ from closed_loop import (
     validate_records,
 )
 from branch_evolution import evaluate as evaluate_branch_evolution
+from lineage_lock import check_append_only, load_lock
 from runtime import reconstruct, validate
 from semantic_acceptance_gate import evaluate
 from semantic_delta_replay import replay
@@ -38,6 +39,9 @@ def run_first_red() -> Dict[str, Any]:
 
     parent_errors = validate_parentage(tuples)
     stages.append(("parentage", not parent_errors, parent_errors))
+
+    lineage = check_append_only(tuples, load_lock())
+    stages.append(("lineage_append_only", lineage["status"] == "PASS" and lineage["locked_count"] > 0, lineage))
 
     runtime_result = validate(reconstruct(tuples, invariants, debt))
     stages.append(("reconstruction", runtime_result["status"] == "PASS", runtime_result))

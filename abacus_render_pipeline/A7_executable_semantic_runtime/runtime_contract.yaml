@@ -1,4 +1,4 @@
-version: A7.1
+version: A7.3
 runtime: executable_semantic_reconstruction
 
 inputs:
@@ -6,6 +6,7 @@ inputs:
   - active_invariants
   - semantic_debt
   - branch_competition
+  - lineage_lock
   - reconstruction_manifest
 
 outputs:
@@ -26,6 +27,13 @@ pillars:
     requirement: repeated reconstruction from identical ledgers produces identical state
   iterative:
     requirement: new tuples extend prior state without deleting lineage
+    enforced_by: lineage_lock.py
+    rule: >-
+      data/lineage_lock.json records the identity hash (id, parent, branch,
+      theme, intent) of every locked tuple in ledger order. Locked tuples may
+      not be deleted, reordered or have identity fields rewritten; progress,
+      todo and delta may evolve. New tuples are appended and then locked with
+      python lineage_lock.py --extend, which refuses to rewrite the lock.
   recursive:
     requirement: reconstructed state can seed the next handover and execution pulse
   evolutionary:
@@ -43,6 +51,7 @@ gates:
   invariant_count_min: 1
   replay_ready_required: true
   branch_competition_valid_required: true
+  lineage_append_only_required: true
 
 next_extensions:
   - tuple_schema_validation
