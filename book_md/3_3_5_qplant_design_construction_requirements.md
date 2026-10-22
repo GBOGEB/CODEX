@@ -451,7 +451,7 @@ while light blue boxes indicate transients
     line.
 
 95. The analysed gas samples shall be sent back to the Low Pressure Line
-    of the WCS (WCS-LP)
+    of the WCS (WCS.LP)
 
     1.  Gas analysis requirements
 
@@ -730,7 +730,7 @@ Cold Box Interfaces for Different Operating Scenarios
     inventory.
 
 118. The QPLANT shall have an input to the QRB‑S where the QCELL safety
-     valves shall discharge to via the QINFRA-S line.
+     valves shall discharge to via the QINFRA.S line.
 
      1.  []{#_Toc200491990 .anchor}Warm Compressor Station
 
@@ -1083,7 +1083,7 @@ distributes the cryogenic flows to the Cryogenic Distribution System
 1.  General Requirements
 
     In the offer, the applicant shall provide a preliminary 3D MODEL
-    including the terminal points for the QRB-A/B/E/D lines.
+    including the terminal points for the QRB.A/B/E/D lines.
 
 <!-- -->
 

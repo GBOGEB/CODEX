@@ -10,7 +10,7 @@ Computes the repo-measurable KPIs named in ``99_handover/PROCESS_DMAIC.md`` and
 * baseline_meta      — requirements.json meta baseline matches the manifest version
 * rename_pack        — no legacy RENAME_SBS names left in the handover pack
 * rename_downstream  — legacy names in downstream book docs never exceed the
-                       committed ratchet baseline (report-only until step 2 lands)
+                       committed ratchet baseline (0 since handover step 2 landed)
 
 Usage:
     python scripts/validate_build_control.py [--root PATH] [--report-json PATH]
@@ -248,7 +248,7 @@ def check_rename_downstream(root: Path) -> dict:
         errors.append(f"legacy names in downstream docs rose to {total} (ratchet baseline {ceiling})")
     return _check(
         "rename_downstream",
-        False,
+        True,
         errors,
         files_scanned=len(paths),
         legacy_hits=total,
