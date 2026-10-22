@@ -27,8 +27,8 @@
       "alias": "snapshot",
       "path": "mission_control/mycelium/metrics_snapshot.json",
       "origin": "file",
-      "sha256": "97456bd4a7cee1ca4652264215b05a5146c858895d9a0ab0bc03bcdff9604174",
-      "stamp": "2026-10-02T13:57:52Z"
+      "sha256": "5e96aa10d123083edc0489381ecfaa3cb45e056eb62f49c437d4141065bfb1a0",
+      "stamp": "2026-10-22T07:17:42Z"
     },
     {
       "alias": "control_observations",
@@ -88,9 +88,9 @@
       "binding_errors": 0,
       "measurement_coverage_pct": 100.0,
       "bands": {
-        "GREEN": 7,
-        "AMBER": 8,
-        "RED": 13,
+        "GREEN": 9,
+        "AMBER": 9,
+        "RED": 10,
         "INFO": 10
       }
     },
@@ -910,8 +910,8 @@
       "name": "Control observation tested-orphan count matches value report",
       "status": "PASS",
       "left": 0,
-      "right": 15,
-      "note": "The report counts registered orphans and the classifier counts unregistered ones; a mismatch is expected until both use one definition."
+      "right": 0,
+      "note": "Registered tested orphans only. The debt classifier's TESTED_ORPHAN class (EXE-05) is a different measure over the disjoint unregistered population (test-name evidence, no workflow reference), so it is not compared here."
     }
   ],
   "red_kpis": [
