@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "snapshot_at": "2026-10-02T13:57:52Z",
+  "snapshot_at": "2026-10-22T07:17:42Z",
   "evidence_policy": "MEASURED_OR_WITHHELD",
   "graph": {
     "node_count": 77,
@@ -36,10 +36,13 @@
       },
       "maturity": {
         "status": "WITHHELD",
-        "value": null
+        "reason": "requirement/interface/evidence/validation coverage census not yet bound",
+        "unlock": "bind requirement_coverage, interface_closure, evidence_coverage and validation_coverage for this node"
       },
       "dmaic": {
-        "status": "WITHHELD"
+        "status": "WITHHELD",
+        "reason": "DMAIC is defined for main topics; no governed rule maps a whole repository to one phase",
+        "unlock": "bind a repo-level DMAIC derivation rule in control_manifest.yaml, or exclude repo nodes from DMC-01"
       },
       "logs": {
         "status": "MEASURED",
@@ -95,10 +98,17 @@
       },
       "maturity": {
         "status": "WITHHELD",
-        "value": null
+        "reason": "requirement/interface/evidence/validation coverage census not yet bound",
+        "unlock": "bind requirement_coverage, interface_closure, evidence_coverage and validation_coverage for this node"
       },
       "dmaic": {
-        "status": "WITHHELD"
+        "status": "DERIVED_FROM_MEASURED",
+        "phase": "ANALYZE",
+        "basis": "dominant blocker identified (cryoplant-project #540) and boundary still in source-verification RFI (#210, state open at receipt); reverse-pressure analysis bound; DOW calculation not yet returned",
+        "evidence": [
+          "mission_control/mycelium/evidence/cryo_if_b_pressure_input_closure_20261001.json"
+        ],
+        "observed_at_receipt": "CRYO_IF_B_PRESSURE_INPUT_CLOSURE_20261001"
       },
       "logs": {
         "status": "WITHHELD"
@@ -107,7 +117,20 @@
         "status": "WITHHELD"
       },
       "ports": {
-        "status": "WITHHELD"
+        "status": "DERIVED_FROM_MEASURED",
+        "value": 100,
+        "probed_ports": 1,
+        "declared_ports": 1,
+        "ports": [
+          "QPS_TRIAGE_RETURN"
+        ],
+        "probe_state": "PASS_EXACT_TYPED_RETURN",
+        "basis": "qps_triage_b priority/return metadata transits the declared QPS_TRIAGE_RETURN port (port_registry.json)",
+        "evidence": [
+          "mission_control/mycelium/evidence/port_probe_receipts_20261001.json",
+          "mission_control/mycelium/port_registry.json",
+          "mission_control/mycelium/evidence/cryoplant_master_input_ledger_return_1834.json"
+        ]
       },
       "code_health": {
         "status": "WITHHELD",
@@ -118,7 +141,8 @@
     "topic_2k_refrigeration": {
       "maturity": {
         "status": "WITHHELD",
-        "reason": "requirement/interface/evidence/validation coverage census not yet bound"
+        "reason": "requirement/interface/evidence/validation coverage census not yet bound",
+        "unlock": "bind requirement_coverage, interface_closure, evidence_coverage and validation_coverage for this node"
       },
       "dmaic": {
         "status": "DERIVED_FROM_MEASURED",
@@ -132,7 +156,9 @@
         "status": "WITHHELD"
       },
       "ports": {
-        "status": "WITHHELD"
+        "status": "WITHHELD",
+        "reason": "DOW_EVIDENCE_RETURN is pinned to the HM01 support return, not the B-interface DOW gap this topic is waiting on",
+        "unlock": "declare a port for this node in port_registry.json and bind an exact governed source-to-target probe receipt"
       },
       "code_health": {
         "status": "WITHHELD",
@@ -143,10 +169,16 @@
     "dab_mech": {
       "maturity": {
         "status": "WITHHELD",
-        "value": null
+        "reason": "requirement/interface/evidence/validation coverage census not yet bound",
+        "unlock": "bind requirement_coverage, interface_closure, evidence_coverage and validation_coverage for this node"
       },
       "dmaic": {
-        "status": "WITHHELD"
+        "status": "DERIVED_FROM_MEASURED",
+        "phase": "CONTROL",
+        "basis": "W293 residual 0 measured at exact current-main census 37016094260; exact-SHA proof and drift watch",
+        "evidence": [
+          "mission_control/mycelium/evidence/abacus_dab_post_1697_measured_e302_promoted.json"
+        ]
       },
       "logs": {
         "status": "MEASURED",
@@ -160,7 +192,9 @@
         "status": "WITHHELD"
       },
       "ports": {
-        "status": "WITHHELD"
+        "status": "WITHHELD",
+        "reason": "no port declared for this node",
+        "unlock": "declare a port for this node in port_registry.json and bind an exact governed source-to-target probe receipt"
       },
       "mechanical_progress": {
         "status": "MEASURED",
@@ -186,18 +220,32 @@
         "artifact_sha256": "6f742d011f42c02774b3607af7fe5d516b902e42d31200a877dbe3a803cbc0a4"
       },
       "code_health": {
-        "status": "WITHHELD",
-        "value": null,
-        "inputs": {}
+        "status": "DERIVED_FROM_MEASURED",
+        "value": 100,
+        "coverage": 0.25,
+        "used_inputs": [
+          "lint_health"
+        ],
+        "missing_inputs": [
+          "debug_health",
+          "qa_gate_health",
+          "test_health"
+        ]
       }
     },
     "dab_hard": {
       "maturity": {
         "status": "WITHHELD",
-        "value": null
+        "reason": "requirement/interface/evidence/validation coverage census not yet bound",
+        "unlock": "bind requirement_coverage, interface_closure, evidence_coverage and validation_coverage for this node"
       },
       "dmaic": {
-        "status": "WITHHELD"
+        "status": "DERIVED_FROM_MEASURED",
+        "phase": "CONTROL",
+        "basis": "7 of 8 protected hard families at 0 in exact current-main census 37016094260; remaining E999=1 is a SOURCE_BOUND_HOLD (qplant/w52_p2m_ts_pressure_sensitivity.py)",
+        "evidence": [
+          "mission_control/mycelium/evidence/abacus_dab_post_1697_measured_e302_promoted.json"
+        ]
       },
       "logs": {
         "status": "MEASURED",
@@ -211,7 +259,9 @@
         "status": "WITHHELD"
       },
       "ports": {
-        "status": "WITHHELD"
+        "status": "WITHHELD",
+        "reason": "no port declared for this node",
+        "unlock": "declare a port for this node in port_registry.json and bind an exact governed source-to-target probe receipt"
       },
       "family_progress": [
         {
@@ -317,15 +367,24 @@
         }
       ],
       "code_health": {
-        "status": "WITHHELD",
-        "value": null,
-        "inputs": {}
+        "status": "DERIVED_FROM_MEASURED",
+        "value": 99.37,
+        "coverage": 0.25,
+        "used_inputs": [
+          "lint_health"
+        ],
+        "missing_inputs": [
+          "debug_health",
+          "qa_gate_health",
+          "test_health"
+        ]
       }
     },
     "dab_bd8k": {
       "maturity": {
         "status": "WITHHELD",
-        "reason": "campaign maturity is not a formal engineering state"
+        "reason": "campaign maturity is not a formal engineering state",
+        "unlock": "none intended: campaign maturity is not a formal engineering state"
       },
       "dmaic": {
         "status": "DERIVED_FROM_MEASURED",
@@ -339,7 +398,9 @@
         "status": "WITHHELD"
       },
       "ports": {
-        "status": "WITHHELD"
+        "status": "WITHHELD",
+        "reason": "no port declared for this node",
+        "unlock": "declare a port for this node in port_registry.json and bind an exact governed source-to-target probe receipt"
       },
       "campaign": {
         "status": "G2_MEASURED_3129_E302_SINGLE_PROMOTION",
@@ -575,15 +636,74 @@
         }
       ],
       "code_health": {
-        "status": "WITHHELD",
-        "value": null,
-        "inputs": {}
+        "status": "DERIVED_FROM_MEASURED",
+        "value": 60.44,
+        "coverage": 0.25,
+        "used_inputs": [
+          "lint_health"
+        ],
+        "missing_inputs": [
+          "debug_health",
+          "qa_gate_health",
+          "test_health"
+        ]
       }
     }
   },
   "pca": {
-    "status": "WITHHELD",
-    "reason": "fewer than 3 complete observations"
+    "status": "DERIVED_FROM_MEASURED",
+    "features": [
+      "E722",
+      "E741",
+      "F841",
+      "W293",
+      "total"
+    ],
+    "explained_variance_ratio": [
+      0.803755,
+      0.14751,
+      0.031704,
+      0.016254,
+      0.000777
+    ],
+    "components": [
+      [
+        -0.34751,
+        -0.471073,
+        -0.480129,
+        -0.445803,
+        -0.47756
+      ],
+      [
+        -0.816813,
+        -0.251929,
+        0.242424,
+        0.398975,
+        0.226711
+      ],
+      [
+        -0.337095,
+        0.431123,
+        -0.057609,
+        -0.667748,
+        0.501292
+      ],
+      [
+        -0.233077,
+        0.621259,
+        -0.590227,
+        0.401247,
+        -0.224378
+      ],
+      [
+        0.209989,
+        -0.377878,
+        -0.599183,
+        0.187598,
+        0.647224
+      ]
+    ],
+    "interpretation_guard": "component order is diagnostic variance, not priority or importance"
   },
   "bradley_terry": {
     "status": "WITHHELD",

@@ -95,6 +95,9 @@ jobs:
       - name: Validate DMAIC phase map
         id: dmaic_phase_map
         run: python scripts/validate_dmaic_phase_map.py --report-json reports/dmaic_phase_report.json
+      - name: Validate build-control KPIs
+        id: build_control
+        run: python scripts/validate_build_control.py --report-json reports/build_control_report.json
       - name: Check backend registry
         id: backend_registry
         run: python scripts/check_backend_registry.py
@@ -102,7 +105,7 @@ jobs:
       - name: Emit governance snapshot
         if: always()
         run: |
-          python scripts/emit_governance_snapshot.py --check authority_integrity=${{ steps.authority_integrity.outcome }} --check release_identity=${{ steps.release_identity.outcome }} --check ssot_census=${{ steps.ssot_census.outcome }} --check ssot_schemas=${{ steps.ssot_schemas.outcome }} --check ruff=${{ steps.ruff.outcome }} --check tests=${{ steps.tests.outcome }} --check mcp_sweep=${{ steps.mcp_sweep.outcome }} --check manifest=${{ steps.manifest.outcome }} --check globs=${{ steps.globs.outcome }} --check stale=${{ steps.stale.outcome }} --check links=${{ steps.links.outcome }} --check bridge_alignment=${{ steps.bridge_alignment.outcome }} --check render_linter=${{ steps.render_linter.outcome }} --check dmaic_phase_map=${{ steps.dmaic_phase_map.outcome }} --check backend_registry=${{ steps.backend_registry.outcome }} --out reports/governance_snapshot.json
+          python scripts/emit_governance_snapshot.py --check authority_integrity=${{ steps.authority_integrity.outcome }} --check release_identity=${{ steps.release_identity.outcome }} --check ssot_census=${{ steps.ssot_census.outcome }} --check ssot_schemas=${{ steps.ssot_schemas.outcome }} --check ruff=${{ steps.ruff.outcome }} --check tests=${{ steps.tests.outcome }} --check mcp_sweep=${{ steps.mcp_sweep.outcome }} --check manifest=${{ steps.manifest.outcome }} --check globs=${{ steps.globs.outcome }} --check stale=${{ steps.stale.outcome }} --check links=${{ steps.links.outcome }} --check bridge_alignment=${{ steps.bridge_alignment.outcome }} --check render_linter=${{ steps.render_linter.outcome }} --check dmaic_phase_map=${{ steps.dmaic_phase_map.outcome }} --check build_control=${{ steps.build_control.outcome }} --check backend_registry=${{ steps.backend_registry.outcome }} --out reports/governance_snapshot.json
 
       - name: Upload CI governance artifacts
         if: always()
@@ -112,6 +115,7 @@ jobs:
           path: |
             reports/governance_snapshot.json
             reports/dmaic_phase_report.json
+            reports/build_control_report.json
             reports/codex_2_0_ssot_candidate_census.json
             reports/codex_2_0_ssot_bound_census.json
             reports/codex_2_0_runtime_consumer_map.json

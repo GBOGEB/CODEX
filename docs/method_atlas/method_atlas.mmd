@@ -1,0 +1,50 @@
+flowchart LR
+%% Method Atlas v3: functional blocks by SPINE stage. Generated; do not edit.
+  subgraph S2_CENSUS["Census"]
+    MC_INVENTORY["Mycelium executable inventory<br/>IO_OK"]
+    ER_QUEUE["EVERRED queue snapshot<br/>RUNTIME_ONLY"]
+  end
+  subgraph S3_CLASSIFY["Classify"]
+    MAROON_RECONCILE["CODE MAROON reconcile<br/>IO_OK"]
+    CTAX_GLOSSARY["CTAXONOMY glossary render<br/>NO_DECLARED_OUTPUT"]
+  end
+  subgraph S4_SCHEDULE["Schedule"]
+    ID_SCHEDULER["ID work-conserving scheduler + dependency gate<br/>RUNTIME_ONLY"]
+    GOGREEN_BDQUEUE["GoGREEN BD queue wave<br/>RUNTIME_ONLY"]
+  end
+  subgraph S6_VERIFY["Verify"]
+    MC_SPINE["Spine gate<br/>IO_OK"]
+    GISTAU_L1["GISTAU Ch.15 L1 physics validation<br/>IO_OK"]
+  end
+  subgraph S7_PUBLISH["Publish"]
+    MC_ATLAS_V2["Operations Atlas v2 (pinned)<br/>IO_OK"]
+    CP_GLOBAL_DOV["CODE PURPLE global DOV<br/>IO_OK"]
+    JADE_GREEN["JADE GoGREEN 21-repo dashboard<br/>IO_OK"]
+    METHOD_ATLAS["Method Atlas v3 (this)<br/>IO_OK"]
+  end
+  subgraph S8_CONTROL["Control"]
+    MC_ISSUE_BD["Mission Control issue burndown<br/>RUNTIME_ONLY"]
+    JADE_BURNDOWN["JADE measured burndown + stop rules<br/>IO_OK"]
+  end
+  MC_SPINE -.-> METHOD_ATLAS
+  MC_INVENTORY -.-> METHOD_ATLAS
+  MC_ATLAS_V2 -.-> METHOD_ATLAS
+  ID_SCHEDULER -.-> METHOD_ATLAS
+  GISTAU_L1 -.-> METHOD_ATLAS
+  CP_GLOBAL_DOV -.-> METHOD_ATLAS
+  ER_QUEUE -.-> METHOD_ATLAS
+  MAROON_RECONCILE -.-> METHOD_ATLAS
+  MC_ISSUE_BD -.-> METHOD_ATLAS
+  JADE_GREEN -.-> METHOD_ATLAS
+  JADE_BURNDOWN -.-> METHOD_ATLAS
+  GOGREEN_BDQUEUE -.-> METHOD_ATLAS
+  classDef GOGREEN stroke:#1f8a4c,stroke-width:3px
+  class GOGREEN_BDQUEUE,METHOD_ATLAS GOGREEN
+  classDef MAROON stroke:#7a1f35,stroke-width:3px
+  class MAROON_RECONCILE MAROON
+  classDef JADE stroke:#0e8f6e,stroke-width:3px
+  class JADE_GREEN,JADE_BURNDOWN JADE
+  classDef EVERRED stroke:#b8322a,stroke-width:3px
+  class ER_QUEUE EVERRED
+  classDef CPURPLE stroke:#6a35a8,stroke-width:3px
+  class CP_GLOBAL_DOV CPURPLE
