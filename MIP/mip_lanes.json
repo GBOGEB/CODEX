@@ -15,28 +15,35 @@
     },
     {
       "id": "repo_self_assess_debug_ldab",
-      "status": "seeded",
+      "status": "green",
       "evidence": "MIP/receipts/repo_self_index.json#/assessments/repo_self_assess_debug_ldab",
-      "victory": "Debug and observability candidates are classified by signal and next action."
+      "victory": "Debug and observability candidates are classified by signal and next action.",
+      "proof": "scripts/mip_debug_diagnostic.py ran on the exact SHA; traceback_localizes and validator_fails_closed both passed (mip_verify_self_index.py lane maturity 2).",
+      "proof_sha": "dd319287a2cdfa217baece1e6f2c0a466df55c5c"
     },
     {
       "id": "repo_self_assess_runners_mcp",
-      "status": "seeded",
+      "status": "active",
       "evidence": "MIP/receipts/repo_self_index.json#/assessments/repo_self_assess_runners_mcp",
-      "victory": "Docker, runner, CI, MCP, and orchestration surfaces are separated into present, missing, and suspicious."
+      "victory": "Docker, runner, CI, MCP, and orchestration surfaces are separated into present, missing, and suspicious.",
+      "proof": "Receipt classifies the lane GREEN from workflow/runner/MCP file signals only (lane maturity 1); no executed runner check yet, so it is not declared green.",
+      "proof_sha": "dd319287a2cdfa217baece1e6f2c0a466df55c5c"
     },
     {
       "id": "repo_self_assess_codz_health_selfheal",
-      "status": "seeded",
+      "status": "green",
       "evidence": "MIP/receipts/repo_self_index.json#/assessments/repo_self_assess_codz_health_selfheal",
-      "victory": "Stale, duplicate, TODO, health, and self-heal candidates are visible without behavior-changing automation."
+      "victory": "Stale, duplicate, TODO, health, and self-heal candidates are visible without behavior-changing automation.",
+      "proof": "scripts/mip_health_selfheal_probe.py ran on the exact SHA in a transient fixture: missing runtime artifacts 3 -> 0 (delta -3, IMPROVED), source checkout unchanged; validated by mip_verify_self_index.py (lane maturity 2).",
+      "proof_sha": "dd319287a2cdfa217baece1e6f2c0a466df55c5c"
     },
     {
       "id": "repo_self_produce",
-      "status": "seeded",
+      "status": "green",
       "evidence": "MIP/receipts/repo_self_index.json#/assessments/repo_self_produce",
-      "victory": "At least one reusable core skill or agent/orchestrator candidate is selected for packaging."
+      "victory": "At least one reusable core skill or agent/orchestrator candidate is selected for packaging.",
+      "proof": ".codex/skills/mip-repo-self-index validator executed on the exact SHA by mip_verify_self_index.py (lane maturity 2).",
+      "proof_sha": "dd319287a2cdfa217baece1e6f2c0a466df55c5c"
     }
   ]
 }
-

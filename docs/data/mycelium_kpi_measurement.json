@@ -13,14 +13,14 @@
       "alias": "report",
       "path": "mission_control/mycelium/executable_value_report.json",
       "origin": "file",
-      "sha256": "85048f8965f27750eb3eca0a25827bbe4e43f553e40c6580e328852c6e39b34b",
+      "sha256": "4e1ec079037dd7f960b04dabc9a101fded0a0bedccbe0453ef7089edfff2eff6",
       "stamp": null
     },
     {
       "alias": "observation",
       "path": "mission_control/mycelium/executable_value_control_observation.json",
       "origin": "file",
-      "sha256": "b57dd67181f9ccc57eda6ac56a07bac5c45a3a8bca3266fa3d879ec4d8f664ae",
+      "sha256": "07dbac382652271353092ee5ee9b71b5f9a16282e6ffbd59b8ee59fabf698865",
       "stamp": null
     },
     {
@@ -62,14 +62,14 @@
       "alias": "mip_lanes",
       "path": "MIP/mip_lanes.json",
       "origin": "file",
-      "sha256": "5dc84d2361672ebd90464349b84edd189812d29611f967fd07f9340a49d1bb1a",
+      "sha256": "3b239e2c97f5d1c6a07ce62aa2e52fde8628ae1184def2c2bb7afc7ad072b74b",
       "stamp": null
     },
     {
       "alias": "mip_surface",
       "path": "MIP/mip_surface.json",
       "origin": "file",
-      "sha256": "d1ac0035191ff13412f332cbb247cfda76ef81083ce32d442a41bc90c73ace6c",
+      "sha256": "e520f1156042d16cd68b458cc5a9b040f8887605f618272a7c34d334736be6e5",
       "stamp": null
     },
     {
@@ -88,9 +88,9 @@
       "binding_errors": 0,
       "measurement_coverage_pct": 100.0,
       "bands": {
-        "GREEN": 5,
-        "AMBER": 7,
-        "RED": 16,
+        "GREEN": 7,
+        "AMBER": 8,
+        "RED": 13,
         "INFO": 10
       }
     },
@@ -167,9 +167,9 @@
         "binding_errors": 0,
         "measurement_coverage_pct": 100.0,
         "bands": {
-          "GREEN": 0,
-          "AMBER": 0,
-          "RED": 3,
+          "GREEN": 2,
+          "AMBER": 1,
+          "RED": 0,
           "INFO": 1
         }
       },
@@ -220,11 +220,11 @@
       "target": 100,
       "dmaic_phase": "MEASURE",
       "status": "MEASURED",
-      "value": 10.38,
+      "value": 10.34,
       "band": "RED",
       "inputs": {
         "numerator": 60,
-        "denominator": 578
+        "denominator": 580
       },
       "unlock": "Register justified batches of census assets in executable_integration_registry.yaml."
     },
@@ -237,10 +237,10 @@
       "target": 0,
       "dmaic_phase": "IMPROVE",
       "status": "MEASURED",
-      "value": 518,
+      "value": 520,
       "band": "RED",
       "inputs": {
-        "numerator": 518
+        "numerator": 520
       },
       "unlock": "Work the registration debt queue (next_control_action CLASSIFY_EXECUTABLE_REGISTRATION_DEBT)."
     },
@@ -268,10 +268,10 @@
       "target": 0,
       "dmaic_phase": "IMPROVE",
       "status": "MEASURED",
-      "value": 14,
+      "value": 15,
       "band": "RED",
       "inputs": {
-        "numerator": 14
+        "numerator": 15
       },
       "unlock": "Bind each unregistered tested orphan to an executable workflow step, or register it as library-only."
     },
@@ -284,11 +284,11 @@
       "target": null,
       "dmaic_phase": "ANALYZE",
       "status": "MEASURED",
-      "value": 42.66,
+      "value": 42.5,
       "band": "INFO",
       "inputs": {
         "numerator": 221,
-        "denominator": 518
+        "denominator": 520
       }
     },
     {
@@ -731,10 +731,10 @@
       "target": 100,
       "dmaic_phase": "IMPROVE",
       "status": "MEASURED",
-      "value": 20.0,
-      "band": "RED",
+      "value": 100.0,
+      "band": "GREEN",
       "inputs": {
-        "numerator": 1,
+        "numerator": 5,
         "denominator": 5
       },
       "unlock": "Advance seeded MIP lanes with exact-SHA receipts."
@@ -748,11 +748,11 @@
       "target": 100,
       "dmaic_phase": "CONTROL",
       "status": "MEASURED",
-      "value": 0.0,
-      "band": "RED",
+      "value": 75.0,
+      "band": "AMBER",
       "inputs": {
-        "numerator": 0,
-        "denominator": 3
+        "numerator": 3,
+        "denominator": 4
       },
       "unlock": "Make the required lanes GREEN per MIP/README.md (exact-SHA diagnostic passes)."
     },
@@ -765,10 +765,10 @@
       "target": 1,
       "dmaic_phase": "CONTROL",
       "status": "MEASURED",
-      "value": 0,
-      "band": "RED",
+      "value": 1,
+      "band": "GREEN",
       "inputs": {
-        "numerator": 0
+        "numerator": 1
       },
       "unlock": "Declare a health_probe in MIP/mip_surface.json."
     },
@@ -887,15 +887,15 @@
       "id": "CHK-03",
       "name": "Debt classifier candidates match unregistered count",
       "status": "PASS",
-      "left": 518,
-      "right": 518
+      "left": 520,
+      "right": 520
     },
     {
       "id": "CHK-04",
       "name": "Control observation unregistered count matches report",
       "status": "PASS",
-      "left": 518,
-      "right": 518
+      "left": 520,
+      "right": 520
     },
     {
       "id": "CHK-05",
@@ -909,7 +909,7 @@
       "name": "Registered tested-orphan count matches debt classifier tested orphans",
       "status": "FAIL",
       "left": 0,
-      "right": 14,
+      "right": 15,
       "note": "The report counts registered orphans and the classifier counts unregistered ones; a mismatch is expected until both use one definition."
     }
   ],
@@ -917,21 +917,21 @@
     {
       "id": "EXE-02",
       "name": "Asset registration coverage",
-      "value": 10.38,
+      "value": 10.34,
       "target": 100,
       "unlock": "Register justified batches of census assets in executable_integration_registry.yaml."
     },
     {
       "id": "EXE-03",
       "name": "Unregistered asset count",
-      "value": 518,
+      "value": 520,
       "target": 0,
       "unlock": "Work the registration debt queue (next_control_action CLASSIFY_EXECUTABLE_REGISTRATION_DEBT)."
     },
     {
       "id": "EXE-05",
       "name": "Unregistered tested orphans",
-      "value": 14,
+      "value": 15,
       "target": 0,
       "unlock": "Bind each unregistered tested orphan to an executable workflow step, or register it as library-only."
     },
@@ -983,27 +983,6 @@
       "value": 33.33,
       "target": 100,
       "unlock": "Record an evidenced DMAIC phase per node in control_observations.json."
-    },
-    {
-      "id": "MIP-01",
-      "name": "Active MIP lanes",
-      "value": 20.0,
-      "target": 100,
-      "unlock": "Advance seeded MIP lanes with exact-SHA receipts."
-    },
-    {
-      "id": "MIP-02",
-      "name": "Required-green lanes declared GREEN",
-      "value": 0.0,
-      "target": 100,
-      "unlock": "Make the required lanes GREEN per MIP/README.md (exact-SHA diagnostic passes)."
-    },
-    {
-      "id": "MIP-03",
-      "name": "MIP health probe bound",
-      "value": 0,
-      "target": 1,
-      "unlock": "Declare a health_probe in MIP/mip_surface.json."
     },
     {
       "id": "SCR-01",
