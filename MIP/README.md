@@ -37,6 +37,7 @@ CODEX hosts the canonical MIP kit. ABACUS, cryoplant-project and other consumers
 | Manifest writer and drift check | `scripts/mip_kit_manifest.py` | yes |
 | Kit manifest (file list and sha256) | `MIP/kit/KIT_MANIFEST.json` | copied from CODEX |
 | Surface config | `MIP/mip_surface.json` | no, one per repo |
+| Health/self-heal probe (CODEX) | `scripts/mip_health_selfheal_probe.py` | no, repo-local |
 
 `MIP/mip_surface.json` holds the only repo-specific settings:
 
