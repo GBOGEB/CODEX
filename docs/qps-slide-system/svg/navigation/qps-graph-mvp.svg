@@ -1,23 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="620" viewBox="0 0 1100 620">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="616" viewBox="0 0 1100 616" role="img" aria-labelledby="graph-title">
+  <title id="graph-title">QPS semantic navigation graph (generated from yaml/nodes)</title>
   <style>
-    .node { fill: #0f172a; stroke: #22d3ee; stroke-width: 2; }
-    .label { fill: #e5e7eb; font: 16px Inter, Arial, sans-serif; }
-    .edge { stroke: #6b7280; stroke-width: 1.5; }
+    .node { fill: #111827; stroke: #22d3ee; stroke-width: 2; }
+    .label { fill: #e5e7eb; font: 15px Inter, Segoe UI, Arial, sans-serif; text-anchor: middle; }
+    .type { fill: #e5e7eb; opacity: 0.7; font: 11px Inter, Segoe UI, Arial, sans-serif; text-anchor: middle; }
+    .tree { fill: none; stroke: #6b7280; stroke-width: 1.5; }
+    .link { fill: none; stroke: #f59e0b; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .legend { fill: #e5e7eb; font: 12px Inter, Segoe UI, Arial, sans-serif; }
   </style>
-  <line class="edge" x1="170" y1="80" x2="390" y2="80"/>
-  <line class="edge" x1="390" y1="80" x2="390" y2="200"/>
-  <line class="edge" x1="390" y1="80" x2="390" y2="340"/>
-  <line class="edge" x1="390" y1="200" x2="700" y2="170"/>
-  <line class="edge" x1="390" y1="200" x2="700" y2="240"/>
-  <line class="edge" x1="390" y1="340" x2="700" y2="310"/>
-  <line class="edge" x1="390" y1="340" x2="700" y2="380"/>
-
-  <a href="../../html/node/qsys.html"><rect class="node" x="90" y="50" width="160" height="60" rx="8"/><text class="label" x="130" y="86">QSYS</text></a>
-  <a href="../../html/node/qps.html"><rect class="node" x="310" y="50" width="160" height="60" rx="8"/><text class="label" x="360" y="86">QPS</text></a>
-  <a href="../../html/node/qplant.html"><rect class="node" x="310" y="170" width="160" height="60" rx="8"/><text class="label" x="342" y="206">QPLANT</text></a>
-  <a href="../../html/node/qinfra.html"><rect class="node" x="310" y="310" width="160" height="60" rx="8"/><text class="label" x="345" y="346">QINFRA</text></a>
-  <a href="../../html/node/wcs.html"><rect class="node" x="620" y="140" width="160" height="60" rx="8"/><text class="label" x="655" y="176">WCS</text></a>
-  <a href="../../html/node/qrb.html"><rect class="node" x="620" y="210" width="160" height="60" rx="8"/><text class="label" x="655" y="246">QRB</text></a>
-  <a href="../../html/node/wsh.html"><rect class="node" x="620" y="280" width="160" height="60" rx="8"/><text class="label" x="655" y="316">WSH</text></a>
-  <a href="../../html/node/qsn.html"><rect class="node" x="620" y="350" width="160" height="60" rx="8"/><text class="label" x="655" y="386">QSN</text></a>
+  <path class="tree" data-edge="tree" data-from="QINFRA" data-to="QINFRA.QSN" d="M700 192 H730 V256 H760"/>
+  <path class="tree" data-edge="tree" data-from="QINFRA" data-to="QINFRA.WSH" d="M700 192 H730 V320 H760"/>
+  <path class="tree" data-edge="tree" data-from="QPLANT" data-to="QPLANT.QRB" d="M700 384 H730 V448 H760"/>
+  <path class="tree" data-edge="tree" data-from="QPLANT" data-to="QPLANT.WCS" d="M700 384 H730 V512 H760"/>
+  <path class="tree" data-edge="tree" data-from="QPS" data-to="QINFRA" d="M460 128 H490 V192 H520"/>
+  <path class="tree" data-edge="tree" data-from="QPS" data-to="QPLANT" d="M460 128 H490 V384 H520"/>
+  <path class="tree" data-edge="tree" data-from="QSYS" data-to="QPS" d="M220 64 H250 V128 H280"/>
+  <path class="link" data-edge="link" data-from="QINFRA" data-to="QPLANT.WCS" d="M700 192 H980 V512 H940"/>
+  <path class="link" data-edge="link" data-from="QINFRA.QSN" data-to="QINFRA.WSH" d="M940 256 H996 V320 H940"/>
+  <path class="link" data-edge="link" data-from="QINFRA.WSH" data-to="QPLANT" d="M940 320 H1012 V384 H700"/>
+  <path class="link" data-edge="link" data-from="QINFRA.WSH" data-to="QPLANT.WCS" d="M940 320 H1028 V512 H940"/>
+  <path class="link" data-edge="link" data-from="QPLANT.QRB" data-to="QPLANT.WCS" d="M940 448 H1044 V512 H940"/>
+  <a href="../../html/node/qsys.html" data-node="QSYS"><title>QSYS (system)</title><rect class="node" x="40" y="40" width="180" height="48" rx="8"/><text class="label" x="130" y="62">QSYS</text><text class="type" x="130" y="79">system</text></a>
+  <a href="../../html/node/qps.html" data-node="QPS"><title>QPS (platform)</title><rect class="node" x="280" y="104" width="180" height="48" rx="8"/><text class="label" x="370" y="126">QPS</text><text class="type" x="370" y="143">platform</text></a>
+  <a href="../../html/node/qinfra.html" data-node="QINFRA"><title>QINFRA (domain)</title><rect class="node" x="520" y="168" width="180" height="48" rx="8"/><text class="label" x="610" y="190">QINFRA</text><text class="type" x="610" y="207">domain</text></a>
+  <a href="../../html/node/qplant.html" data-node="QPLANT"><title>QPLANT (domain)</title><rect class="node" x="520" y="360" width="180" height="48" rx="8"/><text class="label" x="610" y="382">QPLANT</text><text class="type" x="610" y="399">domain</text></a>
+  <a href="../../html/node/qsn.html" data-node="QINFRA.QSN"><title>QINFRA.QSN (subsystem)</title><rect class="node" x="760" y="232" width="180" height="48" rx="8"/><text class="label" x="850" y="254">QINFRA.QSN</text><text class="type" x="850" y="271">subsystem</text></a>
+  <a href="../../html/node/wsh.html" data-node="QINFRA.WSH"><title>QINFRA.WSH (subsystem)</title><rect class="node" x="760" y="296" width="180" height="48" rx="8"/><text class="label" x="850" y="318">QINFRA.WSH</text><text class="type" x="850" y="335">subsystem</text></a>
+  <a href="../../html/node/qrb.html" data-node="QPLANT.QRB"><title>QPLANT.QRB (subsystem)</title><rect class="node" x="760" y="424" width="180" height="48" rx="8"/><text class="label" x="850" y="446">QPLANT.QRB</text><text class="type" x="850" y="463">subsystem</text></a>
+  <a href="../../html/node/wcs.html" data-node="QPLANT.WCS"><title>QPLANT.WCS (subsystem)</title><rect class="node" x="760" y="488" width="180" height="48" rx="8"/><text class="label" x="850" y="510">QPLANT.WCS</text><text class="type" x="850" y="527">subsystem</text></a>
+  <path class="tree" d="M40 596 H80"/><text class="legend" x="88" y="600">tree (parent)</text>
+  <path class="link" d="M210 596 H250"/><text class="legend" x="258" y="600">interface link</text>
 </svg>

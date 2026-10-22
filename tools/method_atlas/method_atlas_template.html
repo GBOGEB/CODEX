@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Method Atlas v3</title>
+<style>
+:root{--bg:#f6f7f9;--panel:#fff;--ink:#17202a;--muted:#5d6b7a;--line:#d9dee5;--accent:#1d5fa7;--accent-soft:#9fbfe3;--ok:#1f8a4c;--warn:#a86b00;--bad:#b8322a;--chip:#eef1f5;
+--gogreen:#1f8a4c;--maroon:#7a1f35;--jade:#0e8f6e;--everred:#b8322a;--cpurple:#6a35a8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f141a;--panel:#161d25;--ink:#e6edf3;--muted:#94a3b3;--line:#2a3542;--accent:#6aa8ec;--accent-soft:#2f4f73;--ok:#4cc38a;--warn:#e0a63a;--bad:#f0756a;--chip:#1f2833;
+--gogreen:#4cc38a;--maroon:#d0697f;--jade:#3ccfa5;--everred:#f0756a;--cpurple:#b48af0}}
+:root[data-theme="dark"]{--bg:#0f141a;--panel:#161d25;--ink:#e6edf3;--muted:#94a3b3;--line:#2a3542;--accent:#6aa8ec;--accent-soft:#2f4f73;--ok:#4cc38a;--warn:#e0a63a;--bad:#f0756a;--chip:#1f2833;
+--gogreen:#4cc38a;--maroon:#d0697f;--jade:#3ccfa5;--everred:#f0756a;--cpurple:#b48af0}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:18px 16px 8px;max-width:1280px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}
+h2{font-size:16px;margin:18px 0 8px}
+.sub{color:var(--muted);font-size:13px}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}
+nav{position:sticky;top:0;z-index:2;background:var(--bg);border-bottom:1px solid var(--line)}
+nav .tabs,nav .lanebar{display:flex;gap:4px;overflow-x:auto;max-width:1280px;margin:0 auto;padding:6px 16px}
+nav .lanebar{padding-top:0;align-items:center}
+nav button{border:1px solid transparent;background:none;color:var(--muted);padding:6px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;font:inherit}
+nav .tabs button[aria-selected="true"]{color:var(--ink);background:var(--panel);border-color:var(--line)}
+.lanebar .lbl{color:var(--muted);font-size:12px;margin-right:4px;white-space:nowrap}
+.lanebar button{font-size:12px;padding:3px 9px;border:1px solid var(--line);border-left:4px solid var(--c,var(--line));background:var(--panel)}
+.lanebar button[aria-pressed="true"]{color:var(--ink);font-weight:600;box-shadow:inset 0 0 0 1px var(--c,var(--accent))}
+main{max-width:1280px;margin:0 auto;padding:8px 16px 40px}
+section[hidden]{display:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(220px,100%),1fr));gap:10px}
+.grid>*{min-width:0}
+.card code,.card .mono,p.mono,td .mono{overflow-wrap:anywhere;word-break:break-word}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}
+.card h3{margin:0 0 6px;font-size:14px}
+.kpi{font-size:26px;font-weight:600;font-variant-numeric:tabular-nums}
+.lane{border-left:5px solid var(--c,var(--line))}
+.chip{display:inline-block;background:var(--chip);border-radius:999px;padding:1px 8px;margin:1px 2px 1px 0;font-size:12px}
+.tag{font-family:ui-monospace,Consolas,monospace;font-size:11px;color:var(--muted)}
+.ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+.tablewrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{position:sticky;top:0;background:var(--panel);font-weight:600}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr[hidden]{display:none}
+input[type=search]{width:100%;max-width:360px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);font:inherit;margin:4px 0 10px}
+.badge{display:inline-block;padding:1px 7px;border-radius:5px;font-size:11px;font-weight:600;border:1px solid currentColor}
+.oid{font-family:ui-monospace,Consolas,monospace;font-size:11px;color:var(--muted)}
+.dag{width:100%;min-width:900px;height:auto}
+.dag .stage{fill:var(--muted);font-size:12px;font-weight:600}
+.dag rect{fill:var(--panel);stroke-width:2.5}
+.dag .nid{fill:var(--ink);font-size:11px;font-weight:600;font-family:ui-monospace,Consolas,monospace}
+.dag .nv{fill:var(--muted);font-size:10px}
+.dag .edge{fill:none;stroke:var(--muted);stroke-width:1.3}
+.dag .dashed{stroke-dasharray:4 4;opacity:.45}
+.dag .arrowhead{fill:var(--muted)}
+.dag g{cursor:pointer}.dag g:focus rect,.dag g:hover rect{stroke-width:4}
+.dag g.dim{opacity:.25}
+.chart{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 10px 4px}
+.bars{display:flex;align-items:flex-end;gap:3px;height:150px;border-bottom:1px solid var(--line);position:relative}
+.bars .slotline{position:absolute;left:0;right:0;border-top:1px dashed var(--bad);pointer-events:none}
+.bars .slotline span{position:absolute;right:0;top:-16px;font-size:10px;color:var(--bad)}
+.bars button{flex:1;display:flex;flex-direction:column-reverse;align-items:stretch;height:100%;padding:0;border:0;background:none;cursor:pointer;border-radius:3px 3px 0 0}
+.bars button .every{background:var(--accent)}
+.bars button .some{background:var(--accent-soft)}
+.bars button[aria-pressed="true"]{outline:2px solid var(--warn);outline-offset:1px}
+.bars button:focus-visible{outline:2px solid var(--ink)}
+.axis{display:flex;gap:3px;font-size:10px;color:var(--muted)}.axis span{flex:1;text-align:center}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:6px 0}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.note{color:var(--muted);font-size:12px;margin:6px 0}
+details{margin:4px 0}summary{cursor:pointer}
+.hm td{text-align:center;vertical-align:middle}.hm td:first-child{text-align:left}
+.hm button.cell{width:100%;min-width:74px;border:1px solid var(--line);border-radius:7px;padding:5px 4px;background:var(--panel);color:var(--ink);cursor:pointer;font:inherit}
+.hm button.cell .sc{display:block;font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+.hm button.cell[aria-pressed="true"]{outline:2px solid var(--accent);outline-offset:1px}
+.st-GREEN{color:var(--ok)}.st-AMBER{color:var(--warn)}.st-RED{color:var(--bad)}.st-NA{color:var(--muted)}
+.hm button.cell.st-GREEN{border-left:4px solid var(--ok)}.hm button.cell.st-AMBER{border-left:4px solid var(--warn)}.hm button.cell.st-RED{border-left:4px solid var(--bad)}
+.meter{height:8px;background:var(--chip);border-radius:4px;overflow:hidden;min-width:90px}.meter i{display:block;height:100%;background:var(--accent)}
+.merge-inputs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:8px;margin:8px 0}
+.merge-inputs label{font-size:12px;color:var(--muted);display:block}
+.merge-inputs input{width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);font:12px ui-monospace,Consolas,monospace}
+pre.cmd{position:relative;background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;font:12px/1.5 ui-monospace,Consolas,monospace;margin:6px 0;white-space:pre}
+pre.cmd button{position:absolute;top:6px;right:6px;font:11px system-ui;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:5px;padding:2px 7px;cursor:pointer}
+.theme-toggle,.copy-link{float:right;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;padding:4px 10px;cursor:pointer;font:inherit;margin-left:6px}
+@media (max-width:600px){.kpi{font-size:22px}h1{font-size:19px}}
+</style>
+</head>
+<body>
+<header>
+  <button class="theme-toggle" id="themeToggle" type="button">Theme</button>
+  <button class="copy-link" id="copyLink" type="button" title="Copy a link to this exact view">Copy link</button>
+  <h1>Method Atlas v3</h1>
+  <div class="sub">Source-derived from the seed and the tracked files of each checkout. Identity: commit SHA plus git object IDs (tree and blob OIDs). Read-only: no network, no dispatch, merge admission HOLD.
+  Digest <code id="digest">{{DIGEST}}</code></div>
+</header>
+<nav>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div class="lanebar" id="lanebar" role="group" aria-label="Filter every view by lane"></div>
+</nav>
+<main>
+<section id="overview" role="tabpanel"></section>
+<section id="health" role="tabpanel" hidden></section>
+<section id="taxonomy" role="tabpanel" hidden></section>
+<section id="blocks" role="tabpanel" hidden></section>
+<section id="dag" role="tabpanel" hidden>
+  <h2>Functional block DAG (SPINE stages left to right)</h2>
+  <p class="note">Solid edges: an output path of one block is a declared input of another. Dashed: the atlas census reads that block's outputs. Stroke colour is the block's primary lane. Click a block to open its I/O row.</p>
+  <div class="tablewrap" style="padding:8px">{{DAG_SVG}}</div>
+  <div id="dagExtra"></div>
+</section>
+<section id="sipoc" role="tabpanel" hidden></section>
+<section id="orchestration" role="tabpanel" hidden></section>
+<section id="ledger" role="tabpanel" hidden></section>
+<section id="merge" role="tabpanel" hidden></section>
+</main>
+<script id="atlas-data" type="application/json">{{ATLAS_JSON}}</script>
+<script>
+(function(){
+const A=JSON.parse(document.getElementById('atlas-data').textContent);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const laneColor=id=>`var(--${String(id).toLowerCase()})`;
+const lanes=A.taxonomy.lanes, laneById=Object.fromEntries(lanes.map(l=>[l.id,l]));
+const chipLane=id=>`<span class="chip" style="border-left:4px solid ${laneColor(id)}">${esc(laneById[id]?laneById[id].display:id)}</span>`;
+const short=o=>o?`<span class="oid" title="${esc(o)}">${esc(o.slice(0,8))}</span>`:'';
+const day=ts=>ts?new Date(ts*1000).toISOString().slice(0,10):'';
+const verdictClass=v=>({IO_OK:'ok',RUNTIME_ONLY:'ok',NO_DECLARED_OUTPUT:'warn',STALE_OUTPUT:'warn',REPO_ABSENT:'warn',INPUT_MISSING:'bad',OUTPUT_MISSING:'bad',ENTRY_MISSING:'bad',INPUT_UNPARSEABLE:'bad',OUTPUT_UNPARSEABLE:'bad'}[v]||'');
+const statusClass=s=>({OK:'ok',UNTRACKED:'warn',MISSING:'bad'}[s]||'');
+const rowLanes=l=>`data-lanes="${esc((l||[]).join(' '))}"`;
+const table=(head,rows,id)=>`<div class="tablewrap"><table ${id?`id="${id}"`:''}><thead><tr>${head.map(h=>`<th class="${h.n?'n':''}">${esc(h.t||h)}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+
+// ---------- state + deep links: #tab=..&lanes=A,B&q=..&hour=..
+const TABS=[['overview','Overview'],['health','Repo health'],['taxonomy','Lanes & taxonomy'],['blocks','Blocks & I/O'],['dag','DAG / SPINE / SPLINE'],['sipoc','SIPOC'],['orchestration','Orchestration & broker'],['ledger','Burndown ledger'],['merge','Merge & conflicts']];
+const SEARCH={taxonomy:'monQ',blocks:'blkQ',orchestration:'wfQ',ledger:'ldQ'};
+const state={tab:'overview',lanes:new Set(),q:'',hour:null,repo:null,dim:null};
+function readHash(){const p=new URLSearchParams(location.hash.slice(1));
+  if(p.get('tab')&&TABS.some(t=>t[0]===p.get('tab')))state.tab=p.get('tab');
+  state.lanes=new Set((p.get('lanes')||'').split(',').filter(x=>laneById[x]));
+  state.q=p.get('q')||'';state.repo=p.get('repo');state.dim=p.get('dim');const h=p.get('hour');state.hour=h!==null&&h!==''&&!isNaN(+h)?+h:null;}
+function writeHash(){const p=new URLSearchParams();p.set('tab',state.tab);
+  if(state.lanes.size)p.set('lanes',[...state.lanes].join(','));if(state.q)p.set('q',state.q);if(state.hour!==null)p.set('hour',state.hour);if(state.repo)p.set('repo',state.repo);if(state.dim)p.set('dim',state.dim);
+  history.replaceState(null,'','#'+p.toString());try{localStorage.setItem('ma3-hash',p.toString())}catch(e){}}
+const laneOk=l=>!state.lanes.size||(l||[]).some(x=>state.lanes.has(x));
+
+// ---------- chrome
+const tabs=document.getElementById('tabs');
+tabs.innerHTML=TABS.map(([id,t])=>`<button role="tab" data-tab="${id}">${t}</button>`).join('');
+tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(b){state.tab=b.dataset.tab;state.q='';apply()}});
+const lanebar=document.getElementById('lanebar');
+lanebar.innerHTML=`<span class="lbl">Lanes:</span><button type="button" data-lane="" style="--c:var(--line)">All</button>`+lanes.map(l=>`<button type="button" data-lane="${l.id}" style="--c:${laneColor(l.id)}">${esc(l.display)}</button>`).join('');
+lanebar.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const id=b.dataset.lane;
+  if(!id)state.lanes.clear();else state.lanes.has(id)?state.lanes.delete(id):state.lanes.add(id);apply()});
+document.getElementById('themeToggle').addEventListener('click',()=>{const r=document.documentElement;const cur=r.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');r.dataset.theme=cur==='dark'?'light':'dark'});
+document.getElementById('copyLink').addEventListener('click',async e=>{writeHash();try{await navigator.clipboard.writeText(location.href);e.target.textContent='Copied'}catch(_){e.target.textContent='Copy failed'}setTimeout(()=>e.target.textContent='Copy link',1500)});
+
+// ---------- health helpers
+const HL=A.health||{repos:{},dimensions:[],thresholds:{green:80,amber:50}};
+const stBadge=(st,score)=>`<span class="badge st-${st}">${st==='NA'?'N/A':esc(st)}${score!=null?' '+score:''}</span>`;
+const healthLine=rid=>{const h=HL.repos[rid];if(!h)return'';return`<div class="sub">Health ${stBadge(h.status,h.overall)} <a href="#tab=health&repo=${encodeURIComponent(rid)}">details</a></div>`};
+
+// ---------- overview
+const O=A.orchestration, D=A.dag, C=O.cron;
+const worst=O.broker.scenarios.reduce((a,s)=>s.ratio>a.ratio?s:a,O.broker.scenarios[0]||{ratio:0});
+const pm=C.peak_minutes[0]||{time:'–',job_slots:0};
+const mirrorCard=m=>`<div class="card"><h3>${esc(m.id)} <span class="chip">mirror of ${esc(m.of)}</span></h3><div class="sub">${esc(m.note||'')} · <code>${esc(m.path)}</code></div>
+${m.present&&m.head?`<div class="mono">${esc(m.branch||'detached')} @ ${esc(m.head.slice(0,10))}</div>
+<div class="sub">Commit SHA ${m.same_commit?'<span class="ok">same</span>':'<span class="warn">differs</span>'} · tree OID ${m.same_tree?'<span class="ok">same (content identical)</span>':'<span class="warn">differs</span>'}</div>
+<div class="sub">By blob OID: ${m.files_identical} identical · <b>${m.files_differing} differ</b> · ${m.files_only_primary} only in ${esc(m.of)} · ${m.files_only_mirror} only in mirror</div>
+<details><summary>Differing files (${m.differing_sample.length} shown)</summary>${m.differing_sample.map(p=>`<div class="mono">${esc(p)}</div>`).join('')}</details>`:'<span class="bad">checkout absent</span>'}</div>`;
+document.getElementById('overview').innerHTML=`
+<h2>Federation</h2>
+<div class="grid">${A.repos.map(r=>`<div class="card"><h3>${esc(r.id)} ${r.host?'<span class="chip">host</span>':''}</h3>
+<div class="sub">${esc(r.remote)}</div><div class="sub">${esc(r.role)}</div>
+<div class="mono">${r.present?(r.host?'this repository':`${esc(r.branch||'detached')} @ ${esc((r.head||'').slice(0,10))}`):'<span class="bad">checkout absent</span>'}</div>
+${r.tree?`<div class="sub">tree OID ${short(r.tree)}</div>`:''}
+<div class="sub">${r.tracked_files??0} tracked files${r.dirty_tracked?` · <span class="warn">${r.dirty_tracked} modified</span>`:''}</div>${healthLine(r.id)}</div>`).join('')}${(A.mirrors||[]).map(mirrorCard).join('')}</div>
+<p class="note">Commit SHA answers "which commit"; tree and blob OIDs answer "which content". Two checkouts with different SHAs but the same tree OID hold identical files.</p>
+<h2>At a glance</h2>
+<div class="grid">
+<div class="card"><h3>Functional blocks</h3><div class="kpi">${D.blocks.length}</div><div class="sub">${Object.entries(D.verdicts).map(([k,v])=>`<span class="${verdictClass(k)}">${esc(k)} ${v}</span>`).join(' · ')}</div></div>
+<div class="card"><h3>Workflows parsed</h3><div class="kpi">${O.workflows.length}</div><div class="sub">${O.workflow_run_chains.length} workflow_run links</div></div>
+<div class="card"><h3>Peak cron minute</h3><div class="kpi ${pm.job_slots>O.broker.parameters.runner_slots.value?'warn':'ok'}">${esc(pm.time)}</div><div class="sub">${pm.job_slots} job slots start together · ${C.stagger.moves.length} stagger moves → ${C.stagger.peak_minute_slots_after}</div></div>
+<div class="card"><h3>Worst broker scenario</h3><div class="kpi ${worst.mode==='SURGE'?'bad':worst.mode==='PEAK'?'warn':'ok'}">${esc(worst.mode)}</div><div class="sub">${esc(worst.label)}: ${worst.jobs} jobs / ${worst.runner_slots} slots (×${worst.ratio})</div></div>
+<div class="card"><h3>Burndown ledgers</h3><div class="kpi">${A.ledger.entries.length}</div><div class="sub">${A.ledger.themes.filter(t=>t.files).length} themes</div></div>
+</div>
+<h2>Lanes</h2>
+<div class="grid">${lanes.map(l=>`<div class="card lane" style="--c:${laneColor(l.id)}"><h3>${esc(l.display)}</h3><div class="tag">${esc(l.tag)} · ${esc(l.id)}</div>
+<div class="kpi">${l.files_total}</div><div class="sub">files · ${l.variant_count} spellings · ${l.nonstandard_mentions} non-standard mentions</div></div>`).join('')}</div>`;
+
+// ---------- health
+const dimLabel=Object.fromEntries(HL.dimensions.map(d=>[d.id,d]));
+const repoIds=Object.keys(HL.repos);
+const pct=c=>c.completion==null?'n/a':Math.round(c.completion*100)+'%';
+const fmtNum=x=>typeof x==='number'&&!Number.isInteger(x)?x.toFixed(2):x;
+const metricVal=v=>Array.isArray(v)?(v.length?`<details><summary>${v.length}</summary>${v.map(x=>`<span class="chip">${esc(x)}</span>`).join('')}</details>`:'0'):esc(v);
+const worklist=[];repoIds.forEach(r=>Object.entries(HL.repos[r].dimensions).forEach(([d,x])=>x.checks.forEach(c=>{if(c.den&&c.completion<1)worklist.push({r,d,c})})));
+worklist.sort((a,b)=>a.c.completion-b.c.completion||b.c.weight-a.c.weight);
+document.getElementById('health').innerHTML=`<h2>Repository health by dimension</h2>
+<p class="note">Each score (0–100) is the weighted completion of the dimension's sub-checks, read from tracked files. GREEN ≥ ${HL.thresholds.green}, AMBER ≥ ${HL.thresholds.amber}, RED below; N/A means the repo has no artefacts for that dimension. Click a cell for its sub-checks and evidence. The lane filter does not apply here.</p>
+<div class="tablewrap"><table class="hm" id="healthMatrix"><thead><tr><th>Repository</th>${HL.dimensions.map(d=>`<th title="${esc(d.description)}">${esc(d.label)}</th>`).join('')}<th>Overall</th></tr></thead><tbody>
+${repoIds.map(r=>{const h=HL.repos[r];return`<tr><td><b>${esc(r)}</b></td>${HL.dimensions.map(d=>{const x=h.dimensions[d.id];return`<td><button type="button" class="cell st-${x.status}" data-repo="${esc(r)}" data-dim="${d.id}" aria-label="${esc(r)} ${esc(d.label)}: ${x.status==='NA'?'not applicable':x.score+' '+x.status}"><span class="sc">${x.score??'–'}</span><span class="st-${x.status}" style="font-size:11px">${x.status==='NA'?'N/A':x.status}</span></button></td>`}).join('')}<td>${stBadge(h.status,h.overall)}</td></tr>`}).join('')}
+</tbody></table></div>
+<div id="healthDetail"></div>
+<h2>Lowest-completion sub-checks (worklist)</h2>
+${table(['Repo','Dimension','Sub-check',{t:'Done',n:1},'Completion','Evidence'],worklist.slice(0,15).map(w=>`<tr><td>${esc(w.r)}</td><td>${esc(dimLabel[w.d]?.label||w.d)}</td><td>${esc(w.c.label)}${w.c.note?`<div class="sub">${esc(w.c.note)}</div>`:''}</td><td class="n">${fmtNum(w.c.num)}/${w.c.den}</td><td><div class="meter"><i style="width:${Math.round(w.c.completion*100)}%"></i></div><span class="sub">${pct(w.c)}</span></td><td>${w.c.evidence.slice(0,3).map(e=>`<div class="mono">${esc(e)}</div>`).join('')}</td></tr>`))}`;
+document.getElementById('healthMatrix').addEventListener('click',e=>{const b=e.target.closest('button.cell');if(!b)return;
+  const same=state.repo===b.dataset.repo&&state.dim===b.dataset.dim;state.repo=same?null:b.dataset.repo;state.dim=same?null:b.dataset.dim;apply()});
+function renderHealth(){
+  document.querySelectorAll('#healthMatrix button.cell').forEach(b=>b.setAttribute('aria-pressed',b.dataset.repo===state.repo&&b.dataset.dim===state.dim));
+  const el=document.getElementById('healthDetail');const h=HL.repos[state.repo];
+  if(!h){el.innerHTML='<p class="note">Select a cell to see its sub-checks.</p>';return}
+  const dims=state.dim&&h.dimensions[state.dim]?[state.dim]:HL.dimensions.map(d=>d.id);
+  el.innerHTML=dims.map(d=>{const x=h.dimensions[d];const meta=dimLabel[d]||{label:d,description:''};
+    return`<h2>${esc(state.repo)} · ${esc(meta.label)} ${stBadge(x.status,x.score)}</h2><p class="note">${esc(meta.description)}</p>
+    ${x.applicable?table(['Sub-check',{t:'Done',n:1},'Completion',{t:'Weight',n:1},'Evidence (sample)'],x.checks.map(c=>`<tr><td>${esc(c.label)}${c.note?`<div class="sub">${esc(c.note)}</div>`:''}</td><td class="n">${c.den?fmtNum(c.num)+'/'+c.den:'n/a'}</td><td>${c.den?`<div class="meter"><i style="width:${Math.round(c.completion*100)}%"></i></div><span class="sub">${pct(c)}</span>`:'<span class="sub">not applicable</span>'}</td><td class="n">${c.weight}</td><td>${c.evidence.map(e=>`<div class="mono">${esc(e)}</div>`).join('')||'<span class="sub">–</span>'}</td></tr>`))
+      +`<div class="grid" style="margin-top:8px">${Object.entries(x.metrics).map(([k,v])=>`<div class="card"><h3>${esc(k.replace(/_/g,' '))}</h3><div>${metricVal(v)}</div></div>`).join('')}</div>`
+      :'<p class="note">No artefacts for this dimension in this repository.</p>'}`}).join('')
+    +`<p><button type="button" class="copy-link" id="clearHealth" style="float:none">Clear selection</button></p>`;
+  document.getElementById('clearHealth').addEventListener('click',()=>{state.repo=null;state.dim=null;apply()});
+}
+
+// ---------- taxonomy
+document.getElementById('taxonomy').innerHTML=`<h2>Canonical lanes</h2><p class="note">ID is identity, display is projection, tag is the label form. Spellings outside the canonical set are variants to normalise.</p>
+<div class="grid">${lanes.map(l=>`<div class="card lane" style="--c:${laneColor(l.id)}" ${rowLanes([l.id])} data-card><h3>${esc(l.display)} <span class="tag">${esc(l.tag)}</span></h3>
+<div>${esc(l.meaning)}</div><div class="sub"><b>Not:</b> ${esc(l.not)}</div>
+<div class="sub">Source: <code>${esc(l.source.repo)}:${esc(l.source.path)}</code> <span class="${l.source.exists?'ok':'bad'}">${l.source.exists?'present':'missing'}</span></div>
+<div class="sub">${Object.entries(l.files_by_repo).map(([r,n])=>`${esc(r)} ${n}`).join(' · ')}</div>
+<details><summary>${l.variant_count} spellings</summary>${l.variants.map(v=>`<span class="chip ${v.canonical?'':'warn'}" title="${v.canonical?'canonical':'normalise to '+esc(v.normalize_to)}">${esc(v.spelling)} ${v.count}</span>`).join('')}</details></div>`).join('')}</div>
+<h2>Lane combinations (files mentioning both)</h2>
+${table(['Pair',{t:'Files',n:1}],A.taxonomy.combinations.map(c=>`<tr ${rowLanes(c.pair.split('+'))}><td>${c.pair.split('+').map(chipLane).join(' + ')}</td><td class="n">${c.files}</td></tr>`),'comboT')}
+<h2>Monikers</h2><input type="search" id="monQ" placeholder="Filter monikers">
+${table(['Moniker','Label','Type','Use','Not',{t:'Files',n:1}],A.taxonomy.monikers.map(m=>`<tr><td class="mono">${esc(m.id)}</td><td>${esc(m.label)}</td><td>${esc(m.type)}</td><td>${esc(m.use)}</td><td class="sub">${esc(m.not)}</td><td class="n">${m.files}</td></tr>`),'monT')}`;
+
+// ---------- blocks
+const io=list=>list.map(i=>`<div><span class="badge ${statusClass(i.status)}">${esc(i.status)}</span> <code>${esc(i.path)}</code>${i.matches!=null?` <span class="sub">(${i.matches})</span>`:''}
+${i.oid?` ${short(i.oid)}`:''}${i.parse==='FAIL'?' <span class="badge bad">PARSE FAIL</span>':i.parse==='OK'?' <span class="sub">parses</span>':''}
+${i.worktree==='MODIFIED'?' <span class="badge warn" title="working tree differs from the index">MODIFIED</span>':''}
+${i.changed_ts?` <span class="sub" title="last commit ${esc(i.last_commit||'')}">${day(i.changed_ts)}</span>`:''}
+${i.referenced_by_entry?'':' <span class="sub" title="file name not found in the entry script">· unreferenced</span>'}</div>`).join('')||'<span class="sub">none declared</span>';
+document.getElementById('blocks').innerHTML=`<h2>Functional blocks: need, input and output checks</h2>
+<p class="note">Each block states what the code must do and what it must produce. Tracked items carry their blob OID, a parse check (JSON/YAML/CSV) and the date of their last commit; an output older than any of its inputs is <b>STALE_OUTPUT</b>. Runtime and external items are reported, not checked. Run the declared checks with <code>build_method_atlas.py --check --run-checks</code> (results go to a separate receipt).</p>
+<details><summary>Verdict legend</summary><div class="sub">IO_OK · RUNTIME_ONLY (outputs only exist at run time) · STALE_OUTPUT · NO_DECLARED_OUTPUT · INPUT/OUTPUT_MISSING · INPUT/OUTPUT_UNPARSEABLE · ENTRY_MISSING · REPO_ABSENT</div></details>
+<input type="search" id="blkQ" placeholder="Filter blocks">
+${table(['Block','Stage','Lanes','Need','Inputs','Outputs','Check','Verdict'],D.blocks.map(b=>`<tr ${rowLanes(b.lanes)}><td><b>${esc(b.id)}</b><div class="sub">${esc(b.name)}</div><div class="mono ${b.entry_exists?'':'bad'}">${esc(b.repo)}:${esc(b.entry)}</div>${short(b.entry_oid)}</td><td>${esc(b.stage)}</td><td>${(b.lanes||[]).map(chipLane).join('')||'<span class="sub">core</span>'}</td><td>${esc(b.need)}</td><td>${io(b.inputs)}</td><td>${io(b.outputs)}</td><td class="mono">${esc(b.check||'')}</td><td><span class="badge ${verdictClass(b.verdict)}">${esc(b.verdict)}</span></td></tr>`),'blkT')}`;
+
+// ---------- dag extras
+const stages=A.spine;
+document.getElementById('dagExtra').innerHTML=`<h2>Execution order (topological)</h2><p class="mono">${D.topological_order.map(esc).join(' → ')}</p>
+<h2>SPINE: canonical stages</h2>${table(['#','Stage','Need','Blocks'],stages.map((s,i)=>`<tr><td>${i+1}</td><td><b>${esc(s.label)}</b> <span class="tag">${esc(s.id)}</span></td><td>${esc(s.need)}</td><td>${D.blocks.filter(b=>b.stage===s.id).map(b=>`<span class="chip">${esc(b.id)}</span>`).join('')}</td></tr>`))}
+<h2>SPLINE: lane × stage</h2><p class="note">Where each lane has a functional block on the spine. Empty cells are stages the lane relies on core blocks for.</p>
+${table(['Lane'].concat(stages.map(s=>s.label)),A.spline.map(r=>`<tr ${r.lane==='CORE'?'':rowLanes([r.lane])}><td>${r.lane==='CORE'?'<b>core</b>':chipLane(r.lane)}</td>${stages.map(s=>`<td>${r.cells[s.id].map(x=>`<span class="chip">${esc(x)}</span>`).join('')}</td>`).join('')}</tr>`),'splineT')}
+<h2>Edges</h2>${table(['From','To','Via','Kind'],D.edges.map(e=>`<tr><td>${esc(e.source)}</td><td>${esc(e.target)}</td><td class="mono">${esc(e.via)}</td><td>${esc(e.derived)}</td></tr>`))}`;
+document.querySelectorAll('.dag g[data-block]').forEach(g=>{const go=()=>{state.tab='blocks';state.q=g.dataset.block;apply()};g.addEventListener('click',go);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})});
+
+// ---------- sipoc
+document.getElementById('sipoc').innerHTML=`<h2>SIPOC per functional block (in SPINE order)</h2>
+${table(['Stage','Supplier','Input','Process','Output','Customer'],A.sipoc.map(r=>`<tr ${rowLanes(r.lanes)}><td><b>${esc(r.block)}</b><div class="tag">${esc(r.stage)}</div></td><td>${esc(r.supplier)}</td><td>${r.input.map(p=>`<div class="mono">${esc(p)}</div>`).join('')}</td><td>${esc(r.process)}</td><td>${r.output.map(p=>`<div class="mono">${esc(p)}</div>`).join('')||'<span class="warn">none declared</span>'}</td><td>${esc(r.customer)}</td></tr>`),'sipocT')}`;
+
+// ---------- orchestration
+const B=O.broker, slots=B.parameters.runner_slots.value;
+const param=(k,p)=>`<div class="card"><h3>${esc(k.replace(/_/g,' '))}</h3><div class="kpi">${esc(p.value)}</div><div class="sub"><span class="badge ${p.status==='ASSUMED'?'warn':'ok'}">${esc(p.status)}</span> ${esc(p.note)}</div></div>`;
+const modeBadge=m=>`<span class="badge ${m==='SURGE'?'bad':m==='PEAK'?'warn':'ok'}">${esc(m)}</span>`;
+const contribRows=list=>list.map(c=>`<tr ${rowLanes(c.lanes)}><td>${esc(c.repo)}</td><td>${esc(c.name)}<div class="mono sub">${esc(c.file)}</div></td><td class="mono">${esc(c.cron)}</td><td class="n">${c.runs??''}</td><td class="n">${c.job_slots}</td><td class="n">${c.slots_in_hour??''}</td><td class="n">${c.day_fraction>=1?'every day':Math.round(c.day_fraction*100)+'% of days'}</td><td>${(c.lanes||[]).map(chipLane).join('')}</td></tr>`);
+document.getElementById('orchestration').innerHTML=`<h2>Broker model</h2>
+<p class="note">Static model from workflow YAML: job slots a trigger can start, against concurrent runner slots. Not an observed queue (EVERRED's live panel is). Cron load is compared per <b>minute</b> (jobs that start together), not per hour.</p>
+<div class="grid">${Object.entries(B.parameters).map(([k,p])=>param(k,p)).join('')}</div>
+<h2>Modes</h2>${table(['Mode','Queue ratio','Action'],B.modes.map((m,i)=>`<tr><td><b>${esc(m.id)}</b></td><td>${i?`≥ ${B.modes[i-1].max_ratio}`:''}${m.max_ratio!=null?` &lt; ${m.max_ratio}`:''}</td><td>${esc(m.action)}</td></tr>`))}
+<h2>Scenarios</h2><p class="note">Jobs = workflows that always trigger (no paths filter); upper bound = every workflow's path filter matches. Ratio, depth, drain and mode use the lower figure.</p>${table(['Scenario',{t:'Jobs',n:1},{t:'Upper bound',n:1},{t:'Slots',n:1},{t:'Ratio',n:1},{t:'Queue depth',n:1},{t:'Drain waves',n:1},{t:'Drain min (est.)',n:1},'Mode'],B.scenarios.map(s=>`<tr><td>${esc(s.label)}</td><td class="n">${s.jobs}</td><td class="n">${s.jobs_max}</td><td class="n">${s.runner_slots}</td><td class="n">${s.ratio}</td><td class="n">${s.queue_depth}</td><td class="n">${s.drain_waves}</td><td class="n">${s.drain_minutes_est}</td><td>${modeBadge(s.mode)}</td></tr>`))}
+<h2>Cron load by UTC hour</h2>
+<p class="note">Each bar is the job slots scheduled to start in that hour on the busiest day. Dark = crons that fire every day; light = crons that fire only on some days (weekly, monthly). Click a bar to see which workflows make it up. The lane filter recomputes the bars.</p>
+<div class="chart"><div class="bars" id="cronBars" role="group" aria-label="Cron job slots per UTC hour"></div><div class="axis">${[...Array(24).keys()].map(h=>`<span>${h%3===0?String(h).padStart(2,'0'):''}</span>`).join('')}</div>
+<div class="legend"><span><i style="background:var(--accent)"></i>every day</span><span><i style="background:var(--accent-soft)"></i>some days</span><span><i style="background:none;border-top:2px dashed var(--bad);height:0"></i>${slots} runner slots (per minute)</span></div></div>
+<div id="hourPanel"></div>
+<h2>Peak cron minutes (jobs that start together)</h2>
+${table(['Minute (UTC)',{t:'Job slots',n:1},'vs runners','Contributors'],C.peak_minutes.map(p=>`<tr><td class="mono"><b>${esc(p.time)}</b></td><td class="n">${p.job_slots}</td><td>${p.over_slots?`<span class="badge warn">×${(p.job_slots/slots).toFixed(2)}</span>`:'<span class="badge ok">fits</span>'}</td><td>${p.contributors.map(c=>`<div>${esc(c.repo)} · ${esc(c.name)} <span class="mono sub">${esc(c.cron)}</span> <b>${c.job_slots}</b></div>`).join('')}</td></tr>`))}
+<h2>Stagger plan</h2>
+<p class="note">Greedy re-timing of crons that have one fixed minute: move them to the least-loaded ${5}-minute slot in the same hour until no minute starts more jobs than runners (or no move helps). Peak start load <b>${C.stagger.peak_minute_slots_before} → ${C.stagger.peak_minute_slots_after}</b> job slots. Apply by editing the workflow's <code>schedule: - cron:</code> line.</p>
+${table(['Repo','Workflow','Current cron','Proposed cron',{t:'Job slots',n:1}],C.stagger.moves.map(m=>`<tr><td>${esc(m.repo)}</td><td>${esc(m.name)}<div class="mono sub">${esc(m.file)}</div></td><td class="mono">${esc(m.from)}</td><td class="mono"><b>${esc(m.to)}</b></td><td class="n">${m.job_slots}</td></tr>`))}
+<h2>Recommendations</h2><ul>${B.recommendations.map(r=>`<li>${esc(r)}</li>`).join('')||'<li class="sub">none</li>'}</ul>
+<h2>Per repository</h2>${table(['Repo',{t:'Workflows',n:1},{t:'Scheduled',n:1},{t:'Concurrency',n:1},{t:'Cancel-in-progress',n:1},{t:'Dispatch senders',n:1},{t:'PR jobs min–max',n:1},{t:'Push jobs min–max',n:1},{t:'Flood risk',n:1}],Object.entries(O.per_repo).map(([r,x])=>`<tr><td><b>${esc(r)}</b></td><td class="n">${x.workflows}${x.parse_errors?` <span class="bad">(${x.parse_errors} err)</span>`:''}</td><td class="n">${x.scheduled}</td><td class="n">${x.with_concurrency}</td><td class="n">${x.cancel_in_progress}</td><td class="n">${x.dispatch_senders}</td><td class="n">${x.pr_jobs_min}–${x.pr_jobs_max}</td><td class="n">${x.push_jobs_min}–${x.push_jobs_max}</td><td class="n">${x.flood_risk_workflows.length}</td></tr>`))}
+<h2>Schedulers, dispatchers and queues</h2>${table(['ID','Type','Location','Policy','Queue / baseline'],O.orchestrators.map(o=>`<tr><td><b>${esc(o.id)}</b></td><td>${esc(o.type)}</td><td class="mono ${o.exists?'':'bad'}">${esc(o.repo)}:${esc(o.path)}</td><td>${esc(o.policy)}</td><td>${o.queue_depth?Object.entries(o.queue_depth).map(([k,v])=>`${esc(k)} ${v}`).join(' · '):''}${o.baseline?`queue exposure ${o.baseline.measured_queue_exposure_seconds}s of ${o.baseline.measured_total_selected_clock_seconds}s (ratio ${o.baseline.queue_exposure_ratio}) · ${o.baseline.registered_workflow_count} workflows`:''}</td></tr>`))}
+<h2>workflow_run chains</h2>${table(['Repo','Upstream','Downstream'],O.workflow_run_chains.map(c=>`<tr><td>${esc(c.repo)}</td><td>${esc(c.upstream)}${c.upstream_file?'':' <span class="warn">(not found)</span>'}</td><td>${esc(c.downstream)}</td></tr>`))}
+<h2>All workflows</h2><input type="search" id="wfQ" placeholder="Filter workflows (name, file, trigger)">
+${table(['Repo','Workflow','Lanes','Triggers','Cron',{t:'Jobs',n:1},{t:'Slots',n:1},{t:'Needs depth',n:1},'Concurrency',{t:'Max timeout',n:1}],O.workflows.map(w=>w.error?`<tr ${rowLanes(w.lanes)}><td>${esc(w.repo)}</td><td class="mono">${esc(w.file)}</td><td></td><td colspan="7" class="bad">${esc(w.error)}</td></tr>`:`<tr ${rowLanes(w.lanes)}><td>${esc(w.repo)}</td><td>${esc(w.name)}<div class="mono sub">${esc(w.file)}</div></td><td>${(w.lanes||[]).map(chipLane).join('')}</td><td>${w.triggers.map(t=>`<span class="chip">${esc(t)}${w.path_filtered[t]?' ·paths':''}</span>`).join('')}</td><td class="mono">${w.crons.map(esc).join('<br>')}</td><td class="n">${w.jobs}</td><td class="n">${w.job_slots}${w.dynamic_matrix?'+':''}</td><td class="n">${w.needs_depth}</td><td>${w.concurrency_group?(w.cancel_in_progress?'group · cancel':'group'):'<span class="warn">none</span>'}</td><td class="n">${w.max_timeout_min}</td></tr>`),'wfT')}`;
+
+function renderCron(){
+  const per=[...Array(24).keys()].map(h=>{let every=0,some=0;(C.contributors_by_hour[h]||[]).forEach(c=>{if(!laneOk(c.lanes))return;c.day_fraction>=1?every+=c.slots_in_hour:some+=c.slots_in_hour});return{h,every,some}});
+  const max=Math.max(slots,...per.map(p=>p.every+p.some),1);
+  document.getElementById('cronBars').innerHTML=per.map(p=>`<button type="button" data-hour="${p.h}" aria-pressed="${state.hour===p.h}" aria-label="${String(p.h).padStart(2,'0')}:00 UTC: ${p.every+p.some} job slots (${p.every} every day, ${p.some} some days)" title="${String(p.h).padStart(2,'0')}:00 UTC: ${p.every+p.some} job slots (${p.every} every day, ${p.some} some days)"><div class="every" style="height:${p.every/max*100}%"></div><div class="some" style="height:${p.some/max*100}%"></div></button>`).join('')+`<div class="slotline" style="bottom:${slots/max*100}%"><span>${slots}</span></div>`;
+  const panel=document.getElementById('hourPanel');
+  if(state.hour===null){panel.innerHTML='<p class="note">No hour selected.</p>';return}
+  const list=(C.contributors_by_hour[state.hour]||[]).filter(c=>laneOk(c.lanes));
+  const tot=list.reduce((a,c)=>a+c.slots_in_hour,0);
+  panel.innerHTML=`<h2>${String(state.hour).padStart(2,'0')}:00–${String(state.hour).padStart(2,'0')}:59 UTC: ${tot} job slots from ${list.length} cron entries <button type="button" class="copy-link" id="clearHour" style="float:none">Clear</button></h2>
+  ${table(['Repo','Workflow','Cron','Runs in hour',{t:'Slots per run',n:1},{t:'Slots in hour',n:1},'Fires','Lanes'],contribRows(list))}`;
+  document.getElementById('clearHour').addEventListener('click',()=>{state.hour=null;apply()});
+}
+document.getElementById('cronBars').addEventListener('click',e=>{const b=e.target.closest('button[data-hour]');if(!b)return;const h=+b.dataset.hour;state.hour=state.hour===h?null:h;apply()});
+
+// ---------- ledger
+const L=A.ledger;
+const fmtCounts=e=>Object.entries(e.counts||{}).map(([k,v])=>`${esc(k)} ${esc(v)}`).join(' · ')+(e.rows!=null?`${Object.keys(e.counts||{}).length?' · ':''}${e.rows} rows`:'');
+document.getElementById('ledger').innerHTML=`<h2>Burndown ledger by theme</h2>
+<p class="note">Every tracked burndown, ledger, census or BD-queue file, grouped by theme and tagged by lane. Counts are read from top-level summary keys where present; files are never summed across themes. The OID identifies the exact content read.</p>
+<div class="grid" id="ledgerCards"></div>
+<h2>Entries</h2><input type="search" id="ldQ" placeholder="Filter ledger (theme, repo, path, lane)">
+${table(['Theme','Repo','Path','Lanes','Counts','OID'],L.entries.map(e=>`<tr ${rowLanes(e.lanes)}><td>${esc(e.theme)}</td><td>${esc(e.repo)}</td><td class="mono">${esc(e.path)}</td><td>${(e.lanes||[]).map(chipLane).join('')}</td><td class="sub">${fmtCounts(e)}</td><td>${short(e.oid)}</td></tr>`),'ldT')}`;
+function renderLedgerCards(){
+  document.getElementById('ledgerCards').innerHTML=L.themes.map(t=>{const es=L.entries.filter(e=>e.theme===t.id&&laneOk(e.lanes));if(!es.length)return'';
+    const byLane={};es.forEach(e=>(e.lanes.length?e.lanes:['CORE']).forEach(l=>byLane[l]=(byLane[l]||0)+1));
+    return`<div class="card"><h3>${esc(t.label)}</h3><div class="kpi">${es.length}</div><div class="sub">${es.filter(e=>Object.keys(e.counts||{}).length||e.rows).length} with counts</div><div>${Object.entries(byLane).sort().map(([l,n])=>l==='CORE'?`<span class="chip">core ${n}</span>`:chipLane(l).replace('</span>',` ${n}</span>`)).join('')}</div></div>`}).join('')||'<p class="note">No ledgers for the selected lanes.</p>';
+}
+
+// ---------- merge & conflicts playbook
+const PB=A.conflict_playbook||{classes:[],recipes:[]};
+const mergeVals={repo:'',branch:'',base:'origin/main',file:'<file>'};
+try{Object.assign(mergeVals,JSON.parse(localStorage.getItem('ma3-merge')||'{}'))}catch(e){}
+const fillCmd=c=>c.replace(/\{(repo|branch|base|file|stem|atlas)\}/g,(m,k)=>{const v={repo:mergeVals.repo||'<repo path>',branch:mergeVals.branch||'<branch>',base:mergeVals.base||'origin/main',file:mergeVals.file||'<file>',stem:(mergeVals.file||'<file>').split('/').pop().replace(/\.[^.]+$/,''),atlas:'.'}[k];return v});
+const cmdBlock=lines=>`<pre class="cmd" data-tpl="${esc(JSON.stringify(lines))}"><code>${esc(lines.map(fillCmd).join('\n'))}</code><button type="button">Copy</button></pre>`;
+document.getElementById('merge').innerHTML=`<h2>Merge-conflict helpers</h2>
+<p class="note">PowerShell commands for the conflict patterns seen across the federation. Fill in the boxes once and every command below updates; nothing runs from this page. For a scan of real branches, run the branch radar and open its report.</p>
+<div class="card"><b>ours / theirs:</b> ${esc(PB.ours_theirs_note||'')}</div>
+<div class="merge-inputs">
+<div><label for="mRepo">Repository path</label><input id="mRepo" placeholder="C:\\Users\\you\\source\\repos\\ABACUS" value="${esc(mergeVals.repo)}"></div>
+<div><label for="mBranch">Branch</label><input id="mBranch" placeholder="feat/my-branch" value="${esc(mergeVals.branch)}"></div>
+<div><label for="mBase">Base</label><input id="mBase" value="${esc(mergeVals.base)}"></div>
+<div><label for="mFile">Conflicted file (repo-relative)</label><input id="mFile" placeholder="docs/ci/WORKFLOW_RATIONALIZATION.md" value="${esc(mergeVals.file==='<file>'?'':mergeVals.file)}"></div>
+</div>
+<h2>Branch radar</h2>
+<p class="note">Scans local branches: merges cleanly with the base or not, rebase in progress, conflicting files classified below, a nothing-lost audit for rebased-but-unpushed branches, and tailored commands. Run these from the CODEX checkout (the atlas tools live there), then open <code>artifacts/method_atlas/branches.html</code> (<a href="../../artifacts/method_atlas/branches.html">open if generated</a>).</p>
+${cmdBlock(["python tools\\method_atlas\\branch_conflicts.py radar --path '{repo}' --fetch","python tools\\method_atlas\\branch_conflicts.py audit --path '{repo}' --branch {branch}","Invoke-Item artifacts\\method_atlas\\branches.html"])}
+<h2>Situations</h2>
+${PB.recipes.map(r=>`<div class="card"><h3>${esc(r.label)}</h3><div class="sub">${esc(r.when)}</div>${cmdBlock(r.commands)}</div>`).join('')}
+<h2>Conflicted file classes</h2>
+<p class="note">The radar puts each conflicting file in the first class whose pattern matches.</p>
+${PB.classes.map(c=>`<div class="card"><h3>${esc(c.label)} <span class="badge">${esc(c.resolution)}</span></h3><div class="sub">${esc(c.why)}</div><div class="sub">Matches: ${c.match.map(m=>`<code>${esc(m)}</code>`).join(' ')}</div>${cmdBlock(c.commands)}</div>`).join('')}`;
+function refreshCmds(){document.querySelectorAll('#merge pre.cmd').forEach(p=>{p.querySelector('code').textContent=JSON.parse(p.dataset.tpl).map(fillCmd).join('\n')})}
+[['mRepo','repo'],['mBranch','branch'],['mBase','base'],['mFile','file']].forEach(([id,k])=>document.getElementById(id).addEventListener('input',e=>{mergeVals[k]=e.target.value.trim();try{localStorage.setItem('ma3-merge',JSON.stringify(mergeVals))}catch(_){}refreshCmds()}));
+document.getElementById('merge').addEventListener('click',async e=>{const b=e.target.closest('pre.cmd button');if(!b)return;try{await navigator.clipboard.writeText(b.parentElement.querySelector('code').textContent);b.textContent='Copied'}catch(_){b.textContent='Select + Ctrl+C'}setTimeout(()=>b.textContent='Copy',1500)});
+
+// ---------- apply state to every view
+function filterTable(id,q){const t=document.getElementById(id);if(!t)return;const ql=(q||'').toLowerCase();
+  t.querySelectorAll('tbody tr').forEach(r=>{const lanesAttr=r.getAttribute('data-lanes');const lOk=lanesAttr===null||laneOk(lanesAttr.split(' ').filter(Boolean));r.hidden=!(lOk&&(!ql||r.textContent.toLowerCase().includes(ql)))})}
+function apply(){
+  tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===state.tab));
+  TABS.forEach(([t])=>document.getElementById(t).hidden=t!==state.tab);
+  lanebar.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lane?state.lanes.has(b.dataset.lane):!state.lanes.size));
+  Object.entries(SEARCH).forEach(([tab,id])=>{const i=document.getElementById(id);if(i)i.value=tab===state.tab?state.q:''});
+  // Table id -> tab whose search box filters it (null: lane filter only).
+  const TABLE_SEARCH={comboT:null,monT:'taxonomy',blkT:'blocks',splineT:null,sipocT:null,wfT:'orchestration',ldT:'ledger'};
+  Object.entries(TABLE_SEARCH).forEach(([id,tab])=>filterTable(id,tab===state.tab?state.q:''));
+  document.querySelectorAll('#taxonomy [data-card]').forEach(c=>c.hidden=!laneOk(c.dataset.lanes.split(' ')));
+  document.querySelectorAll('.dag g[data-block]').forEach(g=>g.classList.toggle('dim',!!state.lanes.size&&!laneOk(g.dataset.lanes.split(' ').filter(Boolean))));
+  renderCron();renderLedgerCards();renderHealth();writeHash();
+}
+Object.entries(SEARCH).forEach(([tab,id])=>{const i=document.getElementById(id);i&&i.addEventListener('input',()=>{state.q=i.value;apply()})});
+window.addEventListener('hashchange',()=>{readHash();apply()});
+
+if(location.hash.length>1)readHash();else{try{const h=localStorage.getItem('ma3-hash');if(h){history.replaceState(null,'','#'+h);readHash()}}catch(e){}}
+apply();
+})();
+</script>
+</body>
+</html>
