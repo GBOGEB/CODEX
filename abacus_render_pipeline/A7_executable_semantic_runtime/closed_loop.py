@@ -61,6 +61,20 @@ def derive_branch_dag(tuples: List[Dict[str, Any]]) -> Dict[str, Any]:
     return {"nodes": nodes, "edges": edges}
 
 
+def check_branch_dag(tuples: List[Dict[str, Any]], dag: Dict[str, Any]) -> Dict[str, Any]:
+    """Each root tuple contributes no edge, so a forest of r roots has n - r edges."""
+    roots = [item["id"] for item in tuples if item.get("parent") is None]
+    expected_edges = len(tuples) - len(roots)
+    passed = bool(roots) and len(dag["nodes"]) == len(tuples) and len(dag["edges"]) == expected_edges
+    return {
+        "pass": passed,
+        "nodes": len(dag["nodes"]),
+        "edges": len(dag["edges"]),
+        "roots": roots,
+        "expected_edges": expected_edges,
+    }
+
+
 def completeness(tuples, invariants, debt) -> Dict[str, Any]:
     tuple_required = len(tuples) > 0
     invariant_required = len(invariants) > 0

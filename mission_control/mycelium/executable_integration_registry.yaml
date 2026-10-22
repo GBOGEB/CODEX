@@ -1900,6 +1900,312 @@ nodes:
     value_scope: V0_TESTED_ONLY
     registration_batch: MYCELIUM_MIP_CI_BATCH_1
 
+  - id: reg2_m4_review_qa_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/missioncontrol-m4-review-qa.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 4ed94ce9c9b95e1c73cddc7341768022cbb7dc9c
+    purpose: Rebuild the MissionControl M4 review page deterministically and browser-QA it at four viewports.
+    inputs: [repository_change]
+    outputs: [ci_execution_evidence]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [run_39267975127_job_118112456585]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2
+
+  - id: reg2_graph_explorer_qa_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/missioncontrol-graph-explorer-browser-qa.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: d10e015bd967b50554e6d2c7e0f0645d56974a4d
+    purpose: Materialize Matplotlib evidence and run MissionControl graph explorer interaction QA.
+    inputs: [repository_change]
+    outputs: [ci_execution_evidence]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [run_39378989694_job_118483487020]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2
+
+  - id: reg2_operational_dag_w33_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/mycelium-operational-dag-w33.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 03677a806586d94892cbf21c29f03c051a6d5bc8
+    purpose: Run the W33 operational task DAG regression suite and generate hash-bound DAG receipts.
+    inputs: [repository_change]
+    outputs: [ci_execution_evidence]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [run_39163261305_job_117780860338]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2
+
+  - id: reg2_p_process_reference_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/mycelium-p-process-reference.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: f937ee734bcce5445b2530d0e3ff805f298ac8c9
+    purpose: Execute the Mycelium P-process typed consumer tests with scoped branch coverage.
+    inputs: [repository_change]
+    outputs: [ci_execution_evidence]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [run_39140485343_job_117713728054]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2
+
+  - id: reg2_live_ops_w1_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/mycelium-live-ops-w1.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 631b948c223024a1615d9f13aa7b0e792f146b47
+    purpose: Qualify the W1 live-ops DAG observer against negative and reverse task-state fixtures.
+    inputs: [repository_change]
+    outputs: [ci_execution_evidence]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [run_39171738159_job_117806049961]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2
+
+  - id: reg2_five_axis_growth_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/five-axis-growth.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: cbcf2634b12f9a09daa7d4c693bce0c727da0e90
+    purpose: Execute five-axis adversarial tests and generate/verify source-bound receipts.
+    inputs: [repository_change]
+    outputs: [ci_execution_evidence]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [run_39173630444_job_117811697738]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2
+
+  - id: reg2_five_axis_census_w31_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/five-axis-census-w31.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: cf3dc23f1158cfbd1638e853fee90b78ac234152
+    purpose: Run W31 regression tests and derive the verified read-only five-axis census.
+    inputs: [repository_change]
+    outputs: [ci_execution_evidence]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [run_39161146097_job_117774546821]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2
+
+  - id: reg2_five_axis_spine_w30_workflow
+    type: WORKFLOW
+    repository: GBOGEB/CODEX
+    path: .github/workflows/five-axis-spine-w30.yml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: c816186d84c3aba371305b3f2b7d8e42e2eb3069
+    purpose: Run the W30 adversarial contract and generate the deterministic DAG/SIPOC spine.
+    inputs: [repository_change]
+    outputs: [ci_execution_evidence]
+    execution_surface: GitHub Actions
+    test_proof_evidence: [run_39158510448_job_117766654887]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_EXECUTION
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2
+
+  - id: reg2_rex_badge_builder
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/build_missioncontrol_rex_badges.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: ae96f42e26702d852c9f2c2beb10803f9e2b39fe
+    purpose: Build the MissionControl REX badge projection and fail on projection drift.
+    inputs: [rex_observability_contract]
+    outputs: [rex_badges]
+    execution_surface: MissionControl Mycelium CI
+    test_proof_evidence: [tests/test_missioncontrol_rex_badges.py, run_39474302063_job_118806161680]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2
+
+  - id: reg2_m4_rebuilder
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/rebuild_missioncontrol_m4.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 4ed94ce9c9b95e1c73cddc7341768022cbb7dc9c
+    purpose: Deterministically rebuild the MissionControl M4 review page from its sources.
+    inputs: [m4_review_sources]
+    outputs: [m4_review_page]
+    execution_surface: GitHub Actions missioncontrol-m4-review-qa.yml
+    test_proof_evidence: [tests/test_missioncontrol_m4.py, run_39267975127_job_118112456585]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2
+
+  - id: reg2_graph_explorer_qa
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/qa_missioncontrol_graph_explorer.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: d10e015bd967b50554e6d2c7e0f0645d56974a4d
+    purpose: Drive the MissionControl graph explorer in a browser and record interaction receipts.
+    inputs: [graph_explorer_page]
+    outputs: [graph_explorer_interaction_receipts]
+    execution_surface: GitHub Actions missioncontrol-graph-explorer-browser-qa.yml
+    test_proof_evidence: [tests/test_missioncontrol_graph_explorer_browser_qa.py, run_39378989694_job_118483487020]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2
+
+  - id: reg2_ops_dag_w33
+    type: PYTHON_MODULE
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/ops_dag/ops_dag.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 03677a806586d94892cbf21c29f03c051a6d5bc8
+    purpose: Derive W33 operational task-instance DAG metrics, SIPOC HTML and SHA256 receipts.
+    inputs: [w33_selected_observations]
+    outputs: [w33_task_receipts]
+    execution_surface: GitHub Actions mycelium-operational-dag-w33.yml
+    test_proof_evidence: [tests/test_mycelium_operational_dag_w33.py, run_39163261305_job_117780860338]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2
+
+  - id: reg2_p_process_reference
+    type: PYTHON_MODULE
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/p_process_reference.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: f937ee734bcce5445b2530d0e3ff805f298ac8c9
+    purpose: Provide the Mycelium P-process typed consumer reference implementation.
+    inputs: [p_process_records]
+    outputs: [typed_consumer_result]
+    execution_surface: GitHub Actions mycelium-p-process-reference.yml
+    test_proof_evidence: [tests/test_p_process_reference.py, run_39140485343_job_117713728054]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2
+
+  - id: reg2_live_ops_dag_observer
+    type: PYTHON_MODULE
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/live_ops/dag_observer.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 631b948c223024a1615d9f13aa7b0e792f146b47
+    purpose: Observe live-ops DAG task states and emit W1 metrics.
+    inputs: [w1_fixture]
+    outputs: [w1_metrics]
+    execution_surface: GitHub Actions mycelium-live-ops-w1.yml
+    test_proof_evidence: [tests/test_live_ops_dag.py, run_39171738159_job_117806049961]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2
+
+  - id: reg2_five_axis_growth
+    type: PYTHON_MODULE
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/five_axis/five_axis.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: cbcf2634b12f9a09daa7d4c693bce0c727da0e90
+    purpose: Compute five-axis growth receipts from field observations.
+    inputs: [w0_field_observations]
+    outputs: [five_axis_receipts]
+    execution_surface: GitHub Actions five-axis-growth.yml
+    test_proof_evidence: [tests/test_five_axis_growth.py, run_39173630444_job_117811697738]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2
+
+  - id: reg2_five_axis_census_w31
+    type: PYTHON_MODULE
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/five_axis/census_w31.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: cf3dc23f1158cfbd1638e853fee90b78ac234152
+    purpose: Derive the W31 read-only five-axis census from fresh readback.
+    inputs: [w31_fresh_readback]
+    outputs: [w31_receipts]
+    execution_surface: GitHub Actions five-axis-census-w31.yml
+    test_proof_evidence: [tests/test_five_axis_census_w31.py, run_39161146097_job_117774546821]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2
+
+  - id: reg2_five_axis_spine_w30
+    type: PYTHON_MODULE
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/five_axis/spine_w30.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: c816186d84c3aba371305b3f2b7d8e42e2eb3069
+    purpose: Generate the W30 deterministic DAG/SIPOC spine from selected native observations.
+    inputs: [w30_selected_native]
+    outputs: [w30_receipts]
+    execution_surface: GitHub Actions five-axis-spine-w30.yml
+    test_proof_evidence: [tests/test_five_axis_spine_w30.py, run_39158510448_job_117766654887]
+    value_evidence: []
+    current_state: REGISTERED_CONNECTED_VALUE_WITHHELD
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    registration_batch: MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2
+
 edges:
   - {from: mc_control_manifest, to: mc_mycelium_workflow, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
   - {from: mc_mycelium_workflow, to: mc_integration_validator, type: TRIGGERED_BY, evidence: run_37281376763_job_111670015753}
@@ -1999,6 +2305,15 @@ edges:
   - {from: reg1_mip_repo_self_index, to: reg1_mip_debug_diagnostic, type: TRIGGERED_BY, evidence: run_39311270270_job_118261165258}
   - {from: reg1_inventory_reconcile_workflow, to: reg1_regen_inventory, type: TRIGGERED_BY, evidence: run_39376960782_job_118477154724}
   - {from: mc_mycelium_workflow, to: reg1_execution_gateway_validator, type: TRIGGERED_BY, evidence: run_39376960861_job_118477154909}
+  - {from: mc_mycelium_workflow, to: reg2_rex_badge_builder, type: TRIGGERED_BY, evidence: run_39474302063_job_118806161680}
+  - {from: reg2_m4_review_qa_workflow, to: reg2_m4_rebuilder, type: TRIGGERED_BY, evidence: run_39267975127_job_118112456585}
+  - {from: reg2_graph_explorer_qa_workflow, to: reg2_graph_explorer_qa, type: TRIGGERED_BY, evidence: run_39378989694_job_118483487020}
+  - {from: reg2_operational_dag_w33_workflow, to: reg2_ops_dag_w33, type: TRIGGERED_BY, evidence: run_39163261305_job_117780860338}
+  - {from: reg2_p_process_reference_workflow, to: reg2_p_process_reference, type: VALIDATES, evidence: run_39140485343_job_117713728054}
+  - {from: reg2_live_ops_w1_workflow, to: reg2_live_ops_dag_observer, type: TRIGGERED_BY, evidence: run_39171738159_job_117806049961}
+  - {from: reg2_five_axis_growth_workflow, to: reg2_five_axis_growth, type: TRIGGERED_BY, evidence: run_39173630444_job_117811697738}
+  - {from: reg2_five_axis_census_w31_workflow, to: reg2_five_axis_census_w31, type: TRIGGERED_BY, evidence: run_39161146097_job_117774546821}
+  - {from: reg2_five_axis_spine_w30_workflow, to: reg2_five_axis_spine_w30, type: TRIGGERED_BY, evidence: run_39158510448_job_117766654887}
 
 integration_paths:
   - id: mcp_sweep_repository_value

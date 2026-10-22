@@ -359,14 +359,14 @@ def test_mcp_sweep_repository_value_path_is_registered():
     assert report["executed_integration_path_count"] >= 15
 
 
-def test_registration_batch_1_claims_no_value_beyond_its_evidence():
+def _assert_registration_batch_claims_no_value_beyond_its_evidence(name, size):
     _, registry, _ = loaded()
     root = REGISTRY.parents[2]
     batch = [
         n for n in registry["nodes"]
-        if n.get("registration_batch") == "MYCELIUM_MIP_CI_BATCH_1"
+        if n.get("registration_batch") == name
     ]
-    assert len(batch) == 13
+    assert len(batch) == size
     edges = registry["edges"]
     for node in batch:
         assert (root / node["path"]).is_file(), node["path"]
@@ -386,3 +386,33 @@ def test_registration_batch_1_claims_no_value_beyond_its_evidence():
         assert test_files, node["id"]
         stem = node["path"].rsplit("/", 1)[-1].removesuffix(".py")
         assert any(stem in (root / t).read_text(encoding="utf-8") for t in test_files), node["id"]
+    return batch, edges
+
+
+def test_registration_batch_1_claims_no_value_beyond_its_evidence():
+    _assert_registration_batch_claims_no_value_beyond_its_evidence(
+        "MYCELIUM_MIP_CI_BATCH_1", 13
+    )
+
+
+def test_registration_batch_2_binds_scripts_to_the_workflow_runs_that_execute_them():
+    batch, edges = _assert_registration_batch_claims_no_value_beyond_its_evidence(
+        "MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2", 17
+    )
+    root = REGISTRY.parents[2]
+    contract, registry, schema = loaded()
+    errors, report = validate_registry(contract, registry, schema)
+    assert errors == []
+    node_map = {n["id"]: n for n in registry["nodes"]}
+    for node in batch:
+        assert node["id"] not in report["tested_orphans"], node["id"]
+        if node["type"] == "WORKFLOW":
+            continue
+        (edge,) = [e for e in edges if e["to"] == node["id"]]
+        workflow = node_map[edge["from"]]
+        assert workflow["type"] == "WORKFLOW", node["id"]
+        assert edge["evidence"] in node["test_proof_evidence"], node["id"]
+        assert node["path"] in (root / workflow["path"]).read_text(encoding="utf-8") or (
+            node["path"].removesuffix(".py").replace("/", ".")
+            in (root / workflow["path"]).read_text(encoding="utf-8")
+        ), node["id"]
