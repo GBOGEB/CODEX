@@ -72,9 +72,9 @@ Assign each change an impact score (0–5) considering safety, compliance, opera
 | `glob_manifest` | Every file in `handover_master_applied.glob.yaml` exists | Blocking |
 | `baseline_meta` | requirements.json meta baseline = manifest version | Blocking |
 | `rename_pack` | No legacy RENAME_SBS names in the pack (ledger files exempt) | Blocking |
-| `rename_downstream` | Legacy names in `Book_Master.md` / `book_md/` ≤ ratchet in `build_control_baseline.json` | Report-only until step 2 is applied |
+| `rename_downstream` | Legacy names in `Book_Master.md` / `book_md/` ≤ ratchet in `build_control_baseline.json` (0) | Blocking |
 
-Lower `rename_downstream_max` in the same PR that applies renames downstream; never raise it.
+Handover step 2 is applied to `Book_Master.md` and `book_md/`, so `rename_downstream_max` is 0; never raise it.
 
 ## Lifecycle and governance
 

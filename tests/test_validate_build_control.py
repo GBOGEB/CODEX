@@ -64,12 +64,11 @@ def test_report_is_idempotent(pack: Path) -> None:
     assert first == second
 
 
-def test_downstream_drop_below_ratchet_still_passes(pack: Path) -> None:
-    _edit(pack, Path("Book_Master.md"), "WCS-HP", "WCS.HP")
-    rc, report = _report(pack)
-    assert rc == 0
-    down = _check(report, "rename_downstream")["kpis"]
-    assert down["legacy_hits"] < down["ratchet_baseline"]
+def test_downstream_docs_are_rename_clean() -> None:
+    report = bc.check_rename_downstream(REPO_ROOT)
+    assert report["blocking"] is True
+    assert report["kpis"]["ratchet_baseline"] == 0
+    assert report["kpis"]["legacy_hits"] == 0, report["kpis"]["by_file"]
 
 
 # --- negative (blocking) ------------------------------------------------------
@@ -145,16 +144,15 @@ def test_missing_required_file_fails(pack: Path) -> None:
     assert bc.validate(pack, None) == 1
 
 
-# --- ratchet (report-only) ----------------------------------------------------
+# --- ratchet ------------------------------------------------------------------
 
 
-def test_downstream_regression_is_reported_but_not_blocking(pack: Path) -> None:
-    _edit(pack, Path("Book_Master.md"), "\n", "\nQRB-A and QRB-B.\n")
+def test_downstream_regression_fails(pack: Path) -> None:
+    _edit(pack, Path("book_md/I1_abbreviations.md"), "\n", "\nQRB-A and QRB-B.\n")
     rc, report = _report(pack)
-    down = _check(report, "rename_downstream")
-    assert rc == 0
-    assert down["status"] == "failed" and down["blocking"] is False
-    assert "rename_downstream" not in report["blocking_failed"]
+    assert rc == 1
+    assert "rename_downstream" in report["blocking_failed"]
+    assert _check(report, "rename_downstream")["kpis"]["by_file"] == {"book_md/I1_abbreviations.md": 2}
 
 
 def test_word_boundaries_do_not_overcount() -> None:

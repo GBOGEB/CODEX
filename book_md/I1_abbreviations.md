@@ -45,7 +45,7 @@
 
   HMI          Human Machine Interface
 
-  HP           High Pressure (typically 15 bar for WCS-HP)
+  HP           High Pressure (typically 15 bar for WCS.HP)
 
   HVAC         Heating, Ventilation and Air Conditioning
 
@@ -144,8 +144,8 @@
 
   UPS          Uninterruptible Power Supply
 
-  VLP          Very Low Pressure (Typically 27-31 mbar for QRB-B and
-               \~400-450 mbar for WCS-VLP)
+  VLP          Very Low Pressure (Typically 27-31 mbar for QRB.B and
+               \~400-450 mbar for WCS.VLP)
 
   WCS          Warm Compressor Station
 
