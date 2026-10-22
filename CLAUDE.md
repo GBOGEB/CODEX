@@ -59,6 +59,39 @@ not patch a downstream gate while an upstream stage is red.
   (`path.mkdir(parents=True, exist_ok=True)`); a missing `docs/rendered_outputs`
   has failed CI before.
 
+- **Keep CLI prints ASCII.** The Windows console is cp1252, so printing `→`
+  or other non-Latin-1 characters from a script raises `UnicodeEncodeError`.
+
+## Local Windows machine (owner's work PC)
+
+- **Check free disk space first.** Before a checkout, regen or full-suite
+  run, check free space on C: and stop below 100 MB. A write on a full disk
+  can corrupt the git index or truncate tracked files, and it breaks sibling
+  sessions too.
+- **Use sparse worktrees by default:** `git worktree add --no-checkout`, then
+  `git sparse-checkout set mission_control scripts tests .github docs/data
+  controls` (about 16 MB; inventory counts stay exact). Remove a worktree
+  once its PR merges. In Git Bash, prefix git commands that take `/path` or
+  `sha:path` arguments with `MSYS_NO_PATHCONV=1`.
+- **Long runs:** git status/diff and full pytest in a full worktree take
+  longer than 2 minutes. Run them in the background.
+- **Known Windows-only pytest failures.** These also fail on a clean
+  origin/main, so they are not regressions:
+  - `test_missioncontrol_rex_badges.py::test_committed_projection_is_current_and_mirrored`
+    (path separator)
+  - swift_roof_p3 ×7
+  - stale_artifact_capture ×3
+  - ssot_resolver ×2
+  - export_abacus_runtime
+  - inkscape_input_bridge
+- **No `gh` CLI.** Push the branch, save the PR body to a file and give the
+  owner the compare link. Before re-pushing or opening a PR, check
+  `git merge-base --is-ancestor <sha> origin/main`, because the owner often
+  merges first.
+- **Parallel sessions:** each wave writes its hand-over notes and pulse
+  reports to one shared, dated folder agreed at the start of the wave, never
+  into another session's notes folder.
+
 ## Artifacts and baselines
 
 - **RTM/SSOT artifacts regenerate in the same PR** as the change that
@@ -76,6 +109,13 @@ not patch a downstream gate while an upstream stage is red.
   Main is also reconciled after merge by
   `missioncontrol-inventory-reconcile.yml`, but that is a safety net, not a
   substitute.
+- **`regen_missioncontrol_inventory.py --check` compares against the
+  committed tree (HEAD)**, so it exits 1 until the regenerated receipts are
+  committed. The order is: regen, then commit, then `--check`.
+- **On Windows the regen leaves line-ending-only (CRLF) diffs** in untouched
+  receipts. Find them with `git diff --ignore-cr-at-eol --name-only` and
+  restore them; never commit line-ending-only changes. New writers use
+  `newline="\n"`.
 
 ## PR discipline
 
