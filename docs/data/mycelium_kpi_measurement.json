@@ -27,15 +27,15 @@
       "alias": "snapshot",
       "path": "mission_control/mycelium/metrics_snapshot.json",
       "origin": "file",
-      "sha256": "742d205f9f4b23ea9fa4eabd601c273ad10dc4833098f2fee51c0a43754a58b9",
-      "stamp": "2026-10-02T13:57:52Z"
+      "sha256": "489949097454358d38c4c502461c74996ab0125f7f94cd541917622f00aef1af",
+      "stamp": "2026-10-22T07:17:42Z"
     },
     {
       "alias": "control_observations",
       "path": "mission_control/mycelium/control_observations.json",
       "origin": "file",
-      "sha256": "fe2b94b1af3b52d2daaa90a57647cb9e6042ce54a137306c4389f3f8028f5fce",
-      "stamp": "2026-10-02T13:57:52Z"
+      "sha256": "b15955edde27b375301d166078b4edaf61a74b322f5607ff32296769a29b4087",
+      "stamp": "2026-10-22T07:17:42Z"
     },
     {
       "alias": "logs",
@@ -88,9 +88,9 @@
       "binding_errors": 0,
       "measurement_coverage_pct": 100.0,
       "bands": {
-        "GREEN": 5,
-        "AMBER": 7,
-        "RED": 16,
+        "GREEN": 7,
+        "AMBER": 8,
+        "RED": 13,
         "INFO": 10
       }
     },
@@ -142,8 +142,8 @@
         "measurement_coverage_pct": 100.0,
         "bands": {
           "GREEN": 2,
-          "AMBER": 1,
-          "RED": 2,
+          "AMBER": 2,
+          "RED": 1,
           "INFO": 1
         }
       },
@@ -154,9 +154,9 @@
         "binding_errors": 0,
         "measurement_coverage_pct": 100.0,
         "bands": {
-          "GREEN": 0,
+          "GREEN": 1,
           "AMBER": 0,
-          "RED": 1,
+          "RED": 0,
           "INFO": 2
         }
       },
@@ -180,9 +180,9 @@
         "binding_errors": 0,
         "measurement_coverage_pct": 100.0,
         "bands": {
-          "GREEN": 1,
+          "GREEN": 2,
           "AMBER": 0,
-          "RED": 3,
+          "RED": 2,
           "INFO": 1
         }
       }
@@ -629,10 +629,10 @@
       "target": 100,
       "dmaic_phase": "MEASURE",
       "status": "MEASURED",
-      "value": 16.67,
-      "band": "RED",
+      "value": 66.67,
+      "band": "AMBER",
       "inputs": {
-        "numerator": 1,
+        "numerator": 4,
         "denominator": 6
       },
       "unlock": "Bind a code-health measurement for each Mycelium node in control_observations.json."
@@ -646,10 +646,10 @@
       "target": 100,
       "dmaic_phase": "MEASURE",
       "status": "MEASURED",
-      "value": 16.67,
+      "value": 33.33,
       "band": "RED",
       "inputs": {
-        "numerator": 1,
+        "numerator": 2,
         "denominator": 6
       },
       "unlock": "Bind a governed port probe for each Mycelium node."
@@ -678,10 +678,10 @@
       "target": 100,
       "dmaic_phase": "DEFINE",
       "status": "MEASURED",
-      "value": 33.33,
-      "band": "RED",
+      "value": 83.33,
+      "band": "GREEN",
       "inputs": {
-        "numerator": 2,
+        "numerator": 5,
         "denominator": 6
       },
       "unlock": "Record an evidenced DMAIC phase per node in control_observations.json."
@@ -695,10 +695,10 @@
       "target": null,
       "dmaic_phase": "CONTROL",
       "status": "MEASURED",
-      "value": 1,
+      "value": 3,
       "band": "INFO",
       "inputs": {
-        "numerator": 1
+        "numerator": 3
       }
     },
     {
@@ -711,14 +711,14 @@
       "dmaic_phase": "MEASURE",
       "status": "MEASURED",
       "value": {
-        "ANALYZE": 1,
-        "CONTROL": 1
+        "ANALYZE": 2,
+        "CONTROL": 3
       },
       "band": "INFO",
       "inputs": {
         "numerator": {
-          "ANALYZE": 1,
-          "CONTROL": 1
+          "ANALYZE": 2,
+          "CONTROL": 3
         }
       }
     },
@@ -813,10 +813,10 @@
       "target": 3,
       "dmaic_phase": "MEASURE",
       "status": "MEASURED",
-      "value": 0,
-      "band": "RED",
+      "value": 10,
+      "band": "GREEN",
       "inputs": {
-        "numerator": 0
+        "numerator": 10
       },
       "unlock": "Record at least 3 complete PCA observation rows in control_observations.json."
     },
@@ -901,8 +901,8 @@
       "id": "CHK-05",
       "name": "Snapshot stamp matches control observation stamp",
       "status": "PASS",
-      "left": "2026-10-02T13:57:52Z",
-      "right": "2026-10-02T13:57:52Z"
+      "left": "2026-10-22T07:17:42Z",
+      "right": "2026-10-22T07:17:42Z"
     },
     {
       "id": "CHK-06",
@@ -964,25 +964,11 @@
       "unlock": "Evidence one node whose output feeds back into Mycelium control (V5_RECURSIVE_CONTROL_VALUE)."
     },
     {
-      "id": "HLT-04",
-      "name": "Code health observation coverage",
-      "value": 16.67,
-      "target": 100,
-      "unlock": "Bind a code-health measurement for each Mycelium node in control_observations.json."
-    },
-    {
       "id": "HLT-05",
       "name": "Port probe coverage",
-      "value": 16.67,
-      "target": 100,
-      "unlock": "Bind a governed port probe for each Mycelium node."
-    },
-    {
-      "id": "DMC-01",
-      "name": "DMAIC phase coverage",
       "value": 33.33,
       "target": 100,
-      "unlock": "Record an evidenced DMAIC phase per node in control_observations.json."
+      "unlock": "Bind a governed port probe for each Mycelium node."
     },
     {
       "id": "MIP-01",
@@ -1011,13 +997,6 @@
       "value": 0.0,
       "target": 100,
       "unlock": "Bind the requirement/interface/evidence/validation coverage census per node."
-    },
-    {
-      "id": "SCR-02",
-      "name": "PCA observation rows",
-      "value": 0,
-      "target": 3,
-      "unlock": "Record at least 3 complete PCA observation rows in control_observations.json."
     },
     {
       "id": "SCR-03",
