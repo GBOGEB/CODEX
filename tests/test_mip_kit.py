@@ -153,11 +153,13 @@ def test_kit_files_do_not_reference_abacus_only_paths():
 # --- surface config resolution ---------------------------------------------
 
 
-def test_codex_surface_config_declares_no_health_probe():
+def test_codex_surface_config_declares_repo_health_probe():
     config = emitter.load_surface_config()
     assert config["program"] == "MIP"
-    assert config["health_probe"] is None
-    assert emitter.resolve_health_probe(config) is None
+    assert config["health_probe"] == emitter.DEFAULT_HEALTH_PROBE
+    resolved = emitter.resolve_health_probe(config)
+    assert resolved == (ROOT / emitter.DEFAULT_HEALTH_PROBE).resolve()
+    assert resolved.is_file()
 
 
 def test_health_probe_absent_key_uses_default(tmp_path: Path):
