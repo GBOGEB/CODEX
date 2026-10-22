@@ -211,44 +211,34 @@ def test_campaign_and_worker_state_are_projected_without_scoring() -> None:
     assert snapshot["nodes"]["dab_bd8k"]["code_health"]["status"] == STATUS_WITHHELD
 
 
-def test_executable_value_census_uses_explicit_evidence_only() -> None:
-    graph = {
+def test_executable_value_census_uses_registry_population_and_report_orphans() -> None:
+    registry = {
         "nodes": [
-            {"id": "proved_orphan", "type": "workflow", "meta": {"exact_head_run": 123}},
-            {"id": "integrated", "type": "script", "meta": {"proof_ref": "run:456"}},
-            {"id": "source", "type": "artifact"},
-            {"id": "consumer", "type": "consumer"},
-            {"id": "gm", "type": "mission"},
+            {"id": "proved_orphan", "type": "WORKFLOW", "tested": True, "value_evidence": []},
+            {"id": "integrated", "type": "PYTHON_SCRIPT", "tested": True, "value_evidence": ["run:456"]},
+            {"id": "consumer", "type": "CONSUMER", "tested": True, "value_evidence": []},
         ],
-        "edges": [
-            {"from": "source", "to": "integrated", "type": "feeds"},
-            {"from": "integrated", "to": "consumer", "type": "produces_for"},
-            {"from": "integrated", "to": "gm", "type": "contributes_to_gm"},
-        ],
+        "edges": [{"from": "integrated", "to": "consumer", "type": "PRODUCES", "evidence": "run:456"}],
+        "integration_paths": [],
     }
-    census = executable_value_census(graph)
+    report = {"tested_orphans": ["proved_orphan"], "library_reference_only": []}
+    census = executable_value_census(registry, report, {"integrated", "consumer"})
     rows = {row["id"]: row for row in census["nodes"]}
+    assert census["population"] == len(registry["nodes"])
+    assert census["population_source"].endswith("executable_integration_registry.yaml")
     assert rows["proved_orphan"]["state"] == "TESTED_ORPHAN"
     assert rows["integrated"]["state"] == "PIPELINE_INTEGRATED"
-    assert rows["integrated"]["gm_linked"] is True
-    assert census["metrics"]["TESTED_ORPHAN_COUNT"]["value"] == 1
+    assert census["metrics"]["TESTED_ORPHAN_COUNT"]["value"] == len(report["tested_orphans"])
     assert census["metrics"]["TEST_PROOF_COVERAGE"]["value"] == 100
-    assert census["metrics"]["PIPELINE_INTEGRATION_COVERAGE"]["value"] == 50
+    assert census["metrics"]["PIPELINE_INTEGRATION_COVERAGE"]["value"] == 66.67
+    assert census["metrics"]["GM_LINK_COVERAGE"]["status"] == STATUS_WITHHELD
 
 
-def test_executable_value_census_does_not_infer_from_names() -> None:
-    graph = {
-        "nodes": [
-            {
-                "id": "looks_integrated",
-                "type": "workflow",
-                "label": "tested pipeline consumer value GM-12",
-            }
-        ],
-        "edges": [],
-    }
-    row = executable_value_census(graph)["nodes"][0]
-    assert row["tested"] is False
-    assert row["pipeline_integrated"] is False
-    assert row["downstream_consumer_count"] == 0
-    assert row["state"] == "WITHHELD"
+def test_committed_snapshot_executable_value_matches_value_report() -> None:
+    snapshot = json.loads((ROOT / "mission_control/mycelium/metrics_snapshot.json").read_text(encoding="utf-8"))
+    report = json.loads((ROOT / "mission_control/mycelium/executable_value_report.json").read_text(encoding="utf-8"))
+    census = snapshot["executable_value"]
+    assert census["population"] == report["registered_node_count"]
+    assert census["metrics"]["TESTED_ORPHAN_COUNT"]["value"] == len(report["tested_orphans"])
+    orphans = sorted(row["id"] for row in census["nodes"] if row["state"] == "TESTED_ORPHAN")
+    assert orphans == sorted(report["tested_orphans"])

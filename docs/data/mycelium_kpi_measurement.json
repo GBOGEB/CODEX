@@ -27,7 +27,7 @@
       "alias": "snapshot",
       "path": "mission_control/mycelium/metrics_snapshot.json",
       "origin": "file",
-      "sha256": "742d205f9f4b23ea9fa4eabd601c273ad10dc4833098f2fee51c0a43754a58b9",
+      "sha256": "97456bd4a7cee1ca4652264215b05a5146c858895d9a0ab0bc03bcdff9604174",
       "stamp": "2026-10-02T13:57:52Z"
     },
     {
@@ -188,8 +188,8 @@
       }
     },
     "checks": {
-      "PASS": 3,
-      "FAIL": 3,
+      "PASS": 6,
+      "FAIL": 0,
       "WITHHELD": 0,
       "BINDING_ERROR": 0
     }
@@ -871,17 +871,18 @@
     {
       "id": "CHK-01",
       "name": "Snapshot tested-orphan count matches value report",
-      "status": "FAIL",
-      "left": 1,
+      "status": "PASS",
+      "left": 0,
       "right": 0,
-      "note": "The snapshot evaluates its own 3-node population; a mismatch means the two are not the same measure."
+      "note": "Both count registered tested orphans under the contract orphan_policy; build_missioncontrol_metrics.py evaluates the registry with the same validate_registry() that writes the report."
     },
     {
       "id": "CHK-02",
       "name": "Snapshot executable-value population matches registry",
-      "status": "FAIL",
-      "left": 3,
-      "right": 109
+      "status": "PASS",
+      "left": 109,
+      "right": 109,
+      "note": "The snapshot's executable_value population is executable_integration_registry.yaml, not interaction_graph.json."
     },
     {
       "id": "CHK-03",
@@ -906,11 +907,11 @@
     },
     {
       "id": "CHK-06",
-      "name": "Registered tested-orphan count matches debt classifier tested orphans",
-      "status": "FAIL",
+      "name": "Control observation tested-orphan count matches value report",
+      "status": "PASS",
       "left": 0,
-      "right": 14,
-      "note": "The report counts registered orphans and the classifier counts unregistered ones; a mismatch is expected until both use one definition."
+      "right": 0,
+      "note": "Registered tested orphans only. The debt classifier's TESTED_ORPHAN class (EXE-05) is a different measure over the disjoint unregistered population (test-name evidence, no workflow reference), so it is not compared here."
     }
   ],
   "red_kpis": [

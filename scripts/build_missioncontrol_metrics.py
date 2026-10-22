@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import importlib.util
 import json
 from pathlib import Path
 from typing import Any
@@ -13,6 +14,7 @@ PAGES_OUT = ROOT / "docs" / "data" / "missioncontrol_metrics.json"
 LOG_ANALYSIS = ROOT / "mission_control" / "mycelium" / "log_analysis.json"
 SOURCE_STATUS = ROOT / "mission_control" / "mycelium" / "source_status.json"
 PORT_REGISTRY = ROOT / "mission_control" / "mycelium" / "port_registry.json"
+VALIDATOR = ROOT / "scripts" / "validate_executable_integration_value.py"
 
 STATUS_MEASURED = "MEASURED"
 STATUS_DERIVED = "DERIVED_FROM_MEASURED"
@@ -133,66 +135,62 @@ def pca_projection(rows: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 
-def executable_value_census(graph: dict[str, Any]) -> dict[str, Any]:
-    """Classify executable graph nodes from explicit graph/runtime evidence only."""
-    nodes = graph.get("nodes", [])
-    edges = graph.get("edges", [])
-    candidates = [
-        node for node in nodes
-        if node.get("type") in {"workflow", "script", "executable", "config"}
-    ]
+def load_executable_value_validator() -> Any:
+    """Load the registry validator that also produces executable_value_report.json."""
+    spec = importlib.util.spec_from_file_location("validate_executable_integration_value", VALIDATOR)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def registry_executable_value() -> tuple[dict[str, Any], dict[str, Any], set[str]]:
+    """Evaluate the registry exactly as validate_executable_integration_value.py does."""
+    validator = load_executable_value_validator()
+    contract = validator.load_yaml(validator.CONTRACT)
+    registry = validator.load_yaml(validator.REGISTRY)
+    schema = json.loads(validator.SCHEMA.read_text(encoding="utf-8"))
+    _, report = validator.validate_registry(contract, registry, schema)
+    node_map = {node["id"]: node for node in registry["nodes"]}
+    edge_pairs = {(edge["from"], edge["to"]) for edge in registry["edges"]}
+    executed_path_nodes = {
+        node_id
+        for path in registry["integration_paths"]
+        if path["executed"] and path["evidence"] and validator.path_is_real(path, edge_pairs, node_map)
+        for node_id in path["nodes"]
+    }
+    return registry, report, executed_path_nodes
+
+
+def executable_value_census(
+    registry: dict[str, Any],
+    report: dict[str, Any],
+    executed_path_nodes: set[str],
+) -> dict[str, Any]:
+    """Census of the registered executable population.
+
+    The population is executable_integration_registry.yaml and tested orphans
+    are the ones validate_registry() reports under the contract orphan_policy,
+    so this block and executable_value_report.json cannot disagree.
+    """
+    nodes = registry.get("nodes", [])
+    edges = registry.get("edges", [])
+    orphans = set(report.get("tested_orphans", []))
+    library_only = set(report.get("library_reference_only", []))
     rows: list[dict[str, Any]] = []
-    for node in candidates:
-        node_id = node.get("id")
-        meta = node.get("meta", {})
-        incoming = [edge for edge in edges if edge.get("to") == node_id]
-        outgoing = [edge for edge in edges if edge.get("from") == node_id]
-        tested = bool(
-            meta.get("exact_head_run")
-            or meta.get("proof_ref")
-            or any(edge.get("type") in {"proves", "validates"} for edge in incoming)
-        )
-        gm_linked = any(
-            edge.get("type") == "contributes_to_gm"
-            for edge in incoming + outgoing
-        )
-        horizontal_linked = any(
-            edge.get("type") == "serves_horizontal_mission"
-            for edge in incoming + outgoing
-        )
-        downstream = [
-            edge for edge in outgoing
-            if edge.get("type") in {"consumes", "feeds", "produces_for"}
-        ]
-        upstream = [
-            edge for edge in incoming
-            if edge.get("type") in {"consumes", "feeds", "produces_for"}
-        ]
-        pipeline_integrated = bool(tested and upstream and downstream)
-        value_edges = [
-            edge for edge in incoming + outgoing
-            if edge.get("type") in {
-                "contributes_to_gm", "serves_horizontal_mission",
-                "consumes", "feeds", "produces_for",
-            }
-        ]
-        tested_orphan = bool(
-            tested
-            and not pipeline_integrated
-            and not gm_linked
-            and not horizontal_linked
-            and not downstream
-        )
+    for node in nodes:
+        node_id = node["id"]
+        downstream = [edge for edge in edges if edge["from"] == node_id]
+        tested = bool(node.get("tested"))
+        pipeline_integrated = node_id in executed_path_nodes
         rows.append({
             "id": node_id,
             "type": node.get("type"),
             "tested": tested,
             "pipeline_integrated": pipeline_integrated,
-            "gm_linked": gm_linked,
-            "horizontal_linked": horizontal_linked,
             "downstream_consumer_count": len(downstream),
-            "value_edge_count": len(value_edges),
-            "state": "TESTED_ORPHAN" if tested_orphan else (
+            "value_evidence_count": len(node.get("value_evidence", [])),
+            "state": "TESTED_ORPHAN" if node_id in orphans else (
+                "LIBRARY_REFERENCE_ONLY" if node_id in library_only else
                 "PIPELINE_INTEGRATED" if pipeline_integrated else
                 "TESTED_ONLY" if tested else "WITHHELD"
             ),
@@ -201,33 +199,48 @@ def executable_value_census(graph: dict[str, Any]) -> dict[str, Any]:
     total = len(rows)
     tested_count = sum(row["tested"] for row in rows)
     integrated_count = sum(row["pipeline_integrated"] for row in rows)
-    value_linked_count = sum(row["value_edge_count"] > 0 for row in rows)
-    gm_count = sum(row["gm_linked"] for row in rows)
-    horizontal_count = sum(row["horizontal_linked"] for row in rows)
+    value_count = sum(row["value_evidence_count"] > 0 for row in rows)
     orphan_count = sum(row["state"] == "TESTED_ORPHAN" for row in rows)
+    no_link_field = {
+        "status": STATUS_WITHHELD,
+        "value": None,
+        "reason": "executable_integration_registry.yaml declares no GM/horizontal-mission link field",
+    }
     return {
         "status": STATUS_DERIVED if total else STATUS_WITHHELD,
         "population": total,
+        "population_source": "mission_control/mycelium/executable_integration_registry.yaml",
         "classification_basis": (
-            "explicit graph edges and exact runtime/proof metadata only; "
-            "filenames and labels do not imply consumers or value"
+            "registered nodes, evidenced edges and executed integration paths only; "
+            "tested orphans per executable_integration_value_contract.yaml orphan_policy, "
+            "as reported by scripts/validate_executable_integration_value.py"
         ),
         "metrics": {
             "TEST_PROOF_COVERAGE": ratio_metric(tested_count, total),
             "PIPELINE_INTEGRATION_COVERAGE": ratio_metric(integrated_count, total),
-            "VALUE_EDGE_COVERAGE": ratio_metric(value_linked_count, total),
+            "VALUE_EDGE_COVERAGE": ratio_metric(value_count, total),
             "TESTED_ORPHAN_COUNT": {
                 "status": STATUS_DERIVED if total else STATUS_WITHHELD,
                 "value": orphan_count if total else None,
             },
-            "GM_LINK_COVERAGE": ratio_metric(gm_count, total),
-            "HORIZONTAL_MISSION_LINK_COVERAGE": ratio_metric(horizontal_count, total),
+            "GM_LINK_COVERAGE": dict(no_link_field),
+            "HORIZONTAL_MISSION_LINK_COVERAGE": dict(no_link_field),
+        },
+        "metric_basis": {
+            "TEST_PROOF_COVERAGE": "nodes with tested=true / registered nodes",
+            "PIPELINE_INTEGRATION_COVERAGE": "nodes on an executed, evidenced integration path / registered nodes",
+            "VALUE_EDGE_COVERAGE": "nodes with non-empty value_evidence / registered nodes",
+            "TESTED_ORPHAN_COUNT": "len(executable_value_report.json tested_orphans)",
         },
         "nodes": rows,
     }
 
 
-def build_snapshot(graph: dict[str, Any], obs: dict[str, Any]) -> dict[str, Any]:
+def build_snapshot(
+    graph: dict[str, Any],
+    obs: dict[str, Any],
+    executable_value: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     nodes = graph.get("nodes", [])
     edges = graph.get("edges", [])
     n, e = len(nodes), len(edges)
@@ -298,7 +311,11 @@ def build_snapshot(graph: dict[str, Any], obs: dict[str, Any]) -> dict[str, Any]
         "nodes": node_metrics,
         "pca": pca_projection(obs.get("pca_rows", [])),
         "bradley_terry": bt_rank(obs.get("pairwise_outcomes", [])),
-        "executable_value": executable_value_census(graph),
+        "executable_value": executable_value or {
+            "status": STATUS_WITHHELD,
+            "population": None,
+            "reason": "no executable integration registry evaluated",
+        },
         "guards": {
             "same_graph_multiple_projections": True,
             "no_synthetic_scores": True,
@@ -501,7 +518,7 @@ def main() -> None:
         log_analysis = json.loads(LOG_ANALYSIS.read_text(encoding="utf-8"))
         for node_id, summary in log_analysis.get("nodes", {}).items():
             obs.setdefault("nodes", {}).setdefault(node_id, {})["logs"] = summary
-    snapshot = build_snapshot(graph, obs)
+    snapshot = build_snapshot(graph, obs, executable_value_census(*registry_executable_value()))
     if SOURCE_STATUS.exists():
         source_status = json.loads(SOURCE_STATUS.read_text(encoding="utf-8"))
         apply_source_status_overlay(snapshot, source_status)
