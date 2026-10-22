@@ -1,0 +1,26 @@
+{
+  "schema": "code-purple.mycelium.terminal-reconciliation.v1",
+  "observation_class": "GITHUB_PUBLIC_REST_NON_ATOMIC_READBACK",
+  "observed_at": "2026-10-21T14:06:05Z",
+  "authority_transfer": false,
+  "merge_authorized": false,
+  "security_waiver": false,
+  "accepted_root_closures": null,
+  "readback_note": "Unauthenticated public REST re-readback of the four N9 PR-head runs and both owner branches in the 2026-10-21 N10 turn; individual reads are non-atomic. The N9 snapshot is the immutable parent and is not rewritten. Run updated_at is not a certified completion timestamp.",
+  "parent": {
+    "epoch": "N9",
+    "path": "N9_ADMISSION_READBACK_20261017.json",
+    "schema": "code-purple.mycelium.admission-observation.v1",
+    "snapshot_sha256": "38d974315c9f177f23ac653f0d84bcff9f54539ac7be3bf0d608c296001d33ba"
+  },
+  "owners": [
+    {"repository":"GBOGEB/CODEX", "branch":"main", "sha":"8868e3e19a4bc16e5a631fa93f78cfb04a7fee6d", "protected":false, "visible_ruleset_count":0, "required_status_verified":false, "protection_detail":"UNAUTHENTICATED_PUBLIC_READBACK"},
+    {"repository":"GBOGEB/pipeline-automation-hub", "branch":"master", "sha":"af28ae021dfda39bd75057851ee8ed312b8678f5", "protected":false, "visible_ruleset_count":1, "required_status_verified":false, "protection_detail":"UNAUTHENTICATED_PUBLIC_READBACK"}
+  ],
+  "cases": [
+    {"repository":"GBOGEB/CODEX","pr":1061,"run_id":39027132905,"head_sha":"605e5a155961953e149d134c9501b83ca36397d6","run_head_sha":"605e5a155961953e149d134c9501b83ca36397d6","run_attempt":1,"run_status":"completed","run_conclusion":"failure","run_created_at":"2026-10-17T11:01:48Z","run_updated_at":"2026-10-17T11:55:43Z","event":"pull_request"},
+    {"repository":"GBOGEB/CODEX","pr":1063,"run_id":39028816004,"head_sha":"8137b338918176389d3e04bd4b02a827384ab127","run_head_sha":"8137b338918176389d3e04bd4b02a827384ab127","run_attempt":1,"run_status":"completed","run_conclusion":"failure","run_created_at":"2026-10-17T11:28:17Z","run_updated_at":"2026-10-17T12:19:14Z","event":"pull_request"},
+    {"repository":"GBOGEB/pipeline-automation-hub","pr":594,"run_id":39021178532,"head_sha":"69e3fe60dd185669315681efb70e786ada4b2c16","run_head_sha":"69e3fe60dd185669315681efb70e786ada4b2c16","run_attempt":1,"run_status":"completed","run_conclusion":"failure","run_created_at":"2026-10-17T09:27:11Z","run_updated_at":"2026-10-17T09:35:07Z","event":"pull_request"},
+    {"repository":"GBOGEB/pipeline-automation-hub","pr":596,"run_id":39022625422,"head_sha":"a04a6dbc188811d56eaf19a0792685fc95bed745","run_head_sha":"a04a6dbc188811d56eaf19a0792685fc95bed745","run_attempt":1,"run_status":"completed","run_conclusion":"success","run_created_at":"2026-10-17T09:50:11Z","run_updated_at":"2026-10-17T10:11:44Z","event":"pull_request"}
+  ]
+}

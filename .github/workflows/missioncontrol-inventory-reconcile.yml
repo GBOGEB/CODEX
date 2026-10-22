@@ -21,6 +21,11 @@ on:
       - 'tests/**'
       - '.github/workflows/**'
       - 'docs/data/missioncontrol_*.json'
+      - 'MANIFEST/MYCELIUM_KPI_MANIFEST.yaml'
+      - 'MIP/mip_lanes.json'
+      - 'MIP/mip_surface.json'
+      - 'MIP/RUNTIME_HEALTH_ROLLUP_1102.yaml'
+      - 'docs/data/mycelium_kpi_measurement.json'
   workflow_dispatch:
 
 permissions:
@@ -69,6 +74,7 @@ jobs:
             docs/data/missioncontrol_metrics.json
             mission_control/mycelium/log_analysis.json
             docs/data/missioncontrol_log_analysis.json
+            docs/data/mycelium_kpi_measurement.json
           )
           git add -- "${outputs[@]}"
           if git diff --cached --quiet; then

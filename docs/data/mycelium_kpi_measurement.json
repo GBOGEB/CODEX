@@ -1,0 +1,1037 @@
+{
+  "schema_version": "0.1",
+  "manifest_id": "MYCELIUM_KPI_MANIFEST",
+  "authority_class": "DERIVED_MEASUREMENT",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "evidence_policy": "MEASURED_OR_WITHHELD",
+  "composite_score": null,
+  "composite_score_reason": "no_composite_score: KPIs are control signals, not a ranking",
+  "sources": [
+    {
+      "alias": "report",
+      "path": "mission_control/mycelium/executable_value_report.json",
+      "origin": "file",
+      "sha256": "85048f8965f27750eb3eca0a25827bbe4e43f553e40c6580e328852c6e39b34b",
+      "stamp": null
+    },
+    {
+      "alias": "observation",
+      "path": "mission_control/mycelium/executable_value_control_observation.json",
+      "origin": "file",
+      "sha256": "b57dd67181f9ccc57eda6ac56a07bac5c45a3a8bca3266fa3d879ec4d8f664ae",
+      "stamp": null
+    },
+    {
+      "alias": "snapshot",
+      "path": "mission_control/mycelium/metrics_snapshot.json",
+      "origin": "file",
+      "sha256": "742d205f9f4b23ea9fa4eabd601c273ad10dc4833098f2fee51c0a43754a58b9",
+      "stamp": "2026-10-02T13:57:52Z"
+    },
+    {
+      "alias": "control_observations",
+      "path": "mission_control/mycelium/control_observations.json",
+      "origin": "file",
+      "sha256": "fe2b94b1af3b52d2daaa90a57647cb9e6042ce54a137306c4389f3f8028f5fce",
+      "stamp": "2026-10-02T13:57:52Z"
+    },
+    {
+      "alias": "logs",
+      "path": "mission_control/mycelium/log_analysis.json",
+      "origin": "file",
+      "sha256": "8edb73b6980376916656527834e607003c8d470482dd6ca967bdbccc2cf5d79c",
+      "stamp": null
+    },
+    {
+      "alias": "registry",
+      "path": "mission_control/mycelium/executable_integration_registry.yaml",
+      "origin": "file",
+      "sha256": "fdab33c9fd1c60872558d62ee50ee5d83fc9ea7b42822d9747fb71052baf2046",
+      "stamp": "bb171b534943cd76fe761b988c936fbd09cf96ca"
+    },
+    {
+      "alias": "debt",
+      "path": "mission_control/mycelium/registration_debt_classification.json",
+      "origin": "generator",
+      "sha256": null,
+      "stamp": null
+    },
+    {
+      "alias": "mip_lanes",
+      "path": "MIP/mip_lanes.json",
+      "origin": "file",
+      "sha256": "5dc84d2361672ebd90464349b84edd189812d29611f967fd07f9340a49d1bb1a",
+      "stamp": null
+    },
+    {
+      "alias": "mip_surface",
+      "path": "MIP/mip_surface.json",
+      "origin": "file",
+      "sha256": "d1ac0035191ff13412f332cbb247cfda76ef81083ce32d442a41bc90c73ace6c",
+      "stamp": null
+    },
+    {
+      "alias": "mip_health_rollup",
+      "path": "MIP/RUNTIME_HEALTH_ROLLUP_1102.yaml",
+      "origin": "file",
+      "sha256": "d1a2a03afff3fecc2ac5c646dcb40a72390030937a84745126ba12d680d619f9",
+      "stamp": null
+    }
+  ],
+  "summary": {
+    "overall": {
+      "defined": 38,
+      "measured": 38,
+      "withheld": 0,
+      "binding_errors": 0,
+      "measurement_coverage_pct": 100.0,
+      "bands": {
+        "GREEN": 5,
+        "AMBER": 7,
+        "RED": 16,
+        "INFO": 10
+      }
+    },
+    "by_dimension": {
+      "execution": {
+        "defined": 10,
+        "measured": 10,
+        "withheld": 0,
+        "binding_errors": 0,
+        "measurement_coverage_pct": 100.0,
+        "bands": {
+          "GREEN": 2,
+          "AMBER": 1,
+          "RED": 4,
+          "INFO": 3
+        }
+      },
+      "reach": {
+        "defined": 5,
+        "measured": 5,
+        "withheld": 0,
+        "binding_errors": 0,
+        "measurement_coverage_pct": 100.0,
+        "bands": {
+          "GREEN": 0,
+          "AMBER": 1,
+          "RED": 3,
+          "INFO": 1
+        }
+      },
+      "signals": {
+        "defined": 5,
+        "measured": 5,
+        "withheld": 0,
+        "binding_errors": 0,
+        "measurement_coverage_pct": 100.0,
+        "bands": {
+          "GREEN": 0,
+          "AMBER": 4,
+          "RED": 0,
+          "INFO": 1
+        }
+      },
+      "health": {
+        "defined": 6,
+        "measured": 6,
+        "withheld": 0,
+        "binding_errors": 0,
+        "measurement_coverage_pct": 100.0,
+        "bands": {
+          "GREEN": 2,
+          "AMBER": 1,
+          "RED": 2,
+          "INFO": 1
+        }
+      },
+      "dmaic": {
+        "defined": 3,
+        "measured": 3,
+        "withheld": 0,
+        "binding_errors": 0,
+        "measurement_coverage_pct": 100.0,
+        "bands": {
+          "GREEN": 0,
+          "AMBER": 0,
+          "RED": 1,
+          "INFO": 2
+        }
+      },
+      "mip": {
+        "defined": 4,
+        "measured": 4,
+        "withheld": 0,
+        "binding_errors": 0,
+        "measurement_coverage_pct": 100.0,
+        "bands": {
+          "GREEN": 0,
+          "AMBER": 0,
+          "RED": 3,
+          "INFO": 1
+        }
+      },
+      "maturity_scoring": {
+        "defined": 5,
+        "measured": 5,
+        "withheld": 0,
+        "binding_errors": 0,
+        "measurement_coverage_pct": 100.0,
+        "bands": {
+          "GREEN": 1,
+          "AMBER": 0,
+          "RED": 3,
+          "INFO": 1
+        }
+      }
+    },
+    "checks": {
+      "PASS": 3,
+      "FAIL": 3,
+      "WITHHELD": 0,
+      "BINDING_ERROR": 0
+    }
+  },
+  "kpis": [
+    {
+      "id": "EXE-01",
+      "dimension": "execution",
+      "name": "Integration path execution rate",
+      "unit": "pct",
+      "direction": "higher_is_better",
+      "target": 100,
+      "dmaic_phase": "CONTROL",
+      "status": "MEASURED",
+      "value": 100.0,
+      "band": "GREEN",
+      "inputs": {
+        "numerator": 15,
+        "denominator": 15
+      }
+    },
+    {
+      "id": "EXE-02",
+      "dimension": "execution",
+      "name": "Asset registration coverage",
+      "unit": "pct",
+      "direction": "higher_is_better",
+      "target": 100,
+      "dmaic_phase": "MEASURE",
+      "status": "MEASURED",
+      "value": 10.38,
+      "band": "RED",
+      "inputs": {
+        "numerator": 60,
+        "denominator": 578
+      },
+      "unlock": "Register justified batches of census assets in executable_integration_registry.yaml."
+    },
+    {
+      "id": "EXE-03",
+      "dimension": "execution",
+      "name": "Unregistered asset count",
+      "unit": "count",
+      "direction": "lower_is_better",
+      "target": 0,
+      "dmaic_phase": "IMPROVE",
+      "status": "MEASURED",
+      "value": 518,
+      "band": "RED",
+      "inputs": {
+        "numerator": 518
+      },
+      "unlock": "Work the registration debt queue (next_control_action CLASSIFY_EXECUTABLE_REGISTRATION_DEBT)."
+    },
+    {
+      "id": "EXE-04",
+      "dimension": "execution",
+      "name": "Registered tested orphans",
+      "unit": "count",
+      "direction": "lower_is_better",
+      "target": 0,
+      "dmaic_phase": "CONTROL",
+      "status": "MEASURED",
+      "value": 0,
+      "band": "GREEN",
+      "inputs": {
+        "numerator": 0
+      }
+    },
+    {
+      "id": "EXE-05",
+      "dimension": "execution",
+      "name": "Unregistered tested orphans",
+      "unit": "count",
+      "direction": "lower_is_better",
+      "target": 0,
+      "dmaic_phase": "IMPROVE",
+      "status": "MEASURED",
+      "value": 14,
+      "band": "RED",
+      "inputs": {
+        "numerator": 14
+      },
+      "unlock": "Bind each unregistered tested orphan to an executable workflow step, or register it as library-only."
+    },
+    {
+      "id": "EXE-06",
+      "dimension": "execution",
+      "name": "Registration debt ready for pipeline integration",
+      "unit": "pct",
+      "direction": "info",
+      "target": null,
+      "dmaic_phase": "ANALYZE",
+      "status": "MEASURED",
+      "value": 42.66,
+      "band": "INFO",
+      "inputs": {
+        "numerator": 221,
+        "denominator": 518
+      }
+    },
+    {
+      "id": "EXE-07",
+      "dimension": "execution",
+      "name": "Unresolved registration debt",
+      "unit": "count",
+      "direction": "lower_is_better",
+      "target": 0,
+      "dmaic_phase": "ANALYZE",
+      "status": "MEASURED",
+      "value": 48,
+      "band": "RED",
+      "inputs": {
+        "numerator": 48
+      },
+      "unlock": "Classify each unresolved asset as register, library-only or archive/remove."
+    },
+    {
+      "id": "EXE-08",
+      "dimension": "execution",
+      "name": "Registered nodes pending exact-head proof",
+      "unit": "pct",
+      "direction": "lower_is_better",
+      "target": 0,
+      "dmaic_phase": "CONTROL",
+      "status": "MEASURED",
+      "value": 5.5,
+      "band": "AMBER",
+      "inputs": {
+        "numerator": 6,
+        "denominator": 109
+      }
+    },
+    {
+      "id": "EXE-09",
+      "dimension": "execution",
+      "name": "Registered nodes at pipeline-integrated state",
+      "unit": "pct",
+      "direction": "info",
+      "target": null,
+      "dmaic_phase": "CONTROL",
+      "status": "MEASURED",
+      "value": 25.69,
+      "band": "INFO",
+      "inputs": {
+        "numerator": 28,
+        "denominator": 109
+      }
+    },
+    {
+      "id": "EXE-10",
+      "dimension": "execution",
+      "name": "Registered state distribution",
+      "unit": "distribution",
+      "direction": "info",
+      "target": null,
+      "dmaic_phase": "MEASURE",
+      "status": "MEASURED",
+      "value": {
+        "BRIDGE_ALIGNMENT_PASS_GLOBAL_SNAPSHOT_RUFF_FAILED": 1,
+        "CANDIDATE_CONTRACT": 1,
+        "CONNECTED": 1,
+        "CONNECTED_PENDING_EXACT_HEAD_PROOF": 3,
+        "CONSUMED_EVIDENCE": 12,
+        "CONSUMER_PENDING_EXACT_HEAD_PROOF": 1,
+        "DOWNSTREAM_CONSUMER": 12,
+        "DOWNSTREAM_CONSUMER_CHILD_ACCEPTANCE_WITHHELD": 1,
+        "DOWNSTREAM_CONSUMER_GLOBAL_CONTROL_WITHHELD": 1,
+        "DOWNSTREAM_CONSUMER_SOFT_RUFF_DEBT_PRESERVED": 1,
+        "EXECUTED": 1,
+        "EXECUTED_DOWNSTREAM_PATH": 2,
+        "FEDERATION_HOSTED_MATERIALIZATION": 1,
+        "FEDERATION_HOSTED_PROOF": 1,
+        "HOSTED_MATERIALIZATION_EVIDENCE": 1,
+        "PIPELINE_INTEGRATED": 28,
+        "PIPELINE_INTEGRATED_PENDING_EXACT_HEAD_PROOF": 2,
+        "PIPELINE_INTEGRATED_SOFT_RUFF_DEBT_PRESERVED": 1,
+        "REGISTERED_CONNECTED_VALUE_WITHHELD": 30,
+        "REPOSITORY_ARTIFACT_PROOF": 1,
+        "REPOSITORY_ARTIFACT_VALUE": 1,
+        "REX_OBSERVABLE": 1,
+        "REX_OBSERVABLE_EVIDENCE": 1,
+        "SOURCE_BOUND": 4
+      },
+      "band": "INFO",
+      "inputs": {
+        "numerator": {
+          "BRIDGE_ALIGNMENT_PASS_GLOBAL_SNAPSHOT_RUFF_FAILED": 1,
+          "CANDIDATE_CONTRACT": 1,
+          "CONNECTED": 1,
+          "CONNECTED_PENDING_EXACT_HEAD_PROOF": 3,
+          "CONSUMED_EVIDENCE": 12,
+          "CONSUMER_PENDING_EXACT_HEAD_PROOF": 1,
+          "DOWNSTREAM_CONSUMER": 12,
+          "DOWNSTREAM_CONSUMER_CHILD_ACCEPTANCE_WITHHELD": 1,
+          "DOWNSTREAM_CONSUMER_GLOBAL_CONTROL_WITHHELD": 1,
+          "DOWNSTREAM_CONSUMER_SOFT_RUFF_DEBT_PRESERVED": 1,
+          "EXECUTED": 1,
+          "EXECUTED_DOWNSTREAM_PATH": 2,
+          "FEDERATION_HOSTED_MATERIALIZATION": 1,
+          "FEDERATION_HOSTED_PROOF": 1,
+          "HOSTED_MATERIALIZATION_EVIDENCE": 1,
+          "PIPELINE_INTEGRATED": 28,
+          "PIPELINE_INTEGRATED_PENDING_EXACT_HEAD_PROOF": 2,
+          "PIPELINE_INTEGRATED_SOFT_RUFF_DEBT_PRESERVED": 1,
+          "REGISTERED_CONNECTED_VALUE_WITHHELD": 30,
+          "REPOSITORY_ARTIFACT_PROOF": 1,
+          "REPOSITORY_ARTIFACT_VALUE": 1,
+          "REX_OBSERVABLE": 1,
+          "REX_OBSERVABLE_EVIDENCE": 1,
+          "SOURCE_BOUND": 4
+        }
+      }
+    },
+    {
+      "id": "RCH-01",
+      "dimension": "reach",
+      "name": "Value beyond repository",
+      "unit": "pct",
+      "direction": "higher_is_better",
+      "target": 50,
+      "dmaic_phase": "IMPROVE",
+      "status": "MEASURED",
+      "value": 12.84,
+      "band": "RED",
+      "inputs": {
+        "numerator": 14,
+        "denominator": 109
+      }
+    },
+    {
+      "id": "RCH-02",
+      "dimension": "reach",
+      "name": "Tested-only share",
+      "unit": "pct",
+      "direction": "lower_is_better",
+      "target": 0,
+      "dmaic_phase": "IMPROVE",
+      "status": "MEASURED",
+      "value": 27.52,
+      "band": "RED",
+      "inputs": {
+        "numerator": 30,
+        "denominator": 109
+      }
+    },
+    {
+      "id": "RCH-03",
+      "dimension": "reach",
+      "name": "Federation value nodes",
+      "unit": "count",
+      "direction": "higher_is_better",
+      "target": 5,
+      "dmaic_phase": "IMPROVE",
+      "status": "MEASURED",
+      "value": 3,
+      "band": "AMBER",
+      "inputs": {
+        "numerator": 3
+      }
+    },
+    {
+      "id": "RCH-04",
+      "dimension": "reach",
+      "name": "Recursive control value nodes",
+      "unit": "count",
+      "direction": "higher_is_better",
+      "target": 1,
+      "dmaic_phase": "CONTROL",
+      "status": "MEASURED",
+      "value": 0,
+      "band": "RED",
+      "inputs": {
+        "numerator": 0
+      },
+      "unlock": "Evidence one node whose output feeds back into Mycelium control (V5_RECURSIVE_CONTROL_VALUE)."
+    },
+    {
+      "id": "RCH-05",
+      "dimension": "reach",
+      "name": "Value scope distribution",
+      "unit": "distribution",
+      "direction": "info",
+      "target": null,
+      "dmaic_phase": "MEASURE",
+      "status": "MEASURED",
+      "value": {
+        "V0_TESTED_ONLY": 30,
+        "V1_LOCAL_OPERATIONAL": 0,
+        "V2_REPOSITORY_VALUE": 65,
+        "V3_PROJECT_VALUE": 11,
+        "V4_FEDERATION_VALUE": 3,
+        "V5_RECURSIVE_CONTROL_VALUE": 0
+      },
+      "band": "INFO",
+      "inputs": {
+        "numerator": {
+          "V0_TESTED_ONLY": 30,
+          "V1_LOCAL_OPERATIONAL": 0,
+          "V2_REPOSITORY_VALUE": 65,
+          "V3_PROJECT_VALUE": 11,
+          "V4_FEDERATION_VALUE": 3,
+          "V5_RECURSIVE_CONTROL_VALUE": 0
+        }
+      }
+    },
+    {
+      "id": "SIG-01",
+      "dimension": "signals",
+      "name": "Graph link coverage",
+      "unit": "pct",
+      "direction": "higher_is_better",
+      "target": 80,
+      "dmaic_phase": "MEASURE",
+      "status": "MEASURED",
+      "value": 59.74,
+      "band": "AMBER",
+      "inputs": {
+        "numerator": 59.74
+      }
+    },
+    {
+      "id": "SIG-02",
+      "dimension": "signals",
+      "name": "Proof edge share",
+      "unit": "pct",
+      "direction": "higher_is_better",
+      "target": 50,
+      "dmaic_phase": "MEASURE",
+      "status": "MEASURED",
+      "value": 24.17,
+      "band": "AMBER",
+      "inputs": {
+        "numerator": 29,
+        "denominator": 120
+      }
+    },
+    {
+      "id": "SIG-03",
+      "dimension": "signals",
+      "name": "Blocking edges",
+      "unit": "count",
+      "direction": "lower_is_better",
+      "target": 0,
+      "dmaic_phase": "CONTROL",
+      "status": "MEASURED",
+      "value": 3,
+      "band": "AMBER",
+      "inputs": {
+        "numerator": 3
+      }
+    },
+    {
+      "id": "SIG-04",
+      "dimension": "signals",
+      "name": "Graph density",
+      "unit": "ratio",
+      "direction": "info",
+      "target": null,
+      "dmaic_phase": "MEASURE",
+      "status": "MEASURED",
+      "value": 0.020506,
+      "band": "INFO",
+      "inputs": {
+        "numerator": 0.020506
+      }
+    },
+    {
+      "id": "SIG-05",
+      "dimension": "signals",
+      "name": "Registry edges per registered node",
+      "unit": "ratio",
+      "direction": "higher_is_better",
+      "target": 1.5,
+      "dmaic_phase": "MEASURE",
+      "status": "MEASURED",
+      "value": 0.83,
+      "band": "AMBER",
+      "inputs": {
+        "numerator": 91,
+        "denominator": 109
+      }
+    },
+    {
+      "id": "HLT-01",
+      "dimension": "health",
+      "name": "Required log pass rate",
+      "unit": "pct",
+      "direction": "higher_is_better",
+      "target": 100,
+      "dmaic_phase": "CONTROL",
+      "status": "MEASURED",
+      "value": 100.0,
+      "band": "GREEN",
+      "inputs": {
+        "numerator": 3,
+        "denominator": 3
+      }
+    },
+    {
+      "id": "HLT-02",
+      "dimension": "health",
+      "name": "Log observation coverage",
+      "unit": "pct",
+      "direction": "higher_is_better",
+      "target": 100,
+      "dmaic_phase": "MEASURE",
+      "status": "MEASURED",
+      "value": 50.0,
+      "band": "AMBER",
+      "inputs": {
+        "numerator": 3,
+        "denominator": 6
+      }
+    },
+    {
+      "id": "HLT-03",
+      "dimension": "health",
+      "name": "Open first-red",
+      "unit": "flag",
+      "direction": "lower_is_better",
+      "target": 0,
+      "dmaic_phase": "CONTROL",
+      "status": "MEASURED",
+      "value": 0,
+      "band": "GREEN",
+      "inputs": {
+        "numerator": 0
+      }
+    },
+    {
+      "id": "HLT-04",
+      "dimension": "health",
+      "name": "Code health observation coverage",
+      "unit": "pct",
+      "direction": "higher_is_better",
+      "target": 100,
+      "dmaic_phase": "MEASURE",
+      "status": "MEASURED",
+      "value": 16.67,
+      "band": "RED",
+      "inputs": {
+        "numerator": 1,
+        "denominator": 6
+      },
+      "unlock": "Bind a code-health measurement for each Mycelium node in control_observations.json."
+    },
+    {
+      "id": "HLT-05",
+      "dimension": "health",
+      "name": "Port probe coverage",
+      "unit": "pct",
+      "direction": "higher_is_better",
+      "target": 100,
+      "dmaic_phase": "MEASURE",
+      "status": "MEASURED",
+      "value": 16.67,
+      "band": "RED",
+      "inputs": {
+        "numerator": 1,
+        "denominator": 6
+      },
+      "unlock": "Bind a governed port probe for each Mycelium node."
+    },
+    {
+      "id": "HLT-06",
+      "dimension": "health",
+      "name": "Log failure recurrences",
+      "unit": "count",
+      "direction": "info",
+      "target": null,
+      "dmaic_phase": "ANALYZE",
+      "status": "MEASURED",
+      "value": 1,
+      "band": "INFO",
+      "inputs": {
+        "numerator": 1
+      }
+    },
+    {
+      "id": "DMC-01",
+      "dimension": "dmaic",
+      "name": "DMAIC phase coverage",
+      "unit": "pct",
+      "direction": "higher_is_better",
+      "target": 100,
+      "dmaic_phase": "DEFINE",
+      "status": "MEASURED",
+      "value": 33.33,
+      "band": "RED",
+      "inputs": {
+        "numerator": 2,
+        "denominator": 6
+      },
+      "unlock": "Record an evidenced DMAIC phase per node in control_observations.json."
+    },
+    {
+      "id": "DMC-02",
+      "dimension": "dmaic",
+      "name": "Nodes in CONTROL phase",
+      "unit": "count",
+      "direction": "info",
+      "target": null,
+      "dmaic_phase": "CONTROL",
+      "status": "MEASURED",
+      "value": 1,
+      "band": "INFO",
+      "inputs": {
+        "numerator": 1
+      }
+    },
+    {
+      "id": "DMC-03",
+      "dimension": "dmaic",
+      "name": "DMAIC phase distribution",
+      "unit": "distribution",
+      "direction": "info",
+      "target": null,
+      "dmaic_phase": "MEASURE",
+      "status": "MEASURED",
+      "value": {
+        "ANALYZE": 1,
+        "CONTROL": 1
+      },
+      "band": "INFO",
+      "inputs": {
+        "numerator": {
+          "ANALYZE": 1,
+          "CONTROL": 1
+        }
+      }
+    },
+    {
+      "id": "MIP-01",
+      "dimension": "mip",
+      "name": "Active MIP lanes",
+      "unit": "pct",
+      "direction": "higher_is_better",
+      "target": 100,
+      "dmaic_phase": "IMPROVE",
+      "status": "MEASURED",
+      "value": 20.0,
+      "band": "RED",
+      "inputs": {
+        "numerator": 1,
+        "denominator": 5
+      },
+      "unlock": "Advance seeded MIP lanes with exact-SHA receipts."
+    },
+    {
+      "id": "MIP-02",
+      "dimension": "mip",
+      "name": "Required-green lanes declared GREEN",
+      "unit": "pct",
+      "direction": "higher_is_better",
+      "target": 100,
+      "dmaic_phase": "CONTROL",
+      "status": "MEASURED",
+      "value": 0.0,
+      "band": "RED",
+      "inputs": {
+        "numerator": 0,
+        "denominator": 3
+      },
+      "unlock": "Make the required lanes GREEN per MIP/README.md (exact-SHA diagnostic passes)."
+    },
+    {
+      "id": "MIP-03",
+      "dimension": "mip",
+      "name": "MIP health probe bound",
+      "unit": "flag",
+      "direction": "higher_is_better",
+      "target": 1,
+      "dmaic_phase": "CONTROL",
+      "status": "MEASURED",
+      "value": 0,
+      "band": "RED",
+      "inputs": {
+        "numerator": 0
+      },
+      "unlock": "Declare a health_probe in MIP/mip_surface.json."
+    },
+    {
+      "id": "MIP-04",
+      "dimension": "mip",
+      "name": "Published lane receipts",
+      "unit": "count",
+      "direction": "info",
+      "target": null,
+      "dmaic_phase": "MEASURE",
+      "status": "MEASURED",
+      "value": 0,
+      "band": "INFO",
+      "inputs": {
+        "numerator": 0
+      }
+    },
+    {
+      "id": "SCR-01",
+      "dimension": "maturity_scoring",
+      "name": "Maturity observation coverage",
+      "unit": "pct",
+      "direction": "higher_is_better",
+      "target": 100,
+      "dmaic_phase": "MEASURE",
+      "status": "MEASURED",
+      "value": 0.0,
+      "band": "RED",
+      "inputs": {
+        "numerator": 0,
+        "denominator": 6
+      },
+      "unlock": "Bind the requirement/interface/evidence/validation coverage census per node."
+    },
+    {
+      "id": "SCR-02",
+      "dimension": "maturity_scoring",
+      "name": "PCA observation rows",
+      "unit": "count",
+      "direction": "higher_is_better",
+      "target": 3,
+      "dmaic_phase": "MEASURE",
+      "status": "MEASURED",
+      "value": 0,
+      "band": "RED",
+      "inputs": {
+        "numerator": 0
+      },
+      "unlock": "Record at least 3 complete PCA observation rows in control_observations.json."
+    },
+    {
+      "id": "SCR-03",
+      "dimension": "maturity_scoring",
+      "name": "Pairwise ranking outcomes",
+      "unit": "count",
+      "direction": "higher_is_better",
+      "target": 1,
+      "dmaic_phase": "MEASURE",
+      "status": "MEASURED",
+      "value": 0,
+      "band": "RED",
+      "inputs": {
+        "numerator": 0
+      },
+      "unlock": "Record observed pairwise outcomes in control_observations.json."
+    },
+    {
+      "id": "SCR-04",
+      "dimension": "maturity_scoring",
+      "name": "QPS triage pressure",
+      "unit": "score_0_100",
+      "direction": "info",
+      "target": null,
+      "dmaic_phase": "ANALYZE",
+      "status": "MEASURED",
+      "value": 87,
+      "band": "INFO",
+      "inputs": {
+        "numerator": 87
+      }
+    },
+    {
+      "id": "SCR-05",
+      "dimension": "maturity_scoring",
+      "name": "CODEX QA score",
+      "unit": "score_0_100",
+      "direction": "higher_is_better",
+      "target": 100,
+      "dmaic_phase": "CONTROL",
+      "status": "MEASURED",
+      "value": 100,
+      "band": "GREEN",
+      "inputs": {
+        "numerator": 100
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "CHK-01",
+      "name": "Snapshot tested-orphan count matches value report",
+      "status": "FAIL",
+      "left": 1,
+      "right": 0,
+      "note": "The snapshot evaluates its own 3-node population; a mismatch means the two are not the same measure."
+    },
+    {
+      "id": "CHK-02",
+      "name": "Snapshot executable-value population matches registry",
+      "status": "FAIL",
+      "left": 3,
+      "right": 109
+    },
+    {
+      "id": "CHK-03",
+      "name": "Debt classifier candidates match unregistered count",
+      "status": "PASS",
+      "left": 518,
+      "right": 518
+    },
+    {
+      "id": "CHK-04",
+      "name": "Control observation unregistered count matches report",
+      "status": "PASS",
+      "left": 518,
+      "right": 518
+    },
+    {
+      "id": "CHK-05",
+      "name": "Snapshot stamp matches control observation stamp",
+      "status": "PASS",
+      "left": "2026-10-02T13:57:52Z",
+      "right": "2026-10-02T13:57:52Z"
+    },
+    {
+      "id": "CHK-06",
+      "name": "Registered tested-orphan count matches debt classifier tested orphans",
+      "status": "FAIL",
+      "left": 0,
+      "right": 14,
+      "note": "The report counts registered orphans and the classifier counts unregistered ones; a mismatch is expected until both use one definition."
+    }
+  ],
+  "red_kpis": [
+    {
+      "id": "EXE-02",
+      "name": "Asset registration coverage",
+      "value": 10.38,
+      "target": 100,
+      "unlock": "Register justified batches of census assets in executable_integration_registry.yaml."
+    },
+    {
+      "id": "EXE-03",
+      "name": "Unregistered asset count",
+      "value": 518,
+      "target": 0,
+      "unlock": "Work the registration debt queue (next_control_action CLASSIFY_EXECUTABLE_REGISTRATION_DEBT)."
+    },
+    {
+      "id": "EXE-05",
+      "name": "Unregistered tested orphans",
+      "value": 14,
+      "target": 0,
+      "unlock": "Bind each unregistered tested orphan to an executable workflow step, or register it as library-only."
+    },
+    {
+      "id": "EXE-07",
+      "name": "Unresolved registration debt",
+      "value": 48,
+      "target": 0,
+      "unlock": "Classify each unresolved asset as register, library-only or archive/remove."
+    },
+    {
+      "id": "RCH-01",
+      "name": "Value beyond repository",
+      "value": 12.84,
+      "target": 50,
+      "unlock": null
+    },
+    {
+      "id": "RCH-02",
+      "name": "Tested-only share",
+      "value": 27.52,
+      "target": 0,
+      "unlock": null
+    },
+    {
+      "id": "RCH-04",
+      "name": "Recursive control value nodes",
+      "value": 0,
+      "target": 1,
+      "unlock": "Evidence one node whose output feeds back into Mycelium control (V5_RECURSIVE_CONTROL_VALUE)."
+    },
+    {
+      "id": "HLT-04",
+      "name": "Code health observation coverage",
+      "value": 16.67,
+      "target": 100,
+      "unlock": "Bind a code-health measurement for each Mycelium node in control_observations.json."
+    },
+    {
+      "id": "HLT-05",
+      "name": "Port probe coverage",
+      "value": 16.67,
+      "target": 100,
+      "unlock": "Bind a governed port probe for each Mycelium node."
+    },
+    {
+      "id": "DMC-01",
+      "name": "DMAIC phase coverage",
+      "value": 33.33,
+      "target": 100,
+      "unlock": "Record an evidenced DMAIC phase per node in control_observations.json."
+    },
+    {
+      "id": "MIP-01",
+      "name": "Active MIP lanes",
+      "value": 20.0,
+      "target": 100,
+      "unlock": "Advance seeded MIP lanes with exact-SHA receipts."
+    },
+    {
+      "id": "MIP-02",
+      "name": "Required-green lanes declared GREEN",
+      "value": 0.0,
+      "target": 100,
+      "unlock": "Make the required lanes GREEN per MIP/README.md (exact-SHA diagnostic passes)."
+    },
+    {
+      "id": "MIP-03",
+      "name": "MIP health probe bound",
+      "value": 0,
+      "target": 1,
+      "unlock": "Declare a health_probe in MIP/mip_surface.json."
+    },
+    {
+      "id": "SCR-01",
+      "name": "Maturity observation coverage",
+      "value": 0.0,
+      "target": 100,
+      "unlock": "Bind the requirement/interface/evidence/validation coverage census per node."
+    },
+    {
+      "id": "SCR-02",
+      "name": "PCA observation rows",
+      "value": 0,
+      "target": 3,
+      "unlock": "Record at least 3 complete PCA observation rows in control_observations.json."
+    },
+    {
+      "id": "SCR-03",
+      "name": "Pairwise ranking outcomes",
+      "value": 0,
+      "target": 1,
+      "unlock": "Record observed pairwise outcomes in control_observations.json."
+    }
+  ],
+  "withheld_kpis": [],
+  "unbound_declared_metrics": [
+    {
+      "path": "MANIFEST/PROGRAM_METRICS.yaml",
+      "issue": "Hand-entered scores and KPIs (last edited 2026-05-28); no source, formula or stamp."
+    }
+  ]
+}
