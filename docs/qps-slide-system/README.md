@@ -4,9 +4,11 @@ HTML-first dense engineering knowledge-transfer system for QPS slide decks.
 
 ## Version
 
-`v0.7.0` — Chapter 15 refreshed as a generated, source-bound deck (validated model, physics authority, L1 results, toolbox).
+`v0.8.0` — the semantic navigation graph and node pages are generated from `yaml/nodes/*.yaml` (tree and interface links).
 
-Previous: `v0.6.0` — Chapter 15 calculator tooling + versioning governance seed (superseded by the v0.7.0 deck below).
+Previous: `v0.7.0` — Chapter 15 refreshed as a generated, source-bound deck (validated model, physics authority, L1 results, toolbox).
+
+Earlier: `v0.6.0` — Chapter 15 calculator tooling + versioning governance seed (superseded by the v0.7.0 deck below).
 
 ## Purpose
 
@@ -101,3 +103,18 @@ physics pin + L1 record + gate + basic-incarnation domain
 
 - Review deck: `generated/gistau-ch15-validated-model.html`. Slides are registered as `GISTAU-0001..0009` in `MANIFEST/MASTER_SLIDE_REGISTRY.yaml`.
 - Corporate PPTX: run `qps_post.py pptx` on the generated Markdown, then `qps_qa.py check`. The SCK CEN slide master is built locally and is not committed.
+
+
+## v0.8.0 Semantic navigation graph (generated from node records)
+
+The graph and node pages are built from the node YAML records, so navigation cannot drift from the SBS data:
+
+```text
+yaml/nodes/*.yaml (+ yaml/schema.node.yaml, styles/tokens.yaml)
+  -> tools/build_qps_node_graph.py
+  -> svg/navigation/qps-graph-mvp.svg   (parent tree solid, interface links dashed)
+  -> html/graph/index.html               (graph + node table)
+  -> html/node/<record>.html             (type, parent, children, interfaces, plots, slides, source refs)
+```
+
+To add a node, add a YAML record and run `python tools/build_qps_node_graph.py`. `tests/test_qps_node_graph.py` fails if the outputs are stale, a record is invalid, or a link does not resolve.
