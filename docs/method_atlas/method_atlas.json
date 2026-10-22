@@ -198,19 +198,19 @@
     "customer": "MissionControl Mycelium preflight parity",
     "entry": "scripts/regen_missioncontrol_inventory.py",
     "entry_exists": true,
-    "entry_oid": "c9a18244d41c2169a8de638f397c8465ea2b99a2",
+    "entry_oid": "87b4866c206197a59b228750894634e335a3c729",
     "id": "MC.INVENTORY",
     "inputs": [
      {
       "kind": "glob",
-      "matches": 163,
+      "matches": 164,
       "path": ".github/workflows/*.yml",
       "referenced_by_entry": false,
       "status": "OK"
      },
      {
       "kind": "glob",
-      "matches": 146,
+      "matches": 147,
       "path": "scripts/*.py",
       "referenced_by_entry": false,
       "status": "OK"
@@ -230,7 +230,7 @@
     "outputs": [
      {
       "kind": "file",
-      "oid": "1e2ce1b6455c23f208351cd87cb84c404244617f",
+      "oid": "921fdbf44d0d06e42c0299855e717ab38a9b4454",
       "parse": "OK",
       "path": "mission_control/mycelium/executable_value_report.json",
       "referenced_by_entry": true,
@@ -239,7 +239,7 @@
      },
      {
       "kind": "file",
-      "oid": "1e2ce1b6455c23f208351cd87cb84c404244617f",
+      "oid": "921fdbf44d0d06e42c0299855e717ab38a9b4454",
       "parse": "OK",
       "path": "docs/data/missioncontrol_executable_value_report.json",
       "referenced_by_entry": true,
@@ -967,7 +967,7 @@
    "RUNTIME_ONLY": 4
   }
  },
- "digest": "ebc98cf16667890eedfc658feeed13b49ed15790b09c013858191b935bb78f74",
+ "digest": "d72e45b7e8df92cbedf74446437138974d839cf3bc94d0ff9f2a03331d3dd3ba",
  "health": {
   "dimensions": [
    {
@@ -1687,17 +1687,17 @@
       "checks": [
        {
         "completion": 1.0,
-        "den": 833,
+        "den": 843,
         "evidence": [],
         "id": "syntax",
         "label": "Python files parse (ast)",
         "note": null,
-        "num": 833,
+        "num": 843,
         "weight": 3
        },
        {
         "completion": 0.9976,
-        "den": 833,
+        "den": 843,
         "evidence": [
          "tools/method_atlas/build_method_atlas.py",
          "tools/pid_semantic_parser.py"
@@ -1705,19 +1705,17 @@
         "id": "size",
         "label": "Files at most 800 lines",
         "note": null,
-        "num": 831,
+        "num": 841,
         "weight": 1
        },
        {
-        "completion": 0.9988,
-        "den": 833,
-        "evidence": [
-         "analytics/qps_thermo_dashboard/build_qps_thermo_dashboard.py"
-        ],
+        "completion": 1.0,
+        "den": 843,
+        "evidence": [],
         "id": "warnings",
         "label": "No SyntaxWarnings (e.g. invalid escape sequences)",
         "note": null,
-        "num": 832,
+        "num": 843,
         "weight": 1
        },
        {
@@ -1740,23 +1738,23 @@
         "weight": 1
        },
        {
-        "completion": 0.9961,
+        "completion": 0.9962,
         "den": 1,
         "evidence": [],
         "id": "markers",
         "label": "TODO/FIXME debt under 5 per kLOC",
         "note": "2 markers, 0.02 per kLOC",
-        "num": 0.9960922235248144,
+        "num": 0.9961539570973914,
         "weight": 1
        }
       ],
       "metrics": {
        "large_files": 2,
-       "loc": 102360,
+       "loc": 104003,
        "markers": 2,
        "parse_failures": 0,
-       "python_files": 833,
-       "syntax_warnings": 1
+       "python_files": 843,
+       "syntax_warnings": 0
       },
       "score": 99.9,
       "status": "GREEN"
@@ -1814,17 +1812,17 @@
        },
        {
         "completion": 1.0,
-        "den": 40,
+        "den": 42,
         "evidence": [],
         "id": "data",
         "label": "DMAIC data files parse",
         "note": null,
-        "num": 40,
+        "num": 42,
         "weight": 1
        }
       ],
       "metrics": {
-       "files": 74,
+       "files": 76,
        "modules": 20,
        "phases": [
         "define",
@@ -2042,17 +2040,17 @@
        },
        {
         "completion": 1.0,
-        "den": 60,
+        "den": 65,
         "evidence": [],
         "id": "receipts",
         "label": "MIP data/receipts parse",
         "note": null,
-        "num": 60,
+        "num": 65,
         "weight": 1
        },
        {
-        "completion": 0.8235,
-        "den": 17,
+        "completion": 0.8333,
+        "den": 18,
         "evidence": [
          "scripts/build_m4_crosswalk.py",
          "scripts/validate_w259_p4_method_cards_knowledge_atom.py",
@@ -2061,7 +2059,7 @@
         "id": "tested",
         "label": "MIP modules referenced by tests",
         "note": null,
-        "num": 14,
+        "num": 15,
         "weight": 2
        },
        {
@@ -2085,16 +2083,16 @@
        }
       ],
       "metrics": {
-       "ci_workflows": 14,
-       "files": 102,
-       "modules": 17,
+       "ci_workflows": 17,
+       "files": 108,
+       "modules": 18,
        "stages": [
         "modernize",
         "innovate",
         "perpetuate"
        ]
       },
-      "score": 94.1,
+      "score": 94.4,
       "status": "GREEN"
      },
      "sql": {
@@ -2108,23 +2106,23 @@
       "applicable": true,
       "checks": [
        {
-        "completion": 0.9358,
+        "completion": 0.9455,
         "den": 1,
         "evidence": [],
         "id": "ratio",
         "label": "Test files per module (target 0.5)",
-        "note": "255 test files / 545 modules = 0.47",
-        "num": 0.9357798165137615,
+        "note": "260 test files / 550 modules = 0.47",
+        "num": 0.9454545454545454,
         "weight": 2
        },
        {
         "completion": 1.0,
-        "den": 250,
+        "den": 255,
         "evidence": [],
         "id": "non_empty",
         "label": "Test files define tests",
         "note": null,
-        "num": 250,
+        "num": 255,
         "weight": 2
        },
        {
@@ -2161,16 +2159,16 @@
        }
       ],
       "metrics": {
-       "ci_workflows_running_tests": 56,
-       "modules": 545,
-       "test_files": 255,
-       "test_functions": 1972
+       "ci_workflows_running_tests": 57,
+       "modules": 550,
+       "test_files": 260,
+       "test_functions": 2057
       },
-      "score": 98.2,
+      "score": 98.4,
       "status": "GREEN"
      }
     },
-    "overall": 89.2,
+    "overall": 89.3,
     "status": "GREEN"
    },
    "HUB": {
@@ -4225,7 +4223,7 @@
    {
     "counts": {},
     "lanes": [],
-    "oid": "731dd84640383e80ed9eaa85f0574246f92cdf17",
+    "oid": "c2940e6d0566d76acfced9fc83cbd4ea7612613a",
     "path": "abacus_render_pipeline/A7_executable_semantic_runtime/data/governance_ledger.json",
     "repo": "CODEX",
     "rows": null,
@@ -4582,7 +4580,7 @@
      "drain_minutes_est": 18,
      "drain_waves": 3,
      "jobs": 52,
-     "jobs_max": 197,
+     "jobs_max": 198,
      "label": "One PR to CODEX",
      "mode": "PEAK",
      "queue_depth": 32,
@@ -4637,7 +4635,7 @@
      "drain_minutes_est": 60,
      "drain_waves": 10,
      "jobs": 189,
-     "jobs_max": 1381,
+     "jobs_max": 1382,
      "label": "Burst: 5 PRs + peak cron minute",
      "mode": "SURGE",
      "queue_depth": 169,
@@ -7317,7 +7315,7 @@
     "by_trigger": {
      "issue_comment": 2,
      "merge_group": 1,
-     "pull_request": 139,
+     "pull_request": 140,
      "pull_request_review_comment": 1,
      "push": 75,
      "repository_dispatch": 3,
@@ -7326,8 +7324,8 @@
      "workflow_dispatch": 126,
      "workflow_run": 1
     },
-    "cancel_in_progress": 17,
-    "dispatch_senders": 1,
+    "cancel_in_progress": 18,
+    "dispatch_senders": 2,
     "flood_risk_workflows": [
      ".github/workflows/abacus-multiformat-publication.yml",
      ".github/workflows/abacus-semantic-runtime.yml",
@@ -7455,14 +7453,14 @@
      ".github/workflows/workflow-registration-guard.yml"
     ],
     "parse_errors": 0,
-    "pr_jobs_max": 197,
+    "pr_jobs_max": 198,
     "pr_jobs_min": 52,
     "push_jobs_max": 109,
     "push_jobs_min": 42,
     "scheduled": 13,
     "self_hosted": 1,
-    "with_concurrency": 27,
-    "workflows": 163
+    "with_concurrency": 28,
+    "workflows": 164
    },
    "HUB": {
     "broad_pr_workflows": [
@@ -15096,6 +15094,30 @@
     "upstream_workflows": []
    },
    {
+    "cancel_in_progress": true,
+    "concurrency_group": true,
+    "crons": [],
+    "dispatches_out": true,
+    "dynamic_matrix": false,
+    "file": ".github/workflows/missioncontrol-inventory-autoregen.yml",
+    "job_slots": 1,
+    "jobs": 1,
+    "lanes": [],
+    "max_parallel": null,
+    "max_timeout_min": 360,
+    "name": "MissionControl Inventory Autoregen",
+    "needs_depth": 1,
+    "path_filtered": {
+     "pull_request": true
+    },
+    "repo": "CODEX",
+    "self_hosted": false,
+    "triggers": [
+     "pull_request"
+    ],
+    "upstream_workflows": []
+   },
+   {
     "cancel_in_progress": false,
     "concurrency_group": true,
     "crons": [],
@@ -21270,7 +21292,7 @@
    "present": true,
    "remote": "GBOGEB/CODEX",
    "role": "Control plane, Mycelium, Mission Control atlas host",
-   "tracked_files": 2722
+   "tracked_files": 2739
   },
   {
    "branch": "main",
@@ -22065,10 +22087,10 @@
     "display": "CODE PURPLE",
     "files_by_repo": {
      "ABACUS": 270,
-     "CODEX": 154,
+     "CODEX": 156,
      "HUB": 364
     },
-    "files_total": 788,
+    "files_total": 790,
     "id": "CPURPLE",
     "meaning": "Execution graph, global DOV live bridge and lossless handover (MERGE_ADMISSION=HOLD)",
     "nonstandard_mentions": 437,
@@ -22083,7 +22105,7 @@
     "variants": [
      {
       "canonical": true,
-      "count": 918,
+      "count": 924,
       "normalize_to": null,
       "spelling": "code-purple"
      },
@@ -22244,7 +22266,7 @@
     "use": "Distinguish coordinated tranche / source receipt / independently owned edit"
    },
    {
-    "files": 680,
+    "files": 687,
     "id": "MIP",
     "label": "Modernize Innovate Perpetuate",
     "not": "A native CI pass by itself",
@@ -22252,7 +22274,7 @@
     "use": "Recursive improvement with measurable controls"
    },
    {
-    "files": 1236,
+    "files": 1239,
     "id": "DMAIC",
     "label": "Define Measure Analyze Improve Control",
     "not": "Evidence of merger",
