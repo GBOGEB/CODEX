@@ -33,7 +33,18 @@ debt classification (in memory)     scripts/measure_mycelium_kpis.py
 - **No composite score.** Bands are control signals, not credit;
   `composite_score` is always `null`.
 - **Disagreements are reported.** `checks` compare the same fact across two
-  producers and report `FAIL` instead of reconciling.
+  producers and report `FAIL` instead of reconciling. A check only pairs
+  values over the same population under the same definition; two measures
+  that merely share a name are separate KPIs, not a check.
+- **One tested-orphan definition.** A tested orphan is a tested registered
+  node with no operational edge and no downstream consumer that is not
+  `LIBRARY_REFERENCE_ONLY` (`executable_integration_value_contract.yaml`
+  `orphan_policy`). `validate_executable_integration_value.py` evaluates it
+  over `executable_integration_registry.yaml`. The metrics snapshot's
+  `executable_value` block uses that same registry and evaluator. The debt
+  classifier's `TESTED_ORPHAN` class (EXE-05) is a pre-registration triage
+  class over the disjoint unregistered population, so it is reported on its
+  own and never compared with the registered count.
 - **Unbound numbers are named.** `unbound_declared_metrics` lists metric
   files that carry hand-entered scores (currently
   `MANIFEST/PROGRAM_METRICS.yaml`), so they are not mistaken for

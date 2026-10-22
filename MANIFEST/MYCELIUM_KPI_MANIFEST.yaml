@@ -591,11 +591,15 @@ checks:
     name: Snapshot tested-orphan count matches value report
     left: {source: snapshot, path: executable_value/metrics/TESTED_ORPHAN_COUNT/value}
     right: {source: report, path: tested_orphans, agg: len}
-    note: The snapshot evaluates its own 3-node population; a mismatch means the two are not the same measure.
+    note: >-
+      Both count registered tested orphans under the contract orphan_policy;
+      build_missioncontrol_metrics.py evaluates the registry with the same
+      validate_registry() that writes the report.
   - id: CHK-02
     name: Snapshot executable-value population matches registry
     left: {source: snapshot, path: executable_value/population}
     right: {source: report, path: registered_node_count}
+    note: The snapshot's executable_value population is executable_integration_registry.yaml, not interaction_graph.json.
   - id: CHK-03
     name: Debt classifier candidates match unregistered count
     left: {source: debt, path: candidate_count}
@@ -609,10 +613,13 @@ checks:
     left: {source: snapshot, path: snapshot_at}
     right: {source: control_observations, path: snapshot_at}
   - id: CHK-06
-    name: Registered tested-orphan count matches debt classifier tested orphans
-    left: {source: report, path: tested_orphans, agg: len}
-    right: {source: debt, path: classification_counts/TESTED_ORPHAN}
-    note: The report counts registered orphans and the classifier counts unregistered ones; a mismatch is expected until both use one definition.
+    name: Control observation tested-orphan count matches value report
+    left: {source: observation, path: tested_orphan_count}
+    right: {source: report, path: tested_orphans, agg: len}
+    note: >-
+      Registered tested orphans only. The debt classifier's TESTED_ORPHAN class
+      (EXE-05) is a different measure over the disjoint unregistered population
+      (test-name evidence, no workflow reference), so it is not compared here.
 
 # What is needed to move each KPI toward target (shown on its report row).
 unlock:

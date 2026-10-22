@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "snapshot_at": "2026-10-02T13:57:52Z",
+  "snapshot_at": "2026-10-22T07:17:42Z",
   "evidence_policy": "MEASURED_OR_WITHHELD",
   "graph": {
     "node_count": 77,
@@ -36,10 +36,13 @@
       },
       "maturity": {
         "status": "WITHHELD",
-        "value": null
+        "reason": "requirement/interface/evidence/validation coverage census not yet bound",
+        "unlock": "bind requirement_coverage, interface_closure, evidence_coverage and validation_coverage for this node"
       },
       "dmaic": {
-        "status": "WITHHELD"
+        "status": "WITHHELD",
+        "reason": "DMAIC is defined for main topics; no governed rule maps a whole repository to one phase",
+        "unlock": "bind a repo-level DMAIC derivation rule in control_manifest.yaml, or exclude repo nodes from DMC-01"
       },
       "logs": {
         "status": "MEASURED",
@@ -95,10 +98,17 @@
       },
       "maturity": {
         "status": "WITHHELD",
-        "value": null
+        "reason": "requirement/interface/evidence/validation coverage census not yet bound",
+        "unlock": "bind requirement_coverage, interface_closure, evidence_coverage and validation_coverage for this node"
       },
       "dmaic": {
-        "status": "WITHHELD"
+        "status": "DERIVED_FROM_MEASURED",
+        "phase": "ANALYZE",
+        "basis": "dominant blocker identified (cryoplant-project #540) and boundary still in source-verification RFI (#210, state open at receipt); reverse-pressure analysis bound; DOW calculation not yet returned",
+        "evidence": [
+          "mission_control/mycelium/evidence/cryo_if_b_pressure_input_closure_20261001.json"
+        ],
+        "observed_at_receipt": "CRYO_IF_B_PRESSURE_INPUT_CLOSURE_20261001"
       },
       "logs": {
         "status": "WITHHELD"
@@ -107,7 +117,20 @@
         "status": "WITHHELD"
       },
       "ports": {
-        "status": "WITHHELD"
+        "status": "DERIVED_FROM_MEASURED",
+        "value": 100,
+        "probed_ports": 1,
+        "declared_ports": 1,
+        "ports": [
+          "QPS_TRIAGE_RETURN"
+        ],
+        "probe_state": "PASS_EXACT_TYPED_RETURN",
+        "basis": "qps_triage_b priority/return metadata transits the declared QPS_TRIAGE_RETURN port (port_registry.json)",
+        "evidence": [
+          "mission_control/mycelium/evidence/port_probe_receipts_20261001.json",
+          "mission_control/mycelium/port_registry.json",
+          "mission_control/mycelium/evidence/cryoplant_master_input_ledger_return_1834.json"
+        ]
       },
       "code_health": {
         "status": "WITHHELD",
@@ -118,7 +141,8 @@
     "topic_2k_refrigeration": {
       "maturity": {
         "status": "WITHHELD",
-        "reason": "requirement/interface/evidence/validation coverage census not yet bound"
+        "reason": "requirement/interface/evidence/validation coverage census not yet bound",
+        "unlock": "bind requirement_coverage, interface_closure, evidence_coverage and validation_coverage for this node"
       },
       "dmaic": {
         "status": "DERIVED_FROM_MEASURED",
@@ -132,7 +156,9 @@
         "status": "WITHHELD"
       },
       "ports": {
-        "status": "WITHHELD"
+        "status": "WITHHELD",
+        "reason": "DOW_EVIDENCE_RETURN is pinned to the HM01 support return, not the B-interface DOW gap this topic is waiting on",
+        "unlock": "declare a port for this node in port_registry.json and bind an exact governed source-to-target probe receipt"
       },
       "code_health": {
         "status": "WITHHELD",
@@ -143,10 +169,16 @@
     "dab_mech": {
       "maturity": {
         "status": "WITHHELD",
-        "value": null
+        "reason": "requirement/interface/evidence/validation coverage census not yet bound",
+        "unlock": "bind requirement_coverage, interface_closure, evidence_coverage and validation_coverage for this node"
       },
       "dmaic": {
-        "status": "WITHHELD"
+        "status": "DERIVED_FROM_MEASURED",
+        "phase": "CONTROL",
+        "basis": "W293 residual 0 measured at exact current-main census 37016094260; exact-SHA proof and drift watch",
+        "evidence": [
+          "mission_control/mycelium/evidence/abacus_dab_post_1697_measured_e302_promoted.json"
+        ]
       },
       "logs": {
         "status": "MEASURED",
@@ -160,7 +192,9 @@
         "status": "WITHHELD"
       },
       "ports": {
-        "status": "WITHHELD"
+        "status": "WITHHELD",
+        "reason": "no port declared for this node",
+        "unlock": "declare a port for this node in port_registry.json and bind an exact governed source-to-target probe receipt"
       },
       "mechanical_progress": {
         "status": "MEASURED",
@@ -186,18 +220,32 @@
         "artifact_sha256": "6f742d011f42c02774b3607af7fe5d516b902e42d31200a877dbe3a803cbc0a4"
       },
       "code_health": {
-        "status": "WITHHELD",
-        "value": null,
-        "inputs": {}
+        "status": "DERIVED_FROM_MEASURED",
+        "value": 100,
+        "coverage": 0.25,
+        "used_inputs": [
+          "lint_health"
+        ],
+        "missing_inputs": [
+          "debug_health",
+          "qa_gate_health",
+          "test_health"
+        ]
       }
     },
     "dab_hard": {
       "maturity": {
         "status": "WITHHELD",
-        "value": null
+        "reason": "requirement/interface/evidence/validation coverage census not yet bound",
+        "unlock": "bind requirement_coverage, interface_closure, evidence_coverage and validation_coverage for this node"
       },
       "dmaic": {
-        "status": "WITHHELD"
+        "status": "DERIVED_FROM_MEASURED",
+        "phase": "CONTROL",
+        "basis": "7 of 8 protected hard families at 0 in exact current-main census 37016094260; remaining E999=1 is a SOURCE_BOUND_HOLD (qplant/w52_p2m_ts_pressure_sensitivity.py)",
+        "evidence": [
+          "mission_control/mycelium/evidence/abacus_dab_post_1697_measured_e302_promoted.json"
+        ]
       },
       "logs": {
         "status": "MEASURED",
@@ -211,7 +259,9 @@
         "status": "WITHHELD"
       },
       "ports": {
-        "status": "WITHHELD"
+        "status": "WITHHELD",
+        "reason": "no port declared for this node",
+        "unlock": "declare a port for this node in port_registry.json and bind an exact governed source-to-target probe receipt"
       },
       "family_progress": [
         {
@@ -317,15 +367,24 @@
         }
       ],
       "code_health": {
-        "status": "WITHHELD",
-        "value": null,
-        "inputs": {}
+        "status": "DERIVED_FROM_MEASURED",
+        "value": 99.37,
+        "coverage": 0.25,
+        "used_inputs": [
+          "lint_health"
+        ],
+        "missing_inputs": [
+          "debug_health",
+          "qa_gate_health",
+          "test_health"
+        ]
       }
     },
     "dab_bd8k": {
       "maturity": {
         "status": "WITHHELD",
-        "reason": "campaign maturity is not a formal engineering state"
+        "reason": "campaign maturity is not a formal engineering state",
+        "unlock": "none intended: campaign maturity is not a formal engineering state"
       },
       "dmaic": {
         "status": "DERIVED_FROM_MEASURED",
@@ -339,7 +398,9 @@
         "status": "WITHHELD"
       },
       "ports": {
-        "status": "WITHHELD"
+        "status": "WITHHELD",
+        "reason": "no port declared for this node",
+        "unlock": "declare a port for this node in port_registry.json and bind an exact governed source-to-target probe receipt"
       },
       "campaign": {
         "status": "G2_MEASURED_3129_E302_SINGLE_PROMOTION",
@@ -575,15 +636,74 @@
         }
       ],
       "code_health": {
-        "status": "WITHHELD",
-        "value": null,
-        "inputs": {}
+        "status": "DERIVED_FROM_MEASURED",
+        "value": 60.44,
+        "coverage": 0.25,
+        "used_inputs": [
+          "lint_health"
+        ],
+        "missing_inputs": [
+          "debug_health",
+          "qa_gate_health",
+          "test_health"
+        ]
       }
     }
   },
   "pca": {
-    "status": "WITHHELD",
-    "reason": "fewer than 3 complete observations"
+    "status": "DERIVED_FROM_MEASURED",
+    "features": [
+      "E722",
+      "E741",
+      "F841",
+      "W293",
+      "total"
+    ],
+    "explained_variance_ratio": [
+      0.803755,
+      0.14751,
+      0.031704,
+      0.016254,
+      0.000777
+    ],
+    "components": [
+      [
+        -0.34751,
+        -0.471073,
+        -0.480129,
+        -0.445803,
+        -0.47756
+      ],
+      [
+        -0.816813,
+        -0.251929,
+        0.242424,
+        0.398975,
+        0.226711
+      ],
+      [
+        -0.337095,
+        0.431123,
+        -0.057609,
+        -0.667748,
+        0.501292
+      ],
+      [
+        -0.233077,
+        0.621259,
+        -0.590227,
+        0.401247,
+        -0.224378
+      ],
+      [
+        0.209989,
+        -0.377878,
+        -0.599183,
+        0.187598,
+        0.647224
+      ]
+    ],
+    "interpretation_guard": "component order is diagnostic variance, not priority or importance"
   },
   "bradley_terry": {
     "status": "WITHHELD",
@@ -592,67 +712,1024 @@
   },
   "executable_value": {
     "status": "DERIVED_FROM_MEASURED",
-    "population": 3,
-    "classification_basis": "explicit graph edges and exact runtime/proof metadata only; filenames and labels do not imply consumers or value",
+    "population": 109,
+    "population_source": "mission_control/mycelium/executable_integration_registry.yaml",
+    "classification_basis": "registered nodes, evidenced edges and executed integration paths only; tested orphans per executable_integration_value_contract.yaml orphan_policy, as reported by scripts/validate_executable_integration_value.py",
     "metrics": {
       "TEST_PROOF_COVERAGE": {
         "status": "DERIVED_FROM_MEASURED",
-        "value": 33.33
+        "value": 100
       },
       "PIPELINE_INTEGRATION_COVERAGE": {
         "status": "DERIVED_FROM_MEASURED",
-        "value": 0
+        "value": 70.64
       },
       "VALUE_EDGE_COVERAGE": {
         "status": "DERIVED_FROM_MEASURED",
-        "value": 0
+        "value": 72.48
       },
       "TESTED_ORPHAN_COUNT": {
         "status": "DERIVED_FROM_MEASURED",
-        "value": 1
+        "value": 0
       },
       "GM_LINK_COVERAGE": {
-        "status": "DERIVED_FROM_MEASURED",
-        "value": 0
+        "status": "WITHHELD",
+        "value": null,
+        "reason": "executable_integration_registry.yaml declares no GM/horizontal-mission link field"
       },
       "HORIZONTAL_MISSION_LINK_COVERAGE": {
-        "status": "DERIVED_FROM_MEASURED",
-        "value": 0
+        "status": "WITHHELD",
+        "value": null,
+        "reason": "executable_integration_registry.yaml declares no GM/horizontal-mission link field"
       }
+    },
+    "metric_basis": {
+      "TEST_PROOF_COVERAGE": "nodes with tested=true / registered nodes",
+      "PIPELINE_INTEGRATION_COVERAGE": "nodes on an executed, evidenced integration path / registered nodes",
+      "VALUE_EDGE_COVERAGE": "nodes with non-empty value_evidence / registered nodes",
+      "TESTED_ORPHAN_COUNT": "len(executable_value_report.json tested_orphans)"
     },
     "nodes": [
       {
-        "id": "config_control_plane",
-        "type": "config",
-        "tested": false,
-        "pipeline_integrated": false,
-        "gm_linked": false,
-        "horizontal_linked": false,
-        "downstream_consumer_count": 0,
-        "value_edge_count": 0,
-        "state": "WITHHELD"
+        "id": "mc_control_manifest",
+        "type": "YAML_CONFIG",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
       },
       {
-        "id": "gateway_design",
-        "type": "config",
-        "tested": false,
-        "pipeline_integrated": false,
-        "gm_linked": false,
-        "horizontal_linked": false,
-        "downstream_consumer_count": 0,
-        "value_edge_count": 0,
-        "state": "WITHHELD"
+        "id": "mc_mycelium_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 5,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
       },
       {
-        "id": "gateway_transport",
-        "type": "workflow",
+        "id": "mc_integration_validator",
+        "type": "VALIDATOR",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "mc_integration_contract",
+        "type": "YAML_CONFIG",
         "tested": true,
         "pipeline_integrated": false,
-        "gm_linked": false,
-        "horizontal_linked": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "mc_integration_registry",
+        "type": "YAML_CONFIG",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "mc_value_report",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 2,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "mc_value_consumer",
+        "type": "CONSUMER",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "mc_control_loop",
+        "type": "CONTROL_STATE",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "gateway_owner_request_builder",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "gateway_owner_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "gateway_transport_runtime",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "gateway_runtime_rex_proof",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "gmi_hosted_mirror",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "gmi_guard_runtime",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 2,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "gmi_guard_hosted_proof",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "gmi_qps_w275_consumer",
+        "type": "CONSUMER",
+        "tested": true,
+        "pipeline_integrated": true,
         "downstream_consumer_count": 0,
-        "value_edge_count": 0,
-        "state": "TESTED_ORPHAN"
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "semantic_w08_candidate_contract",
+        "type": "YAML_CONFIG",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "semantic_runtime_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 3,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "semantic_runtime_execution",
+        "type": "PIPELINE_STAGE",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "semantic_runtime_main_proof",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "semantic_artifact_publisher",
+        "type": "CONSUMER",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "leg5_scout_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "leg5_scout_runtime",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "leg5_scout_scan_job",
+        "type": "WORKFLOW_JOB",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "leg5_scout_receipt",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "leg5_scout_consumer",
+        "type": "CONSUMER",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "mc_log_analyzer",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "mc_metrics_builder",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "mc_metrics_snapshot",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "mc_metrics_validation_consumer",
+        "type": "CONSUMER",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "ci_bridge_map_source",
+        "type": "YAML_CONFIG",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "ci_bridge_alignment_runtime",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "ci_bridge_alignment_job",
+        "type": "WORKFLOW_JOB",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "ci_governance_snapshot_bridge_alignment",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "ci_governance_artifact_consumer",
+        "type": "CONSUMER",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "mc_registration_debt_classifier",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "mc_registration_debt_execution",
+        "type": "WORKFLOW_JOB",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "mc_registration_debt_classification",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "mc_registration_debt_determinism_consumer",
+        "type": "CONSUMER",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "mc_registration_debt_artifact_publisher",
+        "type": "CONSUMER",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "full_stack_governance_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "abacus_runtime_exporter",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "full_stack_mcp_bridge_execution",
+        "type": "WORKFLOW_JOB",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "full_stack_lineage_gate_outcome",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "full_stack_bridge_audit_consumer",
+        "type": "CONSUMER",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "full_stack_release_readiness_consumer",
+        "type": "CONSUMER",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "ssot_authority_registry_source",
+        "type": "YAML_CONFIG",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "ssot_candidate_census_runtime",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "ci_ssot_census_execution",
+        "type": "WORKFLOW_JOB",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "ssot_candidate_census_outcome",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "ssot_logical_id_binder",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "ssot_bound_census_outcome",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "ssot_runtime_consumer_mapper",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "ssot_runtime_consumer_map_outcome",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "qps_m03_policy_source",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "qps_m03_consumer_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "qps_m03_official_mcp_execution",
+        "type": "WORKFLOW_JOB",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "qps_m03_consumer_proof",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "qps_m03_independent_consumer",
+        "type": "CONSUMER",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "hbhs_tuplebridge_docs_source",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "hbhs_tuplebridge_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "hbhs_tuplebridge_bundle_execution",
+        "type": "WORKFLOW_JOB",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "hbhs_tuplebridge_bundle_proof",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "hbhs_tuplebridge_artifact_publisher",
+        "type": "CONSUMER",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "commit_metrics_source_main",
+        "type": "CONTROL_STATE",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "commit_metrics_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "commit_metrics_collection_job",
+        "type": "WORKFLOW_JOB",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "commit_metrics_successor_proof",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "commit_metrics_repository_consumer",
+        "type": "CONSUMER",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "render_parity_source",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "render_parity_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "render_parity_execution",
+        "type": "WORKFLOW_JOB",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "render_parity_proof",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "render_parity_repository_consumer",
+        "type": "CONSUMER",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "mcp_sweep_public_metadata_source",
+        "type": "ADAPTER",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "mcp_sweep_runtime",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "mcp_sweep_ci_execution",
+        "type": "WORKFLOW_JOB",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "mcp_sweep_proof",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "mcp_sweep_snapshot_consumer",
+        "type": "CONSUMER",
+        "tested": true,
+        "pipeline_integrated": true,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 2,
+        "state": "PIPELINE_INTEGRATED"
+      },
+      {
+        "id": "reg1_pages_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 3,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg1_code_purple_rex_control_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 2,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg1_mip_n2_self_index_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 2,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg1_inventory_reconcile_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg1_source_ingestion",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg1_code_purple_rex_rollup",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg1_code_purple_current_observation",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg1_mip_kit_manifest",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg1_mip_verify_self_index",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg1_mip_repo_self_index",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg1_mip_debug_diagnostic",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg1_regen_inventory",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg1_execution_gateway_validator",
+        "type": "VALIDATOR",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg2_m4_review_qa_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg2_graph_explorer_qa_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg2_operational_dag_w33_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg2_p_process_reference_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg2_live_ops_w1_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg2_five_axis_growth_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg2_five_axis_census_w31_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg2_five_axis_spine_w30_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg2_rex_badge_builder",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg2_m4_rebuilder",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg2_graph_explorer_qa",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg2_ops_dag_w33",
+        "type": "PYTHON_MODULE",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg2_p_process_reference",
+        "type": "PYTHON_MODULE",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg2_live_ops_dag_observer",
+        "type": "PYTHON_MODULE",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg2_five_axis_growth",
+        "type": "PYTHON_MODULE",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg2_five_axis_census_w31",
+        "type": "PYTHON_MODULE",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "reg2_five_axis_spine_w30",
+        "type": "PYTHON_MODULE",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
       }
     ]
   },
