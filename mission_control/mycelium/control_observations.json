@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "snapshot_at": "2026-10-02T13:57:52Z",
+  "snapshot_at": "2026-10-22T07:17:42Z",
   "evidence_policy": "MEASURED_OR_WITHHELD",
   "pressure_weights": {
     "urgency": 0.3,
@@ -42,6 +42,30 @@
       "ports": {
         "status": "WITHHELD",
         "reason": "declared interface probe census not yet bound"
+      },
+      "dmaic": {
+        "status": "WITHHELD",
+        "reason": "DMAIC is defined for main topics; no governed rule maps a whole repository to one phase",
+        "unlock": "bind a repo-level DMAIC derivation rule in control_manifest.yaml, or exclude repo nodes from DMC-01"
+      },
+      "maturity": {
+        "status": "WITHHELD",
+        "reason": "requirement/interface/evidence/validation coverage census not yet bound",
+        "unlock": "bind requirement_coverage, interface_closure, evidence_coverage and validation_coverage for this node"
+      },
+      "code_health_provenance": {
+        "qa_gate_health": {
+          "status": "MEASURED",
+          "evidence": [
+            "GBOGEB/CODEX#837",
+            "cb60cc2e89767920528dd0a7cf0ddf5ea3d25a53"
+          ]
+        },
+        "withheld": {
+          "test_health": "no governed pytest pass/total receipt bound",
+          "lint_health": "ruff is report-only with a pre-existing backlog; no governed baseline bound",
+          "debug_health": "no first-red/recurrence census bound"
+        }
       }
     },
     "qps_triage_b": {
@@ -81,6 +105,40 @@
           "floor_elapsed_days": 24,
           "evidence": "Line-B geometry issue explicitly states dominant blocker"
         }
+      },
+      "dmaic": {
+        "status": "DERIVED_FROM_MEASURED",
+        "phase": "ANALYZE",
+        "basis": "dominant blocker identified (cryoplant-project #540) and boundary still in source-verification RFI (#210, state open at receipt); reverse-pressure analysis bound; DOW calculation not yet returned",
+        "evidence": [
+          "mission_control/mycelium/evidence/cryo_if_b_pressure_input_closure_20261001.json"
+        ],
+        "observed_at_receipt": "CRYO_IF_B_PRESSURE_INPUT_CLOSURE_20261001"
+      },
+      "ports": {
+        "status": "DERIVED_FROM_MEASURED",
+        "value": 100,
+        "probed_ports": 1,
+        "declared_ports": 1,
+        "ports": [
+          "QPS_TRIAGE_RETURN"
+        ],
+        "probe_state": "PASS_EXACT_TYPED_RETURN",
+        "basis": "qps_triage_b priority/return metadata transits the declared QPS_TRIAGE_RETURN port (port_registry.json)",
+        "evidence": [
+          "mission_control/mycelium/evidence/port_probe_receipts_20261001.json",
+          "mission_control/mycelium/port_registry.json",
+          "mission_control/mycelium/evidence/cryoplant_master_input_ledger_return_1834.json"
+        ]
+      },
+      "maturity": {
+        "status": "WITHHELD",
+        "reason": "requirement/interface/evidence/validation coverage census not yet bound",
+        "unlock": "bind requirement_coverage, interface_closure, evidence_coverage and validation_coverage for this node"
+      },
+      "code_health_provenance": {
+        "withheld": "not an executable node; no code-health inputs apply",
+        "unlock": "exclude non-code nodes from HLT-04, or bind the owning repository's QA"
       }
     },
     "topic_2k_refrigeration": {
@@ -91,7 +149,17 @@
       },
       "maturity": {
         "status": "WITHHELD",
-        "reason": "requirement/interface/evidence/validation coverage census not yet bound"
+        "reason": "requirement/interface/evidence/validation coverage census not yet bound",
+        "unlock": "bind requirement_coverage, interface_closure, evidence_coverage and validation_coverage for this node"
+      },
+      "ports": {
+        "status": "WITHHELD",
+        "reason": "DOW_EVIDENCE_RETURN is pinned to the HM01 support return, not the B-interface DOW gap this topic is waiting on",
+        "unlock": "declare a port for this node in port_registry.json and bind an exact governed source-to-target probe receipt"
+      },
+      "code_health_provenance": {
+        "withheld": "not an executable node; no code-health inputs apply",
+        "unlock": "exclude non-code nodes from HLT-04, or bind the owning repository's QA"
       }
     },
     "dab_mech": {
@@ -125,6 +193,52 @@
         "passed": 1,
         "failed": 0,
         "health_pct": 100
+      },
+      "code_health_inputs": {
+        "lint_health": 100.0,
+        "qa_gate_health": null,
+        "test_health": null,
+        "debug_health": null
+      },
+      "code_health_provenance": {
+        "lint_health": {
+          "status": "DERIVED_FROM_MEASURED",
+          "scope": "W293",
+          "baseline": 119,
+          "measured": 0,
+          "formula": "100 * (1 - measured / baseline)",
+          "sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
+          "census_run": 37016094260,
+          "census_job": 110867203583,
+          "artifact_id": 11230281685,
+          "artifact_sha256": "6f742d011f42c02774b3607af7fe5d516b902e42d31200a877dbe3a803cbc0a4",
+          "evidence": [
+            "mission_control/mycelium/evidence/abacus_dab_post_1697_measured_e302_promoted.json"
+          ]
+        },
+        "withheld": {
+          "qa_gate_health": "no required-gate pass/executed census bound for this node",
+          "test_health": "no governed test-run pass/total receipt bound for this node",
+          "debug_health": "no first-red/recurrence census bound for this node"
+        }
+      },
+      "dmaic": {
+        "status": "DERIVED_FROM_MEASURED",
+        "phase": "CONTROL",
+        "basis": "W293 residual 0 measured at exact current-main census 37016094260; exact-SHA proof and drift watch",
+        "evidence": [
+          "mission_control/mycelium/evidence/abacus_dab_post_1697_measured_e302_promoted.json"
+        ]
+      },
+      "ports": {
+        "status": "WITHHELD",
+        "reason": "no port declared for this node",
+        "unlock": "declare a port for this node in port_registry.json and bind an exact governed source-to-target probe receipt"
+      },
+      "maturity": {
+        "status": "WITHHELD",
+        "reason": "requirement/interface/evidence/validation coverage census not yet bound",
+        "unlock": "bind requirement_coverage, interface_closure, evidence_coverage and validation_coverage for this node"
       }
     },
     "dab_hard": {
@@ -246,6 +360,52 @@
         "promoted_family": "E302",
         "promoted_count": 145,
         "no_second_residual": true
+      },
+      "code_health_inputs": {
+        "lint_health": 99.37,
+        "qa_gate_health": null,
+        "test_health": null,
+        "debug_health": null
+      },
+      "code_health_provenance": {
+        "lint_health": {
+          "status": "DERIVED_FROM_MEASURED",
+          "scope": "protected hard families E999+F821+F601+F811+E731+E722+E741+F841",
+          "baseline": 158,
+          "measured": 1,
+          "formula": "100 * (1 - measured / baseline)",
+          "sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
+          "census_run": 37016094260,
+          "census_job": 110867203583,
+          "artifact_id": 11230281685,
+          "artifact_sha256": "6f742d011f42c02774b3607af7fe5d516b902e42d31200a877dbe3a803cbc0a4",
+          "evidence": [
+            "mission_control/mycelium/evidence/abacus_dab_post_1697_measured_e302_promoted.json"
+          ]
+        },
+        "withheld": {
+          "qa_gate_health": "no required-gate pass/executed census bound for this node",
+          "test_health": "no governed test-run pass/total receipt bound for this node",
+          "debug_health": "no first-red/recurrence census bound for this node"
+        }
+      },
+      "dmaic": {
+        "status": "DERIVED_FROM_MEASURED",
+        "phase": "CONTROL",
+        "basis": "7 of 8 protected hard families at 0 in exact current-main census 37016094260; remaining E999=1 is a SOURCE_BOUND_HOLD (qplant/w52_p2m_ts_pressure_sensitivity.py)",
+        "evidence": [
+          "mission_control/mycelium/evidence/abacus_dab_post_1697_measured_e302_promoted.json"
+        ]
+      },
+      "ports": {
+        "status": "WITHHELD",
+        "reason": "no port declared for this node",
+        "unlock": "declare a port for this node in port_registry.json and bind an exact governed source-to-target probe receipt"
+      },
+      "maturity": {
+        "status": "WITHHELD",
+        "reason": "requirement/interface/evidence/validation coverage census not yet bound",
+        "unlock": "bind requirement_coverage, interface_closure, evidence_coverage and validation_coverage for this node"
       }
     },
     "dab_bd8k": {
@@ -489,7 +649,8 @@
       },
       "maturity": {
         "status": "WITHHELD",
-        "reason": "campaign maturity is not a formal engineering state"
+        "reason": "campaign maturity is not a formal engineering state",
+        "unlock": "none intended: campaign maturity is not a formal engineering state"
       },
       "logs": {
         "status": "WITHHELD"
@@ -498,12 +659,223 @@
         "status": "WITHHELD"
       },
       "ports": {
-        "status": "WITHHELD"
+        "status": "WITHHELD",
+        "reason": "no port declared for this node",
+        "unlock": "declare a port for this node in port_registry.json and bind an exact governed source-to-target probe receipt"
       },
-      "code_health_inputs": {}
+      "code_health_inputs": {
+        "lint_health": 60.44,
+        "qa_gate_health": null,
+        "test_health": null,
+        "debug_health": null
+      },
+      "code_health_provenance": {
+        "lint_health": {
+          "status": "DERIVED_FROM_MEASURED",
+          "scope": "repository flake8 total",
+          "baseline": 7909,
+          "measured": 3129,
+          "formula": "100 * (1 - measured / baseline)",
+          "sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
+          "census_run": 37016094260,
+          "census_job": 110867203583,
+          "artifact_id": 11230281685,
+          "artifact_sha256": "6f742d011f42c02774b3607af7fe5d516b902e42d31200a877dbe3a803cbc0a4",
+          "evidence": [
+            "mission_control/mycelium/evidence/abacus_dab_post_1697_measured_e302_promoted.json",
+            "mission_control/mycelium/evidence/dab_bd8k_campaign_20261001.json"
+          ]
+        },
+        "withheld": {
+          "qa_gate_health": "no required-gate pass/executed census bound for this node",
+          "test_health": "no governed test-run pass/total receipt bound for this node",
+          "debug_health": "no first-red/recurrence census bound for this node"
+        }
+      }
     }
   },
-  "pca_rows": [],
+  "pca_rows": [
+    {
+      "id": "abacus_main_post_1530",
+      "status": "MEASURED",
+      "population": "ABACUS_POST_MERGE_EXACT_MAIN_DAB_CENSUS",
+      "source_repository": "GBOGEB/ABACUS",
+      "measured_sha": "14750ac24f6065aabb6ce92b1aedf7f42bf7248a",
+      "census_run": 36751754800,
+      "census_job": 110011875112,
+      "artifact_id": 11116102318,
+      "evidence": "mission_control/mycelium/evidence/abacus_dab_post_1530_main_measured.json",
+      "features": {
+        "total": 8222,
+        "W293": 411,
+        "F841": 62,
+        "E722": 16,
+        "E741": 17
+      }
+    },
+    {
+      "id": "abacus_main_post_1542",
+      "status": "MEASURED",
+      "population": "ABACUS_POST_MERGE_EXACT_MAIN_DAB_CENSUS",
+      "source_repository": "GBOGEB/ABACUS",
+      "measured_sha": "b97d08ea76ace14c8116b2e8772ea9f5b8994820",
+      "census_run": 36819544784,
+      "census_job": 110231927555,
+      "artifact_id": 11142084340,
+      "evidence": "mission_control/mycelium/evidence/abacus_dab_post_1542_main_measured.json",
+      "features": {
+        "total": 8035,
+        "W293": 242,
+        "F841": 50,
+        "E722": 16,
+        "E741": 17
+      }
+    },
+    {
+      "id": "abacus_main_post_1545",
+      "status": "MEASURED",
+      "population": "ABACUS_POST_MERGE_EXACT_MAIN_DAB_CENSUS",
+      "source_repository": "GBOGEB/ABACUS",
+      "measured_sha": "755dfc2b76a5e8eaecc0f6b52c01697216e8b1d6",
+      "census_run": 36827396448,
+      "census_job": 110256046210,
+      "artifact_id": 11144789660,
+      "evidence": "mission_control/mycelium/evidence/abacus_dab_post_1545_main_measured.json",
+      "features": {
+        "total": 7996,
+        "W293": 204,
+        "F841": 49,
+        "E722": 16,
+        "E741": 17
+      }
+    },
+    {
+      "id": "abacus_main_post_1548",
+      "status": "MEASURED",
+      "population": "ABACUS_POST_MERGE_EXACT_MAIN_DAB_CENSUS",
+      "source_repository": "GBOGEB/ABACUS",
+      "measured_sha": "ae35036fee38ddbd0df581ce36599a46f95080b1",
+      "census_run": 36841306825,
+      "census_job": 110300810260,
+      "artifact_id": 11151257877,
+      "evidence": "mission_control/mycelium/evidence/abacus_dab_post_1548_main_measured.json",
+      "features": {
+        "total": 7976,
+        "W293": 186,
+        "F841": 47,
+        "E722": 16,
+        "E741": 17
+      }
+    },
+    {
+      "id": "abacus_main_post_1581",
+      "status": "MEASURED",
+      "population": "ABACUS_POST_MERGE_EXACT_MAIN_DAB_CENSUS",
+      "source_repository": "GBOGEB/ABACUS",
+      "measured_sha": "427804f1df69fd7c3ef1978c69daefb23f510f52",
+      "census_run": 36872346746,
+      "census_job": 110403022453,
+      "artifact_id": 11168375869,
+      "evidence": "mission_control/mycelium/evidence/abacus_dab_post_1581_main_measured.json",
+      "features": {
+        "total": 7909,
+        "W293": 119,
+        "F841": 41,
+        "E722": 16,
+        "E741": 17
+      }
+    },
+    {
+      "id": "abacus_main_bd8k_wave1",
+      "status": "MEASURED",
+      "population": "ABACUS_POST_MERGE_EXACT_MAIN_DAB_CENSUS",
+      "source_repository": "GBOGEB/ABACUS",
+      "measured_sha": "348a90fcaa62985cf21b4465858e6700c475d7b9",
+      "census_run": 36908967216,
+      "census_job": 110526569316,
+      "artifact_id": 11185734037,
+      "evidence": "mission_control/mycelium/evidence/dab_bd8k_campaign_20261001.json",
+      "features": {
+        "total": 5916,
+        "W293": 119,
+        "F841": 40,
+        "E722": 16,
+        "E741": 9
+      }
+    },
+    {
+      "id": "abacus_main_bd8k_wave2",
+      "status": "MEASURED",
+      "population": "ABACUS_POST_MERGE_EXACT_MAIN_DAB_CENSUS",
+      "source_repository": "GBOGEB/ABACUS",
+      "measured_sha": "f72184c933076431d49347cfcd2c4a3f8f661e05",
+      "census_run": 36970478170,
+      "census_job": 110723207482,
+      "artifact_id": 11211441398,
+      "evidence": "mission_control/mycelium/evidence/dab_bd8k_campaign_20261001.json",
+      "features": {
+        "total": 3363,
+        "W293": 0,
+        "F841": 11,
+        "E722": 16,
+        "E741": 9
+      }
+    },
+    {
+      "id": "abacus_main_post_1645",
+      "status": "MEASURED",
+      "population": "ABACUS_POST_MERGE_EXACT_MAIN_DAB_CENSUS",
+      "source_repository": "GBOGEB/ABACUS",
+      "measured_sha": "c95570b9d5a8254682ab0d5f6e841e8516ace55a",
+      "census_run": 36979298435,
+      "census_job": 110749934130,
+      "artifact_id": 11214254235,
+      "evidence": "mission_control/mycelium/evidence/abacus_dab_post_1645_main_measured.json",
+      "features": {
+        "total": 3283,
+        "W293": 0,
+        "F841": 0,
+        "E722": 16,
+        "E741": 9
+      }
+    },
+    {
+      "id": "abacus_main_post_1647",
+      "status": "MEASURED",
+      "population": "ABACUS_POST_MERGE_EXACT_MAIN_DAB_CENSUS",
+      "source_repository": "GBOGEB/ABACUS",
+      "measured_sha": "930916b18647c78d1e143038202f37a6df3e1a04",
+      "census_run": 36979711277,
+      "census_job": 110751227472,
+      "artifact_id": 11215450664,
+      "evidence": "mission_control/mycelium/evidence/abacus_dab_post_1647_main_measured.json",
+      "features": {
+        "total": 3279,
+        "W293": 0,
+        "F841": 0,
+        "E722": 12,
+        "E741": 9
+      }
+    },
+    {
+      "id": "abacus_main_post_1697",
+      "status": "MEASURED",
+      "population": "ABACUS_POST_MERGE_EXACT_MAIN_DAB_CENSUS",
+      "source_repository": "GBOGEB/ABACUS",
+      "measured_sha": "02c21964012a3d13ad2c639f5143f4cee48f518a",
+      "census_run": 37016094260,
+      "census_job": 110867203583,
+      "artifact_id": 11230281685,
+      "evidence": "mission_control/mycelium/evidence/abacus_dab_post_1697_measured_e302_promoted.json",
+      "features": {
+        "total": 3129,
+        "W293": 0,
+        "F841": 0,
+        "E722": 0,
+        "E741": 0
+      }
+    }
+  ],
   "pairwise_outcomes": [],
   "pressure_normalization_policy": {
     "schema_version": "0.1",
@@ -529,5 +901,28 @@
       "method": "floor elapsed days from direct blocker issue creation to control snapshot",
       "cap_days": 30
     }
+  },
+  "pca_population_policy": {
+    "population": "ABACUS_POST_MERGE_EXACT_MAIN_DAB_CENSUS",
+    "row_rule": "one row per committed post-merge exact-main DAB census receipt in mission_control/mycelium/evidence/",
+    "features": [
+      "total",
+      "W293",
+      "F841",
+      "E722",
+      "E741"
+    ],
+    "feature_rule": "protected families measured in every row; constant families (E999, E731, F601, F811, F821) excluded as zero-variance",
+    "role": "diagnostic projection of lint-debt trajectory only; no priority or importance claim"
+  },
+  "pairwise_outcomes_policy": {
+    "status": "WITHHELD",
+    "reason": "no governed head-to-head comparison with an observed winner and loser exists between Mycelium items",
+    "unlock": "commit a comparison receipt (winner, loser, count, evidence) from an observed decision, e.g. a governed option or bidder evaluation"
+  },
+  "lint_health_policy": {
+    "formula": "lint_health = 100 * (1 - measured / baseline) over the node's governed flake8 scope",
+    "measurement": "exact current-main ABACUS DAB census only; PR-head or planning probes never count",
+    "guard": "control health signal only; no engineering or formal credit"
   }
 }
