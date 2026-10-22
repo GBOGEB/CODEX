@@ -227,7 +227,7 @@ Ensure recursive/evolutionary development remains stable.
 | Stage 3 | active |
 | Stage 4 | active |
 | Stage 5 | prototype |
-| Stage 6 | prototype |
+| Stage 6 | active (graph + node pages generated from YAML, slide-system v0.8.0) |
 | Stage 7 | planning |
 | Stage 8 | planning |
 

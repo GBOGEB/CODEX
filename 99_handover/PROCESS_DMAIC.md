@@ -20,6 +20,7 @@
 
 ## Control
 - Quarterly QA review of KPIs.  
+- CI build-control gate: `scripts/validate_build_control.py` (see BUILD_WORKFLOW §8).  
 - CIS alerts on tamper seal scans and purge logs.  
 - Maintain SEED tag (1.3.0) and archive `handover_master_applied.tgz`.
 

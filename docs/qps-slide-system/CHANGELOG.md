@@ -1,5 +1,23 @@
 # CHANGELOG — QPS Master Slide System
 
+## v0.8.0 - Generated semantic navigation graph (v1.3 follow-up #1)
+
+### Changed
+
+- The navigation graph (`svg/navigation/qps-graph-mvp.svg`), its page (`html/graph/index.html`) and the node pages (`html/node/*.html`) are now generated from `yaml/nodes/*.yaml` by `tools/build_qps_node_graph.py`. They are no longer hand-drawn.
+- The graph draws both halves of "Tree vs Links": `parent` edges are solid and `interfaces` are dashed, with one lane per link. The hand-drawn MVP drew only the tree.
+- Boxes carry the full node id (`QPLANT.WCS`, not `WCS`). Node pages list the record's type, parent, children, interfaces (declared and received), plots, slides, source refs and optional `links`.
+- Colors and fonts come from `styles/tokens.yaml`.
+
+### Added
+
+- Fail-closed record validation against `yaml/schema.node.yaml`: missing keys, non-list fields, duplicate ids, unknown parent or interface, self-interface and parent cycles all stop the build.
+- `tests/test_qps_node_graph.py` fails when the committed outputs are stale or a link does not resolve. Regenerate with `python tools/build_qps_node_graph.py` (`--check` to verify).
+
+### Not changed
+
+- `data/svg/qps-graph-mvp.svg` stays as it is. It is a fixture copy of the old MVP and an input to the P&ID line and arrow models (`data/model/*.json`), not part of the slide system.
+
 ## v0.7.0
 
 ### Changed
