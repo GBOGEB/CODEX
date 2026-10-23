@@ -248,6 +248,7 @@ blocks:
     stage: S8_CONTROL
     lanes: [JADE, GOGREEN]
     entry: mission-control/jade_temple/site/build_burndown.py
+    check: 'python mission-control/jade_temple/site/build_burndown.py --check'
     need: Measure burndown against the source-bound stop model
     inputs:
       - {path: mission-control/jade_temple/data/READBACK_NPLUS2.json}
@@ -260,6 +261,41 @@ blocks:
       - {path: mission-control/jade_temple/site/burndown.csv}
     supplier: JADE readbacks
     customer: Stop-rule owners
+  - id: JADE.CICD_DAG
+    name: JADE CI/CD dependency DAG and SIPOC
+    repo: HUB
+    stage: S7_PUBLISH
+    lanes: [JADE, GOGREEN]
+    entry: mission-control/jade_temple/tools/cicd_dag.py
+    check: 'python mission-control/jade_temple/tools/cicd_dag.py --check'
+    need: Project source-bound CI/CD dependencies through FUNCTION, SHA and git-OID lenses
+    inputs:
+      - {path: mission-control/jade_temple/data/CICD_DAG_POLICY.json}
+      - {path: mission-control/jade_temple/data/DEVOPS_CENSUS_N9.json}
+      - {path: mission-control/jade_temple/data/ROLLING5_PULSES.json}
+    outputs:
+      - {path: mission-control/jade_temple/site/cicd_dag.json}
+      - {path: mission-control/jade_temple/site/cicd_dag.html}
+      - {path: mission-control/jade_temple/site/cicd_dag_crosswalk.csv}
+    supplier: JADE source-bound gate, lifecycle and workflow observations
+    customer: JADE reviewers, Method Atlas and governed release operators
+  - id: JADE.ROLLING5
+    name: JADE rolling-five pulse and Golden Thread
+    repo: HUB
+    stage: S8_CONTROL
+    lanes: [JADE, GOGREEN]
+    entry: mission-control/jade_temple/tools/rolling5.py
+    check: 'python mission-control/jade_temple/tools/rolling5.py --check'
+    need: Validate append-only pulse evidence, source-red priority and stop/plateau progress
+    inputs:
+      - {path: mission-control/jade_temple/data/ROLLING5_POLICY.json}
+      - {path: mission-control/jade_temple/data/ROLLING5_PULSES.json}
+      - {path: mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json}
+    outputs:
+      - {path: mission-control/jade_temple/site/rolling5.html}
+      - {path: mission-control/jade_temple/site/rolling5.json}
+    supplier: JADE pinned focus snapshots and governed pulse ledger
+    customer: Stop-rule owners, JADE burndown and Golden Thread readers
   - id: GOGREEN.BDQUEUE
     name: GoGREEN BD queue wave
     repo: HUB
