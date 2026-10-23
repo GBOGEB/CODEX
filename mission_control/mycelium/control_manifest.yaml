@@ -564,3 +564,24 @@ graph_publication:
     renderer_may_not_promote_authority: true
     source_original_link_required: true
     browser_core_survives_plotly_failure: true
+
+recursive_control:
+  kpi: RCH-04
+  builder: scripts/project_recursive_control.py
+  projection: mission_control/mycelium/recursive_control_projection.json
+  pages_projection: docs/data/missioncontrol_recursive_control_projection.json
+  federated_inputs: mission_control/mycelium/recursive_control/federated_inputs.yaml
+  inputs:
+    - docs/data/mycelium_kpi_measurement.json
+    - mission_control/mycelium/executable_value_control_observation.json
+    - mission_control/mycelium/control_events.json
+    - mission_control/mycelium/bounded_apply_policy.yaml
+  consumed_as: derived current / mid / long priority horizons beside control_events.json
+  authority_class: DERIVED_CONTROL_PROJECTION
+  mutation_enabled: false
+  control_events_written: false
+  rule: >-
+    Measured outputs and pinned federated receipts are ranked back into control
+    horizons. The projection proposes; steering events in control_events.json stay
+    authoritative and are reported as manual_only_retained, never dropped. Applying
+    a derived horizon needs bounded apply promotion and is out of scope here.

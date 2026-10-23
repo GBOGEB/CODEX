@@ -1,0 +1,18 @@
+schema_version: "0.1"
+purpose: >-
+  Pinned federated inputs for scripts/project_recursive_control.py. Each input is
+  an item import of a remote-authoritative receipt: the local copy is used only
+  while its sha256 (CRLF normalised to LF) equals the pin taken from the source
+  repository at the exact revision below. A mismatch fails closed.
+authority_transfer: false
+inputs:
+  - alias: hub_convergence
+    repository: GBOGEB/pipeline-automation-hub
+    revision: 38b2d824ccbe171a194aeb39e30309619e9630dc
+    source_path: federation/convergence/evidence/20261022/CODE_PURPLE_SCALED_CONVERGENCE_20261022.json
+    source_blob: b9f40f6a275fdbb4920a701c48eede7ab3eea8b9
+    source_pr: https://github.com/GBOGEB/pipeline-automation-hub/pull/789
+    local_path: mission_control/mycelium/recursive_control/federated/pipeline-automation-hub/CODE_PURPLE_SCALED_CONVERGENCE_20261022.json
+    sha256: 4d6eda634a13852f8c6517e96fe0714540dd52f1cb83ba3b97dea8cf3433a79b
+    expected_schema_version: "1.1"
+    expected_programme: CODE_PURPLE
