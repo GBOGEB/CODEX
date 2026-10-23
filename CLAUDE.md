@@ -84,10 +84,39 @@ not patch a downstream gate while an upstream stage is red.
   - ssot_resolver ×2
   - export_abacus_runtime
   - inkscape_input_bridge
-- **No `gh` CLI.** Push the branch, save the PR body to a file and give the
-  owner the compare link. Before re-pushing or opening a PR, check
+- **`gh` works once `GITHUB_TOKEN` is cleared.** A stale `GITHUB_TOKEN` in
+  the environment overrides the keyring login and returns 401, so run
+  `$env:GITHUB_TOKEN=$null` in the same command. If `gh` still fails, push
+  the branch, save the PR body to a file and give the owner the compare link.
+  Before re-pushing or opening a PR, check
   `git merge-base --is-ancestor <sha> origin/main`, because the owner often
   merges first.
+- **Every PR body starts with the `## PR CLASSIFICATION` header** (PR-ID,
+  WAVE, SPRINT, DOMAIN, TYPE, CRITICALITY, TOPOLOGY IMPACT, SCHEMA
+  MUTATION), followed by `---`. Without it, `governance-gate` fails with
+  PR-007. Validate the header with `federation_runtime/engines/governance_parser.py`
+  against `federation_runtime/schema/governance_header.schema.json`. Editing
+  the PR body triggers a fresh gate run.
+- **Sparse worktrees cannot run `regen_missioncontrol_inventory.py`**, because
+  it needs `MANIFEST/` and `docs/assets`. Discard its partial output; never
+  commit it. On a same-repo branch the autoregen workflow commits the
+  receipts.
+- **Too many sessions fill C: through the page file.** Use
+  `tools/relief/Fix-Machine.ps1` (`-ListOnly`, `-DryRun`, `-Stage ...`,
+  `-Reboot`).
+  - Judge the load by memory commit % and free space, never by the
+    `claude.exe` process count: the desktop app alone runs about 20.
+  - Archiving idle sessions (`/archive-idle`) frees memory; `stop_session`
+    does not.
+  - The page file only shrinks after a reboot.
+- **OneDrive offload never touches pinned canonical folders.** `Master_Input`,
+  `ariana_trace_project`, `Documents\.git` and `Documents\Development` stay
+  pinned. In 2026-10, a blanket `attrib -P +U` nearly sent about 80 GB
+  online-only. Use `Fix-Machine.ps1 -Stage onedrive`, which has a pin guard.
+  Set the flags once per folder (`attrib +U -P "<dir>\*"`), not once per file.
+- **Age-filtered tests:** a file that was just written can have an mtime a
+  hair after `time.time()` on Windows. Backdate fixture files with
+  `os.utime` before testing "older than N" filters.
 - **Parallel sessions:** each wave writes its hand-over notes and pulse
   reports to one shared, dated folder agreed at the start of the wave, never
   into another session's notes folder.
