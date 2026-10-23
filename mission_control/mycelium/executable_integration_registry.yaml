@@ -2206,6 +2206,103 @@ nodes:
     value_scope: V0_TESTED_ONLY
     registration_batch: MYCELIUM_MISSIONCONTROL_RUNTIME_BATCH_2
 
+  # RCH-04: read-only recursive control projection. A pinned federated receipt and
+  # measured Mycelium outputs are ranked back into control horizons; nothing is applied.
+  - id: hub_convergence_receipt
+    type: OUTCOME
+    repository: GBOGEB/pipeline-automation-hub
+    path: federation/convergence/evidence/20261022/CODE_PURPLE_SCALED_CONVERGENCE_20261022.json
+    owner: HUB_FEDERATION_CONVERGENCE
+    exact_revision: 38b2d824ccbe171a194aeb39e30309619e9630dc
+    purpose: CODE PURPLE scaled convergence receipt (per-repo plateau, notify, cross-checks), imported by pin.
+    inputs: [pulse_ledgers]
+    outputs: [federated_convergence_receipt]
+    execution_surface: GBOGEB/pipeline-automation-hub
+    test_proof_evidence: [hub_pr_789_merge_38b2d824]
+    value_evidence: [hub_pr_789_merge_38b2d824]
+    outcome_scope: FEDERATION
+    current_state: FEDERATED_PINNED_IMPORT
+    authority_class: REMOTE_AUTHORITATIVE
+    tested: true
+    value_scope: V1_LOCAL_OPERATIONAL
+    recursive_control_effect: false
+
+  - id: mc_recursive_control_inputs
+    type: YAML_CONFIG
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/recursive_control/federated_inputs.yaml
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 8ff9297f75e777a2f2cebc300d1ce31ce7aa4cd0
+    purpose: Pin each federated input to repository, revision, source path and sha256.
+    inputs: [federated_convergence_receipt]
+    outputs: [federated_input_pins]
+    execution_surface: missioncontrol-mycelium-ci
+    test_proof_evidence: [tests_project_recursive_control]
+    value_evidence: [federated_pin_sha256_4d6eda63]
+    current_state: CONNECTED_PENDING_EXACT_HEAD_PROOF
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V1_LOCAL_OPERATIONAL
+    recursive_control_effect: false
+
+  - id: mc_recursive_control_projector
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/project_recursive_control.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 8ff9297f75e777a2f2cebc300d1ce31ce7aa4cd0
+    purpose: Rank measured KPI, value-control and federated convergence state into current/mid/long control horizons.
+    inputs: [kpi_measurement, executable_value_control_observation, federated_convergence_receipt, control_events]
+    outputs: [recursive_control_projection]
+    execution_surface: missioncontrol-mycelium-ci
+    test_proof_evidence: [tests_project_recursive_control]
+    value_evidence: [hub_pr_789_merge_38b2d824, recursive_control_projection_materialization]
+    current_state: CONNECTED_PENDING_EXACT_HEAD_PROOF
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V5_RECURSIVE_CONTROL_VALUE
+    repository_outcome: true
+    project_outcome: true
+    recursive_control_effect: true
+
+  - id: mc_recursive_control_projection
+    type: OUTCOME
+    repository: GBOGEB/CODEX
+    path: mission_control/mycelium/recursive_control_projection.json
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 8ff9297f75e777a2f2cebc300d1ce31ce7aa4cd0
+    purpose: Derived control horizons with sources, plus the delta against hand-maintained control_events horizons.
+    inputs: [recursive_control_projection]
+    outputs: [derived_priority_horizons]
+    execution_surface: MissionControl control plane
+    test_proof_evidence: [tests_project_recursive_control]
+    value_evidence: [recursive_control_projection_materialization]
+    outcome_scope: RECURSIVE_CONTROL
+    current_state: CONNECTED_PENDING_EXACT_HEAD_PROOF
+    authority_class: DERIVED_PROJECTION_ONLY
+    tested: true
+    value_scope: V2_REPOSITORY_VALUE
+    repository_outcome: true
+    recursive_control_effect: true
+
+  - id: mc_recursive_control_tests
+    type: TEST
+    repository: GBOGEB/CODEX
+    path: tests/test_project_recursive_control.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 8ff9297f75e777a2f2cebc300d1ce31ce7aa4cd0
+    purpose: Fail-closed tests for ranking rules, source pointers, pins and no-mutation guarantees.
+    inputs: [recursive_control_projector]
+    outputs: [test_proof]
+    execution_surface: missioncontrol-mycelium-ci
+    test_proof_evidence: [tests_project_recursive_control]
+    value_evidence: [tests_project_recursive_control]
+    current_state: CONNECTED_PENDING_EXACT_HEAD_PROOF
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V1_LOCAL_OPERATIONAL
+    recursive_control_effect: false
+
 edges:
   - {from: mc_control_manifest, to: mc_mycelium_workflow, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
   - {from: mc_mycelium_workflow, to: mc_integration_validator, type: TRIGGERED_BY, evidence: run_37281376763_job_111670015753}
@@ -2314,6 +2411,13 @@ edges:
   - {from: reg2_five_axis_growth_workflow, to: reg2_five_axis_growth, type: TRIGGERED_BY, evidence: run_39173630444_job_117811697738}
   - {from: reg2_five_axis_census_w31_workflow, to: reg2_five_axis_census_w31, type: TRIGGERED_BY, evidence: run_39161146097_job_117774546821}
   - {from: reg2_five_axis_spine_w30_workflow, to: reg2_five_axis_spine_w30, type: TRIGGERED_BY, evidence: run_39158510448_job_117766654887}
+
+  - {from: hub_convergence_receipt, to: mc_recursive_control_projector, type: FEDERATES, evidence: hub_pr_789_merge_38b2d824, cross_repository: true}
+  - {from: mc_recursive_control_inputs, to: mc_recursive_control_projector, type: CONFIGURES, evidence: federated_pin_sha256_4d6eda63}
+  - {from: mc_value_consumer, to: mc_recursive_control_projector, type: CONSUMES, evidence: recursive_control_projection_materialization}
+  - {from: mc_recursive_control_projector, to: mc_recursive_control_projection, type: PRODUCES, evidence: recursive_control_projection_materialization}
+  - {from: mc_recursive_control_projection, to: mc_control_loop, type: UPDATES, evidence: recursive_control_projection_materialization}
+  - {from: mc_recursive_control_tests, to: mc_recursive_control_projector, type: VALIDATES, evidence: tests_project_recursive_control}
 
 integration_paths:
   - id: mcp_sweep_repository_value

@@ -712,7 +712,7 @@
   },
   "executable_value": {
     "status": "DERIVED_FROM_MEASURED",
-    "population": 109,
+    "population": 114,
     "population_source": "mission_control/mycelium/executable_integration_registry.yaml",
     "classification_basis": "registered nodes, evidenced edges and executed integration paths only; tested orphans per executable_integration_value_contract.yaml orphan_policy, as reported by scripts/validate_executable_integration_value.py",
     "metrics": {
@@ -722,11 +722,11 @@
       },
       "PIPELINE_INTEGRATION_COVERAGE": {
         "status": "DERIVED_FROM_MEASURED",
-        "value": 70.64
+        "value": 67.54
       },
       "VALUE_EDGE_COVERAGE": {
         "status": "DERIVED_FROM_MEASURED",
-        "value": 72.48
+        "value": 73.68
       },
       "TESTED_ORPHAN_COUNT": {
         "status": "DERIVED_FROM_MEASURED",
@@ -809,7 +809,7 @@
         "type": "CONSUMER",
         "tested": true,
         "pipeline_integrated": true,
-        "downstream_consumer_count": 1,
+        "downstream_consumer_count": 2,
         "value_evidence_count": 1,
         "state": "PIPELINE_INTEGRATED"
       },
@@ -1729,6 +1729,51 @@
         "pipeline_integrated": false,
         "downstream_consumer_count": 0,
         "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "hub_convergence_receipt",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "mc_recursive_control_inputs",
+        "type": "YAML_CONFIG",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "mc_recursive_control_projector",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 2,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "mc_recursive_control_projection",
+        "type": "OUTCOME",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
+        "state": "TESTED_ONLY"
+      },
+      {
+        "id": "mc_recursive_control_tests",
+        "type": "TEST",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 1,
         "state": "TESTED_ONLY"
       }
     ]

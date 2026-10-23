@@ -14,13 +14,13 @@
       "alias": "kpi_report",
       "origin": "LOCAL",
       "path": "docs/data/mycelium_kpi_measurement.json",
-      "sha256": "5b7ed8ea04b0a0f4c70eeed090ecfea6e479f0a79ac968ad22f1020c7745c876"
+      "sha256": "f9bf64b6814a21c4910c6eed872b127b6f628d1389851750d6d1e0a1e31f3c0b"
     },
     {
       "alias": "value_observation",
       "origin": "LOCAL",
       "path": "mission_control/mycelium/executable_value_control_observation.json",
-      "sha256": "d55e8e6b27a129c8a3908de4a7327e1d55a82d8effe63c010699a355ebeb1956"
+      "sha256": "7a77d2980f8f304c9a2f142b01c1eb0a15e174880f9fe488a9cd3d2844a94f1f"
     },
     {
       "alias": "control_events",
@@ -130,7 +130,7 @@
         "rule": "RC-04",
         "lane": "MYCELIUM_EXECUTION",
         "state": "QUEUED",
-        "reason": "530 unregistered assets, 0 tested orphans",
+        "reason": "527 unregistered assets, 0 tested orphans",
         "sources": [
           {
             "input": "value_observation",
@@ -144,7 +144,7 @@
         "rule": "RC-05",
         "lane": "MYCELIUM_EXECUTION",
         "state": "RED",
-        "reason": "Asset registration coverage: 10.17 against target 100",
+        "reason": "Asset registration coverage: 10.68 against target 100",
         "sources": [
           {
             "input": "kpi_report",
@@ -159,7 +159,7 @@
         "rule": "RC-05",
         "lane": "MYCELIUM_EXECUTION",
         "state": "RED",
-        "reason": "Unregistered asset count: 530 against target 0",
+        "reason": "Unregistered asset count: 527 against target 0",
         "sources": [
           {
             "input": "kpi_report",
@@ -189,7 +189,7 @@
         "rule": "RC-05",
         "lane": "MYCELIUM_EXECUTION",
         "state": "RED",
-        "reason": "Unresolved registration debt: 49 against target 0",
+        "reason": "Unresolved registration debt: 48 against target 0",
         "sources": [
           {
             "input": "kpi_report",
@@ -198,21 +198,6 @@
         ],
         "unlock": "Classify each unresolved asset as register, library-only or archive/remove.",
         "rank": 5
-      },
-      {
-        "id": "KPI_RCH-04",
-        "rule": "RC-05",
-        "lane": "MYCELIUM_REACH",
-        "state": "RED",
-        "reason": "Recursive control value nodes: 0 against target 1",
-        "sources": [
-          {
-            "input": "kpi_report",
-            "pointer": "/kpis/13"
-          }
-        ],
-        "unlock": "Evidence one node whose output feeds back into Mycelium control (V5_RECURSIVE_CONTROL_VALUE).",
-        "rank": 6
       },
       {
         "id": "KPI_HLT-05",
@@ -227,7 +212,7 @@
           }
         ],
         "unlock": "Bind a governed port probe for each Mycelium node.",
-        "rank": 7
+        "rank": 6
       },
       {
         "id": "KPI_SCR-01",
@@ -242,7 +227,7 @@
           }
         ],
         "unlock": "Bind the requirement/interface/evidence/validation coverage census per node.",
-        "rank": 8
+        "rank": 7
       },
       {
         "id": "KPI_SCR-03",
@@ -257,7 +242,7 @@
           }
         ],
         "unlock": "Record observed pairwise outcomes in control_observations.json.",
-        "rank": 9
+        "rank": 8
       }
     ],
     "long": [
@@ -266,7 +251,7 @@
         "rule": "RC-06",
         "lane": "MYCELIUM_REACH",
         "state": "RED",
-        "reason": "Value beyond repository: 12.84 against target 50",
+        "reason": "Value beyond repository: 13.16 against target 50",
         "sources": [
           {
             "input": "kpi_report",
@@ -280,7 +265,7 @@
         "rule": "RC-06",
         "lane": "MYCELIUM_REACH",
         "state": "RED",
-        "reason": "Tested-only share: 27.52 against target 0",
+        "reason": "Tested-only share: 26.32 against target 0",
         "sources": [
           {
             "input": "kpi_report",
@@ -336,7 +321,6 @@
       "KPI_MIP-02",
       "KPI_RCH-01",
       "KPI_RCH-02",
-      "KPI_RCH-04",
       "KPI_SCR-01",
       "KPI_SCR-03"
     ],
@@ -353,7 +337,7 @@
   },
   "summary": {
     "current": 2,
-    "mid": 9,
+    "mid": 8,
     "long": 4
   }
 }
