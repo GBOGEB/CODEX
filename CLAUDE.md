@@ -117,6 +117,25 @@ not patch a downstream gate while an upstream stage is red.
   restore them; never commit line-ending-only changes. New writers use
   `newline="\n"`.
 
+## Archive dedup and deletion (REX from M6, 2026-10-23)
+
+- **Prove before deleting.** Use `src/archive_audit.py --prune` (plan only), then re-hash every keeper and
+  re-read every candidate just before acting. Delete to the Recycle Bin and confirm each item arrived there;
+  a refused item only shows up as an error.
+- **A folder next to its zip can be a live install.** A folder that is or holds a `PATH` entry, or whose
+  executables are running, is never pruned. A "lossless" check compares every file, `node_modules` included;
+  only caches and lock files (`__pycache__`, `*.pyc`, `~$*`) may be skipped.
+- **CODEX is public.** So are ABACUS, gg_MATH and dmaic-recursive-pipeline. Content unpacked from handover
+  archives lands only in a private repo (cryoplant-project or GBOGEB/archive-incubator), and is promoted
+  here file by file after a review for bidder names, contract values and personal data.
+- **Archives carry credentials.** Never commit `.env`, `.abacus.donotdelete`, `*token*` files or scripts
+  with embedded tokens. Scan content for secret patterns before every commit from an archive.
+- **Committing archive files:** use `git -c core.ignorecase=false fast-import`, so committed bytes stay exact
+  and `Outputs/` and `outputs/` stay apart. Drop `.git/` path components: GitHub's fsck rejects them
+  (`hasDotgit`), and the push fails as a bare HTTP 500.
+- **Long runs:** back up the previous report and log the exact command and roots before a rerun. Recount
+  handover claims (test counts, file counts) before repeating them.
+
 ## PR discipline
 
 - **One root cause per PR.** If triage reveals two independent causes, split
