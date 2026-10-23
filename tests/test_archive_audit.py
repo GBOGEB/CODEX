@@ -185,6 +185,23 @@ def test_prune_keeps_grouping(tmp_path: Path) -> None:
     assert big.exists() and spread.exists() and private.exists()
 
 
+def test_prune_spares_installed_tools_and_checks_node_modules(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    arch = tmp_path / "Master_Input"
+    arch.mkdir()
+    tool = _zip(arch / "tool.zip", {"bin/tool.exe": b"exe", "node_modules/dep/index.js": b"dep"})
+    files = {
+        "tool/bin/tool.exe": b"exe", "tool/node_modules/dep/index.js": b"dep",  # installed, on PATH
+        "tool_extract/bin/tool.exe": b"exe", "tool_extract/node_modules/dep/index.js": b"dep",  # true copy
+        "tool_staging/bin/tool.exe": b"exe", "tool_staging/node_modules/dep/index.js": b"patched",  # edited dep
+    }
+    for rel, data in files.items():
+        (arch / rel).parent.mkdir(parents=True, exist_ok=True)
+        (arch / rel).write_bytes(data)
+    monkeypatch.setenv("PATH", str(arch / "tool" / "bin") + os.pathsep + os.environ.get("PATH", ""))
+    actions = aa.plan_prune([tool], aa.Cache(tmp_path / "c.sqlite"), [arch])
+    assert [Path(a.path).name for a in actions] == ["tool_extract"]
+
+
 def test_prune_follows_keeper_chain(tmp_path: Path) -> None:
     a = _zip(tmp_path / "a.zip", {"1": b"one"})
     b = _zip(tmp_path / "b.zip", {"1": b"one", "2": b"two"})

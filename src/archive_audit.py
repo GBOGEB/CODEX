@@ -61,6 +61,8 @@ TRIVIAL_GLOBS = (
     "*/__pycache__/*", "*.pyc", "*/.pytest_cache/*", "*/node_modules/*", "*/.ipynb_checkpoints/*",
     "*.DS_Store", "*Thumbs.db", "*/~$*", "~$*", "__MACOSX/*", "*/__MACOSX/*", "*.lock.tmp",
 )
+# an unpacked folder may hold edited or installed dependencies: there only caches and lock files are skipped
+FOLDER_TRIVIAL_GLOBS = tuple(g for g in TRIVIAL_GLOBS if "node_modules" not in g)
 GENERATED_GLOBS = (
     "output/*", "outputs/*", "*/output/*", "*/outputs/*", "dist/*", "*/dist/*", "build/*",
     "*/build/*", "*/generated/*", "generated/*", "*/site/*", "*/_site/*", "*/rendered/*",
@@ -684,11 +686,22 @@ class PruneAction:
     manifest: list[tuple[str, int, str]] = field(default_factory=list)
 
 
-def _leaves(cache: Cache, sha: str) -> dict[str, int]:
+def _leaves(cache: Cache, sha: str, globs: tuple[str, ...] = TRIVIAL_GLOBS) -> dict[str, int]:
     """sha256 -> size of every substantive leaf member (nested archives count through their contents)."""
 
     return {s: size for name, size, s, _g1, _glf, is_arch in cache.members(sha)
-            if not is_arch and size and not _match(name, TRIVIAL_GLOBS)}
+            if not is_arch and size and not _match(name, globs)}
+
+
+def _on_path(d: Path) -> bool:
+    """The folder holds a PATH entry, so it is an installed tool in use, not an unpacked archive."""
+
+    root = os.path.normcase(os.path.abspath(d))
+    for entry in os.environ.get("PATH", "").split(os.pathsep):
+        e = os.path.normcase(os.path.abspath(entry.strip().strip('"'))) if entry.strip() else ""
+        if e and (e == root or e.startswith(root + os.sep)):
+            return True
+    return False
 
 
 def _norm(name: str) -> str:
@@ -714,8 +727,9 @@ def plan_prune(archives: list[Path], cache: Cache, folder_roots: Iterable[Path])
       member list is recorded so the group can be rebuilt from the keeper;
     * a top-level folder under ``folder_roots`` goes only if its name marks it as an unpacked
       archive and every substantive file is byte-identical to a member of ONE kept archive.
-      Folders containing a ``.git`` directory, cloud-only or unreadable files are never touched,
-      and nothing below the top level is pruned (no half-trees).
+      Files under ``node_modules`` count as substantive there. Folders containing a ``.git``
+      directory, a ``PATH`` entry (an installed tool), cloud-only or unreadable files are never
+      touched, and nothing below the top level is pruned (no half-trees).
     * personal records (:data:`PRIVATE_RE`) are never pruned automatically.
     """
 
@@ -741,11 +755,12 @@ def plan_prune(archives: list[Path], cache: Cache, folder_roots: Iterable[Path])
         while a.keeper in moved:
             a.keeper, a.keeper_sha256 = moved[a.keeper].keeper, moved[a.keeper].keeper_sha256
 
+    folder_leaves = {k: _leaves(cache, scanned[k][0], FOLDER_TRIVIAL_GLOBS) for k in kept}
     holders: dict[str, set[str]] = defaultdict(set)
     for k in kept:
-        for s in leaves[k]:
+        for s in folder_leaves[k]:
             holders[s].add(str(k))
-    sizes = {size for k in kept for size in leaves[k].values()}
+    sizes = {size for k in kept for size in folder_leaves[k].values()}
     sha_of = {str(k): scanned[k][0] for k in kept}
     stems = {_norm(p.name) for p in archives}
 
@@ -755,7 +770,7 @@ def plan_prune(archives: list[Path], cache: Cache, folder_roots: Iterable[Path])
         except OSError:
             continue
         for d in dirs:
-            if PRIVATE_RE.search(d.name) or not _extracted_copy(d.name, stems):
+            if PRIVATE_RE.search(d.name) or not _extracted_copy(d.name, stems) or _on_path(d):
                 continue
             files = _folder_files(d)
             if not files or any(size not in sizes for _, size in files):
@@ -791,7 +806,7 @@ def _folder_files(d: Path) -> list[tuple[str, int]] | None:
                 return None
             if getattr(st, "st_file_attributes", 0) & CLOUD_ATTRS:
                 return None
-            if st.st_size and not _match(os.path.relpath(p, d), TRIVIAL_GLOBS):
+            if st.st_size and not _match(os.path.relpath(p, d), FOLDER_TRIVIAL_GLOBS):
                 files.append((p, st.st_size))
     return None if errors else files
 
