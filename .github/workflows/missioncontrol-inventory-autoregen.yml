@@ -52,6 +52,7 @@ jobs:
     permissions:
       contents: write
       actions: write
+      pull-requests: read
     env:
       SAME_REPO: ${{ github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
       HEAD_REF: ${{ github.event.pull_request.head.ref }}
@@ -111,8 +112,20 @@ jobs:
       - name: Commit refreshed receipts to the PR branch
         id: push
         if: steps.regen.outputs.drift == 'true' && env.SAME_REPO == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
+          # A PR merged while this job ran has no open PR left to carry the
+          # commit, so pushing would strand it on the branch (#1139, #1145,
+          # #1146, #1153, #1158). missioncontrol-inventory-reconcile.yml
+          # regenerates main after the merge instead.
+          state="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" --jq .state)"
+          if [ "$state" != "open" ]; then
+            echo "::notice::PR #${PR_NUMBER} is ${state}; not pushing receipts to ${HEAD_REF}. Main is reconciled by missioncontrol-inventory-reconcile.yml."
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           # Same list as TRACKED_OUTPUTS in scripts/regen_missioncontrol_inventory.py.
