@@ -1,0 +1,34 @@
+# Build context for the root Dockerfile (`COPY . .`). Exclude only VCS data,
+# caches, local environments and secrets; scripts/validate_all.py reads
+# .github/, schemas/, handover/ and tests/, so those must stay in context.
+.git
+
+# Dependencies are installed inside the image (pip + npm install)
+node_modules/
+**/node_modules/
+.venv/
+venv/
+env/
+ENV/
+
+# Python caches and build output
+**/__pycache__/
+**/*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+
+# Local secrets and editor/OS noise
+.env
+.env.*
+*_secret.json
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
