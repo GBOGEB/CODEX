@@ -97,6 +97,25 @@ def test_federated_input_is_recorded_with_its_pin():
     assert len(fed[0]["revision"]) == 40
 
 
+def test_proof_receipt_binds_the_registered_nodes():
+    receipt = json.loads((ROOT / "mission_control/mycelium/receipts/RECURSIVE_CONTROL_RCH04_PR1163_PROOF.json")
+                         .read_text(encoding="utf-8"))
+    registry = yaml.safe_load((ROOT / "mission_control/mycelium/executable_integration_registry.yaml")
+                              .read_text(encoding="utf-8"))
+    nodes = {n["id"]: n for n in registry["nodes"]}
+    run = receipt["proof_runs"]["missioncontrol_mycelium_exact_head"]
+    assert run["conclusion"] == "success" and run["checkout"] == "pull_request.head.sha"
+    evidence = f"run_{run['run']}_job_{run['job']}"
+    for node_id in receipt["proven_nodes"]:
+        node = nodes[node_id]
+        assert "PENDING" not in node["current_state"], node_id
+        assert node["exact_revision"] == receipt["node_revision_sha"], node_id
+        assert evidence in node["test_proof_evidence"], node_id
+    path = next(p for p in registry["integration_paths"] if p["id"] == "missioncontrol_recursive_control_rch04")
+    assert path["executed"] and receipt["receipt_id"] in path["evidence"] and evidence in path["evidence"]
+    assert receipt["mutation_enabled"] is False and receipt["projection_mutates_control_events"] is False
+
+
 def test_control_manifest_declares_the_projection():
     manifest = yaml.safe_load((ROOT / "mission_control/mycelium/control_manifest.yaml").read_text(encoding="utf-8"))
     rc = manifest["recursive_control"]

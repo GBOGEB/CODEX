@@ -1,0 +1,45 @@
+{
+  "schema_version": "0.1",
+  "receipt_id": "RECURSIVE_CONTROL_RCH04_PR1163_PROOF",
+  "repository": "GBOGEB/CODEX",
+  "pull_request": 1163,
+  "exact_head_sha": "d270d70d5a10f4ce93a6265bbdde4805495b3da3",
+  "node_revision_sha": "8ff9297f75e777a2f2cebc300d1ce31ce7aa4cd0",
+  "merge_sha": "2362a96eca5a3ab5f5d9b4c087c6728ae0487d8c",
+  "merged_at": "2026-10-24T14:02:40Z",
+  "decision": "IMPLEMENTED_AND_PROVEN_READ_ONLY",
+  "kpi": "RCH-04",
+  "proven_nodes": [
+    "mc_recursive_control_inputs",
+    "mc_recursive_control_projector",
+    "mc_recursive_control_projection",
+    "mc_recursive_control_tests"
+  ],
+  "federated_input": {
+    "node": "hub_convergence_receipt",
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "revision": "38b2d824ccbe171a194aeb39e30309619e9630dc",
+    "sha256": "4d6eda634a13852f8c6517e96fe0714540dd52f1cb83ba3b97dea8cf3433a79b"
+  },
+  "proof_runs": {
+    "missioncontrol_mycelium_exact_head": {"run": 40099225035, "job": 120887738688, "event": "pull_request", "checkout": "pull_request.head.sha", "conclusion": "success"},
+    "missioncontrol_mycelium_post_merge_main": {"run": 40100746502, "job": 120892200575, "event": "push", "head_sha": "2362a96eca5a3ab5f5d9b4c087c6728ae0487d8c", "conclusion": "success"},
+    "inventory_autoregen": {"run": 40099225030, "conclusion": "success", "pushed_commit": false},
+    "inventory_reconcile_main": {"run": 40100746564, "conclusion": "success"},
+    "ci": {"run": 40099224913, "conclusion": "success"},
+    "codeql": {"run": 40099225020, "conclusion": "success"},
+    "security": {"run": 40099225029, "conclusion": "success"},
+    "full_stack_governance": {"run": 40099224947, "conclusion": "success"},
+    "w003_governance_gate_initial": {"run": 40099224959, "job": 120887738141, "conclusion": "failure", "reason": "PR-007 governance header missing from the PR body"},
+    "w003_governance_gate_after_header": {"run": 40103038547, "job": 120898920069, "conclusion": "success", "note": "same head; only the PR body changed"}
+  },
+  "proof_conclusion": "EXACT_HEAD_CI_GREEN_GOVERNANCE_GATE_GREEN_AFTER_HEADER",
+  "merge_admission_note": "PR #1163 was merged while the W003 governance gate was red and with no approving review; the gate turned green only after merge. The CI proof stands; the admission record does not.",
+  "projection_mutates_control_events": false,
+  "mutation_enabled": false,
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "next_gate": "BOUNDED_APPLY_PROMOTION_FOR_DERIVED_HORIZONS",
+  "next_gate_state": "WITHHELD_EXPLICIT_PROMOTION_REQUIRED"
+}
