@@ -35,6 +35,7 @@ def consume(report_path: Path = REPORT, output_path: Path = OBSERVATION) -> dict
     output_path.write_text(
         json.dumps(observation, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
     return observation
 
