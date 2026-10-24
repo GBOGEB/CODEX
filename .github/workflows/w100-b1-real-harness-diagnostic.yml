@@ -18,7 +18,7 @@ jobs:
         run: python triage/w100_b1_real_harness_diagnostic.py
       - name: Upload diagnostic receipt
         if: always()
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: w100-b1-real-harness-${{ github.sha }}
           path: out/W100_B1_DIAGNOSTIC_RECEIPT.json

@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7.0.0
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.11'
       - name: Install browser
@@ -31,7 +31,7 @@ jobs:
         run: python scripts/qa_missioncontrol_federated_launchpad.py --docs-dir docs --output-dir artifacts/mc-federated-qa
       - name: Upload screenshots and source digests
         if: always()
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: missioncontrol-federated-launchpad-browser-qa
           path: artifacts/mc-federated-qa/

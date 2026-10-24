@@ -195,7 +195,7 @@ table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nu
 th, td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
 th { background: var(--fg); color: var(--bg); }
 td a { color: var(--fg); word-break: break-all; } a:focus-visible, input:focus-visible { outline: 3px solid var(--ok); outline-offset: 2px; }
-code { font-family: var(--mono); font-size: .9em; }
+code { font-family: var(--mono); font-size: .9em; overflow-wrap: anywhere; }
 .green-text { color: var(--ok); font-weight: bold; } .red-text { color: var(--bad); font-weight: bold; }
 .checklist { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
 .checklist li { padding-block: 6px; border-bottom: 1px solid var(--muted); }

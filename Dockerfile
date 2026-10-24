@@ -27,4 +27,10 @@ RUN useradd --create-home codex \
     && chown -R codex:codex /workspace
 USER codex
 
+# The default command is a one-shot validator, not a server, so there is no
+# port to probe. Check that the toolchain validate_all.py needs (Python
+# runtime deps and npx for the TypeScript tests) is usable in the container.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD ["python", "-c", "import shutil, sys, yaml, requests; sys.exit(0 if shutil.which('npx') else 1)"]
+
 CMD ["python", "scripts/validate_all.py"]

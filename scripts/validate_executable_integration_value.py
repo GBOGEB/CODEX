@@ -273,9 +273,9 @@ def main() -> int:
     schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
     errors, report = validate_registry(contract, registry, schema)
     payload = json.dumps(report, indent=2, ensure_ascii=False) + "\n"
-    REPORT.write_text(payload, encoding="utf-8")
+    REPORT.write_text(payload, encoding="utf-8", newline="\n")
     PAGES_REPORT.parent.mkdir(parents=True, exist_ok=True)
-    PAGES_REPORT.write_text(payload, encoding="utf-8")
+    PAGES_REPORT.write_text(payload, encoding="utf-8", newline="\n")
     if errors:
         for error in errors:
             print(f"ERROR: {error}")

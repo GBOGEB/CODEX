@@ -33,7 +33,7 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$SOURCE_HEAD"
       - name: Install Python
-        uses: actions/setup-python@v7.0.0
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
       - name: Install test runner and browser
@@ -48,7 +48,7 @@ jobs:
         run: python scripts/qa_missioncontrol_operations_atlas_v2.py --docs-dir docs --output-dir artifacts/missioncontrol-operations-atlas-v2
       - name: Preserve source identity and visual receipts
         if: always()
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: missioncontrol-operations-atlas-v2-${{ github.run_id }}-${{ github.run_attempt }}
           path: artifacts/missioncontrol-operations-atlas-v2/

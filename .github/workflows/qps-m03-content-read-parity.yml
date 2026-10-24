@@ -28,7 +28,7 @@ jobs:
           fetch-depth: 1
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
           go-version-file: official/go.mod
           cache: false
@@ -47,7 +47,7 @@ jobs:
             --out m03_content_read_parity_receipt.json
 
       - name: Upload parity receipt
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: m03-content-read-parity-receipt
           path: m03_content_read_parity_receipt.json

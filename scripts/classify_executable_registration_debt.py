@@ -122,6 +122,7 @@ def main() -> int:
     OUT.write_text(
         json.dumps(payload, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
     print(json.dumps(payload["classification_counts"], sort_keys=True))
     return 0
