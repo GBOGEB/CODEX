@@ -167,7 +167,7 @@ jobs:
           p.write_text(json.dumps(payload,indent=2)+'\n',encoding='utf-8')
           print(p.read_text())
           PY
-      - uses: actions/upload-artifact@v7.0.2
+      - uses: actions/upload-artifact@v7
         with:
           name: w70-codex-dynamic-publish-burndown
           path: |

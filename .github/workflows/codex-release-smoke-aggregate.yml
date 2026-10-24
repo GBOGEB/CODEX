@@ -54,7 +54,7 @@ jobs:
           raise SystemExit(0 if status == 'PASS' else 1)
           PY
       - if: always()
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: codex-release-smoke-receipts
           path: |

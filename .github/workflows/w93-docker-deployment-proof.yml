@@ -35,7 +35,7 @@ jobs:
         run: |
           grep -q '^Federation validation passed\.$' w93_codex_docker_execution.txt
           printf 'source_sha=%s\nruntime_role=KEB_VALIDATOR\npython_node_parity=PASS\nvalidator_execution=PASS\ncompose_validation=PASS\nengineering_credit_delta=0\n' "$GITHUB_SHA" | tee w93_codex_docker_receipt.txt
-      - uses: actions/upload-artifact@v7.0.2
+      - uses: actions/upload-artifact@v7
         with:
           name: w93-codex-docker-${{ github.sha }}
           path: |

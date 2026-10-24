@@ -68,7 +68,7 @@ jobs:
             --out artifacts/w32-control-tower/MIP_W40_EIGHT_SECTION_RECEIPT.json
       - name: Upload exact-head browser receipts
         if: always()
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: w32-dov-control-${{ github.run_id }}-a${{ github.run_attempt }}-${{ github.event.pull_request.head.sha || github.sha }}
           path: artifacts/w32-control-tower/

@@ -157,7 +157,7 @@ jobs:
           PY
 
       - name: Upload build-side independent byte receipt
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: code-purple-pages-identity-${{ needs.resolve.outputs.source_sha }}
           path: reports/code_purple_expected_pages_bytes.json
@@ -319,7 +319,7 @@ jobs:
           PY
 
       - name: Publish immutable Pages readback receipt artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: code-purple-pages-verified-${{ needs.resolve.outputs.source_sha }}
           path: reports/code_purple_pages_verified.json

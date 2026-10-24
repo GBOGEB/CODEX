@@ -27,7 +27,7 @@ jobs:
           assert m['promotion_allowed'] is False
           print('RC manifest candidate: PASS')
           PY
-      - uses: actions/upload-artifact@v7.0.2
+      - uses: actions/upload-artifact@v7
         with:
           name: codex-rc-manifest-candidate
           path: release/CODEX_2_0_RC_MANIFEST.json

@@ -36,7 +36,7 @@ jobs:
         run: |
           set -euo pipefail
           python mission_control/mycelium/dependency_spine/stage_consumer.py --root . --consumer-sha "$EXPECTED_HEAD" --out "$RUNNER_TEMP/dep-stage"
-      - uses: actions/upload-artifact@v7.0.2
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: codex-mycelium-dep-stage-${{ github.run_id }}-${{ github.run_attempt }}
