@@ -40,17 +40,30 @@ def test_preflight_and_verify_lists_match():
 
 
 KPI_SCRIPT = "scripts/measure_mycelium_kpis.py"
+PROJECTION_SCRIPT = "scripts/project_recursive_control.py"
 KPI_MANIFEST = "MANIFEST/MYCELIUM_KPI_MANIFEST.yaml"
 INVENTORY_WORKFLOWS = ("missioncontrol-mycelium.yml", "missioncontrol-inventory-reconcile.yml", "missioncontrol-inventory-autoregen.yml")
 
 
-def test_kpi_measurement_is_the_last_step_and_a_tracked_output():
+def test_kpi_measurement_runs_after_receipts_and_is_a_tracked_output():
     script = _script()
-    assert script.STEPS[-1] == KPI_SCRIPT
+    # KPIs measure every receipt written before them; only the recursive-control
+    # projection, which ranks the KPI report, may run after.
+    assert script.STEPS[-2:] == (KPI_SCRIPT, PROJECTION_SCRIPT)
     spec = importlib.util.spec_from_file_location("measure_mycelium_kpis", REPO_ROOT / KPI_SCRIPT)
     kpi = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(kpi)
     assert kpi.OUTPUT.relative_to(REPO_ROOT).as_posix() in script.TRACKED_OUTPUTS
+
+
+def test_recursive_control_projection_is_tracked_and_rechecked():
+    script = _script()
+    spec = importlib.util.spec_from_file_location("project_recursive_control", REPO_ROOT / PROJECTION_SCRIPT)
+    prc = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(prc)
+    assert {prc.OUTPUT.as_posix(), prc.PAGES_OUTPUT.as_posix()} <= set(script.TRACKED_OUTPUTS)
+    verify = next(r for r in _runs("missioncontrol-mycelium.yml") if "cmp /tmp/registration_debt_classification.first.json" in r)
+    assert f"python {PROJECTION_SCRIPT} --check" in verify
 
 
 def test_mycelium_ci_rechecks_kpi_report_determinism():

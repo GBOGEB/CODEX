@@ -1,0 +1,343 @@
+{
+  "schema_version": "0.1",
+  "projection_id": "MYCELIUM_RECURSIVE_CONTROL_PROJECTION",
+  "kpi": "RCH-04",
+  "authority_class": "DERIVED_CONTROL_PROJECTION",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "mutation": false,
+  "apply_state": "WITHHELD_BOUNDED_APPLY_DISABLED",
+  "control_events_written": false,
+  "inputs": [
+    {
+      "alias": "kpi_report",
+      "origin": "LOCAL",
+      "path": "docs/data/mycelium_kpi_measurement.json",
+      "sha256": "f9bf64b6814a21c4910c6eed872b127b6f628d1389851750d6d1e0a1e31f3c0b"
+    },
+    {
+      "alias": "value_observation",
+      "origin": "LOCAL",
+      "path": "mission_control/mycelium/executable_value_control_observation.json",
+      "sha256": "7a77d2980f8f304c9a2f142b01c1eb0a15e174880f9fe488a9cd3d2844a94f1f"
+    },
+    {
+      "alias": "control_events",
+      "origin": "LOCAL",
+      "path": "mission_control/mycelium/control_events.json",
+      "sha256": "a8080ca6489740902f6aa6f091d3bbc3c17702c2a7e5818cce60e4a87ed21c93"
+    },
+    {
+      "alias": "apply_policy",
+      "origin": "LOCAL",
+      "path": "mission_control/mycelium/bounded_apply_policy.yaml",
+      "sha256": "b6ecaa19a131e8bb9e16d0731730e49652b776468e195c8cf073a7de1bd45fba"
+    },
+    {
+      "alias": "hub_convergence",
+      "origin": "FEDERATED",
+      "path": "mission_control/mycelium/recursive_control/federated/pipeline-automation-hub/CODE_PURPLE_SCALED_CONVERGENCE_20261022.json",
+      "sha256": "4d6eda634a13852f8c6517e96fe0714540dd52f1cb83ba3b97dea8cf3433a79b",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "revision": "38b2d824ccbe171a194aeb39e30309619e9630dc",
+      "source_path": "federation/convergence/evidence/20261022/CODE_PURPLE_SCALED_CONVERGENCE_20261022.json"
+    }
+  ],
+  "rules": [
+    {
+      "id": "RC-01",
+      "horizon": "current",
+      "rule": "A federated cross-check that FAILs: evidence disagrees, so nothing downstream of it can be trusted."
+    },
+    {
+      "id": "RC-02",
+      "horizon": "current",
+      "rule": "A local KPI cross-check that FAILs: two Mycelium producers disagree on the same fact."
+    },
+    {
+      "id": "RC-03",
+      "horizon": "current",
+      "rule": "Federated repositories whose plateau is STARVED and that notify: no fresh comparable measurement exists."
+    },
+    {
+      "id": "RC-04",
+      "horizon": "mid",
+      "rule": "The executable-value next control action, when it is not PRESERVE_CONTROL."
+    },
+    {
+      "id": "RC-05",
+      "horizon": "mid",
+      "rule": "A RED KPI that names an unlock action."
+    },
+    {
+      "id": "RC-06",
+      "horizon": "long",
+      "rule": "A RED KPI without an unlock action (the unlock still has to be designed)."
+    },
+    {
+      "id": "RC-07",
+      "horizon": "long",
+      "rule": "An AMBER KPI that names an unlock action."
+    }
+  ],
+  "horizons": {
+    "current": [
+      {
+        "id": "FEDERATED_C18_ABACUS_2367_CONFLICT",
+        "rule": "RC-01",
+        "lane": "FEDERATION",
+        "state": "EVIDENCE_CONFLICT",
+        "reason": "chat 1156Z: #2367 head 301960e92b12... 30/30 action_required; terminal pulse baseline: 'prior conversation pulse: ABACUS #2367 W76 4/4 GREEN and #2391 Bandit RED'. No exact head in either -> cannot tell supersession from contradiction",
+        "sources": [
+          {
+            "input": "hub_convergence",
+            "pointer": "/crosschecks/17"
+          }
+        ],
+        "rank": 1
+      },
+      {
+        "id": "FEDERATED_FRESH_MEASUREMENT",
+        "rule": "RC-03",
+        "lane": "FEDERATION",
+        "state": "STARVED",
+        "reason": "no fresh comparable measurement for ABACUS, CODEX, HUB, QPS; plateau cannot be derived",
+        "sources": [
+          {
+            "input": "hub_convergence",
+            "pointer": "/repos/ABACUS/plateau"
+          },
+          {
+            "input": "hub_convergence",
+            "pointer": "/repos/CODEX/plateau"
+          },
+          {
+            "input": "hub_convergence",
+            "pointer": "/repos/HUB/plateau"
+          },
+          {
+            "input": "hub_convergence",
+            "pointer": "/repos/QPS/plateau"
+          }
+        ],
+        "rank": 2
+      }
+    ],
+    "mid": [
+      {
+        "id": "CLASSIFY_EXECUTABLE_REGISTRATION_DEBT",
+        "rule": "RC-04",
+        "lane": "MYCELIUM_EXECUTION",
+        "state": "QUEUED",
+        "reason": "527 unregistered assets, 0 tested orphans",
+        "sources": [
+          {
+            "input": "value_observation",
+            "pointer": "/next_control_action"
+          }
+        ],
+        "rank": 1
+      },
+      {
+        "id": "KPI_EXE-02",
+        "rule": "RC-05",
+        "lane": "MYCELIUM_EXECUTION",
+        "state": "RED",
+        "reason": "Asset registration coverage: 10.68 against target 100",
+        "sources": [
+          {
+            "input": "kpi_report",
+            "pointer": "/kpis/1"
+          }
+        ],
+        "unlock": "Register justified batches of census assets in executable_integration_registry.yaml.",
+        "rank": 2
+      },
+      {
+        "id": "KPI_EXE-03",
+        "rule": "RC-05",
+        "lane": "MYCELIUM_EXECUTION",
+        "state": "RED",
+        "reason": "Unregistered asset count: 527 against target 0",
+        "sources": [
+          {
+            "input": "kpi_report",
+            "pointer": "/kpis/2"
+          }
+        ],
+        "unlock": "Work the registration debt queue (next_control_action CLASSIFY_EXECUTABLE_REGISTRATION_DEBT).",
+        "rank": 3
+      },
+      {
+        "id": "KPI_EXE-05",
+        "rule": "RC-05",
+        "lane": "MYCELIUM_EXECUTION",
+        "state": "RED",
+        "reason": "Unregistered tested orphans: 15 against target 0",
+        "sources": [
+          {
+            "input": "kpi_report",
+            "pointer": "/kpis/4"
+          }
+        ],
+        "unlock": "Bind each unregistered tested orphan to an executable workflow step, or register it as library-only.",
+        "rank": 4
+      },
+      {
+        "id": "KPI_EXE-07",
+        "rule": "RC-05",
+        "lane": "MYCELIUM_EXECUTION",
+        "state": "RED",
+        "reason": "Unresolved registration debt: 48 against target 0",
+        "sources": [
+          {
+            "input": "kpi_report",
+            "pointer": "/kpis/6"
+          }
+        ],
+        "unlock": "Classify each unresolved asset as register, library-only or archive/remove.",
+        "rank": 5
+      },
+      {
+        "id": "KPI_HLT-05",
+        "rule": "RC-05",
+        "lane": "MYCELIUM_HEALTH",
+        "state": "RED",
+        "reason": "Port probe coverage: 33.33 against target 100",
+        "sources": [
+          {
+            "input": "kpi_report",
+            "pointer": "/kpis/24"
+          }
+        ],
+        "unlock": "Bind a governed port probe for each Mycelium node.",
+        "rank": 6
+      },
+      {
+        "id": "KPI_SCR-01",
+        "rule": "RC-05",
+        "lane": "MYCELIUM_MATURITY_SCORING",
+        "state": "RED",
+        "reason": "Maturity observation coverage: 0.0 against target 100",
+        "sources": [
+          {
+            "input": "kpi_report",
+            "pointer": "/kpis/33"
+          }
+        ],
+        "unlock": "Bind the requirement/interface/evidence/validation coverage census per node.",
+        "rank": 7
+      },
+      {
+        "id": "KPI_SCR-03",
+        "rule": "RC-05",
+        "lane": "MYCELIUM_MATURITY_SCORING",
+        "state": "RED",
+        "reason": "Pairwise ranking outcomes: 0 against target 1",
+        "sources": [
+          {
+            "input": "kpi_report",
+            "pointer": "/kpis/35"
+          }
+        ],
+        "unlock": "Record observed pairwise outcomes in control_observations.json.",
+        "rank": 8
+      }
+    ],
+    "long": [
+      {
+        "id": "KPI_RCH-01",
+        "rule": "RC-06",
+        "lane": "MYCELIUM_REACH",
+        "state": "RED",
+        "reason": "Value beyond repository: 13.16 against target 50",
+        "sources": [
+          {
+            "input": "kpi_report",
+            "pointer": "/kpis/10"
+          }
+        ],
+        "rank": 1
+      },
+      {
+        "id": "KPI_RCH-02",
+        "rule": "RC-06",
+        "lane": "MYCELIUM_REACH",
+        "state": "RED",
+        "reason": "Tested-only share: 26.32 against target 0",
+        "sources": [
+          {
+            "input": "kpi_report",
+            "pointer": "/kpis/11"
+          }
+        ],
+        "rank": 2
+      },
+      {
+        "id": "KPI_HLT-04",
+        "rule": "RC-07",
+        "lane": "MYCELIUM_HEALTH",
+        "state": "AMBER",
+        "reason": "Code health observation coverage: 66.67 against target 100",
+        "sources": [
+          {
+            "input": "kpi_report",
+            "pointer": "/kpis/23"
+          }
+        ],
+        "unlock": "Bind a code-health measurement for each Mycelium node in control_observations.json.",
+        "rank": 3
+      },
+      {
+        "id": "KPI_MIP-02",
+        "rule": "RC-07",
+        "lane": "MYCELIUM_MIP",
+        "state": "AMBER",
+        "reason": "Required-green lanes declared GREEN: 75.0 against target 100",
+        "sources": [
+          {
+            "input": "kpi_report",
+            "pointer": "/kpis/30"
+          }
+        ],
+        "unlock": "Make the required lanes GREEN per MIP/README.md (exact-SHA diagnostic passes).",
+        "rank": 4
+      }
+    ]
+  },
+  "delta_vs_control_events": {
+    "control_events_snapshot_at": "2026-10-02T07:44:20Z",
+    "derived_only": [
+      "CLASSIFY_EXECUTABLE_REGISTRATION_DEBT",
+      "FEDERATED_C18_ABACUS_2367_CONFLICT",
+      "FEDERATED_FRESH_MEASUREMENT",
+      "KPI_EXE-02",
+      "KPI_EXE-03",
+      "KPI_EXE-05",
+      "KPI_EXE-07",
+      "KPI_HLT-04",
+      "KPI_HLT-05",
+      "KPI_MIP-02",
+      "KPI_RCH-01",
+      "KPI_RCH-02",
+      "KPI_SCR-01",
+      "KPI_SCR-03"
+    ],
+    "shared": [],
+    "manual_only_retained": [
+      "ABACUS_F841_MEASURED_QUEUE",
+      "ABACUS_W293_MEASURED_QUEUE",
+      "AUTHENTICATED_APPLY_ALLOWLIST",
+      "BOUNDED_APPLY_CONTROL_WATCH",
+      "GLOBAL_DOV",
+      "MUTATION_ENABLEMENT_GOVERNANCE_PROMOTION",
+      "REMOTE_RETURN_INGESTION"
+    ]
+  },
+  "summary": {
+    "current": 2,
+    "mid": 8,
+    "long": 4
+  }
+}

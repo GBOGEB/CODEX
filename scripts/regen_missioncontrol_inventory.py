@@ -29,8 +29,10 @@ STEPS = (
     "scripts/validate_executable_integration_value.py",
     "scripts/consume_executable_value_report.py",
     "scripts/classify_executable_registration_debt.py",
-    # Last: measures KPIs over the receipts the steps above just wrote.
+    # Measures KPIs over the receipts the steps above just wrote.
     "scripts/measure_mycelium_kpis.py",
+    # Last: ranks the KPI report back into control horizons (RCH-04).
+    "scripts/project_recursive_control.py",
 )
 
 # Receipts checked by the preflight step (git diff --exit-code).
@@ -47,6 +49,8 @@ TRACKED_OUTPUTS = PREFLIGHT_RECEIPTS + (
     "mission_control/mycelium/log_analysis.json",
     "docs/data/missioncontrol_log_analysis.json",
     "docs/data/mycelium_kpi_measurement.json",
+    "mission_control/mycelium/recursive_control_projection.json",
+    "docs/data/missioncontrol_recursive_control_projection.json",
 )
 
 # Written by the classify step but not tracked; CI regenerates it.

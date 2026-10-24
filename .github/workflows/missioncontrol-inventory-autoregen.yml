@@ -94,6 +94,8 @@ jobs:
             mission_control/mycelium/log_analysis.json
             docs/data/missioncontrol_log_analysis.json
             docs/data/mycelium_kpi_measurement.json
+            mission_control/mycelium/recursive_control_projection.json
+            docs/data/missioncontrol_recursive_control_projection.json
           )
           if git diff --quiet -- "${outputs[@]}"; then
             echo "drift=false" >> "$GITHUB_OUTPUT"
@@ -123,6 +125,8 @@ jobs:
             mission_control/mycelium/log_analysis.json
             docs/data/missioncontrol_log_analysis.json
             docs/data/mycelium_kpi_measurement.json
+            mission_control/mycelium/recursive_control_projection.json
+            docs/data/missioncontrol_recursive_control_projection.json
           )
           git add -- "${outputs[@]}"
           git commit -m "missioncontrol: autoregen executable-value receipts for ${HEAD_SHA}" \
