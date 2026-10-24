@@ -17,3 +17,5 @@ pywin32>=306; sys_platform == "win32"
 # Keep these explicit while scanner resolves broad direct requirements.
 Pygments>=2.20.0,<3.0
 idna>=3.15,<4.0
+# certifi: drop emSign roots whose intermediate CA keys were compromised (PYSEC-2026-4320).
+certifi>=2026.10.19
