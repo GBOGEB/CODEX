@@ -244,3 +244,102 @@ minimum_action_record:
   required: [action_id, repo_or_node, moniker, priority_band, status_snapshot, authority_boundary, victory_condition, next_executable_step]
   status_snapshot_contract: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
   first_use_case_requirement: every new moniker must name at least one concrete use case
+
+operational_verb_lexicon:
+  status: ADDED_2026-10-24_FROM_WINDOW_2026-10-22..24
+  rule: >-
+    Operational verbs are what owners and agents say; records emit the mapped action moniker. No verb below is a new
+    moniker or a status key. Each names its first use case (repo#PR) as minimum_action_record requires for monikers.
+  verbs:
+    CENSUS:
+      moniker: MAINT
+      meaning: "measure an inventory at one exact SHA (one pulse per snapshot), counting UNKNOWN separately"
+      first_use: "pipeline-automation-hub#784"
+    RECENSUS:
+      moniker: READ
+      meaning: "re-measure a prior census before acting on it"
+      first_use: "gg_MATH#75"
+    DOCK:
+      moniker: ENABLE
+      meaning: "route a metric through the scale dock's own function instead of a parallel copy"
+      first_use: "pipeline-automation-hub#781"
+    CANARY:
+      moniker: HARDEN
+      meaning: "open a deliberately red PR to prove protection blocks it, then close it unmerged"
+      first_use: "cryoplant-project#2055"
+    RATCHET:
+      moniker: HARDEN
+      meaning: "freeze a measured baseline so new changes may only tighten it; block at zero"
+      first_use: "CODEX#1156"
+    SHA_PIN:
+      moniker: HARDEN
+      meaning: "pin third-party actions to a full commit SHA with a version comment"
+      first_use: "pipeline-automation-hub#797"
+    REPIN:
+      moniker: RECEIPT
+      meaning: "re-pin an epoch's denominators from native measurement annotations"
+      first_use: "ABACUS#2156"
+    REPLAY:
+      moniker: RECEIPT
+      meaning: "rebuild state from genesis plus accepted patches and prove it equals the checkpoint"
+      first_use: "cryoplant-project#2059"
+    COLLAPSE:
+      moniker: SEM
+      meaning: "fold occurrences under one semantic root without losing occurrence identity"
+      first_use: "cryoplant-project#2059"
+    INCUBATE:
+      moniker: SSOT
+      meaning: "commit sole-copy archive text byte-identical into an incubator for later promotion; delete nothing"
+      first_use: "archive-incubator#1"
+    RECOVER:
+      moniker: SSOT
+      meaning: "extract sole-copy content from a non-git store into git with a manifest and per-file sha256"
+      first_use: "cryoplant-project#2048"
+    DEDUP:
+      moniker: CLEAN
+      meaning: "classify copies by content hash before any deletion (prove before delete)"
+      first_use: "CODEX#1158"
+    PURGE:
+      moniker: CLEAN
+      meaning: "delete only items proven safe (lossless: content on origin or in the publication store)"
+      first_use: "CODEX#1159"
+    RELIEVE:
+      moniker: MAINT
+      meaning: "recover workstation memory and disk (archive idle sessions, offload unpinned OneDrive)"
+      first_use: "CODEX#1157"
+    ROLLUP:
+      moniker: MAINT
+      meaning: "map, rescue and losslessly purge agent threads after verifying their work on origin"
+      first_use: "CODEX#1160"
+    HANDOFF:
+      moniker: RECEIPT
+      meaning: "close a wave with a dated checkpoint and return of experience for the next session"
+      first_use: "pipeline-automation-hub#796"
+    ADMIT:
+      moniker: CLOSE
+      meaning: "judge merge admission by MACH level at the exact head; evidence only, never merges"
+      first_use: "ABACUS#2406"
+    PREFLIGHT:
+      moniker: READ
+      meaning: "check for an existing owner (open PRs, default branch) before building a metric or tool"
+      first_use: "pipeline-automation-hub#795"
+    READBACK:
+      moniker: RECEIPT
+      meaning: "verify a published artefact from its public location before claiming it deployed"
+      first_use: "gg_MATH#75"
+    PUBLISH:
+      moniker: CLOSE
+      meaning: "place a generated binary as a new version in the owner's publication store with hashes and provenance; never overwrite"
+      first_use: "cryoplant-project#2054"
+    SCRUB:
+      moniker: SEM
+      meaning: "rewrite authored and generated files to coded names and gate on leftovers (naming and scrub gates)"
+      first_use: "cryoplant-project#2053"
+    LEASE:
+      moniker: SSOT
+      meaning: "claim one source-under-test path for one owner; overlapping claims fail closed"
+      first_use: "ABACUS#2386"
+  collision_guards:
+    - MERGE as an incubation verdict, an archive-intake verb (ARC_RECONCILE_SET) or a recovery disposition is never GIT_MERGE
+    - PUBLISH is placement of a new version, not DMS registration and not owner acceptance
+    - CANARY never merges; a merged canary is reverted (cryoplant-project#2057)

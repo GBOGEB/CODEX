@@ -264,6 +264,220 @@ sections:
       definition: Welding Procedure Specification
       authority: QPS domain glossary
 
+  # ---- delta 2026-10-22..24 (see delta_20261024 at the end for the harvest method) ----
+
+  RED_ACCOUNTING_AND_DOCKS:
+    SCALE_DOCK:
+      aliases: [DOCKER, the dock]
+      definition: CODE PURPLE scale dock; one module whose dock functions compute EVERRED, CODE PURPLE, P-process, issue BD and crosswalk metrics from their source registers, so every consumer imports one owner instead of a parallel copy
+      authority: GBOGEB/pipeline-automation-hub:mission-control/gogreen/scale_dock.py
+      not: the Docker container runtime (see namespace_rules DOCKER)
+      where_used: [pipeline-automation-hub#781, pipeline-automation-hub#787]
+    DOCKED:
+      definition: a metric computed by the scale dock's own function and cross-checked against the other dock sources; NOT_DOCKED marks a value read from elsewhere that has no dock owner yet
+      where_used: [pipeline-automation-hub#787]
+    ROOT_RED:
+      aliases: [RootRED, root_red]
+      definition: candidate root of a red run, i.e. the earliest failed step that explains the downstream failures, accounted per pulse next to FIRST_RED; colour class ranked below CODE_PURPLE and above EVERRED
+      where_used: [pipeline-automation-hub#781, pipeline-automation-hub#787, cryoplant-project#2045]
+    SOURCE_RED:
+      definition: JADE ranking of FAIL gates by repos affected x blocked dependents x outbound edges, plus common UNKNOWN gates; the debottlenecking focus of the rolling-5 window
+      authority: GBOGEB/pipeline-automation-hub:mission-control/jade_temple/tools/rolling5.py
+      where_used: [pipeline-automation-hub#787]
+    DOCK_COLOUR_ORDER:
+      definition: precedence of dock colour classes, CODE_PURPLE > ROOT_RED (SOURCE_RED / first red) > EVERRED > FAIL > UNKNOWN > PASS, with P_PROCESS, ISSUE_BD and CROSSWALK as side classes; every colour also carries a text label
+      where_used: [pipeline-automation-hub#787]
+    NEVER_GREEN_GATE:
+      aliases: [nevergreen]
+      definition: gate or check that has never passed on the default branch; a red on such a gate is compared with the main-equivalent run before it is blamed on a PR
+      where_used: [pipeline-automation-hub#787, cryoplant-project#2058, ABACUS#2391]
+
+  JADE_RELEASE_PROGRAMME:
+    FOCUS5:
+      definition: five-repo by twelve-gate (H01-H12) point-release matrix, 60 gate cells, observed at one non-atomic snapshot; the JADE source observation
+      authority: GBOGEB/pipeline-automation-hub:mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json
+      where_used: [pipeline-automation-hub#787, pipeline-automation-hub#821, cryoplant-project#2048, cryoplant-project#2059]
+    H01_H12:
+      definition: the twelve FOCUS5 gates, DEFINE (H01 exact default-branch SHA, H02 root source and entrypoint, H03 release applicability and owner), MEASURE (H04 reproducible build, H05 native primary test PASS, H06 independent domain smoke), ANALYZE (H10 matched coverage and negative tests), IMPROVE (H11 source-bound artefact QA and hashes), CONTROL (H07 security and supply chain, H08 protection plus rejected RED canary, H09 independent human approval, H12 owner tag, assets and rollback)
+      where_used: [pipeline-automation-hub#821, pipeline-automation-hub#822]
+    ROLLING5:
+      aliases: [rolling-5, rolling-five]
+      definition: always-five window over the TOP21 repos; rotation admits the next repo by rank and leaves a slot empty rather than back-filling
+      where_used: [pipeline-automation-hub#787, CODEX#1161]
+    NIRVANA:
+      definition: every FOCUS5 gate PASS on one exact SHA for two consecutive pulses; earns no release credit
+      where_used: [pipeline-automation-hub#787]
+    STREAK_LEDGER:
+      definition: per repo and gate, streak_on_current, streak_record, previous_streak, nevergreen, regressions and unattended counts, appended per pulse and pinned by snapshot sha256
+      where_used: [pipeline-automation-hub#787]
+    JADE_GOLDEN_THREAD:
+      definition: per-repo ordered chain of FOCUS5 gates; its position is the last consecutive PASS and its first break is the first non-PASS gate
+      not: the temporal Golden Thread of SOURCE/TRUTH/PATCH history (see GOLDEN_THREAD and namespace_rules)
+      where_used: [pipeline-automation-hub#787]
+    RED_CANARY:
+      definition: deliberately failing test on a throw-away branch, opened to prove that main protection blocks a red merge (H08), then closed; never merged
+      where_used: [cryoplant-project#2055, cryoplant-project#2057, pipeline-automation-hub#822]
+    CP_HANDOFF:
+      display: CP.HANDOFF
+      definition: dated checkpoint that closes a JADE wave with a return-of-experience entry in the historian register and a newest-first drop-in for the next session
+      where_used: [pipeline-automation-hub#796]
+    RELEASE_CREDIT:
+      definition: count of owner-admitted point releases a pulse may claim; read-only projections and dashboards record RELEASE_CREDIT=0
+      where_used: [pipeline-automation-hub#821, CODEX#1161]
+
+  ADMISSION_AND_GATES:
+    FIRST_PASS_CLOSURE:
+      aliases: [FPC]
+      definition: PR gate that fails unless the PR body carries a filled FPC_RECEIPT_V1 block; red means stop, never merge past it
+      authority: GBOGEB/pipeline-automation-hub:scripts/first_pass_closure_gate.py
+      where_used: [pipeline-automation-hub#792, pipeline-automation-hub#795]
+    FPC_RECEIPT_V1:
+      definition: machine-readable receipt block in a PR body consumed by the First-Pass Closure gate; written with scripts/fpc_receipt.py
+      where_used: [pipeline-automation-hub#792]
+    MACH_LADDER:
+      definition: CODE PURPLE merge-admission ladder; MACH-II solo-owner default with the approval waiver compensated by enforced required checks, green required lanes and automated review at the exact head; MACH-III wrapped single-PR owner exception; MACH-IV merge train, each step re-qualified on the main left by the previous merge, then a green post-train baseline
+      authority: GBOGEB/ABACUS:scripts/code_purple_mach_admission.py
+      where_used: [ABACUS#2406]
+    BASE_PARENT_JUDGEMENT:
+      definition: judge a PR against the merge commit's base parent, not github.event.pull_request.base.sha, which is frozen at the event and goes stale once main moves
+      where_used: [ABACUS#2387, ABACUS#2403]
+    RATCHET:
+      definition: check that may only tighten; a measured baseline that new changes may not worsen (Black, action-pin, rename ratchets), made blocking once it reaches zero
+      where_used: [CODEX#1156, ABACUS#2399, pipeline-automation-hub#797]
+    BASIC_RULESET:
+      definition: owner-applied branch ruleset imported from the p-process manifest (dry-run, apply, verify); the owner-only lever for branch protection
+      where_used: [pipeline-automation-hub#794]
+    ONE_OWNER_PER_METRIC:
+      definition: working rule that every metric, page or tool has one canonical module; check open PRs and the default branch (preflight_overlap) and import, never copy
+      where_used: [pipeline-automation-hub#795]
+    ONE_PULSE_PER_SNAPSHOT:
+      definition: working rule that census and gate state for one repo are read at the same commit SHA and that SHA is recorded
+      where_used: [pipeline-automation-hub#795, pipeline-automation-hub#799]
+    PUSH_EARLY:
+      definition: working rule to push a branch right after its first commit; a workspace audit flags local-only work older than a threshold as PUSH-ME
+      where_used: [pipeline-automation-hub#795, pipeline-automation-hub#798]
+
+  EVIDENCE_STATES:
+    NOT_OBSERVED:
+      definition: no observation exists for the measure at the pulse; never read as zero or PASS
+      where_used: [pipeline-automation-hub#780, pipeline-automation-hub#789]
+    OBSERVED_EMPTY:
+      definition: the measure was observed and counted zero occurrences
+      where_used: [pipeline-automation-hub#780, pipeline-automation-hub#789]
+    OBSERVED_NONEMPTY:
+      definition: the measure was observed with at least one occurrence; VERIFIED and CONFLICT complete the evidence-object states
+      where_used: [pipeline-automation-hub#780]
+    CONVERGENCE_RECEIPT:
+      definition: schema-validated per-repo fold of pulse ledgers in which every measure is an evidence object, so a missing value cannot become zero
+      authority: GBOGEB/pipeline-automation-hub:contracts/convergence-receipt.schema.json
+      where_used: [pipeline-automation-hub#780, pipeline-automation-hub#789]
+    TOKEN_CENSUS:
+      definition: per secret and consumer, compares default-branch runs before and after the secret was saved (FIXED, GREEN, BROKE, STILL_RED, NO_RUN_SINCE_SET) and classifies red logs (AUTH_INVALID 401, FORBIDDEN 403, SECRET_MISSING, REPO_SETTING)
+      where_used: [pipeline-automation-hub#788, pipeline-automation-hub#791]
+    TYPED_DEFER:
+      definition: DEFER_<REASON> return codes that fail closed with a named cause instead of a silent fallback (e.g. DEFER_MM_NOT_CONVERGED, DEFER_PERFECT_SAMPLE_CORRELATION, DEFER_PROVIDER_DIGEST_MISMATCH, DEFER_UNBOUND_PROVIDER_MODULE)
+      where_used: [gg_MATH#74, pipeline-automation-hub#779]
+
+  COVERAGE_RECOVERY:
+    ZERO_COVERED_ASSET:
+      definition: executable source file with no line covered by any test in the measured census
+      where_used: [ABACUS#2367, ABACUS#2385, ABACUS#2388]
+    COVERAGE_FRONTIER:
+      definition: bounded cohort of zero-covered modules selected from a census for the next recovery wave
+      where_used: [ABACUS#2368, ABACUS#2388]
+    COVERAGE_LANE:
+      definition: one worker's disjoint set of new test files over a frontier; lanes never write production source or each other's files
+      where_used: [ABACUS#2388]
+    SOURCE_LEASE:
+      aliases: [SUT lease, disjoint source lease]
+      definition: advisory claim of one system-under-test path by one owner; overlapping leases fail closed
+      where_used: [ABACUS#2384, ABACUS#2386]
+    FOUR_CELL_PROOF:
+      definition: exact-head CI on Ubuntu and Windows x Python 3.11 and 3.12, with emitted hashes re-verified
+      where_used: [ABACUS#2367]
+    EPOCH_REPIN:
+      definition: re-pinning KPI denominators of a measurement epoch from native W16_MEASURED annotations; workflows HOLD while an epoch is pending
+      authority: GBOGEB/ABACUS:scripts/g3a_w16_repin.py
+      where_used: [ABACUS#2156]
+    FLOATING_TESTFLIGHT:
+      definition: local-first test flight with an immutable before-test N+2 forecast, compared after the run
+      where_used: [ABACUS#2393]
+    USER_DIRECTED_HIGH:
+      definition: coverage-census ordering label for modules the owner flags as high priority; ordering only, no gate
+      where_used: [ABACUS#2408]
+
+  TEMPORAL_LINEAGE:
+    GOLDEN_THREAD:
+      definition: immutable temporal extension of SOURCE -> TRUTH -> OUTPUT + PATCHES/HISTORY; accepted patches replay deterministically to the current TRUTH, and checkpoints are optimisations, not authority
+      authority: GBOGEB/cryoplant-project:src/golden_thread.py and docs/federation/GOLDEN_THREAD.md
+      where_used: [cryoplant-project#2059]
+    SEMANTIC_ROOT:
+      definition: collapse of many byte-identical or versioned occurrences under one root that keeps every occurrence identity (lossless collapse/expand)
+      where_used: [cryoplant-project#2059]
+    RECURSIVE_HOOK:
+      definition: advisory source-to-artefact hook (trigger, required proof, fan-out, disposition); a changed node marks its fan-out stale, recursively to a fixed point; never dispatches a job
+      authority: GBOGEB/cryoplant-project:architecture/text_assimilation/n2/RECURSIVE_HOOKS.json
+      where_used: [cryoplant-project#2059]
+    SOURCES_AT_BUILD:
+      definition: digest set of every SOURCE node at the last full build; comparing it with the current digests lists the stale outputs
+      where_used: [cryoplant-project#2059]
+
+  ARCHIVE_RECOVERY_AND_WORKSTATION:
+    INCUBATE:
+      definition: commit text and code that exist only inside archives, byte-identical to their members, into an incubator for review and later promotion by normal PRs; nothing deleted, binaries stay in the archives
+      where_used: [archive-incubator#1, cryoplant-project#2056, CODEX#1158]
+    INCUBATION_VERDICT:
+      definition: per archive, MERGE (code that passes smoke), BRIDGE (docs/data only, or smoke failure) or LEAVE (nothing committable)
+      not: the ARC_RECONCILE_SET archive-intake Merge
+      where_used: [archive-incubator#1, cryoplant-project#2056]
+    SOLE_COPY:
+      definition: content whose only surviving copy is outside git (an IDE profile, an archive member); must be preserved before any prune
+      where_used: [cryoplant-project#2048]
+    PROVE_BEFORE_DELETE:
+      definition: deletion rule; re-hash keepers and re-read candidates just before acting, delete to the Recycle Bin, confirm each item arrived
+      where_used: [CODEX#1158, CODEX#1159]
+    MACHINE_RELIEF:
+      definition: owner-PC recovery tool (Fix-Machine) for memory, page file, OneDrive offload and disk; archiving idle sessions frees memory, stopping them does not
+      authority: GBOGEB/CODEX:tools/relief/Fix-Machine.ps1
+      where_used: [CODEX#1157, CODEX#1160]
+    WORKSPACE_AUDIT:
+      definition: read-only audit of repos and worktrees on the workstation, classed REMOVABLE, PUSH-ME or KEEP, plus LEFTOVER non-git residue
+      authority: GBOGEB/pipeline-automation-hub:tools/workstation/Invoke-WorkspaceAudit.ps1
+      where_used: [pipeline-automation-hub#798]
+    SESSION_HANDOVER_PACK:
+      definition: in-repo record of a monitoring session (state, roots, next actions) so the next session resumes from git, not chat
+      where_used: [ABACUS#2406, ABACUS#2415]
+    STACKED_PR_REBUILD:
+      definition: tools to rebuild a stack of dependent PR branches onto a moved base; auto-resolution must be reviewed three-way
+      where_used: [ABACUS#2392]
+
+  RELEASE_AND_PUBLICATION:
+    RUNTIME_LOCK:
+      definition: pinned transitive dependency set per declared runtime, so resolution cannot drift between builds
+      where_used: [gg_MATH#75]
+    PROOF_CENSUS:
+      definition: release gate that counts collected tests and mission proofs and refuses a release with zero-collection files
+      where_used: [gg_MATH#75, gg_MATH#77]
+    SEMVER_IDENTITY:
+      definition: release identity bound to SemVer tag, exact SHA and asset hashes
+      where_used: [gg_MATH#75]
+    RELEASE_DEPLOYED:
+      definition: receipt written only after readback (tag -> SHA, assets byte-exact, bundle re-validated, live Pages manifest unchanged)
+      where_used: [gg_MATH#75]
+    DECLARED_RUNTIME:
+      definition: the interpreter a repo declares (.python-version or CI matrix); work verified only on another interpreter is unverified until CI on the declared one is green
+      where_used: [gg_MATH#76, gg_MATH#77]
+    DMS:
+      expansion: Document Management System
+      definition: the owner organisation's controlled document register; a binary checked in there becomes the tracked, versioned record, and check-in may change its bytes
+      where_used: [cryoplant-project#2054, cryoplant-project#2059]
+    PUBLISHED_VERSION:
+      definition: generated binary placed in the owner's Master_Input publication store as a new version (V1, V2, ...) next to earlier ones, never overwriting them
+      where_used: [cryoplant-project#2054, cryoplant-project#2058]
+    PUBLISHABLE:
+      definition: verdict of the house-style QA gate on a generated deck (0 fail); not an owner acceptance
+      where_used: [cryoplant-project#2053, cryoplant-project#2054, cryoplant-project#2059]
+
 namespace_rules:
   G3P:
     rule: Governed Three-Pulse Wave denotes one wave containing PULSE-1, PULSE-2 and PULSE-3, never a new 3P method profile or authority.
@@ -281,3 +495,29 @@ namespace_rules:
     rule: qualify Project Manager versus Project Management when machine-readable
   TP:
     rule: domain qualification required
+  DOCKER:
+    rule: DOCKER in machine-readable data keeps its RUNTIME_AND_TOOLING meaning (container runtime); in owner speech "DOCKER" and "the dock" mean SCALE_DOCK, so records write SCALE_DOCK for the dock
+  GOLDEN_THREAD:
+    rule: qualify JADE_GOLDEN_THREAD (FOCUS5 gate chain) versus GOLDEN_THREAD (temporal SOURCE/TRUTH/PATCH history)
+  MERGE:
+    rule: qualify GIT_MERGE, ARC_RECONCILE_SET (archive intake), INCUBATION_VERDICT MERGE and recovery MERGE; bare MERGE is conversational only
+  PRUNE:
+    rule: qualify ARC_CURATE_EXCLUDE (reversible exclusion) versus deletion; a prune never removes provenance
+  CANARY:
+    rule: RED_CANARY is the governance test; upstream package "canary" releases are unrelated
+  EPOCH:
+    rule: in CODE PURPLE KPI records an epoch is a pinned measurement denominator set (EPOCH_REPIN), not a time epoch
+
+delta_20261024:
+  window: 2026-10-22T00:00Z..2026-10-24
+  method: >-
+    Read-only harvest of PR titles/bodies (created or updated in the window) and default-branch commit messages of the
+    seven GBOGEB repos pushed in the window (CODEX, gg_MATH, cryoplant-project, ABACUS, pipeline-automation-hub,
+    archive-incubator, qps_deck): 507 documents. Candidate terms were diffed against every glossary/taxonomy file on
+    the default branches of CODEX, ABACUS, cryoplant-project and pipeline-automation-hub; only terms with no existing
+    definition were added, each with where_used. QPS engineering terms of the window were added to the QPS domain
+    glossary instead (authority_model.domain_authorities.QPS_ENGINEERING).
+  sections_added: [RED_ACCOUNTING_AND_DOCKS, JADE_RELEASE_PROGRAMME, ADMISSION_AND_GATES, EVIDENCE_STATES, COVERAGE_RECOVERY,
+                   TEMPORAL_LINEAGE, ARCHIVE_RECOVERY_AND_WORKSTATION, RELEASE_AND_PUBLICATION]
+  namespace_rules_added: [DOCKER, GOLDEN_THREAD, MERGE, PRUNE, CANARY, EPOCH]
+  verbs: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml operational_verb_lexicon
