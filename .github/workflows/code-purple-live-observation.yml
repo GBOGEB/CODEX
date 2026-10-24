@@ -43,7 +43,7 @@ jobs:
             --main-sha "$ABACUS_MAIN_SHA"
       - name: Upload generated evidence only
         if: github.event_name == 'workflow_dispatch'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: abacus-observation-${{ inputs.abacus_head_sha }}
           path: docs/data/code_purple_live_observation.json

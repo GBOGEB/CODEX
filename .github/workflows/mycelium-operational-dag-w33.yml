@@ -54,7 +54,7 @@ jobs:
           python mission_control/mycelium/ops_dag/ops_dag.py --input mission_control/mycelium/ops_dag/W33_SELECTED_OBSERVATIONS.json --out w33_task_receipts --head "$HEAD_SHA" --verify-only
       - name: Retain hash-bound read-only native projection
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: w33-task-dag-${{ matrix.os }}-py${{ matrix.python }}-${{ github.run_id }}-a${{ github.run_attempt }}
           path: w33_task_receipts/

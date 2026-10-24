@@ -45,7 +45,7 @@ jobs:
           set -euo pipefail
           python mission_control/mycelium/five_axis/five_axis.py --input mission_control/mycelium/five_axis/W0_FIELD_OBSERVATIONS.json --out five_axis_receipts --candidate-head "$HEAD_SHA" --run-id "$RUN_ID" --attempt "$RUN_ATTEMPT"
           python mission_control/mycelium/five_axis/five_axis.py --input mission_control/mycelium/five_axis/W0_FIELD_OBSERVATIONS.json --out five_axis_receipts --candidate-head "$HEAD_SHA" --verify-only
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: five-axis-${{ matrix.os }}-${{ matrix.python }}-${{ github.run_id }}

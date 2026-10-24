@@ -38,7 +38,7 @@ jobs:
           python -m unittest discover -s tests -p test_live_ops_dag.py -v
           python -m unittest discover -s tests -p test_live_ops_events.py -v
           python mission_control/mycelium/live_ops/dag_observer.py --input mission_control/mycelium/live_ops/W1_FIXTURE.json --output live_ops/W1_METRICS.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: live-ops-${{ matrix.os }}-${{ matrix.python }}-${{ github.run_id }}-${{ github.run_attempt }}

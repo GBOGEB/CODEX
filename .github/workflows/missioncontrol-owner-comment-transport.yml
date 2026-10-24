@@ -61,7 +61,7 @@ jobs:
           git diff --check
 
       - name: Upload authenticated owner-comment receipt
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.gateway.outputs.artifact_name }}
           path: ${{ steps.gateway.outputs.artifact_paths }}

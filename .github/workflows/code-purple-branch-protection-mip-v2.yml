@@ -33,7 +33,7 @@ jobs:
           coverage run --branch -m unittest discover -s tests -p test_code_purple_ruleset_evidence_v2.py -v
           coverage json -o outputs/protection-mip-v2/coverage.json
           coverage report --include='scripts/code_purple_ruleset_evidence_v2.py' --fail-under=80
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: code-purple-ruleset-v2-${{ github.event.pull_request.head.sha || github.sha }}

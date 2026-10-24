@@ -62,7 +62,7 @@ jobs:
       - name: Require clean repository
         run: test -z "$(git status --porcelain)"
       - name: Retain deterministic render evidence
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: qcell-svg-determinism-${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
           path: |

@@ -100,7 +100,7 @@ jobs:
           PY
 
       - name: Publish read-only proof artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: code-purple-rex-candidate-${{ github.event.pull_request.head.sha || github.sha }}
           path: |

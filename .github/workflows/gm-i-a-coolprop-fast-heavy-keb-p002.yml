@@ -35,7 +35,7 @@ jobs:
           python scripts/validate_gm_i_a_coolprop_fast_heavy_keb_p002.py --provider /tmp/gm_i_a_p002_provider.json --receipt /tmp/gm_i_a_p002_keb_receipt.json
           python -m json.tool /tmp/gm_i_a_p002_keb_receipt.json > /dev/null
           sha256sum /tmp/gm_i_a_p002_keb_receipt.json | tee /tmp/GM_I_A_P002_KEB_SHA256SUMS
-      - uses: actions/upload-artifact@v7.0.2
+      - uses: actions/upload-artifact@v7
         with:
           name: gm-i-a-p002-keb-${{ github.event.pull_request.head.sha }}
           path: |

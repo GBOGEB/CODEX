@@ -69,7 +69,7 @@ jobs:
           PY
       - name: Upload testflight and coverage evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: code-purple-protection-${{ github.event.pull_request.head.sha || github.sha }}
           path: outputs/protection-mip/

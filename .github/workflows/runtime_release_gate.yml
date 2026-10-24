@@ -45,7 +45,7 @@ jobs:
           pip install -e .
       - run: python scripts/bridge_rtm_ingress.py --json-out reports/rtm_summary.json
       - run: test -f reports/rtm_summary.json
-      - uses: actions/upload-artifact@v7.0.2
+      - uses: actions/upload-artifact@v7
         with:
           name: rtm-artifacts
           path: |
@@ -73,7 +73,7 @@ jobs:
           test -f docs/wave_packages/runtime/out/deployment_readiness.json
           test -f docs/wave_packages/runtime/out/reality_tracker.json
           test -f reports/runtime_status.json
-      - uses: actions/upload-artifact@v7.0.2
+      - uses: actions/upload-artifact@v7
         with:
           name: runtime-evidence-artifacts
           path: |
@@ -124,7 +124,7 @@ jobs:
           test -f reports/governance_snapshot.json
           test -f reports/dmaic_phase_report.json
       - if: always()
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: governance-artifacts
           path: |
@@ -159,7 +159,7 @@ jobs:
           test -f reports/rtm_summary.json
           test -f reports/dmaic_phase_report.json
       - if: always()
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: release-gate-artifacts
           path: |

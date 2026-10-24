@@ -89,7 +89,7 @@ jobs:
           PY
       - name: Keep presentation screenshots even when a later gate fails
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: missioncontrol-m4-visual-qa
           path: qa/m4/

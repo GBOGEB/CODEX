@@ -78,7 +78,7 @@ jobs:
           with open("mycelium-p-process-ci.json", "w", encoding="utf-8") as f:
               json.dump(payload, f, indent=2, sort_keys=True)
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: mycelium-p-process-py${{ matrix.python-version }}-${{ github.event.pull_request.head.sha || github.sha }}

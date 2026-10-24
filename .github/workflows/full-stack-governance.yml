@@ -85,7 +85,7 @@ jobs:
 
       - name: Upload governance artifacts
         if: always()
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: governance-${{ matrix.component }}
           path: reports/${{ matrix.component }}
@@ -148,7 +148,7 @@ jobs:
 
       - name: Upload federation bridge artifacts
         if: always()
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: federation-bridge-output
           path: |

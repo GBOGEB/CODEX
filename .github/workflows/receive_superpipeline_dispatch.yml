@@ -61,7 +61,7 @@ jobs:
             --output "federation_artifacts/${artifact_name}"
 
       - name: Upload rendered report
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: superpipeline-rendered-report
           path: federation_artifacts/
