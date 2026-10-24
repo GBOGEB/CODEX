@@ -18,7 +18,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Exact immutable checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
