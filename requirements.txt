@@ -13,7 +13,9 @@ reportlab>=4.0,<5.0
 pypdf>=4.0,<6.0
 pywin32>=306; sys_platform == "win32"
 
-# G3C OSV: minimum secure transitive dependency versions (2026-10-18).
+# G3C OSV: minimum secure transitive dependency versions (reviewed 2026-10-21).
 # Keep these explicit while scanner resolves broad direct requirements.
 Pygments>=2.20.0,<3.0
 idna>=3.15,<4.0
+# PYSEC-2026-4320 / GHSA-6q48-6c7w-9gw2: compromised emSign intermediate trust.
+certifi>=2026.10.19
