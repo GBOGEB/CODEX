@@ -22,3 +22,13 @@ reason = "Pygments: ReDoS; fixed in 2.15.0; requirements.txt floor Pygments>=2.2
 id = "CVE-2026-45409"
 ignoreUntil = 2027-01-20
 reason = "idna: encode() bypass of CVE-2024-3651 fix; fixed in 3.15.0 per GitLab advisory; requirements.txt floor idna>=3.15."
+
+[[IgnoredVulns]]
+id = "PYSEC-2026-4320"
+ignoreUntil = 2027-01-24
+reason = "certifi: bundled emSign roots with compromised intermediate CA keys; fixed in 2026.10.19 per OSV; requirements.txt floor certifi>=2026.10.19."
+
+[[IgnoredVulns]]
+id = "GHSA-6q48-6c7w-9gw2"
+ignoreUntil = 2027-01-24
+reason = "certifi: alias of PYSEC-2026-4320; fixed in 2026.10.19 per OSV; requirements.txt floor certifi>=2026.10.19."
