@@ -6,7 +6,7 @@
 - Lane: `CODEX`
 - Engineering/test scope: Transformation contracts, negative/regression tests, source-bound changed-line coverage
 - Toolkit reference: `GBOGEB/pipeline-automation-hub@dd606d8897c70fa797a3a585fa12850bacd1d9e1` (immutable pilot pin; renew after canonical promotion)
-- Receives manually approved `workflow_dispatch` or opt-in `repository_dispatch` event `qps-metric-census-v1`.
+- Receives manually approved `workflow_dispatch` only, sent by the hub's Actions-only dispatcher token. The `repository_dispatch` trigger was retired on 2026-10-24 after the first live `workflow_dispatch` fan-out.
 - Routes: `native_checks`, `coverage_catalog`. Both are bounded read-only DAG jobs; never execute arbitrary dispatch payload commands.
 - Each request binds `wave + lane + repository + expected source SHA + selector` to an ID; stale or mismatched heads fail closed.
 - Machine-readable receipts contain execution SHA, target SHA, run ID, attempt, job ID and observed metadata; **tests/coverage remain UNKNOWN** until independently attested by native test/coverage jobs.
