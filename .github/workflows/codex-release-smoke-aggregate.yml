@@ -11,7 +11,7 @@ jobs:
       PYTHONPATH: ${{ github.workspace }}
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7.0.0
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.11'
       - name: Install dependencies
@@ -54,7 +54,7 @@ jobs:
           raise SystemExit(0 if status == 'PASS' else 1)
           PY
       - if: always()
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: codex-release-smoke-receipts
           path: |

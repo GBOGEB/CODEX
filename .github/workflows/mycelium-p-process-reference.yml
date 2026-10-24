@@ -25,10 +25,10 @@ jobs:
       matrix:
         python-version: ['3.11','3.12']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
       - name: Exact head and source-only tests
@@ -78,7 +78,7 @@ jobs:
           with open("mycelium-p-process-ci.json", "w", encoding="utf-8") as f:
               json.dump(payload, f, indent=2, sort_keys=True)
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: mycelium-p-process-py${{ matrix.python-version }}-${{ github.event.pull_request.head.sha || github.sha }}

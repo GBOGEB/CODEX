@@ -19,12 +19,12 @@ jobs:
     timeout-minutes: 22
     steps:
       - name: Immutable source checkout, no stored credentials
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
       - name: Verify exact candidate head
@@ -51,7 +51,7 @@ jobs:
           python scripts/qa_code_purple_dov_w37.py --head "$HEAD_SHA" --out artifacts/w37-dov-browser
       - name: Preserve screenshots and receipt even on first-red
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: codepurple-w37-browser-${{ github.run_id }}-a${{ github.run_attempt }}
           path: artifacts/w37-dov-browser/

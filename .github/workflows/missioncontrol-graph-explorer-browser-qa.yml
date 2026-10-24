@@ -34,7 +34,7 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7.0.0
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.11'
       - name: Install browser and static renderer
@@ -50,7 +50,7 @@ jobs:
             --output-dir artifacts/missioncontrol-graph-explorer-qa
       - name: Upload screenshots and interaction receipts
         if: always()
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: missioncontrol-graph-explorer-browser-qa
           path: artifacts/missioncontrol-graph-explorer-qa/

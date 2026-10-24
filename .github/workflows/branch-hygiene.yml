@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7.0.0
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - run: python -m pip install pytest
@@ -51,7 +51,7 @@ jobs:
       pull-requests: read
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7.0.0
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - name: Apply list
@@ -77,7 +77,7 @@ jobs:
           PY
           exit "$status"
       - if: always()
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: branch-hygiene-receipt-${{ github.run_id }}
           path: ${{ runner.temp }}/branch-hygiene-receipt.json

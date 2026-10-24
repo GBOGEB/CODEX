@@ -21,7 +21,7 @@ jobs:
       EXPECTED_SHA256: af1115346ff212addbcaa855faa5f65e8989a0de01742decb6ba30e16a60affa
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7.0.0
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - name: Install validator runtime dependencies
@@ -35,7 +35,7 @@ jobs:
           python scripts/validate_gm_i_a_coolprop_fast_heavy_keb_p002.py --provider /tmp/gm_i_a_p002_provider.json --receipt /tmp/gm_i_a_p002_keb_receipt.json
           python -m json.tool /tmp/gm_i_a_p002_keb_receipt.json > /dev/null
           sha256sum /tmp/gm_i_a_p002_keb_receipt.json | tee /tmp/GM_I_A_P002_KEB_SHA256SUMS
-      - uses: actions/upload-artifact@v7.0.2
+      - uses: actions/upload-artifact@v7
         with:
           name: gm-i-a-p002-keb-${{ github.event.pull_request.head.sha }}
           path: |

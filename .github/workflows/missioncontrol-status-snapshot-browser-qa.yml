@@ -30,7 +30,7 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7.0.0
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.11'
       - name: Install Playwright
@@ -44,7 +44,7 @@ jobs:
             --output-dir artifacts/missioncontrol-status-snapshot-qa
       - name: Upload browser QA receipt and screenshots
         if: always()
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: missioncontrol-status-snapshot-browser-qa
           path: artifacts/missioncontrol-status-snapshot-qa/

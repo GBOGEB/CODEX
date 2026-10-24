@@ -26,12 +26,12 @@ jobs:
           - {os: windows-2022, python: '3.11'}
     steps:
       - name: Checkout exact source SHA
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python }}
       - name: Assert exact head and run state/causality regression suite
@@ -54,7 +54,7 @@ jobs:
           python mission_control/mycelium/ops_dag/ops_dag.py --input mission_control/mycelium/ops_dag/W33_SELECTED_OBSERVATIONS.json --out w33_task_receipts --head "$HEAD_SHA" --verify-only
       - name: Retain hash-bound read-only native projection
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: w33-task-dag-${{ matrix.os }}-py${{ matrix.python }}-${{ github.run_id }}-a${{ github.run_attempt }}
           path: w33_task_receipts/

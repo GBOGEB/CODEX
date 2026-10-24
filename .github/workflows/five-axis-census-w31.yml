@@ -18,12 +18,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Exact immutable checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
       - name: Exact SHA and regression tests
@@ -46,7 +46,7 @@ jobs:
           python mission_control/mycelium/five_axis/census_w31.py --input mission_control/mycelium/five_axis/W31_FRESH_READBACK.json --out w31_receipts --head "$HEAD_SHA" --verify-only
       - name: Preserve SHA256 receipts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: w31-readonly-${{ github.run_id }}-a${{ github.run_attempt }}
           path: w31_receipts/

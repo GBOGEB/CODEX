@@ -13,7 +13,7 @@ jobs:
     outputs: {workers: '${{ steps.plan.outputs.workers }}', transport: '${{ steps.plan.outputs.transport }}', queue: '${{ steps.balance.outputs.queue }}'}
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7.0.0
+      - uses: actions/setup-python@v7
         with: {python-version: '3.12'}
       - run: pip install 'PyYAML>=6,<7'
       - id: plan
@@ -42,7 +42,7 @@ jobs:
           Path('reports/id_burndown').mkdir(parents=True,exist_ok=True); Path('reports/id_burndown/work_plan.json').write_text(json.dumps(plan,indent=2)+'\n'); open(os.environ['GITHUB_OUTPUT'],'a').write(f"queue={len(q)}\n"); print('ID_BALANCE_PASS '+json.dumps({k:v for k,v in plan.items() if k!='bins'}))
       - name: Measure 5-slot work-conserving scheduler
         run: python scripts/id_scheduler_sample.py --plan reports/id_burndown/work_plan.json --out reports/id_burndown/scheduler_sample.json --pool-size 5
-      - uses: actions/upload-artifact@v7.0.2
+      - uses: actions/upload-artifact@v7
         with: {name: id-burndown-work-packet, path: "reports/codex_2_0_ssot_candidate_census.json\nreports/id_burndown/work_plan.json\nreports/id_burndown/scheduler_sample.json"}
   local-pool:
     needs: producer
@@ -53,7 +53,7 @@ jobs:
       - uses: actions/download-artifact@v8
         with: {name: id-burndown-work-packet, path: reports}
       - run: python scripts/id_pulse_local_pool.py --plan reports/id_burndown/work_plan.json --out-dir reports/id_burndown/local-receipts
-      - uses: actions/upload-artifact@v7.0.2
+      - uses: actions/upload-artifact@v7
         with: {name: id-burndown-local-pool-receipts, path: reports/id_burndown/local-receipts}
   control-local:
     needs: [producer,local-pool]

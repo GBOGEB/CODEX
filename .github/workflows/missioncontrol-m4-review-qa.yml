@@ -32,7 +32,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - name: Install test dependencies for read-only presentation QA
@@ -89,7 +89,7 @@ jobs:
           PY
       - name: Keep presentation screenshots even when a later gate fails
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: missioncontrol-m4-visual-qa
           path: qa/m4/

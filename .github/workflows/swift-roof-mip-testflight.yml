@@ -53,7 +53,7 @@ jobs:
           python scripts/swift_roof_mip.py --mode census --expected-head "$EXPECTED_HEAD" --out /tmp/swift-roof-census
       - name: Publish P1 receipt even on failure
         if: always()
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: swift-roof-p1-${{ github.event.pull_request.head.sha || github.sha }}
           path: /tmp/swift-roof-census
@@ -81,7 +81,7 @@ jobs:
           python scripts/swift_roof_mip.py --mode verify --expected-head "$EXACT_HEAD" --receipt /tmp/swift-roof-native/native.json --out /tmp/swift-roof-native/roof
       - name: Publish P2 native receipt even on failure
         if: always()
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: swift-roof-p2-${{ github.event.pull_request.head.sha || github.sha }}
           path: /tmp/swift-roof-native
@@ -119,7 +119,7 @@ jobs:
             --out /tmp/swift-roof-p3
       - name: Upload P3 status and hash (not owner acceptance)
         if: always()
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: swift-roof-p3-${{ github.event.pull_request.head.sha || github.sha }}
           path: /tmp/swift-roof-p3
