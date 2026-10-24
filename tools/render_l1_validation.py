@@ -198,7 +198,7 @@ th, td {{ border: 1px solid var(--soft); padding: 5px 8px; text-align: left; whi
 th {{ background: var(--fg); color: var(--bg); border-color: var(--fg); }} td.num {{ text-align: right; }}
 .mark {{ font-weight: bold; }} .mark.ok {{ color: var(--ok); }} .mark.bad {{ color: var(--bad); }}
 .foot {{ margin-top: 20px; color: var(--muted); font-size: .88rem; max-width: 80ch; }}
-code {{ font-family: var(--mono); font-size: .9em; }} a {{ color: var(--fg); }}
+code {{ font-family: var(--mono); font-size: .9em; overflow-wrap: anywhere; }} a {{ color: var(--fg); }}
 a:focus-visible {{ outline: 3px solid var(--ok); outline-offset: 2px; }}
 </style></head>
 <body><div class="page">
