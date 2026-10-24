@@ -2237,9 +2237,9 @@ nodes:
     inputs: [federated_convergence_receipt]
     outputs: [federated_input_pins]
     execution_surface: missioncontrol-mycelium-ci
-    test_proof_evidence: [tests_project_recursive_control]
-    value_evidence: [federated_pin_sha256_4d6eda63]
-    current_state: CONNECTED_PENDING_EXACT_HEAD_PROOF
+    test_proof_evidence: [tests_project_recursive_control, run_40099225035_job_120887738688]
+    value_evidence: [federated_pin_sha256_4d6eda63, run_40099225035_job_120887738688]
+    current_state: PIPELINE_INTEGRATED
     authority_class: LOCAL_CONTROL
     tested: true
     value_scope: V1_LOCAL_OPERATIONAL
@@ -2255,9 +2255,9 @@ nodes:
     inputs: [kpi_measurement, executable_value_control_observation, federated_convergence_receipt, control_events]
     outputs: [recursive_control_projection]
     execution_surface: missioncontrol-mycelium-ci
-    test_proof_evidence: [tests_project_recursive_control]
-    value_evidence: [hub_pr_789_merge_38b2d824, recursive_control_projection_materialization]
-    current_state: CONNECTED_PENDING_EXACT_HEAD_PROOF
+    test_proof_evidence: [tests_project_recursive_control, run_40099225035_job_120887738688]
+    value_evidence: [hub_pr_789_merge_38b2d824, recursive_control_projection_materialization, run_40099225035_job_120887738688, RECURSIVE_CONTROL_RCH04_PR1163_PROOF]
+    current_state: PIPELINE_INTEGRATED
     authority_class: LOCAL_CONTROL
     tested: true
     value_scope: V5_RECURSIVE_CONTROL_VALUE
@@ -2275,10 +2275,10 @@ nodes:
     inputs: [recursive_control_projection]
     outputs: [derived_priority_horizons]
     execution_surface: MissionControl control plane
-    test_proof_evidence: [tests_project_recursive_control]
-    value_evidence: [recursive_control_projection_materialization]
+    test_proof_evidence: [tests_project_recursive_control, run_40099225035_job_120887738688]
+    value_evidence: [recursive_control_projection_materialization, run_40099225035_job_120887738688, run_40100746502_job_120892200575]
     outcome_scope: RECURSIVE_CONTROL
-    current_state: CONNECTED_PENDING_EXACT_HEAD_PROOF
+    current_state: PIPELINE_INTEGRATED
     authority_class: DERIVED_PROJECTION_ONLY
     tested: true
     value_scope: V2_REPOSITORY_VALUE
@@ -2295,9 +2295,9 @@ nodes:
     inputs: [recursive_control_projector]
     outputs: [test_proof]
     execution_surface: missioncontrol-mycelium-ci
-    test_proof_evidence: [tests_project_recursive_control]
+    test_proof_evidence: [tests_project_recursive_control, run_40099225035_job_120887738688]
     value_evidence: [tests_project_recursive_control]
-    current_state: CONNECTED_PENDING_EXACT_HEAD_PROOF
+    current_state: EXECUTED
     authority_class: LOCAL_CONTROL
     tested: true
     value_scope: V1_LOCAL_OPERATIONAL
@@ -2418,6 +2418,8 @@ edges:
   - {from: mc_recursive_control_projector, to: mc_recursive_control_projection, type: PRODUCES, evidence: recursive_control_projection_materialization}
   - {from: mc_recursive_control_projection, to: mc_control_loop, type: UPDATES, evidence: recursive_control_projection_materialization}
   - {from: mc_recursive_control_tests, to: mc_recursive_control_projector, type: VALIDATES, evidence: tests_project_recursive_control}
+  - {from: hub_convergence_receipt, to: mc_recursive_control_inputs, type: FEDERATES, evidence: hub_pr_789_merge_38b2d824, cross_repository: true}
+  - {from: mc_mycelium_workflow, to: mc_recursive_control_projector, type: TRIGGERED_BY, evidence: run_40099225035_job_120887738688}
 
 integration_paths:
   - id: mcp_sweep_repository_value
@@ -2673,3 +2675,19 @@ integration_paths:
       - DOWNSTREAM_CONSUMER
     executed: true
     evidence: [run_37281376763_job_111670015753]
+
+  - id: missioncontrol_recursive_control_rch04
+    nodes:
+      - hub_convergence_receipt
+      - mc_recursive_control_inputs
+      - mc_recursive_control_projector
+      - mc_recursive_control_projection
+      - mc_control_loop
+    roles:
+      - UPSTREAM_SOURCE
+      - EXECUTABLE_OR_CONFIG
+      - EXECUTION
+      - OUTPUT_OR_EVIDENCE
+      - DOWNSTREAM_CONSUMER
+    executed: true
+    evidence: [run_40099225035_job_120887738688, run_40100746502_job_120892200575, RECURSIVE_CONTROL_RCH04_PR1163_PROOF]
