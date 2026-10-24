@@ -60,7 +60,7 @@ jobs:
           assert p['checks']['adapter_surface_ready'] is True, p
           assert p['checks']['repo_local_runner_recovered'] is False, p
           PY
-      - uses: actions/upload-artifact@v7.0.2
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: qps-federated-native-lldb-keb-evidence

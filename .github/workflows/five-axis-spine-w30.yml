@@ -56,7 +56,7 @@ jobs:
           python mission_control/mycelium/five_axis/spine_w30.py --input mission_control/mycelium/five_axis/W30_SELECTED_NATIVE.json --out w30_receipts --head "$SOURCE_SHA" --verify-only
       - name: Preserve SHA256 receipts and HTML
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: w30-spine-${{ matrix.os }}-py${{ matrix.py }}-${{ github.run_id }}-a${{ github.run_attempt }}
           path: w30_receipts/

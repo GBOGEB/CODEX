@@ -68,7 +68,7 @@ jobs:
           python scripts/code_purple_dov_census_w36.py --snapshot docs/data/code-purple-dov-w36.json --out w36_readonly --head "$HEAD_SHA" --verify-only
       - name: Preserve public readback and hashes without repo mutation
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: code-purple-w36-dov-${{ github.run_id }}-a${{ github.run_attempt }}
           path: w36_readonly/

@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v7
       - name: LLDB-DAP census PASS
         run: python3 scripts/lldb_dap_runtime_probe.py --mode census --receipt receipts/keb/lldb_dap_census.json
-      - uses: actions/upload-artifact@v7.0.2
+      - uses: actions/upload-artifact@v7
         with:
           name: lldb-dap-census
           path: receipts/keb/lldb_dap_census.json
@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@v7
       - name: Execute real Swift LLDB probe and emit exact-SHA KEB receipt
         run: python3 scripts/lldb_dap_runtime_probe.py --mode probe --receipt receipts/keb/LLDB_DAP_SWIFT_DOCKER_RUNNER_MCP_RECEIPT.json
-      - uses: actions/upload-artifact@v7.0.2
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: keb-lldb-dap-swift-docker-runner-mcp-receipt

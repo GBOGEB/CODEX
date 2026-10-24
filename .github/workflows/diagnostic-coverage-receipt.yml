@@ -33,7 +33,7 @@ jobs:
         run: |
           python scripts/diagnostic_coverage_rollup.py --source-sha "$GITHUB_SHA" --out outputs/diagnostic_coverage/receipt.json
           python -m json.tool outputs/diagnostic_coverage/receipt.json >/dev/null
-      - uses: actions/upload-artifact@v7.0.2
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: diagnostic-coverage-receipt

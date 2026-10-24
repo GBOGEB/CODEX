@@ -23,7 +23,7 @@ jobs:
           python -m pip install -r requirements.txt
       - run: python scripts/release/codex_portability_probe.py
       - if: always()
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: codex-portability-receipt
           path: release/CODEX_PORTABILITY_RECEIPT.json
