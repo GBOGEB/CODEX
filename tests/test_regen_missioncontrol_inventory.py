@@ -148,3 +148,15 @@ def test_autoregen_pushes_only_for_same_repo_branches():
     fork = by_name["Fail with instructions (fork PR)"]
     assert "env.SAME_REPO != 'true'" in fork["if"]
     assert "python scripts/regen_missioncontrol_inventory.py" in fork["run"] and "exit 1" in fork["run"]
+
+
+def test_autoregen_does_not_push_to_a_pr_that_merged_meanwhile():
+    # The owner often merges within seconds; a push after that strands the
+    # receipt commit on the branch. The PR state is read just before pushing.
+    job = _autoregen()["jobs"]["autoregen"]
+    assert job["permissions"]["pull-requests"] == "read"
+    commit = next(s for s in job["steps"] if s.get("id") == "push")
+    run = commit["run"]
+    assert commit["env"]["PR_NUMBER"] == "${{ github.event.pull_request.number }}"
+    assert run.index('pulls/${PR_NUMBER}" --jq .state') < run.index("git push")
+    assert 'if [ "$state" != "open" ]' in run
