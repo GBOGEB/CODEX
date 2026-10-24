@@ -66,9 +66,9 @@ def main() -> None:
     payload = json.loads(INPUT.read_text(encoding="utf-8"))
     result = analyze(payload.get("events", []))
     text = json.dumps(result, indent=2, sort_keys=False) + "\n"
-    OUTPUT.write_text(text, encoding="utf-8")
+    OUTPUT.write_text(text, encoding="utf-8", newline="\n")
     PAGES_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    PAGES_OUTPUT.write_text(text, encoding="utf-8")
+    PAGES_OUTPUT.write_text(text, encoding="utf-8", newline="\n")
     print(f"MissionControl log analysis: {result['status']}")
 
 
