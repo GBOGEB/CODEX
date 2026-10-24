@@ -28,7 +28,7 @@ jobs:
           - {os: windows-2022, py: '3.11'}
     steps:
       - name: Checkout exact candidate with no persisted credentials
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
