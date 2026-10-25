@@ -31,6 +31,14 @@ MAX_LINES_OK = 800
 EVIDENCE = 8
 
 
+def _is_syntax_warning(w: warnings.WarningMessage) -> bool:
+    """SyntaxWarning, or the DeprecationWarning that Python <= 3.11 emits for the same
+    invalid escape sequences (promoted to SyntaxWarning in 3.12)."""
+    if issubclass(w.category, SyntaxWarning):
+        return True
+    return issubclass(w.category, DeprecationWarning) and "invalid escape sequence" in str(w.message)
+
+
 def _read(path: Path) -> str | None:
     try:
         if path.stat().st_size > MAX_BYTES:
@@ -145,7 +153,7 @@ def code_health(v: RepoView) -> tuple[list, dict, bool]:
                 ast.parse(t, filename=p)
             except (SyntaxError, ValueError):
                 bad.append(p)
-        if any(issubclass(w.category, SyntaxWarning) for w in caught):
+        if any(_is_syntax_warning(w) for w in caught):
             warned.append(p)
     pyproject = v.text.get("pyproject.toml", "")
     setup_cfg = v.text.get("setup.cfg", "")
