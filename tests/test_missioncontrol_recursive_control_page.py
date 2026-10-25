@@ -64,3 +64,8 @@ def test_page_states_both_access_routes() -> None:
 def test_launchpad_links_the_entry_page() -> None:
     launchpad = (ROOT / "docs/missioncontrol_federated_launchpad.html").read_text(encoding="utf-8")
     assert 'href="missioncontrol_recursive_control.html"' in launchpad
+
+
+def test_page_is_registered_as_a_published_entrypoint() -> None:
+    manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
+    assert "docs/missioncontrol_recursive_control.html" in manifest["published_pages"]
