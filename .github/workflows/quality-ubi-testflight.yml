@@ -11,6 +11,8 @@ on:
       - 'pyproject.toml'
       - 'tests/test_quality_burndown.py'
       - 'tests/test_ubi_runtime_receipt.py'
+      - 'tests/test_quality_ubi_join_contract.py'
+      - 'tests/test_changed_line_coverage.py'
   push:
     branches: [main]
     paths:
@@ -19,6 +21,8 @@ on:
       - 'scripts/check_release_identity.py'
       - '.github/workflows/quality-ubi-testflight.yml'
       - 'pyproject.toml'
+      - 'tests/test_changed_line_coverage.py'
+      - 'tests/test_quality_ubi_join_contract.py'
 
 permissions:
   contents: read
@@ -28,6 +32,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          # Full ancestry so the changed-line merge-base is exact.
+          fetch-depth: 0
       - name: Classify actual checkout SHA
         shell: bash
         env:
@@ -55,7 +62,7 @@ jobs:
           python-version: '3.12'
       - name: Install pinned scanners
         run: |
-          python -m pip install 'pytest>=7.0' ruff==0.16.6 pyright==1.1.407
+          python -m pip install 'pytest>=7.0' ruff==0.16.6 pyright==1.1.407 'pytest-cov>=6'
           python -m pip install -e .
       - name: Measure Ruff and Pyright independently
         shell: bash
@@ -71,9 +78,45 @@ jobs:
           pyright scripts --outputjson > outputs/quality/pyright-expanded.json
           pyright_expanded_rc=$?
           set -e
-          python -m pytest -q tests/test_quality_burndown.py tests/test_ubi_runtime_receipt.py --junitxml=outputs/quality/pytest-quality.xml
+          python -m pytest -q tests/test_quality_burndown.py tests/test_ubi_runtime_receipt.py tests/test_quality_ubi_join_contract.py tests/test_changed_line_coverage.py --junitxml=outputs/quality/pytest-quality.xml --cov=scripts --cov=tests --cov-report=xml:outputs/quality/coverage.xml --cov-report=term-missing
           python scripts/quality_burndown.py --ruff outputs/quality/ruff.json --pyright outputs/quality/pyright.json --source-sha "$EVALUATED_SHA" --requested-head-sha "$REQUESTED_HEAD_SHA" --ruff-scanned-files outputs/quality/ruff-scanned-files.txt --out outputs/quality/burndown.json
           echo "Ruff exit: $ruff_rc; baseline Pyright exit: $pyright_rc; expanded Pyright exit: $pyright_expanded_rc"
+      - name: Changed-line coverage (REPORT-ONLY)
+        # The target is OWNER POLICY and is not enforced: this step never fails
+        # the job. Set the repository variable CHANGED_LINE_COVERAGE_TARGET to
+        # change the reported target (default 80, the source branch's value).
+        # On a push to main the merge-base is HEAD, so the result is
+        # NOT_MEASURED (skip), never a false failure.
+        continue-on-error: true
+        shell: bash
+        env:
+          CHANGED_LINE_COVERAGE_TARGET: ${{ vars.CHANGED_LINE_COVERAGE_TARGET }}
+        run: |
+          set +e
+          git fetch --no-tags origin main
+          base_sha="$(git merge-base HEAD origin/main)"
+          python scripts/measure_changed_line_coverage.py outputs/quality/coverage.xml "$base_sha" outputs/quality/diff-coverage.json
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          p = Path("outputs/quality/diff-coverage.json")
+          if not p.exists():
+              print("::warning::changed-line coverage receipt was not produced (report-only)")
+              raise SystemExit(0)
+          d = json.loads(p.read_text())
+          a = d.get("admission", {})
+          line = (f"Changed-line coverage: status={d['status']} percent={d['percent']} "
+                  f"eligible={d['eligible_lines']} covered={d['covered_lines']} "
+                  f"target={a.get('target_percent')} verdict={a.get('verdict')} (REPORT-ONLY)")
+          kind = "warning" if a.get("verdict") == "BELOW_TARGET" else "notice"
+          print(f"::{kind}::{line}")
+          summary = os.environ.get("GITHUB_STEP_SUMMARY")
+          if summary:
+              with open(summary, "a", encoding="utf-8") as fh:
+                  fh.write(line + "\n")
+          PY
+          exit 0
       - uses: actions/upload-artifact@v7
         if: always()
         with:
@@ -168,6 +211,7 @@ jobs:
       - uses: actions/download-artifact@v8
         with:
           name: codex-quality-census
+          # The producer archive preserves outputs/quality/ within its root.
           path: .
       - uses: actions/download-artifact@v8
         with:
