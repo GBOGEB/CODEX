@@ -6,6 +6,7 @@ candidate_version: 1.4.1          # VERSION.json / pyproject.toml stay at 1.4.0 
 base_main_sha: 5c0ff34820b4471b95d5be1c60cc1369f623224a
 evaluated_on: 2026-10-25
 status: NOT_READY_BLOCKERS_OPEN
+updated_on: 2026-10-25
 method: >-
   Same structure as release/W126_POINT_RELEASE_CANDIDATE.yaml: release gates K1-K4
   evaluated on this PR's exact head (the K1-K3 workflows run on pull_request only),
@@ -64,17 +65,56 @@ pr_head_evaluation:
        CI: 40184461859 success, MissionControl Mycelium CI: not triggered by this path set (main red, B2)}
   result: K1 K2 K3 PASS; K4 PASS except Mycelium on main (B2); K5 blocked (B1); K6 PASS on main
 
+jade5_federation_readiness:
+  method: >-
+    JADE FOCUS5 H01-H12 point-release matrix (authority GBOGEB/pipeline-automation-hub
+    mission-control/jade_temple; definitions in federation/mesh/GLOBAL_GLOSSARY_v1.yaml
+    JADE_RELEASE_PROGRAMME). Read-only, one head SHA per repo per pulse, UNKNOWN never PASS,
+    RELEASE_CREDIT=0. CODEX is the releasing repo here and is not in the current rolling-5
+    window; its own K1-K6 above map onto H gates as listed below.
+  pulse: P0002
+  observed_date: 2026-10-25
+  source: GBOGEB/pipeline-automation-hub#848 (data/FOCUS5_POINT_RELEASE_P0002.json, tools/focus5_pulse.py)
+  totals: {pass: 17, fail: 2, unknown: 41, of: 60, previous_pulse_P0001: "14 / 8 / 38"}
+  legend: "P=PASS F=FAIL ?=UNKNOWN"
+  rows:
+    - {repo: GBOGEB/pipeline-automation-hub, head: 49a4486bc24c, pass: 3, fail: 0, unknown: 9, gates: "H01=P H02=P H03=? H04=? H05=? H06=P H07=? H08=? H09=? H10=? H11=? H12=?"}
+    - {repo: GBOGEB/cryoplant-project, head: 82eca1967133, pass: 4, fail: 0, unknown: 8, gates: "H01=P H02=P H03=? H04=? H05=P H06=P H07=? H08=? H09=? H10=? H11=? H12=?"}
+    - {repo: GBOGEB/gg_MATH, head: 61ce59f754d2, pass: 4, fail: 0, unknown: 8, gates: "H01=P H02=P H03=? H04=P H05=P H06=? H07=? H08=? H09=? H10=? H11=? H12=?"}
+    - {repo: GBOGEB/DOCX_RTM_Automation, head: aae0ff361a7e, pass: 4, fail: 1, unknown: 7, gates: "H01=P H02=P H03=? H04=? H05=P H06=P H07=? H08=F H09=? H10=? H11=? H12=?"}
+    - {repo: GBOGEB/yaml-grammar, head: 75083c2aaabd, pass: 2, fail: 1, unknown: 9, gates: "H01=P H02=P H03=? H04=? H05=? H06=? H07=? H08=F H09=? H10=? H11=? H12=?"}
+  federation_blockers:
+    - "H08 FAIL: DOCX_RTM_Automation and yaml-grammar default branches unprotected (owner: enable a ruleset, then a rejected RED canary)"
+    - "H03 H07 H09 H12 UNKNOWN in all five: owner release applicability, security acceptance, independent approval, owner tag/rollback"
+  codex_k_to_h_mapping:
+    H01: base_main_sha read back (5c0ff34)
+    H02: repository root README and VERSION.json
+    H03: owner signs scope and candidate_version 1.4.1 (UNKNOWN)
+    H04: K2 CODEX RC Manifest Generate + CODEX Determinism Execution
+    H05: K4 CI (pytest)
+    H06: K1 release smoke + K3 zero-delta and federation
+    H07: K6 OSV, CodeQL, Bandit, Security Scan
+    H08: ruleset Codex_main_protect (pull_request rule); RED canary not yet evidenced (UNKNOWN)
+    H09: independent human approval of the release PR (UNKNOWN)
+    H10: K4 Mycelium N7-N9 coverage gates and negative tests
+    H11: K5 Site HTML QA and the Pages deploy of the release commit
+    H12: owner tag v1.4.1, release assets and rollback note (UNKNOWN until execution)
+
 blockers:
   - id: B1
     gate: K5
     finding: >-
       Deploy GitHub Pages fails at "Build verified Pages output" (pytest on Python 3.11):
       test_health_dimensions_on_synthetic_repo needs Python >= 3.12 SyntaxWarning semantics.
-    repair: PR #1181
+    repair: PR #1181 (merged 2026-10-25)
+    remaining: >-
+      Pages publishes only the newest main push that passed Runtime Release Gate; that gate
+      runs on runtime paths only, so the fix deploys with the next merge touching those paths
+      (federation_runtime/**, docs/wave_packages/runtime/**, docs/rtm/**, governance/**, ...).
   - id: B2
     gate: K4
     finding: MissionControl Mycelium CI parity preflight red on main (receipt counts 528 vs list 530).
-    repair: PR #1182
+    repair: PR #1182 (merged 2026-10-25)
   - id: B3
     gate: K4/K5
     finding: >-
@@ -83,7 +123,9 @@ blockers:
       MissionControl Inventory Reconcile (run 40133966621). Update Documentation on Code
       Changes also fails ("Publish reusable docs update branch", run 40133927552); cause not
       confirmed (log not readable from the probe session).
-    repair: OWNER_DECISION  # bypass actor for these bots, or bots open PRs instead of pushing
+    repair: >-
+      Owner decision 2026-10-25: bots open PRs (no bypass). PR #1184; Actions must be allowed
+      to create pull requests (Settings -> Actions -> General).
 
 known_debt_not_blocking:
   - "Site HTML QA baseline, 4 ERROR entries: dashboard.html topics.json 404 (no generator),
