@@ -53,6 +53,17 @@ release_gates:
     main_at_base: {OSV-Scanner: 40133986561 success, CodeQL Advanced: 40133986397 success,
                    Bandit: 40133986489 success, Security Scan: 40133986349 success}
 
+pr_head_evaluation:
+  pr: 1183
+  head_sha: 765a2023809bc8caf54fbea744d34b7d57fa8b6c
+  K1: {CODEX Release Smoke Aggregate: 40184461917 success, CODEX Release Burndown Aggregate: 40184461858 success}
+  K2: {CODEX RC Manifest Generate: 40184461928 success, CODEX Determinism Execution: 40184461876 success}
+  K3: {W69 QPS Zero-Delta Execution: 40184461956 success, Validate Federation: 40184461847 success,
+       Runtime Federation CI: 40184461906 success}
+  K4: {CODEX Semantic Runtime CI: 40184461890 success, W003 Governance Gate: 40184461891 success,
+       CI: 40184461859 success, MissionControl Mycelium CI: not triggered by this path set (main red, B2)}
+  result: K1 K2 K3 PASS; K4 PASS except Mycelium on main (B2); K5 blocked (B1); K6 PASS on main
+
 blockers:
   - id: B1
     gate: K5
