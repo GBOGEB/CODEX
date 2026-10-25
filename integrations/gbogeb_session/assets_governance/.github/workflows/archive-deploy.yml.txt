@@ -1,0 +1,98 @@
+# ============================================================================
+# GBOGEB/CODEX — Archive Generation & GitHub Pages Deployment
+# Builds asset bundle and deploys visual gallery
+# ============================================================================
+
+name: Archive & Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-archive:
+    name: Build Asset Bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Clean SVGs
+        run: |
+          python src/svg_cleaner.py --input-dir assets/canonical/ --output-dir assets/compiled/ --prefix gbc
+
+      - name: Build archive bundle
+        run: |
+          echo "═══ Building gbc_asset_bundle.tar.gz ═══"
+          tar -czf gbc_asset_bundle.tar.gz \
+            assets/compiled/ \
+            config/visual_data.yaml \
+            config/knowledge_topology.json \
+            config/stakeholder_registry.yaml \
+            lineage_manifest.json \
+            README.md
+          ls -lh gbc_asset_bundle.tar.gz
+
+      - name: Upload bundle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gbc-asset-bundle
+          path: gbc_asset_bundle.tar.gz
+          retention-days: 90
+
+  deploy-gallery:
+    name: Deploy Visual Gallery
+    runs-on: ubuntu-latest
+    needs: build-archive
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Clean SVGs for gallery
+        run: |
+          python src/svg_cleaner.py --input-dir assets/canonical/ --output-dir assets/compiled/ --prefix gbc
+
+      - name: Prepare Pages directory
+        run: |
+          mkdir -p _site/assets
+          cp web/index.html _site/
+          cp -r assets/compiled/ _site/assets/compiled/
+          cp -r assets/canonical/ _site/assets/canonical/
+          cp config/visual_data.yaml _site/
+          cp config/knowledge_topology.json _site/
+          [ -f lineage_manifest.json ] && cp lineage_manifest.json _site/ || true
+          [ -f gbc_asset_bundle.tar.gz ] && cp gbc_asset_bundle.tar.gz _site/ || true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,222 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520">
+  <title>Cryogenic Valve Network — P&amp;ID Schematic</title>
+
+  <!-- Background -->
+  <rect width="960" height="520" fill="#f8f9fa" rx="8"/>
+
+  <!-- Title Block -->
+  <text x="480" y="28" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="700" fill="#202124">Cryogenic Valve Network — P&amp;ID Schematic</text>
+  <text x="480" y="46" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#5f6368">GBOGEB/CODEX · GBC-ASSET-003 · Rev 1.0 · ISA S5.1 Symbology</text>
+
+  <!-- ═══ Main Process Line ═══════════════════════════════════════════ -->
+  <!-- Supply header (blue) -->
+  <line id="gbc-supply-header" x1="40" y1="180" x2="920" y2="180" stroke="#1a73e8" stroke-width="3"/>
+  <text x="50" y="170" font-family="system-ui, sans-serif" font-size="9" fill="#1a73e8" font-weight="600">LHe SUPPLY — 2.0 K / 1.2 bar</text>
+
+  <!-- Return header (orange) -->
+  <line id="gbc-return-header" x1="40" y1="400" x2="920" y2="400" stroke="#ea8600" stroke-width="3"/>
+  <text x="50" y="420" font-family="system-ui, sans-serif" font-size="9" fill="#ea8600" font-weight="600">GHe RETURN — 4.5 K / 1.05 bar</text>
+
+  <!-- ═══ CV-01: Main Control Valve (from engineering_data.yaml) ═════ -->
+  <g id="gbc-cv01-assembly" transform="translate(160, 220)">
+    <!-- Vertical branch from supply -->
+    <line x1="0" y1="-40" x2="0" y2="0" stroke="#1a73e8" stroke-width="2.5"/>
+    <!-- Control valve symbol (bowtie) -->
+    <polygon id="gbc-cv01-body" points="-20,0 0,25 20,0" fill="none" stroke="#1a73e8" stroke-width="2.5"/>
+    <polygon points="-20,50 0,25 20,50" fill="none" stroke="#1a73e8" stroke-width="2.5"/>
+    <!-- Actuator (diaphragm) -->
+    <line x1="-16" y1="-8" x2="16" y2="-8" stroke="#1a73e8" stroke-width="2"/>
+    <circle cx="0" cy="-18" r="10" fill="none" stroke="#1a73e8" stroke-width="1.5"/>
+    <text x="0" y="-15" text-anchor="middle" font-family="system-ui, sans-serif" font-size="7" fill="#1a73e8">A</text>
+    <!-- Vertical branch to return -->
+    <line x1="0" y1="50" x2="0" y2="180" stroke="#ea8600" stroke-width="2.5"/>
+    <!-- Label -->
+    <text x="30" y="20" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#202124">CV-01</text>
+    <text x="30" y="32" font-family="system-ui, sans-serif" font-size="8" fill="#5f6368">Pos: 45%</text>
+    <text x="30" y="43" font-family="system-ui, sans-serif" font-size="8" fill="#5f6368">Cv = 12.8</text>
+    <!-- ISA tag bubble -->
+    <rect x="-32" y="55" width="64" height="22" rx="4" fill="#e3f2fd" stroke="#1a73e8" stroke-width="1"/>
+    <line x1="-32" y1="66" x2="32" y2="66" stroke="#1a73e8" stroke-width="0.5"/>
+    <text x="0" y="64" text-anchor="middle" font-family="system-ui, sans-serif" font-size="7" fill="#1a73e8">FCV</text>
+    <text x="0" y="74" text-anchor="middle" font-family="system-ui, sans-serif" font-size="7" fill="#1a73e8">101</text>
+  </g>
+
+  <!-- ═══ CV-02: Bypass Valve ════════════════════════════════════════ -->
+  <g id="gbc-cv02-assembly" transform="translate(340, 220)">
+    <line x1="0" y1="-40" x2="0" y2="0" stroke="#1a73e8" stroke-width="2"/>
+    <!-- Gate valve symbol (two triangles touching) -->
+    <polygon id="gbc-cv02-body" points="-18,0 0,22 18,0" fill="none" stroke="#6d28d9" stroke-width="2"/>
+    <polygon points="-18,44 0,22 18,44" fill="none" stroke="#6d28d9" stroke-width="2"/>
+    <line x1="-18" y1="22" x2="18" y2="22" stroke="#6d28d9" stroke-width="2"/>
+    <line x1="0" y1="44" x2="0" y2="180" stroke="#ea8600" stroke-width="2"/>
+    <!-- Manual operator (handwheel) -->
+    <line x1="0" y1="-6" x2="0" y2="-18" stroke="#6d28d9" stroke-width="1.5"/>
+    <circle cx="0" cy="-22" r="6" fill="none" stroke="#6d28d9" stroke-width="1.5"/>
+    <text x="28" y="20" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#202124">CV-02</text>
+    <text x="28" y="32" font-family="system-ui, sans-serif" font-size="8" fill="#5f6368">Bypass (NC)</text>
+    <rect x="-32" y="50" width="64" height="22" rx="4" fill="#ede9fe" stroke="#6d28d9" stroke-width="1"/>
+    <line x1="-32" y1="61" x2="32" y2="61" stroke="#6d28d9" stroke-width="0.5"/>
+    <text x="0" y="59" text-anchor="middle" font-family="system-ui, sans-serif" font-size="7" fill="#6d28d9">HV</text>
+    <text x="0" y="69" text-anchor="middle" font-family="system-ui, sans-serif" font-size="7" fill="#6d28d9">102</text>
+  </g>
+
+  <!-- ═══ SV-01: Safety Relief Valve ════════════════════════════════ -->
+  <g id="gbc-sv01-assembly" transform="translate(520, 220)">
+    <line x1="0" y1="-40" x2="0" y2="0" stroke="#1a73e8" stroke-width="2"/>
+    <!-- Safety valve symbol (angled seat) -->
+    <polygon id="gbc-sv01-body" points="-18,0 0,24 18,0" fill="none" stroke="#d93025" stroke-width="2.5"/>
+    <line x1="-14" y1="0" x2="14" y2="0" stroke="#d93025" stroke-width="2.5"/>
+    <!-- Spring symbol -->
+    <polyline points="0,-6 -6,-12 6,-18 -6,-24 6,-30 0,-36" fill="none" stroke="#d93025" stroke-width="1.5"/>
+    <!-- Vent to atmosphere -->
+    <line x1="0" y1="24" x2="0" y2="48" stroke="#d93025" stroke-width="2"/>
+    <line x1="-10" y1="48" x2="10" y2="48" stroke="#d93025" stroke-width="2"/>
+    <line x1="-6" y1="52" x2="6" y2="52" stroke="#d93025" stroke-width="1.5"/>
+    <line x1="-3" y1="55" x2="3" y2="55" stroke="#d93025" stroke-width="1"/>
+    <text x="28" y="12" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#202124">SV-01</text>
+    <text x="28" y="24" font-family="system-ui, sans-serif" font-size="8" fill="#5f6368">Set: 3.0 bar</text>
+    <rect x="-32" y="60" width="64" height="22" rx="4" fill="#fce4ec" stroke="#d93025" stroke-width="1"/>
+    <line x1="-32" y1="71" x2="32" y2="71" stroke="#d93025" stroke-width="0.5"/>
+    <text x="0" y="69" text-anchor="middle" font-family="system-ui, sans-serif" font-size="7" fill="#d93025">PSV</text>
+    <text x="0" y="79" text-anchor="middle" font-family="system-ui, sans-serif" font-size="7" fill="#d93025">103</text>
+  </g>
+
+  <!-- ═══ Check Valve (non-return) ══════════════════════════════════ -->
+  <g id="gbc-ckv01-assembly" transform="translate(680, 220)">
+    <line x1="0" y1="-40" x2="0" y2="0" stroke="#1a73e8" stroke-width="2"/>
+    <!-- Check valve symbol -->
+    <polygon id="gbc-ckv01-body" points="-16,0 0,22 16,0" fill="none" stroke="#34a853" stroke-width="2"/>
+    <line x1="-16" y1="22" x2="16" y2="22" stroke="#34a853" stroke-width="2"/>
+    <circle cx="0" cy="14" r="3" fill="#34a853"/>
+    <line x1="0" y1="22" x2="0" y2="180" stroke="#ea8600" stroke-width="2"/>
+    <text x="26" y="12" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#202124">CKV-01</text>
+    <text x="26" y="24" font-family="system-ui, sans-serif" font-size="8" fill="#5f6368">Non-return</text>
+  </g>
+
+  <!-- ═══ Pressure Instruments ══════════════════════════════════════ -->
+
+  <!-- PT-101: Pressure Transmitter (supply side) -->
+  <g id="gbc-pt101" transform="translate(100, 120)">
+    <line x1="0" y1="30" x2="0" y2="60" stroke="#5f6368" stroke-width="1.5"/>
+    <circle cx="0" cy="18" r="18" fill="#fff" stroke="#1a73e8" stroke-width="1.5"/>
+    <line x1="-18" y1="18" x2="18" y2="18" stroke="#1a73e8" stroke-width="0.5"/>
+    <text x="0" y="14" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#1a73e8">PT</text>
+    <text x="0" y="24" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#1a73e8">101</text>
+    <text x="24" y="10" font-family="system-ui, sans-serif" font-size="7" fill="#5f6368">1.20 bar</text>
+  </g>
+
+  <!-- PT-102: Pressure Transmitter (return side) -->
+  <g id="gbc-pt102" transform="translate(100, 410)">
+    <line x1="0" y1="-10" x2="0" y2="-30" stroke="#5f6368" stroke-width="1.5"/>
+    <circle cx="0" cy="2" r="18" fill="#fff" stroke="#ea8600" stroke-width="1.5"/>
+    <line x1="-18" y1="2" x2="18" y2="2" stroke="#ea8600" stroke-width="0.5"/>
+    <text x="0" y="-2" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#ea8600">PT</text>
+    <text x="0" y="8" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#ea8600">102</text>
+    <text x="24" y="0" font-family="system-ui, sans-serif" font-size="7" fill="#5f6368">1.05 bar</text>
+  </g>
+
+  <!-- ═══ Temperature Instruments ═══════════════════════════════════ -->
+
+  <!-- TT-101: Temperature Transmitter (supply) -->
+  <g id="gbc-tt101" transform="translate(250, 120)">
+    <line x1="0" y1="30" x2="0" y2="60" stroke="#5f6368" stroke-width="1.5"/>
+    <circle cx="0" cy="18" r="18" fill="#fff" stroke="#0097a7" stroke-width="1.5"/>
+    <line x1="-18" y1="18" x2="18" y2="18" stroke="#0097a7" stroke-width="0.5"/>
+    <text x="0" y="14" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#0097a7">TT</text>
+    <text x="0" y="24" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#0097a7">101</text>
+    <text x="24" y="10" font-family="system-ui, sans-serif" font-size="7" fill="#5f6368">2.0 K</text>
+  </g>
+
+  <!-- TT-102: Temperature Transmitter (return) -->
+  <g id="gbc-tt102" transform="translate(820, 410)">
+    <line x1="0" y1="-10" x2="0" y2="-30" stroke="#5f6368" stroke-width="1.5"/>
+    <circle cx="0" cy="2" r="18" fill="#fff" stroke="#0097a7" stroke-width="1.5"/>
+    <line x1="-18" y1="2" x2="18" y2="2" stroke="#0097a7" stroke-width="0.5"/>
+    <text x="0" y="-2" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#0097a7">TT</text>
+    <text x="0" y="8" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#0097a7">102</text>
+    <text x="24" y="0" font-family="system-ui, sans-serif" font-size="7" fill="#5f6368">4.5 K</text>
+  </g>
+
+  <!-- ═══ Flow Instruments ══════════════════════════════════════════ -->
+
+  <!-- FT-101: Flow Transmitter -->
+  <g id="gbc-ft101" transform="translate(440, 120)">
+    <line x1="0" y1="30" x2="0" y2="60" stroke="#5f6368" stroke-width="1.5"/>
+    <circle cx="0" cy="18" r="18" fill="#fff" stroke="#34a853" stroke-width="1.5"/>
+    <line x1="-18" y1="18" x2="18" y2="18" stroke="#34a853" stroke-width="0.5"/>
+    <text x="0" y="14" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#34a853">FT</text>
+    <text x="0" y="24" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#34a853">101</text>
+    <text x="24" y="10" font-family="system-ui, sans-serif" font-size="7" fill="#5f6368">18.4 g/s</text>
+  </g>
+
+  <!-- ═══ Level Indicator ═══════════════════════════════════════════ -->
+
+  <!-- LT-101: Level Transmitter (He vessel) -->
+  <g id="gbc-lt101" transform="translate(620, 120)">
+    <line x1="0" y1="30" x2="0" y2="60" stroke="#5f6368" stroke-width="1.5"/>
+    <circle cx="0" cy="18" r="18" fill="#fff" stroke="#6d28d9" stroke-width="1.5"/>
+    <line x1="-18" y1="18" x2="18" y2="18" stroke="#6d28d9" stroke-width="0.5"/>
+    <text x="0" y="14" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#6d28d9">LT</text>
+    <text x="0" y="24" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#6d28d9">101</text>
+    <text x="24" y="10" font-family="system-ui, sans-serif" font-size="7" fill="#5f6368">85%</text>
+  </g>
+
+  <!-- ═══ DCS / Control System Box ══════════════════════════════════ -->
+  <g id="gbc-dcs" transform="translate(780, 70)">
+    <rect x="0" y="0" width="140" height="65" rx="6" fill="#fff3e0" stroke="#ea8600" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="70" y="18" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" font-weight="600" fill="#ea8600">DCS</text>
+    <text x="70" y="32" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#5f6368">Distributed Control</text>
+    <text x="70" y="44" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#5f6368">System</text>
+    <text x="70" y="58" text-anchor="middle" font-family="system-ui, sans-serif" font-size="7" fill="#ea8600">EPICS / PLC</text>
+    <!-- Signal lines from instruments to DCS -->
+    <line x1="-680" y1="52" x2="0" y2="52" stroke="#ea8600" stroke-width="0.8" stroke-dasharray="3,3"/>
+  </g>
+
+  <!-- ═══ Process Annotations ═══════════════════════════════════════ -->
+  <!-- Arrow indicating flow direction on supply -->
+  <g id="gbc-flow-arrows">
+    <polygon points="75,175 85,180 75,185" fill="#1a73e8"/>
+    <polygon points="455,175 465,180 455,185" fill="#1a73e8"/>
+    <polygon points="755,175 765,180 755,185" fill="#1a73e8"/>
+    <!-- Return flow arrows -->
+    <polygon points="235,395 245,400 235,405" fill="#ea8600"/>
+    <polygon points="555,395 565,400 555,405" fill="#ea8600"/>
+    <polygon points="855,395 865,400 855,405" fill="#ea8600"/>
+  </g>
+
+  <!-- ═══ Legend ════════════════════════════════════════════════════ -->
+  <g id="gbc-pid-legend" transform="translate(40, 460)">
+    <text x="0" y="0" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#202124">Legend:</text>
+
+    <!-- Control valve -->
+    <polygon points="30,18 40,30 50,18" fill="none" stroke="#1a73e8" stroke-width="1.5"/>
+    <text x="56" y="26" font-family="system-ui, sans-serif" font-size="8" fill="#202124">Control valve</text>
+
+    <!-- Gate valve -->
+    <line x1="140" y1="22" x2="160" y2="22" stroke="#6d28d9" stroke-width="1.5"/>
+    <polygon points="140,16 150,28 160,16" fill="none" stroke="#6d28d9" stroke-width="1.5"/>
+    <text x="166" y="26" font-family="system-ui, sans-serif" font-size="8" fill="#202124">Gate valve</text>
+
+    <!-- Safety valve -->
+    <polygon points="250,16 260,28 270,16" fill="none" stroke="#d93025" stroke-width="1.5"/>
+    <text x="276" y="26" font-family="system-ui, sans-serif" font-size="8" fill="#202124">Safety valve</text>
+
+    <!-- Check valve -->
+    <polygon points="370,16 380,28 390,16" fill="none" stroke="#34a853" stroke-width="1.5"/>
+    <text x="396" y="26" font-family="system-ui, sans-serif" font-size="8" fill="#202124">Check valve</text>
+
+    <!-- Instrument bubble -->
+    <circle cx="500" cy="22" r="10" fill="#fff" stroke="#5f6368" stroke-width="1"/>
+    <text x="516" y="26" font-family="system-ui, sans-serif" font-size="8" fill="#202124">Instrument</text>
+
+    <!-- Supply/Return lines -->
+    <line x1="590" y1="18" x2="620" y2="18" stroke="#1a73e8" stroke-width="2.5"/>
+    <text x="626" y="22" font-family="system-ui, sans-serif" font-size="8" fill="#202124">Supply (LHe)</text>
+
+    <line x1="720" y1="18" x2="750" y2="18" stroke="#ea8600" stroke-width="2.5"/>
+    <text x="756" y="22" font-family="system-ui, sans-serif" font-size="8" fill="#202124">Return (GHe)</text>
+  </g>
+
+  <!-- Border frame -->
+  <rect x="4" y="4" width="952" height="512" fill="none" stroke="#dadce0" stroke-width="1" rx="8"/>
+</svg>
