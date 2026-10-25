@@ -1,0 +1,202 @@
+"""Positive and negative cases for source-bound changed-line coverage."""
+from pathlib import Path
+
+from scripts import measure_changed_line_coverage as diffcov
+
+
+def _fixture(tmp_path: Path, hits: tuple[int, int]) -> Path:
+    path = tmp_path / "coverage.xml"
+    path.write_text(
+        '<coverage><packages><package><classes>'
+        '<class filename="scripts/sample.py"><lines>'
+        f'<line number="10" hits="{hits[0]}"/>'
+        f'<line number="11" hits="{hits[1]}"/>'
+        '</lines></class></classes></package></packages></coverage>',
+        encoding="utf-8",
+    )
+    return path
+
+
+def test_changed_line_coverage_counts_executed_and_missed(tmp_path, monkeypatch):
+    def fake_git(args, **kwargs):
+        if args[1] == "rev-parse":
+            return "a" * 40 + "\n"
+        return "+++ b/scripts/sample.py\n@@ -9,0 +10,2 @@\n+first\n+second\n"
+    monkeypatch.setattr(diffcov.subprocess, "check_output", fake_git)
+    result = diffcov.measure(_fixture(tmp_path, (1, 0)), "b" * 40, tmp_path)
+    assert result["exact_sha"] == "a" * 40
+    assert result["eligible_lines"] == 2
+    assert result["covered_lines"] == 1
+    assert result["percent"] == 50.0
+    assert result["uncovered"] == ["scripts/sample.py:11"]
+
+
+def test_zero_changed_executable_lines_never_claims_full_coverage(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        diffcov.subprocess, "check_output",
+        lambda args, **kwargs: "a" * 40 if args[1] == "rev-parse" else "",
+    )
+    result = diffcov.measure(_fixture(tmp_path, (1, 1)), "b" * 40, tmp_path)
+    assert result["status"] == "NO_ELIGIBLE_CHANGED_LINES"
+    assert result["percent"] is None
+    assert result["eligible_lines"] == 0
+
+
+def test_changed_line_coverage_accepts_src_prefix(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        diffcov.subprocess, "check_output",
+        lambda args, **kwargs: "a" * 40 if args[1] == "rev-parse"
+        else "+++ b/src/scripts/sample.py\n@@ -0,0 +10 @@\n+line\n",
+    )
+    result = diffcov.measure(_fixture(tmp_path, (1, 0)), "b" * 40, tmp_path)
+    assert result["covered_lines"] == 1
+    assert result["eligible_lines"] == 1
+    assert result["percent"] == 100.0
+
+
+def test_uninstrumented_changed_source_blocks_measured_percentage(tmp_path, monkeypatch):
+    """Missing XML source must not silently disappear from denominator."""
+    monkeypatch.setattr(
+        diffcov.subprocess, "check_output",
+        lambda args, **kwargs: "a" * 40 if args[1] == "rev-parse"
+        else "+++ b/scripts/sample.py\n@@ -9,0 +10 @@\n+covered\n"
+        "+++ b/scripts/unseen.py\n@@ -0,0 +1 @@\n+untested\n",
+    )
+    result = diffcov.measure(_fixture(tmp_path, (1, 1)), "b" * 40, tmp_path)
+    assert result["status"] == "INCOMPLETE_INSTRUMENTATION"
+    assert result["missing_source_files"] == ["scripts/unseen.py"]
+    assert result["percent"] is None
+    assert result["covered_lines"] == 1
+
+
+def test_basename_from_coverage_xml_matches_scripts_directory(tmp_path, monkeypatch):
+    xml = tmp_path / "coverage.xml"
+    xml.write_text(
+        '<coverage><packages><package><classes><class filename="sample.py">'
+        '<lines><line number="10" hits="1"/></lines></class></classes>'
+        '</package></packages></coverage>', encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        diffcov.subprocess, "check_output",
+        lambda args, **kwargs: "a" * 40 if args[1] == "rev-parse"
+        else "+++ b/scripts/sample.py\n@@ -0,0 +10 @@\n+hit\n",
+    )
+    result = diffcov.measure(xml, "b" * 40, tmp_path)
+    assert result["status"] == "MEASURED"
+    assert (result["covered_lines"], result["eligible_lines"]) == (1, 1)
+
+
+def test_ambiguous_basename_fails_closed(tmp_path, monkeypatch):
+    import pytest
+
+    xml = tmp_path / "coverage.xml"
+    xml.write_text(
+        '<coverage><packages><package><classes><class filename="sample.py">'
+        '<lines><line number="10" hits="1"/></lines></class></classes>'
+        '</package></packages></coverage>', encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        diffcov.subprocess, "check_output",
+        lambda args, **kwargs: "a" * 40 if args[1] == "rev-parse"
+        else "+++ b/scripts/sample.py\n@@ -0,0 +10 @@\n+hit\n"
+        "+++ b/tests/sample.py\n@@ -0,0 +10 @@\n+hit\n",
+    )
+    with pytest.raises(ValueError, match="Ambiguous coverage source path"):
+        diffcov.measure(xml, "b" * 40, tmp_path)
+
+
+def test_coverage_xml_with_zero_hits_reports_zero_percent(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        diffcov.subprocess, "check_output",
+        lambda args, **kwargs: "a" * 40 if args[1] == "rev-parse"
+        else "+++ b/scripts/sample.py\n@@ -0,0 +10,2 @@\n+x\n+y\n",
+    )
+    result = diffcov.measure(_fixture(tmp_path, (0, 0)), "b" * 40, tmp_path)
+    assert result["status"] == "MEASURED"
+    assert result["eligible_lines"] == 2
+    assert result["covered_lines"] == 0
+    assert result["percent"] == 0.0
+
+
+def test_coverage_xml_malformed_is_not_treated_as_clean(tmp_path, monkeypatch):
+    import xml.etree.ElementTree as ET
+
+    import pytest
+
+    xml = tmp_path / "broken.xml"
+    xml.write_text("<coverage><packages>", encoding="utf-8")
+    monkeypatch.setattr(
+        diffcov.subprocess, "check_output",
+        lambda args, **kwargs: "a" * 40 if args[1] == "rev-parse" else "",
+    )
+    with pytest.raises(ET.ParseError):
+        diffcov.measure(xml, "b" * 40, tmp_path)
+
+
+def test_duplicate_xml_classes_do_not_inflate_changed_line_denominator(tmp_path, monkeypatch):
+    xml = tmp_path / "coverage.xml"
+    xml.write_text(
+        '<coverage><packages><package><classes>'
+        '<class filename="scripts/sample.py"><lines><line number="10" hits="0"/></lines></class>'
+        '<class filename="scripts/sample.py"><lines><line number="10" hits="1"/></lines></class>'
+        '</classes></package></packages></coverage>',
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        diffcov.subprocess, "check_output",
+        lambda args, **kwargs: "a" * 40 if args[1] == "rev-parse"
+        else "+++ b/scripts/sample.py\n@@ -0,0 +10 @@\n+line\n",
+    )
+    result = diffcov.measure(xml, "b" * 40, tmp_path)
+    assert result["status"] == "MEASURED"
+    assert result["eligible_lines"] == 1
+    assert result["covered_lines"] == 1
+    assert result["percent"] == 100.0
+
+
+def test_base_equal_to_head_is_not_measured_rather_than_failing(tmp_path, monkeypatch):
+    """Push to main: merge-base HEAD origin/main is HEAD, so there is no diff."""
+    calls = []
+
+    def fake_git(args, **kwargs):
+        calls.append(args)
+        return "a" * 40 + "\n"
+
+    monkeypatch.setattr(diffcov.subprocess, "check_output", fake_git)
+    result = diffcov.measure(_fixture(tmp_path, (1, 1)), "a" * 40, tmp_path)
+    assert result["status"] == "NOT_MEASURED"
+    assert result["percent"] is None
+    assert result["reason"].startswith("EMPTY_BASE_DIFF")
+    assert [c[1] for c in calls] == ["rev-parse"]  # no diff was attempted
+    assert diffcov.evaluate(result, 80.0)["verdict"] == "SKIPPED"
+
+
+def test_target_is_report_only_and_never_fails(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        diffcov.subprocess, "check_output",
+        lambda args, **kwargs: "a" * 40 if args[1] == "rev-parse"
+        else "+++ b/scripts/sample.py\n@@ -0,0 +10,2 @@\n+x\n+y\n",
+    )
+    monkeypatch.chdir(tmp_path)
+    out = tmp_path / "out" / "diff-coverage.json"
+    rc = diffcov.main([str(_fixture(tmp_path, (0, 0))), "b" * 40, str(out), "--target", "80"])
+    assert rc == 0
+    import json
+
+    data = json.loads(out.read_text(encoding="utf-8"))
+    assert data["percent"] == 0.0
+    assert data["admission"] == {
+        "target_percent": 80.0, "verdict": "BELOW_TARGET", "enforcement": "REPORT_ONLY",
+    }
+
+
+def test_target_defaults_to_owner_policy_value_and_env_override(monkeypatch):
+    measured = {"status": "MEASURED", "percent": 85.0}
+    monkeypatch.delenv("CHANGED_LINE_COVERAGE_TARGET", raising=False)
+    assert diffcov._target_from_env() == diffcov.DEFAULT_TARGET == 80.0
+    monkeypatch.setenv("CHANGED_LINE_COVERAGE_TARGET", "90")
+    assert diffcov._target_from_env() == 90.0
+    assert diffcov.evaluate(measured, 90.0)["verdict"] == "BELOW_TARGET"
+    assert diffcov.evaluate(measured, 80.0)["verdict"] == "AT_OR_ABOVE_TARGET"
+    monkeypatch.setenv("CHANGED_LINE_COVERAGE_TARGET", "not-a-number")
+    assert diffcov._target_from_env() == 80.0

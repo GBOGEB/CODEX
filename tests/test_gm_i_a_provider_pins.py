@@ -5,13 +5,12 @@ already-authorized P002 bridge and fail-closed semantic validator. They never
 grant engineering authority or replace the checksum/semantic validation.
 """
 
-from copy import deepcopy
-from pathlib import Path
 import importlib.util
 import unittest
+from copy import deepcopy
+from pathlib import Path
 
 from ruamel.yaml import YAML
-
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github/workflows/gm-i-a-coolprop-fast-heavy-keb.yml"
