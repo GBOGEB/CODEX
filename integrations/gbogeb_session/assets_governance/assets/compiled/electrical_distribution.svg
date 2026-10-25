@@ -1,0 +1,252 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500"
+     role="img" aria-labelledby="gbc-elec-title gbc-elec-desc">
+  <title id="gbc-elec-title">Single-Line Electrical Distribution — Cryomodule Power Systems</title>
+  <desc id="gbc-elec-desc">Single-line diagram showing 13.8 kV main bus feeding step-down transformers and load centers for cryomodule heaters, RF power (704 MHz), vacuum, controls, and diagnostics systems. GBOGEB/CODEX · GBC-ASSET-004 · Rev 1.0</desc>
+
+  <defs>
+    <style>
+      text { font-family: system-ui, -apple-system, sans-serif; }
+      .bus-main { stroke: #d93025; stroke-width: 3; fill: none; }
+      .bus-sec  { stroke: #1a73e8; stroke-width: 2.5; fill: none; }
+      .bus-load { stroke: #333; stroke-width: 2; fill: none; }
+      .label    { font-size: 9px; fill: #333; text-anchor: middle; }
+      .tag      { font-size: 8px; fill: #555; text-anchor: middle; }
+      .val      { font-size: 7.5px; fill: #6d28d9; text-anchor: middle; font-weight: 600; }
+      .heading  { font-size: 11px; fill: #1a73e8; font-weight: 700; text-anchor: middle; }
+      .cb-box   { fill: #fff; stroke: #333; stroke-width: 1.5; }
+      .xfmr-c   { fill: none; stroke: #333; stroke-width: 1.8; }
+      .ground   { stroke: #888; stroke-width: 1.5; fill: none; }
+      .load-box { fill: #e8f0fe; stroke: #1a73e8; stroke-width: 1.5; rx: 4; }
+      .meta     { font-size: 7px; fill: #999; }
+    </style>
+    
+    <symbol id="gbc-cb" viewBox="0 0 16 24">
+      <rect id="gbc-rect-001" x="2" y="0" width="12" height="24" class="cb-box" rx="2"/>
+      <line id="gbc-line-002" x1="8" y1="5" x2="8" y2="10" stroke="#333" stroke-width="1.5"/>
+      <line id="gbc-line-003" x1="8" y1="10" x2="12" y2="19" stroke="#d93025" stroke-width="2"/>
+      <circle id="gbc-circle-004" cx="8" cy="19" r="2" fill="#d93025"/>
+    </symbol>
+    
+    <symbol id="gbc-xfmr" viewBox="0 0 30 40">
+      <circle id="gbc-circle-005" cx="15" cy="14" r="10" class="xfmr-c"/>
+      <circle id="gbc-circle-006" cx="15" cy="26" r="10" class="xfmr-c"/>
+      <circle id="gbc-circle-007" cx="5" cy="20" r="1.5" fill="#333"/>
+      <circle id="gbc-circle-008" cx="25" cy="20" r="1.5" fill="#333"/>
+    </symbol>
+    
+    <symbol id="gbc-fuse" viewBox="0 0 10 20">
+      <rect id="gbc-rect-009" x="1" y="4" width="8" height="12" fill="none" stroke="#333" stroke-width="1.2" rx="1"/>
+      <line id="gbc-line-010" x1="5" y1="0" x2="5" y2="4" stroke="#333" stroke-width="1.2"/>
+      <line id="gbc-line-011" x1="5" y1="16" x2="5" y2="20" stroke="#333" stroke-width="1.2"/>
+      <line id="gbc-line-012" x1="3" y1="10" x2="7" y2="10" stroke="#333" stroke-width="1"/>
+    </symbol>
+    
+    <symbol id="gbc-gnd" viewBox="0 0 20 16">
+      <line id="gbc-line-013" x1="10" y1="0" x2="10" y2="4" class="ground"/>
+      <line id="gbc-line-014" x1="2" y1="4" x2="18" y2="4" class="ground"/>
+      <line id="gbc-line-015" x1="5" y1="8" x2="15" y2="8" class="ground"/>
+      <line id="gbc-line-016" x1="8" y1="12" x2="12" y2="12" class="ground"/>
+    </symbol>
+  </defs>
+
+  
+  <rect id="gbc-rect-017" width="960" height="500" fill="#f8f9fa" rx="6"/>
+
+  
+  <text id="gbc-text-018" x="480" y="24" class="heading" font-size="13">SINGLE-LINE ELECTRICAL DISTRIBUTION — CRYOMODULE POWER SYSTEMS</text>
+  <text id="gbc-text-019" x="480" y="38" class="tag" font-size="8">GBOGEB/CODEX · GBC-ASSET-004 · Rev 1.0 · IEEE / IEC 60617</text>
+
+  
+  <text id="gbc-text-020" x="80" y="68" class="label" font-size="10" font-weight="700">UTILITY</text>
+  <text id="gbc-text-021" x="80" y="80" class="val">13.8 kV · 3φ · 60 Hz</text>
+  <rect id="gbc-rect-022" x="50" y="85" width="60" height="20" fill="#fce8e6" stroke="#d93025" stroke-width="1.5" rx="3"/>
+  <text id="gbc-text-023" x="80" y="99" class="label" font-size="8" fill="#d93025">SOURCE</text>
+
+  
+  <line id="gbc-line-024" x1="110" y1="95" x2="880" y2="95" class="bus-main"/>
+  <text id="gbc-text-025" x="500" y="88" class="val" font-size="8">——— 13.8 kV MAIN BUS ———</text>
+
+  
+  
+  <line id="gbc-line-026" x1="180" y1="95" x2="180" y2="110" class="bus-main" stroke-width="2"/>
+  <use href="#gbc-cb" id="gbc-cb01" x="172" y="110" width="16" height="24"/>
+  <text id="gbc-text-027" x="180" y="146" class="tag">CB-01</text>
+  <text id="gbc-text-028" x="180" y="155" class="tag" font-size="6.5">1200A</text>
+
+  
+  <line id="gbc-line-029" x1="180" y1="158" x2="180" y2="164" stroke="#333" stroke-width="1.5"/>
+  <use href="#gbc-xfmr" id="gbc-t01" x="165" y="164" width="30" height="40"/>
+  <text id="gbc-text-030" x="145" y="188" class="tag" text-anchor="end">T-01</text>
+  <text id="gbc-text-031" x="145" y="197" class="tag" text-anchor="end" font-size="6.5">13.8/0.48 kV</text>
+  <text id="gbc-text-032" x="145" y="206" class="tag" text-anchor="end" font-size="6.5">500 kVA</text>
+
+  
+  <line id="gbc-line-033" x1="180" y1="204" x2="180" y2="216" class="bus-sec" stroke-width="1.5"/>
+  <use href="#gbc-cb" id="gbc-cb01s" x="172" y="216" width="16" height="24"/>
+  <text id="gbc-text-034" x="200" y="232" class="tag" text-anchor="start" font-size="7">CB-01S</text>
+
+  
+  <line id="gbc-line-035" x1="180" y1="240" x2="180" y2="260" class="bus-sec"/>
+  <line id="gbc-line-036" x1="130" y1="260" x2="230" y2="260" class="bus-sec"/>
+  <text id="gbc-text-037" x="180" y="275" class="val" font-size="7">480 V BUS</text>
+
+  
+  <rect id="gbc-rect-038" x="130" y="282" width="100" height="50" class="load-box"/>
+  <text id="gbc-text-039" x="180" y="300" class="label" font-size="8" font-weight="600">CRYOMODULE</text>
+  <text id="gbc-text-040" x="180" y="312" class="label" font-size="8" font-weight="600">HEATER POWER</text>
+  <text id="gbc-text-041" x="180" y="324" class="val" font-size="7">CM-01 · 72.3 W</text>
+  <line id="gbc-line-042" x1="180" y1="260" x2="180" y2="282" class="bus-load"/>
+  <use href="#gbc-fuse" x="175" y="335" width="10" height="20"/>
+
+  
+  <use href="#gbc-gnd" x="170" y="358" width="20" height="16"/>
+
+  
+  <line id="gbc-line-043" x1="360" y1="95" x2="360" y2="110" class="bus-main" stroke-width="2"/>
+  <use href="#gbc-cb" id="gbc-cb02" x="352" y="110" width="16" height="24"/>
+  <text id="gbc-text-044" x="360" y="146" class="tag">CB-02</text>
+  <text id="gbc-text-045" x="360" y="155" class="tag" font-size="6.5">2000A</text>
+
+  
+  <line id="gbc-line-046" x1="360" y1="158" x2="360" y2="164" stroke="#333" stroke-width="1.5"/>
+  <use href="#gbc-xfmr" id="gbc-t02" x="345" y="164" width="30" height="40"/>
+  <text id="gbc-text-047" x="325" y="188" class="tag" text-anchor="end">T-02</text>
+  <text id="gbc-text-048" x="325" y="197" class="tag" text-anchor="end" font-size="6.5">13.8/4.16 kV</text>
+  <text id="gbc-text-049" x="325" y="206" class="tag" text-anchor="end" font-size="6.5">2000 kVA</text>
+
+  <line id="gbc-line-050" x1="360" y1="204" x2="360" y2="216" class="bus-sec" stroke-width="1.5"/>
+  <use href="#gbc-cb" id="gbc-cb02s" x="352" y="216" width="16" height="24"/>
+  <text id="gbc-text-051" x="380" y="232" class="tag" text-anchor="start" font-size="7">CB-02S</text>
+
+  <line id="gbc-line-052" x1="360" y1="240" x2="360" y2="260" class="bus-sec"/>
+  <line id="gbc-line-053" x1="300" y1="260" x2="420" y2="260" class="bus-sec"/>
+  <text id="gbc-text-054" x="360" y="275" class="val" font-size="7">4.16 kV BUS</text>
+
+  
+  <rect id="gbc-rect-055" x="305" y="282" width="110" height="55" class="load-box"/>
+  <text id="gbc-text-056" x="360" y="298" class="label" font-size="8" font-weight="600">RF POWER</text>
+  <text id="gbc-text-057" x="360" y="310" class="label" font-size="8" font-weight="600">KLYSTRON</text>
+  <text id="gbc-text-058" x="360" y="322" class="val" font-size="7">704.42 MHz</text>
+  <text id="gbc-text-059" x="360" y="332" class="val" font-size="7">2000 MeV beam</text>
+  <line id="gbc-line-060" x1="360" y1="260" x2="360" y2="282" class="bus-load"/>
+  <use href="#gbc-fuse" x="355" y="340" width="10" height="20"/>
+  <use href="#gbc-gnd" x="350" y="363" width="20" height="16"/>
+
+  
+  <line id="gbc-line-061" x1="540" y1="95" x2="540" y2="110" class="bus-main" stroke-width="2"/>
+  <use href="#gbc-cb" id="gbc-cb03" x="532" y="110" width="16" height="24"/>
+  <text id="gbc-text-062" x="540" y="146" class="tag">CB-03</text>
+  <text id="gbc-text-063" x="540" y="155" class="tag" font-size="6.5">800A</text>
+
+  
+  <line id="gbc-line-064" x1="540" y1="158" x2="540" y2="164" stroke="#333" stroke-width="1.5"/>
+  <use href="#gbc-xfmr" id="gbc-t03" x="525" y="164" width="30" height="40"/>
+  <text id="gbc-text-065" x="505" y="188" class="tag" text-anchor="end">T-03</text>
+  <text id="gbc-text-066" x="505" y="197" class="tag" text-anchor="end" font-size="6.5">13.8/0.48 kV</text>
+  <text id="gbc-text-067" x="505" y="206" class="tag" text-anchor="end" font-size="6.5">300 kVA</text>
+
+  <line id="gbc-line-068" x1="540" y1="204" x2="540" y2="216" class="bus-sec" stroke-width="1.5"/>
+  <use href="#gbc-cb" id="gbc-cb03s" x="532" y="216" width="16" height="24"/>
+  <text id="gbc-text-069" x="560" y="232" class="tag" text-anchor="start" font-size="7">CB-03S</text>
+
+  <line id="gbc-line-070" x1="540" y1="240" x2="540" y2="260" class="bus-sec"/>
+  <line id="gbc-line-071" x1="490" y1="260" x2="590" y2="260" class="bus-sec"/>
+  <text id="gbc-text-072" x="540" y="275" class="val" font-size="7">480 V BUS</text>
+
+  
+  <rect id="gbc-rect-073" x="490" y="282" width="100" height="50" class="load-box"/>
+  <text id="gbc-text-074" x="540" y="300" class="label" font-size="8" font-weight="600">VACUUM</text>
+  <text id="gbc-text-075" x="540" y="312" class="label" font-size="8" font-weight="600">SYSTEMS</text>
+  <text id="gbc-text-076" x="540" y="324" class="val" font-size="7">Ion pumps · Turbo</text>
+  <line id="gbc-line-077" x1="540" y1="260" x2="540" y2="282" class="bus-load"/>
+  <use href="#gbc-fuse" x="535" y="335" width="10" height="20"/>
+  <use href="#gbc-gnd" x="530" y="358" width="20" height="16"/>
+
+  
+  <line id="gbc-line-078" x1="720" y1="95" x2="720" y2="110" class="bus-main" stroke-width="2"/>
+  <use href="#gbc-cb" id="gbc-cb04" x="712" y="110" width="16" height="24"/>
+  <text id="gbc-text-079" x="720" y="146" class="tag">CB-04</text>
+  <text id="gbc-text-080" x="720" y="155" class="tag" font-size="6.5">400A</text>
+
+  
+  <line id="gbc-line-081" x1="720" y1="158" x2="720" y2="164" stroke="#333" stroke-width="1.5"/>
+  <use href="#gbc-xfmr" id="gbc-t04" x="705" y="164" width="30" height="40"/>
+  <text id="gbc-text-082" x="685" y="188" class="tag" text-anchor="end">T-04</text>
+  <text id="gbc-text-083" x="685" y="197" class="tag" text-anchor="end" font-size="6.5">13.8/0.208 kV</text>
+  <text id="gbc-text-084" x="685" y="206" class="tag" text-anchor="end" font-size="6.5">150 kVA</text>
+
+  <line id="gbc-line-085" x1="720" y1="204" x2="720" y2="216" class="bus-sec" stroke-width="1.5"/>
+  <use href="#gbc-cb" id="gbc-cb04s" x="712" y="216" width="16" height="24"/>
+  <text id="gbc-text-086" x="740" y="232" class="tag" text-anchor="start" font-size="7">CB-04S</text>
+
+  <line id="gbc-line-087" x1="720" y1="240" x2="720" y2="260" class="bus-sec"/>
+  <line id="gbc-line-088" x1="650" y1="260" x2="790" y2="260" class="bus-sec"/>
+  <text id="gbc-text-089" x="720" y="275" class="val" font-size="7">208 V BUS</text>
+
+  
+  <rect id="gbc-rect-090" x="650" y="282" width="60" height="50" class="load-box"/>
+  <text id="gbc-text-091" x="680" y="300" class="label" font-size="7.5" font-weight="600">DCS /</text>
+  <text id="gbc-text-092" x="680" y="312" class="label" font-size="7.5" font-weight="600">PLC</text>
+  <text id="gbc-text-093" x="680" y="324" class="val" font-size="6.5">EPICS IOC</text>
+  <line id="gbc-line-094" x1="680" y1="260" x2="680" y2="282" class="bus-load"/>
+
+  
+  <rect id="gbc-rect-095" x="730" y="282" width="60" height="50" class="load-box"/>
+  <text id="gbc-text-096" x="760" y="300" class="label" font-size="7.5" font-weight="600">BEAM</text>
+  <text id="gbc-text-097" x="760" y="312" class="label" font-size="7.5" font-weight="600">DIAG</text>
+  <text id="gbc-text-098" x="760" y="324" class="val" font-size="6.5">BPM · BCM</text>
+  <line id="gbc-line-099" x1="760" y1="260" x2="760" y2="282" class="bus-load"/>
+
+  
+  <use href="#gbc-gnd" x="670" y="335" width="20" height="16"/>
+  <use href="#gbc-gnd" x="750" y="335" width="20" height="16"/>
+
+  
+  <rect id="gbc-rect-100" x="830" y="110" width="110" height="70" fill="#fef7e0" stroke="#ea8600" stroke-width="1.5" rx="4"/>
+  <text id="gbc-text-101" x="885" y="130" class="label" font-size="8" font-weight="700" fill="#ea8600">UPS BACKUP</text>
+  <text id="gbc-text-102" x="885" y="144" class="tag" font-size="7">125 kVA</text>
+  <text id="gbc-text-103" x="885" y="156" class="tag" font-size="7">Battery: 30 min</text>
+  <text id="gbc-text-104" x="885" y="168" class="tag" font-size="7">Loads: DCS + Safety</text>
+  <line id="gbc-line-105" x1="830" y1="140" x2="820" y2="140" stroke="#ea8600" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <line id="gbc-line-106" x1="820" y1="95" x2="820" y2="140" stroke="#ea8600" stroke-width="1.5" stroke-dasharray="4,2"/>
+
+  
+  <rect id="gbc-rect-107" x="20" y="400" width="920" height="88" fill="#fff" stroke="#ddd" stroke-width="1" rx="4"/>
+  <text id="gbc-text-108" x="40" y="418" class="label" font-size="9" font-weight="700" text-anchor="start">LEGEND</text>
+
+  
+  <use href="#gbc-cb" x="40" y="424" width="12" height="18"/>
+  <text id="gbc-text-109" x="60" y="437" class="tag" font-size="7.5" text-anchor="start">Circuit Breaker</text>
+
+  
+  <use href="#gbc-xfmr" x="140" y="422" width="20" height="28"/>
+  <text id="gbc-text-110" x="168" y="437" class="tag" font-size="7.5" text-anchor="start">Transformer</text>
+
+  
+  <use href="#gbc-fuse" x="250" y="424" width="8" height="16"/>
+  <text id="gbc-text-111" x="266" y="437" class="tag" font-size="7.5" text-anchor="start">Fuse</text>
+
+  
+  <use href="#gbc-gnd" x="330" y="428" width="14" height="12"/>
+  <text id="gbc-text-112" x="352" y="437" class="tag" font-size="7.5" text-anchor="start">Ground</text>
+
+  
+  <line id="gbc-line-113" x1="420" y1="432" x2="460" y2="432" stroke="#d93025" stroke-width="3"/>
+  <text id="gbc-text-114" x="468" y="436" class="tag" font-size="7.5" text-anchor="start">13.8 kV (Primary)</text>
+
+  <line id="gbc-line-115" x1="560" y1="432" x2="600" y2="432" stroke="#1a73e8" stroke-width="2.5"/>
+  <text id="gbc-text-116" x="608" y="436" class="tag" font-size="7.5" text-anchor="start">Secondary Bus</text>
+
+  <line id="gbc-line-117" x1="700" y1="432" x2="740" y2="432" stroke="#333" stroke-width="2"/>
+  <text id="gbc-text-118" x="748" y="436" class="tag" font-size="7.5" text-anchor="start">Load Feed</text>
+
+  <line id="gbc-line-119" x1="820" y1="432" x2="860" y2="432" stroke="#ea8600" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text id="gbc-text-120" x="868" y="436" class="tag" font-size="7.5" text-anchor="start">UPS</text>
+
+  
+  <text id="gbc-text-121" x="40" y="462" class="tag" font-size="7" text-anchor="start">NOTES: All breakers rated per NFPA 70 / NEC · Transformers oil-filled, ONAN cooling · Selective coordination per IEEE 1584 arc flash study</text>
+  <text id="gbc-text-122" x="40" y="474" class="tag" font-size="7" text-anchor="start">Total connected load: ~2950 kVA · Main bus fault current: 25 kA sym · UPS supports critical controls during utility transfer</text>
+
+  
+  <text id="gbc-text-123" x="920" y="492" class="meta" text-anchor="end">GBOGEB/CODEX · GBC-ASSET-004 · Rev 1.0 · IEEE / IEC 60617</text>
+</svg>

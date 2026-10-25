@@ -1,0 +1,197 @@
+{
+  "$schema": "https://gbogeb.dev/schemas/knowledge_topology/v2.json",
+  "version": "2.0.0",
+  "description": "GBOGEB/CODEX (GBC) Knowledge Topology — cross-repository links to GBOGEB/ABACUS (GBA)",
+  "generated_at": "2026-05-20T10:00:00Z",
+
+  "repositories": {
+    "GBC": {
+      "name": "GBOGEB/CODEX",
+      "role": "Visual Asset Governance & Design Source",
+      "url": "https://github.com/gbogeb/codex",
+      "description": "Canonical source for engineering diagrams, schematics, and visual assets"
+    },
+    "GBA": {
+      "name": "GBOGEB/ABACUS",
+      "role": "Governance & Processing Engine",
+      "url": "https://github.com/gbogeb/abacus",
+      "description": "Deterministic publication compiler with A6 governance engines"
+    }
+  },
+
+  "nodes": [
+    {
+      "id": "GBC-ASSET-001",
+      "label": "Cryomodule Schematic",
+      "type": "svg_diagram",
+      "path": "assets/canonical/cryomodule_schematic.svg",
+      "repository": "GBC",
+      "domain": "cryogenic_engineering",
+      "tags": ["cryomodule", "SRF", "cavity", "accelerator"],
+      "links_to": ["GBA-HMI-001", "GBA-SLIDE-003"]
+    },
+    {
+      "id": "GBC-ASSET-002",
+      "label": "Facility Layout",
+      "type": "svg_diagram",
+      "path": "assets/canonical/facility_layout.svg",
+      "repository": "GBC",
+      "domain": "facility_planning",
+      "tags": ["layout", "ESS", "linac", "cryoplant"],
+      "links_to": ["GBA-SLIDE-001", "GBA-REPORT-001"]
+    },
+    {
+      "id": "GBC-CONFIG-001",
+      "label": "Visual Data Registry",
+      "type": "configuration",
+      "path": "config/visual_data.yaml",
+      "repository": "GBC",
+      "domain": "asset_management",
+      "tags": ["registry", "metadata"],
+      "links_to": ["GBA-THEME-001"]
+    },
+    {
+      "id": "GBC-ENGINE-001",
+      "label": "Asset Validator",
+      "type": "validation_engine",
+      "path": "src/asset_validator.py",
+      "repository": "GBC",
+      "domain": "governance",
+      "tags": ["validation", "sha256", "lineage"],
+      "links_to": ["GBA-ENGINE-HOOK"]
+    },
+    {
+      "id": "GBC-ENGINE-002",
+      "label": "SVG Cleaner",
+      "type": "processing_engine",
+      "path": "src/svg_cleaner.py",
+      "repository": "GBC",
+      "domain": "asset_processing",
+      "tags": ["svg", "optimization", "cleanup"],
+      "links_to": ["GBA-RENDER-001"]
+    },
+    {
+      "id": "GBC-ENGINE-003",
+      "label": "Lineage Tracker",
+      "type": "lineage_engine",
+      "path": "src/lineage_tracker.py",
+      "repository": "GBC",
+      "domain": "governance",
+      "tags": ["lineage", "manifest", "traceability"],
+      "links_to": ["GBA-LINEAGE-001"]
+    },
+    {
+      "id": "GBC-WEB-001",
+      "label": "Visual Asset Gallery",
+      "type": "web_hub",
+      "path": "web/index.html",
+      "repository": "GBC",
+      "domain": "presentation",
+      "tags": ["gallery", "hub", "preview"],
+      "links_to": ["GBA-WEB-001"]
+    }
+  ],
+
+  "gba_references": [
+    {
+      "id": "GBA-ENGINE-HOOK",
+      "label": "Verification Hook",
+      "path": "engines/verification_hook.py",
+      "repository": "GBA"
+    },
+    {
+      "id": "GBA-LINEAGE-001",
+      "label": "Lineage Manifest",
+      "path": "_data/lineage_manifest.json",
+      "repository": "GBA"
+    },
+    {
+      "id": "GBA-THEME-001",
+      "label": "Semantic Theme",
+      "path": "engines/SEMANTIC_THEME.yaml",
+      "repository": "GBA"
+    },
+    {
+      "id": "GBA-RENDER-001",
+      "label": "Render Rules",
+      "path": "engines/RENDER_RULES.md",
+      "repository": "GBA"
+    },
+    {
+      "id": "GBA-HMI-001",
+      "label": "HMI Dashboard",
+      "path": "examples/multi_view_workspace/output/documents/index.html",
+      "repository": "GBA"
+    },
+    {
+      "id": "GBA-SLIDE-001",
+      "label": "Presentation Slide 1",
+      "path": "docs/slides/",
+      "repository": "GBA"
+    },
+    {
+      "id": "GBA-SLIDE-003",
+      "label": "Presentation Slide 3",
+      "path": "docs/slides/",
+      "repository": "GBA"
+    },
+    {
+      "id": "GBA-REPORT-001",
+      "label": "Technical Report",
+      "path": "examples/multi_view_workspace/output/documents/report.md",
+      "repository": "GBA"
+    },
+    {
+      "id": "GBA-WEB-001",
+      "label": "GBA Hub",
+      "path": "web/index.html",
+      "repository": "GBA"
+    }
+  ],
+
+  "edges": [
+    {
+      "from": "GBC-ASSET-001",
+      "to": "GBA-HMI-001",
+      "relation": "consumed_by",
+      "description": "Cryomodule SVG rendered in HMI dashboard"
+    },
+    {
+      "from": "GBC-ASSET-002",
+      "to": "GBA-REPORT-001",
+      "relation": "referenced_in",
+      "description": "Facility layout included in technical report"
+    },
+    {
+      "from": "GBC-ENGINE-001",
+      "to": "GBA-ENGINE-HOOK",
+      "relation": "mirrors",
+      "description": "Asset validator mirrors GBA verification_hook patterns"
+    },
+    {
+      "from": "GBC-ENGINE-003",
+      "to": "GBA-LINEAGE-001",
+      "relation": "feeds",
+      "description": "GBC lineage tracker feeds into GBA manifest"
+    },
+    {
+      "from": "GBC-CONFIG-001",
+      "to": "GBA-THEME-001",
+      "relation": "extends",
+      "description": "Visual data registry extends GBA semantic theme"
+    },
+    {
+      "from": "GBC-WEB-001",
+      "to": "GBA-WEB-001",
+      "relation": "links_to",
+      "description": "GBC gallery hub cross-links to GBA hub"
+    }
+  ],
+
+  "integrity": {
+    "topology_hash_algorithm": "SHA256",
+    "cross_repo_validation": true,
+    "required_node_fields": ["id", "label", "type", "path", "repository"],
+    "required_edge_fields": ["from", "to", "relation"]
+  }
+}
