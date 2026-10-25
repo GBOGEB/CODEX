@@ -135,9 +135,14 @@ not patch a downstream gate while an upstream stage is red.
   generated-value parity preflight fails. For same-repo PR branches,
   `missioncontrol-inventory-autoregen.yml` commits the refreshed receipts for
   you (pull before your next push); fork PRs fail with the command to run.
-  Main is also reconciled after merge by
-  `missioncontrol-inventory-reconcile.yml`, but that is a safety net, not a
-  substitute.
+  After merge, `missioncontrol-inventory-reconcile.yml` regenerates on main and,
+  on drift, opens or updates a bot PR from `automation/missioncontrol-reconcile`;
+  that is a safety net, not a substitute.
+- **Bots never push to main.** The `Codex_main_protect` ruleset requires pull
+  requests on main. Bots publish through `scripts/ci/open_bot_pr.sh` (one rolling
+  `automation/<bot>` branch and one open PR per bot). PR creation also needs
+  *Settings -> Actions -> General -> Allow GitHub Actions to create and approve pull
+  requests*; without it the branch is still published and the job summary says so.
 - **`regen_missioncontrol_inventory.py --check` compares against the
   committed tree (HEAD)**, so it exits 1 until the regenerated receipts are
   committed. The order is: regen, then commit, then `--check`.

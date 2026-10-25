@@ -87,9 +87,17 @@ def test_inventory_workflows_trigger_on_every_kpi_input():
 
 
 def test_reconcile_workflow_commits_exactly_the_tracked_outputs():
-    commit = next(r for r in _runs("missioncontrol-inventory-reconcile.yml") if "outputs=(" in r)
-    block = commit.split("outputs=(", 1)[1].split(")", 1)[0]
-    assert set(block.split()) == set(_script().TRACKED_OUTPUTS)
+    step = next(r for r in _runs("missioncontrol-inventory-reconcile.yml") if "open_bot_pr.sh" in r)
+    call = step.split("open_bot_pr.sh", 1)[1].replace("\\\n", " ")
+    paths = {tok for tok in call.split() if tok.endswith(".json")}
+    assert paths == set(_script().TRACKED_OUTPUTS)
+
+
+def test_bots_publish_through_a_pull_request_not_a_push_to_main():
+    for workflow in ("missioncontrol-inventory-reconcile.yml", "dmaic-commit-metrics.yml"):
+        runs = "\n".join(_runs(workflow))
+        assert "open_bot_pr.sh" in runs, workflow
+        assert "git push origin HEAD:main" not in runs and "git push origin HEAD\n" not in runs, workflow
 
 
 def test_reconcile_workflow_cannot_retrigger_itself():
