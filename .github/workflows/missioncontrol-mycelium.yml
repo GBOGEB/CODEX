@@ -22,6 +22,7 @@ on:
       - '.github/workflows/**'
       - 'docs/missioncontrol_mycelium.html'
       - 'docs/missioncontrol_status_snapshot.html'
+      - 'docs/missioncontrol_recursive_control.html'
       - 'docs/assets/missioncontrol/**'
       - 'docs/data/missioncontrol_*.json'
       - 'MANIFEST/MYCELIUM_KPI_MANIFEST.yaml'
@@ -319,7 +320,7 @@ jobs:
               exit 1
             }
       - name: Run MissionControl tests
-        run: pytest -q tests/test_missioncontrol_mycelium.py tests/test_missioncontrol_metrics.py tests/test_missioncontrol_logs.py tests/test_missioncontrol_source_ingestion.py tests/test_missioncontrol_execution_gateway.py tests/test_missioncontrol_authenticated_transport.py tests/test_missioncontrol_status_snapshot.py tests/test_executable_integration_value.py tests/test_missioncontrol_value_rex_contract.py tests/test_missioncontrol_rex_badges.py tests/test_classify_executable_registration_debt.py tests/test_mycelium_kpi_manifest.py tests/test_regen_missioncontrol_inventory.py tests/test_project_recursive_control.py
+        run: pytest -q tests/test_missioncontrol_mycelium.py tests/test_missioncontrol_metrics.py tests/test_missioncontrol_logs.py tests/test_missioncontrol_source_ingestion.py tests/test_missioncontrol_execution_gateway.py tests/test_missioncontrol_authenticated_transport.py tests/test_missioncontrol_status_snapshot.py tests/test_executable_integration_value.py tests/test_missioncontrol_value_rex_contract.py tests/test_missioncontrol_rex_badges.py tests/test_classify_executable_registration_debt.py tests/test_mycelium_kpi_manifest.py tests/test_regen_missioncontrol_inventory.py tests/test_project_recursive_control.py tests/test_missioncontrol_recursive_control_page.py
       - name: Verify deterministic materializations
         run: |
           git ls-files --error-unmatch mission_control/mycelium/executable_value_report.json

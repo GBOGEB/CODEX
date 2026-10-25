@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GBOGEB/CODEX — Visual Asset Gallery</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   GBOGEB/CODEX Visual Asset Gallery — Theme Tokens
+   ═══════════════════════════════════════════════════════════════════ */
+:root {
+  --c-primary: #1a73e8;
+  --c-accent: #34a853;
+  --c-surface: #ffffff;
+  --c-surface-alt: #f8f9fa;
+  --c-text: #202124;
+  --c-text-muted: #5f6368;
+  --c-border: #dadce0;
+  --c-warning: #ea8600;
+  --c-success: #34a853;
+  --c-error: #d93025;
+  --c-code-bg: #f1f3f4;
+  --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,.1);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,.12);
+}
+[data-theme="dark"] {
+  --c-primary: #60a5fa;
+  --c-accent: #34d399;
+  --c-surface: #0f172a;
+  --c-surface-alt: #1e293b;
+  --c-text: #f1f5f9;
+  --c-text-muted: #94a3b8;
+  --c-border: #334155;
+  --c-warning: #fbbf24;
+  --c-success: #34d399;
+  --c-error: #f87171;
+  --c-code-bg: #1e293b;
+  --shadow: 0 2px 8px rgba(0,0,0,.4);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.5);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%; font-family: var(--font);
+  background: var(--c-surface); color: var(--c-text);
+  transition: background .2s, color .2s;
+}
+
+/* ─── Header ──────────────────────────────────────────────────────── */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 24px;
+  background: var(--c-primary); color: #fff;
+  box-shadow: var(--shadow);
+}
+.header h1 { font-size: 18px; display: flex; align-items: center; gap: 10px; }
+.header h1 i { font-size: 22px; }
+.header-controls { display: flex; gap: 10px; align-items: center; }
+.header-controls a {
+  color: #fff; text-decoration: none; font-size: 13px; font-weight: 600;
+  padding: 4px 12px; border: 1px solid rgba(255,255,255,.4);
+  border-radius: var(--radius); transition: all .2s;
+}
+.header-controls a:hover { background: rgba(255,255,255,.15); }
+.theme-toggle {
+  background: none; border: 1px solid rgba(255,255,255,.4);
+  color: #fff; padding: 4px 10px; border-radius: var(--radius);
+  cursor: pointer; font-size: 14px;
+}
+
+/* ─── Info Banner ─────────────────────────────────────────────────── */
+.info-banner {
+  background: var(--c-surface-alt); border-bottom: 1px solid var(--c-border);
+  padding: 16px 24px; display: flex; gap: 32px; flex-wrap: wrap;
+}
+.info-stat { text-align: center; }
+.info-stat .value { font-size: 24px; font-weight: 800; color: var(--c-primary); }
+.info-stat .label { font-size: 11px; color: var(--c-text-muted); text-transform: uppercase; letter-spacing: .5px; }
+
+/* ─── Asset Grid ──────────────────────────────────────────────────── */
+.content { padding: 24px; max-width: 1400px; margin: 0 auto; }
+.section-title {
+  font-size: 16px; font-weight: 700; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+  color: var(--c-text);
+  border-bottom: 2px solid var(--c-primary); padding-bottom: 8px;
+}
+.section-title i { color: var(--c-primary); }
+
+.asset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 20px; margin-bottom: 32px;
+}
+.asset-card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: box-shadow .2s, transform .2s;
+}
+.asset-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+
+.asset-preview {
+  background: #fff; border-bottom: 1px solid var(--c-border);
+  padding: 16px; display: flex; justify-content: center;
+  min-height: 200px; align-items: center;
+}
+.asset-preview svg, .asset-preview img {
+  max-width: 100%; max-height: 240px; height: auto;
+}
+
+.asset-meta { padding: 16px; }
+.asset-meta h3 {
+  font-size: 14px; font-weight: 700; margin-bottom: 4px;
+  color: var(--c-text);
+}
+.asset-meta .asset-id {
+  font-size: 11px; color: var(--c-primary); font-weight: 600;
+  font-family: var(--font-mono); margin-bottom: 8px;
+}
+.asset-meta p { font-size: 12px; color: var(--c-text-muted); line-height: 1.5; margin-bottom: 8px; }
+
+.asset-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.tag {
+  font-size: 10px; padding: 2px 8px;
+  background: var(--c-code-bg); color: var(--c-text-muted);
+  border-radius: 10px; font-weight: 600;
+}
+
+.asset-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn {
+  font-size: 11px; padding: 4px 12px;
+  border: 1px solid var(--c-border); border-radius: var(--radius);
+  background: var(--c-surface-alt); color: var(--c-text);
+  cursor: pointer; text-decoration: none; font-weight: 600;
+  transition: all .2s;
+}
+.btn:hover { background: var(--c-primary); color: #fff; border-color: var(--c-primary); }
+.btn-primary { background: var(--c-primary); color: #fff; border-color: var(--c-primary); }
+
+/* ─── Lineage Table ───────────────────────────────────────────────── */
+.lineage-table {
+  width: 100%; border-collapse: collapse; font-size: 12px;
+  margin-bottom: 24px;
+}
+.lineage-table th, .lineage-table td {
+  padding: 8px 12px; text-align: left;
+  border: 1px solid var(--c-border);
+}
+.lineage-table th {
+  background: var(--c-surface-alt); font-weight: 700;
+  font-size: 11px; text-transform: uppercase; letter-spacing: .3px;
+}
+.lineage-table tr:hover td { background: var(--c-surface-alt); }
+.hash-cell { font-family: var(--font-mono); font-size: 10px; color: var(--c-primary); }
+.status-badge {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 1px 8px; border-radius: 10px;
+}
+.status-verified { background: var(--c-success); color: #fff; }
+.status-failed { background: var(--c-error); color: #fff; }
+
+/* ─── Topology Section ────────────────────────────────────────────── */
+.topology-card {
+  background: var(--c-surface-alt); border: 1px solid var(--c-border);
+  border-radius: var(--radius); padding: 20px;
+  font-family: var(--font-mono); font-size: 12px;
+  line-height: 1.6; overflow-x: auto;
+  margin-bottom: 24px;
+}
+
+/* ─── Footer ──────────────────────────────────────────────────────── */
+.footer {
+  text-align: center; padding: 16px;
+  font-size: 11px; color: var(--c-text-muted);
+  border-top: 1px solid var(--c-border);
+}
+.footer a { color: var(--c-primary); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <h1><i class="fas fa-drafting-compass"></i> GBOGEB/CODEX — Visual Asset Gallery</h1>
+  <div class="header-controls">
+    <a href="https://github.com/gbogeb/abacus" target="_blank"><i class="fas fa-link"></i> GBA Hub</a>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+      <i class="fas fa-adjust"></i>
+    </button>
+  </div>
+</header>
+
+<!-- Stats Banner -->
+<div class="info-banner" id="statsBanner">
+  <div class="info-stat"><div class="value" id="assetCount">5</div><div class="label">Assets</div></div>
+  <div class="info-stat"><div class="value" id="totalSize">52 KB</div><div class="label">Total Size</div></div>
+  <div class="info-stat"><div class="value" id="verifiedCount">5</div><div class="label">Verified</div></div>
+  <div class="info-stat"><div class="value" id="topoNodes">7</div><div class="label">Topology Nodes</div></div>
+  <div class="info-stat"><div class="value" id="topoEdges">6</div><div class="label">Lineage Edges</div></div>
+</div>
+
+<div class="content">
+
+  <!-- ═══ Visual Assets ═══════════════════════════════════════════════ -->
+  <h2 class="section-title"><i class="fas fa-images"></i> Visual Assets</h2>
+  <div class="asset-grid" id="assetGrid">
+
+    <!-- Cryomodule Schematic -->
+    <div class="asset-card">
+      <div class="asset-preview">
+        <object data="assets/canonical/cryomodule_schematic.svg" type="image/svg+xml" style="max-width:100%;max-height:240px;">
+          <img src="assets/canonical/cryomodule_schematic.svg" alt="Cryomodule Schematic">
+        </object>
+      </div>
+      <div class="asset-meta">
+        <div class="asset-id">GBC-ASSET-001</div>
+        <h3>SRF Cryomodule Assembly — Cross Section</h3>
+        <p>Detailed cross-sectional view of superconducting RF cryomodule with cavity string, helium vessel, thermal shields, and vacuum vessel.</p>
+        <div class="asset-tags">
+          <span class="tag">cryomodule</span>
+          <span class="tag">SRF</span>
+          <span class="tag">cavity</span>
+          <span class="tag">accelerator</span>
+          <span class="tag">cross_section</span>
+        </div>
+        <div class="asset-actions">
+          <a href="assets/canonical/cryomodule_schematic.svg" download class="btn btn-primary"><i class="fas fa-download"></i> SVG Source</a>
+          <a href="assets/compiled/cryomodule_schematic.svg" download class="btn"><i class="fas fa-file-code"></i> Compiled</a>
+          <a href="assets/canonical/cryomodule_schematic.svg" target="_blank" class="btn"><i class="fas fa-external-link-alt"></i> Open</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Facility Layout -->
+    <div class="asset-card">
+      <div class="asset-preview">
+        <object data="assets/canonical/facility_layout.svg" type="image/svg+xml" style="max-width:100%;max-height:240px;">
+          <img src="assets/canonical/facility_layout.svg" alt="Facility Layout">
+        </object>
+      </div>
+      <div class="asset-meta">
+        <div class="asset-id">GBC-ASSET-002</div>
+        <h3>ESS Accelerator Facility — Plan View</h3>
+        <p>Top-down layout of the European Spallation Source linear accelerator showing ion source, RFQ, DTL, spoke cavities, medium-beta, and high-beta cryomodule sections with cryoplant.</p>
+        <div class="asset-tags">
+          <span class="tag">layout</span>
+          <span class="tag">ESS</span>
+          <span class="tag">linac</span>
+          <span class="tag">cryoplant</span>
+          <span class="tag">plan_view</span>
+        </div>
+        <div class="asset-actions">
+          <a href="assets/canonical/facility_layout.svg" download class="btn btn-primary"><i class="fas fa-download"></i> SVG Source</a>
+          <a href="assets/compiled/facility_layout.svg" download class="btn"><i class="fas fa-file-code"></i> Compiled</a>
+          <a href="assets/canonical/facility_layout.svg" target="_blank" class="btn"><i class="fas fa-external-link-alt"></i> Open</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Asset 003: P&ID Valve Network ─── -->
+    <div class="asset-card">
+      <div class="asset-preview">
+        <object data="assets/canonical/pid_valve_network.svg" type="image/svg+xml" style="max-width:100%;max-height:240px;">
+          <img src="assets/canonical/pid_valve_network.svg" alt="P&amp;ID Valve Network">
+        </object>
+      </div>
+      <div class="asset-meta">
+        <div class="asset-id">GBC-ASSET-003</div>
+        <h3>P&amp;ID Cryogenic Valve Network</h3>
+        <p>Piping and instrumentation diagram with CV-01 control valve, bypass gate valve, safety relief, check valve, and ISA S5.1 instrument bubbles for pressure, temperature, flow, and level transmitters.</p>
+        <div class="asset-tags">
+          <span class="tag">valve</span>
+          <span class="tag">P&amp;ID</span>
+          <span class="tag">cryogenic</span>
+          <span class="tag">ISA S5.1</span>
+          <span class="tag">instrumentation</span>
+        </div>
+        <div class="asset-actions">
+          <a href="assets/canonical/pid_valve_network.svg" download class="btn btn-primary"><i class="fas fa-download"></i> SVG Source</a>
+          <a href="assets/compiled/pid_valve_network.svg" download class="btn"><i class="fas fa-file-code"></i> Compiled</a>
+          <a href="assets/canonical/pid_valve_network.svg" target="_blank" class="btn"><i class="fas fa-external-link-alt"></i> Open</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Asset 004: Electrical Distribution ─── -->
+    <div class="asset-card">
+      <div class="asset-preview">
+        <object data="assets/canonical/electrical_distribution.svg" type="image/svg+xml" style="max-width:100%;max-height:240px;">
+          <img src="assets/canonical/electrical_distribution.svg" alt="Electrical Distribution">
+        </object>
+      </div>
+      <div class="asset-meta">
+        <div class="asset-id">GBC-ASSET-004</div>
+        <h3>Single-Line Electrical Distribution</h3>
+        <p>Single-line diagram showing 13.8 kV main bus feeding transformers and load centers for cryomodule heaters, RF klystron (704 MHz), vacuum systems, and controls/diagnostics with UPS backup.</p>
+        <div class="asset-tags">
+          <span class="tag">electrical</span>
+          <span class="tag">power</span>
+          <span class="tag">distribution</span>
+          <span class="tag">single-line</span>
+          <span class="tag">transformer</span>
+        </div>
+        <div class="asset-actions">
+          <a href="assets/canonical/electrical_distribution.svg" download class="btn btn-primary"><i class="fas fa-download"></i> SVG Source</a>
+          <a href="assets/compiled/electrical_distribution.svg" download class="btn"><i class="fas fa-file-code"></i> Compiled</a>
+          <a href="assets/canonical/electrical_distribution.svg" target="_blank" class="btn"><i class="fas fa-external-link-alt"></i> Open</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Asset 005: Thermal Flow Diagram ─── -->
+    <div class="asset-card">
+      <div class="asset-preview">
+        <object data="assets/canonical/thermal_flow_diagram.svg" type="image/svg+xml" style="max-width:100%;max-height:240px;">
+          <img src="assets/canonical/thermal_flow_diagram.svg" alt="Thermal Flow Diagram">
+        </object>
+      </div>
+      <div class="asset-meta">
+        <div class="asset-id">GBC-ASSET-005</div>
+        <h3>Thermal Flow Diagram — Helium Cryogenic Loop</h3>
+        <p>Process flow diagram showing the 2 K helium circuit with HX-01 counter-flow heat exchanger, CM-01 cryomodule heat load, cold compressor, JT valve, and annotated thermodynamic state points.</p>
+        <div class="asset-tags">
+          <span class="tag">thermal</span>
+          <span class="tag">heat-exchanger</span>
+          <span class="tag">helium</span>
+          <span class="tag">cryogenic</span>
+          <span class="tag">PFD</span>
+        </div>
+        <div class="asset-actions">
+          <a href="assets/canonical/thermal_flow_diagram.svg" download class="btn btn-primary"><i class="fas fa-download"></i> SVG Source</a>
+          <a href="assets/compiled/thermal_flow_diagram.svg" download class="btn"><i class="fas fa-file-code"></i> Compiled</a>
+          <a href="assets/canonical/thermal_flow_diagram.svg" target="_blank" class="btn"><i class="fas fa-external-link-alt"></i> Open</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ Lineage Tracking ════════════════════════════════════════════ -->
+  <h2 class="section-title"><i class="fas fa-code-branch"></i> Lineage Tracking</h2>
+  <table class="lineage-table">
+    <thead>
+      <tr>
+        <th>Asset</th>
+        <th>SHA256</th>
+        <th>Size</th>
+        <th>Category</th>
+        <th>Status</th>
+        <th>Ingested</th>
+      </tr>
+    </thead>
+    <tbody id="lineageBody">
+      <tr>
+        <td><strong>cryomodule_schematic.svg</strong></td>
+        <td class="hash-cell" id="hash1">—</td>
+        <td>~6 KB</td>
+        <td>svg_diagram</td>
+        <td><span class="status-badge status-verified">verified</span></td>
+        <td>2026-05-20</td>
+      </tr>
+      <tr>
+        <td><strong>facility_layout.svg</strong></td>
+        <td class="hash-cell" id="hash2">—</td>
+        <td>~10 KB</td>
+        <td>facility_layout</td>
+        <td><span class="status-badge status-verified">verified</span></td>
+        <td>2026-05-20</td>
+      </tr>
+      <tr>
+        <td><strong>pid_valve_network.svg</strong></td>
+        <td class="hash-cell" id="hash3">—</td>
+        <td>~12 KB</td>
+        <td>pid_diagram</td>
+        <td><span class="status-badge status-verified">verified</span></td>
+        <td>2026-05-20</td>
+      </tr>
+      <tr>
+        <td><strong>electrical_distribution.svg</strong></td>
+        <td class="hash-cell" id="hash4">—</td>
+        <td>~10 KB</td>
+        <td>electrical_diagram</td>
+        <td><span class="status-badge status-verified">verified</span></td>
+        <td>2026-05-20</td>
+      </tr>
+      <tr>
+        <td><strong>thermal_flow_diagram.svg</strong></td>
+        <td class="hash-cell" id="hash5">—</td>
+        <td>~10 KB</td>
+        <td>process_flow</td>
+        <td><span class="status-badge status-verified">verified</span></td>
+        <td>2026-05-20</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ═══ Knowledge Topology ══════════════════════════════════════════ -->
+  <h2 class="section-title"><i class="fas fa-project-diagram"></i> Knowledge Topology</h2>
+  <div class="topology-card">
+<pre>
+┌─────────────────────────────────────────────────────────────────┐
+│                    GBOGEB Knowledge Graph                       │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────── GBC (CODEX) ────────┐   ┌──────── GBA (ABACUS) ──┐ │
+│  │                              │   │                         │ │
+│  │  GBC-ASSET-001 ──consumed──►│──►│ GBA-HMI-001            │ │
+│  │  (cryomodule.svg)           │   │ (HMI Dashboard)         │ │
+│  │                              │   │                         │ │
+│  │  GBC-ASSET-002 ──referenced─┤──►│ GBA-REPORT-001         │ │
+│  │  (facility_layout.svg)      │   │ (Technical Report)      │ │
+│  │                              │   │                         │ │
+│  │  GBC-ENGINE-001 ──mirrors──►│──►│ GBA-ENGINE-HOOK        │ │
+│  │  (asset_validator.py)       │   │ (verification_hook.py)  │ │
+│  │                              │   │                         │ │
+│  │  GBC-ENGINE-003 ──feeds────►│──►│ GBA-LINEAGE-001        │ │
+│  │  (lineage_tracker.py)       │   │ (lineage_manifest.json) │ │
+│  │                              │   │                         │ │
+│  │  GBC-CONFIG-001 ──extends──►│──►│ GBA-THEME-001          │ │
+│  │  (visual_data.yaml)         │   │ (SEMANTIC_THEME.yaml)   │ │
+│  │                              │   │                         │ │
+│  │  GBC-WEB-001 ──links_to───►│──►│ GBA-WEB-001            │ │
+│  │  (gallery hub)              │   │ (GBA hub)               │ │
+│  │                              │   │                         │ │
+│  └──────────────────────────────┘   └─────────────────────────┘ │
+│                                                                 │
+│  Edges: 6 cross-repo links · Nodes: 7 GBC + 9 GBA refs         │
+└─────────────────────────────────────────────────────────────────┘
+</pre>
+  </div>
+
+  <!-- ═══ Downloads ═══════════════════════════════════════════════════ -->
+  <h2 class="section-title"><i class="fas fa-download"></i> Downloads</h2>
+  <div class="asset-grid" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));">
+    <div class="asset-card" style="padding:16px;">
+      <h3 style="font-size:13px;margin-bottom:4px;"><i class="fas fa-file-archive" style="color:var(--c-primary);"></i> Asset Bundle</h3>
+      <p style="font-size:11px;color:var(--c-text-muted);margin-bottom:8px;">Compiled SVGs + configs + manifest</p>
+      <a href="gbc_asset_bundle.tar.gz" download class="btn btn-primary">gbc_asset_bundle.tar.gz</a>
+    </div>
+    <div class="asset-card" style="padding:16px;">
+      <h3 style="font-size:13px;margin-bottom:4px;"><i class="fas fa-sitemap" style="color:var(--c-primary);"></i> Knowledge Topology</h3>
+      <p style="font-size:11px;color:var(--c-text-muted);margin-bottom:8px;">Cross-repo node/edge graph</p>
+      <a href="knowledge_topology.json" download class="btn">knowledge_topology.json</a>
+    </div>
+    <div class="asset-card" style="padding:16px;">
+      <h3 style="font-size:13px;margin-bottom:4px;"><i class="fas fa-scroll" style="color:var(--c-primary);"></i> Lineage Manifest</h3>
+      <p style="font-size:11px;color:var(--c-text-muted);margin-bottom:8px;">SHA256 asset registry</p>
+      <a href="lineage_manifest.json" download class="btn">lineage_manifest.json</a>
+    </div>
+    <div class="asset-card" style="padding:16px;">
+      <h3 style="font-size:13px;margin-bottom:4px;"><i class="fas fa-palette" style="color:var(--c-primary);"></i> Visual Data</h3>
+      <p style="font-size:11px;color:var(--c-text-muted);margin-bottom:8px;">Asset catalog + theme tokens</p>
+      <a href="visual_data.yaml" download class="btn">visual_data.yaml</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <p>GBOGEB/CODEX (GBC) · Visual Asset Governance Layer · v1.0.0</p>
+  <p>Canonical source for engineering diagrams · Generated outputs are NEVER canonical — see <a href="https://github.com/gbogeb/abacus">GBA</a></p>
+</footer>
+
+<script>
+// Theme toggle
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('gbc-theme', next);
+}
+// Restore theme
+const saved = localStorage.getItem('gbc-theme');
+if (saved) document.documentElement.setAttribute('data-theme', saved);
+
+// Try to load lineage manifest and populate hashes
+fetch('lineage_manifest.json')
+  .then(r => r.json())
+  .then(data => {
+    const assets = data.assets || [];
+    assets.forEach((a, i) => {
+      const el = document.getElementById('hash' + (i + 1));
+      if (el) el.textContent = a.sha256 ? a.sha256.substring(0, 16) + '…' : '—';
+    });
+    document.getElementById('assetCount').textContent = assets.length;
+    const totalKB = assets.reduce((s, a) => s + (a.file_size || 0), 0) / 1024;
+    document.getElementById('totalSize').textContent = totalKB.toFixed(0) + ' KB';
+    document.getElementById('verifiedCount').textContent =
+      assets.filter(a => a.processing_status === 'verified').length;
+  })
+  .catch(() => {});
+
+// Try to load topology and count nodes/edges
+fetch('knowledge_topology.json')
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById('topoNodes').textContent = (data.nodes || []).length;
+    document.getElementById('topoEdges').textContent = (data.edges || []).length;
+  })
+  .catch(() => {});
+</script>
+</body>
+</html>
