@@ -57,3 +57,30 @@ Not listed on purpose:
 Five of the W2 branches carry only a receipt commit that
 `missioncontrol-inventory-autoregen.yml` pushed seconds after the PR merged;
 a separate PR makes the autoregen workflow skip PRs that are no longer open.
+
+## W8 census, 2026-10-25
+
+All 38 branches were checked again against `main` (563a1212). No branch is
+new since the W5 census apart from `automation/metrics`, and no head on a
+ready list or a held branch has moved. There are no open pull requests.
+
+| List | Mode | Branches |
+| --- | --- | --- |
+| `W8_ARCHIVE_SUPERSEDED_20261025.tsv` | archive | 4 |
+
+The list holds the source branches of the W6 re-land PRs, which all merged
+on 2026-10-25: #1175 (certifi floor), #1176 (Docker healthcheck), #1177 (LF
+receipt writers) and #1178 (Mycelium observation binder). Their fixes are on
+`main`. A 3-way merge with `main` adds only regenerable receipts or a
+reworded comment.
+
+Not listed on purpose:
+
+- `automation/metrics` and `automation/update-docs`: live automation branches
+  that their workflows force-push.
+- `repair/20261013-postmerge-ruff-i001` and
+  `work/disjoint-census-verification-20261013`: still held for the owner,
+  heads unchanged.
+- The 29 branches already on the `*_20261024.tsv` lists and
+  `W4_ARCHIVE_NEVER_LANDED_20261011.tsv`: their heads are unchanged, so those
+  lists are ready to run as they are.
