@@ -84,3 +84,27 @@ Not listed on purpose:
 - The 29 branches already on the `*_20261024.tsv` lists and
   `W4_ARCHIVE_NEVER_LANDED_20261011.tsv`: their heads are unchanged, so those
   lists are ready to run as they are.
+
+## W9 held-branch close-out, 2026-10-25
+
+The two branches held for the owner since W5 are closed out using the W8
+held-branch review (decision letters as in that review). Both heads are
+unchanged (checked live on 2026-10-25) and neither has a pull request.
+
+| List | Mode | Branches |
+| --- | --- | --- |
+| `W9_ARCHIVE_HELD_20261025.tsv` | archive | 2 |
+
+- `repair/20261013-postmerge-ruff-i001` (`77e7cba6`), decision **B**: its
+  changed-line coverage script, its 9 + 5 tests and the I001 fix are re-landed
+  by the PR from `claude/w9-changed-line-coverage-report-only`, with the 80%
+  gate report-only (owner policy, repo variable
+  `CHANGED_LINE_COVERAGE_TARGET`). **Run this row only after that PR has
+  merged.** The frozen CI observation JSON and the branch-only push trigger
+  are not re-landed; the archive tag keeps them.
+- `work/disjoint-census-verification-20261013` (`ad19091f`), decision **C**:
+  staged by the owner with "no main push or new PR". The census validator,
+  collector and advisory dashboard stay on the archive tag for #989 and #977;
+  revisit when #989 produces the census JSON.
+
+A dry run on 2026-10-25 reported both rows lossless (`archived_as_tag`).
