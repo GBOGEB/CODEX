@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MissionControl Recursive Control</title>
+<style>
+:root{--bg:#0b1323;--panel:#132038;--panel2:#1c2d49;--ink:#eaf1ff;--muted:#a7b9d1;--line:#354b69;--accent:#80b7ff;--red:#ff8a8a;--amber:#f4c56c;--green:#7fe0a8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,sans-serif}a{color:var(--accent)}
+main{max-width:1500px;margin:auto;padding:20px 16px}header{display:flex;gap:16px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+h1{font-size:clamp(24px,3vw,36px);margin:0}h2{font-size:17px;margin:0 0 12px}h3{font-size:14px;margin:0 0 8px}.kicker{letter-spacing:.12em;font-size:11px;font-weight:700;color:var(--accent)}
+.muted,.sub{color:var(--muted)}.status{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.warn{border-color:var(--amber);color:var(--amber)}
+.summary{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:16px 0}
+.tile,.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}.tile strong{display:block;font-size:22px;overflow-wrap:anywhere}.tile:last-child strong{font-size:14px}.tile small{color:var(--muted)}
+.horizons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.panel+.panel,.horizons+.panel,.panel+.horizons{margin-top:14px}
+.item{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0 0 8px;background:var(--panel2)}
+.item .id{font-weight:700;overflow-wrap:anywhere}.item p{margin:6px 0 0;overflow-wrap:anywhere}
+.tag{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-size:11px;margin-right:4px}
+.tag.RED,.tag.EVIDENCE_CONFLICT{border-color:var(--red);color:var(--red)}.tag.AMBER,.tag.STARVED{border-color:var(--amber);color:var(--amber)}
+.scroller{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top}
+td code,.path{font:12px/1.4 ui-monospace,Consolas,monospace;overflow-wrap:anywhere;word-break:break-all}
+.roots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px}
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}input{width:100%;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 9px;font:12px ui-monospace,Consolas,monospace}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:3px 9px;cursor:pointer;font-size:12px}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;overflow-x:auto;font:12px/1.5 ui-monospace,Consolas,monospace;margin:6px 0 12px}
+.access{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.access>div,.horizons>div{min-width:0}.access li{overflow-wrap:anywhere}
+@media(max-width:1000px){.summary{grid-template-columns:repeat(3,1fr)}.horizons,.access{grid-template-columns:1fr}}
+@media(max-width:580px){.summary{grid-template-columns:repeat(2,1fr)}.roots{grid-template-columns:1fr}.panel{padding:12px}}
+</style></head><body><main>
+<header><div><div class="kicker">MYCELIUM · RCH-04 · DERIVED CONTROL PROJECTION</div>
+<h1>Recursive Control <span class="muted">/ entry &amp; discovery</span></h1>
+<p class="sub">Where the measured MYCELIUM outputs rank back into current, mid and long control horizons, and how to open every source, locally or on GitHub.</p></div>
+<div><a href="missioncontrol_federated_launchpad.html">Federated Launchpad ↗</a> · <a href="missioncontrol_mycelium.html">Mycelium control room ↗</a> · <a href="https://github.com/GBOGEB/CODEX">GBOGEB/CODEX ↗</a></div></header>
+<p class="status" role="status">Read-only. This page renders the committed projection and KPI report; it never writes <code>control_events.json</code>, applies a horizon, transfers authority or claims live refresh. Missing values show as UNKNOWN, never as 0.</p>
+<p class="status warn" id="loadstate" hidden></p>
+
+<section class="summary" id="tiles" aria-label="Projection summary"></section>
+
+<section class="horizons" aria-label="Control horizons">
+<div class="panel"><h2>Current <span class="muted" id="n-current"></span></h2><div id="h-current">Loading…</div></div>
+<div class="panel"><h2>Mid <span class="muted" id="n-mid"></span></h2><div id="h-mid">Loading…</div></div>
+<div class="panel"><h2>Long <span class="muted" id="n-long"></span></h2><div id="h-long">Loading…</div></div>
+</section>
+
+<section class="panel" id="access" aria-label="How to access">
+<h2>How to access</h2>
+<div class="access">
+<div><h3>Online</h3>
+<ul>
+<li>This page on GitHub Pages: <a href="https://gbogeb.github.io/CODEX/missioncontrol_recursive_control.html">gbogeb.github.io/CODEX/missioncontrol_recursive_control.html</a></li>
+<li>Repository: <a href="https://github.com/GBOGEB/CODEX">github.com/GBOGEB/CODEX</a> · federated source: <a href="https://github.com/GBOGEB/pipeline-automation-hub/tree/master/federation/convergence">pipeline-automation-hub / federation/convergence</a></li>
+<li>CI that rebuilds and re-checks the projection: <a href="https://github.com/GBOGEB/CODEX/actions/workflows/missioncontrol-mycelium.yml">MissionControl Mycelium CI runs</a></li>
+<li>Pull requests: <a href="https://github.com/GBOGEB/CODEX/pull/1163">#1163 projector</a> · <a href="https://github.com/GBOGEB/CODEX/pull/1164">#1164 exact-head proof</a></li>
+</ul></div>
+<div><h3>Local checkout</h3>
+<p class="muted">Set your checkout folders once; every path in the catalogue below follows them. Browsers do not open <code>file:</code> links from an https page, so copy the path into File Explorer instead.</p>
+<div class="roots">
+<div><label for="root-codex">CODEX checkout folder</label><input id="root-codex" spellcheck="false" value="C:\Users\gbonthuy\Documents\Codex\2026-10-19\upd\work\CODEX"></div>
+<div><label for="root-hub">pipeline-automation-hub checkout folder</label><input id="root-hub" spellcheck="false" value="C:\Users\gbonthuy\Documents\Codex\2026-10-19\upd\work\mc-integration"></div>
+</div>
+<p>Open the docs folder in File Explorer (PowerShell):</p>
+<pre id="cmd-explorer"></pre>
+<p>Serve this page locally with its live data (then open the link it prints):</p>
+<pre id="cmd-serve"></pre>
+<p>Rebuild and verify the projection from the checkout:</p>
+<pre id="cmd-check"></pre>
+</div></div>
+</section>
+
+<section class="panel" aria-label="Artifact catalogue">
+<h2>Artifact catalogue</h2>
+<div class="scroller"><table><thead><tr><th>Artifact</th><th>Role</th><th>GitHub</th><th>Local path</th></tr></thead><tbody id="catalogue-rows"></tbody></table></div>
+</section>
+
+<section class="panel" aria-label="Projection inputs">
+<h2>Inputs and pins</h2>
+<p class="muted">The projector reads only these files. A federated copy is used only while its sha256 matches the pin; otherwise the build fails closed.</p>
+<div class="scroller"><table><thead><tr><th>Alias</th><th>Origin</th><th>File</th><th>sha256</th></tr></thead><tbody id="inputs">
+<tr><td colspan="4">Loading…</td></tr></tbody></table></div>
+</section>
+
+<section class="panel" aria-label="Ranking rules">
+<h2>Ranking rules</h2>
+<div class="scroller"><table><thead><tr><th>Rule</th><th>Horizon</th><th>Places an item when…</th></tr></thead><tbody id="rules">
+<tr><td colspan="3">Loading…</td></tr></tbody></table></div>
+</section>
+
+<section class="panel" aria-label="Hand-maintained horizons">
+<h2>Hand-maintained horizons retained</h2>
+<p class="muted" id="delta-note">Loading…</p>
+<div id="delta"></div>
+</section>
+
+<script type="application/json" id="catalogue">
+[
+ {"label":"This page","role":"Entry and discovery","repo":"CODEX","path":"docs/missioncontrol_recursive_control.html"},
+ {"label":"Projection (canonical)","role":"Derived horizons, sources per item","repo":"CODEX","path":"mission_control/mycelium/recursive_control_projection.json"},
+ {"label":"Projection (Pages copy)","role":"What this page loads","repo":"CODEX","path":"docs/data/missioncontrol_recursive_control_projection.json"},
+ {"label":"Projector","role":"Builder, rules RC-01 to RC-07, --check","repo":"CODEX","path":"scripts/project_recursive_control.py"},
+ {"label":"Projector tests","role":"Rules, pins, fail-closed, no mutation","repo":"CODEX","path":"tests/test_project_recursive_control.py"},
+ {"label":"Federated pins","role":"HUB revision and sha256 per federated input","repo":"CODEX","path":"mission_control/mycelium/recursive_control/federated_inputs.yaml"},
+ {"label":"Federated copies","role":"Pinned imports from pipeline-automation-hub","repo":"CODEX","path":"mission_control/mycelium/recursive_control/federated/pipeline-automation-hub"},
+ {"label":"KPI report","role":"Measured KPIs, bands and unlock actions","repo":"CODEX","path":"docs/data/mycelium_kpi_measurement.json"},
+ {"label":"KPI manifest","role":"KPI definitions and targets","repo":"CODEX","path":"MANIFEST/MYCELIUM_KPI_MANIFEST.yaml"},
+ {"label":"KPI measurer","role":"Measures the manifest","repo":"CODEX","path":"scripts/measure_mycelium_kpis.py"},
+ {"label":"Executable integration registry","role":"Nodes, edges, executed paths","repo":"CODEX","path":"mission_control/mycelium/executable_integration_registry.yaml"},
+ {"label":"Value control observation","role":"Next control action, debt counts","repo":"CODEX","path":"mission_control/mycelium/executable_value_control_observation.json"},
+ {"label":"Control events","role":"Hand-maintained horizons (never written by the projector)","repo":"CODEX","path":"mission_control/mycelium/control_events.json"},
+ {"label":"Bounded apply policy","role":"Apply stays disabled","repo":"CODEX","path":"mission_control/mycelium/bounded_apply_policy.yaml"},
+ {"label":"Control manifest","role":"Declares the projection","repo":"CODEX","path":"mission_control/mycelium/control_manifest.yaml"},
+ {"label":"Exact-head proof receipt","role":"CI proof for the RCH-04 nodes","repo":"CODEX","path":"mission_control/mycelium/receipts/RECURSIVE_CONTROL_RCH04_PR1163_PROOF.json"},
+ {"label":"Regeneration pipeline","role":"Runs every step and tracks outputs","repo":"CODEX","path":"scripts/regen_missioncontrol_inventory.py"},
+ {"label":"Mycelium CI workflow","role":"Rebuilds, re-checks and diffs outputs","repo":"CODEX","path":".github/workflows/missioncontrol-mycelium.yml"},
+ {"label":"Convergence reducer","role":"Produces the federated receipt","repo":"HUB","path":"federation/convergence/converge.py"},
+ {"label":"Convergence receipt schema","role":"Receipt contract","repo":"HUB","path":"contracts/convergence-receipt.schema.json"}
+]
+</script>
+<script>
+'use strict';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'UNKNOWN').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const REPOS={CODEX:{slug:'GBOGEB/CODEX',ref:'main',root:'#root-codex'},HUB:{slug:'GBOGEB/pipeline-automation-hub',ref:'master',root:'#root-hub'}};
+const gh=(repo,path,ref)=>'https://github.com/'+REPOS[repo].slug+'/blob/'+encodeURIComponent(ref||REPOS[repo].ref).replace(/%2F/g,'/')+'/'+path.split('/').map(encodeURIComponent).join('/');
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const catalogue=JSON.parse($('#catalogue').textContent);
+function localPath(repo,path){const root=$(REPOS[repo].root).value.trim().replace(/[\\/]+$/,'');return root+'\\'+path.replace(/\//g,'\\')}
+function copy(text,btn){const done=()=>{btn.textContent='Copied';setTimeout(()=>btn.textContent='Copy',1200)};
+ if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(done,()=>btn.textContent='Copy failed')}
+ else{const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();try{document.execCommand('copy');done()}catch(e){btn.textContent='Copy failed'}t.remove()}}
+function renderAccess(){
+ const codex=$('#root-codex').value.trim().replace(/[\\/]+$/,'');
+ $('#cmd-explorer').textContent='explorer.exe "'+codex+'\\docs"';
+ $('#cmd-serve').textContent='python -m http.server 8000 --bind 127.0.0.1 --directory "'+codex+'\\docs"\n# then open http://127.0.0.1:8000/missioncontrol_recursive_control.html';
+ $('#cmd-check').textContent='cd "'+codex+'"\npython scripts/project_recursive_control.py --check\npython -m pytest -p no:cacheprovider tests/test_project_recursive_control.py -q';
+ const local=location.protocol==='file:';
+ $('#catalogue-rows').innerHTML=catalogue.map((c,i)=>{const p=localPath(c.repo,c.path);
+  const fileUrl='file:///'+p.replace(/\\/g,'/').split('/').map(encodeURIComponent).join('/').replace(/^([A-Za-z])%3A/,'$1:');
+  return '<tr><td>'+esc(c.label)+'<br><span class="tag">'+esc(c.repo)+'</span></td><td>'+esc(c.role)+'</td><td><a href="'+esc(gh(c.repo,c.path))+'">'+esc(c.path)+'</a></td>'+
+   '<td><span class="path">'+(local?'<a href="'+esc(fileUrl)+'">'+esc(p)+'</a>':esc(p))+'</span> <button type="button" data-copy="'+i+'" aria-label="Copy local path of '+esc(c.label)+'">Copy</button></td></tr>'}).join('');
+}
+document.addEventListener('click',e=>{const b=e.target.closest('button[data-copy]');if(b){const c=catalogue[+b.dataset.copy];copy(localPath(c.repo,c.path),b)}});
+for(const id of ['#root-codex','#root-hub']){const v=store.get('rc-'+id);if(v)$(id).value=v;$(id).addEventListener('input',()=>{store.set('rc-'+id,$(id).value);renderAccess()})}
+renderAccess();
+
+function tile(name,value,sub){return '<div class="tile"><small>'+esc(name)+'</small><strong>'+esc(value)+'</strong><small>'+esc(sub)+'</small></div>'}
+function inputLink(inp,src){if(!inp)return esc(src.input);
+ return inp.origin==='FEDERATED'?'<a href="'+esc(gh('HUB',inp.source_path,inp.revision))+'">'+esc(src.input)+'</a>':'<a href="'+esc(gh('CODEX',inp.path))+'">'+esc(src.input)+'</a>'}
+function item(it,inputs){
+ const srcs=(it.sources||[]).map(s=>inputLink(inputs[s.input],s)+' <code>'+esc(s.pointer)+'</code>').join('<br>');
+ return '<div class="item"><div class="id">'+esc(it.rank)+'. '+esc(it.id)+'</div><div><span class="tag">'+esc(it.rule)+'</span><span class="tag">'+esc(it.lane)+'</span><span class="tag '+esc(it.state)+'">'+esc(it.state)+'</span></div>'+
+  '<p>'+esc(it.reason)+'</p>'+(it.unlock?'<p><b>Unlock:</b> '+esc(it.unlock)+'</p>':'')+'<p class="muted">Source: '+srcs+'</p></div>'}
+async function load(path){const r=await fetch(path,{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status+' for '+path);return r.json()}
+(async()=>{
+ let proj,kpi=null;
+ try{proj=await load('data/missioncontrol_recursive_control_projection.json')}
+ catch(e){const m=$('#loadstate');m.hidden=false;
+  m.textContent=(location.protocol==='file:'?'Opened from disk: browsers block loading data files from file: pages. Use the "Serve this page locally" command below, or open the GitHub Pages copy. ':'')+'Projection not loaded ('+e.message+'). Horizons show as UNKNOWN; the catalogue and access paths below still work.';
+  for(const h of ['current','mid','long'])$('#h-'+h).textContent='UNKNOWN';
+  $('#inputs').innerHTML=$('#rules').innerHTML='<tr><td colspan="4">UNKNOWN</td></tr>';$('#delta-note').textContent='UNKNOWN';return}
+ try{kpi=await load('data/mycelium_kpi_measurement.json')}catch(e){kpi=null}
+ const inputs=Object.fromEntries((proj.inputs||[]).map(i=>[i.alias,i]));
+ const fed=(proj.inputs||[]).find(i=>i.origin==='FEDERATED');
+ const red=kpi&&Array.isArray(kpi.kpis)?kpi.kpis.filter(k=>k.band==='RED').length:'UNKNOWN';
+ const rch=kpi&&Array.isArray(kpi.kpis)?(kpi.kpis.find(k=>k.id==='RCH-04')||{}).value:undefined;
+ $('#tiles').innerHTML=tile('Current',proj.summary?.current,'act now')+tile('Mid',proj.summary?.mid,'unlock named')+tile('Long',proj.summary?.long,'needs design')+
+  tile('RED KPIs',red,'from the KPI report')+tile('RCH-04',rch,'recursive control loop')+tile('Apply',String(proj.apply_state??'UNKNOWN').replace(/_/g,' ').toLowerCase(),'mutation '+String(proj.mutation));
+ for(const h of ['current','mid','long']){const list=(proj.horizons||{})[h];
+  $('#n-'+h).textContent=Array.isArray(list)?'('+list.length+')':'(UNKNOWN)';
+  $('#h-'+h).innerHTML=Array.isArray(list)?(list.length?list.map(i=>item(i,inputs)).join(''):'<p class="muted">Verified empty.</p>'):'UNKNOWN'}
+ $('#inputs').innerHTML=(proj.inputs||[]).map(i=>'<tr><td>'+esc(i.alias)+'</td><td>'+esc(i.origin)+(i.revision?'<br><code>'+esc(i.repository)+' @ '+esc(i.revision.slice(0,12))+'</code>':'')+'</td><td>'+
+  inputLink(i,{input:i.origin==='FEDERATED'?i.source_path:i.path})+'</td><td><code>'+esc(i.sha256)+'</code></td></tr>').join('');
+ $('#rules').innerHTML=(proj.rules||[]).map(r=>'<tr><td>'+esc(r.id)+'</td><td>'+esc(r.horizon)+'</td><td>'+esc(r.rule)+'</td></tr>').join('');
+ const d=proj.delta_vs_control_events||{};
+ $('#delta-note').textContent='Hand-maintained snapshot '+(d.control_events_snapshot_at||'UNKNOWN')+'. These items are kept, never dropped; the projector does not edit them.'+(fed?' Federated pin: '+fed.repository+' @ '+fed.revision.slice(0,12)+'.':'');
+ $('#delta').innerHTML=Array.isArray(d.manual_only_retained)?d.manual_only_retained.map(x=>'<span class="tag">'+esc(x)+'</span>').join(' '):'UNKNOWN';
+})();
+</script>
+</main></body></html>
