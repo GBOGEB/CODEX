@@ -1,0 +1,99 @@
+schema: triage.point-release-candidate/v1
+wave: RR-1.4.1
+repo: GBOGEB/CODEX
+role: POINT_RELEASE_READINESS_PROBE
+candidate_version: 1.4.1          # VERSION.json / pyproject.toml stay at 1.4.0 until release execution
+base_main_sha: 5c0ff34820b4471b95d5be1c60cc1369f623224a
+evaluated_on: 2026-10-25
+status: NOT_READY_BLOCKERS_OPEN
+method: >-
+  Same structure as release/W126_POINT_RELEASE_CANDIDATE.yaml: release gates K1-K4
+  evaluated on this PR's exact head (the K1-K3 workflows run on pull_request only),
+  extended with K5 publication and K6 security. Stop rule: first real red ->
+  repair only that invariant -> rerun the same gate. No release credit by merge.
+
+scope:
+  - GISTAU Chapter 15 L1 validated model, 7/7 checked examples, 24/24 values (#1138, #1112, #1123)
+  - GISTAU book navigator and Chapter 3 Claude-cycle page (#1125)
+  - QPS slide system v0.7.0 GISTAU deck (#1079)
+  - Site-wide Playwright HTML QA with no-new-debt baseline (#1173); GISTAU mobile fixes (#1174)
+  - CI hardening: inventory regen/reconcile (#1122), OSV findings surfacing and documented ignores (#1126, #1128, #1172)
+
+release_gates:
+  - id: K1
+    gate: release_smoke_and_burndown
+    evidence: [CODEX Release Smoke Aggregate, CODEX Release Burndown Aggregate]
+    pass: both workflows PASS on this exact PR head
+  - id: K2
+    gate: rc_manifest_and_determinism
+    evidence: [CODEX RC Manifest Generate, CODEX Determinism Execution]
+    pass: both workflows PASS on this exact PR head
+  - id: K3
+    gate: zero_delta_and_federation
+    evidence: [W69 QPS Zero-Delta Execution, Validate Federation, Runtime Federation CI]
+    pass: all applicable workflows PASS on this exact PR head
+  - id: K4
+    gate: semantic_and_governance
+    evidence: [CODEX Semantic Runtime CI, W003 Governance Gate, CI, MissionControl Mycelium CI]
+    pass: each PASS, or explicitly classified nonblocking by release authority
+    main_at_base: {CI: 40133986363 success, CODEX Semantic Runtime CI: 40133986351 success,
+                   MissionControl Mycelium CI: 40133966660 failure (B2)}
+  - id: K5
+    gate: publication
+    evidence: [Site HTML QA, Deploy GitHub Pages]
+    pass: >-
+      Site HTML QA PASS with no ERROR beyond reports/html_qa/baseline.json (4 known
+      entries), and Deploy GitHub Pages publishes the release commit
+    main_at_base: {Site HTML QA: 40133927582 success (77 pages, 73 without errors),
+                   Deploy GitHub Pages: 40165766987 failure (B1); live site is ae96f42 (2026-10-20)}
+  - id: K6
+    gate: security
+    evidence: [OSV-Scanner, CodeQL Advanced, Bandit, Security Scan]
+    pass: all PASS on main; OSV ignores documented, floor-checked and expiring (tests/test_osv_ignores.py)
+    main_at_base: {OSV-Scanner: 40133986561 success, CodeQL Advanced: 40133986397 success,
+                   Bandit: 40133986489 success, Security Scan: 40133986349 success}
+
+blockers:
+  - id: B1
+    gate: K5
+    finding: >-
+      Deploy GitHub Pages fails at "Build verified Pages output" (pytest on Python 3.11):
+      test_health_dimensions_on_synthetic_repo needs Python >= 3.12 SyntaxWarning semantics.
+    repair: PR #1181
+  - id: B2
+    gate: K4
+    finding: MissionControl Mycelium CI parity preflight red on main (receipt counts 528 vs list 530).
+    repair: PR #1182
+  - id: B3
+    gate: K4/K5
+    finding: >-
+      Ruleset Codex_main_protect (enabled 2026-10-23 14:04Z) requires pull requests on main;
+      bot pushes are refused: CODEX Metrics "Commit metrics artefacts" (run 40133986382),
+      MissionControl Inventory Reconcile (run 40133966621). Update Documentation on Code
+      Changes also fails ("Publish reusable docs update branch", run 40133927552); cause not
+      confirmed (log not readable from the probe session).
+    repair: OWNER_DECISION  # bypass actor for these bots, or bots open PRs instead of pushing
+
+known_debt_not_blocking:
+  - "Site HTML QA baseline, 4 ERROR entries: dashboard.html topics.json 404 (no generator),
+    method_atlas/index.html link outside docs/, two untitled generated stubs"
+  - "Site HTML QA WARNs on non-GISTAU pages (phone overflow, missing lang/viewport)"
+  - GISTAU L1 excludes 5 examples (duplicate, nitrogen, 3 HEPAK-governed two-phase)
+  - Corporate PPTX of the GISTAU deck needs the SCK CEN slide master (local qps_post.py)
+
+release_execution_when_ready:
+  - bump VERSION.json and pyproject.toml to 1.4.1 in one PR (scripts/check_release_identity.py)
+  - tag v1.4.1 on the merged commit and publish GitHub release notes from scope above
+  - confirm Deploy GitHub Pages publishes that commit and Site HTML QA is green on it
+
+workers:
+  KEB: semantic_provenance_policy
+  QA: exact_head_receipt_review
+  Technical_Manager: validity_domain_and_semantic_boundary
+  Governor: release_gate_disposition
+
+stop_rule: first real red -> repair only that invariant -> rerun same gate
+credit_guard:
+  engineering_delta: 0
+  negotiation_delta: 0
+  release_delta: 0
