@@ -14,13 +14,13 @@
       "alias": "kpi_report",
       "origin": "LOCAL",
       "path": "docs/data/mycelium_kpi_measurement.json",
-      "sha256": "06d889948cb3188985b1524e29ef7af1a398e39064c97e0be017547bc330b96f"
+      "sha256": "26b385809e01b00657bf6e51a8ddf2aec9367966f1ad898a3ec514dde5b38c15"
     },
     {
       "alias": "value_observation",
       "origin": "LOCAL",
       "path": "mission_control/mycelium/executable_value_control_observation.json",
-      "sha256": "d55e8e6b27a129c8a3908de4a7327e1d55a82d8effe63c010699a355ebeb1956"
+      "sha256": "b7a64f46c0adc4b88f3124af2adc05351e4850f221591b496c3b24061bcd12c6"
     },
     {
       "alias": "control_events",
@@ -130,7 +130,7 @@
         "rule": "RC-04",
         "lane": "MYCELIUM_EXECUTION",
         "state": "QUEUED",
-        "reason": "530 unregistered assets, 0 tested orphans",
+        "reason": "515 unregistered assets, 0 tested orphans",
         "sources": [
           {
             "input": "value_observation",
@@ -144,7 +144,7 @@
         "rule": "RC-05",
         "lane": "MYCELIUM_EXECUTION",
         "state": "RED",
-        "reason": "Asset registration coverage: 10.62 against target 100",
+        "reason": "Asset registration coverage: 13.3 against target 100",
         "sources": [
           {
             "input": "kpi_report",
@@ -159,7 +159,7 @@
         "rule": "RC-05",
         "lane": "MYCELIUM_EXECUTION",
         "state": "RED",
-        "reason": "Unregistered asset count: 530 against target 0",
+        "reason": "Unregistered asset count: 515 against target 0",
         "sources": [
           {
             "input": "kpi_report",
@@ -168,21 +168,6 @@
         ],
         "unlock": "Work the registration debt queue (next_control_action CLASSIFY_EXECUTABLE_REGISTRATION_DEBT).",
         "rank": 3
-      },
-      {
-        "id": "KPI_EXE-05",
-        "rule": "RC-05",
-        "lane": "MYCELIUM_EXECUTION",
-        "state": "RED",
-        "reason": "Unregistered tested orphans: 15 against target 0",
-        "sources": [
-          {
-            "input": "kpi_report",
-            "pointer": "/kpis/4"
-          }
-        ],
-        "unlock": "Bind each unregistered tested orphan to an executable workflow step, or register it as library-only.",
-        "rank": 4
       },
       {
         "id": "KPI_EXE-07",
@@ -197,7 +182,7 @@
           }
         ],
         "unlock": "Classify each unresolved asset as register, library-only or archive/remove.",
-        "rank": 5
+        "rank": 4
       },
       {
         "id": "KPI_HLT-05",
@@ -212,7 +197,7 @@
           }
         ],
         "unlock": "Bind a governed port probe for each Mycelium node.",
-        "rank": 6
+        "rank": 5
       },
       {
         "id": "KPI_SCR-01",
@@ -227,7 +212,7 @@
           }
         ],
         "unlock": "Bind the requirement/interface/evidence/validation coverage census per node.",
-        "rank": 7
+        "rank": 6
       },
       {
         "id": "KPI_SCR-03",
@@ -242,7 +227,7 @@
           }
         ],
         "unlock": "Record observed pairwise outcomes in control_observations.json.",
-        "rank": 8
+        "rank": 7
       }
     ],
     "long": [
@@ -251,7 +236,7 @@
         "rule": "RC-06",
         "lane": "MYCELIUM_REACH",
         "state": "RED",
-        "reason": "Value beyond repository: 13.16 against target 50",
+        "reason": "Value beyond repository: 11.54 against target 50",
         "sources": [
           {
             "input": "kpi_report",
@@ -265,7 +250,7 @@
         "rule": "RC-06",
         "lane": "MYCELIUM_REACH",
         "state": "RED",
-        "reason": "Tested-only share: 26.32 against target 0",
+        "reason": "Tested-only share: 35.38 against target 0",
         "sources": [
           {
             "input": "kpi_report",
@@ -273,6 +258,20 @@
           }
         ],
         "rank": 2
+      },
+      {
+        "id": "KPI_SIG-05",
+        "rule": "RC-06",
+        "lane": "MYCELIUM_SIGNALS",
+        "state": "RED",
+        "reason": "Registry edges per registered node: 0.78 against target 1.5",
+        "sources": [
+          {
+            "input": "kpi_report",
+            "pointer": "/kpis/19"
+          }
+        ],
+        "rank": 3
       },
       {
         "id": "KPI_HLT-04",
@@ -287,7 +286,7 @@
           }
         ],
         "unlock": "Bind a code-health measurement for each Mycelium node in control_observations.json.",
-        "rank": 3
+        "rank": 4
       },
       {
         "id": "KPI_MIP-02",
@@ -302,7 +301,7 @@
           }
         ],
         "unlock": "Make the required lanes GREEN per MIP/README.md (exact-SHA diagnostic passes).",
-        "rank": 4
+        "rank": 5
       }
     ]
   },
@@ -314,7 +313,6 @@
       "FEDERATED_FRESH_MEASUREMENT",
       "KPI_EXE-02",
       "KPI_EXE-03",
-      "KPI_EXE-05",
       "KPI_EXE-07",
       "KPI_HLT-04",
       "KPI_HLT-05",
@@ -322,7 +320,8 @@
       "KPI_RCH-01",
       "KPI_RCH-02",
       "KPI_SCR-01",
-      "KPI_SCR-03"
+      "KPI_SCR-03",
+      "KPI_SIG-05"
     ],
     "shared": [],
     "manual_only_retained": [
@@ -337,7 +336,7 @@
   },
   "summary": {
     "current": 2,
-    "mid": 8,
-    "long": 4
+    "mid": 7,
+    "long": 5
   }
 }
