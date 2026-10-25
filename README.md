@@ -17,6 +17,28 @@ CODEX is a **governed federation-runtime repository** (see [`GOVERNANCE.md`](GOV
 
 > **Operating model:** CODEX is a governed federation-runtime repository where CI is the truth-verification gate, Pages is the human-facing portal, DMAIC is the iteration ledger, and bridge/federation outputs are the measurable integration layer. See [`GOVERNANCE.md`](GOVERNANCE.md) for repository identity, the workflow → lane map, and the CI-vs-CD contract.
 
+<!-- cross-repo-federation:begin -->
+## Cross-repo federation (ABACUS · CODEX · cryoplant-project)
+
+> Navigation + status snapshot from a smoke-verified cross-repo integration pass (2026-10-25).
+> Not an assertion that any PR is merged or that CI passed on exact head.
+
+CODEX is the **canonical hub** in a hub-and-spoke federation: it owns the only tested
+Bradley-Terry / PCA implementation (`pca_engine`, **16/16 unit tests passing**) and the richest
+`federation/`, `ssot/` and `governance/` trees. The recommended assimilation direction is to
+**canonicalize shared statistics/federation logic here and have spokes reference it**:
+
+- **ABACUS** (DOW analytical runtime) re-implements Bradley-Terry + PCA by hand in
+  `qps_slide_reviewer/lib/stats.ts` → **P1 converge onto `pca_engine`**.
+- **cryoplant-project** (QPS engineering child authority, private) → **P2 consume `federation/`
+  as a single source** rather than divergent copies.
+
+Full evidence, cross-repo integration matrix and merge/prune list:
+[`GBOGEB/ABACUS:docs/INTEGRATION_REPORT.md`](https://github.com/GBOGEB/ABACUS/blob/main/docs/INTEGRATION_REPORT.md).
+Companion analysis: PR **#1188** (W59 cross-repo integration census, analysis-only) — this pass
+adds the executed smoke evidence that census could not run.
+
+<!-- cross-repo-federation:end -->
 
 ## MASTER Contract Workbench SSOT
 
