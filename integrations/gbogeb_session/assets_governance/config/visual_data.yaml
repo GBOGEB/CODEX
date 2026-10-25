@@ -1,0 +1,187 @@
+# ============================================================================
+# GBOGEB/CODEX — Visual Data Registry
+# Central registry of all visual assets, their metadata, and processing rules
+# ============================================================================
+
+schema_version: "1.0.0"
+last_updated: "2026-05-20T10:00:00Z"
+
+# ---------------------------------------------------------------------------
+# Processing Defaults
+# ---------------------------------------------------------------------------
+processing:
+  svg_optimization:
+    remove_metadata: true
+    remove_comments: true
+    remove_editor_data: true
+    minify: false
+    precision: 3
+    inject_ids: true
+    id_prefix: "gbc"
+    viewbox_normalize: true
+
+  thumbnail_generation:
+    enabled: true
+    max_width_px: 400
+    max_height_px: 300
+    format: "png"
+    background: "#ffffff"
+
+  validation:
+    require_viewbox: true
+    require_title: true
+    max_file_size_kb: 500
+    allowed_formats: ["svg", "png", "drawio"]
+    hash_algorithm: "SHA256"
+
+# ---------------------------------------------------------------------------
+# Asset Catalog
+# ---------------------------------------------------------------------------
+assets:
+  - id: "GBC-ASSET-001"
+    filename: "cryomodule_schematic.svg"
+    title: "SRF Cryomodule Assembly — Cross Section"
+    description: "Detailed cross-sectional view of superconducting RF cryomodule with cavity string, helium vessel, thermal shields, and vacuum vessel"
+    category: "engineering_diagram"
+    domain: "cryogenic_engineering"
+    tags:
+      - cryomodule
+      - SRF
+      - cavity
+      - accelerator
+      - cross_section
+    source_format: "svg"
+    canonical_path: "assets/canonical/cryomodule_schematic.svg"
+    compiled_path: "assets/compiled/cryomodule_schematic.svg"
+    created: "2026-05-20"
+    author: "GBOGEB Engineering Team"
+    version: "1.0.0"
+    routing: ["[DOW]", "[ALL]"]
+    gba_consumers:
+      - "GBA-HMI-001"
+      - "GBA-SLIDE-003"
+    dimensions:
+      width: 800
+      height: 400
+      viewbox: "0 0 800 400"
+
+  - id: "GBC-ASSET-002"
+    filename: "facility_layout.svg"
+    title: "ESS Accelerator Facility — Plan View"
+    description: "Top-down layout of the European Spallation Source linear accelerator showing ion source, RFQ, DTL, spoke cavities, medium-beta, and high-beta cryomodule sections with cryoplant"
+    category: "facility_layout"
+    domain: "facility_planning"
+    tags:
+      - layout
+      - ESS
+      - linac
+      - cryoplant
+      - plan_view
+    source_format: "svg"
+    canonical_path: "assets/canonical/facility_layout.svg"
+    compiled_path: "assets/compiled/facility_layout.svg"
+    created: "2026-05-20"
+    author: "GBOGEB Engineering Team"
+    version: "1.0.0"
+    routing: ["[ALL]"]
+    gba_consumers:
+      - "GBA-SLIDE-001"
+      - "GBA-REPORT-001"
+    dimensions:
+      width: 1200
+      height: 300
+      viewbox: "0 0 1200 300"
+
+  - id: "GBC-ASSET-003"
+    filename: "pid_valve_network.svg"
+    title: "P&ID Cryogenic Valve Network"
+    description: "Piping and instrumentation diagram showing cryogenic valve arrangement with CV-01 control valve, bypass gate valve, safety relief, check valve, and ISA S5.1 instrument bubbles for pressure, temperature, flow, and level transmitters"
+    category: "pid_diagram"
+    domain: "process_engineering"
+    tags:
+      - valve
+      - P&ID
+      - cryogenic
+      - ISA_S5.1
+      - instrumentation
+    source_format: "svg"
+    canonical_path: "assets/canonical/pid_valve_network.svg"
+    compiled_path: "assets/compiled/pid_valve_network.svg"
+    created: "2026-05-20"
+    author: "GBOGEB Engineering Team"
+    version: "1.0.0"
+    routing: ["[ALL]"]
+    gba_consumers:
+      - "GBA-SLIDE-001"
+      - "GBA-REPORT-001"
+    dimensions:
+      width: 960
+      height: 520
+      viewbox: "0 0 960 520"
+
+  - id: "GBC-ASSET-004"
+    filename: "electrical_distribution.svg"
+    title: "Single-Line Electrical Distribution"
+    description: "Single-line diagram showing 13.8 kV main bus feeding step-down transformers and load centers for cryomodule heaters, RF klystron power (704 MHz), vacuum systems, and controls/diagnostics with UPS backup"
+    category: "electrical_diagram"
+    domain: "electrical_engineering"
+    tags:
+      - electrical
+      - power
+      - distribution
+      - single_line
+      - transformer
+    source_format: "svg"
+    canonical_path: "assets/canonical/electrical_distribution.svg"
+    compiled_path: "assets/compiled/electrical_distribution.svg"
+    created: "2026-05-20"
+    author: "GBOGEB Engineering Team"
+    version: "1.0.0"
+    routing: ["[ALL]"]
+    gba_consumers:
+      - "GBA-SLIDE-001"
+      - "GBA-REPORT-001"
+    dimensions:
+      width: 960
+      height: 500
+      viewbox: "0 0 960 500"
+
+  - id: "GBC-ASSET-005"
+    filename: "thermal_flow_diagram.svg"
+    title: "Thermal Flow Diagram — Helium Cryogenic Loop"
+    description: "Process flow diagram showing the 2 K helium cryogenic circuit with HX-01 counter-flow heat exchanger, CM-01 cryomodule heat load, cold compressor, JT valve, and annotated thermodynamic state points"
+    category: "process_flow"
+    domain: "thermal_engineering"
+    tags:
+      - thermal
+      - heat-exchanger
+      - helium
+      - cryogenic
+      - PFD
+    source_format: "svg"
+    canonical_path: "assets/canonical/thermal_flow_diagram.svg"
+    compiled_path: "assets/compiled/thermal_flow_diagram.svg"
+    created: "2026-05-20"
+    author: "GBOGEB Engineering Team"
+    version: "1.0.0"
+    routing: ["[ALL]"]
+    gba_consumers:
+      - "GBA-SLIDE-001"
+      - "GBA-REPORT-001"
+    dimensions:
+      width: 960
+      height: 520
+      viewbox: "0 0 960 520"
+
+# ---------------------------------------------------------------------------
+# Theme Integration (extends GBA SEMANTIC_THEME)
+# ---------------------------------------------------------------------------
+theme_tokens:
+  diagram_stroke: "var(--color-primary)"
+  diagram_fill_surface: "var(--color-surface)"
+  diagram_fill_accent: "var(--color-accent)"
+  label_color: "var(--color-on-surface)"
+  status_nominal: "var(--color-success)"
+  status_warning: "var(--color-warning)"
+  status_alarm: "var(--color-error)"
+  grid_color: "var(--color-border)"

@@ -1,0 +1,57 @@
+# ============================================================================
+# GBOGEB/CODEX — Stakeholder Registry
+# Maps visual asset consumers to distribution tags and formats
+# ============================================================================
+
+schema_version: "1.0.0"
+last_updated: "2026-05-20T10:00:00Z"
+
+stakeholders:
+  - tag: "[KEB]"
+    name: "Executive / Strategic Team"
+    description: "High-level decision makers requiring summary views"
+    preferred_formats:
+      - svg_simplified
+      - png_thumbnail
+      - pdf_summary
+    asset_access: "compiled"
+    notification_channel: "email"
+    review_required: true
+
+  - tag: "[DOW]"
+    name: "Technical / Implementation Team"
+    description: "Engineers and developers needing detailed schematics"
+    preferred_formats:
+      - svg_full
+      - drawio_source
+      - png_high_res
+    asset_access: "canonical"
+    notification_channel: "slack"
+    review_required: false
+
+  - tag: "[ALL]"
+    name: "All Stakeholders"
+    description: "Cross-cutting content distributed to everyone"
+    preferred_formats:
+      - svg_optimized
+      - png_standard
+    asset_access: "compiled"
+    notification_channel: "both"
+    review_required: false
+
+routing_rules:
+  default_tag: "[ALL]"
+  multi_tag_allowed: true
+  tag_inheritance: false
+  
+  asset_type_defaults:
+    svg_diagram: "[DOW]"
+    facility_layout: "[ALL]"
+    presentation_graphic: "[KEB]"
+    technical_schematic: "[DOW]"
+
+distribution:
+  archive_format: "gbc_asset_bundle.tar.gz"
+  include_lineage: true
+  include_thumbnails: true
+  max_bundle_size_mb: 50

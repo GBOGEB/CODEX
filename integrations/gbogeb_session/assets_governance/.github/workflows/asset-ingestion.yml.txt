@@ -1,0 +1,113 @@
+# ============================================================================
+# GBOGEB/CODEX — Asset Ingestion Pipeline
+# Validates, cleans, and tracks visual assets on push/PR
+# ============================================================================
+
+name: Asset Ingestion
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'assets/canonical/**'
+      - 'config/visual_data.yaml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/canonical/**'
+      - 'config/visual_data.yaml'
+  workflow_dispatch:
+
+jobs:
+  validate-assets:
+    name: Validate Visual Assets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Validate all canonical assets
+        run: |
+          echo "═══ GBOGEB/CODEX — Asset Validation ═══"
+          python src/asset_validator.py --input-dir assets/canonical/
+
+      - name: Verify manifest integrity
+        run: |
+          python src/lineage_tracker.py --validate --manifest lineage_manifest.json || true
+
+      - name: Check for untracked .mock files
+        run: |
+          MOCK_COUNT=$(git diff --name-only --diff-filter=A -- '*.mock' | wc -l)
+          if [ "$MOCK_COUNT" -gt 0 ]; then
+            echo "⚠ WARNING: $MOCK_COUNT new .mock sidecar files detected"
+            git diff --name-only --diff-filter=A -- '*.mock'
+          fi
+
+  clean-svgs:
+    name: Clean & Optimize SVGs
+    runs-on: ubuntu-latest
+    needs: validate-assets
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Clean SVGs → compiled/
+        run: |
+          echo "═══ GBOGEB/CODEX — SVG Cleaning ═══"
+          python src/svg_cleaner.py --input-dir assets/canonical/ --output-dir assets/compiled/ --prefix gbc
+
+      - name: Upload compiled assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-svgs
+          path: assets/compiled/
+          retention-days: 30
+
+  update-lineage:
+    name: Update Lineage Manifest
+    runs-on: ubuntu-latest
+    needs: clean-svgs
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Track all canonical assets
+        run: |
+          echo "═══ GBOGEB/CODEX — Lineage Update ═══"
+          for svg in assets/canonical/*.svg; do
+            if [ -f "$svg" ]; then
+              python src/lineage_tracker.py --add "$svg" --category svg_diagram --manifest lineage_manifest.json
+            fi
+          done
+
+      - name: Show lineage status
+        run: python src/lineage_tracker.py --status --manifest lineage_manifest.json
+
+      - name: Upload manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: lineage-manifest
+          path: lineage_manifest.json
+          retention-days: 90
