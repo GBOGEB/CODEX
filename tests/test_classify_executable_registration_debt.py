@@ -67,6 +67,33 @@ jobs:
     assert row["classification"] == "PIPELINE_INTEGRATION_CANDIDATE"
 
 
+def test_python_m_module_step_is_operational_consumer(tmp_path: Path) -> None:
+    report = tmp_path / "report.json"
+    workflows = tmp_path / "workflows"
+    tests = tmp_path / "tests"
+    tests.mkdir()
+    (tests / "test_example.py").write_text("", encoding="utf-8")
+    (tests / "test_example_extra.py").write_text("", encoding="utf-8")
+    _write_report(report, ["scripts/example.py", "scripts/example_extra.py"])
+    _write_workflow(
+        workflows / "example.yml",
+        """
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: python -m scripts.example_extra --flag
+""",
+    )
+    payload = classify(report, workflows, tests)
+    rows = {row["asset"]: row for row in payload["candidates"]}
+    assert rows["scripts/example_extra.py"]["operational_edge"] is True
+    assert rows["scripts/example_extra.py"]["classification"] == "PIPELINE_INTEGRATION_CANDIDATE"
+    # A shorter module name that is only a prefix of the run module is not consumed.
+    assert rows["scripts/example.py"]["operational_edge"] is False
+    assert rows["scripts/example.py"]["classification"] == "TESTED_ORPHAN"
+
+
 def test_test_asset_is_reference_only(tmp_path: Path) -> None:
     report = tmp_path / "report.json"
     workflows = tmp_path / "workflows"

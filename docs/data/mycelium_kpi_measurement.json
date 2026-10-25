@@ -13,21 +13,21 @@
       "alias": "report",
       "path": "mission_control/mycelium/executable_value_report.json",
       "origin": "file",
-      "sha256": "588613ad5b69f800031235ea0c76a80f3f6566b107ae55456a941aaa7cb0968a",
+      "sha256": "894883aad58bf9badebefcb5e012c69e2cc95ecbdd9c6668e3a54693074d5017",
       "stamp": null
     },
     {
       "alias": "observation",
       "path": "mission_control/mycelium/executable_value_control_observation.json",
       "origin": "file",
-      "sha256": "17c3ffb7335665596b65cb08e3eb334962dcb8c3e226333631ca033a089fa2c8",
+      "sha256": "0c6ad5c6de74e2f91d78bb4106bd212bd3df9eada7e3b58bc07e39cc475a4209",
       "stamp": null
     },
     {
       "alias": "snapshot",
       "path": "mission_control/mycelium/metrics_snapshot.json",
       "origin": "file",
-      "sha256": "3a06f33dc41a2de43fbe38f95f06f9498fa763a59165b183de390f11bb1963ac",
+      "sha256": "0c1152ba18b0f70f25f038c030065d666eea50573452d7bf81b82399270598da",
       "stamp": "2026-10-22T07:17:42Z"
     },
     {
@@ -48,7 +48,7 @@
       "alias": "registry",
       "path": "mission_control/mycelium/executable_integration_registry.yaml",
       "origin": "file",
-      "sha256": "e3878bca498b3a4fbe579f42a2abd780e1b3f3b87038f2b1525f064ed6138237",
+      "sha256": "35f6ec0f2ec1ff26a2f433bfe5adf98c0edf5ecdec937411bf300a6e2583e1c8",
       "stamp": "bb171b534943cd76fe761b988c936fbd09cf96ca"
     },
     {
@@ -88,8 +88,8 @@
       "binding_errors": 0,
       "measurement_coverage_pct": 100.0,
       "bands": {
-        "GREEN": 10,
-        "AMBER": 9,
+        "GREEN": 11,
+        "AMBER": 8,
         "RED": 9,
         "INFO": 10
       }
@@ -102,9 +102,9 @@
         "binding_errors": 0,
         "measurement_coverage_pct": 100.0,
         "bands": {
-          "GREEN": 2,
+          "GREEN": 3,
           "AMBER": 1,
-          "RED": 4,
+          "RED": 3,
           "INFO": 3
         }
       },
@@ -129,8 +129,8 @@
         "measurement_coverage_pct": 100.0,
         "bands": {
           "GREEN": 0,
-          "AMBER": 4,
-          "RED": 0,
+          "AMBER": 3,
+          "RED": 1,
           "INFO": 1
         }
       },
@@ -220,11 +220,11 @@
       "target": 100,
       "dmaic_phase": "MEASURE",
       "status": "MEASURED",
-      "value": 10.55,
+      "value": 13.28,
       "band": "RED",
       "inputs": {
-        "numerator": 63,
-        "denominator": 597
+        "numerator": 79,
+        "denominator": 595
       },
       "unlock": "Register justified batches of census assets in executable_integration_registry.yaml."
     },
@@ -237,10 +237,10 @@
       "target": 0,
       "dmaic_phase": "IMPROVE",
       "status": "MEASURED",
-      "value": 534,
+      "value": 516,
       "band": "RED",
       "inputs": {
-        "numerator": 534
+        "numerator": 516
       },
       "unlock": "Work the registration debt queue (next_control_action CLASSIFY_EXECUTABLE_REGISTRATION_DEBT)."
     },
@@ -268,10 +268,10 @@
       "target": 0,
       "dmaic_phase": "IMPROVE",
       "status": "MEASURED",
-      "value": 15,
-      "band": "RED",
+      "value": 0,
+      "band": "GREEN",
       "inputs": {
-        "numerator": 15
+        "numerator": 0
       },
       "unlock": "Bind each unregistered tested orphan to an executable workflow step, or register it as library-only."
     },
@@ -284,11 +284,11 @@
       "target": null,
       "dmaic_phase": "ANALYZE",
       "status": "MEASURED",
-      "value": 41.95,
+      "value": 43.02,
       "band": "INFO",
       "inputs": {
-        "numerator": 224,
-        "denominator": 534
+        "numerator": 222,
+        "denominator": 516
       }
     },
     {
@@ -316,11 +316,11 @@
       "target": 0,
       "dmaic_phase": "CONTROL",
       "status": "MEASURED",
-      "value": 5.26,
+      "value": 4.62,
       "band": "AMBER",
       "inputs": {
         "numerator": 6,
-        "denominator": 114
+        "denominator": 130
       }
     },
     {
@@ -332,11 +332,11 @@
       "target": null,
       "dmaic_phase": "CONTROL",
       "status": "MEASURED",
-      "value": 27.19,
+      "value": 23.85,
       "band": "INFO",
       "inputs": {
         "numerator": 31,
-        "denominator": 114
+        "denominator": 130
       }
     },
     {
@@ -365,10 +365,11 @@
         "FEDERATION_HOSTED_MATERIALIZATION": 1,
         "FEDERATION_HOSTED_PROOF": 1,
         "HOSTED_MATERIALIZATION_EVIDENCE": 1,
+        "LIBRARY_REFERENCE_ONLY": 13,
         "PIPELINE_INTEGRATED": 31,
         "PIPELINE_INTEGRATED_PENDING_EXACT_HEAD_PROOF": 2,
         "PIPELINE_INTEGRATED_SOFT_RUFF_DEBT_PRESERVED": 1,
-        "REGISTERED_CONNECTED_VALUE_WITHHELD": 30,
+        "REGISTERED_CONNECTED_VALUE_WITHHELD": 33,
         "REPOSITORY_ARTIFACT_PROOF": 1,
         "REPOSITORY_ARTIFACT_VALUE": 1,
         "REX_OBSERVABLE": 1,
@@ -394,10 +395,11 @@
           "FEDERATION_HOSTED_MATERIALIZATION": 1,
           "FEDERATION_HOSTED_PROOF": 1,
           "HOSTED_MATERIALIZATION_EVIDENCE": 1,
+          "LIBRARY_REFERENCE_ONLY": 13,
           "PIPELINE_INTEGRATED": 31,
           "PIPELINE_INTEGRATED_PENDING_EXACT_HEAD_PROOF": 2,
           "PIPELINE_INTEGRATED_SOFT_RUFF_DEBT_PRESERVED": 1,
-          "REGISTERED_CONNECTED_VALUE_WITHHELD": 30,
+          "REGISTERED_CONNECTED_VALUE_WITHHELD": 33,
           "REPOSITORY_ARTIFACT_PROOF": 1,
           "REPOSITORY_ARTIFACT_VALUE": 1,
           "REX_OBSERVABLE": 1,
@@ -415,11 +417,11 @@
       "target": 50,
       "dmaic_phase": "IMPROVE",
       "status": "MEASURED",
-      "value": 13.16,
+      "value": 11.54,
       "band": "RED",
       "inputs": {
         "numerator": 15,
-        "denominator": 114
+        "denominator": 130
       }
     },
     {
@@ -431,11 +433,11 @@
       "target": 0,
       "dmaic_phase": "IMPROVE",
       "status": "MEASURED",
-      "value": 26.32,
+      "value": 35.38,
       "band": "RED",
       "inputs": {
-        "numerator": 30,
-        "denominator": 114
+        "numerator": 46,
+        "denominator": 130
       }
     },
     {
@@ -479,7 +481,7 @@
       "dmaic_phase": "MEASURE",
       "status": "MEASURED",
       "value": {
-        "V0_TESTED_ONLY": 30,
+        "V0_TESTED_ONLY": 46,
         "V1_LOCAL_OPERATIONAL": 3,
         "V2_REPOSITORY_VALUE": 66,
         "V3_PROJECT_VALUE": 11,
@@ -489,7 +491,7 @@
       "band": "INFO",
       "inputs": {
         "numerator": {
-          "V0_TESTED_ONLY": 30,
+          "V0_TESTED_ONLY": 46,
           "V1_LOCAL_OPERATIONAL": 3,
           "V2_REPOSITORY_VALUE": 66,
           "V3_PROJECT_VALUE": 11,
@@ -568,11 +570,11 @@
       "target": 1.5,
       "dmaic_phase": "MEASURE",
       "status": "MEASURED",
-      "value": 0.87,
-      "band": "AMBER",
+      "value": 0.78,
+      "band": "RED",
       "inputs": {
-        "numerator": 99,
-        "denominator": 114
+        "numerator": 101,
+        "denominator": 130
       }
     },
     {
@@ -882,23 +884,23 @@
       "id": "CHK-02",
       "name": "Snapshot executable-value population matches registry",
       "status": "PASS",
-      "left": 114,
-      "right": 114,
+      "left": 130,
+      "right": 130,
       "note": "The snapshot's executable_value population is executable_integration_registry.yaml, not interaction_graph.json."
     },
     {
       "id": "CHK-03",
       "name": "Debt classifier candidates match unregistered count",
       "status": "PASS",
-      "left": 534,
-      "right": 534
+      "left": 516,
+      "right": 516
     },
     {
       "id": "CHK-04",
       "name": "Control observation unregistered count matches report",
       "status": "PASS",
-      "left": 534,
-      "right": 534
+      "left": 516,
+      "right": 516
     },
     {
       "id": "CHK-05",
@@ -920,23 +922,16 @@
     {
       "id": "EXE-02",
       "name": "Asset registration coverage",
-      "value": 10.55,
+      "value": 13.28,
       "target": 100,
       "unlock": "Register justified batches of census assets in executable_integration_registry.yaml."
     },
     {
       "id": "EXE-03",
       "name": "Unregistered asset count",
-      "value": 534,
+      "value": 516,
       "target": 0,
       "unlock": "Work the registration debt queue (next_control_action CLASSIFY_EXECUTABLE_REGISTRATION_DEBT)."
-    },
-    {
-      "id": "EXE-05",
-      "name": "Unregistered tested orphans",
-      "value": 15,
-      "target": 0,
-      "unlock": "Bind each unregistered tested orphan to an executable workflow step, or register it as library-only."
     },
     {
       "id": "EXE-07",
@@ -948,15 +943,22 @@
     {
       "id": "RCH-01",
       "name": "Value beyond repository",
-      "value": 13.16,
+      "value": 11.54,
       "target": 50,
       "unlock": null
     },
     {
       "id": "RCH-02",
       "name": "Tested-only share",
-      "value": 26.32,
+      "value": 35.38,
       "target": 0,
+      "unlock": null
+    },
+    {
+      "id": "SIG-05",
+      "name": "Registry edges per registered node",
+      "value": 0.78,
+      "target": 1.5,
       "unlock": null
     },
     {

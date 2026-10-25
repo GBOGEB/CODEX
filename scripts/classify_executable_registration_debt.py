@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -62,6 +63,16 @@ def _executable_workflow_text(workflows_root: Path) -> str:
     return "\n".join(chunks)
 
 
+def _runs_asset(asset: str, executable_text: str) -> bool:
+    """True when an executable step names the asset by path or as ``python -m`` module."""
+    if asset in executable_text:
+        return True
+    if not asset.endswith(".py"):
+        return False
+    module = asset.removesuffix(".py").replace("/", ".")
+    return re.search(rf"-m\s+{re.escape(module)}(?![\w.])", executable_text) is not None
+
+
 def _source_label(report_path: Path) -> str:
     resolved = report_path.resolve()
     try:
@@ -82,7 +93,7 @@ def classify(
     for asset in report["inventory"]["unregistered_assets"]:
         stem = Path(asset).stem
         tested = stem in test_stems
-        workflow_consumer = asset in executable_text
+        workflow_consumer = _runs_asset(asset, executable_text)
         if asset.startswith("tests/"):
             classification = "LIBRARY_REFERENCE_ONLY"
         elif asset.startswith(".github/workflows/"):
