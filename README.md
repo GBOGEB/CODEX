@@ -17,6 +17,11 @@ CODEX is a **governed federation-runtime repository** (see [`GOVERNANCE.md`](GOV
 
 > **Operating model:** CODEX is a governed federation-runtime repository where CI is the truth-verification gate, Pages is the human-facing portal, DMAIC is the iteration ledger, and bridge/federation outputs are the measurable integration layer. See [`GOVERNANCE.md`](GOVERNANCE.md) for repository identity, the workflow → lane map, and the CI-vs-CD contract.
 
+> **Cross-repo hub map:** the hub-and-spoke model and the public/private boundary across
+> ABACUS (hub), CODEX, and the private `cryoplant-project` are documented canonically in
+> [`GBOGEB/ABACUS:docs/integration/CROSS_REPO_MAP.md`](https://github.com/GBOGEB/ABACUS/blob/main/docs/integration/CROSS_REPO_MAP.md).
+> No cryoplant-project content is mirrored here; see [`PRUNE_CANDIDATES.md`](PRUNE_CANDIDATES.md) for flagged items.
+
 
 ## MASTER Contract Workbench SSOT
 

@@ -119,3 +119,18 @@ googledrive/inbound_staging/*
 
 # Method Atlas live reports (branch radar, --run-checks receipts); regenerated locally
 artifacts/method_atlas/
+
+# ---- Cross-repo hygiene (binary classes, repo-wide) ----
+# CODEX is a PUBLIC repo; binary office/media/archive artifacts are generated
+# from a checked-out bundle, not committed. Path-specific rules exist above;
+# these widen coverage to the whole tree so new binaries never slip in by name.
+# (Already-tracked binaries predate these rules — see PRUNE_CANDIDATES.md.)
+*.pptx
+*.ppt
+*.doc
+*.xls
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
