@@ -13,14 +13,14 @@
       "alias": "report",
       "path": "mission_control/mycelium/executable_value_report.json",
       "origin": "file",
-      "sha256": "d7f3a75fd53be2d82abe2340af49af6fec02b3a39f1b9e4cf0d4381e93417d54",
+      "sha256": "7b6eaf5af71b8c6c6da081ca3cd4574c60a944b076bd190130107afca1367f6f",
       "stamp": null
     },
     {
       "alias": "observation",
       "path": "mission_control/mycelium/executable_value_control_observation.json",
       "origin": "file",
-      "sha256": "d55e8e6b27a129c8a3908de4a7327e1d55a82d8effe63c010699a355ebeb1956",
+      "sha256": "84efa3bc827691fcb1e425d5955321d5df3554099195e8eb3b609ad21bf81001",
       "stamp": null
     },
     {
@@ -220,11 +220,11 @@
       "target": 100,
       "dmaic_phase": "MEASURE",
       "status": "MEASURED",
-      "value": 10.62,
+      "value": 10.61,
       "band": "RED",
       "inputs": {
         "numerator": 63,
-        "denominator": 593
+        "denominator": 594
       },
       "unlock": "Register justified batches of census assets in executable_integration_registry.yaml."
     },
@@ -237,10 +237,10 @@
       "target": 0,
       "dmaic_phase": "IMPROVE",
       "status": "MEASURED",
-      "value": 530,
+      "value": 531,
       "band": "RED",
       "inputs": {
-        "numerator": 530
+        "numerator": 531
       },
       "unlock": "Work the registration debt queue (next_control_action CLASSIFY_EXECUTABLE_REGISTRATION_DEBT)."
     },
@@ -284,11 +284,11 @@
       "target": null,
       "dmaic_phase": "ANALYZE",
       "status": "MEASURED",
-      "value": 42.08,
+      "value": 42.0,
       "band": "INFO",
       "inputs": {
         "numerator": 223,
-        "denominator": 530
+        "denominator": 531
       }
     },
     {
@@ -890,15 +890,15 @@
       "id": "CHK-03",
       "name": "Debt classifier candidates match unregistered count",
       "status": "PASS",
-      "left": 530,
-      "right": 530
+      "left": 531,
+      "right": 531
     },
     {
       "id": "CHK-04",
       "name": "Control observation unregistered count matches report",
       "status": "PASS",
-      "left": 530,
-      "right": 530
+      "left": 531,
+      "right": 531
     },
     {
       "id": "CHK-05",
@@ -920,14 +920,14 @@
     {
       "id": "EXE-02",
       "name": "Asset registration coverage",
-      "value": 10.62,
+      "value": 10.61,
       "target": 100,
       "unlock": "Register justified batches of census assets in executable_integration_registry.yaml."
     },
     {
       "id": "EXE-03",
       "name": "Unregistered asset count",
-      "value": 530,
+      "value": 531,
       "target": 0,
       "unlock": "Work the registration debt queue (next_control_action CLASSIFY_EXECUTABLE_REGISTRATION_DEBT)."
     },
