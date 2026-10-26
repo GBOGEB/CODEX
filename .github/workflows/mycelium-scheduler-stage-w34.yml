@@ -3,7 +3,9 @@ on:
   pull_request:
     paths:
       - 'scripts/id_scheduler_dependency_gate.py'
+      - 'scripts/id_scheduler_nplus_slowburn.py'
       - 'tests/test_id_scheduler_dependency_gate_w34.py'
+      - 'tests/test_id_scheduler_nplus_slowburn.py'
       - 'docs/missioncontrol_w34_scheduler_mip.md'
       - '.github/workflows/mycelium-scheduler-stage-w34.yml'
   workflow_dispatch:
@@ -43,6 +45,9 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
           python -m unittest discover -s tests -p 'test_id_scheduler_dependency_gate_w34.py' -v
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          python -m coverage run --branch --include=scripts/id_scheduler_nplus_slowburn.py -m unittest discover -s tests -p 'test_id_scheduler_nplus_slowburn.py' -v
+          python -m coverage report --include=scripts/id_scheduler_nplus_slowburn.py --show-missing --fail-under=80
       - name: Produce SIMULATED stage-only sample receipt, never native-pool proof
         shell: bash
         env:
