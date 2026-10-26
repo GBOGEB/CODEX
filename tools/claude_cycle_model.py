@@ -213,8 +213,9 @@ def build_record(props: Props) -> dict[str, Any]:
     b_init = bench["G3-3.5.3.1-ONE-TURBINE-INITIAL"]["expected_outputs"]
     b_opt = bench["G3-3.5.3.1-ONE-TURBINE-OPTIMISED"]["expected_outputs"]
     d = Design()
-    # Fig. 3.46 prints HP 20.00 K / LP (turbine discharge) 19.80 K at the HX3 warm end.
-    init = solve(props, 19.80, d)
+    # Input taken from the benchmark (Fig. 3.46: HP 20.00 K, LP / turbine discharge 19.80 K).
+    t7_init = float(bench["G3-3.5.3.1-ONE-TURBINE-INITIAL"]["inputs"]["turbine_discharge_t_k"])
+    init = solve(props, t7_init, d)
     opt = optimise(props, d)
     rows = _deviation_rows(b_init, init, "initial") + _deviation_rows(b_opt, opt, "optimised")
     sweep = [solve(props, t / 4, d) for t in range(40, 101)]  # 10.00 .. 25.00 K, 0.25 K

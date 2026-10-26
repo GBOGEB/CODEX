@@ -16,7 +16,7 @@ PDF page = printed book page + 38 in Chapter 3 (e.g. Fig. 3.46, p. 123 = PDF 161
 
 Numerical benchmarks are in `data/claude_cycle_benchmarks.json`. Headline: the §3.5.3.1 one-turbine case
 (50 W at 4.41 K + 0.5 g/s liquefaction, 14/1.2 bar, η_t 0.75) drops total cycle flow from 35.90 to 30.19 g/s and
-isothermal power from 55.76 to 47.01 kW when the turbine discharge temperature is optimised (20.00 → 14.93 K).
+isothermal power from 55.76 to 47.01 kW when the turbine discharge temperature is optimised (19.80 → 14.93 K; the text says 20.00 K, which is the HP-side temperature printed in Fig. 3.46).
 
 These are textbook reference cases for generating and testing design alternatives. They are not QPS design targets
 and do not by themselves establish QPS contract compliance or justify accepting a bidder's architecture.

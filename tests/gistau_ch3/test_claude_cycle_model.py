@@ -70,3 +70,10 @@ def test_committed_page_is_current():
     tool = _tool()
     assert (REPO_ROOT / "docs/gistau-ch3/claude_cycle_model.html").read_text(encoding="utf-8") == tool.render(), \
         "regenerate: python tools/claude_cycle_model.py --write"
+
+
+def test_initial_case_uses_the_benchmark_input():
+    bench = json.loads((REPO_ROOT / "docs/gistau-ch3/data/claude_cycle_benchmarks.json").read_text(encoding="utf-8"))
+    rec = json.loads((REPO_ROOT / "docs/gistau-ch3/data/claude_cycle_reproduction.json").read_text(encoding="utf-8"))
+    init = next(b for b in bench["benchmarks"] if b["benchmark_id"] == "G3-3.5.3.1-ONE-TURBINE-INITIAL")
+    assert rec["initial"]["turbine_discharge_t_k"] == init["inputs"]["turbine_discharge_t_k"]
