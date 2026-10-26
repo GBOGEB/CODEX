@@ -7,6 +7,7 @@
   Stages, in order (each is skipped once C: >= -TargetGB and commit < -MaxCommitPct):
     temp      %TEMP% files older than 2 days (Claude task folders are never touched)
     pkgcache  pip and npm download caches (they refill on the next install)
+    fsmonitor stops `git fsmonitor--daemon run` processes (memory commit; git restarts them on demand)
     onedrive  unpinned OneDrive documents -> online-only; protected folders stay pinned
     sessions  memory commit too high -> copies /archive-idle to the clipboard and waits
   The claude process count is shown but not used: the desktop app runs ~20 helper processes
@@ -30,7 +31,7 @@
 param(
     [switch]$ListOnly,
     [switch]$DryRun,
-    [string[]]$Stage,          # temp,pkgcache,onedrive,sessions: only these (in that order), ignoring the target
+    [string[]]$Stage,          # temp,pkgcache,fsmonitor,onedrive,sessions: only these (in that order), ignoring the target
     [switch]$All,              # run every stage even when already unblocked
     [double]$TargetGB = 10,    # unblocked = C: free >= TargetGB ...
     [int]$MaxCommitPct = 80,   # ... and memory commit below this % (what grows the page file)
@@ -49,7 +50,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$Order = 'temp', 'pkgcache', 'onedrive', 'sessions'
+$Order = 'temp', 'pkgcache', 'fsmonitor', 'onedrive', 'sessions'
 # pwsh -File and the .cmd menu pass "temp,pkgcache" as one string: split it here.
 $Stage = @($Stage -split '[,\s]+' | Where-Object { $_ })
 $bad = $Stage | Where-Object { $Order -notcontains $_ }
@@ -74,11 +75,18 @@ function Files([string]$Dir) {
     if (Test-Path -LiteralPath $Dir) { [IO.DirectoryInfo]::new($Dir).EnumerateFiles('*', $o) }
 }
 function GB([double]$Bytes) { [math]::Round($Bytes / 1GB, 2) }
+# The fsmonitor daemon census has one owner: Assert-FreeSpace.ps1 (read-only). Its -Json receipt
+# carries the count, private memory and PIDs; exit 2/3 only mean BLOCKED/UNREADABLE there.
+function Guard {
+    $raw = & (Join-Path $PSScriptRoot 'Assert-FreeSpace.ps1') -Json 2>$null 3>$null
+    if ($raw) { $raw | ConvertFrom-Json }
+}
 
 function Scan {
     $os = Get-CimInstance Win32_OperatingSystem
     $pf = Get-CimInstance Win32_PageFileUsage | Select-Object -First 1
     $claude = @(Get-Process claude -EA 0)
+    $fs = (Guard).fsmonitor
     $s = [ordered]@{
         Time        = (Get-Date).ToString('yyyy-MM-dd HH:mm')
         FreeGB      = GB (Get-PSDrive C).Free
@@ -88,6 +96,8 @@ function Scan {
         CommitMaxGB = [math]::Round($os.TotalVirtualMemorySize / 1MB, 1)
         Claude      = $claude.Count
         ClaudeRamGB = GB ($claude | Measure-Object WorkingSet64 -Sum).Sum
+        Fsmonitor   = $fs.count          # $null when the guard could not read it
+        FsmonitorGB = $fs.private_gb
     }
     $s.RebootGB  = [math]::Max(0, [math]::Round($s.PageAllocGB - [math]::Max($s.PageUsedGB * 2, 8), 1))
     $s.CommitPct = [int](100 * $s.CommitGB / $s.CommitMaxGB)
@@ -97,8 +107,9 @@ function Scan {
 }
 function Show($s) {
     $c = if ($s.Blocked) { 'Red' } elseif ($s.Unblocked) { 'Green' } else { 'Yellow' }
-    Write-Host ("{0}  C: free {1:N2} GB | pagefile {2:N1} GB ({3:N1} in use) | commit {4:N1}/{5:N1} GB ({6}%) | claude procs {7} ({8:N1} GB RAM)" -f `
-        $s.Time, $s.FreeGB, $s.PageAllocGB, $s.PageUsedGB, $s.CommitGB, $s.CommitMaxGB, $s.CommitPct, $s.Claude, $s.ClaudeRamGB) -ForegroundColor $c
+    $fs = if ($null -eq $s.Fsmonitor) { 'n/a' } else { '{0} ({1:N1} GB)' -f $s.Fsmonitor, $s.FsmonitorGB }
+    Write-Host ("{0}  C: free {1:N2} GB | pagefile {2:N1} GB ({3:N1} in use) | commit {4:N1}/{5:N1} GB ({6}%) | claude procs {7} ({8:N1} GB RAM) | fsmonitor {9}" -f `
+        $s.Time, $s.FreeGB, $s.PageAllocGB, $s.PageUsedGB, $s.CommitGB, $s.CommitMaxGB, $s.CommitPct, $s.Claude, $s.ClaudeRamGB, $fs) -ForegroundColor $c
 }
 
 # ---- stages: Measure returns the GB it expects to free; Run does it --------------------------
@@ -140,6 +151,22 @@ $Stages = @{
         Run     = {
             if (PipDir) { & python -m pip cache purge 2>&1 | Out-Null }
             if (NpmDir) { & npm cache clean --force 2>&1 | Out-Null }
+        }
+    }
+    fsmonitor = @{
+        Why     = "git fsmonitor--daemon processes (one per worktree; git restarts them on demand)"
+        Measure = { $g = Guard; if ($g -and $g.fsmonitor.private_gb) { [math]::Round($g.fsmonitor.private_gb, 2) } else { 0 } }
+        Run     = {
+            # Fresh census right before stopping, and only processes still named git.
+            $g = Guard
+            if (-not $g -or $null -eq $g.fsmonitor.count) { Write-Warning '  fsmonitor census unreadable; nothing stopped.'; return }
+            $n = 0
+            foreach ($id in $g.fsmonitor.pids) {
+                $p = Get-Process -Id $id -EA 0
+                if ($p -and $p.ProcessName -eq 'git') { Stop-Process -Id $id -Force -EA SilentlyContinue; $n++ }
+            }
+            Write-Host "  stopped $n fsmonitor daemon(s). They respawn on the next git command in each worktree;" -ForegroundColor DarkGray
+            Write-Host "  for a lasting fix see tools/relief/README.md (system core.fsmonitor, stale worktrees)." -ForegroundColor DarkGray
         }
     }
     onedrive = @{
