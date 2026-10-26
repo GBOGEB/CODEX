@@ -6,7 +6,6 @@ not mathematical authority. GBOGEB/gg_MATH/kernels remains the provider.
 from __future__ import annotations
 
 import math
-from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from typing import Any
 
@@ -66,7 +65,7 @@ def check_bt_admission(
         if not isinstance(row, Mapping):
             return receipt(DEFER_INVALID_COMPARISON, decisive)
         a, c = row.get("a"), row.get("b")
-        if a not in allowed or c not in allowed or a == c:
+        if not isinstance(a, str) or not isinstance(c, str) or a not in allowed or c not in allowed or a == c:
             return receipt(DEFER_INVALID_COMPARISON, decisive)
         try:
             x, y = row["a_score"], row["b_score"]
