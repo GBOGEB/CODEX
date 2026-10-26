@@ -1,0 +1,51 @@
+name: Relief guard
+
+on:
+  pull_request:
+    paths:
+      - 'tools/relief/**'
+      - '.github/workflows/relief-guard.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'tools/relief/**'
+      - '.github/workflows/relief-guard.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  guard-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          sparse-checkout: tools/relief
+
+      - name: Parse relief scripts
+        shell: pwsh
+        run: |
+          $failed = $false
+          Get-ChildItem ./tools/relief -Recurse -Filter *.ps1 | ForEach-Object {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$tokens, [ref]$errors) | Out-Null
+            if ($errors.Count -gt 0) {
+              Write-Host "::error file=$($_.FullName)::$($errors | Out-String)"
+              $failed = $true
+            }
+          }
+          if ($failed) { exit 1 }
+
+      - name: Guard thresholds and hook output
+        shell: pwsh
+        run: |
+          $result = & ./tools/relief/tests/Test-ReliefGuard.ps1 | ConvertFrom-Json
+          $result | ConvertTo-Json -Compress
+          if ($result.result -ne 'PASS') { throw "Relief guard test failed: $($result.failures -join '; ')" }
