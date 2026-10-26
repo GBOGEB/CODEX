@@ -1,0 +1,612 @@
+{
+  "schema": "codex-gistau-ch3-claude-cycle-reproduction/v1",
+  "authority": "REFERENCE_REPRODUCTION_NOT_QPS_DESIGN",
+  "source": "Gistau Baguer 2020, Ch. 3 \u00a73.5.3.1, Figs. 3.46-3.48 (book pp. 123-125)",
+  "property_tier": "tier1_coolprop 7.2.0 (reference, not the governing ABACUS provider)",
+  "design": {
+    "refrigeration_w": 50.0,
+    "liquefaction_g_s": 0.5,
+    "p_high_bar": 14.0,
+    "p_low_bar": 1.2,
+    "t_warm_k": 300.0,
+    "warm_end_dt_k": 3.0,
+    "jt_hx_warm_end_dt_k": 0.2,
+    "turbine_isentropic_efficiency": 0.75
+  },
+  "initial": {
+    "turbine_discharge_t_k": 19.8,
+    "jt_hx_hp_inlet_t_k": 20.0,
+    "turbine_inlet_t_k": 37.5597,
+    "jt_mass_flow_g_s": 19.6318,
+    "brayton_mass_flow_g_s": 16.7672,
+    "cycle_hp_mass_flow_g_s": 36.399,
+    "cycle_lp_return_mass_flow_g_s": 35.899,
+    "turbine_power_w": -1542.6016,
+    "isothermal_compressor_power_kw": 55.7265,
+    "hx1_q_w": 49808.1284,
+    "hx2_q_w": 1909.2128,
+    "lp_t_between_hx2_hx1_k": 29.9602,
+    "energy_closure_w": -0.0
+  },
+  "optimised": {
+    "turbine_discharge_t_k": 14.9334,
+    "jt_hx_hp_inlet_t_k": 15.1334,
+    "turbine_inlet_t_k": 28.6266,
+    "jt_mass_flow_g_s": 10.0076,
+    "brayton_mass_flow_g_s": 20.6795,
+    "cycle_hp_mass_flow_g_s": 30.6871,
+    "cycle_lp_return_mass_flow_g_s": 30.1871,
+    "turbine_power_w": -1429.7381,
+    "isothermal_compressor_power_kw": 46.9816,
+    "hx1_q_w": 43481.5707,
+    "hx2_q_w": 782.1342,
+    "lp_t_between_hx2_hx1_k": 19.8439,
+    "energy_closure_w": -0.0
+  },
+  "deviations": [
+    {
+      "case": "initial",
+      "quantity": "jt_mass_flow_g_s",
+      "book": 19.63,
+      "model": 19.6318,
+      "abs_dev": 0.0018,
+      "rel_dev": 9.2e-05
+    },
+    {
+      "case": "initial",
+      "quantity": "brayton_mass_flow_g_s",
+      "book": 16.77,
+      "model": 16.7672,
+      "abs_dev": -0.0028,
+      "rel_dev": -0.000165
+    },
+    {
+      "case": "initial",
+      "quantity": "cycle_lp_return_mass_flow_g_s",
+      "book": 35.9,
+      "model": 35.899,
+      "abs_dev": -0.001,
+      "rel_dev": -2.7e-05
+    },
+    {
+      "case": "initial",
+      "quantity": "cycle_hp_mass_flow_g_s",
+      "book": 36.4,
+      "model": 36.399,
+      "abs_dev": -0.001,
+      "rel_dev": -2.6e-05
+    },
+    {
+      "case": "initial",
+      "quantity": "isothermal_compressor_power_kw",
+      "book": 55.76,
+      "model": 55.7265,
+      "abs_dev": -0.0335,
+      "rel_dev": -0.0006
+    },
+    {
+      "case": "initial",
+      "quantity": "turbine_inlet_t_k",
+      "book": 37.56,
+      "model": 37.5597,
+      "abs_dev": -0.0003,
+      "rel_dev": -9e-06
+    },
+    {
+      "case": "initial",
+      "quantity": "turbine_power_w",
+      "book": -1543.0,
+      "model": -1542.6016,
+      "abs_dev": 0.3984,
+      "rel_dev": -0.000258
+    },
+    {
+      "case": "initial",
+      "quantity": "hx1_q_w",
+      "book": 49809.0,
+      "model": 49808.13,
+      "abs_dev": -0.87,
+      "rel_dev": -1.7e-05
+    },
+    {
+      "case": "initial",
+      "quantity": "hx2_q_w",
+      "book": 1909.0,
+      "model": 1909.21,
+      "abs_dev": 0.21,
+      "rel_dev": 0.000111
+    },
+    {
+      "case": "optimised",
+      "quantity": "jt_mass_flow_g_s",
+      "book": 10.01,
+      "model": 10.0076,
+      "abs_dev": -0.0024,
+      "rel_dev": -0.000239
+    },
+    {
+      "case": "optimised",
+      "quantity": "brayton_mass_flow_g_s",
+      "book": 20.68,
+      "model": 20.6795,
+      "abs_dev": -0.0005,
+      "rel_dev": -2.5e-05
+    },
+    {
+      "case": "optimised",
+      "quantity": "cycle_lp_return_mass_flow_g_s",
+      "book": 30.19,
+      "model": 30.1871,
+      "abs_dev": -0.0029,
+      "rel_dev": -9.6e-05
+    },
+    {
+      "case": "optimised",
+      "quantity": "cycle_hp_mass_flow_g_s",
+      "book": 30.69,
+      "model": 30.6871,
+      "abs_dev": -0.0029,
+      "rel_dev": -9.4e-05
+    },
+    {
+      "case": "optimised",
+      "quantity": "isothermal_compressor_power_kw",
+      "book": 47.01,
+      "model": 46.9816,
+      "abs_dev": -0.0284,
+      "rel_dev": -0.000604
+    },
+    {
+      "case": "optimised",
+      "quantity": "turbine_inlet_t_k",
+      "book": 28.63,
+      "model": 28.6266,
+      "abs_dev": -0.0034,
+      "rel_dev": -0.000118
+    },
+    {
+      "case": "optimised",
+      "quantity": "turbine_power_w",
+      "book": -1430.0,
+      "model": -1429.7381,
+      "abs_dev": 0.2619,
+      "rel_dev": -0.000183
+    },
+    {
+      "case": "optimised",
+      "quantity": "turbine_discharge_t_k",
+      "book": 14.93,
+      "model": 14.9334,
+      "abs_dev": 0.0034,
+      "rel_dev": 0.000226
+    },
+    {
+      "case": "optimised",
+      "quantity": "hx1_q_w",
+      "book": 43482.0,
+      "model": 43481.57,
+      "abs_dev": -0.43,
+      "rel_dev": -1e-05
+    },
+    {
+      "case": "optimised",
+      "quantity": "hx2_q_w",
+      "book": 782.0,
+      "model": 782.13,
+      "abs_dev": 0.13,
+      "rel_dev": 0.000172
+    }
+  ],
+  "stats": {
+    "n": 19,
+    "max_abs_rel_dev": 0.000604,
+    "rms_rel_dev": 0.000235,
+    "mean_abs_rel_dev": 0.000162,
+    "within_tolerance": 19,
+    "tolerance_rel": 0.01
+  },
+  "flat_optimum_band_1pct_k": [
+    14.0,
+    16.0
+  ],
+  "sweep": [
+    {
+      "t7_k": 10.0,
+      "jt": 4.7205,
+      "brayton": 35.688,
+      "total": 39.9085
+    },
+    {
+      "t7_k": 10.25,
+      "jt": 4.9196,
+      "brayton": 34.2102,
+      "total": 38.6298
+    },
+    {
+      "t7_k": 10.5,
+      "jt": 5.1273,
+      "brayton": 32.8713,
+      "total": 37.4986
+    },
+    {
+      "t7_k": 10.75,
+      "jt": 5.3426,
+      "brayton": 31.6525,
+      "total": 36.4951
+    },
+    {
+      "t7_k": 11.0,
+      "jt": 5.5646,
+      "brayton": 30.5384,
+      "total": 35.603
+    },
+    {
+      "t7_k": 11.25,
+      "jt": 5.793,
+      "brayton": 29.516,
+      "total": 34.8091
+    },
+    {
+      "t7_k": 11.5,
+      "jt": 6.0276,
+      "brayton": 28.5749,
+      "total": 34.1025
+    },
+    {
+      "t7_k": 11.75,
+      "jt": 6.2684,
+      "brayton": 27.7059,
+      "total": 33.4743
+    },
+    {
+      "t7_k": 12.0,
+      "jt": 6.5155,
+      "brayton": 26.9015,
+      "total": 32.917
+    },
+    {
+      "t7_k": 12.25,
+      "jt": 6.7693,
+      "brayton": 26.1552,
+      "total": 32.4245
+    },
+    {
+      "t7_k": 12.5,
+      "jt": 7.0299,
+      "brayton": 25.4614,
+      "total": 31.9914
+    },
+    {
+      "t7_k": 12.75,
+      "jt": 7.2978,
+      "brayton": 24.8153,
+      "total": 31.6132
+    },
+    {
+      "t7_k": 13.0,
+      "jt": 7.5734,
+      "brayton": 24.2126,
+      "total": 31.286
+    },
+    {
+      "t7_k": 13.25,
+      "jt": 7.8571,
+      "brayton": 23.6496,
+      "total": 31.0067
+    },
+    {
+      "t7_k": 13.5,
+      "jt": 8.1493,
+      "brayton": 23.123,
+      "total": 30.7722
+    },
+    {
+      "t7_k": 13.75,
+      "jt": 8.4503,
+      "brayton": 22.6299,
+      "total": 30.5802
+    },
+    {
+      "t7_k": 14.0,
+      "jt": 8.7605,
+      "brayton": 22.1678,
+      "total": 30.4283
+    },
+    {
+      "t7_k": 14.25,
+      "jt": 9.0805,
+      "brayton": 21.7343,
+      "total": 30.3147
+    },
+    {
+      "t7_k": 14.5,
+      "jt": 9.4105,
+      "brayton": 21.3273,
+      "total": 30.2378
+    },
+    {
+      "t7_k": 14.75,
+      "jt": 9.751,
+      "brayton": 20.9451,
+      "total": 30.1961
+    },
+    {
+      "t7_k": 15.0,
+      "jt": 10.1023,
+      "brayton": 20.586,
+      "total": 30.1883
+    },
+    {
+      "t7_k": 15.25,
+      "jt": 10.465,
+      "brayton": 20.2484,
+      "total": 30.2133
+    },
+    {
+      "t7_k": 15.5,
+      "jt": 10.8393,
+      "brayton": 19.931,
+      "total": 30.2703
+    },
+    {
+      "t7_k": 15.75,
+      "jt": 11.2258,
+      "brayton": 19.6326,
+      "total": 30.3583
+    },
+    {
+      "t7_k": 16.0,
+      "jt": 11.6248,
+      "brayton": 19.352,
+      "total": 30.4769
+    },
+    {
+      "t7_k": 16.25,
+      "jt": 12.0369,
+      "brayton": 19.0884,
+      "total": 30.6253
+    },
+    {
+      "t7_k": 16.5,
+      "jt": 12.4626,
+      "brayton": 18.8407,
+      "total": 30.8032
+    },
+    {
+      "t7_k": 16.75,
+      "jt": 12.9022,
+      "brayton": 18.6081,
+      "total": 31.0104
+    },
+    {
+      "t7_k": 17.0,
+      "jt": 13.3565,
+      "brayton": 18.39,
+      "total": 31.2464
+    },
+    {
+      "t7_k": 17.25,
+      "jt": 13.8258,
+      "brayton": 18.1855,
+      "total": 31.5113
+    },
+    {
+      "t7_k": 17.5,
+      "jt": 14.3108,
+      "brayton": 17.9941,
+      "total": 31.805
+    },
+    {
+      "t7_k": 17.75,
+      "jt": 14.8122,
+      "brayton": 17.8153,
+      "total": 32.1275
+    },
+    {
+      "t7_k": 18.0,
+      "jt": 15.3305,
+      "brayton": 17.6485,
+      "total": 32.479
+    },
+    {
+      "t7_k": 18.25,
+      "jt": 15.8665,
+      "brayton": 17.4932,
+      "total": 32.8598
+    },
+    {
+      "t7_k": 18.5,
+      "jt": 16.4209,
+      "brayton": 17.3491,
+      "total": 33.2701
+    },
+    {
+      "t7_k": 18.75,
+      "jt": 16.9944,
+      "brayton": 17.2159,
+      "total": 33.7103
+    },
+    {
+      "t7_k": 19.0,
+      "jt": 17.5879,
+      "brayton": 17.093,
+      "total": 34.181
+    },
+    {
+      "t7_k": 19.25,
+      "jt": 18.2023,
+      "brayton": 16.9804,
+      "total": 34.6827
+    },
+    {
+      "t7_k": 19.5,
+      "jt": 18.8384,
+      "brayton": 16.8777,
+      "total": 35.2161
+    },
+    {
+      "t7_k": 19.75,
+      "jt": 19.4972,
+      "brayton": 16.7847,
+      "total": 35.7819
+    },
+    {
+      "t7_k": 20.0,
+      "jt": 20.1798,
+      "brayton": 16.7012,
+      "total": 36.381
+    },
+    {
+      "t7_k": 20.25,
+      "jt": 20.8874,
+      "brayton": 16.627,
+      "total": 37.0144
+    },
+    {
+      "t7_k": 20.5,
+      "jt": 21.6209,
+      "brayton": 16.5621,
+      "total": 37.6831
+    },
+    {
+      "t7_k": 20.75,
+      "jt": 22.3819,
+      "brayton": 16.5063,
+      "total": 38.3882
+    },
+    {
+      "t7_k": 21.0,
+      "jt": 23.1715,
+      "brayton": 16.4596,
+      "total": 39.131
+    },
+    {
+      "t7_k": 21.25,
+      "jt": 23.9912,
+      "brayton": 16.4218,
+      "total": 39.913
+    },
+    {
+      "t7_k": 21.5,
+      "jt": 24.8426,
+      "brayton": 16.3931,
+      "total": 40.7356
+    },
+    {
+      "t7_k": 21.75,
+      "jt": 25.7273,
+      "brayton": 16.3733,
+      "total": 41.6006
+    },
+    {
+      "t7_k": 22.0,
+      "jt": 26.647,
+      "brayton": 16.3626,
+      "total": 42.5096
+    },
+    {
+      "t7_k": 22.25,
+      "jt": 27.6038,
+      "brayton": 16.361,
+      "total": 43.4647
+    },
+    {
+      "t7_k": 22.5,
+      "jt": 28.5996,
+      "brayton": 16.3685,
+      "total": 44.4681
+    },
+    {
+      "t7_k": 22.75,
+      "jt": 29.6365,
+      "brayton": 16.3855,
+      "total": 45.522
+    },
+    {
+      "t7_k": 23.0,
+      "jt": 30.7171,
+      "brayton": 16.4119,
+      "total": 46.6289
+    },
+    {
+      "t7_k": 23.25,
+      "jt": 31.8437,
+      "brayton": 16.448,
+      "total": 47.7917
+    },
+    {
+      "t7_k": 23.5,
+      "jt": 33.0192,
+      "brayton": 16.494,
+      "total": 49.0132
+    },
+    {
+      "t7_k": 23.75,
+      "jt": 34.2466,
+      "brayton": 16.5502,
+      "total": 50.2968
+    },
+    {
+      "t7_k": 24.0,
+      "jt": 35.5291,
+      "brayton": 16.6169,
+      "total": 51.6459
+    },
+    {
+      "t7_k": 24.25,
+      "jt": 36.8701,
+      "brayton": 16.6944,
+      "total": 53.0645
+    },
+    {
+      "t7_k": 24.5,
+      "jt": 38.2735,
+      "brayton": 16.7831,
+      "total": 54.5566
+    },
+    {
+      "t7_k": 24.75,
+      "jt": 39.7434,
+      "brayton": 16.8836,
+      "total": 56.127
+    },
+    {
+      "t7_k": 25.0,
+      "jt": 41.2844,
+      "brayton": 16.9962,
+      "total": 57.7806
+    }
+  ],
+  "eta_sensitivity": [
+    {
+      "eta": 0.65,
+      "opt_t_k": 16.355,
+      "min_flow_g_s": 39.021,
+      "w_iso_kw": 60.506
+    },
+    {
+      "eta": 0.7,
+      "opt_t_k": 15.619,
+      "min_flow_g_s": 34.183,
+      "w_iso_kw": 53.1
+    },
+    {
+      "eta": 0.75,
+      "opt_t_k": 14.933,
+      "min_flow_g_s": 30.187,
+      "w_iso_kw": 46.982
+    },
+    {
+      "eta": 0.8,
+      "opt_t_k": 14.286,
+      "min_flow_g_s": 26.82,
+      "w_iso_kw": 41.826
+    },
+    {
+      "eta": 0.85,
+      "opt_t_k": 13.668,
+      "min_flow_g_s": 23.933,
+      "w_iso_kw": 37.407
+    }
+  ]
+}
