@@ -84,7 +84,7 @@ Example `-Hook` line:
 RELIEF_GUARD WARN: C: 11.6 GiB free (min 5) | commit 82.0% (warn 80, block 90) | fsmonitor 27 (1.07 GiB, warn >20) | next: archive idle sessions (/archive-idle); Fix-Machine.ps1 -Stage fsmonitor -Yes | 104 ms
 ```
 
-**Speed.** The guard reads nothing through CIM, because `Win32_OperatingSystem` takes 0.6–1.2 s under load. Free space comes from `System.IO.DriveInfo`. Commit charge comes from `GlobalMemoryStatusEx`, and the fsmonitor command lines from `NtQueryInformationProcess`, both through a P/Invoke type built with `Reflection.Emit` (no `Add-Type` compile). On 2026-10-26, at 80–83 % commit, the script body took 93–138 ms (one cold outlier of 227 ms). The trailing `| N ms` in the line is that figure. **`pwsh` startup adds 1.7–2.6 s under load** (the whole hook took 0.6–0.85 s in a calmer moment at 05:30), and Windows PowerShell 5.1 starts in 4–6 s, so give the hook a timeout of at least 10 s.
+**Speed.** The guard reads nothing through CIM, because `Win32_OperatingSystem` takes 0.6–1.2 s under load. Free space comes from `System.IO.DriveInfo`. Commit charge comes from `GlobalMemoryStatusEx`, and the fsmonitor command lines from `NtQueryInformationProcess`, both through a P/Invoke type built with `Reflection.Emit` (no `Add-Type` compile). On 2026-10-26, at 80–83 % commit, the script body took 93–138 ms under `pwsh` (one cold outlier of 227 ms) and 318–513 ms under Windows PowerShell 5.1, so prefer `pwsh`. The trailing `| N ms` in the line is that figure. **`pwsh` startup adds 1.7–2.6 s under load** (the whole hook took 0.6–0.85 s in a calmer moment at 05:30), and Windows PowerShell 5.1 starts in 4–6 s, so give the hook a timeout of at least 10 s.
 
 ### Installing it as a Claude Code hook (owner applies)
 
