@@ -96,3 +96,5 @@ Remove-Item -LiteralPath $errFile -Force -ErrorAction SilentlyContinue
     failures = @($failures)
 } | ConvertTo-Json -Compress
 if ($failures.Count) { exit 1 }
+# The exit-code cases leave $LASTEXITCODE at 2/3, and the Actions pwsh wrapper exits with it.
+exit 0
