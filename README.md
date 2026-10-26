@@ -67,6 +67,24 @@ The W000 assets are a mix of scaffolding and real executable code:
 - **Output:** a JSON report containing per-dimension deltas, aggregate `drift_variance`, and a bounded drift snapshot/state
 - **Process tracking:** covered by `tests/test_drift_monitor.py` and validated with the existing repository governance checks
 
+## Canonical statistics engine (federation P1)
+
+`pca_engine/` is the federation's **single source of truth** for Bradley-Terry
+pairwise ranking and PCA/NLPCA analytics. It is the only tested implementation
+(20/20 unit tests, including a parity harness). Spokes — ABACUS
+`qps_slide_reviewer/lib/stats.ts` and cryoplant parallel paths — should converge
+onto it rather than maintain divergent copies (see
+[`GBOGEB/ABACUS:docs/INTEGRATION_REPORT.md`](https://github.com/GBOGEB/ABACUS/blob/main/docs/INTEGRATION_REPORT.md)
+§4 item 1, action **P1**).
+
+- API & numerical conventions: [`pca_engine/CANONICAL_API.md`](pca_engine/CANONICAL_API.md)
+- Parity with the ABACUS re-implementation (same MM update; divergence is only the
+  regularisation prior and normalisation basis) is pinned by
+  `pca_engine/tests/test_parity_spoke_stats.py`.
+
+This complements the analysis-only W59 cross-repo census (PR #1188) with executed
+parity evidence.
+
 ## Install
 
 ```bash
