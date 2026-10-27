@@ -1,15 +1,15 @@
-# `pca_engine` — Canonical Statistics API (Federation P1)
+# `pca_engine` — CODEX Consumer API (Federation P1)
 
-> **Status:** canonical, single source of truth for Bradley-Terry ranking and
-> PCA/NLPCA across the GBOGEB federation (CODEX hub · ABACUS runtime ·
-> cryoplant-project child). See `GBOGEB/ABACUS:docs/INTEGRATION_REPORT.md` §4
-> item 1 (action **P1**).
+> **Status:** CODEX consumer and compatibility API; not the mathematical SSOT.
+> **Provider:** `GBOGEB/gg_MATH/kernels/` (see `MATH_SSOT_BINDING.md`).
+> Historical federation P1 docs promoted this API as canonical; that claim is
+> superseded by the gg_MATH binding and ABACUS PR #2474.
 
-This package is the **only tested implementation** of the federation's shared
-statistics. Spokes (ABACUS `qps_slide_reviewer/lib/stats.ts`, cryoplant parallel
-paths) should converge onto these functions rather than maintain divergent copies.
-Parity with the ABACUS re-implementation is pinned by
-`tests/test_parity_spoke_stats.py`.
+This installable package provides compatible decision analytics for CODEX.
+It has a local parity harness against the ABACUS TypeScript consumer.
+That test does **not** establish parity with the gg_MATH provider, its
+fail-closed Bradley–Terry admission semantics, or independent release approval.
+Consumers must pin the provider SHA and preserve its DEFER decisions.
 
 ## Install / consume
 
@@ -28,7 +28,7 @@ from pca_engine import (
 
 A CLI entry point is also exposed: `pca-engine` (see `pca_engine.cli:main`).
 
-## Canonical functions
+## CODEX consumer functions
 
 | Domain | Function | Purpose |
 |--------|----------|---------|
@@ -46,29 +46,33 @@ non-negative, and `a != b`.
 
 ## Numerical conventions (read before porting)
 
-The canonical engine and the ABACUS TS port implement the **same** Hunter (2004)
+The CODEX consumer engine and the ABACUS TS port implement the **same** Hunter (2004)
 MM update. Two conventions differ and are **intentional** — the parity tests
 assert both:
 
-1. **Normalisation basis.** Canonical normalises strengths so the **arithmetic
+1. **Normalisation basis.** CODEX normalises strengths so the **arithmetic
    mean == 1**. ABACUS normalises so the **geometric mean == 1**. Ranking order
    and pairwise win-probabilities `pi/(pi+pj)` are invariant to either, so port
    those directly; do not compare raw strength magnitudes across engines.
 2. **Prior / regularisation.** ABACUS adds a `prior = 0.1` pseudo-count to keep
    strengths finite on sparse data; canonical uses no prior and instead floors
-   wins at `EPS`. With the prior set to `0`, win-probabilities match to `1e-6`
+   wins at `EPS`. Neither behavior proves a finite unregularized MLE.
+   With the prior set to `0`, win-probabilities match to `1e-6`
    (verified in `test_win_probabilities_match_without_prior`). With the default
    prior, ABACUS win-probabilities are shrunk toward `0.5`
    (`test_default_prior_shrinks_toward_half`).
 
-**Recommendation for spokes:** call `fit_bradley_terry` directly. If the ABACUS
-regularisation behaviour is required, expose a `prior`/`alpha` option on a thin
-wrapper rather than re-deriving the MM loop.
+**Recommendation for spokes:** use gg_MATH for authoritative mathematical
+ranking and reject its DEFER outcomes. `fit_bradley_terry` is a consumer helper
+only. Do not promote EPS-regularized or prior-regularized results to a
+finite-MLE PASS without the provider's admission and convergence proof.
 
-## Parity guarantee
+## Scoped local parity guarantee
 
 `tests/test_parity_spoke_stats.py` embeds a faithful Python port of the ABACUS
 `bradleyTerry` and asserts: identical ranking order, win-probability agreement
 with prior removed, documented shrinkage with the default prior, and the two
-normalisation bases. If any assertion breaks, parity has drifted and the
-convergence plan must be revisited before a spoke is retired.
+normalisation bases. If any assertion breaks, local parity has drifted and the
+convergence plan must be revisited. The test does not cover gg_MATH's
+Ford-condition DEFER guard or provide an owner/release acceptance. See
+[consumer authority contract](CONSUMER_AUTHORITY_CONTRACT.md).
