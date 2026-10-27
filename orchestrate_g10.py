@@ -34,14 +34,14 @@ def execute_g10_final_closure():
     html_dir.mkdir(parents=True, exist_ok=True)
 
     (html_dir / "files.html").write_text(
-        f"""<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>G10 File Matrix</title></head>
+        f"""<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>G10 File Matrix</title></head>
 <body><h2>📁 Generation 10 (G10) Comprehensive Traceability Matrix</h2>
 <p><strong>System Audit Signature Token:</strong> <code>{g10_token}</code></p></body></html>""",
         encoding="utf-8",
     )
 
     (html_dir / "runtime_overview.html").write_text(
-        f"""<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>G10 Dashboard</title></head>
+        f"""<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>G10 Dashboard</title></head>
 <body><h1>📊 Generation 10 Converged Telemetry Interface</h1>
 <ul><li>Helium Loop Exergy Efficiency: {exergy * 100:.2f}%</li>
 <li>A6 Warning Card Contrast Ratio: {contrast_results['contrast_ratio']}:1</li>
@@ -50,7 +50,7 @@ def execute_g10_final_closure():
     )
 
     (html_dir / "slides_html.html").write_text(
-        f"""<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>G10 Slide Presentation</title></head>
+        f"""<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>G10 Slide Presentation</title></head>
 <body><h1>G10 Multi-Repository Release Matrix</h1><p>Verification Checksum: <code>{g10_token}</code></p></body></html>""",
         encoding="utf-8",
     )

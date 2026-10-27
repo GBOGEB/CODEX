@@ -107,7 +107,7 @@ class AbacusRuntimeEngineA6:
 
         files_html = html_dir / "files.html"
         files_html.write_text(
-            f"""<!DOCTYPE html><html><head><title>A6 File Matrix</title>
+            f"""<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>A6 File Matrix</title>
             <style>body{{font-family:monospace;padding:30px;background:#05070f;color:#38bdf8;}}
             table{{width:100%;border-collapse:collapse;margin-top:15px;}}
             th,td{{padding:10px;border:1px solid #1e293b;text-align:left;}}th{{background:#0f172a;}}</style></head>
@@ -120,7 +120,7 @@ class AbacusRuntimeEngineA6:
 
         runtime_dashboard = html_dir / "runtime_dashboard.html"
         runtime_dashboard.write_text(
-            f"""<!DOCTYPE html><html><head><title>A6 Governance Dashboard</title>
+            f"""<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>A6 Governance Dashboard</title>
             <style>body{{font-family:system-ui;padding:40px;background:#0f172a;color:#f8fafc;}}
             .card{{background:#1e293b;padding:20px;border-radius:8px;margin:15px 0;border:1px solid #334155;}}
             .metric{{font-size:2em;font-weight:bold;color:#10b981;}}</style></head>
@@ -133,7 +133,7 @@ class AbacusRuntimeEngineA6:
 
         slides_html = html_dir / "slides_html.html"
         slides_html.write_text(
-            f"""<!DOCTYPE html><html><head><title>A6 Slide Presentation</title>
+            f"""<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>A6 Slide Presentation</title>
             <style>body{{font-family:sans-serif;background:#000;color:#fff;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;}}
             .slide{{width:75%;border:1px solid #333;padding:50px;border-radius:12px;background:#09090b;}}h1{{color:#6366f1;}}</style></head>
             <body><div class="slide"><h1>A6 Renderer Governance Activation</h1>

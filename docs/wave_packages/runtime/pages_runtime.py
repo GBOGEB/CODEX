@@ -16,6 +16,7 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
 <html lang=\"en\">
 <head>
 <meta charset=\"utf-8\" />
+<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
 <title>Runtime Pages Bundle</title>
 <style>
 body {{ font-family: Arial, sans-serif; margin: 2rem; }}
