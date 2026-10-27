@@ -6,6 +6,7 @@ is installed (CI does not install it).
 """
 from __future__ import annotations
 
+import functools
 import json
 import sys
 import types
@@ -55,7 +56,7 @@ def fake_plotly(monkeypatch):
     go = types.ModuleType("plotly.graph_objects")
     go.Figure = _Figure
     for name in ("Bar", "Heatmap", "Scatter", "Scatter3d", "Mesh3d", "Layout"):
-        setattr(go, name, (lambda n: lambda *a, **k: _Rec(n, *a, **k))(name))
+        setattr(go, name, functools.partial(_Rec, name))
     subplots = types.ModuleType("plotly.subplots")
     subplots.make_subplots = lambda **kwargs: _Figure()
     pkg = types.ModuleType("plotly")
