@@ -56,7 +56,8 @@ body {
 h1 { font-size: 2.35rem; line-height: 1.1; margin: 28px 0 22px; }
 h3 { color: var(--sck-purple); margin-bottom: 8px; }
 ul { padding-left: 1.25rem; }
-li { margin: 0.52rem 0; }
+/* Long unbroken tokens (artifact file names) must wrap instead of widening the page on phones. */
+li { margin: 0.52rem 0; overflow-wrap: anywhere; }
 li span { color: var(--muted); display: block; margin-top: 0.18rem; }
 .callout {
   background: var(--sck-purple-soft);
