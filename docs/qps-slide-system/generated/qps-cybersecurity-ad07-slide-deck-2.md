@@ -29,7 +29,7 @@ _APPENDIX · Slide 2_
 - **Conceptual Design**: action: Initial CyFun Matrix Review
 - **Detailed Design**: action: Vulnerability Management & Remote Access Architecture
 
-### Rtm Map
+### RTM Map
 
 | Item | Detail |
 |---|---|
