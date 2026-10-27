@@ -18,6 +18,9 @@
     code { background: var(--panel); border: 1px solid var(--line); border-radius: 0.25rem; padding: 0.1rem 0.25rem; }
     a { color: var(--accent); }
     @media print { main { max-width: none; padding: 0.5in; } a { color: inherit; } }
+  
+    .table-scroll{overflow-x:auto;max-width:100%;margin:1rem 0 1.5rem}
+    .table-scroll>table{margin:0}
   </style>
 </head>
 <body>
@@ -31,17 +34,17 @@
 
   <h2>2. Interface Hierarchy and Terminal Points</h2>
   <p>Each interface Terminal Point has two functional sides:</p>
-  <table>
+  <div class="table-scroll"><table>
     <thead><tr><th>Terminal Point Side</th><th>Role</th><th>System</th><th>Description</th></tr></thead>
     <tbody>
       <tr><td>TP1</td><td>Requestor of service</td><td>USER / QCELL</td><td>QCELL interface via QDB, QVB, QM and jumper connection</td></tr>
       <tr><td>TP2</td><td>Provider of service</td><td>QPLANT / QRB</td><td>QPLANT interface via QRB / Cold Box Station</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>The TP defines the mechanical, process, operational, commissioning and responsibility boundary between the USER and the QPLANT.</p>
 
   <h2>3. Contract Figures and Tables Applicable to USER Interfaces</h2>
-  <table>
+  <div class="table-scroll"><table>
     <thead><tr><th>Contract item</th><th>Applicability</th><th>Interface relevance</th></tr></thead>
     <tbody>
       <tr><td>Figure 1 — Overall layout of Cryogenic System</td><td>QPS, QPLANT, QRB, QDB, QVB, QCELL relationship</td><td>Shows how QPLANT connects to QDB and the 30 QCELLs</td></tr>
@@ -51,10 +54,10 @@
       <tr><td>Figure 10 — QLM at QRB–QLM connection</td><td>Cold interface geometry</td><td>Gives indicative cold header sizes: A ~30 mm, B ~150 mm, D ~50 mm, E ~50 mm</td></tr>
       <tr><td>Section 4.5.2 — Warm Piping System</td><td>WPS interface definition</td><td>Defines warm headers U, W and S and their user-side interface sizes</td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <h2>4. Cold USER Interfaces</h2>
-  <table>
+  <div class="table-scroll"><table>
     <thead><tr><th>Line</th><th>Type</th><th>Function</th><th>Indicative size</th></tr></thead>
     <tbody>
       <tr><td>A</td><td>Cold</td><td>SHe supply line</td><td>~30 mm</td></tr>
@@ -62,21 +65,21 @@
       <tr><td>D</td><td>Cold</td><td>TS supply line</td><td>~50 mm</td></tr>
       <tr><td>E</td><td>Cold</td><td>TS return line</td><td>~50 mm</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>The cold interface shall maintain continuity of the process pipes, thermal shield, multilayer insulation and vacuum jacket across the QRB–QLM connection.</p>
 
   <h2>5. Warm USER Interfaces</h2>
-  <table>
+  <div class="table-scroll"><table>
     <thead><tr><th>Line</th><th>Type</th><th>Function</th><th>User-side interface</th></tr></thead>
     <tbody>
       <tr><td>U</td><td>Warm</td><td>Warm GHe supply for purge, conditioning and auxiliary operation</td><td>DN25, CF40</td></tr>
       <tr><td>W</td><td>Warm</td><td>Warm GHe recovery return from Cryogenic Users</td><td>DN40, CF63</td></tr>
       <tr><td>S</td><td>Warm</td><td>Safety recovery return from relief / abnormal discharge paths</td><td>DN150, CF160</td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <h2>6. Length and Tap-Off Basis</h2>
-  <table>
+  <div class="table-scroll"><table>
     <thead><tr><th>Parameter</th><th class="num">Value</th></tr></thead>
     <tbody>
       <tr><td>Total process line length per line</td><td class="num">151.5 m</td></tr>
@@ -88,7 +91,7 @@
       <tr><td>Regular QCELL spacing</td><td class="num">3.0 m</td></tr>
       <tr><td>Number of QCELL taps</td><td class="num">30</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>Tap-off logic:</p>
   <ul>
     <li>First QCELL tap starts at 1.5 m.</li>
@@ -100,7 +103,7 @@
   <h2>7. Internal Surface Area Calculation</h2>
   <p>Formula:</p>
   <p><code>A = π × Di × L</code></p>
-  <table>
+  <div class="table-scroll"><table>
     <thead><tr><th>Line</th><th>Type</th><th class="num">Diameter used</th><th class="num">Length</th><th class="num">Internal surface area</th></tr></thead>
     <tbody>
       <tr><td>A</td><td>Cold SHe supply</td><td class="num">30 mm</td><td class="num">151.5 m</td><td class="num">14.28 m²</td></tr>
@@ -111,7 +114,7 @@
       <tr><td>W</td><td>Warm recovery</td><td class="num">40 mm</td><td class="num">151.5 m</td><td class="num">19.04 m²</td></tr>
       <tr><td>S</td><td>Warm safety recovery</td><td class="num">150 mm</td><td class="num">151.5 m</td><td class="num">71.39 m²</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>Total internal surface area for all seven lines: <strong>235.60 m²</strong></p>
 
   <h2>8. Structured Data Sources</h2>
