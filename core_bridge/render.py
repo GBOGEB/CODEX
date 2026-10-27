@@ -3,7 +3,18 @@
 CODEX Transformation Engine - SLUG Format Matrix Generator
 """
 import sys
+from html import escape
 from pathlib import Path
+
+
+def render_html_document(title, text):
+    """Wrap plain source text in a complete HTML page (title, lang, viewport)."""
+    return (
+        "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n"
+        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
+        f"<title>{escape(title)}</title>\n</head>\n"
+        f"<body><pre style=\"white-space: pre-wrap\">{escape(text)}</pre></body>\n</html>\n"
+    )
 
 
 class SlugRenderPipeline:
@@ -25,7 +36,7 @@ class SlugRenderPipeline:
         print(f"[+] Compiling Document Matrix: {source.name} -> Target format: [{target_format.upper()}]")
         
         if target_format == "html":
-            out_file.write_text(f"<html><body>{raw_data}</body></html>", encoding="utf-8")
+            out_file.write_text(render_html_document(source.name, raw_data), encoding="utf-8")
         elif target_format == "pdf":
             out_file.write_text(f"PDF Output Layer Stream\nSource File: {source.name}", encoding="utf-8")
         elif target_format in ["sheet", "xlsx", "csv"]:
