@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-F9fh6dXIIt5UZCtWaULIxO9kqJ61ZTfhW2dd+dCKFPk='; script-src 'sha256-O1wgkkhyAS/8njDyKvWdC8awE2ECyh+yrlf59iDaIsI='; connect-src 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-n5PvD481FovNRfuIpm7XYalZx5Bxk4pQteyH05RVTq0='; script-src 'sha256-q/k6TY5dxGY4Ta2WLnPKYXnMM2Z9OoWf4qHftOuNFzE='" />
   <title>Core Topic EP Dashboard</title>
   <style>
     :root { --bg:#0b1020; --card:#121a30; --txt:#e8edff; --muted:#9fb0e0; --accent:#6ea8ff; }
@@ -16,6 +16,7 @@
     .pill { display:inline-block; padding:4px 9px; border-radius:999px; border:1px solid #3a4f91; margin:3px 4px 0 0; font-size:.8rem; }
     a { color:var(--accent); }
     #topicList li { margin-bottom:6px; }
+    .topics { margin-top:14px; }
   </style>
 </head>
 <body>
@@ -54,8 +55,9 @@
       </article>
     </section>
 
-    <section class="card" style="margin-top:14px;">
+    <section class="card topics">
       <h3>Themed Topics & Epics</h3>
+      <p class="muted">Illustrative sample entries: no generator produces <code>topics.json</code> yet, so this list is not live data.</p>
       <ul id="topicList"></ul>
     </section>
   </main>
@@ -82,10 +84,8 @@
       render();
     }
 
-    fetch('topics.json')
-      .then(r => { if (!r.ok) throw new Error('Failed to load topics.json: ' + r.status); return r.json(); })
-      .then(init)
-      .catch(() => init(SAMPLE_DATA));
+    // No generator writes topics.json yet, so the page shows the labelled sample entries only.
+    init(SAMPLE_DATA);
 
     function createPill(text) {
       const span = document.createElement('span');
