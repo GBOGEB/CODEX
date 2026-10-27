@@ -14,13 +14,13 @@
       "alias": "kpi_report",
       "origin": "LOCAL",
       "path": "docs/data/mycelium_kpi_measurement.json",
-      "sha256": "c3a6ac01ad2a7a886e6d76d7b07fe77a8c7065075aa5e17751f23e1d02351a39"
+      "sha256": "fa4dfa7d1d050142c04193b3322ac2786f29332a8935bbd702b05b231c5b7649"
     },
     {
       "alias": "value_observation",
       "origin": "LOCAL",
       "path": "mission_control/mycelium/executable_value_control_observation.json",
-      "sha256": "b7d8ab76007fb7bf7450beab4573cce21f2a9534b39458401d3b044e38d575b8"
+      "sha256": "f8ce3f0d742fc9f61ac855b6fbd9d0e4199d70c34f35c401c0c12569e76a00e3"
     },
     {
       "alias": "control_events",
@@ -130,7 +130,7 @@
         "rule": "RC-04",
         "lane": "MYCELIUM_EXECUTION",
         "state": "QUEUED",
-        "reason": "524 unregistered assets, 0 tested orphans",
+        "reason": "526 unregistered assets, 0 tested orphans",
         "sources": [
           {
             "input": "value_observation",
@@ -144,7 +144,7 @@
         "rule": "RC-05",
         "lane": "MYCELIUM_EXECUTION",
         "state": "RED",
-        "reason": "Asset registration coverage: 13.1 against target 100",
+        "reason": "Asset registration coverage: 13.06 against target 100",
         "sources": [
           {
             "input": "kpi_report",
@@ -159,7 +159,7 @@
         "rule": "RC-05",
         "lane": "MYCELIUM_EXECUTION",
         "state": "RED",
-        "reason": "Unregistered asset count: 524 against target 0",
+        "reason": "Unregistered asset count: 526 against target 0",
         "sources": [
           {
             "input": "kpi_report",
