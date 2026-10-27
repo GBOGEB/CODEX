@@ -16,6 +16,8 @@ from __future__ import annotations
 import argparse, json
 from dataclasses import dataclass, asdict
 from pathlib import Path
+from math import ceil
+from statistics import median
 
 @dataclass
 class Item:
@@ -81,7 +83,11 @@ def preemption_candidate(running: list[Item], queued: list[Item]) -> tuple[Item,
 def summarize(items: list[Item], pool_size: int, coordinator_slots: int = 1) -> dict:
     queued = [x for x in items if x.state == "QUEUED"]
     running = [x for x in items if x.state == "RUNNING"]
-    ages = [x.age_s for x in queued]
+    ages = sorted(x.age_s for x in queued)
+    # A sorted middle element is not the median for even queue sizes.
+    # Nearest-rank p95 is deliberately conservative for small cohorts.
+    queue_p50 = float(median(ages)) if ages else 0.0
+    queue_p95 = ages[max(0, ceil(0.95 * len(ages)) - 1)] if ages else None
     return {
         "schema_version": "1.0",
         "scheduler": "WORK_CONSERVING_NON_FIFO_WITH_AGING",
@@ -95,7 +101,9 @@ def summarize(items: list[Item], pool_size: int, coordinator_slots: int = 1) -> 
         "queue_depth": len(queued),
         "running_depth": len(running),
         "max_queue_age_s": max(ages) if ages else 0.0,
-        "p50_queue_age_s": sorted(ages)[len(ages)//2] if ages else 0.0,
+        "queue_age_sample_count": len(ages),
+        "p50_queue_age_s": queue_p50,
+        "p95_queue_age_s": queue_p95,
         "overdue_count": sum(1 for x in queued if x.max_queue_s > 0 and x.age_s >= x.max_queue_s),
         "authority_mutation": "SERIALIZED_OUTSIDE_WORKER_POOL",
     }

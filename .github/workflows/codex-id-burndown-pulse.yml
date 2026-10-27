@@ -5,7 +5,7 @@ on:
       workers: {description: 'Logical workers', required: true, default: '16', type: choice, options: ['1','2','4','8','16','32','64']}
       transport: {description: 'Execution transport', required: true, default: local_pool, type: choice, options: [local_pool, physical_fanout]}
   pull_request:
-    paths: ['.github/workflows/codex-id-burndown-pulse.yml','scripts/census_ssot_candidates.py','scripts/id_pulse_scale_controller.py','scripts/id_pulse_local_pool.py','scripts/id_work_conserving_scheduler.py','scripts/id_scheduler_sample.py','ssot/manifest.yaml','ssot/registry/logical_id_registry.yaml']
+    paths: ['.github/workflows/codex-id-burndown-pulse.yml','scripts/census_ssot_candidates.py','scripts/id_pulse_scale_controller.py','scripts/id_pulse_local_pool.py','scripts/id_work_conserving_scheduler.py','scripts/id_scheduler_sample.py','tests/test_id_scheduler_queue_quantiles.py','ssot/manifest.yaml','ssot/registry/logical_id_registry.yaml']
 permissions: {contents: read}
 jobs:
   producer:
@@ -40,6 +40,8 @@ jobs:
           counts=[len(b['items']) for b in bins]; weights=[b['weight'] for b in bins]; skew=lambda v:0 if not v or max(v)==0 else round((max(v)-min(v))/max(v),4)
           plan={'schema_version':'1.4','plan_created_epoch_ns':time.time_ns(),'workers':n,'sue_depth':n*3,'queue':len(q),'queue_per_sue':round(len(q)/(n*3),4),'count_min':min(counts),'count_max':max(counts),'count_skew':skew(counts),'weight_skew':skew(weights),'bins':bins}
           Path('reports/id_burndown').mkdir(parents=True,exist_ok=True); Path('reports/id_burndown/work_plan.json').write_text(json.dumps(plan,indent=2)+'\n'); open(os.environ['GITHUB_OUTPUT'],'a').write(f"queue={len(q)}\n"); print('ID_BALANCE_PASS '+json.dumps({k:v for k,v in plan.items() if k!='bins'}))
+      - name: Verify queue quantiles and measured-cohort safety
+        run: python -m unittest discover -s tests -p 'test_id_scheduler_queue_quantiles.py' -v
       - name: Measure 5-slot work-conserving scheduler
         run: python scripts/id_scheduler_sample.py --plan reports/id_burndown/work_plan.json --out reports/id_burndown/scheduler_sample.json --pool-size 5
       - uses: actions/upload-artifact@v7
