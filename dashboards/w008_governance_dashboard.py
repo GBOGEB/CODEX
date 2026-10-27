@@ -117,10 +117,10 @@ def _build_d1(rollup: dict) -> str:
         <div class="kpi-value" style="color:{status_color}">{_esc(status)}</div>
       </div>
     </div>
-    <table>
+    <div class="table-scroll"><table>
       <thead><tr><th>Member</th><th>GETI</th><th>PCI</th><th>Expansion Factor</th></tr></thead>
       <tbody>{rows}</tbody>
-    </table>
+    </table></div>
   </section>"""
 
 
@@ -149,7 +149,7 @@ def _build_d2(registry: dict) -> str:
   <section class="panel">
     <h2>D2 — Runtime Registry</h2>
     <p class="muted">Wave <strong>{wave}</strong> · Subwave <strong>{subwave}</strong></p>
-    <table>
+    <div class="table-scroll"><table>
       <thead>
         <tr>
           <th>Repository</th>
@@ -159,7 +159,7 @@ def _build_d2(registry: dict) -> str:
         </tr>
       </thead>
       <tbody>{rows}</tbody>
-    </table>
+    </table></div>
   </section>"""
 
 
@@ -203,10 +203,10 @@ def _build_d3(bottleneck: dict) -> str:
       </div>
     </div>
     <p class="notice"><strong>Recommended Action:</strong> {rec_action}</p>
-    <table>
+    <div class="table-scroll"><table>
       <thead><tr><th>Member</th><th>Flags</th><th>Weight</th></tr></thead>
       <tbody>{bn_rows}</tbody>
-    </table>
+    </table></div>
   </section>"""
 
 
@@ -259,7 +259,7 @@ def _build_d4(report: dict) -> str:
     <h2>D4 — Governance Rollup</h2>
     <p class="muted">Wave <strong>{wave}</strong> · Subwave <strong>{subwave}</strong>
       · Tracking: lineage, federation, renderability, drift</p>
-    <table>
+    <div class="table-scroll"><table>
       <thead>
         <tr>
           <th>Member</th>
@@ -272,7 +272,7 @@ def _build_d4(report: dict) -> str:
         </tr>
       </thead>
       <tbody>{rows}</tbody>
-    </table>
+    </table></div>
   </section>"""
 
 
@@ -322,6 +322,8 @@ def main() -> None:
                   letter-spacing:.05em; margin-bottom:6px; }}
     .kpi-value {{ font-size:1.5rem; font-weight:700; }}
     table {{ width:100%; border-collapse:collapse; margin-top:10px; font-size:.9rem; }}
+    .table-scroll {{ overflow-x:auto; max-width:100%; margin-top:10px; }}
+    .table-scroll > table {{ margin-top:0; }}
     th,td {{ border-bottom:1px solid var(--line); padding:8px 10px; text-align:left; }}
     th {{ color:var(--muted); font-weight:600; font-size:.8rem; text-transform:uppercase; }}
     .badge {{ display:inline-block; border-radius:999px; padding:2px 8px;
