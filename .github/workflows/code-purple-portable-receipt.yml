@@ -1,0 +1,38 @@
+name: CODE PURPLE portable receipt (exact-head)
+on:
+  pull_request:
+    paths:
+      - scripts/code_purple_portable_receipt.py
+      - tests/test_code_purple_portable_receipt.py
+      - .github/workflows/code-purple-portable-receipt.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: portable-receipt-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  portable-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact triggering SHA
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert checked-out SHA
+        run: |
+          actual=$(git rev-parse HEAD)
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          test "$actual" = "$expected"
+      - name: Setup Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: '3.12'
+      - name: Test canonical projector plus byte-bound adapter
+        run: |
+          python -m py_compile scripts/code_purple_iteration.py scripts/code_purple_portable_receipt.py
+          python -m unittest discover -s tests -p test_code_purple_iteration.py -v
+          python -m unittest discover -s tests -p test_code_purple_portable_receipt.py -v
+# Synthetic unit fixtures do not verify native human admission or transfers.
