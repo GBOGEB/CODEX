@@ -7,9 +7,19 @@ import importlib.util
 import unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from test_id_scheduler_dependency_gate_w34 import metric, request
 
 ROOT = Path(__file__).resolve().parents[1]
+# pytest's root collection and unittest's '-s tests' mode use different import
+# paths. Load the adjacent W34 fixture by its exact file path in both modes.
+HELPERS_PATH = Path(__file__).resolve().with_name(
+    "test_id_scheduler_dependency_gate_w34.py")
+HELPERS_SPEC = importlib.util.spec_from_file_location(
+    "_w34_slowburn_fixture", HELPERS_PATH)
+assert HELPERS_SPEC and HELPERS_SPEC.loader
+helpers = importlib.util.module_from_spec(HELPERS_SPEC)
+HELPERS_SPEC.loader.exec_module(helpers)
+metric, request = helpers.metric, helpers.request
+
 SPEC = importlib.util.spec_from_file_location(
     "nplus", ROOT / "scripts/id_scheduler_nplus_slowburn.py")
 assert SPEC and SPEC.loader
@@ -35,6 +45,12 @@ def epoch(seq, ids=("a",), *, digest=None):
 
 
 class SixWaveStopControl(unittest.TestCase):
+    def test_w34_fixture_is_loaded_from_the_sibling_file(self):
+        # Guard pytest root collection and scoped unittest discovery alike.
+        self.assertEqual(Path(HELPERS_SPEC.origin).resolve(), HELPERS_PATH)
+        self.assertEqual(request("fixture")["action_class"], "STAGE_ONLY")
+        self.assertIn("GBOGEB/CODEX", metric()["sources"])
+
     def test_six_transitions_require_seven_genuine_inputs(self):
         result = nplus.plan([epoch(i) for i in range(6)])
         self.assertEqual(result["status"], "WITHHELD_INCOMPLETE_NPLUS_HISTORY")

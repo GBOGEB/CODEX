@@ -12,7 +12,12 @@ PAGES = ROOT / 'docs' / 'wave_packages' / 'runtime' / 'pages'
 MINIMAL_ARTIFACTS = {
     OUT / 'runtime_status.md': '# Runtime Status\n\nRecovered minimal runtime artifact.\n',
     OUT / 'topology_runtime.mmd': 'graph TD\n    recovery --> topology\n',
-    PAGES / 'index.html': '<html><body><h1>Recovered Runtime Dashboard</h1></body></html>',
+    PAGES / 'index.html': (
+        '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8" />\n'
+        '<meta name="viewport" content="width=device-width, initial-scale=1" />\n'
+        '<title>Recovered Runtime Dashboard</title>\n</head>\n'
+        '<body><h1>Recovered Runtime Dashboard</h1></body>\n</html>\n'
+    ),
 }
 
 

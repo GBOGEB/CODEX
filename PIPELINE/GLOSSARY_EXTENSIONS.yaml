@@ -229,3 +229,8 @@ glossary:
     definition: UTC timestamp, reported in the M4 rebuild receipt, of the source snapshot the MissionControl M4 merge-topology page was generated from; it dates the inputs and does not grant merge admission.
     introduced_by: scripts/rebuild_missioncontrol_m4.py
     first_use_case: tell reviewers which snapshot a regenerated M4 page reflects while merge_admission stays HOLD.
+
+  semantic_root_closure:
+    definition: Stage-only Mycelium N+6 plan field reserved for a semantic root-closure disposition independently verified by the authorized source owner. The value is null when no such disposition exists. Proposed tasks, simulated stage receipts, registered workers, passed CI, or inferred scheduler progress cannot change null into verified root closure; this field by itself grants no child engineering, compliance, negotiation, release, or merge authority.
+    introduced_by: scripts/id_scheduler_nplus_slowburn.py
+    first_use_case: Preserve an explicit unknown root-closure result in the W33/W34 N+6 advisory planner while native dispatch, owner acceptance and formal closure evidence are withheld.
