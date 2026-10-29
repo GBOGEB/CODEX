@@ -191,6 +191,7 @@ def pca_pkg(monkeypatch):
     cached entries are evicted for the test and restored afterwards.
     """
     pytest.importorskip("numpy")
+    pytest.importorskip("pandas")  # pca_core -> preprocessing imports pandas; CI does not install it
     import importlib
     saved = {k: v for k, v in sys.modules.items() if k == "pca_engine" or k.startswith("pca_engine.")}
     for key in saved:
@@ -257,8 +258,11 @@ def test_sklearn_validation_with_fake_sklearn(pca_pkg, monkeypatch):
     assert res["max_abs_eigenvalue_delta"] == pytest.approx(0.5) and res["max_abs_variance_ratio_delta"] == 0.0
 
 
-def test_nlpca_fails_gracefully_without_tensorflow(pca_pkg, monkeypatch):
-    from pca_engine import nlpca_autoencoder as nl
+NLPCA = "pca_engine/src/pca_engine/nlpca_autoencoder.py"
+
+
+def test_nlpca_fails_gracefully_without_tensorflow(monkeypatch):
+    nl = load(NLPCA)
     monkeypatch.setitem(sys.modules, "tensorflow", None)
     assert nl.tensorflow_available() is False
     with pytest.raises(nl.OptionalDependencyError, match="TensorFlow is optional"):
@@ -296,10 +300,9 @@ def _fake_keras():
     return tf
 
 
-def test_nlpca_with_fake_keras(pca_pkg, monkeypatch):
-    import numpy as np
-
-    from pca_engine import nlpca_autoencoder as nl
+def test_nlpca_with_fake_keras(monkeypatch):
+    np = pytest.importorskip("numpy")
+    nl = load(NLPCA)
     monkeypatch.setitem(sys.modules, "tensorflow", _fake_keras())
     assert nl.tensorflow_available() is True
     auto, enc = nl.build_autoencoder(4, 2, hidden_dims=(3,))
