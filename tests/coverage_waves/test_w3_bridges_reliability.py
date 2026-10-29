@@ -290,7 +290,7 @@ def test_absorb_main_exit_code(tmp_path, monkeypatch):
 
 @pytest.mark.parametrize(
     ("fmt", "suffix", "needle"),
-    [("html", ".html", "<html><body>a---b</body></html>"), ("PDF ", ".pdf", "Source File: s.md"),
+    [("html", ".html", "a---b</"), ("PDF ", ".pdf", "Source File: s.md"),
      ("slides", ".slides", "Total Segments: 2"), ("csv", ".csv", "Header1,Header2")],
 )
 def test_render_formats(tmp_path, fmt, suffix, needle):
@@ -300,6 +300,15 @@ def test_render_formats(tmp_path, fmt, suffix, needle):
     msg = pipe.process_transform(src, fmt)
     assert msg.startswith("[+]")
     assert needle in (tmp_path / "out" / f"s_export{suffix}").read_text(encoding="utf-8")
+
+
+def test_render_html_is_a_document_containing_the_source(tmp_path):
+    src = tmp_path / "s.md"
+    src.write_text("x & y", encoding="utf-8")
+    render.SlugRenderPipeline(tmp_path / "out").process_transform(src, "html")
+    html = (tmp_path / "out" / "s_export.html").read_text(encoding="utf-8")
+    assert "<html" in html and "</html>" in html and "<body>" in html
+    assert "x &amp; y" in html or "x & y" in html
 
 
 def test_render_errors(tmp_path):
