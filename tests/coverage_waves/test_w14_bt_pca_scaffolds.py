@@ -183,10 +183,25 @@ def test_runtime_consumer_map(tmp_path, monkeypatch, capsys):
 # ---------------------------------------------------------------- pca_engine optional layers
 @pytest.fixture
 def pca_pkg(monkeypatch):
+    """Import the real ``pca_engine`` package from ``pca_engine/src``.
+
+    In a full-suite session an earlier ``import pca_engine`` (for example
+    ``delta1_bridge.ranking`` probing ``pca_engine.bradley_terry``) can cache
+    the repo-root ``pca_engine/`` directory as an empty namespace package, so
+    cached entries are evicted for the test and restored afterwards.
+    """
     pytest.importorskip("numpy")
-    monkeypatch.syspath_prepend(str(ROOT / "pca_engine" / "src"))
     import importlib
-    return importlib.import_module("pca_engine")
+    saved = {k: v for k, v in sys.modules.items() if k == "pca_engine" or k.startswith("pca_engine.")}
+    for key in saved:
+        del sys.modules[key]
+    monkeypatch.syspath_prepend(str(ROOT / "pca_engine" / "src"))
+    try:
+        yield importlib.import_module("pca_engine")
+    finally:
+        for key in [k for k in sys.modules if k == "pca_engine" or k.startswith("pca_engine.")]:
+            del sys.modules[key]
+        sys.modules.update(saved)
 
 
 def _data():
