@@ -29,6 +29,8 @@
     .l1 { border-left: 4px solid var(--ok); padding-left: 10px; }
     .l2 { border-left: 4px solid var(--warn); padding-left: 10px; }
     .l3 { border-left: 4px solid #ff6b6b; padding-left: 10px; }
+  
+    .table-scroll{overflow-x:auto;max-width:100%}
   </style>
 </head>
 <body>
@@ -60,7 +62,7 @@
 
   <div class="card">
     <h2>Valve type baseline & cost class mapping</h2>
-    <table id="tbl"></table>
+    <div class="table-scroll"><table id="tbl"></table></div>
     <p class="small">Cost class is a planning proxy (low/medium/high/capital-critical), not vendor quotation.</p>
   </div>
 

@@ -30,6 +30,7 @@
              padding:12px; overflow:auto; font-size:12px; color:#b9c6e6; max-height:420px; }
   .note { color:var(--muted); font-size:13px; }
   footer { color:var(--muted); font-size:12.5px; padding:20px 24px; border-top:1px solid var(--line); }
+.table-scroll{overflow-x:auto;max-width:100%}
 </style>
 </head>
 <body>
@@ -41,12 +42,12 @@
 
   <section>
     <h2>Repo map</h2>
-    <table>
+    <div class="table-scroll"><table>
       <thead><tr><th>Repo</th><th>Plane / role</th><th>Lang</th><th>Files</th><th>Package</th><th>Metrics feed</th></tr></thead>
       <tbody><tr><td><b>GBOGEB/CODEX</b></td><td>governance + KEB semantic provenance</td><td>Python</td><td>~2,779</td><td><code>codex 1.4.0</code></td><td>docs/api/metrics.json ✓</td></tr>
 <tr><td><b>GBOGEB/ABACUS</b></td><td>DOW analytical runtime (12-Cluster)</td><td>Python</td><td>~4,154</td><td><code>abacus-dow 5.0.0</code></td><td>docs/api/dmaic_metrics.json ✓</td></tr>
 <tr><td><b>GBOGEB/cryoplant-project (private)</b></td><td>auxiliary — QPS engineering SSOT (OCD/ADR)</td><td>HTML/Python</td><td>~7,741</td><td><code>—</code></td><td>none (degraded)</td></tr></tbody>
-    </table>
+    </table></div>
     <p class="note">The three repos form a declared DELTA_1 federation. A bridge surface already exists
       (<code>CODEX/src/bridge_adapter.py</code>, <code>cryoplant/src/federation.py</code>,
       <code>federation/manifest.yaml</code>). The delivered <code>delta1_bridge</code> package is
@@ -55,7 +56,7 @@
 
   <section>
     <h2>Opportunity table (δ)</h2>
-    <table>
+    <div class="table-scroll"><table>
       <thead><tr><th>#</th><th>Finding</th><th>Class</th><th>Recommended action</th><th>Status</th></tr></thead>
       <tbody><tr><td>O1</td><td>Bradley-Terry ranking canonical in CODEX, re-derived in ABACUS + cryoplant</td><td><span class="pill" style="background:#2563eb">SHARE</span></td><td>Single call site to canonical engine</td><td><b>Done</b></td></tr>
 <tr><td>O2</td><td>DMAIC metrics schema shared by CODEX+ABACUS, no shared validator</td><td><span class="pill" style="background:#2563eb">SHARE</span></td><td>One schema validator + reusable CI</td><td><b>Done</b></td></tr>
@@ -66,14 +67,14 @@
 <tr><td>O7</td><td>Stray triage script breaks cryoplant pytest collection</td><td><span class="pill" style="background:#b45309">PRUNE</span></td><td>Exclude from collection</td><td>Recommended</td></tr>
 <tr><td>O8</td><td>Generational orchestrators orchestrate_g3..g10 retained</td><td><span class="pill" style="background:#b45309">PRUNE</span></td><td>Archive after review</td><td>Recommended</td></tr>
 <tr><td>O9</td><td>ABACUS-v031/v032 variants alongside DMAIC_V3</td><td><span class="pill" style="background:#b45309">PRUNE</span></td><td>Confirm canonical, archive legacy</td><td>Recommended</td></tr></tbody>
-    </table>
+    </table></div>
     <p class="note">Classes: <b>SHARE</b> common lib/workflow/schema · <b>NEW</b> integration point ·
       <b>MERGE</b> local/micro-merge · <b>PRUNE</b> dead/duplicate (recommendation only — no prune auto-applied).</p>
   </section>
 
   <section>
     <h2>Managed trace (Greek steps)</h2>
-    <table>
+    <div class="table-scroll"><table>
       <thead><tr><th>Step</th><th>Action</th><th>Repo(s)</th><th>Outcome</th></tr></thead>
       <tbody><tr><td><span class="greek">α</span></td><td>READ — structured per-repo read</td><td>all</td><td>DONE</td></tr>
 <tr><td><span class="greek">β</span></td><td>ASCII — structure trees</td><td>all</td><td>DONE</td></tr>
@@ -83,7 +84,7 @@
 <tr><td><span class="greek">ζ</span></td><td>HTML + launchers</td><td>all</td><td>DONE</td></tr>
 <tr><td><span class="greek">η</span></td><td>PR — draft PRs, label in-review</td><td>changed repos</td><td>see PRs</td></tr>
 <tr><td><span class="greek">θ</span></td><td>REPORT — BRIDGE_REPORT + TRACE</td><td>n/a</td><td>DONE</td></tr></tbody>
-    </table>
+    </table></div>
   </section>
 
   <section>

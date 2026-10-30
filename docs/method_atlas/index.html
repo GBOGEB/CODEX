@@ -85,6 +85,7 @@ pre.cmd{position:relative;background:var(--chip);border:1px solid var(--line);bo
 pre.cmd button{position:absolute;top:6px;right:6px;font:11px system-ui;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:5px;padding:2px 7px;cursor:pointer}
 .theme-toggle,.copy-link{float:right;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;padding:4px 10px;cursor:pointer;font:inherit;margin-left:6px}
 @media (max-width:600px){.kpi{font-size:22px}h1{font-size:19px}}
+#digest{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -328,7 +329,7 @@ document.getElementById('merge').innerHTML=`<h2>Merge-conflict helpers</h2>
 <div><label for="mFile">Conflicted file (repo-relative)</label><input id="mFile" placeholder="docs/ci/WORKFLOW_RATIONALIZATION.md" value="${esc(mergeVals.file==='<file>'?'':mergeVals.file)}"></div>
 </div>
 <h2>Branch radar</h2>
-<p class="note">Scans local branches: merges cleanly with the base or not, rebase in progress, conflicting files classified below, a nothing-lost audit for rebased-but-unpushed branches, and tailored commands. Run these from the CODEX checkout (the atlas tools live there), then open <code>artifacts/method_atlas/branches.html</code> (<a href="../../artifacts/method_atlas/branches.html">open if generated</a>).</p>
+<p class="note">Scans local branches: merges cleanly with the base or not, rebase in progress, conflicting files classified below, a nothing-lost audit for rebased-but-unpushed branches, and tailored commands. Run these from the CODEX checkout (the atlas tools live there), then open <code>artifacts/method_atlas/branches.html</code> (a local report, not published to Pages).</p>
 ${cmdBlock(["python tools\\method_atlas\\branch_conflicts.py radar --path '{repo}' --fetch","python tools\\method_atlas\\branch_conflicts.py audit --path '{repo}' --branch {branch}","Invoke-Item artifacts\\method_atlas\\branches.html"])}
 <h2>Situations</h2>
 ${PB.recipes.map(r=>`<div class="card"><h3>${esc(r.label)}</h3><div class="sub">${esc(r.when)}</div>${cmdBlock(r.commands)}</div>`).join('')}
