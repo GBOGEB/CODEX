@@ -101,6 +101,13 @@ jobs:
       - name: Check backend registry
         id: backend_registry
         run: python scripts/check_backend_registry.py
+      - name: Run assets_governance tests in their own process
+        # Its conftest and tests/__init__.py shadow the top-level src and tests packages,
+        # so this suite must not share a pytest process with the main tests job.
+        id: tests_assets_governance
+        run: >-
+          python scripts/pytest_collect_floor.py --label assets-governance --min 68 --
+          integrations/gbogeb_session/assets_governance/tests
 
       - name: Emit governance snapshot
         if: always()
