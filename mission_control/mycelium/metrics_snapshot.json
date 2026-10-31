@@ -712,7 +712,7 @@
   },
   "executable_value": {
     "status": "DERIVED_FROM_MEASURED",
-    "population": 130,
+    "population": 131,
     "population_source": "mission_control/mycelium/executable_integration_registry.yaml",
     "classification_basis": "registered nodes, evidenced edges and executed integration paths only; tested orphans per executable_integration_value_contract.yaml orphan_policy, as reported by scripts/validate_executable_integration_value.py",
     "metrics": {
@@ -722,11 +722,11 @@
       },
       "PIPELINE_INTEGRATION_COVERAGE": {
         "status": "DERIVED_FROM_MEASURED",
-        "value": 62.31
+        "value": 61.83
       },
       "VALUE_EDGE_COVERAGE": {
         "status": "DERIVED_FROM_MEASURED",
-        "value": 64.62
+        "value": 64.12
       },
       "TESTED_ORPHAN_COUNT": {
         "status": "DERIVED_FROM_MEASURED",
@@ -1858,13 +1858,22 @@
         "state": "LIBRARY_REFERENCE_ONLY"
       },
       {
+        "id": "reg3_code_purple_portable_receipt_workflow",
+        "type": "WORKFLOW",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 1,
+        "value_evidence_count": 0,
+        "state": "TESTED_ONLY"
+      },
+      {
         "id": "reg3_lib_code_purple_iteration",
         "type": "PYTHON_SCRIPT",
         "tested": true,
         "pipeline_integrated": false,
         "downstream_consumer_count": 0,
         "value_evidence_count": 0,
-        "state": "LIBRARY_REFERENCE_ONLY"
+        "state": "TESTED_ONLY"
       },
       {
         "id": "reg3_lib_g3a_protocol",
