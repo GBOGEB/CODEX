@@ -62,7 +62,8 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest -q --ignore=tests/test_master_input_validator.py --ignore=tests/test_ssot_validator.py
+          python scripts/pytest_collect_floor.py --label tests-validators --min 8 --no-run -- \n            tests/test_master_input_validator.py tests/test_ssot_validator.py
+          pytest -q
 
       - name: Build QPS W08 KEB runtime return
         run: |
