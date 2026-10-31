@@ -62,7 +62,7 @@ jobs:
         env:
           PYTHONPATH: .
         run: |
-          python scripts/pytest_collect_floor.py --label tests-validators --min 8 --no-run -- \n            tests/test_master_input_validator.py tests/test_ssot_validator.py
+          python scripts/pytest_collect_floor.py --label tests-validators --min 8 --no-run -- tests/test_master_input_validator.py tests/test_ssot_validator.py
           pytest -q
 
       - name: Run MCP federation sweep
