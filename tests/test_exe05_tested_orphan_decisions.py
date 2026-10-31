@@ -35,7 +35,8 @@ DECISIONS = {
     "scripts/mip_health_selfheal_probe.py": "REGISTER",
     "scripts/build_incubator_index.py": "LIBRARY_ONLY",
     "scripts/code_purple_census_delta.py": "LIBRARY_ONLY",
-    "scripts/code_purple_iteration.py": "LIBRARY_ONLY",
+    # Was LIBRARY_ONLY; 4f1783f0 added code-purple-portable-receipt.yml, which runs it.
+    "scripts/code_purple_iteration.py": "REGISTER",
     "scripts/export_incubator_runtime.py": "LIBRARY_ONLY",
     "scripts/extract_themes.py": "LIBRARY_ONLY",
     "scripts/g3a_protocol.py": "LIBRARY_ONLY",
