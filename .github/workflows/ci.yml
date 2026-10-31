@@ -81,8 +81,9 @@ jobs:
         id: tests_outside_testpaths
         env:
           PYTHONPATH: .
-        run: |
-          python scripts/pytest_collect_floor.py --label tools-federation --min 50 -- \n            federation/mesh/handovers/code_purple_n_vector_v1 tools/tests tools/triage
+        run: >-
+          python scripts/pytest_collect_floor.py --label tools-federation --min 50 --
+          federation/mesh/handovers/code_purple_n_vector_v1 tools/tests tools/triage
       - name: Check glob policy
         id: globs
         run: python scripts/check_globs.py
