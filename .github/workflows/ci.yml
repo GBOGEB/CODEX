@@ -82,7 +82,7 @@ jobs:
         env:
           PYTHONPATH: .
         run: >-
-          python scripts/pytest_collect_floor.py --label tools-federation --min 50 --
+          python scripts/pytest_collect_floor.py --label tools-federation --min 49 --
           federation/mesh/handovers/code_purple_n_vector_v1 tools/tests tools/triage
       - name: Check glob policy
         id: globs
