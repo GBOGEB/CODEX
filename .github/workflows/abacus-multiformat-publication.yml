@@ -17,6 +17,7 @@ on:
       - '.github/workflows/deploy_pipeline.yml'
       - '.github/workflows/pages.yml'
       - '.github/workflows/abacus-multiformat-publication.yml'
+      - 'scripts/pytest_collect_floor.py'
   push:
     branches:
       - main
@@ -35,6 +36,7 @@ on:
       - '.github/workflows/deploy_pipeline.yml'
       - '.github/workflows/pages.yml'
       - '.github/workflows/abacus-multiformat-publication.yml'
+      - 'scripts/pytest_collect_floor.py'
 
 jobs:
   multiformat-publication:
@@ -48,7 +50,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@v7.1.0
         with:
           python-version: '3.12'
 
@@ -91,7 +93,7 @@ jobs:
 
       - name: Run A9.3 tamper parity hosted-Pages and promotion tests
         working-directory: abacus_render_pipeline/A9_multiformat_publication
-        run: python test_multiformat_execution.py
+        run: python ../../scripts/pytest_collect_floor.py --label abacus-a9 --min 7 -- test_multiformat_execution.py
 
       - name: Re-prove semantic closed loop at TUP-0012 stability gate
         working-directory: abacus_render_pipeline/A7_executable_semantic_runtime

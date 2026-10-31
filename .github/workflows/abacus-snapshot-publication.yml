@@ -11,6 +11,7 @@ on:
       - 'PIPELINE/GLOSSARY_EXTENSIONS.yaml'
       - 'requirements/contract-governance.txt'
       - '.github/workflows/abacus-snapshot-publication.yml'
+      - 'scripts/pytest_collect_floor.py'
   push:
     branches: [main]
     paths:
@@ -20,6 +21,7 @@ on:
       - 'codex/contract_governance/**'
       - 'contract_governance/**'
       - '.github/workflows/abacus-snapshot-publication.yml'
+      - 'scripts/pytest_collect_floor.py'
 
 jobs:
   snapshot-publication:
@@ -32,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@v7.1.0
         with:
           python-version: '3.12'
 
@@ -60,7 +62,7 @@ jobs:
 
       - name: Run snapshot tamper telemetry and promotion tests
         working-directory: abacus_render_pipeline/A10_snapshot_publication
-        run: python test_snapshot_execution.py
+        run: python ../../scripts/pytest_collect_floor.py --label abacus-a10 --min 3 -- test_snapshot_execution.py
 
       - name: Re-prove semantic closed loop at TUP-0013
         working-directory: abacus_render_pipeline/A7_executable_semantic_runtime
