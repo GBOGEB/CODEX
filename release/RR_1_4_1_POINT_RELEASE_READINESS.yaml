@@ -6,7 +6,7 @@ candidate_version: 1.4.1          # VERSION.json / pyproject.toml stay at 1.4.0 
 base_main_sha: 5c0ff34820b4471b95d5be1c60cc1369f623224a
 evaluated_on: 2026-10-25
 status: NOT_READY_BLOCKERS_OPEN
-updated_on: 2026-10-25
+updated_on: 2026-10-31
 method: >-
   Same structure as release/W126_POINT_RELEASE_CANDIDATE.yaml: release gates K1-K4
   evaluated on this PR's exact head (the K1-K3 workflows run on pull_request only),
@@ -47,6 +47,8 @@ release_gates:
       entries), and Deploy GitHub Pages publishes the release commit
     main_at_base: {Site HTML QA: 40133927582 success (77 pages, 73 without errors),
                    Deploy GitHub Pages: 40165766987 failure (B1); live site is ae96f42 (2026-10-20)}
+    main_2026_10_31: {Site HTML QA: "41223393539 success (80 pages, 80 without errors; baseline emptied by #1237)",
+                      Deploy GitHub Pages: "last success 61cfb48 (2026-10-27); 41172462223 failure on e462125 (B4)"}
   - id: K6
     gate: security
     evidence: [OSV-Scanner, CodeQL Advanced, Bandit, Security Scan]
@@ -72,20 +74,24 @@ jade5_federation_readiness:
     JADE_RELEASE_PROGRAMME). Read-only, one head SHA per repo per pulse, UNKNOWN never PASS,
     RELEASE_CREDIT=0. CODEX is the releasing repo here and is not in the current rolling-5
     window; its own K1-K6 above map onto H gates as listed below.
-  pulse: P0002
-  observed_date: 2026-10-25
-  source: GBOGEB/pipeline-automation-hub#848 (data/FOCUS5_POINT_RELEASE_P0002.json, tools/focus5_pulse.py)
-  totals: {pass: 17, fail: 2, unknown: 41, of: 60, previous_pulse_P0001: "14 / 8 / 38"}
+  pulse: P0003
+  observed_date: 2026-10-31
+  source: GBOGEB/pipeline-automation-hub#1078 (data/FOCUS5_POINT_RELEASE_P0003.json, tools/focus5_pulse.py with the gate evidence registry #983 and the not-started rule #984)
+  totals: {pass: 21, fail: 1, unknown: 38, of: 60, previous_pulses: "P0002 17 / 2 / 41, P0001 14 / 8 / 38"}
   legend: "P=PASS F=FAIL ?=UNKNOWN"
+  private_boundary: cryoplant-project is private; its head is recorded as PRIVATE_AGGREGATE_ONLY (counts and statuses only)
   rows:
-    - {repo: GBOGEB/pipeline-automation-hub, head: 49a4486bc24c, pass: 3, fail: 0, unknown: 9, gates: "H01=P H02=P H03=? H04=? H05=? H06=P H07=? H08=? H09=? H10=? H11=? H12=?"}
-    - {repo: GBOGEB/cryoplant-project, head: 82eca1967133, pass: 4, fail: 0, unknown: 8, gates: "H01=P H02=P H03=? H04=? H05=P H06=P H07=? H08=? H09=? H10=? H11=? H12=?"}
-    - {repo: GBOGEB/gg_MATH, head: 61ce59f754d2, pass: 4, fail: 0, unknown: 8, gates: "H01=P H02=P H03=? H04=P H05=P H06=? H07=? H08=? H09=? H10=? H11=? H12=?"}
-    - {repo: GBOGEB/DOCX_RTM_Automation, head: aae0ff361a7e, pass: 4, fail: 1, unknown: 7, gates: "H01=P H02=P H03=? H04=? H05=P H06=P H07=? H08=F H09=? H10=? H11=? H12=?"}
-    - {repo: GBOGEB/yaml-grammar, head: 75083c2aaabd, pass: 2, fail: 1, unknown: 9, gates: "H01=P H02=P H03=? H04=? H05=? H06=? H07=? H08=F H09=? H10=? H11=? H12=?"}
+    - {repo: GBOGEB/pipeline-automation-hub, head: 3bbee1143e63, pass: 2, fail: 0, unknown: 10, gates: "H01=P H02=P H03=? H04=? H05=? H06=? H07=? H08=? H09=? H10=? H11=? H12=?"}
+    - {repo: GBOGEB/cryoplant-project, head: PRIVATE_AGGREGATE_ONLY, pass: 4, fail: 0, unknown: 8, gates: "H01=P H02=P H03=? H04=? H05=P H06=P H07=? H08=? H09=? H10=? H11=? H12=?"}
+    - {repo: GBOGEB/gg_MATH, head: 1e2caa69fedb, pass: 5, fail: 0, unknown: 7, gates: "H01=P H02=P H03=? H04=P H05=P H06=P H07=? H08=? H09=? H10=? H11=? H12=?"}
+    - {repo: GBOGEB/DOCX_RTM_Automation, head: 7c1da80f2acc, pass: 5, fail: 0, unknown: 7, gates: "H01=P H02=P H03=? H04=P H05=P H06=P H07=? H08=? H09=? H10=? H11=? H12=?"}
+    - {repo: GBOGEB/yaml-grammar, head: d6988d00f0b2, pass: 5, fail: 1, unknown: 6, gates: "H01=P H02=P H03=? H04=P H05=P H06=P H07=? H08=F H09=? H10=? H11=? H12=?"}
   federation_blockers:
-    - "H08 FAIL: DOCX_RTM_Automation and yaml-grammar default branches unprotected (owner: enable a ruleset, then a rejected RED canary)"
-    - "H03 H07 H09 H12 UNKNOWN in all five: owner release applicability, security acceptance, independent approval, owner tag/rollback"
+    - "H08 FAIL: yaml-grammar master unprotected (owner: ruleset requiring PRs and its 4 checks, then a rejected RED canary)"
+    - "H08 UNKNOWN: DOCX_RTM_Automation main protected without a pull request rule (owner: add the rule, then a RED canary); hub, cryoplant and gg_MATH have the rule, canary not evidenced"
+    - "H04 UNKNOWN: hub (no lock contract; owner scope decision: jade_temple only or whole repo) and cryoplant (exact pins, no lock contract declared)"
+    - "H05/H06 UNKNOWN on hub: path-filtered evidence workflows did not run on the observed head"
+    - "H03 H07 H09 H10 H11 H12 UNKNOWN in all five, unattended after three pulses: owner release applicability, security acceptance, independent approval, coverage acceptance, artifact QA acceptance, owner tag/rollback"
   codex_k_to_h_mapping:
     H01: base_main_sha read back (5c0ff34)
     H02: repository root README and VERSION.json
@@ -111,6 +117,16 @@ blockers:
       Pages publishes only the newest main push that passed Runtime Release Gate; that gate
       runs on runtime paths only, so the fix deploys with the next merge touching those paths
       (federation_runtime/**, docs/wave_packages/runtime/**, docs/rtm/**, governance/**, ...).
+  - id: B4
+    gate: K5
+    finding: >-
+      Deploy GitHub Pages fails again on main e462125 (run 41172462223, 2026-10-31): job build,
+      step "Build verified Pages output", exit code 2. Last success 61cfb48 (2026-10-27).
+      Exit 2 from that step's final `pytest -q` usually means a collection error. Not reproduced
+      locally: on Python 3.11 at e462125 the only collection errors are packages this probe
+      sandbox lacks, and the three test files changed since 61cfb48 pass. Cause unconfirmed
+      (job log not readable from the probe session).
+    next: read the job log; reproduce with the Pages install set on Python 3.11; repair only that invariant
   - id: B2
     gate: K4
     finding: MissionControl Mycelium CI parity preflight red on main (receipt counts 528 vs list 530).
@@ -128,9 +144,9 @@ blockers:
       to create pull requests (Settings -> Actions -> General).
 
 known_debt_not_blocking:
-  - "Site HTML QA baseline, 4 ERROR entries: dashboard.html topics.json 404 (no generator),
-    method_atlas/index.html link outside docs/, two untitled generated stubs"
-  - "Site HTML QA WARNs on non-GISTAU pages (phone overflow, missing lang/viewport)"
+  - "Site HTML QA: ERROR baseline burned down to empty (#1219-#1222, #1237); WARNs on lang, viewport
+    and phone overflow cleared (#1223, #1224, #1226, #1227). Remaining findings are network or
+    deploy-generated only"
   - GISTAU L1 excludes 5 examples (duplicate, nitrogen, 3 HEPAK-governed two-phase)
   - Corporate PPTX of the GISTAU deck needs the SCK CEN slide master (local qps_post.py)
 
