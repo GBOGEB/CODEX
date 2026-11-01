@@ -150,11 +150,19 @@ jobs:
 
       - name: No-op summary
         if: env.HAS_PRIVATE_READ == 'true' && steps.drift.outputs.changed != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: automation/wave-register-refresh
         run: |
+          n="$(gh pr list --head "$BRANCH" --base main --state open --json number --jq '.[0].number // empty')"
+          if [ -n "$n" ]; then
+            gh pr close "$n" --comment "The refreshed wave register has no meaningful drift from main; closing this obsolete refresh PR."
+            echo "Closed obsolete wave register refresh PR #$n."
+          fi
           {
             echo "### Wave register unchanged"
             echo
-            echo "Only member HEAD SHAs moved (or nothing changed); no bot PR opened."
+            echo "Only member HEAD SHAs moved (or nothing changed); no new bot PR opened."
             echo
             echo '```'
             cat "$RUNNER_TEMP/register_summary.txt"
