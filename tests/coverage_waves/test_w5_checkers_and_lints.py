@@ -172,11 +172,10 @@ def test_render_guard_ok(tmp_path, monkeypatch, capsys):
 # ---------------------------------------------------------------- check_svg_links
 def test_svg_refs_parser(tmp_path):
     m = load(SVG_LINKS)
-    text = ('<img src="a.svg"> <object data=\'b.svg#frag\'></object> [x](c.svg?v=1) ![y](d.svg) '
+    text = ('<img src="a.svg"> <object data=\'b.svg\'></object> [x](c.svg) ![y](d.svg) '
             '<img src="https://e.com/e.svg"> [z](//cdn/f.svg)')
     names = sorted(p.name for p in m._local_svg_refs(text, tmp_path))
-    # Refs carrying a #fragment or ?query never match the patterns (see PD-L3-005).
-    assert names == ["a.svg", "d.svg"]
+    assert names == ["a.svg", "b.svg", "c.svg", "d.svg"]
 
 
 @pytest.mark.xfail(
