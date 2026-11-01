@@ -244,3 +244,44 @@ def test_register_consensus_excludes_bootstrap_record():
     current = {v for m in reg["current_pointers"].values() for k, v in m.items() if roles.get(k) == "current"}
     assert reg["current_wave_consensus"] == sorted(current)
     assert "BOOT:Wave-0" not in reg["current_wave_consensus"]
+
+
+def test_kahn_reports_cycles_and_longest_chain():
+    chain = {("QPS:W368", "QPS:W366"), ("QPS:W372", "QPS:W368"), ("QPS:W374", "QPS:W372")}
+    ok = build_wave_register.kahn(chain)
+    assert ok["acyclic"] is True and ok["longest_chain"] == 3 and ok["roots"] == 1
+    bad = build_wave_register.kahn(chain | {("QPS:W366", "QPS:W374")})
+    assert bad["acyclic"] is False and bad["nodes_in_cycles"] == 4
+
+
+def test_lineage_prefers_file_name_and_folds_lanes(wave_repo):
+    commit_files(wave_repo, {
+        # a W111B lane record vendored into W365's inputs must not become a W365 edge
+        "triage/w365/inputs/QPS_W111B_LANE_v0.1.yaml": "parent_wave: W110\n",
+        "triage/w373/discovery/waves.yaml": (
+            "waves:\n  - id: W369\n    parent_wave: W368\n"
+            "  - id: W370\n    parent_waves: [W366, W368]\n"
+        ),
+        "notes/unnamed.yaml": "parent_wave: W025\n",
+    })
+    head = build_wave_register.git(wave_repo, "rev-parse", "HEAD").strip()
+    edges, unresolved = build_wave_register.scan_lineage(wave_repo, head, build_wave_register.load_rules())
+    assert set(edges) == {
+        ("QPS:W111", "QPS:W110"), ("QPS:W369", "QPS:W368"),
+        ("QPS:W370", "QPS:W366"), ("QPS:W370", "QPS:W368"),
+    }
+    assert unresolved == 1
+
+
+def test_register_lineage_is_consistent_and_id_only():
+    reg = load(REG)
+    lin = reg["lineage"]
+    keys = {e["key"] for e in reg["waves"]}
+    assert lin["stats"]["edges"] == len(lin["edges"])
+    assert isinstance(lin["stats"]["acyclic"], bool)
+    for e in lin["edges"]:
+        assert set(e) == {"child", "parent", "repos"}
+        assert e["child"] != e["parent"]
+        assert all(isinstance(n, int) and n > 0 for n in e["repos"].values())
+        assert re.fullmatch(r"[A-Z]+:\S+", e["child"]) and re.fullmatch(r"[A-Z]+:\S+", e["parent"])
+    assert keys  # register non-empty
