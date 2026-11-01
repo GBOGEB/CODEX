@@ -10,26 +10,32 @@ sources:
     head: 43d78d7bffa3f27df5e5c25bae99d05f2f20e7bc
     files: 4392
     visibility: public
+    lineage_unresolved: 0
   GBOGEB/CODEX:
-    head: dff04b76696634f7ee5f14abbdfd1dcb187865a3
+    head: 68e194b8ab48cfe76e6bd90b2f8b031959afb120
     files: 2880
     visibility: public
+    lineage_unresolved: 0
   GBOGEB/DOCX_RTM_Automation:
     head: 7c1da80f2acc229fee11707d0500c1cf11482721
     files: 964
     visibility: public
+    lineage_unresolved: 0
   GBOGEB/cryoplant-project:
     head: ae693790db8e8891911d497d4a9cc45cb628d663
     files: 8326
     visibility: private
+    lineage_unresolved: 10
   GBOGEB/document-organization-system:
     head: 6da0c125fb24dbad1ae0786428566bfded7ebd50
     files: 299
     visibility: public
+    lineage_unresolved: 0
   GBOGEB/pipeline-automation-hub:
     head: 484b780404eaef0b8a9376e3b50012de23d42858
     files: 3076
     visibility: public
+    lineage_unresolved: 0
 stats:
   entries: 372
   by_namespace:
@@ -58,6 +64,74 @@ pointer_roles:
   handover/CURRENT.json: bootstrap_record
 current_wave_consensus:
 - QPS:W113
+lineage:
+  source_fields:
+  - parent_wave
+  - parent_waves
+  stats:
+    edges: 14
+    nodes: 20
+    roots: 7
+    acyclic: true
+    nodes_in_cycles: 0
+    longest_chain: 3
+  edges:
+  - child: QPS:W039
+    parent: QPS:W038
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W111
+    parent: QPS:W110
+    repos:
+      GBOGEB/cryoplant-project: 5
+  - child: QPS:W165
+    parent: QPS:W074
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W175
+    parent: QPS:W174
+    repos:
+      GBOGEB/cryoplant-project: 2
+  - child: QPS:W211
+    parent: QPS:W210
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W267
+    parent: QPS:W266
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W306
+    parent: QPS:W211
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W368
+    parent: QPS:W366
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W369
+    parent: QPS:W368
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W370
+    parent: QPS:W366
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W370
+    parent: QPS:W368
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W371
+    parent: QPS:W368
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W372
+    parent: QPS:W368
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W374
+    parent: QPS:W372
+    repos:
+      GBOGEB/cryoplant-project: 1
 waves:
 - key: CP:W1.C1.I0.S0
   namespace: CP
