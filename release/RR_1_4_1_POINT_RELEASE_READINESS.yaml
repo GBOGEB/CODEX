@@ -6,7 +6,7 @@ candidate_version: 1.4.1          # VERSION.json / pyproject.toml stay at 1.4.0 
 base_main_sha: 5c0ff34820b4471b95d5be1c60cc1369f623224a
 evaluated_on: 2026-10-25
 status: NOT_READY_BLOCKERS_OPEN
-updated_on: 2026-10-31
+updated_on: 2026-11-01
 method: >-
   Same structure as release/W126_POINT_RELEASE_CANDIDATE.yaml: release gates K1-K4
   evaluated on this PR's exact head (the K1-K3 workflows run on pull_request only),
@@ -49,6 +49,8 @@ release_gates:
                    Deploy GitHub Pages: 40165766987 failure (B1); live site is ae96f42 (2026-10-20)}
     main_2026_10_31: {Site HTML QA: "41223393539 success (80 pages, 80 without errors; baseline emptied by #1237)",
                       Deploy GitHub Pages: "last success 61cfb48 (2026-10-27); 41172462223 failure on e462125 (B4)"}
+    main_2026_11_01: {Deploy GitHub Pages: "41241990406 success (workflow head 69232ad, resolved source 69232ad) and 41276808331 success (workflow head b602162, resolved source 69232ad); resolve, build, deploy succeeded; B1 and B4 resolved",
+                      CI: "success on every main push since c4d18a0 (#1230)"}
   - id: K6
     gate: security
     evidence: [OSV-Scanner, CodeQL Advanced, Bandit, Security Scan]
@@ -117,6 +119,9 @@ blockers:
       Pages publishes only the newest main push that passed Runtime Release Gate; that gate
       runs on runtime paths only, so the fix deploys with the next merge touching those paths
       (federation_runtime/**, docs/wave_packages/runtime/**, docs/rtm/**, governance/**, ...).
+    resolved: >-
+      2026-10-31: Deploy GitHub Pages run 41241990406 built and deployed main 69232ad
+      (resolve, build and deploy jobs success), so the live site is current again.
   - id: B4
     gate: K5
     finding: >-
@@ -126,11 +131,18 @@ blockers:
       locally: on Python 3.11 at e462125 the only collection errors are packages this probe
       sandbox lacks, and the three test files changed since 61cfb48 pass. Cause unconfirmed
       (job log not readable from the probe session).
-    next: read the job log; reproduce with the Pages install set on Python 3.11; repair only that invariant
+    resolved: >-
+      Pages run 41172462223 selected source 63c168e and failed pytest collection because
+      tests/test_id_scheduler_nplus_slowburn.py could not import the W34 fixture module
+      test_id_scheduler_dependency_gate_w34. PR #1217 repaired that missing fixture import.
+      Pages run 41241990406 then succeeded with workflow head and resolved source 69232ad.
+      The separate EXE-05 registry assertion documented by #1230 is not the cause of this
+      Pages failure.
   - id: B2
     gate: K4
     finding: MissionControl Mycelium CI parity preflight red on main (receipt counts 528 vs list 530).
     repair: PR #1182 (merged 2026-10-25)
+    resolved: MissionControl Mycelium CI success on main b602162 (run 41242906888).
   - id: B3
     gate: K4/K5
     finding: >-
@@ -142,6 +154,13 @@ blockers:
     repair: >-
       Owner decision 2026-10-25: bots open PRs (no bypass). PR #1184; Actions must be allowed
       to create pull requests (Settings -> Actions -> General).
+    remaining: >-
+      2026-11-01: CODEX Metrics run 41242906880 on b602162 succeeded, published
+      automation/metrics, then had PR creation refused by repository policy. Inventory Reconcile
+      run 41242906946 on b602162 succeeded with changed_outputs: []; publication and downstream
+      Mycelium dispatch were skipped, so it is evidence of no drift, not branch publication.
+      Owner: enable Settings -> Actions -> General -> "Allow GitHub Actions to create and
+      approve pull requests" for Metrics PR creation.
 
 known_debt_not_blocking:
   - "Site HTML QA: ERROR baseline burned down to empty (#1219-#1222, #1237); WARNs on lang, viewport
