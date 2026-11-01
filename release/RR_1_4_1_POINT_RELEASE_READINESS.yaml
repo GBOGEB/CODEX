@@ -49,7 +49,7 @@ release_gates:
                    Deploy GitHub Pages: 40165766987 failure (B1); live site is ae96f42 (2026-10-20)}
     main_2026_10_31: {Site HTML QA: "41223393539 success (80 pages, 80 without errors; baseline emptied by #1237)",
                       Deploy GitHub Pages: "last success 61cfb48 (2026-10-27); 41172462223 failure on e462125 (B4)"}
-    main_2026_11_01: {Deploy GitHub Pages: "41241990406 success on 69232ad (resolve, build, deploy) and 41276808331 success on b602162; B1 and B4 resolved",
+    main_2026_11_01: {Deploy GitHub Pages: "41241990406 success (workflow head 69232ad, resolved source 69232ad) and 41276808331 success (workflow head b602162, resolved source 69232ad); resolve, build, deploy succeeded; B1 and B4 resolved",
                       CI: "success on every main push since c4d18a0 (#1230)"}
   - id: K6
     gate: security
@@ -132,11 +132,12 @@ blockers:
       sandbox lacks, and the three test files changed since 61cfb48 pass. Cause unconfirmed
       (job log not readable from the probe session).
     resolved: >-
-      Pages was red on main from 48e028d (2026-10-27 23:16Z) to e462125, the same window in which
-      `CI` (pytest) was red on main (e462125 and 479ea40 failure). The first CI run after #1230
-      (c4d18a0, 2026-10-31 08:26Z) and every later main push are green, and the first Pages run
-      after it, 41241990406 on 69232ad, succeeded. B4 therefore shares the cause of those main
-      test reds (#1217, #1230); the Pages log itself was not read.
+      Pages run 41172462223 selected source 63c168e and failed pytest collection because
+      tests/test_id_scheduler_nplus_slowburn.py could not import the W34 fixture module
+      test_id_scheduler_dependency_gate_w34. PR #1217 repaired that missing fixture import.
+      Pages run 41241990406 then succeeded with workflow head and resolved source 69232ad.
+      The separate EXE-05 registry assertion documented by #1230 is not the cause of this
+      Pages failure.
   - id: B2
     gate: K4
     finding: MissionControl Mycelium CI parity preflight red on main (receipt counts 528 vs list 530).
@@ -154,11 +155,12 @@ blockers:
       Owner decision 2026-10-25: bots open PRs (no bypass). PR #1184; Actions must be allowed
       to create pull requests (Settings -> Actions -> General).
     remaining: >-
-      2026-11-01: both bots run green on main and publish their branches (CODEX Metrics run
-      41242906880, Inventory Reconcile run 41242906946 on b602162), but no PR has ever been opened
-      from automation/metrics or automation/missioncontrol-reconcile. The job warns "PR creation
-      was refused by repository policy". Owner: enable Settings -> Actions -> General -> "Allow
-      GitHub Actions to create and approve pull requests".
+      2026-11-01: CODEX Metrics run 41242906880 on b602162 succeeded, published
+      automation/metrics, then had PR creation refused by repository policy. Inventory Reconcile
+      run 41242906946 on b602162 succeeded with changed_outputs: []; publication and downstream
+      Mycelium dispatch were skipped, so it is evidence of no drift, not branch publication.
+      Owner: enable Settings -> Actions -> General -> "Allow GitHub Actions to create and
+      approve pull requests" for Metrics PR creation.
 
 known_debt_not_blocking:
   - "Site HTML QA: ERROR baseline burned down to empty (#1219-#1222, #1237); WARNs on lang, viewport
