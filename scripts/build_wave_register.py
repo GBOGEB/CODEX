@@ -121,7 +121,8 @@ def scan(name: str, repo: Path, private: bool):
             e["anchors"][anchor] += 1
             if not private and len(e["ev"]) < 3:
                 e["ev"].append(f)
-    return {"head": git(repo, "rev-parse", "HEAD").strip(), "files": len(files), "pointers": read_pointers(repo)}, waves
+    return {"head": git(repo, "rev-parse", "HEAD").strip(), "files": len(files),
+            "pointers": {} if private else read_pointers(repo)}, waves
 
 
 def main() -> int:

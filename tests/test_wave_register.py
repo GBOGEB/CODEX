@@ -6,6 +6,8 @@ from pathlib import Path
 
 import yaml
 
+from scripts import build_wave_register
+
 ROOT = Path(__file__).resolve().parents[1]
 REG = ROOT / "federation" / "waves" / "WAVE_REGISTER.yaml"
 NS = ROOT / "federation" / "waves" / "WAVE_NAMESPACES.yaml"
@@ -42,13 +44,33 @@ def test_index_only_no_authority_transfer():
     assert reg["authority_transfer"] is False
 
 
-def test_private_sources_leak_no_file_names():
+def test_private_sources_leak_no_file_names(tmp_path, monkeypatch):
     reg = load(REG)
     private = {r for r, m in reg["sources"].items() if m["visibility"] == "private"}
+    assert private.isdisjoint(reg["current_pointers"])
     for e in reg["waves"]:
         for repo, v in e["repos"].items():
             if repo in private:
                 assert set(v) <= {"paths", "anchor"}, (e["key"], repo)
+    (tmp_path / "handover").mkdir()
+    (tmp_path / "handover" / "CURRENT.json").write_text(
+        '{"wave": "private/title/path"}', encoding="utf-8"
+    )
+    (tmp_path / ".mesh").mkdir()
+    (tmp_path / ".mesh" / "MESH_DOCK.yaml").write_text(
+        "current_focus:\n  object: private/focus/path\n", encoding="utf-8"
+    )
+    monkeypatch.setattr(
+        build_wave_register, "git",
+        lambda repo, *args: "" if args[0] == "ls-files" else "a" * 40,
+    )
+    public_meta, _ = build_wave_register.scan("public", tmp_path, private=False)
+    assert public_meta["pointers"] == {
+        "handover/CURRENT.json": "private/title/path",
+        ".mesh/MESH_DOCK.yaml#current_focus": "private/focus/path",
+    }
+    private_meta, _ = build_wave_register.scan("private", tmp_path, private=True)
+    assert private_meta["pointers"] == {}
 
 
 def test_sources_are_sha_anchored():
