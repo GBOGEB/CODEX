@@ -1,5 +1,6 @@
 # Wave namespace SSOT (hand-maintained). The generated WAVE_REGISTER.yaml is
-# derived from this file plus a path scan of the federation repos.
+# derived from this file plus paths, declared content sources and public
+# current-wave pointers from captured commits of the federation repos.
 #
 # Why: the letter "W" carries at least six unrelated meanings across the
 # federation. A bare "W3" or "W007" is ambiguous; a canonical key is not.
@@ -14,40 +15,60 @@ namespaces:
     name: CODE PURPLE iteration coordinate
     form: W<wave>.C<cycle>.I<iteration>.S<sub>
     id_regex: '(?<![A-Za-z0-9])W(\d+)\.C(\d+)\.I(\d+)(?:\.S(\d+))?'
+    normalization: coordinate
+    content_sources:
+      - CODE_PURPLE_ITERATION_SERIES_v1.json
+      - CODE_PURPLE_BD_QUEUE_v1.json
     home: GBOGEB/pipeline-automation-hub
     source: mission-control/federation-atlas/CODE_PURPLE_ITERATION_SERIES_v1.json
   - key: HYG
     name: Branch/PR hygiene governance waves (Program W010 lineage)
     form: W<n>, n in 1..10
     path_context: governance/branch_hygiene/
+    id_regex: '(?<![A-Za-z0-9])[Ww](?:ave[-_]?)?(\d{1,3})(?![0-9A-Za-z])'
+    normalization: numeric
+    id_format: 'W{number}'
+    min_id: 1
+    max_id: 10
     home: all members
   - key: ULTRA
     name: QPS-TRIAGE-ULTRA waves
     form: W<n>, n in 0..2
     path_context: mission-control/qps-triage-ultra/
+    id_regex: '(?<![A-Za-z0-9])[Ww](?:ave[-_]?)?(\d{1,3})(?![0-9A-Za-z])'
+    normalization: numeric
+    id_format: 'W{number}'
+    min_id: 0
+    max_id: 2
     home: GBOGEB/pipeline-automation-hub
   - key: BOOT
     name: Repository bootstrap waves (Wave-0, W001..W007, PR-001 scaffold)
     form: Wave-0 | W00<n>
-    id_regex: '(?<![A-Za-z0-9])(?:[Ww]ave-0|W00[0-9])(?![0-9])'
+    id_regex: '(?<![A-Za-z0-9])(?:[Ww]ave-0|[Ww]00[0-9])(?![0-9])'
+    normalization: bootstrap
     home: GBOGEB/CODEX handover/CURRENT.json, ABACUS wave/W001-* branches
   - key: JADE
     name: JADE point-release readiness pulses (N+k) and rolling5 pulses (P000n)
     form: N+<k> | P<nnnn>
-    id_regex: '(?<![A-Za-z0-9])(?:N\+(\d+)|n(\d+)_|P(\d{4}))(?![0-9])'
+    id_regex: '(?<![A-Za-z0-9])(?:N\+(\d+)|[Nn](\d+)_|P(\d{4}))(?![0-9])'
+    normalization: pulse
     path_context: mission-control/jade_temple/
     home: GBOGEB/pipeline-automation-hub
   - key: QPS
     name: Federation QPS / mesh wave sequence (W10..W999)
     form: W<nnn>
     id_regex: '(?<![A-Za-z0-9])[Ww](?:ave[-_]?)?(\d{2,3})(?![0-9A-Za-z])'
+    normalization: numeric
+    id_format: 'W{number:03d}'
+    min_id: 10
+    max_id: 999
     note: >-
       Default namespace for numeric waves. PR governance headers (WAVE ^W[0-9]{3}$)
       refer to this sequence. Ids below W10 found outside a namespace context are
       reported as QPS with confidence "inferred" so collisions stay visible.
 status_enum:
   # Status is set by the owning repo, never inferred by the generator.
-  - OBSERVED      # path evidence only (generator default)
+  - OBSERVED      # source evidence only (generator default)
   - ACTIVE
   - CLOSED
   - SUPERSEDED

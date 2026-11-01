@@ -11,8 +11,8 @@ sources:
     files: 4392
     visibility: public
   GBOGEB/CODEX:
-    head: b602162964eede369501fcd88bbe7306217e56e6
-    files: 2875
+    head: 058b2cc271d5232a4b63d3f619078d35e4b870d3
+    files: 2880
     visibility: public
   GBOGEB/DOCX_RTM_Automation:
     head: 7c1da80f2acc229fee11707d0500c1cf11482721
@@ -31,16 +31,16 @@ sources:
     files: 3076
     visibility: public
 stats:
-  entries: 371
+  entries: 372
   by_namespace:
-    BOOT: 10
+    BOOT: 11
     CP: 7
     HYG: 7
     JADE: 6
     QPS: 338
     ULTRA: 3
   multi_repo_entries: 156
-  single_repo_entries: 215
+  single_repo_entries: 216
   qps_exact_range:
   - 10
   - 381
@@ -350,12 +350,23 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/CODEX:
-      paths: 4
+      paths: 7
       anchor: docs
       evidence:
       - docs/INCUBATOR_W000_W001_COMPLETE.md
+      - docs/governance_w000.html
       - governance/W000_SCAFFOLD_ANALYSIS.md
-      - incubator/26_W22_12_35__INCUBATOR__RUNTIME_GOVERNANCE__CHAT_TUPLE_INGRESS_MAPPING__W000.yml
+- key: BOOT:Wave-0
+  namespace: BOOT
+  id: Wave-0
+  confidence: exact
+  status: OBSERVED
+  repos:
+    GBOGEB/CODEX:
+      paths: 1
+      anchor: handover
+      evidence:
+      - handover/CURRENT.json
 - key: BOOT:W001
   namespace: BOOT
   id: W001
@@ -363,11 +374,12 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/CODEX:
-      paths: 2
+      paths: 3
       anchor: docs
       evidence:
       - docs/INCUBATOR_W000_W001_COMPLETE.md
       - roadmap/W001_yaml_ssot_engine.md
+      - tests/runtime/test_debug_spine_w001_runtime_proof.py
 - key: BOOT:W002
   namespace: BOOT
   id: W002
@@ -390,12 +402,12 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/CODEX:
-      paths: 4
+      paths: 5
       anchor: reports
       evidence:
+      - .github/workflows/w003-governance-gate.yml
       - federation_runtime/.github/W003_PR_FOLLOW_UP.md
       - reports/W003_arrow_direction_validation.md
-      - reports/W003_semantic_layer_validation.md
     GBOGEB/cryoplant-project:
       paths: 1
       anchor: assets/minerva_pid/reports
@@ -469,9 +481,11 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/CODEX:
-      paths: 1
-      anchor: roadmap
+      paths: 3
+      anchor: dashboards
       evidence:
+      - dashboards/w008_governance_dashboard.py
+      - docs/w008-governance-dashboard.html
       - roadmap/W008_award_governance.md
     GBOGEB/cryoplant-project:
       paths: 2
@@ -1094,11 +1108,10 @@ waves:
       evidence:
       - federation/qps/QPS_W22_1_TRI_REPO_DOW_EXECUTION_RECEIPT.yaml
     GBOGEB/CODEX:
-      paths: 2
+      paths: 1
       anchor: federation/qps
       evidence:
       - federation/qps/QPS_W22_1_TRI_REPO_KEB_VALIDATION_RECEIPT.yaml
-      - incubator/26_W22_12_35__INCUBATOR__RUNTIME_GOVERNANCE__CHAT_TUPLE_INGRESS_MAPPING__W000.yml
     GBOGEB/cryoplant-project:
       paths: 4
       anchor: ocd-adr/40_implementation

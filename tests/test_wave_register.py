@@ -2,8 +2,10 @@
 from __future__ import annotations
 
 import re
+import subprocess
 from pathlib import Path
 
+import pytest
 import yaml
 
 from scripts import build_wave_register
@@ -15,6 +17,24 @@ NS = ROOT / "federation" / "waves" / "WAVE_NAMESPACES.yaml"
 
 def load(p: Path):
     return yaml.safe_load(p.read_text(encoding="utf-8"))
+
+
+def commit_files(repo: Path, files: dict[str, str]):
+    for name, text in files.items():
+        path = repo / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
+    build_wave_register.git(repo, "add", ".")
+    build_wave_register.git(
+        repo, "-c", "user.name=Wave test", "-c", "user.email=wave@example.invalid",
+        "commit", "-qm", "Synthetic wave fixtures",
+    )
+
+
+@pytest.fixture
+def wave_repo(tmp_path):
+    build_wave_register.git(tmp_path, "init", "-q")
+    return tmp_path
 
 
 def test_register_is_ascii_and_marked_generated():
@@ -44,7 +64,7 @@ def test_index_only_no_authority_transfer():
     assert reg["authority_transfer"] is False
 
 
-def test_private_sources_leak_no_file_names(tmp_path, monkeypatch):
+def test_private_sources_leak_no_file_names(wave_repo):
     reg = load(REG)
     private = {r for r, m in reg["sources"].items() if m["visibility"] == "private"}
     assert private.isdisjoint(reg["current_pointers"])
@@ -52,24 +72,16 @@ def test_private_sources_leak_no_file_names(tmp_path, monkeypatch):
         for repo, v in e["repos"].items():
             if repo in private:
                 assert set(v) <= {"paths", "anchor"}, (e["key"], repo)
-    (tmp_path / "handover").mkdir()
-    (tmp_path / "handover" / "CURRENT.json").write_text(
-        '{"wave": "private/title/path"}', encoding="utf-8"
-    )
-    (tmp_path / ".mesh").mkdir()
-    (tmp_path / ".mesh" / "MESH_DOCK.yaml").write_text(
-        "current_focus:\n  object: private/focus/path\n", encoding="utf-8"
-    )
-    monkeypatch.setattr(
-        build_wave_register, "git",
-        lambda repo, *args: "" if args[0] == "ls-files" else "a" * 40,
-    )
-    public_meta, _ = build_wave_register.scan("public", tmp_path, private=False)
+    commit_files(wave_repo, {
+        "handover/CURRENT.json": '{"wave": "private/title/path"}',
+        ".mesh/MESH_DOCK.yaml": "current_focus:\n  object: private/focus/path\n",
+    })
+    public_meta, _ = build_wave_register.scan("public", wave_repo, private=False)
     assert public_meta["pointers"] == {
         "handover/CURRENT.json": "private/title/path",
         ".mesh/MESH_DOCK.yaml#current_focus": "private/focus/path",
     }
-    private_meta, _ = build_wave_register.scan("private", tmp_path, private=True)
+    private_meta, _ = build_wave_register.scan("private", wave_repo, private=True)
     assert private_meta["pointers"] == {}
 
 
@@ -83,3 +95,131 @@ def test_codex_evidence_paths_exist():
     for e in reg["waves"]:
         for p in e["repos"].get("GBOGEB/CODEX", {}).get("evidence", []):
             assert (ROOT / p).exists(), p
+
+
+@pytest.mark.parametrize("path,wid", [
+    ("tests/federation/test_w000_bootstrap.py", "W000"),
+    (".github/workflows/w003-governance-gate.yml", "W003"),
+    ("wave/W001-bootstrap/README.md", "W001"),
+    ("handover/Wave-0/README.md", "Wave-0"),
+])
+def test_boot_paths(path, wid):
+    assert build_wave_register.classify(path) == [("BOOT", wid, "exact")]
+
+
+def test_incubator_timestamp_is_not_a_wave():
+    filename = "26_W22_12_35__INCUBATOR__RUNTIME__W030__W000.yml"
+    assert set(build_wave_register.classify("incubator/" + filename)) == {
+        ("QPS", "W030", "exact"), ("BOOT", "W000", "exact"),
+    }
+    assert ("QPS", "W022", "exact") in build_wave_register.classify("other/" + filename)
+    assert build_wave_register.classify("incubator/W022/README.md") == [("QPS", "W022", "exact")]
+
+
+def test_namespace_rules_control_regex_context_bounds_and_precedence():
+    rules = build_wave_register.load_rules()
+    path = "governance/branch_hygiene/W10.md"
+    assert build_wave_register.classify(path, rules) == [("HYG", "W10", "exact")]
+    hyg = next(r for r in rules if r["key"] == "HYG")
+    hyg["max_id"] = 9
+    assert build_wave_register.classify(path, rules) == [("QPS", "W010", "exact")]
+    hyg["max_id"] = 10
+    hyg["min_id"] = 10
+    assert build_wave_register.classify("governance/branch_hygiene/W9.md", rules) == [
+        ("QPS", "W009", "inferred"),
+    ]
+    hyg["path_context"] = "custom/"
+    assert build_wave_register.classify(path, rules) == [("QPS", "W010", "exact")]
+    hyg["id_regex"] = r"X(\d+)"
+    hyg["regex"] = re.compile(hyg["id_regex"])
+    assert build_wave_register.classify("custom/X10.md", rules) == [("HYG", "W10", "exact")]
+    qps = next(r for r in rules if r["key"] == "QPS")
+    rules.remove(qps)
+    rules.insert(0, qps)
+    hyg["path_context"] = "governance/branch_hygiene/"
+    hyg["regex"] = re.compile(r"W(\d+)")
+    assert build_wave_register.classify(path, rules) == [("QPS", "W010", "exact")]
+
+
+def test_namespace_file_changes_affect_generation(tmp_path, monkeypatch):
+    data = load(NS)
+    boot = next(r for r in data["namespaces"] if r["key"] == "BOOT")
+    boot["id_regex"] = r"(?<![A-Za-z0-9])W001(?![0-9])"
+    custom = tmp_path / "namespaces.yaml"
+    custom.write_text(yaml.safe_dump(data), encoding="utf-8")
+    monkeypatch.setattr(build_wave_register, "NS_FILE", custom)
+    assert build_wave_register.classify("wave/W000.md") == [("QPS", "W000", "inferred")]
+    assert build_wave_register.classify("wave/W001.md") == [("BOOT", "W001", "exact")]
+
+
+def test_scan_indexes_normalized_public_pointer_ids(wave_repo):
+    commit_files(wave_repo, {
+        "handover/CURRENT.json": '{"wave": "Wave-0"}',
+        ".mesh/MESH_DOCK.yaml": "current_focus:\n  object: QPS wave W113\n",
+    })
+    meta, waves = build_wave_register.scan("public", wave_repo, private=False)
+    assert meta["pointers"]["handover/CURRENT.json"] == "Wave-0"
+    assert waves[("BOOT", "Wave-0")]["ev"] == ["handover/CURRENT.json"]
+    assert waves[("QPS", "W113")]["ev"] == [".mesh/MESH_DOCK.yaml"]
+    assert all(w["paths"] == 1 for w in waves.values())
+    private_meta, private_waves = build_wave_register.scan("private", wave_repo, private=True)
+    assert private_meta["pointers"] == {}
+    assert private_waves == {}
+
+
+def test_register_contains_corrected_codex_observations():
+    entries = {e["key"]: e for e in load(REG)["waves"]}
+    boot = entries["BOOT:Wave-0"]["repos"]["GBOGEB/CODEX"]
+    assert "handover/CURRENT.json" in boot["evidence"]
+    w003 = entries["BOOT:W003"]["repos"]["GBOGEB/CODEX"]
+    assert ".github/workflows/w003-governance-gate.yml" in w003["evidence"]
+    w022 = entries["QPS:W022"]["repos"]["GBOGEB/CODEX"]
+    assert not any("26_W22_12_35__" in p for p in w022["evidence"])
+
+
+def test_pointer_normalization_preserves_namespace_and_confidence(wave_repo):
+    commit_files(wave_repo, {
+        ".mesh/MESH_DOCK.yaml": "current_focus:\n  object: W3\n",
+    })
+    meta, waves = build_wave_register.scan("public", wave_repo, private=False)
+    assert meta["pointers"][".mesh/MESH_DOCK.yaml#current_focus"] == "QPS:W003"
+    assert set(waves) == {("QPS", "W003")}
+    assert waves[("QPS", "W003")]["conf"] == {"inferred"}
+
+
+def test_scan_ignores_staged_and_working_tree_changes(wave_repo):
+    commit_files(wave_repo, {
+        "handover/CURRENT.json": '{"wave": "Wave-0"}',
+        ".mesh/MESH_DOCK.yaml": "current_focus:\n  object: W113\n",
+        "CODE_PURPLE_ITERATION_SERIES_v1.json": '{"coordinate": "W1.C2.I3.S4"}',
+        "wave/W010.md": "committed wave",
+    })
+    baseline = build_wave_register.scan("public", wave_repo, private=False)
+    (wave_repo / "handover/CURRENT.json").write_text('{"wave": "W999"}', encoding="utf-8")
+    (wave_repo / ".mesh/MESH_DOCK.yaml").write_text("current_focus:\n  object: W998\n", encoding="utf-8")
+    (wave_repo / "CODE_PURPLE_ITERATION_SERIES_v1.json").write_text(
+        '{"coordinate": "W9.C9.I9"}', encoding="utf-8"
+    )
+    (wave_repo / "wave/W010.md").unlink()
+    (wave_repo / "wave/W997.md").write_text("staged wave", encoding="utf-8")
+    build_wave_register.git(wave_repo, "add", ".")
+    (wave_repo / "wave/W996.md").write_text("untracked wave", encoding="utf-8")
+    assert build_wave_register.scan("public", wave_repo, private=False) == baseline
+
+
+def test_scan_keeps_captured_commit_if_head_moves(wave_repo, monkeypatch):
+    commit_files(wave_repo, {"handover/CURRENT.json": '{"wave": "Wave-0"}'})
+    baseline = build_wave_register.scan("public", wave_repo, private=False)
+    original_git = build_wave_register.git
+
+    def moving_head(repo, *args):
+        if args[0] == "ls-tree":
+            subprocess.run(
+                ["git", "-C", str(repo), "-c", "user.name=Wave test",
+                 "-c", "user.email=wave@example.invalid", "commit", "--allow-empty", "-qm", "Advance HEAD"],
+                check=True,
+            )
+        return original_git(repo, *args)
+
+    monkeypatch.setattr(build_wave_register, "git", moving_head)
+    assert build_wave_register.scan("public", wave_repo, private=False) == baseline
