@@ -177,7 +177,7 @@ def main() -> int:
         repos = {r: v for r, v in merged[(ns, wid)].items() if r != "__conf"}
         conf = merged[(ns, wid)]["__conf"]
         entries.append({
-            "key": "%s:%s" % (ns, wid), "namespace": ns, "id": wid,
+            "key": f"{ns}:{wid}", "namespace": ns, "id": wid,
             "confidence": "exact" if "exact" in conf else "inferred",
             "status": "OBSERVED", "repos": dict(sorted(repos.items())),
         })
@@ -211,8 +211,9 @@ def main() -> int:
         yaml.safe_dump(register, sort_keys=False, width=120, allow_unicode=False)
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     Path(a.out).write_text(text, encoding="ascii", newline="\n")
-    print("wave register: %d entries, namespaces %s, QPS W%s..W%s, %d gaps -> %s" % (
-        len(entries), dict(by_ns), qps[0] if qps else "-", qps[-1] if qps else "-", len(gaps), a.out))
+    lo, hi = (qps[0], qps[-1]) if qps else ("-", "-")
+    print(f"wave register: {len(entries)} entries, namespaces {dict(by_ns)}, "
+          f"QPS W{lo}..W{hi}, {len(gaps)} gaps -> {a.out}")
     return 0
 
 

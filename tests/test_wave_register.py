@@ -50,7 +50,7 @@ def test_keys_unique_and_namespaced():
     allowed = {n["key"] for n in ns["namespaces"]}
     statuses = set(ns["status_enum"])
     for e in reg["waves"]:
-        assert e["key"] == "%s:%s" % (e["namespace"], e["id"])
+        assert e["key"] == f"{e['namespace']}:{e['id']}"
         assert e["namespace"] in allowed
         assert e["status"] in statuses
         assert e["confidence"] in {"exact", "inferred"}
