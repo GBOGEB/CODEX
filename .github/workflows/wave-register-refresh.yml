@@ -1,0 +1,161 @@
+name: Wave Register Refresh
+
+# Rebuilds federation/waves/WAVE_REGISTER.yaml from the federation members and
+# publishes it through the bot-PR path (main is PR-only; bots never push to main).
+#
+# - Public members are read with the workflow token (anonymous-equivalent reads).
+# - The private member (cryoplant-project) needs WAVE_REGISTER_READ_TOKEN, a
+#   fine-grained token with contents:read on GBOGEB/cryoplant-project only.
+#   Without it the run fails closed: no regeneration, no PR, a job summary says why.
+#   (Dropping the private source would silently delete its counts and lineage.)
+# - A PR is opened only when the register changes beyond member HEAD SHAs.
+# - PRs opened with GITHUB_TOKEN do not trigger other workflows; the register
+#   contract tests therefore run here, before publishing.
+
+on:
+  schedule:
+    - cron: '17 4 * * 1'   # Mondays 04:17 UTC (off-peak, off the hour)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: wave-register-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      HAS_PRIVATE_READ: ${{ secrets.WAVE_REGISTER_READ_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - name: Fail closed without private-member read access
+        if: env.HAS_PRIVATE_READ != 'true'
+        run: |
+          {
+            echo "### Wave register refresh skipped"
+            echo
+            echo "Secret \`WAVE_REGISTER_READ_TOKEN\` is not set, so GBOGEB/cryoplant-project cannot be read."
+            echo "Regenerating without it would drop that member's counts and lineage, so nothing was published."
+            echo "Add a fine-grained token with contents:read on GBOGEB/cryoplant-project to enable the refresh."
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::warning::WAVE_REGISTER_READ_TOKEN not set; wave register refresh skipped."
+
+      - name: Check out public members
+        if: env.HAS_PRIVATE_READ == 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/members"
+          for repo in ABACUS pipeline-automation-hub DOCX_RTM_Automation document-organization-system; do
+            git clone -q --depth 1 "https://github.com/GBOGEB/${repo}.git" "$RUNNER_TEMP/members/${repo}"
+          done
+
+      - uses: actions/checkout@v7
+        if: env.HAS_PRIVATE_READ == 'true'
+        with:
+          repository: GBOGEB/cryoplant-project
+          token: ${{ secrets.WAVE_REGISTER_READ_TOKEN }}
+          path: _private_member/cryoplant-project
+          fetch-depth: 1
+          persist-credentials: false
+
+      - uses: actions/setup-python@v7.1.0
+        if: env.HAS_PRIVATE_READ == 'true'
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        if: env.HAS_PRIVATE_READ == 'true'
+        run: python -m pip install "pyyaml>=6.0" pytest
+
+      - name: Regenerate register
+        if: env.HAS_PRIVATE_READ == 'true'
+        run: |
+          set -euo pipefail
+          cp federation/waves/WAVE_REGISTER.yaml "$RUNNER_TEMP/register_before.yaml"
+          M="$RUNNER_TEMP/members"
+          python scripts/build_wave_register.py \
+            --repo GBOGEB/CODEX=. \
+            --repo "GBOGEB/ABACUS=$M/ABACUS" \
+            --repo "GBOGEB/pipeline-automation-hub=$M/pipeline-automation-hub" \
+            --repo "GBOGEB/DOCX_RTM_Automation=$M/DOCX_RTM_Automation" \
+            --repo "GBOGEB/document-organization-system=$M/document-organization-system" \
+            --private "GBOGEB/cryoplant-project=_private_member/cryoplant-project" \
+            | tee "$RUNNER_TEMP/register_summary.txt"
+          rm -rf _private_member
+
+      - name: Contract tests (fail closed before publishing)
+        if: env.HAS_PRIVATE_READ == 'true'
+        run: python -m pytest -q -o addopts="" tests/test_wave_register.py
+
+      - name: Detect meaningful drift (ignore member HEAD SHAs)
+        id: drift
+        if: env.HAS_PRIVATE_READ == 'true'
+        run: |
+          python - "$RUNNER_TEMP/register_before.yaml" federation/waves/WAVE_REGISTER.yaml <<'PY' >> "$GITHUB_OUTPUT"
+          import sys, yaml
+          def core(path):
+              d = yaml.safe_load(open(path, encoding="utf-8"))
+              for meta in (d.get("sources") or {}).values():
+                  meta.pop("head", None)
+              return d
+          print("changed=" + ("true" if core(sys.argv[1]) != core(sys.argv[2]) else "false"))
+          PY
+
+      - name: Publish as bot PR
+        if: env.HAS_PRIVATE_READ == 'true' && steps.drift.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: automation/wave-register-refresh
+        run: |
+          set -euo pipefail
+          body="$RUNNER_TEMP/wave_register_pr.md"
+          {
+            echo "waves: refresh federation wave register"
+            echo
+            echo "## PR CLASSIFICATION"
+            echo "- PR-ID: PR-000"
+            echo "- WAVE: W113"
+            echo "- SPRINT: S1-P1"
+            echo "- DOMAIN: EXECUTION_GOVERNANCE_INFRASTRUCTURE"
+            echo "- TYPE: GOVERNANCE"
+            echo "- CRITICALITY: LOW"
+            echo "- TOPOLOGY IMPACT: NO"
+            echo "- SCHEMA MUTATION: NO"
+            echo "---"
+            echo
+            echo "Regenerated by Wave Register Refresh on main ${GITHUB_SHA}."
+            echo "Contract tests passed before publishing. Rebuilt on the latest main every run; merge the latest one."
+            echo
+            echo '```'
+            cat "$RUNNER_TEMP/register_summary.txt"
+            echo '```'
+          } > "$body"
+          scripts/ci/open_bot_pr.sh "$BRANCH" "waves: refresh federation wave register" "$body" \
+            federation/waves/WAVE_REGISTER.yaml
+          # The PR number is unknown until creation; stamp it into the governance header.
+          n="$(gh pr list --head "$BRANCH" --base main --state open --json number --jq '.[0].number // empty' || true)"
+          if [ -n "$n" ]; then
+            sed -i "s/^- PR-ID: PR-000$/- PR-ID: PR-$n/" "$body"
+            gh pr edit "$n" --body-file "$body" || echo "::warning::Could not stamp PR-ID on #$n"
+          fi
+
+      - name: No-op summary
+        if: env.HAS_PRIVATE_READ == 'true' && steps.drift.outputs.changed != 'true'
+        run: |
+          {
+            echo "### Wave register unchanged"
+            echo
+            echo "Only member HEAD SHAs moved (or nothing changed); no bot PR opened."
+            echo
+            echo '```'
+            cat "$RUNNER_TEMP/register_summary.txt"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
