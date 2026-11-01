@@ -24,7 +24,7 @@ import sys
 EXIT_COLLECTION_ERROR = 3
 EXIT_BELOW_FLOOR = 4
 
-_COLLECTED = re.compile(r"(\d+) tests? collected")
+_COLLECTED = re.compile(r"(\d+)(?:/\d+)? tests? collected")
 _ERRORS = re.compile(r"(\d+) errors?\b")
 
 

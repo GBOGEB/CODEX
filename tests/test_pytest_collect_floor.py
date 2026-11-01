@@ -18,10 +18,15 @@ from scripts.pytest_collect_floor import (
 GUARD = Path(__file__).resolve().parents[1] / "scripts" / "pytest_collect_floor.py"
 
 
-def _guard(suite: Path, expected_min: int, *extra: str) -> subprocess.CompletedProcess[str]:
+def _guard(
+    suite: Path,
+    expected_min: int,
+    *extra: str,
+    pytest_args: tuple[str, ...] = (),
+) -> subprocess.CompletedProcess[str]:
     cmd = [
         sys.executable, str(GUARD), "--label", "canary", "--min", str(expected_min), *extra,
-        "--", str(suite), "--rootdir", str(suite), "-p", "no:cacheprovider",
+        "--", str(suite), "--rootdir", str(suite), "-p", "no:cacheprovider", *pytest_args,
     ]
     return subprocess.run(cmd, capture_output=True, text=True, cwd=suite, check=False)
 
@@ -46,6 +51,18 @@ def test_floor_met_runs_suite_green(tmp_path: Path) -> None:
 def test_canary_red_when_below_expected_min(tmp_path: Path) -> None:
     result = _guard(_suite(tmp_path, TWO_PASSING), 3, "--no-run")
     assert result.returncode == EXIT_BELOW_FLOOR
+    assert '"state": "BELOW_FLOOR"' in result.stdout
+
+
+def test_canary_red_when_filter_deselects_below_expected_min(tmp_path: Path) -> None:
+    result = _guard(
+        _suite(tmp_path, TWO_PASSING),
+        2,
+        "--no-run",
+        pytest_args=("-k", "test_a"),
+    )
+    assert result.returncode == EXIT_BELOW_FLOOR
+    assert '"collected": 1' in result.stdout
     assert '"state": "BELOW_FLOOR"' in result.stdout
 
 
@@ -75,6 +92,7 @@ def test_floor_of_zero_is_refused(tmp_path: Path) -> None:
 def test_parse_collect_output_shapes() -> None:
     assert parse_collect_output("a.py::t\n\n130 tests collected in 0.52s\n") == (130, 0)
     assert parse_collect_output("1 test collected in 0.01s") == (1, 0)
+    assert parse_collect_output("1/8 tests collected (7 deselected) in 0.01s") == (1, 0)
     assert parse_collect_output("no tests collected in 0.01s") == (0, 0)
     assert parse_collect_output("4 tests collected, 2 errors in 0.3s") == (4, 2)
     assert parse_collect_output("no tests collected, 1 error in 0.1s") == (0, 1)
