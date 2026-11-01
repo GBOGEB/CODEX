@@ -223,3 +223,24 @@ def test_scan_keeps_captured_commit_if_head_moves(wave_repo, monkeypatch):
 
     monkeypatch.setattr(build_wave_register, "git", moving_head)
     assert build_wave_register.scan("public", wave_repo, private=False) == baseline
+
+
+def test_glob_top_level_wave_is_a_current_declaration(wave_repo):
+    commit_files(wave_repo, {
+        "handover/CURRENT.json": '{"wave": "Wave-0"}',
+        "GLOB.yaml": "wave: W113\nstatus: CANDIDATE\n",
+    })
+    meta, waves = build_wave_register.scan("public", wave_repo, private=False)
+    assert meta["pointers"]["GLOB.yaml#wave"] == "QPS:W113"
+    assert waves[("QPS", "W113")]["ev"] == ["GLOB.yaml"]
+    roles = build_wave_register.POINTER_ROLES
+    assert roles["handover/CURRENT.json"] == "bootstrap_record"
+    assert roles["GLOB.yaml#wave"] == "current"
+
+
+def test_register_consensus_excludes_bootstrap_record():
+    reg = load(REG)
+    roles = reg["pointer_roles"]
+    current = {v for m in reg["current_pointers"].values() for k, v in m.items() if roles.get(k) == "current"}
+    assert reg["current_wave_consensus"] == sorted(current)
+    assert "BOOT:Wave-0" not in reg["current_wave_consensus"]
