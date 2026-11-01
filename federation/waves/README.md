@@ -36,5 +36,5 @@ CODEX is public.
 ## Next
 
 1. Owners set `status` for their waves; the generator never infers status.
-2. Add a lineage edge source (cryoplant `triage/w373/discovery/waves.yaml` has `parent_wave` fields) for public repos.
+2. ~~Add a lineage edge source~~: done. `lineage` indexes `parent_wave` / `parent_waves` fields as `child <- parent` id pairs. Private repos contribute only id pairs and counts. A Kahn sort over the edges reports `acyclic`, `roots` and `longest_chain`. Records whose own id is outside every namespace (e.g. `W25C.4`) are counted per source as `lineage_unresolved`, never guessed.
 3. Run this on a schedule from pipeline-automation-hub and publish the register through the bot-PR path.
