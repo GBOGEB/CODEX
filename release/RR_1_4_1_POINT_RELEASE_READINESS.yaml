@@ -6,7 +6,7 @@ candidate_version: 1.4.1          # VERSION.json / pyproject.toml stay at 1.4.0 
 base_main_sha: 5c0ff34820b4471b95d5be1c60cc1369f623224a
 evaluated_on: 2026-10-25
 status: NOT_READY_BLOCKERS_OPEN
-updated_on: 2026-10-31
+updated_on: 2026-11-01
 method: >-
   Same structure as release/W126_POINT_RELEASE_CANDIDATE.yaml: release gates K1-K4
   evaluated on this PR's exact head (the K1-K3 workflows run on pull_request only),
@@ -49,6 +49,8 @@ release_gates:
                    Deploy GitHub Pages: 40165766987 failure (B1); live site is ae96f42 (2026-10-20)}
     main_2026_10_31: {Site HTML QA: "41223393539 success (80 pages, 80 without errors; baseline emptied by #1237)",
                       Deploy GitHub Pages: "last success 61cfb48 (2026-10-27); 41172462223 failure on e462125 (B4)"}
+    main_2026_11_01: {Deploy GitHub Pages: "41241990406 success on 69232ad (resolve, build, deploy) and 41276808331 success on b602162; B1 and B4 resolved",
+                      CI: "success on every main push since c4d18a0 (#1230)"}
   - id: K6
     gate: security
     evidence: [OSV-Scanner, CodeQL Advanced, Bandit, Security Scan]
@@ -117,6 +119,9 @@ blockers:
       Pages publishes only the newest main push that passed Runtime Release Gate; that gate
       runs on runtime paths only, so the fix deploys with the next merge touching those paths
       (federation_runtime/**, docs/wave_packages/runtime/**, docs/rtm/**, governance/**, ...).
+    resolved: >-
+      2026-10-31: Deploy GitHub Pages run 41241990406 built and deployed main 69232ad
+      (resolve, build and deploy jobs success), so the live site is current again.
   - id: B4
     gate: K5
     finding: >-
@@ -126,11 +131,17 @@ blockers:
       locally: on Python 3.11 at e462125 the only collection errors are packages this probe
       sandbox lacks, and the three test files changed since 61cfb48 pass. Cause unconfirmed
       (job log not readable from the probe session).
-    next: read the job log; reproduce with the Pages install set on Python 3.11; repair only that invariant
+    resolved: >-
+      Pages was red on main from 48e028d (2026-10-27 23:16Z) to e462125, the same window in which
+      `CI` (pytest) was red on main (e462125 and 479ea40 failure). The first CI run after #1230
+      (c4d18a0, 2026-10-31 08:26Z) and every later main push are green, and the first Pages run
+      after it, 41241990406 on 69232ad, succeeded. B4 therefore shares the cause of those main
+      test reds (#1217, #1230); the Pages log itself was not read.
   - id: B2
     gate: K4
     finding: MissionControl Mycelium CI parity preflight red on main (receipt counts 528 vs list 530).
     repair: PR #1182 (merged 2026-10-25)
+    resolved: MissionControl Mycelium CI success on main b602162 (run 41242906888).
   - id: B3
     gate: K4/K5
     finding: >-
@@ -142,6 +153,12 @@ blockers:
     repair: >-
       Owner decision 2026-10-25: bots open PRs (no bypass). PR #1184; Actions must be allowed
       to create pull requests (Settings -> Actions -> General).
+    remaining: >-
+      2026-11-01: both bots run green on main and publish their branches (CODEX Metrics run
+      41242906880, Inventory Reconcile run 41242906946 on b602162), but no PR has ever been opened
+      from automation/metrics or automation/missioncontrol-reconcile. The job warns "PR creation
+      was refused by repository policy". Owner: enable Settings -> Actions -> General -> "Allow
+      GitHub Actions to create and approve pull requests".
 
 known_debt_not_blocking:
   - "Site HTML QA: ERROR baseline burned down to empty (#1219-#1222, #1237); WARNs on lang, viewport
