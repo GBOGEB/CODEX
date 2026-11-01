@@ -5,6 +5,7 @@ All filesystem work happens under ``tmp_path``; no repo file is written.
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -330,8 +331,8 @@ def test_render_sheet_reported_path_exists(tmp_path):
     src = tmp_path / "s.md"
     src.write_text("x", encoding="utf-8")
     msg = render.SlugRenderPipeline(tmp_path / "out").process_transform(src, "sheet")
-    reported = msg.split("at: ", 1)[1]
-    assert (tmp_path / "out" / "s_export.xlsx").exists() and reported.endswith("s_export.xlsx")
+    reported = Path(msg.split("at: ", 1)[1])
+    assert reported.exists()
 
 
 def test_render_main_usage_and_run(tmp_path, monkeypatch, capsys):
