@@ -10,26 +10,32 @@ sources:
     head: 43d78d7bffa3f27df5e5c25bae99d05f2f20e7bc
     files: 4392
     visibility: public
+    lineage_unresolved: 0
   GBOGEB/CODEX:
-    head: 058b2cc271d5232a4b63d3f619078d35e4b870d3
+    head: 68e194b8ab48cfe76e6bd90b2f8b031959afb120
     files: 2880
     visibility: public
+    lineage_unresolved: 0
   GBOGEB/DOCX_RTM_Automation:
     head: 7c1da80f2acc229fee11707d0500c1cf11482721
     files: 964
     visibility: public
+    lineage_unresolved: 0
   GBOGEB/cryoplant-project:
     head: ae693790db8e8891911d497d4a9cc45cb628d663
     files: 8326
     visibility: private
+    lineage_unresolved: 10
   GBOGEB/document-organization-system:
     head: 6da0c125fb24dbad1ae0786428566bfded7ebd50
     files: 299
     visibility: public
+    lineage_unresolved: 0
   GBOGEB/pipeline-automation-hub:
     head: 484b780404eaef0b8a9376e3b50012de23d42858
     files: 3076
     visibility: public
+    lineage_unresolved: 0
 stats:
   entries: 372
   by_namespace:
@@ -39,8 +45,8 @@ stats:
     JADE: 6
     QPS: 338
     ULTRA: 3
-  multi_repo_entries: 156
-  single_repo_entries: 216
+  multi_repo_entries: 157
+  single_repo_entries: 215
   qps_exact_range:
   - 10
   - 381
@@ -51,6 +57,81 @@ current_pointers:
     .mesh/MESH_DOCK.yaml#current_focus: QPS:W113
   GBOGEB/CODEX:
     handover/CURRENT.json: Wave-0
+    GLOB.yaml#wave: QPS:W113
+pointer_roles:
+  GLOB.yaml#wave: current
+  .mesh/MESH_DOCK.yaml#current_focus: current
+  handover/CURRENT.json: bootstrap_record
+current_wave_consensus:
+- QPS:W113
+lineage:
+  source_fields:
+  - parent_wave
+  - parent_waves
+  stats:
+    edges: 14
+    nodes: 20
+    roots: 7
+    acyclic: true
+    nodes_in_cycles: 0
+    longest_chain: 3
+  edges:
+  - child: QPS:W039
+    parent: QPS:W038
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W111
+    parent: QPS:W110
+    repos:
+      GBOGEB/cryoplant-project: 5
+  - child: QPS:W165
+    parent: QPS:W074
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W175
+    parent: QPS:W174
+    repos:
+      GBOGEB/cryoplant-project: 2
+  - child: QPS:W211
+    parent: QPS:W210
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W267
+    parent: QPS:W266
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W306
+    parent: QPS:W211
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W368
+    parent: QPS:W366
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W369
+    parent: QPS:W368
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W370
+    parent: QPS:W366
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W370
+    parent: QPS:W368
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W371
+    parent: QPS:W368
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W372
+    parent: QPS:W368
+    repos:
+      GBOGEB/cryoplant-project: 1
+  - child: QPS:W374
+    parent: QPS:W372
+    repos:
+      GBOGEB/cryoplant-project: 1
 waves:
 - key: CP:W1.C1.I0.S0
   namespace: CP
@@ -380,6 +461,9 @@ waves:
       - docs/INCUBATOR_W000_W001_COMPLETE.md
       - roadmap/W001_yaml_ssot_engine.md
       - tests/runtime/test_debug_spine_w001_runtime_proof.py
+    GBOGEB/cryoplant-project:
+      paths: 29
+      anchor: triage/w367
 - key: BOOT:W002
   namespace: BOOT
   id: W002
@@ -460,10 +544,12 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 1
-      anchor: governance/qps_triage
+      paths: 3
+      anchor: .github/workflows
       evidence:
+      - .github/workflows/w007-runtime-validator-qa.yml
       - governance/qps_triage/W106_M2_W007_RUNTIME_EVIDENCE_REPAIR_v1.yaml
+      - tests/test_w007_runtime_validator_negative.py
     GBOGEB/CODEX:
       paths: 5
       anchor: docs/reports
@@ -2886,17 +2972,18 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 1
-      anchor: architecture/w113
+      paths: 2
+      anchor: .mesh
       evidence:
+      - .mesh/MESH_DOCK.yaml
       - architecture/w113/W113_MESH_CLOSURE_CONTROLLER_DOW_RECEIVER.yaml
     GBOGEB/CODEX:
-      paths: 3
+      paths: 4
       anchor: federation/rex/returns
       evidence:
+      - GLOB.yaml
       - federation/rex/returns/CODEX_W113_PR621_REX_RETURN.yaml
       - federation/rex/returns/W113_3P3_MIP_SESSION_CLOSE.yaml
-      - handover/W113_3P3_MIP_SESSION_CLOSE_2026-09-12.md
     GBOGEB/cryoplant-project:
       paths: 3
       anchor: ocd-adr/40_implementation
