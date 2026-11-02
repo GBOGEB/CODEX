@@ -1,0 +1,53 @@
+name: Wave Claims Validate
+
+# Gate for the wave naming contract (federation/waves/WAVE_NAMING_RULES.yaml):
+# CODEX's own .waves/WAVE_CLAIMS.yaml must obey the ruleset, and the committed
+# register's claims roll-up must carry zero errors (tests/test_wave_claims.py).
+# Member repos run the same `scripts/wave_claims.py validate` on their own file.
+
+on:
+  pull_request:
+    paths:
+      - '.waves/**'
+      - 'federation/waves/**'
+      - 'scripts/wave_claims.py'
+      - 'scripts/build_wave_register.py'
+      - 'tests/test_wave_claims.py'
+      - '.github/workflows/wave-claims-validate.yml'
+  push:
+    branches: [main]
+    paths:
+      - '.waves/**'
+      - 'federation/waves/**'
+      - 'scripts/wave_claims.py'
+      - 'scripts/build_wave_register.py'
+      - 'tests/test_wave_claims.py'
+      - '.github/workflows/wave-claims-validate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: python -m pip install "pyyaml>=6.0" pytest
+
+      - name: CODEX claims obey the naming ruleset
+        run: python scripts/wave_claims.py validate .waves/WAVE_CLAIMS.yaml
+
+      - name: Register claims roll-up carries no errors
+        run: python -m pytest -q -o addopts="" tests/test_wave_claims.py
