@@ -11,31 +11,37 @@ sources:
     files: 4392
     visibility: public
     lineage_unresolved: 0
+    claims_file: false
   GBOGEB/CODEX:
-    head: 68e194b8ab48cfe76e6bd90b2f8b031959afb120
-    files: 2880
+    head: 5024188fdb30782f2bed7c5329ca5bd2061e2af7
+    files: 2887
     visibility: public
     lineage_unresolved: 0
+    claims_file: true
   GBOGEB/DOCX_RTM_Automation:
     head: 7c1da80f2acc229fee11707d0500c1cf11482721
     files: 964
     visibility: public
     lineage_unresolved: 0
+    claims_file: false
   GBOGEB/cryoplant-project:
     head: ae693790db8e8891911d497d4a9cc45cb628d663
     files: 8326
     visibility: private
     lineage_unresolved: 10
+    claims_file: false
   GBOGEB/document-organization-system:
     head: 6da0c125fb24dbad1ae0786428566bfded7ebd50
     files: 299
     visibility: public
     lineage_unresolved: 0
+    claims_file: false
   GBOGEB/pipeline-automation-hub:
     head: 484b780404eaef0b8a9376e3b50012de23d42858
     files: 3076
     visibility: public
     lineage_unresolved: 0
+    claims_file: false
 stats:
   entries: 372
   by_namespace:
@@ -132,6 +138,41 @@ lineage:
     parent: QPS:W372
     repos:
       GBOGEB/cryoplant-project: 1
+dedup:
+  rules: federation/waves/WAVE_NAMING_RULES.yaml
+  claims_file: .waves/WAVE_CLAIMS.yaml
+  census:
+    claims_files: 1
+    claimed_keys: 2
+    observed_keys: 372
+    unclaimed_observed: 370
+    claimed_unobserved: 0
+    multi_repo_observed: 157
+    undeclared_participants: 2
+    owners:
+      GBOGEB/CODEX: 2
+    contested_keys: 0
+    next_free:
+      QPS: W382
+    violations:
+      error: 0
+      warning: 2
+      by_code:
+        O1_UNDECLARED_PARTICIPANT: 2
+  claimed_unobserved: {}
+  violations:
+  - code: O1_UNDECLARED_PARTICIPANT
+    severity: warning
+    key: QPS:W113
+    repos:
+    - GBOGEB/ABACUS
+    detail: observed in GBOGEB/ABACUS but GBOGEB/ABACUS declares no role
+  - code: O1_UNDECLARED_PARTICIPANT
+    severity: warning
+    key: QPS:W113
+    repos:
+    - GBOGEB/cryoplant-project
+    detail: observed in GBOGEB/cryoplant-project but GBOGEB/cryoplant-project declares no role
 waves:
 - key: CP:W1.C1.I0.S0
   namespace: CP
@@ -441,13 +482,19 @@ waves:
   namespace: BOOT
   id: Wave-0
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/CODEX:
       paths: 1
       anchor: handover
       evidence:
       - handover/CURRENT.json
+  claim:
+    owner: GBOGEB/CODEX
+    status: HOLD
+    name: Wave-0
+    paths:
+    - handover/CURRENT.json
 - key: BOOT:W001
   namespace: BOOT
   id: W001
@@ -2969,7 +3016,7 @@ waves:
   namespace: QPS
   id: W113
   confidence: exact
-  status: OBSERVED
+  status: ACTIVE
   repos:
     GBOGEB/ABACUS:
       paths: 2
@@ -2987,6 +3034,18 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 3
       anchor: ocd-adr/40_implementation
+  claim:
+    owner: GBOGEB/CODEX
+    status: ACTIVE
+    name: W113_MESH_CLOSURE_CONTROLLER
+    aliases:
+    - glob
+    - mesh-closure-controller
+    paths:
+    - GLOB.yaml
+    - federation/rex/returns/CODEX_W113_PR621_REX_RETURN.yaml
+    - federation/rex/returns/W113_3P3_MIP_SESSION_CLOSE.yaml
+    - handover/W113_3P3_MIP_SESSION_CLOSE_2026-09-12.md
 - key: QPS:W114
   namespace: QPS
   id: W114
