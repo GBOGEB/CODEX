@@ -207,6 +207,9 @@ def render_ch3() -> str:
                      f"<th>Series</th><th>Unit</th></tr></thead><tbody>{trs}</tbody></table></div>")
         elif outs:
             body += "<h4>Book results</h4>" + _table(_flatten(outs))
+        for err in b.get("book_errata", []):
+            body += (f"<p class='note'><strong>Book erratum ({_e(err['cell'])})</strong>: printed {_e(err['printed'])}. "
+                     f"{_e(err['note'])}</p>")
         if b.get("note"):
             body += f"<p class='note'>Note: {_e(b['note'])}</p>"
         cards.append(f"<article class='card' id='{_e(b['benchmark_id'])}'><h3>{_e(b['benchmark_id'])}</h3>{body}</article>")
@@ -234,11 +237,19 @@ def render_ch3() -> str:
         f"<article class='card open'><h3>{_e(i['id'])}</h3><p class='ref'>due {_e(i['due'])}</p><p class='note'>{_e(i['item'])}</p></article>"
         for i in ch3.get("open_items", [])
     )
+    closed = "".join(
+        f"<li><strong>{_e(i['id'])}</strong> closed {_e(i['closed'])}: {_e(i['resolution'])}</li>"
+        for i in ch3.get("closed_items", [])
+    )
     src = ch3["source"]
+    model = ("<p class='note'><a href='claude_cycle_model.html'>One-turbine Claude cycle model</a>: Figs. 3.46 to 3.48 "
+             "reproduced from fluid properties, with the mass-flow sweep and deviation statistics.</p>")
     body = (
-        compare
+        model
+        + compare
         + "<h2>Benchmarks</h2><section class='grid'>" + "".join(cards) + "</section>"
         + (f"<h2>Open items</h2><section class='grid'>{opens}</section>" if opens else "")
+        + (f"<h2>Closed items</h2><ul class='note'>{closed}</ul>" if closed else "")
     )
     lead = (f"{_e(src['scope_note'])} Extracted {_e(src['extracted_on'])} by {_e(src['method'])}. "
             f"PDF page = printed page + {off} in this chapter.")
