@@ -1,0 +1,114 @@
+name: LLDB Docker Lane Matrix
+
+# Manual. N independent lanes, each on its own runner: Docker lldb-server with a
+# dynamic loopback host port (-p 127.0.0.1::4711, observed with `docker port`),
+# one LDAB debugger receipt per lane, then an aggregate. No static ports, so lanes
+# cannot collide. A lane counts only with real probe steps, a runner and a port.
+on:
+  workflow_dispatch:
+    inputs:
+      lanes:
+        description: "Lane count 1-8"
+        default: "4"
+      exact_sha:
+        description: "Exact commit SHA (default: dispatched ref)"
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lldb-docker-lane-matrix-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  EXACT_SHA: ${{ inputs.exact_sha || github.sha }}
+  LANES: ${{ inputs.lanes || '4' }}
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.m.outputs.matrix }}
+    steps:
+      - name: Validate lane count and build matrix
+        id: m
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$LANES" =~ ^[1-8]$ ]] || { echo "lanes must be 1-8"; exit 2; }
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          import os
+
+          n = int(os.environ["LANES"])
+          print("matrix=" + json.dumps({"lane": [f"L{i:02d}" for i in range(n)]}))
+          PY
+
+  lane:
+    name: Lane ${{ matrix.lane }}
+    needs: plan
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.EXACT_SHA }}
+      - name: Bind receipt to checked-out source bytes
+        id: src
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha="$(git rev-parse HEAD)"
+          test "$sha" = "$EXACT_SHA"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+      - name: Install host lldb
+        run: sudo apt-get update -y && sudo apt-get install -y lldb
+      - name: Docker -> lldb-server -> host LLDB probe
+        id: probe
+        continue-on-error: true
+        run: python3 scripts/qps_docker_remote_lldb_probe.py
+      - name: Emit lane receipt (never invents evidence)
+        if: always()
+        run: |
+          python3 scripts/lldb_lane_receipt.py lane \
+            --probe artifacts/qps_debug/perpetual/docker_remote_lldb.json \
+            --lane "${{ matrix.lane }}" \
+            --source-sha "${{ steps.src.outputs.sha }}" \
+            --job-id "${{ job.check_run_id }}" \
+            --out "receipts/lldb_lanes/lane-${{ matrix.lane }}.json"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: lldb-lane-${{ matrix.lane }}
+          path: |
+            receipts/lldb_lanes/lane-${{ matrix.lane }}.json
+            artifacts/qps_debug/perpetual/docker_remote_lldb.json
+          if-no-files-found: warn
+
+  aggregate:
+    needs: [plan, lane]
+    if: always() && needs.plan.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.EXACT_SHA }}
+      - uses: actions/download-artifact@v7
+        with:
+          pattern: lldb-lane-*
+          merge-multiple: true
+          path: lanes
+      - name: Aggregate (fails on missing lane or mixed source SHA)
+        run: |
+          python3 scripts/lldb_lane_receipt.py aggregate \
+            --lanes lanes/receipts/lldb_lanes/lane-L*.json \
+            --expected "$LANES" --out receipts/lldb_lanes/aggregate.json
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: lldb-lane-aggregate
+          path: receipts/lldb_lanes/aggregate.json
+          if-no-files-found: ignore

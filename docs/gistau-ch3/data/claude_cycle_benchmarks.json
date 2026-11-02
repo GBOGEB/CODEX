@@ -182,23 +182,291 @@
         "liquid_output_increase_pct_approx": 25
       },
       "note": "Refers to Sect. 4.2.2 / Fig. 4.8 for large machines."
+    },
+    {
+      "benchmark_id": "G3-3.5.3.2-PARALLEL-OPTIMISED-STATES",
+      "section": "3.5.3.2.2",
+      "figure": "Fig. 3.51",
+      "page": 128,
+      "problem": "Same duty as §3.5.3.1 (50 W at 4.41 K + 0.50 g/s liquefaction), two turbines in parallel, both discharge temperatures optimised",
+      "inputs": {
+        "p_high_bar": 14.0,
+        "p_low_bar": 1.2,
+        "t_warm_k": 300.0,
+        "warm_end_dt_k": 3.0,
+        "hx3_warm_end_dt_k": 0.5,
+        "jt_hx_warm_end_dt_k": 0.2,
+        "turbine_isentropic_efficiency": 0.75
+      },
+      "expected_outputs": {
+        "cycle_hp_mass_flow_g_s": 13.1,
+        "cycle_lp_return_mass_flow_g_s": 12.6,
+        "isothermal_compressor_power_kw": 20.06,
+        "warm_turbine": {
+          "inlet_t_k": 97.15,
+          "mass_flow_g_s": 3.6,
+          "power_w": -862,
+          "discharge_t_k": 51.69
+        },
+        "cold_turbine": {
+          "inlet_t_k": 19.19,
+          "mass_flow_g_s": 5.01,
+          "power_w": -220,
+          "discharge_t_k": 9.68
+        },
+        "jt_mass_flow_g_s": 4.48,
+        "jt_valve_inlet_t_k": 4.61,
+        "liquid_fraction_after_jt": 0.69,
+        "total_turbine_power_w": -1082,
+        "total_ua_w_k": 4291,
+        "hp_states": {
+          "after_hx1_t_k": 97.15,
+          "after_hx2_t_k": 52.19,
+          "after_hx3_t_k": 19.19,
+          "after_hx4_t_k": 9.88
+        },
+        "lp_states": {
+          "warm_end_t_k": 297.0,
+          "hx1_cold_t_k": 85.87,
+          "hx2_cold_t_k": 51.69,
+          "hx3_cold_t_k": 15.34,
+          "hx4_cold_t_k": 9.68
+        },
+        "hx_lmtd": {
+          "hx1_lmtd_k": 6.25,
+          "hx2_lmtd_k": 3.46,
+          "hx3_lmtd_k": 1.64,
+          "hx4_lmtd_k": 1.24,
+          "hx5_lmtd_k": 0.65
+        }
+      },
+      "note": "Thermal balances printed as closed (0.00 W) for both Brayton stages and the JT stage. original PDF, figure rasterised at 400 dpi and read cell by cell, 2026-11-02"
+    },
+    {
+      "benchmark_id": "G3-3.5.3.3-SERIES-OPTIMISED-STATES",
+      "section": "3.5.3.3",
+      "figure": "Fig. 3.53 (right)",
+      "page": 129,
+      "inputs": {
+        "p_high_bar": 16.0,
+        "p_intermediate_bar": 7.0,
+        "p_low_bar": 1.2,
+        "t_warm_k": 300.0,
+        "warm_end_dt_k": 2.97,
+        "hx3_warm_end_dt_k": 0.68,
+        "jt_hx_warm_end_dt_k": 0.2,
+        "turbine_isentropic_efficiency": 0.75
+      },
+      "expected_outputs": {
+        "cycle_hp_mass_flow_g_s": 13.78,
+        "cycle_lp_return_mass_flow_g_s": 13.28,
+        "warm_turbine": {
+          "inlet_t_k": 87.41,
+          "mass_flow_g_s": 8.12,
+          "power_w": -795,
+          "discharge_t_k": 69.09,
+          "discharge_p_bar": 7.0
+        },
+        "cold_turbine": {
+          "inlet_t_k": 19.68,
+          "power_w": -308,
+          "discharge_t_k": 11.97
+        },
+        "jt_mass_flow_g_s": 5.66,
+        "jt_valve_inlet_t_k": 5.22,
+        "liquid_fraction_after_jt": 0.54,
+        "hp_states": {
+          "after_hx1_t_k": 87.41,
+          "after_hx2_t_k": 69.09,
+          "after_hx3_t_k": 19.68,
+          "after_hx4_t_k": 12.17
+        },
+        "lp_states": {
+          "warm_end_t_k": 297.03,
+          "hx1_cold_t_k": 76.27,
+          "hx2_cold_t_k": 68.41,
+          "hx3_cold_t_k": 15.85,
+          "hx4_cold_t_k": 11.97
+        },
+        "balances": {
+          "brayton1_w": 10.18,
+          "brayton2_w": -0.27,
+          "joule_thomson_w": -0.03
+        }
+      },
+      "note": "The series sheet runs at 16.00 bar HP with a 7.00 bar intermediate pressure, not the 14 bar of the parallel case, although the text says process conditions are similar. Its printed balances do not close (Brayton 1 +10.18 W, Brayton 2 -0.27 W, JT -0.03 W). Leading digits of some HP temperatures are hidden by the turbine arrow and are read from the adjacent turbine cells. original PDF, figure rasterised at 400 dpi and read cell by cell, 2026-11-02"
+    },
+    {
+      "benchmark_id": "G3-3.6.4.1-LN2-REFRIGERATOR",
+      "section": "3.6.4.1",
+      "figure": "Fig. 3.60",
+      "page": 138,
+      "problem": "Pure refrigerator, 100 W at 4.41 K, two parallel turbines, optimised; without vs with LN2 pre-cooling to 80 K",
+      "inputs": {
+        "refrigeration_w": 100.0,
+        "liquefaction_g_s": 0.0,
+        "p_high_bar": 14.0,
+        "p_low_bar": 1.2,
+        "ln2_precool_t_k": 80.0,
+        "turbine_isentropic_efficiency": 0.75
+      },
+      "expected_outputs": {
+        "reference_cycle_flow_g_s": 10.81,
+        "reference_turbine_power_w": 314,
+        "ln2": {
+          "cycle_flow_g_s": 9.94,
+          "isothermal_compressor_power_kw": 15.2,
+          "nitrogen_flow_g_s": 0.25,
+          "nitrogen_power_w": 108.41,
+          "turbine_power_w": 177,
+          "warm_turbine": {
+            "inlet_t_k": 45.14,
+            "mass_flow_g_s": 0.82,
+            "power_w": -91,
+            "discharge_t_k": 23.89
+          },
+          "cold_turbine": {
+            "inlet_t_k": 22.57,
+            "mass_flow_g_s": 1.61,
+            "power_w": -86,
+            "discharge_t_k": 11.58
+          },
+          "jt_mass_flow_g_s": 7.51,
+          "liquid_fraction_after_jt": 0.69
+        }
+      },
+      "book_errata": [
+        {
+          "cell": "Fig. 3.60 left (reference, not pre-cooled) sheet",
+          "printed": "cycle 1.70 g/s, warm turbine -8.42 g/s, LP 343.01 K after HX2, W end JT -9311.72 W, turbine total 2012 W, 2.61 kW iso",
+          "note": "Internally inconsistent (negative turbine flow, LP above room temperature); appears to be an unconverged solver state. The text (p. 137) and Table 3.8 give the reference as 10.81 g/s and 314 W; those are recorded instead. The right (LN2) sheet is consistent and is transcribed."
+        }
+      ],
+      "note": "original PDF, figure rasterised at 400 dpi and read cell by cell, 2026-11-02"
+    },
+    {
+      "benchmark_id": "G3-3.6.4.2-LN2-LIQUEFIER",
+      "section": "3.6.4.2",
+      "figure": "Fig. 3.61",
+      "page": 139,
+      "problem": "Pure liquefier, 1.00 g/s, two parallel turbines, optimised; without vs with LN2 pre-cooling to 80 K",
+      "inputs": {
+        "refrigeration_w": 0.0,
+        "liquefaction_g_s": 1.0,
+        "p_high_bar": 14.0,
+        "p_low_bar": 1.2,
+        "ln2_precool_t_k": 80.0,
+        "turbine_isentropic_efficiency": 0.75
+      },
+      "expected_outputs": {
+        "reference": {
+          "cycle_hp_mass_flow_g_s": 16.64,
+          "cycle_lp_return_mass_flow_g_s": 15.64,
+          "isothermal_compressor_power_kw": 25.49,
+          "warm_turbine": {
+            "inlet_t_k": 99.91,
+            "mass_flow_g_s": 6.33,
+            "power_w": -1558,
+            "discharge_t_k": 53.16
+          },
+          "cold_turbine": {
+            "inlet_t_k": 19.71,
+            "mass_flow_g_s": 7.01,
+            "power_w": -318,
+            "discharge_t_k": 9.98
+          },
+          "jt_mass_flow_g_s": 3.29,
+          "liquid_fraction_after_jt": 0.3,
+          "turbine_power_w": -1875
+        },
+        "ln2": {
+          "cycle_hp_mass_flow_g_s": 8.76,
+          "cycle_lp_return_mass_flow_g_s": 7.76,
+          "isothermal_compressor_power_kw": 13.4,
+          "nitrogen_flow_g_s": 2.88,
+          "nitrogen_power_w": 1228.94,
+          "warm_turbine": {
+            "inlet_t_k": 46.22,
+            "mass_flow_g_s": 3.15,
+            "power_w": -359,
+            "discharge_t_k": 24.48
+          },
+          "cold_turbine": {
+            "inlet_t_k": 16.8,
+            "mass_flow_g_s": 3.32,
+            "power_w": -123,
+            "discharge_t_k": 8.32
+          },
+          "jt_mass_flow_g_s": 2.29,
+          "liquid_fraction_after_jt": 0.44,
+          "turbine_power_w": -482
+        }
+      },
+      "headline": "LN2 pre-cooling halves the liquefier cycle flow (15.64 -> 7.76 g/s) but only trims the refrigerator (10.81 -> 9.94 g/s)",
+      "note": "original PDF, figure rasterised at 400 dpi and read cell by cell, 2026-11-02"
+    },
+    {
+      "benchmark_id": "G3-TABLE-3.8-LN2-COMPARISON",
+      "section": "3.6.4.3",
+      "figure": "Table 3.8",
+      "page": 140,
+      "expected_outputs": {
+        "brayton_1000w_20k": {
+          "flow_no_ln2_g_s": 35.96,
+          "flow_ln2_g_s": 28.3,
+          "flow_ratio": 0.79,
+          "turbine_no_ln2_w": 1736,
+          "turbine_ln2_w": 1232,
+          "turbine_ratio": 0.71,
+          "ln2_flow_g_s": 0.81,
+          "ln2_power_w": 347
+        },
+        "claude_2t_refrigerator_100w": {
+          "flow_no_ln2_g_s": 10.81,
+          "flow_ln2_g_s": 9.94,
+          "flow_ratio": 0.92,
+          "turbine_no_ln2_w": 314,
+          "turbine_ln2_w": 177,
+          "turbine_ratio": 0.56,
+          "ln2_flow_g_s": 0.25,
+          "ln2_power_w": 108
+        },
+        "claude_2t_liquefier_1gs": {
+          "flow_no_ln2_g_s": 15.64,
+          "flow_ln2_g_s": 7.76,
+          "flow_ratio": 0.5,
+          "turbine_no_ln2_w": 1875,
+          "turbine_ln2_w": 482,
+          "turbine_ratio": 0.26,
+          "ln2_flow_g_s": 2.88,
+          "ln2_power_w": 1229
+        }
+      },
+      "note": "Equivalent duty, same high pressure, same HX temperature differences and turbine efficiency. original PDF, figure rasterised at 400 dpi and read cell by cell, 2026-11-02"
     }
   ],
   "open_items": [
     {
+      "id": "G3-OPEN-004",
+      "item": "Extend tools/claude_cycle_model.py to the two-turbine parallel and series cases and the LN2-precooled refrigerator/liquefier, reproducing the benchmarks above",
+      "due": "2026-11-09"
+    }
+  ],
+  "closed_items": [
+    {
       "id": "G3-OPEN-001",
-      "item": "Sect. 3.6.4 LN2-precooled Claude cycle (pp. 137-139, Figs. 3.60-3.61): numerical states not yet transcribed",
-      "due": "2026-10-26"
+      "closed": "2026-11-02",
+      "resolution": "Sect. 3.6.4 transcribed: G3-3.6.4.1-LN2-REFRIGERATOR, G3-3.6.4.2-LN2-LIQUEFIER, G3-TABLE-3.8-LN2-COMPARISON (Fig. 3.60 left sheet recorded as erratum)"
     },
     {
       "id": "G3-OPEN-002",
-      "item": "Fig. 3.51 / 3.53 per-state temperatures for parallel and series optimised cases not yet transcribed",
-      "due": "2026-10-26"
+      "closed": "2026-11-02",
+      "resolution": "Per-state values transcribed: G3-3.5.3.2-PARALLEL-OPTIMISED-STATES, G3-3.5.3.3-SERIES-OPTIMISED-STATES"
     },
     {
       "id": "G3-OPEN-003",
-      "item": "No compute() reproduction yet: one-turbine initial/optimised cases are the first candidates for a provider-backed L1 check",
-      "due": "2026-11-02"
+      "closed": "2026-10-26",
+      "resolution": "One-turbine reproduction in tools/claude_cycle_model.py (#1209): 19/19 printed values within 0.06 %"
     }
   ]
 }
