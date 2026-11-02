@@ -24,7 +24,7 @@ import sys
 EXIT_COLLECTION_ERROR = 3
 EXIT_BELOW_FLOOR = 4
 
-_COLLECTED = re.compile(r"(\d+) tests? collected")
+_COLLECTED = re.compile(r"(?:(\d+)/)?(\d+) tests? collected")
 _ERRORS = re.compile(r"(\d+) errors?\b")
 
 
@@ -45,18 +45,33 @@ def parse_collect_output(text: str) -> tuple[int | None, int]:
     collected_match = _COLLECTED.search(summary)
     if not collected_match:
         return None, errors
-    return int(collected_match.group(1)), errors
+    return int(collected_match.group(1) or collected_match.group(2)), errors
+
+
+class _CollectionCounter:
+    collected: int | None = None
+    errors = 0
+
+    def pytest_collectreport(self, report: object) -> None:
+        if report.failed:
+            self.errors += 1
+
+    def pytest_collection_finish(self, session: object) -> None:
+        self.collected = len(session.items)
 
 
 def collect(pytest_args: list[str]) -> tuple[int | None, int, int, str]:
-    cmd = [
-        sys.executable, "-m", "pytest", "--collect-only", "-q",
-        "-o", "addopts=", "-p", "no:cacheprovider", *pytest_args,
-    ]
-    proc = subprocess.run(cmd, capture_output=True, text=True, check=False)
-    output = proc.stdout + proc.stderr
-    collected, errors = parse_collect_output(output)
-    return collected, errors, proc.returncode, output
+    try:
+        import pytest
+    except ImportError as exc:
+        return None, 1, 1, str(exc)
+
+    counter = _CollectionCounter()
+    returncode = pytest.main(
+        ["--collect-only", "-p", "no:cacheprovider", *pytest_args],
+        plugins=[counter],
+    )
+    return counter.collected, counter.errors, int(returncode), ""
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -91,7 +106,8 @@ def main(argv: list[str] | None = None) -> int:
     print("COLLECT_FLOOR " + json.dumps(evidence, sort_keys=True))
 
     if state == "UNKNOWN":
-        print(output, file=sys.stderr)
+        if output:
+            print(output, file=sys.stderr)
         print(f"FAIL [{args.label}]: collection error; count is UNKNOWN, not 0", file=sys.stderr)
         return EXIT_COLLECTION_ERROR
     if state == "BELOW_FLOOR":
