@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@v7.1.0
         with:
           python-version: '3.12'
 
@@ -77,6 +77,13 @@ jobs:
       - name: Check manifest
         id: manifest
         run: python scripts/check_manifest.py
+      - name: Run tests outside testpaths (tools, federation handover)
+        id: tests_outside_testpaths
+        env:
+          PYTHONPATH: .
+        run: >-
+          python scripts/pytest_collect_floor.py --label tools-federation --min 49 --
+          federation/mesh/handovers/code_purple_n_vector_v1 tools/tests tools/triage
       - name: Check glob policy
         id: globs
         run: python scripts/check_globs.py
@@ -101,6 +108,13 @@ jobs:
       - name: Check backend registry
         id: backend_registry
         run: python scripts/check_backend_registry.py
+      - name: Run assets_governance tests in their own process
+        # Its conftest and tests/__init__.py shadow the top-level src and tests packages,
+        # so this suite must not share a pytest process with the main tests job.
+        id: tests_assets_governance
+        run: >-
+          python scripts/pytest_collect_floor.py --label assets-governance --min 68 --
+          integrations/gbogeb_session/assets_governance/tests
 
       - name: Emit governance snapshot
         if: always()

@@ -14,13 +14,13 @@
       "alias": "kpi_report",
       "origin": "LOCAL",
       "path": "docs/data/mycelium_kpi_measurement.json",
-      "sha256": "51db09f9a72a030ac0c2927a62b56bb556883a3c3e0f6bf3f1131d3be46f2381"
+      "sha256": "7db17c79852bc95911dada77f7ca26187de951fbd0633fcc7d73b333176c16cd"
     },
     {
       "alias": "value_observation",
       "origin": "LOCAL",
       "path": "mission_control/mycelium/executable_value_control_observation.json",
-      "sha256": "8cede62b03ba1b2f0cb3577c814a0575c9a7f06175e50c12532ea1b5f4efc1bd"
+      "sha256": "17c3ffb7335665596b65cb08e3eb334962dcb8c3e226333631ca033a089fa2c8"
     },
     {
       "alias": "control_events",
@@ -130,7 +130,7 @@
         "rule": "RC-04",
         "lane": "MYCELIUM_EXECUTION",
         "state": "QUEUED",
-        "reason": "529 unregistered assets, 0 tested orphans",
+        "reason": "534 unregistered assets, 0 tested orphans",
         "sources": [
           {
             "input": "value_observation",
@@ -144,7 +144,7 @@
         "rule": "RC-05",
         "lane": "MYCELIUM_EXECUTION",
         "state": "RED",
-        "reason": "Asset registration coverage: 13.14 against target 100",
+        "reason": "Asset registration coverage: 13.03 against target 100",
         "sources": [
           {
             "input": "kpi_report",
@@ -159,7 +159,7 @@
         "rule": "RC-05",
         "lane": "MYCELIUM_EXECUTION",
         "state": "RED",
-        "reason": "Unregistered asset count: 529 against target 0",
+        "reason": "Unregistered asset count: 534 against target 0",
         "sources": [
           {
             "input": "kpi_report",
@@ -174,7 +174,7 @@
         "rule": "RC-05",
         "lane": "MYCELIUM_EXECUTION",
         "state": "RED",
-        "reason": "Unresolved registration debt: 49 against target 0",
+        "reason": "Unresolved registration debt: 50 against target 0",
         "sources": [
           {
             "input": "kpi_report",
@@ -274,21 +274,6 @@
         "rank": 3
       },
       {
-        "id": "KPI_EXE-05",
-        "rule": "RC-07",
-        "lane": "MYCELIUM_EXECUTION",
-        "state": "AMBER",
-        "reason": "Unregistered tested orphans: 1 against target 0",
-        "sources": [
-          {
-            "input": "kpi_report",
-            "pointer": "/kpis/4"
-          }
-        ],
-        "unlock": "Bind each unregistered tested orphan to an executable workflow step, or register it as library-only.",
-        "rank": 4
-      },
-      {
         "id": "KPI_HLT-04",
         "rule": "RC-07",
         "lane": "MYCELIUM_HEALTH",
@@ -301,7 +286,7 @@
           }
         ],
         "unlock": "Bind a code-health measurement for each Mycelium node in control_observations.json.",
-        "rank": 5
+        "rank": 4
       },
       {
         "id": "KPI_MIP-02",
@@ -316,7 +301,7 @@
           }
         ],
         "unlock": "Make the required lanes GREEN per MIP/README.md (exact-SHA diagnostic passes).",
-        "rank": 6
+        "rank": 5
       }
     ]
   },
@@ -328,7 +313,6 @@
       "FEDERATED_FRESH_MEASUREMENT",
       "KPI_EXE-02",
       "KPI_EXE-03",
-      "KPI_EXE-05",
       "KPI_EXE-07",
       "KPI_HLT-04",
       "KPI_HLT-05",
@@ -353,6 +337,6 @@
   "summary": {
     "current": 2,
     "mid": 7,
-    "long": 6
+    "long": 5
   }
 }
