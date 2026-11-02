@@ -1,0 +1,22 @@
+# GBOGEB/CODEX wave claims -- this repository's prerogative.
+# Rules: federation/waves/WAVE_NAMING_RULES.yaml (must obey).
+# Check:  python scripts/wave_claims.py validate .waves/WAVE_CLAIMS.yaml
+# Roll-up and de-duplication across the federation: scripts/build_wave_register.py
+schema: gbogeb.wave_claims/1
+repo: GBOGEB/CODEX
+owns:
+  - key: QPS:W113
+    name: W113_MESH_CLOSURE_CONTROLLER
+    status: ACTIVE            # GLOB.yaml status CANDIDATE_GLOBAL_LOOKUP_CONTROL
+    aliases: [glob, mesh-closure-controller]
+    paths:                    # exact files: federation/rex/returns/ is shared by other waves
+      - GLOB.yaml
+      - federation/rex/returns/CODEX_W113_PR621_REX_RETURN.yaml
+      - federation/rex/returns/W113_3P3_MIP_SESSION_CLOSE.yaml
+      - handover/W113_3P3_MIP_SESSION_CLOSE_2026-09-12.md
+  - key: BOOT:Wave-0
+    name: Wave-0
+    status: HOLD              # handover/CURRENT.json release_disposition HOLD (pinned by scripts/validate_all.py)
+    paths:
+      - handover/CURRENT.json
+participates: []
