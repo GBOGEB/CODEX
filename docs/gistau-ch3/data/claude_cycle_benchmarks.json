@@ -217,28 +217,28 @@
         "jt_mass_flow_g_s": 4.48,
         "jt_valve_inlet_t_k": 4.61,
         "liquid_fraction_after_jt": 0.69,
-        "hp_states_k": {
-          "after_hx1": 97.15,
-          "after_hx2": 52.19,
-          "after_hx3": 19.19,
-          "after_hx4": 9.88
-        },
-        "lp_states_k": {
-          "warm_end": 297.0,
-          "hx1_cold": 85.87,
-          "hx2_cold": 51.69,
-          "hx3_cold": 15.34,
-          "hx4_cold": 9.68
-        },
-        "hx_lmtd_k": {
-          "hx1": 6.25,
-          "hx2": 3.46,
-          "hx3": 1.64,
-          "hx4": 1.24,
-          "hx5": 0.65
-        },
         "total_turbine_power_w": -1082,
-        "total_ua_w_k": 4291
+        "total_ua_w_k": 4291,
+        "hp_states": {
+          "after_hx1_t_k": 97.15,
+          "after_hx2_t_k": 52.19,
+          "after_hx3_t_k": 19.19,
+          "after_hx4_t_k": 9.88
+        },
+        "lp_states": {
+          "warm_end_t_k": 297.0,
+          "hx1_cold_t_k": 85.87,
+          "hx2_cold_t_k": 51.69,
+          "hx3_cold_t_k": 15.34,
+          "hx4_cold_t_k": 9.68
+        },
+        "hx_lmtd": {
+          "hx1_lmtd_k": 6.25,
+          "hx2_lmtd_k": 3.46,
+          "hx3_lmtd_k": 1.64,
+          "hx4_lmtd_k": 1.24,
+          "hx5_lmtd_k": 0.65
+        }
       },
       "note": "Thermal balances printed as closed (0.00 W) for both Brayton stages and the JT stage. original PDF, figure rasterised at 400 dpi and read cell by cell, 2026-11-02"
     },
@@ -275,23 +275,23 @@
         "jt_mass_flow_g_s": 5.66,
         "jt_valve_inlet_t_k": 5.22,
         "liquid_fraction_after_jt": 0.54,
-        "hp_states_k": {
-          "after_hx1": 87.41,
-          "after_hx2": 69.09,
-          "after_hx3": 19.68,
-          "after_hx4": 12.17
+        "hp_states": {
+          "after_hx1_t_k": 87.41,
+          "after_hx2_t_k": 69.09,
+          "after_hx3_t_k": 19.68,
+          "after_hx4_t_k": 12.17
         },
-        "lp_states_k": {
-          "warm_end": 297.03,
-          "hx1_cold": 76.27,
-          "hx2_cold": 68.41,
-          "hx3_cold": 15.85,
-          "hx4_cold": 11.97
+        "lp_states": {
+          "warm_end_t_k": 297.03,
+          "hx1_cold_t_k": 76.27,
+          "hx2_cold_t_k": 68.41,
+          "hx3_cold_t_k": 15.85,
+          "hx4_cold_t_k": 11.97
         },
-        "balances_w": {
-          "brayton1": 10.18,
-          "brayton2": -0.27,
-          "joule_thomson": -0.03
+        "balances": {
+          "brayton1_w": 10.18,
+          "brayton2_w": -0.27,
+          "joule_thomson_w": -0.03
         }
       },
       "note": "The series sheet runs at 16.00 bar HP with a 7.00 bar intermediate pressure, not the 14 bar of the parallel case, although the text says process conditions are similar. Its printed balances do not close (Brayton 1 +10.18 W, Brayton 2 -0.27 W, JT -0.03 W). Leading digits of some HP temperatures are hidden by the turbine arrow and are read from the adjacent turbine cells. original PDF, figure rasterised at 400 dpi and read cell by cell, 2026-11-02"
