@@ -37,7 +37,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@v7.1.0
         with: {python-version: '3.12'}
       - run: |
           python -m pip install --upgrade pip
@@ -58,7 +58,7 @@ jobs:
     needs: rtm-generation
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@v7.1.0
         with: {python-version: '3.12'}
       - run: |
           python -m pip install --upgrade pip
@@ -90,7 +90,7 @@ jobs:
     needs: runtime-evidence
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@v7.1.0
         with: {python-version: '3.12'}
       - run: |
           python -m pip install --upgrade pip
