@@ -1,6 +1,7 @@
 """Negative-control contract for exact-head governance enforcement."""
 import unittest
 from pathlib import Path
+
 from scripts.enforce_governance_snapshot import validate
 
 SHA = "a" * 40
