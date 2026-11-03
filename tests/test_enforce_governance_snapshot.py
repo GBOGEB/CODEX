@@ -105,6 +105,44 @@ class GovernanceVerdictTests(unittest.TestCase):
             self.assertEqual(proc.returncode, 1)
             self.assertIn("missing or unreadable", proc.stdout)
 
+    def test_snapshot_exact_head_is_bound_not_synthetic_pr_merge(self):
+        """PR checkout, emitter, and verifier must all use PR head identity."""
+        root = Path(__file__).resolve().parents[1]
+        ci = (root / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+        head = "${{ github.event.pull_request.head.sha || github.sha }}"
+        self.assertIn("ref: " + head, ci)
+        self.assertIn("EXPECTED_SOURCE_SHA: " + head, ci)
+        self.assertIn("EXPECTED_SHA: " + head, ci)
+        self.assertIn('test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE_SHA"', ci)
+        self.assertIn('emit_governance_snapshot.py --sha "$EXPECTED_SOURCE_SHA"', ci)
+
+    def test_emitter_explicit_head_overrides_github_merge_sha(self):
+        """CLI emitter receives the tested source identity and rejects fake SHA."""
+        import json
+        import os
+        import subprocess
+        import sys
+        import tempfile
+        root = Path(__file__).resolve().parents[1]
+        script = root / "scripts/emit_governance_snapshot.py"
+        with tempfile.TemporaryDirectory() as directory:
+            report_path = Path(directory) / "report.json"
+            env = dict(os.environ, GITHUB_SHA="b" * 40)
+            good = subprocess.run(
+                [sys.executable, str(script), "--sha", SHA,
+                 "--check", "ruff=success", "--out", str(report_path)],
+                capture_output=True, text=True, env=env, check=False, timeout=15)
+            self.assertEqual(good.returncode, 0, good.stdout + good.stderr)
+            saved = json.loads(report_path.read_text(encoding="utf-8"))
+            self.assertEqual(saved["sha"], SHA)
+            self.assertEqual(saved["status"], "passed")
+            bad = subprocess.run(
+                [sys.executable, str(script), "--sha", "not-a-sha",
+                 "--check", "ruff=success", "--out", str(report_path)],
+                capture_output=True, text=True, env=env, check=False, timeout=15)
+            self.assertNotEqual(bad.returncode, 0)
+            self.assertEqual(json.loads(report_path.read_text(encoding="utf-8"))["sha"], SHA)
+
     def test_artifact_upload_stays_after_verdict_and_always_runs(self):
         workflow = (Path(__file__).resolve().parents[1] / ".github/workflows/ci.yml").read_text(
             encoding="utf-8"
