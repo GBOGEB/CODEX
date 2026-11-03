@@ -53,12 +53,23 @@ class GovernanceVerdictTests(unittest.TestCase):
             "tests_outside_testpaths", "tests_assets_governance",
             "mcp_sweep", "manifest", "globs", "stale", "links",
             "bridge_alignment", "render_linter", "dmaic_phase_map",
-            "build_control", "backend_registry",
+            "build_control", "backend_registry", "security_scan",
         )
         for name in required:
             with self.subTest(name=name):
-                self.assertIn("--check " + name + "=${{ steps." + name + ".outcome }}", workflow)
+                result = (
+                    "${{ needs.security_scan.result }}"
+                    if name == "security_scan"
+                    else "${{ steps." + name + ".outcome }}"
+                )
+                self.assertIn("--check " + name + "=" + result, workflow)
         self.assertIn("--required " + " ".join(required), workflow)
+        self.assertIn("uses: ./.github/workflows/security-scan.yml", workflow)
+        self.assertIn("needs: security_scan", workflow)
+        security_workflow = (
+            Path(__file__).resolve().parents[1] / ".github/workflows/security-scan.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn("  workflow_call:", security_workflow)
 
     def test_cli_native_exit_positive_and_negative_canaries(self):
         """Exercise the real process-exit predicate, not only validate()."""
