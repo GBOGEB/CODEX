@@ -1,6 +1,6 @@
 """Guard Python 3.9 and pinned Playwright against ubuntu-latest alias drift."""
-from pathlib import Path
 import unittest
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
