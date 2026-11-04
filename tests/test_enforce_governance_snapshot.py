@@ -151,6 +151,17 @@ class GovernanceVerdictTests(unittest.TestCase):
         self.assertIn("python-version: ['3.9', '3.10', '3.11', '3.12']", workflow)
         self.assertIn("workflow_call:", workflow)
 
+    def test_playwright_html_qa_keeps_native_chromium_supported(self):
+        """Fail if rolling Ubuntu updates break mandatory browser installation."""
+        workflow = (
+            Path(__file__).resolve().parents[1] / ".github/workflows/site-html-qa.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn("runs-on: ubuntu-24.04", workflow)
+        self.assertIn("python -m playwright install --with-deps chromium", workflow)
+        self.assertIn("python tools/qa/html_qa.py --check", workflow)
+        self.assertIn("MANIFEST.json", workflow)
+        self.assertIn("name: Site HTML QA", workflow)
+
     def test_artifact_upload_stays_after_verdict_and_always_runs(self):
         workflow = (Path(__file__).resolve().parents[1] / ".github/workflows/ci.yml").read_text(
             encoding="utf-8"
