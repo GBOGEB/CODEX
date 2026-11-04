@@ -6,6 +6,7 @@ on:
     branches:
       - main
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   security-events: write
@@ -19,6 +20,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Python 3.9 is unavailable on Ubuntu 26.04 (ubuntu-latest).
+        # Keep the full four-version security cohort on Ubuntu 24.04.
         os: [ubuntu-24.04, windows-latest, macos-latest]
         python-version: ['3.9', '3.10', '3.11', '3.12']
     env:

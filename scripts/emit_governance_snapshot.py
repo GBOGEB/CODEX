@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -38,7 +39,10 @@ def main(argv: list[str] | None = None) -> int:
         help="Check status as name=status (status should be passed/failed/skipped).",
     )
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
+    parser.add_argument("--sha", help="Exact checked-out source SHA, not PR synthetic merge ref")
     args = parser.parse_args(argv)
+    if args.sha is not None and not re.fullmatch(r"[0-9a-f]{40}", args.sha):
+        parser.error("--sha must be the 40-character lowercase source SHA")
 
     checks = []
     for raw in args.check:
@@ -49,7 +53,7 @@ def main(argv: list[str] | None = None) -> int:
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "status": "passed" if checks and all(c["passed"] for c in checks) else "failed",
         "repo": os.environ.get("GITHUB_REPOSITORY", "local"),
-        "sha": os.environ.get("GITHUB_SHA", ""),
+        "sha": args.sha if args.sha is not None else os.environ.get("GITHUB_SHA", ""),
         "ref": os.environ.get("GITHUB_REF", ""),
         "workflow": os.environ.get("GITHUB_WORKFLOW", ""),
         "checks": checks,

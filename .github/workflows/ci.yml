@@ -7,13 +7,29 @@ on:
       - main
 
 jobs:
+  security_scan:
+    uses: ./.github/workflows/security-scan.yml
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
   test:
+    needs: security_scan
+    if: always()
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: read
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Verify exact checked out source
+        env:
+          EXPECTED_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE_SHA"
 
       - uses: actions/setup-python@v7.1.0
         with:
@@ -54,6 +70,7 @@ jobs:
         run: python scripts/check_ssot_schemas.py
 
       - name: Build dashboard/pages
+        id: build_pages
         run: |
           if [ -f tools/losses/src/build_all.py ]; then python tools/losses/src/build_all.py; fi
 
@@ -119,8 +136,21 @@ jobs:
 
       - name: Emit governance snapshot
         if: always()
+        env:
+          EXPECTED_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
-          python scripts/emit_governance_snapshot.py --check authority_integrity=${{ steps.authority_integrity.outcome }} --check release_identity=${{ steps.release_identity.outcome }} --check ssot_census=${{ steps.ssot_census.outcome }} --check ssot_schemas=${{ steps.ssot_schemas.outcome }} --check ruff=${{ steps.ruff.outcome }} --check tests=${{ steps.tests.outcome }} --check mcp_sweep=${{ steps.mcp_sweep.outcome }} --check manifest=${{ steps.manifest.outcome }} --check globs=${{ steps.globs.outcome }} --check stale=${{ steps.stale.outcome }} --check links=${{ steps.links.outcome }} --check bridge_alignment=${{ steps.bridge_alignment.outcome }} --check render_linter=${{ steps.render_linter.outcome }} --check dmaic_phase_map=${{ steps.dmaic_phase_map.outcome }} --check build_control=${{ steps.build_control.outcome }} --check backend_registry=${{ steps.backend_registry.outcome }} --out reports/governance_snapshot.json
+          python scripts/emit_governance_snapshot.py --sha "$EXPECTED_SOURCE_SHA" --check authority_integrity=${{ steps.authority_integrity.outcome }} --check release_identity=${{ steps.release_identity.outcome }} --check ssot_census=${{ steps.ssot_census.outcome }} --check ssot_schemas=${{ steps.ssot_schemas.outcome }} --check ruff=${{ steps.ruff.outcome }} --check tests=${{ steps.tests.outcome }} --check build_pages=${{ steps.build_pages.outcome }} --check tests_outside_testpaths=${{ steps.tests_outside_testpaths.outcome }} --check tests_assets_governance=${{ steps.tests_assets_governance.outcome }} --check mcp_sweep=${{ steps.mcp_sweep.outcome }} --check manifest=${{ steps.manifest.outcome }} --check globs=${{ steps.globs.outcome }} --check stale=${{ steps.stale.outcome }} --check links=${{ steps.links.outcome }} --check bridge_alignment=${{ steps.bridge_alignment.outcome }} --check render_linter=${{ steps.render_linter.outcome }} --check dmaic_phase_map=${{ steps.dmaic_phase_map.outcome }} --check build_control=${{ steps.build_control.outcome }} --check backend_registry=${{ steps.backend_registry.outcome }} --check security_scan=${{ needs.security_scan.result }} --out reports/governance_snapshot.json
+
+      - name: Verify governance snapshot before admission
+        if: always()
+        id: governance_verdict
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python scripts/enforce_governance_snapshot.py \
+            --report reports/governance_snapshot.json \
+            --sha "$EXPECTED_SHA" \
+            --required authority_integrity release_identity ssot_census ssot_schemas ruff tests build_pages tests_outside_testpaths tests_assets_governance mcp_sweep manifest globs stale links bridge_alignment render_linter dmaic_phase_map build_control backend_registry security_scan
 
       - name: Upload CI governance artifacts
         if: always()
