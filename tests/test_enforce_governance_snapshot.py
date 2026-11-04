@@ -143,6 +143,14 @@ class GovernanceVerdictTests(unittest.TestCase):
             self.assertNotEqual(bad.returncode, 0)
             self.assertEqual(json.loads(report_path.read_text(encoding="utf-8"))["sha"], SHA)
 
+    def test_security_scan_keeps_python39_on_supported_explicit_ubuntu(self):
+        """A rolling ubuntu-latest image loses Python 3.9 in setup-python."""
+        file = (Path(__file__).resolve().parents[1] / ".github/workflows/security-scan.yml")
+        workflow = file.read_text(encoding="utf-8")
+        self.assertIn("os: [ubuntu-24.04, windows-latest, macos-latest]", workflow)
+        self.assertIn("python-version: ['3.9', '3.10', '3.11', '3.12']", workflow)
+        self.assertIn("workflow_call:", workflow)
+
     def test_artifact_upload_stays_after_verdict_and_always_runs(self):
         workflow = (Path(__file__).resolve().parents[1] / ".github/workflows/ci.yml").read_text(
             encoding="utf-8"
