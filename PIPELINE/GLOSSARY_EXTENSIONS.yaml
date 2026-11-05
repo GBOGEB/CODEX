@@ -2,6 +2,10 @@ version: 1.0.1
 purpose: Controlled semantic vocabulary extensions consumed by the semantic-substrate validator when a bounded governance surface introduces a new semantic_* token.
 authority: GBOGEB/CODEX semantic governance only; entries do not create QPS engineering or compliance authority.
 glossary:
+  semantic_flow_runtime_v1:
+    definition: Source-code identifier for the topology flow runtime that reads slide-shape geometry CSV, classifies extracted labels as SUPPLY, RETURN or GENERAL, and exports directional edge CSV and summary JSON; its inferred adjacency and connector flags are not engineering connectivity or compliance acceptance.
+    introduced_by: src/topology/semantic_flow_runtime_v1.py
+    first_use_case: keep the named topology runtime documented in the governed semantic vocabulary without elevating its geometry-derived edges into design authority.
   semantic_readiness:
     definition: Scheduler-facing readiness state indicating whether schemas, contracts, terminology, identifiers and expectations are aligned enough for a bounded execution attempt; semantic readiness does not prove execution, quality, receipt, or child engineering acceptance.
     introduced_by: governance/mesh/MESH_STATUS_CONTRACT_v1.yaml
