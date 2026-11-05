@@ -35,7 +35,7 @@ CODEX hosts the canonical MIP kit. ABACUS, cryoplant-project and other consumers
 | Self-index emitter and verifier | `scripts/mip_repo_self_index.py`, `scripts/mip_verify_self_index.py` | yes |
 | Debug/LDAB diagnostic | `scripts/mip_debug_diagnostic.py` | yes |
 | Manifest writer and drift check | `scripts/mip_kit_manifest.py` | yes |
-| Wave claims validator and naming ruleset (kit 1.2.0) | `scripts/wave_claims.py`, `federation/waves/WAVE_NAMING_RULES.yaml` | yes |
+| Wave claims validator and naming ruleset (kit 1.2.0+) | `scripts/wave_claims.py`, `federation/waves/WAVE_NAMING_RULES.yaml` | yes |
 | Kit manifest (file list and sha256) | `MIP/kit/KIT_MANIFEST.json` | copied from CODEX |
 | Surface config | `MIP/mip_surface.json` | no, one per repo |
 | Health/self-heal probe (CODEX) | `scripts/mip_health_selfheal_probe.py` | no, repo-local |
