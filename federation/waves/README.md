@@ -55,7 +55,8 @@ CODEX is public.
 
 1. Draft from your own records: `python scripts/wave_claims.py propose --repo GBOGEB/<NAME> --repo-path <checkout>`. The proposer only drafts rule-clean claims. It lists the rest under `needs_name` (no unique slug in your records) and `contested_ties` (another repo holds equal evidence).
 2. Edit the draft and commit it as `.waves/WAVE_CLAIMS.yaml`.
-3. Check it: `python scripts/wave_claims.py validate`.
+3. Check it: `python scripts/wave_claims.py validate --expected-repo GBOGEB/<NAME>`.
+   The repository identity is supplied independently and is never read from the claims file.
 
 ## Next
 
