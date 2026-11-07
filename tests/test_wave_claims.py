@@ -46,7 +46,7 @@ def test_single_claim_rules(rules, claim, code):
 
 
 def test_alias_may_name_its_own_number(rules):
-    claim = {"key": "QPS:W364", "name": "W364_DECK", "status": "ACTIVE", "aliases": ["w364-deck"]}
+    claim = {"key": "QPS:W364", "name": "W364_DECK", "status": "ACTIVE", "aliases": ["w364-deck-plan"]}
     assert wave_claims.validate_claims(doc("R", [claim]), rules, "R") == []
 
 
