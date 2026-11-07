@@ -98,7 +98,7 @@ jobs:
           persist-credentials: false
       - name: Download exact-run P2 native receipt when available
         if: needs.native-macos.result == 'success'
-        uses: actions/download-artifact@v8.0.2
+        uses: actions/download-artifact@v8
         with:
           name: swift-roof-p2-${{ github.event.pull_request.head.sha || github.sha }}
           path: /tmp/swift-roof-p2
