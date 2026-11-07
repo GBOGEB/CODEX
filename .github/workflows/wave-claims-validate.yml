@@ -14,6 +14,7 @@ on:
       - 'scripts/build_wave_register.py'
       - 'tests/test_wave_claims.py'
       - 'tests/test_wave_claims_contract.py'
+      - 'tests/test_wave_claims_portable.py'
       - '.github/workflows/wave-claims-validate.yml'
   push:
     branches: [main]
@@ -24,6 +25,7 @@ on:
       - 'scripts/build_wave_register.py'
       - 'tests/test_wave_claims.py'
       - 'tests/test_wave_claims_contract.py'
+      - 'tests/test_wave_claims_portable.py'
       - '.github/workflows/wave-claims-validate.yml'
   workflow_dispatch:
 
@@ -55,7 +57,9 @@ jobs:
           --expected-repo "${{ github.repository }}"
 
       - name: Wave claims negative controls
-        run: python -m pytest -q -o addopts="" tests/test_wave_claims_contract.py
+        run: >-
+          python -m pytest -q -o addopts=""
+          tests/test_wave_claims_contract.py tests/test_wave_claims_portable.py
 
       - name: Register claims roll-up carries no errors
         run: python -m pytest -q -o addopts="" tests/test_wave_claims.py
