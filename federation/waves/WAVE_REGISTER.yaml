@@ -7,29 +7,29 @@ authority_transfer: false
 maturity: CANDIDATE
 sources:
   GBOGEB/ABACUS:
-    head: 43d78d7bffa3f27df5e5c25bae99d05f2f20e7bc
-    files: 4392
+    head: 108614976a1eb798e0e218046b8001c0867b65e6
+    files: 4649
     visibility: public
     lineage_unresolved: 0
-    claims_file: false
+    claims_file: true
   GBOGEB/CODEX:
-    head: 5024188fdb30782f2bed7c5329ca5bd2061e2af7
-    files: 2887
+    head: 43040706356eeca703b27028e842c16c2eb31a29
+    files: 2915
     visibility: public
     lineage_unresolved: 0
     claims_file: true
   GBOGEB/DOCX_RTM_Automation:
-    head: 7c1da80f2acc229fee11707d0500c1cf11482721
-    files: 964
+    head: 7dd2bb48a74ece47b42cb7acbf08f43a51529543
+    files: 972
     visibility: public
     lineage_unresolved: 0
     claims_file: false
   GBOGEB/cryoplant-project:
-    head: ae693790db8e8891911d497d4a9cc45cb628d663
-    files: 8326
+    head: 3a494823e7e992132666a7b5a52aebb8488262d1
+    files: 8599
     visibility: private
     lineage_unresolved: 10
-    claims_file: false
+    claims_file: true
   GBOGEB/document-organization-system:
     head: 6da0c125fb24dbad1ae0786428566bfded7ebd50
     files: 299
@@ -37,26 +37,26 @@ sources:
     lineage_unresolved: 0
     claims_file: false
   GBOGEB/pipeline-automation-hub:
-    head: 484b780404eaef0b8a9376e3b50012de23d42858
-    files: 3076
+    head: bc974acdde8c0f28ba8e6e0d64386157697e4db1
+    files: 3112
     visibility: public
     lineage_unresolved: 0
     claims_file: false
 stats:
-  entries: 372
+  entries: 375
   by_namespace:
     BOOT: 11
     CP: 7
     HYG: 7
-    JADE: 6
-    QPS: 338
+    JADE: 8
+    QPS: 339
     ULTRA: 3
-  multi_repo_entries: 157
-  single_repo_entries: 215
+  multi_repo_entries: 158
+  single_repo_entries: 217
   qps_exact_range:
   - 10
-  - 381
-  qps_exact_count: 328
+  - 382
+  qps_exact_count: 329
   qps_gap_count: 44
 current_pointers:
   GBOGEB/ABACUS:
@@ -142,37 +142,37 @@ dedup:
   rules: federation/waves/WAVE_NAMING_RULES.yaml
   claims_file: .waves/WAVE_CLAIMS.yaml
   census:
-    claims_files: 1
+    claims_files: 3
     claimed_keys: 2
-    observed_keys: 372
-    unclaimed_observed: 370
+    observed_keys: 375
+    unclaimed_observed: 373
     claimed_unobserved: 0
-    multi_repo_observed: 157
-    undeclared_participants: 2
+    multi_repo_observed: 158
+    undeclared_participants: 0
     owners:
       GBOGEB/CODEX: 2
     contested_keys: 0
     next_free:
-      QPS: W382
+      QPS: W383
     violations:
       error: 0
-      warning: 2
-      by_code:
-        O1_UNDECLARED_PARTICIPANT: 2
+      warning: 0
+      by_code: {}
+  reserved:
+  - sha256: 0f8fa7a28af6a17bc416bf79cf38cb04242f72ae8f93a382eed8fd07fec67d17
+    kind: name
+    key: BOOT:Wave-0
+  - sha256: 28c2dec15a9bd200bf93582445f1b3657c47ce68a7a50bd4acb6d8cdd88c6294
+    kind: alias
+    key: QPS:W113
+  - sha256: 47c5cb5943bce1dae56dd65f6ace94a5f67f412aa777964134690ac9f1739604
+    kind: alias
+    key: QPS:W113
+  - sha256: 07d3ba6a1dc82030b4a9ce816aaef61170caf89d5ebf997d2740cff43e46db46
+    kind: name
+    key: QPS:W113
   claimed_unobserved: {}
-  violations:
-  - code: O1_UNDECLARED_PARTICIPANT
-    severity: warning
-    key: QPS:W113
-    repos:
-    - GBOGEB/ABACUS
-    detail: observed in GBOGEB/ABACUS but GBOGEB/ABACUS declares no role
-  - code: O1_UNDECLARED_PARTICIPANT
-    severity: warning
-    key: QPS:W113
-    repos:
-    - GBOGEB/cryoplant-project
-    detail: observed in GBOGEB/cryoplant-project but GBOGEB/cryoplant-project declares no role
+  violations: []
 waves:
 - key: CP:W1.C1.I0.S0
   namespace: CP
@@ -660,6 +660,28 @@ waves:
       evidence:
       - mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_P0003.json
       - mission-control/jade_temple/notes/HANDOVER_JADE5_P0003_20261031.md
+- key: JADE:P0004
+  namespace: JADE
+  id: P0004
+  confidence: exact
+  status: OBSERVED
+  repos:
+    GBOGEB/pipeline-automation-hub:
+      paths: 1
+      anchor: mission-control/jade_temple/data
+      evidence:
+      - mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_P0004.json
+- key: JADE:P0005
+  namespace: JADE
+  id: P0005
+  confidence: exact
+  status: OBSERVED
+  repos:
+    GBOGEB/pipeline-automation-hub:
+      paths: 1
+      anchor: mission-control/jade_temple/data
+      evidence:
+      - mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_P0005.json
 - key: JADE:N+8
   namespace: JADE
   id: N+8
@@ -729,14 +751,14 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 16
-      anchor: .github/workflows
+      paths: 23
+      anchor: tests/coverage_waves/lane_ab_next
       evidence:
       - .github/workflows/bd-w1-three-pulse-regression.yml
       - .github/workflows/dow-w1-coverage-contract-qa.yml
       - .github/workflows/mip-w1-python-dependency-qa.yml
     GBOGEB/CODEX:
-      paths: 10
+      paths: 11
       anchor: docs/code-purple-w1
       evidence:
       - .github/workflows/mycelium-live-ops-w1.yml
@@ -748,7 +770,7 @@ waves:
       evidence:
       - triage/SELF_REPO_ANALYSIS_W01.md
     GBOGEB/cryoplant-project:
-      paths: 15
+      paths: 17
       anchor: tests/coverage_waves
     GBOGEB/pipeline-automation-hub:
       paths: 39
@@ -764,21 +786,21 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 10
-      anchor: docs/ci
+      paths: 18
+      anchor: tests/coverage_waves/lane_ab_next
       evidence:
       - .github/workflows/w2-ariana-isolated-xml-qa.yml
       - .github/workflows/w2-dmaic-phase-cache-qa.yml
       - docs/ci/CBD_W2_ACTION_LEDGER_20261017.md
     GBOGEB/CODEX:
-      paths: 3
+      paths: 4
       anchor: .github/workflows
       evidence:
       - .github/workflows/qps-keb-wave02-full-exchange.yml
       - federation/qps/wave-02/knowledge_exchange_request.json
       - ssot/release/W02_3P3_SELF_EVAL.yaml
     GBOGEB/cryoplant-project:
-      paths: 17
+      paths: 27
       anchor: tests/coverage_waves
     GBOGEB/pipeline-automation-hub:
       paths: 8
@@ -794,22 +816,22 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 16
-      anchor: tests/coverage_waves/lane_a
+      paths: 31
+      anchor: tests/coverage_waves/lane_ab_next
       evidence:
       - docs/ci/CBD_W3_NATIVE_LOG_SUPPLEMENT_20261017.json
       - governance/qps_triage/challenges/H4_QPS_TRIAGE_W3_P2_DOW_OFFER11.json
       - governance/qps_triage/inputs/H4_QPS_TRIAGE_W3_P2_KEB_OFFER11.json
     GBOGEB/CODEX:
-      paths: 4
+      paths: 5
       anchor: architecture
       evidence:
       - architecture/CODEX_2_0_W03_CENSUS_CLASSIFICATION_METHOD.yaml
       - governance/qps_triage/receipts/H4_QPS_TRIAGE_W3_P1_KEB_OFFER11.json
       - ssot/bridge_rows/H4_QPS_TRIAGE_W3_P1_KEB_OFFER11_COMPONENT_ANALYTICS_v1.yaml
     GBOGEB/cryoplant-project:
-      paths: 20
-      anchor: controls
+      paths: 33
+      anchor: ocd-adr/40_implementation/contract_corrigendum/w03
     GBOGEB/pipeline-automation-hub:
       paths: 25
       anchor: mission-control/qps-triage-ultra
@@ -824,22 +846,22 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 25
-      anchor: tests/coverage_waves/lane_a
+      paths: 46
+      anchor: tests/coverage_waves/lane_ab_next
       evidence:
       - .github/workflows/qps-w04-dow-receipt.yml
       - .github/workflows/w4-dashboard-publication-qa.yml
       - federation/qps/QPS_FED_W04_DOW_REQUEST.yaml
     GBOGEB/CODEX:
-      paths: 27
+      paths: 28
       anchor: ssot/release
       evidence:
       - .github/workflows/qps-w04-keb-receipt.yml
       - PIPELINE/qps_w04_keb_qa_actions.yaml
       - architecture/CODEX_2_0_W04_LOGICAL_ID_CONSUMER_BURNDOWN.yaml
     GBOGEB/cryoplant-project:
-      paths: 32
-      anchor: tests/coverage_waves
+      paths: 51
+      anchor: ocd-adr/40_implementation/contract_corrigendum/w04
     GBOGEB/pipeline-automation-hub:
       paths: 41
       anchor: mission-control/federation-atlas/flightdeck/handover/W4
@@ -854,14 +876,14 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 24
-      anchor: tests/coverage_waves/lane_a
+      paths: 55
+      anchor: tests/coverage_waves/lane_ab_next
       evidence:
       - .github/workflows/qps-w05-bidder-eval-dow.yml
       - docs/ci/W05_STABILITY_TRIAGE_v0.1.yaml
       - docs/ci/W05_STABILIZATION_TRIAGE.yaml
     GBOGEB/CODEX:
-      paths: 36
+      paths: 37
       anchor: ssot/release
       evidence:
       - .github/workflows/qps-w05-bidder-eval-keb-receipt.yml
@@ -884,14 +906,14 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 14
-      anchor: tests/coverage_waves/lane_a
+      paths: 49
+      anchor: tests/coverage_waves/lane_ab_next
       evidence:
       - federation/qps/QPS_FED_W06_COST_FRONTIER_DOW_FEEDBACK_RECEIPT.yaml
       - federation/qps/QPS_FED_W06_COST_FRONTIER_DOW_REQUEST.yaml
       - federation/qps/QPS_FED_W06_COST_FRONTIER_DOW_RETURN.yaml
     GBOGEB/CODEX:
-      paths: 4
+      paths: 5
       anchor: federation/qps
       evidence:
       - engineering_tools/hbhs_ep/source/json/governance_release_wave6.json
@@ -914,14 +936,14 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 15
-      anchor: tests/coverage_waves/lane_a
+      paths: 59
+      anchor: tests/coverage_waves/lane_ab_next
       evidence:
       - MIP/G3CS_CONVERGENCE_V2/W7_POSTMERGE_HANDOVER.md
       - docs/qps/QPS_W07_QUANTITY_COST_DOW_REQUEST_v0.1.yaml
       - federation/qps/QPS_FED_W07_COST_BINDING_DOW_REQUEST.yaml
     GBOGEB/CODEX:
-      paths: 4
+      paths: 5
       anchor: docs/qps
       evidence:
       - docs/qps/QPS_W07_QUANTITY_COST_KEB_REQUEST_v0.1.yaml
@@ -951,7 +973,7 @@ waves:
       - feedback/qps_w08_lifecycle_coverage_graph_request.yaml
       - feedback/qps_w08_pr_head_aht_control_snapshot.yaml
     GBOGEB/CODEX:
-      paths: 6
+      paths: 7
       anchor: feedback
       evidence:
       - feedback/qps_w08_keb_candidate_return_receipt.yaml
@@ -973,6 +995,11 @@ waves:
       - tests/coverage_waves/lane_a/test_l1_w9_artifact_ranking_system.py
       - tests/coverage_waves/lane_a/test_l1_w9_execute_full_dmaic_phases_0_to_8.py
       - tests/coverage_waves/lane_a/test_l1_w9_execute_full_dmaic_phases_0_to_9_v033.py
+    GBOGEB/CODEX:
+      paths: 1
+      anchor: tests/coverage_waves
+      evidence:
+      - tests/coverage_waves/test_w9_semantic_runtime_v1_family.py
     GBOGEB/cryoplant-project:
       paths: 31
       anchor: tests/coverage_waves
@@ -997,7 +1024,7 @@ waves:
       - MIP/G3CS_CONVERGENCE_V2/observatory/w10/CODE_PURPLE_W10_REPO_SPINE.svg
       - MIP/G3CS_CONVERGENCE_V2/observatory/w10/DRIFT_AT_PUBLICATION.md
     GBOGEB/CODEX:
-      paths: 4
+      paths: 5
       anchor: handover/receivers
       evidence:
       - handover/receivers/CP_W10_MYCELIUM_CODEX_20261018.json
@@ -1027,12 +1054,12 @@ waves:
       - MIP/G3CS_CONVERGENCE_V2/observatory/w10/SPINE_DAG_W11.json
       - MIP/G3CS_CONVERGENCE_V2/observatory/w10/SPINE_SIPOC_W11.json
     GBOGEB/CODEX:
-      paths: 3
+      paths: 4
       anchor: schemas
       evidence:
       - schemas/qps_w11_offer_evidence.schema.json
       - src/governance/runtime_validation/wave11_recursive_runtime_audit.py
-      - tests/test_qps_w11_offer_evidence_schema.py
+      - tests/coverage_waves/test_w11_phase_map_governance_perpetual.py
     GBOGEB/cryoplant-project:
       paths: 8
       anchor: ocd-adr/40_implementation
@@ -1043,17 +1070,18 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 21
-      anchor: tests/coverage_waves/lane_b
+      paths: 42
+      anchor: tests/coverage_waves/lane_a
       evidence:
       - MIP/G3CS_CONVERGENCE_V2/observatory/w10/SPINE_STATS_W12.json
       - MIP/G3CS_CONVERGENCE_V2/observatory/w10/W12_LOCAL_QA_RECEIPT.json
       - MIP/G3CS_CONVERGENCE_V2/observatory/w10/W12_NPLUSI_HANDOVER.md
     GBOGEB/CODEX:
-      paths: 1
+      paths: 2
       anchor: src/runtime/orchestration
       evidence:
       - src/runtime/orchestration/wave12_multi_deck_runtime_orchestrator.py
+      - tests/coverage_waves/test_w12_slides_and_receipt_gates.py
     GBOGEB/cryoplant-project:
       paths: 10
       anchor: ocd-adr/40_implementation
@@ -1064,17 +1092,18 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 8
-      anchor: MIP/G3CS_CONVERGENCE_V2/observatory/w10
+      paths: 34
+      anchor: tests/coverage_waves/lane_a
       evidence:
       - .github/workflows/w13-neural-spine.yml
       - MIP/G3CS_CONVERGENCE_V2/observatory/w10/W13_BROWSER_QA.json
       - MIP/G3CS_CONVERGENCE_V2/observatory/w10/W13_NEURAL_SPINE_DATA.json
     GBOGEB/CODEX:
-      paths: 1
+      paths: 2
       anchor: src/runtime/interactive
       evidence:
       - src/runtime/interactive/wave13_interactive_runtime_layer.py
+      - tests/coverage_waves/test_w13_repo_validators.py
     GBOGEB/cryoplant-project:
       paths: 22
       anchor: ocd-adr/40_implementation
@@ -1085,16 +1114,18 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 2
-      anchor: tests/coverage_waves/lane_b
+      paths: 23
+      anchor: tests/coverage_waves/lane_a
       evidence:
-      - tests/coverage_waves/lane_b/test_l2_w14_scripts_ops.py
-      - tests/coverage_waves/lane_b/test_l2_w14_scripts_qps_gm.py
+      - tests/coverage_waves/lane_a/test_l1_w14_agent_health_monitor.py
+      - tests/coverage_waves/lane_a/test_l1_w14_analyze_recent_files.py
+      - tests/coverage_waves/lane_a/test_l1_w14_backbone.py
     GBOGEB/CODEX:
-      paths: 1
+      paths: 2
       anchor: src/runtime/layout
       evidence:
       - src/runtime/layout/wave14_adaptive_semantic_layout_engine.py
+      - tests/coverage_waves/test_w14_bt_pca_scaffolds.py
     GBOGEB/cryoplant-project:
       paths: 2
       anchor: docs
@@ -1110,10 +1141,11 @@ waves:
       evidence:
       - tests/coverage_waves/lane_b/test_l2_w15_qplant_misc.py
     GBOGEB/CODEX:
-      paths: 1
+      paths: 2
       anchor: src/intelligence/graph
       evidence:
       - src/intelligence/graph/wave15_engineering_graph_intelligence.py
+      - tests/coverage_waves/test_w15_qps_semantic_manifests.py
     GBOGEB/cryoplant-project:
       paths: 3
       anchor: docs
@@ -1131,11 +1163,12 @@ waves:
       - MIP/statistics/g3a_w16_epoch.json
       - MIP/statistics/g3a_w16_kpi.py
     GBOGEB/CODEX:
-      paths: 2
+      paths: 3
       anchor: engineering_tools/hbhs_ep/source/json
       evidence:
       - engineering_tools/hbhs_ep/source/json/evidence_proof_wave16.json
       - src/intelligence/query/wave16_semantic_runtime_query_engine.py
+      - tests/coverage_waves/test_w16_qcell_and_debug_binding.py
     GBOGEB/cryoplant-project:
       paths: 6
       anchor: ocd-adr/40_implementation
@@ -1194,12 +1227,12 @@ waves:
       paths: 11
       anchor: docs/lkt_w19
     GBOGEB/pipeline-automation-hub:
-      paths: 4
+      paths: 6
       anchor: docs/mission-control/w19
       evidence:
       - docs/mission-control/w19/README.md
       - docs/mission-control/w19/burndown.html
-      - docs/mission-control/w19/observations.json
+      - docs/mission-control/w19/burndown.template.html
 - key: QPS:W020
   namespace: QPS
   id: W020
@@ -1348,12 +1381,12 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 8
+      paths: 9
       anchor: tests
       evidence:
       - .github/workflows/w29-cbd-temporal-matched-coverage.yml
       - .github/workflows/w29-disjoint-frontier-coverage.yml
-      - tests/test_cbd_temporal_w29_adversarial.py
+      - tests/coverage_waves/lane_ab_next/test_abn_w7_w29_temporal_native_compare.py
     GBOGEB/cryoplant-project:
       paths: 4
       anchor: ocd-adr/40_implementation
@@ -1581,7 +1614,7 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 9
+      paths: 10
       anchor: MIP/EVIDENCE_TO_ADMISSION_OBSERVATORY/global
       evidence:
       - .github/workflows/code-purple-w40-binary-penetration.yml
@@ -1848,7 +1881,7 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 26
+      paths: 29
       anchor: qplant
       evidence:
       - .github/workflows/w52-p2m-helium-proof.yml
@@ -2129,7 +2162,7 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 40
+      paths: 43
       anchor: architecture/w64
       evidence:
       - .github/workflows/w64-3p-r01-retained-baseline.yml
@@ -2316,9 +2349,10 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 2
-      anchor: tests
+      paths: 3
+      anchor: tests/coverage_waves/lane_ab_next
       evidence:
+      - tests/coverage_waves/lane_ab_next/test_abn_w7_w73_build_semantic_topology_rows.py
       - tests/test_w73_semantic_topology.py
       - tools/w73_build_semantic_topology_rows.py
     GBOGEB/CODEX:
@@ -2336,12 +2370,12 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 8
+      paths: 9
       anchor: tests
       evidence:
       - .github/workflows/w74-qplant-k8s-contract.yml
       - docs/ci/MIP_W74_EVIDENCE_DAG_SIPOC.md
-      - tests/test_cbd_native_run_provenance_w74.py
+      - tests/coverage_waves/lane_ab_next/test_abn_w6_w74_paired_pressure.py
     GBOGEB/cryoplant-project:
       paths: 3
       anchor: ocd-adr/40_implementation
@@ -2371,7 +2405,7 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 12
+      paths: 13
       anchor: tests
       evidence:
       - .github/workflows/code-purple-w76-zero-assets.yml
@@ -2384,12 +2418,12 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 14
+      paths: 15
       anchor: tests
       evidence:
       - .github/workflows/w77-phase-runtime-instrumentation.yml
       - docs/ci/W77_ZERO_COVERAGE_BREADTH_SIPOC.md
-      - tests/test_w77_legacy_configurations.py
+      - tests/coverage_waves/lane_ab_next/test_abn_w7_w77_instrumented_semantic_census.py
 - key: QPS:W078
   namespace: QPS
   id: W078
@@ -2397,7 +2431,7 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 7
+      paths: 9
       anchor: architecture/w79
       evidence:
       - .github/workflows/w78-deterministic-work-census.yml
@@ -2410,7 +2444,7 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 13
+      paths: 14
       anchor: architecture/w79
       evidence:
       - .github/workflows/w79-deterministic-multivariate.yml
@@ -2439,7 +2473,7 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 11
+      paths: 12
       anchor: architecture/w81
       evidence:
       - .github/workflows/w81-repair-outcome-block.yml
@@ -2471,7 +2505,7 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 16
+      paths: 18
       anchor: architecture/w83
       evidence:
       - architecture/w83/W83_NG1_CONTROL_v0.1.json
@@ -2487,7 +2521,7 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 6
+      paths: 7
       anchor: architecture
       evidence:
       - abacus_runtime/w84_effectiveness.py
@@ -3046,6 +3080,9 @@ waves:
     - federation/rex/returns/CODEX_W113_PR621_REX_RETURN.yaml
     - federation/rex/returns/W113_3P3_MIP_SESSION_CLOSE.yaml
     - handover/W113_3P3_MIP_SESSION_CLOSE_2026-09-12.md
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/cryoplant-project: receiver
 - key: QPS:W114
   namespace: QPS
   id: W114
@@ -3773,7 +3810,7 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 7
+      paths: 9
       anchor: triage/w189
       evidence:
       - controls/QPS_W189_FEDERATION_SAMPLE4_CURRENT_v1.json
@@ -4080,7 +4117,7 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/cryoplant-project:
-      paths: 4
+      paths: 5
       anchor: handover/session
 - key: QPS:W229
   namespace: QPS
@@ -4763,7 +4800,7 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 7
+      paths: 9
       anchor: qps/visual_regression/w286
       evidence:
       - .github/workflows/w286-gloob-pandoc-p1.yml
@@ -5314,7 +5351,7 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/cryoplant-project:
-      paths: 26
+      paths: 27
       anchor: triage/w363
 - key: QPS:W364
   namespace: QPS
@@ -5323,7 +5360,7 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/cryoplant-project:
-      paths: 70
+      paths: 97
       anchor: triage/w364
 - key: QPS:W365
   namespace: QPS
@@ -5498,4 +5535,19 @@ waves:
   repos:
     GBOGEB/cryoplant-project:
       paths: 1
+      anchor: triage/w364
+    GBOGEB/pipeline-automation-hub:
+      paths: 2
+      anchor: .github/workflows
+      evidence:
+      - .github/workflows/w381-adaptive-pulse-tempo.yml
+      - tools/metric-atlas/docs/ADAPTIVE_PULSE_W381.md
+- key: QPS:W382
+  namespace: QPS
+  id: W382
+  confidence: exact
+  status: OBSERVED
+  repos:
+    GBOGEB/cryoplant-project:
+      paths: 7
       anchor: triage/w364
