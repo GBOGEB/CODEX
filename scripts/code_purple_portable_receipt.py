@@ -50,6 +50,12 @@ def verify(record, source_payload, consumer_payload):
         reasons.append("SOURCE_RECEIPT_BYTES_MISMATCH")
     if actual_consumer != record.get("consumer_receipt_sha256"):
         reasons.append("CONSUMER_RECEIPT_BYTES_MISMATCH")
+    # The repository names are bound through the hashed payloads, so a receipt copied under other names
+    # no longer matches (#1228 review).
+    if source_payload.get("repo") != source_repo:
+        reasons.append("SOURCE_PAYLOAD_REPO_MISMATCH")
+    if consumer_payload.get("repo") != target_repo:
+        reasons.append("CONSUMER_PAYLOAD_REPO_MISMATCH")
     if source_payload.get("source_sha") != record.get("observed_head_sha"):
         reasons.append("SOURCE_PAYLOAD_HEAD_MISMATCH")
     if consumer_payload.get("source_sha") != record.get("consumer_head_sha"):
