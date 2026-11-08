@@ -15,10 +15,10 @@ TARGET = "b" * 40
 
 
 def sample():
-    source_payload = dict(source_sha=SOURCE, authority_transfer=False,
+    source_payload = dict(repo="GBOGEB/CODEX", source_sha=SOURCE, authority_transfer=False,
                           asset_type="preflight", data={"fixture": "safe"})
     source_receipt = hashlib.sha256(module.canonical_bytes(source_payload)).hexdigest()
-    consumer_payload = dict(source_sha=TARGET, authority_transfer=False,
+    consumer_payload = dict(repo="GBOGEB/ABACUS", source_sha=TARGET, authority_transfer=False,
                             source_receipt_sha256=source_receipt)
     consumer_receipt = hashlib.sha256(module.canonical_bytes(consumer_payload)).hexdigest()
     record = dict(
@@ -77,6 +77,22 @@ class PortableReceiptTests(unittest.TestCase):
         r, p, c = sample()
         r["consumer_repo"] = r["repo"]
         self.assertIn("ADJACENT_REPOSITORY_REQUIRED", module.verify(r, p, c)["reasons"])
+
+    def test_repositories_are_bound_by_the_hashed_payloads(self):
+        """#1228 Codex review r4412589062: valid receipts copied under other repository names still passed."""
+        r, s, c = sample()
+        r["repo"], r["consumer_repo"] = "GBOGEB/OTHER", "GBOGEB/ELSEWHERE"
+        out = module.verify(r, s, c)
+        self.assertEqual(out["classification"], "HOLD")
+        self.assertIn("SOURCE_PAYLOAD_REPO_MISMATCH", out["reasons"])
+        self.assertIn("CONSUMER_PAYLOAD_REPO_MISMATCH", out["reasons"])
+
+    def test_workflow_runs_when_the_projector_changes(self):
+        """#1228 Codex review r4412589107: the adapter imports the canonical projector."""
+        workflow = (FILE.parents[1] / ".github/workflows/code-purple-portable-receipt.yml").read_text()
+        paths = workflow.split("paths:", 1)[1].split("workflow_dispatch", 1)[0]
+        for path in ("scripts/code_purple_iteration.py", "tests/test_code_purple_iteration.py"):
+            self.assertIn(path, paths)
 
     def test_payload_cannot_transfer_authority(self):
         r, p, c = sample()
