@@ -3,11 +3,19 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 from typing import Any
 
 import yaml
 from jsonschema import Draft202012Validator
+
+# Run as `python scripts/validate_master_contract_ssot.py`, Python puts only
+# scripts/ on sys.path, so the repo-root `codex` package is not importable.
+# Bootstrap the repo root (resolved via pathlib, independent of the CWD).
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 from codex.ssot_resolver import resolve_ssot
 
