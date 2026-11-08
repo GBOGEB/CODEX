@@ -312,6 +312,13 @@ def test_render_html_is_a_document_containing_the_source(tmp_path):
     assert "x &amp; y" in html or "x & y" in html
 
 
+def test_render_html_keeps_a_leading_newline():
+    """#1220 Codex review r4395260405: HTML parsers drop the first LF after <pre>, so a sacrificial LF must
+    precede the text; a document starting with a blank line then keeps it."""
+    html = render.render_html_document("t", "\nfirst line")
+    assert '<pre style="white-space: pre-wrap">\n\nfirst line</pre>' in html
+
+
 def test_render_errors(tmp_path):
     pipe = render.SlugRenderPipeline(tmp_path / "out")
     assert pipe.process_transform(tmp_path / "nope", "html").startswith("[-] Error: Source asset missing")
