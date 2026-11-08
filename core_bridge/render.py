@@ -13,7 +13,8 @@ def render_html_document(title, text):
         "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n"
         "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
         f"<title>{escape(title)}</title>\n</head>\n"
-        f"<body><pre style=\"white-space: pre-wrap\">{escape(text)}</pre></body>\n</html>\n"
+        # The parser drops one LF right after <pre>; this sacrificial one keeps a leading blank line.
+        f"<body><pre style=\"white-space: pre-wrap\">\n{escape(text)}</pre></body>\n</html>\n"
     )
 
 
