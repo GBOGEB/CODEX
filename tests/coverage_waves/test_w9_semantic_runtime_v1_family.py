@@ -188,7 +188,8 @@ def test_reasoning_intent():
     assert it.category == "environmental_control" and it.confidence == pytest.approx(0.83)
     assert it.reasoning[-1].startswith("Combined HVAC and PCW")
     capped = rt.infer_intent({"i": list(rt.UTILITY_KEYWORDS) * 2})
-    assert capped.confidence == pytest.approx(0.99) or capped.confidence < 0.99
+    # #1216 review r4434900802: every utility keyword plus HVAC/PCW caps at 0.99; nothing lower passes.
+    assert capped.confidence == pytest.approx(0.99)
 
 
 def test_reasoning_anomalies_and_dependencies():
