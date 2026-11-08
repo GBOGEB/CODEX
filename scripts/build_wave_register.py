@@ -309,7 +309,18 @@ def main() -> int:
 
     naming = wave_claims.load_naming_rules()
     observed = {e["key"]: set(e["repos"]) for e in entries}
-    claims, violations, census = wave_claims.rollup(claim_sets, observed, set(lineage), naming)
+    # Retired names and aliases stay reserved: carry the previous register's index forward.
+    previous: list[dict] = []
+    if Path(a.out).is_file():
+        try:
+            prior = yaml.safe_load(Path(a.out).read_text(encoding="utf-8")) or {}
+            previous = list((prior.get("dedup") or {}).get("reserved") or [])
+        except yaml.YAMLError:
+            previous = []
+    claims, violations, census = wave_claims.rollup(
+        claim_sets, observed, set(lineage), naming, reserved=previous
+    )
+    reserved = census.pop("reserved")
     for e in entries:
         c = claims.get(e["key"])
         if c:
@@ -354,6 +365,7 @@ def main() -> int:
             "rules": "federation/waves/WAVE_NAMING_RULES.yaml",
             "claims_file": wave_claims.CLAIMS_PATH,
             "census": census,
+            "reserved": reserved,
             "claimed_unobserved": {k: v for k, v in sorted(claims.items()) if k not in observed},
             "violations": violations,
         },

@@ -1,6 +1,8 @@
 """Contract tests: wave naming ruleset, per-repo claims, federation roll-up and dedup."""
 from __future__ import annotations
 
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -169,3 +171,39 @@ def test_committed_register_rollup_is_clean():
     w113 = next(e for e in reg["waves"] if e["key"] == "QPS:W113")
     assert w113["claim"]["owner"] == "GBOGEB/CODEX" and w113["status"] == "ACTIVE"
     assert w113["claim"]["name"] == "W113_MESH_CLOSURE_CONTROLLER"
+
+
+def test_register_keeps_retired_names_reserved_across_runs(tmp_path):
+    """dedup.reserved is carried from one register run to the next."""
+    repo = tmp_path / "member"
+    repo.mkdir()
+    build_wave_register.git(repo, "init", "-q")
+
+    def commit(claims: dict):
+        (repo / ".waves").mkdir(exist_ok=True)
+        (repo / ".waves" / "WAVE_CLAIMS.yaml").write_text(yaml.safe_dump(claims), encoding="utf-8")
+        (repo / "triage" / "w300").mkdir(parents=True, exist_ok=True)
+        (repo / "triage" / "w300" / "note.md").write_text("x\n", encoding="utf-8")
+        (repo / "triage" / "w301").mkdir(parents=True, exist_ok=True)
+        (repo / "triage" / "w301" / "note.md").write_text("x\n", encoding="utf-8")
+        build_wave_register.git(repo, "add", ".")
+        build_wave_register.git(repo, "-c", "user.name=t", "-c", "user.email=t@example.invalid",
+                                "commit", "-qm", "c", "--allow-empty")
+
+    out = tmp_path / "REGISTER.yaml"
+    cmd = [sys.executable, str(ROOT / "scripts" / "build_wave_register.py"), "--strict",
+           "--repo", f"GBOGEB/M={repo}", "--out", str(out)]
+    commit(doc("GBOGEB/M", [{"key": "QPS:W300", "name": "W300_LEGACY_PLANT", "status": "CLOSED",
+                             "aliases": ["legacy-plant"]}]))
+    first = subprocess.run(cmd, capture_output=True, text=True)
+    assert first.returncode == 0, first.stdout + first.stderr
+    reserved = yaml.safe_load(out.read_text(encoding="utf-8"))["dedup"]["reserved"]
+    assert {(e["kind"], e["key"]) for e in reserved} == {("name", "QPS:W300"), ("alias", "QPS:W300")}
+    # W300's claim is removed; W301 reuses the retired name and alias.
+    commit(doc("GBOGEB/M", [{"key": "QPS:W301", "name": "W300_LEGACY_PLANT", "status": "ACTIVE",
+                             "aliases": ["legacy-plant"]}]))
+    second = subprocess.run(cmd, capture_output=True, text=True)
+    assert second.returncode == 2, second.stdout + second.stderr
+    found = yaml.safe_load(out.read_text(encoding="utf-8"))["dedup"]["violations"]
+    assert {(v["code"], v["key"]) for v in found} >= {
+        ("D2_NAME_REUSE", "QPS:W301"), ("D3_ALIAS_CLASH", "QPS:W301")}
