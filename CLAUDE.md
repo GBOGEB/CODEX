@@ -31,13 +31,15 @@ fix the earliest failing stage first:
 A red governance-gate or scan-pr is usually a symptom, not the disease. Do
 not patch a downstream gate while an upstream stage is red.
 
-> As of 2026-09-04, ruff is pinned (`ruff==0.16.6`) and now runs as a
-> report-only step in `ci.yml`, but is **not yet a blocking gate** — a
-> full-repo run currently surfaces ~1,000 pre-existing violations under
-> ruff's default rule set that predate this pin. Promoting the step to
-> blocking is tracked as a follow-up once that backlog is triaged; until
-> then, "ruff first" means "read the ruff step's output first," not "a red
-> ruff step fails the build."
+> ruff is pinned (`ruff==0.16.6`) and runs as a **ratchet** (since 2026-11-08):
+> `scripts/ruff_ratchet.py` fails the `ruff` step, which the governance snapshot
+> treats as mandatory, when the violation count rises above `max_violations` in
+> `ci/ruff_baseline.json` (1,443 pre-pin violations at introduction). New code
+> must be ruff-clean; when you fix existing violations, lower the baseline in the
+> same PR. A ruff version other than the pin, or unreadable output, is UNKNOWN
+> (exit 3), never a pass. Before the ratchet, the step was `continue-on-error`
+> while governance required it, so `CI` was red on every run from #1250
+> (2026-11-02) onward.
 
 ## Dependency pinning discipline
 
