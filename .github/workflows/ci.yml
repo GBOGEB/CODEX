@@ -42,10 +42,11 @@ jobs:
           pip install pytest "ruff==0.16.6"
           pip install -e .
 
-      - name: Lint (ruff)
+      - name: Lint (ruff ratchet)
         id: ruff
-        continue-on-error: true
-        run: ruff check . --exclude tests
+        # Mandatory for new violations only: fails when the count rises above ci/ruff_baseline.json.
+        # The pre-pin backlog stays visible in the RUFF_RATCHET line and is paid down by lowering the baseline.
+        run: python scripts/ruff_ratchet.py
 
       - name: Check CODEX authority integrity
         id: authority_integrity
