@@ -238,6 +238,11 @@
           "hx3_lmtd_k": 1.64,
           "hx4_lmtd_k": 1.24,
           "hx5_lmtd_k": 0.65
+        },
+        "jt_stage": {
+          "warm_end_w": -67.64,
+          "refrigeration_w": 50.0,
+          "liquefaction_w": 17.64
         }
       },
       "note": "Thermal balances printed as closed (0.00 W) for both Brayton stages and the JT stage. original PDF, figure rasterised at 400 dpi and read cell by cell, 2026-11-02"
@@ -292,6 +297,11 @@
           "brayton1_w": 10.18,
           "brayton2_w": -0.27,
           "joule_thomson_w": -0.03
+        },
+        "jt_stage": {
+          "warm_end_w": -75.2,
+          "refrigeration_w": 50.0,
+          "liquefaction_w": 25.13
         }
       },
       "note": "The series sheet runs at 16.00 bar HP with a 7.00 bar intermediate pressure, not the 14 bar of the parallel case, although the text says process conditions are similar. Its printed balances do not close (Brayton 1 +10.18 W, Brayton 2 -0.27 W, JT -0.03 W). Leading digits of some HP temperatures are hidden by the turbine arrow and are read from the adjacent turbine cells. original PDF, figure rasterised at 400 dpi and read cell by cell, 2026-11-02"
@@ -445,13 +455,7 @@
       "note": "Equivalent duty, same high pressure, same HX temperature differences and turbine efficiency. original PDF, figure rasterised at 400 dpi and read cell by cell, 2026-11-02"
     }
   ],
-  "open_items": [
-    {
-      "id": "G3-OPEN-004",
-      "item": "Extend tools/claude_cycle_model.py to the two-turbine parallel and series cases and the LN2-precooled refrigerator/liquefier, reproducing the benchmarks above",
-      "due": "2026-11-09"
-    }
-  ],
+  "open_items": [],
   "closed_items": [
     {
       "id": "G3-OPEN-001",
@@ -467,6 +471,11 @@
       "id": "G3-OPEN-003",
       "closed": "2026-10-26",
       "resolution": "One-turbine reproduction in tools/claude_cycle_model.py (#1209): 19/19 printed values within 0.06 %"
+    },
+    {
+      "id": "G3-OPEN-004",
+      "closed": "2026-11-09",
+      "resolution": "tools/claude_cycle_model.py reproduces Figs. 3.51, 3.53, 3.60, 3.61 and Table 3.8: 47/47 parallel and LN2 values within 1 % or the printed rounding (RMS 0.26 %); series sheet shown to be unconverged; refrigerator sheets above the model optimum"
     }
   ]
 }

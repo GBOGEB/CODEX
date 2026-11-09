@@ -608,5 +608,869 @@
       "min_flow_g_s": 23.933,
       "w_iso_kw": 37.407
     }
-  ]
+  ],
+  "two_turbine": {
+    "cases": [
+      {
+        "id": "parallel",
+        "label": "Two parallel turbines, 50 W + 0.5 g/s",
+        "figure": "Fig. 3.51",
+        "design": {
+          "refrigeration_w": 50.0,
+          "liquefaction_g_s": 0.5,
+          "p_high_bar": 14.0,
+          "p_low_bar": 1.2,
+          "t_warm_k": 300.0,
+          "warm_end_dt_k": 3.0,
+          "hx3_warm_end_dt_k": 0.5,
+          "jt_hx_warm_end_dt_k": 0.2,
+          "turbine_isentropic_efficiency": 0.75,
+          "t_compressor_k": 300.0
+        },
+        "at_book_point": {
+          "warm_turbine_discharge_t_k": 51.69,
+          "cold_turbine_discharge_t_k": 9.68,
+          "warm_turbine_inlet_t_k": 97.1529,
+          "cold_turbine_inlet_t_k": 19.187,
+          "jt_mass_flow_g_s": 4.4804,
+          "warm_turbine_mass_flow_g_s": 3.6031,
+          "cold_turbine_mass_flow_g_s": 5.0128,
+          "cycle_hp_mass_flow_g_s": 13.0962,
+          "cycle_lp_return_mass_flow_g_s": 12.5962,
+          "warm_turbine_power_w": -862.2381,
+          "cold_turbine_power_w": -219.9168,
+          "total_turbine_power_w": -1082.1549,
+          "isothermal_compressor_power_kw": 20.0501
+        },
+        "optimum": {
+          "warm_turbine_discharge_t_k": 49.9169,
+          "cold_turbine_discharge_t_k": 9.1812,
+          "warm_turbine_inlet_t_k": 93.8232,
+          "cold_turbine_inlet_t_k": 18.3091,
+          "jt_mass_flow_g_s": 4.1457,
+          "warm_turbine_mass_flow_g_s": 3.7555,
+          "cold_turbine_mass_flow_g_s": 5.1473,
+          "cycle_hp_mass_flow_g_s": 13.0484,
+          "cycle_lp_return_mass_flow_g_s": 12.5484,
+          "warm_turbine_power_w": -868.09,
+          "cold_turbine_power_w": -213.1215,
+          "total_turbine_power_w": -1081.2115,
+          "isothermal_compressor_power_kw": 19.977
+        },
+        "deviations": [
+          {
+            "case": "parallel",
+            "quantity": "cycle_hp_mass_flow_g_s",
+            "book": 13.1,
+            "model": 13.0962,
+            "abs_dev": -0.0038,
+            "rel_dev": -0.000291,
+            "within_print_precision": true
+          },
+          {
+            "case": "parallel",
+            "quantity": "cycle_lp_return_mass_flow_g_s",
+            "book": 12.6,
+            "model": 12.5962,
+            "abs_dev": -0.0038,
+            "rel_dev": -0.000303,
+            "within_print_precision": true
+          },
+          {
+            "case": "parallel",
+            "quantity": "isothermal_compressor_power_kw",
+            "book": 20.06,
+            "model": 20.0501,
+            "abs_dev": -0.0099,
+            "rel_dev": -0.000493,
+            "within_print_precision": false
+          },
+          {
+            "case": "parallel",
+            "quantity": "warm_turbine.inlet_t_k",
+            "book": 97.15,
+            "model": 97.1529,
+            "abs_dev": 0.0029,
+            "rel_dev": 3e-05,
+            "within_print_precision": true
+          },
+          {
+            "case": "parallel",
+            "quantity": "warm_turbine.mass_flow_g_s",
+            "book": 3.6,
+            "model": 3.6031,
+            "abs_dev": 0.0031,
+            "rel_dev": 0.000848,
+            "within_print_precision": true
+          },
+          {
+            "case": "parallel",
+            "quantity": "warm_turbine.power_w",
+            "book": 862.0,
+            "model": 862.2381,
+            "abs_dev": 0.2381,
+            "rel_dev": 0.000276,
+            "within_print_precision": true
+          },
+          {
+            "case": "parallel",
+            "quantity": "cold_turbine.inlet_t_k",
+            "book": 19.19,
+            "model": 19.187,
+            "abs_dev": -0.003,
+            "rel_dev": -0.000159,
+            "within_print_precision": true
+          },
+          {
+            "case": "parallel",
+            "quantity": "cold_turbine.mass_flow_g_s",
+            "book": 5.01,
+            "model": 5.0128,
+            "abs_dev": 0.0028,
+            "rel_dev": 0.00055,
+            "within_print_precision": true
+          },
+          {
+            "case": "parallel",
+            "quantity": "cold_turbine.power_w",
+            "book": 220.0,
+            "model": 219.9168,
+            "abs_dev": -0.0832,
+            "rel_dev": -0.000378,
+            "within_print_precision": true
+          },
+          {
+            "case": "parallel",
+            "quantity": "jt_mass_flow_g_s",
+            "book": 4.48,
+            "model": 4.4804,
+            "abs_dev": 0.0004,
+            "rel_dev": 8.4e-05,
+            "within_print_precision": true
+          },
+          {
+            "case": "parallel",
+            "quantity": "total_turbine_power_w",
+            "book": 1082.0,
+            "model": 1082.1549,
+            "abs_dev": 0.1549,
+            "rel_dev": 0.000143,
+            "within_print_precision": true
+          }
+        ],
+        "stats": {
+          "n": 11,
+          "max_abs_rel_dev": 0.000848,
+          "rms_rel_dev": 0.000395,
+          "mean_abs_rel_dev": 0.000323,
+          "within_tolerance": 11,
+          "tolerance_rel": 0.01,
+          "within_tolerance_or_print_precision": 11
+        }
+      },
+      {
+        "id": "ln2_refrigerator",
+        "label": "LN2-precooled refrigerator, 100 W",
+        "figure": "Fig. 3.60 (right)",
+        "design": {
+          "refrigeration_w": 100.0,
+          "liquefaction_g_s": 0.0,
+          "p_high_bar": 14.0,
+          "p_low_bar": 1.2,
+          "t_warm_k": 80.0,
+          "warm_end_dt_k": 1.0,
+          "hx3_warm_end_dt_k": 0.5,
+          "jt_hx_warm_end_dt_k": 0.2,
+          "turbine_isentropic_efficiency": 0.75,
+          "t_compressor_k": 300.0
+        },
+        "at_book_point": {
+          "warm_turbine_discharge_t_k": 23.89,
+          "cold_turbine_discharge_t_k": 11.58,
+          "warm_turbine_inlet_t_k": 45.1346,
+          "cold_turbine_inlet_t_k": 22.5645,
+          "jt_mass_flow_g_s": 7.5102,
+          "warm_turbine_mass_flow_g_s": 0.8178,
+          "cold_turbine_mass_flow_g_s": 1.6135,
+          "cycle_hp_mass_flow_g_s": 9.9415,
+          "cycle_lp_return_mass_flow_g_s": 9.9415,
+          "warm_turbine_power_w": -90.8121,
+          "cold_turbine_power_w": -85.7229,
+          "total_turbine_power_w": -176.5351,
+          "isothermal_compressor_power_kw": 15.2203,
+          "ln2_duty_w": 108.5346,
+          "nitrogen_flow_g_s": 0.2542
+        },
+        "optimum": {
+          "warm_turbine_discharge_t_k": 17.3982,
+          "cold_turbine_discharge_t_k": 7.9868,
+          "warm_turbine_inlet_t_k": 33.1366,
+          "cold_turbine_inlet_t_k": 16.2228,
+          "jt_mass_flow_g_s": 5.0103,
+          "warm_turbine_mass_flow_g_s": 1.1965,
+          "cold_turbine_mass_flow_g_s": 1.8462,
+          "cycle_hp_mass_flow_g_s": 8.0529,
+          "cycle_lp_return_mass_flow_g_s": 8.0529,
+          "warm_turbine_power_w": -96.622,
+          "cold_turbine_power_w": -65.3742,
+          "total_turbine_power_w": -161.9961,
+          "isothermal_compressor_power_kw": 12.329,
+          "ln2_duty_w": 87.9169,
+          "nitrogen_flow_g_s": 0.2059
+        },
+        "deviations": [
+          {
+            "case": "ln2_refrigerator",
+            "quantity": "cycle_flow_g_s",
+            "book": 9.94,
+            "model": 9.9415,
+            "abs_dev": 0.0015,
+            "rel_dev": 0.000148,
+            "within_print_precision": true
+          },
+          {
+            "case": "ln2_refrigerator",
+            "quantity": "isothermal_compressor_power_kw",
+            "book": 15.2,
+            "model": 15.2203,
+            "abs_dev": 0.0203,
+            "rel_dev": 0.001334,
+            "within_print_precision": true
+          },
+          {
+            "case": "ln2_refrigerator",
+            "quantity": "nitrogen_flow_g_s",
+            "book": 0.25,
+            "model": 0.2542,
+            "abs_dev": 0.0042,
+            "rel_dev": 0.016627,
+            "within_print_precision": true
+          },
+          {
+            "case": "ln2_refrigerator",
+            "quantity": "nitrogen_power_w",
+            "book": 108.41,
+            "model": 108.5346,
+            "abs_dev": 0.1246,
+            "rel_dev": 0.001149,
+            "within_print_precision": false
+          },
+          {
+            "case": "ln2_refrigerator",
+            "quantity": "turbine_power_w",
+            "book": 177.0,
+            "model": 176.5351,
+            "abs_dev": -0.4649,
+            "rel_dev": -0.002627,
+            "within_print_precision": true
+          },
+          {
+            "case": "ln2_refrigerator",
+            "quantity": "warm_turbine.inlet_t_k",
+            "book": 45.14,
+            "model": 45.1346,
+            "abs_dev": -0.0054,
+            "rel_dev": -0.000121,
+            "within_print_precision": false
+          },
+          {
+            "case": "ln2_refrigerator",
+            "quantity": "warm_turbine.mass_flow_g_s",
+            "book": 0.82,
+            "model": 0.8178,
+            "abs_dev": -0.0022,
+            "rel_dev": -0.002709,
+            "within_print_precision": true
+          },
+          {
+            "case": "ln2_refrigerator",
+            "quantity": "warm_turbine.power_w",
+            "book": 91.0,
+            "model": 90.8121,
+            "abs_dev": -0.1879,
+            "rel_dev": -0.002064,
+            "within_print_precision": true
+          },
+          {
+            "case": "ln2_refrigerator",
+            "quantity": "cold_turbine.inlet_t_k",
+            "book": 22.57,
+            "model": 22.5645,
+            "abs_dev": -0.0055,
+            "rel_dev": -0.000245,
+            "within_print_precision": false
+          },
+          {
+            "case": "ln2_refrigerator",
+            "quantity": "cold_turbine.mass_flow_g_s",
+            "book": 1.61,
+            "model": 1.6135,
+            "abs_dev": 0.0035,
+            "rel_dev": 0.002174,
+            "within_print_precision": true
+          },
+          {
+            "case": "ln2_refrigerator",
+            "quantity": "cold_turbine.power_w",
+            "book": 86.0,
+            "model": 85.7229,
+            "abs_dev": -0.2771,
+            "rel_dev": -0.003222,
+            "within_print_precision": true
+          },
+          {
+            "case": "ln2_refrigerator",
+            "quantity": "jt_mass_flow_g_s",
+            "book": 7.51,
+            "model": 7.5102,
+            "abs_dev": 0.0002,
+            "rel_dev": 2.5e-05,
+            "within_print_precision": true
+          }
+        ],
+        "stats": {
+          "n": 12,
+          "max_abs_rel_dev": 0.016627,
+          "rms_rel_dev": 0.005109,
+          "mean_abs_rel_dev": 0.002704,
+          "within_tolerance": 11,
+          "tolerance_rel": 0.01,
+          "within_tolerance_or_print_precision": 12
+        }
+      },
+      {
+        "id": "reference_refrigerator",
+        "label": "Refrigerator without LN2, 100 W (no valid sheet)",
+        "figure": "Table 3.8",
+        "design": {
+          "refrigeration_w": 100.0,
+          "liquefaction_g_s": 0.0,
+          "p_high_bar": 14.0,
+          "p_low_bar": 1.2,
+          "t_warm_k": 300.0,
+          "warm_end_dt_k": 3.0,
+          "hx3_warm_end_dt_k": 0.5,
+          "jt_hx_warm_end_dt_k": 0.2,
+          "turbine_isentropic_efficiency": 0.75,
+          "t_compressor_k": 300.0
+        },
+        "at_book_point": null,
+        "optimum": {
+          "warm_turbine_discharge_t_k": 32.2356,
+          "cold_turbine_discharge_t_k": 8.3708,
+          "warm_turbine_inlet_t_k": 60.6876,
+          "cold_turbine_inlet_t_k": 16.8913,
+          "jt_mass_flow_g_s": 5.1355,
+          "warm_turbine_mass_flow_g_s": 1.1627,
+          "cold_turbine_mass_flow_g_s": 2.8646,
+          "cycle_hp_mass_flow_g_s": 9.1629,
+          "cycle_lp_return_mass_flow_g_s": 9.1629,
+          "warm_turbine_power_w": -174.047,
+          "cold_turbine_power_w": -107.0051,
+          "total_turbine_power_w": -281.0521,
+          "isothermal_compressor_power_kw": 14.0283
+        },
+        "deviations": [],
+        "stats": null
+      },
+      {
+        "id": "liquefier_reference",
+        "label": "Liquefier without LN2, 1 g/s",
+        "figure": "Fig. 3.61 (left)",
+        "design": {
+          "refrigeration_w": 0.0,
+          "liquefaction_g_s": 1.0,
+          "p_high_bar": 14.0,
+          "p_low_bar": 1.2,
+          "t_warm_k": 300.0,
+          "warm_end_dt_k": 3.0,
+          "hx3_warm_end_dt_k": 0.5,
+          "jt_hx_warm_end_dt_k": 0.2,
+          "turbine_isentropic_efficiency": 0.75,
+          "t_compressor_k": 300.0
+        },
+        "at_book_point": {
+          "warm_turbine_discharge_t_k": 53.16,
+          "cold_turbine_discharge_t_k": 9.98,
+          "warm_turbine_inlet_t_k": 99.914,
+          "cold_turbine_inlet_t_k": 19.7168,
+          "jt_mass_flow_g_s": 3.2949,
+          "warm_turbine_mass_flow_g_s": 6.3296,
+          "cold_turbine_mass_flow_g_s": 7.0121,
+          "cycle_hp_mass_flow_g_s": 16.6366,
+          "cycle_lp_return_mass_flow_g_s": 15.6366,
+          "warm_turbine_power_w": -1557.5203,
+          "cold_turbine_power_w": -317.9757,
+          "total_turbine_power_w": -1875.496,
+          "isothermal_compressor_power_kw": 25.4705
+        },
+        "optimum": {
+          "warm_turbine_discharge_t_k": 53.1581,
+          "cold_turbine_discharge_t_k": 9.9788,
+          "warm_turbine_inlet_t_k": 99.9104,
+          "cold_turbine_inlet_t_k": 19.7146,
+          "jt_mass_flow_g_s": 3.2939,
+          "warm_turbine_mass_flow_g_s": 6.3299,
+          "cold_turbine_mass_flow_g_s": 7.0128,
+          "cycle_hp_mass_flow_g_s": 16.6366,
+          "cycle_lp_return_mass_flow_g_s": 15.6366,
+          "warm_turbine_power_w": -1557.5329,
+          "cold_turbine_power_w": -317.9631,
+          "total_turbine_power_w": -1875.496,
+          "isothermal_compressor_power_kw": 25.4705
+        },
+        "deviations": [
+          {
+            "case": "liquefier_reference",
+            "quantity": "cycle_hp_mass_flow_g_s",
+            "book": 16.64,
+            "model": 16.6366,
+            "abs_dev": -0.0034,
+            "rel_dev": -0.000202,
+            "within_print_precision": true
+          },
+          {
+            "case": "liquefier_reference",
+            "quantity": "cycle_lp_return_mass_flow_g_s",
+            "book": 15.64,
+            "model": 15.6366,
+            "abs_dev": -0.0034,
+            "rel_dev": -0.000215,
+            "within_print_precision": true
+          },
+          {
+            "case": "liquefier_reference",
+            "quantity": "isothermal_compressor_power_kw",
+            "book": 25.49,
+            "model": 25.4705,
+            "abs_dev": -0.0195,
+            "rel_dev": -0.000764,
+            "within_print_precision": false
+          },
+          {
+            "case": "liquefier_reference",
+            "quantity": "warm_turbine.inlet_t_k",
+            "book": 99.91,
+            "model": 99.914,
+            "abs_dev": 0.004,
+            "rel_dev": 4e-05,
+            "within_print_precision": true
+          },
+          {
+            "case": "liquefier_reference",
+            "quantity": "warm_turbine.mass_flow_g_s",
+            "book": 6.33,
+            "model": 6.3296,
+            "abs_dev": -0.0004,
+            "rel_dev": -5.9e-05,
+            "within_print_precision": true
+          },
+          {
+            "case": "liquefier_reference",
+            "quantity": "warm_turbine.power_w",
+            "book": 1558.0,
+            "model": 1557.5203,
+            "abs_dev": -0.4797,
+            "rel_dev": -0.000308,
+            "within_print_precision": true
+          },
+          {
+            "case": "liquefier_reference",
+            "quantity": "cold_turbine.inlet_t_k",
+            "book": 19.71,
+            "model": 19.7168,
+            "abs_dev": 0.0068,
+            "rel_dev": 0.000344,
+            "within_print_precision": false
+          },
+          {
+            "case": "liquefier_reference",
+            "quantity": "cold_turbine.mass_flow_g_s",
+            "book": 7.01,
+            "model": 7.0121,
+            "abs_dev": 0.0021,
+            "rel_dev": 0.000306,
+            "within_print_precision": true
+          },
+          {
+            "case": "liquefier_reference",
+            "quantity": "cold_turbine.power_w",
+            "book": 318.0,
+            "model": 317.9757,
+            "abs_dev": -0.0243,
+            "rel_dev": -7.6e-05,
+            "within_print_precision": true
+          },
+          {
+            "case": "liquefier_reference",
+            "quantity": "jt_mass_flow_g_s",
+            "book": 3.29,
+            "model": 3.2949,
+            "abs_dev": 0.0049,
+            "rel_dev": 0.001481,
+            "within_print_precision": true
+          },
+          {
+            "case": "liquefier_reference",
+            "quantity": "turbine_power_w",
+            "book": 1875.0,
+            "model": 1875.496,
+            "abs_dev": 0.496,
+            "rel_dev": 0.000265,
+            "within_print_precision": true
+          }
+        ],
+        "stats": {
+          "n": 11,
+          "max_abs_rel_dev": 0.001481,
+          "rms_rel_dev": 0.000544,
+          "mean_abs_rel_dev": 0.000369,
+          "within_tolerance": 11,
+          "tolerance_rel": 0.01,
+          "within_tolerance_or_print_precision": 11
+        }
+      },
+      {
+        "id": "liquefier_ln2",
+        "label": "LN2-precooled liquefier, 1 g/s",
+        "figure": "Fig. 3.61 (right)",
+        "design": {
+          "refrigeration_w": 0.0,
+          "liquefaction_g_s": 1.0,
+          "p_high_bar": 14.0,
+          "p_low_bar": 1.2,
+          "t_warm_k": 80.0,
+          "warm_end_dt_k": 1.0,
+          "hx3_warm_end_dt_k": 0.5,
+          "jt_hx_warm_end_dt_k": 0.2,
+          "turbine_isentropic_efficiency": 0.75,
+          "t_compressor_k": 300.0
+        },
+        "at_book_point": {
+          "warm_turbine_discharge_t_k": 24.48,
+          "cold_turbine_discharge_t_k": 8.32,
+          "warm_turbine_inlet_t_k": 46.2306,
+          "cold_turbine_inlet_t_k": 16.8027,
+          "jt_mass_flow_g_s": 2.2874,
+          "warm_turbine_mass_flow_g_s": 3.153,
+          "cold_turbine_mass_flow_g_s": 3.3202,
+          "cycle_hp_mass_flow_g_s": 8.7605,
+          "cycle_lp_return_mass_flow_g_s": 7.7605,
+          "warm_turbine_power_w": -358.765,
+          "cold_turbine_power_w": -123.17,
+          "total_turbine_power_w": -481.935,
+          "isothermal_compressor_power_kw": 13.4123,
+          "ln2_duty_w": 1229.0624,
+          "nitrogen_flow_g_s": 2.8781
+        },
+        "optimum": {
+          "warm_turbine_discharge_t_k": 24.4753,
+          "cold_turbine_discharge_t_k": 8.3159,
+          "warm_turbine_inlet_t_k": 46.2219,
+          "cold_turbine_inlet_t_k": 16.7956,
+          "jt_mass_flow_g_s": 2.2855,
+          "warm_turbine_mass_flow_g_s": 3.1538,
+          "cold_turbine_mass_flow_g_s": 3.3211,
+          "cycle_hp_mass_flow_g_s": 8.7605,
+          "cycle_lp_return_mass_flow_g_s": 7.7605,
+          "warm_turbine_power_w": -358.7979,
+          "cold_turbine_power_w": -123.137,
+          "total_turbine_power_w": -481.935,
+          "isothermal_compressor_power_kw": 13.4123,
+          "ln2_duty_w": 1229.0624,
+          "nitrogen_flow_g_s": 2.8781
+        },
+        "deviations": [
+          {
+            "case": "liquefier_ln2",
+            "quantity": "cycle_hp_mass_flow_g_s",
+            "book": 8.76,
+            "model": 8.7605,
+            "abs_dev": 0.0005,
+            "rel_dev": 6e-05,
+            "within_print_precision": true
+          },
+          {
+            "case": "liquefier_ln2",
+            "quantity": "cycle_lp_return_mass_flow_g_s",
+            "book": 7.76,
+            "model": 7.7605,
+            "abs_dev": 0.0005,
+            "rel_dev": 6.8e-05,
+            "within_print_precision": true
+          },
+          {
+            "case": "liquefier_ln2",
+            "quantity": "isothermal_compressor_power_kw",
+            "book": 13.4,
+            "model": 13.4123,
+            "abs_dev": 0.0123,
+            "rel_dev": 0.000916,
+            "within_print_precision": true
+          },
+          {
+            "case": "liquefier_ln2",
+            "quantity": "nitrogen_flow_g_s",
+            "book": 2.88,
+            "model": 2.8781,
+            "abs_dev": -0.0019,
+            "rel_dev": -0.000656,
+            "within_print_precision": true
+          },
+          {
+            "case": "liquefier_ln2",
+            "quantity": "nitrogen_power_w",
+            "book": 1228.94,
+            "model": 1229.0624,
+            "abs_dev": 0.1224,
+            "rel_dev": 0.0001,
+            "within_print_precision": false
+          },
+          {
+            "case": "liquefier_ln2",
+            "quantity": "warm_turbine.inlet_t_k",
+            "book": 46.22,
+            "model": 46.2306,
+            "abs_dev": 0.0106,
+            "rel_dev": 0.000229,
+            "within_print_precision": false
+          },
+          {
+            "case": "liquefier_ln2",
+            "quantity": "warm_turbine.mass_flow_g_s",
+            "book": 3.15,
+            "model": 3.153,
+            "abs_dev": 0.003,
+            "rel_dev": 0.000937,
+            "within_print_precision": true
+          },
+          {
+            "case": "liquefier_ln2",
+            "quantity": "warm_turbine.power_w",
+            "book": 359.0,
+            "model": 358.765,
+            "abs_dev": -0.235,
+            "rel_dev": -0.000655,
+            "within_print_precision": true
+          },
+          {
+            "case": "liquefier_ln2",
+            "quantity": "cold_turbine.inlet_t_k",
+            "book": 16.8,
+            "model": 16.8027,
+            "abs_dev": 0.0027,
+            "rel_dev": 0.000161,
+            "within_print_precision": true
+          },
+          {
+            "case": "liquefier_ln2",
+            "quantity": "cold_turbine.mass_flow_g_s",
+            "book": 3.32,
+            "model": 3.3202,
+            "abs_dev": 0.0002,
+            "rel_dev": 5.5e-05,
+            "within_print_precision": true
+          },
+          {
+            "case": "liquefier_ln2",
+            "quantity": "cold_turbine.power_w",
+            "book": 123.0,
+            "model": 123.17,
+            "abs_dev": 0.17,
+            "rel_dev": 0.001382,
+            "within_print_precision": true
+          },
+          {
+            "case": "liquefier_ln2",
+            "quantity": "jt_mass_flow_g_s",
+            "book": 2.29,
+            "model": 2.2874,
+            "abs_dev": -0.0026,
+            "rel_dev": -0.001139,
+            "within_print_precision": true
+          },
+          {
+            "case": "liquefier_ln2",
+            "quantity": "turbine_power_w",
+            "book": 482.0,
+            "model": 481.935,
+            "abs_dev": -0.065,
+            "rel_dev": -0.000135,
+            "within_print_precision": true
+          }
+        ],
+        "stats": {
+          "n": 13,
+          "max_abs_rel_dev": 0.001382,
+          "rms_rel_dev": 0.000674,
+          "mean_abs_rel_dev": 0.000499,
+          "within_tolerance": 13,
+          "tolerance_rel": 0.01,
+          "within_tolerance_or_print_precision": 13
+        }
+      }
+    ],
+    "series": {
+      "design": {
+        "refrigeration_w": 50.0,
+        "liquefaction_g_s": 0.5,
+        "p_high_bar": 16.0,
+        "p_mid_bar": 7.0,
+        "p_low_bar": 1.2,
+        "t_warm_k": 300.0,
+        "warm_end_dt_k": 2.97,
+        "hx3_warm_end_dt_k": 0.68,
+        "jt_hx_warm_end_dt_k": 0.2,
+        "turbine_isentropic_efficiency": 0.75
+      },
+      "at_book_inputs": {
+        "warm_turbine_inlet_t_k": 87.41,
+        "cold_turbine_inlet_t_k": 19.68,
+        "warm_turbine_discharge_t_k": 69.0479,
+        "cold_turbine_discharge_t_k": 11.9622,
+        "jt_mass_flow_g_s": 5.9176,
+        "brayton_mass_flow_g_s": 7.9612,
+        "cycle_hp_mass_flow_g_s": 13.8788,
+        "cycle_lp_return_mass_flow_g_s": 13.3788,
+        "warm_turbine_power_w": -777.87,
+        "cold_turbine_power_w": -299.9321,
+        "warm_section_residual_w": 26.7853
+      },
+      "closed": {
+        "warm_turbine_inlet_t_k": 88.9486,
+        "cold_turbine_inlet_t_k": 19.68,
+        "warm_turbine_discharge_t_k": 70.2638,
+        "cold_turbine_discharge_t_k": 11.9622,
+        "jt_mass_flow_g_s": 5.9176,
+        "brayton_mass_flow_g_s": 8.0747,
+        "cycle_hp_mass_flow_g_s": 13.9923,
+        "cycle_lp_return_mass_flow_g_s": 13.4923,
+        "warm_turbine_power_w": -802.6771,
+        "cold_turbine_power_w": -304.2107,
+        "warm_section_residual_w": -0.0
+      },
+      "deviations": [
+        {
+          "case": "series",
+          "quantity": "cycle_hp_mass_flow_g_s",
+          "book": 13.78,
+          "model": 13.8788,
+          "abs_dev": 0.0988,
+          "rel_dev": 0.007167,
+          "within_print_precision": false
+        },
+        {
+          "case": "series",
+          "quantity": "cycle_lp_return_mass_flow_g_s",
+          "book": 13.28,
+          "model": 13.3788,
+          "abs_dev": 0.0988,
+          "rel_dev": 0.007437,
+          "within_print_precision": false
+        },
+        {
+          "case": "series",
+          "quantity": "warm_turbine.mass_flow_g_s",
+          "book": 8.12,
+          "model": 7.9612,
+          "abs_dev": -0.1588,
+          "rel_dev": -0.019561,
+          "within_print_precision": false
+        },
+        {
+          "case": "series",
+          "quantity": "warm_turbine.power_w",
+          "book": 795.0,
+          "model": 777.87,
+          "abs_dev": -17.13,
+          "rel_dev": -0.021547,
+          "within_print_precision": false
+        },
+        {
+          "case": "series",
+          "quantity": "warm_turbine.discharge_t_k",
+          "book": 69.09,
+          "model": 69.0479,
+          "abs_dev": -0.0421,
+          "rel_dev": -0.00061,
+          "within_print_precision": false
+        },
+        {
+          "case": "series",
+          "quantity": "cold_turbine.power_w",
+          "book": 308.0,
+          "model": 299.9321,
+          "abs_dev": -8.0679,
+          "rel_dev": -0.026195,
+          "within_print_precision": false
+        },
+        {
+          "case": "series",
+          "quantity": "cold_turbine.discharge_t_k",
+          "book": 11.97,
+          "model": 11.9622,
+          "abs_dev": -0.0078,
+          "rel_dev": -0.000651,
+          "within_print_precision": false
+        },
+        {
+          "case": "series",
+          "quantity": "jt_mass_flow_g_s",
+          "book": 5.66,
+          "model": 5.9176,
+          "abs_dev": 0.2576,
+          "rel_dev": 0.045513,
+          "within_print_precision": false
+        }
+      ],
+      "stats": {
+        "n": 8,
+        "max_abs_rel_dev": 0.045513,
+        "rms_rel_dev": 0.021541,
+        "mean_abs_rel_dev": 0.016085,
+        "within_tolerance": 4,
+        "tolerance_rel": 0.01,
+        "within_tolerance_or_print_precision": 4
+      },
+      "book_brayton1_balance_w": 10.18,
+      "jt_flow_implied_by_book_jt_stage_g_s": 5.912,
+      "jt_flow_printed_g_s": 5.66,
+      "warm_end_dh_j_g": 13.896
+    },
+    "table_3_8": [
+      {
+        "row": "claude_2t_refrigerator_100w",
+        "book_flow_no_ln2_g_s": 10.81,
+        "book_flow_ln2_g_s": 9.94,
+        "model_opt_flow_no_ln2_g_s": 9.163,
+        "model_opt_flow_ln2_g_s": 8.053,
+        "book_turbine_no_ln2_w": 314,
+        "book_turbine_ln2_w": 177,
+        "model_opt_turbine_no_ln2_w": 281.1,
+        "model_opt_turbine_ln2_w": 162.0
+      },
+      {
+        "row": "claude_2t_liquefier_1gs",
+        "book_flow_no_ln2_g_s": 15.64,
+        "book_flow_ln2_g_s": 7.76,
+        "model_opt_flow_no_ln2_g_s": 15.637,
+        "model_opt_flow_ln2_g_s": 7.761,
+        "book_turbine_no_ln2_w": 1875,
+        "book_turbine_ln2_w": 482,
+        "model_opt_turbine_no_ln2_w": 1875.5,
+        "model_opt_turbine_ln2_w": 481.9
+      }
+    ],
+    "stats_parallel_and_ln2": {
+      "n": 47,
+      "max_abs_rel_dev": 0.016627,
+      "rms_rel_dev": 0.002626,
+      "mean_abs_rel_dev": 0.00099,
+      "within_tolerance": 46,
+      "tolerance_rel": 0.01,
+      "within_tolerance_or_print_precision": 47
+    },
+    "hx0_lp_inlet_t_k": 78.78,
+    "nitrogen_dh_j_g": 427.038
+  }
 }

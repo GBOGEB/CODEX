@@ -77,3 +77,47 @@ def test_initial_case_uses_the_benchmark_input():
     rec = json.loads((REPO_ROOT / "docs/gistau-ch3/data/claude_cycle_reproduction.json").read_text(encoding="utf-8"))
     init = next(b for b in bench["benchmarks"] if b["benchmark_id"] == "G3-3.5.3.1-ONE-TURBINE-INITIAL")
     assert rec["initial"]["turbine_discharge_t_k"] == init["inputs"]["turbine_discharge_t_k"]
+
+
+def test_parallel_two_turbine_cold_box_closes():
+    tool = _tool()
+    p, c = IdealHelium(), tool.TwoTurbine()
+    r = tool.solve_parallel(p, 50.0, 10.0, c)
+    m_jt, m1, m2 = r["jt_mass_flow_g_s"], r["warm_turbine_mass_flow_g_s"], r["cold_turbine_mass_flow_g_s"]
+    dh1 = p.h(r["warm_turbine_inlet_t_k"], c.p_high_bar) - p.h(50.0, c.p_low_bar)
+    dh2 = p.h(r["cold_turbine_inlet_t_k"], c.p_high_bar) - p.h(10.0, c.p_low_bar)
+    m_hp, liq = m_jt + m1 + m2, c.liquefaction_g_s
+    energy_in = m_hp * p.h(c.t_warm_k, c.p_high_bar) + c.refrigeration_w
+    energy_out = (m_hp - liq) * p.h(c.t_warm_k - c.warm_end_dt_k, c.p_low_bar) + liq * p.h_liq_sat(c.p_low_bar) \
+        + m1 * dh1 + m2 * dh2
+    assert abs(energy_in - energy_out) < 1e-6
+    assert math.isclose(r["cycle_lp_return_mass_flow_g_s"], m_hp - liq)
+
+
+def test_series_closure_drives_the_warm_residual_to_zero():
+    tool = _tool()
+    p, c = IdealHelium(), tool.Series()
+    lo = tool.solve_series(p, 70.0, 20.0, c)["warm_section_residual_w"]
+    hi = tool.solve_series(p, 140.0, 20.0, c)["warm_section_residual_w"]
+    assert lo * hi < 0
+    assert abs(tool.close_series(p, 20.0, c)["warm_section_residual_w"]) < 1e-3
+
+
+def test_committed_two_turbine_record_supports_the_page_findings():
+    rec = json.loads((REPO_ROOT / "docs/gistau-ch3/data/claude_cycle_reproduction.json").read_text(encoding="utf-8"))
+    tt = rec["two_turbine"]
+    st = tt["stats_parallel_and_ln2"]
+    assert st["n"] >= 40 and st["within_tolerance_or_print_precision"] == st["n"]
+    by = {c["id"]: c for c in tt["cases"]}
+    bench = json.loads((REPO_ROOT / "docs/gistau-ch3/data/claude_cycle_benchmarks.json").read_text(encoding="utf-8"))
+    liq = next(b for b in bench["benchmarks"] if b["benchmark_id"] == "G3-3.6.4.2-LN2-LIQUEFIER")["expected_outputs"]
+    for cid, key in (("liquefier_reference", "reference"), ("liquefier_ln2", "ln2")):
+        o = by[cid]["optimum"]
+        assert abs(o["warm_turbine_discharge_t_k"] - liq[key]["warm_turbine"]["discharge_t_k"]) < 0.05
+        assert abs(o["cold_turbine_discharge_t_k"] - liq[key]["cold_turbine"]["discharge_t_k"]) < 0.05
+    for cid in ("parallel", "ln2_refrigerator"):
+        assert by[cid]["optimum"]["cycle_lp_return_mass_flow_g_s"] < by[cid]["at_book_point"]["cycle_lp_return_mass_flow_g_s"]
+    se = tt["series"]
+    assert se["jt_flow_implied_by_book_jt_stage_g_s"] > 1.03 * se["jt_flow_printed_g_s"]
+    assert abs(se["closed"]["warm_section_residual_w"]) < 1e-2
+    assert se["closed"]["cycle_lp_return_mass_flow_g_s"] > by["parallel"]["optimum"]["cycle_lp_return_mass_flow_g_s"]
