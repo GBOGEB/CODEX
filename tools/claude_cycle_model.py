@@ -471,7 +471,9 @@ def build_two_turbine(props: Props, n2_dh_j_g: float) -> dict[str, Any]:
     ref_b = bench["G3-3.6.4.1-LN2-REFRIGERATOR"]["expected_outputs"]
     liq_b = bench["G3-3.6.4.2-LN2-LIQUEFIER"]["expected_outputs"]
     tab = bench["G3-TABLE-3.8-LN2-COMPARISON"]["expected_outputs"]
-    hx0_lp_in = 78.78  # Figs. 3.60/3.61: LP leaves HX1 and enters HX0 at 78.78 K (1.22 K below the 80 K HP)
+    # Figs. 3.60/3.61 print the cold-box LP return as 79.00 K (1.00 K warm-end difference) but start HX0 at 78.78 K.
+    # The model uses one boundary (the cold-box outlet); the book's 78.78 K figure is kept only as a labelled comparison.
+    book_hx0_lp_in = 78.78
     skip = {"warm_turbine.discharge_t_k", "cold_turbine.discharge_t_k"}
     rnd = lambda r: {k: round(v, 4) for k, v in r.items()}
 
@@ -489,10 +491,11 @@ def build_two_turbine(props: Props, n2_dh_j_g: float) -> dict[str, Any]:
         if book:
             r = solve_parallel(props, td[0], td[1], c)
             if ln2:
-                r.update(ln2_precooler(props, r, c, hx0_lp_in, n2_dh_j_g))
+                r.update(ln2_precooler(props, r, c, c.t_warm_k - c.warm_end_dt_k, n2_dh_j_g))
+                r["ln2_duty_book_convention_w"] = ln2_precooler(props, r, c, book_hx0_lp_in, n2_dh_j_g)["ln2_duty_w"]
         o = optimise_parallel(props, c, x0)
         if ln2:
-            o.update(ln2_precooler(props, o, c, hx0_lp_in, n2_dh_j_g))
+            o.update(ln2_precooler(props, o, c, c.t_warm_k - c.warm_end_dt_k, n2_dh_j_g))
         rows = _compare(cid, book, r, skip) if book else []
         cases.append({"id": cid, "label": label, "figure": figure, "design": asdict(c),
                       "at_book_point": rnd(r) if r else None, "optimum": rnd(o), "deviations": rows,
@@ -541,7 +544,7 @@ def build_two_turbine(props: Props, n2_dh_j_g: float) -> dict[str, Any]:
                       "model_opt_turbine_ln2_w": round(abs(by[cid_ln2]["optimum"]["total_turbine_power_w"]), 1)})
     rows = [r for c in cases for r in c["deviations"]]
     return {"cases": cases, "series": series, "table_3_8": table, "stats_parallel_and_ln2": _stats2(rows, 0.01),
-            "hx0_lp_inlet_t_k": hx0_lp_in, "nitrogen_dh_j_g": round(n2_dh_j_g, 3)}
+            "book_hx0_lp_inlet_t_k": book_hx0_lp_in, "nitrogen_dh_j_g": round(n2_dh_j_g, 3)}
 
 
 # ---------------------------------------------------------------- page
@@ -586,7 +589,7 @@ def _chart(sweep: list[dict[str, float]], init: dict, opt: dict) -> str:
     return "".join(parts)
 
 
-def _dot_chart(rows: list[tuple[str, float | None, float | None, float]]) -> str:
+def _dot_chart(rows: list[tuple[str, float | None, float | None, float, bool]]) -> str:
     """Cycle flow per case: book (ring), model at the book's inputs (dot), model optimum (diamond)."""
     w, row_h, ml, mr, mt, mb = 720, 34, 200, 24, 10, 40
     h = mt + mb + row_h * len(rows)
@@ -600,21 +603,21 @@ def _dot_chart(rows: list[tuple[str, float | None, float | None, float]]) -> str
         p.append(f"<line class='grid' x1='{sx(x):.1f}' x2='{sx(x):.1f}' y1='{mt}' y2='{h - mb}'/>"
                  f"<text class='tick' x='{sx(x):.1f}' y='{h - mb + 16}' text-anchor='middle'>{x}</text>")
     p.append(f"<text class='axis' x='{(ml + w - mr) / 2}' y='{h - 6}' text-anchor='middle'>Cycle compressor flow (g/s); rows are Gistau figures</text>")
-    for i, (label, book, model, opt) in enumerate(rows):
+    for i, (label, book, model, opt, closed_only) in enumerate(rows):
         y = mt + row_h * i + row_h / 2
         p.append(f"<text class='tick' x='{ml - 10}' y='{y + 4:.1f}' text-anchor='end'>{_e(label)}</text>")
         vals = [v for v in (book, model, opt) if v is not None]
         p.append(f"<line class='grid' x1='{sx(min(vals)):.1f}' x2='{sx(max(vals)):.1f}' y1='{y}' y2='{y}'/>")
         x = sx(opt)
-        p.append(f"<path class='dia s2f' d='M{x:.1f} {y - 6:.1f}L{x + 6:.1f} {y:.1f}L{x:.1f} {y + 6:.1f}L{x - 6:.1f} {y:.1f}Z' "
-                 "/>")
+        p.append(f"<path class='dia {'s2o' if closed_only else 's2f'}' d='M{x:.1f} {y - 6:.1f}L{x + 6:.1f} {y:.1f}"
+                 f"L{x:.1f} {y + 6:.1f}L{x - 6:.1f} {y:.1f}Z'/>")
         if model is not None:
             p.append(f"<circle class='dot s1f' cx='{sx(model):.1f}' cy='{y}' r='4'/>")
         if book is not None:
             p.append(f"<circle class='ring' cx='{sx(book):.1f}' cy='{y}' r='7'/>")
         tip = " · ".join(x for x in (
             f"book {book:.2f}" if book is not None else "", f"model at book inputs {model:.2f}" if model is not None else "",
-            f"model optimum {opt:.2f} g/s") if x)
+            f"{'closed balance, not optimised' if closed_only else 'model optimum'} {opt:.2f} g/s") if x)
         p.append(f"<rect class='rowhit' x='{ml}' y='{y - row_h / 2:.1f}' width='{w - ml - mr}' height='{row_h}' "
                  f"data-tip='{_e(label)}: {_e(tip)}'/>")
     p.append("</svg></div>")
@@ -631,12 +634,12 @@ def _two_section(tt: dict[str, Any]) -> str:
              "ln2_refrigerator": "3.60 refrigerator, LN2", "liquefier_reference": "3.61 liquefier, no LN2",
              "liquefier_ln2": "3.61 liquefier, LN2"}
     rows = [(short[c], book_flow[c],
-             by[c]["at_book_point"][flow] if by[c]["at_book_point"] else None, by[c]["optimum"][flow])
+             by[c]["at_book_point"][flow] if by[c]["at_book_point"] else None, by[c]["optimum"][flow], False)
             for c in ("parallel", "reference_refrigerator", "ln2_refrigerator", "liquefier_reference", "liquefier_ln2")]
-    rows.insert(1, ("3.53 series, 16/7 bar", 13.28, se["at_book_inputs"][flow], se["closed"][flow]))
+    rows.insert(1, ("3.53 series, 16/7 bar", 13.28, se["at_book_inputs"][flow], se["closed"][flow], True))
     ref, ln2r = by["reference_refrigerator"]["optimum"], by["ln2_refrigerator"]
     tiles = "".join(f"<div class='tile'><b>{v}</b><span>{_e(k)}</span></div>" for k, v in (
-        (f"Parallel and LN2 sheets: values matched ({st['n']})",
+        (f"Parallel and LN2 sheets: values within 1 % or print rounding ({st['n']})",
          f"{st['within_tolerance_or_print_precision']} / {st['n']}"),
         ("RMS deviation, parallel and LN2 sheets", f"{st['rms_rel_dev'] * 100:.2f} %"),
         ("Series JT flow: printed vs implied by its own JT stage",
@@ -665,7 +668,8 @@ def _two_section(tt: dict[str, Any]) -> str:
 <div class="tiles">{tiles}</div>
 <div class="legend"><span><svg width="14" height="14"><circle class="ring" cx="7" cy="7" r="5"/></svg> Book</span>
 <span><svg width="14" height="14"><circle class="dot s1f" cx="7" cy="7" r="4"/></svg> Model at the book's inputs</span>
-<span><svg width="14" height="14"><path class="dia s2f" d="M7 1L13 7L7 13L1 7Z"/></svg> Model optimum (closed balance for the series cycle)</span></div>
+<span><svg width="14" height="14"><path class="dia s2f" d="M7 1L13 7L7 13L1 7Z"/></svg> Model optimum</span>
+<span><svg width="14" height="14"><path class="dia s2o" d="M7 2L12 7L7 12L2 7Z"/></svg> Series: closed balance, not optimised</span></div>
 {_dot_chart(rows)}
 <p class="ref">Where the model reproduces the book and the book's point is also the optimum (the two liquefiers, and Fig. 3.51 to
 0.05 g/s), the three markers coincide. Hover any marker for its value; every value is in the tables below.</p>
@@ -681,11 +685,14 @@ so treat the book's refrigerator figures as conservative, not as optima.</li>
 <li><b>The series sheet is unconverged.</b> Its printed Brayton 1 balance is {se['book_brayton1_balance_w']:+.2f} W (model at its inputs:
 {se['at_book_inputs']['warm_section_residual_w']:+.1f} W), and its own JT-stage warm-end term implies
 {se['jt_flow_implied_by_book_jt_stage_g_s']:.2f} g/s through the JT valve against {se['jt_flow_printed_g_s']:.2f} g/s printed. Closing the
-balance (warm turbine inlet {se['closed']['warm_turbine_inlet_t_k']:.2f} K) gives {se['closed'][flow]:.2f} g/s, still above the parallel
-cycle at a lower 14 bar: the book's conclusion that parallel is better holds.</li>
-<li><b>LN2 duty.</b> HX0 with the LP entering at {tt['hx0_lp_inlet_t_k']} K, as printed, reproduces the nitrogen duty
-(Fig. 3.60: {ln2r['at_book_point']['ln2_duty_w']:.1f} W; Fig. 3.61: {by['liquefier_ln2']['at_book_point']['ln2_duty_w']:.1f} W) with
-{tt['nitrogen_dh_j_g']:.1f} J/g to vaporise nitrogen at 1.2 bar and warm it to 297 K.</li>
+balance by solving only the warm turbine inlet ({se['closed']['warm_turbine_inlet_t_k']:.2f} K; cold turbine inlet and 7 bar kept from
+the sheet) gives {se['closed'][flow]:.2f} g/s. That is a closed point, not an optimum: the cold turbine inlet and the intermediate
+pressure were not searched, so it does not by itself confirm the book's conclusion that the parallel arrangement is better.</li>
+<li><b>LN2 duty: the book's HX0 boundary has a 0.22 K gap.</b> Figs. 3.60 and 3.61 return the cold-box LP at 79.00 K but start HX0
+at {tt['book_hx0_lp_inlet_t_k']} K. The model uses one boundary (79.00 K), giving {ln2r['at_book_point']['ln2_duty_w']:.1f} W (Fig. 3.60, book
+108.41 W) and {by['liquefier_ln2']['at_book_point']['ln2_duty_w']:.1f} W (Fig. 3.61, book 1228.94 W). With the book's 78.78 K the model
+gives {ln2r['at_book_point']['ln2_duty_book_convention_w']:.1f} W and {by['liquefier_ln2']['at_book_point']['ln2_duty_book_convention_w']:.1f} W,
+so the gap, not the model, explains the difference. Nitrogen: {tt['nitrogen_dh_j_g']:.1f} J/g to vaporise at 1.2 bar and warm to 297 K.</li>
 </ul>
 <h3>Table 3.8 against the model optimum</h3>
 <div class="scroll"><table><thead><tr><th>Row</th><th>Flow, no LN2 (book)</th><th>(model)</th><th>Flow, LN2 (book)</th><th>(model)</th>
@@ -715,7 +722,7 @@ h2{font-size:1.15rem;margin:2rem 0 .5rem}.ref{color:var(--ink2);font-size:.9rem}
 .grid{stroke:var(--grid);stroke-width:1}.tick,.axis,.dlabel,.note{fill:var(--ink2);font-size:12px}
 .axis{fill:var(--ink)}.line{fill:none;stroke-width:2}.s1{stroke:var(--s1)}.s2{stroke:var(--s2)}.s3{stroke:var(--s3)}
 .mark{fill:var(--bg);stroke:var(--ink);stroke-width:2}.ring{fill:none;stroke:var(--ink);stroke-width:2}.rowhit{fill:transparent}.rowhit:hover{fill:var(--grid);fill-opacity:.35}
-.dot,.dia{stroke:var(--card);stroke-width:2}.s1f{fill:var(--s1)}.s2f{fill:var(--s2)}h3{font-size:1rem;margin:1.4rem 0 .4rem}
+.dot,.dia{stroke:var(--card);stroke-width:2}.s1f{fill:var(--s1)}.s2f{fill:var(--s2)}.s2o{fill:var(--card);stroke:var(--s2);stroke-width:2}h3{font-size:1rem;margin:1.4rem 0 .4rem}
 .chart.wide{min-width:640px}.findings{padding-left:1.2rem}.findings li{margin:.4rem 0}.hit{fill:transparent}.xhair{stroke:var(--muted);stroke-width:1;opacity:0}
 .tip{position:fixed;pointer-events:none;background:var(--card);color:var(--ink);border:1px solid var(--grid);
 border-radius:6px;padding:6px 8px;font-size:.85rem;opacity:0}

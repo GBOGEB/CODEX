@@ -798,8 +798,9 @@
           "cold_turbine_power_w": -85.7229,
           "total_turbine_power_w": -176.5351,
           "isothermal_compressor_power_kw": 15.2203,
-          "ln2_duty_w": 108.5346,
-          "nitrogen_flow_g_s": 0.2542
+          "ln2_duty_w": 119.9007,
+          "nitrogen_flow_g_s": 0.2808,
+          "ln2_duty_book_convention_w": 108.5346
         },
         "optimum": {
           "warm_turbine_discharge_t_k": 17.3982,
@@ -815,8 +816,8 @@
           "cold_turbine_power_w": -65.3742,
           "total_turbine_power_w": -161.9961,
           "isothermal_compressor_power_kw": 12.329,
-          "ln2_duty_w": 87.9169,
-          "nitrogen_flow_g_s": 0.2059
+          "ln2_duty_w": 97.1239,
+          "nitrogen_flow_g_s": 0.2274
         },
         "deviations": [
           {
@@ -841,18 +842,18 @@
             "case": "ln2_refrigerator",
             "quantity": "nitrogen_flow_g_s",
             "book": 0.25,
-            "model": 0.2542,
-            "abs_dev": 0.0042,
-            "rel_dev": 0.016627,
-            "within_print_precision": true
+            "model": 0.2808,
+            "abs_dev": 0.0308,
+            "rel_dev": 0.123092,
+            "within_print_precision": false
           },
           {
             "case": "ln2_refrigerator",
             "quantity": "nitrogen_power_w",
             "book": 108.41,
-            "model": 108.5346,
-            "abs_dev": 0.1246,
-            "rel_dev": 0.001149,
+            "model": 119.9007,
+            "abs_dev": 11.4907,
+            "rel_dev": 0.105993,
             "within_print_precision": false
           },
           {
@@ -930,12 +931,12 @@
         ],
         "stats": {
           "n": 12,
-          "max_abs_rel_dev": 0.016627,
-          "rms_rel_dev": 0.005109,
-          "mean_abs_rel_dev": 0.002704,
-          "within_tolerance": 11,
+          "max_abs_rel_dev": 0.123092,
+          "rms_rel_dev": 0.046923,
+          "mean_abs_rel_dev": 0.020313,
+          "within_tolerance": 10,
           "tolerance_rel": 0.01,
-          "within_tolerance_or_print_precision": 12
+          "within_tolerance_or_print_precision": 10
         }
       },
       {
@@ -1160,8 +1161,9 @@
           "cold_turbine_power_w": -123.17,
           "total_turbine_power_w": -481.935,
           "isothermal_compressor_power_kw": 13.4123,
-          "ln2_duty_w": 1229.0624,
-          "nitrogen_flow_g_s": 2.8781
+          "ln2_duty_w": 1237.9351,
+          "nitrogen_flow_g_s": 2.8989,
+          "ln2_duty_book_convention_w": 1229.0624
         },
         "optimum": {
           "warm_turbine_discharge_t_k": 24.4753,
@@ -1177,8 +1179,8 @@
           "cold_turbine_power_w": -123.137,
           "total_turbine_power_w": -481.935,
           "isothermal_compressor_power_kw": 13.4123,
-          "ln2_duty_w": 1229.0624,
-          "nitrogen_flow_g_s": 2.8781
+          "ln2_duty_w": 1237.935,
+          "nitrogen_flow_g_s": 2.8989
         },
         "deviations": [
           {
@@ -1212,18 +1214,18 @@
             "case": "liquefier_ln2",
             "quantity": "nitrogen_flow_g_s",
             "book": 2.88,
-            "model": 2.8781,
-            "abs_dev": -0.0019,
-            "rel_dev": -0.000656,
-            "within_print_precision": true
+            "model": 2.8989,
+            "abs_dev": 0.0189,
+            "rel_dev": 0.006558,
+            "within_print_precision": false
           },
           {
             "case": "liquefier_ln2",
             "quantity": "nitrogen_power_w",
             "book": 1228.94,
-            "model": 1229.0624,
-            "abs_dev": 0.1224,
-            "rel_dev": 0.0001,
+            "model": 1237.9351,
+            "abs_dev": 8.9951,
+            "rel_dev": 0.007319,
             "within_print_precision": false
           },
           {
@@ -1301,9 +1303,9 @@
         ],
         "stats": {
           "n": 13,
-          "max_abs_rel_dev": 0.001382,
-          "rms_rel_dev": 0.000674,
-          "mean_abs_rel_dev": 0.000499,
+          "max_abs_rel_dev": 0.007319,
+          "rms_rel_dev": 0.002802,
+          "mean_abs_rel_dev": 0.001509,
           "within_tolerance": 13,
           "tolerance_rel": 0.01,
           "within_tolerance_or_print_precision": 13
@@ -1463,14 +1465,14 @@
     ],
     "stats_parallel_and_ln2": {
       "n": 47,
-      "max_abs_rel_dev": 0.016627,
-      "rms_rel_dev": 0.002626,
-      "mean_abs_rel_dev": 0.00099,
-      "within_tolerance": 46,
+      "max_abs_rel_dev": 0.123092,
+      "rms_rel_dev": 0.023758,
+      "mean_abs_rel_dev": 0.005766,
+      "within_tolerance": 45,
       "tolerance_rel": 0.01,
-      "within_tolerance_or_print_precision": 47
+      "within_tolerance_or_print_precision": 45
     },
-    "hx0_lp_inlet_t_k": 78.78,
+    "book_hx0_lp_inlet_t_k": 78.78,
     "nitrogen_dh_j_g": 427.038
   }
 }

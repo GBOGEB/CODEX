@@ -107,8 +107,16 @@ def test_committed_two_turbine_record_supports_the_page_findings():
     rec = json.loads((REPO_ROOT / "docs/gistau-ch3/data/claude_cycle_reproduction.json").read_text(encoding="utf-8"))
     tt = rec["two_turbine"]
     st = tt["stats_parallel_and_ln2"]
-    assert st["n"] >= 40 and st["within_tolerance_or_print_precision"] == st["n"]
     by = {c["id"]: c for c in tt["cases"]}
+    rows = [r for c in tt["cases"] for r in c["deviations"]]
+    misses = [r for r in rows if not (abs(r["rel_dev"]) <= st["tolerance_rel"] or r["within_print_precision"])]
+    assert st["n"] == len(rows) >= 40 and st["within_tolerance_or_print_precision"] == st["n"] - len(misses)
+    # The only misses are the LN2 refrigerator's nitrogen rows, from the book's 0.22 K HX0 boundary gap
+    # (cold box returns LP at 79.00 K, HX0 starts at 78.78 K); with the book's boundary the duty matches.
+    assert {(r["case"], r["quantity"]) for r in misses} <= {("ln2_refrigerator", "nitrogen_flow_g_s"),
+                                                           ("ln2_refrigerator", "nitrogen_power_w")}
+    for cid, book_w in (("ln2_refrigerator", 108.41), ("liquefier_ln2", 1228.94)):
+        assert abs(by[cid]["at_book_point"]["ln2_duty_book_convention_w"] / book_w - 1) < 0.01
     bench = json.loads((REPO_ROOT / "docs/gistau-ch3/data/claude_cycle_benchmarks.json").read_text(encoding="utf-8"))
     liq = next(b for b in bench["benchmarks"] if b["benchmark_id"] == "G3-3.6.4.2-LN2-LIQUEFIER")["expected_outputs"]
     for cid, key in (("liquefier_reference", "reference"), ("liquefier_ln2", "ln2")):
