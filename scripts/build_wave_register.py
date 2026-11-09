@@ -317,8 +317,22 @@ def main() -> int:
             previous = list((prior.get("dedup") or {}).get("reserved") or [])
         except yaml.YAMLError:
             previous = []
+    # Elevated (federation-owned) waves: read from the steward repo at its exact commit.
+    steward = naming["elevation"]["steward"]
+    global_doc = None
+    for spec in a.repo + a.private:
+        name, path = spec.split("=", 1)
+        if name == steward:
+            try:
+                global_doc = yaml.safe_load(git(Path(path).resolve(), "show",
+                                                f"{sources[name]['head']}:{wave_claims.GLOBAL_PATH}"))
+            except subprocess.CalledProcessError:
+                global_doc = None
+            except yaml.YAMLError:
+                global_doc = {"schema": "unparseable"}
+            sources[name]["global_waves_file"] = global_doc is not None
     claims, violations, census = wave_claims.rollup(
-        claim_sets, observed, set(lineage), naming, reserved=previous
+        claim_sets, observed, set(lineage), naming, reserved=previous, global_doc=global_doc
     )
     reserved = census.pop("reserved")
     for e in entries:
@@ -364,6 +378,7 @@ def main() -> int:
         "dedup": {
             "rules": "federation/waves/WAVE_NAMING_RULES.yaml",
             "claims_file": wave_claims.CLAIMS_PATH,
+            "global_waves_file": wave_claims.GLOBAL_PATH,
             "census": census,
             "reserved": reserved,
             "claimed_unobserved": {k: v for k, v in sorted(claims.items()) if k not in observed},

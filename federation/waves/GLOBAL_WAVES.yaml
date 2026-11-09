@@ -1,0 +1,106 @@
+# Federation-owned (elevated) waves. Rules: WAVE_NAMING_RULES.yaml#elevation.
+#
+# A wave id that the wider federation recognises is not awarded to one member
+# repo. It is owned by the FEDERATION; CODEX keeps this file as steward (index
+# keeper, no authority transfer). Each member repo declares its role in its
+# own .waves/WAVE_CLAIMS.yaml; `origin` (first commit) declares `producer`.
+#
+#   CONVERGED   the repos already carry one name for the id
+#   DEVELOPING  the id is federation-wide, the repos name it differently; the
+#               name below is a working title the participants develop
+#
+# All entries start at status HOLD: a name may still be renamed once before an
+# owner sets ACTIVE (or CLOSED). CODEX is public, so names and aliases are
+# built only from evidence in public repos.
+#
+# Validate: python scripts/wave_claims.py validate-global
+schema: gbogeb.global_waves/1
+steward: GBOGEB/CODEX
+waves:
+  - key: QPS:W033
+    name: W033_MYCELIUM_BACKBONE_DAG
+    status: HOLD
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project
+    aliases: [w33-backbone-pool, mycelium-ops-dag]
+  - key: QPS:W048
+    name: W048_CBD_RECURSE_SHARED_ANSWER
+    status: HOLD
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project
+    aliases: [cbd-recurse-w48]
+  - key: QPS:W060
+    name: W060_3PR_5H_DOV_PCA_PULSE_CONTROL
+    status: HOLD
+    maturity: CONVERGED
+    origin: GBOGEB/cryoplant-project
+    aliases: [dov-pca-pulse-control]
+  - key: QPS:W068
+    name: W068_3PR_MIP_PCA_PULSE
+    status: HOLD
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project
+  - key: QPS:W089
+    name: W089_CENSUS_EXACT_HEAD_TRIGGER
+    status: HOLD
+    maturity: CONVERGED
+    origin: GBOGEB/CODEX
+  - key: QPS:W091
+    name: W091_RUNTIME_CONSOLIDATION
+    status: HOLD
+    maturity: CONVERGED
+    origin: GBOGEB/CODEX
+  - key: QPS:W092
+    name: W092_DEPLOYMENT_RUNTIME_REGISTRY
+    status: HOLD
+    maturity: CONVERGED
+    origin: GBOGEB/CODEX
+  - key: QPS:W093
+    name: W093_PVPS_DEPLOYMENT_PROOF_GATE
+    status: HOLD
+    maturity: CONVERGED
+    origin: GBOGEB/cryoplant-project
+    aliases: [docker-deployment-proof]
+  - key: QPS:W097
+    name: W097_MIP_CONTROL_BASELINE
+    status: HOLD
+    maturity: DEVELOPING
+    origin: GBOGEB/ABACUS
+  - key: QPS:W101
+    name: W101_IMMUTABLE_BINARY_RECOVERY
+    status: HOLD
+    maturity: DEVELOPING
+    origin: GBOGEB/CODEX
+  - key: QPS:W102
+    name: W102_MIP_RECONCILIATION_INGRESS
+    status: HOLD
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project
+  - key: QPS:W112
+    name: W112_GLOBAL_HIVE_GLOB_RECEIPT
+    status: HOLD
+    maturity: CONVERGED
+    origin: GBOGEB/CODEX
+    aliases: [global-hive]
+  - key: QPS:W264
+    name: W264_TEMPORAL_PCA_PROPAGATION
+    status: HOLD
+    maturity: CONVERGED
+    origin: GBOGEB/cryoplant-project
+  - key: QPS:W284
+    name: W284_GOLDEN_THREAD_MIP
+    status: HOLD
+    maturity: CONVERGED
+    origin: GBOGEB/pipeline-automation-hub
+    aliases: [golden-thread]
+  - key: QPS:W322
+    name: W322_HEPAK_MIP_REVIEW
+    status: HOLD
+    maturity: CONVERGED
+    origin: GBOGEB/cryoplant-project
+    aliases: [hepak-mip-review]
+  - key: QPS:W334
+    name: W334_HIST_BD_RECEIPT
+    status: HOLD
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project

@@ -20,4 +20,30 @@ owns:
     status: HOLD              # handover/CURRENT.json release_disposition HOLD (pinned by scripts/validate_all.py)
     paths:
       - handover/CURRENT.json
-participates: []
+participates:
+  - key: QPS:W033
+    role: reviewer   # DOV wave map, mycelium ops DAG; elevated
+  - key: QPS:W048
+    role: reviewer   # KEB shared-answer request; elevated
+  - key: QPS:W060
+    role: receiver   # KEB receipt, 3P3 execution bounds; elevated
+  - key: QPS:W068
+    role: executor   # zero-delta pulse, MIP semantic runtime; elevated
+  - key: QPS:W089
+    role: producer   # origin; census exact-head trigger; elevated
+  - key: QPS:W091
+    role: producer   # origin; runtime consolidation; elevated
+  - key: QPS:W092
+    role: producer   # origin; deployment runtime registry; elevated
+  - key: QPS:W093
+    role: receiver   # KEB gate, docker deployment proof; elevated
+  - key: QPS:W101
+    role: producer   # origin; immutable binary stage; elevated
+  - key: QPS:W102
+    role: receiver   # file-library ingress handoff; elevated
+  - key: QPS:W112
+    role: producer   # origin; global hive 3PC MIP receipt; elevated
+  - key: QPS:W322
+    role: reviewer   # HEPAK MIP KEB review; elevated
+  - key: QPS:W334
+    role: receiver   # KEB receipt; elevated
