@@ -207,3 +207,97 @@ def test_register_keeps_retired_names_reserved_across_runs(tmp_path):
     found = yaml.safe_load(out.read_text(encoding="utf-8"))["dedup"]["violations"]
     assert {(v["code"], v["key"]) for v in found} >= {
         ("D2_NAME_REUSE", "QPS:W301"), ("D3_ALIAS_CLASH", "QPS:W301")}
+
+
+G = "gbogeb.global_waves/1"
+
+
+def gdoc(*waves, steward="GBOGEB/CODEX"):
+    return {"schema": G, "steward": steward, "waves": list(waves)}
+
+
+def gwave(key="QPS:W060", name="W060_DOV_PCA_PULSE", **kw):
+    w = {"key": key, "name": name, "status": "HOLD", "maturity": "CONVERGED",
+         "origin": "GBOGEB/cryoplant-project"}
+    w.update(kw)
+    return w
+
+
+def test_committed_global_waves_obey_the_ruleset(rules):
+    d = yaml.safe_load((ROOT / wave_claims.GLOBAL_PATH).read_text(encoding="utf-8"))
+    assert wave_claims.validate_global(d, rules) == []
+    assert d["waves"], "the steward file must not be empty"
+
+
+@pytest.mark.parametrize(
+    "doc_, code",
+    [
+        ({"schema": "x"}, "G0_SCHEMA"),
+        (gdoc(gwave(), steward="GBOGEB/ABACUS"), "G0_STEWARD"),
+        (gdoc(gwave(maturity="SETTLED")), "G1_MATURITY"),
+        (gdoc(gwave(origin="cryoplant")), "G2_ORIGIN"),
+        (gdoc(gwave(paths=["architecture/w60/"])), "G3_GLOBAL_PATHS"),
+        (gdoc(gwave(name="W061_DOV_PCA_PULSE")), "C3_NAME_NUMBER"),
+        (gdoc(gwave(name="W060_DOV_FINAL")), "C4_RESERVED"),
+        (gdoc(gwave(), gwave()), "D1_DUP_OWNER"),
+    ],
+)
+def test_global_wave_rules(rules, doc_, code):
+    assert code in codes(wave_claims.validate_global(doc_, rules))
+
+
+def test_elevated_wave_is_federation_owned_and_members_only_participate(rules):
+    sets = {
+        "GBOGEB/ABACUS": (doc("GBOGEB/ABACUS", [], [{"key": "QPS:W060", "role": "receiver"}]), False),
+        "GBOGEB/cryoplant-project": (
+            doc("GBOGEB/cryoplant-project", [], [{"key": "QPS:W060", "role": "producer"}]), True),
+    }
+    observed = {"QPS:W060": {"GBOGEB/ABACUS", "GBOGEB/cryoplant-project"}}
+    claims, found, census = wave_claims.rollup(sets, observed, set(), rules, global_doc=gdoc(gwave()))
+    rec = claims["QPS:W060"]
+    assert rec["owner"] == "FEDERATION" and rec["scope"] == "global"
+    assert rec["origin"] == "GBOGEB/cryoplant-project" and rec["maturity"] == "CONVERGED"
+    assert rec["participants"] == {"GBOGEB/ABACUS": "receiver", "GBOGEB/cryoplant-project": "producer"}
+    assert found == []
+    assert census["elevated_keys"] == {"total": 1, "by_maturity": {"CONVERGED": 1}}
+
+
+def test_member_cannot_own_an_elevated_wave(rules):
+    sets = {"GBOGEB/ABACUS": (doc("GBOGEB/ABACUS", [
+        {"key": "QPS:W060", "name": "W060_ABACUS_PULSE", "status": "ACTIVE"}]), False)}
+    claims, found, _ = wave_claims.rollup(sets, {"QPS:W060": {"GBOGEB/ABACUS"}}, set(), rules,
+                                          global_doc=gdoc(gwave()))
+    assert claims["QPS:W060"]["owner"] == "CONTESTED"
+    d1 = [f for f in found if f["code"] == "D1_DUP_OWNER"]
+    assert d1 and "elevated" in d1[0]["detail"]
+
+
+def test_origin_declares_the_origin_role_and_undeclared_repos_warn(rules):
+    sets = {"GBOGEB/cryoplant-project": (
+        doc("GBOGEB/cryoplant-project", [], [{"key": "QPS:W060", "role": "receiver"}]), True)}
+    observed = {"QPS:W060": {"GBOGEB/cryoplant-project", "GBOGEB/CODEX"}}
+    _, found, _ = wave_claims.rollup(sets, observed, set(), rules, global_doc=gdoc(gwave()))
+    assert codes(found) == ["G4_ORIGIN_ROLE", "O1_UNDECLARED_PARTICIPANT"]
+    assert all(f["severity"] == "warning" for f in found)
+
+
+def test_elevation_candidates_list_widely_recognised_ids(rules):
+    observed = {"QPS:W200": {"A/a", "B/b", "C/c"}, "QPS:W201": {"A/a", "B/b"},
+                "QPS:W202": {"A/a", "B/b", "C/c"}}
+    sets = {"A/a": (doc("A/a", [{"key": "QPS:W202", "name": "W202_LOCAL", "status": "ACTIVE"}],
+                        ), False)}
+    _, _, census = wave_claims.rollup(sets, observed, set(), rules)
+    cand = census["elevation_candidates"]
+    assert cand["unowned"] == ["QPS:W200"] and cand["locally_owned"] == ["QPS:W202"]
+    assert census["elevated_keys"]["total"] == 0
+
+
+def test_validate_global_cli(tmp_path):
+    p = tmp_path / "g.yaml"
+    p.write_text(yaml.safe_dump(gdoc(gwave(maturity="?"))), encoding="utf-8")
+    r = subprocess.run([sys.executable, str(ROOT / "scripts" / "wave_claims.py"), "validate-global", str(p)],
+                       capture_output=True, text=True, check=False)
+    assert r.returncode == 1 and "G1_MATURITY" in r.stdout and r.stdout.isascii()
+    ok = subprocess.run([sys.executable, str(ROOT / "scripts" / "wave_claims.py"), "validate-global"],
+                        capture_output=True, text=True, check=False)
+    assert ok.returncode == 0, ok.stdout

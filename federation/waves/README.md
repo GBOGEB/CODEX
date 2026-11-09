@@ -53,6 +53,31 @@ CODEX is public.
 | Non-QPS namespaces keep their native id as the name (an empty or missing name is rejected) | `C2_NAME` |
 | Private repos are validated in full, but publish only sha256 digests of names and aliases | redacted in messages |
 
+**Elevation: ids the wider federation recognises (`GLOBAL_WAVES.yaml`).**
+Some wave ids are carried in several repos, often under the same name and
+committed within seconds of each other by one fan-out session. Such an id has
+federation-wide recognition, so no single member repo is awarded it. It is
+*elevated*:
+
+- **Owner.** The `FEDERATION` owns it. CODEX stewards `GLOBAL_WAVES.yaml` as index keeper only (`authority_transfer: false`).
+- **Origin.** The repo that committed the id first is kept as `origin` and declares the role `producer`. Every other repo declares its own role.
+- **Maturity.** `CONVERGED` means the repos already use one name. `DEVELOPING` means the name is a working title that the participants still develop.
+- **Status.** Every entry starts at `HOLD`, and a name may change once before an owner sets `ACTIVE`.
+- **Public names only.** CODEX is public, so global names are built only from public evidence.
+
+| Rule | Code |
+|---|---|
+| Steward file schema and steward | `G0_SCHEMA`, `G0_STEWARD` |
+| Maturity enum; origin is an `OWNER/NAME` repo | `G1_MATURITY`, `G2_ORIGIN` |
+| No path boundaries on an elevated wave (each repo keeps its own) | `G3_GLOBAL_PATHS` |
+| Origin repo declares `producer` | `G4_ORIGIN_ROLE` (warning) |
+| A member repo that also owns an elevated id | `D1_DUP_OWNER` (published as `CONTESTED`) |
+
+The register's `dedup.census.elevation_candidates` is the queue for further
+elevation: unowned ids seen in `candidate_min_reach` or more repos, plus locally
+owned ids with that reach. Validate the steward file with
+`python scripts/wave_claims.py validate-global`.
+
 **Owner workflow.**
 
 1. Draft from your own records: `python scripts/wave_claims.py propose --repo GBOGEB/<NAME> --repo-path <checkout>`. The proposer only drafts rule-clean claims. It lists the rest under `needs_name` (no unique slug in your records) and `contested_ties` (another repo holds equal evidence).

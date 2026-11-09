@@ -56,6 +56,9 @@ jobs:
           python scripts/wave_claims.py validate .waves/WAVE_CLAIMS.yaml
           --expected-repo "${{ github.repository }}"
 
+      - name: Elevated (federation-owned) waves obey the ruleset
+        run: python scripts/wave_claims.py validate-global federation/waves/GLOBAL_WAVES.yaml
+
       - name: Wave claims negative controls
         run: >-
           python -m pytest -q -o addopts=""
