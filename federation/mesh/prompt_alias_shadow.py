@@ -163,7 +163,7 @@ def main(argv: list[str] | None = None) -> int:
                   + " actions=" + str(len(profile["atomic_actions"]))
                   + " composites=" + str(len(profile["composite_selectors"])))
         return 0
-    except (AliasPolicyError, ValueError, KeyError, OSError) as exc:
+    except (ValueError, KeyError, OSError) as exc:
         print("PROMPT_ALIAS_SHADOW=FAIL " + str(exc), file=sys.stderr)
         return 2
 
