@@ -1,0 +1,48 @@
+name: Global Prompt Alias Shadow
+
+# Candidate-only native verification. Path-filtered: never configure as a
+# universal required context. This workflow grants no dispatch/merge authority.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'federation/mesh/PROMPT_ALIAS_SHADOW_PROFILE_v1.json'
+      - 'federation/mesh/prompt_alias_shadow.py'
+      - 'tests/test_prompt_alias_shadow.py'
+      - '.github/workflows/global-prompt-alias-shadow.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: global-prompt-alias-shadow-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  native-candidate-qa:
+    name: explicit alias and namespace negative canaries
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact candidate head
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify exact checkout
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+      - name: Setup Python
+        uses: actions/setup-python@v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Install pinned Ruff
+        run: python -m pip install 'ruff==0.16.6'
+      - name: Source OID and schema validation
+        run: python federation/mesh/prompt_alias_shadow.py --validate
+      - name: Positive and negative alias test cohort
+        run: python -m unittest discover -s tests -p 'test_prompt_alias_shadow.py' -v
+      - name: Enforce zero new Ruff source violations
+        run: ruff check federation/mesh/prompt_alias_shadow.py --output-format concise
