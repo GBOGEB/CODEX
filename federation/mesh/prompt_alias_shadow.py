@@ -24,7 +24,7 @@ class AliasPolicyError(ValueError):
 
 
 def git_blob_oid(data: bytes) -> str:
-    return hashlib.sha1(b"blob " + str(len(data)).encode("ascii") + b"\\0" + data).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(data)).encode("ascii") + b"\0" + data).hexdigest()
 
 
 def normalize_phrase(value: str) -> str:
@@ -43,10 +43,10 @@ def top_level_yaml_keys(contents: bytes, section: str) -> set[str]:
     """Strict textual discovery of top-level mapping keys, not a YAML authority parser."""
     text = contents.decode("utf-8")
     match = re.search(r"(?ms)^" + re.escape(section)
-                      + r":\\s*\\n(.*?)(?=^[A-Za-z][A-Za-z0-9_-]*:|\\Z)", text)
+                      + r":\s*\n(.*?)(?=^[A-Za-z][A-Za-z0-9_-]*:|\Z)", text)
     if not match:
         raise AliasPolicyError("MISSING_CANONICAL_SECTION_" + section)
-    keys = set(re.findall(r"(?m)^  ([A-Z][A-Z0-9_]*):(?:\\s|$)", match.group(1)))
+    keys = set(re.findall(r"(?m)^  ([A-Z][A-Z0-9_]*):(?:\s|$)", match.group(1)))
     if not keys:
         raise AliasPolicyError("EMPTY_CANONICAL_SECTION_" + section)
     return keys
