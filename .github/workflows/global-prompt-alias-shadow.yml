@@ -45,4 +45,4 @@ jobs:
       - name: Positive and negative alias test cohort
         run: python -m unittest discover -s tests -p 'test_prompt_alias_shadow.py' -v
       - name: Enforce zero new Ruff source violations
-        run: ruff check federation/mesh/prompt_alias_shadow.py --output-format concise
+        run: ruff check federation/mesh/prompt_alias_shadow.py tests/test_prompt_alias_shadow.py --output-format concise
