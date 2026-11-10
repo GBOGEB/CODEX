@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Shadow-only alias resolver consuming CODEX's existing mesh action/status owners.
 
 This is NOT a scheduler, command dispatcher, reviewer, source authority, or merge gate.
