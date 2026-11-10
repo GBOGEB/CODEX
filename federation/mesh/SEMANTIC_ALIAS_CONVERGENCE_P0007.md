@@ -81,7 +81,7 @@ Moving between stages is an **owner decision**, never an elapsed-timer automatio
 | SEM-14 | P0 | **DEPENDENCY_HOLD** | S4 existing protected gate after owner acceptance and negative-canary qualification |
 | SEM-15 | P2 | **OPEN** | Controlled documentation/pointer cleanup; no branch, PR, issue ID, folder or filename edits without independent compatibility tests |
 
-**Count:** 15 semantic subitems = 2 candidate/source DONE, 1 CI_PENDING, 5 OPEN (SEM-05,07,09,10,11,15 = **6 OPEN**), 4 OWNER_HOLD (04,06,08,12), 2 DEPENDENCY_HOLD (13,14). These SEM IDs are **not new Hub B### IDs**; link them to the Hub cumulative burndown as subordinate evidence, without summing denominators.
+**Count:** 15 semantic subitems = 2 candidate/source DONE, 1 CI_PENDING, **6 OPEN** (SEM-05,07,09,10,11,15), 4 OWNER_HOLD (04,06,08,12), 2 DEPENDENCY_HOLD (13,14). These SEM IDs are **not new Hub B### IDs**; link them to the Hub cumulative burndown as subordinate evidence, without summing denominators.
 
 ## Incremental deployment DAG (Kahn-compatible)
 
