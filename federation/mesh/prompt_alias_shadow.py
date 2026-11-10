@@ -9,9 +9,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-from pathlib import Path
 import re
 import sys
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PROFILE_PATH = ROOT / "federation/mesh/PROMPT_ALIAS_SHADOW_PROFILE_v1.json"
@@ -24,7 +24,9 @@ class AliasPolicyError(ValueError):
 
 
 def git_blob_oid(data: bytes) -> str:
-    return hashlib.sha1(b"blob " + str(len(data)).encode("ascii") + b"\0" + data).hexdigest()
+    # Git object identity uses SHA-1 by specification; never use this as an auth hash.
+    payload = b"blob " + str(len(data)).encode("ascii") + b"\0" + data
+    return hashlib.sha1(payload, usedforsecurity=False).hexdigest()
 
 
 def normalize_phrase(value: str) -> str:
