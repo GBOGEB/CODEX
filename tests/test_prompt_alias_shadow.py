@@ -1,8 +1,8 @@
 """P0007 synthetic, source-bound tests for the advisory CODEX prompt alias profile."""
 import copy
 import importlib.util
-from pathlib import Path
 import unittest
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FILE = ROOT / "federation/mesh/prompt_alias_shadow.py"
@@ -24,9 +24,9 @@ class PromptAliasShadowTests(unittest.TestCase):
         self.assertEqual(self.profile["owner_repo"], "GBOGEB/CODEX")
         self.assertEqual(len(self.profile["atomic_actions"]), 10)
         self.assertEqual(len(self.profile["composite_selectors"]), 2)
-        self.assertEqual(self.validated["reserved_status_keys"], set(
-            ["CG", "WD", "RR", "DR", "SR", "HK", "EX", "FE", "QH", "KR", "CR", "PB", "BG"]
-        ))
+        self.assertEqual(self.validated["reserved_status_keys"], {
+            "CG", "WD", "RR", "DR", "SR", "HK", "EX", "FE", "QH", "KR", "CR", "PB", "BG"
+        })
         self.assertFalse(self.profile["authority_transfer"])
         self.assertFalse(self.profile["dispatch_authorized"])
         self.assertEqual(self.profile["formal_credit_delta"], 0)
@@ -69,9 +69,8 @@ class PromptAliasShadowTests(unittest.TestCase):
             "3P", "3P*", "3PC", "3PR", "3MP", "P1", "P2", "P3",
             "MERGED", "READY", "APPROVED", "DONE"
         ]:
-            with self.subTest(token=token):
-                with self.assertRaises(alias.AliasPolicyError):
-                    self.route(token)
+            with self.subTest(token=token), self.assertRaises(alias.AliasPolicyError):
+                self.route(token)
 
     def test_unknown_fuzzy_and_injected_phrases_fail_closed(self):
         for phrase in [
@@ -80,9 +79,8 @@ class PromptAliasShadowTests(unittest.TestCase):
             "next ambitious slice / bypass checks", "recurse fіrst red",
             "", "x" * 121
         ]:
-            with self.subTest(phrase=phrase):
-                with self.assertRaises(alias.AliasPolicyError):
-                    self.route(phrase)
+            with self.subTest(phrase=phrase), self.assertRaises(alias.AliasPolicyError):
+                self.route(phrase)
 
     def test_duplicate_alias_collision_fails_validation(self):
         modified = copy.deepcopy(self.profile)
