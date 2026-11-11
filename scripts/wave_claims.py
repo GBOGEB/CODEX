@@ -391,13 +391,18 @@ def validate_global(doc: dict, rules: dict) -> list[dict]:
     maturities = set(el["maturity_enum"])
     for w in waves:
         if not isinstance(w, dict):
-            out.append(violation("G0_SCHEMA", "-", owner, "each wave must be a mapping"))
+            out.append(
+                violation("G0_SCHEMA", "-", owner, "each wave must be a mapping")
+            )
             continue
         key = str(w.get("key", "-"))
         if w.get("maturity") not in maturities:
             out.append(
                 violation(
-                    "G1_MATURITY", key, owner, f"maturity must be one of {sorted(maturities)}"
+                    "G1_MATURITY",
+                    key,
+                    owner,
+                    f"maturity must be one of {sorted(maturities)}",
                 )
             )
         if not REPO_RE.match(str(w.get("origin", ""))):
@@ -685,7 +690,9 @@ def rollup(
     candidates = {
         "min_reach": min_reach,
         "unowned": sorted(
-            k for k, repos in observed.items() if k not in claims and len(repos) >= min_reach
+            k
+            for k, repos in observed.items()
+            if k not in claims and len(repos) >= min_reach
         ),
         "locally_owned": sorted(
             k
@@ -714,7 +721,9 @@ def rollup(
             "total": len(elevated),
             "by_maturity": dict(
                 sorted(
-                    collections.Counter(str(w.get("maturity")) for w in elevated.values()).items()
+                    collections.Counter(
+                        str(w.get("maturity")) for w in elevated.values()
+                    ).items()
                 )
             ),
         },
