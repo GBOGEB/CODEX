@@ -11,8 +11,10 @@ recently modified, then the shortest path. The others go to the Recycle Bin, not
 permanent deletion, and every move is written to a CSV manifest so it can be
 restored. Emptying the Recycle Bin stays a manual step.
 
-Never touched: anything under .git, node_modules or virtualenvs; OneDrive
-cloud-only files (hashing them would download them); files changed in the last
+Never touched: anything under .git, node_modules or virtualenvs; files tracked
+by an enclosing git work tree (they may serve as the kept copy, but are never
+recycled - `git ls-files` decides, and a work tree git cannot list is protected
+whole); OneDrive cloud-only files (hashing them would download them); files changed in the last
 7 days; files smaller than --min-mb.
 """
 from __future__ import annotations
@@ -114,7 +116,52 @@ def sha256(path: Path, limit: int | None = None) -> str | None:
     return h.hexdigest()
 
 
-def find_duplicates(roots: list[Path], min_bytes: int, min_age_s: float) -> list[dict]:
+def _norm(path) -> str:
+    return os.path.normcase(os.path.abspath(str(path)))  # abspath also normalises; relative roots must match git's absolute paths
+
+
+class TrackedFiles:
+    """Answers "is this file tracked by an enclosing git work tree?", caching per directory and per work tree."""
+
+    def __init__(self):
+        self._top: dict[str, str | None] = {}  # directory -> work tree top (normalised) or None
+        self._tracked: dict[str, set[str] | None] = {}  # work tree top -> tracked paths; None = protect all
+
+    @staticmethod
+    def _run(cwd: Path, *args: str):
+        try:
+            return subprocess.run(["git", "-C", str(cwd), *args], capture_output=True, text=True,
+                                  encoding="utf-8", errors="replace", check=False)
+        except OSError:  # git not installed
+            return None
+
+    def _toplevel(self, directory: Path) -> str | None:
+        key = _norm(directory)
+        if key not in self._top:
+            res = self._run(directory, "rev-parse", "--show-toplevel")
+            top = res.stdout.strip() if res is not None and res.returncode == 0 else ""
+            if not top:  # git missing, refusing (safe.directory) or not a repo: fall back to a .git ancestor
+                top = next((str(a) for a in (directory, *directory.parents) if (a / ".git").exists()), "")
+                if top:
+                    self._tracked[_norm(top)] = None  # cannot list it: protect the whole tree
+            self._top[key] = _norm(top) if top else None
+        return self._top[key]
+
+    def __call__(self, path: Path) -> bool:
+        top = self._toplevel(path.parent)
+        if top is None:
+            return False
+        if top not in self._tracked:
+            res = self._run(Path(top), "ls-files", "-z", "--full-name")
+            self._tracked[top] = (None if res is None or res.returncode != 0 else
+                                  {_norm(Path(top) / f) for f in res.stdout.split("\0") if f})
+        tracked = self._tracked[top]
+        return tracked is None or _norm(path) in tracked
+
+
+def find_duplicates(roots: list[Path], min_bytes: int, min_age_s: float, is_tracked=None) -> list[dict]:
+    """Group identical files; tracked files are preferred as the kept copy and never listed for removal."""
+    is_tracked = is_tracked or TrackedFiles()
     by_size = defaultdict(list)
     for p, st in walk(roots, min_bytes, min_age_s):
         by_size[st.st_size].append((p, st.st_mtime))
@@ -138,9 +185,10 @@ def find_duplicates(roots: list[Path], min_bytes: int, min_age_s: float) -> list
             for digest, same in by_full.items():
                 if len(same) < 2:
                     continue
-                same.sort(key=lambda pm: keeper_key(pm[0], pm[1]))
-                groups.append({"sha256": digest, "size": size, "keep": str(same[0][0]),
-                               "remove": [str(p) for p, _ in same[1:]]})
+                same.sort(key=lambda pm: (not is_tracked(pm[0]), keeper_key(pm[0], pm[1])))
+                remove = [str(p) for p, _ in same[1:] if not is_tracked(p)]
+                if remove:
+                    groups.append({"sha256": digest, "size": size, "keep": str(same[0][0]), "remove": remove})
     groups.sort(key=lambda g: -g["size"] * len(g["remove"]))
     return groups
 
