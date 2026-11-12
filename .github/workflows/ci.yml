@@ -75,6 +75,12 @@ jobs:
         run: |
           if [ -f tools/losses/src/build_all.py ]; then python tools/losses/src/build_all.py; fi
 
+      - name: Method Atlas projection check
+        id: method_atlas
+        # Fails when docs/method_atlas/ is hand-edited. The full --check rebuild reads the
+        # sibling federation checkouts, so it stays local-only (tools/method_atlas/README.md).
+        run: python tools/method_atlas/build_method_atlas.py --verify-projection
+
       - name: Run tests
         id: tests
         env:
