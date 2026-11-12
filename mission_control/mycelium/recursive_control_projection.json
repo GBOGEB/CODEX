@@ -14,13 +14,13 @@
       "alias": "kpi_report",
       "origin": "LOCAL",
       "path": "docs/data/mycelium_kpi_measurement.json",
-      "sha256": "ada3eae76f439817ba42844fd910c3a6ef57abacbe3245faab360bbb3e294ef5"
+      "sha256": "8480f49c3c01008f7f7c49fac048d5ed3b9c4c59b1e83959089055302e7f47c0"
     },
     {
       "alias": "value_observation",
       "origin": "LOCAL",
       "path": "mission_control/mycelium/executable_value_control_observation.json",
-      "sha256": "8365658e1a7dd6bc3d02cf0ea9b347186984e7e112bdc236c3588f4613676731"
+      "sha256": "19a9784400efbee382f656ffd319cc066e22aca3e0860a116fda123cbfc8b93c"
     },
     {
       "alias": "control_events",
@@ -130,7 +130,7 @@
         "rule": "RC-04",
         "lane": "MYCELIUM_EXECUTION",
         "state": "QUEUED",
-        "reason": "565 unregistered assets, 0 tested orphans",
+        "reason": "564 unregistered assets, 0 tested orphans",
         "sources": [
           {
             "input": "value_observation",
@@ -144,7 +144,7 @@
         "rule": "RC-05",
         "lane": "MYCELIUM_EXECUTION",
         "state": "RED",
-        "reason": "Asset registration coverage: 12.4 against target 100",
+        "reason": "Asset registration coverage: 12.69 against target 100",
         "sources": [
           {
             "input": "kpi_report",
@@ -159,7 +159,7 @@
         "rule": "RC-05",
         "lane": "MYCELIUM_EXECUTION",
         "state": "RED",
-        "reason": "Unregistered asset count: 565 against target 0",
+        "reason": "Unregistered asset count: 564 against target 0",
         "sources": [
           {
             "input": "kpi_report",
@@ -236,7 +236,7 @@
         "rule": "RC-06",
         "lane": "MYCELIUM_REACH",
         "state": "RED",
-        "reason": "Value beyond repository: 11.45 against target 50",
+        "reason": "Value beyond repository: 11.28 against target 50",
         "sources": [
           {
             "input": "kpi_report",
@@ -250,7 +250,7 @@
         "rule": "RC-06",
         "lane": "MYCELIUM_REACH",
         "state": "RED",
-        "reason": "Tested-only share: 35.88 against target 0",
+        "reason": "Tested-only share: 36.84 against target 0",
         "sources": [
           {
             "input": "kpi_report",
@@ -264,7 +264,7 @@
         "rule": "RC-06",
         "lane": "MYCELIUM_SIGNALS",
         "state": "RED",
-        "reason": "Registry edges per registered node: 0.78 against target 1.5",
+        "reason": "Registry edges per registered node: 0.77 against target 1.5",
         "sources": [
           {
             "input": "kpi_report",
