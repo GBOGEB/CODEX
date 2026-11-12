@@ -70,6 +70,9 @@ def load_reviews(reviews_dir: Path = REVIEWS_DIR, schema_path: Path = SCHEMA) ->
         for obj in record["extracted_objects"]:
             if not (isinstance(obj, dict) and len(obj) == 1):
                 raise ReviewError(f"{path.name}: extracted object {obj!r} must be a one-key mapping (kind: id)")
+            ((kind, value),) = obj.items()
+            if not all(isinstance(v, str) and v.strip() for v in (kind, value)):
+                raise ReviewError(f"{path.name}: extracted object {obj!r} needs a non-empty kind and id")
         reviews.append({**record, "stem": path.name[: -len(SUFFIX)], "file": path.name})
     if not reviews:
         raise ReviewError(f"no review records in {reviews_dir}")

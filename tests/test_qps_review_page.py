@@ -91,6 +91,9 @@ def _write_reviews(tmp_path: Path, records: dict[str, dict]) -> Path:
         ({"status": ""}, "'status' must be a non-empty string"),
         ({"extracted_objects": [{"node": "QPS", "subsystem": "X"}]}, "must be a one-key mapping"),
         ({"extracted_objects": ["QPS"]}, "must be a one-key mapping"),
+        ({"extracted_objects": [{"node": ""}]}, "needs a non-empty kind and id"),
+        ({"extracted_objects": [{"": "QPS"}]}, "needs a non-empty kind and id"),
+        ({"extracted_objects": [{"node": "  "}]}, "needs a non-empty kind and id"),
     ],
 )
 def test_invalid_records_fail_closed(tmp_path, record, message):
