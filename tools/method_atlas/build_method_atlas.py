@@ -11,6 +11,14 @@ index) of every declared repository, then writes:
     python tools/method_atlas/build_method_atlas.py --write
     python tools/method_atlas/build_method_atlas.py --write --repo HUB=../mission-control
     python tools/method_atlas/build_method_atlas.py --check --run-checks   # also run each block's `check:`
+    python tools/method_atlas/build_method_atlas.py --verify-projection   # CI: committed files are untouched
+
+--check rebuilds from the federation checkouts, so it is local-only: the atlas
+records sibling HEAD SHAs, dirty counts and the host's tracked-file count, none
+of which a single-repo CI checkout reproduces. --verify-projection needs no
+sibling and no git: it checks that method_atlas.json still matches its own
+digest and that index.html and method_atlas.mmd re-render byte-exact from it,
+so a hand edit anywhere in docs/method_atlas/ fails.
 
 Identity is recorded twice: commit SHA (which commit) and git object IDs
 (which content): the HEAD tree OID per checkout and the blob OID per declared
@@ -967,8 +975,7 @@ def build(seed_path: Path = SEED, overrides: dict | None = None) -> tuple[dict, 
         "health": build_health(seed, files, roots),
         "conflict_playbook": seed.get("conflicts", {}),
     }
-    atlas["digest"] = hashlib.sha256(json.dumps(atlas, sort_keys=True, separators=(",", ":"),
-                                                ensure_ascii=True).encode()).hexdigest()
+    atlas["digest"] = atlas_digest(atlas)
     return atlas, seed, roots
 
 
@@ -978,15 +985,49 @@ def outputs(atlas: dict, seed: dict, out_dir: Path = OUT_DIR) -> dict[Path, str]
             out_dir / "method_atlas.mmd": mermaid(atlas, seed)}
 
 
+def atlas_digest(atlas: dict) -> str:
+    body = {k: v for k, v in atlas.items() if k != "digest"}
+    return hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":"),
+                                     ensure_ascii=True).encode()).hexdigest()
+
+
+def verify_projection(seed_path: Path = SEED, out_dir: Path = OUT_DIR) -> list[str]:
+    """Problems with the committed outputs, judged against the committed JSON alone (no git, no siblings)."""
+    seed = yaml.safe_load(seed_path.read_text(encoding="utf-8"))
+    json_path = out_dir / "method_atlas.json"
+    if not json_path.exists():
+        return [f"{json_path.name}: missing"]
+    text = json_path.read_text(encoding="utf-8")
+    try:
+        atlas = json.loads(text)
+    except json.JSONDecodeError as exc:
+        return [f"{json_path.name}: not JSON ({exc})"]
+    problems = []
+    if atlas.get("digest") != atlas_digest(atlas):
+        problems.append(f"{json_path.name}: digest does not match content (hand-edited?)")
+    for path, content in outputs(atlas, seed, out_dir).items():
+        current = path.read_text(encoding="utf-8") if path.exists() else None
+        if current != content:
+            problems.append(f"{path.name}: differs from the projection of method_atlas.json")
+    return problems
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     mode = ap.add_mutually_exclusive_group(required=True)
     mode.add_argument("--check", action="store_true")
     mode.add_argument("--write", action="store_true")
+    mode.add_argument("--verify-projection", action="store_true",
+                      help="CI-safe: committed outputs match their own digest and re-render byte-exact")
     ap.add_argument("--repo", action="append", default=[], metavar="ID=PATH")
     ap.add_argument("--run-checks", action="store_true", help="also run each block's declared `check:` command")
     ap.add_argument("--checks-out", type=Path, default=CHECKS_OUT, help="receipt path for --run-checks")
     args = ap.parse_args(argv)
+    if args.verify_projection:
+        problems = verify_projection()
+        print(json.dumps({"mode": "VERIFY_PROJECTION", "result": "HOLD" if problems else "PASS",
+                          "problems": problems}, indent=1))
+        return 1 if problems else 0
     overrides = dict(r.split("=", 1) for r in args.repo)
     atlas, seed, roots = build(SEED, overrides)
     expected = outputs(atlas, seed)

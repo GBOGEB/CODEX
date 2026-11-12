@@ -371,3 +371,28 @@ def test_radar_commands_per_state():
     assert any("--force-with-lease origin feat/x" in l for b in pushed for l in b["lines"])
     stray = bc.commands_for(repo, {"name": "main", "state": "BASE_LOCAL_AHEAD", "conflicts": []}, pb)
     assert "branch -f main origin/main" in stray[0]["lines"][1]
+
+
+@pytest.mark.skipif(not (OUT / "method_atlas.json").exists(), reason="atlas not generated")
+def test_verify_projection_passes_on_committed_outputs():
+    assert atlas.verify_projection() == []
+    assert atlas.main(["--verify-projection"]) == 0
+
+
+@pytest.mark.skipif(not (OUT / "method_atlas.json").exists(), reason="atlas not generated")
+@pytest.mark.parametrize("name, edit", [
+    ("method_atlas.json", lambda t: t.replace('"network": false', '"network": true', 1)),
+    ("index.html", lambda t: t.replace("</body>", "<p>hand edit</p></body>", 1)),
+    ("method_atlas.mmd", lambda t: t + "%% hand edit\n"),
+])
+def test_verify_projection_fails_on_hand_edit(tmp_path, name, edit):
+    for f in ("method_atlas.json", "index.html", "method_atlas.mmd"):
+        (tmp_path / f).write_bytes((OUT / f).read_bytes())
+    assert atlas.verify_projection(out_dir=tmp_path) == []
+    target = tmp_path / name
+    text = target.read_text(encoding="utf-8")
+    edited = edit(text)
+    assert edited != text
+    target.write_text(edited, encoding="utf-8", newline="")
+    problems = atlas.verify_projection(out_dir=tmp_path)
+    assert problems and any(p.startswith(name) for p in problems)
