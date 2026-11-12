@@ -117,13 +117,6 @@ def test_check_manifest_passes(tmp_path, monkeypatch, capsys):
     assert "manifest check passed" in capsys.readouterr().out
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "production_defect: scripts/check_manifest.py joins invalid published_pages entries as strings, "
-        "so a non-string entry (e.g. 5) crashes with TypeError instead of the intended SystemExit report"
-    ),
-)
 def test_check_manifest_non_string_entry_is_reported(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _manifest_tree(tmp_path, {"canonical_entrypoint": "docs/index.html", "published_pages": REQUIRED_PAGES + [5]})
@@ -178,13 +171,6 @@ def test_svg_refs_parser(tmp_path):
     assert names == ["a.svg", "b.svg", "c.svg", "d.svg"]
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "production_defect: scripts/check_svg_links.py strips #fragment/?query from matches, but its regexes "
-        "require the value to end in '.svg', so refs like 'icon.svg#id' are never matched and broken ones pass"
-    ),
-)
 def test_svg_links_broken_ref_with_fragment_is_reported(tmp_path, monkeypatch):
     m = load(SVG_LINKS)
     monkeypatch.chdir(tmp_path)
@@ -244,13 +230,6 @@ def test_emit_runtime_status_main_writes_report(tmp_path):
     assert data["status"] == "passed" and data["deployment"] == {"completion_percent": 100}
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "production_defect: scripts/emit_runtime_status.py prints a non-ASCII arrow (U+2192), which raises "
-        "UnicodeEncodeError on the cp1252 Windows console (CODEX CLAUDE.md: keep CLI prints ASCII)"
-    ),
-)
 def test_emit_runtime_status_output_is_cp1252_safe(tmp_path, capsys):
     m = load(RUNTIME_STATUS)
     dep = _write(tmp_path / "d.json", "{}")

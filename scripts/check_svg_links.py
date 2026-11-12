@@ -6,8 +6,8 @@ from pathlib import Path
 DOCS_ROOT = Path("docs")
 
 # Match src/data/href attributes and Markdown image/link syntax pointing to .svg files
-_ATTR_RE = re.compile(r'(?:src|data|href)=["\']([^"\']+\.svg)["\']', re.IGNORECASE)
-_MD_RE = re.compile(r'(?:!\[[^\]]*\]|(?<!!)\[[^\]]*\])\(([^)]+\.svg)\)', re.IGNORECASE)
+_ATTR_RE = re.compile(r'(?:src|data|href)=["\']([^"\']+\.svg(?:[#?][^"\']*)?)["\']', re.IGNORECASE)
+_MD_RE = re.compile(r'(?:!\[[^\]]*\]|(?<!!)\[[^\]]*\])\(([^)]+\.svg(?:[#?][^)]*)?)\)', re.IGNORECASE)
 
 
 def _local_svg_refs(text, base):
