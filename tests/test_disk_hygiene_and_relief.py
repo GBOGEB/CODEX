@@ -115,6 +115,24 @@ def test_tracked_files_are_never_removal_candidates(tmp_path):
     assert Path(g["keep"]).name == "model_backup.bin"  # tracked copy wins the keep slot
 
 
+
+@pytest.mark.skipif(shutil.which("git") is None, reason="git not installed")
+def test_tracked_files_protected_with_relative_root(tmp_path, monkeypatch):
+    """Scanning via a relative root (``--roots .``) must still recognise tracked files (git paths are absolute)."""
+    repo = tmp_path / "clone"
+    repo.mkdir()
+    subprocess.run(["git", "-C", str(repo), "init", "-q"], check=True)
+    payload = os.urandom(4096)
+    (repo / "data.bin").write_bytes(payload)
+    (repo / "data (1).bin").write_bytes(payload)
+    subprocess.run(["git", "-C", str(repo), "add", "."], check=True)
+    subprocess.run(["git", "-C", str(repo), "-c", "user.name=t", "-c", "user.email=t@example.invalid",
+                    "commit", "-q", "-m", "seed"], check=True)
+    _backdate(repo)
+    monkeypatch.chdir(repo)
+    groups = dh.find_duplicates([Path(".")], min_bytes=1, min_age_s=0)
+    assert [p for g in groups for p in g["remove"]] == []
+
 def test_unlistable_work_tree_is_protected_whole(tmp_path):
     """When git cannot list a work tree (no git, safe.directory refusal), nothing under it is a candidate."""
     repo = tmp_path / "clone"

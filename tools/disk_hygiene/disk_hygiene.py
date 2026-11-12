@@ -117,7 +117,7 @@ def sha256(path: Path, limit: int | None = None) -> str | None:
 
 
 def _norm(path) -> str:
-    return os.path.normcase(os.path.normpath(str(path)))
+    return os.path.normcase(os.path.abspath(str(path)))  # abspath also normalises; relative roots must match git's absolute paths
 
 
 class TrackedFiles:
