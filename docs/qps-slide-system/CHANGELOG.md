@@ -1,5 +1,21 @@
 # CHANGELOG — QPS Master Slide System
 
+## v0.9.0 - Generated lineage review page (v1.3 follow-up #2)
+
+### Changed
+
+- `html/review.html` is no longer the 2026-05-18 placeholder. It is generated from `review/lineage/*.review.yaml` by `tools/build_qps_review_page.py`: per review, the source slide beside the curated slide, the source lineage, reviewer comments and the extracted semantic objects.
+- Slides and extracted objects link to their node pages (`html/node/*.html`) when a node record lists the slide or has the object's id.
+
+### Added
+
+- Fail-closed review validation against `yaml/schema.review.yaml`: missing keys, non-list fields, empty strings and malformed extracted objects stop the build.
+- `tests/test_qps_review_page.py` fails when the committed page is stale (including a hand edit) or a link does not resolve. Regenerate with `python tools/build_qps_review_page.py` (`--check` to verify).
+
+### Not done
+
+- Follow-up #3 (density modes from `styles/tokens.yaml`) and a headless Chromium check of the page.
+
 ## v0.8.0 - Generated semantic navigation graph (v1.3 follow-up #1)
 
 ### Changed
