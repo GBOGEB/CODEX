@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Non-admitting QPS review-DMAIC -> CODEX MYCELIUM observation bridge.
 
 The producing QPS head and consuming CODEX head are caller-supplied reference
@@ -13,6 +12,7 @@ import html
 import json
 import re
 from pathlib import Path
+from string import Template
 
 INPUT_SCHEMA = "qps.review-dmaic-score/1.0"
 OUTPUT_SCHEMA = "codepurple.qps.review-dmaic-bridge.v1"
@@ -234,18 +234,18 @@ def render_html(report):
              ("OCCURRENCES",metrics["comment_observations"]),
              ("REPLAY OBSERVATIONS",metrics["repeat_observations"]),
              ("NATIVE SCALE", "WITHHELD"),("ADMISSION", "DEFER")]
-    cards = "".join('<article class="tile"><small>%s</small><strong>%s</strong></article>' % (e(a),e(b)) for a,b in tiles)
+    cards = "".join(f'<article class="tile"><small>{e(a)}</small><strong>{e(b)}</strong></article>' for a, b in tiles)
     panels = [
         ("01 / Define", "QPS review-DMAIC aggregate. External SHA-256 payload pin verified; origin authentication withheld."),
-        ("02 / Measure", "%s pulses / %s distinct review documents, as claimed by the producer." % (e(metrics["pulse_count"]),e(metrics["distinct_review_documents"]))),
-        ("03 / Analyse", "%s comparable candidate-answer transitions. These are not root closures or effectiveness measurements." % e(metrics["comparable_candidate_transitions"])),
+        ("02 / Measure", f'{e(metrics["pulse_count"])} pulses / {e(metrics["distinct_review_documents"])} distinct review documents, as claimed by the producer.'),
+        ("03 / Analyse", f'{e(metrics["comparable_candidate_transitions"])} comparable candidate-answer transitions. These are not root closures or effectiveness measurements.'),
         ("04 / Improve", "Existing QPS source, W383, R07 and MINERVA_PID generators retain their own authority. This bridge does not launch them."),
         ("05 / Control", "Native Office, engineering acceptance and exact-head CI are withheld in the bridge. Publication HOLD."),
         ("06 / Federation", "PAY_IT_FORWARD / DEFER. No automatic adoption; CODEX owns presentation only, QPS owns engineering truth."),
     ]
-    grid = "".join('<section><h2>%s</h2><p>%s</p></section>' % (e(a), b) for a,b in panels)
-    return """<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MYCELIUM · QPS DMAIC intake</title><style>
-:root{--purple:#39135f;--violet:#74349c;--ink:#231633;--blush:#f6e1ec}*{box-sizing:border-box}body{margin:0;font:15px Aptos,'Segoe UI',sans-serif;background:#faf8fc;color:var(--ink)}header{background:var(--purple);color:#fff;padding:28px max(20px,5vw)}h1{font-size:clamp(23px,3vw,34px);margin:0 0 8px}.eyebrow{font:12px Consolas,monospace}main{max-width:1380px;margin:auto;padding:18px}.splash,.panels{display:grid;gap:13px}.splash{grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin-bottom:18px}.panels{grid-template-columns:repeat(2,minmax(0,1fr))}.tile,.panels section{min-width:0;background:#fff;border:1px solid #e5ddee;border-radius:10px;padding:16px}.tile{border-top:4px solid var(--violet)}small{display:block;color:#695c71}.tile strong{display:block;font-size:26px;margin-top:7px;overflow-wrap:anywhere}h2{color:var(--purple);font-size:17px;margin:0}p{line-height:1.5;overflow-wrap:anywhere}.notice{background:var(--blush);padding:12px;border-radius:6px;margin-bottom:15px;overflow-wrap:anywhere}.notice code{word-break:break-all}footer{text-align:center;padding:22px;color:#73697b}@media(max-width:760px){.panels{grid-template-columns:1fr}}</style></head><body><header><div class="eyebrow">CODEX / MYCELIUM · READ-ONLY BRIDGE · NO ENGINEERING CREDIT</div><h1>QPS DMAIC — SCORE</h1><div>Six-view source-bound observation · admission DEFER</div></header><main><div class="notice">Source score SHA-256: <code>%s</code> · Producer head is a caller-supplied reference, not independently authenticated.</div><div class="splash">%s</div><div class="panels">%s</div></main><footer>Local scratch output only · Do not publish private QPS evidence to public CODEX Pages</footer></body></html>""" % (e(report["source"]["source_payload_sha256"]),cards,grid)
+    grid = "".join(f'<section><h2>{e(a)}</h2><p>{b}</p></section>' for a, b in panels)
+    return Template("""<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MYCELIUM · QPS DMAIC intake</title><style>
+:root{--purple:#39135f;--violet:#74349c;--ink:#231633;--blush:#f6e1ec}*{box-sizing:border-box}body{margin:0;font:15px Aptos,'Segoe UI',sans-serif;background:#faf8fc;color:var(--ink)}header{background:var(--purple);color:#fff;padding:28px max(20px,5vw)}h1{font-size:clamp(23px,3vw,34px);margin:0 0 8px}.eyebrow{font:12px Consolas,monospace}main{max-width:1380px;margin:auto;padding:18px}.splash,.panels{display:grid;gap:13px}.splash{grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin-bottom:18px}.panels{grid-template-columns:repeat(2,minmax(0,1fr))}.tile,.panels section{min-width:0;background:#fff;border:1px solid #e5ddee;border-radius:10px;padding:16px}.tile{border-top:4px solid var(--violet)}small{display:block;color:#695c71}.tile strong{display:block;font-size:26px;margin-top:7px;overflow-wrap:anywhere}h2{color:var(--purple);font-size:17px;margin:0}p{line-height:1.5;overflow-wrap:anywhere}.notice{background:var(--blush);padding:12px;border-radius:6px;margin-bottom:15px;overflow-wrap:anywhere}.notice code{word-break:break-all}footer{text-align:center;padding:22px;color:#73697b}@media(max-width:760px){.panels{grid-template-columns:1fr}}</style></head><body><header><div class="eyebrow">CODEX / MYCELIUM · READ-ONLY BRIDGE · NO ENGINEERING CREDIT</div><h1>QPS DMAIC — SCORE</h1><div>Six-view source-bound observation · admission DEFER</div></header><main><div class="notice">Source score SHA-256: <code>$digest</code> · Producer head is a caller-supplied reference, not independently authenticated.</div><div class="splash">$cards</div><div class="panels">$grid</div></main><footer>Local scratch output only · Do not publish private QPS evidence to public CODEX Pages</footer></body></html>""").substitute(digest=e(report["source"]["source_payload_sha256"]), cards=cards, grid=grid)
 
 
 def publish(report, out_dir):
