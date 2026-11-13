@@ -339,7 +339,7 @@ jobs:
           path: mission_control/mycelium/registration_debt_classification.json
 
   qps-dmaic-bridge:
-    name: QPS DMAIC bridge (non-admitting 52-case floor)
+    name: QPS DMAIC bridge (non-admitting 53-case floor)
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -376,7 +376,7 @@ jobs:
           from pathlib import Path
           from xml.etree import ElementTree as ET
           cases = list(ET.parse('/tmp/qps-dmaic-bridge-qa/junit.xml').iter('testcase'))
-          if len(cases) < 52 or any(
+          if len(cases) < 53 or any(
               x.find(y) is not None for x in cases for y in ('failure','error','skipped')
           ):
               raise SystemExit('QPS_BRIDGE_FIRST_RED: missing test population or unclean JUnit')
