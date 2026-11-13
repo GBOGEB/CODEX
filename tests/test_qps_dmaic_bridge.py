@@ -197,3 +197,7 @@ def test_cli_permitted_local_output(tmp_path,monkeypatch,capsys):
       "--expected-codex-head",CODEX_SHA,"--out-dir",str(tmp_path/"out")])
     assert bridge.main()==0
     assert '"admission": "DEFER"' in capsys.readouterr().out
+
+def test_mobile_sha_digest_does_not_force_horizontal_overflow():
+    body = bridge.render_html(run(score()))
+    assert '.notice code{word-break:break-all}' in body
