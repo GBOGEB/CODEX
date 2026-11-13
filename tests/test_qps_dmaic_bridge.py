@@ -1,12 +1,9 @@
 """QPS -> CODEX public-contract adversaries. Synthetic only; no QPS source bytes."""
 from __future__ import annotations
 
-import copy
-import hashlib
 import importlib.util
-import json
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -20,29 +17,40 @@ CODEX_SHA = "b" * 40
 
 
 def score():
-    pulse = dict(pulse_id="N0",ordinal=0,source_document_id="SYNTHETIC",
-                 source_sha256="a"*64,producer_receipt_sha256="b"*64,
-                 workitems_receipt_sha256="c"*64,entry_count=1,thread_count=1,
-                 expected_entries=1,expected_threads=1,candidate_answers=0,
-                 declared_evidence_links=0)
-    newer = {**pulse,"pulse_id":"N1","ordinal":1,"workitems_receipt_sha256":"d"*64,
-             "candidate_answers":1}
-    return dict(schema="qps.review-dmaic-score/1.0",input_manifest_sha256="e"*64,
-                mode="OBSERVE",evidence_class="SYNTHETIC_FIXTURE",admission="OBSERVATION_ONLY",
-                dispatched_workflows=0,github_mutations=0,pulse_count=2,pulses=[pulse,newer],
-                trend=[{"pulse_id":"N0","class":"BASELINE","candidate_answer_delta":None},
-                       {"pulse_id":"N1","class":"COMPARABLE_REVIEW_ANALYSIS","candidate_answer_delta":1}],
-                dag_order=["INTAKE","REVIEW"],dag_edge_count=1,candidate_handoff_count=1,
-                score=dict(authority_transfer=False,formal_credit_delta=0,
-                           engineering_admission="HOLD",publication_admission="HOLD",
-                           native_office_qa="NOT_EXECUTED",exact_head_ci="NOT_VERIFIED",
-                           receipt_pin_integrity="PASS",dag_cycle_guard="PASS",handoff_direction_guard="PASS",
-                           first_red_causal_recurrence="WITHHELD_NO_ROOT_EVENTS",
-                           consumer_adoption="WITHHELD_NO_ACCEPTANCE",
-                           queue_p50_p95="WITHHELD_NO_CLOCK",pca_bt="WITHHELD_NO_POPULATION",
-                           source_population_reconciliation="PASS",comment_identity_duplicates=0,
-                           unique_comment_keys=1,comment_observations=2,repeat_observations=1))
-
+    pulse = {
+        "pulse_id": "N0", "ordinal": 0, "source_document_id": "SYNTHETIC",
+        "source_sha256": "a" * 64, "producer_receipt_sha256": "b" * 64,
+        "workitems_receipt_sha256": "c" * 64, "entry_count": 1, "thread_count": 1,
+        "expected_entries": 1, "expected_threads": 1, "candidate_answers": 0,
+        "declared_evidence_links": 0,
+    }
+    newer = {**pulse, "pulse_id": "N1", "ordinal": 1,
+             "workitems_receipt_sha256": "d" * 64, "candidate_answers": 1}
+    return {
+        "schema": "qps.review-dmaic-score/1.0", "input_manifest_sha256": "e" * 64,
+        "mode": "OBSERVE", "evidence_class": "SYNTHETIC_FIXTURE",
+        "admission": "OBSERVATION_ONLY", "dispatched_workflows": 0,
+        "github_mutations": 0, "pulse_count": 2, "pulses": [pulse, newer],
+        "trend": [
+            {"pulse_id": "N0", "class": "BASELINE", "candidate_answer_delta": None},
+            {"pulse_id": "N1", "class": "COMPARABLE_REVIEW_ANALYSIS", "candidate_answer_delta": 1},
+        ],
+        "dag_order": ["INTAKE", "REVIEW"], "dag_edge_count": 1,
+        "candidate_handoff_count": 1,
+        "score": {
+            "authority_transfer": False, "formal_credit_delta": 0,
+            "engineering_admission": "HOLD", "publication_admission": "HOLD",
+            "native_office_qa": "NOT_EXECUTED", "exact_head_ci": "NOT_VERIFIED",
+            "receipt_pin_integrity": "PASS", "dag_cycle_guard": "PASS",
+            "handoff_direction_guard": "PASS",
+            "first_red_causal_recurrence": "WITHHELD_NO_ROOT_EVENTS",
+            "consumer_adoption": "WITHHELD_NO_ACCEPTANCE",
+            "queue_p50_p95": "WITHHELD_NO_CLOCK", "pca_bt": "WITHHELD_NO_POPULATION",
+            "source_population_reconciliation": "PASS", "comment_identity_duplicates": 0,
+            "unique_comment_keys": 1, "comment_observations": 2,
+            "repeat_observations": 1,
+        },
+    }
 
 def run(record):
     raw=bridge.canonical(record)
@@ -98,8 +106,8 @@ def test_independent_pin_mismatch():
                                       ("expected_qps_head", 7)])
 def test_invalid_external_binding(field,bad):
     raw=bridge.canonical(score())
-    args=dict(expected_payload_sha256=bridge.sha256(raw),
-              expected_qps_head=QPS_SHA,expected_codex_head=CODEX_SHA)
+    args={"expected_payload_sha256":bridge.sha256(raw),
+          "expected_qps_head":QPS_SHA,"expected_codex_head":CODEX_SHA}
     args[field]=bad
     with pytest.raises(bridge.SourceWithheld):
         bridge.bridge(raw,**args)
