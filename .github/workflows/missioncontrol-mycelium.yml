@@ -394,7 +394,7 @@ jobs:
                      'qps_native_source_verified':False,
                      'engineering_acceptance':False,'authority_transfer':False,
                      'merge_admission':'HOLD'}
-          Path('/tmp/qps-dmaic-bridge-qa/receipt.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\\n')
+          Path('/tmp/qps-dmaic-bridge-qa/receipt.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n')
           print('QPS_BRIDGE_CI_RECEIPT='+json.dumps(receipt,sort_keys=True))
           PY
       - name: Upload non-sensitive exact-head QA receipts
