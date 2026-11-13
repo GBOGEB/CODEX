@@ -36,8 +36,8 @@ Define (source identity and pin), Measure (counts and denominators), Analyse (ca
 ## QA and admission
 
 - Fail closed on schema drift, forged approval/CI, source/payload pin mismatch, malformed JSON, invalid counts, unchanged replay mislabelled as progress, private reviewer fields and output drift/alias.
-- `tests/test_qps_dmaic_bridge.py` contains 52 synthetic contract/adversarial cases. Local pilot: 52/52 PASS, statement coverage 160/168 (95.2%), branches 50/52 (96.2%). The existing `missioncontrol-mycelium.yml` should collect and enforce >=52 tests, >=90% statements and >=90% branches on the **actual PR head**.
-- Example browser QA must run at 1440x1000, 1280x800, 390x844, with zero page/console errors, zero overflow, six visible sections. A local browser check does not assert recipient Acrobat, engineering agreement or native QPS document fidelity.
+- `tests/test_qps_dmaic_bridge.py` contains 53 synthetic contract/adversarial cases. Local pilot: 53/53 PASS, statement coverage 160/168 (95.2%), branches 50/52 (96.2%). The existing `missioncontrol-mycelium.yml` should collect and enforce >=53 tests, >=90% statements and >=90% branches on the **actual PR head**.
+- Example browser QA must run at 1440x1000, 1280x800, 390x844, with zero page/console errors, zero overflow, six visible sections. Local Chromium (explicit executable) at all three viewports confirmed six panels, zero page/console errors and zero horizontal overflow after a long-digest mobile wrap repair. A local browser check does not assert recipient Acrobat, engineering agreement or native QPS document fidelity.
 - Missing or unverified raw QPS / SLD / P&ID / T-s sources -> `WITHHELD`; the bridge **cannot** prove 12 independent sources or 1x/4x/16x distinct-document throughput.
 - QPS #2354 independent human APPROVED review remains a separate, required gate. CODEX bridge CI is not QPS CI; no merge, protection or waiver from this code.
 
