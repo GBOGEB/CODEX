@@ -337,3 +337,75 @@ jobs:
         with:
           name: missioncontrol-registration-debt-classification
           path: mission_control/mycelium/registration_debt_classification.json
+
+  qps-dmaic-bridge:
+    name: QPS DMAIC bridge (non-admitting 53-case floor)
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact triggering SHA without credentials
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Check exact SHA identity
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          echo "QPS_BRIDGE_TESTED_SHA=$EXPECTED_SHA" >> "$GITHUB_ENV"
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Install pinned test tools
+        run: python -m pip install --disable-pip-version-check pytest==8.4.2 coverage==7.13.3 ruff==0.14.8
+      - name: Ruff lint (new QPS bridge and tests only)
+        run: |
+          python -m ruff check --select EXE001,F401,I001,UP031,C408 \
+            mission_control/mycelium/qps_dmaic_bridge.py tests/test_qps_dmaic_bridge.py
+      - name: Fail closed on source bridge, adversarial and coverage gaps
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/qps-dmaic-bridge-qa
+          python -m coverage run --branch --include='*/mission_control/mycelium/qps_dmaic_bridge.py' -m pytest -q -p no:cacheprovider tests/test_qps_dmaic_bridge.py --junitxml=/tmp/qps-dmaic-bridge-qa/junit.xml
+          python -m coverage json -q -o /tmp/qps-dmaic-bridge-qa/coverage.json
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+          cases = list(ET.parse('/tmp/qps-dmaic-bridge-qa/junit.xml').iter('testcase'))
+          if len(cases) < 53 or any(
+              x.find(y) is not None for x in cases for y in ('failure','error','skipped')
+          ):
+              raise SystemExit('QPS_BRIDGE_FIRST_RED: missing test population or unclean JUnit')
+          c = json.loads(Path('/tmp/qps-dmaic-bridge-qa/coverage.json').read_text())['totals']
+          if (c['num_statements'] <= 0 or c['num_branches'] <= 0
+              or 100*c['covered_lines'] < 90*c['num_statements']
+              or 100*c['covered_branches'] < 90*c['num_branches']):
+              raise SystemExit('QPS_BRIDGE_FIRST_RED: 90/90 statement/branch coverage floor')
+          receipt = {'schema':'codepurple.qps.dmaic-bridge-ci.v1',
+                     'tested_sha':os.environ['QPS_BRIDGE_TESTED_SHA'],
+                     'tests_executed':len(cases),
+                     'statement_covered':c['covered_lines'],'statements':c['num_statements'],
+                     'branch_covered':c['covered_branches'],'branches':c['num_branches'],
+                     'scope':'SYNTHETIC_ADVERSARIAL_BRIDGE_ONLY',
+                     'qps_native_source_verified':False,
+                     'engineering_acceptance':False,'authority_transfer':False,
+                     'merge_admission':'HOLD'}
+          Path('/tmp/qps-dmaic-bridge-qa/receipt.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n')
+          print('QPS_BRIDGE_CI_RECEIPT='+json.dumps(receipt,sort_keys=True))
+          PY
+      - name: Upload non-sensitive exact-head QA receipts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: qps-dmaic-bridge-${{ env.QPS_BRIDGE_TESTED_SHA }}-${{ github.run_id }}
+          path: /tmp/qps-dmaic-bridge-qa/
+          if-no-files-found: warn
+          retention-days: 30
