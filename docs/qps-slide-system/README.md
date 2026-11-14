@@ -4,6 +4,8 @@ HTML-first dense engineering knowledge-transfer system for QPS slide decks.
 
 ## Version
 
+`v0.9.0` — the side-by-side lineage review page (`html/review.html`) is generated from `review/lineage/*.review.yaml`.
+
 `v0.8.0` — the semantic navigation graph and node pages are generated from `yaml/nodes/*.yaml` (tree and interface links).
 
 Previous: `v0.7.0` — Chapter 15 refreshed as a generated, source-bound deck (validated model, physics authority, L1 results, toolbox).
@@ -104,6 +106,16 @@ physics pin + L1 record + gate + basic-incarnation domain
 - Review deck: `generated/gistau-ch15-validated-model.html`. Slides are registered as `GISTAU-0001..0009` in `MANIFEST/MASTER_SLIDE_REGISTRY.yaml`.
 - Corporate PPTX: run `qps_post.py pptx` on the generated Markdown, then `qps_qa.py check`. The SCK CEN slide master is built locally and is not committed.
 
+
+## v0.9.0 Lineage review page (generated from review records)
+
+```text
+review/lineage/*.review.yaml (+ yaml/schema.review.yaml, yaml/nodes/*.yaml)
+  -> tools/build_qps_review_page.py
+  -> html/review.html   (source vs curated slide, lineage, comments, extracted objects)
+```
+
+To add a review, add a `review/lineage/<name>.review.yaml` record and run `python tools/build_qps_review_page.py`. `tests/test_qps_review_page.py` fails if the page is stale, a record is invalid, or a link does not resolve.
 
 ## v0.8.0 Semantic navigation graph (generated from node records)
 
