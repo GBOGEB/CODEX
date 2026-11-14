@@ -331,3 +331,12 @@ def test_empty_claims_file_is_a_schema_error_not_absent(wave_repo):
     from scripts import wave_claims
     codes = {v["code"] for v in wave_claims.validate_claims(doc, wave_claims.load_naming_rules(), "O/r")}
     assert "C0_SCHEMA" in codes
+
+
+def test_cycle_count_excludes_nodes_only_blocked_by_a_cycle():
+    """r4436454421: A <-> B plus B -> C has two cyclic nodes; C is only blocked behind the cycle."""
+    got = build_wave_register.kahn({("B", "A"), ("A", "B"), ("C", "B")})
+    assert got["acyclic"] is False
+    assert got["nodes_in_cycles"] == 2
+    assert got["nodes_blocked_by_cycles"] == 1
+    assert build_wave_register.kahn({("X", "X")})["nodes_in_cycles"] == 1  # a self-edge is a cycle
