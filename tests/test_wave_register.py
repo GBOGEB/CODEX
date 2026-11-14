@@ -281,7 +281,8 @@ def test_register_lineage_is_consistent_and_id_only():
     assert isinstance(lin["stats"]["acyclic"], bool)
     for e in lin["edges"]:
         assert set(e) == {"child", "parent", "repos"}
-        assert e["child"] != e["parent"]
+        if e["child"] == e["parent"]:  # a literal self-dependency is kept so the cycle check sees it
+            assert lin["stats"]["acyclic"] is False
         assert all(isinstance(n, int) and n > 0 for n in e["repos"].values())
         assert re.fullmatch(r"[A-Z]+:\S+", e["child"]) and re.fullmatch(r"[A-Z]+:\S+", e["parent"])
         # both endpoints are register keys: no dangling references (CODEX #1248 review)

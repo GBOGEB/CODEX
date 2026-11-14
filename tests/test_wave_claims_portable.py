@@ -461,7 +461,7 @@ class ReviewFindings(unittest.TestCase):
 
 
 class ReviewFindingsCodex1248(unittest.TestCase):
-    """CODEX#1248 Codex review, closed in kit 1.3.1."""
+    """CODEX#1248 Codex review, closed in kit 1.3.2."""
 
     def roll(self, sets, observed):
         claims, found, _ = wc.rollup(sets, observed, set(), RULES)
