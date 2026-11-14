@@ -53,7 +53,7 @@ def main(argv: list[str] | None = None) -> int:
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(f"Wrote runtime status report → {args.out}")
+    print(f"Wrote runtime status report -> {args.out}")
     return 0
 
 
