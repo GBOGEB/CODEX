@@ -26,6 +26,11 @@ jobs:
       - name: Validate payload
         env:
           PAYLOAD: ${{ toJson(github.event.client_payload) }}
+          SENDER: ${{ github.event.sender.login }}
+          # Comma-separated logins allowed to dispatch on GEMINI's behalf
+          # (repository variable). Unset or unmatched: the run is recorded
+          # as UNVERIFIED and never as a GEMINI handover.
+          ALLOWED_SENDERS: ${{ vars.ECOSYSTEM_DISPATCH_SENDERS }}
         run: |
           set -euo pipefail
           printf '%s' "$PAYLOAD" > payload.json
@@ -37,8 +42,25 @@ jobs:
           if ! printf '%s' "$sha" | grep -Eq '^[0-9a-f]{40}$'; then
             echo "::error::commit_sha is not a 40-hex SHA"; exit 1
           fi
+          # source_repo is a payload claim. Attribute it only when the
+          # sender is allow-listed AND the SHA exists in GBOGEB/GEMINI.
+          provenance=UNVERIFIED
+          case ",${ALLOWED_SENDERS// /}," in
+            *",$SENDER,"*)
+              code=$(curl -sS -o /dev/null -w '%{http_code}' \
+                "https://api.github.com/repos/GBOGEB/GEMINI/commits/$sha")
+              if [ "$code" = 200 ]; then
+                provenance=GEMINI_HANDOVER
+              else
+                echo "::error::$sha not found in GBOGEB/GEMINI ($code)"
+                exit 1
+              fi
+              ;;
+          esac
           {
             echo "### ecosystem_worktree_sync received"
+            echo
+            echo "provenance: $provenance (sender: $SENDER)"
             echo
             echo '```json'
             jq . payload.json
