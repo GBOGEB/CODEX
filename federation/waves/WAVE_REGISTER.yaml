@@ -7,27 +7,27 @@ authority_transfer: false
 maturity: CANDIDATE
 sources:
   GBOGEB/ABACUS:
-    head: 3b326d32e22e2f1e38a1ac4186932c6158af3faf
-    files: 4656
+    head: 1b3a6a513d2a02ad46de7fe8c61a85bb5405f876
+    files: 4657
     visibility: public
     lineage_unresolved: 0
     claims_file: true
   GBOGEB/CODEX:
-    head: 98158e021371794ef53bed59c04d18d9ecdd2a19
-    files: 2919
+    head: 38831761dcfb1999feeca9545814dca8ae5a66d0
+    files: 2928
     visibility: public
     lineage_unresolved: 0
     claims_file: true
     global_waves_file: true
   GBOGEB/DOCX_RTM_Automation:
-    head: 7e47219a60ac3da7b3976db0a9ca98bee12b0032
-    files: 973
+    head: d1ae2b651d7dee6e18c27fb95ae3215a52c86a1c
+    files: 974
     visibility: public
     lineage_unresolved: 0
     claims_file: true
   GBOGEB/cryoplant-project:
-    head: 29ed3ef97c34a2cb26339d9ded0f204d4faebc1e
-    files: 8626
+    head: a7f074f91385b5cd7375bcb660656b1e5ec3b0ae
+    files: 8741
     visibility: private
     lineage_unresolved: 10
     claims_file: true
@@ -38,26 +38,26 @@ sources:
     lineage_unresolved: 0
     claims_file: false
   GBOGEB/pipeline-automation-hub:
-    head: 8d851e0b1cb3ce11f4689553e6600536df51d19a
-    files: 3116
+    head: ae328a6e3644e1824a12eef694eb4d0f706f35dc
+    files: 3207
     visibility: public
     lineage_unresolved: 0
     claims_file: true
 stats:
-  entries: 375
+  entries: 376
   by_namespace:
     BOOT: 11
     CP: 7
     HYG: 7
     JADE: 8
-    QPS: 339
+    QPS: 340
     ULTRA: 3
-  multi_repo_entries: 158
+  multi_repo_entries: 159
   single_repo_entries: 217
   qps_exact_range:
   - 10
-  - 382
-  qps_exact_count: 329
+  - 383
+  qps_exact_count: 330
   qps_gap_count: 44
 current_pointers:
   GBOGEB/ABACUS:
@@ -146,10 +146,10 @@ dedup:
   census:
     claims_files: 5
     claimed_keys: 19
-    observed_keys: 375
-    unclaimed_observed: 356
+    observed_keys: 376
+    unclaimed_observed: 357
     claimed_unobserved: 0
-    multi_repo_observed: 158
+    multi_repo_observed: 159
     undeclared_participants: 0
     owners:
       FEDERATION: 16
@@ -239,7 +239,6 @@ dedup:
       - QPS:W111
       - QPS:W116
       - QPS:W126
-      - QPS:W142
       - QPS:W145
       - QPS:W147
       - QPS:W169
@@ -260,7 +259,7 @@ dedup:
       locally_owned:
       - QPS:W113
     next_free:
-      QPS: W383
+      QPS: W384
     violations:
       error: 0
       warning: 0
@@ -952,8 +951,8 @@ waves:
       evidence:
       - triage/SELF_REPO_ANALYSIS_W01.md
     GBOGEB/cryoplant-project:
-      paths: 17
-      anchor: tests/coverage_waves
+      paths: 35
+      anchor: mission_control/svg_engine/w1
     GBOGEB/pipeline-automation-hub:
       paths: 39
       anchor: mission-control/side-missions/MCEX_W1
@@ -982,10 +981,10 @@ waves:
       - federation/qps/wave-02/knowledge_exchange_request.json
       - ssot/release/W02_3P3_SELF_EVAL.yaml
     GBOGEB/cryoplant-project:
-      paths: 27
-      anchor: tests/coverage_waves
+      paths: 44
+      anchor: mission_control/svg_engine/w2
     GBOGEB/pipeline-automation-hub:
-      paths: 8
+      paths: 9
       anchor: mission-control/federation-atlas/mission_rebuild
       evidence:
       - mission-control/federation-atlas/mission_rebuild/N4_W2_BROWSER_FIRST_RED_DOV_20261018.md
@@ -1061,7 +1060,7 @@ waves:
       paths: 55
       anchor: tests/coverage_waves/lane_ab_next
       evidence:
-      - .github/workflows/qps-w05-bidder-eval-dow.yml
+      - .github/workflows/qps-w05-supplier-eval-dow.yml
       - docs/ci/W05_STABILITY_TRIAGE_v0.1.yaml
       - docs/ci/W05_STABILIZATION_TRIAGE.yaml
     GBOGEB/CODEX:
@@ -1102,7 +1101,7 @@ waves:
       - federation/qps/QPS_FED_W06_COST_FRONTIER_KEB_FEEDBACK_RECEIPT.yaml
       - federation/qps/QPS_FED_W06_COST_FRONTIER_KEB_REQUEST.yaml
     GBOGEB/cryoplant-project:
-      paths: 64
+      paths: 73
       anchor: tests/coverage_waves
     GBOGEB/pipeline-automation-hub:
       paths: 10
@@ -1243,8 +1242,15 @@ waves:
       - src/governance/runtime_validation/wave11_recursive_runtime_audit.py
       - tests/coverage_waves/test_w11_phase_map_governance_perpetual.py
     GBOGEB/cryoplant-project:
-      paths: 8
+      paths: 10
       anchor: ocd-adr/40_implementation
+    GBOGEB/pipeline-automation-hub:
+      paths: 4
+      anchor: mission-control/v2/handoff/closeout/w11-gmic-r2-p0008
+      evidence:
+      - mission-control/v2/handoff/closeout/w11-gmic-r2-p0008/BD_B01_B46_READONLY.json
+      - mission-control/v2/handoff/closeout/w11-gmic-r2-p0008/NEXT_CHAT_DROPIN.md
+      - mission-control/v2/handoff/closeout/w11-gmic-r2-p0008/P0008_CONTINUATION_DAG.mmd
 - key: QPS:W012
   namespace: QPS
   id: W012
@@ -2097,7 +2103,7 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 29
+      paths: 28
       anchor: qplant
       evidence:
       - .github/workflows/w52-p2m-helium-proof.yml
@@ -2142,7 +2148,7 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 8
+      paths: 7
       anchor: governance/qps
       evidence:
       - governance/qps/W54_P02_DOW_UTILITY_ANALYSIS_RECEIPT.yaml
@@ -2368,7 +2374,7 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 11
+      paths: 10
       anchor: architecture/w63
       evidence:
       - DMAIC_V3/tests/test_w63_agent_mcp_handover_roundtrip.py
@@ -3321,12 +3327,12 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/ABACUS:
-      paths: 8
+      paths: 4
       anchor: federation/mesh
       evidence:
-      - .github/workflows/qps-w111-power-utility-dow.yml
       - federation/mesh/W111_CIS_30_CELL_DOW_CONSUMER.yaml
       - federation/mesh/W112_W111_DOW_POSTMERGE_RECEIPT.yaml
+      - triage/payloads/QPS_W111_POWER_UTILITY_SANITIZED_v1.json
     GBOGEB/CODEX:
       paths: 9
       anchor: .github/workflows
@@ -3697,11 +3703,6 @@ waves:
   confidence: exact
   status: OBSERVED
   repos:
-    GBOGEB/ABACUS:
-      paths: 1
-      anchor: triage
-      evidence:
-      - triage/W142_QPS_INVCOP_THERMO_DOW_ANALYSIS.yaml
     GBOGEB/CODEX:
       paths: 1
       anchor: triage
@@ -5331,12 +5332,12 @@ waves:
       paths: 1
       anchor: triage/w305
     GBOGEB/pipeline-automation-hub:
-      paths: 5
+      paths: 6
       anchor: mission-control/quality
       evidence:
       - docs/W305_FIRST_PASS_CLOSURE_GATE.md
+      - docs/W305_FPC_DEFERRED_CLOSURE_DESIGN.md
       - mission-control/quality/W305_POST_R9_FPC_CANARY_20260919_v1.yaml
-      - mission-control/quality/W305_R6_BOOTSTRAP_CONTROL_v1.json
 - key: QPS:W306
   namespace: QPS
   id: W306
@@ -5738,7 +5739,7 @@ waves:
   status: OBSERVED
   repos:
     GBOGEB/cryoplant-project:
-      paths: 97
+      paths: 104
       anchor: triage/w364
 - key: QPS:W365
   namespace: QPS
@@ -5854,6 +5855,9 @@ waves:
   confidence: exact
   status: OBSERVED
   repos:
+    GBOGEB/cryoplant-project:
+      paths: 3
+      anchor: triage/w377
     GBOGEB/pipeline-automation-hub:
       paths: 2
       anchor: .github/workflows
@@ -5928,4 +5932,13 @@ waves:
   repos:
     GBOGEB/cryoplant-project:
       paths: 7
+      anchor: triage/w364
+- key: QPS:W383
+  namespace: QPS
+  id: W383
+  confidence: exact
+  status: OBSERVED
+  repos:
+    GBOGEB/cryoplant-project:
+      paths: 8
       anchor: triage/w364
