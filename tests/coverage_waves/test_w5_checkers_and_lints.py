@@ -171,6 +171,13 @@ def test_svg_refs_parser(tmp_path):
     assert names == ["a.svg", "b.svg", "c.svg", "d.svg"]
 
 
+def test_svg_refs_angle_bracket_destinations(tmp_path):
+    m = load(SVG_LINKS)
+    text = "![icon](<https://e.com/i.svg?raw=1>) ![x](<local.svg#frag>) [y](<//cdn/z.svg>)"
+    names = sorted(p.name for p in m._local_svg_refs(text, tmp_path))
+    assert names == ["local.svg"]
+
+
 def test_svg_links_broken_ref_with_fragment_is_reported(tmp_path, monkeypatch):
     m = load(SVG_LINKS)
     monkeypatch.chdir(tmp_path)

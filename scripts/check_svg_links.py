@@ -16,7 +16,11 @@ def _local_svg_refs(text, base):
     for pattern in (_ATTR_RE, _MD_RE):
         for match in pattern.finditer(text):
             # Strip fragment (#...) and query (?...) components from the target path
-            target = match.group(1).split("#")[0].split("?")[0]
+            target = match.group(1).strip()
+            if pattern is _MD_RE and target.startswith("<") and target.endswith(">"):
+                # CommonMark angle-bracket destination: <dest>
+                target = target[1:-1].strip()
+            target = target.split("#")[0].split("?")[0]
             if target.startswith(("http://", "https://", "//")):
                 continue
             refs.append((base / target).resolve())
