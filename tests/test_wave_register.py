@@ -284,4 +284,50 @@ def test_register_lineage_is_consistent_and_id_only():
         assert e["child"] != e["parent"]
         assert all(isinstance(n, int) and n > 0 for n in e["repos"].values())
         assert re.fullmatch(r"[A-Z]+:\S+", e["child"]) and re.fullmatch(r"[A-Z]+:\S+", e["parent"])
+        # both endpoints are register keys: no dangling references (CODEX #1248 review)
+        assert e["child"] in keys and e["parent"] in keys, e
     assert keys  # register non-empty
+
+
+# --- CODEX #1248 review findings (kit 1.3.2) ---------------------------------------------------------
+
+
+def test_dotted_numeric_ids_are_not_folded_to_a_lane():
+    rules = build_wave_register.load_rules()
+    assert build_wave_register.wave_keys("W25C.4", rules, "notes/x.yaml") == []
+    assert build_wave_register.wave_keys("W111B", rules, "notes/x.yaml") == ["QPS:W111"]
+
+
+def test_child_resolves_independently_of_lane_sibling_parents(wave_repo):
+    commit_files(wave_repo, {
+        "notes/lanes.yaml": (
+            "waves:\n  - id: W111B\n    parent_waves: [W111A, W110]\n"
+            "  - id: W120\n    parent_wave: W120\n"
+            "  - id: W25C.4\n    parent_wave: W024\n"
+        ),
+    })
+    head = build_wave_register.git(wave_repo, "rev-parse", "HEAD").strip()
+    edges, unresolved = build_wave_register.scan_lineage(wave_repo, head, build_wave_register.load_rules())
+    # the lane link W111A is folded away, the real parent W110 survives, a literal self-edge is kept
+    assert set(edges) == {("QPS:W111", "QPS:W110"), ("QPS:W120", "QPS:W120")}
+    assert unresolved == 1  # W25C.4 is not a wave key
+
+
+def test_lineage_endpoints_must_be_register_keys():
+    lineage = {
+        ("QPS:W211", "QPS:W210"): {"GBOGEB/cryoplant-project": 1},
+        ("QPS:W369", "QPS:W368"): {"GBOGEB/CODEX": 2, "GBOGEB/cryoplant-project": 1},
+    }
+    kept, dropped = build_wave_register.publishable_lineage(lineage, {"QPS:W211", "QPS:W368", "QPS:W369"})
+    assert set(kept) == {("QPS:W369", "QPS:W368")}
+    assert dropped == {"GBOGEB/cryoplant-project": 1}
+
+
+def test_empty_claims_file_is_a_schema_error_not_absent(wave_repo):
+    commit_files(wave_repo, {".waves/WAVE_CLAIMS.yaml": "# all claims removed\n", "README.md": "x\n"})
+    head = build_wave_register.git(wave_repo, "rev-parse", "HEAD").strip()
+    doc = build_wave_register.read_claims(wave_repo, head)
+    assert doc is not None
+    from scripts import wave_claims
+    codes = {v["code"] for v in wave_claims.validate_claims(doc, wave_claims.load_naming_rules(), "O/r")}
+    assert "C0_SCHEMA" in codes

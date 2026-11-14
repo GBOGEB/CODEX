@@ -460,6 +460,48 @@ class ReviewFindings(unittest.TestCase):
         )
 
 
+class ReviewFindingsCodex1248(unittest.TestCase):
+    """CODEX#1248 Codex review, closed in kit 1.3.1."""
+
+    def roll(self, sets, observed):
+        claims, found, _ = wc.rollup(sets, observed, set(), RULES)
+        return claims, found
+
+    def test_null_entries_are_schema_violations_not_crashes(self):
+        """r4439540881: owns: [null] and participates: [null] raised AttributeError."""
+        for broken in (doc("A", owns=[None]), doc("A", participates=[None]), doc("A", owns=["text"])):
+            with self.subTest(broken=broken):
+                self.assertIn("C0_ENTRY", codes(wc.validate_claims(broken, RULES, "A")))
+                _claims, found = self.roll({"A": (broken, False)}, {})
+                self.assertIn("C0_ENTRY", codes(found))
+
+    def test_private_claims_do_not_publish_parents(self):
+        """r4439540918: a private claim's parent values reached the public register verbatim."""
+        sets = {"A": (doc("A", [claim(301, slug="X", parent="QPS:W300")]), True)}
+        claims, _ = self.roll(sets, {"QPS:W301": {"A"}})
+        self.assertNotIn("parent", claims["QPS:W301"])
+        self.assertEqual(claims["QPS:W301"]["parent_count"], 1)
+
+    def test_proposals_defer_nested_boundaries(self):
+        """r4439541096: unique slugs alone left nested boundaries that fail D5 when validated."""
+        with tempfile.TemporaryDirectory() as d:
+            repo = Path(d)
+            run("git", "init", "-q", cwd=repo)
+            for rel in ("triage/w368_cooldown/a.yaml", "triage/w368_cooldown/w369_rebuild/b.yaml"):
+                (repo / rel).parent.mkdir(parents=True, exist_ok=True)
+                (repo / rel).write_text("x\n", encoding="utf-8")
+            run("git", "add", ".", cwd=repo)
+            run("git", "-c", "user.name=t", "-c", "user.email=t@example.invalid", "commit", "-qm", "f", cwd=repo)
+            entry = lambda n, anchor: {"key": f"QPS:W{n}", "namespace": "QPS", "id": f"W{n}", "confidence": "exact",
+                                       "repos": {"R": {"paths": 1, "anchor": anchor}}}
+            register = {"waves": [entry(368, "triage/w368_cooldown"),
+                                  entry(369, "triage/w368_cooldown/w369_rebuild")]}
+            draft = wc.propose(register, "R", RULES, repo_path=repo)
+            body = {k: v for k, v in draft.items() if k != "_proposal"}
+            self.assertNotIn("D5_PATH_OVERLAP", codes(wc.validate_claims(body, RULES, "R")))
+            self.assertEqual(draft["_proposal"]["boundary_conflicts"], ["QPS:W369"])
+
+
 class Cli(unittest.TestCase):
     def test_validate_and_propose_commands(self):
         with tempfile.TemporaryDirectory() as d:
