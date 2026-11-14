@@ -7,38 +7,38 @@ authority_transfer: false
 maturity: CANDIDATE
 sources:
   GBOGEB/ABACUS:
-    head: 1b3a6a513d2a02ad46de7fe8c61a85bb5405f876
+    head: 1a3c11c47b624bf24f2299f954ea1b22443a7e8e
     files: 4657
     visibility: public
     lineage_unresolved: 0
     claims_file: true
   GBOGEB/CODEX:
-    head: 38831761dcfb1999feeca9545814dca8ae5a66d0
+    head: 045d99e4981c79396c83ea16a341270c22785e78
     files: 2928
     visibility: public
     lineage_unresolved: 0
     claims_file: true
     global_waves_file: true
   GBOGEB/DOCX_RTM_Automation:
-    head: d1ae2b651d7dee6e18c27fb95ae3215a52c86a1c
+    head: 51875fbdba22dac33c203586e8474c3f2a80f009
     files: 974
     visibility: public
     lineage_unresolved: 0
     claims_file: true
   GBOGEB/cryoplant-project:
-    head: a7f074f91385b5cd7375bcb660656b1e5ec3b0ae
+    head: 097aea043acec09ceb44cdab137bbfafe0e712ce
     files: 8741
     visibility: private
     lineage_unresolved: 10
     claims_file: true
   GBOGEB/document-organization-system:
-    head: 86b57bc265929fa00cf40153f08e231815e28137
-    files: 300
+    head: add163fafaf0acc171ba5cc24f4cbe08ef8c6be2
+    files: 301
     visibility: public
     lineage_unresolved: 0
-    claims_file: false
+    claims_file: true
   GBOGEB/pipeline-automation-hub:
-    head: ae328a6e3644e1824a12eef694eb4d0f706f35dc
+    head: a24a48535e208a849bd3a35c6e8f68599e0c1895
     files: 3207
     visibility: public
     lineage_unresolved: 0
@@ -144,23 +144,23 @@ dedup:
   claims_file: .waves/WAVE_CLAIMS.yaml
   global_waves_file: federation/waves/GLOBAL_WAVES.yaml
   census:
-    claims_files: 5
-    claimed_keys: 19
+    claims_files: 6
+    claimed_keys: 55
     observed_keys: 376
-    unclaimed_observed: 357
+    unclaimed_observed: 321
     claimed_unobserved: 0
     multi_repo_observed: 159
     undeclared_participants: 0
     owners:
-      FEDERATION: 16
+      FEDERATION: 52
       GBOGEB/CODEX: 2
       GBOGEB/cryoplant-project: 1
     contested_keys: 0
     elevated_keys:
-      total: 16
+      total: 52
       by_maturity:
-        CONVERGED: 9
-        DEVELOPING: 7
+        CONVERGED: 21
+        DEVELOPING: 31
     elevation_candidates:
       min_reach: 3
       unowned:
@@ -190,7 +190,6 @@ dedup:
       - QPS:W019
       - QPS:W022
       - QPS:W026
-      - QPS:W028
       - QPS:W030
       - QPS:W031
       - QPS:W032
@@ -199,63 +198,29 @@ dedup:
       - QPS:W036
       - QPS:W040
       - QPS:W041
-      - QPS:W042
       - QPS:W043
-      - QPS:W044
-      - QPS:W045
-      - QPS:W047
       - QPS:W049
       - QPS:W050
       - QPS:W051
       - QPS:W052
       - QPS:W053
-      - QPS:W054
-      - QPS:W055
       - QPS:W056
       - QPS:W057
-      - QPS:W058
       - QPS:W059
-      - QPS:W061
-      - QPS:W062
-      - QPS:W063
-      - QPS:W065
-      - QPS:W066
       - QPS:W069
       - QPS:W070
-      - QPS:W071
       - QPS:W072
       - QPS:W073
-      - QPS:W084
-      - QPS:W088
       - QPS:W090
       - QPS:W098
       - QPS:W100
       - QPS:W103
-      - QPS:W104
-      - QPS:W105
       - QPS:W106
-      - QPS:W107
-      - QPS:W110
       - QPS:W111
-      - QPS:W116
-      - QPS:W126
-      - QPS:W145
-      - QPS:W147
       - QPS:W169
-      - QPS:W189
-      - QPS:W190
-      - QPS:W232
-      - QPS:W233
-      - QPS:W259
-      - QPS:W266
-      - QPS:W273
-      - QPS:W274
       - QPS:W275
       - QPS:W276
-      - QPS:W285
       - QPS:W286
-      - QPS:W306
-      - QPS:W329
       locally_owned:
       - QPS:W113
     next_free:
@@ -271,6 +236,9 @@ dedup:
   - sha256: 47b374f256f63871e0629ecdf1cfaec44f49770875c8400090ed3042f55b7822
     kind: name
     key: QPS:W027
+  - sha256: 7db832c937adbee84be69103eb69908671e368608418e3a5db4c1321954c3345
+    kind: name
+    key: QPS:W028
   - sha256: 0a7aee9af8bd396e4cdc28755702d5c7908905e24bf395bf3dc6963e24824dbf
     kind: alias
     key: QPS:W033
@@ -280,21 +248,66 @@ dedup:
   - sha256: 6ba0a66c80974f93222d9b52bd11fc0f705fce2370e1040489691fad4c111bb1
     kind: name
     key: QPS:W033
+  - sha256: 4a129d0e7f29b2261558d4996bfaa86077be62e292b42bf5007dee79c9037543
+    kind: name
+    key: QPS:W042
+  - sha256: 0ebb3fb6745bc7451c945bc04d253df8eaa027b5e76aa3ad6f82559e0d99a469
+    kind: name
+    key: QPS:W044
+  - sha256: 3232854787734205d89e3092e866efe143016640a7515a87cfc9fdd3907b77e4
+    kind: name
+    key: QPS:W045
+  - sha256: 9de078f51f29a930c78b45712f96487ca45fff172f2cd956386c2108eaf17a5f
+    kind: name
+    key: QPS:W047
   - sha256: 834d6f70b9e8fbd9ab0c8d701b0f4ec7a003e34b3ed82b774524ad66ccc54205
     kind: alias
     key: QPS:W048
   - sha256: 84b14ea36e5b0fdc6776cabda7aea6f68540d690f2dd3f7935e201c636769b52
     kind: name
     key: QPS:W048
+  - sha256: f90ab4ebf1a932cd9635a2bd3fd9523bd0a027d2d326ec9d9ef659f877230e85
+    kind: name
+    key: QPS:W054
+  - sha256: 68cf481f6f2e045ecdb66162b07e64d549ed36646fcd71169843d6682dd5e65b
+    kind: name
+    key: QPS:W055
+  - sha256: a896279b48e8cc0e6dbf898ca426ab893b7a153dbeef52b68d3182d26a8db61a
+    kind: name
+    key: QPS:W058
   - sha256: 19fb3b71ca0ce8f00a58bd881ae0805a036f2f81f6c63b5809e3dbaffa3c0489
     kind: alias
     key: QPS:W060
   - sha256: eb6d483911f607d8f5cb58c5d910c40e377048a0b28b834ec6167c265836770e
     kind: name
     key: QPS:W060
+  - sha256: e9c2ade83fe1e5f3fbc8280a8bfff03a4ea72dae5c477d347e6e6a90ac759548
+    kind: name
+    key: QPS:W061
+  - sha256: ac5663a29e55e3f7fa86516539d89d622eceaed5206924ebec8f5031af340fad
+    kind: name
+    key: QPS:W062
+  - sha256: 58974c0a765f2c1fd4b21465033307b53e72e8f269f180d6b369e95368ec742d
+    kind: name
+    key: QPS:W063
+  - sha256: 6ce0dded8054731e5723323dda5dd2b03608ce95a969f9e771c86647bef6f133
+    kind: name
+    key: QPS:W065
+  - sha256: 3a3ac222cbb424179e0a16664439c7658fd70b995098bda10cc1edfc5833a5ec
+    kind: name
+    key: QPS:W066
   - sha256: a938a04087820d52c887d78c76dd01f2624c30ab73f4069bbfc073d0312ed70f
     kind: name
     key: QPS:W068
+  - sha256: 4a626b6a616f93dc7f1dbffd204853ffcb3cc1fd26e87df5e2a07b16f2ddfebf
+    kind: name
+    key: QPS:W071
+  - sha256: d7a11bae3b19748ef95b65690e7ff3a210d1fcd917f69244eb283ec1c9081c95
+    kind: name
+    key: QPS:W084
+  - sha256: 49359cb1363b9b854891c7902811126175a2fc5c29849ef6d710447ad52c39ae
+    kind: name
+    key: QPS:W088
   - sha256: 5d7aad93a529c93bf6e55c3a8825f667d3a60183bdc4a11f914b6e337823eee9
     kind: name
     key: QPS:W089
@@ -319,6 +332,18 @@ dedup:
   - sha256: b1f3c950de05bcea16dcd71dcf2b8e494b00ccbaee478d7ef0032c051fdac214
     kind: name
     key: QPS:W102
+  - sha256: 4b0a6e40994a4a10b43252502d70b5fda6b7665ebb42130fe400a6ec19c4d4ea
+    kind: name
+    key: QPS:W104
+  - sha256: e80fbc1c9298f7171c59801e5f3db40cb1f848f99af187c72e1ca5eb7102b178
+    kind: name
+    key: QPS:W105
+  - sha256: c8c64ed1ca4bf45ef788797ce6e194872d35b009b90a32ffad21b443322ca2aa
+    kind: name
+    key: QPS:W107
+  - sha256: a5a270491697000d3edeb209c7fc33cd035f9b0c6e1e4fb4cc67686bb680029f
+    kind: name
+    key: QPS:W110
   - sha256: 76b602056ec50ff4a63a235f9a81b1b341f0513425382c439c85dfdc29cae734
     kind: alias
     key: QPS:W112
@@ -334,21 +359,69 @@ dedup:
   - sha256: 07d3ba6a1dc82030b4a9ce816aaef61170caf89d5ebf997d2740cff43e46db46
     kind: name
     key: QPS:W113
+  - sha256: 8894c749981e4fec1c6348f44fb97ffbfea8548b0d2efdadbb0f2ff32bd6cbbf
+    kind: name
+    key: QPS:W116
+  - sha256: 0ae0325807c6ab41cbbdeee89cbfd62bf2b9771ab949c355c613b58850673f94
+    kind: name
+    key: QPS:W126
+  - sha256: 8ce30cd06da6f716f3335d2a52af74ef234bf9ac5f5a4a794a519c381c0fe3ee
+    kind: name
+    key: QPS:W142
+  - sha256: e1aac7cae41c553d2c0b599a8ddca2ab763d247f1d87aad498ac126cc3de9f10
+    kind: name
+    key: QPS:W145
+  - sha256: 2de574bac1bfa42293edbafdf8df45018ad56f779a3343c3dc771dc8ce523ecb
+    kind: name
+    key: QPS:W147
+  - sha256: d9f8aae93e6667191fd0ccaf38ed9d6f9ae3ccb6482bb905f593572f5213a565
+    kind: name
+    key: QPS:W189
+  - sha256: db0c4894d3fd247439c2a050468f8454d14d8763bf2d97bba228fab086ff6c11
+    kind: name
+    key: QPS:W190
+  - sha256: 9da39f2dd4071d7997fc541672848caaa16d325618d0becdbabe7924e1b2d8f5
+    kind: name
+    key: QPS:W232
+  - sha256: 1662c317c3da62e2337dfc346e37af64b492df1a22817322b4032e2ec50e10a4
+    kind: name
+    key: QPS:W233
+  - sha256: a510c52b5cd61a77efc506b722f2a12601174cb3df96cc513949c9780fb14ceb
+    kind: name
+    key: QPS:W259
   - sha256: f7cce54d5f7e2bf7adb9eb594ed0f2d3c57122935e620763d5e823ca21e2abe5
     kind: name
     key: QPS:W264
+  - sha256: 06f7bd55265ed3f023048fede23eec750fd56bb562324a2c39fb6eeb8a2707cf
+    kind: name
+    key: QPS:W266
+  - sha256: 78d3fd701c7ab6bc43e8b54a286cd02872a54c0054a66b782f874a799d4ebb0d
+    kind: name
+    key: QPS:W273
+  - sha256: 015b455335afffe57e2f71aaa443b823deb5f0341a721b164a089f6b1a1e6379
+    kind: name
+    key: QPS:W274
   - sha256: d5c6491f668dfdaf6354911e71aa0e59872d47071b16063c41fd402029e92bf4
     kind: alias
     key: QPS:W284
   - sha256: f454af011b1d19ec9aaf0002365c25a429ba051d3001bd8471026594d773e13f
     kind: name
     key: QPS:W284
+  - sha256: 5379b4e56d8fd73d2ba5e0ca0b015e50528f7f3a104fa178a1d153208a9015a7
+    kind: name
+    key: QPS:W285
+  - sha256: 2b9391ab23991100c31d33ebfcfb3aa12675903ab2f205d8d511f1594a1af74f
+    kind: name
+    key: QPS:W306
   - sha256: 0cdf99614f27ac82d32acc3272be39f47e190dd341e0db1f8db19d5fc48b3d49
     kind: alias
     key: QPS:W322
   - sha256: e914df45f3bae19140cbd57cb9a599e09eefc20fd59b4340672efada5f4dd53b
     kind: name
     key: QPS:W322
+  - sha256: c4089b0cbfbe983642079f96d5e30e4129554161642fee73e5bde9f3f638957c
+    kind: name
+    key: QPS:W329
   - sha256: d9f16aa53f0dfdf32fa29bca18d70b10444a4cdbb87e4861cf6804a53b2b82d9
     kind: name
     key: QPS:W334
@@ -1551,7 +1624,7 @@ waves:
   namespace: QPS
   id: W028
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 3
@@ -1569,6 +1642,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 1
       anchor: ocd-adr/40_implementation
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W028_WORD_PDF_REQUEST_ROUTE
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/CODEX
+    participants:
+      GBOGEB/ABACUS: reviewer
+      GBOGEB/CODEX: producer
+      GBOGEB/cryoplant-project: receiver
 - key: QPS:W029
   namespace: QPS
   id: W029
@@ -1866,7 +1950,7 @@ waves:
   namespace: QPS
   id: W042
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 6
@@ -1885,6 +1969,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 24
       anchor: ocd-adr/40_implementation
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W042_TRI_REPO_BINARY_TRIAGE
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/CODEX
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: producer
+      GBOGEB/cryoplant-project: receiver
 - key: QPS:W043
   namespace: QPS
   id: W043
@@ -1912,7 +2007,7 @@ waves:
   namespace: QPS
   id: W044
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 7
@@ -1931,11 +2026,22 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 14
       anchor: ocd-adr/40_implementation
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W044_PCA_PROMOTION_EXECUTION
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/ABACUS
+    participants:
+      GBOGEB/ABACUS: producer
+      GBOGEB/CODEX: receiver
+      GBOGEB/cryoplant-project: receiver
 - key: QPS:W045
   namespace: QPS
   id: W045
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 5
@@ -1954,6 +2060,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 9
       anchor: ocd-adr/40_implementation
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W045_HELIUM_PROPERTY_CONVERGENCE
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: receiver
+      GBOGEB/cryoplant-project: producer
 - key: QPS:W046
   namespace: QPS
   id: W046
@@ -1974,7 +2091,7 @@ waves:
   namespace: QPS
   id: W047
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 1
@@ -1989,6 +2106,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 5
       anchor: ocd-adr/40_implementation
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W047_FULL_COMMENT_REQUEST
+    scope: global
+    maturity: CONVERGED
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: reviewer
+      GBOGEB/CODEX: reviewer
+      GBOGEB/cryoplant-project: producer
 - key: QPS:W048
   namespace: QPS
   id: W048
@@ -2145,7 +2273,7 @@ waves:
   namespace: QPS
   id: W054
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 7
@@ -2164,11 +2292,22 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 20
       anchor: controls
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W054_UTILITY_PROVENANCE_BASELINE
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/CODEX
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: producer
+      GBOGEB/cryoplant-project: receiver
 - key: QPS:W055
   namespace: QPS
   id: W055
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 3
@@ -2187,6 +2326,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 7
       anchor: controls
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W055_ALL_LINE_RUNTIME_PCA_GUARD
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/CODEX
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: producer
+      GBOGEB/cryoplant-project: receiver
 - key: QPS:W056
   namespace: QPS
   id: W056
@@ -2243,7 +2393,7 @@ waves:
   namespace: QPS
   id: W058
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 7
@@ -2262,6 +2412,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 10
       anchor: controls
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W058_3PR_DOV_IMPLEMENTATION_TRACKER
+    scope: global
+    maturity: CONVERGED
+    origin: GBOGEB/CODEX
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: producer
+      GBOGEB/cryoplant-project: receiver
 - key: QPS:W059
   namespace: QPS
   id: W059
@@ -2325,7 +2486,7 @@ waves:
   namespace: QPS
   id: W061
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 8
@@ -2344,11 +2505,22 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 23
       anchor: architecture/w61
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W061_PARENT_HANDOVER_ROUNDTRIP
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/CODEX
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: producer
+      GBOGEB/cryoplant-project: receiver
 - key: QPS:W062
   namespace: QPS
   id: W062
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 14
@@ -2367,11 +2539,22 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 9
       anchor: triage/census/roundtrip
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W062_3PR_OBSERVED_IMMUTABLE_TRIAGE
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/ABACUS
+    participants:
+      GBOGEB/ABACUS: producer
+      GBOGEB/CODEX: receiver
+      GBOGEB/cryoplant-project: receiver
 - key: QPS:W063
   namespace: QPS
   id: W063
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 10
@@ -2390,6 +2573,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 3
       anchor: architecture/w63
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W063_DISPOSITION_CLOSURE_RECEIPT
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/ABACUS
+    participants:
+      GBOGEB/ABACUS: producer
+      GBOGEB/CODEX: receiver
+      GBOGEB/cryoplant-project: receiver
 - key: QPS:W064
   namespace: QPS
   id: W064
@@ -2410,7 +2604,7 @@ waves:
   namespace: QPS
   id: W065
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 4
@@ -2427,11 +2621,22 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 8
       anchor: controls
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W065_FEDERATED_PARALLEL_DISCOVERY
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: executor
+      GBOGEB/CODEX: receiver
+      GBOGEB/cryoplant-project: producer
 - key: QPS:W066
   namespace: QPS
   id: W066
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 18
@@ -2449,6 +2654,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 3
       anchor: controls
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W066_TERMINAL_EXECUTION_BURNDOWN
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: reviewer
+      GBOGEB/cryoplant-project: producer
 - key: QPS:W067
   namespace: QPS
   id: W067
@@ -2552,7 +2768,7 @@ waves:
   namespace: QPS
   id: W071
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 1
@@ -2567,6 +2783,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 2
       anchor: .github/workflows
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W071_TERMINAL_ATOM_RESIDUAL_LINEAGE
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: executor
+      GBOGEB/CODEX: receiver
+      GBOGEB/cryoplant-project: producer
 - key: QPS:W072
   namespace: QPS
   id: W072
@@ -2764,7 +2991,7 @@ waves:
   namespace: QPS
   id: W084
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 7
@@ -2783,6 +3010,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 12
       anchor: controls
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W084_SOURCE_ELIGIBILITY_EFFECTIVENESS
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: executor
+      GBOGEB/CODEX: receiver
+      GBOGEB/cryoplant-project: producer
 - key: QPS:W085
   namespace: QPS
   id: W085
@@ -2831,7 +3069,7 @@ waves:
   namespace: QPS
   id: W088
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 1
@@ -2846,6 +3084,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 4
       anchor: ocd-adr/40_implementation
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W088_OFFER_EVAL_REPLAY
+    scope: global
+    maturity: CONVERGED
+    origin: GBOGEB/CODEX
+    participants:
+      GBOGEB/ABACUS: reviewer
+      GBOGEB/CODEX: producer
+      GBOGEB/cryoplant-project: receiver
 - key: QPS:W089
   namespace: QPS
   id: W089
@@ -3186,7 +3435,7 @@ waves:
   namespace: QPS
   id: W104
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 4
@@ -3205,11 +3454,22 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 11
       anchor: ocd-adr/40_implementation
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W104_CC_FLOATING_COVERAGE_EXECUTION
+    scope: global
+    maturity: CONVERGED
+    origin: GBOGEB/CODEX
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: producer
+      GBOGEB/cryoplant-project: receiver
 - key: QPS:W105
   namespace: QPS
   id: W105
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 3
@@ -3228,6 +3488,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 12
       anchor: controls
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W105_PVPS_PLAYGROUND_MIP_PROBE
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: receiver
+      GBOGEB/cryoplant-project: producer
 - key: QPS:W106
   namespace: QPS
   id: W106
@@ -3252,7 +3523,7 @@ waves:
   namespace: QPS
   id: W107
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 1
@@ -3274,6 +3545,18 @@ waves:
       evidence:
       - .github/workflows/w107-runtime-proof.yml
       - federation/w107/W107_CHILD_ACCEPT_RECEIPT_849.yaml
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W107_CHILD_RUNTIME_ACCEPT_PROOF
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/ABACUS
+    participants:
+      GBOGEB/ABACUS: producer
+      GBOGEB/DOCX_RTM_Automation: receiver
+      GBOGEB/cryoplant-project: receiver
+      GBOGEB/document-organization-system: receiver
 - key: QPS:W108
   namespace: QPS
   id: W108
@@ -3301,7 +3584,7 @@ waves:
   namespace: QPS
   id: W110
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 3
@@ -3320,6 +3603,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 9
       anchor: federation/mip
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W110_CANONICAL_SSOT_REGISTRY
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/CODEX
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: producer
+      GBOGEB/cryoplant-project: reviewer
 - key: QPS:W111
   namespace: QPS
   id: W111
@@ -3449,7 +3743,7 @@ waves:
   namespace: QPS
   id: W116
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 1
@@ -3464,6 +3758,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 8
       anchor: controls/w116
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W116_QPS_3PR_P2_CHALLENGE
+    scope: global
+    maturity: CONVERGED
+    origin: GBOGEB/CODEX
+    participants:
+      GBOGEB/ABACUS: reviewer
+      GBOGEB/CODEX: producer
+      GBOGEB/cryoplant-project: receiver
 - key: QPS:W117
   namespace: QPS
   id: W117
@@ -3556,7 +3861,7 @@ waves:
   namespace: QPS
   id: W126
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 1
@@ -3571,6 +3876,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 10
       anchor: triage/w126
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W126_POINT_RELEASE_CANDIDATE
+    scope: global
+    maturity: CONVERGED
+    origin: GBOGEB/CODEX
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: producer
+      GBOGEB/cryoplant-project: reviewer
 - key: QPS:W127
   namespace: QPS
   id: W127
@@ -3701,7 +4017,7 @@ waves:
   namespace: QPS
   id: W142
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/CODEX:
       paths: 1
@@ -3711,6 +4027,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 13
       anchor: triage/w142
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W142_INVCOP_THERMO_BRIDGE
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: reviewer
+      GBOGEB/cryoplant-project: producer
 - key: QPS:W143
   namespace: QPS
   id: W143
@@ -3733,7 +4060,7 @@ waves:
   namespace: QPS
   id: W145
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 1
@@ -3748,6 +4075,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 16
       anchor: triage/w145
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W145_NUMERICAL_DOV_REENTRY
+    scope: global
+    maturity: CONVERGED
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: receiver
+      GBOGEB/cryoplant-project: producer
 - key: QPS:W146
   namespace: QPS
   id: W146
@@ -3761,7 +4099,7 @@ waves:
   namespace: QPS
   id: W147
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 1
@@ -3776,6 +4114,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 2
       anchor: triage/w147
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W147_NUMERICAL_SOURCE_CLOSURE
+    scope: global
+    maturity: CONVERGED
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: reviewer
+      GBOGEB/CODEX: reviewer
+      GBOGEB/cryoplant-project: producer
 - key: QPS:W148
   namespace: QPS
   id: W148
@@ -4140,7 +4489,7 @@ waves:
   namespace: QPS
   id: W189
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 9
@@ -4159,11 +4508,22 @@ waves:
       - controls/QPS_W189_FEDERATION_SAMPLE4_CURRENT_v1.json
       - triage/w189/QPS_W189_CROSS_SURFACE_FEATURE_MATRIX_v0.1.json
       - triage/w189/QPS_W189_FEDERATION_EXPANSION_RUNTIME_CONTROL_v0.1.json
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W189_FEDERATION_SAMPLE4_EXACT
+    scope: global
+    maturity: CONVERGED
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: reviewer
+      GBOGEB/cryoplant-project: producer
+      GBOGEB/pipeline-automation-hub: receiver
 - key: QPS:W190
   namespace: QPS
   id: W190
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 7
@@ -4182,6 +4542,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 12
       anchor: federation/w190
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W190_3PC_MIP_RECEIPT
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: receiver
+      GBOGEB/cryoplant-project: producer
 - key: QPS:W191
   namespace: QPS
   id: W191
@@ -4483,7 +4854,7 @@ waves:
   namespace: QPS
   id: W232
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 1
@@ -4498,11 +4869,22 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 5
       anchor: handover/session
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W232_LOSSLESS_HANDOVER_RECEIVER
+    scope: global
+    maturity: CONVERGED
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: receiver
+      GBOGEB/cryoplant-project: producer
 - key: QPS:W233
   namespace: QPS
   id: W233
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 1
@@ -4517,6 +4899,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 2
       anchor: handover/session
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W233_EXPANDED_FEDERATION_POINTER
+    scope: global
+    maturity: CONVERGED
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: reviewer
+      GBOGEB/CODEX: receiver
+      GBOGEB/cryoplant-project: producer
 - key: QPS:W234
   namespace: QPS
   id: W234
@@ -4740,7 +5133,7 @@ waves:
   namespace: QPS
   id: W259
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 5
@@ -4759,6 +5152,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 7
       anchor: triage/w259
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W259_METHOD_CARDS_KNOWLEDGE_ATOM
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: receiver
+      GBOGEB/cryoplant-project: producer
 - key: QPS:W260
   namespace: QPS
   id: W260
@@ -4839,7 +5243,7 @@ waves:
   namespace: QPS
   id: W266
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 1
@@ -4854,6 +5258,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 2
       anchor: triage/w266
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W266_GOVERNANCE_CONSUMER_RECEIPT
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: receiver
+      GBOGEB/cryoplant-project: producer
 - key: QPS:W267
   namespace: QPS
   id: W267
@@ -4903,7 +5318,7 @@ waves:
   namespace: QPS
   id: W273
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 1
@@ -4918,11 +5333,22 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 2
       anchor: controls
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W273_GMI_DOCENG_3PR_MIP
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: receiver
+      GBOGEB/cryoplant-project: producer
 - key: QPS:W274
   namespace: QPS
   id: W274
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 1
@@ -4938,6 +5364,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 4
       anchor: triage/w274
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W274_GMI_DOCENG_SOURCE_POINTER
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: reviewer
+      GBOGEB/DOCX_RTM_Automation: executor
+      GBOGEB/cryoplant-project: producer
 - key: QPS:W275
   namespace: QPS
   id: W275
@@ -5122,7 +5559,7 @@ waves:
   namespace: QPS
   id: W285
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 5
@@ -5148,6 +5585,18 @@ waves:
       - .github/workflows/hm01-r3-dmaic-w285-3pr.yml
       - federation/w285/QPS_W285_FUNCTION_DEPTH_POINTER_v1.json
       - mission-control/grand-missions/R3_DMAIC_W285_3PR_REFRESH_v1.json
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W285_FEDERATION_FUNCTION_DEPTH
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: reviewer
+      GBOGEB/cryoplant-project: producer
+      GBOGEB/pipeline-automation-hub: executor
 - key: QPS:W286
   namespace: QPS
   id: W286
@@ -5342,7 +5791,7 @@ waves:
   namespace: QPS
   id: W306
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 1
@@ -5357,6 +5806,17 @@ waves:
       anchor: triage/w306
       evidence:
       - triage/w306/TXT_CUR_029_ARTIFACT_INTAKE_CONTROL_REVIEW_v0.1.yaml
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W306_TYPED_FINDINGS_PROOF
+    scope: global
+    maturity: DEVELOPING
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: executor
+      GBOGEB/cryoplant-project: producer
+      GBOGEB/document-organization-system: reviewer
 - key: QPS:W307
   namespace: QPS
   id: W307
@@ -5437,7 +5897,7 @@ waves:
   namespace: QPS
   id: W329
   confidence: exact
-  status: OBSERVED
+  status: HOLD
   repos:
     GBOGEB/ABACUS:
       paths: 4
@@ -5456,6 +5916,17 @@ waves:
     GBOGEB/cryoplant-project:
       paths: 21
       anchor: handover/session
+  claim:
+    owner: FEDERATION
+    status: HOLD
+    name: W329_HIST_BD_QCELL_REVIEW
+    scope: global
+    maturity: CONVERGED
+    origin: GBOGEB/cryoplant-project
+    participants:
+      GBOGEB/ABACUS: receiver
+      GBOGEB/CODEX: receiver
+      GBOGEB/cryoplant-project: producer
 - key: QPS:W330
   namespace: QPS
   id: W330
