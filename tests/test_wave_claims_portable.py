@@ -614,32 +614,26 @@ class Elevation(unittest.TestCase):
         self.assertEqual(census["elevated_keys"]["total"], 0)
 
     def test_validate_global_command(self):
-        script = ROOT / "scripts" / "wave_claims.py"
+        # In-process on purpose: no subprocess, so no new Bandit B603 debt
+        # in consumers that ratchet it.
+        def run(path):
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                code = wc.main(["validate-global", str(path)])
+            return code, out.getvalue()
+
         with tempfile.TemporaryDirectory() as tmp:
             bad = Path(tmp) / "bad.yaml"
             bad.write_text(yaml.safe_dump(gdoc(gwave(maturity="?"))), encoding="utf-8")
             good = Path(tmp) / "good.yaml"
             good.write_text(yaml.safe_dump(gdoc(gwave())), encoding="utf-8")
-            r = subprocess.run(
-                [sys.executable, str(script), "validate-global", str(bad)],
-                capture_output=True,
-                text=True,
-                check=False,
-            )
-            self.assertEqual(r.returncode, 1)
-            self.assertIn("G1_MATURITY", r.stdout)
-            self.assertTrue(r.stdout.isascii())
-            ok = subprocess.run(
-                [sys.executable, str(script), "validate-global", str(good)],
-                capture_output=True,
-                text=True,
-                check=False,
-            )
-            self.assertEqual(ok.returncode, 0, ok.stdout)
-            out = io.StringIO()
-            with contextlib.redirect_stdout(out):
-                code = wc.main(["validate-global", str(bad)])
+            code, out = run(bad)
             self.assertEqual(code, 1)
+            self.assertIn("G1_MATURITY", out)
+            self.assertTrue(out.isascii())
+            code, out = run(good)
+            self.assertEqual(code, 0, out)
+            self.assertIn("1 elevated, 0 errors", out)
 
 
 class Cli(unittest.TestCase):
