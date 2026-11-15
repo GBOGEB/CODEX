@@ -1,0 +1,290 @@
+schema: gbogeb-repo-rex-return/1.0
+repo: GBOGEB/CODEX
+measurement_window:
+  start: 2026-11-14T17:16:00Z
+  end: 2026-11-15T09:30:00Z
+  basis: exact_heads_workflow_runs_reviews_and_observed_failures
+  label: MAROON_OPEN_PR_PULSE_W1
+  denominator_notes: >-
+    55 unresolved review threads on 16 open PRs (ABACUS 9, CODEX 2,
+    cryoplant-project 5); 3 more CodeQL threads appeared on this pulse's own
+    test edits. Counts are threads, not lifetime occurrences.
+
+repo_state:
+  head_sha: 6d77b90
+  branch_or_pr: claude/rex-maroon-review-types-20261115
+  dmaic_phase: CONTROL
+  rex_status: CURRENT
+
+records:
+  - rex_id: REX-MAROON-20261114-001
+    signature: CI_CD.ACTION_TAG_UNPINNED
+    issue_kind: REVIEW_FINDING
+    family: CI_CD
+    repo:
+      primary: GBOGEB/ABACUS
+      impacted: [GBOGEB/ABACUS]
+    first_seen: ABACUS#2704
+    last_seen: ABACUS#2708
+    severity_stars: 3
+    frequency:
+      observed_count: 16
+      unit: semgrep_threads
+      impacted_repo_count: 1
+      impacted_workflow_count: 3
+      measurement_window: MAROON_OPEN_PR_PULSE_W1
+    recurrence: CROSS_WORKFLOW_RECURRING
+    symptom: actions/* referenced by mutable major tags in newly added workflows
+    root_cause: new workflows copied tag refs while main already carried SHA pins
+    action_moniker: HARDEN
+    repair_method: >-
+      Pinned to SHAs verified by git ls-remote against the upstream tags and
+      reused main's canonical pins (checkout v7.0.1, setup-python v7.1.0,
+      upload-artifact v7.0.2, download-artifact v8.0.2, cache v6.1.0).
+    verification:
+      exact_head_sha: bf0d825 / 7aaf5f6
+      result: PASS
+      evidence: all 16 code-scanning threads closed on re-analysis of the new heads
+    control_guard:
+      - reuse one verified pin map; never hand-type a SHA
+      - MAROON lane <repo>:review-provenance-pin
+    control_status: VERIFIED
+    lesson: copy pins from main, not tags from examples; verify each SHA against its tag before use
+    lookup_tags: [semgrep, provenance-pin, github-actions, sha-pin]
+
+  - rex_id: REX-MAROON-20261114-002
+    signature: VALIDATION.ASSERT_STRIPPED_BY_OPTIMIZE
+    issue_kind: BUG
+    family: VALIDATION
+    repo:
+      primary: GBOGEB/cryoplant-project
+      impacted: [GBOGEB/cryoplant-project]
+    first_seen: cryoplant-project#2355
+    last_seen: cryoplant-project#2355
+    severity_stars: 4
+    frequency:
+      observed_count: 13
+      unit: assert_statements_in_one_verifier
+      impacted_repo_count: 1
+      impacted_workflow_count: 0
+      measurement_window: MAROON_OPEN_PR_PULSE_W1
+    recurrence: CLUSTERED_LOCAL
+    symptom: under python -O the standalone verifier wrote a passing QA receipt with every check removed
+    root_cause: audit invariants expressed as assert statements
+    action_moniker: HARDEN
+    repair_method: explicit AuditError raises; subprocess test runs the verifier under -O
+    verification:
+      exact_head_sha: 543e1e6
+      result: DEFER
+      evidence: local test red before, green after; PR CI not green for unrelated reasons
+    control_guard:
+      - guards that issue receipts never use assert
+      - test the CLI under python -O
+    control_status: REPAIRED
+    lesson: an assert is a debugging aid, not a gate; anything that issues a receipt must raise explicitly
+    lookup_tags: [assert, python-O, verifier, receipt, fail-open]
+
+  - rex_id: REX-MAROON-20261114-003
+    signature: AUTHORITY.FAIL_OPEN_GUARD
+    issue_kind: REVIEW_FINDING
+    family: AUTHORITY
+    repo:
+      primary: GBOGEB/cryoplant-project
+      impacted: [GBOGEB/cryoplant-project, GBOGEB/CODEX]
+    first_seen: cryoplant-project#2354
+    last_seen: CODEX#1289
+    severity_stars: 4
+    frequency:
+      observed_count: 6
+      unit: review_threads
+      impacted_repo_count: 2
+      impacted_workflow_count: 1
+      measurement_window: MAROON_OPEN_PR_PULSE_W1
+    recurrence: CROSS_REPO_RECURRING
+    symptom: >-
+      Guards documented as fail-closed accepted altered frozen digests, an
+      erased source conflict, release/owner-approval promotion, family-source
+      reassignment, unchecked thread roots and an unauthenticated payload claim.
+    root_cause: the documented invariant was never written as a check; only the happy path was tested
+    action_moniker: HARDEN
+    repair_method: one explicit check plus one negative test per documented invariant
+    verification:
+      exact_head_sha: 143e0a3 / 0ae8074 / c6c9bc6
+      result: DEFER
+      evidence: each negative test red before, green after; positive controls kept
+    control_guard:
+      - every README "must fail closed" line maps to a named error and a negative test
+    control_status: REPAIRED
+    lesson: a fail-closed claim is only true when a test mutates the input and sees the refusal
+    lookup_tags: [fail-open, authority, negative-test, frozen-digest, provenance]
+
+  - rex_id: REX-MAROON-20261114-004
+    signature: ARTIFACT.UNMEASURED_RECEIPT_CLAIM
+    issue_kind: DEFECT
+    family: ARTIFACT
+    repo:
+      primary: GBOGEB/cryoplant-project
+      impacted: [GBOGEB/cryoplant-project]
+    first_seen: cryoplant-project#2353
+    last_seen: cryoplant-project#2353
+    severity_stars: 3
+    frequency:
+      observed_count: 2
+      unit: numeric_claims
+      impacted_repo_count: 1
+      impacted_workflow_count: 0
+      measurement_window: MAROON_OPEN_PR_PULSE_W1
+    recurrence: CLUSTERED_LOCAL
+    symptom: a proof document claimed 848 classifications (8 measured) and 28/28 tests (18 discovered)
+    root_cause: a counter incremented per render, and a hand-typed test count
+    action_moniker: RECEIPT
+    repair_method: count once at the source; re-measure with the documented command and print what ran
+    verification:
+      exact_head_sha: 0e2a898
+      result: DEFER
+      evidence: unittest discover runs 20 tests (18 + 2 regression tests)
+    control_guard:
+      - proof tables quote the command output, never a typed number
+    control_status: REPAIRED
+    lesson: recount before repeating a number; a receipt counter must count events, not loop iterations
+    lookup_tags: [honest-reporting, receipt, test-count, counter]
+
+  - rex_id: REX-MAROON-20261114-005
+    signature: ARTIFACT.BASENAME_IDENTITY_COLLISION
+    issue_kind: BUG
+    family: ARTIFACT
+    repo:
+      primary: GBOGEB/ABACUS
+      impacted: [GBOGEB/ABACUS]
+    first_seen: ABACUS#2746
+    last_seen: ABACUS#2746
+    severity_stars: 3
+    frequency:
+      observed_count: 1
+      unit: review_threads
+      impacted_repo_count: 1
+      impacted_workflow_count: 0
+      measurement_window: MAROON_OPEN_PR_PULSE_W1
+    recurrence: UNIQUE
+    symptom: same-basename drawings from two roots overwrote each other's graph and locators
+    root_cause: output stem and locator keyed on path.name only
+    action_moniker: RED
+    repair_method: source_key = basename@sha256(resolved path)[:8] in graph, locators and stem
+    verification:
+      exact_head_sha: eed550f
+      result: DEFER
+      evidence: two-directory test red before, green after
+    control_guard:
+      - any multi-root writer keys outputs on a root-qualified identity
+    control_status: REPAIRED
+    lesson: basename is a label, not an identity, once more than one root is scanned
+    lookup_tags: [identity, collision, multi-root, locator]
+
+  - rex_id: REX-MAROON-20261114-006
+    signature: CI_CD.CONCURRENCY_GROUP_COLLISION
+    issue_kind: REVIEW_FINDING
+    family: CI_CD
+    repo:
+      primary: GBOGEB/ABACUS
+      impacted: [GBOGEB/ABACUS]
+    first_seen: ABACUS#2741
+    last_seen: ABACUS#2741
+    severity_stars: 2
+    frequency:
+      observed_count: 2
+      unit: review_threads
+      impacted_repo_count: 1
+      impacted_workflow_count: 4
+      measurement_window: MAROON_OPEN_PR_PULSE_W1
+    recurrence: CLUSTERED_LOCAL
+    symptom: a dispatch could replace a pending push, and a stale re-run could cancel the current head
+    root_cause: concurrency group omitted event name and run attempt
+    action_moniker: HARDEN
+    repair_method: group on workflow + event_name + PR/sha, with a -rerun-<run_id> suffix for run_attempt > 1
+    verification:
+      exact_head_sha: 4c6c757
+      result: NOT_RUN
+    control_guard:
+      - concurrency keys include github.event_name
+    control_status: REPAIRED
+    lesson: one pending run per group means the group key decides which run is silently dropped
+    lookup_tags: [concurrency, github-actions, rerun, cancel-in-progress]
+
+  - rex_id: REX-MAROON-20261114-007
+    signature: VALIDATION.REGEX_WHITESPACE_EATS_NEWLINE
+    issue_kind: BUG
+    family: VALIDATION
+    repo:
+      primary: GBOGEB/ABACUS
+      impacted: [GBOGEB/ABACUS]
+    first_seen: pulse pin tool (not committed)
+    last_seen: pulse pin tool (not committed)
+    severity_stars: 2
+    frequency:
+      observed_count: 1
+      unit: tool_runs
+      impacted_repo_count: 1
+      impacted_workflow_count: 1
+      measurement_window: MAROON_OPEN_PR_PULSE_W1
+    recurrence: UNIQUE
+    symptom: a sed-style rewrite of `uses:` lines silently deleted following blank lines
+    root_cause: \s*$ under re.MULTILINE matches newlines
+    action_moniker: HARDEN
+    repair_method: "[ \\t]*$ instead of \\s*$; caught by an asymmetric diffstat before commit"
+    verification:
+      exact_head_sha: 7aaf5f6
+      result: PASS
+      evidence: symmetric diff (pins only), YAML parses
+    control_guard:
+      - a one-for-one rewrite must produce equal insertions and deletions
+    control_status: CONTROLLED
+    lesson: in line-anchored regexes use [ \t]* not \s*, and treat an asymmetric diffstat as a failed rewrite
+    lookup_tags: [regex, multiline, rewrite, diffstat]
+
+  - rex_id: REX-MAROON-20261114-008
+    signature: SECURITY.THREAD_RESOLVED_ALERT_OPEN
+    issue_kind: GAP
+    family: SECURITY
+    repo:
+      primary: GBOGEB/ABACUS
+      impacted: [GBOGEB/ABACUS]
+    first_seen: ABACUS#2711
+    last_seen: ABACUS#2746
+    severity_stars: 2
+    frequency:
+      observed_count: 7
+      unit: code_scanning_threads
+      impacted_repo_count: 1
+      impacted_workflow_count: 1
+      measurement_window: MAROON_OPEN_PR_PULSE_W1
+    recurrence: CLUSTERED_LOCAL
+    symptom: >-
+      Six subprocess findings were deferred and one SHA-1 finding was kept
+      with nosemgrep. Agent sessions get HTTP 403 on code-scanning alerts, so
+      the alert state cannot be read or dismissed from the session.
+    root_cause: session token lacks security_events scope
+    action_moniker: WATCH
+    repair_method: >-
+      Threads answered and resolved with their MAROON disposition. Alerts are
+      left to the owner and the security/subprocess lane. Local Semgrep shows
+      the nosemgrep result as suppressions inSource.
+    verification:
+      result: DEFER
+    control_guard:
+      - resolving a review thread never counts as dismissing its alert
+    control_status: DEFERRED
+    lesson: a PR thread and a code-scanning alert are two records; close each with its own evidence
+    lookup_tags: [code-scanning, semgrep, codeql, nosemgrep, backlog]
+
+summary:
+  total_records: 8
+  open_or_deferred: 1
+  five_star_open: 0
+  recurring_records: 2
+  cross_repo_records: 1
+  verified_or_controlled: 2
+
+return_contract:
+  consumer: GBOGEB/CODEX
+  global_taxonomy: federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml
+  merge_key: signature_plus_authority_relevant_scope
