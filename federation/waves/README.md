@@ -51,7 +51,8 @@ CODEX is public.
 | A repo that touches another repo's wave declares a role (overlapping worktrees) | `O1_UNDECLARED_PARTICIPANT` (warning) |
 | Status is owner-set (`ACTIVE`, `HOLD`, `CLOSED`, `SUPERSEDED`); `OBSERVED` is the generator default | `C5_STATUS` |
 | Non-QPS namespaces keep their native id as the name (an empty or missing name is rejected) | `C2_NAME` |
-| Private repos are validated in full, but publish only sha256 digests of names and aliases | redacted in messages |
+| Private repos are validated in full, but publish only sha256 digests of names and aliases, and a `parent_count` instead of parent keys | redacted in messages |
+| Every `owns` / `participates` entry is a mapping; an empty or comment-only claims file is an invalid document, never "no file" | `C0_ENTRY`, `C0_SCHEMA` |
 
 **Elevation: ids the wider federation recognises (`GLOBAL_WAVES.yaml`).**
 Some wave ids are carried in several repos, often under the same name and
@@ -80,7 +81,7 @@ owned ids with that reach. Validate the steward file with
 
 **Owner workflow.**
 
-1. Draft from your own records: `python scripts/wave_claims.py propose --repo GBOGEB/<NAME> --repo-path <checkout>`. The proposer only drafts rule-clean claims. It lists the rest under `needs_name` (no unique slug in your records) and `contested_ties` (another repo holds equal evidence).
+1. Draft from your own records: `python scripts/wave_claims.py propose --repo GBOGEB/<NAME> --repo-path <checkout>`. The proposer only drafts rule-clean claims. It lists the rest under `needs_name` (no unique slug in your records), `contested_ties` (another repo holds equal evidence) and `boundary_conflicts` (its path boundary nests inside another drafted boundary; proposals never set `parent`, so you declare it).
 2. Edit the draft and commit it as `.waves/WAVE_CLAIMS.yaml`.
 3. Check it: `python scripts/wave_claims.py validate --expected-repo GBOGEB/<NAME>`.
    The repository identity is supplied independently and is never read from the claims file.
@@ -88,5 +89,5 @@ owned ids with that reach. Validate the steward file with
 ## Next
 
 1. ~~Owners set `status`~~: done via `.waves/WAVE_CLAIMS.yaml` (see above). CODEX has seeded its own claims; the other members add theirs.
-2. ~~Add a lineage edge source~~: done. `lineage` indexes `parent_wave` / `parent_waves` fields as `child <- parent` id pairs. Private repos contribute only id pairs and counts. A Kahn sort over the edges reports `acyclic`, `roots` and `longest_chain`. Records whose own id is outside every namespace (e.g. `W25C.4`) are counted per source as `lineage_unresolved`, never guessed.
+2. ~~Add a lineage edge source~~: done. `lineage` indexes `parent_wave` / `parent_waves` fields as `child <- parent` id pairs. Private repos contribute only id pairs and counts. A Kahn sort over the edges reports `acyclic`, `roots` and `longest_chain`. Records whose own id is outside every namespace (e.g. `W25C.4`) are counted per source as `lineage_unresolved`, never guessed. `nodes_in_cycles` counts nodes on a cycle (strongly connected components); `nodes_blocked_by_cycles` counts nodes only stuck behind one. A lane link (`W111B` <- `W111A`) folds to one key and is not lineage; a literal self-reference (`W120` <- `W120`) is kept so the Kahn sort reports the cycle. Both endpoints of a published edge are register keys; a record that points outside the register is counted as `lineage_unresolved` instead.
 3. Run this on a schedule from pipeline-automation-hub and publish the register through the bot-PR path.
