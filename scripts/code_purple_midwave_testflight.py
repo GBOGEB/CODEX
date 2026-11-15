@@ -81,16 +81,67 @@ def compact_prior(comments: list[dict], prior: dict | None, head_sha: str, root_
     seen = set(prior.get("comment_fingerprints", []))
     latest = {x["id"]: x for x in comments}
     new = [x for x in latest.values() if x["fingerprint"] not in seen]
-    all_seen = sorted(seen | {x["fingerprint"] for x in latest.values()})
+    # Only fingerprints still open are carried forward: the marker stays bounded
+    # by the live set instead of growing (and arbitrarily truncating) forever.
+    current = sorted({x["fingerprint"] for x in latest.values()})
+    prior_open = prior.get("open_ids")
+    resolved = sorted(set(prior_open) - set(latest)) if isinstance(prior_open, list) else []
     return {
         "root_id": root_id,
         "source_sha": head_sha,
         "history": history[-8:],
-        "comment_fingerprints": all_seen[-500:],
+        "comment_fingerprints": current,
+        "open_ids": sorted(latest),
         "new_bot_comments": new,
+        "resolved_ids": resolved,
+        "prior_open_count": len(prior_open) if isinstance(prior_open, list) else None,
         "same_head": bool(last_sha == head_sha),
         "authority_transfer": False,
     }
+
+
+def render_delta_comment(state: dict, prior_observed_at: str | None) -> str:
+    """Delta-only checkpoint: what changed since the last receipt, plus totals."""
+    new, resolved = state["new_bot_comments"], state["resolved_ids"]
+    total = len(state["open_ids"])
+    before = state.get("prior_open_count")
+    since = f" since {prior_observed_at}" if prior_observed_at else ""
+    lines = [
+        "CODE PURPLE mid-wave bot-review delta: **HOLD / independent disposition required**.",
+        f"**Delta{since}: +{len(new)} new, -{len(resolved)} resolved | "
+        f"open now: {total}" + (f" (was {before})" if before is not None else " (first delta receipt)") + "**",
+        f"Head: `{(state['source_sha'] or 'UNKNOWN')[:12]}`",
+    ]
+    if new:
+        lines.append("\nNew:")
+        lines += [f"- {r['repo']} #{r['pr']} ({r['kind']}): {r['comment_url'] or r['id']}" for r in new[:12]]
+        if len(new) > 12:
+            lines.append(f"- ... +{len(new) - 12} more (see run artifact)")
+    if resolved:
+        lines.append("\nNo longer present:")
+        lines += [f"- {rid}" for rid in resolved[:12]]
+        if len(resolved) > 12:
+            lines.append(f"- ... +{len(resolved) - 12} more")
+    return "\n".join(lines)
+
+
+def find_latest_checkpoint(client: GitHubRead, repo: str, issue: int, max_pages: int = 30) -> dict | None:
+    """Scan every page: the newest receipt is on the last page, not the first."""
+    latest = None
+    for page in range(1, max_pages + 1):
+        try:
+            batch = client.get(f"/repos/{repo}/issues/{issue}/comments?per_page=100&page={page}")
+        except (urllib.error.HTTPError, TypeError):
+            break
+        if not isinstance(batch, list):
+            break
+        for comment in batch:
+            parsed = parse_checkpoint_comment(comment.get("body", "") or "")
+            if parsed:
+                latest = dict(parsed, _observed_at=comment.get("created_at"))
+        if len(batch) < 100:
+            break
+    return latest
 
 
 def gate_census(checks: list[dict], source_sha: str) -> dict:
@@ -270,15 +321,8 @@ def main() -> int:
         except (urllib.error.HTTPError, TypeError):
             pass
     owner_issue = f"{args.owner}/CODEX"
-    previous = None
-    try:
-        issue_comments = client.get(f"/repos/{owner_issue}/issues/1037/comments?per_page=100")
-        for comment in reversed(issue_comments):
-            previous = parse_checkpoint_comment(comment.get("body", ""))
-            if previous:
-                break
-    except (urllib.error.HTTPError, TypeError):
-        pass
+    previous = find_latest_checkpoint(client, owner_issue, 1037)
+    prior_observed_at = (previous or {}).pop("_observed_at", None)
     head = next((r["main_sha"] for r in monitored if r["repo"] == owner_issue), None)
     state = compact_prior(bot_comments, previous, head or "UNKNOWN", "CODE_PURPLE_ORG_TESTFLIGHT")
     snapshot = {
@@ -293,6 +337,7 @@ def main() -> int:
         "bot_review_census": {
             "count": len(bot_comments),
             "new_since_last_checkpoint": len(state["new_bot_comments"]),
+            "resolved_since_last_checkpoint": len(state["resolved_ids"]),
             "comments": bot_comments,
             "open_findings_require_review": True,
         },
@@ -303,22 +348,19 @@ def main() -> int:
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(snapshot, sort_keys=True, indent=2) + "\n", encoding="utf-8")
-    if args.post_on_new_bot_findings and state["new_bot_comments"]:
+    changed = bool(state["new_bot_comments"] or state["resolved_ids"])
+    if args.post_on_new_bot_findings and changed:
         # No arbitrary comment body is reposted, only safe evidence links/identities.
         event = {
             "schema": SCHEMA, "root_id": state["root_id"],
             "source_sha": state["source_sha"],
-            "comment_fingerprints": state["comment_fingerprints"][-500:],
+            "comment_fingerprints": state["comment_fingerprints"],
+            "open_ids": state["open_ids"],
             "history": state["history"], "gates": {},
         }
-        lines = [
-            "CODE PURPLE mid-wave bot-review intake: **HOLD / independent disposition required**.",
-            f"New bot coding/security/review observations: {len(state['new_bot_comments'])}.",
-        ]
-        for row in state["new_bot_comments"][:12]:
-            lines.append(f"- {row['repo']} #{row['pr']} ({row['kind']}): {row['comment_url'] or row['id']}")
-        lines.append(ISSUE_MARKER + json.dumps(event, sort_keys=True, separators=(",", ":")) + " -->")
-        client.post_issue_comment(owner_issue, 1037, "\n".join(lines))
+        body = render_delta_comment(state, prior_observed_at)
+        body += "\n" + ISSUE_MARKER + json.dumps(event, sort_keys=True, separators=(",", ":")) + " -->"
+        client.post_issue_comment(owner_issue, 1037, body)
     print(f"Mid-wave testflight: {len(accessible)} repos, {len(studied)} probed, "
           f"{len(bot_comments)} bot review receipts; authority=HOLD")
     return 0
