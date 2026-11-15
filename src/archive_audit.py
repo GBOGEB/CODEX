@@ -169,14 +169,16 @@ def iter_members(fileobj: BinaryIO, prefix: str = "") -> Iterator[Member]:
                     continue
                 if info.islnk():
                     # a hard link is a second name for its target's bytes
+                    # extract the target member itself: tarfile resolves links only to earlier entries,
+                    # but a valid TAR may store the hard link before its target
                     try:
-                        size = tf.getmember(info.linkname).size
+                        target = tf.getmember(info.linkname)
                     except KeyError:
                         raise tarfile.ReadError(f"hard link {info.name} targets missing {info.linkname}") from None
-                    m = tf.extractfile(info)
+                    m = tf.extractfile(target) if target.isfile() else None
                     if m is None:
                         raise tarfile.ReadError(f"hard link {info.name} has no readable target")
-                    yield from _member(prefix + info.name, m, size)
+                    yield from _member(prefix + info.name, m, target.size)
                     continue
                 if not info.isfile():
                     continue
@@ -235,12 +237,15 @@ create table if not exists members(archive_sha256 text, name text, size int, sha
     git_sha1 text, git_sha1_lf text, is_archive int);
 create index if not exists members_arch on members(archive_sha256);
 create table if not exists disk(path text primary key, size int, mtime_ns int, sha256 text);
+create table if not exists archive_errors(sha256 text primary key, error text);
 """
 
 
 # Bump when iter_members changes which members an archive yields: cached member lists built under
 # older rules are discarded, never mixed with new ones. 2: TAR symlinks and hard links are members.
-MEMBER_RULES = 2
+# 3: parse errors are kept per archive digest (archive_errors), so every path of a damaged archive
+# inherits its error with its (partial) member list.
+MEMBER_RULES = 3
 
 
 class Cache:
@@ -251,6 +256,7 @@ class Cache:
         if self.db.execute("pragma user_version").fetchone()[0] != MEMBER_RULES:
             self.db.execute("delete from members")
             self.db.execute("delete from archives")
+            self.db.execute("delete from archive_errors")
             self.db.execute(f"pragma user_version = {MEMBER_RULES}")
             self.db.commit()
 
@@ -281,7 +287,11 @@ class Cache:
                         rows.append((sha, m.name, d.size, d.sha256, d.git_sha1, d.git_sha1_lf, int(m.is_archive)))
             except READ_ERRORS as exc:  # truncated or corrupt: keep what was read, flag the archive
                 err = f"{type(exc).__name__}: {exc}"[:300]
+                self.db.execute("insert or replace into archive_errors values(?,?)", (sha, err))
             self.db.executemany("insert into members values(?,?,?,?,?,?,?)", rows)
+        else:  # members cached by digest: their completeness travels with them
+            row = self.db.execute("select error from archive_errors where sha256=?", (sha,)).fetchone()
+            err = row[0] if row else None
         self.db.execute("insert or replace into archives values(?,?,?,?,?)", (str(path), st.st_size, st.st_mtime_ns, sha, err))
         self.db.commit()
         return sha, err
@@ -864,13 +874,13 @@ def apply_prune(actions: list[PruneAction], cache: Cache) -> None:
     that gained or changed any byte since planning (a user, a sync client), is left alone.
     """
 
-    keeper_ok: dict[str, bool] = {}
     for a in actions:
-        if a.keeper not in keeper_ok:
-            k = Path(a.keeper)
-            sha, _ = cache.archive_sha(k) if k.is_file() else (None, None)
-            keeper_ok[a.keeper] = sha == a.keeper_sha256 and file_sha256(k) == a.keeper_sha256
-        if not keeper_ok[a.keeper] or not _candidate_unchanged(a):
+        # no memo: a keeper shared by several candidates is re-hashed before each deletion, because
+        # it can be replaced (a sync client, a user) between one deletion and the next
+        k = Path(a.keeper)
+        sha, _ = cache.archive_sha(k) if k.is_file() else (None, None)
+        keeper_ok = sha == a.keeper_sha256 and file_sha256(k) == a.keeper_sha256
+        if not keeper_ok or not _candidate_unchanged(a):
             continue  # changed since planning: never proven redundant in its current state
         if a.kind == "archive":
             Path(a.path).unlink()
