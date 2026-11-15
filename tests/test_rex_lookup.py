@@ -77,3 +77,33 @@ def test_glob_rex_subresolver_points_to_canonical_rex_sources():
     assert lookup["role"] == "DMAIC_CONTROL_REX_SUBRESOLVER"
     assert lookup["sources"]["taxonomy"] == "federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml"
     assert lookup["sources"]["ledger"] == "federation/rex/GLOBAL_REX_LEDGER_v1.yaml"
+
+
+def test_review_disposition_vocabulary_mirrors_maroon():
+    taxonomy = _yaml("federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml")
+    disp = taxonomy["review_dispositions"]
+    assert set(disp["statuses"]) == {
+        "FIX_IN_PR",
+        "FIXED_ON_MAIN",
+        "CONFIRMED_OPEN",
+        "NO_CHANGE_NEEDED",
+        "RETHEME",
+    }
+    assert set(disp["reply_aliases"].values()) <= set(disp["statuses"])
+    themes = taxonomy["review_lane_themes"]["themes"]
+    assert len(themes) == len(set(themes))
+    assert set(taxonomy["review_lane_themes"]["added_2026_11_15"]) <= set(themes)
+
+
+def test_repo_rex_returns_use_taxonomy_vocabulary():
+    taxonomy = _yaml("federation/rex/GLOBAL_REX_TAXONOMY_v1.yaml")
+    required = set(taxonomy["rex_record_required_fields"])
+    returns = sorted((ROOT / "federation" / "rex" / "returns").glob("*.yaml"))
+    assert returns
+    for path in returns:
+        for record in _yaml(str(path.relative_to(ROOT))).get("records") or []:
+            assert required <= set(record), (path.name, record.get("rex_id"))
+            assert record["recurrence"] in taxonomy["recurrence_classes"]
+            assert record["control_status"] in taxonomy["control_status"]
+            assert record["family"] in taxonomy["families"]
+            assert 1 <= int(record["severity_stars"]) <= 5
