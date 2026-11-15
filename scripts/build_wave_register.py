@@ -184,8 +184,14 @@ def wave_keys(text: str, rules: list[dict], context: str) -> list[str]:
     return list(dict.fromkeys(hits))
 
 
-def scan_lineage(repo: Path, head: str, rules: list[dict]) -> tuple[collections.Counter, int]:
-    """(child, parent) edges from parent_wave/parent_waves fields in committed YAML/JSON."""
+def scan_lineage(
+    repo: Path, head: str, rules: list[dict], records: list | None = None
+) -> tuple[collections.Counter, int]:
+    """(child, parent) edges from parent_wave/parent_waves fields in committed YAML/JSON.
+
+    ``records``, when given, receives one frozenset of edges per resolved record, so that
+    unresolved lineage can be counted per record rather than per edge.
+    """
     try:
         listed = git(repo, "grep", "-l", "-E", r"parent_waves?\"?\s*:", head, "--", "*.yaml", "*.yml", "*.json")
     except subprocess.CalledProcessError:
@@ -224,6 +230,7 @@ def scan_lineage(repo: Path, head: str, rules: list[dict]) -> tuple[collections.
                 unresolved += 1
                 continue
             child = children[0]
+            mine = set()
             for text, par in parents:
                 # W111B -> W111A folds to one key: a lane link, not lineage. Only a literal
                 # self-reference (own id == parent text) is a genuine self-edge, kept so that
@@ -231,6 +238,9 @@ def scan_lineage(repo: Path, head: str, rules: list[dict]) -> tuple[collections.
                 if par == child and not (own and text.upper() == own.strip().upper()):
                     continue
                 edges[(child, par)] += 1
+                mine.add((child, par))
+            if records is not None and mine:
+                records.append(frozenset(mine))
     return edges, unresolved
 
 
@@ -324,18 +334,27 @@ def read_claims(repo: Path, head: str) -> dict | None:
     return {"schema": "empty"} if doc is None else doc
 
 
-def publishable_lineage(lineage: dict, keys: set[str]) -> tuple[dict, dict[str, int]]:
+def publishable_lineage(
+    lineage: dict, keys: set[str], records: dict[str, list] | None = None
+) -> tuple[dict, dict[str, int]]:
     """Edges whose both endpoints are register keys, and per-repo counts of the records dropped.
 
     A dangling endpoint would be a reference the register cannot resolve, and for a private
-    member it would publish an id that no public entry carries.
+    member it would publish an id that no public entry carries. With ``records`` (repo -> edge
+    sets from ``scan_lineage``) a record counts once however many of its edges dangle; its
+    in-register edges stay published. Without it, each dropped edge's record count is used.
     """
     kept, dropped = {}, collections.Counter()
     for edge, repos in lineage.items():
         if edge[0] in keys and edge[1] in keys:
             kept[edge] = repos
-        else:
+        elif records is None:
             dropped.update(repos)
+    if records is not None:
+        for repo, rows in records.items():
+            n = sum(1 for row in rows if any(c not in keys or p not in keys for c, p in row))
+            if n:
+                dropped[repo] += n
     return kept, dict(dropped)
 
 
@@ -351,13 +370,16 @@ def main() -> int:
 
     sources, merged = {}, collections.defaultdict(dict)
     lineage: dict[tuple[str, str], dict] = collections.defaultdict(dict)
+    lineage_records: dict[str, list] = {}
     claim_sets: dict[str, tuple[dict, bool]] = {}
     for spec, private in [(s, False) for s in a.repo] + [(s, True) for s in a.private]:
         name, path = spec.split("=", 1)
         meta, waves = scan(name, Path(path).resolve(), private, rules)
         meta["visibility"] = "private" if private else "public"
         sources[name] = meta
-        edges, unresolved = scan_lineage(Path(path).resolve(), meta["head"], rules)
+        rows: list = []
+        edges, unresolved = scan_lineage(Path(path).resolve(), meta["head"], rules, rows)
+        lineage_records[name] = rows
         meta["lineage_unresolved"] = unresolved
         doc = read_claims(Path(path).resolve(), meta["head"])
         meta["claims_file"] = doc is not None
@@ -411,7 +433,7 @@ def main() -> int:
             except yaml.YAMLError:
                 global_doc = {"schema": "unparseable"}
             sources[name]["global_waves_file"] = global_doc is not None
-    lineage, dangling = publishable_lineage(lineage, set(observed))
+    lineage, dangling = publishable_lineage(lineage, set(observed), lineage_records)
     for name, n in dangling.items():
         sources[name]["lineage_unresolved"] += n
     claims, violations, census = wave_claims.rollup(
