@@ -172,7 +172,8 @@ def scan(name: str, repo: Path, private: bool, rules: list[dict] | None = None):
 PARENT_KEYS = ("parent_wave", "parent_waves")
 CHILD_KEYS = ("id", "wave", "wave_id")
 # Lane suffixes (W111A, W43-M05) belong to their base wave for lineage purposes.
-LANE_RE = re.compile(r"(?<![A-Za-z0-9])[Ww](\d{2,3})(?:[A-Z]|-M\d+)?(?![0-9A-Za-z])")
+# A dotted numeric continuation (W25C.4) is a sub-item id, not a lane: never folded.
+LANE_RE = re.compile(r"(?<![A-Za-z0-9])[Ww](\d{2,3})(?:[A-Z]|-M\d+)?(?![0-9A-Za-z])(?!\.\d)")
 
 
 def wave_keys(text: str, rules: list[dict], context: str) -> list[str]:
@@ -208,20 +209,28 @@ def scan_lineage(repo: Path, head: str, rules: list[dict]) -> tuple[collections.
                 continue
             stack.extend(node.values())
             raw = [v for k in PARENT_KEYS if k in node for v in (node[k] if isinstance(node[k], list) else [node[k]])]
-            parents = [k for v in raw if isinstance(v, (str, int)) for k in wave_keys(str(v), rules, f)]
+            raw = [str(v).strip() for v in raw if isinstance(v, (str, int))]
+            parents = [(v, k) for v in raw for k in wave_keys(v, rules, f)]
             if not parents:
                 continue
             own = next((node[k] for k in CHILD_KEYS if isinstance(node.get(k), str)), None)
             if own:
-                named = wave_keys(own, rules, f)
+                children = wave_keys(own, rules, f)
             else:  # the file name outranks folders: records are often vendored into another wave's inputs
-                named = wave_keys(f.rsplit("/", 1)[-1], rules, f) or wave_keys(f, rules, f)
-            children = [c for c in named if c not in parents]
+                children = wave_keys(f.rsplit("/", 1)[-1], rules, f)
+                if not children:  # folder names may include the parents' own folders
+                    children = [c for c in wave_keys(f, rules, f) if c not in {k for _, k in parents}]
             if len(children) != 1:
                 unresolved += 1
                 continue
-            for par in parents:
-                edges[(children[0], par)] += 1
+            child = children[0]
+            for text, par in parents:
+                # W111B -> W111A folds to one key: a lane link, not lineage. Only a literal
+                # self-reference (own id == parent text) is a genuine self-edge, kept so that
+                # the acyclicity check sees it.
+                if par == child and not (own and text.upper() == own.strip().upper()):
+                    continue
+                edges[(child, par)] += 1
     return edges, unresolved
 
 
@@ -245,18 +254,89 @@ def kahn(edges: set[tuple[str, str]]) -> dict:
             if indeg[c] == 0:
                 queue.append(c)
     return {"nodes": len(nodes), "roots": sum(1 for n in nodes if not any(c == n for c, _ in edges)),
-            "acyclic": seen == len(nodes), "nodes_in_cycles": len(nodes) - seen,
+            "acyclic": seen == len(nodes), "nodes_in_cycles": len(cyclic_nodes(edges)),
+            # Kahn leaves unprocessed every node a cycle reaches, cyclic or not
+            "nodes_blocked_by_cycles": len(nodes) - seen - len(cyclic_nodes(edges)),
             "longest_chain": max(depth.values(), default=0)}
 
 
+def cyclic_nodes(edges: set[tuple[str, str]]) -> set[str]:
+    """Nodes on a cycle: members of a strongly connected component of size > 1, or with a self-edge.
+
+    Iterative Tarjan, so deep lineage chains never hit the recursion limit.
+    """
+    succ = collections.defaultdict(list)
+    for child, parent in edges:
+        succ[parent].append(child)
+    index, low, on_stack, stack, out = {}, {}, set(), [], set()
+    counter = 0
+    for root in sorted({n for e in edges for n in e}):
+        if root in index:
+            continue
+        work = [(root, iter(sorted(succ[root])))]
+        index[root] = low[root] = counter
+        counter += 1
+        stack.append(root)
+        on_stack.add(root)
+        while work:
+            node, it = work[-1]
+            nxt = next(it, None)
+            if nxt is not None:
+                if nxt not in index:
+                    index[nxt] = low[nxt] = counter
+                    counter += 1
+                    stack.append(nxt)
+                    on_stack.add(nxt)
+                    work.append((nxt, iter(sorted(succ[nxt]))))
+                elif nxt in on_stack:
+                    low[node] = min(low[node], index[nxt])
+                continue
+            work.pop()
+            if work:
+                low[work[-1][0]] = min(low[work[-1][0]], low[node])
+            if low[node] == index[node]:
+                comp = []
+                while True:
+                    m = stack.pop()
+                    on_stack.discard(m)
+                    comp.append(m)
+                    if m == node:
+                        break
+                if len(comp) > 1 or (node, node) in edges:
+                    out.update(comp)
+    return out
+
+
 def read_claims(repo: Path, head: str) -> dict | None:
-    """The repo's own wave claims (its prerogative), read at the exact source commit."""
+    """The repo's own wave claims (its prerogative), read at the exact source commit.
+
+    None only when the file is missing. An empty or comment-only file is an invalid
+    document (C0_SCHEMA), so emptying a claims file never silently drops ownership.
+    """
     try:
-        return yaml.safe_load(git(repo, "show", f"{head}:{wave_claims.CLAIMS_PATH}"))
+        text = git(repo, "show", f"{head}:{wave_claims.CLAIMS_PATH}")
     except subprocess.CalledProcessError:
         return None
+    try:
+        doc = yaml.safe_load(text)
     except yaml.YAMLError:
         return {"schema": "unparseable"}
+    return {"schema": "empty"} if doc is None else doc
+
+
+def publishable_lineage(lineage: dict, keys: set[str]) -> tuple[dict, dict[str, int]]:
+    """Edges whose both endpoints are register keys, and per-repo counts of the records dropped.
+
+    A dangling endpoint would be a reference the register cannot resolve, and for a private
+    member it would publish an id that no public entry carries.
+    """
+    kept, dropped = {}, collections.Counter()
+    for edge, repos in lineage.items():
+        if edge[0] in keys and edge[1] in keys:
+            kept[edge] = repos
+        else:
+            dropped.update(repos)
+    return kept, dict(dropped)
 
 
 def main() -> int:
@@ -331,6 +411,9 @@ def main() -> int:
             except yaml.YAMLError:
                 global_doc = {"schema": "unparseable"}
             sources[name]["global_waves_file"] = global_doc is not None
+    lineage, dangling = publishable_lineage(lineage, set(observed))
+    for name, n in dangling.items():
+        sources[name]["lineage_unresolved"] += n
     claims, violations, census = wave_claims.rollup(
         claim_sets, observed, set(lineage), naming, reserved=previous, global_doc=global_doc
     )
