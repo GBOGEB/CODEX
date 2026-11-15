@@ -306,3 +306,25 @@ def test_a_partly_unreadable_package_is_not_redownloadable(tmp_path: Path) -> No
     (v,) = aa.audit([pkg], aa.Cache(tmp_path / "c.sqlite"), [], [], provenance=False, log=lambda *_: None)
     assert v.error and v.members == 1
     assert v.verdict != "REDOWNLOADABLE" and v.disposition != "DELETE_OK"
+
+
+def test_a_hard_link_to_a_missing_target_flags_the_archive(tmp_path: Path) -> None:
+    broken = _tar(tmp_path / "broken.tar", {"f.txt": b"data"}, {"h": (tarfile.LNKTYPE, "gone.txt")})
+    sha, err = aa.Cache(tmp_path / "c.sqlite").scan_archive(broken)
+    assert sha and err and "gone.txt" in err
+
+
+def test_a_cache_from_older_member_rules_is_rescanned(tmp_path: Path) -> None:
+    """Link members (MEMBER_RULES 2) must not be hidden by member lists cached under the old rules."""
+    t = _tar(tmp_path / "t.tar", {"f.txt": b"data"}, {"cur": (tarfile.SYMTYPE, "f.txt")})
+    db = tmp_path / "c.sqlite"
+    sha, _ = aa.Cache(db).scan_archive(t)
+    old = aa.sqlite3.connect(str(db))
+    old.execute("delete from members where name='cur'")  # what the old rules cached
+    old.execute("pragma user_version = 1")
+    old.commit()
+    old.close()
+    cache = aa.Cache(db)
+    assert cache.members(sha) == []  # discarded, not trusted
+    cache.scan_archive(t)
+    assert sorted(m[0] for m in cache.members(sha)) == ["cur", "f.txt"]

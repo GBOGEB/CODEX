@@ -37,6 +37,7 @@ import argparse
 import fnmatch
 import gzip
 import hashlib
+import io
 import json
 import os
 import re
@@ -161,6 +162,22 @@ def iter_members(fileobj: BinaryIO, prefix: str = "") -> Iterator[Member]:
     elif kind in ("gz", "tar") and _is_tar(fileobj):
         with tarfile.open(fileobj=fileobj, mode="r:*") as tf:
             for info in tf:
+                if info.issym():
+                    # a symlink is its target path, exactly as git stores it as a blob
+                    target = info.linkname.encode("utf-8", "surrogateescape")
+                    yield from _member(prefix + info.name, io.BytesIO(target), len(target))
+                    continue
+                if info.islnk():
+                    # a hard link is a second name for its target's bytes
+                    try:
+                        size = tf.getmember(info.linkname).size
+                    except KeyError:
+                        raise tarfile.ReadError(f"hard link {info.name} targets missing {info.linkname}") from None
+                    m = tf.extractfile(info)
+                    if m is None:
+                        raise tarfile.ReadError(f"hard link {info.name} has no readable target")
+                    yield from _member(prefix + info.name, m, size)
+                    continue
                 if not info.isfile():
                     continue
                 m = tf.extractfile(info)
@@ -221,11 +238,21 @@ create table if not exists disk(path text primary key, size int, mtime_ns int, s
 """
 
 
+# Bump when iter_members changes which members an archive yields: cached member lists built under
+# older rules are discarded, never mixed with new ones. 2: TAR symlinks and hard links are members.
+MEMBER_RULES = 2
+
+
 class Cache:
     def __init__(self, path: Path) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
         self.db = sqlite3.connect(str(path), timeout=60)
         self.db.executescript(SCHEMA)
+        if self.db.execute("pragma user_version").fetchone()[0] != MEMBER_RULES:
+            self.db.execute("delete from members")
+            self.db.execute("delete from archives")
+            self.db.execute(f"pragma user_version = {MEMBER_RULES}")
+            self.db.commit()
 
     def archive_sha(self, path: Path) -> tuple[str | None, str | None]:
         st = path.stat()
@@ -606,7 +633,9 @@ def audit(
             v.duplicate_of = first
         if v.error and not v.members:
             v.verdict = "ERROR"
-        elif _match(Path(v.path).name, REDOWNLOADABLE_GLOBS):
+        elif not v.error and _match(Path(v.path).name, REDOWNLOADABLE_GLOBS):
+            # the filename vouches only for a fully readable package; a partly unreadable
+            # one may be modified or damaged and falls through to the error guard below
             v.verdict = "REDOWNLOADABLE"
         elif not v.archive_only:
             v.verdict = "SAFE_LOCAL_GIT" if v.covered_git_local else "SAFE_LOSSLESS"
@@ -643,7 +672,9 @@ def _disposition(v: ArchiveVerdict) -> str:
     return "INCUBATE"
 
 
-def aggregate_receipt(verdicts: list[ArchiveVerdict], report_sha256: str, engine_sha: str | None) -> dict:
+def aggregate_receipt(
+    verdicts: list[ArchiveVerdict], report_sha256: str, engine_sha: str | None, deletion_performed: bool = False
+) -> dict:
     """Name-free summary for Golden Thread / Mycelium (no member or archive names)."""
 
     tally: dict[str, dict[str, int]] = defaultdict(lambda: {"archives": 0, "bytes": 0})
@@ -664,7 +695,7 @@ def aggregate_receipt(verdicts: list[ArchiveVerdict], report_sha256: str, engine
         "dispositions": dict(sorted(Counter(v.disposition for v in verdicts).items())),
         "covered_git_unpushed": sum(v.covered_git_local for v in verdicts),
         "local_report_sha256": report_sha256,
-        "deletion_performed": False,
+        "deletion_performed": deletion_performed,
         "authority_transfer": False,
     }
 
@@ -682,6 +713,8 @@ class PruneAction:
     files: int
     bytes: int
     applied: bool = False
+    # archive candidates: the file's own sha256 when planned, re-checked before deletion
+    candidate_sha256: str = ""
     # the grouping that disappears with the path: (relative name, size, sha256) per substantive file
     manifest: list[tuple[str, int, str]] = field(default_factory=list)
 
@@ -746,7 +779,7 @@ def plan_prune(archives: list[Path], cache: Cache, folder_roots: Iterable[Path])
                 manifest = [(n, size, s) for n, size, s, _g1, _glf, is_arch in cache.members(scanned[p][0])
                             if not is_arch]
                 actions.append(PruneAction("archive", str(p), str(k), scanned[k][0], len(leaves[p]),
-                                           p.stat().st_size, manifest=manifest))
+                                           p.stat().st_size, manifest=manifest, candidate_sha256=scanned[p][0]))
                 kept.discard(p)
                 break
     # a keeper that was itself pruned hands over to its own keeper (containment is transitive)
@@ -811,13 +844,34 @@ def _folder_files(d: Path) -> list[tuple[str, int]] | None:
     return None if errors else files
 
 
-def apply_prune(actions: list[PruneAction], cache: Cache) -> None:
-    """Delete planned paths after re-checking that each keeper is still the file that was verified."""
+def _candidate_unchanged(a: PruneAction) -> bool:
+    """The candidate is byte-for-byte what was planned: same archive digest, or same folder manifest."""
 
+    path = Path(a.path)
+    if a.kind == "archive":
+        return bool(a.candidate_sha256) and path.is_file() and file_sha256(path) == a.candidate_sha256
+    files = _folder_files(path) if path.is_dir() else None
+    if files is None:
+        return False
+    now = sorted((os.path.relpath(f, path), size, file_sha256(Path(f))) for f, size in files)
+    return now == sorted(tuple(x) for x in a.manifest)
+
+
+def apply_prune(actions: list[PruneAction], cache: Cache) -> None:
+    """Delete planned paths after re-checking the keeper and the candidate itself.
+
+    Both are re-hashed immediately before deletion: a keeper that moved or changed, or a candidate
+    that gained or changed any byte since planning (a user, a sync client), is left alone.
+    """
+
+    keeper_ok: dict[str, bool] = {}
     for a in actions:
-        sha, _ = cache.archive_sha(Path(a.keeper)) if Path(a.keeper).is_file() else (None, None)
-        if sha != a.keeper_sha256:
-            continue  # keeper moved or changed since planning: leave the candidate alone
+        if a.keeper not in keeper_ok:
+            k = Path(a.keeper)
+            sha, _ = cache.archive_sha(k) if k.is_file() else (None, None)
+            keeper_ok[a.keeper] = sha == a.keeper_sha256 and file_sha256(k) == a.keeper_sha256
+        if not keeper_ok[a.keeper] or not _candidate_unchanged(a):
+            continue  # changed since planning: never proven redundant in its current state
         if a.kind == "archive":
             Path(a.path).unlink()
         else:
@@ -889,7 +943,9 @@ def main(argv: list[str] | None = None) -> int:
     if a.receipt:
         engine = (_git(Path(__file__).parent, "rev-parse", "HEAD") or "").strip() or None
         a.receipt.parent.mkdir(parents=True, exist_ok=True)
-        a.receipt.write_text(json.dumps(aggregate_receipt(verdicts, digest, engine), indent=2) + "\n", encoding="utf-8")
+        deleted = bool(a.prune and a.apply and any(x.applied for x in actions))
+        a.receipt.write_text(json.dumps(aggregate_receipt(verdicts, digest, engine, deleted), indent=2) + "\n",
+                             encoding="utf-8")
     counts = defaultdict(int)
     for v in verdicts:
         counts[v.verdict] += 1
