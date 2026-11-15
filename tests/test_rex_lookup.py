@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import re
 from pathlib import Path
 
 import yaml
@@ -107,3 +108,14 @@ def test_repo_rex_returns_use_taxonomy_vocabulary():
             assert record["control_status"] in taxonomy["control_status"]
             assert record["family"] in taxonomy["families"]
             assert 1 <= int(record["severity_stars"]) <= 5
+            assert record["issue_kind"] in taxonomy["issue_kinds"], (path.name, record.get("rex_id"))
+            if "action_moniker" in record:
+                assert record["action_moniker"] in taxonomy["repair_methods"]["monikers"], (
+                    path.name,
+                    record.get("rex_id"),
+                )
+            verification = record.get("verification") or {}
+            sha = verification.get("exact_head_sha")
+            assert sha is None or re.fullmatch(r"[0-9a-f]{7,40}", str(sha)), (path.name, sha)
+            for each in verification.get("exact_head_shas") or []:
+                assert re.fullmatch(r"[0-9a-f]{7,40}", str(each)), (path.name, each)

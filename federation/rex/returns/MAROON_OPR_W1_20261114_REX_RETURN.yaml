@@ -42,7 +42,7 @@ records:
       reused main's canonical pins (checkout v7.0.1, setup-python v7.1.0,
       upload-artifact v7.0.2, download-artifact v8.0.2, cache v6.1.0).
     verification:
-      exact_head_sha: bf0d825 / 7aaf5f6
+      exact_head_shas: [bf0d825, 7aaf5f6]
       result: PASS
       evidence: all 16 code-scanning threads closed on re-analysis of the new heads
     control_guard:
@@ -109,7 +109,7 @@ records:
     action_moniker: HARDEN
     repair_method: one explicit check plus one negative test per documented invariant
     verification:
-      exact_head_sha: 143e0a3 / 0ae8074 / c6c9bc6
+      exact_head_shas: [143e0a3, 0ae8074, c6c9bc6]
       result: DEFER
       evidence: each negative test red before, green after; positive controls kept
     control_guard:
