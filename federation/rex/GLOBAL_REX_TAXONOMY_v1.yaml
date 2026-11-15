@@ -54,21 +54,52 @@ families:
   LINEAGE:
     examples: [stale_sha, missing_receipt, wrong_source_pointer]
   AUTHORITY:
-    examples: [premature_promotion, owner_confusion, authority_transfer_risk]
+    examples:
+      - premature_promotion
+      - owner_confusion
+      - authority_transfer_risk
+      - fail_open_guard
+      - unverified_payload_attribution
   RUNTIME:
     examples: [zero_step, runner_allocation, dependency_failure, crash]
   CI_CD:
-    examples: [workflow_syntax, job_failure, artifact_upload, branch_gate]
+    examples:
+      - workflow_syntax
+      - job_failure
+      - artifact_upload
+      - branch_gate
+      - unpinned_action_tag
+      - concurrency_group_collision
+      - cited_artifact_not_uploaded
   VALIDATION:
-    examples: [schema, lint, line_length, format, type, test_assertion]
+    examples:
+      - schema
+      - lint
+      - line_length
+      - format
+      - type
+      - test_assertion
+      - assert_stripped_by_optimize
+      - checker_tokenisation_drift
   DATA_SSOT:
     examples: [stale_data, duplicate_ssot, missing_locator, inconsistent_value]
   ARTIFACT:
-    examples: [render_mismatch, binary_stale, parity_failure, missing_output]
+    examples:
+      - render_mismatch
+      - binary_stale
+      - parity_failure
+      - missing_output
+      - basename_identity_collision
+      - unmeasured_receipt_claim
   FEDERATION:
     examples: [dock_drift, consumer_mismatch, propagation_break]
   SECURITY:
-    examples: [vulnerability, permission, secret_exposure, policy_guard]
+    examples:
+      - vulnerability
+      - permission
+      - secret_exposure
+      - policy_guard
+      - weak_hash_non_crypto
   PERFORMANCE:
     examples: [timeout, resource_pressure, excessive_runtime]
   UX_LOOKUP:
@@ -196,6 +227,51 @@ promotion_rules:
     - severity_stars >= 4
     - recurrence in [CROSS_WORKFLOW_RECURRING, CROSS_REPO_RECURRING, CHRONIC, SYSTEMIC]
   authority_rule: REX preserves experience; only entitled domain owners can convert it into engineering acceptance
+
+review_dispositions:
+  owner_repo: GBOGEB/cryoplant-project
+  owner_path: mission_control/maroon/review_backlog/DISPOSITIONS.json
+  note: >-
+    Mirror of the MAROON review-backlog vocabulary so REX records, PR thread
+    replies and the backlog register use one set of words. MAROON stays the
+    owner; change it there first.
+  statuses:
+    FIX_IN_PR: fixed by a commit on an open PR branch, cited on the thread
+    FIXED_ON_MAIN: the fix is an ancestor of the default branch
+    CONFIRMED_OPEN: still on the default branch; fix planned in its own lane PR
+    NO_CHANGE_NEEDED: answered on the thread with evidence; behaviour kept
+    RETHEME: the finding belongs to another theme; carries the corrected theme
+  reply_aliases:
+    FIXED: FIX_IN_PR
+    DEFERRED_BACKLOG: CONFIRMED_OPEN
+  evidence_rule: >-
+    Every disposition names a commit (red before, green after where testable)
+    or the backlog lane it moved to. Resolving a thread never dismisses the
+    code-scanning alert behind it.
+
+review_lane_themes:
+  lane_key: <repo>:review-<theme>
+  rule: one theme in one repository is one root and one follow-up PR
+  themes:
+    - provenance-pin
+    - fail-open
+    - security
+    - input-validation
+    - ci-repro
+    - private-leak
+    - path-alias
+    - ooxml-integrity
+    - atomic-write
+    - evidence-link
+    - release-publish
+    - wave-claims
+    - ide-config
+    - weak-hash
+    - code-hygiene
+    - honest-reporting
+    - correctness
+    - other
+  added_2026_11_15: [weak-hash, code-hygiene, honest-reporting, correctness]
 
 first_use_case: >-
   W112 Global Hive convergence: capture semantic namespace collision, an
