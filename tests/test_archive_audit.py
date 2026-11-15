@@ -219,3 +219,90 @@ def test_apply_skips_when_keeper_changed(tmp_path: Path) -> None:
     os.utime(big, ns=(1, 1))
     aa.apply_prune(actions, cache)
     assert small.exists() and not actions[0].applied
+
+
+# --- CODEX #1158 review findings: deletion safety -----------------------------------------------
+
+
+def _tar(path: Path, files: dict[str, bytes], links: dict[str, tuple[bytes, str]] | None = None) -> Path:
+    """A plain tar; ``links`` maps name -> (tarfile.SYMTYPE | LNKTYPE, target)."""
+    links = links or {}
+    with tarfile.open(path, "w") as tf:
+        for name, data in files.items():
+            info = tarfile.TarInfo(name)
+            info.size = len(data)
+            tf.addfile(info, io.BytesIO(data))
+        for name, (kind, target) in links.items():
+            info = tarfile.TarInfo(name)
+            info.type, info.linkname = kind, target
+            tf.addfile(info)
+    return path
+
+
+def test_apply_revalidates_a_candidate_archive_before_deleting_it(tmp_path: Path) -> None:
+    """r4358419273: a candidate changed after planning is never deleted."""
+    small = _zip(tmp_path / "small.zip", {"1": b"one"})
+    big = _zip(tmp_path / "big.zip", {"1": b"one", "2": b"two"})
+    cache = aa.Cache(tmp_path / "c.sqlite")
+    actions = aa.plan_prune([small, big], cache, [])
+    assert [Path(a.path).name for a in actions] == ["small.zip"]
+    _zip(small, {"1": b"one", "new.txt": b"added after the scan"})
+    aa.apply_prune(actions, cache)
+    assert small.exists() and not actions[0].applied
+
+
+def test_apply_revalidates_a_candidate_folder_before_deleting_it(tmp_path: Path) -> None:
+    arch = tmp_path / "arch"
+    arch.mkdir()
+    big = _zip(arch / "big.zip", {"a.txt": b"alpha", "b.txt": b"beta"})
+    for name in ("big_extract", "big_staging"):
+        (arch / name).mkdir()
+        (arch / name / "a.txt").write_bytes(b"alpha")
+    cache = aa.Cache(tmp_path / "c.sqlite")
+    actions = aa.plan_prune([big], cache, [arch])
+    assert sorted(Path(a.path).name for a in actions) == ["big_extract", "big_staging"]
+    (arch / "big_extract" / "notes.md").write_bytes(b"own work added during the scan")
+    (arch / "big_staging" / "a.txt").write_bytes(b"ALPHA")  # same size, other bytes
+    aa.apply_prune(actions, cache)
+    assert (arch / "big_extract" / "notes.md").exists() and (arch / "big_staging" / "a.txt").exists()
+    assert not any(a.applied for a in actions)
+
+
+def test_tar_links_are_members_not_silently_skipped(tmp_path: Path) -> None:
+    """r4358419284: link members count, so a TAR is never lossless only because its links were ignored."""
+    only_links = _tar(tmp_path / "links.tar", {}, {"cur": (tarfile.SYMTYPE, "v2/bin")})
+    with open(only_links, "rb") as f:
+        members = list(aa.iter_members(f))
+    assert [m.name for m in members] == ["cur"]
+    assert members[0].digest.sha256 == aa.hashlib.sha256(b"v2/bin").hexdigest()  # git's symlink blob
+    mixed = _tar(tmp_path / "mixed.tar", {"f.txt": b"data"},
+                 {"alias": (tarfile.SYMTYPE, "f.txt"), "hard": (tarfile.LNKTYPE, "f.txt")})
+    plain = _tar(tmp_path / "plain.tar", {"f.txt": b"data", "g.txt": b"more"})
+    actions = aa.plan_prune([mixed, plain], aa.Cache(tmp_path / "c.sqlite"), [])
+    assert "mixed.tar" not in [Path(a.path).name for a in actions]  # its symlink exists nowhere else
+
+
+def test_receipt_records_an_applied_prune(tmp_path: Path) -> None:
+    """r4358419290: --prune --apply --receipt must not claim that nothing was deleted."""
+    small = _zip(tmp_path / "small.zip", {"1": b"one"})
+    big = _zip(tmp_path / "big.zip", {"1": b"one", "2": b"two"})
+    receipt = tmp_path / "receipt.json"
+    args = [str(small), str(big), "--out", str(tmp_path / "out"), "--receipt", str(receipt), "--no-provenance"]
+    assert aa.main([*args, "--prune", "--apply"]) == 0
+    assert not small.exists()
+    assert json.loads(receipt.read_text(encoding="utf-8"))["deletion_performed"] is True
+    assert aa.main([str(big), "--out", str(tmp_path / "out2"), "--receipt", str(receipt), "--no-provenance"]) == 0
+    assert json.loads(receipt.read_text(encoding="utf-8"))["deletion_performed"] is False
+
+
+def test_a_partly_unreadable_package_is_not_redownloadable(tmp_path: Path) -> None:
+    """r4358419302: a parse error after the first member never yields DELETE_OK from the filename."""
+    good = _zip(tmp_path / "ok.zip", {"a.txt": b"A" * 200, "b.txt": b"B" * 200})
+    raw = bytearray(good.read_bytes())
+    at = raw.find(b"B" * 200)
+    raw[at:at + 4] = b"XXXX"  # corrupt the second member: CRC error after the first was read
+    pkg = tmp_path / "node-v20.0.0-win-x64.zip"
+    pkg.write_bytes(bytes(raw))
+    (v,) = aa.audit([pkg], aa.Cache(tmp_path / "c.sqlite"), [], [], provenance=False, log=lambda *_: None)
+    assert v.error and v.members == 1
+    assert v.verdict != "REDOWNLOADABLE" and v.disposition != "DELETE_OK"
