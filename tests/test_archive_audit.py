@@ -328,3 +328,60 @@ def test_a_cache_from_older_member_rules_is_rescanned(tmp_path: Path) -> None:
     assert cache.members(sha) == []  # discarded, not trusted
     cache.scan_archive(t)
     assert sorted(m[0] for m in cache.members(sha)) == ["cur", "f.txt"]
+
+
+# --- CODEX #1312 review findings ------------------------------------------------------------------
+
+
+def test_each_deletion_rechecks_the_keeper_it_relies_on(tmp_path: Path, monkeypatch) -> None:
+    """r4578825515: a keeper replaced after the first deletion protects the next candidate."""
+    a = _zip(tmp_path / "a.zip", {"1": b"one"})
+    b = _zip(tmp_path / "b.zip", {"2": b"two"})
+    keeper = _zip(tmp_path / "keeper.zip", {"1": b"one", "2": b"two"})
+    cache = aa.Cache(tmp_path / "c.sqlite")
+    actions = aa.plan_prune([a, b, keeper], cache, [])
+    assert sorted(Path(x.path).name for x in actions) == ["a.zip", "b.zip"]
+    real, calls = aa._candidate_unchanged, []
+
+    def swap_keeper_after_first(action):
+        ok = real(action)
+        calls.append(action.path)
+        if len(calls) == 1:  # a sync client replaces the keeper once the first deletion is under way
+            _zip(keeper, {"1": b"one"})
+        return ok
+    monkeypatch.setattr(aa, "_candidate_unchanged", swap_keeper_after_first)
+    aa.apply_prune(actions, cache)
+    assert [x.applied for x in actions] == [True, False]
+    assert not Path(actions[0].path).exists() and Path(actions[1].path).exists()
+
+
+def test_a_hard_link_before_its_target_is_resolved(tmp_path: Path) -> None:
+    """r4578825522: tarfile resolves links only backwards; a forward hard link must still scan."""
+    with tarfile.open(tmp_path / "fwd.tar", "w") as tf:
+        link = tarfile.TarInfo("h")
+        link.type, link.linkname = tarfile.LNKTYPE, "f.txt"
+        tf.addfile(link)
+        info = tarfile.TarInfo("f.txt")
+        info.size = 4
+        tf.addfile(info, io.BytesIO(b"data"))
+    with open(tmp_path / "fwd.tar", "rb") as f:
+        members = {m.name: m.digest.sha256 for m in aa.iter_members(f)}
+    assert members == {"h": aa.hashlib.sha256(b"data").hexdigest(), "f.txt": aa.hashlib.sha256(b"data").hexdigest()}
+
+
+def test_a_parse_error_follows_the_archive_digest_to_every_path(tmp_path: Path) -> None:
+    """r4578836109: a renamed copy of a damaged package keeps its error and never gets DELETE_OK."""
+    good = _zip(tmp_path / "ok.zip", {"a.txt": b"A" * 200, "b.txt": b"B" * 200})
+    raw = bytearray(good.read_bytes())
+    at = raw.find(b"B" * 200)
+    raw[at:at + 4] = b"XXXX"
+    first = tmp_path / "damaged.zip"
+    first.write_bytes(bytes(raw))
+    cache = aa.Cache(tmp_path / "c.sqlite")
+    _sha, err = cache.scan_archive(first)
+    assert err
+    renamed = tmp_path / "node-v20.0.0-win-x64.zip"
+    first.rename(renamed)
+    (v,) = aa.audit([renamed], cache, [], [], provenance=False, log=lambda *_: None)
+    assert v.error, "the cached member list is partial; the error must come with it"
+    assert v.verdict != "REDOWNLOADABLE" and v.disposition != "DELETE_OK"
