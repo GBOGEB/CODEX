@@ -341,3 +341,23 @@ def test_cycle_count_excludes_nodes_only_blocked_by_a_cycle():
     assert got["nodes_in_cycles"] == 2
     assert got["nodes_blocked_by_cycles"] == 1
     assert build_wave_register.kahn({("X", "X")})["nodes_in_cycles"] == 1  # a self-edge is a cycle
+
+
+def test_a_record_with_several_dangling_parents_counts_once(wave_repo):
+    """#1299 review r4577811704: lineage_unresolved counts records, not dropped edges."""
+    commit_files(wave_repo, {
+        "notes/lineage.yaml": (
+            "waves:\n  - id: W211\n    parent_waves: [W998, W999, W210]\n"
+            "  - id: W212\n    parent_wave: W211\n"
+        ),
+    })
+    head = build_wave_register.git(wave_repo, "rev-parse", "HEAD").strip()
+    records: list = []
+    edges, _ = build_wave_register.scan_lineage(wave_repo, head, build_wave_register.load_rules(), records)
+    assert sorted(len(r) for r in records) == [1, 3]  # one edge set per resolved record
+    lineage = {edge: {"O/r": n} for edge, n in edges.items()}
+    keys = {"QPS:W210", "QPS:W211", "QPS:W212"}
+    kept, dropped = build_wave_register.publishable_lineage(lineage, keys, {"O/r": records})
+    # the record's in-register edge stays; the record itself counts once, not once per dangling parent
+    assert set(kept) == {("QPS:W211", "QPS:W210"), ("QPS:W212", "QPS:W211")}
+    assert dropped == {"O/r": 1}
