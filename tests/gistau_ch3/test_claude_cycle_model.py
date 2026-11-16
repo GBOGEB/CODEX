@@ -128,4 +128,10 @@ def test_committed_two_turbine_record_supports_the_page_findings():
     se = tt["series"]
     assert se["jt_flow_implied_by_book_jt_stage_g_s"] > 1.03 * se["jt_flow_printed_g_s"]
     assert abs(se["closed"]["warm_section_residual_w"]) < 1e-2
-    assert se["closed"]["cycle_lp_return_mass_flow_g_s"] > by["parallel"]["optimum"]["cycle_lp_return_mass_flow_g_s"]
+    flow = "cycle_lp_return_mass_flow_g_s"
+    assert se["optimum_book_conditions"][flow] <= se["closed"][flow] + 1e-3
+    for key in ("optimum_book_conditions", "optimum_like_for_like"):
+        assert abs(se[key]["warm_section_residual_w"]) < 1e-2
+    # Like-for-like (same 14 bar and HX end differences): parallel needs less compressor flow than series
+    assert se["like_for_like_design"]["p_high_bar"] == 14.0
+    assert se["optimum_like_for_like"][flow] > 1.03 * by["parallel"]["optimum"][flow]
