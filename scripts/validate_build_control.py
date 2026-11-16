@@ -210,7 +210,45 @@ def check_baseline_meta(root: Path) -> dict:
         errors.append(
             f"requirements.json meta baseline {meta['baseline']!r} != manifest version {version!r}"
         )
-    return _check("baseline_meta", True, errors, baseline=str(meta.get("baseline", "")), manifest_version=version)
+    errors += _document_version_errors(root, meta, version)
+    return _check(
+        "baseline_meta",
+        True,
+        errors,
+        baseline=str(meta.get("baseline", "")),
+        manifest_version=version,
+        documents_versioned=len(meta.get("documents") or {}),
+    )
+
+
+def _document_version_errors(root: Path, meta: dict, version: str) -> list[str]:
+    """BUILD_WORKFLOW section 7: every source document the requirements cite has a version in meta."""
+    documents = meta.get("documents")
+    if not isinstance(documents, dict) or not documents:
+        return ["requirements.json meta: missing 'documents' (source document versions)"]
+    errors: list[str] = []
+    reqs = _requirements(root).get("requirements", [])
+    req_ids = {r.get("id", "") for r in reqs}
+    cited = {
+        part.split()[0]
+        for r in reqs
+        for part in (p.strip() for p in r.get("source", "").split(";"))
+        if part and part.split()[0] not in req_ids
+    }
+    for ref in sorted(cited - set(documents)):
+        errors.append(f"requirements.json meta documents: no version for cited source {ref!r}")
+    pack = {p.as_posix() for p in _pack_paths(_manifest(root))}
+    for ref, doc in sorted(documents.items()):
+        if not isinstance(doc, dict) or not str(doc.get("version", "")).strip() or not doc.get("path"):
+            errors.append(f"requirements.json meta documents[{ref!r}]: needs 'path' and 'version'")
+            continue
+        if not (root / doc["path"]).exists():
+            errors.append(f"requirements.json meta documents[{ref!r}]: {doc['path']} not found")
+        if doc["path"] in pack and str(doc["version"]) != version:
+            errors.append(
+                f"requirements.json meta documents[{ref!r}]: version {doc['version']!r} != manifest version {version!r}"
+            )
+    return errors
 
 
 def _legacy_pattern(root: Path) -> re.Pattern[str]:

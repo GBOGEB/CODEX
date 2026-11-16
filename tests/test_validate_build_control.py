@@ -126,6 +126,40 @@ def test_baseline_version_mismatch_fails(pack: Path) -> None:
     assert "baseline_meta" in report["blocking_failed"]
 
 
+def test_committed_meta_versions_every_cited_document() -> None:
+    check = bc.check_baseline_meta(REPO_ROOT)
+    assert check["status"] == "passed", check["errors"]
+    assert check["kpis"]["documents_versioned"] >= 3
+
+
+@pytest.mark.parametrize(
+    ("old", "new", "error"),
+    [
+        (
+            '"BOM_Master.csv": {"path": "03_bom/BOM_Master.csv", "version": "1.3.0"},',
+            "",
+            "no version for cited source 'BOM_Master.csv'",
+        ),
+        (
+            '"path": "03_bom/BOM_Master.csv", "version": "1.3.0"',
+            '"path": "03_bom/BOM_Master.csv", "version": "1.2.0"',
+            "version '1.2.0' != manifest version '1.3.0'",
+        ),
+        (
+            '"path": "03_bom/BOM_Master.csv", "version": "1.3.0"',
+            '"path": "03_bom/BOM_Master.csv", "version": ""',
+            "needs 'path' and 'version'",
+        ),
+    ],
+)
+def test_document_version_drift_fails(pack: Path, old: str, new: str, error: str) -> None:
+    _edit(pack, bc.REQUIREMENTS_JSON, old, new)
+    rc, report = _report(pack)
+    assert rc == 1
+    assert "baseline_meta" in report["blocking_failed"]
+    assert any(error in e for e in _check(report, "baseline_meta")["errors"])
+
+
 def test_legacy_name_in_pack_fails(pack: Path) -> None:
     _edit(pack, Path("07_ops/OCD/OCD.md"), "\n", "\nRelief to WCS-LP.\n")
     rc, report = _report(pack)

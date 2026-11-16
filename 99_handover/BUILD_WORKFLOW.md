@@ -58,7 +58,7 @@ Assign each change an impact score (0–5) considering safety, compliance, opera
 ## 7. Reproducibility
 - Git workflow: commit → tag `SEED_YYYYMMDD`.  
 - Store `handover_master_applied.tgz` with all artifacts.  
-- Document versions inside requirements.json meta block.
+- Document versions inside requirements.json meta block (`meta.documents`: one `path` + `version` per cited source; `baseline_meta` in `scripts/validate_build_control.py` fails when one is missing or off the manifest version).
 
 
 ## 8. Build-control gate (Measure / Control)
