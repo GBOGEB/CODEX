@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-15T14:22:32Z",
+  "generated_at": "2026-11-16T07:26:40Z",
   "module_count": 143,
   "modules": {
     "src/__init__.py": {
@@ -344,7 +344,11 @@
           "name": "_folder_files"
         },
         {
-          "doc": "Delete planned paths after re-checking that each keeper is still the file that was verified.",
+          "doc": "The candidate is byte-for-byte what was planned: same archive digest, or same folder manifest.",
+          "name": "_candidate_unchanged"
+        },
+        {
+          "doc": "Delete planned paths after re-checking the keeper and the candidate itself.\n\nBoth are re-hashed immediately before deletion: a keeper that moved or changed, or a candidate\nthat gained or changed any b",
           "name": "apply_prune"
         },
         {
@@ -4970,5 +4974,5 @@
       ]
     }
   },
-  "source_sha": "57a9577bf36b7d91b553c534570c48cadf59e0ef"
+  "source_sha": "b4c0a8a345722b4cecc3f7be67bb21f36f81e79f"
 }
