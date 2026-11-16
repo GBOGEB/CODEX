@@ -67,7 +67,13 @@ def normalize_comment(item: dict, category: str, repo: str, pr: int, source_sha:
     }
 
 
-def compact_prior(comments: list[dict], prior: dict | None, head_sha: str, root_id: str) -> dict:
+def compact_prior(
+    comments: list[dict],
+    prior: dict | None,
+    head_sha: str,
+    root_id: str,
+    scanned: set[str] | None = None,
+) -> dict:
     """Keep completed work in history, but never credit stale-head proof."""
     prior = prior or {}
     history = list(prior.get("history", []))[-8:]
@@ -85,16 +91,30 @@ def compact_prior(comments: list[dict], prior: dict | None, head_sha: str, root_
     # by the live set instead of growing (and arbitrarily truncating) forever.
     current = sorted({x["fingerprint"] for x in latest.values()})
     prior_open = prior.get("open_ids")
-    resolved = sorted(set(prior_open) - set(latest)) if isinstance(prior_open, list) else []
+    # IDs are "<repo>#<pr>:<category>:<key>". Only a PR that was scanned this
+    # run can prove a finding resolved; findings on PRs outside the sample stay
+    # open and are carried forward. scanned=None keeps the old "all scanned" rule.
+    def in_scope(fid: str) -> bool:
+        return scanned is None or fid.split(":", 1)[0] in scanned
+
+    if isinstance(prior_open, list):
+        resolved = sorted(i for i in set(prior_open) - set(latest) if in_scope(i))
+        carried = sorted(i for i in set(prior_open) - set(latest) if not in_scope(i))
+    else:
+        resolved, carried = [], []
     return {
         "root_id": root_id,
         "source_sha": head_sha,
         "history": history[-8:],
         "comment_fingerprints": current,
-        "open_ids": sorted(latest),
+        "open_ids": sorted(set(latest) | set(carried)),
+        "carried_unscanned_ids": carried,
         "new_bot_comments": new,
         "resolved_ids": resolved,
         "prior_open_count": len(prior_open) if isinstance(prior_open, list) else None,
+        # A legacy receipt (fingerprints, no open_ids) must still emit the first
+        # delta marker so later runs have open_ids to diff against.
+        "legacy_migration": prior_open is None and bool(prior.get("comment_fingerprints")),
         "same_head": bool(last_sha == head_sha),
         "authority_transfer": False,
     }
@@ -313,18 +333,20 @@ def main() -> int:
     studied = [probe_repo(client, r) for r in ordered[:args.limit]]
     monitored = [r for r in studied if r["repo"] in (f"{args.owner}/CODEX", f"{args.owner}/ABACUS")]
     bot_comments = []
+    scanned: set[str] = set()
     for item in monitored:
         try:
             prs = client.get(f"/repos/{item['repo']}/pulls?state=open&per_page=10")
             for pr in prs[:5]:
                 bot_comments.extend(bot_comments_for_pr(client, item["repo"], pr))
+                scanned.add(f"{item['repo']}#{pr['number']}")
         except (urllib.error.HTTPError, TypeError):
             pass
     owner_issue = f"{args.owner}/CODEX"
     previous = find_latest_checkpoint(client, owner_issue, 1037)
     prior_observed_at = (previous or {}).pop("_observed_at", None)
     head = next((r["main_sha"] for r in monitored if r["repo"] == owner_issue), None)
-    state = compact_prior(bot_comments, previous, head or "UNKNOWN", "CODE_PURPLE_ORG_TESTFLIGHT")
+    state = compact_prior(bot_comments, previous, head or "UNKNOWN", "CODE_PURPLE_ORG_TESTFLIGHT", scanned)
     snapshot = {
         "schema": SCHEMA, "observed_at": datetime.now(timezone.utc).isoformat(),
         "authority_transfer": False, "merge_allowed": False,
@@ -348,7 +370,7 @@ def main() -> int:
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(snapshot, sort_keys=True, indent=2) + "\n", encoding="utf-8")
-    changed = bool(state["new_bot_comments"] or state["resolved_ids"])
+    changed = bool(state["new_bot_comments"] or state["resolved_ids"] or state["legacy_migration"])
     if args.post_on_new_bot_findings and changed:
         # No arbitrary comment body is reposted, only safe evidence links/identities.
         event = {

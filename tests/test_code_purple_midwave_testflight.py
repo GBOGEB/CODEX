@@ -263,6 +263,25 @@ class MidwaveTests(unittest.TestCase):
         self.assertIn("+0 new, -1 resolved | open now: 1 (was 2)", body)
         self.assertIn("- r:2", body)
 
+    def test_findings_on_unscanned_prs_stay_open(self):
+        keep = {"id": "O/CODEX#1:code:a", "fingerprint": "f1", "repo": "O/CODEX", "pr": 1,
+                "kind": "code", "comment_url": "u"}
+        prior = {"source_sha": "a" * 40, "comment_fingerprints": ["f1"],
+                 "open_ids": ["O/CODEX#1:code:a", "O/CODEX#1:code:b", "O/CODEX#9:code:c"]}
+        state = midwave.compact_prior([keep], prior, "a" * 40, "r", scanned={"O/CODEX#1"})
+        self.assertEqual(state["resolved_ids"], ["O/CODEX#1:code:b"])
+        self.assertEqual(state["carried_unscanned_ids"], ["O/CODEX#9:code:c"])
+        self.assertIn("O/CODEX#9:code:c", state["open_ids"])
+
+    def test_legacy_receipt_without_open_ids_triggers_first_delta(self):
+        keep = {"id": "O/CODEX#1:code:a", "fingerprint": "f1", "repo": "O/CODEX", "pr": 1,
+                "kind": "code", "comment_url": "u"}
+        state = midwave.compact_prior([keep], {"comment_fingerprints": ["f1"]}, "a" * 40, "r")
+        self.assertEqual(state["new_bot_comments"], [])
+        self.assertTrue(state["legacy_migration"])
+        fresh = midwave.compact_prior([keep], {}, "a" * 40, "r")
+        self.assertFalse(fresh["legacy_migration"])
+
     def test_delta_comment_truncates_long_lists(self):
         rows = [{"id": f"r:{i}", "fingerprint": f"f{i}", "repo": "GBOGEB/CODEX", "pr": i,
                  "kind": "code", "comment_url": None} for i in range(15)]
