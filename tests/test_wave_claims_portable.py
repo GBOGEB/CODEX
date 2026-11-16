@@ -609,6 +609,18 @@ class Elevation(unittest.TestCase):
         self.assertEqual(len(g4), 1)
         self.assertIn("does not declare", g4[0]["detail"])
 
+    def test_observed_origin_without_claims_file_is_flagged(self):
+        _, found, _ = wc.rollup(
+            {}, {"QPS:W060": {"ORG/origin"}}, set(), RULES, global_doc=gdoc(gwave())
+        )
+        g4 = [f for f in found if f["code"] == "G4_ORIGIN_ROLE"]
+        self.assertEqual(len(g4), 1)
+        self.assertIn("does not declare", g4[0]["detail"])
+
+    def test_unscanned_origin_is_not_flagged(self):
+        _, found, _ = wc.rollup({}, {}, set(), RULES, global_doc=gdoc(gwave()))
+        self.assertNotIn("G4_ORIGIN_ROLE", codes(found))
+
     def test_malformed_steward_file_does_not_crash_rollup(self):
         for bad in ("not a mapping", [gwave()]):
             with self.subTest(bad=type(bad).__name__):

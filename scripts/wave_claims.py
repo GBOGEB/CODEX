@@ -698,8 +698,10 @@ def rollup(
         origin = str(w.get("origin", ""))
         role = participants.get(key, {}).get(origin)
         # An origin that omits the wave from `participates` is flagged too:
-        # silence is not the origin role.
-        if origin in claim_sets and role != origin_role:
+        # silence is not the origin role. "Included in the roll-up" means
+        # scanned: a claims file, or observed using the key without one.
+        in_rollup = origin in claim_sets or origin in observed.get(key, ())
+        if in_rollup and role != origin_role:
             violations.append(
                 violation(
                     "G4_ORIGIN_ROLE",
