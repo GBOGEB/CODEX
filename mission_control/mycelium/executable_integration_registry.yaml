@@ -2650,6 +2650,46 @@ nodes:
     registration_batch: MYCELIUM_EXE05_TESTED_ORPHAN_BATCH_3
     exe05_decision: LIBRARY_ONLY
 
+  - id: qps_node_graph_tests
+    type: TEST
+    repository: GBOGEB/CODEX
+    path: tests/test_qps_node_graph.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: d3a1685a8779bf484f1c457bde1508da5f79d2f6
+    purpose: "Fail when the QPS navigation graph and node pages are stale against yaml/nodes, a node record is invalid, or a link does not resolve."
+    inputs: []
+    outputs: [test_proof]
+    execution_surface: CI test job (pytest -q over tests/)
+    test_proof_evidence: [tests/test_qps_node_graph.py]
+    value_evidence: []
+    current_state: LIBRARY_REFERENCE_ONLY
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    intentional_no_consumer: true
+    library_only_reason: "Staleness and fail-closed tests for tools/build_qps_node_graph.py, an operator generator; no workflow step runs the generator and no registered node consumes its docs/qps-slide-system outputs."
+    registration_batch: QPS_SLIDE_SYSTEM_GENERATOR_TESTS
+
+  - id: qps_review_page_tests
+    type: TEST
+    repository: GBOGEB/CODEX
+    path: tests/test_qps_review_page.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: d3a1685a8779bf484f1c457bde1508da5f79d2f6
+    purpose: "Fail when the QPS lineage review page is stale against review/lineage (including a hand edit), a review record is invalid, or a link does not resolve."
+    inputs: []
+    outputs: [test_proof]
+    execution_surface: CI test job (pytest -q over tests/)
+    test_proof_evidence: [tests/test_qps_review_page.py]
+    value_evidence: []
+    current_state: LIBRARY_REFERENCE_ONLY
+    authority_class: LOCAL_CONTROL
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    intentional_no_consumer: true
+    library_only_reason: "Staleness and fail-closed tests for tools/build_qps_review_page.py, an operator generator; no workflow step runs the generator and no registered node consumes its docs/qps-slide-system outputs."
+    registration_batch: QPS_SLIDE_SYSTEM_GENERATOR_TESTS
+
 edges:
   - {from: mc_control_manifest, to: mc_mycelium_workflow, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
   - {from: mc_mycelium_workflow, to: mc_integration_validator, type: TRIGGERED_BY, evidence: run_37281376763_job_111670015753}
