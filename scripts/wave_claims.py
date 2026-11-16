@@ -36,6 +36,8 @@ REGISTER_FILE = ROOT / "federation" / "waves" / "WAVE_REGISTER.yaml"
 GLOBAL_FILE = ROOT / "federation" / "waves" / "GLOBAL_WAVES.yaml"
 GLOBAL_PATH = "federation/waves/GLOBAL_WAVES.yaml"
 CLAIMS_PATH = ".waves/WAVE_CLAIMS.yaml"
+# QPS numbering in an empty federation starts at W010 (W001-W009 predate the register).
+EMPTY_FEDERATION_TOP = 9
 KEY_RE = re.compile(r"^(?P<ns>[A-Z]+):(?P<id>\S+)$")
 NUM_IN_TEXT = re.compile(r"(?<![0-9])[Ww]?(\d{3})(?![0-9])")
 
@@ -604,12 +606,36 @@ def rollup(
                             f"{kind} is reserved by {owner} ({other_kind}, retired names never return)",
                         )
                     )
-    for d, keys in name_index.items():
-        for k in keys:
-            held.setdefault((d, "name"), k)
-    for d, keys in alias_index.items():
-        for k in keys:
-            held.setdefault((d, "alias"), k)
+    # One canonical name per key, forever: a key that already holds a reserved
+    # name and now arrives with a different one is a rename, not a new name.
+    history_names = collections.defaultdict(set)
+    for (d, kind), k in held.items():
+        if kind == "name":
+            history_names[k].add(d)
+    renamed = set()
+    for d, keys in sorted(name_index.items()):
+        for k in sorted(keys):
+            if history_names.get(k) and d not in history_names[k]:
+                renamed.add((d, k))
+                violations.append(
+                    violation(
+                        "D2_NAME_REUSE",
+                        k,
+                        claimants[k],
+                        "key already holds another canonical name (one name per key, forever)",
+                    )
+                )
+    # Reserve only unambiguous names: a digest submitted by two keys at once is
+    # the D2 collision reported above and stays unowned until history settles it,
+    # so the persisted index never depends on set iteration order.
+    for kind, index in (("name", name_index), ("alias", alias_index)):
+        for d, keys in sorted(index.items()):
+            if len(keys) != 1:
+                continue
+            (k,) = keys
+            if kind == "name" and (d, k) in renamed:
+                continue
+            held.setdefault((d, kind), k)
 
     flagged_d4 = {v["key"] for v in violations if v["code"] == "D4_SLUG_NO_LINEAGE"}
     for d, keys in slug_index.items():
@@ -632,6 +658,10 @@ def rollup(
     # Numbering: no backfilling unobserved holes.
     observed_nums = [key_number(k) for k in observed if key_number(k) is not None]
     top = max(observed_nums, default=0)
+    # The allocation baseline: the observed maximum, or W009 for an empty
+    # federation, so the first published next_free (W010) is also the first
+    # number the N2 check accepts.
+    base = max(observed_nums, default=EMPTY_FEDERATION_TOP)
     for key, rec in claims.items():
         n = key_number(key)
         if n is not None and key not in observed and n < top:
@@ -651,18 +681,21 @@ def rollup(
         for k in claims
         if key_number(k) is not None and k not in observed and key_number(k) > top
     )
-    expected = top + 1
+    expected = base + 1
     for n, key in fresh:
-        if n != expected:
-            violations.append(
-                violation(
-                    "N2_SKIP",
-                    key,
-                    claimants[key],
-                    f"allocation skips the next free number W{expected:03d}",
-                )
+        if n == expected:
+            expected += 1
+            continue
+        # expected stays at the first gap, so every later number is a skip too
+        violations.append(
+            violation(
+                "N2_SKIP",
+                key,
+                claimants[key],
+                f"allocation skips the next free number W{expected:03d}",
             )
-        expected = max(expected, n) + 1
+        )
+    first_free = expected
 
     # Overlap census: repos that touch an owned key without declaring a role.
     undeclared = 0
@@ -733,7 +766,6 @@ def rollup(
         ),
     }
 
-    claimed_nums = [key_number(k) for k in claims if key_number(k) is not None]
     sev = collections.Counter(v["severity"] for v in violations)
     census = {
         "claims_files": len(claim_sets),
@@ -758,9 +790,7 @@ def rollup(
             ),
         },
         "elevation_candidates": candidates,
-        "next_free": {
-            "QPS": f"W{max(claimed_nums + observed_nums, default=9) + 1:03d}"
-        },
+        "next_free": {"QPS": f"W{first_free:03d}"},
         "reserved": [
             {"sha256": d, "kind": kind, "key": k}
             for (d, kind), k in sorted(

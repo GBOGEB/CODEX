@@ -7,6 +7,7 @@ member repo that copies the kit runs the same proof.
 
 import contextlib
 import io
+import os
 import subprocess
 import sys
 import tempfile
@@ -661,6 +662,73 @@ class Elevation(unittest.TestCase):
             code, out = run(good)
             self.assertEqual(code, 0, out)
             self.assertIn("1 elevated, 0 errors", out)
+
+
+class ReviewFindingsKit136(unittest.TestCase):
+    """Kit 1.3.6: allocation and reservation findings (CODEX#1273, cryoplant#2297 reviews)."""
+
+    def test_every_claim_after_the_first_gap_is_a_skip(self):
+        observed = {"QPS:W381": {"R"}}
+        sets = {"R": (doc("R", [claim(383, slug="A"), claim(384, slug="B")]), False)}
+        _, found, census = wc.rollup(sets, observed, set(), RULES)
+        self.assertEqual(
+            sorted((f["code"], f["key"]) for f in found),
+            [("N2_SKIP", "QPS:W383"), ("N2_SKIP", "QPS:W384")],
+        )
+        self.assertEqual(census["next_free"], {"QPS": "W382"})  # the first gap
+
+    def test_an_empty_federation_starts_at_its_published_next_free(self):
+        _, found, census = wc.rollup({}, {}, set(), RULES)
+        self.assertEqual(census["next_free"], {"QPS": "W010"})
+        first = {"R": (doc("R", [claim(10, slug="START")]), False)}
+        _, found, census = wc.rollup(first, {}, set(), RULES)
+        self.assertEqual(found, [])
+        self.assertEqual(census["next_free"], {"QPS": "W011"})
+        skip = {"R": (doc("R", [claim(11, slug="START")]), False)}
+        _, found, _ = wc.rollup(skip, {}, set(), RULES)
+        self.assertEqual([(f["code"], f["key"]) for f in found], [("N2_SKIP", "QPS:W011")])
+
+    def test_a_collided_name_is_reserved_to_neither_claimant(self):
+        observed = {"QPS:W100": {"A"}, "QPS:W101": {"B"}}
+        sets = {
+            "A": (doc("A", [{"key": "QPS:W100", "name": "W100_SHARED", "status": "ACTIVE"}]), False),
+            "B": (doc("B", [{"key": "QPS:W101", "name": "W100_SHARED", "status": "ACTIVE"}]), False),
+        }
+        _, found, census = wc.rollup(sets, observed, set(), RULES)
+        self.assertIn("D2_NAME_REUSE", codes(found))
+        held = {(r["sha256"], r["kind"]): r["key"] for r in census["reserved"]}
+        name_keys = [k for (d, kind), k in held.items() if kind == "name" and k in ("QPS:W100", "QPS:W101")]
+        self.assertEqual(name_keys, [], f"collided name reserved to {name_keys}")
+
+    def test_reservation_does_not_depend_on_hash_order(self):
+        script = (
+            "import json,sys; sys.path.insert(0, 'scripts'); import wave_claims as wc;"
+            "rules = wc.load_naming_rules();"
+            "o = {'QPS:W100': {'A'}, 'QPS:W101': {'B'}};"
+            "d = lambda r, k: {'schema': rules['claims_schema'], 'repo': r, 'participates': [],"
+            " 'owns': [{'key': k, 'name': 'W100_SHARED', 'status': 'ACTIVE'}]};"
+            "_, _, c = wc.rollup({'A': (d('A', 'QPS:W100'), False), 'B': (d('B', 'QPS:W101'), False)}, o, set(), rules);"
+            "print(json.dumps(c['reserved'], sort_keys=True))"
+        )
+        outs = {
+            subprocess.run(
+                [sys.executable, "-c", script], cwd=ROOT, capture_output=True, text=True, check=True,
+                env={**os.environ, "PYTHONHASHSEED": str(seed)},
+            ).stdout
+            for seed in range(6)
+        }
+        self.assertEqual(len(outs), 1, outs)
+
+    def test_a_reserved_key_keeps_its_one_canonical_name(self):
+        observed = {"QPS:W300": {"R"}}
+        first = {"R": (doc("R", [claim(300, slug="ALPHA")]), False)}
+        _, found, census = wc.rollup(first, observed, set(), RULES)
+        self.assertEqual(found, [])
+        renamed = {"R": (doc("R", [claim(300, slug="BETA")]), False)}
+        _, found, census = wc.rollup(renamed, observed, set(), RULES, reserved=census["reserved"])
+        self.assertEqual([(f["code"], f["key"]) for f in found], [("D2_NAME_REUSE", "QPS:W300")])
+        names = [r for r in census["reserved"] if r["kind"] == "name" and r["key"] == "QPS:W300"]
+        self.assertEqual(len(names), 1, "the second name must not be reserved alongside the first")
 
 
 class Cli(unittest.TestCase):
