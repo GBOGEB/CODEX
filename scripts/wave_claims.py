@@ -466,7 +466,10 @@ def rollup(
     if global_doc is not None:
         fed = rules["elevation"]["owner"]
         violations += validate_global(global_doc, rules)
-        for w in as_list((global_doc or {}).get("waves")):
+        # A malformed steward file (scalar or sequence) is already G0_SCHEMA;
+        # never call .get on it.
+        gwaves = global_doc.get("waves") if isinstance(global_doc, dict) else None
+        for w in as_list(gwaves):
             if isinstance(w, dict) and w.get("key"):
                 owners[str(w["key"])].append((fed, w, False))
                 elevated[str(w["key"])] = w
@@ -694,13 +697,21 @@ def rollup(
     for key, w in sorted(elevated.items()):
         origin = str(w.get("origin", ""))
         role = participants.get(key, {}).get(origin)
-        if origin in claim_sets and role is not None and role != origin_role:
+        # An origin that omits the wave from `participates` is flagged too:
+        # silence is not the origin role. "Included in the roll-up" means
+        # scanned: a claims file, or observed using the key without one.
+        in_rollup = origin in claim_sets or origin in observed.get(key, ())
+        if in_rollup and role != origin_role:
             violations.append(
                 violation(
                     "G4_ORIGIN_ROLE",
                     key,
                     origin,
-                    f"the origin repo declares role {origin_role}, not {role}",
+                    (
+                        f"the origin repo declares role {origin_role}, not {role}"
+                        if role is not None
+                        else f"the origin repo does not declare role {origin_role}"
+                    ),
                     "warning",
                 )
             )
