@@ -203,7 +203,7 @@ class MidwaveTests(unittest.TestCase):
             "/repos/GBOGEB/CODEX/pulls/1040/comments?per_page=100": [
                 {"id": 1, "user": {"login": "chatgpt-codex-connector"},
                  "body": "security finding", "html_url": "https://github.com/example"}],
-            "/repos/GBOGEB/CODEX/issues/1037/comments?per_page=100": [],
+            "/repos/GBOGEB/CODEX/issues/1037/comments?per_page=100&page=1": [],
         }
         fake = FakeClient(data)
         with tempfile.TemporaryDirectory() as td:
@@ -221,6 +221,75 @@ class MidwaveTests(unittest.TestCase):
             self.assertFalse(receipt["merge_allowed"])
             self.assertEqual(len(fake.posted), 1)
             self.assertIn(midwave.ISSUE_MARKER, fake.posted[0][2])
+            self.assertIn("+1 new, -0 resolved | open now: 1", fake.posted[0][2])
+
+            # Second run, same findings: the receipt is found and nothing is reposted.
+            data["/repos/GBOGEB/CODEX/issues/1037/comments?per_page=100&page=1"] = [
+                {"body": fake.posted[0][2], "created_at": "2026-11-15T06:00:00Z"}]
+            with patch.object(midwave, "GitHubRead", return_value=fake), \
+                    patch.object(sys, "argv", ["testflight", "--limit", "2",
+                                              "--out", str(output),
+                                              "--post-on-new-bot-findings"]), \
+                    patch("sys.stdout", new_callable=io.StringIO):
+                self.assertEqual(midwave.main(), 0)
+            self.assertEqual(len(fake.posted), 1)
+
+    def test_latest_checkpoint_is_read_past_the_first_page(self):
+        def receipt(sha):
+            event = {"schema": midwave.SCHEMA, "source_sha": sha}
+            return {"body": midwave.ISSUE_MARKER + json.dumps(event) + " -->",
+                    "created_at": "t-" + sha}
+        page1 = [receipt("old")] + [{"body": "human note"}] * 99
+        page2 = [receipt("new"), {"body": "trailing"}]
+        fake = FakeClient({
+            "/repos/GBOGEB/CODEX/issues/1037/comments?per_page=100&page=1": page1,
+            "/repos/GBOGEB/CODEX/issues/1037/comments?per_page=100&page=2": page2,
+        })
+        found = midwave.find_latest_checkpoint(fake, "GBOGEB/CODEX", 1037)
+        self.assertEqual(found["source_sha"], "new")
+        self.assertEqual(found["_observed_at"], "t-new")
+        self.assertIsNone(midwave.find_latest_checkpoint(FakeClient({}), "GBOGEB/CODEX", 1037))
+
+    def test_delta_reports_resolved_and_bounds_fingerprints(self):
+        keep = {"id": "r:1", "fingerprint": "f1", "repo": "GBOGEB/CODEX", "pr": 1,
+                "kind": "code", "comment_url": "u1"}
+        prior = {"source_sha": "a" * 40, "comment_fingerprints": ["f1", "f2", "stale"],
+                 "open_ids": ["r:1", "r:2"]}
+        state = midwave.compact_prior([keep], prior, "a" * 40, "r")
+        self.assertEqual(state["new_bot_comments"], [])
+        self.assertEqual(state["resolved_ids"], ["r:2"])
+        self.assertEqual(state["comment_fingerprints"], ["f1"])
+        body = midwave.render_delta_comment(state, "2026-11-15T00:00:00Z")
+        self.assertIn("+0 new, -1 resolved | open now: 1 (was 2)", body)
+        self.assertIn("- r:2", body)
+
+    def test_findings_on_unscanned_prs_stay_open(self):
+        keep = {"id": "O/CODEX#1:code:a", "fingerprint": "f1", "repo": "O/CODEX", "pr": 1,
+                "kind": "code", "comment_url": "u"}
+        prior = {"source_sha": "a" * 40, "comment_fingerprints": ["f1"],
+                 "open_ids": ["O/CODEX#1:code:a", "O/CODEX#1:code:b", "O/CODEX#9:code:c"]}
+        state = midwave.compact_prior([keep], prior, "a" * 40, "r", scanned={"O/CODEX#1"})
+        self.assertEqual(state["resolved_ids"], ["O/CODEX#1:code:b"])
+        self.assertEqual(state["carried_unscanned_ids"], ["O/CODEX#9:code:c"])
+        self.assertIn("O/CODEX#9:code:c", state["open_ids"])
+
+    def test_legacy_receipt_without_open_ids_triggers_first_delta(self):
+        keep = {"id": "O/CODEX#1:code:a", "fingerprint": "f1", "repo": "O/CODEX", "pr": 1,
+                "kind": "code", "comment_url": "u"}
+        state = midwave.compact_prior([keep], {"comment_fingerprints": ["f1"]}, "a" * 40, "r")
+        self.assertEqual(state["new_bot_comments"], [])
+        self.assertTrue(state["legacy_migration"])
+        fresh = midwave.compact_prior([keep], {}, "a" * 40, "r")
+        self.assertFalse(fresh["legacy_migration"])
+
+    def test_delta_comment_truncates_long_lists(self):
+        rows = [{"id": f"r:{i}", "fingerprint": f"f{i}", "repo": "GBOGEB/CODEX", "pr": i,
+                 "kind": "code", "comment_url": None} for i in range(15)]
+        state = midwave.compact_prior(rows, {"open_ids": [f"x:{i}" for i in range(14)]}, "a" * 40, "r")
+        body = midwave.render_delta_comment(state, None)
+        self.assertIn("+15 new, -14 resolved | open now: 15 (was 14)", body)
+        self.assertIn("+3 more (see run artifact)", body)
+        self.assertIn("+2 more", body)
 
 
 if __name__ == "__main__":
