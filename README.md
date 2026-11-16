@@ -175,7 +175,7 @@ Adding or removing a test, workflow, script or module? Run `python scripts/regen
 <details>
 <summary>MASTER Contract Governance Workbench rules</summary>
 
-The workbench lifecycle runs from selection and ITT through clarification, negotiation rounds, BAFO and award to execution; the current stage is recorded in the YAML SSOT under [`MASTER_input/`](MASTER_input/README.md), not on this page.
+The workbench lifecycle runs from selection and ITT through clarification, negotiation rounds, BAFO and award to execution; phase definitions live in [`contract.yaml`](MASTER_input/contracts/master-contract/contract.yaml), whose `governance.owners` assigns **Lifecycle State to ABACUS**. At this snapshot neither CODEX nor ABACUS holds a source-qualified current-stage record, so this page states no current stage; adding that record in ABACUS is an open owner action.
 
 1. `MASTER_input/00_ITT_RELEASE_BASELINE/` is locked baseline material; released ITT documents are never overwritten.
 2. All updates are additive; YAML SSOT is authoritative.
