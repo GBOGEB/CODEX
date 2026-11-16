@@ -30,7 +30,7 @@ import html
 import json
 import math
 import sys
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 from typing import Any, Protocol
 
@@ -412,6 +412,57 @@ def build_record(props: Props) -> dict[str, Any]:
     }
 
 
+def close_series_at(props: Props, ti2_k: float, c: Series) -> dict[str, float]:
+    """close_series with the warm turbine inlet bracket found by scanning (needed when p_mid or Ti2 move far from
+    the book's sheet)."""
+    f = lambda x: solve_series(props, x, ti2_k, c)["warm_section_residual_w"]
+    prev = None
+    for i in range(80):
+        x = ti2_k + 5.0 + 2.5 * i
+        try:
+            v = f(x)
+        except ValueError:
+            prev = None
+            continue
+        if prev is not None and prev[1] * v < 0:
+            return solve_series(props, _bisect(f, prev[0], x, tol=1e-6), ti2_k, c)
+        prev = (x, v)
+    raise ValueError("series cycle does not close in the scanned warm-turbine-inlet range")
+
+
+def optimise_series(props: Props, c: Series, x0: tuple[float, float]) -> dict[str, float]:
+    """Pattern search over the cold turbine inlet and the intermediate pressure, the warm turbine inlet closing the
+    balance each time; keeps flows positive and every HX section with positive length."""
+
+    def f(x):
+        if not 1.3 < x[1] < c.p_high_bar - 0.1:
+            return math.inf
+        try:
+            r = close_series_at(props, x[0], replace(c, p_mid_bar=x[1]))
+        except ValueError:
+            return math.inf
+        ok = (min(r["jt_mass_flow_g_s"], r["brayton_mass_flow_g_s"]) > 0
+              and r["warm_turbine_inlet_t_k"] > r["warm_turbine_discharge_t_k"] > x[0]
+              > r["cold_turbine_discharge_t_k"] + c.jt_hx_warm_end_dt_k)
+        return r["cycle_lp_return_mass_flow_g_s"] if ok else math.inf
+
+    x, fx, step = list(x0), f(x0), [2.0, 1.0]
+    while max(step) > 1e-3:
+        moved = False
+        for i in (0, 1):
+            for s in (step[i], -step[i]):
+                y = x[:]
+                y[i] += s
+                fy = f(y)
+                if fy < fx:
+                    x, fx, moved = y, fy, True
+        if not moved:
+            step = [v / 2 for v in step]
+    r = close_series_at(props, x[0], replace(c, p_mid_bar=x[1]))
+    r["p_mid_bar"] = x[1]
+    return r
+
+
 def _flat(d: dict[str, Any], pre: str = "") -> dict[str, Any]:
     out: dict[str, Any] = {}
     for k, v in d.items():
@@ -523,8 +574,14 @@ def build_two_turbine(props: Props, n2_dh_j_g: float) -> dict[str, Any]:
     # JT flow implied by the book's own JT-stage warm-end term (-(m_jt - L) * (h_LP - h_HP) at the HX5 warm end)
     dh_warm = props.h(so["cold_turbine"]["discharge_t_k"], c_ser.p_low_bar) - props.h(so["hp_states"]["after_hx4_t_k"], c_ser.p_high_bar)
     implied_jt = abs(so["jt_stage"]["warm_end_w"]) / dh_warm + c_ser.liquefaction_g_s
+    s_opt = optimise_series(props, c_ser, (so["cold_turbine"]["inlet_t_k"], c_ser.p_mid_bar))
+    # like-for-like with the parallel cycle: same 14 bar and the same HX end-temperature differences
+    c_lfl = Series(p_high_bar=c_par.p_high_bar, warm_end_dt_k=c_par.warm_end_dt_k,
+                   hx3_warm_end_dt_k=c_par.hx3_warm_end_dt_k, jt_hx_warm_end_dt_k=c_par.jt_hx_warm_end_dt_k)
+    s_lfl = optimise_series(props, c_lfl, (so["cold_turbine"]["inlet_t_k"], 6.0))
     series = {
         "design": asdict(c_ser), "at_book_inputs": rnd(s_book), "closed": rnd(s_closed),
+        "optimum_book_conditions": rnd(s_opt), "like_for_like_design": asdict(c_lfl), "optimum_like_for_like": rnd(s_lfl),
         "deviations": s_rows, "stats": _stats2(s_rows, 0.01),
         "book_brayton1_balance_w": so["balances"]["brayton1_w"],
         "jt_flow_implied_by_book_jt_stage_g_s": round(implied_jt, 3), "jt_flow_printed_g_s": so["jt_mass_flow_g_s"],
@@ -636,7 +693,7 @@ def _two_section(tt: dict[str, Any]) -> str:
     rows = [(short[c], book_flow[c],
              by[c]["at_book_point"][flow] if by[c]["at_book_point"] else None, by[c]["optimum"][flow], False)
             for c in ("parallel", "reference_refrigerator", "ln2_refrigerator", "liquefier_reference", "liquefier_ln2")]
-    rows.insert(1, ("3.53 series, 16/7 bar", 13.28, se["at_book_inputs"][flow], se["closed"][flow], True))
+    rows.insert(1, ("3.53 series, 16 bar", 13.28, se["at_book_inputs"][flow], se["optimum_book_conditions"][flow], False))
     ref, ln2r = by["reference_refrigerator"]["optimum"], by["ln2_refrigerator"]
     tiles = "".join(f"<div class='tile'><b>{v}</b><span>{_e(k)}</span></div>" for k, v in (
         (f"Parallel and LN2 sheets: values within 1 % or print rounding ({st['n']})",
@@ -668,8 +725,7 @@ def _two_section(tt: dict[str, Any]) -> str:
 <div class="tiles">{tiles}</div>
 <div class="legend"><span><svg width="14" height="14"><circle class="ring" cx="7" cy="7" r="5"/></svg> Book</span>
 <span><svg width="14" height="14"><circle class="dot s1f" cx="7" cy="7" r="4"/></svg> Model at the book's inputs</span>
-<span><svg width="14" height="14"><path class="dia s2f" d="M7 1L13 7L7 13L1 7Z"/></svg> Model optimum</span>
-<span><svg width="14" height="14"><path class="dia s2o" d="M7 2L12 7L7 12L2 7Z"/></svg> Series: closed balance, not optimised</span></div>
+<span><svg width="14" height="14"><path class="dia s2f" d="M7 1L13 7L7 13L1 7Z"/></svg> Model optimum</span></div>
 {_dot_chart(rows)}
 <p class="ref">Where the model reproduces the book and the book's point is also the optimum (the two liquefiers, and Fig. 3.51 to
 0.05 g/s), the three markers coincide. Hover any marker for its value; every value is in the tables below.</p>
@@ -685,9 +741,14 @@ so treat the book's refrigerator figures as conservative, not as optima.</li>
 <li><b>The series sheet is unconverged.</b> Its printed Brayton 1 balance is {se['book_brayton1_balance_w']:+.2f} W (model at its inputs:
 {se['at_book_inputs']['warm_section_residual_w']:+.1f} W), and its own JT-stage warm-end term implies
 {se['jt_flow_implied_by_book_jt_stage_g_s']:.2f} g/s through the JT valve against {se['jt_flow_printed_g_s']:.2f} g/s printed. Closing the
-balance by solving only the warm turbine inlet ({se['closed']['warm_turbine_inlet_t_k']:.2f} K; cold turbine inlet and 7 bar kept from
-the sheet) gives {se['closed'][flow]:.2f} g/s. That is a closed point, not an optimum: the cold turbine inlet and the intermediate
-pressure were not searched, so it does not by itself confirm the book's conclusion that the parallel arrangement is better.</li>
+balance at the sheet's other inputs (warm turbine inlet {se['closed']['warm_turbine_inlet_t_k']:.2f} K) gives {se['closed'][flow]:.2f} g/s.</li>
+<li><b>Parallel beats series, like for like.</b> Optimising the series cycle over the cold turbine inlet and the intermediate
+pressure (the warm turbine inlet closing the balance each time) gives {se['optimum_book_conditions'][flow]:.2f} g/s at the book's
+16 bar ({se['optimum_book_conditions']['cold_turbine_inlet_t_k']:.2f} K, {se['optimum_book_conditions']['p_mid_bar']:.2f} bar). At the
+parallel cycle's 14 bar and end-temperature differences it needs {se['optimum_like_for_like'][flow]:.2f} g/s
+({se['optimum_like_for_like']['cold_turbine_inlet_t_k']:.2f} K, {se['optimum_like_for_like']['p_mid_bar']:.2f} bar), against
+{by['parallel']['optimum'][flow]:.2f} g/s for two parallel turbines: {(se['optimum_like_for_like'][flow] / by['parallel']['optimum'][flow] - 1) * 100:.1f} %
+more compressor flow. This confirms the book's conclusion on a converged basis.</li>
 <li><b>LN2 duty: the book's HX0 boundary has a 0.22 K gap.</b> Figs. 3.60 and 3.61 return the cold-box LP at 79.00 K but start HX0
 at {tt['book_hx0_lp_inlet_t_k']} K. The model uses one boundary (79.00 K), giving {ln2r['at_book_point']['ln2_duty_w']:.1f} W (Fig. 3.60, book
 108.41 W) and {by['liquefier_ln2']['at_book_point']['ln2_duty_w']:.1f} W (Fig. 3.61, book 1228.94 W). With the book's 78.78 K the model

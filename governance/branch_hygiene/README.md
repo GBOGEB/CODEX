@@ -108,3 +108,19 @@ unchanged (checked live on 2026-10-25) and neither has a pull request.
   revisit when #989 produces the census JSON.
 
 A dry run on 2026-10-25 reported both rows lossless (`archived_as_tag`).
+
+## W12 archive list, 2026-11-16
+
+`W12_ARCHIVE_SUPERSEDED_20261116.tsv` (archive, 2 branches), checked against
+`main` 72babf87.
+
+- `test/coverage-waves-l3-20261026` and `test/coverage-waves-l3-20261026-next1`
+  are the heads of #1214 and #1215. The owner closed both unmerged as
+  superseded by #1216, which merged on 2026-11-03 and put
+  `tests/coverage_waves/` (waves 1 to 16) on `main`. Only the older wave
+  1 to 4 test bodies and their autoregen receipts differ, and the archive tags
+  keep them.
+
+A dry run on 2026-11-16 reported both rows lossless (`archived_as_tag`).
+Each tag can be restored with
+`git push origin archive/<branch>:refs/heads/<branch>`.
