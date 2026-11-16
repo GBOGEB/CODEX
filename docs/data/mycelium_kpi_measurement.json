@@ -13,21 +13,21 @@
       "alias": "report",
       "path": "mission_control/mycelium/executable_value_report.json",
       "origin": "file",
-      "sha256": "1a03161b4d49694e1c9c8f33f0d7baa4a18cb7adc8ae7fcce3b63cbebac2cc26",
+      "sha256": "991ffbfc733c0cb010dce659fa2b951d41620bfdc54d0f51295b6125fea54c81",
       "stamp": null
     },
     {
       "alias": "observation",
       "path": "mission_control/mycelium/executable_value_control_observation.json",
       "origin": "file",
-      "sha256": "587c662d4f2bd2c59a3d859d6b78dc5de7e83a8f4498de20c2d88413de8be21f",
+      "sha256": "38ba105c92cf8d766d826b4af41f8c6ae557fd063303fe279725c6441bcde9a5",
       "stamp": null
     },
     {
       "alias": "snapshot",
       "path": "mission_control/mycelium/metrics_snapshot.json",
       "origin": "file",
-      "sha256": "f3f63d01f929b6d9004031889d32aca3719793890611adcd7c6c35358027d7f8",
+      "sha256": "213fc2213a0a8a2963199a2925637930290d89458f2e0de4028bf58ca626ddfa",
       "stamp": "2026-10-22T07:17:42Z"
     },
     {
@@ -48,7 +48,7 @@
       "alias": "registry",
       "path": "mission_control/mycelium/executable_integration_registry.yaml",
       "origin": "file",
-      "sha256": "42a503714cc39a4309a84125aa36bff9f682bc8b4d27cb4a6fd0d7cfd5f2d7fb",
+      "sha256": "c60f612d8e14daa2c86fe8024b21e7c2abb58192d5b33db37a292423eff33941",
       "stamp": "bb171b534943cd76fe761b988c936fbd09cf96ca"
     },
     {
@@ -88,8 +88,8 @@
       "binding_errors": 0,
       "measurement_coverage_pct": 100.0,
       "bands": {
-        "GREEN": 10,
-        "AMBER": 9,
+        "GREEN": 11,
+        "AMBER": 8,
         "RED": 9,
         "INFO": 10
       }
@@ -102,8 +102,8 @@
         "binding_errors": 0,
         "measurement_coverage_pct": 100.0,
         "bands": {
-          "GREEN": 2,
-          "AMBER": 2,
+          "GREEN": 3,
+          "AMBER": 1,
           "RED": 3,
           "INFO": 3
         }
@@ -220,10 +220,10 @@
       "target": 100,
       "dmaic_phase": "MEASURE",
       "status": "MEASURED",
-      "value": 12.6,
+      "value": 12.75,
       "band": "RED",
       "inputs": {
-        "numerator": 82,
+        "numerator": 83,
         "denominator": 651
       },
       "unlock": "Register justified batches of census assets in executable_integration_registry.yaml."
@@ -237,10 +237,10 @@
       "target": 0,
       "dmaic_phase": "IMPROVE",
       "status": "MEASURED",
-      "value": 569,
+      "value": 568,
       "band": "RED",
       "inputs": {
-        "numerator": 569
+        "numerator": 568
       },
       "unlock": "Work the registration debt queue (next_control_action CLASSIFY_EXECUTABLE_REGISTRATION_DEBT)."
     },
@@ -268,10 +268,10 @@
       "target": 0,
       "dmaic_phase": "IMPROVE",
       "status": "MEASURED",
-      "value": 1,
-      "band": "AMBER",
+      "value": 0,
+      "band": "GREEN",
       "inputs": {
-        "numerator": 1
+        "numerator": 0
       },
       "unlock": "Bind each unregistered tested orphan to an executable workflow step, or register it as library-only."
     },
@@ -284,11 +284,11 @@
       "target": null,
       "dmaic_phase": "ANALYZE",
       "status": "MEASURED",
-      "value": 41.83,
+      "value": 41.9,
       "band": "INFO",
       "inputs": {
         "numerator": 238,
-        "denominator": 569
+        "denominator": 568
       }
     },
     {
@@ -316,11 +316,11 @@
       "target": 0,
       "dmaic_phase": "CONTROL",
       "status": "MEASURED",
-      "value": 4.51,
+      "value": 4.48,
       "band": "AMBER",
       "inputs": {
         "numerator": 6,
-        "denominator": 133
+        "denominator": 134
       }
     },
     {
@@ -332,11 +332,11 @@
       "target": null,
       "dmaic_phase": "CONTROL",
       "status": "MEASURED",
-      "value": 23.31,
+      "value": 23.13,
       "band": "INFO",
       "inputs": {
         "numerator": 31,
-        "denominator": 133
+        "denominator": 134
       }
     },
     {
@@ -365,7 +365,7 @@
         "FEDERATION_HOSTED_MATERIALIZATION": 1,
         "FEDERATION_HOSTED_PROOF": 1,
         "HOSTED_MATERIALIZATION_EVIDENCE": 1,
-        "LIBRARY_REFERENCE_ONLY": 14,
+        "LIBRARY_REFERENCE_ONLY": 15,
         "PIPELINE_INTEGRATED": 31,
         "PIPELINE_INTEGRATED_PENDING_EXACT_HEAD_PROOF": 2,
         "PIPELINE_INTEGRATED_SOFT_RUFF_DEBT_PRESERVED": 1,
@@ -395,7 +395,7 @@
           "FEDERATION_HOSTED_MATERIALIZATION": 1,
           "FEDERATION_HOSTED_PROOF": 1,
           "HOSTED_MATERIALIZATION_EVIDENCE": 1,
-          "LIBRARY_REFERENCE_ONLY": 14,
+          "LIBRARY_REFERENCE_ONLY": 15,
           "PIPELINE_INTEGRATED": 31,
           "PIPELINE_INTEGRATED_PENDING_EXACT_HEAD_PROOF": 2,
           "PIPELINE_INTEGRATED_SOFT_RUFF_DEBT_PRESERVED": 1,
@@ -417,11 +417,11 @@
       "target": 50,
       "dmaic_phase": "IMPROVE",
       "status": "MEASURED",
-      "value": 11.28,
+      "value": 11.19,
       "band": "RED",
       "inputs": {
         "numerator": 15,
-        "denominator": 133
+        "denominator": 134
       }
     },
     {
@@ -433,11 +433,11 @@
       "target": 0,
       "dmaic_phase": "IMPROVE",
       "status": "MEASURED",
-      "value": 36.84,
+      "value": 37.31,
       "band": "RED",
       "inputs": {
-        "numerator": 49,
-        "denominator": 133
+        "numerator": 50,
+        "denominator": 134
       }
     },
     {
@@ -481,7 +481,7 @@
       "dmaic_phase": "MEASURE",
       "status": "MEASURED",
       "value": {
-        "V0_TESTED_ONLY": 49,
+        "V0_TESTED_ONLY": 50,
         "V1_LOCAL_OPERATIONAL": 3,
         "V2_REPOSITORY_VALUE": 66,
         "V3_PROJECT_VALUE": 11,
@@ -491,7 +491,7 @@
       "band": "INFO",
       "inputs": {
         "numerator": {
-          "V0_TESTED_ONLY": 49,
+          "V0_TESTED_ONLY": 50,
           "V1_LOCAL_OPERATIONAL": 3,
           "V2_REPOSITORY_VALUE": 66,
           "V3_PROJECT_VALUE": 11,
@@ -570,11 +570,11 @@
       "target": 1.5,
       "dmaic_phase": "MEASURE",
       "status": "MEASURED",
-      "value": 0.77,
+      "value": 0.76,
       "band": "RED",
       "inputs": {
         "numerator": 102,
-        "denominator": 133
+        "denominator": 134
       }
     },
     {
@@ -884,23 +884,23 @@
       "id": "CHK-02",
       "name": "Snapshot executable-value population matches registry",
       "status": "PASS",
-      "left": 133,
-      "right": 133,
+      "left": 134,
+      "right": 134,
       "note": "The snapshot's executable_value population is executable_integration_registry.yaml, not interaction_graph.json."
     },
     {
       "id": "CHK-03",
       "name": "Debt classifier candidates match unregistered count",
       "status": "PASS",
-      "left": 569,
-      "right": 569
+      "left": 568,
+      "right": 568
     },
     {
       "id": "CHK-04",
       "name": "Control observation unregistered count matches report",
       "status": "PASS",
-      "left": 569,
-      "right": 569
+      "left": 568,
+      "right": 568
     },
     {
       "id": "CHK-05",
@@ -922,14 +922,14 @@
     {
       "id": "EXE-02",
       "name": "Asset registration coverage",
-      "value": 12.6,
+      "value": 12.75,
       "target": 100,
       "unlock": "Register justified batches of census assets in executable_integration_registry.yaml."
     },
     {
       "id": "EXE-03",
       "name": "Unregistered asset count",
-      "value": 569,
+      "value": 568,
       "target": 0,
       "unlock": "Work the registration debt queue (next_control_action CLASSIFY_EXECUTABLE_REGISTRATION_DEBT)."
     },
@@ -943,21 +943,21 @@
     {
       "id": "RCH-01",
       "name": "Value beyond repository",
-      "value": 11.28,
+      "value": 11.19,
       "target": 50,
       "unlock": null
     },
     {
       "id": "RCH-02",
       "name": "Tested-only share",
-      "value": 36.84,
+      "value": 37.31,
       "target": 0,
       "unlock": null
     },
     {
       "id": "SIG-05",
       "name": "Registry edges per registered node",
-      "value": 0.77,
+      "value": 0.76,
       "target": 1.5,
       "unlock": null
     },
