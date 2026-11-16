@@ -42,11 +42,11 @@ CODEX is public.
 | Rule | Code |
 |---|---|
 | One number has exactly one owner | `D1_DUP_OWNER`. The key is published as `CONTESTED`, with all claimants. |
-| One canonical name maps to one key, forever: `W<nnn>_<SLUG>`, and the number must match the key | `C2`, `C3`, `D2_NAME_REUSE` |
+| One canonical name maps to one key, and one key keeps one canonical name, forever: `W<nnn>_<SLUG>`, and the number must match the key | `C2`, `C3`, `D2_NAME_REUSE` |
 | Aliases are free but must obey the rule: lower-case kebab, at most 40 chars, at most 5 per wave, no other wave's number, never equal to any canonical name | `C6`, `C7`, `D3_ALIAS_CLASH` |
 | The number can increment: a successor takes a new number and may carry the slug forward only if it declares an *earlier* holder as `parent` (the roll-up also accepts observed lineage). Checked inside each repo's own claims file too | `D4_SLUG_NO_LINEAGE` |
-| New numbers are `next_free`, allocated contiguously above the observed maximum; an unobserved hole below it is never backfilled | `N1_BACKFILL`, `N2_SKIP` |
-| Retired names and aliases stay reserved to their key forever: the register carries a cumulative digest index (`dedup.reserved`) from run to run | `D2_NAME_REUSE`, `D3_ALIAS_CLASH` |
+| New numbers are `next_free`, allocated contiguously above the observed maximum (W010 first in an empty federation); every claim after the first gap is a skip, and `next_free` is that gap; an unobserved hole below the maximum is never backfilled | `N1_BACKFILL`, `N2_SKIP` |
+| Retired names and aliases stay reserved to their key forever: the register carries a cumulative digest index (`dedup.reserved`) from run to run. A name or alias claimed by two keys at once is reserved to neither until the collision is resolved | `D2_NAME_REUSE`, `D3_ALIAS_CLASH` |
 | Path boundaries are repo-relative (no `..`, absolute paths or `\\`) and normalized before comparison; inside a repo they never overlap, unless the inner wave declares the outer one as parent | `C9_PATH`, `D5_PATH_OVERLAP` |
 | A repo that touches another repo's wave declares a role (overlapping worktrees) | `O1_UNDECLARED_PARTICIPANT` (warning) |
 | Status is owner-set (`ACTIVE`, `HOLD`, `CLOSED`, `SUPERSEDED`); `OBSERVED` is the generator default | `C5_STATUS` |
