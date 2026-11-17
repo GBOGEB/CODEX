@@ -1,0 +1,40 @@
+name: Feature request
+description: A new capability, tool, metric or page.
+title: "[Feature] "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **One owner per metric:** check that no open PR or existing module already provides this. Import the existing owner; never copy it.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What you're trying to do, and what gets in the way today.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+    validations:
+      required: true
+  - type: textarea
+    id: owner
+    attributes:
+      label: Existing owners checked
+      description: Modules, PRs or repositories (for example pipeline-automation-hub) that already do something close, and why this is different.
+    validations:
+      required: true
+  - type: input
+    id: trace
+    attributes:
+      label: Traceability
+      description: RTM entry, ADR or DMAIC phase, if any.
+  - type: textarea
+    id: done-when
+    attributes:
+      label: Done when
+    validations:
+      required: true

@@ -1,0 +1,54 @@
+name: Bug report
+description: Code, a tool or a generated artifact behaves wrongly.
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For a red CI run or gate, use **CI / gate failure** instead. Security problems go through SECURITY.md, never here.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you saw, with the full error message or traceback.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Run `python tools/...`
+        2. See the error
+    validations:
+      required: true
+  - type: input
+    id: sha
+    attributes:
+      label: Commit SHA
+      description: Output of `git rev-parse --short HEAD` where you saw it.
+    validations:
+      required: true
+  - type: input
+    id: runtime
+    attributes:
+      label: Runtime
+      description: OS and Python version. Reproduce on the declared runtime (`.python-version` or CI matrix), not just the workstation's.
+      placeholder: Windows 11, Python 3.11.9
+  - type: input
+    id: trace
+    attributes:
+      label: Traceability
+      description: RTM entry, ADR or DMAIC phase this touches, if any.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      render: shell

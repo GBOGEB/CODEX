@@ -1,0 +1,22 @@
+name: Documentation
+description: Something in the docs is wrong, missing or unclear.
+title: "[Docs] "
+labels: [documentation]
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Where
+      description: File path or URL of the page.
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's wrong or missing
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested wording

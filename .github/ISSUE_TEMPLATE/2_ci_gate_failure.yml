@@ -1,0 +1,49 @@
+name: CI / gate failure
+description: A workflow run or merge gate (for example first-pass-closure) is red or flaky.
+title: "[CI] "
+labels: [bug, scope:ci, frontier:ci-health]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Red means stop: don't merge past a red gate while this is open. One issue per **causal root**, not per failing run. Search open `frontier:ci-health` issues first.
+  - type: input
+    id: gate
+    attributes:
+      label: Workflow or gate
+      placeholder: first-pass-closure
+    validations:
+      required: true
+  - type: input
+    id: run
+    attributes:
+      label: Failing run URL
+    validations:
+      required: true
+  - type: input
+    id: sha
+    attributes:
+      label: Head SHA
+      description: The exact commit the run checked out. Read gate and census state at this same SHA.
+    validations:
+      required: true
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Admission impact
+      options:
+        - Blocks merge (required check)
+        - Flaky (passes on re-run)
+        - Informational (not required)
+    validations:
+      required: true
+  - type: textarea
+    id: root
+    attributes:
+      label: Suspected causal root
+      description: What you think broke, and other runs or PRs that fail for the same reason.
+  - type: textarea
+    id: log
+    attributes:
+      label: Failing step output
+      render: shell
