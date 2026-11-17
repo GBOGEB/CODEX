@@ -2690,6 +2690,27 @@ nodes:
     library_only_reason: "Staleness and fail-closed tests for tools/build_qps_review_page.py, an operator generator; no workflow step runs the generator and no registered node consumes its docs/qps-slide-system outputs."
     registration_batch: QPS_SLIDE_SYSTEM_GENERATOR_TESTS
 
+  - id: federation_pr_dag
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/ci/federation_pr_dag.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 9cf1970669e1f9c5ac0830944deb0b4839a40337
+    purpose: "Build the federation PR dependency DAG (Kahn order, critical path, reverse pressure, unblocking-vector pilot); recommendation-only."
+    inputs: []
+    outputs: []
+    execution_surface: operator CLI, no pipeline consumer
+    test_proof_evidence: [tests/test_federation_pr_dag.py]
+    value_evidence: []
+    current_state: LIBRARY_REFERENCE_ONLY
+    authority_class: LOCAL_LIBRARY
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    intentional_no_consumer: true
+    library_only_reason: "Operator-run census and analysis; it writes controls/pr_dag snapshots by hand and no workflow step runs it. Recommendations are not authority (3P3 W59)."
+    registration_batch: FEDERATION_PR_DAG
+    exe05_decision: LIBRARY_ONLY
+
 edges:
   - {from: mc_control_manifest, to: mc_mycelium_workflow, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
   - {from: mc_mycelium_workflow, to: mc_integration_validator, type: TRIGGERED_BY, evidence: run_37281376763_job_111670015753}
