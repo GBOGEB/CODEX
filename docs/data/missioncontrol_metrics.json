@@ -712,7 +712,7 @@
   },
   "executable_value": {
     "status": "DERIVED_FROM_MEASURED",
-    "population": 134,
+    "population": 135,
     "population_source": "mission_control/mycelium/executable_integration_registry.yaml",
     "classification_basis": "registered nodes, evidenced edges and executed integration paths only; tested orphans per executable_integration_value_contract.yaml orphan_policy, as reported by scripts/validate_executable_integration_value.py",
     "metrics": {
@@ -722,11 +722,11 @@
       },
       "PIPELINE_INTEGRATION_COVERAGE": {
         "status": "DERIVED_FROM_MEASURED",
-        "value": 60.45
+        "value": 60
       },
       "VALUE_EDGE_COVERAGE": {
         "status": "DERIVED_FROM_MEASURED",
-        "value": 62.69
+        "value": 62.22
       },
       "TESTED_ORPHAN_COUNT": {
         "status": "DERIVED_FROM_MEASURED",
@@ -1949,6 +1949,15 @@
       },
       {
         "id": "federation_pr_dag",
+        "type": "PYTHON_SCRIPT",
+        "tested": true,
+        "pipeline_integrated": false,
+        "downstream_consumer_count": 0,
+        "value_evidence_count": 0,
+        "state": "LIBRARY_REFERENCE_ONLY"
+      },
+      {
+        "id": "issue_critical_path",
         "type": "PYTHON_SCRIPT",
         "tested": true,
         "pipeline_integrated": false,

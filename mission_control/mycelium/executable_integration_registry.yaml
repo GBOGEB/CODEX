@@ -2711,6 +2711,27 @@ nodes:
     registration_batch: FEDERATION_PR_DAG
     exe05_decision: LIBRARY_ONLY
 
+  - id: issue_critical_path
+    type: PYTHON_SCRIPT
+    repository: GBOGEB/CODEX
+    path: scripts/issue_critical_path.py
+    owner: CODEX_UI_GOVERNANCE
+    exact_revision: 258e5cbfb962912502e27ad3cd401f0d58945c3a
+    purpose: "Critical path, Kahn waves, betweenness, reverse pressure, lever cover and descriptive PCA/BT over the issue / PR / BD-queue graph (codex.cpath.graph.v1 -> codex.cpath.report.v1); read-only."
+    inputs: []
+    outputs: []
+    execution_surface: operator CLI, no pipeline consumer
+    test_proof_evidence: [tests/test_issue_critical_path.py]
+    value_evidence: []
+    current_state: LIBRARY_REFERENCE_ONLY
+    authority_class: LOCAL_LIBRARY
+    tested: true
+    value_scope: V0_TESTED_ONLY
+    intentional_no_consumer: true
+    library_only_reason: "Operator-run analysis; its docs/data/cpath snapshots are written by hand and no workflow step runs it. Recommendations are not authority (3P3 W59)."
+    registration_batch: FEDERATION_PR_DAG
+    exe05_decision: LIBRARY_ONLY
+
 edges:
   - {from: mc_control_manifest, to: mc_mycelium_workflow, type: CONFIGURES, evidence: run_37281376763_job_111670015753}
   - {from: mc_mycelium_workflow, to: mc_integration_validator, type: TRIGGERED_BY, evidence: run_37281376763_job_111670015753}
