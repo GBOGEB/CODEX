@@ -1,0 +1,22 @@
+# C-PATH pilot data (2026-11-16)
+
+`scripts/issue_critical_path.py` analyses an issue / PR / BD-queue graph. It reports:
+
+- Kahn waves and any cycle (deadlock) Kahn cannot drain.
+- The CPM critical path overall and per goal (`goals`), with slack per node.
+- Downstream cone and Brandes betweenness (chokepoints).
+- Reverse pressure. With `--mode and` (the default), every prerequisite inherits full pressure. With `--mode share`, pressure is split across blockers, PageRank style.
+- Levers: multiplier and pairwise synergy, plus a greedy k-way **lever cover** per goal that shows how AND-joins need several levers together.
+- Descriptive PCA and Bradley-Terry strengths.
+
+| File | What |
+|---|---|
+| `cpath_graph_20261116.json` | Pilot graph: 40 open ABACUS + CODEX issues, open PRs, the #2752 main-red BD ledger (14 Nov) plus three live BD rows measured on ABACUS main (Black 275 files, isort 257, Bandit 24,823 raw), owner gates, and one time wait. Every edge carries `evidence` (`DECLARED` or `INFERRED`) and a `source` |
+| `cpath_report_20261116.json` | `python scripts/issue_critical_path.py --graph cpath_graph_20261116.json --out cpath_report_20261116.json` |
+
+Caveats, also written into the report:
+
+- Durations are per-class defaults unless a node sets its own. The path orders the work; it does not forecast dates.
+- `INFERRED` edges are reviewed judgements, not links declared on GitHub.
+- PCA and Bradley-Terry over tens of nodes are descriptive only; they support no inference.
+- The graph is a snapshot. Rebuild it before acting on any ranking.
