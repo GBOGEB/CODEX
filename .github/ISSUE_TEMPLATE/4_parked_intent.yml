@@ -1,0 +1,39 @@
+name: Parked intent
+description: Unfinished work from a retired or archived thread that no live thread, PR or issue owns.
+title: "[U00] "
+labels: [parked-intent]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use the roll-up number in the title (for example `[U54]`). Add the matching `frontier:*` and `closure:*` labels after creating the issue.
+  - type: textarea
+    id: origin
+    attributes:
+      label: Origin
+      description: Which thread roll-up or session this came from, and confirmation that nothing else owns it.
+      placeholder: From the thread roll-up of YYYY-MM-DD. No live thread, PR or issue owned this when its source thread was archived.
+    validations:
+      required: true
+  - type: textarea
+    id: intent
+    attributes:
+      label: Intent
+      description: What was meant to happen, what is known so far, and where the evidence and leftover tooling are.
+    validations:
+      required: true
+  - type: textarea
+    id: done-when
+    attributes:
+      label: Done when
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Source threads (unarchive to resume)
+  - type: textarea
+    id: wake
+    attributes:
+      label: Wake triggers
+      description: Events that should bring this back into active work.
