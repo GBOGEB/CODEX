@@ -46,6 +46,41 @@ class DockerTimeoutReceiptTests(unittest.TestCase):
         self.assertEqual(body["build"]["returncode"], 124)
         self.assertEqual(body["authority_guards"]["formal_engineering_credit_delta"], 0)
 
+    def test_image_inspect_timeout_never_accepts_even_if_build_passed(self):
+        def command_response(args, **kwargs):
+            if args[1] == "image":
+                raise subprocess.TimeoutExpired(
+                    cmd=args, timeout=300, output=b"inspect stalled"
+                )
+            return subprocess.CompletedProcess(args, 0, "build ok", "")
+
+        with tempfile.TemporaryDirectory() as td, \
+             patch.object(probe, "OUT", Path(td)), \
+             patch.object(probe.shutil, "which", side_effect=lambda x: "/usr/bin/" + x), \
+             patch.object(probe.subprocess, "run", side_effect=command_response):
+            code = probe.main()
+            body = json.loads((Path(td) / "docker_remote_lldb.json").read_text())
+        self.assertEqual(code, 2)
+        self.assertEqual(body["status"], "REJECT")
+        self.assertEqual(body["dov_status"], "WITHHELD")
+        self.assertEqual(body["reason"], "image_inspect_timeout")
+        self.assertEqual(body["inspect"]["returncode"], 124)
+        self.assertEqual(body["authority_guards"]["formal_engineering_credit_delta"], 0)
+
+    def test_empty_image_identity_rejected(self):
+        def command_response(args, **kwargs):
+            return subprocess.CompletedProcess(args, 0, "" if args[1] == "image" else "ok", "")
+
+        with tempfile.TemporaryDirectory() as td, \
+             patch.object(probe, "OUT", Path(td)), \
+             patch.object(probe.shutil, "which", side_effect=lambda x: "/usr/bin/" + x), \
+             patch.object(probe.subprocess, "run", side_effect=command_response):
+            code = probe.main()
+            body = json.loads((Path(td) / "docker_remote_lldb.json").read_text())
+        self.assertEqual(code, 2)
+        self.assertEqual(body["status"], "REJECT")
+        self.assertEqual(body["reason"], "image_inspect_failed")
+
     def test_normal_nonzero_build_is_not_relabeled_timeout(self):
         result = subprocess.CompletedProcess(
             args=["docker", "build"], returncode=1, stdout="", stderr="build failed"
