@@ -2,6 +2,65 @@
 
 <!-- markdownlint-disable MD001 MD013 MD022 MD029 MD031 MD032 MD033 MD040 MD060 -->
 
+<!-- OG5_VISUAL_FRONTDOOR_BEGIN -->
+## Visual front door · architecture, process DAG and OID
+
+> **Scope:** repository topology and declared process contracts, **not** a current CI, dispatch, approval or engineering-acceptance receipt. Solid edges show source/data relationships; dashed edges are candidate federation handoffs or publication dependencies. Full cross-repo OID and lane views are owned by JADE in the Hub.
+
+```mermaid
+flowchart LR
+  subgraph S["S · Suppliers"]
+    SS["CODEX SSOT, wave claims, MIP"]
+    SP["Spoke claims and native receipts"]
+  end
+  I["I · Shared evidence envelope<br/>source SHA · blob OID · run/attempt"]
+  subgraph P["P · Parallel process stacks"]
+    P1["P1 · Semantic provenance"]
+    P2["P2 · Wave and MIP roll-up"]
+    P3["P3 · MYCELIUM / dependency DAG"]
+    P4["P4 · CI and assurance"]
+    P5["P5 · PCA / statistical engine"]
+  end
+  subgraph O["O · Multiple output stacks"]
+    R["Typed JSON/YAML receipts"]
+    B["Statistical analysis outputs"]
+    V["Mermaid / HTML views"]
+  end
+  subgraph C["C · Consumers"]
+    CR["Reviewer / owner"]
+    CS["Federation spokes"]
+    CP["Published audiences"]
+  end
+  J{"Joined release / publication gate"}
+  OID["Git blob OID · 18e98ed7a4…<br/>operations atlas Mermaid"]
+  SS --> I
+  SP -.-> I
+  I --> P1
+  I --> P2
+  I -.-> P3
+  I --> P4
+  I --> P5
+  P1 --> R
+  P2 --> R
+  P3 -.-> R
+  P4 --> J
+  P5 --> B
+  R --> CR
+  B --> CR
+  R -.-> CS
+  R --> J
+  J -.-> V
+  OID --> V
+  V -.-> CP
+  classDef violet fill:#ede1f7,stroke:#683b8c,color:#2b1740
+  class I,J,OID violet
+```
+
+**Object identity and forest navigation:** [OID-linked operations atlas](docs/missioncontrol_operations_atlas_v2.mmd) (recorded Git blob `18e98ed7a4929a11278629be25c75fc78595871d`) · [Mycelium interactive HTML](docs/missioncontrol_mycelium.html) · [Graph explorer](docs/missioncontrol_graph_explorer.html) · [existing Pages portal source](docs/index.html) · [JADE function/SHA/OID federation lens](https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/jade_temple/site/cicd_dag.html) · [seven-lane/70-stage canonical matrix](https://github.com/GBOGEB/pipeline-automation-hub/blob/master/tools/metric-atlas/docs/LANE_PROCESS_GRAPH_W380.md). The OID labels a *Git file object*, not a running process. Pages publication/served-byte validation remains a distinct gate.
+
+<!-- OG5_VISUAL_FRONTDOOR_END -->
+
+
 [![DMAIC quality](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FGBOGEB%2FCODEX%2Fmain%2Fdocs%2Fapi%2Fmetrics.json&query=%24.quality_score&label=DMAIC%20quality&color=blue&style=flat-square)](docs/api/metrics.json)
 [![CI](https://img.shields.io/github/actions/workflow/status/GBOGEB/CODEX/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/GBOGEB/CODEX/actions/workflows/ci.yml)
 [![Gating runtime: Python 3.12](https://img.shields.io/badge/gating%20runtime-Python%203.12-blue?style=flat-square)](.github/workflows/ci.yml)
