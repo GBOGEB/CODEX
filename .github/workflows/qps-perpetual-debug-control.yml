@@ -359,6 +359,8 @@ jobs:
           fi
           docker version
           lldb --version
+      - name: Verify fail-closed Docker timeout receipts
+        run: python3 -m unittest discover -s tests -p 'test_qps_docker_remote_lldb_probe.py' -v
       - name: Execute Docker dynamic-port remote LLDB proof
         id: docker_probe
         continue-on-error: true
