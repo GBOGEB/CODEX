@@ -3,6 +3,7 @@
 The extractor intentionally separates semantic comparison from exact binary hashes.
 It supports XLSX, DOCX, PPTX and HTML using defusedxml for XML safety.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -12,6 +13,7 @@ import re
 import unicodedata
 import zipfile
 from pathlib import Path, PurePosixPath
+
 from defusedxml import ElementTree as ET
 
 NS = {
@@ -105,17 +107,31 @@ def xlsx_native_node(element):
     if element is None:
         return None
     booleans = {
-        "hidden", "hiddenButton", "showButton", "and", "blank",
-        "caseSensitive", "columnSort", "fullCalcOnLoad",
-        "forceFullCalc", "iterate", "fullPrecision", "calcOnSave",
+        "hidden",
+        "hiddenButton",
+        "showButton",
+        "and",
+        "blank",
+        "caseSensitive",
+        "columnSort",
+        "fullCalcOnLoad",
+        "forceFullCalc",
+        "iterate",
+        "fullPrecision",
+        "calcOnSave",
     }
     attributes = {}
     for key, value in element.attrib.items():
         if key.endswith("}uid"):
             continue
-        attributes[key] = value in {"true", "1"} if key in booleans and value in {"true", "false", "0", "1"} else value
+        attributes[key] = (
+            value in {"true", "1"}
+            if key in booleans and value in {"true", "false", "0", "1"}
+            else value
+        )
     return {
-        "tag": element.tag, "attributes": attributes,
+        "tag": element.tag,
+        "attributes": attributes,
         "text": (element.text or "").strip(),
         "children": [xlsx_native_node(child) for child in element],
     }
@@ -135,27 +151,59 @@ def xlsx_manifest(path: Path) -> dict:
                 target = rels.get(rid, "")
                 if target:
                     target = resolve_part("xl/workbook.xml", target)
-                sheets.append({"name": sh.attrib.get("name", ""), "target": target, "visibility": sh.attrib.get("state", "visible")})
+                sheets.append(
+                    {
+                        "name": sh.attrib.get("name", ""),
+                        "target": target,
+                        "visibility": sh.attrib.get("state", "visible"),
+                    }
+                )
             for dn in wb.findall("s:definedNames/s:definedName", NS):
-                defined.append({"name": dn.attrib.get("name", ""), "value": norm_text(dn.text or "")})
-                scoped_names.append({"attributes": xlsx_native_node(dn)["attributes"], "value": dn.text or ""})
-            scoped_keys = [(n["attributes"].get("name"), n["attributes"].get("localSheetId")) for n in scoped_names]
+                defined.append(
+                    {
+                        "name": dn.attrib.get("name", ""),
+                        "value": norm_text(dn.text or ""),
+                    }
+                )
+                scoped_names.append(
+                    {
+                        "attributes": xlsx_native_node(dn)["attributes"],
+                        "value": dn.text or "",
+                    }
+                )
+            scoped_keys = [
+                (n["attributes"].get("name"), n["attributes"].get("localSheetId"))
+                for n in scoped_names
+            ]
             if len(scoped_keys) != len(set(scoped_keys)):
                 raise ValueError("DUPLICATE_SCOPED_DEFINED_NAME")
             for named in scoped_names:
                 scope = named["attributes"].get("localSheetId")
-                if scope is not None and (not str(scope).isdigit() or int(scope) >= len(sheets)):
+                if scope is not None and (
+                    not str(scope).isdigit() or int(scope) >= len(sheets)
+                ):
                     raise ValueError("DEFINED_NAME_WITH_INVALID_SCOPE")
         for sh in sheets:
             root = xml_root(zf, sh["target"])
             if root is None:
                 continue
-            native_sheets.append({
-                "name": sh["name"], "visibility": sh["visibility"],
-                "auto_filter": xlsx_native_node(root.find("s:autoFilter", NS)),
-                "hidden_rows": sorted(int(row.attrib["r"]) for row in root.findall("s:sheetData/s:row", NS) if row.attrib.get("hidden") in {"true", "1"}),
-                "hidden_columns": sorted([int(col.attrib["min"]), int(col.attrib["max"])] for col in root.findall("s:cols/s:col", NS) if col.attrib.get("hidden") in {"true", "1"}),
-            })
+            native_sheets.append(
+                {
+                    "name": sh["name"],
+                    "visibility": sh["visibility"],
+                    "auto_filter": xlsx_native_node(root.find("s:autoFilter", NS)),
+                    "hidden_rows": sorted(
+                        int(row.attrib["r"])
+                        for row in root.findall("s:sheetData/s:row", NS)
+                        if row.attrib.get("hidden") in {"true", "1"}
+                    ),
+                    "hidden_columns": sorted(
+                        [int(col.attrib["min"]), int(col.attrib["max"])]
+                        for col in root.findall("s:cols/s:col", NS)
+                        if col.attrib.get("hidden") in {"true", "1"}
+                    ),
+                }
+            )
             for cell in root.findall(".//s:c", NS):
                 ref = cell.attrib.get("r", "")
                 formula = cell.find("s:f", NS)
@@ -168,15 +216,34 @@ def xlsx_manifest(path: Path) -> dict:
                     resolved = xlsx_cell_value(cell, shared_strings)
                     if resolved is not None:
                         controlled_values[key] = resolved
-        for name in sorted(n for n in zf.namelist() if n.startswith("xl/tables/") and n.endswith(".xml")):
+        for name in sorted(
+            n
+            for n in zf.namelist()
+            if n.startswith("xl/tables/") and n.endswith(".xml")
+        ):
             root = xml_root(zf, name)
             if root is not None:
-                tables.append({"name": root.attrib.get("name", ""), "ref": root.attrib.get("ref", "")})
+                tables.append(
+                    {
+                        "name": root.attrib.get("name", ""),
+                        "ref": root.attrib.get("ref", ""),
+                    }
+                )
         formula_tags = {f"{{{NS['c']}}}f"}
-        for name in sorted(n for n in zf.namelist() if n.startswith("xl/charts/") and n.endswith(".xml")):
+        for name in sorted(
+            n
+            for n in zf.namelist()
+            if n.startswith("xl/charts/") and n.endswith(".xml")
+        ):
             root = xml_root(zf, name)
             if root is not None:
-                refs = sorted({norm_text(el.text or "") for el in root.iter() if el.tag in formula_tags and norm_text(el.text or "")})
+                refs = sorted(
+                    {
+                        norm_text(el.text or "")
+                        for el in root.iter()
+                        if el.tag in formula_tags and norm_text(el.text or "")
+                    }
+                )
                 chart_sources.append({"chart": name, "sources": refs})
         return {
             "kind": "xlsx",
@@ -184,16 +251,33 @@ def xlsx_manifest(path: Path) -> dict:
             "sheet_names": sorted(s["name"] for s in sheets),
             "defined_names": sorted(defined, key=lambda x: (x["name"], x["value"])),
             "normalized_formula_map": dict(sorted(formulas.items())),
-            "normalized_value_map_for_controlled_cells": dict(sorted(controlled_values.items())),
-            "table_names_and_ranges": sorted(tables, key=lambda x: (x["name"], x["ref"])),
+            "normalized_value_map_for_controlled_cells": dict(
+                sorted(controlled_values.items())
+            ),
+            "table_names_and_ranges": sorted(
+                tables, key=lambda x: (x["name"], x["ref"])
+            ),
             "chart_data_source_ranges": chart_sources,
             "native_feature_contract": {
                 "schema": "codex-xlsx-native-features/v1",
                 "sheets": native_sheets,
-                "scoped_defined_names": sorted(scoped_names, key=lambda x: (x["attributes"].get("name", ""), str(x["attributes"].get("localSheetId", "")))),
+                "scoped_defined_names": sorted(
+                    scoped_names,
+                    key=lambda x: (
+                        x["attributes"].get("name", ""),
+                        str(x["attributes"].get("localSheetId", "")),
+                    ),
+                ),
                 "explicit_calculation_settings": (
-                    {k: v for k, v in xlsx_native_node(wb.find("s:calcPr", NS))["attributes"].items() if k != "calcId"}
-                    if wb is not None and wb.find("s:calcPr", NS) is not None else {}
+                    {
+                        k: v
+                        for k, v in xlsx_native_node(wb.find("s:calcPr", NS))[
+                            "attributes"
+                        ].items()
+                        if k != "calcId"
+                    }
+                    if wb is not None and wb.find("s:calcPr", NS) is not None
+                    else {}
                 ),
                 "formula_attributes": dict(sorted(formula_attributes.items())),
                 "formula_evaluation": "NOT_PERFORMED",
@@ -212,7 +296,11 @@ def docx_manifest(path: Path) -> dict:
                     continue
                 paragraphs.append(sha256_text(text))
                 style = p.find("w:pPr/w:pStyle", NS)
-                sval = style.attrib.get(f"{{{NS['w']}}}val", "") if style is not None else ""
+                sval = (
+                    style.attrib.get(f"{{{NS['w']}}}val", "")
+                    if style is not None
+                    else ""
+                )
                 if sval.lower().startswith("heading"):
                     headings.append(text)
                 for h in p.findall(".//w:hyperlink", NS):
@@ -225,8 +313,21 @@ def docx_manifest(path: Path) -> dict:
                 for row in rows:
                     cells = row.findall("w:tc", NS)
                     max_cols = max(max_cols, len(cells))
-                    row_text.append(" | ".join(norm_text("".join(t.text or "" for t in c.findall(".//w:t", NS))) for c in cells))
-                tables.append({"rows": len(rows), "cols_max": max_cols, "text_hash": sha256_text("\n".join(row_text))})
+                    row_text.append(
+                        " | ".join(
+                            norm_text(
+                                "".join(t.text or "" for t in c.findall(".//w:t", NS))
+                            )
+                            for c in cells
+                        )
+                    )
+                tables.append(
+                    {
+                        "rows": len(rows),
+                        "cols_max": max_cols,
+                        "text_hash": sha256_text("\n".join(row_text)),
+                    }
+                )
         return {
             "kind": "docx",
             "heading_sequence": headings,
@@ -252,8 +353,11 @@ def pptx_object_count(root) -> int:
     if sp_tree is None:
         return 0
     object_tags = {
-        f"{{{NS['p']}}}sp", f"{{{NS['p']}}}pic", f"{{{NS['p']}}}graphicFrame",
-        f"{{{NS['p']}}}grpSp", f"{{{NS['p']}}}cxnSp",
+        f"{{{NS['p']}}}sp",
+        f"{{{NS['p']}}}pic",
+        f"{{{NS['p']}}}graphicFrame",
+        f"{{{NS['p']}}}grpSp",
+        f"{{{NS['p']}}}cxnSp",
     }
     return sum(1 for child in sp_tree if child.tag in object_tags)
 
@@ -273,7 +377,15 @@ def pptx_manifest(path: Path) -> dict:
         titles, text_hashes, counts, notes_hashes = [], [], [], []
         for spath in slide_paths:
             root = xml_root(zf, spath)
-            texts = [] if root is None else [norm_text(t.text or "") for t in root.findall(".//a:t", NS) if norm_text(t.text or "")]
+            texts = (
+                []
+                if root is None
+                else [
+                    norm_text(t.text or "")
+                    for t in root.findall(".//a:t", NS)
+                    if norm_text(t.text or "")
+                ]
+            )
             counts.append(pptx_object_count(root))
             titles.append(texts[0] if texts else "")
             text_hashes.append(sha256_text("\n".join(texts)))
@@ -282,41 +394,97 @@ def pptx_manifest(path: Path) -> dict:
             if notes_path:
                 nroot = xml_root(zf, notes_path)
                 if nroot is not None:
-                    note_text = "\n".join(norm_text(t.text or "") for t in nroot.findall(".//a:t", NS) if norm_text(t.text or ""))
+                    note_text = "\n".join(
+                        norm_text(t.text or "")
+                        for t in nroot.findall(".//a:t", NS)
+                        if norm_text(t.text or "")
+                    )
             notes_hashes.append(sha256_text(note_text))
         chart_hashes = []
-        for name in sorted(n for n in zf.namelist() if n.startswith("ppt/charts/") and n.endswith(".xml")):
+        for name in sorted(
+            n
+            for n in zf.namelist()
+            if n.startswith("ppt/charts/") and n.endswith(".xml")
+        ):
             root = xml_root(zf, name)
-            refs = [] if root is None else sorted({norm_text(el.text or "") for el in root.findall(".//c:f", NS) if norm_text(el.text or "")})
-            chart_hashes.append({"chart": name, "source_hash": sha256_text("\n".join(refs))})
+            refs = (
+                []
+                if root is None
+                else sorted(
+                    {
+                        norm_text(el.text or "")
+                        for el in root.findall(".//c:f", NS)
+                        if norm_text(el.text or "")
+                    }
+                )
+            )
+            chart_hashes.append(
+                {"chart": name, "source_hash": sha256_text("\n".join(refs))}
+            )
         return {
-            "kind": "pptx", "slide_order": slide_paths, "slide_titles": titles,
-            "normalized_text_hashes": text_hashes, "object_count_by_slide": counts,
-            "chart_data_hashes": chart_hashes, "notes_text_hashes": notes_hashes,
+            "kind": "pptx",
+            "slide_order": slide_paths,
+            "slide_titles": titles,
+            "normalized_text_hashes": text_hashes,
+            "object_count_by_slide": counts,
+            "chart_data_hashes": chart_hashes,
+            "notes_text_hashes": notes_hashes,
         }
 
 
 def html_manifest(path: Path) -> dict:
     text = path.read_text(encoding="utf-8", errors="replace")
     ids = re.findall(r"\bid=[\"']([^\"']+)[\"']", text, flags=re.IGNORECASE)
-    headings = [norm_text(re.sub(r"<[^>]+>", "", x)) for x in re.findall(r"<h[1-6][^>]*>(.*?)</h[1-6]>", text, flags=re.IGNORECASE | re.DOTALL)]
-    assets = sorted(set(re.findall(r"(?:src|href)=[\"']([^\"']+)[\"']", text, flags=re.IGNORECASE)))
-    visible = norm_text(re.sub(r"<script\b.*?</script>|<style\b.*?</style>|<[^>]+>", " ", text, flags=re.IGNORECASE | re.DOTALL))
-    embedded = [sha256_text(x) for x in re.findall(r"<script[^>]+type=[\"']application/(?:json|ld\+json)[\"'][^>]*>(.*?)</script>", text, flags=re.IGNORECASE | re.DOTALL)]
+    headings = [
+        norm_text(re.sub(r"<[^>]+>", "", x))
+        for x in re.findall(
+            r"<h[1-6][^>]*>(.*?)</h[1-6]>", text, flags=re.IGNORECASE | re.DOTALL
+        )
+    ]
+    assets = sorted(
+        set(re.findall(r"(?:src|href)=[\"']([^\"']+)[\"']", text, flags=re.IGNORECASE))
+    )
+    visible = norm_text(
+        re.sub(
+            r"<script\b.*?</script>|<style\b.*?</style>|<[^>]+>",
+            " ",
+            text,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+    )
+    embedded = [
+        sha256_text(x)
+        for x in re.findall(
+            r"<script[^>]+type=[\"']application/(?:json|ld\+json)[\"'][^>]*>(.*?)</script>",
+            text,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+    ]
     return {
-        "kind": "html", "route_or_section_ids": ids, "heading_sequence": headings,
-        "asset_references": assets, "normalized_text_hashes": [sha256_text(visible)],
+        "kind": "html",
+        "route_or_section_ids": ids,
+        "heading_sequence": headings,
+        "asset_references": assets,
+        "normalized_text_hashes": [sha256_text(visible)],
         "embedded_data_hashes": embedded,
     }
 
 
 def build(path: Path) -> dict:
-    handlers = {".xlsx": xlsx_manifest, ".docx": docx_manifest, ".pptx": pptx_manifest, ".html": html_manifest, ".htm": html_manifest}
+    handlers = {
+        ".xlsx": xlsx_manifest,
+        ".docx": docx_manifest,
+        ".pptx": pptx_manifest,
+        ".html": html_manifest,
+        ".htm": html_manifest,
+    }
     ext = path.suffix.lower()
     if ext not in handlers:
         raise SystemExit(f"Unsupported artifact type: {ext}")
     result = handlers[ext](path)
-    canonical = json.dumps(result, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    canonical = json.dumps(
+        result, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    )
     result["semantic_sha256"] = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
     result["artifact_name"] = path.name
     return result

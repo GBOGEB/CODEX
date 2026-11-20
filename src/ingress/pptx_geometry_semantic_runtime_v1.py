@@ -23,14 +23,15 @@ from __future__ import annotations
 
 import argparse
 import json
-from dataclasses import dataclass, asdict
+import logging
+from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Dict, List
 
-import pandas as pd
 from pptx import Presentation
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.util import Emu
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -73,7 +74,7 @@ class PPTXGeometrySemanticRuntime:
                 if shape.placeholder_format.idx == 0:
                     return "TITLE"
             except Exception:
-                pass
+                logger.debug("Unable to inspect placeholder index", exc_info=True)
 
         if shape.shape_type == MSO_SHAPE_TYPE.PICTURE:
             return "IMAGE"
@@ -97,10 +98,11 @@ class PPTXGeometrySemanticRuntime:
         try:
             return shape.shape_type == MSO_SHAPE_TYPE.LINE
         except Exception:
+            logger.debug("Unable to inspect connector type", exc_info=True)
             return False
 
-    def extract_slide_shapes(self, slide, slide_number: int) -> List[ShapeTelemetry]:
-        telemetry: List[ShapeTelemetry] = []
+    def extract_slide_shapes(self, slide, slide_number: int) -> list[ShapeTelemetry]:
+        telemetry: list[ShapeTelemetry] = []
 
         for z_order, shape in enumerate(slide.shapes):
             text = shape.text if hasattr(shape, "text") else ""
@@ -126,10 +128,14 @@ class PPTXGeometrySemanticRuntime:
 
         return telemetry
 
-    def execute(self) -> Dict[str, str]:
+    def execute(self) -> dict[str, str]:
+        # Full tabular export requires the dependency declared in requirements.txt.
+        # Unit conversion and direct shape extraction remain independently usable.
+        import pandas as pd
+
         prs = Presentation(str(self.pptx_path))
 
-        all_shapes: List[ShapeTelemetry] = []
+        all_shapes: list[ShapeTelemetry] = []
 
         for slide_number, slide in enumerate(prs.slides, start=1):
             all_shapes.extend(self.extract_slide_shapes(slide, slide_number))
@@ -164,7 +170,9 @@ class PPTXGeometrySemanticRuntime:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Wave 44 PPTX geometry semantic runtime")
+    parser = argparse.ArgumentParser(
+        description="Wave 44 PPTX geometry semantic runtime"
+    )
     parser.add_argument("pptx", help="Path to PPTX")
     parser.add_argument("--out", default="runtime_outputs/pptx_geometry")
 
