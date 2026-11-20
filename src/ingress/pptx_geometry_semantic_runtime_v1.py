@@ -30,9 +30,7 @@ from typing import Dict, List
 import pandas as pd
 from pptx import Presentation
 from pptx.enum.shapes import MSO_SHAPE_TYPE
-
-
-EMU_TO_MM = 0.000352778
+from pptx.util import Emu
 
 
 @dataclass
@@ -63,7 +61,8 @@ class PPTXGeometrySemanticRuntime:
 
     @staticmethod
     def emu_to_mm(value: int) -> float:
-        return round(value * EMU_TO_MM, 3)
+        # Delegate the unit conversion to the same native PPTX length contract.
+        return round(Emu(value).mm, 3)
 
     @staticmethod
     def semantic_role(shape, text: str) -> str:

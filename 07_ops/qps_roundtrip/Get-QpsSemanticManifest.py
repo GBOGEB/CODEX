@@ -100,6 +100,27 @@ def xlsx_cell_value(cell, shared_strings: list[str]) -> str | None:
     return raw
 
 
+def xlsx_native_node(element):
+    """Retain complete filter behavior instead of only filter counts/ranges."""
+    if element is None:
+        return None
+    booleans = {
+        "hidden", "hiddenButton", "showButton", "and", "blank",
+        "caseSensitive", "columnSort", "fullCalcOnLoad",
+        "forceFullCalc", "iterate", "fullPrecision", "calcOnSave",
+    }
+    attributes = {}
+    for key, value in element.attrib.items():
+        if key.endswith("}uid"):
+            continue
+        attributes[key] = value in {"true", "1"} if key in booleans and value in {"true", "false", "0", "1"} else value
+    return {
+        "tag": element.tag, "attributes": attributes,
+        "text": (element.text or "").strip(),
+        "children": [xlsx_native_node(child) for child in element],
+    }
+
+
 def xlsx_manifest(path: Path) -> dict:
     with zipfile.ZipFile(path) as zf:
         wb = xml_root(zf, "xl/workbook.xml")
@@ -107,25 +128,42 @@ def xlsx_manifest(path: Path) -> dict:
         shared_strings = xlsx_shared_strings(zf)
         sheets, defined, tables, chart_sources = [], [], [], []
         formulas, controlled_values = {}, {}
+        native_sheets, scoped_names, formula_attributes = [], [], {}
         if wb is not None:
             for sh in wb.findall("s:sheets/s:sheet", NS):
                 rid = sh.attrib.get(f"{{{NS['r']}}}id", "")
                 target = rels.get(rid, "")
                 if target:
                     target = resolve_part("xl/workbook.xml", target)
-                sheets.append({"name": sh.attrib.get("name", ""), "target": target})
+                sheets.append({"name": sh.attrib.get("name", ""), "target": target, "visibility": sh.attrib.get("state", "visible")})
             for dn in wb.findall("s:definedNames/s:definedName", NS):
                 defined.append({"name": dn.attrib.get("name", ""), "value": norm_text(dn.text or "")})
+                scoped_names.append({"attributes": xlsx_native_node(dn)["attributes"], "value": dn.text or ""})
+            scoped_keys = [(n["attributes"].get("name"), n["attributes"].get("localSheetId")) for n in scoped_names]
+            if len(scoped_keys) != len(set(scoped_keys)):
+                raise ValueError("DUPLICATE_SCOPED_DEFINED_NAME")
+            for named in scoped_names:
+                scope = named["attributes"].get("localSheetId")
+                if scope is not None and (not str(scope).isdigit() or int(scope) >= len(sheets)):
+                    raise ValueError("DEFINED_NAME_WITH_INVALID_SCOPE")
         for sh in sheets:
             root = xml_root(zf, sh["target"])
             if root is None:
                 continue
+            native_sheets.append({
+                "name": sh["name"], "visibility": sh["visibility"],
+                "auto_filter": xlsx_native_node(root.find("s:autoFilter", NS)),
+                "hidden_rows": sorted(int(row.attrib["r"]) for row in root.findall("s:sheetData/s:row", NS) if row.attrib.get("hidden") in {"true", "1"}),
+                "hidden_columns": sorted([int(col.attrib["min"]), int(col.attrib["max"])] for col in root.findall("s:cols/s:col", NS) if col.attrib.get("hidden") in {"true", "1"}),
+            })
             for cell in root.findall(".//s:c", NS):
                 ref = cell.attrib.get("r", "")
                 formula = cell.find("s:f", NS)
                 key = f"{sh['name']}!{ref}"
                 if formula is not None:
                     formulas[key] = norm_text(formula.text or "")
+                    if formula.attrib:
+                        formula_attributes[key] = dict(formula.attrib)
                 else:
                     resolved = xlsx_cell_value(cell, shared_strings)
                     if resolved is not None:
@@ -149,6 +187,17 @@ def xlsx_manifest(path: Path) -> dict:
             "normalized_value_map_for_controlled_cells": dict(sorted(controlled_values.items())),
             "table_names_and_ranges": sorted(tables, key=lambda x: (x["name"], x["ref"])),
             "chart_data_source_ranges": chart_sources,
+            "native_feature_contract": {
+                "schema": "codex-xlsx-native-features/v1",
+                "sheets": native_sheets,
+                "scoped_defined_names": sorted(scoped_names, key=lambda x: (x["attributes"].get("name", ""), str(x["attributes"].get("localSheetId", "")))),
+                "explicit_calculation_settings": (
+                    {k: v for k, v in xlsx_native_node(wb.find("s:calcPr", NS))["attributes"].items() if k != "calcId"}
+                    if wb is not None and wb.find("s:calcPr", NS) is not None else {}
+                ),
+                "formula_attributes": dict(sorted(formula_attributes.items())),
+                "formula_evaluation": "NOT_PERFORMED",
+            },
         }
 
 

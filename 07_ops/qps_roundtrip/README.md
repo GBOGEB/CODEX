@@ -52,6 +52,24 @@ Use distinct controls for distinct claims:
 
 Semantic comparison does not replace formula evaluation, rendering QA or exact release hashes.
 
+## XLSX native feature identity
+
+The XLSX manifest includes `native_feature_contract` version 1. It retains
+complete worksheet filter trees, active criteria, sheet visibility, hidden rows
+and columns, scoped defined-name attributes and text, explicit calculation
+settings and formula attributes. Duplicate scoped names and invalid local-sheet
+indices are rejected. A change to these features changes the semantic hash even
+when cell values and formula text are unchanged.
+
+Regenerate semantic baselines when adopting this expanded extractor. Formula
+caches remain outside deterministic semantic comparison; cache preservation and
+recalculation are separate checks. `formula_evaluation = NOT_PERFORMED` is
+explicit. No native Excel or contractual-acceptance claim follows from equality.
+
+Run `python -m pytest tests/test_qps_xlsx_native_manifest.py` with the existing
+`defusedxml` dependency installed. The production extractor retains that hard
+dependency and has no unsafe fallback parser.
+
 ## Scope boundary
 
 `CODEX` provides the reusable governance layer only. Canonical QPS analytics remain in `GBOGEB/ABACUS`; project-specific confidential text remains in the private overlay.
