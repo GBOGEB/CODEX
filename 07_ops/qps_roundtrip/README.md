@@ -5,6 +5,14 @@ Repository role: reusable federation, CI, release, hash and local-workspace tool
 
 This directory is deliberately generic. It must not contain QPS bidder values, confidential evidence text or generated deliverables.
 
+The controlled XLSX native-feature v2 contract includes table-level AutoFilter
+trees and table sort state, keyed by table name and range. Changing a table
+criterion from `Open` to `Closed` changes semantic identity even when cell values,
+formulas and table ranges stay equal. Table filter booleans use the same
+normalization as worksheet filters; literal criterion strings are preserved.
+Recompute fingerprints for the final admitted source hash and keep earlier
+receipts as version-bound history.
+
 ## Tools
 
 - `Initialize-QpsWorkspace.ps1`: creates clean local repository, workspace and release roots outside OneDrive.
@@ -52,6 +60,37 @@ Use distinct controls for distinct claims:
 
 Semantic comparison does not replace formula evaluation, rendering QA or exact release hashes.
 
+## XLSX native feature identity
+
+The XLSX manifest includes `native_feature_contract` version 2. It retains
+complete worksheet filter trees, active criteria, sheet visibility, hidden rows
+and columns, scoped defined-name attributes and text, explicit calculation
+settings and formula attributes. Duplicate scoped names and invalid local-sheet
+indices are rejected. A change to these features changes the semantic hash even
+when cell values and formula text are unchanged.
+
+Regenerate semantic baselines when adopting this expanded extractor. Formula
+caches remain outside deterministic semantic comparison; cache preservation and
+recalculation are separate checks. `formula_evaluation = NOT_PERFORMED` is
+explicit. No native Excel or contractual-acceptance claim follows from equality.
+
+Run `python -m pytest tests/test_qps_xlsx_native_manifest.py` with the existing
+`defusedxml` dependency installed. The production extractor retains that hard
+dependency and has no unsafe fallback parser.
+
 ## Scope boundary
 
 `CODEX` provides the reusable governance layer only. Canonical QPS analytics remain in `GBOGEB/ABACUS`; project-specific confidential text remains in the private overlay.
+
+## Native-feature identity migration
+
+The XLSX native-feature contract is now `codex-xlsx-native-features/v2`.
+Formula `ca` and `aca`, and sort `descending`, use the same true/1 and false/0
+normalization as the other OOXML Boolean fields. String-valued `customList`
+remains verbatim. Opposite Boolean meanings still produce different identities.
+
+Rebuild derived workbook manifests when adopting this version. Preserve prior
+v1 receipts and their source hashes as historical evidence; do not relabel
+old fingerprints. The paired ABACUS bridge identifies this behavior as parser
+1.2.1 with native feature/snapshot v2. Semantic Boolean normalization does not
+relax a separate byte-preservation contract for formula XML or cached results.
