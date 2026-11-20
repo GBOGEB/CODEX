@@ -34,7 +34,7 @@ class DriveSyncMethodBindingTests(unittest.TestCase):
             for path in (
                 "../secret.txt", "subdir/../../secret.txt", "/tmp/secret.txt",
                 "C:\\secret.txt", "C:\\Users\\User\\secret.txt",
-                "..\\secret.txt",
+                "..\\secret.txt", "C:secret.txt", "\\secret.txt",
             ):
                 with self.subTest(path=path):
                     self.assertTrue(agent.target_is_unsafe(Path(path)))

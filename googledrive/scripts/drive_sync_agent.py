@@ -180,6 +180,7 @@ class DriveSyncAgent:
         return (
             target.is_absolute()
             or windows_target.is_absolute()
+            or bool(windows_target.drive or windows_target.root)
             or ".." in target.parts
             or ".." in windows_target.parts
         )
