@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import json
 from datetime import datetime
+
 from scripts.id_scheduler_dependency_gate import stage, validate
 
 SCHEMA = "missioncontrol.mycelium.nplus.slowburn.v1"
@@ -23,9 +24,9 @@ WAKE = {
 
 def _instant(value):
     if not isinstance(value, str):
-        raise ValueError("SOURCE_OBSERVATION_TIME_MISSING")
+        raise TypeError("SOURCE_OBSERVATION_TIME_MISSING")
     try:
-        moment = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        moment = datetime.fromisoformat(value)
     except ValueError as exc:
         raise ValueError("SOURCE_OBSERVATION_TIME_INVALID") from exc
     if moment.tzinfo is None or moment.utcoffset() is None:
@@ -51,7 +52,7 @@ def plan(history, *, horizon=6, max_proposals=4):
     total_proposed = 0
     for index, entry in enumerate(history):
         if not isinstance(entry, dict) or not isinstance(entry.get("metrics"), dict):
-            raise ValueError("MISSING_W33_EPOCH_METRICS")
+            raise TypeError("MISSING_W33_EPOCH_METRICS")
         metrics = entry["metrics"]
         reqs = entry.get("requests")
         # Canonical W34 validator also rejects remote mutation, unsafe paths,
