@@ -119,6 +119,9 @@ def xlsx_native_node(element):
         "iterate",
         "fullPrecision",
         "calcOnSave",
+        "descending",
+        "ca",
+        "aca",
     }
     attributes = {}
     for key, value in element.attrib.items():
@@ -145,6 +148,7 @@ def xlsx_manifest(path: Path) -> dict:
         sheets, defined, tables, chart_sources = [], [], [], []
         formulas, controlled_values = {}, {}
         native_sheets, scoped_names, formula_attributes = [], [], {}
+        table_filters = []
         if wb is not None:
             for sh in wb.findall("s:sheets/s:sheet", NS):
                 rid = sh.attrib.get(f"{{{NS['r']}}}id", "")
@@ -211,7 +215,9 @@ def xlsx_manifest(path: Path) -> dict:
                 if formula is not None:
                     formulas[key] = norm_text(formula.text or "")
                     if formula.attrib:
-                        formula_attributes[key] = dict(formula.attrib)
+                        formula_attributes[key] = xlsx_native_node(formula)[
+                            "attributes"
+                        ]
                 else:
                     resolved = xlsx_cell_value(cell, shared_strings)
                     if resolved is not None:
@@ -227,6 +233,14 @@ def xlsx_manifest(path: Path) -> dict:
                     {
                         "name": root.attrib.get("name", ""),
                         "ref": root.attrib.get("ref", ""),
+                    }
+                )
+                table_filters.append(
+                    {
+                        "name": root.attrib.get("name", ""),
+                        "ref": root.attrib.get("ref", ""),
+                        "auto_filter": xlsx_native_node(root.find("s:autoFilter", NS)),
+                        "sort_state": xlsx_native_node(root.find("s:sortState", NS)),
                     }
                 )
         formula_tags = {f"{{{NS['c']}}}f"}
@@ -259,8 +273,11 @@ def xlsx_manifest(path: Path) -> dict:
             ),
             "chart_data_source_ranges": chart_sources,
             "native_feature_contract": {
-                "schema": "codex-xlsx-native-features/v1",
+                "schema": "codex-xlsx-native-features/v2",
                 "sheets": native_sheets,
+                "table_filters": sorted(
+                    table_filters, key=lambda table: (table["name"], table["ref"])
+                ),
                 "scoped_defined_names": sorted(
                     scoped_names,
                     key=lambda x: (

@@ -38,3 +38,26 @@
 - REQUIRED PROOF: exact-head W003, Mycelium and CODE PURPLE Live Observation
   terminal results; independent security review before governed merge.
 - AUTHORITY: no QPS/ABACUS transfer, waiver, REX launch or formal credit.
+
+## BINARY ENGINE FOLLOW-UP — PR-1330
+
+- PR-ID: PR-1330
+- WAVE: W003
+- SPRINT: S1-P1
+- DOMAIN: EXECUTION_GOVERNANCE_INFRASTRUCTURE
+- TYPE: GOVERNANCE
+- CRITICALITY: HIGH
+- TOPOLOGY IMPACT: NO
+- SCHEMA MUTATION: CONTROLLED
+- PURPOSE: qualify source-bound OCR and native workbook/PPTX behavior through
+  the existing binary engines, preserving source authority boundaries.
+- FIRST-RED DISPOSITION: update legacy OCR tests that expected confidence-based
+  authority promotion; retire the strict expected failure for repaired raster
+  classification and retain an executable positive regression across formats.
+- REQUIRED PROOF: current-head semantic validation, ordinary tests, security,
+  and this governance header; local tests do not satisfy native CI admission.
+- AUTHORITY: OCR remains derived evidence. Neither recognition confidence,
+  execution receipts nor a passing test confer QPS engineering acceptance.
+- CONTROLLED CONTRACT MIGRATION: native workbook features v2 normalize Boolean
+  spellings with paired ABACUS parser 1.2.1; source-bound OCR region/crop/reference
+  contracts remain subordinate. Historical v1 fingerprints are retained, not relabelled.
