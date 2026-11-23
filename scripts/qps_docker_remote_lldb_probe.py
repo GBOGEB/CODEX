@@ -24,14 +24,28 @@ OUT = ROOT / "artifacts/qps_debug/perpetual"
 
 
 def run(args: list[str], timeout: int = 300, cwd: Path | None = None) -> dict[str, Any]:
-    proc = subprocess.run(
-        args,
-        cwd=cwd or ROOT,
-        text=True,
-        capture_output=True,
-        timeout=timeout,
-        check=False,
-    )
+    try:
+        proc = subprocess.run(
+            args,
+            cwd=cwd or ROOT,
+            text=True,
+            capture_output=True,
+            timeout=timeout,
+            check=False,
+        )
+    except subprocess.TimeoutExpired as exc:
+        def tail(value: str | bytes | None) -> str:
+            if isinstance(value, bytes):
+                value = value.decode("utf-8", errors="replace")
+            return (value or "")[-16000:]
+        return {
+            "cmd": args,
+            "returncode": 124,
+            "timed_out": True,
+            "timeout_seconds": timeout,
+            "stdout": tail(exc.stdout),
+            "stderr": tail(exc.stderr),
+        }
     return {
         "cmd": args,
         "returncode": proc.returncode,
@@ -91,9 +105,26 @@ def main() -> int:
         )
         build = run([docker, "build", "-t", image, "."], cwd=work)
         if build["returncode"] != 0:
-            receipt({"schema": "qps.perpetual.docker_lldb.v1", "status": "REJECT", "build": build})
+            receipt({
+                "schema": "qps.perpetual.docker_lldb.v1",
+                "status": "REJECT",
+                "dov_status": "WITHHELD",
+                "reason": "docker_build_timeout" if build.get("timed_out") else "docker_build_failed",
+                "bd_id": "BD03-DOCKER-RUNTIME",
+                "build": build,
+            })
             return 2
         inspect = run([docker, "image", "inspect", image, "--format", "{{.Id}}"])
+        if inspect["returncode"] != 0 or not inspect.get("stdout", "").strip():
+            receipt({
+                "schema": "qps.perpetual.docker_lldb.v1",
+                "status": "REJECT",
+                "dov_status": "WITHHELD",
+                "reason": "image_inspect_timeout" if inspect.get("timed_out") else "image_inspect_failed",
+                "bd_id": "BD03-DOCKER-RUNTIME",
+                "inspect": inspect,
+            })
+            return 2
 
         symbol_create = run([docker, "create", image])
         symbol_container = symbol_create.get("stdout", "").strip()
@@ -148,8 +179,12 @@ def main() -> int:
         container_id = start["stdout"].strip()
         port = None
         port_observation = None
+        port_timed_out = False
         for _ in range(40):
             port_observation = run([docker, "port", container_id, "4711/tcp"], 20)
+            port_timed_out |= bool(port_observation.get("timed_out"))
+            if port_timed_out:
+                break
             match = re.search(r"127\.0\.0\.1:(\d+)", port_observation.get("stdout", ""))
             if match:
                 port = int(match.group(1))
@@ -198,9 +233,14 @@ def main() -> int:
         cleanup = run([docker, "rm", "-f", container_id], 30)
         accepted = (
             build["returncode"] == 0
+            and inspect["returncode"] == 0
+            and symbol_create["returncode"] == 0
             and copy["returncode"] == 0
             and symbol_cleanup["returncode"] == 0
+            and not port_timed_out
+            and (port_observation or {}).get("returncode") == 0
             and debug["returncode"] == 0
+            and logs["returncode"] == 0
             and steps > 0
             and port > 0
             and "127.0.0.1" in (port_observation or {}).get("stdout", "")
@@ -222,6 +262,7 @@ def main() -> int:
             "copy": copy,
             "symbol_cleanup": symbol_cleanup,
             "port_observation": port_observation,
+            "port_timed_out": port_timed_out,
             "debug": debug,
             "container_logs": logs,
             "cleanup": cleanup,
