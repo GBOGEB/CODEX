@@ -13,6 +13,8 @@
 |---|---|
 | `cpath_graph_20261116.json` | Pilot graph: 40 open ABACUS + CODEX issues, open PRs, the #2752 main-red BD ledger (14 Nov) plus three live BD rows measured on ABACUS main (Black 275 files, isort 257, Bandit 24,823 raw), owner gates, and one time wait. Every edge carries `evidence` (`DECLARED` or `INFERRED`) and a `source` |
 | `cpath_report_20261116.json` | `python scripts/issue_critical_path.py --graph cpath_graph_20261116.json --out cpath_report_20261116.json` |
+| `cpath_graph_20261123.json` | The 2026-11-16 graph merged with a live PR census (`federation_pr_dag.py collect` then `export-cpath --base cpath_graph_20261116.json`): 98 nodes, 97 edges. Curated base nodes win; new nodes are open PRs (kind `pr`), held-run / owner-checklist gates and BD-queue rows. Census edges carry `DECLARED` (Depends-on, Fixes), `DERIVED` (kit pin, gates) or `INFERRED` (shared files) |
+| `cpath_report_20261123.json` | `python scripts/issue_critical_path.py --graph cpath_graph_20261123.json --out cpath_report_20261123.json` |
 
 Caveats, also written into the report:
 

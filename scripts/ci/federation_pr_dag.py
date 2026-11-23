@@ -18,6 +18,9 @@ Usage
       --bd-queue controls/BD_QUEUE_CURRENT.md --out census.json
   python scripts/ci/federation_pr_dag.py analyze census.json \
       [--bt-scores scores.json] --json-out dag.json --md-out dag.md
+  python scripts/ci/federation_pr_dag.py export-cpath census.json \
+      --base docs/data/cpath/cpath_graph_<date>.json --out graph.json
+  python scripts/issue_critical_path.py graph.json ...   # deeper engine (#1317)
 """
 
 from __future__ import annotations
@@ -429,6 +432,56 @@ def to_markdown(rep: dict, top: int = 12) -> str:
     return "\n".join(lines)
 
 
+# ------------------------------------------------------------- cpath bridge
+CPATH_SCHEMA = "codex.cpath.graph.v1"
+EVIDENCE = {"depends_on": "DECLARED", "closes_bd": "DECLARED", "kit_pin": "DERIVED",
+            "human_gate": "DERIVED", "shared_files": "INFERRED", "shared_generated": "INFERRED"}
+BD_CLOSURE = {"EXTERNAL_GATE": "external", "FIX_PR": "active", "PROVE": "near",
+              "PARENT_CONTROL": "control-surface"}
+HOURS_PER_DAY = 8.0
+
+
+def to_cpath(census: dict, base: dict | None = None) -> dict:
+    """Write the PR census as a codex.cpath.graph.v1 graph (scripts/issue_critical_path.py).
+
+    PRs become kind "pr" with effort_days from the verdict estimate; human gates become
+    kind "gate" (closure owner-decision); BD rows become kind "issue" with the C-path ID
+    form "<REPO>#<n>". With ``base`` (an existing C-path graph), nodes and edges are merged
+    by ID: base nodes win, so curated issue records are never overwritten by the census.
+    """
+    nodes, edges = build_graph(census)
+
+    def cid(v: str) -> str:
+        return v.replace("!", "#")
+
+    out_nodes = []
+    for v, n in sorted(nodes.items()):
+        if v.startswith("GATE:"):
+            rec = {"id": v, "kind": "gate", "closure": "owner-decision", "title": n["title"]}
+        elif n.get("kind") == "issue":
+            rec = {"id": cid(v), "kind": "issue", "closure": BD_CLOSURE.get(n.get("bd_state"), "external"),
+                   "title": n["title"], "bd_rank_priority": n["priority"]}
+        else:
+            rec = {"id": v, "kind": "pr", "title": n.get("title", ""), "verdict": n.get("verdict"),
+                   "effort_days": round(n["effort"] / HOURS_PER_DAY, 3), "latency_days": 0.0}
+        out_nodes.append(rec)
+    out_edges = sorted(
+        ({"from": cid(e["from"]), "to": cid(e["to"]), "evidence": EVIDENCE.get(e["kind"], "INFERRED"),
+          "source": f"federation_pr_dag:{e['kind']}"} for e in edges),
+        key=lambda e: (e["from"], e["to"]))
+    graph = {"schema": CPATH_SCHEMA, "as_of": census.get("observed_at"), "nodes": out_nodes,
+             "edges": out_edges, "goals": []}
+    if base:
+        if base.get("schema") != CPATH_SCHEMA:
+            raise ValueError(f"base graph is not {CPATH_SCHEMA}")
+        have = {n["id"] for n in base["nodes"]}
+        pairs = {(e["from"], e["to"]) for e in base["edges"]}
+        graph = {**base, "as_of": graph["as_of"],
+                 "nodes": base["nodes"] + [n for n in out_nodes if n["id"] not in have],
+                 "edges": base["edges"] + [e for e in out_edges if (e["from"], e["to"]) not in pairs]}
+    return graph
+
+
 # -------------------------------------------------------------------- collect
 def _gh(path: str) -> object:
     out = subprocess.run(["gh", "api", path], check=True, capture_output=True, text=True)  # nosec B603 B607 - fixed gh argv, no shell
@@ -505,7 +558,19 @@ def main(argv: list[str] | None = None) -> int:
     a.add_argument("--bt-scores", type=Path, help="JSON {node_id: priority 0..1} from the PCA/BT engine")
     a.add_argument("--json-out", type=Path)
     a.add_argument("--md-out", type=Path)
+    x = sub.add_parser("export-cpath", help="write the census as a codex.cpath.graph.v1 graph")
+    x.add_argument("census", type=Path)
+    x.add_argument("--base", type=Path, help="existing C-path graph to merge into (base nodes win)")
+    x.add_argument("--out", type=Path, required=True)
     args = ap.parse_args(argv)
+    if args.cmd == "export-cpath":
+        census = json.loads(args.census.read_text(encoding="utf-8"))
+        base = json.loads(args.base.read_text(encoding="utf-8")) if args.base else None
+        graph = to_cpath(census, base)
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(json.dumps(graph, indent=1, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+        print(f"cpath graph: {len(graph['nodes'])} nodes, {len(graph['edges'])} edges -> {args.out}")
+        return 0
     if args.cmd == "collect":
         census = collect(args.repo, args.bd_queue)
         args.out.parent.mkdir(parents=True, exist_ok=True)

@@ -102,3 +102,28 @@ def test_parent_control_issues_are_not_ranked():
     text = "| 1 | #319 DMAIC control | PARENT_CONTROL | x | y |\n"
     rep = dag.analyze(census(*dag.parse_bd_queue(text, "O/CODEX")))
     assert "CODEX!319" in rep["nodes"] and "CODEX!319" not in rep["ranking"]
+
+
+def test_export_cpath_loads_in_issue_critical_path_and_merges_base():
+    spec = importlib.util.spec_from_file_location("issue_critical_path", ROOT / "scripts/issue_critical_path.py")
+    cp = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cp)
+    c = census(
+        pr("O/CODEX", 1, "THREADS", [dag.KIT_PRODUCER], unresolved=2, body="Fixes #500"),
+        pr("O/ABACUS", 2, "REQ_PENDING", [dag.KIT_CONSUMER]),
+        pr("O/CODEX", 5, "NEEDS_APPROVAL", held_runs=3),
+        *dag.parse_bd_queue("| 1 | #500 TRIAGE gate | EXTERNAL_GATE | x | y |\n", "O/CODEX"),
+    )
+    g = dag.to_cpath(c)
+    nodes, edges = cp.load_graph(g)
+    assert nodes["CODEX#500"]["kind"] == "issue" and nodes["CODEX#500"]["closure"] == "external"
+    assert nodes["CODEX#1"]["effort_days"] == 0.125  # 1.0 h / 8
+    assert ("CODEX#1", "CODEX#500") in edges and ("CODEX#1", "ABACUS#2") in edges
+    assert nodes["GATE:CODEX#5:approve-runs"]["kind"] == "gate"
+    base = {"schema": dag.CPATH_SCHEMA, "as_of": "B", "goals": ["CODEX#500"],
+            "nodes": [{"id": "CODEX#500", "kind": "issue", "closure": "external", "title": "curated"}],
+            "edges": []}
+    merged = dag.to_cpath(c, base)
+    assert next(n for n in merged["nodes"] if n["id"] == "CODEX#500")["title"] == "curated"
+    assert merged["goals"] == ["CODEX#500"]
+    cp.load_graph(merged)
