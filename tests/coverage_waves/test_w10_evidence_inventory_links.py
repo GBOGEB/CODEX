@@ -53,20 +53,44 @@ def test_ocr_promotion_rules():
     m = load(OCR)
     rt = m.OCREvidenceRuntime()
     D = m.OCRDecision
-    assert rt.may_promote_ocr(m.OCRSidecar("a", D.REQUIRED, 0.95)) is True
+    # Recognition confidence is never a document-control decision.
+    assert rt.may_promote_ocr(m.OCRSidecar("a", D.REQUIRED, 0.95)) is False
+    assert rt.may_promote_ocr(m.OCRSidecar("a", D.REQUIRED, 1.0)) is False
     assert rt.may_promote_ocr(m.OCRSidecar("a", D.REQUIRED, 0.90)) is False
     assert rt.may_promote_ocr(m.OCRSidecar("a", D.SKIP, 0.99)) is False
     assert rt.may_promote_ocr(m.OCRSidecar("a", D.CONDITIONAL, 0.99, warnings=["w"])) is False
 
 
-def test_ocr_lineage_and_json():
+def test_ocr_lineage_and_json(tmp_path):
     m = load(OCR)
     rt = m.OCREvidenceRuntime()
-    asset = _asset(m, m.EvidenceFormat.PDF, embedded_text_chars=0)
-    side = m.OCRSidecar("a", m.OCRDecision.REQUIRED, 0.95)
+    source = _write(tmp_path / "source.png", b"synthetic source bytes", "b")
+    raster = _write(tmp_path / "raster.png", b"synthetic raster bytes", "b")
+    asset = rt.asset_from_path(source)
+    side = m.OCRSidecar(asset.asset_id, m.OCRDecision.REQUIRED, 0.95)
     lin = rt.build_lineage(asset, side)
-    assert lin.derived_artifacts == ["ocr_sidecar"] and side.promoted_to_authoritative is True
-    skip = rt.build_lineage(asset, m.OCRSidecar("a", m.OCRDecision.SKIP, 1.0))
+    assert lin.derived_artifacts == []
+    assert lin.evidence_primary is True
+    assert lin.sidecar.promoted_to_authoritative is False
+    executed = rt.record_execution(
+        asset, side, page_1based=1, raster_path=raster, text="Synthetic OCR text",
+        engine="synthetic-test-recorder", engine_version="1",
+        requested_languages=["eng"], available_languages=["eng"],
+        model_sha256s={"eng": "a" * 64}, parameters={"psm": 6},
+    )
+    lin = rt.build_lineage(asset, executed)
+    assert lin.derived_artifacts == ["ocr_sidecar"]
+    assert lin.evidence_primary is True
+    assert lin.sidecar.promoted_to_authoritative is False
+    assert side.execution is None and side.promoted_to_authoritative is False
+    assert lin.sidecar.execution["source_sha256"] == asset.sha256
+    assert lin.sidecar.execution["authority_effect"] == "NONE"
+    # The lineage holds an independent receipt, not a caller-owned mutable alias.
+    executed.execution["parameters"]["psm"] = 3
+    assert lin.sidecar.execution["parameters"]["psm"] == 6
+    with pytest.raises(ValueError, match="fingerprint mismatch"):
+        rt.build_lineage(asset, executed)
+    skip = rt.build_lineage(asset, m.OCRSidecar(asset.asset_id, m.OCRDecision.SKIP, 1.0))
     assert skip.derived_artifacts == [] and skip.evidence_primary is True
     data = json.loads(rt.to_json(lin))
     assert data["sidecar"]["decision"] == "required" and data["preservation_policy"] == "preserve_full_frame"
@@ -83,18 +107,16 @@ def test_ocr_asset_from_path(tmp_path):
     assert odd.source_format == m.EvidenceFormat.UNKNOWN and odd.path == str(tmp_path / "y.bin")
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "production_defect: OCREvidenceRuntime.asset_from_path maps the file extension straight onto "
-        "EvidenceFormat values, so .png/.jpg files (enum value 'image') become UNKNOWN and lose the "
-        "image-is-primary-evidence OCR policy"
-    ),
-)
-def test_ocr_png_is_classified_as_image(tmp_path):
+@pytest.mark.parametrize("extension", ["png", "jpg", "jpeg", "tif", "tiff", "bmp", "webp"])
+def test_ocr_png_is_classified_as_image(tmp_path, extension):
     m = load(OCR)
-    a = m.OCREvidenceRuntime.asset_from_path(_write(tmp_path / "skid.png", b"\x89PNG", "b"))
+    a = m.OCREvidenceRuntime.asset_from_path(
+        _write(tmp_path / f"skid.{extension}", b"synthetic raster bytes", "b")
+    )
     assert a.source_format == m.EvidenceFormat.IMAGE
+    assert m.OCREvidenceRuntime().build_lineage(
+        a, m.OCREvidenceRuntime().decide_ocr(a)
+    ).evidence_primary is True
 
 
 def test_ocr_main_demo(capsys):
