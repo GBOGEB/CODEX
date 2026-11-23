@@ -124,3 +124,22 @@ A dry run on 2026-10-25 reported both rows lossless (`archived_as_tag`).
 A dry run on 2026-11-16 reported both rows lossless (`archived_as_tag`).
 Each tag can be restored with
 `git push origin archive/<branch>:refs/heads/<branch>`.
+
+## W14 census and one-dispatch queue, 2026-11-23
+
+No list has run since 2026-10-25. A dry run against live heads on 2026-11-23
+found every pending list still lossless (31/31 rows, W4 included). Of the 42
+branches, 31 are on those lists, 2 are rolling bot branches, 2 have open PRs, 2
+are active work from 11-16 and 11-23 with no PR yet, and 4 are new:
+
+`W14_DELETE_MERGED_20261123.tsv` (delete, 4 branches): the `hold/*` copies
+of `fix/` branches whose exact head commits merged in #1310, #1312 (two) and
+#1316. Every commit is on `main`.
+
+`READY_20261123.queue` names the 6 ready lists in order. Dispatch the workflow
+with `list` set to the queue file, first as a dry run, then with `execute` on.
+The script runs the lists as one job with every guard per row, the receipt
+names the list each row came from, and the job summary gives counts per list.
+A queue entry must be a `.tsv` file name in this folder, and a branch may
+appear only once across the queue. `W4_ARCHIVE_NEVER_LANDED_20261011.tsv` is
+not queued while the owner hold stands. A dry run of the queue: 20/20 lossless.

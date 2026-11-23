@@ -175,6 +175,59 @@ def test_rate_limit_wait_uses_retry_after_or_reset_header():
     assert bh.rate_limit_wait(err(500, retry_after="5"), 0) is None
 
 
+def test_queue_runs_named_lists_in_order_and_tags_each_row(tmp_path):
+    (tmp_path / "A.tsv").write_text(f"a1\t{SHA}\na2\t{SHA}\tarchive\n", encoding="utf-8")
+    (tmp_path / "B.tsv").write_text(f"b1\t{OTHER}\n", encoding="utf-8")
+    q = tmp_path / "READY.queue"
+    q.write_text("# ready\nA.tsv\n\nB.tsv\n", encoding="utf-8")
+    rows, sources = bh.load_rows(q)
+    assert [r[0] for r in rows] == ["a1", "a2", "b1"]
+    assert sources == ["A.tsv", "A.tsv", "B.tsv"]
+    single, src = bh.load_rows(tmp_path / "B.tsv")
+    assert single == [("b1", OTHER, "delete")] and src == ["B.tsv"]
+
+
+@pytest.mark.parametrize(
+    "body",
+    ["../A.tsv\n", "sub/A.tsv\n", "A.txt\n", "A.tsv\nA.tsv\n", "A.tsv\nC.tsv\n"],
+)
+def test_queue_rejects_paths_repeats_and_branches_listed_twice(tmp_path, body):
+    (tmp_path / "A.tsv").write_text(f"a1\t{SHA}\n", encoding="utf-8")
+    (tmp_path / "C.tsv").write_text(f"a1\t{SHA}\n", encoding="utf-8")
+    q = tmp_path / "X.queue"
+    q.write_text(body, encoding="utf-8")
+    with pytest.raises(SystemExit):
+        bh.load_rows(q)
+
+
+def test_main_queue_receipt_names_the_list_of_every_row(monkeypatch, tmp_path):
+    (tmp_path / "A.tsv").write_text(f"done\t{SHA}\n", encoding="utf-8")
+    (tmp_path / "B.tsv").write_text(f"old\t{SHA}\tarchive\n", encoding="utf-8")
+    q = tmp_path / "READY.queue"
+    q.write_text("A.tsv\nB.tsv\n", encoding="utf-8")
+    receipt = tmp_path / "r.json"
+    api = FakeApi({"done": (SHA, False), "old": (SHA, False)})
+    monkeypatch.setattr(bh, "make_api", lambda repo, token: api)
+    monkeypatch.setenv("GITHUB_TOKEN", "tok")
+    monkeypatch.setattr(
+        bh.sys, "argv", ["x", str(q), "--repo", "GBOGEB/X", "--receipt", str(receipt)]
+    )
+    assert bh.main() == 0
+    data = bh.json.loads(receipt.read_text(encoding="utf-8"))
+    assert data["list_file"] == "READY.queue" and data["lists"] == ["A.tsv", "B.tsv"]
+    assert [(r["branch"], r["list"]) for r in data["results"]] == [
+        ("done", "A.tsv"),
+        ("old", "B.tsv"),
+    ]
+    assert data["deleted"] == 0 and set(api.branches) == {"done", "old"}
+
+
+def test_committed_queues_name_existing_lists():
+    for q in sorted((SCRIPT.parents[1] / "governance" / "branch_hygiene").glob("*.queue")):
+        rows, sources = bh.load_rows(q)
+        assert rows and len(sources) == len(rows), q
+
+
 def test_committed_lists_are_well_formed_and_unique():
     lists = sorted((SCRIPT.parents[1] / "governance" / "branch_hygiene").glob("*.tsv"))
     seen: set[str] = set()
