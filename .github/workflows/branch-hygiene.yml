@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       list:
-        description: Branch list (TSV) under governance/branch_hygiene/
+        description: Branch list (.tsv) or queue of lists (.queue) under governance/branch_hygiene/
         required: true
         default: governance/branch_hygiene/W1_DELETE_MERGED_20261011.tsv
       execute:
@@ -61,7 +61,7 @@ jobs:
           EXECUTE: ${{ inputs.execute }}
         run: |
           set -euo pipefail
-          case "$LIST" in governance/branch_hygiene/*.tsv) ;; *) echo "list must be under governance/branch_hygiene/"; exit 1;; esac
+          case "$LIST" in governance/branch_hygiene/*.tsv|governance/branch_hygiene/*.queue) ;; *) echo "list must be a .tsv or .queue under governance/branch_hygiene/"; exit 1;; esac
           flag=""; [ "$EXECUTE" = "true" ] && flag="--execute"
           status=0
           python scripts/branch_hygiene_delete.py "$LIST" $flag --receipt "$RUNNER_TEMP/branch-hygiene-receipt.json" > /dev/null || status=$?
@@ -71,9 +71,14 @@ jobs:
           print(f"## Branch hygiene: {d['mode']}\n")
           print(f"Listed {d['listed']}, lossless {d['eligible']}, deleted {d['deleted']}, "
                 f"skipped {d['skipped']}, errors {d['errors']}.\n")
+          for name in d.get("lists", []):
+              rs = [r for r in d["results"] if r.get("list") == name]
+              print(f"- `{name}`: listed {len(rs)}, lossless {sum(r['action'] == 'delete' for r in rs)}, "
+                    f"deleted {sum(bool(r.get('deleted')) for r in rs)}")
+          print()
           for r in d["results"]:
               if r["action"] in ("skip", "error"):
-                  print(f"- {r['action']} `{r['branch']}`: {r['reason']}")
+                  print(f"- {r['action']} `{r['branch']}` ({r.get('list', '')}): {r['reason']}")
           PY
           exit "$status"
       - if: always()

@@ -17,6 +17,11 @@ only when every guard holds at execution time:
 
 Anything else is skipped with a reason, never deleted. The receipt lists the
 restore command for every deleted branch. Stdlib only.
+
+The list file may also be a ``.queue`` file: one list file name per line (same
+directory, no paths), run in order as one job with one receipt. Each result
+names the list it came from, so a single dispatch can run every list that is
+ready instead of one dispatch per list.
 """
 
 from __future__ import annotations
@@ -106,6 +111,36 @@ def parse_list(text: str) -> list[tuple[str, str, str]]:
             )
         rows.append((parts[0], parts[1], parts[2]))
     return rows
+
+
+QUEUE_SUFFIX = ".queue"
+
+
+def load_rows(path: Path) -> tuple[list[tuple[str, str, str]], list[str]]:
+    """Rows to run and, per row, the list file it came from."""
+    if path.suffix != QUEUE_SUFFIX:
+        rows = parse_list(path.read_text(encoding="utf-8"))
+        return rows, [path.name] * len(rows)
+    rows: list[tuple[str, str, str]] = []
+    sources: list[str] = []
+    seen_lists: set[str] = set()
+    seen_branches: set[str] = set()
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        name = raw.strip()
+        if not name or name.startswith("#"):
+            continue
+        if "/" in name or "\\" in name or not name.endswith(".tsv"):
+            raise SystemExit(f"queue entry must be a .tsv file name in {path.parent}: {raw!r}")
+        if name in seen_lists:
+            raise SystemExit(f"queue names {name} twice")
+        seen_lists.add(name)
+        for row in parse_list((path.parent / name).read_text(encoding="utf-8")):
+            if row[0] in seen_branches:
+                raise SystemExit(f"queue lists branch {row[0]!r} twice")
+            seen_branches.add(row[0])
+            rows.append(row)
+            sources.append(name)
+    return rows, sources
 
 
 def assess(
@@ -244,8 +279,12 @@ def main() -> int:
     if not args.repo or not token:
         raise SystemExit("need --repo (or GITHUB_REPOSITORY) and GITHUB_TOKEN")
 
-    rows = parse_list(args.list_file.read_text(encoding="utf-8"))
+    rows, sources = load_rows(args.list_file)
     receipt = run(make_api(args.repo, token), args.repo, rows, args.execute)
+    receipt["list_file"] = args.list_file.name
+    receipt["lists"] = list(dict.fromkeys(sources))
+    for result, source in zip(receipt["results"], sources):
+        result["list"] = source
     payload = json.dumps(receipt, indent=2, sort_keys=True) + "\n"
     if args.receipt:
         args.receipt.parent.mkdir(parents=True, exist_ok=True)
