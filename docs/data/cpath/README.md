@@ -22,3 +22,18 @@ Caveats, also written into the report:
 - `INFERRED` edges are reviewed judgements, not links declared on GitHub.
 - PCA and Bradley-Terry over tens of nodes are descriptive only; they support no inference.
 - The graph is a snapshot. Rebuild it before acting on any ranking.
+
+
+## Advisory control boundary
+
+Newly generated reports explicitly mark structural waves, ranking, lever unlocks
+and cover as advisory only. They cannot authorize an operation or verify
+completion. ABACUS #2470 is a protected negative canary: ordinary merge and
+generic lever completion are prohibited. ABACUS #2471 requires separately
+qualified effective policy, refusal evidence and authorized disposition. An
+absent census node or a graph-local `done` flag is not that evidence. The guard
+excludes both controls from generic lever completion and retains the refusal
+prerequisite in lever-cover residuals, even if a census refresh removes #2470.
+The original graph topology and dated graph/report snapshots are preserved;
+historical reports predate this guard and must not be used for operational
+dispatch. No new dispatcher or receipt verifier is introduced.
