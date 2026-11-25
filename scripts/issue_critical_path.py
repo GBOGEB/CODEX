@@ -6,7 +6,7 @@ Read-only analysis. Input is a graph JSON (`codex.cpath.graph.v1`); output is a 
 
 What it computes, and how far each number can be trusted:
 
-* Kahn waves (safe execution order) and the cycle set Kahn cannot drain (deadlocks).
+* Kahn waves (structural order, not execution permission) and the cycle set Kahn cannot drain (deadlocks).
 * CPM on the acyclic part: earliest/latest start, slack, and the critical path, using each
   node's ``effort_days + latency_days`` as its duration. Durations are class defaults unless
   a node gives its own, so the path is an ordering argument, not a forecast.
@@ -212,21 +212,47 @@ def reverse_pressure(nodes, edges, alpha: float = 0.85, iters: int = 200, mode: 
     return {u: v / top for u, v in p.items()}
 
 
+# The explicit negative control and its owner obligation are not generic work.
+# This advisory library has no trusted refusal/admission receipt consumer.
+PROTECTED_CANARY = "ABACUS#2470"
+CANARY_OWNER_OBLIGATION = "ABACUS#2471"
+
+
+def _control_id(node_id: str) -> str:
+    return node_id.upper().removeprefix("GBOGEB/").replace("!", "#")
+
+
+def _guarded_controls(nodes) -> set[str]:
+    return {n for n in nodes if _control_id(n) in (PROTECTED_CANARY, CANARY_OWNER_OBLIGATION)}
+
+
+def _advisory_class(node_id: str) -> str:
+    if _control_id(node_id) == PROTECTED_CANARY:
+        return "PROTECTED_NEVER_MERGE"
+    if _control_id(node_id) == CANARY_OWNER_OBLIGATION:
+        return "HOLD_VERIFIED_REFUSAL"
+    return "ADVISORY_ONLY"
+
+
 def _ready(nodes, pred, done: set[str]) -> set[str]:
     return {n for n in nodes if n not in done and all(p in done for p in pred[n])}
 
 
 def levers(nodes, edges) -> dict:
     _, pred = _adjacency(nodes, edges)
+
+    guarded = _guarded_controls(nodes)
     groups = defaultdict(set)
     for n, d in nodes.items():
+        if n in guarded:
+            continue
         for lv in d.get("levers", []):
             groups[lv].add(n)
-    base_done = {n for n, d in nodes.items() if d.get("done")}
+    base_done = {n for n, d in nodes.items() if d.get("done")} - guarded
     base = _ready(nodes, pred, base_done)
 
     def gain(members: set[str]) -> set[str]:
-        return _ready(nodes, pred, base_done | members) - base - members
+        return _ready(nodes, pred, base_done | members) - base - members - guarded
 
     rows = {}
     for lv, members in sorted(groups.items()):
@@ -262,9 +288,17 @@ def lever_cover(nodes, edges, target: str) -> dict:
     effort-day. ``share`` is that lever's part of the target's open ancestry; ``residual``
     lists ancestors no lever covers (work outside any lever, i.e. a hidden blocker).
     """
-    anc = {a for a in ancestors(nodes, edges, target) if not nodes[a].get("done")}
+    guarded = _guarded_controls(nodes)
+    all_anc = ancestors(nodes, edges, target)
+    anc = {a for a in all_anc if not nodes[a].get("done") or a in guarded}
+    # Census removal or a missing historical edge is not refusal evidence.
+    if any(_control_id(n) == CANARY_OWNER_OBLIGATION for n in all_anc | {target}):
+        canaries = {n for n in nodes if _control_id(n) == PROTECTED_CANARY}
+        anc.update(canaries or {PROTECTED_CANARY})
     groups = defaultdict(set)
     for n, d in nodes.items():
+        if n in guarded:
+            continue
         for lv in d.get("levers", []):
             groups[lv].add(n)
     covered, steps = set(), []
@@ -363,6 +397,7 @@ def analyse(data: dict, alpha: float = 0.85, mode: str = "and") -> dict:
     for n in nodes:
         d = nodes[n]
         rows.append({"id": n, "kind": d.get("kind"), "closure": d.get("closure"),
+                     "advisory_action_class": _advisory_class(n),
                      "title": d.get("title", ""), "actor": d.get("actor", ""),
                      "levers": d.get("levers", []), "wave": next((i for i, w in enumerate(waves) if n in w), None),
                      "slack_days": c["slack"].get(n), "critical": n in c["path"],
@@ -373,6 +408,19 @@ def analyse(data: dict, alpha: float = 0.85, mode: str = "and") -> dict:
     goals = data.get("goals") or sorted(
         (x for x in order if not _adjacency(nodes, edges)[0][x]), key=lambda x: -c["ef"][x])[:5]
     return {"schema": REPORT_SCHEMA, "nodes": len(nodes), "edges": len(edges),
+            "recommendations_are_not_authority": True,
+            "authority_transfer": False,
+            "execution_classification": "ADVISORY_ONLY",
+            "operational_readiness": "NOT_QUALIFIED",
+            "protected_control": {
+                "id": PROTECTED_CANARY,
+                "dependent": CANARY_OWNER_OBLIGATION,
+                "merge_eligible": False,
+                "completion_verified": False,
+                "present": any(_control_id(n) == PROTECTED_CANARY for n in nodes),
+                "dependent_present": any(_control_id(n) == CANARY_OWNER_OBLIGATION for n in nodes),
+                "required_evidence": "EFFECTIVE_POLICY_AND_VERIFIED_REFUSAL_AND_AUTHORIZED_DISPOSITION",
+            },
             "waves": waves, "cycle": cycle, "critical_path": c["path"],
             "critical_path_days": c["duration_days"], "ranking": rows,
             "goal_paths": [path_to(nodes, edges, order, g) for g in goals if g in nodes],
@@ -388,7 +436,9 @@ def analyse(data: dict, alpha: float = 0.85, mode: str = "and") -> dict:
             "pca": pca(mat, feats), "caveats": [
                 "Durations are class defaults unless a node sets them; the path orders work, it does not forecast dates.",
                 "Edges marked evidence=INFERRED are reviewed judgements, not GitHub-declared links.",
-                "PCA and Bradley-Terry are descriptive over tens of nodes; no inference."]}
+                "PCA and Bradley-Terry are descriptive over tens of nodes; no inference.",
+                "Structural waves and hypothetical levers are advisory, never executable work.",
+                "Protected canary refusal is unverified even when absent from the census."]}
 
 
 def edges_from_text(source_id: str, text: str, default_repo: str) -> list[dict]:

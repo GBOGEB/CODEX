@@ -102,3 +102,92 @@ def test_parent_control_issues_are_not_ranked():
     text = "| 1 | #319 DMAIC control | PARENT_CONTROL | x | y |\n"
     rep = dag.analyze(census(*dag.parse_bd_queue(text, "O/CODEX")))
     assert "CODEX!319" in rep["nodes"] and "CODEX!319" not in rep["ranking"]
+
+
+def test_export_cpath_loads_in_issue_critical_path_and_merges_base():
+    spec = importlib.util.spec_from_file_location("issue_critical_path", ROOT / "scripts/issue_critical_path.py")
+    cp = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cp)
+    c = census(
+        pr("O/CODEX", 1, "THREADS", [dag.KIT_PRODUCER], unresolved=2, body="Fixes #500"),
+        pr("O/ABACUS", 2, "REQ_PENDING", [dag.KIT_CONSUMER]),
+        pr("O/CODEX", 5, "NEEDS_APPROVAL", held_runs=3),
+        *dag.parse_bd_queue("| 1 | #500 TRIAGE gate | EXTERNAL_GATE | x | y |\n", "O/CODEX"),
+    )
+    g = dag.to_cpath(c)
+    nodes, edges = cp.load_graph(g)
+    assert nodes["CODEX#500"]["kind"] == "issue" and nodes["CODEX#500"]["closure"] == "external"
+    assert nodes["CODEX#1"]["effort_days"] == 0.125  # 1.0 h / 8
+    assert ("CODEX#1", "CODEX#500") in edges and ("CODEX#1", "ABACUS#2") in edges
+    assert nodes["GATE:CODEX#5:approve-runs"]["kind"] == "gate"
+    base = {"schema": dag.CPATH_SCHEMA, "as_of": "B", "goals": ["CODEX#500"],
+            "nodes": [{"id": "CODEX#500", "kind": "issue", "closure": "external", "title": "curated"}],
+            "edges": []}
+    merged = dag.to_cpath(c, base)
+    assert next(n for n in merged["nodes"] if n["id"] == "CODEX#500")["title"] == "curated"
+    assert merged["goals"] == ["CODEX#500"]
+    cp.load_graph(merged)
+
+
+def _cpath_graph(nodes, edges=(), goals=()):
+    return {"schema": dag.CPATH_SCHEMA, "as_of": "B", "goals": list(goals), "nodes": list(nodes), "edges": list(edges)}
+
+
+def test_export_cpath_base_refreshes_census_owned_records():
+    # #1333 review P1: a --base snapshot must not pin an earlier PR verdict or keep closed PRs.
+    base = _cpath_graph(
+        [{"id": "CODEX#1", "kind": "pr", "verdict": "REQ_RED", "effort_days": 0.375},
+         {"id": "CODEX#9", "kind": "pr", "verdict": "THREADS", "effort_days": 0.1},  # closed since
+         {"id": "OTHER#4", "kind": "pr", "title": "curated, repo not censused"},
+         {"id": "GATE:CODEX#9:owner-checklist", "kind": "gate", "closure": "owner-decision"},
+         {"id": "GATE:BD-17", "kind": "gate", "closure": "owner-decision", "title": "curated gate"},
+         {"id": "CODEX#500", "kind": "issue", "closure": "external", "title": "curated"}],
+        [{"from": "GATE:CODEX#9:owner-checklist", "to": "CODEX#9", "source": "federation_pr_dag:human_gate"},
+         {"from": "CODEX#9", "to": "CODEX#500", "source": "#2752 ledger"},
+         {"from": "GATE:BD-17", "to": "CODEX#500", "source": "#2752 ledger"}],
+        goals=["CODEX#500"])
+    c = census(pr("O/CODEX", 1, "READY"), *dag.parse_bd_queue("| 1 | #500 gate | EXTERNAL_GATE | x | y |\n", "O/CODEX"))
+    merged = dag.to_cpath(c, base)
+    ids = {n["id"]: n for n in merged["nodes"]}
+    assert ids["CODEX#1"]["verdict"] == "READY"
+    assert "CODEX#9" not in ids and "GATE:CODEX#9:owner-checklist" not in ids
+    assert ids["OTHER#4"]["title"] == "curated, repo not censused" and "GATE:BD-17" in ids
+    assert ids["CODEX#500"]["title"] == "curated"
+    assert [(e["from"], e["to"]) for e in merged["edges"]] == [("GATE:BD-17", "CODEX#500")]
+    spec = importlib.util.spec_from_file_location("issue_critical_path", ROOT / "scripts/issue_critical_path.py")
+    cp = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cp)
+    cp.load_graph(merged)
+
+
+def test_export_cpath_parent_control_is_not_work():
+    # #1333 review P2: PARENT_CONTROL stays non-actionable in the C-path graph.
+    c = census(*dag.parse_bd_queue("| 1 | #879 DMAIC control | PARENT_CONTROL | x | y |\n", "O/CODEX"))
+    rec = next(n for n in dag.to_cpath(c)["nodes"] if n["id"] == "CODEX#879")
+    assert rec["actionable"] is False and rec["goal_weight"] == 0.0
+    assert rec["effort_days"] == 0.0 and rec["latency_days"] == 0.0
+
+
+def test_actions_unavailable_gate_is_the_kahn_root():
+    c = census(pr("O/CODEX", 1, "REQ_RED"), pr("O/CODEX", 2, "BEHIND"), pr("O/CODEX", 3, "THREADS"),
+               pr("O/ABACUS", 4, "REQ_RED"))
+    c["actions_blocked"] = {"O/CODEX": "account is locked due to a billing issue"}
+    rep = dag.analyze(c)
+    g = "GATE:O:actions-unavailable"
+    assert rep["kahn_order"][0] == g
+    succ = {e["to"] for e in rep["edges"] if e["from"] == g}
+    assert succ == {"CODEX#1", "CODEX#2"}  # THREADS needs no CI; ABACUS not blocked
+    assert g in rep["critical_path"]
+    assert "Actions cannot start" in dag.to_markdown(rep)
+
+
+def test_actions_block_reason_and_unreadable_rules():
+    assert dag.actions_block_reason(["x", "The job was not started because your account is locked due to a billing issue."])
+    assert dag.actions_block_reason(["Process completed with exit code 1."]) is None
+    assert dag.required_contexts(None) == (None, False)
+    latest = {"a": {"status": "completed", "conclusion": "failure"},
+              "b": {"status": "in_progress", "conclusion": None},
+              "c": {"status": "completed", "conclusion": "success"}}
+    assert dag.classify_checks(None, latest) == (["a"], ["b"])
+    assert dag.classify_checks(["c"], latest) == ([], [])
+    assert dag.classify_checks(None, {}) == ([], ["<no check runs; required set unreadable>"])

@@ -146,3 +146,44 @@ def test_lever_cover_finds_k_way_set_and_hidden_blockers():
     assert [s["lever"] for s in res["steps"]] == ["A", "B"]
     assert res["steps"][0]["completes"] == 2 and res["steps"][0]["share"] == 0.5
     assert res["residual"] == ["loose"] and res["ready_after_cover"] is False
+
+
+@pytest.mark.parametrize("canary", ["ABACUS#2470", "abacus!2470", "GBOGEB/ABACUS#2470"])
+def test_protected_control_is_not_generic_lever_completion(canary):
+    data = graph([n("policy", levers=["admin"]), n(canary, kind="pr", levers=["merge"], done=True),
+                  n("ABACUS#2471", levers=["merge"], done=True), n("child"), n("ordinary", levers=["merge"]),
+                  n("ordinary_child")],
+                 [("policy", canary), (canary, "ABACUS#2471"), ("policy", "ABACUS#2471"),
+                  ("ABACUS#2471", "child"), ("ordinary", "ordinary_child")])
+    nodes, edges = cp.load_graph(data)
+    res = cp.levers(nodes, edges)
+    assert res["levers"]["merge"]["members"] == ["ordinary"]
+    assert res["levers"]["merge"]["unlocks"] == ["ordinary_child"]
+    assert all("ABACUS#2471" not in row["extra_unlocks"] for row in res["synergy"])
+    cover = cp.lever_cover(nodes, edges, "child")
+    assert canary in cover["residual"]
+    assert "ABACUS#2471" in cover["residual"]
+    assert cover["ready_after_cover"] is False
+    report = cp.analyse(data)
+    assert (report["nodes"], report["edges"]) == (6, 5)
+    assert report["execution_classification"] == "ADVISORY_ONLY"
+    assert report["authority_transfer"] is False
+    assert report["protected_control"]["merge_eligible"] is False
+    assert report["protected_control"]["completion_verified"] is False
+    assert report["protected_control"]["present"] is True
+    assert next(r for r in report["ranking"] if r["id"] == canary)["advisory_action_class"] == (
+        "PROTECTED_NEVER_MERGE"
+    )
+
+
+def test_absent_canary_does_not_clear_refusal_obligation():
+    data = graph([n("policy", levers=["admin"]), n("ABACUS#2471"), n("child")],
+                 [("policy", "ABACUS#2471"), ("ABACUS#2471", "child")])
+    nodes, edges = cp.load_graph(data)
+    assert "ABACUS#2471" not in cp.levers(nodes, edges)["levers"]["admin"]["unlocks"]
+    assert "ABACUS#2470" in cp.lever_cover(nodes, edges, "ABACUS#2471")["residual"]
+    assert "ABACUS#2470" in cp.lever_cover(nodes, edges, "child")["residual"]
+    report = cp.analyse(data)
+    assert report["protected_control"]["present"] is False
+    assert report["protected_control"]["completion_verified"] is False
+    assert report["operational_readiness"] == "NOT_QUALIFIED"
