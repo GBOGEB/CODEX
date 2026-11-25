@@ -61,6 +61,10 @@ DEP_RE = re.compile(
 )
 REF_RE = re.compile(r"(?:([\w.-]+/[\w.-]+))?#(\d+)")
 CLOSES_RE = re.compile(r"(?i)\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#(\d+)")
+# Verdicts that cannot clear without a fresh CI result.
+CI_BOUND = ("REQ_RED", "REQ_PENDING", "BEHIND", "CONFLICT", "NEEDS_APPROVAL")
+# Check-run annotation text GitHub writes when a job never started for an account reason.
+ACTIONS_BLOCKED_RE = re.compile(r"(?i)account is locked due to a billing issue|spending limit|actions (?:is|are) disabled")
 KIT_PRODUCER = "MIP/kit/KIT_MANIFEST.json"
 KIT_CONSUMER = ".github/workflows/mip-n2-self-index.yml"
 
@@ -136,6 +140,16 @@ def build_graph(census: dict) -> tuple[dict, list[dict]]:
             g = f"GATE:{n['id']}:owner-checklist"
             nodes[g] = _gate(g, n["repo"], "owner merge checklist")
             add(g, n["id"], "human_gate")
+
+    # Actions cannot start in a repo (billing lock, Actions disabled): every PR that
+    # still needs a CI result waits on one owner gate per account. It is the Kahn root.
+    for repo, reason in sorted((census.get("actions_blocked") or {}).items()):
+        g = f"GATE:{repo.split('/')[0]}:actions-unavailable"
+        # Top priority: Kahn takes it first among ready nodes, as nothing CI-bound moves before it.
+        nodes.setdefault(g, {**_gate(g, repo, f"restore GitHub Actions ({reason})"), "priority": 1.0})
+        for n in prs:
+            if n["repo"] == repo and n.get("verdict") in CI_BOUND:
+                add(g, n["id"], "human_gate")
 
     producers = [n for n in prs if KIT_PRODUCER in n.get("files", []) and n["repo"].endswith("CODEX")]
     consumers = [n for n in prs if KIT_CONSUMER in n.get("files", []) and not n["repo"].endswith("CODEX")]
@@ -367,6 +381,7 @@ def analyze(census: dict, bt_scores: dict | None = None) -> dict:
         "observed_at": census.get("observed_at"),
         "repos": census.get("repos", []),
         "recommendations_are_not_authority": True,
+        "actions_blocked": census.get("actions_blocked") or {},
         "counts": {"nodes": len(nodes), "edges": len(edges),
                    "gates": sum(1 for v in nodes if v.startswith("GATE:"))},
         "deadlock_nodes": raw_cycles,
@@ -393,8 +408,12 @@ def to_markdown(rep: dict, top: int = 12) -> str:
              "Recommendation-only (3P3 W59). Effort figures are estimates by census verdict.", "",
              (f"- Nodes {rep['counts']['nodes']} (gates {rep['counts']['gates']}), "
               f"edges {rep['counts']['edges']}, makespan **{rep['makespan_hours']} h**"),
-             f"- Deadlocks: {', '.join(rep['deadlock_nodes']) or 'none'}", "",
-             "## Critical path (zero slack)", ""]
+             f"- Deadlocks: {', '.join(rep['deadlock_nodes']) or 'none'}", ""]
+    blocked = rep.get("actions_blocked") or {}
+    if blocked:
+        lines += ["**Actions cannot start** (Kahn root; every CI-bound PR waits on it): "
+                  + "; ".join(f"`{r}` {why}" for r, why in sorted(blocked.items())), ""]
+    lines += ["## Critical path (zero slack)", ""]
     lines += [f"{i}. `{v}` {n[v]['verdict']} {n[v]['effort']} h: {n[v]['title'][:70]}"
               for i, v in enumerate(rep["critical_path"], 1)]
     lines += ["", "## Unlock ranking (reverse pressure x leverage / effort)", "",
@@ -439,6 +458,10 @@ EVIDENCE = {"depends_on": "DECLARED", "closes_bd": "DECLARED", "kit_pin": "DERIV
 BD_CLOSURE = {"EXTERNAL_GATE": "external", "FIX_PR": "active", "PROVE": "near",
               "PARENT_CONTROL": "control-surface"}
 HOURS_PER_DAY = 8.0
+# Records the census owns; a --base snapshot never pins them: PRs of censused repos
+# (an absent one is closed), gates build_graph derives, and federation_pr_dag edges.
+CENSUS_GATE_RE = re.compile(r"^GATE:.+:(?:approve-runs|owner-checklist|actions-unavailable)$")
+CENSUS_SOURCE = "federation_pr_dag:"
 
 
 def to_cpath(census: dict, base: dict | None = None) -> dict:
@@ -461,6 +484,9 @@ def to_cpath(census: dict, base: dict | None = None) -> dict:
         elif n.get("kind") == "issue":
             rec = {"id": cid(v), "kind": "issue", "closure": BD_CLOSURE.get(n.get("bd_state"), "external"),
                    "title": n["title"], "bd_rank_priority": n["priority"]}
+            if not n.get("actionable", True):
+                # A parent control is not executable work: no goal weight, no duration.
+                rec.update(actionable=False, goal_weight=0.0, effort_days=0.0, latency_days=0.0)
         else:
             rec = {"id": v, "kind": "pr", "title": n.get("title", ""), "verdict": n.get("verdict"),
                    "effort_days": round(n["effort"] / HOURS_PER_DAY, 3), "latency_days": 0.0}
@@ -474,28 +500,114 @@ def to_cpath(census: dict, base: dict | None = None) -> dict:
     if base:
         if base.get("schema") != CPATH_SCHEMA:
             raise ValueError(f"base graph is not {CPATH_SCHEMA}")
-        have = {n["id"] for n in base["nodes"]}
-        pairs = {(e["from"], e["to"]) for e in base["edges"]}
-        graph = {**base, "as_of": graph["as_of"],
-                 "nodes": base["nodes"] + [n for n in out_nodes if n["id"] not in have],
-                 "edges": base["edges"] + [e for e in out_edges if (e["from"], e["to"]) not in pairs]}
+        # Census-owned records (PRs, gates, federation_pr_dag edges) always come from the
+        # current census: an earlier snapshot's verdicts and closed PRs must not linger.
+        # Curated base records (issues, hand-written edges) win over census issues.
+        censused = {r.split("/")[-1] for r in census.get("repos", [])}
+
+        def census_owned(n: dict) -> bool:
+            if n.get("kind") == "pr":
+                return n["id"].split("#")[0] in censused
+            return n.get("kind") == "gate" and bool(CENSUS_GATE_RE.match(n["id"]))
+
+        kept = [n for n in base["nodes"] if not census_owned(n)]
+        have = {n["id"] for n in kept}
+        nodes_all = kept + [n for n in out_nodes if n["id"] not in have]
+        ids = {n["id"] for n in nodes_all}
+        curated = [e for e in base["edges"] if not str(e.get("source", "")).startswith(CENSUS_SOURCE)]
+        pairs = {(e["from"], e["to"]) for e in curated}
+        edges_all = curated + [e for e in out_edges if (e["from"], e["to"]) not in pairs]
+        graph = {**base, "as_of": graph["as_of"], "nodes": nodes_all,
+                 "edges": [e for e in edges_all if e["from"] in ids and e["to"] in ids]}
     return graph
 
 
 # -------------------------------------------------------------------- collect
-def _gh(path: str) -> object:
-    out = subprocess.run(["gh", "api", path], check=True, capture_output=True, text=True)  # nosec B603 B607 - fixed gh argv, no shell
+def _gh(path: str, *fields: str) -> object:
+    """``gh api`` (REST path, or ``graphql`` with typed ``-F`` fields); fixed argv, no shell.
+
+    UTF-8 decoding so a Windows cp1252 console cannot drop stdout.
+    """
+    argv = ["gh", "api", path] + [a for f in fields for a in ("-F", f)]
+    out = subprocess.run(argv, check=True, capture_output=True, text=True, encoding="utf-8")  # nosec B603 B607
     return json.loads(out.stdout)
+
+
+def _gh_or_none(path: str) -> object | None:
+    try:
+        return _gh(path)
+    except subprocess.CalledProcessError:  # 403 (plan-gated rules on private repos) or 404
+        return None
+
+
+THREADS_Q = ("query($o:String!,$n:String!,$p:Int!){repository(owner:$o,name:$n){pullRequest(number:$p)"
+             "{reviewThreads(first:100){nodes{isResolved}}}}}")
+
+
+def unresolved_threads(repo: str, num: int) -> int:
+    owner, name = repo.split("/")
+    data = _gh("graphql", f"query={THREADS_Q}", f"o={owner}", f"n={name}", f"p={num}")
+    nodes = data["data"]["repository"]["pullRequest"]["reviewThreads"]["nodes"]
+    return sum(1 for t in nodes if not t["isResolved"])
+
+
+def required_contexts(rules: list | None) -> tuple[list[str] | None, bool]:
+    """Required check names and strict flag; ``None`` when the rules cannot be read."""
+    if rules is None:
+        return None, False
+    req = sorted({c["context"] for r in rules if r["type"] == "required_status_checks"
+                  for c in r["parameters"]["required_status_checks"]})
+    strict = any(r["parameters"].get("strict_required_status_checks_policy")
+                 for r in rules if r["type"] == "required_status_checks")
+    return req, strict
+
+
+def classify_checks(req: list[str] | None, latest: dict) -> tuple[list[str], list[str]]:
+    """(red, pending) required checks. Unreadable rules: every check counts, so an
+    unknown rule set can never yield READY on its own."""
+    names = sorted(latest) if req is None else req
+    red = [c for c in names if c in latest and latest[c]["status"] == "completed"
+           and latest[c]["conclusion"] not in ("success", "neutral", "skipped")]
+    pend = [c for c in names if c not in latest or latest[c]["status"] != "completed"]
+    if req is None and not latest:
+        pend = ["<no check runs; required set unreadable>"]
+    return red, pend
+
+
+def actions_block_reason(messages: list[str]) -> str | None:
+    """The account-level reason jobs never started (billing lock, spending limit), if any."""
+    for m in messages:
+        hit = ACTIONS_BLOCKED_RE.search(m or "")
+        if hit:
+            return hit.group(0).lower()
+    return None
+
+
+def probe_actions_blocked(repo: str, branch: str) -> str | None:
+    runs = _gh_or_none(f"repos/{repo}/actions/runs?branch={branch}&per_page=1")
+    if not runs or not runs.get("workflow_runs"):
+        return None
+    run = runs["workflow_runs"][0]
+    if run.get("conclusion") not in ("failure", "startup_failure"):
+        return None
+    jobs = (_gh_or_none(f"repos/{repo}/actions/runs/{run['id']}/jobs?per_page=3") or {}).get("jobs", [])
+    msgs = []
+    for j in jobs:
+        msgs += [a.get("message", "") for a in (_gh_or_none(f"repos/{repo}/check-runs/{j['id']}/annotations") or [])]
+    return actions_block_reason(msgs)
 
 
 def collect(repos: list[str], bd_queue: Path | None) -> dict:
     nodes = []
+    blocked: dict[str, str] = {}
+    rules_source: dict[str, str] = {}
     for repo in repos:
-        rules = _gh(f"repos/{repo}/rules/branches/main")
-        req = sorted({c["context"] for r in rules if r["type"] == "required_status_checks"
-                      for c in r["parameters"]["required_status_checks"]})
-        strict = any(r["parameters"].get("strict_required_status_checks_policy")
-                     for r in rules if r["type"] == "required_status_checks")
+        branch = _gh(f"repos/{repo}")["default_branch"]
+        req, strict = required_contexts(_gh_or_none(f"repos/{repo}/rules/branches/{branch}"))
+        rules_source[repo] = f"rules/branches/{branch}" if req is not None else "unreadable: all checks count"
+        reason = probe_actions_blocked(repo, branch)
+        if reason:
+            blocked[repo] = reason
         for pr in _gh(f"repos/{repo}/pulls?state=open&per_page=100"):
             num = pr["number"]
             d = _gh(f"repos/{repo}/pulls/{num}")
@@ -507,12 +619,9 @@ def collect(repos: list[str], bd_queue: Path | None) -> dict:
                     break
                 runs += chunk
             latest = {r["name"]: r for r in runs}
-            red = [c for c in req if c in latest and latest[c]["status"] == "completed"
-                   and latest[c]["conclusion"] not in ("success", "neutral", "skipped")]
-            pend = [c for c in req if c not in latest or latest[c]["status"] != "completed"]
+            red, pend = classify_checks(req, latest)
             held = _gh(f"repos/{repo}/actions/runs?head_sha={sha}&status=action_required&per_page=1")["total_count"]
-            threads = _gh(f"repos/{repo}/pulls/{num}/ccr/review_threads")
-            unresolved = sum(1 for t in threads if not t.get("resolved"))
+            unresolved = unresolved_threads(repo, num)
             files = [f["filename"] for f in _gh(f"repos/{repo}/pulls/{num}/files?per_page=100")]
             ms = d["mergeable_state"]
             body = d.get("body") or ""
@@ -543,6 +652,7 @@ def collect(repos: list[str], bd_queue: Path | None) -> dict:
     if bd_queue and bd_queue.exists():
         nodes += parse_bd_queue(bd_queue.read_text(encoding="utf-8"), "GBOGEB/CODEX")
     return {"schema": "federation_pr_census/v1", "repos": repos, "nodes": nodes,
+            "actions_blocked": blocked, "required_source": rules_source,
             "observed_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%MZ")}
 
 
