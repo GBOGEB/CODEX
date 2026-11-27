@@ -663,6 +663,24 @@ class Elevation(unittest.TestCase):
             self.assertEqual(code, 0, out)
             self.assertIn("1 elevated, 0 errors", out)
 
+    def test_cli_summaries_report_scalar_documents_without_traceback(self):
+        # Kit 1.3.7: validate / validate-global must reach their normal report
+        # and exit path for a scalar YAML document (cryoplant#2360 review).
+        cases = (
+            (["validate-global"], "G0_SCHEMA", "0 elevated"),
+            (["validate", "--expected-repo", "GBOGEB/demo"], "C0_SCHEMA", "0 owned"),
+        )
+        for cmd, code_expected, needle in cases:
+            with tempfile.TemporaryDirectory() as tmp:
+                path = Path(tmp) / "scalar.yaml"
+                path.write_text('"not a mapping"\n', encoding="utf-8")
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    code = wc.main([*cmd, str(path)])
+                self.assertEqual(code, 1, out.getvalue())
+                self.assertIn(code_expected, out.getvalue())
+                self.assertIn(needle, out.getvalue())
+
 
 class ReviewFindingsKit136(unittest.TestCase):
     """Kit 1.3.6: allocation and reservation findings (CODEX#1273, cryoplant#2297 reviews)."""

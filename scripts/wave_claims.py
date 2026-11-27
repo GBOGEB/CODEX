@@ -137,7 +137,7 @@ def validate_claims(
 ) -> list[dict]:
     """Rule checks that a single repo can run on its own claims file."""
     out: list[dict] = []
-    repo = repo or (doc or {}).get("repo") or "?"
+    repo = repo or (doc.get("repo") if isinstance(doc, dict) else None) or "?"
     if not isinstance(doc, dict) or doc.get("schema") != rules["claims_schema"]:
         return [
             violation(
@@ -975,7 +975,8 @@ def main(argv: list[str] | None = None) -> int:
             print(f"{f['severity'].upper()} {f['code']} {f['key']}: {f['detail']}")
         errors = sum(1 for f in found if f["severity"] == "error")
         print(
-            f"wave claims: {len((doc or {}).get('owns') or [])} owned, {errors} errors"
+            f"wave claims: {len(as_list(doc.get('owns')) if isinstance(doc, dict) else [])} owned,"
+            f" {errors} errors"
         )
         return 1 if errors else 0
     if a.cmd == "validate-global":
@@ -986,7 +987,8 @@ def main(argv: list[str] | None = None) -> int:
             print(f"{f['severity'].upper()} {f['code']} {f['key']}: {f['detail']}")
         errors = sum(1 for f in found if f["severity"] == "error")
         print(
-            f"global waves: {len((doc or {}).get('waves') or [])} elevated, {errors} errors"
+            f"global waves: {len(as_list(doc.get('waves')) if isinstance(doc, dict) else [])} elevated,"
+            f" {errors} errors"
         )
         return 1 if errors else 0
     register = yaml.safe_load(Path(a.register).read_text(encoding="utf-8"))
