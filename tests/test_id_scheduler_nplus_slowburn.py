@@ -5,7 +5,7 @@ import copy
 import hashlib
 import importlib.util
 import unittest
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,7 +30,7 @@ SPEC.loader.exec_module(nplus)
 def epoch(seq, ids=("a",), *, digest=None):
     m = metric()
     m["capture_utc"] = (
-        datetime(2026, 10, 1, tzinfo=timezone.utc) + timedelta(days=seq)
+        datetime(2026, 10, 1, tzinfo=UTC) + timedelta(days=seq)
     ).isoformat()
     m["source_digest"] = digest or hashlib.sha256(str(seq).encode()).hexdigest()
     task = {"a": "ready-a", "b": "ready-b", "c": "ready-c",
